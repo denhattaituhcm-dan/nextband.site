@@ -1,0 +1,370 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String           @id @default(uuid())
+  email             String           @unique
+  password          String
+  fullName          String?          @map("full_name")
+  avatarUrl         String?          @map("avatar_url") @db.Text
+  bio               String?          @db.Text
+  gender            String?          @db.VarChar(10)
+  dateOfBirth       DateTime?        @map("date_of_birth")
+  phone             String?          @db.VarChar(20)
+  parentName        String?          @map("parent_name") @db.VarChar(255)
+  parentPhone       String?          @map("parent_phone") @db.VarChar(20)
+  isActive          Boolean          @default(true) @map("is_active")
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+  googleId          String?          @unique @map("google_id")
+  courses           Course[]         @relation("TeacherCourses")
+  enrollments       Enrollment[]
+  gradedSubmissions ExamSubmission[] @relation("GraderSubmissions")
+  submissions       ExamSubmission[] @relation("StudentSubmissions")
+  highlights        Highlight[]
+  roles             UserRole[]
+  classesAsTeacher  Class[]          @relation("TeacherClasses")
+  classesAsStudent  ClassStudent[]
+  attendanceRecords ClassAttendance[] @relation("AttendanceStudent")
+  attendanceMarked  ClassAttendance[] @relation("AttendanceMarker")
+
+  @@map("users")
+}
+
+model UserRole {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  role      AppRole  @default(student)
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, role])
+  @@map("user_roles")
+}
+
+model Course {
+  id           String       @id @default(uuid())
+  title        String       @db.VarChar(255)
+  description  String?      @db.Text
+  thumbnailUrl String?      @map("thumbnail_url") @db.Text
+  level        String       @default("beginner") @db.VarChar(50)
+  teacherId    String?      @map("teacher_id")
+  price        Decimal?     @default(0.00) @db.Decimal(10, 2)
+  isPublished  Boolean      @default(false) @map("is_published")
+  isActive     Boolean      @default(true) @map("is_active")
+  isLocked     Boolean      @default(false) @map("is_locked")
+  syllabus     Json?
+  slug         String?      @unique @db.VarChar(255)
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+  teacher      User?        @relation("TeacherCourses", fields: [teacherId], references: [id])
+  enrollments  Enrollment[]
+  exams        Exam[]
+
+  @@index([teacherId], map: "courses_teacher_id_fkey")
+  @@map("courses")
+}
+
+model Enrollment {
+  id              String   @id @default(uuid())
+  courseId        String   @map("course_id")
+  studentId       String   @map("student_id")
+  enrolledAt      DateTime @default(now()) @map("enrolled_at")
+  progressPercent Int?     @default(0) @map("progress_percent")
+  course          Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  student         User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, studentId])
+  @@index([studentId], map: "enrollments_student_id_fkey")
+  @@map("enrollments")
+}
+
+model Exam {
+  id              String           @id @default(uuid())
+  courseId        String           @map("course_id")
+  title           String           @db.VarChar(255)
+  description     String?          @db.Text
+  week            Int?             @default(1)
+  durationMinutes Int?             @default(60) @map("duration_minutes")
+  isPublished     Boolean          @default(false) @map("is_published")
+  isActive        Boolean          @default(true) @map("is_active")
+  isLocked        Boolean          @default(false) @map("is_locked")
+  isOpen          Boolean          @default(false) @map("is_open")
+  maxParticipants Int?             @map("max_participants")
+  currentParticipants Int          @default(0) @map("current_participants")
+  examType        String           @default("ielts") @map("exam_type") @db.VarChar(50)
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  sections        ExamSection[]
+  submissions     ExamSubmission[]
+  course          Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([courseId], map: "exams_course_id_fkey")
+  @@map("exams")
+}
+
+model ExamSection {
+  id              String          @id @default(uuid())
+  examId          String          @map("exam_id")
+  sectionType     ExamSectionType @map("section_type")
+  title           String          @db.VarChar(255)
+  instructions    String?         @db.LongText
+  content         Json?
+  audioUrl        String?         @map("audio_url") @db.Text
+  audioScript     String?         @map("audio_script") @db.LongText
+  durationMinutes Int?            @map("duration_minutes")
+  orderIndex      Int?            @default(0) @map("order_index")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  updatedAt       DateTime        @updatedAt @map("updated_at")
+  exam            Exam            @relation(fields: [examId], references: [id], onDelete: Cascade)
+  highlights      Highlight[]
+  questionGroups  QuestionGroup[]
+
+  @@index([examId], map: "exam_sections_exam_id_fkey")
+  @@map("exam_sections")
+}
+
+model QuestionGroup {
+  id           String      @id @default(uuid())
+  sectionId    String      @map("section_id")
+  title        String?     @db.VarChar(255)
+  instructions String?     @db.Text
+  passage      String?     @db.LongText
+  audioUrl     String?     @map("audio_url") @db.Text
+  orderIndex   Int?        @default(0) @map("order_index")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  section      ExamSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  questions    Question[]
+
+  @@index([sectionId], map: "question_groups_section_id_fkey")
+  @@map("question_groups")
+}
+
+model Question {
+  id            String        @id @default(uuid())
+  groupId       String        @map("group_id")
+  questionType  QuestionType  @map("question_type")
+  questionText  String        @map("question_text") @db.Text
+  options       Json?
+  correctAnswer String?       @map("correct_answer") @db.Text
+  points        Int?          @default(1)
+  orderIndex    Int?          @default(0) @map("order_index")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  audioUrl      String?       @map("audio_url") @db.Text
+  answers       Answer[]
+  group         QuestionGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@index([groupId], map: "questions_group_id_fkey")
+  @@map("questions")
+}
+
+model ExamSubmission {
+  id          String           @id @default(uuid())
+  examId      String           @map("exam_id")
+  studentId   String           @map("student_id")
+  status      SubmissionStatus @default(in_progress)
+  startedAt   DateTime?        @default(now()) @map("started_at")
+  submittedAt DateTime?        @map("submitted_at")
+  totalScore      Decimal?         @map("total_score") @db.Decimal(5, 2)
+  correctAnswers  Int?             @map("correct_answers")
+  totalQuestions  Int?             @map("total_questions")
+  gradedBy        String?          @map("graded_by")
+  gradedAt        DateTime?        @map("graded_at")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  answers     Answer[]
+  exam        Exam             @relation(fields: [examId], references: [id], onDelete: Cascade)
+  grader      User?            @relation("GraderSubmissions", fields: [gradedBy], references: [id])
+  student     User             @relation("StudentSubmissions", fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([examId], map: "exam_submissions_exam_id_fkey")
+  @@index([gradedBy], map: "exam_submissions_graded_by_fkey")
+  @@index([studentId], map: "exam_submissions_student_id_fkey")
+  @@map("exam_submissions")
+}
+
+model Answer {
+  id           String         @id @default(uuid())
+  submissionId String         @map("submission_id")
+  questionId   String         @map("question_id")
+  answerText   String?        @map("answer_text") @db.LongText
+  audioUrl     String?        @map("audio_url") @db.Text
+  score        Decimal?       @db.Decimal(5, 2)
+  feedback     String?        @db.Text
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  question     Question       @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  submission   ExamSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@unique([submissionId, questionId])
+  @@index([questionId], map: "answers_question_id_fkey")
+  @@map("answers")
+}
+
+model Highlight {
+  id         String      @id @default(uuid())
+  sectionId  String      @map("section_id")
+  passageId  String?     @map("passage_id")
+  studentId  String      @map("student_id")
+  highlightText String?  @map("highlight_text") @db.Text
+  startIndex Int         @map("start_index")
+  endIndex   Int         @map("end_index")
+  color      String?     @default("yellow") @db.VarChar(50)
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @default(now()) @updatedAt @map("updated_at")
+  section    ExamSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  student    User        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([sectionId], map: "highlights_section_id_fkey")
+  @@index([studentId], map: "highlights_student_id_fkey")
+  @@map("highlights")
+}
+
+model Class {
+  id          String    @id @default(uuid())
+  name        String    @db.VarChar(255)
+  description String?   @db.Text
+  teacherId   String?   @map("teacher_id")
+  startDate   DateTime? @map("start_date")
+  endDate     DateTime? @map("end_date")
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  teacher  User?          @relation("TeacherClasses", fields: [teacherId], references: [id])
+  students ClassStudent[]
+  schedules  ClassSchedule[]
+  attendance ClassAttendance[]
+
+  @@index([teacherId], map: "classes_teacher_id_fkey")
+  @@map("classes")
+}
+
+model ClassSchedule {
+  id              String   @id @default(uuid())
+  classId         String   @map("class_id")
+  dayOfWeek       Int      @map("day_of_week")
+  startTime       String   @map("start_time") @db.VarChar(5)
+  durationMinutes Int      @map("duration_minutes")
+  timezone        String   @default("Asia/Ho_Chi_Minh") @db.VarChar(64)
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  class           Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@unique([classId, dayOfWeek, startTime])
+  @@index([classId], map: "class_schedules_class_id_idx")
+  @@map("class_schedules")
+}
+
+model ClassAttendance {
+  id          String           @id @default(uuid())
+  classId     String           @map("class_id")
+  studentId   String           @map("student_id")
+  sessionDate DateTime         @map("session_date") @db.Date
+  status      AttendanceStatus @default(present)
+  note        String?          @db.Text
+  markedBy    String?          @map("marked_by")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  class       Class            @relation(fields: [classId], references: [id], onDelete: Cascade)
+  student     User             @relation("AttendanceStudent", fields: [studentId], references: [id], onDelete: Cascade)
+  marker      User?            @relation("AttendanceMarker", fields: [markedBy], references: [id], onDelete: SetNull)
+
+  @@unique([classId, studentId, sessionDate])
+  @@index([classId, sessionDate], map: "class_attendance_class_id_session_date_idx")
+  @@index([studentId], map: "class_attendance_student_id_idx")
+  @@map("class_attendance")
+}
+
+model ClassStudent {
+  id        String   @id @default(uuid())
+  classId   String   @map("class_id")
+  studentId String   @map("student_id")
+  joinedAt  DateTime @default(now()) @map("joined_at")
+
+  class   Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+  student User  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([classId, studentId])
+  @@index([studentId], map: "class_students_student_id_fkey")
+  @@map("class_students")
+}
+
+model SiteSettings {
+  id                         String   @id @default("default")
+  siteName                   String   @default("NextBand") @map("site_name") @db.VarChar(255)
+  logoUrl                    String?  @map("logo_url") @db.Text
+  authTagline                String   @default("Nền tảng học IELTS hiện đại") @map("auth_tagline") @db.VarChar(120)
+  authFeatureOneTitle        String   @default("Khóa học chất lượng") @map("auth_feature_one_title") @db.VarChar(120)
+  authFeatureOneDescription  String   @default("Hàng trăm bài học từ cơ bản đến nâng cao") @map("auth_feature_one_description") @db.VarChar(160)
+  authFeatureTwoTitle        String   @default("Giáo viên uy tín") @map("auth_feature_two_title") @db.VarChar(120)
+  authFeatureTwoDescription  String   @default("Đội ngũ giáo viên giàu kinh nghiệm") @map("auth_feature_two_description") @db.VarChar(160)
+  highlightPresent           String   @default("#fff7a5") @map("highlight_present") @db.VarChar(20)
+  highlightAbsent            String   @default("#ffd7d7") @map("highlight_absent") @db.VarChar(20)
+  highlightInactive          String   @default("#e5e7eb") @map("highlight_inactive") @db.VarChar(20)
+  sloganText                 String   @default("Khám phá khóa học IELTS") @map("slogan_text") @db.VarChar(100)
+  sloganFontFamily           String   @default("'Be Vietnam Pro', sans-serif") @map("slogan_font_family") @db.VarChar(191)
+  sloganFontWeight           String   @default("bold") @map("slogan_font_weight") @db.VarChar(20)
+  sloganDesktopSize          Int      @default(56) @map("slogan_desktop_size")
+  sloganMobileSize           Int      @default(34) @map("slogan_mobile_size")
+  sloganColor                String   @default("#0f172a") @map("slogan_color") @db.VarChar(20)
+  sloganAlign                String   @default("left") @map("slogan_align") @db.VarChar(20)
+  sloganLineHeight           Decimal  @default(1.20) @map("slogan_line_height") @db.Decimal(3, 2)
+  heroDescriptionText        String   @default("Nâng cao kỹ năng tiếng Anh của bạn với các khóa học được thiết kế bởi đội ngũ giáo viên giàu kinh nghiệm.") @map("hero_description_text") @db.VarChar(300)
+  heroDescriptionFontFamily  String   @default("'Be Vietnam Pro', sans-serif") @map("hero_description_font_family") @db.VarChar(191)
+  heroDescriptionFontWeight  String   @default("regular") @map("hero_description_font_weight") @db.VarChar(20)
+  heroDescriptionDesktopSize Int      @default(30) @map("hero_description_desktop_size")
+  heroDescriptionMobileSize  Int      @default(20) @map("hero_description_mobile_size")
+  heroDescriptionColor       String   @default("#64748b") @map("hero_description_color") @db.VarChar(20)
+  heroDescriptionAlign       String   @default("left") @map("hero_description_align") @db.VarChar(20)
+  heroDescriptionLineHeight  Decimal  @default(1.60) @map("hero_description_line_height") @db.Decimal(3, 2)
+  updatedBy                  String?  @map("updated_by")
+  updatedAt                  DateTime @updatedAt @map("updated_at")
+  createdAt                  DateTime @default(now()) @map("created_at")
+
+  @@map("site_settings")
+}
+
+enum AppRole {
+  admin
+  teacher
+  student
+}
+
+enum ExamSectionType {
+  listening
+  reading
+  writing
+  speaking
+  general
+}
+
+enum QuestionType {
+  multiple_choice
+  fill_blank
+  matching
+  essay
+  speaking
+  listening
+  short_answer
+  true_false_not_given
+  yes_no_not_given
+}
+
+enum SubmissionStatus {
+  in_progress
+  submitted
+  graded
+}
+
+enum AttendanceStatus {
+  present
+  absent
+  inactive
+}
