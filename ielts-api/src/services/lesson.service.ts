@@ -154,4 +154,99 @@ export class LessonService {
       lessons: lessonsProjection
     };
   }
+
+  // Projection: GET /api/v1/classes/:classId/progress
+  async getClassProgressProjection(classId: string, userId: string, userRoles: string[]) {
+    const isTeacherOrAdmin = userRoles.includes('admin') || userRoles.includes('teacher');
+
+    // 1. Authorization Check
+    const classData = await this.classRepo.findById(classId);
+    if (!classData) {
+      throw new Error('Lớp học không tồn tại.');
+    }
+
+    if (!isTeacherOrAdmin) {
+      const isEnrolled = await this.classRepo.isStudentInClass(classId, userId);
+      if (!isEnrolled) {
+        throw new Error('Bạn không có quyền truy cập thông tin tiến độ lớp học này.');
+      }
+    } else if (userRoles.includes('teacher') && !userRoles.includes('admin')) {
+      if (classData.teacherId !== userId) {
+        throw new Error('Bạn không có quyền quản lý lớp học này.');
+      }
+    }
+
+    // 2. Calculate Course Progress (Published Lessons vs Completed Sessions)
+    const courseLessons = await this.prisma.lesson.findMany({
+      where: { courseId: classData.courseId, status: 'PUBLISHED' },
+      select: { id: true }
+    });
+    const totalPublishedLessons = courseLessons.length;
+
+    const classSessions = await this.prisma.classSession.findMany({
+      where: { classId },
+      include: {
+        attendance: { where: { studentId: userId } },
+        homeworks: {
+          include: {
+            submissions: { where: { studentId: userId } }
+          }
+        }
+      }
+    });
+
+    const now = new Date();
+    let completedLessonsCount = 0;
+
+    courseLessons.forEach(lesson => {
+      const session = classSessions.find(s => s.lessonId === lesson.id);
+      const attendanceRecord = session?.attendance[0] || null;
+      const homework = session?.homeworks[0] || null;
+      const submission = homework?.submissions[0] || null;
+
+      const sessionCompleted = !!(session && new Date(session.sessionDate) <= now && (attendanceRecord?.status === 'PRESENT' || !attendanceRecord));
+      const homeworkGraded = !!(submission && submission.status === 'GRADED');
+      const lessonCompleted = sessionCompleted && (homework ? homeworkGraded : true);
+
+      if (lessonCompleted) completedLessonsCount++;
+    });
+
+    const coursePercentage = totalPublishedLessons > 0 ? Math.round((completedLessonsCount / totalPublishedLessons) * 100) : 0;
+
+    // 3. Calculate Homework Progress (Assigned Homeworks vs Graded Submissions)
+    const assignedHomeworks = await this.prisma.homework.findMany({
+      where: { classId },
+      include: {
+        submissions: { where: { studentId: userId } }
+      }
+    });
+
+    const totalAssignedHomeworks = assignedHomeworks.length;
+    let gradedHomeworksCount = 0;
+
+    assignedHomeworks.forEach(hw => {
+      const sub = hw.submissions[0];
+      if (sub && sub.status === 'GRADED') {
+        gradedHomeworksCount++;
+      }
+    });
+
+    const homeworkPercentage = totalAssignedHomeworks > 0 ? Math.round((gradedHomeworksCount / totalAssignedHomeworks) * 100) : 0;
+
+    return {
+      classId: classData.id,
+      className: classData.name,
+      courseTitle: classData.course.title,
+      courseProgress: {
+        completed: completedLessonsCount,
+        total: totalPublishedLessons,
+        percentage: coursePercentage
+      },
+      homeworkProgress: {
+        completed: gradedHomeworksCount,
+        total: totalAssignedHomeworks,
+        percentage: homeworkPercentage
+      }
+    };
+  }
 }
