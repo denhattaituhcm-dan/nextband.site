@@ -218,11 +218,11 @@ export default function AdminCourses() {
             ) : (
               courses.map((course: any) => (
                 <TableRow key={course.id}>
-                  <TableCell className="font-medium">{course.title}</TableCell>
-                  <TableCell>{course.level}</TableCell>
+                  <TableCell className="font-bold text-slate-800">{course.title}</TableCell>
+                  <TableCell className="text-slate-500 capitalize">{course.level || "beginner"}</TableCell>
                   <TableCell>
                     <Badge
-                      variant={(course.is_published ?? course.isPublished) ? "default" : "secondary"}
+                      className={(course.is_published ?? course.isPublished) ? "bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-3 py-1 text-xs" : "bg-slate-100 text-slate-600 border-0 rounded-full px-3 py-1 text-xs"}
                     >
                       {(course.is_published ?? course.isPublished) ? "Đã xuất bản" : "Nháp"}
                     </Badge>
@@ -231,6 +231,7 @@ export default function AdminCourses() {
                     <Switch
                       checked={(course.is_active ?? course.isActive) ?? true}
                       disabled={!!(course.is_locked ?? course.isLocked)}
+                      className="data-[state=checked]:bg-emerald-600"
                       onCheckedChange={(checked) =>
                         toggleMutation.mutate({
                           id: course.id,
@@ -244,8 +245,9 @@ export default function AdminCourses() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
-                            variant={(course.is_locked ?? course.isLocked) ? "secondary" : "outline"}
+                            variant="ghost"
                             size="icon"
+                            className="h-8 w-8 text-slate-400 hover:text-slate-600"
                             onClick={() =>
                               lockMutation.mutate({
                                 id: course.id,
@@ -256,9 +258,9 @@ export default function AdminCourses() {
                             aria-label={(course.is_locked ?? course.isLocked) ? "Mở khóa" : "Khóa"}
                           >
                             {(course.is_locked ?? course.isLocked) ? (
-                              <Unlock className="h-4 w-4" />
+                              <Unlock className="h-4 w-4 text-amber-600" />
                             ) : (
-                              <Lock className="h-4 w-4" />
+                              <Lock className="h-4 w-4 text-slate-400" />
                             )}
                           </Button>
                         </TooltipTrigger>
@@ -267,6 +269,29 @@ export default function AdminCourses() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1.5">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8 rounded-lg border-slate-200 text-slate-700 hover:bg-slate-50"
+                        asChild
+                      >
+                        <Link to={`/admin/courses/${course.id}`}>
+                          <Edit className="h-3.5 w-3.5" />
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 rounded-lg bg-rose-50 text-rose-500 hover:bg-rose-100 hover:text-rose-600 border border-rose-100"
+                        disabled={!!(course.is_locked ?? course.isLocked)}
+                        onClick={() => setDeleteCourse({ id: course.id, title: course.title, isLocked: !!(course.is_locked ?? course.isLocked) })}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-5">
