@@ -14,6 +14,8 @@ import classesRoutes from "./classes.routes.js";
 import highlightsRoutes from "./highlights.routes.js";
 import attendanceRoutes from "./attendance.routes.js";
 import siteSettingsRoutes from "./site-settings.routes.js";
+import invitationRoutes from "./invitation.routes.js";
+import homeworkRoutes from "./homework.routes.js";
 
 const routes: FastifyPluginAsync = async (fastify) => {
   // Health check
@@ -40,6 +42,8 @@ const routes: FastifyPluginAsync = async (fastify) => {
   await fastify.register(highlightsRoutes, { prefix: "/highlights" });
   await fastify.register(attendanceRoutes, { prefix: "/attendance" });
   await fastify.register(siteSettingsRoutes, { prefix: "/site-settings" });
+  await fastify.register(invitationRoutes, { prefix: "/invitations" });
+  await fastify.register(homeworkRoutes, { prefix: "/homeworks" });
 };
 
 export default routes;
