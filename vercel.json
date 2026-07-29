@@ -1,0 +1,5 @@
+{
+  "buildCommand": "cd nextband && npm install && npm run build",
+  "outputDirectory": "nextband/dist",
+  "framework": "vite"
+}
