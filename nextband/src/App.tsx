@@ -14,6 +14,7 @@ import MinimalLayout from "@/layouts/MinimalLayout";
 // Pages
 import Auth from "@/pages/Auth";
 import HomePage from "@/pages/HomePage";
+import StudentLessonViewerPage from "@/pages/StudentLessonViewerPage";
 import MyCourses from "@/pages/MyCourses";
 import MySubmissions from "@/pages/MySubmissions";
 import CourseDetail from "@/pages/CourseDetail";
@@ -75,6 +76,7 @@ const App = () => (
             >
               <Route path="/" element={<HomePage />} />
               <Route path="/my-courses" element={<MyCourses />} />
+              <Route path="/class/:classId/lessons" element={<StudentLessonViewerPage />} />
               <Route path="/my-submissions" element={<MySubmissions />} />
               <Route path="/course/:slug" element={<CourseDetail />} />
               <Route path="/submissions/:id" element={<SubmissionDetail />} />

@@ -1336,7 +1336,6 @@ export const homeworksApi = {
       },
       body: JSON.stringify(payload),
     });
-    const result = await response.json();
     if (!response.ok) throw new Error(result.error || "Failed to submit homework");
     return result;
   },
@@ -1355,6 +1354,66 @@ export const homeworksApi = {
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "Failed to grade submission");
     return result;
+  },
+};
+
+export interface StudentLessonProgress {
+  homeworkSubmitted: boolean;
+  homeworkGraded: boolean;
+  lessonCompleted: boolean;
+}
+
+export interface LessonResourceItemDTO {
+  id: string;
+  title: string;
+  type: string;
+  url: string;
+}
+
+export interface StudentLessonItemContract {
+  id: string;
+  title: string;
+  description: string | null;
+  lessonOrder: number;
+  estimatedMinutes: number | null;
+  status: string;
+  sessionDate: string | null;
+  sessionNumber: number | null;
+  resources: LessonResourceItemDTO[];
+  homework: {
+    id: string;
+    title: string;
+    deadline: string | null;
+    status: string;
+    score: number | null;
+  } | null;
+  progress: StudentLessonProgress;
+}
+
+export interface ClassLessonContract {
+  classId: string;
+  className: string;
+  courseTitle: string;
+  progress: {
+    completedLessons: number;
+    totalLessons: number;
+    percentage: number;
+  };
+  lessons: StudentLessonItemContract[];
+}
+
+export const lessonsApi = {
+  getClassLessons: async (classId: string) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
+    const response = await fetch(`http://localhost:3000/api/v1/classes/${classId}/lessons`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Failed to fetch class lessons");
+    return result as { success: boolean; data: ClassLessonContract };
   },
 };
 
