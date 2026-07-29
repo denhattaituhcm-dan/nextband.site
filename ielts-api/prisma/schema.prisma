@@ -500,9 +500,11 @@ enum SubmissionStatus {
 }
 
 enum AttendanceStatus {
+  UNMARKED
   PRESENT
   ABSENT
   LATE
+  EXCUSED
 }
 
 enum ExamSectionType {
