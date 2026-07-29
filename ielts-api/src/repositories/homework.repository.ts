@@ -39,7 +39,7 @@ export class HomeworkRepository {
   }
 
   async findSubmission(homeworkId: string, studentId: string) {
-    return this.prisma.homeworkSubmission.findUnique({
+    return this.prisma.submission.findUnique({
       where: { homeworkId_studentId: { homeworkId, studentId } }
     });
   }
@@ -53,7 +53,7 @@ export class HomeworkRepository {
     score?: Prisma.Decimal | number;
     feedback?: string;
   }) {
-    return this.prisma.homeworkSubmission.upsert({
+    return this.prisma.submission.upsert({
       where: { homeworkId_studentId: { homeworkId: data.homeworkId, studentId: data.studentId } },
       update: {
         status: data.status,

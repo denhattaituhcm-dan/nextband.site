@@ -168,7 +168,7 @@ async function main() {
     });
 
     // 9. Create Student Submission
-    await prisma.homeworkSubmission.create({
+    await prisma.submission.create({
       data: {
         homeworkId: homework.id,
         studentId: studentUser.id,

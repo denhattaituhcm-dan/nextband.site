@@ -36,7 +36,7 @@ model User {
   attendanceMarked  ClassAttendance[] @relation("AttendanceTeacher")
   createdInvitations Invitation[]     @relation("CreatedInvitations")
   createdHomeworks  Homework[]        @relation("CreatedHomeworks")
-  homeworkSubmissions HomeworkSubmission[] @relation("StudentHomeworkSubmissions")
+  homeworkSubmissions Submission[]     @relation("StudentHomeworkSubmissions")
 
   @@map("users")
 }
@@ -239,14 +239,14 @@ model Homework {
   session        ClassSession?      @relation(fields: [classSessionId], references: [id], onDelete: SetNull)
   lesson         Lesson?            @relation(fields: [lessonId], references: [id], onDelete: SetNull)
   exam           Exam?              @relation(fields: [examId], references: [id], onDelete: SetNull)
-  submissions    HomeworkSubmission[]
+  submissions    Submission[]
 
   @@index([classId], map: "homeworks_class_id_idx")
   @@index([createdBy], map: "homeworks_created_by_idx")
   @@map("homeworks")
 }
 
-model HomeworkSubmission {
+model Submission {
   id          String           @id @default(uuid())
   homeworkId  String           @map("homework_id")
   studentId   String           @map("student_id")
@@ -262,8 +262,8 @@ model HomeworkSubmission {
   student     User             @relation("StudentHomeworkSubmissions", fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([homeworkId, studentId])
-  @@index([studentId], map: "homework_submissions_student_id_idx")
-  @@map("homework_submissions")
+  @@index([studentId], map: "submissions_student_id_idx")
+  @@map("submissions")
 }
 
 model Enrollment {
