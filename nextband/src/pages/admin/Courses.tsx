@@ -271,86 +271,47 @@ export default function AdminCourses() {
                     </TooltipProvider>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-1.5">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8 rounded-lg border-slate-200 text-slate-700 hover:bg-slate-50"
-                        asChild
-                      >
-                        <Link to={`/admin/courses/${course.id}`}>
-                          <Edit className="h-3.5 w-3.5" />
-                        </Link>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 rounded-lg bg-rose-50 text-rose-500 hover:bg-rose-100 hover:text-rose-600 border border-rose-100"
-                        disabled={!!(course.is_locked ?? course.isLocked)}
-                        onClick={() => setDeleteCourse({ id: course.id, title: course.title, isLocked: !!(course.is_locked ?? course.isLocked) })}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-5">
+                    <div className="flex items-center gap-2">
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <span>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                asChild
-                                disabled={!!course.isLocked}
-                                aria-label="Sửa khóa học"
-                              >
-                                <Link to={`/admin/courses/${course.id}`}>
-                                  <Edit className="h-4 w-4" />
-                                </Link>
-                              </Button>
-                            </span>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8 rounded-lg border-slate-200 text-slate-700 hover:bg-slate-50"
+                              asChild
+                            >
+                              <Link to={`/admin/courses/${course.id}`}>
+                                <Edit className="h-3.5 w-3.5" />
+                              </Link>
+                            </Button>
                           </TooltipTrigger>
-                          <TooltipContent>Sửa</TooltipContent>
+                          <TooltipContent>Chỉnh sửa</TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
-                      <div className="rounded-md border border-destructive/40 bg-destructive/5 p-1.5">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <span>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="text-destructive hover:text-destructive"
-                                  disabled={
-                                    !!course.isLocked ||
-                                    (course as any)._count?.enrollments > 0
-                                  }
-                                  aria-label="Xóa khóa học"
-                                  onClick={() =>
-                                    setDeleteCourse({
-                                      id: course.id,
-                                      title: course.title,
-                                      isLocked: !!course.isLocked,
-                                    })
-                                  }
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </span>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              {course.isLocked
-                                ? "Đang khóa, cần mở khóa trước khi xóa"
-                                : (course as any)._count?.enrollments > 0
-                                ? `Không thể xóa — còn ${(course as any)._count.enrollments} học viên`
-                                : "Xóa"}
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
+
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 rounded-lg bg-rose-50 text-rose-500 hover:bg-rose-100 hover:text-rose-600 border border-rose-100"
+                              disabled={!!(course.is_locked ?? course.isLocked)}
+                              onClick={() =>
+                                setDeleteCourse({
+                                  id: course.id,
+                                  title: course.title,
+                                  isLocked: !!(course.is_locked ?? course.isLocked),
+                                })
+                              }
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Xóa khóa học</TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                   </TableCell>
                 </TableRow>
