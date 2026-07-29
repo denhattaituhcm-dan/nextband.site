@@ -1203,4 +1203,123 @@ export const siteSettingsApi = {
   },
 };
 
+// =============================================
+// PHASE 0 SPRINT 3 PROJECTION DTO APIS
+// =============================================
+export enum HomeworkPriority {
+  RESUME = "RESUME",
+  DUE_TODAY = "DUE_TODAY",
+  UPCOMING = "UPCOMING",
+  OVERDUE = "OVERDUE",
+}
+
+export interface StudentWorkspaceTask {
+  id: string;
+  title: string;
+  className: string;
+  deadline: string | null;
+  status: string;
+  score: number | null;
+  feedback: string | null;
+  priorityGroup: HomeworkPriority;
+  actionUrl: string;
+}
+
+export const invitationsApi = {
+  joinByCode: async (payload: { code: string }) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
+    const response = await fetch("http://localhost:3000/api/v1/invitations/join", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ inviteCode: payload.code.trim().toUpperCase() }),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || result.message || "Failed to join class");
+    return result;
+  },
+
+  generate: async (payload: { classId: string; inviteCode?: string }) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
+    const response = await fetch("http://localhost:3000/api/v1/invitations/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Failed to generate invitation");
+    return result;
+  },
+};
+
+export const homeworksApi = {
+  getWorkspace: async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
+    const response = await fetch("http://localhost:3000/api/v1/homeworks/workspace", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Failed to fetch workspace");
+    return result as { success: boolean; data: { tasks: StudentWorkspaceTask[] } };
+  },
+
+  create: async (payload: { classId: string; title: string; description?: string; deadline?: string }) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
+    const response = await fetch("http://localhost:3000/api/v1/homeworks/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Failed to create homework");
+    return result;
+  },
+
+  submit: async (payload: { homeworkId: string }) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
+    const response = await fetch("http://localhost:3000/api/v1/homeworks/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Failed to submit homework");
+    return result;
+  },
+
+  grade: async (payload: { homeworkId: string; studentId: string; score: number; feedback: string }) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
+    const response = await fetch("http://localhost:3000/api/v1/homeworks/grade", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Failed to grade submission");
+    return result;
+  },
+};
+
 export default supabase;

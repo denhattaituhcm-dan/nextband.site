@@ -71,7 +71,8 @@ export class HomeworkService {
         status: submission ? submission.status : 'NOT_STARTED',
         score: submission?.score || null,
         feedback: submission?.feedback || null,
-        priorityGroup
+        priorityGroup,
+        actionUrl: `/exam/${hw.examId || hw.id}`
       };
     });
 
@@ -80,7 +81,6 @@ export class HomeworkService {
     formattedTasks.sort((a, b) => priorityOrder[a.priorityGroup] - priorityOrder[b.priorityGroup]);
 
     return {
-      activeHomework: formattedTasks.find(t => t.status !== 'GRADED') || null,
       tasks: formattedTasks
     };
   }
