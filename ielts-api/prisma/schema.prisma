@@ -79,18 +79,20 @@ model Course {
 }
 
 model Lesson {
-  id          String           @id @default(uuid())
-  courseId    String           @map("course_id")
-  title       String           @db.VarChar(255)
-  description String?          @db.Text
-  lessonOrder Int              @default(1) @map("lesson_order")
-  createdAt   DateTime         @default(now()) @map("created_at")
-  updatedAt   DateTime         @updatedAt @map("updated_at")
+  id               String           @id @default(uuid())
+  courseId         String           @map("course_id")
+  title            String           @db.VarChar(255)
+  description      String?          @db.Text
+  lessonOrder      Int              @default(1) @map("lesson_order")
+  estimatedMinutes Int?             @map("estimated_minutes")
+  status           LessonStatus     @default(PUBLISHED)
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
 
-  course      Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  resources   LessonResource[]
-  sessions    ClassSession[]
-  homeworks   Homework[]
+  course           Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  resources        LessonResource[]
+  sessions         ClassSession[]
+  homeworks        Homework[]
 
   @@unique([courseId, lessonOrder])
   @@index([courseId])
@@ -171,19 +173,21 @@ model Invitation {
 }
 
 model ClassSession {
-  id          String            @id @default(uuid())
-  classId     String            @map("class_id")
-  lessonId    String            @map("lesson_id")
-  sessionDate DateTime          @map("session_date") @db.Date
-  title       String?           @db.VarChar(255)
-  notes       String?           @db.Text
-  createdAt   DateTime          @default(now()) @map("created_at")
+  id            String            @id @default(uuid())
+  classId       String            @map("class_id")
+  lessonId      String            @map("lesson_id")
+  sessionNumber Int               @default(1) @map("session_number")
+  sessionDate   DateTime          @map("session_date") @db.Date
+  title         String?           @db.VarChar(255)
+  notes         String?           @db.Text
+  createdAt     DateTime          @default(now()) @map("created_at")
 
-  class       Class             @relation(fields: [classId], references: [id], onDelete: Cascade)
-  lesson      Lesson            @relation(fields: [lessonId], references: [id], onDelete: Restrict)
-  attendance  ClassAttendance[]
-  homeworks   Homework[]
+  class         Class             @relation(fields: [classId], references: [id], onDelete: Cascade)
+  lesson        Lesson            @relation(fields: [lessonId], references: [id], onDelete: Restrict)
+  attendance    ClassAttendance[]
+  homeworks     Homework[]
 
+  @@index([classId, sessionNumber], map: "class_sessions_class_id_session_number_idx")
   @@index([classId, sessionDate], map: "class_sessions_class_id_session_date_idx")
   @@map("class_sessions")
 }
@@ -466,6 +470,12 @@ enum InvitationStatus {
   ACTIVE
   EXPIRED
   DISABLED
+}
+
+enum LessonStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
 }
 
 enum ResourceType {
