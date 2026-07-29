@@ -1,39 +1,38 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
-import { coursesApi, enrollmentsApi, submissionsApi, homeworksApi, HomeworkPriority } from "@/lib/api";
+import { coursesApi, enrollmentsApi, homeworksApi } from "@/lib/api";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Link, useNavigate } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import { JoinClassModal } from "@/components/auth/JoinClassModal";
+import { HomeworkContinueCard } from "@/components/homework/HomeworkContinueCard";
+import { HomeworkEmptyState } from "@/components/homework/HomeworkEmptyState";
+import { HomeworkList } from "@/components/homework/HomeworkList";
 import {
   BookOpen,
-  CheckCircle2,
-  Clock,
-  ArrowRight,
-  Sparkles,
   Target,
   Bell,
   MessageSquare,
   Award,
-  KeyRound,
 } from "lucide-react";
 
 export default function HomePage() {
   const { user, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
   const [joinModalOpen, setJoinModalOpen] = useState(false);
 
-  // 0. Fetch Projection Workspace Data from Backend
+  // 0. Fetch Projection Workspace Data from Backend DTO
   const { data: workspaceData, refetch: refetchWorkspace } = useQuery({
     queryKey: ["student-homework-workspace"],
     queryFn: () => homeworksApi.getWorkspace(),
     enabled: isAuthenticated,
   });
 
-  const tasks = workspaceData?.data?.tasks || [];
-  const activeTask = tasks[0] || null;
+  const workspace = workspaceData?.data;
+  const continueTask = workspace?.continue || null;
+  const dueTodayTasks = workspace?.dueToday || [];
+  const upcomingTasks = workspace?.upcoming || [];
+  const completedTasks = workspace?.completed || [];
 
   // 1. Fetch Enrollments
   const { data: enrollments = [] } = useQuery({
@@ -42,77 +41,13 @@ export default function HomePage() {
     enabled: isAuthenticated,
   });
 
-  // 2. Fetch Submissions for Recent Activity & State Machine
-  const { data: submissionsData } = useQuery({
-    queryKey: ["my-submissions-dashboard", user?.id],
-    queryFn: () => submissionsApi.list({ limit: 5, studentId: user?.id }),
-    enabled: isAuthenticated && !!user?.id,
-  });
-
-  // 3. Fetch Courses list
+  // 2. Fetch Courses list
   const { data: coursesData } = useQuery({
     queryKey: ["courses-home"],
     queryFn: () => coursesApi.list({ limit: 6 }),
   });
 
-  const submissions = submissionsData?.data || [];
-  const latestSubmission = submissions[0];
-
-  // Continue Learning State Machine Logic
-  const getContinueState = () => {
-    if (!latestSubmission) {
-      return {
-        type: "START",
-        title: "Dreamer — Lesson 1: Introduction & Diagnostic Test",
-        badge: "Bắt đầu bài đầu tiên",
-        btnText: "Bắt đầu làm bài",
-        subtext: "⏱️ Thời lượng dự kiến: 30 phút",
-      };
-    }
-
-    if (latestSubmission.status === "in_progress") {
-      return {
-        type: "RESUME",
-        title: `${latestSubmission.exams?.title || "Bài thi IELTS"}`,
-        badge: "Đang làm dở",
-        btnText: "Tiếp tục làm bài (Resume)",
-        subtext: "⌛ Hạn nộp: 22:00 Hôm nay",
-        link: `/exam/${latestSubmission.exam_id}`,
-      };
-    }
-
-    if (latestSubmission.status === "submitted") {
-      return {
-        type: "AWAITING",
-        title: `${latestSubmission.exams?.title || "Bài làm đã nộp"}`,
-        badge: "Đã nộp bài • Chờ chấm",
-        btnText: "Xem bài đã nộp",
-        subtext: "🕒 Đã nộp lúc " + new Date(latestSubmission.submitted_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        link: `/submission/${latestSubmission.id}`,
-      };
-    }
-
-    if (latestSubmission.status === "graded") {
-      return {
-        type: "GRADED",
-        title: `${latestSubmission.exams?.title || "Bài tập đã chấm điểm"}`,
-        badge: `Đã chấm điểm • Score: ${latestSubmission.total_score || 0} pts`,
-        btnText: "Xem feedback giáo viên",
-        subtext: "💬 Giáo viên đã nhận xét bài làm của bạn",
-        link: `/submission/${latestSubmission.id}`,
-      };
-    }
-
-    return {
-      type: "FREE_DAY",
-      title: "Bạn đã hoàn thành tất cả bài tập! 🎉",
-      badge: "Không có bài tồn đọng",
-      btnText: "Xem lại danh sách khóa học",
-      subtext: "📅 Buổi học tiếp theo: Thứ Ba 19:30",
-    };
-  };
-
-  const stateInfo = getContinueState();
+  const hasClasses = enrollments.length > 0;
 
   return (
     <div className="min-h-screen bg-slate-50/50 pb-12">
@@ -121,12 +56,12 @@ export default function HomePage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-              Xin chào {user?.fullName || "DAN"} - Hệ Thống V2.0 Đã Kết Nối! 👋
+              Xin chào {user?.fullName || "DAN"} - NextBand V2.0 Workspaces 👋
             </h1>
             <p className="text-sm text-slate-500 mt-1">
               {isAuthenticated
-                ? "Hôm nay bạn có bài tập cần hoàn thành."
-                : "Đăng nhập để xem nhiệm vụ bài tập hôm nay của bạn."}
+                ? "Hệ điều hành bài tập dành cho trung tâm IELTS."
+                : "Đăng nhập để xem bài tập của bạn."}
             </p>
           </div>
           {isAuthenticated && (
@@ -137,66 +72,22 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* LEVEL 1: HERO WORKSPACE (PROJECTION DATA FROM BACKEND) */}
-        <Card className="border-emerald-100 bg-gradient-to-br from-emerald-900 via-slate-900 to-slate-950 text-white rounded-2xl shadow-xl overflow-hidden relative">
-          <div className="absolute -right-12 -top-12 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl" />
-          <CardContent className="p-6 md:p-8 relative z-10 space-y-6">
-            <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                <Sparkles className="w-3.5 h-3.5" />
-                {activeTask ? `ƯU TIÊN: ${activeTask.priorityGroup}` : "Hệ điều hành bài tập NextBand V2.0"}
-              </span>
-              {activeTask?.deadline && (
-                <span className="text-xs text-slate-400 font-medium flex items-center gap-1">
-                  <Clock className="w-3.5 h-3.5" />
-                  Hạn nộp: {new Date(activeTask.deadline).toLocaleDateString("vi-VN")}
-                </span>
-              )}
-            </div>
+        {/* LEVEL 1: HERO WORKSPACE MODULAR COMPONENTS */}
+        {continueTask ? (
+          <HomeworkContinueCard task={continueTask} />
+        ) : (
+          <HomeworkEmptyState
+            hasClasses={hasClasses}
+            onJoinClick={() => setJoinModalOpen(true)}
+          />
+        )}
 
-            <div className="space-y-2">
-              <span className="text-xs font-semibold tracking-wider text-emerald-400 uppercase">
-                Task before Course • Continue Homework
-              </span>
-              <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-                {activeTask ? activeTask.title : "Bạn đã hoàn thành tất cả bài tập về nhà!"}
-              </h2>
-              {activeTask && (
-                <p className="text-sm text-slate-300">Lớp: {activeTask.className}</p>
-              )}
-            </div>
-
-            <div className="pt-2 flex items-center justify-between border-t border-slate-800/80">
-              <div className="flex items-center gap-3">
-                {activeTask ? (
-                  <Button
-                    onClick={() => navigate(activeTask.actionUrl)}
-                    className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-6 py-5 rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center gap-2"
-                  >
-                    Làm bài ngay
-                    <ArrowRight className="w-4 h-4" />
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => setJoinModalOpen(true)}
-                    className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-6 py-5 rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center gap-2"
-                  >
-                    <KeyRound className="w-4 h-4 mr-1" />
-                    Tham gia Lớp bằng mã ngắn (DREAM31)
-                  </Button>
-                )}
-                <Button
-                  variant="outline"
-                  onClick={() => setJoinModalOpen(true)}
-                  className="border-slate-700 bg-slate-800/60 hover:bg-slate-800 text-white"
-                >
-                  <KeyRound className="w-4 h-4 mr-2" />
-                  Nhập mã Lớp học
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* WORKSPACE SECTIONS LISTS */}
+        <div className="space-y-6">
+          <HomeworkList title="Due Today (Hạn hôm nay)" tasks={dueTodayTasks} />
+          <HomeworkList title="Upcoming (Sắp tới)" tasks={upcomingTasks} />
+          <HomeworkList title="Completed (Đã làm & Đã chấm)" tasks={completedTasks} variant="completed" />
+        </div>
 
         {/* Modal Onboarding Join Class */}
         <JoinClassModal

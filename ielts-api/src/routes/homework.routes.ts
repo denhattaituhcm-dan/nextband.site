@@ -14,6 +14,13 @@ const homeworkRoutes: FastifyPluginAsync = async (fastify) => {
     return reply.send({ success: true, data: workspace });
   });
 
+  // Teacher Workspace Projection
+  fastify.get('/teacher-workspace', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    const user = request.user as { id: string };
+    const workspace = await homeworkService.getTeacherHomeworkWorkspace(user.id);
+    return reply.send({ success: true, data: workspace });
+  });
+
   // Teacher assigns homework
   fastify.post('/create', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const user = request.user as { id: string };

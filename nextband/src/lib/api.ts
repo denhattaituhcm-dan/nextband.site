@@ -1221,8 +1221,14 @@ export interface StudentWorkspaceTask {
   status: string;
   score: number | null;
   feedback: string | null;
-  priorityGroup: HomeworkPriority;
   actionUrl: string;
+}
+
+export interface StudentWorkspaceContract {
+  continue: StudentWorkspaceTask | null;
+  dueToday: StudentWorkspaceTask[];
+  upcoming: StudentWorkspaceTask[];
+  completed: StudentWorkspaceTask[];
 }
 
 export const invitationsApi = {
@@ -1259,6 +1265,23 @@ export const invitationsApi = {
   },
 };
 
+export interface TeacherGradingItem {
+  homeworkId: string;
+  homeworkTitle: string;
+  className?: string;
+  studentId: string;
+  studentName: string;
+  submittedAt?: string;
+  gradedAt?: string;
+  score?: number | null;
+  status: string;
+}
+
+export interface TeacherWorkspaceContract {
+  needGrading: TeacherGradingItem[];
+  recentGraded: TeacherGradingItem[];
+}
+
 export const homeworksApi = {
   getWorkspace: async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -1270,7 +1293,20 @@ export const homeworksApi = {
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "Failed to fetch workspace");
-    return result as { success: boolean; data: { tasks: StudentWorkspaceTask[] } };
+    return result as { success: boolean; data: StudentWorkspaceContract };
+  },
+
+  getTeacherWorkspace: async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
+    const response = await fetch("http://localhost:3000/api/v1/homeworks/teacher-workspace", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Failed to fetch teacher workspace");
+    return result as { success: boolean; data: TeacherWorkspaceContract };
   },
 
   create: async (payload: { classId: string; title: string; description?: string; deadline?: string }) => {

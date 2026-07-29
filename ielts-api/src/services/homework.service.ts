@@ -42,46 +42,102 @@ export class HomeworkService {
     });
   }
 
-  // Use Case: Student Dashboard Workspace Query ("Continue Homework" Priority View Projection)
+  // Use Case: Student Dashboard Workspace Query (StudentWorkspaceContract)
   async getStudentHomeworkWorkspace(studentId: string) {
     const assigned = await this.homeworkRepo.findAssignedHomeworksForStudent(studentId);
 
-    // Dynamic Projection Priority: Resume -> Due Today -> Upcoming -> Overdue
     const now = new Date();
+    let continueTask: any = null;
+    const dueToday: any[] = [];
+    const upcoming: any[] = [];
+    const completed: any[] = [];
 
-    const formattedTasks = assigned.map(hw => {
+    assigned.forEach(hw => {
       const submission = hw.submissions[0] || null;
-      const isSubmitted = submission?.status === SubmissionStatus.SUBMITTED || submission?.status === SubmissionStatus.GRADED;
-      const isOverdue = hw.deadline && new Date(hw.deadline) < now && !isSubmitted;
+      const status = submission ? submission.status : 'NOT_STARTED';
 
-      let priorityGroup = 'UPCOMING';
-      if (submission?.status === SubmissionStatus.PENDING) {
-        priorityGroup = 'RESUME';
-      } else if (!isSubmitted && hw.deadline && new Date(hw.deadline).toDateString() === now.toDateString()) {
-        priorityGroup = 'DUE_TODAY';
-      } else if (isOverdue) {
-        priorityGroup = 'OVERDUE';
-      }
-
-      return {
+      const taskItem = {
         id: hw.id,
         title: hw.title,
         className: hw.class.name,
         deadline: hw.deadline,
-        status: submission ? submission.status : 'NOT_STARTED',
-        score: submission?.score || null,
+        status,
+        score: submission?.score ? Number(submission.score) : null,
         feedback: submission?.feedback || null,
-        priorityGroup,
-        actionUrl: `/exam/${hw.examId || hw.id}`
+        actionUrl: status === 'GRADED' ? `/exam/${hw.examId || hw.id}/review` : `/exam/${hw.examId || hw.id}`
       };
+
+      if (status === 'GRADED') {
+        completed.push(taskItem);
+      } else if (status === 'PENDING') {
+        if (!continueTask) continueTask = taskItem;
+        else upcoming.push(taskItem);
+      } else if (hw.deadline && new Date(hw.deadline).toDateString() === now.toDateString()) {
+        dueToday.push(taskItem);
+      } else {
+        if (!continueTask && status === 'NOT_STARTED') {
+          continueTask = taskItem;
+        } else {
+          upcoming.push(taskItem);
+        }
+      }
     });
 
-    // Sort by priority order
-    const priorityOrder: Record<string, number> = { RESUME: 1, DUE_TODAY: 2, UPCOMING: 3, OVERDUE: 4 };
-    formattedTasks.sort((a, b) => priorityOrder[a.priorityGroup] - priorityOrder[b.priorityGroup]);
+    return {
+      continue: continueTask,
+      dueToday,
+      upcoming,
+      completed
+    };
+  }
+
+  // Use Case: Teacher Workspace Query (TeacherWorkspaceContract) - Only classes managed by teacher
+  async getTeacherHomeworkWorkspace(teacherId: string) {
+    // Find all homeworks created by or belonging to classes of teacher
+    const homeworks = await this.prisma.homework.findMany({
+      where: {
+        OR: [
+          { createdBy: teacherId },
+          { class: { teacherId } }
+        ]
+      },
+      include: {
+        class: true,
+        submissions: { include: { student: true } }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    const needGrading: any[] = [];
+    const recentGraded: any[] = [];
+
+    homeworks.forEach(hw => {
+      hw.submissions.forEach(sub => {
+        if (sub.status === 'SUBMITTED') {
+          needGrading.push({
+            homeworkId: hw.id,
+            homeworkTitle: hw.title,
+            className: hw.class.name,
+            studentId: sub.studentId,
+            studentName: sub.student.fullName || sub.student.email,
+            submittedAt: sub.submittedAt,
+            status: sub.status
+          });
+        } else if (sub.status === 'GRADED') {
+          recentGraded.push({
+            homeworkId: hw.id,
+            homeworkTitle: hw.title,
+            studentName: sub.student.fullName || sub.student.email,
+            score: sub.score ? Number(sub.score) : null,
+            gradedAt: sub.gradedAt
+          });
+        }
+      });
+    });
 
     return {
-      tasks: formattedTasks
+      needGrading,
+      recentGraded
     };
   }
 }
