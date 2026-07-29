@@ -105,49 +105,48 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex bg-slate-50/40 dark:bg-slate-950 font-sans selection:bg-primary/10 selection:text-primary">
-      {/* Left side - Premium Quiet Academic Branding */}
-      <div className="hidden lg:flex lg:w-7/12 bg-slate-900 text-slate-100 p-16 xl:p-20 flex-col justify-between relative overflow-hidden border-r border-slate-800/80">
-        {/* Subtle Radial Light & Ambient Depth (Imperceptible yet luxurious) */}
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(16,185,129,0.08),rgba(255,255,255,0))]" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen flex bg-slate-50/50 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 selection:bg-primary/10 selection:text-primary">
+      {/* Left side - Balanced Quiet Academic Branding Panel */}
+      <div className="hidden lg:flex lg:w-5/12 xl:w-1/2 bg-slate-100/80 dark:bg-slate-900/90 text-slate-800 dark:text-slate-200 p-12 xl:p-16 flex-col justify-between relative overflow-hidden border-r border-slate-200/60 dark:border-slate-800/60 backdrop-blur-md">
+        {/* Subtle Warm Ambient Glow */}
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_20%,rgba(16,185,129,0.04),transparent_60%)]" />
 
-        {/* 1. Header Logo - Plenty of space */}
-        <div className="relative z-10 space-y-6">
+        {/* 1. Brand Recognition: Original Color Logo + Crisp Whitespace */}
+        <div className="relative z-10 space-y-5">
           <div className="flex items-center gap-3">
-            <SiteLogo alt="NextBand Logo" className="max-h-11 w-auto brightness-0 invert opacity-95" />
+            <SiteLogo alt="NextBand Logo" className="max-h-10 w-auto object-contain" />
           </div>
-          {/* 2. Hero Tagline */}
-          <h2 className="text-xl xl:text-2xl font-medium tracking-tight text-slate-200 leading-snug max-w-md pt-2">
+          {/* 4. Refined Tagline as a Quiet Academic Message */}
+          <p className="text-sm font-medium tracking-tight text-slate-600 dark:text-slate-400 leading-relaxed max-w-sm">
             {settings.authTagline}
-          </h2>
+          </p>
         </div>
 
-        {/* 3 & 4 & 5 & 6. Product Feature Cards - Elevated Depth & Typography Hierarchy */}
-        <div className="space-y-5 relative z-10 my-auto max-w-md">
-          <div className="group flex items-start gap-4 p-5 rounded-2xl bg-slate-800/40 border border-slate-700/40 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 ease-out">
-            <div className="rounded-xl bg-gradient-to-b from-slate-700/80 to-slate-800 p-3 border border-slate-600/30 shadow-inner shrink-0 group-hover:border-primary/40 transition-colors">
-              <BookOpen className="h-5 w-5 text-primary-foreground/90" />
+        {/* 5. Product Feature Cards */}
+        <div className="space-y-4 relative z-10 my-auto max-w-md">
+          <div className="group flex items-start gap-4 p-4.5 rounded-xl bg-white/90 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_-2px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 transition-all duration-200">
+            <div className="rounded-lg bg-primary/10 dark:bg-primary/20 p-2.5 border border-primary/15 shrink-0 group-hover:border-primary/30 transition-colors">
+              <BookOpen className="h-4.5 w-4.5 text-primary" />
             </div>
-            <div className="space-y-1">
-              <h3 className="font-semibold text-slate-100 text-sm tracking-tight">
+            <div className="space-y-0.5">
+              <h3 className="font-semibold text-slate-800 dark:text-slate-200 text-sm tracking-tight">
                 {settings.authFeatureOneTitle}
               </h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                 {settings.authFeatureOneDescription}
               </p>
             </div>
           </div>
 
-          <div className="group flex items-start gap-4 p-5 rounded-2xl bg-slate-800/40 border border-slate-700/40 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 ease-out">
-            <div className="rounded-xl bg-gradient-to-b from-slate-700/80 to-slate-800 p-3 border border-slate-600/30 shadow-inner shrink-0 group-hover:border-primary/40 transition-colors">
-              <Users className="h-5 w-5 text-primary-foreground/90" />
+          <div className="group flex items-start gap-4 p-4.5 rounded-xl bg-white/90 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_-2px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 transition-all duration-200">
+            <div className="rounded-lg bg-primary/10 dark:bg-primary/20 p-2.5 border border-primary/15 shrink-0 group-hover:border-primary/30 transition-colors">
+              <Users className="h-4.5 w-4.5 text-primary" />
             </div>
-            <div className="space-y-1">
-              <h3 className="font-semibold text-slate-100 text-sm tracking-tight">
+            <div className="space-y-0.5">
+              <h3 className="font-semibold text-slate-800 dark:text-slate-200 text-sm tracking-tight">
                 {settings.authFeatureTwoTitle}
               </h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                 {settings.authFeatureTwoDescription}
               </p>
             </div>
@@ -155,18 +154,18 @@ export default function Auth() {
         </div>
 
         {/* Footer */}
-        <p className="text-xs text-slate-500 relative z-10 font-normal tracking-wide">
-          © {new Date().getFullYear()} NextBand. All rights reserved.
+        <p className="text-[11px] text-slate-400 dark:text-slate-500 relative z-10 font-normal tracking-wide">
+          © {new Date().getFullYear()} NextBand. Tất cả quyền được bảo lưu.
         </p>
       </div>
 
-      {/* Right side - Light Quiet Form Workspace */}
-      <div className="flex-1 flex items-center justify-center p-8 sm:p-16 lg:p-20">
-        {/* 8. Light Weight Card */}
-        <Card className="w-full max-w-[380px] border border-slate-200/80 dark:border-slate-800 shadow-sm rounded-2xl bg-white dark:bg-slate-900 p-2 sm:p-4">
-          <CardHeader className="space-y-2 text-center pb-6">
+      {/* Right side - Focal Point Student Login Workspace Form */}
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 lg:p-16">
+        {/* 6. Light Breathing Card */}
+        <Card className="w-full max-w-[380px] border border-slate-200/80 dark:border-slate-800 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] rounded-2xl bg-white dark:bg-slate-900 p-2 sm:p-3">
+          <CardHeader className="space-y-1.5 text-center pb-5">
             <div className="lg:hidden flex items-center justify-center gap-2 mb-3">
-              <SiteLogo alt="NextBand Logo" className="max-h-10 w-auto" />
+              <SiteLogo alt="NextBand Logo" className="max-h-9 w-auto object-contain" />
             </div>
             <CardTitle className="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
               Đăng nhập
@@ -175,13 +174,13 @@ export default function Auth() {
               Đăng nhập để tiếp tục bài học của bạn
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
-            {/* 9. Google Login Primary Entry */}
-            <div className="space-y-2.5">
+          <CardContent className="space-y-5">
+            {/* 7. Google Login Primary Entry */}
+            <div className="space-y-2">
               <Button
                 type="button"
                 variant="outline"
-                className="w-full flex items-center justify-center gap-3 border-slate-200/90 dark:border-slate-700 h-11 px-4 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-800 dark:text-slate-200 shadow-sm hover:shadow transition-all duration-150 active:scale-[0.99]"
+                className="w-full flex items-center justify-center gap-3 border-slate-200 dark:border-slate-700 h-10.5 px-4 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-800 dark:text-slate-200 shadow-sm hover:shadow transition-all duration-150 active:scale-[0.99]"
                 onClick={async () => {
                   try {
                     setIsLoading(true);
@@ -222,19 +221,19 @@ export default function Auth() {
               </p>
             </div>
 
-            <div className="relative my-4">
+            <div className="relative my-3.5">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t border-slate-200/80 dark:border-slate-800" />
               </div>
               <div className="relative flex justify-center text-[10px] uppercase tracking-wider">
-                <span className="bg-white dark:bg-slate-900 px-3 text-slate-400 font-medium">
+                <span className="bg-white dark:bg-slate-900 px-2.5 text-slate-400 font-medium">
                   Hoặc bằng email
                 </span>
               </div>
             </div>
 
             {/* Secondary Email/Password Form */}
-            <form onSubmit={handleSignIn} className="space-y-4">
+            <form onSubmit={handleSignIn} className="space-y-3.5">
               <div className="space-y-1.5">
                 <Label htmlFor="login-email" className="text-xs font-medium text-slate-700 dark:text-slate-300">
                   Email
@@ -246,7 +245,7 @@ export default function Auth() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
-                  className="h-10 text-xs border-slate-200 dark:border-slate-800 focus-visible:ring-1 focus-visible:ring-primary/40"
+                  className="h-9.5 text-xs border-slate-200 dark:border-slate-800 focus-visible:ring-1 focus-visible:ring-primary/40"
                 />
                 {errors.email && (
                   <p className="text-xs text-destructive mt-1">{errors.email}</p>
@@ -264,7 +263,7 @@ export default function Auth() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={isLoading}
-                    className="h-10 text-xs pr-9 border-slate-200 dark:border-slate-800 focus-visible:ring-1 focus-visible:ring-primary/40"
+                    className="h-9.5 text-xs pr-9 border-slate-200 dark:border-slate-800 focus-visible:ring-1 focus-visible:ring-primary/40"
                   />
                   <Button
                     type="button"
@@ -285,7 +284,7 @@ export default function Auth() {
                   <p className="text-xs text-destructive mt-1">{errors.password}</p>
                 )}
               </div>
-              <Button type="submit" className="w-full h-10 text-xs font-medium tracking-tight mt-2" disabled={isLoading}>
+              <Button type="submit" className="w-full h-9.5 text-xs font-medium tracking-tight mt-1.5" disabled={isLoading}>
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
