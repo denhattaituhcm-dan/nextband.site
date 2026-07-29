@@ -222,15 +222,15 @@ export default function AdminCourses() {
                   <TableCell>{course.level}</TableCell>
                   <TableCell>
                     <Badge
-                      variant={course.isPublished ? "default" : "secondary"}
+                      variant={(course.is_published ?? course.isPublished) ? "default" : "secondary"}
                     >
-                      {course.isPublished ? "Đã xuất bản" : "Nháp"}
+                      {(course.is_published ?? course.isPublished) ? "Đã xuất bản" : "Nháp"}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     <Switch
-                      checked={course.isActive ?? true}
-                      disabled={!!course.isLocked}
+                      checked={(course.is_active ?? course.isActive) ?? true}
+                      disabled={!!(course.is_locked ?? course.isLocked)}
                       onCheckedChange={(checked) =>
                         toggleMutation.mutate({
                           id: course.id,
@@ -244,18 +244,18 @@ export default function AdminCourses() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
-                            variant={course.isLocked ? "secondary" : "outline"}
+                            variant={(course.is_locked ?? course.isLocked) ? "secondary" : "outline"}
                             size="icon"
                             onClick={() =>
                               lockMutation.mutate({
                                 id: course.id,
-                                isLocked: !course.isLocked,
+                                isLocked: !(course.is_locked ?? course.isLocked),
                               })
                             }
                             disabled={lockMutation.isPending}
-                            aria-label={course.isLocked ? "Mở khóa" : "Khóa"}
+                            aria-label={(course.is_locked ?? course.isLocked) ? "Mở khóa" : "Khóa"}
                           >
-                            {course.isLocked ? (
+                            {(course.is_locked ?? course.isLocked) ? (
                               <Unlock className="h-4 w-4" />
                             ) : (
                               <Lock className="h-4 w-4" />
@@ -263,7 +263,7 @@ export default function AdminCourses() {
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                          {course.isLocked ? "Mở khóa" : "Khóa"}
+                          {(course.is_locked ?? course.isLocked) ? "Mở khóa" : "Khóa"}
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
