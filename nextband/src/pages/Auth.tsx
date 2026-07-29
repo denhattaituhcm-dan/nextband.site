@@ -18,6 +18,7 @@ import {
   Users,
   Eye,
   EyeOff,
+  MessageCircle,
 } from "lucide-react";
 import { GoogleLogin } from "@react-oauth/google";
 import { authApi } from "@/lib/api";
@@ -107,50 +108,65 @@ export default function Auth() {
   return (
     <div className="min-h-screen flex bg-slate-50/50 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 selection:bg-primary/10 selection:text-primary">
       {/* Left side - Balanced Quiet Academic Branding Panel */}
-      <div className="hidden lg:flex lg:w-5/12 xl:w-1/2 bg-slate-100/80 dark:bg-slate-900/90 text-slate-800 dark:text-slate-200 p-12 xl:p-16 flex-col justify-between relative overflow-hidden border-r border-slate-200/60 dark:border-slate-800/60 backdrop-blur-md">
+      <div className="hidden lg:flex lg:w-5/12 xl:w-1/2 bg-slate-100/80 dark:bg-slate-900/90 text-slate-800 dark:text-slate-200 p-10 xl:p-14 flex-col justify-between relative overflow-hidden border-r border-slate-200/60 dark:border-slate-800/60 backdrop-blur-md">
         {/* Subtle Warm Ambient Glow */}
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_20%,rgba(16,185,129,0.04),transparent_60%)]" />
 
         {/* 1. Brand Recognition: Original Color Logo + Crisp Whitespace */}
-        <div className="relative z-10 space-y-5">
+        <div className="relative z-10 space-y-4">
           <div className="flex items-center gap-3">
             <SiteLogo alt="NextBand Logo" className="max-h-10 w-auto object-contain" />
           </div>
           {/* 4. Refined Tagline as a Quiet Academic Message */}
-          <p className="text-sm font-medium tracking-tight text-slate-600 dark:text-slate-400 leading-relaxed max-w-sm">
+          <p className="text-sm font-medium tracking-tight text-slate-600 dark:text-slate-400 leading-relaxed max-w-md">
             {settings.authTagline}
           </p>
         </div>
 
-        {/* 5. Product Feature Cards */}
-        <div className="space-y-4 relative z-10 my-auto max-w-md">
-          <div className="group flex items-start gap-4 p-4.5 rounded-xl bg-white/90 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_-2px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 transition-all duration-200">
-            <div className="rounded-lg bg-primary/10 dark:bg-primary/20 p-2.5 border border-primary/15 shrink-0 group-hover:border-primary/30 transition-colors">
-              <BookOpen className="h-4.5 w-4.5 text-primary" />
+        {/* 5. Product Feature Cards (Cân đối không bị dồn nén) */}
+        <div className="space-y-4 relative z-10 my-auto w-full max-w-lg">
+          <div className="group flex items-start gap-4 p-5 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/70 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+            <div className="rounded-xl bg-primary/10 dark:bg-primary/20 p-3 border border-primary/20 shrink-0 group-hover:border-primary/40 transition-colors">
+              <BookOpen className="h-5 w-5 text-primary" />
             </div>
-            <div className="space-y-0.5">
+            <div className="space-y-1 min-w-0 flex-1">
               <h3 className="font-semibold text-slate-800 dark:text-slate-200 text-sm tracking-tight">
                 {settings.authFeatureOneTitle}
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed break-words">
                 {settings.authFeatureOneDescription}
               </p>
             </div>
           </div>
 
-          <div className="group flex items-start gap-4 p-4.5 rounded-xl bg-white/90 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_-2px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 transition-all duration-200">
-            <div className="rounded-lg bg-primary/10 dark:bg-primary/20 p-2.5 border border-primary/15 shrink-0 group-hover:border-primary/30 transition-colors">
-              <Users className="h-4.5 w-4.5 text-primary" />
+          <div className="group flex items-start gap-4 p-5 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/70 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+            <div className="rounded-xl bg-primary/10 dark:bg-primary/20 p-3 border border-primary/20 shrink-0 group-hover:border-primary/40 transition-colors">
+              <Users className="h-5 w-5 text-primary" />
             </div>
-            <div className="space-y-0.5">
+            <div className="space-y-1 min-w-0 flex-1">
               <h3 className="font-semibold text-slate-800 dark:text-slate-200 text-sm tracking-tight">
                 {settings.authFeatureTwoTitle}
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed break-words">
                 {settings.authFeatureTwoDescription}
               </p>
             </div>
           </div>
+
+          {/* Nút liên hệ Admin qua Zalo */}
+          {settings.zaloLink && (
+            <div className="pt-2">
+              <a
+                href={settings.zaloLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800/60 text-xs font-medium hover:bg-blue-100/70 dark:hover:bg-blue-900/60 transition-colors"
+              >
+                <MessageCircle className="h-4 w-4 shrink-0" />
+                <span>Cần hỗ trợ? Liên hệ Admin qua Zalo</span>
+              </a>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
