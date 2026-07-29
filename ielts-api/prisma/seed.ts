@@ -1,170 +1,192 @@
-import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
+import { PrismaClient, AppRole, ResourceType, HomeworkStatus, SubmissionStatus, AttendanceStatus, InvitationStatus } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌱 Seeding database...");
+  console.log('🌱 Seeding database for Phase 0 Sprint 1...');
 
-  // Create admin user
-  const adminPassword = await bcrypt.hash("admin123", 10);
-  const admin = await prisma.user.upsert({
-    where: { email: "admin@ielts.com" },
+  // 1. Create Teacher & Admin Users if not exist
+  const teacherUser = await prisma.user.upsert({
+    where: { email: 'teacher@nextband.edu.vn' },
     update: {},
     create: {
-      email: "admin@ielts.com",
-      password: adminPassword,
-      fullName: "Admin User",
+      email: 'teacher@nextband.edu.vn',
+      password: '$2a$10$YourHashedPasswordHere',
+      fullName: 'Cô Hoàng Anh (IELTS 8.5)',
       roles: {
-        create: { role: "admin" },
-      },
-    },
+        create: { role: AppRole.teacher }
+      }
+    }
   });
-  console.log("✅ Admin user created:", admin.email);
 
-  // Create teacher user
-  const teacherPassword = await bcrypt.hash("teacher123", 10);
-  const teacher = await prisma.user.upsert({
-    where: { email: "teacher@ielts.com" },
+  const adminUser = await prisma.user.upsert({
+    where: { email: 'admin@nextband.edu.vn' },
     update: {},
     create: {
-      email: "teacher@ielts.com",
-      password: teacherPassword,
-      fullName: "Teacher User",
+      email: 'admin@nextband.edu.vn',
+      password: '$2a$10$YourHashedPasswordHere',
+      fullName: 'Admin NextBand',
       roles: {
-        create: { role: "teacher" },
-      },
-    },
+        create: { role: AppRole.admin }
+      }
+    }
   });
-  console.log("✅ Teacher user created:", teacher.email);
 
-  // Create student user
-  const studentPassword = await bcrypt.hash("student123", 10);
-  const student = await prisma.user.upsert({
-    where: { email: "student@ielts.com" },
+  // 2. Create Student User
+  const studentUser = await prisma.user.upsert({
+    where: { email: 'student@gmail.com' },
     update: {},
     create: {
-      email: "student@ielts.com",
-      password: studentPassword,
-      fullName: "Student User",
+      email: 'student@gmail.com',
+      password: '$2a$10$YourHashedPasswordHere',
+      fullName: 'Nguyễn Văn Học Viên',
       roles: {
-        create: { role: "student" },
-      },
-    },
+        create: { role: AppRole.student }
+      }
+    }
   });
-  console.log("✅ Student user created:", student.email);
 
-  // Create sample course
+  // 3. Create Course: Dreamer
   const course = await prisma.course.upsert({
-    where: { slug: "ielts-preparation" },
+    where: { slug: 'dreamer-ielts' },
     update: {},
     create: {
-      title: "IELTS Preparation Course",
-      description: "Complete IELTS preparation with all 4 skills",
-      level: "intermediate",
-      price: 0,
+      title: 'IELTS Dreamer (Target 5.5 - 6.5)',
+      slug: 'dreamer-ielts',
+      description: 'Lộ trình chuẩn bị nền tảng IELTS toàn diện 4 kỹ năng.',
+      level: 'intermediate',
       isPublished: true,
-      slug: "ielts-preparation",
-      teacherId: teacher.id,
+      isActive: true,
+      createdBy: teacherUser.id,
+      lessons: {
+        create: [
+          {
+            title: 'Buổi 1: Introduction to IELTS Reading & Skimming Techniques',
+            description: 'Kỹ thuật đọc lướt và xác định Keyword trong bài đọc IELTS.',
+            lessonOrder: 1,
+            resources: {
+              create: [
+                { title: 'Slide Bài giảng Buổi 1', type: ResourceType.SLIDE, url: 'https://cdn.nextband.edu.vn/slides/lesson1.pdf' },
+                { title: 'Danh mục Từ vựng Reading Task 1', type: ResourceType.PDF, url: 'https://cdn.nextband.edu.vn/docs/vocab-lesson1.pdf' }
+              ]
+            }
+          },
+          {
+            title: 'Buổi 2: Listening Part 1 - Form Completion & Numbers',
+            description: 'Chiến thuật làm bài nghe điền từ và ghi chép con số/chữ cái.',
+            lessonOrder: 2,
+            resources: {
+              create: [
+                { title: 'File Audio Luyện Nghe Buổi 2', type: ResourceType.AUDIO, url: 'https://cdn.nextband.edu.vn/audio/part1-practice.mp3' }
+              ]
+            }
+          }
+        ]
+      }
     },
+    include: { lessons: true }
   });
-  console.log("✅ Sample course created:", course.title);
 
-  // Create sample exam
-  const exam = await prisma.exam.upsert({
-    where: { id: "sample-exam-1" },
+  // 4. Create Class: Dreamer K31
+  const dreamerClass = await prisma.class.upsert({
+    where: { id: 'dreamer-k31-id' },
     update: {},
     create: {
-      id: "sample-exam-1",
+      id: 'dreamer-k31-id',
+      name: 'Dreamer K31',
+      description: 'Lớp IELTS Dreamer Khóa 31 (Tối 2 - 4 - 6)',
       courseId: course.id,
-      title: "Week 1 - Listening Practice",
-      description: "Practice test for listening skills",
-      week: 1,
-      durationMinutes: 60,
-      isPublished: true,
-      examType: "ielts",
-    },
+      teacherId: teacherUser.id,
+      startDate: new Date(),
+      isActive: true
+    }
   });
-  console.log("✅ Sample exam created:", exam.title);
 
-  // Create exam section
-  const section = await prisma.examSection.create({
-    data: {
-      examId: exam.id,
-      sectionType: "listening",
-      title: "Part 1 - Conversation",
-      instructions: "Listen to the audio and answer the questions.",
-      orderIndex: 0,
-    },
-  });
-  console.log("✅ Sample section created:", section.title);
-
-  // Create question group
-  const group = await prisma.questionGroup.create({
-    data: {
-      sectionId: section.id,
-      title: "Questions 1-5",
-      instructions: "Complete the sentences below.",
-      orderIndex: 0,
-    },
-  });
-  console.log("✅ Sample question group created");
-
-  // Create sample questions
-  await prisma.question.createMany({
-    data: [
-      {
-        groupId: group.id,
-        questionType: "fill_blank",
-        questionText: "The meeting is scheduled for ___.",
-        correctAnswer: "Monday",
-        points: 1,
-        orderIndex: 0,
-      },
-      {
-        groupId: group.id,
-        questionType: "multiple_choice",
-        questionText: "What time does the event start?",
-        options: JSON.stringify([
-          "9:00 AM",
-          "10:00 AM",
-          "11:00 AM",
-          "12:00 PM",
-        ]),
-        correctAnswer: "10:00 AM",
-        points: 1,
-        orderIndex: 1,
-      },
-    ],
-  });
-  console.log("✅ Sample questions created");
-
-  // Enroll student in course
-  await prisma.enrollment.upsert({
+  // 5. Enroll Student to Class
+  await prisma.classStudent.upsert({
     where: {
-      courseId_studentId: {
-        courseId: course.id,
-        studentId: student.id,
-      },
+      classId_studentId: {
+        classId: dreamerClass.id,
+        studentId: studentUser.id
+      }
     },
     update: {},
     create: {
-      courseId: course.id,
-      studentId: student.id,
-    },
+      classId: dreamerClass.id,
+      studentId: studentUser.id
+    }
   });
-  console.log("✅ Student enrolled in course");
 
-  console.log("\n🎉 Seeding completed!");
-  console.log("\n📝 Test accounts:");
-  console.log("   Admin:   admin@ielts.com / admin123");
-  console.log("   Teacher: teacher@ielts.com / teacher123");
-  console.log("   Student: student@ielts.com / student123");
+  // 6. Create Invitation for Dreamer K31
+  await prisma.invitation.upsert({
+    where: { inviteCode: 'DREAM31' },
+    update: {},
+    create: {
+      classId: dreamerClass.id,
+      inviteToken: 'inv_token_dreamer_k31_2026',
+      inviteCode: 'DREAM31',
+      createdBy: teacherUser.id,
+      status: InvitationStatus.ACTIVE
+    }
+  });
+
+  // 7. Create ClassSession & Attendance for Lesson 1
+  const lesson1 = course.lessons.find(l => l.lessonOrder === 1);
+  if (lesson1) {
+    const session1 = await prisma.classSession.create({
+      data: {
+        classId: dreamerClass.id,
+        lessonId: lesson1.id,
+        sessionDate: new Date(),
+        title: 'Buổi 1: Thảo luận Skimming & Scanning',
+        notes: 'Cả lớp tương tác tốt, hoàn thành 80% bài đọc mẫu.'
+      }
+    });
+
+    // Attendance
+    await prisma.classAttendance.create({
+      data: {
+        sessionId: session1.id,
+        studentId: studentUser.id,
+        teacherId: teacherUser.id,
+        status: AttendanceStatus.PRESENT,
+        note: 'Đến đúng giờ'
+      }
+    });
+
+    // 8. Create Homework for Lesson 1
+    const homework = await prisma.homework.create({
+      data: {
+        classId: dreamerClass.id,
+        classSessionId: session1.id,
+        createdBy: teacherUser.id,
+        title: 'Bài tập về nhà Buổi 1: Reading Cambridge 18 Test 1 Passage 1',
+        description: 'Đọc đoạn văn và làm 13 câu hỏi trong file đính kèm.',
+        deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        status: HomeworkStatus.PUBLISHED
+      }
+    });
+
+    // 9. Create Student Submission
+    await prisma.homeworkSubmission.create({
+      data: {
+        homeworkId: homework.id,
+        studentId: studentUser.id,
+        status: SubmissionStatus.GRADED,
+        submittedAt: new Date(),
+        gradedAt: new Date(),
+        score: 8.5,
+        feedback: '## Nhận xét bài làm\n- **Ưu điểm**: Làm tốt các câu hỏi True/False/Not Given.\n- **Cần cải thiện**: Chú ý đếm số từ giới hạn (NO MORE THAN TWO WORDS).'
+      }
+    });
+  }
+
+  console.log('✅ Seed successfully completed for Phase 0 Sprint 1!');
 }
 
 main()
   .catch((e) => {
-    console.error("❌ Seeding error:", e);
+    console.error('❌ Error during seed:', e);
     process.exit(1);
   })
   .finally(async () => {
