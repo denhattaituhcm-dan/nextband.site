@@ -1,0 +1,6 @@
+*.tar.gz
+*.sql
+node_modules/
+dist/
+.env
+ielts-be/uploads/
