@@ -1,13 +1,73 @@
 import { supabase } from "./supabase";
 import { normalizeSiteSettings } from "./site-settings";
 
-// Helper helper format URLs if any
+// Helper to format URLs
 export const formatStorageUrl = (path: string | null) => {
   if (!path) return "";
   if (path.startsWith("http://") || path.startsWith("https://")) return path;
   const { data } = supabase.storage.from("exam-assets").getPublicUrl(path);
   return data.publicUrl;
 };
+
+// =============================================
+// DATA NORMALIZER: Supabase snake_case → Frontend camelCase
+// Đảm bảo ExamInterface, QuestionRenderers, v.v. hoạt động
+// dù data đến từ Supabase (snake_case) hay fallback (camelCase)
+// =============================================
+export function normalizeExamData(exam: any): any {
+  if (!exam) return exam;
+
+  const normalizeSections = (sections: any[]) =>
+    (sections || []).map((s: any) => ({
+      ...s,
+      // Normalize section fields
+      sectionType: s.sectionType || s.section_type,
+      section_type: s.section_type || s.sectionType,
+      examId: s.examId || s.exam_id,
+      orderIndex: s.orderIndex ?? s.order_index ?? 0,
+      audioUrl: s.audioUrl || s.audio_url || "",
+      audioScript: s.audioScript || s.audio_script || "",
+      // Normalize nested question_groups / questionGroups
+      questionGroups: normalizeGroups(s.questionGroups || s.question_groups || []),
+      question_groups: normalizeGroups(s.questionGroups || s.question_groups || []),
+    }));
+
+  const normalizeGroups = (groups: any[]) =>
+    (groups || []).map((g: any) => ({
+      ...g,
+      sectionId: g.sectionId || g.section_id,
+      orderIndex: g.orderIndex ?? g.order_index ?? 0,
+      audioUrl: g.audioUrl || g.audio_url || "",
+      questions: normalizeQuestions(g.questions || []),
+    }));
+
+  const normalizeQuestions = (questions: any[]) =>
+    (questions || []).map((q: any) => ({
+      ...q,
+      questionType: q.questionType || q.question_type,
+      question_type: q.question_type || q.questionType,
+      questionText: q.questionText || q.question_text || "",
+      question_text: q.question_text || q.questionText || "",
+      correctAnswer: q.correctAnswer || q.correct_answer || "",
+      correct_answer: q.correct_answer || q.correctAnswer || "",
+      groupId: q.groupId || q.group_id,
+      orderIndex: q.orderIndex ?? q.order_index ?? 0,
+      audioUrl: q.audioUrl || q.audio_url || "",
+      // Normalize options: ensure array format
+      options: Array.isArray(q.options)
+        ? q.options
+        : (q.options ? (typeof q.options === "string" ? JSON.parse(q.options) : q.options) : []),
+    }));
+
+  return {
+    ...exam,
+    courseId: exam.courseId || exam.course_id,
+    durationMinutes: exam.durationMinutes || exam.duration_minutes || 60,
+    isPublished: exam.isPublished ?? exam.is_published ?? false,
+    isActive: exam.isActive ?? exam.is_active ?? true,
+    sections: normalizeSections(exam.sections || exam.exam_sections || []),
+  };
+}
 
 // =============================================
 // AUTH API
@@ -496,7 +556,7 @@ export const examsApi = {
       .eq("id", id)
       .single();
 
-    if (!error && data) return data;
+    if (!error && data) return normalizeExamData(data);
 
     // Fallback for offline/local exams lookup
     const examList = await examsApi.list({ limit: 1000 });
@@ -973,23 +1033,36 @@ export const submissionsApi = {
       audioUrl?: string;
     }>
   ) => {
-    // 1. Save Answers
-    if (answers && answers.length > 0) {
+    // Gọi RPC Stored Procedure để thực hiện Atomic Transaction trên Database:
+    // Upsert Answers + Auto Grade + Mark Submitted/Graded trong 1 giao dịch duy nhất.
+    const formattedAnswers = (answers || []).map((a) => ({
+      question_id: a.questionId,
+      answer_text: a.answerText || "",
+      audio_url: a.audioUrl || "",
+    }));
+
+    const { data, error } = await supabase.rpc("submit_exam_transaction", {
+      p_submission_id: id,
+      p_answers: formattedAnswers,
+    });
+
+    if (error) {
+      // Fallback đơn giản nếu RPC chưa được tạo trong Supabase SQL Editor
+      console.warn("RPC submit_exam_transaction fail, fallback to direct update:", error.message);
       await submissionsApi.saveAnswers(id, answers);
+      const { data: fallbackData, error: fallbackErr } = await supabase
+        .from("exam_submissions")
+        .update({
+          status: "submitted",
+          submitted_at: new Date().toISOString(),
+        })
+        .eq("id", id)
+        .select()
+        .single();
+      if (fallbackErr) throw fallbackErr;
+      return fallbackData;
     }
 
-    // 2. Mark submission as submitted
-    const { data, error } = await supabase
-      .from("exam_submissions")
-      .update({
-        status: "submitted",
-        submitted_at: new Date().toISOString(),
-      })
-      .eq("id", id)
-      .select()
-      .single();
-
-    if (error) throw error;
     return data;
   },
 
