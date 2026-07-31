@@ -1,17 +1,24 @@
-import { PrismaClient, AppRole, ResourceType, HomeworkStatus, SubmissionStatus, AttendanceStatus, InvitationStatus } from '@prisma/client';
+import { PrismaClient, AppRole, ResourceType, AttendanceStatus, InvitationStatus } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('🌱 Seeding database for Phase 0 Sprint 1...');
 
+  const defaultAdminPassword = await bcrypt.hash('admin123', 10);
+  const defaultTeacherPassword = await bcrypt.hash('teacher123', 10);
+  const defaultStudentPassword = await bcrypt.hash('student123', 10);
+
   // 1. Create Teacher & Admin Users if not exist
   const teacherUser = await prisma.user.upsert({
-    where: { email: 'teacher@nextband.edu.vn' },
-    update: {},
+    where: { email: 'teacher@ielts.com' },
+    update: {
+      password: defaultTeacherPassword,
+    },
     create: {
-      email: 'teacher@nextband.edu.vn',
-      password: '$2a$10$YourHashedPasswordHere',
+      email: 'teacher@ielts.com',
+      password: defaultTeacherPassword,
       fullName: 'Cô Hoàng Anh (IELTS 8.5)',
       roles: {
         create: { role: AppRole.teacher }
@@ -20,12 +27,14 @@ async function main() {
   });
 
   const adminUser = await prisma.user.upsert({
-    where: { email: 'admin@nextband.edu.vn' },
-    update: {},
+    where: { email: 'admin@ielts.com' },
+    update: {
+      password: defaultAdminPassword,
+    },
     create: {
-      email: 'admin@nextband.edu.vn',
-      password: '$2a$10$YourHashedPasswordHere',
-      fullName: 'Admin NextBand',
+      email: 'admin@ielts.com',
+      password: defaultAdminPassword,
+      fullName: 'Admin ARIS IELTS',
       roles: {
         create: { role: AppRole.admin }
       }
@@ -34,11 +43,13 @@ async function main() {
 
   // 2. Create Student User
   const studentUser = await prisma.user.upsert({
-    where: { email: 'student@gmail.com' },
-    update: {},
+    where: { email: 'student@ielts.com' },
+    update: {
+      password: defaultStudentPassword,
+    },
     create: {
-      email: 'student@gmail.com',
-      password: '$2a$10$YourHashedPasswordHere',
+      email: 'student@ielts.com',
+      password: defaultStudentPassword,
       fullName: 'Nguyễn Văn Học Viên',
       roles: {
         create: { role: AppRole.student }
@@ -163,7 +174,7 @@ async function main() {
         title: 'Bài tập về nhà Buổi 1: Reading Cambridge 18 Test 1 Passage 1',
         description: 'Đọc đoạn văn và làm 13 câu hỏi trong file đính kèm.',
         deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        status: HomeworkStatus.PUBLISHED
+        status: 'PUBLISHED'
       }
     });
 
@@ -172,7 +183,7 @@ async function main() {
       data: {
         homeworkId: homework.id,
         studentId: studentUser.id,
-        status: SubmissionStatus.GRADED,
+        status: 'GRADED',
         submittedAt: new Date(),
         gradedAt: new Date(),
         score: 8.5,
