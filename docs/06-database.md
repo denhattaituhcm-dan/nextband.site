@@ -253,20 +253,26 @@ npm run db:deploy
 
 Avoid using `db:push` for production-like environments because it can bypass migration history.
 
-## Data Shape Notes
+## Business Rules Freeze Database Constraints
 
-Question and answer formats are not fully normalized. They depend on `questionType`.
+1. **Submission Entity Integrity**:
+   - `exam_submissions` / `submissions` table holds **exactly one active submission** per `(student_id, homework_id)` or `(student_id, exam_id)`.
+   - Re-submissions mutate the existing record in-place by updating `submitted_at` and `updated_at`. No submission versioning tables or submission history logs exist.
 
-Examples:
+2. **Student Identity Integrity**:
+   - `users.email` is the immutable login identity (`1 Student = 1 Google Email`).
+   - No secondary email columns or identity mapping tables.
+   - Administrative email updates preserve the existing `user.id` and all associated learning history.
 
-- Simple objective answer: `"A"` or `"true"`.
-- Alternatives: `"answer one|answer two"`.
-- Fill blank correct answer: JSON object keyed by blank IDs.
-- Matching correct answer: JSON object with `items`, `options`, and `pairs`.
-- Student answer for multi-select: JSON array string.
+3. **Class Archiving Policy**:
+   - Class deletion sets `classes.is_active = false` (soft-archive).
+   - Archiving affects UI discoverability only. All related `homework`, `submissions`, `grades`, `class_attendance`, and `class_students` remain untouched for historical reporting.
 
-When changing question formats, update both:
+4. **Activity Timeline (Read-Model Only)**:
+   - Activity timeline on Student Dashboard is synthesized dynamically via queries on existing entities (`enrollments`, `homework`, `submissions`, `class_attendance`).
+   - **No `activity_logs` or `timeline_events` tables are created.**
 
-- backend auto-grading in `submissions.routes.ts`
-- frontend section renderers and review screens
+5. **Homework Lock Authority**:
+   - Homework locking/unlocking is controlled solely by `homework.unlock_date` or explicit teacher toggle (`is_locked`). No automatic locking columns tied to `class_attendance` exist.
+
 

@@ -140,14 +140,17 @@ PUT  /submissions/:id
 POST /submissions/:id/grade
 ```
 
-Key behaviors:
+## Frozen Submissions & Deadlines Rules
 
-- `POST /submissions` starts or resumes an in-progress attempt.
-- Students are limited to 3 attempts per exam.
-- Existing in-progress attempts are reused if time remains.
-- Expired stale attempts are closed as submitted.
-- Open exams can enforce `maxParticipants`.
-- Objective questions are auto-graded on submit.
+Key API behaviors:
+
+- **Single Admission Check Rule**: Deadline eligibility is checked **only once** when `POST /submissions` or entry occurs. Once admitted, the session remains valid until voluntary submit, browser closure, or explicit teacher lock.
+- **In-Place Overwrite**: `PUT /submissions/:id` performs in-place updates of existing submission fields (`submitted_at`, `updated_at`). Creating duplicate/versioned submission records on resubmission is strictly prohibited.
+- **Single Active Record**: Exactly one submission record exists for each `(Student × Homework)` or `(Student × Exam)`.
+- **Homework Lock Authority**: Homework locking is controlled exclusively by scheduled unlock time or manual teacher action. Attendance status never locks homework.
+- **Teacher Feedback**: Grading (`POST /submissions/:id/grade`) updates feedback directly in-place. No feedback history endpoint or log table exists.
+- **Class Archiving**: `DELETE /classes/:id` performs a soft-archive (`is_active = false`). Data is preserved for reporting.
+- **Activity Timeline**: Dynamic read-model API endpoint synthesizes timeline events on the fly from existing domain tables without dedicated timeline tables.
 - Writing and Speaking keep status `submitted` until manually graded.
 - Enrollment progress updates after submit.
 
