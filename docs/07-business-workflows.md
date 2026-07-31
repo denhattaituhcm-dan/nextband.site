@@ -1,174 +1,113 @@
-# Business Workflows
+# Business Workflows (Frozen Business Rules)
 
-## Authentication
+## 1. Curriculum Policy (Frozen)
 
-### Email Login
+The curriculum for each course level is fixed:
 
-```text
-User submits email/password
-  -> POST /auth/login
-  -> backend verifies bcrypt password and active status
-  -> backend signs JWT with id/email/roles
-  -> frontend stores token and user
-```
+- `STARTER` = 27 lessons (9 weeks)
+- `DREAMER` = 27 lessons (9 weeks)
+- `BUILDER` = 27 lessons (9 weeks)
+- `MASTER` = 27 lessons (9 weeks)
+- `LEADER` = 30 lessons (10 weeks)
 
-### Google Login
+Business Rules:
 
-```text
-Google credential
-  -> POST /auth/login/google
-  -> backend verifies ID token with GOOGLE_CLIENT_ID
-  -> existing user matched by googleId or email
-  -> missing user is created as student
-  -> JWT returned
-```
+- No Curriculum Versioning.
+- No mid-stream curriculum changes.
+- No Lesson Split / Merge.
+- No Curriculum Migration.
+- Upon class creation, the Curriculum Book is generated once and remains static for the class lifecycle.
 
-## Course Access
+## 2. Submission Lifecycle
 
-Course list behavior:
+Submissions are not immutable. Only 1 current submission exists per student per assignment.
 
-- Guest: empty list.
-- Student: enrolled, published, active courses.
-- Admin/teacher: active courses.
-
-Course detail behavior:
-
-- Requires token.
-- Student cannot view inactive/unpublished course.
-- Admin/teacher can view unpublished course data.
-
-Known caveat: frontend route param is called `slug`, but currently uses course ID.
-
-## Exam Creation
+Workflow:
 
 ```text
-Admin/teacher creates exam
-  -> POST /exams
-  -> backend creates exam
-  -> backend creates 5 default sections:
-       listening, reading, writing, speaking, general
+NOT_STARTED -> IN_PROGRESS -> SUBMITTED
 ```
 
-Sections cannot be manually created or deleted through the public API. They can be updated.
-
-## Exam Access
-
-Student can access an exam when:
-
-- exam is published
-- exam is active
-- and either:
-  - student is enrolled in the course
-  - exam `isOpen` is true
-
-Admin/teacher access is broader, but teacher data visibility is scoped in some list/detail routes.
-
-## Starting an Exam Attempt
+If the deadline has not expired and the homework is not locked, a student may edit and re-submit:
 
 ```text
-Student opens /exam/:examId
-  -> frontend fetches exam
-  -> frontend POST /submissions with examId
-  -> backend checks access, published/active state, attempt count, open exam quota
-  -> backend returns existing in-progress attempt or creates a new one
+SUBMITTED -> Edit -> SUBMITTED (In-place Overwrite)
 ```
 
-Important rules:
+Business Rules:
 
-- Max attempts for students: 3.
-- Admin/teacher are not subject to the same attempt cap.
-- If an in-progress attempt still has time, it is reused.
-- If an expired in-progress attempt has no answers, its timer is reset.
-- If an expired in-progress attempt has answers, it is closed as submitted.
-- Open exam `currentParticipants` increments only once per student per exam.
+- Always exactly 1 submission record.
+- No `Submission v1/v2/v3` or historic logs stored.
+- Re-submitting updates `submitted_at` and `updated_at` in-place.
 
-## Answering and Submitting
+## 3. Deadline Rules
+
+Business Rules:
+
+- **Homework not yet unlocked**: Cannot start.
+- **Deadline expired before student starts**: Cannot start.
+- **Student started BEFORE deadline**: Allowed to continue working and submit after the deadline timestamp.
+- No automatic session cancellation or "Late Submission" penalty for students who started before the deadline.
+
+## 4. Attendance Policy
+
+Attendance is completely independent of Homework.
+
+Business Rules:
+
+- `Absent` ≠ `Homework Locked`
+- `Present` ≠ `Homework Completed`
+- Attendance reflects physical/online class presence.
+- Homework reflects self-study progress.
+- No locking/unlocking logic depends on Attendance records.
+
+## 5. Teacher Feedback Policy
+
+Teacher Feedback represents current state data only.
+
+Business Rules:
+
+- Updating feedback overwrites the existing feedback directly.
+- No `Feedback History`, `Feedback Versions`, or `Feedback Audit` logs are maintained.
+
+## 6. Student Identity Policy
+
+1 Student = 1 Google Email.
+
+Business Rules:
+
+- No secondary emails or multiple email accounts.
+- No account merging or identity merging features.
+- Email updates are handled exclusively via administrative workflow.
+
+## 7. Class Lifecycle & Archiving
+
+Class deletion uses soft-archiving by default.
+
+Business Rules:
 
 ```text
-Frontend stores answers in component state
-  -> on submit, answers are serialized
-  -> PUT /submissions/:id with submit=true
-  -> backend upserts answers
-  -> backend auto-grades objective questions
-  -> backend marks status as graded or submitted
-  -> backend updates enrollment progress
+Delete Class -> Archive Class (is_active = false / status = archived)
 ```
 
-Status after submit:
+- Homework, Submissions, Grades, Feedback, and Attendance records are fully preserved for reporting and analytics.
+- Hard delete is restricted exclusively to Super Admin operations.
 
-- `graded`: no manual questions.
-- `submitted`: contains Writing/Speaking manual questions.
+## 8. Student Activity Timeline
 
-## Auto-Grading
+The Student Dashboard includes a lightweight Activity Timeline synthesized dynamically from existing domain tables (`enrollments`, `homework`, `submissions`, `grades`, `placement_tests`).
 
-Auto-graded types:
+Business Rules:
 
-- multiple choice
-- true/false/not given
-- yes/no/not given
-- short answer
-- fill blank
-- listening
-- matching
+- Events: `Joined Class`, `Homework Released`, `Homework Submitted`, `Homework Graded`, `Placement Test Completed`, `Teacher Feedback Published`.
+- This is NOT a Chat system and NOT a Notification Center.
+- No extra database tables required.
 
-Manual types:
+## 9. Product Philosophy
 
-- essay
-- speaking
+The Student Portal is a **Personal Learning Workspace**.
 
-Scoring details:
+- Simple, Focused, Production-ready, Easy to Maintain.
+- Explicitly excludes LMS Enterprise bloat (Curriculum Versioning, Submission History, Feedback History, Multi Identity, Notification Center, Audit Logs).
 
-- Pipe-delimited correct answers are supported as alternatives.
-- Fill blank JSON can award per-blank partial score.
-- Matching JSON can award partial score by correct pairs.
-- Multi-select multiple choice/listening supports JSON arrays.
-
-## Manual Grading
-
-```text
-Admin/teacher opens submission detail
-  -> POST /submissions/:id/grade
-  -> backend updates individual answer scores/feedback
-  -> backend marks submission graded
-```
-
-Teacher grading is scoped to students in the teacher's classes.
-
-## Enrollment Progress
-
-After a submission is finalized, backend recalculates course progress:
-
-```text
-completed published active exams / total published active exams
-```
-
-Progress is stored in `enrollments.progress_percent`.
-
-## Classes and Attendance
-
-Classes are separate from courses. They are used for teacher scoping and attendance.
-
-Typical flow:
-
-```text
-Admin creates class and assigns teacher
-  -> Admin/teacher adds students
-  -> Admin/teacher creates schedules
-  -> Admin/teacher records attendance for a session date
-  -> Dashboard/history shows present/absent rates
-```
-
-Teacher can manage only their own classes.
-
-## Upload Flow
-
-```text
-Frontend sends multipart file
-  -> POST /uploads/image or /uploads/audio
-  -> backend validates MIME type and size
-  -> backend stores file under uploads/images or uploads/audio
-  -> backend returns absolute file URL
-```
-
-Uploads are served by backend static route `/uploads/*`.
 
