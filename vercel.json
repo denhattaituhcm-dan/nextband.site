@@ -1,5 +1,11 @@
 {
   "buildCommand": "cd nextband && npm install && npm run build",
   "outputDirectory": "nextband/dist",
-  "framework": "vite"
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
