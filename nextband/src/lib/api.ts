@@ -242,9 +242,6 @@ export const coursesApi = {
         { id: "c1000000-0000-0000-0000-000000000009", title: "EXTRA LISTENING", description: "Luyện phản xạ và kỹ năng nghe chuyên sâu", level: "All Levels", slug: "extra-listening" },
       ];
 
-      // Auto-upsert background sync
-      supabase.from("courses").upsert(defaultCourses, { onConflict: "id" }).then(() => {});
-
       let filtered = defaultCourses;
       if (params?.search) {
         const s = params.search.toLowerCase();
