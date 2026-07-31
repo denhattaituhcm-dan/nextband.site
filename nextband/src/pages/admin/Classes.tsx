@@ -54,6 +54,7 @@ type SortField = "name" | "createdAt";
 const emptyForm = {
   name: "",
   description: "",
+  courseId: "",
   teacherId: "",
   startDate: "",
   endDate: "",
