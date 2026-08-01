@@ -153,6 +153,7 @@ const classesRoutes: FastifyPluginAsync = async (fastify) => {
             select: { id: true, fullName: true, email: true },
           },
           students: {
+            where: { deletedAt: null },
             include: {
               student: {
                 select: {
@@ -379,12 +380,72 @@ const classesRoutes: FastifyPluginAsync = async (fastify) => {
     },
   );
 
-  // DELETE /classes/:id/students/:studentId - Xoá học sinh khỏi lớp
+  // PATCH /classes/:id/students/:studentId/status - Thay đổi trạng thái học viên & Ghi vết Audit Log
+  fastify.patch<{ Params: { id: string; studentId: string }; Body: { status: string; reason?: string } }>(
+    "/:id/students/:studentId/status",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { id, studentId } = request.params;
+      const { status, reason } = request.body || {};
+      const operatorId = (request.user as any).id;
+
+      const validStatuses = ["INVITED", "PENDING", "ACTIVE", "SUSPENDED", "COMPLETED"];
+      if (!status || !validStatuses.includes(status)) {
+        return reply.status(400).send({ error: "Trạng thái không hợp lệ" });
+      }
+
+      // Check teacher ownership if not admin
+      const userRoles = (request.user as any).roles || [];
+      const isAdmin = userRoles.some(
+        (r: any) => r.role === "admin" || r === "admin",
+      );
+      if (!isAdmin) {
+        const classData = await fastify.prisma.class.findUnique({
+          where: { id },
+        });
+        if (!classData || classData.teacherId !== operatorId) {
+          return reply.status(403).send({ error: "Từ chối truy cập" });
+        }
+      }
+
+      const existing = await fastify.prisma.classStudent.findFirst({
+        where: { classId: id, studentId, deletedAt: null },
+      });
+
+      if (!existing) {
+        return reply.status(404).send({ error: "Học viên không thuộc lớp này" });
+      }
+
+      const fromStatus = existing.status;
+      const updated = await fastify.prisma.classStudent.update({
+        where: { id: existing.id },
+        data: { status: status as any },
+      });
+
+      // Write Audit Log
+      await fastify.prisma.enrollmentAuditLog.create({
+        data: {
+          operatorId,
+          studentId,
+          classId: id,
+          fromStatus: fromStatus as any,
+          toStatus: status as any,
+          action: "STATUS_CHANGE",
+          reason: reason || null,
+        },
+      });
+
+      return { success: true, student: updated };
+    },
+  );
+
+  // DELETE /classes/:id/students/:studentId - Xoá (Soft Delete) học sinh khỏi lớp
   fastify.delete<{ Params: { id: string; studentId: string } }>(
     "/:id/students/:studentId",
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       const { id, studentId } = request.params;
+      const operatorId = (request.user as any).id;
 
       // Teacher: verify ownership
       const userRoles = (request.user as any).roles || [];
@@ -395,17 +456,33 @@ const classesRoutes: FastifyPluginAsync = async (fastify) => {
         const classData = await fastify.prisma.class.findUnique({
           where: { id },
         });
-        if (!classData || classData.teacherId !== (request.user as any).id) {
+        if (!classData || classData.teacherId !== operatorId) {
           return reply.status(403).send({ error: "Từ chối truy cập" });
         }
       }
 
-      await fastify.prisma.classStudent.deleteMany({
-        where: {
-          classId: id,
-          studentId,
-        },
+      const existing = await fastify.prisma.classStudent.findFirst({
+        where: { classId: id, studentId, deletedAt: null },
       });
+
+      if (existing) {
+        await fastify.prisma.classStudent.update({
+          where: { id: existing.id },
+          data: { deletedAt: new Date() },
+        });
+
+        await fastify.prisma.enrollmentAuditLog.create({
+          data: {
+            operatorId,
+            studentId,
+            classId: id,
+            fromStatus: existing.status,
+            toStatus: null,
+            action: "SOFT_DELETE",
+            reason: "Giáo viên / Admin xóa khỏi lớp",
+          },
+        });
+      }
 
       return { success: true };
     },

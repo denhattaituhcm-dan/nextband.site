@@ -37,6 +37,7 @@ model User {
   createdInvitations Invitation[]     @relation("CreatedInvitations")
   createdHomeworks  Homework[]        @relation("CreatedHomeworks")
   homeworkSubmissions Submission[]     @relation("StudentHomeworkSubmissions")
+  auditLogsPerformed EnrollmentAuditLog[] @relation("OperatorAuditLogs")
 
   @@map("users")
 }
@@ -211,10 +212,12 @@ model ClassAttendance {
 }
 
 model ClassStudent {
-  id        String   @id @default(uuid())
-  classId   String   @map("class_id")
-  studentId String   @map("student_id")
-  joinedAt  DateTime @default(now()) @map("joined_at")
+  id        String           @id @default(uuid())
+  classId   String           @map("class_id")
+  studentId String           @map("student_id")
+  status    EnrollmentStatus @default(ACTIVE)
+  joinedAt  DateTime         @default(now()) @map("joined_at")
+  deletedAt DateTime?        @map("deleted_at")
 
   class   Class @relation(fields: [classId], references: [id], onDelete: Cascade)
   student User  @relation(fields: [studentId], references: [id], onDelete: Cascade)
@@ -222,6 +225,24 @@ model ClassStudent {
   @@unique([classId, studentId])
   @@index([studentId], map: "class_students_student_id_fkey")
   @@map("class_students")
+}
+
+model EnrollmentAuditLog {
+  id          String            @id @default(uuid())
+  operatorId  String            @map("operator_id")
+  studentId   String            @map("student_id")
+  classId     String            @map("class_id")
+  fromStatus  EnrollmentStatus? @map("from_status")
+  toStatus    EnrollmentStatus? @map("to_status")
+  action      String            @db.VarChar(50)
+  reason      String?           @db.Text
+  createdAt   DateTime          @default(now()) @map("created_at")
+
+  operator    User              @relation("OperatorAuditLogs", fields: [operatorId], references: [id], onDelete: Cascade)
+
+  @@index([studentId], map: "enrollment_audit_logs_student_id_idx")
+  @@index([classId], map: "enrollment_audit_logs_class_id_idx")
+  @@map("enrollment_audit_logs")
 }
 
 model Homework {
@@ -525,4 +546,12 @@ enum QuestionType {
   short_answer
   true_false_not_given
   yes_no_not_given
+}
+
+enum EnrollmentStatus {
+  INVITED
+  PENDING
+  ACTIVE
+  SUSPENDED
+  COMPLETED
 }
