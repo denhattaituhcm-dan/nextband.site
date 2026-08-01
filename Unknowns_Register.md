@@ -4,36 +4,44 @@ Tài liệu này theo dõi minh bạch các điểm **Chưa Kiểm Chứng (Unkn
 
 ---
 
-## I. STRUCTURAL EDGE UNKNOWNS (CẠNH CẤU TRÚC CSDL)
+## UNKNOWNS LIST
 
-### EDGE-001: Course ──► Class
-- **UNK-001A: Cascade Deletion Behavior**
-  - *Chưa biết*: Khi xóa `Course`, các `Class` liên quan có bị xóa `CASCADE` hay nhận `RESTRICT`?
-  - *Trạng thái*: **Unknown** (Cần kiểm tra `information_schema.referential_constraints` trong Sprint 1).
+### UNK-001A: Course -> Class Cascade Deletion Behavior
+- **Description**: Chưa xác minh hành vi khi xóa `Course` thì các `Class` liên quan tự động xóa `CASCADE` hay nhận `RESTRICT` trên Supabase Cloud.
+- **Risk**: CRITICAL (Xóa nhầm toàn bộ lớp học hoặc nghẽn DB).
+- **Blocking Level**: RELEASE_BLOCKING (Tier 0).
+- **Evidence Missing**: Kết quả truy vấn `information_schema.referential_constraints`.
+- **Verification Plan**: Chạy SQL query đối chiếu `delete_rule` trên Live DB.
+- **Status**: `UNKNOWN`
 
-### EDGE-004: Class ──► Homework
-- **UNK-004A: Homework Cascade Delete**
-  - *Chưa biết*: Khi xóa một Lớp học (`Class`), các bài tập `Homework` liên quan xử lý ra sao?
-  - *Trạng thái*: **Unknown**.
+### UNK-004A: Class -> Homework & ClassStudent Cascade Deletion
+- **Description**: Chưa xác minh hành vi lan truyền khi xóa `Class` tới `homeworks` và `class_students`.
+- **Risk**: HIGH (Dữ liệu học viên mồ côi).
+- **Blocking Level**: RELEASE_BLOCKING (Tier 0).
+- **Evidence Missing**: Physical foreign key constraint inspection on Supabase.
+- **Verification Plan**: Thực thi SQL script kiểm tra cascade constraint.
+- **Status**: `EVIDENCE_PENDING`
 
-### EDGE-005: Homework ──► Submission
-- **UNK-005A: Submission Retry & Rollback**
-  - *Chưa biết*: Khi nộp bài bị đứt mạng giữa chừng, CSDL Rollback hay để lại bản ghi dở dang?
-  - *Trạng thái*: **Unknown**.
-- **UNK-005B: Duplicate Submission Lock**
-  - *Chưa biết*: CSDL có chặn bằng Unique Constraint trường hợp Học viên gửi 2 request nộp bài cùng lúc (Concurrent Double-Click) hay không?
-  - *Trạng thái*: **Unknown**.
+### UNK-005A: Homework Submission Rollback
+- **Description**: Khi nộp bài bị rớt mạng giữa chừng, `exam_submissions` và `answers` có Rollback nguyên tử hay không.
+- **Risk**: HIGH (Dữ liệu bài nộp dở dang, không chấm điểm được).
+- **Blocking Level**: RELEASE_BLOCKING (Tier 0).
+- **Evidence Missing**: Network loss simulation log during submit.
+- **Verification Plan**: Chạy E2E test ngắt kết nối HTTP trong khi POST `/submissions`.
+- **Status**: `UNKNOWN`
 
----
+### UNK-005B: Duplicate Submission Lock
+- **Description**: CSDL có chặn bằng Unique Constraint trường hợp Học viên gửi 2 request nộp bài cùng lúc (Double-Click) hay không.
+- **Risk**: MEDIUM (Tạo bản ghi trùng lặp).
+- **Blocking Level**: TIER_1_BLOCKING.
+- **Evidence Missing**: Unique index check on `exam_submissions(exam_id, student_id)`.
+- **Verification Plan**: Kiểm tra `pg_indexes`.
+- **Status**: `UNKNOWN`
 
-## II. BEHAVIORAL EDGE UNKNOWNS (CẠNH HÀNH VI VẬN HÀNH)
-
-### EDGE-B01: Homework ──► Student Workspace
-- **UNK-B01A: Workspace Render Latency**
-  - *Chưa biết*: Thời gian từ lúc Giáo viên bấm Giao bài đến lúc Workspace Học viên hiển thị bài tập qua API có `< 200ms` hay không?
-  - *Trạng thái*: **Unknown**.
-
-### EDGE-B02: Submission ──► Grade Queue
-- **UNK-B02A: Teacher Review Queue Trigger**
-  - *Chưa biết*: Học viên nộp bài thành công có lập tức đẩy dòng vào bảng danh sách cần chấm `getTeacherWorkspace()` hay không?
-  - *Trạng thái*: **Unknown**.
+### UNK-B01A: Student Workspace Render Latency
+- **Description**: Chưa đo đạc latency từ khi Teacher Giao bài tới khi Workspace Học viên nhận data.
+- **Risk**: LOW (Ảnh hưởng trải nghiệm người dùng).
+- **Blocking Level**: NON_BLOCKING.
+- **Evidence Missing**: Performance Network Trace.
+- **Verification Plan**: Đo thời gian phản hồi `homeworksApi.getWorkspace()` `< 200ms`.
+- **Status**: `EVIDENCE_PENDING`

@@ -1,174 +1,174 @@
-# NextBand Architecture Manifest (Bản Đồ Kiến Trúc Độc Nhất)
-# File này là Single Source of Truth cho toàn bộ Đồ thị Cạnh (Edge Graph), Tầng Phụ Thuộc và Trạng Thái Kiểm Toán.
+# NextBand Architecture Manifest (Machine-Readable Single Source of Truth)
+version: "3.0.0"
+last_updated: "2026-08-01"
 
-version: "1.0.0"
-last_audit: "2026-08-01"
-constitution_version: "1.0.0"
+evidence_registry_ref: "Evidence_Registry.md"
+
+entities:
+  - id: ENT-001
+    name: "User"
+    tier: 0
+    criticality: "CRITICAL"
+    owner: "Identity Layer"
+    source_of_truth: "ielts-api/prisma/schema.prisma#L10"
+    db_table: "public.profiles"
+    prisma_model: "User"
+    dto: "User / Profile"
+    api: "usersApi"
+    ui: "Users.tsx, Teachers.tsx, Admins.tsx"
+
+  - id: ENT-002
+    name: "UserRole"
+    tier: 0
+    criticality: "CRITICAL"
+    owner: "Security Layer"
+    source_of_truth: "ielts-api/prisma/schema.prisma#L44"
+    db_table: "public.user_roles"
+    prisma_model: "UserRole"
+    dto: "AppRole"
+    api: "supabase.from('user_roles')"
+    ui: "Users.tsx, Teachers.tsx"
+
+  - id: ENT-003
+    name: "Course"
+    tier: 0
+    criticality: "CRITICAL"
+    owner: "Academic Layer"
+    source_of_truth: "ADR-002"
+    db_table: "public.courses"
+    prisma_model: "Course"
+    dto: "CourseInterface"
+    api: "coursesApi"
+    ui: "Courses.tsx, CourseDetail.tsx"
+
+  - id: ENT-004
+    name: "Class"
+    tier: 0
+    criticality: "CRITICAL"
+    owner: "Academic Layer"
+    source_of_truth: "ADR-002"
+    db_table: "public.classes"
+    prisma_model: "Class"
+    dto: "ClassInterface"
+    api: "classesApi"
+    ui: "Classes.tsx, ClassEdit.tsx"
+
+  - id: ENT-005
+    name: "ClassStudent"
+    tier: 0
+    criticality: "HIGH"
+    owner: "Academic Layer"
+    source_of_truth: "ielts-api/prisma/schema.prisma#L213"
+    db_table: "public.class_students"
+    prisma_model: "ClassStudent"
+    dto: "ClassStudent"
+    api: "classesApi.addStudents"
+    ui: "CourseStudentsList.tsx"
+
+  - id: ENT-007
+    name: "Homework"
+    tier: 0
+    criticality: "CRITICAL"
+    owner: "Homework Layer"
+    source_of_truth: "State_and_Event_Flows.md"
+    db_table: "public.homeworks"
+    prisma_model: "Homework"
+    dto: "StudentWorkspaceTask"
+    api: "homeworksApi"
+    ui: "HomeworkList.tsx"
+    state_machine: "SM-HW-001"
+
+  - id: ENT-008
+    name: "ExamSubmission"
+    tier: 0
+    criticality: "CRITICAL"
+    owner: "Grading Layer"
+    source_of_truth: "State_and_Event_Flows.md"
+    db_table: "public.exam_submissions"
+    prisma_model: "ExamSubmission"
+    dto: "TeacherGradingItem"
+    api: "submissionsApi"
+    ui: "SubmissionList.tsx"
+    state_machine: "SM-SUB-001"
 
 edges:
   - id: EDGE-001
     name: "Course -> Class"
-    from: "Course"
-    to: "Class"
-    type: "structural"
+    from_entity: "ENT-003"
+    to_entity: "ENT-004"
+    type: "STRUCTURAL"
     tier: 0
-    owner: "Academic Layer"
-    source_of_truth: "ADR-002"
-    status: "verified"
-    invariants: ["INV-D01"]
-    checklist:
-      prisma_schema: true
-      sql_migration: true
-      live_db_column: true
-      physical_fk: true
-      indexes: true
-      api_dto: true
-      api_payload: true
-      ui_binding: true
-      runtime_execution: true
-      delete_cascade: false
-      rls_security: false
-      performance: false
+    foreign_keys: ["classes.course_id -> courses.id"]
+    indexes: ["classes_course_id_idx"]
+    delete_rule: "RESTRICT"
+    security_rules: ["Admin can assign course_id to Class"]
+    events: ["EVT-CLASS-CREATED"]
+    required_evidence: ["EV-001", "EV-004"]
+    unknowns: ["UNK-001A"]
+    verification_status: "EVIDENCE_PENDING"
 
   - id: EDGE-002
     name: "User -> Teacher Profile"
-    from: "User"
-    to: "Profile (Teacher)"
-    type: "structural"
+    from_entity: "ENT-001"
+    to_entity: "ENT-004"
+    type: "STRUCTURAL"
     tier: 0
-    owner: "Identity Layer"
-    source_of_truth: "ADR-001"
-    status: "verified"
-    invariants: ["INV-I01", "INV-102"]
-    checklist:
-      prisma_schema: true
-      sql_migration: true
-      live_db_column: true
-      physical_fk: true
-      indexes: true
-      api_dto: true
-      api_payload: true
-      ui_binding: true
-      runtime_execution: true
-      delete_cascade: false
-      rls_security: false
-      performance: false
+    foreign_keys: ["classes.teacher_id -> profiles.user_id"]
+    indexes: ["classes_teacher_id_fkey"]
+    delete_rule: "SET NULL"
+    security_rules: ["Only users with role=teacher can be assigned"]
+    events: ["EVT-TEACHER-ASSIGNED"]
+    required_evidence: ["EV-002", "EV-003"]
+    unknowns: []
+    verification_status: "VERIFIED"
 
   - id: EDGE-003
     name: "Class -> ClassStudent"
-    from: "Class"
-    to: "ClassStudent"
-    type: "structural"
+    from_entity: "ENT-004"
+    to_entity: "ENT-005"
+    type: "STRUCTURAL"
     tier: 0
-    owner: "Academic Layer"
-    source_of_truth: "Prisma Schema"
-    status: "evidence_pending"
-    invariants: ["INV-D401", "INV-D402"]
+    foreign_keys: ["class_students.class_id -> classes.id", "class_students.student_id -> profiles.user_id"]
+    indexes: ["class_students_class_id_student_id_key"]
+    delete_rule: "CASCADE"
+    security_rules: ["Admin and Teacher can add students to Class"]
+    events: ["EVT-STUDENT-JOINED"]
+    required_evidence: ["EV-005"]
     unknowns: ["UNK-004A"]
-    checklist:
-      prisma_schema: true
-      sql_migration: true
-      live_db_column: true
-      physical_fk: true
-      indexes: true
-      api_dto: true
-      api_payload: true
-      ui_binding: true
-      runtime_execution: true
-      delete_cascade: false
-      rls_security: false
-      performance: false
+    verification_status: "EVIDENCE_PENDING"
 
   - id: EDGE-004
     name: "Class -> Homework"
-    from: "Class"
-    to: "Homework"
-    type: "structural"
+    from_entity: "ENT-004"
+    to_entity: "ENT-007"
+    type: "STRUCTURAL"
     tier: 0
-    owner: "Homework Layer"
-    source_of_truth: "Prisma Schema"
-    status: "evidence_pending"
-    invariants: ["INV-301"]
+    foreign_keys: ["homeworks.class_id -> classes.id"]
+    indexes: ["homeworks_class_id_idx"]
+    delete_rule: "CASCADE"
+    security_rules: ["Assigned Teacher can create Homework for Class"]
+    events: ["EVT-HW-ASSIGNED"]
+    required_evidence: ["EV-005"]
     unknowns: ["UNK-004A"]
-    checklist:
-      prisma_schema: true
-      sql_migration: true
-      live_db_column: true
-      physical_fk: true
-      indexes: true
-      api_dto: true
-      api_payload: true
-      ui_binding: true
-      runtime_execution: false
-      delete_cascade: false
-      rls_security: false
-      performance: false
+    verification_status: "EVIDENCE_PENDING"
 
   - id: EDGE-005
     name: "Homework -> Submission"
-    from: "Homework"
-    to: "ExamSubmission"
-    type: "structural"
+    from_entity: "ENT-007"
+    to_entity: "ENT-008"
+    type: "STRUCTURAL"
     tier: 0
-    owner: "Grading Layer"
-    source_of_truth: "State_and_Event_Flows.md"
-    status: "evidence_pending"
-    invariants: ["INV-302", "INV-304"]
+    foreign_keys: ["exam_submissions.exam_id -> homeworks.exam_id"]
+    indexes: ["exam_submissions_exam_id_fkey"]
+    delete_rule: "CASCADE"
+    security_rules: ["Student can create submission for own class homework"]
+    events: ["EVT-HW-SUBMITTED", "EVT-HW-GRADED"]
+    required_evidence: ["EV-006", "EV-007"]
     unknowns: ["UNK-005A", "UNK-005B"]
-    checklist:
-      prisma_schema: true
-      sql_migration: true
-      live_db_column: true
-      physical_fk: true
-      indexes: true
-      api_dto: true
-      api_payload: true
-      ui_binding: true
-      runtime_execution: false
-      delete_cascade: false
-      rls_security: false
-      performance: false
+    verification_status: "EVIDENCE_PENDING"
 
-  - id: EDGE-B01
-    name: "Homework -> Student Workspace"
-    from: "Homework"
-    to: "Student Workspace"
-    type: "behavioral"
-    tier: 1
-    owner: "Student Portal"
-    source_of_truth: "State_and_Event_Flows.md"
-    status: "evidence_pending"
-    unknowns: ["UNK-B01A"]
-    checklist:
-      prisma_schema: true
-      sql_migration: true
-      live_db_column: true
-      physical_fk: false
-      indexes: false
-      api_dto: true
-      api_payload: true
-      ui_binding: true
-      runtime_execution: false
-      delete_cascade: false
-      rls_security: false
-      performance: false
-
-state_machines:
-  - entity: "Homework"
-    states: ["DRAFT", "PUBLISHED", "IN_PROGRESS", "SUBMITTED", "GRADED", "ARCHIVED"]
-    initial_state: "DRAFT"
-    forbidden_transitions:
-      - "DRAFT -> GRADED"
-      - "SUBMITTED -> PUBLISHED"
-
-  - entity: "ExamSubmission"
-    states: ["NOT_STARTED", "IN_PROGRESS", "SUBMITTED", "GRADED"]
-    initial_state: "NOT_STARTED"
-    forbidden_transitions:
-      - "GRADED -> IN_PROGRESS"
-
-exit_criteria_sprint_1:
-  tier_0_verified_required: true
-  zero_schema_drift: true
-  zero_orphan_records: true
-  zero_ambiguous_relationships: true
+evidence_closure_roadmap:
+  phase_a: "Evidence Acquisition (Close UNK-001A, UNK-004A, UNK-005A, UNK-005B via SQL/Logs)"
+  phase_b: "Integration Hardening (Retry, Rollback, Timeout, Idempotency)"
+  phase_c: "Performance Benchmark (Explain Analyze, Indexes, Latency < 200ms)"
+  phase_d: "Developer Experience (Auto DTO, OpenAPI, React Query Hooks)"
