@@ -1,0 +1,174 @@
+# NextBand Architecture Manifest (Bản Đồ Kiến Trúc Độc Nhất)
+# File này là Single Source of Truth cho toàn bộ Đồ thị Cạnh (Edge Graph), Tầng Phụ Thuộc và Trạng Thái Kiểm Toán.
+
+version: "1.0.0"
+last_audit: "2026-08-01"
+constitution_version: "1.0.0"
+
+edges:
+  - id: EDGE-001
+    name: "Course -> Class"
+    from: "Course"
+    to: "Class"
+    type: "structural"
+    tier: 0
+    owner: "Academic Layer"
+    source_of_truth: "ADR-002"
+    status: "verified"
+    invariants: ["INV-D01"]
+    checklist:
+      prisma_schema: true
+      sql_migration: true
+      live_db_column: true
+      physical_fk: true
+      indexes: true
+      api_dto: true
+      api_payload: true
+      ui_binding: true
+      runtime_execution: true
+      delete_cascade: false
+      rls_security: false
+      performance: false
+
+  - id: EDGE-002
+    name: "User -> Teacher Profile"
+    from: "User"
+    to: "Profile (Teacher)"
+    type: "structural"
+    tier: 0
+    owner: "Identity Layer"
+    source_of_truth: "ADR-001"
+    status: "verified"
+    invariants: ["INV-I01", "INV-102"]
+    checklist:
+      prisma_schema: true
+      sql_migration: true
+      live_db_column: true
+      physical_fk: true
+      indexes: true
+      api_dto: true
+      api_payload: true
+      ui_binding: true
+      runtime_execution: true
+      delete_cascade: false
+      rls_security: false
+      performance: false
+
+  - id: EDGE-003
+    name: "Class -> ClassStudent"
+    from: "Class"
+    to: "ClassStudent"
+    type: "structural"
+    tier: 0
+    owner: "Academic Layer"
+    source_of_truth: "Prisma Schema"
+    status: "evidence_pending"
+    invariants: ["INV-D401", "INV-D402"]
+    unknowns: ["UNK-004A"]
+    checklist:
+      prisma_schema: true
+      sql_migration: true
+      live_db_column: true
+      physical_fk: true
+      indexes: true
+      api_dto: true
+      api_payload: true
+      ui_binding: true
+      runtime_execution: true
+      delete_cascade: false
+      rls_security: false
+      performance: false
+
+  - id: EDGE-004
+    name: "Class -> Homework"
+    from: "Class"
+    to: "Homework"
+    type: "structural"
+    tier: 0
+    owner: "Homework Layer"
+    source_of_truth: "Prisma Schema"
+    status: "evidence_pending"
+    invariants: ["INV-301"]
+    unknowns: ["UNK-004A"]
+    checklist:
+      prisma_schema: true
+      sql_migration: true
+      live_db_column: true
+      physical_fk: true
+      indexes: true
+      api_dto: true
+      api_payload: true
+      ui_binding: true
+      runtime_execution: false
+      delete_cascade: false
+      rls_security: false
+      performance: false
+
+  - id: EDGE-005
+    name: "Homework -> Submission"
+    from: "Homework"
+    to: "ExamSubmission"
+    type: "structural"
+    tier: 0
+    owner: "Grading Layer"
+    source_of_truth: "State_and_Event_Flows.md"
+    status: "evidence_pending"
+    invariants: ["INV-302", "INV-304"]
+    unknowns: ["UNK-005A", "UNK-005B"]
+    checklist:
+      prisma_schema: true
+      sql_migration: true
+      live_db_column: true
+      physical_fk: true
+      indexes: true
+      api_dto: true
+      api_payload: true
+      ui_binding: true
+      runtime_execution: false
+      delete_cascade: false
+      rls_security: false
+      performance: false
+
+  - id: EDGE-B01
+    name: "Homework -> Student Workspace"
+    from: "Homework"
+    to: "Student Workspace"
+    type: "behavioral"
+    tier: 1
+    owner: "Student Portal"
+    source_of_truth: "State_and_Event_Flows.md"
+    status: "evidence_pending"
+    unknowns: ["UNK-B01A"]
+    checklist:
+      prisma_schema: true
+      sql_migration: true
+      live_db_column: true
+      physical_fk: false
+      indexes: false
+      api_dto: true
+      api_payload: true
+      ui_binding: true
+      runtime_execution: false
+      delete_cascade: false
+      rls_security: false
+      performance: false
+
+state_machines:
+  - entity: "Homework"
+    states: ["DRAFT", "PUBLISHED", "IN_PROGRESS", "SUBMITTED", "GRADED", "ARCHIVED"]
+    initial_state: "DRAFT"
+    forbidden_transitions:
+      - "DRAFT -> GRADED"
+      - "SUBMITTED -> PUBLISHED"
+
+  - entity: "ExamSubmission"
+    states: ["NOT_STARTED", "IN_PROGRESS", "SUBMITTED", "GRADED"]
+    initial_state: "NOT_STARTED"
+    forbidden_transitions:
+      - "GRADED -> IN_PROGRESS"
+
+exit_criteria_sprint_1:
+  tier_0_verified_required: true
+  zero_schema_drift: true
+  zero_orphan_records: true
+  zero_ambiguous_relationships: true

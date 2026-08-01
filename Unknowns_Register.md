@@ -1,45 +1,39 @@
-# Unknowns Register (Sổ Nhật Ký Các Điểm Chưa Xác Minh)
+# Unknowns Register (Sổ Nhật Ký Các Điểm Chưa Xác Minh Theo Cạnh Tích Hợp)
 
-Tài liệu này ghi nhận công khai toàn bộ các **Hành vi / Ràng buộc chưa được kiểm chứng bằng bằng chứng thực tế (Empirical Evidence)**. 
-Một hạng mục chỉ được xóa khỏi Sổ Nhật Ký này khi và chỉ khi có câu lệnh SQL Audit, Network Capture, hoặc E2E Test chứng minh thành công.
-
----
-
-## I. UNKNOWNS BẢNG CƠ SỞ DỮ LIỆU & RÀNG BUỘC (STRUCTURAL UNKNOWNS)
-
-- **UNK-001: Homework Cascade Deletion**
-  - *Câu hỏi*: Khi xóa một Lớp học (`Class`) hoặc Bài thi (`Exam`), bài tập `Homework` và các `Submission` liên quan có tự động bị xóa sỉ (`CASCADE`) hay nhận `SET NULL`?
-  - *Trạng thái*: **Unknown** (Cần chạy `information_schema.referential_constraints` trong Sprint 1).
-
-- **UNK-002: Attendance Unique Constraint**
-  - *Câu hỏi*: CSDL có chặn việc điểm danh trùng lặp 2 lần cho cùng một Học viên trong cùng một Buổi học (`sessionId, studentId`) hay không?
-  - *Trạng thái*: **Unknown** (Cần kiểm tra `pg_constraint`).
-
-- **UNK-003: Indexes on Foreign Key Columns**
-  - *Câu hỏi*: Tất cả các cột khóa ngoại (`course_id`, `teacher_id`, `class_id`, `student_id`) trên Supabase Cloud đã có Index để tối ưu tốc độ JOIN chưa?
-  - *Trạng thái*: **Unknown** (Cần kiểm tra `pg_indexes`).
+Tài liệu này theo dõi minh bạch các điểm **Chưa Kiểm Chứng (Unknowns)** được gom nhóm chính xác theo **Cạnh Tích Hợp (Integration Edge)**.
 
 ---
 
-## II. UNKNOWNS VẬN HÀNH BÀI TẬP VÀ ĐIỂM SỐ (BEHAVIORAL UNKNOWNS)
+## I. STRUCTURAL EDGE UNKNOWNS (CẠNH CẤU TRÚC CSDL)
 
-- **UNK-101: Submission Transaction Rollback**
-  - *Câu hỏi*: Khi Học viên nộp bài làm bị rớt mạng giữa chừng, bài nộp `ExamSubmission` và các câu trả lời `Answer` có bị lỡ dở (partial write) hay được Rollback sạch sẻ?
-  - *Trạng thái*: **Unknown** (Cần kiểm thử kịch bản Mất mạng/Failure).
+### EDGE-001: Course ──► Class
+- **UNK-001A: Cascade Deletion Behavior**
+  - *Chưa biết*: Khi xóa `Course`, các `Class` liên quan có bị xóa `CASCADE` hay nhận `RESTRICT`?
+  - *Trạng thái*: **Unknown** (Cần kiểm tra `information_schema.referential_constraints` trong Sprint 1).
 
-- **UNK-102: Concurrent Attendance Edits**
-  - *Câu hỏi*: Nếu 2 Giáo viên cùng chỉnh sửa điểm danh của một Lớp học tại cùng một thời điểm, CSDL xử lý xung đột ra sao (`Optimistic Locking` hay `Last-Write-Wins`)?
+### EDGE-004: Class ──► Homework
+- **UNK-004A: Homework Cascade Delete**
+  - *Chưa biết*: Khi xóa một Lớp học (`Class`), các bài tập `Homework` liên quan xử lý ra sao?
   - *Trạng thái*: **Unknown**.
 
-- **UNK-103: Teacher Grade Ownership Enforcement**
-  - *Câu hỏi*: Nếu Giáo viên A cố gắng sửa điểm hoặc nộp lời phê cho Học viên lớp Giáo viên B qua PostgREST API, RLS của Supabase có chặn `HTTP 403 Forbidden` hay không?
-  - *Trạng thái*: **Unknown** (Cần test RLS trong Sprint 3).
+### EDGE-005: Homework ──► Submission
+- **UNK-005A: Submission Retry & Rollback**
+  - *Chưa biết*: Khi nộp bài bị đứt mạng giữa chừng, CSDL Rollback hay để lại bản ghi dở dang?
+  - *Trạng thái*: **Unknown**.
+- **UNK-005B: Duplicate Submission Lock**
+  - *Chưa biết*: CSDL có chặn bằng Unique Constraint trường hợp Học viên gửi 2 request nộp bài cùng lúc (Concurrent Double-Click) hay không?
+  - *Trạng thái*: **Unknown**.
 
 ---
 
-## III. NHẬT KÝ THEO DÕI XÓA BỎ UNKNOWNS (REMOVAL LOG)
+## II. BEHAVIORAL EDGE UNKNOWNS (CẠNH HÀNH VI VẬN HÀNH)
 
-| Unknown Code | Mô tả | Ngày xóa bỏ | Bằng chứng xác minh (Evidence) |
-| :--- | :--- | :--- | :--- |
-| **UNK-000A** | `classes.course_id` có tồn tại trên DB không? | 01/08/2026 | **Resolved**: Bổ sung `course_id uuid REFERENCES courses(id)` |
-| **UNK-000B** | `classes.teacher_id` map sang `profiles.id` hay `user_id`? | 01/08/2026 | **Resolved**: Sửa DTO map chính xác sang `profiles.user_id` |
+### EDGE-B01: Homework ──► Student Workspace
+- **UNK-B01A: Workspace Render Latency**
+  - *Chưa biết*: Thời gian từ lúc Giáo viên bấm Giao bài đến lúc Workspace Học viên hiển thị bài tập qua API có `< 200ms` hay không?
+  - *Trạng thái*: **Unknown**.
+
+### EDGE-B02: Submission ──► Grade Queue
+- **UNK-B02A: Teacher Review Queue Trigger**
+  - *Chưa biết*: Học viên nộp bài thành công có lập tức đẩy dòng vào bảng danh sách cần chấm `getTeacherWorkspace()` hay không?
+  - *Trạng thái*: **Unknown**.
