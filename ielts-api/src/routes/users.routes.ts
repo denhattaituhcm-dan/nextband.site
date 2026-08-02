@@ -157,7 +157,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
     },
   );
 
-  // POST /users - Create user (admin only)
+  // POST /users - Create user (admin only with idempotency & compensation rollback protection)
   fastify.post(
     "/",
     { preHandler: [authenticate, requireRoles("admin")] },
@@ -174,45 +174,64 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         parentPhone,
       } = request.body as any;
 
-      if (!email) {
-        return reply.status(400).send({ error: "Yêu cầu email" });
+      if (!email || typeof email !== "string" || !email.includes("@")) {
+        return reply.status(400).send({ error: "Email không hợp lệ" });
       }
 
+      // 1. Idempotency Check: Prevent duplicate user registration
       const existing = await fastify.prisma.user.findUnique({
-        where: { email },
+        where: { email: email.trim().toLowerCase() },
       });
 
       if (existing) {
-        return reply.status(409).send({ error: "Email đã tồn tại" });
+        return reply.status(409).send({ error: "Email đã tồn tại trong hệ thống" });
       }
 
-      // Generate a random 16-character string if no password is provided
       const finalPassword = password || Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
       const hashedPassword = await hashPassword(finalPassword);
 
-      const user = await fastify.prisma.user.create({
-        data: {
-          email,
-          password: hashedPassword,
-          fullName,
-          gender,
-          dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined,
-          phone,
-          parentName,
-          parentPhone,
-          roles: {
-            create: { role },
-          },
-        },
-        include: { roles: true },
-      });
+      let createdUserId: string | null = null;
+      try {
+        // 2. Atomic Transaction: Create user and role mapping together
+        const user = await fastify.prisma.$transaction(async (tx) => {
+          const newUser = await tx.user.create({
+            data: {
+              email: email.trim().toLowerCase(),
+              password: hashedPassword,
+              fullName,
+              gender,
+              dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined,
+              phone,
+              parentName,
+              parentPhone,
+              roles: {
+                create: { role },
+              },
+            },
+            include: { roles: true },
+          });
+          createdUserId = newUser.id;
+          return newUser;
+        });
 
-      return reply.status(201).send({
-        id: user.id,
-        email: user.email,
-        fullName: user.fullName,
-        roles: user.roles.map((r) => r.role),
-      });
+        return reply.status(201).send({
+          id: user.id,
+          email: user.email,
+          fullName: user.fullName,
+          roles: user.roles.map((r) => r.role),
+          createdAt: user.createdAt,
+        });
+      } catch (err: any) {
+        // 3. Compensation Cleanup Safety: Rollback any partially created user state
+        if (createdUserId) {
+          try {
+            await fastify.prisma.user.delete({ where: { id: createdUserId } });
+          } catch (cleanupErr) {
+            request.log.error(cleanupErr, "Compensation cleanup error during user creation");
+          }
+        }
+        throw err;
+      }
     },
   );
 
