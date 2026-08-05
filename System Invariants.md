@@ -5,6 +5,14 @@ Mọi thay đổi về Mã nguồn UI, API DTO, hay Database Schema **BẮT BU�
 
 ---
 
+## 1.1 SYSTEM INVARIANT CORE-008: STUDENT IDENTIFIER BINDING
+
+- **Quy tắc Tối cao**: `class_students.student_id`, `class_attendance.student_id`, và tất cả các bảng liên quan đến Học viên **BẮT BUỘC** lưu `profiles.id` (Profile Primary Key UUID).
+- **Phân định Thực thể**: `profiles.id` đại diện cho thực thể nghiệp vụ "Học viên" (tồn tại duy nhất & NOT NULL kể cả khi học viên chưa kích hoạt Auth). `auth.users.id` (`profiles.user_id`) chỉ đại diện cho tài khoản xác thực Auth.
+- **Quy định Cấm**: Nghiêm cấm dùng `.or(id, user_id)` để lách lỗi. Tất cả API (`usersApi.list`, `classesApi.getById`, `addStudents`, `addStudentsByEmails`) phải truyền & nhận nhất quán `profiles.id`.
+
+---
+
 ## 1. PHÂN CẤP TIÊU CHUẨN TIER KIỂM TOÁN (TIERED AUDIT SYSTEM)
 
 ### Tier 0: Critical System Core (Release Blocking)

@@ -32,3 +32,12 @@ Tài liệu này ghi lại toàn bộ các **Quyết định Kiến trúc Tối 
 - **Bối cảnh**: Cú pháp `select("*, user_roles(role)")` từ SDK Supabase Client gây ra lỗi `HTTP 400 Bad Request` do vướng chính sách PostgREST Schema Cache.
 - **Quyết định (Decision)**: Tách thành 2 bước truy vấn độc lập: Lấy danh sách ID từ `user_roles` trước, sau đó query `profiles.in("user_id", allowedUserIds)`.
 - **Lý do (Rationale)**: Giúp câu lệnh REST API minh bạch, tối ưu tốc độ và không bị treo socket.
+
+---
+
+## ADR-005: Thống nhất Định danh Học viên (`class_students.student_id`) tham chiếu `profiles.id`
+- **Bối cảnh**: Bảng `profiles` chứa 2 cột định danh `id` (Profile PK) và `user_id` (Auth ID). Học viên tạo qua Email/Pre-provisioning chưa có tài khoản Auth nên `user_id` bị NULL.
+- **Quyết định (Decision)**: Mọi bảng tham chiếu Học viên (`class_students.student_id`, `class_attendance.student_id`, `submissions.student_id`) **BẮT BUỘC** lưu `profiles.id` (Profile PK).
+- **Lý do (Rationale)**: `profiles.id` là thuộc tính duy nhất luôn tồn tại (NOT NULL) bất kể học viên đã kích hoạt tài khoản hay chưa, đảm bảo tính toàn vẹn dữ liệu lâu dài mà không cần dùng workaround `.or(id, user_id)`.
+- **Hệ quả (Consequences)**: Tất cả API (`usersApi.list`, `classesApi.addStudents`, `classesApi.getById`) và các UI component chỉ làm việc duy nhất với `profiles.id`.
+
