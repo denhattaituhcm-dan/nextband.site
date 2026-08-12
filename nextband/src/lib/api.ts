@@ -75,6 +75,78 @@ export function normalizeExamData(exam: any): any {
   };
 }
 
+export function normalizeSectionData(section: any): any {
+  if (!section) return section;
+
+  const normalizeQuestions = (questions: any[]) =>
+    (questions || []).map((q: any) => ({
+      ...q,
+      id: q.id,
+      groupId: q.groupId || q.group_id,
+      questionType: q.questionType || q.question_type,
+      questionText: q.questionText || q.question_text || "",
+      options: Array.isArray(q.options)
+        ? q.options
+        : q.options
+        ? typeof q.options === "string"
+          ? JSON.parse(q.options)
+          : q.options
+        : [],
+      correctAnswer: q.correctAnswer ?? q.correct_answer ?? "",
+      audioUrl: q.audioUrl ?? (q.audio_url ? formatStorageUrl(q.audio_url) : null),
+      points: q.points ?? 1,
+      orderIndex: q.orderIndex ?? q.order_index ?? 0,
+    }));
+
+  const normalizeGroups = (groups: any[]) =>
+    (groups || []).map((g: any) => ({
+      ...g,
+      id: g.id,
+      sectionId: g.sectionId || g.section_id,
+      title: g.title ?? null,
+      passage: g.passage ?? null,
+      instructions: g.instructions ?? null,
+      audioUrl: g.audioUrl ?? (g.audio_url ? formatStorageUrl(g.audio_url) : null),
+      orderIndex: g.orderIndex ?? g.order_index ?? 0,
+      questions: normalizeQuestions(g.questions || []),
+    }));
+
+  return {
+    ...section,
+    id: section.id,
+    examId: section.examId || section.exam_id,
+    sectionType: section.sectionType || section.section_type,
+    title: section.title,
+    instructions: section.instructions ?? null,
+    content: section.content ?? [],
+    audioUrl: section.audioUrl ?? (section.audio_url ? formatStorageUrl(section.audio_url) : null),
+    audioScript: section.audioScript || section.audio_script || null,
+    durationMinutes: section.durationMinutes ?? section.duration_minutes ?? null,
+    orderIndex: section.orderIndex ?? section.order_index ?? 0,
+    questionGroups: normalizeGroups(section.questionGroups || section.question_groups || []),
+    question_groups: normalizeGroups(section.questionGroups || section.question_groups || []),
+  };
+}
+
+export function normalizeCourseData(course: any): any {
+  if (!course) return course;
+
+  return {
+    ...course,
+    id: course.id,
+    title: course.title,
+    description: course.description ?? null,
+    level: course.level || "beginner",
+    price: course.price ?? 0,
+    isPublished: course.isPublished ?? course.is_published ?? false,
+    isActive: course.isActive ?? course.is_active ?? true,
+    thumbnailUrl: course.thumbnailUrl ?? (course.thumbnail_url ? formatStorageUrl(course.thumbnail_url) : null),
+    createdAt: course.createdAt || course.created_at,
+    updatedAt: course.updatedAt || course.updated_at,
+    exams: Array.isArray(course.exams) ? course.exams.map(normalizeExamData) : [],
+  };
+}
+
 // =============================================
 // AUTH API
 // =============================================
@@ -545,10 +617,32 @@ export const sectionsApi = {
     return data;
   },
 
-  update: async (id: string, section: any) => {
+  update: async (
+    id: string,
+    section: Partial<{
+      title: string;
+      instructions: string;
+      content: any;
+      audioUrl: string;
+      audioScript: string;
+      durationMinutes: number;
+      orderIndex: number;
+      sectionType: string;
+    }>
+  ) => {
+    const updatePayload: Record<string, any> = {};
+    if (section.title !== undefined) updatePayload.title = section.title;
+    if (section.instructions !== undefined) updatePayload.instructions = section.instructions;
+    if (section.content !== undefined) updatePayload.content = section.content;
+    if (section.audioUrl !== undefined) updatePayload.audio_url = section.audioUrl;
+    if (section.audioScript !== undefined) updatePayload.audio_script = section.audioScript;
+    if (section.durationMinutes !== undefined) updatePayload.duration_minutes = section.durationMinutes;
+    if (section.orderIndex !== undefined) updatePayload.order_index = section.orderIndex;
+    if (section.sectionType !== undefined) updatePayload.section_type = section.sectionType;
+
     const { data, error } = await supabase
       .from("exam_sections")
-      .update(section)
+      .update(updatePayload)
       .eq("id", id)
       .select()
       .single();
@@ -566,6 +660,25 @@ export const sectionsApi = {
     return { success: true };
   },
 };
+
+// Types for Question Mutation Payloads
+export interface UpdateQuestionGroupPayload {
+  title?: string;
+  instructions?: string;
+  passage?: string;
+  audioUrl?: string;
+  orderIndex?: number;
+}
+
+export interface UpdateQuestionPayload {
+  questionType?: string;
+  questionText?: string;
+  options?: any;
+  correctAnswer?: string;
+  audioUrl?: string;
+  points?: number;
+  orderIndex?: number;
+}
 
 // =============================================
 // QUESTIONS API
@@ -596,10 +709,17 @@ export const questionsApi = {
     return data;
   },
 
-  updateGroup: async (id: string, group: any) => {
+  updateGroup: async (id: string, group: UpdateQuestionGroupPayload) => {
+    const updatePayload: Record<string, any> = {};
+    if (group.title !== undefined) updatePayload.title = group.title;
+    if (group.instructions !== undefined) updatePayload.instructions = group.instructions;
+    if (group.passage !== undefined) updatePayload.passage = group.passage;
+    if (group.audioUrl !== undefined) updatePayload.audio_url = group.audioUrl;
+    if (group.orderIndex !== undefined) updatePayload.order_index = group.orderIndex;
+
     const { data, error } = await supabase
       .from("question_groups")
-      .update(group)
+      .update(updatePayload)
       .eq("id", id)
       .select()
       .single();
@@ -646,10 +766,19 @@ export const questionsApi = {
     return data;
   },
 
-  update: async (id: string, question: any) => {
+  update: async (id: string, question: UpdateQuestionPayload) => {
+    const updatePayload: Record<string, any> = {};
+    if (question.questionType !== undefined) updatePayload.question_type = question.questionType;
+    if (question.questionText !== undefined) updatePayload.question_text = question.questionText;
+    if (question.options !== undefined) updatePayload.options = question.options;
+    if (question.correctAnswer !== undefined) updatePayload.correct_answer = question.correctAnswer;
+    if (question.audioUrl !== undefined) updatePayload.audio_url = question.audioUrl;
+    if (question.points !== undefined) updatePayload.points = question.points;
+    if (question.orderIndex !== undefined) updatePayload.order_index = question.orderIndex;
+
     const { data, error } = await supabase
       .from("questions")
-      .update(question)
+      .update(updatePayload)
       .eq("id", id)
       .select()
       .single();
