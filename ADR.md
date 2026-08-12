@@ -35,9 +35,42 @@ Tài liệu này ghi lại toàn bộ các **Quyết định Kiến trúc Tối 
 
 ---
 
-## ADR-005: Thống nhất Định danh Học viên (`class_students.student_id`) tham chiếu `profiles.id`
-- **Bối cảnh**: Bảng `profiles` chứa 2 cột định danh `id` (Profile PK) và `user_id` (Auth ID). Học viên tạo qua Email/Pre-provisioning chưa có tài khoản Auth nên `user_id` bị NULL.
-- **Quyết định (Decision)**: Mọi bảng tham chiếu Học viên (`class_students.student_id`, `class_attendance.student_id`, `submissions.student_id`) **BẮT BUỘC** lưu `profiles.id` (Profile PK).
-- **Lý do (Rationale)**: `profiles.id` là thuộc tính duy nhất luôn tồn tại (NOT NULL) bất kể học viên đã kích hoạt tài khoản hay chưa, đảm bảo tính toàn vẹn dữ liệu lâu dài mà không cần dùng workaround `.or(id, user_id)`.
-- **Hệ quả (Consequences)**: Tất cả API (`usersApi.list`, `classesApi.addStudents`, `classesApi.getById`) và các UI component chỉ làm việc duy nhất với `profiles.id`.
+## ADR-005: Thống nhất Định danh Học viên (`class_students.student_id`) tham chiếu Canonical User ID (`profiles.user_id`)
+- **Bối cảnh**: Bảng `profiles` chứa 2 cột định danh `id` (Profile PK) và `user_id` (Auth ID). Bảng `user_roles` và Supabase Auth Security context làm việc trực tiếp trên `auth.users.id` (`profiles.user_id`).
+- **Quyết định (Decision)**: Mọi bảng tham chiếu Học viên (`class_students.student_id`, `class_attendance.student_id`, `exam_submissions.student_id`) **BẮT BUỘC** lưu Canonical User ID (`profiles.user_id`).
+- **Lý do (Rationale)**: `profiles.user_id` là định danh duy nhất liên kết 1:1 với Supabase `auth.users.id` và hàm phân quyền Postgres `has_role(auth.uid(), ...)`.
+- **Hệ quả (Consequences)**: Tất cả API Client DTO (`usersApi.list`, `classesApi.addStudents`) luôn truyền `user_id` chuẩn làm primary identifier cho UI.
+
+---
+
+## ADR-006: Nghiêm cấm Bypass Mapper trong Tầng API Mutation (Strict Data Contract Boundary)
+- **Bối cảnh (Context)**: Việc truyền nguyên khối object Frontend (`camelCase`) hoặc biến `any` trực tiếp vào các lệnh `.insert()`, `.update()`, `.upsert()` của Supabase Client gây ra lỗi đứt gãy schema (ví dụ: lỗi `audioUrl` không tìm thấy trên bảng `question_groups`).
+- **Quyết định (Decision)**: **NGHIÊM CẤM** gọi `.update(frontendObject)` hoặc `.insert(frontendObject)` trực tiếp. Tất cả các mutation trong `src/lib/api.ts` **BẮT BUỘC** phải đi qua Explicit DTO Transformer (`camelCase` UI Model ➔ `snake_case` DB DTO).
+- **Lý do (Rationale)**: Bảo vệ hệ thống khỏi các biến UI rác (`isExpanded`, `isSelected`, `previewUrl`) lọt xuống Database và ngăn ngừa rủi ro SQL Schema Cache Incompatibility.
+- **Hệ quả (Consequences)**: Mọi hàm mutation API phải khai báo interface DTO rõ ràng (`UpdateQuestionGroupPayload`, `UpdateQuestionPayload`,...) và tự chịu trách nhiệm map thuộc tính.
+
+---
+
+## ADR-007: Thống nhất Canonical Identity toàn hệ thống (`auth.users.id` ↔ `profiles.user_id`)
+- **Bối cảnh (Context)**: Bảng `profiles` tồn tại 2 trường UUID (`id` và `user_id`). Việc nhầm lẫn giữa 2 ID này gây nguy cơ vi phạm khóa ngoại ở các bảng nghiệp vụ.
+- **Quyết định (Decision)**: **`auth.users.id` (`profiles.user_id`) là Canonical User ID DUY NHẤT** trên toàn hệ thống NextBand. `profiles.id` chỉ đóng vai trò làm Khóa chính đĩa của bảng Record, không được dùng làm tham chiếu nghiệp vụ.
+- **Lý do (Rationale)**: Tất cả 100% Khóa ngoại (`classes.teacher_id`, `class_students.student_id`, `enrollments.student_id`, `exam_submissions.student_id`) đều trỏ về `auth.users.id`.
+- **Hệ quả (Consequences)**: API DTO `usersApi.list()` gán `id = p.user_id` để đảm bảo Frontend UI luôn sử dụng duy nhất 1 ID chuẩn.
+
+---
+
+## ADR-008: Chuẩn hóa Boundary cho Tầng Đọc Dữ liệu (Read Model Boundary)
+- **Bối cảnh (Context)**: Database trả dữ liệu dạng `snake_case` (`audio_url`, `section_type`, `order_index`), khiến các React Component phải dùng vô số fallback đúp `group.audioUrl || group.audio_url`.
+- **Quyết định (Decision)**: Tất cả các API đọc dữ liệu (`sectionsApi.getById`, `coursesApi.getById`, `examsApi.getById`) **BẮT BUỘC** phải trả về Frontend Model chuẩn `camelCase` thuần túy qua hàm Data Normalizer độc lập (`normalizeSectionData`, `normalizeCourseData`).
+- **Lý do (Rationale)**: Cách ly React Component khỏi Database Schema, giúp code UI sạch sẽ và loại bỏ nguy cơ ghi đè dữ liệu rỗng do đọc sót thuộc tính.
+- **Hệ quả (Consequences)**: Loại bỏ toàn bộ các fallback OR expressions `foo.camel || foo_snake` trên UI.
+
+---
+
+## ADR-009: Quy chuẩn Xử lý Media URL và Tải nguyên File (Storage & Media Contract)
+- **Bối cảnh (Context)**: Hệ thống kế thừa các đường dẫn tương đối cũ (`/uploads/audio/...`) từ VPS cũ.
+- **Quyết định (Decision)**: 
+  1. Frontend và Read Mapper **BẮT BUỘC** đi qua hàm `formatStorageUrl` để quy đổi URL tương đối thành Supabase Storage Bucket Public URL.
+  2. **Bảo tồn tuyệt đối** các DB Reference hiện tại trong Database (Không tự ý xóa hay overwrite URL khi chưa có quy trình Verification).
+  3. Mọi rủi ro thiếu file (ví dụ `RISK-D01`: Missing Storage Object ở ID `3566e75f...`) phải được ghi nhận vào Risk Register để quản lý độc lập.
 

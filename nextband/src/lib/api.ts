@@ -354,7 +354,7 @@ export const coursesApi = {
       .single();
 
     if (error) throw error;
-    return data;
+    return normalizeCourseData(data);
   },
 
   getBySlug: async (slug: string) => {
@@ -365,7 +365,7 @@ export const coursesApi = {
       .single();
 
     if (error) throw error;
-    return data;
+    return normalizeCourseData(data);
   },
 
   create: async (course: {
@@ -593,7 +593,7 @@ export const sectionsApi = {
       .single();
 
     if (error) throw error;
-    return data;
+    return normalizeSectionData(data);
   },
 
   create: async (section: {
