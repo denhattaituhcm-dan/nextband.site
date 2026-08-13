@@ -7,7 +7,8 @@ const markAttendanceSchema = z.object({
     z.object({
       studentId: z.string().uuid(),
       status: z.enum(['UNMARKED', 'PRESENT', 'ABSENT', 'LATE', 'EXCUSED']),
-      notes: z.string().optional()
+      note: z.string().optional().nullable(),
+      notes: z.string().optional().nullable()
     })
   )
 });
@@ -15,7 +16,7 @@ const markAttendanceSchema = z.object({
 const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
   const attendanceService = new AttendanceService(fastify.prisma);
 
-  // GET /api/v1/classes/:classId/sessions/:sessionId/attendance
+  // 1. GET /classes/:classId/sessions/:sessionId/attendance
   fastify.get('/classes/:classId/sessions/:sessionId/attendance', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const user = request.user as { id: string; roles: string[] };
     const { classId, sessionId } = request.params as { classId: string; sessionId: string };
@@ -24,7 +25,7 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
     return reply.send({ success: true, data });
   });
 
-  // POST /api/v1/classes/:classId/sessions/:sessionId/attendance
+  // 2. POST /classes/:classId/sessions/:sessionId/attendance
   fastify.post('/classes/:classId/sessions/:sessionId/attendance', { preHandler: [fastify.authenticate] }, async (request, reply) => {
     const user = request.user as { id: string; roles: string[] };
     const { classId, sessionId } = request.params as { classId: string; sessionId: string };
@@ -33,6 +34,24 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
     const result = await attendanceService.markSessionAttendance(classId, sessionId, user.id, user.roles || ['teacher'], body.items);
     return reply.send(result);
   });
+
+  // 3. POST /classes/:classId/sessions/:sessionId/complete (Chốt buổi học)
+  fastify.post('/classes/:classId/sessions/:sessionId/complete', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    const user = request.user as { id: string; roles: string[] };
+    const { classId, sessionId } = request.params as { classId: string; sessionId: string };
+
+    const result = await attendanceService.completeSession(classId, sessionId, user.id, user.roles || ['teacher']);
+    return reply.send(result);
+  });
+
+  // 4. GET /classes/:classId/attendance-matrix (Ma trận chuyên cần & Backend Attendance Rate)
+  fastify.get('/classes/:classId/attendance-matrix', { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    const { classId } = request.params as { classId: string };
+
+    const data = await attendanceService.getAttendanceMatrix(classId);
+    return reply.send({ success: true, data });
+  });
 };
 
 export default attendanceRoutes;
+
