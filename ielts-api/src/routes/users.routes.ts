@@ -100,6 +100,203 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
     },
   );
 
+  // GET /users/students-management - Real-data Student Management View Model DTO
+  fastify.get(
+    "/students-management",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { page = 1, limit = 10, search } = (request.query || {}) as any;
+      const pageNum = Number(page) || 1;
+      const limitNum = Number(limit) || 10;
+      const skip = (pageNum - 1) * limitNum;
+
+      const user = request.user;
+      const isAdmin = user.roles.includes("admin");
+      const isTeacher = user.roles.includes("teacher");
+
+      const where: any = {
+        roles: {
+          some: { role: "student" },
+        },
+      };
+
+      if (isTeacher && !isAdmin) {
+        const teacherStudentIds = await getTeacherStudentIds(fastify.prisma, user.id);
+        where.id = { in: teacherStudentIds };
+      }
+
+      if (search) {
+        where.OR = [
+          { email: { contains: search, mode: "insensitive" } },
+          { fullName: { contains: search, mode: "insensitive" } },
+        ];
+      }
+
+      const [studentsData, total] = await Promise.all([
+        fastify.prisma.user.findMany({
+          where,
+          skip,
+          take: limitNum,
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true,
+            email: true,
+            fullName: true,
+            avatarUrl: true,
+            phone: true,
+            isActive: true,
+            createdAt: true,
+            classStudents: {
+              include: {
+                class: {
+                  select: { id: true, name: true, courseId: true, course: { select: { id: true, title: true } } }
+                }
+              }
+            },
+            submissions: {
+              select: { id: true, status: true, score: true, submittedAt: true, homework: { select: { title: true } } }
+            },
+            examSubmissions: {
+              select: { id: true, status: true, totalScore: true, submittedAt: true, exam: { select: { title: true } } }
+            },
+            attendances: {
+              select: { id: true, status: true, sessionDate: true }
+            }
+          }
+        }),
+        fastify.prisma.user.count({ where }),
+      ]);
+
+      const items = await Promise.all(studentsData.map(async (st) => {
+        // 1. Classes array (Deduplicated per student)
+        const classesMap = new Map<string, any>();
+        (st.classStudents || []).forEach((cs) => {
+          if (cs.class) {
+            classesMap.set(cs.class.id, {
+              id: cs.class.id,
+              name: cs.class.name,
+              courseId: cs.class.courseId,
+              courseTitle: cs.class.course?.title || undefined,
+            });
+          }
+        });
+        const classes = Array.from(classesMap.values());
+        const classIds = classes.map((c) => c.id);
+
+        // 2. Count total assigned homeworks across student's classes
+        let totalAssignedCount = 0;
+        if (classIds.length > 0) {
+          const hwCount = await fastify.prisma.homework.count({
+            where: { classId: { in: classIds } }
+          });
+          const exCount = await fastify.prisma.exam.count({
+            where: { course: { classes: { some: { id: { in: classIds } } } }, isPublished: true, isActive: true }
+          });
+          totalAssignedCount = hwCount + exCount;
+        }
+
+        // 3. Homework & Submissions stats (submittedCount = submitted + graded)
+        const hwSubs = st.submissions || [];
+        const examSubs = st.examSubmissions || [];
+
+        const submittedHwCount = hwSubs.filter((s) => s.status === "SUBMITTED" || s.status === "GRADED" || s.status === "submitted" || s.status === "graded").length;
+        const submittedExamCount = examSubs.filter((s) => s.status === "SUBMITTED" || s.status === "GRADED" || s.status === "submitted" || s.status === "graded").length;
+        const submittedCount = submittedHwCount + submittedExamCount;
+
+        const gradedHwCount = hwSubs.filter((s) => s.status === "GRADED" || s.status === "graded").length;
+        const gradedExamCount = examSubs.filter((s) => s.status === "GRADED" || s.status === "graded").length;
+        const gradedCount = gradedHwCount + gradedExamCount;
+
+        const homeworkPercentage = totalAssignedCount > 0 
+          ? Math.min(100, Math.round((submittedCount / totalAssignedCount) * 100))
+          : null;
+
+        // 4. Attendance stats
+        const attendances = st.attendances || [];
+        const totalSessions = attendances.length;
+        const attendedCount = attendances.filter((a) => a.status === "PRESENT" || a.status === "present").length;
+        const attendancePercentage = totalSessions > 0 
+          ? Math.round((attendedCount / totalSessions) * 100)
+          : null;
+
+        // 5. Last Activity
+        let lastActivity: any = null;
+        const allActivities: any[] = [];
+        hwSubs.forEach((s) => {
+          if (s.submittedAt) {
+            allActivities.push({
+              type: "submission",
+              title: s.homework?.title || "Bài tập",
+              score: s.score ? Number(s.score) : null,
+              timestamp: new Date(s.submittedAt).toISOString(),
+            });
+          }
+        });
+        examSubs.forEach((s) => {
+          if (s.submittedAt) {
+            allActivities.push({
+              type: "submission",
+              title: s.exam?.title || "Bài thi",
+              score: s.totalScore ? Number(s.totalScore) : null,
+              timestamp: new Date(s.submittedAt).toISOString(),
+            });
+          }
+        });
+
+        if (allActivities.length > 0) {
+          allActivities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+          lastActivity = allActivities[0];
+        }
+
+        // 6. Server Academic Health Score Calculation
+        let academicHealth: number | null = null;
+        if (totalAssignedCount > 0) {
+          const hwProgressRatio = submittedCount / totalAssignedCount;
+          const gradedRatio = submittedCount > 0 ? (gradedCount / submittedCount) : 0;
+
+          if (totalSessions > 0) {
+            const attRatio = attendedCount / totalSessions;
+            const score = (attRatio * 0.3 + hwProgressRatio * 0.4 + gradedRatio * 0.3) * 100;
+            academicHealth = Math.round(score);
+          } else {
+            const score = (hwProgressRatio * 0.6 + gradedRatio * 0.4) * 100;
+            academicHealth = Math.round(score);
+          }
+        }
+
+        return {
+          id: st.id,
+          fullName: st.fullName || st.email.split("@")[0],
+          email: st.email,
+          avatarUrl: st.avatarUrl,
+          phone: st.phone,
+          isActive: st.isActive,
+          createdAt: st.createdAt,
+          classes,
+          homework: {
+            submittedCount,
+            gradedCount,
+            totalAssignedCount,
+            percentage: homeworkPercentage,
+          },
+          attendance: {
+            attendedCount,
+            totalSessions,
+            percentage: attendancePercentage,
+          },
+          lastActivity,
+          academicHealth,
+        };
+      }));
+
+      return reply.send({
+        success: true,
+        data: withFileUrlsMany(items, ["avatarUrl"]),
+        meta: { total, page: pageNum, limit: limitNum, totalPages: Math.ceil(total / limitNum) },
+      });
+    }
+  );
+
   // GET /users/:id
   fastify.get<{ Params: { id: string } }>(
     "/:id",
