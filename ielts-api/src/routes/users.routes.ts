@@ -146,31 +146,31 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
             phone: true,
             isActive: true,
             createdAt: true,
-            classStudents: {
+            classesAsStudent: {
               include: {
                 class: {
                   select: { id: true, name: true, courseId: true, course: { select: { id: true, title: true } } }
                 }
               }
             },
-            submissions: {
+            homeworkSubmissions: {
               select: { id: true, status: true, score: true, submittedAt: true, homework: { select: { title: true } } }
             },
-            examSubmissions: {
+            submissions: {
               select: { id: true, status: true, totalScore: true, submittedAt: true, exam: { select: { title: true } } }
             },
-            attendances: {
-              select: { id: true, status: true, sessionDate: true }
+            attendanceRecords: {
+              select: { id: true, status: true, createdAt: true }
             }
           }
         }),
         fastify.prisma.user.count({ where }),
       ]);
 
-      const items = await Promise.all(studentsData.map(async (st) => {
+      const items = await Promise.all(studentsData.map(async (st: any) => {
         // 1. Classes array (Deduplicated per student)
         const classesMap = new Map<string, any>();
-        (st.classStudents || []).forEach((cs) => {
+        (st.classesAsStudent || []).forEach((cs: any) => {
           if (cs.class) {
             classesMap.set(cs.class.id, {
               id: cs.class.id,
@@ -181,40 +181,36 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           }
         });
         const classes = Array.from(classesMap.values());
-        const classIds = classes.map((c) => c.id);
 
-        // 2. Count total assigned homeworks across student's classes
-        let totalAssignedCount = 0;
-        if (classIds.length > 0) {
-          const hwCount = await fastify.prisma.homework.count({
-            where: { classId: { in: classIds } }
-          });
-          const exCount = await fastify.prisma.exam.count({
-            where: { course: { classes: { some: { id: { in: classIds } } } }, isPublished: true, isActive: true }
-          });
-          totalAssignedCount = hwCount + exCount;
-        }
+        // 2. Class IDs for assigned homeworks count
+        const studentClassIds = classes.map((c) => c.id);
+        const totalAssignedCount = studentClassIds.length > 0
+          ? await fastify.prisma.homework.count({
+              where: { classId: { in: studentClassIds } }
+            })
+          : 0;
 
         // 3. Homework & Submissions stats (submittedCount = submitted + graded)
-        const hwSubs = st.submissions || [];
-        const examSubs = st.examSubmissions || [];
+        const hwSubs = st.homeworkSubmissions || [];
+        const examSubs = st.submissions || [];
+        
+        const hwSubmitted = hwSubs.filter((s: any) => s.status === "submitted" || s.status === "graded" || s.status === "SUBMITTED" || s.status === "GRADED").length;
+        const hwGraded = hwSubs.filter((s: any) => s.status === "graded" || s.status === "GRADED").length;
+        
+        const examSubmitted = examSubs.filter((s: any) => s.status === "submitted" || s.status === "graded" || s.status === "SUBMITTED" || s.status === "GRADED").length;
+        const examGraded = examSubs.filter((s: any) => s.status === "graded" || s.status === "GRADED").length;
 
-        const submittedHwCount = hwSubs.filter((s) => s.status === "SUBMITTED" || s.status === "GRADED" || s.status === "submitted" || s.status === "graded").length;
-        const submittedExamCount = examSubs.filter((s) => s.status === "SUBMITTED" || s.status === "GRADED" || s.status === "submitted" || s.status === "graded").length;
-        const submittedCount = submittedHwCount + submittedExamCount;
-
-        const gradedHwCount = hwSubs.filter((s) => s.status === "GRADED" || s.status === "graded").length;
-        const gradedExamCount = examSubs.filter((s) => s.status === "GRADED" || s.status === "graded").length;
-        const gradedCount = gradedHwCount + gradedExamCount;
+        const submittedCount = hwSubmitted + examSubmitted;
+        const gradedCount = hwGraded + examGraded;
 
         const homeworkPercentage = totalAssignedCount > 0 
           ? Math.min(100, Math.round((submittedCount / totalAssignedCount) * 100))
           : null;
 
         // 4. Attendance stats
-        const attendances = st.attendances || [];
+        const attendances = st.attendanceRecords || [];
         const totalSessions = attendances.length;
-        const attendedCount = attendances.filter((a) => a.status === "PRESENT" || a.status === "present").length;
+        const attendedCount = attendances.filter((a: any) => a.status === "PRESENT" || a.status === "present").length;
         const attendancePercentage = totalSessions > 0 
           ? Math.round((attendedCount / totalSessions) * 100)
           : null;
@@ -222,7 +218,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         // 5. Last Activity
         let lastActivity: any = null;
         const allActivities: any[] = [];
-        hwSubs.forEach((s) => {
+        hwSubs.forEach((s: any) => {
           if (s.submittedAt) {
             allActivities.push({
               type: "submission",
@@ -232,7 +228,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
             });
           }
         });
-        examSubs.forEach((s) => {
+        examSubs.forEach((s: any) => {
           if (s.submittedAt) {
             allActivities.push({
               type: "submission",

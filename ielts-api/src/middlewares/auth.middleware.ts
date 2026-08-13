@@ -34,6 +34,8 @@ export function requireRoles(...roles: string[]) {
         .send({ error: "Unauthorized", message: "Invalid or expired token" });
     }
   };
+}
+
 export function requireActiveStudentEnrollment() {
   return async (request: FastifyRequest, reply: FastifyReply) => {
     try {

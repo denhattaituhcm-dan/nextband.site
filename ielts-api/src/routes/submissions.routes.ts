@@ -28,6 +28,23 @@ const OBJECTIVE_TYPES = new Set([
 const MANUAL_TYPES = new Set(["essay", "speaking"]);
 const MAX_EXAM_ATTEMPTS = 3;
 
+function convertOptionValToIndex(val: any): number | null {
+  if (val === null || val === undefined) return null;
+  const str = String(val).trim().toUpperCase();
+  if (!str) return null;
+  if (/^\d+$/.test(str)) {
+    const num = parseInt(str, 10);
+    return isNaN(num) ? null : num;
+  }
+  if (/^[A-Z]$/.test(str)) {
+    return str.charCodeAt(0) - 65;
+  }
+  const romanMap: Record<string, number> = {
+    I: 0, II: 1, III: 2, IV: 3, V: 4, VI: 5, VII: 6, VIII: 7, IX: 8, X: 9, XI: 10, XII: 11
+  };
+  return romanMap[str] !== undefined ? romanMap[str] : null;
+}
+
 function getRemainingSeconds(startedAt: Date | null, durationMinutes: number | null) {
   const safeDuration = Math.max(1, durationMinutes || 60);
   if (!startedAt) return safeDuration * 60;
@@ -62,7 +79,7 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
   };
 
   const normalizeSubmissionStatus = async (submission: any) => {
-    if (!submission || submission.status !== "submitted" || !submission.examId) {
+    if (!submission || (submission.status !== "submitted" && submission.status !== "SUBMITTED") || !submission.examId) {
       return submission;
     }
 
@@ -76,14 +93,14 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
     await fastify.prisma.examSubmission.update({
       where: { id: submission.id },
       data: {
-        status: "graded",
+        status: "GRADED" as any,
         gradedAt,
       },
     });
 
     return {
       ...submission,
-      status: "graded",
+      status: "GRADED",
       gradedAt,
     };
   };
@@ -465,7 +482,7 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
       await fastify.prisma.examSubmission.update({
         where: { id: existing.id },
         data: {
-          status: "submitted",
+          status: "SUBMITTED" as any,
           submittedAt: new Date(),
         },
       });
@@ -504,7 +521,7 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
           where: {
             examId,
             studentId: user.id,
-            status: "in_progress",
+            status: "IN_PROGRESS" as any,
           },
         });
         if (inProgress) {
@@ -538,7 +555,7 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
           await tx.examSubmission.update({
             where: { id: inProgress.id },
             data: {
-              status: "submitted",
+              status: "SUBMITTED" as any,
               submittedAt: new Date(),
             },
           });
@@ -568,7 +585,7 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
           data: {
             examId,
             studentId: user.id,
-            status: "in_progress",
+            status: "IN_PROGRESS" as any,
             startedAt: new Date(),
           },
         });
@@ -616,7 +633,7 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
         return reply.status(403).send({ error: "Từ chối truy cập" });
       }
 
-      if (submission.status !== "in_progress") {
+      if (submission.status !== "in_progress" && submission.status !== "IN_PROGRESS") {
         if (submit) {
           // Idempotent return for retry / double-submit
           return reply.send({
@@ -880,17 +897,17 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
         }
 
         const normalizedObjectiveScore = Math.round(objectiveScore * 100) / 100;
-        const finalStatus = hasManualQuestions ? "submitted" : "graded";
+        const finalStatus = hasManualQuestions ? "SUBMITTED" : "GRADED";
 
         const updatedSubmission = await tx.examSubmission.update({
           where: { id: id },
           data: {
-            status: finalStatus,
+            status: finalStatus as any,
             submittedAt: new Date(),
             correctAnswers,
             totalQuestions,
             totalScore: normalizedObjectiveScore,
-            ...(finalStatus === "graded" && { gradedAt: new Date() }),
+            ...(finalStatus === "GRADED" && { gradedAt: new Date() }),
           },
         });
 
@@ -957,14 +974,13 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
         } catch (progressError) {
           console.error("[Progress] CRITICAL ERROR:", progressError);
         }
-      }
 
-      return fastify.prisma.examSubmission.findUnique({
-        where: { id },
-        include: { answers: true },
-      });
-    },
-  );
+        return fastify.prisma.examSubmission.findUnique({
+          where: { id },
+          include: { answers: true },
+        });
+      },
+    );
 
   // POST /submissions/:id/grade - Grade submission (admin/teacher only)
   fastify.post<{ Params: { id: string } }>(
@@ -1025,7 +1041,7 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
       const updated = await fastify.prisma.examSubmission.update({
         where: { id },
         data: {
-          status: "graded",
+          status: "GRADED" as any,
           totalScore: totalScore,
           gradedBy: user.id,
           gradedAt: new Date(),
@@ -1036,7 +1052,7 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
         },
       });
 
-      const formattedAnswers = updated.answers.map((answer) => ({
+      const formattedAnswers = (updated as any).answers.map((answer: any) => ({
         ...answer,
         audioUrl: toFileUrl(answer.audioUrl),
       }));

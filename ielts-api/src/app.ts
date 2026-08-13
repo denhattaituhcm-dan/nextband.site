@@ -53,10 +53,35 @@ export async function buildApp() {
     return payload;
   });
 
-  // CORS
+  // CORS - Robust Multi-Origin & Vercel Preview Support
   await app.register(cors, {
-    origin: env.NODE_ENV === "production" ? env.FRONTEND_URL : true,
+    origin: (origin, cb) => {
+      if (!origin || env.NODE_ENV !== "production") {
+        return cb(null, true);
+      }
+
+      const allowedOrigins = [
+        env.FRONTEND_URL,
+        "https://nextband.site",
+        "https://www.nextband.site",
+      ].flatMap((url) => (url ? url.split(",").map((s) => s.trim()) : []));
+
+      let isAllowed = allowedOrigins.some((allowed) => origin === allowed || allowed === "*");
+
+      try {
+        const hostname = new URL(origin).hostname;
+        if (hostname.endsWith(".vercel.app") || hostname === "localhost") {
+          isAllowed = true;
+        }
+      } catch (e) {
+        // Ignored
+      }
+
+      cb(null, isAllowed);
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   });
 
   // File upload (multipart)
