@@ -273,6 +273,7 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
         include: {
           exam: {
             include: {
+              course: true,
               sections: {
                 orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }],
                 include: {
@@ -616,106 +617,117 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
       }
 
       if (submission.status !== "in_progress") {
+        if (submit) {
+          // Idempotent return for retry / double-submit
+          return reply.send({
+            id: submission.id,
+            status: submission.status,
+            submittedAt: submission.submittedAt,
+            correctAnswers: submission.correctAnswers,
+            totalQuestions: submission.totalQuestions,
+            totalScore: submission.totalScore,
+          });
+        }
         return reply.status(400).send({ error: "Không thể sửa bài đã nộp" });
       }
 
-      // Save answers
-      if (answers && Array.isArray(answers)) {
-        for (const answer of answers) {
-          await fastify.prisma.answer.upsert({
-            where: {
-              submissionId_questionId: {
+      // Execute submission updates and auto-grading inside a single Prisma Transaction
+      const resultData = await fastify.prisma.$transaction(async (tx) => {
+        // 1. Save / Upsert answers
+        if (answers && Array.isArray(answers)) {
+          for (const answer of answers) {
+            await tx.answer.upsert({
+              where: {
+                submissionId_questionId: {
+                  submissionId: id,
+                  questionId: answer.questionId,
+                },
+              },
+              update: {
+                answerText: answer.answerText,
+                audioUrl: answer.audioUrl,
+              },
+              create: {
                 submissionId: id,
                 questionId: answer.questionId,
+                answerText: answer.answerText,
+                audioUrl: answer.audioUrl,
               },
-            },
-            update: {
-              answerText: answer.answerText,
-              audioUrl: answer.audioUrl,
-            },
-            create: {
-              submissionId: id,
-              questionId: answer.questionId,
-              answerText: answer.answerText,
-              audioUrl: answer.audioUrl,
-            },
-          });
+            });
+          }
         }
-      }
 
-      // Submit if requested
-      if (submit) {
-        // === Auto-grading logic ===
+        if (!submit) {
+          return { status: submission.status };
+        }
+
+        // 2. Auto-grading logic inside Transaction
         let correctAnswers = 0;
         let totalQuestions = 0;
         let objectiveScore = 0;
         let hasManualQuestions = false;
 
-        try {
-          // Get all questions from the exam
-          const examWithQuestions = await fastify.prisma.exam.findUnique({
-            where: { id: submission.examId },
-            include: {
-              sections: {
-                include: {
-                  questionGroups: {
-                    include: {
-                      questions: true,
-                    },
+        const examWithQuestions = await tx.exam.findUnique({
+          where: { id: submission.examId },
+          include: {
+            sections: {
+              include: {
+                questionGroups: {
+                  include: {
+                    questions: true,
                   },
                 },
               },
             },
+          },
+        });
+
+        if (examWithQuestions) {
+          const allQuestions = examWithQuestions.sections.flatMap((s) =>
+            s.questionGroups.flatMap((g) => g.questions)
+          );
+          hasManualQuestions = allQuestions.some((question) =>
+            MANUAL_TYPES.has(question.questionType),
+          );
+
+          const submittedAnswers = await tx.answer.findMany({
+            where: { submissionId: id },
           });
+          const answerMap = new Map(
+            submittedAnswers.map((a) => [a.questionId, a.answerText])
+          );
 
-          if (examWithQuestions) {
-            const allQuestions = examWithQuestions.sections.flatMap((s) =>
-              s.questionGroups.flatMap((g) => g.questions)
-            );
-            hasManualQuestions = allQuestions.some((question) =>
-              MANUAL_TYPES.has(question.questionType),
-            );
+          for (const question of allQuestions) {
+            if (
+              !OBJECTIVE_TYPES.has(question.questionType) ||
+              !question.correctAnswer
+            ) {
+              continue;
+            }
 
-            // Get all submitted answers for this submission
-            const submittedAnswers = await fastify.prisma.answer.findMany({
-              where: { submissionId: id },
-            });
-            const answerMap = new Map(
-              submittedAnswers.map((a) => [a.questionId, a.answerText])
-            );
+            totalQuestions++;
 
-            for (const question of allQuestions) {
-              if (
-                !OBJECTIVE_TYPES.has(question.questionType) ||
-                !question.correctAnswer
-              ) {
-                continue;
-              }
+            const studentAnswer = answerMap.get(question.id);
+            if (!studentAnswer) continue;
 
-              totalQuestions++;
+            const correctAnswer = question.correctAnswer.trim();
 
-              const studentAnswer = answerMap.get(question.id);
-              if (!studentAnswer) continue;
+            // Handle fill_blank with multiple blanks (JSON format)
+            if (question.questionType === "fill_blank") {
+              try {
+                const parsedStudent = JSON.parse(studentAnswer);
+                const parsedCorrect = JSON.parse(correctAnswer);
 
-              const correctAnswer = question.correctAnswer.trim();
+                if (
+                  typeof parsedStudent === "object" &&
+                  typeof parsedCorrect === "object" &&
+                  parsedStudent !== null &&
+                  parsedCorrect !== null
+                ) {
+                  const keys = Object.keys(parsedCorrect);
+                  const blankCount = keys.length;
 
-              // Handle fill_blank with multiple blanks (JSON format)
-              if (question.questionType === "fill_blank") {
-                try {
-                  const parsedStudent = JSON.parse(studentAnswer);
-                  const parsedCorrect = JSON.parse(correctAnswer);
-
-                  if (
-                    typeof parsedStudent === "object" &&
-                    typeof parsedCorrect === "object" &&
-                    parsedStudent !== null &&
-                    parsedCorrect !== null
-                  ) {
-                    const keys = Object.keys(parsedCorrect);
-                    const blankCount = keys.length;
-
-                    if (blankCount === 0) continue;
-
+                  if (blankCount > 0) {
                     let correctBlanks = 0;
 
                     for (const key of keys) {
@@ -730,160 +742,147 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
                       }
                     }
 
-                    // Add the number of blanks minus 1 to the total questions, 
-                    // since the question itself was already counted as 1.
                     totalQuestions += (blankCount - 1);
                     correctAnswers += correctBlanks;
                     const partialScore = correctBlanks;
                     objectiveScore += partialScore;
 
-                    // Score the answer by the number of correct blanks
                     const answerRecord = submittedAnswers.find(a => a.questionId === question.id);
                     if (answerRecord) {
-                      await fastify.prisma.answer.update({
+                      await tx.answer.update({
                         where: { id: answerRecord.id },
                         data: { score: partialScore },
                       });
                     }
                     continue;
                   }
-                } catch {
-                  // Not JSON, fall through to string comparison
                 }
+              } catch {
+                // Fall through to string comparison
               }
+            }
 
-              // Handle matching with JSON answers
-              if (question.questionType === "matching") {
-                try {
-                  const parsedStudent = JSON.parse(studentAnswer);
-                  const parsedCorrect = JSON.parse(correctAnswer);
+            // Handle matching with JSON answers using convertOptionValToIndex
+            if (question.questionType === "matching") {
+              try {
+                const parsedStudent = JSON.parse(studentAnswer);
+                const parsedCorrect = JSON.parse(correctAnswer);
 
-                  if (
-                    typeof parsedStudent === "object" &&
-                    typeof parsedCorrect === "object" &&
-                    parsedStudent !== null &&
-                    parsedCorrect !== null &&
-                    parsedCorrect.pairs
-                  ) {
-                    const keys = Object.keys(parsedCorrect.pairs);
-                    const pairsCount = keys.length;
+                if (
+                  typeof parsedStudent === "object" &&
+                  typeof parsedCorrect === "object" &&
+                  parsedStudent !== null &&
+                  parsedCorrect !== null &&
+                  parsedCorrect.pairs
+                ) {
+                  const keys = Object.keys(parsedCorrect.pairs);
+                  const pairsCount = keys.length;
 
-                    if (pairsCount === 0) continue;
-
+                  if (pairsCount > 0) {
                     let correctPairs = 0;
 
                     for (const key of keys) {
-                      const correctVal = String(parsedCorrect.pairs[key] || "").trim();
-                      const studentVal = String(parsedStudent[key] || "").trim();
+                      const correctIdx = convertOptionValToIndex(parsedCorrect.pairs[key]);
+                      const studentIdx = convertOptionValToIndex(parsedStudent[key]);
 
-                      if (correctVal === studentVal) {
+                      if (correctIdx !== null && studentIdx !== null && correctIdx === studentIdx) {
                         correctPairs++;
                       }
                     }
 
-                    // Add the number of pairs minus 1 to the total questions, 
-                    // since the question itself was already counted as 1.
                     totalQuestions += (pairsCount - 1);
                     correctAnswers += correctPairs;
                     const totalPoints = question.points || 1;
                     const partialScore = (correctPairs / pairsCount) * totalPoints;
                     objectiveScore += partialScore;
 
-                    // Set fractional score based on correct pairs
                     const answerRecord = submittedAnswers.find(a => a.questionId === question.id);
                     if (answerRecord) {
-                      await fastify.prisma.answer.update({
+                      await tx.answer.update({
                         where: { id: answerRecord.id },
                         data: { score: partialScore },
                       });
                     }
                     continue;
                   }
-                } catch {
-                  // Not JSON, fall through to string comparison
                 }
-              }
-
-              // Support pipe-delimited alternatives in correctAnswer
-              const alternatives = correctAnswer
-                .split("|")
-                .map((a: string) => a.trim())
-                .filter(Boolean);
-
-              let isCorrect = false;
-              let questionScore = 0;
-              const questionPoints = question.points || 1;
-
-              if (
-                (question.questionType === "multiple_choice" ||
-                  question.questionType === "listening") &&
-                alternatives.length > 1
-              ) {
-                // Multi-select MCQ/listening answers are stored as JSON arrays.
-                // Fallback to comma/pipe strings for backward compatibility.
-                let studentSelections: string[] = [];
-                try {
-                  const parsed = JSON.parse(studentAnswer);
-                  if (Array.isArray(parsed)) {
-                    studentSelections = parsed.map((v) => String(v).trim());
-                  }
-                } catch {
-                  studentSelections = studentAnswer
-                    .split("|")
-                    .flatMap((part) => part.split(","))
-                    .map((v) => v.trim())
-                    .filter(Boolean);
-                }
-
-                const normalizedStudent = studentSelections.map((v) => v.toLowerCase());
-                const normalizedCorrect = alternatives.map((v) => v.toLowerCase());
-
-                const correctHits = normalizedStudent.filter((v) =>
-                  normalizedCorrect.includes(v),
-                ).length;
-                const wrongSelections = normalizedStudent.filter(
-                  (v) => !normalizedCorrect.includes(v),
-                ).length;
-
-                // Partial scoring: (hits - wrong) / total_correct, min 0
-                const ratio = Math.max(
-                  0,
-                  (correctHits - wrongSelections) / normalizedCorrect.length,
-                );
-                questionScore = Math.round(ratio * questionPoints * 100) / 100;
-                isCorrect = questionScore >= questionPoints;
-              } else {
-                isCorrect = alternatives
-                  .map((a) => a.toLowerCase())
-                  .includes(studentAnswer.trim().toLowerCase());
-                questionScore = isCorrect ? questionPoints : 0;
-              }
-
-              if (isCorrect) {
-                correctAnswers++;
-              }
-
-              objectiveScore += questionScore;
-
-              // Set score on the individual answer record
-              const answerRecord = submittedAnswers.find(a => a.questionId === question.id);
-              if (answerRecord) {
-                await fastify.prisma.answer.update({
-                  where: { id: answerRecord.id },
-                  data: { score: questionScore },
-                });
+              } catch {
+                // Fall through to string comparison
               }
             }
 
+            // Support pipe-delimited alternatives in correctAnswer
+            const alternatives = correctAnswer
+              .split("|")
+              .map((a: string) => a.trim())
+              .filter(Boolean);
+
+            let isCorrect = false;
+            let questionScore = 0;
+            const questionPoints = question.points || 1;
+
+            if (
+              (question.questionType === "multiple_choice" ||
+                question.questionType === "listening") &&
+              alternatives.length > 1
+            ) {
+              let studentSelections: string[] = [];
+              try {
+                const parsed = JSON.parse(studentAnswer);
+                if (Array.isArray(parsed)) {
+                  studentSelections = parsed.map((v) => String(v).trim());
+                }
+              } catch {
+                studentSelections = studentAnswer
+                  .split("|")
+                  .flatMap((part) => part.split(","))
+                  .map((v) => v.trim())
+                  .filter(Boolean);
+              }
+
+              const normalizedStudent = studentSelections.map((v) => v.toLowerCase());
+              const normalizedCorrect = alternatives.map((v) => v.toLowerCase());
+
+              const correctHits = normalizedStudent.filter((v) =>
+                normalizedCorrect.includes(v),
+              ).length;
+              const wrongSelections = normalizedStudent.filter(
+                (v) => !normalizedCorrect.includes(v),
+              ).length;
+
+              const ratio = Math.max(
+                0,
+                (correctHits - wrongSelections) / normalizedCorrect.length,
+              );
+              questionScore = Math.round(ratio * questionPoints * 100) / 100;
+              isCorrect = questionScore >= questionPoints;
+            } else {
+              isCorrect = alternatives
+                .map((a) => a.toLowerCase())
+                .includes(studentAnswer.trim().toLowerCase());
+              questionScore = isCorrect ? questionPoints : 0;
+            }
+
+            if (isCorrect) {
+              correctAnswers++;
+            }
+
+            objectiveScore += questionScore;
+
+            const answerRecord = submittedAnswers.find(a => a.questionId === question.id);
+            if (answerRecord) {
+              await tx.answer.update({
+                where: { id: answerRecord.id },
+                data: { score: questionScore },
+              });
+            }
           }
-        } catch (gradingError) {
-          console.error("[AutoGrade] Error:", gradingError);
         }
 
         const normalizedObjectiveScore = Math.round(objectiveScore * 100) / 100;
         const finalStatus = hasManualQuestions ? "submitted" : "graded";
 
-        await fastify.prisma.examSubmission.update({
+        const updatedSubmission = await tx.examSubmission.update({
           where: { id: id },
           data: {
             status: finalStatus,
@@ -894,6 +893,9 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
             ...(finalStatus === "graded" && { gradedAt: new Date() }),
           },
         });
+
+        return updatedSubmission;
+      });
 
         // Tự động cập nhật tiến độ enrollment
         try {
