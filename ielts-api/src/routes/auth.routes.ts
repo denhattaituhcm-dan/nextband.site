@@ -15,63 +15,84 @@ import { toFileUrl } from "../utils/file.js";
 
 const authRoutes: FastifyPluginAsync = async (fastify) => {
   // POST /auth/register
-  fastify.post<{ Body: RegisterInput }>("/register", async (request, reply) => {
-    const data = handleValidation(
-      registerSchema.safeParse(request.body),
-      request,
-      reply,
-    );
-    if (!data) return;
-
-    const { email, password, fullName } = data;
-
-    // Check if email exists
-    const existing = await fastify.prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (existing) {
-      return reply.status(409).send({ error: "Email đã được đăng ký" });
-    }
-
-    // Create user
-    const hashedPassword = await hashPassword(password);
-
-    const user = await fastify.prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        fullName,
-        roles: {
-          create: { role: "student" },
+  fastify.post<{ Body: RegisterInput }>(
+    "/register",
+    {
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: "1 minute",
         },
       },
-      include: { roles: true },
-    });
+    },
+    async (request, reply) => {
+      const data = handleValidation(
+        registerSchema.safeParse(request.body),
+        request,
+        reply,
+      );
+      if (!data) return;
 
-    // Generate token
-    const token = fastify.jwt.sign({
-      id: user.id,
-      email: user.email,
-      roles: user.roles.map((r) => r.role),
-    });
+      const { email, password, fullName } = data;
 
-    return {
-      token,
-      user: {
+      // Check if email exists
+      const existing = await fastify.prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (existing) {
+        return reply.status(409).send({ error: "Email đã được đăng ký" });
+      }
+
+      // Create user
+      const hashedPassword = await hashPassword(password);
+
+      const user = await fastify.prisma.user.create({
+        data: {
+          email,
+          password: hashedPassword,
+          fullName,
+          roles: {
+            create: { role: "student" },
+          },
+        },
+        include: { roles: true },
+      });
+
+      // Generate token
+      const token = fastify.jwt.sign({
         id: user.id,
         email: user.email,
-        fullName: user.fullName,
-        avatarUrl: toFileUrl(user.avatarUrl),
-        phone: user.phone,
-        gender: user.gender,
         roles: user.roles.map((r) => r.role),
-      },
-    };
-  });
+      });
+
+      return {
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          fullName: user.fullName,
+          avatarUrl: toFileUrl(user.avatarUrl),
+          phone: user.phone,
+          gender: user.gender,
+          roles: user.roles.map((r) => r.role),
+        },
+      };
+    },
+  );
 
   // POST /auth/login
-  fastify.post<{ Body: LoginInput }>("/login", async (request, reply) => {
+  fastify.post<{ Body: LoginInput }>(
+    "/login",
+    {
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: "1 minute",
+        },
+      },
+    },
+    async (request, reply) => {
     const data = handleValidation(
       loginSchema.safeParse(request.body),
       request,
@@ -289,7 +310,15 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
   // POST /auth/change-password
   fastify.post(
     "/change-password",
-    { preHandler: authenticate },
+    {
+      preHandler: authenticate,
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: "1 minute",
+        },
+      },
+    },
     async (request, reply) => {
       const { id } = request.user;
       const { currentPassword, newPassword } = request.body as any;
@@ -339,7 +368,15 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
   // POST /auth/verify-password
   fastify.post(
     "/verify-password",
-    { preHandler: authenticate },
+    {
+      preHandler: authenticate,
+      config: {
+        rateLimit: {
+          max: 10,
+          timeWindow: "1 minute",
+        },
+      },
+    },
     async (request, reply) => {
       const { id } = request.user;
       const { password } = request.body as { password?: string };

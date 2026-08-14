@@ -1,35 +1,94 @@
 import { PrismaClient, AttendanceStatus, ClassSessionStatus } from '@prisma/client';
 import { ClassRepository } from '../repositories/class.repository.js';
+import { AuthorizationService, AuthorizationError, NotFoundError } from './authorization.service.js';
 
 export interface MarkAttendanceItemDTO {
   studentId: string;
   status: AttendanceStatus;
-  note?: string;
-  notes?: string;
+  note?: string | null;
+  notes?: string | null;
 }
 
 export class AttendanceService {
   private classRepo: ClassRepository;
+  private authService: AuthorizationService;
 
   constructor(private prisma: PrismaClient) {
     this.classRepo = new ClassRepository(prisma);
+    this.authService = new AuthorizationService(prisma);
   }
 
-  // 1. Fetch Session Attendance & Summary Projection
-  async getSessionAttendance(classId: string, sessionId: string, userId: string, userRoles: string[]) {
+  // 1. Fetch Session Attendance & Summary Projection (Object-Level Authorization)
+  async getSessionAttendance(classId: string, sessionId: string, userId: string, userRoles: string[] = ['student']) {
     const classData = await this.classRepo.findById(classId);
-    if (!classData) throw new Error('Lớp học không tồn tại.');
-
-    if (userRoles.includes('teacher') && !userRoles.includes('admin') && classData.teacherId !== userId) {
-      throw new Error('Bạn không có quyền điểm danh lớp học này.');
-    }
+    if (!classData) throw new NotFoundError('Lớp học không tồn tại.');
 
     const session = await this.prisma.classSession.findUnique({
       where: { id: sessionId },
       include: { lesson: true }
     });
-    if (!session || session.classId !== classId) throw new Error('Buổi học không hợp lệ.');
+    if (!session || session.classId !== classId) throw new NotFoundError('Buổi học không hợp lệ hoặc không thuộc lớp này.');
 
+    const isAdmin = userRoles.includes('admin');
+    const isClassTeacher = userRoles.includes('teacher') && classData.teacherId === userId;
+    const isOtherTeacher = userRoles.includes('teacher') && classData.teacherId !== userId;
+
+    if (isOtherTeacher && !isAdmin) {
+      throw new AuthorizationError('Từ chối truy cập: Bạn không phải giáo viên phụ trách lớp học này.', 403);
+    }
+
+    const isStudent = !isAdmin && !isClassTeacher;
+
+    if (isStudent) {
+      // Check if student belongs to this class
+      const isEnrolled = await this.authService.isStudentEnrolledInClass(userId, classId);
+      if (!isEnrolled) {
+        throw new AuthorizationError('Từ chối truy cập: Bạn không thuộc danh sách học viên của lớp này.', 403);
+      }
+
+      // Student only gets their OWN record
+      const studentRecord = await this.prisma.classAttendance.findUnique({
+        where: {
+          sessionId_studentId: {
+            sessionId,
+            studentId: userId,
+          }
+        },
+        include: {
+          student: {
+            select: { id: true, fullName: true, email: true, avatarUrl: true }
+          }
+        }
+      });
+
+      const studentUser = await this.prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true, fullName: true, email: true, avatarUrl: true }
+      });
+
+      return {
+        classId,
+        className: classData.name,
+        sessionId,
+        sessionNumber: session.sessionNumber,
+        sessionTitle: session.title || session.lesson.title,
+        sessionDate: session.sessionDate,
+        status: session.status,
+        completedAt: session.completedAt,
+        summary: null, // Students do not get whole class summary
+        students: [
+          {
+            studentId: userId,
+            studentName: studentUser?.fullName || studentUser?.email || '',
+            avatarUrl: studentUser?.avatarUrl || null,
+            status: studentRecord ? studentRecord.status : 'UNMARKED',
+            note: studentRecord?.note || null,
+          }
+        ]
+      };
+    }
+
+    // Admin & Class Teacher get full class attendance
     const classStudents = await this.prisma.classStudent.findMany({
       where: { classId, deletedAt: null },
       include: { student: true }
@@ -87,20 +146,45 @@ export class AttendanceService {
 
   // 2. Mark Session Attendance (Bulk Upsert Transaction + Strict Authorization Guard + Read-only Guard for COMPLETED sessions)
   async markSessionAttendance(classId: string, sessionId: string, teacherId: string, userRoles: string[], items: MarkAttendanceItemDTO[]) {
-    const classData = await this.classRepo.findById(classId);
-    if (!classData) throw new Error('Lớp học không tồn tại.');
-
-    const isAdmin = userRoles.includes('admin');
-    if (userRoles.includes('teacher') && !isAdmin && classData.teacherId !== teacherId) {
-      throw new Error('Bạn không có quyền lưu điểm danh cho lớp học này.');
-    }
+    // 1. Authoritative Gate Check (Admin or Class Teacher only)
+    await this.authService.requireClassTeacherOrAdmin({
+      userId: teacherId,
+      userRoles,
+      classId,
+    });
 
     const session = await this.prisma.classSession.findUnique({ where: { id: sessionId } });
-    if (!session || session.classId !== classId) throw new Error('Buổi học không hợp lệ.');
+    if (!session || session.classId !== classId) throw new NotFoundError('Buổi học không hợp lệ hoặc không thuộc lớp này.');
+
+    const isAdmin = userRoles.includes('admin');
 
     // Immutability Guard: If session is already COMPLETED, only Admin can edit
     if (session.status === ClassSessionStatus.COMPLETED && !isAdmin) {
-      throw new Error('Buổi học đã chốt điểm danh (COMPLETED). Bạn không có quyền chỉnh sửa ngoại trừ Admin.');
+      throw new AuthorizationError(
+        'SESSION_ALREADY_COMPLETED: Buổi học đã chốt điểm danh (COMPLETED). Bạn không có quyền chỉnh sửa ngoại trừ Admin.',
+        403
+      );
+    }
+
+    // Guard 1: Active Enrollment Validation (Must verify ALL studentIds before any DB writes)
+    const requestedStudentIds = [...new Set(items.map(i => i.studentId))];
+    const activeClassStudents = await this.prisma.classStudent.findMany({
+      where: {
+        classId,
+        studentId: { in: requestedStudentIds },
+        deletedAt: null,
+      },
+      select: { studentId: true },
+    });
+
+    const activeSet = new Set(activeClassStudents.map(cs => cs.studentId));
+    const invalidStudentIds = requestedStudentIds.filter(id => !activeSet.has(id));
+
+    if (invalidStudentIds.length > 0) {
+      throw new AuthorizationError(
+        `INVALID_ENROLLMENT_STUDENT: Phát hiện học viên (${invalidStudentIds.join(', ')}) không thuộc danh sách học viên đang hoạt động của lớp học này.`,
+        400
+      );
     }
 
     await this.prisma.$transaction(
@@ -134,16 +218,15 @@ export class AttendanceService {
 
   // 3. Complete Session Guard: Chốt buổi học (Khóa 100% điểm danh)
   async completeSession(classId: string, sessionId: string, userId: string, userRoles: string[]) {
-    const classData = await this.classRepo.findById(classId);
-    if (!classData) throw new Error('Lớp học không tồn tại.');
-
-    const isAdmin = userRoles.includes('admin');
-    if (userRoles.includes('teacher') && !isAdmin && classData.teacherId !== userId) {
-      throw new Error('Bạn không có quyền chốt buổi học này.');
-    }
+    // 1. Authoritative Gate Check (Admin or Class Teacher only)
+    await this.authService.requireClassTeacherOrAdmin({
+      userId,
+      userRoles,
+      classId,
+    });
 
     const session = await this.prisma.classSession.findUnique({ where: { id: sessionId } });
-    if (!session || session.classId !== classId) throw new Error('Buổi học không hợp lệ.');
+    if (!session || session.classId !== classId) throw new NotFoundError('Buổi học không hợp lệ hoặc không thuộc lớp này.');
 
     // Check active class students
     const activeStudents = await this.prisma.classStudent.findMany({
@@ -178,10 +261,26 @@ export class AttendanceService {
     return { success: true, message: 'Đã chốt thành công buổi học.', session: updatedSession };
   }
 
-  // 4. Get Attendance Matrix & Backend Calculated Attendance Rate
-  async getAttendanceMatrix(classId: string) {
+  // 4. Get Attendance Matrix & Backend Calculated Attendance Rate (Object-Level Authorization)
+  async getAttendanceMatrix(classId: string, userId: string, userRoles: string[] = ['student']) {
     const classData = await this.classRepo.findById(classId);
-    if (!classData) throw new Error('Lớp học không tồn tại.');
+    if (!classData) throw new NotFoundError('Lớp học không tồn tại.');
+
+    const isAdmin = userRoles.includes('admin');
+    const isClassTeacher = userRoles.includes('teacher') && classData.teacherId === userId;
+    const isOtherTeacher = userRoles.includes('teacher') && classData.teacherId !== userId;
+
+    if (isOtherTeacher && !isAdmin) {
+      throw new AuthorizationError('Từ chối truy cập: Bạn không phải giáo viên phụ trách lớp học này.', 403);
+    }
+
+    const isStudent = !isAdmin && !isClassTeacher;
+    if (isStudent) {
+      const isEnrolled = await this.authService.isStudentEnrolledInClass(userId, classId);
+      if (!isEnrolled) {
+        throw new AuthorizationError('Từ chối truy cập: Bạn không thuộc lớp học này.', 403);
+      }
+    }
 
     const sessions = await this.prisma.classSession.findMany({
       where: { classId },
@@ -190,14 +289,21 @@ export class AttendanceService {
     });
 
     const classStudents = await this.prisma.classStudent.findMany({
-      where: { classId, deletedAt: null },
+      where: {
+        classId,
+        deletedAt: null,
+        ...(isStudent ? { studentId: userId } : {}) // Student only gets own row
+      },
       include: { student: true },
       orderBy: { joinedAt: 'asc' }
     });
 
     const sessionIds = sessions.map(s => s.id);
     const allAttendance = await this.prisma.classAttendance.findMany({
-      where: { sessionId: { in: sessionIds } }
+      where: {
+        sessionId: { in: sessionIds },
+        ...(isStudent ? { studentId: userId } : {})
+      }
     });
 
     const completedSessions = sessions.filter(s => s.status === ClassSessionStatus.COMPLETED);
@@ -215,7 +321,6 @@ export class AttendanceService {
       let absentCount = 0;
       let excusedCount = 0;
 
-      // Only calculate for COMPLETED sessions
       studentAttendance.forEach(att => {
         if (completedSessionIds.has(att.sessionId)) {
           if (att.status === 'PRESENT') presentCount++;
@@ -263,8 +368,6 @@ export class AttendanceService {
     });
 
     const sessionCoverage = sessions.length > 0 ? Math.round((completedSessions.length / sessions.length) * 1000) / 10 : 0;
-    
-    // Attendance Record Coverage Calculation
     const totalExpectedRecords = completedSessions.length * classStudents.length;
     const actualMarkedRecords = allAttendance.filter(a => completedSessionIds.has(a.sessionId) && a.status !== 'UNMARKED').length;
     const recordCoverage = totalExpectedRecords > 0 ? Math.round((actualMarkedRecords / totalExpectedRecords) * 1000) / 10 : 100;
@@ -276,7 +379,7 @@ export class AttendanceService {
       completedSessions: completedSessions.length,
       sessionCoverage,
       recordCoverage,
-      attendanceCoverage: sessionCoverage, // Backwards compatibility
+      attendanceCoverage: sessionCoverage,
       sessions: sessions.map(s => ({
         id: s.id,
         sessionNumber: s.sessionNumber,
@@ -288,4 +391,3 @@ export class AttendanceService {
     };
   }
 }
-

@@ -156,6 +156,23 @@ const sectionsRoutes: FastifyPluginAsync = async (fastify) => {
       );
       if (!data) return;
 
+      const existing = await fastify.prisma.examSection.findUnique({
+        where: { id },
+        include: { exam: { select: { isActive: true, isLocked: true } } },
+      });
+      if (!existing) {
+        return reply.status(404).send({ error: "Không tìm thấy phần thi" });
+      }
+      if (
+        existing.exam &&
+        (existing.exam.isActive === false || existing.exam.isLocked === true)
+      ) {
+        return reply.status(409).send({
+          error: "EXAM_ARCHIVED_IMMUTABLE",
+          message: "Đề thi đã lưu trữ hoặc bị khóa, không thể cập nhật phần thi.",
+        });
+      }
+
       try {
         const section = await fastify.prisma.examSection.update({
           where: { id },

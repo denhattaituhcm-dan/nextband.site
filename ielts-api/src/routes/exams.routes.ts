@@ -248,10 +248,17 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
 
       const existing = await fastify.prisma.exam.findUnique({
         where: { id },
-        select: { id: true },
+        select: { id: true, isActive: true, isLocked: true },
       });
       if (!existing) {
         return reply.status(404).send({ error: "Không tìm thấy bài thi" });
+      }
+
+      if (existing.isActive === false || existing.isLocked === true) {
+        return reply.status(409).send({
+          error: "EXAM_ARCHIVED_IMMUTABLE",
+          message: "Đề thi đã lưu trữ hoặc bị khóa, không thể cập nhật thông tin.",
+        });
       }
 
       const updatedExam = await fastify.prisma.exam.update({
@@ -263,7 +270,7 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
     },
   );
 
-  // DELETE /exams/:id
+  // DELETE /exams/:id (T1-B Historical Data Protection)
   fastify.delete<{ Params: { id: string } }>(
     "/:id",
     { preHandler: [authenticate, requireRoles("admin")] },
@@ -290,25 +297,63 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
 
       const existing = await fastify.prisma.exam.findUnique({
         where: { id },
-        select: { id: true },
+        select: { id: true, isActive: true, isLocked: true },
       });
       if (!existing) {
         return reply.status(404).send({ error: "Không tìm thấy bài thi" });
       }
 
-      const lockRows = await fastify.prisma.$queryRaw<
-        Array<{ is_locked: number | boolean | null }>
-      >(Prisma.sql`SELECT is_locked FROM exams WHERE id = ${id} LIMIT 1`);
-      const isLocked = Boolean(lockRows[0]?.is_locked);
+      if (existing.isActive === false) {
+        return reply.status(409).send({
+          success: false,
+          action: "already_archived",
+          errorCode: "EXAM_ALREADY_ARCHIVED",
+          message: "Đề thi này đã ở trong kho lưu trữ (Archived).",
+        });
+      }
 
-      if (isLocked) {
-        return reply.status(423).send({
-          error: "Bài tập đang bị khóa. Hãy mở khóa trước khi xóa",
+      // T1-B: Transactional Historical Protection & Usage Guard
+      const [submissionCount, homeworkCount] = await Promise.all([
+        fastify.prisma.examSubmission.count({ where: { examId: id } }),
+        fastify.prisma.homework.count({ where: { examId: id } }),
+      ]);
+
+      if (submissionCount > 0 || homeworkCount > 0) {
+        // Atomic Safe Archive Transaction
+        await fastify.prisma.$transaction(async (tx) => {
+          await tx.exam.update({
+            where: { id },
+            data: {
+              isPublished: false,
+              isActive: false,
+              isOpen: false,
+              isLocked: true,
+            },
+          });
+        });
+
+        const errorCode =
+          submissionCount > 0
+            ? "CANNOT_HARD_DELETE_EXAM_WITH_SUBMISSIONS"
+            : "CANNOT_HARD_DELETE_EXAM_WITH_HOMEWORKS";
+
+        return reply.status(409).send({
+          success: false,
+          action: "archived",
+          errorCode,
+          message:
+            "Đề thi đã có bài làm hoặc bài tập giao cho học viên. Hệ thống đã tự động chuyển sang chế độ Lưu trữ (Archived) để bảo toàn 100% lịch sử.",
+          submissionCount,
+          homeworkCount,
         });
       }
 
       await fastify.prisma.exam.delete({ where: { id } });
-      return { success: true };
+      return {
+        success: true,
+        action: "hard_deleted",
+        message: "Đã xóa bài thi chưa sử dụng thành công",
+      };
     },
   );
 };

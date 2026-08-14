@@ -855,22 +855,20 @@ const classesRoutes: FastifyPluginAsync = async (fastify) => {
       }
 
       const dateRows = await fastify.prisma.classAttendance.findMany({
-        where: { classId: id },
-        select: { sessionDate: true },
-        distinct: ["sessionDate"],
-        orderBy: { sessionDate: "asc" },
+        where: { session: { classId: id } },
+        select: { session: { select: { sessionDate: true } } },
       });
 
-      const sessionDates = dateRows.map((d) =>
-        d.sessionDate.toISOString().slice(0, 10),
-      );
+      const sessionDates = [...new Set(dateRows.map((d) =>
+        d.session.sessionDate.toISOString().slice(0, 10),
+      ))].sort();
 
       const attendanceRows = await fastify.prisma.classAttendance.findMany({
-        where: { classId: id },
+        where: { session: { classId: id } },
         select: {
           studentId: true,
-          sessionDate: true,
           status: true,
+          session: { select: { sessionDate: true } }
         },
       });
 
@@ -879,7 +877,7 @@ const classesRoutes: FastifyPluginAsync = async (fastify) => {
         Record<string, "present" | "absent" | "inactive">
       > = {};
       attendanceRows.forEach((row) => {
-        const dateKey = row.sessionDate.toISOString().slice(0, 10);
+        const dateKey = row.session.sessionDate.toISOString().slice(0, 10);
         if (!recordsByStudent[row.studentId]) {
           recordsByStudent[row.studentId] = {};
         }

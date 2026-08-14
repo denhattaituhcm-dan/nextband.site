@@ -1,14 +1,17 @@
 import { PrismaClient, InvitationStatus } from '@prisma/client';
 import { InvitationRepository } from '../repositories/invitation.repository.js';
 import { ClassRepository } from '../repositories/class.repository.js';
+import { AuthorizationService, AuthorizationError, NotFoundError } from './authorization.service.js';
 
 export class InvitationService {
   private invitationRepo: InvitationRepository;
   private classRepo: ClassRepository;
+  private authService: AuthorizationService;
 
   constructor(private prisma: PrismaClient) {
     this.invitationRepo = new InvitationRepository(prisma);
     this.classRepo = new ClassRepository(prisma);
+    this.authService = new AuthorizationService(prisma);
   }
 
   // Use Case: Student Joins Class via Code (Atomic Transaction)
@@ -44,8 +47,20 @@ export class InvitationService {
     });
   }
 
-  // Use Case: Admin/Teacher Generates Invitation Code
-  async generateInvitation(classId: string, createdBy: string, inviteCode?: string, expiresInDays?: number) {
+  // Use Case: Admin/Teacher Generates Invitation Code (Authoritative Gate: Teacher owns class or Admin)
+  async generateInvitation(
+    classId: string,
+    createdBy: string,
+    userRoles: string[] = ['teacher'],
+    inviteCode?: string,
+    expiresInDays?: number
+  ) {
+    await this.authService.requireClassTeacherOrAdmin({
+      userId: createdBy,
+      userRoles,
+      classId,
+    });
+
     const code = inviteCode ? inviteCode.toUpperCase() : Math.random().toString(36).substring(2, 8).toUpperCase();
     const token = `token_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     const expiresAt = expiresInDays ? new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1000) : null;

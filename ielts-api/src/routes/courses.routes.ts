@@ -107,7 +107,7 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
         take: limit,
         orderBy: { [sortBy]: sortOrder },
         include: {
-          teacher: {
+          creator: {
             select: { id: true, fullName: true, avatarUrl: true },
           },
           _count: {
@@ -121,10 +121,10 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
     const courses = data.map((c) => ({
       ...c,
       thumbnailUrl: toFileUrl(c.thumbnailUrl),
-      teacher: c.teacher
+      teacher: c.creator
         ? {
-            ...c.teacher,
-            avatarUrl: toFileUrl(c.teacher.avatarUrl),
+            ...c.creator,
+            avatarUrl: toFileUrl(c.creator.avatarUrl),
           }
         : null,
     }));
@@ -158,7 +158,7 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
     const course = await fastify.prisma.course.findUnique({
       where: { id },
       include: {
-        teacher: {
+        creator: {
           select: { id: true, fullName: true, avatarUrl: true },
         },
         exams: {
@@ -189,10 +189,10 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
     return {
       ...course,
       thumbnailUrl: toFileUrl(course.thumbnailUrl),
-      teacher: course.teacher
+      teacher: course.creator
         ? {
-            ...course.teacher,
-            avatarUrl: toFileUrl(course.teacher.avatarUrl),
+            ...course.creator,
+            avatarUrl: toFileUrl(course.creator.avatarUrl),
           }
         : null,
     };
@@ -218,7 +218,7 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
       const course = await fastify.prisma.course.findUnique({
         where: { slug },
         include: {
-          teacher: {
+          creator: {
             select: { id: true, fullName: true, avatarUrl: true },
           },
           exams: {
@@ -249,10 +249,10 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
       return {
         ...course,
         thumbnailUrl: toFileUrl(course.thumbnailUrl),
-        teacher: course.teacher
+        teacher: course.creator
           ? {
-              ...course.teacher,
-              avatarUrl: toFileUrl(course.teacher.avatarUrl),
+              ...course.creator,
+              avatarUrl: toFileUrl(course.creator.avatarUrl),
             }
           : null,
       };

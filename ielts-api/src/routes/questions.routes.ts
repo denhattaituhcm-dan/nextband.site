@@ -192,6 +192,33 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
     return !!existing;
   };
 
+  const isExamArchivedBySectionId = async (sectionId: string) => {
+    const section = await fastify.prisma.examSection.findUnique({
+      where: { id: sectionId },
+      include: { exam: { select: { isActive: true, isLocked: true } } },
+    });
+    const exam = section?.exam;
+    return Boolean(exam && (exam.isActive === false || exam.isLocked === true));
+  };
+
+  const isExamArchivedByGroupId = async (groupId: string) => {
+    const group = await fastify.prisma.questionGroup.findUnique({
+      where: { id: groupId },
+      include: { section: { include: { exam: { select: { isActive: true, isLocked: true } } } } },
+    });
+    const exam = group?.section?.exam;
+    return Boolean(exam && (exam.isActive === false || exam.isLocked === true));
+  };
+
+  const isExamArchivedByQuestionId = async (questionId: string) => {
+    const question = await fastify.prisma.question.findUnique({
+      where: { id: questionId },
+      include: { group: { include: { section: { include: { exam: { select: { isActive: true, isLocked: true } } } } } } },
+    });
+    const exam = question?.group?.section?.exam;
+    return Boolean(exam && (exam.isActive === false || exam.isLocked === true));
+  };
+
   // ============ Question Groups ============
 
   // POST /questions/groups
@@ -205,6 +232,13 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
         reply,
       );
       if (!data) return;
+
+      if (await isExamArchivedBySectionId(data.sectionId)) {
+        return reply.status(409).send({
+          error: "EXAM_ARCHIVED_IMMUTABLE",
+          message: "Đề thi đã lưu trữ hoặc bị khóa, không thể tạo nhóm câu hỏi mới.",
+        });
+      }
 
       const group = await fastify.prisma.questionGroup.create({
         data,
@@ -227,6 +261,13 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
       );
       if (!data) return;
 
+      if (await isExamArchivedByGroupId(id)) {
+        return reply.status(409).send({
+          error: "EXAM_ARCHIVED_IMMUTABLE",
+          message: "Đề thi đã lưu trữ hoặc bị khóa, không thể chỉnh sửa nhóm câu hỏi.",
+        });
+      }
+
       const group = await fastify.prisma.questionGroup.update({
         where: { id },
         data,
@@ -242,6 +283,14 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
     { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
       const { id } = request.params;
+
+      if (await isExamArchivedByGroupId(id)) {
+        return reply.status(409).send({
+          error: "EXAM_ARCHIVED_IMMUTABLE",
+          message: "Đề thi đã lưu trữ hoặc bị khóa, không thể xóa nhóm câu hỏi.",
+        });
+      }
+
       await fastify.prisma.questionGroup.delete({ where: { id } });
       return { success: true };
     },
@@ -260,6 +309,13 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
         reply,
       );
       if (!data) return;
+
+      if (await isExamArchivedByGroupId(data.groupId)) {
+        return reply.status(409).send({
+          error: "EXAM_ARCHIVED_IMMUTABLE",
+          message: "Đề thi đã lưu trữ hoặc bị khóa, không thể thêm câu hỏi mới.",
+        });
+      }
 
       const body = request.body as any;
       const orderIndexProvided =
@@ -329,6 +385,13 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
       );
       if (!data) return;
 
+      if (await isExamArchivedByQuestionId(id)) {
+        return reply.status(409).send({
+          error: "EXAM_ARCHIVED_IMMUTABLE",
+          message: "Đề thi đã lưu trữ hoặc bị khóa, không thể chỉnh sửa câu hỏi.",
+        });
+      }
+
       const body = request.body as any;
       const orderIndexProvided =
         body &&
@@ -375,7 +438,10 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
 
       const question = await fastify.prisma.question.update({
         where: { id },
-        data: sanitized as any,
+        data: {
+          ...sanitized,
+          options: sanitized.options ? sanitized.options : undefined,
+        } as any,
       });
 
       return question;
@@ -388,6 +454,14 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
     { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
       const { id } = request.params;
+
+      if (await isExamArchivedByQuestionId(id)) {
+        return reply.status(409).send({
+          error: "EXAM_ARCHIVED_IMMUTABLE",
+          message: "Đề thi đã lưu trữ hoặc bị khóa, không thể xóa câu hỏi.",
+        });
+      }
+
       await fastify.prisma.question.delete({ where: { id } });
       return { success: true };
     },
@@ -404,6 +478,13 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
         return reply
           .status(400)
           .send({ error: "Yêu cầu mảng questions và groupId" });
+      }
+
+      if (await isExamArchivedByGroupId(groupId)) {
+        return reply.status(409).send({
+          error: "EXAM_ARCHIVED_IMMUTABLE",
+          message: "Đề thi đã lưu trữ hoặc bị khóa, không thể thêm câu hỏi hàng loạt.",
+        });
       }
 
       // Semantic validation for each bulk question

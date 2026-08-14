@@ -1,5 +1,7 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
+import rateLimit from "@fastify/rate-limit";
+import helmet from "@fastify/helmet";
 import multipart from "@fastify/multipart";
 import staticPlugin from "@fastify/static";
 import { join } from "path";
@@ -53,35 +55,97 @@ export async function buildApp() {
     return payload;
   });
 
-  // CORS - Robust Multi-Origin & Vercel Preview Support
+  // Exact CORS Allowlist matching
+  const exactAllowedOrigins = new Set<string>([
+    "https://nextband.site",
+    "https://www.nextband.site",
+  ]);
+
+  if (env.FRONTEND_URL) {
+    env.FRONTEND_URL.split(",")
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .forEach((u) => exactAllowedOrigins.add(u));
+  }
+
+  if (env.PREVIEW_ALLOWED_ORIGINS) {
+    env.PREVIEW_ALLOWED_ORIGINS.split(",")
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .forEach((u) => exactAllowedOrigins.add(u));
+  }
+
   await app.register(cors, {
     origin: (origin, cb) => {
-      if (!origin || env.NODE_ENV !== "production") {
+      // Direct / non-browser requests without origin header
+      if (!origin) {
         return cb(null, true);
       }
 
-      const allowedOrigins = [
-        env.FRONTEND_URL,
-        "https://nextband.site",
-        "https://www.nextband.site",
-      ].flatMap((url) => (url ? url.split(",").map((s) => s.trim()) : []));
+      const isProduction =
+        process.env.NODE_ENV === "production" || env.NODE_ENV === "production";
 
-      let isAllowed = allowedOrigins.some((allowed) => origin === allowed || allowed === "*");
-
-      try {
-        const hostname = new URL(origin).hostname;
-        if (hostname.endsWith(".vercel.app") || hostname === "localhost") {
-          isAllowed = true;
-        }
-      } catch (e) {
-        // Ignored
+      if (!isProduction) {
+        return cb(null, true);
       }
 
+      // Exact match against allowlist Set (no wildcard, case/port/domain sensitive)
+      const isAllowed = exactAllowedOrigins.has(origin);
       cb(null, isAllowed);
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  });
+
+  // Security Headers via Helmet (API Hardening)
+  await app.register(helmet, {
+    contentSecurityPolicy: false, // CSP is configured on frontend nextband
+    hsts: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: false,
+    },
+    noSniff: true,
+    frameguard: {
+      action: "deny",
+    },
+    referrerPolicy: {
+      policy: "strict-origin-when-cross-origin",
+    },
+    crossOriginResourcePolicy: {
+      policy: "cross-origin",
+    },
+  });
+
+  // Global & Per-Route Rate Limiter
+  await app.register(rateLimit, {
+    global: true,
+    max: 200,
+    timeWindow: "1 minute",
+    keyGenerator: (request) => {
+      // If trusted proxy IPs are configured, verify socket remoteAddress before trusting x-forwarded-for
+      if (env.TRUST_PROXY_IPS) {
+        const trustedList = env.TRUST_PROXY_IPS.split(",").map((s) => s.trim());
+        const remoteSocketIp = request.raw.socket.remoteAddress || "";
+        if (trustedList.includes(remoteSocketIp)) {
+          const xForwardedFor = request.headers["x-forwarded-for"];
+          if (xForwardedFor) {
+            const firstIp = (Array.isArray(xForwardedFor) ? xForwardedFor[0] : xForwardedFor).split(",")[0].trim();
+            if (firstIp) return firstIp;
+          }
+        }
+      }
+      return request.ip;
+    },
+    errorResponseBuilder: (_request, context) => {
+      return {
+        statusCode: 429,
+        error: "Too Many Requests",
+        message: `Quá nhiều yêu cầu. Vui lòng thử lại sau ${Math.ceil(context.ttl / 1000)} giây.`,
+        retryAfter: Math.ceil(context.ttl / 1000),
+      };
+    },
   });
 
   // File upload (multipart)
@@ -111,18 +175,37 @@ export async function buildApp() {
   // API Routes
   await app.register(routes, { prefix: "/api/v1" });
 
-  // Global error handler
-  app.setErrorHandler((error, _request, reply) => {
-    app.log.error(error);
-
+  // Global error handler - Structured logging on server & Clean sanitized response for client
+  app.setErrorHandler((error, request, reply) => {
+    const isProduction =
+      process.env.NODE_ENV === "production" || env.NODE_ENV === "production";
     const statusCode = error.statusCode || 500;
-    const message =
-      statusCode === 500 ? "Internal Server Error" : error.message;
 
-    reply.status(statusCode).send({
-      error: message,
+    // Full diagnostic in server log
+    app.log.error({
+      requestId: request.id,
+      url: request.url,
+      method: request.method,
       statusCode,
-      ...(env.NODE_ENV !== "production" && { stack: error.stack }),
+      err: error,
+    });
+
+    if (statusCode >= 500) {
+      return reply.status(statusCode).send({
+        statusCode,
+        error: isProduction ? "Internal Server Error" : error.message,
+        message: isProduction
+          ? "Đã xảy ra lỗi máy chủ nội bộ. Vui lòng liên hệ quản trị viên."
+          : error.message,
+        requestId: request.id,
+      });
+    }
+
+    // Client errors (4xx) - return safe validation or authorization message
+    return reply.status(statusCode).send({
+      statusCode,
+      error: error.message,
+      requestId: request.id,
     });
   });
 

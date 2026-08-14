@@ -17,12 +17,10 @@ const submissionStatusEnum = z.enum(["in_progress", "submitted", "graded"], {
 
 const OBJECTIVE_TYPES = new Set([
   "multiple_choice",
-  "true_false_not_given",
-  "yes_no_not_given",
-  "short_answer",
   "fill_blank",
-  "listening",
   "matching",
+  "listening",
+  "reading",
 ]);
 
 const MANUAL_TYPES = new Set(["essay", "speaking"]);
@@ -255,7 +253,7 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
         where: {
           examId,
           studentId: user.id,
-          status: { in: ["submitted", "graded"] },
+          status: { in: ["SUBMITTED", "GRADED"] as any },
         },
         orderBy: [{ submittedAt: "desc" }, { createdAt: "desc" }],
         select: {
@@ -445,7 +443,7 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
       where: {
         examId,
         studentId: user.id,
-        status: "in_progress",
+        status: "IN_PROGRESS" as any,
       },
     });
 
@@ -623,6 +621,11 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
 
       const submission = await fastify.prisma.examSubmission.findUnique({
         where: { id },
+        include: {
+          exam: {
+            select: { durationMinutes: true },
+          },
+        },
       });
 
       if (!submission) {
@@ -633,7 +636,8 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
         return reply.status(403).send({ error: "Từ chối truy cập" });
       }
 
-      if (submission.status !== "in_progress" && submission.status !== "IN_PROGRESS") {
+      const isStatusInProgress = String(submission.status).toUpperCase() === "IN_PROGRESS";
+      if (!isStatusInProgress) {
         if (submit) {
           // Idempotent return for retry / double-submit
           return reply.send({
@@ -648,10 +652,38 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
         return reply.status(400).send({ error: "Không thể sửa bài đã nộp" });
       }
 
+      // Server-Side Exam Time Limit Enforcement (T1-A)
+      const durationMinutes = submission.exam?.durationMinutes;
+      let isOverdue = false;
+      let cappedSubmittedAt = new Date();
+
+      if (durationMinutes && durationMinutes > 0) {
+        const allowedSeconds = durationMinutes * 60;
+        const GRACE_PERIOD_SECONDS = 120; // 2 minutes grace period for network latency / clock skew
+        const startedMs = submission.startedAt
+          ? new Date(submission.startedAt).getTime()
+          : (submission.createdAt ? new Date(submission.createdAt).getTime() : Date.now());
+        const elapsedSeconds = Math.floor((Date.now() - startedMs) / 1000);
+
+        if (elapsedSeconds > (allowedSeconds + GRACE_PERIOD_SECONDS)) {
+          isOverdue = true;
+          cappedSubmittedAt = new Date(startedMs + (allowedSeconds * 1000));
+
+          if (!submit) {
+            // Reject saving intermediate answers after exam time has strictly expired
+            return reply.status(400).send({
+              error: "EXAM_TIME_EXPIRED",
+              message: "Thời gian làm bài đã kết thúc. Không thể lưu thêm câu trả lời.",
+              remainingSeconds: 0,
+            });
+          }
+        }
+      }
+
       // Execute submission updates and auto-grading inside a single Prisma Transaction
       const resultData = await fastify.prisma.$transaction(async (tx) => {
-        // 1. Save / Upsert answers
-        if (answers && Array.isArray(answers)) {
+        // 1. Save / Upsert answers (Only if NOT overdue - prevent injecting answers after time expired)
+        if (!isOverdue && answers && Array.isArray(answers)) {
           for (const answer of answers) {
             await tx.answer.upsert({
               where: {
@@ -924,7 +956,7 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
           where: { id: id },
           data: {
             status: finalStatus as any,
-            submittedAt: new Date(),
+            submittedAt: isOverdue ? cappedSubmittedAt : new Date(),
             correctAnswers,
             totalQuestions,
             totalScore: normalizedObjectiveScore,
@@ -966,7 +998,7 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
                   by: ["examId"],
                   where: {
                     studentId: user.id,
-                    status: { in: ["submitted", "graded"] },
+                    status: { in: ["SUBMITTED", "GRADED"] as any },
                     exam: {
                       courseId: exam.courseId,
                       isPublished: true,
@@ -1039,7 +1071,8 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
         }
       }
 
-      if (submission.status === "in_progress") {
+      const isStillInProgress = String(submission.status).toUpperCase() === "IN_PROGRESS";
+      if (isStillInProgress) {
         return reply
           .status(400)
           .send({ error: "Bài tập vẫn đang trong quá trình thực hiện" });

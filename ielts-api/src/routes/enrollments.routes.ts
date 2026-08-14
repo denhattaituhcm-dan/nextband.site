@@ -11,7 +11,7 @@ const enrollmentsRoutes: FastifyPluginAsync = async (fastify) => {
       include: {
         course: {
           include: {
-            teacher: { select: { id: true, fullName: true } },
+            creator: { select: { id: true, fullName: true } },
             _count: { select: { exams: true } },
           },
         },

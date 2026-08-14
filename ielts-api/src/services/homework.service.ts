@@ -1,20 +1,24 @@
 import { PrismaClient, HomeworkStatus, SubmissionStatus } from '@prisma/client';
 import { HomeworkRepository } from '../repositories/homework.repository.js';
 import { ClassRepository } from '../repositories/class.repository.js';
+import { AuthorizationService, AuthorizationError, NotFoundError } from './authorization.service.js';
 
 export class HomeworkService {
   private homeworkRepo: HomeworkRepository;
   private classRepo: ClassRepository;
+  private authService: AuthorizationService;
 
   constructor(private prisma: PrismaClient) {
     this.homeworkRepo = new HomeworkRepository(prisma);
     this.classRepo = new ClassRepository(prisma);
+    this.authService = new AuthorizationService(prisma);
   }
 
-  // Use Case: Assign Homework to Class/Session
+  // Use Case: Assign Homework to Class/Session (Authoritative Gate: Teacher owns class or Admin)
   async createHomework(data: {
     classId: string;
     createdBy: string;
+    userRoles: string[];
     classSessionId?: string;
     lessonId?: string;
     examId?: string;
@@ -22,10 +26,16 @@ export class HomeworkService {
     description?: string;
     deadline?: string;
   }) {
+    // 1. Authoritative Gate Check
+    await this.authService.requireClassTeacherOrAdmin({
+      userId: data.createdBy,
+      userRoles: data.userRoles,
+      classId: data.classId,
+    });
+
     return this.prisma.$transaction(async (tx) => {
       const homeworkRepo = new HomeworkRepository(tx as PrismaClient);
 
-      // Business Rule: Confirm teacher owns class or is admin
       const homework = await homeworkRepo.createHomework({
         class: { connect: { id: data.classId } },
         creator: { connect: { id: data.createdBy } },
@@ -91,13 +101,24 @@ export class HomeworkService {
     };
   }
 
-  // Use Case: Teacher Workspace Query (TeacherWorkspaceContract) - Only classes managed by teacher
-  async getTeacherHomeworkWorkspace(teacherId: string, classId?: string) {
-    if (!classId) {
+  // Use Case: Teacher Workspace Query (TeacherWorkspaceContract) - Authoritative Isolation
+  async getTeacherHomeworkWorkspace(userId: string, userRoles: string[] = ['teacher'], classId?: string) {
+    const isAdmin = userRoles.includes('admin');
+
+    if (classId) {
+      // Authoritative Gate check on requested classId
+      await this.authService.requireClassTeacherOrAdmin({
+        userId,
+        userRoles,
+        classId,
+      });
+    } else {
+      // Select first accessible class
       const firstClass = await this.prisma.class.findFirst({
-        where: { teacherId },
+        where: isAdmin ? { isActive: true } : { teacherId: userId, isActive: true },
         select: { id: true, name: true },
       });
+
       if (!firstClass) {
         return {
           classId: "",
@@ -123,13 +144,13 @@ export class HomeworkService {
 
     // Get real enrolled students in this class
     const classStudents = await this.prisma.classStudent.findMany({
-      where: { classId },
+      where: { classId, deletedAt: null },
       include: {
         student: {
           select: { id: true, fullName: true, email: true, avatarUrl: true },
         },
       },
-      orderBy: { createdAt: "asc" },
+      orderBy: { joinedAt: "asc" },
     });
 
     // Get real assigned homeworks for this class
@@ -151,7 +172,7 @@ export class HomeworkService {
         title: hw.title,
         lessonNumber: Math.ceil((idx + 1) / 2),
         lessonTitle: `Buổi ${Math.ceil((idx + 1) / 2)}`,
-        type: hw.type || "writing",
+        type: (hw as any).type || "writing",
         isExam: false,
       })),
       ...assignedExams.map((ex, idx) => ({

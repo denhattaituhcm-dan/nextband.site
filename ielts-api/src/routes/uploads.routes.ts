@@ -3,9 +3,10 @@ import { createWriteStream, existsSync, mkdirSync, unlinkSync } from "fs";
 import { join, extname } from "path";
 import { pipeline } from "stream/promises";
 import { randomUUID } from "crypto";
-import { authenticate } from "../middlewares/auth.middleware.js";
+import { authenticate, requireRoles } from "../middlewares/auth.middleware.js";
 import { env } from "../config/env.js";
 import { toFileUrl } from "../utils/file.js";
+import { AuthorizationService, AuthorizationError } from "../services/authorization.service.js";
 
 // Allowed file types
 const ALLOWED_IMAGE_TYPES = [
@@ -169,35 +170,74 @@ const uploadsRoutes: FastifyPluginAsync = async (fastify) => {
     },
   );
 
-  // DELETE /uploads - Delete file
-  fastify.delete("/", { preHandler: authenticate }, async (request, reply) => {
-    const { url } = request.body as { url?: string };
+  // DELETE /uploads - Delete file (admin / teacher only)
+  fastify.delete(
+    "/",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { url } = (request.body || {}) as { url?: string };
 
-    if (!url) {
-      return reply.status(400).send({ error: "Yêu cầu URL" });
-    }
-
-    // Parse file path from URL
-    const match = url.match(/\/uploads\/(images|audio)\/(.+)/);
-    if (!match) {
-      return reply.status(400).send({ error: "URL tệp không hợp lệ" });
-    }
-
-    const [, subDir, fileName] = match;
-    const filePath = join(getUploadDir(subDir), fileName);
-
-    try {
-      if (existsSync(filePath)) {
-        unlinkSync(filePath);
-        return { success: true, message: "Đã xóa tệp" };
-      } else {
-        return reply.status(404).send({ error: "Không tìm thấy tệp" });
+      if (!url || typeof url !== "string") {
+        return reply.status(400).send({ error: "Yêu cầu URL tệp cần xóa" });
       }
-    } catch (err) {
-      fastify.log.error(err);
-      return reply.status(500).send({ error: "Xóa tệp thất bại" });
-    }
-  });
+
+      // Decode URL safely to prevent encoded path traversal like %2e%2e
+      let decodedUrl: string;
+      try {
+        decodedUrl = decodeURIComponent(url);
+        // Second decode in case of double-encoding %252e
+        if (decodedUrl.includes("%")) {
+          try {
+            decodedUrl = decodeURIComponent(decodedUrl);
+          } catch {
+            // keep previous decoded
+          }
+        }
+      } catch {
+        return reply.status(400).send({ error: "URL không hợp lệ" });
+      }
+
+      // Check if URL contains obvious path traversal patterns before regex
+      if (decodedUrl.includes("..") || decodedUrl.includes(":\\") || decodedUrl.includes(":/")) {
+        // Return 400 immediately on traversal attempt
+        return reply.status(400).send({ error: "Đường dẫn chứa ký tự không hợp lệ" });
+      }
+
+      // Parse file path from URL
+      const match = decodedUrl.match(/\/uploads\/(images|audio)\/(.+)/);
+      if (!match) {
+        return reply.status(400).send({ error: "URL tệp không đúng định dạng /uploads/(images|audio)/..." });
+      }
+
+      const [, subDir, rawFileName] = match;
+      const baseUploadDir = join(process.cwd(), env.UPLOAD_DIR);
+      const authService = new AuthorizationService(fastify.prisma);
+
+      let filePath: string;
+      try {
+        filePath = authService.validateUploadPathBoundary({
+          subDir,
+          rawFileName,
+          baseUploadDir,
+        });
+      } catch (err: any) {
+        const statusCode = err instanceof AuthorizationError ? err.statusCode : 400;
+        return reply.status(statusCode).send({ error: err.message || "Tệp không hợp lệ" });
+      }
+
+      try {
+        if (existsSync(filePath)) {
+          unlinkSync(filePath);
+          return { success: true, message: "Đã xóa tệp thành công" };
+        } else {
+          return reply.status(404).send({ error: "Không tìm thấy tệp" });
+        }
+      } catch (err) {
+        fastify.log.error(err);
+        return reply.status(500).send({ error: "Xóa tệp thất bại" });
+      }
+    },
+  );
 };
 
 export default uploadsRoutes;
