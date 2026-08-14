@@ -105,8 +105,8 @@ export async function buildApp() {
   });
 
   // Plugins
-  await app.register(authPlugin);
   await app.register(prismaPlugin);
+  await app.register(authPlugin);
 
   // API Routes
   await app.register(routes, { prefix: "/api/v1" });

@@ -13,6 +13,8 @@ const envSchema = z.object({
   UPLOAD_DIR: z.string().default("uploads"),
   MAX_FILE_SIZE: z.string().default("52428800"), // 50MB
   FRONTEND_URL: z.string().default("http://localhost:5173"),
+  SUPABASE_URL: z.string().default("https://gzpdlqxjggyxlkeatvvf.supabase.co"),
+  SUPABASE_JWKS_URL: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);

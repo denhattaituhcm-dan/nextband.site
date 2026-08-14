@@ -14,6 +14,14 @@ const previewScheduleSchema = z.object({
   durationMinutes: z.number().int().optional().default(90)
 });
 
+const classScheduleSchema = z.object({
+  dayOfWeek: z.number().int().min(0).max(6),
+  startTime: z.string().regex(/^\d{2}:\d{2}$/),
+  durationMinutes: z.number().int().min(15).max(600),
+  timezone: z.string().min(1).max(64).default("Asia/Ho_Chi_Minh"),
+  isActive: z.boolean().optional().default(true),
+});
+
 const createClassSchema = z.object({
   courseId: z.string().min(1, "Mã khóa học (courseId) là bắt buộc"),
   name: z.string().min(1, "Tên lớp là bắt buộc"),
@@ -71,14 +79,6 @@ const parseMonthRange = (month?: string) => {
     monthLabel: `${start.getUTCFullYear()}-${String(start.getUTCMonth() + 1).padStart(2, "0")}`,
   };
 };
-
-const classScheduleSchema = z.object({
-  dayOfWeek: z.number().int().min(0).max(6),
-  startTime: z.string().regex(/^\d{2}:\d{2}$/),
-  durationMinutes: z.number().int().min(15).max(600),
-  timezone: z.string().min(1).max(64).default("Asia/Ho_Chi_Minh"),
-  isActive: z.boolean().optional().default(true),
-});
 
 const classAttendanceUpsertSchema = z.object({
   sessionDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
