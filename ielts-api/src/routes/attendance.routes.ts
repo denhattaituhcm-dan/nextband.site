@@ -159,7 +159,7 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify: any) => {
         return reply.status(403).send({ error: 'Từ chối truy cập: Bạn không phải giáo viên phụ trách lớp học này.' });
       }
 
-      const sessRows: any[] = await prisma.$queryRawUnsafe('SELECT id, class_id as classId, status FROM class_sessions WHERE id = ?', sessionId);
+      const sessRows: any[] = await prisma.$queryRawUnsafe('SELECT id, class_id as classId, session_date as sessionDate, status FROM class_sessions WHERE id = ?', sessionId);
       if (!sessRows || sessRows.length === 0 || sessRows[0].classId !== classId) {
         return reply.status(404).send({ error: 'Buổi học không hợp lệ hoặc không thuộc lớp này.' });
       }
@@ -190,18 +190,22 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify: any) => {
         });
       }
 
+      // Atomic Transaction: Raw SQL upsert
+      const sessionDate = session.sessionDate || new Date();
       await prisma.$transaction(
         body.items.map((item: any) => {
           const itemNote = item.note || item.notes || null;
           const attId = crypto.randomUUID();
           return prisma.$executeRawUnsafe(
-            `INSERT INTO class_attendance (id, session_id, student_id, teacher_id, status, note, created_at)
-             VALUES (?, ?, ?, ?, ?, ?, NOW())
+            `INSERT INTO class_attendance (id, class_id, session_id, student_id, teacher_id, session_date, status, note, created_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
              ON DUPLICATE KEY UPDATE status = VALUES(status), teacher_id = VALUES(teacher_id), note = VALUES(note)`,
             attId,
+            classId,
             sessionId,
             item.studentId,
             user.id,
+            sessionDate,
             item.status,
             itemNote
           );
