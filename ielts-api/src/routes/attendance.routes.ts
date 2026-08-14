@@ -292,9 +292,9 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
       });
 
       const unmarkedStudentIds = activeStudents
-        .map((s) => s.studentId)
-        .filter((sId) => {
-          const rec = attendanceRecords.find((r) => r.studentId === sId);
+        .map((s: any) => s.studentId)
+        .filter((sId: any) => {
+          const rec = attendanceRecords.find((r: any) => r.studentId === sId);
           return !rec || rec.status === 'UNMARKED';
         });
 
