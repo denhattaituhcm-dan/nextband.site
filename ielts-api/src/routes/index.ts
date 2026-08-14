@@ -42,7 +42,7 @@ const routes: FastifyPluginAsync = async (fastify) => {
   await fastify.register(logsRoutes, { prefix: "/admin" });
   await fastify.register(classesRoutes, { prefix: "/classes" });
   await fastify.register(highlightsRoutes, { prefix: "/highlights" });
-  await fastify.register(attendanceRoutes, { prefix: "/attendance" });
+  await fastify.register(attendanceRoutes);
   await fastify.register(siteSettingsRoutes, { prefix: "/site-settings" });
   await fastify.register(invitationRoutes, { prefix: "/invitations" });
   await fastify.register(homeworkRoutes, { prefix: "/homeworks" });

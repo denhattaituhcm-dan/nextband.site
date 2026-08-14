@@ -203,6 +203,9 @@ export class AttendanceService {
     const completedSessions = sessions.filter(s => s.status === ClassSessionStatus.COMPLETED);
     const completedSessionIds = new Set(completedSessions.map(s => s.id));
 
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+
     const matrix = classStudents.map(cs => {
       const studentId = cs.studentId;
       const studentAttendance = allAttendance.filter(a => a.studentId === studentId);
@@ -228,12 +231,18 @@ export class AttendanceService {
 
       const sessionRecords = sessions.map(s => {
         const att = studentAttendance.find(a => a.sessionId === s.id);
+        const sDate = new Date(s.sessionDate);
+        const isFuture = s.status === 'SCHEDULED' && sDate > today;
+        const isOverdueUnmarked = s.status === 'SCHEDULED' && sDate <= today;
+
         return {
           sessionId: s.id,
           sessionNumber: s.sessionNumber,
           sessionDate: s.sessionDate,
           status: s.status,
           attendanceStatus: att ? att.status : 'UNMARKED',
+          isFuture,
+          isOverdueUnmarked,
           note: att?.note || null
         };
       });
@@ -253,14 +262,21 @@ export class AttendanceService {
       };
     });
 
-    const attendanceCoverage = sessions.length > 0 ? Math.round((completedSessions.length / sessions.length) * 1000) / 10 : 0;
+    const sessionCoverage = sessions.length > 0 ? Math.round((completedSessions.length / sessions.length) * 1000) / 10 : 0;
+    
+    // Attendance Record Coverage Calculation
+    const totalExpectedRecords = completedSessions.length * classStudents.length;
+    const actualMarkedRecords = allAttendance.filter(a => completedSessionIds.has(a.sessionId) && a.status !== 'UNMARKED').length;
+    const recordCoverage = totalExpectedRecords > 0 ? Math.round((actualMarkedRecords / totalExpectedRecords) * 1000) / 10 : 100;
 
     return {
       classId,
       className: classData.name,
       totalSessions: sessions.length,
       completedSessions: completedSessions.length,
-      attendanceCoverage,
+      sessionCoverage,
+      recordCoverage,
+      attendanceCoverage: sessionCoverage, // Backwards compatibility
       sessions: sessions.map(s => ({
         id: s.id,
         sessionNumber: s.sessionNumber,
