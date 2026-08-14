@@ -17,7 +17,7 @@ const markAttendanceSchema = z.object({
   ),
 });
 
-const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
+const attendanceRoutes = async (fastify: any) => {
   // Helper: check if teacher is class owner or user is admin
   const isTeacherOrAdmin = async (userId: string, roles: string[], classId: string) => {
     if (roles.includes('admin')) return true;
@@ -38,10 +38,10 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
   };
 
   // 1. GET /classes/:classId/sessions/:sessionId/attendance
-  fastify.get<{ Params: { classId: string; sessionId: string } }>(
+  fastify.get(
     '/classes/:classId/sessions/:sessionId/attendance',
     { preHandler: [authenticate] },
-    async (request, reply) => {
+    async (request: any, reply: any) => {
       const user = request.user as { id: string; roles: string[] };
       const { classId, sessionId } = request.params;
 
@@ -173,10 +173,10 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
   );
 
   // 2. POST /classes/:classId/sessions/:sessionId/attendance (Guard 1: Active Enrollment + Session Lock)
-  fastify.post<{ Params: { classId: string; sessionId: string } }>(
+  fastify.post(
     '/classes/:classId/sessions/:sessionId/attendance',
     { preHandler: [authenticate, requireRoles('admin', 'teacher')] },
-    async (request, reply) => {
+    async (request: any, reply: any) => {
       const user = request.user as { id: string; roles: string[] };
       const { classId, sessionId } = request.params;
       const body = markAttendanceSchema.parse(request.body);
@@ -259,10 +259,10 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
   );
 
   // 3. POST /classes/:classId/sessions/:sessionId/complete
-  fastify.post<{ Params: { classId: string; sessionId: string } }>(
+  fastify.post(
     '/classes/:classId/sessions/:sessionId/complete',
     { preHandler: [authenticate, requireRoles('admin', 'teacher')] },
-    async (request, reply) => {
+    async (request: any, reply: any) => {
       const user = request.user as { id: string; roles: string[] };
       const { classId, sessionId } = request.params;
 
@@ -321,10 +321,10 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
   );
 
   // 4. GET /classes/:classId/attendance-matrix (Object-Level Authorization)
-  fastify.get<{ Params: { classId: string } }>(
+  fastify.get(
     '/classes/:classId/attendance-matrix',
     { preHandler: [authenticate] },
-    async (request, reply) => {
+    async (request: any, reply: any) => {
       const user = request.user as { id: string; roles: string[] };
       const { classId } = request.params;
 
