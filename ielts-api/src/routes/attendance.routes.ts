@@ -1,3 +1,4 @@
+import fp from 'fastify-plugin';
 import { FastifyPluginAsync } from 'fastify';
 import { authenticate, requireRoles } from '../middlewares/auth.middleware.js';
 import { z } from 'zod';
@@ -442,5 +443,4 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
   );
 };
 
-export default attendanceRoutes;
-
+export default fp(attendanceRoutes);
