@@ -1,7 +1,10 @@
 import fp from 'fastify-plugin';
 import { FastifyPluginAsync } from 'fastify';
+import { PrismaClient } from '@prisma/client';
 import { authenticate, requireRoles } from '../middlewares/auth.middleware.js';
 import { z } from 'zod';
+
+const db = new PrismaClient();
 
 const markAttendanceSchema = z.object({
   items: z.array(
@@ -19,7 +22,7 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
   const isTeacherOrAdmin = async (userId: string, roles: string[], classId: string) => {
     if (roles.includes('admin')) return true;
     if (!roles.includes('teacher')) return false;
-    const cls = await fastify.prisma.class.findUnique({
+    const cls = await db.class.findUnique({
       where: { id: classId },
       select: { teacherId: true },
     });
@@ -28,7 +31,7 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
 
   // Helper: check if student belongs to class
   const isStudentInClass = async (studentId: string, classId: string) => {
-    const rec = await fastify.prisma.classStudent.findFirst({
+    const rec = await db.classStudent.findFirst({
       where: { classId, studentId },
     });
     return !!rec;
@@ -42,13 +45,13 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
       const user = request.user as { id: string; roles: string[] };
       const { classId, sessionId } = request.params;
 
-      const cls = await fastify.prisma.class.findUnique({
+      const cls = await db.class.findUnique({
         where: { id: classId },
         select: { id: true, name: true, teacherId: true },
       });
       if (!cls) return reply.status(404).send({ error: 'Lớp học không tồn tại.' });
 
-      const session = await fastify.prisma.classSession.findUnique({
+      const session = await db.classSession.findUnique({
         where: { id: sessionId },
       });
       if (!session || session.classId !== classId) {
@@ -70,7 +73,7 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
           return reply.status(403).send({ error: 'Từ chối truy cập: Bạn không thuộc danh sách học viên của lớp này.' });
         }
 
-        const studentRecord = await fastify.prisma.classAttendance.findUnique({
+        const studentRecord = await db.classAttendance.findUnique({
           where: {
             sessionId_studentId: {
               sessionId,
@@ -79,7 +82,7 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
           },
         });
 
-        const studentUser = await fastify.prisma.user.findUnique({
+        const studentUser = await db.user.findUnique({
           where: { id: user.id },
           select: { id: true, fullName: true, email: true, avatarUrl: true },
         });
@@ -110,12 +113,12 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
       }
 
       // Admin & Class Teacher
-      const classStudents = await fastify.prisma.classStudent.findMany({
+      const classStudents = await db.classStudent.findMany({
         where: { classId },
         include: { student: true },
       });
 
-      const attendanceRecords = await fastify.prisma.classAttendance.findMany({
+      const attendanceRecords = await db.classAttendance.findMany({
         where: { sessionId },
       });
 
@@ -178,7 +181,7 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
       const { classId, sessionId } = request.params;
       const body = markAttendanceSchema.parse(request.body);
 
-      const cls = await fastify.prisma.class.findUnique({
+      const cls = await db.class.findUnique({
         where: { id: classId },
         select: { teacherId: true },
       });
@@ -190,7 +193,7 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
         return reply.status(403).send({ error: 'Từ chối truy cập: Bạn không phải giáo viên phụ trách lớp học này.' });
       }
 
-      const session = await fastify.prisma.classSession.findUnique({
+      const session = await db.classSession.findUnique({
         where: { id: sessionId },
       });
       if (!session || session.classId !== classId) {
@@ -206,7 +209,7 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
 
       // Guard 1: Active Enrollment Validation (ALL students in items must be enrolled in class)
       const requestedStudentIds = [...new Set(body.items.map((i) => i.studentId))];
-      const activeClassStudents = await fastify.prisma.classStudent.findMany({
+      const activeClassStudents = await db.classStudent.findMany({
         where: {
           classId,
           studentId: { in: requestedStudentIds },
@@ -225,10 +228,10 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
       }
 
       // Atomic Transaction: Only executed when ALL items are valid
-      await fastify.prisma.$transaction(
+      await db.$transaction(
         body.items.map((item) => {
           const itemNote = item.note || item.notes || null;
-          return fastify.prisma.classAttendance.upsert({
+          return db.classAttendance.upsert({
             where: {
               sessionId_studentId: {
                 sessionId,
@@ -263,7 +266,7 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
       const user = request.user as { id: string; roles: string[] };
       const { classId, sessionId } = request.params;
 
-      const cls = await fastify.prisma.class.findUnique({
+      const cls = await db.class.findUnique({
         where: { id: classId },
         select: { teacherId: true },
       });
@@ -275,19 +278,19 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
         return reply.status(403).send({ error: 'Từ chối truy cập: Bạn không phải giáo viên phụ trách lớp học này.' });
       }
 
-      const session = await fastify.prisma.classSession.findUnique({
+      const session = await db.classSession.findUnique({
         where: { id: sessionId },
       });
       if (!session || session.classId !== classId) {
         return reply.status(404).send({ error: 'Buổi học không hợp lệ hoặc không thuộc lớp này.' });
       }
 
-      const activeStudents = await fastify.prisma.classStudent.findMany({
+      const activeStudents = await db.classStudent.findMany({
         where: { classId },
         select: { studentId: true },
       });
 
-      const attendanceRecords = await fastify.prisma.classAttendance.findMany({
+      const attendanceRecords = await db.classAttendance.findMany({
         where: { sessionId },
       });
 
@@ -304,7 +307,7 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
         });
       }
 
-      const updatedSession = await fastify.prisma.classSession.update({
+      const updatedSession = await db.classSession.update({
         where: { id: sessionId },
         data: {
           status: 'COMPLETED',
@@ -325,7 +328,7 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
       const user = request.user as { id: string; roles: string[] };
       const { classId } = request.params;
 
-      const cls = await fastify.prisma.class.findUnique({
+      const cls = await db.class.findUnique({
         where: { id: classId },
         select: { id: true, name: true, teacherId: true },
       });
@@ -347,12 +350,12 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
         }
       }
 
-      const sessions = await fastify.prisma.classSession.findMany({
+      const sessions = await db.classSession.findMany({
         where: { classId },
         orderBy: { sessionNumber: 'asc' },
       });
 
-      const classStudents = await fastify.prisma.classStudent.findMany({
+      const classStudents = await db.classStudent.findMany({
         where: {
           classId,
           ...(isStudent ? { studentId: user.id } : {}),
@@ -362,7 +365,7 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify) => {
       });
 
       const sessionIds = sessions.map((s) => s.id);
-      const allAttendance = await fastify.prisma.classAttendance.findMany({
+      const allAttendance = await db.classAttendance.findMany({
         where: {
           sessionId: { in: sessionIds },
           ...(isStudent ? { studentId: user.id } : {}),
