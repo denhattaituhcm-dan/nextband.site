@@ -31,7 +31,85 @@ const createQuestionGroupSchema = z.object({
   orderIndex: z.number().int().default(0),
 });
 
-const createQuestionSchema = z.object({
+import { sanitizeBackendQuestionPayload } from "../utils/questionNormalizer.js";
+
+const validateQuestionSemantic = (data: any, ctx: z.RefinementCtx) => {
+  const type = data.questionType;
+  if (!type) return;
+
+  if (type === "multiple_choice") {
+    let opts = data.options;
+    if (typeof opts === "string") {
+      try {
+        opts = JSON.parse(opts);
+      } catch {
+        opts = null;
+      }
+    }
+    const validOptions = Array.isArray(opts)
+      ? opts.filter((o: any) => typeof o === "string" && o.trim().length > 0)
+      : [];
+    if (validOptions.length < 2) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Câu hỏi trắc nghiệm phải có ít nhất 2 lựa chọn có nội dung",
+        path: ["options"],
+      });
+    }
+  }
+
+  if (type === "matching" && data.correctAnswer) {
+    try {
+      const parsed = JSON.parse(data.correctAnswer);
+      if (
+        !parsed ||
+        !Array.isArray(parsed.items) ||
+        parsed.items.length === 0 ||
+        !Array.isArray(parsed.options) ||
+        parsed.options.length === 0 ||
+        typeof parsed.pairs !== "object" ||
+        parsed.pairs === null ||
+        Object.keys(parsed.pairs).length === 0
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Dữ liệu nối đáp án (matching) không đúng cấu trúc (items, options, pairs)",
+          path: ["correctAnswer"],
+        });
+      }
+    } catch {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Đáp án matching phải là chuỗi JSON hợp lệ",
+        path: ["correctAnswer"],
+      });
+    }
+  }
+
+  if (type === "true_false_not_given" && data.correctAnswer) {
+    const val = data.correctAnswer.trim().toUpperCase();
+    if (!["TRUE", "FALSE", "NOT GIVEN"].includes(val)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Đáp án TRUE/FALSE/NOT GIVEN phải là TRUE, FALSE hoặc NOT GIVEN",
+        path: ["correctAnswer"],
+      });
+    }
+  }
+
+  if (type === "yes_no_not_given" && data.correctAnswer) {
+    const val = data.correctAnswer.trim().toUpperCase();
+    if (!["YES", "NO", "NOT GIVEN"].includes(val)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Đáp án YES/NO/NOT GIVEN phải là YES, NO hoặc NOT GIVEN",
+        path: ["correctAnswer"],
+      });
+    }
+  }
+};
+
+const baseQuestionSchema = z.object({
   groupId: z.string({ required_error: "ID nhóm câu hỏi là bắt buộc" }),
   questionType: questionTypeEnum,
   questionText: z.string().min(1, "Nội dung câu hỏi là bắt buộc"),
@@ -42,8 +120,14 @@ const createQuestionSchema = z.object({
   orderIndex: z.number().int().default(0),
 });
 
+const createQuestionSchema = baseQuestionSchema.superRefine(validateQuestionSemantic);
+
 const updateQuestionGroupSchema = createQuestionGroupSchema.partial();
-const updateQuestionSchema = createQuestionSchema.partial();
+const updateQuestionSchema = baseQuestionSchema.partial().superRefine((data, ctx) => {
+  if (data.questionType) {
+    validateQuestionSemantic(data, ctx);
+  }
+});
 
 const questionsRoutes: FastifyPluginAsync = async (fastify) => {
   const MAX_AUTO_ORDER_RETRIES = 5;
@@ -183,9 +267,11 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
         (Object.prototype.hasOwnProperty.call(body, "orderIndex") ||
           Object.prototype.hasOwnProperty.call(body, "order_index"));
 
+      const sanitized = sanitizeBackendQuestionPayload(data);
+
       if (!orderIndexProvided) {
         try {
-          const question = await createQuestionWithAutoOrder(data as any);
+          const question = await createQuestionWithAutoOrder(sanitized as any);
           return reply.status(201).send(question);
         } catch (error) {
           if (isPrismaErrorCode(error, "P2002")) {
@@ -201,7 +287,7 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
 
       if (await hasOrderConflict(data.groupId, desiredOrder)) {
         try {
-          const question = await createQuestionWithAutoOrder(data as any);
+          const question = await createQuestionWithAutoOrder(sanitized as any);
           return reply.status(201).send(question);
         } catch (error) {
           if (isPrismaErrorCode(error, "P2002")) {
@@ -213,16 +299,16 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
         }
       }
 
-      data.orderIndex = desiredOrder;
+      sanitized.orderIndex = desiredOrder;
 
       try {
         const question = await fastify.prisma.question.create({
-          data: data as any,
+          data: sanitized as any,
         });
         return reply.status(201).send(question);
       } catch (error) {
         if (isPrismaErrorCode(error, "P2002")) {
-          const question = await createQuestionWithAutoOrder(data as any);
+          const question = await createQuestionWithAutoOrder(sanitized as any);
           return reply.status(201).send(question);
         }
         throw error;
@@ -255,7 +341,7 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
 
       const existing = await fastify.prisma.question.findUnique({
         where: { id },
-        select: { id: true, groupId: true, orderIndex: true },
+        select: { id: true, groupId: true, orderIndex: true, questionType: true },
       });
       if (!existing) {
         return reply.status(404).send({ error: "Không tìm thấy câu hỏi" });
@@ -279,9 +365,17 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
         }
       }
 
+      const merged = {
+        ...existing,
+        ...data,
+        groupId: nextGroupId,
+        orderIndex: nextOrderIndex,
+      };
+      const sanitized = sanitizeBackendQuestionPayload(merged);
+
       const question = await fastify.prisma.question.update({
         where: { id },
-        data,
+        data: sanitized as any,
       });
 
       return question;
@@ -310,6 +404,34 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
         return reply
           .status(400)
           .send({ error: "Yêu cầu mảng questions và groupId" });
+      }
+
+      // Semantic validation for each bulk question
+      for (let i = 0; i < questions.length; i++) {
+        const q = questions[i];
+        if (!q.questionText || !String(q.questionText).trim()) {
+          return reply.status(400).send({
+            error: `Câu hỏi số ${i + 1} không có nội dung`,
+          });
+        }
+        if (q.questionType === "multiple_choice") {
+          let opts = q.options;
+          if (typeof opts === "string") {
+            try {
+              opts = JSON.parse(opts);
+            } catch {
+              opts = null;
+            }
+          }
+          const validOptions = Array.isArray(opts)
+            ? opts.filter((o: any) => typeof o === "string" && o.trim().length > 0)
+            : [];
+          if (validOptions.length < 2) {
+            return reply.status(400).send({
+              error: `Câu hỏi số ${i + 1} (Trắc nghiệm) phải có ít nhất 2 lựa chọn có nội dung`,
+            });
+          }
+        }
       }
 
       let attempt = 0;
@@ -346,16 +468,16 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
                 }
                 batchOrders.add(orderIndex);
 
-                return {
+                const sanitized = sanitizeBackendQuestionPayload({
+                  ...q,
                   groupId,
-                  questionType: q.questionType,
-                  questionText: q.questionText,
-                  options: q.options,
-                  correctAnswer: q.correctAnswer,
-                  audioUrl: q.audioUrl,
-                  points: q.points || 1,
                   orderIndex,
-                };
+                });
+
+                return {
+                  ...sanitized,
+                  options: sanitized.options ? sanitized.options : undefined,
+                } as any;
               });
 
               const result = await tx.question.createMany({

@@ -715,14 +715,35 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
           );
 
           for (const question of allQuestions) {
-            if (
-              !OBJECTIVE_TYPES.has(question.questionType) ||
-              !question.correctAnswer
-            ) {
+            if (!OBJECTIVE_TYPES.has(question.questionType)) {
               continue;
             }
 
-            totalQuestions++;
+            // Always count objective question towards totalQuestions denominator
+            let questionUnits = 1;
+            if (question.questionType === "fill_blank" && question.correctAnswer) {
+              try {
+                const parsedCorrect = JSON.parse(question.correctAnswer.trim());
+                if (typeof parsedCorrect === "object" && parsedCorrect !== null) {
+                  const bCount = Object.keys(parsedCorrect).length;
+                  if (bCount > 0) questionUnits = bCount;
+                }
+              } catch {}
+            } else if (question.questionType === "matching" && question.correctAnswer) {
+              try {
+                const parsedCorrect = JSON.parse(question.correctAnswer.trim());
+                if (parsedCorrect && parsedCorrect.pairs) {
+                  const pCount = Object.keys(parsedCorrect.pairs).length;
+                  if (pCount > 0) questionUnits = pCount;
+                }
+              } catch {}
+            }
+
+            totalQuestions += questionUnits;
+
+            if (!question.correctAnswer || !question.correctAnswer.trim()) {
+              continue;
+            }
 
             const studentAnswer = answerMap.get(question.id);
             if (!studentAnswer) continue;
