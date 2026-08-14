@@ -35,9 +35,3 @@ export const gradeSubmissionSchema = z.object({
   feedback: z.string().min(1, 'Nhận xét không được để trống')
 });
 
-export const recordAttendanceSchema = z.object({
-  sessionId: z.string().uuid('ID Buổi học không hợp lệ'),
-  studentId: z.string().uuid('ID Học viên không hợp lệ'),
-  status: z.enum(['PRESENT', 'ABSENT', 'LATE']),
-  note: z.string().optional()
-});

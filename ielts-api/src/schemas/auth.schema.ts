@@ -20,12 +20,3 @@ export const googleLoginSchema = z.object({
 
 export type GoogleLoginInput = z.infer<typeof googleLoginSchema>;
 
-export const userResponseSchema = z.object({
-  id: z.string(),
-  email: z.string(),
-  fullName: z.string().nullable(),
-  avatarUrl: z.string().nullable(),
-  roles: z.array(z.string()),
-});
-
-export type UserResponse = z.infer<typeof userResponseSchema>;

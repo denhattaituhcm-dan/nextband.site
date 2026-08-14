@@ -20,5 +20,3 @@ export const createExamSchema = z.object({
 
 export const updateExamSchema = createExamSchema.partial();
 
-export type CreateExamInput = z.infer<typeof createExamSchema>;
-export type UpdateExamInput = z.infer<typeof updateExamSchema>;
