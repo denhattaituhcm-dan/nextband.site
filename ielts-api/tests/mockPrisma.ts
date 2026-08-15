@@ -18,6 +18,7 @@ export function createMockPrisma() {
   const answers: any[] = [];
   const idempotencyRecords: any[] = [];
   const auditOutboxEvents: any[] = [];
+  const notifications: any[] = [];
 
   const mock = {
     $connect: async () => {},
@@ -442,8 +443,12 @@ export function createMockPrisma() {
           Object.assign(submissions[idx], update);
           return submissions[idx];
         }
-        submissions.push(create);
-        return create;
+        const item = {
+          id: create.id || randomUUID(),
+          ...create,
+        };
+        submissions.push(item);
+        return item;
       },
       findUnique: async ({ where }: any) => {
         return submissions.find(
@@ -747,6 +752,99 @@ export function createMockPrisma() {
       findMany: async () => auditOutboxEvents,
     },
 
+    notification: {
+      create: async ({ data }: any) => {
+        // Check unique constraint: entityType, entityId, userId, type
+        if (data.entityType && data.entityId && data.userId && data.type) {
+          const existing = notifications.find(
+            (n) =>
+              n.entityType === data.entityType &&
+              n.entityId === data.entityId &&
+              n.userId === data.userId &&
+              n.type === data.type
+          );
+          if (existing) {
+            const err: any = new Error('Unique constraint failed on the fields: (`entity_type`,`entity_id`,`user_id`,`type`)');
+            err.code = 'P2002';
+            throw err;
+          }
+        }
+        const item = {
+          id: data.id || `notif-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+          ...data,
+          link: data.link || null,
+          entityType: data.entityType || null,
+          entityId: data.entityId || null,
+          isRead: data.isRead || false,
+          createdAt: data.createdAt || new Date(),
+          readAt: data.readAt || null,
+        };
+        notifications.push(item);
+        return item;
+      },
+      createMany: async ({ data, skipDuplicates }: any) => {
+        let count = 0;
+        for (const d of data) {
+          if (skipDuplicates && d.entityType && d.entityId && d.userId && d.type) {
+            const exists = notifications.some(
+              (n) =>
+                n.entityType === d.entityType &&
+                n.entityId === d.entityId &&
+                n.userId === d.userId &&
+                n.type === d.type
+            );
+            if (exists) continue;
+          }
+          notifications.push({
+            id: d.id || `notif-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+            ...d,
+            link: d.link || null,
+            entityType: d.entityType || null,
+            entityId: d.entityId || null,
+            isRead: d.isRead || false,
+            createdAt: d.createdAt || new Date(),
+            readAt: d.readAt || null,
+          });
+          count++;
+        }
+        return { count };
+      },
+      findMany: async ({ where, orderBy, skip, take }: any = {}) => {
+        let list = [...notifications];
+        if (where) {
+          if (where.userId) list = list.filter((n) => n.userId === where.userId);
+          if (where.isRead !== undefined) list = list.filter((n) => n.isRead === where.isRead);
+        }
+        if (orderBy?.createdAt === 'desc') {
+          list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        }
+        const s = skip || 0;
+        const t = take ? s + take : list.length;
+        return list.slice(s, t);
+      },
+      count: async ({ where }: any = {}) => {
+        let list = [...notifications];
+        if (where) {
+          if (where.userId) list = list.filter((n) => n.userId === where.userId);
+          if (where.isRead !== undefined) list = list.filter((n) => n.isRead === where.isRead);
+        }
+        return list.length;
+      },
+      updateMany: async ({ where, data }: any) => {
+        let count = 0;
+        for (const n of notifications) {
+          const matchId = !where?.id || n.id === where.id;
+          const matchUser = !where?.userId || n.userId === where.userId;
+          const matchIsRead = where?.isRead === undefined || n.isRead === where.isRead;
+          if (matchId && matchUser && matchIsRead) {
+            Object.assign(n, data);
+            count++;
+          }
+        }
+        return { count };
+      },
+    },
+
     users,
     userRoles,
     courses,
@@ -764,6 +862,7 @@ export function createMockPrisma() {
     answers,
     idempotencyRecords,
     auditOutboxList: auditOutboxEvents,
+    notifications,
   };
 
   return mock;

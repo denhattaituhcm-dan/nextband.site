@@ -5,6 +5,12 @@ import { ClassController } from "../controllers/class.controller.js";
 export default async function classesRoutes(fastify: FastifyInstance) {
   const controller = new ClassController(fastify);
 
+  // GET /classes/my-classes — Danh sách lớp học của học viên đang đăng nhập
+  // PHẢI được đăng ký TRƯỚC /:id để Fastify không nhầm "my-classes" là classId
+  fastify.get("/my-classes", { preHandler: authenticate }, async (request, reply) => {
+    return controller.getMyClasses(request, reply);
+  });
+
   // GET /classes - Lấy danh sách lớp
   fastify.get("/", { preHandler: authenticate }, async (request, reply) => {
     return controller.list(request, reply);

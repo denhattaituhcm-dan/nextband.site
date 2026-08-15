@@ -1,7 +1,7 @@
 import { PrismaClient, Prisma, SubmissionStatus } from '@prisma/client';
 
 export class HomeworkRepository {
-  constructor(private prisma: PrismaClient) {}
+  constructor(private prisma: PrismaClient | Prisma.TransactionClient) {}
 
   async findById(id: string) {
     return this.prisma.homework.findUnique({

@@ -138,6 +138,29 @@ export class ClassRepository {
     });
   }
 
+  async getClassesForStudent(studentId: string) {
+    return this.prisma.classStudent.findMany({
+      where: {
+        studentId,
+        status: "ACTIVE",
+        deletedAt: null,
+      },
+      include: {
+        class: {
+          include: {
+            course: {
+              select: { id: true, title: true, description: true },
+            },
+            teacher: {
+              select: { id: true, fullName: true },
+            },
+          },
+        },
+      },
+      orderBy: { joinedAt: "desc" },
+    });
+  }
+
   async recordAttendance(data: {
     sessionId: string;
     studentId: string;

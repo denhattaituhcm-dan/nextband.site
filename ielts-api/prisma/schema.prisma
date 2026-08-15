@@ -38,6 +38,7 @@ model User {
   createdHomeworks  Homework[]        @relation("CreatedHomeworks")
   homeworkSubmissions Submission[]     @relation("StudentHomeworkSubmissions")
   auditLogsPerformed EnrollmentAuditLog[] @relation("OperatorAuditLogs")
+  notifications     Notification[]   @relation("UserNotifications")
 
   @@map("users")
 }
@@ -608,4 +609,36 @@ enum ClassStatus {
   COMPLETED
   CLOSED
   ARCHIVED
+}
+
+enum NotificationType {
+  NEW_SUBMISSION
+  SUBMISSION_GRADED
+  NEW_HOMEWORK
+  TEACHER_FEEDBACK
+  PENDING_GRADING
+  DEADLINE_APPROACHING
+  ANNOUNCEMENT
+  SYSTEM
+}
+
+model Notification {
+  id         String           @id @default(uuid())
+  userId     String           @map("user_id")
+  type       NotificationType @default(SYSTEM)
+  title      String           @db.VarChar(255)
+  message    String           @db.Text
+  link       String?          @db.VarChar(500)
+  entityType String?          @map("entity_type") @db.VarChar(50)
+  entityId   String?          @map("entity_id") @db.VarChar(255)
+  isRead     Boolean          @default(false) @map("is_read")
+  createdAt  DateTime         @default(now()) @map("created_at")
+  readAt     DateTime?        @map("read_at")
+
+  user       User             @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([entityType, entityId, userId, type], map: "notifications_idempotency_idx")
+  @@index([userId, isRead], map: "notifications_user_id_is_read_idx")
+  @@index([userId, createdAt], map: "notifications_user_id_created_at_idx")
+  @@map("notifications")
 }

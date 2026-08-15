@@ -11,6 +11,17 @@ export class ClassController {
     this.service = new ClassService(fastify.prisma);
   }
 
+  async getMyClasses(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const user = (request as any).user;
+      const result = await this.service.getMyClasses(user.id);
+      return reply.send({ data: result });
+    } catch (err: any) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
+
   async list(request: FastifyRequest, reply: FastifyReply) {
     const dataQuery = handleValidation(
       paginationSchema.safeParse(request.query),

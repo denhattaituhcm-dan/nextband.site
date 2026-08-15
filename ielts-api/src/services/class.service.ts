@@ -9,6 +9,22 @@ export class ClassService {
     this.repo = new ClassRepository(prisma);
   }
 
+  // Use Case: Get all active class memberships for the currently authenticated student
+  async getMyClasses(userId: string) {
+    const memberships = await this.repo.getClassesForStudent(userId);
+    return memberships.map((m) => ({
+      id: m.id,
+      classId: m.class.id,
+      className: m.class.name,
+      courseId: m.class.courseId,
+      courseTitle: m.class.course?.title ?? m.class.name,
+      teacherName: m.class.teacher?.fullName ?? null,
+      isActive: m.class.isActive,
+      membershipStatus: m.status,
+      joinedAt: m.joinedAt,
+    }));
+  }
+
   // Use Case: List Classes with Role & Teacher filtering
   async listClasses(user: { id: string; roles: string[] }, query: any) {
     const { page = 1, limit = 10, search, isActive } = query;

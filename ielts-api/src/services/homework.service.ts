@@ -1,17 +1,20 @@
-import { PrismaClient, HomeworkStatus, SubmissionStatus } from '@prisma/client';
+import { PrismaClient, Prisma, HomeworkStatus, SubmissionStatus, NotificationType, EnrollmentStatus } from '@prisma/client';
 import { HomeworkRepository } from '../repositories/homework.repository.js';
 import { ClassRepository } from '../repositories/class.repository.js';
 import { AuthorizationService, AuthorizationError, NotFoundError } from './authorization.service.js';
+import { NotificationService } from './notification.service.js';
 
 export class HomeworkService {
   private homeworkRepo: HomeworkRepository;
   private classRepo: ClassRepository;
   private authService: AuthorizationService;
+  private notificationService: NotificationService;
 
   constructor(private prisma: PrismaClient) {
     this.homeworkRepo = new HomeworkRepository(prisma);
     this.classRepo = new ClassRepository(prisma);
     this.authService = new AuthorizationService(prisma);
+    this.notificationService = new NotificationService(prisma);
   }
 
   // Use Case: Assign Homework to Class/Session (Authoritative Gate: Teacher owns class or Admin)
@@ -33,8 +36,8 @@ export class HomeworkService {
       classId: data.classId,
     });
 
-    return this.prisma.$transaction(async (tx) => {
-      const homeworkRepo = new HomeworkRepository(tx as PrismaClient);
+    return this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+      const homeworkRepo = new HomeworkRepository(tx);
 
       const homework = await homeworkRepo.createHomework({
         class: { connect: { id: data.classId } },
@@ -47,6 +50,35 @@ export class HomeworkService {
         ...(data.lessonId && !data.classSessionId && { lesson: { connect: { id: data.lessonId } } }),
         ...(data.examId && { exam: { connect: { id: data.examId } } })
       });
+
+      // 2. Query all ACTIVE students in class
+      const activeStudents = await tx.classStudent.findMany({
+        where: {
+          classId: data.classId,
+          status: EnrollmentStatus.ACTIVE,
+        },
+        select: { studentId: true },
+      });
+
+      // 3. Batch Notification (createMany in single SQL statement with skipDuplicates)
+      if (activeStudents.length > 0) {
+        const deadlineText = data.deadline
+          ? ` (Hạn nộp: ${new Date(data.deadline).toLocaleDateString('vi-VN')})`
+          : '';
+
+        await this.notificationService.createBatchNotifications(
+          tx,
+          activeStudents.map((s) => ({
+            userId: s.studentId,
+            type: NotificationType.NEW_HOMEWORK,
+            title: `Bài tập mới: ${data.title}`,
+            message: `Lớp học có bài tập mới "${data.title}"${deadlineText}.`,
+            link: `/client/classes/${data.classId}`,
+            entityType: 'HOMEWORK',
+            entityId: homework.id,
+          }))
+        );
+      }
 
       return homework;
     });
