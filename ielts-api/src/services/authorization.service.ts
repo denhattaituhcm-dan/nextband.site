@@ -154,6 +154,47 @@ export class AuthorizationService {
   }
 
   /**
+   * Kiểm tra quyền làm/xem bài thi của học viên (hỗ trợ cả Direct Enrollment và Class Membership).
+   */
+  async isStudentAuthorizedForExam(params: {
+    studentId: string;
+    examId: string;
+    courseId: string;
+    isOpen?: boolean;
+  }): Promise<boolean> {
+    const { studentId, examId, courseId, isOpen } = params;
+    if (isOpen) return true;
+
+    // 1. Direct course enrollment
+    const enrollment = await this.prisma.enrollment.findUnique({
+      where: {
+        courseId_studentId: {
+          courseId,
+          studentId,
+        },
+      },
+    });
+    if (enrollment) return true;
+
+    // 2. Class-based membership (via ClassStudent)
+    const classStudent = await this.prisma.classStudent.findFirst({
+      where: {
+        studentId,
+        deletedAt: null,
+        class: {
+          isActive: true,
+          OR: [
+            { courseId },
+            { homeworks: { some: { examId } } },
+          ],
+        },
+      },
+    });
+
+    return !!classStudent;
+  }
+
+  /**
    * Chuẩn hóa và kiểm tra ranh giới thư mục tuyệt đối chống Path Traversal.
    */
   validateUploadPathBoundary(params: {

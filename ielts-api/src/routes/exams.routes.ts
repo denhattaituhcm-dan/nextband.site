@@ -6,22 +6,59 @@ import { authenticate, requireRoles } from "../middlewares/auth.middleware.js";
 import { handleValidation } from "../utils/validation.js";
 import { toFileUrl } from "../utils/file.js";
 import { verifyPassword } from "../utils/password.js";
+import { AuthorizationService } from "../services/authorization.service.js";
 
 const examsRoutes: FastifyPluginAsync = async (fastify) => {
   const cleanQuestionData = (q: any, isAdminOrTeacher: boolean) => {
-    if (isAdminOrTeacher) return q;
+    // 1. Calculate safe metadata for UI rendering without leaking the answer strings
+    let selectionMode: "single" | "multiple" = "single";
+    let maxSelections = 1;
+
+    if (q.questionType === "multiple_choice") {
+      if (q.correctAnswer && typeof q.correctAnswer === "string") {
+        const answers = q.correctAnswer.split("|").map((s: string) => s.trim()).filter(Boolean);
+        if (answers.length > 1) {
+          selectionMode = "multiple";
+          maxSelections = answers.length;
+        }
+      }
+    }
+
+    if (isAdminOrTeacher) {
+      return {
+        ...q,
+        selectionMode,
+        maxSelections,
+        isMultiChoice: selectionMode === "multiple",
+      };
+    }
+
+    // 2. Student Safe DTO: Strip 100% of secret fields
     const cleaned = { ...q };
     if (q.questionType === "matching" && q.correctAnswer) {
       try {
         const config = JSON.parse(q.correctAnswer);
         delete config.pairs;
-        cleaned.correctAnswer = JSON.stringify(config);
-      } catch {
-        cleaned.correctAnswer = null;
-      }
-    } else {
-      cleaned.correctAnswer = null;
+        if (!cleaned.options || typeof cleaned.options !== "object") {
+          cleaned.options = { items: config.items || [], options: config.options || [] };
+        }
+      } catch {}
     }
+
+    delete cleaned.correctAnswer;
+    delete cleaned.correct_answer;
+    delete cleaned.audioScript;
+    delete cleaned.audio_script;
+    delete cleaned.acceptedAnswers;
+    delete cleaned.answerKey;
+    delete cleaned.answer_key;
+
+    cleaned.correctAnswer = null;
+    cleaned.audioScript = null;
+    cleaned.selectionMode = selectionMode;
+    cleaned.maxSelections = maxSelections;
+    cleaned.isMultiChoice = selectionMode === "multiple";
+
     return cleaned;
   };
 
@@ -135,21 +172,18 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
 
       // IDOR Check
       if (!isAdmin && !isTeacher) {
-        const enrollment = await fastify.prisma.enrollment.findUnique({
-          where: {
-            courseId_studentId: {
-              courseId: exam.courseId,
-              studentId: user.id,
-            },
-          },
+        const authService = new AuthorizationService(fastify.prisma);
+        const isAuthorized = await authService.isStudentAuthorizedForExam({
+          studentId: user.id,
+          examId: exam.id,
+          courseId: exam.courseId,
+          isOpen: exam.isOpen,
         });
 
-        if (!enrollment) {
-          if (!exam.isOpen) {
-            return reply
-              .status(403)
-              .send({ error: "Bạn chưa đăng ký khóa học này để xem bài thi" });
-          }
+        if (!isAuthorized) {
+          return reply
+            .status(403)
+            .send({ error: "Bạn chưa đăng ký khóa học hoặc lớp học này để xem bài thi" });
         }
 
         if (!exam.isPublished || !exam.isActive) {

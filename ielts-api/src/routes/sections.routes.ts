@@ -3,6 +3,7 @@ import { z } from "zod";
 import { authenticate, requireRoles } from "../middlewares/auth.middleware.js";
 import { handleValidation } from "../utils/validation.js";
 import { toFileUrl, withFileUrls } from "../utils/file.js";
+import { AuthorizationService } from "../services/authorization.service.js";
 
 const sectionTypeEnum = z.enum(
   ["listening", "reading", "writing", "speaking", "general"],
@@ -94,17 +95,16 @@ const sectionsRoutes: FastifyPluginAsync = async (fastify) => {
 
       // IDOR/Enrollment Check
       if (!isAdmin && !isTeacher) {
-        const enrollment = await fastify.prisma.enrollment.findUnique({
-          where: {
-            courseId_studentId: {
-              courseId: section.exam.courseId,
-              studentId: user.id,
-            },
-          },
+        const authService = new AuthorizationService(fastify.prisma);
+        const isAuthorized = await authService.isStudentAuthorizedForExam({
+          studentId: user.id,
+          examId: section.exam.id,
+          courseId: section.exam.courseId,
+          isOpen: section.exam.isOpen,
         });
 
-        if (!enrollment) {
-          return reply.status(403).send({ error: "Bạn chưa đăng ký khóa học này" });
+        if (!isAuthorized) {
+          return reply.status(403).send({ error: "Bạn chưa đăng ký khóa học hoặc lớp học này" });
         }
       }
 

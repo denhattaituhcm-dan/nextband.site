@@ -10,6 +10,10 @@ import {
   isStudentInTeacherClasses,
   isTeacherOfClass,
 } from "../utils/teacherScope.js";
+import { canonicalScoringService } from "../services/scoring/CanonicalScoringService.js";
+import { idempotencyService } from "../services/idempotency/IdempotencyService.js";
+import { auditOutboxService } from "../services/audit/AuditOutboxService.js";
+import { AuthorizationService } from "../services/authorization.service.js";
 
 const submissionStatusEnum = z.enum(["in_progress", "submitted", "graded"], {
   errorMap: () => ({ message: "Trạng thái bài nộp không hợp lệ" }),
@@ -103,20 +107,56 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
     };
   };
 
-  const cleanQuestionData = (q: any, isAdminOrTeacher: boolean) => {
-    if (isAdminOrTeacher) return q;
+  const cleanQuestionData = (q: any, isAdminOrTeacher: boolean, isGradedReview: boolean = false) => {
+    // 1. Calculate safe metadata for UI rendering without leaking the answer strings
+    let selectionMode: "single" | "multiple" = "single";
+    let maxSelections = 1;
+
+    if (q.questionType === "multiple_choice") {
+      if (q.correctAnswer && typeof q.correctAnswer === "string") {
+        const answers = q.correctAnswer.split("|").map((s: string) => s.trim()).filter(Boolean);
+        if (answers.length > 1) {
+          selectionMode = "multiple";
+          maxSelections = answers.length;
+        }
+      }
+    }
+
+    if (isAdminOrTeacher || isGradedReview) {
+      return {
+        ...q,
+        selectionMode,
+        maxSelections,
+        isMultiChoice: selectionMode === "multiple",
+      };
+    }
+
+    // 2. Student Safe DTO (In-progress or awaiting grading)
     const cleaned = { ...q };
     if (q.questionType === "matching" && q.correctAnswer) {
       try {
         const config = JSON.parse(q.correctAnswer);
         delete config.pairs;
-        cleaned.correctAnswer = JSON.stringify(config);
-      } catch {
-        cleaned.correctAnswer = null;
-      }
-    } else {
-      cleaned.correctAnswer = null;
+        if (!cleaned.options || typeof cleaned.options !== "object") {
+          cleaned.options = { items: config.items || [], options: config.options || [] };
+        }
+      } catch {}
     }
+
+    delete cleaned.correctAnswer;
+    delete cleaned.correct_answer;
+    delete cleaned.audioScript;
+    delete cleaned.audio_script;
+    delete cleaned.acceptedAnswers;
+    delete cleaned.answerKey;
+    delete cleaned.answer_key;
+
+    cleaned.correctAnswer = null;
+    cleaned.audioScript = null;
+    cleaned.selectionMode = selectionMode;
+    cleaned.maxSelections = maxSelections;
+    cleaned.isMultiChoice = selectionMode === "multiple";
+
     return cleaned;
   };
 
@@ -351,6 +391,7 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
 
       // Format question data to hide answers if user is a student
       const isAdminOrTeacher = isAdmin || isTeacher;
+      const isGradedReview = String(submission.status).toUpperCase() === "GRADED";
 
       const canShowTranscript = isAdminOrTeacher && submission.status !== "in_progress";
       const formattedExam = {
@@ -367,7 +408,7 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
                 ...q,
                 audioUrl: toFileUrl(q.audioUrl),
               };
-              return cleanQuestionData(formatted, isAdminOrTeacher);
+              return cleanQuestionData(formatted, isAdminOrTeacher, isGradedReview);
             }),
           })),
         })),
@@ -377,7 +418,7 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
         if (!answer.question) return answer;
         return {
           ...answer,
-          question: cleanQuestionData(answer.question, isAdminOrTeacher),
+          question: cleanQuestionData(answer.question, isAdminOrTeacher, isGradedReview),
         };
       });
 
@@ -420,21 +461,18 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
         return reply.status(403).send({ error: "Bài tập hiện đang bị khóa" });
       }
 
-      if (!exam.isOpen) {
-        const enrollment = await fastify.prisma.enrollment.findUnique({
-          where: {
-            courseId_studentId: {
-              courseId: exam.courseId,
-              studentId: user.id,
-            },
-          },
-        });
+      const authService = new AuthorizationService(fastify.prisma);
+      const isAuthorized = await authService.isStudentAuthorizedForExam({
+        studentId: user.id,
+        examId: exam.id,
+        courseId: exam.courseId,
+        isOpen: exam.isOpen,
+      });
 
-        if (!enrollment) {
-          return reply
-            .status(403)
-            .send({ error: "Bạn chưa đăng ký khóa học này để bắt đầu bài thi" });
-        }
+      if (!isAuthorized) {
+        return reply
+          .status(403)
+          .send({ error: "Bạn chưa đăng ký khóa học hoặc lớp học này để bắt đầu bài thi" });
       }
     }
 
@@ -610,14 +648,347 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
 
   });
 
-  // PUT /submissions/:id - Update submission (submit answers)
+  const handleAuthoritativeSubmit = async (
+    submissionId: string,
+    userId: string,
+    answers: any[],
+    reply: any,
+    options: { idempotencyKey?: string; clientVersion?: number; requestId?: string } = {},
+  ) => {
+    const { idempotencyKey, requestId } = options;
+    const payloadHash = idempotencyService.computePayloadHash(answers);
+
+    // 1. Idempotency Check (Database-backed)
+    if (idempotencyKey) {
+      try {
+        const existingRecord = await fastify.prisma.idempotencyRecord.findUnique({
+          where: {
+            submissionId_key: {
+              submissionId,
+              key: idempotencyKey,
+            },
+          },
+        });
+
+        const check = idempotencyService.verifyIdempotency(existingRecord, payloadHash);
+        if (check.isMatch) {
+          return reply.status(200).send(check.cachedResponse);
+        }
+        if (check.isConflict) {
+          return reply.status(409).send({
+            error: "IDEMPOTENCY_CONFLICT",
+            message: "Idempotency key này đã được sử dụng với nội dung nộp bài khác.",
+          });
+        }
+      } catch {}
+    }
+
+    const submission = await fastify.prisma.examSubmission.findUnique({
+      where: { id: submissionId },
+      include: {
+        exam: {
+          select: { id: true, durationMinutes: true },
+        },
+      },
+    });
+
+    if (!submission) {
+      return reply.status(404).send({ error: "Không tìm thấy bài nộp" });
+    }
+
+    if (submission.studentId !== userId) {
+      return reply.status(403).send({ error: "Từ chối truy cập" });
+    }
+
+    const isStatusInProgress = String(submission.status).toUpperCase() === "IN_PROGRESS";
+    if (!isStatusInProgress) {
+      // Idempotent return for already-committed submission
+      const existingResponse = {
+        id: submission.id,
+        status: submission.status,
+        submittedAt: submission.submittedAt,
+        correctAnswers: submission.correctAnswers,
+        totalQuestions: submission.totalQuestions,
+        totalScore: submission.totalScore,
+      };
+
+      if (idempotencyKey) {
+        try {
+          await fastify.prisma.idempotencyRecord.upsert({
+            where: {
+              submissionId_key: {
+                submissionId,
+                key: idempotencyKey,
+              },
+            },
+            update: { responsePayload: existingResponse },
+            create: {
+              key: idempotencyKey,
+              submissionId,
+              payloadHash,
+              responsePayload: existingResponse,
+              status: "COMMITTED",
+            },
+          });
+        } catch {}
+      }
+
+      return reply.send(existingResponse);
+    }
+
+    // Server-Side Exam Time Limit Enforcement (T1-A)
+    const durationMinutes = submission.exam?.durationMinutes;
+    let isOverdue = false;
+    let cappedSubmittedAt = new Date();
+
+    if (durationMinutes && durationMinutes > 0) {
+      const allowedSeconds = durationMinutes * 60;
+      const GRACE_PERIOD_SECONDS = 120;
+      const startedMs = submission.startedAt
+        ? new Date(submission.startedAt).getTime()
+        : (submission.createdAt ? new Date(submission.createdAt).getTime() : Date.now());
+      const elapsedSeconds = Math.floor((Date.now() - startedMs) / 1000);
+
+      if (elapsedSeconds > (allowedSeconds + GRACE_PERIOD_SECONDS)) {
+        isOverdue = true;
+        cappedSubmittedAt = new Date(startedMs + (allowedSeconds * 1000));
+      }
+    }
+
+    // Execute submission updates, auto-grading, and audit outbox inside a SINGLE Prisma Transaction
+    const clientResponse = await fastify.prisma.$transaction(async (tx) => {
+      // 1. Save final answers batch if provided
+      if (!isOverdue && answers && Array.isArray(answers)) {
+        for (const answer of answers) {
+          if (!answer || !answer.questionId) continue;
+          const serializedText =
+            answer.answerText !== undefined
+              ? answer.answerText !== null
+                ? typeof answer.answerText === "object"
+                  ? JSON.stringify(answer.answerText)
+                  : String(answer.answerText)
+                : null
+              : undefined;
+
+          await tx.answer.upsert({
+            where: {
+              submissionId_questionId: {
+                submissionId,
+                questionId: answer.questionId,
+              },
+            },
+            update: {
+              answerText: serializedText,
+              audioUrl: answer.audioUrl !== undefined ? (answer.audioUrl !== null ? String(answer.audioUrl) : null) : undefined,
+            },
+            create: {
+              submissionId,
+              questionId: answer.questionId,
+              answerText: serializedText !== undefined ? serializedText : null,
+              audioUrl: answer.audioUrl !== null && answer.audioUrl !== undefined ? String(answer.audioUrl) : null,
+            },
+          });
+        }
+      }
+
+      // 2. Authoritative Canonical Evaluation inside Transaction
+      const examWithQuestions = await tx.exam.findUnique({
+        where: { id: submission.examId },
+        include: {
+          sections: {
+            include: {
+              questionGroups: {
+                include: {
+                  questions: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      const submittedAnswers = await tx.answer.findMany({
+        where: { submissionId },
+      });
+
+      const summary = canonicalScoringService.evaluateExamAttempt(
+        examWithQuestions || submission.exam,
+        submittedAnswers,
+      );
+
+      // Persist individual evaluated answer scores
+      for (const evalRes of summary.evaluatedAnswers) {
+        const answerRecord = submittedAnswers.find((a) => a.questionId === evalRes.questionId);
+        if (answerRecord) {
+          await tx.answer.update({
+            where: { id: answerRecord.id },
+            data: {
+              score: evalRes.isManual ? null : evalRes.score,
+            },
+          });
+        }
+      }
+
+      const nextVersion = ((submission as any).version || 1) + 1;
+      const finalSubmittedAt = isOverdue ? cappedSubmittedAt : new Date();
+
+      const updatedSubmission = await tx.examSubmission.update({
+        where: { id: submissionId },
+        data: {
+          status: summary.status as any,
+          submittedAt: finalSubmittedAt,
+          correctAnswers: summary.correctAnswers,
+          totalQuestions: summary.totalQuestions,
+          totalScore: summary.totalScore,
+          version: nextVersion,
+          ...(summary.status === "GRADED" && { gradedAt: new Date() }),
+        },
+      });
+
+      const responseDto = {
+        id: updatedSubmission.id,
+        status: updatedSubmission.status,
+        submittedAt: updatedSubmission.submittedAt,
+        correctAnswers: updatedSubmission.correctAnswers,
+        totalQuestions: updatedSubmission.totalQuestions,
+        totalScore: updatedSubmission.totalScore,
+        percentage: summary.percentage,
+        hasManualQuestions: summary.hasManualQuestions,
+      };
+
+      // 3. Save Idempotency Record within same transaction
+      if (idempotencyKey && tx.idempotencyRecord) {
+        try {
+          await tx.idempotencyRecord.upsert({
+            where: {
+              submissionId_key: {
+                submissionId,
+                key: idempotencyKey,
+              },
+            },
+            update: { responsePayload: responseDto },
+            create: {
+              key: idempotencyKey,
+              submissionId,
+              payloadHash,
+              responsePayload: responseDto,
+              status: "COMMITTED",
+            },
+          });
+        } catch {}
+      }
+
+      // 4. Save Sanitized Audit Outbox Event within same transaction
+      if (tx.auditOutbox) {
+        try {
+          const auditEvent = auditOutboxService.buildSanitizedEvent({
+            eventType: "SUBMISSION_FINALIZED",
+            actorId: userId,
+            actorRole: "student",
+            submissionId,
+            examId: submission.examId,
+            requestId,
+            idempotencyKey,
+            oldState: {
+              status: submission.status,
+              totalScore: submission.totalScore,
+              version: (submission as any).version || 1,
+            },
+            newState: {
+              status: summary.status,
+              totalScore: summary.totalScore,
+              version: nextVersion,
+            },
+            resultSummary: {
+              totalScore: summary.totalScore,
+              maxScore: summary.maxScore,
+              correctAnswers: summary.correctAnswers,
+              totalQuestions: summary.totalQuestions,
+              percentage: summary.percentage,
+              hasManualQuestions: summary.hasManualQuestions,
+            },
+          });
+
+          await tx.auditOutbox.create({
+            data: auditEvent,
+          });
+        } catch {}
+      }
+
+      return responseDto;
+    });
+
+    // Update enrollment progress
+    try {
+      const exam = await fastify.prisma.exam.findUnique({
+        where: { id: submission.examId },
+        select: { courseId: true },
+      });
+
+      if (exam) {
+        const enrollment = await fastify.prisma.enrollment.findFirst({
+          where: {
+            courseId: exam.courseId,
+            studentId: userId,
+          },
+        });
+
+        if (enrollment) {
+          const totalExams = await fastify.prisma.exam.count({
+            where: {
+              courseId: exam.courseId,
+              isPublished: true,
+              isActive: true,
+            },
+          });
+
+          const uniqueSubmissions = await fastify.prisma.examSubmission.groupBy({
+            by: ["examId"],
+            where: {
+              studentId: userId,
+              status: { in: ["SUBMITTED", "GRADED"] as any },
+              exam: {
+                courseId: exam.courseId,
+                isPublished: true,
+                isActive: true,
+              },
+            },
+          });
+
+          const completedExamsCount = uniqueSubmissions.length;
+          const progressPercent =
+            totalExams > 0
+              ? Math.round((completedExamsCount / totalExams) * 100)
+              : 0;
+
+          await fastify.prisma.enrollment.update({
+            where: { id: enrollment.id },
+            data: { progressPercent },
+          });
+        }
+      }
+    } catch {}
+
+    return reply.send(clientResponse);
+  };
+
+  // PUT /submissions/:id - Autosave answers in-progress with Conditional Write & Versioning
   fastify.put<{ Params: { id: string } }>(
     "/:id",
     { preHandler: authenticate },
     async (request, reply) => {
       const { id } = request.params;
-      const { answers, submit } = request.body as any;
+      const { answers, submit, version, idempotencyKey } = (request.body || {}) as any;
       const user = request.user;
+      const headerIdempotency = request.headers["x-idempotency-key"] as string | undefined;
+      const finalIdempotencyKey = idempotencyKey || headerIdempotency;
+
+      if (submit) {
+        return handleAuthoritativeSubmit(id, user.id, answers, reply, {
+          idempotencyKey: finalIdempotencyKey,
+          clientVersion: version,
+        });
+      }
 
       const submission = await fastify.prisma.examSubmission.findUnique({
         where: { id },
@@ -636,404 +1007,115 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
         return reply.status(403).send({ error: "Từ chối truy cập" });
       }
 
+      // Conditional Write: Block autosave if submission is already final
       const isStatusInProgress = String(submission.status).toUpperCase() === "IN_PROGRESS";
       if (!isStatusInProgress) {
-        if (submit) {
-          // Idempotent return for retry / double-submit
-          return reply.send({
-            id: submission.id,
-            status: submission.status,
-            submittedAt: submission.submittedAt,
-            correctAnswers: submission.correctAnswers,
-            totalQuestions: submission.totalQuestions,
-            totalScore: submission.totalScore,
-          });
-        }
-        return reply.status(400).send({ error: "Không thể sửa bài đã nộp" });
+        return reply.status(409).send({
+          error: "SUBMISSION_ALREADY_FINALIZED",
+          message: "Bài tập đã được nộp hoặc chấm điểm, không thể cập nhật bản nháp.",
+        });
       }
 
-      // Server-Side Exam Time Limit Enforcement (T1-A)
-      const durationMinutes = submission.exam?.durationMinutes;
-      let isOverdue = false;
-      let cappedSubmittedAt = new Date();
+      // Optimistic Versioning check
+      const currentVersion = (submission as any).version || 1;
+      if (typeof version === "number" && version < currentVersion) {
+        return reply.status(409).send({
+          error: "STALE_VERSION_CONFLICT",
+          message: "Bản nháp gửi lên đã cũ hơn phiên bản hiện tại trên máy chủ.",
+          currentVersion,
+        });
+      }
 
+      // Check time limit
+      const durationMinutes = submission.exam?.durationMinutes;
       if (durationMinutes && durationMinutes > 0) {
         const allowedSeconds = durationMinutes * 60;
-        const GRACE_PERIOD_SECONDS = 120; // 2 minutes grace period for network latency / clock skew
+        const GRACE_PERIOD_SECONDS = 120;
         const startedMs = submission.startedAt
           ? new Date(submission.startedAt).getTime()
           : (submission.createdAt ? new Date(submission.createdAt).getTime() : Date.now());
         const elapsedSeconds = Math.floor((Date.now() - startedMs) / 1000);
 
         if (elapsedSeconds > (allowedSeconds + GRACE_PERIOD_SECONDS)) {
-          isOverdue = true;
-          cappedSubmittedAt = new Date(startedMs + (allowedSeconds * 1000));
-
-          if (!submit) {
-            // Reject saving intermediate answers after exam time has strictly expired
-            return reply.status(400).send({
-              error: "EXAM_TIME_EXPIRED",
-              message: "Thời gian làm bài đã kết thúc. Không thể lưu thêm câu trả lời.",
-              remainingSeconds: 0,
-            });
-          }
+          return reply.status(400).send({
+            error: "EXAM_TIME_EXPIRED",
+            message: "Thời gian làm bài đã kết thúc. Không thể lưu thêm câu trả lời.",
+            remainingSeconds: 0,
+          });
         }
       }
 
-      // Execute submission updates and auto-grading inside a single Prisma Transaction
-      const resultData = await fastify.prisma.$transaction(async (tx) => {
-        // 1. Save / Upsert answers (Only if NOT overdue - prevent injecting answers after time expired)
-        if (!isOverdue && answers && Array.isArray(answers)) {
-          for (const answer of answers) {
-            await tx.answer.upsert({
-              where: {
-                submissionId_questionId: {
-                  submissionId: id,
-                  questionId: answer.questionId,
-                },
-              },
-              update: {
-                answerText: answer.answerText,
-                audioUrl: answer.audioUrl,
-              },
-              create: {
+      // Save/upsert answers atomically and bump version
+      const newVersion = currentVersion + 1;
+      let savedCount = 0;
+
+      if (answers && Array.isArray(answers)) {
+        for (const answer of answers) {
+          if (!answer || !answer.questionId) continue;
+          const serializedText =
+            answer.answerText !== undefined
+              ? answer.answerText !== null
+                ? typeof answer.answerText === "object"
+                  ? JSON.stringify(answer.answerText)
+                  : String(answer.answerText)
+                : null
+              : undefined;
+
+          await fastify.prisma.answer.upsert({
+            where: {
+              submissionId_questionId: {
                 submissionId: id,
                 questionId: answer.questionId,
-                answerText: answer.answerText,
-                audioUrl: answer.audioUrl,
-              },
-            });
-          }
-        }
-
-        if (!submit) {
-          return { status: submission.status };
-        }
-
-        // 2. Auto-grading logic inside Transaction
-        let correctAnswers = 0;
-        let totalQuestions = 0;
-        let objectiveScore = 0;
-        let hasManualQuestions = false;
-
-        const examWithQuestions = await tx.exam.findUnique({
-          where: { id: submission.examId },
-          include: {
-            sections: {
-              include: {
-                questionGroups: {
-                  include: {
-                    questions: true,
-                  },
-                },
               },
             },
-          },
-        });
-
-        if (examWithQuestions) {
-          const allQuestions = examWithQuestions.sections.flatMap((s) =>
-            s.questionGroups.flatMap((g) => g.questions)
-          );
-          hasManualQuestions = allQuestions.some((question) =>
-            MANUAL_TYPES.has(question.questionType),
-          );
-
-          const submittedAnswers = await tx.answer.findMany({
-            where: { submissionId: id },
+            update: {
+              answerText: serializedText,
+              audioUrl: answer.audioUrl !== undefined ? (answer.audioUrl !== null ? String(answer.audioUrl) : null) : undefined,
+            },
+            create: {
+              submissionId: id,
+              questionId: answer.questionId,
+              answerText: serializedText !== undefined ? serializedText : null,
+              audioUrl: answer.audioUrl !== null && answer.audioUrl !== undefined ? String(answer.audioUrl) : null,
+            },
           });
-          const answerMap = new Map(
-            submittedAnswers.map((a) => [a.questionId, a.answerText])
-          );
-
-          for (const question of allQuestions) {
-            if (!OBJECTIVE_TYPES.has(question.questionType)) {
-              continue;
-            }
-
-            // Always count objective question towards totalQuestions denominator
-            let questionUnits = 1;
-            if (question.questionType === "fill_blank" && question.correctAnswer) {
-              try {
-                const parsedCorrect = JSON.parse(question.correctAnswer.trim());
-                if (typeof parsedCorrect === "object" && parsedCorrect !== null) {
-                  const bCount = Object.keys(parsedCorrect).length;
-                  if (bCount > 0) questionUnits = bCount;
-                }
-              } catch {}
-            } else if (question.questionType === "matching" && question.correctAnswer) {
-              try {
-                const parsedCorrect = JSON.parse(question.correctAnswer.trim());
-                if (parsedCorrect && parsedCorrect.pairs) {
-                  const pCount = Object.keys(parsedCorrect.pairs).length;
-                  if (pCount > 0) questionUnits = pCount;
-                }
-              } catch {}
-            }
-
-            totalQuestions += questionUnits;
-
-            if (!question.correctAnswer || !question.correctAnswer.trim()) {
-              continue;
-            }
-
-            const studentAnswer = answerMap.get(question.id);
-            if (!studentAnswer) continue;
-
-            const correctAnswer = question.correctAnswer.trim();
-
-            // Handle fill_blank with multiple blanks (JSON format)
-            if (question.questionType === "fill_blank") {
-              try {
-                const parsedStudent = JSON.parse(studentAnswer);
-                const parsedCorrect = JSON.parse(correctAnswer);
-
-                if (
-                  typeof parsedStudent === "object" &&
-                  typeof parsedCorrect === "object" &&
-                  parsedStudent !== null &&
-                  parsedCorrect !== null
-                ) {
-                  const keys = Object.keys(parsedCorrect);
-                  const blankCount = keys.length;
-
-                  if (blankCount > 0) {
-                    let correctBlanks = 0;
-
-                    for (const key of keys) {
-                      const correctVal = String(parsedCorrect[key] || "").trim();
-                      const studentVal = String(parsedStudent[key] || "").trim();
-                      const alternatives = correctVal
-                        .split("|")
-                        .map((a: string) => a.trim().toLowerCase());
-
-                      if (alternatives.includes(studentVal.toLowerCase())) {
-                        correctBlanks++;
-                      }
-                    }
-
-                    totalQuestions += (blankCount - 1);
-                    correctAnswers += correctBlanks;
-                    const partialScore = correctBlanks;
-                    objectiveScore += partialScore;
-
-                    const answerRecord = submittedAnswers.find(a => a.questionId === question.id);
-                    if (answerRecord) {
-                      await tx.answer.update({
-                        where: { id: answerRecord.id },
-                        data: { score: partialScore },
-                      });
-                    }
-                    continue;
-                  }
-                }
-              } catch {
-                // Fall through to string comparison
-              }
-            }
-
-            // Handle matching with JSON answers using convertOptionValToIndex
-            if (question.questionType === "matching") {
-              try {
-                const parsedStudent = JSON.parse(studentAnswer);
-                const parsedCorrect = JSON.parse(correctAnswer);
-
-                if (
-                  typeof parsedStudent === "object" &&
-                  typeof parsedCorrect === "object" &&
-                  parsedStudent !== null &&
-                  parsedCorrect !== null &&
-                  parsedCorrect.pairs
-                ) {
-                  const keys = Object.keys(parsedCorrect.pairs);
-                  const pairsCount = keys.length;
-
-                  if (pairsCount > 0) {
-                    let correctPairs = 0;
-
-                    for (const key of keys) {
-                      const correctIdx = convertOptionValToIndex(parsedCorrect.pairs[key]);
-                      const studentIdx = convertOptionValToIndex(parsedStudent[key]);
-
-                      if (correctIdx !== null && studentIdx !== null && correctIdx === studentIdx) {
-                        correctPairs++;
-                      }
-                    }
-
-                    totalQuestions += (pairsCount - 1);
-                    correctAnswers += correctPairs;
-                    const totalPoints = question.points || 1;
-                    const partialScore = (correctPairs / pairsCount) * totalPoints;
-                    objectiveScore += partialScore;
-
-                    const answerRecord = submittedAnswers.find(a => a.questionId === question.id);
-                    if (answerRecord) {
-                      await tx.answer.update({
-                        where: { id: answerRecord.id },
-                        data: { score: partialScore },
-                      });
-                    }
-                    continue;
-                  }
-                }
-              } catch {
-                // Fall through to string comparison
-              }
-            }
-
-            // Support pipe-delimited alternatives in correctAnswer
-            const alternatives = correctAnswer
-              .split("|")
-              .map((a: string) => a.trim())
-              .filter(Boolean);
-
-            let isCorrect = false;
-            let questionScore = 0;
-            const questionPoints = question.points || 1;
-
-            if (
-              (question.questionType === "multiple_choice" ||
-                question.questionType === "listening") &&
-              alternatives.length > 1
-            ) {
-              let studentSelections: string[] = [];
-              try {
-                const parsed = JSON.parse(studentAnswer);
-                if (Array.isArray(parsed)) {
-                  studentSelections = parsed.map((v) => String(v).trim());
-                }
-              } catch {
-                studentSelections = studentAnswer
-                  .split("|")
-                  .flatMap((part) => part.split(","))
-                  .map((v) => v.trim())
-                  .filter(Boolean);
-              }
-
-              const normalizedStudent = studentSelections.map((v) => v.toLowerCase());
-              const normalizedCorrect = alternatives.map((v) => v.toLowerCase());
-
-              const correctHits = normalizedStudent.filter((v) =>
-                normalizedCorrect.includes(v),
-              ).length;
-              const wrongSelections = normalizedStudent.filter(
-                (v) => !normalizedCorrect.includes(v),
-              ).length;
-
-              const ratio = Math.max(
-                0,
-                (correctHits - wrongSelections) / normalizedCorrect.length,
-              );
-              questionScore = Math.round(ratio * questionPoints * 100) / 100;
-              isCorrect = questionScore >= questionPoints;
-            } else {
-              isCorrect = alternatives
-                .map((a) => a.toLowerCase())
-                .includes(studentAnswer.trim().toLowerCase());
-              questionScore = isCorrect ? questionPoints : 0;
-            }
-
-            if (isCorrect) {
-              correctAnswers++;
-            }
-
-            objectiveScore += questionScore;
-
-            const answerRecord = submittedAnswers.find(a => a.questionId === question.id);
-            if (answerRecord) {
-              await tx.answer.update({
-                where: { id: answerRecord.id },
-                data: { score: questionScore },
-              });
-            }
-          }
+          savedCount++;
         }
+      }
 
-        const normalizedObjectiveScore = Math.round(objectiveScore * 100) / 100;
-        const finalStatus = hasManualQuestions ? "SUBMITTED" : "GRADED";
-
-        const updatedSubmission = await tx.examSubmission.update({
-          where: { id: id },
-          data: {
-            status: finalStatus as any,
-            submittedAt: isOverdue ? cappedSubmittedAt : new Date(),
-            correctAnswers,
-            totalQuestions,
-            totalScore: normalizedObjectiveScore,
-            ...(finalStatus === "GRADED" && { gradedAt: new Date() }),
-          },
-        });
-
-        return updatedSubmission;
+      await fastify.prisma.examSubmission.update({
+        where: { id },
+        data: { version: newVersion },
       });
 
-        // Tự động cập nhật tiến độ enrollment
-        try {
-          const exam = await fastify.prisma.exam.findUnique({
-            where: { id: submission.examId },
-            select: { courseId: true },
-          });
+      return reply.send({
+        id: submission.id,
+        status: submission.status,
+        savedCount,
+        version: newVersion,
+        updatedAt: new Date().toISOString(),
+      });
+    },
+  );
 
-          if (exam) {
-            const enrollment = await fastify.prisma.enrollment.findFirst({
-              where: {
-                courseId: exam.courseId,
-                studentId: user.id,
-              },
-            });
+  // POST /submissions/:id/submit - Final Authoritative Submit & Scoring (with Idempotency & Audit Outbox)
+  fastify.post<{ Params: { id: string } }>(
+    "/:id/submit",
+    { preHandler: authenticate },
+    async (request, reply) => {
+      const { id } = request.params;
+      const { answers, idempotencyKey, version } = (request.body || {}) as any;
+      const user = request.user;
+      const headerIdempotency = request.headers["x-idempotency-key"] as string | undefined;
+      const finalIdempotencyKey = idempotencyKey || headerIdempotency;
 
-            if (enrollment) {
-              // 1. Đếm tổng số bài tập đang có trong khóa (Published & Active)
-              const totalExams = await fastify.prisma.exam.count({
-                where: {
-                  courseId: exam.courseId,
-                  isPublished: true,
-                  isActive: true,
-                },
-              });
-
-              // 2. Lấy danh sách các ExamId DUY NHẤT mà user này đã nộp trong khóa này
-              const uniqueSubmissions =
-                await fastify.prisma.examSubmission.groupBy({
-                  by: ["examId"],
-                  where: {
-                    studentId: user.id,
-                    status: { in: ["SUBMITTED", "GRADED"] as any },
-                    exam: {
-                      courseId: exam.courseId,
-                      isPublished: true,
-                      isActive: true,
-                    },
-                  },
-                });
-
-              const completedExamsCount = uniqueSubmissions.length;
-              const progressPercent =
-                totalExams > 0
-                  ? Math.round((completedExamsCount / totalExams) * 100)
-                  : 0;
-
-              // 3. Cập nhật vào DB
-              await fastify.prisma.enrollment.update({
-                where: { id: enrollment.id },
-                data: { progressPercent },
-              });
-            } else {
-              console.warn(
-                `[Progress] No enrollment found for course ${exam.courseId}`,
-              );
-            }
-          }
-        } catch (progressError) {
-          console.error("[Progress] CRITICAL ERROR:", progressError);
-        }
-
-        return fastify.prisma.examSubmission.findUnique({
-          where: { id },
-          include: { answers: true },
-        });
-      },
-    );
+      return handleAuthoritativeSubmit(id, user.id, answers, reply, {
+        idempotencyKey: finalIdempotencyKey,
+        clientVersion: version,
+        requestId: request.id,
+      });
+    },
+  );
 
   // POST /submissions/:id/grade - Grade submission (admin/teacher only)
   fastify.post<{ Params: { id: string } }>(
@@ -1078,35 +1160,94 @@ const submissionsRoutes: FastifyPluginAsync = async (fastify) => {
           .send({ error: "Bài tập vẫn đang trong quá trình thực hiện" });
       }
 
-      // Update individual answer grades
-      if (grades && Array.isArray(grades)) {
-        for (const grade of grades) {
-          await fastify.prisma.answer.update({
-            where: { id: grade.answerId },
-            data: {
-              score: grade.score,
-              feedback: grade.feedback,
-            },
-          });
+      // Execute teacher grading and audit outbox within a single Transaction
+      const updated = await fastify.prisma.$transaction(async (tx) => {
+        // 1. Update individual answer grades
+        if (grades && Array.isArray(grades)) {
+          for (const grade of grades) {
+            if (!grade || !grade.answerId) continue;
+            await tx.answer.update({
+              where: { id: grade.answerId },
+              data: {
+                score: typeof grade.score === "number" ? grade.score : null,
+                feedback: grade.feedback ? String(grade.feedback) : null,
+              },
+            });
+          }
         }
-      }
 
-      // Update submission
-      const updated = await fastify.prisma.examSubmission.update({
-        where: { id },
-        data: {
-          status: "GRADED" as any,
-          totalScore: totalScore,
-          gradedBy: user.id,
-          gradedAt: new Date(),
-        },
-        include: {
-          answers: true,
-          student: { select: { id: true, fullName: true, email: true } },
-        },
+        // 2. Canonical Total Score Recalculation across all answers (Objective + Subjective)
+        const allAnswers = await tx.answer.findMany({
+          where: { submissionId: id },
+        });
+
+        let calculatedTotal = 0;
+        let calculatedCorrectCount = 0;
+
+        for (const a of allAnswers) {
+          if (typeof a.score === "number" && a.score > 0) {
+            calculatedTotal += a.score;
+            calculatedCorrectCount++;
+          }
+        }
+
+        const finalTotalScore =
+          typeof totalScore === "number" && totalScore >= 0
+            ? totalScore
+            : Math.round(calculatedTotal * 100) / 100;
+
+        // 3. Update submission status and locked official score
+        const updatedSub = await tx.examSubmission.update({
+          where: { id },
+          data: {
+            status: "GRADED" as any,
+            totalScore: finalTotalScore,
+            correctAnswers: submission.correctAnswers || calculatedCorrectCount,
+            gradedBy: user.id,
+            gradedAt: new Date(),
+          },
+          include: {
+            answers: true,
+            student: { select: { id: true, fullName: true, email: true } },
+          },
+        });
+
+        // 4. Save Sanitized Audit Outbox Event
+        if (tx.auditOutbox && typeof tx.auditOutbox.create === "function") {
+          try {
+            const auditEvent = auditOutboxService.buildSanitizedEvent({
+              eventType: "TEACHER_REGRADED",
+              actorId: user.id,
+              actorRole: user.roles?.[0] || "teacher",
+              submissionId: id,
+              examId: submission.examId,
+              requestId: request.id,
+              oldState: {
+                status: submission.status,
+                totalScore: submission.totalScore,
+              },
+              newState: {
+                status: "GRADED",
+                totalScore: finalTotalScore,
+                gradedBy: user.id,
+              },
+              resultSummary: {
+                totalScore: finalTotalScore,
+                correctAnswers: submission.correctAnswers || calculatedCorrectCount,
+                totalQuestions: submission.totalQuestions,
+              },
+            });
+
+            await tx.auditOutbox.create({
+              data: auditEvent,
+            });
+          } catch {}
+        }
+
+        return updatedSub;
       });
 
-      const formattedAnswers = (updated as any).answers.map((answer: any) => ({
+      const formattedAnswers = ((updated as any).answers || []).map((answer: any) => ({
         ...answer,
         audioUrl: toFileUrl(answer.audioUrl),
       }));
