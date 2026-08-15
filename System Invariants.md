@@ -5,11 +5,18 @@ Mọi thay đổi về Mã nguồn UI, API DTO, hay Database Schema **BẮT BU�
 
 ---
 
-## 1.1 SYSTEM INVARIANT CORE-008: STUDENT IDENTIFIER BINDING
+## 1.1 SYSTEM INVARIANT CORE-008: CANONICAL IDENTITY & ENROLLMENT DISAMBIGUATION
 
-- **Quy tắc Tối cao**: `class_students.student_id`, `class_attendance.student_id`, và tất cả các bảng liên quan đến Học viên **BẮT BUỘC** lưu `profiles.id` (Profile Primary Key UUID).
-- **Phân định Thực thể**: `profiles.id` đại diện cho thực thể nghiệp vụ "Học viên" (tồn tại duy nhất & NOT NULL kể cả khi học viên chưa kích hoạt Auth). `auth.users.id` (`profiles.user_id`) chỉ đại diện cho tài khoản xác thực Auth.
-- **Quy định Cấm**: Nghiêm cấm dùng `.or(id, user_id)` để lách lỗi. Tất cả API (`usersApi.list`, `classesApi.getById`, `addStudents`, `addStudentsByEmails`) phải truyền & nhận nhất quán `profiles.id`.
+- **Quy tắc Tối cao (Supreme Invariant)**:
+  - **`studentId` (Canonical Student Identity ID)**: BẮT BUỘC lưu `profiles.user_id` / `auth.users.id` (Auth UID). Mọi bảng quan hệ (`class_students.student_id`, `class_attendance.student_id`, `exam_submissions.student_id`, `submissions.student_id`) BẮT BUỘC trỏ về `profiles.user_id`.
+  - **`enrollmentId` (Enrollment Record ID)**: BẮT BUỘC là `class_students.id` (Khóa chính của bản ghi ghi danh).
+- **Phân định Tuyệt đối (Absolute Separation)**:
+  - $studentId \neq enrollmentId$ trên mọi môi trường và mọi cơ sở dữ liệu.
+  - Tuyệt đối cấm dùng tên chung là `id` trong các DTO có chứa cả hai khái niệm.
+  - Tuyệt đối cấm so sánh chéo `st.id === s.student_id` (so khớp `enrollmentId` với `studentId` luôn thất bại tại runtime).
+- **Nguyên tắc Toàn vẹn DTO**:
+  - `CanonicalStudentDTO` phải định nghĩa rõ ràng `enrollmentId: string` và `studentId: string`.
+  - Nghiêm cấm dùng chuỗi fallback `s.user_id || s.id` để tránh nhầm lẫn giữa Auth UID và Record ID.
 
 ---
 

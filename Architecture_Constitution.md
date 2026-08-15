@@ -250,6 +250,80 @@ Dự án tuyệt đối **KHÔNG ĐƯỢC CHUYỂN SPRINT** (ví dụ từ Sprin
 
 ---
 
+## ARTICLE XIII: CANONICAL IDENTITY & ENROLLMENT SEPARATION (PHÂN ĐỊNH TUYỆT ĐỐI ĐỊNH DANH & GHI DANH)
+
+### Section 13.1: Quy Tắc Bất Biến 2 Loại ID
+Toàn bộ hệ thống NextBand tuân thủ nghiêm ngặt nguyên tắc phân định $studentId \neq enrollmentId$:
+1. **`studentId` (Canonical Student Identity ID)**: 
+   - Đại diện cho người dùng học viên trong hệ thống.
+   - BẮT BUỘC bằng **`auth.users.id` $\equiv$ `profiles.user_id`** (Auth UID).
+   - Được dùng độc quyền trong mọi bảng tham chiếu học viên (`class_students.student_id`, `class_attendance.student_id`, `exam_submissions.student_id`, `submissions.student_id`).
+2. **`enrollmentId` (Enrollment Record ID)**: 
+   - Đại diện cho bản ghi ghi danh của một học viên vào một lớp cụ thể.
+   - BẮT BUỘC là **`class_students.id`**.
+
+### Section 13.2: Các Hành Vi Bị Cấm Tuyệt Đối (Forbidden Patterns)
+- ❌ **CẤM ĐẶT TÊN CHUNG LÀ `id`**: Trong các DTO liên quan đến lớp/học viên, tuyệt đối không đặt tên `id` cho cả hai khái niệm. Phải ghi rõ `enrollmentId` và `studentId`.
+- ❌ **CẤM SO SÁNH CHÉO**: Tuyệt đối cấm so sánh `st.id === s.student_id` (so khớp giữa `enrollmentId` và `studentId` luôn trả về `false` tại runtime, gây ra lỗi mất tên học viên hoặc duplicate selection).
+
+---
+
+## ARTICLE XIV: TRUTHFUL STATE & ZERO SILENT FAILURE (TRUNG THỰC TRẠNG THÁI — CẤM NUỐT LỖI BẰNG EMPTY DATA)
+
+### Section 14.1: Cấm Nuốt Lỗi Âm Thầm (No Silent Catch-all)
+- Nghiêm cấm tuyệt đối việc sử dụng `catch { return [] }` hoặc `catch { return {} }` để che giấu các lỗi mạng (Network Error), lỗi máy chủ (HTTP 500), hoặc lỗi phân quyền (HTTP 401/403).
+- Việc biến một Failure State thành Empty Data State là hành vi **ngụy tạo trạng thái**, làm cho UI hiển thị sai sự thật (ví dụ: biến lỗi rớt mạng thành thông báo *"Chưa có lớp học"* hoặc *"Chưa có học viên"*).
+
+### Section 14.2: Quy Tắc Bảo Toàn Trạng Thái Lỗi (Error State Preservation)
+1. Mọi tầng API Client bắt buộc phải truyền trung thực mã lỗi, mã HTTP Status, hoặc `status: "network_error" | "api_error" | "unauthenticated"` lên tầng gọi.
+2. Tầng UI bắt buộc phải render **Error Card / Error Banner kèm Nút "Thử lại" (Retry)** khi xảy ra lỗi kết nối hoặc lỗi server, không được phép render Empty Data State.
+
+---
+
+## ARTICLE XV: DTO BOUNDARY INTEGRITY & ANTI-FALLBACK POISONING (TOÀN VẸN RANH GIỚI DTO — CHỐNG Ô NHIỄM FALLBACK)
+
+### Section 15.1: Cấm Fallback Vô Tội Vạ (No TypeScript Silencing Fallbacks)
+- Nghiêm cấm việc nhét các chuỗi fallback lỏng lẻo như `s.user_id || s.id` hoặc `st.studentId || st.id` chỉ nhằm mục đích làm "im lặng TypeScript".
+- Fallback lỏng lẻo là nguồn gốc che giấu việc DTO upstream bị lệch cấu trúc, dẫn đến việc component con lấy nhầm `id` (record ID) thay vì `studentId` (Auth UID) mà không bị bắt lỗi tại compile-time.
+
+### Section 15.2: Khóa Ranh Giới DTO (DTO Boundary Lock)
+- Mọi DTO khi truyền qua ranh giới Context/API phải được chuẩn hóa (normalized) và định nghĩa kiểu rõ ràng tại API boundary (`src/lib/api.ts`).
+- Component UI chỉ được phép đọc các thuộc tính canonical đã được định nghĩa trong DTO Contract.
+
+---
+
+## ARTICLE XVI: FORENSIC INVESTIGATION & SURGICAL FIX PROTOCOL (QUY TRÌNH SỬA LỖI PHẪU THUẬT & ĐÓNG BẰNG BASELINE)
+
+### Section 16.1: Quy Trình Sửa Lỗi Bắt Buộc (9-Step Protocol)
+Khi phát hiện lỗi hệ thống, kỹ sư và AI Agents tuyệt đối không được sửa lỗi theo triệu chứng (Symptom Patching). Bắt buộc phải thực hiện đủ 9 bước:
+
+```text
+[1. Đóng Băng Codebase] ──► [2. Forensic Scan & Phân Loại] ──► [3. Dependency Trace (DB ➔ API ➔ DTO ➔ UI)]
+                                                                               │
+[6. Gate S1 (Static tsc)] ◄── [5. Surgical Fix Đúng Điểm] ◄── [4. Contract Lock Đã Phê Duyệt]
+       │
+       ▼
+[7. Gate S2 (Logic/Trace)] ──► [8. Gate S4 (Real DB Runtime Test)] ──► [9. Freeze Baseline (F0, F1...)]
+```
+
+### Section 16.2: Quy Tắc Baseline Freeze
+- Mọi đợt sửa lỗi sau khi vượt qua đủ các cổng kiểm chứng (S1, S2, S3, S4) bắt buộc phải được đóng gói và gán Git Tag Baseline (`freeze-baseline-f0`, `f1`...).
+- Không trộn lẫn các đợt refactor lớn vào trong một bản vá phẫu thuật.
+
+---
+
+## ARTICLE XVII: DUAL-STACK MUTATION & OPTIMISTIC UI CONSISTENCY (ĐỒNG BỘ DUAL-STACK & TÍNH NHẤT QUÁN TRẠNG THÁI TỨC THỜI)
+
+### Section 17.1: Nguyên Tắc Đồng Bộ Hai Đầu (Dual-Stack Sync)
+- Trong kiến trúc lai Fastify REST + Supabase Client: Mọi thao tác thay đổi trạng thái (như `completeSession`, `unlockSession`, `markAttendance`) phải gọi Fastify REST endpoint đồng thời cập nhật Supabase fallback khi cần thiết.
+
+### Section 17.2: Tính Nhất Quán Giao Diện Tức Thời (Immediate UI Consistency)
+- Khi một Action hoàn tất (ví dụ: Chốt buổi học / Mở lại buổi học):
+  1. Phải kích hoạt Invalidation cache (`invalidateClassWorkspace`, `refetchClass`).
+  2. Phải cập nhật ngay `localSessionStatuses` / `optimisticState` tại Component để các thành phần phụ thuộc (Dropdown selector, Status Badges, Action Buttons) phản ánh tức thì trạng thái thực tế mới nhất, triệt tiêu độ trễ gây nhầm lẫn cho người dùng.
+
+---
+
 ## APPENDIX A: BẢNG ĐỊNH NGHĨA TRẠNG THÁI CHUẨN (STANDARD STATUS DEFINITIONS)
 
 | Trạng thái (Status) | Định nghĩa Pháp lý Kỹ thuật | Điều kiện Đạt |
