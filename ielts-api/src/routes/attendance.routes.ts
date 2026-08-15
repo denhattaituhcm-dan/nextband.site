@@ -392,6 +392,92 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify: any) => {
       });
     },
   );
+
+  // 5. GET /classes/:classId/sessions - Danh sách toàn bộ buổi học của lớp
+  fastify.get(
+    '/classes/:classId/sessions',
+    { preHandler: [authenticate] },
+    async (request: any, reply: any) => {
+      const { classId } = request.params;
+      const sessions: any[] = await prisma.$queryRawUnsafe(
+        'SELECT id, class_id as classId, session_number as sessionNumber, title, session_date as sessionDate, planned_date as plannedDate, start_time as startTime, end_time as endTime, status, note, reschedule_reason as rescheduleReason, completed_at as completedAt FROM class_sessions WHERE class_id = ? ORDER BY session_number ASC',
+        classId
+      );
+      return reply.send(sessions || []);
+    }
+  );
+
+  // 6. POST /classes/:classId/sessions/:sessionId/unlock - Mở lại điểm danh buổi học đã chốt
+  fastify.post(
+    '/classes/:classId/sessions/:sessionId/unlock',
+    { preHandler: [authenticate, requireRoles('admin', 'teacher')] },
+    async (request: any, reply: any) => {
+      const user = request.user;
+      const { classId, sessionId } = request.params;
+
+      const clsRows: any[] = await prisma.$queryRawUnsafe('SELECT id, teacher_id as teacherId FROM classes WHERE id = ?', classId);
+      if (!clsRows || clsRows.length === 0) return reply.status(404).send({ error: 'Lớp học không tồn tại.' });
+      const cls = clsRows[0];
+
+      const isAdmin = user.roles.includes('admin');
+      const isOwner = cls.teacherId === user.id;
+      if (!isAdmin && !isOwner) {
+        return reply.status(403).send({ error: 'Từ chối truy cập: Bạn không phải giáo viên phụ trách lớp học này.' });
+      }
+
+      await prisma.$executeRawUnsafe(
+        'UPDATE class_sessions SET status = "SCHEDULED", completed_at = NULL, completed_by = NULL WHERE id = ?',
+        sessionId
+      );
+
+      return reply.send({ success: true, message: 'Đã mở lại điểm danh buổi học thành công.' });
+    }
+  );
+
+  // 7. POST /classes/:classId/sessions/generate - Sinh hàng loạt buổi học từ lịch học
+  fastify.post(
+    '/classes/:classId/sessions/generate',
+    { preHandler: [authenticate, requireRoles('admin', 'teacher')] },
+    async (request: any, reply: any) => {
+      const { classId } = request.params;
+      const { startDate, weekdays = [1, 3, 5], totalSessions = 24, startTime = '18:00', endTime = '20:00' } = request.body || {};
+
+      const clsRows: any[] = await prisma.$queryRawUnsafe('SELECT id, teacher_id as teacherId FROM classes WHERE id = ?', classId);
+      if (!clsRows || clsRows.length === 0) return reply.status(404).send({ error: 'Lớp học không tồn tại.' });
+
+      const dates: string[] = [];
+      const [y, m, d] = (startDate || new Date().toISOString().slice(0, 10)).split('-').map(Number);
+      const cur = new Date(y, m - 1, d);
+
+      while (dates.length < totalSessions) {
+        const dow = cur.getDay();
+        if (weekdays.includes(dow)) {
+          const mm = String(cur.getMonth() + 1).padStart(2, '0');
+          const dd = String(cur.getDate()).padStart(2, '0');
+          dates.push(`${cur.getFullYear()}-${mm}-${dd}`);
+        }
+        cur.setDate(cur.getDate() + 1);
+      }
+
+      const createdSessions = [];
+      for (let i = 0; i < dates.length; i++) {
+        const sessId = crypto.randomUUID();
+        const sessionNum = i + 1;
+        const sessionDate = dates[i];
+        const title = `Lesson ${sessionNum}`;
+
+        await prisma.$executeRawUnsafe(
+          `INSERT INTO class_sessions (id, class_id, session_number, title, session_date, planned_date, start_time, end_time, status, created_at, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'SCHEDULED', NOW(), NOW())
+           ON DUPLICATE KEY UPDATE session_date = VALUES(session_date), title = VALUES(title), start_time = VALUES(start_time), end_time = VALUES(end_time)`,
+          sessId, classId, sessionNum, title, sessionDate, sessionDate, startTime, endTime
+        );
+        createdSessions.push({ id: sessId, sessionNumber: sessionNum, sessionDate, title, status: 'SCHEDULED' });
+      }
+
+      return reply.send(createdSessions);
+    }
+  );
 };
 
 export default attendanceRoutes;
