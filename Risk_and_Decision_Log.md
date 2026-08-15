@@ -24,3 +24,5 @@ Tài liệu này dùng để **Phân cấp Ưu tiên Rủi ro (Risk Prioritizati
 | **DEC-002** | 01/08/2026 | `classesApi.create` | Loại bỏ các key rỗng `null` không tồn tại trong DB payload | Chống lỗi `Could not find column in schema cache` |
 | **DEC-003** | 01/08/2026 | `Exams.tsx` | Thêm Dropdown chọn Khóa học cho Ngân hàng bài thi | Đáp ứng nhu cầu lọc bài thi theo khóa học thực tế |
 | **DEC-004** | 01/08/2026 | `Users.tsx` | Cố định `role: "student"` trong truy vấn danh sách Học viên | Bóc tách hoàn toàn Admin & Teacher khỏi trang Học viên |
+| **DEC-005** | 16/08/2026 | `Notification Subsystem` | Chuyển toàn bộ mock Notification Center sang Authoritative Subsystem với DB-level Idempotency, Transactional Atomicity, và Object-level Auth | Chống rò rỉ dữ liệu giả trên Production, đảm bảo chu kỳ sự kiện nộp bài/chấm bài/giao bài phát sinh thông báo thật |
+| **DEC-006** | 16/08/2026 | `api.ts` Dual Fallback | Bổ sung fallback Supabase khi Fastify REST Gateway offline/404 cho `my-classes`, `sessions`, `attendance` | Đảm bảo tính khả dụng cao, chống sập UI khi Gateway có sự cố hoặc chênh lệch phiên bản API |

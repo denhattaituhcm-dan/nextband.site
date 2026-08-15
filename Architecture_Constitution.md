@@ -1,7 +1,8 @@
 # NEXTBAND ARCHITECTURE CONSTITUTION (HIẾN PHÁP KIẾN TRÚC HỆ THỐNG NEXTBAND)
 
-**Phiên bản**: 1.0.0  
+**Phiên bản**: 1.1.0  
 **Ngày ban hành**: 01/08/2026  
+**Ngày cập nhật**: 16/08/2026 — Bổ sung Article XX (Frontend Deployment Resilience) và Article XXI (Design Token Discipline) từ sự cố production thực tế.  
 **Cấp độ áp dụng**: Tối cao (Bắt buộc tuân thủ cho toàn bộ Kỹ sư, Technical Lead, và AI Agents)  
 **Phạm vi**: Toàn bộ Hệ thống IELTS NextBand (Frontend `nextband/`, Backend Fastify `ielts-api/`, Database Supabase Cloud PostgreSQL, và các tài liệu Kiến trúc liên quan)
 
@@ -409,6 +410,294 @@ $$\text{User A Action} \longrightarrow \text{DB Entity Commit} \longrightarrow \
 
 ---
 
+## ARTICLE XX: DESIGN SYSTEM INTEGRITY & ARCHITECTURAL PALETTE LOCKDOWN (TÍNH TOÀN VẸN THIẾT KẾ & KHÓA PALETTE PHÒNG CHỐNG REGRESSION)
+
+### Section 20.1: Mô Hình Token 3 Tầng Bắt Buộc (3-Tier Token Architecture)
+Mọi màu sắc và thành phần giao diện trong toàn bộ hệ thống phải tuân thủ nghiêm ngặt mô hình 3 tầng phân cấp, triệt tiêu hoàn toàn tình trạng đa nguồn chân lý (Multi-Source-of-Truth):
+
+```text
+[TIER 1: BRAND]      ──► primary, primary-foreground, primary-hover, primary-soft (Bất biến về Hue)
+[TIER 2: SEMANTIC]   ──► success, warning, destructive, info (Kèm foreground tương ứng)
+[TIER 3: NEUTRAL]    ──► background, foreground, card, muted, border, input, ring, sidebar-*
+```
+
+1. **Cấm Token Hóa Bảng Màu Thô**: Tuyệt đối không khai báo token theo tên màu nguyên thủy (`--blue-600`, `--emerald-500`, `--amber-400`). Component chỉ được phép biết *vai trò ngữ nghĩa* (Semantic Role), không được tự ý quyết định sắc độ màu.
+2. **Quy Tắc Độc Tôn Biến CSS**: Mọi thay đổi về nhận diện thương hiệu chỉ được phép diễn ra tại `index.css`. Cấm sửa đổi màu rải rác trong từng file component.
+
+### Section 20.2: Cơ Chế Khóa Compiler Chống Thoái Lùi (Compiler-Level Anti-Regression Gate)
+1. **Khóa Bảng Màu Tailwind (`tailwind.config.ts`)**: Cấu hình Tailwind bắt buộc phải ghi đè (`override`) map `colors` để chỉ expose các token ngữ nghĩa (Tier 1, 2, 3).
+2. **Từ Chối Biên Dịch Class Tùy Ý (Banned Color Utilities)**:
+   - ❌ **CẤM TRUY CẬP TRỰC TIẾP**: `text-blue-*`, `bg-blue-*`, `text-emerald-*`, `bg-emerald-*`, `text-amber-*`, `bg-amber-*`, `text-indigo-*`, `bg-indigo-*`, `text-sky-*`, `bg-sky-*`, `text-teal-*`, `bg-teal-*`.
+   - ✅ **CHỈ CHO PHÉP**: `text-primary`, `bg-primary`, `text-success`, `bg-success`, `text-warning`, `bg-warning`, `text-destructive`, `bg-destructive`, `text-info`, `bg-info`, `text-foreground`, `text-muted-foreground`, `bg-card`, `bg-muted`.
+3. **PASS/FAIL Condition**:
+   - **PASS**: Không có bất kỳ utility class màu palette thô nào lọt vào bản build production.
+   - **FAIL**: Xuất hiện class màu cứng tự do trong file `.tsx` mới.
+
+### Section 20.3: Hợp Đồng Điều Hướng Duy Nhất (Universal Navigation State Contract)
+Toàn bộ hệ thống Menu điều hướng (bao gồm Client Sidebar, Admin Sidebar, Teacher Workspace, Header dropdowns) bắt buộc phải chia sẻ đúng **một hợp đồng trạng thái duy nhất**:
+
+```text
+Navigation State Contract
+├── default    ──► text-sidebar-foreground, opacity 70%
+├── hover      ──► bg-sidebar-accent/50, text-sidebar-foreground
+├── active     ──► bg-sidebar-accent, text-sidebar-accent-foreground, font-semibold
+└── disabled   ──► text-muted-foreground, cursor-not-allowed
+```
+
+- ❌ **CẤM PHÂN MẢNH GIAO DIỆN**: Cấm tình trạng mỗi nhóm menu (ví dụ: Client dùng Blue, Admin Teaching dùng `blue-50`, Admin System dùng `slate-100`) tự chế active state riêng.
+
+### Section 20.4: Chuẩn Mực Cấp Bậc Thị Giác 5 Tầng & Chống Trùng Lớp (5-Tier Hierarchy & Layering Rules)
+Hệ thống thiết lập chuẩn mực phân cấp thị giác kết hợp chặt chẽ giữa **Font Size + Font Weight + Line Height + Spacing Rhythm**:
+
+| Cấp Bậc (Level) | Mục Đích Sử Dụng | Kích Thước (Size) | Độ Đậm (Weight) | Dòng (Line-Height) | Quy Tắc Bắt Buộc |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **L1 (Hero / Page Title)** | Tiêu đề chính màn hình | `32–36px` (`text-3xl`/`text-4xl`) | `800` (extrabold) | `1.15` (tight) | Tối đa 1 điểm nhấn L1 duy nhất trên một trang |
+| **L2 (Section Title)** | Tiêu đề phân đoạn lớn | `20–24px` (`text-xl`/`text-2xl`) | `600–700` (bold) | `1.3` (snug) | Định hướng phân khu chức năng |
+| **L3 (Card / Metric)** | Tiêu đề card, chỉ số KPI | `16–18px` (`text-base`/`text-lg`) | `600` (semibold) | `1.4` (normal) | Chỉ số số đếm dùng `text-2xl font-bold` gọn |
+| **L4 (Body Text)** | Nội dung mô tả, đoạn văn | `14–16px` (`text-sm`/`text-base`) | `400–500` (normal) | `1.6` (relaxed) | Đảm bảo độ thoáng khi đọc |
+| **L5 (Metadata / Label)** | Nhãn phụ, badge, ghi chú | `11–13px` (`text-[11px]`/`text-xs`) | `500–600` (medium) | `1.5` (normal) | Nhãn danh mục dùng uppercase tracking-wide |
+
+- **Anti-Duplication Layering Rule**:
+  - `Header` là **Navigation & Control Layer**: Chỉ chứa Logo, Breadcrumb/Class Chip, Notifications, User Avatar. **Tuyệt đối cấm đặt lời chào (Greeting)** tại Header.
+  - `Hero Banner` là **Context Layer**: Chịu trách nhiệm hiển thị lời chào (`"Xin chào, [Tên]!"`) và ngữ cảnh lớp học hiện tại.
+  - Không bao giờ để 2 tầng giao diện cùng thực hiện một nhiệm vụ trùng lặp.
+
+### Section 20.5: Nhận Diện Thương Hiệu Bất Biến & Đóng Băng Dark Mode / Gradient (Brand Hue Invariant & Decoration Policy)
+1. **Bảo Tồn Brand Hue (Single Identity Invariant)**:
+   - Mã màu thương hiệu `primary` mang giá trị Hue bất biến (`hsl(223 68% ...)` - Academic Blue).
+   - Tuyệt đối cấm hiện tượng đột biến nhận diện (ví dụ: Light Mode dùng Blue, Dark Mode đột biến sang Teal).
+2. **Dark Mode Freeze Policy**:
+   - Khi sản phẩm chưa có yêu cầu kinh doanh chính thức hoặc chưa có bộ token tối ưu hoàn chỉnh cho Dark Mode, hệ thống **BẮT BUỘC ĐÓNG BĂNG/LOẠI BỎ** class `.dark` và `darkMode` configuration.
+   - Cấm để lại các class `dark:*` mồ côi (dead UI code) gây rác codebase và đánh lừa lập trình viên.
+3. **Gradient as Decoration Only**:
+   - Gradient chỉ được phép đóng vai trò làm lớp nền mờ trang trí nhẹ (`ambient glow / surface background`), tuyệt đối không được biến gradient thành nhận diện thương hiệu hay text highlight.
+
+---
+
+## ARTICLE XXI: SINGLE LIFECYCLE AUTHORITY & MULTI-MODAL STATE CONFORMANCE (THẨM QUYỀN VÒNG ĐỜI DUY NHẤT & CHUẨN HÓA TRẠNG THÁI ĐA PHƯƠNG THỨC)
+
+### Section 21.1: Thẩm Quyền Vòng Đời Duy Nhất (Single Lifecycle Authority Invariant)
+1. Toàn bộ các component trong Student Portal (`ClientHeader`, `HomePage`, `ClientSidebar`, `StudentLessonViewerPage`) **BẮT BUỘC ĐỌC TRẠNG THÁI HỌC VIÊN ĐỘC QUYỀN TỪ HOOK `useStudentLifecycle`**.
+2. **Nghiêm Cấm Gọi API Độc Lập Để Tự Đoán Trạng Thái**:
+   - Tuyệt đối cấm các component tự ý gọi `classStudentsApi.getMyClasses()` hoặc API riêng lẻ để tự render nhãn trạng thái.
+   - Hiện tượng Header hiển thị *"Chưa có lớp học"* trong khi Homepage hiển thị danh sách bài tập của lớp là vi phạm nghiêm trọng luật Single Lifecycle Authority.
+
+### Section 21.2: Phân Định Nghiêm Ngặt 5 Trạng Thái Vòng Đời (Truthful Lifecycle States)
+Hệ thống máy trạng thái vòng đời học viên bắt buộc phân định rõ 5 trạng thái tách biệt:
+
+```text
+               ┌─────────────────────── useStudentLifecycle ───────────────────────┐
+               │                                                                    │
+      [1. LOADING] ──► Skeleton Loader (Cấm chớp giật, cấm hiển thị "Chưa có lớp")  │
+               │                                                                    │
+      [2. NETWORK_ERROR] ──► Error Banner Mạng + Nút Thử Lại (Cấm render Empty)    │
+               │                                                                    │
+      [3. API_ERROR] ─────► Error Banner Server (4xx/5xx) + Nút Thử Lại (Cấm Empty)│
+               │                                                                    │
+      [4. PRE_ENROLLMENT] ─► Empty State (CHỈ KHI Backend xác nhận 200 + data: []) │
+               │                                                                    │
+      [5. ENROLLED] ──────► Full Workspace Dashboard & Danh Sách Bài Tập           │
+               └────────────────────────────────────────────────────────────────────┘
+```
+
+- **Invariant Truthful Empty State**: Chỉ khi và chỉ khi Backend trả về `HTTP 200 OK` kèm danh sách rỗng đã xác thực (`data: []`), UI mới được phép tuyên bố học viên ở trạng thái `PRE_ENROLLMENT` (*"Chưa có lớp học"*).
+- Mọi lỗi mạng hoặc lỗi máy chủ **BẮT BUỘC PHẢI RENDER ERROR STATE KÈM RETRY**, không được phép nuốt lỗi thành Empty State.
+
+### Section 21.3: Hợp Đồng Badge Ngữ Nghĩa & Truy Cập Đa Phương Thức (Semantic Badge & Multi-Modal Accessibility)
+1. **Màu Sắc Chỉ Là Tăng Cường (Reinforcement Policy)**: Màu sắc tuyệt đối không bao giờ là kênh thông tin duy nhất để truyền tải trạng thái nghiệp vụ (đảm bảo chuẩn tiếp cận Web Accessibility WCAG).
+2. **Công Thức 3 Thành Tố Bắt Buộc Cho Mọi Badge Trạng Thái**:
+   $$\text{Status Badge} = \text{Badge Variant Ngữ Nghĩa (success/warning/info/destructive)} + \text{Lucide Icon Chuẩn} + \text{Nhãn Text Minh Bạch}$$
+   - *Ví dụ chuẩn*: `<Badge variant="success"><CheckCircle2 className="h-3 w-3" /> Đã nhận xét</Badge>`
+   - *Ví dụ chuẩn*: `<Badge variant="warning"><Clock className="h-3 w-3" /> Chờ phản hồi</Badge>`
+   - *Ví dụ chuẩn*: `<Badge variant="info"><Edit3 className="h-3 w-3" /> Đang làm</Badge>`
+3. **Cấm Dùng Emoji Giả Màu**: Nghiêm cấm đặt các emoji màu (`🟢`, `🟡`, `🔴`, `🔵`) vào trong component để giả lập trạng thái.
+
+### Section 21.4: Hợp Nhất Đường Ống Thông Báo & Cảnh Báo (Unified Notification & Alert Pipeline)
+1. **Một Nguồn Sự Thật Cho Thông Báo**: Toàn bộ thông báo người dùng, thông báo lớp học, và cảnh báo công việc tồn đọng (Pending Tasks, Unread Submissions) bắt buộc phải tích hợp trực tiếp qua hệ thống `notificationsApi`.
+2. **Cấm API Phân Mảnh / Ảo**: Tuyệt đối cấm tạo các wrapper API riêng biệt không kết nối cơ sở dữ liệu thật (`alertsApi`, `announcementsApi`). Mọi thông báo phải được phân loại qua enum chuẩn (`ANNOUNCEMENT`, `PENDING_GRADING`, `NEW_SUBMISSION`, `SYSTEM_ALERT`).
+3. **Tính Nguyên Tử Khi Đánh Dấu Đã Xử Lý (Atomic Invalidation)**: Khi một thông báo/cảnh báo được đánh dấu đã đọc (`markAsRead`), client bắt buộc phải kích hoạt đồng thời Invalidation cho toàn bộ query keys liên đới:
+   - `queryClient.invalidateQueries({ queryKey: ["notifications-unread-count"] })`
+   - `queryClient.invalidateQueries({ queryKey: ["notifications-list"] })`
+   - `queryClient.invalidateQueries({ queryKey: ["alerts-widget"] })`
+
+---
+
+## ARTICLE XXII: CANONICAL SUBMISSION DOMAIN & DUAL-BACKEND ELIMINATION (MIỀN BÀI NỘP CHUẨN & TRIỆT TIÊU LỖI SPLIT-BRAIN BACKEND)
+
+### Section 22.1: CSDL Nguồn Sự Thật Duy Nhất (Single Canonical Database of Record)
+1. Toàn bộ vòng đời bài làm và câu trả lời (`exam_submissions`, `answers`) thuộc quyền quản lý độc quyền của **Supabase PostgreSQL Cloud**.
+2. **Triệt tiêu Mô hình Split-Brain**: Tuyệt đối cấm mô hình chia rẽ kiến trúc "Start ghi vào Supabase nhưng Submit/GetById gọi sang Fastify/MySQL". Mọi hành vi tạo "hộ chiếu" ở DB này nhưng nộp ở DB khác là vi phạm nghiêm trọng luật Single Canonical Database.
+3. **Cấm Dual-Write Không Nguyên Tử**: Tuyệt đối không được triển khai cơ chế ghi đồng thời vào cả MySQL và Supabase ở tầng Client để "chữa cháy" triệu chứng.
+
+### Section 22.2: Một UUID Bất Biến Cho Toàn Bộ Vòng Đời (Single Lifecycle UUID Invariant)
+Toàn bộ hành trình của một lượt làm bài thi bắt buộc gắn liền với **duy nhất 1 chuỗi UUID** xuyên suốt:
+$$\text{Start Attempt} \xrightarrow{\text{1 UUID}} \text{Autosave Answers} \xrightarrow{\text{1 UUID}} \text{Submit Exam} \xrightarrow{\text{1 UUID}} \text{Teacher Grading} \xrightarrow{\text{1 UUID}} \text{Review Results}$$
+
+### Section 22.3: Cô Lập & Dọn Sạch Runtime Callers (Runtime Isolation Policy)
+1. Trước khi xóa mã nguồn backend legacy, bắt buộc phải chứng minh **Runtime Callers = 0**:
+   - `grep -R "API_BASE_URL/submissions" src/` $\longrightarrow 0$ kết quả.
+   - `grep -R "API_BASE_URL/homeworks" src/` $\longrightarrow 0$ kết quả trên luồng học viên.
+2. Không còn bất kỳ component học viên hay giáo viên nào gửi request nộp bài sang Fastify endpoint cũ.
+
+---
+
+## ARTICLE XXIII: TRUTHFUL AUTOSAVE, IDEMPOTENCY & PRE-SUBMIT FLUSH (CƠ CHẾ LƯU TỰ ĐỘNG TRUNG THỰC & NỘP BÀI NGUYÊN TỬ)
+
+### Section 23.1: Giao Diện Lưu Nháp Trung Thực 3 Trạng Thái (Truthful Autosave UI Invariant)
+1. Giao diện làm bài **TUYỆT ĐỐI KHÔNG ĐƯỢC MẶC ĐỊNH HIỂN THỊ "ĐÃ LƯU"** khi chưa có xác nhận từ CSDL.
+2. Hệ thống bắt buộc phân biệt rạch ròi 3 trạng thái phản hồi:
+   - `Đang lưu... (màu vàng / animate-pulse)`: Khi có câu trả lời mới đang chờ gửi hoặc request đang trên đường truyền mạng.
+   - `✓ Đã lưu tự động (màu xanh)`: CHỈ KHI VÀ CHỈ KHI CSDL PostgreSQL trả về HTTP 200/201 xác nhận bản ghi đã ghi đĩa an toàn.
+   - `⚠ Lưu thất bại (màu đỏ)`: Khi mất mạng hoặc server lỗi, kèm cờ báo động để học viên không bị mất dữ liệu khi chuyển câu.
+
+### Section 23.2: Quy Trình Xả Nháp Trước Khi Nộp (Pre-Submit Flush Sequence)
+Nghiêm cấm việc gửi lệnh Final Submit khi vẫn còn câu trả lời chưa lưu hoặc timer debounce đang đếm lùi. Quy trình nộp bài bắt buộc tuân theo chuỗi tuần tự nghiêm ngặt:
+$$\text{Click "Nộp Bài"} \longrightarrow \text{Hủy Debounce Timer} \longrightarrow \text{Flush Đồng Bộ 100\% Answers} \longrightarrow \text{Xác Nhận DB Persistence} \longrightarrow \text{Finalize Submission}$$
+
+### Section 23.3: Tính Bất Biến Idempotent Attempt & Retake Semantics
+1. **Một Active Attempt Tại Một Thời Điểm**: Đối với mỗi cặp `(student_id, exam_id)`, trạng thái `in_progress` chỉ được phép tồn tại tối đa **1 bản ghi duy nhất**.
+2. **Khôi Phục Trạng Thái Khi F5/Reload**: Khi học viên làm mới trang, mở lại tab hoặc mạng chập chờn, hệ thống bắt buộc phải **Resume** đúng attempt đang làm dở kèm toàn bộ câu trả lời đã lưu, không được sinh UUID mới làm rác CSDL.
+3. **Quyền Làm Lại (Retake)**: Học viên chỉ được phép bắt đầu một attempt mới sau khi attempt cũ đã được chấm điểm hoàn tất (`status = 'graded'`).
+
+---
+
+## ARTICLE XXIV: ANTI-CHEATING DATA BOUNDARY & SERVER-SIDE RPC (RANH GIỚI BẢO MẬT ĐÁP ÁN & THẨM QUYỀN CHẤM ĐIỂM SERVER)
+
+### Section 24.1: Giấu Đáp Án Tuyệt Đối Khỏi Browser (Answer Key Privacy Invariant)
+1. **Không Dựa Vào UI Để Bảo Mật**: Tuyệt đối không dùng logic "ẩn trên UI nhưng API vẫn trả về `correct_answer`" vì học viên có thể mở DevTools/Network Tab xem trước toàn bộ đáp án.
+2. **Ranh Giới Dữ Liệu Tầng CSDL (Data Projection Boundary)**:
+   - Học viên khi làm bài chỉ được phép truy vấn thông qua View chuyên biệt: `student_exam_questions_view` (loại bỏ hoàn toàn cột `correct_answer`).
+   - Cột `correct_answer` là dữ liệu tuyệt mật, chỉ có Backend / PostgreSQL Stored Procedure mới có quyền đọc.
+
+### Section 24.2: Thẩm Quyền Chấm Điểm Tại Server / Stored Procedure
+1. Logic chấm điểm khách quan và cập nhật điểm số tổng bắt buộc phải đóng gói thành Stored Procedure chạy ngầm tại PostgreSQL (`submit_exam_attempt`).
+2. **Quy Chuẩn Hàm SECURITY DEFINER**:
+   - Bắt buộc khóa cứng: `SET search_path = public, pg_temp;`.
+   - Bắt buộc thu hồi quyền thực thi mặc định: `REVOKE EXECUTE ON FUNCTION ... FROM PUBLIC;`.
+   - Bắt buộc kiểm tra danh tính nội bộ: `auth.uid() = submission.student_id`.
+   - Cấm tin tưởng tham số `p_student_id` do Client gửi lên.
+
+### Section 24.3: Chống Giả Mạo Điểm Số (Anti-Tampering Invariant)
+Học viên (role `authenticated` / `student`) bị cấm tuyệt đối quyền thực hiện lệnh `UPDATE` trực tiếp lên các cột `total_score`, `correct_answers`, `status`, `graded_by` của bảng `exam_submissions` thông qua Supabase PostgREST client. Mọi sự thay đổi trạng thái điểm số chỉ được phép thực hiện thông qua RPC đã kiểm toán hoặc Role Giáo Viên/Admin.
+
+---
+
+## ARTICLE XXV: SPATIAL IDENTITY SYSTEM & WAYFINDING DESIGN (HỆ THỐNG NHẬN DIỆN KHÔNG GIAN & THIẾT KẾ ĐIỀU HƯỚNG)
+
+### Section 25.1: 4 Lãnh Địa Không Gian (The 4 Spatial Realms)
+Hệ thống IELTS NextBand thiết lập 4 không gian trải nghiệm đặc trưng giúp học viên nhận biết vị trí của mình chỉ trong 1 giây:
+
+```text
+[1. 🏠 SẢNH CHÍNH - THE HUB] ──────► Màu Slate / Blue-gray (Trung tính, điều hướng, chọn lộ trình)
+           │
+           ▼
+[2. 🏫 LỚP HỌC - THE CLASSROOM] ──► Màu Emerald / Teal (Thanh neo 4px Emerald + Không gian học tập lớp)
+           │
+           ▼
+[3. ⚔️ PHÒNG LÀM BÀI - TRAINING ROOM] ► Màu Indigo / Violet (Thanh neo 4px Indigo + Tập trung làm nhiệm vụ)
+           │
+           ▼
+[4. 📊 KẾT QUẢ - HALL OF RESULTS] ─► Màu Blue / Cyan (Huy hiệu Blue + Phân tích điểm số & nhận xét)
+```
+
+### Section 25.2: Nguyên Tắc Tách Biệt Màu Không Gian & Màu Trạng Thái
+1. **Spatial Color (Tôi đang ở đâu?)**: Dùng để neo giữ nhận diện không gian (Emerald = Lớp học, Indigo = Phòng thi, Blue = Kết quả). Phải sử dụng màu đơn sắc (single-hue anchor line 4px), không lạm dụng gradient đa sắc gây xao nhãng.
+2. **Semantic Color (Điều gì đang xảy ra?)**: Dùng để biểu thị trạng thái dữ liệu (Xanh lục = Đúng/Đã lưu, Vàng = Đang lưu/Chờ chấm, Đỏ = Sai/Lỗi).
+3. **Cấm Đánh Lẫn Hai Hệ Màu**: Tuyệt đối không dùng màu không gian để thay thế cho màu trạng thái dữ liệu và ngược lại.
+
+---
+
+## ARTICLE XXVI: POST-SUBMISSION RESULT CLARITY & STATE-DRIVEN COMPARISON (TÍNH MINH BẠCH KẾT QUẢ SAU KHI NỘP & ĐỐI CHIẾU ĐÁP ÁN TRỰC QUAN)
+
+### Section 26.1: 4 Khối Thống Kê Tổng Quan Màu Sắc (Color-Coded Result Hero Cards)
+Giao diện kết quả bài nộp (`SubmissionDetail`) bắt buộc phải hiển thị 4 khối thống kê trực quan trên đầu trang:
+- 🟩 **Khối Câu Đúng (Màu Emerald)**: Số câu đúng to rõ kèm biểu tượng `✓`.
+- 🟥 **Khối Câu Sai (Màu Rose)**: Số câu sai để học viên nắm ngay các điểm cần khắc phục.
+- 🟦 **Khối Độ Chính Xác (Màu Blue)**: Tỷ lệ % hoàn thành chính xác.
+- ⬜ **Khối Thời Gian & Tiến Độ (Màu Slate)**: Giờ nộp bài và tổng số câu đã làm.
+
+### Section 26.2: Thẻ Câu Hỏi Nhận Diện Theo Trạng Thái (State-Driven Card Borders & Badges)
+Mỗi thẻ câu hỏi (`AnswerResultCard`) khi xem lại kết quả bắt buộc có viền màu bên trái và Badge ngữ nghĩa:
+- **Câu Đúng**: Viền trái 4px Xanh lá (`border-l-4 border-l-emerald-500 bg-emerald-50/15`) + Badge `✓ Đúng (Điểm/Tổng)`.
+- **Câu Sai**: Viền trái 4px Đỏ (`border-l-4 border-l-rose-500 bg-rose-50/15`) + Badge `✗ Sai (0/Tổng)`.
+- **Câu Tự Luận / Nói**: Viền trái 4px Cam (`border-l-4 border-l-amber-400 bg-amber-50/15`) + Badge `⏳ Chờ giáo viên chấm`.
+- **Câu Chưa Làm**: Viền trái 4px Xám (`border-l-4 border-l-slate-300 bg-slate-50/30`) + Badge `Chưa làm`.
+
+### Section 26.3: Đối Chiếu Đáp Án Trực Quan (Side-by-Side Comparison Box)
+- Hộp **"Câu trả lời của bạn"** tự động chuyển màu theo kết quả (Xanh nếu đúng, Đỏ nếu sai).
+- Hộp **"Đáp án chính xác"** được đóng khung nổi bật với màu Xanh Ngọc kèm biểu tượng `✓ Đáp án chính xác: [Nội dung]` để học viên không bao giờ bị lẫn lộn giữa bài làm của mình và đáp án chuẩn.
+
+---
+
+## ARTICLE XXVII: QUESTION DOMAIN CONTRACT & SEMANTIC DATA INTEGRITY (HIẾN PHÁP DỮ LIỆU CÂU HỎI & BẢO VỆ TÍNH TOÀN VẸN NGỮ NGHĨA)
+
+### Section 27.1: Nguyên Tắc Đồng Bộ Trạng Thái Soạn Thảo (Authoring State Cleanliness)
+1. **Cấm Rò Rỉ State Mặc Định (Zero Default State Leaks)**: Form soạn thảo câu hỏi (`SectionEdit`) tuyệt đối không dùng state mặc định chung `options: ["", "", "", ""]` áp đặt cho mọi loại câu hỏi.
+2. **Tự Động Reset Khi Đổi Loại Câu (Type-Switching State Rebuild)**: Khi chuyển `questionType` trong Admin UI, toàn bộ state phụ thuộc phải được tái tạo sạch theo Hợp đồng Ngữ nghĩa:
+   - `multiple_choice`: Tái tạo `options = ["", ""]`, `correctAnswer = ""`.
+   - `short_answer` / `essay` / `speaking`: Bắt buộc set `options = null`, `correctAnswer = ""` (hoặc null).
+   - `matching`: Bắt buộc set `options = null`, `correctAnswer = JSON({ items, options, pairs })`.
+   - `fill_blank`: Bắt buộc set `options = null`, `fillBlankAnswers = [""]`.
+
+### Section 27.2: Thẩm Quyền Kiểm Tra Ngữ Nghĩa Backend (Backend Semantic SuperRefine Authority)
+1. **Không Tin Tưởng Frontend Payload**: Backend Zod Schema (`questions.routes.ts`) là cổng thẩm định tối cao. Phải sử dụng `.superRefine()` để kiểm tra ngữ nghĩa runtime:
+   - **MCQ Invariant**: Câu trắc nghiệm bắt buộc có $\ge 2$ options có nội dung thực tế sau khi `.trim()`. Nếu $< 2$ options $\implies$ **REJECT NGAY LẬP TỨC với HTTP 400 Bad Request**. Tuyệt đối không âm thầm nuốt lỗi hoặc tự ý biến thành `options: null`.
+   - **Text Question Invariant**: Đối với `short_answer`, `essay`, `speaking`, `fill_blank`, backend bắt buộc làm sạch và lưu `options: null`.
+   - **Matching Invariant**: Bắt buộc kiểm tra JSON structure có đủ `items` (mảng không rỗng), `options` (mảng không rỗng), và `pairs` (từ điển hợp lệ trỏ đúng chỉ số).
+
+### Section 27.3: Cấm Renderer Đoán Ngữ Nghĩa (Zero Speculative Rendering & Isolated Failure)
+1. **Không Tự Ý Đoán Semantic**: Student Renderer (`GrammarSection`, `WritingSection`, `QuestionControlRenderer`) tuyệt đối không được tự ý biến một câu `multiple_choice` thiếu options thành `Textarea`.
+2. **Phòng Thủ Lỗi Cô Lập (Isolated Failure Defense)**: Khi gặp bản ghi câu hỏi bị lỗi cấu trúc dữ liệu, UI bắt buộc render một `<Alert variant="destructive">` thông báo lỗi nội dung tại đúng vị trí câu đó. Tuyệt đối không để một câu lỗi làm crash cả bài thi hay làm hỏng khả năng làm bài của các câu khác.
+
+---
+
+## ARTICLE XXVIII: HYBRID EXAM WORKSPACE & TWO-WAY WAYFINDING INTEGRITY (KHÔNG GIAN LÀM BÀI THI HYBRID & ĐIỀU HƯỚNG KHÔNG GIAN ĐỒNG BỘ 2 CHIỀU)
+
+### Section 28.1: Nguyên Tắc "Nội Dung Thay Đổi, Công Cụ Trả Lời Không Thay Đổi" (Unified Written Response Box)
+1. **Thống Nhất Giao Diện Tự Luận**: Toàn bộ các dạng câu hỏi trả lời bằng chữ (`short_answer`, `essay`, nhận diện S-V, viết lại câu, dịch câu) **BẮT BUỘC** dùng chung một component nhập liệu chuẩn: `WritingAnswerBox`.
+2. **Chuẩn Hóa Kích Thước & Trải Nghiệm**:
+   - Chiều cao mặc định 5–6 dòng (`min-h-[135px]`, `max-h-[340px]`), cuộn nội bộ khi dài. Không để 24 câu hỏi làm phình trang vô tận.
+   - Tích hợp sẵn Footer thống kê: Đếm số từ thực tế theo chuẩn chuẩn hóa khoảng trắng (`value.trim().split(/\s+/).filter(Boolean).length`) + Chỉ báo tự động lưu (`✓ Đã lưu` / `Đang lưu...`).
+
+### Section 28.2: Ghim Ngữ Cảnh Nhóm (Sticky Group Context Header)
+1. **Xóa Bỏ Hiện Tượng Quên Yêu Cầu Đề**: Với các bài thi nhiều nhóm (Group 1: Dịch câu, Group 2: Nhận diện S-V, Group 3: Phát hiện lỗi), Header và Chỉ dẫn của từng nhóm (`QuestionGroupHeader`) **BẮT BUỘC** được ghim nhẹ (`sticky top-14 md:top-16 z-20`) khi học viên cuộn làm bài trong phạm vi nhóm đó.
+2. **Chuyển Giao Mượt Mà**: Khi cuộn sang nhóm tiếp theo, Header nhóm mới tự động đẩy Header nhóm cũ ra khỏi khung nhìn, đảm bảo luôn có duy nhất một ngữ cảnh chỉ dẫn hiển thị.
+
+### Section 28.3: Đồng Bộ Điều Hướng 2 Chiều Dựa Trên Trung Tâm Viewport (Center-Based Viewport Synchronization)
+1. **Nguồn Chân Lý Duy Nhất Cho Câu Đang Xem (`activeQuestionId`)**:
+   - `activeQuestionId` được xác định theo thời gian thực bởi câu hỏi nằm gần trục ngang trung tâm của Viewport nhất (`Math.abs(elCenter - viewportCenter)` nhỏ nhất).
+   - Tuyệt đối cấm duy trì hai trạng thái độc lập giữa vị trí cuộn màn hình và số câu highlight ở thanh Navigator đáy.
+2. **Hệ Thống Ký Hiệu Điều Hướng Chuẩn (Navigator Visual Semantics)**:
+   - `[ N ]` = Trạng thái Đang xem (Viền highlight nổi bật, không tranh chấp màu sắc với trạng thái đã làm).
+   - `●` = Trạng thái Đã trả lời (Chấm xanh ngọc tinh tế).
+   - `⚑` = Trạng thái Đã gắn cờ xem lại (Chấm vàng cảnh báo).
+   - `○` = Trạng thái Chưa làm.
+3. **Phản Hồi Mobile Linh Hoạt**: Trên màn hình nhỏ, thanh điều hướng đáy hiển thị nút `‹ [Câu X/Y] ›` cho phép chạm để mở Bottom Sheet xem toàn bộ bảng câu hỏi.
+
+---
+
+## ARTICLE XXIX: HISTORICAL DATA FORENSIC & SAFE DATA REPAIR (ĐIỀU TRA PHÁP Y DỮ LIỆU & DI TRÚ DỮ LIỆU AN TOÀN)
+
+### Section 29.1: Quy Trình Kiểm Tra Lịch Sử Trước Khi Sửa Dữ Liệu Sống (Pre-Migration Forensic Check)
+Khi thực hiện sửa chữa hoặc thay đổi `questionType` / cấu trúc dữ liệu trên Production Database, kỹ sư và AI bắt buộc tuân thủ quy trình 3 bước:
+1. **Bước 1: Audit Lịch Sử Bài Nộp**: Truy vấn bảng `answers` và `submissions` kiểm tra xem đã có học viên nào nộp bài trên các câu hỏi bị ảnh hưởng hay chưa. Nếu đã có bài nộp, bắt buộc lập chiến lược di trú bảo toàn điểm số lịch sử.
+2. **Bước 2: Phân Loại Dữ Liệu Rác vs Dữ Liệu Thực (Zero Blind Wipe Policy)**: Quét toàn bộ các bản ghi nghi vấn (`options != null` trên câu tự luận). Phân loại chính xác:
+   - `Dummy-only options` (chỉ chứa mảng rỗng `["", "", "", ""]`): Cho phép cleanup về `null`.
+   - `Meaningful options` (có chứa text thật): **CẤM TỰ Ý XÓA**, bắt buộc gắn cờ điều tra nguyên nhân.
+3. **Bước 3: Tái Quét Toàn Diện Sau Di Trú (Post-Migration Re-Scan Guard)**: Chạy script kiểm toán toàn bộ 100% bản ghi CSDL, chứng minh bằng số liệu thực nghiệm đạt **0 vi phạm critical** và **0 vi phạm data hygiene**.
+
+---
+
+## ARTICLE XXX: STRICT LOCAL PRODUCTION BUILD VERIFICATION (CỔNG KIỂM TRA BẢN BUILD PRODUCTION BẮT BUỘC TRƯỚC KHI BÀN GIAO)
+
+### Section 30.1: Chống Ngụy Biện "Chỉ Check Typescript Là Đủ"
+1. **Lệnh Bắt Buộc (Mandatory Build Check)**: Sau bất kỳ thay đổi nào liên quan đến UI / Frontend Component (`.tsx`, `.jsx`), kỹ sư/AI **BẮT BUỘC PHẢI CHẠY LỆNH BUILD PRODUCTION THỰC TẾ** (`npm run build` / `vite build`).
+2. **Điều Kiện Đóng Sprint**:
+   - `npx tsc --noEmit` đạt 0 lỗi là **chưa đủ**.
+   - `npm run build` bắt buộc phải trả về mã thoát `0` và tạo ra thư mục `dist/` hoàn chỉnh mà không gặp bất kỳ lỗi cú pháp esbuild/Vite Transform nào.
+
+---
+
 ## APPENDIX A: BẢNG ĐỊNH NGHĨA TRẠNG THÁI CHUẨN (STANDARD STATUS DEFINITIONS)
 
 | Trạng thái (Status) | Định nghĩa Pháp lý Kỹ thuật | Điều kiện Đạt |
@@ -474,3 +763,91 @@ Nghiêm cấm tất cả AI Agents (bao gồm Antigravity và các subagents) vi
 
 ### Thứ Tự Ưu Tiên Hành Động Của AI (AI Action Priority):
 $$\text{Evidence (Bằng chứng)} \longrightarrow \text{Verification (Xác minh)} \longrightarrow \text{Decision (Quyết định ADR)} \longrightarrow \text{Implementation (Viết code)}$$
+
+---
+
+## ARTICLE XX: FRONTEND DEPLOYMENT RESILIENCE — STALE CHUNK RECOVERY (PHỤC HỒI TẦNG FRONTEND SAU TRIỂN KHAI MỚI)
+
+> **Nguồn gốc**: Sự cố production ngày 16/08/2026 — Lỗi "Failed to fetch dynamically imported module" xuất hiện sau mỗi lần deploy do browser giữ HTML cũ cache, trỏ đến chunk hash không còn tồn tại.
+
+### Section 20.1: Bản Chất Lỗi Stale Chunk (Root Cause)
+1. Vite (và các bundler code-splitting khác) tạo ra các file JS chunk với **hash trong tên** (ví dụ: `StudentLessonViewerPage-D3LmupST.js`).
+2. Sau mỗi lần deploy, hash thay đổi. Browser có thể giữ bản HTML cũ từ cache → tham chiếu đến chunk hash cũ → `404 Not Found` → lỗi `Failed to fetch dynamically imported module`.
+3. Lỗi này **không phụ thuộc vào framework** (React, Vue, Angular đều có thể bị), cũng **không phải lỗi build** — chỉ là hệ quả của cache desynchronization.
+
+### Section 20.2: Quy Tắc Bắt Buộc — `lazyWithRetry` Pattern
+1. **Nghiêm cấm dùng `React.lazy()` trực tiếp** cho bất kỳ route lazy-load nào tại `App.tsx`.
+2. **Bắt buộc dùng `lazyWithRetry()`** — một wrapper xử lý stale chunk theo cơ chế:
+   - Catch lỗi `Failed to fetch dynamically imported module` hoặc `ChunkLoadError`.
+   - Kiểm tra `sessionStorage` flag `__nb_chunk_reloaded__` để tránh infinite reload loop.
+   - Nếu chưa reload: ghi flag → `window.location.reload()` ngầm → user không thấy màn hình lỗi.
+   - Nếu đã reload mà vẫn lỗi: để lỗi propagate lên `AppErrorBoundary` hiển thị UI thông báo.
+3. **`AppErrorBoundary.componentDidCatch`** phải có thêm một lớp phòng thủ thứ hai: detect stale chunk error và tự reload thay vì render màn hình lỗi đỏ.
+
+```typescript
+// Pattern chuẩn — BẮT BUỘC tuân thủ
+const CHUNK_RELOAD_KEY = "__nb_chunk_reloaded__";
+
+function lazyWithRetry<T extends React.ComponentType<any>>(
+  factory: () => Promise<{ default: T }>
+): React.LazyExoticComponent<T> {
+  return lazy(() =>
+    factory().catch((err: unknown) => {
+      if (isChunkLoadError(err)) {
+        const alreadyReloaded = sessionStorage.getItem(CHUNK_RELOAD_KEY);
+        if (!alreadyReloaded) {
+          sessionStorage.setItem(CHUNK_RELOAD_KEY, "1");
+          window.location.reload();
+          return new Promise(() => {}) as never;
+        }
+      }
+      throw err;
+    })
+  );
+}
+```
+
+### Section 20.3: Quy Tắc Về Bundle Size Warning
+1. Cảnh báo Vite `Some chunks are larger than 500 kB` là **performance warning, không phải lỗi build**.
+2. **Không được phép dùng `manualChunks` để tắt cảnh báo** mà không có bundle analyzer data làm căn cứ. Chia chunk sai có thể tăng số request, tạo dependency phức tạp và phá cache behavior.
+3. Khi nào được phép tối ưu bundle: Sau khi hệ thống ổn định và thực hiện đủ quy trình: `Bundle Analyzer → xác định top packages thực tế → lazy-load có căn cứ → đo Lighthouse before/after → quyết định`.
+
+- **PASS/FAIL Condition**:
+  - **PASS**: Mọi `React.lazy()` import trong `App.tsx` đều được bọc bởi `lazyWithRetry()`. `AppErrorBoundary` có logic detect và self-reload khi gặp chunk error.
+  - **FAIL**: Tồn tại bất kỳ `React.lazy(() => import(...))` trực tiếp trong routing layer. Người dùng nhìn thấy màn hình lỗi sau khi deploy mới.
+  - **Verification Method**: Grep `src/App.tsx` tìm pattern `lazy\(` không đi kèm `lazyWithRetry`. Deploy mới → kiểm tra browser cache cũ → không thấy màn hình lỗi.
+
+---
+
+## ARTICLE XXI: DESIGN TOKEN DISCIPLINE — CẤM HARDCODE MÀU SẮC TRONG SHARED COMPONENTS (KỶ LUẬT DESIGN TOKEN)
+
+> **Nguồn gốc**: Sự cố ngày 16/08/2026 — `AppErrorBoundary` và `PageLoader` được viết với hardcoded Tailwind colors (`slate-900`, `blue-600`, `red-50`) thay vì semantic design tokens, gây ra màn hình error boundary hiển thị màu sai khi theme thay đổi.
+
+### Section 21.1: Phân Biệt Hardcoded Color vs Design Token
+
+| Loại | Ví dụ | Khi nào được dùng |
+|---|---|---|
+| **Hardcoded Tailwind color** | `text-slate-900`, `bg-blue-600`, `border-red-200` | **Chỉ** trong mockup, prototype, hoặc one-off UI không dùng lại |
+| **Semantic Design Token** | `text-foreground`, `bg-primary`, `border-destructive/20` | **Bắt buộc** trong mọi shared component, layout, error boundary |
+
+### Section 21.2: Quy Tắc Bắt Buộc
+
+1. **Shared components** (ErrorBoundary, PageLoader, Layout, Toast, Dialog...) **BẮT BUỘC** dùng semantic design tokens:
+   - Text: `text-foreground`, `text-muted-foreground`, `text-destructive`
+   - Background: `bg-background`, `bg-card`, `bg-primary`, `bg-destructive/10`
+   - Border: `border-border`, `border-destructive/20`
+   - Interactive: `bg-primary hover:bg-primary-hover`, `text-primary-foreground`
+   - Spinner: `border-primary` (không phải `border-blue-600`)
+
+2. **Cấm tuyệt đối** dùng màu cụ thể (`slate-*`, `blue-*`, `red-*`, `gray-*`) bên trong:
+   - `AppErrorBoundary` / `GlobalErrorBoundary`
+   - `PageLoader` / skeleton screens
+   - Mọi component trong `src/layouts/`
+   - Mọi component `ui/` trong design system
+
+3. **Quy tắc kiểm tra (Smell Test)**: Nếu component có thể thay đổi màu mà không cần chỉnh code (chỉ cần đổi CSS variable trong theme) → đang dùng token đúng. Nếu buộc phải sửa class string → đang hardcode sai.
+
+- **PASS/FAIL Condition**:
+  - **PASS**: `AppErrorBoundary`, `PageLoader`, tất cả Layouts đều dùng semantic tokens. Thay đổi `--primary` CSS variable → toàn bộ UI cập nhật đồng bộ không cần sửa code.
+  - **FAIL**: Tồn tại bất kỳ `text-slate-*`, `bg-blue-*`, `border-red-*` nào trong `ErrorBoundary`, `PageLoader`, hoặc shared Layout components.
+  - **Verification Method**: `grep -r "text-slate\|bg-blue\|border-red\|text-gray" src/components/ui/ src/layouts/ src/main.tsx` → kết quả phải rỗng.

@@ -75,6 +75,59 @@ Mọi thay đổi về Mã nguồn UI, API DTO, hay Database Schema **BẮT BU�
 
 ---
 
+## 1.8 SYSTEM INVARIANT CORE-015: DESIGN SYSTEM SINGLE SOURCE OF TRUTH & PALETTE LOCKDOWN
+
+- **Quy tắc Bất biến Khóa Bảng Màu & Mô Hình Token 3 Tầng**:
+  - Toàn bộ UI tuân thủ mô hình 3-Tier Token: Tier 1 (Brand Primary bất biến về Hue), Tier 2 (Semantic `success`, `warning`, `destructive`, `info`), Tier 3 (Neutral Surface `background`, `card`, `border`, `muted`, `sidebar-*`).
+  - `tailwind.config.ts` bắt buộc ghi đè map `colors` chỉ expose semantic tokens. Cấm lập trình viên và AI sử dụng các class màu thô (`text-blue-*`, `bg-emerald-*`, `text-amber-*`, `bg-teal-*`).
+  - Mọi menu điều hướng (Client/Admin Sidebars, Header) bắt buộc dùng chung 1 Navigation State Contract (`bg-sidebar-accent text-sidebar-accent-foreground font-semibold` cho active state).
+
+---
+
+## 1.9 SYSTEM INVARIANT CORE-016: SINGLE LIFECYCLE STATE AUTHORITY & TRUTHFUL EMPTY STATE
+
+- **Quy tắc Thẩm Quyền Vòng Đời Duy Nhất**:
+  - Toàn bộ các component trong Student Portal (`ClientHeader`, `HomePage`, `StudentLessonViewerPage`) **BẮT BUỘC** đọc trạng thái học viên độc quyền từ hook tập trung `useStudentLifecycle`. Cấm các component tự gọi API riêng lẻ để suy đoán trạng thái.
+  - Phân định rõ 5 trạng thái: `LOADING` (Skeleton, cấm flicker), `NETWORK_ERROR` (Error Banner + Retry), `API_ERROR` (Error Banner + Retry), `PRE_ENROLLMENT` (Empty State, CHỈ KHI Backend 200 + `data: []`), `ENROLLED` (Workspace đầy đủ).
+  - Tuyệt đối cấm hiển thị *"Chưa có lớp học"* khi hệ thống đang loading hoặc gặp lỗi mạng/server.
+
+---
+
+## 1.10 SYSTEM INVARIANT CORE-017: MULTI-MODAL ACCESSIBILITY & UNIFIED NOTIFICATION PIPELINE
+
+- **Quy tắc Badge Ngữ Nghĩa & Hợp Nhất Đường Ống Thông Báo**:
+  - Màu sắc chỉ là tăng cường (Reinforcement), không bao giờ là kênh thông tin duy nhất. Mọi Badge trạng thái bắt buộc kết hợp: `Badge Semantic Variant` + `Lucide Icon` + `Text Rõ Ràng`. Cấm dùng emoji màu (`🟢`, `🟡`, `🔴`, `🔵`) giả icon.
+  - Toàn bộ thông báo, việc cần xử lý và announcement bắt buộc đi qua đường ống duy nhất `notificationsApi`. Khi `markAsRead`, bắt buộc invalidate đồng thời `notifications-unread-count`, `notifications-list`, và `alerts-widget`.
+
+---
+
+## 1.11 SYSTEM INVARIANT CORE-018: QUESTION TYPE CONTRACT & STRICT SEMANTIC VALIDATION GUARD
+
+- **Quy tắc Bất Biến Kiểu Câu Hỏi & Cổng Thẩm Định Ngữ Nghĩa**:
+  - **No Fake MCQ Invariant**: Tuyệt đối không bản ghi `multiple_choice` nào được phép tồn tại trong CSDL với ít hơn 2 options có nội dung thực tế. Backend bắt buộc dùng Zod `.superRefine()` để từ chối với HTTP 400.
+  - **No Leaked Options on Text Questions**: Các dạng `short_answer`, `essay`, `speaking`, `fill_blank`, `matching` bắt buộc lưu `options: null`.
+  - **No Speculative Rendering**: Renderer không bao giờ tự đoán kiểu câu hỏi từ dữ liệu lỗi; nếu gặp bản ghi hỏng cấu trúc, phải hiển thị cảnh báo lỗi nội dung cô lập để bảo vệ tính toàn vẹn của các câu còn lại.
+
+---
+
+## 1.12 SYSTEM INVARIANT CORE-019: UNIFIED WRITING ANSWER BOX & VIEWPORT-CENTERED NAVIGATION
+
+- **Quy tắc Khung Nhập Liệu Thống Nhất & Điều Hướng Đồng Bộ Trung Tâm Viewport**:
+  - **Nội dung thay đổi, công cụ trả lời không thay đổi**: Mọi câu hỏi trả lời bằng văn bản (`short_answer`, `essay`, rewrite, translation, S-V) bắt buộc dùng chung component `WritingAnswerBox` với chiều cao chuẩn 5-6 dòng, đếm từ thực tế và chỉ báo lưu tự động.
+  - **Sticky Group Context**: Header nhóm câu hỏi (`QuestionGroupHeader`) bắt buộc ghim nhẹ ở đầu khung nhìn khi cuộn trong phạm vi nhóm đó.
+  - **Single Source of Truth Navigator**: `activeQuestionId` được xác định theo thời gian thực bởi câu hỏi nằm gần trục ngang trung tâm Viewport nhất, đảm bảo đồng bộ 2 chiều 100% giữa cuộn trang và thanh điều hướng.
+
+---
+
+## 1.13 SYSTEM INVARIANT CORE-020: PRE-MIGRATION HISTORICAL FORENSIC & LOCAL BUILD GATE
+
+- **Quy tắc Điều Tra Pháp Y Trước Di Trú & Cổng Build Production**:
+  - **Kiểm tra Lịch sử Bài Nộp**: Trước khi UPDATE/chuyển đổi `questionType` hàng loạt, bắt buộc kiểm tra xem có học viên nào đã làm bài hay chưa (`answers`, `submissions`) để bảo toàn dữ liệu lịch sử.
+  - **Zero Blind Wipe**: Phải phân loại dữ liệu rác (`["", "", "", ""]`) vs dữ liệu thực trước khi dọn dẹp. Bắt buộc tái quét toàn bộ CSDL sau di trú.
+  - **Local Build Gate**: Mọi thay đổi Frontend bắt buộc phải chạy và pass thành công lệnh build production (`npm run build`) trước khi hoàn thành task.
+
+---
+
 ## 1. PHÂN CẤP TIÊU CHUẨN TIER KIỂM TOÁN (TIERED AUDIT SYSTEM)
 
 ### Tier 0: Critical System Core (Release Blocking)
