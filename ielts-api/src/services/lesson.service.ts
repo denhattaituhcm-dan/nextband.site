@@ -145,7 +145,7 @@ export class LessonService {
     return {
       classId: classData.id,
       className: classData.name,
-      courseTitle: classData.course.title,
+      courseTitle: (classData as any).course?.title || classData.name,
       progress: {
         completedLessons: completedLessonsCount,
         totalLessons,
@@ -236,7 +236,7 @@ export class LessonService {
     return {
       classId: classData.id,
       className: classData.name,
-      courseTitle: classData.course.title,
+      courseTitle: (classData as any).course?.title || classData.name,
       courseProgress: {
         completed: completedLessonsCount,
         total: totalPublishedLessons,

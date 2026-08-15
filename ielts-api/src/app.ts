@@ -41,8 +41,9 @@ export async function buildApp() {
     },
   });
 
-  // Force-disable caching for all API responses to avoid stale data across clients/devices.
+  // Observability: Gán X-Request-ID vào mọi Response Header & disable cache cho API
   app.addHook("onSend", async (request, reply, payload) => {
+    reply.header("X-Request-ID", request.id);
     if (request.url.startsWith("/api/")) {
       reply.header(
         "Cache-Control",

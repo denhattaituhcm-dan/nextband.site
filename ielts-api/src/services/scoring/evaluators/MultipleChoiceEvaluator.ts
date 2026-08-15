@@ -31,6 +31,8 @@ export class MultipleChoiceEvaluator implements IQuestionEvaluator {
     const isMultiSelect =
       question.selectionMode === "multiple" ||
       question.questionType === "multiple_choice_multi" ||
+      (question as any).isMultiChoice === true ||
+      (question as any).is_multi_choice === true ||
       (typeof question.maxSelections === "number" && question.maxSelections > 1);
 
     if (isMultiSelect) {

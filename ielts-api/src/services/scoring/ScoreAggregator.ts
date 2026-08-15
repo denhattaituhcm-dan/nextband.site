@@ -1,4 +1,5 @@
 import { QuestionEvaluationResult, SubmissionGradingSummary } from "./types.js";
+import { IeltsBandCalculator } from "./IeltsBandCalculator.js";
 
 export class ScoreAggregator {
   /**
@@ -31,6 +32,7 @@ export class ScoreAggregator {
     const roundedTotalScore = Math.round(totalScore * 100) / 100;
     const percentage = maxScore > 0 ? Math.round((roundedTotalScore / maxScore) * 100) : 0;
     const status: "GRADED" | "SUBMITTED" = hasManualQuestions ? "SUBMITTED" : "GRADED";
+    const bandScore = IeltsBandCalculator.calculateEstimatedBand(percentage);
 
     return {
       totalScore: roundedTotalScore,
@@ -40,6 +42,7 @@ export class ScoreAggregator {
       hasManualQuestions,
       status,
       percentage,
+      bandScore,
       evaluatedAnswers: evaluations,
     };
   }

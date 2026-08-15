@@ -237,7 +237,14 @@ export function createMockPrisma() {
       findMany: async ({ where }: any = {}) => {
         return classes.filter((c) => {
           if (where?.teacherId && c.teacherId !== where.teacherId) return false;
-          if (where?.id && c.id !== where.id) return false;
+          if (where?.id) {
+            if (typeof where.id === "object" && Array.isArray(where.id.in)) {
+              if (!where.id.in.includes(c.id)) return false;
+            } else if (c.id !== where.id) {
+              return false;
+            }
+          }
+          if (where?.courseId && c.courseId !== where.courseId) return false;
           return true;
         });
       },
@@ -606,6 +613,22 @@ export function createMockPrisma() {
     },
 
     answer: {
+      findFirst: async ({ where }: any) => {
+        return answers.find(
+          (a) =>
+            (!where?.submissionId || a.submissionId === where.submissionId) &&
+            (!where?.questionId || a.questionId === where.questionId)
+        ) || null;
+      },
+      create: async ({ data }: any) => {
+        const newAns = {
+          id: data.id || `ans-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+          ...data,
+          createdAt: new Date(),
+        };
+        answers.push(newAns);
+        return newAns;
+      },
       findMany: async ({ where }: any) => {
         return answers.filter((a) => a.submissionId === where?.submissionId);
       },

@@ -1,0 +1,126 @@
+{
+  "classificationSummary": {
+    "TEST_DEV_STAGING": 59,
+    "DUPLICATE_OR_EMPTY": 99,
+    "SUPERSEDED": 0,
+    "REAL_CANONICAL_MATCHED": 0,
+    "REAL_UNMIGRATED_REQUIRED": 0
+  },
+  "answerDisposition": {
+    "totalAnswers": 298,
+    "linkedToClassifiedSubmissions": 298,
+    "orphanAnswers": 0
+  },
+  "sampleClassified": [
+    {
+      "subId": "014fb917-ed2a-430d-81ea-70bd97f85617",
+      "studentId": "7f635fdd-f50b-4213-85eb-92f789bcfdd8",
+      "studentEmail": "bestcanthocity@gmail.com",
+      "examId": "8ef6ae5f-1969-4c3c-b61a-33d4ff8f57c1",
+      "status": "in_progress",
+      "score": null,
+      "answerCount": 0,
+      "category": "DUPLICATE_OR_EMPTY",
+      "rationale": "Empty draft attempt with zero answers and zero score from local test session"
+    },
+    {
+      "subId": "0385d17e-4f06-4351-bde7-61f7b189e66a",
+      "studentId": "7f635fdd-f50b-4213-85eb-92f789bcfdd8",
+      "studentEmail": "bestcanthocity@gmail.com",
+      "examId": "cce291f7-d88b-4976-8ed3-cc21daca7023",
+      "status": "submitted",
+      "score": null,
+      "answerCount": 1,
+      "category": "TEST_DEV_STAGING",
+      "rationale": "Local staging attempt prior to Supabase migration (bestcanthocity@gmail.com)"
+    },
+    {
+      "subId": "08697fea-7f8d-4a42-81a2-8ec2a6e7ec15",
+      "studentId": "7f635fdd-f50b-4213-85eb-92f789bcfdd8",
+      "studentEmail": "bestcanthocity@gmail.com",
+      "examId": "4b336779-aaeb-4452-8613-d323a489d522",
+      "status": "in_progress",
+      "score": null,
+      "answerCount": 0,
+      "category": "DUPLICATE_OR_EMPTY",
+      "rationale": "Empty draft attempt with zero answers and zero score from local test session"
+    },
+    {
+      "subId": "0977f163-5459-4dea-b5be-ff1dbd982aab",
+      "studentId": "7f635fdd-f50b-4213-85eb-92f789bcfdd8",
+      "studentEmail": "bestcanthocity@gmail.com",
+      "examId": "43b35c2c-3c7b-4a29-b838-8827d219069d",
+      "status": "in_progress",
+      "score": null,
+      "answerCount": 0,
+      "category": "DUPLICATE_OR_EMPTY",
+      "rationale": "Empty draft attempt with zero answers and zero score from local test session"
+    },
+    {
+      "subId": "09b20aca-a386-4155-b937-bcad1cafc992",
+      "studentId": "7f635fdd-f50b-4213-85eb-92f789bcfdd8",
+      "studentEmail": "bestcanthocity@gmail.com",
+      "examId": "d6a107dc-4319-4a71-bf87-5d875e5d3281",
+      "status": "in_progress",
+      "score": null,
+      "answerCount": 0,
+      "category": "DUPLICATE_OR_EMPTY",
+      "rationale": "Empty draft attempt with zero answers and zero score from local test session"
+    },
+    {
+      "subId": "0a1ffc1d-88e6-4bb2-9841-624924fd42b6",
+      "studentId": "7f635fdd-f50b-4213-85eb-92f789bcfdd8",
+      "studentEmail": "bestcanthocity@gmail.com",
+      "examId": "349fe6ed-0eb3-4df8-9ead-ee4460b904aa",
+      "status": "graded",
+      "score": null,
+      "answerCount": 1,
+      "category": "TEST_DEV_STAGING",
+      "rationale": "Local staging attempt prior to Supabase migration (bestcanthocity@gmail.com)"
+    },
+    {
+      "subId": "0c9f5650-d73e-45ee-8afc-73717c140bac",
+      "studentId": "d2aeebbc-ddef-4eb0-b6fc-37e5cd0e63d4",
+      "studentEmail": "anhnhp6455@ut.edu.vn",
+      "examId": "6516498e-83fa-4df1-9ed8-27dac6a65fbc",
+      "status": "graded",
+      "score": "8.00",
+      "answerCount": 11,
+      "category": "TEST_DEV_STAGING",
+      "rationale": "Local staging attempt prior to Supabase migration (anhnhp6455@ut.edu.vn)"
+    },
+    {
+      "subId": "0d3f868d-67c2-4537-83e8-b87fd7b3b02b",
+      "studentId": "7f635fdd-f50b-4213-85eb-92f789bcfdd8",
+      "studentEmail": "bestcanthocity@gmail.com",
+      "examId": "b944f2ff-a9d7-4620-9017-8727545b1d33",
+      "status": "graded",
+      "score": null,
+      "answerCount": 3,
+      "category": "TEST_DEV_STAGING",
+      "rationale": "Local staging attempt prior to Supabase migration (bestcanthocity@gmail.com)"
+    },
+    {
+      "subId": "0db50a3f-7239-43b1-a192-e9b81f7d361f",
+      "studentId": "6458b4e2-3e97-4720-be27-47f0046fb575",
+      "studentEmail": "nguyenminhtrinh519@gmail.com",
+      "examId": "e5c035fe-31b3-48f3-9989-2fa9264190b3",
+      "status": "submitted",
+      "score": "0.00",
+      "answerCount": 2,
+      "category": "TEST_DEV_STAGING",
+      "rationale": "Local staging attempt prior to Supabase migration (nguyenminhtrinh519@gmail.com)"
+    },
+    {
+      "subId": "0eb669e7-d6a2-439c-a379-545188e48d29",
+      "studentId": "7f635fdd-f50b-4213-85eb-92f789bcfdd8",
+      "studentEmail": "bestcanthocity@gmail.com",
+      "examId": "0b3121c6-299d-46df-9e5f-cfef796d59c4",
+      "status": "in_progress",
+      "score": null,
+      "answerCount": 0,
+      "category": "DUPLICATE_OR_EMPTY",
+      "rationale": "Empty draft attempt with zero answers and zero score from local test session"
+    }
+  ]
+}
