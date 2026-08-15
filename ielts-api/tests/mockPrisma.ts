@@ -122,15 +122,6 @@ export function createMockPrisma() {
       }
       return 1;
     },
-    $transaction: async (arg: any) => {
-      if (typeof arg === "function") {
-        return arg(mock);
-      }
-      if (Array.isArray(arg)) {
-        return Promise.all(arg);
-      }
-      return arg;
-    },
 
     user: {
       create: async ({ data, include }: any) => {
@@ -221,6 +212,11 @@ export function createMockPrisma() {
     },
 
     class: {
+      create: async ({ data }: any) => {
+        const cls = { id: data.id || randomUUID(), ...data, createdAt: new Date() };
+        classes.push(cls);
+        return cls;
+      },
       createMany: async ({ data }: any) => {
         classes.push(...data);
         return { count: data.length };
@@ -237,6 +233,29 @@ export function createMockPrisma() {
           if (where.id && c.id !== where.id) return false;
           return true;
         }) || null;
+      },
+      findMany: async ({ where }: any = {}) => {
+        return classes.filter((c) => {
+          if (where?.teacherId && c.teacherId !== where.teacherId) return false;
+          if (where?.id && c.id !== where.id) return false;
+          return true;
+        });
+      },
+      update: async ({ where, data }: any) => {
+        const cls = classes.find((c) => c.id === where.id);
+        if (cls) {
+          Object.assign(cls, data);
+          return cls;
+        }
+        return null;
+      },
+      delete: async ({ where }: any) => {
+        const idx = classes.findIndex((c) => c.id === where.id);
+        if (idx !== -1) {
+          const removed = classes.splice(idx, 1)[0];
+          return removed;
+        }
+        return null;
       },
       deleteMany: async () => {
         classes.length = 0;

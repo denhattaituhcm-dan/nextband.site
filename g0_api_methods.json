@@ -1,0 +1,507 @@
+[
+  {
+    "apiObj": "authApi",
+    "method": "login",
+    "line": 203
+  },
+  {
+    "apiObj": "authApi",
+    "method": "loginWithGoogle",
+    "line": 212
+  },
+  {
+    "apiObj": "authApi",
+    "method": "register",
+    "line": 235
+  },
+  {
+    "apiObj": "authApi",
+    "method": "getMe",
+    "line": 247
+  },
+  {
+    "apiObj": "authApi",
+    "method": "updateProfile",
+    "line": 279
+  },
+  {
+    "apiObj": "authApi",
+    "method": "changePassword",
+    "line": 308
+  },
+  {
+    "apiObj": "coursesApi",
+    "method": "list",
+    "line": 321
+  },
+  {
+    "apiObj": "coursesApi",
+    "method": "getById",
+    "line": 398
+  },
+  {
+    "apiObj": "coursesApi",
+    "method": "getBySlug",
+    "line": 409
+  },
+  {
+    "apiObj": "coursesApi",
+    "method": "create",
+    "line": 420
+  },
+  {
+    "apiObj": "coursesApi",
+    "method": "update",
+    "line": 451
+  },
+  {
+    "apiObj": "coursesApi",
+    "method": "delete",
+    "line": 483
+  },
+  {
+    "apiObj": "examsApi",
+    "method": "list",
+    "line": 497
+  },
+  {
+    "apiObj": "examsApi",
+    "method": "getById",
+    "line": 540
+  },
+  {
+    "apiObj": "examsApi",
+    "method": "create",
+    "line": 554
+  },
+  {
+    "apiObj": "examsApi",
+    "method": "update",
+    "line": 596
+  },
+  {
+    "apiObj": "examsApi",
+    "method": "delete",
+    "line": 626
+  },
+  {
+    "apiObj": "sectionsApi",
+    "method": "getById",
+    "line": 637
+  },
+  {
+    "apiObj": "sectionsApi",
+    "method": "create",
+    "line": 648
+  },
+  {
+    "apiObj": "sectionsApi",
+    "method": "update",
+    "line": 669
+  },
+  {
+    "apiObj": "sectionsApi",
+    "method": "delete",
+    "line": 703
+  },
+  {
+    "apiObj": "questionsApi",
+    "method": "createGroup",
+    "line": 736
+  },
+  {
+    "apiObj": "questionsApi",
+    "method": "updateGroup",
+    "line": 761
+  },
+  {
+    "apiObj": "questionsApi",
+    "method": "deleteGroup",
+    "line": 780
+  },
+  {
+    "apiObj": "questionsApi",
+    "method": "create",
+    "line": 789
+  },
+  {
+    "apiObj": "questionsApi",
+    "method": "update",
+    "line": 818
+  },
+  {
+    "apiObj": "questionsApi",
+    "method": "delete",
+    "line": 839
+  },
+  {
+    "apiObj": "questionsApi",
+    "method": "bulkCreate",
+    "line": 845
+  },
+  {
+    "apiObj": "submissionsApi",
+    "method": "list",
+    "line": 943
+  },
+  {
+    "apiObj": "submissionsApi",
+    "method": "getById",
+    "line": 990
+  },
+  {
+    "apiObj": "submissionsApi",
+    "method": "getLatestByExam",
+    "line": 1012
+  },
+  {
+    "apiObj": "submissionsApi",
+    "method": "start",
+    "line": 1031
+  },
+  {
+    "apiObj": "submissionsApi",
+    "method": "saveAnswers",
+    "line": 1056
+  },
+  {
+    "apiObj": "submissionsApi",
+    "method": "submit",
+    "line": 1092
+  },
+  {
+    "apiObj": "submissionsApi",
+    "method": "grade",
+    "line": 1130
+  },
+  {
+    "apiObj": "usersApi",
+    "method": "list",
+    "line": 1192
+  },
+  {
+    "apiObj": "usersApi",
+    "method": "getById",
+    "line": 1311
+  },
+  {
+    "apiObj": "usersApi",
+    "method": "getStudentManagement",
+    "line": 1322
+  },
+  {
+    "apiObj": "usersApi",
+    "method": "create",
+    "line": 1344
+  },
+  {
+    "apiObj": "usersApi",
+    "method": "update",
+    "line": 1363
+  },
+  {
+    "apiObj": "usersApi",
+    "method": "delete",
+    "line": 1384
+  },
+  {
+    "apiObj": "classStudentsApi",
+    "method": "getMyClasses",
+    "line": 1401
+  },
+  {
+    "apiObj": "enrollmentsApi",
+    "method": "listDirectPurchases",
+    "line": 1443
+  },
+  {
+    "apiObj": "enrollmentsApi",
+    "method": "list",
+    "line": 1458
+  },
+  {
+    "apiObj": "enrollmentsApi",
+    "method": "listByCourse",
+    "line": 1463
+  },
+  {
+    "apiObj": "enrollmentsApi",
+    "method": "enroll",
+    "line": 1473
+  },
+  {
+    "apiObj": "enrollmentsApi",
+    "method": "enrollUser",
+    "line": 1492
+  },
+  {
+    "apiObj": "enrollmentsApi",
+    "method": "delete",
+    "line": 1506
+  },
+  {
+    "apiObj": "uploadsApi",
+    "method": "uploadImage",
+    "line": 1517
+  },
+  {
+    "apiObj": "uploadsApi",
+    "method": "uploadAudio",
+    "line": 1532
+  },
+  {
+    "apiObj": "uploadsApi",
+    "method": "deleteFile",
+    "line": 1547
+  },
+  {
+    "apiObj": "statsApi",
+    "method": "getAdminStats",
+    "line": 1556
+  },
+  {
+    "apiObj": "statsApi",
+    "method": "getMonthlyAttendance",
+    "line": 1570
+  },
+  {
+    "apiObj": "logsApi",
+    "method": "getLogs",
+    "line": 1579
+  },
+  {
+    "apiObj": "logsApi",
+    "method": "getLastLogs",
+    "line": 1580
+  },
+  {
+    "apiObj": "classesApi",
+    "method": "list",
+    "line": 1587
+  },
+  {
+    "apiObj": "classesApi",
+    "method": "getById",
+    "line": 1690
+  },
+  {
+    "apiObj": "classesApi",
+    "method": "create",
+    "line": 1786
+  },
+  {
+    "apiObj": "classesApi",
+    "method": "update",
+    "line": 1814
+  },
+  {
+    "apiObj": "classesApi",
+    "method": "delete",
+    "line": 1842
+  },
+  {
+    "apiObj": "classesApi",
+    "method": "checkAcademicStatus",
+    "line": 1852
+  },
+  {
+    "apiObj": "classesApi",
+    "method": "previewFutureScheduleUpdate",
+    "line": 1936
+  },
+  {
+    "apiObj": "classesApi",
+    "method": "applyFutureScheduleUpdate",
+    "line": 2004
+  },
+  {
+    "apiObj": "classesApi",
+    "method": "addStudents",
+    "line": 2024
+  },
+  {
+    "apiObj": "classesApi",
+    "method": "addStudentsByEmails",
+    "line": 2037
+  },
+  {
+    "apiObj": "classesApi",
+    "method": "claimProfileOnLogin",
+    "line": 2101
+  },
+  {
+    "apiObj": "classesApi",
+    "method": "removeStudent",
+    "line": 2143
+  },
+  {
+    "apiObj": "classesApi",
+    "method": "updateStudentStatus",
+    "line": 2154
+  },
+  {
+    "apiObj": "classesApi",
+    "method": "listSchedules",
+    "line": 2170
+  },
+  {
+    "apiObj": "classesApi",
+    "method": "createSchedule",
+    "line": 2180
+  },
+  {
+    "apiObj": "classesApi",
+    "method": "deleteSchedule",
+    "line": 2191
+  },
+  {
+    "apiObj": "classesApi",
+    "method": "getAttendance",
+    "line": 2201
+  },
+  {
+    "apiObj": "classesApi",
+    "method": "upsertAttendance",
+    "line": 2212
+  },
+  {
+    "apiObj": "classesApi",
+    "method": "getAttendanceHistory",
+    "line": 2231
+  },
+  {
+    "apiObj": "sessionsApi",
+    "method": "list",
+    "line": 2360
+  },
+  {
+    "apiObj": "sessionsApi",
+    "method": "generateForClass",
+    "line": 2372
+  },
+  {
+    "apiObj": "sessionsApi",
+    "method": "reschedule",
+    "line": 2423
+  },
+  {
+    "apiObj": "sessionsApi",
+    "method": "updateStatus",
+    "line": 2455
+  },
+  {
+    "apiObj": "sessionsApi",
+    "method": "deleteAllForClass",
+    "line": 2486
+  },
+  {
+    "apiObj": "siteSettingsApi",
+    "method": "get",
+    "line": 2500
+  },
+  {
+    "apiObj": "siteSettingsApi",
+    "method": "update",
+    "line": 2513
+  },
+  {
+    "apiObj": "invitationsApi",
+    "method": "joinByCode",
+    "line": 2557
+  },
+  {
+    "apiObj": "invitationsApi",
+    "method": "generate",
+    "line": 2573
+  },
+  {
+    "apiObj": "homeworksApi",
+    "method": "getWorkspace",
+    "line": 2608
+  },
+  {
+    "apiObj": "homeworksApi",
+    "method": "getTeacherWorkspace",
+    "line": 2701
+  },
+  {
+    "apiObj": "homeworksApi",
+    "method": "create",
+    "line": 2717
+  },
+  {
+    "apiObj": "homeworksApi",
+    "method": "submit",
+    "line": 2733
+  },
+  {
+    "apiObj": "homeworksApi",
+    "method": "grade",
+    "line": 2749
+  },
+  {
+    "apiObj": "lessonsApi",
+    "method": "getClassLessons",
+    "line": 2812
+  },
+  {
+    "apiObj": "attendanceApi",
+    "method": "getSessionAttendance",
+    "line": 2931
+  },
+  {
+    "apiObj": "attendanceApi",
+    "method": "markAttendance",
+    "line": 2944
+  },
+  {
+    "apiObj": "attendanceApi",
+    "method": "getAttendanceMatrix",
+    "line": 2964
+  },
+  {
+    "apiObj": "announcementsApi",
+    "method": "list",
+    "line": 3028
+  },
+  {
+    "apiObj": "announcementsApi",
+    "method": "markAsRead",
+    "line": 3095
+  },
+  {
+    "apiObj": "activityFeedApi",
+    "method": "list",
+    "line": 3113
+  },
+  {
+    "apiObj": "alertsApi",
+    "method": "list",
+    "line": 3157
+  },
+  {
+    "apiObj": "alertsApi",
+    "method": "resolve",
+    "line": 3196
+  },
+  {
+    "apiObj": "notificationsApi",
+    "method": "list",
+    "line": 3206
+  },
+  {
+    "apiObj": "notificationsApi",
+    "method": "markAsRead",
+    "line": 3220
+  },
+  {
+    "apiObj": "notificationsApi",
+    "method": "markAllAsRead",
+    "line": 3229
+  },
+  {
+    "apiObj": "workspaceApi",
+    "method": "getStudentWorkspace",
+    "line": 3263
+  }
+]
