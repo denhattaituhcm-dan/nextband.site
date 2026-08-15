@@ -74,3 +74,31 @@ Tài liệu này ghi lại toàn bộ các **Quyết định Kiến trúc Tối 
   2. **Bảo tồn tuyệt đối** các DB Reference hiện tại trong Database (Không tự ý xóa hay overwrite URL khi chưa có quy trình Verification).
   3. Mọi rủi ro thiếu file (ví dụ `RISK-D01`: Missing Storage Object ở ID `3566e75f...`) phải được ghi nhận vào Risk Register để quản lý độc lập.
 
+---
+
+## ADR-010: Phân Định Tuyệt Đối Đường Dẫn Tĩnh & Dynamic Route Parameter (Parametric Route Disambiguation)
+- **Bối cảnh (Context)**: Router Fastify/Nginx xảy ra hiện tượng Parametric Shadowing: khi request `GET /classes/my-classes` được gửi lên server phiên bản cũ hoặc router có tham số `/:id`, router gán `id = "my-classes"`, gọi hàm `getClassById` tìm kiếm ID `"my-classes"` trong DB, dẫn đến lỗi `404 Không tìm thấy lớp học` giả mạo.
+- **Quyết định (Decision)**: 
+  1. Mọi endpoint tĩnh (`/my-classes`, `/stats`, `/search`) **BẮT BUỘC** đăng ký trước `/:id`.
+  2. Mọi dynamic parameter `/:id` **BẮT BUỘC** có validation guard (Zod `.uuid()` / Regex UUID) để router tự động từ chối các chuỗi không phải UUID thay vì query CSDL.
+- **Hệ quả (Consequences)**: Loại bỏ hoàn toàn nguy cơ nuốt route tĩnh và chặn đứng lỗi 404 giả.
+
+---
+
+## ADR-011: Chiến Lược Tự Phục Hồi Hai Tầng (Dual-Tier Resilience Fallback Pattern) Cho Kiến Trúc Lai
+- **Bối cảnh (Context)**: Trong kiến trúc lai (Frontend Vercel + Backend Fastify VPS + Database Supabase), chu kỳ triển khai giữa Frontend và Backend diễn ra bất đồng bộ. Khi Frontend gọi endpoint mới mà Backend đang reload hoặc chưa cập nhật, Frontend dễ bị crash hoặc kẹt ở Error Banner.
+- **Quyết định (Decision)**: 
+  1. Tầng API Client (`classStudentsApi`, `sessionsApi`,...) **BẮT BUỘC** áp dụng mô hình **Dual-Tier Resilience**: Ưu tiên gọi REST API Gateway; nếu Gateway trả về lỗi kết nối, `404`, `502`, `503`, client tự động Fallback xuống truy vấn trực tiếp bảng Supabase tương ứng.
+  2. UI **TUYỆT ĐỐI KHÔNG HIỂN THỊ ERROR BANNER** nếu tầng Fallback vẫn cung cấp được dữ liệu hợp lệ.
+- **Hệ quả (Consequences)**: Hệ thống đạt độ sẵn sàng cao (High Availability), trải nghiệm người dùng không bị gián đoạn ngay cả khi Backend gặp sự cố hoặc đang deploy.
+
+---
+
+## ADR-012: Phân Tách Ngữ Cảnh Vai Trò & Điều Hướng Thích Ứng (Role-Aware Context Guard)
+- **Bối cảnh (Context)**: Khi Admin (`admin@ielts.com`) hoặc Giáo viên truy cập vào view Học viên (`/` Bài tập), do tài khoản không có bản ghi trong `class_students`, State Machine nhận diện thành 0 lớp học và hiển thị thông báo lỗi hoặc làm Admin bối rối.
+- **Quyết định (Decision)**: 
+  1. Nhận diện ngữ cảnh vai trò (`useAuth`) tại mọi view đặc thù.
+  2. Khi Admin / Giáo viên ở view Học viên, UI tự động hiển thị **Thanh Điều Hướng Ngữ Cảnh (Role-Aware Shortcut Bar)** dẫn thẳng tới `/admin/classes` hoặc `/admin/teacher-workspace`.
+- **Hệ quả (Consequences)**: Trải nghiệm mượt mà, phân định rõ ràng giữa "Học viên chưa ghi danh" và "Tài khoản đặc quyền đang kiểm tra hệ thống".
+
+

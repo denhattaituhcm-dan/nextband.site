@@ -20,6 +20,61 @@ Mọi thay đổi về Mã nguồn UI, API DTO, hay Database Schema **BẮT BU�
 
 ---
 
+## 1.2 SYSTEM INVARIANT CORE-009: DUAL-TIER RESILIENCE & N-1 VERSION DEGRADATION CONTRACT
+
+- **Quy tắc Tự Phục Hồi Hai Tầng**:
+  - Tầng 1 (REST Gateway) và Tầng 2 (Supabase Direct) phải được bao bọc trong cấu trúc `try-catch` tự phục hồi tại mọi API Client wrapper (`classStudentsApi`, `sessionsApi`, `homeworksApi`).
+  - Nếu Tầng 1 trả về mã lỗi `404`, `502`, `503` hoặc Timeout, API Client **BẮT BUỘC** thực thi Tầng 2 trước khi quyết định trả về `API_ERROR` / `NETWORK_ERROR`.
+  - **Cấm Báo Lỗi Toàn Màn Hình Khi Còn Dữ Liệu Tầng 2**: UI không được hiển thị Error Banner chặn người dùng nếu tầng dự phòng Supabase trả về dữ liệu hợp lệ.
+
+---
+
+## 1.3 SYSTEM INVARIANT CORE-010: PARAMETRIC ROUTE DISAMBIGUATION & SCHEMA VALIDATION GUARD
+
+- **Quy tắc Phân Định Tuyệt Đối Đường Dẫn**:
+  - Mọi dynamic parametric route (`/:id`, `/:classId`) **BẮT BUỘC** đăng ký SAU tất cả các static sub-resource endpoints (`/my-classes`, `/stats`, `/search`).
+  - Mọi dynamic parameter **BẮT BUỘC** kiểm tra định dạng UUID (`/^[0-9a-fA-F-]{36}$/`).
+  - Tuyệt đối cấm để router chuyển tiếp một chuỗi tĩnh không hợp lệ xuống tầng Service gây lỗi `404 Not Found` giả.
+
+---
+
+## 1.4 SYSTEM INVARIANT CORE-011: ROLE-AWARE CONTEXT & MULTI-PERSONA COEXISTENCE
+
+- **Quy tắc Ngữ Cảnh Vai Trò**:
+  - Hệ thống phân biệt rõ: `Tài khoản chưa ghi danh` (Học viên mới) $\neq$ `Tài khoản Quản trị / Giáo viên`.
+  - Khi Admin / Giáo viên truy cập vào view Học viên, UI **BẮT BUỘC** hiển thị Action Card điều hướng nhanh về Bàn làm việc Quản trị (`/admin/classes`, `/admin/teacher-workspace`), tuyệt đối không khóa màn hình hay báo lỗi không tìm thấy lớp.
+
+---
+
+## 1.5 SYSTEM INVARIANT CORE-012: ZERO-MOCK PRODUCTION & BUSINESS EVENT ATOMICITY
+
+- **Quy tắc Cấm Mock Dữ Liệu & Tính Nguyên Tử Sự Kiện**:
+  - Tuyệt đối không đưa dữ liệu giả lập/mock (`announcementsApi`, `alertsApi`, tin tức mẫu) lên môi trường Production. UI khi chưa có dữ liệu phải hiển thị Empty State chuẩn.
+  - Mọi side-effect phát sinh từ sự kiện nghiệp vụ (sinh `Notification`, ghi `AuditLog`) **BẮT BUỘC** thực thi trong cùng một DB Transaction context (`$transaction` / `Prisma.TransactionClient`) với Business Entity chính.
+  - Rollback nghiệp vụ chính $\rightarrow$ Bắt buộc rollback toàn bộ notification/side-effect đi kèm. Tuyệt đối không sinh thông báo mồ côi (Zero Phantom Notifications).
+
+---
+
+## 1.6 SYSTEM INVARIANT CORE-013: DATABASE-LEVEL EVENT IDEMPOTENCY & AUTHORITATIVE RECIPIENT
+
+- **Quy tắc Chống Trùng Lặp CSDL & Xác Định Người Nhận Chuẩn Xác**:
+  - Mọi bản ghi Notification/Event bắt buộc phải có Ràng buộc Idempotency tại tầng CSDL:
+    ```sql
+    UNIQUE INDEX `notifications_idempotency_idx` (`entity_type`, `entity_id`, `user_id`, `type`)
+    ```
+  - Tầng Service bắt buộc phải bắt mã lỗi `P2002` để bỏ qua an toàn hoặc dùng `createMany(skipDuplicates: true)` cho batch operations khi request bị retry.
+  - Người nhận thông báo phải được xác định qua quan hệ miền dữ liệu chính thức (`Class.teacherId` cho giáo viên phụ trách, `ClassStudent.status = ACTIVE` cho học viên trong lớp), không để lập trình viên tự suy diễn.
+
+---
+
+## 1.7 SYSTEM INVARIANT CORE-014: FAILURE VISIBILITY & STRICT OBJECT-LEVEL AUTHORIZATION
+
+- **Quy tắc Minh Bạch Trạng Thái Lỗi & Phân Quyền Cấp Bản Ghi**:
+  - Cấm tuyệt đối hành vi nuốt mã lỗi HTTP 500/502/Network Error thành `{ count: 0 }` hay mảng rỗng. UI bắt buộc phải hiển thị Error Banner kèm nút "Thử lại".
+  - Endpoint thông báo (`/notifications`, `/notifications/:id/read`, `/notifications/read-all`) **BẮT BUỘC** lấy quyền sở hữu từ JWT Auth Token (`request.user.id`). Cấm cho phép Frontend truyền `userId` qua query param hay đọc/sửa thông báo của tài khoản khác.
+
+---
+
 ## 1. PHÂN CẤP TIÊU CHUẨN TIER KIỂM TOÁN (TIERED AUDIT SYSTEM)
 
 ### Tier 0: Critical System Core (Release Blocking)

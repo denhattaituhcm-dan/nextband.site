@@ -233,6 +233,52 @@ Dự án tuyệt đối **KHÔNG ĐƯỢC CHUYỂN SPRINT** (ví dụ từ Sprin
 
 ---
 
+## ARTICLE XIII: ROUTE & ENDPOINT DISAMBIGUATION (QUY TẮC PHÂN ĐỊNH ĐƯỜNG DẪN & CHỐNG NUỐT ROUTE)
+
+### Section 13.1: Ngăn Chặn Hiện Tượng Nuốt Route (Parametric Route Shadowing)
+1. **Tuyệt Đối Cấm Nuốt Route**: Trong toàn bộ hệ thống API Gateway (Fastify / Express / Nginx), mọi Endpoint tĩnh (Static Endpoints như `/my-classes`, `/stats`, `/search`, `/export`) **BẮT BUỘC PHẢI ĐƯỢC ĐĂNG KÝ TRƯỚC** hoặc **CÁCH LY KHỎI** các Endpoint động chứa tham số (Parametric Wildcards như `/:id`, `/:classId`).
+2. **Bắt Buộc Schema Validation Cho Route Parameters**: Mọi tham số ID động trên URL (`/:id`, `/:classId`, `/:sessionId`) **BẮT BUỘC** phải có schema kiểm thực định dạng (ví dụ Zod `.uuid()` hoặc Regex `^[0-9a-fA-F-]{36}$`). Tuyệt đối không cho phép router nhận một chuỗi tĩnh bất kỳ (`my-classes`) rồi tiếp tục chuyển tiếp xuống tầng Service query Database gây lỗi `404 Not Found` giả.
+3. **PASS/FAIL Condition**:
+   - **PASS**: Gửi request `GET /api/v1/classes/my-classes` luôn kích hoạt đúng Controller `getMyClasses`, không bao giờ rơi vào `getClassById(id="my-classes")`.
+   - **FAIL**: Xuất hiện bất kỳ log truy vấn CSDL nào tìm kiếm Record với `id` là tên của một Endpoint tĩnh.
+   - **Verification Method**: Chạy Integration Test kiểm tra Route Matching với mọi sub-resource path trước khi deploy.
+
+---
+
+## ARTICLE XIV: DUAL-TIER RESILIENCE & DEPLOYMENT DESYNCHRONIZATION TOLERANCE (QUẢN TRỊ TỰ PHỤC HỒI LIÊN TẦNG & TƯƠNG THÍCH LỆCH PHA TRIỂN KHAI)
+
+### Section 14.1: Nguyên Tắc Phục Hồi Hai Tầng (Dual-Tier Resilience Principle)
+1. **Kiến Trúc Lai (Hybrid Architecture Contract)**: Hệ thống hoạt động trên mô hình kết hợp: API Gateway (`ielts-api`) đóng vai trò xử lý logic nghiệp vụ tập trung & Supabase Database đóng vai trò lưu trữ chuẩn xác.
+2. **Khả Năng Chống Chịu Lệch Pha Triển Khai (N-1 Deployment Tolerance)**: Do Frontend (Vercel) và Backend (VPS / Container) có chu kỳ triển khai bất đồng bộ, Frontend API Client **BẮT BUỘC PHẢI CÓ CƠ CHẾ FALLBACK TỰ PHỤC HỒI**:
+   - **Kênh Chính (Primary Tier)**: Gửi request qua REST API Gateway (`/api/v1/...`).
+   - **Kênh Phục Hồi (Resilient Fallback Tier)**: Nếu REST Gateway trả về mã `404 Not Found`, `502 Bad Gateway`, `503 Service Unavailable`, hoặc lỗi mạng cục bộ (Backend đang reload/build), API Client **BẮT BUỘC TỰ ĐỘNG FALLBACK** truy vấn trực tiếp xuống Supabase Physical Database (nếu thao tác an toàn với RLS).
+3. **Cấm Hiển Thị Lỗi Bộc Phát Khi Kênh Phụ Còn Sống (No Exploding Error Banners)**:
+   - UI chỉ được phép hiển thị Banner Báo Lỗi toàn màn hình khi và chỉ khi **CẢ HAI TẦNG (REST API Gateway VÀ Supabase Database)** đều thất bại 100%.
+   - Nếu Kênh Phục Hồi hoạt động thành công, hệ thống phải cung cấp dữ liệu liên tục cho người dùng, đồng thời ghi log cảnh báo (`console.warn` / telemetry).
+4. **PASS/FAIL Condition**:
+   - **PASS**: Khi tắt server Backend (`ielts-api`), người dùng truy cập trang Web vẫn xem được danh sách lớp học, bài tập và nộp bài bình thường thông qua Kênh Phục Hồi Supabase.
+   - **FAIL**: Backend chưa reload xong khiến Frontend ném banner lỗi đỏ chặn toàn bộ màn hình của Học viên/Giáo viên.
+   - **Verification Method**: Chạy E2E Chaos Test giả lập sự cố Backend sập nguồn hoặc trả về 404 để kiểm tra tính liên tục của Frontend.
+
+---
+
+## ARTICLE XV: ROLE-AWARE CONTEXT & MULTI-PERSONA COEXISTENCE (QUẢN TRỊ NGỮ CẢNH VAI TRÒ & HIỂN THỊ THÍCH ỨNG)
+
+### Section 15.1: Phân Tách Ngữ Cảnh Đa Vai Trò (Multi-Persona Context Segregation)
+1. **Không Nhầm Lẫn Giữa Trạng Thái Lỗi Và Quyền Hạn**: Tài khoản Quản trị viên (`admin`) hoặc Giáo viên (`teacher`) không phải là Học viên (`student`), do đó có thể không có bản ghi trong bảng ghi danh lớp (`class_students`).
+2. **Quy Tắc Thích Ứng Giao Diện (Adaptive Context Rendering)**:
+   - Khi một tài khoản Admin/Giáo viên truy cập vào không gian học tập của Học viên (ví dụ `/` Bài tập):
+     - Tuyệt đối cấm coi đây là "Lỗi hệ thống" hay "Học viên bị đình chỉ".
+     - Bắt buộc phải hiển thị **Thanh Điều Hướng Ngữ Cảnh (Role-Aware Shortcut Bar)** cung cấp đường dẫn tức thì đến:
+       - 🏢 **Quản lý Lớp học** (`/admin/classes`)
+       - 🎓 **Bàn làm việc Giáo viên** (`/admin/teacher-workspace`)
+3. **PASS/FAIL Condition**:
+   - **PASS**: Đăng nhập bằng `admin@ielts.com` vào trang chủ `/` nhìn thấy thông tin rõ ràng và có nút chuyển nhanh sang Trang Quản trị mà không gặp bất kỳ thông báo lỗi nào.
+   - **FAIL**: Admin đăng nhập bị hiển thị thông báo lỗi "Không thể tải thông tin lớp học" hoặc bị khóa chức năng.
+   - **Verification Method**: Chạy kịch bản kiểm thử Persona Matrix Test cho cả 3 vai trò Admin, Teacher, Student trên toàn bộ các route công khai và bảo vệ.
+
+---
+
 ## ARTICLE XII: BURDEN OF PROOF (TRÁCH NHIỆM CHỨNG MINH)
 
 ### Section 12.1: Quy Tắc Trách Nhiệm Chứng Minh
@@ -321,6 +367,45 @@ Khi phát hiện lỗi hệ thống, kỹ sư và AI Agents tuyệt đối khôn
 - Khi một Action hoàn tất (ví dụ: Chốt buổi học / Mở lại buổi học):
   1. Phải kích hoạt Invalidation cache (`invalidateClassWorkspace`, `refetchClass`).
   2. Phải cập nhật ngay `localSessionStatuses` / `optimisticState` tại Component để các thành phần phụ thuộc (Dropdown selector, Status Badges, Action Buttons) phản ánh tức thì trạng thái thực tế mới nhất, triệt tiêu độ trễ gây nhầm lẫn cho người dùng.
+
+---
+
+## ARTICLE XVIII: ZERO-MOCK PRODUCTION & BUSINESS EVENT INTEGRITY (CHÍNH SÁCH TUYỆT ĐỐI KHÔNG DÙNG MOCK TRÊN PRODUCTION & TÍNH TOÀN VẸN SỰ KIỆN NGHIỆP VỤ)
+
+### Section 18.1: Cấm Triệt Để Dữ Liệu Giả Trên Production (Zero Mock Data Policy)
+1. Tuyệt đối không được phép đưa code chứa dữ liệu mẫu (`mock data`, danh sách hardcoded, chuông thông báo giả lập) lên môi trường Production.
+2. Nếu một phân hệ phụ trợ (như Notification Center, Audit Logs, Analytics) chưa được kết nối Backend, giao diện bắt buộc phải:
+   - Hiển thị **Trạng thái rỗng chuẩn (Empty State)** trung thực, HOẶC
+   - Ẩn có chủ đích khỏi giao diện người dùng.
+3. Nghiêm cấm hành vi "vá triệu chứng P0" (biến mảng mock thành `[]` để pass build) mà bỏ qua "khiếm khuyết kiến trúc P1" (không kết nối sự kiện nghiệp vụ thật).
+
+### Section 18.2: Tính Nguyên Tử Của Tác Vụ Đi Kèm (Atomicity of Business Side-Effects)
+1. Mọi tác vụ phát sinh từ sự kiện nghiệp vụ chính (như sinh `Notification`, ghi `AuditLog`, kích hoạt `Outbox` khi học viên nộp bài hoặc giáo viên chấm điểm) **BẮT BUỘC** phải được thực thi trong **cùng một DB Transaction context** (`$transaction` / `Prisma.TransactionClient`).
+2. Tuyệt đối cấm commit thông báo trước hoặc độc lập bên ngoài transaction của thực thể nghiệp vụ chính. Nếu nghiệp vụ chính bị lỗi hoặc rollback, toàn bộ thông báo và side-effect đi kèm phải được rollback sạch sẽ (Chống Phantom Notifications).
+
+### Section 18.3: Chống Trùng Lặp Cấp Cơ Sở Dữ Liệu (DB-Level Idempotency)
+1. Mọi sự kiện phát sinh từ hành động người dùng hoặc webhook có nguy cơ bị gửi lặp (Network Retry / Double Click) **BẮT BUỘC** phải có ràng buộc Idempotency tại tầng CSDL:
+   ```sql
+   UNIQUE INDEX `notifications_idempotency_idx` (`entity_type`, `entity_id`, `user_id`, `type`)
+   ```
+2. Ở tầng Service: Bắt buộc phải bắt lỗi Unique Constraint (`P2002`) để skip an toàn hoặc sử dụng `createMany` với `skipDuplicates: true`, không được để retry request làm sập API hoặc sinh ra nhiều thông báo trùng rác.
+
+### Section 18.4: Người Nhận Có Căn Cứ & Phân Quyền Cấp Bản Ghi (Authoritative Recipient & Object-Level Auth)
+1. **Authoritative Recipient**: Người nhận thông báo phải được xác định dựa trên quy tắc miền dữ liệu chính thức (ví dụ: `Class.teacherId` cho giáo viên phụ trách, `ClassStudent.status = ACTIVE` cho học viên trong lớp), không để lập trình viên tự suy diễn.
+2. **Business Entity Reference**: Thông báo phải mang cặp khóa tham chiếu đối tượng nghiệp vụ (`entityType`, `entityId`) để định danh chính xác sự kiện, không chỉ dựa vào URL string tĩnh.
+3. **Object-Level Authorization**: Endpoint đọc/sửa thông báo (`GET /notifications`, `PATCH /notifications/:id/read`) bắt buộc phải ràng buộc `WHERE userId = request.user.id`. Tuyệt đối không cho phép truyền `userId` qua query param hay đọc trộm thông báo của người khác.
+
+---
+
+## ARTICLE XIX: DEFINITION OF DONE & ANTI-COMPILATION-FALLACY (ĐỊNH NGHĨA HOÀN THÀNH — CHỐNG NGỤY BIỆN COMPILE PASS)
+
+### Section 19.1: Compile Pass Không Đồng Nghĩa Nghiệp Vụ Hoạt Động (Compilation $\neq$ Completeness)
+1. Lệnh `npx tsc --noEmit` và `npm run build` thành công **CHỈ CHỨNG MINH**: Mã nguồn không có lỗi cú pháp và khớp kiểu tĩnh cơ bản.
+2. Tuyệt đối không được xem `tsc pass` là căn cứ hoàn thành tính năng nếu luồng sự kiện nghiệp vụ bên dưới chưa được nối thật vào cơ sở dữ liệu.
+
+### Section 19.2: Tiêu Chuẩn Nghiệm Thu Chu Kỳ Khép Kín (Closed-Loop Business DoD)
+Một tính năng chỉ được xem là **Hoàn thành (Done)** khi và chỉ khi vượt qua bài kiểm thử Chu kỳ sự kiện 2 chiều trên cơ sở dữ liệu thực tế (End-to-End Event Loop):
+$$\text{User A Action} \longrightarrow \text{DB Entity Commit} \longrightarrow \text{Atomic Side-Effect DB} \longrightarrow \text{User B Notification / Realtime} \longrightarrow \text{User B Action / Mutate State}$$
 
 ---
 
