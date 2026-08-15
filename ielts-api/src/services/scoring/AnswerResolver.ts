@@ -12,7 +12,7 @@ export class AnswerResolver {
    */
   public resolve(
     examStructure: any,
-    studentAnswers: Array<{ questionId: string; answerText?: any; audioUrl?: string }>,
+    studentAnswers: Array<{ questionId: string; answerText?: any; audioUrl?: string | null }>,
   ): ResolvedExamAttempt {
     const flattenedQuestions: ScoringQuestion[] = [];
     const sections = examStructure?.sections || [];

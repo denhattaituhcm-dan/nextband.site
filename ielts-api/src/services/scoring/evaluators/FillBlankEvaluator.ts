@@ -31,12 +31,12 @@ export class FillBlankEvaluator implements IQuestionEvaluator {
     const defaultPoints = question.points && question.points > 0 ? question.points : 1;
 
     // Check if correct answer is a JSON object with multiple blanks
-    let parsedCorrect: Record<string, any> | null = null;
+    let parsedCorrect: Record<string, unknown> | null = null;
     if (rawCorrect.startsWith("{") || rawCorrect.startsWith("[")) {
-      parsedCorrect = normalizer.parseJsonSafe<Record<string, any>>(rawCorrect, null);
+      parsedCorrect = normalizer.parseJsonSafe<Record<string, unknown> | null>(rawCorrect, null);
     }
 
-    if (parsedCorrect && typeof parsedCorrect === "object") {
+    if (parsedCorrect && typeof parsedCorrect === "object" && !Array.isArray(parsedCorrect)) {
       return this.evaluateMultiBlank(question, parsedCorrect, rawStudent, defaultPoints, normalizer);
     }
 
@@ -69,15 +69,15 @@ export class FillBlankEvaluator implements IQuestionEvaluator {
       if (Array.isArray(rawStudent)) {
         studentText = rawStudent[0] || "";
       } else {
-        studentText = (rawStudent as any)["0"] || Object.values(rawStudent)[0] || "";
+        studentText = (rawStudent as Record<string, unknown>)["0"] || Object.values(rawStudent)[0] || "";
       }
     } else if (typeof rawStudent === "string" && (rawStudent.startsWith("{") || rawStudent.startsWith("["))) {
-      const parsed = normalizer.parseJsonSafe(rawStudent, null);
-      if (parsed) {
+      const parsed = normalizer.parseJsonSafe<unknown>(rawStudent, null);
+      if (parsed && typeof parsed === "object") {
         if (Array.isArray(parsed)) {
           studentText = parsed[0] || "";
-        } else if (typeof parsed === "object") {
-          studentText = parsed["0"] || Object.values(parsed)[0] || "";
+        } else {
+          studentText = (parsed as Record<string, unknown>)["0"] || Object.values(parsed)[0] || "";
         }
       }
     }
@@ -107,7 +107,7 @@ export class FillBlankEvaluator implements IQuestionEvaluator {
 
   private evaluateMultiBlank(
     question: ScoringQuestion,
-    correctMap: Record<string, any>,
+    correctMap: Record<string, unknown>,
     rawStudent: unknown,
     points: number,
     normalizer: ITextNormalizer,
@@ -124,24 +124,24 @@ export class FillBlankEvaluator implements IQuestionEvaluator {
     }
 
     // Parse student answer structure
-    let studentMap: Record<string, any> = {};
+    const studentMap: Record<string, unknown> = {};
     if (rawStudent && typeof rawStudent === "object") {
       if (Array.isArray(rawStudent)) {
-        rawStudent.forEach((val, idx) => {
+        rawStudent.forEach((val: unknown, idx: number) => {
           studentMap[String(idx)] = val;
         });
       } else {
-        studentMap = rawStudent as Record<string, any>;
+        Object.assign(studentMap, rawStudent);
       }
     } else if (typeof rawStudent === "string" && rawStudent.trim()) {
-      const parsed = normalizer.parseJsonSafe(rawStudent, null);
+      const parsed = normalizer.parseJsonSafe<unknown>(rawStudent, null);
       if (parsed && typeof parsed === "object") {
         if (Array.isArray(parsed)) {
-          parsed.forEach((val, idx) => {
+          parsed.forEach((val: unknown, idx: number) => {
             studentMap[String(idx)] = val;
           });
         } else {
-          studentMap = parsed;
+          Object.assign(studentMap, parsed);
         }
       } else {
         // Plain string fallback mapped to first blank

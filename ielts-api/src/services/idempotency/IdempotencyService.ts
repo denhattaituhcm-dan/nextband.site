@@ -5,7 +5,7 @@ export interface IdempotencyRecord {
   submissionId: string;
   payloadHash: string;
   responsePayload: any;
-  status: "COMMITTED" | "IN_PROGRESS";
+  status: string;
   createdAt: Date;
 }
 

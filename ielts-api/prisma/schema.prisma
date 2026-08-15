@@ -402,6 +402,7 @@ model ExamSubmission {
   totalQuestions Int?             @map("total_questions")
   gradedBy       String?          @map("graded_by")
   gradedAt       DateTime?        @map("graded_at")
+  version        Int              @default(1)
   createdAt      DateTime         @default(now()) @map("created_at")
   answers        Answer[]
   exam           Exam             @relation(fields: [examId], references: [id], onDelete: Cascade)
@@ -449,6 +450,39 @@ model Highlight {
   @@index([sectionId], map: "highlights_section_id_fkey")
   @@index([studentId], map: "highlights_student_id_fkey")
   @@map("highlights")
+}
+
+model IdempotencyRecord {
+  id              String   @id @default(uuid())
+  key             String   @db.VarChar(128)
+  submissionId    String   @map("submission_id")
+  payloadHash     String   @map("payload_hash") @db.VarChar(64)
+  responsePayload Json     @map("response_payload")
+  status          String   @default("COMMITTED") @db.VarChar(32)
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@unique([submissionId, key])
+  @@index([key], map: "idempotency_records_key_idx")
+  @@map("idempotency_records")
+}
+
+model AuditOutbox {
+  id                 String   @id @default(uuid())
+  eventType          String   @map("event_type") @db.VarChar(64)
+  actorId            String   @map("actor_id")
+  actorRole          String   @map("actor_role") @db.VarChar(32)
+  submissionId       String   @map("submission_id")
+  examId             String   @map("exam_id")
+  requestId          String   @map("request_id") @db.VarChar(64)
+  idempotencyKeyHash String?  @map("idempotency_key_hash") @db.VarChar(64)
+  oldState           String?  @map("old_state") @db.Text
+  newState           String?  @map("new_state") @db.Text
+  resultSummary      String?  @map("result_summary") @db.Text
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  @@index([submissionId], map: "audit_outbox_submission_id_idx")
+  @@index([eventType], map: "audit_outbox_event_type_idx")
+  @@map("audit_outbox")
 }
 
 model SiteSettings {

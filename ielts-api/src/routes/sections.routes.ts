@@ -73,7 +73,7 @@ const sectionsRoutes: FastifyPluginAsync = async (fastify) => {
       const section = await fastify.prisma.examSection.findUnique({
         where: { id },
         include: {
-          exam: { select: { id: true, courseId: true, isPublished: true, isActive: true } },
+          exam: { select: { id: true, courseId: true, isPublished: true, isActive: true, isOpen: true } },
           questionGroups: {
             orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }],
             include: {

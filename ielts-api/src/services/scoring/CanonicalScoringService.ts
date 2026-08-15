@@ -23,7 +23,7 @@ export class CanonicalScoringService {
    */
   public evaluateExamAttempt(
     examStructure: any,
-    studentAnswers: Array<{ questionId: string; answerText?: any; audioUrl?: string }>,
+    studentAnswers: Array<{ questionId: string; answerText?: any; audioUrl?: string | null }>,
   ): SubmissionGradingSummary {
     const { questions, answerMap } = this.resolver.resolve(examStructure, studentAnswers);
 
