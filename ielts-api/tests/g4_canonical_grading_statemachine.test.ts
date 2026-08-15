@@ -195,8 +195,8 @@ describe("🏛️ GATE G4: CANONICAL GRADING AUTHORITY + SUBMISSION STATE MACHIN
       });
       const subDetail = JSON.parse(getRes.body);
       const q1 = subDetail.exam.sections[0].questionGroups[0].questions[0];
-      expect(q1.correctAnswer).toBeNull();
-      expect(subDetail.exam.sections[0].audioScript).toBeNull();
+      expect(Object.hasOwn(q1, "correctAnswer")).toBe(false);
+      expect(Object.hasOwn(subDetail.exam.sections[0], "audioScript")).toBe(false);
     });
 
     it("1.2. 🛡️ SCORE INJECTION RESISTANCE: Server completely ignores client fake scores and computes real score", async () => {

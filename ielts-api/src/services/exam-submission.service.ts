@@ -33,10 +33,9 @@ function sanitizeQuestionForStudent(q: any, showAnswerKey: boolean) {
     delete cleaned.audioScript;
     delete cleaned.audio_script;
     delete cleaned.acceptedAnswers;
+    delete cleaned.accepted_answers;
     delete cleaned.answerKey;
     delete cleaned.answer_key;
-    cleaned.correctAnswer = null;
-    cleaned.audioScript = null;
   }
   return cleaned;
 }
@@ -192,20 +191,24 @@ export class ExamSubmissionService {
 
     // Sanitize question data for student (Immutable copy without mutating database object)
     const isGraded = String(submission.status).toUpperCase() === "GRADED";
+    const canSeeSecrets = isGraded || isAdmin || isTeacher;
     if (submission.exam?.sections) {
       submission.exam = {
         ...submission.exam,
-        sections: submission.exam.sections.map((sec: any) => ({
-          ...sec,
-          audioScript: isGraded || isAdmin || isTeacher ? sec.audioScript : null,
-          audio_script: isGraded || isAdmin || isTeacher ? sec.audio_script : null,
-          questionGroups: sec.questionGroups?.map((g: any) => ({
+        sections: submission.exam.sections.map((sec: any) => {
+          const sanitizedSec = { ...sec };
+          if (!canSeeSecrets) {
+            delete sanitizedSec.audioScript;
+            delete sanitizedSec.audio_script;
+          }
+          sanitizedSec.questionGroups = sec.questionGroups?.map((g: any) => ({
             ...g,
             questions: g.questions?.map((q: any) =>
-              sanitizeQuestionForStudent(q, isGraded || isAdmin || isTeacher)
+              sanitizeQuestionForStudent(q, canSeeSecrets)
             ),
-          })),
-        })),
+          }));
+          return sanitizedSec;
+        }),
       };
     }
 
