@@ -283,11 +283,15 @@ export function createMockPrisma() {
           return true;
         }) || null;
       },
-      findMany: async ({ where, include }: any) => {
+      findMany: async ({ where, include }: any = {}) => {
         return classStudents
           .filter((cs) => {
-            if (where.classId && cs.classId !== where.classId) return false;
-            if (where.studentId && cs.studentId !== where.studentId) return false;
+            if (where?.classId && cs.classId !== where.classId) return false;
+            if (where?.studentId && cs.studentId !== where.studentId) return false;
+            if (where?.class?.teacherId) {
+              const cls = classes.find((c) => c.id === cs.classId);
+              if (!cls || cls.teacherId !== where.class.teacherId) return false;
+            }
             return true;
           })
           .map((cs) => {
@@ -658,6 +662,17 @@ export function createMockPrisma() {
         const a = answers.find((x) => x.id === where?.id);
         if (a) Object.assign(a, data);
         return a;
+      },
+      updateMany: async ({ where, data }: any) => {
+        let count = 0;
+        answers.forEach((a) => {
+          if ((!where?.submissionId || a.submissionId === where.submissionId) &&
+              (!where?.questionId || a.questionId === where.questionId)) {
+            Object.assign(a, data);
+            count++;
+          }
+        });
+        return { count };
       },
       deleteMany: async () => {
         answers.length = 0;

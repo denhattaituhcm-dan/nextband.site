@@ -4,6 +4,7 @@ import { canonicalScoringService } from "./scoring/CanonicalScoringService.js";
 import { auditOutboxService } from "./audit/AuditOutboxService.js";
 import { idempotencyService } from "./idempotency/IdempotencyService.js";
 import { AuthorizationError, NotFoundError } from "./authorization.service.js";
+import { SubmissionStateMachine, SubmissionState, StateTransitionError } from "./submission-state-machine.js";
 import {
   getClassStudentIds,
   getTeacherStudentIds,
@@ -189,20 +190,23 @@ export class ExamSubmissionService {
       }
     }
 
-    // Sanitize question data for student
+    // Sanitize question data for student (Immutable copy without mutating database object)
     const isGraded = String(submission.status).toUpperCase() === "GRADED";
     if (submission.exam?.sections) {
-      submission.exam.sections.forEach((sec: any) => {
-        if (sec.questionGroups) {
-          sec.questionGroups.forEach((g: any) => {
-            if (g.questions) {
-              g.questions = g.questions.map((q: any) =>
-                sanitizeQuestionForStudent(q, isGraded || isAdmin || isTeacher)
-              );
-            }
-          });
-        }
-      });
+      submission.exam = {
+        ...submission.exam,
+        sections: submission.exam.sections.map((sec: any) => ({
+          ...sec,
+          audioScript: isGraded || isAdmin || isTeacher ? sec.audioScript : null,
+          audio_script: isGraded || isAdmin || isTeacher ? sec.audio_script : null,
+          questionGroups: sec.questionGroups?.map((g: any) => ({
+            ...g,
+            questions: g.questions?.map((q: any) =>
+              sanitizeQuestionForStudent(q, isGraded || isAdmin || isTeacher)
+            ),
+          })),
+        })),
+      };
     }
 
     return submission;
@@ -333,9 +337,13 @@ export class ExamSubmissionService {
       throw new AuthorizationError("Bạn không có quyền sửa bài làm này", 403);
     }
 
-    const currentStatus = String(submission.status).toUpperCase();
+    const currentStatus = String(submission.status).toUpperCase() as SubmissionState;
+    if (SubmissionStateMachine.isFinalized(currentStatus)) {
+      throw new StateTransitionError("SUBMISSION_ALREADY_FINALIZED");
+    }
+
     if (currentStatus !== "IN_PROGRESS") {
-      throw new AuthorizationError("SUBMISSION_ALREADY_FINALIZED", 409);
+      throw new StateTransitionError("SUBMISSION_ALREADY_FINALIZED");
     }
 
     // Version conflict check
@@ -392,10 +400,22 @@ export class ExamSubmissionService {
   }
 
   // Use Case: Submit Exam with Canonical Scoring & Idempotency
+  // CRITICAL: Pure Server Authority — Strips client score/bandScore/isCorrect injections
   async submitExam(
     user: { id: string; roles: string[] },
     id: string,
-    payload: { answers: any[]; idempotencyKey?: string; version?: number }
+    payload: {
+      answers: any[];
+      idempotencyKey?: string;
+      version?: number;
+      // Client score injection fields to IGNORE
+      score?: any;
+      bandScore?: any;
+      correctCount?: any;
+      isCorrect?: any;
+      totalScore?: any;
+      status?: any;
+    }
   ) {
     // Check idempotency record first
     if (payload.idempotencyKey) {
@@ -457,9 +477,9 @@ export class ExamSubmissionService {
       throw new AuthorizationError("Bạn không có quyền nộp bài làm này", 403);
     }
 
-    // Idempotency: If already graded/submitted, return saved result
-    const statusUpper = String(submission.status).toUpperCase();
-    if (statusUpper === "GRADED") {
+    // Idempotency: If already graded, return saved result without re-modifying score
+    const currentStatus = String(submission.status).toUpperCase() as SubmissionState;
+    if (currentStatus === "GRADED") {
       return submission;
     }
 
@@ -475,6 +495,7 @@ export class ExamSubmissionService {
       }));
     }
 
+    // SERVER IS SOLE AUTHORITY: Pure Canonical Scoring from answers & exam structure
     const examStructure = submission.exam;
     const gradingSummary = canonicalScoringService.evaluateExamAttempt(
       examStructure,
@@ -482,7 +503,10 @@ export class ExamSubmissionService {
     );
 
     const hasManualQuestions = gradingSummary.hasManualQuestions;
-    const targetStatus = hasManualQuestions ? "SUBMITTED" : "GRADED";
+    const targetStatus: SubmissionState = hasManualQuestions ? "SUBMITTED" : "GRADED";
+
+    // Enforce State Machine Transition
+    SubmissionStateMachine.assertTransition(currentStatus, targetStatus);
 
     return this.repo.transaction(async (tx) => {
       const createdOrUpdatedAnswers = [];
@@ -534,6 +558,7 @@ export class ExamSubmissionService {
       const fullResult = {
         ...updated,
         answers: createdOrUpdatedAnswers,
+        bandScore: gradingSummary.bandScore,
       };
 
       // Audit Outbox Event
@@ -594,6 +619,9 @@ export class ExamSubmissionService {
       }
     }
 
+    const currentStatus = String(submission.status).toUpperCase() as SubmissionState;
+    SubmissionStateMachine.assertTransition(currentStatus, "GRADED", true);
+
     return this.repo.transaction(async (tx) => {
       let computedTotal = 0;
 
@@ -624,6 +652,7 @@ export class ExamSubmissionService {
           gradedBy: user.id,
           totalScore: finalTotalScore,
         },
+        include: { answers: true },
       });
 
       // Audit Outbox Event for Regrade
@@ -641,6 +670,142 @@ export class ExamSubmissionService {
       }
 
       return updated;
+    });
+  }
+
+  // Use Case: Authorized Regrade Workflow (G4 Core)
+  async regradeSubmission(
+    user: { id: string; roles: string[] },
+    id: string,
+    data: {
+      reason: string;
+      grades?: Array<{ answerId: string; score: number; feedback?: string }>;
+      regradeAll?: boolean;
+    }
+  ) {
+    const isAdmin = user.roles.includes("admin");
+    const isTeacher = user.roles.includes("teacher");
+
+    if (!isAdmin && !isTeacher) {
+      throw new AuthorizationError("Từ chối truy cập: Chỉ giáo viên quản lý lớp hoặc quản trị viên mới được phép phúc khảo/chấm lại bài thi", 403);
+    }
+
+    if (!data.reason || typeof data.reason !== "string" || data.reason.trim().length < 5) {
+      throw new AuthorizationError("Yêu cầu phúc khảo bắt buộc phải có lý do chi tiết (tối thiểu 5 ký tự)", 400);
+    }
+
+    const submission: any = await this.repo.findById(id, {
+      exam: {
+        include: {
+          sections: {
+            include: {
+              questionGroups: {
+                include: {
+                  questions: true,
+                },
+              },
+            },
+          },
+        },
+      },
+      answers: true,
+    });
+
+    if (!submission) {
+      throw new NotFoundError("Không tìm thấy bài nộp cần chấm lại");
+    }
+
+    if (isTeacher && !isAdmin) {
+      const teacherStudentIds = await getTeacherStudentIds(this.prisma, user.id);
+      if (!teacherStudentIds.includes(submission.studentId)) {
+        throw new AuthorizationError("Học viên không thuộc lớp do bạn phụ trách", 403);
+      }
+    }
+
+    const previousScore = Number(submission.totalScore) || 0;
+    const currentStatus = String(submission.status).toUpperCase() as SubmissionState;
+    SubmissionStateMachine.assertTransition(currentStatus, "GRADED", true);
+
+    return this.repo.transaction(async (tx) => {
+      let finalTotalScore = previousScore;
+      let finalCorrectCount = submission.correctAnswers || 0;
+
+      // Mode A: Regrade All against Canonical Scoring Engine
+      if (data.regradeAll) {
+        const rawAnswers = (submission.answers || []).map((a: any) => ({
+          questionId: a.questionId,
+          answerText: a.answerText,
+          audioUrl: a.audioUrl,
+        }));
+
+        const gradingSummary = canonicalScoringService.evaluateExamAttempt(
+          submission.exam,
+          rawAnswers
+        );
+
+        for (const ans of rawAnswers) {
+          const evalResult = gradingSummary.evaluatedAnswers.find((g) => g.questionId === ans.questionId);
+          if (evalResult) {
+            await tx.answer.updateMany({
+              where: { submissionId: id, questionId: ans.questionId },
+              data: { score: evalResult.score },
+            });
+          }
+        }
+
+        finalTotalScore = gradingSummary.totalScore;
+        finalCorrectCount = gradingSummary.correctAnswers;
+      }
+
+      // Mode B: Partial overrides from Teacher Manual Regrade
+      if (data.grades && data.grades.length > 0) {
+        for (const g of data.grades) {
+          await tx.answer.update({
+            where: { id: g.answerId },
+            data: {
+              score: g.score,
+              feedback: g.feedback || null,
+            },
+          });
+        }
+
+        const allAnswers = await tx.answer.findMany({ where: { submissionId: id } });
+        finalTotalScore = allAnswers.reduce((sum: number, a: any) => sum + (Number(a.score) || 0), 0);
+      }
+
+      const updated = await tx.examSubmission.update({
+        where: { id },
+        data: {
+          status: "GRADED" as any,
+          gradedAt: new Date(),
+          gradedBy: user.id,
+          totalScore: finalTotalScore,
+          correctAnswers: finalCorrectCount,
+          version: (submission.version || 1) + 1,
+        },
+        include: { answers: true },
+      });
+
+      // Immutable Audit Trail
+      if (tx.auditOutbox) {
+        const auditEvent = auditOutboxService.buildSanitizedEvent({
+          eventType: "SUBMISSION_REGRADED",
+          actorId: user.id,
+          actorRole: isAdmin ? "admin" : "teacher",
+          submissionId: id,
+          examId: submission.examId as string,
+          oldState: { status: submission.status, totalScore: previousScore },
+          newState: { status: "GRADED", totalScore: finalTotalScore },
+          reason: data.reason.trim(),
+        });
+        await tx.auditOutbox.create({ data: auditEvent });
+      }
+
+      return {
+        ...updated,
+        regradeReason: data.reason.trim(),
+        previousScore,
+      };
     });
   }
 }

@@ -3,6 +3,7 @@ import { randomUUID, createHash } from "crypto";
 export type AuditEventType =
   | "SUBMISSION_FINALIZED"
   | "TEACHER_REGRADED"
+  | "SUBMISSION_REGRADED"
   | "AUTOSAVE_REJECTED"
   | "SHADOW_MISMATCH"
   | "SECURITY_ALERT";
@@ -18,6 +19,7 @@ export interface AuditEventPayload {
   oldState?: Record<string, any>;
   newState?: Record<string, any>;
   resultSummary?: Record<string, any>;
+  reason?: string;
 }
 
 export interface SanitizedAuditEvent {

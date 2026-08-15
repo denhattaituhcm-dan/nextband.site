@@ -93,4 +93,15 @@ export class SubmissionController {
       return reply.status(status).send({ error: err.message });
     }
   }
+
+  async regrade(request: FastifyRequest<{ Params: { id: string }; Body: { reason: string; grades?: any[]; regradeAll?: boolean } }>, reply: FastifyReply) {
+    try {
+      const user = (request as any).user;
+      const result = await this.service.regradeSubmission(user, request.params.id, request.body || { reason: "" });
+      return reply.send(result);
+    } catch (err: any) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
 }

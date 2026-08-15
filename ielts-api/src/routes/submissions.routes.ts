@@ -46,4 +46,13 @@ export default async function submissionsRoutes(fastify: FastifyInstance) {
       return controller.grade(request, reply);
     }
   );
+
+  // POST /submissions/:id/regrade - Authorized regrade workflow with audit trail
+  fastify.post<{ Params: { id: string }; Body: { reason: string; grades?: any[]; regradeAll?: boolean } }>(
+    "/:id/regrade",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      return controller.regrade(request, reply);
+    }
+  );
 }
