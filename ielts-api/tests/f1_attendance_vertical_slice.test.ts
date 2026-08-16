@@ -196,9 +196,6 @@ describe("BASELINE F1: ATTENDANCE VERTICAL SLICE (Session -> Attendance -> Compl
           ],
         },
       });
-      if (res.statusCode !== 200) {
-        console.log("TEST 1.4 FAILED PAYLOAD:", res.payload);
-      }
       expect(res.statusCode).toBe(200);
       const json = JSON.parse(res.payload);
       expect(json.success).toBe(true);
