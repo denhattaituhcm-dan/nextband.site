@@ -1,0 +1,155 @@
+import { useLocation } from "react-router-dom";
+import {
+  Home,
+  BookOpen,
+  ClipboardList,
+  GraduationCap,
+  User,
+} from "lucide-react";
+import { NavLink } from "@/components/NavLink";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarHeader,
+  SidebarFooter,
+  useSidebar,
+} from "@/components/ui/sidebar";
+import { useAuth } from "@/hooks/useAuth";
+import { useStudentLifecycle } from "@/hooks/useStudentLifecycle";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { SiteLogo } from "@/components/common/SiteLogo";
+
+const fullNavigationItems = [
+  {
+    title: "Bài tập",
+    url: "/",
+    icon: ClipboardList,
+    description: "Bàn làm việc bài tập",
+  },
+  {
+    title: "Lớp học & Khóa học",
+    url: "/my-courses",
+    icon: BookOpen,
+    description: "Lớp học và lộ trình",
+  },
+  {
+    title: "Kết quả & Nhận xét",
+    url: "/my-submissions",
+    icon: GraduationCap,
+    description: "Lịch sử nộp bài & Đánh giá",
+  },
+  {
+    title: "Cá nhân",
+    url: "/profile",
+    icon: User,
+    description: "Thông tin cá nhân",
+  },
+];
+
+const preEnrollmentNavigationItems = [
+  {
+    title: "Chào mừng",
+    url: "/",
+    icon: Home,
+    description: "Trang hỗ trợ & Kích hoạt",
+  },
+  {
+    title: "Cá nhân",
+    url: "/profile",
+    icon: User,
+    description: "Thông tin cá nhân",
+  },
+];
+
+export function ClientSidebar() {
+  const location = useLocation();
+  const { state } = useSidebar();
+  const collapsed = state === "collapsed";
+  const { user } = useAuth();
+  const { state: lifecycleState } = useStudentLifecycle();
+
+  /**
+   * INVARIANT-01 & INVARIANT-05:
+   * Menu is only reduced to preEnrollmentNavigationItems when Backend
+   * authoritatively confirms no enrollment (state === "PRE_ENROLLMENT").
+   *
+   * For LOADING, API_ERROR, NETWORK_ERROR → keep fullNavigationItems.
+   * A failing API request is NOT evidence that the user has no classes.
+   */
+  const navigationItems = lifecycleState === "PRE_ENROLLMENT"
+    ? preEnrollmentNavigationItems
+    : fullNavigationItems;
+
+  const isActive = (path: string) => location.pathname === path;
+
+  return (
+    <Sidebar collapsible="icon" className="border-r">
+      <SidebarHeader className="border-b px-4 py-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-full items-center justify-start overflow-hidden">
+            <SiteLogo
+              alt="NextBand Logo"
+              className={`transition-all ${collapsed ? "w-8" : "max-h-8 w-auto"}`}
+            />
+          </div>
+        </div>
+      </SidebarHeader>
+
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Điều hướng</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navigationItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive(item.url)}
+                    tooltip={item.title}
+                  >
+                    <NavLink
+                      to={item.url}
+                      end={item.url === "/"}
+                      className="flex items-center gap-3"
+                      activeClassName="bg-sidebar-accent text-sidebar-accent-foreground"
+                    >
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter className="border-t p-4">
+        <div className="flex items-center gap-3">
+          <Avatar className="h-9 w-9">
+            <AvatarImage src={user?.avatarUrl || undefined} />
+            <AvatarFallback>
+              <User className="h-4 w-4" />
+            </AvatarFallback>
+          </Avatar>
+          {!collapsed && (
+            <div className="flex flex-col overflow-hidden">
+              <span className="text-sm font-medium truncate">
+                {user?.fullName || "Học viên"}
+              </span>
+              <span className="text-xs text-muted-foreground truncate">
+                {user?.email}
+              </span>
+            </div>
+          )}
+        </div>
+      </SidebarFooter>
+    </Sidebar>
+  );
+}

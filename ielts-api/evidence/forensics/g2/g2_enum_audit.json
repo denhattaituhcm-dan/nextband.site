@@ -1,0 +1,175 @@
+[
+  {
+    "prismaEnum": "AppRole",
+    "prismaValues": [
+      "admin",
+      "teacher",
+      "student"
+    ],
+    "sqlEnum": "app_role",
+    "sqlValues": [
+      "admin",
+      "teacher",
+      "student"
+    ],
+    "isCompatible": true
+  },
+  {
+    "prismaEnum": "InvitationStatus",
+    "prismaValues": [
+      "ACTIVE",
+      "EXPIRED",
+      "DISABLED"
+    ],
+    "sqlEnum": "MISSING_IN_SQL",
+    "sqlValues": [],
+    "isCompatible": false
+  },
+  {
+    "prismaEnum": "LessonStatus",
+    "prismaValues": [
+      "DRAFT",
+      "PUBLISHED",
+      "ARCHIVED"
+    ],
+    "sqlEnum": "MISSING_IN_SQL",
+    "sqlValues": [],
+    "isCompatible": false
+  },
+  {
+    "prismaEnum": "ResourceType",
+    "prismaValues": [
+      "PDF",
+      "VIDEO",
+      "AUDIO",
+      "SLIDE",
+      "LINK",
+      "IMAGE"
+    ],
+    "sqlEnum": "MISSING_IN_SQL",
+    "sqlValues": [],
+    "isCompatible": false
+  },
+  {
+    "prismaEnum": "HomeworkStatus",
+    "prismaValues": [
+      "DRAFT",
+      "PUBLISHED",
+      "CLOSED"
+    ],
+    "sqlEnum": "MISSING_IN_SQL",
+    "sqlValues": [],
+    "isCompatible": false
+  },
+  {
+    "prismaEnum": "SubmissionStatus",
+    "prismaValues": [
+      "IN_PROGRESS",
+      "PENDING",
+      "SUBMITTED",
+      "GRADED"
+    ],
+    "sqlEnum": "submission_status",
+    "sqlValues": [
+      "in_progress",
+      "submitted",
+      "graded"
+    ],
+    "isCompatible": false
+  },
+  {
+    "prismaEnum": "AttendanceStatus",
+    "prismaValues": [
+      "UNMARKED",
+      "PRESENT",
+      "ABSENT",
+      "LATE",
+      "EXCUSED"
+    ],
+    "sqlEnum": "MISSING_IN_SQL",
+    "sqlValues": [],
+    "isCompatible": false
+  },
+  {
+    "prismaEnum": "ExamSectionType",
+    "prismaValues": [
+      "listening",
+      "reading",
+      "writing",
+      "speaking",
+      "general"
+    ],
+    "sqlEnum": "exam_section_type",
+    "sqlValues": [
+      "listening",
+      "reading",
+      "writing",
+      "speaking",
+      "general"
+    ],
+    "isCompatible": true
+  },
+  {
+    "prismaEnum": "QuestionType",
+    "prismaValues": [
+      "multiple_choice",
+      "fill_blank",
+      "matching",
+      "essay",
+      "speaking",
+      "listening",
+      "short_answer",
+      "true_false_not_given",
+      "yes_no_not_given"
+    ],
+    "sqlEnum": "question_type",
+    "sqlValues": [
+      "multiple_choice",
+      "fill_blank",
+      "matching",
+      "essay",
+      "speaking",
+      "short_answer",
+      "true_false_not_given",
+      "yes_no_not_given"
+    ],
+    "isCompatible": false
+  },
+  {
+    "prismaEnum": "EnrollmentStatus",
+    "prismaValues": [
+      "INVITED",
+      "PENDING",
+      "ACTIVE",
+      "SUSPENDED",
+      "COMPLETED"
+    ],
+    "sqlEnum": "MISSING_IN_SQL",
+    "sqlValues": [],
+    "isCompatible": false
+  },
+  {
+    "prismaEnum": "ClassSessionStatus",
+    "prismaValues": [
+      "SCHEDULED",
+      "COMPLETED",
+      "CANCELLED"
+    ],
+    "sqlEnum": "MISSING_IN_SQL",
+    "sqlValues": [],
+    "isCompatible": false
+  },
+  {
+    "prismaEnum": "ClassStatus",
+    "prismaValues": [
+      "DRAFT",
+      "ACTIVE",
+      "COMPLETED",
+      "CLOSED",
+      "ARCHIVED"
+    ],
+    "sqlEnum": "MISSING_IN_SQL",
+    "sqlValues": [],
+    "isCompatible": false
+  }
+]

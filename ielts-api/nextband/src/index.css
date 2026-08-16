@@ -1,0 +1,271 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Homework - IELTS Learning Platform Design System
+   Aesthetic: Modern, Academic, Duolingo meets Coursera
+   All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Core backgrounds */
+    --background: 210 20% 98%;
+    --foreground: 222 47% 11%;
+
+    /* Card surfaces */
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    /* Popovers & dropdowns */
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Primary brand - ARIS Academic Blue (#1E429F) */
+    --primary: 223 68% 37%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 223 68% 28%;
+    --primary-soft: 223 68% 97%;
+
+    /* Brand Accent - ARIS Crimson (#C00000) */
+    --brand-crimson: 354 85% 44%;
+    --brand-crimson-foreground: 0 0% 100%;
+    --brand-crimson-soft: 354 85% 96%;
+
+    /* Secondary */
+    --secondary: 220 20% 96%;
+    --secondary-foreground: 222 47% 20%;
+
+    /* Muted backgrounds */
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    /* Accent - Brand Crimson for key highlights */
+    --accent: 354 85% 44%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Destructive/Error states (Semantic Error Red) */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Success states */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+
+    /* Warning states */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 0%;
+
+    /* Info states */
+    --info: 217 91% 48%;
+    --info-foreground: 0 0% 100%;
+
+    /* Form elements */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 223 68% 37%;
+
+    --radius: 0.75rem;
+
+    /* Sidebar specific */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 223 68% 37%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 223 68% 96%;
+    --sidebar-accent-foreground: 223 68% 28%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 223 68% 37%;
+
+    /* Exam section colors - General/Listening/Reading/Writing use Brand Blue; Speaking uses Crimson Accent */
+    --listening: 223 68% 37%;
+    --reading: 223 68% 37%;
+    --writing: 223 68% 37%;
+    --speaking: 354 85% 44%;
+
+    /* Gradient — only for page-level background surfaces (e.g. auth page ambient) */
+    /* NOT for brand identity. Brand uses solid primary. */
+    --gradient-hero: linear-gradient(
+      135deg,
+      hsl(223 68% 97%),
+      hsl(210 20% 98%)
+    );
+  }
+
+  /* Dark mode is intentionally disabled for ARIS.
+   * The .dark class has no effect. Do not re-enable without a full token audit.
+   * Reason: was using a different brand hue (teal) in dark mode — breaking brand identity.
+   */
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted/50;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/50;
+  }
+}
+
+@layer components {
+  /* Exam skill badges */
+  .skill-listening {
+    @apply bg-[hsl(var(--listening))] text-white;
+  }
+
+  .skill-reading {
+    @apply bg-[hsl(var(--reading))] text-white;
+  }
+
+  .skill-writing {
+    @apply bg-[hsl(var(--writing))] text-white;
+  }
+
+  .skill-speaking {
+    @apply bg-[hsl(var(--speaking))] text-white;
+  }
+
+  /* Glass effect */
+  .glass {
+    @apply backdrop-blur-md bg-background/80 border border-border/50;
+  }
+
+  /* gradient-text intentionally removed — gradient-primary was teal/sky, not brand blue.
+   * Use text-primary for brand color. */
+
+  /* Rich text content — WYSIWYG consistency between admin editor and exam interface */
+  .rich-content {
+    line-height: 1.7;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    width: 100%;
+  }
+
+  .rich-content p {
+    margin-bottom: 1em;
+  }
+  .rich-content p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Passage variant — IELTS reading style: justified, wider paragraph gaps */
+  .rich-content-passage p {
+    margin-bottom: 1.25em;
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+  }
+  .rich-content-passage p:last-child {
+    margin-bottom: 0;
+  }
+  .rich-content [style*="text-align: justify"],
+  .rich-content .is-text-align-justify {
+    text-align: justify;
+    text-justify: inter-word;
+  }
+  .rich-content [style*="text-align: center"],
+  .rich-content .is-text-align-center {
+    text-align: center;
+  }
+  .rich-content [style*="text-align: right"],
+  .rich-content .is-text-align-right {
+    text-align: right;
+  }
+  .rich-content [style*="text-align: left"],
+  .rich-content .is-text-align-left {
+    text-align: left;
+  }
+
+  @media (max-width: 640px) {
+    .rich-content-passage p,
+    .rich-content [style*="text-align: justify"],
+    .rich-content .is-text-align-justify {
+      text-align: left;
+    }
+  }
+  .rich-content strong, .rich-content b { font-weight: 700; }
+  .rich-content em, .rich-content i { font-style: italic; }
+  .rich-content u { text-decoration: underline; }
+  .rich-content s { text-decoration: line-through; }
+
+  .rich-content h1 { font-size: 1.5em; font-weight: 700; margin-bottom: 0.5em; }
+  .rich-content h2 { font-size: 1.25em; font-weight: 700; margin-bottom: 0.4em; }
+  .rich-content h3 { font-size: 1.1em; font-weight: 600; margin-bottom: 0.3em; }
+
+  .rich-content ul {
+    list-style-type: disc;
+    padding-left: 1.5em;
+    margin-bottom: 0.5em;
+  }
+  .rich-content ol {
+    list-style-type: decimal;
+    padding-left: 1.5em;
+    margin-bottom: 0.5em;
+  }
+  .rich-content li { margin-bottom: 0.25em; }
+
+  .rich-content a {
+    color: hsl(var(--primary));
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .rich-content code {
+    background-color: hsl(var(--muted));
+    border-radius: 0.25rem;
+    padding: 0.1em 0.35em;
+    font-family: monospace;
+    font-size: 0.9em;
+  }
+  .rich-content blockquote {
+    border-left: 3px solid hsl(var(--border));
+    padding-left: 1em;
+    margin: 0.5em 0;
+    color: hsl(var(--muted-foreground));
+    font-style: italic;
+  }
+  .rich-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+  }
+}
+
+
+@layer utilities {
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

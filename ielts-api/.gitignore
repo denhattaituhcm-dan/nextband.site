@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Dependencies
 node_modules/
 
@@ -35,3 +36,11 @@ package-lock.json
 .uploads/
 *.uploads/
 .uploads
+=======
+*.tar.gz
+*.sql
+node_modules/
+dist/
+.env
+ielts-be/uploads/
+>>>>>>> origin/main
