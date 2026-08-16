@@ -1,0 +1,100 @@
+[
+  {
+    "entity": "profiles",
+    "mysqlLegacy": 21,
+    "postgresCanonical": 14,
+    "delta": -7,
+    "status": "DELTA (-7)"
+  },
+  {
+    "entity": "user_roles",
+    "mysqlLegacy": 21,
+    "postgresCanonical": 26,
+    "delta": 5,
+    "status": "DELTA (5)"
+  },
+  {
+    "entity": "courses",
+    "mysqlLegacy": 16,
+    "postgresCanonical": 11,
+    "delta": -5,
+    "status": "DELTA (-5)"
+  },
+  {
+    "entity": "exams",
+    "mysqlLegacy": 130,
+    "postgresCanonical": 130,
+    "delta": 0,
+    "status": "MATCH (100%)"
+  },
+  {
+    "entity": "exam_sections",
+    "mysqlLegacy": 609,
+    "postgresCanonical": 609,
+    "delta": 0,
+    "status": "MATCH (100%)"
+  },
+  {
+    "entity": "question_groups",
+    "mysqlLegacy": 181,
+    "postgresCanonical": 181,
+    "delta": 0,
+    "status": "MATCH (100%)"
+  },
+  {
+    "entity": "questions",
+    "mysqlLegacy": 739,
+    "postgresCanonical": 739,
+    "delta": 0,
+    "status": "MATCH (100%)"
+  },
+  {
+    "entity": "exam_submissions",
+    "mysqlLegacy": 158,
+    "postgresCanonical": 9,
+    "delta": -149,
+    "status": "DELTA (-149)"
+  },
+  {
+    "entity": "answers",
+    "mysqlLegacy": 298,
+    "postgresCanonical": 36,
+    "delta": -262,
+    "status": "DELTA (-262)"
+  },
+  {
+    "entity": "classes",
+    "mysqlLegacy": 3,
+    "postgresCanonical": 2,
+    "delta": -1,
+    "status": "DELTA (-1)"
+  },
+  {
+    "entity": "class_students",
+    "mysqlLegacy": 6,
+    "postgresCanonical": 8,
+    "delta": 2,
+    "status": "DELTA (2)"
+  },
+  {
+    "entity": "class_attendance",
+    "mysqlLegacy": 14,
+    "postgresCanonical": 0,
+    "delta": -14,
+    "status": "DELTA (-14)"
+  },
+  {
+    "entity": "enrollments",
+    "mysqlLegacy": 25,
+    "postgresCanonical": 0,
+    "delta": -25,
+    "status": "DELTA (-25)"
+  },
+  {
+    "entity": "highlights",
+    "mysqlLegacy": 8,
+    "postgresCanonical": 0,
+    "delta": -8,
+    "status": "DELTA (-8)"
+  }
+]
