@@ -1,6 +1,37 @@
-*.tar.gz
-*.sql
+# Dependencies
 node_modules/
+
+# Build output
 dist/
+
+# Environment
 .env
-ielts-be/uploads/
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Prisma
+prisma/migrations/*_migration.sql
+
+# Test
+coverage/
+.cursor/
+.env
+package-lock.json
+.uploads/
+*.uploads/
+.uploads

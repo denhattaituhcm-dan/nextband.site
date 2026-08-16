@@ -384,7 +384,8 @@ export class AttendanceService {
         id: s.id,
         sessionNumber: s.sessionNumber,
         sessionDate: s.sessionDate,
-        lessonTitle: s.lesson.title,
+        title: s.title || s.lesson?.title || `Buổi ${s.sessionNumber}`,
+        lessonTitle: s.lesson?.title || s.title || `Buổi ${s.sessionNumber}`,
         status: s.status
       })),
       students: matrix

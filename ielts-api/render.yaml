@@ -3,7 +3,7 @@ services:
     name: ielts-api
     env: node
     buildCommand: npm install && npm run build
-    startCommand: npm start
+    startCommand: npx prisma migrate deploy && npm start
     envVars:
       - key: NODE_ENV
         value: production

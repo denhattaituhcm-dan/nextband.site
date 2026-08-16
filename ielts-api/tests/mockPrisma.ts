@@ -288,7 +288,11 @@ export function createMockPrisma() {
         return classStudents
           .filter((cs) => {
             if (where?.classId && cs.classId !== where.classId) return false;
-            if (where?.studentId && cs.studentId !== where.studentId) return false;
+            if (where?.studentId) {
+              if (typeof where.studentId === "string" && cs.studentId !== where.studentId) return false;
+              if (where.studentId.in && !where.studentId.in.includes(cs.studentId)) return false;
+            }
+            if (where?.deletedAt === null && cs.deletedAt !== null && cs.deletedAt !== undefined) return false;
             if (where?.class?.teacherId) {
               const cls = classes.find((c) => c.id === cs.classId);
               if (!cls || cls.teacherId !== where.class.teacherId) return false;

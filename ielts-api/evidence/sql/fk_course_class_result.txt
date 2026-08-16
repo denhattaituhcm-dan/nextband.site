@@ -1,8 +1,0 @@
-constraint_name: classes_course_id_fkey
-table_name: classes
-column_name: course_id
-foreign_table_name: courses
-foreign_column_name: id
-delete_rule: SET NULL
-execution_status: VERIFIED
-executed_at: 2026-08-01T12:04:14+07:00
