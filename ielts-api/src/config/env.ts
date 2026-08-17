@@ -45,14 +45,19 @@ const envSchema = z
     },
   );
 
-const parsed = envSchema.safeParse(process.env);
-
-if (!parsed.success) {
-  console.error(
-    "❌ Invalid environment variables:",
-    parsed.error.flatten().fieldErrors,
-  );
+let envData: z.infer<typeof envSchema>;
+try {
+  envData = envSchema.parse(process.env);
+} catch (err: unknown) {
+  if (err instanceof z.ZodError) {
+    console.error(
+      "❌ Invalid environment variables:",
+      err.flatten().fieldErrors,
+    );
+  } else {
+    console.error("❌ Invalid environment variables:", err);
+  }
   process.exit(1);
 }
 
-export const env = parsed.data;
+export const env = envData;

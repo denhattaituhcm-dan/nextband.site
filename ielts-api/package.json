@@ -28,21 +28,21 @@
     "@fastify/rate-limit": "^9.1.0",
     "@fastify/static": "^7.0.4",
     "@prisma/client": "^5.19.1",
+    "@types/bcrypt": "^5.0.2",
+    "@types/node": "^22.5.4",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
     "fastify": "^4.28.1",
     "fastify-plugin": "^4.5.1",
     "google-auth-library": "^10.5.0",
     "jose": "^6.2.8",
+    "prisma": "^5.19.1",
+    "typescript": "^5.5.4",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.2",
-    "@types/node": "^22.5.4",
     "pino-pretty": "^11.2.2",
-    "prisma": "^5.19.1",
     "tsx": "^4.19.0",
-    "typescript": "^5.5.4",
     "vitest": "^2.0.5"
   }
 }
