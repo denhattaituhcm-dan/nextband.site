@@ -44,17 +44,43 @@ const updateSiteSettingsSchema = z
   });
 
 async function ensureDefaultRow(fastify: any) {
+  // Tự động kiểm tra và thêm cột nếu chưa có (Self-healing DB schema)
   try {
-    await fastify.prisma.$executeRawUnsafe(
+    await (fastify.prisma as any).$executeRawUnsafe(
+      "ALTER TABLE `site_settings` ADD COLUMN `zalo_link` VARCHAR(500) NULL DEFAULT 'https://zalo.me'",
+    ).catch(() => {});
+  } catch {}
+
+  try {
+    await (fastify.prisma as any).$executeRawUnsafe(
+      "ALTER TABLE `site_settings` ADD COLUMN `completed_lessons_stat` VARCHAR(50) NULL DEFAULT '5,000+'",
+    ).catch(() => {});
+  } catch {}
+
+  try {
+    await (fastify.prisma as any).$executeRawUnsafe(
+      "ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS zalo_link VARCHAR(500) DEFAULT 'https://zalo.me'",
+    ).catch(() => {});
+  } catch {}
+
+  try {
+    await (fastify.prisma as any).$executeRawUnsafe(
+      "ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS completed_lessons_stat VARCHAR(50) DEFAULT '5,000+'",
+    ).catch(() => {});
+  } catch {}
+
+  // Đảm bảo hàng mặc định 'default' luôn tồn tại
+  try {
+    await (fastify.prisma as any).$executeRawUnsafe(
+      "INSERT INTO `site_settings` (`id`) VALUES ('default') ON DUPLICATE KEY UPDATE `id` = `id`",
+    ).catch(() => {});
+  } catch {}
+
+  try {
+    await (fastify.prisma as any).$executeRawUnsafe(
       "INSERT INTO site_settings (id) VALUES ('default') ON CONFLICT (id) DO NOTHING",
-    );
-  } catch {
-    try {
-      await fastify.prisma.$executeRawUnsafe(
-        "INSERT INTO `site_settings` (`id`) VALUES ('default') ON DUPLICATE KEY UPDATE `id` = `id`",
-      );
-    } catch {}
-  }
+    ).catch(() => {});
+  } catch {}
 }
 
 function normalizeRow(row: any) {
