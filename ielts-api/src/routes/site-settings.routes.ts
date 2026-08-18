@@ -1,7 +1,47 @@
 import { FastifyPluginAsync } from "fastify";
+import { z } from "zod";
 import { authenticate, requireRoles } from "../middlewares/auth.middleware.js";
 
 const SETTINGS_ID = "default";
+
+const updateSiteSettingsSchema = z
+  .object({
+    id: z.string().optional(),
+    siteName: z.string().max(255).optional(),
+    logoUrl: z.string().max(5000).nullable().optional(),
+    zaloLink: z.string().max(500).nullable().optional(),
+    completedLessonsStat: z.string().max(50).nullable().optional(),
+    authTagline: z.string().max(120).optional(),
+    authFeatureOneTitle: z.string().max(120).optional(),
+    authFeatureOneDescription: z.string().max(160).optional(),
+    authFeatureTwoTitle: z.string().max(120).optional(),
+    authFeatureTwoDescription: z.string().max(160).optional(),
+    highlightPresent: z.string().max(20).optional(),
+    highlightAbsent: z.string().max(20).optional(),
+    highlightInactive: z.string().max(20).optional(),
+    sloganText: z.string().max(100).optional(),
+    sloganFontFamily: z.string().max(191).optional(),
+    sloganFontWeight: z.enum(["light", "regular", "bold"]).optional(),
+    sloganDesktopSize: z.number().int().min(20).max(96).optional(),
+    sloganMobileSize: z.number().int().min(14).max(72).optional(),
+    sloganColor: z.string().max(20).optional(),
+    sloganAlign: z.enum(["left", "center", "right"]).optional(),
+    sloganLineHeight: z.number().min(1).max(2).optional(),
+    heroDescriptionText: z.string().max(300).optional(),
+    heroDescriptionFontFamily: z.string().max(191).optional(),
+    heroDescriptionFontWeight: z.enum(["light", "regular", "bold"]).optional(),
+    heroDescriptionDesktopSize: z.number().int().min(14).max(56).optional(),
+    heroDescriptionMobileSize: z.number().int().min(12).max(40).optional(),
+    heroDescriptionColor: z.string().max(20).optional(),
+    heroDescriptionAlign: z.enum(["left", "center", "right"]).optional(),
+    heroDescriptionLineHeight: z.number().min(1).max(2.2).optional(),
+    updatedBy: z.string().optional(),
+    updatedAt: z.union([z.string(), z.date()]).optional(),
+    createdAt: z.union([z.string(), z.date()]).optional(),
+  })
+  .strict({
+    message: "Dữ liệu gửi lên chứa trường cài đặt không được hỗ trợ",
+  });
 
 async function ensureDefaultRow(fastify: any) {
   await fastify.prisma.$executeRawUnsafe(
@@ -13,7 +53,10 @@ async function ensureDefaultRow(fastify: any) {
 function normalizeRow(row: any) {
   return {
     ...row,
+    siteName: row?.siteName || "NextBand",
     logoUrl: row?.logoUrl || "",
+    zaloLink: row?.zaloLink || "https://zalo.me",
+    completedLessonsStat: row?.completedLessonsStat || "5,000+",
     authTagline: row?.authTagline || "Nền tảng học IELTS hiện đại",
     authFeatureOneTitle: row?.authFeatureOneTitle || "Khóa học chất lượng",
     authFeatureOneDescription:
@@ -27,11 +70,14 @@ function normalizeRow(row: any) {
   };
 }
 
+const SELECT_SETTINGS_SQL =
+  "SELECT `id`, `site_name` AS siteName, `logo_url` AS logoUrl, `zalo_link` AS zaloLink, `completed_lessons_stat` AS completedLessonsStat, `auth_tagline` AS authTagline, `auth_feature_one_title` AS authFeatureOneTitle, `auth_feature_one_description` AS authFeatureOneDescription, `auth_feature_two_title` AS authFeatureTwoTitle, `auth_feature_two_description` AS authFeatureTwoDescription, `highlight_present` AS highlightPresent, `highlight_absent` AS highlightAbsent, `highlight_inactive` AS highlightInactive, `slogan_text` AS sloganText, `slogan_font_family` AS sloganFontFamily, `slogan_font_weight` AS sloganFontWeight, `slogan_desktop_size` AS sloganDesktopSize, `slogan_mobile_size` AS sloganMobileSize, `slogan_color` AS sloganColor, `slogan_align` AS sloganAlign, `slogan_line_height` AS sloganLineHeight, `hero_description_text` AS heroDescriptionText, `hero_description_font_family` AS heroDescriptionFontFamily, `hero_description_font_weight` AS heroDescriptionFontWeight, `hero_description_desktop_size` AS heroDescriptionDesktopSize, `hero_description_mobile_size` AS heroDescriptionMobileSize, `hero_description_color` AS heroDescriptionColor, `hero_description_align` AS heroDescriptionAlign, `hero_description_line_height` AS heroDescriptionLineHeight, `updated_by` AS updatedBy, `updated_at` AS updatedAt, `created_at` AS createdAt FROM `site_settings` WHERE `id` = ? LIMIT 1";
+
 const siteSettingsRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.get("/", async () => {
     await ensureDefaultRow(fastify);
     const rows = await fastify.prisma.$queryRawUnsafe<any[]>(
-      "SELECT `id`, `site_name` AS siteName, `logo_url` AS logoUrl, `auth_tagline` AS authTagline, `auth_feature_one_title` AS authFeatureOneTitle, `auth_feature_one_description` AS authFeatureOneDescription, `auth_feature_two_title` AS authFeatureTwoTitle, `auth_feature_two_description` AS authFeatureTwoDescription, `highlight_present` AS highlightPresent, `highlight_absent` AS highlightAbsent, `highlight_inactive` AS highlightInactive, `slogan_text` AS sloganText, `slogan_font_family` AS sloganFontFamily, `slogan_font_weight` AS sloganFontWeight, `slogan_desktop_size` AS sloganDesktopSize, `slogan_mobile_size` AS sloganMobileSize, `slogan_color` AS sloganColor, `slogan_align` AS sloganAlign, `slogan_line_height` AS sloganLineHeight, `hero_description_text` AS heroDescriptionText, `hero_description_font_family` AS heroDescriptionFontFamily, `hero_description_font_weight` AS heroDescriptionFontWeight, `hero_description_desktop_size` AS heroDescriptionDesktopSize, `hero_description_mobile_size` AS heroDescriptionMobileSize, `hero_description_color` AS heroDescriptionColor, `hero_description_align` AS heroDescriptionAlign, `hero_description_line_height` AS heroDescriptionLineHeight, `updated_by` AS updatedBy, `updated_at` AS updatedAt, `created_at` AS createdAt FROM `site_settings` WHERE `id` = ? LIMIT 1",
+      SELECT_SETTINGS_SQL,
       SETTINGS_ID,
     );
     return normalizeRow(rows[0] || {});
@@ -41,7 +87,25 @@ const siteSettingsRoutes: FastifyPluginAsync = async (fastify) => {
     "/",
     { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
-      const body = request.body as Record<string, unknown>;
+      const parseResult = updateSiteSettingsSchema.safeParse(request.body);
+      if (!parseResult.success) {
+        const issues = parseResult.error.issues;
+        const unrecognizedKeys = issues
+          .filter((i) => i.code === "unrecognized_keys")
+          .flatMap((i: any) => i.keys || []);
+
+        const errorMsg =
+          unrecognizedKeys.length > 0
+            ? `Trường không được hỗ trợ: ${unrecognizedKeys.join(", ")}`
+            : issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ");
+
+        return reply.status(400).send({
+          error: errorMsg,
+          details: issues,
+        });
+      }
+
+      const body = parseResult.data;
       const user = request.user;
 
       const str = (v: unknown, max: number) =>
@@ -58,7 +122,11 @@ const siteSettingsRoutes: FastifyPluginAsync = async (fastify) => {
 
       const data: Record<string, unknown> = {
         siteName: str(body.siteName, 255),
-        logoUrl: str(body.logoUrl, 5000) || null,
+        logoUrl: str(body.logoUrl, 5000) || (body.logoUrl === null ? null : undefined),
+        zaloLink: str(body.zaloLink, 500) || (body.zaloLink === null ? null : undefined),
+        completedLessonsStat:
+          str(body.completedLessonsStat, 50) ||
+          (body.completedLessonsStat === null ? null : undefined),
         authTagline: str(body.authTagline, 120),
         authFeatureOneTitle: str(body.authFeatureOneTitle, 120),
         authFeatureOneDescription: str(body.authFeatureOneDescription, 160),
@@ -99,6 +167,8 @@ const siteSettingsRoutes: FastifyPluginAsync = async (fastify) => {
       const columns: Record<string, string> = {
         siteName: "site_name",
         logoUrl: "logo_url",
+        zaloLink: "zalo_link",
+        completedLessonsStat: "completed_lessons_stat",
         authTagline: "auth_tagline",
         authFeatureOneTitle: "auth_feature_one_title",
         authFeatureOneDescription: "auth_feature_one_description",
@@ -137,7 +207,7 @@ const siteSettingsRoutes: FastifyPluginAsync = async (fastify) => {
       );
 
       const rows = await fastify.prisma.$queryRawUnsafe<any[]>(
-        "SELECT `id`, `site_name` AS siteName, `logo_url` AS logoUrl, `auth_tagline` AS authTagline, `auth_feature_one_title` AS authFeatureOneTitle, `auth_feature_one_description` AS authFeatureOneDescription, `auth_feature_two_title` AS authFeatureTwoTitle, `auth_feature_two_description` AS authFeatureTwoDescription, `highlight_present` AS highlightPresent, `highlight_absent` AS highlightAbsent, `highlight_inactive` AS highlightInactive, `slogan_text` AS sloganText, `slogan_font_family` AS sloganFontFamily, `slogan_font_weight` AS sloganFontWeight, `slogan_desktop_size` AS sloganDesktopSize, `slogan_mobile_size` AS sloganMobileSize, `slogan_color` AS sloganColor, `slogan_align` AS sloganAlign, `slogan_line_height` AS sloganLineHeight, `hero_description_text` AS heroDescriptionText, `hero_description_font_family` AS heroDescriptionFontFamily, `hero_description_font_weight` AS heroDescriptionFontWeight, `hero_description_desktop_size` AS heroDescriptionDesktopSize, `hero_description_mobile_size` AS heroDescriptionMobileSize, `hero_description_color` AS heroDescriptionColor, `hero_description_align` AS heroDescriptionAlign, `hero_description_line_height` AS heroDescriptionLineHeight, `updated_by` AS updatedBy, `updated_at` AS updatedAt, `created_at` AS createdAt FROM `site_settings` WHERE `id` = ? LIMIT 1",
+        SELECT_SETTINGS_SQL,
         SETTINGS_ID,
       );
 

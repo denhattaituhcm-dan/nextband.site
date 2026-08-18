@@ -1,8 +1,8 @@
 # NEXTBAND ARCHITECTURE CONSTITUTION (HIẾN PHÁP KIẾN TRÚC HỆ THỐNG NEXTBAND)
 
-**Phiên bản**: 1.1.0  
+**Phiên bản**: 1.2.0  
 **Ngày ban hành**: 01/08/2026  
-**Ngày cập nhật**: 16/08/2026 — Bổ sung Article XX (Frontend Deployment Resilience) và Article XXI (Design Token Discipline) từ sự cố production thực tế.  
+**Ngày cập nhật**: 18/08/2026 — Nâng cấp Article XX (Deployment Resilience & CDN Cache Architecture: Khắc phục triệt để SPA Fallback Trap, Kỷ luật Cache 2 tầng, và Rate-limited Preload Recovery từ sự cố thực nghiệm production).  
 **Cấp độ áp dụng**: Tối cao (Bắt buộc tuân thủ cho toàn bộ Kỹ sư, Technical Lead, và AI Agents)  
 **Phạm vi**: Toàn bộ Hệ thống IELTS NextBand (Frontend `nextband/`, Backend Fastify `ielts-api/`, Database Supabase Cloud PostgreSQL, và các tài liệu Kiến trúc liên quan)
 
@@ -766,56 +766,102 @@ $$\text{Evidence (Bằng chứng)} \longrightarrow \text{Verification (Xác minh
 
 ---
 
-## ARTICLE XX: FRONTEND DEPLOYMENT RESILIENCE — STALE CHUNK RECOVERY (PHỤC HỒI TẦNG FRONTEND SAU TRIỂN KHAI MỚI)
+## ARTICLE XX: FRONTEND DEPLOYMENT RESILIENCE & CDN CACHE ARCHITECTURE (KIẾN TRÚC PHỤC HỒI TRIỂN KHAI & BẢO TOÀN CACHE CDN)
 
-> **Nguồn gốc**: Sự cố production ngày 16/08/2026 — Lỗi "Failed to fetch dynamically imported module" xuất hiện sau mỗi lần deploy do browser giữ HTML cũ cache, trỏ đến chunk hash không còn tồn tại.
+> **Nguồn gốc & Lịch sử Sự cố**: Sự cố production ngày 18/08/2026 — Lỗi `Failed to fetch dynamically imported module: .../LoginPage-[hash].js` xảy ra sau khi deploy. Kiểm toán thực nghiệm phát hiện: ngoài việc lệch version giữa tab cũ và build mới, nguyên nhân cốt lõi là cấu hình SPA Rewrite ngây thơ (`/(.*) -> index.html`) đã biến request asset thiếu thành `200 OK text/html`, gây phá vỡ giao thức ES Module và vô hiệu hóa cơ chế tự động phục hồi của trình duyệt.
 
-### Section 20.1: Bản Chất Lỗi Stale Chunk (Root Cause)
-1. Vite (và các bundler code-splitting khác) tạo ra các file JS chunk với **hash trong tên** (ví dụ: `StudentLessonViewerPage-D3LmupST.js`).
-2. Sau mỗi lần deploy, hash thay đổi. Browser có thể giữ bản HTML cũ từ cache → tham chiếu đến chunk hash cũ → `404 Not Found` → lỗi `Failed to fetch dynamically imported module`.
-3. Lỗi này **không phụ thuộc vào framework** (React, Vue, Angular đều có thể bị), cũng **không phải lỗi build** — chỉ là hệ quả của cache desynchronization.
+### Section 20.1: Cạm Bẫy SPA Rewrite Fallback & Bản Chất Version Skew
+1. **Bản chất Version Skew**: Vite bundler băm mã hash vào tên file tĩnh (ví dụ `LoginPage-CIuSTK3U.js`). Khi triển khai bản build $N+1$, các file chunk của build $N$ không còn tồn tại trên server. Các tab trình duyệt mở từ trước sẽ yêu cầu chunk cũ $N$.
+2. **Cạm bẫy "SPA Fallback Trap"**:
+   - Nếu server (Vercel, Nginx, Caddy, Cloudflare) bắt mọi request bằng wildcard rewrite `/(.*) -> /index.html`:
+   - Khi trình duyệt yêu cầu `LoginPage-[old-hash].js`, server **không trả về 404**, mà trả về **`200 OK` kèm nội dung `index.html` (MIME `text/html`)**.
+   - Trình duyệt mong đợi nhận JavaScript ES Module nhưng nhận về HTML $\rightarrow$ Ném lỗi `Failed to fetch dynamically imported module` hoặc MIME type mismatch error.
+3. **Kỷ luật Cốt lõi**: Cấm tuyệt đối việc dùng SPA Fallback để che giấu mã `404 Not Found` của các file tĩnh thiếu.
 
-### Section 20.2: Quy Tắc Bắt Buộc — `lazyWithRetry` Pattern
-1. **Nghiêm cấm dùng `React.lazy()` trực tiếp** cho bất kỳ route lazy-load nào tại `App.tsx`.
-2. **Bắt buộc dùng `lazyWithRetry()`** — một wrapper xử lý stale chunk theo cơ chế:
-   - Catch lỗi `Failed to fetch dynamically imported module` hoặc `ChunkLoadError`.
-   - Kiểm tra `sessionStorage` flag `__nb_chunk_reloaded__` để tránh infinite reload loop.
-   - Nếu chưa reload: ghi flag → `window.location.reload()` ngầm → user không thấy màn hình lỗi.
-   - Nếu đã reload mà vẫn lỗi: để lỗi propagate lên `AppErrorBoundary` hiển thị UI thông báo.
-3. **`AppErrorBoundary.componentDidCatch`** phải có thêm một lớp phòng thủ thứ hai: detect stale chunk error và tự reload thay vì render màn hình lỗi đỏ.
+### Section 20.2: Kỷ Luật Định Tuyến Web Server / CDN Edge (Route Isolation & 404 Discipline)
+Mọi cấu hình web server (Vercel `vercel.json`, Nginx `nginx.conf`, Cloudflare Pages) **BẮT BUỘC** phải tách biệt 2 namespace định tuyến theo thứ tự ưu tiên tuyệt đối:
 
-```typescript
-// Pattern chuẩn — BẮT BUỘC tuân thủ
-const CHUNK_RELOAD_KEY = "__nb_chunk_reloaded__";
+```text
+[Incoming Request]
+       │
+       ▼
+1. Filesystem Resolution (handle: "filesystem")
+       │
+       ├── File tồn tại ───────────────► 200 OK + Immutable Cache
+       └── File KHÔNG tồn tại
+               │
+               ├── Thuộc namespace /assets/* ──► BẮT BUỘC TRẢ VỀ 404 NOT FOUND (CẤM fallback)
+               └── Thuộc App Route thông thường ─► Rewrite về /index.html (SPA Fallback)
+```
 
-function lazyWithRetry<T extends React.ComponentType<any>>(
-  factory: () => Promise<{ default: T }>
-): React.LazyExoticComponent<T> {
-  return lazy(() =>
-    factory().catch((err: unknown) => {
-      if (isChunkLoadError(err)) {
-        const alreadyReloaded = sessionStorage.getItem(CHUNK_RELOAD_KEY);
-        if (!alreadyReloaded) {
-          sessionStorage.setItem(CHUNK_RELOAD_KEY, "1");
-          window.location.reload();
-          return new Promise(() => {}) as never;
-        }
-      }
-      throw err;
-    })
-  );
+**Cấu hình Vercel chuẩn mực (`vercel.json`):**
+```json
+{
+  "routes": [
+    {
+      "src": "/assets/(.*)",
+      "headers": { "cache-control": "public, max-age=31536000, immutable" },
+      "continue": true
+    },
+    { "handle": "filesystem" },
+    { "src": "/assets/(.*)", "status": 404 },
+    {
+      "src": "/(.*)",
+      "headers": { "cache-control": "public, max-age=0, must-revalidate" },
+      "dest": "/index.html"
+    }
+  ]
 }
 ```
 
-### Section 20.3: Quy Tắc Về Bundle Size Warning
-1. Cảnh báo Vite `Some chunks are larger than 500 kB` là **performance warning, không phải lỗi build**.
-2. **Không được phép dùng `manualChunks` để tắt cảnh báo** mà không có bundle analyzer data làm căn cứ. Chia chunk sai có thể tăng số request, tạo dependency phức tạp và phá cache behavior.
-3. Khi nào được phép tối ưu bundle: Sau khi hệ thống ổn định và thực hiện đủ quy trình: `Bundle Analyzer → xác định top packages thực tế → lazy-load có căn cứ → đo Lighthouse before/after → quyết định`.
+### Section 20.3: Kỷ Luật Cache-Control 2 Tầng (Dual-Tier Cache Discipline)
+Nghiêm cấm dùng một chính sách Cache-Control cào bằng cho toàn bộ website. Bắt buộc phân chia chính xác 2 tầng:
+1. **Tầng Entrypoint (`index.html`, `/`)**:
+   - Header bắt buộc: `Cache-Control: public, max-age=0, must-revalidate` (hoặc `no-cache`).
+   - Mục đích: Đảm bảo khi người dùng mở tab mới hoặc bấm F5, trình duyệt/CDN Edge luôn revalidate và nhận ngay file `index.html` mang danh sách hash mới nhất của production.
+2. **Tầng Hashed Static Assets (`/assets/*`, `.js`, `.css`, `.woff2`)**:
+   - Header bắt buộc: `Cache-Control: public, max-age=31536000, immutable`.
+   - Mục đích: Vì tên file đã chứa content hash bất biến, tài nguyên này an toàn để cache vĩnh viễn trên Browser Cache và CDN Edge, tối ưu 100% tốc độ tải trang.
+
+### Section 20.4: Mô Hình Phục Hồi 3 Tầng (3-Tier Resilience Architecture)
+Hệ thống thiết lập chuỗi phòng thủ 3 tầng khép kín từ hạ tầng đến client runtime:
+
+```text
+[TẦNG 1: Edge/Server]
+  - File tĩnh tồn tại: 200 OK (Cache 1 năm)
+  - File tĩnh thiếu (stale chunk): 404 Not Found (Ngắt fallback)
+         │
+         ▼ (404 kích hoạt sự kiện mạng client)
+[TẦNG 2: Vite Preload Recovery (src/main.tsx)]
+  - Bắt sự kiện window 'vite:preloadError'
+  - Kiểm tra sessionStorage rate-limiter: Nếu chưa reload trong 15s -> window.location.reload()
+  - Nếu đã reload trong 15s (lỗi lặp lại do CDN hỏng) -> Chuyển quyền xử lý cho Tầng 3
+         │
+         ▼ (Khi lỗi kéo dài)
+[TẦNG 3: Error Boundary UI (src/App.tsx & src/main.tsx)]
+  - GlobalErrorBoundary / AppErrorBoundary bắt lỗi, dừng crash toàn trang
+  - Hiển thị UI thân thiện bằng Semantic Design Tokens kèm nút "Làm mới trang"
+```
+
+### Section 20.5: Quy Tắc Kiểm Toán Bằng Chứng Deployment (Empirical Evidence Protocol)
+Theo Điều khoản Article II, khi xảy ra sự cố tải chunk hoặc nghi ngờ version mismatch, **nghiêm cấm AI và Kỹ sư phán đoán mò là lỗi React Component**. Bắt buộc thực thi kiểm toán thực nghiệm bằng lệnh `curl -I`:
+1. `curl -I https://nextband.site/` $\rightarrow$ Xác minh `index.html` có `max-age=0` và trỏ đúng entrypoint script hiện tại.
+2. `curl -I https://nextband.site/assets/[chunk-loi].js` $\rightarrow$ Xác minh server trả về **404 Not Found** (nếu trả về `200 text/html` là vi phạm Section 20.2).
+3. `curl -I https://nextband.site/assets/[chunk-active].js` $\rightarrow$ Xác minh chunk đang hoạt động có header `max-age=31536000, immutable`.
 
 - **PASS/FAIL Condition**:
-  - **PASS**: Mọi `React.lazy()` import trong `App.tsx` đều được bọc bởi `lazyWithRetry()`. `AppErrorBoundary` có logic detect và self-reload khi gặp chunk error.
-  - **FAIL**: Tồn tại bất kỳ `React.lazy(() => import(...))` trực tiếp trong routing layer. Người dùng nhìn thấy màn hình lỗi sau khi deploy mới.
-  - **Verification Method**: Grep `src/App.tsx` tìm pattern `lazy\(` không đi kèm `lazyWithRetry`. Deploy mới → kiểm tra browser cache cũ → không thấy màn hình lỗi.
+  - **PASS**:
+    1. Cấu hình `vercel.json` có route chặn `/assets/*` trả 404 khi missing file.
+    2. Request tới asset không tồn tại trả về đúng mã HTTP 404 (không trả về HTML 200).
+    3. `src/main.tsx` có `vite:preloadError` listener với `sessionStorage` rate-limiter.
+    4. Mọi lazy component trong `src/App.tsx` bọc bởi `lazyWithRetry`.
+  - **FAIL**:
+    1. Tồn tại cấu hình wildcard rewrite `/(.*)` áp dụng lên `/assets/`.
+    2. Request tới chunk lỗi trả về `200 OK` chứa thẻ `<!DOCTYPE html>`.
+    3. Tự động reload vô hạn không có cờ chặn rate-limit.
+  - **Verification Method**:
+    - Chạy `curl -I https://nextband.site/assets/non_existent_test_chunk.js` $\rightarrow$ phải trả về `HTTP 404`.
+    - Kiểm tra `vercel.json`, `nextband/src/main.tsx`, `nextband/src/App.tsx`.
 
 ---
 
