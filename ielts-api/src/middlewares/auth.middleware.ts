@@ -39,7 +39,21 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
       userId = payload.sub;
       email = typeof payload.email === "string" ? payload.email : "";
       if (Array.isArray((payload as any).roles)) {
-        fallbackRoles = (payload as any).roles;
+        fallbackRoles.push(...(payload as any).roles);
+      }
+      const appMeta = (payload as any).app_metadata;
+      if (appMeta?.role && typeof appMeta.role === "string") {
+        fallbackRoles.push(appMeta.role);
+      }
+      if (Array.isArray(appMeta?.roles)) {
+        fallbackRoles.push(...appMeta.roles);
+      }
+      const userMeta = (payload as any).user_metadata;
+      if (userMeta?.role && typeof userMeta.role === "string") {
+        fallbackRoles.push(userMeta.role);
+      }
+      if (Array.isArray(userMeta?.roles)) {
+        fallbackRoles.push(...userMeta.roles);
       }
     }
   } catch (jwksErr) {
