@@ -147,7 +147,6 @@ export class AuthorizationService {
       where: {
         classId,
         studentId,
-        deletedAt: null,
       },
     });
     return !!record;
@@ -180,7 +179,6 @@ export class AuthorizationService {
     const classStudent = await this.prisma.classStudent.findFirst({
       where: {
         studentId,
-        deletedAt: null,
         class: {
           isActive: true,
           OR: [

@@ -73,6 +73,7 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
         where: {
           OR: [
             { userId: userId },
+            { id: userId },
             ...(email ? [{ email }] : []),
           ],
         },
@@ -80,7 +81,7 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
       });
 
       if (dbUser) {
-        canonicalUserId = dbUser.userId;
+        canonicalUserId = dbUser.userId || dbUser.id;
         authoritativeRoles = dbUser.roles.map((r: any) => r.role);
       }
     }
