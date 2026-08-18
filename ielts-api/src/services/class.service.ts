@@ -20,8 +20,8 @@ export class ClassService {
       courseTitle: m.class.course?.title ?? m.class.name,
       teacherName: m.class.teacher?.fullName ?? null,
       isActive: m.class.isActive,
-      membershipStatus: m.status,
-      joinedAt: m.joinedAt,
+      membershipStatus: "ACTIVE",
+      joinedAt: m.createdAt,
     }));
   }
 

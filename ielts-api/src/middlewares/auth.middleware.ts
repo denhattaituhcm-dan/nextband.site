@@ -63,7 +63,7 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
 
   if (!userId) return null;
 
-  // Load authoritative user & roles from MySQL
+  // Load authoritative user & roles from Supabase PostgreSQL via Prisma
   let canonicalUserId = userId;
   let authoritativeRoles: string[] = [];
   try {
@@ -72,7 +72,7 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
       const dbUser = await prisma.user.findFirst({
         where: {
           OR: [
-            { id: userId },
+            { userId: userId },
             ...(email ? [{ email }] : []),
           ],
         },
@@ -80,39 +80,12 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
       });
 
       if (dbUser) {
-        canonicalUserId = dbUser.id;
+        canonicalUserId = dbUser.userId;
         authoritativeRoles = dbUser.roles.map((r: any) => r.role);
-      } else if (userId && email) {
-        // Auto-provision user record in MySQL if newly registered in Supabase
-        try {
-          const newUser = await prisma.user.create({
-            data: {
-              id: userId,
-              email,
-              fullName: email.split("@")[0],
-              roles: {
-                create: { role: "student" },
-              },
-            },
-            include: { roles: true },
-          });
-          canonicalUserId = newUser.id;
-          authoritativeRoles = newUser.roles.map((r: any) => r.role);
-        } catch (createErr) {
-          // In case user was created concurrently
-          const existing = await prisma.user.findUnique({
-            where: { email },
-            include: { roles: true },
-          });
-          if (existing) {
-            canonicalUserId = existing.id;
-            authoritativeRoles = existing.roles.map((r: any) => r.role);
-          }
-        }
       }
     }
   } catch (dbErr) {
-    request.log.warn({ err: dbErr, userId, email }, "Failed to fetch user from MySQL, using fallback");
+    request.log.warn({ err: dbErr, userId, email }, "Failed to fetch user from PostgreSQL, using fallback");
   }
 
   const finalRoles = authoritativeRoles.length > 0

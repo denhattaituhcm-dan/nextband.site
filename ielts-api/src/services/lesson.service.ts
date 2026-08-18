@@ -75,7 +75,7 @@ export class LessonService {
 
     // 2. Fetch Course Lessons & Class Sessions
     const courseLessons = await this.prisma.lesson.findMany({
-      where: { courseId: classData.courseId, status: 'PUBLISHED' },
+      where: { courseId: classData.courseId || '', status: 'PUBLISHED' },
       orderBy: { lessonOrder: 'asc' },
       include: { resources: true }
     });
@@ -95,13 +95,14 @@ export class LessonService {
     const now = new Date();
     let completedLessonsCount = 0;
 
-    const lessonsProjection: StudentLessonItemDTO[] = courseLessons.map(lesson => {
+    const lessonsProjection: StudentLessonItemDTO[] = courseLessons.map((lesson: any) => {
       const session = classSessions.find(s => s.lessonId === lesson.id);
       const attendanceRecord = session?.attendance[0] || null;
       const homework = session?.homeworks[0] || null;
       const submission = homework?.submissions[0] || null;
 
-      const sessionCompleted = !!(session && new Date(session.sessionDate) <= now && (attendanceRecord?.status === 'PRESENT' || !attendanceRecord));
+      const sDate = session?.sessionDate || session?.plannedDate;
+      const sessionCompleted = !!(session && sDate && new Date(sDate) <= now && (attendanceRecord?.status === 'PRESENT' || !attendanceRecord));
       const homeworkSubmitted = !!(submission && (submission.status === 'SUBMITTED' || submission.status === 'GRADED'));
       const homeworkGraded = !!(submission && submission.status === 'GRADED');
       const lessonCompleted = sessionCompleted && (homework ? homeworkGraded : true);
@@ -117,7 +118,7 @@ export class LessonService {
         status: lesson.status,
         sessionDate: session?.sessionDate || null,
         sessionNumber: session?.sessionNumber || null,
-        resources: lesson.resources.map(r => ({
+        resources: (lesson.resources || []).map((r: any) => ({
           id: r.id,
           title: r.title,
           type: r.type,
@@ -178,7 +179,7 @@ export class LessonService {
 
     // 2. Calculate Course Progress (Published Lessons vs Completed Sessions)
     const courseLessons = await this.prisma.lesson.findMany({
-      where: { courseId: classData.courseId, status: 'PUBLISHED' },
+      where: { courseId: classData.courseId || '', status: 'PUBLISHED' },
       select: { id: true }
     });
     const totalPublishedLessons = courseLessons.length;
@@ -198,13 +199,14 @@ export class LessonService {
     const now = new Date();
     let completedLessonsCount = 0;
 
-    courseLessons.forEach(lesson => {
+    courseLessons.forEach((lesson: any) => {
       const session = classSessions.find(s => s.lessonId === lesson.id);
       const attendanceRecord = session?.attendance[0] || null;
       const homework = session?.homeworks[0] || null;
       const submission = homework?.submissions[0] || null;
 
-      const sessionCompleted = !!(session && new Date(session.sessionDate) <= now && (attendanceRecord?.status === 'PRESENT' || !attendanceRecord));
+      const sDate = session?.sessionDate || session?.plannedDate;
+      const sessionCompleted = !!(session && sDate && new Date(sDate) <= now && (attendanceRecord?.status === 'PRESENT' || !attendanceRecord));
       const homeworkGraded = !!(submission && submission.status === 'GRADED');
       const lessonCompleted = sessionCompleted && (homework ? homeworkGraded : true);
 

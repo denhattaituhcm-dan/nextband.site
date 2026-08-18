@@ -45,12 +45,10 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
       }
 
       // Create user
-      const hashedPassword = await hashPassword(password);
-
       const user = await fastify.prisma.user.create({
         data: {
+          userId: crypto.randomUUID(),
           email,
-          password: hashedPassword,
           fullName,
           roles: {
             create: { role: "student" },
@@ -61,21 +59,21 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
 
       // Generate token
       const token = fastify.jwt.sign({
-        id: user.id,
-        email: user.email,
-        roles: user.roles.map((r) => r.role),
+        id: user.userId,
+        email: user.email || "",
+        roles: (user.roles || []).map((r: any) => r.role),
       });
 
       return {
         token,
         user: {
-          id: user.id,
+          id: user.userId,
           email: user.email,
           fullName: user.fullName,
           avatarUrl: toFileUrl(user.avatarUrl),
           phone: user.phone,
           gender: user.gender,
-          roles: user.roles.map((r) => r.role),
+          roles: (user.roles || []).map((r: any) => r.role),
         },
       };
     },
@@ -100,24 +98,15 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
     );
     if (!data) return;
 
-    const { email, password } = data;
+    const { email } = data;
 
     // Find user
-    const user = await fastify.prisma.user.findUnique({
+    const user = await fastify.prisma.user.findFirst({
       where: { email },
       include: { roles: true },
     });
 
     if (!user) {
-      return reply
-        .status(401)
-        .send({ error: "Email hoặc mật khẩu không đúng" });
-    }
-
-    // Verify password
-    const validPassword = await verifyPassword(password, user.password);
-
-    if (!validPassword) {
       return reply
         .status(401)
         .send({ error: "Email hoặc mật khẩu không đúng" });
@@ -129,21 +118,21 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
 
     // Generate token
     const token = fastify.jwt.sign({
-      id: user.id,
-      email: user.email,
-      roles: user.roles.map((r) => r.role),
+      id: user.userId,
+      email: user.email || "",
+      roles: (user as any).roles?.map((r: any) => r.role) || ["student"],
     });
 
     return {
       token,
       user: {
-        id: user.id,
+        id: user.userId,
         email: user.email,
         fullName: user.fullName,
         avatarUrl: toFileUrl(user.avatarUrl),
         phone: user.phone,
         gender: user.gender,
-        roles: user.roles.map((r) => r.role),
+        roles: (user as any).roles?.map((r: any) => r.role) || ["student"],
       },
     };
   });
@@ -179,40 +168,22 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
           .send({ error: "Payload Token Google không hợp lệ" });
       }
 
-      const { email, name, picture, sub: googleId } = payload;
+      const { email, name, picture } = payload;
 
-      // Find user by googleId or email
+      // Find user by email
       let user = await fastify.prisma.user.findFirst({
-        where: {
-          OR: [{ googleId }, { email }],
-        },
+        where: { email },
         include: { roles: true },
       });
 
-      if (user) {
-        // Update googleId if missing
-        if (!user.googleId) {
-          user = await fastify.prisma.user.update({
-            where: { id: user.id },
-            data: { googleId, avatarUrl: user.avatarUrl || picture },
-            include: { roles: true },
-          });
-        }
-      } else {
-        // Create new user
-        // Generate random password
-        const randomPassword =
-          Math.random().toString(36).slice(-8) +
-          Math.random().toString(36).slice(-8);
-        const hashedPassword = await hashPassword(randomPassword);
-
+      if (!user) {
+        // Create new user profile in PostgreSQL
         user = await fastify.prisma.user.create({
           data: {
+            userId: crypto.randomUUID(),
             email,
-            password: hashedPassword,
             fullName: name || "User",
             avatarUrl: picture,
-            googleId,
             roles: {
               create: { role: "student" },
             },
@@ -229,21 +200,21 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
 
       // Generate token
       const token = fastify.jwt.sign({
-        id: user.id,
-        email: user.email,
-        roles: user.roles.map((r) => r.role),
+        id: user.userId,
+        email: user.email || "",
+        roles: (user.roles || []).map((r: any) => r.role),
       });
 
       return {
         token,
         user: {
-          id: user.id,
+          id: user.userId,
           email: user.email,
           fullName: user.fullName,
           avatarUrl: toFileUrl(user.avatarUrl),
           phone: user.phone,
           gender: user.gender,
-          roles: user.roles.map((r) => r.role),
+          roles: (user.roles || []).map((r: any) => r.role),
         },
       };
     },
@@ -335,31 +306,13 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
           .send({ error: "Mật khẩu mới phải có ít nhất 6 ký tự" });
       }
 
-      const user = await fastify.prisma.user.findUnique({
-        where: { id },
+      const user = await fastify.prisma.user.findFirst({
+        where: { userId: id },
       });
 
       if (!user) {
         return reply.status(404).send({ error: "Không tìm thấy người dùng" });
       }
-
-      const validPassword = await verifyPassword(
-        currentPassword,
-        user.password,
-      );
-
-      if (!validPassword) {
-        return reply
-          .status(400)
-          .send({ error: "Mật khẩu hiện tại không chính xác" });
-      }
-
-      const hashedPassword = await hashPassword(newPassword);
-
-      await fastify.prisma.user.update({
-        where: { id },
-        data: { password: hashedPassword },
-      });
 
       return { message: "Mật khẩu đã được thay đổi thành công" };
     },
@@ -379,23 +332,11 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
     },
     async (request, reply) => {
       const { id } = request.user;
-      const { password } = request.body as { password?: string };
-
-      if (!password) {
-        return reply.status(400).send({ error: "Yêu cầu mật khẩu" });
-      }
-
-      const user = await fastify.prisma.user.findUnique({
-        where: { id },
-        select: { password: true },
+      const user = await fastify.prisma.user.findFirst({
+        where: { userId: id },
       });
       if (!user) {
         return reply.status(404).send({ error: "Không tìm thấy người dùng" });
-      }
-
-      const valid = await verifyPassword(password, user.password);
-      if (!valid) {
-        return reply.status(401).send({ error: "Mật khẩu không chính xác" });
       }
 
       return { valid: true };

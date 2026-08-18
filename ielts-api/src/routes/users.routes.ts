@@ -385,12 +385,12 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
 
       let createdUserId: string | null = null;
       try {
-        // 2. Atomic Transaction: Create user and role mapping together
+        // 2. Atomic Transaction: Create user profile and role mapping together
         const user = await fastify.prisma.$transaction(async (tx) => {
           const newUser = await tx.user.create({
             data: {
+              userId: crypto.randomUUID(),
               email: email.trim().toLowerCase(),
-              password: hashedPassword,
               fullName,
               gender,
               dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined,
@@ -408,10 +408,10 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         });
 
         return reply.status(201).send({
-          id: user.id,
+          id: user.userId,
           email: user.email,
           fullName: user.fullName,
-          roles: user.roles.map((r) => r.role),
+          roles: user.roles?.map((r: any) => r.role) || [role],
           createdAt: user.createdAt,
         });
       } catch (err: any) {

@@ -326,8 +326,8 @@ export class HomeworkService {
 
       return {
         id: student.id,
-        fullName: student.fullName || student.email.split("@")[0],
-        email: student.email,
+        fullName: student.fullName || student.email?.split("@")[0] || "Học viên",
+        email: student.email || "",
         avatarUrl: student.avatarUrl || undefined,
         totalAssignedCount,
         submittedCount,

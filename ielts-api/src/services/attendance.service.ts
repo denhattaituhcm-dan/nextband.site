@@ -1,6 +1,14 @@
-import { PrismaClient, AttendanceStatus, ClassSessionStatus } from '@prisma/client';
+import { PrismaClient, AttendanceStatus } from '@prisma/client';
 import { ClassRepository } from '../repositories/class.repository.js';
 import { AuthorizationService, AuthorizationError, NotFoundError } from './authorization.service.js';
+
+export const ClassSessionStatus = {
+  SCHEDULED: 'SCHEDULED',
+  PLANNED: 'PLANNED',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
+} as const;
+export type ClassSessionStatus = (typeof ClassSessionStatus)[keyof typeof ClassSessionStatus];
 
 export interface MarkAttendanceItemDTO {
   studentId: string;
@@ -71,7 +79,7 @@ export class AttendanceService {
         className: classData.name,
         sessionId,
         sessionNumber: session.sessionNumber,
-        sessionTitle: session.title || session.lesson.title,
+        sessionTitle: session.title || session.lesson?.title || '',
         sessionDate: session.sessionDate,
         status: session.status,
         completedAt: session.completedAt,
@@ -128,7 +136,7 @@ export class AttendanceService {
       className: classData.name,
       sessionId,
       sessionNumber: session.sessionNumber,
-      sessionTitle: session.title || session.lesson.title,
+      sessionTitle: session.title || session.lesson?.title || '',
       sessionDate: session.sessionDate,
       status: session.status,
       completedAt: session.completedAt,
@@ -336,7 +344,7 @@ export class AttendanceService {
 
       const sessionRecords = sessions.map(s => {
         const att = studentAttendance.find(a => a.sessionId === s.id);
-        const sDate = new Date(s.sessionDate);
+        const sDate = s.sessionDate ? new Date(s.sessionDate) : (s.plannedDate ? new Date(s.plannedDate) : new Date());
         const isFuture = s.status === 'SCHEDULED' && sDate > today;
         const isOverdueUnmarked = s.status === 'SCHEDULED' && sDate <= today;
 

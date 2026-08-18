@@ -75,7 +75,7 @@ export class ClassRepository {
 
   async isStudentInClass(classId: string, studentId: string): Promise<boolean> {
     const cs = await this.prisma.classStudent.findFirst({
-      where: { classId, studentId, deletedAt: null },
+      where: { classId, studentId },
     });
     return !!cs;
   }
@@ -91,11 +91,8 @@ export class ClassRepository {
   }
 
   async removeStudent(classId: string, studentId: string) {
-    return this.prisma.classStudent.update({
-      where: {
-        classId_studentId: { classId, studentId },
-      },
-      data: { deletedAt: new Date() },
+    return this.prisma.classStudent.deleteMany({
+      where: { classId, studentId },
     });
   }
 
@@ -104,37 +101,9 @@ export class ClassRepository {
   }
 
   async getSchedule(classId: string) {
-    return this.prisma.classSchedule.findMany({
-      where: { classId, isActive: true },
-      orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }],
-    });
-  }
-
-  async updateSchedule(classId: string, schedules: Array<{ dayOfWeek: number; startTime: string; durationMinutes: number }>) {
-    return this.prisma.$transaction(async (tx) => {
-      await tx.classSchedule.deleteMany({ where: { classId } });
-      return tx.classSchedule.createMany({
-        data: schedules.map((s) => ({ ...s, classId })),
-      });
-    });
-  }
-
-  async getAttendanceMatrix(classId: string, startDate?: Date, endDate?: Date) {
-    const where: any = { session: { classId } };
-    if (startDate || endDate) {
-      where.session.sessionDate = {};
-      if (startDate) where.session.sessionDate.gte = startDate;
-      if (endDate) where.session.sessionDate.lte = endDate;
-    }
-    return this.prisma.classAttendance.findMany({
-      where,
-      orderBy: { createdAt: "asc" },
-      include: {
-        student: {
-          select: { id: true, fullName: true, email: true },
-        },
-        session: true,
-      },
+    return this.prisma.classSession.findMany({
+      where: { classId },
+      orderBy: [{ sessionNumber: "asc" }],
     });
   }
 
@@ -142,8 +111,6 @@ export class ClassRepository {
     return this.prisma.classStudent.findMany({
       where: {
         studentId,
-        status: "ACTIVE",
-        deletedAt: null,
       },
       include: {
         class: {
@@ -157,7 +124,7 @@ export class ClassRepository {
           },
         },
       },
-      orderBy: { joinedAt: "desc" },
+      orderBy: { createdAt: "desc" },
     });
   }
 

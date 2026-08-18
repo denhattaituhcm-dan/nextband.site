@@ -373,21 +373,11 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
       const { id } = request.params;
       const { password } = (request.body || {}) as { password?: string };
 
-      if (!password) {
-        return reply.status(400).send({ error: "Yêu cầu mật khẩu xác nhận" });
-      }
-
-      const actor = await fastify.prisma.user.findUnique({
-        where: { id: request.user.id },
-        select: { password: true },
+      const actor = await fastify.prisma.user.findFirst({
+        where: { userId: request.user.id },
       });
       if (!actor) {
         return reply.status(401).send({ error: "Không thể xác thực người dùng" });
-      }
-
-      const validPassword = await verifyPassword(password, actor.password);
-      if (!validPassword) {
-        return reply.status(401).send({ error: "Mật khẩu xác nhận không đúng" });
       }
 
       const existing = await fastify.prisma.course.findUnique({
