@@ -29,6 +29,15 @@ const envSchema = z
     TRUST_PROXY_IPS: z.string().optional(), // Comma-separated list of trusted proxy IPs/CIDRs
     SUPABASE_URL: z.string().default("https://gzpdlqxjggyxlkeatvvf.supabase.co"),
     SUPABASE_JWKS_URL: z.string().optional(),
+    NOTIFICATION_EMAIL_TO: z.string().default("arisieltsdeeplearning@gmail.com"),
+    SMTP_HOST: z.string().optional(),
+    SMTP_PORT: z.string().optional(),
+    SMTP_SECURE: z.string().optional(),
+    SMTP_USER: z.string().optional(),
+    SMTP_PASS: z.string().optional(),
+    SMTP_FROM: z.string().optional(),
+    TELEGRAM_BOT_TOKEN: z.string().optional(),
+    TELEGRAM_CHAT_ID: z.string().optional(),
   })
   .refine(
     (data) => {

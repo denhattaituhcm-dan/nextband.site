@@ -36,11 +36,13 @@
     "fastify-plugin": "^4.5.1",
     "google-auth-library": "^10.5.0",
     "jose": "^6.2.8",
+    "nodemailer": "^9.0.5",
     "prisma": "^5.19.1",
     "typescript": "^5.5.4",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/nodemailer": "^8.0.1",
     "pino-pretty": "^11.2.2",
     "tsx": "^4.19.0",
     "vitest": "^2.0.5"

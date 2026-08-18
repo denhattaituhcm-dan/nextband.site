@@ -642,3 +642,30 @@ model Notification {
   @@index([userId, createdAt], map: "notifications_user_id_created_at_idx")
   @@map("notifications")
 }
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  ENROLLED
+  CANCELLED
+  ARCHIVED
+}
+
+model ContactLead {
+  id         String     @id @default(uuid())
+  fullName   String     @map("full_name") @db.VarChar(255)
+  phone      String     @db.VarChar(50)
+  email      String?    @db.VarChar(255)
+  goal       String?    @db.Text
+  source     String     @default("contact_page") @db.VarChar(100)
+  status     LeadStatus @default(NEW)
+  assignedTo String?    @map("assigned_to") @db.VarChar(255)
+  notes      String?    @db.Text
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+
+  @@index([status], map: "contact_leads_status_idx")
+  @@index([createdAt], map: "contact_leads_created_at_idx")
+  @@map("contact_leads")
+}
+

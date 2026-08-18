@@ -19,6 +19,7 @@ import homeworkRoutes from "./homework.routes.js";
 import lessonRoutes from "./lesson.routes.js";
 import workspaceRoutes from "./workspace.routes.js";
 import notificationsRoutes from "./notifications.routes.js";
+import leadRoutes from "./lead.routes.js";
 
 const routes: FastifyPluginAsync = async (fastify) => {
   // Health check
@@ -49,6 +50,7 @@ const routes: FastifyPluginAsync = async (fastify) => {
   await fastify.register(homeworkRoutes, { prefix: "/homeworks" });
   await fastify.register(workspaceRoutes, { prefix: "/me" });
   await fastify.register(notificationsRoutes, { prefix: "/notifications" });
+  await fastify.register(leadRoutes, { prefix: "/leads" });
   await fastify.register(lessonRoutes);
 };
 
