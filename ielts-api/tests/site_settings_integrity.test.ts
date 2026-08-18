@@ -35,9 +35,9 @@ describe("SITE SETTINGS PERSISTENCE & RELIABILITY INTEGRITY TEST SUITE", () => {
 
     it("2.2. Backend routes must map and select zalo_link and completed_lessons_stat", () => {
       const content = readFileSync(backendRoutePath, "utf-8");
-      expect(content).toContain("zaloLink: \"zalo_link\"");
-      expect(content).toContain("`zalo_link` AS zaloLink");
-      expect(content).toContain("`completed_lessons_stat` AS completedLessonsStat");
+      expect(content).toContain('zaloLink: "zalo_link"');
+      expect(content).toContain('zalo_link AS "zaloLink"');
+      expect(content).toContain('completed_lessons_stat AS "completedLessonsStat"');
     });
   });
 

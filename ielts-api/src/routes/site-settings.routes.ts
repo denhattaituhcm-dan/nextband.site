@@ -44,10 +44,17 @@ const updateSiteSettingsSchema = z
   });
 
 async function ensureDefaultRow(fastify: any) {
-  await fastify.prisma.$executeRawUnsafe(
-    "INSERT INTO `site_settings` (`id`) VALUES (?) ON DUPLICATE KEY UPDATE `id` = `id`",
-    SETTINGS_ID,
-  );
+  try {
+    await fastify.prisma.$executeRawUnsafe(
+      "INSERT INTO site_settings (id) VALUES ('default') ON CONFLICT (id) DO NOTHING",
+    );
+  } catch {
+    try {
+      await fastify.prisma.$executeRawUnsafe(
+        "INSERT INTO `site_settings` (`id`) VALUES ('default') ON DUPLICATE KEY UPDATE `id` = `id`",
+      );
+    } catch {}
+  }
 }
 
 function normalizeRow(row: any) {
@@ -70,17 +77,33 @@ function normalizeRow(row: any) {
   };
 }
 
-const SELECT_SETTINGS_SQL =
+const SELECT_SETTINGS_PG_SQL =
+  'SELECT id, site_name AS "siteName", logo_url AS "logoUrl", zalo_link AS "zaloLink", completed_lessons_stat AS "completedLessonsStat", auth_tagline AS "authTagline", auth_feature_one_title AS "authFeatureOneTitle", auth_feature_one_description AS "authFeatureOneDescription", auth_feature_two_title AS "authFeatureTwoTitle", auth_feature_two_description AS "authFeatureTwoDescription", highlight_present AS "highlightPresent", highlight_absent AS "highlightAbsent", highlight_inactive AS "highlightInactive", slogan_text AS "sloganText", slogan_font_family AS "sloganFontFamily", slogan_font_weight AS "sloganFontWeight", slogan_desktop_size AS "sloganDesktopSize", slogan_mobile_size AS "sloganMobileSize", slogan_color AS "sloganColor", slogan_align AS "sloganAlign", slogan_line_height AS "sloganLineHeight", hero_description_text AS "heroDescriptionText", hero_description_font_family AS "heroDescriptionFontFamily", hero_description_font_weight AS "heroDescriptionFontWeight", hero_description_desktop_size AS "heroDescriptionDesktopSize", hero_description_mobile_size AS "heroDescriptionMobileSize", hero_description_color AS "heroDescriptionColor", hero_description_align AS "heroDescriptionAlign", hero_description_line_height AS "heroDescriptionLineHeight", updated_by AS "updatedBy", updated_at AS "updatedAt", created_at AS "createdAt" FROM site_settings WHERE id = $1 LIMIT 1';
+
+const SELECT_SETTINGS_MYSQL_SQL =
   "SELECT `id`, `site_name` AS siteName, `logo_url` AS logoUrl, `zalo_link` AS zaloLink, `completed_lessons_stat` AS completedLessonsStat, `auth_tagline` AS authTagline, `auth_feature_one_title` AS authFeatureOneTitle, `auth_feature_one_description` AS authFeatureOneDescription, `auth_feature_two_title` AS authFeatureTwoTitle, `auth_feature_two_description` AS authFeatureTwoDescription, `highlight_present` AS highlightPresent, `highlight_absent` AS highlightAbsent, `highlight_inactive` AS highlightInactive, `slogan_text` AS sloganText, `slogan_font_family` AS sloganFontFamily, `slogan_font_weight` AS sloganFontWeight, `slogan_desktop_size` AS sloganDesktopSize, `slogan_mobile_size` AS sloganMobileSize, `slogan_color` AS sloganColor, `slogan_align` AS sloganAlign, `slogan_line_height` AS sloganLineHeight, `hero_description_text` AS heroDescriptionText, `hero_description_font_family` AS heroDescriptionFontFamily, `hero_description_font_weight` AS heroDescriptionFontWeight, `hero_description_desktop_size` AS heroDescriptionDesktopSize, `hero_description_mobile_size` AS heroDescriptionMobileSize, `hero_description_color` AS heroDescriptionColor, `hero_description_align` AS heroDescriptionAlign, `hero_description_line_height` AS heroDescriptionLineHeight, `updated_by` AS updatedBy, `updated_at` AS updatedAt, `created_at` AS createdAt FROM `site_settings` WHERE `id` = ? LIMIT 1";
+
+async function fetchSettingsRow(fastify: any): Promise<any> {
+  try {
+    const rows = (await (fastify.prisma as any).$queryRawUnsafe(
+      SELECT_SETTINGS_PG_SQL,
+      SETTINGS_ID,
+    )) as any[];
+    return rows[0] || {};
+  } catch {
+    const rows = (await (fastify.prisma as any).$queryRawUnsafe(
+      SELECT_SETTINGS_MYSQL_SQL,
+      SETTINGS_ID,
+    )) as any[];
+    return rows[0] || {};
+  }
+}
 
 const siteSettingsRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.get("/", async () => {
     await ensureDefaultRow(fastify);
-    const rows = await fastify.prisma.$queryRawUnsafe<any[]>(
-      SELECT_SETTINGS_SQL,
-      SETTINGS_ID,
-    );
-    return normalizeRow(rows[0] || {});
+    const row = await fetchSettingsRow(fastify);
+    return normalizeRow(row);
   });
 
   fastify.put(
@@ -197,21 +220,32 @@ const siteSettingsRoutes: FastifyPluginAsync = async (fastify) => {
       };
 
       const entries = Object.entries(cleanData).filter(([key]) => columns[key]);
-      const setClause = entries.map(([key]) => `\`${columns[key]}\` = ?`).join(", ");
       const values = entries.map(([, value]) => value);
 
-      await fastify.prisma.$executeRawUnsafe(
-        `UPDATE \`site_settings\` SET ${setClause} WHERE \`id\` = ?`,
-        ...values,
-        SETTINGS_ID,
-      );
+      try {
+        // 1. Try PostgreSQL parameterized query ($1, $2, ...)
+        const pgSetClause = entries
+          .map(([key], index) => `"${columns[key]}" = $${index + 1}`)
+          .join(", ");
+        await fastify.prisma.$executeRawUnsafe(
+          `UPDATE site_settings SET ${pgSetClause} WHERE id = $${values.length + 1}`,
+          ...values,
+          SETTINGS_ID,
+        );
+      } catch {
+        // 2. Fallback to MySQL parameter binding (?, ?, ...)
+        const mySqlSetClause = entries
+          .map(([key]) => `\`${columns[key]}\` = ?`)
+          .join(", ");
+        await fastify.prisma.$executeRawUnsafe(
+          `UPDATE \`site_settings\` SET ${mySqlSetClause} WHERE \`id\` = ?`,
+          ...values,
+          SETTINGS_ID,
+        );
+      }
 
-      const rows = await fastify.prisma.$queryRawUnsafe<any[]>(
-        SELECT_SETTINGS_SQL,
-        SETTINGS_ID,
-      );
-
-      return normalizeRow(rows[0] || {});
+      const row = await fetchSettingsRow(fastify);
+      return normalizeRow(row);
     },
   );
 };
