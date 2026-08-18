@@ -2,7 +2,7 @@ import { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { authenticate, requireRoles } from "../middlewares/auth.middleware.js";
 
-const SETTINGS_ID = "default";
+const SETTINGS_KEY = "global";
 
 const updateSiteSettingsSchema = z
   .object({
@@ -43,93 +43,64 @@ const updateSiteSettingsSchema = z
     message: "Dữ liệu gửi lên chứa trường cài đặt không được hỗ trợ",
   });
 
-async function ensureDefaultRow(fastify: any) {
-  // Tự động kiểm tra và thêm cột nếu chưa có (Self-healing DB schema)
-  try {
-    await (fastify.prisma as any).$executeRawUnsafe(
-      "ALTER TABLE `site_settings` ADD COLUMN `zalo_link` VARCHAR(500) NULL DEFAULT 'https://zalo.me'",
-    ).catch(() => {});
-  } catch {}
-
-  try {
-    await (fastify.prisma as any).$executeRawUnsafe(
-      "ALTER TABLE `site_settings` ADD COLUMN `completed_lessons_stat` VARCHAR(50) NULL DEFAULT '5,000+'",
-    ).catch(() => {});
-  } catch {}
-
-  try {
-    await (fastify.prisma as any).$executeRawUnsafe(
-      "ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS zalo_link VARCHAR(500) DEFAULT 'https://zalo.me'",
-    ).catch(() => {});
-  } catch {}
-
-  try {
-    await (fastify.prisma as any).$executeRawUnsafe(
-      "ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS completed_lessons_stat VARCHAR(50) DEFAULT '5,000+'",
-    ).catch(() => {});
-  } catch {}
-
-  // Đảm bảo hàng mặc định 'default' luôn tồn tại
-  try {
-    await (fastify.prisma as any).$executeRawUnsafe(
-      "INSERT INTO `site_settings` (`id`) VALUES ('default') ON DUPLICATE KEY UPDATE `id` = `id`",
-    ).catch(() => {});
-  } catch {}
-
-  try {
-    await (fastify.prisma as any).$executeRawUnsafe(
-      "INSERT INTO site_settings (id) VALUES ('default') ON CONFLICT (id) DO NOTHING",
-    ).catch(() => {});
-  } catch {}
-}
-
-function normalizeRow(row: any) {
+function normalizeSettings(record: any) {
+  const val =
+    record && typeof record.value === "object" && record.value !== null
+      ? record.value
+      : record || {};
   return {
-    ...row,
-    siteName: row?.siteName || "NextBand",
-    logoUrl: row?.logoUrl || "",
-    zaloLink: row?.zaloLink || "https://zalo.me",
-    completedLessonsStat: row?.completedLessonsStat || "5,000+",
-    authTagline: row?.authTagline || "Nền tảng học IELTS hiện đại",
-    authFeatureOneTitle: row?.authFeatureOneTitle || "Khóa học chất lượng",
+    id: record?.id || "global",
+    siteName: val.siteName || "NextBand",
+    logoUrl: val.logoUrl || "",
+    zaloLink: val.zaloLink || "https://zalo.me",
+    completedLessonsStat: val.completedLessonsStat || "5,000+",
+    authTagline: val.authTagline || "Nền tảng học IELTS hiện đại",
+    authFeatureOneTitle: val.authFeatureOneTitle || "Khóa học chất lượng",
     authFeatureOneDescription:
-      row?.authFeatureOneDescription ||
+      val.authFeatureOneDescription ||
       "Hàng trăm bài học từ cơ bản đến nâng cao",
-    authFeatureTwoTitle: row?.authFeatureTwoTitle || "Giáo viên uy tín",
+    authFeatureTwoTitle: val.authFeatureTwoTitle || "Giáo viên uy tín",
     authFeatureTwoDescription:
-      row?.authFeatureTwoDescription || "Đội ngũ giáo viên giàu kinh nghiệm",
-    sloganLineHeight: Number(row?.sloganLineHeight ?? 1.2),
-    heroDescriptionLineHeight: Number(row?.heroDescriptionLineHeight ?? 1.6),
+      val.authFeatureTwoDescription || "Đội ngũ giáo viên giàu kinh nghiệm",
+    highlightPresent: val.highlightPresent || "#fff7a5",
+    highlightAbsent: val.highlightAbsent || "#ffd7d7",
+    highlightInactive: val.highlightInactive || "#e5e7eb",
+    sloganText: val.sloganText || "Khám phá khóa học IELTS",
+    sloganFontFamily: val.sloganFontFamily || "Be Vietnam Pro",
+    sloganFontWeight: val.sloganFontWeight || "bold",
+    sloganDesktopSize: Number(val.sloganDesktopSize ?? 56),
+    sloganMobileSize: Number(val.sloganMobileSize ?? 34),
+    sloganColor: val.sloganColor || "#0f172a",
+    sloganAlign: val.sloganAlign || "left",
+    sloganLineHeight: Number(val.sloganLineHeight ?? 1.2),
+    heroDescriptionText:
+      val.heroDescriptionText ||
+      "Nâng cao kỹ năng tiếng Anh của bạn với các khóa học được thiết kế bởi đội ngũ giáo viên giàu kinh nghiệm.",
+    heroDescriptionFontFamily: val.heroDescriptionFontFamily || "Be Vietnam Pro",
+    heroDescriptionFontWeight: val.heroDescriptionFontWeight || "regular",
+    heroDescriptionDesktopSize: Number(val.heroDescriptionDesktopSize ?? 30),
+    heroDescriptionMobileSize: Number(val.heroDescriptionMobileSize ?? 20),
+    heroDescriptionColor: val.heroDescriptionColor || "#64748b",
+    heroDescriptionAlign: val.heroDescriptionAlign || "left",
+    heroDescriptionLineHeight: Number(val.heroDescriptionLineHeight ?? 1.6),
+    updatedAt: record?.updatedAt || new Date().toISOString(),
   };
-}
-
-const SELECT_SETTINGS_PG_SQL =
-  'SELECT id, site_name AS "siteName", logo_url AS "logoUrl", zalo_link AS "zaloLink", completed_lessons_stat AS "completedLessonsStat", auth_tagline AS "authTagline", auth_feature_one_title AS "authFeatureOneTitle", auth_feature_one_description AS "authFeatureOneDescription", auth_feature_two_title AS "authFeatureTwoTitle", auth_feature_two_description AS "authFeatureTwoDescription", highlight_present AS "highlightPresent", highlight_absent AS "highlightAbsent", highlight_inactive AS "highlightInactive", slogan_text AS "sloganText", slogan_font_family AS "sloganFontFamily", slogan_font_weight AS "sloganFontWeight", slogan_desktop_size AS "sloganDesktopSize", slogan_mobile_size AS "sloganMobileSize", slogan_color AS "sloganColor", slogan_align AS "sloganAlign", slogan_line_height AS "sloganLineHeight", hero_description_text AS "heroDescriptionText", hero_description_font_family AS "heroDescriptionFontFamily", hero_description_font_weight AS "heroDescriptionFontWeight", hero_description_desktop_size AS "heroDescriptionDesktopSize", hero_description_mobile_size AS "heroDescriptionMobileSize", hero_description_color AS "heroDescriptionColor", hero_description_align AS "heroDescriptionAlign", hero_description_line_height AS "heroDescriptionLineHeight", updated_by AS "updatedBy", updated_at AS "updatedAt", created_at AS "createdAt" FROM site_settings WHERE id = $1 LIMIT 1';
-
-const SELECT_SETTINGS_MYSQL_SQL =
-  "SELECT `id`, `site_name` AS siteName, `logo_url` AS logoUrl, `zalo_link` AS zaloLink, `completed_lessons_stat` AS completedLessonsStat, `auth_tagline` AS authTagline, `auth_feature_one_title` AS authFeatureOneTitle, `auth_feature_one_description` AS authFeatureOneDescription, `auth_feature_two_title` AS authFeatureTwoTitle, `auth_feature_two_description` AS authFeatureTwoDescription, `highlight_present` AS highlightPresent, `highlight_absent` AS highlightAbsent, `highlight_inactive` AS highlightInactive, `slogan_text` AS sloganText, `slogan_font_family` AS sloganFontFamily, `slogan_font_weight` AS sloganFontWeight, `slogan_desktop_size` AS sloganDesktopSize, `slogan_mobile_size` AS sloganMobileSize, `slogan_color` AS sloganColor, `slogan_align` AS sloganAlign, `slogan_line_height` AS sloganLineHeight, `hero_description_text` AS heroDescriptionText, `hero_description_font_family` AS heroDescriptionFontFamily, `hero_description_font_weight` AS heroDescriptionFontWeight, `hero_description_desktop_size` AS heroDescriptionDesktopSize, `hero_description_mobile_size` AS heroDescriptionMobileSize, `hero_description_color` AS heroDescriptionColor, `hero_description_align` AS heroDescriptionAlign, `hero_description_line_height` AS heroDescriptionLineHeight, `updated_by` AS updatedBy, `updated_at` AS updatedAt, `created_at` AS createdAt FROM `site_settings` WHERE `id` = ? LIMIT 1";
-
-async function fetchSettingsRow(fastify: any): Promise<any> {
-  try {
-    const rows = (await (fastify.prisma as any).$queryRawUnsafe(
-      SELECT_SETTINGS_PG_SQL,
-      SETTINGS_ID,
-    )) as any[];
-    return rows[0] || {};
-  } catch {
-    const rows = (await (fastify.prisma as any).$queryRawUnsafe(
-      SELECT_SETTINGS_MYSQL_SQL,
-      SETTINGS_ID,
-    )) as any[];
-    return rows[0] || {};
-  }
 }
 
 const siteSettingsRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.get("/", async () => {
-    await ensureDefaultRow(fastify);
-    const row = await fetchSettingsRow(fastify);
-    return normalizeRow(row);
+    let setting = await fastify.prisma.siteSettings.findFirst({
+      where: { key: SETTINGS_KEY },
+    });
+    if (!setting) {
+      setting = await fastify.prisma.siteSettings.create({
+        data: {
+          key: SETTINGS_KEY,
+          value: normalizeSettings({}),
+        },
+      });
+    }
+    return normalizeSettings(setting);
   });
 
   fastify.put(
@@ -155,123 +126,32 @@ const siteSettingsRoutes: FastifyPluginAsync = async (fastify) => {
       }
 
       const body = parseResult.data;
-      const user = request.user;
+      let current = await fastify.prisma.siteSettings.findFirst({
+        where: { key: SETTINGS_KEY },
+      });
 
-      const str = (v: unknown, max: number) =>
-        typeof v === "string" ? v.trim().slice(0, max) : undefined;
-      const int = (v: unknown, min: number, max: number) => {
-        if (typeof v !== "number" || !Number.isFinite(v)) return undefined;
-        return Math.min(max, Math.max(min, Math.round(v)));
-      };
-      const float = (v: unknown, min: number, max: number) => {
-        if (typeof v !== "number" || !Number.isFinite(v)) return undefined;
-        const clamped = Math.min(max, Math.max(min, v));
-        return Number(clamped.toFixed(2));
-      };
+      const currentValue =
+        current && typeof current.value === "object" && current.value !== null
+          ? (current.value as Record<string, unknown>)
+          : {};
 
-      const data: Record<string, unknown> = {
-        siteName: str(body.siteName, 255),
-        logoUrl: str(body.logoUrl, 5000) || (body.logoUrl === null ? null : undefined),
-        zaloLink: str(body.zaloLink, 500) || (body.zaloLink === null ? null : undefined),
-        completedLessonsStat:
-          str(body.completedLessonsStat, 50) ||
-          (body.completedLessonsStat === null ? null : undefined),
-        authTagline: str(body.authTagline, 120),
-        authFeatureOneTitle: str(body.authFeatureOneTitle, 120),
-        authFeatureOneDescription: str(body.authFeatureOneDescription, 160),
-        authFeatureTwoTitle: str(body.authFeatureTwoTitle, 120),
-        authFeatureTwoDescription: str(body.authFeatureTwoDescription, 160),
-        highlightPresent: str(body.highlightPresent, 20),
-        highlightAbsent: str(body.highlightAbsent, 20),
-        highlightInactive: str(body.highlightInactive, 20),
-        sloganText: str(body.sloganText, 100),
-        sloganFontFamily: str(body.sloganFontFamily, 191),
-        sloganFontWeight: str(body.sloganFontWeight, 20),
-        sloganDesktopSize: int(body.sloganDesktopSize, 20, 96),
-        sloganMobileSize: int(body.sloganMobileSize, 14, 72),
-        sloganColor: str(body.sloganColor, 20),
-        sloganAlign: str(body.sloganAlign, 20),
-        sloganLineHeight: float(body.sloganLineHeight, 1, 2),
-        heroDescriptionText: str(body.heroDescriptionText, 300),
-        heroDescriptionFontFamily: str(body.heroDescriptionFontFamily, 191),
-        heroDescriptionFontWeight: str(body.heroDescriptionFontWeight, 20),
-        heroDescriptionDesktopSize: int(body.heroDescriptionDesktopSize, 14, 56),
-        heroDescriptionMobileSize: int(body.heroDescriptionMobileSize, 12, 40),
-        heroDescriptionColor: str(body.heroDescriptionColor, 20),
-        heroDescriptionAlign: str(body.heroDescriptionAlign, 20),
-        heroDescriptionLineHeight: float(body.heroDescriptionLineHeight, 1, 2.2),
-        updatedBy: user.id,
+      const newValue = {
+        ...currentValue,
+        ...Object.fromEntries(
+          Object.entries(body).filter(([, val]) => val !== undefined),
+        ),
       };
 
-      const cleanData = Object.fromEntries(
-        Object.entries(data).filter(([, value]) => value !== undefined),
-      );
+      const updated = current
+        ? await fastify.prisma.siteSettings.update({
+            where: { id: current.id },
+            data: { value: newValue as any },
+          })
+        : await fastify.prisma.siteSettings.create({
+            data: { key: SETTINGS_KEY, value: newValue as any },
+          });
 
-      if (Object.keys(cleanData).length === 0) {
-        return reply.status(400).send({ error: "Không có dữ liệu hợp lệ để cập nhật" });
-      }
-
-      await ensureDefaultRow(fastify);
-
-      const columns: Record<string, string> = {
-        siteName: "site_name",
-        logoUrl: "logo_url",
-        zaloLink: "zalo_link",
-        completedLessonsStat: "completed_lessons_stat",
-        authTagline: "auth_tagline",
-        authFeatureOneTitle: "auth_feature_one_title",
-        authFeatureOneDescription: "auth_feature_one_description",
-        authFeatureTwoTitle: "auth_feature_two_title",
-        authFeatureTwoDescription: "auth_feature_two_description",
-        highlightPresent: "highlight_present",
-        highlightAbsent: "highlight_absent",
-        highlightInactive: "highlight_inactive",
-        sloganText: "slogan_text",
-        sloganFontFamily: "slogan_font_family",
-        sloganFontWeight: "slogan_font_weight",
-        sloganDesktopSize: "slogan_desktop_size",
-        sloganMobileSize: "slogan_mobile_size",
-        sloganColor: "slogan_color",
-        sloganAlign: "slogan_align",
-        sloganLineHeight: "slogan_line_height",
-        heroDescriptionText: "hero_description_text",
-        heroDescriptionFontFamily: "hero_description_font_family",
-        heroDescriptionFontWeight: "hero_description_font_weight",
-        heroDescriptionDesktopSize: "hero_description_desktop_size",
-        heroDescriptionMobileSize: "hero_description_mobile_size",
-        heroDescriptionColor: "hero_description_color",
-        heroDescriptionAlign: "hero_description_align",
-        heroDescriptionLineHeight: "hero_description_line_height",
-        updatedBy: "updated_by",
-      };
-
-      const entries = Object.entries(cleanData).filter(([key]) => columns[key]);
-      const values = entries.map(([, value]) => value);
-
-      try {
-        // 1. Try PostgreSQL parameterized query ($1, $2, ...)
-        const pgSetClause = entries
-          .map(([key], index) => `"${columns[key]}" = $${index + 1}`)
-          .join(", ");
-        await fastify.prisma.$executeRawUnsafe(
-          `UPDATE site_settings SET ${pgSetClause} WHERE id = $${values.length + 1}`,
-          ...values,
-          SETTINGS_ID,
-        );
-      } catch {
-        // 2. Fallback to MySQL parameter binding (?, ?, ...)
-        const mySqlSetClause = entries
-          .map(([key]) => `\`${columns[key]}\` = ?`)
-          .join(", ");
-        await fastify.prisma.$executeRawUnsafe(
-          `UPDATE \`site_settings\` SET ${mySqlSetClause} WHERE \`id\` = ?`,
-          ...values,
-          SETTINGS_ID,
-        );
-      }
-
-      const row = await fetchSettingsRow(fastify);
-      return normalizeRow(row);
+      return normalizeSettings(updated);
     },
   );
 };
