@@ -100,13 +100,6 @@ export class ClassRepository {
     return this.removeStudent(classId, studentId);
   }
 
-  async getSchedule(classId: string) {
-    return this.prisma.classSession.findMany({
-      where: { classId },
-      orderBy: [{ sessionNumber: "asc" }],
-    });
-  }
-
   async getClassesForStudent(studentId: string) {
     return this.prisma.classStudent.findMany({
       where: {

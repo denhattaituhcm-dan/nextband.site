@@ -38,12 +38,6 @@ export class HomeworkRepository {
     return this.prisma.homework.create({ data });
   }
 
-  async findSubmission(homeworkId: string, studentId: string) {
-    return this.prisma.submission.findUnique({
-      where: { homeworkId_studentId: { homeworkId, studentId } }
-    });
-  }
-
   async upsertSubmission(data: {
     homeworkId: string;
     studentId: string;
