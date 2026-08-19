@@ -7,7 +7,7 @@ import {
   CreateCourseInput,
   UpdateCourseInput,
 } from "../schemas/course.schema.js";
-import { authenticate, requireRoles } from "../middlewares/auth.middleware.js";
+import { authenticate, optionalAuthenticate, requireRoles } from "../middlewares/auth.middleware.js";
 import { handleValidation } from "../utils/validation.js";
 import { toFileUrl, withFileUrls } from "../utils/file.js";
 import { verifyPassword } from "../utils/password.js";
@@ -39,8 +39,8 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
     }
   };
 
-  // GET /courses - List all courses (public)
-  fastify.get("/", async (request, reply) => {
+  // GET /courses - List all courses (public with optional auth)
+  fastify.get("/", { preHandler: optionalAuthenticate }, async (request, reply) => {
     const query = paginationSchema.safeParse(request.query);
 
     if (!query.success) {
@@ -52,40 +52,24 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
     const { level } = request.query as any;
 
     const where: any = {};
-
-    let currentUser: any = null;
-    const authHeader = request.headers.authorization;
-    if (authHeader) {
-      try {
-        await request.jwtVerify();
-        currentUser = request.user;
-      } catch (err) {
-        // Token invalid/expired, treat as guest
-      }
-    }
+    const currentUser = (request as any).user;
 
     // Role-based visibility
     if (!currentUser) {
-      // Guest: force empty result by returning early
-      return {
-        data: [],
-        meta: {
-          total: 0,
-          page,
-          limit,
-          totalPages: 0,
-        },
-      };
+      // Guest: show published and active courses
+      where.isPublished = true;
+      where.isActive = true;
     } else {
       const hasAdminOrTeacherRole = currentUser.roles?.some((r: string) =>
         ["admin", "teacher"].includes(r),
       );
 
       if (!hasAdminOrTeacherRole) {
-        // Student: only show enrolled courses
-        where.enrollments = { some: { studentId: currentUser.id } };
-        where.isPublished = true;
-        where.isActive = true;
+        // Student: show published active courses or courses student is enrolled in
+        where.OR = [
+          { enrollments: { some: { studentId: currentUser.id } } },
+          { isPublished: true, isActive: true },
+        ];
       } else {
         // Admin/Teacher: hide soft-deleted courses by default
         where.isActive = true;
@@ -141,79 +125,60 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
   });
 
   // GET /courses/:id - Get course by ID
-  fastify.get<{ Params: { id: string } }>("/:id", async (request, reply) => {
-    const { id } = request.params;
+  fastify.get<{ Params: { id: string } }>(
+    "/:id",
+    { preHandler: optionalAuthenticate },
+    async (request, reply) => {
+      const { id } = request.params;
+      const currentUser = (request as any).user;
 
-    let currentUser: any = null;
-    const authHeader = request.headers.authorization;
-    if (authHeader) {
-      try {
-        await request.jwtVerify();
-        currentUser = request.user;
-      } catch (err) {
-        // Token invalid/expired, treat as guest
-      }
-    }
-
-    const course = await fastify.prisma.course.findUnique({
-      where: { id },
-      include: {
-        creator: {
-          select: { id: true, fullName: true, avatarUrl: true },
+      const course = await fastify.prisma.course.findUnique({
+        where: { id },
+        include: {
+          creator: {
+            select: { id: true, fullName: true, avatarUrl: true },
+          },
+          exams: {
+            where: { isActive: true },
+            orderBy: { week: "asc" },
+          },
         },
-        exams: {
-          where: { isActive: true },
-          orderBy: { week: "asc" },
-        },
-      },
-    });
+      });
 
-    if (!course) {
-      return reply.status(404).send({ error: "Không tìm thấy khóa học" });
-    }
-
-    if (!currentUser) {
-      return reply.status(404).send({ error: "Không tìm thấy khóa học" });
-    }
-
-    const hasAdminOrTeacherRole = currentUser.roles?.some((r: string) =>
-      ["admin", "teacher"].includes(r),
-    );
-
-    if (!hasAdminOrTeacherRole) {
-      if (!course.isActive || !course.isPublished) {
+      if (!course) {
         return reply.status(404).send({ error: "Không tìm thấy khóa học" });
       }
-    }
 
-    return {
-      ...course,
-      thumbnailUrl: toFileUrl(course.thumbnailUrl),
-      teacher: course.creator
-        ? {
-            ...course.creator,
-            avatarUrl: toFileUrl(course.creator.avatarUrl),
-          }
-        : null,
-    };
-  });
+      const hasAdminOrTeacherRole = currentUser?.roles?.some((r: string) =>
+        ["admin", "teacher"].includes(r),
+      );
+
+      if (!hasAdminOrTeacherRole) {
+        if (!course.isActive || !course.isPublished) {
+          return reply.status(404).send({ error: "Không tìm thấy khóa học" });
+        }
+      }
+
+      return {
+        ...course,
+        thumbnailUrl: toFileUrl(course.thumbnailUrl),
+        teacher: course.creator
+          ? {
+              ...course.creator,
+              avatarUrl: toFileUrl(course.creator.avatarUrl),
+            }
+          : null,
+      };
+    },
+  );
 
   // GET /courses/slug/:slug - Get course by slug
   fastify.get<{ Params: { slug: string } }>(
     "/slug/:slug",
+    { preHandler: optionalAuthenticate },
     async (request, reply) => {
       const { slug } = request.params;
-
-      let currentUser: any = null;
-      const authHeader = request.headers.authorization;
-      if (authHeader) {
-        try {
-          await request.jwtVerify();
-          currentUser = request.user;
-        } catch (err) {
-          // Token invalid/expired, treat as guest
-        }
-      }
+      const currentUser = (request as any).user;
 
       const course = await fastify.prisma.course.findUnique({
         where: { slug },
@@ -232,11 +197,7 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
         return reply.status(404).send({ error: "Course not found" });
       }
 
-      if (!currentUser) {
-        return reply.status(404).send({ error: "Course not found" });
-      }
-
-      const hasAdminOrTeacherRole = currentUser.roles?.some((r: string) =>
+      const hasAdminOrTeacherRole = currentUser?.roles?.some((r: string) =>
         ["admin", "teacher"].includes(r),
       );
 

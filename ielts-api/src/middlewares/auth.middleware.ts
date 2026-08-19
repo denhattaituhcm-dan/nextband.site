@@ -129,6 +129,32 @@ export async function authenticate(
   }
 }
 
+export async function optionalAuthenticate(
+  request: FastifyRequest,
+  reply: FastifyReply,
+) {
+  const authHeader = request.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    request.user = null as any;
+    return;
+  }
+
+  const token = authHeader.slice(7).trim();
+  if (!token) {
+    return reply
+      .status(401)
+      .send({ error: "Unauthorized", message: "Invalid or expired token" });
+  }
+
+  const user = await verifyAndResolveUser(request);
+  if (!user) {
+    return reply
+      .status(401)
+      .send({ error: "Unauthorized", message: "Invalid or expired token" });
+  }
+  request.user = user;
+}
+
 export function requireRoles(...roles: string[]) {
   return async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.user || (await verifyAndResolveUser(request));

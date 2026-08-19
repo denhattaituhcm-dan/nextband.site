@@ -222,4 +222,143 @@ export class AuthorizationService {
 
     return targetFilePath;
   }
+
+  /**
+   * Authoring IDOR Protection: Xác thực quyền soạn thảo Đề thi (Admin hoặc Giáo viên phụ trách Khóa học).
+   */
+  async requireExamAuthoringAccess(
+    examId: string,
+    userId: string,
+    userRoles: string[] = [],
+  ) {
+    if (userRoles.includes("admin")) return true;
+    if (!userRoles.includes("teacher")) {
+      throw new AuthorizationError("Chỉ giáo viên hoặc admin có quyền chỉnh sửa", 403);
+    }
+
+    const exam = await this.prisma.exam.findUnique({
+      where: { id: examId },
+      include: { course: { select: { teacherId: true } } },
+    });
+
+    if (!exam) {
+      throw new NotFoundError("Bài thi không tồn tại.");
+    }
+
+    if (exam.course?.teacherId && exam.course.teacherId !== userId) {
+      throw new AuthorizationError(
+        "Từ chối quyền: Bạn không phụ trách khóa học chứa đề thi này.",
+        403,
+      );
+    }
+    return exam;
+  }
+
+  /**
+   * Authoring IDOR Protection: Xác thực quyền soạn thảo Phần thi (Section).
+   */
+  async requireSectionAuthoringAccess(
+    sectionId: string,
+    userId: string,
+    userRoles: string[] = [],
+  ) {
+    if (userRoles.includes("admin")) return true;
+    if (!userRoles.includes("teacher")) {
+      throw new AuthorizationError("Chỉ giáo viên hoặc admin có quyền chỉnh sửa", 403);
+    }
+
+    const section = await this.prisma.examSection.findUnique({
+      where: { id: sectionId },
+      include: { exam: { include: { course: { select: { teacherId: true } } } } },
+    });
+
+    if (!section) {
+      throw new NotFoundError("Phần thi không tồn tại.");
+    }
+
+    const teacherId = section.exam?.course?.teacherId;
+    if (teacherId && teacherId !== userId) {
+      throw new AuthorizationError(
+        "Từ chối quyền: Bạn không phụ trách khóa học chứa phần thi này.",
+        403,
+      );
+    }
+    return section;
+  }
+
+  /**
+   * Authoring IDOR Protection: Xác thực quyền soạn thảo Nhóm câu hỏi (QuestionGroup).
+   */
+  async requireQuestionGroupAuthoringAccess(
+    groupId: string,
+    userId: string,
+    userRoles: string[] = [],
+  ) {
+    if (userRoles.includes("admin")) return true;
+    if (!userRoles.includes("teacher")) {
+      throw new AuthorizationError("Chỉ giáo viên hoặc admin có quyền chỉnh sửa", 403);
+    }
+
+    const group = await this.prisma.questionGroup.findUnique({
+      where: { id: groupId },
+      include: {
+        section: {
+          include: { exam: { include: { course: { select: { teacherId: true } } } } },
+        },
+      },
+    });
+
+    if (!group) {
+      throw new NotFoundError("Nhóm câu hỏi không tồn tại.");
+    }
+
+    const teacherId = group.section?.exam?.course?.teacherId;
+    if (teacherId && teacherId !== userId) {
+      throw new AuthorizationError(
+        "Từ chối quyền: Bạn không phụ trách khóa học chứa nhóm câu hỏi này.",
+        403,
+      );
+    }
+    return group;
+  }
+
+  /**
+   * Authoring IDOR Protection: Xác thực quyền soạn thảo Câu hỏi (Question).
+   */
+  async requireQuestionAuthoringAccess(
+    questionId: string,
+    userId: string,
+    userRoles: string[] = [],
+  ) {
+    if (userRoles.includes("admin")) return true;
+    if (!userRoles.includes("teacher")) {
+      throw new AuthorizationError("Chỉ giáo viên hoặc admin có quyền chỉnh sửa", 403);
+    }
+
+    const question = await this.prisma.question.findUnique({
+      where: { id: questionId },
+      include: {
+        group: {
+          include: {
+            section: {
+              include: { exam: { include: { course: { select: { teacherId: true } } } } },
+            },
+          },
+        },
+      },
+    });
+
+    if (!question) {
+      throw new NotFoundError("Câu hỏi không tồn tại.");
+    }
+
+    const teacherId = question.group?.section?.exam?.course?.teacherId;
+    if (teacherId && teacherId !== userId) {
+      throw new AuthorizationError(
+        "Từ chối quyền: Bạn không phụ trách khóa học chứa câu hỏi này.",
+        403,
+      );
+    }
+    return question;
+  }
 }

@@ -45,7 +45,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           fastify.prisma,
           user.id,
         );
-        where.id = { in: teacherStudentIds };
+        where.userId = { in: teacherStudentIds };
       }
 
       if (search) {
@@ -279,9 +279,10 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
       const { id } = request.params;
 
       const user = await fastify.prisma.user.findUnique({
-        where: { id },
+        where: { userId: id },
         select: {
           id: true,
+          userId: true,
           email: true,
           fullName: true,
           avatarUrl: true,
@@ -321,6 +322,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
 
       const userWithRoles = {
         ...user,
+        id: user.userId,
         roles: user.roles.map((r) => r.role),
       };
 
@@ -424,7 +426,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
       } = request.body as any;
 
       const user = await fastify.prisma.user.update({
-        where: { id },
+        where: { userId: id },
         data: {
           ...(fullName !== undefined && { fullName }),
           ...(isActive !== undefined && { isActive }),
@@ -442,15 +444,15 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
       // Update role if provided
       if (role) {
         await fastify.prisma.userRole.deleteMany({
-          where: { userId: id },
+          where: { userId: user.id },
         });
         await fastify.prisma.userRole.create({
-          data: { userId: id, role },
+          data: { userId: user.id, role },
         });
       }
 
       return {
-        id: user.id,
+        id: user.userId,
         email: user.email,
         fullName: user.fullName,
         isActive: user.isActive,
@@ -465,7 +467,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
     { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
       const { id } = request.params;
-      await fastify.prisma.user.delete({ where: { id } });
+      await fastify.prisma.user.delete({ where: { userId: id } });
       return { success: true };
     },
   );

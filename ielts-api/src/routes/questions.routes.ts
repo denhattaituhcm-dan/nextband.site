@@ -2,6 +2,7 @@ import { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { authenticate, requireRoles } from "../middlewares/auth.middleware.js";
 import { handleValidation } from "../utils/validation.js";
+import { AuthorizationService } from "../services/authorization.service.js";
 
 const questionTypeEnum = z.enum(
   [
@@ -233,6 +234,20 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
       );
       if (!data) return;
 
+      const authService = new AuthorizationService(fastify.prisma);
+      try {
+        await authService.requireSectionAuthoringAccess(
+          data.sectionId,
+          request.user.id,
+          request.user.roles,
+        );
+      } catch (err: any) {
+        if (err.statusCode) {
+          return reply.status(err.statusCode).send({ error: err.message });
+        }
+        throw err;
+      }
+
       if (await isExamArchivedBySectionId(data.sectionId)) {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",
@@ -260,6 +275,20 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
         reply,
       );
       if (!data) return;
+
+      const authService = new AuthorizationService(fastify.prisma);
+      try {
+        await authService.requireQuestionGroupAuthoringAccess(
+          id,
+          request.user.id,
+          request.user.roles,
+        );
+      } catch (err: any) {
+        if (err.statusCode) {
+          return reply.status(err.statusCode).send({ error: err.message });
+        }
+        throw err;
+      }
 
       if (await isExamArchivedByGroupId(id)) {
         return reply.status(409).send({
@@ -309,6 +338,20 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
         reply,
       );
       if (!data) return;
+
+      const authService = new AuthorizationService(fastify.prisma);
+      try {
+        await authService.requireQuestionGroupAuthoringAccess(
+          data.groupId,
+          request.user.id,
+          request.user.roles,
+        );
+      } catch (err: any) {
+        if (err.statusCode) {
+          return reply.status(err.statusCode).send({ error: err.message });
+        }
+        throw err;
+      }
 
       if (await isExamArchivedByGroupId(data.groupId)) {
         return reply.status(409).send({
@@ -384,6 +427,20 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
         reply,
       );
       if (!data) return;
+
+      const authService = new AuthorizationService(fastify.prisma);
+      try {
+        await authService.requireQuestionAuthoringAccess(
+          id,
+          request.user.id,
+          request.user.roles,
+        );
+      } catch (err: any) {
+        if (err.statusCode) {
+          return reply.status(err.statusCode).send({ error: err.message });
+        }
+        throw err;
+      }
 
       if (await isExamArchivedByQuestionId(id)) {
         return reply.status(409).send({
@@ -478,6 +535,20 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
         return reply
           .status(400)
           .send({ error: "Yêu cầu mảng questions và groupId" });
+      }
+
+      const authService = new AuthorizationService(fastify.prisma);
+      try {
+        await authService.requireQuestionGroupAuthoringAccess(
+          groupId,
+          request.user.id,
+          request.user.roles,
+        );
+      } catch (err: any) {
+        if (err.statusCode) {
+          return reply.status(err.statusCode).send({ error: err.message });
+        }
+        throw err;
       }
 
       if (await isExamArchivedByGroupId(groupId)) {

@@ -156,6 +156,20 @@ const sectionsRoutes: FastifyPluginAsync = async (fastify) => {
       );
       if (!data) return;
 
+      const authService = new AuthorizationService(fastify.prisma);
+      try {
+        await authService.requireSectionAuthoringAccess(
+          id,
+          request.user.id,
+          request.user.roles,
+        );
+      } catch (err: any) {
+        if (err.statusCode) {
+          return reply.status(err.statusCode).send({ error: err.message });
+        }
+        throw err;
+      }
+
       const existing = await fastify.prisma.examSection.findUnique({
         where: { id },
         include: { exam: { select: { isActive: true, isLocked: true } } },

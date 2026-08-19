@@ -280,6 +280,20 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
       if (!data) return;
       const { isLocked: _ignoredIsLocked, ...safeData } = data as any;
 
+      const authService = new AuthorizationService(fastify.prisma);
+      try {
+        await authService.requireExamAuthoringAccess(
+          id,
+          request.user.id,
+          request.user.roles,
+        );
+      } catch (err: any) {
+        if (err.statusCode) {
+          return reply.status(err.statusCode).send({ error: err.message });
+        }
+        throw err;
+      }
+
       const existing = await fastify.prisma.exam.findUnique({
         where: { id },
         select: { id: true, isActive: true, isLocked: true },

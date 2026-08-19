@@ -128,10 +128,45 @@ Mọi thay đổi về Mã nguồn UI, API DTO, hay Database Schema **BẮT BU�
 
 ---
 
+## 1.14 SYSTEM INVARIANT CORE-021: CANONICAL EXAM DOMAIN & ZERO-SHADOW DOMAIN ENFORCEMENT
+
+- **Quy tắc Độc quyền Miền Khảo thí Chuẩn hóa**:
+  - Mọi thao tác giao bài, làm bài, nộp bài, chấm điểm và sửa bài **BẮT BUỘC** tuân thủ chuỗi thực thể: `Class -> Course -> Exam -> ExamSubmission -> Answer`.
+  - Nghiêm cấm tạo hoặc duy trì các thực thể song song (`homeworks`, `submissions`, `/homeworks/*`, `/me/workspace`).
+  - Khi một endpoint hoặc model bị bãi bỏ, toàn bộ controller, service, repository, và API client liên quan phải được dọn dẹp triệt để (Zero Legacy Residue).
+
+---
+
+## 1.15 SYSTEM INVARIANT CORE-022: PURE ENROLLMENT LIFECYCLE & TERMINAL-STATE GUARANTEE
+
+- **Quy tắc Vòng đời Ghi danh Độc lập & Bảo đảm Điểm Kết thúc**:
+  - `useStudentLifecycle` chỉ được phép quản lý 4 trạng thái hữu hạn: `ENROLLED`, `NOT_ENROLLED`, `API_ERROR`, `NETWORK_ERROR`.
+  - Cấm gộp việc fetch dữ liệu thứ cấp (KPI, workspace, tiến độ bài tập) vào lifecycle ghi danh.
+  - Trạng thái `LOADING` bắt buộc phải chuyển sang một trạng thái kết thúc (Terminal State), không được phép treo màn hình trắng vô hạn khi sub-resource gặp sự cố.
+
+---
+
+## 1.16 SYSTEM INVARIANT CORE-023: ATTEMPT IMMUTABILITY & REVISION DATA ISOLATION
+
+- **Quy tắc Bất biến Lịch sử Làm bài & Cách ly Bản sửa**:
+  - Khi học viên nộp bài (`Attempt 1`) và giáo viên chấm điểm (`GRADED`), bản ghi `ExamSubmission` và các câu trả lời (`Answer`) của attempt đó chuyển sang trạng thái đóng băng (**Read-Only**).
+  - Bản sửa bài (`Attempt 2+`) là một bản ghi `ExamSubmission` mới được tạo độc lập.
+  - Câu trả lời của `Attempt 2` liên kết với `submission_id` mới và tuyệt đối không bao giờ được ghi đè (UPDATE) lên câu trả lời của `Attempt 1`.
+
+---
+
+## 1.17 SYSTEM INVARIANT CORE-024: STRICT BACKEND AUTHORITY & MUTATION IDEMPOTENCY
+
+- **Quy tắc Thẩm quyền Backend Tuyệt đối & Chống Trùng lặp Đột biến**:
+  - Mọi phán quyết về quyền truy cập, tính hợp lệ của bài nộp, và chuyển đổi trạng thái thuộc về Fastify Backend API. Cấm cơ chế client-side direct fallback can thiệp vào các giao dịch chấm nộp bài.
+  - Mọi endpoint đột biến (`/submissions`, `/submissions/revision`, `/submit`, `/grade`) bắt buộc phải có **Idempotency Guard** ở tầng Backend để miễn nhiễm với race conditions và double-click.
+
+---
+
 ## 1. PHÂN CẤP TIÊU CHUẨN TIER KIỂM TOÁN (TIERED AUDIT SYSTEM)
 
 ### Tier 0: Critical System Core (Release Blocking)
-- **Entities / Edges**: `User`, `Role`, `Profile`, `Course`, `Class`, `Homework`, `Submission`.
+- **Entities / Edges**: `User`, `Role`, `Profile`, `Course`, `Class`, `Exam`, `ExamSubmission`, `Answer`.
 - **Quy tắc**: Bắt buộc `PASS` 100% kiểm toán 12 điểm mới cho phép Release.
 
 ### Tier 1: Business Operations (Critical Operation)

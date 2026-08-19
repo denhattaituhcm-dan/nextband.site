@@ -1,8 +1,8 @@
 # NEXTBAND ARCHITECTURE CONSTITUTION (HIẾN PHÁP KIẾN TRÚC HỆ THỐNG NEXTBAND)
 
-**Phiên bản**: 1.2.0  
+**Phiên bản**: 1.3.0  
 **Ngày ban hành**: 01/08/2026  
-**Ngày cập nhật**: 18/08/2026 — Nâng cấp Article XX (Deployment Resilience & CDN Cache Architecture: Khắc phục triệt để SPA Fallback Trap, Kỷ luật Cache 2 tầng, và Rate-limited Preload Recovery từ sự cố thực nghiệm production).  
+**Ngày cập nhật**: 20/08/2026 — Ban hành Article XXII (Canonical Exam Domain & Lean Learning Loop Architecture: Khử bỏ toàn diện Shadow Model, Kỷ luật Pure Enrollment Lifecycle, Bất biến Attempt cũ, và Idempotent Revision Flow).  
 **Cấp độ áp dụng**: Tối cao (Bắt buộc tuân thủ cho toàn bộ Kỹ sư, Technical Lead, và AI Agents)  
 **Phạm vi**: Toàn bộ Hệ thống IELTS NextBand (Frontend `nextband/`, Backend Fastify `ielts-api/`, Database Supabase Cloud PostgreSQL, và các tài liệu Kiến trúc liên quan)
 
@@ -897,3 +897,66 @@ Theo Điều khoản Article II, khi xảy ra sự cố tải chunk hoặc nghi 
   - **PASS**: `AppErrorBoundary`, `PageLoader`, tất cả Layouts đều dùng semantic tokens. Thay đổi `--primary` CSS variable → toàn bộ UI cập nhật đồng bộ không cần sửa code.
   - **FAIL**: Tồn tại bất kỳ `text-slate-*`, `bg-blue-*`, `border-red-*` nào trong `ErrorBoundary`, `PageLoader`, hoặc shared Layout components.
   - **Verification Method**: `grep -r "text-slate\|bg-blue\|border-red\|text-gray" src/components/ui/ src/layouts/ src/main.tsx` → kết quả phải rỗng.
+
+---
+
+## ARTICLE XXII: CANONICAL EXAM DOMAIN & LEAN LEARNING LOOP ARCHITECTURE (MIỀN KHẢO THÍ CHUẨN HÓA & VÒNG LẶP HỌC TẬP TINH GỌN)
+
+> **Nguồn gốc**: Chiến dịch Phẫu thuật Kiến trúc P0/P1 ngày 19-20/08/2026 — Xóa bỏ triệt để hiện tượng phân mảnh Domain mồ côi (Shadow Models: `homeworks`, `submissions`, `/me/workspace`), cô lập hoàn toàn Enrollment Lifecycle, và thiết lập Vòng lặp Sửa bài Tinh gọn (Lean Learning Loop) với tính bất biến của dữ liệu lịch sử.
+
+### Section 22.1: Độc Quyền Nguồn Sự Thật & Nghiêm Cấm Shadow Model (Zero-Shadow Authority)
+1. **Chuỗi Canonical Model Duy Nhất**: Mọi hoạt động giao bài, làm bài, chấm điểm và phản hồi **BẮT BUỘC** đi qua chuỗi phân cấp chuẩn:
+   ```text
+   Class ──► Course ──► Exam ──► ExamSubmission ──► Answer
+   ```
+2. **Cấm Tuyệt Đối Shadow Models**: Nghiêm cấm tạo hoặc duy trì các bảng/route song song (`homeworks`, `submissions`, `/homeworks/*`, `/me/workspace`, `homeworkId`, `hwId`).
+3. **Kỷ Luật Clean Retirement**: Khi một tính năng hoặc endpoint bị loại bỏ (như `/me/workspace`), toàn bộ Route, Controller, Service, Repository, DTO và API Client liên quan **BẮT BUỘC** phải bị tháo dỡ hoàn toàn khỏi codebase, không để lại bất kỳ reference mồ côi nào.
+
+### Section 22.2: Terminal-State Guarantee & Cô Lập Vòng Đời Ghi Danh (Pure Enrollment Lifecycle)
+1. **Pure Lifecycle Boundary**: `useStudentLifecycle` CHỈ ĐƯỢC PHÉP quản trị trạng thái ghi danh thuần túy dựa trên `GET /classes/my-classes`:
+   ```text
+   LOADING ──► ENROLLED | NOT_ENROLLED | API_ERROR | NETWORK_ERROR
+   ```
+2. **Cấm Kéo Sập Vòng Đời Bởi Dữ Liệu Thứ Cấp**: Tuyệt đối không gộp việc fetch KPI, tiến độ làm bài, workspace, hay danh sách bài tập vào `useStudentLifecycle`.
+3. **Bảo Đảm Điểm Kết Thúc (Terminal-State Guarantee)**: Trạng thái `LOADING` bắt buộc phải chuyển sang một trạng thái kết thúc (Terminal State) sau timeout hoặc lỗi mạng. Lỗi ở các widget con (tiến độ, biểu đồ) phải được cô lập cục bộ (Component-Level Fault Isolation), không được quyền kéo sập quyền truy cập lớp học của học viên.
+
+### Section 22.3: Bất Biến Lịch Sử Làm Bài (Immutable Attempts & Append-Only Revision)
+1. **Attempt 1 Là Read-Only Bất Biến**: Khi học viên nộp bài (`Attempt 1`) và giáo viên chấm điểm (`GRADED`), bản ghi `ExamSubmission` và các câu trả lời (`Answer`) gắn với attempt đó chuyển sang trạng thái đóng băng vĩnh viễn (**Read-Only**).
+2. **Append-Only Revision Flow**: Bài sửa (`Attempt 2+`) là một bản ghi `ExamSubmission` mới được tạo độc lập:
+   ```text
+   Exam ──► Submission #1 (GRADED, Score 5.5, revisionRequired=true) [FROZEN]
+                 │
+                 ▼ (POST /submissions/revision)
+            Submission #2 (IN_PROGRESS ──► SUBMITTED ──► GRADED, Score 7.0) [ACTIVE]
+   ```
+3. **Cách Ly Tuyệt Đối Câu Trả Lời**: Bảng `Answer` có ràng buộc `UNIQUE(submission_id, question_id)`. Câu trả lời của Attempt 2 thuộc về `submission_id` mới và **tuyệt đối không bao giờ được overwrite** câu trả lời của Attempt 1.
+4. **Không Thêm Bảng Mồ Côi**: Không tạo bảng `SubmissionHistory` trung gian khi bản thân mô hình đa bản ghi `ExamSubmission` đã giải quyết trọn vẹn yêu cầu lịch sử.
+
+### Section 22.4: Thiết Kế Phản Hồi Định Tính Tinh Gọn Trước Khi Mở Rộng Engine (Lean Domain First)
+1. **Structured Feedback V1**: Phản hồi của giáo viên giữ ở mức tối giản, tập trung vào 3 trường:
+   - `feedback`: Chuỗi nhận xét định tính chi tiết.
+   - `primaryErrorCategory`: Nhóm lỗi chính cần khắc phục (`CONCEPT` | `STRUCTURE` | `EXPRESSION` | `GRAMMAR`).
+   - `revisionRequired`: Cờ boolean xác định học viên có phải làm bản sửa hay không.
+2. **Cấm Xây Dựng Engine Khi Chưa Có Dữ Liệu Thực**: Tuyệt đối không vội vã đưa AI, rubric chấm điểm đa chiều (C1–C4), hay tính năng bôi đen từng ký tự vào hệ thống khi chưa chứng minh được nhu cầu thực nghiệm.
+
+### Section 22.5: Cấm "Browser Là Backend Thứ Hai" & Bắt Buộc Idempotency Guard (Strict Backend Authority)
+1. **Backend Là Nguồn Thẩm Quyền Duy Nhất**: Mọi quyết định về tạo attempt, chuyển trạng thái (`IN_PROGRESS` $\rightarrow$ `SUBMITTED` $\rightarrow$ `GRADED`), phân quyền và tính điểm thuộc về Fastify Backend API. Cấm tuyệt đối cơ chế "client-side direct fallback" can thiệp vào các giao dịch nộp bài.
+2. **Bắt Buộc Idempotency Guard**:
+   - `POST /submissions/revision`: Phải kiểm tra nếu học viên đang có phiên `IN_PROGRESS` cho cùng đề thi thì trả về phiên đang mở, chống double-click tạo thừa attempt.
+   - `POST /submissions/:id/submit`: Kiểm tra trạng thái, ngăn chặn nộp lặp (Double Submit Defense).
+
+- **PASS/FAIL Condition**:
+  - **PASS**:
+    1. Zero reference tới `homeworks`, `submissions`, `workspaceRoutes` trong source code và API client.
+    2. `useStudentLifecycle` hoạt động độc lập và luôn đạt Terminal State khi mock API lỗi.
+    3. Toàn bộ Attempt cũ được bảo toàn 100% trong DB khi thực hiện Revision.
+    4. Cả 2 bộ test suite Backend (`ielts-api`) và Frontend (`nextband`) pass 100%.
+  - **FAIL**:
+    1. Tồn tại bất kỳ query nào trỏ tới bảng `homeworks` hoặc endpoint `/homeworks`.
+    2. Một thao tác làm bài sửa ghi đè (UPDATE) lên câu trả lời của attempt cũ.
+    3. Trạng thái `LOADING` của student lifecycle treo vô hạn khi sub-resource lỗi.
+  - **Verification Method**:
+    - `grep -r "homeworksApi\|workspaceApi" nextband/src/` $\rightarrow$ Không có kết quả active.
+    - Chạy `npx vitest run tests/p1_learning_loop.test.ts` trong `ielts-api`.
+    - Chạy `npx vitest run src/test/p1_c_learning_loop_ui.test.tsx` trong `nextband`.
+
