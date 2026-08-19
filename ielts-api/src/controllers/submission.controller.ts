@@ -82,11 +82,43 @@ export class SubmissionController {
     }
   }
 
-  async grade(request: FastifyRequest<{ Params: { id: string }; Body: { grades: any[]; totalScore?: number } }>, reply: FastifyReply) {
+  async startRevision(request: FastifyRequest<{ Body: { examId: string; clonePreviousAnswers?: boolean } }>, reply: FastifyReply) {
     try {
       const user = (request as any).user;
-      const { grades = [], totalScore } = request.body || {};
-      const result = await this.service.gradeManualSubmission(user, request.params.id, grades, totalScore);
+      const { examId, clonePreviousAnswers } = request.body || {};
+      if (!examId) {
+        return reply.status(400).send({ error: "examId là bắt buộc" });
+      }
+
+      const { submission, isNew } = await this.service.startRevision(user, examId, { clonePreviousAnswers });
+      return reply.status(isNew ? 201 : 200).send(submission);
+    } catch (err: any) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
+
+  async grade(
+    request: FastifyRequest<{
+      Params: { id: string };
+      Body: {
+        grades: any[];
+        totalScore?: number;
+        feedback?: string;
+        primaryErrorCategory?: "CONCEPT" | "STRUCTURE" | "EXPRESSION" | "GRAMMAR";
+        revisionRequired?: boolean;
+      };
+    }>,
+    reply: FastifyReply
+  ) {
+    try {
+      const user = (request as any).user;
+      const { grades = [], totalScore, feedback, primaryErrorCategory, revisionRequired } = request.body || {};
+      const result = await this.service.gradeManualSubmission(user, request.params.id, grades, totalScore, {
+        feedback,
+        primaryErrorCategory,
+        revisionRequired,
+      });
       return reply.send(result);
     } catch (err: any) {
       const status = err.statusCode || 500;

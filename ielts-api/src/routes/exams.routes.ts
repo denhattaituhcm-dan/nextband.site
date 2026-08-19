@@ -337,12 +337,11 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
       }
 
       // T1-B: Transactional Historical Protection & Usage Guard
-      const [submissionCount, homeworkCount] = await Promise.all([
-        fastify.prisma.examSubmission.count({ where: { examId: id } }),
-        fastify.prisma.homework.count({ where: { examId: id } }),
-      ]);
+      const submissionCount = await fastify.prisma.examSubmission.count({
+        where: { examId: id },
+      });
 
-      if (submissionCount > 0 || homeworkCount > 0) {
+      if (submissionCount > 0) {
         // Atomic Safe Archive Transaction
         await fastify.prisma.$transaction(async (tx) => {
           await tx.exam.update({
@@ -356,19 +355,13 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
           });
         });
 
-        const errorCode =
-          submissionCount > 0
-            ? "CANNOT_HARD_DELETE_EXAM_WITH_SUBMISSIONS"
-            : "CANNOT_HARD_DELETE_EXAM_WITH_HOMEWORKS";
-
         return reply.status(409).send({
           success: false,
           action: "archived",
-          errorCode,
+          errorCode: "CANNOT_HARD_DELETE_EXAM_WITH_SUBMISSIONS",
           message:
-            "Đề thi đã có bài làm hoặc bài tập giao cho học viên. Hệ thống đã tự động chuyển sang chế độ Lưu trữ (Archived) để bảo toàn 100% lịch sử.",
+            "Đề thi đã có bài làm của học viên. Hệ thống đã tự động chuyển sang chế độ Lưu trữ (Archived) để bảo toàn 100% lịch sử.",
           submissionCount,
-          homeworkCount,
         });
       }
 

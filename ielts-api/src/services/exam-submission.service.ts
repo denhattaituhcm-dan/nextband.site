@@ -596,12 +596,104 @@ export class ExamSubmissionService {
     });
   }
 
-  // Use Case: Teacher Grades Manual Submission (Essay/Speaking)
+  // Use Case: Start Revision Attempt (P1 Canonical Learning Loop)
+  async startRevision(
+    user: { id: string; roles: string[] },
+    examId: string,
+    options?: { clonePreviousAnswers?: boolean }
+  ): Promise<{ submission: any; isNew: boolean }> {
+    const exam = await this.prisma.exam.findUnique({
+      where: { id: examId },
+    });
+
+    if (!exam) {
+      throw new NotFoundError("Bài thi không tồn tại");
+    }
+
+    // 1. Idempotency Check: Return existing active IN_PROGRESS session if present
+    const existingInProgress = await this.prisma.examSubmission.findFirst({
+      where: {
+        examId,
+        studentId: user.id,
+        status: "IN_PROGRESS" as any,
+      },
+      include: { answers: true },
+    });
+
+    if (existingInProgress) {
+      return {
+        submission: existingInProgress,
+        isNew: false,
+      };
+    }
+
+    // 2. Fetch latest previous submission for this exam & student
+    const latestSubmission = await this.prisma.examSubmission.findFirst({
+      where: {
+        examId,
+        studentId: user.id,
+      },
+      orderBy: { createdAt: "desc" },
+      include: { answers: true },
+    });
+
+    if (!latestSubmission) {
+      throw new AuthorizationError("Chưa có bài nộp nào trước đó để sửa. Vui lòng làm bài lần đầu.", 400);
+    }
+
+    const latestStatus = String(latestSubmission.status).toUpperCase();
+    if (latestStatus !== "GRADED") {
+      throw new AuthorizationError("Bài nộp trước đó chưa được chấm điểm. Chỉ có thể sửa bài sau khi đã có đánh giá từ giáo viên.", 400);
+    }
+
+    // 3. Create fresh ExamSubmission for Attempt 2 (Revision) in an atomic transaction
+    return this.repo.transaction(async (tx) => {
+      const newSubmission = await tx.examSubmission.create({
+        data: {
+          examId,
+          studentId: user.id,
+          status: "IN_PROGRESS" as any,
+          startedAt: new Date(),
+        },
+      });
+
+      // Optionally clone answer texts from previous attempt if requested
+      if (options?.clonePreviousAnswers && latestSubmission.answers?.length > 0) {
+        for (const prevAnswer of latestSubmission.answers) {
+          await tx.answer.create({
+            data: {
+              submissionId: newSubmission.id,
+              questionId: prevAnswer.questionId,
+              answerText: prevAnswer.answerText,
+              audioUrl: prevAnswer.audioUrl,
+            },
+          });
+        }
+      }
+
+      const created = await tx.examSubmission.findUnique({
+        where: { id: newSubmission.id },
+        include: { answers: true },
+      });
+
+      return {
+        submission: created,
+        isNew: true,
+      };
+    });
+  }
+
+  // Use Case: Teacher Grades Manual Submission (Essay/Speaking / P1 Feedback)
   async gradeManualSubmission(
     user: { id: string; roles: string[] },
     id: string,
     grades: Array<{ answerId: string; score: number; feedback?: string }>,
-    totalScore?: number
+    totalScore?: number,
+    options?: {
+      feedback?: string;
+      primaryErrorCategory?: "CONCEPT" | "STRUCTURE" | "EXPRESSION" | "GRAMMAR";
+      revisionRequired?: boolean;
+    }
   ) {
     const isAdmin = user.roles.includes("admin");
     const isTeacher = user.roles.includes("teacher");
@@ -628,12 +720,25 @@ export class ExamSubmissionService {
     return this.repo.transaction(async (tx) => {
       let computedTotal = 0;
 
-      for (const g of grades) {
+      for (let i = 0; i < grades.length; i++) {
+        const g = grades[i];
+        let answerFeedback = g.feedback || null;
+
+        // If top-level feedback metadata is provided and this is the first answer, format feedback
+        if (i === 0 && options && (options.feedback || options.primaryErrorCategory || options.revisionRequired !== undefined)) {
+          const structuredPayload = {
+            text: options.feedback || g.feedback || "",
+            primaryErrorCategory: options.primaryErrorCategory || null,
+            revisionRequired: !!options.revisionRequired,
+          };
+          answerFeedback = JSON.stringify(structuredPayload);
+        }
+
         await tx.answer.update({
           where: { id: g.answerId },
           data: {
             score: g.score,
-            feedback: g.feedback || null,
+            feedback: answerFeedback,
           },
         });
         computedTotal += g.score;

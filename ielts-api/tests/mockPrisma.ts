@@ -610,11 +610,15 @@ export function createMockPrisma() {
           return true;
         }).length;
       },
-      update: async ({ where, data }: any) => {
+      update: async ({ where, data, include }: any) => {
         const sub = examSubmissions.find((s) => s.id === where?.id);
         if (sub) {
           Object.assign(sub, data, { updatedAt: new Date() });
-          return sub;
+          const subAnswers = answers.filter((a) => a.submissionId === sub.id);
+          return {
+            ...sub,
+            answers: include?.answers ? subAnswers : undefined,
+          };
         }
         return null;
       },

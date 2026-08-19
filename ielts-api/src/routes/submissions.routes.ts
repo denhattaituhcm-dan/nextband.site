@@ -15,6 +15,15 @@ export default async function submissionsRoutes(fastify: FastifyInstance) {
     return controller.start(request, reply);
   });
 
+  // POST /submissions/revision - Start a revision attempt (P1 Learning Loop)
+  fastify.post<{ Body: { examId: string; clonePreviousAnswers?: boolean } }>(
+    "/revision",
+    { preHandler: authenticate },
+    async (request: any, reply) => {
+      return controller.startRevision(request, reply);
+    }
+  );
+
   // GET /submissions/:id - Get submission detail (with student/teacher ownership check)
   fastify.get<{ Params: { id: string } }>("/:id", { preHandler: authenticate }, async (request, reply) => {
     return controller.getById(request, reply);

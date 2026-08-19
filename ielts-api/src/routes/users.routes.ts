@@ -153,9 +153,6 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
                 }
               }
             },
-            homeworkSubmissions: {
-              select: { id: true, status: true, score: true, submittedAt: true, homework: { select: { title: true } } }
-            },
             submissions: {
               select: { id: true, status: true, totalScore: true, submittedAt: true, exam: { select: { title: true } } }
             },
@@ -182,32 +179,13 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         });
         const classes = Array.from(classesMap.values());
 
-        // 2. Class IDs for assigned homeworks count
-        const studentClassIds = classes.map((c) => c.id);
-        const totalAssignedCount = studentClassIds.length > 0
-          ? await fastify.prisma.homework.count({
-              where: { classId: { in: studentClassIds } }
-            })
-          : 0;
-
-        // 3. Homework & Submissions stats (submittedCount = submitted + graded)
-        const hwSubs = st.homeworkSubmissions || [];
+        // 2. Exam & Submissions stats (Canonical exam_submissions)
         const examSubs = st.submissions || [];
         
-        const hwSubmitted = hwSubs.filter((s: any) => s.status === "submitted" || s.status === "graded" || s.status === "SUBMITTED" || s.status === "GRADED").length;
-        const hwGraded = hwSubs.filter((s: any) => s.status === "graded" || s.status === "GRADED").length;
-        
-        const examSubmitted = examSubs.filter((s: any) => s.status === "submitted" || s.status === "graded" || s.status === "SUBMITTED" || s.status === "GRADED").length;
-        const examGraded = examSubs.filter((s: any) => s.status === "graded" || s.status === "GRADED").length;
+        const submittedCount = examSubs.filter((s: any) => s.status === "submitted" || s.status === "graded" || s.status === "SUBMITTED" || s.status === "GRADED").length;
+        const gradedCount = examSubs.filter((s: any) => s.status === "graded" || s.status === "GRADED").length;
 
-        const submittedCount = hwSubmitted + examSubmitted;
-        const gradedCount = hwGraded + examGraded;
-
-        const homeworkPercentage = totalAssignedCount > 0 
-          ? Math.min(100, Math.round((submittedCount / totalAssignedCount) * 100))
-          : null;
-
-        // 4. Attendance stats
+        // 3. Attendance stats
         const attendances = st.attendanceRecords || [];
         const totalSessions = attendances.length;
         const attendedCount = attendances.filter((a: any) => a.status === "PRESENT" || a.status === "present").length;
@@ -272,8 +250,8 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           homework: {
             submittedCount,
             gradedCount,
-            totalAssignedCount,
-            percentage: homeworkPercentage,
+            totalAssignedCount: submittedCount,
+            percentage: submittedCount > 0 ? 100 : null,
           },
           attendance: {
             attendedCount,

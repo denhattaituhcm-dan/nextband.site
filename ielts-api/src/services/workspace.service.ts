@@ -1,12 +1,7 @@
 import { PrismaClient, EnrollmentStatus } from '@prisma/client';
-import { HomeworkService } from './homework.service.js';
 
 export class WorkspaceService {
-  private homeworkService: HomeworkService;
-
-  constructor(private prisma: PrismaClient) {
-    this.homeworkService = new HomeworkService(prisma);
-  }
+  constructor(private prisma: PrismaClient) {}
 
   async getStudentWorkspace(studentId: string) {
     // 1. Fetch Student Profile
@@ -99,35 +94,13 @@ export class WorkspaceService {
 
     // Case 3: Has ACTIVE class(es) -> Determine priority nextAction
     let nextAction: {
-      type: 'HOMEWORK' | 'LESSON' | 'EXAM';
+      type: 'LESSON' | 'EXAM';
       targetId: string;
       title: string;
       classId: string;
-      deadline?: string | null;
     } | null = null;
 
-    try {
-      const homeworkWorkspace =
-        await this.homeworkService.getStudentHomeworkWorkspace(studentId);
-      if (homeworkWorkspace.continue) {
-        nextAction = {
-          type: 'HOMEWORK',
-          targetId: homeworkWorkspace.continue.homework.id,
-          title: homeworkWorkspace.continue.homework.title,
-          classId: homeworkWorkspace.continue.homework.classId,
-          deadline: homeworkWorkspace.continue.homework.deadline
-            ? new Date(
-                homeworkWorkspace.continue.homework.deadline
-              ).toISOString()
-            : null,
-        };
-      }
-    } catch {
-      // Fallback gracefully if no continue task
-    }
-
-    // Fallback nextAction if no active homework task found: link to primary active class lesson viewer
-    if (!nextAction && activeClasses.length > 0) {
+    if (activeClasses.length > 0) {
       nextAction = {
         type: 'LESSON',
         targetId: activeClasses[0].classId,
