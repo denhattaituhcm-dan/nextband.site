@@ -535,8 +535,14 @@ export function createMockPrisma() {
         return data;
       },
       findMany: async () => exams,
-      findUnique: async ({ where }: any) => {
-        return exams.find((e) => e.id === where?.id) || null;
+      findUnique: async ({ where, include }: any) => {
+        const e = exams.find((x) => x.id === where?.id);
+        if (!e) return null;
+        const course = courses.find((c) => c.id === e.courseId);
+        return {
+          ...e,
+          course: include?.course ? course : undefined,
+        };
       },
       update: async ({ where, data }: any) => {
         const e = exams.find((x) => x.id === where?.id);

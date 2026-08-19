@@ -56,13 +56,4 @@ export default async function classesRoutes(fastify: FastifyInstance) {
       return controller.removeStudent(request, reply);
     }
   );
-
-  // POST /classes/:id/attendance - Điểm danh buổi học
-  fastify.post<{ Params: { id: string }; Body: { records: any[] } }>(
-    "/:id/attendance",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
-    async (request, reply) => {
-      return controller.recordAttendance(request, reply);
-    }
-  );
 }

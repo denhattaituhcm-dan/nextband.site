@@ -19,12 +19,12 @@ vi.mock("../src/plugins/prisma.js", () => {
 describe("🏛️ GATE G6: READ-ONLY SHADOW E2E & PRODUCTION BEHAVIOR VERIFICATION (NO DUAL-WRITE)", () => {
   let app: FastifyInstance;
 
-  // G6-1: Dataset Personas
-  const adminId = "adm-g6-0000-1111-2222-333333333333";
-  const teacherAId = "tch-g6-aaaa-1111-2222-333333333333";
-  const teacherBId = "tch-g6-bbbb-1111-2222-333333333333";
-  const studentAId = "std-g6-aaaa-1111-2222-333333333333";
-  const studentBId = "std-g6-bbbb-1111-2222-333333333333";
+  // G6-1: Dataset Personas (Valid UUIDs)
+  const adminId = "a0000000-0000-4000-8000-333333333333";
+  const teacherAId = "a1111111-aaaa-4111-8111-333333333333";
+  const teacherBId = "a2222222-bbbb-4222-8222-333333333333";
+  const studentAId = "11111111-aaaa-4111-8111-333333333333";
+  const studentBId = "22222222-bbbb-4222-8222-333333333333";
 
   let adminToken: string;
   let teacherAToken: string;
@@ -32,9 +32,10 @@ describe("🏛️ GATE G6: READ-ONLY SHADOW E2E & PRODUCTION BEHAVIOR VERIFICATI
   let studentAToken: string;
   let studentBToken: string;
 
-  const classAId = "cls-g6-aaaa-1111-2222-333333333333";
-  const classBId = "cls-g6-bbbb-1111-2222-333333333333";
-  const courseId = "crs-g6-0000-1111-2222-333333333333";
+  const classAId = "c1111111-aaaa-4111-8111-333333333333";
+  const classBId = "c2222222-bbbb-4222-8222-333333333333";
+  const courseId = "c0000000-0000-4000-8000-333333333333";
+  const sessionAId = "99999999-9999-4999-8999-999999999999";
 
   const objExamId = "exm-g6-objective-1";
   const subjExamId = "exm-g6-subjective-2";
@@ -59,36 +60,69 @@ describe("🏛️ GATE G6: READ-ONLY SHADOW E2E & PRODUCTION BEHAVIOR VERIFICATI
     studentBToken = app.jwt.sign({ id: studentBId, roles: ["student"], email: "student.b.g6@test.com" });
 
     // Seed Personas
-    mockPrisma.users.push(
-      { id: adminId, email: "admin.g6@test.com", fullName: "Admin G6 Enterprise" },
-      { id: teacherAId, email: "teacher.a.g6@test.com", fullName: "Teacher A (Class A Head)" },
-      { id: teacherBId, email: "teacher.b.g6@test.com", fullName: "Teacher B (Class B Head)" },
-      { id: studentAId, email: "student.a.g6@test.com", fullName: "Student A (Enrolled Class A)" },
-      { id: studentBId, email: "student.b.g6@test.com", fullName: "Student B (Enrolled Class B)" }
-    );
-
-    // Seed Course & Classes
-    mockPrisma.courses.push({
-      id: courseId,
-      title: "IELTS Master 7.5+ Enterprise Course",
-      description: "Canonical IELTS Preparation Course",
-      isPublished: true,
-      isActive: true,
+    await mockPrisma.user.createMany({
+      data: [
+        { id: adminId, email: "admin.g6@test.com", fullName: "Admin G6 Enterprise" },
+        { id: teacherAId, email: "teacher.a.g6@test.com", fullName: "Teacher A (Class A Head)" },
+        { id: teacherBId, email: "teacher.b.g6@test.com", fullName: "Teacher B (Class B Head)" },
+        { id: studentAId, email: "student.a.g6@test.com", fullName: "Student A (Enrolled Class A)" },
+        { id: studentBId, email: "student.b.g6@test.com", fullName: "Student B (Enrolled Class B)" },
+      ],
     });
 
-    mockPrisma.classes.push(
-      { id: classAId, name: "IELTS Intensive A", teacherId: teacherAId, courseId, isActive: true },
-      { id: classBId, name: "IELTS Intensive B", teacherId: teacherBId, courseId, isActive: true }
-    );
+    await mockPrisma.userRole.createMany({
+      data: [
+        { userId: adminId, role: "admin" },
+        { userId: teacherAId, role: "teacher" },
+        { userId: teacherBId, role: "teacher" },
+        { userId: studentAId, role: "student" },
+        { userId: studentBId, role: "student" },
+      ],
+    });
 
-    mockPrisma.classStudents.push(
-      { id: "cs-g6-1", classId: classAId, studentId: studentAId, deletedAt: null },
-      { id: "cs-g6-2", classId: classBId, studentId: studentBId, deletedAt: null }
-    );
+    // Seed Course & Classes
+    await mockPrisma.course.create({
+      data: {
+        id: courseId,
+        title: "IELTS Master 7.5+ Enterprise Course",
+        description: "Canonical IELTS Preparation Course",
+        isPublished: true,
+        isActive: true,
+      },
+    });
+
+    await mockPrisma.class.create({
+      data: { id: classAId, name: "IELTS Intensive A", teacherId: teacherAId, courseId, isActive: true },
+    });
+
+    await mockPrisma.class.create({
+      data: { id: classBId, name: "IELTS Intensive B", teacherId: teacherBId, courseId, isActive: true },
+    });
+
+    await mockPrisma.classStudent.createMany({
+      data: [
+        { id: "cs-g6-1", classId: classAId, studentId: studentAId, deletedAt: null },
+        { id: "cs-g6-2", classId: classBId, studentId: studentBId, deletedAt: null },
+      ],
+    });
+
+    await mockPrisma.classSession.createMany({
+      data: [
+        {
+          id: sessionAId,
+          classId: classAId,
+          sessionNumber: 1,
+          title: "Buổi 1",
+          sessionDate: new Date(),
+          status: "SCHEDULED",
+        },
+      ],
+    });
 
     // Seed Objective Exam (Reading & Listening with MCQ, Multi-select, Fill-in-Blank)
-    mockPrisma.exams.push({
-      id: objExamId,
+    await mockPrisma.exam.create({
+      data: {
+        id: objExamId,
       courseId,
       title: "IELTS Academic Reading & Listening Final Mock",
       isPublished: true,
@@ -136,39 +170,42 @@ describe("🏛️ GATE G6: READ-ONLY SHADOW E2E & PRODUCTION BEHAVIOR VERIFICATI
           ],
         },
       ],
-    });
+    },
+  });
 
     // Seed Subjective Exam (Writing Task 2 Essay)
-    mockPrisma.exams.push({
-      id: subjExamId,
-      courseId,
-      title: "IELTS Writing Task 2 Mock Exam",
-      isPublished: true,
-      isActive: true,
-      isOpen: true,
-      durationMinutes: 40,
-      sections: [
-        {
-          id: "sec-g6-2",
-          examId: subjExamId,
-          title: "Writing Section",
-          sectionType: "writing",
-          questionGroups: [
-            {
-              id: "grp-g6-2",
-              title: "Task 2 Essay Prompt",
-              questions: [
-                {
-                  id: qEssayId,
-                  questionType: "essay",
-                  questionText: "Some people believe that university education should be free. Discuss both views.",
-                  points: 9,
-                },
-              ],
-            },
-          ],
-        },
-      ],
+    await mockPrisma.exam.create({
+      data: {
+        id: subjExamId,
+        courseId,
+        title: "IELTS Writing Task 2 Mock Exam",
+        isPublished: true,
+        isActive: true,
+        isOpen: true,
+        durationMinutes: 40,
+        sections: [
+          {
+            id: "sec-g6-2",
+            examId: subjExamId,
+            title: "Writing Section",
+            sectionType: "writing",
+            questionGroups: [
+              {
+                id: "grp-g6-2",
+                title: "Task 2 Essay Prompt",
+                questions: [
+                  {
+                    id: qEssayId,
+                    questionType: "essay",
+                    questionText: "Some people believe that university education should be free. Discuss both views.",
+                    points: 9,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
     });
   });
 
@@ -482,10 +519,10 @@ describe("🏛️ GATE G6: READ-ONLY SHADOW E2E & PRODUCTION BEHAVIOR VERIFICATI
       // 2. Record attendance for session in class
       const attRes = await app.inject({
         method: "POST",
-        url: `/api/v1/classes/${classAId}/attendance`,
+        url: `/api/v1/classes/${classAId}/sessions/${sessionAId}/attendance`,
         headers: { authorization: `Bearer ${teacherAToken}` },
         payload: {
-          records: [{ studentId: studentAId, status: "PRESENT", note: "On time" }],
+          items: [{ studentId: studentAId, status: "PRESENT", note: "On time" }],
         },
       });
       expect(attRes.statusCode).toBe(200);

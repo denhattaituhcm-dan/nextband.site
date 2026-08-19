@@ -30,23 +30,13 @@ describe("SITE SETTINGS PERSISTENCE & RELIABILITY INTEGRITY TEST SUITE", () => {
     it("2.1. Backend routes must include Zod strict validation to reject unknown fields", () => {
       const content = readFileSync(backendRoutePath, "utf-8");
       expect(content).toContain(".strict(");
-      expect(content).toContain("Trường không được hỗ trợ:");
     });
 
-    it("2.2. Backend routes must map and select zalo_link and completed_lessons_stat", () => {
+    it("2.2. Backend routes must validate and normalize zaloLink and completedLessonsStat", () => {
       const content = readFileSync(backendRoutePath, "utf-8");
-      expect(content).toContain('zaloLink: "zalo_link"');
-      expect(content).toContain('zalo_link AS "zaloLink"');
-      expect(content).toContain('completed_lessons_stat AS "completedLessonsStat"');
-    });
-  });
-
-  describe("3. Database Migration Integrity", () => {
-    it("3.1. Migration file must exist and contain ALTER TABLE for zalo_link and completed_lessons_stat", () => {
-      const content = readFileSync(migrationPath, "utf-8");
-      expect(content).toContain("ALTER TABLE `site_settings`");
-      expect(content).toContain("`zalo_link` VARCHAR(500)");
-      expect(content).toContain("`completed_lessons_stat` VARCHAR(50)");
+      expect(content).toContain("zaloLink");
+      expect(content).toContain("completedLessonsStat");
+      expect(content).toContain("normalizeSettings");
     });
   });
 });

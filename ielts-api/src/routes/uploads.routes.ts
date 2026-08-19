@@ -170,10 +170,10 @@ const uploadsRoutes: FastifyPluginAsync = async (fastify) => {
     },
   );
 
-  // DELETE /uploads - Delete file (admin / teacher only)
+  // DELETE /uploads - Delete file (admin only)
   fastify.delete(
     "/",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
       const { url } = (request.body || {}) as { url?: string };
 
