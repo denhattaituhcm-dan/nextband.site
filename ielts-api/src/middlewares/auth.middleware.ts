@@ -152,7 +152,11 @@ export async function optionalAuthenticate(
       .status(401)
       .send({ error: "Unauthorized", message: "Invalid or expired token" });
   }
-  request.user = user;
+  request.user = {
+    id: user.id,
+    email: user.email,
+    roles: user.roles || [],
+  };
 }
 
 export function requireRoles(...roles: string[]) {

@@ -181,6 +181,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
 
         // 2. Exam & Submissions stats (Canonical exam_submissions)
         const examSubs = st.submissions || [];
+        const totalAssignedCount = examSubs.length;
         
         const submittedCount = examSubs.filter((s: any) => s.status === "submitted" || s.status === "graded" || s.status === "SUBMITTED" || s.status === "GRADED").length;
         const gradedCount = examSubs.filter((s: any) => s.status === "graded" || s.status === "GRADED").length;
@@ -196,16 +197,6 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         // 5. Last Activity
         let lastActivity: any = null;
         const allActivities: any[] = [];
-        hwSubs.forEach((s: any) => {
-          if (s.submittedAt) {
-            allActivities.push({
-              type: "submission",
-              title: s.homework?.title || "Bài tập",
-              score: s.score ? Number(s.score) : null,
-              timestamp: new Date(s.submittedAt).toISOString(),
-            });
-          }
-        });
         examSubs.forEach((s: any) => {
           if (s.submittedAt) {
             allActivities.push({
