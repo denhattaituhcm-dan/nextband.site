@@ -6441,3 +6441,6 @@
 {"level":30,"time":1786872596158,"pid":14980,"hostname":"Admin-PC","reqId":"req-n","res":{"statusCode":401},"responseTime":0.6252999994903803,"msg":"request completed"}
 {"level":30,"time":1786872596158,"pid":14980,"hostname":"Admin-PC","reqId":"req-o","req":{"method":"POST","url":"/api/v1/invitations/generate","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
 {"level":30,"time":1786872596160,"pid":14980,"hostname":"Admin-PC","reqId":"req-o","res":{"statusCode":403},"responseTime":2.1337999999523163,"msg":"request completed"}
+{"level":30,"time":1787038712308,"pid":1208,"hostname":"Admin-PC","msg":"Server listening at http://0.0.0.0:3000"}
+{"level":30,"time":1787038725541,"pid":1208,"hostname":"Admin-PC","reqId":"req-1","req":{"method":"GET","url":"/api/v1/site-settings","hostname":"localhost:3000","remoteAddress":"127.0.0.1","remotePort":55207},"msg":"incoming request"}
+{"level":30,"time":1787038725860,"pid":1208,"hostname":"Admin-PC","reqId":"req-1","res":{"statusCode":200},"responseTime":318.16620000079274,"msg":"request completed"}
