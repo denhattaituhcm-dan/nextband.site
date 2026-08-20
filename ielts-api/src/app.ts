@@ -173,6 +173,15 @@ export async function buildApp() {
   await app.register(prismaPlugin);
   await app.register(authPlugin);
 
+  // Root Health check for load balancers & Render
+  app.get("/health", async () => {
+    return {
+      status: "ok",
+      timestamp: new Date().toISOString(),
+      version: "1.0.0",
+    };
+  });
+
   // API Routes
   await app.register(routes, { prefix: "/api/v1" });
 
