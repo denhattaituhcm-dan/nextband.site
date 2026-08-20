@@ -10025,3 +10025,11 @@
 {"level":30,"time":1787244335919,"pid":10640,"hostname":"Admin-PC","reqId":"req-4","res":{"statusCode":401},"responseTime":0.4803999960422516,"msg":"request completed"}
 {"level":30,"time":1787244366337,"pid":10640,"hostname":"Admin-PC","reqId":"req-5","req":{"method":"GET","url":"/api/v1/health","hostname":"localhost:3000","remoteAddress":"127.0.0.1","remotePort":58456},"msg":"incoming request"}
 {"level":30,"time":1787244366338,"pid":10640,"hostname":"Admin-PC","reqId":"req-5","res":{"statusCode":200},"responseTime":0.6053999960422516,"msg":"request completed"}
+{"level":30,"time":1787244774679,"pid":8660,"hostname":"Admin-PC","msg":"Server listening at http://0.0.0.0:3000"}
+{"level":30,"time":1787245564113,"pid":7792,"hostname":"Admin-PC","reqId":"req-1","req":{"method":"GET","url":"/api/v1/health","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1787245564117,"pid":7792,"hostname":"Admin-PC","reqId":"req-1","res":{"statusCode":200},"responseTime":3.8969000056385994,"msg":"request completed"}
+{"level":30,"time":1787245564123,"pid":7792,"hostname":"Admin-PC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/submissions","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1787245567608,"pid":7792,"hostname":"Admin-PC","reqId":"req-2","res":{"statusCode":403},"responseTime":3484.4023000001907,"msg":"request completed"}
+{"level":30,"time":1787245568370,"pid":7792,"hostname":"Admin-PC","reqId":"req-3","req":{"method":"POST","url":"/api/v1/submissions","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1787245571771,"pid":7792,"hostname":"Admin-PC","reqId":"req-3","res":{"statusCode":403},"responseTime":3401.0427999943495,"msg":"request completed"}
+{"level":30,"time":1787245571771,"pid":7792,"hostname":"Admin-PC","reqId":"req-4","req":{"method":"POST","url":"/api/v1/submissions","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
