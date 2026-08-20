@@ -262,7 +262,7 @@ export class ExamSubmissionService {
         where: {
           examId,
           studentId: user.id,
-          status: "IN_PROGRESS" as any,
+          status: "IN_PROGRESS",
         },
       });
 
@@ -302,7 +302,7 @@ export class ExamSubmissionService {
         await tx.examSubmission.update({
           where: { id: inProgress.id },
           data: {
-            status: "SUBMITTED" as any,
+            status: "SUBMITTED",
             submittedAt: new Date(),
           },
         });
@@ -312,7 +312,7 @@ export class ExamSubmissionService {
         data: {
           examId,
           studentId: user.id,
-          status: "IN_PROGRESS" as any,
+          status: "IN_PROGRESS",
           startedAt: new Date(),
           version: 1,
         },
@@ -615,7 +615,7 @@ export class ExamSubmissionService {
       where: {
         examId,
         studentId: user.id,
-        status: "IN_PROGRESS" as any,
+        status: "IN_PROGRESS",
       },
       include: { answers: true },
     });
@@ -672,7 +672,7 @@ export class ExamSubmissionService {
         data: {
           examId,
           studentId: user.id,
-          status: "IN_PROGRESS" as any,
+          status: "IN_PROGRESS",
           startedAt: new Date(),
         },
       });

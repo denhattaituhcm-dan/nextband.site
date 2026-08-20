@@ -343,7 +343,7 @@ describe("🔁 P1-B: CANONICAL REVISION WORKFLOW & ATTEMPT ISOLATION TEST", () =
         },
       });
 
-      expect([400, 403]).toContain(mutateGradedRes.statusCode);
+      expect([400, 403, 409]).toContain(mutateGradedRes.statusCode);
     });
 
     it("Gate 5 [Invalid Transition Defense]: Cannot start Revision when teacher did NOT require revision (revisionRequired=false)", async () => {

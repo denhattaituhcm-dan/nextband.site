@@ -597,15 +597,31 @@ export function createMockPrisma() {
           answers: include?.answers ? subAnswers : undefined,
         };
       },
-      findFirst: async ({ where }: any) => {
-        return (
-          examSubmissions.find((s) => {
-            if (where?.examId && s.examId !== where.examId) return false;
-            if (where?.studentId && s.studentId !== where.studentId) return false;
-            if (where?.status && s.status !== where.status) return false;
-            return true;
-          }) || null
-        );
+      findFirst: async ({ where, orderBy, include }: any) => {
+        let list = [...examSubmissions];
+        if (orderBy?.createdAt === "desc") {
+          list.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+        }
+        const sub = list.find((s) => {
+          if (where?.examId && s.examId !== where.examId) return false;
+          if (where?.studentId && s.studentId !== where.studentId) return false;
+          if (where?.status && s.status !== where.status) return false;
+          return true;
+        });
+        if (!sub) return null;
+        const exam = exams.find((e) => e.id === sub.examId);
+        const subAnswers = answers
+          .filter((a) => a.submissionId === sub.id)
+          .map((a) => {
+            const allQ = exam?.sections?.flatMap((s: any) => s.questionGroups?.flatMap((g: any) => g.questions || []) || []) || [];
+            const q = allQ.find((q: any) => q.id === a.questionId);
+            return { ...a, question: q };
+          });
+        return {
+          ...sub,
+          exam,
+          answers: include?.answers ? subAnswers : undefined,
+        };
       },
       findMany: async () => examSubmissions,
       count: async ({ where }: any) => {
