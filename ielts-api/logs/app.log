@@ -10808,3 +10808,9 @@
 {"level":30,"time":1787248553880,"pid":18284,"hostname":"Admin-PC","reqId":"req-d","res":{"statusCode":200},"responseTime":2.0639999955892563,"msg":"request completed"}
 {"level":30,"time":1787248553881,"pid":18284,"hostname":"Admin-PC","reqId":"req-e","req":{"method":"POST","url":"/api/v1/submissions/sub-1787248553853-dfsjh/regrade","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
 {"level":30,"time":1787248553882,"pid":18284,"hostname":"Admin-PC","reqId":"req-e","res":{"statusCode":200},"responseTime":0.9786999970674515,"msg":"request completed"}
+{"level":30,"time":1787248580566,"pid":16596,"hostname":"Admin-PC","reqId":"req-1","req":{"method":"GET","url":"/api/v1/classes/0defcb78-0eca-490e-8e41-476eedffe353/lessons","hostname":"localhost:3000","remoteAddress":"127.0.0.1","remotePort":64123},"msg":"incoming request"}
+{"level":30,"time":1787248580573,"pid":16596,"hostname":"Admin-PC","reqId":"req-1","res":{"statusCode":401},"responseTime":5.575499996542931,"msg":"request completed"}
+{"level":30,"time":1787248580588,"pid":16596,"hostname":"Admin-PC","reqId":"req-2","req":{"method":"GET","url":"/api/v1/classes/0defcb78-0eca-490e-8e41-476eedffe353/lessons","hostname":"localhost:3000","remoteAddress":"127.0.0.1","remotePort":64125},"msg":"incoming request"}
+{"level":30,"time":1787248580589,"pid":16596,"hostname":"Admin-PC","reqId":"req-2","res":{"statusCode":401},"responseTime":0.5292000025510788,"msg":"request completed"}
+{"level":30,"time":1787248580592,"pid":16596,"hostname":"Admin-PC","reqId":"req-3","req":{"method":"GET","url":"/api/v1/classes/0defcb78-0eca-490e-8e41-476eedffe353/lessons","hostname":"localhost:3000","remoteAddress":"127.0.0.1","remotePort":64123},"msg":"incoming request"}
+{"level":30,"time":1787248580592,"pid":16596,"hostname":"Admin-PC","reqId":"req-3","res":{"statusCode":401},"responseTime":0.3879000023007393,"msg":"request completed"}
