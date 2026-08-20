@@ -8,7 +8,6 @@ export class HomeworkRepository {
       where: { id },
       include: {
         class: true,
-        session: true,
         lesson: true,
         exam: true,
         submissions: { include: { student: true } }
@@ -28,7 +27,6 @@ export class HomeworkRepository {
       orderBy: { deadline: 'asc' },
       include: {
         class: true,
-        session: { include: { lesson: true } },
         submissions: { where: { studentId } }
       }
     });

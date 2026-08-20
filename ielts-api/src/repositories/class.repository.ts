@@ -122,24 +122,34 @@ export class ClassRepository {
   }
 
   async recordAttendance(data: {
-    sessionId: string;
+    classId: string;
     studentId: string;
-    teacherId: string;
+    sessionDate: Date;
+    markedBy: string;
     status: any;
     note?: string;
   }) {
     return this.prisma.classAttendance.upsert({
       where: {
-        sessionId_studentId: {
-          sessionId: data.sessionId,
+        classId_studentId_sessionDate: {
+          classId: data.classId,
           studentId: data.studentId,
+          sessionDate: data.sessionDate,
         },
       },
       update: {
         status: data.status,
+        markedBy: data.markedBy,
         note: data.note,
       },
-      create: data,
+      create: {
+        classId: data.classId,
+        studentId: data.studentId,
+        sessionDate: data.sessionDate,
+        markedBy: data.markedBy,
+        status: data.status,
+        note: data.note,
+      },
     });
   }
 }

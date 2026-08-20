@@ -322,21 +322,33 @@ export function createMockPrisma() {
 
     classSession: {
       createMany: async ({ data }: any) => {
-        classSessions.push(...data);
+        const normalized = data.map((d: any) => ({
+          ...d,
+          plannedDate: d.plannedDate || d.sessionDate || new Date(),
+        }));
+        classSessions.push(...normalized);
         return { count: data.length };
       },
       findUnique: async ({ where, include }: any) => {
         const s = classSessions.find((x) => x.id === where?.id);
         if (!s) return null;
+        const normalized = {
+          ...s,
+          plannedDate: s.plannedDate || s.sessionDate || new Date(),
+        };
         const lesson = lessons.find((l) => l.id === s.lessonId) || { title: "Lesson Title" };
-        return { ...s, ...(include?.lesson ? { lesson } : {}) };
+        return { ...normalized, ...(include?.lesson ? { lesson } : {}) };
       },
       findMany: async ({ where, include }: any) => {
         return classSessions
           .filter((s) => !where?.classId || s.classId === where.classId)
           .map((s) => {
+            const normalized = {
+              ...s,
+              plannedDate: s.plannedDate || s.sessionDate || new Date(),
+            };
             const lesson = lessons.find((l) => l.id === s.lessonId) || { title: "Lesson Title" };
-            return { ...s, ...(include?.lesson ? { lesson } : {}) };
+            return { ...normalized, ...(include?.lesson ? { lesson } : {}) };
           });
       },
       update: async ({ where, data }: any) => {
@@ -357,6 +369,12 @@ export function createMockPrisma() {
       },
       upsert: async ({ where, update, create }: any) => {
         const idx = classAttendances.findIndex((a) => {
+          if (where?.classId_studentId_sessionDate) {
+            const target = where.classId_studentId_sessionDate;
+            const aDate = a.sessionDate ? new Date(a.sessionDate).toISOString().slice(0, 10) : "";
+            const tDate = target.sessionDate ? new Date(target.sessionDate).toISOString().slice(0, 10) : "";
+            return a.classId === target.classId && a.studentId === target.studentId && aDate === tDate;
+          }
           if (where?.sessionId_studentId) {
             return a.sessionId === where.sessionId_studentId.sessionId && a.studentId === where.sessionId_studentId.studentId;
           }
@@ -372,6 +390,12 @@ export function createMockPrisma() {
       findUnique: async ({ where, include }: any) => {
         const a = classAttendances.find((x) => {
           if (where?.id && x.id === where.id) return true;
+          if (where?.classId_studentId_sessionDate) {
+            const target = where.classId_studentId_sessionDate;
+            const aDate = x.sessionDate ? new Date(x.sessionDate).toISOString().slice(0, 10) : "";
+            const tDate = target.sessionDate ? new Date(target.sessionDate).toISOString().slice(0, 10) : "";
+            return x.classId === target.classId && x.studentId === target.studentId && aDate === tDate;
+          }
           if (where?.sessionId_studentId) {
             return x.sessionId === where.sessionId_studentId.sessionId && x.studentId === where.sessionId_studentId.studentId;
           }
@@ -383,11 +407,20 @@ export function createMockPrisma() {
       },
       findMany: async ({ where }: any) => {
         return classAttendances.filter((a) => {
+          if (where?.classId && a.classId !== where.classId) return false;
+          if (where?.sessionDate) {
+            const aDate = a.sessionDate ? new Date(a.sessionDate).toISOString().slice(0, 10) : "";
+            const wDate = new Date(where.sessionDate).toISOString().slice(0, 10);
+            if (aDate !== wDate) return false;
+          }
           if (where?.sessionId) {
             if (typeof where.sessionId === "string" && a.sessionId !== where.sessionId) return false;
             if (where.sessionId.in && !where.sessionId.in.includes(a.sessionId)) return false;
           }
-          if (where?.studentId && a.studentId !== where.studentId) return false;
+          if (where?.studentId) {
+            if (typeof where.studentId === "string" && a.studentId !== where.studentId) return false;
+            if (where.studentId.in && !where.studentId.in.includes(a.studentId)) return false;
+          }
           return true;
         });
       },

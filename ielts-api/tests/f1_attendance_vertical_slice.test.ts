@@ -125,8 +125,8 @@ describe("BASELINE F1: ATTENDANCE VERTICAL SLICE (Session -> Attendance -> Compl
     // 5. Seed Sessions for Class A
     await prisma.classSession.createMany({
       data: [
-        { id: session1Id, classId: classAId, lessonId: lesson1Id, sessionNumber: 1, sessionDate: new Date("2026-08-01"), status: "SCHEDULED" },
-        { id: session2Id, classId: classAId, lessonId: lesson2Id, sessionNumber: 2, sessionDate: new Date("2026-08-03"), status: "SCHEDULED" },
+        { id: session1Id, classId: classAId, lessonId: lesson1Id, sessionNumber: 1, plannedDate: new Date("2026-08-01"), status: "SCHEDULED" },
+        { id: session2Id, classId: classAId, lessonId: lesson2Id, sessionNumber: 2, plannedDate: new Date("2026-08-03"), status: "SCHEDULED" },
       ],
     });
 
@@ -202,14 +202,14 @@ describe("BASELINE F1: ATTENDANCE VERTICAL SLICE (Session -> Attendance -> Compl
 
       // Verify records in database
       const att1 = await prisma.classAttendance.findUnique({
-        where: { sessionId_studentId: { sessionId: session1Id, studentId: student1Id } },
+        where: { classId_studentId_sessionDate: { classId: classAId, studentId: student1Id, sessionDate: new Date("2026-08-01") } },
       });
       expect(att1).not.toBeNull();
       expect(att1.status).toBe("PRESENT");
       expect(att1.note).toBe("On time");
 
       const att2 = await prisma.classAttendance.findUnique({
-        where: { sessionId_studentId: { sessionId: session1Id, studentId: student2Id } },
+        where: { classId_studentId_sessionDate: { classId: classAId, studentId: student2Id, sessionDate: new Date("2026-08-01") } },
       });
       expect(att2).not.toBeNull();
       expect(att2.status).toBe("PRESENT");
@@ -229,7 +229,7 @@ describe("BASELINE F1: ATTENDANCE VERTICAL SLICE (Session -> Attendance -> Compl
       expect(res.statusCode).toBe(200);
 
       const att1 = await prisma.classAttendance.findUnique({
-        where: { sessionId_studentId: { sessionId: session1Id, studentId: student1Id } },
+        where: { classId_studentId_sessionDate: { classId: classAId, studentId: student1Id, sessionDate: new Date("2026-08-01") } },
       });
       expect(att1.status).toBe("EXCUSED");
       expect(att1.note).toBe("Medical leave");
@@ -304,7 +304,7 @@ describe("BASELINE F1: ATTENDANCE VERTICAL SLICE (Session -> Attendance -> Compl
       expect(res.statusCode).toBe(200);
 
       const att1 = await prisma.classAttendance.findUnique({
-        where: { sessionId_studentId: { sessionId: session1Id, studentId: student1Id } },
+        where: { classId_studentId_sessionDate: { classId: classAId, studentId: student1Id, sessionDate: new Date("2026-08-01") } },
       });
       expect(att1.note).toBe("Admin verified");
     });

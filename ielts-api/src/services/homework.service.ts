@@ -94,8 +94,8 @@ export class HomeworkService {
     const upcoming: any[] = [];
     const completed: any[] = [];
 
-    assigned.forEach(hw => {
-      const submission = hw.submissions[0] || null;
+    assigned.forEach((hw: any) => {
+      const submission = hw.submissions?.[0] || null;
       const status = submission ? submission.status : 'NOT_STARTED';
 
       const taskItem = {

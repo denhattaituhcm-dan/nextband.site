@@ -42,7 +42,7 @@ export class SubmissionService {
       });
 
       // Authoritative Recipient: Teacher assigned to class
-      const teacherId = homework.class?.teacherId;
+      const teacherId = (homework as any).class?.teacherId;
       if (teacherId) {
         await this.notificationService.createNotification(tx, {
           userId: teacherId,

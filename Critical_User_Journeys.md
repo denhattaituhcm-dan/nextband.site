@@ -22,7 +22,7 @@ Tài liệu này phân cấp **3 Tier Trực Thuộc (Tier A, Tier B, Tier C)** 
 | **`CUJ-001`** | User Auth & Role Dashboard Routing | **Tier A** | **YES (Blocking)** | 100% | 🟢 **PASS** |
 | **`CUJ-002`** | Admin Class Creation & Course Linking | **Tier A** | **YES (Blocking)** | 100% | 🟢 **PASS** |
 | **`CUJ-003`** | Admin Student Management & Class Assignment | **Tier A** | **YES (Blocking)** | 100% | 🟢 **PASS** |
-| **`CUJ-004`** | Teacher Homework Assignment | **Tier A** | **YES (Blocking)** | 100% | 🟡 **PARTIAL** |
+| **`CUJ-004`** | [RETIRED] Legacy Teacher Homework Assignment (Replaced by Class Course Exam Binding) | **Tier A** | **NO (Retired)** | N/A | ⚪ **RETIRED** |
 | **`CUJ-006`** | Student Exam Submission & Answer Lock | **Tier A** | **YES (Blocking)** | 100% | 🟡 **PARTIAL** |
 | **`CUJ-007`** | Teacher Grading & Feedback Publication | **Tier A** | **YES (Blocking)** | 100% | 🟡 **PARTIAL** |
 | **`CUJ-005`** | Student Workspace Homework Discovery | **Tier B** | NO | 80% | 🟡 **PARTIAL** |

@@ -195,10 +195,12 @@ export class ClassService {
 
     const results = [];
     for (const r of records) {
+      const sDate = r.sessionDate ? new Date(r.sessionDate) : new Date();
       const recorded = await this.repo.recordAttendance({
-        sessionId: (r as any).sessionId || classId,
+        classId,
         studentId: r.studentId,
-        teacherId: user.id,
+        sessionDate: sDate,
+        markedBy: user.id,
         status: r.status,
         note: r.note,
       });
