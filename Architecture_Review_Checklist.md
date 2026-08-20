@@ -24,8 +24,14 @@ Tài liệu này đóng vai trò là **Cổng Kiểm Soát Release (Release Gate
 - [ ] **UNK-005A**: Submission Rollback (`UNKNOWN`).
 - [ ] **UNK-005B**: Duplicate Submission Lock (`UNKNOWN`).
 
-### 4. Release Decision Protocol
-- **Rule**: If ANY Tier 0 Edge status is `BROKEN` or ANY Tier 0 Unknown is unverified $\rightarrow$ **RELEASE IS BLOCKED**.
+### 4. Live Runtime & Anti-Mock-Fallacy Check (Article XXIII)
+- [x] **Backend Process Listening**: Port 3000 verified listening via `Get-NetTCPConnection`.
+- [x] **Live Health Check**: `GET /api/v1/health` returns `200 OK`.
+- [x] **Zero-Poisoned Fallback**: Supabase fallback query verified with zero non-existent foreign keys.
+- [x] **3-Tier Verification**: Tier A (Static/Build), Tier B (Vitest Suite), Tier C (Live Runtime) all verified.
+
+### 5. Release Decision Protocol
+- **Rule**: If ANY Tier 0 Edge status is `BROKEN`, ANY Tier 0 Unknown is unverified, or Tier C Live Runtime check fails $\rightarrow$ **RELEASE IS BLOCKED**.
 
 ---
 

@@ -163,6 +163,15 @@ Mọi thay đổi về Mã nguồn UI, API DTO, hay Database Schema **BẮT BU�
 
 ---
 
+## 1.18 SYSTEM INVARIANT CORE-025: LIVE RUNTIME INTEGRITY & ZERO-POISONED FALLBACK CONTRACT
+
+- **Quy tắc Toàn vẹn Runtime & Chống Ngụy biện Mock Test**:
+  - Mock Test Pass $\neq$ Live System Ready. Bắt buộc thực hiện đủ **3 Cấp độ Xác minh**: (1) Static Typecheck `tsc --noEmit`, (2) Automated Vitest Suite, (3) Live Runtime Port & HTTP Health Check (`/api/v1/health` $\rightarrow$ 200).
+  - Tầng Fallback Supabase Direct khi Gateway không phản hồi **BẮT BUỘC** phải tuân thủ Schema vật lý thực tế. Tuyệt đối cấm viết câu PostgREST join suy đoán (`profiles!classes_teacher_id_fkey`) gây crash tầng Fallback.
+  - Cấm kết luận "Hết lỗi" khi chưa chứng minh tiến trình Backend đang chạy thực tế.
+
+---
+
 ## 1. PHÂN CẤP TIÊU CHUẨN TIER KIỂM TOÁN (TIERED AUDIT SYSTEM)
 
 ### Tier 0: Critical System Core (Release Blocking)

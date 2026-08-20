@@ -1,8 +1,8 @@
 # NEXTBAND ARCHITECTURE CONSTITUTION (HIẾN PHÁP KIẾN TRÚC HỆ THỐNG NEXTBAND)
 
-**Phiên bản**: 1.4.0  
+**Phiên bản**: 1.5.0  
 **Ngày ban hành**: 01/08/2026  
-**Ngày cập nhật**: 20/08/2026 — Ban hành Tiêu Chuẩn Kiến Trúc Vàng ([`GOLDEN_ARCHITECTURE_BASELINE.md`](./GOLDEN_ARCHITECTURE_BASELINE.md)), Khóa Physical DB Reality > Migration > Prisma Contract, Triệt tiêu hoàn toàn Dual-Backend Fallback.  
+**Ngày cập nhật**: 20/08/2026 — Ban hành ARTICLE XXIII: LIVE RUNTIME INTEGRITY & ANTI-MOCK-FALLACY (Khóa kỷ luật xác minh 3 cấp độ: Static -> Automated Tests -> Live Runtime Process & Zero-Poisoned Fallback).  
 **Cấp độ áp dụng**: Tối cao (Bắt buộc tuân thủ cho toàn bộ Kỹ sư, Technical Lead, và AI Agents)  
 **Phạm vi**: Toàn bộ Hệ thống IELTS NextBand (Frontend `nextband/`, Backend Fastify `ielts-api/`, Database Supabase Cloud PostgreSQL, và các tài liệu Kiến trúc liên quan)
 
@@ -957,4 +957,49 @@ Theo Điều khoản Article II, khi xảy ra sự cố tải chunk hoặc nghi 
     - `grep -r "homeworksApi\|workspaceApi" nextband/src/` $\rightarrow$ Không có kết quả active.
     - Chạy `npx vitest run tests/p1_learning_loop.test.ts` trong `ielts-api`.
     - Chạy `npx vitest run src/test/p1_c_learning_loop_ui.test.tsx` trong `nextband`.
+
+---
+
+## ARTICLE XXIII: LIVE RUNTIME INTEGRITY & ANTI-MOCK-FALLACY (TOÀN VẸN MÔI TRƯỜNG RUNTIME THẬT & CHỐNG NGỤY BIỆN MOCK TEST)
+
+> **Nguồn gốc**: Bài học sâu sắc từ sự cố ngày 20/08/2026 — Báo cáo "Hết lỗi" chủ quan khi bộ Unit test dùng Mock DB/API pass 100%, nhưng môi trường thực tế gặp lỗi do tiến trình Backend chưa khởi động và tầng Fallback Supabase chứa câu query PostgREST join sai schema.
+
+### Section 23.1: Định Lý Chống Ngụy Biện Mock Test (The Anti-Mock-Fallacy Doctrine)
+1. **Mock Test $\neq$ Runtime Readiness**: Một bài kiểm thử chạy trên môi trường Mock (`mockPrisma`, `vi.spyOn().mockResolvedValue`, in-memory database) **CHỈ** chứng minh logic nội tại không có lỗi cú pháp và hoạt động đúng trong điều kiện giả lập lý tưởng.
+2. **Cấm Tuyệt Đối Báo "Hết Lỗi" Dựa Vào Mock**: Nghiêm cấm mọi kỹ sư hoặc AI Assistant kết luận *"Hệ thống đã hết lỗi"*, *"Sẵn sàng hoạt động"*, *"Production Ready"* nếu chỉ dựa vào kết quả của test runner sử dụng Mock.
+
+### Section 23.2: Quy Trình Xác Minh 3 Cấp Độ Bắt Buộc (Mandatory 3-Tier Verification Protocol)
+Trước khi đưa ra bất kỳ kết luận nào về tính sẵn sàng của hệ thống, bắt buộc phải thực thi và trình bằng chứng đủ 3 cấp độ:
+
+```text
+[Tier A: Static Integrity] ────► [Tier B: Automated Suite] ────► [Tier C: Live Runtime Pre-flight]
+  • tsc --noEmit (0 error)         • Vitest Suites Pass             • Process Port Listening
+  • Vite Build (0 warning)         • Regression Guards Pass         • Real HTTP Health Check (200)
+                                                                    • Zero Broken DB Join / Query
+```
+
+1. **Tier A (Static Integrity)**: Kiểm tra kiểu tĩnh (`tsc --noEmit`), build production (`npm run build`) đảm bảo 0 lỗi biên dịch.
+2. **Tier B (Automated Suite)**: Chạy toàn bộ test suite để đảm bảo không bị regression logic.
+3. **Tier C (Live Runtime Pre-flight — Cấp Độ Bắt Buộc)**:
+   - **Xác minh tiến trình (Process Verification)**: Kiểm tra tiến trình backend đang thực sự lắng nghe tại port dự kiến (ví dụ: `Get-NetTCPConnection` hoặc `netstat` kiểm tra Port 3000).
+   - **Xác minh Health Check**: Gửi request HTTP thật tới `/api/v1/health` nhận phản hồi `200 OK`.
+   - **Xác minh Khả dụng Mạng**: Đảm bảo không bị chặn bởi CORS, firewall, hay rớt kết nối Gateway.
+
+### Section 23.3: Kỷ Luật Kiểm Soát Tầng Dự Phòng (Zero-Poisoned Fallback Discipline)
+1. **Tầng Fallback Không Được Độc Hại**: Khi thiết kế cơ chế tự phục hồi 2 tầng (Dual-Tier Resilience: Gateway $\rightarrow$ Supabase Direct), câu lệnh truy vấn ở tầng Fallback **BẮT BUỘC** phải tuân thủ đúng Schema vật lý thực tế.
+2. **Cấm Join Tùy Tiện Ở Tầng Fallback**: Tuyệt đối không sử dụng các cú pháp quan hệ suy đoán (như `profiles!classes_teacher_id_fkey`) ở tầng Fallback nếu không có bằng chứng Schema Cache của Supabase PostgREST hỗ trợ quan hệ đó.
+3. **Cấm Nuốt Lỗi Fallback Bằng Mock**: Khi viết Unit Test cho module có Fallback (như `useStudentLifecycle`), **BẮT BUỘC** phải có test case kiểm thử chính câu query Fallback thực thi mà không làm sập hệ thống, không được chỉ mock bao bọc ở hàm cấp cao nhất.
+
+- **PASS/FAIL Condition**:
+  - **PASS**:
+    1. Tiến trình backend thật đang lắng nghe trên cổng mạng và trả về HTTP 200 tại `/health`.
+    2. Câu query Supabase Fallback không chứa bất kỳ quan hệ schema cache không hợp lệ nào.
+    3. Trình đủ bằng chứng thực thi 3 cấp độ (Tier A, Tier B, Tier C).
+  - **FAIL**:
+    1. Báo cáo "Hết lỗi" khi backend process chưa chạy hoặc chưa verify HTTP response thật.
+    2. Tồn tại câu query Supabase bị PostgREST từ chối `PGRST200` (Relationship not found).
+  - **Verification Method**:
+    - Chạy `Get-NetTCPConnection -LocalPort 3000` $\rightarrow$ State: `Listen`.
+    - Gửi request `GET http://localhost:3000/api/v1/health` $\rightarrow$ Status: `200 OK`.
+
 
