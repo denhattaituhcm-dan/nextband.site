@@ -278,4 +278,136 @@ describe("🔁 P1-B: CANONICAL REVISION WORKFLOW & ATTEMPT ISOLATION TEST", () =
     expect(sub2InDb.status).toBe("GRADED");
     expect(Number(sub2InDb.totalScore)).toBe(7.0);
   });
+
+  describe("🔒 P1-D: SECURITY, IDOR, IDEMPOTENCY & INVALID TRANSITIONS SUITE", () => {
+    const studentBId = "std-p1-bbbb-2222-3333-444444444444";
+    const teacherBId = "tch-p1-bbbb-2222-3333-444444444444"; // Teacher not assigned to class
+    let studentBToken: string;
+    let teacherBToken: string;
+
+    beforeAll(() => {
+      studentBToken = app.jwt.sign({ id: studentBId, email: "studentB@p1.com", roles: ["student"] });
+      teacherBToken = app.jwt.sign({ id: teacherBId, email: "teacherB@p1.com", roles: ["teacher"] });
+
+      mockPrisma.users.push(
+        { id: studentBId, email: "studentB@p1.com", fullName: "Student B", roles: ["student"] },
+        { id: teacherBId, email: "teacherB@p1.com", fullName: "Teacher B", roles: ["teacher"] }
+      );
+    });
+
+    it("Gate 1 [IDOR Defense]: Student B cannot read Student A's submission", async () => {
+      const getRes = await app.inject({
+        method: "GET",
+        url: `/api/v1/submissions/${attempt1SubId}`,
+        headers: { authorization: `Bearer ${studentBToken}` },
+      });
+
+      // Must be 403 Forbidden
+      expect(getRes.statusCode).toBe(403);
+    });
+
+    it("Gate 2 [IDOR Defense]: Student B cannot submit answers to Student A's submission", async () => {
+      const hijackRes = await app.inject({
+        method: "POST",
+        url: `/api/v1/submissions/${attempt2SubId}/submit`,
+        headers: { authorization: `Bearer ${studentBToken}` },
+        payload: {
+          answers: [{ questionId, answerText: "Hijacked content" }],
+        },
+      });
+
+      expect(hijackRes.statusCode).toBe(403);
+    });
+
+    it("Gate 3 [IDOR Defense]: Teacher B (not in class) cannot grade Student A's submission", async () => {
+      const unauthGradeRes = await app.inject({
+        method: "POST",
+        url: `/api/v1/submissions/${attempt1SubId}/grade`,
+        headers: { authorization: `Bearer ${teacherBToken}` },
+        payload: {
+          totalScore: 9.0,
+          grades: [{ answerId: attempt1AnswerId, score: 9.0 }],
+        },
+      });
+
+      expect(unauthGradeRes.statusCode).toBe(403);
+    });
+
+    it("Gate 4 [Invalid Transition Defense]: Cannot edit or resubmit an already GRADED attempt", async () => {
+      const mutateGradedRes = await app.inject({
+        method: "PUT",
+        url: `/api/v1/submissions/${attempt1SubId}`,
+        headers: { authorization: `Bearer ${studentToken}` },
+        payload: {
+          answers: [{ questionId, answerText: "Attempting to change finalized submission" }],
+        },
+      });
+
+      expect([400, 403]).toContain(mutateGradedRes.statusCode);
+    });
+
+    it("Gate 5 [Invalid Transition Defense]: Cannot start Revision when teacher did NOT require revision (revisionRequired=false)", async () => {
+      // Attempt 2 was graded with revisionRequired=false
+      const unneededRevRes = await app.inject({
+        method: "POST",
+        url: "/api/v1/submissions/revision",
+        headers: { authorization: `Bearer ${studentToken}` },
+        payload: {
+          examId,
+        },
+      });
+
+      expect(unneededRevRes.statusCode).toBe(400);
+      const errData = JSON.parse(unneededRevRes.payload);
+      expect(errData.error).toMatch(/không có yêu cầu|đã đạt yêu cầu/i);
+    });
+
+    it("Gate 6 [Idempotency Guard]: Concurrent / Repeated Submissions with Idempotency Key return cached 200 without side effects", async () => {
+      // Start a fresh submission for Student B
+      mockPrisma.classStudents.push({
+        id: "cs-p1-student-b",
+        classId,
+        studentId: studentBId,
+        deletedAt: null,
+      });
+
+      const startRes = await app.inject({
+        method: "POST",
+        url: "/api/v1/submissions",
+        headers: { authorization: `Bearer ${studentBToken}` },
+        payload: { examId },
+      });
+      expect(startRes.statusCode).toBe(201);
+      const subBId = JSON.parse(startRes.payload).id;
+
+      const idemKey = "idem-p1-test-key-999";
+      const submitPayload = {
+        answers: [{ questionId, answerText: "Student B essay content" }],
+        idempotencyKey: idemKey,
+      };
+
+      // Call 1
+      const res1 = await app.inject({
+        method: "POST",
+        url: `/api/v1/submissions/${subBId}/submit`,
+        headers: { authorization: `Bearer ${studentBToken}` },
+        payload: submitPayload,
+      });
+      expect(res1.statusCode).toBe(200);
+
+      // Call 2 (Immediate Retry / Double Click)
+      const res2 = await app.inject({
+        method: "POST",
+        url: `/api/v1/submissions/${subBId}/submit`,
+        headers: { authorization: `Bearer ${studentBToken}` },
+        payload: submitPayload,
+      });
+      expect(res2.statusCode).toBe(200);
+
+      // Invariant: Submissions count for Student B remains exactly 1
+      const studentBSubs = mockPrisma.examSubmissions.filter((s: any) => s.studentId === studentBId && s.examId === examId);
+      expect(studentBSubs.length).toBe(1);
+      expect(studentBSubs[0].status).toBe("SUBMITTED");
+    });
+  });
 });

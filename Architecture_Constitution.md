@@ -1,8 +1,8 @@
 # NEXTBAND ARCHITECTURE CONSTITUTION (HIẾN PHÁP KIẾN TRÚC HỆ THỐNG NEXTBAND)
 
-**Phiên bản**: 1.3.0  
+**Phiên bản**: 1.4.0  
 **Ngày ban hành**: 01/08/2026  
-**Ngày cập nhật**: 20/08/2026 — Ban hành Article XXII (Canonical Exam Domain & Lean Learning Loop Architecture: Khử bỏ toàn diện Shadow Model, Kỷ luật Pure Enrollment Lifecycle, Bất biến Attempt cũ, và Idempotent Revision Flow).  
+**Ngày cập nhật**: 20/08/2026 — Ban hành Tiêu Chuẩn Kiến Trúc Vàng ([`GOLDEN_ARCHITECTURE_BASELINE.md`](./GOLDEN_ARCHITECTURE_BASELINE.md)), Khóa Physical DB Reality > Migration > Prisma Contract, Triệt tiêu hoàn toàn Dual-Backend Fallback.  
 **Cấp độ áp dụng**: Tối cao (Bắt buộc tuân thủ cho toàn bộ Kỹ sư, Technical Lead, và AI Agents)  
 **Phạm vi**: Toàn bộ Hệ thống IELTS NextBand (Frontend `nextband/`, Backend Fastify `ielts-api/`, Database Supabase Cloud PostgreSQL, và các tài liệu Kiến trúc liên quan)
 
@@ -10,13 +10,13 @@
 
 ## PREAMBLE (LỜI NÓI ĐẦU)
 
-Hiến pháp Kiến trúc NextBand (Architecture Constitution) là văn bản pháp lý kỹ thuật **tối cao** của dự án. Hiến pháp tồn tại nhằm mục đích thiết lập kỷ luật kiểm toán tuyệt đối, bảo vệ sự sống còn và tính toàn vẹn của hệ thống thông qua 5 trụ cột:
+Hiến pháp Kiến trúc NextBand (Architecture Constitution) và **Golden Architecture Baseline** ([`GOLDEN_ARCHITECTURE_BASELINE.md`](./GOLDEN_ARCHITECTURE_BASELINE.md)) là văn bản pháp lý kỹ thuật **tối cao** của dự án. Hiến pháp tồn tại nhằm mục đích thiết lập kỷ luật kiểm toán tuyệt đối, bảo vệ sự sống còn và tính toàn vẹn của hệ thống thông qua 5 trụ cột:
 
 1. **Domain Integrity**: Bảo vệ mô hình miền nghiệp vụ đào tạo IELTS khỏi sự sai lệch do các bản vá lỗi triệu chứng.
-2. **Data Integrity**: Bảo đảm dữ liệu nhất quán 1:1 từ Prisma Schema đến Physical Database, chống dữ liệu mồ côi (Zero Orphan Policy) và Schema Drift.
-3. **Integration Alignment**: Đảm bảo hợp đồng tích hợp liên tầng (UI $\rightarrow$ DTO $\rightarrow$ API Wrapper $\rightarrow$ PostgREST $\rightarrow$ Physical DB) luôn khớp 100%.
-4. **Security & Ownership**: Phân định ranh giới sở hữu tài nguyên, bảo mật RLS và chặn đứng nguy cơ rò rỉ hoặc truy cập trái phép.
-5. **Maintainability & Governance**: Duy trì máy kiểm tra kiến trúc tự động, biến tri thức hệ thống thành tài sản bền vững không phụ thuộc vào cá nhân hay AI cụ thể.
+2. **Data Integrity**: Bảo đảm dữ liệu nhất quán 1:1 từ Physical Database đến Prisma Schema, chống dữ liệu mồ côi (Zero Orphan Policy) và Schema Drift.
+3. **Integration Alignment**: Đảm bảo hợp đồng tích hợp liên tầng (Physical DB $\rightarrow$ Prisma ORM $\rightarrow$ Fastify API $\rightarrow$ Frontend UI) luôn khớp 100%.
+4. **Security & Ownership**: Phân định ranh giới sở hữu tài nguyên, bảo mật RLS và Fastify Authorization.
+5. **Maintainability & Governance**: Duy trì máy kiểm tra kiến trúc tự động (`audit_production_schema.mjs`), biến tri thức hệ thống thành tài sản bền vững không phụ thuộc vào cá nhân hay AI cụ thể.
 
 ---
 
@@ -26,16 +26,14 @@ Hiến pháp Kiến trúc NextBand (Architecture Constitution) là văn bản ph
 Khi xảy ra mâu thuẫn hoặc xung đột thông tin giữa các tầng, thứ tự ưu tiên pháp lý kỹ thuật được áp dụng nghiêm ngặt theo thứ tự giảm dần từ trên xuống dưới:
 
 ```text
-[1] Business Rules Document (Quy tắc Nghiệp vụ Chủ trung tâm)
- └─► [2] Architecture Constitution (Hiến pháp Kiến trúc này)
-      └─► [3] Architecture Decision Records (ADR.md)
-           └─► [4] System Invariants (System_Invariants.md)
+[1] Physical PostgreSQL Database (db.gzpdlqxjggyxlkeatvvf.supabase.co) - NGUỒN SỰ THẬT VẬT LÝ
+ └─► [2] Golden Architecture Baseline (GOLDEN_ARCHITECTURE_BASELINE.md)
+      └─► [3] Architecture Constitution (Hiến pháp Kiến trúc này)
+           └─► [4] Migration Reality Ledger (Lịch sử migration thực tế trong DB)
                 └─► [5] Prisma Schema (ielts-api/prisma/schema.prisma)
-                     └─► [6] Migration SQL Files (prisma/migrations, supabase/migrations)
-                          └─► [7] Live Physical Database (Supabase Cloud PostgreSQL)
-                               └─► [8] TypeScript DTO Interfaces (src/lib/api.ts)
-                                    └─► [9] API Client Wrappers
-                                         └─► [10] UI Components & Forms
+                     └─► [6] Fastify Backend Authority API (/api/v1/*)
+                          └─► [7] TypeScript DTO Interfaces & API Clients (src/lib/api.ts)
+                               └─► [8] UI Components & Forms (nextband/src/*)
 ```
 
 ### Section 1.2: Quy Trình Xử Lý Mâu Thuẫn (Drift Resolution Protocol)

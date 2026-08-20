@@ -91,7 +91,6 @@ model Lesson {
 
   course           Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
   resources        LessonResource[]
-  sessions         ClassSession[]
   homeworks        Homework[]
 
   @@unique([courseId, lessonOrder])
@@ -132,6 +131,7 @@ model Class {
   schedules   ClassSchedule[]
   invitations Invitation[]
   sessions    ClassSession[]
+  attendance  ClassAttendance[]
   homeworks   Homework[]
 
   @@map("classes")
@@ -141,12 +141,11 @@ model ClassSchedule {
   id              String   @id @default(uuid())
   classId         String   @map("class_id")
   dayOfWeek       Int      @map("day_of_week")
-  startTime       String   @map("start_time")
+  startTime       DateTime @map("start_time") @db.Time
   durationMinutes Int      @map("duration_minutes")
   timezone        String   @default("Asia/Ho_Chi_Minh")
   isActive        Boolean  @default(true) @map("is_active")
   createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
 
   class           Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
 
@@ -173,44 +172,38 @@ model Invitation {
 model ClassSession {
   id               String            @id @default(uuid())
   classId          String            @map("class_id")
-  lessonId         String?           @map("lesson_id")
   sessionNumber    Int               @default(1) @map("session_number")
-  sessionDate      DateTime?         @map("session_date")
-  plannedDate      DateTime?         @map("planned_date")
-  startTime        String?           @map("start_time")
-  endTime          String?           @map("end_time")
+  plannedDate      DateTime          @map("planned_date") @db.Date
+  startTime        DateTime          @map("start_time") @db.Time
+  endTime          DateTime          @map("end_time") @db.Time
   status           String            @default("PLANNED")
-  title            String?
-  notes            String?
-  note             String?
   rescheduleReason String?           @map("reschedule_reason")
-  completedAt      DateTime?         @map("completed_at")
-  completedBy      String?           @map("completed_by")
-  createdAt        DateTime          @default(now()) @map("created_at")
-  updatedAt        DateTime          @default(now()) @updatedAt @map("updated_at")
+  note             String?
+  createdAt        DateTime?         @default(now()) @map("created_at")
+  updatedAt        DateTime?         @default(now()) @updatedAt @map("updated_at")
 
   class            Class             @relation(fields: [classId], references: [id], onDelete: Cascade)
-  lesson           Lesson?           @relation(fields: [lessonId], references: [id], onDelete: SetNull)
-  attendance       ClassAttendance[]
-  homeworks        Homework[]
 
+  @@unique([classId, sessionNumber])
   @@map("class_sessions")
 }
 
 model ClassAttendance {
-  id        String           @id @default(uuid())
-  sessionId String           @map("session_id")
-  studentId String           @map("student_id")
-  teacherId String           @map("teacher_id")
-  status    AttendanceStatus @default(PRESENT)
-  note      String?
-  createdAt DateTime         @default(now()) @map("created_at")
+  id          String   @id @default(uuid())
+  classId     String   @map("class_id")
+  studentId   String   @map("student_id")
+  sessionDate DateTime @map("session_date") @db.Date
+  status      String   @default("PRESENT")
+  note        String?
+  markedBy    String?  @map("marked_by")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
 
-  session   ClassSession     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  student   User             @relation("AttendanceStudent", fields: [studentId], references: [userId], onDelete: Cascade)
-  teacher   User             @relation("AttendanceTeacher", fields: [teacherId], references: [userId], onDelete: Restrict)
+  class       Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  student     User     @relation("AttendanceStudent", fields: [studentId], references: [userId], onDelete: Cascade)
+  marker      User?    @relation("AttendanceTeacher", fields: [markedBy], references: [userId], onDelete: SetNull)
 
-  @@unique([sessionId, studentId])
+  @@unique([classId, studentId, sessionDate])
   @@map("class_attendance")
 }
 
@@ -250,7 +243,6 @@ model Homework {
   id             String         @id @default(uuid())
   classId        String         @map("class_id")
   createdBy      String         @map("created_by")
-  classSessionId String?        @map("class_session_id")
   lessonId       String?        @map("lesson_id")
   examId         String?        @map("exam_id")
   title          String
@@ -262,7 +254,6 @@ model Homework {
 
   class          Class          @relation(fields: [classId], references: [id], onDelete: Cascade)
   creator        User           @relation("CreatedHomeworks", fields: [createdBy], references: [userId])
-  session        ClassSession?  @relation(fields: [classSessionId], references: [id], onDelete: SetNull)
   lesson         Lesson?        @relation(fields: [lessonId], references: [id], onDelete: SetNull)
   exam           Exam?          @relation(fields: [examId], references: [id], onDelete: SetNull)
   submissions    Submission[]
@@ -331,7 +322,7 @@ model Exam {
 model ExamSection {
   id              String          @id @default(uuid())
   examId          String          @map("exam_id")
-  sectionType     String          @map("section_type")
+  sectionType     ExamSectionType @map("section_type")
   title           String
   instructions    String?
   content         Json?
@@ -368,7 +359,7 @@ model QuestionGroup {
 model Question {
   id            String        @id @default(uuid())
   groupId       String        @map("group_id")
-  questionType  String        @map("question_type")
+  questionType  QuestionType  @map("question_type")
   questionText  String        @map("question_text")
   options       Json?
   correctAnswer String?       @map("correct_answer")
@@ -502,6 +493,32 @@ enum AppRole {
   admin
   teacher
   student
+
+  @@map("app_role")
+}
+
+enum ExamSectionType {
+  listening
+  reading
+  writing
+  speaking
+  general
+
+  @@map("exam_section_type")
+}
+
+enum QuestionType {
+  multiple_choice
+  fill_blank
+  matching
+  essay
+  speaking
+  listening
+  short_answer
+  true_false_not_given
+  yes_no_not_given
+
+  @@map("question_type")
 }
 
 enum InvitationStatus {

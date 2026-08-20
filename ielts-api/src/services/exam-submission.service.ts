@@ -646,6 +646,26 @@ export class ExamSubmissionService {
       throw new AuthorizationError("Bài nộp trước đó chưa được chấm điểm. Chỉ có thể sửa bài sau khi đã có đánh giá từ giáo viên.", 400);
     }
 
+    // Invariant Check: Verify that teacher explicitly marked revisionRequired: true
+    let isRevisionRequired = true;
+    for (const ans of latestSubmission.answers || []) {
+      if (ans.feedback) {
+        try {
+          const parsed = JSON.parse(ans.feedback);
+          if (parsed && typeof parsed === "object" && parsed.revisionRequired !== undefined) {
+            isRevisionRequired = !!parsed.revisionRequired;
+            break;
+          }
+        } catch {
+          // not structured json feedback
+        }
+      }
+    }
+
+    if (!isRevisionRequired) {
+      throw new AuthorizationError("Bài nộp đã đạt yêu cầu hoặc giáo viên không yêu cầu sửa bài.", 400);
+    }
+
     // 3. Create fresh ExamSubmission for Attempt 2 (Revision) in an atomic transaction
     return this.repo.transaction(async (tx) => {
       const newSubmission = await tx.examSubmission.create({
