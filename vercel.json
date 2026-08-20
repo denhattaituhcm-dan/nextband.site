@@ -1,28 +1,14 @@
 {
-  "buildCommand": "cd nextband && npm install && npm run build",
+  "buildCommand": "cd ielts-api && npx prisma generate && cd ../nextband && npm run build",
   "outputDirectory": "nextband/dist",
-  "framework": "vite",
-  "routes": [
+  "rewrites": [
     {
-      "src": "/assets/(.*)",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
-      },
-      "continue": true
+      "source": "/api/(.*)",
+      "destination": "/api"
     },
     {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/assets/(.*)",
-      "status": 404
-    },
-    {
-      "src": "/(.*)",
-      "headers": {
-        "cache-control": "public, max-age=0, must-revalidate"
-      },
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
