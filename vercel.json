@@ -1,13 +1,9 @@
 {
-  "buildCommand": "cd ielts-api && npx prisma generate && cd ../nextband && npm run build",
+  "buildCommand": "cd nextband && npm run build",
   "outputDirectory": "nextband/dist",
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api"
-    },
-    {
-      "source": "/(.*)",
+      "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
   ]
