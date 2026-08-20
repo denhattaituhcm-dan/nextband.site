@@ -343,7 +343,7 @@ describe('Notification Subsystem End-to-End Test Suite', () => {
                 id: 'qg-w1',
                 questionType: 'essay',
                 questions: [
-                  { id: 'q-w1', score: 9 },
+                  { id: 'q-w1', questionType: 'essay', score: 9 },
                 ],
               },
             ],
