@@ -118,21 +118,21 @@ describe("GATE 3: FRONTEND STATIC ARCHITECTURE & AUTHORITY BOUNDARY TEST SUITE",
     const apiTsContent = readFileSync(apiTsPath, "utf-8");
 
     it("2.1. submissionsApi.start exclusively invokes Fastify POST /submissions", () => {
-      expect(apiTsContent).toContain('fetch(`${API_BASE_URL}/submissions`');
+      expect(apiTsContent).toMatch(/fetch(WithResilience)?\(`\$\{API_BASE_URL\}\/submissions`/);
       expect(apiTsContent).not.toMatch(/\.from\(\s*["']exam_submissions["']\s*\)\s*\.insert/);
     });
 
     it("2.2. submissionsApi.saveAnswers exclusively invokes Fastify PUT /submissions/:id", () => {
-      expect(apiTsContent).toContain('fetch(`${API_BASE_URL}/submissions/${id}`');
+      expect(apiTsContent).toMatch(/fetch(WithResilience)?\(`\$\{API_BASE_URL\}\/submissions\/\$\{id\}`/);
       expect(apiTsContent).not.toMatch(/\.from\(\s*["']answers["']\s*\)\s*\.upsert/);
     });
 
     it("2.3. submissionsApi.submit exclusively invokes Fastify POST /submissions/:id/submit", () => {
-      expect(apiTsContent).toContain('fetch(`${API_BASE_URL}/submissions/${id}/submit`');
+      expect(apiTsContent).toMatch(/fetch(WithResilience)?\(`\$\{API_BASE_URL\}\/submissions\/\$\{id\}\/submit`/);
     });
 
     it("2.4. submissionsApi.grade exclusively invokes Fastify POST /submissions/:id/grade", () => {
-      expect(apiTsContent).toContain('fetch(`${API_BASE_URL}/submissions/${id}/grade`');
+      expect(apiTsContent).toMatch(/fetch(WithResilience)?\(`\$\{API_BASE_URL\}\/submissions\/\$\{id\}\/grade`/);
       expect(apiTsContent).not.toMatch(/\.from\(\s*["']exam_submissions["']\s*\)\s*\.update/);
     });
   });

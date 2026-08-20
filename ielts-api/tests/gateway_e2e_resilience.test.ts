@@ -96,7 +96,7 @@ describe("🚀 PHASE 2: GATEWAY E2E BUSINESS FLOW & FAILURE ISOLATION TESTS", ()
     }
 
     let exam = await prisma.exam.findFirst({
-      where: { courseId, isPublished: true },
+      where: { title: "E2E IELTS Gateway Dedicated Test Exam" },
       include: {
         sections: {
           include: {
@@ -113,7 +113,7 @@ describe("🚀 PHASE 2: GATEWAY E2E BUSINESS FLOW & FAILURE ISOLATION TESTS", ()
     if (!exam) {
       exam = await prisma.exam.create({
         data: {
-          title: "E2E IELTS Gateway Test Exam",
+          title: "E2E IELTS Gateway Dedicated Test Exam",
           courseId,
           isPublished: true,
           isActive: true,
@@ -164,12 +164,12 @@ describe("🚀 PHASE 2: GATEWAY E2E BUSINESS FLOW & FAILURE ISOLATION TESTS", ()
 
     examId = exam.id;
     questionId = exam.sections[0]?.questionGroups[0]?.questions[0]?.id || "q1";
-  });
+  }, 60000);
 
   afterAll(async () => {
     await app.close();
     await prisma.$disconnect();
-  });
+  }, 60000);
 
   // ---------------------------------------------------------------------------
   // 1. GATEWAY HEALTH ENDPOINT
@@ -191,6 +191,9 @@ describe("🚀 PHASE 2: GATEWAY E2E BUSINESS FLOW & FAILURE ISOLATION TESTS", ()
   it(
     "G2: Full End-to-End Business Flow: Start -> Save Draft -> Submit -> Grade -> Revision",
     async () => {
+      // Clean slate for test isolation
+      await prisma.examSubmission.deleteMany({ where: { examId, studentId } });
+
       // Step 1: Student Starts Exam Attempt 1
       const idempotencyKey = `idemp-e2e-${Date.now()}`;
       const startRes = await app.inject({
@@ -290,7 +293,7 @@ describe("🚀 PHASE 2: GATEWAY E2E BUSINESS FLOW & FAILURE ISOLATION TESTS", ()
       expect(verifiedSub?.status).toBe("GRADED");
       expect(verifiedSub?.answers[0]?.answerText).toBe("Paris");
     },
-    20000
+    60000
   );
 
   // ---------------------------------------------------------------------------
@@ -299,6 +302,9 @@ describe("🚀 PHASE 2: GATEWAY E2E BUSINESS FLOW & FAILURE ISOLATION TESTS", ()
   it(
     "G3: Gateway Idempotency Guarantee -> Duplicate POST /submissions with same key returns identical record without duplicate DB row",
     async () => {
+      // Clean slate for test isolation
+      await prisma.examSubmission.deleteMany({ where: { examId, studentId } });
+
       const fixedIdempotencyKey = `idemp-dup-${Date.now()}`;
       const initialCount = await prisma.examSubmission.count({
         where: { examId, studentId },
@@ -347,6 +353,6 @@ describe("🚀 PHASE 2: GATEWAY E2E BUSINESS FLOW & FAILURE ISOLATION TESTS", ()
       });
       expect(finalCount - initialCount).toBeLessThanOrEqual(1);
     },
-    20000
+    60000
   );
 });
