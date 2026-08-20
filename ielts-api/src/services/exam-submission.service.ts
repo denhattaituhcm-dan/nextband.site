@@ -447,9 +447,14 @@ export class ExamSubmissionService {
   ) {
     // Check idempotency record first
     if (payload.idempotencyKey) {
-      const existingIdem = await this.prisma.idempotencyRecord?.findFirst?.({
-        where: { key: payload.idempotencyKey },
-      });
+      let existingIdem: any = null;
+      try {
+        existingIdem = await this.prisma.idempotencyRecord?.findFirst?.({
+          where: { key: payload.idempotencyKey },
+        });
+      } catch {
+        existingIdem = null;
+      }
 
       if (existingIdem) {
         const cached = typeof existingIdem.responsePayload === "string" 
@@ -591,63 +596,75 @@ export class ExamSubmissionService {
 
       // Audit Outbox Event
       if (tx.auditOutbox) {
-        const auditEvent = auditOutboxService.buildSanitizedEvent({
-          eventType: "SUBMISSION_FINALIZED",
-          actorId: user.id,
-          actorRole: user.roles[0] || "student",
-          submissionId: id,
-          examId: submission.examId,
-          idempotencyKey: payload.idempotencyKey,
-          oldState: { status: submission.status, totalScore: submission.totalScore },
-          newState: { status: targetStatus, totalScore: gradingSummary.totalScore },
-          resultSummary: gradingSummary,
-        });
-        await tx.auditOutbox.create({ data: auditEvent });
+        try {
+          const auditEvent = auditOutboxService.buildSanitizedEvent({
+            eventType: "SUBMISSION_FINALIZED",
+            actorId: user.id,
+            actorRole: user.roles[0] || "student",
+            submissionId: id,
+            examId: submission.examId,
+            idempotencyKey: payload.idempotencyKey,
+            oldState: { status: submission.status, totalScore: submission.totalScore },
+            newState: { status: targetStatus, totalScore: gradingSummary.totalScore },
+            resultSummary: gradingSummary,
+          });
+          await tx.auditOutbox.create({ data: auditEvent });
+        } catch {
+          // Fault isolation: secondary audit logging must not abort submission
+        }
       }
 
       // Idempotency Record
       if (payload.idempotencyKey && tx.idempotencyRecord) {
-        await tx.idempotencyRecord.create({
-          data: {
-            key: payload.idempotencyKey,
-            submissionId: id,
-            payloadHash: "sha256-mock",
-            responsePayload: JSON.stringify(fullResult),
-          },
-        });
+        try {
+          await tx.idempotencyRecord.create({
+            data: {
+              key: payload.idempotencyKey,
+              submissionId: id,
+              payloadHash: "sha256-mock",
+              responsePayload: JSON.stringify(fullResult),
+            },
+          });
+        } catch {
+          // Fault isolation: secondary idempotency record must not abort submission
+        }
       }
 
       // Invariant CORE-012/013: Notify student if auto-graded or notify teacher if awaiting grading
       if (tx.notification) {
-        const notifService = new NotificationService(this.prisma);
-        const examTitle = submission.exam?.title || "bài thi";
-        if (targetStatus === "GRADED") {
-          await notifService.createNotification(tx, {
-            userId: user.id,
-            type: "SUBMISSION_GRADED",
-            title: "Bài làm đã có kết quả",
-            message: `Bài thi "${examTitle}" của bạn đã được chấm tự động: ${gradingSummary.correctAnswers}/${gradingSummary.totalQuestions} câu đúng.`,
-            link: `/app/submissions/${id}`,
-            entityType: "submission",
-            entityId: id,
-          });
-        } else if (targetStatus === "SUBMITTED" && submission.exam?.courseId) {
-          const teacherClasses = await tx.class.findMany({
-            where: { courseId: submission.exam.courseId, isActive: true },
-            select: { teacherId: true },
-          });
-          const teacherIds = teacherClasses.map((c: any) => c.teacherId).filter(Boolean) as string[];
-          for (const tId of teacherIds) {
+        try {
+          const notifService = new NotificationService(this.prisma);
+          const examTitle = submission.exam?.title || "bài thi";
+          if (targetStatus === "GRADED") {
             await notifService.createNotification(tx, {
-              userId: tId,
-              type: "NEW_SUBMISSION",
-              title: "Bài nộp mới cần chấm",
-              message: `Học viên đã nộp bài "${examTitle}". Vui lòng kiểm tra và chấm điểm.`,
-              link: `/admin/submissions/${id}`,
+              userId: user.id,
+              type: "SUBMISSION_GRADED",
+              title: "Bài làm đã có kết quả",
+              message: `Bài thi "${examTitle}" của bạn đã được chấm tự động: ${gradingSummary.correctAnswers}/${gradingSummary.totalQuestions} câu đúng.`,
+              link: `/app/submissions/${id}`,
               entityType: "submission",
               entityId: id,
             });
+          } else if (targetStatus === "SUBMITTED" && submission.exam?.courseId) {
+            const teacherClasses = await tx.class.findMany({
+              where: { courseId: submission.exam.courseId, isActive: true },
+              select: { teacherId: true },
+            });
+            const teacherIds = teacherClasses.map((c: any) => c.teacherId).filter(Boolean) as string[];
+            for (const tId of teacherIds) {
+              await notifService.createNotification(tx, {
+                userId: tId,
+                type: "NEW_SUBMISSION",
+                title: "Bài nộp mới cần chấm",
+                message: `Học viên đã nộp bài "${examTitle}". Vui lòng kiểm tra và chấm điểm.`,
+                link: `/admin/submissions/${id}`,
+                entityType: "submission",
+                entityId: id,
+              });
+            }
           }
+        } catch {
+          // Fault isolation: notification must not abort submission
         }
       }
 

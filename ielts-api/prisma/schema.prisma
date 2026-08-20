@@ -220,6 +220,8 @@ model ClassStudent {
   student   User             @relation(fields: [studentId], references: [userId], onDelete: Cascade)
 
   @@unique([classId, studentId])
+  @@index([studentId])
+  @@index([classId])
   @@map("class_students")
 }
 
