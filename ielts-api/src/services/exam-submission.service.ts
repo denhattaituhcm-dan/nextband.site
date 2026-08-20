@@ -57,9 +57,11 @@ function sanitizeQuestionForStudent(q: any, showAnswerKey: boolean) {
 
 export class ExamSubmissionService {
   private repo: SubmissionRepository;
+  private notificationService: NotificationService;
 
   constructor(private prisma: PrismaClient) {
     this.repo = new SubmissionRepository(prisma);
+    this.notificationService = new NotificationService(prisma);
   }
 
   // Use Case: List Submissions with Role-based filtering
