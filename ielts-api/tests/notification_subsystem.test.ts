@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createMockPrisma } from './mockPrisma.js';
 import { NotificationService } from '../src/services/notification.service.js';
+import { ExamSubmissionService } from '../src/services/exam-submission.service.js';
 import { NotificationType, EnrollmentStatus } from '@prisma/client';
 
 describe('Notification Subsystem End-to-End Test Suite', () => {
@@ -272,6 +273,144 @@ describe('Notification Subsystem End-to-End Test Suite', () => {
       expect(s2Notifs.items.length).toBe(1);
       expect(s2Notifs.items[0].type).toBe(NotificationType.NEW_HOMEWORK);
       expect(s2Notifs.items[0].title).toBe('Bài tập mới: Listening Cam 18 Test 3');
+    });
+
+    it('Business Event 4: ExamSubmissionService.submitExam (Auto-Graded) creates SUBMISSION_GRADED notification for student', async () => {
+      const examSubService = new ExamSubmissionService(mockPrisma as any);
+      const subId = 'sub-auto-1';
+
+      // Setup exam with single choice question (auto-graded)
+      const autoExam = {
+        id: 'exam-auto-1',
+        title: 'IELTS Reading Test 1',
+        courseId: courseId,
+        sections: [
+          {
+            id: 'sec-1',
+            questionGroups: [
+              {
+                id: 'qg-1',
+                questionType: 'multiple_choice',
+                questions: [
+                  { id: 'q-1', correctAnswer: 'A', score: 1 },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+      mockPrisma.exams.push(autoExam);
+      mockPrisma.examSubmissions.push({
+        id: subId,
+        examId: autoExam.id,
+        studentId: student1Id,
+        status: 'IN_PROGRESS',
+        startedAt: new Date(),
+        answers: [],
+        version: 1,
+      });
+
+      await examSubService.submitExam(
+        { id: student1Id, roles: ['student'] },
+        subId,
+        {
+          answers: [{ questionId: 'q-1', answerText: 'A' }],
+        }
+      );
+
+      // Student should receive SUBMISSION_GRADED notification
+      const studentNotifs = await notificationService.listNotifications({ userId: student1Id });
+      expect(studentNotifs.items.length).toBe(1);
+      expect(studentNotifs.items[0].type).toBe(NotificationType.SUBMISSION_GRADED);
+      expect(studentNotifs.items[0].entityId).toBe(subId);
+      expect(studentNotifs.items[0].link).toBe(`/results/${subId}`);
+    });
+
+    it('Business Event 5: ExamSubmissionService.submitExam (Essay/Manual) creates NEW_SUBMISSION notification for teacher', async () => {
+      const examSubService = new ExamSubmissionService(mockPrisma as any);
+      const subId = 'sub-essay-1';
+
+      // Setup exam with essay question (requires manual grading)
+      const essayExam = {
+        id: 'exam-essay-1',
+        title: 'IELTS Writing Task 1',
+        courseId: courseId,
+        sections: [
+          {
+            id: 'sec-w1',
+            questionGroups: [
+              {
+                id: 'qg-w1',
+                questionType: 'essay',
+                questions: [
+                  { id: 'q-w1', score: 9 },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+      mockPrisma.exams.push(essayExam);
+      mockPrisma.examSubmissions.push({
+        id: subId,
+        examId: essayExam.id,
+        studentId: student1Id,
+        status: 'IN_PROGRESS',
+        startedAt: new Date(),
+        answers: [],
+        version: 1,
+      });
+
+      await examSubService.submitExam(
+        { id: student1Id, roles: ['student'] },
+        subId,
+        {
+          answers: [{ questionId: 'q-w1', answerText: 'This is my essay submission.' }],
+        }
+      );
+
+      // Teacher should receive NEW_SUBMISSION notification
+      const teacherNotifs = await notificationService.listNotifications({ userId: teacherId });
+      expect(teacherNotifs.items.length).toBe(1);
+      expect(teacherNotifs.items[0].type).toBe(NotificationType.NEW_SUBMISSION);
+      expect(teacherNotifs.items[0].entityId).toBe(subId);
+      expect(teacherNotifs.items[0].link).toBe(`/admin/submissions/${subId}`);
+    });
+
+    it('Business Event 6: ExamSubmissionService.gradeSubmission creates TEACHER_FEEDBACK notification for student', async () => {
+      const examSubService = new ExamSubmissionService(mockPrisma as any);
+      const subId = 'sub-graded-by-teacher-1';
+
+      const essayExam = {
+        id: 'exam-essay-2',
+        title: 'IELTS Writing Task 2 - Environment',
+        courseId: courseId,
+      };
+      mockPrisma.exams.push(essayExam);
+      mockPrisma.examSubmissions.push({
+        id: subId,
+        examId: essayExam.id,
+        studentId: student1Id,
+        status: 'SUBMITTED',
+        startedAt: new Date(),
+        answers: [{ id: 'ans-1', questionId: 'q-1', submissionId: subId, answerText: 'Essay body' }],
+        version: 2,
+      });
+
+      await examSubService.gradeSubmission(
+        { id: teacherId, roles: ['teacher'] },
+        subId,
+        [{ answerId: 'ans-1', score: 7.5, feedback: 'Well structured arguments!' }],
+        { feedback: 'Overall great performance.' }
+      );
+
+      // Student should receive TEACHER_FEEDBACK notification
+      const studentNotifs = await notificationService.listNotifications({ userId: student1Id });
+      const feedbackNotif = studentNotifs.items.find(n => n.type === NotificationType.TEACHER_FEEDBACK);
+      expect(feedbackNotif).toBeDefined();
+      expect(feedbackNotif?.entityId).toBe(subId);
+      expect(feedbackNotif?.title).toBe('Giáo viên đã chấm bài thi');
+      expect(feedbackNotif?.link).toBe(`/results/${subId}`);
     });
   });
 });
