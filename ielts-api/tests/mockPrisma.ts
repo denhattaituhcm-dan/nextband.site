@@ -656,7 +656,25 @@ export function createMockPrisma() {
           answers: include?.answers ? subAnswers : undefined,
         };
       },
-      findMany: async () => examSubmissions,
+      findMany: async ({ where, select, include }: any = {}) => {
+        let list = [...examSubmissions];
+        if (where?.examId) list = list.filter((s) => s.examId === where.examId);
+        if (where?.studentId?.in) list = list.filter((s) => where.studentId.in.includes(s.studentId));
+        else if (where?.studentId && typeof where.studentId === "string") list = list.filter((s) => s.studentId === where.studentId);
+        if (where?.status) list = list.filter((s) => s.status === where.status);
+
+        return list.map((sub) => {
+          const subAnswers = answers.filter((a) => a.submissionId === sub.id);
+          const student = users.find((u) => u.id === sub.studentId);
+          const exam = exams.find((e) => e.id === sub.examId);
+          return {
+            ...sub,
+            student: select?.student ? student : undefined,
+            exam: select?.exam ? exam : undefined,
+            answers: (select?.answers || include?.answers) ? subAnswers : undefined,
+          };
+        });
+      },
       count: async ({ where }: any) => {
         return examSubmissions.filter((s) => {
           if (where?.examId && s.examId !== where.examId) return false;

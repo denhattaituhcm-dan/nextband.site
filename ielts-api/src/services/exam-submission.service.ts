@@ -14,6 +14,20 @@ import {
 const MANUAL_TYPES = new Set(["essay", "speaking"]);
 const MAX_EXAM_ATTEMPTS = 3;
 
+export interface CriteriaScores {
+  taskResponse: number | null;
+  coherence: number | null;
+  lexical: number | null;
+  grammar: number | null;
+}
+
+export interface TeacherFeedbackPayload {
+  text: string;
+  primaryErrorCategory: "CONCEPT" | "STRUCTURE" | "EXPRESSION" | "GRAMMAR" | null;
+  revisionRequired: boolean;
+  criteriaScores: CriteriaScores | null;
+}
+
 export function getRemainingSeconds(startedAt: Date | null, durationMinutes: number | null) {
   const safeDuration = Math.max(1, durationMinutes || 60);
   if (!startedAt) return safeDuration * 60;
@@ -125,6 +139,16 @@ export class ExamSubmissionService {
               id: true,
               title: true,
               durationMinutes: true,
+            },
+          },
+          answers: {
+            select: {
+              id: true,
+              questionId: true,
+              answerText: true,
+              audioUrl: true,
+              score: true,
+              feedback: true,
             },
           },
         }
@@ -711,8 +735,9 @@ export class ExamSubmissionService {
     totalScore?: number,
     options?: {
       feedback?: string;
-      primaryErrorCategory?: "CONCEPT" | "STRUCTURE" | "EXPRESSION" | "GRAMMAR";
+      primaryErrorCategory?: "CONCEPT" | "STRUCTURE" | "EXPRESSION" | "GRAMMAR" | null;
       revisionRequired?: boolean;
+      criteriaScores?: CriteriaScores | null;
     }
   ) {
     const isAdmin = user.roles.includes("admin");
@@ -745,22 +770,45 @@ export class ExamSubmissionService {
         let answerFeedback = g.feedback || null;
 
         // If top-level feedback metadata is provided and this is the first answer, format feedback
-        if (i === 0 && options && (options.feedback || options.primaryErrorCategory || options.revisionRequired !== undefined)) {
-          const structuredPayload = {
+        if (
+          i === 0 &&
+          options &&
+          (options.feedback ||
+            options.primaryErrorCategory !== undefined ||
+            options.revisionRequired !== undefined ||
+            options.criteriaScores !== undefined)
+        ) {
+          const structuredPayload: TeacherFeedbackPayload = {
             text: options.feedback || g.feedback || "",
             primaryErrorCategory: options.primaryErrorCategory || null,
             revisionRequired: !!options.revisionRequired,
+            criteriaScores: options.criteriaScores || null,
           };
           answerFeedback = JSON.stringify(structuredPayload);
         }
 
-        await tx.answer.update({
-          where: { id: g.answerId },
-          data: {
-            score: g.score,
-            feedback: answerFeedback,
-          },
-        });
+        if (g.answerId) {
+          await tx.answer.update({
+            where: { id: g.answerId },
+            data: {
+              score: g.score,
+              feedback: answerFeedback,
+            },
+          });
+        } else {
+          const fallbackAns = await tx.answer.findFirst({
+            where: { submissionId: id },
+          });
+          if (fallbackAns) {
+            await tx.answer.update({
+              where: { id: fallbackAns.id },
+              data: {
+                score: g.score,
+                feedback: answerFeedback,
+              },
+            });
+          }
+        }
         computedTotal += g.score;
       }
 

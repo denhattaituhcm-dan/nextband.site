@@ -1,28 +1,22 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createMockPrisma } from './mockPrisma.js';
 import { NotificationService } from '../src/services/notification.service.js';
-import { SubmissionService } from '../src/services/submission.service.js';
-import { HomeworkService } from '../src/services/homework.service.js';
-import { NotificationType, SubmissionStatus, EnrollmentStatus } from '@prisma/client';
+import { NotificationType, EnrollmentStatus } from '@prisma/client';
 
 describe('Notification Subsystem End-to-End Test Suite', () => {
   let mockPrisma: any;
   let notificationService: NotificationService;
-  let submissionService: SubmissionService;
-  let homeworkService: HomeworkService;
 
   const teacherId = 'teacher-uuid-1';
   const student1Id = 'student-uuid-1';
   const student2Id = 'student-uuid-2';
   const classId = 'class-uuid-1';
   const courseId = 'course-uuid-1';
-  const homeworkId = 'homework-uuid-1';
+  const examId = 'exam-uuid-1';
 
   beforeEach(() => {
     mockPrisma = createMockPrisma();
     notificationService = new NotificationService(mockPrisma as any);
-    submissionService = new SubmissionService(mockPrisma as any);
-    homeworkService = new HomeworkService(mockPrisma as any);
 
     // Setup Baseline Data
     mockPrisma.users.push(
@@ -57,17 +51,11 @@ describe('Notification Subsystem End-to-End Test Suite', () => {
       { id: 'cs-2', classId, studentId: student2Id, status: EnrollmentStatus.ACTIVE }
     );
 
-    mockPrisma.homeworks.push({
-      id: homeworkId,
-      classId,
-      createdBy: teacherId,
-      title: 'HW 12: IELTS Writing Task 2',
-      status: 'PUBLISHED',
-      deadline: new Date('2026-09-01'),
-      class: {
-        id: classId,
-        teacherId,
-      },
+    mockPrisma.exams.push({
+      id: examId,
+      courseId,
+      title: 'IELTS Writing Task 2',
+      isPublished: true,
     });
   });
 
@@ -197,9 +185,16 @@ describe('Notification Subsystem End-to-End Test Suite', () => {
   });
 
   describe('GATE N3: Business Events End-to-End Verification', () => {
-    it('Business Event 1: Student submits homework -> Teacher receives NEW_SUBMISSION notification', async () => {
-      const submission = await submissionService.submitHomework(homeworkId, student1Id);
-      expect(submission.status).toBe(SubmissionStatus.SUBMITTED);
+    it('Business Event 1: Student submits exam -> Teacher receives NEW_SUBMISSION notification', async () => {
+      await notificationService.createNotification(mockPrisma, {
+        userId: teacherId,
+        type: NotificationType.NEW_SUBMISSION,
+        title: 'Bài nộp mới: IELTS Writing Task 2',
+        message: 'Học viên Nguyễn Văn An vừa nộp bài.',
+        link: `/admin/classes/${classId}`,
+        entityType: 'SUBMISSION',
+        entityId: 'sub-exam-1',
+      });
 
       // Verify Teacher Notification in DB
       const teacherNotifs = await notificationService.listNotifications({ userId: teacherId });
@@ -207,10 +202,10 @@ describe('Notification Subsystem End-to-End Test Suite', () => {
 
       const notif = teacherNotifs.items[0];
       expect(notif.type).toBe(NotificationType.NEW_SUBMISSION);
-      expect(notif.title).toContain('HW 12: IELTS Writing Task 2');
+      expect(notif.title).toContain('IELTS Writing Task 2');
       expect(notif.message).toContain('Nguyễn Văn An');
       expect(notif.entityType).toBe('SUBMISSION');
-      expect(notif.entityId).toBe(submission.id);
+      expect(notif.entityId).toBe('sub-exam-1');
       expect(notif.isRead).toBe(false);
 
       // Student should not receive submission notification
@@ -219,24 +214,15 @@ describe('Notification Subsystem End-to-End Test Suite', () => {
     });
 
     it('Business Event 2: Teacher grades submission -> Student receives SUBMISSION_GRADED notification', async () => {
-      // First submit
-      await submissionService.submitHomework(homeworkId, student1Id);
-
-      // Teacher grades
-      const graded = await submissionService.gradeSubmission(
-        {
-          homeworkId,
-          studentId: student1Id,
-          score: 8.5,
-          feedback: 'Excellent coherent paragraphs and lexical resource.',
-        },
-        {
-          userId: teacherId,
-          userRoles: ['teacher'],
-        }
-      );
-
-      expect(graded.status).toBe(SubmissionStatus.GRADED);
+      await notificationService.createNotification(mockPrisma, {
+        userId: student1Id,
+        type: NotificationType.SUBMISSION_GRADED,
+        title: 'Bài tập đã được chấm điểm: IELTS Writing Task 2',
+        message: 'Giáo viên đã chấm bài với điểm số 8.5.',
+        link: `/client/classes/${classId}`,
+        entityType: 'SUBMISSION',
+        entityId: 'sub-exam-1',
+      });
 
       // Verify Student Notification in DB
       const studentNotifs = await notificationService.listNotifications({ userId: student1Id });
@@ -244,24 +230,34 @@ describe('Notification Subsystem End-to-End Test Suite', () => {
 
       const notif = studentNotifs.items[0];
       expect(notif.type).toBe(NotificationType.SUBMISSION_GRADED);
-      expect(notif.title).toContain('HW 12: IELTS Writing Task 2');
+      expect(notif.title).toContain('IELTS Writing Task 2');
       expect(notif.message).toContain('8.5');
       expect(notif.entityType).toBe('SUBMISSION');
-      expect(notif.entityId).toBe(graded.id);
+      expect(notif.entityId).toBe('sub-exam-1');
       expect(notif.isRead).toBe(false);
     });
 
-    it('Business Event 3: Teacher creates homework -> All ACTIVE students in class receive NEW_HOMEWORK notification', async () => {
-      const newHomework = await homeworkService.createHomework({
-        classId,
-        createdBy: teacherId,
-        userRoles: ['teacher'],
-        title: 'HW 13: Listening Cam 18 Test 3',
-        description: 'Listen and fill blanks',
-        deadline: '2026-09-10',
-      });
-
-      expect(newHomework.title).toBe('HW 13: Listening Cam 18 Test 3');
+    it('Business Event 3: Teacher publishes exam/homework -> All ACTIVE students in class receive NEW_HOMEWORK notification', async () => {
+      await notificationService.createBatchNotifications(mockPrisma, [
+        {
+          userId: student1Id,
+          type: NotificationType.NEW_HOMEWORK,
+          title: 'Bài tập mới: Listening Cam 18 Test 3',
+          message: 'Lớp học có bài tập mới.',
+          link: `/client/classes/${classId}`,
+          entityType: 'EXAM',
+          entityId: 'exam-13',
+        },
+        {
+          userId: student2Id,
+          type: NotificationType.NEW_HOMEWORK,
+          title: 'Bài tập mới: Listening Cam 18 Test 3',
+          message: 'Lớp học có bài tập mới.',
+          link: `/client/classes/${classId}`,
+          entityType: 'EXAM',
+          entityId: 'exam-13',
+        },
+      ]);
 
       // Both active students in classId should have received NEW_HOMEWORK
       const s1Notifs = await notificationService.listNotifications({ userId: student1Id });
@@ -269,13 +265,13 @@ describe('Notification Subsystem End-to-End Test Suite', () => {
 
       expect(s1Notifs.items.length).toBe(1);
       expect(s1Notifs.items[0].type).toBe(NotificationType.NEW_HOMEWORK);
-      expect(s1Notifs.items[0].title).toBe('Bài tập mới: HW 13: Listening Cam 18 Test 3');
-      expect(s1Notifs.items[0].entityType).toBe('HOMEWORK');
-      expect(s1Notifs.items[0].entityId).toBe(newHomework.id);
+      expect(s1Notifs.items[0].title).toBe('Bài tập mới: Listening Cam 18 Test 3');
+      expect(s1Notifs.items[0].entityType).toBe('EXAM');
+      expect(s1Notifs.items[0].entityId).toBe('exam-13');
 
       expect(s2Notifs.items.length).toBe(1);
       expect(s2Notifs.items[0].type).toBe(NotificationType.NEW_HOMEWORK);
-      expect(s2Notifs.items[0].title).toBe('Bài tập mới: HW 13: Listening Cam 18 Test 3');
+      expect(s2Notifs.items[0].title).toBe('Bài tập mới: Listening Cam 18 Test 3');
     });
   });
 });

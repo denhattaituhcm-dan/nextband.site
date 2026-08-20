@@ -105,19 +105,21 @@ export class SubmissionController {
         grades: any[];
         totalScore?: number;
         feedback?: string;
-        primaryErrorCategory?: "CONCEPT" | "STRUCTURE" | "EXPRESSION" | "GRAMMAR";
+        primaryErrorCategory?: "CONCEPT" | "STRUCTURE" | "EXPRESSION" | "GRAMMAR" | null;
         revisionRequired?: boolean;
+        criteriaScores?: any;
       };
     }>,
     reply: FastifyReply
   ) {
     try {
       const user = (request as any).user;
-      const { grades = [], totalScore, feedback, primaryErrorCategory, revisionRequired } = request.body || {};
+      const { grades = [], totalScore, feedback, primaryErrorCategory, revisionRequired, criteriaScores } = request.body || {};
       const result = await this.service.gradeManualSubmission(user, request.params.id, grades, totalScore, {
         feedback,
         primaryErrorCategory,
         revisionRequired,
+        criteriaScores,
       });
       return reply.send(result);
     } catch (err: any) {

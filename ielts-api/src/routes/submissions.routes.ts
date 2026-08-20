@@ -48,7 +48,17 @@ export default async function submissionsRoutes(fastify: FastifyInstance) {
   );
 
   // POST /submissions/:id/grade - Manual teacher grading (essay / speaking)
-  fastify.post<{ Params: { id: string }; Body: { grades: any[]; totalScore?: number } }>(
+  fastify.post<{
+    Params: { id: string };
+    Body: {
+      grades: any[];
+      totalScore?: number;
+      feedback?: string;
+      primaryErrorCategory?: "CONCEPT" | "STRUCTURE" | "EXPRESSION" | "GRAMMAR" | null;
+      revisionRequired?: boolean;
+      criteriaScores?: any;
+    };
+  }>(
     "/:id/grade",
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
