@@ -5,6 +5,7 @@ import { auditOutboxService } from "./audit/AuditOutboxService.js";
 import { idempotencyService } from "./idempotency/IdempotencyService.js";
 import { AuthorizationError, NotFoundError } from "./authorization.service.js";
 import { SubmissionStateMachine, SubmissionState, StateTransitionError } from "./submission-state-machine.js";
+import { NotificationService } from "./notification.service.js";
 import {
   getClassStudentIds,
   getTeacherStudentIds,
@@ -616,6 +617,40 @@ export class ExamSubmissionService {
         });
       }
 
+      // Invariant CORE-012/013: Notify student if auto-graded or notify teacher if awaiting grading
+      if (tx.notification) {
+        const notifService = new NotificationService(this.prisma);
+        const examTitle = submission.exam?.title || "bài thi";
+        if (targetStatus === "GRADED") {
+          await notifService.createNotification(tx, {
+            userId: user.id,
+            type: "SUBMISSION_GRADED",
+            title: "Bài làm đã có kết quả",
+            message: `Bài thi "${examTitle}" của bạn đã được chấm tự động: ${gradingSummary.correctAnswers}/${gradingSummary.totalQuestions} câu đúng.`,
+            link: `/app/submissions/${id}`,
+            entityType: "submission",
+            entityId: id,
+          });
+        } else if (targetStatus === "SUBMITTED" && submission.exam?.courseId) {
+          const teacherClasses = await tx.class.findMany({
+            where: { courseId: submission.exam.courseId, isActive: true },
+            select: { teacherId: true },
+          });
+          const teacherIds = teacherClasses.map((c: any) => c.teacherId).filter(Boolean) as string[];
+          for (const tId of teacherIds) {
+            await notifService.createNotification(tx, {
+              userId: tId,
+              type: "NEW_SUBMISSION",
+              title: "Bài nộp mới cần chấm",
+              message: `Học viên đã nộp bài "${examTitle}". Vui lòng kiểm tra và chấm điểm.`,
+              link: `/admin/submissions/${id}`,
+              entityType: "submission",
+              entityId: id,
+            });
+          }
+        }
+      }
+
       return fullResult;
     });
   }
@@ -843,6 +878,24 @@ export class ExamSubmissionService {
           newState: { status: "GRADED", totalScore: finalTotalScore },
         });
         await tx.auditOutbox.create({ data: auditEvent });
+      }
+
+      // Invariant CORE-012/CORE-013: Notify student inside transaction with DB Idempotency
+      if (tx.notification) {
+        const notifService = new NotificationService(this.prisma);
+        const examTitle = submission.exam?.title || "bài thi";
+        const hasRevision = options?.revisionRequired;
+        await notifService.createNotification(tx, {
+          userId: submission.studentId,
+          type: "SUBMISSION_GRADED",
+          title: hasRevision ? "Giáo viên yêu cầu sửa bài (Attempt 2)" : "Bài làm đã được chấm điểm",
+          message: hasRevision
+            ? `Giáo viên đã hoàn tất nhận xét cho bài "${examTitle}" và yêu cầu bạn viết bài sửa (Attempt 2).`
+            : `Giáo viên đã chấm điểm và phản hồi bài làm "${examTitle}". Điểm tổng kết: ${finalTotalScore}.`,
+          link: `/app/submissions/${id}`,
+          entityType: "submission",
+          entityId: id,
+        });
       }
 
       return updated;
