@@ -274,7 +274,7 @@ model Submission {
   id          String           @id @default(uuid())
   homeworkId  String           @map("homework_id")
   studentId   String           @map("student_id")
-  status      SubmissionStatus @default(PENDING)
+  status      SubmissionStatus @default(in_progress)
   submittedAt DateTime?        @map("submitted_at")
   gradedAt    DateTime?        @map("graded_at")
   score       Decimal?
@@ -387,7 +387,7 @@ model ExamSubmission {
   id             String           @id @default(uuid())
   examId         String           @map("exam_id")
   studentId      String           @map("student_id")
-  status         String           @default("in_progress")
+  status         SubmissionStatus @default(in_progress)
   startedAt      DateTime?        @default(now()) @map("started_at")
   submittedAt    DateTime?        @map("submitted_at")
   totalScore     Decimal?         @map("total_score")
@@ -532,10 +532,11 @@ enum HomeworkStatus {
 }
 
 enum SubmissionStatus {
-  IN_PROGRESS
-  PENDING
-  SUBMITTED
-  GRADED
+  in_progress
+  submitted
+  graded
+
+  @@map("submission_status")
 }
 
 enum AttendanceStatus {
