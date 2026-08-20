@@ -397,7 +397,7 @@ describe('Notification Subsystem End-to-End Test Suite', () => {
         version: 2,
       });
 
-      await examSubService.gradeSubmission(
+      await examSubService.gradeManualSubmission(
         { id: teacherId, roles: ['teacher'] },
         subId,
         [{ answerId: 'ans-1', score: 7.5, feedback: 'Well structured arguments!' }],

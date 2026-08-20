@@ -276,13 +276,24 @@ export function createMockPrisma() {
         classStudents.push(...data);
         return { count: data.length };
       },
-      findFirst: async ({ where }: any) => {
-        return classStudents.find((cs) => {
-          if (where.classId && cs.classId !== where.classId) return false;
-          if (where.studentId && cs.studentId !== where.studentId) return false;
-          if (where.deletedAt === null && cs.deletedAt !== null && cs.deletedAt !== undefined) return false;
+      findFirst: async ({ where, include }: any = {}) => {
+        const cs = classStudents.find((item) => {
+          if (where?.classId && item.classId !== where.classId) return false;
+          if (where?.studentId && item.studentId !== where.studentId) return false;
+          if (where?.deletedAt === null && item.deletedAt !== null && item.deletedAt !== undefined) return false;
+          if (where?.class?.courseId) {
+            const cls = classes.find((c) => c.id === item.classId);
+            if (!cls || cls.courseId !== where.class.courseId) return false;
+          }
           return true;
-        }) || null;
+        });
+        if (cs && include?.class) {
+          return {
+            ...cs,
+            class: classes.find((c) => c.id === cs.classId) || null,
+          };
+        }
+        return cs || null;
       },
       findMany: async ({ where, include }: any = {}) => {
         return classStudents
