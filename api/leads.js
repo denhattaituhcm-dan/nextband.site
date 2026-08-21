@@ -80,15 +80,15 @@ export default async function handler(req, res) {
       // Format goal / notes for Supabase persistence
       let formattedGoal = message;
       if (leadType === "QUICK_TRIAL") {
-        formattedGoal = [Học Thử 02 Buổi] Khóa:  | Ca học: ;
-        if (message) formattedGoal +=  | Ghi chú: ;
+        formattedGoal = `[Học Thử 02 Buổi] Khóa: ${course || "N/A"} | Ca học: ${preferredSchedule || "Linh hoạt"}`;
+        if (message) formattedGoal += ` | Ghi chú: ${message}`;
       } else if (leadType === "ASSESSMENT") {
-        formattedGoal = [Khảo Thí] Trình độ:  -> Mục tiêu:  ();
-        if (metadata.preferredDate) formattedGoal +=  | Ngày hẹn: ;
-        if (message) formattedGoal +=  | Lời nhắn: ;
+        formattedGoal = `[Khảo Thí] Trình độ: ${metadata.currentLevel || "N/A"} -> Mục tiêu: ${metadata.targetBand || "N/A"} (${metadata.testFormat || "online"})`;
+        if (metadata.preferredDate) formattedGoal += ` | Ngày hẹn: ${metadata.preferredDate}`;
+        if (message) formattedGoal += ` | Lời nhắn: ${message}`;
       }
 
-      const sourceTag = body.source || web_;
+      const sourceTag = body.source || `web_${leadType.toLowerCase()}`;
       const now = new Date().toISOString();
 
       // 2. PRIMARY PERSISTENCE: Save to Supabase (Source of Truth)
@@ -113,7 +113,7 @@ export default async function handler(req, res) {
         });
       }
 
-      const leadId = dbLead?.id || lead-;
+      const leadId = dbLead?.id || `lead-${Date.now()}`;
       const createdAt = dbLead?.created_at || now;
 
       // 3. SECONDARY NOTIFICATION: Dispatch to Google Apps Script Webhook (Async & Resilient)
@@ -147,17 +147,17 @@ export default async function handler(req, res) {
           .then(async (response) => {
             if (!response.ok) {
               const errText = await response.text().catch(() => "");
-              console.warn([Leads API] ⚠️ Google Apps Script Webhook returned HTTP : );
+              console.warn(`[Leads API] ⚠️ Google Apps Script Webhook returned HTTP ${response.status}: ${errText}`);
             } else {
-              console.log([Leads API] ✅ Successfully dispatched lead [] to Google Apps Script Webhook);
+              console.log(`[Leads API] ✅ Successfully dispatched lead [${leadId}] to Google Apps Script Webhook`);
             }
           })
           .catch((err) => {
-            console.error([Leads API] ❌ Failed to dispatch lead [] to Google Apps Script Webhook:, err?.message || err);
+            console.error(`[Leads API] ❌ Failed to dispatch lead [${leadId}] to Google Apps Script Webhook:`, err?.message || err);
           });
       } else {
         console.info(
-          [Leads API] Notice: GOOGLE_APPS_SCRIPT_WEBHOOK_URL not configured. Lead [] saved safely in Supabase.
+          `[Leads API] Notice: GOOGLE_APPS_SCRIPT_WEBHOOK_URL not configured. Lead [${leadId}] saved safely in Supabase.`
         );
       }
 
