@@ -1,7 +1,7 @@
-// Student Class Practice Workspace - Course-Driven Action Hub
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { lessonsApi, submissionsApi } from "@/lib/api";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { lessonsApi, submissionsApi, examsApi } from "@/lib/api";
+import { deriveHomeworkStatus, HomeworkStatus } from "@/types/homework";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -33,9 +33,19 @@ export default function StudentLessonViewerPage() {
   const { classId } = useParams<{ classId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
+  const queryClient = useQueryClient();
   const { user } = useAuth();
   const { state: lifecycleState, resolveClass, retry: retryLifecycle } = useStudentLifecycle();
   const { isHealthy: isGatewayHealthy, isWarmingUp: isGatewayWarmingUp, checkHealthNow } = useGatewayHealth();
+
+  const handlePrefetchExam = (targetExamId?: string) => {
+    if (!targetExamId) return;
+    queryClient.prefetchQuery({
+      queryKey: ["exam", targetExamId],
+      queryFn: () => examsApi.getById(targetExamId),
+      staleTime: 1000 * 60 * 5,
+    });
+  };
 
   const handleOpenExam = (targetExamId: string) => {
     const returnUrl = location.pathname;
@@ -184,16 +194,9 @@ export default function StudentLessonViewerPage() {
   // Homework items formatted for Practice Platform
   const homeworkList = lessons.map((item: any, idx: number) => {
     const sub = submissionsMap[item.id] || item.submission;
-    let status: "NOT_STARTED" | "IN_PROGRESS" | "SUBMITTED" | "REVIEWED" | "REVISION_REQUIRED" = "NOT_STARTED";
-
-    // Sole Source of Truth: submission.status & revisionRequired
-    if (sub?.status === "graded" || sub?.status === "GRADED" || sub?.grade_status === "graded") {
-      status = sub?.revisionRequired ? "REVISION_REQUIRED" : "REVIEWED";
-    } else if (sub?.status === "submitted" || sub?.status === "SUBMITTED") {
-      status = "SUBMITTED";
-    } else if (sub?.status === "in_progress" || sub?.status === "IN_PROGRESS") {
-      status = "IN_PROGRESS";
-    }
+    const derived = deriveHomeworkStatus(sub);
+    const status: "NOT_STARTED" | "IN_PROGRESS" | "SUBMITTED" | "REVIEWED" | "REVISION_REQUIRED" =
+      derived === "GRADED" ? "REVIEWED" : derived === "GRADING" ? "SUBMITTED" : derived;
 
     return {
       id: item.id,
@@ -222,6 +225,7 @@ export default function StudentLessonViewerPage() {
             Cần sửa bài (Attempt 2)
           </Badge>
         );
+      case "GRADED":
       case "REVIEWED":
         return (
           <Badge variant="success">
@@ -230,6 +234,7 @@ export default function StudentLessonViewerPage() {
           </Badge>
         );
       case "SUBMITTED":
+      case "GRADING":
         return (
           <Badge variant="warning">
             <Clock className="h-3 w-3" />
@@ -352,6 +357,8 @@ export default function StudentLessonViewerPage() {
 
                 <Button
                   onClick={() => handleOpenExam(nextHomework.examId || nextHomework.id)}
+                  onMouseEnter={() => handlePrefetchExam(nextHomework.examId || nextHomework.id)}
+                  onFocus={() => handlePrefetchExam(nextHomework.examId || nextHomework.id)}
                   className="bg-white text-primary hover:bg-white/95 font-bold px-6 py-2.5 rounded-xl text-xs shadow-xs shrink-0"
                 >
                   <span>Làm bài ngay</span>
@@ -425,6 +432,7 @@ export default function StudentLessonViewerPage() {
               {homeworkList.map((hw) => (
                 <Card
                   key={hw.id}
+                  onMouseEnter={() => handlePrefetchExam(hw.examId || hw.id)}
                   className="p-4 rounded-xl border border-border bg-card hover:border-primary/40 hover:shadow-xs transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                 >
                   <div className="space-y-1.5 flex-1">
@@ -456,6 +464,8 @@ export default function StudentLessonViewerPage() {
                       size="sm"
                       variant={hw.status === "REVIEWED" ? "outline" : "default"}
                       className={`font-bold text-xs gap-1.5 ${hw.status === "REVISION_REQUIRED" ? "bg-amber-600 hover:bg-amber-700 text-white shadow-xs" : ""}`}
+                      onMouseEnter={() => handlePrefetchExam(hw.examId || hw.id)}
+                      onFocus={() => handlePrefetchExam(hw.examId || hw.id)}
                       onClick={() => {
                         if (hw.submission?.id && (hw.status === "REVIEWED" || hw.status === "REVISION_REQUIRED")) {
                           navigate(`/submission/${hw.submission.id}`);

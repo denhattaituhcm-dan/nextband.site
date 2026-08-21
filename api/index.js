@@ -105825,10 +105825,7 @@ var AuthorizationService = class {
         studentId,
         class: {
           isActive: true,
-          OR: [
-            { courseId },
-            { homeworks: { some: { examId } } }
-          ]
+          courseId
         }
       }
     });
@@ -108509,6 +108506,9 @@ var ExamSubmissionService = class {
           examId,
           studentId: user.id,
           status: "IN_PROGRESS"
+        },
+        include: {
+          answers: true
         }
       });
       if (inProgress) {
@@ -108517,8 +108517,10 @@ var ExamSubmissionService = class {
           return {
             submission: {
               ...inProgress,
+              answers: inProgress.answers || [],
               remainingSeconds,
-              serverTime: (/* @__PURE__ */ new Date()).toISOString()
+              serverTime: (/* @__PURE__ */ new Date()).toISOString(),
+              isResumed: true
             },
             isNew: false
           };
@@ -108534,8 +108536,10 @@ var ExamSubmissionService = class {
           return {
             submission: {
               ...reset,
+              answers: [],
               remainingSeconds: Math.max(1, (exam.durationMinutes || 60) * 60),
-              serverTime: (/* @__PURE__ */ new Date()).toISOString()
+              serverTime: (/* @__PURE__ */ new Date()).toISOString(),
+              isResumed: false
             },
             isNew: false
           };
@@ -108547,6 +108551,32 @@ var ExamSubmissionService = class {
             submittedAt: /* @__PURE__ */ new Date()
           }
         });
+      }
+      const recentConcurrent = await tx.examSubmission.findFirst({
+        where: {
+          examId,
+          studentId: user.id,
+          status: "IN_PROGRESS"
+        },
+        orderBy: { createdAt: "desc" },
+        include: {
+          answers: true
+        }
+      });
+      if (recentConcurrent) {
+        const rem = getRemainingSeconds(recentConcurrent.startedAt, exam.durationMinutes);
+        if (rem > 0) {
+          return {
+            submission: {
+              ...recentConcurrent,
+              answers: recentConcurrent.answers || [],
+              remainingSeconds: rem,
+              serverTime: (/* @__PURE__ */ new Date()).toISOString(),
+              isResumed: true
+            },
+            isNew: false
+          };
+        }
       }
       const newSubmission = await tx.examSubmission.create({
         data: {
@@ -108560,8 +108590,10 @@ var ExamSubmissionService = class {
       return {
         submission: {
           ...newSubmission,
+          answers: [],
           remainingSeconds: (exam.durationMinutes || 60) * 60,
-          serverTime: (/* @__PURE__ */ new Date()).toISOString()
+          serverTime: (/* @__PURE__ */ new Date()).toISOString(),
+          isResumed: false
         },
         isNew: true
       };
@@ -119109,9 +119141,10 @@ var attendanceRoutes = async (fastify) => {
           userRoles: user.roles || [],
           classId
         });
-        const lessons = await prisma.lesson.findMany({
+        const courseExams = await prisma.exam.findMany({
           where: { courseId: cls.courseId },
-          orderBy: { lessonOrder: "asc" }
+          orderBy: { createdAt: "asc" },
+          select: { id: true, title: true }
         });
         const dates = [];
         const [y, m2, d] = (startDate || (/* @__PURE__ */ new Date()).toISOString().slice(0, 10)).split("-").map(Number);
@@ -119129,17 +119162,18 @@ var attendanceRoutes = async (fastify) => {
         for (let i2 = 0; i2 < dates.length; i2++) {
           const sessionNum = i2 + 1;
           const sessionDate = new Date(dates[i2]);
-          const lesson = lessons[i2] || lessons[0] || null;
-          const title = lesson?.title || `Lesson ${sessionNum}`;
+          const exam = courseExams[i2] || null;
+          const title = exam?.title ? `Bu\u1ED5i ${sessionNum}: ${exam.title}` : `Bu\u1ED5i ${sessionNum}`;
           const sess = await prisma.classSession.create({
             data: {
               id: crypto2.randomUUID(),
               classId,
-              lessonId: lesson?.id || "default-lesson-id",
               sessionNumber: sessionNum,
-              title,
-              sessionDate,
-              status: "SCHEDULED"
+              plannedDate: sessionDate,
+              startTime: /* @__PURE__ */ new Date(`1970-01-01T${startTime}:00Z`),
+              endTime: /* @__PURE__ */ new Date(`1970-01-01T${endTime}:00Z`),
+              status: "PLANNED",
+              note: title
             }
           });
           createdSessions.push({
@@ -119147,7 +119181,7 @@ var attendanceRoutes = async (fastify) => {
             sessionNumber: sessionNum,
             sessionDate: dates[i2],
             title,
-            status: "SCHEDULED"
+            status: "PLANNED"
           });
         }
         return reply.send(createdSessions);
@@ -119397,24 +119431,6 @@ var createInvitationSchema = external_exports.object({
   classId: external_exports.string().uuid("ID L\u1EDBp h\u1ECDc kh\xF4ng h\u1EE3p l\u1EC7"),
   inviteCode: external_exports.string().min(3).max(10).optional(),
   expiresInDays: external_exports.number().int().positive().optional()
-});
-var createHomeworkSchema = external_exports.object({
-  classId: external_exports.string().uuid("ID L\u1EDBp h\u1ECDc kh\xF4ng h\u1EE3p l\u1EC7"),
-  classSessionId: external_exports.string().uuid().optional(),
-  lessonId: external_exports.string().uuid().optional(),
-  examId: external_exports.string().uuid().optional(),
-  title: external_exports.string().min(3, "T\xEAn b\xE0i t\u1EADp ph\u1EA3i t\u1EEB 3 k\xFD t\u1EF1"),
-  description: external_exports.string().optional(),
-  deadline: external_exports.string().datetime().optional()
-});
-var submitHomeworkSchema = external_exports.object({
-  homeworkId: external_exports.string().uuid("ID B\xE0i t\u1EADp kh\xF4ng h\u1EE3p l\u1EC7")
-});
-var gradeSubmissionSchema = external_exports.object({
-  homeworkId: external_exports.string().uuid("ID B\xE0i t\u1EADp kh\xF4ng h\u1EE3p l\u1EC7"),
-  studentId: external_exports.string().uuid("ID H\u1ECDc vi\xEAn kh\xF4ng h\u1EE3p l\u1EC7"),
-  score: external_exports.number().min(0).max(10, "Band \u0111i\u1EC3m ph\u1EA3i t\u1EEB 0 - 10"),
-  feedback: external_exports.string().min(1, "Nh\u1EADn x\xE9t kh\xF4ng \u0111\u01B0\u1EE3c \u0111\u1EC3 tr\u1ED1ng")
 });
 
 // server/routes/invitation.routes.ts

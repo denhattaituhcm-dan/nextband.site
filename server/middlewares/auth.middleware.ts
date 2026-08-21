@@ -77,7 +77,7 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
 
   if (!userId) return null;
 
-  // Load authoritative user & roles from Supabase PostgreSQL via Prisma
+  // Load authoritative user & roles from Supabase PostgreSQL via Prisma (user_roles is Single Source of Truth)
   let canonicalUserId = userId;
   let authoritativeRoles: string[] = [];
   try {
@@ -88,7 +88,6 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
           OR: [
             { userId: userId },
             { id: userId },
-            ...(email ? [{ email }] : []),
           ],
         },
         include: { roles: true },
@@ -103,9 +102,10 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
     request.log.warn({ err: dbErr, userId, email }, "Failed to fetch user from PostgreSQL, using fallback");
   }
 
+  // Authoritative roles from DB override any token roles; do not silently fallback to 'student'
   const finalRoles = authoritativeRoles.length > 0
     ? authoritativeRoles
-    : (fallbackRoles.length > 0 ? fallbackRoles : ["student"]);
+    : fallbackRoles;
 
   const userContext = {
     id: canonicalUserId,
