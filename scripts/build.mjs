@@ -41,5 +41,15 @@ const viteCwd = existsSync(resolve(rootDir, "vite.config.ts"))
   ? rootDir
   : resolve(rootDir, "nextband");
 
-execSync(`npx vite build`, { cwd: viteCwd, stdio: "inherit" });
+const viteBin = existsSync(resolve(rootDir, "node_modules/vite/bin/vite.js"))
+  ? resolve(rootDir, "node_modules/vite/bin/vite.js")
+  : existsSync(resolve(viteCwd, "node_modules/vite/bin/vite.js"))
+  ? resolve(viteCwd, "node_modules/vite/bin/vite.js")
+  : null;
+
+if (viteBin) {
+  execSync(`node "${viteBin}" build`, { cwd: viteCwd, stdio: "inherit", env: { ...process.env, NODE_OPTIONS: "--max-old-space-size=4096" } });
+} else {
+  execSync(`npx vite build`, { cwd: viteCwd, stdio: "inherit", env: { ...process.env, NODE_OPTIONS: "--max-old-space-size=4096" } });
+}
 console.log("✅ Full production build completed successfully!");
