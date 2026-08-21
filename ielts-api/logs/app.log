@@ -11415,3 +11415,4 @@
 {"level":30,"time":1787290947035,"pid":9464,"hostname":"Admin-PC","reqId":"req-7","req":{"method":"POST","url":"/api/v1/submissions","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
 {"level":30,"time":1787290951309,"pid":9464,"hostname":"Admin-PC","reqId":"req-7","res":{"statusCode":201},"responseTime":4273.822200000286,"msg":"request completed"}
 {"level":30,"time":1787290951309,"pid":9464,"hostname":"Admin-PC","reqId":"req-8","req":{"method":"POST","url":"/api/v1/submissions","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1787290954837,"pid":9464,"hostname":"Admin-PC","reqId":"req-8","res":{"statusCode":200},"responseTime":3528.108200000599,"msg":"request completed"}
