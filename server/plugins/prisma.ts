@@ -19,6 +19,9 @@ function resolveCanonicalDatabaseUrl(): string | undefined {
 
 const prismaPlugin: FastifyPluginAsync = async (fastify) => {
   const dbUrl = resolveCanonicalDatabaseUrl();
+  if (dbUrl) {
+    process.env.DATABASE_URL = dbUrl;
+  }
   const prisma = new PrismaClient({
     datasources: dbUrl ? { db: { url: dbUrl } } : undefined,
     log: fastify.log.level === "debug" ? ["query", "error", "warn"] : ["error"],

@@ -90126,6 +90126,9 @@ var NEVER = INVALID;
 })();
 
 // server/config/env.ts
+if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("db.gzpdlqxjggyxlkeatvvf.supabase.co")) {
+  process.env.DATABASE_URL = "postgresql://postgres.gzpdlqxjggyxlkeatvvf:anhxtanhmat1@aws-0-ap-southeast-2.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=10&pool_timeout=20";
+}
 var WEAK_SECRETS = /* @__PURE__ */ new Set([
   "secret",
   "jwt_secret",
@@ -90214,6 +90217,9 @@ function resolveCanonicalDatabaseUrl() {
 }
 var prismaPlugin = async (fastify) => {
   const dbUrl = resolveCanonicalDatabaseUrl();
+  if (dbUrl) {
+    process.env.DATABASE_URL = dbUrl;
+  }
   const prisma = new PrismaClient({
     datasources: dbUrl ? { db: { url: dbUrl } } : void 0,
     log: fastify.log.level === "debug" ? ["query", "error", "warn"] : ["error"]
