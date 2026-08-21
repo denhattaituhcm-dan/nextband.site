@@ -1,6 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
-
-// Initialize Supabase Client
+// Supabase Configuration
 const supabaseUrl =
   process.env.SUPABASE_URL ||
   process.env.VITE_SUPABASE_URL ||
@@ -11,10 +9,6 @@ const supabaseKey =
   process.env.SUPABASE_ANON_KEY ||
   process.env.VITE_SUPABASE_ANON_KEY ||
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGRscXhqZ2d5eGxrZWF0dnZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyOTc3NjMsImV4cCI6MjEwMDg3Mzc2M30.M7uMAo2qJCDQtxQMP-_58VKF1LfSBdwR31gpvqcCN6I";
-
-const supabase = createClient(supabaseUrl, supabaseKey, {
-  auth: { persistSession: false },
-});
 
 export default async function handler(req, res) {
   // CORS Headers
@@ -33,19 +27,23 @@ export default async function handler(req, res) {
   // GET: List recent leads (Admin / verification)
   if (req.method === "GET") {
     try {
-      const { data, error } = await supabase
-        .from("contact_leads")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(50);
+      const response = await fetch(`${supabaseUrl}/rest/v1/contact_leads?select=*&order=created_at.desc&limit=50`, {
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-      if (error) {
-        return res.status(500).json({ success: false, error: error.message });
+      if (!response.ok) {
+        const errText = await response.text();
+        return res.status(response.status).json({ success: false, error: errText });
       }
 
+      const data = await response.json();
       return res.status(200).json({ success: true, data });
     } catch (err) {
-      return res.status(500).json({ success: false, error: err.message || "Internal server error" });
+      return res.status(500).json({ success: false, error: err?.message || "Internal server error" });
     }
   }
 
@@ -91,27 +89,36 @@ export default async function handler(req, res) {
       const sourceTag = body.source || `web_${leadType.toLowerCase()}`;
       const now = new Date().toISOString();
 
-      // 2. PRIMARY PERSISTENCE: Save to Supabase (Source of Truth)
-      const { data: dbLead, error: dbError } = await supabase
-        .from("contact_leads")
-        .insert({
+      // 2. PRIMARY PERSISTENCE: Save to Supabase (Source of Truth via REST API)
+      const dbResponse = await fetch(`${supabaseUrl}/rest/v1/contact_leads`, {
+        method: "POST",
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+          "Content-Type": "application/json",
+          Prefer: "return=representation",
+        },
+        body: JSON.stringify({
           full_name: fullName,
           phone,
           email: email || null,
           goal: formattedGoal || null,
           source: sourceTag,
           status: "NEW",
-        })
-        .select()
-        .single();
+        }),
+      });
 
-      if (dbError) {
-        console.error("[Leads API] Supabase Insert Error:", dbError);
+      if (!dbResponse.ok) {
+        const dbErrText = await dbResponse.text();
+        console.error("[Leads API] Supabase Insert Error:", dbErrText);
         return res.status(500).json({
           success: false,
           error: "Không thể lưu thông tin vào hệ thống. Vui lòng liên hệ Hotline 0933.319.693.",
         });
       }
+
+      const insertedRows = await dbResponse.json();
+      const dbLead = Array.isArray(insertedRows) ? insertedRows[0] : insertedRows;
 
       const leadId = dbLead?.id || `lead-${Date.now()}`;
       const createdAt = dbLead?.created_at || now;
