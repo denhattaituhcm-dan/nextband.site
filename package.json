@@ -2,7 +2,7 @@
   "name": "nextband-monorepo",
   "private": true,
   "scripts": {
-    "build": "npx prisma generate --schema=./prisma/schema.prisma && node scripts/bundle-api.mjs && npx vite build"
+    "build": "npx prisma generate --schema=./prisma/schema.prisma && cd nextband && npx prisma generate --schema=./prisma/schema.prisma && node scripts/bundle-api.mjs && npx vite build && cd .."
   },
   "dependencies": {
     "@prisma/client": "^5.19.1",
