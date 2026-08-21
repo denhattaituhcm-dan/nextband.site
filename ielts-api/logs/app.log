@@ -11409,3 +11409,9 @@
 {"level":30,"time":1787290932398,"pid":9464,"hostname":"Admin-PC","reqId":"req-4","req":{"method":"POST","url":"/api/v1/submissions/26558284-3a3e-439a-a1e4-a1713b2927ed/submit","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
 {"level":30,"time":1787290937245,"pid":9464,"hostname":"Admin-PC","reqId":"req-4","res":{"statusCode":200},"responseTime":4847.145299999043,"msg":"request completed"}
 {"level":30,"time":1787290937246,"pid":9464,"hostname":"Admin-PC","reqId":"req-5","req":{"method":"POST","url":"/api/v1/submissions/26558284-3a3e-439a-a1e4-a1713b2927ed/grade","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1787290942566,"pid":9464,"hostname":"Admin-PC","reqId":"req-5","res":{"statusCode":200},"responseTime":5319.569799998775,"msg":"request completed"}
+{"level":30,"time":1787290942566,"pid":9464,"hostname":"Admin-PC","reqId":"req-6","req":{"method":"PUT","url":"/api/v1/submissions/26558284-3a3e-439a-a1e4-a1713b2927ed","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1787290944726,"pid":9464,"hostname":"Admin-PC","reqId":"req-6","res":{"statusCode":409},"responseTime":2159.7730000000447,"msg":"request completed"}
+{"level":30,"time":1787290947035,"pid":9464,"hostname":"Admin-PC","reqId":"req-7","req":{"method":"POST","url":"/api/v1/submissions","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1787290951309,"pid":9464,"hostname":"Admin-PC","reqId":"req-7","res":{"statusCode":201},"responseTime":4273.822200000286,"msg":"request completed"}
+{"level":30,"time":1787290951309,"pid":9464,"hostname":"Admin-PC","reqId":"req-8","req":{"method":"POST","url":"/api/v1/submissions","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
