@@ -2,9 +2,6 @@
   "buildCommand": "npm run build",
   "outputDirectory": "nextband/dist",
   "functions": {
-    "api/**/*.cjs": {
-      "includeFiles": "node_modules/.prisma/client/**"
-    },
     "api/**/*.js": {
       "includeFiles": "node_modules/.prisma/client/**"
     }
@@ -20,7 +17,7 @@
     },
     {
       "source": "/api/(.*)",
-      "destination": "/api/index.cjs"
+      "destination": "/api/index.js"
     },
     {
       "source": "/((?!api|assets|favicon|Logo).*)",
