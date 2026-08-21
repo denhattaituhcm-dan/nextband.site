@@ -627,7 +627,7 @@ export class ExamSubmissionService {
         const examTitle = submission.exam?.title || "IELTS Exam";
         if (targetStatus === "SUBMITTED") {
           let teacherId: string | null = null;
-          if (submission.exam?.courseId && (tx as any).classStudent) {
+          if (submission.exam?.courseId && (tx as any).classStudent?.findFirst) {
             const classStudent = await (tx as any).classStudent.findFirst({
               where: {
                 studentId: user.id,
@@ -638,7 +638,7 @@ export class ExamSubmissionService {
             teacherId = classStudent?.class?.teacherId || null;
           }
 
-          if (!teacherId && (tx as any).userRole) {
+          if (!teacherId && (tx as any).userRole?.findFirst) {
             const firstTeacher = await (tx as any).userRole.findFirst({
               where: { role: "teacher" },
             });

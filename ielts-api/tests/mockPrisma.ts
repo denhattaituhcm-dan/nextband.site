@@ -178,6 +178,15 @@ export function createMockPrisma() {
     },
 
     userRole: {
+      findFirst: async ({ where }: any) => {
+        return (
+          userRoles.find(
+            (r) =>
+              (!where?.role || r.role === where.role) &&
+              (!where?.userId || r.userId === where.userId)
+          ) || null
+        );
+      },
       createMany: async ({ data }: any) => {
         userRoles.push(...data);
         return { count: data.length };
