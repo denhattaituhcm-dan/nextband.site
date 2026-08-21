@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { buildApp } from "../../ielts-api/src/app.js";
+import { buildApp } from "../../nextband/dist-server/app.js";
 
 let fastifyApp: any = null;
 

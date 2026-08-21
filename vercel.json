@@ -3,10 +3,6 @@
   "outputDirectory": "nextband/dist",
   "rewrites": [
     {
-      "source": "/api/v1/(.*)",
-      "destination": "/api/index.ts"
-    },
-    {
       "source": "/((?!api|assets|favicon|Logo).*)",
       "destination": "/index.html"
     }
