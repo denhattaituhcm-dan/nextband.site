@@ -113,7 +113,20 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
         skip,
         take: limit,
         orderBy: { [orderField]: sortOrder },
-        include: {
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          thumbnailUrl: true,
+          level: true,
+          price: true,
+          isPublished: true,
+          isActive: true,
+          isLocked: true,
+          slug: true,
+          createdAt: true,
+          updatedAt: true,
+          teacherId: true,
           creator: {
             select: { id: true, fullName: true, avatarUrl: true },
           },
@@ -164,6 +177,18 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
           exams: {
             where: { isActive: true },
             orderBy: { week: "asc" },
+            select: {
+              id: true,
+              courseId: true,
+              title: true,
+              description: true,
+              week: true,
+              durationMinutes: true,
+              isPublished: true,
+              isActive: true,
+              createdAt: true,
+              updatedAt: true,
+            },
           },
         },
       });
@@ -220,6 +245,18 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
           exams: {
             where: { isActive: true, isPublished: true },
             orderBy: { week: "asc" },
+            select: {
+              id: true,
+              courseId: true,
+              title: true,
+              description: true,
+              week: true,
+              durationMinutes: true,
+              isPublished: true,
+              isActive: true,
+              createdAt: true,
+              updatedAt: true,
+            },
           },
         },
       });

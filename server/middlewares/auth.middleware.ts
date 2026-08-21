@@ -9,6 +9,26 @@ interface DecodedTokenData {
   roles?: string[];
 }
 
+// In-memory cache for resolved user data to avoid repeating 600-800ms database roundtrips on every request
+const userAuthCache = new Map<
+  string,
+  {
+    canonicalUserId: string;
+    email: string;
+    roles: string[];
+    cachedAt: number;
+  }
+>();
+const USER_CACHE_TTL_MS = 60 * 1000; // 60s TTL
+
+export function invalidateUserAuthCache(userId?: string) {
+  if (userId) {
+    userAuthCache.delete(userId);
+  } else {
+    userAuthCache.clear();
+  }
+}
+
 /**
  * Verifies the incoming Bearer token using either:
  * 1. Supabase JWKS (ES256/RS256 asymmetric) - Primary production path
@@ -77,6 +97,18 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
 
   if (!userId) return null;
 
+  // 1. Check in-memory cache first (0ms latency for active sessions)
+  const cachedUser = userAuthCache.get(userId);
+  if (cachedUser && Date.now() - cachedUser.cachedAt < USER_CACHE_TTL_MS) {
+    const userContext = {
+      id: cachedUser.canonicalUserId,
+      email: cachedUser.email || email,
+      roles: cachedUser.roles,
+    };
+    request.user = userContext;
+    return userContext;
+  }
+
   // Load authoritative user & roles from Supabase PostgreSQL via Prisma (user_roles is Single Source of Truth)
   let canonicalUserId = userId;
   let authoritativeRoles: string[] = [];
@@ -112,6 +144,22 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
     email,
     roles: finalRoles,
   };
+
+  // Cache resolved user data
+  userAuthCache.set(userId, {
+    canonicalUserId,
+    email,
+    roles: finalRoles,
+    cachedAt: Date.now(),
+  });
+  if (canonicalUserId !== userId) {
+    userAuthCache.set(canonicalUserId, {
+      canonicalUserId,
+      email,
+      roles: finalRoles,
+      cachedAt: Date.now(),
+    });
+  }
 
   request.user = userContext;
   return userContext;

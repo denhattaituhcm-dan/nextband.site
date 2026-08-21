@@ -9,7 +9,6 @@ import submissionsRoutes from "./submissions.routes.js";
 import usersRoutes from "./users.routes.js";
 import enrollmentsRoutes from "./enrollments.routes.js";
 import uploadsRoutes from "./uploads.routes.js";
-import logsRoutes from "./logs.routes.js";
 import classesRoutes from "./classes.routes.js";
 import highlightsRoutes from "./highlights.routes.js";
 import attendanceRoutes from "./attendance.routes.js";
@@ -41,7 +40,6 @@ const routes: FastifyPluginAsync = async (fastify) => {
   await fastify.register(usersRoutes, { prefix: "/users" });
   await fastify.register(enrollmentsRoutes, { prefix: "/enrollments" });
   await fastify.register(uploadsRoutes, { prefix: "/uploads" });
-  await fastify.register(logsRoutes, { prefix: "/admin" });
   await fastify.register(classesRoutes, { prefix: "/classes" });
   await fastify.register(highlightsRoutes, { prefix: "/highlights" });
   await fastify.register(attendanceRoutes);
