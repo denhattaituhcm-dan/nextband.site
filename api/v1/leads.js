@@ -1,4 +1,3 @@
-// Supabase Configuration
 const supabaseUrl =
   process.env.SUPABASE_URL ||
   process.env.VITE_SUPABASE_URL ||
@@ -11,7 +10,6 @@ const supabaseKey =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGRscXhqZ2d5eGxrZWF0dnZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyOTc3NjMsImV4cCI6MjEwMDg3Mzc2M30.M7uMAo2qJCDQtxQMP-_58VKF1LfSBdwR31gpvqcCN6I";
 
 export default async function handler(req, res) {
-  // CORS Headers
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS,PATCH,DELETE,POST,PUT");
@@ -21,61 +19,74 @@ export default async function handler(req, res) {
   );
 
   if (req.method === "OPTIONS") {
-    return res.status(200).end();
+    if (res.status) return res.status(200).end();
+    res.statusCode = 200;
+    return res.end();
   }
 
-  // GET: List recent leads (Admin / verification)
+  const sendJson = (status, data) => {
+    if (res.status && res.json) {
+      return res.status(status).json(data);
+    }
+    res.statusCode = status;
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify(data));
+  };
+
   if (req.method === "GET") {
     try {
-      const response = await fetch(`${supabaseUrl}/rest/v1/contact_leads?select=*&order=created_at.desc&limit=50`, {
-        headers: {
-          apikey: supabaseKey,
-          Authorization: `Bearer ${supabaseKey}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${supabaseUrl}/rest/v1/contact_leads?select=*&order=created_at.desc&limit=50`,
+        {
+          headers: {
+            apikey: supabaseKey,
+            Authorization: `Bearer ${supabaseKey}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!response.ok) {
         const errText = await response.text();
-        return res.status(response.status).json({ success: false, error: errText });
+        return sendJson(response.status, { success: false, error: errText });
       }
 
       const data = await response.json();
-      return res.status(200).json({ success: true, data });
+      return sendJson(200, { success: true, data });
     } catch (err) {
-      return res.status(500).json({ success: false, error: err?.message || "Internal server error" });
+      return sendJson(500, { success: false, error: err?.message || "Internal server error" });
     }
   }
 
-  // POST: Receive new lead
   if (req.method === "POST") {
     try {
-      const body = req.body || {};
+      let body = req.body;
+      if (typeof body === "string") {
+        try {
+          body = JSON.parse(body);
+        } catch {
+          body = {};
+        }
+      }
+      body = body || {};
+
       const fullName = (body.fullName || body.name || "").trim();
       const phone = (body.phone || "").trim().replace(/\s+/g, "");
       const email = (body.email || "").trim();
-      const leadType = body.leadType || "CONTACT"; // "QUICK_TRIAL" | "CONTACT" | "ASSESSMENT"
+      const leadType = body.leadType || "CONTACT";
       const course = (body.course || "").trim();
       const preferredSchedule = (body.preferredSchedule || "").trim();
       const message = (body.message || body.goal || "").trim();
       const metadata = body.metadata || {};
 
-      // 1. Validation
       if (!fullName) {
-        return res.status(400).json({
-          success: false,
-          error: "Vui lòng nhập họ và tên",
-        });
+        return sendJson(400, { success: false, error: "Vui lòng nhập họ và tên" });
       }
 
       if (!phone || phone.length < 9) {
-        return res.status(400).json({
-          success: false,
-          error: "Số điện thoại không hợp lệ (tối thiểu 9 số)",
-        });
+        return sendJson(400, { success: false, error: "Số điện thoại không hợp lệ (tối thiểu 9 số)" });
       }
 
-      // Format goal / notes for Supabase persistence
       let formattedGoal = message;
       if (leadType === "QUICK_TRIAL") {
         formattedGoal = `[Học Thử 02 Buổi] Khóa: ${course || "N/A"} | Ca học: ${preferredSchedule || "Linh hoạt"}`;
@@ -89,7 +100,6 @@ export default async function handler(req, res) {
       const sourceTag = body.source || `web_${leadType.toLowerCase()}`;
       const now = new Date().toISOString();
 
-      // 2. PRIMARY PERSISTENCE: Save to Supabase (Source of Truth via REST API)
       const dbResponse = await fetch(`${supabaseUrl}/rest/v1/contact_leads`, {
         method: "POST",
         headers: {
@@ -111,7 +121,7 @@ export default async function handler(req, res) {
       if (!dbResponse.ok) {
         const dbErrText = await dbResponse.text();
         console.error("[Leads API] Supabase Insert Error:", dbErrText);
-        return res.status(500).json({
+        return sendJson(500, {
           success: false,
           error: "Không thể lưu thông tin vào hệ thống. Vui lòng liên hệ Hotline 0933.319.693.",
         });
@@ -119,11 +129,10 @@ export default async function handler(req, res) {
 
       const insertedRows = await dbResponse.json();
       const dbLead = Array.isArray(insertedRows) ? insertedRows[0] : insertedRows;
-
       const leadId = dbLead?.id || `lead-${Date.now()}`;
       const createdAt = dbLead?.created_at || now;
 
-      // 3. SECONDARY NOTIFICATION: Dispatch to Google Apps Script Webhook (Async & Resilient)
+      // Google Apps Script Dispatch (Async / Non-blocking)
       const webhookUrl = process.env.GOOGLE_APPS_SCRIPT_WEBHOOK_URL;
       const webhookSecret = process.env.GOOGLE_APPS_SCRIPT_SECRET || "";
 
@@ -168,8 +177,7 @@ export default async function handler(req, res) {
         );
       }
 
-      // 4. Return success immediately to client
-      return res.status(201).json({
+      return sendJson(201, {
         success: true,
         message: "Gửi thông tin thành công! Ban Học Thuật ARIS sẽ liên hệ trong thời gian sớm nhất.",
         data: {
@@ -181,12 +189,12 @@ export default async function handler(req, res) {
       });
     } catch (err) {
       console.error("[Leads API] Unhandled Error:", err);
-      return res.status(500).json({
+      return sendJson(500, {
         success: false,
         error: "Đã xảy ra lỗi xử lý. Vui lòng gọi trực tiếp Hotline 0933.319.693.",
       });
     }
   }
 
-  return res.status(405).json({ success: false, error: "Method Not Allowed" });
+  return sendJson(405, { success: false, error: "Method Not Allowed" });
 }

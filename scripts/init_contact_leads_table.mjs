@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../ielts-api/node_modules/@prisma/client/default.js";
 
 const prisma = new PrismaClient({
   datasources: {
@@ -27,7 +27,7 @@ async function main() {
         email TEXT,
         goal TEXT,
         source TEXT DEFAULT 'contact_page',
-        status "LeadStatus" DEFAULT 'NEW',
+        status TEXT DEFAULT 'NEW',
         assigned_to TEXT,
         notes TEXT,
         created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -35,25 +35,27 @@ async function main() {
       );
     `);
 
+    await prisma.$executeRawUnsafe(`ALTER TABLE public.contact_leads ENABLE ROW LEVEL SECURITY;`);
+
     await prisma.$executeRawUnsafe(`
-      ALTER TABLE public.contact_leads ENABLE ROW LEVEL SECURITY;
-      
       DO $$ BEGIN
         DROP POLICY IF EXISTS "Allow anon insert on contact_leads" ON public.contact_leads;
         CREATE POLICY "Allow anon insert on contact_leads" ON public.contact_leads FOR INSERT TO anon, authenticated WITH CHECK (true);
       EXCEPTION
         WHEN undefined_table THEN null;
       END $$;
+    `);
 
+    await prisma.$executeRawUnsafe(`
       DO $$ BEGIN
         DROP POLICY IF EXISTS "Allow authenticated select on contact_leads" ON public.contact_leads;
         CREATE POLICY "Allow authenticated select on contact_leads" ON public.contact_leads FOR SELECT TO anon, authenticated USING (true);
       EXCEPTION
         WHEN undefined_table THEN null;
       END $$;
-
-      NOTIFY pgrst, 'reload schema';
     `);
+
+    await prisma.$executeRawUnsafe(`NOTIFY pgrst, 'reload schema';`);
 
     console.log("✅ Successfully created/verified contact_leads table and reloaded schema cache!");
   } catch (err) {

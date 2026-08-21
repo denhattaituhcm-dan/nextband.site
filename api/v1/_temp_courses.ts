@@ -1,5 +1,5 @@
 
-import { buildApp } from "../../dist-server/app.js";
+import { buildApp } from "../server/app.js";
 
 let fastifyApp = null;
 
@@ -10,21 +10,9 @@ export default async function handler(req, res) {
       await fastifyApp.ready();
     }
 
-    // Resolve original requested URL before Vercel internal rewrite
-    let targetUrl =
-      req.headers["x-forwarded-uri"] ||
-      req.headers["x-matched-path"] ||
-      req.headers["x-vercel-matched-path"] ||
-      req.url ||
-      "/";
-
-    if (targetUrl === "/api/index" || targetUrl === "/api" || targetUrl === "/api/") {
-      targetUrl = req.headers["x-forwarded-uri"] || req.url || "/";
-    }
-
     const response = await fastifyApp.inject({
       method: req.method || "GET",
-      url: targetUrl,
+      url: req.url,
       headers: req.headers,
       query: req.query,
       payload: req.body,

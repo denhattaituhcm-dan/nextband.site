@@ -19,6 +19,7 @@ export function createMockPrisma() {
   const idempotencyRecords: any[] = [];
   const auditOutboxEvents: any[] = [];
   const notifications: any[] = [];
+  const siteSettingsList: any[] = [];
 
   const mock = {
     $connect: async () => {},
@@ -935,6 +936,28 @@ export function createMockPrisma() {
         }
         return { count };
       },
+    siteSettings: {
+      findFirst: async ({ where }: any = {}) => {
+        if (!where) return siteSettingsList[0] || null;
+        return siteSettingsList.find((s) => !where.key || s.key === where.key) || null;
+      },
+      create: async ({ data }: any) => {
+        const row = {
+          id: data.id || randomUUID(),
+          key: data.key || "global",
+          value: data.value || {},
+          updatedAt: new Date(),
+        };
+        siteSettingsList.push(row);
+        return row;
+      },
+      update: async ({ where, data }: any) => {
+        const row = siteSettingsList.find((s) => s.id === where.id || s.key === where.key);
+        if (!row) throw new Error("SiteSettings record not found");
+        if (data.value) row.value = data.value;
+        row.updatedAt = new Date();
+        return row;
+      },
     },
 
     users,
@@ -955,6 +978,7 @@ export function createMockPrisma() {
     idempotencyRecords,
     auditOutboxList: auditOutboxEvents,
     notifications,
+    siteSettingsList,
   };
 
   return mock;
