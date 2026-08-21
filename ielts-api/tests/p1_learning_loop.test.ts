@@ -121,6 +121,9 @@ describe("🔁 P1-B: CANONICAL REVISION WORKFLOW & ATTEMPT ISOLATION TEST", () =
       },
     });
 
+    if (submitRes.statusCode !== 200) {
+      console.error("SUBMIT ERROR PAYLOAD:", submitRes.payload);
+    }
     expect(submitRes.statusCode).toBe(200);
     const submitData = JSON.parse(submitRes.payload);
     expect(submitData.status).toBe("SUBMITTED");

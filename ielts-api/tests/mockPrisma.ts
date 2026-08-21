@@ -859,6 +859,7 @@ export function createMockPrisma() {
           if (existing) {
             const err: any = new Error('Unique constraint failed on the fields: (`entity_type`,`entity_id`,`user_id`,`type`)');
             err.code = 'P2002';
+            err.meta = { target: ['entity_type', 'entity_id', 'user_id', 'type'] };
             throw err;
           }
         }

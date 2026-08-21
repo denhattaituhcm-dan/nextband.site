@@ -77,6 +77,7 @@ export class SubmissionController {
       const result = await this.service.submitExam(user, request.params.id, payload);
       return reply.send(result);
     } catch (err: any) {
+      request.log.error(err, "submitExam controller error");
       const status = err.statusCode || 500;
       return reply.status(status).send({ error: err.message });
     }
