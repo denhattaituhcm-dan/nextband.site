@@ -1,14 +1,15 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "skipLibCheck": true,
     "noEmit": true,
     "checkJs": false,
     "strict": false
   },
-  "include": ["api/**/*"],
-  "exclude": ["ielts-api", "evidence", "node_modules", "nextband/src"]
+  "files": [],
+  "include": [],
+  "exclude": ["**/*"]
 }
