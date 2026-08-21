@@ -54,9 +54,14 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
     const where: any = {};
     const currentUser = (request as any).user;
 
-    // Role-based visibility
-    if (!currentUser) {
-      // Guest: show published and active courses
+    // Role-based visibility & Strict Guest-Only Edge Caching
+    const hasAuthHeader = Boolean(request.headers.authorization);
+    if (!hasAuthHeader && !currentUser) {
+      // Guest: show published and active courses + Safe Vercel Edge CDN Cache
+      reply.header(
+        "Cache-Control",
+        "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+      );
       where.isPublished = true;
       where.isActive = true;
     } else {
@@ -157,6 +162,14 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
         if (!course.isActive || !course.isPublished) {
           return reply.status(404).send({ error: "Không tìm thấy khóa học" });
         }
+      }
+
+      const hasAuthHeader = Boolean(request.headers.authorization);
+      if (!hasAuthHeader && !currentUser && course.isActive && course.isPublished) {
+        reply.header(
+          "Cache-Control",
+          "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        );
       }
 
       return {

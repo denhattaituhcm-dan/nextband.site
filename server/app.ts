@@ -61,18 +61,38 @@ export async function buildApp() {
     logger: loggerConfig,
   });
 
-  // Observability: Gán X-Request-ID vào mọi Response Header & disable cache cho API
+  // Observability: Gán X-Request-ID vào mọi Response Header & enforce strict allowlist-based cache security
   app.addHook("onSend", async (request, reply, payload) => {
     reply.header("X-Request-ID", request.id);
+
     if (request.url.startsWith("/api/")) {
-      reply.header(
-        "Cache-Control",
-        "no-store, no-cache, must-revalidate, proxy-revalidate",
-      );
-      reply.header("Pragma", "no-cache");
-      reply.header("Expires", "0");
-      reply.header("Surrogate-Control", "no-store");
+      const isGet = request.method === "GET";
+      const hasAuthHeader = Boolean(request.headers.authorization);
+      const urlPath = request.url.split("?")[0].replace(/\/+$/, "");
+
+      const isPublicCourses =
+        isGet &&
+        !hasAuthHeader &&
+        (urlPath === "/api/v1/courses" || /^\/api\/v1\/courses\/[^/]+$/.test(urlPath));
+
+      const isPublicSiteSettings =
+        isGet && urlPath === "/api/v1/site-settings";
+
+      // Chỉ cho phép đúng 2 public read-only boundaries được hưởng route-level cache header
+      if ((isPublicCourses || isPublicSiteSettings) && reply.hasHeader("Cache-Control")) {
+        // Allow explicit route cache header
+      } else {
+        // Enforce absolute no-store on EVERYTHING else
+        reply.header(
+          "Cache-Control",
+          "no-store, no-cache, must-revalidate, proxy-revalidate",
+        );
+        reply.header("Pragma", "no-cache");
+        reply.header("Expires", "0");
+        reply.header("Surrogate-Control", "no-store");
+      }
     }
+
     return payload;
   });
 

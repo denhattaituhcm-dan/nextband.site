@@ -112,7 +112,11 @@ function normalizeSettings(record: any) {
 }
 
 const siteSettingsRoutes: FastifyPluginAsync = async (fastify) => {
-  fastify.get("/", async () => {
+  fastify.get("/", async (request, reply) => {
+    reply.header(
+      "Cache-Control",
+      "public, max-age=120, s-maxage=600, stale-while-revalidate=1200",
+    );
     let setting = await fastify.prisma.siteSettings.findFirst({
       where: { key: SETTINGS_KEY },
     });

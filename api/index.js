@@ -99687,7 +99687,12 @@ var coursesRoutes = async (fastify) => {
     const { level } = request.query;
     const where = {};
     const currentUser = request.user;
-    if (!currentUser) {
+    const hasAuthHeader = Boolean(request.headers.authorization);
+    if (!hasAuthHeader && !currentUser) {
+      reply.header(
+        "Cache-Control",
+        "public, max-age=60, s-maxage=300, stale-while-revalidate=600"
+      );
       where.isPublished = true;
       where.isActive = true;
     } else {
@@ -99772,6 +99777,13 @@ var coursesRoutes = async (fastify) => {
         if (!course.isActive || !course.isPublished) {
           return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y kh\xF3a h\u1ECDc" });
         }
+      }
+      const hasAuthHeader = Boolean(request.headers.authorization);
+      if (!hasAuthHeader && !currentUser && course.isActive && course.isPublished) {
+        reply.header(
+          "Cache-Control",
+          "public, max-age=60, s-maxage=300, stale-while-revalidate=600"
+        );
       }
       return {
         ...course,
@@ -110412,7 +110424,11 @@ function normalizeSettings(record) {
   };
 }
 var siteSettingsRoutes = async (fastify) => {
-  fastify.get("/", async () => {
+  fastify.get("/", async (request, reply) => {
+    reply.header(
+      "Cache-Control",
+      "public, max-age=120, s-maxage=600, stale-while-revalidate=1200"
+    );
     let setting = await fastify.prisma.siteSettings.findFirst({
       where: { key: SETTINGS_KEY }
     });
@@ -112641,13 +112657,21 @@ async function buildApp() {
   app.addHook("onSend", async (request, reply, payload) => {
     reply.header("X-Request-ID", request.id);
     if (request.url.startsWith("/api/")) {
-      reply.header(
-        "Cache-Control",
-        "no-store, no-cache, must-revalidate, proxy-revalidate"
-      );
-      reply.header("Pragma", "no-cache");
-      reply.header("Expires", "0");
-      reply.header("Surrogate-Control", "no-store");
+      const isGet = request.method === "GET";
+      const hasAuthHeader = Boolean(request.headers.authorization);
+      const urlPath = request.url.split("?")[0].replace(/\/+$/, "");
+      const isPublicCourses = isGet && !hasAuthHeader && (urlPath === "/api/v1/courses" || /^\/api\/v1\/courses\/[^/]+$/.test(urlPath));
+      const isPublicSiteSettings = isGet && urlPath === "/api/v1/site-settings";
+      if ((isPublicCourses || isPublicSiteSettings) && reply.hasHeader("Cache-Control")) {
+      } else {
+        reply.header(
+          "Cache-Control",
+          "no-store, no-cache, must-revalidate, proxy-revalidate"
+        );
+        reply.header("Pragma", "no-cache");
+        reply.header("Expires", "0");
+        reply.header("Surrogate-Control", "no-store");
+      }
     }
     return payload;
   });
