@@ -99742,7 +99742,7 @@ var coursesRoutes = async (fastify) => {
             select: { id: true, fullName: true, avatarUrl: true }
           },
           _count: {
-            select: { exams: true, enrollments: true, lessons: true, classes: true }
+            select: { exams: true, enrollments: true, classes: true }
           }
         }
       }),
