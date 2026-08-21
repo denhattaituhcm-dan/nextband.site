@@ -235,8 +235,8 @@ var require_queue = __commonJS({
         self2.drain();
         self2.drain = noop2;
       }
-      function error(handler2) {
-        errorHandler = handler2;
+      function error(handler) {
+        errorHandler = handler;
       }
     }
     function noop2() {
@@ -3092,33 +3092,33 @@ var require_handleRequest = __commonJS({
       const headers = request.headers;
       const context = request[kRouteContext];
       if (method === "GET" || method === "HEAD") {
-        handler2(request, reply);
+        handler(request, reply);
         return;
       }
       const contentType = headers["content-type"];
       if (method === "POST" || method === "PUT" || method === "PATCH" || method === "TRACE" || method === "SEARCH" || method === "PROPFIND" || method === "PROPPATCH" || method === "LOCK" || method === "COPY" || method === "MOVE" || method === "MKCOL" || method === "REPORT" || method === "MKCALENDAR") {
         if (contentType === void 0) {
           if (headers["transfer-encoding"] === void 0 && (headers["content-length"] === "0" || headers["content-length"] === void 0)) {
-            handler2(request, reply);
+            handler(request, reply);
           } else {
-            context.contentTypeParser.run("", handler2, request, reply);
+            context.contentTypeParser.run("", handler, request, reply);
           }
         } else {
-          context.contentTypeParser.run(contentType, handler2, request, reply);
+          context.contentTypeParser.run(contentType, handler, request, reply);
         }
         return;
       }
       if (method === "OPTIONS" || method === "DELETE") {
         if (contentType !== void 0 && (headers["transfer-encoding"] !== void 0 || headers["content-length"] !== void 0)) {
-          context.contentTypeParser.run(contentType, handler2, request, reply);
+          context.contentTypeParser.run(contentType, handler, request, reply);
         } else {
-          handler2(request, reply);
+          handler(request, reply);
         }
         return;
       }
-      handler2(request, reply);
+      handler(request, reply);
     }
-    function handler2(request, reply) {
+    function handler(request, reply) {
       try {
         if (request[kRouteContext].preValidation !== null) {
           preValidationHookRunner(
@@ -3193,7 +3193,7 @@ var require_handleRequest = __commonJS({
       }
     }
     module.exports = handleRequest;
-    module.exports[Symbol.for("internals")] = { handler: handler2, preHandlerCallback };
+    module.exports[Symbol.for("internals")] = { handler, preHandlerCallback };
   }
 });
 
@@ -7681,11 +7681,11 @@ var require_rfdc = __commonJS({
       constructorHandlers.set(Map, (o, fn) => new Map(cloneArray(Array.from(o), fn)));
       constructorHandlers.set(Set, (o, fn) => new Set(cloneArray(Array.from(o), fn)));
       if (opts.constructorHandlers) {
-        for (const handler3 of opts.constructorHandlers) {
-          constructorHandlers.set(handler3[0], handler3[1]);
+        for (const handler2 of opts.constructorHandlers) {
+          constructorHandlers.set(handler2[0], handler2[1]);
         }
       }
-      let handler2 = null;
+      let handler = null;
       return opts.proto ? cloneProto : clone2;
       function cloneArray(a, fn) {
         const keys = Object.keys(a);
@@ -7695,8 +7695,8 @@ var require_rfdc = __commonJS({
           const cur = a[k];
           if (typeof cur !== "object" || cur === null) {
             a2[k] = cur;
-          } else if (cur.constructor !== Object && (handler2 = constructorHandlers.get(cur.constructor))) {
-            a2[k] = handler2(cur, fn);
+          } else if (cur.constructor !== Object && (handler = constructorHandlers.get(cur.constructor))) {
+            a2[k] = handler(cur, fn);
           } else if (ArrayBuffer.isView(cur)) {
             a2[k] = copyBuffer(cur);
           } else {
@@ -7708,8 +7708,8 @@ var require_rfdc = __commonJS({
       function clone2(o) {
         if (typeof o !== "object" || o === null) return o;
         if (Array.isArray(o)) return cloneArray(o, clone2);
-        if (o.constructor !== Object && (handler2 = constructorHandlers.get(o.constructor))) {
-          return handler2(o, clone2);
+        if (o.constructor !== Object && (handler = constructorHandlers.get(o.constructor))) {
+          return handler(o, clone2);
         }
         const o2 = {};
         for (const k in o) {
@@ -7717,8 +7717,8 @@ var require_rfdc = __commonJS({
           const cur = o[k];
           if (typeof cur !== "object" || cur === null) {
             o2[k] = cur;
-          } else if (cur.constructor !== Object && (handler2 = constructorHandlers.get(cur.constructor))) {
-            o2[k] = handler2(cur, clone2);
+          } else if (cur.constructor !== Object && (handler = constructorHandlers.get(cur.constructor))) {
+            o2[k] = handler(cur, clone2);
           } else if (ArrayBuffer.isView(cur)) {
             o2[k] = copyBuffer(cur);
           } else {
@@ -7730,16 +7730,16 @@ var require_rfdc = __commonJS({
       function cloneProto(o) {
         if (typeof o !== "object" || o === null) return o;
         if (Array.isArray(o)) return cloneArray(o, cloneProto);
-        if (o.constructor !== Object && (handler2 = constructorHandlers.get(o.constructor))) {
-          return handler2(o, cloneProto);
+        if (o.constructor !== Object && (handler = constructorHandlers.get(o.constructor))) {
+          return handler(o, cloneProto);
         }
         const o2 = {};
         for (const k in o) {
           const cur = o[k];
           if (typeof cur !== "object" || cur === null) {
             o2[k] = cur;
-          } else if (cur.constructor !== Object && (handler2 = constructorHandlers.get(cur.constructor))) {
-            o2[k] = handler2(cur, cloneProto);
+          } else if (cur.constructor !== Object && (handler = constructorHandlers.get(cur.constructor))) {
+            o2[k] = handler(cur, cloneProto);
           } else if (ArrayBuffer.isView(cur)) {
             o2[k] = copyBuffer(cur);
           } else {
@@ -7757,11 +7757,11 @@ var require_rfdc = __commonJS({
       constructorHandlers.set(Map, (o, fn) => new Map(cloneArray(Array.from(o), fn)));
       constructorHandlers.set(Set, (o, fn) => new Set(cloneArray(Array.from(o), fn)));
       if (opts.constructorHandlers) {
-        for (const handler3 of opts.constructorHandlers) {
-          constructorHandlers.set(handler3[0], handler3[1]);
+        for (const handler2 of opts.constructorHandlers) {
+          constructorHandlers.set(handler2[0], handler2[1]);
         }
       }
-      let handler2 = null;
+      let handler = null;
       return opts.proto ? cloneProto : clone2;
       function cloneArray(a, fn) {
         const keys = Object.keys(a);
@@ -7771,8 +7771,8 @@ var require_rfdc = __commonJS({
           const cur = a[k];
           if (typeof cur !== "object" || cur === null) {
             a2[k] = cur;
-          } else if (cur.constructor !== Object && (handler2 = constructorHandlers.get(cur.constructor))) {
-            a2[k] = handler2(cur, fn);
+          } else if (cur.constructor !== Object && (handler = constructorHandlers.get(cur.constructor))) {
+            a2[k] = handler(cur, fn);
           } else if (ArrayBuffer.isView(cur)) {
             a2[k] = copyBuffer(cur);
           } else {
@@ -7789,8 +7789,8 @@ var require_rfdc = __commonJS({
       function clone2(o) {
         if (typeof o !== "object" || o === null) return o;
         if (Array.isArray(o)) return cloneArray(o, clone2);
-        if (o.constructor !== Object && (handler2 = constructorHandlers.get(o.constructor))) {
-          return handler2(o, clone2);
+        if (o.constructor !== Object && (handler = constructorHandlers.get(o.constructor))) {
+          return handler(o, clone2);
         }
         const o2 = {};
         refs.push(o);
@@ -7800,8 +7800,8 @@ var require_rfdc = __commonJS({
           const cur = o[k];
           if (typeof cur !== "object" || cur === null) {
             o2[k] = cur;
-          } else if (cur.constructor !== Object && (handler2 = constructorHandlers.get(cur.constructor))) {
-            o2[k] = handler2(cur, clone2);
+          } else if (cur.constructor !== Object && (handler = constructorHandlers.get(cur.constructor))) {
+            o2[k] = handler(cur, clone2);
           } else if (ArrayBuffer.isView(cur)) {
             o2[k] = copyBuffer(cur);
           } else {
@@ -7820,8 +7820,8 @@ var require_rfdc = __commonJS({
       function cloneProto(o) {
         if (typeof o !== "object" || o === null) return o;
         if (Array.isArray(o)) return cloneArray(o, cloneProto);
-        if (o.constructor !== Object && (handler2 = constructorHandlers.get(o.constructor))) {
-          return handler2(o, cloneProto);
+        if (o.constructor !== Object && (handler = constructorHandlers.get(o.constructor))) {
+          return handler(o, cloneProto);
         }
         const o2 = {};
         refs.push(o);
@@ -7830,8 +7830,8 @@ var require_rfdc = __commonJS({
           const cur = o[k];
           if (typeof cur !== "object" || cur === null) {
             o2[k] = cur;
-          } else if (cur.constructor !== Object && (handler2 = constructorHandlers.get(cur.constructor))) {
-            o2[k] = handler2(cur, cloneProto);
+          } else if (cur.constructor !== Object && (handler = constructorHandlers.get(cur.constructor))) {
+            o2[k] = handler(cur, cloneProto);
           } else if (ArrayBuffer.isView(cur)) {
             o2[k] = copyBuffer(cur);
           } else {
@@ -12223,7 +12223,7 @@ var require_context = __commonJS({
     } = require_symbols2();
     function Context({
       schema,
-      handler: handler2,
+      handler,
       config,
       requestIdLogLabel,
       childLoggerFactory,
@@ -12242,7 +12242,7 @@ var require_context = __commonJS({
       isFastify
     }) {
       this.schema = schema;
-      this.handler = handler2;
+      this.handler = handler;
       this.Reply = server[kReply];
       this.Request = server[kRequest];
       this.contentTypeParser = server[kContentTypeParser];
@@ -13446,11 +13446,11 @@ var require_contentTypeParser = __commonJS({
       }
       return removed || idx > -1;
     };
-    ContentTypeParser.prototype.run = function(contentType, handler2, request, reply) {
+    ContentTypeParser.prototype.run = function(contentType, handler, request, reply) {
       const parser = this.getParser(contentType);
       if (parser === void 0) {
         if (request.is404) {
-          handler2(request, reply);
+          handler(request, reply);
         } else {
           reply.send(new FST_ERR_CTP_INVALID_MEDIA_TYPE(contentType || void 0));
         }
@@ -13479,7 +13479,7 @@ var require_contentTypeParser = __commonJS({
             reply.send(error);
           } else {
             request.body = body;
-            handler2(request, reply);
+            handler(request, reply);
           }
         });
       }
@@ -41511,8 +41511,8 @@ var require_handler_storage = __commonJS({
       // The store's implementation comes from the strategies provided to the Router.
       _buildConstraintStore(store, constraint) {
         for (let i2 = 0; i2 < this.handlers.length; i2++) {
-          const handler2 = this.handlers[i2];
-          const constraintValue = handler2.constraints[constraint];
+          const handler = this.handlers[i2];
+          const constraintValue = handler.constraints[constraint];
           if (constraintValue !== void 0) {
             let indexes = store.get(constraintValue) || 0;
             indexes |= 1 << i2;
@@ -41524,8 +41524,8 @@ var require_handler_storage = __commonJS({
       _constrainedIndexBitmask(constraint) {
         let mask = 0;
         for (let i2 = 0; i2 < this.handlers.length; i2++) {
-          const handler2 = this.handlers[i2];
-          const constraintValue = handler2.constraints[constraint];
+          const handler = this.handlers[i2];
+          const constraintValue = handler.constraints[constraint];
           if (constraintValue !== void 0) {
             mask |= 1 << i2;
           }
@@ -42202,25 +42202,25 @@ var require_find_my_way = __commonJS({
       this.routes = [];
       this.trees = {};
     }
-    Router.prototype.on = function on(method, path, opts, handler2, store) {
+    Router.prototype.on = function on(method, path, opts, handler, store) {
       if (typeof opts === "function") {
-        if (handler2 !== void 0) {
-          store = handler2;
+        if (handler !== void 0) {
+          store = handler;
         }
-        handler2 = opts;
+        handler = opts;
         opts = {};
       }
       assert(typeof path === "string", "Path should be a string");
       assert(path.length > 0, "The path could not be empty");
       assert(path[0] === "/" || path[0] === "*", "The first character of a path should be `/` or `*`");
-      assert(typeof handler2 === "function", "Handler should be a function");
+      assert(typeof handler === "function", "Handler should be a function");
       const optionalParamMatch = path.match(OPTIONAL_PARAM_REGEXP);
       if (optionalParamMatch) {
         assert(path.length === optionalParamMatch.index + optionalParamMatch[0].length, "Optional Parameter needs to be the last parameter of the path");
         const pathFull = path.replace(OPTIONAL_PARAM_REGEXP, "$1$2");
         const pathOptional = path.replace(OPTIONAL_PARAM_REGEXP, "$2") || "/";
-        this.on(method, pathFull, opts, handler2, store);
-        this.on(method, pathOptional, opts, handler2, store);
+        this.on(method, pathFull, opts, handler, store);
+        this.on(method, pathOptional, opts, handler, store);
         return;
       }
       const route = path;
@@ -42234,10 +42234,10 @@ var require_find_my_way = __commonJS({
       for (const method2 of methods) {
         assert(typeof method2 === "string", "Method should be a string");
         assert(httpMethods.includes(method2), `Method '${method2}' is not an http method.`);
-        this._on(method2, path, opts, handler2, store, route);
+        this._on(method2, path, opts, handler, store, route);
       }
     };
-    Router.prototype._on = function _on(method, path, opts, handler2, store) {
+    Router.prototype._on = function _on(method, path, opts, handler, store) {
       let constraints = {};
       if (opts.constraints !== void 0) {
         assert(typeof opts.constraints === "object" && opts.constraints !== null, "Constraints should be an object");
@@ -42353,7 +42353,7 @@ var require_find_my_way = __commonJS({
           throw new Error(`Method '${method}' already declared for route '${pattern}' with constraints '${JSON.stringify(constraints)}'`);
         }
       }
-      const route = { method, path, pattern, params, opts, handler: handler2, store };
+      const route = { method, path, pattern, params, opts, handler, store };
       this.routes.push(route);
       currentNode.addRoute(route, this.constrainer);
     };
@@ -42650,8 +42650,8 @@ var require_find_my_way = __commonJS({
     Router.prototype._rebuild = function(routes2) {
       this.reset();
       for (const route of routes2) {
-        const { method, path, opts, handler: handler2, store } = route;
-        this._on(method, path, opts, handler2, store);
+        const { method, path, opts, handler, store } = route;
+        this._on(method, path, opts, handler, store);
       }
     };
     Router.prototype._defaultRoute = function(req, res, ctx) {
@@ -42700,12 +42700,12 @@ var require_find_my_way = __commonJS({
       if (!httpMethods.hasOwnProperty(i2)) continue;
       const m2 = httpMethods[i2];
       const methodName = m2.toLowerCase();
-      Router.prototype[methodName] = function(path, handler2, store) {
-        return this.on(m2, path, handler2, store);
+      Router.prototype[methodName] = function(path, handler, store) {
+        return this.on(m2, path, handler, store);
       };
     }
-    Router.prototype.all = function(path, handler2, store) {
-      this.on(httpMethods, path, handler2, store);
+    Router.prototype.all = function(path, handler, store) {
+      this.on(httpMethods, path, handler, store);
     };
     module.exports = Router;
     function escapeRegExp(string) {
@@ -42915,14 +42915,14 @@ var require_route = __commonJS({
       function isAsyncConstraint() {
         return router.constrainer.asyncStrategiesInUse.size > 0;
       }
-      function prepareRoute({ method, url, options: options2, handler: handler2, isFastify }) {
+      function prepareRoute({ method, url, options: options2, handler, isFastify }) {
         if (typeof url !== "string") {
           throw new FST_ERR_INVALID_URL(typeof url);
         }
-        if (!handler2 && typeof options2 === "function") {
-          handler2 = options2;
+        if (!handler && typeof options2 === "function") {
+          handler = options2;
           options2 = {};
-        } else if (handler2 && typeof handler2 === "function") {
+        } else if (handler && typeof handler === "function") {
           if (Object.prototype.toString.call(options2) !== "[object Object]") {
             throw new FST_ERR_ROUTE_OPTIONS_NOT_OBJ(method, url);
           } else if (options2.handler) {
@@ -42937,7 +42937,7 @@ var require_route = __commonJS({
           method,
           url,
           path: url,
-          handler: handler2 || options2 && options2.handler
+          handler: handler || options2 && options2.handler
         });
         return route.call(this, { options: options2, isFastify });
       }
@@ -43356,7 +43356,7 @@ var require_fourOhFour = __commonJS({
         _404Context.onSend = context.onSend;
         context[kFourOhFourContext] = _404Context;
       }
-      function setNotFoundHandler(opts, handler2, avvio, routeHandler) {
+      function setNotFoundHandler(opts, handler, avvio, routeHandler) {
         if (this[kCanSetNotFoundHandler] === void 0) {
           this[kCanSetNotFoundHandler] = true;
         }
@@ -43385,27 +43385,27 @@ var require_fourOhFour = __commonJS({
           }
         }
         if (typeof opts === "function") {
-          handler2 = opts;
+          handler = opts;
           opts = void 0;
         }
         opts = opts || {};
-        if (handler2) {
+        if (handler) {
           this[kFourOhFourLevelInstance][kCanSetNotFoundHandler] = false;
-          handler2 = handler2.bind(this);
-          _onBadUrlHandler = handler2;
+          handler = handler.bind(this);
+          _onBadUrlHandler = handler;
         } else {
-          handler2 = basic404;
+          handler = basic404;
           _onBadUrlHandler = basic404;
         }
         this.after((notHandledErr, done) => {
-          _setNotFoundHandler.call(this, prefix, opts, handler2, avvio, routeHandler);
+          _setNotFoundHandler.call(this, prefix, opts, handler, avvio, routeHandler);
           done(notHandledErr);
         });
       }
-      function _setNotFoundHandler(prefix, opts, handler2, avvio, routeHandler) {
+      function _setNotFoundHandler(prefix, opts, handler, avvio, routeHandler) {
         const context = new Context({
           schema: opts.schema,
-          handler: handler2,
+          handler,
           config: opts.config || {},
           server: this
         });
@@ -46548,29 +46548,29 @@ var require_fastify = __commonJS({
         getDefaultRoute: router.getDefaultRoute.bind(router),
         setDefaultRoute: router.setDefaultRoute.bind(router),
         // routes shorthand methods
-        delete: function _delete(url, options2, handler2) {
-          return router.prepareRoute.call(this, { method: "DELETE", url, options: options2, handler: handler2 });
+        delete: function _delete(url, options2, handler) {
+          return router.prepareRoute.call(this, { method: "DELETE", url, options: options2, handler });
         },
-        get: function _get(url, options2, handler2) {
-          return router.prepareRoute.call(this, { method: "GET", url, options: options2, handler: handler2 });
+        get: function _get(url, options2, handler) {
+          return router.prepareRoute.call(this, { method: "GET", url, options: options2, handler });
         },
-        head: function _head(url, options2, handler2) {
-          return router.prepareRoute.call(this, { method: "HEAD", url, options: options2, handler: handler2 });
+        head: function _head(url, options2, handler) {
+          return router.prepareRoute.call(this, { method: "HEAD", url, options: options2, handler });
         },
-        patch: function _patch(url, options2, handler2) {
-          return router.prepareRoute.call(this, { method: "PATCH", url, options: options2, handler: handler2 });
+        patch: function _patch(url, options2, handler) {
+          return router.prepareRoute.call(this, { method: "PATCH", url, options: options2, handler });
         },
-        post: function _post(url, options2, handler2) {
-          return router.prepareRoute.call(this, { method: "POST", url, options: options2, handler: handler2 });
+        post: function _post(url, options2, handler) {
+          return router.prepareRoute.call(this, { method: "POST", url, options: options2, handler });
         },
-        put: function _put(url, options2, handler2) {
-          return router.prepareRoute.call(this, { method: "PUT", url, options: options2, handler: handler2 });
+        put: function _put(url, options2, handler) {
+          return router.prepareRoute.call(this, { method: "PUT", url, options: options2, handler });
         },
-        options: function _options(url, options2, handler2) {
-          return router.prepareRoute.call(this, { method: "OPTIONS", url, options: options2, handler: handler2 });
+        options: function _options(url, options2, handler) {
+          return router.prepareRoute.call(this, { method: "OPTIONS", url, options: options2, handler });
         },
-        all: function _all(url, options2, handler2) {
-          return router.prepareRoute.call(this, { method: supportedMethods, url, options: options2, handler: handler2 });
+        all: function _all(url, options2, handler) {
+          return router.prepareRoute.call(this, { method: supportedMethods, url, options: options2, handler });
         },
         // extended route
         route: function _route(options2) {
@@ -46992,9 +46992,9 @@ ${body}`);
           }
         };
       }
-      function setNotFoundHandler(opts, handler2) {
+      function setNotFoundHandler(opts, handler) {
         throwIfAlreadyStarted('Cannot call "setNotFoundHandler"!');
-        fourOhFour.setNotFoundHandler.call(this, opts, handler2, avvio, router.routeHandler);
+        fourOhFour.setNotFoundHandler.call(this, opts, handler, avvio, router.routeHandler);
         return this;
       }
       function setValidatorCompiler(validatorCompiler) {
@@ -51784,13 +51784,13 @@ var require_multipart2 = __commonJS({
             values.push(val);
           }
         };
-        const handle = (handler2) => {
+        const handle = (handler) => {
           if (values.length > 0) {
             const value = values[0];
             values = values.slice(1);
-            handler2(value);
+            handler(value);
           } else {
-            pendingHandler = handler2;
+            pendingHandler = handler;
           }
         };
         const parts = () => {
@@ -55837,8 +55837,8 @@ var require_commonjs3 = __commonJS({
       /**
        * Alias for {@link Minipass#on}
        */
-      addListener(ev, handler2) {
-        return this.on(ev, handler2);
+      addListener(ev, handler) {
+        return this.on(ev, handler);
       }
       /**
        * Mostly identical to `EventEmitter.on`, with the following
@@ -55857,8 +55857,8 @@ var require_commonjs3 = __commonJS({
        *   cause the event to be re-emitted immediately with the error previously
        *   raised.
        */
-      on(ev, handler2) {
-        const ret = super.on(ev, handler2);
+      on(ev, handler) {
+        const ret = super.on(ev, handler);
         if (ev === "data") {
           this[DISCARDED] = false;
           this[DATALISTENERS]++;
@@ -55871,7 +55871,7 @@ var require_commonjs3 = __commonJS({
           super.emit(ev);
           this.removeAllListeners(ev);
         } else if (ev === "error" && this[EMITTED_ERROR]) {
-          const h2 = handler2;
+          const h2 = handler;
           if (this[ASYNC])
             defer(() => h2.call(this, this[EMITTED_ERROR]));
           else
@@ -55882,8 +55882,8 @@ var require_commonjs3 = __commonJS({
       /**
        * Alias for {@link Minipass#off}
        */
-      removeListener(ev, handler2) {
-        return this.off(ev, handler2);
+      removeListener(ev, handler) {
+        return this.off(ev, handler);
       }
       /**
        * Mostly identical to `EventEmitter.off`
@@ -55893,8 +55893,8 @@ var require_commonjs3 = __commonJS({
        * then the flow of data will stop until there is another consumer or
        * {@link Minipass#resume} is explicitly called.
        */
-      off(ev, handler2) {
-        const ret = super.off(ev, handler2);
+      off(ev, handler) {
+        const ret = super.off(ev, handler);
         if (ev === "data") {
           this[DATALISTENERS] = this.listeners("data").length;
           if (this[DATALISTENERS] === 0 && !this[DISCARDED] && !this[PIPES].length) {
@@ -67090,8 +67090,8 @@ var require_utils5 = __commonJS({
     var algorithmMatcher = /"alg"\s*:\s*"[HERP]S(256|384)"/m;
     var edAlgorithmMatcher = /"alg"\s*:\s*"EdDSA"/m;
     var ed448CurveMatcher = /"crv"\s*:\s*"Ed448"/m;
-    function getAsyncKey(handler2, decoded, callback) {
-      const result = handler2(decoded, callback);
+    function getAsyncKey(handler, decoded, callback) {
+      const result = handler(decoded, callback);
       if (result && typeof result.then === "function") {
         result.then((key) => {
           process.nextTick(() => callback(null, key));
@@ -87734,7 +87734,7 @@ var require_fetch = __commonJS({
       let finished = false;
       let cookies;
       let body;
-      const handler2 = parsed.protocol === "https:" ? https2 : http3;
+      const handler = parsed.protocol === "https:" ? https2 : http3;
       const headers = {
         "accept-encoding": "gzip,deflate",
         "user-agent": "nodemailer/" + packageData.version
@@ -87816,7 +87816,7 @@ var require_fetch = __commonJS({
         reqOptions.servername = parsed.hostname;
       }
       try {
-        req = handler2.request(reqOptions);
+        req = handler.request(reqOptions);
       } catch (E) {
         finished = true;
         setImmediate(() => {
@@ -95042,7 +95042,7 @@ var require_smtp_connection = __commonJS({
           }
         }
         if (this.customAuth.has(this._authMethod)) {
-          const handler2 = this.customAuth.get(this._authMethod);
+          const handler = this.customAuth.get(this._authMethod);
           let lastResponse;
           let returned = false;
           const resolve2 = () => {
@@ -95070,7 +95070,7 @@ var require_smtp_connection = __commonJS({
             returned = true;
             callback(this._formatError(err, "EAUTH", lastResponse, "AUTH " + this._authMethod));
           };
-          const handlerResponse = handler2({
+          const handlerResponse = handler({
             auth: this._auth,
             method: this._authMethod,
             extensions: [].concat(this._supportedExtensions),
@@ -111551,47 +111551,8 @@ async function buildApp() {
   });
   return app;
 }
-
-// <stdin>
-var fastifyApp = null;
-async function handler(req, res) {
-  try {
-    if (!fastifyApp) {
-      fastifyApp = await buildApp();
-      await fastifyApp.ready();
-    }
-    const response = await fastifyApp.inject({
-      method: req.method || "GET",
-      url: req.url,
-      headers: req.headers,
-      query: req.query,
-      payload: req.body
-    });
-    if (response.headers) {
-      for (const [key, value] of Object.entries(response.headers)) {
-        if (value !== void 0) {
-          res.setHeader(key, value);
-        }
-      }
-    }
-    res.statusCode = response.statusCode;
-    res.end(response.body);
-  } catch (err) {
-    console.error("Fastify Serverless Handler Error:", err);
-    res.statusCode = 500;
-    res.setHeader("Content-Type", "application/json");
-    res.end(
-      JSON.stringify({
-        statusCode: 500,
-        error: "Internal Server Error",
-        message: err?.message || "Serverless runtime error",
-        stack: err?.stack
-      })
-    );
-  }
-}
 export {
-  handler as default
+  buildApp
 };
 /*! Bundled license information:
 

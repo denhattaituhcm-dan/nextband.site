@@ -936,6 +936,7 @@ export function createMockPrisma() {
         }
         return { count };
       },
+    },
     siteSettings: {
       findFirst: async ({ where }: any = {}) => {
         if (!where) return siteSettingsList[0] || null;
