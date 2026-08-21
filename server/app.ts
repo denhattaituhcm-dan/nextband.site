@@ -68,21 +68,24 @@ export async function buildApp() {
     if (request.url.startsWith("/api/")) {
       const isGet = request.method === "GET";
       const hasAuthHeader = Boolean(request.headers.authorization);
+      const isSuccess = reply.statusCode >= 200 && reply.statusCode < 300;
       const urlPath = request.url.split("?")[0].replace(/\/+$/, "");
 
       const isPublicCourses =
         isGet &&
         !hasAuthHeader &&
-        (urlPath === "/api/v1/courses" || /^\/api\/v1\/courses\/[^/]+$/.test(urlPath));
+        (/^\/api\/v1\/courses(\/.*)?$/.test(urlPath));
 
       const isPublicSiteSettings =
-        isGet && urlPath === "/api/v1/site-settings";
+        isGet &&
+        !hasAuthHeader &&
+        urlPath === "/api/v1/site-settings";
 
-      // Chỉ cho phép đúng 2 public read-only boundaries được hưởng route-level cache header
-      if ((isPublicCourses || isPublicSiteSettings) && reply.hasHeader("Cache-Control")) {
+      // Chỉ cho phép đúng 2 public read-only boundaries được hưởng route-level cache header khi status 2xx và không có Auth header
+      if (isSuccess && (isPublicCourses || isPublicSiteSettings) && reply.hasHeader("Cache-Control")) {
         // Allow explicit route cache header
       } else {
-        // Enforce absolute no-store on EVERYTHING else
+        // Enforce absolute no-store on EVERYTHING else (Auth, user mutations, 4xx/5xx, non-whitelisted)
         reply.header(
           "Cache-Control",
           "no-store, no-cache, must-revalidate, proxy-revalidate",

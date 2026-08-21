@@ -238,6 +238,14 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
         }
       }
 
+      const hasAuthHeader = Boolean(request.headers.authorization);
+      if (!hasAuthHeader && !currentUser && course.isActive && course.isPublished) {
+        reply.header(
+          "Cache-Control",
+          "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        );
+      }
+
       return {
         ...course,
         thumbnailUrl: toFileUrl(course.thumbnailUrl),

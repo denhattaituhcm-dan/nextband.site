@@ -99841,6 +99841,13 @@ var coursesRoutes = async (fastify) => {
           return reply.status(404).send({ error: "Course not found" });
         }
       }
+      const hasAuthHeader = Boolean(request.headers.authorization);
+      if (!hasAuthHeader && !currentUser && course.isActive && course.isPublished) {
+        reply.header(
+          "Cache-Control",
+          "public, max-age=60, s-maxage=300, stale-while-revalidate=600"
+        );
+      }
       return {
         ...course,
         thumbnailUrl: toFileUrl(course.thumbnailUrl),
@@ -112708,10 +112715,11 @@ async function buildApp() {
     if (request.url.startsWith("/api/")) {
       const isGet = request.method === "GET";
       const hasAuthHeader = Boolean(request.headers.authorization);
+      const isSuccess = reply.statusCode >= 200 && reply.statusCode < 300;
       const urlPath = request.url.split("?")[0].replace(/\/+$/, "");
-      const isPublicCourses = isGet && !hasAuthHeader && (urlPath === "/api/v1/courses" || /^\/api\/v1\/courses\/[^/]+$/.test(urlPath));
-      const isPublicSiteSettings = isGet && urlPath === "/api/v1/site-settings";
-      if ((isPublicCourses || isPublicSiteSettings) && reply.hasHeader("Cache-Control")) {
+      const isPublicCourses = isGet && !hasAuthHeader && /^\/api\/v1\/courses(\/.*)?$/.test(urlPath);
+      const isPublicSiteSettings = isGet && !hasAuthHeader && urlPath === "/api/v1/site-settings";
+      if (isSuccess && (isPublicCourses || isPublicSiteSettings) && reply.hasHeader("Cache-Control")) {
       } else {
         reply.header(
           "Cache-Control",
