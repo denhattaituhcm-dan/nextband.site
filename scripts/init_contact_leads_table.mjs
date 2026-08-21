@@ -3,7 +3,7 @@ import { PrismaClient } from "../ielts-api/node_modules/@prisma/client/default.j
 const prisma = new PrismaClient({
   datasources: {
     db: {
-      url: "postgresql://postgres:anhxtanhmat1@db.gzpdlqxjggyxlkeatvvf.supabase.co:6543/postgres?pgbouncer=true&connection_limit=10&pool_timeout=20",
+      url: "postgresql://postgres.gzpdlqxjggyxlkeatvvf:anhxtanhmat1@aws-0-ap-southeast-2.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=10&pool_timeout=20",
     },
   },
 });
