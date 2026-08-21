@@ -3,7 +3,7 @@
   "outputDirectory": "nextband/dist",
   "functions": {
     "api/**/*.js": {
-      "includeFiles": "node_modules/.prisma/client/**"
+      "includeFiles": "{node_modules/.prisma/client/**,nextband/node_modules/.prisma/client/**,prisma/**,nextband/prisma/**}"
     }
   },
   "rewrites": [
