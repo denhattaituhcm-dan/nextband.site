@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { ClassRepository } from '../repositories/class.repository.js';
 import { AuthorizationService, AuthorizationError, NotFoundError } from './authorization.service.js';
-import { calculateAutomaticDeadline, DeadlineSource } from '../utils/deadline.util.js';
+import { resolveEffectiveDeadline, calculateSubmissionTiming, DeadlineSource } from '../utils/deadline.util.js';
 
 export interface StudentLessonProgressDTO {
   sessionCompleted: boolean;
@@ -30,6 +30,10 @@ export interface StudentLessonItemDTO {
     title: string;
     deadline: Date | null;
     deadlineSource?: DeadlineSource;
+    submissionTiming?: {
+      isLate: boolean;
+      lateDays: number;
+    };
     status: string;
     score: number | null;
   } | null;
@@ -141,19 +145,16 @@ export class LessonService {
       const lessonOrder = exam.week || (idx + 1);
       const customHw = manualHomeworks.find((h: any) => h.examId === exam.id || h.lessonId === exam.id);
 
-      let effectiveDeadline: Date | null = null;
-      let deadlineSource: DeadlineSource = "NONE";
+      const { effectiveDeadline, deadlineSource } = resolveEffectiveDeadline({
+        classStartDate: classData.startDate || classData.createdAt,
+        lessonWeek: lessonOrder,
+        manualDeadline: customHw?.deadline,
+        defaultOffsetDays: 7,
+      });
 
-      if (customHw?.deadline) {
-        effectiveDeadline = new Date(customHw.deadline);
-        deadlineSource = "MANUAL";
-      } else {
-        effectiveDeadline = calculateAutomaticDeadline({
-          classStartDate: classData.startDate || classData.createdAt,
-          lessonOrder,
-        });
-        deadlineSource = "AUTO";
-      }
+      const submissionTiming = sub
+        ? calculateSubmissionTiming(sub.submittedAt || sub.createdAt, effectiveDeadline)
+        : { isLate: false, lateDays: 0 };
 
       return {
         id: exam.id,
@@ -170,6 +171,7 @@ export class LessonService {
           title: exam.title,
           deadline: effectiveDeadline,
           deadlineSource,
+          submissionTiming,
           status: sub ? String(sub.status).toUpperCase() : 'NOT_STARTED',
           score: sub?.totalScore != null ? Number(sub.totalScore) : null,
         },
@@ -182,6 +184,7 @@ export class LessonService {
         },
       };
     });
+
 
     const totalLessons = exams.length;
     const percentage = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;

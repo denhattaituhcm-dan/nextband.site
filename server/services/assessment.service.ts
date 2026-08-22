@@ -314,7 +314,11 @@ export class AssessmentService {
         audioUrl: toFileUrl(q.audioUrl) || undefined,
         options,
         placeholder: q.questionType === "fill_blank" ? "Nhập câu trả lời..." : undefined,
-        orderIndex: questionCursor++,
+        orderIndex: (typeof q.orderIndex === "number" && q.orderIndex > 0)
+          ? q.orderIndex
+          : (typeof q.order_index === "number" && q.order_index > 0)
+          ? q.order_index
+          : questionCursor++,
         blankCount,
       };
     };
@@ -331,6 +335,7 @@ export class AssessmentService {
         listeningQuestions.push(mapQuestion({ ...q, group: g }, "listening", "Kỹ năng Nghe (Listening)"));
       });
     });
+    listeningQuestions.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
 
     // 2. Reading Questions & Passage
     const readingQuestions: SanitizedQuestion[] = [];
@@ -347,6 +352,7 @@ export class AssessmentService {
         readingQuestions.push(mapQuestion({ ...q, group: g }, "reading", "Kỹ năng Đọc hiểu (Reading)"));
       });
     });
+    readingQuestions.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
 
     // 3. Grammar Questions
     const grammarQuestions: SanitizedQuestion[] = [];
@@ -355,6 +361,7 @@ export class AssessmentService {
         grammarQuestions.push(mapQuestion({ ...q, group: g }, "grammar", "Ngữ pháp & Từ vựng (Grammar)"));
       });
     });
+    grammarQuestions.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
 
     // 4. Writing
     const writingQ = writingSec?.questionGroups?.[0]?.questions?.[0];
@@ -863,7 +870,11 @@ export class AssessmentService {
 
     // Subjective check (Writing & Speaking)
     const hasWriting = typeof answers["writing_response"] === "string" && answers["writing_response"].trim().length >= 30;
-    const hasSpeaking = !!answers["speaking_audio_url"] || !!answers["speaking_completed"];
+    const hasSpeaking =
+      !!answers["speaking_part1_audio_url"] ||
+      !!answers["speaking_part2_audio_url"] ||
+      !!answers["speaking_audio_url"] || // backward compat
+      !!answers["speaking_completed"]; // backward compat
     const subjectiveStatus = (hasWriting || hasSpeaking) ? "PENDING_REVIEW" : "NONE";
 
     const strengths: string[] = [];
@@ -1097,7 +1108,11 @@ export class AssessmentService {
         typeof answers["writing_response"] === "string" &&
         answers["writing_response"].trim().length >= 10;
       const writingLength = typeof answers["writing_response"] === "string" ? answers["writing_response"].trim().length : 0;
-      const hasSpeaking = !!answers["speaking_audio_url"] || !!answers["speaking_completed"];
+      const hasSpeaking =
+        !!answers["speaking_part1_audio_url"] ||
+        !!answers["speaking_part2_audio_url"] ||
+        !!answers["speaking_audio_url"] || // backward compat
+        !!answers["speaking_completed"]; // backward compat
 
       let gradingStatus = teacherReview.gradingStatus;
       if (!gradingStatus) {
