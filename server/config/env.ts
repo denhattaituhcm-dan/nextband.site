@@ -1,6 +1,23 @@
 import { z } from "zod";
 import "dotenv/config";
 
+// Direct Supabase database host (port 5432) requires IPv6 which is unavailable in serverless runtimes.
+// Automatically map to the official IPv4 connection pooler (port 6543) using runtime environment credentials.
+if (process.env.DATABASE_URL && process.env.DATABASE_URL.includes("db.gzpdlqxjggyxlkeatvvf.supabase.co")) {
+  try {
+    const parsed = new URL(process.env.DATABASE_URL);
+    parsed.hostname = "aws-0-ap-southeast-2.pooler.supabase.com";
+    parsed.port = "6543";
+    if (!parsed.username.includes(".")) {
+      parsed.username = `${parsed.username}.gzpdlqxjggyxlkeatvvf`;
+    }
+    if (!parsed.searchParams.has("pgbouncer")) {
+      parsed.searchParams.set("pgbouncer", "true");
+    }
+    process.env.DATABASE_URL = parsed.toString();
+  } catch {}
+}
+
 const WEAK_SECRETS = new Set([
   "secret",
   "jwt_secret",

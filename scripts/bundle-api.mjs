@@ -9,6 +9,21 @@ const rootDir = resolve(__dirname, "..");
 mkdirSync(resolve(rootDir, "api"), { recursive: true });
 
 const entryCode = `
+if (process.env.DATABASE_URL && process.env.DATABASE_URL.includes("db.gzpdlqxjggyxlkeatvvf.supabase.co")) {
+  try {
+    const parsed = new URL(process.env.DATABASE_URL);
+    parsed.hostname = "aws-0-ap-southeast-2.pooler.supabase.com";
+    parsed.port = "6543";
+    if (!parsed.username.includes(".")) {
+      parsed.username = parsed.username + ".gzpdlqxjggyxlkeatvvf";
+    }
+    if (!parsed.searchParams.has("pgbouncer")) {
+      parsed.searchParams.set("pgbouncer", "true");
+    }
+    process.env.DATABASE_URL = parsed.toString();
+  } catch {}
+}
+
 import { buildApp } from "../server/app.js";
 
 let fastifyApp = null;
