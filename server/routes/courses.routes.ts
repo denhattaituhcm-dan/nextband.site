@@ -1,4 +1,5 @@
 import { FastifyPluginAsync } from "fastify";
+import "../plugins/prisma.js";
 import { Prisma } from "@prisma/client";
 import { paginationSchema } from "../schemas/common.schema.js";
 import {

@@ -35,7 +35,30 @@ if (existsSync(bundleScript)) {
   execSync(`node "${bundleScript}"`, { stdio: "inherit" });
 }
 
-// 3. Build Vite Frontend
+// 3. Strict TypeScript Verification
+console.log("🔍 Running Strict TypeScript Typecheck...");
+const tsconfigPath = existsSync(resolve(rootDir, "nextband/tsconfig.app.json"))
+  ? resolve(rootDir, "nextband/tsconfig.app.json")
+  : resolve(rootDir, "tsconfig.app.json");
+
+const tscBin = existsSync(resolve(rootDir, "node_modules/typescript/bin/tsc"))
+  ? resolve(rootDir, "node_modules/typescript/bin/tsc")
+  : existsSync(resolve(rootDir, "nextband/node_modules/typescript/bin/tsc"))
+  ? resolve(rootDir, "nextband/node_modules/typescript/bin/tsc")
+  : null;
+
+if (existsSync(tsconfigPath)) {
+  const tscCommand = tscBin
+    ? `node --max-old-space-size=4096 "${tscBin}" -p "${tsconfigPath}" --noEmit`
+    : `npx --node-options="--max-old-space-size=4096" tsc -p "${tsconfigPath}" --noEmit`;
+
+  execSync(tscCommand, {
+    cwd: existsSync(resolve(rootDir, "nextband")) ? resolve(rootDir, "nextband") : rootDir,
+    stdio: "inherit",
+  });
+}
+
+// 4. Build Vite Frontend
 console.log("🚀 Building Frontend with Vite SWC...");
 const viteCwd = existsSync(resolve(rootDir, "vite.config.ts"))
   ? rootDir

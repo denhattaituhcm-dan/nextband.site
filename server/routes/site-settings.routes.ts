@@ -1,4 +1,5 @@
 import { FastifyPluginAsync } from "fastify";
+import "../plugins/prisma.js";
 import { z } from "zod";
 import { authenticate, requireRoles } from "../middlewares/auth.middleware.js";
 
