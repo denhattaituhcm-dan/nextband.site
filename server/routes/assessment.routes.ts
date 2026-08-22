@@ -234,6 +234,7 @@ const assessmentRoutes: FastifyPluginAsync = async (fastify) => {
         const report = await assessmentService.submitAssessment(
           request.params.id,
           request.body?.answers || {},
+          { allowIdempotentRetry: true },
         );
         return reply.send({
           success: true,

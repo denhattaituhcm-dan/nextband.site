@@ -9,6 +9,19 @@ export class LeadService {
    * Create a new contact lead and trigger instant notification
    */
   async createLead(input: CreateLeadInput) {
+    // Idempotency: Prevent duplicate lead creation on double click / retry within 5 minutes
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const existingRecentLead = await this.prisma.contactLead.findFirst({
+      where: {
+        phone: input.phone,
+        createdAt: { gte: fiveMinutesAgo },
+      },
+    });
+
+    if (existingRecentLead) {
+      return existingRecentLead;
+    }
+
     const lead = await this.prisma.contactLead.create({
       data: {
         fullName: input.fullName,

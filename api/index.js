@@ -120234,6 +120234,16 @@ var LeadService = class {
    * Create a new contact lead and trigger instant notification
    */
   async createLead(input) {
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1e3);
+    const existingRecentLead = await this.prisma.contactLead.findFirst({
+      where: {
+        phone: input.phone,
+        createdAt: { gte: fiveMinutesAgo }
+      }
+    });
+    if (existingRecentLead) {
+      return existingRecentLead;
+    }
     const lead = await this.prisma.contactLead.create({
       data: {
         fullName: input.fullName,
@@ -120348,33 +120358,44 @@ var listLeadsQuerySchema = external_exports.object({
 // server/routes/lead.routes.ts
 var leadRoutes = async (fastify) => {
   const leadService = new LeadService(fastify.prisma);
-  fastify.post("/", async (request, reply) => {
-    const validatedData = handleValidation(
-      createLeadSchema.safeParse(request.body),
-      request,
-      reply
-    );
-    if (!validatedData) return;
-    try {
-      const lead = await leadService.createLead(validatedData);
-      return reply.status(201).send({
-        success: true,
-        message: "G\u1EEDi y\xEAu c\u1EA7u t\u01B0 v\u1EA5n th\xE0nh c\xF4ng! Ban H\u1ECDc Thu\u1EADt ARIS \u0111\xE3 ti\u1EBFp nh\u1EADn th\xF4ng tin.",
-        data: {
-          id: lead.id,
-          fullName: lead.fullName,
-          phone: lead.phone,
-          createdAt: lead.createdAt
+  fastify.post(
+    "/",
+    {
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: "10 minutes"
         }
-      });
-    } catch (err) {
-      request.log.error(err, "Failed to create consultation lead");
-      return reply.status(500).send({
-        success: false,
-        error: "Kh\xF4ng th\u1EC3 x\u1EED l\xFD y\xEAu c\u1EA7u l\xFAc n\xE0y. Vui l\xF2ng li\xEAn h\u1EC7 Hotline 0933.319.693."
-      });
+      }
+    },
+    async (request, reply) => {
+      const validatedData = handleValidation(
+        createLeadSchema.safeParse(request.body),
+        request,
+        reply
+      );
+      if (!validatedData) return;
+      try {
+        const lead = await leadService.createLead(validatedData);
+        return reply.status(201).send({
+          success: true,
+          message: "G\u1EEDi y\xEAu c\u1EA7u t\u01B0 v\u1EA5n th\xE0nh c\xF4ng! Ban H\u1ECDc Thu\u1EADt ARIS \u0111\xE3 ti\u1EBFp nh\u1EADn th\xF4ng tin.",
+          data: {
+            id: lead.id,
+            fullName: lead.fullName,
+            phone: lead.phone,
+            createdAt: lead.createdAt
+          }
+        });
+      } catch (err) {
+        request.log.error(err, "Failed to create consultation lead");
+        return reply.status(500).send({
+          success: false,
+          error: "Kh\xF4ng th\u1EC3 x\u1EED l\xFD y\xEAu c\u1EA7u l\xFAc n\xE0y. Vui l\xF2ng li\xEAn h\u1EC7 Hotline 0933.319.693."
+        });
+      }
     }
-  });
+  );
   fastify.get(
     "/",
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
@@ -121683,7 +121704,7 @@ var AssessmentService = class {
   /**
    * 5. Submit and Grade Objective Sections + Enqueue Subjective Review
    */
-  async submitAssessment(sessionId, answersPayload) {
+  async submitAssessment(sessionId, answersPayload, options = {}) {
     const session = await this.getSessionById(sessionId);
     if (!session) {
       const err = new Error("Phi\xEAn kh\u1EA3o th\xED kh\xF4ng t\u1ED3n t\u1EA1i");
@@ -121691,6 +121712,9 @@ var AssessmentService = class {
       throw err;
     }
     if (session.status === "SUBMITTED") {
+      if (options.allowIdempotentRetry && session.result) {
+        return session.result;
+      }
       const err = new Error("B\xE0i kh\u1EA3o th\xED n\xE0y \u0111\xE3 \u0111\u01B0\u1EE3c n\u1ED9p tr\u01B0\u1EDBc \u0111\xF3");
       err.statusCode = 409;
       throw err;
@@ -122116,7 +122140,8 @@ var assessmentRoutes = async (fastify) => {
       try {
         const report = await assessmentService.submitAssessment(
           request.params.id,
-          request.body?.answers || {}
+          request.body?.answers || {},
+          { allowIdempotentRetry: true }
         );
         return reply.send({
           success: true,

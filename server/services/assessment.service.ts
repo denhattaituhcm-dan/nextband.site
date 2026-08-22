@@ -688,7 +688,11 @@ export class AssessmentService {
   /**
    * 5. Submit and Grade Objective Sections + Enqueue Subjective Review
    */
-  public async submitAssessment(sessionId: string, answersPayload: Record<string, any>): Promise<DiagnosticReport> {
+  public async submitAssessment(
+    sessionId: string,
+    answersPayload: Record<string, any>,
+    options: { allowIdempotentRetry?: boolean } = {}
+  ): Promise<DiagnosticReport> {
     const session = await this.getSessionById(sessionId);
     if (!session) {
       const err = new Error("Phiên khảo thí không tồn tại");
@@ -697,6 +701,9 @@ export class AssessmentService {
     }
 
     if (session.status === "SUBMITTED") {
+      if (options.allowIdempotentRetry && session.result) {
+        return session.result;
+      }
       const err = new Error("Bài khảo thí này đã được nộp trước đó");
       (err as any).statusCode = 409;
       throw err;

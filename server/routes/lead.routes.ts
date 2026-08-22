@@ -12,7 +12,17 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
   const leadService = new LeadService(fastify.prisma);
 
   // POST /leads - Public endpoint for prospective students submitting consultation requests
-  fastify.post("/", async (request, reply) => {
+  fastify.post(
+    "/",
+    {
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: "10 minutes",
+        },
+      },
+    },
+    async (request, reply) => {
     const validatedData = handleValidation(
       createLeadSchema.safeParse(request.body),
       request,
