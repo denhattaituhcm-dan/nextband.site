@@ -5245,7 +5245,7 @@ var require_thread_stream = __commonJS({
     var { version: version3 } = require_package();
     var { EventEmitter } = __require("events");
     var { Worker: Worker2 } = __require("worker_threads");
-    var { join: join3 } = __require("path");
+    var { join: join2 } = __require("path");
     var { pathToFileURL } = __require("url");
     var { wait } = require_wait();
     var {
@@ -5288,7 +5288,7 @@ var require_thread_stream = __commonJS({
     function createWorker(stream, opts) {
       const { filename, workerData } = opts;
       const bundlerOverrides = "__bundlerPathsOverrides" in globalThis ? globalThis.__bundlerPathsOverrides : {};
-      const toExecute = bundlerOverrides["thread-stream-worker"] || join3(__dirname, "lib", "worker.js");
+      const toExecute = bundlerOverrides["thread-stream-worker"] || join2(__dirname, "lib", "worker.js");
       const worker = new Worker2(toExecute, {
         ...opts.workerOpts,
         trackUnmanagedFds: false,
@@ -5691,7 +5691,7 @@ var require_transport = __commonJS({
     "use strict";
     var { createRequire } = __require("module");
     var getCallers = require_caller();
-    var { join: join3, isAbsolute, sep: sep2 } = __require("node:path");
+    var { join: join2, isAbsolute, sep: sep2 } = __require("node:path");
     var sleep2 = require_atomic_sleep();
     var onExit = require_on_exit_leak_free();
     var ThreadStream = require_thread_stream();
@@ -5743,7 +5743,7 @@ var require_transport = __commonJS({
       stream.flushSync();
     }
     function transport(fullOptions) {
-      const { pipeline: pipeline3, targets, levels, dedupe, worker = {}, caller = getCallers(), sync = false } = fullOptions;
+      const { pipeline: pipeline2, targets, levels, dedupe, worker = {}, caller = getCallers(), sync = false } = fullOptions;
       const options = {
         ...fullOptions.options
       };
@@ -5754,7 +5754,7 @@ var require_transport = __commonJS({
         throw new Error("only one of target or targets can be specified");
       }
       if (targets) {
-        target = bundlerOverrides["pino-worker"] || join3(__dirname, "worker.js");
+        target = bundlerOverrides["pino-worker"] || join2(__dirname, "worker.js");
         options.targets = targets.filter((dest) => dest.target).map((dest) => {
           return {
             ...dest,
@@ -5771,9 +5771,9 @@ var require_transport = __commonJS({
             };
           });
         });
-      } else if (pipeline3) {
-        target = bundlerOverrides["pino-worker"] || join3(__dirname, "worker.js");
-        options.pipelines = [pipeline3.map((dest) => {
+      } else if (pipeline2) {
+        target = bundlerOverrides["pino-worker"] || join2(__dirname, "worker.js");
+        options.pipelines = [pipeline2.map((dest) => {
           return {
             ...dest,
             target: fixTarget(dest.target)
@@ -5794,7 +5794,7 @@ var require_transport = __commonJS({
           return origin;
         }
         if (origin === "pino/file") {
-          return join3(__dirname, "..", "file.js");
+          return join2(__dirname, "..", "file.js");
         }
         let fixTarget2;
         for (const filePath of callers) {
@@ -6781,7 +6781,7 @@ var require_safe_stable_stringify = __commonJS({
               return circularValue;
             }
             let res = "";
-            let join3 = ",";
+            let join2 = ",";
             const originalIndentation = indentation;
             if (Array.isArray(value)) {
               if (value.length === 0) {
@@ -6795,7 +6795,7 @@ var require_safe_stable_stringify = __commonJS({
                 indentation += spacer;
                 res += `
 ${indentation}`;
-                join3 = `,
+                join2 = `,
 ${indentation}`;
               }
               const maximumValuesToStringify = Math.min(value.length, maximumBreadth);
@@ -6803,13 +6803,13 @@ ${indentation}`;
               for (; i2 < maximumValuesToStringify - 1; i2++) {
                 const tmp2 = stringifyFnReplacer(String(i2), value, stack, replacer, spacer, indentation);
                 res += tmp2 !== void 0 ? tmp2 : "null";
-                res += join3;
+                res += join2;
               }
               const tmp = stringifyFnReplacer(String(i2), value, stack, replacer, spacer, indentation);
               res += tmp !== void 0 ? tmp : "null";
               if (value.length - 1 > maximumBreadth) {
                 const removedKeys = value.length - maximumBreadth - 1;
-                res += `${join3}"... ${getItemCount(removedKeys)} not stringified"`;
+                res += `${join2}"... ${getItemCount(removedKeys)} not stringified"`;
               }
               if (spacer !== "") {
                 res += `
@@ -6830,7 +6830,7 @@ ${originalIndentation}`;
             let separator = "";
             if (spacer !== "") {
               indentation += spacer;
-              join3 = `,
+              join2 = `,
 ${indentation}`;
               whitespace = " ";
             }
@@ -6844,13 +6844,13 @@ ${indentation}`;
               const tmp = stringifyFnReplacer(key2, value, stack, replacer, spacer, indentation);
               if (tmp !== void 0) {
                 res += `${separator}${strEscape(key2)}:${whitespace}${tmp}`;
-                separator = join3;
+                separator = join2;
               }
             }
             if (keyLength > maximumBreadth) {
               const removedKeys = keyLength - maximumBreadth;
               res += `${separator}"...":${whitespace}"${getItemCount(removedKeys)} not stringified"`;
-              separator = join3;
+              separator = join2;
             }
             if (spacer !== "" && separator.length > 1) {
               res = `
@@ -6890,7 +6890,7 @@ ${originalIndentation}`;
             }
             const originalIndentation = indentation;
             let res = "";
-            let join3 = ",";
+            let join2 = ",";
             if (Array.isArray(value)) {
               if (value.length === 0) {
                 return "[]";
@@ -6903,7 +6903,7 @@ ${originalIndentation}`;
                 indentation += spacer;
                 res += `
 ${indentation}`;
-                join3 = `,
+                join2 = `,
 ${indentation}`;
               }
               const maximumValuesToStringify = Math.min(value.length, maximumBreadth);
@@ -6911,13 +6911,13 @@ ${indentation}`;
               for (; i2 < maximumValuesToStringify - 1; i2++) {
                 const tmp2 = stringifyArrayReplacer(String(i2), value[i2], stack, replacer, spacer, indentation);
                 res += tmp2 !== void 0 ? tmp2 : "null";
-                res += join3;
+                res += join2;
               }
               const tmp = stringifyArrayReplacer(String(i2), value[i2], stack, replacer, spacer, indentation);
               res += tmp !== void 0 ? tmp : "null";
               if (value.length - 1 > maximumBreadth) {
                 const removedKeys = value.length - maximumBreadth - 1;
-                res += `${join3}"... ${getItemCount(removedKeys)} not stringified"`;
+                res += `${join2}"... ${getItemCount(removedKeys)} not stringified"`;
               }
               if (spacer !== "") {
                 res += `
@@ -6930,7 +6930,7 @@ ${originalIndentation}`;
             let whitespace = "";
             if (spacer !== "") {
               indentation += spacer;
-              join3 = `,
+              join2 = `,
 ${indentation}`;
               whitespace = " ";
             }
@@ -6939,7 +6939,7 @@ ${indentation}`;
               const tmp = stringifyArrayReplacer(key2, value[key2], stack, replacer, spacer, indentation);
               if (tmp !== void 0) {
                 res += `${separator}${strEscape(key2)}:${whitespace}${tmp}`;
-                separator = join3;
+                separator = join2;
               }
             }
             if (spacer !== "" && separator.length > 1) {
@@ -6996,20 +6996,20 @@ ${originalIndentation}`;
               indentation += spacer;
               let res2 = `
 ${indentation}`;
-              const join4 = `,
+              const join3 = `,
 ${indentation}`;
               const maximumValuesToStringify = Math.min(value.length, maximumBreadth);
               let i2 = 0;
               for (; i2 < maximumValuesToStringify - 1; i2++) {
                 const tmp2 = stringifyIndent(String(i2), value[i2], stack, spacer, indentation);
                 res2 += tmp2 !== void 0 ? tmp2 : "null";
-                res2 += join4;
+                res2 += join3;
               }
               const tmp = stringifyIndent(String(i2), value[i2], stack, spacer, indentation);
               res2 += tmp !== void 0 ? tmp : "null";
               if (value.length - 1 > maximumBreadth) {
                 const removedKeys = value.length - maximumBreadth - 1;
-                res2 += `${join4}"... ${getItemCount(removedKeys)} not stringified"`;
+                res2 += `${join3}"... ${getItemCount(removedKeys)} not stringified"`;
               }
               res2 += `
 ${originalIndentation}`;
@@ -7025,16 +7025,16 @@ ${originalIndentation}`;
               return '"[Object]"';
             }
             indentation += spacer;
-            const join3 = `,
+            const join2 = `,
 ${indentation}`;
             let res = "";
             let separator = "";
             let maximumPropertiesToStringify = Math.min(keyLength, maximumBreadth);
             if (isTypedArrayWithEntries(value)) {
-              res += stringifyTypedArray(value, join3, maximumBreadth);
+              res += stringifyTypedArray(value, join2, maximumBreadth);
               keys = keys.slice(value.length);
               maximumPropertiesToStringify -= value.length;
-              separator = join3;
+              separator = join2;
             }
             if (deterministic) {
               keys = sort(keys, comparator);
@@ -7045,13 +7045,13 @@ ${indentation}`;
               const tmp = stringifyIndent(key2, value[key2], stack, spacer, indentation);
               if (tmp !== void 0) {
                 res += `${separator}${strEscape(key2)}: ${tmp}`;
-                separator = join3;
+                separator = join2;
               }
             }
             if (keyLength > maximumBreadth) {
               const removedKeys = keyLength - maximumBreadth;
               res += `${separator}"...": "${getItemCount(removedKeys)} not stringified"`;
-              separator = join3;
+              separator = join2;
             }
             if (separator !== "") {
               res = `
@@ -38670,7 +38670,7 @@ var require_multipart2 = __commonJS({
     var Busboy = require_busboy();
     var os = __require("node:os");
     var fp3 = require_plugin2();
-    var { createWriteStream: createWriteStream2 } = __require("node:fs");
+    var { createWriteStream } = __require("node:fs");
     var { unlink } = __require("node:fs/promises");
     var path = __require("node:path");
     var { generateId } = require_generateId();
@@ -38678,8 +38678,8 @@ var require_multipart2 = __commonJS({
     var createError = require_error3();
     var sendToWormhole = require_stream_wormhole();
     var deepmergeAll = require_deepmerge()({ all: true });
-    var { PassThrough: PassThrough3, pipeline: pipeline3, Readable } = __require("node:stream");
-    var pump2 = util2.promisify(pipeline3);
+    var { PassThrough: PassThrough3, pipeline: pipeline2, Readable } = __require("node:stream");
+    var pump2 = util2.promisify(pipeline2);
     var secureJSON = require_secure_json_parse();
     var kMultipart = Symbol("multipart");
     var kMultipartHandler = Symbol("multipartHandler");
@@ -39023,7 +39023,7 @@ var require_multipart2 = __commonJS({
         let i2 = 0;
         for await (const file of files) {
           const filepath = path.join(tmpdir, generateId() + path.extname(file.filename || "file" + i2++));
-          const target = createWriteStream2(filepath);
+          const target = createWriteStream(filepath);
           try {
             this.tmpUploads.push(filepath);
             await pump2(file.file, target);
@@ -47310,7 +47310,7 @@ var require_SendStream = __commonJS({
     var { parseTokenList } = require_parseTokenList();
     var { setHeaders } = require_setHeaders();
     var extname2 = path.extname;
-    var join3 = path.join;
+    var join2 = path.join;
     var normalize = path.normalize;
     var resolve2 = path.resolve;
     var sep2 = path.sep;
@@ -47552,7 +47552,7 @@ var require_SendStream = __commonJS({
           return res;
         }
         parts = path2.split(sep2);
-        path2 = normalize(join3(root, path2));
+        path2 = normalize(join2(root, path2));
       } else {
         if (UP_PATH_REGEXP.test(path2)) {
           debug('malicious path "%s"', path2);
@@ -47685,7 +47685,7 @@ var require_SendStream = __commonJS({
           if (err) return self2.onStatError(err);
           return self2.error(404);
         }
-        const p = join3(path2, self2._index[i2]);
+        const p = join2(path2, self2._index[i2]);
         debug('stat "%s"', p);
         fs2.stat(p, function(err2, stat2) {
           if (err2) return next(err2);
@@ -56584,7 +56584,7 @@ var require_buffer = __commonJS({
       const isCompatible = typeof data === "object" && data.constructor.name === "EncoderBuffer" && typeof data.length === "number" && typeof data.join === "function";
       return isCompatible;
     };
-    EncoderBuffer.prototype.join = function join3(out, offset) {
+    EncoderBuffer.prototype.join = function join2(out, offset) {
       if (!out)
         out = Buffer4.alloc(this.length);
       if (!offset)
@@ -86478,8 +86478,8 @@ var require_RealtimeChannel = __commonJS({
       }
       /** @internal */
       _notThisChannelEvent(event, ref) {
-        const { close, error, leave, join: join3 } = constants_1.CHANNEL_EVENTS;
-        const events = [close, error, leave, join3];
+        const { close, error, leave, join: join2 } = constants_1.CHANNEL_EVENTS;
+        const events = [close, error, leave, join2];
         return ref && events.includes(event) && ref !== this.joinPush.ref;
       }
       /** @internal */
@@ -111991,8 +111991,8 @@ var import_helmet = __toESM(require_helmet2(), 1);
 var import_multipart = __toESM(require_multipart2(), 1);
 var import_static = __toESM(require_static(), 1);
 init_env();
-import { join as join2 } from "path";
-import { existsSync as existsSync2, mkdirSync as mkdirSync2 } from "fs";
+import { join } from "path";
+import { existsSync, mkdirSync } from "fs";
 
 // server/plugins/prisma.ts
 var import_fastify_plugin = __toESM(require_plugin2(), 1);
@@ -118169,9 +118169,8 @@ var enrollmentsRoutes = async (fastify) => {
 var enrollments_routes_default = enrollmentsRoutes;
 
 // server/routes/uploads.routes.ts
-import { createWriteStream, existsSync, mkdirSync, unlinkSync } from "fs";
-import { join, extname } from "path";
-import { pipeline as pipeline2 } from "stream/promises";
+init_dist5();
+import { extname } from "path";
 import { randomUUID as randomUUID2 } from "crypto";
 init_env();
 var ALLOWED_IMAGE_TYPES = [
@@ -118188,19 +118187,15 @@ var ALLOWED_AUDIO_TYPES = [
   "audio/webm"
 ];
 var ALLOWED_TYPES = [...ALLOWED_IMAGE_TYPES, ...ALLOWED_AUDIO_TYPES];
-function getUploadDir(subDir) {
-  const baseDir = join(process.cwd(), env.UPLOAD_DIR);
-  const targetDir = subDir ? join(baseDir, subDir) : baseDir;
-  if (!existsSync(targetDir)) {
-    mkdirSync(targetDir, { recursive: true });
-  }
-  return targetDir;
-}
+var BUCKET_NAME = "exam-assets";
 function generateFileName(originalName) {
-  const ext = extname(originalName);
+  const ext = extname(originalName) || ".bin";
   return `${Date.now()}-${randomUUID2()}${ext}`;
 }
 var uploadsRoutes = async (fastify) => {
+  const supabaseUrl = env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co";
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGRscXhqZ2d5eGxrZWF0dnZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyOTc3NjMsImV4cCI6MjEwMDg3Mzc2M30.M7uMAo2qJCDQtxQMP-_58VKF1LfSBdwR31gpvqcCN6I";
+  const supabase = createClient(supabaseUrl, supabaseKey);
   fastify.post(
     "/",
     { preHandler: authenticate },
@@ -118217,21 +118212,36 @@ var uploadsRoutes = async (fastify) => {
       }
       const isImage = ALLOWED_IMAGE_TYPES.includes(data.mimetype);
       const subDir = isImage ? "images" : "audio";
-      const uploadDir = getUploadDir(subDir);
-      const fileName = generateFileName(data.filename);
-      const filePath = join(uploadDir, fileName);
+      const fileName = generateFileName(data.filename || `file_${Date.now()}`);
+      const storagePath = `${subDir}/${fileName}`;
       try {
-        await pipeline2(data.file, createWriteStream(filePath));
-        const relativePath = `/uploads/${subDir}/${fileName}`;
+        const buffer = await data.toBuffer();
+        const { error: uploadError } = await supabase.storage.from(BUCKET_NAME).upload(storagePath, buffer, {
+          contentType: data.mimetype,
+          upsert: false
+        });
+        if (uploadError) {
+          fastify.log.error({ err: uploadError, storagePath }, "Supabase Storage persistence error");
+          return reply.status(500).send({
+            statusCode: 500,
+            error: "PERSISTENCE_ERROR",
+            message: "T\u1EA3i t\u1EC7p l\xEAn h\u1EC7 th\u1ED1ng l\u01B0u tr\u1EEF b\u1EC1n v\u1EEFng th\u1EA5t b\u1EA1i: " + (uploadError.message || "Storage error")
+          });
+        }
+        const { data: publicUrlData } = supabase.storage.from(BUCKET_NAME).getPublicUrl(storagePath);
         return {
-          url: toFileUrl(relativePath),
+          url: publicUrlData.publicUrl,
           fileName,
           mimeType: data.mimetype,
-          size: data.file.bytesRead
+          size: buffer.length
         };
       } catch (err) {
-        fastify.log.error(err);
-        return reply.status(500).send({ error: "T\u1EA3i t\u1EC7p l\xEAn th\u1EA5t b\u1EA1i" });
+        fastify.log.error(err, "Unexpected upload error");
+        return reply.status(500).send({
+          statusCode: 500,
+          error: "PERSISTENCE_ERROR",
+          message: "L\u1ED7i h\u1EC7 th\u1ED1ng khi x\u1EED l\xFD t\u1EA3i t\u1EC7p: " + (err?.message || "Internal error")
+        });
       }
     }
   );
@@ -118249,19 +118259,36 @@ var uploadsRoutes = async (fastify) => {
           allowedTypes: ALLOWED_IMAGE_TYPES
         });
       }
-      const uploadDir = getUploadDir("images");
-      const fileName = generateFileName(data.filename);
-      const filePath = join(uploadDir, fileName);
+      const fileName = generateFileName(data.filename || `image_${Date.now()}`);
+      const storagePath = `images/${fileName}`;
       try {
-        await pipeline2(data.file, createWriteStream(filePath));
+        const buffer = await data.toBuffer();
+        const { error: uploadError } = await supabase.storage.from(BUCKET_NAME).upload(storagePath, buffer, {
+          contentType: data.mimetype,
+          upsert: false
+        });
+        if (uploadError) {
+          fastify.log.error({ err: uploadError, storagePath }, "Supabase Storage image persistence error");
+          return reply.status(500).send({
+            statusCode: 500,
+            error: "PERSISTENCE_ERROR",
+            message: "T\u1EA3i h\xECnh \u1EA3nh l\xEAn h\u1EC7 th\u1ED1ng l\u01B0u tr\u1EEF b\u1EC1n v\u1EEFng th\u1EA5t b\u1EA1i: " + (uploadError.message || "Storage error")
+          });
+        }
+        const { data: publicUrlData } = supabase.storage.from(BUCKET_NAME).getPublicUrl(storagePath);
         return {
-          url: toFileUrl(`/uploads/images/${fileName}`),
+          url: publicUrlData.publicUrl,
           fileName,
-          mimeType: data.mimetype
+          mimeType: data.mimetype,
+          size: buffer.length
         };
       } catch (err) {
-        fastify.log.error(err);
-        return reply.status(500).send({ error: "T\u1EA3i t\u1EC7p l\xEAn th\u1EA5t b\u1EA1i" });
+        fastify.log.error(err, "Unexpected image upload error");
+        return reply.status(500).send({
+          statusCode: 500,
+          error: "PERSISTENCE_ERROR",
+          message: "L\u1ED7i h\u1EC7 th\u1ED1ng khi x\u1EED l\xFD t\u1EA3i h\xECnh \u1EA3nh: " + (err?.message || "Internal error")
+        });
       }
     }
   );
@@ -118279,19 +118306,36 @@ var uploadsRoutes = async (fastify) => {
           allowedTypes: ALLOWED_AUDIO_TYPES
         });
       }
-      const uploadDir = getUploadDir("audio");
-      const fileName = generateFileName(data.filename);
-      const filePath = join(uploadDir, fileName);
+      const fileName = generateFileName(data.filename || `audio_${Date.now()}`);
+      const storagePath = `audio/${fileName}`;
       try {
-        await pipeline2(data.file, createWriteStream(filePath));
+        const buffer = await data.toBuffer();
+        const { error: uploadError } = await supabase.storage.from(BUCKET_NAME).upload(storagePath, buffer, {
+          contentType: data.mimetype,
+          upsert: false
+        });
+        if (uploadError) {
+          fastify.log.error({ err: uploadError, storagePath }, "Supabase Storage audio persistence error");
+          return reply.status(500).send({
+            statusCode: 500,
+            error: "PERSISTENCE_ERROR",
+            message: "T\u1EA3i \xE2m thanh l\xEAn h\u1EC7 th\u1ED1ng l\u01B0u tr\u1EEF b\u1EC1n v\u1EEFng th\u1EA5t b\u1EA1i: " + (uploadError.message || "Storage error")
+          });
+        }
+        const { data: publicUrlData } = supabase.storage.from(BUCKET_NAME).getPublicUrl(storagePath);
         return {
-          url: toFileUrl(`/uploads/audio/${fileName}`),
+          url: publicUrlData.publicUrl,
           fileName,
-          mimeType: data.mimetype
+          mimeType: data.mimetype,
+          size: buffer.length
         };
       } catch (err) {
-        fastify.log.error(err);
-        return reply.status(500).send({ error: "Failed to upload file" });
+        fastify.log.error(err, "Unexpected audio upload error");
+        return reply.status(500).send({
+          statusCode: 500,
+          error: "PERSISTENCE_ERROR",
+          message: "L\u1ED7i h\u1EC7 th\u1ED1ng khi x\u1EED l\xFD t\u1EA3i \xE2m thanh: " + (err?.message || "Internal error")
+        });
       }
     }
   );
@@ -118315,37 +118359,37 @@ var uploadsRoutes = async (fastify) => {
       } catch {
         return reply.status(400).send({ error: "URL kh\xF4ng h\u1EE3p l\u1EC7" });
       }
-      if (decodedUrl.includes("..") || decodedUrl.includes(":\\") || decodedUrl.includes(":/")) {
+      if (decodedUrl.includes("..") || decodedUrl.includes(":\\") || decodedUrl.includes(":/..")) {
         return reply.status(400).send({ error: "\u0110\u01B0\u1EDDng d\u1EABn ch\u1EE9a k\xFD t\u1EF1 kh\xF4ng h\u1EE3p l\u1EC7" });
       }
-      const match = decodedUrl.match(/\/uploads\/(images|audio)\/(.+)/);
-      if (!match) {
-        return reply.status(400).send({ error: "URL t\u1EC7p kh\xF4ng \u0111\xFAng \u0111\u1ECBnh d\u1EA1ng /uploads/(images|audio)/..." });
-      }
-      const [, subDir, rawFileName] = match;
-      const baseUploadDir = join(process.cwd(), env.UPLOAD_DIR);
-      const authService = new AuthorizationService(fastify.prisma);
-      let filePath;
-      try {
-        filePath = authService.validateUploadPathBoundary({
-          subDir,
-          rawFileName,
-          baseUploadDir
-        });
-      } catch (err) {
-        const statusCode = err instanceof AuthorizationError ? err.statusCode : 400;
-        return reply.status(statusCode).send({ error: err.message || "T\u1EC7p kh\xF4ng h\u1EE3p l\u1EC7" });
+      let storagePath = "";
+      const relativeMatch = decodedUrl.match(/\/uploads\/(images|audio)\/([^/?#]+)/);
+      const cdnMatch = decodedUrl.match(/\/exam-assets\/(images|audio)\/([^/?#]+)/);
+      if (cdnMatch) {
+        storagePath = `${cdnMatch[1]}/${cdnMatch[2]}`;
+      } else if (relativeMatch) {
+        storagePath = `${relativeMatch[1]}/${relativeMatch[2]}`;
+      } else {
+        return reply.status(400).send({ error: "URL t\u1EC7p kh\xF4ng thu\u1ED9c ph\u1EA1m vi qu\u1EA3n l\xFD exam-assets" });
       }
       try {
-        if (existsSync(filePath)) {
-          unlinkSync(filePath);
-          return { success: true, message: "\u0110\xE3 x\xF3a t\u1EC7p th\xE0nh c\xF4ng" };
-        } else {
-          return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y t\u1EC7p" });
+        const { error: removeError } = await supabase.storage.from(BUCKET_NAME).remove([storagePath]);
+        if (removeError) {
+          fastify.log.error({ err: removeError, storagePath }, "Supabase Storage delete error");
+          return reply.status(500).send({
+            statusCode: 500,
+            error: "PERSISTENCE_ERROR",
+            message: "X\xF3a t\u1EC7p kh\u1ECFi h\u1EC7 th\u1ED1ng l\u01B0u tr\u1EEF b\u1EC1n v\u1EEFng th\u1EA5t b\u1EA1i: " + removeError.message
+          });
         }
+        return { success: true, message: "\u0110\xE3 x\xF3a t\u1EC7p kh\u1ECFi h\u1EC7 th\u1ED1ng l\u01B0u tr\u1EEF th\xE0nh c\xF4ng" };
       } catch (err) {
-        fastify.log.error(err);
-        return reply.status(500).send({ error: "X\xF3a t\u1EC7p th\u1EA5t b\u1EA1i" });
+        fastify.log.error(err, "Delete file unexpected error");
+        return reply.status(500).send({
+          statusCode: 500,
+          error: "PERSISTENCE_ERROR",
+          message: "L\u1ED7i h\u1EC7 th\u1ED1ng khi x\xF3a t\u1EC7p: " + (err?.message || "Internal error")
+        });
       }
     }
   );
@@ -122393,14 +122437,14 @@ async function buildApp() {
       level: isProduction ? "info" : "debug"
     };
   } else {
-    const logDir = join2(process.cwd(), "logs");
-    if (!existsSync2(logDir)) {
+    const logDir = join(process.cwd(), "logs");
+    if (!existsSync(logDir)) {
       try {
-        mkdirSync2(logDir, { recursive: true });
+        mkdirSync(logDir, { recursive: true });
       } catch {
       }
     }
-    const logFile = join2(logDir, "app.log");
+    const logFile = join(logDir, "app.log");
     loggerConfig = {
       level: "debug",
       transport: {
@@ -122410,7 +122454,7 @@ async function buildApp() {
             options: { colorize: true },
             level: "debug"
           },
-          ...existsSync2(logDir) ? [
+          ...existsSync(logDir) ? [
             {
               target: "pino/file",
               options: { destination: logFile },
@@ -122524,14 +122568,14 @@ async function buildApp() {
       // 50MB default
     }
   });
-  const uploadDir = isServerless ? join2("/tmp", env.UPLOAD_DIR || "uploads") : join2(process.cwd(), env.UPLOAD_DIR || "uploads");
-  if (!existsSync2(uploadDir)) {
+  const uploadDir = isServerless ? join("/tmp", env.UPLOAD_DIR || "uploads") : join(process.cwd(), env.UPLOAD_DIR || "uploads");
+  if (!existsSync(uploadDir)) {
     try {
-      mkdirSync2(uploadDir, { recursive: true });
+      mkdirSync(uploadDir, { recursive: true });
     } catch {
     }
   }
-  if (existsSync2(uploadDir)) {
+  if (existsSync(uploadDir)) {
     await app.register(import_static.default, {
       root: uploadDir,
       prefix: "/uploads/",

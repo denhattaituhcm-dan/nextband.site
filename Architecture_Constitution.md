@@ -1,5 +1,19 @@
 # NEXTBAND ARCHITECTURE CONSTITUTION (HIẾN PHÁP KIẾN TRÚC HỆ THỐNG NEXTBAND)
 
+> [!IMPORTANT]
+> **STABILIZATION NOTICE — NON-NORMATIVE**  
+> Trong đợt Release Stabilization hiện tại, các điều khoản liên quan đến Dual-Tier Fallback (Điều XIV), 12-Point Edge Protocol (Điều VII), Forensic Protocol 9 bước (Điều XVI/X), UI/Visual Realm & Design Tokens Blocker (Điều XX, XXI, XXV) và Enterprise Event/Outbox requirements đang ở trạng thái **SUSPENDED FOR STABILIZATION**.  
+> 
+> Các điều khoản này **không được dùng để**:
+> - Yêu cầu thêm complexity;
+> - Tạo fallback / adapter / architecture mới;
+> - Làm release blocker;
+> - Mở rộng phạm vi sửa chữa ngoài 5 Critical Flows.
+> 
+> **Không xóa, sửa hoặc diễn giải lại các điều khoản bên dưới trong giai đoạn này.**  
+> **Canonical runtime path chưa được quyết định bởi tài liệu này.** Nó sẽ được xác định bằng Pre-RSP Audit dựa trên production evidence.  
+> **Authoritative operational process:** Release Stabilization Protocol (RSP).
+
 **Phiên bản**: 1.6.0  
 **Ngày ban hành**: 01/08/2026  
 **Ngày cập nhật**: 22/08/2026 — Ban hành ARTICLE XXIV: CODE HYGIENE, EVIDENCE-BASED PURGE & CANONICAL SSOT GOVERNANCE (Khóa kỷ luật khai tử đồng bộ, phân định Nguồn Chân lý với Sản phẩm Biên dịch, Quy tắc Tối cao về Bằng chứng Tiêu hủy và 4 Cổng nghiệm thu chất lượng).  

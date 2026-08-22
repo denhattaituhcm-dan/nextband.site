@@ -1,12 +1,9 @@
 import { FastifyPluginAsync, FastifyRequest } from "fastify";
-import { createWriteStream, existsSync, mkdirSync, unlinkSync } from "fs";
-import { join, extname } from "path";
-import { pipeline } from "stream/promises";
+import { extname } from "path";
 import { randomUUID } from "crypto";
+import { createClient } from "@supabase/supabase-js";
 import { authenticate, requireRoles } from "../middlewares/auth.middleware.js";
 import { env } from "../config/env.js";
-import { toFileUrl } from "../utils/file.js";
-import { AuthorizationService, AuthorizationError } from "../services/authorization.service.js";
 
 // Allowed file types
 const ALLOWED_IMAGE_TYPES = [
@@ -24,26 +21,24 @@ const ALLOWED_AUDIO_TYPES = [
 ];
 const ALLOWED_TYPES = [...ALLOWED_IMAGE_TYPES, ...ALLOWED_AUDIO_TYPES];
 
-// Get upload directory path
-function getUploadDir(subDir?: string): string {
-  const baseDir = join(process.cwd(), env.UPLOAD_DIR);
-  const targetDir = subDir ? join(baseDir, subDir) : baseDir;
-
-  if (!existsSync(targetDir)) {
-    mkdirSync(targetDir, { recursive: true });
-  }
-
-  return targetDir;
-}
+const BUCKET_NAME = "exam-assets";
 
 // Generate unique filename
 function generateFileName(originalName: string): string {
-  const ext = extname(originalName);
+  const ext = extname(originalName) || ".bin";
   return `${Date.now()}-${randomUUID()}${ext}`;
 }
 
 const uploadsRoutes: FastifyPluginAsync = async (fastify) => {
-  // POST /uploads - Upload single file
+  const supabaseUrl = env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co";
+  const supabaseKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.VITE_SUPABASE_ANON_KEY ||
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGRscXhqZ2d5eGxrZWF0dnZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyOTc3NjMsImV4cCI6MjEwMDg3Mzc2M30.M7uMAo2qJCDQtxQMP-_58VKF1LfSBdwR31gpvqcCN6I";
+
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  // POST /uploads - Upload single file to Supabase Storage
   fastify.post(
     "/",
     { preHandler: authenticate },
@@ -64,30 +59,47 @@ const uploadsRoutes: FastifyPluginAsync = async (fastify) => {
         });
       }
 
-      // Determine subdirectory based on file type
       const isImage = ALLOWED_IMAGE_TYPES.includes(data.mimetype);
       const subDir = isImage ? "images" : "audio";
-
-      const uploadDir = getUploadDir(subDir);
-      const fileName = generateFileName(data.filename);
-      const filePath = join(uploadDir, fileName);
+      const fileName = generateFileName(data.filename || `file_${Date.now()}`);
+      const storagePath = `${subDir}/${fileName}`;
 
       try {
-        // Save file
-        await pipeline(data.file, createWriteStream(filePath));
+        const buffer = await data.toBuffer();
 
-        // Generate URL (full URL để FE dùng trực tiếp)
-        const relativePath = `/uploads/${subDir}/${fileName}`;
+        const { error: uploadError } = await supabase.storage
+          .from(BUCKET_NAME)
+          .upload(storagePath, buffer, {
+            contentType: data.mimetype,
+            upsert: false,
+          });
+
+        if (uploadError) {
+          fastify.log.error({ err: uploadError, storagePath }, "Supabase Storage persistence error");
+          return reply.status(500).send({
+            statusCode: 500,
+            error: "PERSISTENCE_ERROR",
+            message: "Tải tệp lên hệ thống lưu trữ bền vững thất bại: " + (uploadError.message || "Storage error"),
+          });
+        }
+
+        const { data: publicUrlData } = supabase.storage
+          .from(BUCKET_NAME)
+          .getPublicUrl(storagePath);
 
         return {
-          url: toFileUrl(relativePath),
+          url: publicUrlData.publicUrl,
           fileName,
           mimeType: data.mimetype,
-          size: data.file.bytesRead,
+          size: buffer.length,
         };
-      } catch (err) {
-        fastify.log.error(err);
-        return reply.status(500).send({ error: "Tải tệp lên thất bại" });
+      } catch (err: any) {
+        fastify.log.error(err, "Unexpected upload error");
+        return reply.status(500).send({
+          statusCode: 500,
+          error: "PERSISTENCE_ERROR",
+          message: "Lỗi hệ thống khi xử lý tải tệp: " + (err?.message || "Internal error"),
+        });
       }
     },
   );
@@ -112,21 +124,45 @@ const uploadsRoutes: FastifyPluginAsync = async (fastify) => {
         });
       }
 
-      const uploadDir = getUploadDir("images");
-      const fileName = generateFileName(data.filename);
-      const filePath = join(uploadDir, fileName);
+      const fileName = generateFileName(data.filename || `image_${Date.now()}`);
+      const storagePath = `images/${fileName}`;
 
       try {
-        await pipeline(data.file, createWriteStream(filePath));
+        const buffer = await data.toBuffer();
+
+        const { error: uploadError } = await supabase.storage
+          .from(BUCKET_NAME)
+          .upload(storagePath, buffer, {
+            contentType: data.mimetype,
+            upsert: false,
+          });
+
+        if (uploadError) {
+          fastify.log.error({ err: uploadError, storagePath }, "Supabase Storage image persistence error");
+          return reply.status(500).send({
+            statusCode: 500,
+            error: "PERSISTENCE_ERROR",
+            message: "Tải hình ảnh lên hệ thống lưu trữ bền vững thất bại: " + (uploadError.message || "Storage error"),
+          });
+        }
+
+        const { data: publicUrlData } = supabase.storage
+          .from(BUCKET_NAME)
+          .getPublicUrl(storagePath);
 
         return {
-          url: toFileUrl(`/uploads/images/${fileName}`),
+          url: publicUrlData.publicUrl,
           fileName,
           mimeType: data.mimetype,
+          size: buffer.length,
         };
-      } catch (err) {
-        fastify.log.error(err);
-        return reply.status(500).send({ error: "Tải tệp lên thất bại" });
+      } catch (err: any) {
+        fastify.log.error(err, "Unexpected image upload error");
+        return reply.status(500).send({
+          statusCode: 500,
+          error: "PERSISTENCE_ERROR",
+          message: "Lỗi hệ thống khi xử lý tải hình ảnh: " + (err?.message || "Internal error"),
+        });
       }
     },
   );
@@ -151,26 +187,50 @@ const uploadsRoutes: FastifyPluginAsync = async (fastify) => {
         });
       }
 
-      const uploadDir = getUploadDir("audio");
-      const fileName = generateFileName(data.filename);
-      const filePath = join(uploadDir, fileName);
+      const fileName = generateFileName(data.filename || `audio_${Date.now()}`);
+      const storagePath = `audio/${fileName}`;
 
       try {
-        await pipeline(data.file, createWriteStream(filePath));
+        const buffer = await data.toBuffer();
+
+        const { error: uploadError } = await supabase.storage
+          .from(BUCKET_NAME)
+          .upload(storagePath, buffer, {
+            contentType: data.mimetype,
+            upsert: false,
+          });
+
+        if (uploadError) {
+          fastify.log.error({ err: uploadError, storagePath }, "Supabase Storage audio persistence error");
+          return reply.status(500).send({
+            statusCode: 500,
+            error: "PERSISTENCE_ERROR",
+            message: "Tải âm thanh lên hệ thống lưu trữ bền vững thất bại: " + (uploadError.message || "Storage error"),
+          });
+        }
+
+        const { data: publicUrlData } = supabase.storage
+          .from(BUCKET_NAME)
+          .getPublicUrl(storagePath);
 
         return {
-          url: toFileUrl(`/uploads/audio/${fileName}`),
+          url: publicUrlData.publicUrl,
           fileName,
           mimeType: data.mimetype,
+          size: buffer.length,
         };
-      } catch (err) {
-        fastify.log.error(err);
-        return reply.status(500).send({ error: "Failed to upload file" });
+      } catch (err: any) {
+        fastify.log.error(err, "Unexpected audio upload error");
+        return reply.status(500).send({
+          statusCode: 500,
+          error: "PERSISTENCE_ERROR",
+          message: "Lỗi hệ thống khi xử lý tải âm thanh: " + (err?.message || "Internal error"),
+        });
       }
     },
   );
 
-  // DELETE /uploads - Delete file (admin only)
+  // DELETE /uploads - Delete file from Supabase Storage (admin only)
   fastify.delete(
     "/",
     { preHandler: [authenticate, requireRoles("admin")] },
@@ -181,63 +241,61 @@ const uploadsRoutes: FastifyPluginAsync = async (fastify) => {
         return reply.status(400).send({ error: "Yêu cầu URL tệp cần xóa" });
       }
 
-      // Decode URL safely to prevent encoded path traversal like %2e%2e
       let decodedUrl: string;
       try {
         decodedUrl = decodeURIComponent(url);
-        // Second decode in case of double-encoding %252e
         if (decodedUrl.includes("%")) {
           try {
             decodedUrl = decodeURIComponent(decodedUrl);
-          } catch {
-            // keep previous decoded
-          }
+          } catch {}
         }
       } catch {
         return reply.status(400).send({ error: "URL không hợp lệ" });
       }
 
-      // Check if URL contains obvious path traversal patterns before regex
-      if (decodedUrl.includes("..") || decodedUrl.includes(":\\") || decodedUrl.includes(":/")) {
-        // Return 400 immediately on traversal attempt
+      if (decodedUrl.includes("..") || decodedUrl.includes(":\\") || decodedUrl.includes(":/..")) {
         return reply.status(400).send({ error: "Đường dẫn chứa ký tự không hợp lệ" });
       }
 
-      // Parse file path from URL
-      const match = decodedUrl.match(/\/uploads\/(images|audio)\/(.+)/);
-      if (!match) {
-        return reply.status(400).send({ error: "URL tệp không đúng định dạng /uploads/(images|audio)/..." });
-      }
+      // Extract storage path from either relative /uploads/(images|audio)/file or CDN URL
+      let storagePath = "";
+      const relativeMatch = decodedUrl.match(/\/uploads\/(images|audio)\/([^/?#]+)/);
+      const cdnMatch = decodedUrl.match(/\/exam-assets\/(images|audio)\/([^/?#]+)/);
 
-      const [, subDir, rawFileName] = match;
-      const baseUploadDir = join(process.cwd(), env.UPLOAD_DIR);
-      const authService = new AuthorizationService(fastify.prisma);
-
-      let filePath: string;
-      try {
-        filePath = authService.validateUploadPathBoundary({
-          subDir,
-          rawFileName,
-          baseUploadDir,
-        });
-      } catch (err: any) {
-        const statusCode = err instanceof AuthorizationError ? err.statusCode : 400;
-        return reply.status(statusCode).send({ error: err.message || "Tệp không hợp lệ" });
+      if (cdnMatch) {
+        storagePath = `${cdnMatch[1]}/${cdnMatch[2]}`;
+      } else if (relativeMatch) {
+        storagePath = `${relativeMatch[1]}/${relativeMatch[2]}`;
+      } else {
+        return reply.status(400).send({ error: "URL tệp không thuộc phạm vi quản lý exam-assets" });
       }
 
       try {
-        if (existsSync(filePath)) {
-          unlinkSync(filePath);
-          return { success: true, message: "Đã xóa tệp thành công" };
-        } else {
-          return reply.status(404).send({ error: "Không tìm thấy tệp" });
+        const { error: removeError } = await supabase.storage
+          .from(BUCKET_NAME)
+          .remove([storagePath]);
+
+        if (removeError) {
+          fastify.log.error({ err: removeError, storagePath }, "Supabase Storage delete error");
+          return reply.status(500).send({
+            statusCode: 500,
+            error: "PERSISTENCE_ERROR",
+            message: "Xóa tệp khỏi hệ thống lưu trữ bền vững thất bại: " + removeError.message,
+          });
         }
-      } catch (err) {
-        fastify.log.error(err);
-        return reply.status(500).send({ error: "Xóa tệp thất bại" });
+
+        return { success: true, message: "Đã xóa tệp khỏi hệ thống lưu trữ thành công" };
+      } catch (err: any) {
+        fastify.log.error(err, "Delete file unexpected error");
+        return reply.status(500).send({
+          statusCode: 500,
+          error: "PERSISTENCE_ERROR",
+          message: "Lỗi hệ thống khi xóa tệp: " + (err?.message || "Internal error"),
+        });
       }
     },
   );
 };
 
 export default uploadsRoutes;
+
