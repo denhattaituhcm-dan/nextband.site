@@ -164,22 +164,21 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify: any) => {
       const sessions = await prisma.classSession.findMany({
         where: { classId },
         orderBy: { sessionNumber: 'asc' },
-        include: { lesson: true },
       });
 
       const mapped = sessions.map((s: any) => ({
         id: s.id,
         classId: s.classId,
         sessionNumber: s.sessionNumber,
-        title: s.title || s.lesson?.title || `Buổi ${s.sessionNumber}`,
-        sessionDate: s.sessionDate,
-        plannedDate: s.sessionDate,
+        title: s.note || `Buổi ${s.sessionNumber}`,
+        sessionDate: s.plannedDate,
+        plannedDate: s.plannedDate,
         startTime: s.startTime || null,
         endTime: s.endTime || null,
         status: s.status,
-        note: s.notes || null,
-        rescheduleReason: null,
-        completedAt: s.completedAt || null,
+        note: s.note || null,
+        rescheduleReason: s.rescheduleReason || null,
+        completedAt: null,
       }));
 
       return reply.send(mapped);
@@ -210,8 +209,6 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify: any) => {
           where: { id: sessionId },
           data: {
             status: 'SCHEDULED',
-            completedAt: null,
-            completedBy: null,
           },
         });
 

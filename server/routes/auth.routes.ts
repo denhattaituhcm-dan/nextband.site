@@ -250,68 +250,25 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
     },
   );
 
-  // POST /auth/change-password
+  // POST /auth/change-password - DECOMMISSIONED (Supabase Auth is canonical)
   fastify.post(
     "/change-password",
-    {
-      preHandler: authenticate,
-      config: {
-        rateLimit: {
-          max: 5,
-          timeWindow: "1 minute",
-        },
-      },
-    },
-    async (request, reply) => {
-      const { id } = request.user;
-      const { currentPassword, newPassword } = request.body as any;
-
-      if (!currentPassword || !newPassword) {
-        return reply
-          .status(400)
-          .send({ error: "Yêu cầu mật khẩu hiện tại và mật khẩu mới" });
-      }
-
-      if (newPassword.length < 6) {
-        return reply
-          .status(400)
-          .send({ error: "Mật khẩu mới phải có ít nhất 6 ký tự" });
-      }
-
-      const user = await fastify.prisma.user.findFirst({
-        where: { userId: id },
+    async (_request, reply) => {
+      return reply.status(410).send({
+        error: "GONE",
+        message: "Endpoint /auth/change-password đã ngừng hoạt động. Vui lòng đổi mật khẩu trực tiếp qua Supabase Auth (supabase.auth.updateUser).",
       });
-
-      if (!user) {
-        return reply.status(404).send({ error: "Không tìm thấy người dùng" });
-      }
-
-      return { message: "Mật khẩu đã được thay đổi thành công" };
     },
   );
 
-  // POST /auth/verify-password
+  // POST /auth/verify-password - DECOMMISSIONED (Supabase Auth is canonical)
   fastify.post(
     "/verify-password",
-    {
-      preHandler: authenticate,
-      config: {
-        rateLimit: {
-          max: 10,
-          timeWindow: "1 minute",
-        },
-      },
-    },
-    async (request, reply) => {
-      const { id } = request.user;
-      const user = await fastify.prisma.user.findFirst({
-        where: { userId: id },
+    async (_request, reply) => {
+      return reply.status(410).send({
+        error: "GONE",
+        message: "Endpoint /auth/verify-password đã ngừng hoạt động. Vui lòng xác thực qua Supabase Auth.",
       });
-      if (!user) {
-        return reply.status(404).send({ error: "Không tìm thấy người dùng" });
-      }
-
-      return { valid: true };
     },
   );
 };

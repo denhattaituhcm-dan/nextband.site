@@ -61,13 +61,29 @@ export class LessonService {
     const isTeacherOrAdmin = userRoles.includes('admin') || userRoles.includes('teacher');
 
     // 1. Authorization Check: Must be enrolled student or managing teacher/admin
-    const classData = await this.classRepo.findById(classId);
+    // Targeted query for class metadata + specific student enrollment (avoids full relation over-fetching)
+    const classData = await this.prisma.class.findUnique({
+      where: { id: classId },
+      select: {
+        id: true,
+        name: true,
+        courseId: true,
+        teacherId: true,
+        students: !isTeacherOrAdmin
+          ? {
+              where: { studentId: userId },
+              select: { id: true, status: true },
+            }
+          : false,
+      },
+    });
+
     if (!classData) {
       throw new NotFoundError('Lớp học không tồn tại.');
     }
 
     if (!isTeacherOrAdmin) {
-      const isEnrolled = await this.authService.isStudentEnrolledInClass(userId, classId);
+      const isEnrolled = classData.students && classData.students.length > 0;
       if (!isEnrolled) {
         throw new AuthorizationError('Bạn không có quyền truy cập lộ trình lớp học này.', 403);
       }
@@ -77,28 +93,28 @@ export class LessonService {
       }
     }
 
-    // 2. Fetch Course Exams & Student Submissions (Canonical Chain: Class -> Course -> Exam -> Submission)
+    // 2. Parallel Fetch: Course Exams & Student Submissions (Runs simultaneously without sequential wait)
     const courseId = classData.courseId;
     let exams: any[] = [];
     let submissions: any[] = [];
 
     if (courseId) {
-      exams = await this.prisma.exam.findMany({
-        where: { courseId, isPublished: true },
-        orderBy: { week: 'asc' },
-        include: { sections: true },
-      });
-
-      const examIds = exams.map((e) => e.id);
-      if (examIds.length > 0) {
-        submissions = await this.prisma.examSubmission.findMany({
+      const [fetchedExams, fetchedSubmissions] = await Promise.all([
+        this.prisma.exam.findMany({
+          where: { courseId, isPublished: true },
+          orderBy: { week: 'asc' },
+          include: { sections: true },
+        }),
+        this.prisma.examSubmission.findMany({
           where: {
             studentId: userId,
-            examId: { in: examIds },
+            exam: { courseId },
           },
           orderBy: { createdAt: 'desc' },
-        });
-      }
+        }),
+      ]);
+      exams = fetchedExams;
+      submissions = fetchedSubmissions;
     }
 
     let completedCount = 0;

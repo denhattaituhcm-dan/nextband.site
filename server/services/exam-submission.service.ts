@@ -787,7 +787,7 @@ export class ExamSubmissionService {
             type: "SUBMISSION_GRADED",
             title: "Kết quả bài thi",
             message: `Bài thi "${examTitle}" của bạn đã được chấm xong.${bandText}`,
-            link: `/results/${id}`,
+            link: `/app/submissions/${id}`,
             entityType: "SUBMISSION",
             entityId: id,
           });
@@ -1031,7 +1031,7 @@ export class ExamSubmissionService {
           type: "TEACHER_FEEDBACK",
           title: "Giáo viên đã chấm bài thi",
           message: `Thầy/Cô đã chấm và gửi nhận xét cho bài thi "${examTitle}" của bạn.`,
-          link: `/results/${id}`,
+          link: `/app/submissions/${id}`,
           entityType: "SUBMISSION",
           entityId: id,
         });

@@ -113493,53 +113493,20 @@ var authRoutes = async (fastify) => {
   );
   fastify.post(
     "/change-password",
-    {
-      preHandler: authenticate,
-      config: {
-        rateLimit: {
-          max: 5,
-          timeWindow: "1 minute"
-        }
-      }
-    },
-    async (request, reply) => {
-      const { id } = request.user;
-      const { currentPassword, newPassword } = request.body;
-      if (!currentPassword || !newPassword) {
-        return reply.status(400).send({ error: "Y\xEAu c\u1EA7u m\u1EADt kh\u1EA9u hi\u1EC7n t\u1EA1i v\xE0 m\u1EADt kh\u1EA9u m\u1EDBi" });
-      }
-      if (newPassword.length < 6) {
-        return reply.status(400).send({ error: "M\u1EADt kh\u1EA9u m\u1EDBi ph\u1EA3i c\xF3 \xEDt nh\u1EA5t 6 k\xFD t\u1EF1" });
-      }
-      const user = await fastify.prisma.user.findFirst({
-        where: { userId: id }
+    async (_request, reply) => {
+      return reply.status(410).send({
+        error: "GONE",
+        message: "Endpoint /auth/change-password \u0111\xE3 ng\u1EEBng ho\u1EA1t \u0111\u1ED9ng. Vui l\xF2ng \u0111\u1ED5i m\u1EADt kh\u1EA9u tr\u1EF1c ti\u1EBFp qua Supabase Auth (supabase.auth.updateUser)."
       });
-      if (!user) {
-        return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y ng\u01B0\u1EDDi d\xF9ng" });
-      }
-      return { message: "M\u1EADt kh\u1EA9u \u0111\xE3 \u0111\u01B0\u1EE3c thay \u0111\u1ED5i th\xE0nh c\xF4ng" };
     }
   );
   fastify.post(
     "/verify-password",
-    {
-      preHandler: authenticate,
-      config: {
-        rateLimit: {
-          max: 10,
-          timeWindow: "1 minute"
-        }
-      }
-    },
-    async (request, reply) => {
-      const { id } = request.user;
-      const user = await fastify.prisma.user.findFirst({
-        where: { userId: id }
+    async (_request, reply) => {
+      return reply.status(410).send({
+        error: "GONE",
+        message: "Endpoint /auth/verify-password \u0111\xE3 ng\u1EEBng ho\u1EA1t \u0111\u1ED9ng. Vui l\xF2ng x\xE1c th\u1EF1c qua Supabase Auth."
       });
-      if (!user) {
-        return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y ng\u01B0\u1EDDi d\xF9ng" });
-      }
-      return { valid: true };
     }
   );
 };
@@ -117162,7 +117129,7 @@ var ExamSubmissionService = class {
             type: "SUBMISSION_GRADED",
             title: "K\u1EBFt qu\u1EA3 b\xE0i thi",
             message: `B\xE0i thi "${examTitle}" c\u1EE7a b\u1EA1n \u0111\xE3 \u0111\u01B0\u1EE3c ch\u1EA5m xong.${bandText}`,
-            link: `/results/${id}`,
+            link: `/app/submissions/${id}`,
             entityType: "SUBMISSION",
             entityId: id
           });
@@ -117345,7 +117312,7 @@ var ExamSubmissionService = class {
           type: "TEACHER_FEEDBACK",
           title: "Gi\xE1o vi\xEAn \u0111\xE3 ch\u1EA5m b\xE0i thi",
           message: `Th\u1EA7y/C\xF4 \u0111\xE3 ch\u1EA5m v\xE0 g\u1EEDi nh\u1EADn x\xE9t cho b\xE0i thi "${examTitle}" c\u1EE7a b\u1EA1n.`,
-          link: `/results/${id}`,
+          link: `/app/submissions/${id}`,
           entityType: "SUBMISSION",
           entityId: id
         });
@@ -119497,22 +119464,21 @@ var attendanceRoutes = async (fastify) => {
       const { classId } = request.params;
       const sessions = await prisma.classSession.findMany({
         where: { classId },
-        orderBy: { sessionNumber: "asc" },
-        include: { lesson: true }
+        orderBy: { sessionNumber: "asc" }
       });
       const mapped = sessions.map((s2) => ({
         id: s2.id,
         classId: s2.classId,
         sessionNumber: s2.sessionNumber,
-        title: s2.title || s2.lesson?.title || `Bu\u1ED5i ${s2.sessionNumber}`,
-        sessionDate: s2.sessionDate,
-        plannedDate: s2.sessionDate,
+        title: s2.note || `Bu\u1ED5i ${s2.sessionNumber}`,
+        sessionDate: s2.plannedDate,
+        plannedDate: s2.plannedDate,
         startTime: s2.startTime || null,
         endTime: s2.endTime || null,
         status: s2.status,
-        note: s2.notes || null,
-        rescheduleReason: null,
-        completedAt: s2.completedAt || null
+        note: s2.note || null,
+        rescheduleReason: s2.rescheduleReason || null,
+        completedAt: null
       }));
       return reply.send(mapped);
     }
@@ -119536,9 +119502,7 @@ var attendanceRoutes = async (fastify) => {
         await prisma.classSession.update({
           where: { id: sessionId },
           data: {
-            status: "SCHEDULED",
-            completedAt: null,
-            completedBy: null
+            status: "SCHEDULED"
           }
         });
         return reply.send({ success: true, message: "\u0110\xE3 m\u1EDF l\u1EA1i \u0111i\u1EC3m danh bu\u1ED5i h\u1ECDc th\xE0nh c\xF4ng." });
@@ -119906,12 +119870,24 @@ var LessonService = class {
   // Projection: GET /classes/:classId/lessons
   async getClassLessonProjection(classId, userId, userRoles) {
     const isTeacherOrAdmin = userRoles.includes("admin") || userRoles.includes("teacher");
-    const classData = await this.classRepo.findById(classId);
+    const classData = await this.prisma.class.findUnique({
+      where: { id: classId },
+      select: {
+        id: true,
+        name: true,
+        courseId: true,
+        teacherId: true,
+        students: !isTeacherOrAdmin ? {
+          where: { studentId: userId },
+          select: { id: true, status: true }
+        } : false
+      }
+    });
     if (!classData) {
       throw new NotFoundError("L\u1EDBp h\u1ECDc kh\xF4ng t\u1ED3n t\u1EA1i.");
     }
     if (!isTeacherOrAdmin) {
-      const isEnrolled = await this.authService.isStudentEnrolledInClass(userId, classId);
+      const isEnrolled = classData.students && classData.students.length > 0;
       if (!isEnrolled) {
         throw new AuthorizationError("B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n truy c\u1EADp l\u1ED9 tr\xECnh l\u1EDBp h\u1ECDc n\xE0y.", 403);
       }
@@ -119924,21 +119900,22 @@ var LessonService = class {
     let exams = [];
     let submissions = [];
     if (courseId) {
-      exams = await this.prisma.exam.findMany({
-        where: { courseId, isPublished: true },
-        orderBy: { week: "asc" },
-        include: { sections: true }
-      });
-      const examIds = exams.map((e2) => e2.id);
-      if (examIds.length > 0) {
-        submissions = await this.prisma.examSubmission.findMany({
+      const [fetchedExams, fetchedSubmissions] = await Promise.all([
+        this.prisma.exam.findMany({
+          where: { courseId, isPublished: true },
+          orderBy: { week: "asc" },
+          include: { sections: true }
+        }),
+        this.prisma.examSubmission.findMany({
           where: {
             studentId: userId,
-            examId: { in: examIds }
+            exam: { courseId }
           },
           orderBy: { createdAt: "desc" }
-        });
-      }
+        })
+      ]);
+      exams = fetchedExams;
+      submissions = fetchedSubmissions;
     }
     let completedCount = 0;
     const lessonsProjection = exams.map((exam, idx) => {
@@ -120279,9 +120256,9 @@ var LeadService = class {
     }
     if (search) {
       where.OR = [
-        { fullName: { contains: search } },
-        { phone: { contains: search } },
-        { email: { contains: search } }
+        { fullName: { contains: search, mode: "insensitive" } },
+        { phone: { contains: search, mode: "insensitive" } },
+        { email: { contains: search, mode: "insensitive" } }
       ];
     }
     const [total, items] = await Promise.all([
