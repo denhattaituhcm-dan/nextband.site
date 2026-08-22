@@ -120887,6 +120887,162 @@ var AssessmentService = class {
     }
   }
   /**
+   * Helper: Find designated entrance test from Database
+   */
+  async findDesignatedEntranceExam() {
+    try {
+      const exam = await this.prisma.exam.findFirst({
+        where: {
+          OR: [
+            { allowGuestAssessment: true, isActive: true, isPublished: true },
+            { title: { contains: "ENTRANCE TEST", mode: "insensitive" }, isActive: true, isPublished: true },
+            { course: { slug: { contains: "placement", mode: "insensitive" } }, isActive: true, isPublished: true }
+          ]
+        },
+        orderBy: [
+          { allowGuestAssessment: "desc" },
+          { updatedAt: "desc" }
+        ],
+        include: {
+          sections: {
+            orderBy: { orderIndex: "asc" },
+            include: {
+              questionGroups: {
+                orderBy: { orderIndex: "asc" },
+                include: {
+                  questions: {
+                    orderBy: { orderIndex: "asc" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+      return exam;
+    } catch (err) {
+      console.warn("[AssessmentService] findDesignatedEntranceExam notice:", err);
+      return null;
+    }
+  }
+  /**
+   * Helper: Transform a Database Exam model into SanitizedPlacementTestPayload (Zero Answer Leak)
+   */
+  transformDbExamToPayload(exam) {
+    const sections = exam?.sections || [];
+    const listeningSec = sections.find((s2) => s2.sectionType === "listening");
+    const readingSec = sections.find((s2) => s2.sectionType === "reading");
+    const grammarSec = sections.find((s2) => s2.sectionType === "general");
+    const writingSec = sections.find((s2) => s2.sectionType === "writing");
+    const speakingSec = sections.find((s2) => s2.sectionType === "speaking");
+    let questionCursor = 1;
+    const mapQuestion = (q, skill, defaultSectionTitle) => {
+      let options = void 0;
+      if (q.questionType === "true_false_not_given") {
+        options = ["TRUE", "FALSE", "NOT GIVEN"];
+      } else if (q.options) {
+        if (Array.isArray(q.options)) {
+          options = q.options.filter((o) => typeof o === "string" && o.trim().length > 0);
+          if (options.length === 0) options = void 0;
+        } else if (typeof q.options === "object") {
+          try {
+            options = Object.values(q.options).filter((o) => typeof o === "string" && o.trim().length > 0);
+            if (options.length === 0) options = void 0;
+          } catch {
+          }
+        }
+      }
+      let blankCount = 1;
+      if (q.questionType === "fill_blank") {
+        if (q.correctAnswer && typeof q.correctAnswer === "string" && q.correctAnswer.trim().startsWith("[")) {
+          try {
+            const arr = JSON.parse(q.correctAnswer);
+            if (Array.isArray(arr) && arr.length > 0) blankCount = arr.length;
+          } catch {
+          }
+        } else if (q.questionText) {
+          const m2 = q.questionText.match(/\[BLANK(?:_\d+)?\]/g);
+          if (m2 && m2.length > 0) blankCount = m2.length;
+        }
+      }
+      return {
+        id: q.id,
+        skill,
+        sectionTitle: q.group?.title || defaultSectionTitle,
+        questionType: q.questionType,
+        prompt: q.questionText || "",
+        audioUrl: toFileUrl(q.audioUrl) || void 0,
+        options,
+        placeholder: q.questionType === "fill_blank" ? "Nh\u1EADp c\xE2u tr\u1EA3 l\u1EDDi..." : void 0,
+        orderIndex: questionCursor++,
+        blankCount
+      };
+    };
+    const listeningQuestions = [];
+    const listeningAudio = toFileUrl(listeningSec?.audioUrl) || toFileUrl(listeningSec?.questionGroups?.[0]?.audioUrl) || "https://assets.mixkit.co/active_storage/sfx/2874/2874-preview.mp3";
+    listeningSec?.questionGroups?.forEach((g) => {
+      g.questions?.forEach((q) => {
+        listeningQuestions.push(mapQuestion({ ...q, group: g }, "listening", "K\u1EF9 n\u0103ng Nghe (Listening)"));
+      });
+    });
+    const readingQuestions = [];
+    const readingPassage = readingSec?.questionGroups?.map((g) => g.passage).filter((p) => p && typeof p === "string" && p.trim().length > 0).join("\n\n") || readingSec?.instructions || "";
+    readingSec?.questionGroups?.forEach((g) => {
+      g.questions?.forEach((q) => {
+        readingQuestions.push(mapQuestion({ ...q, group: g }, "reading", "K\u1EF9 n\u0103ng \u0110\u1ECDc hi\u1EC3u (Reading)"));
+      });
+    });
+    const grammarQuestions = [];
+    grammarSec?.questionGroups?.forEach((g) => {
+      g.questions?.forEach((q) => {
+        grammarQuestions.push(mapQuestion({ ...q, group: g }, "grammar", "Ng\u1EEF ph\xE1p & T\u1EEB v\u1EF1ng (Grammar)"));
+      });
+    });
+    const writingQ = writingSec?.questionGroups?.[0]?.questions?.[0];
+    const writingPrompt = writingQ?.questionText || writingSec?.questionGroups?.[0]?.passage || canonicalPlacementTestPayload.skills.writing.prompt;
+    const speakingQuestions = speakingSec?.questionGroups?.[0]?.questions || [];
+    const part1Qs = speakingQuestions.slice(0, 2).map((q) => q.questionText).filter(Boolean);
+    const part2Topic = speakingQuestions[2]?.questionText || canonicalPlacementTestPayload.skills.speaking.part2Topic;
+    let totalObjCount = 0;
+    [...listeningQuestions, ...readingQuestions, ...grammarQuestions].forEach((q) => {
+      totalObjCount += q.blankCount && q.blankCount > 1 ? q.blankCount : 1;
+    });
+    return {
+      testId: exam.id || "aris-placement-v1",
+      title: exam.title ? `ARIS Diagnostic Assessment \u2014 ${exam.title}` : canonicalPlacementTestPayload.title,
+      durationMinutes: exam.durationMinutes || 45,
+      totalQuestions: totalObjCount + 2,
+      skills: {
+        listening: {
+          title: listeningSec?.title || canonicalPlacementTestPayload.skills.listening.title,
+          audioUrl: listeningAudio,
+          questions: listeningQuestions.length > 0 ? listeningQuestions : canonicalPlacementTestPayload.skills.listening.questions
+        },
+        reading: {
+          title: readingSec?.title || canonicalPlacementTestPayload.skills.reading.title,
+          passage: readingPassage || canonicalPlacementTestPayload.skills.reading.passage,
+          questions: readingQuestions.length > 0 ? readingQuestions : canonicalPlacementTestPayload.skills.reading.questions
+        },
+        grammar: {
+          title: grammarSec?.title || canonicalPlacementTestPayload.skills.grammar.title,
+          questions: grammarQuestions.length > 0 ? grammarQuestions : canonicalPlacementTestPayload.skills.grammar.questions
+        },
+        writing: {
+          title: writingSec?.title || canonicalPlacementTestPayload.skills.writing.title,
+          prompt: writingPrompt,
+          guidelines: canonicalPlacementTestPayload.skills.writing.guidelines,
+          minWords: 80
+        },
+        speaking: {
+          title: speakingSec?.title || canonicalPlacementTestPayload.skills.speaking.title,
+          part1Questions: part1Qs.length > 0 ? part1Qs : canonicalPlacementTestPayload.skills.speaking.part1Questions,
+          part2Topic,
+          part2Cues: canonicalPlacementTestPayload.skills.speaking.part2Cues
+        }
+      }
+    };
+  }
+  /**
    * 1. Create a dedicated Assessment Session
    */
   async createAssessmentSession(params) {
@@ -120907,8 +121063,18 @@ var AssessmentService = class {
     const now = /* @__PURE__ */ new Date();
     const expiresAt = new Date(now.getTime() + 60 * 60 * 1e3);
     const sessionId = crypto.randomUUID();
+    let examId = "cce291f7-d88b-4976-8ed3-cc21daca7023";
+    try {
+      const designatedExam = await this.findDesignatedEntranceExam();
+      if (designatedExam) {
+        examId = designatedExam.id;
+      }
+    } catch (e2) {
+      console.warn("[AssessmentService] Exam lookup notice:", e2);
+    }
     const session = {
       id: sessionId,
+      examId,
       candidateName: cleanName,
       phone: cleanPhone,
       targetBand: params.targetBand || "Ch\u01B0a x\xE1c \u0111\u1ECBnh",
@@ -120929,6 +121095,7 @@ var AssessmentService = class {
         await this.prisma.assessmentSession.create({
           data: {
             id: session.id,
+            examId: session.examId || examId,
             fullName: session.candidateName,
             phone: session.phone,
             targetBand: session.targetBand,
@@ -120951,7 +121118,7 @@ var AssessmentService = class {
           phone: cleanPhone,
           goal: `Kh\u1EA3o th\xED ch\u1EA9n \u0111o\xE1n ARIS | M\u1EE5c ti\xEAu: ${session.targetBand}`,
           source: "aris_diagnostic_test",
-          notes: `Session: ${sessionId}`
+          notes: `Session: ${sessionId} | Exam: ${examId}`
         }
       });
     } catch (leadErr) {
@@ -120974,6 +121141,7 @@ var AssessmentService = class {
         if (db) {
           const rec = {
             id: db.id,
+            examId: db.examId,
             candidateName: db.fullName || db.candidateName,
             phone: db.phone,
             targetBand: db.targetBand || "Ch\u01B0a x\xE1c \u0111\u1ECBnh",
@@ -121020,6 +121188,33 @@ var AssessmentService = class {
       err.statusCode = 403;
       throw err;
     }
+    let testPayload = canonicalPlacementTestPayload;
+    const targetExamId = session.examId || "cce291f7-d88b-4976-8ed3-cc21daca7023";
+    try {
+      const dbExam = await this.prisma.exam.findUnique({
+        where: { id: targetExamId },
+        include: {
+          sections: {
+            orderBy: { orderIndex: "asc" },
+            include: {
+              questionGroups: {
+                orderBy: { orderIndex: "asc" },
+                include: {
+                  questions: {
+                    orderBy: { orderIndex: "asc" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+      if (dbExam && dbExam.sections && dbExam.sections.length > 0) {
+        testPayload = this.transformDbExamToPayload(dbExam);
+      }
+    } catch (err) {
+      console.warn("[AssessmentService] Dynamic test payload generation fallback notice:", err);
+    }
     return {
       session: {
         id: session.id,
@@ -121030,7 +121225,7 @@ var AssessmentService = class {
         remainingSeconds: remainingSec,
         answers: session.answers || {}
       },
-      test: canonicalPlacementTestPayload
+      test: testPayload
     };
   }
   /**
@@ -121101,24 +121296,106 @@ var AssessmentService = class {
     let grammarCorrect = 0;
     let grammarTotal = 0;
     const normalizeText = (s2) => String(s2 || "").trim().toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").replace(/\s+/g, " ");
-    Object.entries(authoritativePlacementAnswerKeys).forEach(([qId, key]) => {
-      if (key.skill === "listening") listeningTotal++;
-      else if (key.skill === "reading") readingTotal++;
-      else if (key.skill === "grammar") grammarTotal++;
-      const studentAns = answers[qId];
-      if (!studentAns) return;
-      const normStudent = normalizeText(studentAns);
-      const normCorrect = normalizeText(key.correctAnswer);
-      let isMatch = normStudent === normCorrect;
-      if (!isMatch && key.acceptedAnswers && key.acceptedAnswers.length > 0) {
-        isMatch = key.acceptedAnswers.some((acc) => normalizeText(acc) === normStudent);
+    const targetExamId = session.examId || "cce291f7-d88b-4976-8ed3-cc21daca7023";
+    let dbExamQuestions = [];
+    try {
+      dbExamQuestions = await this.prisma.question.findMany({
+        where: {
+          group: {
+            section: {
+              examId: targetExamId
+            }
+          }
+        },
+        include: {
+          group: {
+            include: {
+              section: true
+            }
+          }
+        }
+      });
+    } catch (dbErr) {
+      console.warn("[AssessmentService] DB questions fetch error:", dbErr);
+    }
+    if (dbExamQuestions.length > 0) {
+      for (const q of dbExamQuestions) {
+        const secType = q.group?.section?.sectionType;
+        const isListening = secType === "listening";
+        const isReading = secType === "reading";
+        const isGrammar = secType === "general";
+        if (!isListening && !isReading && !isGrammar) continue;
+        const studentAns = answers[q.id];
+        const rawCorrect2 = q.correctAnswer;
+        if (!rawCorrect2) continue;
+        let parsedKeys = null;
+        try {
+          if (typeof rawCorrect2 === "string" && rawCorrect2.trim().startsWith("[")) {
+            const arr = JSON.parse(rawCorrect2);
+            if (Array.isArray(arr)) parsedKeys = arr;
+          }
+        } catch {
+        }
+        if (parsedKeys && parsedKeys.length > 0) {
+          parsedKeys.forEach((keyVal, idx) => {
+            if (isListening) listeningTotal++;
+            else if (isReading) readingTotal++;
+            else if (isGrammar) grammarTotal++;
+            let sVal = void 0;
+            if (studentAns && typeof studentAns === "object") {
+              sVal = studentAns[idx] ?? studentAns[String(idx)];
+            } else if (Array.isArray(studentAns)) {
+              sVal = studentAns[idx];
+            } else if (typeof studentAns === "string" && idx === 0) {
+              sVal = studentAns;
+            }
+            if (sVal != null && String(sVal).trim() !== "") {
+              const normStudent = normalizeText(sVal);
+              const alternatives = String(keyVal).split("|").map((s2) => normalizeText(s2));
+              const isMatch = alternatives.some((alt) => alt === normStudent);
+              if (isMatch) {
+                if (isListening) listeningCorrect++;
+                else if (isReading) readingCorrect++;
+                else if (isGrammar) grammarCorrect++;
+              }
+            }
+          });
+        } else {
+          if (isListening) listeningTotal++;
+          else if (isReading) readingTotal++;
+          else if (isGrammar) grammarTotal++;
+          if (studentAns != null && String(studentAns).trim() !== "") {
+            const normStudent = normalizeText(studentAns);
+            const alternatives = String(rawCorrect2).split("|").map((s2) => normalizeText(s2));
+            const isMatch = alternatives.some((alt) => alt === normStudent);
+            if (isMatch) {
+              if (isListening) listeningCorrect++;
+              else if (isReading) readingCorrect++;
+              else if (isGrammar) grammarCorrect++;
+            }
+          }
+        }
       }
-      if (isMatch) {
-        if (key.skill === "listening") listeningCorrect++;
-        else if (key.skill === "reading") readingCorrect++;
-        else if (key.skill === "grammar") grammarCorrect++;
-      }
-    });
+    } else {
+      Object.entries(authoritativePlacementAnswerKeys).forEach(([qId, key]) => {
+        if (key.skill === "listening") listeningTotal++;
+        else if (key.skill === "reading") readingTotal++;
+        else if (key.skill === "grammar") grammarTotal++;
+        const studentAns = answers[qId];
+        if (!studentAns) return;
+        const normStudent = normalizeText(studentAns);
+        const normCorrect = normalizeText(key.correctAnswer);
+        let isMatch = normStudent === normCorrect;
+        if (!isMatch && key.acceptedAnswers && key.acceptedAnswers.length > 0) {
+          isMatch = key.acceptedAnswers.some((acc) => normalizeText(acc) === normStudent);
+        }
+        if (isMatch) {
+          if (key.skill === "listening") listeningCorrect++;
+          else if (key.skill === "reading") readingCorrect++;
+          else if (key.skill === "grammar") grammarCorrect++;
+        }
+      });
+    }
     const totalQuestions = listeningTotal + readingTotal + grammarTotal;
     const rawCorrect = listeningCorrect + readingCorrect + grammarCorrect;
     const accuracyPercent = Math.round(rawCorrect / Math.max(1, totalQuestions) * 100);

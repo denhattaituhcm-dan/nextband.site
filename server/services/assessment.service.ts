@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import { canonicalPlacementTestPayload, SanitizedPlacementTestPayload } from "../data/placement-test/questions.js";
+import { canonicalPlacementTestPayload, SanitizedPlacementTestPayload, SanitizedQuestion } from "../data/placement-test/questions.js";
 import { authoritativePlacementAnswerKeys, AuthoritativeAnswerKey } from "../data/placement-test/answerKeys.js";
+import { toFileUrl } from "../utils/file.js";
 
 // Rate limiting in-memory trackers
 const ipRateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -11,6 +12,7 @@ const inMemoryAssessmentSessions = new Map<string, AssessmentSessionRecord>();
 
 export interface AssessmentSessionRecord {
   id: string;
+  examId?: string | null;
   candidateName: string;
   phone: string;
   targetBand: string;
@@ -206,6 +208,200 @@ export class AssessmentService {
   }
 
   /**
+   * Helper: Find designated entrance test from Database
+   */
+  private async findDesignatedEntranceExam(): Promise<any | null> {
+    try {
+      const exam = await this.prisma.exam.findFirst({
+        where: {
+          OR: [
+            { allowGuestAssessment: true, isActive: true, isPublished: true },
+            { title: { contains: "ENTRANCE TEST", mode: "insensitive" }, isActive: true, isPublished: true },
+            { course: { slug: { contains: "placement", mode: "insensitive" } }, isActive: true, isPublished: true },
+          ],
+        },
+        orderBy: [
+          { allowGuestAssessment: "desc" },
+          { updatedAt: "desc" },
+        ],
+        include: {
+          sections: {
+            orderBy: { orderIndex: "asc" },
+            include: {
+              questionGroups: {
+                orderBy: { orderIndex: "asc" },
+                include: {
+                  questions: {
+                    orderBy: { orderIndex: "asc" },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+      return exam;
+    } catch (err) {
+      console.warn("[AssessmentService] findDesignatedEntranceExam notice:", err);
+      return null;
+    }
+  }
+
+  /**
+   * Helper: Transform a Database Exam model into SanitizedPlacementTestPayload (Zero Answer Leak)
+   */
+  public transformDbExamToPayload(exam: any): SanitizedPlacementTestPayload {
+    const sections: any[] = exam?.sections || [];
+
+    const listeningSec = sections.find((s) => s.sectionType === "listening");
+    const readingSec = sections.find((s) => s.sectionType === "reading");
+    const grammarSec = sections.find((s) => s.sectionType === "general");
+    const writingSec = sections.find((s) => s.sectionType === "writing");
+    const speakingSec = sections.find((s) => s.sectionType === "speaking");
+
+    let questionCursor = 1;
+
+    // Helper: Map Question to SanitizedQuestion
+    const mapQuestion = (
+      q: any,
+      skill: "listening" | "reading" | "grammar",
+      defaultSectionTitle: string,
+    ): SanitizedQuestion => {
+      let options: string[] | undefined = undefined;
+
+      if (q.questionType === "true_false_not_given") {
+        options = ["TRUE", "FALSE", "NOT GIVEN"];
+      } else if (q.options) {
+        if (Array.isArray(q.options)) {
+          options = q.options.filter((o: any) => typeof o === "string" && o.trim().length > 0);
+          if (options.length === 0) options = undefined;
+        } else if (typeof q.options === "object") {
+          try {
+            options = Object.values(q.options).filter((o: any) => typeof o === "string" && o.trim().length > 0) as string[];
+            if (options.length === 0) options = undefined;
+          } catch {}
+        }
+      }
+
+      let blankCount = 1;
+      if (q.questionType === "fill_blank") {
+        if (q.correctAnswer && typeof q.correctAnswer === "string" && q.correctAnswer.trim().startsWith("[")) {
+          try {
+            const arr = JSON.parse(q.correctAnswer);
+            if (Array.isArray(arr) && arr.length > 0) blankCount = arr.length;
+          } catch {}
+        } else if (q.questionText) {
+          const m = q.questionText.match(/\[BLANK(?:_\d+)?\]/g);
+          if (m && m.length > 0) blankCount = m.length;
+        }
+      }
+
+      return {
+        id: q.id,
+        skill,
+        sectionTitle: q.group?.title || defaultSectionTitle,
+        questionType: q.questionType,
+        prompt: q.questionText || "",
+        audioUrl: toFileUrl(q.audioUrl) || undefined,
+        options,
+        placeholder: q.questionType === "fill_blank" ? "Nhập câu trả lời..." : undefined,
+        orderIndex: questionCursor++,
+        blankCount,
+      };
+    };
+
+    // 1. Listening Questions
+    const listeningQuestions: SanitizedQuestion[] = [];
+    const listeningAudio =
+      toFileUrl(listeningSec?.audioUrl) ||
+      toFileUrl(listeningSec?.questionGroups?.[0]?.audioUrl) ||
+      "https://assets.mixkit.co/active_storage/sfx/2874/2874-preview.mp3";
+
+    listeningSec?.questionGroups?.forEach((g: any) => {
+      g.questions?.forEach((q: any) => {
+        listeningQuestions.push(mapQuestion({ ...q, group: g }, "listening", "Kỹ năng Nghe (Listening)"));
+      });
+    });
+
+    // 2. Reading Questions & Passage
+    const readingQuestions: SanitizedQuestion[] = [];
+    const readingPassage =
+      readingSec?.questionGroups
+        ?.map((g: any) => g.passage)
+        .filter((p: any) => p && typeof p === "string" && p.trim().length > 0)
+        .join("\n\n") ||
+      readingSec?.instructions ||
+      "";
+
+    readingSec?.questionGroups?.forEach((g: any) => {
+      g.questions?.forEach((q: any) => {
+        readingQuestions.push(mapQuestion({ ...q, group: g }, "reading", "Kỹ năng Đọc hiểu (Reading)"));
+      });
+    });
+
+    // 3. Grammar Questions
+    const grammarQuestions: SanitizedQuestion[] = [];
+    grammarSec?.questionGroups?.forEach((g: any) => {
+      g.questions?.forEach((q: any) => {
+        grammarQuestions.push(mapQuestion({ ...q, group: g }, "grammar", "Ngữ pháp & Từ vựng (Grammar)"));
+      });
+    });
+
+    // 4. Writing
+    const writingQ = writingSec?.questionGroups?.[0]?.questions?.[0];
+    const writingPrompt =
+      writingQ?.questionText ||
+      writingSec?.questionGroups?.[0]?.passage ||
+      canonicalPlacementTestPayload.skills.writing.prompt;
+
+    // 5. Speaking
+    const speakingQuestions = speakingSec?.questionGroups?.[0]?.questions || [];
+    const part1Qs = speakingQuestions.slice(0, 2).map((q: any) => q.questionText).filter(Boolean);
+    const part2Topic = speakingQuestions[2]?.questionText || canonicalPlacementTestPayload.skills.speaking.part2Topic;
+
+    // Calculate total effective objective questions + writing + speaking
+    let totalObjCount = 0;
+    [...listeningQuestions, ...readingQuestions, ...grammarQuestions].forEach((q) => {
+      totalObjCount += q.blankCount && q.blankCount > 1 ? q.blankCount : 1;
+    });
+
+    return {
+      testId: exam.id || "aris-placement-v1",
+      title: exam.title ? `ARIS Diagnostic Assessment — ${exam.title}` : canonicalPlacementTestPayload.title,
+      durationMinutes: exam.durationMinutes || 45,
+      totalQuestions: totalObjCount + 2,
+      skills: {
+        listening: {
+          title: listeningSec?.title || canonicalPlacementTestPayload.skills.listening.title,
+          audioUrl: listeningAudio,
+          questions: listeningQuestions.length > 0 ? listeningQuestions : canonicalPlacementTestPayload.skills.listening.questions,
+        },
+        reading: {
+          title: readingSec?.title || canonicalPlacementTestPayload.skills.reading.title,
+          passage: readingPassage || canonicalPlacementTestPayload.skills.reading.passage,
+          questions: readingQuestions.length > 0 ? readingQuestions : canonicalPlacementTestPayload.skills.reading.questions,
+        },
+        grammar: {
+          title: grammarSec?.title || canonicalPlacementTestPayload.skills.grammar.title,
+          questions: grammarQuestions.length > 0 ? grammarQuestions : canonicalPlacementTestPayload.skills.grammar.questions,
+        },
+        writing: {
+          title: writingSec?.title || canonicalPlacementTestPayload.skills.writing.title,
+          prompt: writingPrompt,
+          guidelines: canonicalPlacementTestPayload.skills.writing.guidelines,
+          minWords: 80,
+        },
+        speaking: {
+          title: speakingSec?.title || canonicalPlacementTestPayload.skills.speaking.title,
+          part1Questions: part1Qs.length > 0 ? part1Qs : canonicalPlacementTestPayload.skills.speaking.part1Questions,
+          part2Topic,
+          part2Cues: canonicalPlacementTestPayload.skills.speaking.part2Cues,
+        },
+      },
+    };
+  }
+
+  /**
    * 1. Create a dedicated Assessment Session
    */
   public async createAssessmentSession(params: {
@@ -237,8 +433,20 @@ export class AssessmentService {
     const expiresAt = new Date(now.getTime() + 60 * 60 * 1000);
     const sessionId = crypto.randomUUID();
 
+    // Look up designated Entrance Test from DB
+    let examId: string = "cce291f7-d88b-4976-8ed3-cc21daca7023"; // default fallback
+    try {
+      const designatedExam = await this.findDesignatedEntranceExam();
+      if (designatedExam) {
+        examId = designatedExam.id;
+      }
+    } catch (e) {
+      console.warn("[AssessmentService] Exam lookup notice:", e);
+    }
+
     const session: AssessmentSessionRecord = {
       id: sessionId,
+      examId,
       candidateName: cleanName,
       phone: cleanPhone,
       targetBand: params.targetBand || "Chưa xác định",
@@ -261,6 +469,7 @@ export class AssessmentService {
         await (this.prisma as any).assessmentSession.create({
           data: {
             id: session.id,
+            examId: session.examId || examId,
             fullName: session.candidateName,
             phone: session.phone,
             targetBand: session.targetBand,
@@ -287,7 +496,7 @@ export class AssessmentService {
           phone: cleanPhone,
           goal: `Khảo thí chẩn đoán ARIS | Mục tiêu: ${session.targetBand}`,
           source: "aris_diagnostic_test",
-          notes: `Session: ${sessionId}`,
+          notes: `Session: ${sessionId} | Exam: ${examId}`,
         },
       });
     } catch (leadErr) {
@@ -314,6 +523,7 @@ export class AssessmentService {
         if (db) {
           const rec: AssessmentSessionRecord = {
             id: db.id,
+            examId: db.examId,
             candidateName: db.fullName || db.candidateName,
             phone: db.phone,
             targetBand: db.targetBand || "Chưa xác định",
@@ -376,6 +586,37 @@ export class AssessmentService {
       throw err;
     }
 
+    // Attempt to load dynamic exam payload from DB
+    let testPayload = canonicalPlacementTestPayload;
+    const targetExamId = session.examId || "cce291f7-d88b-4976-8ed3-cc21daca7023";
+
+    try {
+      const dbExam = await this.prisma.exam.findUnique({
+        where: { id: targetExamId },
+        include: {
+          sections: {
+            orderBy: { orderIndex: "asc" },
+            include: {
+              questionGroups: {
+                orderBy: { orderIndex: "asc" },
+                include: {
+                  questions: {
+                    orderBy: { orderIndex: "asc" },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (dbExam && dbExam.sections && dbExam.sections.length > 0) {
+        testPayload = this.transformDbExamToPayload(dbExam);
+      }
+    } catch (err) {
+      console.warn("[AssessmentService] Dynamic test payload generation fallback notice:", err);
+    }
+
     return {
       session: {
         id: session.id,
@@ -386,7 +627,7 @@ export class AssessmentService {
         remainingSeconds: remainingSec,
         answers: session.answers || {},
       },
-      test: canonicalPlacementTestPayload,
+      test: testPayload,
     };
   }
 
@@ -462,7 +703,6 @@ export class AssessmentService {
 
     const answers = { ...(session.answers || {}), ...(answersPayload || {}) };
 
-    // Objective Scoring (Listening 10, Reading 10, Grammar 15) against Secret Answer Keys
     let listeningCorrect = 0;
     let listeningTotal = 0;
     let readingCorrect = 0;
@@ -477,28 +717,122 @@ export class AssessmentService {
         .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
         .replace(/\s+/g, " ");
 
-    Object.entries(authoritativePlacementAnswerKeys).forEach(([qId, key]) => {
-      if (key.skill === "listening") listeningTotal++;
-      else if (key.skill === "reading") readingTotal++;
-      else if (key.skill === "grammar") grammarTotal++;
+    // Check if we can grade against DB exam questions
+    const targetExamId = session.examId || "cce291f7-d88b-4976-8ed3-cc21daca7023";
+    let dbExamQuestions: any[] = [];
+    try {
+      dbExamQuestions = await this.prisma.question.findMany({
+        where: {
+          group: {
+            section: {
+              examId: targetExamId,
+            },
+          },
+        },
+        include: {
+          group: {
+            include: {
+              section: true,
+            },
+          },
+        },
+      });
+    } catch (dbErr) {
+      console.warn("[AssessmentService] DB questions fetch error:", dbErr);
+    }
 
-      const studentAns = answers[qId];
-      if (!studentAns) return;
+    if (dbExamQuestions.length > 0) {
+      // Dynamic Database Auto-grading
+      for (const q of dbExamQuestions) {
+        const secType = q.group?.section?.sectionType;
+        const isListening = secType === "listening";
+        const isReading = secType === "reading";
+        const isGrammar = secType === "general";
 
-      const normStudent = normalizeText(studentAns);
-      const normCorrect = normalizeText(key.correctAnswer);
+        if (!isListening && !isReading && !isGrammar) continue;
 
-      let isMatch = normStudent === normCorrect;
-      if (!isMatch && key.acceptedAnswers && key.acceptedAnswers.length > 0) {
-        isMatch = key.acceptedAnswers.some((acc) => normalizeText(acc) === normStudent);
+        const studentAns = answers[q.id];
+        const rawCorrect = q.correctAnswer;
+        if (!rawCorrect) continue;
+
+        let parsedKeys: string[] | null = null;
+        try {
+          if (typeof rawCorrect === "string" && rawCorrect.trim().startsWith("[")) {
+            const arr = JSON.parse(rawCorrect);
+            if (Array.isArray(arr)) parsedKeys = arr;
+          }
+        } catch {}
+
+        if (parsedKeys && parsedKeys.length > 0) {
+          // Multi-blank question
+          parsedKeys.forEach((keyVal, idx) => {
+            if (isListening) listeningTotal++;
+            else if (isReading) readingTotal++;
+            else if (isGrammar) grammarTotal++;
+
+            let sVal: any = undefined;
+            if (studentAns && typeof studentAns === "object") {
+              sVal = studentAns[idx] ?? studentAns[String(idx)];
+            } else if (Array.isArray(studentAns)) {
+              sVal = studentAns[idx];
+            } else if (typeof studentAns === "string" && idx === 0) {
+              sVal = studentAns;
+            }
+
+            if (sVal != null && String(sVal).trim() !== "") {
+              const normStudent = normalizeText(sVal);
+              const alternatives = String(keyVal).split("|").map((s) => normalizeText(s));
+              const isMatch = alternatives.some((alt) => alt === normStudent);
+              if (isMatch) {
+                if (isListening) listeningCorrect++;
+                else if (isReading) readingCorrect++;
+                else if (isGrammar) grammarCorrect++;
+              }
+            }
+          });
+        } else {
+          // Single-item question
+          if (isListening) listeningTotal++;
+          else if (isReading) readingTotal++;
+          else if (isGrammar) grammarTotal++;
+
+          if (studentAns != null && String(studentAns).trim() !== "") {
+            const normStudent = normalizeText(studentAns);
+            const alternatives = String(rawCorrect).split("|").map((s) => normalizeText(s));
+            const isMatch = alternatives.some((alt) => alt === normStudent);
+            if (isMatch) {
+              if (isListening) listeningCorrect++;
+              else if (isReading) readingCorrect++;
+              else if (isGrammar) grammarCorrect++;
+            }
+          }
+        }
       }
+    } else {
+      // Fallback: Grade against authoritative Placement Answer Keys
+      Object.entries(authoritativePlacementAnswerKeys).forEach(([qId, key]) => {
+        if (key.skill === "listening") listeningTotal++;
+        else if (key.skill === "reading") readingTotal++;
+        else if (key.skill === "grammar") grammarTotal++;
 
-      if (isMatch) {
-        if (key.skill === "listening") listeningCorrect++;
-        else if (key.skill === "reading") readingCorrect++;
-        else if (key.skill === "grammar") grammarCorrect++;
-      }
-    });
+        const studentAns = answers[qId];
+        if (!studentAns) return;
+
+        const normStudent = normalizeText(studentAns);
+        const normCorrect = normalizeText(key.correctAnswer);
+
+        let isMatch = normStudent === normCorrect;
+        if (!isMatch && key.acceptedAnswers && key.acceptedAnswers.length > 0) {
+          isMatch = key.acceptedAnswers.some((acc) => normalizeText(acc) === normStudent);
+        }
+
+        if (isMatch) {
+          if (key.skill === "listening") listeningCorrect++;
+          else if (key.skill === "reading") readingCorrect++;
+          else if (key.skill === "grammar") grammarCorrect++;
+        }
+      });
+    }
 
     const totalQuestions = listeningTotal + readingTotal + grammarTotal;
     const rawCorrect = listeningCorrect + readingCorrect + grammarCorrect;
@@ -642,3 +976,4 @@ export class AssessmentService {
     return report;
   }
 }
+

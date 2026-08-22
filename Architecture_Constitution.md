@@ -1,10 +1,10 @@
 # NEXTBAND ARCHITECTURE CONSTITUTION (HIẾN PHÁP KIẾN TRÚC HỆ THỐNG NEXTBAND)
 
-**Phiên bản**: 1.5.0  
+**Phiên bản**: 1.6.0  
 **Ngày ban hành**: 01/08/2026  
-**Ngày cập nhật**: 20/08/2026 — Ban hành ARTICLE XXIII: LIVE RUNTIME INTEGRITY & ANTI-MOCK-FALLACY (Khóa kỷ luật xác minh 3 cấp độ: Static -> Automated Tests -> Live Runtime Process & Zero-Poisoned Fallback).  
+**Ngày cập nhật**: 22/08/2026 — Ban hành ARTICLE XXIV: CODE HYGIENE, EVIDENCE-BASED PURGE & CANONICAL SSOT GOVERNANCE (Khóa kỷ luật khai tử đồng bộ, phân định Nguồn Chân lý với Sản phẩm Biên dịch, Quy tắc Tối cao về Bằng chứng Tiêu hủy và 4 Cổng nghiệm thu chất lượng).  
 **Cấp độ áp dụng**: Tối cao (Bắt buộc tuân thủ cho toàn bộ Kỹ sư, Technical Lead, và AI Agents)  
-**Phạm vi**: Toàn bộ Hệ thống IELTS NextBand (Frontend `nextband/`, Backend Fastify `ielts-api/`, Database Supabase Cloud PostgreSQL, và các tài liệu Kiến trúc liên quan)
+**Phạm vi**: Toàn bộ Hệ thống IELTS NextBand (Frontend `nextband/`, Backend Fastify root `server/`, Gateway Serverless, Database Supabase Cloud PostgreSQL, và các tài liệu Kiến trúc liên quan)
 
 ---
 
@@ -1001,5 +1001,74 @@ Trước khi đưa ra bất kỳ kết luận nào về tính sẵn sàng của 
   - **Verification Method**:
     - Chạy `Get-NetTCPConnection -LocalPort 3000` $\rightarrow$ State: `Listen`.
     - Gửi request `GET http://localhost:3000/api/v1/health` $\rightarrow$ Status: `200 OK`.
+
+---
+
+## ARTICLE XXIV: CODE HYGIENE, EVIDENCE-BASED PURGE & CANONICAL SSOT GOVERNANCE (KỶ LUẬT VỆ SINH MÃ NGUỒN, TIÊU HỦY DỰA TRÊN CHỨNG CỨ & BẢO VỆ NGUỒN CHÂN LÝ DUY NHẤT)
+
+> **Nguồn gốc**: Đúc kết từ Chiến dịch Phẫu thuật Vệ sinh Mã nguồn & Chuẩn hóa SSOT ngày 22/08/2026 — Thiết lập kỷ luật khai tử đồng bộ (Synchronous Decommissioning), phân định rạch ròi giữa Nguồn Chân lý và Sản phẩm Biên dịch, ban hành Quy tắc Tối cao về Bằng chứng Tiêu hủy (Supremacy Rule of Evidence) và chuẩn hóa 4 Cổng nghiệm thu chất lượng sau dọn dẹp.
+
+### Section 24.1: Nguyên Tắc Tiêu Hủy Đồng Bộ Toàn Diện (Synchronous Decommissioning Doctrine)
+1. **Cấm Vô Hiệu Hóa Lửng Lơ (Anti-Partial-Disable)**: Nghiêm cấm việc khai tử một năng lực (capability) bằng cách ngắt quãng ở giữa chuỗi (như sửa API helper trả về chuỗi tĩnh *"Disabled"* hoặc ném lỗi) trong khi vẫn để các điểm vào tiếp tục hoạt động, kích hoạt polling, render UI thừa hoặc duy trì route backend đọc dữ liệu ảo.
+2. **Không Gian Kiến Trúc Tối Thiểu Bắt Buộc Tháo Dỡ (Minimum Architectural Surface)**: Khi một capability bị loại bỏ, kỹ sư và AI bắt buộc phải tháo dỡ đồng bộ từ điểm vào người dùng đến điểm lưu trữ cuối cùng:
+   ```text
+   UI Component ──► App Router / Lazy Loader ──► Navigation / Menu ──► State Hook / Store 
+        ──► API Client / Contract ──► Backend Gateway / Route ──► Domain Service / Repo 
+        ──► DB RLS / Policy ──► Event / Queue Handler
+   ```
+3. **PASS/FAIL Condition**:
+   - **PASS**: Mọi điểm chạm từ UI đến Backend thuộc capability bị khai tử được gỡ bỏ đồng thời trong cùng một atomic change; 0 endpoint mồ côi, 0 polling vô nghĩa.
+   - **FAIL**: Chỉ xóa UI mà để lại Backend Route, hoặc chỉ stub API client mà để lại UI component và menu dẫn đường.
+
+### Section 24.2: Phân Định Nguồn Chân Lý Backend & Sản Phẩm Biên Dịch (Canonical Source vs. Generated Artifacts)
+1. **Phân Biệt Rạch Ròi 3 Thực Thể**:
+   - **Canonical Domain Source (Nguồn Chân lý Nghiệp vụ)**: Mã nguồn gốc chứa logic nghiệp vụ (ví dụ: `server/`). Mỗi miền nghiệp vụ **chỉ được phép có duy nhất một cây thư mục thẩm quyền**. Nghiêm cấm tạo các bản sao chép ma (ghost clones) trong frontend hay repo phụ.
+   - **Generated Deployment Artifacts (Sản phẩm Đóng gói Triển khai)**: File bundle sinh ra tự động phục vụ môi trường chạy (ví dụ: `api/index.js`). Bắt buộc phải được tạo ra từ pipeline build có tính tái lập (deterministic build), không chỉnh sửa thủ công.
+   - **Ephemeral Compiler Outputs (Rác Biên dịch Tạm thời)**: Các file sinh ra trong quá trình biên dịch (`dist/`, `dist-server/`, `*.tsbuildinfo`, `.js` compiled từ `.ts`). **Tuyệt đối không lưu vết trong Git tracking**.
+2. **Kỷ Luật Dòng Chảy Mã Nguồn (The Linear Source-to-Deployment Pipeline)**:
+   ```text
+   [Canonical Source] ──(Deterministic Build Pipeline)──► [Generated Artifact] ──► [Deployment Runtime]
+   ```
+   *Cấm tuyệt đối quy trình lệch:* `Source ──► Manual Compile ──► Ad-hoc Copy ──► Commit to Git`.
+
+### Section 24.3: Quy Tắc Tối Cao Về Bằng Chứng & Phân Cấp Tiêu Hủy (The Supremacy Rule of Evidence & Purge Classification)
+
+> [!IMPORTANT]
+> **THE SUPREMACY RULE OF EVIDENCE (QUY TẮC TỐI CAO VỀ BẰNG CHỨNG)**:  
+> *Khi có xung đột giữa **tốc độ dọn code** và **khả năng chứng minh** rằng code không còn cần thiết, bắt buộc **ưu tiên bảo toàn code** cho đến khi thu thập đủ chứng cứ toàn diện.  
+> **Nghiêm cấm coi "không tìm thấy reference qua grep" là bằng chứng duy nhất để xóa mã nguồn.***
+
+1. **Tiêu Chuẩn Chứng Minh Dead Code (The 5-Zero Proof Standard)**:
+   Một khối mã nguồn CHỈ ĐƯỢC PHÉP coi là Dead Code và đưa vào diện xóa bỏ khi thỏa mãn đồng thời cả 5 điều kiện chứng minh:
+   - (1) Zero Static Import / Call Site.
+   - (2) Zero Dynamic Access / Reflection / String Registry.
+   - (3) Zero Runtime / Filesystem / CLI Discovery.
+   - (4) Zero Test Suite Dependency.
+   - (5) Zero Build / Deployment Pipeline Dependency.
+2. **Khung Phân Cấp 4 Tầng Xử Lý (The 4-Tier Purge Framework)**:
+   - **Tier P0 (Dead Code Đã Chứng Minh Toàn Diện)**: Thỏa mãn trọn vẹn tiêu chuẩn 5-Zero $\rightarrow$ **Được phép xóa an toàn**.
+   - **Tier P1 (Vai Trò Kiến Trúc & Test-Supported Logic)**: Các module có Test Suite bảo vệ logic nghiệp vụ (dù chưa có caller trực tiếp từ UI) hoặc đảm nhiệm vai trò kiến trúc trọng yếu (Resilience Fallback, Data Normalizer, Contract Adapter) **phải được bảo tồn chức năng** cho đến khi có abstraction thay thế đã được kiểm chứng thực nghiệm.
+   - **Tier P2 (Mã Nguồn Lịch Sử, Công Cụ Vận Hành & Data Snapshots)**: Script migration DDL / RLS policies, công cụ audit bảo mật, script phục hồi sự cố (Incident Recovery) và dữ liệu crawl dump không được xóa mù quáng $\rightarrow$ **Bắt buộc phân loại và lưu trữ có cấu trúc tại `scripts/archive/` kèm tài liệu tra cứu**.
+   - **Tier P3 (Tài Nguyên Dữ Liệu & Media Vật Lý)**: Mọi tệp tin upload/media local phải trải qua quy trình **Kiểm toán Lưu giữ Tài sản (Asset Retention Audit)** đối soát với Cloud Storage trước khi có bất kỳ can thiệp giải phóng dung lượng nào.
+
+### Section 24.4: Kỷ Luật Cách Ly Git & Vệ Sinh Mã Nguồn (Git Hygiene & Ephemeral Isolation)
+1. **Khóa Cứng `.gitignore`**: Mọi thư mục và file sinh ra từ compiler, bundler, test runner hoặc cache IDE phải được định nghĩa tường minh trong `.gitignore`.
+2. **Cấm "Sống Chung Với Rác Biên Dịch"**: Khi phát hiện artifact biên dịch lọt vào Git tracking, kỹ sư/AI phải lập tức xóa bỏ khỏi Git tree và bổ sung rule vào `.gitignore` trong một atomic commit riêng biệt.
+
+### Section 24.5: Cổng Kiểm Định Chất Lượng Bắt Buộc Sau Dọn Dẹp (Mandatory Post-Purge Verification Gates)
+Mọi chiến dịch dọn dẹp mã nguồn bắt buộc phải vượt qua đủ 4 Cổng Kiểm Định trước khi được coi là hoàn tất:
+1. **Cổng 1 (Negative Reference & Integrity Scan)**: Quét toàn bộ active codebase chứng minh 0 broken import, 0 orphan reference, 0 cú pháp truy cập động bị gãy.
+2. **Cổng 2 (Deterministic Build Gate)**: Build gateway và build frontend thành công 100% từ trạng thái clean (`npm run build`).
+3. **Cổng 3 (Test Suite Integrity Gate)**: **100% PASS trên toàn bộ Test Suite hiện hành**. Nghiêm cấm việc xóa test, skip test, hoặc giảm test coverage để làm cho cổng này chuyển sang trạng thái PASS.
+4. **Cổng 4 (Git Diff Review Gate)**: Kiểm tra `git diff` chứng minh chỉ có các thành phần thuộc Tier P0 đã được phê duyệt bị loại bỏ; toàn bộ cấu trúc bảo lưu (Tier P1, P2, P3) được bảo toàn trọn vẹn.
+
+- **PASS/FAIL Condition**:
+  - **PASS**: Đạt đồng thời cả 4 Cổng Kiểm Định sau mỗi đợt dọn dẹp; 0 vi phạm Supremacy Rule of Evidence.
+  - **FAIL**: Để sót zombie code sau khi disable tính năng, hoặc xóa nhầm test-supported domain logic do chỉ dựa vào kết quả grep đơn thuần.
+  - **Verification Method**:
+    - Chạy audit reference tự động.
+    - Chạy `npm test` toàn hệ thống đạt 100% PASS.
+    - Kiểm tra `git status` đảm bảo không có compiled artifacts bị commit.
+
 
 
