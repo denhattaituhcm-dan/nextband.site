@@ -27,7 +27,22 @@ export function toFileUrl(path: string | null | undefined): string | null {
   if (!path) return null;
   // Nếu đã là URL đầy đủ (http/https hoặc data:) thì giữ nguyên
   if (/^(https?:\/\/|data:)/i.test(path)) return path;
-  // Đảm bảo chỉ có 1 dấu /
+
+  // Nếu là direct Supabase storage path (vd: /storage/v1/...) thì giữ nguyên hoặc prepend base
+  if (path.startsWith("/storage/v1/")) {
+    const supabaseBase = (env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co").replace(/\/$/, "");
+    return `${supabaseBase}${path}`;
+  }
+
+  // Canonical mapping: /uploads/audio/<filename> hoặc uploads/audio/<filename>
+  const audioMatch = path.match(/^(?:\/)?uploads\/audio\/(.+)$/);
+  if (audioMatch && audioMatch[1]) {
+    const filename = audioMatch[1].replace(/^\/+/, "");
+    const supabaseBase = (env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co").replace(/\/$/, "");
+    return `${supabaseBase}/storage/v1/object/public/exam-assets/audio/${filename}`;
+  }
+
+  // Fallback: relative path khác giữ nguyên behavior cũ
   const base = getBaseUrl().replace(/\/$/, "");
   const relative = path.startsWith("/") ? path : `/${path}`;
   return `${base}${relative}`;

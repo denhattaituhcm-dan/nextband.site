@@ -113304,6 +113304,16 @@ function getBaseUrl() {
 function toFileUrl(path) {
   if (!path) return null;
   if (/^(https?:\/\/|data:)/i.test(path)) return path;
+  if (path.startsWith("/storage/v1/")) {
+    const supabaseBase = (env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co").replace(/\/$/, "");
+    return `${supabaseBase}${path}`;
+  }
+  const audioMatch = path.match(/^(?:\/)?uploads\/audio\/(.+)$/);
+  if (audioMatch && audioMatch[1]) {
+    const filename = audioMatch[1].replace(/^\/+/, "");
+    const supabaseBase = (env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co").replace(/\/$/, "");
+    return `${supabaseBase}/storage/v1/object/public/exam-assets/audio/${filename}`;
+  }
   const base = getBaseUrl().replace(/\/$/, "");
   const relative = path.startsWith("/") ? path : `/${path}`;
   return `${base}${relative}`;
@@ -120436,10 +120446,44 @@ var invitation_routes_default = invitationRoutes;
 function calculateAutomaticDeadline(params) {
   const baseDate = params.classStartDate ? new Date(params.classStartDate) : /* @__PURE__ */ new Date();
   const order = Math.max(1, Math.floor(Number(params.lessonOrder) || 1));
-  const targetMs = baseDate.getTime() + order * 7 * 24 * 60 * 60 * 1e3;
+  const offsetDays = Math.max(1, params.defaultOffsetDays || 7);
+  const targetMs = baseDate.getTime() + order * offsetDays * 24 * 60 * 60 * 1e3;
   const deadline = new Date(targetMs);
   deadline.setHours(23, 59, 59, 999);
   return deadline;
+}
+function resolveEffectiveDeadline(params) {
+  if (params.manualDeadline) {
+    return {
+      effectiveDeadline: new Date(params.manualDeadline),
+      deadlineSource: "MANUAL"
+    };
+  }
+  const auto = calculateAutomaticDeadline({
+    classStartDate: params.classStartDate,
+    lessonOrder: params.lessonWeek,
+    defaultOffsetDays: params.defaultOffsetDays
+  });
+  return {
+    effectiveDeadline: auto,
+    deadlineSource: "AUTO"
+  };
+}
+function calculateSubmissionTiming(submittedAt, effectiveDeadline) {
+  if (!submittedAt || !effectiveDeadline) {
+    return { isLate: false, lateDays: 0 };
+  }
+  const subMs = new Date(submittedAt).getTime();
+  const deadMs = new Date(effectiveDeadline).getTime();
+  if (isNaN(subMs) || isNaN(deadMs) || subMs <= deadMs) {
+    return { isLate: false, lateDays: 0 };
+  }
+  const diffMs = subMs - deadMs;
+  const lateDays = Math.max(1, Math.floor(diffMs / (24 * 60 * 60 * 1e3)));
+  return {
+    isLate: true,
+    lateDays
+  };
 }
 
 // server/services/lesson.service.ts
@@ -120519,18 +120563,13 @@ var LessonService = class {
       if (isGraded) completedCount++;
       const lessonOrder = exam.week || idx + 1;
       const customHw = manualHomeworks.find((h2) => h2.examId === exam.id || h2.lessonId === exam.id);
-      let effectiveDeadline = null;
-      let deadlineSource = "NONE";
-      if (customHw?.deadline) {
-        effectiveDeadline = new Date(customHw.deadline);
-        deadlineSource = "MANUAL";
-      } else {
-        effectiveDeadline = calculateAutomaticDeadline({
-          classStartDate: classData.startDate || classData.createdAt,
-          lessonOrder
-        });
-        deadlineSource = "AUTO";
-      }
+      const { effectiveDeadline, deadlineSource } = resolveEffectiveDeadline({
+        classStartDate: classData.startDate || classData.createdAt,
+        lessonWeek: lessonOrder,
+        manualDeadline: customHw?.deadline,
+        defaultOffsetDays: 7
+      });
+      const submissionTiming = sub ? calculateSubmissionTiming(sub.submittedAt || sub.createdAt, effectiveDeadline) : { isLate: false, lateDays: 0 };
       return {
         id: exam.id,
         title: exam.title,
@@ -120546,6 +120585,7 @@ var LessonService = class {
           title: exam.title,
           deadline: effectiveDeadline,
           deadlineSource,
+          submissionTiming,
           status: sub ? String(sub.status).toUpperCase() : "NOT_STARTED",
           score: sub?.totalScore != null ? Number(sub.totalScore) : null
         },
@@ -122099,7 +122139,7 @@ var AssessmentService = class {
         audioUrl: toFileUrl(q.audioUrl) || void 0,
         options,
         placeholder: q.questionType === "fill_blank" ? "Nh\u1EADp c\xE2u tr\u1EA3 l\u1EDDi..." : void 0,
-        orderIndex: questionCursor++,
+        orderIndex: typeof q.orderIndex === "number" && q.orderIndex > 0 ? q.orderIndex : typeof q.order_index === "number" && q.order_index > 0 ? q.order_index : questionCursor++,
         blankCount
       };
     };
@@ -122110,6 +122150,7 @@ var AssessmentService = class {
         listeningQuestions.push(mapQuestion({ ...q, group: g }, "listening", "K\u1EF9 n\u0103ng Nghe (Listening)"));
       });
     });
+    listeningQuestions.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
     const readingQuestions = [];
     const readingPassage = readingSec?.questionGroups?.map((g) => g.passage).filter((p) => p && typeof p === "string" && p.trim().length > 0).join("\n\n") || readingSec?.instructions || "";
     readingSec?.questionGroups?.forEach((g) => {
@@ -122117,12 +122158,14 @@ var AssessmentService = class {
         readingQuestions.push(mapQuestion({ ...q, group: g }, "reading", "K\u1EF9 n\u0103ng \u0110\u1ECDc hi\u1EC3u (Reading)"));
       });
     });
+    readingQuestions.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
     const grammarQuestions = [];
     grammarSec?.questionGroups?.forEach((g) => {
       g.questions?.forEach((q) => {
         grammarQuestions.push(mapQuestion({ ...q, group: g }, "grammar", "Ng\u1EEF ph\xE1p & T\u1EEB v\u1EF1ng (Grammar)"));
       });
     });
+    grammarQuestions.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
     const writingQ = writingSec?.questionGroups?.[0]?.questions?.[0];
     const writingPrompt = writingQ?.questionText || writingSec?.questionGroups?.[0]?.passage || canonicalPlacementTestPayload.skills.writing.prompt;
     const speakingQuestions = speakingSec?.questionGroups?.[0]?.questions || [];
@@ -122532,7 +122575,8 @@ var AssessmentService = class {
     const grammarPct = Math.round(grammarCorrect / Math.max(1, grammarTotal) * 100);
     const arisInfo = mapRawScoreToArisLevel(rawCorrect, totalQuestions);
     const hasWriting = typeof answers["writing_response"] === "string" && answers["writing_response"].trim().length >= 30;
-    const hasSpeaking = !!answers["speaking_audio_url"] || !!answers["speaking_completed"];
+    const hasSpeaking = !!answers["speaking_part1_audio_url"] || !!answers["speaking_part2_audio_url"] || !!answers["speaking_audio_url"] || // backward compat
+    !!answers["speaking_completed"];
     const subjectiveStatus = hasWriting || hasSpeaking ? "PENDING_REVIEW" : "NONE";
     const strengths = [];
     const weaknesses = [];
@@ -122730,7 +122774,8 @@ var AssessmentService = class {
       const teacherReview = res.teacherReview || {};
       const hasWriting = typeof answers["writing_response"] === "string" && answers["writing_response"].trim().length >= 10;
       const writingLength = typeof answers["writing_response"] === "string" ? answers["writing_response"].trim().length : 0;
-      const hasSpeaking = !!answers["speaking_audio_url"] || !!answers["speaking_completed"];
+      const hasSpeaking = !!answers["speaking_part1_audio_url"] || !!answers["speaking_part2_audio_url"] || !!answers["speaking_audio_url"] || // backward compat
+      !!answers["speaking_completed"];
       let gradingStatus = teacherReview.gradingStatus;
       if (!gradingStatus) {
         gradingStatus = db.status === "SUBMITTED" ? "PENDING" : "IN_PROGRESS";
