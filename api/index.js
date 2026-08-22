@@ -116346,6 +116346,7 @@ var SubmissionStateMachine = class {
 };
 
 // server/services/notification.service.ts
+import { NotificationType } from "@prisma/client";
 var NotificationService = class {
   constructor(prisma) {
     this.prisma = prisma;
@@ -116462,6 +116463,216 @@ var NotificationService = class {
       }
     });
     return result.count;
+  }
+  /**
+   * ADMIN: Phát thông báo tới nhóm đối tượng (Toàn hệ thống, Học viên, Giáo viên, hoặc Lớp học).
+   * Transaction + Backend-resolved DISTINCT recipients + UNIQUE constraint chống duplicate.
+   */
+  async broadcastAnnouncement(data) {
+    let targetIds = [];
+    if (data.targetType === "ALL") {
+      const users = await this.prisma.user.findMany({
+        where: { isActive: true },
+        select: { userId: true }
+      });
+      targetIds = users.map((u) => u.userId);
+    } else if (data.targetType === "STUDENTS") {
+      const studentRoles = await this.prisma.userRole.findMany({
+        where: { role: "student", user: { isActive: true } },
+        select: { userId: true }
+      });
+      targetIds = studentRoles.map((r2) => r2.userId);
+    } else if (data.targetType === "TEACHERS") {
+      const teacherRoles = await this.prisma.userRole.findMany({
+        where: { role: "teacher", user: { isActive: true } },
+        select: { userId: true }
+      });
+      targetIds = teacherRoles.map((r2) => r2.userId);
+    } else if (data.targetType === "CLASS") {
+      if (!data.targetClassId) {
+        throw new Error("targetClassId is required for class broadcast");
+      }
+      const classStudents = await this.prisma.classStudent.findMany({
+        where: { classId: data.targetClassId, status: "ACTIVE", deletedAt: null },
+        select: { studentId: true }
+      });
+      const cls = await this.prisma.class.findUnique({
+        where: { id: data.targetClassId },
+        select: { teacherId: true }
+      });
+      const ids = new Set(classStudents.map((cs) => cs.studentId));
+      if (cls?.teacherId) ids.add(cls.teacherId);
+      targetIds = Array.from(ids);
+    }
+    const distinctUserIds = Array.from(new Set(targetIds.filter(Boolean)));
+    if (distinctUserIds.length === 0) {
+      return { broadcastId: "", recipientCount: 0 };
+    }
+    const notifType = data.type || NotificationType.ANNOUNCEMENT;
+    return await this.prisma.$transaction(async (tx) => {
+      const broadcast = await tx.notificationBroadcast.create({
+        data: {
+          title: data.title,
+          message: data.message,
+          type: notifType,
+          targetType: data.targetType,
+          targetClassId: data.targetClassId || null,
+          link: data.link || null,
+          createdBy: data.createdBy || null,
+          publishedAt: data.publishedAt || /* @__PURE__ */ new Date(),
+          expiresAt: data.expiresAt || null
+        }
+      });
+      const notifItems = distinctUserIds.map((userId) => ({
+        broadcastId: broadcast.id,
+        userId,
+        type: notifType,
+        title: data.title,
+        message: data.message,
+        link: data.link || null,
+        entityType: "ADMIN_ANNOUNCEMENT",
+        entityId: broadcast.id
+      }));
+      await tx.notification.createMany({
+        data: notifItems,
+        skipDuplicates: true
+      });
+      return {
+        broadcastId: broadcast.id,
+        recipientCount: distinctUserIds.length
+      };
+    });
+  }
+  /**
+   * ADMIN: Lấy danh sách các đợt phát thông báo kèm thống kê số người nhận & đã đọc.
+   */
+  async listAdminBroadcasts(params) {
+    const page = params.page && params.page > 0 ? params.page : 1;
+    const limit = params.limit && params.limit > 0 ? Math.min(params.limit, 50) : 20;
+    const skip = (page - 1) * limit;
+    const where = {
+      deletedAt: null,
+      ...params.search ? {
+        OR: [
+          { title: { contains: params.search, mode: "insensitive" } },
+          { message: { contains: params.search, mode: "insensitive" } }
+        ]
+      } : {},
+      ...params.type ? { type: params.type } : {}
+    };
+    const [broadcasts, total] = await Promise.all([
+      this.prisma.notificationBroadcast.findMany({
+        where,
+        orderBy: { publishedAt: "desc" },
+        skip,
+        take: limit,
+        include: {
+          _count: {
+            select: { notifications: true }
+          }
+        }
+      }),
+      this.prisma.notificationBroadcast.count({ where })
+    ]);
+    const items = await Promise.all(
+      broadcasts.map(async (b) => {
+        const totalRecipients = b._count.notifications;
+        const readCount = await this.prisma.notification.count({
+          where: {
+            broadcastId: b.id,
+            isRead: true
+          }
+        });
+        const readRate = totalRecipients > 0 ? Math.round(readCount / totalRecipients * 1e3) / 10 : 0;
+        return {
+          id: b.id,
+          broadcastId: b.id,
+          title: b.title,
+          message: b.message,
+          type: b.type,
+          targetType: b.targetType,
+          targetClassId: b.targetClassId,
+          link: b.link,
+          createdBy: b.createdBy,
+          createdAt: b.createdAt,
+          publishedAt: b.publishedAt,
+          expiresAt: b.expiresAt,
+          totalRecipients,
+          readCount,
+          readRate
+        };
+      })
+    );
+    return { items, total, page, limit };
+  }
+  /**
+   * ADMIN: Lấy danh sách chi tiết người nhận của 1 đợt phát thông báo (có phân trang, tìm kiếm và lọc).
+   */
+  async getBroadcastRecipients(params) {
+    const page = params.page && params.page > 0 ? params.page : 1;
+    const limit = params.limit && params.limit > 0 ? Math.min(params.limit, 100) : 50;
+    const skip = (page - 1) * limit;
+    const where = {
+      broadcastId: params.broadcastId,
+      ...params.status === "READ" ? { isRead: true } : params.status === "UNREAD" ? { isRead: false } : {},
+      ...params.search ? {
+        user: {
+          OR: [
+            { fullName: { contains: params.search, mode: "insensitive" } },
+            { email: { contains: params.search, mode: "insensitive" } }
+          ]
+        }
+      } : {}
+    };
+    const [notifications, total] = await Promise.all([
+      this.prisma.notification.findMany({
+        where,
+        include: {
+          user: {
+            select: {
+              userId: true,
+              fullName: true,
+              email: true,
+              avatarUrl: true,
+              roles: {
+                select: { role: true }
+              }
+            }
+          }
+        },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit
+      }),
+      this.prisma.notification.count({ where })
+    ]);
+    const items = notifications.map((n) => ({
+      id: n.id,
+      userId: n.userId,
+      userName: n.user?.fullName || "Ng\u01B0\u1EDDi d\xF9ng",
+      userEmail: n.user?.email || "",
+      userAvatar: n.user?.avatarUrl || null,
+      userRoles: n.user?.roles?.map((r2) => r2.role) || [],
+      isRead: n.isRead,
+      readAt: n.readAt,
+      createdAt: n.createdAt
+    }));
+    return { items, total, page, limit };
+  }
+  /**
+   * ADMIN: Soft-delete một đợt phát thông báo theo broadcastId (bảo toàn lịch sử notification cho audit).
+   */
+  async deleteBroadcast(broadcastId) {
+    const result = await this.prisma.notificationBroadcast.updateMany({
+      where: {
+        id: broadcastId,
+        deletedAt: null
+      },
+      data: {
+        deletedAt: /* @__PURE__ */ new Date()
+      }
+    });
+    return result.count > 0;
   }
 };
 
@@ -120063,6 +120274,7 @@ var lessonRoutes = async (fastify) => {
 var lesson_routes_default = lessonRoutes;
 
 // server/routes/notifications.routes.ts
+import { NotificationType as NotificationType2 } from "@prisma/client";
 var notificationsRoutes = async (fastify) => {
   const notificationService = new NotificationService(fastify.prisma);
   fastify.get("/", { preHandler: [fastify.authenticate] }, async (request, reply) => {
@@ -120107,6 +120319,110 @@ var notificationsRoutes = async (fastify) => {
     const markedCount = await notificationService.markAllAsRead(user.id);
     return reply.send({ success: true, markedCount });
   });
+  fastify.get(
+    "/admin/broadcasts",
+    { preHandler: [fastify.authenticate, requireRoles("admin")] },
+    async (request, reply) => {
+      const { page, limit, search, type } = request.query || {};
+      const result = await notificationService.listAdminBroadcasts({
+        page: page ? parseInt(page, 10) : void 0,
+        limit: limit ? parseInt(limit, 10) : void 0,
+        search,
+        type
+      });
+      return reply.send({
+        success: true,
+        data: result.items,
+        pagination: {
+          total: result.total,
+          page: result.page,
+          limit: result.limit
+        }
+      });
+    }
+  );
+  fastify.get(
+    "/admin/broadcasts/:broadcastId/recipients",
+    { preHandler: [fastify.authenticate, requireRoles("admin")] },
+    async (request, reply) => {
+      const { broadcastId } = request.params;
+      const { page, limit, search, status } = request.query || {};
+      const result = await notificationService.getBroadcastRecipients({
+        broadcastId,
+        page: page ? parseInt(page, 10) : void 0,
+        limit: limit ? parseInt(limit, 10) : void 0,
+        search,
+        status
+      });
+      return reply.send({
+        success: true,
+        data: result.items,
+        pagination: {
+          total: result.total,
+          page: result.page,
+          limit: result.limit
+        }
+      });
+    }
+  );
+  fastify.post(
+    "/admin/broadcast",
+    { preHandler: [fastify.authenticate, requireRoles("admin")] },
+    async (request, reply) => {
+      const user = request.user;
+      const { title, message: message2, type, targetType, targetClassId, link, expiresAt } = request.body || {};
+      if (!title || !title.trim()) {
+        return reply.status(400).send({ success: false, error: "Ti\xEAu \u0111\u1EC1 th\xF4ng b\xE1o kh\xF4ng \u0111\u01B0\u1EE3c \u0111\u1EC3 tr\u1ED1ng." });
+      }
+      if (!message2 || !message2.trim()) {
+        return reply.status(400).send({ success: false, error: "N\u1ED9i dung th\xF4ng b\xE1o kh\xF4ng \u0111\u01B0\u1EE3c \u0111\u1EC3 tr\u1ED1ng." });
+      }
+      if (!targetType || !["ALL", "STUDENTS", "TEACHERS", "CLASS"].includes(targetType)) {
+        return reply.status(400).send({ success: false, error: "Vui l\xF2ng ch\u1ECDn \u0111\u1ED1i t\u01B0\u1EE3ng nh\u1EADn th\xF4ng b\xE1o h\u1EE3p l\u1EC7 (ALL, STUDENTS, TEACHERS, CLASS)." });
+      }
+      if (targetType === "CLASS" && !targetClassId) {
+        return reply.status(400).send({ success: false, error: "Vui l\xF2ng ch\u1ECDn l\u1EDBp h\u1ECDc nh\u1EADn th\xF4ng b\xE1o." });
+      }
+      try {
+        const result = await notificationService.broadcastAnnouncement({
+          title: title.trim(),
+          message: message2.trim(),
+          type: type || NotificationType2.ANNOUNCEMENT,
+          targetType,
+          targetClassId,
+          link: link?.trim() || null,
+          createdBy: user.id,
+          expiresAt: expiresAt ? new Date(expiresAt) : null
+        });
+        return reply.status(201).send({
+          success: true,
+          broadcastId: result.broadcastId,
+          recipientCount: result.recipientCount,
+          message: `\u0110\xE3 ph\xE1t th\xF4ng b\xE1o th\xE0nh c\xF4ng t\u1EDBi ${result.recipientCount} ng\u01B0\u1EDDi nh\u1EADn.`
+        });
+      } catch (err) {
+        return reply.status(500).send({
+          success: false,
+          error: err?.message || "Kh\xF4ng th\u1EC3 ph\xE1t th\xF4ng b\xE1o."
+        });
+      }
+    }
+  );
+  fastify.delete(
+    "/admin/broadcasts/:broadcastId",
+    { preHandler: [fastify.authenticate, requireRoles("admin")] },
+    async (request, reply) => {
+      const { broadcastId } = request.params;
+      const success = await notificationService.deleteBroadcast(broadcastId);
+      if (!success) {
+        return reply.status(404).send({ success: false, error: "Th\xF4ng b\xE1o kh\xF4ng t\u1ED3n t\u1EA1i ho\u1EB7c \u0111\xE3 b\u1ECB x\xF3a." });
+      }
+      return reply.send({
+        success: true,
+        message: "\u0110\xE3 l\u01B0u tr\u1EEF v\xE0 x\xF3a th\xF4ng b\xE1o kh\u1ECFi danh s\xE1ch qu\u1EA3n tr\u1ECB."
+      });
+    }
+  );
 };
 var notifications_routes_default = notificationsRoutes;
 
