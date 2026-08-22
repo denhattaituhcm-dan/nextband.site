@@ -129,4 +129,22 @@ export class ClassController {
       return reply.status(status).send({ error: err.message });
     }
   }
+
+  async setHomeworkDeadline(
+    request: FastifyRequest<{ Params: { id: string }; Body: { examId: string; deadline: string | null } }>,
+    reply: FastifyReply
+  ) {
+    try {
+      const user = (request as any).user;
+      const { examId, deadline } = request.body || {};
+      if (!examId) {
+        return reply.status(400).send({ error: "examId là bắt buộc" });
+      }
+      const result = await this.service.setHomeworkDeadline(user, request.params.id, examId, deadline);
+      return reply.send(result);
+    } catch (err: any) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
 }

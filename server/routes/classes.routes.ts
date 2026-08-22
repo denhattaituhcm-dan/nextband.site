@@ -56,4 +56,13 @@ export default async function classesRoutes(fastify: FastifyInstance) {
       return controller.removeStudent(request, reply);
     }
   );
+
+  // POST /classes/:id/homework-deadline - Cập nhật deadline bài tập cho lớp
+  fastify.post<{ Params: { id: string }; Body: { examId: string; deadline: string | null } }>(
+    "/:id/homework-deadline",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      return controller.setHomeworkDeadline(request, reply);
+    }
+  );
 }

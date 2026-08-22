@@ -1005,5 +1005,288 @@ export class AssessmentService {
 
     return report;
   }
+
+  /**
+   * 6. Admin: List all assessment sessions with pagination, search, and status filter
+   */
+  public async listAdminAssessmentSessions(params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    status?: string;
+    gradingStatus?: string;
+  }): Promise<{
+    items: any[];
+    pagination: { total: number; page: number; limit: number; totalPages: number };
+  }> {
+    const page = Math.max(1, Number(params.page) || 1);
+    const limit = Math.min(100, Math.max(1, Number(params.limit) || 20));
+    const skip = (page - 1) * limit;
+
+    let dbItems: any[] = [];
+    let totalCount = 0;
+
+    try {
+      if ((this.prisma as any).assessmentSession) {
+        const whereClause: any = {};
+        if (params.status && params.status !== "ALL") {
+          whereClause.status = params.status;
+        }
+        if (params.search && params.search.trim()) {
+          const q = params.search.trim();
+          whereClause.OR = [
+            { fullName: { contains: q, mode: "insensitive" } },
+            { phone: { contains: q, mode: "insensitive" } },
+            { id: { contains: q, mode: "insensitive" } },
+          ];
+        }
+
+        totalCount = await (this.prisma as any).assessmentSession.count({ where: whereClause });
+        dbItems = await (this.prisma as any).assessmentSession.findMany({
+          where: whereClause,
+          orderBy: { createdAt: "desc" },
+          skip,
+          take: limit,
+        });
+      }
+    } catch (err) {
+      console.warn("[AssessmentService] listAdminAssessmentSessions DB fetch notice:", err);
+    }
+
+    // Merge with in-memory sessions if DB is empty or during offline fallback
+    if (dbItems.length === 0 && inMemoryAssessmentSessions.size > 0) {
+      const allMem = Array.from(inMemoryAssessmentSessions.values()).sort(
+        (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+      );
+      const filtered = allMem.filter((item) => {
+        if (params.status && params.status !== "ALL" && item.status !== params.status) return false;
+        if (params.search && params.search.trim()) {
+          const q = params.search.trim().toLowerCase();
+          const matchName = item.candidateName.toLowerCase().includes(q);
+          const matchPhone = item.phone.toLowerCase().includes(q);
+          const matchId = item.id.toLowerCase().includes(q);
+          if (!matchName && !matchPhone && !matchId) return false;
+        }
+        return true;
+      });
+
+      totalCount = filtered.length;
+      dbItems = filtered.slice(skip, skip + limit).map((m) => ({
+        id: m.id,
+        examId: m.examId,
+        fullName: m.candidateName,
+        phone: m.phone,
+        targetBand: m.targetBand,
+        status: m.status,
+        answers: m.answers,
+        result: m.result,
+        startedAt: m.startedAt,
+        submittedAt: m.submittedAt,
+        expiresAt: m.expiresAt,
+        createdAt: m.createdAt,
+        updatedAt: m.updatedAt,
+      }));
+    }
+
+    const items = dbItems.map((db) => {
+      const res = db.result || {};
+      const answers = db.answers || {};
+      const teacherReview = res.teacherReview || {};
+
+      const hasWriting =
+        typeof answers["writing_response"] === "string" &&
+        answers["writing_response"].trim().length >= 10;
+      const writingLength = typeof answers["writing_response"] === "string" ? answers["writing_response"].trim().length : 0;
+      const hasSpeaking = !!answers["speaking_audio_url"] || !!answers["speaking_completed"];
+
+      let gradingStatus = teacherReview.gradingStatus;
+      if (!gradingStatus) {
+        gradingStatus = db.status === "SUBMITTED" ? "PENDING" : "IN_PROGRESS";
+      }
+
+      return {
+        id: db.id,
+        examId: db.examId,
+        candidateName: db.fullName || db.candidateName,
+        phone: db.phone,
+        targetBand: db.targetBand || "Chưa xác định",
+        status: db.status,
+        objectiveScore: res.objectiveBreakdown || null,
+        arisLevel: res.arisLevel || null,
+        hasWriting,
+        writingLength,
+        hasSpeaking,
+        gradingStatus,
+        assignedTeacher: teacherReview.assignedTeacher || null,
+        teacherNotes: teacherReview.teacherNotes || null,
+        zaloDraftFeedback: teacherReview.zaloDraftFeedback || null,
+        startedAt: db.startedAt || db.createdAt,
+        submittedAt: db.submittedAt || null,
+        createdAt: db.createdAt,
+        updatedAt: db.updatedAt,
+      };
+    });
+
+    let finalItems = items;
+    if (params.gradingStatus && params.gradingStatus !== "ALL") {
+      finalItems = items.filter((i) => i.gradingStatus === params.gradingStatus);
+    }
+
+    return {
+      items: finalItems,
+      pagination: {
+        total: totalCount,
+        page,
+        limit,
+        totalPages: Math.ceil(totalCount / limit) || 1,
+      },
+    };
+  }
+
+  /**
+   * 7. Admin: Get full submission details including raw answers, question breakdown, and audio recordings
+   */
+  public async getAdminAssessmentSessionDetail(sessionId: string): Promise<any | null> {
+    const session = await this.getSessionById(sessionId);
+    if (!session) return null;
+
+    let testPayload: SanitizedPlacementTestPayload | null = null;
+    try {
+      const data = await this.getTestPayloadForSession(sessionId);
+      testPayload = data.test;
+    } catch {
+      testPayload = canonicalPlacementTestPayload;
+    }
+
+    const answers = session.answers || {};
+    const res = (session.result || {}) as any;
+    const teacherReview = res.teacherReview || {};
+
+    const questionBreakdown: any[] = [];
+    if (testPayload) {
+      const allObjectiveQuestions = [
+        ...testPayload.skills.listening.questions.map((q) => ({ ...q, skill: "listening" })),
+        ...testPayload.skills.reading.questions.map((q) => ({ ...q, skill: "reading" })),
+        ...testPayload.skills.grammar.questions.map((q) => ({ ...q, skill: "grammar" })),
+      ];
+
+      allObjectiveQuestions.forEach((q) => {
+        const studentAns = answers[q.id];
+        const key = authoritativePlacementAnswerKeys[q.id];
+        const correctAnswer = key?.correctAnswer || "Chưa có đáp án mẫu";
+
+        let isCorrect = false;
+        if (studentAns != null && key) {
+          const normStudent = String(studentAns).trim().toLowerCase();
+          const normCorrect = String(key.correctAnswer).trim().toLowerCase();
+          isCorrect = normStudent === normCorrect;
+          if (!isCorrect && key.acceptedAnswers) {
+            isCorrect = key.acceptedAnswers.some((acc) => String(acc).trim().toLowerCase() === normStudent);
+          }
+        }
+
+        questionBreakdown.push({
+          id: q.id,
+          skill: q.skill,
+          sectionTitle: q.sectionTitle,
+          questionType: q.questionType,
+          prompt: q.prompt,
+          options: q.options,
+          studentAnswer: studentAns ?? null,
+          correctAnswer,
+          isCorrect,
+        });
+      });
+    }
+
+    return {
+      session: {
+        id: session.id,
+        examId: session.examId,
+        candidateName: session.candidateName,
+        phone: session.phone,
+        targetBand: session.targetBand,
+        status: session.status,
+        startedAt: session.startedAt,
+        submittedAt: session.submittedAt,
+        expiresAt: session.expiresAt,
+        createdAt: session.createdAt,
+        updatedAt: session.updatedAt,
+      },
+      answers,
+      result: res,
+      testPayload,
+      questionBreakdown,
+      teacherReview: {
+        gradingStatus: teacherReview.gradingStatus || (session.status === "SUBMITTED" ? "PENDING" : "IN_PROGRESS"),
+        assignedTeacher: teacherReview.assignedTeacher || "",
+        teacherNotes: teacherReview.teacherNotes || "",
+        zaloDraftFeedback: teacherReview.zaloDraftFeedback || "",
+        reviewedAt: teacherReview.reviewedAt || null,
+      },
+    };
+  }
+
+  /**
+   * 8. Admin: Update teacher grading status, assigned staff, and notes
+   */
+  public async updateAdminAssessmentSession(
+    sessionId: string,
+    updateData: {
+      gradingStatus?: "PENDING" | "IN_PROGRESS" | "GRADED_SENT_ZALO";
+      assignedTeacher?: string;
+      teacherNotes?: string;
+      zaloDraftFeedback?: string;
+    }
+  ): Promise<any> {
+    const session = await this.getSessionById(sessionId);
+    if (!session) {
+      const err = new Error("Phiên khảo thí không tồn tại");
+      (err as any).statusCode = 404;
+      throw err;
+    }
+
+    const currentResult = (session.result || {}) as any;
+    const currentReview = currentResult.teacherReview || {};
+
+    const updatedReview = {
+      ...currentReview,
+      gradingStatus: updateData.gradingStatus || currentReview.gradingStatus || "PENDING",
+      assignedTeacher: updateData.assignedTeacher !== undefined ? updateData.assignedTeacher : currentReview.assignedTeacher,
+      teacherNotes: updateData.teacherNotes !== undefined ? updateData.teacherNotes : currentReview.teacherNotes,
+      zaloDraftFeedback: updateData.zaloDraftFeedback !== undefined ? updateData.zaloDraftFeedback : currentReview.zaloDraftFeedback,
+      reviewedAt: new Date().toISOString(),
+    };
+
+    const newResult = {
+      ...currentResult,
+      teacherReview: updatedReview,
+    };
+
+    session.result = newResult;
+    session.updatedAt = new Date();
+    inMemoryAssessmentSessions.set(sessionId, session);
+
+    try {
+      if ((this.prisma as any).assessmentSession) {
+        await (this.prisma as any).assessmentSession.update({
+          where: { id: sessionId },
+          data: {
+            result: newResult,
+            updatedAt: session.updatedAt,
+          },
+        });
+      }
+    } catch (err) {
+      console.warn("[AssessmentService] Update session DB error:", err);
+    }
+
+    return {
+      success: true,
+      sessionId,
+      teacherReview: updatedReview,
+      updatedAt: session.updatedAt.toISOString(),
+    };
+  }
 }
 

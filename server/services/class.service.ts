@@ -209,4 +209,66 @@ export class ClassService {
 
     return { success: true, count: results.length, data: results };
   }
+
+  // Use Case: Set / Update Homework Deadline for a Class (Class-Level Override)
+  async setHomeworkDeadline(
+    user: { id: string; roles: string[] },
+    classId: string,
+    examId: string,
+    deadline: string | Date | null
+  ) {
+    const classData = await this.repo.findById(classId);
+    if (!classData) {
+      throw new NotFoundError("Không tìm thấy lớp học");
+    }
+
+    const isAdmin = user.roles.includes("admin");
+    if (!isAdmin && classData.teacherId !== user.id) {
+      throw new AuthorizationError("Từ chối truy cập - bạn không có quyền sửa deadline lớp này", 403);
+    }
+
+    const exam = await this.prisma.exam.findUnique({
+      where: { id: examId },
+    });
+    if (!exam) {
+      throw new NotFoundError("Không tìm thấy bài tập/bài thi");
+    }
+
+    const parsedDeadline = deadline ? new Date(deadline) : null;
+
+    // Find existing homework record or create one
+    const existingHw = await this.prisma.homework.findFirst({
+      where: { classId, examId },
+    });
+
+    let updatedHw;
+    if (existingHw) {
+      updatedHw = await this.prisma.homework.update({
+        where: { id: existingHw.id },
+        data: {
+          deadline: parsedDeadline,
+          status: "PUBLISHED",
+        },
+      });
+    } else {
+      updatedHw = await this.prisma.homework.create({
+        data: {
+          classId,
+          examId,
+          createdBy: user.id,
+          title: exam.title,
+          deadline: parsedDeadline,
+          status: "PUBLISHED",
+        },
+      });
+    }
+
+    return {
+      success: true,
+      classId,
+      examId,
+      deadline: updatedHw.deadline,
+      deadlineSource: updatedHw.deadline ? "MANUAL" : "AUTO",
+    };
+  }
 }

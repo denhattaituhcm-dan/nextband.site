@@ -118939,6 +118939,55 @@ var ClassService = class {
     }
     return { success: true, count: results.length, data: results };
   }
+  // Use Case: Set / Update Homework Deadline for a Class (Class-Level Override)
+  async setHomeworkDeadline(user, classId, examId, deadline) {
+    const classData = await this.repo.findById(classId);
+    if (!classData) {
+      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+    }
+    const isAdmin = user.roles.includes("admin");
+    if (!isAdmin && classData.teacherId !== user.id) {
+      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n s\u1EEDa deadline l\u1EDBp n\xE0y", 403);
+    }
+    const exam = await this.prisma.exam.findUnique({
+      where: { id: examId }
+    });
+    if (!exam) {
+      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y b\xE0i t\u1EADp/b\xE0i thi");
+    }
+    const parsedDeadline = deadline ? new Date(deadline) : null;
+    const existingHw = await this.prisma.homework.findFirst({
+      where: { classId, examId }
+    });
+    let updatedHw;
+    if (existingHw) {
+      updatedHw = await this.prisma.homework.update({
+        where: { id: existingHw.id },
+        data: {
+          deadline: parsedDeadline,
+          status: "PUBLISHED"
+        }
+      });
+    } else {
+      updatedHw = await this.prisma.homework.create({
+        data: {
+          classId,
+          examId,
+          createdBy: user.id,
+          title: exam.title,
+          deadline: parsedDeadline,
+          status: "PUBLISHED"
+        }
+      });
+    }
+    return {
+      success: true,
+      classId,
+      examId,
+      deadline: updatedHw.deadline,
+      deadlineSource: updatedHw.deadline ? "MANUAL" : "AUTO"
+    };
+  }
 };
 
 // server/schemas/class.schema.ts
@@ -119076,6 +119125,20 @@ var ClassController = class {
       return reply.status(status).send({ error: err.message });
     }
   }
+  async setHomeworkDeadline(request, reply) {
+    try {
+      const user = request.user;
+      const { examId, deadline } = request.body || {};
+      if (!examId) {
+        return reply.status(400).send({ error: "examId l\xE0 b\u1EAFt bu\u1ED9c" });
+      }
+      const result = await this.service.setHomeworkDeadline(user, request.params.id, examId, deadline);
+      return reply.send(result);
+    } catch (err) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
 };
 
 // server/routes/classes.routes.ts
@@ -119116,6 +119179,13 @@ async function classesRoutes(fastify) {
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       return controller.removeStudent(request, reply);
+    }
+  );
+  fastify.post(
+    "/:id/homework-deadline",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      return controller.setHomeworkDeadline(request, reply);
     }
   );
 }
@@ -119599,6 +119669,204 @@ var AttendanceService = class {
       students: matrix
     };
   }
+  // 5. System-wide Monthly Attendance Summary Aggregation (Multi-class Monthly Overview)
+  async getMonthlyAttendanceSummary(options) {
+    const { userId, userRoles } = options;
+    const isAdmin = userRoles.includes("admin");
+    const isTeacher = userRoles.includes("teacher");
+    const year = Number(options.year) || (/* @__PURE__ */ new Date()).getFullYear();
+    const monthParam = options.month !== void 0 ? String(options.month).toLowerCase() : "all";
+    const isFullYear = monthParam === "year" || monthParam === "all";
+    const specificMonth = !isFullYear ? Number(monthParam) : null;
+    const classFilter = { isActive: true };
+    if (options.classId) {
+      classFilter.id = options.classId;
+    }
+    if (isTeacher && !isAdmin) {
+      classFilter.teacherId = userId;
+    }
+    const classes = await this.prisma.class.findMany({
+      where: classFilter,
+      include: {
+        teacher: { select: { id: true, fullName: true, email: true } },
+        _count: { select: { students: { where: { deletedAt: null } } } }
+      },
+      orderBy: { name: "asc" }
+    });
+    const classIds = classes.map((c) => c.id);
+    if (classIds.length === 0) {
+      return {
+        year,
+        period: isFullYear ? "year" : String(specificMonth).padStart(2, "0"),
+        periodLabel: isFullYear ? `C\u1EA3 n\u0103m ${year}` : `Th\xE1ng ${specificMonth}/${year}`,
+        totalSessions: 0,
+        completedSessions: 0,
+        activeClassesCount: 0,
+        presentCount: 0,
+        lateCount: 0,
+        absentCount: 0,
+        excusedCount: 0,
+        unmarkedCount: 0,
+        totalPresent: 0,
+        totalAbsent: 0,
+        totalExcused: 0,
+        totalMarked: 0,
+        attendanceRate: 1,
+        byClass: [],
+        monthsSummary: Array.from({ length: 12 }, (_, i2) => ({
+          month: i2 + 1,
+          monthKey: String(i2 + 1).padStart(2, "0"),
+          totalSessions: 0,
+          completedSessions: 0,
+          presentCount: 0,
+          lateCount: 0,
+          absentCount: 0,
+          excusedCount: 0,
+          totalPresent: 0,
+          totalAbsent: 0,
+          totalExcused: 0,
+          attendanceRate: 1
+        }))
+      };
+    }
+    const yearStart = new Date(Date.UTC(year, 0, 1, 0, 0, 0, 0));
+    const yearEnd = new Date(Date.UTC(year, 11, 31, 23, 59, 59, 999));
+    const [allYearSessions, allYearAttendance] = await Promise.all([
+      this.prisma.classSession.findMany({
+        where: {
+          classId: { in: classIds },
+          plannedDate: { gte: yearStart, lte: yearEnd }
+        }
+      }),
+      this.prisma.classAttendance.findMany({
+        where: {
+          classId: { in: classIds },
+          sessionDate: { gte: yearStart, lte: yearEnd }
+        }
+      })
+    ]);
+    const monthsSummary = Array.from({ length: 12 }, (_, idx) => {
+      const mNum = idx + 1;
+      const mSessions = allYearSessions.filter((s2) => {
+        const d = new Date(s2.plannedDate);
+        return d.getUTCFullYear() === year && d.getUTCMonth() + 1 === mNum;
+      });
+      const mAttendance = allYearAttendance.filter((a) => {
+        const d = new Date(a.sessionDate);
+        return d.getUTCFullYear() === year && d.getUTCMonth() + 1 === mNum;
+      });
+      let present = 0;
+      let late2 = 0;
+      let absent = 0;
+      let excused = 0;
+      mAttendance.forEach((att) => {
+        if (att.status === "PRESENT") present++;
+        else if (att.status === "LATE") late2++;
+        else if (att.status === "ABSENT") absent++;
+        else if (att.status === "EXCUSED") excused++;
+      });
+      const totalPres = present + late2;
+      const validAttendance = totalPres + absent;
+      const rate = validAttendance > 0 ? Math.round(totalPres / validAttendance * 1e3) / 1e3 : 1;
+      return {
+        month: mNum,
+        monthKey: String(mNum).padStart(2, "0"),
+        totalSessions: mSessions.length,
+        completedSessions: mSessions.filter((s2) => s2.status === "COMPLETED").length,
+        presentCount: present,
+        lateCount: late2,
+        absentCount: absent,
+        excusedCount: excused,
+        totalPresent: totalPres,
+        totalAbsent: absent,
+        totalExcused: excused,
+        attendanceRate: rate
+      };
+    });
+    const targetSessions = isFullYear ? allYearSessions : allYearSessions.filter((s2) => {
+      const d = new Date(s2.plannedDate);
+      return d.getUTCFullYear() === year && d.getUTCMonth() + 1 === specificMonth;
+    });
+    const targetAttendance = isFullYear ? allYearAttendance : allYearAttendance.filter((a) => {
+      const d = new Date(a.sessionDate);
+      return d.getUTCFullYear() === year && d.getUTCMonth() + 1 === specificMonth;
+    });
+    let presentCount = 0;
+    let lateCount = 0;
+    let absentCount = 0;
+    let excusedCount = 0;
+    let unmarkedCount = 0;
+    targetAttendance.forEach((att) => {
+      if (att.status === "PRESENT") presentCount++;
+      else if (att.status === "LATE") lateCount++;
+      else if (att.status === "ABSENT") absentCount++;
+      else if (att.status === "EXCUSED") excusedCount++;
+      else unmarkedCount++;
+    });
+    const totalPresent = presentCount + lateCount;
+    const totalAbsent = absentCount;
+    const totalExcused = excusedCount;
+    const totalMarked = presentCount + lateCount + absentCount + excusedCount;
+    const validCount = totalPresent + totalAbsent;
+    const attendanceRate = validCount > 0 ? Math.round(totalPresent / validCount * 1e3) / 1e3 : 1;
+    const activeClassIdSet = /* @__PURE__ */ new Set([
+      ...targetSessions.map((s2) => s2.classId),
+      ...targetAttendance.map((a) => a.classId)
+    ]);
+    const byClass = classes.map((c) => {
+      const clsSessions = targetSessions.filter((s2) => s2.classId === c.id);
+      const clsAttendance = targetAttendance.filter((a) => a.classId === c.id);
+      let clsPresent = 0;
+      let clsLate = 0;
+      let clsAbsent = 0;
+      let clsExcused = 0;
+      clsAttendance.forEach((att) => {
+        if (att.status === "PRESENT") clsPresent++;
+        else if (att.status === "LATE") clsLate++;
+        else if (att.status === "ABSENT") clsAbsent++;
+        else if (att.status === "EXCUSED") clsExcused++;
+      });
+      const clsTotalPresent = clsPresent + clsLate;
+      const clsValid = clsTotalPresent + clsAbsent;
+      const clsRate = clsValid > 0 ? Math.round(clsTotalPresent / clsValid * 1e3) / 1e3 : 1;
+      return {
+        classId: c.id,
+        className: c.name,
+        teacherName: c.teacher?.fullName || c.teacher?.email || "Ch\u01B0a ph\xE2n c\xF4ng",
+        totalStudents: c._count.students,
+        totalSessions: clsSessions.length,
+        completedSessions: clsSessions.filter((s2) => s2.status === "COMPLETED").length,
+        presentCount: clsPresent,
+        lateCount: clsLate,
+        absentCount: clsAbsent,
+        excusedCount: clsExcused,
+        totalPresent: clsTotalPresent,
+        totalAbsent: clsAbsent,
+        totalExcused: clsExcused,
+        attendanceRate: clsRate
+      };
+    }).filter((c) => isFullYear || c.totalSessions > 0 || c.totalPresent > 0 || c.totalAbsent > 0);
+    return {
+      year,
+      period: isFullYear ? "year" : String(specificMonth).padStart(2, "0"),
+      periodLabel: isFullYear ? `C\u1EA3 n\u0103m ${year}` : `Th\xE1ng ${specificMonth}/${year}`,
+      totalSessions: targetSessions.length,
+      completedSessions: targetSessions.filter((s2) => s2.status === "COMPLETED").length,
+      activeClassesCount: activeClassIdSet.size > 0 ? activeClassIdSet.size : byClass.length,
+      presentCount,
+      lateCount,
+      absentCount,
+      excusedCount,
+      unmarkedCount,
+      totalPresent,
+      totalAbsent,
+      totalExcused,
+      totalMarked,
+      attendanceRate,
+      byClass,
+      monthsSummary
+    };
+  }
 };
 
 // server/routes/attendance.routes.ts
@@ -119854,6 +120122,32 @@ var attendanceRoutes = async (fastify) => {
           });
         }
         return reply.send(createdSessions);
+      } catch (err) {
+        if (err instanceof NotFoundError || err.statusCode === 404) {
+          return reply.status(404).send({ error: err.message });
+        }
+        if (err instanceof AuthorizationError || err.statusCode === 403) {
+          return reply.status(err.statusCode || 403).send({ error: err.message });
+        }
+        throw err;
+      }
+    }
+  );
+  fastify.get(
+    "/classes/attendance/monthly-summary",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      const user = request.user;
+      const { year, month, classId } = request.query || {};
+      try {
+        const data = await attendanceService.getMonthlyAttendanceSummary({
+          year: year ? Number(year) : void 0,
+          month: month !== void 0 ? month : void 0,
+          classId: classId || void 0,
+          userId: user.id,
+          userRoles: user.roles || ["student"]
+        });
+        return reply.send({ success: true, data });
       } catch (err) {
         if (err instanceof NotFoundError || err.statusCode === 404) {
           return reply.status(404).send({ error: err.message });
@@ -120138,6 +120432,16 @@ var invitationRoutes = async (fastify) => {
 };
 var invitation_routes_default = invitationRoutes;
 
+// server/utils/deadline.util.ts
+function calculateAutomaticDeadline(params) {
+  const baseDate = params.classStartDate ? new Date(params.classStartDate) : /* @__PURE__ */ new Date();
+  const order = Math.max(1, Math.floor(Number(params.lessonOrder) || 1));
+  const targetMs = baseDate.getTime() + order * 7 * 24 * 60 * 60 * 1e3;
+  const deadline = new Date(targetMs);
+  deadline.setHours(23, 59, 59, 999);
+  return deadline;
+}
+
 // server/services/lesson.service.ts
 var LessonService = class {
   constructor(prisma) {
@@ -120157,6 +120461,11 @@ var LessonService = class {
         name: true,
         courseId: true,
         teacherId: true,
+        startDate: true,
+        createdAt: true,
+        course: {
+          select: { title: true }
+        },
         students: !isTeacherOrAdmin ? {
           where: { studentId: userId },
           select: { id: true, status: true }
@@ -120179,8 +120488,9 @@ var LessonService = class {
     const courseId = classData.courseId;
     let exams = [];
     let submissions = [];
+    let manualHomeworks = [];
     if (courseId) {
-      const [fetchedExams, fetchedSubmissions] = await Promise.all([
+      const [fetchedExams, fetchedSubmissions, fetchedHomeworks] = await Promise.all([
         this.prisma.exam.findMany({
           where: { courseId, isPublished: true },
           orderBy: { week: "asc" },
@@ -120192,10 +120502,14 @@ var LessonService = class {
             exam: { courseId }
           },
           orderBy: { createdAt: "desc" }
+        }),
+        this.prisma.homework.findMany({
+          where: { classId }
         })
       ]);
       exams = fetchedExams;
       submissions = fetchedSubmissions;
+      manualHomeworks = fetchedHomeworks;
     }
     let completedCount = 0;
     const lessonsProjection = exams.map((exam, idx) => {
@@ -120203,20 +120517,35 @@ var LessonService = class {
       const isGraded = sub?.status === "GRADED" || sub?.status === "graded";
       const isSubmitted = sub?.status === "SUBMITTED" || sub?.status === "submitted" || isGraded;
       if (isGraded) completedCount++;
+      const lessonOrder = exam.week || idx + 1;
+      const customHw = manualHomeworks.find((h2) => h2.examId === exam.id || h2.lessonId === exam.id);
+      let effectiveDeadline = null;
+      let deadlineSource = "NONE";
+      if (customHw?.deadline) {
+        effectiveDeadline = new Date(customHw.deadline);
+        deadlineSource = "MANUAL";
+      } else {
+        effectiveDeadline = calculateAutomaticDeadline({
+          classStartDate: classData.startDate || classData.createdAt,
+          lessonOrder
+        });
+        deadlineSource = "AUTO";
+      }
       return {
         id: exam.id,
         title: exam.title,
         description: exam.description || null,
-        lessonOrder: exam.week || idx + 1,
+        lessonOrder,
         estimatedMinutes: exam.durationMinutes || 60,
         status: exam.isPublished ? "PUBLISHED" : "DRAFT",
         sessionDate: null,
-        sessionNumber: exam.week || idx + 1,
+        sessionNumber: lessonOrder,
         resources: [],
         homework: {
           id: exam.id,
           title: exam.title,
-          deadline: null,
+          deadline: effectiveDeadline,
+          deadlineSource,
           status: sub ? String(sub.status).toUpperCase() : "NOT_STARTED",
           score: sub?.totalScore != null ? Number(sub.totalScore) : null
         },
@@ -121756,7 +122085,7 @@ var AssessmentService = class {
           } catch {
           }
         } else if (q.questionText) {
-          const m2 = q.questionText.match(/\[BLANK(?:_\d+)?\]/g);
+          const m2 = q.questionText.match(/(?:\[BLANK(?:_\d+)?\]|\[\d+\])/gi);
           if (m2 && m2.length > 0) blankCount = m2.length;
         }
       }
@@ -122329,6 +122658,242 @@ var AssessmentService = class {
     }
     return report;
   }
+  /**
+   * 6. Admin: List all assessment sessions with pagination, search, and status filter
+   */
+  async listAdminAssessmentSessions(params) {
+    const page = Math.max(1, Number(params.page) || 1);
+    const limit = Math.min(100, Math.max(1, Number(params.limit) || 20));
+    const skip = (page - 1) * limit;
+    let dbItems = [];
+    let totalCount = 0;
+    try {
+      if (this.prisma.assessmentSession) {
+        const whereClause = {};
+        if (params.status && params.status !== "ALL") {
+          whereClause.status = params.status;
+        }
+        if (params.search && params.search.trim()) {
+          const q = params.search.trim();
+          whereClause.OR = [
+            { fullName: { contains: q, mode: "insensitive" } },
+            { phone: { contains: q, mode: "insensitive" } },
+            { id: { contains: q, mode: "insensitive" } }
+          ];
+        }
+        totalCount = await this.prisma.assessmentSession.count({ where: whereClause });
+        dbItems = await this.prisma.assessmentSession.findMany({
+          where: whereClause,
+          orderBy: { createdAt: "desc" },
+          skip,
+          take: limit
+        });
+      }
+    } catch (err) {
+      console.warn("[AssessmentService] listAdminAssessmentSessions DB fetch notice:", err);
+    }
+    if (dbItems.length === 0 && inMemoryAssessmentSessions.size > 0) {
+      const allMem = Array.from(inMemoryAssessmentSessions.values()).sort(
+        (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+      );
+      const filtered = allMem.filter((item) => {
+        if (params.status && params.status !== "ALL" && item.status !== params.status) return false;
+        if (params.search && params.search.trim()) {
+          const q = params.search.trim().toLowerCase();
+          const matchName = item.candidateName.toLowerCase().includes(q);
+          const matchPhone = item.phone.toLowerCase().includes(q);
+          const matchId = item.id.toLowerCase().includes(q);
+          if (!matchName && !matchPhone && !matchId) return false;
+        }
+        return true;
+      });
+      totalCount = filtered.length;
+      dbItems = filtered.slice(skip, skip + limit).map((m2) => ({
+        id: m2.id,
+        examId: m2.examId,
+        fullName: m2.candidateName,
+        phone: m2.phone,
+        targetBand: m2.targetBand,
+        status: m2.status,
+        answers: m2.answers,
+        result: m2.result,
+        startedAt: m2.startedAt,
+        submittedAt: m2.submittedAt,
+        expiresAt: m2.expiresAt,
+        createdAt: m2.createdAt,
+        updatedAt: m2.updatedAt
+      }));
+    }
+    const items = dbItems.map((db) => {
+      const res = db.result || {};
+      const answers = db.answers || {};
+      const teacherReview = res.teacherReview || {};
+      const hasWriting = typeof answers["writing_response"] === "string" && answers["writing_response"].trim().length >= 10;
+      const writingLength = typeof answers["writing_response"] === "string" ? answers["writing_response"].trim().length : 0;
+      const hasSpeaking = !!answers["speaking_audio_url"] || !!answers["speaking_completed"];
+      let gradingStatus = teacherReview.gradingStatus;
+      if (!gradingStatus) {
+        gradingStatus = db.status === "SUBMITTED" ? "PENDING" : "IN_PROGRESS";
+      }
+      return {
+        id: db.id,
+        examId: db.examId,
+        candidateName: db.fullName || db.candidateName,
+        phone: db.phone,
+        targetBand: db.targetBand || "Ch\u01B0a x\xE1c \u0111\u1ECBnh",
+        status: db.status,
+        objectiveScore: res.objectiveBreakdown || null,
+        arisLevel: res.arisLevel || null,
+        hasWriting,
+        writingLength,
+        hasSpeaking,
+        gradingStatus,
+        assignedTeacher: teacherReview.assignedTeacher || null,
+        teacherNotes: teacherReview.teacherNotes || null,
+        zaloDraftFeedback: teacherReview.zaloDraftFeedback || null,
+        startedAt: db.startedAt || db.createdAt,
+        submittedAt: db.submittedAt || null,
+        createdAt: db.createdAt,
+        updatedAt: db.updatedAt
+      };
+    });
+    let finalItems = items;
+    if (params.gradingStatus && params.gradingStatus !== "ALL") {
+      finalItems = items.filter((i2) => i2.gradingStatus === params.gradingStatus);
+    }
+    return {
+      items: finalItems,
+      pagination: {
+        total: totalCount,
+        page,
+        limit,
+        totalPages: Math.ceil(totalCount / limit) || 1
+      }
+    };
+  }
+  /**
+   * 7. Admin: Get full submission details including raw answers, question breakdown, and audio recordings
+   */
+  async getAdminAssessmentSessionDetail(sessionId) {
+    const session = await this.getSessionById(sessionId);
+    if (!session) return null;
+    let testPayload = null;
+    try {
+      const data = await this.getTestPayloadForSession(sessionId);
+      testPayload = data.test;
+    } catch {
+      testPayload = canonicalPlacementTestPayload;
+    }
+    const answers = session.answers || {};
+    const res = session.result || {};
+    const teacherReview = res.teacherReview || {};
+    const questionBreakdown = [];
+    if (testPayload) {
+      const allObjectiveQuestions = [
+        ...testPayload.skills.listening.questions.map((q) => ({ ...q, skill: "listening" })),
+        ...testPayload.skills.reading.questions.map((q) => ({ ...q, skill: "reading" })),
+        ...testPayload.skills.grammar.questions.map((q) => ({ ...q, skill: "grammar" }))
+      ];
+      allObjectiveQuestions.forEach((q) => {
+        const studentAns = answers[q.id];
+        const key = authoritativePlacementAnswerKeys[q.id];
+        const correctAnswer = key?.correctAnswer || "Ch\u01B0a c\xF3 \u0111\xE1p \xE1n m\u1EABu";
+        let isCorrect = false;
+        if (studentAns != null && key) {
+          const normStudent = String(studentAns).trim().toLowerCase();
+          const normCorrect = String(key.correctAnswer).trim().toLowerCase();
+          isCorrect = normStudent === normCorrect;
+          if (!isCorrect && key.acceptedAnswers) {
+            isCorrect = key.acceptedAnswers.some((acc) => String(acc).trim().toLowerCase() === normStudent);
+          }
+        }
+        questionBreakdown.push({
+          id: q.id,
+          skill: q.skill,
+          sectionTitle: q.sectionTitle,
+          questionType: q.questionType,
+          prompt: q.prompt,
+          options: q.options,
+          studentAnswer: studentAns ?? null,
+          correctAnswer,
+          isCorrect
+        });
+      });
+    }
+    return {
+      session: {
+        id: session.id,
+        examId: session.examId,
+        candidateName: session.candidateName,
+        phone: session.phone,
+        targetBand: session.targetBand,
+        status: session.status,
+        startedAt: session.startedAt,
+        submittedAt: session.submittedAt,
+        expiresAt: session.expiresAt,
+        createdAt: session.createdAt,
+        updatedAt: session.updatedAt
+      },
+      answers,
+      result: res,
+      testPayload,
+      questionBreakdown,
+      teacherReview: {
+        gradingStatus: teacherReview.gradingStatus || (session.status === "SUBMITTED" ? "PENDING" : "IN_PROGRESS"),
+        assignedTeacher: teacherReview.assignedTeacher || "",
+        teacherNotes: teacherReview.teacherNotes || "",
+        zaloDraftFeedback: teacherReview.zaloDraftFeedback || "",
+        reviewedAt: teacherReview.reviewedAt || null
+      }
+    };
+  }
+  /**
+   * 8. Admin: Update teacher grading status, assigned staff, and notes
+   */
+  async updateAdminAssessmentSession(sessionId, updateData) {
+    const session = await this.getSessionById(sessionId);
+    if (!session) {
+      const err = new Error("Phi\xEAn kh\u1EA3o th\xED kh\xF4ng t\u1ED3n t\u1EA1i");
+      err.statusCode = 404;
+      throw err;
+    }
+    const currentResult = session.result || {};
+    const currentReview = currentResult.teacherReview || {};
+    const updatedReview = {
+      ...currentReview,
+      gradingStatus: updateData.gradingStatus || currentReview.gradingStatus || "PENDING",
+      assignedTeacher: updateData.assignedTeacher !== void 0 ? updateData.assignedTeacher : currentReview.assignedTeacher,
+      teacherNotes: updateData.teacherNotes !== void 0 ? updateData.teacherNotes : currentReview.teacherNotes,
+      zaloDraftFeedback: updateData.zaloDraftFeedback !== void 0 ? updateData.zaloDraftFeedback : currentReview.zaloDraftFeedback,
+      reviewedAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    const newResult = {
+      ...currentResult,
+      teacherReview: updatedReview
+    };
+    session.result = newResult;
+    session.updatedAt = /* @__PURE__ */ new Date();
+    inMemoryAssessmentSessions.set(sessionId, session);
+    try {
+      if (this.prisma.assessmentSession) {
+        await this.prisma.assessmentSession.update({
+          where: { id: sessionId },
+          data: {
+            result: newResult,
+            updatedAt: session.updatedAt
+          }
+        });
+      }
+    } catch (err) {
+      console.warn("[AssessmentService] Update session DB error:", err);
+    }
+    return {
+      success: true,
+      sessionId,
+      teacherReview: updatedReview,
+      updatedAt: session.updatedAt.toISOString()
+    };
+  }
 };
 
 // server/routes/assessment.routes.ts
@@ -122537,6 +123102,80 @@ var assessmentRoutes = async (fastify) => {
     }
     return reply.send(session.result);
   });
+  fastify.get(
+    "/admin/sessions",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      try {
+        const query = request.query || {};
+        const result = await assessmentService.listAdminAssessmentSessions({
+          page: query.page ? parseInt(query.page, 10) : 1,
+          limit: query.limit ? parseInt(query.limit, 10) : 20,
+          search: query.search,
+          status: query.status,
+          gradingStatus: query.gradingStatus
+        });
+        return reply.send({
+          success: true,
+          data: result.items,
+          pagination: result.pagination
+        });
+      } catch (err) {
+        request.log.error(err, "Failed to list admin assessment sessions");
+        return reply.status(500).send({
+          success: false,
+          error: err.message || "Kh\xF4ng th\u1EC3 t\u1EA3i danh s\xE1ch b\xE0i kh\u1EA3o th\xED"
+        });
+      }
+    }
+  );
+  fastify.get(
+    "/admin/sessions/:id",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      try {
+        const { id } = request.params;
+        const detail = await assessmentService.getAdminAssessmentSessionDetail(id);
+        if (!detail) {
+          return reply.status(404).send({
+            success: false,
+            error: "Kh\xF4ng t\xECm th\u1EA5y b\xE0i kh\u1EA3o th\xED"
+          });
+        }
+        return reply.send({
+          success: true,
+          data: detail
+        });
+      } catch (err) {
+        request.log.error(err, "Failed to get admin assessment session detail");
+        return reply.status(500).send({
+          success: false,
+          error: err.message || "Kh\xF4ng th\u1EC3 t\u1EA3i chi ti\u1EBFt b\xE0i kh\u1EA3o th\xED"
+        });
+      }
+    }
+  );
+  fastify.patch(
+    "/admin/sessions/:id",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      try {
+        const { id } = request.params;
+        const updateResult = await assessmentService.updateAdminAssessmentSession(id, request.body || {});
+        return reply.send({
+          success: true,
+          data: updateResult
+        });
+      } catch (err) {
+        request.log.error(err, "Failed to update admin assessment session");
+        const status = err.statusCode || 500;
+        return reply.status(status).send({
+          success: false,
+          error: err.message || "Kh\xF4ng th\u1EC3 c\u1EADp nh\u1EADt b\xE0i kh\u1EA3o th\xED"
+        });
+      }
+    }
+  );
 };
 var assessment_routes_default = assessmentRoutes;
 

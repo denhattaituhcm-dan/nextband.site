@@ -429,4 +429,247 @@ export class AttendanceService {
       students: matrix,
     };
   }
+
+  // 5. System-wide Monthly Attendance Summary Aggregation (Multi-class Monthly Overview)
+  async getMonthlyAttendanceSummary(options: {
+    year?: number;
+    month?: string | number;
+    classId?: string;
+    userId: string;
+    userRoles: string[];
+  }) {
+    const { userId, userRoles } = options;
+    const isAdmin = userRoles.includes('admin');
+    const isTeacher = userRoles.includes('teacher');
+
+    const year = Number(options.year) || new Date().getFullYear();
+    const monthParam = options.month !== undefined ? String(options.month).toLowerCase() : 'all';
+    const isFullYear = monthParam === 'year' || monthParam === 'all';
+    const specificMonth = !isFullYear ? Number(monthParam) : null;
+
+    // Role-based filtering: If teacher and not admin, only show classes assigned to this teacher
+    const classFilter: any = { isActive: true };
+    if (options.classId) {
+      classFilter.id = options.classId;
+    }
+    if (isTeacher && !isAdmin) {
+      classFilter.teacherId = userId;
+    }
+
+    // Get all relevant classes
+    const classes = await this.prisma.class.findMany({
+      where: classFilter,
+      include: {
+        teacher: { select: { id: true, fullName: true, email: true } },
+        _count: { select: { students: { where: { deletedAt: null } } } },
+      },
+      orderBy: { name: 'asc' },
+    });
+
+    const classIds = classes.map((c) => c.id);
+
+    // If no classes match, return empty metrics
+    if (classIds.length === 0) {
+      return {
+        year,
+        period: isFullYear ? 'year' : String(specificMonth).padStart(2, '0'),
+        periodLabel: isFullYear ? `Cả năm ${year}` : `Tháng ${specificMonth}/${year}`,
+        totalSessions: 0,
+        completedSessions: 0,
+        activeClassesCount: 0,
+        presentCount: 0,
+        lateCount: 0,
+        absentCount: 0,
+        excusedCount: 0,
+        unmarkedCount: 0,
+        totalPresent: 0,
+        totalAbsent: 0,
+        totalExcused: 0,
+        totalMarked: 0,
+        attendanceRate: 1.0,
+        byClass: [],
+        monthsSummary: Array.from({ length: 12 }, (_, i) => ({
+          month: i + 1,
+          monthKey: String(i + 1).padStart(2, '0'),
+          totalSessions: 0,
+          completedSessions: 0,
+          presentCount: 0,
+          lateCount: 0,
+          absentCount: 0,
+          excusedCount: 0,
+          totalPresent: 0,
+          totalAbsent: 0,
+          totalExcused: 0,
+          attendanceRate: 1.0,
+        })),
+      };
+    }
+
+    // Fetch all sessions in the whole year for 12-month summary + current period
+    const yearStart = new Date(Date.UTC(year, 0, 1, 0, 0, 0, 0));
+    const yearEnd = new Date(Date.UTC(year, 11, 31, 23, 59, 59, 999));
+
+    const [allYearSessions, allYearAttendance] = await Promise.all([
+      this.prisma.classSession.findMany({
+        where: {
+          classId: { in: classIds },
+          plannedDate: { gte: yearStart, lte: yearEnd },
+        },
+      }),
+      this.prisma.classAttendance.findMany({
+        where: {
+          classId: { in: classIds },
+          sessionDate: { gte: yearStart, lte: yearEnd },
+        },
+      }),
+    ]);
+
+    // Build 12-month summary breakdown
+    const monthsSummary = Array.from({ length: 12 }, (_, idx) => {
+      const mNum = idx + 1;
+      const mSessions = allYearSessions.filter((s) => {
+        const d = new Date(s.plannedDate);
+        return d.getUTCFullYear() === year && d.getUTCMonth() + 1 === mNum;
+      });
+      const mAttendance = allYearAttendance.filter((a) => {
+        const d = new Date(a.sessionDate);
+        return d.getUTCFullYear() === year && d.getUTCMonth() + 1 === mNum;
+      });
+
+      let present = 0;
+      let late = 0;
+      let absent = 0;
+      let excused = 0;
+
+      mAttendance.forEach((att) => {
+        if (att.status === 'PRESENT') present++;
+        else if (att.status === 'LATE') late++;
+        else if (att.status === 'ABSENT') absent++;
+        else if (att.status === 'EXCUSED') excused++;
+      });
+
+      const totalPres = present + late;
+      const validAttendance = totalPres + absent;
+      const rate = validAttendance > 0 ? Math.round((totalPres / validAttendance) * 1000) / 1000 : 1.0;
+
+      return {
+        month: mNum,
+        monthKey: String(mNum).padStart(2, '0'),
+        totalSessions: mSessions.length,
+        completedSessions: mSessions.filter((s) => s.status === 'COMPLETED').length,
+        presentCount: present,
+        lateCount: late,
+        absentCount: absent,
+        excusedCount: excused,
+        totalPresent: totalPres,
+        totalAbsent: absent,
+        totalExcused: excused,
+        attendanceRate: rate,
+      };
+    });
+
+    // Filter sessions and attendance for the requested period
+    const targetSessions = isFullYear
+      ? allYearSessions
+      : allYearSessions.filter((s) => {
+          const d = new Date(s.plannedDate);
+          return d.getUTCFullYear() === year && d.getUTCMonth() + 1 === specificMonth;
+        });
+
+    const targetAttendance = isFullYear
+      ? allYearAttendance
+      : allYearAttendance.filter((a) => {
+          const d = new Date(a.sessionDate);
+          return d.getUTCFullYear() === year && d.getUTCMonth() + 1 === specificMonth;
+        });
+
+    let presentCount = 0;
+    let lateCount = 0;
+    let absentCount = 0;
+    let excusedCount = 0;
+    let unmarkedCount = 0;
+
+    targetAttendance.forEach((att) => {
+      if (att.status === 'PRESENT') presentCount++;
+      else if (att.status === 'LATE') lateCount++;
+      else if (att.status === 'ABSENT') absentCount++;
+      else if (att.status === 'EXCUSED') excusedCount++;
+      else unmarkedCount++;
+    });
+
+    const totalPresent = presentCount + lateCount;
+    const totalAbsent = absentCount;
+    const totalExcused = excusedCount;
+    const totalMarked = presentCount + lateCount + absentCount + excusedCount;
+    const validCount = totalPresent + totalAbsent;
+    const attendanceRate = validCount > 0 ? Math.round((totalPresent / validCount) * 1000) / 1000 : 1.0;
+
+    // Active classes in the period (classes with sessions or attendance)
+    const activeClassIdSet = new Set([
+      ...targetSessions.map((s) => s.classId),
+      ...targetAttendance.map((a) => a.classId),
+    ]);
+
+    // Breakdown by Class
+    const byClass = classes
+      .map((c) => {
+        const clsSessions = targetSessions.filter((s) => s.classId === c.id);
+        const clsAttendance = targetAttendance.filter((a) => a.classId === c.id);
+
+        let clsPresent = 0;
+        let clsLate = 0;
+        let clsAbsent = 0;
+        let clsExcused = 0;
+
+        clsAttendance.forEach((att) => {
+          if (att.status === 'PRESENT') clsPresent++;
+          else if (att.status === 'LATE') clsLate++;
+          else if (att.status === 'ABSENT') clsAbsent++;
+          else if (att.status === 'EXCUSED') clsExcused++;
+        });
+
+        const clsTotalPresent = clsPresent + clsLate;
+        const clsValid = clsTotalPresent + clsAbsent;
+        const clsRate = clsValid > 0 ? Math.round((clsTotalPresent / clsValid) * 1000) / 1000 : 1.0;
+
+        return {
+          classId: c.id,
+          className: c.name,
+          teacherName: c.teacher?.fullName || c.teacher?.email || 'Chưa phân công',
+          totalStudents: c._count.students,
+          totalSessions: clsSessions.length,
+          completedSessions: clsSessions.filter((s) => s.status === 'COMPLETED').length,
+          presentCount: clsPresent,
+          lateCount: clsLate,
+          absentCount: clsAbsent,
+          excusedCount: clsExcused,
+          totalPresent: clsTotalPresent,
+          totalAbsent: clsAbsent,
+          totalExcused: clsExcused,
+          attendanceRate: clsRate,
+        };
+      })
+      .filter((c) => isFullYear || c.totalSessions > 0 || c.totalPresent > 0 || c.totalAbsent > 0);
+
+    return {
+      year,
+      period: isFullYear ? 'year' : String(specificMonth).padStart(2, '0'),
+      periodLabel: isFullYear ? `Cả năm ${year}` : `Tháng ${specificMonth}/${year}`,
+      totalSessions: targetSessions.length,
+      completedSessions: targetSessions.filter((s) => s.status === 'COMPLETED').length,
+      activeClassesCount: activeClassIdSet.size > 0 ? activeClassIdSet.size : byClass.length,
+      presentCount,
+      lateCount,
+      absentCount,
+      excusedCount,
+      unmarkedCount,
+      totalPresent,
+      totalAbsent,
+      totalExcused,
+      totalMarked,
+      attendanceRate,
+      byClass,
+      monthsSummary,
+    };
+  }
 }

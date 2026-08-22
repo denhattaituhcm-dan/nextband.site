@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { ClassRepository } from '../repositories/class.repository.js';
 import { AuthorizationService, AuthorizationError, NotFoundError } from './authorization.service.js';
+import { calculateAutomaticDeadline, DeadlineSource } from '../utils/deadline.util.js';
 
 export interface StudentLessonProgressDTO {
   sessionCompleted: boolean;
@@ -28,6 +29,7 @@ export interface StudentLessonItemDTO {
     id: string;
     title: string;
     deadline: Date | null;
+    deadlineSource?: DeadlineSource;
     status: string;
     score: number | null;
   } | null;
@@ -69,6 +71,11 @@ export class LessonService {
         name: true,
         courseId: true,
         teacherId: true,
+        startDate: true,
+        createdAt: true,
+        course: {
+          select: { title: true },
+        },
         students: !isTeacherOrAdmin
           ? {
               where: { studentId: userId },
@@ -93,13 +100,14 @@ export class LessonService {
       }
     }
 
-    // 2. Parallel Fetch: Course Exams & Student Submissions (Runs simultaneously without sequential wait)
+    // 2. Parallel Fetch: Course Exams, Student Submissions & Manual Homework overrides
     const courseId = classData.courseId;
     let exams: any[] = [];
     let submissions: any[] = [];
+    let manualHomeworks: any[] = [];
 
     if (courseId) {
-      const [fetchedExams, fetchedSubmissions] = await Promise.all([
+      const [fetchedExams, fetchedSubmissions, fetchedHomeworks] = await Promise.all([
         this.prisma.exam.findMany({
           where: { courseId, isPublished: true },
           orderBy: { week: 'asc' },
@@ -112,9 +120,13 @@ export class LessonService {
           },
           orderBy: { createdAt: 'desc' },
         }),
+        this.prisma.homework.findMany({
+          where: { classId },
+        }),
       ]);
       exams = fetchedExams;
       submissions = fetchedSubmissions;
+      manualHomeworks = fetchedHomeworks;
     }
 
     let completedCount = 0;
@@ -126,20 +138,38 @@ export class LessonService {
 
       if (isGraded) completedCount++;
 
+      const lessonOrder = exam.week || (idx + 1);
+      const customHw = manualHomeworks.find((h: any) => h.examId === exam.id || h.lessonId === exam.id);
+
+      let effectiveDeadline: Date | null = null;
+      let deadlineSource: DeadlineSource = "NONE";
+
+      if (customHw?.deadline) {
+        effectiveDeadline = new Date(customHw.deadline);
+        deadlineSource = "MANUAL";
+      } else {
+        effectiveDeadline = calculateAutomaticDeadline({
+          classStartDate: classData.startDate || classData.createdAt,
+          lessonOrder,
+        });
+        deadlineSource = "AUTO";
+      }
+
       return {
         id: exam.id,
         title: exam.title,
         description: exam.description || null,
-        lessonOrder: exam.week || (idx + 1),
+        lessonOrder,
         estimatedMinutes: exam.durationMinutes || 60,
         status: exam.isPublished ? 'PUBLISHED' : 'DRAFT',
         sessionDate: null,
-        sessionNumber: exam.week || (idx + 1),
+        sessionNumber: lessonOrder,
         resources: [],
         homework: {
           id: exam.id,
           title: exam.title,
-          deadline: null,
+          deadline: effectiveDeadline,
+          deadlineSource,
           status: sub ? String(sub.status).toUpperCase() : 'NOT_STARTED',
           score: sub?.totalScore != null ? Number(sub.totalScore) : null,
         },

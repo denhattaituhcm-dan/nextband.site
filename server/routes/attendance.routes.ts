@@ -302,6 +302,35 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify: any) => {
       }
     },
   );
+
+  // 8. GET /classes/attendance/monthly-summary - Thống kê điểm danh theo tháng/năm toàn hệ thống
+  fastify.get(
+    '/classes/attendance/monthly-summary',
+    { preHandler: [authenticate] },
+    async (request: any, reply: any) => {
+      const user = request.user;
+      const { year, month, classId } = request.query || {};
+
+      try {
+        const data = await attendanceService.getMonthlyAttendanceSummary({
+          year: year ? Number(year) : undefined,
+          month: month !== undefined ? month : undefined,
+          classId: classId || undefined,
+          userId: user.id,
+          userRoles: user.roles || ['student'],
+        });
+        return reply.send({ success: true, data });
+      } catch (err: any) {
+        if (err instanceof NotFoundError || err.statusCode === 404) {
+          return reply.status(404).send({ error: err.message });
+        }
+        if (err instanceof AuthorizationError || err.statusCode === 403) {
+          return reply.status(err.statusCode || 403).send({ error: err.message });
+        }
+        throw err;
+      }
+    },
+  );
 };
 
 export default attendanceRoutes;

@@ -1,6 +1,7 @@
 import { FastifyPluginAsync, FastifyRequest, FastifyReply } from "fastify";
 import { AssessmentService } from "../services/assessment.service.js";
 import { env } from "../config/env.js";
+import { authenticate, requireRoles } from "../middlewares/auth.middleware.js";
 
 interface CreateSessionBody {
   fullName: string;
@@ -276,6 +277,111 @@ const assessmentRoutes: FastifyPluginAsync = async (fastify) => {
 
     return reply.send(session.result);
   });
+
+  /**
+   * GET /assessment/admin/sessions - Admin/Teacher list all assessment sessions
+   */
+  fastify.get(
+    "/admin/sessions",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      try {
+        const query = (request.query || {}) as {
+          page?: string;
+          limit?: string;
+          search?: string;
+          status?: string;
+          gradingStatus?: string;
+        };
+
+        const result = await assessmentService.listAdminAssessmentSessions({
+          page: query.page ? parseInt(query.page, 10) : 1,
+          limit: query.limit ? parseInt(query.limit, 10) : 20,
+          search: query.search,
+          status: query.status,
+          gradingStatus: query.gradingStatus,
+        });
+
+        return reply.send({
+          success: true,
+          data: result.items,
+          pagination: result.pagination,
+        });
+      } catch (err: any) {
+        request.log.error(err, "Failed to list admin assessment sessions");
+        return reply.status(500).send({
+          success: false,
+          error: err.message || "Không thể tải danh sách bài khảo thí",
+        });
+      }
+    }
+  );
+
+  /**
+   * GET /assessment/admin/sessions/:id - Admin/Teacher get full candidate test submission detail
+   */
+  fastify.get<{ Params: { id: string } }>(
+    "/admin/sessions/:id",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      try {
+        const { id } = request.params;
+        const detail = await assessmentService.getAdminAssessmentSessionDetail(id);
+
+        if (!detail) {
+          return reply.status(404).send({
+            success: false,
+            error: "Không tìm thấy bài khảo thí",
+          });
+        }
+
+        return reply.send({
+          success: true,
+          data: detail,
+        });
+      } catch (err: any) {
+        request.log.error(err, "Failed to get admin assessment session detail");
+        return reply.status(500).send({
+          success: false,
+          error: err.message || "Không thể tải chi tiết bài khảo thí",
+        });
+      }
+    }
+  );
+
+  /**
+   * PATCH /assessment/admin/sessions/:id - Admin/Teacher update grading status and feedback notes
+   */
+  fastify.patch<{
+    Params: { id: string };
+    Body: {
+      gradingStatus?: "PENDING" | "IN_PROGRESS" | "GRADED_SENT_ZALO";
+      assignedTeacher?: string;
+      teacherNotes?: string;
+      zaloDraftFeedback?: string;
+    };
+  }>(
+    "/admin/sessions/:id",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      try {
+        const { id } = request.params;
+        const updateResult = await assessmentService.updateAdminAssessmentSession(id, request.body || {});
+
+        return reply.send({
+          success: true,
+          data: updateResult,
+        });
+      } catch (err: any) {
+        request.log.error(err, "Failed to update admin assessment session");
+        const status = err.statusCode || 500;
+        return reply.status(status).send({
+          success: false,
+          error: err.message || "Không thể cập nhật bài khảo thí",
+        });
+      }
+    }
+  );
 };
 
 export default assessmentRoutes;
