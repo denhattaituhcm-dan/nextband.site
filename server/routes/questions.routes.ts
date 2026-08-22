@@ -193,31 +193,40 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
     return !!existing;
   };
 
-  const isExamArchivedBySectionId = async (sectionId: string) => {
+  const isExamArchivedBySectionId = async (sectionId: string, isAdmin: boolean = false) => {
     const section = await fastify.prisma.examSection.findUnique({
       where: { id: sectionId },
       include: { exam: { select: { isActive: true, isLocked: true } } },
     });
     const exam = section?.exam;
-    return Boolean(exam && (exam.isActive === false || exam.isLocked === true));
+    if (!exam) return false;
+    if (exam.isActive === false) return true;
+    if (exam.isLocked && !isAdmin) return true;
+    return false;
   };
 
-  const isExamArchivedByGroupId = async (groupId: string) => {
+  const isExamArchivedByGroupId = async (groupId: string, isAdmin: boolean = false) => {
     const group = await fastify.prisma.questionGroup.findUnique({
       where: { id: groupId },
       include: { section: { include: { exam: { select: { isActive: true, isLocked: true } } } } },
     });
     const exam = group?.section?.exam;
-    return Boolean(exam && (exam.isActive === false || exam.isLocked === true));
+    if (!exam) return false;
+    if (exam.isActive === false) return true;
+    if (exam.isLocked && !isAdmin) return true;
+    return false;
   };
 
-  const isExamArchivedByQuestionId = async (questionId: string) => {
+  const isExamArchivedByQuestionId = async (questionId: string, isAdmin: boolean = false) => {
     const question = await fastify.prisma.question.findUnique({
       where: { id: questionId },
       include: { group: { include: { section: { include: { exam: { select: { isActive: true, isLocked: true } } } } } } },
     });
     const exam = question?.group?.section?.exam;
-    return Boolean(exam && (exam.isActive === false || exam.isLocked === true));
+    if (!exam) return false;
+    if (exam.isActive === false) return true;
+    if (exam.isLocked && !isAdmin) return true;
+    return false;
   };
 
   // ============ Question Groups ============
@@ -248,7 +257,8 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
         throw err;
       }
 
-      if (await isExamArchivedBySectionId(data.sectionId)) {
+      const isAdmin = request.user.roles.includes("admin");
+      if (await isExamArchivedBySectionId(data.sectionId, isAdmin)) {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",
           message: "Đề thi đã lưu trữ hoặc bị khóa, không thể tạo nhóm câu hỏi mới.",
@@ -290,7 +300,8 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
         throw err;
       }
 
-      if (await isExamArchivedByGroupId(id)) {
+      const isAdmin = request.user.roles.includes("admin");
+      if (await isExamArchivedByGroupId(id, isAdmin)) {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",
           message: "Đề thi đã lưu trữ hoặc bị khóa, không thể chỉnh sửa nhóm câu hỏi.",
@@ -313,7 +324,8 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
     async (request, reply) => {
       const { id } = request.params;
 
-      if (await isExamArchivedByGroupId(id)) {
+      const isAdmin = request.user.roles.includes("admin");
+      if (await isExamArchivedByGroupId(id, isAdmin)) {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",
           message: "Đề thi đã lưu trữ hoặc bị khóa, không thể xóa nhóm câu hỏi.",
@@ -353,7 +365,8 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
         throw err;
       }
 
-      if (await isExamArchivedByGroupId(data.groupId)) {
+      const isAdmin = request.user.roles.includes("admin");
+      if (await isExamArchivedByGroupId(data.groupId, isAdmin)) {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",
           message: "Đề thi đã lưu trữ hoặc bị khóa, không thể thêm câu hỏi mới.",
@@ -442,7 +455,8 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
         throw err;
       }
 
-      if (await isExamArchivedByQuestionId(id)) {
+      const isAdmin = request.user.roles.includes("admin");
+      if (await isExamArchivedByQuestionId(id, isAdmin)) {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",
           message: "Đề thi đã lưu trữ hoặc bị khóa, không thể chỉnh sửa câu hỏi.",
@@ -512,7 +526,8 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
     async (request, reply) => {
       const { id } = request.params;
 
-      if (await isExamArchivedByQuestionId(id)) {
+      const isAdmin = request.user.roles.includes("admin");
+      if (await isExamArchivedByQuestionId(id, isAdmin)) {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",
           message: "Đề thi đã lưu trữ hoặc bị khóa, không thể xóa câu hỏi.",
@@ -551,7 +566,8 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
         throw err;
       }
 
-      if (await isExamArchivedByGroupId(groupId)) {
+      const isAdmin = request.user.roles.includes("admin");
+      if (await isExamArchivedByGroupId(groupId, isAdmin)) {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",
           message: "Đề thi đã lưu trữ hoặc bị khóa, không thể thêm câu hỏi hàng loạt.",

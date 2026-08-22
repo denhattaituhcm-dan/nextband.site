@@ -273,11 +273,15 @@ export class AssessmentService {
         options = ["TRUE", "FALSE", "NOT GIVEN"];
       } else if (q.options) {
         if (Array.isArray(q.options)) {
-          options = q.options.filter((o: any) => typeof o === "string" && o.trim().length > 0);
+          options = q.options
+            .filter((o: any) => typeof o === "string" && o.trim().length > 0)
+            .map((o: string) => o.replace(/<\/?font[^>]*>/gi, "").trim());
           if (options.length === 0) options = undefined;
         } else if (typeof q.options === "object") {
           try {
-            options = Object.values(q.options).filter((o: any) => typeof o === "string" && o.trim().length > 0) as string[];
+            options = Object.values(q.options)
+              .filter((o: any) => typeof o === "string" && o.trim().length > 0)
+              .map((o: any) => String(o).replace(/<\/?font[^>]*>/gi, "").trim()) as string[];
             if (options.length === 0) options = undefined;
           } catch {}
         }
@@ -296,12 +300,17 @@ export class AssessmentService {
         }
       }
 
+      const cleanPrompt = (q.questionText || "")
+        .replace(/<\/?font[^>]*>/gi, "")
+        .replace(/font-family:[^;"]*;?/gi, "")
+        .trim();
+
       return {
         id: q.id,
         skill,
         sectionTitle: q.group?.title || defaultSectionTitle,
         questionType: q.questionType,
-        prompt: q.questionText || "",
+        prompt: cleanPrompt,
         audioUrl: toFileUrl(q.audioUrl) || undefined,
         options,
         placeholder: q.questionType === "fill_blank" ? "Nhập câu trả lời..." : undefined,

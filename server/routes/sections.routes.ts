@@ -177,9 +177,10 @@ const sectionsRoutes: FastifyPluginAsync = async (fastify) => {
       if (!existing) {
         return reply.status(404).send({ error: "Không tìm thấy phần thi" });
       }
+      const isAdmin = request.user.roles.includes("admin");
       if (
         existing.exam &&
-        (existing.exam.isActive === false || existing.exam.isLocked === true)
+        (existing.exam.isActive === false || (existing.exam.isLocked === true && !isAdmin))
       ) {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",

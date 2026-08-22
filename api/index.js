@@ -106532,7 +106532,8 @@ var sectionsRoutes = async (fastify) => {
       if (!existing) {
         return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y ph\u1EA7n thi" });
       }
-      if (existing.exam && (existing.exam.isActive === false || existing.exam.isLocked === true)) {
+      const isAdmin = request.user.roles.includes("admin");
+      if (existing.exam && (existing.exam.isActive === false || existing.exam.isLocked === true && !isAdmin)) {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",
           message: "\u0110\u1EC1 thi \u0111\xE3 l\u01B0u tr\u1EEF ho\u1EB7c b\u1ECB kh\xF3a, kh\xF4ng th\u1EC3 c\u1EADp nh\u1EADt ph\u1EA7n thi."
@@ -106776,29 +106777,38 @@ var questionsRoutes = async (fastify) => {
     });
     return !!existing;
   };
-  const isExamArchivedBySectionId = async (sectionId) => {
+  const isExamArchivedBySectionId = async (sectionId, isAdmin = false) => {
     const section = await fastify.prisma.examSection.findUnique({
       where: { id: sectionId },
       include: { exam: { select: { isActive: true, isLocked: true } } }
     });
     const exam = section?.exam;
-    return Boolean(exam && (exam.isActive === false || exam.isLocked === true));
+    if (!exam) return false;
+    if (exam.isActive === false) return true;
+    if (exam.isLocked && !isAdmin) return true;
+    return false;
   };
-  const isExamArchivedByGroupId = async (groupId) => {
+  const isExamArchivedByGroupId = async (groupId, isAdmin = false) => {
     const group = await fastify.prisma.questionGroup.findUnique({
       where: { id: groupId },
       include: { section: { include: { exam: { select: { isActive: true, isLocked: true } } } } }
     });
     const exam = group?.section?.exam;
-    return Boolean(exam && (exam.isActive === false || exam.isLocked === true));
+    if (!exam) return false;
+    if (exam.isActive === false) return true;
+    if (exam.isLocked && !isAdmin) return true;
+    return false;
   };
-  const isExamArchivedByQuestionId = async (questionId) => {
+  const isExamArchivedByQuestionId = async (questionId, isAdmin = false) => {
     const question = await fastify.prisma.question.findUnique({
       where: { id: questionId },
       include: { group: { include: { section: { include: { exam: { select: { isActive: true, isLocked: true } } } } } } }
     });
     const exam = question?.group?.section?.exam;
-    return Boolean(exam && (exam.isActive === false || exam.isLocked === true));
+    if (!exam) return false;
+    if (exam.isActive === false) return true;
+    if (exam.isLocked && !isAdmin) return true;
+    return false;
   };
   fastify.post(
     "/groups",
@@ -106823,7 +106833,8 @@ var questionsRoutes = async (fastify) => {
         }
         throw err;
       }
-      if (await isExamArchivedBySectionId(data.sectionId)) {
+      const isAdmin = request.user.roles.includes("admin");
+      if (await isExamArchivedBySectionId(data.sectionId, isAdmin)) {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",
           message: "\u0110\u1EC1 thi \u0111\xE3 l\u01B0u tr\u1EEF ho\u1EB7c b\u1ECB kh\xF3a, kh\xF4ng th\u1EC3 t\u1EA1o nh\xF3m c\xE2u h\u1ECFi m\u1EDBi."
@@ -106859,7 +106870,8 @@ var questionsRoutes = async (fastify) => {
         }
         throw err;
       }
-      if (await isExamArchivedByGroupId(id)) {
+      const isAdmin = request.user.roles.includes("admin");
+      if (await isExamArchivedByGroupId(id, isAdmin)) {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",
           message: "\u0110\u1EC1 thi \u0111\xE3 l\u01B0u tr\u1EEF ho\u1EB7c b\u1ECB kh\xF3a, kh\xF4ng th\u1EC3 ch\u1EC9nh s\u1EEDa nh\xF3m c\xE2u h\u1ECFi."
@@ -106877,7 +106889,8 @@ var questionsRoutes = async (fastify) => {
     { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
       const { id } = request.params;
-      if (await isExamArchivedByGroupId(id)) {
+      const isAdmin = request.user.roles.includes("admin");
+      if (await isExamArchivedByGroupId(id, isAdmin)) {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",
           message: "\u0110\u1EC1 thi \u0111\xE3 l\u01B0u tr\u1EEF ho\u1EB7c b\u1ECB kh\xF3a, kh\xF4ng th\u1EC3 x\xF3a nh\xF3m c\xE2u h\u1ECFi."
@@ -106910,7 +106923,8 @@ var questionsRoutes = async (fastify) => {
         }
         throw err;
       }
-      if (await isExamArchivedByGroupId(data.groupId)) {
+      const isAdmin = request.user.roles.includes("admin");
+      if (await isExamArchivedByGroupId(data.groupId, isAdmin)) {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",
           message: "\u0110\u1EC1 thi \u0111\xE3 l\u01B0u tr\u1EEF ho\u1EB7c b\u1ECB kh\xF3a, kh\xF4ng th\u1EC3 th\xEAm c\xE2u h\u1ECFi m\u1EDBi."
@@ -106985,7 +106999,8 @@ var questionsRoutes = async (fastify) => {
         }
         throw err;
       }
-      if (await isExamArchivedByQuestionId(id)) {
+      const isAdmin = request.user.roles.includes("admin");
+      if (await isExamArchivedByQuestionId(id, isAdmin)) {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",
           message: "\u0110\u1EC1 thi \u0111\xE3 l\u01B0u tr\u1EEF ho\u1EB7c b\u1ECB kh\xF3a, kh\xF4ng th\u1EC3 ch\u1EC9nh s\u1EEDa c\xE2u h\u1ECFi."
@@ -107037,7 +107052,8 @@ var questionsRoutes = async (fastify) => {
     { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
       const { id } = request.params;
-      if (await isExamArchivedByQuestionId(id)) {
+      const isAdmin = request.user.roles.includes("admin");
+      if (await isExamArchivedByQuestionId(id, isAdmin)) {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",
           message: "\u0110\u1EC1 thi \u0111\xE3 l\u01B0u tr\u1EEF ho\u1EB7c b\u1ECB kh\xF3a, kh\xF4ng th\u1EC3 x\xF3a c\xE2u h\u1ECFi."
@@ -107068,7 +107084,8 @@ var questionsRoutes = async (fastify) => {
         }
         throw err;
       }
-      if (await isExamArchivedByGroupId(groupId)) {
+      const isAdmin = request.user.roles.includes("admin");
+      if (await isExamArchivedByGroupId(groupId, isAdmin)) {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",
           message: "\u0110\u1EC1 thi \u0111\xE3 l\u01B0u tr\u1EEF ho\u1EB7c b\u1ECB kh\xF3a, kh\xF4ng th\u1EC3 th\xEAm c\xE2u h\u1ECFi h\xE0ng lo\u1EA1t."
@@ -120942,11 +120959,11 @@ var AssessmentService = class {
         options = ["TRUE", "FALSE", "NOT GIVEN"];
       } else if (q.options) {
         if (Array.isArray(q.options)) {
-          options = q.options.filter((o) => typeof o === "string" && o.trim().length > 0);
+          options = q.options.filter((o) => typeof o === "string" && o.trim().length > 0).map((o) => o.replace(/<\/?font[^>]*>/gi, "").trim());
           if (options.length === 0) options = void 0;
         } else if (typeof q.options === "object") {
           try {
-            options = Object.values(q.options).filter((o) => typeof o === "string" && o.trim().length > 0);
+            options = Object.values(q.options).filter((o) => typeof o === "string" && o.trim().length > 0).map((o) => String(o).replace(/<\/?font[^>]*>/gi, "").trim());
             if (options.length === 0) options = void 0;
           } catch {
           }
@@ -120965,12 +120982,13 @@ var AssessmentService = class {
           if (m2 && m2.length > 0) blankCount = m2.length;
         }
       }
+      const cleanPrompt = (q.questionText || "").replace(/<\/?font[^>]*>/gi, "").replace(/font-family:[^;"]*;?/gi, "").trim();
       return {
         id: q.id,
         skill,
         sectionTitle: q.group?.title || defaultSectionTitle,
         questionType: q.questionType,
-        prompt: q.questionText || "",
+        prompt: cleanPrompt,
         audioUrl: toFileUrl(q.audioUrl) || void 0,
         options,
         placeholder: q.questionType === "fill_blank" ? "Nh\u1EADp c\xE2u tr\u1EA3 l\u1EDDi..." : void 0,
