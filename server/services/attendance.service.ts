@@ -71,9 +71,14 @@ export class AttendanceService {
         },
       });
 
-      const studentUser = await this.prisma.user.findUnique({
-        where: { id: userId },
-        select: { id: true, fullName: true, email: true, avatarUrl: true },
+      const studentUser = await this.prisma.user.findFirst({
+        where: {
+          OR: [
+            { userId },
+            { id: userId },
+          ],
+        },
+        select: { id: true, userId: true, fullName: true, email: true, avatarUrl: true },
       });
 
       return {

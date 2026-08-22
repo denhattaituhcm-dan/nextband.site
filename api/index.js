@@ -113052,6 +113052,13 @@ init_env();
 init_env();
 var userAuthCache = /* @__PURE__ */ new Map();
 var USER_CACHE_TTL_MS = 60 * 1e3;
+function invalidateUserAuthCache(userId) {
+  if (userId) {
+    userAuthCache.delete(userId);
+  } else {
+    userAuthCache.clear();
+  }
+}
 async function verifyAndResolveUser(request) {
   const authHeader = request.headers.authorization;
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -113420,15 +113427,20 @@ var authRoutes = async (fastify) => {
   );
   fastify.get("/me", { preHandler: authenticate }, async (request, reply) => {
     const { id } = request.user;
-    const user = await fastify.prisma.user.findUnique({
-      where: { id },
+    const user = await fastify.prisma.user.findFirst({
+      where: {
+        OR: [
+          { userId: id },
+          { id }
+        ]
+      },
       include: { roles: true }
     });
     if (!user) {
       return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y ng\u01B0\u1EDDi d\xF9ng" });
     }
     return {
-      id: user.id,
+      id: user.userId,
       email: user.email,
       fullName: user.fullName,
       avatarUrl: toFileUrl(user.avatarUrl),
@@ -113444,8 +113456,20 @@ var authRoutes = async (fastify) => {
     async (request, reply) => {
       const { id } = request.user;
       const { fullName, bio, avatarUrl, phone, gender } = request.body;
+      const existingUser = await fastify.prisma.user.findFirst({
+        where: {
+          OR: [
+            { userId: id },
+            { id }
+          ]
+        },
+        select: { id: true, userId: true }
+      });
+      if (!existingUser) {
+        return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y ng\u01B0\u1EDDi d\xF9ng" });
+      }
       const user = await fastify.prisma.user.update({
-        where: { id },
+        where: { id: existingUser.id },
         data: {
           ...fullName && { fullName },
           ...bio !== void 0 && { bio },
@@ -113456,7 +113480,7 @@ var authRoutes = async (fastify) => {
         include: { roles: true }
       });
       return {
-        id: user.id,
+        id: user.userId,
         email: user.email,
         fullName: user.fullName,
         avatarUrl: toFileUrl(user.avatarUrl),
@@ -116824,9 +116848,13 @@ var ExamSubmissionService = class {
       };
     });
   }
-  // Use Case: Save Draft Answers (Autosave - checks version conflict and status)
+  // Use Case: Save Draft Answers (Autosave - checks version conflict, immutability, and server deadline)
   async saveDraft(user, id, answers, version3) {
-    const submission = await this.repo.findById(id);
+    const submission = await this.repo.findById(id, {
+      exam: {
+        include: { policy: true }
+      }
+    });
     if (!submission) {
       throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y b\xE0i l\xE0m");
     }
@@ -116834,11 +116862,23 @@ var ExamSubmissionService = class {
       throw new AuthorizationError("B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n s\u1EEDa b\xE0i l\xE0m n\xE0y", 403);
     }
     const currentStatus = String(submission.status).toUpperCase();
-    if (SubmissionStateMachine.isFinalized(currentStatus)) {
-      throw new StateTransitionError("SUBMISSION_ALREADY_FINALIZED");
+    if (currentStatus === "SUBMITTED" || currentStatus === "GRADED" || currentStatus === "EXPIRED" || currentStatus === "ABANDONED") {
+      throw new AuthorizationError("ANSWERS_IMMUTABLE: Kh\xF4ng th\u1EC3 s\u1EEDa c\xE2u tr\u1EA3 l\u1EDDi sau khi b\xE0i thi \u0111\xE3 n\u1ED9p ho\u1EB7c k\u1EBFt th\xFAc", 403);
     }
     if (currentStatus !== "IN_PROGRESS") {
       throw new StateTransitionError("SUBMISSION_ALREADY_FINALIZED");
+    }
+    const durationSeconds = submission.exam?.policy?.durationSeconds || (submission.exam?.durationMinutes || 60) * 60;
+    const graceSeconds = submission.exam?.policy?.submissionGraceSeconds ?? 60;
+    const startedMs = submission.startedAt ? new Date(submission.startedAt).getTime() : Date.now();
+    const deadlineMs = startedMs + durationSeconds * 1e3;
+    const nowMs = Date.now();
+    if (nowMs > deadlineMs + graceSeconds * 1e3 && !submission.exam?.policy?.allowLateSubmission) {
+      await this.prisma.examSubmission.update({
+        where: { id },
+        data: { status: "EXPIRED" }
+      });
+      throw new AuthorizationError("EXAM_EXPIRED: Th\u1EDDi gian l\xE0m b\xE0i \u0111\xE3 k\u1EBFt th\xFAc", 408);
     }
     if (typeof version3 === "number" && submission.version !== void 0 && submission.version !== null) {
       if (version3 <= submission.version) {
@@ -116924,6 +116964,7 @@ var ExamSubmissionService = class {
     const submission = await this.repo.findById(id, {
       exam: {
         include: {
+          policy: true,
           sections: {
             include: {
               questionGroups: {
@@ -116943,8 +116984,27 @@ var ExamSubmissionService = class {
       throw new AuthorizationError("B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n n\u1ED9p b\xE0i l\xE0m n\xE0y", 403);
     }
     const currentStatus = String(submission.status).toUpperCase();
-    if (currentStatus === "GRADED") {
-      return submission;
+    if (currentStatus === "GRADED" || currentStatus === "SUBMITTED") {
+      const existingAnswers = await this.prisma.answer.findMany({ where: { submissionId: id } });
+      return {
+        ...submission,
+        answers: existingAnswers
+      };
+    }
+    if (currentStatus === "EXPIRED") {
+      throw new AuthorizationError("EXAM_EXPIRED: B\xE0i thi \u0111\xE3 qu\xE1 th\u1EDDi gian l\xE0m b\xE0i quy \u0111\u1ECBnh", 408);
+    }
+    const durationSeconds = submission.exam?.policy?.durationSeconds || (submission.exam?.durationMinutes || 60) * 60;
+    const graceSeconds = submission.exam?.policy?.submissionGraceSeconds ?? 60;
+    const startedMs = submission.startedAt ? new Date(submission.startedAt).getTime() : Date.now();
+    const deadlineMs = startedMs + durationSeconds * 1e3;
+    const nowMs = Date.now();
+    if (nowMs > deadlineMs + graceSeconds * 1e3 && !submission.exam?.policy?.allowLateSubmission) {
+      await this.prisma.examSubmission.update({
+        where: { id },
+        data: { status: "EXPIRED" }
+      });
+      throw new AuthorizationError("EXAM_EXPIRED: B\xE0i thi \u0111\xE3 qu\xE1 th\u1EDDi h\u1EA1n n\u1ED9p b\xE0i quy \u0111\u1ECBnh", 408);
     }
     let answersToEvaluate = payload.answers || [];
     if (answersToEvaluate.length === 0) {
@@ -116973,8 +117033,9 @@ var ExamSubmissionService = class {
         const existingAns = await tx.answer.findFirst({
           where: { submissionId: id, questionId: ans.questionId }
         });
+        let savedAns;
         if (existingAns) {
-          const u = await tx.answer.update({
+          savedAns = await tx.answer.update({
             where: { id: existingAns.id },
             data: {
               answerText,
@@ -116982,9 +117043,8 @@ var ExamSubmissionService = class {
               score: evalResult ? evalResult.score : null
             }
           });
-          createdOrUpdatedAnswers.push(u);
         } else {
-          const c = await tx.answer.create({
+          savedAns = await tx.answer.create({
             data: {
               submissionId: id,
               questionId: ans.questionId,
@@ -116993,7 +117053,34 @@ var ExamSubmissionService = class {
               score: evalResult ? evalResult.score : null
             }
           });
-          createdOrUpdatedAnswers.push(c);
+        }
+        createdOrUpdatedAnswers.push(savedAns);
+        if (evalResult && savedAns?.id) {
+          const rawStr = typeof ans.answerText === "object" ? JSON.stringify(ans.answerText) : String(ans.answerText || "");
+          const normStr = canonicalScoringService.getNormalizer().normalizeText(ans.answerText);
+          await tx.answerEvaluationEvidence.upsert({
+            where: { answerId: savedAns.id },
+            create: {
+              answerId: savedAns.id,
+              evaluatorType: evalResult.questionType || "unknown",
+              evaluatorVersion: "1.0.0",
+              rawSubmitted: rawStr,
+              normalizedInput: normStr,
+              matchedRule: evalResult.isCorrect ? "CANONICAL_MATCH" : "NO_MATCH",
+              isCorrect: evalResult.isCorrect ?? false,
+              scoreAwarded: evalResult.score ?? 0,
+              maxScore: evalResult.maxScore ?? 1
+            },
+            update: {
+              evaluatorType: evalResult.questionType || "unknown",
+              rawSubmitted: rawStr,
+              normalizedInput: normStr,
+              matchedRule: evalResult.isCorrect ? "CANONICAL_MATCH" : "NO_MATCH",
+              isCorrect: evalResult.isCorrect ?? false,
+              scoreAwarded: evalResult.score ?? 0,
+              maxScore: evalResult.maxScore ?? 1
+            }
+          });
         }
       }
       const updated = await tx.examSubmission.update({
@@ -117646,7 +117733,7 @@ var usersRoutes = async (fastify) => {
       };
       if (isTeacher && !isAdmin) {
         const teacherStudentIds = await getTeacherStudentIds(fastify.prisma, user.id);
-        where.id = { in: teacherStudentIds };
+        where.userId = { in: teacherStudentIds };
       }
       if (search) {
         where.OR = [
@@ -117942,11 +118029,12 @@ var usersRoutes = async (fastify) => {
       });
       if (role) {
         await fastify.prisma.userRole.deleteMany({
-          where: { userId: user.id }
+          where: { userId: user.userId }
         });
         await fastify.prisma.userRole.create({
-          data: { userId: user.id, role }
+          data: { userId: user.userId, role }
         });
+        invalidateUserAuthCache(user.userId);
       }
       return {
         id: user.userId,
@@ -118957,9 +119045,14 @@ var AttendanceService = class {
           }
         }
       });
-      const studentUser = await this.prisma.user.findUnique({
-        where: { id: userId },
-        select: { id: true, fullName: true, email: true, avatarUrl: true }
+      const studentUser = await this.prisma.user.findFirst({
+        where: {
+          OR: [
+            { userId },
+            { id: userId }
+          ]
+        },
+        select: { id: true, userId: true, fullName: true, email: true, avatarUrl: true }
       });
       return {
         classId,
@@ -119747,7 +119840,7 @@ var InvitationService = class {
     const expiresAt = expiresInDays ? new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1e3) : null;
     return this.invitationRepo.create({
       class: { connect: { id: classId } },
-      creator: { connect: { id: createdBy } },
+      creator: { connect: { userId: createdBy } },
       inviteCode: code,
       inviteToken: token,
       expiresAt,
@@ -122148,6 +122241,114 @@ var speakingStorageRoutes = async (fastify) => {
 };
 var speakingStorage_routes_default = speakingStorageRoutes;
 
+// server/routes/speaking-forecast.routes.ts
+init_zod();
+var updateForecastSchema = external_exports.object({
+  seasons: external_exports.array(external_exports.any()),
+  topics: external_exports.array(external_exports.any()),
+  selectedSeasonId: external_exports.string().optional()
+});
+var FORECAST_SETTINGS_KEY = "speaking_forecast";
+var speakingForecastRoutes = async (fastify) => {
+  fastify.get("/", { preHandler: optionalAuthenticate }, async (request, reply) => {
+    try {
+      const record = await fastify.prisma.siteSettings.findFirst({
+        where: { key: FORECAST_SETTINGS_KEY }
+      });
+      if (!record || !record.value) {
+        return reply.send({
+          seasons: [],
+          topics: [],
+          selectedSeasonId: "",
+          isDefault: true
+        });
+      }
+      const data = record.value;
+      const currentUser = request.user;
+      const isAdminOrTeacher = currentUser?.roles?.some((r2) => ["admin", "teacher"].includes(r2));
+      if (isAdminOrTeacher) {
+        return reply.send(data);
+      }
+      const publishedTopics = (data.topics || []).filter((t2) => t2.status === "Published" || t2.isPublished === true);
+      const publishedSeasons = (data.seasons || []).filter((s2) => s2.isPublished !== false);
+      return reply.send({
+        seasons: publishedSeasons,
+        topics: publishedTopics,
+        selectedSeasonId: data.selectedSeasonId || (publishedSeasons[0]?.id || "")
+      });
+    } catch (err) {
+      request.log.error(err, "Failed to retrieve public speaking forecast");
+      return reply.status(500).send({ error: "Kh\xF4ng th\u1EC3 t\u1EA3i d\u1EEF li\u1EC7u Speaking Forecast" });
+    }
+  });
+  fastify.get(
+    "/admin",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      try {
+        const record = await fastify.prisma.siteSettings.findFirst({
+          where: { key: FORECAST_SETTINGS_KEY }
+        });
+        if (!record || !record.value) {
+          return reply.send({
+            seasons: [],
+            topics: [],
+            selectedSeasonId: "",
+            isDefault: true
+          });
+        }
+        return reply.send(record.value);
+      } catch (err) {
+        request.log.error(err, "Failed to retrieve admin speaking forecast");
+        return reply.status(500).send({ error: "Kh\xF4ng th\u1EC3 t\u1EA3i d\u1EEF li\u1EC7u Speaking Forecast" });
+      }
+    }
+  );
+  fastify.put(
+    "/admin",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const validated = handleValidation(
+        updateForecastSchema.safeParse(request.body),
+        request,
+        reply
+      );
+      if (!validated) return;
+      try {
+        const existing = await fastify.prisma.siteSettings.findFirst({
+          where: { key: FORECAST_SETTINGS_KEY }
+        });
+        const payloadValue = {
+          seasons: validated.seasons,
+          topics: validated.topics,
+          selectedSeasonId: validated.selectedSeasonId,
+          updatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+          updatedBy: request.user?.id
+        };
+        if (existing) {
+          const updated = await fastify.prisma.siteSettings.update({
+            where: { id: existing.id },
+            data: { value: payloadValue }
+          });
+          return reply.send({ success: true, data: updated.value });
+        } else {
+          const created = await fastify.prisma.siteSettings.create({
+            data: {
+              key: FORECAST_SETTINGS_KEY,
+              value: payloadValue
+            }
+          });
+          return reply.status(201).send({ success: true, data: created.value });
+        }
+      } catch (err) {
+        request.log.error(err, "Failed to save speaking forecast");
+        return reply.status(500).send({ error: "Kh\xF4ng th\u1EC3 l\u01B0u d\u1EEF li\u1EC7u Speaking Forecast" });
+      }
+    }
+  );
+};
+var speaking_forecast_routes_default = speakingForecastRoutes;
+
 // server/routes/index.ts
 var routes = async (fastify) => {
   fastify.get("/health", async () => {
@@ -122175,6 +122376,7 @@ var routes = async (fastify) => {
   await fastify.register(notifications_routes_default, { prefix: "/notifications" });
   await fastify.register(lead_routes_default, { prefix: "/leads" });
   await fastify.register(speakingStorage_routes_default, { prefix: "/speaking" });
+  await fastify.register(speaking_forecast_routes_default, { prefix: "/speaking-forecast" });
   await fastify.register(lesson_routes_default);
 };
 var routes_default = routes;

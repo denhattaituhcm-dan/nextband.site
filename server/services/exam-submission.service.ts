@@ -403,9 +403,13 @@ export class ExamSubmissionService {
     });
   }
 
-  // Use Case: Save Draft Answers (Autosave - checks version conflict and status)
+  // Use Case: Save Draft Answers (Autosave - checks version conflict, immutability, and server deadline)
   async saveDraft(user: { id: string; roles: string[] }, id: string, answers: any[], version?: number) {
-    const submission: any = await this.repo.findById(id);
+    const submission: any = await this.repo.findById(id, {
+      exam: {
+        include: { policy: true },
+      },
+    });
     if (!submission) {
       throw new NotFoundError("Không tìm thấy bài làm");
     }
@@ -415,12 +419,27 @@ export class ExamSubmissionService {
     }
 
     const currentStatus = String(submission.status).toUpperCase() as SubmissionState;
-    if (SubmissionStateMachine.isFinalized(currentStatus)) {
-      throw new StateTransitionError("SUBMISSION_ALREADY_FINALIZED");
+    if (currentStatus === "SUBMITTED" || currentStatus === "GRADED" || currentStatus === "EXPIRED" || currentStatus === "ABANDONED") {
+      throw new AuthorizationError("ANSWERS_IMMUTABLE: Không thể sửa câu trả lời sau khi bài thi đã nộp hoặc kết thúc", 403);
     }
 
     if (currentStatus !== "IN_PROGRESS") {
       throw new StateTransitionError("SUBMISSION_ALREADY_FINALIZED");
+    }
+
+    // Server-Authoritative Deadline Check
+    const durationSeconds = submission.exam?.policy?.durationSeconds || (submission.exam?.durationMinutes || 60) * 60;
+    const graceSeconds = submission.exam?.policy?.submissionGraceSeconds ?? 60;
+    const startedMs = submission.startedAt ? new Date(submission.startedAt).getTime() : Date.now();
+    const deadlineMs = startedMs + durationSeconds * 1000;
+    const nowMs = Date.now();
+
+    if (nowMs > deadlineMs + graceSeconds * 1000 && !submission.exam?.policy?.allowLateSubmission) {
+      await this.prisma.examSubmission.update({
+        where: { id },
+        data: { status: "EXPIRED" },
+      });
+      throw new AuthorizationError("EXAM_EXPIRED: Thời gian làm bài đã kết thúc", 408);
     }
 
     // Version conflict check
@@ -536,6 +555,7 @@ export class ExamSubmissionService {
     const submission: any = await this.repo.findById(id, {
       exam: {
         include: {
+          policy: true,
           sections: {
             include: {
               questionGroups: {
@@ -557,10 +577,34 @@ export class ExamSubmissionService {
       throw new AuthorizationError("Bạn không có quyền nộp bài làm này", 403);
     }
 
-    // Idempotency: If already graded, return saved result without re-modifying score
     const currentStatus = String(submission.status).toUpperCase() as SubmissionState;
-    if (currentStatus === "GRADED") {
-      return submission;
+
+    // Idempotency: If already submitted or graded, return canonical saved result
+    if (currentStatus === "GRADED" || currentStatus === "SUBMITTED") {
+      const existingAnswers = await this.prisma.answer.findMany({ where: { submissionId: id } });
+      return {
+        ...submission,
+        answers: existingAnswers,
+      };
+    }
+
+    if (currentStatus === "EXPIRED") {
+      throw new AuthorizationError("EXAM_EXPIRED: Bài thi đã quá thời gian làm bài quy định", 408);
+    }
+
+    // Server-Authoritative Deadline Check
+    const durationSeconds = submission.exam?.policy?.durationSeconds || (submission.exam?.durationMinutes || 60) * 60;
+    const graceSeconds = submission.exam?.policy?.submissionGraceSeconds ?? 60;
+    const startedMs = submission.startedAt ? new Date(submission.startedAt).getTime() : Date.now();
+    const deadlineMs = startedMs + durationSeconds * 1000;
+    const nowMs = Date.now();
+
+    if (nowMs > deadlineMs + graceSeconds * 1000 && !submission.exam?.policy?.allowLateSubmission) {
+      await this.prisma.examSubmission.update({
+        where: { id },
+        data: { status: "EXPIRED" },
+      });
+      throw new AuthorizationError("EXAM_EXPIRED: Bài thi đã quá thời hạn nộp bài quy định", 408);
     }
 
     let answersToEvaluate = payload.answers || [];
@@ -598,8 +642,9 @@ export class ExamSubmissionService {
           where: { submissionId: id, questionId: ans.questionId },
         });
 
+        let savedAns: any;
         if (existingAns) {
-          const u = await tx.answer.update({
+          savedAns = await tx.answer.update({
             where: { id: existingAns.id },
             data: {
               answerText,
@@ -607,9 +652,8 @@ export class ExamSubmissionService {
               score: evalResult ? evalResult.score : null,
             },
           });
-          createdOrUpdatedAnswers.push(u);
         } else {
-          const c = await tx.answer.create({
+          savedAns = await tx.answer.create({
             data: {
               submissionId: id,
               questionId: ans.questionId,
@@ -618,7 +662,36 @@ export class ExamSubmissionService {
               score: evalResult ? evalResult.score : null,
             },
           });
-          createdOrUpdatedAnswers.push(c);
+        }
+        createdOrUpdatedAnswers.push(savedAns);
+
+        // Immutable Evidence Layer Recording
+        if (evalResult && savedAns?.id) {
+          const rawStr = typeof ans.answerText === "object" ? JSON.stringify(ans.answerText) : String(ans.answerText || "");
+          const normStr = canonicalScoringService.getNormalizer().normalizeText(ans.answerText);
+          await tx.answerEvaluationEvidence.upsert({
+            where: { answerId: savedAns.id },
+            create: {
+              answerId: savedAns.id,
+              evaluatorType: evalResult.questionType || "unknown",
+              evaluatorVersion: "1.0.0",
+              rawSubmitted: rawStr,
+              normalizedInput: normStr,
+              matchedRule: evalResult.isCorrect ? "CANONICAL_MATCH" : "NO_MATCH",
+              isCorrect: evalResult.isCorrect ?? false,
+              scoreAwarded: evalResult.score ?? 0,
+              maxScore: evalResult.maxScore ?? 1,
+            },
+            update: {
+              evaluatorType: evalResult.questionType || "unknown",
+              rawSubmitted: rawStr,
+              normalizedInput: normStr,
+              matchedRule: evalResult.isCorrect ? "CANONICAL_MATCH" : "NO_MATCH",
+              isCorrect: evalResult.isCorrect ?? false,
+              scoreAwarded: evalResult.score ?? 0,
+              maxScore: evalResult.maxScore ?? 1,
+            },
+          });
         }
       }
 

@@ -319,6 +319,8 @@ model Exam {
   submissions         ExamSubmission[]
   assessmentSessions  AssessmentSession[]
   homeworks           Homework[]
+  policy              ExamPolicy?
+  examVersions        ExamVersion[]
   course              Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@index([courseId])
@@ -376,8 +378,9 @@ model Question {
   createdAt     DateTime      @default(now()) @map("created_at")
   audioUrl      String?       @map("audio_url")
 
-  group         QuestionGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  answers       Answer[]
+  group               QuestionGroup   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  answers             Answer[]
+  versions            QuestionVersion[]
 
   @@index([groupId, orderIndex])
   @@map("questions")
@@ -387,6 +390,7 @@ model ExamSubmission {
   id             String           @id @default(uuid())
   examId         String           @map("exam_id")
   studentId      String           @map("student_id")
+  examVersionId  String?          @map("exam_version_id")
   status         SubmissionStatus @default(IN_PROGRESS)
   startedAt      DateTime?        @default(now()) @map("started_at")
   submittedAt    DateTime?        @map("submitted_at")
@@ -400,6 +404,7 @@ model ExamSubmission {
 
   answers        Answer[]
   exam           Exam             @relation(fields: [examId], references: [id], onDelete: Cascade)
+  examVersion    ExamVersion?     @relation(fields: [examVersionId], references: [id])
   grader         User?            @relation("GraderSubmissions", fields: [gradedBy], references: [userId])
   student        User             @relation("StudentSubmissions", fields: [studentId], references: [userId], onDelete: Cascade)
 
@@ -410,18 +415,21 @@ model ExamSubmission {
 }
 
 model Answer {
-  id           String         @id @default(uuid())
-  submissionId String         @map("submission_id")
-  questionId   String         @map("question_id")
-  answerText   String?        @map("answer_text")
-  audioUrl     String?        @map("audio_url")
-  score        Decimal?
-  feedback     String?
-  createdAt    DateTime       @default(now()) @map("created_at")
-  updatedAt    DateTime       @default(now()) @updatedAt @map("updated_at")
+  id                String                    @id @default(uuid())
+  submissionId      String                    @map("submission_id")
+  questionId        String                    @map("question_id")
+  questionVersionId String?                   @map("question_version_id")
+  answerText        String?                   @map("answer_text")
+  audioUrl          String?                   @map("audio_url")
+  score             Decimal?
+  feedback          String?
+  createdAt         DateTime                  @default(now()) @map("created_at")
+  updatedAt         DateTime                  @default(now()) @updatedAt @map("updated_at")
 
-  question     Question       @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  submission   ExamSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  question          Question                  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionVersion   QuestionVersion?          @relation(fields: [questionVersionId], references: [id])
+  submission        ExamSubmission            @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  evidence          AnswerEvaluationEvidence?
 
   @@unique([submissionId, questionId])
   @@map("answers")
@@ -587,6 +595,8 @@ enum SubmissionStatus {
   IN_PROGRESS @map("in_progress")
   SUBMITTED   @map("submitted")
   GRADED      @map("graded")
+  EXPIRED     @map("expired")
+  ABANDONED   @map("abandoned")
 
   @@map("submission_status")
 }
@@ -676,4 +686,90 @@ model SpeakingRecordingAsset {
   @@index([referenceType, referenceId])
   @@map("speaking_recording_assets")
 }
+
+model ExamPolicy {
+  id                     String   @id @default(uuid())
+  examId                 String   @unique @map("exam_id")
+  durationSeconds        Int      @map("duration_seconds")
+  submissionGraceSeconds Int      @default(60) @map("submission_grace_seconds")
+  allowLateSubmission    Boolean  @default(false) @map("allow_late_submission")
+  allowResume            Boolean  @default(true) @map("allow_resume")
+  maxAttempts            Int      @default(3) @map("max_attempts")
+  strictMode             Boolean  @default(true) @map("strict_mode")
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @default(now()) @updatedAt @map("updated_at")
+
+  exam                   Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  @@map("exam_policies")
+}
+
+model QuestionVersion {
+  id              String   @id @default(uuid())
+  questionId      String   @map("question_id")
+  versionNumber   Int      @map("version_number")
+  questionText    String   @map("question_text")
+  questionType    String   @map("question_type")
+  optionsJson     String?  @map("options_json")
+  correctAnswer   String   @map("correct_answer")
+  acceptedAnswers String?  @map("accepted_answers")
+  scoringRuleJson String?  @map("scoring_rule_json")
+  audioUrl        String?  @map("audio_url")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  question        Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  examVersions    ExamVersionItem[]
+  answers         Answer[]
+
+  @@unique([questionId, versionNumber])
+  @@map("question_versions")
+}
+
+model ExamVersion {
+  id            String            @id @default(uuid())
+  examId        String            @map("exam_id")
+  versionNumber Int               @map("version_number")
+  title         String
+  totalPoints   Float             @default(0) @map("total_points")
+  createdAt     DateTime          @default(now()) @map("created_at")
+
+  exam          Exam              @relation(fields: [examId], references: [id], onDelete: Cascade)
+  items         ExamVersionItem[]
+  submissions   ExamSubmission[]
+
+  @@unique([examId, versionNumber])
+  @@map("exam_versions")
+}
+
+model ExamVersionItem {
+  id                String          @id @default(uuid())
+  examVersionId     String          @map("exam_version_id")
+  questionVersionId String          @map("question_version_id")
+  sectionOrder      Int             @default(0) @map("section_order")
+  groupOrder        Int             @default(0) @map("group_order")
+  questionOrder     Int             @default(0) @map("question_order")
+
+  examVersion       ExamVersion     @relation(fields: [examVersionId], references: [id], onDelete: Cascade)
+  questionVersion   QuestionVersion @relation(fields: [questionVersionId], references: [id], onDelete: Cascade)
+
+  @@unique([examVersionId, questionVersionId])
+  @@map("exam_version_items")
+}
+
+model AnswerEvaluationEvidence {
+  id               String   @id @default(uuid())
+  answerId         String   @unique @map("answer_id")
+  evaluatorType    String   @map("evaluator_type")
+  evaluatorVersion String   @default("1.0.0") @map("evaluator_version")
+  rawSubmitted     String?  @map("raw_submitted")
+  normalizedInput  String?  @map("normalized_input")
+  matchedRule      String?  @map("matched_rule")
+  isCorrect        Boolean  @map("is_correct")
+  scoreAwarded     Float    @map("score_awarded")
+  maxScore         Float    @map("max_score")
+  evaluatedAt      DateTime @default(now()) @map("evaluated_at")
+
+  answer           Answer   @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  @@map("answer_evaluation_evidences")
+}
+
 

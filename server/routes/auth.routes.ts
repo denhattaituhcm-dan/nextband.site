@@ -177,8 +177,13 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.get("/me", { preHandler: authenticate }, async (request, reply) => {
     const { id } = request.user;
 
-    const user = await fastify.prisma.user.findUnique({
-      where: { id },
+    const user = await fastify.prisma.user.findFirst({
+      where: {
+        OR: [
+          { userId: id },
+          { id },
+        ],
+      },
       include: { roles: true },
     });
 
@@ -187,7 +192,7 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
     }
 
     return {
-      id: user.id,
+      id: user.userId,
       email: user.email,
       fullName: user.fullName,
       avatarUrl: toFileUrl(user.avatarUrl),
@@ -206,8 +211,22 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
       const { id } = request.user;
       const { fullName, bio, avatarUrl, phone, gender } = request.body as any;
 
+      const existingUser = await fastify.prisma.user.findFirst({
+        where: {
+          OR: [
+            { userId: id },
+            { id },
+          ],
+        },
+        select: { id: true, userId: true },
+      });
+
+      if (!existingUser) {
+        return reply.status(404).send({ error: "Không tìm thấy người dùng" });
+      }
+
       const user = await fastify.prisma.user.update({
-        where: { id },
+        where: { id: existingUser.id },
         data: {
           ...(fullName && { fullName }),
           ...(bio !== undefined && { bio }),
@@ -219,7 +238,7 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
       });
 
       return {
-        id: user.id,
+        id: user.userId,
         email: user.email,
         fullName: user.fullName,
         avatarUrl: toFileUrl(user.avatarUrl),

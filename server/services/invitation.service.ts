@@ -67,7 +67,7 @@ export class InvitationService {
 
     return this.invitationRepo.create({
       class: { connect: { id: classId } },
-      creator: { connect: { id: createdBy } },
+      creator: { connect: { userId: createdBy } },
       inviteCode: code,
       inviteToken: token,
       expiresAt,

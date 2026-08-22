@@ -2,7 +2,7 @@ import { FastifyPluginAsync } from "fastify";
 import { createClient } from "@supabase/supabase-js";
 import { env } from "../config/env.js";
 import { paginationSchema } from "../schemas/common.schema.js";
-import { authenticate, requireRoles } from "../middlewares/auth.middleware.js";
+import { authenticate, requireRoles, invalidateUserAuthCache } from "../middlewares/auth.middleware.js";
 import { hashPassword } from "../utils/password.js";
 import { handleValidation } from "../utils/validation.js";
 import { withFileUrls, withFileUrlsMany } from "../utils/file.js";
@@ -134,7 +134,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
 
       if (isTeacher && !isAdmin) {
         const teacherStudentIds = await getTeacherStudentIds(fastify.prisma, user.id);
-        where.id = { in: teacherStudentIds };
+        where.userId = { in: teacherStudentIds };
       }
 
       if (search) {
@@ -481,11 +481,12 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
       // Update role if provided
       if (role) {
         await fastify.prisma.userRole.deleteMany({
-          where: { userId: user.id },
+          where: { userId: user.userId },
         });
         await fastify.prisma.userRole.create({
-          data: { userId: user.id, role },
+          data: { userId: user.userId, role },
         });
+        invalidateUserAuthCache(user.userId);
       }
 
       return {
