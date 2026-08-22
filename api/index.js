@@ -53313,6 +53313,21 @@ var init_env = __esm({
   "server/config/env.ts"() {
     init_zod();
     init_config();
+    if (process.env.DATABASE_URL && process.env.DATABASE_URL.includes("db.gzpdlqxjggyxlkeatvvf.supabase.co")) {
+      try {
+        const parsed = new URL(process.env.DATABASE_URL);
+        parsed.hostname = "aws-0-ap-southeast-2.pooler.supabase.com";
+        parsed.port = "6543";
+        if (!parsed.username.includes(".")) {
+          parsed.username = `${parsed.username}.gzpdlqxjggyxlkeatvvf`;
+        }
+        if (!parsed.searchParams.has("pgbouncer")) {
+          parsed.searchParams.set("pgbouncer", "true");
+        }
+        process.env.DATABASE_URL = parsed.toString();
+      } catch {
+      }
+    }
     WEAK_SECRETS = /* @__PURE__ */ new Set([
       "secret",
       "jwt_secret",
@@ -111996,7 +112011,24 @@ var import_fastify_plugin = __toESM(require_plugin2(), 1);
 init_env();
 import { PrismaClient } from "@prisma/client";
 function resolveCanonicalDatabaseUrl() {
-  return process.env.DATABASE_URL || env.DATABASE_URL;
+  let url = process.env.DATABASE_URL || env.DATABASE_URL;
+  if (!url) return void 0;
+  if (url.includes("db.gzpdlqxjggyxlkeatvvf.supabase.co")) {
+    try {
+      const parsed = new URL(url);
+      parsed.hostname = "aws-0-ap-southeast-2.pooler.supabase.com";
+      parsed.port = "6543";
+      if (!parsed.username.includes(".")) {
+        parsed.username = `${parsed.username}.gzpdlqxjggyxlkeatvvf`;
+      }
+      if (!parsed.searchParams.has("pgbouncer")) {
+        parsed.searchParams.set("pgbouncer", "true");
+      }
+      url = parsed.toString();
+    } catch {
+    }
+  }
+  return url;
 }
 var prismaPlugin = async (fastify) => {
   const dbUrl = resolveCanonicalDatabaseUrl();
@@ -122619,6 +122651,21 @@ async function buildApp() {
 }
 
 // <stdin>
+if (process.env.DATABASE_URL && process.env.DATABASE_URL.includes("db.gzpdlqxjggyxlkeatvvf.supabase.co")) {
+  try {
+    const parsed = new URL(process.env.DATABASE_URL);
+    parsed.hostname = "aws-0-ap-southeast-2.pooler.supabase.com";
+    parsed.port = "6543";
+    if (!parsed.username.includes(".")) {
+      parsed.username = parsed.username + ".gzpdlqxjggyxlkeatvvf";
+    }
+    if (!parsed.searchParams.has("pgbouncer")) {
+      parsed.searchParams.set("pgbouncer", "true");
+    }
+    process.env.DATABASE_URL = parsed.toString();
+  } catch {
+  }
+}
 var fastifyApp = null;
 async function handler(req, res) {
   try {
