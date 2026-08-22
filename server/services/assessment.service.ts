@@ -295,7 +295,7 @@ export class AssessmentService {
             if (Array.isArray(arr) && arr.length > 0) blankCount = arr.length;
           } catch {}
         } else if (q.questionText) {
-          const m = q.questionText.match(/\[BLANK(?:_\d+)?\]/g);
+          const m = q.questionText.match(/(?:\[BLANK(?:_\d+)?\]|\[\d+\])/gi);
           if (m && m.length > 0) blankCount = m.length;
         }
       }
