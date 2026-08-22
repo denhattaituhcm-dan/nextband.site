@@ -18,6 +18,7 @@ import lessonRoutes from "./lesson.routes.js";
 import notificationsRoutes from "./notifications.routes.js";
 import leadRoutes from "./lead.routes.js";
 import assessmentRoutes from "./assessment.routes.js";
+import speakingStorageRoutes from "./speakingStorage.routes.js";
 
 const routes: FastifyPluginAsync = async (fastify) => {
   // Health check
@@ -47,6 +48,7 @@ const routes: FastifyPluginAsync = async (fastify) => {
   await fastify.register(invitationRoutes, { prefix: "/invitations" });
   await fastify.register(notificationsRoutes, { prefix: "/notifications" });
   await fastify.register(leadRoutes, { prefix: "/leads" });
+  await fastify.register(speakingStorageRoutes, { prefix: "/speaking" });
   await fastify.register(lessonRoutes);
 };
 

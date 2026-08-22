@@ -639,3 +639,41 @@ enum LeadStatus {
   CANCELLED
   ARCHIVED
 }
+
+enum RetentionType {
+  PLACEMENT
+  HOMEWORK
+  EXAM
+  DRAFT
+}
+
+enum RecordingStatus {
+  UPLOADING
+  ACTIVE
+  EXPIRED
+  PURGED
+}
+
+model SpeakingRecordingAsset {
+  id               String          @id @default(uuid())
+  storagePath      String?         @unique @map("storage_path")
+  referenceType    String          @map("reference_type") // PLACEMENT_SESSION, HOMEWORK_SUBMISSION, EXAM_SUBMISSION, DRAFT
+  referenceId      String          @map("reference_id")
+  questionId       String?         @map("question_id")
+  retentionType    RetentionType   @map("retention_type")
+  status           RecordingStatus @default(UPLOADING)
+  mimeType         String          @default("audio/webm") @map("mime_type")
+  sizeBytes        Int?            @map("size_bytes")
+  durationMs       Int?            @map("duration_ms")
+  uploadedBy       String?         @map("uploaded_by")
+  expiresAt        DateTime        @map("expires_at")
+  purgedAt         DateTime?       @map("purged_at")
+  lastCleanupError String?         @map("last_cleanup_error")
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @default(now()) @updatedAt @map("updated_at")
+
+  @@index([status, expiresAt])
+  @@index([referenceType, referenceId])
+  @@map("speaking_recording_assets")
+}
+

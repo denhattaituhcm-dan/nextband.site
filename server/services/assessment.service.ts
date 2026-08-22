@@ -982,6 +982,20 @@ export class AssessmentService {
       console.warn("[AssessmentService] Lead update notice:", leadUpdateErr);
     }
 
+    // Promote speaking recordings to PLACEMENT retention class (15 days)
+    try {
+      const { SpeakingStorageService } = await import("./speakingStorage.service.js");
+      const speakingService = new SpeakingStorageService(this.prisma);
+      await speakingService.promoteAssetOnSubmission({
+        referenceType: "PLACEMENT_SESSION",
+        referenceId: sessionId,
+        retentionType: "PLACEMENT",
+        submittedAt: session.submittedAt,
+      });
+    } catch (speakingErr) {
+      console.warn("[AssessmentService] Speaking promotion notice:", speakingErr);
+    }
+
     return report;
   }
 }
