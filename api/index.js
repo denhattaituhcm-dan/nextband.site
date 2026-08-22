@@ -53313,9 +53313,6 @@ var init_env = __esm({
   "server/config/env.ts"() {
     init_zod();
     init_config();
-    if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("db.gzpdlqxjggyxlkeatvvf.supabase.co")) {
-      process.env.DATABASE_URL = "postgresql://postgres.gzpdlqxjggyxlkeatvvf:anhxtanhmat1@aws-0-ap-southeast-2.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=10&pool_timeout=20";
-    }
     WEAK_SECRETS = /* @__PURE__ */ new Set([
       "secret",
       "jwt_secret",
@@ -111999,11 +111996,7 @@ var import_fastify_plugin = __toESM(require_plugin2(), 1);
 init_env();
 import { PrismaClient } from "@prisma/client";
 function resolveCanonicalDatabaseUrl() {
-  let url = process.env.DATABASE_URL || env.DATABASE_URL;
-  if (!url || url.includes("db.gzpdlqxjggyxlkeatvvf.supabase.co")) {
-    url = "postgresql://postgres.gzpdlqxjggyxlkeatvvf:anhxtanhmat1@aws-0-ap-southeast-2.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=10&pool_timeout=20";
-  }
-  return url;
+  return process.env.DATABASE_URL || env.DATABASE_URL;
 }
 var prismaPlugin = async (fastify) => {
   const dbUrl = resolveCanonicalDatabaseUrl();

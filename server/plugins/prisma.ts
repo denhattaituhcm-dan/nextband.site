@@ -10,11 +10,7 @@ declare module "fastify" {
 }
 
 function resolveCanonicalDatabaseUrl(): string | undefined {
-  let url = process.env.DATABASE_URL || env.DATABASE_URL;
-  if (!url || url.includes("db.gzpdlqxjggyxlkeatvvf.supabase.co")) {
-    url = "postgresql://postgres.gzpdlqxjggyxlkeatvvf:anhxtanhmat1@aws-0-ap-southeast-2.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=10&pool_timeout=20";
-  }
-  return url;
+  return process.env.DATABASE_URL || env.DATABASE_URL;
 }
 
 const prismaPlugin: FastifyPluginAsync = async (fastify) => {

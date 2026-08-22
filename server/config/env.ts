@@ -1,10 +1,6 @@
 import { z } from "zod";
 import "dotenv/config";
 
-if (!process.env.DATABASE_URL || process.env.DATABASE_URL.includes("db.gzpdlqxjggyxlkeatvvf.supabase.co")) {
-  process.env.DATABASE_URL = "postgresql://postgres.gzpdlqxjggyxlkeatvvf:anhxtanhmat1@aws-0-ap-southeast-2.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=10&pool_timeout=20";
-}
-
 const WEAK_SECRETS = new Set([
   "secret",
   "jwt_secret",
