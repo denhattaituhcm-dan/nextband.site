@@ -25,10 +25,10 @@ const questionTypeEnum = z.enum(
 
 const createQuestionGroupSchema = z.object({
   sectionId: z.string({ required_error: "ID phần thi là bắt buộc" }),
-  title: z.string().optional(),
-  instructions: z.string().optional(),
-  passage: z.string().optional(),
-  audioUrl: z.string().optional(),
+  title: z.string().optional().nullable(),
+  instructions: z.string().optional().nullable(),
+  passage: z.string().optional().nullable(),
+  audioUrl: z.string().optional().nullable(),
   orderIndex: z.number().int().default(0),
 });
 
@@ -114,9 +114,9 @@ const baseQuestionSchema = z.object({
   groupId: z.string({ required_error: "ID nhóm câu hỏi là bắt buộc" }),
   questionType: questionTypeEnum,
   questionText: z.string().min(1, "Nội dung câu hỏi là bắt buộc"),
-  options: z.any().optional(),
-  correctAnswer: z.string().optional(),
-  audioUrl: z.string().optional(),
+  options: z.any().optional().nullable(),
+  correctAnswer: z.string().optional().nullable(),
+  audioUrl: z.string().optional().nullable(),
   points: z.number({ invalid_type_error: "Điểm phải là số" }).int().default(1),
   orderIndex: z.number().int().default(0),
 });

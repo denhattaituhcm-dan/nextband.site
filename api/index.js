@@ -114810,10 +114810,10 @@ var questionTypeEnum = external_exports.enum(
 );
 var createQuestionGroupSchema = external_exports.object({
   sectionId: external_exports.string({ required_error: "ID ph\u1EA7n thi l\xE0 b\u1EAFt bu\u1ED9c" }),
-  title: external_exports.string().optional(),
-  instructions: external_exports.string().optional(),
-  passage: external_exports.string().optional(),
-  audioUrl: external_exports.string().optional(),
+  title: external_exports.string().optional().nullable(),
+  instructions: external_exports.string().optional().nullable(),
+  passage: external_exports.string().optional().nullable(),
+  audioUrl: external_exports.string().optional().nullable(),
   orderIndex: external_exports.number().int().default(0)
 });
 var validateQuestionSemantic = (data, ctx) => {
@@ -114880,9 +114880,9 @@ var baseQuestionSchema = external_exports.object({
   groupId: external_exports.string({ required_error: "ID nh\xF3m c\xE2u h\u1ECFi l\xE0 b\u1EAFt bu\u1ED9c" }),
   questionType: questionTypeEnum,
   questionText: external_exports.string().min(1, "N\u1ED9i dung c\xE2u h\u1ECFi l\xE0 b\u1EAFt bu\u1ED9c"),
-  options: external_exports.any().optional(),
-  correctAnswer: external_exports.string().optional(),
-  audioUrl: external_exports.string().optional(),
+  options: external_exports.any().optional().nullable(),
+  correctAnswer: external_exports.string().optional().nullable(),
+  audioUrl: external_exports.string().optional().nullable(),
   points: external_exports.number({ invalid_type_error: "\u0110i\u1EC3m ph\u1EA3i l\xE0 s\u1ED1" }).int().default(1),
   orderIndex: external_exports.number().int().default(0)
 });
