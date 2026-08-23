@@ -1324,6 +1324,8 @@ export const submissionsApi = {
         lexical?: number | null;
         grammar?: number | null;
       } | null;
+      sentenceFeedbacks?: any[];
+      tabSwitchCount?: number;
     }
   ) => {
     const token = await getAuthToken();
@@ -1344,6 +1346,8 @@ export const submissionsApi = {
         primaryErrorCategory: options?.primaryErrorCategory,
         revisionRequired: options?.revisionRequired,
         criteriaScores: options?.criteriaScores,
+        sentenceFeedbacks: options?.sentenceFeedbacks,
+        tabSwitchCount: options?.tabSwitchCount,
       }),
     });
 

@@ -27,6 +27,15 @@ export interface TeacherFeedbackPayload {
   primaryErrorCategory: "CONCEPT" | "STRUCTURE" | "EXPRESSION" | "GRAMMAR" | null;
   revisionRequired: boolean;
   criteriaScores: CriteriaScores | null;
+  sentenceFeedbacks?: Array<{
+    sentenceIndex: number;
+    originalSentence: string;
+    category: string;
+    tag: string;
+    note: string;
+    suggestedSentence?: string;
+  }>;
+  tabSwitchCount?: number;
 }
 
 export function getRemainingSeconds(startedAt: Date | null, durationMinutes: number | null) {
@@ -834,6 +843,15 @@ export class ExamSubmissionService {
       primaryErrorCategory?: "CONCEPT" | "STRUCTURE" | "EXPRESSION" | "GRAMMAR" | null;
       revisionRequired?: boolean;
       criteriaScores?: CriteriaScores | null;
+      sentenceFeedbacks?: Array<{
+        sentenceIndex: number;
+        originalSentence: string;
+        category: string;
+        tag: string;
+        note: string;
+        suggestedSentence?: string;
+      }>;
+      tabSwitchCount?: number;
     }
   ) {
     const isAdmin = user.roles.includes("admin");
@@ -872,13 +890,16 @@ export class ExamSubmissionService {
           (options.feedback ||
             options.primaryErrorCategory !== undefined ||
             options.revisionRequired !== undefined ||
-            options.criteriaScores !== undefined)
+            options.criteriaScores !== undefined ||
+            options.sentenceFeedbacks !== undefined)
         ) {
           const structuredPayload: TeacherFeedbackPayload = {
             text: options.feedback || g.feedback || "",
             primaryErrorCategory: options.primaryErrorCategory || null,
             revisionRequired: !!options.revisionRequired,
             criteriaScores: options.criteriaScores || null,
+            sentenceFeedbacks: options.sentenceFeedbacks || [],
+            tabSwitchCount: options.tabSwitchCount || 0,
           };
           answerFeedback = JSON.stringify(structuredPayload);
         }

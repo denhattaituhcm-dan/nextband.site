@@ -125,6 +125,24 @@ export class ClassService {
       courseId = firstCourse?.id || "default";
     }
 
+    // MVP invariant: Room phải thuộc cùng Branch với Class.
+    // Room.branchId === Class.branchId — không được tạo lớp học ở cơ sở A nhưng dùng phòng ở cơ sở B.
+    if (data.roomId && data.branchId) {
+      const room = await this.prisma.room.findUnique({
+        where: { id: data.roomId },
+        select: { branchId: true, name: true },
+      });
+      if (!room) {
+        throw new NotFoundError("Phòng học không tồn tại.");
+      }
+      if (room.branchId !== data.branchId) {
+        throw new AuthorizationError(
+          "Phòng học không thuộc cơ sở đã chọn. Vui lòng chọn phòng học thuộc đúng cơ sở.",
+          400
+        );
+      }
+    }
+
     return this.repo.create({
       name: data.name,
       description: data.description,
@@ -137,6 +155,7 @@ export class ClassService {
       isActive: data.isActive !== undefined ? data.isActive : true,
     } as any);
   }
+
 
   // Use Case: Update Class with Ownership Guard
   async updateClass(user: { id: string; roles: string[] }, id: string, data: any) {
@@ -161,8 +180,25 @@ export class ClassService {
     if (data.isActive !== undefined) updatePayload.isActive = data.isActive;
     if (isAdmin && data.teacherId !== undefined) updatePayload.teacherId = data.teacherId;
 
+    // MVP invariant: Room phải thuộc cùng Branch với Class khi cập nhật.
+    const effectiveBranchId = updatePayload.branchId ?? classData.branchId;
+    const effectiveRoomId = updatePayload.roomId ?? classData.roomId;
+    if (effectiveRoomId && effectiveBranchId) {
+      const room = await this.prisma.room.findUnique({
+        where: { id: effectiveRoomId },
+        select: { branchId: true },
+      });
+      if (room && room.branchId !== effectiveBranchId) {
+        throw new AuthorizationError(
+          "Phòng học không thuộc cơ sở đã chọn. Vui lòng chọn phòng học thuộc đúng cơ sở.",
+          400
+        );
+      }
+    }
+
     return this.repo.update(id, updatePayload);
   }
+
 
   // Helper: Gửi thông báo đến học sinh và giáo viên khi lớp đóng
   private async sendClassClosedNotifications(classData: {

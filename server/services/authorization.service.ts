@@ -309,26 +309,45 @@ export class AuthorizationService {
   }
 
   /**
-   * Phân giải phạm vi chi nhánh được phép truy cập (Single Org - Multi Branch Invariant INV-3 & INV-5).
-   * - Super Admin: Được chọn 'ALL' hoặc bất kỳ branchId nào.
-   * - Branch Manager / Teacher / Staff: Chỉ được truy cập các branchId nằm trong USER_BRANCH. Không được phép chọn 'ALL'.
+   * Phân giải phạm vi chi nhánh được phép truy cập.
+   *
+   * MVP Multi-Location invariant:
+   *   - Admin, Teacher, Student → { type: "all" } — truy cập toàn bộ active branches.
+   *   - Branch không phải là security boundary trong MVP này.
+   *   - selectedBranch ở frontend là UI filter/view state, KHÔNG được dùng để derive authorization scope.
+   *   - UserBranch được giữ nguyên cho các role chuyên biệt trong tương lai (branch_manager, staff).
+   *     Hiện tại chưa có role nào bị giới hạn bởi UserBranch scope trong MVP.
+   *
+   * Nếu sau này cần branch-based access control, chỉ áp dụng cho các role được
+   * liệt kê rõ ràng trong BRANCH_SCOPED_ROLES, không mặc định áp dụng cho tất cả.
    */
   async resolveAuthorizedBranchScope(params: {
     userId: string;
     userRoles: string[];
     requestedBranchId?: string | null;
   }): Promise<AuthorizedBranchScope> {
-    const { userId, userRoles = [], requestedBranchId } = params;
-    const isAdmin = userRoles.includes("admin");
+    const { userRoles = [], requestedBranchId } = params;
 
-    if (isAdmin) {
+    // MVP Option A: Admin/Teacher/Student đều có global access.
+    // UserBranch scope chỉ áp dụng cho các role chuyên biệt (branch_manager, v.v.)
+    // hiện chưa tồn tại trong hệ thống. Giữ code dưới đây cho tương lai.
+    const BRANCH_SCOPED_ROLES: string[] = [
+      // "branch_manager", "branch_staff"  // ← Uncomment khi có nhu cầu thực tế
+    ];
+
+    const needsBranchScope = userRoles.some((r) => BRANCH_SCOPED_ROLES.includes(r));
+
+    if (!needsBranchScope) {
+      // Admin, Teacher, Student: global access — thấy tất cả active branches
       if (!requestedBranchId || requestedBranchId === "ALL" || requestedBranchId === "all") {
         return { type: "all" };
       }
       return { type: "branch", branchId: requestedBranchId };
     }
 
-    // Với các role khác (branch_manager, teacher, staff): lấy danh sách chi nhánh được gán
+    // Dự phòng cho tương lai: các role bị scope theo UserBranch
+    // Đoạn code này hiện không được kích hoạt vì BRANCH_SCOPED_ROLES rỗng.
+    const { userId } = params;
     const userBranches = await this.prisma.userBranch.findMany({
       where: { userId },
       select: { branchId: true },
@@ -336,12 +355,10 @@ export class AuthorizationService {
     const allowedBranchIds = userBranches.map((ub) => ub.branchId);
 
     if (allowedBranchIds.length === 0) {
-      // Nếu user chưa được gán branch nào, trả về mảng rỗng để không leak dữ liệu
       return { type: "branches", branchIds: [] };
     }
 
     if (!requestedBranchId || requestedBranchId === "ALL" || requestedBranchId === "all") {
-      // Non-admin không có quyền 'ALL' toàn hệ thống, tự động scope theo danh sách branch được gán
       return { type: "branches", branchIds: allowedBranchIds };
     }
 

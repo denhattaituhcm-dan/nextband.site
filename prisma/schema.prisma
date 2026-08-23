@@ -595,7 +595,11 @@ model Branch {
   name      String
   address   String
   phone     String?
-  isActive  Boolean  @default(true) @map("is_active")
+  isActive  Boolean  @default(true)  @map("is_active")
+  /// isPrimary: đánh dấu đây là Cơ sở chính (Head Campus) của hệ thống.
+  /// MVP invariant: tối đa 1 active Branch có isPrimary = true tại mọi thời điểm.
+  /// Được enforce bởi: unique partial index ở DB + transaction trong BranchService.setPrimaryBranch().
+  isPrimary Boolean  @default(false) @map("is_primary")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
 

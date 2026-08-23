@@ -1,6 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 import { AuthorizedBranchScope, AuthorizationError, NotFoundError } from "./authorization.service.js";
 
+// ─── Custom Error ────────────────────────────────────────────────────────────
+export class ValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ValidationError";
+  }
+}
+
+// ─── Input Interfaces ────────────────────────────────────────────────────────
 export interface CreateBranchInput {
   code: string;
   name: string;
@@ -12,19 +21,23 @@ export interface UpdateBranchInput {
   name?: string;
   address?: string;
   phone?: string;
-  isActive?: boolean;
 }
 
+// ─── BranchService ───────────────────────────────────────────────────────────
 export class BranchService {
   constructor(private prisma: PrismaClient) {}
 
   /**
-   * Lấy danh sách chi nhánh theo AuthorizedBranchScope
+   * Lấy danh sách chi nhánh theo AuthorizedBranchScope.
+   * Mặc định chỉ trả về active branches.
+   * @param includeInactive - nếu true, trả về cả inactive (dùng cho trang Settings).
    */
-  async listBranches(scope?: AuthorizedBranchScope) {
+  async listBranches(scope?: AuthorizedBranchScope, includeInactive = false) {
+    const activeFilter = includeInactive ? {} : { isActive: true };
+
     if (!scope || scope.type === "all") {
       return this.prisma.branch.findMany({
-        where: { isActive: true },
+        where: activeFilter,
         include: {
           _count: {
             select: {
@@ -34,13 +47,13 @@ export class BranchService {
             },
           },
         },
-        orderBy: { createdAt: "asc" },
+        orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }],
       });
     }
 
     if (scope.type === "branch") {
       return this.prisma.branch.findMany({
-        where: { id: scope.branchId, isActive: true },
+        where: { id: scope.branchId, ...activeFilter },
         include: {
           _count: {
             select: {
@@ -55,7 +68,7 @@ export class BranchService {
 
     if (scope.type === "branches") {
       return this.prisma.branch.findMany({
-        where: { id: { in: scope.branchIds }, isActive: true },
+        where: { id: { in: scope.branchIds }, ...activeFilter },
         include: {
           _count: {
             select: {
@@ -65,7 +78,7 @@ export class BranchService {
             },
           },
         },
-        orderBy: { createdAt: "asc" },
+        orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }],
       });
     }
 
@@ -100,7 +113,18 @@ export class BranchService {
   }
 
   /**
-   * Tạo chi nhánh mới (Super Admin)
+   * Lấy Cơ sở chính (isPrimary = true, isActive = true).
+   * Dùng cho frontend auto-select khi chỉ có 1 cơ sở hoặc cần default.
+   */
+  async getPrimaryBranch() {
+    return this.prisma.branch.findFirst({
+      where: { isPrimary: true, isActive: true },
+    });
+  }
+
+  /**
+   * Tạo chi nhánh mới (Admin only).
+   * Nếu là chi nhánh đầu tiên trong hệ thống → tự động set isPrimary = true.
    */
   async createBranch(input: CreateBranchInput) {
     const normalizedCode = input.code.trim().toUpperCase().replace(/\s+/g, "_");
@@ -112,6 +136,10 @@ export class BranchService {
       throw new AuthorizationError(`Mã chi nhánh '${normalizedCode}' đã tồn tại.`);
     }
 
+    // Nếu đây là chi nhánh đầu tiên → tự động là Cơ sở chính
+    const branchCount = await this.prisma.branch.count();
+    const isPrimary = branchCount === 0;
+
     return this.prisma.branch.create({
       data: {
         code: normalizedCode,
@@ -119,12 +147,14 @@ export class BranchService {
         address: input.address.trim(),
         phone: input.phone?.trim() || null,
         isActive: true,
+        isPrimary,
       },
     });
   }
 
   /**
-   * Cập nhật thông tin chi nhánh
+   * Cập nhật thông tin cơ bản của chi nhánh (tên, địa chỉ, hotline).
+   * Không dùng để thay đổi isPrimary hoặc isActive (có method riêng).
    */
   async updateBranch(id: string, input: UpdateBranchInput) {
     const branch = await this.prisma.branch.findUnique({ where: { id } });
@@ -138,13 +168,79 @@ export class BranchService {
         name: input.name !== undefined ? input.name.trim() : undefined,
         address: input.address !== undefined ? input.address.trim() : undefined,
         phone: input.phone !== undefined ? input.phone.trim() : undefined,
-        isActive: input.isActive !== undefined ? input.isActive : undefined,
       },
     });
   }
 
   /**
-   * Gán nhân sự vào chi nhánh
+   * Đặt chi nhánh này làm Cơ sở chính.
+   *
+   * Invariant: Tại mọi thời điểm, tối đa 1 active Branch có isPrimary = true.
+   * Được enforce bởi transaction + unique partial index ở DB.
+   */
+  async setPrimaryBranch(id: string) {
+    const branch = await this.prisma.branch.findUnique({ where: { id } });
+    if (!branch) {
+      throw new NotFoundError("Chi nhánh không tồn tại.");
+    }
+    if (!branch.isActive) {
+      throw new ValidationError("Không thể đặt chi nhánh đang ngừng hoạt động làm Cơ sở chính.");
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      // Unset tất cả primary hiện tại
+      await tx.branch.updateMany({
+        where: { isPrimary: true },
+        data: { isPrimary: false },
+      });
+      // Set chi nhánh mới làm primary
+      return tx.branch.update({
+        where: { id },
+        data: { isPrimary: true },
+      });
+    });
+  }
+
+  /**
+   * Ngừng hoạt động chi nhánh (soft-delete).
+   * KHÔNG cho phép ngừng Cơ sở chính — phải chọn Primary mới trước.
+   */
+  async deactivateBranch(id: string) {
+    const branch = await this.prisma.branch.findUnique({ where: { id } });
+    if (!branch) {
+      throw new NotFoundError("Chi nhánh không tồn tại.");
+    }
+    if (branch.isPrimary) {
+      throw new ValidationError(
+        "Không thể ngừng hoạt động Cơ sở chính. Vui lòng đặt cơ sở khác làm Cơ sở chính trước."
+      );
+    }
+
+    return this.prisma.branch.update({
+      where: { id },
+      data: { isActive: false },
+    });
+  }
+
+  /**
+   * Kích hoạt lại chi nhánh đang inactive.
+   */
+  async activateBranch(id: string) {
+    const branch = await this.prisma.branch.findUnique({ where: { id } });
+    if (!branch) {
+      throw new NotFoundError("Chi nhánh không tồn tại.");
+    }
+
+    return this.prisma.branch.update({
+      where: { id },
+      data: { isActive: true },
+    });
+  }
+
+  /**
+   * Gán nhân sự vào chi nhánh.
+   * MVP Note: UserBranch hiện được giữ lại cho tương lai nhưng không ảnh hưởng
+   * đến quyền truy cập của Teacher/Student trong MVP này.
    */
   async assignUserToBranch(userId: string, branchId: string) {
     return this.prisma.userBranch.upsert({
@@ -157,7 +253,7 @@ export class BranchService {
   }
 
   /**
-   * Xóa nhân sự khỏi chi nhánh
+   * Xóa nhân sự khỏi chi nhánh.
    */
   async removeUserFromBranch(userId: string, branchId: string) {
     return this.prisma.userBranch.deleteMany({
