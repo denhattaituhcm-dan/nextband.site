@@ -1431,6 +1431,25 @@ export class AssessmentService {
       console.warn("[AssessmentService] Speaking promotion notice:", speakingErr);
     }
 
+    // Asynchronously dispatch in-app notifications for Teachers & Admins (non-blocking)
+    (async () => {
+      try {
+        const { NotificationService } = await import("./notification.service.js");
+        const notifService = new NotificationService(this.prisma);
+        const candidateDisplayName = session.candidateName || "Học viên";
+        await notifService.notifyUsersByRole(["teacher", "admin"], {
+          type: "NEW_SUBMISSION",
+          title: "Có bài kiểm tra đầu vào mới",
+          message: `Thí sinh ${candidateDisplayName} (${session.phone}) vừa nộp bài test. Cần chấm phần thi Tự luận (Writing & Speaking).`,
+          link: `/admin/assessments/${sessionId}`,
+          entityType: "ASSESSMENT_SESSION",
+          entityId: sessionId,
+        });
+      } catch (inAppErr) {
+        console.error("[AssessmentService] In-app notification error:", inAppErr);
+      }
+    })();
+
     return report;
   }
 

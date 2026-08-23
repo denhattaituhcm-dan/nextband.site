@@ -29,7 +29,11 @@ export class LeadService {
         email: input.email && input.email.length > 0 ? input.email : null,
         goal: input.goal && input.goal.length > 0 ? input.goal : null,
         source: input.source || "contact_page",
+        preferredBranchId: input.preferredBranchId || null,
         status: LeadStatus.NEW,
+      },
+      include: {
+        preferredBranch: { select: { id: true, name: true, code: true } },
       },
     });
 
@@ -46,6 +50,24 @@ export class LeadService {
       console.error("[LeadService] Notification trigger error:", err);
     });
 
+    // In-app notifications for Admins (non-blocking)
+    (async () => {
+      try {
+        const { NotificationService } = await import("./notification.service.js");
+        const notifService = new NotificationService(this.prisma);
+        await notifService.notifyUsersByRole(["admin"], {
+          type: "SYSTEM",
+          title: "Có Lead mới đăng ký tư vấn",
+          message: `Khách hàng ${lead.fullName} (${lead.phone}) vừa để lại thông tin tư vấn.`,
+          link: "/admin/leads",
+          entityType: "LEAD",
+          entityId: lead.id,
+        });
+      } catch (inAppErr) {
+        console.error("[LeadService] In-app notification error:", inAppErr);
+      }
+    })();
+
     return lead;
   }
 
@@ -59,6 +81,9 @@ export class LeadService {
     const where: any = {};
     if (status) {
       where.status = status;
+    }
+    if (query.preferredBranchId && query.preferredBranchId !== "ALL" && query.preferredBranchId !== "all") {
+      where.preferredBranchId = query.preferredBranchId;
     }
     if (search) {
       where.OR = [
@@ -74,6 +99,9 @@ export class LeadService {
         where,
         skip,
         take: limit,
+        include: {
+          preferredBranch: { select: { id: true, name: true, code: true } },
+        },
         orderBy: { createdAt: "desc" },
       }),
     ]);
@@ -95,6 +123,9 @@ export class LeadService {
   async getLeadById(id: string) {
     return this.prisma.contactLead.findUnique({
       where: { id },
+      include: {
+        preferredBranch: { select: { id: true, name: true, code: true } },
+      },
     });
   }
 
@@ -105,11 +136,15 @@ export class LeadService {
     const data: any = {};
     if (input.status !== undefined) data.status = input.status as LeadStatus;
     if (input.assignedTo !== undefined) data.assignedTo = input.assignedTo;
+    if (input.preferredBranchId !== undefined) data.preferredBranchId = input.preferredBranchId;
     if (input.notes !== undefined) data.notes = input.notes;
 
     return this.prisma.contactLead.update({
       where: { id },
       data,
+      include: {
+        preferredBranch: { select: { id: true, name: true, code: true } },
+      },
     });
   }
 

@@ -461,4 +461,66 @@ export class NotificationService {
 
     return result.count > 0;
   }
+
+  /**
+   * Dọn dẹp các thông báo đã đọc cũ hơn X ngày (mặc định 60 ngày).
+   * Tuyệt đối không xóa các thông báo chưa đọc.
+   */
+  async purgeOldReadNotifications(days: number = 60): Promise<number> {
+    const cutoffDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+    const result = await this.prisma.notification.deleteMany({
+      where: {
+        isRead: true,
+        createdAt: { lte: cutoffDate },
+      },
+    });
+    return result.count;
+  }
+
+  /**
+   * Gửi thông báo tới tất cả người dùng có role chỉ định (ví dụ: 'admin' hoặc 'teacher').
+   * Thiết kế an toàn, không block luồng gọi chính.
+   */
+  async notifyUsersByRole(
+    roles: ('admin' | 'teacher' | 'student')[],
+    payload: {
+      type: NotificationType;
+      title: string;
+      message: string;
+      link?: string | null;
+      entityType?: string | null;
+      entityId?: string | null;
+    }
+  ): Promise<number> {
+    try {
+      const userRoles = await this.prisma.userRole.findMany({
+        where: {
+          role: { in: roles },
+          user: { isActive: true },
+        },
+        select: { userId: true },
+      });
+
+      const uniqueUserIds = Array.from(new Set(userRoles.map((r) => r.userId).filter(Boolean)));
+      if (uniqueUserIds.length === 0) return 0;
+
+      await this.prisma.notification.createMany({
+        data: uniqueUserIds.map((userId) => ({
+          userId,
+          type: payload.type,
+          title: payload.title,
+          message: payload.message,
+          link: payload.link || null,
+          entityType: payload.entityType || null,
+          entityId: payload.entityId || null,
+        })),
+        skipDuplicates: true,
+      });
+
+      return uniqueUserIds.length;
+    } catch (err) {
+      console.error('[NotificationService] notifyUsersByRole error:', err);
+      return 0;
+    }
+  }
 }

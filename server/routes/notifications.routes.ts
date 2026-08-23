@@ -199,6 +199,24 @@ const notificationsRoutes: FastifyPluginAsync = async (fastify) => {
       });
     }
   );
+
+  // POST /notifications/maintenance/cleanup — Dọn dẹp notifications đã đọc cũ hơn 60 ngày
+  fastify.post(
+    '/maintenance/cleanup',
+    { preHandler: [fastify.authenticate, requireRoles('admin')] },
+    async (request, reply) => {
+      const { days } = (request.body || {}) as { days?: number };
+      const retentionDays = Number(days) > 0 ? Number(days) : 60;
+      const purgedCount = await notificationService.purgeOldReadNotifications(retentionDays);
+
+      return reply.send({
+        success: true,
+        message: `Đã dọn dẹp ${purgedCount} thông báo đã đọc cũ hơn ${retentionDays} ngày.`,
+        purgedCount,
+        retentionDays,
+      });
+    }
+  );
 };
 
 export default notificationsRoutes;

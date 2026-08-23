@@ -1,12 +1,15 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, NotificationType } from "@prisma/client";
 import { ClassRepository } from "../repositories/class.repository.js";
-import { AuthorizationError, NotFoundError } from "./authorization.service.js";
+import { AuthorizationService, AuthorizationError, NotFoundError } from "./authorization.service.js";
+import { NotificationService } from "./notification.service.js";
 
 export class ClassService {
   private repo: ClassRepository;
+  private notifService: NotificationService;
 
   constructor(private prisma: PrismaClient) {
     this.repo = new ClassRepository(prisma);
+    this.notifService = new NotificationService(prisma);
   }
 
   // Use Case: Get all active class memberships for the currently authenticated student
@@ -25,9 +28,9 @@ export class ClassService {
     }));
   }
 
-  // Use Case: List Classes with Role & Teacher filtering
+  // Use Case: List Classes with Role & Teacher filtering & Branch scoping
   async listClasses(user: { id: string; roles: string[] }, query: any) {
-    const { page = 1, limit = 10, search, isActive } = query;
+    const { page = 1, limit = 10, search, isActive, branchId } = query;
     const skip = (page - 1) * limit;
 
     const where: any = {};
@@ -38,6 +41,20 @@ export class ClassService {
       where.teacherId = user.id;
     } else if (!isAdmin && !isTeacher) {
       where.students = { some: { studentId: user.id } };
+    }
+
+    // Branch Scoping (INV-2, INV-3, INV-5)
+    const authService = new AuthorizationService(this.prisma);
+    const branchScope = await authService.resolveAuthorizedBranchScope({
+      userId: user.id,
+      userRoles: user.roles,
+      requestedBranchId: branchId,
+    });
+
+    if (branchScope.type === "branch") {
+      where.branchId = branchScope.branchId;
+    } else if (branchScope.type === "branches") {
+      where.branchId = { in: branchScope.branchIds };
     }
 
     if (isActive !== undefined) {
@@ -112,6 +129,8 @@ export class ClassService {
       name: data.name,
       description: data.description,
       course: { connect: { id: courseId } },
+      branch: data.branchId ? { connect: { id: data.branchId } } : undefined,
+      room: data.roomId ? { connect: { id: data.roomId } } : undefined,
       teacher: teacherId ? { connect: { id: teacherId } } : undefined,
       startDate: data.startDate ? new Date(data.startDate) : undefined,
       endDate: data.endDate ? new Date(data.endDate) : undefined,
@@ -134,6 +153,9 @@ export class ClassService {
     const updatePayload: any = {};
     if (data.name !== undefined) updatePayload.name = data.name;
     if (data.description !== undefined) updatePayload.description = data.description;
+    if (data.courseId !== undefined) updatePayload.courseId = data.courseId;
+    if (data.branchId !== undefined) updatePayload.branchId = data.branchId || null;
+    if (data.roomId !== undefined) updatePayload.roomId = data.roomId || null;
     if (data.startDate !== undefined) updatePayload.startDate = data.startDate ? new Date(data.startDate) : null;
     if (data.endDate !== undefined) updatePayload.endDate = data.endDate ? new Date(data.endDate) : null;
     if (data.isActive !== undefined) updatePayload.isActive = data.isActive;
@@ -142,11 +164,168 @@ export class ClassService {
     return this.repo.update(id, updatePayload);
   }
 
+  // Helper: Gửi thông báo đến học sinh và giáo viên khi lớp đóng
+  private async sendClassClosedNotifications(classData: {
+    id: string;
+    name: string;
+    teacherId?: string | null;
+    students?: Array<{ studentId: string }>;
+  }) {
+    const recipientUserIds = new Set<string>();
+    if (classData.teacherId) {
+      recipientUserIds.add(classData.teacherId);
+    }
+    if (classData.students) {
+      for (const s of classData.students) {
+        if (s.studentId) recipientUserIds.add(s.studentId);
+      }
+    }
+
+    if (recipientUserIds.size === 0) return;
+
+    const notifPayloads = Array.from(recipientUserIds).map((userId) => ({
+      userId,
+      type: NotificationType.SYSTEM,
+      title: `Lớp học đã kết thúc: ${classData.name}`,
+      message: `Lớp học "${classData.name}" đã chính thức đóng. Bạn có 3 tháng để xem lại bài nộp, điểm số và nhận xét trước khi dữ liệu lớp được dọn dẹp.`,
+      link: `/classes/${classData.id}`,
+      entityType: "CLASS",
+      entityId: classData.id,
+    }));
+
+    await this.notifService.createBatchNotifications(this.prisma, notifPayloads);
+  }
+
+  // Use Case: Close Class (Teacher or Admin)
+  async closeClass(user: { id: string; roles: string[] }, id: string) {
+    const classData = await this.repo.findById(id);
+    if (!classData) {
+      throw new NotFoundError("Không tìm thấy lớp học");
+    }
+
+    const isAdmin = user.roles.includes("admin");
+    if (!isAdmin && classData.teacherId !== user.id) {
+      throw new AuthorizationError("Từ chối truy cập - bạn không có quyền đóng lớp này", 403);
+    }
+
+    if (classData.status === "CLOSED" || !classData.isActive) {
+      return {
+        success: true,
+        message: "Lớp học đã ở trạng thái đóng.",
+        data: classData,
+      };
+    }
+
+    const updatedClass = await this.prisma.class.update({
+      where: { id },
+      data: {
+        status: "CLOSED",
+        isActive: false,
+        closedAt: new Date(),
+      },
+      select: {
+        id: true,
+        name: true,
+        teacherId: true,
+        status: true,
+        isActive: true,
+        closedAt: true,
+        students: { select: { studentId: true } },
+      },
+    });
+
+    await this.sendClassClosedNotifications({
+      id: updatedClass.id,
+      name: updatedClass.name,
+      teacherId: updatedClass.teacherId,
+      students: updatedClass.students,
+    });
+
+    return {
+      success: true,
+      message: `Đã đóng lớp "${updatedClass.name}" thành công và gửi thông báo đến học viên.`,
+      data: updatedClass,
+    };
+  }
+
+  // Use Case: Run Lifecycle Maintenance (Auto-close after 6 months & Auto-cleanup after 3 months)
+  async runClassLifecycleMaintenance() {
+    const now = new Date();
+
+    // 1. Tự động đóng các lớp ACTIVE quá 6 tháng kể từ ngày khai giảng (startDate)
+    const sixMonthsAgo = new Date(now.getTime() - 180 * 24 * 60 * 60 * 1000);
+    const expiredClasses = await this.prisma.class.findMany({
+      where: {
+        status: "ACTIVE",
+        startDate: {
+          lte: sixMonthsAgo,
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        teacherId: true,
+        students: { select: { studentId: true } },
+      },
+    });
+
+    let closedCount = 0;
+    for (const cls of expiredClasses) {
+      await this.prisma.class.update({
+        where: { id: cls.id },
+        data: {
+          status: "CLOSED",
+          isActive: false,
+          closedAt: now,
+        },
+      });
+
+      await this.sendClassClosedNotifications({
+        id: cls.id,
+        name: cls.name,
+        teacherId: cls.teacherId,
+        students: cls.students,
+      });
+      closedCount++;
+    }
+
+    // 2. Tự động dọn dẹp / xóa sạch các lớp đã CLOSED quá 3 tháng (90 ngày) kể từ ngày closedAt
+    const threeMonthsAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+    const classesToDelete = await this.prisma.class.findMany({
+      where: {
+        status: "CLOSED",
+        closedAt: {
+          lte: threeMonthsAgo,
+        },
+      },
+      select: { id: true, name: true },
+    });
+
+    let deletedCount = 0;
+    for (const cls of classesToDelete) {
+      await this.prisma.class.delete({
+        where: { id: cls.id },
+      });
+      deletedCount++;
+    }
+
+    return {
+      success: true,
+      timestamp: now.toISOString(),
+      closedClassesCount: closedCount,
+      deletedClassesCount: deletedCount,
+    };
+  }
+
   // Use Case: Add Student to Class
   async addStudent(user: { id: string; roles: string[] }, classId: string, studentId: string) {
     const classData = await this.repo.findById(classId);
     if (!classData) {
       throw new NotFoundError("Không tìm thấy lớp học");
+    }
+
+    if (classData.status === "CLOSED" || !classData.isActive) {
+      throw new AuthorizationError("Lớp học đã kết thúc và đóng, không thể thêm học viên mới", 400);
     }
 
     const isAdmin = user.roles.includes("admin");
@@ -169,6 +348,10 @@ export class ClassService {
       throw new NotFoundError("Không tìm thấy lớp học");
     }
 
+    if (classData.status === "CLOSED" || !classData.isActive) {
+      throw new AuthorizationError("Lớp học đã kết thúc và đóng, không thể thay đổi danh sách học viên", 400);
+    }
+
     const isAdmin = user.roles.includes("admin");
     if (!isAdmin && classData.teacherId !== user.id) {
       throw new AuthorizationError("Từ chối truy cập - bạn không có quyền xóa học viên khỏi lớp này", 403);
@@ -186,6 +369,10 @@ export class ClassService {
     const classData = await this.repo.findById(classId);
     if (!classData) {
       throw new NotFoundError("Không tìm thấy lớp học");
+    }
+
+    if (classData.status === "CLOSED" || !classData.isActive) {
+      throw new AuthorizationError("Lớp học đã kết thúc và đóng, không thể điểm danh", 400);
     }
 
     const isAdmin = user.roles.includes("admin");
@@ -220,6 +407,10 @@ export class ClassService {
     const classData = await this.repo.findById(classId);
     if (!classData) {
       throw new NotFoundError("Không tìm thấy lớp học");
+    }
+
+    if (classData.status === "CLOSED" || !classData.isActive) {
+      throw new AuthorizationError("Lớp học đã kết thúc và đóng, không thể giao bài tập hoặc sửa hạn nộp", 400);
     }
 
     const isAdmin = user.roles.includes("admin");

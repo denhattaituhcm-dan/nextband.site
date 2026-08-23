@@ -10,6 +10,7 @@ import { env } from "./config/env.js";
 import prismaPlugin from "./plugins/prisma.js";
 import authPlugin from "./plugins/auth.js";
 import routes from "./routes/index.js";
+import { ClassSchedulerService } from "./services/class-scheduler.service.js";
 
 export async function buildApp() {
   const isServerless =
@@ -278,6 +279,21 @@ export async function buildApp() {
       statusCode: 404,
     });
   });
+
+  // Background Class Lifecycle Scheduler (runs on persistent server instances)
+  if (!isServerless) {
+    let scheduler: ClassSchedulerService | null = null;
+    app.addHook("onReady", async () => {
+      scheduler = new ClassSchedulerService(app.prisma, app.log);
+      scheduler.start();
+    });
+    app.addHook("onClose", async () => {
+      if (scheduler) {
+        scheduler.stop();
+        scheduler = null;
+      }
+    });
+  }
 
   return app;
 }

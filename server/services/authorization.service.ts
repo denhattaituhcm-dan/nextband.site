@@ -307,4 +307,54 @@ export class AuthorizationService {
     }
     return question;
   }
+
+  /**
+   * Phân giải phạm vi chi nhánh được phép truy cập (Single Org - Multi Branch Invariant INV-3 & INV-5).
+   * - Super Admin: Được chọn 'ALL' hoặc bất kỳ branchId nào.
+   * - Branch Manager / Teacher / Staff: Chỉ được truy cập các branchId nằm trong USER_BRANCH. Không được phép chọn 'ALL'.
+   */
+  async resolveAuthorizedBranchScope(params: {
+    userId: string;
+    userRoles: string[];
+    requestedBranchId?: string | null;
+  }): Promise<AuthorizedBranchScope> {
+    const { userId, userRoles = [], requestedBranchId } = params;
+    const isAdmin = userRoles.includes("admin");
+
+    if (isAdmin) {
+      if (!requestedBranchId || requestedBranchId === "ALL" || requestedBranchId === "all") {
+        return { type: "all" };
+      }
+      return { type: "branch", branchId: requestedBranchId };
+    }
+
+    // Với các role khác (branch_manager, teacher, staff): lấy danh sách chi nhánh được gán
+    const userBranches = await this.prisma.userBranch.findMany({
+      where: { userId },
+      select: { branchId: true },
+    });
+    const allowedBranchIds = userBranches.map((ub) => ub.branchId);
+
+    if (allowedBranchIds.length === 0) {
+      // Nếu user chưa được gán branch nào, trả về mảng rỗng để không leak dữ liệu
+      return { type: "branches", branchIds: [] };
+    }
+
+    if (!requestedBranchId || requestedBranchId === "ALL" || requestedBranchId === "all") {
+      // Non-admin không có quyền 'ALL' toàn hệ thống, tự động scope theo danh sách branch được gán
+      return { type: "branches", branchIds: allowedBranchIds };
+    }
+
+    if (!allowedBranchIds.includes(requestedBranchId)) {
+      throw new AuthorizationError("Từ chối truy cập: Bạn không có quyền quản lý chi nhánh này.", 403);
+    }
+
+    return { type: "branch", branchId: requestedBranchId };
+  }
 }
+
+export type AuthorizedBranchScope =
+  | { type: "all" }
+  | { type: "branch"; branchId: string }
+  | { type: "branches"; branchIds: string[] };
+

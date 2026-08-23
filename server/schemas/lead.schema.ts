@@ -29,6 +29,7 @@ export const createLeadSchema = z.object({
     .max(100)
     .optional()
     .default("contact_page"),
+  preferredBranchId: z.string().optional().nullable(),
 });
 
 export const updateLeadSchema = z.object({
@@ -36,6 +37,7 @@ export const updateLeadSchema = z.object({
     .enum(["NEW", "CONTACTED", "ENROLLED", "CANCELLED", "ARCHIVED"])
     .optional(),
   assignedTo: z.string().optional().nullable(),
+  preferredBranchId: z.string().optional().nullable(),
   notes: z.string().max(2000).optional().nullable(),
 });
 
@@ -45,6 +47,7 @@ export const listLeadsQuerySchema = z.object({
   status: z
     .enum(["NEW", "CONTACTED", "ENROLLED", "CANCELLED", "ARCHIVED"])
     .optional(),
+  preferredBranchId: z.string().optional(),
   search: z.string().optional(),
 });
 

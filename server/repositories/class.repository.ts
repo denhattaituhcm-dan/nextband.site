@@ -8,6 +8,8 @@ export class ClassRepository {
       where: { id },
       include: include || {
         course: true,
+        branch: true,
+        room: true,
         teacher: {
           select: { id: true, fullName: true, email: true },
         },
@@ -37,6 +39,15 @@ export class ClassRepository {
       include: {
         teacher: {
           select: { id: true, fullName: true, email: true },
+        },
+        branch: {
+          select: { id: true, name: true, code: true },
+        },
+        room: {
+          select: { id: true, name: true, capacity: true },
+        },
+        course: {
+          select: { id: true, title: true },
         },
         _count: {
           select: { students: true },

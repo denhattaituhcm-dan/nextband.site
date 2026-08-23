@@ -65,4 +65,22 @@ export default async function classesRoutes(fastify: FastifyInstance) {
       return controller.setHomeworkDeadline(request, reply);
     }
   );
+
+  // POST /classes/:id/close - Đóng lớp học (Thủ công bởi Teacher hoặc Admin)
+  fastify.post<{ Params: { id: string } }>(
+    "/:id/close",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      return controller.close(request, reply);
+    }
+  );
+
+  // POST /classes/maintenance - Tác vụ bảo trì vòng đời lớp (Quét tự động đóng & xóa dọn dẹp)
+  fastify.post(
+    "/maintenance",
+    { preHandler: [authenticate, requireRoles("admin")] },
+    async (request, reply) => {
+      return controller.triggerMaintenance(request, reply);
+    }
+  );
 }

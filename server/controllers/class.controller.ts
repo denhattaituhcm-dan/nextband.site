@@ -147,4 +147,25 @@ export class ClassController {
       return reply.status(status).send({ error: err.message });
     }
   }
+
+  async close(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+    try {
+      const user = (request as any).user;
+      const result = await this.service.closeClass(user, request.params.id);
+      return reply.send(result);
+    } catch (err: any) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
+
+  async triggerMaintenance(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const result = await this.service.runClassLifecycleMaintenance();
+      return reply.send(result);
+    } catch (err: any) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
 }
