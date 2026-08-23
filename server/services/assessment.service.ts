@@ -693,12 +693,37 @@ export class AssessmentService {
       }
     } catch {}
 
+    let candidateName = fallbackData?.candidateName;
+    let phone = fallbackData?.phone;
+    let targetBand = fallbackData?.targetBand;
+
+    try {
+      const lead = await this.prisma.contactLead.findFirst({
+        where: {
+          OR: [
+            { notes: { contains: sessionId } },
+            { notes: { contains: sessionId.toLowerCase() } },
+            { notes: { contains: sessionId.toUpperCase() } },
+          ],
+        },
+        orderBy: { createdAt: "desc" },
+      });
+      if (lead) {
+        if (!candidateName || candidateName === "Thí sinh ARIS") candidateName = lead.fullName;
+        if (!phone || phone === "0900000000") phone = lead.phone;
+        if (!targetBand || targetBand === "7.0+" || targetBand === "Chưa xác định") {
+          const match = lead.goal?.match(/Mục tiêu:\s*([^\n|]+)/i);
+          if (match && match[1]) targetBand = match[1].trim();
+        }
+      }
+    } catch {}
+
     session = {
       id: sessionId,
       examId,
-      candidateName: fallbackData?.candidateName || "Thí sinh ARIS",
-      phone: fallbackData?.phone || "0900000000",
-      targetBand: fallbackData?.targetBand || "7.0+",
+      candidateName: candidateName || "Thí sinh ARIS",
+      phone: phone || "0900000000",
+      targetBand: targetBand || "Chưa xác định",
       status: "ACTIVE",
       answers: fallbackData?.answers || {},
       objectiveScore: null,
@@ -730,6 +755,9 @@ export class AssessmentService {
             expiresAt: session.expiresAt,
           },
           update: {
+            fullName: session.candidateName,
+            phone: session.phone,
+            targetBand: session.targetBand,
             answers: session.answers,
           },
         });
@@ -748,7 +776,9 @@ export class AssessmentService {
     if (!sessionId) return null;
 
     const mem = inMemoryAssessmentSessions.get(sessionId);
-    if (mem) return mem;
+    if (mem && mem.candidateName && mem.candidateName !== "Thí sinh ARIS" && mem.phone !== "0900000000") {
+      return mem;
+    }
 
     try {
       if ((this.prisma as any).assessmentSession) {
@@ -756,12 +786,43 @@ export class AssessmentService {
           where: { id: sessionId },
         });
         if (db) {
+          let cName = db.fullName || db.candidateName || "Thí sinh ARIS";
+          let cPhone = db.phone || "0900000000";
+          let cTargetBand = db.targetBand || "Chưa xác định";
+
+          if (cName === "Thí sinh ARIS" || cPhone === "0900000000") {
+            try {
+              const lead = await this.prisma.contactLead.findFirst({
+                where: {
+                  OR: [
+                    { notes: { contains: sessionId } },
+                    { notes: { contains: sessionId.toLowerCase() } },
+                    { notes: { contains: sessionId.toUpperCase() } },
+                  ],
+                },
+                orderBy: { createdAt: "desc" },
+              });
+              if (lead) {
+                if (lead.fullName) cName = lead.fullName;
+                if (lead.phone) cPhone = lead.phone;
+                if (lead.goal) {
+                  const match = lead.goal.match(/Mục tiêu:\s*([^\n|]+)/i);
+                  if (match && match[1]) cTargetBand = match[1].trim();
+                }
+                await (this.prisma as any).assessmentSession.update({
+                  where: { id: sessionId },
+                  data: { fullName: cName, phone: cPhone, targetBand: cTargetBand },
+                });
+              }
+            } catch {}
+          }
+
           const rec: AssessmentSessionRecord = {
             id: db.id,
             examId: db.examId,
-            candidateName: db.fullName || db.candidateName,
-            phone: db.phone,
-            targetBand: db.targetBand || "Chưa xác định",
+            candidateName: cName,
+            phone: cPhone,
+            targetBand: cTargetBand,
             status: db.status,
             answers: db.answers || {},
             objectiveScore: (db.result as any)?.objectiveBreakdown || null,
@@ -1401,6 +1462,32 @@ export class AssessmentService {
       }));
     }
 
+    // Enrich candidate info from ContactLead if placeholder detected
+    for (const db of dbItems) {
+      if (!db.fullName || db.fullName === "Thí sinh ARIS" || db.phone === "0900000000") {
+        try {
+          const lead = await this.prisma.contactLead.findFirst({
+            where: {
+              OR: [
+                { notes: { contains: db.id } },
+                { notes: { contains: db.id.toLowerCase() } },
+                { notes: { contains: db.id.toUpperCase() } },
+              ],
+            },
+            orderBy: { createdAt: "desc" },
+          });
+          if (lead) {
+            if (lead.fullName) db.fullName = lead.fullName;
+            if (lead.phone) db.phone = lead.phone;
+            if (lead.goal) {
+              const match = lead.goal.match(/Mục tiêu:\s*([^\n|]+)/i);
+              if (match && match[1]) db.targetBand = match[1].trim();
+            }
+          }
+        } catch {}
+      }
+    }
+
     const items = dbItems.map((db) => {
       const res = db.result || {};
       const answers = db.answers || {};
@@ -1468,11 +1555,55 @@ export class AssessmentService {
     if (!session) return null;
 
     let testPayload: SanitizedPlacementTestPayload | null = null;
+    const targetExamId = session.examId || "cce291f7-d88b-4976-8ed3-cc21daca7023";
+    let dbExam: any = null;
+
     try {
-      const data = await this.getTestPayloadForSession(sessionId);
-      testPayload = data.test;
-    } catch {
+      dbExam = await this.prisma.exam.findUnique({
+        where: { id: targetExamId },
+        include: {
+          sections: {
+            orderBy: { orderIndex: "asc" },
+            include: {
+              questionGroups: {
+                orderBy: { orderIndex: "asc" },
+                include: {
+                  questions: {
+                    orderBy: { orderIndex: "asc" },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (dbExam && dbExam.sections && dbExam.sections.length > 0) {
+        testPayload = this.transformDbExamToPayload(dbExam);
+      }
+    } catch (err) {
+      console.warn("[AssessmentService] getAdminAssessmentSessionDetail DB exam lookup:", err);
+    }
+
+    if (!testPayload) {
       testPayload = canonicalPlacementTestPayload;
+    }
+
+    // Build question answer keys map from DB
+    const dbAnswerKeys: Record<string, { correctAnswer: string; acceptedAnswers?: string[] }> = {};
+    if (dbExam && dbExam.sections) {
+      dbExam.sections.forEach((s: any) => {
+        s.questionGroups?.forEach((g: any) => {
+          g.questions?.forEach((q: any) => {
+            if (q.correctAnswer) {
+              dbAnswerKeys[q.id] = {
+                correctAnswer: q.correctAnswer,
+                acceptedAnswers: q.acceptedAnswers || [],
+              };
+            }
+          });
+        });
+      });
     }
 
     const answers = session.answers || {};
@@ -1489,7 +1620,7 @@ export class AssessmentService {
 
       allObjectiveQuestions.forEach((q) => {
         const studentAns = answers[q.id];
-        const key = authoritativePlacementAnswerKeys[q.id];
+        const key = dbAnswerKeys[q.id] || authoritativePlacementAnswerKeys[q.id];
         const correctAnswer = key?.correctAnswer || "Chưa có đáp án mẫu";
 
         let isCorrect = false;
@@ -1498,7 +1629,7 @@ export class AssessmentService {
           const normCorrect = String(key.correctAnswer).trim().toLowerCase();
           isCorrect = normStudent === normCorrect;
           if (!isCorrect && key.acceptedAnswers) {
-            isCorrect = key.acceptedAnswers.some((acc) => String(acc).trim().toLowerCase() === normStudent);
+            isCorrect = key.acceptedAnswers.some((acc: any) => String(acc).trim().toLowerCase() === normStudent);
           }
         }
 
@@ -1533,6 +1664,7 @@ export class AssessmentService {
       answers,
       result: res,
       testPayload,
+      dbAnswerKeys,
       questionBreakdown,
       teacherReview: {
         gradingStatus: teacherReview.gradingStatus || (session.status === "SUBMITTED" ? "PENDING" : "IN_PROGRESS"),
