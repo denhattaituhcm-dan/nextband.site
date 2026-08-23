@@ -39,6 +39,15 @@ export interface AssessmentSessionRecord {
   updatedAt: Date;
 }
 
+export interface SkillScoreReportItem {
+  correct: number;
+  total: number;
+  scorePercent: number;
+  estimatedBand?: string;
+  level?: string;
+  feedback: string;
+}
+
 export interface DiagnosticReport {
   sessionId: string;
   candidateName: string;
@@ -61,19 +70,40 @@ export interface DiagnosticReport {
     rawScore: number;
     totalQuestions: number;
     accuracyPercent: number;
-    listening: { correct: number; total: number; scorePercent: number; feedback: string };
-    reading: { correct: number; total: number; scorePercent: number; feedback: string };
-    grammar: { correct: number; total: number; scorePercent: number; feedback: string };
+    listening: SkillScoreReportItem;
+    reading: SkillScoreReportItem;
+    grammar: SkillScoreReportItem;
   };
   subjectiveEvaluation: {
     status: "NONE" | "PENDING_REVIEW" | "REVIEWED";
     hasWritingSubmission: boolean;
     hasSpeakingRecording: boolean;
+    writing?: {
+      submitted: boolean;
+      status: string;
+      message: string;
+    };
+    speaking?: {
+      submitted: boolean;
+      status: string;
+      message: string;
+    };
     note: string;
   };
   strengths: string[];
   weaknesses: string[];
   submittedAt: string;
+}
+
+export function calculateEstimatedSkillBand(correct: number, total: number): { band: string; level: string } {
+  if (total <= 0) return { band: "Band 2.5 – 3.5", level: "Starter (Khởi nền)" };
+  const pct = Math.round((correct / total) * 100);
+  if (pct >= 90) return { band: "Band 7.5 – 8.5", level: "Advanced (Xuất sắc)" };
+  if (pct >= 75) return { band: "Band 6.5 – 7.0", level: "Upper-Intermediate (Giỏi)" };
+  if (pct >= 55) return { band: "Band 5.5 – 6.0", level: "Intermediate (Khá)" };
+  if (pct >= 40) return { band: "Band 4.5 – 5.0", level: "Pre-Intermediate (Trung bình)" };
+  if (pct >= 25) return { band: "Band 3.5 – 4.0", level: "Elementary (Sơ cấp)" };
+  return { band: "Band 2.5 – 3.0", level: "Starter (Khởi nền)" };
 }
 
 export function mapRawScoreToArisLevel(correctCount: number, totalQuestions: number = 35) {
@@ -384,7 +414,7 @@ export class AssessmentService {
     return {
       testId: exam.id || "aris-placement-v1",
       title: exam.title ? `ARIS Diagnostic Assessment — ${exam.title}` : canonicalPlacementTestPayload.title,
-      durationMinutes: exam.durationMinutes || 45,
+      durationMinutes: exam.durationMinutes || 60,
       totalQuestions: totalObjCount + 2,
       skills: {
         listening: {
@@ -445,8 +475,8 @@ export class AssessmentService {
     this.checkRateLimits(params.ipAddress || "", cleanPhone);
 
     const now = new Date();
-    // 45 minutes duration + 15 minutes buffer
-    const expiresAt = new Date(now.getTime() + 60 * 60 * 1000);
+    // 60 minutes duration + 15 minutes buffer
+    const expiresAt = new Date(now.getTime() + 75 * 60 * 1000);
     const sessionId = crypto.randomUUID();
 
     // Look up designated Entrance Test from DB
@@ -740,32 +770,37 @@ export class AssessmentService {
         .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
         .replace(/\s+/g, " ");
 
-    // Check if we can grade against DB exam questions
-    const targetExamId = session.examId || "cce291f7-d88b-4976-8ed3-cc21daca7023";
+    // Check if answers match canonical diagnostic test keys (L1-L10, R1-R10, G1-G15)
+    const hasCanonicalPlacementAnswers = Object.keys(answers).some(
+      (k) => k in authoritativePlacementAnswerKeys || /^[LRG]\d+$/i.test(k)
+    );
+
     let dbExamQuestions: any[] = [];
-    try {
-      dbExamQuestions = await this.prisma.question.findMany({
-        where: {
-          group: {
-            section: {
-              examId: targetExamId,
+    if (!hasCanonicalPlacementAnswers && session.examId) {
+      try {
+        dbExamQuestions = await this.prisma.question.findMany({
+          where: {
+            group: {
+              section: {
+                examId: session.examId,
+              },
             },
           },
-        },
-        include: {
-          group: {
-            include: {
-              section: true,
+          include: {
+            group: {
+              include: {
+                section: true,
+              },
             },
           },
-        },
-      });
-    } catch (dbErr) {
-      console.warn("[AssessmentService] DB questions fetch error:", dbErr);
+        });
+      } catch (dbErr) {
+        console.warn("[AssessmentService] DB questions fetch error:", dbErr);
+      }
     }
 
     if (dbExamQuestions.length > 0) {
-      // Dynamic Database Auto-grading
+      // Dynamic Database Auto-grading for custom exam questions
       for (const q of dbExamQuestions) {
         const secType = q.group?.section?.sectionType;
         const isListening = secType === "listening";
@@ -832,21 +867,42 @@ export class AssessmentService {
         }
       }
     } else {
-      // Fallback: Grade against authoritative Placement Answer Keys
+      // Authoritative Clean-room Diagnostic Auto-grading (L1-L10, R1-R10, G1-G15)
       Object.entries(authoritativePlacementAnswerKeys).forEach(([qId, key]) => {
         if (key.skill === "listening") listeningTotal++;
         else if (key.skill === "reading") readingTotal++;
         else if (key.skill === "grammar") grammarTotal++;
 
         const studentAns = answers[qId];
-        if (!studentAns) return;
+        if (studentAns == null || String(studentAns).trim() === "") return;
 
-        const normStudent = normalizeText(studentAns);
+        let rawAns = studentAns;
+        // If question answer is an object with slots e.g. { "0": "answer" }
+        if (typeof studentAns === "object" && !Array.isArray(studentAns)) {
+          const values = Object.values(studentAns).filter(Boolean);
+          if (values.length > 0) rawAns = values.join(" ");
+        }
+
+        const normStudent = normalizeText(rawAns);
         const normCorrect = normalizeText(key.correctAnswer);
 
         let isMatch = normStudent === normCorrect;
         if (!isMatch && key.acceptedAnswers && key.acceptedAnswers.length > 0) {
           isMatch = key.acceptedAnswers.some((acc) => normalizeText(acc) === normStudent);
+        }
+
+        // Support accent-insensitive match (e.g. Vietnamese typing without accents or subtle variations)
+        if (!isMatch) {
+          const stripAccents = (str: string) =>
+            str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+          const studentStripped = stripAccents(normStudent);
+          const correctStripped = stripAccents(normCorrect);
+          isMatch = studentStripped === correctStripped || studentStripped.includes(correctStripped) || correctStripped.includes(studentStripped);
+          if (!isMatch && key.acceptedAnswers) {
+            isMatch = key.acceptedAnswers.some(
+              (acc) => stripAccents(normalizeText(acc)) === studentStripped
+            );
+          }
         }
 
         if (isMatch) {
@@ -865,6 +921,10 @@ export class AssessmentService {
     const readingPct = Math.round((readingCorrect / Math.max(1, readingTotal)) * 100);
     const grammarPct = Math.round((grammarCorrect / Math.max(1, grammarTotal)) * 100);
 
+    const listeningBandInfo = calculateEstimatedSkillBand(listeningCorrect, listeningTotal);
+    const readingBandInfo = calculateEstimatedSkillBand(readingCorrect, readingTotal);
+    const grammarBandInfo = calculateEstimatedSkillBand(grammarCorrect, grammarTotal);
+
     // Map to ARIS Diagnostic Level & Estimated IELTS Range
     const arisInfo = mapRawScoreToArisLevel(rawCorrect, totalQuestions);
 
@@ -880,29 +940,38 @@ export class AssessmentService {
     const strengths: string[] = [];
     const weaknesses: string[] = [];
 
-    if (readingPct >= 70) {
-      strengths.push("Khả năng quét và định vị thông tin học thuật (Scanning & Skimming) rất nhanh và chính xác.");
-    } else if (readingPct < 40) {
-      weaknesses.push("Tốc độ đọc còn chậm và dễ bị bẫy ở các câu hỏi suy luận logic True/False/Not Given.");
-    }
+    const hasAttemptedAnswers = Object.keys(answers).some(
+      (k) => k !== "writing_response" && !k.startsWith("speaking") && answers[k] != null && String(answers[k]).trim() !== ""
+    );
 
-    if (listeningPct >= 70) {
-      strengths.push("Phản xạ nghe hiểu tốt, bắt kịp tốc độ các đoạn hội thoại và độc thoại học thuật.");
-    } else if (listeningPct < 40) {
-      weaknesses.push("Còn gặp khó khăn khi nghe các từ nối âm và thông tin số liệu/địa chỉ trong bài nghe.");
-    }
+    if (!hasAttemptedAnswers || rawCorrect === 0) {
+      strengths.push("Chưa đủ dữ liệu câu trả lời hợp lệ để xác nhận điểm mạnh của thí sinh.");
+      weaknesses.push("Chưa có đủ dữ liệu câu trả lời để bóc tách điểm nghẽn chi tiết.");
+    } else {
+      if (readingPct >= 70) {
+        strengths.push("Khả năng quét và định vị thông tin học thuật (Scanning & Skimming) rất nhanh và chính xác.");
+      } else if (readingPct < 40) {
+        weaknesses.push("Tốc độ đọc còn chậm và dễ bị bẫy ở các câu hỏi suy luận logic True/False/Not Given.");
+      }
 
-    if (grammarPct >= 70) {
-      strengths.push("Nắm vững cấu trúc câu phức, đảo ngữ và các collocations học thuật thông dụng.");
-    } else if (grammarPct < 50) {
-      weaknesses.push("Cần củng cố thêm các thì hoàn thành, mệnh đề quan hệ và trật tự từ trong câu phức.");
-    }
+      if (listeningPct >= 70) {
+        strengths.push("Phản xạ nghe hiểu tốt, bắt kịp tốc độ các đoạn hội thoại và độc thoại học thuật.");
+      } else if (listeningPct < 40) {
+        weaknesses.push("Còn gặp khó khăn khi nghe các từ nối âm và thông tin số liệu/địa chỉ trong bài nghe.");
+      }
 
-    if (strengths.length === 0) {
-      strengths.push("Có thái độ học tập nghiêm túc, hoàn thành trọn vẹn toàn bộ bài khảo thí.");
-    }
-    if (weaknesses.length === 0) {
-      weaknesses.push("Tiếp tục duy trì luyện tập các đề đọc hiểu độ khó cao để tối ưu tốc độ làm bài.");
+      if (grammarPct >= 70) {
+        strengths.push("Nắm vững cấu trúc câu phức, đảo ngữ và các collocations học thuật thông dụng.");
+      } else if (grammarPct < 50) {
+        weaknesses.push("Cần củng cố thêm các thì hoàn thành, mệnh đề quan hệ và trật tự từ trong câu phức.");
+      }
+
+      if (strengths.length === 0) {
+        strengths.push("Đã hoàn thành các phần thi trắc nghiệm chẩn đoán.");
+      }
+      if (weaknesses.length === 0) {
+        weaknesses.push("Tiếp tục duy trì luyện tập các đề đọc hiểu độ khó cao để tối ưu tốc độ làm bài.");
+      }
     }
 
     const report: DiagnosticReport = {
@@ -925,28 +994,65 @@ export class AssessmentService {
           correct: listeningCorrect,
           total: listeningTotal,
           scorePercent: listeningPct,
-          feedback: listeningPct >= 70 ? "Nghe hiểu tốt các ngữ cảnh thông dụng & học thuật." : "Cần rèn luyện thêm kỹ thuật bắt từ khóa (Keywords tracking).",
+          estimatedBand: listeningBandInfo.band,
+          level: listeningBandInfo.level,
+          feedback: !hasAttemptedAnswers || listeningTotal === 0
+            ? "Chưa có dữ liệu bài làm."
+            : listeningPct >= 70
+            ? "Phản xạ nghe hiểu tốt các ngữ cảnh thông dụng & học thuật."
+            : listeningPct >= 40
+            ? "Nắm được thông tin cơ bản, cần rèn thêm kỹ thuật bắt từ khóa (Keyword tracking)."
+            : "Cần xây dựng lại phản xạ nghe từ vựng và ngữ âm IPA cơ bản.",
         },
         reading: {
           correct: readingCorrect,
           total: readingTotal,
           scorePercent: readingPct,
-          feedback: readingPct >= 70 ? "Đọc hiểu nhanh, nhận diện chính xác từ đồng nghĩa." : "Cần củng cố kỹ năng đọc lướt và phân tích ngữ cảnh.",
+          estimatedBand: readingBandInfo.band,
+          level: readingBandInfo.level,
+          feedback: !hasAttemptedAnswers || readingTotal === 0
+            ? "Chưa có dữ liệu bài làm."
+            : readingPct >= 70
+            ? "Đọc hiểu nhanh, định vị thông tin chính xác (Scanning & Skimming tốt)."
+            : readingPct >= 40
+            ? "Hiểu ý chính của đoạn văn, cần chú ý bẫy từ đồng nghĩa và True/False/Not Given."
+            : "Tốc độ đọc còn chậm, cần củng cố vốn từ vựng học thuật cốt lõi.",
         },
         grammar: {
           correct: grammarCorrect,
           total: grammarTotal,
           scorePercent: grammarPct,
-          feedback: grammarPct >= 70 ? "Làm chủ cấu trúc câu học thuật và collocations nâng cao." : "Cần củng cố ngữ pháp câu phức và mở rộng vốn từ vựng.",
+          level: grammarBandInfo.level,
+          feedback: !hasAttemptedAnswers || grammarTotal === 0
+            ? "Chưa có dữ liệu bài làm."
+            : grammarPct >= 70
+            ? "Làm chủ cấu trúc câu phức, mệnh đề quan hệ và từ vựng học thuật."
+            : grammarPct >= 40
+            ? "Nắm được ngữ pháp thông dụng, cần rèn luyện thêm câu ghép và collocations."
+            : "Cần củng cố ngữ pháp căn bản, trật tự từ và các thì cơ bản.",
         },
       },
       subjectiveEvaluation: {
         status: subjectiveStatus,
         hasWritingSubmission: hasWriting,
         hasSpeakingRecording: hasSpeaking,
+        writing: {
+          submitted: hasWriting,
+          status: hasWriting ? "Đang chờ Giảng viên chấm" : "Chưa nộp bài",
+          message: hasWriting
+            ? "Bài viết tự luận Task 2 của bạn đã được ghi nhận. Giảng viên ARIS sẽ chấm chi tiết theo 4 tiêu chí chuẩn IELTS (TR, CC, LR, GRA) và gửi kết quả kèm bài sửa qua Zalo/SĐT trong vòng 24h."
+            : "Chưa có bài viết gửi kèm (chưa đủ dữ liệu để đánh giá).",
+        },
+        speaking: {
+          submitted: hasSpeaking,
+          status: hasSpeaking ? "Đang chờ Giảng viên chấm" : "Chưa thu âm",
+          message: hasSpeaking
+            ? "2 bản ghi âm (Part 1 & Part 2) đã được niêm phong an toàn. Giảng viên chuyên môn sẽ chấm phát âm (Pronunciation), độ trôi chảy & từ vựng và gửi kết quả chi tiết sau."
+            : "Chưa có bản ghi âm gửi kèm (chưa đủ dữ liệu để đánh giá).",
+        },
         note: hasWriting || hasSpeaking
-          ? "Bài Viết và Nói của bạn đã được lưu an toàn và chuyển đến Giảng viên/AI chấm chuyên sâu."
-          : "Thí sinh không gửi phần làm bài Viết/Nói tự luận.",
+          ? "Phần thi Tự luận (Nói & Viết) đã được gửi đến Hội đồng Giảng viên ARIS thẩm định chi tiết."
+          : "Thí sinh chưa nộp phần thi Tự luận (Nói & Viết) nên chưa thể đánh giá 2 kỹ năng này.",
       },
       strengths,
       weaknesses,

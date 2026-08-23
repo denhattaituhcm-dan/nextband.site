@@ -111919,12 +111919,17 @@ var init_speakingStorage_service = __esm({
         });
       }
       /**
-       * Tạo Signed URL có thời hạn (1 giờ) sau khi kiểm tra quyền
+       * Tạo Signed URL hoặc Public URL có thời hạn để phát âm thanh
        */
       async getSignedPlaybackUrl(storagePath, expiresInSeconds = 3600) {
         if (!storagePath) return null;
-        const cleanPath = storagePath.replace(/^speaking-recordings\//, "").replace(/^\/+/, "");
-        const { data, error } = await this.supabase.storage.from(SPEAKING_BUCKET).createSignedUrl(cleanPath, expiresInSeconds);
+        const cleanPath = storagePath.replace(/^\/+/, "");
+        const { data: pubData } = this.supabase.storage.from("exam-assets").getPublicUrl(cleanPath);
+        if (pubData?.publicUrl) {
+          return pubData.publicUrl;
+        }
+        const subCleanPath = cleanPath.replace(/^speaking-recordings\//, "");
+        const { data, error } = await this.supabase.storage.from(SPEAKING_BUCKET).createSignedUrl(subCleanPath, expiresInSeconds);
         if (error || !data?.signedUrl) {
           throw new Error(error?.message || "Kh\xF4ng th\u1EC3 t\u1EA1o li\xEAn k\u1EBFt ph\xE1t \xE2m thanh");
         }
@@ -111949,11 +111954,10 @@ var init_speakingStorage_service = __esm({
         for (const asset of expiredAssets) {
           try {
             if (asset.storagePath) {
-              const cleanPath = asset.storagePath.replace(/^speaking-recordings\//, "").replace(/^\/+/, "");
-              const { error } = await this.supabase.storage.from(SPEAKING_BUCKET).remove([cleanPath]);
-              if (error && !error.message?.includes("not found") && !error.message?.includes("404")) {
-                throw error;
-              }
+              const cleanPath = asset.storagePath.replace(/^\/+/, "");
+              const subCleanPath = cleanPath.replace(/^speaking-recordings\//, "");
+              await this.supabase.storage.from("exam-assets").remove([cleanPath]);
+              await this.supabase.storage.from(SPEAKING_BUCKET).remove([subCleanPath]);
             }
             await this.prisma.speakingRecordingAsset.update({
               where: { id: asset.id },
@@ -121214,7 +121218,7 @@ var lead_routes_default = leadRoutes;
 var canonicalPlacementTestPayload = {
   testId: "aris-placement-v1",
   title: "ARIS IELTS-style Diagnostic Assessment (4 K\u1EF9 N\u0103ng & Ng\u1EEF Ph\xE1p)",
-  durationMinutes: 45,
+  durationMinutes: 60,
   totalQuestions: 37,
   skills: {
     listening: {
@@ -121923,6 +121927,16 @@ var authoritativePlacementAnswerKeys = {
 var ipRateLimitMap = /* @__PURE__ */ new Map();
 var phoneRateLimitMap = /* @__PURE__ */ new Map();
 var inMemoryAssessmentSessions = /* @__PURE__ */ new Map();
+function calculateEstimatedSkillBand(correct, total) {
+  if (total <= 0) return { band: "Band 2.5 \u2013 3.5", level: "Starter (Kh\u1EDFi n\u1EC1n)" };
+  const pct = Math.round(correct / total * 100);
+  if (pct >= 90) return { band: "Band 7.5 \u2013 8.5", level: "Advanced (Xu\u1EA5t s\u1EAFc)" };
+  if (pct >= 75) return { band: "Band 6.5 \u2013 7.0", level: "Upper-Intermediate (Gi\u1ECFi)" };
+  if (pct >= 55) return { band: "Band 5.5 \u2013 6.0", level: "Intermediate (Kh\xE1)" };
+  if (pct >= 40) return { band: "Band 4.5 \u2013 5.0", level: "Pre-Intermediate (Trung b\xECnh)" };
+  if (pct >= 25) return { band: "Band 3.5 \u2013 4.0", level: "Elementary (S\u01A1 c\u1EA5p)" };
+  return { band: "Band 2.5 \u2013 3.0", level: "Starter (Kh\u1EDFi n\u1EC1n)" };
+}
 function mapRawScoreToArisLevel(correctCount, totalQuestions = 35) {
   const percentage = Math.round(correctCount / Math.max(1, totalQuestions) * 100);
   if (percentage < 25) {
@@ -122178,7 +122192,7 @@ var AssessmentService = class {
     return {
       testId: exam.id || "aris-placement-v1",
       title: exam.title ? `ARIS Diagnostic Assessment \u2014 ${exam.title}` : canonicalPlacementTestPayload.title,
-      durationMinutes: exam.durationMinutes || 45,
+      durationMinutes: exam.durationMinutes || 60,
       totalQuestions: totalObjCount + 2,
       skills: {
         listening: {
@@ -122229,7 +122243,7 @@ var AssessmentService = class {
     }
     this.checkRateLimits(params.ipAddress || "", cleanPhone);
     const now = /* @__PURE__ */ new Date();
-    const expiresAt = new Date(now.getTime() + 60 * 60 * 1e3);
+    const expiresAt = new Date(now.getTime() + 75 * 60 * 1e3);
     const sessionId = crypto.randomUUID();
     let examId = "cce291f7-d88b-4976-8ed3-cc21daca7023";
     try {
@@ -122467,27 +122481,31 @@ var AssessmentService = class {
     let grammarCorrect = 0;
     let grammarTotal = 0;
     const normalizeText = (s2) => String(s2 || "").trim().toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").replace(/\s+/g, " ");
-    const targetExamId = session.examId || "cce291f7-d88b-4976-8ed3-cc21daca7023";
+    const hasCanonicalPlacementAnswers = Object.keys(answers).some(
+      (k) => k in authoritativePlacementAnswerKeys || /^[LRG]\d+$/i.test(k)
+    );
     let dbExamQuestions = [];
-    try {
-      dbExamQuestions = await this.prisma.question.findMany({
-        where: {
-          group: {
-            section: {
-              examId: targetExamId
+    if (!hasCanonicalPlacementAnswers && session.examId) {
+      try {
+        dbExamQuestions = await this.prisma.question.findMany({
+          where: {
+            group: {
+              section: {
+                examId: session.examId
+              }
+            }
+          },
+          include: {
+            group: {
+              include: {
+                section: true
+              }
             }
           }
-        },
-        include: {
-          group: {
-            include: {
-              section: true
-            }
-          }
-        }
-      });
-    } catch (dbErr) {
-      console.warn("[AssessmentService] DB questions fetch error:", dbErr);
+        });
+      } catch (dbErr) {
+        console.warn("[AssessmentService] DB questions fetch error:", dbErr);
+      }
     }
     if (dbExamQuestions.length > 0) {
       for (const q of dbExamQuestions) {
@@ -122553,12 +122571,28 @@ var AssessmentService = class {
         else if (key.skill === "reading") readingTotal++;
         else if (key.skill === "grammar") grammarTotal++;
         const studentAns = answers[qId];
-        if (!studentAns) return;
-        const normStudent = normalizeText(studentAns);
+        if (studentAns == null || String(studentAns).trim() === "") return;
+        let rawAns = studentAns;
+        if (typeof studentAns === "object" && !Array.isArray(studentAns)) {
+          const values = Object.values(studentAns).filter(Boolean);
+          if (values.length > 0) rawAns = values.join(" ");
+        }
+        const normStudent = normalizeText(rawAns);
         const normCorrect = normalizeText(key.correctAnswer);
         let isMatch = normStudent === normCorrect;
         if (!isMatch && key.acceptedAnswers && key.acceptedAnswers.length > 0) {
           isMatch = key.acceptedAnswers.some((acc) => normalizeText(acc) === normStudent);
+        }
+        if (!isMatch) {
+          const stripAccents = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+          const studentStripped = stripAccents(normStudent);
+          const correctStripped = stripAccents(normCorrect);
+          isMatch = studentStripped === correctStripped || studentStripped.includes(correctStripped) || correctStripped.includes(studentStripped);
+          if (!isMatch && key.acceptedAnswers) {
+            isMatch = key.acceptedAnswers.some(
+              (acc) => stripAccents(normalizeText(acc)) === studentStripped
+            );
+          }
         }
         if (isMatch) {
           if (key.skill === "listening") listeningCorrect++;
@@ -122573,6 +122607,9 @@ var AssessmentService = class {
     const listeningPct = Math.round(listeningCorrect / Math.max(1, listeningTotal) * 100);
     const readingPct = Math.round(readingCorrect / Math.max(1, readingTotal) * 100);
     const grammarPct = Math.round(grammarCorrect / Math.max(1, grammarTotal) * 100);
+    const listeningBandInfo = calculateEstimatedSkillBand(listeningCorrect, listeningTotal);
+    const readingBandInfo = calculateEstimatedSkillBand(readingCorrect, readingTotal);
+    const grammarBandInfo = calculateEstimatedSkillBand(grammarCorrect, grammarTotal);
     const arisInfo = mapRawScoreToArisLevel(rawCorrect, totalQuestions);
     const hasWriting = typeof answers["writing_response"] === "string" && answers["writing_response"].trim().length >= 30;
     const hasSpeaking = !!answers["speaking_part1_audio_url"] || !!answers["speaking_part2_audio_url"] || !!answers["speaking_audio_url"] || // backward compat
@@ -122580,26 +122617,34 @@ var AssessmentService = class {
     const subjectiveStatus = hasWriting || hasSpeaking ? "PENDING_REVIEW" : "NONE";
     const strengths = [];
     const weaknesses = [];
-    if (readingPct >= 70) {
-      strengths.push("Kh\u1EA3 n\u0103ng qu\xE9t v\xE0 \u0111\u1ECBnh v\u1ECB th\xF4ng tin h\u1ECDc thu\u1EADt (Scanning & Skimming) r\u1EA5t nhanh v\xE0 ch\xEDnh x\xE1c.");
-    } else if (readingPct < 40) {
-      weaknesses.push("T\u1ED1c \u0111\u1ED9 \u0111\u1ECDc c\xF2n ch\u1EADm v\xE0 d\u1EC5 b\u1ECB b\u1EABy \u1EDF c\xE1c c\xE2u h\u1ECFi suy lu\u1EADn logic True/False/Not Given.");
-    }
-    if (listeningPct >= 70) {
-      strengths.push("Ph\u1EA3n x\u1EA1 nghe hi\u1EC3u t\u1ED1t, b\u1EAFt k\u1ECBp t\u1ED1c \u0111\u1ED9 c\xE1c \u0111o\u1EA1n h\u1ED9i tho\u1EA1i v\xE0 \u0111\u1ED9c tho\u1EA1i h\u1ECDc thu\u1EADt.");
-    } else if (listeningPct < 40) {
-      weaknesses.push("C\xF2n g\u1EB7p kh\xF3 kh\u0103n khi nghe c\xE1c t\u1EEB n\u1ED1i \xE2m v\xE0 th\xF4ng tin s\u1ED1 li\u1EC7u/\u0111\u1ECBa ch\u1EC9 trong b\xE0i nghe.");
-    }
-    if (grammarPct >= 70) {
-      strengths.push("N\u1EAFm v\u1EEFng c\u1EA5u tr\xFAc c\xE2u ph\u1EE9c, \u0111\u1EA3o ng\u1EEF v\xE0 c\xE1c collocations h\u1ECDc thu\u1EADt th\xF4ng d\u1EE5ng.");
-    } else if (grammarPct < 50) {
-      weaknesses.push("C\u1EA7n c\u1EE7ng c\u1ED1 th\xEAm c\xE1c th\xEC ho\xE0n th\xE0nh, m\u1EC7nh \u0111\u1EC1 quan h\u1EC7 v\xE0 tr\u1EADt t\u1EF1 t\u1EEB trong c\xE2u ph\u1EE9c.");
-    }
-    if (strengths.length === 0) {
-      strengths.push("C\xF3 th\xE1i \u0111\u1ED9 h\u1ECDc t\u1EADp nghi\xEAm t\xFAc, ho\xE0n th\xE0nh tr\u1ECDn v\u1EB9n to\xE0n b\u1ED9 b\xE0i kh\u1EA3o th\xED.");
-    }
-    if (weaknesses.length === 0) {
-      weaknesses.push("Ti\u1EBFp t\u1EE5c duy tr\xEC luy\u1EC7n t\u1EADp c\xE1c \u0111\u1EC1 \u0111\u1ECDc hi\u1EC3u \u0111\u1ED9 kh\xF3 cao \u0111\u1EC3 t\u1ED1i \u01B0u t\u1ED1c \u0111\u1ED9 l\xE0m b\xE0i.");
+    const hasAttemptedAnswers = Object.keys(answers).some(
+      (k) => k !== "writing_response" && !k.startsWith("speaking") && answers[k] != null && String(answers[k]).trim() !== ""
+    );
+    if (!hasAttemptedAnswers || rawCorrect === 0) {
+      strengths.push("Ch\u01B0a \u0111\u1EE7 d\u1EEF li\u1EC7u c\xE2u tr\u1EA3 l\u1EDDi h\u1EE3p l\u1EC7 \u0111\u1EC3 x\xE1c nh\u1EADn \u0111i\u1EC3m m\u1EA1nh c\u1EE7a th\xED sinh.");
+      weaknesses.push("Ch\u01B0a c\xF3 \u0111\u1EE7 d\u1EEF li\u1EC7u c\xE2u tr\u1EA3 l\u1EDDi \u0111\u1EC3 b\xF3c t\xE1ch \u0111i\u1EC3m ngh\u1EBDn chi ti\u1EBFt.");
+    } else {
+      if (readingPct >= 70) {
+        strengths.push("Kh\u1EA3 n\u0103ng qu\xE9t v\xE0 \u0111\u1ECBnh v\u1ECB th\xF4ng tin h\u1ECDc thu\u1EADt (Scanning & Skimming) r\u1EA5t nhanh v\xE0 ch\xEDnh x\xE1c.");
+      } else if (readingPct < 40) {
+        weaknesses.push("T\u1ED1c \u0111\u1ED9 \u0111\u1ECDc c\xF2n ch\u1EADm v\xE0 d\u1EC5 b\u1ECB b\u1EABy \u1EDF c\xE1c c\xE2u h\u1ECFi suy lu\u1EADn logic True/False/Not Given.");
+      }
+      if (listeningPct >= 70) {
+        strengths.push("Ph\u1EA3n x\u1EA1 nghe hi\u1EC3u t\u1ED1t, b\u1EAFt k\u1ECBp t\u1ED1c \u0111\u1ED9 c\xE1c \u0111o\u1EA1n h\u1ED9i tho\u1EA1i v\xE0 \u0111\u1ED9c tho\u1EA1i h\u1ECDc thu\u1EADt.");
+      } else if (listeningPct < 40) {
+        weaknesses.push("C\xF2n g\u1EB7p kh\xF3 kh\u0103n khi nghe c\xE1c t\u1EEB n\u1ED1i \xE2m v\xE0 th\xF4ng tin s\u1ED1 li\u1EC7u/\u0111\u1ECBa ch\u1EC9 trong b\xE0i nghe.");
+      }
+      if (grammarPct >= 70) {
+        strengths.push("N\u1EAFm v\u1EEFng c\u1EA5u tr\xFAc c\xE2u ph\u1EE9c, \u0111\u1EA3o ng\u1EEF v\xE0 c\xE1c collocations h\u1ECDc thu\u1EADt th\xF4ng d\u1EE5ng.");
+      } else if (grammarPct < 50) {
+        weaknesses.push("C\u1EA7n c\u1EE7ng c\u1ED1 th\xEAm c\xE1c th\xEC ho\xE0n th\xE0nh, m\u1EC7nh \u0111\u1EC1 quan h\u1EC7 v\xE0 tr\u1EADt t\u1EF1 t\u1EEB trong c\xE2u ph\u1EE9c.");
+      }
+      if (strengths.length === 0) {
+        strengths.push("\u0110\xE3 ho\xE0n th\xE0nh c\xE1c ph\u1EA7n thi tr\u1EAFc nghi\u1EC7m ch\u1EA9n \u0111o\xE1n.");
+      }
+      if (weaknesses.length === 0) {
+        weaknesses.push("Ti\u1EBFp t\u1EE5c duy tr\xEC luy\u1EC7n t\u1EADp c\xE1c \u0111\u1EC1 \u0111\u1ECDc hi\u1EC3u \u0111\u1ED9 kh\xF3 cao \u0111\u1EC3 t\u1ED1i \u01B0u t\u1ED1c \u0111\u1ED9 l\xE0m b\xE0i.");
+      }
     }
     const report = {
       sessionId,
@@ -122621,26 +122666,41 @@ var AssessmentService = class {
           correct: listeningCorrect,
           total: listeningTotal,
           scorePercent: listeningPct,
-          feedback: listeningPct >= 70 ? "Nghe hi\u1EC3u t\u1ED1t c\xE1c ng\u1EEF c\u1EA3nh th\xF4ng d\u1EE5ng & h\u1ECDc thu\u1EADt." : "C\u1EA7n r\xE8n luy\u1EC7n th\xEAm k\u1EF9 thu\u1EADt b\u1EAFt t\u1EEB kh\xF3a (Keywords tracking)."
+          estimatedBand: listeningBandInfo.band,
+          level: listeningBandInfo.level,
+          feedback: !hasAttemptedAnswers || listeningTotal === 0 ? "Ch\u01B0a c\xF3 d\u1EEF li\u1EC7u b\xE0i l\xE0m." : listeningPct >= 70 ? "Ph\u1EA3n x\u1EA1 nghe hi\u1EC3u t\u1ED1t c\xE1c ng\u1EEF c\u1EA3nh th\xF4ng d\u1EE5ng & h\u1ECDc thu\u1EADt." : listeningPct >= 40 ? "N\u1EAFm \u0111\u01B0\u1EE3c th\xF4ng tin c\u01A1 b\u1EA3n, c\u1EA7n r\xE8n th\xEAm k\u1EF9 thu\u1EADt b\u1EAFt t\u1EEB kh\xF3a (Keyword tracking)." : "C\u1EA7n x\xE2y d\u1EF1ng l\u1EA1i ph\u1EA3n x\u1EA1 nghe t\u1EEB v\u1EF1ng v\xE0 ng\u1EEF \xE2m IPA c\u01A1 b\u1EA3n."
         },
         reading: {
           correct: readingCorrect,
           total: readingTotal,
           scorePercent: readingPct,
-          feedback: readingPct >= 70 ? "\u0110\u1ECDc hi\u1EC3u nhanh, nh\u1EADn di\u1EC7n ch\xEDnh x\xE1c t\u1EEB \u0111\u1ED3ng ngh\u0129a." : "C\u1EA7n c\u1EE7ng c\u1ED1 k\u1EF9 n\u0103ng \u0111\u1ECDc l\u01B0\u1EDBt v\xE0 ph\xE2n t\xEDch ng\u1EEF c\u1EA3nh."
+          estimatedBand: readingBandInfo.band,
+          level: readingBandInfo.level,
+          feedback: !hasAttemptedAnswers || readingTotal === 0 ? "Ch\u01B0a c\xF3 d\u1EEF li\u1EC7u b\xE0i l\xE0m." : readingPct >= 70 ? "\u0110\u1ECDc hi\u1EC3u nhanh, \u0111\u1ECBnh v\u1ECB th\xF4ng tin ch\xEDnh x\xE1c (Scanning & Skimming t\u1ED1t)." : readingPct >= 40 ? "Hi\u1EC3u \xFD ch\xEDnh c\u1EE7a \u0111o\u1EA1n v\u0103n, c\u1EA7n ch\xFA \xFD b\u1EABy t\u1EEB \u0111\u1ED3ng ngh\u0129a v\xE0 True/False/Not Given." : "T\u1ED1c \u0111\u1ED9 \u0111\u1ECDc c\xF2n ch\u1EADm, c\u1EA7n c\u1EE7ng c\u1ED1 v\u1ED1n t\u1EEB v\u1EF1ng h\u1ECDc thu\u1EADt c\u1ED1t l\xF5i."
         },
         grammar: {
           correct: grammarCorrect,
           total: grammarTotal,
           scorePercent: grammarPct,
-          feedback: grammarPct >= 70 ? "L\xE0m ch\u1EE7 c\u1EA5u tr\xFAc c\xE2u h\u1ECDc thu\u1EADt v\xE0 collocations n\xE2ng cao." : "C\u1EA7n c\u1EE7ng c\u1ED1 ng\u1EEF ph\xE1p c\xE2u ph\u1EE9c v\xE0 m\u1EDF r\u1ED9ng v\u1ED1n t\u1EEB v\u1EF1ng."
+          level: grammarBandInfo.level,
+          feedback: !hasAttemptedAnswers || grammarTotal === 0 ? "Ch\u01B0a c\xF3 d\u1EEF li\u1EC7u b\xE0i l\xE0m." : grammarPct >= 70 ? "L\xE0m ch\u1EE7 c\u1EA5u tr\xFAc c\xE2u ph\u1EE9c, m\u1EC7nh \u0111\u1EC1 quan h\u1EC7 v\xE0 t\u1EEB v\u1EF1ng h\u1ECDc thu\u1EADt." : grammarPct >= 40 ? "N\u1EAFm \u0111\u01B0\u1EE3c ng\u1EEF ph\xE1p th\xF4ng d\u1EE5ng, c\u1EA7n r\xE8n luy\u1EC7n th\xEAm c\xE2u gh\xE9p v\xE0 collocations." : "C\u1EA7n c\u1EE7ng c\u1ED1 ng\u1EEF ph\xE1p c\u0103n b\u1EA3n, tr\u1EADt t\u1EF1 t\u1EEB v\xE0 c\xE1c th\xEC c\u01A1 b\u1EA3n."
         }
       },
       subjectiveEvaluation: {
         status: subjectiveStatus,
         hasWritingSubmission: hasWriting,
         hasSpeakingRecording: hasSpeaking,
-        note: hasWriting || hasSpeaking ? "B\xE0i Vi\u1EBFt v\xE0 N\xF3i c\u1EE7a b\u1EA1n \u0111\xE3 \u0111\u01B0\u1EE3c l\u01B0u an to\xE0n v\xE0 chuy\u1EC3n \u0111\u1EBFn Gi\u1EA3ng vi\xEAn/AI ch\u1EA5m chuy\xEAn s\xE2u." : "Th\xED sinh kh\xF4ng g\u1EEDi ph\u1EA7n l\xE0m b\xE0i Vi\u1EBFt/N\xF3i t\u1EF1 lu\u1EADn."
+        writing: {
+          submitted: hasWriting,
+          status: hasWriting ? "\u0110ang ch\u1EDD Gi\u1EA3ng vi\xEAn ch\u1EA5m" : "Ch\u01B0a n\u1ED9p b\xE0i",
+          message: hasWriting ? "B\xE0i vi\u1EBFt t\u1EF1 lu\u1EADn Task 2 c\u1EE7a b\u1EA1n \u0111\xE3 \u0111\u01B0\u1EE3c ghi nh\u1EADn. Gi\u1EA3ng vi\xEAn ARIS s\u1EBD ch\u1EA5m chi ti\u1EBFt theo 4 ti\xEAu ch\xED chu\u1EA9n IELTS (TR, CC, LR, GRA) v\xE0 g\u1EEDi k\u1EBFt qu\u1EA3 k\xE8m b\xE0i s\u1EEDa qua Zalo/S\u0110T trong v\xF2ng 24h." : "Ch\u01B0a c\xF3 b\xE0i vi\u1EBFt g\u1EEDi k\xE8m (ch\u01B0a \u0111\u1EE7 d\u1EEF li\u1EC7u \u0111\u1EC3 \u0111\xE1nh gi\xE1)."
+        },
+        speaking: {
+          submitted: hasSpeaking,
+          status: hasSpeaking ? "\u0110ang ch\u1EDD Gi\u1EA3ng vi\xEAn ch\u1EA5m" : "Ch\u01B0a thu \xE2m",
+          message: hasSpeaking ? "2 b\u1EA3n ghi \xE2m (Part 1 & Part 2) \u0111\xE3 \u0111\u01B0\u1EE3c ni\xEAm phong an to\xE0n. Gi\u1EA3ng vi\xEAn chuy\xEAn m\xF4n s\u1EBD ch\u1EA5m ph\xE1t \xE2m (Pronunciation), \u0111\u1ED9 tr\xF4i ch\u1EA3y & t\u1EEB v\u1EF1ng v\xE0 g\u1EEDi k\u1EBFt qu\u1EA3 chi ti\u1EBFt sau." : "Ch\u01B0a c\xF3 b\u1EA3n ghi \xE2m g\u1EEDi k\xE8m (ch\u01B0a \u0111\u1EE7 d\u1EEF li\u1EC7u \u0111\u1EC3 \u0111\xE1nh gi\xE1)."
+        },
+        note: hasWriting || hasSpeaking ? "Ph\u1EA7n thi T\u1EF1 lu\u1EADn (N\xF3i & Vi\u1EBFt) \u0111\xE3 \u0111\u01B0\u1EE3c g\u1EEDi \u0111\u1EBFn H\u1ED9i \u0111\u1ED3ng Gi\u1EA3ng vi\xEAn ARIS th\u1EA9m \u0111\u1ECBnh chi ti\u1EBFt." : "Th\xED sinh ch\u01B0a n\u1ED9p ph\u1EA7n thi T\u1EF1 lu\u1EADn (N\xF3i & Vi\u1EBFt) n\xEAn ch\u01B0a th\u1EC3 \u0111\xE1nh gi\xE1 2 k\u1EF9 n\u0103ng n\xE0y."
       },
       strengths,
       weaknesses,

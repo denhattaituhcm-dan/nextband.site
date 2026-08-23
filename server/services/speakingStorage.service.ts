@@ -121,15 +121,23 @@ export class SpeakingStorageService {
   }
 
   /**
-   * Tạo Signed URL có thời hạn (1 giờ) sau khi kiểm tra quyền
+   * Tạo Signed URL hoặc Public URL có thời hạn để phát âm thanh
    */
   async getSignedPlaybackUrl(storagePath: string, expiresInSeconds: number = 3600): Promise<string | null> {
     if (!storagePath) return null;
-    const cleanPath = storagePath.replace(/^speaking-recordings\//, "").replace(/^\/+/, "");
+    const cleanPath = storagePath.replace(/^\/+/, "");
     
+    // 1. Try exam-assets bucket first
+    const { data: pubData } = this.supabase.storage.from("exam-assets").getPublicUrl(cleanPath);
+    if (pubData?.publicUrl) {
+      return pubData.publicUrl;
+    }
+
+    // 2. Fallback to speaking-recordings bucket
+    const subCleanPath = cleanPath.replace(/^speaking-recordings\//, "");
     const { data, error } = await this.supabase.storage
       .from(SPEAKING_BUCKET)
-      .createSignedUrl(cleanPath, expiresInSeconds);
+      .createSignedUrl(subCleanPath, expiresInSeconds);
 
     if (error || !data?.signedUrl) {
       throw new Error(error?.message || "Không thể tạo liên kết phát âm thanh");
@@ -160,12 +168,10 @@ export class SpeakingStorageService {
     for (const asset of expiredAssets) {
       try {
         if (asset.storagePath) {
-          const cleanPath = asset.storagePath.replace(/^speaking-recordings\//, "").replace(/^\/+/, "");
-          const { error } = await this.supabase.storage.from(SPEAKING_BUCKET).remove([cleanPath]);
-          
-          if (error && !error.message?.includes("not found") && !error.message?.includes("404")) {
-            throw error;
-          }
+          const cleanPath = asset.storagePath.replace(/^\/+/, "");
+          const subCleanPath = cleanPath.replace(/^speaking-recordings\//, "");
+          await this.supabase.storage.from("exam-assets").remove([cleanPath]);
+          await this.supabase.storage.from(SPEAKING_BUCKET).remove([subCleanPath]);
         }
 
         await this.prisma.speakingRecordingAsset.update({

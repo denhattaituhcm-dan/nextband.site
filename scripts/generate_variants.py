@@ -1,0 +1,209 @@
+import os
+import math
+from PIL import Image, ImageDraw, ImageFont
+
+def generate_variants():
+    src_path = 'nextband/public/your-journey.png'
+    orig = Image.open(src_path).convert('RGBA')
+    W, H = orig.size
+    SCALE = 4
+
+    font_bold_path = "C:/Windows/Fonts/segoeuib.ttf"
+    font_semi_path = "C:/Windows/Fonts/seguisb.ttf"
+    font_reg_path = "C:/Windows/Fonts/segoeui.ttf"
+    font_arialbd = "C:/Windows/Fonts/arialbd.ttf"
+
+    bg_color = (252, 248, 243, 255)
+
+    stages = [
+        {
+            "num": "1",
+            "cx": 189.5 * SCALE,
+            "title": "Starter",
+            "band_num": "3.0",
+            # Hồng hơi tím (Pinkish purple / Fuchsia Orchid)
+            "color": (212, 58, 148, 255),       # #D43A94
+            "text_color": (188, 30, 120, 255),  # deep vibrant pink-purple
+            "badge_bg": (253, 240, 248, 255),
+            "badge_border": (244, 114, 182, 180)
+        },
+        {
+            "num": "2",
+            "cx": 476.5 * SCALE,
+            "title": "Dreamer",
+            "band_num": "4.0",
+            # Blue
+            "color": (37, 130, 215, 255),       # #2582D7
+            "text_color": (18, 110, 195, 255),  # deep blue
+            "badge_bg": (239, 246, 255, 255),
+            "badge_border": (147, 197, 253, 180)
+        },
+        {
+            "num": "3",
+            "cx": 794.5 * SCALE,
+            "title": "Builder",
+            "band_num": "5.0",
+            # Green
+            "color": (40, 155, 110, 255),       # #289B6E
+            "text_color": (20, 135, 90, 255),   # deep emerald
+            "badge_bg": (236, 253, 245, 255),
+            "badge_border": (110, 231, 183, 180)
+        },
+        {
+            "num": "4",
+            "cx": 1126.5 * SCALE,
+            "title": "Master",
+            "band_num": "6.0",
+            # Orange
+            "color": (238, 135, 34, 255),       # #EE8722
+            "text_color": (215, 100, 10, 255),  # deep orange
+            "badge_bg": (255, 251, 235, 255),
+            "badge_border": (252, 211, 77, 180)
+        },
+        {
+            "num": "5",
+            "cx": 1485.5 * SCALE,
+            "title": "Leader",
+            "band_num": "6.5+",
+            # Red
+            "color": (220, 52, 45, 255),        # #DC342D
+            "text_color": (195, 32, 25, 255),   # deep red
+            "badge_bg": (254, 242, 242, 255),
+            "badge_border": (252, 165, 165, 180)
+        }
+    ]
+
+    CY = 762 * SCALE
+    RADIUS = 26 * SCALE
+    LINE_WIDTH = int(2.5 * SCALE)
+    DOT_RADIUS = int(4.5 * SCALE)
+
+    for variant_idx, style in enumerate(['clean_large', 'badge_pill']):
+        canvas = orig.resize((W * SCALE, H * SCALE), Image.Resampling.LANCZOS)
+        draw = ImageDraw.Draw(canvas)
+
+        # Clear bottom area below y=758 completely
+        draw.rectangle([0, int(758 * SCALE), W * SCALE, H * SCALE], fill=bg_color)
+        
+        # Also clear circle tops from y=734 to 758 around each circle, avoiding shoes (x=1300..1440)
+        for s in stages:
+            cx = s["cx"]
+            draw.rectangle([cx - RADIUS - 5 * SCALE, int(734 * SCALE), cx + RADIUS + 5 * SCALE, int(758 * SCALE)], fill=bg_color)
+
+        # Clear any dots in y=750..758
+        for dx in [333.0, 635.5, 960.5]:
+            draw.rectangle([(dx - 10) * SCALE, int(750 * SCALE), (dx + 10) * SCALE, int(758 * SCALE)], fill=bg_color)
+        # Clear far left line in y=750..758
+        draw.rectangle([0, int(750 * SCALE), int(150 * SCALE), int(758 * SCALE)], fill=bg_color)
+        # Clear far right line in y=750..758
+        draw.rectangle([int(1515 * SCALE), int(750 * SCALE), W * SCALE, int(758 * SCALE)], fill=bg_color)
+
+        # Draw connecting line from x=50 to Circle 1
+        draw.line([(50 * SCALE, CY), (stages[0]["cx"] - RADIUS, CY)], fill=stages[0]["color"], width=LINE_WIDTH)
+
+        # Draw lines between circles
+        dots_x = [333.0 * SCALE, 635.5 * SCALE, 960.5 * SCALE, 1306.0 * SCALE]
+        for i in range(4):
+            c1 = stages[i]
+            c2 = stages[i+1]
+            mid_dot_x = dots_x[i]
+            draw.line([(c1["cx"] + RADIUS, CY), (mid_dot_x, CY)], fill=c1["color"], width=LINE_WIDTH)
+            draw.line([(mid_dot_x, CY), (c2["cx"] - RADIUS, CY)], fill=c2["color"], width=LINE_WIDTH)
+            draw.ellipse([mid_dot_x - DOT_RADIUS, CY - DOT_RADIUS, mid_dot_x + DOT_RADIUS, CY + DOT_RADIUS], fill=c1["color"])
+
+        # Arrow after Circle 5
+        arrow_start_x = stages[4]["cx"] + RADIUS
+        arrow_end_x = 1640 * SCALE
+        draw.line([(arrow_start_x, CY), (arrow_end_x, CY)], fill=stages[4]["color"], width=LINE_WIDTH)
+        arrow_size = 9 * SCALE
+        draw.polygon([
+            (arrow_end_x, CY),
+            (arrow_end_x - arrow_size, CY - arrow_size * 0.55),
+            (arrow_end_x - arrow_size * 0.65, CY),
+            (arrow_end_x - arrow_size, CY + arrow_size * 0.55)
+        ], fill=stages[4]["color"])
+
+        # Fonts
+        title_font = ImageFont.truetype(font_bold_path, 23 * SCALE)
+        circle_num_font = ImageFont.truetype(font_bold_path, 25 * SCALE)
+
+        if style == 'clean_large':
+            band_label_font = ImageFont.truetype(font_semi_path, 15 * SCALE)
+            band_num_font = ImageFont.truetype(font_bold_path, 28 * SCALE)
+        else: # badge_pill
+            band_label_font = ImageFont.truetype(font_bold_path, 13 * SCALE)
+            band_num_font = ImageFont.truetype(font_bold_path, 24 * SCALE)
+
+        for s in stages:
+            cx = s["cx"]
+            # Circle
+            draw.ellipse([cx - RADIUS, CY - RADIUS, cx + RADIUS, CY + RADIUS], fill=s["color"])
+            
+            # Circle number
+            num_str = s["num"]
+            bbox_num = circle_num_font.getbbox(num_str)
+            nw = bbox_num[2] - bbox_num[0]
+            nh = bbox_num[3] - bbox_num[1]
+            draw.text((cx - nw / 2 - bbox_num[0], CY - nh / 2 - bbox_num[1] - 1 * SCALE), num_str, fill=(255, 255, 255, 255), font=circle_num_font)
+
+            # Stage Name
+            title_str = s["title"]
+            bbox_title = title_font.getbbox(title_str)
+            tw = bbox_title[2] - bbox_title[0]
+            title_y = (762 + 48) * SCALE
+            draw.text((cx - tw / 2 - bbox_title[0], title_y), title_str, fill=(15, 23, 42, 255), font=title_font)
+
+            # Band score
+            band_word = "Band "
+            num_word = s["band_num"]
+
+            bbox_b = band_label_font.getbbox(band_word)
+            bw = bbox_b[2] - bbox_b[0]
+            bh = bbox_b[3] - bbox_b[1]
+
+            bbox_n = band_num_font.getbbox(num_word)
+            nw = bbox_n[2] - bbox_n[0]
+            nh = bbox_n[3] - bbox_n[1]
+
+            if style == 'clean_large':
+                gap = 5 * SCALE
+                total_w = bw + gap + nw
+                start_x = cx - total_w / 2
+                band_y = title_y + (30 * SCALE)
+                diff = nh - bh
+
+                # Draw "Band"
+                draw.text((start_x - bbox_b[0], band_y + diff - 1 * SCALE), band_word, fill=s["text_color"], font=band_label_font)
+                # Draw big bold score
+                draw.text((start_x + bw + gap - bbox_n[0], band_y), num_word, fill=s["text_color"], font=band_num_font)
+
+            elif style == 'badge_pill':
+                gap = 4 * SCALE
+                total_w = bw + gap + nw
+                pad_x = 12 * SCALE
+                pad_y = 6 * SCALE
+                pill_w = total_w + pad_x * 2
+                pill_h = nh + pad_y * 2
+                pill_x1 = cx - pill_w / 2
+                pill_y1 = title_y + (28 * SCALE)
+                pill_x2 = pill_x1 + pill_w
+                pill_y2 = pill_y1 + pill_h
+                r = pill_h / 2
+
+                # Pill background
+                draw.rounded_rectangle([pill_x1, pill_y1, pill_x2, pill_y2], radius=r, fill=s["badge_bg"], outline=s["badge_border"], width=int(1.5 * SCALE))
+
+                text_start_x = pill_x1 + pad_x
+                band_y = pill_y1 + pad_y
+                diff = nh - bh
+
+                draw.text((text_start_x - bbox_b[0], band_y + diff - 1 * SCALE), band_word, fill=s["text_color"], font=band_label_font)
+                draw.text((text_start_x + bw + gap - bbox_n[0], band_y), num_word, fill=s["text_color"], font=band_num_font)
+
+        final_img = canvas.resize((W, H), Image.Resampling.LANCZOS)
+        out_path = f"C:/Users/Admin/.gemini/antigravity/brain/722f517e-f510-46ec-9bf0-2a77c681dad6/variant_{style}.png"
+        final_img.save(out_path)
+        print(f"Saved {out_path}")
+
+if __name__ == '__main__':
+    generate_variants()

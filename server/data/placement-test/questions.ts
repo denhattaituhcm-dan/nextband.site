@@ -64,7 +64,7 @@ export interface SanitizedPlacementTestPayload {
 export const canonicalPlacementTestPayload: SanitizedPlacementTestPayload = {
   testId: "aris-placement-v1",
   title: "ARIS IELTS-style Diagnostic Assessment (4 Kỹ Năng & Ngữ Pháp)",
-  durationMinutes: 45,
+  durationMinutes: 60,
   totalQuestions: 37,
   skills: {
     listening: {
