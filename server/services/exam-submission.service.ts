@@ -12,7 +12,6 @@ import {
   isTeacherOfClass,
 } from "../utils/teacherScope.js";
 
-const MANUAL_TYPES = new Set(["essay", "speaking"]);
 const MAX_EXAM_ATTEMPTS = 3;
 
 export interface CriteriaScores {

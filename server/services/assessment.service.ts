@@ -958,8 +958,12 @@ export class AssessmentService {
 
     try {
       if ((this.prisma as any).assessmentSession) {
-        await (this.prisma as any).assessmentSession.update({
-          where: { id: sessionId },
+        // Enforce DB-level guard: never overwrite a SUBMITTED session
+        await (this.prisma as any).assessmentSession.updateMany({
+          where: {
+            id: sessionId,
+            status: { not: "SUBMITTED" },
+          },
           data: {
             answers: session.answers,
             updatedAt: session.updatedAt,
@@ -1313,6 +1317,10 @@ export class AssessmentService {
       },
       strengths,
       weaknesses,
+      diagnosticEngineVersion: "2026.08.1",
+      scoringVersion: "2026.08.1",
+      questionSetVersion: "1.0.0",
+      diagnosticRubricVersion: "2026.08.1",
       submittedAt: new Date().toISOString(),
     };
 
@@ -1341,6 +1349,7 @@ export class AssessmentService {
           where: { id: sessionId },
           data: {
             status: "SUBMITTED",
+            gradingStatus: "PENDING",
             submittedAt: session.submittedAt,
             answers: session.answers,
             result: report,
@@ -1405,6 +1414,9 @@ export class AssessmentService {
         const whereClause: any = {};
         if (params.status && params.status !== "ALL") {
           whereClause.status = params.status;
+        }
+        if (params.gradingStatus && params.gradingStatus !== "ALL") {
+          whereClause.gradingStatus = params.gradingStatus;
         }
         if (params.search && params.search.trim()) {
           const q = params.search.trim();
@@ -1718,12 +1730,23 @@ export class AssessmentService {
 
     try {
       if ((this.prisma as any).assessmentSession) {
+        const updatePayload: any = {
+          result: newResult,
+          updatedAt: session.updatedAt,
+        };
+        if (updateData.gradingStatus) {
+          updatePayload.gradingStatus = updateData.gradingStatus;
+          if (updateData.gradingStatus === "GRADED_SENT_ZALO") {
+            updatePayload.gradedAt = new Date();
+            updatePayload.sentAt = new Date();
+          }
+        }
+        if (updateData.teacherNotes !== undefined) {
+          updatePayload.teacherNotes = updateData.teacherNotes;
+        }
         await (this.prisma as any).assessmentSession.update({
           where: { id: sessionId },
-          data: {
-            result: newResult,
-            updatedAt: session.updatedAt,
-          },
+          data: updatePayload,
         });
       }
     } catch (err) {

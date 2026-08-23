@@ -114571,17 +114571,6 @@ var sectionTypeEnum = external_exports.enum(
     })
   }
 );
-var createSectionSchema = external_exports.object({
-  examId: external_exports.string({ required_error: "ID b\xE0i t\u1EADp l\xE0 b\u1EAFt bu\u1ED9c" }),
-  sectionType: sectionTypeEnum,
-  title: external_exports.string().min(1, "Ti\xEAu \u0111\u1EC1 l\xE0 b\u1EAFt bu\u1ED9c"),
-  instructions: external_exports.string().max(5e6, "N\u1ED9i dung h\u01B0\u1EDBng d\u1EABn qu\xE1 d\xE0i").optional(),
-  content: external_exports.any().optional(),
-  audioUrl: external_exports.string().optional(),
-  audioScript: external_exports.string().max(5e6, "N\u1ED9i dung script qu\xE1 d\xE0i").optional(),
-  durationMinutes: external_exports.number({ invalid_type_error: "Th\u1EDDi gian ph\u1EA3i l\xE0 s\u1ED1" }).int().optional(),
-  orderIndex: external_exports.number().int().default(0)
-});
 var updateSectionSchema = external_exports.object({
   title: external_exports.string().min(1, "Ti\xEAu \u0111\u1EC1 l\xE0 b\u1EAFt bu\u1ED9c").optional(),
   instructions: external_exports.string().max(5e6, "N\u1ED9i dung h\u01B0\u1EDBng d\u1EABn qu\xE1 d\xE0i").optional(),
@@ -122640,8 +122629,11 @@ var AssessmentService = class {
     inMemoryAssessmentSessions.set(sessionId, session);
     try {
       if (this.prisma.assessmentSession) {
-        await this.prisma.assessmentSession.update({
-          where: { id: sessionId },
+        await this.prisma.assessmentSession.updateMany({
+          where: {
+            id: sessionId,
+            status: { not: "SUBMITTED" }
+          },
           data: {
             answers: session.answers,
             updatedAt: session.updatedAt
@@ -122914,6 +122906,10 @@ var AssessmentService = class {
       },
       strengths,
       weaknesses,
+      diagnosticEngineVersion: "2026.08.1",
+      scoringVersion: "2026.08.1",
+      questionSetVersion: "1.0.0",
+      diagnosticRubricVersion: "2026.08.1",
       submittedAt: (/* @__PURE__ */ new Date()).toISOString()
     };
     session.status = "SUBMITTED";
@@ -122939,6 +122935,7 @@ var AssessmentService = class {
           where: { id: sessionId },
           data: {
             status: "SUBMITTED",
+            gradingStatus: "PENDING",
             submittedAt: session.submittedAt,
             answers: session.answers,
             result: report
@@ -122986,6 +122983,9 @@ var AssessmentService = class {
         const whereClause = {};
         if (params.status && params.status !== "ALL") {
           whereClause.status = params.status;
+        }
+        if (params.gradingStatus && params.gradingStatus !== "ALL") {
+          whereClause.gradingStatus = params.gradingStatus;
         }
         if (params.search && params.search.trim()) {
           const q = params.search.trim();
@@ -123256,12 +123256,23 @@ var AssessmentService = class {
     inMemoryAssessmentSessions.set(sessionId, session);
     try {
       if (this.prisma.assessmentSession) {
+        const updatePayload = {
+          result: newResult,
+          updatedAt: session.updatedAt
+        };
+        if (updateData.gradingStatus) {
+          updatePayload.gradingStatus = updateData.gradingStatus;
+          if (updateData.gradingStatus === "GRADED_SENT_ZALO") {
+            updatePayload.gradedAt = /* @__PURE__ */ new Date();
+            updatePayload.sentAt = /* @__PURE__ */ new Date();
+          }
+        }
+        if (updateData.teacherNotes !== void 0) {
+          updatePayload.teacherNotes = updateData.teacherNotes;
+        }
         await this.prisma.assessmentSession.update({
           where: { id: sessionId },
-          data: {
-            result: newResult,
-            updatedAt: session.updatedAt
-          }
+          data: updatePayload
         });
       }
     } catch (err) {

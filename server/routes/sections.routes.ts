@@ -15,21 +15,6 @@ const sectionTypeEnum = z.enum(
   },
 );
 
-const createSectionSchema = z.object({
-  examId: z.string({ required_error: "ID bài tập là bắt buộc" }),
-  sectionType: sectionTypeEnum,
-  title: z.string().min(1, "Tiêu đề là bắt buộc"),
-  instructions: z.string().max(5_000_000, "Nội dung hướng dẫn quá dài").optional(),
-  content: z.any().optional(),
-  audioUrl: z.string().optional(),
-  audioScript: z.string().max(5_000_000, "Nội dung script quá dài").optional(),
-  durationMinutes: z
-    .number({ invalid_type_error: "Thời gian phải là số" })
-    .int()
-    .optional(),
-  orderIndex: z.number().int().default(0),
-});
-
 const updateSectionSchema = z.object({
   title: z.string().min(1, "Tiêu đề là bắt buộc").optional(),
   instructions: z.string().max(5_000_000, "Nội dung hướng dẫn quá dài").optional(),
