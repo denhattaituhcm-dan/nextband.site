@@ -1,0 +1,504 @@
+{
+  "id": "cce291f7-d88b-4976-8ed3-cc21daca7023",
+  "courseId": "2b2d1b1d-f984-4b36-810f-52b09733e713",
+  "title": "ENTRANCE TEST",
+  "description": "",
+  "week": 1,
+  "durationMinutes": 60,
+  "isPublished": true,
+  "isActive": true,
+  "isLocked": false,
+  "isOpen": true,
+  "allowGuestAssessment": true,
+  "maxParticipants": null,
+  "currentParticipants": 0,
+  "examType": "ielts",
+  "createdAt": "2026-07-29T17:56:34.468Z",
+  "updatedAt": "2026-08-22T16:04:38.669Z",
+  "sections": [
+    {
+      "id": "b28af4bb-f268-47a2-aca1-6b882d50632f",
+      "examId": "cce291f7-d88b-4976-8ed3-cc21daca7023",
+      "sectionType": "speaking",
+      "title": "Speaking",
+      "instructions": "<p><b><u style=\"color: rgb(239, 68, 68);\">Hướng dẫn Speaking</u></b></p>\n<ul>\n<li>\nTrả lời bằng <strong>tiếng Anh</strong>.\n</li>\n<li>\nNói <strong>tự nhiên và rõ ràng</strong>.\n</li>\n<li>\nCố gắng <strong>giải thích và phát triển câu trả lời</strong>, không chỉ trả lời một câu ngắn.\n</li>\n<li>\nBạn có thể suy nghĩ vài giây trước khi nói.\n</li>\n<li>\nNếu nói sai, <strong>không cần dừng lại hoặc nói lại từ đầu</strong>.\n</li>\n<li>\nKhông sử dụng bài viết hoặc câu trả lời chuẩn bị sẵn.\n</li>\n<li>\nHãy nói trong khả năng tốt nhất của bạn.</li></ul>",
+      "content": null,
+      "audioUrl": null,
+      "audioScript": null,
+      "durationMinutes": null,
+      "orderIndex": 0,
+      "createdAt": "2026-08-05T05:10:41.151Z",
+      "updatedAt": "2026-08-22T16:04:22.443Z",
+      "questionGroups": [
+        {
+          "id": "cee3cf6a-b06b-411a-b470-00d768e5ae7a",
+          "sectionId": "b28af4bb-f268-47a2-aca1-6b882d50632f",
+          "title": "Câu 1",
+          "instructions": "",
+          "passage": "&nbsp;Tell me about your hometown. What do you like most about living there?&nbsp;&nbsp;",
+          "audioUrl": "",
+          "orderIndex": 0,
+          "createdAt": "2026-08-22T16:01:45.528Z",
+          "questions": []
+        },
+        {
+          "id": "35ea005d-877a-499f-a430-38d6601567a3",
+          "sectionId": "b28af4bb-f268-47a2-aca1-6b882d50632f",
+          "title": "Câu 2",
+          "instructions": "&nbsp;Tell me about a skill you would like to learn. Why would you like to learn it?&nbsp;&nbsp;",
+          "passage": "",
+          "audioUrl": "",
+          "orderIndex": 1,
+          "createdAt": "2026-08-22T16:02:38.535Z",
+          "questions": []
+        },
+        {
+          "id": "39d126d6-fa26-4e61-8170-c134c5064694",
+          "sectionId": "b28af4bb-f268-47a2-aca1-6b882d50632f",
+          "title": "Câu 3",
+          "instructions": "&nbsp;Do you think schools should give students more practical skills? Why or why not?&nbsp;&nbsp;",
+          "passage": "",
+          "audioUrl": "",
+          "orderIndex": 2,
+          "createdAt": "2026-08-22T16:03:01.345Z",
+          "questions": []
+        }
+      ]
+    },
+    {
+      "id": "65b05c1c-2afa-410b-8cb5-c769168a3c7f",
+      "examId": "cce291f7-d88b-4976-8ed3-cc21daca7023",
+      "sectionType": "reading",
+      "title": "Reading",
+      "instructions": "",
+      "content": null,
+      "audioUrl": null,
+      "audioScript": null,
+      "durationMinutes": null,
+      "orderIndex": 0,
+      "createdAt": "2026-08-05T05:10:12.079Z",
+      "updatedAt": "2026-08-06T18:56:58.778Z",
+      "questionGroups": [
+        {
+          "id": "a936c66e-5753-4645-b77f-6013a8e091da",
+          "sectionId": "65b05c1c-2afa-410b-8cb5-c769168a3c7f",
+          "title": "",
+          "instructions": "",
+          "passage": "<p style=\"text-align: center;\"><b>Case Study: Tourism New Zealand website</b></p>\n\n<p style=\"text-align: justify; \">New Zealand is a small country of\nfour million inhabitants, a long-haul flight from all the major\ntourist-generating markets of the world. Tourism currently makes up 9% of the\ncountry’s gross domestic product, and is the country’s largest export sector. Unlike\nother export sectors, which make products and then sell them overseas, tourism\nbrings its customers to New Zealand. The product is the country itself – the\npeople, the places and the experiences. In 1999, Tourism New Zealand launched a\ncampaign to communicate a new brand position to the world. The campaign focused\non New Zealand’s scenic beauty, exhilarating outdoor activities and authentic\nMaori culture, and it made New Zealand one of the strongest national brands in\nthe world.</p>\n\n<p style=\"text-align: justify;\">A key feature of the campaign was the\nwebsite www.newzealand.com, which provided potential visitors to New Zealand\nwith a single gateway to everything the destination had to offer. The heart of\nthe website was a database of tourism services operators, both those based in\nNew Zealand and those based abroad which offered tourism service to the\ncountry. Any tourism-related business could be listed by filling in a simple\nform. This meant that even the smallest bed and breakfast address or specialist\nactivity provider could gain a web presence with access to an audience of\nlong-haul visitors. In addition, because participating businesses were able to\nupdate the details they gave on a regular basis, the information provided\nremained accurate. And to maintain and improve standards, Tourism New Zealand\norganised a scheme whereby organisations appearing on the website underwent an\nindependent evaluation against a set of agreed national standards of quality.\nAs part of this, the effect of each business on the environment was considered.</p>\n\n<p style=\"text-align: justify;\">To communicate the New Zealand\nexperience, the site also carried features relating to famous people and\nplaces.One of the most popular was an interview with former New Zealand All\nBlacks rugby captain Tana Umaga. Another feature that attracted a lot of attention\nwas an interactive journey through a number of the locations chosen for\nblockbuster films which had made use of New Zealand’s stunning scenery as a\nbackdrop. As the site developed, additional features were added to help\nindependent travelers devise their own customised itineraries. To make it\neasier to plan motoring holidays, the site catalogued the most popular driving\nroutes in the country, highlighting different routes according to the season\nand indicating distances and times.</p>\n\n<p style=\"text-align: justify;\">Later, a Travel Planner feature was\nadded, which allowed visitors to click and ‘bookmark’ places or attractions\nthey were interested in, and then view the results on a map. The Travel Planner\noffered suggested routes and public transport options between the chosen\nlocations. There were also links to accommodation in the area. By registering\nwith the website, users could save their Travel Plan and return to it later, or\nprint it out to take on the visit. The website also had a ‘Your Words’ section\nwhere anyone could submit a blog of their New Zealand travels for possible\ninclusion on the website.</p>\n\n<p style=\"text-align: justify;\">The Tourism New Zealand website won\ntwo Webby awards for online achievement and innovation. More importantly\nperhaps, the growth of tourism to New Zealand was impressive. Overall tourism\nexpenditure increased by an average of 6.9% per year between 1999 and 2004.\nFrom Britain, visits to New Zealand grew at an average annual rate of 13%\nbetween 2002 and 2006, compared to a rate of 4% overall for British visits\nabroad.</p>\n\n<p style=\"text-align: justify;\">The website was set up to allow both\nindividuals and travel organisations to create itineraries and travel packages\nto suit their own needs and interests. On the website, visitors can search for\nactivities not solely by geographical location, but also by the particular\nnature of the activity. This is important as research shows that activities are\nthe key driver of visitor satisfaction, contributing 74% to visitor satisfaction,\nwhile transport and accommodation account for the remaining 26%. The more\nactivities that visitors undertake, the more satisfied they will be. It has\nalso been found that visitors enjoy cultural activities most when they are\ninteractive, such as visiting a marae (meeting ground) to learn about\ntraditional Maori life. Many long-haul travelers enjoy such learning\nexperiences, which provide them with stories to take home to their friends and\nfamily. In addition, it appears that visitors to New Zealand don’t want to be\n‘one of the crowd’ and find activities that involve only a few people more\nspecial and meaningful.</p>\n\n<p style=\"text-align: justify; \">It could be argued that New Zealand\nis not a typical destination. New Zealand is a small country with a visitor\neconomy composed mainly of small businesses. It is generally perceived as a\nsafe English-speaking country with a reliable transport infrastructure. Because\nof the long-haul flight, most visitors stay for longer (average 20 days) and\nwant to see as much of the country as possible on what is often seen as a\nonce-in-a-lifetime visit. However, the underlying lessons apply anywhere – the\neffectiveness of a strong brand, a strategy based on unique experiences and a\ncomprehensive and user-friendly website.</p>",
+          "audioUrl": "",
+          "orderIndex": 0,
+          "createdAt": "2026-08-05T05:11:28.249Z",
+          "questions": [
+            {
+              "id": "c0d8e9bd-f426-42c3-b051-4c15df13543a",
+              "groupId": "a936c66e-5753-4645-b77f-6013a8e091da",
+              "questionType": "fill_blank",
+              "questionText": "<span id=\"docs-internal-guid-e5c541aa-7fff-2bf7-1432-8f708b4f0ed0\"><font size=\"4\"><p dir=\"ltr\" style=\"line-height: 1.295; margin-top: 0pt; margin-bottom: 8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">Questions 1-7</span></p><p dir=\"ltr\" style=\"line-height: 1.295; margin-top: 0pt; margin-bottom: 8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">Complete the table below. Choose ONE WORD ONLY from the passage for each answer. Write your answers in boxes 1-7 on your answer sheet.</span></p><div dir=\"ltr\" style=\"margin-left: 0pt;\" align=\"left\"><table style=\"border: none;\"><colgroup><col width=\"207\"><col width=\"406\"></colgroup><tbody><tr style=\"height:0pt\"><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;text-align: center;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">Section of website</span></p></td><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;text-align: center;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">Comments</span></p></td></tr><tr style=\"height:0pt\"><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">Database of tourism services</span></p></td><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">•&nbsp; &nbsp;easy for tourism-related businesses to get on the list</span></p><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">•&nbsp;&nbsp;&nbsp;allowed businesses to&nbsp;</span><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\"><span style=\"color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace; white-space-collapse: collapse; background-color: rgb(243, 245, 247);\">[BLANK_1]</span>&nbsp; information regularly</span></p><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">•&nbsp;&nbsp;&nbsp;provided a country-wide evaluation of businesses, including their impact on the&nbsp;</span><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\"><span style=\"color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace; white-space-collapse: collapse; background-color: rgb(243, 245, 247);\">[BLANK_2]</span>&nbsp;.</span></p></td></tr><tr style=\"height:0pt\"><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">Special features on local topics</span></p></td><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">•&nbsp;&nbsp;&nbsp;e.g. an interview with a former sports&nbsp;</span><span style=\"color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace; background-color: rgb(243, 245, 247);\">[BLANK_3]</span><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">&nbsp;, and an interactive tour of various locations used in&nbsp;</span><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\"> <span style=\"color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace; white-space-collapse: collapse; background-color: rgb(243, 245, 247);\">[BLANK_4]</span>&nbsp;.</span></p></td></tr><tr style=\"height:0pt\"><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">Information on driving routes</span></p></td><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">•&nbsp;&nbsp;&nbsp;varied depending on the&nbsp;</span><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\"> </span><span style=\"color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace; background-color: rgb(243, 245, 247);\">[BLANK_5]</span><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">&nbsp;.&nbsp;</span></p></td></tr><tr style=\"height:0pt\"><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">Travel Planner</span></p></td><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">•&nbsp;&nbsp;&nbsp;included a map showing selected places, details of public transport and local</span><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\"> </span><span style=\"color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace; background-color: rgb(243, 245, 247);\">[BLANK_6]</span><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">&nbsp;.</span></p></td></tr><tr style=\"height:0pt\"><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">‘Your Words’</span></p></td><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">•&nbsp; &nbsp;travelers could send a link to their&nbsp; </span><span style=\"background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;\">[BLANK_7]</span><span style=\"background-color: transparent; color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;, serif; white-space-collapse: preserve;\">.</span></p></td></tr></tbody></table></div></font></span>",
+              "options": [
+                "",
+                "",
+                "",
+                ""
+              ],
+              "correctAnswer": "[\"update\",\"environment\",\"captain\",\"films\",\"season\",\"accomodation\",\"blog\"]",
+              "points": 1,
+              "orderIndex": -1,
+              "createdAt": "2026-08-05T05:12:57.158Z",
+              "audioUrl": null
+            },
+            {
+              "id": "e6084ef6-30d7-421b-9935-c15e506d4049",
+              "groupId": "a936c66e-5753-4645-b77f-6013a8e091da",
+              "questionType": "true_false_not_given",
+              "questionText": "8. The website www.newzealand.com aimed to provide ready-made itineraries and packages for travel companies and individual tourists.",
+              "options": [
+                "",
+                "",
+                "",
+                ""
+              ],
+              "correctAnswer": "FALSE",
+              "points": 1,
+              "orderIndex": 0,
+              "createdAt": "2026-08-05T05:13:16.403Z",
+              "audioUrl": null
+            },
+            {
+              "id": "de50e60b-f74c-4948-905f-03f5ba2c0b6d",
+              "groupId": "a936c66e-5753-4645-b77f-6013a8e091da",
+              "questionType": "true_false_not_given",
+              "questionText": "9. It was found that most visitors started searching on the website by geographical location.",
+              "options": [
+                "",
+                "",
+                "",
+                ""
+              ],
+              "correctAnswer": "NOT GIVEN",
+              "points": 1,
+              "orderIndex": 1,
+              "createdAt": "2026-08-05T05:13:12.331Z",
+              "audioUrl": null
+            },
+            {
+              "id": "e19ac399-6094-4a0c-9003-b54abc5e0f40",
+              "groupId": "a936c66e-5753-4645-b77f-6013a8e091da",
+              "questionType": "true_false_not_given",
+              "questionText": "10. According to research, 26% of visitor satisfaction is related to their accommodationn",
+              "options": [
+                "",
+                "",
+                "",
+                ""
+              ],
+              "correctAnswer": "FALSE",
+              "points": 1,
+              "orderIndex": 2,
+              "createdAt": "2026-08-05T05:13:13.932Z",
+              "audioUrl": null
+            },
+            {
+              "id": "00d76f65-dd5f-4dc1-98de-8c235f37f834",
+              "groupId": "a936c66e-5753-4645-b77f-6013a8e091da",
+              "questionType": "true_false_not_given",
+              "questionText": "11. Visitors to New Zealand like to become involved in the local culture",
+              "options": [
+                "",
+                "",
+                "",
+                ""
+              ],
+              "correctAnswer": "TRUE",
+              "points": 1,
+              "orderIndex": 3,
+              "createdAt": "2026-08-05T05:11:39.702Z",
+              "audioUrl": null
+            },
+            {
+              "id": "578ed22b-adee-4442-92ab-c04a1951d902",
+              "groupId": "a936c66e-5753-4645-b77f-6013a8e091da",
+              "questionType": "true_false_not_given",
+              "questionText": "12. Visitors like staying in small hotels in New Zealand rather than in larger ones",
+              "options": [
+                "",
+                "",
+                "",
+                ""
+              ],
+              "correctAnswer": "NOT GIVEN",
+              "points": 1,
+              "orderIndex": 4,
+              "createdAt": "2026-08-05T05:12:14.536Z",
+              "audioUrl": null
+            },
+            {
+              "id": "6268c893-6886-499e-81c3-194dea9cd9f2",
+              "groupId": "a936c66e-5753-4645-b77f-6013a8e091da",
+              "questionType": "true_false_not_given",
+              "questionText": "13. Many visitors feel it is unlikely that they will return to New Zealand after their visit",
+              "options": [
+                "",
+                "",
+                "",
+                ""
+              ],
+              "correctAnswer": "TRUE",
+              "points": 1,
+              "orderIndex": 5,
+              "createdAt": "2026-08-05T05:12:19.231Z",
+              "audioUrl": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "9dc8262e-6ee2-4607-8b1b-d400b35d4124",
+      "examId": "cce291f7-d88b-4976-8ed3-cc21daca7023",
+      "sectionType": "writing",
+      "title": "Writing",
+      "instructions": "",
+      "content": null,
+      "audioUrl": null,
+      "audioScript": null,
+      "durationMinutes": null,
+      "orderIndex": 0,
+      "createdAt": "2026-08-05T05:10:32.720Z",
+      "updatedAt": "2026-08-06T18:56:58.926Z",
+      "questionGroups": [
+        {
+          "id": "65786084-79a0-4930-acd9-46325463a819",
+          "sectionId": "9dc8262e-6ee2-4607-8b1b-d400b35d4124",
+          "title": null,
+          "instructions": null,
+          "passage": "<div><br></div>",
+          "audioUrl": null,
+          "orderIndex": 0,
+          "createdAt": "2026-08-05T05:11:22.198Z",
+          "questions": [
+            {
+              "id": "cc8c16a0-69d1-42c1-882d-3205ea3bc5e9",
+              "groupId": "65786084-79a0-4930-acd9-46325463a819",
+              "questionType": "essay",
+              "questionText": "<font size=\"4\"><u style=\"color: rgb(0, 0, 0);\">Viết một bài văn khoảng 100–150 từ trả lời câu hỏi sau:</u></font><div><font size=\"4\"><b><i style=\"color: rgb(147, 51, 234);\">Some people think that students should be required to learn a foreign language in school. Do you agree or disagree? Give reasons and examples.</i></b></font></div>",
+              "options": [
+                "",
+                "",
+                "",
+                ""
+              ],
+              "correctAnswer": null,
+              "points": 1,
+              "orderIndex": 0,
+              "createdAt": "2026-08-05T05:13:03.889Z",
+              "audioUrl": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c8fd5c82-dcb4-412d-a615-9a067e3fd62f",
+      "examId": "cce291f7-d88b-4976-8ed3-cc21daca7023",
+      "sectionType": "general",
+      "title": "Grammar",
+      "instructions": null,
+      "content": null,
+      "audioUrl": null,
+      "audioScript": "NULL",
+      "durationMinutes": null,
+      "orderIndex": 0,
+      "createdAt": "2026-08-05T05:10:50.240Z",
+      "updatedAt": "2026-08-12T18:11:02.066Z",
+      "questionGroups": [
+        {
+          "id": "24bba46c-cc72-4b75-8bf6-0c95f3b41ac4",
+          "sectionId": "c8fd5c82-dcb4-412d-a615-9a067e3fd62f",
+          "title": "",
+          "instructions": "",
+          "passage": null,
+          "audioUrl": null,
+          "orderIndex": 0,
+          "createdAt": "2026-08-05T05:11:17.080Z",
+          "questions": [
+            {
+              "id": "7b3cc213-6fbc-4e41-8ed7-9420773fd55a",
+              "groupId": "24bba46c-cc72-4b75-8bf6-0c95f3b41ac4",
+              "questionType": "multiple_choice",
+              "questionText": "My brother usually ___ to work by bus.",
+              "options": [
+                "go",
+                "goes",
+                "is going",
+                "going"
+              ],
+              "correctAnswer": "goes",
+              "points": 1,
+              "orderIndex": 1,
+              "createdAt": "2026-08-22T16:06:16.466Z",
+              "audioUrl": null
+            },
+            {
+              "id": "5ba28972-e776-4953-b05e-41d6a862c4ed",
+              "groupId": "24bba46c-cc72-4b75-8bf6-0c95f3b41ac4",
+              "questionType": "multiple_choice",
+              "questionText": "I ___ this book three times, but I still find it interesting.",
+              "options": [
+                "read",
+                "am reading",
+                "have read",
+                "had read"
+              ],
+              "correctAnswer": "have read",
+              "points": 1,
+              "orderIndex": 2,
+              "createdAt": "2026-08-22T16:06:16.466Z",
+              "audioUrl": null
+            },
+            {
+              "id": "afd8852d-5f56-413d-99ef-73cd89c969d4",
+              "groupId": "24bba46c-cc72-4b75-8bf6-0c95f3b41ac4",
+              "questionType": "multiple_choice",
+              "questionText": "The results of the survey ___ to all participants next week.",
+              "options": [
+                "will send",
+                "will be sent",
+                "are sending",
+                "have sent"
+              ],
+              "correctAnswer": "will be sent",
+              "points": 1,
+              "orderIndex": 3,
+              "createdAt": "2026-08-22T16:06:16.466Z",
+              "audioUrl": null
+            },
+            {
+              "id": "59739e98-711b-4d4b-8927-e5f97c0d3a32",
+              "groupId": "24bba46c-cc72-4b75-8bf6-0c95f3b41ac4",
+              "questionType": "multiple_choice",
+              "questionText": "There isn't ___ information available about the causes of the problem.",
+              "options": [
+                "many",
+                "a few",
+                "much",
+                "several"
+              ],
+              "correctAnswer": "much",
+              "points": 1,
+              "orderIndex": 4,
+              "createdAt": "2026-08-22T16:06:16.466Z",
+              "audioUrl": null
+            },
+            {
+              "id": "380a1c22-1b82-478a-863e-e5e9a2ac21dd",
+              "groupId": "24bba46c-cc72-4b75-8bf6-0c95f3b41ac4",
+              "questionType": "multiple_choice",
+              "questionText": "She has worked for the company ___ 2019.",
+              "options": [
+                "for",
+                "since",
+                "during",
+                "from"
+              ],
+              "correctAnswer": "since",
+              "points": 1,
+              "orderIndex": 5,
+              "createdAt": "2026-08-22T16:06:16.466Z",
+              "audioUrl": null
+            },
+            {
+              "id": "36a7ce11-694e-4986-871b-96427ac6f798",
+              "groupId": "24bba46c-cc72-4b75-8bf6-0c95f3b41ac4",
+              "questionType": "multiple_choice",
+              "questionText": "If governments ___ more money in public transport, traffic congestion would be reduced.",
+              "options": [
+                "invest",
+                "invested",
+                "will invest",
+                "have invested"
+              ],
+              "correctAnswer": "invested",
+              "points": 1,
+              "orderIndex": 6,
+              "createdAt": "2026-08-22T16:06:16.466Z",
+              "audioUrl": null
+            },
+            {
+              "id": "307abd86-198d-4686-9c35-03e3b8d84520",
+              "groupId": "24bba46c-cc72-4b75-8bf6-0c95f3b41ac4",
+              "questionType": "multiple_choice",
+              "questionText": "The students ___ submitted their assignments on time will receive additional feedback.",
+              "options": [
+                "which",
+                "whom",
+                "whose",
+                "who"
+              ],
+              "correctAnswer": "who",
+              "points": 1,
+              "orderIndex": 7,
+              "createdAt": "2026-08-22T16:06:16.466Z",
+              "audioUrl": null
+            },
+            {
+              "id": "af2cb913-45db-4ee3-a2bb-870d79d44334",
+              "groupId": "24bba46c-cc72-4b75-8bf6-0c95f3b41ac4",
+              "questionType": "multiple_choice",
+              "questionText": "Many people find it difficult ___ a healthy work-life balance.",
+              "options": [
+                "maintain",
+                "maintaining",
+                "to maintain",
+                "maintained"
+              ],
+              "correctAnswer": "to maintain",
+              "points": 1,
+              "orderIndex": 8,
+              "createdAt": "2026-08-22T16:06:16.466Z",
+              "audioUrl": null
+            },
+            {
+              "id": "ecd26e7b-aaae-45a1-b3c2-52bcdd8409af",
+              "groupId": "24bba46c-cc72-4b75-8bf6-0c95f3b41ac4",
+              "questionType": "multiple_choice",
+              "questionText": "Despite ___ several advantages, the new system has some significant limitations.",
+              "options": [
+                "have",
+                "having",
+                "to have",
+                "had"
+              ],
+              "correctAnswer": "having",
+              "points": 1,
+              "orderIndex": 9,
+              "createdAt": "2026-08-22T16:06:16.466Z",
+              "audioUrl": null
+            },
+            {
+              "id": "eea6e4cd-4eda-4de6-904c-c4c2a834f0a7",
+              "groupId": "24bba46c-cc72-4b75-8bf6-0c95f3b41ac4",
+              "questionType": "multiple_choice",
+              "questionText": "By the time the researchers arrived, the experiment ___.",
+              "options": [
+                "already finished",
+                "has already finished",
+                "had already finished",
+                "was already finishing"
+              ],
+              "correctAnswer": "had already finished",
+              "points": 1,
+              "orderIndex": 10,
+              "createdAt": "2026-08-22T16:06:16.466Z",
+              "audioUrl": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "5eb9a915-7395-4b45-9d32-3c143548cc67",
+      "examId": "cce291f7-d88b-4976-8ed3-cc21daca7023",
+      "sectionType": "listening",
+      "title": "Listening",
+      "instructions": "",
+      "content": null,
+      "audioUrl": "https://gzpdlqxjggyxlkeatvvf.supabase.co/storage/v1/object/public/exam-assets/audio/1787423782098-cambridge-ielts-13-academic-listening-1-audio-1.mp3",
+      "audioScript": null,
+      "durationMinutes": null,
+      "orderIndex": 0,
+      "createdAt": "2026-08-05T05:10:09.317Z",
+      "updatedAt": "2026-08-22T18:36:24.068Z",
+      "questionGroups": [
+        {
+          "id": "74db2167-fd4e-481f-8fa0-b7a3c164fc5b",
+          "sectionId": "5eb9a915-7395-4b45-9d32-3c143548cc67",
+          "title": "",
+          "instructions": "Complete the table below. Write <b>ONE WORD AND/OR A NUMBER</b> for each answer.",
+          "passage": null,
+          "audioUrl": null,
+          "orderIndex": 0,
+          "createdAt": "2026-08-05T05:11:24.120Z",
+          "questions": [
+            {
+              "id": "43907def-1f78-4839-8751-ff1079fdee91",
+              "groupId": "74db2167-fd4e-481f-8fa0-b7a3c164fc5b",
+              "questionType": "fill_blank",
+              "questionText": "<span id=\"docs-internal-guid-4fda0c15-7fff-c920-4698-81ecd7e90be9\"><p dir=\"ltr\" style=\"line-height:1.295;text-align: center;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\"><font size=\"4\">COOKERY CLASSES</font></span></p><div dir=\"ltr\" style=\"margin-left:0pt;\" align=\"left\"><table style=\"border: none;\"><colgroup><col width=\"153\"><col width=\"187\"><col width=\"302\"></colgroup><tbody><tr style=\"height:0pt\"><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;text-align: center;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\"><font size=\"4\">Cookery Class</font></span></p></td><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;text-align: center;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\"><font size=\"4\">Focus</font></span></p></td><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;text-align: center;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\"><font size=\"4\">Other Information</font></span></p></td></tr><tr style=\"height:0pt\"><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-style: italic; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\"><font size=\"4\">Example</font></span></p><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><font size=\"4\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">The Food …</span><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-style: italic; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">Studio</span><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">…</span></font></p></td><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><font size=\"4\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">how to&nbsp;</span><span style=\"background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;\">[BLANK_1]&nbsp;</span><span style=\"background-color: transparent; color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;, serif; white-space-collapse: preserve;\">and cook with seasonal products</span></font></p></td><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\"><font size=\"4\">●&nbsp;&nbsp; small classes</font></span></p><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><font size=\"4\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">●&nbsp;&nbsp; also offers </span><span style=\"background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;\">[BLANK_2]</span></font></p><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\"><font size=\"4\">&nbsp; classes</font></span></p><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><font size=\"4\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">●&nbsp;&nbsp; clients who return get a&nbsp;</span><span style=\"background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;\">[BLANK_3]&nbsp;</span></font><span style=\"font-size: large; background-color: transparent; color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;, serif; white-space-collapse: preserve;\">discount</span></p></td></tr><tr style=\"height:0pt\"><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\"><font size=\"4\">Bond’s Cookery School</font></span></p></td><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><font size=\"4\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">food that is</span><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">&nbsp;</span><span style=\"background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;\">[BLANK_4]</span></font></p></td><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><font size=\"4\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">●&nbsp;&nbsp; includes recipes to strengthen your</span><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\"> </span><span style=\"background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;\">[BLANK_5]</span></font></p><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><font size=\"4\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">●&nbsp;&nbsp; they have a free&nbsp;</span><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">6 </span><span style=\"background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;\">[BLANK_6]</span></font></p><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\"><font size=\"4\">&nbsp;Every Thursday</font></span></p></td></tr><tr style=\"height:0pt\"><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><font size=\"4\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">The&nbsp;</span><span style=\"background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;\">[BLANK_7]</span><span style=\"background-color: transparent; color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;, serif; white-space-collapse: preserve;\"> Centre</span></font></p></td><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><font size=\"4\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">mainly&nbsp;</span><span style=\"background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;\">[BLANK_8]</span><span style=\"background-color: transparent; color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;, serif; white-space-collapse: preserve;\">&nbsp; food</span></font></p></td><td style=\"border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;\"><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><font size=\"4\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">●&nbsp;&nbsp; located near the</span><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\"> </span><span style=\"background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;\">[BLANK_9]</span></font></p><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><font size=\"4\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\">●&nbsp;&nbsp; a special course in skills with a&nbsp; </span><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\"> </span><span style=\"background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;\">[BLANK_10]</span></font></p><p dir=\"ltr\" style=\"line-height:1.295;margin-top:0pt;margin-bottom:8pt;\"><span style=\"font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;\"><font size=\"4\"> is sometimes available</font></span></p></td></tr></tbody></table><br></div></span>",
+              "options": [
+                "",
+                "",
+                "",
+                ""
+              ],
+              "correctAnswer": "[\"choose\",\"private\",\"20% | 20 percent\",\"healthy\",\"bones\",\"lecture\",\"Arretsa | arretsa\",\"vegetarian\",\"market\",\"knife\"]",
+              "points": 1,
+              "orderIndex": 0,
+              "createdAt": "2026-08-05T05:12:06.117Z",
+              "audioUrl": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

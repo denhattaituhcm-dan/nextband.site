@@ -121205,410 +121205,224 @@ var lead_routes_default = leadRoutes;
 
 // server/data/placement-test/questions.ts
 var canonicalPlacementTestPayload = {
-  testId: "aris-placement-v1",
-  title: "ARIS IELTS-style Diagnostic Assessment (4 K\u1EF9 N\u0103ng & Ng\u1EEF Ph\xE1p)",
+  testId: "cce291f7-d88b-4976-8ed3-cc21daca7023",
+  title: "ENTRANCE TEST \u2014 ARIS Diagnostic Assessment",
   durationMinutes: 60,
-  totalQuestions: 37,
+  totalQuestions: 35,
+  // 10 Listening + 13 Reading + 10 Grammar = 33 Obj + 2 Subj
   skills: {
     listening: {
-      title: "K\u1EF9 n\u0103ng Nghe (Listening Comprehension)",
-      audioUrl: "https://assets.mixkit.co/active_storage/sfx/2874/2874-preview.mp3",
+      title: "K\u1EF9 n\u0103ng Nghe (Listening)",
+      audioUrl: "https://gzpdlqxjggyxlkeatvvf.supabase.co/storage/v1/object/public/exam-assets/audio/1787423782098-cambridge-ielts-13-academic-listening-1-audio-1.mp3",
       questions: [
         {
-          id: "L1",
+          id: "43907def-1f78-4839-8751-ff1079fdee91",
           skill: "listening",
-          sectionTitle: "Part 1: Th\xF4ng tin h\u1ED9i tho\u1EA1i th\u01B0\u1EDDng ng\xE0y",
-          questionType: "multiple_choice",
-          prompt: "Ng\u01B0\u1EDDi g\u1ECDi \u0111i\u1EC7n mu\u1ED1n \u0111\u0103ng k\xFD tham gia l\u1EDBp h\u1ECDc v\xE0o bu\u1ED5i n\xE0o?",
-          options: ["Th\u1EE9 Hai & Th\u1EE9 T\u01B0", "Th\u1EE9 Ba & Th\u1EE9 N\u0103m", "Th\u1EE9 B\u1EA3y & Ch\u1EE7 Nh\u1EADt", "T\u1EA5t c\u1EA3 c\xE1c bu\u1ED5i t\u1ED1i"],
-          orderIndex: 1
-        },
-        {
-          id: "L2",
-          skill: "listening",
-          sectionTitle: "Part 1: Th\xF4ng tin h\u1ED9i tho\u1EA1i th\u01B0\u1EDDng ng\xE0y",
-          questionType: "multiple_choice",
-          prompt: "M\u1EE9c h\u1ECDc ph\xED \u01B0u \u0111\xE3i \xE1p d\u1EE5ng tr\u01B0\u1EDBc ng\xE0y n\xE0o?",
-          options: ["Ng\xE0y 15 h\xE0ng th\xE1ng", "Ng\xE0y 20 h\xE0ng th\xE1ng", "Ng\xE0y cu\u1ED1i c\xF9ng c\u1EE7a th\xE1ng", "Sau kh\xF3a h\u1ECDc"],
-          orderIndex: 2
-        },
-        {
-          id: "L3",
-          skill: "listening",
-          sectionTitle: "Part 1: Th\xF4ng tin h\u1ED9i tho\u1EA1i th\u01B0\u1EDDng ng\xE0y",
+          sectionTitle: "K\u1EF9 n\u0103ng Nghe (Listening)",
           questionType: "fill_blank",
-          prompt: "\u0110\u1ECBa ch\u1EC9 chi nh\xE1nh trung t\xE2m n\u1EB1m t\u1EA1i \u0111\u01B0\u1EDDng: [BLANK]",
-          placeholder: "Nh\u1EADp t\xEAn \u0111\u01B0\u1EDDng nghe \u0111\u01B0\u1EE3c...",
-          orderIndex: 3
-        },
-        {
-          id: "L4",
-          skill: "listening",
-          sectionTitle: "Part 1: Th\xF4ng tin h\u1ED9i tho\u1EA1i th\u01B0\u1EDDng ng\xE0y",
-          questionType: "multiple_choice",
-          prompt: "T\xE0i li\u1EC7u h\u1ECDc t\u1EADp \u0111\u01B0\u1EE3c cung c\u1EA5p d\u01B0\u1EDBi h\xECnh th\u1EE9c n\xE0o?",
-          options: ["S\xE1ch in gi\u1EA5y mi\u1EC5n ph\xED", "Ebook PDF & Audio Portal", "T\u1EF1 mua ngo\xE0i hi\u1EC7u s\xE1ch", "Kh\xF4ng c\xF3 t\xE0i li\u1EC7u"],
-          orderIndex: 4
-        },
-        {
-          id: "L5",
-          skill: "listening",
-          sectionTitle: "Part 1: Th\xF4ng tin h\u1ED9i tho\u1EA1i th\u01B0\u1EDDng ng\xE0y",
-          questionType: "multiple_choice",
-          prompt: "Th\u1EDDi l\u01B0\u1EE3ng m\u1ED7i bu\u1ED5i h\u1ECDc k\xE9o d\xE0i bao l\xE2u?",
-          options: ["60 ph\xFAt", "90 ph\xFAt", "120 ph\xFAt", "150 ph\xFAt"],
-          orderIndex: 5
-        },
-        {
-          id: "L6",
-          skill: "listening",
-          sectionTitle: "Part 2: \u0110\u1ED9c tho\u1EA1i h\u1ECDc thu\u1EADt & H\u01B0\u1EDBng d\u1EABn",
-          questionType: "multiple_choice",
-          prompt: "M\u1EE5c \u0111\xEDch ch\xEDnh c\u1EE7a b\xE0i thuy\u1EBFt tr\xECnh l\xE0 g\xEC?",
-          options: [
-            "Gi\u1EDBi thi\u1EC7u c\u01A1 s\u1EDF v\u1EADt ch\u1EA5t th\u01B0 vi\u1EC7n",
-            "H\u01B0\u1EDBng d\u1EABn ph\u01B0\u01A1ng ph\xE1p t\u1EF1 h\u1ECDc IELTS hi\u1EC7u qu\u1EA3",
-            "Th\xF4ng b\xE1o l\u1ECBch thi chu\u1EA9n h\xF3a qu\u1ED1c t\u1EBF",
-            "K\xEAu g\u1ECDi tham gia c\xE2u l\u1EA1c b\u1ED9 ti\u1EBFng Anh"
-          ],
-          orderIndex: 6
-        },
-        {
-          id: "L7",
-          skill: "listening",
-          sectionTitle: "Part 2: \u0110\u1ED9c tho\u1EA1i h\u1ECDc thu\u1EADt & H\u01B0\u1EDBng d\u1EABn",
-          questionType: "multiple_choice",
-          prompt: "Ng\u01B0\u1EDDi n\xF3i nh\u1EA5n m\u1EA1nh y\u1EBFu t\u1ED1 quan tr\u1ECDng nh\u1EA5t \u0111\u1EC3 c\u1EA3i thi\u1EC7n ph\xE1t \xE2m l\xE0:",
-          options: [
-            "Luy\u1EC7n n\xF3i th\u1EADt nhanh",
-            "N\u1EAFm v\u1EEFng 44 \xE2m IPA v\xE0 tr\u1ECDng \xE2m t\u1EEB",
-            "H\u1ECDc thu\u1ED9c nhi\u1EC1u t\u1EEB v\u1EF1ng hi\u1EBFm",
-            "Ch\u1EC9 nghe ng\u01B0\u1EDDi b\u1EA3n x\u1EE9 Anh-Anh"
-          ],
-          orderIndex: 7
-        },
-        {
-          id: "L8",
-          skill: "listening",
-          sectionTitle: "Part 2: \u0110\u1ED9c tho\u1EA1i h\u1ECDc thu\u1EADt & H\u01B0\u1EDBng d\u1EABn",
-          questionType: "fill_blank",
-          prompt: "S\u1ED1 gi\u1EDD t\u1EF1 luy\u1EC7n nghe khuy\u1EBFn ngh\u1ECB m\u1ED7i ng\xE0y l\xE0: [BLANK] ph\xFAt.",
-          placeholder: "Nh\u1EADp s\u1ED1 ph\xFAt...",
-          orderIndex: 8
-        },
-        {
-          id: "L9",
-          skill: "listening",
-          sectionTitle: "Part 2: \u0110\u1ED9c tho\u1EA1i h\u1ECDc thu\u1EADt & H\u01B0\u1EDBng d\u1EABn",
-          questionType: "multiple_choice",
-          prompt: "Khi g\u1EB7p t\u1EEB m\u1EDBi trong b\xE0i nghe, th\xED sinh n\xEAn:",
-          options: [
-            "D\u1EEBng b\xE0i nghe tra t\u1EEB \u0111i\u1EC3n ngay",
-            "D\u1EF1a v\xE0o ng\u1EEF c\u1EA3nh \u0111\u1EC3 \u0111o\xE1n ngh\u0129a ch\xEDnh",
-            "B\u1ECF qua to\xE0n b\u1ED9 c\xE2u h\u1ECFi \u0111\xF3",
-            "Ch\xE9p l\u1EA1i to\xE0n b\u1ED9 b\xE0i nghe"
-          ],
-          orderIndex: 9
-        },
-        {
-          id: "L10",
-          skill: "listening",
-          sectionTitle: "Part 2: \u0110\u1ED9c tho\u1EA1i h\u1ECDc thu\u1EADt & H\u01B0\u1EDBng d\u1EABn",
-          questionType: "multiple_choice",
-          prompt: "T\xE0i li\u1EC7u luy\u1EC7n nghe ch\xEDnh th\u1EE9c \u0111\u01B0\u1EE3c \u0111\u1EC1 xu\u1EA5t l\xE0:",
-          options: ["Cambridge IELTS Official Series", "Tin t\u1EE9c m\u1EA1ng x\xE3 h\u1ED9i", "Phim c\xF3 ph\u1EE5 \u0111\u1EC1 ti\u1EBFng Vi\u1EC7t", "Truy\u1EC7n tranh song ng\u1EEF"],
-          orderIndex: 10
+          prompt: '<span id="docs-internal-guid-4fda0c15-7fff-c920-4698-81ecd7e90be9"><p dir="ltr" style="line-height:1.295;text-align: center;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;"><font size="4">COOKERY CLASSES</font></span></p><div dir="ltr" style="margin-left:0pt;" align="left"><table style="border: none;"><colgroup><col width="153"><col width="187"><col width="302"></colgroup><tbody><tr style="height:0pt"><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;text-align: center;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;"><font size="4">Cookery Class</font></span></p></td><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;text-align: center;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;"><font size="4">Focus</font></span></p></td><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;text-align: center;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;"><font size="4">Other Information</font></span></p></td></tr><tr style="height:0pt"><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-style: italic; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;"><font size="4">Example</font></span></p><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><font size="4"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">The Food \u2026</span><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-style: italic; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">Studio</span><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">\u2026</span></font></p></td><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><font size="4"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">how to&nbsp;</span><span style="background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;">[BLANK_1]&nbsp;</span><span style="background-color: transparent; color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;, serif; white-space-collapse: preserve;">and cook with seasonal products</span></font></p></td><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;"><font size="4">\u25CF&nbsp;&nbsp; small classes</font></span></p><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><font size="4"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">\u25CF&nbsp;&nbsp; also offers </span><span style="background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;">[BLANK_2]</span></font></p><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;"><font size="4">&nbsp; classes</font></span></p><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><font size="4"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">\u25CF&nbsp;&nbsp; clients who return get a&nbsp;</span><span style="background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;">[BLANK_3]&nbsp;</span></font><span style="font-size: large; background-color: transparent; color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;, serif; white-space-collapse: preserve;">discount</span></p></td></tr><tr style="height:0pt"><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;"><font size="4">Bond\u2019s Cookery School</font></span></p></td><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><font size="4"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">food that is</span><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">&nbsp;</span><span style="background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;">[BLANK_4]</span></font></p></td><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><font size="4"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">\u25CF&nbsp;&nbsp; includes recipes to strengthen your</span><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;"> </span><span style="background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;">[BLANK_5]</span></font></p><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><font size="4"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">\u25CF&nbsp;&nbsp; they have a free&nbsp;</span><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">6 </span><span style="background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;">[BLANK_6]</span></font></p><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;"><font size="4">&nbsp;Every Thursday</font></span></p></td></tr><tr style="height:0pt"><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><font size="4"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">The&nbsp;</span><span style="background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;">[BLANK_7]</span><span style="background-color: transparent; color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;, serif; white-space-collapse: preserve;"> Centre</span></font></p></td><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><font size="4"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">mainly&nbsp;</span><span style="background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;">[BLANK_8]</span><span style="background-color: transparent; color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;, serif; white-space-collapse: preserve;">&nbsp; food</span></font></p></td><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><font size="4"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">\u25CF&nbsp;&nbsp; located near the</span><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;"> </span><span style="background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;">[BLANK_9]</span></font></p><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><font size="4"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">\u25CF&nbsp;&nbsp; a special course in skills with a&nbsp; </span><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;"> </span><span style="background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;">[BLANK_10]</span></font></p><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;"><font size="4"> is sometimes available</font></span></p></td></tr></tbody></table><br></div></span>',
+          placeholder: "Nh\u1EADp c\xE2u tr\u1EA3 l\u1EDDi...",
+          orderIndex: 1,
+          blankCount: 10
         }
       ]
     },
     reading: {
-      title: "K\u1EF9 n\u0103ng \u0110\u1ECDc hi\u1EC3u (Reading Comprehension)",
-      passage: `THE POWER OF DELIBERATE PRACTICE IN LANGUAGE ACQUISITION
-
-Paragraph A
-For decades, researchers in cognitive psychology have sought to understand why some language learners achieve near-native fluency within a few years, while others struggle for a decade without significant progress. Traditional theories attributed this divergence to innate linguistic talent or "an ear for languages." However, groundbreaking research led by Dr. Anders Ericsson has revealed that innate ability plays a far smaller role than previously assumed. The decisive factor is a specialized methodology known as "deliberate practice."
-
-Paragraph B
-Deliberate practice is fundamentally distinct from passive exposure. Merely watching English movies with subtitles or casually listening to podcasts rarely leads to substantial structural improvement. In contrast, deliberate practice involves breaking down complex skills into well-defined micro-components, executing tasks with intense cognitive focus, and receiving immediate, corrective feedback. In the context of IELTS preparation, this means dissecting complex sentence structures, isolating phonetic errors in speech, and systematically mastering academic collocations.
-
-Paragraph C
-A critical element of deliberate practice is operating consistently at the edge of one's current ability \u2014 in what educational psychologist Lev Vygotsky termed the "Zone of Proximal Development." If training tasks are too simplistic, the learner enters a state of cognitive complacency where no neural adaptation occurs. Conversely, if tasks are overwhelmingly difficult, cognitive overload impairs retention. Successful language training programs calibrate exercises to be challenging yet achievable with focused effort.
-
-Paragraph D
-Furthermore, the retention of academic vocabulary requires spaced repetition rather than massed cramming. Neural pathways strengthening lexical memory undergo consolidation during sleep and intervals of recall. When candidates actively retrieve a new term across expanding time intervals (e.g., 1 day, 3 days, 1 week, 1 month), retention efficiency increases by over 300% compared to traditional rote memorization.`,
+      title: "K\u1EF9 n\u0103ng \u0110\u1ECDc hi\u1EC3u (Reading)",
+      passage: '<p style="text-align: center;"><b>Case Study: Tourism New Zealand website</b></p>\n\n<p style="text-align: justify; ">New Zealand is a small country of\nfour million inhabitants, a long-haul flight from all the major\ntourist-generating markets of the world. Tourism currently makes up 9% of the\ncountry\u2019s gross domestic product, and is the country\u2019s largest export sector. Unlike\nother export sectors, which make products and then sell them overseas, tourism\nbrings its customers to New Zealand. The product is the country itself \u2013 the\npeople, the places and the experiences. In 1999, Tourism New Zealand launched a\ncampaign to communicate a new brand position to the world. The campaign focused\non New Zealand\u2019s scenic beauty, exhilarating outdoor activities and authentic\nMaori culture, and it made New Zealand one of the strongest national brands in\nthe world.</p>\n\n<p style="text-align: justify;">A key feature of the campaign was the\nwebsite www.newzealand.com, which provided potential visitors to New Zealand\nwith a single gateway to everything the destination had to offer. The heart of\nthe website was a database of tourism services operators, both those based in\nNew Zealand and those based abroad which offered tourism service to the\ncountry. Any tourism-related business could be listed by filling in a simple\nform. This meant that even the smallest bed and breakfast address or specialist\nactivity provider could gain a web presence with access to an audience of\nlong-haul visitors. In addition, because participating businesses were able to\nupdate the details they gave on a regular basis, the information provided\nremained accurate. And to maintain and improve standards, Tourism New Zealand\norganised a scheme whereby organisations appearing on the website underwent an\nindependent evaluation against a set of agreed national standards of quality.\nAs part of this, the effect of each business on the environment was considered.</p>\n\n<p style="text-align: justify;">To communicate the New Zealand\nexperience, the site also carried features relating to famous people and\nplaces.One of the most popular was an interview with former New Zealand All\nBlacks rugby captain Tana Umaga. Another feature that attracted a lot of attention\nwas an interactive journey through a number of the locations chosen for\nblockbuster films which had made use of New Zealand\u2019s stunning scenery as a\nbackdrop. As the site developed, additional features were added to help\nindependent travelers devise their own customised itineraries. To make it\neasier to plan motoring holidays, the site catalogued the most popular driving\nroutes in the country, highlighting different routes according to the season\nand indicating distances and times.</p>\n\n<p style="text-align: justify;">Later, a Travel Planner feature was\nadded, which allowed visitors to click and \u2018bookmark\u2019 places or attractions\nthey were interested in, and then view the results on a map. The Travel Planner\noffered suggested routes and public transport options between the chosen\nlocations. There were also links to accommodation in the area. By registering\nwith the website, users could save their Travel Plan and return to it later, or\nprint it out to take on the visit. The website also had a \u2018Your Words\u2019 section\nwhere anyone could submit a blog of their New Zealand travels for possible\ninclusion on the website.</p>\n\n<p style="text-align: justify;">The Tourism New Zealand website won\ntwo Webby awards for online achievement and innovation. More importantly\nperhaps, the growth of tourism to New Zealand was impressive. Overall tourism\nexpenditure increased by an average of 6.9% per year between 1999 and 2004.\nFrom Britain, visits to New Zealand grew at an average annual rate of 13%\nbetween 2002 and 2006, compared to a rate of 4% overall for British visits\nabroad.</p>\n\n<p style="text-align: justify;">The website was set up to allow both\nindividuals and travel organisations to create itineraries and travel packages\nto suit their own needs and interests. On the website, visitors can search for\nactivities not solely by geographical location, but also by the particular\nnature of the activity. This is important as research shows that activities are\nthe key driver of visitor satisfaction, contributing 74% to visitor satisfaction,\nwhile transport and accommodation account for the remaining 26%. The more\nactivities that visitors undertake, the more satisfied they will be. It has\nalso been found that visitors enjoy cultural activities most when they are\ninteractive, such as visiting a marae (meeting ground) to learn about\ntraditional Maori life. Many long-haul travelers enjoy such learning\nexperiences, which provide them with stories to take home to their friends and\nfamily. In addition, it appears that visitors to New Zealand don\u2019t want to be\n\u2018one of the crowd\u2019 and find activities that involve only a few people more\nspecial and meaningful.</p>\n\n<p style="text-align: justify; ">It could be argued that New Zealand\nis not a typical destination. New Zealand is a small country with a visitor\neconomy composed mainly of small businesses. It is generally perceived as a\nsafe English-speaking country with a reliable transport infrastructure. Because\nof the long-haul flight, most visitors stay for longer (average 20 days) and\nwant to see as much of the country as possible on what is often seen as a\nonce-in-a-lifetime visit. However, the underlying lessons apply anywhere \u2013 the\neffectiveness of a strong brand, a strategy based on unique experiences and a\ncomprehensive and user-friendly website.</p>',
       questions: [
         {
-          id: "R1",
+          id: "c0d8e9bd-f426-42c3-b051-4c15df13543a",
           skill: "reading",
-          sectionTitle: "Reading: Tr\u1EAFc nghi\u1EC7m \xFD ch\xEDnh & chi ti\u1EBFt",
-          questionType: "multiple_choice",
-          prompt: "Theo \u0110o\u1EA1n A, y\u1EBFu t\u1ED1 quy\u1EBFt \u0111\u1ECBnh s\u1EF1 th\xE0nh c\xF4ng trong vi\u1EC7c ti\u1EBFp thu ng\xF4n ng\u1EEF l\xE0 g\xEC?",
-          options: [
-            "N\u0103ng khi\u1EBFu b\u1EA9m sinh \u0111\u1EB7c bi\u1EC7t",
-            "Ph\u01B0\u01A1ng ph\xE1p luy\u1EC7n t\u1EADp c\xF3 ch\u1EE7 \u0111\xEDch (Deliberate practice)",
-            "S\u1ED1 n\u0103m sinh s\u1ED1ng t\u1EA1i n\u01B0\u1EDBc ngo\xE0i",
-            "B\u1EAFt \u0111\u1EA7u h\u1ECDc ti\u1EBFng Anh t\u1EEB khi c\xF2n nh\u1ECF"
-          ],
-          orderIndex: 11
-        },
-        {
-          id: "R2",
-          skill: "reading",
-          sectionTitle: "Reading: Tr\u1EAFc nghi\u1EC7m \xFD ch\xEDnh & chi ti\u1EBFt",
-          questionType: "multiple_choice",
-          prompt: "Ho\u1EA1t \u0111\u1ED9ng n\xE0o sau \u0111\xE2y b\u1ECB xem l\xE0 'ti\u1EBFp x\xFAc th\u1EE5 \u0111\u1ED9ng' (passive exposure)?",
-          options: [
-            "Xem phim c\xF3 ph\u1EE5 \u0111\u1EC1 m\xE0 kh\xF4ng ph\xE2n t\xEDch c\u1EA5u tr\xFAc c\xE2u",
-            "Ph\xE2n t\xEDch l\u1ED7i sai ph\xE1t \xE2m c\xF9ng gi\u1EA3ng vi\xEAn",
-            "H\u1ECDc collocations theo b\u1EA3ng danh m\u1EE5c h\u1ECDc thu\u1EADt",
-            "Ghi \xE2m v\xE0 so s\xE1nh gi\u1ECDng v\u1EDBi ng\u01B0\u1EDDi b\u1EA3n x\u1EE9"
-          ],
-          orderIndex: 12
-        },
-        {
-          id: "R3",
-          skill: "reading",
-          sectionTitle: "Reading: Tr\u1EAFc nghi\u1EC7m \xFD ch\xEDnh & chi ti\u1EBFt",
-          questionType: "multiple_choice",
-          prompt: "Kh\xE1i ni\u1EC7m 'Zone of Proximal Development' (V\xF9ng ph\xE1t tri\u1EC3n g\u1EA7n nh\u1EA5t) c\xF3 \xFD ngh\u0129a l\xE0:",
-          options: [
-            "Luy\u1EC7n t\u1EADp nh\u1EEFng b\xE0i d\u1EC5 \u0111\u1EC3 duy tr\xEC s\u1EF1 t\u1EF1 tin",
-            "Th\u1EF1c hi\u1EC7n c\xE1c b\xE0i t\u1EADp \u1EDF ng\u01B0\u1EE1ng th\u1EED th\xE1ch v\u1EEBa ph\u1EA3i, \u0111\xF2i h\u1ECFi s\u1EF1 t\u1EADp trung",
-            "H\u1ECDc nh\u1EEFng t\xE0i li\u1EC7u kh\xF3 nh\u1EA5t \u0111\u1EC3 t\u1EA1o \xE1p l\u1EF1c t\u1ED1i \u0111a",
-            "Ch\u1EC9 h\u1ECDc nh\xF3m m\xE0 kh\xF4ng c\u1EA7n t\u1EF1 h\u1ECDc \u0111\u1ED9c l\u1EADp"
-          ],
-          orderIndex: 13
-        },
-        {
-          id: "R4",
-          skill: "reading",
-          sectionTitle: "Reading: Tr\u1EAFc nghi\u1EC7m \xFD ch\xEDnh & chi ti\u1EBFt",
-          questionType: "multiple_choice",
-          prompt: "\u0110o\u1EA1n D gi\u1EA3i th\xEDch r\u1EB1ng k\u1EF9 thu\u1EADt Spaced Repetition (L\u1EB7p l\u1EA1i ng\u1EAFt qu\xE3ng) gi\xFAp:",
-          options: [
-            "T\u0103ng hi\u1EC7u qu\u1EA3 ghi nh\u1EDB t\u1EEB v\u1EF1ng l\xEAn h\u01A1n 300%",
-            "H\u1ECDc \u0111\u01B0\u1EE3c 100 t\u1EEB m\u1EDBi m\u1ED7i ng\xE0y kh\xF4ng c\u1EA7n \xF4n",
-            "Thay th\u1EBF ho\xE0n to\xE0n vi\u1EC7c luy\u1EC7n ph\xE1t \xE2m",
-            "Gi\u1EA3m th\u1EDDi gian ng\u1EE7 c\u1EE7a ng\u01B0\u1EDDi h\u1ECDc"
-          ],
-          orderIndex: 14
-        },
-        {
-          id: "R5",
-          skill: "reading",
-          sectionTitle: "Reading: X\xE1c \u0111\u1ECBnh th\xF4ng tin \u0110\xFAng/Sai/Kh\xF4ng \u0111\u1EC1 c\u1EADp",
-          questionType: "multiple_choice",
-          prompt: "Th\xF4ng tin: 'Dr. Anders Ericsson cho r\u1EB1ng n\u0103ng khi\u1EBFu b\u1EA9m sinh \u0111\xF3ng vai tr\xF2 quan tr\u1ECDng nh\u1EA5t trong vi\u1EC7c gi\u1ECFi ngo\u1EA1i ng\u1EEF.' l\xE0:",
-          options: ["TRUE (\u0110\xFAng)", "FALSE (Sai)", "NOT GIVEN (Kh\xF4ng c\xF3 trong b\xE0i)"],
-          orderIndex: 15
-        },
-        {
-          id: "R6",
-          skill: "reading",
-          sectionTitle: "Reading: X\xE1c \u0111\u1ECBnh th\xF4ng tin \u0110\xFAng/Sai/Kh\xF4ng \u0111\u1EC1 c\u1EADp",
-          questionType: "multiple_choice",
-          prompt: "Th\xF4ng tin: 'Qu\xE1 tr\xECnh c\u1EE7ng c\u1ED1 tr\xED nh\u1EDB t\u1EEB v\u1EF1ng di\u1EC5n ra trong gi\u1EA5c ng\u1EE7 v\xE0 c\xE1c kho\u1EA3ng th\u1EDDi gian truy xu\u1EA5t l\u1EB7p l\u1EA1i.' l\xE0:",
-          options: ["TRUE (\u0110\xFAng)", "FALSE (Sai)", "NOT GIVEN (Kh\xF4ng c\xF3 trong b\xE0i)"],
-          orderIndex: 16
-        },
-        {
-          id: "R7",
-          skill: "reading",
-          sectionTitle: "Reading: X\xE1c \u0111\u1ECBnh th\xF4ng tin \u0110\xFAng/Sai/Kh\xF4ng \u0111\u1EC1 c\u1EADp",
-          questionType: "multiple_choice",
-          prompt: "Th\xF4ng tin: 'H\u1EA7u h\u1EBFt c\xE1c tr\u01B0\u1EDDng \u0111\u1EA1i h\u1ECDc t\u1EA1i Anh \u0111\xE3 \xE1p d\u1EE5ng ph\u01B0\u01A1ng ph\xE1p c\u1EE7a Vygotsky v\xE0o ch\u01B0\u01A1ng tr\xECnh gi\u1EA3ng d\u1EA1y.' l\xE0:",
-          options: ["TRUE (\u0110\xFAng)", "FALSE (Sai)", "NOT GIVEN (Kh\xF4ng c\xF3 trong b\xE0i)"],
-          orderIndex: 17
-        },
-        {
-          id: "R8",
-          skill: "reading",
-          sectionTitle: "Reading: \u0110i\u1EC1n t\u1EEB v\xE0o \u0111o\u1EA1n t\xF3m t\u1EAFt",
+          sectionTitle: "K\u1EF9 n\u0103ng \u0110\u1ECDc hi\u1EC3u (Reading)",
           questionType: "fill_blank",
-          prompt: "Deliberate practice requires immediate and [BLANK] feedback to correct mistakes.",
-          placeholder: "Nh\u1EADp 1 t\u1EEB ch\xEDnh x\xE1c t\u1EEB b\xE0i \u0111\u1ECDc...",
-          orderIndex: 18
+          prompt: '<span id="docs-internal-guid-e5c541aa-7fff-2bf7-1432-8f708b4f0ed0"><font size="4"><p dir="ltr" style="line-height: 1.295; margin-top: 0pt; margin-bottom: 8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">Questions 1-7</span></p><p dir="ltr" style="line-height: 1.295; margin-top: 0pt; margin-bottom: 8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">Complete the table below. Choose ONE WORD ONLY from the passage for each answer. Write your answers in boxes 1-7 on your answer sheet.</span></p><div dir="ltr" style="margin-left: 0pt;" align="left"><table style="border: none;"><colgroup><col width="207"><col width="406"></colgroup><tbody><tr style="height:0pt"><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;text-align: center;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">Section of website</span></p></td><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;text-align: center;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">Comments</span></p></td></tr><tr style="height:0pt"><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">Database of tourism services</span></p></td><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">\u2022&nbsp; &nbsp;easy for tourism-related businesses to get on the list</span></p><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">\u2022&nbsp;&nbsp;&nbsp;allowed businesses to&nbsp;</span><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;"><span style="color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace; white-space-collapse: collapse; background-color: rgb(243, 245, 247);">[BLANK_1]</span>&nbsp; information regularly</span></p><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">\u2022&nbsp;&nbsp;&nbsp;provided a country-wide evaluation of businesses, including their impact on the&nbsp;</span><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;"><span style="color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace; white-space-collapse: collapse; background-color: rgb(243, 245, 247);">[BLANK_2]</span>&nbsp;.</span></p></td></tr><tr style="height:0pt"><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">Special features on local topics</span></p></td><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">\u2022&nbsp;&nbsp;&nbsp;e.g. an interview with a former sports&nbsp;</span><span style="color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace; background-color: rgb(243, 245, 247);">[BLANK_3]</span><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">&nbsp;, and an interactive tour of various locations used in&nbsp;</span><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;"> <span style="color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace; white-space-collapse: collapse; background-color: rgb(243, 245, 247);">[BLANK_4]</span>&nbsp;.</span></p></td></tr><tr style="height:0pt"><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">Information on driving routes</span></p></td><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">\u2022&nbsp;&nbsp;&nbsp;varied depending on the&nbsp;</span><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;"> </span><span style="color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace; background-color: rgb(243, 245, 247);">[BLANK_5]</span><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">&nbsp;.&nbsp;</span></p></td></tr><tr style="height:0pt"><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">Travel Planner</span></p></td><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">\u2022&nbsp;&nbsp;&nbsp;included a map showing selected places, details of public transport and local</span><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 700; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;"> </span><span style="color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace; background-color: rgb(243, 245, 247);">[BLANK_6]</span><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">&nbsp;.</span></p></td></tr><tr style="height:0pt"><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">\u2018Your Words\u2019</span></p></td><td style="border-width: 0.75pt; border-color: rgb(0, 0, 0); vertical-align: middle; background-color: rgb(255, 255, 255); padding: 7.5pt; overflow: hidden; overflow-wrap: break-word;"><p dir="ltr" style="line-height:1.295;margin-top:0pt;margin-bottom:8pt;"><span style="font-family: &quot;Times New Roman&quot;, serif; color: rgb(0, 0, 0); background-color: transparent; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-variant-position: normal; font-variant-emoji: normal; vertical-align: baseline; white-space-collapse: preserve;">\u2022&nbsp; &nbsp;travelers could send a link to their&nbsp; </span><span style="background-color: rgb(243, 245, 247); color: rgb(20, 184, 165); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, &quot;Liberation Mono&quot;, &quot;Courier New&quot;, monospace;">[BLANK_7]</span><span style="background-color: transparent; color: rgb(0, 0, 0); font-family: &quot;Times New Roman&quot;, serif; white-space-collapse: preserve;">.</span></p></td></tr></tbody></table></div></font></span>',
+          placeholder: "Nh\u1EADp c\xE2u tr\u1EA3 l\u1EDDi...",
+          orderIndex: 1,
+          blankCount: 7
         },
         {
-          id: "R9",
+          id: "e6084ef6-30d7-421b-9935-c15e506d4049",
           skill: "reading",
-          sectionTitle: "Reading: \u0110i\u1EC1n t\u1EEB v\xE0o \u0111o\u1EA1n t\xF3m t\u1EAFt",
-          questionType: "fill_blank",
-          prompt: "When tasks are overly simple, the learner enters a state of cognitive [BLANK].",
-          placeholder: "Nh\u1EADp 1 t\u1EEB ch\xEDnh x\xE1c t\u1EEB b\xE0i \u0111\u1ECDc...",
-          orderIndex: 19
+          sectionTitle: "K\u1EF9 n\u0103ng \u0110\u1ECDc hi\u1EC3u (Reading)",
+          questionType: "true_false_not_given",
+          prompt: "8. The website www.newzealand.com aimed to provide ready-made itineraries and packages for travel companies and individual tourists.",
+          options: ["TRUE", "FALSE", "NOT GIVEN"],
+          orderIndex: 8,
+          blankCount: 1
         },
         {
-          id: "R10",
+          id: "de50e60b-f74c-4948-905f-03f5ba2c0b6d",
           skill: "reading",
-          sectionTitle: "Reading: Gh\xE9p ti\xEAu \u0111\u1EC1 \u0111o\u1EA1n v\u0103n",
-          questionType: "multiple_choice",
-          prompt: "Ti\xEAu \u0111\u1EC1 ph\xF9 h\u1EE3p nh\u1EA5t cho \u0110o\u1EA1n B l\xE0:",
-          options: [
-            "The Core Characteristics of Deliberate Practice",
-            "Why Entertainment is the Best Learning Tool",
-            "The Biography of Dr. Anders Ericsson",
-            "History of Psychological Research"
-          ],
-          orderIndex: 20
+          sectionTitle: "K\u1EF9 n\u0103ng \u0110\u1ECDc hi\u1EC3u (Reading)",
+          questionType: "true_false_not_given",
+          prompt: "9. It was found that most visitors started searching on the website by geographical location.",
+          options: ["TRUE", "FALSE", "NOT GIVEN"],
+          orderIndex: 9,
+          blankCount: 1
+        },
+        {
+          id: "e19ac399-6094-4a0c-9003-b54abc5e0f40",
+          skill: "reading",
+          sectionTitle: "K\u1EF9 n\u0103ng \u0110\u1ECDc hi\u1EC3u (Reading)",
+          questionType: "true_false_not_given",
+          prompt: "10. According to research, 26% of visitor satisfaction is related to their accommodationn",
+          options: ["TRUE", "FALSE", "NOT GIVEN"],
+          orderIndex: 10,
+          blankCount: 1
+        },
+        {
+          id: "00d76f65-dd5f-4dc1-98de-8c235f37f834",
+          skill: "reading",
+          sectionTitle: "K\u1EF9 n\u0103ng \u0110\u1ECDc hi\u1EC3u (Reading)",
+          questionType: "true_false_not_given",
+          prompt: "11. Visitors to New Zealand like to become involved in the local culture",
+          options: ["TRUE", "FALSE", "NOT GIVEN"],
+          orderIndex: 11,
+          blankCount: 1
+        },
+        {
+          id: "578ed22b-adee-4442-92ab-c04a1951d902",
+          skill: "reading",
+          sectionTitle: "K\u1EF9 n\u0103ng \u0110\u1ECDc hi\u1EC3u (Reading)",
+          questionType: "true_false_not_given",
+          prompt: "12. Visitors like staying in small hotels in New Zealand rather than in larger ones",
+          options: ["TRUE", "FALSE", "NOT GIVEN"],
+          orderIndex: 12,
+          blankCount: 1
+        },
+        {
+          id: "6268c893-6886-499e-81c3-194dea9cd9f2",
+          skill: "reading",
+          sectionTitle: "K\u1EF9 n\u0103ng \u0110\u1ECDc hi\u1EC3u (Reading)",
+          questionType: "true_false_not_given",
+          prompt: "13. Many visitors feel it is unlikely that they will return to New Zealand after their visit",
+          options: ["TRUE", "FALSE", "NOT GIVEN"],
+          orderIndex: 13,
+          blankCount: 1
         }
       ]
     },
     grammar: {
-      title: "Ch\u1EA9n \u0111o\xE1n Ng\u1EEF ph\xE1p & T\u1EEB v\u1EF1ng (Grammar & Lexicon)",
+      title: "Ng\u1EEF ph\xE1p & T\u1EEB v\u1EF1ng (Grammar)",
       questions: [
         {
-          id: "G1",
+          id: "7b3cc213-6fbc-4e41-8ed7-9420773fd55a",
           skill: "grammar",
-          sectionTitle: "Ng\u1EEF ph\xE1p: Th\xEC & C\u1EA5u tr\xFAc c\xE2u",
+          sectionTitle: "Ng\u1EEF ph\xE1p & T\u1EEB v\u1EF1ng (Grammar)",
           questionType: "multiple_choice",
-          prompt: "By the time the new policy is implemented next year, the committee _____ the evaluation.",
-          options: ["will have completed", "completed", "has completed", "will complete"],
-          orderIndex: 21
+          prompt: "My brother usually ___ to work by bus.",
+          options: ["go", "goes", "is going", "going"],
+          orderIndex: 1,
+          blankCount: 1
         },
         {
-          id: "G2",
+          id: "5ba28972-e776-4953-b05e-41d6a862c4ed",
           skill: "grammar",
-          sectionTitle: "Ng\u1EEF ph\xE1p: C\xE2u \u0111i\u1EC1u ki\u1EC7n & M\u1EC7nh \u0111\u1EC1",
+          sectionTitle: "Ng\u1EEF ph\xE1p & T\u1EEB v\u1EF1ng (Grammar)",
           questionType: "multiple_choice",
-          prompt: "Had the government invested more in green energy, pollution levels _____ so dramatically.",
-          options: ["would not rise", "would not have risen", "will not rise", "have not risen"],
-          orderIndex: 22
+          prompt: "I ___ this book three times, but I still find it interesting.",
+          options: ["read", "am reading", "have read", "had read"],
+          orderIndex: 2,
+          blankCount: 1
         },
         {
-          id: "G3",
+          id: "afd8852d-5f56-413d-99ef-73cd89c969d4",
           skill: "grammar",
-          sectionTitle: "Ng\u1EEF ph\xE1p: M\u1EC7nh \u0111\u1EC1 quan h\u1EC7 & R\xFAt g\u1ECDn",
+          sectionTitle: "Ng\u1EEF ph\xE1p & T\u1EEB v\u1EF1ng (Grammar)",
           questionType: "multiple_choice",
-          prompt: "The research team published a report _____ the environmental impact of urban expansion.",
-          options: ["highlighting", "highlighted", "which highlight", "was highlighted"],
-          orderIndex: 23
+          prompt: "The results of the survey ___ to all participants next week.",
+          options: ["will send", "will be sent", "are sending", "have sent"],
+          orderIndex: 3,
+          blankCount: 1
         },
         {
-          id: "G4",
+          id: "59739e98-711b-4d4b-8927-e5f97c0d3a32",
           skill: "grammar",
-          sectionTitle: "Ng\u1EEF ph\xE1p: \u0110\u1EA3o ng\u1EEF (Inversion)",
+          sectionTitle: "Ng\u1EEF ph\xE1p & T\u1EEB v\u1EF1ng (Grammar)",
           questionType: "multiple_choice",
-          prompt: "Not only _____ to reduce operational costs, but it also enhanced customer satisfaction.",
-          options: ["the system helped", "did the system help", "the system had helped", "helping the system"],
-          orderIndex: 24
+          prompt: "There isn't ___ information available about the causes of the problem.",
+          options: ["many", "a few", "much", "several"],
+          orderIndex: 4,
+          blankCount: 1
         },
         {
-          id: "G5",
+          id: "380a1c22-1b82-478a-863e-e5e9a2ac21dd",
           skill: "grammar",
-          sectionTitle: "Ng\u1EEF ph\xE1p: Th\u1EC3 b\u1ECB \u0111\u1ED9ng & T\xE2n ng\u1EEF",
+          sectionTitle: "Ng\u1EEF ph\xE1p & T\u1EEB v\u1EF1ng (Grammar)",
           questionType: "multiple_choice",
-          prompt: "The newly discovered manuscript is widely believed _____ in the early sixteenth century.",
-          options: ["to write", "to have been written", "having written", "being written"],
-          orderIndex: 25
+          prompt: "She has worked for the company ___ 2019.",
+          options: ["for", "since", "during", "from"],
+          orderIndex: 5,
+          blankCount: 1
         },
         {
-          id: "G6",
+          id: "36a7ce11-694e-4986-871b-96427ac6f798",
           skill: "grammar",
-          sectionTitle: "T\u1EEB v\u1EF1ng H\u1ECDc thu\u1EADt: Academic Collocations",
+          sectionTitle: "Ng\u1EEF ph\xE1p & T\u1EEB v\u1EF1ng (Grammar)",
           questionType: "multiple_choice",
-          prompt: "Rapid industrialization has _____ a profound impact on local biodiversity.",
-          options: ["exerted", "committed", "taken", "conducted"],
-          orderIndex: 26
+          prompt: "If governments ___ more money in public transport, traffic congestion would be reduced.",
+          options: ["invest", "invested", "will invest", "have invested"],
+          orderIndex: 6,
+          blankCount: 1
         },
         {
-          id: "G7",
+          id: "307abd86-198d-4686-9c35-03e3b8d84520",
           skill: "grammar",
-          sectionTitle: "T\u1EEB v\u1EF1ng H\u1ECDc thu\u1EADt: Academic Collocations",
+          sectionTitle: "Ng\u1EEF ph\xE1p & T\u1EEB v\u1EF1ng (Grammar)",
           questionType: "multiple_choice",
-          prompt: "The university decided to _____ a comprehensive survey regarding student mental health.",
-          options: ["conduct", "perform", "make", "enforce"],
-          orderIndex: 27
+          prompt: "The students ___ submitted their assignments on time will receive additional feedback.",
+          options: ["which", "whom", "whose", "who"],
+          orderIndex: 7,
+          blankCount: 1
         },
         {
-          id: "G8",
+          id: "af2cb913-45db-4ee3-a2bb-870d79d44334",
           skill: "grammar",
-          sectionTitle: "T\u1EEB v\u1EF1ng H\u1ECDc thu\u1EADt: Li\xEAn t\u1EEB & Logic",
+          sectionTitle: "Ng\u1EEF ph\xE1p & T\u1EEB v\u1EF1ng (Grammar)",
           questionType: "multiple_choice",
-          prompt: "The initial investment was substantial; _____, the long-term economic gains proved undeniable.",
-          options: ["furthermore", "nonetheless", "conversely", "meanwhile"],
-          orderIndex: 28
+          prompt: "Many people find it difficult ___ a healthy work-life balance.",
+          options: ["maintain", "maintaining", "to maintain", "maintained"],
+          orderIndex: 8,
+          blankCount: 1
         },
         {
-          id: "G9",
+          id: "ecd26e7b-aaae-45a1-b3c2-52bcdd8409af",
           skill: "grammar",
-          sectionTitle: "T\u1EEB v\u1EF1ng H\u1ECDc thu\u1EADt: Prepositions & Phrasal Verbs",
+          sectionTitle: "Ng\u1EEF ph\xE1p & T\u1EEB v\u1EF1ng (Grammar)",
           questionType: "multiple_choice",
-          prompt: "Students who adhere _____ a strict study schedule consistently outperform their peers.",
-          options: ["to", "with", "for", "at"],
-          orderIndex: 29
+          prompt: "Despite ___ several advantages, the new system has some significant limitations.",
+          options: ["have", "having", "to have", "had"],
+          orderIndex: 9,
+          blankCount: 1
         },
         {
-          id: "G10",
+          id: "eea6e4cd-4eda-4de6-904c-c4c2a834f0a7",
           skill: "grammar",
-          sectionTitle: "T\u1EEB v\u1EF1ng H\u1ECDc thu\u1EADt: Paraphrasing & Lexicon",
+          sectionTitle: "Ng\u1EEF ph\xE1p & T\u1EEB v\u1EF1ng (Grammar)",
           questionType: "multiple_choice",
-          prompt: "Choose the word CLOSEST in meaning to 'ubiquitous' in: 'Smartphones have become ubiquitous in modern society.'",
-          options: ["omnipresent / widespread", "expensive", "obsolete", "complicated"],
-          orderIndex: 30
-        },
-        {
-          id: "G11",
-          skill: "grammar",
-          sectionTitle: "Ng\u1EEF ph\xE1p: Subject-Verb Agreement",
-          questionType: "multiple_choice",
-          prompt: "The number of students enrolling in online certification courses _____ steadily over the past three years.",
-          options: ["have increased", "has increased", "are increasing", "were increasing"],
-          orderIndex: 31
-        },
-        {
-          id: "G12",
-          skill: "grammar",
-          sectionTitle: "Ng\u1EEF ph\xE1p: Cleft Sentences (C\xE2u ch\u1EBB)",
-          questionType: "multiple_choice",
-          prompt: "It was the lack of infrastructure _____ hindered the economic development of the remote region.",
-          options: ["which", "that", "what", "whom"],
-          orderIndex: 32
-        },
-        {
-          id: "G13",
-          skill: "grammar",
-          sectionTitle: "Ng\u1EEF ph\xE1p: Gerund vs Infinitive",
-          questionType: "multiple_choice",
-          prompt: "The municipal authority is actively considering _____ renewable energy subsidies for households.",
-          options: ["to introduce", "introducing", "introduce", "having introduced"],
-          orderIndex: 33
-        },
-        {
-          id: "G14",
-          skill: "grammar",
-          sectionTitle: "T\u1EEB v\u1EF1ng H\u1ECDc thu\u1EADt: Word Form",
-          questionType: "multiple_choice",
-          prompt: "The company's failure to adapt to digital transformation led to its _____ decline in market share.",
-          options: ["subsequent", "subsequently", "subsequence", "subsequencing"],
-          orderIndex: 34
-        },
-        {
-          id: "G15",
-          skill: "grammar",
-          sectionTitle: "Ng\u1EEF ph\xE1p: Parallel Structure",
-          questionType: "multiple_choice",
-          prompt: "Effective leadership involves setting clear expectations, fostering collaboration, and _____ transparent communication.",
-          options: ["maintain", "to maintain", "maintaining", "maintenance"],
-          orderIndex: 35
+          prompt: "By the time the researchers arrived, the experiment ___.",
+          options: ["already finished", "has already finished", "had already finished", "was already finishing"],
+          orderIndex: 10,
+          blankCount: 1
         }
       ]
     },
     writing: {
-      title: "Ch\u1EA9n \u0111o\xE1n Vi\u1EBFt (Diagnostic Writing)",
-      prompt: "Some people believe that university education should be completely free for all citizens, while others argue that students should pay tuition fees. Write a short response (100\u2013150 words) expressing your point of view with at least 2 clear supporting reasons.",
+      title: "K\u1EF9 n\u0103ng Vi\u1EBFt (Writing)",
+      prompt: '<font size="4"><u style="color: rgb(0, 0, 0);">Vi\u1EBFt m\u1ED9t b\xE0i v\u0103n kho\u1EA3ng 100\u2013150 t\u1EEB tr\u1EA3 l\u1EDDi c\xE2u h\u1ECFi sau:</u></font><div><font size="4"><b><i style="color: rgb(147, 51, 234);">Some people think that students should be required to learn a foreign language in school. Do you agree or disagree? Give reasons and examples.</i></b></font></div>',
       guidelines: [
-        "N\xEAu r\xF5 quan \u0111i\u1EC3m c\u1EE7a b\u1EA1n ngay \u1EDF c\xE2u m\u1EDF \u0111o\u1EA1n.",
-        "S\u1EED d\u1EE5ng \xEDt nh\u1EA5t 2 lu\u1EADn \u0111i\u1EC3m k\xE8m v\xED d\u1EE5 ho\u1EB7c gi\u1EA3i th\xEDch ng\u1EAFn g\u1ECDn.",
-        "C\u1ED1 g\u1EAFng \xE1p d\u1EE5ng c\xE2u gh\xE9p / c\xE2u ph\u1EE9c v\xE0 c\xE1c li\xEAn t\u1EEB logic (However, Furthermore, Consequently...)."
+        "Vi\u1EBFt t\u1ED1i thi\u1EC3u 100 t\u1EEB, ph\xE1t tri\u1EC3n \xEDt nh\u1EA5t 2 lu\u1EADn \u0111i\u1EC3m r\xF5 r\xE0ng.",
+        "S\u1EED d\u1EE5ng \u0111a d\u1EA1ng c\u1EA5u tr\xFAc c\xE2u gh\xE9p, c\xE2u ph\u1EE9c v\xE0 t\u1EEB v\u1EF1ng h\u1ECDc thu\u1EADt.",
+        "Tr\xECnh b\xE0y m\u1EA1ch l\u1EA1c v\u1EDBi m\u1EDF b\xE0i, th\xE2n b\xE0i v\xE0 k\u1EBFt b\xE0i."
       ],
       minWords: 80,
-      maxWords: 350
+      maxWords: 400
     },
     speaking: {
-      title: "Ch\u1EA9n \u0111o\xE1n N\xF3i (Diagnostic Speaking)",
+      title: "K\u1EF9 n\u0103ng N\xF3i (Speaking)",
       part1Questions: [
-        "1. Can you tell me about your daily routine and what part of the day you enjoy the most?",
+        "1. Tell me about your hometown. What do you like most about living there?",
         "2. How do you usually study or practice English in your free time?"
       ],
       part2Topic: "Describe an important goal or ambition you have set for yourself recently.",
@@ -121624,290 +121438,169 @@ Furthermore, the retention of academic vocabulary requires spaced repetition rat
 
 // server/data/placement-test/answerKeys.ts
 var authoritativePlacementAnswerKeys = {
-  // Listening (10 questions)
-  L1: {
-    questionId: "L1",
+  // Listening: Multi-blank fill-in-the-blank (10 blanks)
+  "43907def-1f78-4839-8751-ff1079fdee91": {
+    questionId: "43907def-1f78-4839-8751-ff1079fdee91",
     skill: "listening",
-    correctAnswer: "Th\u1EE9 Ba & Th\u1EE9 N\u0103m",
-    diagnosticCategory: "detail_listening",
-    difficulty: "foundation",
-    weight: 1
-  },
-  L2: {
-    questionId: "L2",
-    skill: "listening",
-    correctAnswer: "Ng\xE0y 15 h\xE0ng th\xE1ng",
-    diagnosticCategory: "detail_listening",
-    difficulty: "foundation",
-    weight: 1
-  },
-  L3: {
-    questionId: "L3",
-    skill: "listening",
-    correctAnswer: "nguyen tri phuong",
-    acceptedAnswers: ["nguy\u1EC5n tri ph\u01B0\u01A1ng", "nguyen tri phuong", "tri phuong", "tri ph\u01B0\u01A1ng"],
-    diagnosticCategory: "form_filling_spelling",
+    correctAnswer: '["choose","private","20% | 20 percent","healthy","bones","lecture","Arretsa | arretsa","vegetarian","market","knife"]',
+    acceptedAnswers: ["choose", "private", "20%", "20 percent", "healthy", "bones", "lecture", "Arretsa", "arretsa", "vegetarian", "market", "knife"],
+    diagnosticCategory: "cambridge_listening_form_filling",
     difficulty: "intermediate",
-    weight: 1
+    weight: 10
   },
-  L4: {
-    questionId: "L4",
-    skill: "listening",
-    correctAnswer: "Ebook PDF & Audio Portal",
-    diagnosticCategory: "detail_listening",
-    difficulty: "foundation",
-    weight: 1
-  },
-  L5: {
-    questionId: "L5",
-    skill: "listening",
-    correctAnswer: "90 ph\xFAt",
-    diagnosticCategory: "detail_listening",
-    difficulty: "foundation",
-    weight: 1
-  },
-  L6: {
-    questionId: "L6",
-    skill: "listening",
-    correctAnswer: "H\u01B0\u1EDBng d\u1EABn ph\u01B0\u01A1ng ph\xE1p t\u1EF1 h\u1ECDc IELTS hi\u1EC7u qu\u1EA3",
-    diagnosticCategory: "main_idea_listening",
-    difficulty: "intermediate",
-    weight: 1
-  },
-  L7: {
-    questionId: "L7",
-    skill: "listening",
-    correctAnswer: "N\u1EAFm v\u1EEFng 44 \xE2m IPA v\xE0 tr\u1ECDng \xE2m t\u1EEB",
-    diagnosticCategory: "inference_listening",
-    difficulty: "intermediate",
-    weight: 1
-  },
-  L8: {
-    questionId: "L8",
-    skill: "listening",
-    correctAnswer: "30",
-    acceptedAnswers: ["30", "thirty", "30 ph\xFAt", "30 mins", "30 minutes"],
-    diagnosticCategory: "numeric_listening",
-    difficulty: "foundation",
-    weight: 1
-  },
-  L9: {
-    questionId: "L9",
-    skill: "listening",
-    correctAnswer: "D\u1EF1a v\xE0o ng\u1EEF c\u1EA3nh \u0111\u1EC3 \u0111o\xE1n ngh\u0129a ch\xEDnh",
-    diagnosticCategory: "strategy_listening",
-    difficulty: "intermediate",
-    weight: 1
-  },
-  L10: {
-    questionId: "L10",
-    skill: "listening",
-    correctAnswer: "Cambridge IELTS Official Series",
-    diagnosticCategory: "detail_listening",
-    difficulty: "foundation",
-    weight: 1
-  },
-  // Reading (10 questions)
-  R1: {
-    questionId: "R1",
+  // Reading: Multi-blank fill-in-the-blank (7 blanks)
+  "c0d8e9bd-f426-42c3-b051-4c15df13543a": {
+    questionId: "c0d8e9bd-f426-42c3-b051-4c15df13543a",
     skill: "reading",
-    correctAnswer: "Ph\u01B0\u01A1ng ph\xE1p luy\u1EC7n t\u1EADp c\xF3 ch\u1EE7 \u0111\xEDch (Deliberate practice)",
-    diagnosticCategory: "main_idea_reading",
-    difficulty: "foundation",
-    weight: 1
-  },
-  R2: {
-    questionId: "R2",
-    skill: "reading",
-    correctAnswer: "Xem phim c\xF3 ph\u1EE5 \u0111\u1EC1 m\xE0 kh\xF4ng ph\xE2n t\xEDch c\u1EA5u tr\xFAc c\xE2u",
-    diagnosticCategory: "detail_reading",
-    difficulty: "foundation",
-    weight: 1
-  },
-  R3: {
-    questionId: "R3",
-    skill: "reading",
-    correctAnswer: "Th\u1EF1c hi\u1EC7n c\xE1c b\xE0i t\u1EADp \u1EDF ng\u01B0\u1EE1ng th\u1EED th\xE1ch v\u1EEBa ph\u1EA3i, \u0111\xF2i h\u1ECFi s\u1EF1 t\u1EADp trung",
-    diagnosticCategory: "concept_inference",
-    difficulty: "intermediate",
-    weight: 1
-  },
-  R4: {
-    questionId: "R4",
-    skill: "reading",
-    correctAnswer: "T\u0103ng hi\u1EC7u qu\u1EA3 ghi nh\u1EDB t\u1EEB v\u1EF1ng l\xEAn h\u01A1n 300%",
-    diagnosticCategory: "detail_scanning",
-    difficulty: "foundation",
-    weight: 1
-  },
-  R5: {
-    questionId: "R5",
-    skill: "reading",
-    correctAnswer: "FALSE (Sai)",
-    diagnosticCategory: "tfng_logic",
-    difficulty: "intermediate",
-    weight: 1
-  },
-  R6: {
-    questionId: "R6",
-    skill: "reading",
-    correctAnswer: "TRUE (\u0110\xFAng)",
-    diagnosticCategory: "tfng_logic",
-    difficulty: "intermediate",
-    weight: 1
-  },
-  R7: {
-    questionId: "R7",
-    skill: "reading",
-    correctAnswer: "NOT GIVEN (Kh\xF4ng c\xF3 trong b\xE0i)",
-    diagnosticCategory: "tfng_logic",
-    difficulty: "advanced",
-    weight: 1
-  },
-  R8: {
-    questionId: "R8",
-    skill: "reading",
-    correctAnswer: "corrective",
-    acceptedAnswers: ["corrective", "corrective feedback"],
+    correctAnswer: '["update","environment","captain","films","season","accomodation","blog"]',
+    acceptedAnswers: ["update", "environment", "captain", "films", "season", "accomodation", "accommodation", "blog"],
     diagnosticCategory: "summary_completion",
     difficulty: "intermediate",
-    weight: 1
+    weight: 7
   },
-  R9: {
-    questionId: "R9",
+  // Reading: True / False / Not Given (6 questions)
+  "e6084ef6-30d7-421b-9935-c15e506d4049": {
+    questionId: "e6084ef6-30d7-421b-9935-c15e506d4049",
     skill: "reading",
-    correctAnswer: "complacency",
-    acceptedAnswers: ["complacency", "cognitive complacency"],
-    diagnosticCategory: "summary_completion",
-    difficulty: "advanced",
+    correctAnswer: "FALSE",
+    acceptedAnswers: ["FALSE", "F"],
+    diagnosticCategory: "tfng_logic",
+    difficulty: "intermediate",
     weight: 1
   },
-  R10: {
-    questionId: "R10",
+  "de50e60b-f74c-4948-905f-03f5ba2c0b6d": {
+    questionId: "de50e60b-f74c-4948-905f-03f5ba2c0b6d",
     skill: "reading",
-    correctAnswer: "The Core Characteristics of Deliberate Practice",
-    diagnosticCategory: "heading_matching",
-    difficulty: "intermediate",
-    weight: 1
-  },
-  // Grammar (15 questions)
-  G1: {
-    questionId: "G1",
-    skill: "grammar",
-    correctAnswer: "will have completed",
-    diagnosticCategory: "future_perfect_tense",
-    difficulty: "intermediate",
-    weight: 1
-  },
-  G2: {
-    questionId: "G2",
-    skill: "grammar",
-    correctAnswer: "would not have risen",
-    diagnosticCategory: "inversion_conditional_3",
+    correctAnswer: "NOT GIVEN",
+    acceptedAnswers: ["NOT GIVEN", "NG"],
+    diagnosticCategory: "tfng_logic",
     difficulty: "advanced",
     weight: 1
   },
-  G3: {
-    questionId: "G3",
-    skill: "grammar",
-    correctAnswer: "highlighting",
-    diagnosticCategory: "reduced_relative_clause",
+  "e19ac399-6094-4a0c-9003-b54abc5e0f40": {
+    questionId: "e19ac399-6094-4a0c-9003-b54abc5e0f40",
+    skill: "reading",
+    correctAnswer: "FALSE",
+    acceptedAnswers: ["FALSE", "F"],
+    diagnosticCategory: "tfng_logic",
     difficulty: "intermediate",
     weight: 1
   },
-  G4: {
-    questionId: "G4",
-    skill: "grammar",
-    correctAnswer: "did the system help",
-    diagnosticCategory: "negative_inversion",
-    difficulty: "advanced",
-    weight: 1
-  },
-  G5: {
-    questionId: "G5",
-    skill: "grammar",
-    correctAnswer: "to have been written",
-    diagnosticCategory: "perfect_passive_infinitive",
-    difficulty: "advanced",
-    weight: 1
-  },
-  G6: {
-    questionId: "G6",
-    skill: "grammar",
-    correctAnswer: "exerted",
-    diagnosticCategory: "academic_collocation",
-    difficulty: "advanced",
-    weight: 1
-  },
-  G7: {
-    questionId: "G7",
-    skill: "grammar",
-    correctAnswer: "conduct",
-    diagnosticCategory: "academic_collocation",
+  "00d76f65-dd5f-4dc1-98de-8c235f37f834": {
+    questionId: "00d76f65-dd5f-4dc1-98de-8c235f37f834",
+    skill: "reading",
+    correctAnswer: "TRUE",
+    acceptedAnswers: ["TRUE", "T"],
+    diagnosticCategory: "tfng_logic",
     difficulty: "intermediate",
     weight: 1
   },
-  G8: {
-    questionId: "G8",
-    skill: "grammar",
-    correctAnswer: "nonetheless",
-    diagnosticCategory: "logical_transitions",
+  "578ed22b-adee-4442-92ab-c04a1951d902": {
+    questionId: "578ed22b-adee-4442-92ab-c04a1951d902",
+    skill: "reading",
+    correctAnswer: "NOT GIVEN",
+    acceptedAnswers: ["NOT GIVEN", "NG"],
+    diagnosticCategory: "tfng_logic",
+    difficulty: "advanced",
+    weight: 1
+  },
+  "6268c893-6886-499e-81c3-194dea9cd9f2": {
+    questionId: "6268c893-6886-499e-81c3-194dea9cd9f2",
+    skill: "reading",
+    correctAnswer: "TRUE",
+    acceptedAnswers: ["TRUE", "T"],
+    diagnosticCategory: "tfng_logic",
     difficulty: "intermediate",
     weight: 1
   },
-  G9: {
-    questionId: "G9",
+  // Grammar (10 questions)
+  "7b3cc213-6fbc-4e41-8ed7-9420773fd55a": {
+    questionId: "7b3cc213-6fbc-4e41-8ed7-9420773fd55a",
     skill: "grammar",
-    correctAnswer: "to",
-    diagnosticCategory: "dependent_prepositions",
+    correctAnswer: "goes",
+    acceptedAnswers: ["goes"],
+    diagnosticCategory: "present_simple_tense",
     difficulty: "foundation",
     weight: 1
   },
-  G10: {
-    questionId: "G10",
+  "5ba28972-e776-4953-b05e-41d6a862c4ed": {
+    questionId: "5ba28972-e776-4953-b05e-41d6a862c4ed",
     skill: "grammar",
-    correctAnswer: "omnipresent / widespread",
-    diagnosticCategory: "advanced_lexicon",
-    difficulty: "intermediate",
-    weight: 1
-  },
-  G11: {
-    questionId: "G11",
-    skill: "grammar",
-    correctAnswer: "has increased",
-    diagnosticCategory: "subject_verb_agreement",
+    correctAnswer: "have read",
+    acceptedAnswers: ["have read"],
+    diagnosticCategory: "present_perfect_tense",
     difficulty: "foundation",
     weight: 1
   },
-  G12: {
-    questionId: "G12",
+  "afd8852d-5f56-413d-99ef-73cd89c969d4": {
+    questionId: "afd8852d-5f56-413d-99ef-73cd89c969d4",
     skill: "grammar",
-    correctAnswer: "that",
-    diagnosticCategory: "cleft_sentences",
+    correctAnswer: "will be sent",
+    acceptedAnswers: ["will be sent"],
+    diagnosticCategory: "future_passive_voice",
     difficulty: "intermediate",
     weight: 1
   },
-  G13: {
-    questionId: "G13",
+  "59739e98-711b-4d4b-8927-e5f97c0d3a32": {
+    questionId: "59739e98-711b-4d4b-8927-e5f97c0d3a32",
     skill: "grammar",
-    correctAnswer: "introducing",
-    diagnosticCategory: "gerund_infinitive",
+    correctAnswer: "much",
+    acceptedAnswers: ["much"],
+    diagnosticCategory: "uncountable_quantifiers",
     difficulty: "foundation",
     weight: 1
   },
-  G14: {
-    questionId: "G14",
+  "380a1c22-1b82-478a-863e-e5e9a2ac21dd": {
+    questionId: "380a1c22-1b82-478a-863e-e5e9a2ac21dd",
     skill: "grammar",
-    correctAnswer: "subsequent",
-    diagnosticCategory: "word_form",
+    correctAnswer: "since",
+    acceptedAnswers: ["since"],
+    diagnosticCategory: "prepositions_of_time",
+    difficulty: "foundation",
+    weight: 1
+  },
+  "36a7ce11-694e-4986-871b-96427ac6f798": {
+    questionId: "36a7ce11-694e-4986-871b-96427ac6f798",
+    skill: "grammar",
+    correctAnswer: "invested",
+    acceptedAnswers: ["invested"],
+    diagnosticCategory: "second_conditional",
     difficulty: "intermediate",
     weight: 1
   },
-  G15: {
-    questionId: "G15",
+  "307abd86-198d-4686-9c35-03e3b8d84520": {
+    questionId: "307abd86-198d-4686-9c35-03e3b8d84520",
     skill: "grammar",
-    correctAnswer: "maintaining",
-    diagnosticCategory: "parallel_structure",
+    correctAnswer: "who",
+    acceptedAnswers: ["who"],
+    diagnosticCategory: "relative_pronouns",
+    difficulty: "foundation",
+    weight: 1
+  },
+  "af2cb913-45db-4ee3-a2bb-870d79d44334": {
+    questionId: "af2cb913-45db-4ee3-a2bb-870d79d44334",
+    skill: "grammar",
+    correctAnswer: "to maintain",
+    acceptedAnswers: ["to maintain"],
+    diagnosticCategory: "infinitive_structures",
+    difficulty: "intermediate",
+    weight: 1
+  },
+  "ecd26e7b-aaae-45a1-b3c2-52bcdd8409af": {
+    questionId: "ecd26e7b-aaae-45a1-b3c2-52bcdd8409af",
+    skill: "grammar",
+    correctAnswer: "having",
+    acceptedAnswers: ["having"],
+    diagnosticCategory: "gerund_after_prepositions",
+    difficulty: "intermediate",
+    weight: 1
+  },
+  "eea6e4cd-4eda-4de6-904c-c4c2a834f0a7": {
+    questionId: "eea6e4cd-4eda-4de6-904c-c4c2a834f0a7",
+    skill: "grammar",
+    correctAnswer: "had already finished",
+    acceptedAnswers: ["had already finished"],
+    diagnosticCategory: "past_perfect_tense",
     difficulty: "intermediate",
     weight: 1
   }
@@ -122082,9 +121775,10 @@ var AssessmentService = class {
    */
   async findDesignatedEntranceExam() {
     try {
-      const exam = await this.prisma.exam.findFirst({
+      let exam = await this.prisma.exam.findFirst({
         where: {
           OR: [
+            { id: "cce291f7-d88b-4976-8ed3-cc21daca7023" },
             { allowGuestAssessment: true, isActive: true, isPublished: true },
             { title: { contains: "ENTRANCE TEST", mode: "insensitive" }, isActive: true, isPublished: true },
             { course: { slug: { contains: "placement", mode: "insensitive" } }, isActive: true, isPublished: true }
@@ -122110,7 +121804,35 @@ var AssessmentService = class {
           }
         }
       });
-      return exam;
+      if (exam && exam.sections) {
+        const totalQs = exam.sections.reduce(
+          (sum, s2) => sum + (s2.questionGroups?.reduce((gsum, g) => gsum + (g.questions?.length || 0), 0) || 0),
+          0
+        );
+        if (totalQs > 0) {
+          return exam;
+        }
+      }
+      exam = await this.prisma.exam.findUnique({
+        where: { id: "cce291f7-d88b-4976-8ed3-cc21daca7023" },
+        include: {
+          sections: {
+            orderBy: { orderIndex: "asc" },
+            include: {
+              questionGroups: {
+                orderBy: { orderIndex: "asc" },
+                include: {
+                  questions: {
+                    orderBy: { orderIndex: "asc" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+      if (exam) return exam;
+      return null;
     } catch (err) {
       console.warn("[AssessmentService] findDesignatedEntranceExam notice:", err);
       return null;
@@ -122303,25 +122025,6 @@ var AssessmentService = class {
       const designatedExam = await this.findDesignatedEntranceExam();
       if (designatedExam) {
         examId = designatedExam.id;
-      } else {
-        const anyExam = await this.prisma.exam.findFirst({ select: { id: true } });
-        if (anyExam) {
-          examId = anyExam.id;
-        } else {
-          const fallbackExam = await this.prisma.exam.create({
-            data: {
-              id: examId,
-              title: "ARIS Academic Entrance Exam",
-              slug: "aris-academic-entrance-exam",
-              allowGuestAssessment: true,
-              isActive: true,
-              isPublished: true,
-              durationMinutes: 60,
-              totalScore: 100
-            }
-          });
-          examId = fallbackExam.id;
-        }
       }
     } catch (e2) {
       console.warn("[AssessmentService] Exam lookup notice:", e2);
@@ -122393,9 +122096,6 @@ var AssessmentService = class {
       const designatedExam = await this.findDesignatedEntranceExam();
       if (designatedExam) {
         examId = designatedExam.id;
-      } else {
-        const anyExam = await this.prisma.exam.findFirst({ select: { id: true } });
-        if (anyExam) examId = anyExam.id;
       }
     } catch {
     }
@@ -122678,31 +122378,27 @@ var AssessmentService = class {
     let grammarCorrect = 0;
     let grammarTotal = 0;
     const normalizeText = (s2) => String(s2 || "").trim().toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").replace(/\s+/g, " ");
-    const hasCanonicalPlacementAnswers = Object.keys(answers).some(
-      (k) => k in authoritativePlacementAnswerKeys || /^[LRG]\d+$/i.test(k)
-    );
     let dbExamQuestions = [];
-    if (!hasCanonicalPlacementAnswers && session.examId) {
-      try {
-        dbExamQuestions = await this.prisma.question.findMany({
-          where: {
-            group: {
-              section: {
-                examId: session.examId
-              }
-            }
-          },
-          include: {
-            group: {
-              include: {
-                section: true
-              }
+    const targetExamId = session.examId || "cce291f7-d88b-4976-8ed3-cc21daca7023";
+    try {
+      dbExamQuestions = await this.prisma.question.findMany({
+        where: {
+          group: {
+            section: {
+              examId: targetExamId
             }
           }
-        });
-      } catch (dbErr) {
-        console.warn("[AssessmentService] DB questions fetch error:", dbErr);
-      }
+        },
+        include: {
+          group: {
+            include: {
+              section: true
+            }
+          }
+        }
+      });
+    } catch (dbErr) {
+      console.warn("[AssessmentService] DB questions fetch error:", dbErr);
     }
     if (dbExamQuestions.length > 0) {
       for (const q of dbExamQuestions) {
@@ -122718,7 +122414,7 @@ var AssessmentService = class {
         try {
           if (typeof rawCorrect2 === "string" && rawCorrect2.trim().startsWith("[")) {
             const arr = JSON.parse(rawCorrect2);
-            if (Array.isArray(arr)) parsedKeys = arr;
+            if (Array.isArray(arr) && arr.length > 0) parsedKeys = arr;
           }
         } catch {
         }
@@ -122764,37 +122460,76 @@ var AssessmentService = class {
       }
     } else {
       Object.entries(authoritativePlacementAnswerKeys).forEach(([qId, key]) => {
-        if (key.skill === "listening") listeningTotal++;
-        else if (key.skill === "reading") readingTotal++;
-        else if (key.skill === "grammar") grammarTotal++;
+        const isListening = key.skill === "listening";
+        const isReading = key.skill === "reading";
+        const isGrammar = key.skill === "grammar";
         const studentAns = answers[qId];
-        if (studentAns == null || String(studentAns).trim() === "") return;
-        let rawAns = studentAns;
-        if (typeof studentAns === "object" && !Array.isArray(studentAns)) {
-          const values = Object.values(studentAns).filter(Boolean);
-          if (values.length > 0) rawAns = values.join(" ");
-        }
-        const normStudent = normalizeText(rawAns);
-        const normCorrect = normalizeText(key.correctAnswer);
-        let isMatch = normStudent === normCorrect;
-        if (!isMatch && key.acceptedAnswers && key.acceptedAnswers.length > 0) {
-          isMatch = key.acceptedAnswers.some((acc) => normalizeText(acc) === normStudent);
-        }
-        if (!isMatch) {
-          const stripAccents = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-          const studentStripped = stripAccents(normStudent);
-          const correctStripped = stripAccents(normCorrect);
-          isMatch = studentStripped === correctStripped;
-          if (!isMatch && key.acceptedAnswers) {
-            isMatch = key.acceptedAnswers.some(
-              (acc) => stripAccents(normalizeText(acc)) === studentStripped
-            );
+        const rawCorrect2 = key.correctAnswer;
+        let parsedKeys = null;
+        try {
+          if (typeof rawCorrect2 === "string" && rawCorrect2.trim().startsWith("[")) {
+            const arr = JSON.parse(rawCorrect2);
+            if (Array.isArray(arr) && arr.length > 0) parsedKeys = arr;
           }
+        } catch {
         }
-        if (isMatch) {
-          if (key.skill === "listening") listeningCorrect++;
-          else if (key.skill === "reading") readingCorrect++;
-          else if (key.skill === "grammar") grammarCorrect++;
+        if (parsedKeys && parsedKeys.length > 0) {
+          parsedKeys.forEach((keyVal, idx) => {
+            if (isListening) listeningTotal++;
+            else if (isReading) readingTotal++;
+            else if (isGrammar) grammarTotal++;
+            let sVal = void 0;
+            if (studentAns && typeof studentAns === "object") {
+              sVal = studentAns[idx] ?? studentAns[String(idx)];
+            } else if (Array.isArray(studentAns)) {
+              sVal = studentAns[idx];
+            } else if (typeof studentAns === "string" && idx === 0) {
+              sVal = studentAns;
+            }
+            if (sVal != null && String(sVal).trim() !== "") {
+              const normStudent = normalizeText(sVal);
+              const alternatives = String(keyVal).split("|").map((s2) => normalizeText(s2));
+              const isMatch = alternatives.some((alt) => alt === normStudent);
+              if (isMatch) {
+                if (isListening) listeningCorrect++;
+                else if (isReading) readingCorrect++;
+                else if (isGrammar) grammarCorrect++;
+              }
+            }
+          });
+        } else {
+          if (isListening) listeningTotal++;
+          else if (isReading) readingTotal++;
+          else if (isGrammar) grammarTotal++;
+          if (studentAns != null && String(studentAns).trim() !== "") {
+            let rawAns = studentAns;
+            if (typeof studentAns === "object" && !Array.isArray(studentAns)) {
+              const values = Object.values(studentAns).filter(Boolean);
+              if (values.length > 0) rawAns = values.join(" ");
+            }
+            const normStudent = normalizeText(rawAns);
+            const normCorrect = normalizeText(key.correctAnswer);
+            let isMatch = normStudent === normCorrect;
+            if (!isMatch && key.acceptedAnswers && key.acceptedAnswers.length > 0) {
+              isMatch = key.acceptedAnswers.some((acc) => normalizeText(acc) === normStudent);
+            }
+            if (!isMatch) {
+              const stripAccents = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+              const studentStripped = stripAccents(normStudent);
+              const correctStripped = stripAccents(normCorrect);
+              isMatch = studentStripped === correctStripped;
+              if (!isMatch && key.acceptedAnswers) {
+                isMatch = key.acceptedAnswers.some(
+                  (acc) => stripAccents(normalizeText(acc)) === studentStripped
+                );
+              }
+            }
+            if (isMatch) {
+              if (key.skill === "listening") listeningCorrect++;
+              else if (key.skill === "reading") readingCorrect++;
+              else if (key.skill === "grammar") grammarCorrect++;
+            }
+          }
         }
       });
     }
@@ -123118,7 +122853,7 @@ var AssessmentService = class {
     const session = await this.getSessionById(sessionId);
     if (!session) return null;
     let testPayload = null;
-    const targetExamId = session.examId || "cce291f7-d88b-4976-8ed3-cc21daca7023";
+    let targetExamId = session.examId || "cce291f7-d88b-4976-8ed3-cc21daca7023";
     let dbExam = null;
     try {
       dbExam = await this.prisma.exam.findUnique({
@@ -123139,6 +122874,31 @@ var AssessmentService = class {
           }
         }
       });
+      const totalExamQs = dbExam?.sections?.reduce(
+        (sum, s2) => sum + (s2.questionGroups?.reduce((gsum, g) => gsum + (g.questions?.length || 0), 0) || 0),
+        0
+      ) || 0;
+      if (!dbExam || totalExamQs === 0) {
+        targetExamId = "cce291f7-d88b-4976-8ed3-cc21daca7023";
+        dbExam = await this.prisma.exam.findUnique({
+          where: { id: targetExamId },
+          include: {
+            sections: {
+              orderBy: { orderIndex: "asc" },
+              include: {
+                questionGroups: {
+                  orderBy: { orderIndex: "asc" },
+                  include: {
+                    questions: {
+                      orderBy: { orderIndex: "asc" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
       if (dbExam && dbExam.sections && dbExam.sections.length > 0) {
         testPayload = this.transformDbExamToPayload(dbExam);
       }
@@ -123166,6 +122926,7 @@ var AssessmentService = class {
     const answers = session.answers || {};
     const res = session.result || {};
     const teacherReview = res.teacherReview || {};
+    const normalizeText = (s2) => String(s2 || "").trim().toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "").replace(/\s+/g, " ");
     const questionBreakdown = [];
     if (testPayload) {
       const allObjectiveQuestions = [
@@ -123176,27 +122937,74 @@ var AssessmentService = class {
       allObjectiveQuestions.forEach((q) => {
         const studentAns = answers[q.id];
         const key = dbAnswerKeys[q.id] || authoritativePlacementAnswerKeys[q.id];
-        const correctAnswer = key?.correctAnswer || "Ch\u01B0a c\xF3 \u0111\xE1p \xE1n m\u1EABu";
-        let isCorrect = false;
-        if (studentAns != null && key) {
-          const normStudent = String(studentAns).trim().toLowerCase();
-          const normCorrect = String(key.correctAnswer).trim().toLowerCase();
-          isCorrect = normStudent === normCorrect;
-          if (!isCorrect && key.acceptedAnswers) {
-            isCorrect = key.acceptedAnswers.some((acc) => String(acc).trim().toLowerCase() === normStudent);
+        const rawCorrectAnswer = key?.correctAnswer || "Ch\u01B0a c\xF3 \u0111\xE1p \xE1n m\u1EABu";
+        let parsedKeys = null;
+        try {
+          if (typeof rawCorrectAnswer === "string" && rawCorrectAnswer.trim().startsWith("[")) {
+            const arr = JSON.parse(rawCorrectAnswer);
+            if (Array.isArray(arr) && arr.length > 0) parsedKeys = arr;
           }
+        } catch {
         }
-        questionBreakdown.push({
-          id: q.id,
-          skill: q.skill,
-          sectionTitle: q.sectionTitle,
-          questionType: q.questionType,
-          prompt: q.prompt,
-          options: q.options,
-          studentAnswer: studentAns ?? null,
-          correctAnswer,
-          isCorrect
-        });
+        if (parsedKeys && parsedKeys.length > 0) {
+          parsedKeys.forEach((keyVal, bIdx) => {
+            let sVal = void 0;
+            if (studentAns && typeof studentAns === "object") {
+              sVal = studentAns[bIdx] ?? studentAns[String(bIdx)];
+            } else if (Array.isArray(studentAns)) {
+              sVal = studentAns[bIdx];
+            } else if (typeof studentAns === "string" && bIdx === 0) {
+              sVal = studentAns;
+            }
+            let isCorrect = false;
+            if (sVal != null && String(sVal).trim() !== "") {
+              const normStudent = normalizeText(sVal);
+              const alternatives = String(keyVal).split("|").map((s2) => normalizeText(s2));
+              isCorrect = alternatives.some((alt) => alt === normStudent);
+            }
+            questionBreakdown.push({
+              id: `${q.id}_blank_${bIdx}`,
+              parentQuestionId: q.id,
+              blankIndex: bIdx,
+              skill: q.skill,
+              sectionTitle: q.sectionTitle,
+              questionType: "fill_blank",
+              prompt: q.prompt,
+              blankLabel: `Ch\u1ED7 tr\u1ED1ng (${bIdx + 1})`,
+              studentAnswer: sVal != null && String(sVal).trim() !== "" ? String(sVal).trim() : null,
+              correctAnswer: String(keyVal),
+              isCorrect
+            });
+          });
+        } else {
+          let formattedStudentAns = null;
+          if (studentAns != null && typeof studentAns === "object" && !Array.isArray(studentAns)) {
+            const vals = Object.values(studentAns).filter(Boolean);
+            formattedStudentAns = vals.length > 0 ? vals.join(" ") : null;
+          } else if (studentAns != null) {
+            formattedStudentAns = String(studentAns).trim();
+          }
+          let isCorrect = false;
+          if (formattedStudentAns != null && formattedStudentAns !== "" && key) {
+            const normStudent = normalizeText(formattedStudentAns);
+            const alternatives = String(key.correctAnswer).split("|").map((s2) => normalizeText(s2));
+            isCorrect = alternatives.some((alt) => alt === normStudent);
+            if (!isCorrect && key.acceptedAnswers) {
+              isCorrect = key.acceptedAnswers.some((acc) => normalizeText(acc) === normStudent);
+            }
+          }
+          questionBreakdown.push({
+            id: q.id,
+            skill: q.skill,
+            sectionTitle: q.sectionTitle,
+            questionType: q.questionType,
+            prompt: q.prompt,
+            options: q.options,
+            studentAnswer: formattedStudentAns && formattedStudentAns.length > 0 ? formattedStudentAns : null,
+            correctAnswer: rawCorrectAnswer,
+            isCorrect
+          });
+        }
       });
     }
     return {

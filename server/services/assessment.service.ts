@@ -284,9 +284,10 @@ export class AssessmentService {
    */
   private async findDesignatedEntranceExam(): Promise<any | null> {
     try {
-      const exam = await this.prisma.exam.findFirst({
+      let exam = await this.prisma.exam.findFirst({
         where: {
           OR: [
+            { id: "cce291f7-d88b-4976-8ed3-cc21daca7023" },
             { allowGuestAssessment: true, isActive: true, isPublished: true },
             { title: { contains: "ENTRANCE TEST", mode: "insensitive" }, isActive: true, isPublished: true },
             { course: { slug: { contains: "placement", mode: "insensitive" } }, isActive: true, isPublished: true },
@@ -312,7 +313,40 @@ export class AssessmentService {
           },
         },
       });
-      return exam;
+
+      // Verify that the found exam actually has questions in its sections
+      if (exam && exam.sections) {
+        const totalQs = exam.sections.reduce(
+          (sum: number, s: any) => sum + (s.questionGroups?.reduce((gsum: number, g: any) => gsum + (g.questions?.length || 0), 0) || 0),
+          0
+        );
+        if (totalQs > 0) {
+          return exam;
+        }
+      }
+
+      // Direct lookup for authoritative entrance exam cce291f7-d88b-4976-8ed3-cc21daca7023
+      exam = await this.prisma.exam.findUnique({
+        where: { id: "cce291f7-d88b-4976-8ed3-cc21daca7023" },
+        include: {
+          sections: {
+            orderBy: { orderIndex: "asc" },
+            include: {
+              questionGroups: {
+                orderBy: { orderIndex: "asc" },
+                include: {
+                  questions: {
+                    orderBy: { orderIndex: "asc" },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+      if (exam) return exam;
+
+      return null;
     } catch (err) {
       console.warn("[AssessmentService] findDesignatedEntranceExam notice:", err);
       return null;
@@ -577,26 +611,6 @@ export class AssessmentService {
       const designatedExam = await this.findDesignatedEntranceExam();
       if (designatedExam) {
         examId = designatedExam.id;
-      } else {
-        const anyExam = await this.prisma.exam.findFirst({ select: { id: true } });
-        if (anyExam) {
-          examId = anyExam.id;
-        } else {
-          // If no exam exists in DB, ensure a valid fallback record
-          const fallbackExam = await this.prisma.exam.create({
-            data: {
-              id: examId,
-              title: "ARIS Academic Entrance Exam",
-              slug: "aris-academic-entrance-exam",
-              allowGuestAssessment: true,
-              isActive: true,
-              isPublished: true,
-              durationMinutes: 60,
-              totalScore: 100,
-            },
-          });
-          examId = fallbackExam.id;
-        }
       }
     } catch (e) {
       console.warn("[AssessmentService] Exam lookup notice:", e);
@@ -687,9 +701,6 @@ export class AssessmentService {
       const designatedExam = await this.findDesignatedEntranceExam();
       if (designatedExam) {
         examId = designatedExam.id;
-      } else {
-        const anyExam = await this.prisma.exam.findFirst({ select: { id: true } });
-        if (anyExam) examId = anyExam.id;
       }
     } catch {}
 
@@ -1026,33 +1037,27 @@ export class AssessmentService {
         .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
         .replace(/\s+/g, " ");
 
-    // Check if answers match canonical diagnostic test keys (L1-L10, R1-R10, G1-G15)
-    const hasCanonicalPlacementAnswers = Object.keys(answers).some(
-      (k) => k in authoritativePlacementAnswerKeys || /^[LRG]\d+$/i.test(k)
-    );
-
     let dbExamQuestions: any[] = [];
-    if (!hasCanonicalPlacementAnswers && session.examId) {
-      try {
-        dbExamQuestions = await this.prisma.question.findMany({
-          where: {
-            group: {
-              section: {
-                examId: session.examId,
-              },
+    const targetExamId = session.examId || "cce291f7-d88b-4976-8ed3-cc21daca7023";
+    try {
+      dbExamQuestions = await this.prisma.question.findMany({
+        where: {
+          group: {
+            section: {
+              examId: targetExamId,
             },
           },
-          include: {
-            group: {
-              include: {
-                section: true,
-              },
+        },
+        include: {
+          group: {
+            include: {
+              section: true,
             },
           },
-        });
-      } catch (dbErr) {
-        console.warn("[AssessmentService] DB questions fetch error:", dbErr);
-      }
+        },
+      });
+    } catch (dbErr) {
+      console.warn("[AssessmentService] DB questions fetch error:", dbErr);
     }
 
     if (dbExamQuestions.length > 0) {
@@ -1073,7 +1078,7 @@ export class AssessmentService {
         try {
           if (typeof rawCorrect === "string" && rawCorrect.trim().startsWith("[")) {
             const arr = JSON.parse(rawCorrect);
-            if (Array.isArray(arr)) parsedKeys = arr;
+            if (Array.isArray(arr) && arr.length > 0) parsedKeys = arr;
           }
         } catch {}
 
@@ -1123,48 +1128,88 @@ export class AssessmentService {
         }
       }
     } else {
-      // Authoritative Clean-room Diagnostic Auto-grading (L1-L10, R1-R10, G1-G15)
+      // Authoritative Clean-room Diagnostic Auto-grading
       Object.entries(authoritativePlacementAnswerKeys).forEach(([qId, key]) => {
-        if (key.skill === "listening") listeningTotal++;
-        else if (key.skill === "reading") readingTotal++;
-        else if (key.skill === "grammar") grammarTotal++;
+        const isListening = key.skill === "listening";
+        const isReading = key.skill === "reading";
+        const isGrammar = key.skill === "grammar";
 
         const studentAns = answers[qId];
-        if (studentAns == null || String(studentAns).trim() === "") return;
+        const rawCorrect = key.correctAnswer;
 
-        let rawAns = studentAns;
-        // If question answer is an object with slots e.g. { "0": "answer" }
-        if (typeof studentAns === "object" && !Array.isArray(studentAns)) {
-          const values = Object.values(studentAns).filter(Boolean);
-          if (values.length > 0) rawAns = values.join(" ");
-        }
-
-        const normStudent = normalizeText(rawAns);
-        const normCorrect = normalizeText(key.correctAnswer);
-
-        let isMatch = normStudent === normCorrect;
-        if (!isMatch && key.acceptedAnswers && key.acceptedAnswers.length > 0) {
-          isMatch = key.acceptedAnswers.some((acc) => normalizeText(acc) === normStudent);
-        }
-
-        // Support accent-insensitive match (e.g. Vietnamese typing without accents)
-        if (!isMatch) {
-          const stripAccents = (str: string) =>
-            str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-          const studentStripped = stripAccents(normStudent);
-          const correctStripped = stripAccents(normCorrect);
-          isMatch = studentStripped === correctStripped;
-          if (!isMatch && key.acceptedAnswers) {
-            isMatch = key.acceptedAnswers.some(
-              (acc) => stripAccents(normalizeText(acc)) === studentStripped
-            );
+        let parsedKeys: string[] | null = null;
+        try {
+          if (typeof rawCorrect === "string" && rawCorrect.trim().startsWith("[")) {
+            const arr = JSON.parse(rawCorrect);
+            if (Array.isArray(arr) && arr.length > 0) parsedKeys = arr;
           }
-        }
+        } catch {}
 
-        if (isMatch) {
-          if (key.skill === "listening") listeningCorrect++;
-          else if (key.skill === "reading") readingCorrect++;
-          else if (key.skill === "grammar") grammarCorrect++;
+        if (parsedKeys && parsedKeys.length > 0) {
+          parsedKeys.forEach((keyVal, idx) => {
+            if (isListening) listeningTotal++;
+            else if (isReading) readingTotal++;
+            else if (isGrammar) grammarTotal++;
+
+            let sVal: any = undefined;
+            if (studentAns && typeof studentAns === "object") {
+              sVal = studentAns[idx] ?? studentAns[String(idx)];
+            } else if (Array.isArray(studentAns)) {
+              sVal = studentAns[idx];
+            } else if (typeof studentAns === "string" && idx === 0) {
+              sVal = studentAns;
+            }
+
+            if (sVal != null && String(sVal).trim() !== "") {
+              const normStudent = normalizeText(sVal);
+              const alternatives = String(keyVal).split("|").map((s) => normalizeText(s));
+              const isMatch = alternatives.some((alt) => alt === normStudent);
+              if (isMatch) {
+                if (isListening) listeningCorrect++;
+                else if (isReading) readingCorrect++;
+                else if (isGrammar) grammarCorrect++;
+              }
+            }
+          });
+        } else {
+          if (isListening) listeningTotal++;
+          else if (isReading) readingTotal++;
+          else if (isGrammar) grammarTotal++;
+
+          if (studentAns != null && String(studentAns).trim() !== "") {
+            let rawAns = studentAns;
+            if (typeof studentAns === "object" && !Array.isArray(studentAns)) {
+              const values = Object.values(studentAns).filter(Boolean);
+              if (values.length > 0) rawAns = values.join(" ");
+            }
+
+            const normStudent = normalizeText(rawAns);
+            const normCorrect = normalizeText(key.correctAnswer);
+
+            let isMatch = normStudent === normCorrect;
+            if (!isMatch && key.acceptedAnswers && key.acceptedAnswers.length > 0) {
+              isMatch = key.acceptedAnswers.some((acc) => normalizeText(acc) === normStudent);
+            }
+
+            if (!isMatch) {
+              const stripAccents = (str: string) =>
+                str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+              const studentStripped = stripAccents(normStudent);
+              const correctStripped = stripAccents(normCorrect);
+              isMatch = studentStripped === correctStripped;
+              if (!isMatch && key.acceptedAnswers) {
+                isMatch = key.acceptedAnswers.some(
+                  (acc) => stripAccents(normalizeText(acc)) === studentStripped
+                );
+              }
+            }
+
+            if (isMatch) {
+              if (key.skill === "listening") listeningCorrect++;
+              else if (key.skill === "reading") readingCorrect++;
+              else if (key.skill === "grammar") grammarCorrect++;
+            }
+          }
         }
       });
     }
@@ -1567,7 +1612,7 @@ export class AssessmentService {
     if (!session) return null;
 
     let testPayload: SanitizedPlacementTestPayload | null = null;
-    const targetExamId = session.examId || "cce291f7-d88b-4976-8ed3-cc21daca7023";
+    let targetExamId = session.examId || "cce291f7-d88b-4976-8ed3-cc21daca7023";
     let dbExam: any = null;
 
     try {
@@ -1589,6 +1634,33 @@ export class AssessmentService {
           },
         },
       });
+
+      const totalExamQs = dbExam?.sections?.reduce(
+        (sum: number, s: any) => sum + (s.questionGroups?.reduce((gsum: number, g: any) => gsum + (g.questions?.length || 0), 0) || 0),
+        0
+      ) || 0;
+
+      if (!dbExam || totalExamQs === 0) {
+        targetExamId = "cce291f7-d88b-4976-8ed3-cc21daca7023";
+        dbExam = await this.prisma.exam.findUnique({
+          where: { id: targetExamId },
+          include: {
+            sections: {
+              orderBy: { orderIndex: "asc" },
+              include: {
+                questionGroups: {
+                  orderBy: { orderIndex: "asc" },
+                  include: {
+                    questions: {
+                      orderBy: { orderIndex: "asc" },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
 
       if (dbExam && dbExam.sections && dbExam.sections.length > 0) {
         testPayload = this.transformDbExamToPayload(dbExam);
@@ -1622,6 +1694,13 @@ export class AssessmentService {
     const res = (session.result || {}) as any;
     const teacherReview = res.teacherReview || {};
 
+    const normalizeText = (s: any) =>
+      String(s || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
+        .replace(/\s+/g, " ");
+
     const questionBreakdown: any[] = [];
     if (testPayload) {
       const allObjectiveQuestions = [
@@ -1632,30 +1711,85 @@ export class AssessmentService {
 
       allObjectiveQuestions.forEach((q) => {
         const studentAns = answers[q.id];
-        const key = dbAnswerKeys[q.id] || authoritativePlacementAnswerKeys[q.id];
-        const correctAnswer = key?.correctAnswer || "Chưa có đáp án mẫu";
+        const key = dbAnswerKeys[q.id] || (authoritativePlacementAnswerKeys as any)[q.id];
+        const rawCorrectAnswer = key?.correctAnswer || "Chưa có đáp án mẫu";
 
-        let isCorrect = false;
-        if (studentAns != null && key) {
-          const normStudent = String(studentAns).trim().toLowerCase();
-          const normCorrect = String(key.correctAnswer).trim().toLowerCase();
-          isCorrect = normStudent === normCorrect;
-          if (!isCorrect && key.acceptedAnswers) {
-            isCorrect = key.acceptedAnswers.some((acc: any) => String(acc).trim().toLowerCase() === normStudent);
+        // Check if multi-blank question
+        let parsedKeys: string[] | null = null;
+        try {
+          if (typeof rawCorrectAnswer === "string" && rawCorrectAnswer.trim().startsWith("[")) {
+            const arr = JSON.parse(rawCorrectAnswer);
+            if (Array.isArray(arr) && arr.length > 0) parsedKeys = arr;
           }
-        }
+        } catch {}
 
-        questionBreakdown.push({
-          id: q.id,
-          skill: q.skill,
-          sectionTitle: q.sectionTitle,
-          questionType: q.questionType,
-          prompt: q.prompt,
-          options: q.options,
-          studentAnswer: studentAns ?? null,
-          correctAnswer,
-          isCorrect,
-        });
+        if (parsedKeys && parsedKeys.length > 0) {
+          parsedKeys.forEach((keyVal, bIdx) => {
+            let sVal: any = undefined;
+            if (studentAns && typeof studentAns === "object") {
+              sVal = studentAns[bIdx] ?? studentAns[String(bIdx)];
+            } else if (Array.isArray(studentAns)) {
+              sVal = studentAns[bIdx];
+            } else if (typeof studentAns === "string" && bIdx === 0) {
+              sVal = studentAns;
+            }
+
+            let isCorrect = false;
+            if (sVal != null && String(sVal).trim() !== "") {
+              const normStudent = normalizeText(sVal);
+              const alternatives = String(keyVal)
+                .split("|")
+                .map((s) => normalizeText(s));
+              isCorrect = alternatives.some((alt) => alt === normStudent);
+            }
+
+            questionBreakdown.push({
+              id: `${q.id}_blank_${bIdx}`,
+              parentQuestionId: q.id,
+              blankIndex: bIdx,
+              skill: q.skill,
+              sectionTitle: q.sectionTitle,
+              questionType: "fill_blank",
+              prompt: q.prompt,
+              blankLabel: `Chỗ trống (${bIdx + 1})`,
+              studentAnswer: sVal != null && String(sVal).trim() !== "" ? String(sVal).trim() : null,
+              correctAnswer: String(keyVal),
+              isCorrect,
+            });
+          });
+        } else {
+          let formattedStudentAns: string | null = null;
+          if (studentAns != null && typeof studentAns === "object" && !Array.isArray(studentAns)) {
+            const vals = Object.values(studentAns).filter(Boolean);
+            formattedStudentAns = vals.length > 0 ? vals.join(" ") : null;
+          } else if (studentAns != null) {
+            formattedStudentAns = String(studentAns).trim();
+          }
+
+          let isCorrect = false;
+          if (formattedStudentAns != null && formattedStudentAns !== "" && key) {
+            const normStudent = normalizeText(formattedStudentAns);
+            const alternatives = String(key.correctAnswer)
+              .split("|")
+              .map((s) => normalizeText(s));
+            isCorrect = alternatives.some((alt) => alt === normStudent);
+            if (!isCorrect && key.acceptedAnswers) {
+              isCorrect = key.acceptedAnswers.some((acc: any) => normalizeText(acc) === normStudent);
+            }
+          }
+
+          questionBreakdown.push({
+            id: q.id,
+            skill: q.skill,
+            sectionTitle: q.sectionTitle,
+            questionType: q.questionType,
+            prompt: q.prompt,
+            options: q.options,
+            studentAnswer: formattedStudentAns && formattedStudentAns.length > 0 ? formattedStudentAns : null,
+            correctAnswer: rawCorrectAnswer,
+            isCorrect,
+          });
+        }
       });
     }
 
