@@ -140,9 +140,9 @@ const assessmentRoutes: FastifyPluginAsync = async (fastify) => {
       });
     }
 
-    const session = await assessmentService.getSessionById(request.params.id);
+    let session = await assessmentService.getSessionById(request.params.id);
     if (!session) {
-      return reply.status(404).send({ error: "Phiên khảo thí không tồn tại" });
+      session = await assessmentService.ensureOrReviveSession(request.params.id);
     }
 
     const remainingSec = Math.max(0, Math.floor((new Date(session.expiresAt).getTime() - Date.now()) / 1000));

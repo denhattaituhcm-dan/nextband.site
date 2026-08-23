@@ -517,8 +517,8 @@ export class AssessmentService {
     this.checkRateLimits(params.ipAddress || "", cleanPhone);
 
     const now = new Date();
-    // 60 minutes duration + 15 minutes buffer
-    const expiresAt = new Date(now.getTime() + 75 * 60 * 1000);
+    // 60 minutes total exam duration
+    const expiresAt = new Date(now.getTime() + 60 * 60 * 1000);
     const sessionId = crypto.randomUUID();
 
     // Look up designated Entrance Test from DB
@@ -527,6 +527,26 @@ export class AssessmentService {
       const designatedExam = await this.findDesignatedEntranceExam();
       if (designatedExam) {
         examId = designatedExam.id;
+      } else {
+        const anyExam = await this.prisma.exam.findFirst({ select: { id: true } });
+        if (anyExam) {
+          examId = anyExam.id;
+        } else {
+          // If no exam exists in DB, ensure a valid fallback record
+          const fallbackExam = await this.prisma.exam.create({
+            data: {
+              id: examId,
+              title: "ARIS Academic Entrance Exam",
+              slug: "aris-academic-entrance-exam",
+              allowGuestAssessment: true,
+              isActive: true,
+              isPublished: true,
+              durationMinutes: 60,
+              totalScore: 100,
+            },
+          });
+          examId = fallbackExam.id;
+        }
       }
     } catch (e) {
       console.warn("[AssessmentService] Exam lookup notice:", e);
@@ -595,6 +615,83 @@ export class AssessmentService {
   }
 
   /**
+   * Helper: Ensure or Revive session across server reloads/restarts
+   */
+  public async ensureOrReviveSession(
+    sessionId: string,
+    fallbackData?: {
+      candidateName?: string;
+      phone?: string;
+      targetBand?: string;
+      answers?: Record<string, any>;
+    }
+  ): Promise<AssessmentSessionRecord> {
+    let session = await this.getSessionById(sessionId);
+    if (session) return session;
+
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + 60 * 60 * 1000);
+
+    let examId: string = "cce291f7-d88b-4976-8ed3-cc21daca7023";
+    try {
+      const designatedExam = await this.findDesignatedEntranceExam();
+      if (designatedExam) {
+        examId = designatedExam.id;
+      } else {
+        const anyExam = await this.prisma.exam.findFirst({ select: { id: true } });
+        if (anyExam) examId = anyExam.id;
+      }
+    } catch {}
+
+    session = {
+      id: sessionId,
+      examId,
+      candidateName: fallbackData?.candidateName || "Thí sinh ARIS",
+      phone: fallbackData?.phone || "0900000000",
+      targetBand: fallbackData?.targetBand || "7.0+",
+      status: "ACTIVE",
+      answers: fallbackData?.answers || {},
+      objectiveScore: null,
+      subjectiveStatus: "NONE",
+      result: null,
+      startedAt: now,
+      expiresAt,
+      submittedAt: null,
+      ipAddress: null,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    inMemoryAssessmentSessions.set(sessionId, session);
+
+    try {
+      if ((this.prisma as any).assessmentSession && examId) {
+        await (this.prisma as any).assessmentSession.upsert({
+          where: { id: sessionId },
+          create: {
+            id: session.id,
+            examId,
+            fullName: session.candidateName,
+            phone: session.phone,
+            targetBand: session.targetBand,
+            status: session.status,
+            answers: session.answers,
+            startedAt: session.startedAt,
+            expiresAt: session.expiresAt,
+          },
+          update: {
+            answers: session.answers,
+          },
+        });
+      }
+    } catch (dbErr) {
+      console.warn("[AssessmentService] Session revive DB notice:", dbErr);
+    }
+
+    return session;
+  }
+
+  /**
    * 2. Find existing session by ID
    */
   public async getSessionById(sessionId: string): Promise<AssessmentSessionRecord | null> {
@@ -653,11 +750,9 @@ export class AssessmentService {
     };
     test: SanitizedPlacementTestPayload;
   }> {
-    const session = await this.getSessionById(sessionId);
+    let session = await this.getSessionById(sessionId);
     if (!session) {
-      const err = new Error("Phiên khảo thí không tồn tại hoặc đã bị hủy");
-      (err as any).statusCode = 404;
-      throw err;
+      session = await this.ensureOrReviveSession(sessionId);
     }
 
     if (session.status === "SUBMITTED") {
@@ -723,11 +818,9 @@ export class AssessmentService {
    * 4. Debounced autosave
    */
   public async autosaveAnswers(sessionId: string, answers: Record<string, any>) {
-    const session = await this.getSessionById(sessionId);
+    let session = await this.getSessionById(sessionId);
     if (!session) {
-      const err = new Error("Phiên khảo thí không tồn tại");
-      (err as any).statusCode = 404;
-      throw err;
+      session = await this.ensureOrReviveSession(sessionId, { answers });
     }
 
     if (session.status === "SUBMITTED") {
@@ -777,11 +870,9 @@ export class AssessmentService {
     answersPayload: Record<string, any>,
     options: { allowIdempotentRetry?: boolean } = {}
   ): Promise<DiagnosticReport> {
-    const session = await this.getSessionById(sessionId);
+    let session = await this.getSessionById(sessionId);
     if (!session) {
-      const err = new Error("Phiên khảo thí không tồn tại");
-      (err as any).statusCode = 404;
-      throw err;
+      session = await this.ensureOrReviveSession(sessionId, { answers: answersPayload });
     }
 
     if (session.status === "SUBMITTED") {

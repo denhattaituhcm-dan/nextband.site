@@ -122267,13 +122267,32 @@ var AssessmentService = class {
     }
     this.checkRateLimits(params.ipAddress || "", cleanPhone);
     const now = /* @__PURE__ */ new Date();
-    const expiresAt = new Date(now.getTime() + 75 * 60 * 1e3);
+    const expiresAt = new Date(now.getTime() + 60 * 60 * 1e3);
     const sessionId = crypto.randomUUID();
     let examId = "cce291f7-d88b-4976-8ed3-cc21daca7023";
     try {
       const designatedExam = await this.findDesignatedEntranceExam();
       if (designatedExam) {
         examId = designatedExam.id;
+      } else {
+        const anyExam = await this.prisma.exam.findFirst({ select: { id: true } });
+        if (anyExam) {
+          examId = anyExam.id;
+        } else {
+          const fallbackExam = await this.prisma.exam.create({
+            data: {
+              id: examId,
+              title: "ARIS Academic Entrance Exam",
+              slug: "aris-academic-entrance-exam",
+              allowGuestAssessment: true,
+              isActive: true,
+              isPublished: true,
+              durationMinutes: 60,
+              totalScore: 100
+            }
+          });
+          examId = fallbackExam.id;
+        }
       }
     } catch (e2) {
       console.warn("[AssessmentService] Exam lookup notice:", e2);
@@ -122333,6 +122352,69 @@ var AssessmentService = class {
     return session;
   }
   /**
+   * Helper: Ensure or Revive session across server reloads/restarts
+   */
+  async ensureOrReviveSession(sessionId, fallbackData) {
+    let session = await this.getSessionById(sessionId);
+    if (session) return session;
+    const now = /* @__PURE__ */ new Date();
+    const expiresAt = new Date(now.getTime() + 60 * 60 * 1e3);
+    let examId = "cce291f7-d88b-4976-8ed3-cc21daca7023";
+    try {
+      const designatedExam = await this.findDesignatedEntranceExam();
+      if (designatedExam) {
+        examId = designatedExam.id;
+      } else {
+        const anyExam = await this.prisma.exam.findFirst({ select: { id: true } });
+        if (anyExam) examId = anyExam.id;
+      }
+    } catch {
+    }
+    session = {
+      id: sessionId,
+      examId,
+      candidateName: fallbackData?.candidateName || "Th\xED sinh ARIS",
+      phone: fallbackData?.phone || "0900000000",
+      targetBand: fallbackData?.targetBand || "7.0+",
+      status: "ACTIVE",
+      answers: fallbackData?.answers || {},
+      objectiveScore: null,
+      subjectiveStatus: "NONE",
+      result: null,
+      startedAt: now,
+      expiresAt,
+      submittedAt: null,
+      ipAddress: null,
+      createdAt: now,
+      updatedAt: now
+    };
+    inMemoryAssessmentSessions.set(sessionId, session);
+    try {
+      if (this.prisma.assessmentSession && examId) {
+        await this.prisma.assessmentSession.upsert({
+          where: { id: sessionId },
+          create: {
+            id: session.id,
+            examId,
+            fullName: session.candidateName,
+            phone: session.phone,
+            targetBand: session.targetBand,
+            status: session.status,
+            answers: session.answers,
+            startedAt: session.startedAt,
+            expiresAt: session.expiresAt
+          },
+          update: {
+            answers: session.answers
+          }
+        });
+      }
+    } catch (dbErr) {
+      console.warn("[AssessmentService] Session revive DB notice:", dbErr);
+    }
+    return session;
+  }
+  /**
    * 2. Find existing session by ID
    */
   async getSessionById(sessionId) {
@@ -122376,11 +122458,9 @@ var AssessmentService = class {
    * 3. Get Sanitized Test Payload (ZERO answer keys in client response)
    */
   async getTestPayloadForSession(sessionId) {
-    const session = await this.getSessionById(sessionId);
+    let session = await this.getSessionById(sessionId);
     if (!session) {
-      const err = new Error("Phi\xEAn kh\u1EA3o th\xED kh\xF4ng t\u1ED3n t\u1EA1i ho\u1EB7c \u0111\xE3 b\u1ECB h\u1EE7y");
-      err.statusCode = 404;
-      throw err;
+      session = await this.ensureOrReviveSession(sessionId);
     }
     if (session.status === "SUBMITTED") {
       const err = new Error("B\xE0i kh\u1EA3o th\xED n\xE0y \u0111\xE3 \u0111\u01B0\u1EE3c n\u1ED9p. B\u1EA1n c\xF3 th\u1EC3 xem l\u1EA1i k\u1EBFt qu\u1EA3.");
@@ -122438,11 +122518,9 @@ var AssessmentService = class {
    * 4. Debounced autosave
    */
   async autosaveAnswers(sessionId, answers) {
-    const session = await this.getSessionById(sessionId);
+    let session = await this.getSessionById(sessionId);
     if (!session) {
-      const err = new Error("Phi\xEAn kh\u1EA3o th\xED kh\xF4ng t\u1ED3n t\u1EA1i");
-      err.statusCode = 404;
-      throw err;
+      session = await this.ensureOrReviveSession(sessionId, { answers });
     }
     if (session.status === "SUBMITTED") {
       const err = new Error("B\xE0i thi \u0111\xE3 \u0111\u01B0\u1EE3c n\u1ED9p. Kh\xF4ng th\u1EC3 l\u01B0u th\xEAm thay \u0111\u1ED5i.");
@@ -122480,11 +122558,9 @@ var AssessmentService = class {
    * 5. Submit and Grade Objective Sections + Enqueue Subjective Review
    */
   async submitAssessment(sessionId, answersPayload, options = {}) {
-    const session = await this.getSessionById(sessionId);
+    let session = await this.getSessionById(sessionId);
     if (!session) {
-      const err = new Error("Phi\xEAn kh\u1EA3o th\xED kh\xF4ng t\u1ED3n t\u1EA1i");
-      err.statusCode = 404;
-      throw err;
+      session = await this.ensureOrReviveSession(sessionId, { answers: answersPayload });
     }
     if (session.status === "SUBMITTED") {
       if (options.allowIdempotentRetry && session.result) {
@@ -123133,9 +123209,9 @@ var assessmentRoutes = async (fastify) => {
         message: "T\u1EEB ch\u1ED1i truy c\u1EADp: M\xE3 phi\xEAn kh\xF4ng kh\u1EDBp v\u1EDBi phi\xEAn l\xE0m b\xE0i"
       });
     }
-    const session = await assessmentService.getSessionById(request.params.id);
+    let session = await assessmentService.getSessionById(request.params.id);
     if (!session) {
-      return reply.status(404).send({ error: "Phi\xEAn kh\u1EA3o th\xED kh\xF4ng t\u1ED3n t\u1EA1i" });
+      session = await assessmentService.ensureOrReviveSession(request.params.id);
     }
     const remainingSec = Math.max(0, Math.floor((new Date(session.expiresAt).getTime() - Date.now()) / 1e3));
     return reply.send({
