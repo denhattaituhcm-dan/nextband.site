@@ -122167,7 +122167,7 @@ var AssessmentService = class {
           if (m2 && m2.length > 0) blankCount = m2.length;
         }
       }
-      const cleanPrompt = (q.questionText || "").replace(/<\/?font[^>]*>/gi, "").replace(/font-family:[^;"]*;?/gi, "").trim();
+      const cleanPrompt = (q.questionText || "").replace(/<font\s+color=["']?([^"'>]+)["']?>/gi, '<span style="color: $1">').replace(/<\/font>/gi, "</span>").replace(/font-family:[^;"]*;?/gi, "").trim();
       return {
         id: q.id,
         skill,
@@ -122183,29 +122183,69 @@ var AssessmentService = class {
     };
     const listeningQuestions = [];
     const listeningAudio = toFileUrl(listeningSec?.audioUrl) || toFileUrl(listeningSec?.questionGroups?.[0]?.audioUrl) || "https://assets.mixkit.co/active_storage/sfx/2874/2874-preview.mp3";
-    listeningSec?.questionGroups?.forEach((g) => {
-      g.questions?.forEach((q) => {
-        listeningQuestions.push(mapQuestion({ ...q, group: g }, "listening", "K\u1EF9 n\u0103ng Nghe (Listening)"));
+    let listeningCursor = 1;
+    const listeningGroups = [...listeningSec?.questionGroups || []].sort((a, b) => {
+      const orderA = a.orderIndex ?? a.order_index ?? 0;
+      const orderB = b.orderIndex ?? b.order_index ?? 0;
+      return orderA - orderB;
+    });
+    listeningGroups.forEach((g) => {
+      const groupQs = [...g.questions || []].sort((a, b) => {
+        const orderA = a.orderIndex ?? a.order_index ?? 0;
+        const orderB = b.orderIndex ?? b.order_index ?? 0;
+        return orderA - orderB;
+      });
+      groupQs.forEach((q) => {
+        const mapped = mapQuestion({ ...q, group: g }, "listening", "K\u1EF9 n\u0103ng Nghe (Listening)");
+        mapped.orderIndex = listeningCursor;
+        listeningQuestions.push(mapped);
+        listeningCursor += mapped.blankCount && mapped.blankCount > 1 ? mapped.blankCount : 1;
       });
     });
-    listeningQuestions.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
     const readingQuestions = [];
     const readingPassage = readingSec?.questionGroups?.map((g) => g.passage).filter((p) => p && typeof p === "string" && p.trim().length > 0).join("\n\n") || readingSec?.instructions || "";
-    readingSec?.questionGroups?.forEach((g) => {
-      g.questions?.forEach((q) => {
-        readingQuestions.push(mapQuestion({ ...q, group: g }, "reading", "K\u1EF9 n\u0103ng \u0110\u1ECDc hi\u1EC3u (Reading)"));
+    let readingCursor = 1;
+    const readingGroups = [...readingSec?.questionGroups || []].sort((a, b) => {
+      const orderA = a.orderIndex ?? a.order_index ?? 0;
+      const orderB = b.orderIndex ?? b.order_index ?? 0;
+      return orderA - orderB;
+    });
+    readingGroups.forEach((g) => {
+      const groupQs = [...g.questions || []].sort((a, b) => {
+        const orderA = a.orderIndex ?? a.order_index ?? 0;
+        const orderB = b.orderIndex ?? b.order_index ?? 0;
+        return orderA - orderB;
+      });
+      groupQs.forEach((q) => {
+        const mapped = mapQuestion({ ...q, group: g }, "reading", "K\u1EF9 n\u0103ng \u0110\u1ECDc hi\u1EC3u (Reading)");
+        mapped.orderIndex = readingCursor;
+        readingQuestions.push(mapped);
+        readingCursor += mapped.blankCount && mapped.blankCount > 1 ? mapped.blankCount : 1;
       });
     });
-    readingQuestions.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
     const grammarQuestions = [];
-    grammarSec?.questionGroups?.forEach((g) => {
-      g.questions?.forEach((q) => {
-        grammarQuestions.push(mapQuestion({ ...q, group: g }, "grammar", "Ng\u1EEF ph\xE1p & T\u1EEB v\u1EF1ng (Grammar)"));
+    let grammarCursor = 1;
+    const grammarGroups = [...grammarSec?.questionGroups || []].sort((a, b) => {
+      const orderA = a.orderIndex ?? a.order_index ?? 0;
+      const orderB = b.orderIndex ?? b.order_index ?? 0;
+      return orderA - orderB;
+    });
+    grammarGroups.forEach((g) => {
+      const groupQs = [...g.questions || []].sort((a, b) => {
+        const orderA = a.orderIndex ?? a.order_index ?? 0;
+        const orderB = b.orderIndex ?? b.order_index ?? 0;
+        return orderA - orderB;
+      });
+      groupQs.forEach((q) => {
+        const mapped = mapQuestion({ ...q, group: g }, "grammar", "Ng\u1EEF ph\xE1p & T\u1EEB v\u1EF1ng (Grammar)");
+        mapped.orderIndex = grammarCursor;
+        grammarQuestions.push(mapped);
+        grammarCursor += mapped.blankCount && mapped.blankCount > 1 ? mapped.blankCount : 1;
       });
     });
-    grammarQuestions.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
     const writingQ = writingSec?.questionGroups?.[0]?.questions?.[0];
-    const writingPrompt = writingQ?.questionText || writingSec?.questionGroups?.[0]?.passage || canonicalPlacementTestPayload.skills.writing.prompt;
+    const rawWritingPrompt = writingQ?.questionText || writingSec?.questionGroups?.[0]?.passage || canonicalPlacementTestPayload.skills.writing.prompt;
+    const writingPrompt = (rawWritingPrompt || "").replace(/<font\s+color=["']?([^"'>]+)["']?>/gi, '<span style="color: $1">').replace(/<\/font>/gi, "</span>").trim();
     const speakingQuestions = speakingSec?.questionGroups?.[0]?.questions || [];
     const part1Qs = speakingQuestions.slice(0, 2).map((q) => q.questionText).filter(Boolean);
     const part2Topic = speakingQuestions[2]?.questionText || canonicalPlacementTestPayload.skills.speaking.part2Topic;

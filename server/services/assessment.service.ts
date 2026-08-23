@@ -373,7 +373,8 @@ export class AssessmentService {
       }
 
       const cleanPrompt = (q.questionText || "")
-        .replace(/<\/?font[^>]*>/gi, "")
+        .replace(/<font\s+color=["']?([^"'>]+)["']?>/gi, '<span style="color: $1">')
+        .replace(/<\/font>/gi, "</span>")
         .replace(/font-family:[^;"]*;?/gi, "")
         .trim();
 
@@ -402,12 +403,27 @@ export class AssessmentService {
       toFileUrl(listeningSec?.questionGroups?.[0]?.audioUrl) ||
       "https://assets.mixkit.co/active_storage/sfx/2874/2874-preview.mp3";
 
-    listeningSec?.questionGroups?.forEach((g: any) => {
-      g.questions?.forEach((q: any) => {
-        listeningQuestions.push(mapQuestion({ ...q, group: g }, "listening", "Kỹ năng Nghe (Listening)"));
+    let listeningCursor = 1;
+    const listeningGroups = [...(listeningSec?.questionGroups || [])].sort((a: any, b: any) => {
+      const orderA = a.orderIndex ?? a.order_index ?? 0;
+      const orderB = b.orderIndex ?? b.order_index ?? 0;
+      return orderA - orderB;
+    });
+
+    listeningGroups.forEach((g: any) => {
+      const groupQs = [...(g.questions || [])].sort((a: any, b: any) => {
+        const orderA = a.orderIndex ?? a.order_index ?? 0;
+        const orderB = b.orderIndex ?? b.order_index ?? 0;
+        return orderA - orderB;
+      });
+
+      groupQs.forEach((q: any) => {
+        const mapped = mapQuestion({ ...q, group: g }, "listening", "Kỹ năng Nghe (Listening)");
+        mapped.orderIndex = listeningCursor;
+        listeningQuestions.push(mapped);
+        listeningCursor += mapped.blankCount && mapped.blankCount > 1 ? mapped.blankCount : 1;
       });
     });
-    listeningQuestions.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
 
     // 2. Reading Questions & Passage
     const readingQuestions: SanitizedQuestion[] = [];
@@ -419,28 +435,62 @@ export class AssessmentService {
       readingSec?.instructions ||
       "";
 
-    readingSec?.questionGroups?.forEach((g: any) => {
-      g.questions?.forEach((q: any) => {
-        readingQuestions.push(mapQuestion({ ...q, group: g }, "reading", "Kỹ năng Đọc hiểu (Reading)"));
+    let readingCursor = 1;
+    const readingGroups = [...(readingSec?.questionGroups || [])].sort((a: any, b: any) => {
+      const orderA = a.orderIndex ?? a.order_index ?? 0;
+      const orderB = b.orderIndex ?? b.order_index ?? 0;
+      return orderA - orderB;
+    });
+
+    readingGroups.forEach((g: any) => {
+      const groupQs = [...(g.questions || [])].sort((a: any, b: any) => {
+        const orderA = a.orderIndex ?? a.order_index ?? 0;
+        const orderB = b.orderIndex ?? b.order_index ?? 0;
+        return orderA - orderB;
+      });
+
+      groupQs.forEach((q: any) => {
+        const mapped = mapQuestion({ ...q, group: g }, "reading", "Kỹ năng Đọc hiểu (Reading)");
+        mapped.orderIndex = readingCursor;
+        readingQuestions.push(mapped);
+        readingCursor += mapped.blankCount && mapped.blankCount > 1 ? mapped.blankCount : 1;
       });
     });
-    readingQuestions.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
 
     // 3. Grammar Questions
     const grammarQuestions: SanitizedQuestion[] = [];
-    grammarSec?.questionGroups?.forEach((g: any) => {
-      g.questions?.forEach((q: any) => {
-        grammarQuestions.push(mapQuestion({ ...q, group: g }, "grammar", "Ngữ pháp & Từ vựng (Grammar)"));
+    let grammarCursor = 1;
+    const grammarGroups = [...(grammarSec?.questionGroups || [])].sort((a: any, b: any) => {
+      const orderA = a.orderIndex ?? a.order_index ?? 0;
+      const orderB = b.orderIndex ?? b.order_index ?? 0;
+      return orderA - orderB;
+    });
+
+    grammarGroups.forEach((g: any) => {
+      const groupQs = [...(g.questions || [])].sort((a: any, b: any) => {
+        const orderA = a.orderIndex ?? a.order_index ?? 0;
+        const orderB = b.orderIndex ?? b.order_index ?? 0;
+        return orderA - orderB;
+      });
+
+      groupQs.forEach((q: any) => {
+        const mapped = mapQuestion({ ...q, group: g }, "grammar", "Ngữ pháp & Từ vựng (Grammar)");
+        mapped.orderIndex = grammarCursor;
+        grammarQuestions.push(mapped);
+        grammarCursor += mapped.blankCount && mapped.blankCount > 1 ? mapped.blankCount : 1;
       });
     });
-    grammarQuestions.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
 
     // 4. Writing
     const writingQ = writingSec?.questionGroups?.[0]?.questions?.[0];
-    const writingPrompt =
+    const rawWritingPrompt =
       writingQ?.questionText ||
       writingSec?.questionGroups?.[0]?.passage ||
       canonicalPlacementTestPayload.skills.writing.prompt;
+    const writingPrompt = (rawWritingPrompt || "")
+      .replace(/<font\s+color=["']?([^"'>]+)["']?>/gi, '<span style="color: $1">')
+      .replace(/<\/font>/gi, "</span>")
+      .trim();
 
     // 5. Speaking
     const speakingQuestions = speakingSec?.questionGroups?.[0]?.questions || [];
