@@ -52,6 +52,89 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
     }
   });
 
+  // GET /leads/check-phone - Check duplicate leads by phone number (for UI warnings)
+  fastify.get(
+    "/check-phone",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { phone } = request.query as any;
+      if (!phone || typeof phone !== "string") {
+        return reply.send({ success: true, duplicates: [] });
+      }
+
+      const duplicates = await leadService.checkDuplicatePhone(phone);
+      return reply.send({
+        success: true,
+        duplicates,
+      });
+    }
+  );
+
+  // POST /leads/manual - Authenticated endpoint for Admin/Teacher/Staff to record offline/hotline leads
+  fastify.post(
+    "/manual",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const validatedData = handleValidation(
+        createLeadSchema.safeParse(request.body),
+        request,
+        reply
+      );
+      if (!validatedData) return;
+
+      try {
+        const lead = await leadService.createLead({
+          ...validatedData,
+          source: validatedData.source || "offline_walkin",
+          createdByUserId: request.user.id,
+        });
+
+        return reply.status(201).send({
+          success: true,
+          message: "Tiếp nhận thông tin khách tư vấn thành công.",
+          data: lead,
+        });
+      } catch (err: any) {
+        request.log.error(err, "Failed to create manual consultation lead");
+        return reply.status(500).send({
+          success: false,
+          error: "Không thể lưu thông tin tư vấn lúc này.",
+        });
+      }
+    }
+  );
+
+  // POST /leads/:id/convert - Atomic Conversion: Lead -> Student User + UserBranch + Link Lead
+  fastify.post<{ Params: { id: string } }>(
+    "/:id/convert",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { id } = request.params;
+      const { convertLeadSchema } = await import("../schemas/lead.schema.js");
+      const validatedData = handleValidation(
+        convertLeadSchema.safeParse(request.body),
+        request,
+        reply
+      );
+      if (!validatedData) return;
+
+      try {
+        const result = await leadService.convertLeadToStudent(id, validatedData, request.user.id);
+        return reply.status(200).send({
+          success: true,
+          message: "Chuyển đổi khách tư vấn thành học viên thành công.",
+          data: result,
+        });
+      } catch (err: any) {
+        request.log.error(err, "Failed to convert lead to student");
+        return reply.status(400).send({
+          success: false,
+          error: err?.message || "Không thể chuyển đổi khách tư vấn thành học viên",
+        });
+      }
+    }
+  );
+
   // GET /leads - Admin/Teacher list all leads with pagination
   fastify.get(
     "/",

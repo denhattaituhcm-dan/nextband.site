@@ -176,6 +176,142 @@ Vui lòng gọi điện tư vấn cho học viên sớm nhất.
       }
     }
   }
+
+  /**
+   * Send notification to staff/admin via Email & Telegram when a new Student account is created
+   */
+  async notifyNewStudent(student: {
+    id: string;
+    fullName: string;
+    email: string;
+    phone?: string | null;
+    branchName?: string | null;
+    source?: string;
+    createdBy?: string | null;
+  }): Promise<void> {
+    const recipient = env.NOTIFICATION_EMAIL_TO || "arisieltsdeeplearning@gmail.com";
+    const now = new Date();
+    const formattedDate = new Intl.DateTimeFormat("vi-VN", {
+      dateStyle: "full",
+      timeStyle: "medium",
+      timeZone: "Asia/Ho_Chi_Minh",
+    }).format(now);
+
+    const subject = `🎓 [HỌC VIÊN MỚI] ${student.fullName} (${student.email}) đã được thêm vào hệ thống`;
+
+    const htmlContent = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff; color: #1e293b;">
+        <div style="text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid #f1f5f9;">
+          <div style="display: inline-block; padding: 6px 14px; background-color: #dcfce7; color: #15803d; font-weight: 800; font-size: 12px; text-transform: uppercase; border-radius: 9999px; letter-spacing: 0.05em; margin-bottom: 8px;">
+            Học Viên Mới Nhập Học
+          </div>
+          <h2 style="margin: 0; color: #0f172a; font-size: 22px; font-weight: 800;">HỌC VIỆN ARIS IELTS</h2>
+          <p style="margin: 4px 0 0 0; color: #64748b; font-size: 13px;">Thông báo tài khoản học viên mới được kích hoạt trên hệ thống LMS</p>
+        </div>
+
+        <div style="background-color: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 24px; border: 1px solid #e2e8f0;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <tr>
+              <td style="padding: 8px 0; color: #64748b; width: 140px; font-weight: 600;">Họ và tên:</td>
+              <td style="padding: 8px 0; color: #0f172a; font-weight: 700; font-size: 16px;">${student.fullName}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; color: #64748b; font-weight: 600;">Email đăng nhập:</td>
+              <td style="padding: 8px 0; color: #2563eb; font-weight: 600;">
+                <a href="mailto:${student.email}" style="color: #2563eb; text-decoration: none;">${student.email}</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; color: #64748b; font-weight: 600;">Số điện thoại:</td>
+              <td style="padding: 8px 0; color: #0f172a; font-weight: 600;">
+                ${student.phone ? `<a href="tel:${student.phone}" style="color: #0f172a; text-decoration: none;">${student.phone}</a>` : '<span style="color: #94a3b8; font-style: italic;">Chưa cập nhật</span>'}
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; color: #64748b; font-weight: 600;">Cơ sở trực thuộc:</td>
+              <td style="padding: 8px 0; color: #059669; font-weight: 700;">${student.branchName || "Hệ thống chung"}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; color: #64748b; font-weight: 600;">Hình thức tạo:</td>
+              <td style="padding: 8px 0; color: #334155; font-weight: 600;">${student.source || "Tạo trực tiếp / Chuyển đổi Lead"}</td>
+            </tr>
+            ${student.createdBy ? `
+            <tr>
+              <td style="padding: 8px 0; color: #64748b; font-weight: 600;">Người thực hiện:</td>
+              <td style="padding: 8px 0; color: #334155;">${student.createdBy}</td>
+            </tr>` : ''}
+            <tr>
+              <td style="padding: 8px 0; color: #64748b; font-weight: 600;">Thời gian:</td>
+              <td style="padding: 8px 0; color: #334155;">${formattedDate}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div style="text-align: center; padding-top: 16px; border-top: 1px solid #f1f5f9; color: #94a3b8; font-size: 12px;">
+          <p style="margin: 0;">Mã Học Viên: <strong style="font-family: monospace;">${student.id}</strong></p>
+          <p style="margin: 4px 0 0 0;">Bạn có thể quản lý danh sách học viên tại mục Quản Trị Học Viên trên hệ thống ARIS.</p>
+        </div>
+      </div>
+    `;
+
+    const textContent = `
+========================================
+🎓 [HỌC VIÊN MỚI] ĐÃ ĐƯỢC THÊM VÀO HỆ THỐNG
+========================================
+Họ và tên: ${student.fullName}
+Email: ${student.email}
+Số điện thoại: ${student.phone || "Chưa có"}
+Cơ sở: ${student.branchName || "Hệ thống chung"}
+Hình thức: ${student.source || "Tạo trực tiếp"}
+Thời gian: ${formattedDate}
+Mã Học Viên: ${student.id}
+========================================
+    `.trim();
+
+    // 1. Email notification
+    if (this.transporter) {
+      try {
+        const fromAddress = env.SMTP_FROM || `"ARIS IELTS System" <${env.SMTP_USER || "no-reply@nextband.site"}>`;
+        await this.transporter.sendMail({
+          from: fromAddress,
+          to: recipient,
+          subject,
+          text: textContent,
+          html: htmlContent,
+        });
+        console.log(`[LeadNotificationService] ✅ Successfully sent new student email notification to ${recipient}`);
+      } catch (err: any) {
+        console.error(`[LeadNotificationService] ❌ Failed to send new student email:`, err?.message || err);
+      }
+    }
+
+    // 2. Telegram notification
+    if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
+      try {
+        const telegramMessage = `🎓 *[HỌC VIÊN MỚI] THÊM VÀO HỆ THỐNG THÀNH CÔNG*\n\n` +
+          `👤 *Họ và tên:* ${student.fullName}\n` +
+          `✉️ *Email:* \`${student.email}\`\n` +
+          `📞 *Số điện thoại:* \`${student.phone || "Chưa có"}\`\n` +
+          `🏢 *Cơ sở:* ${student.branchName || "Hệ thống chung"}\n` +
+          `📌 *Kênh tạo:* ${student.source || "Tạo bởi Admin / Chuyển đổi"}\n` +
+          `⏰ *Thời gian:* ${formattedDate}\n` +
+          `🆔 *Mã ID:* \`${student.id}\``;
+
+        await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: env.TELEGRAM_CHAT_ID,
+            text: telegramMessage,
+            parse_mode: "Markdown",
+          }),
+        });
+        console.log(`[LeadNotificationService] ✅ Successfully sent Telegram alert for new student ${student.email}`);
+      } catch (tgErr: any) {
+        console.error("[LeadNotificationService] ❌ Failed to send Telegram alert:", tgErr?.message || tgErr);
+      }
+    }
+  }
 }
 
 export const leadNotificationService = new LeadNotificationService();

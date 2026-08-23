@@ -1,6 +1,7 @@
 import { FastifyPluginAsync } from "fastify";
 
 import authRoutes from "./auth.routes.js";
+import assessmentRoutes from "./assessment.routes.js";
 import coursesRoutes from "./courses.routes.js";
 import examsRoutes from "./exams.routes.js";
 import sectionsRoutes from "./sections.routes.js";

@@ -511,8 +511,8 @@ export class NotificationService {
           title: payload.title,
           message: payload.message,
           link: payload.link || null,
-          entityType: payload.entityType || null,
-          entityId: payload.entityId || null,
+          entityType: payload.entityType || 'SYSTEM',
+          entityId: payload.entityId || 'GLOBAL',
         })),
         skipDuplicates: true,
       });

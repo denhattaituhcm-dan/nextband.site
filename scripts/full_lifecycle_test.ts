@@ -7,44 +7,28 @@ async function runFullLifecycleTestSuite() {
 
   console.log("🚀 Running Comprehensive Class Lifecycle Test Suite...\n");
 
-  let testCourse: any = null;
-  let testTeacher: any = null;
-  let testStudent: any = null;
   let manualClass: any = null;
   let autoCloseClass: any = null;
   let autoPurgeClass: any = null;
 
   try {
-    // 0. Chuẩn bị dữ liệu mẫu (Teacher, Student, Course)
-    testTeacher = await prisma.user.create({
-      data: {
-        email: `test_teacher_${Date.now()}@example.com`,
-        passwordHash: "test_hash",
-        fullName: "Test Teacher",
-        role: "teacher",
-      },
-    });
+    // 0. Sử dụng user thực tồn tại trong hệ thống
+    const teacherId = "2a7f243e-0870-40c1-abbc-5702db118bf1"; // Minh Hoang Tran
+    const studentId = "1e5b9575-0f50-4d31-9f45-ff32a7037097"; // Lưu Văn Đang
 
-    testStudent = await prisma.user.create({
-      data: {
-        email: `test_student_${Date.now()}@example.com`,
-        passwordHash: "test_hash",
-        fullName: "Test Student",
-        role: "student",
-      },
-    });
-
-    testCourse = await prisma.course.findFirst();
+    let testCourse = await prisma.course.findFirst();
     if (!testCourse) {
       testCourse = await prisma.course.create({
         data: {
-          title: "Test Course",
+          title: "Test Course Lifecycle",
           description: "Test Course Description",
         },
       });
     }
 
-    console.log("✅ Step 0: Test fixtures created.");
+    console.log("✅ Step 0: Test fixtures ready.");
+    console.log(`  TeacherId: ${teacherId}`);
+    console.log(`  StudentId: ${studentId}`);
 
     // --- TEST 1: ĐÓNG LỚP THỦ CÔNG & GỬI THÔNG BÁO ---
     console.log("\n🧪 Test 1: Manual Class Close & Notification...");
@@ -52,7 +36,7 @@ async function runFullLifecycleTestSuite() {
       data: {
         name: "Test Class - Manual Close",
         courseId: testCourse.id,
-        teacherId: testTeacher.userId,
+        teacherId: teacherId,
         status: "ACTIVE",
         isActive: true,
       },
@@ -61,13 +45,13 @@ async function runFullLifecycleTestSuite() {
     await prisma.classStudent.create({
       data: {
         classId: manualClass.id,
-        studentId: testStudent.userId,
+        studentId: studentId,
       },
     });
 
     // Thực hiện đóng lớp
     const closeResult = await classService.closeClass(
-      { id: testTeacher.userId, roles: ["teacher"] },
+      { id: teacherId, roles: ["teacher"] },
       manualClass.id
     );
 
@@ -88,14 +72,15 @@ async function runFullLifecycleTestSuite() {
       throw new Error(`❌ Expected at least 2 notifications (teacher + student), got ${notifs.length}`);
     }
     console.log(`  ✅ Notifications verified: ${notifs.length} notifications dispatched.`);
+    console.log(`     Sample notif title: "${notifs[0].title}" | message: "${notifs[0].message}"`);
 
     // Kiểm tra Mutation Guards (Chặn ghi khi đã đóng)
     let blockedAddStudent = false;
     try {
       await classService.addStudent(
-        { id: testTeacher.userId, roles: ["teacher"] },
+        { id: teacherId, roles: ["teacher"] },
         manualClass.id,
-        testStudent.userId
+        studentId
       );
     } catch (e: any) {
       if (e.statusCode === 400 && e.message.includes("đã kết thúc và đóng")) {
@@ -116,7 +101,7 @@ async function runFullLifecycleTestSuite() {
       data: {
         name: "Test Class - 7 Months Old",
         courseId: testCourse.id,
-        teacherId: testTeacher.userId,
+        teacherId: teacherId,
         startDate: sevenMonthsAgo,
         status: "ACTIVE",
         isActive: true,
@@ -126,7 +111,7 @@ async function runFullLifecycleTestSuite() {
     await prisma.classStudent.create({
       data: {
         classId: autoCloseClass.id,
-        studentId: testStudent.userId,
+        studentId: studentId,
       },
     });
 
@@ -151,7 +136,7 @@ async function runFullLifecycleTestSuite() {
       data: {
         name: "Test Class - Closed 4 Months Ago",
         courseId: testCourse.id,
-        teacherId: testTeacher.userId,
+        teacherId: teacherId,
         status: "CLOSED",
         isActive: false,
         closedAt: fourMonthsAgo,
@@ -179,17 +164,13 @@ async function runFullLifecycleTestSuite() {
     console.log("\n🧹 Cleaning up test artifacts...");
     if (manualClass?.id) {
       await prisma.notification.deleteMany({ where: { entityId: manualClass.id } }).catch(() => {});
+      await prisma.classStudent.deleteMany({ where: { classId: manualClass.id } }).catch(() => {});
       await prisma.class.delete({ where: { id: manualClass.id } }).catch(() => {});
     }
     if (autoCloseClass?.id) {
       await prisma.notification.deleteMany({ where: { entityId: autoCloseClass.id } }).catch(() => {});
+      await prisma.classStudent.deleteMany({ where: { classId: autoCloseClass.id } }).catch(() => {});
       await prisma.class.delete({ where: { id: autoCloseClass.id } }).catch(() => {});
-    }
-    if (testStudent?.userId) {
-      await prisma.user.delete({ where: { userId: testStudent.userId } }).catch(() => {});
-    }
-    if (testTeacher?.userId) {
-      await prisma.user.delete({ where: { userId: testTeacher.userId } }).catch(() => {});
     }
     await prisma.$disconnect();
     console.log("✨ Cleanup completed.");

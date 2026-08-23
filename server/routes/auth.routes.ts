@@ -57,6 +57,33 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
         include: { roles: true },
       });
 
+      // Dispatch In-App & Email/Telegram notification to Admins
+      (async () => {
+        try {
+          const { NotificationService } = await import("../services/notification.service.js");
+          const notifService = new NotificationService(fastify.prisma);
+          await notifService.notifyUsersByRole(["admin"], {
+            type: "SYSTEM",
+            title: "Học viên mới đăng ký tài khoản",
+            message: `Học viên ${user.fullName || user.email} (${user.email}) vừa đăng ký tài khoản mới trên website.`,
+            link: "/admin/users",
+            entityType: "USER",
+            entityId: user.userId,
+          });
+
+          const { leadNotificationService } = await import("../services/leadNotification.service.js");
+          await leadNotificationService.notifyNewStudent({
+            id: user.userId,
+            fullName: user.fullName || "Học viên mới",
+            email: user.email || "",
+            phone: user.phone || null,
+            source: "Đăng ký trực tiếp trên Website (Web Registration)",
+          });
+        } catch (notifErr) {
+          request.log.error(notifErr, "Failed to dispatch user registration notification");
+        }
+      })();
+
       // Generate token
       const token = fastify.jwt.sign({
         id: user.userId,
@@ -143,6 +170,33 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
           },
           include: { roles: true },
         });
+
+        // Dispatch In-App & Email/Telegram notification to Admins for first-time Google sign up
+        (async () => {
+          try {
+            const { NotificationService } = await import("../services/notification.service.js");
+            const notifService = new NotificationService(fastify.prisma);
+            await notifService.notifyUsersByRole(["admin"], {
+              type: "SYSTEM",
+              title: "Học viên mới đăng ký qua Google",
+              message: `Học viên ${user.fullName || user.email} (${user.email}) vừa tạo tài khoản lần đầu qua Google.`,
+              link: "/admin/users",
+              entityType: "USER",
+              entityId: user.userId,
+            });
+
+            const { leadNotificationService } = await import("../services/leadNotification.service.js");
+            await leadNotificationService.notifyNewStudent({
+              id: user.userId,
+              fullName: user.fullName || "Học viên Google",
+              email: user.email || "",
+              phone: null,
+              source: "Đăng ký lần đầu qua Google OAuth (Web Google Auth)",
+            });
+          } catch (notifErr) {
+            request.log.error(notifErr, "Failed to dispatch google registration notification");
+          }
+        })();
       }
 
       if (!user.isActive) {

@@ -417,6 +417,37 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           return newUser;
         });
 
+        // 3. Non-blocking In-App & Email/Telegram notification to Admins
+        (async () => {
+          try {
+            const { NotificationService } = await import("../services/notification.service.js");
+            const notifService = new NotificationService(fastify.prisma);
+            const roleLabel = role === "student" ? "Học viên" : role === "teacher" ? "Giáo viên" : "Quản trị viên";
+            await notifService.notifyUsersByRole(["admin"], {
+              type: "SYSTEM",
+              title: `${roleLabel} mới được thêm vào hệ thống`,
+              message: `${roleLabel} ${user.fullName || user.email} (${user.email}) vừa được tạo thành công trên hệ thống.`,
+              link: "/admin/users",
+              entityType: "USER",
+              entityId: user.userId,
+            });
+
+            if (role === "student") {
+              const { leadNotificationService } = await import("../services/leadNotification.service.js");
+              await leadNotificationService.notifyNewStudent({
+                id: user.userId,
+                fullName: user.fullName || user.email || "Học viên mới",
+                email: user.email || "",
+                phone: user.phone || null,
+                source: "Tạo trực tiếp bởi Quản trị viên (Admin Portal)",
+                createdBy: (request as any).user?.email || "Admin",
+              });
+            }
+          } catch (notifErr) {
+            request.log.error(notifErr, "Failed to dispatch user creation notification");
+          }
+        })();
+
         return reply.status(201).send({
           id: user.userId,
           email: user.email,

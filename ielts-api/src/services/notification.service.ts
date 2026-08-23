@@ -16,6 +16,7 @@ export class NotificationService {
   /**
    * Tạo 1 notification trong transaction hoặc direct client context.
    * Nếu vi phạm unique constraint (P2002) do retry cùng business event -> skip an toàn (Idempotency).
+   * Đảm bảo entityType và entityId không bị null để PostgreSQL UNIQUE index hoạt động chuẩn xác 100%.
    */
   async createNotification(
     tx: Prisma.TransactionClient | PrismaClient,
