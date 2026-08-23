@@ -2178,7 +2178,19 @@ export interface Branch {
   rooms?: Room[];
 }
 
+export interface Room {
+  id: string;
+  branchId: string;
+  name: string;
+  capacity: number;
+  isActive: boolean;
+  createdAt?: string;
+  branch?: { id: string; name: string; code: string };
+  _count?: { classes: number };
+}
+
 export const branchesApi = {
+
   /** Lấy danh sách chi nhánh active. includeInactive=true dùng cho trang Settings. */
   list: async (includeInactive = false): Promise<Branch[]> => {
     const token = await getAuthToken();
@@ -2256,7 +2268,62 @@ export const branchesApi = {
     const json = await res.json();
     return json.data;
   },
+
+  /** Đặt chi nhánh này làm Cơ sở chính. Admin only. Transaction đảm bảo chỉ 1 primary. */
+  setPrimary: async (id: string): Promise<Branch> => {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/branches/${id}/set-primary`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || err.error || "Không thể đặt làm cơ sở chính");
+    }
+    const json = await res.json();
+    return json.data;
+  },
+
+  /** Ngừng hoạt động chi nhánh (soft-delete). Không được áp dụng cho Cơ sở chính. Admin only. */
+  deactivate: async (id: string): Promise<Branch> => {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/branches/${id}/deactivate`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || err.error || "Không thể ngừng hoạt động chi nhánh");
+    }
+    const json = await res.json();
+    return json.data;
+  },
+
+  /** Kích hoạt lại chi nhánh đang inactive. Admin only. */
+  activate: async (id: string): Promise<Branch> => {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/branches/${id}/activate`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || err.error || "Không thể kích hoạt chi nhánh");
+    }
+    const json = await res.json();
+    return json.data;
+  },
 };
+
 
 export const roomsApi = {
   list: async (branchId?: string): Promise<Room[]> => {

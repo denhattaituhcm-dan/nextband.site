@@ -16469,9 +16469,9 @@ var require_validate = __commonJS({
       }
     }
     function returnResults(it) {
-      const { gen, schemaEnv, validateName, ValidationError, opts } = it;
+      const { gen, schemaEnv, validateName, ValidationError: ValidationError2, opts } = it;
       if (schemaEnv.$async) {
-        gen.if((0, codegen_1._)`${names_1.default.errors} === 0`, () => gen.return(names_1.default.data), () => gen.throw((0, codegen_1._)`new ${ValidationError}(${names_1.default.vErrors})`));
+        gen.if((0, codegen_1._)`${names_1.default.errors} === 0`, () => gen.return(names_1.default.data), () => gen.throw((0, codegen_1._)`new ${ValidationError2}(${names_1.default.vErrors})`));
       } else {
         gen.assign((0, codegen_1._)`${validateName}.errors`, names_1.default.vErrors);
         if (opts.unevaluated)
@@ -16823,14 +16823,14 @@ var require_validation_error = __commonJS({
   "node_modules/ajv/dist/runtime/validation_error.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var ValidationError = class extends Error {
+    var ValidationError2 = class extends Error {
       constructor(errors) {
         super("validation failed");
         this.errors = errors;
         this.ajv = this.validation = true;
       }
     };
-    exports.default = ValidationError;
+    exports.default = ValidationError2;
   }
 });
 
@@ -117180,19 +117180,31 @@ var AuthorizationService = class {
     return question;
   }
   /**
-   * Phân giải phạm vi chi nhánh được phép truy cập (Single Org - Multi Branch Invariant INV-3 & INV-5).
-   * - Super Admin: Được chọn 'ALL' hoặc bất kỳ branchId nào.
-   * - Branch Manager / Teacher / Staff: Chỉ được truy cập các branchId nằm trong USER_BRANCH. Không được phép chọn 'ALL'.
+   * Phân giải phạm vi chi nhánh được phép truy cập.
+   *
+   * MVP Multi-Location invariant:
+   *   - Admin, Teacher, Student → { type: "all" } — truy cập toàn bộ active branches.
+   *   - Branch không phải là security boundary trong MVP này.
+   *   - selectedBranch ở frontend là UI filter/view state, KHÔNG được dùng để derive authorization scope.
+   *   - UserBranch được giữ nguyên cho các role chuyên biệt trong tương lai (branch_manager, staff).
+   *     Hiện tại chưa có role nào bị giới hạn bởi UserBranch scope trong MVP.
+   *
+   * Nếu sau này cần branch-based access control, chỉ áp dụng cho các role được
+   * liệt kê rõ ràng trong BRANCH_SCOPED_ROLES, không mặc định áp dụng cho tất cả.
    */
   async resolveAuthorizedBranchScope(params) {
-    const { userId, userRoles = [], requestedBranchId } = params;
-    const isAdmin = userRoles.includes("admin");
-    if (isAdmin) {
+    const { userRoles = [], requestedBranchId } = params;
+    const BRANCH_SCOPED_ROLES = [
+      // "branch_manager", "branch_staff"  // ← Uncomment khi có nhu cầu thực tế
+    ];
+    const needsBranchScope = userRoles.some((r2) => BRANCH_SCOPED_ROLES.includes(r2));
+    if (!needsBranchScope) {
       if (!requestedBranchId || requestedBranchId === "ALL" || requestedBranchId === "all") {
         return { type: "all" };
       }
       return { type: "branch", branchId: requestedBranchId };
     }
+    const { userId } = params;
     const userBranches = await this.prisma.userBranch.findMany({
       where: { userId },
       select: { branchId: true }
@@ -120152,12 +120164,14 @@ var ExamSubmissionService = class {
       for (let i2 = 0; i2 < grades.length; i2++) {
         const g = grades[i2];
         let answerFeedback = g.feedback || null;
-        if (i2 === 0 && options && (options.feedback || options.primaryErrorCategory !== void 0 || options.revisionRequired !== void 0 || options.criteriaScores !== void 0)) {
+        if (i2 === 0 && options && (options.feedback || options.primaryErrorCategory !== void 0 || options.revisionRequired !== void 0 || options.criteriaScores !== void 0 || options.sentenceFeedbacks !== void 0)) {
           const structuredPayload = {
             text: options.feedback || g.feedback || "",
             primaryErrorCategory: options.primaryErrorCategory || null,
             revisionRequired: !!options.revisionRequired,
-            criteriaScores: options.criteriaScores || null
+            criteriaScores: options.criteriaScores || null,
+            sentenceFeedbacks: options.sentenceFeedbacks || [],
+            tabSwitchCount: options.tabSwitchCount || 0
           };
           answerFeedback = JSON.stringify(structuredPayload);
         }
@@ -121583,6 +121597,21 @@ var ClassService = class {
       const firstCourse = await this.prisma.course.findFirst();
       courseId = firstCourse?.id || "default";
     }
+    if (data.roomId && data.branchId) {
+      const room = await this.prisma.room.findUnique({
+        where: { id: data.roomId },
+        select: { branchId: true, name: true }
+      });
+      if (!room) {
+        throw new NotFoundError("Ph\xF2ng h\u1ECDc kh\xF4ng t\u1ED3n t\u1EA1i.");
+      }
+      if (room.branchId !== data.branchId) {
+        throw new AuthorizationError(
+          "Ph\xF2ng h\u1ECDc kh\xF4ng thu\u1ED9c c\u01A1 s\u1EDF \u0111\xE3 ch\u1ECDn. Vui l\xF2ng ch\u1ECDn ph\xF2ng h\u1ECDc thu\u1ED9c \u0111\xFAng c\u01A1 s\u1EDF.",
+          400
+        );
+      }
+    }
     return this.repo.create({
       name: data.name,
       description: data.description,
@@ -121615,6 +121644,20 @@ var ClassService = class {
     if (data.endDate !== void 0) updatePayload.endDate = data.endDate ? new Date(data.endDate) : null;
     if (data.isActive !== void 0) updatePayload.isActive = data.isActive;
     if (isAdmin && data.teacherId !== void 0) updatePayload.teacherId = data.teacherId;
+    const effectiveBranchId = updatePayload.branchId ?? classData.branchId;
+    const effectiveRoomId = updatePayload.roomId ?? classData.roomId;
+    if (effectiveRoomId && effectiveBranchId) {
+      const room = await this.prisma.room.findUnique({
+        where: { id: effectiveRoomId },
+        select: { branchId: true }
+      });
+      if (room && room.branchId !== effectiveBranchId) {
+        throw new AuthorizationError(
+          "Ph\xF2ng h\u1ECDc kh\xF4ng thu\u1ED9c c\u01A1 s\u1EDF \u0111\xE3 ch\u1ECDn. Vui l\xF2ng ch\u1ECDn ph\xF2ng h\u1ECDc thu\u1ED9c \u0111\xFAng c\u01A1 s\u1EDF.",
+          400
+        );
+      }
+    }
     return this.repo.update(id, updatePayload);
   }
   // Helper: Gửi thông báo đến học sinh và giáo viên khi lớp đóng
@@ -124419,17 +124462,26 @@ var speakingForecastRoutes = async (fastify) => {
 var speaking_forecast_routes_default = speakingForecastRoutes;
 
 // server/services/branch.service.ts
+var ValidationError = class extends Error {
+  constructor(message2) {
+    super(message2);
+    this.name = "ValidationError";
+  }
+};
 var BranchService = class {
   constructor(prisma) {
     this.prisma = prisma;
   }
   /**
-   * Lấy danh sách chi nhánh theo AuthorizedBranchScope
+   * Lấy danh sách chi nhánh theo AuthorizedBranchScope.
+   * Mặc định chỉ trả về active branches.
+   * @param includeInactive - nếu true, trả về cả inactive (dùng cho trang Settings).
    */
-  async listBranches(scope) {
+  async listBranches(scope, includeInactive = false) {
+    const activeFilter = includeInactive ? {} : { isActive: true };
     if (!scope || scope.type === "all") {
       return this.prisma.branch.findMany({
-        where: { isActive: true },
+        where: activeFilter,
         include: {
           _count: {
             select: {
@@ -124439,12 +124491,12 @@ var BranchService = class {
             }
           }
         },
-        orderBy: { createdAt: "asc" }
+        orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }]
       });
     }
     if (scope.type === "branch") {
       return this.prisma.branch.findMany({
-        where: { id: scope.branchId, isActive: true },
+        where: { id: scope.branchId, ...activeFilter },
         include: {
           _count: {
             select: {
@@ -124458,7 +124510,7 @@ var BranchService = class {
     }
     if (scope.type === "branches") {
       return this.prisma.branch.findMany({
-        where: { id: { in: scope.branchIds }, isActive: true },
+        where: { id: { in: scope.branchIds }, ...activeFilter },
         include: {
           _count: {
             select: {
@@ -124468,7 +124520,7 @@ var BranchService = class {
             }
           }
         },
-        orderBy: { createdAt: "asc" }
+        orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }]
       });
     }
     return [];
@@ -124498,7 +124550,17 @@ var BranchService = class {
     return branch;
   }
   /**
-   * Tạo chi nhánh mới (Super Admin)
+   * Lấy Cơ sở chính (isPrimary = true, isActive = true).
+   * Dùng cho frontend auto-select khi chỉ có 1 cơ sở hoặc cần default.
+   */
+  async getPrimaryBranch() {
+    return this.prisma.branch.findFirst({
+      where: { isPrimary: true, isActive: true }
+    });
+  }
+  /**
+   * Tạo chi nhánh mới (Admin only).
+   * Nếu là chi nhánh đầu tiên trong hệ thống → tự động set isPrimary = true.
    */
   async createBranch(input) {
     const normalizedCode = input.code.trim().toUpperCase().replace(/\s+/g, "_");
@@ -124508,18 +124570,22 @@ var BranchService = class {
     if (existing) {
       throw new AuthorizationError(`M\xE3 chi nh\xE1nh '${normalizedCode}' \u0111\xE3 t\u1ED3n t\u1EA1i.`);
     }
+    const branchCount = await this.prisma.branch.count();
+    const isPrimary = branchCount === 0;
     return this.prisma.branch.create({
       data: {
         code: normalizedCode,
         name: input.name.trim(),
         address: input.address.trim(),
         phone: input.phone?.trim() || null,
-        isActive: true
+        isActive: true,
+        isPrimary
       }
     });
   }
   /**
-   * Cập nhật thông tin chi nhánh
+   * Cập nhật thông tin cơ bản của chi nhánh (tên, địa chỉ, hotline).
+   * Không dùng để thay đổi isPrimary hoặc isActive (có method riêng).
    */
   async updateBranch(id, input) {
     const branch = await this.prisma.branch.findUnique({ where: { id } });
@@ -124531,13 +124597,71 @@ var BranchService = class {
       data: {
         name: input.name !== void 0 ? input.name.trim() : void 0,
         address: input.address !== void 0 ? input.address.trim() : void 0,
-        phone: input.phone !== void 0 ? input.phone.trim() : void 0,
-        isActive: input.isActive !== void 0 ? input.isActive : void 0
+        phone: input.phone !== void 0 ? input.phone.trim() : void 0
       }
     });
   }
   /**
-   * Gán nhân sự vào chi nhánh
+   * Đặt chi nhánh này làm Cơ sở chính.
+   *
+   * Invariant: Tại mọi thời điểm, tối đa 1 active Branch có isPrimary = true.
+   * Được enforce bởi transaction + unique partial index ở DB.
+   */
+  async setPrimaryBranch(id) {
+    const branch = await this.prisma.branch.findUnique({ where: { id } });
+    if (!branch) {
+      throw new NotFoundError("Chi nh\xE1nh kh\xF4ng t\u1ED3n t\u1EA1i.");
+    }
+    if (!branch.isActive) {
+      throw new ValidationError("Kh\xF4ng th\u1EC3 \u0111\u1EB7t chi nh\xE1nh \u0111ang ng\u1EEBng ho\u1EA1t \u0111\u1ED9ng l\xE0m C\u01A1 s\u1EDF ch\xEDnh.");
+    }
+    return this.prisma.$transaction(async (tx) => {
+      await tx.branch.updateMany({
+        where: { isPrimary: true },
+        data: { isPrimary: false }
+      });
+      return tx.branch.update({
+        where: { id },
+        data: { isPrimary: true }
+      });
+    });
+  }
+  /**
+   * Ngừng hoạt động chi nhánh (soft-delete).
+   * KHÔNG cho phép ngừng Cơ sở chính — phải chọn Primary mới trước.
+   */
+  async deactivateBranch(id) {
+    const branch = await this.prisma.branch.findUnique({ where: { id } });
+    if (!branch) {
+      throw new NotFoundError("Chi nh\xE1nh kh\xF4ng t\u1ED3n t\u1EA1i.");
+    }
+    if (branch.isPrimary) {
+      throw new ValidationError(
+        "Kh\xF4ng th\u1EC3 ng\u1EEBng ho\u1EA1t \u0111\u1ED9ng C\u01A1 s\u1EDF ch\xEDnh. Vui l\xF2ng \u0111\u1EB7t c\u01A1 s\u1EDF kh\xE1c l\xE0m C\u01A1 s\u1EDF ch\xEDnh tr\u01B0\u1EDBc."
+      );
+    }
+    return this.prisma.branch.update({
+      where: { id },
+      data: { isActive: false }
+    });
+  }
+  /**
+   * Kích hoạt lại chi nhánh đang inactive.
+   */
+  async activateBranch(id) {
+    const branch = await this.prisma.branch.findUnique({ where: { id } });
+    if (!branch) {
+      throw new NotFoundError("Chi nh\xE1nh kh\xF4ng t\u1ED3n t\u1EA1i.");
+    }
+    return this.prisma.branch.update({
+      where: { id },
+      data: { isActive: true }
+    });
+  }
+  /**
+   * Gán nhân sự vào chi nhánh.
+   * MVP Note: UserBranch hiện được giữ lại cho tương lai nhưng không ảnh hưởng
+   * đến quyền truy cập của Teacher/Student trong MVP này.
    */
   async assignUserToBranch(userId, branchId) {
     return this.prisma.userBranch.upsert({
@@ -124549,7 +124673,7 @@ var BranchService = class {
     });
   }
   /**
-   * Xóa nhân sự khỏi chi nhánh
+   * Xóa nhân sự khỏi chi nhánh.
    */
   async removeUserFromBranch(userId, branchId) {
     return this.prisma.userBranch.deleteMany({
@@ -124568,8 +124692,13 @@ async function branchRoutes(fastify) {
       userId: user.id,
       userRoles: user.roles || []
     });
-    const branches = await branchService.listBranches(scope);
+    const includeInactive = request.query.includeInactive === "true";
+    const branches = await branchService.listBranches(scope, includeInactive);
     return reply.send({ success: true, data: branches });
+  });
+  fastify.get("/primary", { preHandler: authenticate }, async (_request, reply) => {
+    const branch = await branchService.getPrimaryBranch();
+    return reply.send({ success: true, data: branch });
   });
   fastify.get("/:id", { preHandler: authenticate }, async (request, reply) => {
     const branch = await branchService.getBranchById(request.params.id);
@@ -124583,6 +124712,30 @@ async function branchRoutes(fastify) {
     const branch = await branchService.updateBranch(request.params.id, request.body);
     return reply.send({ success: true, data: branch });
   });
+  fastify.patch(
+    "/:id/set-primary",
+    { preHandler: [authenticate, requireRoles("admin")] },
+    async (request, reply) => {
+      const branch = await branchService.setPrimaryBranch(request.params.id);
+      return reply.send({ success: true, data: branch });
+    }
+  );
+  fastify.patch(
+    "/:id/deactivate",
+    { preHandler: [authenticate, requireRoles("admin")] },
+    async (request, reply) => {
+      const branch = await branchService.deactivateBranch(request.params.id);
+      return reply.send({ success: true, data: branch });
+    }
+  );
+  fastify.patch(
+    "/:id/activate",
+    { preHandler: [authenticate, requireRoles("admin")] },
+    async (request, reply) => {
+      const branch = await branchService.activateBranch(request.params.id);
+      return reply.send({ success: true, data: branch });
+    }
+  );
   fastify.post("/:id/users", { preHandler: [authenticate, requireRoles("admin")] }, async (request, reply) => {
     await branchService.assignUserToBranch(request.body.userId, request.params.id);
     return reply.send({ success: true, message: "G\xE1n chi nh\xE1nh th\xE0nh c\xF4ng" });
