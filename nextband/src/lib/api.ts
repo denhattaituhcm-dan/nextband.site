@@ -2166,6 +2166,8 @@ export interface Branch {
   address: string;
   phone?: string | null;
   isActive: boolean;
+  /** isPrimary: true = đây là Cơ sở chính của hệ thống. Tối đa 1 active Branch có giá trị này. */
+  isPrimary: boolean;
   createdAt: string;
   updatedAt?: string;
   _count?: {
@@ -2176,21 +2178,12 @@ export interface Branch {
   rooms?: Room[];
 }
 
-export interface Room {
-  id: string;
-  branchId: string;
-  name: string;
-  capacity: number;
-  isActive: boolean;
-  createdAt?: string;
-  branch?: { id: string; name: string; code: string };
-  _count?: { classes: number };
-}
-
 export const branchesApi = {
-  list: async (): Promise<Branch[]> => {
+  /** Lấy danh sách chi nhánh active. includeInactive=true dùng cho trang Settings. */
+  list: async (includeInactive = false): Promise<Branch[]> => {
     const token = await getAuthToken();
-    const res = await fetch(`${API_BASE_URL}/branches`, {
+    const query = includeInactive ? "?includeInactive=true" : "";
+    const res = await fetch(`${API_BASE_URL}/branches${query}`, {
       headers: {
         "Content-Type": "application/json",
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -2199,6 +2192,20 @@ export const branchesApi = {
     if (!res.ok) throw new Error("Không thể tải danh sách chi nhánh");
     const json = await res.json();
     return json.data || [];
+  },
+
+  /** Lấy Cơ sở chính (isPrimary = true). Dùng cho auto-select trên form. */
+  getPrimary: async (): Promise<Branch | null> => {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/branches/primary`, {
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json.data || null;
   },
 
   getById: async (id: string): Promise<Branch> => {
@@ -2232,7 +2239,7 @@ export const branchesApi = {
     return json.data;
   },
 
-  update: async (id: string, data: { name?: string; address?: string; phone?: string; isActive?: boolean }): Promise<Branch> => {
+  update: async (id: string, data: { name?: string; address?: string; phone?: string }): Promise<Branch> => {
     const token = await getAuthToken();
     const res = await fetch(`${API_BASE_URL}/branches/${id}`, {
       method: "PUT",
