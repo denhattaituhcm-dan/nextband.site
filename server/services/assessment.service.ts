@@ -70,6 +70,7 @@ export interface DiagnosticReport {
     rawScore: number;
     totalQuestions: number;
     accuracyPercent: number;
+    preliminaryRange?: string;
     listening: SkillScoreReportItem;
     reading: SkillScoreReportItem;
     grammar: SkillScoreReportItem;
@@ -96,14 +97,55 @@ export interface DiagnosticReport {
 }
 
 export function calculateEstimatedSkillBand(correct: number, total: number): { band: string; level: string } {
-  if (total <= 0) return { band: "Band 2.5 – 3.5", level: "Starter (Khởi nền)" };
-  const pct = Math.round((correct / total) * 100);
-  if (pct >= 90) return { band: "Band 7.5 – 8.5", level: "Advanced (Xuất sắc)" };
-  if (pct >= 75) return { band: "Band 6.5 – 7.0", level: "Upper-Intermediate (Giỏi)" };
-  if (pct >= 55) return { band: "Band 5.5 – 6.0", level: "Intermediate (Khá)" };
-  if (pct >= 40) return { band: "Band 4.5 – 5.0", level: "Pre-Intermediate (Trung bình)" };
-  if (pct >= 25) return { band: "Band 3.5 – 4.0", level: "Elementary (Sơ cấp)" };
-  return { band: "Band 2.5 – 3.0", level: "Starter (Khởi nền)" };
+  if (total <= 0) return { band: "≈ 3.0", level: "Foundation (Cơ bản)" };
+
+  // For Grammar (15 questions)
+  if (total === 15) {
+    if (correct >= 11) return { band: "Advanced", level: "Advanced (Nâng cao)" };
+    if (correct >= 6) return { band: "Intermediate", level: "Intermediate (Trung cấp)" };
+    return { band: "Foundation", level: "Foundation (Cơ bản)" };
+  }
+
+  // For Listening & Reading (10 questions each)
+  if (correct >= 9) return { band: "≈ 6.5+", level: "Advanced (Nâng cao)" };
+  if (correct >= 7) return { band: "≈ 6.0", level: "Upper-Intermediate (Khá - Giỏi)" };
+  if (correct >= 5) return { band: "≈ 5.0", level: "Intermediate (Trung cấp)" };
+  if (correct >= 3) return { band: "≈ 4.0", level: "Elementary (Sơ cấp)" };
+  return { band: "≈ 3.0", level: "Foundation (Khởi nền)" };
+}
+
+/**
+ * Derive preliminary receptive skills profile range directly from Listening & Reading estimates
+ */
+export function derivePreliminaryProfileRange(
+  listeningBandStr?: string,
+  readingBandStr?: string,
+  hasAttemptedData: boolean = true
+): string {
+  if (!hasAttemptedData) return "Chưa đủ dữ liệu";
+
+  const parseBandNum = (str?: string): number | null => {
+    if (!str) return null;
+    const match = str.match(/(\d+(\.\d+)?)/);
+    return match ? parseFloat(match[1]) : null;
+  };
+
+  const lNum = parseBandNum(listeningBandStr);
+  const rNum = parseBandNum(readingBandStr);
+
+  if (lNum == null && rNum == null) return "5.0 – 6.0";
+  if (lNum != null && rNum == null) return `${lNum.toFixed(1)}${lNum >= 6.5 ? "+" : ""}`;
+  if (lNum == null && rNum != null) return `${rNum.toFixed(1)}${rNum >= 6.5 ? "+" : ""}`;
+
+  const min = Math.min(lNum!, rNum!);
+  const max = Math.max(lNum!, rNum!);
+
+  if (min === max) {
+    return `${min.toFixed(1)}${min >= 6.5 ? "+" : ""}`;
+  }
+
+  const maxSuffix = max >= 6.5 ? "+" : "";
+  return `${min.toFixed(1)} – ${max.toFixed(1)}${maxSuffix}`;
 }
 
 export function mapRawScoreToArisLevel(correctCount: number, totalQuestions: number = 35) {
@@ -118,7 +160,7 @@ export function mapRawScoreToArisLevel(correctCount: number, totalQuestions: num
       recommendedCourse: {
         slug: "starter",
         title: "Khóa STARTER (Xây Nền 44 Âm IPA & Câu Đơn)",
-        targetBand: "Mục tiêu: Bứt phá chuẩn 3.5+",
+        targetBand: "Mục tiêu: Đạt chuẩn 3.5+",
         level: "Beginner",
         summary: "Huấn luyện chuẩn xác 44 âm IPA, làm chủ cấu trúc câu đơn và 800 từ vựng cốt lõi theo phương pháp The ARIS Way.",
       },
@@ -701,6 +743,11 @@ export class AssessmentService {
       throw err;
     }
 
+    // Anti-spam & buffer protection: limit writing response to 4000 characters
+    if (typeof answers["writing_response"] === "string") {
+      answers["writing_response"] = answers["writing_response"].slice(0, 4000);
+    }
+
     session.answers = { ...session.answers, ...answers };
     session.updatedAt = new Date();
     inMemoryAssessmentSessions.set(sessionId, session);
@@ -755,6 +802,9 @@ export class AssessmentService {
     }
 
     const answers = { ...(session.answers || {}), ...(answersPayload || {}) };
+    if (typeof answers["writing_response"] === "string") {
+      answers["writing_response"] = answers["writing_response"].slice(0, 4000);
+    }
 
     let listeningCorrect = 0;
     let listeningTotal = 0;
@@ -891,13 +941,13 @@ export class AssessmentService {
           isMatch = key.acceptedAnswers.some((acc) => normalizeText(acc) === normStudent);
         }
 
-        // Support accent-insensitive match (e.g. Vietnamese typing without accents or subtle variations)
+        // Support accent-insensitive match (e.g. Vietnamese typing without accents)
         if (!isMatch) {
           const stripAccents = (str: string) =>
             str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
           const studentStripped = stripAccents(normStudent);
           const correctStripped = stripAccents(normCorrect);
-          isMatch = studentStripped === correctStripped || studentStripped.includes(correctStripped) || correctStripped.includes(studentStripped);
+          isMatch = studentStripped === correctStripped;
           if (!isMatch && key.acceptedAnswers) {
             isMatch = key.acceptedAnswers.some(
               (acc) => stripAccents(normalizeText(acc)) === studentStripped
@@ -929,7 +979,7 @@ export class AssessmentService {
     const arisInfo = mapRawScoreToArisLevel(rawCorrect, totalQuestions);
 
     // Subjective check (Writing & Speaking)
-    const hasWriting = typeof answers["writing_response"] === "string" && answers["writing_response"].trim().length >= 30;
+    const hasWriting = typeof answers["writing_response"] === "string" && answers["writing_response"].trim().length > 0;
     const hasSpeaking =
       !!answers["speaking_part1_audio_url"] ||
       !!answers["speaking_part2_audio_url"] ||
@@ -990,6 +1040,11 @@ export class AssessmentService {
         rawScore: rawCorrect,
         totalQuestions,
         accuracyPercent,
+        preliminaryRange: derivePreliminaryProfileRange(
+          listeningBandInfo.band,
+          readingBandInfo.band,
+          hasAttemptedAnswers && rawCorrect > 0
+        ),
         listening: {
           correct: listeningCorrect,
           total: listeningTotal,

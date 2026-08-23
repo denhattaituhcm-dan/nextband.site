@@ -121613,7 +121613,8 @@ Furthermore, the retention of academic vocabulary requires spaced repetition rat
         "S\u1EED d\u1EE5ng \xEDt nh\u1EA5t 2 lu\u1EADn \u0111i\u1EC3m k\xE8m v\xED d\u1EE5 ho\u1EB7c gi\u1EA3i th\xEDch ng\u1EAFn g\u1ECDn.",
         "C\u1ED1 g\u1EAFng \xE1p d\u1EE5ng c\xE2u gh\xE9p / c\xE2u ph\u1EE9c v\xE0 c\xE1c li\xEAn t\u1EEB logic (However, Furthermore, Consequently...)."
       ],
-      minWords: 80
+      minWords: 80,
+      maxWords: 350
     },
     speaking: {
       title: "Ch\u1EA9n \u0111o\xE1n N\xF3i (Diagnostic Speaking)",
@@ -121928,14 +121929,37 @@ var ipRateLimitMap = /* @__PURE__ */ new Map();
 var phoneRateLimitMap = /* @__PURE__ */ new Map();
 var inMemoryAssessmentSessions = /* @__PURE__ */ new Map();
 function calculateEstimatedSkillBand(correct, total) {
-  if (total <= 0) return { band: "Band 2.5 \u2013 3.5", level: "Starter (Kh\u1EDFi n\u1EC1n)" };
-  const pct = Math.round(correct / total * 100);
-  if (pct >= 90) return { band: "Band 7.5 \u2013 8.5", level: "Advanced (Xu\u1EA5t s\u1EAFc)" };
-  if (pct >= 75) return { band: "Band 6.5 \u2013 7.0", level: "Upper-Intermediate (Gi\u1ECFi)" };
-  if (pct >= 55) return { band: "Band 5.5 \u2013 6.0", level: "Intermediate (Kh\xE1)" };
-  if (pct >= 40) return { band: "Band 4.5 \u2013 5.0", level: "Pre-Intermediate (Trung b\xECnh)" };
-  if (pct >= 25) return { band: "Band 3.5 \u2013 4.0", level: "Elementary (S\u01A1 c\u1EA5p)" };
-  return { band: "Band 2.5 \u2013 3.0", level: "Starter (Kh\u1EDFi n\u1EC1n)" };
+  if (total <= 0) return { band: "\u2248 3.0", level: "Foundation (C\u01A1 b\u1EA3n)" };
+  if (total === 15) {
+    if (correct >= 11) return { band: "Advanced", level: "Advanced (N\xE2ng cao)" };
+    if (correct >= 6) return { band: "Intermediate", level: "Intermediate (Trung c\u1EA5p)" };
+    return { band: "Foundation", level: "Foundation (C\u01A1 b\u1EA3n)" };
+  }
+  if (correct >= 9) return { band: "\u2248 6.5+", level: "Advanced (N\xE2ng cao)" };
+  if (correct >= 7) return { band: "\u2248 6.0", level: "Upper-Intermediate (Kh\xE1 - Gi\u1ECFi)" };
+  if (correct >= 5) return { band: "\u2248 5.0", level: "Intermediate (Trung c\u1EA5p)" };
+  if (correct >= 3) return { band: "\u2248 4.0", level: "Elementary (S\u01A1 c\u1EA5p)" };
+  return { band: "\u2248 3.0", level: "Foundation (Kh\u1EDFi n\u1EC1n)" };
+}
+function derivePreliminaryProfileRange(listeningBandStr, readingBandStr, hasAttemptedData = true) {
+  if (!hasAttemptedData) return "Ch\u01B0a \u0111\u1EE7 d\u1EEF li\u1EC7u";
+  const parseBandNum = (str) => {
+    if (!str) return null;
+    const match = str.match(/(\d+(\.\d+)?)/);
+    return match ? parseFloat(match[1]) : null;
+  };
+  const lNum = parseBandNum(listeningBandStr);
+  const rNum = parseBandNum(readingBandStr);
+  if (lNum == null && rNum == null) return "5.0 \u2013 6.0";
+  if (lNum != null && rNum == null) return `${lNum.toFixed(1)}${lNum >= 6.5 ? "+" : ""}`;
+  if (lNum == null && rNum != null) return `${rNum.toFixed(1)}${rNum >= 6.5 ? "+" : ""}`;
+  const min = Math.min(lNum, rNum);
+  const max = Math.max(lNum, rNum);
+  if (min === max) {
+    return `${min.toFixed(1)}${min >= 6.5 ? "+" : ""}`;
+  }
+  const maxSuffix = max >= 6.5 ? "+" : "";
+  return `${min.toFixed(1)} \u2013 ${max.toFixed(1)}${maxSuffix}`;
 }
 function mapRawScoreToArisLevel(correctCount, totalQuestions = 35) {
   const percentage = Math.round(correctCount / Math.max(1, totalQuestions) * 100);
@@ -121948,7 +121972,7 @@ function mapRawScoreToArisLevel(correctCount, totalQuestions = 35) {
       recommendedCourse: {
         slug: "starter",
         title: "Kh\xF3a STARTER (X\xE2y N\u1EC1n 44 \xC2m IPA & C\xE2u \u0110\u01A1n)",
-        targetBand: "M\u1EE5c ti\xEAu: B\u1EE9t ph\xE1 chu\u1EA9n 3.5+",
+        targetBand: "M\u1EE5c ti\xEAu: \u0110\u1EA1t chu\u1EA9n 3.5+",
         level: "Beginner",
         summary: "Hu\u1EA5n luy\u1EC7n chu\u1EA9n x\xE1c 44 \xE2m IPA, l\xE0m ch\u1EE7 c\u1EA5u tr\xFAc c\xE2u \u0111\u01A1n v\xE0 800 t\u1EEB v\u1EF1ng c\u1ED1t l\xF5i theo ph\u01B0\u01A1ng ph\xE1p The ARIS Way."
       }
@@ -122431,6 +122455,9 @@ var AssessmentService = class {
       err.statusCode = 403;
       throw err;
     }
+    if (typeof answers["writing_response"] === "string") {
+      answers["writing_response"] = answers["writing_response"].slice(0, 4e3);
+    }
     session.answers = { ...session.answers, ...answers };
     session.updatedAt = /* @__PURE__ */ new Date();
     inMemoryAssessmentSessions.set(sessionId, session);
@@ -122474,6 +122501,9 @@ var AssessmentService = class {
       throw err;
     }
     const answers = { ...session.answers || {}, ...answersPayload || {} };
+    if (typeof answers["writing_response"] === "string") {
+      answers["writing_response"] = answers["writing_response"].slice(0, 4e3);
+    }
     let listeningCorrect = 0;
     let listeningTotal = 0;
     let readingCorrect = 0;
@@ -122587,7 +122617,7 @@ var AssessmentService = class {
           const stripAccents = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
           const studentStripped = stripAccents(normStudent);
           const correctStripped = stripAccents(normCorrect);
-          isMatch = studentStripped === correctStripped || studentStripped.includes(correctStripped) || correctStripped.includes(studentStripped);
+          isMatch = studentStripped === correctStripped;
           if (!isMatch && key.acceptedAnswers) {
             isMatch = key.acceptedAnswers.some(
               (acc) => stripAccents(normalizeText(acc)) === studentStripped
@@ -122611,7 +122641,7 @@ var AssessmentService = class {
     const readingBandInfo = calculateEstimatedSkillBand(readingCorrect, readingTotal);
     const grammarBandInfo = calculateEstimatedSkillBand(grammarCorrect, grammarTotal);
     const arisInfo = mapRawScoreToArisLevel(rawCorrect, totalQuestions);
-    const hasWriting = typeof answers["writing_response"] === "string" && answers["writing_response"].trim().length >= 30;
+    const hasWriting = typeof answers["writing_response"] === "string" && answers["writing_response"].trim().length > 0;
     const hasSpeaking = !!answers["speaking_part1_audio_url"] || !!answers["speaking_part2_audio_url"] || !!answers["speaking_audio_url"] || // backward compat
     !!answers["speaking_completed"];
     const subjectiveStatus = hasWriting || hasSpeaking ? "PENDING_REVIEW" : "NONE";
@@ -122662,6 +122692,11 @@ var AssessmentService = class {
         rawScore: rawCorrect,
         totalQuestions,
         accuracyPercent,
+        preliminaryRange: derivePreliminaryProfileRange(
+          listeningBandInfo.band,
+          readingBandInfo.band,
+          hasAttemptedAnswers && rawCorrect > 0
+        ),
         listening: {
           correct: listeningCorrect,
           total: listeningTotal,

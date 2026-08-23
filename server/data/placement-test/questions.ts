@@ -51,6 +51,7 @@ export interface SanitizedPlacementTestPayload {
       prompt: string;
       guidelines: string[];
       minWords: number;
+      maxWords?: number;
     };
     speaking: {
       title: string;
@@ -460,6 +461,7 @@ Furthermore, the retention of academic vocabulary requires spaced repetition rat
         "Cố gắng áp dụng câu ghép / câu phức và các liên từ logic (However, Furthermore, Consequently...).",
       ],
       minWords: 80,
+      maxWords: 350,
     },
     speaking: {
       title: "Chẩn đoán Nói (Diagnostic Speaking)",
