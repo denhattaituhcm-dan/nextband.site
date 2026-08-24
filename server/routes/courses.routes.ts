@@ -324,7 +324,7 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
       }
 
       try {
-        const { isLocked: _ignoredIsLocked, ...safeData } = data as any;
+        const safeData = { ...data };
         const course = await fastify.prisma.course.create({
           data: {
             ...safeData,
@@ -385,7 +385,7 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
           slug: await buildUniqueSlug(data.title, id),
         };
       }
-      const { isLocked: _ignoredIsLocked, ...safeUpdateData } = updateData;
+      const safeUpdateData = { ...updateData };
 
       try {
         const course = await fastify.prisma.course.update({
@@ -394,6 +394,7 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
         });
 
         return withFileUrls(course, ["thumbnailUrl"]);
+
       } catch (error: any) {
         if (error?.code === "P2002") {
           return reply.status(409).send({ error: "Slug khóa học đã tồn tại" });

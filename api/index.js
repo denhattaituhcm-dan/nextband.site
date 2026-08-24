@@ -116810,7 +116810,7 @@ var coursesRoutes = async (fastify) => {
         }
       }
       try {
-        const { isLocked: _ignoredIsLocked, ...safeData } = data;
+        const safeData = { ...data };
         const course = await fastify.prisma.course.create({
           data: {
             ...safeData,
@@ -116863,7 +116863,7 @@ var coursesRoutes = async (fastify) => {
           slug: await buildUniqueSlug(data.title, id)
         };
       }
-      const { isLocked: _ignoredIsLocked, ...safeUpdateData } = updateData;
+      const safeUpdateData = { ...updateData };
       try {
         const course = await fastify.prisma.course.update({
           where: { id },
@@ -117419,7 +117419,7 @@ var examsRoutes = async (fastify) => {
         reply
       );
       if (!data) return;
-      const { isLocked: _ignoredIsLocked, ...safeData } = data;
+      const safeData = { ...data };
       const authService = new AuthorizationService(fastify.prisma);
       try {
         await authService.requireCourseAuthoringAccess(
@@ -117473,7 +117473,7 @@ var examsRoutes = async (fastify) => {
         reply
       );
       if (!data) return;
-      const { isLocked: _ignoredIsLocked, ...safeData } = data;
+      const safeData = { ...data };
       const authService = new AuthorizationService(fastify.prisma);
       try {
         await authService.requireExamAuthoringAccess(
@@ -117494,10 +117494,17 @@ var examsRoutes = async (fastify) => {
       if (!existing) {
         return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y b\xE0i thi" });
       }
-      if (existing.isActive === false || existing.isLocked === true) {
+      const isAdmin = request.user.roles.includes("admin");
+      if (existing.isActive === false && safeData.isActive !== true) {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",
-          message: "\u0110\u1EC1 thi \u0111\xE3 l\u01B0u tr\u1EEF ho\u1EB7c b\u1ECB kh\xF3a, kh\xF4ng th\u1EC3 c\u1EADp nh\u1EADt th\xF4ng tin."
+          message: "\u0110\u1EC1 thi \u0111\xE3 l\u01B0u tr\u1EEF, kh\xF4ng th\u1EC3 c\u1EADp nh\u1EADt th\xF4ng tin."
+        });
+      }
+      if (existing.isLocked === true && !isAdmin && safeData.isLocked !== false) {
+        return reply.status(409).send({
+          error: "EXAM_LOCKED_IMMUTABLE",
+          message: "\u0110\u1EC1 thi \u0111ang b\u1ECB kh\xF3a, h\xE3y m\u1EDF kh\xF3a tr\u01B0\u1EDBc khi ch\u1EC9nh s\u1EEDa n\u1ED9i dung."
         });
       }
       const updatedExam = await fastify.prisma.exam.update({

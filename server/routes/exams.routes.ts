@@ -242,7 +242,7 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
         reply,
       );
       if (!data) return;
-      const { isLocked: _ignoredIsLocked, ...safeData } = data as any;
+      const safeData = { ...data };
 
       const authService = new AuthorizationService(fastify.prisma);
       try {
@@ -306,7 +306,7 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
         reply,
       );
       if (!data) return;
-      const { isLocked: _ignoredIsLocked, ...safeData } = data as any;
+      const safeData = { ...data };
 
       const authService = new AuthorizationService(fastify.prisma);
       try {
@@ -330,10 +330,21 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
         return reply.status(404).send({ error: "Không tìm thấy bài thi" });
       }
 
-      if (existing.isActive === false || existing.isLocked === true) {
+      const isAdmin = request.user.roles.includes("admin");
+
+      // Nếu bài thi đã lưu trữ (isActive === false) và không phải đang kích hoạt lại
+      if (existing.isActive === false && safeData.isActive !== true) {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",
-          message: "Đề thi đã lưu trữ hoặc bị khóa, không thể cập nhật thông tin.",
+          message: "Đề thi đã lưu trữ, không thể cập nhật thông tin.",
+        });
+      }
+
+      // Nếu bài thi đang bị khóa, chỉ cho phép admin hoặc tác vụ mở khóa (isLocked === false)
+      if (existing.isLocked === true && !isAdmin && safeData.isLocked !== false) {
+        return reply.status(409).send({
+          error: "EXAM_LOCKED_IMMUTABLE",
+          message: "Đề thi đang bị khóa, hãy mở khóa trước khi chỉnh sửa nội dung.",
         });
       }
 
@@ -345,6 +356,7 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
       return updatedExam;
     },
   );
+
 
   // DELETE /exams/:id (T1-B Historical Data Protection)
   fastify.delete<{ Params: { id: string } }>(
