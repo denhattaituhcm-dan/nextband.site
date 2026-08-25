@@ -178,7 +178,16 @@ export function mapToProgressReportData(input: ProgressReportInput): ProgressRep
         passedCount++;
       }
 
-      if (type.includes("writing") || type.includes("speaking") || hw.feedback || hw.criteriaScores) {
+      const isTeacherGraded = !!(
+        hw.gradedBy ||
+        hw.graded_by ||
+        hw.feedback ||
+        hw.criteriaScores ||
+        type.includes("writing") ||
+        type.includes("speaking")
+      );
+
+      if (isTeacherGraded) {
         teacherGradedCount++;
       } else {
         autoGradedCount++;
@@ -265,10 +274,9 @@ export function mapToProgressReportData(input: ProgressReportInput): ProgressRep
     courseProgressPercent = Math.min(100, Math.round((attendance.total / Math.max(attendance.total, 24)) * 100));
   }
 
-  // 5. Quy mô lớp học
+  // 5. Quy mô lớp học (Factual metrics: Sĩ số hiện tại / Sĩ số tối đa)
   const currentStudents = input.classInfo?.currentStudents || input.totalStudentsInClass || 6;
   const maxStudents = input.classInfo?.maxStudents || 10;
-  const classModel = input.classInfo?.classModel || (currentStudents <= 10 ? "Nhóm nhỏ tương tác cao" : "Lớp tiêu chuẩn");
 
   // 6. Structured Teacher Evaluation
   const teacherEvaluation = {
@@ -295,7 +303,6 @@ export function mapToProgressReportData(input: ProgressReportInput): ProgressRep
     classInfo: {
       currentStudents,
       maxStudents,
-      classModel,
     },
     courseProgress: {
       percent: courseProgressPercent,

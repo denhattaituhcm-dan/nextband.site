@@ -21,11 +21,11 @@ export interface ProgressReportData {
     to: string;   // DD/MM/YYYY
   };
 
-  // Thông tin quy mô lớp học & môi trường học
+  // Thông tin quy mô lớp học
   classInfo?: {
     currentStudents: number;
     maxStudents: number;
-    classModel: string; // e.g. "Nhóm nhỏ tương tác cao"
+    classModel?: string;
   };
 
   // Tiến độ khóa học
