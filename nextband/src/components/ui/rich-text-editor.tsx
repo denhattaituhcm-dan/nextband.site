@@ -7,6 +7,7 @@ import {
   List,
   Type,
   Eraser,
+  Sparkles,
   AlignLeft,
   AlignCenter,
   AlignRight,
@@ -36,6 +37,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { uploadsApi } from "@/lib/api";
+import { normalizeQuestionHtml } from "@/lib/htmlNormalizer";
 
 interface RichTextEditorProps {
   value: string;
@@ -521,6 +523,21 @@ export function RichTextEditor({
     }
   };
 
+  // --- NORMALIZE HANDLER ---
+  const handleNormalize = () => {
+    if (!editorRef.current) return;
+    const currentHtml = editorRef.current.innerHTML;
+    if (!currentHtml || !currentHtml.trim()) return;
+
+    const normalized = normalizeQuestionHtml(currentHtml);
+    editorRef.current.innerHTML = normalized;
+    onChange(normalized);
+    toast({
+      title: "Đã chuẩn hóa định dạng",
+      description: "Đã làm sạch cỡ chữ và mã rác từ Word/Docs thành công.",
+    });
+  };
+
   // --- PASTE SANITIZATION HANDLER ---
   const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
     const items = e.clipboardData?.items;
@@ -541,7 +558,8 @@ export function RichTextEditor({
     if (htmlData) {
       e.preventDefault();
       const sanitized = sanitizePastedHtml(htmlData);
-      document.execCommand("insertHTML", false, sanitized);
+      const normalized = normalizeQuestionHtml(sanitized);
+      document.execCommand("insertHTML", false, normalized);
       if (editorRef.current) {
         onChange(editorRef.current.innerHTML);
       }
@@ -885,6 +903,17 @@ export function RichTextEditor({
           title="Xóa định dạng (Remove formatting)"
         >
           <Eraser className="h-4 w-4" />
+        </Button>
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={handleNormalize}
+          className="text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/50"
+          title="Chuẩn hóa định dạng (Xóa cỡ chữ rác từ Word/Docs)"
+        >
+          <Sparkles className="h-4 w-4" />
         </Button>
 
         <div className="h-4 w-px bg-border mx-1" />

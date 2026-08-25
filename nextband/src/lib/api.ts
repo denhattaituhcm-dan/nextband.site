@@ -2,7 +2,7 @@ import { supabase } from "./supabase";
 import { normalizeSiteSettings } from "./site-settings";
 import { isValidUUID } from "./classContext";
 import { normalizeSubmissionStatus } from "./submissionStatus";
-import { resolveEffectiveDeadline } from "./homeworkStatusHelper";
+import { resolveEffectiveDeadline, compareHomeworkOrder } from "./homeworkStatusHelper";
 import { adaptExam } from "../adapters/exam.adapter";
 import { adaptSection } from "../adapters/section.adapter";
 import { adaptSession } from "../adapters/session.adapter";
@@ -826,6 +826,18 @@ export interface UpdateQuestionPayload {
   orderIndex?: number;
 }
 
+// Helper to extract detailed error messages from API response
+export function extractApiError(errData: any, fallback: string): string {
+  if (!errData) return fallback;
+  if (errData.details && typeof errData.details === "object") {
+    const detailMessages = Object.values(errData.details).flat().filter(Boolean);
+    if (detailMessages.length > 0) return detailMessages.join(", ");
+  }
+  if (errData.message && errData.message !== "Xác thực không thành công") return errData.message;
+  if (errData.error && errData.error !== "Xác thực không thành công") return errData.error;
+  return errData.message || errData.error || fallback;
+}
+
 // =============================================
 // QUESTIONS API
 // =============================================
@@ -850,7 +862,7 @@ export const questionsApi = {
 
     if (res.ok) return await res.json();
     const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.error || errData.message || "Không thể thêm nhóm câu hỏi");
+    throw new Error(extractApiError(errData, "Không thể thêm nhóm câu hỏi"));
   },
 
   updateGroup: async (id: string, group: UpdateQuestionGroupPayload) => {
@@ -866,7 +878,7 @@ export const questionsApi = {
 
     if (res.ok) return await res.json();
     const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.error || errData.message || "Không thể cập nhật nhóm câu hỏi");
+    throw new Error(extractApiError(errData, "Không thể cập nhật nhóm câu hỏi"));
   },
 
   deleteGroup: async (id: string) => {
@@ -881,7 +893,7 @@ export const questionsApi = {
 
     if (res.ok) return { success: true };
     const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.error || errData.message || "Không thể xóa nhóm câu hỏi");
+    throw new Error(extractApiError(errData, "Không thể xóa nhóm câu hỏi"));
   },
 
   create: async (question: {
@@ -906,7 +918,7 @@ export const questionsApi = {
 
     if (res.ok) return await res.json();
     const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.error || errData.message || "Không thể thêm câu hỏi");
+    throw new Error(extractApiError(errData, "Không thể thêm câu hỏi"));
   },
 
   update: async (id: string, question: UpdateQuestionPayload) => {
@@ -922,7 +934,7 @@ export const questionsApi = {
 
     if (res.ok) return await res.json();
     const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.error || errData.message || "Không thể cập nhật câu hỏi");
+    throw new Error(extractApiError(errData, "Không thể cập nhật câu hỏi"));
   },
 
   delete: async (id: string) => {
@@ -3592,7 +3604,7 @@ export const lessonsApi = {
         .select("id, title, description, week, exam_type, exam_sections(id, section_type, title, instructions, order_index)")
         .eq("course_id", courseId)
         .order("week", { ascending: true });
-      exams = examData || [];
+      exams = (examData || []).sort(compareHomeworkOrder);
     }
 
     const examIds = exams.map((e) => e.id);
@@ -3640,10 +3652,11 @@ export const lessonsApi = {
         lessons: exams.map((e: any, idx: number) => {
           const sub = submissionsMap[e.id];
           const customHw = homeworksMap[e.id];
-          const lessonOrder = e.week || idx + 1;
+          const lessonOrder = idx + 1;
+          const lessonWeek = e.week || Math.ceil((idx + 1) / 3);
           const { effectiveDeadline, deadlineSource } = resolveEffectiveDeadline({
             classStartDate: (cls as any)?.start_date || (cls as any)?.startDate || (cls as any)?.created_at || (cls as any)?.createdAt,
-            lessonWeek: lessonOrder,
+            lessonWeek,
             manualDeadline: customHw?.deadline,
             defaultOffsetDays: 7,
           });

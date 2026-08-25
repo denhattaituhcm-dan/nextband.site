@@ -44,6 +44,7 @@ import {
   FileText,
   Zap,
   Edit,
+  Sparkles,
 } from "lucide-react";
 import FileUpload from "@/components/admin/FileUpload";
 import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
@@ -56,6 +57,7 @@ import {
 } from "@/components/admin/question-forms";
 import { sanitizeQuestionPayload } from "@/lib/questionNormalizer";
 import { parseSmartBulkQuestions } from "@/lib/smartQuestionParser";
+import { normalizeQuestionHtml } from "@/lib/htmlNormalizer";
 import {
   Accordion,
   AccordionContent,
@@ -240,6 +242,11 @@ export default function AdminSectionEdit() {
     orderIndex: 0,
   });
 
+  // Batch Normalization states
+  const [normalizing, setNormalizing] = useState(false);
+  const [normalizeConfirmOpen, setNormalizeConfirmOpen] = useState(false);
+  const [targetNormalizeGroupId, setTargetNormalizeGroupId] = useState<string | null>(null);
+
   const { data: sectionData, isLoading: sectionLoading } = useQuery({
     queryKey: ["section-detail", id],
     queryFn: () => sectionsApi.getById(id!),
@@ -248,6 +255,10 @@ export default function AdminSectionEdit() {
 
   const section = sectionData;
   const questionGroups = section?.question_groups || section?.questionGroups || [];
+
+  const totalQuestionsCount = useMemo(() => {
+    return questionGroups.reduce((acc: number, g: any) => acc + (g.questions?.length || 0), 0);
+  }, [questionGroups]);
 
   const getNextOrderIndexForGroup = (groupId: string) => {
     const group = questionGroups.find((g: any) => g.id === groupId);
@@ -628,6 +639,16 @@ export default function AdminSectionEdit() {
 
   const handleSaveQuestion = () => {
     const sanitized = sanitizeQuestionPayload(questionForm);
+
+    if (!sanitized.questionText || sanitized.questionText.trim().length === 0) {
+      toast({
+        title: "Thiếu nội dung câu hỏi",
+        description: "Vui lòng nhập nội dung hoặc hướng dẫn câu hỏi.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (sanitized.questionType === "fill_blank") {
       sanitized.correctAnswer = stringifyFillBlankAnswers(
         questionForm.fillBlankAnswers,
@@ -646,6 +667,58 @@ export default function AdminSectionEdit() {
         });
         return;
       }
+    }
+
+    if (sanitized.questionType === "matching") {
+      let parsed: any = null;
+      try {
+        parsed = sanitized.correctAnswer ? JSON.parse(sanitized.correctAnswer) : null;
+      } catch {}
+
+      const rawItems: string[] = Array.isArray(parsed?.items) ? parsed.items : [];
+      const rawOptions: string[] = Array.isArray(parsed?.options) ? parsed.options : [];
+      const rawPairs: Record<string, string> =
+        parsed?.pairs && typeof parsed.pairs === "object" ? parsed.pairs : {};
+
+      const cleanItems = rawItems
+        .map((s) => (typeof s === "string" ? s.trim() : ""))
+        .filter(Boolean);
+      const cleanOptions = rawOptions
+        .map((s) => (typeof s === "string" ? s.trim() : ""))
+        .filter(Boolean);
+
+      if (cleanItems.length < 2 || cleanOptions.length < 2) {
+        toast({
+          title: "Thiếu thông tin câu hỏi nối đáp án",
+          description:
+            "Vui lòng nhập ít nhất 2 câu hỏi (vế trái) và 2 lựa chọn (vế phải).",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Check if any items are missing matching pairs
+      const missingPairs: number[] = [];
+      cleanItems.forEach((_, idx) => {
+        if (!rawPairs[String(idx)]) {
+          missingPairs.push(idx + 1);
+        }
+      });
+
+      if (missingPairs.length > 0) {
+        toast({
+          title: "Chưa chọn đáp án nối",
+          description: `Vui lòng chọn đáp án nối (A, B, C...) cho câu hỏi số: ${missingPairs.join(", ")}.`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      sanitized.correctAnswer = JSON.stringify({
+        items: cleanItems,
+        options: cleanOptions,
+        pairs: rawPairs,
+      });
     }
 
     if (editingQuestion) {
@@ -678,6 +751,81 @@ export default function AdminSectionEdit() {
       text: bulkImportText,
       questionType: bulkImportType,
     });
+  };
+
+  const handleBatchNormalize = async (groupId?: string | null) => {
+    setNormalizing(true);
+    try {
+      let affectedQuestions = 0;
+      let affectedGroups = 0;
+
+      const groupsToProcess = groupId
+        ? questionGroups.filter((g: any) => g.id === groupId)
+        : questionGroups;
+
+      // 1. Process Section instructions if full section normalize
+      if (!groupId && section?.instructions) {
+        const normalizedInst = normalizeQuestionHtml(section.instructions);
+        if (normalizedInst !== section.instructions) {
+          await sectionsApi.update(id!, { instructions: normalizedInst });
+        }
+      }
+
+      // 2. Process groups and their questions
+      for (const group of groupsToProcess) {
+        let groupUpdated = false;
+        const groupUpdates: any = {};
+
+        if (group.passage) {
+          const normalizedPassage = normalizeQuestionHtml(group.passage);
+          if (normalizedPassage !== group.passage) {
+            groupUpdates.passage = normalizedPassage;
+            groupUpdated = true;
+          }
+        }
+
+        if (group.instructions) {
+          const normalizedInst = normalizeQuestionHtml(group.instructions);
+          if (normalizedInst !== group.instructions) {
+            groupUpdates.instructions = normalizedInst;
+            groupUpdated = true;
+          }
+        }
+
+        if (groupUpdated) {
+          await questionsApi.updateGroup(group.id, groupUpdates);
+          affectedGroups++;
+        }
+
+        // Process questions in group
+        for (const question of group.questions || []) {
+          const qText = question.questionText || (question as any).question_text;
+          if (qText) {
+            const normalizedText = normalizeQuestionHtml(qText);
+            if (normalizedText !== qText) {
+              await questionsApi.update(question.id, { questionText: normalizedText });
+              affectedQuestions++;
+            }
+          }
+        }
+      }
+
+      await queryClient.invalidateQueries({ queryKey: ["section-detail", id] });
+      toast({
+        title: "Chuẩn hóa định dạng hoàn tất",
+        description: `Đã chuẩn hóa ${affectedQuestions} câu hỏi và ${affectedGroups} nhóm nội dung.`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Lỗi chuẩn hóa",
+        description: getErrorMessage(error, "Không thể chuẩn hóa câu hỏi"),
+        variant: "destructive",
+      });
+    } finally {
+      setNormalizing(false);
+      setNormalizeConfirmOpen(false);
+      setTargetNormalizeGroupId(null);
+    }
   };
 
   if (sectionLoading) {
@@ -738,6 +886,24 @@ export default function AdminSectionEdit() {
             <h1 className="text-2xl font-bold">{section.title}</h1>
           </div>
         </div>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            setTargetNormalizeGroupId(null);
+            setNormalizeConfirmOpen(true);
+          }}
+          disabled={normalizing || totalQuestionsCount === 0}
+          className="gap-2 border-amber-500/40 text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 font-semibold shadow-xs"
+        >
+          {normalizing ? (
+            <Loader2 className="h-4 w-4 animate-spin text-amber-600" />
+          ) : (
+            <Sparkles className="h-4 w-4 text-amber-500" />
+          )}
+          <span>Chuẩn hóa toàn bộ ({totalQuestionsCount})</span>
+        </Button>
       </div>
 
       {/* Section Settings */}
@@ -869,6 +1035,19 @@ export default function AdminSectionEdit() {
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setTargetNormalizeGroupId(group.id);
+                              setNormalizeConfirmOpen(true);
+                            }}
+                            className="text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/40 text-xs font-medium"
+                            title="Chuẩn hóa định dạng nhóm câu hỏi này"
+                          >
+                            <Sparkles className="h-3.5 w-3.5 mr-1 text-amber-500" /> Chuẩn hóa nhóm
+                          </Button>
                           <Button
                             variant="ghost"
                             size="sm"
@@ -1397,6 +1576,55 @@ export default function AdminSectionEdit() {
         description="Câu hỏi này sẽ bị xóa khỏi hệ thống."
         loading={deleteQuestionMutation.isPending}
       />
+
+      {/* Batch Normalize Confirmation Dialog */}
+      <Dialog open={normalizeConfirmOpen} onOpenChange={setNormalizeConfirmOpen}>
+        <DialogContent className="sm:max-w-[480px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-amber-600">
+              <Sparkles className="h-5 w-5 text-amber-500" />
+              Xác nhận chuẩn hóa định dạng tự động
+            </DialogTitle>
+            <DialogDescription className="space-y-2 pt-2 text-sm text-foreground/80">
+              <p>
+                Hệ thống sẽ tự động quét qua{" "}
+                <strong>
+                  {targetNormalizeGroupId
+                    ? `các câu hỏi và đoạn văn trong nhóm này`
+                    : `toàn bộ ${totalQuestionsCount} câu hỏi, đoạn văn và hướng dẫn`}
+                </strong>{" "}
+                để:
+              </p>
+              <ul className="list-disc pl-5 space-y-1 text-xs text-muted-foreground">
+                <li>Loại bỏ thẻ cỡ chữ rác, cỡ chữ to nhỏ thất thường copy từ Word/Google Docs.</li>
+                <li>Đưa kích thước chữ về chuẩn hệ thống giúp học viên làm bài rõ ràng, đồng nhất.</li>
+                <li>Bảo toàn nguyên vẹn chữ in đậm, in nghiêng, gạch chân, danh sách, bảng biểu và từ khóa điền khuyết.</li>
+              </ul>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0 pt-3">
+            <Button
+              variant="outline"
+              onClick={() => setNormalizeConfirmOpen(false)}
+              disabled={normalizing}
+            >
+              Hủy
+            </Button>
+            <Button
+              onClick={() => handleBatchNormalize(targetNormalizeGroupId)}
+              disabled={normalizing}
+              className="bg-amber-600 hover:bg-amber-700 text-white font-bold gap-2"
+            >
+              {normalizing ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Sparkles className="h-4 w-4" />
+              )}
+              Bắt đầu chuẩn hóa
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

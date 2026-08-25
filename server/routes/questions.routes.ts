@@ -65,16 +65,19 @@ const validateQuestionSemantic = (data: any, ctx: z.RefinementCtx) => {
       if (
         !parsed ||
         !Array.isArray(parsed.items) ||
-        parsed.items.length === 0 ||
         !Array.isArray(parsed.options) ||
-        parsed.options.length === 0 ||
         typeof parsed.pairs !== "object" ||
-        parsed.pairs === null ||
-        Object.keys(parsed.pairs).length === 0
+        parsed.pairs === null
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Dữ liệu nối đáp án (matching) không đúng cấu trúc (items, options, pairs)",
+          message: "Dữ liệu nối đáp án (matching) phải có cấu trúc items, options và pairs",
+          path: ["correctAnswer"],
+        });
+      } else if (parsed.items.length < 2 || parsed.options.length < 2) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Câu hỏi nối đáp án phải có ít nhất 2 câu hỏi và 2 lựa chọn",
           path: ["correctAnswer"],
         });
       }

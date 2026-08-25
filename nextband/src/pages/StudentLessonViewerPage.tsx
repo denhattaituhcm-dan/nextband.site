@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { lessonsApi, submissionsApi, examsApi } from "@/lib/api";
@@ -5,6 +6,7 @@ import {
   deriveCanonicalVisualStatus,
   formatDeadlineCountdown,
   deriveSubmissionTiming,
+  compareHomeworkOrder,
   CanonicalVisualStatus,
 } from "@/lib/homeworkStatusHelper";
 import { Card } from "@/components/ui/card";
@@ -164,7 +166,10 @@ export default function StudentLessonViewerPage() {
   }
 
   const classData = classLessonData.data;
-  const lessons = classData.lessons || [];
+  const rawLessons = classData.lessons || [];
+  const lessons = useMemo(() => {
+    return [...rawLessons].sort(compareHomeworkOrder);
+  }, [rawLessons]);
   const userSubmissions = Array.isArray(submissionsData?.data) ? submissionsData.data : [];
 
   const sortedSubmissions = [...userSubmissions].sort((a: any, b: any) => {

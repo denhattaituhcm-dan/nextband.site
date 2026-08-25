@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Mic, Square, CheckCircle2, Play, Pause, RotateCcw, Loader2, AlertCircle, RefreshCw } from "lucide-react";
+import { Mic, Square, CheckCircle2, Play, Pause, RotateCcw, Loader2, AlertCircle, RefreshCw, Clock } from "lucide-react";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { AudioWaveform } from "./AudioWaveform";
@@ -127,7 +127,7 @@ export function QuestionRecorder({
   questionId,
   answer,
   submissionId = "temp_exam_session",
-  maxDurationSeconds = 180,
+  maxDurationSeconds = 120,
   onAnswerChange,
   onRecordingStateChange,
   className,
@@ -140,7 +140,6 @@ export function QuestionRecorder({
 
   const {
     isRecording,
-    audioUrl,
     audioBlob,
     startRecording,
     stopRecording,
@@ -165,23 +164,29 @@ export function QuestionRecorder({
     }
   }, [answer, phase]);
 
-  // Recording timer with auto-stop
+  const handleStopRecording = () => {
+    setPhase("processing");
+    stopRecording();
+    try {
+      stopListening();
+    } catch {}
+  };
+
+  // Recording countdown timer with auto-stop at maxDurationSeconds (120s = 2 minutes)
   useEffect(() => {
-    if (isRecording) {
+    if (isRecording && phase === "recording") {
       const timer = setInterval(() => {
         setRecordTime((prev) => {
           const next = prev + 1;
           if (next >= maxDurationSeconds) {
-            stopRecording();
-            stopListening();
-            setPhase("processing");
+            handleStopRecording();
           }
           return next;
         });
       }, 1000);
       return () => clearInterval(timer);
     }
-  }, [isRecording, maxDurationSeconds, stopRecording, stopListening]);
+  }, [isRecording, phase, maxDurationSeconds]);
 
   // Direct Supabase Storage Upload
   const handleUploadAudio = async (blob: Blob) => {
@@ -269,7 +274,7 @@ export function QuestionRecorder({
   }, [audioBlob, phase]);
 
   const handleStartRecording = async () => {
-    if (permissionStatus !== "granted") {
+    if (permissionStatus === "denied") {
       const granted = await requestPermission();
       if (!granted) return;
     }
@@ -278,16 +283,16 @@ export function QuestionRecorder({
     resetTranscript();
     setRecordTime(0);
     setUploadError(null);
-    setPhase("recording");
 
-    await startRecording();
-    startListening();
-  };
-
-  const handleStopRecording = () => {
-    setPhase("processing");
-    stopRecording();
-    stopListening();
+    const started = await startRecording();
+    if (started) {
+      setPhase("recording");
+      try {
+        startListening();
+      } catch {}
+    } else {
+      setPhase("idle");
+    }
   };
 
   const handleRetry = () => {
@@ -309,6 +314,8 @@ export function QuestionRecorder({
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
+
+  const remainingSeconds = Math.max(0, maxDurationSeconds - recordTime);
 
   if (permissionStatus === "denied") {
     return (
@@ -332,12 +339,12 @@ export function QuestionRecorder({
             Bắt đầu ghi âm
           </Button>
           <span className="text-xs text-muted-foreground font-medium italic hidden sm:inline">
-            Tối đa: {Math.floor(maxDurationSeconds / 60)} phút. Nhấn để bắt đầu.
+            Tối đa: {Math.floor(maxDurationSeconds / 60)} phút (đếm lùi). Nhấn để bắt đầu.
           </span>
         </div>
       )}
 
-      {/* State 2: Active Recording */}
+      {/* State 2: Active Recording with Countdown Timer */}
       {phase === "recording" && (
         <div className="bg-gradient-to-b from-white to-orange-50/50 dark:from-neutral-900 dark:to-neutral-800/80 rounded-2xl p-4 border-2 border-orange-400/60 dark:border-orange-600/60 shadow-lg space-y-4 animate-in zoom-in-95 fill-mode-both">
           <div className="flex items-center justify-between">
@@ -347,19 +354,20 @@ export function QuestionRecorder({
                 ĐANG GHI ÂM...
               </span>
             </div>
-            <span className="font-mono font-extrabold text-2xl text-orange-600 dark:text-orange-400">
-              {formatTime(recordTime)}
-            </span>
+            <div className="flex items-center gap-1.5 font-mono font-extrabold text-2xl text-orange-600 dark:text-orange-400">
+              <Clock className="w-5 h-5 text-orange-500 animate-pulse" />
+              <span>{formatTime(remainingSeconds)}</span>
+            </div>
           </div>
 
           <AudioWaveform
             data={analyserData}
-            isRecording={true}
+            isRecording={isRecording}
             className="h-14 w-full"
           />
 
           <div className="text-xs text-muted-foreground italic text-center font-medium">
-            Hệ thống đang ghi âm... Nhấn nút dưới đây khi hoàn tất câu trả lời.
+            Thời gian còn lại (Tối đa {Math.floor(maxDurationSeconds / 60)} phút). Nhấn nút dưới đây khi hoàn tất câu trả lời.
           </div>
 
           <Button

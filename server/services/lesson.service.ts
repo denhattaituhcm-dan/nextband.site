@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { ClassRepository } from '../repositories/class.repository.js';
 import { AuthorizationService, AuthorizationError, NotFoundError } from './authorization.service.js';
-import { resolveEffectiveDeadline, calculateSubmissionTiming, DeadlineSource } from '../utils/deadline.util.js';
+import { resolveEffectiveDeadline, calculateSubmissionTiming, compareHomeworkOrder, DeadlineSource } from '../utils/deadline.util.js';
 
 export interface StudentLessonProgressDTO {
   sessionCompleted: boolean;
@@ -133,7 +133,7 @@ export class LessonService {
           orderBy: { sessionNumber: 'asc' },
         }),
       ]);
-      exams = fetchedExams;
+      exams = [...fetchedExams].sort(compareHomeworkOrder);
       submissions = fetchedSubmissions;
       manualHomeworks = fetchedHomeworks;
       sessions = fetchedSessions;
@@ -148,7 +148,8 @@ export class LessonService {
 
       if (isGraded) completedCount++;
 
-      const lessonOrder = exam.week || (idx + 1);
+      const lessonOrder = idx + 1;
+      const lessonWeek = exam.week || Math.ceil((idx + 1) / 3);
       const customHw = manualHomeworks.find((h: any) => h.examId === exam.id || h.lessonId === exam.id);
       const matchingSession = sessions.find((s: any) => s.sessionNumber === lessonOrder);
       const sessionDate = matchingSession?.plannedDate || null;
@@ -156,7 +157,7 @@ export class LessonService {
       const { effectiveDeadline, deadlineSource } = resolveEffectiveDeadline({
         classStartDate: classData.startDate || classData.createdAt,
         sessionDate,
-        lessonWeek: lessonOrder,
+        lessonWeek,
         manualDeadline: customHw?.deadline,
         defaultOffsetDays: 7,
       });

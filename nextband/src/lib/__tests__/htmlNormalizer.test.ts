@@ -1,0 +1,73 @@
+import { describe, it, expect } from "vitest";
+import { normalizeQuestionHtml } from "../htmlNormalizer";
+
+describe("HTML Question Normalizer", () => {
+  it("returns empty string for null or empty input", () => {
+    expect(normalizeQuestionHtml("")).toBe("");
+    expect(normalizeQuestionHtml(null)).toBe("");
+    expect(normalizeQuestionHtml(undefined)).toBe("");
+  });
+
+  it("preserves plain text without modification", () => {
+    const text = "1) Nguyên nhân (Cause)\nMột phần người trẻ phụ thuộc vào mạng xã hội.";
+    expect(normalizeQuestionHtml(text)).toBe(text);
+  });
+
+  it("strips font tags and size attributes", () => {
+    const dirty = `<font size="5" face="Arial"><strong>1) Nguyên nhân (Cause)</strong></font><p><font size="2">Một phần, việc người trẻ phụ thuộc...</font></p>`;
+    const normalized = normalizeQuestionHtml(dirty);
+    expect(normalized).not.toContain("<font");
+    expect(normalized).not.toContain('size="5"');
+    expect(normalized).not.toContain('face="Arial"');
+    expect(normalized).toContain("<strong>1) Nguyên nhân (Cause)</strong>");
+    expect(normalized).toContain("<p>Một phần, việc người trẻ phụ thuộc...</p>");
+  });
+
+  it("strips inline font-size, font-family, and noisy Word styles", () => {
+    const dirty = `<p style="font-size: 24pt; font-family: 'Times New Roman'; line-height: 150%; margin-top: 10px;">Một phần, việc người trẻ phụ thuộc vào mạng xã hội</p>`;
+    const normalized = normalizeQuestionHtml(dirty);
+    expect(normalized).not.toContain("font-size");
+    expect(normalized).not.toContain("font-family");
+    expect(normalized).not.toContain("line-height");
+    expect(normalized).toBe("<p>Một phần, việc người trẻ phụ thuộc vào mạng xã hội</p>");
+  });
+
+  it("converts H1/H2/H3 headings to <p><strong>...</strong></p>", () => {
+    const dirty = `<h3>Part 1: Introduction</h3><p>Please translate the following sentence.</p>`;
+    const normalized = normalizeQuestionHtml(dirty);
+    expect(normalized).not.toContain("<h3");
+    expect(normalized).toContain("<p><strong>Part 1: Introduction</strong></p>");
+  });
+
+  it("preserves lists, bold, italic, and underline tags", () => {
+    const input = `<p><strong>Gợi ý:</strong></p><ul><li><em>in part</em></li><li><u>be due to</u></li><li><strong>coupled with this</strong></li></ul>`;
+    const normalized = normalizeQuestionHtml(input);
+    expect(normalized).toContain("<strong>Gợi ý:</strong>");
+    expect(normalized).toContain("<ul>");
+    expect(normalized).toContain("<li><em>in part</em></li>");
+    expect(normalized).toContain("<li><u>be due to</u></li>");
+    expect(normalized).toContain("<li><strong>coupled with this</strong></li>");
+  });
+
+  it("preserves tables and cell structure", () => {
+    const input = `<table><thead><tr><th>Header 1</th><th>Header 2</th></tr></thead><tbody><tr><td>Cell 1</td><td>Cell 2</td></tr></tbody></table>`;
+    const normalized = normalizeQuestionHtml(input);
+    expect(normalized).toContain("<table");
+    expect(normalized).toContain("<th>Header 1</th>");
+    expect(normalized).toContain("<td>Cell 1</td>");
+  });
+
+  it("preserves fill in the blank data attributes", () => {
+    const input = `<p>I have lived here <span data-fill-blank="true" data-blank-id="1">[1]</span> 2010.</p>`;
+    const normalized = normalizeQuestionHtml(input);
+    expect(normalized).toContain('data-fill-blank="true"');
+    expect(normalized).toContain('data-blank-id="1"');
+  });
+
+  it("preserves intentional colors and background highlights", () => {
+    const input = `<p><span style="color: #ef4444;">Từ quan trọng</span> và <span style="background-color: #fef08a;">highlight</span></p>`;
+    const normalized = normalizeQuestionHtml(input);
+    expect(normalized).toContain('style="color: rgb(239, 68, 68);"');
+    expect(normalized).toContain('style="background-color: rgb(254, 240, 138);"');
+  });
+});

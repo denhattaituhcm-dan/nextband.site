@@ -259,6 +259,7 @@ export function SpeakingSection({
                                   <QuestionRecorder
                                     questionId={question.id}
                                     answer={answers[question.id]}
+                                    maxDurationSeconds={120}
                                     onAnswerChange={onAnswerChange}
                                     onRecordingStateChange={onRecordingStateChange}
                                   />

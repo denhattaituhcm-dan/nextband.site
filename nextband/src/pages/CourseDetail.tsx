@@ -23,6 +23,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { isSubmissionCompleted } from "@/lib/submissionStatus";
+import { compareHomeworkOrder } from "@/lib/homeworkStatusHelper";
 
 export default function CourseDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -56,7 +57,8 @@ export default function CourseDetail() {
     staleTime: 30 * 1000,
   });
 
-  const exams = examsData?.data || [];
+  const rawExams = examsData?.data || [];
+  const exams = [...rawExams].sort(compareHomeworkOrder);
   const submissions = submissionsData?.data || [];
 
   // Map submissions by examId

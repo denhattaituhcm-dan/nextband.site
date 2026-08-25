@@ -14,6 +14,7 @@ import {
   deriveSubmissionTiming,
   formatDeadlineCountdown,
   sortStudentActionQueue,
+  compareHomeworkOrder,
 } from "@/lib/homeworkStatusHelper";
 import { getHuanCoState } from "@/lib/huanCoState";
 import { HuanCoMascot } from "@/components/mascot/HuanCoMascot";
@@ -123,7 +124,8 @@ export default function HomePage() {
 
   // Hàng đợi hành động 4 tầng ưu tiên sư phạm: Revision > Overdue > Due Soon > Upcoming
   const actionQueue = useMemo(() => {
-    const formatted = rawLessons.map((item: any, idx: number) => {
+    const sortedLessons = [...rawLessons].sort(compareHomeworkOrder);
+    const formatted = sortedLessons.map((item: any, idx: number) => {
       const sub = userSubmissions.find((s: any) => (s.examId || s.exam_id) === item.id) || item.submission;
       const deadline = item.homework?.deadline;
       const status = deriveCanonicalVisualStatus({

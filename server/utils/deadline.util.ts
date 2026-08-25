@@ -108,3 +108,66 @@ export function calculateSubmissionTiming(
     lateDays,
   };
 }
+
+/**
+ * Extracts week and day numbers from homework/exam title and metadata
+ * Handles patterns:
+ * - "WEEK 1 - DAY 1 - WRITING" -> week: 1, day: 1
+ * - "W1 - D2 - SPK" -> week: 1, day: 2
+ * - "DAY 1 - WRITING" -> week: 1 (or explicitWeek), day: 1
+ * - "D9 - D2" -> week: 9, day: 2
+ * - "FINAL TEST" -> week: explicitWeek || 999, day: 100
+ */
+export function parseWeekAndDay(title: string, explicitWeek?: number | null): { week: number; day: number } {
+  const cleanTitle = (title || "").trim().toUpperCase();
+
+  let week = explicitWeek != null && !isNaN(explicitWeek) && explicitWeek > 0 ? explicitWeek : 999;
+  let remainingTitle = cleanTitle;
+
+  // Pattern 1: D<week> - D<day> (e.g. D9 - D2)
+  const dFormatMatch = cleanTitle.match(/^D(\d+)\s*[-_/\s]\s*D(\d+)/i);
+  if (dFormatMatch) {
+    week = parseInt(dFormatMatch[1], 10);
+    const day = parseInt(dFormatMatch[2], 10);
+    return { week, day };
+  }
+
+  // Pattern 2: (WEEK|W)<num>
+  const weekMatch = cleanTitle.match(/(?:WEEK|W)\s*(\d+)/i);
+  if (weekMatch) {
+    week = parseInt(weekMatch[1], 10);
+    remainingTitle = cleanTitle.slice(0, weekMatch.index) + cleanTitle.slice((weekMatch.index || 0) + weekMatch[0].length);
+  }
+
+  // Pattern 3: (DAY|D)<num> from remainingTitle
+  let day = 99;
+  const dayMatch = remainingTitle.match(/(?:DAY|D)\s*(\d+)/i);
+  if (dayMatch) {
+    day = parseInt(dayMatch[1], 10);
+  } else if (cleanTitle.includes("FINAL")) {
+    day = 100;
+  }
+
+  return { week, day };
+}
+
+/**
+ * Authoritative comparator for homework/exam ordering:
+ * Week 1 -> Week 2 -> ... -> Week N
+ * Within each week: Day 1 -> Day 2 -> Day 3 -> ...
+ */
+export function compareHomeworkOrder(
+  a: { title?: string; week?: number | null; lessonOrder?: number | null },
+  b: { title?: string; week?: number | null; lessonOrder?: number | null }
+): number {
+  const aParsed = parseWeekAndDay(a.title || "", a.week ?? a.lessonOrder);
+  const bParsed = parseWeekAndDay(b.title || "", b.week ?? b.lessonOrder);
+
+  if (aParsed.week !== bParsed.week) {
+    return aParsed.week - bParsed.week;
+  }
+  if (aParsed.day !== bParsed.day) {
+    return aParsed.day - bParsed.day;
+  }
+  return (a.title || "").localeCompare(b.title || "");
+}

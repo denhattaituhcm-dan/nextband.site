@@ -78,6 +78,13 @@ describe("Tầng 2: Integration Test - Class Lessons Data & Contract Integration
             }),
           } as any;
         }
+        if (table === "homeworks") {
+          return {
+            select: () => ({
+              eq: async () => ({ data: [], error: null }),
+            }),
+          } as any;
+        }
         return {} as any;
       });
 

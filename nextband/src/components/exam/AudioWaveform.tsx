@@ -9,6 +9,8 @@ interface AudioWaveformProps {
 export function AudioWaveform({ data, isRecording, className = '' }: AudioWaveformProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animFrameRef = useRef<number | null>(null);
+  const dataRef = useRef(data);
+  dataRef.current = data;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -57,14 +59,15 @@ export function AudioWaveform({ data, isRecording, className = '' }: AudioWavefo
       ctx.fillStyle = gradient;
 
       step += 0.15;
+      const currentData = dataRef.current;
 
       for (let i = 0; i < numBars; i++) {
         let barHeight = 4;
 
-        if (data && data.length > 0) {
-          const dataIndex = Math.floor((i / numBars) * data.length);
-          const rawVal = data[dataIndex] || 0;
-          barHeight = (rawVal / 255) * (height * 0.75);
+        if (currentData && currentData.length > 0) {
+          const dataIndex = Math.floor((i / numBars) * currentData.length);
+          const rawVal = currentData[dataIndex] || 0;
+          barHeight = (rawVal / 255) * (height * 0.85);
         }
 
         // Ambient idle animation fallback if volume is low so it never looks frozen
@@ -96,7 +99,7 @@ export function AudioWaveform({ data, isRecording, className = '' }: AudioWavefo
         cancelAnimationFrame(animFrameRef.current);
       }
     };
-  }, [data, isRecording]);
+  }, [isRecording]);
 
   return (
     <div className={`relative overflow-hidden rounded-2xl border border-orange-200/80 shadow-inner ${className}`}>

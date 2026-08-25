@@ -368,7 +368,7 @@ export function WritingSection({
                                   {cleanHtmlText(question.question_text) && (
                                     <RichContent
                                       html={question.question_text}
-                                      className="font-bold text-gray-900 dark:text-gray-100 text-lg leading-snug"
+                                      className="text-gray-900 dark:text-gray-100 text-base leading-relaxed font-medium"
                                     />
                                   )}
 

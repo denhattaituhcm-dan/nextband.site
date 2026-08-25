@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { ArrowRightLeft, Plus, Trash2 } from "lucide-react";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { cn } from "@/lib/utils";
 import type { QuestionFormProps } from "./QuestionFormTypes";
 
 function getOptionLabel(index: number): string {
@@ -76,7 +77,11 @@ export function MatchingForm({ form, onChange }: QuestionFormProps) {
 
   useEffect(() => {
     const data = parseMatching(form.correctAnswer);
-    if (data.items.length > 0) setItems(data.items);
+    let initItems = ["", ""];
+    let initOptions = ["", ""];
+    let initPairs: Record<string, string> = {};
+
+    if (data.items.length > 0) initItems = data.items;
     if (data.options.length > 0) {
       const migratedOptions = data.options.map((opt) => {
         if (/^Option [A-Z]$/.test(opt) || /^Lựa chọn [A-Z]$/.test(opt)) {
@@ -84,9 +89,19 @@ export function MatchingForm({ form, onChange }: QuestionFormProps) {
         }
         return opt;
       });
-      setOptions(migratedOptions);
+      initOptions = migratedOptions;
     }
-    setPairs(data.pairs || {});
+    initPairs = data.pairs || {};
+
+    setItems(initItems);
+    setOptions(initOptions);
+    setPairs(initPairs);
+
+    if (!form.correctAnswer) {
+      onChange({
+        correctAnswer: stringifyMatching(initItems, initOptions, initPairs),
+      });
+    }
   }, []);
 
   const syncToForm = (
@@ -149,12 +164,20 @@ export function MatchingForm({ form, onChange }: QuestionFormProps) {
     syncToForm(items, options, newPairs);
   };
 
+  const pairedCount = Object.keys(pairs).length;
+  const isAllPaired = pairedCount === items.length && items.length > 0;
+
   return (
     <Card className="border-primary/30 bg-primary/5">
       <CardContent className="p-4 space-y-5">
-        <div className="flex items-center gap-2 text-sm font-bold text-primary pb-2 border-b border-primary/10">
-          <ArrowRightLeft className="h-4 w-4" />
-          CÂU HỎI NỐI ĐÁP ÁN
+        <div className="flex items-center justify-between pb-2 border-b border-primary/10">
+          <div className="flex items-center gap-2 text-sm font-bold text-primary">
+            <ArrowRightLeft className="h-4 w-4" />
+            CÂU HỎI NỐI ĐÁP ÁN
+          </div>
+          <span className="text-xs text-muted-foreground font-medium">
+            (Nối từng câu hỏi vế trái với chữ cái đáp án tương ứng)
+          </span>
         </div>
 
         {/* Question text / Instructions */}
@@ -176,7 +199,7 @@ export function MatchingForm({ form, onChange }: QuestionFormProps) {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Danh sách câu hỏi (trái)
+                Danh sách câu hỏi (trái) & Đáp án
               </Label>
               <Button
                 type="button"
@@ -199,21 +222,29 @@ export function MatchingForm({ form, onChange }: QuestionFormProps) {
                     placeholder={`Câu hỏi ${i + 1}`}
                     value={item}
                     onChange={(e) => updateItem(i, e.target.value)}
-                    className="bg-background h-8 text-sm"
+                    className="bg-background h-8 text-sm flex-1"
                   />
                   <Select
                     value={pairs[String(i)] || ""}
                     onValueChange={(v) => setPair(i, v)}
                   >
-                    <SelectTrigger className="w-16 h-8 text-xs bg-background px-2 font-bold text-teal-700">
-                      <SelectValue placeholder="—" />
+                    <SelectTrigger
+                      className={cn(
+                        "w-20 h-8 text-xs bg-background px-2 font-bold",
+                        pairs[String(i)]
+                          ? "text-teal-700 border-teal-500"
+                          : "text-muted-foreground border-amber-300",
+                      )}
+                      title="Chọn đáp án đúng (A, B, C...)"
+                    >
+                      <SelectValue placeholder="Chọn →" />
                     </SelectTrigger>
                     <SelectContent className="z-[70] max-h-44">
                       {options.map((_, oi) => {
                         const label = getOptionLabel(oi);
                         return (
                           <SelectItem key={oi} value={label}>
-                            {label}
+                            Đáp án {label}
                           </SelectItem>
                         );
                       })}
@@ -281,26 +312,38 @@ export function MatchingForm({ form, onChange }: QuestionFormProps) {
           </div>
         </div>
 
-        {/* Preview pairs */}
-        {Object.keys(pairs).length > 0 && (
-          <div className="rounded-lg border border-teal-200 bg-white/50 dark:bg-teal-950/10 p-3 space-y-1">
-            <Label className="text-[10px] font-bold uppercase tracking-wider text-teal-600">
-              Đáp án nối
-            </Label>
-            <div className="flex flex-wrap gap-2 text-xs">
+        {/* Pair status feedback banner */}
+        <div
+          className={cn(
+            "rounded-lg border p-3 space-y-1.5 text-xs",
+            isAllPaired
+              ? "border-teal-200 bg-teal-50/50 dark:bg-teal-950/20 text-teal-800 dark:text-teal-300"
+              : "border-amber-200 bg-amber-50/50 dark:bg-amber-950/20 text-amber-800 dark:text-amber-300",
+          )}
+        >
+          <div className="flex items-center justify-between font-bold">
+            <span className="text-[11px] uppercase tracking-wider">
+              {isAllPaired
+                ? `✓ Đã ghép đủ đáp án (${pairedCount}/${items.length})`
+                : `⚠️ Cần chọn đáp án nối (${pairedCount}/${items.length})`}
+            </span>
+          </div>
+
+          {pairedCount > 0 && (
+            <div className="flex flex-wrap gap-2 pt-0.5">
               {Object.entries(pairs)
                 .sort(([a], [b]) => parseInt(a, 10) - parseInt(b, 10))
                 .map(([itemIdx, optLabel]) => (
                   <span
                     key={itemIdx}
-                    className="px-2 py-1 rounded bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300 font-semibold"
+                    className="px-2 py-0.5 rounded bg-white dark:bg-neutral-800 text-teal-700 dark:text-teal-300 font-bold shadow-xs border border-teal-100 dark:border-teal-900"
                   >
-                    {parseInt(itemIdx, 10) + 1} → {optLabel}
+                    Câu {parseInt(itemIdx, 10) + 1} → {optLabel}
                   </span>
                 ))}
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Points */}
         <div className="grid gap-4 md:grid-cols-2">

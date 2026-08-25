@@ -114068,9 +114068,13 @@ function handleValidation(validation, request, reply) {
       query: request.query,
       params: request.params
     });
+    const fieldErrors = validation.error.flatten().fieldErrors;
+    const detailMessages = Object.values(fieldErrors).flat().filter(Boolean);
+    const primaryMessage = detailMessages.length > 0 ? detailMessages.join(", ") : "D\u1EEF li\u1EC7u kh\xF4ng h\u1EE3p l\u1EC7";
     reply.status(400).send({
-      error: "X\xE1c th\u1EF1c kh\xF4ng th\xE0nh c\xF4ng",
-      details: validation.error.flatten().fieldErrors
+      error: primaryMessage,
+      message: primaryMessage,
+      details: fieldErrors
     });
     return void 0;
   }
@@ -114829,7 +114833,7 @@ function mapRawScoreToArisLevel(correctCount, totalQuestions = 35) {
   if (percentage < 25) {
     return {
       levelNumber: 1,
-      levelTitle: "C\u1EA5p 1 \u2014 Kh\u1EDFi N\u1EC1n (Starter)",
+      levelTitle: "C\u1EA5p 1 \u2014 H\u1ECDc \u0110\u1ED3 (Starter)",
       estimatedIeltsRange: "Band 2.5 \u2013 3.5",
       description: "Th\xED sinh c\xF3 v\u1ED1n t\u1EEB v\u1EF1ng ban \u0111\u1EA7u, c\u1EA7n c\u1EE7ng c\u1ED1 l\u1EA1i ph\u01B0\u01A1ng ph\xE1p x\xE2y n\u1EC1n ng\u1EEF \xE2m IPA v\xE0 c\u1EA5u tr\xFAc c\xE2u \u0111\u01A1n ho\xE0n ch\u1EC9nh tr\u01B0\u1EDBc khi luy\u1EC7n \u0111\u1EC1.",
       recommendedCourse: {
@@ -114844,7 +114848,7 @@ function mapRawScoreToArisLevel(correctCount, totalQuestions = 35) {
   if (percentage < 45) {
     return {
       levelNumber: 2,
-      levelTitle: "C\u1EA5p 2 \u2014 T\u1EADp S\u1EF1 (Dreamer)",
+      levelTitle: "C\u1EA5p 2 \u2014 H\u1ECDc S\u0129 (Dreamer)",
       estimatedIeltsRange: "Band 3.5 \u2013 4.5",
       description: "\u0110\xE3 c\xF3 ph\u1EA3n x\u1EA1 nghe v\xE0 hi\u1EC3u c\xE1c h\u1ED9i tho\u1EA1i quen thu\u1ED9c. C\u1EA7n m\u1EDF r\u1ED9ng c\xE2u gh\xE9p, m\u1EC7nh \u0111\u1EC1 quan h\u1EC7 v\xE0 c\u1EE7ng c\u1ED1 ng\u1EEF ph\xE1p trung c\u1EA5p.",
       recommendedCourse: {
@@ -114859,7 +114863,7 @@ function mapRawScoreToArisLevel(correctCount, totalQuestions = 35) {
   if (percentage < 65) {
     return {
       levelNumber: 3,
-      levelTitle: "C\u1EA5p 3 \u2014 H\u1ECDc S\u0129 (Builder)",
+      levelTitle: "C\u1EA5p 3 \u2014 H\u1ECDc S\u01B0 (Builder)",
       estimatedIeltsRange: "Band 5.0 \u2013 5.5",
       description: "N\u1EC1n t\u1EA3ng t\u1EEB v\u1EF1ng v\xE0 ng\u1EEF ph\xE1p kh\xE1 v\u1EEFng. C\u1EA7n chuy\xEAn s\xE2u r\xE8n luy\u1EC7n c\xE2u ph\u1EE9c nhi\u1EC1u m\u1EC7nh \u0111\u1EC1, c\xE1c d\u1EA1ng b\xE0i suy lu\u1EADn logic IELTS v\xE0 collocations h\u1ECDc thu\u1EADt.",
       recommendedCourse: {
@@ -114874,7 +114878,7 @@ function mapRawScoreToArisLevel(correctCount, totalQuestions = 35) {
   if (percentage < 82) {
     return {
       levelNumber: 4,
-      levelTitle: "C\u1EA5p 4 \u2014 H\u1ECDc S\u01B0 (Master)",
+      levelTitle: "C\u1EA5p 4 \u2014 H\u1ECDc Gi\u1EA3 (Master)",
       estimatedIeltsRange: "Band 6.0 \u2013 6.5",
       description: "K\u1EF9 n\u0103ng x\u1EED l\xFD b\xE0i \u0111\u1ECDc v\xE0 b\xE0i nghe r\u1EA5t t\u1ED1t. C\u1EA7n r\xE8n luy\u1EC7n t\u01B0 duy l\u1EADp lu\u1EADn ph\u1EA3n bi\u1EC7n, b\u1EE9t ph\xE1 b\xE0i vi\u1EBFt Task 2 v\xE0 n\xF3i chuy\xEAn s\xE2u Part 2-3.",
       recommendedCourse: {
@@ -117917,10 +117921,16 @@ var validateQuestionSemantic = (data, ctx) => {
   if (type === "matching" && data.correctAnswer) {
     try {
       const parsed = JSON.parse(data.correctAnswer);
-      if (!parsed || !Array.isArray(parsed.items) || parsed.items.length === 0 || !Array.isArray(parsed.options) || parsed.options.length === 0 || typeof parsed.pairs !== "object" || parsed.pairs === null || Object.keys(parsed.pairs).length === 0) {
+      if (!parsed || !Array.isArray(parsed.items) || !Array.isArray(parsed.options) || typeof parsed.pairs !== "object" || parsed.pairs === null) {
         ctx.addIssue({
           code: external_exports.ZodIssueCode.custom,
-          message: "D\u1EEF li\u1EC7u n\u1ED1i \u0111\xE1p \xE1n (matching) kh\xF4ng \u0111\xFAng c\u1EA5u tr\xFAc (items, options, pairs)",
+          message: "D\u1EEF li\u1EC7u n\u1ED1i \u0111\xE1p \xE1n (matching) ph\u1EA3i c\xF3 c\u1EA5u tr\xFAc items, options v\xE0 pairs",
+          path: ["correctAnswer"]
+        });
+      } else if (parsed.items.length < 2 || parsed.options.length < 2) {
+        ctx.addIssue({
+          code: external_exports.ZodIssueCode.custom,
+          message: "C\xE2u h\u1ECFi n\u1ED1i \u0111\xE1p \xE1n ph\u1EA3i c\xF3 \xEDt nh\u1EA5t 2 c\xE2u h\u1ECFi v\xE0 2 l\u1EF1a ch\u1ECDn",
           path: ["correctAnswer"]
         });
       }
@@ -123532,6 +123542,41 @@ function calculateSubmissionTiming(submittedAt, effectiveDeadline) {
     lateDays
   };
 }
+function parseWeekAndDay(title, explicitWeek) {
+  const cleanTitle = (title || "").trim().toUpperCase();
+  let week = explicitWeek != null && !isNaN(explicitWeek) && explicitWeek > 0 ? explicitWeek : 999;
+  let remainingTitle = cleanTitle;
+  const dFormatMatch = cleanTitle.match(/^D(\d+)\s*[-_/\s]\s*D(\d+)/i);
+  if (dFormatMatch) {
+    week = parseInt(dFormatMatch[1], 10);
+    const day2 = parseInt(dFormatMatch[2], 10);
+    return { week, day: day2 };
+  }
+  const weekMatch = cleanTitle.match(/(?:WEEK|W)\s*(\d+)/i);
+  if (weekMatch) {
+    week = parseInt(weekMatch[1], 10);
+    remainingTitle = cleanTitle.slice(0, weekMatch.index) + cleanTitle.slice((weekMatch.index || 0) + weekMatch[0].length);
+  }
+  let day = 99;
+  const dayMatch = remainingTitle.match(/(?:DAY|D)\s*(\d+)/i);
+  if (dayMatch) {
+    day = parseInt(dayMatch[1], 10);
+  } else if (cleanTitle.includes("FINAL")) {
+    day = 100;
+  }
+  return { week, day };
+}
+function compareHomeworkOrder(a, b) {
+  const aParsed = parseWeekAndDay(a.title || "", a.week ?? a.lessonOrder);
+  const bParsed = parseWeekAndDay(b.title || "", b.week ?? b.lessonOrder);
+  if (aParsed.week !== bParsed.week) {
+    return aParsed.week - bParsed.week;
+  }
+  if (aParsed.day !== bParsed.day) {
+    return aParsed.day - bParsed.day;
+  }
+  return (a.title || "").localeCompare(b.title || "");
+}
 
 // server/services/lesson.service.ts
 var LessonService = class {
@@ -123603,7 +123648,7 @@ var LessonService = class {
           orderBy: { sessionNumber: "asc" }
         })
       ]);
-      exams = fetchedExams;
+      exams = [...fetchedExams].sort(compareHomeworkOrder);
       submissions = fetchedSubmissions;
       manualHomeworks = fetchedHomeworks;
       sessions = fetchedSessions;
@@ -123614,14 +123659,15 @@ var LessonService = class {
       const isGraded = sub?.status === "GRADED" || sub?.status === "graded";
       const isSubmitted = sub?.status === "SUBMITTED" || sub?.status === "submitted" || isGraded;
       if (isGraded) completedCount++;
-      const lessonOrder = exam.week || idx + 1;
+      const lessonOrder = idx + 1;
+      const lessonWeek = exam.week || Math.ceil((idx + 1) / 3);
       const customHw = manualHomeworks.find((h2) => h2.examId === exam.id || h2.lessonId === exam.id);
       const matchingSession = sessions.find((s2) => s2.sessionNumber === lessonOrder);
       const sessionDate = matchingSession?.plannedDate || null;
       const { effectiveDeadline, deadlineSource } = resolveEffectiveDeadline({
         classStartDate: classData.startDate || classData.createdAt,
         sessionDate,
-        lessonWeek: lessonOrder,
+        lessonWeek,
         manualDeadline: customHw?.deadline,
         defaultOffsetDays: 7
       });
@@ -124967,6 +125013,116 @@ async function roomRoutes(fastify) {
   );
 }
 
+// server/routes/periodic-reports.routes.ts
+init_zod();
+var savePeriodicReportSchema = external_exports.object({
+  periodStart: external_exports.string().optional(),
+  periodEnd: external_exports.string().optional(),
+  strengths: external_exports.string().optional().nullable(),
+  weaknesses: external_exports.string().optional().nullable(),
+  recommendations: external_exports.string().optional().nullable(),
+  nextPeriodGoals: external_exports.array(external_exports.string()).optional().default([])
+});
+var periodicReportsRoutes = async (fastify) => {
+  const prisma = fastify.prisma;
+  fastify.get(
+    "/classes/:classId/students/:studentId/periodic-reports/latest",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      const { classId, studentId } = request.params;
+      const user = request.user;
+      try {
+        const report = await prisma.studentPeriodicReport.findFirst({
+          where: {
+            classId,
+            studentId
+          },
+          orderBy: {
+            createdAt: "desc"
+          },
+          include: {
+            teacher: {
+              select: { id: true, fullName: true, email: true }
+            }
+          }
+        });
+        return reply.send({
+          success: true,
+          data: report
+        });
+      } catch (err) {
+        fastify.log.error(err, "Failed to get latest periodic report");
+        return reply.status(500).send({
+          error: "InternalServerError",
+          message: "Kh\xF4ng th\u1EC3 t\u1EA3i b\xE1o c\xE1o \u0111\u1ECBnh k\u1EF3: " + err.message
+        });
+      }
+    }
+  );
+  fastify.post(
+    "/classes/:classId/students/:studentId/periodic-reports",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { classId, studentId } = request.params;
+      const teacherId = request.user.id || request.user.userId;
+      const body = savePeriodicReportSchema.parse(request.body);
+      const now = /* @__PURE__ */ new Date();
+      const defaultStart = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1e3);
+      const periodStart = body.periodStart ? new Date(body.periodStart) : defaultStart;
+      const periodEnd = body.periodEnd ? new Date(body.periodEnd) : now;
+      try {
+        const existing = await prisma.studentPeriodicReport.findFirst({
+          where: {
+            classId,
+            studentId,
+            periodStart,
+            periodEnd
+          }
+        });
+        let savedReport;
+        if (existing) {
+          savedReport = await prisma.studentPeriodicReport.update({
+            where: { id: existing.id },
+            data: {
+              teacherId,
+              strengths: body.strengths,
+              weaknesses: body.weaknesses,
+              recommendations: body.recommendations,
+              nextPeriodGoals: body.nextPeriodGoals,
+              updatedAt: now
+            }
+          });
+        } else {
+          savedReport = await prisma.studentPeriodicReport.create({
+            data: {
+              classId,
+              studentId,
+              teacherId,
+              periodStart,
+              periodEnd,
+              strengths: body.strengths,
+              weaknesses: body.weaknesses,
+              recommendations: body.recommendations,
+              nextPeriodGoals: body.nextPeriodGoals
+            }
+          });
+        }
+        return reply.send({
+          success: true,
+          data: savedReport
+        });
+      } catch (err) {
+        fastify.log.error(err, "Failed to save periodic report");
+        return reply.status(500).send({
+          error: "InternalServerError",
+          message: "Kh\xF4ng th\u1EC3 l\u01B0u b\xE1o c\xE1o \u0111\u1ECBnh k\u1EF3: " + err.message
+        });
+      }
+    }
+  );
+};
+var periodic_reports_routes_default = periodicReportsRoutes;
+
 // server/routes/index.ts
 var routes = async (fastify) => {
   fastify.get("/health", async () => {
@@ -124998,6 +125154,7 @@ var routes = async (fastify) => {
   await fastify.register(speakingStorage_routes_default, { prefix: "/speaking" });
   await fastify.register(speaking_forecast_routes_default, { prefix: "/speaking-forecast" });
   await fastify.register(lesson_routes_default);
+  await fastify.register(periodic_reports_routes_default);
 };
 var routes_default = routes;
 
