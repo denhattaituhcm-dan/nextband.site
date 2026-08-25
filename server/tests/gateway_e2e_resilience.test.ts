@@ -167,8 +167,15 @@ describe("🚀 PHASE 2: GATEWAY E2E BUSINESS FLOW & FAILURE ISOLATION TESTS", ()
   }, 60000);
 
   afterAll(async () => {
-    await app.close();
-    await prisma.$disconnect();
+    try {
+      if (examId) {
+        await prisma.examSubmission.deleteMany({ where: { examId } }).catch(() => {});
+        await prisma.exam.delete({ where: { id: examId } }).catch(() => {});
+      }
+    } finally {
+      await app.close();
+      await prisma.$disconnect();
+    }
   }, 60000);
 
   // ---------------------------------------------------------------------------

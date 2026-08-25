@@ -251,7 +251,7 @@ export default function ResultsPage() {
                           <span className="inline-flex items-center gap-0.5 font-mono text-[10px] font-black text-brand-red">
                             {honor.stage.starCount}
                             <img
-                              src="/images/star.png"
+                              src="/images/star1.png"
                               alt="star"
                               className="w-3 h-3 object-contain inline-block -mt-0.5"
                             />
@@ -457,7 +457,7 @@ export default function ResultsPage() {
                         <span>{honor.stage.stageName}</span>
                         <span className="inline-flex items-center gap-0.5 text-brand-red font-mono">
                           {honor.stage.starCount}
-                          <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                          <img src="/images/star1.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
                         </span>
                       </span>
                       <span className="text-xs font-mono font-black px-2.5 py-1 rounded-lg bg-background border text-foreground shadow-2xs">

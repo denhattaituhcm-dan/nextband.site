@@ -443,7 +443,7 @@ export default function AcademicSystemPage() {
                 <div className="space-y-2">
                   <div className="inline-flex items-center gap-1.5 text-xs font-mono font-black px-3 py-1 rounded-lg bg-brand-blue-soft text-brand-blue w-fit">
                     <span>1★</span>
-                    <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                    <img src="/images/star1.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
                   </div>
                   <h4 className="font-black text-foreground text-xl">Sơ Kỳ (Phase I)</h4>
                   <div className="text-xs font-mono font-bold text-brand-blue">
@@ -463,8 +463,8 @@ export default function AcademicSystemPage() {
                   <div className="inline-flex items-center gap-1.5 text-xs font-mono font-black px-3 py-1 rounded-lg bg-brand-blue-soft text-brand-blue w-fit">
                     <span>2★</span>
                     <div className="inline-flex items-center -space-x-0.5">
-                      <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
-                      <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                      <img src="/images/star1.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                      <img src="/images/star1.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
                     </div>
                   </div>
                   <h4 className="font-black text-foreground text-xl">Trung Kỳ (Phase II)</h4>
@@ -485,9 +485,9 @@ export default function AcademicSystemPage() {
                   <div className="inline-flex items-center gap-1.5 text-xs font-mono font-black px-3 py-1 rounded-lg bg-brand-blue-soft text-brand-blue w-fit">
                     <span>3★</span>
                     <div className="inline-flex items-center -space-x-0.5">
-                      <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
-                      <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
-                      <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                      <img src="/images/star1.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                      <img src="/images/star1.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                      <img src="/images/star1.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
                     </div>
                   </div>
                   <h4 className="font-black text-foreground text-xl">Hậu Kỳ (Phase III)</h4>
@@ -508,10 +508,10 @@ export default function AcademicSystemPage() {
                   <div className="inline-flex items-center gap-1.5 text-xs font-mono font-black px-3 py-1 rounded-lg bg-brand-red-soft text-brand-red w-fit">
                     <span>4★</span>
                     <div className="inline-flex items-center -space-x-0.5">
-                      <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
-                      <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
-                      <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
-                      <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                      <img src="/images/star1.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                      <img src="/images/star1.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                      <img src="/images/star1.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                      <img src="/images/star1.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
                     </div>
                   </div>
                   <h4 className="font-black text-foreground text-xl">Đỉnh Phong (Apex)</h4>

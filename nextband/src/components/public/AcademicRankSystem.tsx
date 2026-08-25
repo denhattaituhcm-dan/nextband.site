@@ -319,12 +319,12 @@ export function AcademicRankSystem({
                 <span>4 Tầng Tiến Trình Chuẩn Hóa</span>
                 <span className="font-mono text-xs text-foreground/75 inline-flex items-center gap-1">
                   <span className="inline-flex items-center gap-0.5 font-bold">
-                    1<img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                    1<img src="/images/star1.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
                   </span>
                   <span>Sơ kỳ</span>
                   <span className="text-muted-foreground font-normal">→</span>
                   <span className="inline-flex items-center gap-0.5 font-bold">
-                    4<img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                    4<img src="/images/star1.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
                   </span>
                   <span>Đỉnh phong</span>
                 </span>
@@ -358,7 +358,7 @@ export function AcademicRankSystem({
                           <span className="inline-flex items-center gap-1 text-xs font-mono font-black px-2 py-0.5 rounded-md bg-background border border-border text-foreground shadow-2xs">
                             <span>{stage.starCount}</span>
                             <img
-                              src="/images/star.png"
+                              src="/images/star1.png"
                               alt="star"
                               className="w-3.5 h-3.5 object-contain inline-block -mt-0.5"
                             />
