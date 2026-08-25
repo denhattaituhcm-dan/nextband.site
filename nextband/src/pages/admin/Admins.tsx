@@ -35,6 +35,7 @@ import {
   EyeOff,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { DataTablePagination } from "@/components/admin/DataTablePagination";
 
 type SortField = "fullName" | "email" | "createdAt";
@@ -50,6 +51,7 @@ const emptyForm = {
 };
 
 export default function AdminAdmins() {
+  const { user: currentUser, refreshUser } = useAuth();
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -94,9 +96,12 @@ export default function AdminAdmins() {
     mutationFn: async ({ id, isActive }: { id: string; isActive: boolean }) => {
       return usersApi.update(id, { isActive });
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["admin-admins"] });
       toast({ title: "Đã cập nhật trạng thái quản trị viên" });
+      if (currentUser && (variables.id === currentUser.id || variables.id === (currentUser as any).userId)) {
+        refreshUser();
+      }
     },
   });
 

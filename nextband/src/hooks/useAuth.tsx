@@ -19,6 +19,7 @@ export interface User {
   bio?: string | null;
   phone?: string | null;
   gender?: string | null;
+  isActive?: boolean;
   roles: AppRole[];
 }
 
@@ -60,11 +61,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       // 1. Fetch Profile
-      const { data: profile } = await supabase
+      const { data: profile, error: profileErr } = await supabase
         .from("profiles")
         .select("*")
         .eq("user_id", authUser.id)
         .maybeSingle();
+
+      if (profileErr) {
+        console.error("Failed to query profile:", profileErr);
+      }
+
+      // If user profile is marked inactive (disabled by admin), force sign out immediately
+      if (profile && (profile.is_active === false || profile.isActive === false)) {
+        console.warn("[AUTH] Account has been deactivated:", authUser.email);
+        await supabase.auth.signOut();
+        setUser(null);
+        setToken(null);
+        throw new Error("Tài khoản của bạn đã bị vô hiệu hóa hoặc tắt kích hoạt. Vui lòng liên hệ ban quản trị.");
+      }
 
       // 2. Fetch User Roles directly from source of truth
       const { data: rolesData } = await supabase
@@ -84,20 +98,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         bio: profile?.bio || null,
         phone: profile?.phone || null,
         gender: profile?.gender || null,
+        isActive: profile?.is_active ?? true,
         roles: userRoles,
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to load user profile:", err);
       setUser(null);
+      throw err;
     }
   };
 
   useEffect(() => {
     // Check active session on mount
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
         setToken(session.access_token);
-        fetchUserProfile(session.user).finally(() => setIsLoading(false));
+        try {
+          await fetchUserProfile(session.user);
+        } catch (err) {
+          console.warn("[AUTH] Initial profile load notice:", err);
+          setUser(null);
+          setToken(null);
+        } finally {
+          setIsLoading(false);
+        }
       } else {
         setIsLoading(false);
       }
@@ -109,7 +133,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user) {
         setToken(session.access_token);
-        await fetchUserProfile(session.user);
+        try {
+          await fetchUserProfile(session.user);
+        } catch (err) {
+          console.warn("[AUTH] Auth state change profile load notice:", err);
+          setUser(null);
+          setToken(null);
+        }
       } else {
         setToken(null);
         setUser(null);
@@ -147,7 +177,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (data.user) {
         setToken(data.session?.access_token || null);
-        await fetchUserProfile(data.user);
+        try {
+          await fetchUserProfile(data.user);
+        } catch (profileErr: any) {
+          await supabase.auth.signOut();
+          setToken(null);
+          setUser(null);
+          return { error: new Error(profileErr?.message || "Tài khoản của bạn đã bị vô hiệu hóa hoặc tắt kích hoạt. Vui lòng liên hệ ban quản trị.") };
+        }
       }
 
       return { error: null };
@@ -189,7 +226,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (data.session && data.user) {
         setToken(data.session.access_token);
-        await fetchUserProfile(data.user);
+        try {
+          await fetchUserProfile(data.user);
+        } catch (profileErr: any) {
+          await supabase.auth.signOut();
+          setToken(null);
+          setUser(null);
+          return { error: new Error(profileErr?.message || "Đăng ký thất bại") };
+        }
       }
 
       return { error: null };
@@ -209,7 +253,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       data: { user: authUser },
     } = await supabase.auth.getUser();
     if (authUser) {
-      await fetchUserProfile(authUser);
+      try {
+        await fetchUserProfile(authUser);
+      } catch (err) {
+        console.warn("[AUTH] Refresh profile notice:", err);
+        setUser(null);
+        setToken(null);
+      }
     }
   };
 

@@ -27,7 +27,7 @@ export function ProtectedRoute({
     );
   }
 
-  if (!user) {
+  if (!user || user.isActive === false) {
     return <Navigate to={redirectTo} state={{ from: location }} replace />;
   }
 
