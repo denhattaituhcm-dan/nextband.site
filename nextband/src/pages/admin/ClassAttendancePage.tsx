@@ -24,18 +24,19 @@ export default function ClassAttendancePage() {
   });
 
   const sessionInfo = sessionData?.data;
-  const students = sessionInfo?.students || [];
+  const rawStudents = sessionInfo?.students;
+  const students = useMemo(() => rawStudents || [], [rawStudents]);
   const summary = sessionInfo?.summary;
 
   useEffect(() => {
-    if (students.length > 0) {
+    if (rawStudents && rawStudents.length > 0) {
       const initialState: Record<string, AttendanceStatus> = {};
-      students.forEach((s) => {
+      rawStudents.forEach((s) => {
         initialState[s.studentId] = s.status as AttendanceStatus;
       });
       setAttendanceState(initialState);
     }
-  }, [students]);
+  }, [rawStudents]);
 
   const saveMutation = useMutation({
     mutationFn: () => {

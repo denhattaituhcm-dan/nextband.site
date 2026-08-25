@@ -140,6 +140,22 @@ const queryClient = new QueryClient({
   },
 });
 
+function formatAppErrorMessage(err: any): string {
+  if (!err) return "Đã xảy ra lỗi không xác định trên hệ thống.";
+  const msg = String(err?.message || err);
+
+  if (msg.includes("invariant=310") || msg.includes("error #310")) {
+    return "Lỗi thực thi giao diện (Thứ tự Hook thay đổi khi render).";
+  }
+  if (msg.includes("invariant=300") || msg.includes("error #300")) {
+    return "Lỗi thực thi giao diện (Số lượng Hook không khớp giữa các lần render).";
+  }
+  if (msg.includes("invariant=418") || msg.includes("invariant=423")) {
+    return "Lỗi đồng bộ cấu trúc dữ liệu giao diện (Hydration mismatch).";
+  }
+  return msg;
+}
+
 class AppErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: any }> {
   constructor(props: { children: React.ReactNode }) {
     super(props);
@@ -166,27 +182,46 @@ class AppErrorBoundary extends React.Component<{ children: React.ReactNode }, { 
 
   render() {
     if (this.state.hasError) {
+      const errorDisplay = formatAppErrorMessage(this.state.error);
+      const rawError = String(this.state.error?.message || this.state.error || "Unknown Error");
+
       return (
         <div className="min-h-screen flex items-center justify-center bg-background p-6 text-center font-sans">
           <div className="max-w-md w-full bg-card p-8 rounded-2xl border border-border shadow-xl space-y-4">
-            <div className="w-12 h-12 rounded-full bg-primary-soft text-primary flex items-center justify-center mx-auto text-xl font-bold">
+            <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto text-xl font-bold">
               ⚡
             </div>
             <h2 className="text-xl font-extrabold text-foreground">NextBand LMS System</h2>
-            <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-xl text-left">
-              <p className="text-[11px] font-mono font-bold text-destructive break-words">
-                {String(this.state.error?.message || this.state.error || "Unknown Error")}
+            <div className="p-3.5 bg-destructive/10 border border-destructive/20 rounded-xl text-left space-y-1.5">
+              <p className="text-xs font-semibold text-destructive">
+                {errorDisplay}
               </p>
+              {errorDisplay !== rawError && (
+                <p className="text-[10px] font-mono text-muted-foreground break-words">
+                  {rawError}
+                </p>
+              )}
             </div>
-            <button
-              onClick={() => {
-                this.setState({ hasError: false, error: null });
-                window.location.href = window.location.origin + window.location.pathname + "?t=" + Date.now();
-              }}
-              className="w-full py-2.5 px-4 bg-primary hover:bg-primary-hover text-primary-foreground font-extrabold text-xs rounded-xl shadow-md transition-all cursor-pointer"
-            >
-              Làm mới trang
-            </button>
+            <div className="flex gap-2.5 pt-1">
+              <button
+                onClick={() => {
+                  this.setState({ hasError: false, error: null });
+                  window.location.href = window.location.origin + "/app";
+                }}
+                className="flex-1 py-2.5 px-3 border border-input hover:bg-muted font-bold text-xs rounded-xl transition-all cursor-pointer"
+              >
+                Về Trang Chính
+              </button>
+              <button
+                onClick={() => {
+                  this.setState({ hasError: false, error: null });
+                  window.location.href = window.location.origin + window.location.pathname + "?t=" + Date.now();
+                }}
+                className="flex-1 py-2.5 px-4 bg-primary hover:bg-primary/90 text-primary-foreground font-extrabold text-xs rounded-xl shadow-md transition-all cursor-pointer"
+              >
+                Làm mới trang
+              </button>
+            </div>
           </div>
         </div>
       );
@@ -232,7 +267,7 @@ const App = () => (
                 <Route path="/courses/:slug" element={<CourseDetailPage />} />
                 <Route path="/teachers" element={<TeachersPage />} />
                 <Route path="/results" element={<ResultsPage />} />
-                <Route path="/progress" element={<ResultsPage />} />
+                <Route path="/progress" element={<Navigate to="/results" replace />} />
                 <Route path="/careers" element={<CareersPage />} />
                 <Route path="/careers/:jobSlug" element={<JobDetailPage />} />
                 <Route path="/news" element={<NewsPage />} />

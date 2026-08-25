@@ -249,13 +249,6 @@ export const authApi = {
 
   loginWithGoogle: async (redirectTo?: string) => {
     const targetRedirect = redirectTo || `${window.location.origin}/login`;
-    console.log("[AUTH_DIAGNOSTIC] Initiating signInWithOAuth", {
-      provider: "google",
-      redirectTo: targetRedirect,
-      currentHref: window.location.href,
-      origin: window.location.origin,
-      timestamp: new Date().toISOString(),
-    });
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
@@ -263,10 +256,8 @@ export const authApi = {
       },
     });
     if (error) {
-      console.error("[AUTH_DIAGNOSTIC] signInWithOAuth failed directly", error);
       throw error;
     }
-    console.log("[AUTH_DIAGNOSTIC] signInWithOAuth initiated successfully, provider URL returned:", data?.url);
     return data;
   },
 
@@ -4138,32 +4129,14 @@ export const assessmentApi = {
       }
 
       const err = await res.json().catch(() => ({}));
-      const errMsg = err.error || err.message;
-      if (errMsg) {
-        throw new Error(errMsg);
-      }
+      const errMsg = err.error || err.message || "Không thể khởi tạo phiên khảo thí trên hệ thống.";
+      throw new Error(errMsg);
     } catch (networkErr: any) {
       if (networkErr?.message && !networkErr.message.includes("Failed to fetch") && !networkErr.message.includes("NetworkError")) {
         throw networkErr;
       }
+      throw new Error("Không thể kết nối đến máy chủ khảo thí. Vui lòng kiểm tra kết nối mạng và thử lại.");
     }
-
-    // Fallback for offline / direct client execution
-    const fallbackId = `assess_${Date.now()}`;
-    const dummyToken = `candidate_${fallbackId}`;
-    setAssessmentToken(dummyToken);
-
-    return {
-      success: true,
-      sessionId: fallbackId,
-      token: dummyToken,
-      expiresAt: new Date(Date.now() + 65 * 60 * 1000).toISOString(),
-      candidate: {
-        fullName: payload.fullName,
-        phone: payload.phone,
-        targetBand: payload.targetBand || "Chưa xác định",
-      },
-    };
   },
 
   getTestPayload: async (sessionId: string, customToken?: string) => {

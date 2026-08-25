@@ -334,10 +334,10 @@ export function ProgressReportModal({
     ctx.font = `800 14px ${FONT_FAMILY}`;
     ctx.fillText(`• Mục tiêu đầu ra: ${targetBand}`, 470, currY + 54);
 
-    // Quy mô lớp học
+    // Sĩ số lớp học
     ctx.fillStyle = "#0369a1";
     ctx.font = `700 13px ${FONT_FAMILY}`;
-    ctx.fillText(`• QUY MÔ LỚP: ${classCurrent} / ${classMax} học viên (Sĩ số hiện tại / Sĩ số tối đa)`, 38, currY + 77);
+    ctx.fillText(`• Sĩ số: ${classCurrent} học viên (tối đa ${classMax} HV)`, 38, currY + 77);
 
     currY += 104;
 
@@ -460,7 +460,7 @@ export function ProgressReportModal({
     ctx.fillStyle = "#0369a1";
     ctx.font = `700 13px ${FONT_FAMILY}`;
     ctx.fillText(
-      `• Nguồn chấm: ${hw.autoGradedCount || 0} bài chấm tự động (Trắc nghiệm/Reading/Listening) · ${hw.teacherGradedCount || 0} bài giáo viên chấm & nhận xét (Writing/Speaking)`,
+      `• Nguồn chấm: ${hw.autoGradedCount || 0} bài tự động · ${hw.teacherGradedCount || 0} bài giáo viên chấm & nhận xét`,
       36,
       currY + 104
     );
@@ -527,7 +527,7 @@ export function ProgressReportModal({
       ctx.fillText("🎯  Hoàn thành đầy đủ các bài tập tự học trên hệ thống", 36, currY + 54);
     }
 
-    // 8. Footer & Brand Identity
+    // 8. Footer & Brand Identity (Địa chỉ trung tâm & Ngày xuất)
     ctx.strokeStyle = "#e2e8f0";
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -537,7 +537,7 @@ export function ProgressReportModal({
 
     ctx.fillStyle = "#475569";
     ctx.font = `700 12px ${FONT_FAMILY}`;
-    ctx.fillText("HỌC VIỆN NGÔN NGỮ HỌC THUẬT ARIS — HỌC TIẾNG ANH TỪ BẢN CHẤT", 20, height - 20);
+    ctx.fillText("68B, Phan Bội Châu, P. Dĩ An, TP.HCM", 20, height - 20);
 
     ctx.fillStyle = "#64748b";
     ctx.font = `500 12px ${FONT_FAMILY}`;
@@ -774,9 +774,9 @@ export function ProgressReportModal({
                 <span>• Ngày xuất: <strong>{data.generatedAt}</strong></span>
               </div>
               <div className="flex items-center gap-1.5 pt-1.5 border-t border-slate-200/60 dark:border-slate-800 text-[11px]">
-                <span className="font-bold text-sky-700 dark:text-sky-400">QUY MÔ LỚP:</span>
+                <span className="font-bold text-sky-700 dark:text-sky-400">• Sĩ số:</span>
                 <span className="font-semibold text-slate-800 dark:text-slate-200">
-                  {data.classInfo?.currentStudents || 6} / {data.classInfo?.maxStudents || 10} học viên (Sĩ số hiện tại / Tối đa)
+                  {data.classInfo?.currentStudents || 6} học viên (tối đa {data.classInfo?.maxStudents || 10} HV)
                 </span>
               </div>
             </div>
@@ -842,7 +842,7 @@ export function ProgressReportModal({
                   <span>Đã chấm: <strong>{data.homework.gradedCount}/{hwCompleted}</strong> | Đạt chuẩn: <strong className="text-emerald-600">{data.homework.passedCount || 0}</strong> | Cần cải thiện: <strong className="text-amber-600">{data.homework.needsImprovementCount || 0}</strong></span>
                 </div>
                 <div className="text-[10px] text-sky-700 dark:text-sky-400">
-                  • Nguồn chấm: {data.homework.autoGradedCount || 0} bài chấm tự động · {data.homework.teacherGradedCount || 0} bài giáo viên chấm & nhận xét
+                  • Nguồn chấm: {data.homework.autoGradedCount || 0} bài tự động · {data.homework.teacherGradedCount || 0} bài giáo viên chấm & nhận xét
                 </div>
               </div>
             </div>
@@ -876,7 +876,7 @@ export function ProgressReportModal({
 
             {/* Footer watermark */}
             <div className="pt-1.5 text-[10px] text-slate-400 flex items-center justify-between border-t border-slate-200 dark:border-slate-800">
-              <span>Học Viện ARIS — Học Tiếng Anh Từ Bản Chất</span>
+              <span>68B, Phan Bội Châu, P. Dĩ An, TP.HCM</span>
               <span>nextband.site</span>
             </div>
           </div>

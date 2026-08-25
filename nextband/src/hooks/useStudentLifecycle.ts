@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { classStudentsApi, MyClassEnrollment } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { resolveClassContext, ResolveClassResult } from "@/lib/classContext";
 
 /**
@@ -57,63 +57,68 @@ export function useStudentLifecycle() {
   });
 
   // ─── Derive authoritative lifecycle state ───────────────────────────────────
-  let state: StudentLifecycleState = "LOADING";
-  let enrollments: MyClassEnrollment[] = [];
-  let lifecycleError: StudentLifecycleError | undefined;
-
   const isQuerySettled = queryStatus === "success" || queryStatus === "error";
 
-  if (isQuerySettled) {
-    if (isQueryError || !classesResult) {
-      // Query threw an exception or returned undefined on error
-      const err = queryError as any;
-      const httpStatus = err?.httpStatus || err?.status;
-      const message = err?.message || "Không thể kết nối máy chủ";
+  const { state, enrollments, lifecycleError } = useMemo<{
+    state: StudentLifecycleState;
+    enrollments: MyClassEnrollment[];
+    lifecycleError: StudentLifecycleError | undefined;
+  }>(() => {
+    let s: StudentLifecycleState = "LOADING";
+    let e: MyClassEnrollment[] = [];
+    let err: StudentLifecycleError | undefined;
 
-      if (httpStatus === 401 || httpStatus === 403) {
-        state = "API_ERROR";
-        lifecycleError = { httpStatus, message };
-      } else if (httpStatus && httpStatus >= 400 && httpStatus < 600) {
-        state = "API_ERROR";
-        lifecycleError = { httpStatus, message };
+    if (isQuerySettled) {
+      if (isQueryError || !classesResult) {
+        const queryErr = queryError as any;
+        const httpStatus = queryErr?.httpStatus || queryErr?.status;
+        const message = queryErr?.message || "Không thể kết nối máy chủ";
+
+        if (httpStatus === 401 || httpStatus === 403) {
+          s = "API_ERROR";
+          err = { httpStatus, message };
+        } else if (httpStatus && httpStatus >= 400 && httpStatus < 600) {
+          s = "API_ERROR";
+          err = { httpStatus, message };
+        } else {
+          s = "NETWORK_ERROR";
+          err = { message };
+        }
       } else {
-        state = "NETWORK_ERROR";
-        lifecycleError = { message };
+        switch (classesResult.status) {
+          case "ok":
+            e = classesResult.data || [];
+            s = e.length > 0 ? "ENROLLED" : "PRE_ENROLLMENT";
+            break;
+          case "unauthenticated":
+            s = "API_ERROR";
+            err = { httpStatus: 401, message: "Phiên đăng nhập đã hết hạn" };
+            break;
+          case "api_error":
+            s = "API_ERROR";
+            err = {
+              httpStatus: classesResult.httpStatus || 500,
+              message: classesResult.message || "Lỗi máy chủ",
+            };
+            break;
+          case "network_error":
+            s = "NETWORK_ERROR";
+            err = {
+              message: classesResult.message || "Không thể kết nối tới máy chủ",
+            };
+            break;
+        }
       }
-    } else {
-      switch (classesResult.status) {
-        case "ok":
-          enrollments = classesResult.data || [];
-          state = enrollments.length > 0 ? "ENROLLED" : "PRE_ENROLLMENT";
-          break;
-        case "unauthenticated":
-          state = "API_ERROR";
-          lifecycleError = { httpStatus: 401, message: "Phiên đăng nhập đã hết hạn" };
-          break;
-        case "api_error":
-          state = "API_ERROR";
-          lifecycleError = {
-            httpStatus: classesResult.httpStatus || 500,
-            message: classesResult.message || "Lỗi máy chủ",
-          };
-          break;
-        case "network_error":
-          state = "NETWORK_ERROR";
-          lifecycleError = {
-            message: classesResult.message || "Không thể kết nối tới máy chủ",
-          };
-          break;
-      }
+    } else if (!authLoading && !isAuthenticated) {
+      s = "API_ERROR";
+      err = { httpStatus: 401, message: "Chưa đăng nhập" };
+    } else if (!authLoading && isAuthenticated && !user?.id) {
+      s = "API_ERROR";
+      err = { httpStatus: 401, message: "Không tìm thấy hồ sơ người dùng" };
     }
-  } else if (!authLoading && !isAuthenticated) {
-    // Settled unauthenticated state
-    state = "API_ERROR";
-    lifecycleError = { httpStatus: 401, message: "Chưa đăng nhập" };
-  } else if (!authLoading && isAuthenticated && !user?.id) {
-    // Authenticated session without valid profile
-    state = "API_ERROR";
-    lifecycleError = { httpStatus: 401, message: "Không tìm thấy hồ sơ người dùng" };
-  }
+
+    return { state: s, enrollments: e, lifecycleError: err };
+  }, [isQuerySettled, isQueryError, classesResult, queryError, authLoading, isAuthenticated, user?.id]);
 
   const hasEnrollments = state === "ENROLLED";
   const isLoading = state === "LOADING";

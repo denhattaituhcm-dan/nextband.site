@@ -120,11 +120,11 @@ export default function HomePage() {
     staleTime: 1000 * 60 * 2,
   });
 
-  const rawLessons = classLessonData?.data?.lessons || [];
+  const rawLessons = classLessonData?.data?.lessons;
 
   // Hàng đợi hành động 4 tầng ưu tiên sư phạm: Revision > Overdue > Due Soon > Upcoming
   const actionQueue = useMemo(() => {
-    const sortedLessons = [...rawLessons].sort(compareHomeworkOrder);
+    const sortedLessons = [...(rawLessons || [])].sort(compareHomeworkOrder);
     const formatted = sortedLessons.map((item: any, idx: number) => {
       const sub = userSubmissions.find((s: any) => (s.examId || s.exam_id) === item.id) || item.submission;
       const deadline = item.homework?.deadline;

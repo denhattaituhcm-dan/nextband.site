@@ -106,13 +106,13 @@ export default function TeacherWorkspace() {
     },
   });
 
-  const classes = classesData || [];
+  const classes = useMemo(() => classesData || [], [classesData]);
 
   useEffect(() => {
-    if (!selectedClassId && classes.length > 0) {
-      setSelectedClassId(classes[0].id);
+    if (!selectedClassId && classesData && classesData.length > 0) {
+      setSelectedClassId(classesData[0].id);
     }
-  }, [selectedClassId, classes]);
+  }, [selectedClassId, classesData]);
 
   const currentClass = useMemo(() => {
     return classes.find((c: any) => c.id === selectedClassId) || classes[0];

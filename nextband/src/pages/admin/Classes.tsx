@@ -158,26 +158,26 @@ export default function AdminClasses() {
   const courses = coursesData?.data || [];
   const teachers = teachersData?.data || [];
 
-  const rawClasses = data?.data || [];
-  const classes = rawClasses;
+  const rawClasses = data?.data;
+  const classes = useMemo(() => rawClasses || [], [rawClasses]);
 
   const total = data?.meta?.total || 0;
 
   const totalPages = data?.meta?.totalPages || 1;
 
   const activeClassesCount = useMemo(() => {
-    return rawClasses.filter((c: any) => c.isActive !== false).length;
+    return (rawClasses || []).filter((c: any) => c.isActive !== false).length;
   }, [rawClasses]);
 
   const totalStudentsCount = useMemo(() => {
-    return rawClasses.reduce((acc: number, c: any) => {
+    return (rawClasses || []).reduce((acc: number, c: any) => {
       const studentCount = c.studentsCount || c.student_count || c._count?.students || (c.students ? c.students.length : 0);
       return acc + (typeof studentCount === "number" ? studentCount : 0);
     }, 0);
   }, [rawClasses]);
 
   const filteredClasses = useMemo(() => {
-    return [...rawClasses].sort((a: any, b: any) => {
+    return [...(rawClasses || [])].sort((a: any, b: any) => {
       const mult = sortOrder === "asc" ? 1 : -1;
       if (sortField === "name") {
         return (a.name || "").localeCompare(b.name || "") * mult;

@@ -177,10 +177,11 @@ export default function ExamInterface() {
   });
 
   const exam = examData;
-  const sections = exam?.sections || [];
+  const rawSections = exam?.sections;
+  const sections = useMemo(() => rawSections || [], [rawSections]);
 
   const availableSections = useMemo(() => {
-    return (sections || [])
+    return sections
       .filter((s: any) => {
         const groups = s.questionGroups || s.question_groups || [];
         return groups.some(
