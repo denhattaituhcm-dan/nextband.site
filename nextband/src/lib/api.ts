@@ -3642,7 +3642,7 @@ export const lessonsApi = {
           const customHw = homeworksMap[e.id];
           const lessonOrder = e.week || idx + 1;
           const { effectiveDeadline, deadlineSource } = resolveEffectiveDeadline({
-            classStartDate: cls.start_date || cls.created_at,
+            classStartDate: (cls as any)?.start_date || (cls as any)?.startDate || (cls as any)?.created_at || (cls as any)?.createdAt,
             lessonWeek: lessonOrder,
             manualDeadline: customHw?.deadline,
             defaultOffsetDays: 7,
