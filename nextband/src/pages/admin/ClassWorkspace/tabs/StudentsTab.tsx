@@ -130,7 +130,7 @@ export const StudentsTab: React.FC = () => {
                   return (
                     <TableRow
                       key={student.id || student.studentId}
-                      className="cursor-pointer hover:bg-muted/50 transition-colors"
+                      className="cursor-pointer hover:bg-red-50/60 hover:border-l-4 hover:border-l-red-500 transition-all"
                       onClick={() => handleOpenProfile(student)}
                     >
                       <TableCell>

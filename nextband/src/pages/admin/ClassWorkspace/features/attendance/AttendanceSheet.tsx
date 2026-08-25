@@ -386,12 +386,12 @@ export const AttendanceSheet: React.FC<AttendanceSheetProps> = ({ classId, sessi
                   <SelectItem
                     key={s.id}
                     value={s.id}
-                    className={`text-xs font-medium py-2 my-0.5 rounded-md transition-colors cursor-pointer ${
+                    className={`text-xs font-medium py-2 px-3 my-0.5 rounded-lg transition-all cursor-pointer border border-transparent hover:bg-red-50 hover:text-red-900 hover:border-red-200 focus:bg-red-50 focus:text-red-900 focus:border-red-200 data-[highlighted]:bg-red-50 data-[highlighted]:text-red-900 data-[highlighted]:border-red-200 data-[highlighted]:font-semibold ${
                       isItemCompleted
-                        ? "bg-emerald-50/60 hover:bg-emerald-100/70 focus:bg-emerald-100/70 text-emerald-950 font-semibold"
+                        ? "bg-emerald-50/50 text-emerald-950 font-medium"
                         : isItemCancelled
                         ? "bg-rose-50/40 text-rose-800"
-                        : "hover:bg-muted/70 focus:bg-muted/70"
+                        : "text-slate-800"
                     }`}
                   >
                     <div className="flex items-center justify-between w-full gap-3">
@@ -540,7 +540,7 @@ export const AttendanceSheet: React.FC<AttendanceSheetProps> = ({ classId, sessi
             </TableHeader>
             <TableBody>
               {items.map((student) => (
-                <TableRow key={student.studentId} className="hover:bg-muted/50 transition-colors">
+                <TableRow key={student.studentId} className="hover:bg-red-50/60 hover:border-l-4 hover:border-l-red-500 transition-all cursor-pointer">
                   <TableCell>
                     <div className="flex items-center gap-2.5">
                       <Avatar className="h-8 w-8">

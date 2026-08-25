@@ -170,7 +170,7 @@ export const AttendanceMatrix: React.FC<AttendanceMatrixProps> = ({ classId }) =
           </TableHeader>
           <TableBody>
             {data.students.map((student) => (
-              <TableRow key={student.studentId} className="hover:bg-muted/50 transition-colors">
+              <TableRow key={student.studentId} className="hover:bg-red-50/60 hover:border-l-4 hover:border-l-red-500 transition-all cursor-pointer">
                 <TableCell className="sticky left-0 bg-card z-10 border-r">
                   <div className="flex items-center gap-2">
                     <Avatar className="h-6 w-6">
