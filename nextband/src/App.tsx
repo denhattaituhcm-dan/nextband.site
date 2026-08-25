@@ -418,11 +418,19 @@ const App = () => (
                 />
                 <Route
                   path="/admin/check-attempt"
-                  element={<AdminCheckAttempt />}
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <AdminCheckAttempt />
+                    </ProtectedRoute>
+                  }
                 />
                 <Route
                   path="/admin/submissions/:id"
-                  element={<AdminSubmissionGrade />}
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <AdminSubmissionGrade />
+                    </ProtectedRoute>
+                  }
                 />
                 <Route
                   path="/admin/classes"

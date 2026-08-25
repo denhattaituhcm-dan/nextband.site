@@ -46,6 +46,7 @@ const envSchema = z
     TRUST_PROXY_IPS: z.string().optional(), // Comma-separated list of trusted proxy IPs/CIDRs
     SUPABASE_URL: z.string().default("https://gzpdlqxjggyxlkeatvvf.supabase.co"),
     SUPABASE_JWKS_URL: z.string().optional(),
+    SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
     NOTIFICATION_EMAIL_TO: z.string().default("arisieltsdeeplearning@gmail.com"),
     SMTP_HOST: z.string().optional(),
     SMTP_PORT: z.string().optional(),
@@ -83,16 +84,23 @@ try {
   } else {
     console.error("❌ Invalid environment variables:", err);
   }
-  // Resilient fallback in serverless: do not process.exit(1)
+  
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "❌ FATAL: Missing or invalid required environment variables in production. Refusing to start with insecure fallbacks."
+    );
+  }
+
+  // Development/Test safe defaults
   envData = {
-    NODE_ENV: (process.env.NODE_ENV as any) || "production",
+    NODE_ENV: (process.env.NODE_ENV as any) || "development",
     PORT: process.env.PORT || "3001",
     DATABASE_URL: process.env.DATABASE_URL || "",
-    JWT_SECRET: process.env.JWT_SECRET || "default_jwt_secret_must_be_set_in_vercel_environment_variables",
+    JWT_SECRET: process.env.JWT_SECRET || "dev_jwt_secret_min_32_characters_long_for_local_testing_only",
     JWT_EXPIRES_IN: "7d",
     UPLOAD_DIR: "uploads",
     MAX_FILE_SIZE: "52428800",
-    FRONTEND_URL: "https://nextband.site",
+    FRONTEND_URL: "http://localhost:5173",
     SUPABASE_URL: "https://gzpdlqxjggyxlkeatvvf.supabase.co",
     NOTIFICATION_EMAIL_TO: "arisieltsdeeplearning@gmail.com",
   };

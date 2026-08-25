@@ -31,18 +31,31 @@ function generateFileName(originalName: string): string {
 
 const uploadsRoutes: FastifyPluginAsync = async (fastify) => {
   const supabaseUrl = env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co";
-  const supabaseKey =
-    process.env.SUPABASE_SERVICE_ROLE_KEY ||
-    process.env.VITE_SUPABASE_ANON_KEY ||
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGRscXhqZ2d5eGxrZWF0dnZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyOTc3NjMsImV4cCI6MjEwMDg3Mzc2M30.M7uMAo2qJCDQtxQMP-_58VKF1LfSBdwR31gpvqcCN6I";
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || (env as any).SUPABASE_SERVICE_ROLE_KEY;
 
-  const supabase = createClient(supabaseUrl, supabaseKey);
+  const getSupabaseStorageClient = () => {
+    if (!serviceRoleKey) {
+      return null;
+    }
+    return createClient(supabaseUrl, serviceRoleKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+  };
 
   // POST /uploads - Upload single file to Supabase Storage
   fastify.post(
     "/",
     { preHandler: authenticate },
     async (request: FastifyRequest, reply) => {
+      const supabase = getSupabaseStorageClient();
+      if (!supabase) {
+        return reply.status(500).send({
+          statusCode: 500,
+          error: "SERVICE_CONFIGURATION_ERROR",
+          message: "Hệ thống chưa cấu hình SUPABASE_SERVICE_ROLE_KEY cho chức năng tải tệp lên hệ thống lưu trữ.",
+        });
+      }
+
       const data = await (request as any).file();
 
       if (!data) {
@@ -109,6 +122,15 @@ const uploadsRoutes: FastifyPluginAsync = async (fastify) => {
     "/image",
     { preHandler: authenticate },
     async (request: FastifyRequest, reply) => {
+      const supabase = getSupabaseStorageClient();
+      if (!supabase) {
+        return reply.status(500).send({
+          statusCode: 500,
+          error: "SERVICE_CONFIGURATION_ERROR",
+          message: "Hệ thống chưa cấu hình SUPABASE_SERVICE_ROLE_KEY cho chức năng tải hình ảnh lên hệ thống lưu trữ.",
+        });
+      }
+
       const data = await (request as any).file();
 
       if (!data) {
@@ -172,6 +194,15 @@ const uploadsRoutes: FastifyPluginAsync = async (fastify) => {
     "/audio",
     { preHandler: authenticate },
     async (request: FastifyRequest, reply) => {
+      const supabase = getSupabaseStorageClient();
+      if (!supabase) {
+        return reply.status(500).send({
+          statusCode: 500,
+          error: "SERVICE_CONFIGURATION_ERROR",
+          message: "Hệ thống chưa cấu hình SUPABASE_SERVICE_ROLE_KEY cho chức năng tải âm thanh lên hệ thống lưu trữ.",
+        });
+      }
+
       const data = await (request as any).file();
 
       if (!data) {
@@ -235,6 +266,15 @@ const uploadsRoutes: FastifyPluginAsync = async (fastify) => {
     "/",
     { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
+      const supabase = getSupabaseStorageClient();
+      if (!supabase) {
+        return reply.status(500).send({
+          statusCode: 500,
+          error: "SERVICE_CONFIGURATION_ERROR",
+          message: "Hệ thống chưa cấu hình SUPABASE_SERVICE_ROLE_KEY cho chức năng xóa tệp khỏi hệ thống lưu trữ.",
+        });
+      }
+
       const { url } = (request.body || {}) as { url?: string };
 
       if (!url || typeof url !== "string") {

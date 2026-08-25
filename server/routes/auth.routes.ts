@@ -14,95 +14,14 @@ import { handleValidation } from "../utils/validation.js";
 import { toFileUrl } from "../utils/file.js";
 
 const authRoutes: FastifyPluginAsync = async (fastify) => {
-  // POST /auth/register
-  fastify.post<{ Body: RegisterInput }>(
+  // POST /auth/register - DECOMMISSIONED (Supabase Auth is canonical)
+  fastify.post(
     "/register",
-    {
-      config: {
-        rateLimit: {
-          max: 5,
-          timeWindow: "1 minute",
-        },
-      },
-    },
-    async (request, reply) => {
-      const data = handleValidation(
-        registerSchema.safeParse(request.body),
-        request,
-        reply,
-      );
-      if (!data) return;
-
-      const { email, password, fullName } = data;
-
-      // Check if email exists
-      const existing = await fastify.prisma.user.findUnique({
-        where: { email },
+    async (_request, reply) => {
+      return reply.status(410).send({
+        error: "GONE",
+        message: "Endpoint /auth/register đã ngừng hoạt động. Vui lòng đăng ký tài khoản qua Supabase Auth SDK.",
       });
-
-      if (existing) {
-        return reply.status(409).send({ error: "Email đã được đăng ký" });
-      }
-
-      // Create user
-      const user = await fastify.prisma.user.create({
-        data: {
-          userId: crypto.randomUUID(),
-          email,
-          fullName,
-          roles: {
-            create: { role: "student" },
-          },
-        },
-        include: { roles: true },
-      });
-
-      // Dispatch In-App & Email/Telegram notification to Admins
-      (async () => {
-        try {
-          const { NotificationService } = await import("../services/notification.service.js");
-          const notifService = new NotificationService(fastify.prisma);
-          await notifService.notifyUsersByRole(["admin"], {
-            type: "SYSTEM",
-            title: "Học viên mới đăng ký tài khoản",
-            message: `Học viên ${user.fullName || user.email} (${user.email}) vừa đăng ký tài khoản mới trên website.`,
-            link: "/admin/users",
-            entityType: "USER",
-            entityId: user.userId,
-          });
-
-          const { leadNotificationService } = await import("../services/leadNotification.service.js");
-          await leadNotificationService.notifyNewStudent({
-            id: user.userId,
-            fullName: user.fullName || "Học viên mới",
-            email: user.email || "",
-            phone: user.phone || null,
-            source: "Đăng ký trực tiếp trên Website (Web Registration)",
-          });
-        } catch (notifErr) {
-          request.log.error(notifErr, "Failed to dispatch user registration notification");
-        }
-      })();
-
-      // Generate token
-      const token = fastify.jwt.sign({
-        id: user.userId,
-        email: user.email || "",
-        roles: (user.roles || []).map((r: any) => r.role),
-      });
-
-      return {
-        token,
-        user: {
-          id: user.userId,
-          email: user.email,
-          fullName: user.fullName,
-          avatarUrl: toFileUrl(user.avatarUrl),
-          phone: user.phone,
-          gender: user.gender,
-          roles: (user.roles || []).map((r: any) => r.role),
-        },
-      };
     },
   );
 
@@ -117,113 +36,14 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
     },
   );
 
-  // POST /auth/login/google
-  fastify.post<{ Body: GoogleLoginInput }>(
+  // POST /auth/login/google - DECOMMISSIONED (Supabase Auth is canonical)
+  fastify.post(
     "/login/google",
-    async (request, reply) => {
-      const data = handleValidation(
-        googleLoginSchema.safeParse(request.body),
-        request,
-        reply,
-      );
-      if (!data) return;
-
-      const { credential } = data;
-      const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
-      let payload;
-      try {
-        const ticket = await client.verifyIdToken({
-          idToken: credential,
-          audience: process.env.GOOGLE_CLIENT_ID,
-        });
-        payload = ticket.getPayload();
-      } catch (error) {
-        return reply.status(401).send({ error: "Token Google không hợp lệ" });
-      }
-
-      if (!payload || !payload.email) {
-        return reply
-          .status(400)
-          .send({ error: "Payload Token Google không hợp lệ" });
-      }
-
-      const { email, name, picture } = payload;
-
-      // Find user by email
-      let user = await fastify.prisma.user.findFirst({
-        where: { email },
-        include: { roles: true },
+    async (_request, reply) => {
+      return reply.status(410).send({
+        error: "GONE",
+        message: "Endpoint /auth/login/google đã ngừng hoạt động. Vui lòng đăng nhập Google qua Supabase Auth OAuth provider.",
       });
-
-      if (!user) {
-        // Create new user profile in PostgreSQL
-        user = await fastify.prisma.user.create({
-          data: {
-            userId: crypto.randomUUID(),
-            email,
-            fullName: name || "User",
-            avatarUrl: picture,
-            roles: {
-              create: { role: "student" },
-            },
-          },
-          include: { roles: true },
-        });
-
-        // Dispatch In-App & Email/Telegram notification to Admins for first-time Google sign up
-        (async () => {
-          try {
-            const { NotificationService } = await import("../services/notification.service.js");
-            const notifService = new NotificationService(fastify.prisma);
-            await notifService.notifyUsersByRole(["admin"], {
-              type: "SYSTEM",
-              title: "Học viên mới đăng ký qua Google",
-              message: `Học viên ${user.fullName || user.email} (${user.email}) vừa tạo tài khoản lần đầu qua Google.`,
-              link: "/admin/users",
-              entityType: "USER",
-              entityId: user.userId,
-            });
-
-            const { leadNotificationService } = await import("../services/leadNotification.service.js");
-            await leadNotificationService.notifyNewStudent({
-              id: user.userId,
-              fullName: user.fullName || "Học viên Google",
-              email: user.email || "",
-              phone: null,
-              source: "Đăng ký lần đầu qua Google OAuth (Web Google Auth)",
-            });
-          } catch (notifErr) {
-            request.log.error(notifErr, "Failed to dispatch google registration notification");
-          }
-        })();
-      }
-
-      if (!user.isActive) {
-        return reply
-          .status(403)
-          .send({ error: "Tài khoản đã bị hủy kích hoạt" });
-      }
-
-      // Generate token
-      const token = fastify.jwt.sign({
-        id: user.userId,
-        email: user.email || "",
-        roles: (user.roles || []).map((r: any) => r.role),
-      });
-
-      return {
-        token,
-        user: {
-          id: user.userId,
-          email: user.email,
-          fullName: user.fullName,
-          avatarUrl: toFileUrl(user.avatarUrl),
-          phone: user.phone,
-          gender: user.gender,
-          roles: (user.roles || []).map((r: any) => r.role),
-        },
-      };
     },
   );
 

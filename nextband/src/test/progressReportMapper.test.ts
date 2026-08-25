@@ -225,6 +225,21 @@ describe("Academic Progress Report Mapper - Unit Tests", () => {
     } as any);
     expect(res3.student.targetBand).toBe("IELTS 6.0+");
   });
+
+  it("Scenario 7: Default Period covers from class start date (or first session) to report date", () => {
+    const startDate = new Date(2026, 6, 1); // 01/07/2026
+    const reportDate = new Date(2026, 7, 25); // 25/08/2026
+
+    const res = mapToProgressReportData({
+      studentName: "Nguyễn Văn A",
+      className: "IELTS Intensive",
+      periodFrom: startDate,
+      periodTo: reportDate,
+    });
+
+    expect(res.period.from).toBe("01/07/2026");
+    expect(res.period.to).toBe("25/08/2026");
+  });
 });
 
 

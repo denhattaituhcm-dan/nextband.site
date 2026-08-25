@@ -78,22 +78,9 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
       }
     }
   } catch (jwksErr) {
-    // Path 2: Fallback to Fastify native HS256 verification if JWKS verification fails
-    try {
-      const fastifyJwt = (request.server as any).jwt;
-      if (fastifyJwt) {
-        const decoded = fastifyJwt.verify(token);
-        if (decoded) {
-          userId = decoded.id || decoded.sub || "";
-          email = decoded.email || "";
-          if (Array.isArray(decoded.roles)) {
-            fallbackRoles = decoded.roles;
-          }
-        }
-      }
-    } catch (hsErr) {
-      return null;
-    }
+    // Canonical Auth Invariant: User authentication must originate strictly from Supabase Auth JWKS.
+    // HS256 fallback is strictly removed to prevent user impersonation and authentication forgery.
+    return null;
   }
 
   if (!userId) return null;

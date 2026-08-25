@@ -419,6 +419,23 @@ export default function TeacherWorkspace() {
       (s: any) => s.studentId === currentStudent?.id
     );
 
+    const sortedSessions = [...(attendanceData?.sessions || [])].sort((a: any, b: any) => {
+      const numA = Number(a.sessionNumber || a.session_number || 0);
+      const numB = Number(b.sessionNumber || b.session_number || 0);
+      return numA - numB;
+    });
+    const firstSessionDate =
+      sortedSessions[0]?.sessionDate ||
+      sortedSessions[0]?.plannedDate ||
+      sortedSessions[0]?.scheduledDate ||
+      null;
+
+    const classStartDate =
+      currentClass?.startDate ||
+      currentClass?.start_date ||
+      firstSessionDate ||
+      null;
+
     return mapToProgressReportData({
       classId: selectedClassId,
       studentId: currentStudent?.id,
@@ -433,6 +450,8 @@ export default function TeacherWorkspace() {
         currentClass?.targetBand ||
         (currentClass?.course?.level ? `IELTS ${currentClass.course.level}` : null),
       programTitle: currentClass?.course?.title || currentClass?.name || null,
+      periodFrom: classStartDate,
+      periodTo: new Date(),
       courseProgress: {
         completedSessions: attendanceData?.completedSessions,
         totalSessions: attendanceData?.totalSessions,

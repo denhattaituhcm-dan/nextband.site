@@ -59,12 +59,19 @@ export class AuthorizationService {
 
   /**
    * Kiểm tra xem học viên có đang trong lớp học (active) hay không.
+   * Domain Invariant: Chỉ học viên có status = ACTIVE, chưa bị soft-delete (deletedAt = null)
+   * và thuộc lớp đang hoạt động (class.isActive = true) mới được coi là hợp lệ.
    */
   async isStudentEnrolledInClass(studentId: string, classId: string): Promise<boolean> {
     const record = await this.prisma.classStudent.findFirst({
       where: {
         classId,
         studentId,
+        status: "ACTIVE",
+        deletedAt: null,
+        class: {
+          isActive: true,
+        },
       },
     });
     return !!record;
@@ -72,6 +79,8 @@ export class AuthorizationService {
 
   /**
    * Kiểm tra quyền làm/xem bài thi của học viên (hỗ trợ cả Direct Enrollment và Class Membership).
+   * Domain Invariant: Học viên bị đình chỉ (SUSPENDED), đã xóa mềm (deletedAt != null),
+   * hoặc lớp học bị vô hiệu hóa sẽ bị từ chối truy cập (HTTP 403).
    */
   async isStudentAuthorizedForExam(params: {
     studentId: string;
@@ -97,6 +106,8 @@ export class AuthorizationService {
     const classStudent = await this.prisma.classStudent.findFirst({
       where: {
         studentId,
+        status: "ACTIVE",
+        deletedAt: null,
         class: {
           isActive: true,
           courseId,

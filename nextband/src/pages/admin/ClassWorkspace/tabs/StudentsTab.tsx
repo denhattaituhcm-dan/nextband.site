@@ -101,6 +101,23 @@ export const StudentsTab: React.FC = () => {
       // fallback smoothly
     }
 
+    const sortedSessions = [...sessions].sort((a: any, b: any) => {
+      const numA = Number(a.sessionNumber || a.session_number || 0);
+      const numB = Number(b.sessionNumber || b.session_number || 0);
+      return numA - numB;
+    });
+    const firstSessionDate =
+      sortedSessions[0]?.scheduledDate ||
+      sortedSessions[0]?.plannedDate ||
+      sortedSessions[0]?.sessionDate ||
+      null;
+
+    const classStartDate =
+      classData?.startDate ||
+      classData?.start_date ||
+      firstSessionDate ||
+      null;
+
     const mapped = mapToProgressReportData({
       classId,
       studentId,
@@ -116,6 +133,8 @@ export const StudentsTab: React.FC = () => {
         classData?.targetBand ||
         (classData?.course?.level ? `IELTS ${classData.course.level}` : null),
       programTitle: classData?.course?.title || classData?.name || null,
+      periodFrom: classStartDate,
+      periodTo: new Date(),
       courseProgress: {
         completedSessions: completedSessionsCount,
         totalSessions: sessions.length,
