@@ -92,102 +92,10 @@ function normalizeColor(colorStr: string): string {
 }
 
 /**
- * Whitelist HTML Sanitizer for Pasted Content
- * Preserves semantic tags (bold, italic, underline, color, highlight, links, lists, tables)
- * Strips font-family, font-size, layout/margin/padding, and MS Word/Docs junk.
+ * HTML Sanitizer for Pasted Content using Single-Source-of-Truth normalizeQuestionHtml
  */
 function sanitizePastedHtml(rawHtml: string): string {
-  if (!rawHtml) return "";
-  try {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(rawHtml, "text/html");
-    const body = doc.body;
-
-    const ALLOWED_TAGS = new Set([
-      "P", "BR", "STRONG", "B", "EM", "I", "U", "S", "SPAN", "MARK", "A", "UL", "OL", "LI", "IMG",
-      "TABLE", "THEAD", "TBODY", "TFOOT", "TR", "TH", "TD", "CAPTION", "COLGROUP", "COL"
-    ]);
-
-    const cleanNode = (node: Node): Node | null => {
-      if (node.nodeType === Node.TEXT_NODE) {
-        return node.cloneNode(true);
-      }
-
-      if (node.nodeType !== Node.ELEMENT_NODE) {
-        return null;
-      }
-
-      const el = node as HTMLElement;
-      const tagName = el.tagName.toUpperCase();
-
-      // Convert structural/heading tags to P
-      const targetTagName = ALLOWED_TAGS.has(tagName)
-        ? tagName
-        : ["DIV", "H1", "H2", "H3", "H4", "H5", "H6", "SECTION", "ARTICLE"].includes(tagName)
-        ? "P"
-        : null;
-
-      // Extract allowed inline styles
-      const styleColor = el.style.color ? normalizeColor(el.style.color) : "";
-      const styleBg = el.style.backgroundColor ? normalizeColor(el.style.backgroundColor) : "";
-
-      // Process children
-      const cleanedChildren: Node[] = [];
-      el.childNodes.forEach((child) => {
-        const cleanedChild = cleanNode(child);
-        if (cleanedChild) cleanedChildren.push(cleanedChild);
-      });
-
-      if (!targetTagName) {
-        // Unwrap tag: return fragment of children
-        const frag = doc.createDocumentFragment();
-        cleanedChildren.forEach((child) => frag.appendChild(child));
-        return frag;
-      }
-
-      const newEl = doc.createElement(targetTagName);
-      cleanedChildren.forEach((child) => newEl.appendChild(child));
-
-      // Preserve specific allowed attributes
-      if (targetTagName === "A" && el.hasAttribute("href")) {
-        newEl.setAttribute("href", el.getAttribute("href") || "#");
-        newEl.setAttribute("target", "_blank");
-        newEl.setAttribute("rel", "noopener noreferrer");
-      }
-
-      if (targetTagName === "IMG" && el.hasAttribute("src")) {
-        newEl.setAttribute("src", el.getAttribute("src") || "");
-        if (el.hasAttribute("alt")) newEl.setAttribute("alt", el.getAttribute("alt") || "");
-        newEl.className = "rounded-md my-2 max-w-full h-auto";
-      }
-
-      if (["TH", "TD"].includes(targetTagName)) {
-        if (el.hasAttribute("colspan")) newEl.setAttribute("colspan", el.getAttribute("colspan") || "1");
-        if (el.hasAttribute("rowspan")) newEl.setAttribute("rowspan", el.getAttribute("rowspan") || "1");
-      }
-
-      // Preserve normalized color & background-color only
-      if (styleColor && styleColor !== "#000000" && styleColor !== "inherit") {
-        newEl.style.color = styleColor;
-      }
-      if (styleBg && styleBg !== "transparent") {
-        newEl.style.backgroundColor = styleBg;
-      }
-
-      return newEl;
-    };
-
-    const container = doc.createElement("div");
-    body.childNodes.forEach((child) => {
-      const cleaned = cleanNode(child);
-      if (cleaned) container.appendChild(cleaned);
-    });
-
-    return container.innerHTML;
-  } catch (err) {
-    console.error("Paste sanitization error:", err);
-    return rawHtml;
-  }
+  return normalizeQuestionHtml(rawHtml);
 }
 
 export function RichTextEditor({

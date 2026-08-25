@@ -89,26 +89,76 @@ export function normalizeQuestionHtml(rawHtml: string | null | undefined): strin
 
       const el = node as HTMLElement;
       const tagName = el.tagName.toUpperCase();
+      const styleAttr = (el.getAttribute("style") || "").toLowerCase();
 
-      // Convert headings to <p><strong>...</strong></p>
-      if (["H1", "H2", "H3", "H4", "H5", "H6"].includes(tagName)) {
-        const pEl = doc.createElement("p");
-        const strongEl = doc.createElement("strong");
-        
+      // Detect font-weight attributes (e.g. Google Docs/Word wrappers vs real bold)
+      const isNormalFontWeight =
+        el.style.fontWeight === "normal" ||
+        el.style.fontWeight === "400" ||
+        el.style.fontWeight === "lighter" ||
+        styleAttr.includes("font-weight:normal") ||
+        styleAttr.includes("font-weight: normal") ||
+        styleAttr.includes("font-weight:400") ||
+        styleAttr.includes("font-weight: 400") ||
+        styleAttr.includes("mso-bidi-font-weight:normal") ||
+        el.id?.startsWith("docs-internal-guid");
+
+      const isBoldFontWeight =
+        !isNormalFontWeight &&
+        (el.style.fontWeight === "bold" ||
+          el.style.fontWeight === "700" ||
+          el.style.fontWeight === "800" ||
+          el.style.fontWeight === "900" ||
+          styleAttr.includes("font-weight:bold") ||
+          styleAttr.includes("font-weight: bold") ||
+          styleAttr.includes("font-weight:700") ||
+          styleAttr.includes("font-weight: 700") ||
+          styleAttr.includes("font-weight:800") ||
+          styleAttr.includes("font-weight:900"));
+
+      const isItalicStyle =
+        el.style.fontStyle === "italic" ||
+        styleAttr.includes("font-style:italic") ||
+        styleAttr.includes("font-style: italic");
+
+      const isUnderlineStyle =
+        el.style.textDecoration?.includes("underline") ||
+        styleAttr.includes("text-decoration:underline") ||
+        styleAttr.includes("text-decoration: underline");
+
+      const isStrikeStyle =
+        el.style.textDecoration?.includes("line-through") ||
+        styleAttr.includes("text-decoration:line-through") ||
+        styleAttr.includes("text-decoration: line-through");
+
+      // 1. Google Docs / Word normal weight wrapper detection for <B> and <STRONG>
+      // When pasting from Google Docs, it wraps the entire text in <b style="font-weight:normal;">.
+      // We must unwrap this fake bold tag to prevent regular text from becoming bold!
+      if ((tagName === "B" || tagName === "STRONG") && isNormalFontWeight) {
+        const frag = doc.createDocumentFragment();
         el.childNodes.forEach((child) => {
           const cleanedChild = cleanNode(child);
-          if (cleanedChild) strongEl.appendChild(cleanedChild);
+          if (cleanedChild) frag.appendChild(cleanedChild);
+        });
+        return frag;
+      }
+
+      // 2. Convert headings (H1-H6) to <p> to prevent gigantic fonts without forcing bold
+      if (["H1", "H2", "H3", "H4", "H5", "H6"].includes(tagName)) {
+        const pEl = doc.createElement("p");
+        el.childNodes.forEach((child) => {
+          const cleanedChild = cleanNode(child);
+          if (cleanedChild) pEl.appendChild(cleanedChild);
         });
 
-        if (!strongEl.textContent?.trim() && strongEl.children.length === 0) {
+        if (!pEl.textContent?.trim() && pEl.children.length === 0) {
           return null;
         }
 
-        pEl.appendChild(strongEl);
         return pEl;
       }
 
-      // Convert structural block tags (DIV, SECTION, ARTICLE) to P
+      // Convert structural block tags (DIV, SECTION, ARTICLE, HEADER, FOOTER) to P
       const isDivLike = ["DIV", "SECTION", "ARTICLE", "HEADER", "FOOTER"].includes(tagName);
       const targetTagName = isDivLike
         ? "P"
@@ -127,18 +177,54 @@ export function normalizeQuestionHtml(rawHtml: string | null | undefined): strin
         if (cleanedChild) cleanedChildren.push(cleanedChild);
       });
 
-      // If tag is not in allowed list (e.g. <font>, <o:p>, custom tags), unwrap and return fragment
+      // Wrap helper for semantic styles extracted from inline CSS (e.g. span style="font-weight:bold")
+      const applySemanticWrappers = (targetNode: Node): Node => {
+        let currentNode = targetNode;
+        if (isBoldFontWeight && tagName !== "STRONG" && tagName !== "B") {
+          const strong = doc.createElement("strong");
+          strong.appendChild(currentNode);
+          currentNode = strong;
+        }
+        if (isItalicStyle && tagName !== "EM" && tagName !== "I") {
+          const em = doc.createElement("em");
+          em.appendChild(currentNode);
+          currentNode = em;
+        }
+        if (isUnderlineStyle && tagName !== "U") {
+          const u = doc.createElement("u");
+          u.appendChild(currentNode);
+          currentNode = u;
+        }
+        if (isStrikeStyle && tagName !== "S") {
+          const s = doc.createElement("s");
+          s.appendChild(currentNode);
+          currentNode = s;
+        }
+        return currentNode;
+      };
+
+      // If tag is not in allowed list (e.g. <font>, <o:p>, custom tags), unwrap and return fragment with semantic wrappers
       if (!targetTagName) {
         const frag = doc.createDocumentFragment();
         cleanedChildren.forEach((child) => frag.appendChild(child));
-        return frag;
+        return applySemanticWrappers(frag);
       }
 
       // If SPAN has no meaningful attributes (no color/bg, no class, no dataset), unwrap it
-      if (targetTagName === "SPAN" && !styleColor && !styleBg && !el.className && el.attributes.length === 0) {
+      const hasDataAttrs = Array.from(el.attributes).some(
+        (attr) => attr.name.startsWith("data-fill-blank") || attr.name.startsWith("data-blank-id"),
+      );
+
+      if (
+        targetTagName === "SPAN" &&
+        !styleColor &&
+        !styleBg &&
+        !el.className &&
+        !hasDataAttrs
+      ) {
         const frag = doc.createDocumentFragment();
         cleanedChildren.forEach((child) => frag.appendChild(child));
-        return frag;
+        return applySemanticWrappers(frag);
       }
 
       const newEl = doc.createElement(targetTagName);
@@ -177,7 +263,7 @@ export function normalizeQuestionHtml(rawHtml: string | null | undefined): strin
         }
       });
 
-      return newEl;
+      return applySemanticWrappers(newEl);
     };
 
     const container = doc.createElement("div");

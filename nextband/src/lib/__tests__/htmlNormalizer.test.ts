@@ -32,11 +32,28 @@ describe("HTML Question Normalizer", () => {
     expect(normalized).toBe("<p>Một phần, việc người trẻ phụ thuộc vào mạng xã hội</p>");
   });
 
-  it("converts H1/H2/H3 headings to <p><strong>...</strong></p>", () => {
+  it("converts H1/H2/H3 headings to <p> without forcing bold on regular text", () => {
     const dirty = `<h3>Part 1: Introduction</h3><p>Please translate the following sentence.</p>`;
     const normalized = normalizeQuestionHtml(dirty);
     expect(normalized).not.toContain("<h3");
-    expect(normalized).toContain("<p><strong>Part 1: Introduction</strong></p>");
+    expect(normalized).toContain("<p>Part 1: Introduction</p>");
+    expect(normalized).toContain("<p>Please translate the following sentence.</p>");
+  });
+
+  it("unwraps Google Docs false bold wrappers (b style='font-weight:normal')", () => {
+    const googleDocsHtml = `<b id="docs-internal-guid-12345" style="font-weight:normal;"><p><span>Học cách dùng 1 số từ vựng</span></p></b>`;
+    const normalized = normalizeQuestionHtml(googleDocsHtml);
+    expect(normalized).not.toContain("<b");
+    expect(normalized).not.toContain("<strong");
+    expect(normalized).toBe("<p>Học cách dùng 1 số từ vựng</p>");
+  });
+
+  it("preserves intentional bold text inside Google Docs content while keeping normal text normal", () => {
+    const googleDocsMixed = `<b style="font-weight: normal;"><p><span>Đây là chữ thường, </span><span style="font-weight: 700;">đây là in đậm</span><span>, và tiếp tục là chữ thường.</span></p></b>`;
+    const normalized = normalizeQuestionHtml(googleDocsMixed);
+    expect(normalized).toContain("<strong>đây là in đậm</strong>");
+    expect(normalized).toContain("Đây là chữ thường, ");
+    expect(normalized).toContain(", và tiếp tục là chữ thường.");
   });
 
   it("preserves lists, bold, italic, and underline tags", () => {
