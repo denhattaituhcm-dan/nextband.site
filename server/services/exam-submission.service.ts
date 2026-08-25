@@ -427,7 +427,7 @@ export class ExamSubmissionService {
     }
 
     const currentStatus = String(submission.status).toUpperCase() as SubmissionState;
-    if (currentStatus === "SUBMITTED" || currentStatus === "GRADED" || currentStatus === "EXPIRED" || currentStatus === "ABANDONED") {
+    if (currentStatus === "SUBMITTED" || currentStatus === "GRADED" || (currentStatus as string) === "EXPIRED" || (currentStatus as string) === "ABANDONED") {
       throw new AuthorizationError("ANSWERS_IMMUTABLE: Không thể sửa câu trả lời sau khi bài thi đã nộp hoặc kết thúc", 403);
     }
 
@@ -596,7 +596,7 @@ export class ExamSubmissionService {
       };
     }
 
-    if (currentStatus === "EXPIRED") {
+    if ((currentStatus as string) === "EXPIRED") {
       throw new AuthorizationError("EXAM_EXPIRED: Bài thi đã quá thời gian làm bài quy định", 408);
     }
 

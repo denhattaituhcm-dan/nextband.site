@@ -266,7 +266,7 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
       }
 
       const group = await fastify.prisma.questionGroup.create({
-        data,
+        data: data as any,
       });
 
       return reply.status(201).send(group);

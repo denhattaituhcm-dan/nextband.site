@@ -43,7 +43,7 @@ const speakingStorageRoutes: FastifyPluginAsync = async (fastify) => {
 
       const userId = (request as any).user?.id || null;
       const asset = await speakingService.registerDraftAsset({
-        ...data,
+        ...(data as any),
         uploadedBy: userId,
       });
 
@@ -63,7 +63,7 @@ const speakingStorageRoutes: FastifyPluginAsync = async (fastify) => {
       );
       if (!data) return;
 
-      const asset = await speakingService.confirmAssetUploaded(data);
+      const asset = await speakingService.confirmAssetUploaded(data as any);
       return reply.send(asset);
     },
   );

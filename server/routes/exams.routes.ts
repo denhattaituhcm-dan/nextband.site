@@ -259,7 +259,7 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
       }
 
       const exam = await fastify.prisma.exam.create({
-        data: safeData,
+        data: safeData as any,
       });
 
       // Auto-create 5 default sections

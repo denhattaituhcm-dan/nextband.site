@@ -93,6 +93,10 @@ export interface DiagnosticReport {
   };
   strengths: string[];
   weaknesses: string[];
+  diagnosticEngineVersion?: string;
+  scoringVersion?: string;
+  questionSetVersion?: string;
+  diagnosticRubricVersion?: string;
   submittedAt: string;
 }
 

@@ -94,7 +94,7 @@ const assessmentRoutes: FastifyPluginAsync = async (fastify) => {
           {
             type: "assessment_guest",
             sessionId: session.id,
-          },
+          } as any,
           { expiresIn: "3h" },
         );
 

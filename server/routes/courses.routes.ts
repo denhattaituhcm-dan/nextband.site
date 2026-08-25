@@ -330,7 +330,7 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
             ...safeData,
             price: safeData.price || 0,
             teacherId,
-          },
+          } as any,
         });
 
         return reply.status(201).send(withFileUrls(course, ["thumbnailUrl"]));

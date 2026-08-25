@@ -64,7 +64,7 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify: any) => {
           sessionId,
           user.id,
           user.roles || [],
-          body.items
+          body.items as any
         );
         return reply.send(result);
       } catch (err: any) {

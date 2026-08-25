@@ -34,7 +34,7 @@ const envSchema = z
     NODE_ENV: z
       .enum(["development", "production", "test"])
       .default("development"),
-    PORT: z.string().default("3000"),
+    PORT: z.string().default("3001"),
     APP_URL: z.string().optional(), // Full URL của server, VD: https://api.yourdomain.com
     DATABASE_URL: z.string(),
     JWT_SECRET: z.string().min(1, "JWT_SECRET cannot be empty"),
@@ -86,7 +86,7 @@ try {
   // Resilient fallback in serverless: do not process.exit(1)
   envData = {
     NODE_ENV: (process.env.NODE_ENV as any) || "production",
-    PORT: process.env.PORT || "3000",
+    PORT: process.env.PORT || "3001",
     DATABASE_URL: process.env.DATABASE_URL || "",
     JWT_SECRET: process.env.JWT_SECRET || "default_jwt_secret_must_be_set_in_vercel_environment_variables",
     JWT_EXPIRES_IN: "7d",

@@ -363,7 +363,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         return reply.status(409).send({ error: "Email đã tồn tại trong hệ thống" });
       }
 
-      const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_SERVICE_ROLE_KEY;
+      const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || (env as any).SUPABASE_SERVICE_ROLE_KEY;
       if (!serviceRoleKey) {
         return reply.status(500).send({
           error: "SUPABASE_SERVICE_ROLE_KEY_REQUIRED",

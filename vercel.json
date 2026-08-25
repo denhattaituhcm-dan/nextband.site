@@ -4,7 +4,7 @@
   "regions": ["syd1"],
   "functions": {
     "api/**/*.js": {
-      "includeFiles": "{node_modules/.prisma/client/**,nextband/node_modules/.prisma/client/**,prisma/**,nextband/prisma/**}"
+      "includeFiles": "{node_modules/.prisma/client/**,prisma/**}"
     }
   },
   "rewrites": [
@@ -21,7 +21,7 @@
       "destination": "/api/index.js"
     },
     {
-      "source": "/((?!api|assets|favicon|Logo).*)",
+      "source": "/((?!api|assets|favicon|Logo|uploads).*)",
       "destination": "/index.html"
     }
   ]

@@ -7369,7 +7369,7 @@ var require_multistream = __commonJS({
 var require_pino = __commonJS({
   "node_modules/pino/pino.js"(exports, module) {
     "use strict";
-    var os = __require("node:os");
+    var os2 = __require("node:os");
     var stdSerializers = require_pino_std_serializers();
     var caller = require_caller();
     var redaction = require_redaction();
@@ -7416,7 +7416,7 @@ var require_pino = __commonJS({
     } = symbols;
     var { epochTime, nullTime } = time;
     var { pid } = process;
-    var hostname = os.hostname();
+    var hostname = os2.hostname();
     var defaultErrorSerializer = stdSerializers.err;
     var defaultOptions = {
       level: "info",
@@ -16864,20 +16864,20 @@ var require_compile = __commonJS({
     var util_1 = require_util();
     var validate_1 = require_validate();
     var SchemaEnv = class {
-      constructor(env2) {
+      constructor(env3) {
         var _a;
         this.refs = {};
         this.dynamicAnchors = {};
         let schema;
-        if (typeof env2.schema == "object")
-          schema = env2.schema;
-        this.schema = env2.schema;
-        this.schemaId = env2.schemaId;
-        this.root = env2.root || this;
-        this.baseId = (_a = env2.baseId) !== null && _a !== void 0 ? _a : (0, resolve_1.normalizeId)(schema === null || schema === void 0 ? void 0 : schema[env2.schemaId || "$id"]);
-        this.schemaPath = env2.schemaPath;
-        this.localRefs = env2.localRefs;
-        this.meta = env2.meta;
+        if (typeof env3.schema == "object")
+          schema = env3.schema;
+        this.schema = env3.schema;
+        this.schemaId = env3.schemaId;
+        this.root = env3.root || this;
+        this.baseId = (_a = env3.baseId) !== null && _a !== void 0 ? _a : (0, resolve_1.normalizeId)(schema === null || schema === void 0 ? void 0 : schema[env3.schemaId || "$id"]);
+        this.schemaPath = env3.schemaPath;
+        this.localRefs = env3.localRefs;
+        this.meta = env3.meta;
         this.$async = schema === null || schema === void 0 ? void 0 : schema.$async;
         this.refs = {};
       }
@@ -17061,15 +17061,15 @@ var require_compile = __commonJS({
           baseId = (0, resolve_1.resolveUrl)(this.opts.uriResolver, baseId, schId);
         }
       }
-      let env2;
+      let env3;
       if (typeof schema != "boolean" && schema.$ref && !(0, util_1.schemaHasRulesButRef)(schema, this.RULES)) {
         const $ref = (0, resolve_1.resolveUrl)(this.opts.uriResolver, baseId, schema.$ref);
-        env2 = resolveSchema.call(this, root, $ref);
+        env3 = resolveSchema.call(this, root, $ref);
       }
       const { schemaId } = this.opts;
-      env2 = env2 || new SchemaEnv({ schema, schemaId, root, baseId });
-      if (env2.schema !== env2.root.schema)
-        return env2;
+      env3 = env3 || new SchemaEnv({ schema, schemaId, root, baseId });
+      if (env3.schema !== env3.root.schema)
+        return env3;
       return void 0;
     }
   }
@@ -18583,8 +18583,8 @@ var require_ref = __commonJS({
       schemaType: "string",
       code(cxt) {
         const { gen, schema: $ref, it } = cxt;
-        const { baseId, schemaEnv: env2, validateName, opts, self: self2 } = it;
-        const { root } = env2;
+        const { baseId, schemaEnv: env3, validateName, opts, self: self2 } = it;
+        const { root } = env3;
         if (($ref === "#" || $ref === "#/") && baseId === root.baseId)
           return callRootRef();
         const schOrEnv = compile_1.resolveRef.call(self2, root, baseId, $ref);
@@ -18594,8 +18594,8 @@ var require_ref = __commonJS({
           return callValidate(schOrEnv);
         return inlineRefSchema(schOrEnv);
         function callRootRef() {
-          if (env2 === root)
-            return callRef(cxt, validateName, env2, env2.$async);
+          if (env3 === root)
+            return callRef(cxt, validateName, env3, env3.$async);
           const rootName = gen.scopeValue("root", { ref: root });
           return callRef(cxt, (0, codegen_1._)`${rootName}.validate`, root, root.$async);
         }
@@ -18625,14 +18625,14 @@ var require_ref = __commonJS({
     exports.getValidate = getValidate;
     function callRef(cxt, v, sch, $async) {
       const { gen, it } = cxt;
-      const { allErrors, schemaEnv: env2, opts } = it;
+      const { allErrors, schemaEnv: env3, opts } = it;
       const passCxt = opts.passContext ? names_1.default.this : codegen_1.nil;
       if ($async)
         callAsyncRef();
       else
         callSyncRef();
       function callAsyncRef() {
-        if (!env2.$async)
+        if (!env3.$async)
           throw new Error("async schema referenced by sync schema");
         const valid = gen.let("valid");
         gen.try(() => {
@@ -38668,7 +38668,7 @@ var require_multipart2 = __commonJS({
   "node_modules/@fastify/multipart/index.js"(exports, module) {
     "use strict";
     var Busboy = require_busboy();
-    var os = __require("node:os");
+    var os2 = __require("node:os");
     var fp3 = require_plugin2();
     var { createWriteStream } = __require("node:fs");
     var { unlink } = __require("node:fs/promises");
@@ -39018,7 +39018,7 @@ var require_multipart2 = __commonJS({
           files = await this.files(options2);
         }
         this.savedRequestFiles = [];
-        const tmpdir = options2 && options2.tmpdir || os.tmpdir();
+        const tmpdir = options2 && options2.tmpdir || os2.tmpdir();
         this.tmpUploads = [];
         let i2 = 0;
         for await (const file of files) {
@@ -44866,7 +44866,7 @@ var require_commonjs4 = __commonJS({
         const dirs = /* @__PURE__ */ new Set();
         const queue = [entry];
         let processing = 0;
-        const process2 = () => {
+        const process3 = () => {
           let paused = false;
           while (!paused) {
             const dir = queue.shift();
@@ -44907,9 +44907,9 @@ var require_commonjs4 = __commonJS({
                 }
               }
               if (paused && !results.flowing) {
-                results.once("drain", process2);
+                results.once("drain", process3);
               } else if (!sync) {
-                process2();
+                process3();
               }
             };
             let sync = true;
@@ -44917,7 +44917,7 @@ var require_commonjs4 = __commonJS({
             sync = false;
           }
         };
-        process2();
+        process3();
         return results;
       }
       streamSync(entry = this.cwd, opts = {}) {
@@ -44935,7 +44935,7 @@ var require_commonjs4 = __commonJS({
         }
         const queue = [entry];
         let processing = 0;
-        const process2 = () => {
+        const process3 = () => {
           let paused = false;
           while (!paused) {
             const dir = queue.shift();
@@ -44969,9 +44969,9 @@ var require_commonjs4 = __commonJS({
             }
           }
           if (paused && !results.flowing)
-            results.once("drain", process2);
+            results.once("drain", process3);
         };
-        process2();
+        process3();
         return results;
       }
       chdir(path = this.cwd) {
@@ -48148,11 +48148,11 @@ var require_content_disposition = __commonJS({
 var require_dirList = __commonJS({
   "node_modules/@fastify/static/lib/dirList.js"(exports, module) {
     "use strict";
-    var os = __require("node:os");
+    var os2 = __require("node:os");
     var path = __require("node:path");
     var fs2 = __require("node:fs/promises");
     var fastq = require_queue();
-    var fastqConcurrency = Math.max(1, os.cpus().length - 1);
+    var fastqConcurrency = Math.max(1, os2.cpus().length - 1);
     var dirList = {
       _getExtendedInfo: async function(dir, info) {
         const depth = dir.split(path.sep).length;
@@ -52961,7 +52961,7 @@ var require_main = __commonJS({
   "node_modules/dotenv/lib/main.js"(exports, module) {
     var fs2 = __require("fs");
     var path = __require("path");
-    var os = __require("os");
+    var os2 = __require("os");
     var crypto3 = __require("crypto");
     var packageJson = require_package2();
     var version3 = packageJson.version;
@@ -53084,7 +53084,7 @@ var require_main = __commonJS({
       return null;
     }
     function _resolveHome(envPath) {
-      return envPath[0] === "~" ? path.join(os.homedir(), envPath.slice(1)) : envPath;
+      return envPath[0] === "~" ? path.join(os2.homedir(), envPath.slice(1)) : envPath;
     }
     function _configVault(options) {
       const debug = Boolean(options && options.debug);
@@ -53340,7 +53340,7 @@ var init_env = __esm({
     ]);
     envSchema = external_exports.object({
       NODE_ENV: external_exports.enum(["development", "production", "test"]).default("development"),
-      PORT: external_exports.string().default("3000"),
+      PORT: external_exports.string().default("3001"),
       APP_URL: external_exports.string().optional(),
       // Full URL của server, VD: https://api.yourdomain.com
       DATABASE_URL: external_exports.string(),
@@ -53390,7 +53390,7 @@ var init_env = __esm({
       }
       envData = {
         NODE_ENV: process.env.NODE_ENV || "production",
-        PORT: process.env.PORT || "3000",
+        PORT: process.env.PORT || "3001",
         DATABASE_URL: process.env.DATABASE_URL || "",
         JWT_SECRET: process.env.JWT_SECRET || "default_jwt_secret_must_be_set_in_vercel_environment_variables",
         JWT_EXPIRES_IN: "7d",
@@ -60779,7 +60779,7 @@ var require_ms = __commonJS({
 // node_modules/debug/src/common.js
 var require_common2 = __commonJS({
   "node_modules/debug/src/common.js"(exports, module) {
-    function setup(env2) {
+    function setup(env3) {
       createDebug.debug = createDebug;
       createDebug.default = createDebug;
       createDebug.coerce = coerce2;
@@ -60788,8 +60788,8 @@ var require_common2 = __commonJS({
       createDebug.enabled = enabled;
       createDebug.humanize = require_ms();
       createDebug.destroy = destroy;
-      Object.keys(env2).forEach((key) => {
-        createDebug[key] = env2[key];
+      Object.keys(env3).forEach((key) => {
+        createDebug[key] = env3[key];
       });
       createDebug.names = [];
       createDebug.skips = [];
@@ -61123,125 +61123,159 @@ var require_browser = __commonJS({
   }
 });
 
-// nextband/node_modules/has-flag/index.js
-var require_has_flag = __commonJS({
-  "nextband/node_modules/has-flag/index.js"(exports, module) {
-    "use strict";
-    module.exports = (flag, argv = process.argv) => {
-      const prefix = flag.startsWith("-") ? "" : flag.length === 1 ? "-" : "--";
-      const position = argv.indexOf(prefix + flag);
-      const terminatorPosition = argv.indexOf("--");
-      return position !== -1 && (terminatorPosition === -1 || position < terminatorPosition);
-    };
-  }
+// node_modules/supports-color/index.js
+var supports_color_exports = {};
+__export(supports_color_exports, {
+  createSupportsColor: () => createSupportsColor,
+  default: () => supports_color_default
 });
-
-// nextband/node_modules/supports-color/index.js
-var require_supports_color = __commonJS({
-  "nextband/node_modules/supports-color/index.js"(exports, module) {
-    "use strict";
-    var os = __require("os");
-    var tty = __require("tty");
-    var hasFlag = require_has_flag();
-    var { env: env2 } = process;
-    var forceColor;
+import process2 from "node:process";
+import os from "node:os";
+import tty from "node:tty";
+function hasFlag(flag, argv = globalThis.Deno ? globalThis.Deno.args : process2.argv) {
+  const prefix = flag.startsWith("-") ? "" : flag.length === 1 ? "-" : "--";
+  const position = argv.indexOf(prefix + flag);
+  const terminatorPosition = argv.indexOf("--");
+  return position !== -1 && (terminatorPosition === -1 || position < terminatorPosition);
+}
+function envForceColor() {
+  if (!("FORCE_COLOR" in env2)) {
+    return;
+  }
+  if (env2.FORCE_COLOR === "true") {
+    return 1;
+  }
+  if (env2.FORCE_COLOR === "false") {
+    return 0;
+  }
+  if (env2.FORCE_COLOR.length === 0) {
+    return 1;
+  }
+  const level = Math.min(Number.parseInt(env2.FORCE_COLOR, 10), 3);
+  if (![0, 1, 2, 3].includes(level)) {
+    return;
+  }
+  return level;
+}
+function translateLevel(level) {
+  if (level === 0) {
+    return false;
+  }
+  return {
+    level,
+    hasBasic: true,
+    has256: level >= 2,
+    has16m: level >= 3
+  };
+}
+function _supportsColor(haveStream, { streamIsTTY, sniffFlags = true } = {}) {
+  const noFlagForceColor = envForceColor();
+  if (noFlagForceColor !== void 0) {
+    flagForceColor = noFlagForceColor;
+  }
+  const forceColor = sniffFlags ? flagForceColor : noFlagForceColor;
+  if (forceColor === 0) {
+    return 0;
+  }
+  if (sniffFlags) {
+    if (hasFlag("color=16m") || hasFlag("color=full") || hasFlag("color=truecolor")) {
+      return 3;
+    }
+    if (hasFlag("color=256")) {
+      return 2;
+    }
+  }
+  if ("TF_BUILD" in env2 && "AGENT_NAME" in env2) {
+    return 1;
+  }
+  if (haveStream && !streamIsTTY && forceColor === void 0) {
+    return 0;
+  }
+  const min = forceColor || 0;
+  if (env2.TERM === "dumb") {
+    return min;
+  }
+  if (process2.platform === "win32") {
+    const osRelease = os.release().split(".");
+    if (Number(osRelease[0]) >= 10 && Number(osRelease[2]) >= 10586) {
+      return Number(osRelease[2]) >= 14931 ? 3 : 2;
+    }
+    return 1;
+  }
+  if ("CI" in env2) {
+    if (["GITHUB_ACTIONS", "GITEA_ACTIONS", "CIRCLECI"].some((key) => key in env2)) {
+      return 3;
+    }
+    if (["TRAVIS", "APPVEYOR", "GITLAB_CI", "BUILDKITE", "DRONE"].some((sign) => sign in env2) || env2.CI_NAME === "codeship") {
+      return 1;
+    }
+    return min;
+  }
+  if ("TEAMCITY_VERSION" in env2) {
+    return /^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/.test(env2.TEAMCITY_VERSION) ? 1 : 0;
+  }
+  if (env2.COLORTERM === "truecolor") {
+    return 3;
+  }
+  if (env2.TERM === "xterm-kitty") {
+    return 3;
+  }
+  if (env2.TERM === "xterm-ghostty") {
+    return 3;
+  }
+  if (env2.TERM === "wezterm") {
+    return 3;
+  }
+  if ("TERM_PROGRAM" in env2) {
+    const version3 = Number.parseInt((env2.TERM_PROGRAM_VERSION || "").split(".")[0], 10);
+    switch (env2.TERM_PROGRAM) {
+      case "iTerm.app": {
+        return version3 >= 3 ? 3 : 2;
+      }
+      case "Apple_Terminal": {
+        return 2;
+      }
+    }
+  }
+  if (/-256(color)?$/i.test(env2.TERM)) {
+    return 2;
+  }
+  if (/^screen|^xterm|^vt100|^vt220|^rxvt|color|ansi|cygwin|linux/i.test(env2.TERM)) {
+    return 1;
+  }
+  if ("COLORTERM" in env2) {
+    return 1;
+  }
+  return min;
+}
+function createSupportsColor(stream, options = {}) {
+  const level = _supportsColor(stream, {
+    streamIsTTY: stream && stream.isTTY,
+    ...options
+  });
+  return translateLevel(level);
+}
+var env2, flagForceColor, supportsColor, supports_color_default;
+var init_supports_color = __esm({
+  "node_modules/supports-color/index.js"() {
+    ({ env: env2 } = process2);
     if (hasFlag("no-color") || hasFlag("no-colors") || hasFlag("color=false") || hasFlag("color=never")) {
-      forceColor = 0;
+      flagForceColor = 0;
     } else if (hasFlag("color") || hasFlag("colors") || hasFlag("color=true") || hasFlag("color=always")) {
-      forceColor = 1;
+      flagForceColor = 1;
     }
-    if ("FORCE_COLOR" in env2) {
-      if (env2.FORCE_COLOR === "true") {
-        forceColor = 1;
-      } else if (env2.FORCE_COLOR === "false") {
-        forceColor = 0;
-      } else {
-        forceColor = env2.FORCE_COLOR.length === 0 ? 1 : Math.min(parseInt(env2.FORCE_COLOR, 10), 3);
-      }
-    }
-    function translateLevel(level) {
-      if (level === 0) {
-        return false;
-      }
-      return {
-        level,
-        hasBasic: true,
-        has256: level >= 2,
-        has16m: level >= 3
-      };
-    }
-    function supportsColor(haveStream, streamIsTTY) {
-      if (forceColor === 0) {
-        return 0;
-      }
-      if (hasFlag("color=16m") || hasFlag("color=full") || hasFlag("color=truecolor")) {
-        return 3;
-      }
-      if (hasFlag("color=256")) {
-        return 2;
-      }
-      if (haveStream && !streamIsTTY && forceColor === void 0) {
-        return 0;
-      }
-      const min = forceColor || 0;
-      if (env2.TERM === "dumb") {
-        return min;
-      }
-      if (process.platform === "win32") {
-        const osRelease = os.release().split(".");
-        if (Number(osRelease[0]) >= 10 && Number(osRelease[2]) >= 10586) {
-          return Number(osRelease[2]) >= 14931 ? 3 : 2;
-        }
-        return 1;
-      }
-      if ("CI" in env2) {
-        if (["TRAVIS", "CIRCLECI", "APPVEYOR", "GITLAB_CI", "GITHUB_ACTIONS", "BUILDKITE"].some((sign) => sign in env2) || env2.CI_NAME === "codeship") {
-          return 1;
-        }
-        return min;
-      }
-      if ("TEAMCITY_VERSION" in env2) {
-        return /^(9\.(0*[1-9]\d*)\.|\d{2,}\.)/.test(env2.TEAMCITY_VERSION) ? 1 : 0;
-      }
-      if (env2.COLORTERM === "truecolor") {
-        return 3;
-      }
-      if ("TERM_PROGRAM" in env2) {
-        const version3 = parseInt((env2.TERM_PROGRAM_VERSION || "").split(".")[0], 10);
-        switch (env2.TERM_PROGRAM) {
-          case "iTerm.app":
-            return version3 >= 3 ? 3 : 2;
-          case "Apple_Terminal":
-            return 2;
-        }
-      }
-      if (/-256(color)?$/i.test(env2.TERM)) {
-        return 2;
-      }
-      if (/^screen|^xterm|^vt100|^vt220|^rxvt|color|ansi|cygwin|linux/i.test(env2.TERM)) {
-        return 1;
-      }
-      if ("COLORTERM" in env2) {
-        return 1;
-      }
-      return min;
-    }
-    function getSupportLevel(stream) {
-      const level = supportsColor(stream, stream && stream.isTTY);
-      return translateLevel(level);
-    }
-    module.exports = {
-      supportsColor: getSupportLevel,
-      stdout: translateLevel(supportsColor(true, tty.isatty(1))),
-      stderr: translateLevel(supportsColor(true, tty.isatty(2)))
+    supportsColor = {
+      stdout: createSupportsColor({ isTTY: tty.isatty(1) }),
+      stderr: createSupportsColor({ isTTY: tty.isatty(2) })
     };
+    supports_color_default = supportsColor;
   }
 });
 
 // node_modules/debug/src/node.js
 var require_node3 = __commonJS({
   "node_modules/debug/src/node.js"(exports, module) {
-    var tty = __require("tty");
+    var tty2 = __require("tty");
     var util2 = __require("util");
     exports.init = init;
     exports.log = log;
@@ -61256,8 +61290,8 @@ var require_node3 = __commonJS({
     );
     exports.colors = [6, 2, 3, 4, 5, 1];
     try {
-      const supportsColor = require_supports_color();
-      if (supportsColor && (supportsColor.stderr || supportsColor).level >= 2) {
+      const supportsColor2 = (init_supports_color(), __toCommonJS(supports_color_exports));
+      if (supportsColor2 && (supportsColor2.stderr || supportsColor2).level >= 2) {
         exports.colors = [
           20,
           21,
@@ -61359,7 +61393,7 @@ var require_node3 = __commonJS({
       return obj;
     }, {});
     function useColors() {
-      return "colors" in exports.inspectOpts ? Boolean(exports.inspectOpts.colors) : tty.isatty(process.stderr.fd);
+      return "colors" in exports.inspectOpts ? Boolean(exports.inspectOpts.colors) : tty2.isatty(process.stderr.fd);
     }
     function formatArgs(args) {
       const { namespace: name, useColors: useColors2 } = this;
@@ -66220,15 +66254,15 @@ var require_streams = __commonJS({
     var POOL_SIZE2 = 65536;
     if (!globalThis.ReadableStream) {
       try {
-        const process2 = __require("node:process");
-        const { emitWarning } = process2;
+        const process3 = __require("node:process");
+        const { emitWarning } = process3;
         try {
-          process2.emitWarning = () => {
+          process3.emitWarning = () => {
           };
           Object.assign(globalThis, __require("node:stream/web"));
-          process2.emitWarning = emitWarning;
+          process3.emitWarning = emitWarning;
         } catch (error) {
-          process2.emitWarning = emitWarning;
+          process3.emitWarning = emitWarning;
           throw error;
         }
       } catch (error) {
@@ -70815,7 +70849,7 @@ var require_logging_utils = __commonJS({
     exports.setBackend = setBackend;
     exports.log = log;
     var events_1 = __require("events");
-    var process2 = __importStar2(__require("process"));
+    var process3 = __importStar2(__require("process"));
     var util2 = __importStar2(__require("util"));
     var colours_1 = require_colours();
     var LogSeverity;
@@ -70872,7 +70906,7 @@ var require_logging_utils = __commonJS({
         this.cached = /* @__PURE__ */ new Map();
         this.filters = [];
         this.filtersSet = false;
-        let nodeFlag = (_a = process2.env[exports.env.nodeEnables]) !== null && _a !== void 0 ? _a : "*";
+        let nodeFlag = (_a = process3.env[exports.env.nodeEnables]) !== null && _a !== void 0 ? _a : "*";
         if (nodeFlag === "all") {
           nodeFlag = "*";
         }
@@ -70912,7 +70946,7 @@ var require_logging_utils = __commonJS({
         return (fields, ...args) => {
           var _a;
           const nscolour = `${colours_1.Colours.green}${namespace}${colours_1.Colours.reset}`;
-          const pid = `${colours_1.Colours.yellow}${process2.pid}${colours_1.Colours.reset}`;
+          const pid = `${colours_1.Colours.yellow}${process3.pid}${colours_1.Colours.reset}`;
           let level;
           switch (fields.severity) {
             case LogSeverity.ERROR:
@@ -70960,8 +70994,8 @@ var require_logging_utils = __commonJS({
       }
       setFilters() {
         var _a;
-        const existingFilters = (_a = process2.env["NODE_DEBUG"]) !== null && _a !== void 0 ? _a : "";
-        process2.env["NODE_DEBUG"] = `${existingFilters}${existingFilters ? "," : ""}${this.filters.join(",")}`;
+        const existingFilters = (_a = process3.env["NODE_DEBUG"]) !== null && _a !== void 0 ? _a : "";
+        process3.env["NODE_DEBUG"] = `${existingFilters}${existingFilters ? "," : ""}${this.filters.join(",")}`;
       }
     };
     function getDebugBackend(debugPkg) {
@@ -71014,7 +71048,7 @@ var require_logging_utils = __commonJS({
     }
     function log(namespace, parent) {
       if (!cachedBackend) {
-        const enablesFlag = process2.env[exports.env.nodeEnables];
+        const enablesFlag = process3.env[exports.env.nodeEnables];
         if (!enablesFlag) {
           return exports.placeholder;
         }
@@ -71667,7 +71701,7 @@ var require_util4 = __commonJS({
     exports.isValidFile = isValidFile;
     exports.getWellKnownCertificateConfigFileLocation = getWellKnownCertificateConfigFileLocation;
     var fs2 = __require("fs");
-    var os = __require("os");
+    var os2 = __require("os");
     var path = __require("path");
     var WELL_KNOWN_CERTIFICATE_CONFIG_FILE = "certificate_config.json";
     var CLOUDSDK_CONFIG_DIRECTORY = "gcloud";
@@ -71765,7 +71799,7 @@ var require_util4 = __commonJS({
       return path.join(configDir, WELL_KNOWN_CERTIFICATE_CONFIG_FILE);
     }
     function _isWindows() {
-      return os.platform().startsWith("win");
+      return os2.platform().startsWith("win");
     }
   }
 });
@@ -72132,8 +72166,8 @@ var require_loginticket = __commonJS({
        * @param {TokenPayload} pay Payload of the jwt
        * @constructor
        */
-      constructor(env2, pay) {
-        this.envelope = env2;
+      constructor(env3, pay) {
+        this.envelope = env3;
         this.payload = pay;
       }
       getEnvelope() {
@@ -73018,25 +73052,25 @@ var require_envDetect = __commonJS({
       return envPromise;
     }
     async function getEnvMemoized() {
-      let env2 = GCPEnv.NONE;
+      let env3 = GCPEnv.NONE;
       if (isAppEngine()) {
-        env2 = GCPEnv.APP_ENGINE;
+        env3 = GCPEnv.APP_ENGINE;
       } else if (isCloudFunction()) {
-        env2 = GCPEnv.CLOUD_FUNCTIONS;
+        env3 = GCPEnv.CLOUD_FUNCTIONS;
       } else if (await isComputeEngine()) {
         if (await isKubernetesEngine()) {
-          env2 = GCPEnv.KUBERNETES_ENGINE;
+          env3 = GCPEnv.KUBERNETES_ENGINE;
         } else if (isCloudRun()) {
-          env2 = GCPEnv.CLOUD_RUN;
+          env3 = GCPEnv.CLOUD_RUN;
         } else if (isCloudRunJob()) {
-          env2 = GCPEnv.CLOUD_RUN_JOBS;
+          env3 = GCPEnv.CLOUD_RUN_JOBS;
         } else {
-          env2 = GCPEnv.COMPUTE_ENGINE;
+          env3 = GCPEnv.COMPUTE_ENGINE;
         }
       } else {
-        env2 = GCPEnv.NONE;
+        env3 = GCPEnv.NONE;
       }
-      return env2;
+      return env3;
     }
     function isAppEngine() {
       return !!(process.env.GAE_SERVICE || process.env.GAE_MODULE_NAME);
@@ -77148,7 +77182,7 @@ var require_googleauth = __commonJS({
     var fs2 = __require("fs");
     var gaxios_1 = require_src3();
     var gcpMetadata = require_src5();
-    var os = __require("os");
+    var os2 = __require("os");
     var path = __require("path");
     var crypto_1 = require_crypto4();
     var computeclient_1 = require_computeclient();
@@ -77657,7 +77691,7 @@ var require_googleauth = __commonJS({
        * @api private
        */
       _isWindows() {
-        const sys = os.platform();
+        const sys = os2.platform();
         if (sys && sys.length >= 3) {
           if (sys.substring(0, 3).toLowerCase() === "win") {
             return true;
@@ -79631,7 +79665,7 @@ var require_shared3 = __commonJS({
     var errors = require_errors5();
     var dns = __require("dns");
     var net = __require("net");
-    var os = __require("os");
+    var os2 = __require("os");
     var DNS_TTL = 5 * 60 * 1e3;
     var CACHE_CLEANUP_INTERVAL = 30 * 1e3;
     var MAX_CACHE_SIZE = 1e3;
@@ -79642,7 +79676,7 @@ var require_shared3 = __commonJS({
     };
     var networkInterfaces;
     try {
-      networkInterfaces = os.networkInterfaces();
+      networkInterfaces = os2.networkInterfaces();
     } catch (_err) {
     }
     module.exports.networkInterfaces = networkInterfaces;
@@ -86376,7 +86410,7 @@ var require_smtp_connection = __commonJS({
     var { EventEmitter } = __require("events");
     var net = __require("net");
     var tls = __require("tls");
-    var os = __require("os");
+    var os2 = __require("os");
     var crypto3 = __require("crypto");
     var DataStream = require_data_stream2();
     var { PassThrough: PassThrough3 } = __require("stream");
@@ -87852,7 +87886,7 @@ var require_smtp_connection = __commonJS({
       _getHostname() {
         let defaultHostname;
         try {
-          defaultHostname = os.hostname() || "";
+          defaultHostname = os2.hostname() || "";
         } catch (_err) {
           defaultHostname = "localhost";
         }
@@ -91346,7 +91380,7 @@ function __classPrivateFieldIn(state, receiver) {
   if (receiver === null || typeof receiver !== "object" && typeof receiver !== "function") throw new TypeError("Cannot use 'in' operator on non-object");
   return typeof state === "function" ? receiver === state : state.has(receiver);
 }
-function __addDisposableResource(env2, value, async) {
+function __addDisposableResource(env3, value, async) {
   if (value !== null && value !== void 0) {
     if (typeof value !== "object" && typeof value !== "function") throw new TypeError("Object expected.");
     var dispose, inner;
@@ -91367,22 +91401,22 @@ function __addDisposableResource(env2, value, async) {
         return Promise.reject(e2);
       }
     };
-    env2.stack.push({ value, dispose, async });
+    env3.stack.push({ value, dispose, async });
   } else if (async) {
-    env2.stack.push({ async: true });
+    env3.stack.push({ async: true });
   }
   return value;
 }
-function __disposeResources(env2) {
+function __disposeResources(env3) {
   function fail(e2) {
-    env2.error = env2.hasError ? new _SuppressedError(e2, env2.error, "An error was suppressed during disposal.") : e2;
-    env2.hasError = true;
+    env3.error = env3.hasError ? new _SuppressedError(e2, env3.error, "An error was suppressed during disposal.") : e2;
+    env3.hasError = true;
   }
   var r2, s2 = 0;
   function next() {
-    while (r2 = env2.stack.pop()) {
+    while (r2 = env3.stack.pop()) {
       try {
-        if (!r2.async && s2 === 1) return s2 = 0, env2.stack.push(r2), Promise.resolve().then(next);
+        if (!r2.async && s2 === 1) return s2 = 0, env3.stack.push(r2), Promise.resolve().then(next);
         if (r2.dispose) {
           var result = r2.dispose.call(r2.value);
           if (r2.async) return s2 |= 2, Promise.resolve(result).then(next, function(e2) {
@@ -91394,8 +91428,8 @@ function __disposeResources(env2) {
         fail(e2);
       }
     }
-    if (s2 === 1) return env2.hasError ? Promise.reject(env2.error) : Promise.resolve();
-    if (env2.hasError) throw env2.error;
+    if (s2 === 1) return env3.hasError ? Promise.reject(env3.error) : Promise.resolve();
+    if (env3.hasError) throw env3.error;
   }
   return next();
 }
@@ -95745,15 +95779,15 @@ var require_websocket_factory = __commonJS({
        * ```
        */
       static getWebSocketConstructor() {
-        const env2 = this.detectEnvironment();
-        if (env2.wsConstructor) {
-          return env2.wsConstructor;
+        const env3 = this.detectEnvironment();
+        if (env3.wsConstructor) {
+          return env3.wsConstructor;
         }
-        let errorMessage = env2.error || "WebSocket not supported in this environment.";
-        if (env2.workaround) {
+        let errorMessage = env3.error || "WebSocket not supported in this environment.";
+        if (env3.workaround) {
           errorMessage += `
 
-Suggested solution: ${env2.workaround}`;
+Suggested solution: ${env3.workaround}`;
         }
         throw new Error(errorMessage);
       }
@@ -95772,8 +95806,8 @@ Suggested solution: ${env2.workaround}`;
        */
       static isWebSocketSupported() {
         try {
-          const env2 = this.detectEnvironment();
-          return env2.type === "native";
+          const env3 = this.detectEnvironment();
+          return env3.type === "native";
         } catch (_a) {
           return false;
         }
