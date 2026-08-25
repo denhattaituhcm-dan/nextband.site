@@ -739,9 +739,15 @@ export const sectionsApi = {
     sectionType: string;
     title: string;
     instructions?: string;
+    orderIndex?: number;
+    durationMinutes?: number;
   }) => {
     const token = await getAuthToken();
-    const res = await fetch(`${API_BASE_URL}/sections`, {
+    const endpoint = section.examId
+      ? `${API_BASE_URL}/exams/${section.examId}/sections`
+      : `${API_BASE_URL}/sections`;
+
+    const res = await fetch(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -756,7 +762,7 @@ export const sectionsApi = {
     }
 
     const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.error || errData.message || "Không thể tạo phần thi thủ công");
+    throw new Error(errData.error || errData.message || "Không thể tạo phần thi");
   },
 
   update: async (

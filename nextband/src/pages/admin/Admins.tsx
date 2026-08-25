@@ -19,6 +19,22 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -33,12 +49,14 @@ import {
   ShieldCheck,
   Eye,
   EyeOff,
+  AlertTriangle,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { DataTablePagination } from "@/components/admin/DataTablePagination";
 
 type SortField = "fullName" | "email" | "createdAt";
+type StatusFilter = "all" | "active" | "inactive";
 
 const emptyForm = {
   email: "",
@@ -54,6 +72,7 @@ export default function AdminAdmins() {
   const { user: currentUser, refreshUser } = useAuth();
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [sortField, setSortField] = useState<SortField>("createdAt");
@@ -65,6 +84,9 @@ export default function AdminAdmins() {
   const [editingUser, setEditingUser] = useState<any>(null);
   const [form, setForm] = useState(emptyForm);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Safety Confirmation for deactivating Admin
+  const [confirmUser, setConfirmUser] = useState<any>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -93,20 +115,20 @@ export default function AdminAdmins() {
   });
 
   const toggleMutation = useMutation({
-    mutationFn: async ({ id, role, isActive = true }: { id: string; role?: string; isActive?: boolean }) => {
-      return usersApi.update(id, { role, isActive });
+    mutationFn: async ({ id, isActive }: { id: string; isActive: boolean }) => {
+      return usersApi.update(id, { isActive });
     },
-    onSuccess: (res, variables) => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["admin-admins"] });
-      const isRevoking = variables.role === "student";
       toast({
-        title: isRevoking
-          ? "Đã thu hồi quyền Quản trị viên (chuyển về Học viên)"
-          : "Đã cấp quyền Quản trị viên",
-        description: isRevoking
-          ? "Tài khoản vẫn có thể đăng nhập bình thường với tư cách Học viên."
-          : "Tài khoản hiện có toàn quyền Quản trị hệ thống.",
+        title: variables.isActive
+          ? "Đã kích hoạt lại quyền Quản trị viên"
+          : "Đã thu hồi quyền Quản trị viên (Trạng thái tắt)",
+        description: variables.isActive
+          ? "Tài khoản hiện có toàn quyền Quản trị hệ thống."
+          : "Tài khoản đã chuyển sang trạng thái tắt, lưu trong danh sách chờ kích hoạt lại.",
       });
+      setConfirmUser(null);
       if (currentUser && (variables.id === currentUser.id || variables.id === (currentUser as any).userId)) {
         refreshUser();
       }
@@ -114,9 +136,10 @@ export default function AdminAdmins() {
     onError: () => {
       toast({
         title: "Lỗi",
-        description: "Không thể cập nhật quyền quản trị viên.",
+        description: "Không thể cập nhật trạng thái quyền quản trị viên.",
         variant: "destructive",
       });
+      setConfirmUser(null);
     },
   });
 
@@ -142,7 +165,7 @@ export default function AdminAdmins() {
     mutationFn: ({ id, ...body }: any) => usersApi.update(id, body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-admins"] });
-      toast({ title: "Đã cập nhật quản trị viên" });
+      toast({ title: "Đã cập nhật thông tin quản trị viên" });
       setDialogOpen(false);
       setEditingUser(null);
       setForm(emptyForm);
@@ -150,7 +173,7 @@ export default function AdminAdmins() {
     onError: () => {
       toast({
         title: "Lỗi",
-        description: "Không thể cập nhật",
+        description: "Không thể cập nhật thông tin",
         variant: "destructive",
       });
     },
@@ -187,13 +210,24 @@ export default function AdminAdmins() {
     }
   };
 
-  const adminsList = data?.data || [];
+  const rawAdmins = data?.data || [];
   const totalPages = data?.meta?.totalPages || 1;
   const total = data?.meta?.total || 0;
 
+  const activeCount = rawAdmins.filter((a: any) => a.isActive !== false).length;
+  const inactiveCount = rawAdmins.filter((a: any) => a.isActive === false).length;
+
+  const filteredAdmins = rawAdmins.filter((admin: any) => {
+    const isActive = admin.isActive !== false;
+    if (statusFilter === "active") return isActive;
+    if (statusFilter === "inactive") return !isActive;
+    return true;
+  });
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/10">
             <ShieldCheck className="h-5 w-5 text-amber-600" />
@@ -201,27 +235,49 @@ export default function AdminAdmins() {
           <div>
             <h1 className="text-2xl font-bold">Quản lý Quản trị viên (Admin)</h1>
             <p className="text-sm text-muted-foreground">
-              {total} tài khoản admin hệ thống
+              {total} tài khoản admin • {activeCount} đang hoạt động • {inactiveCount} đã tắt (chờ kích hoạt)
             </p>
           </div>
         </div>
-        <Button onClick={openCreate} className="bg-amber-600 hover:bg-amber-700 text-white">
+        <Button onClick={openCreate} className="bg-amber-600 hover:bg-amber-700 text-white self-start sm:self-auto">
           <Plus className="mr-2 h-4 w-4" />
           Thêm Quản trị viên
         </Button>
       </div>
 
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Tìm theo email hoặc tên admin..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-10"
-        />
+      {/* Toolbar: Search + Status Filter Chips */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between">
+        <div className="relative w-full sm:max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Tìm theo email hoặc tên admin..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+
+        <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
+          {[
+            { id: "all", label: `Tất cả (${total})` },
+            { id: "active", label: `Đang hoạt động (${activeCount})` },
+            { id: "inactive", label: `Đã tắt (${inactiveCount})` },
+          ].map((chip) => (
+            <Button
+              key={chip.id}
+              variant={statusFilter === chip.id ? "default" : "outline"}
+              size="sm"
+              onClick={() => setStatusFilter(chip.id as StatusFilter)}
+              className="h-8 rounded-full text-xs"
+            >
+              {chip.label}
+            </Button>
+          ))}
+        </div>
       </div>
 
-      <div className="border rounded-lg bg-white shadow-xs">
+      {/* Table */}
+      <div className="border rounded-lg bg-white shadow-xs overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -243,32 +299,71 @@ export default function AdminAdmins() {
                   </div>
                 </TableCell>
               </TableRow>
-            ) : adminsList.length === 0 ? (
+            ) : filteredAdmins.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                  Chưa có tài khoản Admin nào
+                  {search
+                    ? "Không tìm thấy quản trị viên phù hợp"
+                    : statusFilter === "inactive"
+                    ? "Không có quản trị viên nào ở trạng thái tắt"
+                    : "Chưa có tài khoản Admin nào"}
                 </TableCell>
               </TableRow>
             ) : (
-              adminsList.map((admin: any) => {
-                const hasAdminRole = admin.roles?.includes("admin") || admin.role === "admin";
+              filteredAdmins.map((admin: any) => {
+                const isAccountActive = admin.isActive !== false;
+                const isSelf =
+                  currentUser &&
+                  (admin.id === currentUser.id ||
+                    admin.id === (currentUser as any).userId ||
+                    admin.email === currentUser.email);
+
                 return (
-                  <TableRow key={admin.id}>
+                  <TableRow
+                    key={admin.id}
+                    className={!isAccountActive ? "bg-slate-50/70 text-slate-500" : undefined}
+                  >
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <Avatar className="h-9 w-9">
                           <AvatarImage src={admin.avatarUrl || undefined} />
-                          <AvatarFallback className="bg-amber-100 text-amber-800 font-bold">
+                          <AvatarFallback
+                            className={
+                              isAccountActive
+                                ? "bg-amber-100 text-amber-800 font-bold"
+                                : "bg-slate-200 text-slate-600 font-bold"
+                            }
+                          >
                             <ShieldCheck className="h-4 w-4" />
                           </AvatarFallback>
                         </Avatar>
                         <div>
-                          <span className="font-semibold text-slate-900 block">
+                          <span
+                            className={`font-semibold block ${
+                              isAccountActive ? "text-slate-900" : "text-slate-600"
+                            }`}
+                          >
                             {admin.fullName || "Admin System"}
+                            {isSelf && (
+                              <span className="ml-1.5 text-xs text-amber-600 font-normal">
+                                (Bạn)
+                              </span>
+                            )}
                           </span>
-                          <Badge className={hasAdminRole ? "bg-amber-500 hover:bg-amber-600 text-white text-[10px]" : "bg-slate-300 text-slate-700 text-[10px]"}>
-                            {hasAdminRole ? "Admin" : "Học viên"}
-                          </Badge>
+                          {isAccountActive ? (
+                            <Badge className="bg-amber-500 hover:bg-amber-600 text-white text-[10px] gap-1">
+                              <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+                              Admin (Hoạt động)
+                            </Badge>
+                          ) : (
+                            <Badge
+                              variant="outline"
+                              className="bg-slate-100 text-slate-600 border-slate-300 text-[10px] gap-1"
+                            >
+                              <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
+                              Đã tắt (Chờ kích hoạt lại)
+                            </Badge>
+                          )}
                         </div>
                       </div>
                     </TableCell>
@@ -292,16 +387,34 @@ export default function AdminAdmins() {
                       {new Date(admin.createdAt).toLocaleDateString("vi-VN")}
                     </TableCell>
                     <TableCell>
-                      <Switch
-                        checked={hasAdminRole}
-                        onCheckedChange={(checked) =>
-                          toggleMutation.mutate({
-                            id: admin.id,
-                            role: checked ? "admin" : "student",
-                            isActive: true,
-                          })
-                        }
-                      />
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="inline-block">
+                              <Switch
+                                checked={isAccountActive}
+                                disabled={isSelf || toggleMutation.isPending}
+                                onCheckedChange={(checked) => {
+                                  if (!checked) {
+                                    setConfirmUser(admin);
+                                  } else {
+                                    toggleMutation.mutate({
+                                      id: admin.id,
+                                      isActive: true,
+                                    });
+                                  }
+                                }}
+                                aria-label={`Trạng thái quyền Admin của ${admin.fullName || admin.email}`}
+                              />
+                            </span>
+                          </TooltipTrigger>
+                          {isSelf && (
+                            <TooltipContent>
+                              <p>Không thể tự tắt quyền quản trị của chính mình</p>
+                            </TooltipContent>
+                          )}
+                        </Tooltip>
+                      </TooltipProvider>
                     </TableCell>
                     <TableCell>
                       <Button variant="ghost" size="sm" onClick={() => openEdit(admin)}>
@@ -326,6 +439,62 @@ export default function AdminAdmins() {
           />
         )}
       </div>
+
+      {/* Safety Confirmation Dialog */}
+      <AlertDialog
+        open={!!confirmUser}
+        onOpenChange={(open) => !open && setConfirmUser(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-destructive">
+              <AlertTriangle className="h-5 w-5" />
+              Thu hồi quyền Quản trị viên?
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-2 text-sm text-muted-foreground pt-2">
+                <p>
+                  Bạn có chắc chắn muốn thu hồi quyền quản trị của{" "}
+                  <strong className="text-foreground">
+                    {confirmUser?.fullName || confirmUser?.email}
+                  </strong>
+                  ?
+                </p>
+                <div className="rounded-md bg-amber-50 border border-amber-200 p-3 text-xs text-amber-900 space-y-1">
+                  <p className="font-semibold flex items-center gap-1.5">
+                    <ShieldCheck className="h-4 w-4 text-amber-600" />
+                    Lưu giữ trong danh sách ở trạng thái tắt:
+                  </p>
+                  <p>• Tài khoản sẽ tạm ngưng quyền truy cập quản trị hệ thống.</p>
+                  <p>
+                    • Tài khoản <strong>vẫn được giữ trong danh sách này</strong> và có thể{" "}
+                    <strong>kích hoạt lại bất kỳ lúc nào</strong> bằng công tắc.
+                  </p>
+                </div>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (confirmUser) {
+                  toggleMutation.mutate({
+                    id: confirmUser.id,
+                    isActive: false,
+                  });
+                }
+              }}
+            >
+              {toggleMutation.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Xác nhận tắt quyền
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Create / Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

@@ -103,6 +103,9 @@ export function StudentWorkspaceDrawer({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
+  // Reservation Toggle State
+  const [isTogglingReservation, setIsTogglingReservation] = useState(false);
+
   if (!student) return null;
 
   const handleSaveProfile = async () => {
@@ -191,7 +194,6 @@ export function StudentWorkspaceDrawer({
   const isClassSuspended = student.classes?.some((c: any) => c.status === "SUSPENDED");
   const isBioReserved = !!(student.bio?.includes('"isReserved":true') || student.bio?.includes('"status":"suspended"') || student.bio === "RESERVED");
   const isReserved = Boolean(student.isReserved || student.status === "suspended" || isClassSuspended || isBioReserved);
-  const [isTogglingReservation, setIsTogglingReservation] = useState(false);
 
   // Guardian info
   const parentNameDisplay = student.parentName || student.parent_name || "";

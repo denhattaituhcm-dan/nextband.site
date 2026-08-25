@@ -194,7 +194,6 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
                 exam: { select: { id: true, title: true, courseId: true } },
               },
               orderBy: { createdAt: "desc" },
-              take: 20,
             },
             attendanceRecords: {
               select: {
@@ -205,7 +204,6 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
                 class: { select: { id: true, name: true, teacher: { select: { fullName: true } } } },
               },
               orderBy: { sessionDate: "desc" },
-              take: 20,
             },
           },
         }),
@@ -272,15 +270,24 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           const relevantSubmissions = (st.submissions || []).filter(
             (s: any) => studentCourseExamIds.has(s.exam?.id) || studentCourseExamIds.has(s.examId)
           );
-          submittedCount = relevantSubmissions.filter(
-            (s: any) =>
-              s.status === "submitted" ||
-              s.status === "graded" ||
-              s.status === "SUBMITTED" ||
-              s.status === "GRADED"
-          ).length;
-          gradedCount = relevantSubmissions.filter(
-            (s: any) => s.status === "graded" || s.status === "GRADED"
+
+          // An exam is counted as submitted only if it is actually submitted (status is SUBMITTED or GRADED, or has submittedAt)
+          // Deduplicate by examId so taking multiple attempts at the same exam does not double-count
+          const submittedExamMap = new Map<string, any>();
+          relevantSubmissions.forEach((s: any) => {
+            const statusUpper = String(s.status || "").toUpperCase();
+            const isSubmitted = statusUpper === "SUBMITTED" || statusUpper === "GRADED";
+            if (isSubmitted) {
+              const examKey = s.examId || s.exam?.id;
+              if (examKey && !submittedExamMap.has(examKey)) {
+                submittedExamMap.set(examKey, s);
+              }
+            }
+          });
+
+          submittedCount = submittedExamMap.size;
+          gradedCount = Array.from(submittedExamMap.values()).filter(
+            (s: any) => String(s.status || "").toUpperCase() === "GRADED"
           ).length;
           homeworkPercentage = Math.round((submittedCount / totalAssignedCount) * 100);
         }
@@ -297,19 +304,24 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         // 4. Activities Timeline
         const recentActivities: any[] = [];
         (st.submissions || []).forEach((s: any) => {
-          if (s.submittedAt || s.createdAt) {
-            recentActivities.push({
-              type: "submission",
-              title: `Nộp bài: ${s.exam?.title || "Bài tập / Bài thi"}`,
-              description:
-                s.totalScore != null
-                  ? `Điểm số: ${s.totalScore}`
-                  : `Trạng thái: ${
-                      s.status === "graded" || s.status === "GRADED" ? "Đã chấm" : "Đã nộp bài"
-                    }`,
-              score: s.totalScore ? Number(s.totalScore) : null,
-              timestamp: new Date(s.submittedAt || s.createdAt).toISOString(),
-            });
+          const statusUpper = String(s.status || "").toUpperCase();
+          const isSubmitted = statusUpper === "SUBMITTED" || statusUpper === "GRADED";
+          if (s.submittedAt || isSubmitted) {
+            const timestamp = s.submittedAt || s.createdAt;
+            if (timestamp) {
+              recentActivities.push({
+                type: "submission",
+                title: `Nộp bài: ${s.exam?.title || "Bài tập / Bài thi"}`,
+                description:
+                  s.totalScore != null
+                    ? `Điểm số: ${s.totalScore}`
+                    : `Trạng thái: ${
+                        statusUpper === "GRADED" ? "Đã chấm" : "Đã nộp bài"
+                      }`,
+                score: s.totalScore ? Number(s.totalScore) : null,
+                timestamp: new Date(timestamp).toISOString(),
+              });
+            }
           }
         });
         attendances.forEach((a: any) => {

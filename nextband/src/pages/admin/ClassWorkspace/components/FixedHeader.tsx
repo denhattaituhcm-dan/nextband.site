@@ -2,7 +2,7 @@ import React from "react";
 import { useWorkspace } from "../WorkspaceProvider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, UserPlus, GraduationCap } from "lucide-react";
+import { ArrowLeft, UserPlus, GraduationCap, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const FixedHeader: React.FC = () => {
@@ -40,16 +40,26 @@ export const FixedHeader: React.FC = () => {
                 </Badge>
               )}
             </div>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5 font-medium">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground mt-0.5 font-medium">
               <span>{teacherName}</span>
               <span>·</span>
               <span>{studentsCount} học viên</span>
               {courseTitle && (
                 <>
                   <span>·</span>
-                  <span className="flex items-center gap-1 text-slate-600">
+                  <span className="flex items-center gap-1 text-slate-600 dark:text-slate-300">
                     <GraduationCap className="h-3 w-3 text-primary" />
                     {courseTitle}
+                  </span>
+                </>
+              )}
+              {classData?.branch && (
+                <>
+                  <span>·</span>
+                  <span className="inline-flex items-center gap-1 text-emerald-700 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md">
+                    <MapPin className="h-3 w-3 text-emerald-600" />
+                    {classData.branch.name}
+                    {classData.room && ` (${classData.room.name})`}
                   </span>
                 </>
               )}

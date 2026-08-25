@@ -123,7 +123,14 @@ export default function AdminExamEdit() {
         sectionType: "reading",
         orderIndex: sections.length,
       });
-      toast({ title: "Đã thêm section" });
+      toast({ title: "Đã thêm phần thi mới thành công" });
+    },
+    onError: (err: any) => {
+      toast({
+        title: "Lỗi tạo phần thi",
+        description: err.message || "Không thể tạo phần thi",
+        variant: "destructive",
+      });
     },
   });
 
@@ -132,14 +139,28 @@ export default function AdminExamEdit() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["exam", id] });
     },
+    onError: (err: any) => {
+      toast({
+        title: "Lỗi cập nhật phần thi",
+        description: err.message || "Không thể cập nhật phần thi",
+        variant: "destructive",
+      });
+    },
   });
 
   const deleteSectionMutation = useMutation({
-    mutationFn: (id: string) => sectionsApi.delete(id),
+    mutationFn: (sectionId: string) => sectionsApi.delete(sectionId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["exam", id] });
       setDeleteId(null);
-      toast({ title: "Đã xóa section" });
+      toast({ title: "Đã xóa phần thi thành công" });
+    },
+    onError: (err: any) => {
+      toast({
+        title: "Lỗi xóa phần thi",
+        description: err.message || "Không thể xóa phần thi",
+        variant: "destructive",
+      });
     },
   });
 
@@ -331,9 +352,93 @@ export default function AdminExamEdit() {
                     })}
                 </div>
               ) : (
-                <p className="text-center py-8 text-muted-foreground">
-                  Chưa có section nào.
-                </p>
+                <div className="text-center py-12 px-4 border-2 border-dashed border-slate-200 rounded-xl space-y-4">
+                  <div className="mx-auto w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                    <BookOpen className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-semibold text-slate-800">Chưa có phần thi (Section) nào</h3>
+                    <p className="text-sm text-muted-foreground mt-1 max-w-md mx-auto">
+                      Bài thi cần có ít nhất một phần thi để tạo câu hỏi và cho học viên làm bài.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap justify-center gap-2 pt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-orange-600 border-orange-200 hover:bg-orange-50"
+                      onClick={() => {
+                        setNewSection({
+                          title: "Speaking",
+                          sectionType: "speaking",
+                          orderIndex: 0,
+                        });
+                        setCreateDialogOpen(true);
+                      }}
+                    >
+                      <Mic className="h-4 w-4 mr-1.5" /> + Speaking
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-rose-600 border-rose-200 hover:bg-rose-50"
+                      onClick={() => {
+                        setNewSection({
+                          title: "Writing",
+                          sectionType: "writing",
+                          orderIndex: 0,
+                        });
+                        setCreateDialogOpen(true);
+                      }}
+                    >
+                      <PenTool className="h-4 w-4 mr-1.5" /> + Writing
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                      onClick={() => {
+                        setNewSection({
+                          title: "Listening",
+                          sectionType: "listening",
+                          orderIndex: 0,
+                        });
+                        setCreateDialogOpen(true);
+                      }}
+                    >
+                      <Headphones className="h-4 w-4 mr-1.5" /> + Listening
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+                      onClick={() => {
+                        setNewSection({
+                          title: "Reading",
+                          sectionType: "reading",
+                          orderIndex: 0,
+                        });
+                        setCreateDialogOpen(true);
+                      }}
+                    >
+                      <BookOpen className="h-4 w-4 mr-1.5" /> + Reading
+                    </Button>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => {
+                        setNewSection({
+                          title: "",
+                          sectionType: "reading",
+                          orderIndex: 0,
+                        });
+                        setCreateDialogOpen(true);
+                      }}
+                    >
+                      <Plus className="h-4 w-4 mr-1" /> Tùy chỉnh phần thi
+                    </Button>
+                  </div>
+                </div>
               )}
             </CardContent>
           </Card>

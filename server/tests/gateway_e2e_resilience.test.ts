@@ -362,4 +362,59 @@ describe("🚀 PHASE 2: GATEWAY E2E BUSINESS FLOW & FAILURE ISOLATION TESTS", ()
     },
     60000
   );
+
+  afterAll(async () => {
+    try {
+      // 1. Clean up test notifications
+      await prisma.notification.deleteMany({
+        where: {
+          OR: [
+            { title: { contains: "E2E", mode: "insensitive" } },
+            { message: { contains: "E2E", mode: "insensitive" } },
+            { message: { contains: "Dedicated Test Exam", mode: "insensitive" } },
+            { title: { contains: "Dedicated Test Exam", mode: "insensitive" } },
+          ],
+        },
+      });
+
+      // 2. Clean up test submissions & answers
+      if (examId) {
+        const subs = await prisma.examSubmission.findMany({
+          where: { examId },
+          select: { id: true },
+        });
+        const subIds = subs.map((s) => s.id);
+        if (subIds.length > 0) {
+          await prisma.examAnswer.deleteMany({
+            where: { submissionId: { in: subIds } },
+          });
+          await prisma.examSubmission.deleteMany({
+            where: { id: { in: subIds } },
+          });
+        }
+
+        // 3. Delete test exam
+        await prisma.exam.deleteMany({
+          where: { id: examId },
+        });
+      }
+
+      // 4. Delete test course if created specifically
+      if (courseId) {
+        const course = await prisma.course.findUnique({
+          where: { id: courseId },
+          select: { title: true },
+        });
+        if (course?.title === "E2E IELTS Gateway Test Course") {
+          await prisma.enrollment.deleteMany({ where: { courseId } });
+          await prisma.course.delete({ where: { id: courseId } });
+        }
+      }
+    } catch (err) {
+      console.warn("afterAll test cleanup warning:", err);
+    } finally {
+      await app.close();
+      await prisma.$disconnect();
+    }
+  });
 });

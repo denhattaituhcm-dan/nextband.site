@@ -98534,6 +98534,15 @@ var createExamSchema = external_exports.object({
   week: external_exports.number().int().min(1, "Tu\u1EA7n ph\u1EA3i \xEDt nh\u1EA5t l\xE0 1").default(1),
   durationMinutes: external_exports.number().int().min(1, "Th\u1EDDi gian thi ph\u1EA3i \xEDt nh\u1EA5t l\xE0 1 ph\xFAt").default(60),
   examType: external_exports.string().default("ielts"),
+  template: external_exports.enum([
+    "blank",
+    "single_speaking",
+    "single_writing",
+    "single_listening",
+    "single_reading",
+    "single_grammar",
+    "full_ielts_mock"
+  ]).optional(),
   isPublished: external_exports.boolean().optional().default(false),
   isActive: external_exports.boolean().optional().default(true),
   isLocked: external_exports.boolean().optional().default(false),
@@ -98541,6 +98550,25 @@ var createExamSchema = external_exports.object({
   maxParticipants: external_exports.number().int().positive().optional().nullable()
 });
 var updateExamSchema = createExamSchema.partial();
+var sectionTypeEnum = external_exports.enum(
+  ["listening", "reading", "writing", "speaking", "general"],
+  {
+    errorMap: () => ({
+      message: "Lo\u1EA1i ph\u1EA7n thi kh\xF4ng h\u1EE3p l\u1EC7. Ph\u1EA3i l\xE0: listening, reading, writing, speaking, general"
+    })
+  }
+);
+var createSectionSchema = external_exports.object({
+  sectionType: sectionTypeEnum,
+  title: external_exports.string().min(1, "Ti\xEAu \u0111\u1EC1 ph\u1EA7n thi l\xE0 b\u1EAFt bu\u1ED9c"),
+  instructions: external_exports.string().max(5e6, "N\u1ED9i dung h\u01B0\u1EDBng d\u1EABn qu\xE1 d\xE0i").optional(),
+  content: external_exports.any().optional(),
+  audioUrl: external_exports.string().optional(),
+  audioScript: external_exports.string().max(5e6, "N\u1ED9i dung script qu\xE1 d\xE0i").optional(),
+  durationMinutes: external_exports.number({ invalid_type_error: "Th\u1EDDi gian ph\u1EA3i l\xE0 s\u1ED1" }).int().optional(),
+  orderIndex: external_exports.number().int().optional()
+});
+var updateSectionSchema = createSectionSchema.partial();
 
 // server/services/authorization.service.ts
 import { basename, resolve, sep } from "path";
@@ -99027,7 +99055,7 @@ var examsRoutes = async (fastify) => {
         reply
       );
       if (!data) return;
-      const safeData = { ...data };
+      const { template, ...safeData } = data;
       const authService = new AuthorizationService(fastify.prisma);
       try {
         await authService.requireCourseAuthoringAccess(
@@ -99044,23 +99072,57 @@ var examsRoutes = async (fastify) => {
       const exam = await fastify.prisma.exam.create({
         data: safeData
       });
-      const defaultSections = [
-        {
-          sectionType: "listening",
-          title: "Listening",
-          orderIndex: 0
-        },
-        { sectionType: "reading", title: "Reading", orderIndex: 1 },
-        { sectionType: "writing", title: "Writing", orderIndex: 2 },
-        { sectionType: "speaking", title: "Speaking", orderIndex: 3 },
-        { sectionType: "general", title: "Grammar", orderIndex: 4 }
-      ];
-      await fastify.prisma.examSection.createMany({
-        data: defaultSections.map((s) => ({
-          examId: exam.id,
-          ...s
-        }))
-      });
+      let defaultSections = [];
+      if (template === "full_ielts_mock") {
+        defaultSections = [
+          { sectionType: "listening", title: "Listening", orderIndex: 0 },
+          { sectionType: "reading", title: "Reading", orderIndex: 1 },
+          { sectionType: "writing", title: "Writing", orderIndex: 2 },
+          { sectionType: "speaking", title: "Speaking", orderIndex: 3 },
+          { sectionType: "general", title: "Grammar", orderIndex: 4 }
+        ];
+      } else if (template === "single_speaking") {
+        defaultSections = [{ sectionType: "speaking", title: "Speaking", orderIndex: 0 }];
+      } else if (template === "single_writing") {
+        defaultSections = [{ sectionType: "writing", title: "Writing", orderIndex: 0 }];
+      } else if (template === "single_listening") {
+        defaultSections = [{ sectionType: "listening", title: "Listening", orderIndex: 0 }];
+      } else if (template === "single_reading") {
+        defaultSections = [{ sectionType: "reading", title: "Reading", orderIndex: 0 }];
+      } else if (template === "single_grammar") {
+        defaultSections = [{ sectionType: "general", title: "Grammar", orderIndex: 0 }];
+      } else if (template === "blank") {
+        defaultSections = [];
+      } else {
+        const title = safeData.title || "";
+        if (/- SPK\b|SPEAKING/i.test(title)) {
+          defaultSections = [{ sectionType: "speaking", title: "Speaking", orderIndex: 0 }];
+        } else if (/- WRI\b|WRITING/i.test(title)) {
+          defaultSections = [{ sectionType: "writing", title: "Writing", orderIndex: 0 }];
+        } else if (/- LIS\b|LISTENING/i.test(title)) {
+          defaultSections = [{ sectionType: "listening", title: "Listening", orderIndex: 0 }];
+        } else if (/- REA\b|READING/i.test(title)) {
+          defaultSections = [{ sectionType: "reading", title: "Reading", orderIndex: 0 }];
+        } else if (/VOCAB/i.test(title)) {
+          defaultSections = [{ sectionType: "general", title: "Grammar", orderIndex: 0 }];
+        } else if (/MOCK|PLACEMENT/i.test(title)) {
+          defaultSections = [
+            { sectionType: "listening", title: "Listening", orderIndex: 0 },
+            { sectionType: "reading", title: "Reading", orderIndex: 1 },
+            { sectionType: "writing", title: "Writing", orderIndex: 2 },
+            { sectionType: "speaking", title: "Speaking", orderIndex: 3 },
+            { sectionType: "general", title: "Grammar", orderIndex: 4 }
+          ];
+        }
+      }
+      if (defaultSections.length > 0) {
+        await fastify.prisma.examSection.createMany({
+          data: defaultSections.map((s) => ({
+            examId: exam.id,
+            ...s
+          }))
+        });
+      }
       const examWithSections = await fastify.prisma.exam.findUnique({
         where: { id: exam.id },
         include: {
@@ -99081,7 +99143,7 @@ var examsRoutes = async (fastify) => {
         reply
       );
       if (!data) return;
-      const safeData = { ...data };
+      const { template, ...safeData } = data;
       const authService = new AuthorizationService(fastify.prisma);
       try {
         await authService.requireExamAuthoringAccess(
@@ -99115,11 +99177,141 @@ var examsRoutes = async (fastify) => {
           message: "\u0110\u1EC1 thi \u0111ang b\u1ECB kh\xF3a, h\xE3y m\u1EDF kh\xF3a tr\u01B0\u1EDBc khi ch\u1EC9nh s\u1EEDa n\u1ED9i dung."
         });
       }
+      if (safeData.isPublished === true) {
+        const sectionCount = await fastify.prisma.examSection.count({
+          where: { examId: id }
+        });
+        if (sectionCount === 0) {
+          return reply.status(400).send({
+            error: "EXAM_SECTIONS_REQUIRED",
+            message: "\u0110\u1EC1 thi ph\u1EA3i c\xF3 \xEDt nh\u1EA5t 1 ph\u1EA7n thi (section) tr\u01B0\u1EDBc khi xu\u1EA5t b\u1EA3n."
+          });
+        }
+      }
       const updatedExam = await fastify.prisma.exam.update({
         where: { id },
         data: safeData
       });
       return updatedExam;
+    }
+  );
+  fastify.post(
+    "/:examId/sections",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { examId } = request.params;
+      const data = handleValidation(
+        createSectionSchema.safeParse(request.body),
+        request,
+        reply
+      );
+      if (!data) return;
+      const authService = new AuthorizationService(fastify.prisma);
+      try {
+        await authService.requireExamAuthoringAccess(
+          examId,
+          request.user.id,
+          request.user.roles
+        );
+      } catch (err) {
+        if (err.statusCode) {
+          return reply.status(err.statusCode).send({ error: err.message });
+        }
+        throw err;
+      }
+      const exam = await fastify.prisma.exam.findUnique({
+        where: { id: examId },
+        select: { id: true, isActive: true, isLocked: true }
+      });
+      if (!exam) {
+        return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y b\xE0i thi" });
+      }
+      const isAdmin = request.user.roles.includes("admin");
+      if (exam.isActive === false || exam.isLocked === true && !isAdmin) {
+        return reply.status(409).send({
+          error: "EXAM_LOCKED_IMMUTABLE",
+          message: "\u0110\u1EC1 thi \u0111ang b\u1ECB kh\xF3a ho\u1EB7c \u0111\xE3 l\u01B0u tr\u1EEF, kh\xF4ng th\u1EC3 th\xEAm ph\u1EA7n thi."
+        });
+      }
+      let orderIndex = data.orderIndex;
+      if (orderIndex === void 0) {
+        const lastSection = await fastify.prisma.examSection.findFirst({
+          where: { examId },
+          orderBy: { orderIndex: "desc" },
+          select: { orderIndex: true }
+        });
+        orderIndex = (lastSection?.orderIndex ?? -1) + 1;
+      }
+      const section = await fastify.prisma.examSection.create({
+        data: {
+          examId,
+          sectionType: data.sectionType,
+          title: data.title,
+          instructions: data.instructions,
+          content: data.content,
+          audioUrl: data.audioUrl,
+          audioScript: data.audioScript,
+          durationMinutes: data.durationMinutes,
+          orderIndex
+        }
+      });
+      return reply.status(201).send(section);
+    }
+  );
+  fastify.delete(
+    "/:examId/sections/:sectionId",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { examId, sectionId } = request.params;
+      const authService = new AuthorizationService(fastify.prisma);
+      try {
+        await authService.requireExamAuthoringAccess(
+          examId,
+          request.user.id,
+          request.user.roles
+        );
+      } catch (err) {
+        if (err.statusCode) {
+          return reply.status(err.statusCode).send({ error: err.message });
+        }
+        throw err;
+      }
+      const exam = await fastify.prisma.exam.findUnique({
+        where: { id: examId },
+        select: { id: true, isActive: true, isLocked: true }
+      });
+      if (!exam) {
+        return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y b\xE0i thi" });
+      }
+      const isAdmin = request.user.roles.includes("admin");
+      if (exam.isActive === false || exam.isLocked === true && !isAdmin) {
+        return reply.status(409).send({
+          error: "EXAM_LOCKED_IMMUTABLE",
+          message: "\u0110\u1EC1 thi \u0111ang b\u1ECB kh\xF3a ho\u1EB7c \u0111\xE3 l\u01B0u tr\u1EEF, kh\xF4ng th\u1EC3 x\xF3a ph\u1EA7n thi."
+        });
+      }
+      const submissionCount = await fastify.prisma.examSubmission.count({
+        where: { examId }
+      });
+      if (submissionCount > 0) {
+        return reply.status(409).send({
+          error: "EXAM_HAS_SUBMISSIONS",
+          message: "Kh\xF4ng th\u1EC3 x\xF3a ph\u1EA7n thi khi b\xE0i thi \u0111\xE3 c\xF3 l\u01B0\u1EE3t l\xE0m b\xE0i c\u1EE7a h\u1ECDc vi\xEAn."
+        });
+      }
+      const section = await fastify.prisma.examSection.findFirst({
+        where: { id: sectionId, examId }
+      });
+      if (!section) {
+        return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y ph\u1EA7n thi trong b\xE0i thi n\xE0y" });
+      }
+      await fastify.prisma.examSection.delete({
+        where: { id: sectionId }
+      });
+      return reply.send({
+        success: true,
+        message: "\u0110\xE3 x\xF3a ph\u1EA7n thi th\xE0nh c\xF4ng."
+      });
     }
   );
   fastify.delete(
@@ -99185,7 +99377,7 @@ var exams_routes_default = examsRoutes;
 
 // server/routes/sections.routes.ts
 init_zod();
-var sectionTypeEnum = external_exports.enum(
+var sectionTypeEnum2 = external_exports.enum(
   ["listening", "reading", "writing", "speaking", "general"],
   {
     errorMap: () => ({
@@ -99193,7 +99385,18 @@ var sectionTypeEnum = external_exports.enum(
     })
   }
 );
-var updateSectionSchema = external_exports.object({
+var createSectionSchema2 = external_exports.object({
+  examId: external_exports.string({ required_error: "ID b\xE0i t\u1EADp l\xE0 b\u1EAFt bu\u1ED9c" }),
+  sectionType: sectionTypeEnum2,
+  title: external_exports.string().min(1, "Ti\xEAu \u0111\u1EC1 l\xE0 b\u1EAFt bu\u1ED9c"),
+  instructions: external_exports.string().max(5e6, "N\u1ED9i dung h\u01B0\u1EDBng d\u1EABn qu\xE1 d\xE0i").optional(),
+  content: external_exports.any().optional(),
+  audioUrl: external_exports.string().optional(),
+  audioScript: external_exports.string().max(5e6, "N\u1ED9i dung script qu\xE1 d\xE0i").optional(),
+  durationMinutes: external_exports.number({ invalid_type_error: "Th\u1EDDi gian ph\u1EA3i l\xE0 s\u1ED1" }).int().optional(),
+  orderIndex: external_exports.number().int().optional()
+});
+var updateSectionSchema3 = external_exports.object({
   title: external_exports.string().min(1, "Ti\xEAu \u0111\u1EC1 l\xE0 b\u1EAFt bu\u1ED9c").optional(),
   instructions: external_exports.string().max(5e6, "N\u1ED9i dung h\u01B0\u1EDBng d\u1EABn qu\xE1 d\xE0i").optional(),
   content: external_exports.any().optional(),
@@ -99280,9 +99483,62 @@ var sectionsRoutes = async (fastify) => {
     "/",
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
-      return reply.status(403).send({
-        error: "Kh\xF4ng th\u1EC3 t\u1EA1o section th\u1EE7 c\xF4ng. Sections \u0111\u01B0\u1EE3c t\u1EA1o t\u1EF1 \u0111\u1ED9ng khi t\u1EA1o b\xE0i thi."
+      const data = handleValidation(
+        createSectionSchema2.safeParse(request.body),
+        request,
+        reply
+      );
+      if (!data) return;
+      const authService = new AuthorizationService(fastify.prisma);
+      try {
+        await authService.requireExamAuthoringAccess(
+          data.examId,
+          request.user.id,
+          request.user.roles
+        );
+      } catch (err) {
+        if (err.statusCode) {
+          return reply.status(err.statusCode).send({ error: err.message });
+        }
+        throw err;
+      }
+      const exam = await fastify.prisma.exam.findUnique({
+        where: { id: data.examId },
+        select: { id: true, isActive: true, isLocked: true }
       });
+      if (!exam) {
+        return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y b\xE0i thi" });
+      }
+      const isAdmin = request.user.roles.includes("admin");
+      if (exam.isActive === false || exam.isLocked === true && !isAdmin) {
+        return reply.status(409).send({
+          error: "EXAM_LOCKED_IMMUTABLE",
+          message: "\u0110\u1EC1 thi \u0111ang b\u1ECB kh\xF3a ho\u1EB7c \u0111\xE3 l\u01B0u tr\u1EEF, kh\xF4ng th\u1EC3 th\xEAm ph\u1EA7n thi."
+        });
+      }
+      let orderIndex = data.orderIndex;
+      if (orderIndex === void 0) {
+        const lastSection = await fastify.prisma.examSection.findFirst({
+          where: { examId: data.examId },
+          orderBy: { orderIndex: "desc" },
+          select: { orderIndex: true }
+        });
+        orderIndex = (lastSection?.orderIndex ?? -1) + 1;
+      }
+      const section = await fastify.prisma.examSection.create({
+        data: {
+          examId: data.examId,
+          sectionType: data.sectionType,
+          title: data.title,
+          instructions: data.instructions,
+          content: data.content,
+          audioUrl: data.audioUrl,
+          audioScript: data.audioScript,
+          durationMinutes: data.durationMinutes,
+          orderIndex
+        }
+      });
+      return reply.status(201).send(section);
     }
   );
   fastify.put(
@@ -99291,7 +99547,7 @@ var sectionsRoutes = async (fastify) => {
     async (request, reply) => {
       const { id } = request.params;
       const data = handleValidation(
-        updateSectionSchema.safeParse(request.body),
+        updateSectionSchema3.safeParse(request.body),
         request,
         reply
       );
@@ -99341,10 +99597,51 @@ var sectionsRoutes = async (fastify) => {
   );
   fastify.delete(
     "/:id",
-    { preHandler: [authenticate, requireRoles("admin")] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
-      return reply.status(403).send({
-        error: "Kh\xF4ng th\u1EC3 x\xF3a section. M\u1ED7i b\xE0i t\u1EADp lu\xF4n c\xF3 \u0111\u1EE7 5 sections."
+      const { id } = request.params;
+      const authService = new AuthorizationService(fastify.prisma);
+      try {
+        await authService.requireSectionAuthoringAccess(
+          id,
+          request.user.id,
+          request.user.roles
+        );
+      } catch (err) {
+        if (err.statusCode) {
+          return reply.status(err.statusCode).send({ error: err.message });
+        }
+        throw err;
+      }
+      const section = await fastify.prisma.examSection.findUnique({
+        where: { id },
+        include: { exam: { select: { id: true, isActive: true, isLocked: true } } }
+      });
+      if (!section) {
+        return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y ph\u1EA7n thi" });
+      }
+      const isAdmin = request.user.roles.includes("admin");
+      if (section.exam && (section.exam.isActive === false || section.exam.isLocked === true && !isAdmin)) {
+        return reply.status(409).send({
+          error: "EXAM_LOCKED_IMMUTABLE",
+          message: "\u0110\u1EC1 thi \u0111ang b\u1ECB kh\xF3a ho\u1EB7c \u0111\xE3 l\u01B0u tr\u1EEF, kh\xF4ng th\u1EC3 x\xF3a ph\u1EA7n thi."
+        });
+      }
+      const submissionCount = await fastify.prisma.examSubmission.count({
+        where: { examId: section.examId }
+      });
+      if (submissionCount > 0) {
+        return reply.status(409).send({
+          error: "EXAM_HAS_SUBMISSIONS",
+          message: "Kh\xF4ng th\u1EC3 x\xF3a ph\u1EA7n thi khi b\xE0i thi \u0111\xE3 c\xF3 l\u01B0\u1EE3t l\xE0m b\xE0i c\u1EE7a h\u1ECDc vi\xEAn."
+        });
+      }
+      await fastify.prisma.examSection.delete({
+        where: { id }
+      });
+      return reply.send({
+        success: true,
+        message: "\u0110\xE3 x\xF3a ph\u1EA7n thi th\xE0nh c\xF4ng."
       });
     }
   );
@@ -102306,8 +102603,7 @@ var usersRoutes = async (fastify) => {
                 createdAt: true,
                 exam: { select: { id: true, title: true, courseId: true } }
               },
-              orderBy: { createdAt: "desc" },
-              take: 20
+              orderBy: { createdAt: "desc" }
             },
             attendanceRecords: {
               select: {
@@ -102317,8 +102613,7 @@ var usersRoutes = async (fastify) => {
                 createdAt: true,
                 class: { select: { id: true, name: true, teacher: { select: { fullName: true } } } }
               },
-              orderBy: { sessionDate: "desc" },
-              take: 20
+              orderBy: { sessionDate: "desc" }
             }
           }
         }),
@@ -102372,11 +102667,20 @@ var usersRoutes = async (fastify) => {
           const relevantSubmissions = (st.submissions || []).filter(
             (s) => studentCourseExamIds.has(s.exam?.id) || studentCourseExamIds.has(s.examId)
           );
-          submittedCount = relevantSubmissions.filter(
-            (s) => s.status === "submitted" || s.status === "graded" || s.status === "SUBMITTED" || s.status === "GRADED"
-          ).length;
-          gradedCount = relevantSubmissions.filter(
-            (s) => s.status === "graded" || s.status === "GRADED"
+          const submittedExamMap = /* @__PURE__ */ new Map();
+          relevantSubmissions.forEach((s) => {
+            const statusUpper = String(s.status || "").toUpperCase();
+            const isSubmitted = statusUpper === "SUBMITTED" || statusUpper === "GRADED";
+            if (isSubmitted) {
+              const examKey = s.examId || s.exam?.id;
+              if (examKey && !submittedExamMap.has(examKey)) {
+                submittedExamMap.set(examKey, s);
+              }
+            }
+          });
+          submittedCount = submittedExamMap.size;
+          gradedCount = Array.from(submittedExamMap.values()).filter(
+            (s) => String(s.status || "").toUpperCase() === "GRADED"
           ).length;
           homeworkPercentage = Math.round(submittedCount / totalAssignedCount * 100);
         }
@@ -102388,14 +102692,19 @@ var usersRoutes = async (fastify) => {
         const attendancePercentage = totalSessions > 0 ? Math.round(attendedCount / totalSessions * 100) : null;
         const recentActivities = [];
         (st.submissions || []).forEach((s) => {
-          if (s.submittedAt || s.createdAt) {
-            recentActivities.push({
-              type: "submission",
-              title: `N\u1ED9p b\xE0i: ${s.exam?.title || "B\xE0i t\u1EADp / B\xE0i thi"}`,
-              description: s.totalScore != null ? `\u0110i\u1EC3m s\u1ED1: ${s.totalScore}` : `Tr\u1EA1ng th\xE1i: ${s.status === "graded" || s.status === "GRADED" ? "\u0110\xE3 ch\u1EA5m" : "\u0110\xE3 n\u1ED9p b\xE0i"}`,
-              score: s.totalScore ? Number(s.totalScore) : null,
-              timestamp: new Date(s.submittedAt || s.createdAt).toISOString()
-            });
+          const statusUpper = String(s.status || "").toUpperCase();
+          const isSubmitted = statusUpper === "SUBMITTED" || statusUpper === "GRADED";
+          if (s.submittedAt || isSubmitted) {
+            const timestamp = s.submittedAt || s.createdAt;
+            if (timestamp) {
+              recentActivities.push({
+                type: "submission",
+                title: `N\u1ED9p b\xE0i: ${s.exam?.title || "B\xE0i t\u1EADp / B\xE0i thi"}`,
+                description: s.totalScore != null ? `\u0110i\u1EC3m s\u1ED1: ${s.totalScore}` : `Tr\u1EA1ng th\xE1i: ${statusUpper === "GRADED" ? "\u0110\xE3 ch\u1EA5m" : "\u0110\xE3 n\u1ED9p b\xE0i"}`,
+                score: s.totalScore ? Number(s.totalScore) : null,
+                timestamp: new Date(timestamp).toISOString()
+              });
+            }
           }
         });
         attendances.forEach((a) => {

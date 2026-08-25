@@ -12,11 +12,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Edit, Trash2, ArrowUpDown } from "lucide-react";
+import { Plus, Edit, Trash2, ArrowUpDown, Lock, Unlock } from "lucide-react";
 import { useState } from "react";
 import { DataTablePagination } from "@/components/admin/DataTablePagination";
 import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface CourseExamsListProps {
   courseId: string;
@@ -86,6 +92,23 @@ export default function CourseExamsList({ courseId }: CourseExamsListProps) {
     },
   });
 
+  const lockMutation = useMutation({
+    mutationFn: async ({ id, isLocked }: { id: string; isLocked: boolean }) =>
+      examsApi.update(id, { isLocked }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["course-exams-admin"] });
+      toast({ title: "Đã cập nhật trạng thái khóa" });
+    },
+    onError: (err: any) => {
+      toast({
+        title: "Lỗi",
+        description:
+          err.response?.data?.error || "Không thể cập nhật trạng thái khóa",
+        variant: "destructive",
+      });
+    },
+  });
+
   const toggleSort = (field: SortField) => {
     if (sortField === field) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -139,6 +162,7 @@ export default function CourseExamsList({ courseId }: CourseExamsListProps) {
                   <SortHeader field="title">Tên bài thi</SortHeader>
                   <TableHead>Trạng thái</TableHead>
                   <TableHead>Kích hoạt</TableHead>
+                  <TableHead className="w-[80px] text-center">Khóa</TableHead>
                   <TableHead className="w-[120px] whitespace-nowrap">Hành động</TableHead>
                 </TableRow>
               </TableHeader>
@@ -161,28 +185,95 @@ export default function CourseExamsList({ courseId }: CourseExamsListProps) {
                         {exam.isActive ? "Hoạt động" : "Tắt"}
                       </Badge>
                     </TableCell>
+                    <TableCell className="text-center">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant={exam.isLocked ? "default" : "outline"}
+                              size="icon"
+                              className={`h-8 w-8 ${
+                                exam.isLocked
+                                  ? "bg-amber-100 text-amber-800 hover:bg-amber-200 border border-amber-300 dark:bg-amber-950 dark:text-amber-300"
+                                  : "text-muted-foreground hover:text-foreground"
+                              }`}
+                              onClick={() =>
+                                lockMutation.mutate({
+                                  id: exam.id,
+                                  isLocked: !exam.isLocked,
+                                })
+                              }
+                              disabled={lockMutation.isPending}
+                              aria-label={
+                                exam.isLocked
+                                  ? "Đang khóa, bấm để mở khóa"
+                                  : "Đang mở khóa, bấm để khóa"
+                              }
+                            >
+                              {exam.isLocked ? (
+                                <Lock className="h-4 w-4 text-amber-700 dark:text-amber-300" />
+                              ) : (
+                                <Unlock className="h-4 w-4 text-slate-400" />
+                              )}
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            {exam.isLocked
+                              ? "Đang khóa — Bấm để mở khóa"
+                              : "Đang mở khóa — Bấm để khóa"}
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </TableCell>
                     <TableCell className="whitespace-nowrap">
                       <div className="flex items-center gap-1">
-                      <Button variant="ghost" size="sm" asChild disabled={!!exam.isLocked}>
-                        <Link to={`/admin/exams/${exam.id}`}>
-                          <Edit className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-destructive hover:text-destructive"
-                        disabled={!!exam.isLocked}
-                        onClick={() =>
-                          setDeleteExam({
-                            id: exam.id,
-                            title: exam.title,
-                            isLocked: !!exam.isLocked,
-                          })
-                        }
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span>
+                                <Button variant="ghost" size="sm" asChild disabled={!!exam.isLocked}>
+                                  <Link to={`/admin/exams/${exam.id}`}>
+                                    <Edit className="h-4 w-4" />
+                                  </Link>
+                                </Button>
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              {exam.isLocked
+                                ? "Đang khóa, cần mở khóa trước khi sửa"
+                                : "Sửa bài thi"}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-destructive hover:text-destructive"
+                                  disabled={!!exam.isLocked}
+                                  onClick={() =>
+                                    setDeleteExam({
+                                      id: exam.id,
+                                      title: exam.title,
+                                      isLocked: !!exam.isLocked,
+                                    })
+                                  }
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              {exam.isLocked
+                                ? "Đang khóa, cần mở khóa trước khi xóa"
+                                : "Xóa bài thi"}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
                     </TableCell>
                   </TableRow>

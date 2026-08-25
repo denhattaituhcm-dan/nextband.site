@@ -1,7 +1,12 @@
 import { FastifyPluginAsync } from "fastify";
 import { Prisma } from "@prisma/client";
 import { paginationSchema } from "../schemas/common.schema.js";
-import { createExamSchema, updateExamSchema } from "../schemas/exam.schema.js";
+import {
+  createExamSchema,
+  updateExamSchema,
+  createSectionSchema,
+  updateSectionSchema,
+} from "../schemas/exam.schema.js";
 import { authenticate, requireRoles } from "../middlewares/auth.middleware.js";
 import { handleValidation } from "../utils/validation.js";
 import { toFileUrl } from "../utils/file.js";
@@ -242,7 +247,7 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
         reply,
       );
       if (!data) return;
-      const safeData = { ...data };
+      const { template, ...safeData } = data as any;
 
       const authService = new AuthorizationService(fastify.prisma);
       try {
@@ -262,25 +267,61 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
         data: safeData as any,
       });
 
-      // Auto-create 5 default sections
-      const defaultSections = [
-        {
-          sectionType: "listening" as const,
-          title: "Listening",
-          orderIndex: 0,
-        },
-        { sectionType: "reading" as const, title: "Reading", orderIndex: 1 },
-        { sectionType: "writing" as const, title: "Writing", orderIndex: 2 },
-        { sectionType: "speaking" as const, title: "Speaking", orderIndex: 3 },
-        { sectionType: "general" as const, title: "Grammar", orderIndex: 4 },
-      ];
+      // Modular Section Auto-initialization
+      let defaultSections: Array<{ sectionType: any; title: string; orderIndex: number }> = [];
 
-      await fastify.prisma.examSection.createMany({
-        data: defaultSections.map((s) => ({
-          examId: exam.id,
-          ...s,
-        })),
-      });
+      if (template === "full_ielts_mock") {
+        defaultSections = [
+          { sectionType: "listening", title: "Listening", orderIndex: 0 },
+          { sectionType: "reading", title: "Reading", orderIndex: 1 },
+          { sectionType: "writing", title: "Writing", orderIndex: 2 },
+          { sectionType: "speaking", title: "Speaking", orderIndex: 3 },
+          { sectionType: "general", title: "Grammar", orderIndex: 4 },
+        ];
+      } else if (template === "single_speaking") {
+        defaultSections = [{ sectionType: "speaking", title: "Speaking", orderIndex: 0 }];
+      } else if (template === "single_writing") {
+        defaultSections = [{ sectionType: "writing", title: "Writing", orderIndex: 0 }];
+      } else if (template === "single_listening") {
+        defaultSections = [{ sectionType: "listening", title: "Listening", orderIndex: 0 }];
+      } else if (template === "single_reading") {
+        defaultSections = [{ sectionType: "reading", title: "Reading", orderIndex: 0 }];
+      } else if (template === "single_grammar") {
+        defaultSections = [{ sectionType: "general", title: "Grammar", orderIndex: 0 }];
+      } else if (template === "blank") {
+        defaultSections = [];
+      } else {
+        // Fallback: title/semantics inference
+        const title = safeData.title || "";
+        if (/- SPK\b|SPEAKING/i.test(title)) {
+          defaultSections = [{ sectionType: "speaking", title: "Speaking", orderIndex: 0 }];
+        } else if (/- WRI\b|WRITING/i.test(title)) {
+          defaultSections = [{ sectionType: "writing", title: "Writing", orderIndex: 0 }];
+        } else if (/- LIS\b|LISTENING/i.test(title)) {
+          defaultSections = [{ sectionType: "listening", title: "Listening", orderIndex: 0 }];
+        } else if (/- REA\b|READING/i.test(title)) {
+          defaultSections = [{ sectionType: "reading", title: "Reading", orderIndex: 0 }];
+        } else if (/VOCAB/i.test(title)) {
+          defaultSections = [{ sectionType: "general", title: "Grammar", orderIndex: 0 }];
+        } else if (/MOCK|PLACEMENT/i.test(title)) {
+          defaultSections = [
+            { sectionType: "listening", title: "Listening", orderIndex: 0 },
+            { sectionType: "reading", title: "Reading", orderIndex: 1 },
+            { sectionType: "writing", title: "Writing", orderIndex: 2 },
+            { sectionType: "speaking", title: "Speaking", orderIndex: 3 },
+            { sectionType: "general", title: "Grammar", orderIndex: 4 },
+          ];
+        }
+      }
+
+      if (defaultSections.length > 0) {
+        await fastify.prisma.examSection.createMany({
+          data: defaultSections.map((s) => ({
+            examId: exam.id,
+            ...s,
+          })),
+        });
+      }
 
       // Return exam with sections
       const examWithSections = await fastify.prisma.exam.findUnique({
@@ -306,7 +347,7 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
         reply,
       );
       if (!data) return;
-      const safeData = { ...data };
+      const { template, ...safeData } = data as any;
 
       const authService = new AuthorizationService(fastify.prisma);
       try {
@@ -348,12 +389,162 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
         });
       }
 
+      // Publishing Invariant: Đề thi phải có ít nhất 1 section trước khi kích hoạt / xuất bản
+      if (safeData.isPublished === true) {
+        const sectionCount = await fastify.prisma.examSection.count({
+          where: { examId: id },
+        });
+        if (sectionCount === 0) {
+          return reply.status(400).send({
+            error: "EXAM_SECTIONS_REQUIRED",
+            message: "Đề thi phải có ít nhất 1 phần thi (section) trước khi xuất bản.",
+          });
+        }
+      }
+
       const updatedExam = await fastify.prisma.exam.update({
         where: { id },
         data: safeData,
       });
 
       return updatedExam;
+    },
+  );
+
+  // POST /exams/:examId/sections - Domain-scoped section creation
+  fastify.post<{ Params: { examId: string } }>(
+    "/:examId/sections",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { examId } = request.params;
+      const data = handleValidation(
+        createSectionSchema.safeParse(request.body),
+        request,
+        reply,
+      );
+      if (!data) return;
+
+      const authService = new AuthorizationService(fastify.prisma);
+      try {
+        await authService.requireExamAuthoringAccess(
+          examId,
+          request.user.id,
+          request.user.roles,
+        );
+      } catch (err: any) {
+        if (err.statusCode) {
+          return reply.status(err.statusCode).send({ error: err.message });
+        }
+        throw err;
+      }
+
+      const exam = await fastify.prisma.exam.findUnique({
+        where: { id: examId },
+        select: { id: true, isActive: true, isLocked: true },
+      });
+      if (!exam) {
+        return reply.status(404).send({ error: "Không tìm thấy bài thi" });
+      }
+
+      const isAdmin = request.user.roles.includes("admin");
+      if (exam.isActive === false || (exam.isLocked === true && !isAdmin)) {
+        return reply.status(409).send({
+          error: "EXAM_LOCKED_IMMUTABLE",
+          message: "Đề thi đang bị khóa hoặc đã lưu trữ, không thể thêm phần thi.",
+        });
+      }
+
+      let orderIndex = data.orderIndex;
+      if (orderIndex === undefined) {
+        const lastSection = await fastify.prisma.examSection.findFirst({
+          where: { examId },
+          orderBy: { orderIndex: "desc" },
+          select: { orderIndex: true },
+        });
+        orderIndex = (lastSection?.orderIndex ?? -1) + 1;
+      }
+
+      const section = await fastify.prisma.examSection.create({
+        data: {
+          examId,
+          sectionType: data.sectionType,
+          title: data.title,
+          instructions: data.instructions,
+          content: data.content,
+          audioUrl: data.audioUrl,
+          audioScript: data.audioScript,
+          durationMinutes: data.durationMinutes,
+          orderIndex,
+        },
+      });
+
+      return reply.status(201).send(section);
+    },
+  );
+
+  // DELETE /exams/:examId/sections/:sectionId - Domain-scoped section deletion
+  fastify.delete<{ Params: { examId: string; sectionId: string } }>(
+    "/:examId/sections/:sectionId",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { examId, sectionId } = request.params;
+
+      const authService = new AuthorizationService(fastify.prisma);
+      try {
+        await authService.requireExamAuthoringAccess(
+          examId,
+          request.user.id,
+          request.user.roles,
+        );
+      } catch (err: any) {
+        if (err.statusCode) {
+          return reply.status(err.statusCode).send({ error: err.message });
+        }
+        throw err;
+      }
+
+      const exam = await fastify.prisma.exam.findUnique({
+        where: { id: examId },
+        select: { id: true, isActive: true, isLocked: true },
+      });
+      if (!exam) {
+        return reply.status(404).send({ error: "Không tìm thấy bài thi" });
+      }
+
+      const isAdmin = request.user.roles.includes("admin");
+      if (exam.isActive === false || (exam.isLocked === true && !isAdmin)) {
+        return reply.status(409).send({
+          error: "EXAM_LOCKED_IMMUTABLE",
+          message: "Đề thi đang bị khóa hoặc đã lưu trữ, không thể xóa phần thi.",
+        });
+      }
+
+      // Check student submissions protection
+      const submissionCount = await fastify.prisma.examSubmission.count({
+        where: { examId },
+      });
+      if (submissionCount > 0) {
+        return reply.status(409).send({
+          error: "EXAM_HAS_SUBMISSIONS",
+          message: "Không thể xóa phần thi khi bài thi đã có lượt làm bài của học viên.",
+        });
+      }
+
+      const section = await fastify.prisma.examSection.findFirst({
+        where: { id: sectionId, examId },
+      });
+      if (!section) {
+        return reply.status(404).send({ error: "Không tìm thấy phần thi trong bài thi này" });
+      }
+
+      await fastify.prisma.examSection.delete({
+        where: { id: sectionId },
+      });
+
+      return reply.send({
+        success: true,
+        message: "Đã xóa phần thi thành công.",
+      });
     },
   );
 

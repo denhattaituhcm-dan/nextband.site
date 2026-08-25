@@ -313,8 +313,13 @@ export default function AdminExams() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
-                            variant={exam.isLocked ? "secondary" : "outline"}
+                            variant={exam.isLocked ? "default" : "outline"}
                             size="icon"
+                            className={
+                              exam.isLocked
+                                ? "bg-amber-100 text-amber-800 hover:bg-amber-200 border border-amber-300 dark:bg-amber-950 dark:text-amber-300"
+                                : "text-muted-foreground hover:text-foreground"
+                            }
                             onClick={() =>
                               lockMutation.mutate({
                                 id: exam.id,
@@ -322,17 +327,17 @@ export default function AdminExams() {
                               })
                             }
                             disabled={lockMutation.isPending}
-                            aria-label={exam.isLocked ? "Mở khóa" : "Khóa"}
+                            aria-label={exam.isLocked ? "Đang khóa, bấm để mở khóa" : "Đang mở khóa, bấm để khóa"}
                           >
                             {exam.isLocked ? (
-                              <Unlock className="h-4 w-4" />
+                              <Lock className="h-4 w-4 text-amber-700 dark:text-amber-300" />
                             ) : (
-                              <Lock className="h-4 w-4" />
+                              <Unlock className="h-4 w-4 text-slate-400" />
                             )}
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                          {exam.isLocked ? "Mở khóa" : "Khóa"}
+                          {exam.isLocked ? "Đang khóa — Bấm để mở khóa" : "Đang mở khóa — Bấm để khóa"}
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>

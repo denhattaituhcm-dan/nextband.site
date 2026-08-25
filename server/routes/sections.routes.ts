@@ -15,6 +15,21 @@ const sectionTypeEnum = z.enum(
   },
 );
 
+const createSectionSchema = z.object({
+  examId: z.string({ required_error: "ID bài tập là bắt buộc" }),
+  sectionType: sectionTypeEnum,
+  title: z.string().min(1, "Tiêu đề là bắt buộc"),
+  instructions: z.string().max(5_000_000, "Nội dung hướng dẫn quá dài").optional(),
+  content: z.any().optional(),
+  audioUrl: z.string().optional(),
+  audioScript: z.string().max(5_000_000, "Nội dung script quá dài").optional(),
+  durationMinutes: z
+    .number({ invalid_type_error: "Thời gian phải là số" })
+    .int()
+    .optional(),
+  orderIndex: z.number().int().optional(),
+});
+
 const updateSectionSchema = z.object({
   title: z.string().min(1, "Tiêu đề là bắt buộc").optional(),
   instructions: z.string().max(5_000_000, "Nội dung hướng dẫn quá dài").optional(),
@@ -116,15 +131,73 @@ const sectionsRoutes: FastifyPluginAsync = async (fastify) => {
     },
   );
 
-  // POST /sections - BLOCKED (sections are auto-created with exam)
+  // POST /sections - Create section (Generic / Backward-Compatible)
   fastify.post(
     "/",
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
-      return reply.status(403).send({
-        error:
-          "Không thể tạo section thủ công. Sections được tạo tự động khi tạo bài thi.",
+      const data = handleValidation(
+        createSectionSchema.safeParse(request.body),
+        request,
+        reply,
+      );
+      if (!data) return;
+
+      const authService = new AuthorizationService(fastify.prisma);
+      try {
+        await authService.requireExamAuthoringAccess(
+          data.examId,
+          request.user.id,
+          request.user.roles,
+        );
+      } catch (err: any) {
+        if (err.statusCode) {
+          return reply.status(err.statusCode).send({ error: err.message });
+        }
+        throw err;
+      }
+
+      const exam = await fastify.prisma.exam.findUnique({
+        where: { id: data.examId },
+        select: { id: true, isActive: true, isLocked: true },
       });
+      if (!exam) {
+        return reply.status(404).send({ error: "Không tìm thấy bài thi" });
+      }
+
+      const isAdmin = request.user.roles.includes("admin");
+      if (exam.isActive === false || (exam.isLocked === true && !isAdmin)) {
+        return reply.status(409).send({
+          error: "EXAM_LOCKED_IMMUTABLE",
+          message: "Đề thi đang bị khóa hoặc đã lưu trữ, không thể thêm phần thi.",
+        });
+      }
+
+      let orderIndex = data.orderIndex;
+      if (orderIndex === undefined) {
+        const lastSection = await fastify.prisma.examSection.findFirst({
+          where: { examId: data.examId },
+          orderBy: { orderIndex: "desc" },
+          select: { orderIndex: true },
+        });
+        orderIndex = (lastSection?.orderIndex ?? -1) + 1;
+      }
+
+      const section = await fastify.prisma.examSection.create({
+        data: {
+          examId: data.examId,
+          sectionType: data.sectionType,
+          title: data.title,
+          instructions: data.instructions,
+          content: data.content,
+          audioUrl: data.audioUrl,
+          audioScript: data.audioScript,
+          durationMinutes: data.durationMinutes,
+          orderIndex,
+        },
+      });
+
+      return reply.status(201).send(section);
     },
   );
 
@@ -191,13 +264,64 @@ const sectionsRoutes: FastifyPluginAsync = async (fastify) => {
     },
   );
 
-  // DELETE /sections/:id - BLOCKED (sections cannot be deleted)
+  // DELETE /sections/:id - Delete section with domain protection
   fastify.delete<{ Params: { id: string } }>(
     "/:id",
-    { preHandler: [authenticate, requireRoles("admin")] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
-      return reply.status(403).send({
-        error: "Không thể xóa section. Mỗi bài tập luôn có đủ 5 sections.",
+      const { id } = request.params;
+
+      const authService = new AuthorizationService(fastify.prisma);
+      try {
+        await authService.requireSectionAuthoringAccess(
+          id,
+          request.user.id,
+          request.user.roles,
+        );
+      } catch (err: any) {
+        if (err.statusCode) {
+          return reply.status(err.statusCode).send({ error: err.message });
+        }
+        throw err;
+      }
+
+      const section = await fastify.prisma.examSection.findUnique({
+        where: { id },
+        include: { exam: { select: { id: true, isActive: true, isLocked: true } } },
+      });
+      if (!section) {
+        return reply.status(404).send({ error: "Không tìm thấy phần thi" });
+      }
+
+      const isAdmin = request.user.roles.includes("admin");
+      if (
+        section.exam &&
+        (section.exam.isActive === false || (section.exam.isLocked === true && !isAdmin))
+      ) {
+        return reply.status(409).send({
+          error: "EXAM_LOCKED_IMMUTABLE",
+          message: "Đề thi đang bị khóa hoặc đã lưu trữ, không thể xóa phần thi.",
+        });
+      }
+
+      // Check student submissions protection
+      const submissionCount = await fastify.prisma.examSubmission.count({
+        where: { examId: section.examId },
+      });
+      if (submissionCount > 0) {
+        return reply.status(409).send({
+          error: "EXAM_HAS_SUBMISSIONS",
+          message: "Không thể xóa phần thi khi bài thi đã có lượt làm bài của học viên.",
+        });
+      }
+
+      await fastify.prisma.examSection.delete({
+        where: { id },
+      });
+
+      return reply.send({
+        success: true,
+        message: "Đã xóa phần thi thành công.",
       });
     },
   );

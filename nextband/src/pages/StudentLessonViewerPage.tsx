@@ -94,6 +94,12 @@ export default function StudentLessonViewerPage() {
     staleTime: 1000 * 60 * 2,
   });
 
+  const rawLessons = classLessonData?.data?.lessons;
+  const lessons = useMemo(() => {
+    if (!Array.isArray(rawLessons)) return [];
+    return [...rawLessons].sort(compareHomeworkOrder);
+  }, [rawLessons]);
+
   const isLoading = isLessonsLoading || isSubmissionsLoading;
 
   if (!classId || !isValidUUID(classId)) {
@@ -165,11 +171,6 @@ export default function StudentLessonViewerPage() {
     );
   }
 
-  const classData = classLessonData.data;
-  const rawLessons = classData.lessons || [];
-  const lessons = useMemo(() => {
-    return [...rawLessons].sort(compareHomeworkOrder);
-  }, [rawLessons]);
   const userSubmissions = Array.isArray(submissionsData?.data) ? submissionsData.data : [];
 
   const sortedSubmissions = [...userSubmissions].sort((a: any, b: any) => {
