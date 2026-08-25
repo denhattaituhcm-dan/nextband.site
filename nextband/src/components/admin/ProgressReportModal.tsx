@@ -99,10 +99,55 @@ export function ProgressReportModal({
   const hwCompletionPct = data.homework?.completionRate ?? (hwTotal > 0 ? Math.round((hwCompleted / hwTotal) * 100) : 0);
   const latestBand = data.assessment?.latestOverall || (data.recentResults?.[0]?.score ? String(data.recentResults[0].score) : "Đang cập nhật");
 
+  const FONT_FAMILY = "'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+
+  const drawRoundedRect = (
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    r: number = 8,
+    fillColor?: string,
+    strokeColor?: string,
+    lineWidth: number = 1
+  ) => {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+
+    if (fillColor) {
+      ctx.fillStyle = fillColor;
+      ctx.fill();
+    }
+    if (strokeColor) {
+      ctx.strokeStyle = strokeColor;
+      ctx.lineWidth = lineWidth;
+      ctx.stroke();
+    }
+  };
+
   /**
-   * Draw the Academic Progress Report onto an HTML5 Canvas with 2x Retina sharpness
+   * Draw the Academic Progress Report onto an HTML5 Canvas with 2x Retina sharpness & high-fidelity typography
    */
-  const drawReportToCanvas = (): HTMLCanvasElement => {
+  const drawReportToCanvas = async (): Promise<HTMLCanvasElement> => {
+    // 1. Wait for Google Web Fonts (Plus Jakarta Sans & Inter) to be fully loaded in browser
+    if (typeof document !== "undefined" && document.fonts) {
+      try {
+        await document.fonts.ready;
+      } catch (e) {
+        console.warn("Fonts ready promise error, fallback:", e);
+      }
+    }
+
     const width = 800;
     const height = 1180;
     const canvas = document.createElement("canvas");
@@ -112,37 +157,36 @@ export function ProgressReportModal({
     if (!ctx) throw new Error("Canvas 2D context not available");
 
     ctx.scale(2, 2);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
 
     // 1. Background
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, width, height);
 
     // Outer subtle border
-    ctx.strokeStyle = "#e2e8f0";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(16, 16, width - 32, height - 32);
+    drawRoundedRect(ctx, 16, 16, width - 32, height - 32, 12, undefined, "#e2e8f0", 1);
 
     // 2. Header Banner (Deep Navy Brand)
-    ctx.fillStyle = "#0c1e38";
-    ctx.fillRect(20, 20, width - 40, 95);
+    drawRoundedRect(ctx, 20, 20, width - 40, 95, 10, "#0c1e38");
 
     // Top brand tag
     ctx.fillStyle = "#38bdf8";
-    ctx.font = "bold 11px 'Inter', sans-serif";
+    ctx.font = `800 11px ${FONT_FAMILY}`;
     ctx.fillText("HỌC VIỆN NGÔN NGỮ HỌC THUẬT ARIS", 44, 46);
 
     // Report Title
     ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 20px 'Inter', sans-serif";
+    ctx.font = `800 20px ${FONT_FAMILY}`;
     ctx.fillText("BÁO CÁO TIẾN ĐỘ HỌC TẬP", 44, 72);
 
     // Period & Academic sub-badge
     ctx.fillStyle = "#94a3b8";
-    ctx.font = "12px 'Inter', sans-serif";
+    ctx.font = `500 12px ${FONT_FAMILY}`;
     ctx.fillText(`Kỳ báo cáo: ${periodStr}`, 44, 95);
 
     ctx.fillStyle = "#38bdf8";
-    ctx.font = "bold 12px 'Inter', sans-serif";
+    ctx.font = `800 12px ${FONT_FAMILY}`;
     ctx.fillText("ACADEMIC PROGRESS REPORT", width - 240, 72);
 
     let currY = 130;
@@ -152,33 +196,31 @@ export function ProgressReportModal({
     const classMax = data.classInfo?.maxStudents || 10;
     const classModel = data.classInfo?.classModel || (classCurrent <= 10 ? "Nhóm nhỏ tương tác cao" : "Lớp tiêu chuẩn");
 
-    ctx.fillStyle = "#f8fafc";
-    ctx.fillRect(36, currY, width - 72, 78);
-    ctx.strokeStyle = "#e2e8f0";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(36, currY, width - 72, 78);
+    drawRoundedRect(ctx, 36, currY, width - 72, 78, 8, "#f8fafc", "#e2e8f0", 1);
 
     // Left accent bar
     ctx.fillStyle = "#0284c7";
-    ctx.fillRect(36, currY, 4, 78);
+    ctx.beginPath();
+    ctx.roundRect(36, currY, 4, 78, [8, 0, 0, 8]);
+    ctx.fill();
 
     ctx.fillStyle = "#0f172a";
-    ctx.font = "bold 15px 'Inter', sans-serif";
+    ctx.font = `800 15px ${FONT_FAMILY}`;
     ctx.fillText(`HỌC VIÊN: ${studentName.toUpperCase()}`, 48, currY + 24);
 
     ctx.fillStyle = "#475569";
-    ctx.font = "12px 'Inter', sans-serif";
+    ctx.font = `500 12px ${FONT_FAMILY}`;
     ctx.fillText(`• Lớp học: ${className}`, 48, currY + 46);
     ctx.fillText(`• Giảng viên: ${teacherName}`, 260, currY + 46);
     ctx.fillText(`• Mục tiêu đầu ra: ${targetBand}`, 500, currY + 46);
 
     // Quy mô lớp học (Nổi bật)
     ctx.fillStyle = "#0369a1";
-    ctx.font = "bold 12px 'Inter', sans-serif";
+    ctx.font = `700 12px ${FONT_FAMILY}`;
     ctx.fillText(`• QUY MÔ LỚP: ${classCurrent}/${classMax} học viên`, 48, currY + 68);
 
     ctx.fillStyle = "#059669";
-    ctx.font = "bold 11px 'Inter', sans-serif";
+    ctx.font = `700 11px ${FONT_FAMILY}`;
     ctx.fillText(`(${classModel})`, 225, currY + 68);
 
     currY += 92;
@@ -196,21 +238,18 @@ export function ProgressReportModal({
 
     kpis.forEach((kpi, idx) => {
       const kX = 36 + idx * (cardW + 12);
-      ctx.fillStyle = "#f8fafc";
-      ctx.fillRect(kX, currY, cardW, cardH);
-      ctx.strokeStyle = "#e2e8f0";
-      ctx.strokeRect(kX, currY, cardW, cardH);
+      drawRoundedRect(ctx, kX, currY, cardW, cardH, 8, "#f8fafc", "#e2e8f0", 1);
 
       ctx.fillStyle = "#64748b";
-      ctx.font = "bold 9.5px 'Inter', sans-serif";
+      ctx.font = `700 9.5px ${FONT_FAMILY}`;
       ctx.fillText(kpi.label, kX + 12, currY + 18);
 
       ctx.fillStyle = kpi.color;
-      ctx.font = "bold 18px 'Inter', sans-serif";
+      ctx.font = `800 19px ${FONT_FAMILY}`;
       ctx.fillText(kpi.val, kX + 12, currY + 42);
 
       ctx.fillStyle = "#94a3b8";
-      ctx.font = "10.5px 'Inter', sans-serif";
+      ctx.font = `500 10.5px ${FONT_FAMILY}`;
       ctx.fillText(kpi.sub, kX + 12, currY + 58);
     });
 
@@ -219,7 +258,7 @@ export function ProgressReportModal({
     // Helper function to draw Section Header
     const drawSectionHeader = (title: string, y: number) => {
       ctx.fillStyle = "#0f172a";
-      ctx.font = "bold 13px 'Inter', sans-serif";
+      ctx.font = `800 13px ${FONT_FAMILY}`;
       ctx.fillText(title, 36, y);
 
       ctx.strokeStyle = "#cbd5e1";
@@ -234,15 +273,12 @@ export function ProgressReportModal({
     drawSectionHeader("1. CHUYÊN CẦN & THAM GIA LỚP HỌC", currY);
     currY += 16;
 
-    ctx.fillStyle = "#f8fafc";
-    ctx.fillRect(36, currY, width - 72, 54);
-    ctx.strokeStyle = "#e2e8f0";
-    ctx.strokeRect(36, currY, width - 72, 54);
+    drawRoundedRect(ctx, 36, currY, width - 72, 54, 8, "#f8fafc", "#e2e8f0", 1);
 
     if (data.attendance && data.attendance.total > 0) {
       const att = data.attendance;
       ctx.fillStyle = "#1e293b";
-      ctx.font = "12px 'Inter', sans-serif";
+      ctx.font = `500 12px ${FONT_FAMILY}`;
       ctx.fillText(
         `• Có mặt: ${att.present} buổi   |   • Đi muộn: ${att.late || 0} buổi   |   • Vắng không phép: ${att.absent} buổi   |   • Nghỉ phép: ${att.excused || 0} buổi`,
         52,
@@ -254,15 +290,13 @@ export function ProgressReportModal({
       const barY = currY + 34;
       const barW = width - 104;
       const barH = 8;
-      ctx.fillStyle = "#e2e8f0";
-      ctx.fillRect(barX, barY, barW, barH);
+      drawRoundedRect(ctx, barX, barY, barW, barH, 4, "#e2e8f0");
 
       const fillW = Math.min(barW, Math.max(0, (barW * att.rate) / 100));
-      ctx.fillStyle = att.rate >= 80 ? "#10b981" : "#f59e0b";
-      ctx.fillRect(barX, barY, fillW, barH);
+      drawRoundedRect(ctx, barX, barY, fillW, barH, 4, att.rate >= 80 ? "#10b981" : "#f59e0b");
     } else {
       ctx.fillStyle = "#64748b";
-      ctx.font = "italic 12px 'Inter', sans-serif";
+      ctx.font = `italic 500 12px ${FONT_FAMILY}`;
       ctx.fillText("Học viên duy trì tham gia đầy đủ các buổi học theo đúng lịch trình của khóa.", 52, currY + 32);
     }
 
@@ -274,40 +308,37 @@ export function ProgressReportModal({
 
     const hw = data.homework;
     const hwBoxH = 76;
-    ctx.fillStyle = "#f8fafc";
-    ctx.fillRect(36, currY, width - 72, hwBoxH);
-    ctx.strokeStyle = "#e2e8f0";
-    ctx.strokeRect(36, currY, width - 72, hwBoxH);
+    drawRoundedRect(ctx, 36, currY, width - 72, hwBoxH, 8, "#f8fafc", "#e2e8f0", 1);
 
     // Lớp 1: Mức độ hoàn thành
     ctx.fillStyle = "#059669";
-    ctx.font = "bold 12px 'Inter', sans-serif";
+    ctx.font = `700 12px ${FONT_FAMILY}`;
     ctx.fillText(`✓ Hoàn thành: ${hw.completed} / ${hw.totalAssigned} bài (${hwCompletionPct}%)`, 52, currY + 22);
 
     if (hw.overdue > 0) {
       ctx.fillStyle = "#e11d48";
-      ctx.font = "bold 12px 'Inter', sans-serif";
+      ctx.font = `700 12px ${FONT_FAMILY}`;
       ctx.fillText(`⚠ Quá hạn: ${hw.overdue} bài`, 340, currY + 22);
     } else {
       ctx.fillStyle = "#475569";
-      ctx.font = "12px 'Inter', sans-serif";
+      ctx.font = `500 12px ${FONT_FAMILY}`;
       ctx.fillText(`• Đang thực hiện: ${hw.inProgress} bài`, 340, currY + 22);
     }
 
     ctx.fillStyle = "#64748b";
-    ctx.font = "12px 'Inter', sans-serif";
+    ctx.font = `500 12px ${FONT_FAMILY}`;
     ctx.fillText(`• Chưa nộp: ${hw.unsubmitted} bài`, 540, currY + 22);
 
     // Lớp 2: Đánh giá chất lượng & Kết quả chấm
     ctx.fillStyle = "#1e293b";
-    ctx.font = "11.5px 'Inter', sans-serif";
+    ctx.font = `500 11.5px ${FONT_FAMILY}`;
     const avgScoreStr = hw.averageScore ? `Điểm TB: ${hw.averageScore}` : "Điểm TB: Đang tích lũy";
     const passRateStr = `Đạt yêu cầu: ${hw.passedCount || 0} bài  |  Cần cải thiện: ${hw.needsImprovementCount || 0} bài`;
     ctx.fillText(`• Kết quả làm bài: ${avgScoreStr}   |   ${passRateStr}`, 52, currY + 44);
 
     // Lớp 3: Nguồn chấm điểm (Tự động vs Giáo viên chấm chi tiết)
     ctx.fillStyle = "#0369a1";
-    ctx.font = "11px 'Inter', sans-serif";
+    ctx.font = `600 11px ${FONT_FAMILY}`;
     ctx.fillText(
       `• Nguồn chấm: ${hw.autoGradedCount || 0} bài tự động (Trắc nghiệm/R/L)  ·  ${hw.teacherGradedCount || 0} bài giáo viên sửa chi tiết (W/S)`,
       52,
@@ -324,33 +355,27 @@ export function ProgressReportModal({
     if (hasResults) {
       const resCount = Math.min(3, data.recentResults.length);
       const boxH = resCount * 28 + 14;
-      ctx.fillStyle = "#f8fafc";
-      ctx.fillRect(36, currY, width - 72, boxH);
-      ctx.strokeStyle = "#e2e8f0";
-      ctx.strokeRect(36, currY, width - 72, boxH);
+      drawRoundedRect(ctx, 36, currY, width - 72, boxH, 8, "#f8fafc", "#e2e8f0", 1);
 
       data.recentResults.slice(0, 3).forEach((res, idx) => {
         const itemY = currY + 20 + idx * 26;
         ctx.fillStyle = "#1e293b";
-        ctx.font = "12px 'Inter', sans-serif";
+        ctx.font = `500 12px ${FONT_FAMILY}`;
         ctx.fillText(`• ${res.title}`, 52, itemY);
 
         if (res.score != null) {
           ctx.fillStyle = "#0284c7";
-          ctx.font = "bold 12.5px 'Inter', sans-serif";
+          ctx.font = `700 12.5px ${FONT_FAMILY}`;
           ctx.fillText(`${res.score}`, width - 130, itemY);
         }
       });
 
       currY += boxH + 14;
     } else {
-      ctx.fillStyle = "#f8fafc";
-      ctx.fillRect(36, currY, width - 72, 42);
-      ctx.strokeStyle = "#e2e8f0";
-      ctx.strokeRect(36, currY, width - 72, 42);
+      drawRoundedRect(ctx, 36, currY, width - 72, 42, 8, "#f8fafc", "#e2e8f0", 1);
 
       ctx.fillStyle = "#64748b";
-      ctx.font = "italic 12px 'Inter', sans-serif";
+      ctx.font = `italic 500 12px ${FONT_FAMILY}`;
       ctx.fillText("Chưa có đủ dữ liệu đánh giá định kỳ để xác định xu hướng tiến bộ.", 52, currY + 26);
       currY += 56;
     }
@@ -359,34 +384,31 @@ export function ProgressReportModal({
     drawSectionHeader("4. NHẬN XÉT CHUYÊN MÔN CỦA GIẢNG VIÊN", currY);
     currY += 16;
 
-    ctx.fillStyle = "#fefce8";
-    ctx.fillRect(36, currY, width - 72, 130);
-    ctx.strokeStyle = "#fef08a";
-    ctx.strokeRect(36, currY, width - 72, 130);
+    drawRoundedRect(ctx, 36, currY, width - 72, 130, 8, "#fefce8", "#fef08a", 1);
 
     // Strengths
     ctx.fillStyle = "#15803d";
-    ctx.font = "bold 11.5px 'Inter', sans-serif";
+    ctx.font = `700 11.5px ${FONT_FAMILY}`;
     ctx.fillText("✓ Điểm mạnh:", 52, currY + 24);
     ctx.fillStyle = "#1e293b";
-    ctx.font = "11.5px 'Inter', sans-serif";
-    ctx.fillText(strengths.trim().slice(0, 100), 140, currY + 24);
+    ctx.font = `500 11.5px ${FONT_FAMILY}`;
+    ctx.fillText(strengths.trim().slice(0, 95) || "Tiếp thu tốt kiến thức trên lớp", 140, currY + 24);
 
     // Weaknesses
     ctx.fillStyle = "#b45309";
-    ctx.font = "bold 11.5px 'Inter', sans-serif";
+    ctx.font = `700 11.5px ${FONT_FAMILY}`;
     ctx.fillText("⚠ Cần cải thiện:", 52, currY + 58);
     ctx.fillStyle = "#1e293b";
-    ctx.font = "11.5px 'Inter', sans-serif";
-    ctx.fillText(weaknesses.trim().slice(0, 100), 140, currY + 58);
+    ctx.font = `500 11.5px ${FONT_FAMILY}`;
+    ctx.fillText(weaknesses.trim().slice(0, 95) || "Cần chú ý cẩn thận hơn khi làm bài tập", 140, currY + 58);
 
     // Recommendations
     ctx.fillStyle = "#0369a1";
-    ctx.font = "bold 11.5px 'Inter', sans-serif";
+    ctx.font = `700 11.5px ${FONT_FAMILY}`;
     ctx.fillText("★ Khuyến nghị:", 52, currY + 92);
     ctx.fillStyle = "#1e293b";
-    ctx.font = "11.5px 'Inter', sans-serif";
-    ctx.fillText(recommendations.trim().slice(0, 100), 140, currY + 92);
+    ctx.font = `500 11.5px ${FONT_FAMILY}`;
+    ctx.fillText(recommendations.trim().slice(0, 95) || "Dành thêm 20-30 phút tự học mỗi ngày", 140, currY + 92);
 
     currY += 144;
 
@@ -394,17 +416,21 @@ export function ProgressReportModal({
     drawSectionHeader("5. TRỌNG TÂM & MỤC TIÊU GIAI ĐOẠN TIẾP THEO", currY);
     currY += 16;
 
-    ctx.fillStyle = "#f0fdf4";
-    ctx.fillRect(36, currY, width - 72, 80);
-    ctx.strokeStyle = "#bbf7d0";
-    ctx.strokeRect(36, currY, width - 72, 80);
+    drawRoundedRect(ctx, 36, currY, width - 72, 80, 8, "#f0fdf4", "#bbf7d0", 1);
 
     const goals = [goal1, goal2, goal3].filter(Boolean);
-    goals.forEach((g, idx) => {
+    if (goals.length > 0) {
+      goals.forEach((g, idx) => {
+        ctx.fillStyle = "#166534";
+        ctx.font = `600 12px ${FONT_FAMILY}`;
+        ctx.fillText(`•  ${g}`, 52, currY + 24 + idx * 24);
+      });
+    } else {
       ctx.fillStyle = "#166534";
-      ctx.font = "12px 'Inter', sans-serif";
-      ctx.fillText(`•  ${g}`, 52, currY + 24 + idx * 24);
-    });
+      ctx.font = `500 12px ${FONT_FAMILY}`;
+      ctx.fillText("•  Duy trì tỷ lệ chuyên cần 100% các buổi học", 52, currY + 24);
+      ctx.fillText("•  Hoàn thành đầy đủ các bài tập tự học trên hệ thống", 52, currY + 48);
+    }
 
     // 10. Footer & Brand Identity
     ctx.strokeStyle = "#e2e8f0";
@@ -414,7 +440,7 @@ export function ProgressReportModal({
     ctx.stroke();
 
     ctx.fillStyle = "#64748b";
-    ctx.font = "10.5px 'Inter', sans-serif";
+    ctx.font = `600 10.5px ${FONT_FAMILY}`;
     ctx.fillText("HỌC VIỆN NGÔN NGỮ HỌC THUẬT ARIS — HỌC TIẾNG ANH TỪ BẢN CHẤT", 36, height - 32);
     ctx.fillText(`Website: nextband.site   |   Ngày xuất: ${data.generatedAt}`, width - 290, height - 32);
 
@@ -436,7 +462,7 @@ export function ProgressReportModal({
         });
       }
 
-      const canvas = drawReportToCanvas();
+      const canvas = await drawReportToCanvas();
       canvas.toBlob(async (blob) => {
         if (!blob) {
           toast.error("Không thể tạo ảnh báo cáo");
@@ -480,7 +506,7 @@ export function ProgressReportModal({
         });
       }
 
-      const canvas = drawReportToCanvas();
+      const canvas = await drawReportToCanvas();
       const dataUrl = canvas.toDataURL("image/png");
       const a = document.createElement("a");
       const safeName = studentName.replace(/[^a-zA-Z0-9\u00C0-\u024F\u1E00-\u1EFF]/g, "_");
