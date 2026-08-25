@@ -63,6 +63,7 @@ import {
   Unlock,
   Key,
   PauseCircle,
+  PlayCircle,
   Archive,
   Trash2,
   Clock,
@@ -155,6 +156,33 @@ export default function AdminUsers() {
     },
   });
 
+  const toggleReservationMutation = useMutation({
+    mutationFn: async ({ id, isReserved }: { id: string; isReserved: boolean }) => {
+      return usersApi.update(id, {
+        isReserved,
+        status: isReserved ? "suspended" : "active",
+      });
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-students-management"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["class-workspace"] });
+      toast({
+        title: variables.isReserved ? "Đã đặt bảo lưu" : "Đã mở bảo lưu",
+        description: variables.isReserved
+          ? "Đã chuyển học viên sang trạng thái Bảo lưu"
+          : "Đã mở lại trạng thái học tập bình thường",
+      });
+    },
+    onError: (err: any) => {
+      toast({
+        title: "Lỗi",
+        description: err?.message || "Không thể thay đổi trạng thái bảo lưu",
+        variant: "destructive",
+      });
+    },
+  });
+
   const createMutation = useMutation({
     mutationFn: (body: typeof emptyForm) => usersApi.create(body),
     onSuccess: () => {
@@ -195,6 +223,23 @@ export default function AdminUsers() {
     onError: (err: any) => {
       const msg = err?.message || err?.response?.data?.error || "Không thể xóa dữ liệu học viên";
       toast({ title: "Lỗi", description: msg, variant: "destructive" });
+    },
+  });
+
+  const archiveMutation = useMutation({
+    mutationFn: ({ id, reason, metadata }: { id: string; reason: string; metadata: any }) =>
+      usersApi.update(id, {
+        isActive: false,
+        bio: JSON.stringify({ isReserved: true, archiveReason: reason, ...metadata }),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-students-management"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      toast({ title: "Thành công", description: "Đã lưu trữ hồ sơ học viên thành công" });
+      setDrawerOpen(false);
+    },
+    onError: (err: any) => {
+      toast({ title: "Lỗi", description: err?.message || "Không thể lưu trữ học viên", variant: "destructive" });
     },
   });
 
@@ -545,9 +590,15 @@ export default function AdminUsers() {
                     {/* ENROLLMENT / ACCOUNT STATUS (2-TIER) */}
                     <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                       <div className="flex flex-col items-center gap-1">
-                        <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">
-                          🟢 Đang học
-                        </Badge>
+                        {user.isReserved || user.status === "suspended" ? (
+                          <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 text-[11px] font-medium">
+                            ⏸️ Đang bảo lưu
+                          </Badge>
+                        ) : (
+                          <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">
+                            🟢 Đang học
+                          </Badge>
+                        )}
                         {isAccountLocked && (
                           <Badge variant="destructive" className="text-[9px] px-1 py-0">
                             🔒 Khóa TK
@@ -577,9 +628,23 @@ export default function AdminUsers() {
                             <RefreshCw className="h-3.5 w-3.5 mr-2 text-emerald-500" />
                             Đổi lớp / Chuyển lớp
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => toast({ title: "Đã chuyển trạng thái Bảo lưu" })}>
-                            <PauseCircle className="h-3.5 w-3.5 mr-2 text-amber-500" />
-                            Đặt bảo lưu
+                          <DropdownMenuItem
+                            onClick={() => {
+                              const isCurrentlyReserved = Boolean(user.isReserved || user.status === "suspended");
+                              toggleReservationMutation.mutate({ id: user.id, isReserved: !isCurrentlyReserved });
+                            }}
+                          >
+                            {user.isReserved || user.status === "suspended" ? (
+                              <>
+                                <PlayCircle className="h-3.5 w-3.5 mr-2 text-emerald-600" />
+                                Mở bảo lưu
+                              </>
+                            ) : (
+                              <>
+                                <PauseCircle className="h-3.5 w-3.5 mr-2 text-amber-500" />
+                                Đặt bảo lưu
+                              </>
+                            )}
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => toast({ title: "Đã gửi lại mã Reset mật khẩu" })}>
                             <Key className="h-3.5 w-3.5 mr-2 text-purple-500" />
@@ -648,8 +713,7 @@ export default function AdminUsers() {
         onOpenChange={setDrawerOpen}
         student={selectedStudent}
         onArchive={(id, reason, metadata) => {
-          queryClient.invalidateQueries({ queryKey: ["admin-students-management"] });
-          queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+          archiveMutation.mutate({ id, reason, metadata });
         }}
         onDelete={(id) => {
           deleteMutation.mutate(id);

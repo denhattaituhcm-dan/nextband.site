@@ -24,6 +24,7 @@ import {
   SyncVisualState,
   SubmissionFlowStatus,
 } from "@/lib/examSyncEngine";
+import { compareCanonicalOrder } from "@/lib/questionOrder";
 import {
   ArrowLeft,
   Clock,
@@ -179,12 +180,14 @@ export default function ExamInterface() {
   const sections = exam?.sections || [];
 
   const availableSections = useMemo(() => {
-    return (sections || []).filter((s: any) => {
-      const groups = s.questionGroups || s.question_groups || [];
-      return groups.some(
-        (g: any) => Array.isArray(g.questions) && g.questions.length > 0,
-      );
-    });
+    return (sections || [])
+      .filter((s: any) => {
+        const groups = s.questionGroups || s.question_groups || [];
+        return groups.some(
+          (g: any) => Array.isArray(g.questions) && g.questions.length > 0,
+        );
+      })
+      .sort(compareCanonicalOrder);
   }, [sections]);
 
   const explicitSubmissionId = searchParams.get("submissionId");
@@ -417,29 +420,11 @@ export default function ExamInterface() {
       ...(currentSection.questionGroups ||
         currentSection.question_groups ||
         []),
-    ].sort((a: any, b: any) => {
-      const orderDiff =
-        (a.orderIndex ?? a.order_index ?? 0) -
-        (b.orderIndex ?? b.order_index ?? 0);
-      if (orderDiff !== 0) return orderDiff;
-      return (
-        new Date(a.createdAt ?? 0).getTime() -
-        new Date(b.createdAt ?? 0).getTime()
-      );
-    });
+    ].sort(compareCanonicalOrder);
 
     return sortedGroups.flatMap((g: any) =>
       [...(g.questions || [])]
-        .sort((a: any, b: any) => {
-          const orderDiff =
-            (a.orderIndex ?? a.order_index ?? 0) -
-            (b.orderIndex ?? b.order_index ?? 0);
-          if (orderDiff !== 0) return orderDiff;
-          return (
-            new Date(a.createdAt ?? 0).getTime() -
-            new Date(b.createdAt ?? 0).getTime()
-          );
-        })
+        .sort(compareCanonicalOrder)
         .map((q: any) => ({ ...q, groupId: g.id })),
     );
   }, [currentSection, sectionHasQuestions]);
@@ -751,7 +736,8 @@ export default function ExamInterface() {
         ) || [],
       );
 
-      const answerEntries = Object.entries(answers)
+      const currentAnswers = { ...answers, ...(answersRef.current || {}) };
+      const answerEntries = Object.entries(currentAnswers)
         .filter(([questionId]) => validQuestionIds.has(questionId))
         .map(([questionId, answerVal]) => {
           const isAudio = typeof answerVal === "string" && (answerVal.startsWith("http://") || answerVal.startsWith("https://") || answerVal.startsWith("/uploads/"));

@@ -201,10 +201,14 @@ export class ExamSubmissionService {
       exam: {
         include: {
           sections: {
+            orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }],
             include: {
               questionGroups: {
+                orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }],
                 include: {
-                  questions: true,
+                  questions: {
+                    orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }],
+                  },
                 },
               },
             },
@@ -565,10 +569,14 @@ export class ExamSubmissionService {
         include: {
           policy: true,
           sections: {
+            orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }],
             include: {
               questionGroups: {
+                orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }],
                 include: {
-                  questions: true,
+                  questions: {
+                    orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }],
+                  },
                 },
               },
             },

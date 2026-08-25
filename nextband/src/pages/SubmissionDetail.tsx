@@ -57,9 +57,11 @@ const statusConfig: Record<
   ABANDONED: { label: "Đã hủy", variant: "outline", icon: AlertCircle },
 };
 
+import { compareCanonicalOrder, isSubjectiveQuestion } from "@/lib/questionOrder";
+
 const getOrderValue = (item: any) => {
   const order = item?.orderIndex ?? item?.order_index;
-  return typeof order === "number" ? order : Number.MAX_SAFE_INTEGER;
+  return typeof order === "number" ? order : 0;
 };
 
 const getCreatedValue = (item: any) => {
@@ -68,13 +70,7 @@ const getCreatedValue = (item: any) => {
   return Number.isFinite(t) ? t : 0;
 };
 
-const compareByDisplayOrder = (a: any, b: any) => {
-  const orderDiff = getOrderValue(a) - getOrderValue(b);
-  if (orderDiff !== 0) return orderDiff;
-  const createdDiff = getCreatedValue(a) - getCreatedValue(b);
-  if (createdDiff !== 0) return createdDiff;
-  return String(a?.id || "").localeCompare(String(b?.id || ""));
-};
+const compareByDisplayOrder = compareCanonicalOrder;
 
 const sectionHasQuestions = (section: any) =>
   (section?.questionGroups || []).some(
@@ -178,13 +174,17 @@ export default function SubmissionDetail() {
   const sections = useMemo(() => {
     if (!exam) return [];
     const rawSections = exam.sections || exam.exam_sections || [];
-    return rawSections.map((sec: any) => ({
-      ...sec,
-      questionGroups: (sec.questionGroups || sec.question_groups || []).map((g: any) => ({
-        ...g,
-        questions: g.questions || [],
-      })),
-    }));
+    return rawSections
+      .map((sec: any) => ({
+        ...sec,
+        questionGroups: (sec.questionGroups || sec.question_groups || [])
+          .map((g: any) => ({
+            ...g,
+            questions: (g.questions || []).sort(compareCanonicalOrder),
+          }))
+          .sort(compareCanonicalOrder),
+      }))
+      .sort(compareCanonicalOrder);
   }, [exam]);
 
   const answers = submission?.answers || [];
@@ -200,13 +200,24 @@ export default function SubmissionDetail() {
   const allQuestions = useMemo(() => {
     if (!sections) return [];
     return sections.flatMap((sec: any) =>
-      (sec.questionGroups || [])
-        .sort(compareByDisplayOrder)
-        .flatMap((g: any) =>
-          (g.questions || []).sort(compareByDisplayOrder),
-        ),
+      (sec.questionGroups || []).flatMap((g: any) =>
+        (g.questions || []).map((q: any) => ({ ...q, sectionType: sec.sectionType }))
+      ),
     );
   }, [sections]);
+
+  const { objectiveQuestions, subjectiveQuestions } = useMemo(() => {
+    const obj: any[] = [];
+    const subj: any[] = [];
+    allQuestions.forEach((q) => {
+      if (isSubjectiveQuestion(q, q.sectionType)) {
+        subj.push(q);
+      } else {
+        obj.push(q);
+      }
+    });
+    return { objectiveQuestions: obj, subjectiveQuestions: subj };
+  }, [allQuestions]);
 
   const totalQuestionsCount = allQuestions.reduce(
     (sum: number, q: any) => sum + getQuestionAssessmentWeight(q),
@@ -246,37 +257,14 @@ export default function SubmissionDetail() {
     return Math.round((answeredCount / totalQuestionsCount) * 100);
   }, [answeredCount, totalQuestionsCount]);
 
-  // Auto-graded results from backend
-  const hasAutoGradedResults =
-    submission?.correctAnswers != null && submission?.totalQuestions != null;
-
-  // Frontend-side correct count computation for submissions without backend auto-grading
-  const frontendComputedResults = useMemo(() => {
-    if (hasAutoGradedResults) return null; // Backend already has it
-    if (!sections || allQuestions.length === 0) return null;
-
-    const autoGradableTypes = [
-      "multiple_choice", "true_false_not_given", "yes_no_not_given",
-      "short_answer", "fill_blank", "listening", "matching",
-    ];
+  // Objective Questions Auto-grading (frontend verification & fallback)
+  const objectiveGradedResults = useMemo(() => {
+    if (objectiveQuestions.length === 0) return null;
 
     let correctCount = 0;
     let gradableCount = 0;
 
-    // Build a section map for question -> sectionType
-    const questionSectionMap: Record<string, string> = {};
-    sections.forEach((sec: any) => {
-      (sec.questionGroups || []).forEach((g: any) => {
-        (g.questions || []).forEach((q: any) => {
-          questionSectionMap[q.id] = sec.sectionType;
-        });
-      });
-    });
-
-    for (const question of allQuestions) {
-      const sectionType = questionSectionMap[question.id];
-      const isAutoGradable = ["listening", "reading", "general"].includes(sectionType || "");
-      if (!isAutoGradable || !autoGradableTypes.includes(question.questionType)) continue;
+    for (const question of objectiveQuestions) {
       if (!question.correctAnswer) continue;
 
       const questionWeight = getQuestionAssessmentWeight(question);
@@ -299,10 +287,9 @@ export default function SubmissionDetail() {
               const correctVal = String(parsedCorrect[key] || "").trim();
               const studentVal = String(parsedStudent[key] || "").trim();
               const alternatives = correctVal.split("|").map((a: string) => a.trim().toLowerCase());
-              if (!alternatives.includes(studentVal.toLowerCase())) {
-                continue;
+              if (alternatives.includes(studentVal.toLowerCase())) {
+                correctBlanks++;
               }
-              correctBlanks++;
             }
             correctCount += correctBlanks;
             continue;
@@ -310,6 +297,27 @@ export default function SubmissionDetail() {
         } catch {
           // Not JSON, fall through
         }
+      }
+
+      // Handle matching
+      if (question.questionType === "matching") {
+        try {
+          const parsedStudent = JSON.parse(studentText);
+          const parsedCorrect = JSON.parse(correctText);
+          if (parsedCorrect?.pairs && typeof parsedCorrect.pairs === "object") {
+            const keys = Object.keys(parsedCorrect.pairs);
+            if (keys.length > 0) {
+              let correctPairs = 0;
+              for (const k of keys) {
+                if (String(parsedStudent?.[k] || "").trim().toUpperCase() === String(parsedCorrect.pairs[k] || "").trim().toUpperCase()) {
+                  correctPairs++;
+                }
+              }
+              correctCount += (correctPairs / keys.length) * questionWeight;
+              continue;
+            }
+          }
+        } catch {}
       }
 
       const alternatives = correctText
@@ -356,14 +364,21 @@ export default function SubmissionDetail() {
       }
     }
 
-    if (gradableCount === 0) return null;
-    return { correctAnswers: correctCount, totalQuestions: gradableCount };
-  }, [hasAutoGradedResults, sections, allQuestions, answerMap]);
+    return {
+      correctAnswers: Math.round(correctCount * 100) / 100,
+      totalQuestions: gradableCount,
+    };
+  }, [objectiveQuestions, answerMap]);
 
-  // Unified correct count: prefer backend, fallback to frontend-computed
-  const displayCorrectAnswers = submission?.correctAnswers ?? frontendComputedResults?.correctAnswers ?? null;
-  const displayTotalQuestions = submission?.totalQuestions ?? frontendComputedResults?.totalQuestions ?? null;
-  const hasCorrectResults = displayCorrectAnswers != null && displayTotalQuestions != null;
+  const hasSubjectiveOnly = subjectiveQuestions.length > 0 && objectiveQuestions.length === 0;
+  const isMixedExam = subjectiveQuestions.length > 0 && objectiveQuestions.length > 0;
+  const isObjectiveOnly = objectiveQuestions.length > 0 && subjectiveQuestions.length === 0;
+
+  // Objective stats to display
+  const objCorrect = objectiveGradedResults?.correctAnswers ?? 0;
+  const objTotal = objectiveGradedResults?.totalQuestions ?? objectiveQuestions.length;
+  const objPercentage = objTotal > 0 ? Math.round((objCorrect / objTotal) * 100) : 0;
+
   const location = useLocation();
   const handleBack = () => {
     const destination = resolveExitDestination(
@@ -449,8 +464,142 @@ export default function SubmissionDetail() {
 
           <Separator />
 
-          {/* COLOR-CODED RESULT STAT CARDS */}
-          {hasCorrectResults ? (
+          {/* DEDICATED RESULT STAT CARDS BY EXAM NATURE */}
+          {hasSubjectiveOnly ? (
+            /* CASE 1: PURE SUBJECTIVE EXAM (e.g. Writing, Speaking, Essay Translations) */
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-1">
+                {/* Status Card */}
+                <div className="rounded-xl border border-amber-200 bg-amber-50/60 dark:bg-amber-950/20 dark:border-amber-800/60 p-4 flex flex-col items-center justify-center text-center">
+                  <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 font-bold text-xs uppercase tracking-wider mb-1">
+                    <Clock className="h-4 w-4" />
+                    <span>Trạng Thái</span>
+                  </div>
+                  <p className="text-base sm:text-lg font-bold text-amber-800 dark:text-amber-300">
+                    {isGraded ? "Đã chấm điểm" : "Chờ giáo viên chấm"}
+                  </p>
+                </div>
+
+                {/* Answered Questions Card */}
+                <div className="rounded-xl border border-blue-200 bg-blue-50/60 dark:bg-blue-950/20 dark:border-blue-800/60 p-4 flex flex-col items-center justify-center text-center">
+                  <div className="flex items-center gap-1.5 text-blue-700 dark:text-blue-400 font-bold text-xs uppercase tracking-wider mb-1">
+                    <CheckCircle2 className="h-4 w-4" />
+                    <span>Đã Trả Lời</span>
+                  </div>
+                  <p className="text-2xl sm:text-3xl font-extrabold text-blue-700 dark:text-blue-400 tabular-nums">
+                    {answeredCount}
+                    <span className="text-xs font-medium text-blue-600/70 ml-1">/ {totalQuestionsCount} câu</span>
+                  </p>
+                </div>
+
+                {/* Exam Category Card */}
+                <div className="rounded-xl border border-purple-200 bg-purple-50/60 dark:bg-purple-950/20 dark:border-purple-800/60 p-4 flex flex-col items-center justify-center text-center">
+                  <div className="flex items-center gap-1.5 text-purple-700 dark:text-purple-400 font-bold text-xs uppercase tracking-wider mb-1">
+                    <Sparkles className="h-4 w-4" />
+                    <span>Hình Thức</span>
+                  </div>
+                  <p className="text-base sm:text-lg font-bold text-purple-800 dark:text-purple-300">
+                    Bài tập Tự Luận
+                  </p>
+                </div>
+
+                {/* Submission Time Card */}
+                <div className="rounded-xl border border-slate-200 bg-slate-50 dark:bg-slate-900/40 dark:border-slate-800 p-4 flex flex-col items-center justify-center text-center">
+                  <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 font-bold text-xs uppercase tracking-wider mb-1">
+                    <Clock className="h-4 w-4" />
+                    <span>Thời Gian Nộp</span>
+                  </div>
+                  <p className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-200">
+                    {submission?.submittedAt || submission?.submitted_at
+                      ? format(
+                          new Date(submission.submittedAt || submission.submitted_at),
+                          "HH:mm · dd/MM",
+                          { locale: vi }
+                        )
+                      : "—"}
+                  </p>
+                </div>
+              </div>
+
+              {!isGraded && (
+                <div className="p-3.5 rounded-xl border border-amber-200/90 bg-amber-50/70 dark:bg-amber-950/30 dark:border-amber-800/70 text-xs text-amber-900 dark:text-amber-200 flex items-center gap-2.5">
+                  <AlertCircle className="h-4 w-4 text-amber-600 shrink-0" />
+                  <span>
+                    Bài làm tự luận của bạn đã được ghi nhận và nộp thành công. Giáo viên sẽ chấm điểm, sửa từng câu và gửi phản hồi cho bạn.
+                  </span>
+                </div>
+              )}
+            </div>
+          ) : isMixedExam ? (
+            /* CASE 2: MIXED EXAM (e.g. Vocabulary MCQ + Translation/Essay Questions) */
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-1">
+                {/* Objective Correct */}
+                <div className="rounded-xl border border-emerald-200 bg-emerald-50/60 dark:bg-emerald-950/20 dark:border-emerald-800/60 p-4 flex flex-col items-center justify-center text-center">
+                  <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-bold text-xs uppercase tracking-wider mb-1">
+                    <CheckCircle2 className="h-4 w-4" />
+                    <span>Trắc Nghiệm Đúng</span>
+                  </div>
+                  <p className="text-2xl sm:text-3xl font-extrabold text-emerald-700 dark:text-emerald-400 tabular-nums">
+                    {objCorrect}
+                    <span className="text-xs font-medium text-emerald-600/70 ml-1">/ {objTotal}</span>
+                  </p>
+                </div>
+
+                {/* Objective Accuracy */}
+                <div className="rounded-xl border border-blue-200 bg-blue-50/60 dark:bg-blue-950/20 dark:border-blue-800/60 p-4 flex flex-col items-center justify-center text-center">
+                  <div className="flex items-center gap-1.5 text-blue-700 dark:text-blue-400 font-bold text-xs uppercase tracking-wider mb-1">
+                    <Trophy className="h-4 w-4" />
+                    <span>Độ Chính Xác TN</span>
+                  </div>
+                  <p className="text-2xl sm:text-3xl font-extrabold text-blue-700 dark:text-blue-400 tabular-nums">
+                    {objPercentage}%
+                  </p>
+                </div>
+
+                {/* Subjective Pending Count */}
+                <div className="rounded-xl border border-amber-200 bg-amber-50/60 dark:bg-amber-950/20 dark:border-amber-800/60 p-4 flex flex-col items-center justify-center text-center">
+                  <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 font-bold text-xs uppercase tracking-wider mb-1">
+                    <Clock className="h-4 w-4" />
+                    <span>Phần Tự Luận</span>
+                  </div>
+                  <p className="text-lg sm:text-xl font-bold text-amber-800 dark:text-amber-300">
+                    {isGraded ? "Đã chấm" : `⏳ ${subjectiveQuestions.length} câu chờ chấm`}
+                  </p>
+                </div>
+
+                {/* Total Submission Time */}
+                <div className="rounded-xl border border-slate-200 bg-slate-50 dark:bg-slate-900/40 dark:border-slate-800 p-4 flex flex-col items-center justify-center text-center">
+                  <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 font-bold text-xs uppercase tracking-wider mb-1">
+                    <Clock className="h-4 w-4" />
+                    <span>Thời Gian Nộp</span>
+                  </div>
+                  <p className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-200">
+                    {submission?.submittedAt || submission?.submitted_at
+                      ? format(
+                          new Date(submission.submittedAt || submission.submitted_at),
+                          "HH:mm · dd/MM",
+                          { locale: vi }
+                        )
+                      : "—"}
+                  </p>
+                  <span className="text-[11px] text-muted-foreground mt-0.5">
+                    Đã làm: {answeredCount}/{totalQuestionsCount} câu
+                  </span>
+                </div>
+              </div>
+
+              {!isGraded && (
+                <div className="p-3.5 rounded-xl border border-blue-200/80 bg-blue-50/60 dark:bg-blue-950/20 dark:border-blue-800/60 text-xs text-blue-900 dark:text-blue-200 flex items-center gap-2.5">
+                  <AlertCircle className="h-4 w-4 text-blue-600 shrink-0" />
+                  <span>
+                    Điểm phần trắc nghiệm đã được chấm tự động. {subjectiveQuestions.length} câu tự luận đang chờ giáo viên xem và chấm điểm chi tiết.
+                  </span>
+                </div>
+              )}
+            </div>
+          ) : (
+            /* CASE 3: PURE OBJECTIVE EXAM (e.g. Reading, Listening) */
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-1">
               {/* Correct Answers Card */}
               <div className="rounded-xl border border-emerald-200 bg-emerald-50/60 dark:bg-emerald-950/20 dark:border-emerald-800/60 p-4 flex flex-col items-center justify-center text-center">
@@ -459,8 +608,8 @@ export default function SubmissionDetail() {
                   <span>Câu Đúng</span>
                 </div>
                 <p className="text-2xl sm:text-3xl font-extrabold text-emerald-700 dark:text-emerald-400 tabular-nums">
-                  {displayCorrectAnswers}
-                  <span className="text-xs font-medium text-emerald-600/70 ml-1">/ {displayTotalQuestions}</span>
+                  {objCorrect}
+                  <span className="text-xs font-medium text-emerald-600/70 ml-1">/ {objTotal}</span>
                 </p>
               </div>
 
@@ -471,7 +620,7 @@ export default function SubmissionDetail() {
                   <span>Câu Sai</span>
                 </div>
                 <p className="text-2xl sm:text-3xl font-extrabold text-rose-700 dark:text-rose-400 tabular-nums">
-                  {Math.max(0, (displayTotalQuestions || 0) - (displayCorrectAnswers || 0))}
+                  {Math.max(0, objTotal - objCorrect)}
                   <span className="text-xs font-medium text-rose-600/70 ml-1">câu</span>
                 </p>
               </div>
@@ -483,9 +632,7 @@ export default function SubmissionDetail() {
                   <span>Độ Chính Xác</span>
                 </div>
                 <p className="text-2xl sm:text-3xl font-extrabold text-blue-700 dark:text-blue-400 tabular-nums">
-                  {displayTotalQuestions! > 0
-                    ? Math.round(((displayCorrectAnswers || 0) / displayTotalQuestions!) * 100)
-                    : 0}%
+                  {objPercentage}%
                 </p>
               </div>
 
@@ -507,42 +654,6 @@ export default function SubmissionDetail() {
                 <span className="text-[11px] text-muted-foreground mt-0.5">
                   Đã làm: {answeredCount}/{totalQuestionsCount} câu
                 </span>
-              </div>
-            </div>
-          ) : (
-            /* Fallback stats row if not auto-gradable */
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="text-center p-3 rounded-lg bg-slate-50">
-                <p className="text-xs text-muted-foreground">Tổng số câu</p>
-                <p className="text-lg font-bold">{totalQuestionsCount}</p>
-              </div>
-              <div className="text-center p-3 rounded-lg bg-slate-50">
-                <p className="text-xs text-muted-foreground">Đã trả lời</p>
-                <p className="text-lg font-bold">
-                  {answeredCount}/{totalQuestionsCount} ({completionRate}%)
-                </p>
-              </div>
-              <div className="text-center p-3 rounded-lg bg-slate-50">
-                <p className="text-xs text-muted-foreground">Ngày làm</p>
-                <p className="text-sm font-semibold">
-                  {submission?.startedAt || submission?.started_at
-                    ? format(new Date(submission.startedAt || submission.started_at), "dd/MM/yyyy", {
-                        locale: vi,
-                      })
-                    : "—"}
-                </p>
-              </div>
-              <div className="text-center p-3 rounded-lg bg-slate-50">
-                <p className="text-xs text-muted-foreground">Ngày nộp</p>
-                <p className="text-sm font-semibold">
-                  {submission?.submittedAt || submission?.submitted_at
-                    ? format(
-                        new Date(submission.submittedAt || submission.submitted_at),
-                        "dd/MM/yyyy HH:mm",
-                        { locale: vi }
-                      )
-                    : "—"}
-                </p>
               </div>
             </div>
           )}

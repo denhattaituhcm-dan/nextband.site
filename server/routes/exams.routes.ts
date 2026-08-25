@@ -163,12 +163,12 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
         include: {
           course: { select: { id: true, title: true } },
           sections: {
-            orderBy: { orderIndex: "asc" },
+            orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }],
             include: {
               questionGroups: {
-                orderBy: { orderIndex: "asc" },
+                orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }],
                 include: {
-                  questions: { orderBy: { orderIndex: "asc" } },
+                  questions: { orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }] },
                 },
               },
             },

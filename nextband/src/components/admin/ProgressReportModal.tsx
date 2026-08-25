@@ -241,8 +241,8 @@ export function ProgressReportModal({
     // Preload Logo
     const logoImg = await loadLogoImage();
 
-    const width = 800;
-    const height = 1120;
+    const width = 760;
+    const height = 980;
     const canvas = document.createElement("canvas");
     canvas.width = width * 2;
     canvas.height = height * 2;
@@ -258,18 +258,17 @@ export function ProgressReportModal({
     ctx.fillRect(0, 0, width, height);
 
     // Outer subtle border
-    drawRoundedRect(ctx, 16, 16, width - 32, height - 32, 14, undefined, "#e2e8f0", 1.5);
+    drawRoundedRect(ctx, 12, 12, width - 24, height - 24, 14, undefined, "#e2e8f0", 1.5);
 
     // 2. Header Banner (Deep Navy Brand with subtle styling)
-    drawRoundedRect(ctx, 24, 22, width - 48, 98, 12, "#0b1a30");
+    drawRoundedRect(ctx, 20, 18, width - 40, 92, 12, "#0b1a30");
 
     // White Logo Container on Left
-    drawRoundedRect(ctx, 40, 34, 74, 74, 10, "#ffffff", "#38bdf8", 1.5);
+    drawRoundedRect(ctx, 32, 28, 72, 72, 10, "#ffffff", "#38bdf8", 1.5);
     if (logoImg && logoImg.naturalWidth > 0) {
-      // Draw image keeping aspect ratio centered in 74x74 box
-      const boxX = 40;
-      const boxY = 34;
-      const boxSize = 74;
+      const boxX = 32;
+      const boxY = 28;
+      const boxSize = 72;
       const padding = 6;
       const maxW = boxSize - padding * 2;
       const maxH = boxSize - padding * 2;
@@ -282,71 +281,71 @@ export function ProgressReportModal({
     } else {
       ctx.fillStyle = "#0c1e38";
       ctx.font = `900 18px ${FONT_FAMILY}`;
-      ctx.fillText("ARIS", 54, 76);
+      ctx.fillText("ARIS", 48, 68);
     }
 
     // Top brand tag
     ctx.fillStyle = "#38bdf8";
     ctx.font = `800 11.5px ${FONT_FAMILY}`;
-    ctx.fillText("HỌC VIỆN NGÔN NGỮ HỌC THUẬT ARIS", 128, 50);
+    ctx.fillText("HỌC VIỆN NGÔN NGỮ HỌC THUẬT ARIS", 118, 44);
 
     // Report Title
     ctx.fillStyle = "#ffffff";
-    ctx.font = `800 21px ${FONT_FAMILY}`;
-    ctx.fillText("BÁO CÁO TIẾN ĐỘ HỌC TẬP", 128, 77);
+    ctx.font = `800 22px ${FONT_FAMILY}`;
+    ctx.fillText("BÁO CÁO TIẾN ĐỘ HỌC TẬP", 118, 71);
 
     // Period sub-badge
     ctx.fillStyle = "#94a3b8";
     ctx.font = `500 12.5px ${FONT_FAMILY}`;
-    ctx.fillText(`Kỳ báo cáo: ${periodStr}`, 128, 100);
+    ctx.fillText(`Kỳ báo cáo: ${periodStr}`, 118, 93);
 
     // Academic Tag on Right
-    drawRoundedRect(ctx, width - 264, 48, 224, 34, 17, "rgba(56, 189, 248, 0.12)", "#38bdf8", 1);
+    drawRoundedRect(ctx, width - 240, 42, 210, 34, 17, "rgba(56, 189, 248, 0.12)", "#38bdf8", 1);
     ctx.fillStyle = "#38bdf8";
-    ctx.font = `800 11.5px ${FONT_FAMILY}`;
-    ctx.fillText("ACADEMIC PROGRESS REPORT", width - 250, 70);
+    ctx.font = `800 11px ${FONT_FAMILY}`;
+    ctx.fillText("ACADEMIC PROGRESS REPORT", width - 228, 64);
 
-    let currY = 136;
+    let currY = 120;
 
     // 3. Section 01: THÔNG TIN HỌC VIÊN & QUY MÔ LỚP HỌC
     const classCurrent = data.classInfo?.currentStudents || 6;
     const classMax = data.classInfo?.maxStudents || 10;
 
-    drawRoundedRect(ctx, 24, currY, width - 48, 92, 10, "#f8fafc", "#e2e8f0", 1);
+    drawRoundedRect(ctx, 20, currY, width - 40, 92, 10, "#f8fafc", "#e2e8f0", 1);
 
     // Left accent bar
     ctx.fillStyle = "#0284c7";
     ctx.beginPath();
-    ctx.roundRect(24, currY, 5, 92, [10, 0, 0, 10]);
+    ctx.roundRect(20, currY, 5, 92, [10, 0, 0, 10]);
     ctx.fill();
 
     ctx.fillStyle = "#0f172a";
-    ctx.font = `800 16.5px ${FONT_FAMILY}`;
-    ctx.fillText(`HỌC VIÊN: ${studentName.toUpperCase()}`, 42, currY + 28);
+    ctx.font = `800 17.5px ${FONT_FAMILY}`;
+    ctx.fillText(`HỌC VIÊN: ${studentName.toUpperCase()}`, 38, currY + 28);
 
     // Class and Teacher Info
     ctx.fillStyle = "#334155";
-    ctx.font = `600 13px ${FONT_FAMILY}`;
-    ctx.fillText(`• Lớp học: ${className}`, 42, currY + 54);
-    ctx.fillText(`• Giảng viên: ${teacherName}`, 260, currY + 54);
+    ctx.font = `700 13.5px ${FONT_FAMILY}`;
+    ctx.fillText(`• Lớp học: ${className}`, 38, currY + 54);
+    ctx.fillText(`• Giảng viên: ${teacherName}`, 240, currY + 54);
 
     // Highlighted Target Band Badge
     ctx.fillStyle = "#4338ca";
-    ctx.font = `800 13.5px ${FONT_FAMILY}`;
-    ctx.fillText(`• Mục tiêu đầu ra: ${targetBand}`, 500, currY + 54);
+    ctx.font = `800 14px ${FONT_FAMILY}`;
+    ctx.fillText(`• Mục tiêu đầu ra: ${targetBand}`, 470, currY + 54);
 
     // Quy mô lớp học
     ctx.fillStyle = "#0369a1";
-    ctx.font = `700 12.5px ${FONT_FAMILY}`;
-    ctx.fillText(`• QUY MÔ LỚP: ${classCurrent} / ${classMax} học viên (Sĩ số hiện tại / Sĩ số tối đa)`, 42, currY + 77);
+    ctx.font = `700 13px ${FONT_FAMILY}`;
+    ctx.fillText(`• QUY MÔ LỚP: ${classCurrent} / ${classMax} học viên (Sĩ số hiện tại / Sĩ số tối đa)`, 38, currY + 77);
 
-    currY += 108;
+    currY += 104;
 
-    // 4. Section 02: 3 KPI CARDS TỔNG QUAN (Spacious, 3 wide cards - No overflow)
-    const cardGap = 16;
-    const totalW = width - 48;
+    // 4. Section 02: 3 KPI CARDS TỔNG QUAN (To rõ, lớn cho mobile)
+    const cardGap = 14;
+    const totalW = width - 40;
     const cardW = (totalW - cardGap * 2) / 3;
-    const cardH = 90;
+    const cardH = 94;
 
     const kpis = [
       {
@@ -364,8 +363,10 @@ export function ProgressReportModal({
         val: `${attendanceRate}%`,
         color: "#0f172a",
         bg: "#f8fafc",
-        border: "#e2e8f0",
-        sub: data.attendance ? `Có mặt ${data.attendance.present}/${data.attendance.total} buổi` : "Tham gia đầy đủ 100%",
+        border: "#cbd5e1",
+        sub: data.attendance && data.attendance.total > 0
+          ? `Có mặt ${data.attendance.present}/${data.attendance.total} buổi (Vắng ${data.attendance.absent})`
+          : "Tham gia đầy đủ 100%",
       },
       {
         label: "BÀI TẬP VỀ NHÀ",
@@ -378,20 +379,20 @@ export function ProgressReportModal({
     ];
 
     kpis.forEach((kpi, idx) => {
-      const kX = 24 + idx * (cardW + cardGap);
+      const kX = 20 + idx * (cardW + cardGap);
       drawRoundedRect(ctx, kX, currY, cardW, cardH, 10, kpi.bg, kpi.border, 1.2);
 
       ctx.fillStyle = "#64748b";
-      ctx.font = `700 11px ${FONT_FAMILY}`;
+      ctx.font = `700 12px ${FONT_FAMILY}`;
       ctx.fillText(kpi.label, kX + 16, currY + 24);
 
       ctx.fillStyle = kpi.color;
-      ctx.font = `800 28px ${FONT_FAMILY}`;
-      ctx.fillText(kpi.val, kX + 16, currY + 56);
+      ctx.font = `800 32px ${FONT_FAMILY}`;
+      ctx.fillText(kpi.val, kX + 16, currY + 58);
 
       ctx.fillStyle = "#64748b";
-      ctx.font = `500 12px ${FONT_FAMILY}`;
-      ctx.fillText(kpi.sub, kX + 16, currY + 77);
+      ctx.font = `600 12.5px ${FONT_FAMILY}`;
+      ctx.fillText(kpi.sub, kX + 16, currY + 80);
     });
 
     currY += cardH + 20;
@@ -399,205 +400,148 @@ export function ProgressReportModal({
     // Helper function to draw Section Header
     const drawSectionHeader = (title: string, y: number) => {
       ctx.fillStyle = "#0f172a";
-      ctx.font = `800 14px ${FONT_FAMILY}`;
-      ctx.fillText(title, 24, y);
+      ctx.font = `800 15px ${FONT_FAMILY}`;
+      ctx.fillText(title, 20, y);
 
       ctx.strokeStyle = "#cbd5e1";
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(24, y + 6);
-      ctx.lineTo(width - 24, y + 6);
+      ctx.moveTo(20, y + 6);
+      ctx.lineTo(width - 20, y + 6);
       ctx.stroke();
     };
 
-    // 5. Section 01: CHUYÊN CẦN & THAM GIA LỚP HỌC (Có thanh phân đoạn trực quan)
-    drawSectionHeader("1. CHUYÊN CẦN & THAM GIA LỚP HỌC", currY);
-    currY += 16;
-
-    const attBoxH = 86;
-    drawRoundedRect(ctx, 24, currY, width - 48, attBoxH, 10, "#f8fafc", "#e2e8f0", 1);
-
-    if (data.attendance && data.attendance.total > 0) {
-      const att = data.attendance;
-      ctx.fillStyle = "#1e293b";
-      ctx.font = `600 13px ${FONT_FAMILY}`;
-      ctx.fillText(
-        `• Có mặt: ${att.present} buổi   |   • Đi muộn: ${att.late || 0} buổi   |   • Vắng không phép: ${att.absent} buổi   |   • Nghỉ phép: ${att.excused || 0} buổi`,
-        40,
-        currY + 28
-      );
-
-      // Segmented Progress Bar (Direct Visual Chart)
-      const barX = 40;
-      const barY = currY + 42;
-      const barW = width - 80;
-      const barH = 12;
-
-      drawRoundedRect(ctx, barX, barY, barW, barH, 6, "#e2e8f0");
-
-      const presentW = Math.max(0, (barW * att.present) / att.total);
-      const lateW = Math.max(0, (barW * (att.late || 0)) / att.total);
-      const absentW = Math.max(0, (barW * att.absent) / att.total);
-
-      let curBarX = barX;
-      if (presentW > 0) {
-        drawRoundedRect(ctx, curBarX, barY, presentW, barH, 6, "#10b981");
-        curBarX += presentW;
-      }
-      if (lateW > 0) {
-        drawRoundedRect(ctx, curBarX, barY, lateW, barH, lateW === barW ? 6 : 0, "#f59e0b");
-        curBarX += lateW;
-      }
-      if (absentW > 0) {
-        drawRoundedRect(ctx, curBarX, barY, absentW, barH, curBarX + absentW >= barX + barW ? 6 : 0, "#f43f5e");
-      }
-
-      ctx.fillStyle = "#475569";
-      ctx.font = `600 12px ${FONT_FAMILY}`;
-      ctx.fillText(
-        `Tỷ lệ tham gia tích cực: ${att.rate}% (Duy trì nề nếp và tham gia lớp học nghiêm túc)`,
-        40,
-        currY + 72
-      );
-    } else {
-      ctx.fillStyle = "#475569";
-      ctx.font = `italic 500 13px ${FONT_FAMILY}`;
-      ctx.fillText("Học viên duy trì tham gia đầy đủ các buổi học theo đúng lịch trình của khóa.", 40, currY + 48);
-    }
-
-    currY += attBoxH + 18;
-
-    // 6. Section 02: BÀI TẬP VỀ NHÀ & CHẤT LƯỢNG BÀI LÀM (3 Lớp thông tin + Thanh tiến độ trực quan)
-    drawSectionHeader("2. BÀI TẬP VỀ NHÀ & CHẤT LƯỢNG BÀI LÀM", currY);
+    // 5. Section 01: BÀI TẬP VỀ NHÀ & CHẤT LƯỢNG BÀI LÀM (3 Lớp thông tin + Thanh tiến độ trực quan)
+    drawSectionHeader("1. BÀI TẬP VỀ NHÀ & CHẤT LƯỢNG BÀI LÀM", currY);
     currY += 16;
 
     const hw = data.homework;
-    const hwBoxH = 120;
-    drawRoundedRect(ctx, 24, currY, width - 48, hwBoxH, 10, "#f8fafc", "#e2e8f0", 1);
+    const hwBoxH = 126;
+    drawRoundedRect(ctx, 20, currY, width - 40, hwBoxH, 10, "#f8fafc", "#e2e8f0", 1);
 
     // Lớp 1: Mức độ hoàn thành
     ctx.fillStyle = "#059669";
-    ctx.font = `700 13.5px ${FONT_FAMILY}`;
-    ctx.fillText(`✓ Hoàn thành: ${hw.completed} / ${hw.totalAssigned} bài (${hwCompletionPct}%)`, 40, currY + 26);
+    ctx.font = `800 14.5px ${FONT_FAMILY}`;
+    ctx.fillText(`✓ Hoàn thành: ${hw.completed} / ${hw.totalAssigned} bài (${hwCompletionPct}%)`, 36, currY + 27);
 
     if (hw.overdue > 0) {
       ctx.fillStyle = "#e11d48";
-      ctx.font = `700 13px ${FONT_FAMILY}`;
-      ctx.fillText(`⚠ Quá hạn: ${hw.overdue} bài`, 340, currY + 26);
+      ctx.font = `700 14px ${FONT_FAMILY}`;
+      ctx.fillText(`⚠ Quá hạn: ${hw.overdue} bài`, 340, currY + 27);
     } else {
       ctx.fillStyle = "#475569";
-      ctx.font = `500 13px ${FONT_FAMILY}`;
-      ctx.fillText(`• Đang thực hiện: ${hw.inProgress} bài`, 340, currY + 26);
+      ctx.font = `600 14px ${FONT_FAMILY}`;
+      ctx.fillText(`• Đang thực hiện: ${hw.inProgress} bài`, 340, currY + 27);
     }
 
     ctx.fillStyle = "#64748b";
-    ctx.font = `500 13px ${FONT_FAMILY}`;
-    ctx.fillText(`• Chưa nộp: ${hw.unsubmitted} bài`, 540, currY + 26);
+    ctx.font = `600 14px ${FONT_FAMILY}`;
+    ctx.fillText(`• Chưa nộp: ${hw.unsubmitted} bài`, 530, currY + 27);
 
     // Visual Mini Progress Bar
-    const hwBarX = 40;
-    const hwBarY = currY + 38;
-    const hwBarW = width - 80;
-    const hwBarH = 8;
-    drawRoundedRect(ctx, hwBarX, hwBarY, hwBarW, hwBarH, 4, "#e2e8f0");
+    const hwBarX = 36;
+    const hwBarY = currY + 41;
+    const hwBarW = width - 72;
+    const hwBarH = 10;
+    drawRoundedRect(ctx, hwBarX, hwBarY, hwBarW, hwBarH, 5, "#e2e8f0");
     const hwFillW = Math.min(hwBarW, Math.max(0, (hwBarW * hwCompletionPct) / 100));
     if (hwFillW > 0) {
-      drawRoundedRect(ctx, hwBarX, hwBarY, hwFillW, hwBarH, 4, "#10b981");
+      drawRoundedRect(ctx, hwBarX, hwBarY, hwFillW, hwBarH, 5, "#10b981");
     }
 
     // Lớp 2: Đánh giá chất lượng & Kết quả chấm
     ctx.fillStyle = "#1e293b";
-    ctx.font = `600 13px ${FONT_FAMILY}`;
+    ctx.font = `700 13.5px ${FONT_FAMILY}`;
     const avgScoreStr = hw.averageScore ? `Điểm TB: ${hw.averageScore}` : "Điểm TB: Đang tích lũy";
     const passRateStr = `Đạt chuẩn: ${hw.passedCount || 0} bài  |  Cần cải thiện: ${hw.needsImprovementCount || 0} bài`;
-    ctx.fillText(`• Đã chấm & phản hồi: ${hw.gradedCount}/${hw.completed} bài   |   ${avgScoreStr}   |   ${passRateStr}`, 40, currY + 70);
+    ctx.fillText(`• Đã chấm & phản hồi: ${hw.gradedCount}/${hw.completed} bài   |   ${avgScoreStr}   |   ${passRateStr}`, 36, currY + 76);
 
     // Lớp 3: Nguồn chấm điểm thực tế từ submission (Chấm tự động vs Giáo viên chấm & phản hồi)
     ctx.fillStyle = "#0369a1";
-    ctx.font = `700 12px ${FONT_FAMILY}`;
+    ctx.font = `700 13px ${FONT_FAMILY}`;
     ctx.fillText(
       `• Nguồn chấm: ${hw.autoGradedCount || 0} bài chấm tự động (Trắc nghiệm/Reading/Listening) · ${hw.teacherGradedCount || 0} bài giáo viên chấm & nhận xét (Writing/Speaking)`,
-      40,
-      currY + 98
+      36,
+      currY + 104
     );
 
-    currY += hwBoxH + 18;
+    currY += hwBoxH + 20;
 
-    // 7. Section 03: NHẬN XÉT CỦA GIÁO VIÊN (3 Cards màu sắc riêng biệt, thoải mái 2-3 dòng chữ)
-    drawSectionHeader("3. NHẬN XÉT CHUYÊN MÔN CỦA GIẢNG VIÊN", currY);
+    // 6. Section 02: NHẬN XÉT CỦA GIÁO VIÊN (3 Cards màu sắc riêng biệt, chữ to rõ ràng)
+    drawSectionHeader("2. NHẬN XÉT CHUYÊN MÔN CỦA GIẢNG VIÊN", currY);
     currY += 16;
 
-    const subCardH = 74;
+    const subCardH = 78;
     const subCardGap = 10;
 
     // Sub-card 1: Điểm mạnh
     const sc1Y = currY;
-    drawRoundedRect(ctx, 24, sc1Y, width - 48, subCardH, 8, "#f0fdf4", "#bbf7d0", 1);
+    drawRoundedRect(ctx, 20, sc1Y, width - 40, subCardH, 8, "#f0fdf4", "#bbf7d0", 1);
     ctx.fillStyle = "#15803d";
-    ctx.font = `800 13px ${FONT_FAMILY}`;
-    ctx.fillText("✓ Điểm mạnh học viên:", 38, sc1Y + 22);
+    ctx.font = `800 14px ${FONT_FAMILY}`;
+    ctx.fillText("✓ Điểm mạnh học viên:", 34, sc1Y + 23);
     ctx.fillStyle = "#1e293b";
-    ctx.font = `500 13px ${FONT_FAMILY}`;
-    drawWrappedText(ctx, strengths || "Tiếp thu tốt kiến thức trên lớp, chủ động tương tác.", 38, sc1Y + 42, width - 86, 18, 2);
+    ctx.font = `500 13.5px ${FONT_FAMILY}`;
+    drawWrappedText(ctx, strengths || "Tiếp thu tốt kiến thức trên lớp, chủ động tương tác.", 34, sc1Y + 44, width - 68, 20, 2);
 
     // Sub-card 2: Cần cải thiện
     const sc2Y = sc1Y + subCardH + subCardGap;
-    drawRoundedRect(ctx, 24, sc2Y, width - 48, subCardH, 8, "#fffbeb", "#fde68a", 1);
+    drawRoundedRect(ctx, 20, sc2Y, width - 40, subCardH, 8, "#fffbeb", "#fde68a", 1);
     ctx.fillStyle = "#b45309";
-    ctx.font = `800 13px ${FONT_FAMILY}`;
-    ctx.fillText("⚠ Điểm cần chú ý cải thiện:", 38, sc2Y + 22);
+    ctx.font = `800 14px ${FONT_FAMILY}`;
+    ctx.fillText("⚠ Điểm cần chú ý cải thiện:", 34, sc2Y + 23);
     ctx.fillStyle = "#1e293b";
-    ctx.font = `500 13px ${FONT_FAMILY}`;
-    drawWrappedText(ctx, weaknesses || "Cần chú ý cẩn thận hơn về cấu trúc ngữ pháp và từ vựng học thuật.", 38, sc2Y + 42, width - 86, 18, 2);
+    ctx.font = `500 13.5px ${FONT_FAMILY}`;
+    drawWrappedText(ctx, weaknesses || "Cần chú ý cẩn thận hơn về cấu trúc ngữ pháp và từ vựng học thuật.", 34, sc2Y + 44, width - 68, 20, 2);
 
     // Sub-card 3: Khuyến nghị
     const sc3Y = sc2Y + subCardH + subCardGap;
-    drawRoundedRect(ctx, 24, sc3Y, width - 48, subCardH, 8, "#f0f9ff", "#bae6fd", 1);
+    drawRoundedRect(ctx, 20, sc3Y, width - 40, subCardH, 8, "#f0f9ff", "#bae6fd", 1);
     ctx.fillStyle = "#0369a1";
-    ctx.font = `800 13px ${FONT_FAMILY}`;
-    ctx.fillText("★ Khuyến nghị từ giảng viên:", 38, sc3Y + 22);
+    ctx.font = `800 14px ${FONT_FAMILY}`;
+    ctx.fillText("★ Khuyến nghị từ giảng viên:", 34, sc3Y + 23);
     ctx.fillStyle = "#1e293b";
-    ctx.font = `500 13px ${FONT_FAMILY}`;
-    drawWrappedText(ctx, recommendations || "Dành thêm 20-30 phút tự học mỗi ngày, hoàn thành bài tập đúng hạn.", 38, sc3Y + 42, width - 86, 18, 2);
+    ctx.font = `500 13.5px ${FONT_FAMILY}`;
+    drawWrappedText(ctx, recommendations || "Dành thêm 20-30 phút tự học mỗi ngày, hoàn thành bài tập đúng hạn.", 34, sc3Y + 44, width - 68, 20, 2);
 
-    currY = sc3Y + subCardH + 18;
+    currY = sc3Y + subCardH + 20;
 
-    // 8. Section 04: MỤC TIÊU GIAI ĐOẠN TIẾP THEO
-    drawSectionHeader("4. TRỌNG TÂM & MỤC TIÊU GIAI ĐOẠN TIẾP THEO", currY);
+    // 7. Section 03: MỤC TIÊU GIAI ĐOẠN TIẾP THEO
+    drawSectionHeader("3. TRỌNG TÂM & MỤC TIÊU GIAI ĐOẠN TIẾP THEO", currY);
     currY += 16;
 
     const goalsBoxH = 96;
-    drawRoundedRect(ctx, 24, currY, width - 48, goalsBoxH, 10, "#f0fdf4", "#bbf7d0", 1);
+    drawRoundedRect(ctx, 20, currY, width - 40, goalsBoxH, 10, "#f0fdf4", "#bbf7d0", 1);
 
     const goals = [goal1, goal2, goal3].filter(Boolean);
     if (goals.length > 0) {
       goals.forEach((g, idx) => {
         ctx.fillStyle = "#166534";
-        ctx.font = `700 13px ${FONT_FAMILY}`;
-        ctx.fillText(`🎯  ${g}`, 40, currY + 28 + idx * 24);
+        ctx.font = `700 14px ${FONT_FAMILY}`;
+        ctx.fillText(`🎯  ${g}`, 36, currY + 28 + idx * 24);
       });
     } else {
       ctx.fillStyle = "#166534";
-      ctx.font = `600 13px ${FONT_FAMILY}`;
-      ctx.fillText("🎯  Duy trì tỷ lệ chuyên cần 100% các buổi học", 40, currY + 28);
-      ctx.fillText("🎯  Hoàn thành đầy đủ các bài tập tự học trên hệ thống", 40, currY + 54);
+      ctx.font = `600 14px ${FONT_FAMILY}`;
+      ctx.fillText("🎯  Duy trì tỷ lệ chuyên cần 100% các buổi học", 36, currY + 28);
+      ctx.fillText("🎯  Hoàn thành đầy đủ các bài tập tự học trên hệ thống", 36, currY + 54);
     }
 
-    // 9. Footer & Brand Identity
+    // 8. Footer & Brand Identity
     ctx.strokeStyle = "#e2e8f0";
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(24, height - 48);
-    ctx.lineTo(width - 24, height - 48);
+    ctx.moveTo(20, height - 42);
+    ctx.lineTo(width - 20, height - 42);
     ctx.stroke();
 
     ctx.fillStyle = "#475569";
-    ctx.font = `700 11.5px ${FONT_FAMILY}`;
-    ctx.fillText("HỌC VIỆN NGÔN NGỮ HỌC THUẬT ARIS — HỌC TIẾNG ANH TỪ BẢN CHẤT", 24, height - 26);
+    ctx.font = `700 12px ${FONT_FAMILY}`;
+    ctx.fillText("HỌC VIỆN NGÔN NGỮ HỌC THUẬT ARIS — HỌC TIẾNG ANH TỪ BẢN CHẤT", 20, height - 20);
 
     ctx.fillStyle = "#64748b";
-    ctx.font = `500 11.5px ${FONT_FAMILY}`;
-    ctx.fillText(`Website: nextband.site   |   Ngày xuất: ${data.generatedAt}`, width - 290, height - 26);
+    ctx.font = `500 12px ${FONT_FAMILY}`;
+    ctx.fillText(`Website: nextband.site   |   Ngày xuất: ${data.generatedAt}`, width - 290, height - 20);
 
     return canvas;
   };
@@ -854,7 +798,9 @@ export function ProgressReportModal({
                   {attendanceRate}%
                 </div>
                 <div className="text-[10px] text-slate-500 truncate">
-                  {data.attendance ? `${data.attendance.present}/${data.attendance.total} buổi` : "Đầy đủ 100%"}
+                  {data.attendance && data.attendance.total > 0
+                    ? `Có mặt ${data.attendance.present}/${data.attendance.total} buổi`
+                    : "Đầy đủ 100%"}
                 </div>
               </div>
               <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 rounded-lg border border-emerald-200 dark:border-emerald-800 text-center">
@@ -868,46 +814,10 @@ export function ProgressReportModal({
               </div>
             </div>
 
-            {/* Attendance */}
-            <div className="space-y-1">
-              <div className="font-bold text-[11px] text-slate-800 dark:text-slate-200">
-                1. CHUYÊN CẦN & THAM GIA LỚP HỌC
-              </div>
-              <div className="p-2.5 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 text-[11px] space-y-1.5 text-slate-700 dark:text-slate-300">
-                {data.attendance && data.attendance.total > 0 ? (
-                  <>
-                    <div className="flex flex-wrap gap-2 text-[10.5px]">
-                      <span>• Có mặt: <strong className="text-emerald-600">{data.attendance.present}</strong></span>
-                      <span>• Đi muộn: <strong className="text-amber-600">{data.attendance.late || 0}</strong></span>
-                      <span>• Vắng: <strong className="text-rose-600">{data.attendance.absent}</strong></span>
-                      <span>• Nghỉ phép: <strong>{data.attendance.excused || 0}</strong></span>
-                    </div>
-                    {/* Visual bar */}
-                    <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden flex">
-                      <div
-                        style={{ width: `${(data.attendance.present / data.attendance.total) * 100}%` }}
-                        className="h-full bg-emerald-500"
-                      />
-                      <div
-                        style={{ width: `${((data.attendance.late || 0) / data.attendance.total) * 100}%` }}
-                        className="h-full bg-amber-500"
-                      />
-                      <div
-                        style={{ width: `${(data.attendance.absent / data.attendance.total) * 100}%` }}
-                        className="h-full bg-rose-500"
-                      />
-                    </div>
-                  </>
-                ) : (
-                  <>• Chuyên cần lớp học: <strong>Đạt 100%</strong> (Tham gia đầy đủ các buổi)</>
-                )}
-              </div>
-            </div>
-
             {/* Homework */}
             <div className="space-y-1">
               <div className="font-bold text-[11px] text-slate-800 dark:text-slate-200 flex justify-between">
-                <span>2. BÀI TẬP VỀ NHÀ & CHẤT LƯỢNG BÀI LÀM</span>
+                <span>1. BÀI TẬP VỀ NHÀ & CHẤT LƯỢNG BÀI LÀM</span>
                 {data.homework.averageScore && (
                   <span className="text-sky-600 font-semibold">Điểm TB: {data.homework.averageScore}</span>
                 )}
@@ -940,7 +850,7 @@ export function ProgressReportModal({
             {/* Teacher Notes Preview (3 separate colored cards) */}
             <div className="space-y-1.5">
               <div className="font-bold text-[11px] text-slate-800 dark:text-slate-200">
-                3. NHẬN XÉT CHUYÊN MÔN CỦA GIẢNG VIÊN
+                2. NHẬN XÉT CHUYÊN MÔN CỦA GIẢNG VIÊN
               </div>
               <div className="p-2.5 bg-emerald-50/80 dark:bg-emerald-950/20 rounded-lg border border-emerald-200 dark:border-emerald-900 text-[11px] text-slate-800 dark:text-slate-200">
                 <span className="font-bold text-emerald-800 dark:text-emerald-300">✓ Điểm mạnh: </span>
@@ -958,7 +868,7 @@ export function ProgressReportModal({
 
             {/* Goals */}
             <div className="p-2.5 bg-emerald-50/60 dark:bg-emerald-950/20 rounded-lg border border-emerald-200 dark:border-emerald-900 text-[11px] space-y-1 text-emerald-900 dark:text-emerald-300">
-              <div className="font-bold">4. TRỌNG TÂM & MỤC TIÊU GIAI ĐOẠN TIẾP THEO</div>
+              <div className="font-bold">3. TRỌNG TÂM & MỤC TIÊU GIAI ĐOẠN TIẾP THEO</div>
               <div className="text-[10.5px]">🎯 {goal1}</div>
               <div className="text-[10.5px]">🎯 {goal2}</div>
               <div className="text-[10.5px]">🎯 {goal3}</div>
@@ -1008,3 +918,4 @@ export function ProgressReportModal({
     </Dialog>
   );
 }
+

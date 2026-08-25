@@ -51,6 +51,8 @@ const getMinWords = (title: string) => {
   return 250;
 };
 
+import { compareCanonicalOrder } from "@/lib/questionOrder";
+
 export function WritingSection({
   section,
   answers,
@@ -85,21 +87,9 @@ export function WritingSection({
           if (!q?.id) return true;
           return arr.findIndex((item: any) => item?.id === q.id) === idx;
         })
-        .sort((a: any, b: any) => {
-          const orderDiff = (a.order_index || 0) - (b.order_index || 0);
-          if (orderDiff !== 0) return orderDiff;
-          return new Date(a.createdAt ?? 0).getTime() -
-            new Date(b.createdAt ?? 0).getTime();
-        }),
+        .sort(compareCanonicalOrder),
     }))
-    .sort((a: any, b: any) => {
-      const orderDiff =
-        (a.order_index || a.orderIndex || 0) -
-        (b.order_index || b.orderIndex || 0);
-      if (orderDiff !== 0) return orderDiff;
-      return new Date(a.createdAt ?? 0).getTime() -
-        new Date(b.createdAt ?? 0).getTime();
-    });
+    .sort(compareCanonicalOrder);
 
   const allQuestions = useMemo(
     () =>

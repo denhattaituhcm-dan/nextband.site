@@ -133,11 +133,94 @@ export const WorkspaceProvider: React.FC<{
         console.warn("[WorkspaceProvider] Could not fetch submissions:", subErr);
       }
 
+      // Enrich activeStudents with live real-time metrics
+      const enrichedActiveStudents = activeStudents.map((st: any) => {
+        const studentId = st.studentId || st.student_id || st.id || st.userId;
+        const studentSubs = submissions.filter(
+          (s: any) => (s.studentId || s.student_id || s.userId) === studentId
+        );
+
+        // Submissions matched to published lessons
+        const completedHw = studentSubs.filter(
+          (s: any) =>
+            s.status === "submitted" ||
+            s.status === "graded" ||
+            s.status === "SUBMITTED" ||
+            s.status === "GRADED"
+        ).length;
+
+        // Structured homework items for Progress Strip
+        const homeworkItems = lessons.map((lesson: any, i: number) => {
+          const hwNumber = i + 1;
+          const sub = studentSubs.find(
+            (s: any) =>
+              s.examId === lesson.id ||
+              s.exam_id === lesson.id ||
+              s.homework_id === lesson.id ||
+              s.lesson_id === lesson.id
+          );
+          const isGraded = sub?.status === "graded" || sub?.status === "GRADED";
+          const isSubmitted = sub?.status === "submitted" || sub?.status === "SUBMITTED" || isGraded;
+          const isOverdue =
+            !isSubmitted &&
+            lesson.deadline &&
+            new Date().getTime() > new Date(lesson.deadline).getTime();
+
+          const status = isGraded || isSubmitted ? "done" : isOverdue ? "missed" : "pending";
+          return {
+            hwNumber,
+            title: lesson.title || `Homework ${hwNumber}`,
+            status,
+            score: sub?.totalScore ?? sub?.total_score ?? null,
+            examId: lesson.id,
+          };
+        });
+
+        // Attendance stats
+        const studentAttendances = canonicalSessions
+          .map((sess: any) => {
+            const att = (sess.attendance || []).find(
+              (a: any) => (a.studentId || a.student_id) === studentId
+            );
+            return att?.status || "UNMARKED";
+          })
+          .filter((status: string) => status !== "UNMARKED");
+
+        const presentCount = studentAttendances.filter(
+          (stt: string) => stt === "PRESENT" || stt === "present"
+        ).length;
+        const totalMarked = studentAttendances.length;
+        const attendanceRate =
+          totalMarked > 0 ? Math.round((presentCount / totalMarked) * 100) : undefined;
+
+        // Feedback history
+        const feedbackHistory = studentSubs
+          .filter((s: any) => s.feedback || s.teacherFeedback)
+          .map((s: any) => ({
+            hw: s.exam?.title || "Bài tập",
+            date:
+              s.gradedAt || s.createdAt
+                ? new Date(s.gradedAt || s.createdAt).toLocaleDateString("vi-VN")
+                : "",
+            note: s.feedback || s.teacherFeedback,
+          }));
+
+        return {
+          ...st,
+          studentId,
+          totalHomeworks: lessons.length,
+          completedHw,
+          homeworkItems,
+          attendanceRate,
+          feedbackHistory,
+        };
+      });
+
       return {
         ...cls,
         students: canonicalStudents,
-        activeStudents,
-        studentCount: activeStudents.length,
+        activeStudents: enrichedActiveStudents,
+        studentCount: enrichedActiveStudents.length,
         sessions: canonicalSessions,
         lessons,
         submissions,

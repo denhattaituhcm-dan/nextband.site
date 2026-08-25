@@ -2,28 +2,36 @@ import React from "react";
 
 export type HomeworkStatus = "done" | "late" | "missed" | "pending";
 
+export interface HomeworkStripItem {
+  hwNumber: number;
+  title?: string;
+  status: HomeworkStatus;
+  score?: number | null;
+  examId?: string;
+}
+
 interface HomeworkProgressStripProps {
   totalHomeworks?: number;
   completedCount?: number;
-  onSelectHomework?: (hwNumber: number) => void;
+  items?: HomeworkStripItem[];
+  onSelectHomework?: (hwNumber: number, item?: HomeworkStripItem) => void;
 }
 
 export const HomeworkProgressStrip: React.FC<HomeworkProgressStripProps> = ({
-  totalHomeworks = 27,
-  completedCount = 12,
+  totalHomeworks = 0,
+  completedCount = 0,
+  items: customItems,
   onSelectHomework,
 }) => {
-  const items = Array.from({ length: totalHomeworks }, (_, i) => {
-    const hwNumber = i + 1;
-    let status: HomeworkStatus = "pending";
-    if (hwNumber <= completedCount) {
-      status = hwNumber === 3 ? "late" : "done";
-    } else if (hwNumber === completedCount + 1) {
-      status = "missed";
-    }
+  const items: HomeworkStripItem[] = customItems && customItems.length > 0
+    ? customItems
+    : Array.from({ length: totalHomeworks }, (_, i) => {
+        const hwNumber = i + 1;
+        const status: HomeworkStatus = hwNumber <= completedCount ? "done" : "pending";
+        return { hwNumber, status };
+      });
 
-    return { hwNumber, status };
-  });
+  const effectiveTotal = items.length > 0 ? items.length : totalHomeworks;
 
   const getStatusSymbol = (status: HomeworkStatus) => {
     switch (status) {
@@ -38,10 +46,18 @@ export const HomeworkProgressStrip: React.FC<HomeworkProgressStripProps> = ({
     }
   };
 
+  if (effectiveTotal === 0) {
+    return (
+      <div className="p-3 rounded-lg border bg-muted/10 text-center text-xs text-muted-foreground">
+        Lớp học chưa có bài tập được xuất bản.
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
-        <span>Tiến độ 27 Homework (Click ô để xem bài)</span>
+        <span>Tiến độ {effectiveTotal} bài tập (Click ô để xem bài)</span>
         <span className="flex items-center gap-3">
           <span className="flex items-center gap-1"><span className="text-emerald-600 font-bold">✓</span> Đã làm</span>
           <span className="flex items-center gap-1">⏰ Trễ</span>
@@ -51,13 +67,13 @@ export const HomeworkProgressStrip: React.FC<HomeworkProgressStripProps> = ({
       </div>
 
       <div className="flex flex-wrap gap-1.5 p-3 rounded-lg border bg-muted/20">
-        {items.map(({ hwNumber, status }) => {
-          const { icon, bg } = getStatusSymbol(status);
+        {items.map((item) => {
+          const { icon, bg } = getStatusSymbol(item.status);
           return (
             <button
-              key={hwNumber}
-              onClick={() => onSelectHomework?.(hwNumber)}
-              title={`Homework ${hwNumber}`}
+              key={item.hwNumber}
+              onClick={() => onSelectHomework?.(item.hwNumber, item)}
+              title={item.title || `Homework ${item.hwNumber}`}
               className={`h-7 w-7 rounded border text-xs font-semibold flex items-center justify-center transition-transform hover:scale-110 focus:outline-none focus:ring-1 focus:ring-emerald-500 ${bg}`}
             >
               {icon}

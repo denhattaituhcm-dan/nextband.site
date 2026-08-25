@@ -33,6 +33,7 @@ import {
   MessageSquare,
   RefreshCw,
   PauseCircle,
+  PlayCircle,
   Key,
   Info,
   AlertTriangle,
@@ -187,20 +188,102 @@ export function StudentWorkspaceDrawer({
     : (student.lastActivityText || "Chưa có hoạt động");
 
   const isAccountLocked = student.isActive === false;
+  const isClassSuspended = student.classes?.some((c: any) => c.status === "SUSPENDED");
+  const isBioReserved = !!(student.bio?.includes('"isReserved":true') || student.bio?.includes('"status":"suspended"') || student.bio === "RESERVED");
+  const isReserved = Boolean(student.isReserved || student.status === "suspended" || isClassSuspended || isBioReserved);
+  const [isTogglingReservation, setIsTogglingReservation] = useState(false);
 
   // Guardian info
   const parentNameDisplay = student.parentName || student.parent_name || "";
   const parentPhoneDisplay = student.parentPhone || student.parent_phone || "";
   const lastContactDate = student.lastContactDate || "";
 
-  const handleConfirmArchive = () => {
-    onArchive(student.id, archiveReason, {
-      returnDate,
-      transferClass,
-      notes: archiveNotes,
-    });
-    setArchiveDialogOpen(false);
-    toast({ title: "Đã chuyển học viên sang mục Lưu trữ" });
+  const handleToggleReservation = async () => {
+    setIsTogglingReservation(true);
+    const studentId = student.id || student.userId;
+    const nextReservedState = !isReserved;
+
+    try {
+      await usersApi.update(studentId, {
+        isReserved: nextReservedState,
+        status: nextReservedState ? "suspended" : "active",
+      });
+
+      // Mutate local object so UI reflects changes immediately
+      student.isReserved = nextReservedState;
+      student.status = nextReservedState ? "suspended" : "active";
+      if (student.classes) {
+        student.classes.forEach((c: any) => {
+          c.status = nextReservedState ? "SUSPENDED" : "ACTIVE";
+        });
+      }
+
+      // Invalidate queries so tables and related views refresh
+      queryClient.invalidateQueries({ queryKey: ["admin-students-management"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["class-workspace"] });
+
+      if (nextReservedState) {
+        toast({
+          title: "Đã đặt bảo lưu",
+          description: `Đã chuyển học viên ${student.fullName || fullName || ""} sang trạng thái Bảo lưu`,
+        });
+      } else {
+        toast({
+          title: "Đã mở bảo lưu",
+          description: `Đã mở lại trạng thái học tập bình thường cho học viên ${student.fullName || fullName || ""}`,
+        });
+      }
+
+      if (onUpdate) {
+        onUpdate(studentId, {
+          isReserved: nextReservedState,
+          status: nextReservedState ? "suspended" : "active",
+        });
+      }
+    } catch (err: any) {
+      toast({
+        title: "Lỗi",
+        description: err.message || "Không thể cập nhật trạng thái bảo lưu",
+        variant: "destructive",
+      });
+    } finally {
+      setIsTogglingReservation(false);
+    }
+  };
+
+  const handleConfirmArchive = async () => {
+    const studentId = student.id || student.userId;
+    try {
+      await usersApi.update(studentId, {
+        isReserved: true,
+        status: "suspended",
+      });
+      student.isReserved = true;
+      student.status = "suspended";
+      if (student.classes) {
+        student.classes.forEach((c: any) => {
+          c.status = "SUSPENDED";
+        });
+      }
+      queryClient.invalidateQueries({ queryKey: ["admin-students-management"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["class-workspace"] });
+
+      onArchive(studentId, archiveReason, {
+        returnDate,
+        transferClass,
+        notes: archiveNotes,
+      });
+      setArchiveDialogOpen(false);
+      toast({ title: "Đã chuyển học viên sang mục Lưu trữ và Bảo lưu" });
+
+      if (onUpdate) {
+        onUpdate(studentId, { isReserved: true, status: "suspended" });
+      }
+    } catch (err: any) {
+      toast({ title: "Lỗi", description: err.message || "Không thể lưu trữ", variant: "destructive" });
+    }
   };
 
   const handleConfirmDelete = () => {
@@ -240,8 +323,17 @@ export function StudentWorkspaceDrawer({
                   >
                     <Edit className="h-3.5 w-3.5" />
                   </Button>
-                  <Badge variant={isAccountLocked ? "destructive" : "secondary"} className="text-[10px] px-1.5 py-0">
-                    {isAccountLocked ? "🔒 Đã khóa TK" : "🟢 Hoạt động"}
+                  <Badge
+                    variant={isAccountLocked ? "destructive" : isReserved ? "outline" : "secondary"}
+                    className={
+                      isAccountLocked
+                        ? "text-[10px] px-1.5 py-0"
+                        : isReserved
+                        ? "text-[10px] px-2 py-0.5 bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-700 font-semibold"
+                        : "text-[10px] px-1.5 py-0 text-emerald-700 bg-emerald-50 border-emerald-200"
+                    }
+                  >
+                    {isAccountLocked ? "🔒 Đã khóa TK" : isReserved ? "⏸️ Đang bảo lưu" : "🟢 Hoạt động"}
                   </Badge>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
@@ -293,9 +385,24 @@ export function StudentWorkspaceDrawer({
                 <RefreshCw className="h-4 w-4 text-primary" />
                 Đổi lớp
               </Button>
-              <Button variant="outline" size="sm" className="flex flex-col h-14 items-center justify-center gap-1 text-[11px] font-normal" onClick={() => setArchiveDialogOpen(true)}>
-                <PauseCircle className="h-4 w-4 text-warning" />
-                Bảo lưu
+              <Button
+                variant={isReserved ? "default" : "outline"}
+                size="sm"
+                disabled={isTogglingReservation}
+                className={`flex flex-col h-14 items-center justify-center gap-1 text-[11px] transition-all relative group ${
+                  isReserved
+                    ? "bg-amber-500 hover:bg-amber-600 text-white dark:bg-amber-600 dark:hover:bg-amber-700 font-semibold shadow-xs ring-2 ring-amber-300 dark:ring-amber-800"
+                    : "font-normal border-amber-500/30 hover:bg-amber-50 hover:text-amber-700 dark:hover:bg-amber-950/40"
+                }`}
+                onClick={handleToggleReservation}
+                title={isReserved ? "Click để Mở bảo lưu (Tiếp tục học)" : "Click để Đặt bảo lưu học viên"}
+              >
+                {isReserved ? (
+                  <PlayCircle className="h-4 w-4 text-white animate-pulse" />
+                ) : (
+                  <PauseCircle className="h-4 w-4 text-amber-600" />
+                )}
+                {isReserved ? "Mở bảo lưu" : "Bảo lưu"}
               </Button>
               <Button variant="outline" size="sm" className="flex flex-col h-14 items-center justify-center gap-1 text-[11px] font-normal" onClick={() => toast({ title: "Reset mật khẩu", description: "Đã gửi hướng dẫn reset mật khẩu về email học viên" })}>
                 <Key className="h-4 w-4 text-muted-foreground" />
@@ -309,6 +416,11 @@ export function StudentWorkspaceDrawer({
                 <Badge variant="destructive" className="text-xs py-1 px-2.5 flex items-center gap-1.5">
                   <AlertTriangle className="h-3.5 w-3.5" />
                   Tài khoản đang bị khóa
+                </Badge>
+              ) : isReserved ? (
+                <Badge variant="outline" className="text-xs py-1 px-2.5 text-amber-800 bg-amber-50 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-700 flex items-center gap-1.5 font-medium">
+                  <PauseCircle className="h-3.5 w-3.5 text-amber-600" />
+                  Học viên đang trong trạng thái Bảo lưu
                 </Badge>
               ) : healthScore != null && healthScore < 60 ? (
                 <Badge variant="destructive" className="text-xs py-1 px-2.5 flex items-center gap-1.5">
@@ -525,11 +637,25 @@ export function StudentWorkspaceDrawer({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="w-full border-warning/40 text-foreground hover:bg-warning/10 gap-1.5 text-xs"
-                  onClick={() => setArchiveDialogOpen(true)}
+                  disabled={isTogglingReservation}
+                  className={`w-full gap-1.5 text-xs transition-colors ${
+                    isReserved
+                      ? "border-emerald-500/50 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 font-semibold"
+                      : "border-warning/40 text-foreground hover:bg-warning/10"
+                  }`}
+                  onClick={isReserved ? handleToggleReservation : () => setArchiveDialogOpen(true)}
                 >
-                  <Archive className="h-3.5 w-3.5 text-warning" />
-                  Lưu trữ học viên...
+                  {isReserved ? (
+                    <>
+                      <PlayCircle className="h-3.5 w-3.5 text-emerald-600 animate-pulse" />
+                      Mở lại trạng thái học
+                    </>
+                  ) : (
+                    <>
+                      <Archive className="h-3.5 w-3.5 text-warning" />
+                      Lưu trữ / Đặt bảo lưu...
+                    </>
+                  )}
                 </Button>
 
                 <Button

@@ -125,8 +125,19 @@ export const StudentDrawer: React.FC<StudentDrawerProps> = ({
                   <SheetDescription className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
                     <span>{student.email}</span>
                     <span>•</span>
-                    <Badge variant="outline" className="text-xs text-emerald-600 bg-emerald-50">
-                      {student.is_active === false ? "Tạm nghỉ" : "Active Student"}
+                    <Badge
+                      variant="outline"
+                      className={
+                        student.is_active === false || student.status === "suspended" || student.isReserved
+                          ? "text-xs text-amber-700 bg-amber-50 border-amber-300 font-medium"
+                          : "text-xs text-emerald-600 bg-emerald-50"
+                      }
+                    >
+                      {student.status === "suspended" || student.isReserved
+                        ? "⏸️ Đang bảo lưu"
+                        : student.is_active === false
+                        ? "🔒 Tạm nghỉ / Khóa"
+                        : "Active Student"}
                     </Badge>
                   </SheetDescription>
                 </div>
@@ -161,7 +172,12 @@ export const StudentDrawer: React.FC<StudentDrawerProps> = ({
           <HomeworkProgressStrip
             totalHomeworks={student.totalHomeworks || 0}
             completedCount={student.completedHw || 0}
-            onSelectHomework={(hwNum) => alert(`Chi tiết Homework ${hwNum}`)}
+            items={student.homeworkItems}
+            onSelectHomework={(hwNum, item) => {
+              if (item?.title) {
+                toast.info(`Bài tập ${hwNum}: ${item.title} (${item.status === 'done' ? 'Đã nộp' : item.status === 'missed' ? 'Quá hạn' : 'Chưa nộp'})`);
+              }
+            }}
           />
 
           {/* Teacher Feedback History Timeline */}
@@ -170,13 +186,13 @@ export const StudentDrawer: React.FC<StudentDrawerProps> = ({
               <MessageSquare className="h-4 w-4 text-emerald-600" />
               Lịch sử nhận xét của giáo viên
             </h4>
-            {feedbackHistory.length === 0 ? (
+            {(student.feedbackHistory || feedbackHistory).length === 0 ? (
               <div className="p-6 border rounded-lg bg-muted/20 text-center text-xs text-muted-foreground">
                 Chưa có nhận xét nào cho học viên này.
               </div>
             ) : (
               <div className="space-y-3 pl-2 border-l-2 border-slate-200 dark:border-slate-800">
-                {feedbackHistory.map((item: any, idx: number) => (
+                {(student.feedbackHistory || feedbackHistory).map((item: any, idx: number) => (
                   <div key={idx} className="relative pl-4 space-y-1">
                     <div className="absolute -left-[21px] top-1 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-4 ring-background" />
                     <div className="flex items-center justify-between text-xs">

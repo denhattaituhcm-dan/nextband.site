@@ -14,30 +14,15 @@ import { useAuth } from "@/hooks/useAuth";
 import { RichContent } from "@/components/exam/RichContent";
 import { getFillBlankBlankCount } from "@/lib/fillBlank";
 
+import { compareCanonicalOrder } from "@/lib/questionOrder";
+
 interface GradeUpdate {
   answerId: string;
   score: number | null;
   feedback: string;
 }
 
-const getOrderValue = (item: any) => {
-  const order = item?.orderIndex ?? item?.order_index;
-  return typeof order === "number" ? order : Number.MAX_SAFE_INTEGER;
-};
-
-const getCreatedValue = (item: any) => {
-  const raw = item?.createdAt ?? item?.created_at;
-  const t = raw ? new Date(raw).getTime() : 0;
-  return Number.isFinite(t) ? t : 0;
-};
-
-const compareByDisplayOrder = (a: any, b: any) => {
-  const orderDiff = getOrderValue(a) - getOrderValue(b);
-  if (orderDiff !== 0) return orderDiff;
-  const createdDiff = getCreatedValue(a) - getCreatedValue(b);
-  if (createdDiff !== 0) return createdDiff;
-  return String(a?.id || "").localeCompare(String(b?.id || ""));
-};
+const compareByDisplayOrder = compareCanonicalOrder;
 
 const sectionHasQuestions = (section: any) =>
   (section?.questionGroups || []).some(

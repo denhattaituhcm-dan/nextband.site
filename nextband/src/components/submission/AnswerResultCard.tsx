@@ -21,6 +21,8 @@ import { convertOptionValToIndex } from "@/components/exam/MatchingRenderer";
 import { SentenceLevelGrader } from "@/components/grading/SentenceLevelGrader";
 import { parseStructuredFeedback } from "@/lib/sentenceFeedback";
 
+import { isSubjectiveQuestion } from "@/lib/questionOrder";
+
 interface AnswerResultCardProps {
   questionIndex: number;
   questionText: string;
@@ -65,10 +67,11 @@ export function AnswerResultCard({
   isSubmitted = false,
   sectionType,
 }: AnswerResultCardProps) {
-  const isManualGradeOnly = ["speaking", "writing"].includes(sectionType || "");
+  const isSubjective = isSubjectiveQuestion({ questionType, correctAnswer }, sectionType);
+  const isManualPending = isSubjective && (!isGraded || score == null);
   const shouldHideCorrectAnswerForStudent =
     sectionType === "speaking" || questionType === "speaking";
-  const isAutoGradable = ["listening", "reading", "general"].includes(sectionType || "");
+  const isAutoGradable = !isSubjective && ["listening", "reading", "general", "grammar"].includes(sectionType || "");
   const isFillBlankWithPlaceholders =
     questionType === "fill_blank" && hasFillBlankPlaceholders(questionText);
   const fillBlankPointCount = getFillBlankBlankCount(correctAnswer);
@@ -94,8 +97,8 @@ export function AnswerResultCard({
   const computedScore = (() => {
     // If backend already provided a score, use it
     if (score != null) return score;
-    // If not auto-gradable or no correct answer, we can't determine
-    if (!isAutoGradable || !correctAnswer || !answerText) return null;
+    // If subjective or not auto-gradable or no correct answer, we can't auto-determine
+    if (isSubjective || !isAutoGradable || !correctAnswer || !answerText) return null;
 
     const autoGradableTypes = [
       "multiple_choice", "true_false_not_given", "yes_no_not_given",
@@ -219,8 +222,7 @@ export function AnswerResultCard({
   const isFullCredit = rawScore != null && Number(rawScore) >= Number(effectivePoints);
   const isZeroCredit = rawScore != null && Number(rawScore) === 0;
   const isPartialCredit = rawScore != null && Number(rawScore) > 0 && Number(rawScore) < Number(effectivePoints);
-  const isManualPending = isManualGradeOnly && (!isGraded || score == null);
-  const isUnanswered = !answerText && shouldShowAutoResult;
+  const isUnanswered = !answerText && shouldShowAutoResult && !isSubjective;
 
   const getStatusIcon = () => {
     if (isManualPending)
@@ -234,6 +236,7 @@ export function AnswerResultCard({
       return <Minus className="h-4 w-4 text-amber-600 dark:text-amber-400" />;
     }
 
+    if (isSubjective) return <Clock className="h-4 w-4 text-amber-500" />;
     if (!answerText) return <XCircle className="h-4 w-4 text-rose-600 dark:text-rose-400" />;
     return <Minus className="h-4 w-4 text-muted-foreground" />;
   };
@@ -245,7 +248,7 @@ export function AnswerResultCard({
           variant="outline"
           className="text-xs font-bold bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300"
         >
-          ⏳ Chờ giáo viên chấm
+          ⏳ Tự luận - Chờ giáo viên chấm
         </Badge>
       );
     }
@@ -275,6 +278,17 @@ export function AnswerResultCard({
       );
     }
 
+    if (isSubjective) {
+      return (
+        <Badge
+          variant="outline"
+          className="text-xs font-bold bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300"
+        >
+          ⏳ Tự luận - Chờ chấm
+        </Badge>
+      );
+    }
+
     if (isUnanswered) {
       return (
         <Badge variant="outline" className="text-xs font-bold bg-slate-100 text-slate-700 border-slate-300">
@@ -297,51 +311,41 @@ export function AnswerResultCard({
 
   const parseStudentSelections = (text: string | null) => {
     if (!text) return [];
-
     try {
       const parsed = JSON.parse(text);
-      if (Array.isArray(parsed)) {
-        return parsed.map((value) => String(value).trim()).filter(Boolean);
-      }
-    } catch {
-      // Fall back to plain text parsing below.
-    }
+      if (Array.isArray(parsed)) return parsed.map((item) => String(item).trim()).filter(Boolean);
+    } catch {}
+    return text.split("|").flatMap((part) => part.split(",")).map((item) => item.trim()).filter(Boolean);
+  };
 
-    return text
-      .split("|")
-      .flatMap((part) => part.split(","))
-      .map((value) => String(value).trim())
-      .filter(Boolean);
+  const parseCorrectSelections = (text: string | null) => {
+    if (!text) return [];
+    return text.split("|").map((item) => item.trim()).filter(Boolean);
   };
 
   const normalizeOptionValue = (value: string) => value.trim().toLowerCase();
   const studentSelections = parseStudentSelections(answerText);
+  const correctSelections = parseCorrectSelections(correctAnswer);
   const normalizedStudentSelections = new Set(
     studentSelections.map(normalizeOptionValue),
   );
-  const correctSelections = correctAnswer
-    ? correctAnswer
-        .split("|")
-        .map((value) => value.trim())
-        .filter(Boolean)
-    : [];
   const normalizedCorrectSelections = new Set(
     correctSelections.map(normalizeOptionValue),
   );
 
   const cardStyle = cn(
     "transition-all border shadow-2xs rounded-xl overflow-hidden",
-    canShowResult
-      ? isFullCredit
-        ? "border-emerald-300/80 bg-emerald-50/15 border-l-4 border-l-emerald-500 dark:border-emerald-800 dark:bg-emerald-950/10"
-        : isZeroCredit || isUnanswered
-        ? "border-rose-200/80 bg-rose-50/15 border-l-4 border-l-rose-500 dark:border-rose-900/60 dark:bg-rose-950/10"
-        : isPartialCredit
-        ? "border-amber-200/80 bg-amber-50/15 border-l-4 border-l-amber-500 dark:border-amber-900/60 dark:bg-amber-950/10"
-        : isManualPending
-        ? "border-amber-200/80 bg-amber-50/15 border-l-4 border-l-amber-400 dark:border-amber-900/60 dark:bg-amber-950/10"
+    isManualPending
+      ? "border-amber-200/80 bg-amber-50/15 border-l-4 border-l-amber-400 dark:border-amber-900/60 dark:bg-amber-950/10"
+      : canShowResult
+        ? isFullCredit
+          ? "border-emerald-300/80 bg-emerald-50/15 border-l-4 border-l-emerald-500 dark:border-emerald-800 dark:bg-emerald-950/10"
+          : isZeroCredit || isUnanswered
+          ? "border-rose-200/80 bg-rose-50/15 border-l-4 border-l-rose-500 dark:border-rose-900/60 dark:bg-rose-950/10"
+          : isPartialCredit
+          ? "border-amber-200/80 bg-amber-50/15 border-l-4 border-l-amber-500 dark:border-amber-900/60 dark:bg-amber-950/10"
+          : "border-border/70"
         : "border-border/70"
-      : "border-border/70"
   );
 
   return (

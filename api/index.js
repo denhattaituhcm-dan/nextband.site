@@ -117417,12 +117417,12 @@ var examsRoutes = async (fastify) => {
         include: {
           course: { select: { id: true, title: true } },
           sections: {
-            orderBy: { orderIndex: "asc" },
+            orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }],
             include: {
               questionGroups: {
-                orderBy: { orderIndex: "asc" },
+                orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }],
                 include: {
-                  questions: { orderBy: { orderIndex: "asc" } }
+                  questions: { orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }] }
                 }
               }
             }
@@ -119629,10 +119629,14 @@ var ExamSubmissionService = class {
       exam: {
         include: {
           sections: {
+            orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }],
             include: {
               questionGroups: {
+                orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }],
                 include: {
-                  questions: true
+                  questions: {
+                    orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }]
+                  }
                 }
               }
             }
@@ -119928,10 +119932,14 @@ var ExamSubmissionService = class {
         include: {
           policy: true,
           sections: {
+            orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }],
             include: {
               questionGroups: {
+                orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }],
                 include: {
-                  questions: true
+                  questions: {
+                    orderBy: [{ orderIndex: "asc" }, { createdAt: "asc" }]
+                  }
                 }
               }
             }
@@ -120633,6 +120641,9 @@ var usersRoutes = async (fastify) => {
         where.roles = {
           some: { role }
         };
+        if (role === "student") {
+          where.roles.none = { role: "admin" };
+        }
       }
       const sortFieldMap = {
         newest: "createdAt",
@@ -120693,7 +120704,8 @@ var usersRoutes = async (fastify) => {
       const isTeacher = user.roles.includes("teacher");
       const where = {
         roles: {
-          some: { role: "student" }
+          some: { role: "student" },
+          none: { role: "admin" }
         }
       };
       if (isTeacher && !isAdmin) {
@@ -120724,6 +120736,7 @@ var usersRoutes = async (fastify) => {
             gender: true,
             dateOfBirth: true,
             isActive: true,
+            bio: true,
             createdAt: true,
             classesAsStudent: {
               where: { deletedAt: null },
@@ -120742,14 +120755,15 @@ var usersRoutes = async (fastify) => {
             submissions: {
               select: {
                 id: true,
+                examId: true,
                 status: true,
                 totalScore: true,
                 submittedAt: true,
                 createdAt: true,
-                exam: { select: { id: true, title: true } }
+                exam: { select: { id: true, title: true, courseId: true } }
               },
               orderBy: { createdAt: "desc" },
-              take: 10
+              take: 20
             },
             attendanceRecords: {
               select: {
@@ -120760,12 +120774,33 @@ var usersRoutes = async (fastify) => {
                 class: { select: { id: true, name: true, teacher: { select: { fullName: true } } } }
               },
               orderBy: { sessionDate: "desc" },
-              take: 10
+              take: 20
             }
           }
         }),
         fastify.prisma.user.count({ where })
       ]);
+      const allCourseIds = Array.from(
+        new Set(
+          studentsData.flatMap(
+            (st) => (st.classesAsStudent || []).map((cs) => cs.class?.courseId).filter(Boolean)
+          )
+        )
+      );
+      const courseExams = allCourseIds.length > 0 ? await fastify.prisma.exam.findMany({
+        where: {
+          courseId: { in: allCourseIds },
+          isPublished: true
+        },
+        select: { id: true, courseId: true, title: true }
+      }) : [];
+      const courseExamsMap = /* @__PURE__ */ new Map();
+      courseExams.forEach((e2) => {
+        if (e2.courseId) {
+          if (!courseExamsMap.has(e2.courseId)) courseExamsMap.set(e2.courseId, []);
+          courseExamsMap.get(e2.courseId).push({ id: e2.id, title: e2.title });
+        }
+      });
       const items = await Promise.all(studentsData.map(async (st) => {
         const classesMap = /* @__PURE__ */ new Map();
         (st.classesAsStudent || []).forEach((cs) => {
@@ -120781,16 +120816,34 @@ var usersRoutes = async (fastify) => {
           }
         });
         const classes = Array.from(classesMap.values());
-        const examSubs = st.submissions || [];
-        const totalAssignedCount = examSubs.length;
-        const submittedCount = examSubs.filter((s2) => s2.status === "submitted" || s2.status === "graded" || s2.status === "SUBMITTED" || s2.status === "GRADED").length;
-        const gradedCount = examSubs.filter((s2) => s2.status === "graded" || s2.status === "GRADED").length;
+        const studentCourseIds = classes.map((c) => c.courseId).filter(Boolean);
+        const studentCourseExams = studentCourseIds.flatMap((cId) => courseExamsMap.get(cId) || []);
+        const studentCourseExamIds = new Set(studentCourseExams.map((e2) => e2.id));
+        let totalAssignedCount = 0;
+        let submittedCount = 0;
+        let gradedCount = 0;
+        let homeworkPercentage = null;
+        if (classes.length > 0 && studentCourseExamIds.size > 0) {
+          totalAssignedCount = studentCourseExamIds.size;
+          const relevantSubmissions = (st.submissions || []).filter(
+            (s2) => studentCourseExamIds.has(s2.exam?.id) || studentCourseExamIds.has(s2.examId)
+          );
+          submittedCount = relevantSubmissions.filter(
+            (s2) => s2.status === "submitted" || s2.status === "graded" || s2.status === "SUBMITTED" || s2.status === "GRADED"
+          ).length;
+          gradedCount = relevantSubmissions.filter(
+            (s2) => s2.status === "graded" || s2.status === "GRADED"
+          ).length;
+          homeworkPercentage = Math.round(submittedCount / totalAssignedCount * 100);
+        }
         const attendances = st.attendanceRecords || [];
         const totalSessions = attendances.length;
-        const attendedCount = attendances.filter((a) => a.status === "PRESENT" || a.status === "present").length;
+        const attendedCount = attendances.filter(
+          (a) => a.status === "PRESENT" || a.status === "present"
+        ).length;
         const attendancePercentage = totalSessions > 0 ? Math.round(attendedCount / totalSessions * 100) : null;
         const recentActivities = [];
-        examSubs.forEach((s2) => {
+        (st.submissions || []).forEach((s2) => {
           if (s2.submittedAt || s2.createdAt) {
             recentActivities.push({
               type: "submission",
@@ -120809,7 +120862,9 @@ var usersRoutes = async (fastify) => {
             recentActivities.push({
               type: "attendance",
               title: `\u0110i\u1EC3m danh: ${statusText}${className}`,
-              description: `Bu\u1ED5i h\u1ECDc ng\xE0y ${new Date(a.sessionDate || a.createdAt).toLocaleDateString("vi-VN")}${teacherText}`,
+              description: `Bu\u1ED5i h\u1ECDc ng\xE0y ${new Date(
+                a.sessionDate || a.createdAt
+              ).toLocaleDateString("vi-VN")}${teacherText}`,
               timestamp: new Date(a.sessionDate || a.createdAt).toISOString()
             });
           }
@@ -120822,21 +120877,27 @@ var usersRoutes = async (fastify) => {
             timestamp: new Date(st.createdAt).toISOString()
           });
         }
-        recentActivities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        recentActivities.sort(
+          (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
         const lastActivity = recentActivities.length > 0 ? recentActivities[0] : null;
         let academicHealth = null;
-        if (totalAssignedCount > 0) {
+        if (classes.length > 0 && totalAssignedCount > 0) {
           const hwProgressRatio = submittedCount / totalAssignedCount;
           const gradedRatio = submittedCount > 0 ? gradedCount / submittedCount : 0;
           if (totalSessions > 0) {
             const attRatio = attendedCount / totalSessions;
             const score = (attRatio * 0.3 + hwProgressRatio * 0.4 + gradedRatio * 0.3) * 100;
-            academicHealth = Math.round(score);
+            academicHealth = Math.min(100, Math.max(0, Math.round(score)));
           } else {
             const score = (hwProgressRatio * 0.6 + gradedRatio * 0.4) * 100;
-            academicHealth = Math.round(score);
+            academicHealth = Math.min(100, Math.max(0, Math.round(score)));
           }
         }
+        const isClassSuspended = (st.classesAsStudent || []).some((cs) => cs.status === "SUSPENDED");
+        const isBioReserved = !!(st.bio?.includes('"isReserved":true') || st.bio?.includes('"status":"suspended"') || st.bio === "RESERVED");
+        const isReserved = isClassSuspended || isBioReserved;
+        const status = isReserved ? "suspended" : st.isActive === false ? "inactive" : "active";
         return {
           id: st.id,
           userId: st.userId,
@@ -120849,13 +120910,16 @@ var usersRoutes = async (fastify) => {
           gender: st.gender,
           dateOfBirth: st.dateOfBirth,
           isActive: st.isActive,
+          isReserved,
+          status,
+          bio: st.bio,
           createdAt: st.createdAt,
           classes,
           homework: {
             submittedCount,
             gradedCount,
             totalAssignedCount,
-            percentage: totalAssignedCount > 0 ? Math.round(submittedCount / totalAssignedCount * 100) : null
+            percentage: homeworkPercentage
           },
           attendance: {
             attendedCount,
@@ -121054,12 +121118,15 @@ var usersRoutes = async (fastify) => {
       const {
         fullName,
         isActive,
+        isReserved,
+        status,
         role,
         gender,
         dateOfBirth,
         phone,
         parentName,
-        parentPhone
+        parentPhone,
+        bio
       } = request.body;
       const existingUser = await fastify.prisma.user.findFirst({
         where: {
@@ -121073,11 +121140,35 @@ var usersRoutes = async (fastify) => {
       if (!existingUser) {
         return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y ng\u01B0\u1EDDi d\xF9ng" });
       }
+      let updatedBio = bio;
+      if (isReserved !== void 0 || status !== void 0) {
+        const shouldReserve = isReserved === true || status === "suspended";
+        const newEnrollmentStatus = shouldReserve ? "SUSPENDED" : "ACTIVE";
+        await fastify.prisma.classStudent.updateMany({
+          where: {
+            studentId: existingUser.userId,
+            deletedAt: null
+          },
+          data: {
+            status: newEnrollmentStatus
+          }
+        });
+        const currentBio = existingUser.bio || "";
+        try {
+          const bioObj = currentBio.startsWith("{") ? JSON.parse(currentBio) : { note: currentBio };
+          bioObj.isReserved = shouldReserve;
+          bioObj.status = shouldReserve ? "suspended" : "active";
+          updatedBio = JSON.stringify(bioObj);
+        } catch {
+          updatedBio = JSON.stringify({ isReserved: shouldReserve, status: shouldReserve ? "suspended" : "active" });
+        }
+      }
       const user = await fastify.prisma.user.update({
         where: { id: existingUser.id },
         data: {
           ...fullName !== void 0 && { fullName },
           ...isActive !== void 0 && { isActive },
+          ...updatedBio !== void 0 && { bio: updatedBio },
           ...gender !== void 0 && { gender },
           ...dateOfBirth !== void 0 && {
             dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null

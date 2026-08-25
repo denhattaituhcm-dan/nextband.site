@@ -21,6 +21,8 @@ import { MatchingRenderer } from "./MatchingRenderer";
 import { RichContent } from "./RichContent";
 import { formatStorageUrl } from "@/lib/api";
 
+import { compareCanonicalOrder } from "@/lib/questionOrder";
+
 interface GrammarSectionProps {
   section: any;
   answers: Record<string, any>;
@@ -46,7 +48,7 @@ export function GrammarSection({
 }: GrammarSectionProps) {
   const rawGroups = section.question_groups || section.questionGroups || [];
 
-  // Normalize question fields from camelCase to snake_case
+  // Normalize question fields and sort canonically
   const questionGroups = rawGroups
     .map((g: any) => ({
       ...g,
@@ -65,21 +67,9 @@ export function GrammarSection({
               : q.options
             : [],
         }))
-        .sort((a: any, b: any) => {
-          const orderDiff = (a.order_index || 0) - (b.order_index || 0);
-          return orderDiff !== 0
-            ? orderDiff
-            : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-        }),
+        .sort(compareCanonicalOrder),
     }))
-    .sort((a: any, b: any) => {
-      const orderDiff =
-        (a.order_index || a.orderIndex || 0) -
-        (b.order_index || b.orderIndex || 0);
-      return orderDiff !== 0
-        ? orderDiff
-        : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-    });
+    .sort(compareCanonicalOrder);
 
   const cleanSectionInstructions = cleanHtmlText(section.instructions);
 

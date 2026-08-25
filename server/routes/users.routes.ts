@@ -61,6 +61,9 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         where.roles = {
           some: { role },
         };
+        if (role === "student") {
+          where.roles.none = { role: "admin" };
+        }
       }
 
       const sortFieldMap: Record<string, string> = {
@@ -130,6 +133,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
       const where: any = {
         roles: {
           some: { role: "student" },
+          none: { role: "admin" },
         },
       };
 
@@ -163,6 +167,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
             gender: true,
             dateOfBirth: true,
             isActive: true,
+            bio: true,
             createdAt: true,
             classesAsStudent: {
               where: { deletedAt: null },
@@ -181,14 +186,15 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
             submissions: {
               select: {
                 id: true,
+                examId: true,
                 status: true,
                 totalScore: true,
                 submittedAt: true,
                 createdAt: true,
-                exam: { select: { id: true, title: true } },
+                exam: { select: { id: true, title: true, courseId: true } },
               },
               orderBy: { createdAt: "desc" },
-              take: 10,
+              take: 20,
             },
             attendanceRecords: {
               select: {
@@ -199,12 +205,40 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
                 class: { select: { id: true, name: true, teacher: { select: { fullName: true } } } },
               },
               orderBy: { sessionDate: "desc" },
-              take: 10,
+              take: 20,
             },
           },
         }),
         fastify.prisma.user.count({ where }),
       ]);
+
+      // Pre-fetch all published exams for all enrolled courses across this page
+      const allCourseIds = Array.from(
+        new Set(
+          studentsData.flatMap((st) =>
+            (st.classesAsStudent || []).map((cs) => cs.class?.courseId).filter(Boolean)
+          )
+        )
+      ) as string[];
+
+      const courseExams =
+        allCourseIds.length > 0
+          ? await fastify.prisma.exam.findMany({
+              where: {
+                courseId: { in: allCourseIds },
+                isPublished: true,
+              },
+              select: { id: true, courseId: true, title: true },
+            })
+          : [];
+
+      const courseExamsMap = new Map<string, Array<{ id: string; title: string }>>();
+      courseExams.forEach((e) => {
+        if (e.courseId) {
+          if (!courseExamsMap.has(e.courseId)) courseExamsMap.set(e.courseId, []);
+          courseExamsMap.get(e.courseId)!.push({ id: e.id, title: e.title });
+        }
+      });
 
       const items = await Promise.all(studentsData.map(async (st: any) => {
         // 1. Classes array (Deduplicated per student)
@@ -223,29 +257,56 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         });
         const classes = Array.from(classesMap.values());
 
-        // 2. Exam & Submissions stats (Canonical exam_submissions)
-        const examSubs = st.submissions || [];
-        const totalAssignedCount = examSubs.length;
-        
-        const submittedCount = examSubs.filter((s: any) => s.status === "submitted" || s.status === "graded" || s.status === "SUBMITTED" || s.status === "GRADED").length;
-        const gradedCount = examSubs.filter((s: any) => s.status === "graded" || s.status === "GRADED").length;
+        // 2. Exam & Submissions stats for enrolled courses
+        const studentCourseIds = classes.map((c) => c.courseId).filter(Boolean) as string[];
+        const studentCourseExams = studentCourseIds.flatMap((cId) => courseExamsMap.get(cId) || []);
+        const studentCourseExamIds = new Set(studentCourseExams.map((e) => e.id));
+
+        let totalAssignedCount = 0;
+        let submittedCount = 0;
+        let gradedCount = 0;
+        let homeworkPercentage: number | null = null;
+
+        if (classes.length > 0 && studentCourseExamIds.size > 0) {
+          totalAssignedCount = studentCourseExamIds.size;
+          const relevantSubmissions = (st.submissions || []).filter(
+            (s: any) => studentCourseExamIds.has(s.exam?.id) || studentCourseExamIds.has(s.examId)
+          );
+          submittedCount = relevantSubmissions.filter(
+            (s: any) =>
+              s.status === "submitted" ||
+              s.status === "graded" ||
+              s.status === "SUBMITTED" ||
+              s.status === "GRADED"
+          ).length;
+          gradedCount = relevantSubmissions.filter(
+            (s: any) => s.status === "graded" || s.status === "GRADED"
+          ).length;
+          homeworkPercentage = Math.round((submittedCount / totalAssignedCount) * 100);
+        }
 
         // 3. Attendance stats
         const attendances = st.attendanceRecords || [];
         const totalSessions = attendances.length;
-        const attendedCount = attendances.filter((a: any) => a.status === "PRESENT" || a.status === "present").length;
-        const attendancePercentage = totalSessions > 0 
-          ? Math.round((attendedCount / totalSessions) * 100)
-          : null;
+        const attendedCount = attendances.filter(
+          (a: any) => a.status === "PRESENT" || a.status === "present"
+        ).length;
+        const attendancePercentage =
+          totalSessions > 0 ? Math.round((attendedCount / totalSessions) * 100) : null;
 
         // 4. Activities Timeline
         const recentActivities: any[] = [];
-        examSubs.forEach((s: any) => {
+        (st.submissions || []).forEach((s: any) => {
           if (s.submittedAt || s.createdAt) {
             recentActivities.push({
               type: "submission",
               title: `Nộp bài: ${s.exam?.title || "Bài tập / Bài thi"}`,
-              description: s.totalScore != null ? `Điểm số: ${s.totalScore}` : `Trạng thái: ${s.status === 'graded' || s.status === 'GRADED' ? 'Đã chấm' : 'Đã nộp bài'}`,
+              description:
+                s.totalScore != null
+                  ? `Điểm số: ${s.totalScore}`
+                  : `Trạng thái: ${
+                      s.status === "graded" || s.status === "GRADED" ? "Đã chấm" : "Đã nộp bài"
+                    }`,
               score: s.totalScore ? Number(s.totalScore) : null,
               timestamp: new Date(s.submittedAt || s.createdAt).toISOString(),
             });
@@ -253,13 +314,20 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         });
         attendances.forEach((a: any) => {
           if (a.sessionDate || a.createdAt) {
-            const statusText = a.status === "PRESENT" || a.status === "present" ? "Có mặt" : a.status === "LATE" || a.status === "late" ? "Đi muộn" : "Vắng";
+            const statusText =
+              a.status === "PRESENT" || a.status === "present"
+                ? "Có mặt"
+                : a.status === "LATE" || a.status === "late"
+                ? "Đi muộn"
+                : "Vắng";
             const className = a.class?.name ? ` - Lớp ${a.class.name}` : "";
             const teacherText = a.class?.teacher?.fullName ? ` (GV: ${a.class.teacher.fullName})` : "";
             recentActivities.push({
               type: "attendance",
               title: `Điểm danh: ${statusText}${className}`,
-              description: `Buổi học ngày ${new Date(a.sessionDate || a.createdAt).toLocaleDateString("vi-VN")}${teacherText}`,
+              description: `Buổi học ngày ${new Date(
+                a.sessionDate || a.createdAt
+              ).toLocaleDateString("vi-VN")}${teacherText}`,
               timestamp: new Date(a.sessionDate || a.createdAt).toISOString(),
             });
           }
@@ -274,24 +342,32 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           });
         }
 
-        recentActivities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        recentActivities.sort(
+          (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
         const lastActivity = recentActivities.length > 0 ? recentActivities[0] : null;
 
-        // 5. Server Academic Health Score Calculation
+        // 5. Server Academic Health Score Calculation (Only for enrolled students with real curriculum)
         let academicHealth: number | null = null;
-        if (totalAssignedCount > 0) {
+        if (classes.length > 0 && totalAssignedCount > 0) {
           const hwProgressRatio = submittedCount / totalAssignedCount;
-          const gradedRatio = submittedCount > 0 ? (gradedCount / submittedCount) : 0;
+          const gradedRatio = submittedCount > 0 ? gradedCount / submittedCount : 0;
 
           if (totalSessions > 0) {
             const attRatio = attendedCount / totalSessions;
             const score = (attRatio * 0.3 + hwProgressRatio * 0.4 + gradedRatio * 0.3) * 100;
-            academicHealth = Math.round(score);
+            academicHealth = Math.min(100, Math.max(0, Math.round(score)));
           } else {
             const score = (hwProgressRatio * 0.6 + gradedRatio * 0.4) * 100;
-            academicHealth = Math.round(score);
+            academicHealth = Math.min(100, Math.max(0, Math.round(score)));
           }
         }
+
+        // Check reservation / suspended status
+        const isClassSuspended = (st.classesAsStudent || []).some((cs: any) => cs.status === "SUSPENDED");
+        const isBioReserved = !!(st.bio?.includes('"isReserved":true') || st.bio?.includes('"status":"suspended"') || st.bio === "RESERVED");
+        const isReserved = isClassSuspended || isBioReserved;
+        const status = isReserved ? "suspended" : (st.isActive === false ? "inactive" : "active");
 
         return {
           id: st.id,
@@ -305,13 +381,16 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           gender: st.gender,
           dateOfBirth: st.dateOfBirth,
           isActive: st.isActive,
+          isReserved,
+          status,
+          bio: st.bio,
           createdAt: st.createdAt,
           classes,
           homework: {
             submittedCount,
             gradedCount,
             totalAssignedCount,
-            percentage: totalAssignedCount > 0 ? Math.round((submittedCount / totalAssignedCount) * 100) : null,
+            percentage: homeworkPercentage,
           },
           attendance: {
             attendedCount,
@@ -543,12 +622,15 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
       const {
         fullName,
         isActive,
+        isReserved,
+        status,
         role,
         gender,
         dateOfBirth,
         phone,
         parentName,
         parentPhone,
+        bio,
       } = request.body as any;
 
       const existingUser = await fastify.prisma.user.findFirst({
@@ -565,11 +647,38 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         return reply.status(404).send({ error: "Không tìm thấy người dùng" });
       }
 
+      let updatedBio = bio;
+      if (isReserved !== undefined || status !== undefined) {
+        const shouldReserve = isReserved === true || status === "suspended";
+        const newEnrollmentStatus = shouldReserve ? "SUSPENDED" : "ACTIVE";
+
+        await fastify.prisma.classStudent.updateMany({
+          where: {
+            studentId: existingUser.userId,
+            deletedAt: null,
+          },
+          data: {
+            status: newEnrollmentStatus,
+          },
+        });
+
+        const currentBio = existingUser.bio || "";
+        try {
+          const bioObj = currentBio.startsWith("{") ? JSON.parse(currentBio) : { note: currentBio };
+          bioObj.isReserved = shouldReserve;
+          bioObj.status = shouldReserve ? "suspended" : "active";
+          updatedBio = JSON.stringify(bioObj);
+        } catch {
+          updatedBio = JSON.stringify({ isReserved: shouldReserve, status: shouldReserve ? "suspended" : "active" });
+        }
+      }
+
       const user = await fastify.prisma.user.update({
         where: { id: existingUser.id },
         data: {
           ...(fullName !== undefined && { fullName }),
           ...(isActive !== undefined && { isActive }),
+          ...(updatedBio !== undefined && { bio: updatedBio }),
           ...(gender !== undefined && { gender }),
           ...(dateOfBirth !== undefined && {
             dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null,
