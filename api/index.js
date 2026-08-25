@@ -123481,9 +123481,18 @@ var invitation_routes_default = invitationRoutes;
 
 // server/utils/deadline.util.ts
 function calculateAutomaticDeadline(params) {
+  const offsetDays = Math.max(1, params.defaultOffsetDays || 7);
+  if (params.sessionDate) {
+    const sDate = new Date(params.sessionDate);
+    if (!isNaN(sDate.getTime())) {
+      const targetMs2 = sDate.getTime() + offsetDays * 24 * 60 * 60 * 1e3;
+      const deadline2 = new Date(targetMs2);
+      deadline2.setHours(23, 59, 59, 999);
+      return deadline2;
+    }
+  }
   const baseDate = params.classStartDate ? new Date(params.classStartDate) : /* @__PURE__ */ new Date();
   const order = Math.max(1, Math.floor(Number(params.lessonOrder) || 1));
-  const offsetDays = Math.max(1, params.defaultOffsetDays || 7);
   const targetMs = baseDate.getTime() + order * offsetDays * 24 * 60 * 60 * 1e3;
   const deadline = new Date(targetMs);
   deadline.setHours(23, 59, 59, 999);
@@ -123498,6 +123507,7 @@ function resolveEffectiveDeadline(params) {
   }
   const auto = calculateAutomaticDeadline({
     classStartDate: params.classStartDate,
+    sessionDate: params.sessionDate,
     lessonOrder: params.lessonWeek,
     defaultOffsetDays: params.defaultOffsetDays
   });
@@ -123570,8 +123580,9 @@ var LessonService = class {
     let exams = [];
     let submissions = [];
     let manualHomeworks = [];
+    let sessions = [];
     if (courseId) {
-      const [fetchedExams, fetchedSubmissions, fetchedHomeworks] = await Promise.all([
+      const [fetchedExams, fetchedSubmissions, fetchedHomeworks, fetchedSessions] = await Promise.all([
         this.prisma.exam.findMany({
           where: { courseId, isPublished: true },
           orderBy: { week: "asc" },
@@ -123586,11 +123597,16 @@ var LessonService = class {
         }),
         this.prisma.homework.findMany({
           where: { classId }
+        }),
+        this.prisma.classSession.findMany({
+          where: { classId },
+          orderBy: { sessionNumber: "asc" }
         })
       ]);
       exams = fetchedExams;
       submissions = fetchedSubmissions;
       manualHomeworks = fetchedHomeworks;
+      sessions = fetchedSessions;
     }
     let completedCount = 0;
     const lessonsProjection = exams.map((exam, idx) => {
@@ -123600,8 +123616,11 @@ var LessonService = class {
       if (isGraded) completedCount++;
       const lessonOrder = exam.week || idx + 1;
       const customHw = manualHomeworks.find((h2) => h2.examId === exam.id || h2.lessonId === exam.id);
+      const matchingSession = sessions.find((s2) => s2.sessionNumber === lessonOrder);
+      const sessionDate = matchingSession?.plannedDate || null;
       const { effectiveDeadline, deadlineSource } = resolveEffectiveDeadline({
         classStartDate: classData.startDate || classData.createdAt,
+        sessionDate,
         lessonWeek: lessonOrder,
         manualDeadline: customHw?.deadline,
         defaultOffsetDays: 7
@@ -123614,8 +123633,8 @@ var LessonService = class {
         lessonOrder,
         estimatedMinutes: exam.durationMinutes || 60,
         status: exam.isPublished ? "PUBLISHED" : "DRAFT",
-        sessionDate: null,
-        sessionNumber: lessonOrder,
+        sessionDate,
+        sessionNumber: matchingSession?.sessionNumber || lessonOrder,
         resources: [],
         sections: exam.sections || [],
         exam_sections: exam.sections || [],

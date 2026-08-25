@@ -141,15 +141,29 @@ export function formatDeadlineCountdown(
 
 /**
  * Pure helper for calculating automatic deadline on client (matches backend invariant)
+ * Rule 1: If sessionDate exists, deadline is sessionDate + offsetDays (default 7 days) at 23:59:59.999.
+ * Rule 2: Fallback to classStartDate + (lessonOrder * offsetDays) at 23:59:59.999.
  */
 export function calculateAutomaticDeadline(params: {
-  classStartDate: Date | string | null | undefined;
-  lessonOrder: number;
+  classStartDate?: Date | string | null | undefined;
+  sessionDate?: Date | string | null | undefined;
+  lessonOrder?: number;
   defaultOffsetDays?: number;
 }): Date {
+  const offsetDays = Math.max(1, params.defaultOffsetDays || 7);
+
+  if (params.sessionDate) {
+    const sDate = new Date(params.sessionDate);
+    if (!isNaN(sDate.getTime())) {
+      const targetMs = sDate.getTime() + offsetDays * 24 * 60 * 60 * 1000;
+      const deadline = new Date(targetMs);
+      deadline.setHours(23, 59, 59, 999);
+      return deadline;
+    }
+  }
+
   const baseDate = params.classStartDate ? new Date(params.classStartDate) : new Date();
   const order = Math.max(1, Math.floor(Number(params.lessonOrder) || 1));
-  const offsetDays = Math.max(1, params.defaultOffsetDays || 7);
   const targetMs = baseDate.getTime() + order * offsetDays * 24 * 60 * 60 * 1000;
   const deadline = new Date(targetMs);
   deadline.setHours(23, 59, 59, 999);
@@ -160,8 +174,9 @@ export function calculateAutomaticDeadline(params: {
  * Resolves effective deadline with provenance: MANUAL override > AUTO calculation
  */
 export function resolveEffectiveDeadline(params: {
-  classStartDate: Date | string | null | undefined;
-  lessonWeek: number;
+  classStartDate?: Date | string | null | undefined;
+  sessionDate?: Date | string | null | undefined;
+  lessonWeek?: number;
   manualDeadline?: Date | string | null;
   defaultOffsetDays?: number;
 }): { effectiveDeadline: Date; deadlineSource: "MANUAL" | "AUTO" } {
@@ -174,6 +189,7 @@ export function resolveEffectiveDeadline(params: {
 
   const auto = calculateAutomaticDeadline({
     classStartDate: params.classStartDate,
+    sessionDate: params.sessionDate,
     lessonOrder: params.lessonWeek,
     defaultOffsetDays: params.defaultOffsetDays,
   });

@@ -20,8 +20,11 @@ import { StudentDrawer } from "../features/students/StudentDrawer";
 import { AddStudentModal } from "../features/students/AddStudentModal";
 import { AttendanceSheet } from "../features/attendance/AttendanceSheet";
 import { AttendanceMatrix } from "../features/attendance/AttendanceMatrix";
+import { ProgressReportModal } from "@/components/admin/ProgressReportModal";
+import { mapToProgressReportData } from "@/lib/progressReportMapper";
+import { ProgressReportData } from "@/types/progressReport";
 import { classesApi, invalidateClassQueries } from "@/lib/api";
-import { Users, Eye, UserPlus, CalendarCheck, Grid, List, UserMinus, Loader2 } from "lucide-react";
+import { Users, Eye, UserPlus, CalendarCheck, Grid, List, UserMinus, Loader2, FileText } from "lucide-react";
 import { toast } from "sonner";
 
 export const StudentsTab: React.FC = () => {
@@ -31,6 +34,8 @@ export const StudentsTab: React.FC = () => {
   const [studentToRemove, setStudentToRemove] = useState<any | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [subTab, setSubTab] = useState<string>("list");
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [reportData, setReportData] = useState<ProgressReportData | null>(null);
 
   const students = classData?.activeStudents || [];
   const lessons = classData?.lessons || [];
@@ -41,6 +46,62 @@ export const StudentsTab: React.FC = () => {
   const handleOpenProfile = (student: any) => {
     setSelectedStudent(student);
     setDrawerOpen(true);
+  };
+
+  const handleOpenReport = (student: any) => {
+    const studentId = student.studentId || student.id;
+    const submissions = classData?.submissions || [];
+
+    const studentSubmissions = submissions.filter(
+      (s: any) => (s.studentId || s.student_id) === studentId
+    );
+
+    const studentHomeworks = lessons.map((lesson: any, i: number) => {
+      const hwNum = String(i + 1).padStart(2, "0");
+      const sub = studentSubmissions.find(
+        (s: any) =>
+          s.examId === lesson.id ||
+          s.exam_id === lesson.id ||
+          s.homework_id === lesson.id ||
+          s.lesson_id === lesson.id ||
+          s.homework_title?.includes(hwNum)
+      );
+      const isGraded = sub?.status === "graded" || sub?.status === "GRADED" || sub?.grade_status === "graded";
+      const isSubmitted = sub?.status === "submitted" || sub?.status === "SUBMITTED" || isGraded;
+      const isOverdue = !isSubmitted && lesson.deadline && new Date().getTime() > new Date(lesson.deadline).getTime();
+
+      return {
+        id: lesson.id,
+        title: lesson.title || `Homework ${hwNum}`,
+        status: isGraded ? "graded" : isSubmitted ? "submitted" : isOverdue ? "OVERDUE" : "pending",
+        score: sub?.totalScore ?? sub?.total_score ?? null,
+        bandScore: sub?.totalScore ?? sub?.total_score ?? null,
+        isOverdue,
+      };
+    });
+
+    const studentAttendanceRecords = sessions
+      .map((sess: any) => {
+        const att = (sess.attendance || []).find(
+          (a: any) => (a.studentId || a.student_id) === studentId
+        );
+        return {
+          sessionId: sess.id,
+          status: att?.status || "UNMARKED",
+        };
+      })
+      .filter((a: any) => a.status !== "UNMARKED");
+
+    const mapped = mapToProgressReportData({
+      studentName: student.fullName || student.full_name || student.email || "Học viên",
+      className: classData?.name || "Lớp học",
+      teacherName: classData?.teacher?.fullName || classData?.teacher_name || null,
+      homeworks: studentHomeworks,
+      attendanceRecords: studentAttendanceRecords,
+    });
+
+    setReportData(mapped);
+    setIsReportModalOpen(true);
   };
 
   const removeStudentMutation = useMutation({
@@ -173,6 +234,16 @@ export const StudentsTab: React.FC = () => {
                           <Button
                             variant="ghost"
                             size="sm"
+                            className="h-8 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 font-medium gap-1"
+                            title="Xuất thẻ báo cáo tiến độ học tập gửi Zalo phụ huynh"
+                            onClick={() => handleOpenReport(student)}
+                          >
+                            <FileText className="h-3.5 w-3.5" />
+                            Báo cáo phụ huynh
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
                             className="h-8 text-xs text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
                             onClick={() => handleOpenProfile(student)}
                           >
@@ -219,11 +290,21 @@ export const StudentsTab: React.FC = () => {
         student={selectedStudent}
         open={drawerOpen}
         onOpenChange={setDrawerOpen}
+        onOpenReport={handleOpenReport}
         onRemoveStudent={(student) => {
           setDrawerOpen(false);
           setStudentToRemove(student);
         }}
       />
+
+      {/* PROGRESS REPORT MODAL (THẺ BÁO CÁO PHỤ HUYNH) */}
+      {reportData && (
+        <ProgressReportModal
+          open={isReportModalOpen}
+          onOpenChange={setIsReportModalOpen}
+          data={reportData}
+        />
+      )}
 
       <AddStudentModal
         open={isAddStudentModalOpen}

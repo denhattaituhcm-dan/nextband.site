@@ -81,9 +81,19 @@ export const WorkspaceProvider: React.FC<{
               let effectiveDeadline = matchedProj?.homework?.deadline;
               let deadlineSource = matchedProj?.homework?.deadlineSource || "AUTO";
 
+              const matchingSession = canonicalSessions.find(
+                (s: any) => s.sessionNumber === lessonOrder || s.examId === exam.id || s.lessonId === exam.id
+              );
+              const sessionDate =
+                (matchingSession as any)?.scheduledDate ||
+                (matchingSession as any)?.plannedDate ||
+                (matchingSession as any)?.sessionDate ||
+                null;
+
               if (!effectiveDeadline) {
                 const auto = resolveEffectiveDeadline({
                   classStartDate: cls.startDate || cls.start_date || cls.createdAt || cls.created_at,
+                  sessionDate,
                   lessonWeek: lessonOrder,
                   defaultOffsetDays: 7,
                 });

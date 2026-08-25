@@ -104,14 +104,15 @@ export class LessonService {
       }
     }
 
-    // 2. Parallel Fetch: Course Exams, Student Submissions & Manual Homework overrides
+    // 2. Parallel Fetch: Course Exams, Student Submissions, Manual Homework overrides & Class Sessions
     const courseId = classData.courseId;
     let exams: any[] = [];
     let submissions: any[] = [];
     let manualHomeworks: any[] = [];
+    let sessions: any[] = [];
 
     if (courseId) {
-      const [fetchedExams, fetchedSubmissions, fetchedHomeworks] = await Promise.all([
+      const [fetchedExams, fetchedSubmissions, fetchedHomeworks, fetchedSessions] = await Promise.all([
         this.prisma.exam.findMany({
           where: { courseId, isPublished: true },
           orderBy: { week: 'asc' },
@@ -127,10 +128,15 @@ export class LessonService {
         this.prisma.homework.findMany({
           where: { classId },
         }),
+        this.prisma.classSession.findMany({
+          where: { classId },
+          orderBy: { sessionNumber: 'asc' },
+        }),
       ]);
       exams = fetchedExams;
       submissions = fetchedSubmissions;
       manualHomeworks = fetchedHomeworks;
+      sessions = fetchedSessions;
     }
 
     let completedCount = 0;
@@ -144,9 +150,12 @@ export class LessonService {
 
       const lessonOrder = exam.week || (idx + 1);
       const customHw = manualHomeworks.find((h: any) => h.examId === exam.id || h.lessonId === exam.id);
+      const matchingSession = sessions.find((s: any) => s.sessionNumber === lessonOrder);
+      const sessionDate = matchingSession?.plannedDate || null;
 
       const { effectiveDeadline, deadlineSource } = resolveEffectiveDeadline({
         classStartDate: classData.startDate || classData.createdAt,
+        sessionDate,
         lessonWeek: lessonOrder,
         manualDeadline: customHw?.deadline,
         defaultOffsetDays: 7,
@@ -163,8 +172,8 @@ export class LessonService {
         lessonOrder,
         estimatedMinutes: exam.durationMinutes || 60,
         status: exam.isPublished ? 'PUBLISHED' : 'DRAFT',
-        sessionDate: null,
-        sessionNumber: lessonOrder,
+        sessionDate,
+        sessionNumber: matchingSession?.sessionNumber || lessonOrder,
         resources: [],
         sections: exam.sections || [],
         exam_sections: exam.sections || [],

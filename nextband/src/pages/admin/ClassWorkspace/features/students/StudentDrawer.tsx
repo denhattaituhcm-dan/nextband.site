@@ -9,7 +9,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { HomeworkProgressStrip } from "./HomeworkProgressStrip";
-import { CheckCircle2, MessageSquare, Clock, UserMinus } from "lucide-react";
+import { CheckCircle2, MessageSquare, Clock, UserMinus, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface StudentDrawerProps {
@@ -17,6 +17,7 @@ interface StudentDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onRemoveStudent?: (student: any) => void;
+  onOpenReport?: (student: any) => void;
 }
 
 export const StudentDrawer: React.FC<StudentDrawerProps> = ({
@@ -24,6 +25,7 @@ export const StudentDrawer: React.FC<StudentDrawerProps> = ({
   open,
   onOpenChange,
   onRemoveStudent,
+  onOpenReport,
 }) => {
   if (!student) return null;
 
@@ -34,23 +36,37 @@ export const StudentDrawer: React.FC<StudentDrawerProps> = ({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-2xl p-6 overflow-y-auto space-y-6">
         <SheetHeader className="px-0 pt-0 border-b pb-4">
-          <div className="flex items-center gap-4">
-            <Avatar className="h-12 w-12">
-              <AvatarImage src={student.avatarUrl || student.avatar_url} />
-              <AvatarFallback className="bg-emerald-100 text-emerald-800 font-bold">
-                {(student.fullName || student.full_name || student.email || "HV")?.slice(0, 2).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <SheetTitle className="text-xl font-bold">{student.fullName || student.full_name || student.email}</SheetTitle>
-              <SheetDescription className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
-                <span>{student.email}</span>
-                <span>•</span>
-                <Badge variant="outline" className="text-xs text-emerald-600 bg-emerald-50">
-                  {student.is_active === false ? "Tạm nghỉ" : "Active Student"}
-                </Badge>
-              </SheetDescription>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <Avatar className="h-12 w-12">
+                <AvatarImage src={student.avatarUrl || student.avatar_url} />
+                <AvatarFallback className="bg-emerald-100 text-emerald-800 font-bold">
+                  {(student.fullName || student.full_name || student.email || "HV")?.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <SheetTitle className="text-xl font-bold">{student.fullName || student.full_name || student.email}</SheetTitle>
+                <SheetDescription className="text-xs text-muted-foreground flex items-center gap-2 mt-0.5">
+                  <span>{student.email}</span>
+                  <span>•</span>
+                  <Badge variant="outline" className="text-xs text-emerald-600 bg-emerald-50">
+                    {student.is_active === false ? "Tạm nghỉ" : "Active Student"}
+                  </Badge>
+                </SheetDescription>
+              </div>
             </div>
+
+            {onOpenReport && (
+              <Button
+                size="sm"
+                onClick={() => onOpenReport(student)}
+                className="gap-1.5 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-xs shrink-0 self-start sm:self-auto"
+                title="Xuất thẻ báo cáo tiến độ học tập gửi Zalo cho phụ huynh"
+              >
+                <FileText className="h-4 w-4" />
+                Xuất Thẻ Báo Cáo Phụ Huynh
+              </Button>
+            )}
           </div>
         </SheetHeader>
 
