@@ -6,21 +6,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HomeworkSidebar, HomeworkItemData } from "../components/HomeworkSidebar";
 import { ActivityChecklist } from "../components/ActivityChecklist";
 import { PendingSubmissionsList } from "../components/PendingSubmissionsList";
-import { BookOpen, Users, Inbox, PlusCircle } from "lucide-react";
+import { SetHomeworkDeadlineModal } from "../components/SetHomeworkDeadlineModal";
+import {
+  formatVietnameseDeadline,
+  formatDeadlineCountdown,
+} from "@/lib/homeworkStatusHelper";
+import { BookOpen, Users, Inbox, PlusCircle, Calendar, Clock, Edit3 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const HomeworkTab: React.FC = () => {
-  const { classData, setActiveTab } = useWorkspace();
+  const { classData, setActiveTab, refetchClass } = useWorkspace();
+  const [isDeadlineModalOpen, setIsDeadlineModalOpen] = useState(false);
 
   const lessons = classData?.lessons || [];
   const submissions = classData?.submissions || [];
   const students = classData?.students || [];
   const totalStudents = students.length || 0;
 
-  // Transform lessons to Course-driven Homework list with real workload & heatmap metrics
+  // Transform lessons to Course-driven Homework list with real workload, deadline & heatmap metrics
   const homeworkList: HomeworkItemData[] = lessons.map((lesson: any, i: number) => {
     const hwNum = String(i + 1).padStart(2, "0");
     const hwTitle = lesson.title || `Homework ${hwNum}`;
+    const deadline = lesson.deadline || lesson.homework?.deadline || null;
+    const deadlineSource: "MANUAL" | "AUTO" = lesson.deadlineSource || lesson.homework?.deadlineSource || "AUTO";
     
     // Calculate submissions for this lesson/homework
     const lessonSubmissions = submissions.filter(
@@ -60,11 +68,11 @@ export const HomeworkTab: React.FC = () => {
         : 0;
 
     // Map DB sections if present, otherwise map standard activity types
-    const dbSections = lesson.exam_sections || [];
+    const dbSections = lesson.exam_sections || lesson.sections || [];
     let skills = dbSections.map((sec: any) => ({
       type: sec.section_type || "general",
-      name: sec.title || `Skill - ${sec.section_type.toUpperCase()}`,
-      detail: sec.instructions || `Nội dung luyện tập phần ${sec.section_type.toUpperCase()}`,
+      name: sec.title || `Skill - ${(sec.section_type || "general").toUpperCase()}`,
+      detail: sec.instructions || `Nội dung luyện tập phần ${(sec.section_type || "general").toUpperCase()}`,
     }));
 
     // Fallback if no sections in DB yet
@@ -85,6 +93,8 @@ export const HomeworkTab: React.FC = () => {
       waitingReviewCount,
       gradedCount,
       progressPercent,
+      deadline,
+      deadlineSource,
       skills,
       pendingSubmissions,
     };
@@ -114,6 +124,7 @@ export const HomeworkTab: React.FC = () => {
   }
 
   const selectedHw = homeworkList.find((hw) => hw.id === selectedHwId) || homeworkList[0];
+  const selectedCountdown = selectedHw?.deadline ? formatDeadlineCountdown(selectedHw.deadline) : null;
 
   return (
     <div className="space-y-4 pt-2">
@@ -128,7 +139,7 @@ export const HomeworkTab: React.FC = () => {
               Nội dung học tập & Heatmap Tiến độ (Course-Driven Curriculum)
             </h3>
             <p className="text-xs text-muted-foreground">
-              Toàn bộ bài học mở hoàn toàn. Theo dõi chỉ số Workload (bài chờ chấm) & Heatmap nộp bài trực tiếp ở Sidebar.
+              Toàn bộ bài học mở hoàn toàn. Theo dõi chỉ số Workload (bài chờ chấm), Deadline & Heatmap nộp bài trực tiếp ở Sidebar.
             </p>
           </div>
         </div>
@@ -149,7 +160,7 @@ export const HomeworkTab: React.FC = () => {
           />
         </div>
 
-        {/* Right Column: Dynamic ActivityChecklist & PendingSubmissionsList */}
+        {/* Right Column: Dynamic ActivityChecklist, Deadline Controls & PendingSubmissionsList */}
         <div className="md:col-span-8">
           {selectedHw ? (
             <Card className="h-full border bg-card flex flex-col justify-between">
@@ -176,7 +187,55 @@ export const HomeworkTab: React.FC = () => {
                 </div>
               </CardHeader>
 
-              <CardContent className="p-5 space-y-5 flex-1 overflow-y-auto">
+              <CardContent className="p-5 space-y-4 flex-1 overflow-y-auto">
+                {/* Deadline Management Control Strip */}
+                <div className="p-3.5 rounded-xl border bg-muted/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2.5 rounded-xl ${selectedHw.deadlineSource === 'MANUAL' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400' : 'bg-blue-500/15 text-blue-600 dark:text-blue-400'}`}>
+                      <Calendar className="h-4 w-4" />
+                    </div>
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                          Hạn nộp: {formatVietnameseDeadline(selectedHw.deadline)}
+                        </span>
+                        {selectedHw.deadlineSource === "MANUAL" ? (
+                          <Badge className="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-mono">
+                            Gán thủ công
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="text-[10px] font-mono text-blue-700 border-blue-300 bg-blue-50/60 dark:text-blue-300 dark:border-blue-800">
+                            Tự động theo tuần
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-muted-foreground flex items-center gap-1.5">
+                        <Clock className="h-3 w-3 text-slate-400" />
+                        {selectedCountdown ? (
+                          selectedCountdown.isOverdue ? (
+                            <span className="text-rose-600 dark:text-rose-400 font-semibold">{selectedCountdown.text}</span>
+                          ) : (
+                            <span className="text-emerald-700 dark:text-emerald-400 font-medium">Thời gian còn lại: {selectedCountdown.text}</span>
+                          )
+                        ) : (
+                          <span>Hạn hoàn thành toàn bộ hoạt động của bài học này</span>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 self-end sm:self-auto">
+                    <Button
+                      size="sm"
+                      onClick={() => setIsDeadlineModalOpen(true)}
+                      className="text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5 h-8.5 px-3 shadow-xs"
+                    >
+                      <Calendar className="h-3.5 w-3.5" />
+                      Cài đặt / Gia hạn
+                    </Button>
+                  </div>
+                </div>
+
                 {/* Workload Metric Summary */}
                 <div className="p-3 rounded-xl border bg-muted/20 flex items-center justify-between text-xs">
                   <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300 font-medium">
@@ -207,6 +266,21 @@ export const HomeworkTab: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Set Homework Deadline Modal */}
+      {selectedHw && (
+        <SetHomeworkDeadlineModal
+          open={isDeadlineModalOpen}
+          onOpenChange={setIsDeadlineModalOpen}
+          classId={classData?.id || ""}
+          className={classData?.name}
+          lessonId={selectedHw.id}
+          lessonTitle={selectedHw.title}
+          currentDeadline={selectedHw.deadline}
+          deadlineSource={selectedHw.deadlineSource || "AUTO"}
+          onSuccess={() => refetchClass()}
+        />
+      )}
     </div>
   );
 };

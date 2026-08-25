@@ -2,6 +2,7 @@ import { supabase } from "./supabase";
 import { normalizeSiteSettings } from "./site-settings";
 import { isValidUUID } from "./classContext";
 import { normalizeSubmissionStatus } from "./submissionStatus";
+import { resolveEffectiveDeadline } from "./homeworkStatusHelper";
 import { adaptExam } from "../adapters/exam.adapter";
 import { adaptSection } from "../adapters/section.adapter";
 import { adaptSession } from "../adapters/session.adapter";
@@ -3596,16 +3597,27 @@ export const lessonsApi = {
 
     const examIds = exams.map((e) => e.id);
     let submissionsMap: Record<string, any> = {};
+    let homeworksMap: Record<string, any> = {};
 
     if (examIds.length > 0) {
-      const { data: subs } = await supabase
-        .from("exam_submissions")
-        .select("id, exam_id, status, total_score, submitted_at")
-        .eq("student_id", user.id)
-        .in("exam_id", examIds);
+      const [subsRes, hwRes] = await Promise.all([
+        supabase
+          .from("exam_submissions")
+          .select("id, exam_id, status, total_score, submitted_at")
+          .eq("student_id", user.id)
+          .in("exam_id", examIds),
+        supabase
+          .from("homeworks")
+          .select("id, exam_id, lesson_id, deadline, status")
+          .eq("class_id", classId),
+      ]);
 
-      (subs || []).forEach((s: any) => {
+      (subsRes.data || []).forEach((s: any) => {
         submissionsMap[s.exam_id] = s;
+      });
+
+      (hwRes.data || []).forEach((h: any) => {
+        if (h.exam_id) homeworksMap[h.exam_id] = h;
       });
     }
 
@@ -3627,16 +3639,27 @@ export const lessonsApi = {
         },
         lessons: exams.map((e: any, idx: number) => {
           const sub = submissionsMap[e.id];
+          const customHw = homeworksMap[e.id];
+          const lessonOrder = e.week || idx + 1;
+          const { effectiveDeadline, deadlineSource } = resolveEffectiveDeadline({
+            classStartDate: cls.start_date || cls.created_at,
+            lessonWeek: lessonOrder,
+            manualDeadline: customHw?.deadline,
+            defaultOffsetDays: 7,
+          });
+
           return {
             id: e.id,
             title: e.title || `Bài tập ${idx + 1}`,
             description: e.description || "",
-            week: e.week || 1,
+            week: lessonOrder,
             lessonNumber: idx + 1,
+            exam_sections: e.exam_sections || [],
             homework: {
               id: e.id,
               title: e.title || `Bài tập ${idx + 1}`,
-              deadline: null,
+              deadline: effectiveDeadline,
+              deadlineSource,
               status: (sub?.status || "NOT_STARTED").toUpperCase(),
               score: sub?.total_score ?? null,
             },

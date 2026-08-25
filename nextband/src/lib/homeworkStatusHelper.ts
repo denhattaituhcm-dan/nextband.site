@@ -157,6 +157,52 @@ export function calculateAutomaticDeadline(params: {
 }
 
 /**
+ * Resolves effective deadline with provenance: MANUAL override > AUTO calculation
+ */
+export function resolveEffectiveDeadline(params: {
+  classStartDate: Date | string | null | undefined;
+  lessonWeek: number;
+  manualDeadline?: Date | string | null;
+  defaultOffsetDays?: number;
+}): { effectiveDeadline: Date; deadlineSource: "MANUAL" | "AUTO" } {
+  if (params.manualDeadline) {
+    return {
+      effectiveDeadline: new Date(params.manualDeadline),
+      deadlineSource: "MANUAL",
+    };
+  }
+
+  const auto = calculateAutomaticDeadline({
+    classStartDate: params.classStartDate,
+    lessonOrder: params.lessonWeek,
+    defaultOffsetDays: params.defaultOffsetDays,
+  });
+
+  return {
+    effectiveDeadline: auto,
+    deadlineSource: "AUTO",
+  };
+}
+
+/**
+ * Formats a Date/string into a clear Vietnamese readable string (e.g. 23:59:59 28/08/2026)
+ */
+export function formatVietnameseDeadline(deadline: string | Date | null | undefined): string {
+  if (!deadline) return "Chưa thiết lập";
+  const date = new Date(deadline);
+  if (isNaN(date.getTime())) return "Không hợp lệ";
+
+  const timeStr = date.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+  const dateStr = date.toLocaleDateString("vi-VN", {
+    weekday: "short",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+  return `${timeStr}, ${dateStr}`;
+}
+
+/**
  * Sorts student homework list into a strict pedagogical action queue:
  * Priority 1: REVISION_REQUIRED (Cần sửa bài Attempt 2)
  * Priority 2: OVERDUE (Quá hạn)

@@ -123617,6 +123617,8 @@ var LessonService = class {
         sessionDate: null,
         sessionNumber: lessonOrder,
         resources: [],
+        sections: exam.sections || [],
+        exam_sections: exam.sections || [],
         homework: {
           id: exam.id,
           title: exam.title,

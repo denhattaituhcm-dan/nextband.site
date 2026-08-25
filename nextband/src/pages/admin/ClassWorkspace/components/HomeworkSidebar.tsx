@@ -1,7 +1,7 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { HeatmapBar } from "./HeatmapBar";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Calendar, Clock } from "lucide-react";
 
 export interface HomeworkItemData {
   id: string;
@@ -11,6 +11,8 @@ export interface HomeworkItemData {
   waitingReviewCount: number;
   gradedCount: number;
   progressPercent: number;
+  deadline?: string | Date | null;
+  deadlineSource?: "MANUAL" | "AUTO";
   skills: any[];
   pendingSubmissions: any[];
 }
@@ -28,6 +30,13 @@ export const HomeworkSidebar: React.FC<HomeworkSidebarProps> = ({
   onSelectHw,
   totalStudents,
 }) => {
+  const formatShortDate = (d?: string | Date | null) => {
+    if (!d) return null;
+    const date = new Date(d);
+    if (isNaN(date.getTime())) return null;
+    return date.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" });
+  };
+
   return (
     <div className="border rounded-xl bg-card p-2 space-y-1.5 max-h-[560px] overflow-y-auto">
       <div className="px-2 py-1.5 text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center justify-between border-b pb-2 mb-1">
@@ -38,6 +47,7 @@ export const HomeworkSidebar: React.FC<HomeworkSidebarProps> = ({
       {homeworkList.map((hw) => {
         const isSelected = hw.id === selectedHwId;
         const isLowProgress = hw.progressPercent < 30 && totalStudents > 0;
+        const formattedDeadline = formatShortDate(hw.deadline);
 
         return (
           <div
@@ -72,6 +82,23 @@ export const HomeworkSidebar: React.FC<HomeworkSidebarProps> = ({
                   </Badge>
                 )}
               </div>
+            </div>
+
+            {/* Deadline & Provenance Row */}
+            <div className="flex items-center justify-between text-[10px] text-muted-foreground mt-1.5">
+              <span className="flex items-center gap-1">
+                <Calendar className="h-3 w-3 text-slate-400" />
+                <span>Hạn: {formattedDeadline || "Tự động"}</span>
+              </span>
+              {hw.deadlineSource === "MANUAL" ? (
+                <span className="text-[9px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-100/60 dark:bg-emerald-950/60 px-1 py-0.2 rounded border border-emerald-200 dark:border-emerald-800">
+                  Thủ công
+                </span>
+              ) : (
+                <span className="text-[9px] text-slate-400">
+                  Tự động
+                </span>
+              )}
             </div>
 
             {/* Heatmap Bar */}

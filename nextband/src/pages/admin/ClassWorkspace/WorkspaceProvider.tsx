@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { classesApi, sessionsApi, examsApi, submissionsApi, normalizeSession } from "@/lib/api";
+import { classesApi, sessionsApi, examsApi, submissionsApi, normalizeSession, lessonsApi } from "@/lib/api";
+import { resolveEffectiveDeadline } from "@/lib/homeworkStatusHelper";
 
 interface WorkspaceContextType {
   classId: string;
@@ -53,15 +54,63 @@ export const WorkspaceProvider: React.FC<{
         (s: any) => s.isActive !== false && s.status !== "suspended" && s.status !== "inactive"
       );
 
-      // Fetch course homeworks/exams if course_id exists
+      // Fetch course homeworks/exams and class-specific deadlines
       let lessons: any[] = [];
       const targetCourseId = cls.courseId || cls.course_id;
       if (targetCourseId) {
         try {
-          const examRes = await examsApi.list({ courseId: targetCourseId, limit: 100 });
-          lessons = examRes.data || [];
+          const [lessonRes, examRes] = await Promise.all([
+            lessonsApi.getClassLessons(classId).catch((err) => {
+              console.warn("[WorkspaceProvider] lessonsApi.getClassLessons warning:", err);
+              return null;
+            }),
+            examsApi.list({ courseId: targetCourseId, limit: 100 }).catch((err) => {
+              console.warn("[WorkspaceProvider] examsApi.list warning:", err);
+              return { data: [] };
+            }),
+          ]);
+
+          const rawExams: any[] = examRes?.data || [];
+          const projectionLessons: any[] = lessonRes?.data?.lessons || [];
+
+          if (rawExams.length > 0) {
+            lessons = rawExams.map((exam: any, idx: number) => {
+              const matchedProj = projectionLessons.find((p: any) => p.id === exam.id);
+              const lessonOrder = exam.week || (idx + 1);
+
+              let effectiveDeadline = matchedProj?.homework?.deadline;
+              let deadlineSource = matchedProj?.homework?.deadlineSource || "AUTO";
+
+              if (!effectiveDeadline) {
+                const auto = resolveEffectiveDeadline({
+                  classStartDate: cls.startDate || cls.start_date || cls.createdAt || cls.created_at,
+                  lessonWeek: lessonOrder,
+                  defaultOffsetDays: 7,
+                });
+                effectiveDeadline = auto.effectiveDeadline;
+                deadlineSource = auto.deadlineSource;
+              }
+
+              return {
+                ...exam,
+                week: lessonOrder,
+                lessonOrder,
+                deadline: effectiveDeadline,
+                deadlineSource,
+                homework: {
+                  id: exam.id,
+                  title: exam.title,
+                  deadline: effectiveDeadline,
+                  deadlineSource,
+                },
+                exam_sections: exam.exam_sections || matchedProj?.exam_sections || matchedProj?.sections || [],
+              };
+            });
+          } else if (projectionLessons.length > 0) {
+            lessons = projectionLessons;
+          }
         } catch (examErr) {
-          console.warn("[WorkspaceProvider] Could not fetch exams:", examErr);
+          console.warn("[WorkspaceProvider] Could not fetch exams/lessons:", examErr);
         }
       }
 
