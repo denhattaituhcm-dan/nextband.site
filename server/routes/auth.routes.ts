@@ -245,6 +245,10 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
       return reply.status(404).send({ error: "Không tìm thấy người dùng" });
     }
 
+    if (user.isActive === false) {
+      return reply.status(403).send({ error: "Tài khoản đã bị vô hiệu hóa" });
+    }
+
     return {
       id: user.userId,
       email: user.email,
@@ -272,11 +276,15 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
             { id },
           ],
         },
-        select: { id: true, userId: true },
+        select: { id: true, userId: true, isActive: true },
       });
 
       if (!existingUser) {
         return reply.status(404).send({ error: "Không tìm thấy người dùng" });
+      }
+
+      if (existingUser.isActive === false) {
+        return reply.status(403).send({ error: "Tài khoản đã bị vô hiệu hóa" });
       }
 
       const user = await fastify.prisma.user.update({

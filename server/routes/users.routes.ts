@@ -81,6 +81,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           orderBy: { [orderField]: sortOrder },
           select: {
             id: true,
+            userId: true,
             email: true,
             fullName: true,
             avatarUrl: true,
@@ -493,8 +494,22 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         parentPhone,
       } = request.body as any;
 
+      const existingUser = await fastify.prisma.user.findFirst({
+        where: {
+          OR: [
+            { userId: id },
+            { id: id },
+          ],
+        },
+        include: { roles: true },
+      });
+
+      if (!existingUser) {
+        return reply.status(404).send({ error: "Không tìm thấy người dùng" });
+      }
+
       const user = await fastify.prisma.user.update({
-        where: { userId: id },
+        where: { id: existingUser.id },
         data: {
           ...(fullName !== undefined && { fullName }),
           ...(isActive !== undefined && { isActive }),
@@ -517,8 +532,12 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         await fastify.prisma.userRole.create({
           data: { userId: user.userId, role },
         });
-        invalidateUserAuthCache(user.userId);
       }
+
+      // Always invalidate auth cache whenever user is updated or toggled
+      invalidateUserAuthCache(user.userId);
+      invalidateUserAuthCache(user.id);
+      invalidateUserAuthCache(id);
 
       return {
         id: user.userId,
@@ -536,7 +555,21 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
     { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
       const { id } = request.params;
-      await fastify.prisma.user.delete({ where: { userId: id } });
+      const existingUser = await fastify.prisma.user.findFirst({
+        where: {
+          OR: [
+            { userId: id },
+            { id: id },
+          ],
+        },
+      });
+
+      if (existingUser) {
+        await fastify.prisma.user.delete({ where: { id: existingUser.id } });
+        invalidateUserAuthCache(existingUser.userId);
+        invalidateUserAuthCache(existingUser.id);
+        invalidateUserAuthCache(id);
+      }
       return { success: true };
     },
   );

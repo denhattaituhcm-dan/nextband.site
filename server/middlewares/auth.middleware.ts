@@ -16,6 +16,7 @@ const userAuthCache = new Map<
     canonicalUserId: string;
     email: string;
     roles: string[];
+    isActive: boolean;
     cachedAt: number;
   }
 >();
@@ -100,6 +101,9 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
   // 1. Check in-memory cache first (0ms latency for active sessions)
   const cachedUser = userAuthCache.get(userId);
   if (cachedUser && Date.now() - cachedUser.cachedAt < USER_CACHE_TTL_MS) {
+    if (!cachedUser.isActive) {
+      return null;
+    }
     const userContext = {
       id: cachedUser.canonicalUserId,
       email: cachedUser.email || email,
@@ -112,6 +116,7 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
   // Load authoritative user & roles from Supabase PostgreSQL via Prisma (user_roles is Single Source of Truth)
   let canonicalUserId = userId;
   let authoritativeRoles: string[] = [];
+  let userIsActive = true;
   try {
     const prisma = (request.server as any).prisma;
     if (prisma && prisma.user) {
@@ -126,12 +131,27 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
       });
 
       if (dbUser) {
+        if (dbUser.isActive === false) {
+          userIsActive = false;
+          userAuthCache.set(userId, {
+            canonicalUserId: dbUser.userId || dbUser.id,
+            email: dbUser.email || email,
+            roles: [],
+            isActive: false,
+            cachedAt: Date.now(),
+          });
+          return null;
+        }
         canonicalUserId = dbUser.userId || dbUser.id;
         authoritativeRoles = dbUser.roles.map((r: any) => r.role);
       }
     }
   } catch (dbErr) {
     request.log.warn({ err: dbErr, userId, email }, "Failed to fetch user from PostgreSQL, using fallback");
+  }
+
+  if (!userIsActive) {
+    return null;
   }
 
   // Authoritative roles from DB override any token roles; do not silently fallback to 'student'
@@ -150,6 +170,7 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
     canonicalUserId,
     email,
     roles: finalRoles,
+    isActive: true,
     cachedAt: Date.now(),
   });
   if (canonicalUserId !== userId) {
@@ -157,6 +178,7 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
       canonicalUserId,
       email,
       roles: finalRoles,
+      isActive: true,
       cachedAt: Date.now(),
     });
   }

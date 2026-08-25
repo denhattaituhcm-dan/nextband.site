@@ -113904,6 +113904,9 @@ async function verifyAndResolveUser(request) {
   if (!userId) return null;
   const cachedUser = userAuthCache.get(userId);
   if (cachedUser && Date.now() - cachedUser.cachedAt < USER_CACHE_TTL_MS) {
+    if (!cachedUser.isActive) {
+      return null;
+    }
     const userContext2 = {
       id: cachedUser.canonicalUserId,
       email: cachedUser.email || email,
@@ -113914,6 +113917,7 @@ async function verifyAndResolveUser(request) {
   }
   let canonicalUserId = userId;
   let authoritativeRoles = [];
+  let userIsActive = true;
   try {
     const prisma = request.server.prisma;
     if (prisma && prisma.user) {
@@ -113927,12 +113931,26 @@ async function verifyAndResolveUser(request) {
         include: { roles: true }
       });
       if (dbUser) {
+        if (dbUser.isActive === false) {
+          userIsActive = false;
+          userAuthCache.set(userId, {
+            canonicalUserId: dbUser.userId || dbUser.id,
+            email: dbUser.email || email,
+            roles: [],
+            isActive: false,
+            cachedAt: Date.now()
+          });
+          return null;
+        }
         canonicalUserId = dbUser.userId || dbUser.id;
         authoritativeRoles = dbUser.roles.map((r2) => r2.role);
       }
     }
   } catch (dbErr) {
     request.log.warn({ err: dbErr, userId, email }, "Failed to fetch user from PostgreSQL, using fallback");
+  }
+  if (!userIsActive) {
+    return null;
   }
   const finalRoles = authoritativeRoles.length > 0 ? authoritativeRoles : fallbackRoles;
   const userContext = {
@@ -113944,6 +113962,7 @@ async function verifyAndResolveUser(request) {
     canonicalUserId,
     email,
     roles: finalRoles,
+    isActive: true,
     cachedAt: Date.now()
   });
   if (canonicalUserId !== userId) {
@@ -113951,6 +113970,7 @@ async function verifyAndResolveUser(request) {
       canonicalUserId,
       email,
       roles: finalRoles,
+      isActive: true,
       cachedAt: Date.now()
     });
   }
@@ -114285,6 +114305,9 @@ var authRoutes = async (fastify) => {
     if (!user) {
       return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y ng\u01B0\u1EDDi d\xF9ng" });
     }
+    if (user.isActive === false) {
+      return reply.status(403).send({ error: "T\xE0i kho\u1EA3n \u0111\xE3 b\u1ECB v\xF4 hi\u1EC7u h\xF3a" });
+    }
     return {
       id: user.userId,
       email: user.email,
@@ -114309,10 +114332,13 @@ var authRoutes = async (fastify) => {
             { id }
           ]
         },
-        select: { id: true, userId: true }
+        select: { id: true, userId: true, isActive: true }
       });
       if (!existingUser) {
         return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y ng\u01B0\u1EDDi d\xF9ng" });
+      }
+      if (existingUser.isActive === false) {
+        return reply.status(403).send({ error: "T\xE0i kho\u1EA3n \u0111\xE3 b\u1ECB v\xF4 hi\u1EC7u h\xF3a" });
       }
       const user = await fastify.prisma.user.update({
         where: { id: existingUser.id },
@@ -120615,6 +120641,7 @@ var usersRoutes = async (fastify) => {
           orderBy: { [orderField]: sortOrder },
           select: {
             id: true,
+            userId: true,
             email: true,
             fullName: true,
             avatarUrl: true,
@@ -120968,8 +120995,20 @@ var usersRoutes = async (fastify) => {
         parentName,
         parentPhone
       } = request.body;
+      const existingUser = await fastify.prisma.user.findFirst({
+        where: {
+          OR: [
+            { userId: id },
+            { id }
+          ]
+        },
+        include: { roles: true }
+      });
+      if (!existingUser) {
+        return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y ng\u01B0\u1EDDi d\xF9ng" });
+      }
       const user = await fastify.prisma.user.update({
-        where: { userId: id },
+        where: { id: existingUser.id },
         data: {
           ...fullName !== void 0 && { fullName },
           ...isActive !== void 0 && { isActive },
@@ -120990,8 +121029,10 @@ var usersRoutes = async (fastify) => {
         await fastify.prisma.userRole.create({
           data: { userId: user.userId, role }
         });
-        invalidateUserAuthCache(user.userId);
       }
+      invalidateUserAuthCache(user.userId);
+      invalidateUserAuthCache(user.id);
+      invalidateUserAuthCache(id);
       return {
         id: user.userId,
         email: user.email,
@@ -121006,7 +121047,20 @@ var usersRoutes = async (fastify) => {
     { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
       const { id } = request.params;
-      await fastify.prisma.user.delete({ where: { userId: id } });
+      const existingUser = await fastify.prisma.user.findFirst({
+        where: {
+          OR: [
+            { userId: id },
+            { id }
+          ]
+        }
+      });
+      if (existingUser) {
+        await fastify.prisma.user.delete({ where: { id: existingUser.id } });
+        invalidateUserAuthCache(existingUser.userId);
+        invalidateUserAuthCache(existingUser.id);
+        invalidateUserAuthCache(id);
+      }
       return { success: true };
     }
   );
