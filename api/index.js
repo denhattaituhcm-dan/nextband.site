@@ -125217,8 +125217,52 @@ async function buildApp() {
   });
   await app.register(routes_default, { prefix: "/api/v1" });
   app.setErrorHandler((error, request, reply) => {
-    const isProduction2 = process.env.NODE_ENV === "production" || env.NODE_ENV === "production";
-    const statusCode = error.statusCode || 500;
+    let statusCode = error.statusCode || 500;
+    let clientMessage = error.message || "\u0110\xE3 x\u1EA3y ra l\u1ED7i h\u1EC7 th\u1ED1ng.";
+    let errorType = error.name || "Error";
+    if (error.name === "PrismaClientKnownRequestError") {
+      switch (error.code) {
+        case "P2002":
+          statusCode = 409;
+          const targetFields = Array.isArray(error.meta?.target) ? error.meta.target.join(", ") : error.meta?.target || "tr\u01B0\u1EDDng d\u1EEF li\u1EC7u";
+          clientMessage = `D\u1EEF li\u1EC7u b\u1ECB tr\xF9ng l\u1EB7p: ${targetFields} \u0111\xE3 t\u1ED3n t\u1EA1i trong h\u1EC7 th\u1ED1ng.`;
+          errorType = "DuplicateError";
+          break;
+        case "P2003":
+          statusCode = 400;
+          clientMessage = "D\u1EEF li\u1EC7u li\xEAn k\u1EBFt kh\xF4ng h\u1EE3p l\u1EC7 ho\u1EB7c \u0111\xE3 b\u1ECB x\xF3a.";
+          errorType = "ForeignKeyError";
+          break;
+        case "P2025":
+          statusCode = 404;
+          clientMessage = "Kh\xF4ng t\xECm th\u1EA5y b\u1EA3n ghi y\xEAu c\u1EA7u trong h\u1EC7 th\u1ED1ng.";
+          errorType = "NotFoundError";
+          break;
+        case "P2023":
+          statusCode = 400;
+          clientMessage = "M\xE3 \u0111\u1ECBnh danh (ID) kh\xF4ng \u0111\xFAng \u0111\u1ECBnh d\u1EA1ng.";
+          errorType = "ValidationError";
+          break;
+        default:
+          statusCode = 400;
+          clientMessage = error.message || "L\u1ED7i truy v\u1EA5n c\u01A1 s\u1EDF d\u1EEF li\u1EC7u.";
+      }
+    } else if (error.message && typeof error.message === "string") {
+      if (error.message.includes("violates check constraint")) {
+        statusCode = 400;
+        clientMessage = "D\u1EEF li\u1EC7u kh\xF4ng th\u1ECFa m\xE3n r\xE0ng bu\u1ED9c tr\u1EA1ng th\xE1i ho\u1EB7c gi\xE1 tr\u1ECB h\u1EE3p l\u1EC7 c\u1EE7a h\u1EC7 th\u1ED1ng.";
+        errorType = "ConstraintViolation";
+      } else if (error.message.includes("violates foreign key constraint")) {
+        statusCode = 400;
+        clientMessage = "D\u1EEF li\u1EC7u li\xEAn k\u1EBFt kh\xF4ng t\u1ED3n t\u1EA1i.";
+        errorType = "ForeignKeyError";
+      }
+    }
+    if (error.name === "ZodError") {
+      statusCode = 400;
+      clientMessage = "D\u1EEF li\u1EC7u g\u1EEDi l\xEAn kh\xF4ng \u0111\xFAng \u0111\u1ECBnh d\u1EA1ng.";
+      errorType = "ValidationError";
+    }
     app.log.error({
       requestId: request.id,
       url: request.url,
@@ -125226,18 +125270,13 @@ async function buildApp() {
       statusCode,
       err: error
     });
-    if (statusCode >= 500) {
-      return reply.status(statusCode).send({
-        statusCode,
-        error: isProduction2 ? "Internal Server Error" : error.message,
-        message: isProduction2 ? "\u0110\xE3 x\u1EA3y ra l\u1ED7i m\xE1y ch\u1EE7 n\u1ED9i b\u1ED9. Vui l\xF2ng li\xEAn h\u1EC7 qu\u1EA3n tr\u1ECB vi\xEAn." : error.message,
-        requestId: request.id
-      });
-    }
     return reply.status(statusCode).send({
       statusCode,
-      error: error.message,
-      requestId: request.id
+      error: clientMessage,
+      message: clientMessage,
+      errorType,
+      requestId: request.id,
+      ...error.issues ? { details: error.issues } : {}
     });
   });
   app.setNotFoundHandler((_request, reply) => {

@@ -239,10 +239,59 @@ export async function buildApp() {
   await app.register(routes, { prefix: "/api/v1" });
 
   // Global error handler - Structured logging on server & Clean sanitized response for client
-  app.setErrorHandler((error, request, reply) => {
-    const isProduction =
-      process.env.NODE_ENV === "production" || env.NODE_ENV === "production";
-    const statusCode = error.statusCode || 500;
+  app.setErrorHandler((error: any, request, reply) => {
+    let statusCode = error.statusCode || 500;
+    let clientMessage = error.message || "Đã xảy ra lỗi hệ thống.";
+    let errorType = error.name || "Error";
+
+    // 1. Map Prisma specific errors
+    if (error.name === "PrismaClientKnownRequestError") {
+      switch (error.code) {
+        case "P2002":
+          statusCode = 409;
+          const targetFields = Array.isArray(error.meta?.target)
+            ? error.meta.target.join(", ")
+            : error.meta?.target || "trường dữ liệu";
+          clientMessage = `Dữ liệu bị trùng lặp: ${targetFields} đã tồn tại trong hệ thống.`;
+          errorType = "DuplicateError";
+          break;
+        case "P2003":
+          statusCode = 400;
+          clientMessage = "Dữ liệu liên kết không hợp lệ hoặc đã bị xóa.";
+          errorType = "ForeignKeyError";
+          break;
+        case "P2025":
+          statusCode = 404;
+          clientMessage = "Không tìm thấy bản ghi yêu cầu trong hệ thống.";
+          errorType = "NotFoundError";
+          break;
+        case "P2023":
+          statusCode = 400;
+          clientMessage = "Mã định danh (ID) không đúng định dạng.";
+          errorType = "ValidationError";
+          break;
+        default:
+          statusCode = 400;
+          clientMessage = error.message || "Lỗi truy vấn cơ sở dữ liệu.";
+      }
+    } else if (error.message && typeof error.message === "string") {
+      if (error.message.includes("violates check constraint")) {
+        statusCode = 400;
+        clientMessage = "Dữ liệu không thỏa mãn ràng buộc trạng thái hoặc giá trị hợp lệ của hệ thống.";
+        errorType = "ConstraintViolation";
+      } else if (error.message.includes("violates foreign key constraint")) {
+        statusCode = 400;
+        clientMessage = "Dữ liệu liên kết không tồn tại.";
+        errorType = "ForeignKeyError";
+      }
+    }
+
+    // 2. Map Zod validation errors
+    if (error.name === "ZodError") {
+      statusCode = 400;
+      clientMessage = "Dữ liệu gửi lên không đúng định dạng.";
+      errorType = "ValidationError";
+    }
 
     // Full diagnostic in server log
     app.log.error({
@@ -253,22 +302,13 @@ export async function buildApp() {
       err: error,
     });
 
-    if (statusCode >= 500) {
-      return reply.status(statusCode).send({
-        statusCode,
-        error: isProduction ? "Internal Server Error" : error.message,
-        message: isProduction
-          ? "Đã xảy ra lỗi máy chủ nội bộ. Vui lòng liên hệ quản trị viên."
-          : error.message,
-        requestId: request.id,
-      });
-    }
-
-    // Client errors (4xx) - return safe validation or authorization message
     return reply.status(statusCode).send({
       statusCode,
-      error: error.message,
+      error: clientMessage,
+      message: clientMessage,
+      errorType,
       requestId: request.id,
+      ...(error.issues ? { details: error.issues } : {}),
     });
   });
 
