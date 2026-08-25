@@ -191,10 +191,9 @@ export function ProgressReportModal({
 
     let currY = 130;
 
-    // 3. Section 01: THÔNG TIN HỌC VIÊN & QUY MÔ LỚP HỌC (LÀM NỔI BẬT)
+    // 3. Section 01: THÔNG TIN HỌC VIÊN & QUY MÔ LỚP HỌC (THUẦN DỮ LIỆU)
     const classCurrent = data.classInfo?.currentStudents || 6;
     const classMax = data.classInfo?.maxStudents || 10;
-    const classModel = data.classInfo?.classModel || (classCurrent <= 10 ? "Nhóm nhỏ tương tác cao" : "Lớp tiêu chuẩn");
 
     drawRoundedRect(ctx, 36, currY, width - 72, 78, 8, "#f8fafc", "#e2e8f0", 1);
 
@@ -214,25 +213,21 @@ export function ProgressReportModal({
     ctx.fillText(`• Giảng viên: ${teacherName}`, 260, currY + 46);
     ctx.fillText(`• Mục tiêu đầu ra: ${targetBand}`, 500, currY + 46);
 
-    // Quy mô lớp học (Nổi bật)
+    // Quy mô lớp học (Factual metrics, no marketing buzzwords)
     ctx.fillStyle = "#0369a1";
     ctx.font = `700 12px ${FONT_FAMILY}`;
-    ctx.fillText(`• QUY MÔ LỚP: ${classCurrent}/${classMax} học viên`, 48, currY + 68);
-
-    ctx.fillStyle = "#059669";
-    ctx.font = `700 11px ${FONT_FAMILY}`;
-    ctx.fillText(`(${classModel})`, 225, currY + 68);
+    ctx.fillText(`• QUY MÔ LỚP: ${classCurrent} / ${classMax} học viên (Sĩ số hiện tại / Sĩ số tối đa)`, 48, currY + 68);
 
     currY += 92;
 
-    // 4. Section 02: 4 KPI CARDS TỔNG QUAN
+    // 4. Section 02: 4 KPI CARDS TỔNG QUAN (Màu sắc học thuật nhất quán, không phán xét)
     const cardW = (width - 72 - 36) / 4;
     const cardH = 68;
 
     const kpis = [
       { label: "TIẾN ĐỘ KHÓA HỌC", val: `${courseProgressPct}%`, color: "#0284c7", sub: "Theo phân phối buổi" },
-      { label: "CHUYÊN CẦN", val: `${attendanceRate}%`, color: attendanceRate >= 80 ? "#059669" : "#e11d48", sub: data.attendance ? `${data.attendance.present}/${data.attendance.total} buổi` : "Chuẩn" },
-      { label: "BÀI TẬP", val: `${hwCompleted}/${hwTotal}`, color: hwCompleted === hwTotal && hwTotal > 0 ? "#059669" : "#d97706", sub: `Đạt ${hwCompletionPct}%` },
+      { label: "CHUYÊN CẦN", val: `${attendanceRate}%`, color: "#0f172a", sub: data.attendance ? `${data.attendance.present}/${data.attendance.total} buổi` : "Chuẩn" },
+      { label: "BÀI TẬP", val: `${hwCompleted}/${hwTotal}`, color: "#0f172a", sub: `Đạt ${hwCompletionPct}%` },
       { label: "ĐÁNH GIÁ GẦN NHẤT", val: String(latestBand).replace("Band ", ""), color: "#7c3aed", sub: "IELTS Scale" },
     ];
 
@@ -285,7 +280,7 @@ export function ProgressReportModal({
         currY + 24
       );
 
-      // Progress Bar
+      // Progress Bar (Màu xanh thương hiệu nhất quán, không phán xét đỏ/vàng)
       const barX = 52;
       const barY = currY + 34;
       const barW = width - 104;
@@ -293,7 +288,7 @@ export function ProgressReportModal({
       drawRoundedRect(ctx, barX, barY, barW, barH, 4, "#e2e8f0");
 
       const fillW = Math.min(barW, Math.max(0, (barW * att.rate) / 100));
-      drawRoundedRect(ctx, barX, barY, fillW, barH, 4, att.rate >= 80 ? "#10b981" : "#f59e0b");
+      drawRoundedRect(ctx, barX, barY, fillW, barH, 4, "#0284c7");
     } else {
       ctx.fillStyle = "#64748b";
       ctx.font = `italic 500 12px ${FONT_FAMILY}`;
@@ -302,7 +297,7 @@ export function ProgressReportModal({
 
     currY += 68;
 
-    // 6. Section 04: BÀI TẬP VỀ NHÀ (3 LỚP THÔNG TIN: TIẾN ĐỘ + CHẤT LƯỢNG + NGUỒN CHẤM)
+    // 6. Section 04: BÀI TẬP VỀ NHÀ (3 LỚP THÔNG TIN: TIẾN ĐỘ + CHẤT LƯỢNG + NGUỒN CHẤM THỰC TẾ)
     drawSectionHeader("2. BÀI TẬP VỀ NHÀ & CHẤT LƯỢNG BÀI LÀM", currY);
     currY += 16;
 
@@ -334,13 +329,13 @@ export function ProgressReportModal({
     ctx.font = `500 11.5px ${FONT_FAMILY}`;
     const avgScoreStr = hw.averageScore ? `Điểm TB: ${hw.averageScore}` : "Điểm TB: Đang tích lũy";
     const passRateStr = `Đạt yêu cầu: ${hw.passedCount || 0} bài  |  Cần cải thiện: ${hw.needsImprovementCount || 0} bài`;
-    ctx.fillText(`• Kết quả làm bài: ${avgScoreStr}   |   ${passRateStr}`, 52, currY + 44);
+    ctx.fillText(`• Đã chấm & phản hồi: ${hw.gradedCount}/${hw.completed} bài   |   ${avgScoreStr}   |   ${passRateStr}`, 52, currY + 44);
 
-    // Lớp 3: Nguồn chấm điểm (Tự động vs Giáo viên chấm chi tiết)
+    // Lớp 3: Nguồn chấm điểm thực tế từ submission (Chấm tự động vs Giáo viên chấm & phản hồi)
     ctx.fillStyle = "#0369a1";
     ctx.font = `600 11px ${FONT_FAMILY}`;
     ctx.fillText(
-      `• Nguồn chấm: ${hw.autoGradedCount || 0} bài tự động (Trắc nghiệm/R/L)  ·  ${hw.teacherGradedCount || 0} bài giáo viên sửa chi tiết (W/S)`,
+      `• Nguồn chấm: ${hw.autoGradedCount || 0} bài chấm tự động  ·  ${hw.teacherGradedCount || 0} bài giáo viên chấm & nhận xét`,
       52,
       currY + 64
     );
@@ -633,10 +628,7 @@ export function ProgressReportModal({
               <div className="flex items-center gap-1.5 pt-1 border-t border-slate-200/60 dark:border-slate-800 text-[11px]">
                 <span className="font-bold text-sky-700 dark:text-sky-400">QUY MÔ LỚP:</span>
                 <span className="font-semibold text-slate-800 dark:text-slate-200">
-                  {data.classInfo?.currentStudents || 6}/{data.classInfo?.maxStudents || 10} học viên
-                </span>
-                <span className="text-emerald-600 dark:text-emerald-400 font-medium">
-                  ({data.classInfo?.classModel || "Nhóm nhỏ tương tác cao"})
+                  {data.classInfo?.currentStudents || 6} / {data.classInfo?.maxStudents || 10} học viên (Sĩ số hiện tại / Tối đa)
                 </span>
               </div>
             </div>
@@ -649,13 +641,13 @@ export function ProgressReportModal({
               </div>
               <div className="p-2 bg-slate-50 dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-800 text-center">
                 <div className="text-[9px] text-slate-500 font-semibold">CHUYÊN CẦN</div>
-                <div className={`text-sm font-extrabold ${attendanceRate >= 80 ? "text-emerald-600" : "text-amber-600"}`}>
+                <div className="text-sm font-extrabold text-slate-900 dark:text-slate-100">
                   {attendanceRate}%
                 </div>
               </div>
               <div className="p-2 bg-slate-50 dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-800 text-center">
                 <div className="text-[9px] text-slate-500 font-semibold">BÀI TẬP</div>
-                <div className="text-sm font-extrabold text-amber-600">
+                <div className="text-sm font-extrabold text-slate-900 dark:text-slate-100">
                   {hwCompleted}/{hwTotal}
                 </div>
               </div>
@@ -699,10 +691,10 @@ export function ProgressReportModal({
                   )}
                 </div>
                 <div className="text-[10.5px] text-slate-600 dark:text-slate-300 flex justify-between">
-                  <span>Đạt chuẩn: <strong className="text-emerald-600">{data.homework.passedCount || 0}</strong> bài | Cần cải thiện: <strong className="text-amber-600">{data.homework.needsImprovementCount || 0}</strong> bài</span>
+                  <span>Đã chấm & phản hồi: <strong>{data.homework.gradedCount}/{hwCompleted}</strong> bài | Đạt chuẩn: <strong className="text-emerald-600">{data.homework.passedCount || 0}</strong> | Cần cải thiện: <strong className="text-amber-600">{data.homework.needsImprovementCount || 0}</strong></span>
                 </div>
                 <div className="text-[10px] text-sky-700 dark:text-sky-400">
-                  • Nguồn chấm: {data.homework.autoGradedCount || 0} tự động (Trắc nghiệm/R/L) · {data.homework.teacherGradedCount || 0} giáo viên sửa chi tiết (W/S)
+                  • Nguồn chấm: {data.homework.autoGradedCount || 0} bài chấm tự động · {data.homework.teacherGradedCount || 0} bài giáo viên chấm & nhận xét
                 </div>
                 {data.homework.overdueTitles && data.homework.overdueTitles.length > 0 && (
                   <div className="text-[10.5px] text-rose-600 font-medium pt-0.5">

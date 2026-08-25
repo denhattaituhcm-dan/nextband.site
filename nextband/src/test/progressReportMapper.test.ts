@@ -179,7 +179,6 @@ describe("Academic Progress Report Mapper - Unit Tests", () => {
     expect(result.classInfo).toBeDefined();
     expect(result.classInfo?.currentStudents).toBe(6);
     expect(result.classInfo?.maxStudents).toBe(10);
-    expect(result.classInfo?.classModel).toBe("Nhóm nhỏ tương tác cao");
 
     // 2. Homework Layer 1: Mức độ hoàn thành
     expect(result.homework.totalAssigned).toBe(20);
