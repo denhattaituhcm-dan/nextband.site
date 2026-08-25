@@ -44,6 +44,8 @@ model User {
   createdLeads      ContactLead[]       @relation("LeadCreatedByUser")
   convertedLead     ContactLead?        @relation("LeadConvertedUser")
   studentAssessments AssessmentSession[] @relation("StudentAssessments")
+  studentReports    StudentPeriodicReport[] @relation("StudentPeriodicReports")
+  authoredReports   StudentPeriodicReport[] @relation("TeacherPeriodicReports")
 
   @@map("profiles")
 }
@@ -143,6 +145,7 @@ model Class {
   sessions    ClassSession[]
   attendance  ClassAttendance[]
   homeworks   Homework[]
+  periodicReports StudentPeriodicReport[]
 
   @@index([branchId])
   @@map("classes")
@@ -879,5 +882,29 @@ model AnswerEvaluationEvidence {
   answer           Answer   @relation(fields: [answerId], references: [id], onDelete: Cascade)
   @@map("answer_evaluation_evidences")
 }
+
+model StudentPeriodicReport {
+  id              String   @id @default(uuid())
+  classId         String   @map("class_id")
+  studentId       String   @map("student_id")
+  teacherId       String   @map("teacher_id")
+  periodStart     DateTime @map("period_start") @db.Date
+  periodEnd       DateTime @map("period_end") @db.Date
+  strengths       String?
+  weaknesses      String?
+  recommendations String?
+  nextPeriodGoals Json?    @default("[]") @map("next_period_goals")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
+
+  class           Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  student         User     @relation("StudentPeriodicReports", fields: [studentId], references: [userId], onDelete: Cascade)
+  teacher         User     @relation("TeacherPeriodicReports", fields: [teacherId], references: [userId], onDelete: Cascade)
+
+  @@unique([classId, studentId, periodStart, periodEnd])
+  @@index([studentId, classId])
+  @@map("student_periodic_reports")
+}
+
 
 

@@ -22,6 +22,7 @@ import speakingStorageRoutes from "./speakingStorage.routes.js";
 import speakingForecastRoutes from "./speaking-forecast.routes.js";
 import branchRoutes from "./branch.routes.js";
 import roomRoutes from "./room.routes.js";
+import periodicReportsRoutes from "./periodic-reports.routes.js";
 
 const routes: FastifyPluginAsync = async (fastify) => {
   // Health check
@@ -56,6 +57,7 @@ const routes: FastifyPluginAsync = async (fastify) => {
   await fastify.register(speakingStorageRoutes, { prefix: "/speaking" });
   await fastify.register(speakingForecastRoutes, { prefix: "/speaking-forecast" });
   await fastify.register(lessonRoutes);
+  await fastify.register(periodicReportsRoutes);
 };
 
 export default routes;

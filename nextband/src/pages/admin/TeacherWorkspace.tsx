@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { classesApi, examsApi, submissionsApi, formatStorageUrl } from "@/lib/api";
+import { classesApi, examsApi, submissionsApi, attendanceApi, periodicReportsApi, formatStorageUrl } from "@/lib/api";
 import { deriveHomeworkStatus, HomeworkStatus } from "@/types/homework";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -230,6 +230,21 @@ export default function TeacherWorkspace() {
     enabled: !!selectedClassId,
   });
 
+  // 3. Fetch ma trận điểm danh của lớp để hiển thị chính xác chuyên cần trong báo cáo
+  const { data: attendanceData } = useQuery({
+    queryKey: ["teacher-attendance-matrix", selectedClassId],
+    queryFn: async () => {
+      if (!selectedClassId) return null;
+      try {
+        return await attendanceApi.getAttendanceMatrix(selectedClassId);
+      } catch (e) {
+        console.warn("[TeacherWorkspace] Could not load attendance matrix:", e);
+        return null;
+      }
+    },
+    enabled: !!selectedClassId,
+  });
+
   // Normalize Danh sách Học viên thật từ CSDL
   const students = useMemo(() => {
     if (!workspaceData?.students) return [];
@@ -384,15 +399,88 @@ export default function TeacherWorkspace() {
     };
   }, [currentStudent]);
 
+  // 4. Fetch báo cáo định kỳ đã lưu của học viên hiện tại (nếu có)
+  const { data: latestPeriodicReport, refetch: refetchPeriodicReport } = useQuery({
+    queryKey: ["student-periodic-report", selectedClassId, currentStudent?.id],
+    queryFn: async () => {
+      if (!selectedClassId || !currentStudent?.id) return null;
+      try {
+        return await periodicReportsApi.getLatest(selectedClassId, currentStudent.id);
+      } catch (e) {
+        return null;
+      }
+    },
+    enabled: !!selectedClassId && !!currentStudent?.id,
+  });
+
   // Data Map cho Báo Cáo Tiến Độ Phụ Huynh
   const reportData = useMemo(() => {
+    const studentMatrix = attendanceData?.students?.find(
+      (s: any) => s.studentId === currentStudent?.id
+    );
+
     return mapToProgressReportData({
+      classId: selectedClassId,
+      studentId: currentStudent?.id,
       studentName: currentStudent?.fullName || "Học viên",
       className: currentClass?.name || "Lớp học",
       teacherName: currentClass?.teacher?.fullName || null,
+      courseProgress: {
+        completedSessions: attendanceData?.completedSessions,
+        totalSessions: attendanceData?.totalSessions,
+      },
+      attendanceSummary: studentMatrix
+        ? {
+            present: studentMatrix.presentCount,
+            late: studentMatrix.lateCount,
+            absent: studentMatrix.absentCount,
+            excused: studentMatrix.excusedCount,
+            total:
+              (studentMatrix.presentCount || 0) +
+              (studentMatrix.lateCount || 0) +
+              (studentMatrix.absentCount || 0) +
+              (studentMatrix.excusedCount || 0),
+            rate: studentMatrix.attendanceRate,
+          }
+        : null,
+      classInfo: {
+        currentStudents: students.length || 6,
+        maxStudents: currentClass?.room?.capacity || 10,
+        classModel: (students.length || 6) <= 10 ? "Nhóm nhỏ tương tác cao" : "Lớp tiêu chuẩn",
+      },
       homeworks: currentStudent?.homeworks || [],
+      teacherEvaluation: latestPeriodicReport
+        ? {
+            strengths: latestPeriodicReport.strengths || "",
+            weaknesses: latestPeriodicReport.weaknesses || "",
+            recommendations: latestPeriodicReport.recommendations || "",
+            nextGoals: Array.isArray(latestPeriodicReport.nextPeriodGoals)
+              ? latestPeriodicReport.nextPeriodGoals
+              : [],
+          }
+        : undefined,
     });
-  }, [currentStudent, currentClass]);
+  }, [currentStudent, currentClass, attendanceData, selectedClassId, latestPeriodicReport, students]);
+
+  const handleSaveReport = async (evalData: {
+    strengths: string;
+    weaknesses: string;
+    recommendations: string;
+    nextGoals: string[];
+  }) => {
+    if (!selectedClassId || !currentStudent?.id) return;
+    try {
+      await periodicReportsApi.save(selectedClassId, currentStudent.id, {
+        strengths: evalData.strengths,
+        weaknesses: evalData.weaknesses,
+        recommendations: evalData.recommendations,
+        nextGoals: evalData.nextGoals,
+      });
+      refetchPeriodicReport();
+    } catch (e: any) {
+      console.warn("[TeacherWorkspace] Could not persist periodic report:", e);
+    }
+  };
 
   // THAO TÁC TRẢ BÀI & TỰ ĐỘNG CHUYỂN BÀI THEO QUEUE CHỜ CHẤM
   const handleGradeSubmit = async () => {
@@ -989,6 +1077,7 @@ export default function TeacherWorkspace() {
         open={isReportModalOpen}
         onOpenChange={setIsReportModalOpen}
         data={reportData}
+        onSaveReport={handleSaveReport}
       />
     </div>
   );

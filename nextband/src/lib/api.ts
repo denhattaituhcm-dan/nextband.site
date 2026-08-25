@@ -3798,6 +3798,66 @@ export const attendanceApi = {
 };
 
 // =============================================
+// PERIODIC PROGRESS REPORT PERSISTENCE APIs
+// =============================================
+
+export const periodicReportsApi = {
+  getLatest: async (classId: string, studentId: string) => {
+    const token = await getAuthToken();
+    const response = await fetch(
+      `${API_BASE_URL}/classes/${classId}/students/${studentId}/periodic-reports/latest`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      }
+    );
+
+    if (response.ok) {
+      const result = await response.json();
+      return result.data;
+    }
+
+    return null;
+  },
+
+  save: async (
+    classId: string,
+    studentId: string,
+    payload: {
+      strengths?: string;
+      weaknesses?: string;
+      recommendations?: string;
+      nextGoals?: string[];
+      periodStart?: string;
+      periodEnd?: string;
+    }
+  ) => {
+    const token = await getAuthToken();
+    const response = await fetch(
+      `${API_BASE_URL}/classes/${classId}/students/${studentId}/periodic-reports`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    if (response.ok) {
+      const result = await response.json();
+      return result.data;
+    }
+
+    const errJson = await response.json().catch(() => ({}));
+    throw new Error(errJson.error || errJson.message || "Không thể lưu nhận xét định kỳ");
+  },
+};
+
+// =============================================
 // AUTHORITATIVE NOTIFICATION SUBSYSTEM APIs
 // =============================================
 

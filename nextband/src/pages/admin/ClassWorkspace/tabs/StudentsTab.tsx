@@ -23,7 +23,7 @@ import { AttendanceMatrix } from "../features/attendance/AttendanceMatrix";
 import { ProgressReportModal } from "@/components/admin/ProgressReportModal";
 import { mapToProgressReportData } from "@/lib/progressReportMapper";
 import { ProgressReportData } from "@/types/progressReport";
-import { classesApi, invalidateClassQueries } from "@/lib/api";
+import { classesApi, periodicReportsApi, invalidateClassQueries } from "@/lib/api";
 import { Users, Eye, UserPlus, CalendarCheck, Grid, List, UserMinus, Loader2, FileText } from "lucide-react";
 import { toast } from "sonner";
 
@@ -48,7 +48,7 @@ export const StudentsTab: React.FC = () => {
     setDrawerOpen(true);
   };
 
-  const handleOpenReport = (student: any) => {
+  const handleOpenReport = async (student: any) => {
     const studentId = student.studentId || student.id;
     const submissions = classData?.submissions || [];
 
@@ -73,7 +73,7 @@ export const StudentsTab: React.FC = () => {
       return {
         id: lesson.id,
         title: lesson.title || `Homework ${hwNum}`,
-        status: isGraded ? "graded" : isSubmitted ? "submitted" : isOverdue ? "OVERDUE" : "pending",
+        status: isGraded ? "graded" : isSubmitted ? "submitted" : isOverdue ? "overdue" : "unsubmitted",
         score: sub?.totalScore ?? sub?.total_score ?? null,
         bandScore: sub?.totalScore ?? sub?.total_score ?? null,
         isOverdue,
@@ -92,16 +92,65 @@ export const StudentsTab: React.FC = () => {
       })
       .filter((a: any) => a.status !== "UNMARKED");
 
+    const completedSessionsCount = sessions.filter((s: any) => s.status === "COMPLETED").length;
+
+    let savedReport = null;
+    try {
+      savedReport = await periodicReportsApi.getLatest(classId, studentId);
+    } catch (e) {
+      // fallback smoothly
+    }
+
     const mapped = mapToProgressReportData({
+      classId,
+      studentId,
       studentName: student.fullName || student.full_name || student.email || "Học viên",
       className: classData?.name || "Lớp học",
       teacherName: classData?.teacher?.fullName || classData?.teacher_name || null,
+      courseProgress: {
+        completedSessions: completedSessionsCount,
+        totalSessions: sessions.length,
+      },
+      classInfo: {
+        currentStudents: students.length || 6,
+        maxStudents: classData?.room?.capacity || 10,
+        classModel: (students.length || 6) <= 10 ? "Nhóm nhỏ tương tác cao" : "Lớp tiêu chuẩn",
+      },
       homeworks: studentHomeworks,
       attendanceRecords: studentAttendanceRecords,
+      teacherEvaluation: savedReport
+        ? {
+            strengths: savedReport.strengths || "",
+            weaknesses: savedReport.weaknesses || "",
+            recommendations: savedReport.recommendations || "",
+            nextGoals: Array.isArray(savedReport.nextPeriodGoals)
+              ? savedReport.nextPeriodGoals
+              : [],
+          }
+        : undefined,
     });
 
     setReportData(mapped);
     setIsReportModalOpen(true);
+  };
+
+  const handleSaveReport = async (evalData: {
+    strengths: string;
+    weaknesses: string;
+    recommendations: string;
+    nextGoals: string[];
+  }) => {
+    if (!classId || !reportData?.studentId) return;
+    try {
+      await periodicReportsApi.save(classId, reportData.studentId, {
+        strengths: evalData.strengths,
+        weaknesses: evalData.weaknesses,
+        recommendations: evalData.recommendations,
+        nextGoals: evalData.nextGoals,
+      });
+    } catch (e: any) {
+      console.warn("[StudentsTab] Could not persist periodic report:", e);
+    }
   };
 
   const removeStudentMutation = useMutation({
@@ -303,6 +352,7 @@ export const StudentsTab: React.FC = () => {
           open={isReportModalOpen}
           onOpenChange={setIsReportModalOpen}
           data={reportData}
+          onSaveReport={handleSaveReport}
         />
       )}
 
