@@ -120714,24 +120714,53 @@ var usersRoutes = async (fastify) => {
           orderBy: { createdAt: "desc" },
           select: {
             id: true,
+            userId: true,
             email: true,
             fullName: true,
             avatarUrl: true,
             phone: true,
+            parentName: true,
+            parentPhone: true,
+            gender: true,
+            dateOfBirth: true,
             isActive: true,
             createdAt: true,
             classesAsStudent: {
+              where: { deletedAt: null },
               include: {
                 class: {
-                  select: { id: true, name: true, courseId: true, course: { select: { id: true, title: true } } }
+                  select: {
+                    id: true,
+                    name: true,
+                    courseId: true,
+                    course: { select: { id: true, title: true } },
+                    teacher: { select: { id: true, fullName: true, email: true } }
+                  }
                 }
               }
             },
             submissions: {
-              select: { id: true, status: true, totalScore: true, submittedAt: true, exam: { select: { title: true } } }
+              select: {
+                id: true,
+                status: true,
+                totalScore: true,
+                submittedAt: true,
+                createdAt: true,
+                exam: { select: { id: true, title: true } }
+              },
+              orderBy: { createdAt: "desc" },
+              take: 10
             },
             attendanceRecords: {
-              select: { id: true, status: true, createdAt: true }
+              select: {
+                id: true,
+                status: true,
+                sessionDate: true,
+                createdAt: true,
+                class: { select: { id: true, name: true, teacher: { select: { fullName: true } } } }
+              },
+              orderBy: { sessionDate: "desc" },
+              take: 10
             }
           }
         }),
@@ -120745,7 +120774,9 @@ var usersRoutes = async (fastify) => {
               id: cs.class.id,
               name: cs.class.name,
               courseId: cs.class.courseId,
-              courseTitle: cs.class.course?.title || void 0
+              courseTitle: cs.class.course?.title || void 0,
+              teacherId: cs.class.teacher?.id || void 0,
+              teacherName: cs.class.teacher?.fullName || cs.class.teacher?.email || void 0
             });
           }
         });
@@ -120758,22 +120789,41 @@ var usersRoutes = async (fastify) => {
         const totalSessions = attendances.length;
         const attendedCount = attendances.filter((a) => a.status === "PRESENT" || a.status === "present").length;
         const attendancePercentage = totalSessions > 0 ? Math.round(attendedCount / totalSessions * 100) : null;
-        let lastActivity = null;
-        const allActivities = [];
+        const recentActivities = [];
         examSubs.forEach((s2) => {
-          if (s2.submittedAt) {
-            allActivities.push({
+          if (s2.submittedAt || s2.createdAt) {
+            recentActivities.push({
               type: "submission",
-              title: s2.exam?.title || "B\xE0i thi",
+              title: `N\u1ED9p b\xE0i: ${s2.exam?.title || "B\xE0i t\u1EADp / B\xE0i thi"}`,
+              description: s2.totalScore != null ? `\u0110i\u1EC3m s\u1ED1: ${s2.totalScore}` : `Tr\u1EA1ng th\xE1i: ${s2.status === "graded" || s2.status === "GRADED" ? "\u0110\xE3 ch\u1EA5m" : "\u0110\xE3 n\u1ED9p b\xE0i"}`,
               score: s2.totalScore ? Number(s2.totalScore) : null,
-              timestamp: new Date(s2.submittedAt).toISOString()
+              timestamp: new Date(s2.submittedAt || s2.createdAt).toISOString()
             });
           }
         });
-        if (allActivities.length > 0) {
-          allActivities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-          lastActivity = allActivities[0];
+        attendances.forEach((a) => {
+          if (a.sessionDate || a.createdAt) {
+            const statusText = a.status === "PRESENT" || a.status === "present" ? "C\xF3 m\u1EB7t" : a.status === "LATE" || a.status === "late" ? "\u0110i mu\u1ED9n" : "V\u1EAFng";
+            const className = a.class?.name ? ` - L\u1EDBp ${a.class.name}` : "";
+            const teacherText = a.class?.teacher?.fullName ? ` (GV: ${a.class.teacher.fullName})` : "";
+            recentActivities.push({
+              type: "attendance",
+              title: `\u0110i\u1EC3m danh: ${statusText}${className}`,
+              description: `Bu\u1ED5i h\u1ECDc ng\xE0y ${new Date(a.sessionDate || a.createdAt).toLocaleDateString("vi-VN")}${teacherText}`,
+              timestamp: new Date(a.sessionDate || a.createdAt).toISOString()
+            });
+          }
+        });
+        if (st.createdAt) {
+          recentActivities.push({
+            type: "account",
+            title: "Gia nh\u1EADp h\u1EC7 th\u1ED1ng",
+            description: "T\xE0i kho\u1EA3n h\u1ECDc vi\xEAn \u0111\u01B0\u1EE3c kh\u1EDFi t\u1EA1o tr\xEAn h\u1EC7 th\u1ED1ng",
+            timestamp: new Date(st.createdAt).toISOString()
+          });
         }
+        recentActivities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        const lastActivity = recentActivities.length > 0 ? recentActivities[0] : null;
         let academicHealth = null;
         if (totalAssignedCount > 0) {
           const hwProgressRatio = submittedCount / totalAssignedCount;
@@ -120789,18 +120839,23 @@ var usersRoutes = async (fastify) => {
         }
         return {
           id: st.id,
-          fullName: st.fullName || st.email.split("@")[0],
+          userId: st.userId,
+          fullName: st.fullName || st.email?.split("@")[0] || "H\u1ECDc vi\xEAn",
           email: st.email,
           avatarUrl: st.avatarUrl,
           phone: st.phone,
+          parentName: st.parentName,
+          parentPhone: st.parentPhone,
+          gender: st.gender,
+          dateOfBirth: st.dateOfBirth,
           isActive: st.isActive,
           createdAt: st.createdAt,
           classes,
           homework: {
             submittedCount,
             gradedCount,
-            totalAssignedCount: submittedCount,
-            percentage: submittedCount > 0 ? 100 : null
+            totalAssignedCount,
+            percentage: totalAssignedCount > 0 ? Math.round(submittedCount / totalAssignedCount * 100) : null
           },
           attendance: {
             attendedCount,
@@ -120808,6 +120863,7 @@ var usersRoutes = async (fastify) => {
             percentage: attendancePercentage
           },
           lastActivity,
+          recentActivities: recentActivities.slice(0, 10),
           academicHealth
         };
       }));

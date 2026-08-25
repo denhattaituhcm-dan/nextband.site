@@ -153,26 +153,55 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           orderBy: { createdAt: "desc" },
           select: {
             id: true,
+            userId: true,
             email: true,
             fullName: true,
             avatarUrl: true,
             phone: true,
+            parentName: true,
+            parentPhone: true,
+            gender: true,
+            dateOfBirth: true,
             isActive: true,
             createdAt: true,
             classesAsStudent: {
+              where: { deletedAt: null },
               include: {
                 class: {
-                  select: { id: true, name: true, courseId: true, course: { select: { id: true, title: true } } }
-                }
-              }
+                  select: {
+                    id: true,
+                    name: true,
+                    courseId: true,
+                    course: { select: { id: true, title: true } },
+                    teacher: { select: { id: true, fullName: true, email: true } },
+                  },
+                },
+              },
             },
             submissions: {
-              select: { id: true, status: true, totalScore: true, submittedAt: true, exam: { select: { title: true } } }
+              select: {
+                id: true,
+                status: true,
+                totalScore: true,
+                submittedAt: true,
+                createdAt: true,
+                exam: { select: { id: true, title: true } },
+              },
+              orderBy: { createdAt: "desc" },
+              take: 10,
             },
             attendanceRecords: {
-              select: { id: true, status: true, createdAt: true }
-            }
-          }
+              select: {
+                id: true,
+                status: true,
+                sessionDate: true,
+                createdAt: true,
+                class: { select: { id: true, name: true, teacher: { select: { fullName: true } } } },
+              },
+              orderBy: { sessionDate: "desc" },
+              take: 10,
+            },
+          },
         }),
         fastify.prisma.user.count({ where }),
       ]);
@@ -187,6 +216,8 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
               name: cs.class.name,
               courseId: cs.class.courseId,
               courseTitle: cs.class.course?.title || undefined,
+              teacherId: cs.class.teacher?.id || undefined,
+              teacherName: cs.class.teacher?.fullName || cs.class.teacher?.email || undefined,
             });
           }
         });
@@ -207,26 +238,46 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           ? Math.round((attendedCount / totalSessions) * 100)
           : null;
 
-        // 5. Last Activity
-        let lastActivity: any = null;
-        const allActivities: any[] = [];
+        // 4. Activities Timeline
+        const recentActivities: any[] = [];
         examSubs.forEach((s: any) => {
-          if (s.submittedAt) {
-            allActivities.push({
+          if (s.submittedAt || s.createdAt) {
+            recentActivities.push({
               type: "submission",
-              title: s.exam?.title || "Bài thi",
+              title: `Nộp bài: ${s.exam?.title || "Bài tập / Bài thi"}`,
+              description: s.totalScore != null ? `Điểm số: ${s.totalScore}` : `Trạng thái: ${s.status === 'graded' || s.status === 'GRADED' ? 'Đã chấm' : 'Đã nộp bài'}`,
               score: s.totalScore ? Number(s.totalScore) : null,
-              timestamp: new Date(s.submittedAt).toISOString(),
+              timestamp: new Date(s.submittedAt || s.createdAt).toISOString(),
+            });
+          }
+        });
+        attendances.forEach((a: any) => {
+          if (a.sessionDate || a.createdAt) {
+            const statusText = a.status === "PRESENT" || a.status === "present" ? "Có mặt" : a.status === "LATE" || a.status === "late" ? "Đi muộn" : "Vắng";
+            const className = a.class?.name ? ` - Lớp ${a.class.name}` : "";
+            const teacherText = a.class?.teacher?.fullName ? ` (GV: ${a.class.teacher.fullName})` : "";
+            recentActivities.push({
+              type: "attendance",
+              title: `Điểm danh: ${statusText}${className}`,
+              description: `Buổi học ngày ${new Date(a.sessionDate || a.createdAt).toLocaleDateString("vi-VN")}${teacherText}`,
+              timestamp: new Date(a.sessionDate || a.createdAt).toISOString(),
             });
           }
         });
 
-        if (allActivities.length > 0) {
-          allActivities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-          lastActivity = allActivities[0];
+        if (st.createdAt) {
+          recentActivities.push({
+            type: "account",
+            title: "Gia nhập hệ thống",
+            description: "Tài khoản học viên được khởi tạo trên hệ thống",
+            timestamp: new Date(st.createdAt).toISOString(),
+          });
         }
 
-        // 6. Server Academic Health Score Calculation
+        recentActivities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        const lastActivity = recentActivities.length > 0 ? recentActivities[0] : null;
+
+        // 5. Server Academic Health Score Calculation
         let academicHealth: number | null = null;
         if (totalAssignedCount > 0) {
           const hwProgressRatio = submittedCount / totalAssignedCount;
@@ -244,18 +295,23 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
 
         return {
           id: st.id,
-          fullName: st.fullName || st.email.split("@")[0],
+          userId: st.userId,
+          fullName: st.fullName || st.email?.split("@")[0] || "Học viên",
           email: st.email,
           avatarUrl: st.avatarUrl,
           phone: st.phone,
+          parentName: st.parentName,
+          parentPhone: st.parentPhone,
+          gender: st.gender,
+          dateOfBirth: st.dateOfBirth,
           isActive: st.isActive,
           createdAt: st.createdAt,
           classes,
           homework: {
             submittedCount,
             gradedCount,
-            totalAssignedCount: submittedCount,
-            percentage: submittedCount > 0 ? 100 : null,
+            totalAssignedCount,
+            percentage: totalAssignedCount > 0 ? Math.round((submittedCount / totalAssignedCount) * 100) : null,
           },
           attendance: {
             attendedCount,
@@ -263,6 +319,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
             percentage: attendancePercentage,
           },
           lastActivity,
+          recentActivities: recentActivities.slice(0, 10),
           academicHealth,
         };
       }));

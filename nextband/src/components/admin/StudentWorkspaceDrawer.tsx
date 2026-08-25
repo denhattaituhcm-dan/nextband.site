@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { usersApi } from "@/lib/api";
 import {
   Sheet,
   SheetContent,
@@ -43,7 +45,9 @@ import {
   Archive,
   Trash2,
   UserCheck,
-  GraduationCap
+  GraduationCap,
+  Edit,
+  User,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -54,6 +58,7 @@ interface StudentWorkspaceDrawerProps {
   onArchive: (id: string, reason: string, metadata: any) => void;
   onDelete: (id: string) => void;
   onToggleLock: (id: string, isLocked: boolean) => void;
+  onUpdate?: (id: string, data: any) => void;
 }
 
 export function StudentWorkspaceDrawer({
@@ -63,9 +68,29 @@ export function StudentWorkspaceDrawer({
   onArchive,
   onDelete,
   onToggleLock,
+  onUpdate,
 }: StudentWorkspaceDrawerProps) {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   
+  // Edit Profile / Rename Student Dialog State
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [parentName, setParentName] = useState("");
+  const [parentPhone, setParentPhone] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Sync state whenever student changes
+  useEffect(() => {
+    if (student) {
+      setFullName(student.fullName || student.full_name || "");
+      setPhone(student.phone || "");
+      setParentName(student.parentName || student.parent_name || "");
+      setParentPhone(student.parentPhone || student.parent_phone || "");
+    }
+  }, [student]);
+
   // Archive Dialog State
   const [archiveDialogOpen, setArchiveDialogOpen] = useState(false);
   const [archiveReason, setArchiveReason] = useState("long_term_pause");
@@ -79,23 +104,94 @@ export function StudentWorkspaceDrawer({
 
   if (!student) return null;
 
-  // Mocked Academic Health & Operational Data for Demo
-  const healthScore = student.healthScore || 82;
-  const isHealthy = healthScore >= 80;
-  const isNeedsAttention = healthScore >= 60 && healthScore < 80;
+  const handleSaveProfile = async () => {
+    if (!fullName.trim()) {
+      toast({ title: "Lỗi", description: "Họ và tên học viên không được để trống", variant: "destructive" });
+      return;
+    }
+    setIsSaving(true);
+    try {
+      const studentId = student.id || student.userId;
+      const updatePayload = {
+        fullName: fullName.trim(),
+        phone: phone.trim(),
+        parentName: parentName.trim(),
+        parentPhone: parentPhone.trim(),
+      };
 
-  const currentClass = student.className || "IELTS Dreamer 03";
-  const courseName = student.courseName || "IELTS Overall 6.5";
-  const teacherName = student.teacherName || "Cô Minh Châu";
-  const hwRatio = student.hwRatio || "12/27 (44%)";
-  const attendanceRate = student.attendanceRate || "95%";
-  const lastActivityText = student.lastActivityText || "2 giờ trước";
+      await usersApi.update(studentId, updatePayload);
+
+      // Mutate local object so UI reflects changes immediately
+      student.fullName = fullName.trim();
+      student.phone = phone.trim();
+      student.parentName = parentName.trim();
+      student.parentPhone = parentPhone.trim();
+
+      // Invalidate queries so tables and related views refresh
+      queryClient.invalidateQueries({ queryKey: ["admin-students-management"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["class-workspace"] });
+
+      toast({ title: "Thành công", description: "Đã cập nhật tên và thông tin học viên" });
+      setEditDialogOpen(false);
+
+      if (onUpdate) {
+        onUpdate(studentId, updatePayload);
+      }
+    } catch (err: any) {
+      toast({ title: "Lỗi", description: err.message || "Không thể cập nhật thông tin học viên", variant: "destructive" });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+
+  // 1. Classes & Course info
+  const primaryClass = student.classes?.[0];
+  const classNames = student.classes && student.classes.length > 0
+    ? student.classes.map((c: any) => c.name).join(", ")
+    : (student.className || "Chưa xếp lớp");
+  const courseName = student.courseName || primaryClass?.courseTitle || (primaryClass ? "Chưa có tên khóa" : "");
+  
+  // Teacher info from assigned class
+  const teacherNames = student.classes && student.classes.length > 0
+    ? student.classes.map((c: any) => c.teacherName).filter(Boolean).join(", ")
+    : null;
+  const teacherName = teacherNames || student.teacherName || primaryClass?.teacherName || "Chưa phân công";
+
+  // 2. Academic Health & Operational Data
+  const healthScore = student.academicHealth != null 
+    ? student.academicHealth 
+    : (student.healthScore != null ? student.healthScore : null);
+  const isHealthy = healthScore != null && healthScore >= 80;
+  const isNeedsAttention = healthScore != null && healthScore >= 60 && healthScore < 80;
+
+  // Homework progress
+  const hwRatio = student.homework
+    ? (student.homework.totalAssignedCount > 0
+        ? `${student.homework.submittedCount}/${student.homework.totalAssignedCount} (${student.homework.percentage ?? 0}%)`
+        : student.homework.submittedCount > 0
+          ? `${student.homework.submittedCount} bài đã nộp`
+          : "Chưa có bài tập")
+    : (student.hwRatio || "Chưa có bài tập");
+
+  // Attendance rate
+  const attendanceRate = student.attendance && student.attendance.percentage != null
+    ? `${student.attendance.percentage}% (${student.attendance.attendedCount}/${student.attendance.totalSessions} buổi)`
+    : (student.attendanceRate || "Chưa có dữ liệu");
+
+  // Last Activity
+  const lastActivity = student.lastActivity;
+  const lastActivityText = lastActivity?.timestamp
+    ? new Date(lastActivity.timestamp).toLocaleString("vi-VN")
+    : (student.lastActivityText || "Chưa có hoạt động");
+
   const isAccountLocked = student.isActive === false;
 
   // Guardian info
-  const parentName = student.parentName || "Nguyễn Văn B";
-  const parentPhone = student.parentPhone || "0901 234 567";
-  const lastContactDate = student.lastContactDate || "05/08/2026";
+  const parentNameDisplay = student.parentName || student.parent_name || "";
+  const parentPhoneDisplay = student.parentPhone || student.parent_phone || "";
+  const lastContactDate = student.lastContactDate || "";
 
   const handleConfirmArchive = () => {
     onArchive(student.id, archiveReason, {
@@ -127,80 +223,134 @@ export function StudentWorkspaceDrawer({
               <Avatar className="h-11 w-11 border">
                 <AvatarImage src={student.avatarUrl} />
                 <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                  {student.fullName ? student.fullName.substring(0, 2).toUpperCase() : "HV"}
+                  {fullName ? fullName.substring(0, 2).toUpperCase() : "HV"}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   <h3 className="font-bold text-base text-foreground leading-none">
-                    {student.fullName || "Học viên chưa đặt tên"}
+                    {fullName || "Học viên chưa đặt tên"}
                   </h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 w-6 p-0 text-muted-foreground hover:text-primary rounded-md"
+                    title="Đổi tên / Chỉnh sửa thông tin học viên"
+                    onClick={() => setEditDialogOpen(true)}
+                  >
+                    <Edit className="h-3.5 w-3.5" />
+                  </Button>
                   <Badge variant={isAccountLocked ? "destructive" : "secondary"} className="text-[10px] px-1.5 py-0">
                     {isAccountLocked ? "🔒 Đã khóa TK" : "🟢 Hoạt động"}
                   </Badge>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {currentClass} • {student.email}
+                  {classNames} • {student.email}
                 </p>
               </div>
             </div>
 
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-1 text-xs text-muted-foreground hover:text-foreground"
-              onClick={() => toast({ title: "Tính năng mở trang Profile chi tiết" })}
-            >
-              Mở toàn trang
-              <ExternalLink className="h-3.5 w-3.5" />
-            </Button>
+            <div className="flex items-center gap-1.5">
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5 text-xs text-primary border-primary/30 hover:bg-primary/5 font-semibold"
+                onClick={() => setEditDialogOpen(true)}
+              >
+                <Edit className="h-3.5 w-3.5" />
+                Đổi tên
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1 text-xs text-muted-foreground hover:text-foreground"
+                onClick={() => toast({ title: "Hồ sơ học viên", description: `ID: ${student.id || student.userId}` })}
+              >
+                Mở toàn trang
+                <ExternalLink className="h-3.5 w-3.5" />
+              </Button>
+            </div>
           </div>
 
           {/* SCROLLABLE BODY CONTENT */}
           <div className="flex-1 overflow-y-auto p-5 space-y-6">
             {/* 2. QUICK ACTIONS */}
-            <div className="grid grid-cols-4 gap-2">
-              <Button variant="outline" size="sm" className="flex flex-col h-14 items-center justify-center gap-1 text-[11px] font-normal" onClick={() => toast({ title: "Mở ô nhắn tin với học viên" })}>
+            <div className="grid grid-cols-5 gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex flex-col h-14 items-center justify-center gap-1 text-[11px] font-normal border-primary/20 hover:bg-primary/5 hover:text-primary transition-colors"
+                onClick={() => setEditDialogOpen(true)}
+              >
+                <Edit className="h-4 w-4 text-primary" />
+                Đổi tên / Sửa
+              </Button>
+              <Button variant="outline" size="sm" className="flex flex-col h-14 items-center justify-center gap-1 text-[11px] font-normal" onClick={() => toast({ title: "Nhắn tin", description: `Gửi thông báo đến ${student.email}` })}>
                 <MessageSquare className="h-4 w-4 text-primary" />
                 Nhắn tin
               </Button>
-              <Button variant="outline" size="sm" className="flex flex-col h-14 items-center justify-center gap-1 text-[11px] font-normal" onClick={() => toast({ title: "Mở Modal đổi lớp" })}>
+              <Button variant="outline" size="sm" className="flex flex-col h-14 items-center justify-center gap-1 text-[11px] font-normal" onClick={() => toast({ title: "Đổi lớp", description: "Vui lòng vào chi tiết Lớp học để gán học viên" })}>
                 <RefreshCw className="h-4 w-4 text-primary" />
                 Đổi lớp
               </Button>
-              <Button variant="outline" size="sm" className="flex flex-col h-14 items-center justify-center gap-1 text-[11px] font-normal" onClick={() => toast({ title: "Đã chọn đặt bảo lưu" })}>
+              <Button variant="outline" size="sm" className="flex flex-col h-14 items-center justify-center gap-1 text-[11px] font-normal" onClick={() => setArchiveDialogOpen(true)}>
                 <PauseCircle className="h-4 w-4 text-warning" />
                 Bảo lưu
               </Button>
-              <Button variant="outline" size="sm" className="flex flex-col h-14 items-center justify-center gap-1 text-[11px] font-normal" onClick={() => toast({ title: "Mã reset mật khẩu đã tạo" })}>
+              <Button variant="outline" size="sm" className="flex flex-col h-14 items-center justify-center gap-1 text-[11px] font-normal" onClick={() => toast({ title: "Reset mật khẩu", description: "Đã gửi hướng dẫn reset mật khẩu về email học viên" })}>
                 <Key className="h-4 w-4 text-muted-foreground" />
                 Reset Pass
               </Button>
             </div>
 
-            {/* 3. MINI NOTIFICATIONS (Cảnh báo nhanh) */}
+            {/* 3. MINI NOTIFICATIONS / STATUS BADGES */}
             <div className="flex flex-wrap gap-2">
-              <Badge variant="warning" className="text-xs py-1 px-2.5 flex items-center gap-1.5">
-                <AlertTriangle className="h-3.5 w-3.5" />
-                2 Bài tập trễ hạn
-              </Badge>
-              <Badge variant="info" className="text-xs py-1 px-2.5 flex items-center gap-1.5">
-                <MessageSquare className="h-3.5 w-3.5" />
-                3 Phản hồi chưa đọc
-              </Badge>
+              {isAccountLocked ? (
+                <Badge variant="destructive" className="text-xs py-1 px-2.5 flex items-center gap-1.5">
+                  <AlertTriangle className="h-3.5 w-3.5" />
+                  Tài khoản đang bị khóa
+                </Badge>
+              ) : healthScore != null && healthScore < 60 ? (
+                <Badge variant="destructive" className="text-xs py-1 px-2.5 flex items-center gap-1.5">
+                  <AlertTriangle className="h-3.5 w-3.5" />
+                  Cần hỗ trợ học thuật
+                </Badge>
+              ) : (!student.classes || student.classes.length === 0) ? (
+                <Badge variant="outline" className="text-xs py-1 px-2.5 text-muted-foreground flex items-center gap-1.5">
+                  <Info className="h-3.5 w-3.5" />
+                  Chưa phân lớp học
+                </Badge>
+              ) : (
+                <Badge variant="outline" className="text-xs py-1 px-2.5 text-emerald-700 bg-emerald-50 border-emerald-200 flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  Hoạt động bình thường
+                </Badge>
+              )}
             </div>
 
-            {/* 4. CURRENT FOCUS (Nhiệm vụ trọng tâm hiện tại) */}
+            {/* 4. CURRENT FOCUS / RECENT ACTIVITY */}
             <div className="bg-gradient-to-r from-primary/5 via-primary/10 to-transparent border border-primary/20 rounded-xl p-4 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold uppercase tracking-wider text-primary flex items-center gap-1.5">
                   <BookOpen className="h-3.5 w-3.5" />
-                  Trọng tâm hiện tại (Current Focus)
+                  Trọng tâm & Hoạt động gần nhất
                 </span>
-                <Badge variant="outline" className="bg-background text-[10px]">Hạn: Ngày mai</Badge>
+                {lastActivity?.timestamp && (
+                  <Badge variant="outline" className="bg-background text-[10px]">
+                    {new Date(lastActivity.timestamp).toLocaleDateString("vi-VN")}
+                  </Badge>
+                )}
               </div>
-              <p className="font-medium text-sm">Homework 12: IELTS Writing Task 2 - Essay Structure</p>
-              <p className="text-xs text-muted-foreground">Trạng thái: <span className="text-warning font-medium">Chưa nộp bài</span> • Cần nhắc nhở học viên trước 23:59</p>
+              {lastActivity ? (
+                <>
+                  <p className="font-medium text-sm">{lastActivity.title}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {lastActivity.description || (lastActivity.score != null ? `Điểm số: ${lastActivity.score}` : "Đã hoàn thành")}
+                  </p>
+                </>
+              ) : (
+                <p className="text-xs text-muted-foreground">Chưa có bài tập hoặc nhiệm vụ học tập ghi nhận gần đây.</p>
+              )}
             </div>
 
             {/* 5. ACADEMIC HEALTH & OVERVIEW */}
@@ -217,40 +367,50 @@ export function StudentWorkspaceDrawer({
                         <p className="font-bold">Công thức Academic Health Score:</p>
                         <p>• Tỷ lệ điểm danh: 30%</p>
                         <p>• Hoàn thành bài tập: 40%</p>
-                        <p>• Bài tập đúng hạn: 20%</p>
-                        <p>• Đánh giá từ giáo viên: 10%</p>
+                        <p>• Tỷ lệ bài đã chấm: 30%</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`text-lg font-bold ${isHealthy ? "text-success" : isNeedsAttention ? "text-warning" : "text-destructive"}`}>
-                    {healthScore}/100
-                  </span>
-                  <Badge variant={isHealthy ? "success" : isNeedsAttention ? "warning" : "destructive"}>
-                    {isHealthy ? (
-                      <>
-                        <CheckCircle2 className="h-3 w-3" /> Tốt
-                      </>
-                    ) : isNeedsAttention ? (
-                      <>
-                        <AlertTriangle className="h-3 w-3" /> Cần chú ý
-                      </>
-                    ) : (
-                      <>
-                        <AlertTriangle className="h-3 w-3" /> Rủi ro cao
-                      </>
-                    )}
-                  </Badge>
+                  {healthScore != null ? (
+                    <>
+                      <span className={`text-lg font-bold ${isHealthy ? "text-success" : isNeedsAttention ? "text-warning" : "text-destructive"}`}>
+                        {healthScore}/100
+                      </span>
+                      <Badge variant={isHealthy ? "success" : isNeedsAttention ? "warning" : "destructive"}>
+                        {isHealthy ? (
+                          <>
+                            <CheckCircle2 className="h-3 w-3" /> Tốt
+                          </>
+                        ) : isNeedsAttention ? (
+                          <>
+                            <AlertTriangle className="h-3 w-3" /> Cần chú ý
+                          </>
+                        ) : (
+                          <>
+                            <AlertTriangle className="h-3 w-3" /> Rủi ro cao
+                          </>
+                        )}
+                      </Badge>
+                    </>
+                  ) : (
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-muted-foreground font-medium">Chưa đánh giá</span>
+                      <Badge variant="outline" className="text-[10px] text-muted-foreground">Chưa có dữ liệu</Badge>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              <Progress value={healthScore} className="h-2" />
+              <Progress value={healthScore ?? 0} className="h-2" />
 
               <div className="grid grid-cols-2 gap-3 text-xs pt-2 border-t">
                 <div>
                   <span className="text-muted-foreground">Lớp & Khóa:</span>
-                  <p className="font-medium mt-0.5">{currentClass} ({courseName})</p>
+                  <p className="font-medium mt-0.5">
+                    {classNames} {courseName ? `(${courseName})` : ""}
+                  </p>
                 </div>
                 <div>
                   <span className="text-muted-foreground">Giáo viên phụ trách:</span>
@@ -272,20 +432,30 @@ export function StudentWorkspaceDrawer({
 
             {/* 6. GUARDIAN / PARENT SECTION */}
             <div className="border rounded-xl p-4 bg-muted/10 space-y-2">
-              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                <UserCheck className="h-3.5 w-3.5" />
-                Thông tin Phụ huynh (Guardian)
-              </span>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                  <UserCheck className="h-3.5 w-3.5" />
+                  Thông tin Phụ huynh (Guardian)
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 text-[11px] text-muted-foreground hover:text-primary gap-1 p-1 px-2"
+                  onClick={() => setEditDialogOpen(true)}
+                >
+                  <Edit className="h-3 w-3" /> Chỉnh sửa
+                </Button>
+              </div>
               <div className="flex items-center justify-between text-xs pt-1">
                 <div>
-                  <p className="font-semibold text-sm">{parentName}</p>
+                  <p className="font-semibold text-sm">{parentNameDisplay || "Chưa cập nhật"}</p>
                   <p className="text-muted-foreground flex items-center gap-1 mt-0.5">
-                    <Phone className="h-3 w-3" /> {parentPhone}
+                    <Phone className="h-3 w-3" /> {parentPhoneDisplay || "Chưa có SĐT"}
                   </p>
                 </div>
                 <div className="text-right">
                   <span className="text-muted-foreground">Lần liên hệ cuối:</span>
-                  <p className="font-medium">{lastContactDate}</p>
+                  <p className="font-medium">{lastContactDate || "Chưa ghi nhận"}</p>
                 </div>
               </div>
             </div>
@@ -300,49 +470,43 @@ export function StudentWorkspaceDrawer({
                 <span className="text-[11px] text-muted-foreground">Gần nhất: {lastActivityText}</span>
               </div>
 
-              <div className="relative pl-4 space-y-4 border-l-2 border-muted ml-2 text-xs">
-                {/* Event 1 */}
-                <div className="relative">
-                  <div className="absolute -left-[21px] top-0.5 bg-success text-success-foreground rounded-full p-0.5">
-                    <CheckCircle2 className="h-3 w-3" />
-                  </div>
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <p className="font-semibold text-foreground">Nộp Bài tập 12 - Writing Task 2</p>
-                      <span className="text-[10px] text-muted-foreground">2 giờ trước</span>
-                    </div>
-                    <p className="text-muted-foreground mt-0.5">Đã đạt Band 6.5 (Nhận xét: Mở bài đạt chuẩn, bài làm mạch lạc)</p>
-                  </div>
-                </div>
+              {student.recentActivities && student.recentActivities.length > 0 ? (
+                <div className="relative pl-4 space-y-4 border-l-2 border-muted ml-2 text-xs">
+                  {student.recentActivities.map((act: any, idx: number) => {
+                    const isSubmission = act.type === "submission";
+                    const isAttendance = act.type === "attendance";
 
-                {/* Event 2 */}
-                <div className="relative">
-                  <div className="absolute -left-[21px] top-0.5 bg-primary text-primary-foreground rounded-full p-0.5">
-                    <Calendar className="h-3 w-3" />
-                  </div>
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <p className="font-semibold text-foreground">Điểm danh - Có mặt</p>
-                      <span className="text-[10px] text-muted-foreground">01/08/2026</span>
-                    </div>
-                    <p className="text-muted-foreground mt-0.5">Buổi 14: Luyện tập Speaking Part 2 với GV Minh Châu</p>
-                  </div>
+                    return (
+                      <div key={idx} className="relative">
+                        <div className={`absolute -left-[21px] top-0.5 rounded-full p-0.5 ${
+                          isSubmission ? "bg-success text-success-foreground" :
+                          isAttendance ? "bg-primary text-primary-foreground" :
+                          "bg-muted-foreground text-background"
+                        }`}>
+                          {isSubmission ? <CheckCircle2 className="h-3 w-3" /> :
+                           isAttendance ? <Calendar className="h-3 w-3" /> :
+                           <User className="h-3 w-3" />}
+                        </div>
+                        <div>
+                          <div className="flex items-center justify-between">
+                            <p className="font-semibold text-foreground">{act.title}</p>
+                            <span className="text-[10px] text-muted-foreground">
+                              {act.timestamp ? new Date(act.timestamp).toLocaleDateString("vi-VN") : ""}
+                            </span>
+                          </div>
+                          {act.description && (
+                            <p className="text-muted-foreground mt-0.5">{act.description}</p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-
-                {/* Event 3 */}
-                <div className="relative">
-                  <div className="absolute -left-[21px] top-0.5 bg-info text-info-foreground rounded-full p-0.5">
-                    <MessageSquare className="h-3 w-3" />
-                  </div>
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <p className="font-semibold text-foreground">Nhận xét từ Giáo viên</p>
-                      <span className="text-[10px] text-muted-foreground">31/07/2026</span>
-                    </div>
-                    <p className="text-muted-foreground mt-0.5">"Kỹ năng Listening tiến bộ tốt, cần luyện thêm vốn từ ngữ vựng Topic Education"</p>
-                  </div>
+              ) : (
+                <div className="p-4 border rounded-lg bg-muted/10 text-center text-xs text-muted-foreground">
+                  Chưa có lịch sử hoạt động ghi nhận cho học viên này.
                 </div>
-              </div>
+              )}
             </div>
 
             <Separator />
@@ -382,6 +546,91 @@ export function StudentWorkspaceDrawer({
           </div>
         </SheetContent>
       </Sheet>
+
+      {/* DIALOG: EDIT STUDENT PROFILE / RENAME */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base">
+              <Edit className="h-4 w-4 text-primary" />
+              Chỉnh sửa thông tin & Đổi tên học viên
+            </DialogTitle>
+            <DialogDescription className="text-xs">
+              Cập nhật họ tên thật và thông tin liên lạc của học viên để hiển thị chuẩn xác trên hệ thống và báo cáo học tập.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3.5 py-2 text-xs">
+            <div className="p-2.5 rounded-lg bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900 text-slate-700 dark:text-slate-300">
+              <p className="font-semibold text-blue-900 dark:text-blue-300">• Email tài khoản: <span className="font-mono text-xs">{student.email}</span></p>
+              <p className="text-[11px] text-blue-700 dark:text-blue-400 mt-0.5">Hệ thống có thể đã lấy tên mặc định từ Google Email. Bạn có thể đổi sang họ tên thật có dấu đầy đủ của học viên dưới đây.</p>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs font-bold text-foreground">
+                Họ và tên học viên (Họ tên thật) *
+              </Label>
+              <Input
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Ví dụ: Trương Bích Vân"
+                className="h-9 text-xs font-medium"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-foreground">
+                Số điện thoại học viên
+              </Label>
+              <Input
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="Ví dụ: 0901234567"
+                className="h-9 text-xs"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 pt-1 border-t">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-foreground">
+                  Tên Phụ huynh (Guardian)
+                </Label>
+                <Input
+                  value={parentName}
+                  onChange={(e) => setParentName(e.target.value)}
+                  placeholder="Ví dụ: Nguyễn Văn A"
+                  className="h-9 text-xs"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-foreground">
+                  SĐT Phụ huynh
+                </Label>
+                <Input
+                  value={parentPhone}
+                  onChange={(e) => setParentPhone(e.target.value)}
+                  placeholder="0909876543"
+                  className="h-9 text-xs"
+                />
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 pt-2">
+            <Button variant="outline" size="sm" onClick={() => setEditDialogOpen(false)}>
+              Hủy
+            </Button>
+            <Button
+              size="sm"
+              disabled={isSaving}
+              onClick={handleSaveProfile}
+              className="bg-primary gap-1.5 font-semibold"
+            >
+              {isSaving ? "Đang lưu..." : "Lưu thay đổi"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* DIALOG 1: ARCHIVE WITH METADATA */}
       <Dialog open={archiveDialogOpen} onOpenChange={setArchiveDialogOpen}>

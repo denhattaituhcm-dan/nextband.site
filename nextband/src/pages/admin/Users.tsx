@@ -149,6 +149,7 @@ export default function AdminUsers() {
       return usersApi.update(id, { isActive });
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-students-management"] });
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
       toast({ title: "Đã cập nhật trạng thái tài khoản" });
     },
@@ -157,6 +158,7 @@ export default function AdminUsers() {
   const createMutation = useMutation({
     mutationFn: (body: typeof emptyForm) => usersApi.create(body),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-students-management"] });
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
       toast({ title: "Đã tạo học viên mới thành công" });
       setDialogOpen(false);
@@ -171,6 +173,7 @@ export default function AdminUsers() {
   const updateMutation = useMutation({
     mutationFn: ({ id, ...body }: any) => usersApi.update(id, body),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-students-management"] });
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
       toast({ title: "Đã cập nhật thông tin học viên" });
       setDialogOpen(false);
@@ -185,6 +188,7 @@ export default function AdminUsers() {
   const deleteMutation = useMutation({
     mutationFn: (id: string) => usersApi.delete(id),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-students-management"] });
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
       toast({ title: "Đã xóa vĩnh viễn dữ liệu học viên" });
     },
@@ -644,6 +648,7 @@ export default function AdminUsers() {
         onOpenChange={setDrawerOpen}
         student={selectedStudent}
         onArchive={(id, reason, metadata) => {
+          queryClient.invalidateQueries({ queryKey: ["admin-students-management"] });
           queryClient.invalidateQueries({ queryKey: ["admin-users"] });
         }}
         onDelete={(id) => {
@@ -651,6 +656,11 @@ export default function AdminUsers() {
         }}
         onToggleLock={(id, isLocked) => {
           toggleLockMutation.mutate({ id, isActive: !isLocked });
+        }}
+        onUpdate={(id, updated) => {
+          setSelectedStudent((prev: any) => (prev ? { ...prev, ...updated } : null));
+          queryClient.invalidateQueries({ queryKey: ["admin-students-management"] });
+          queryClient.invalidateQueries({ queryKey: ["admin-users"] });
         }}
       />
 
@@ -698,7 +708,7 @@ export default function AdminUsers() {
               <div className="space-y-2">
                 <Label>Tên Phụ huynh</Label>
                 <Input
-                  placeholder="Nguyễn Văn B"
+                  placeholder="Ví dụ: Nguyễn Văn A"
                   value={form.parentName}
                   onChange={(e) => setForm({ ...form, parentName: e.target.value })}
                 />
