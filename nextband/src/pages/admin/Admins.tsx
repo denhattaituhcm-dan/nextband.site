@@ -93,15 +93,30 @@ export default function AdminAdmins() {
   });
 
   const toggleMutation = useMutation({
-    mutationFn: async ({ id, isActive }: { id: string; isActive: boolean }) => {
-      return usersApi.update(id, { isActive });
+    mutationFn: async ({ id, role, isActive = true }: { id: string; role?: string; isActive?: boolean }) => {
+      return usersApi.update(id, { role, isActive });
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (res, variables) => {
       queryClient.invalidateQueries({ queryKey: ["admin-admins"] });
-      toast({ title: "Đã cập nhật trạng thái quản trị viên" });
+      const isRevoking = variables.role === "student";
+      toast({
+        title: isRevoking
+          ? "Đã thu hồi quyền Quản trị viên (chuyển về Học viên)"
+          : "Đã cấp quyền Quản trị viên",
+        description: isRevoking
+          ? "Tài khoản vẫn có thể đăng nhập bình thường với tư cách Học viên."
+          : "Tài khoản hiện có toàn quyền Quản trị hệ thống.",
+      });
       if (currentUser && (variables.id === currentUser.id || variables.id === (currentUser as any).userId)) {
         refreshUser();
       }
+    },
+    onError: () => {
+      toast({
+        title: "Lỗi",
+        description: "Không thể cập nhật quyền quản trị viên.",
+        variant: "destructive",
+      });
     },
   });
 
@@ -214,7 +229,7 @@ export default function AdminAdmins() {
               <TableHead>Email</TableHead>
               <TableHead>SĐT</TableHead>
               <TableHead>Ngày tạo</TableHead>
-              <TableHead>Kích hoạt</TableHead>
+              <TableHead>Quyền Admin</TableHead>
               <TableHead className="w-[60px]"></TableHead>
             </TableRow>
           </TableHeader>
@@ -235,63 +250,67 @@ export default function AdminAdmins() {
                 </TableCell>
               </TableRow>
             ) : (
-              adminsList.map((admin: any) => (
-                <TableRow key={admin.id}>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-9 w-9">
-                        <AvatarImage src={admin.avatarUrl || undefined} />
-                        <AvatarFallback className="bg-amber-100 text-amber-800 font-bold">
-                          <ShieldCheck className="h-4 w-4" />
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <span className="font-semibold text-slate-900 block">
-                          {admin.fullName || "Admin System"}
-                        </span>
-                        <Badge className="bg-amber-500 hover:bg-amber-600 text-white text-[10px]">
-                          Admin
-                        </Badge>
+              adminsList.map((admin: any) => {
+                const hasAdminRole = admin.roles?.includes("admin") || admin.role === "admin";
+                return (
+                  <TableRow key={admin.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-9 w-9">
+                          <AvatarImage src={admin.avatarUrl || undefined} />
+                          <AvatarFallback className="bg-amber-100 text-amber-800 font-bold">
+                            <ShieldCheck className="h-4 w-4" />
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <span className="font-semibold text-slate-900 block">
+                            {admin.fullName || "Admin System"}
+                          </span>
+                          <Badge className={hasAdminRole ? "bg-amber-500 hover:bg-amber-600 text-white text-[10px]" : "bg-slate-300 text-slate-700 text-[10px]"}>
+                            {hasAdminRole ? "Admin" : "Học viên"}
+                          </Badge>
+                        </div>
                       </div>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-sm font-medium text-slate-700">
-                    <div className="flex items-center gap-1.5">
-                      <Mail className="h-3.5 w-3.5 text-slate-400" />
-                      {admin.email}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-sm">
-                    {admin.phone ? (
+                    </TableCell>
+                    <TableCell className="text-sm font-medium text-slate-700">
                       <div className="flex items-center gap-1.5">
-                        <Phone className="h-3.5 w-3.5 text-slate-400" />
-                        {admin.phone}
+                        <Mail className="h-3.5 w-3.5 text-slate-400" />
+                        {admin.email}
                       </div>
-                    ) : (
-                      <span className="text-muted-foreground">—</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {new Date(admin.createdAt).toLocaleDateString("vi-VN")}
-                  </TableCell>
-                  <TableCell>
-                    <Switch
-                      checked={admin.isActive ?? true}
-                      onCheckedChange={(checked) =>
-                        toggleMutation.mutate({
-                          id: admin.id,
-                          isActive: checked,
-                        })
-                      }
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Button variant="ghost" size="sm" onClick={() => openEdit(admin)}>
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {admin.phone ? (
+                        <div className="flex items-center gap-1.5">
+                          <Phone className="h-3.5 w-3.5 text-slate-400" />
+                          {admin.phone}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {new Date(admin.createdAt).toLocaleDateString("vi-VN")}
+                    </TableCell>
+                    <TableCell>
+                      <Switch
+                        checked={hasAdminRole}
+                        onCheckedChange={(checked) =>
+                          toggleMutation.mutate({
+                            id: admin.id,
+                            role: checked ? "admin" : "student",
+                            isActive: true,
+                          })
+                        }
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Button variant="ghost" size="sm" onClick={() => openEdit(admin)}>
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>
