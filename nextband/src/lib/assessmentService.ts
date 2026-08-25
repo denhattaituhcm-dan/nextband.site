@@ -107,7 +107,7 @@ export function mapBandToArisRank(band: number) {
   if (band < 3.5) {
     return {
       rankCode: 3,
-      rankTitle: "Rank 3 — Khởi Nền (Starter)",
+      rankTitle: "Rank 3 — Học Đồ (Starter)",
       bandRange: "Band 2.5 – 3.5",
       recommendedCourse: {
         slug: "starter",
@@ -121,7 +121,7 @@ export function mapBandToArisRank(band: number) {
   if (band <= 4.5) {
     return {
       rankCode: 4,
-      rankTitle: "Rank 4 — Tập Sự (Dreamer)",
+      rankTitle: "Rank 4 — Học Sĩ (Dreamer)",
       bandRange: "Band 4.0 – 4.5",
       recommendedCourse: {
         slug: "dreamer",
@@ -135,7 +135,7 @@ export function mapBandToArisRank(band: number) {
   if (band <= 5.5) {
     return {
       rankCode: 5,
-      rankTitle: "Rank 5 — Học Sĩ (Builder)",
+      rankTitle: "Rank 5 — Học Sư (Builder)",
       bandRange: "Band 5.0 – 5.5",
       recommendedCourse: {
         slug: "builder",
@@ -149,7 +149,7 @@ export function mapBandToArisRank(band: number) {
   if (band <= 6.5) {
     return {
       rankCode: 6,
-      rankTitle: "Rank 6 — Học Sư (Master)",
+      rankTitle: "Rank 6 — Học Giả (Master)",
       bandRange: "Band 6.0 – 6.5",
       recommendedCourse: {
         slug: "master",
@@ -162,7 +162,7 @@ export function mapBandToArisRank(band: number) {
   }
   return {
     rankCode: 7,
-    rankTitle: "Rank 7 — Học Giả (Leader)",
+    rankTitle: "Rank 7 — Học Bá (Leader)",
     bandRange: "Band 7.0 – 8.0+",
     recommendedCourse: {
       slug: "leader",

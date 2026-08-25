@@ -199,5 +199,32 @@ describe("Academic Progress Report Mapper - Unit Tests", () => {
     expect(result.homework.autoGradedCount).toBe(10);
     expect(result.homework.teacherGradedCount).toBe(8);
   });
+
+  it("Scenario 6: Target Band extraction and flexible fallback resolution", () => {
+    // 6a: Explicit targetBand
+    const res1 = mapToProgressReportData({
+      studentName: "Nguyễn Hoàng Mai",
+      className: "D01 07.2026",
+      targetBand: "IELTS 7.0+",
+    });
+    expect(res1.student.targetBand).toBe("IELTS 7.0+");
+
+    // 6b: Fallback from student object targetBand
+    const res2 = mapToProgressReportData({
+      studentName: "Lê Văn C",
+      className: "D02 08.2026",
+      student: { targetBand: "IELTS 6.5+" } as any,
+    });
+    expect(res2.student.targetBand).toBe("IELTS 6.5+");
+
+    // 6c: Fallback from snake_case target_band
+    const res3 = mapToProgressReportData({
+      studentName: "Phạm Văn D",
+      className: "D03 09.2026",
+      target_band: "IELTS 6.0+",
+    } as any);
+    expect(res3.student.targetBand).toBe("IELTS 6.0+");
+  });
 });
+
 

@@ -20,7 +20,8 @@ import {
   UserCheck,
   Users,
 } from "lucide-react";
-import { getFeaturedEvidence, fetchEvidenceListAsync, EvidenceItem } from "@/lib/evidenceStore";
+import { cn } from "@/lib/utils";
+import { getFeaturedEvidence, fetchEvidenceListAsync, getAcademicRankHonor, EvidenceItem } from "@/lib/evidenceStore";
 import {
   Dialog,
   DialogContent,
@@ -678,6 +679,40 @@ export default function PublicHomePage() {
                   </div>
                 </div>
               </div>
+
+              {/* Honorary Academic Rank Award Banner */}
+              {(() => {
+                const honor = getAcademicRankHonor(selectedEvidence.academicRankTitle || selectedEvidence.overallScore);
+                return (
+                  <div
+                    className={cn(
+                      "p-4 rounded-2xl border flex items-center justify-between gap-4",
+                      honor.badgeBg,
+                      honor.badgeBorder
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={cn("p-2.5 rounded-xl bg-card border shadow-2xs", honor.badgeBorder)}>
+                        <Award className={cn("h-6 w-6", honor.accentColor)} />
+                      </div>
+                      <div>
+                        <span className="text-[10px] sm:text-[11px] uppercase font-black tracking-wider text-muted-foreground block">
+                          Danh Hiệu Học Thuật Chính Thức Được Trao Tặng
+                        </span>
+                        <div className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
+                          <span>{honor.fullTitle}</span>
+                          <span className={cn("text-xs font-bold", honor.accentColor)}>({honor.subtitle})</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0 hidden sm:block">
+                      <span className="text-xs font-mono font-black px-2.5 py-1 rounded-lg bg-background border text-foreground shadow-2xs">
+                        IELTS {selectedEvidence.overallScore}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Score Breakdown Bar */}
               <div className="p-4 rounded-2xl bg-brand-blue-soft/50 border border-brand-blue/20 grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
 import {
   EvidenceItem,
   getEvidenceList,
@@ -7,6 +8,7 @@ import {
   deleteEvidenceItemAsync,
   toggleEvidencePublished,
   toggleEvidenceFeatured,
+  getAcademicRankHonor,
 } from "@/lib/evidenceStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -270,7 +272,7 @@ export default function AdminEvidence() {
 
                     {/* Student & Title */}
                     <td className="py-4 px-4 max-w-sm">
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <span className="font-extrabold text-foreground text-sm">
                           {item.studentName}
                         </span>
@@ -279,6 +281,22 @@ export default function AdminEvidence() {
                             {item.studentSchool}
                           </span>
                         )}
+                        {(() => {
+                          const honor = getAcademicRankHonor(item.academicRankTitle || item.overallScore);
+                          return (
+                            <span
+                              className={cn(
+                                "inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-md border",
+                                honor.badgeBg,
+                                honor.badgeText,
+                                honor.badgeBorder
+                              )}
+                            >
+                              <Award className="h-3 w-3" />
+                              {honor.fullTitle}
+                            </span>
+                          );
+                        })()}
                       </div>
                       <p className="text-xs text-foreground/80 font-medium line-clamp-1 mt-0.5">
                         {item.title}
@@ -565,16 +583,40 @@ export default function AdminEvidence() {
                   </div>
                 </div>
 
-                <div className="space-y-1.5 pt-2">
-                  <Label className="text-xs font-bold">Khóa học / Chặng tham gia</Label>
-                  <Input
-                    placeholder="Ví dụ: Khóa MASTER & LEADER"
-                    value={editingItem.courseName || ""}
-                    onChange={(e) =>
-                      setEditingItem({ ...editingItem, courseName: e.target.value })
-                    }
-                    className="rounded-xl h-10"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-bold">Khóa học / Chặng tham gia</Label>
+                    <Input
+                      placeholder="Ví dụ: Khóa MASTER & LEADER"
+                      value={editingItem.courseName || ""}
+                      onChange={(e) =>
+                        setEditingItem({ ...editingItem, courseName: e.target.value })
+                      }
+                      className="rounded-xl h-10"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-bold flex items-center justify-between">
+                      <span>Danh Hiệu ARIS-7 Trao Tặng</span>
+                      {(() => {
+                        const h = getAcademicRankHonor(editingItem.academicRankTitle || editingItem.overallScore || "6.5");
+                        return (
+                          <span className={cn("text-[10px] font-black px-2 py-0.5 rounded-md border", h.badgeBg, h.badgeText, h.badgeBorder)}>
+                            {h.fullTitle}
+                          </span>
+                        );
+                      })()}
+                    </Label>
+                    <Input
+                      placeholder={getAcademicRankHonor(editingItem.overallScore || "6.5").fullTitle}
+                      value={editingItem.academicRankTitle || ""}
+                      onChange={(e) =>
+                        setEditingItem({ ...editingItem, academicRankTitle: e.target.value })
+                      }
+                      className="rounded-xl h-10"
+                    />
+                  </div>
                 </div>
               </div>
 

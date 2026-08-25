@@ -3,7 +3,7 @@ import { ArisDiagnosticLevel } from "./assessment.types";
 export const ARIS_DIAGNOSTIC_LEVELS: Record<number, ArisDiagnosticLevel> = {
   1: {
     levelNumber: 1,
-    levelTitle: "Cấp 1 — Khởi Nền (Starter)",
+    levelTitle: "Cấp 1 — Học Đồ (Starter)",
     estimatedIeltsRange: "Band 2.5 – 3.5",
     description: "Thí sinh có nền tảng từ vựng cơ bản, cần củng cố lại phương pháp xây nền ngữ âm IPA và cấu trúc câu đơn hoàn chỉnh trước khi luyện đề.",
     recommendedCourse: {
@@ -16,7 +16,7 @@ export const ARIS_DIAGNOSTIC_LEVELS: Record<number, ArisDiagnosticLevel> = {
   },
   2: {
     levelNumber: 2,
-    levelTitle: "Cấp 2 — Tập Sự (Dreamer)",
+    levelTitle: "Cấp 2 — Học Sĩ (Dreamer)",
     estimatedIeltsRange: "Band 3.5 – 4.5",
     description: "Đã có phản xạ nghe và hiểu các hội thoại quen thuộc. Cần mở rộng câu ghép, mệnh đề quan hệ và củng cố ngữ pháp trung cấp.",
     recommendedCourse: {
@@ -29,7 +29,7 @@ export const ARIS_DIAGNOSTIC_LEVELS: Record<number, ArisDiagnosticLevel> = {
   },
   3: {
     levelNumber: 3,
-    levelTitle: "Cấp 3 — Học Sĩ (Builder)",
+    levelTitle: "Cấp 3 — Học Sư (Builder)",
     estimatedIeltsRange: "Band 5.0 – 5.5",
     description: "Nền tảng từ vựng và ngữ pháp khá vững. Cần chuyên sâu rèn luyện câu phức nhiều mệnh đề, các dạng bài suy luận logic và collocations học thuật.",
     recommendedCourse: {
@@ -42,7 +42,7 @@ export const ARIS_DIAGNOSTIC_LEVELS: Record<number, ArisDiagnosticLevel> = {
   },
   4: {
     levelNumber: 4,
-    levelTitle: "Cấp 4 — Học Sư (Master)",
+    levelTitle: "Cấp 4 — Học Giả (Master)",
     estimatedIeltsRange: "Band 6.0 – 6.5",
     description: "Kỹ năng xử lý bài đọc và bài nghe rất tốt. Cần rèn luyện tư duy lập luận phản biện, bứt phá bài viết Task 2 và nói chuyên sâu Part 2-3.",
     recommendedCourse: {

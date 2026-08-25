@@ -408,9 +408,9 @@ export default function AcademicSystemPage() {
       {/* ========================================================================= */}
       <section id="aris-7" className="scroll-mt-20">
         <SectionContainer
-          badge="Khung Chuẩn Năng Lực ARIS-7"
-          title="ARIS-7 không phải danh hiệu. Đó là bản đồ năng lực theo từng nấc phát triển."
-          description="Mỗi cấp bậc định vị rõ hồ sơ năng lực hiện tại, điểm nghẽn cần phá vỡ và chuẩn đầu ra cụ thể để bạn vững bước lên nấc tiếp theo."
+          badge="Khung Chuẩn Năng Lực & Danh Hiệu ARIS-7"
+          title="ARIS-7: Bản đồ định vị năng lực & Hệ thống danh hiệu vinh danh thực chất"
+          description="Mỗi cấp bậc định vị rõ hồ sơ năng lực và chuẩn đầu ra cụ thể. Sau khi đạt kết quả thi IELTS chính thức, học viên sẽ được Hội đồng học thuật ARIS trao tặng danh hiệu tương ứng."
           background="muted"
         >
           {/* Interactive Rank Component */}
@@ -428,71 +428,103 @@ export default function AcademicSystemPage() {
           </div>
 
           {/* 4 Progression Stages */}
-          <div className="pt-14 space-y-6 text-left">
-            <div className="text-center max-w-2xl mx-auto space-y-2">
+          <div className="pt-14 space-y-8 text-left">
+            <div className="text-center max-w-3xl mx-auto space-y-2.5">
               <h3 className="text-2xl sm:text-3xl font-black text-foreground">
-                4 Giai Đoạn Phát Triển Trong Từng Cấp Bậc
+                Quy Tắc Chuẩn Hóa 4 Tầng Tiến Trình Trong Từng Cấp Bậc
               </h3>
-              <p className="text-sm sm:text-base text-foreground/75">
-                Mỗi rank được chia thành 4 giai đoạn tiến trình để đảm bảo học viên tích lũy năng lực vững chắc mà không bị học nhảy cóc:
+              <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
+                Mỗi cấp bậc chuẩn hóa $X$ (ví dụ: Học Đồ $3.0$, Học Sĩ $4.0$, Học Sư $5.0$, Học Giả $6.0$, Học Bá $7.0$, Học Tôn $8.0$) được chia thành 4 tầng tiến trình đo lường sự cân bằng kỹ năng và độ vững vàng:
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 text-left">
-              <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-3 shadow-2xs">
-                <div className="inline-flex items-center gap-1.5 text-xs font-mono font-black px-3 py-1 rounded-lg bg-brand-blue-soft text-brand-blue w-fit">
-                  <span>Giai đoạn 1</span>
-                  <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
-                </div>
-                <h4 className="font-black text-foreground text-xl">Sơ Kỳ (Phase I)</h4>
-                <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed">
-                  Tiếp cận kiến thức cốt lõi, nhận diện cấu trúc dạng đề và làm quen với các tiêu chí chuẩn năng lực của rank.
-                </p>
-              </div>
-
-              <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-3 shadow-2xs">
-                <div className="inline-flex items-center gap-1.5 text-xs font-mono font-black px-3 py-1 rounded-lg bg-brand-blue-soft text-brand-blue w-fit">
-                  <span>Giai đoạn 2</span>
-                  <div className="inline-flex items-center -space-x-0.5">
-                    <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+              <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-3.5 shadow-2xs flex flex-col justify-between">
+                <div className="space-y-2">
+                  <div className="inline-flex items-center gap-1.5 text-xs font-mono font-black px-3 py-1 rounded-lg bg-brand-blue-soft text-brand-blue w-fit">
+                    <span>1★</span>
                     <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
                   </div>
+                  <h4 className="font-black text-foreground text-xl">Sơ Kỳ (Phase I)</h4>
+                  <div className="text-xs font-mono font-bold text-brand-blue">
+                    Overall X • Có kỹ năng &lt; X
+                  </div>
+                  <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed">
+                    Học viên vừa chạm mốc Overall của cấp bậc, nhưng còn ít nhất 1 kỹ năng thành phần chưa đạt mốc $X$. Cần tập trung giải phẫu điểm nghẽn của kỹ năng yếu.
+                  </p>
                 </div>
-                <h4 className="font-black text-foreground text-xl">Trung Kỳ (Phase II)</h4>
-                <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed">
-                  Luyện tập chuyên sâu có chủ đích, bóc tách và sửa các lỗi sai ngữ nghĩa, cấu trúc và logic lập luận hay gặp.
-                </p>
+                <div className="p-3 rounded-xl bg-muted/40 border border-border/50 text-[11px] font-mono text-muted-foreground">
+                  Ví dụ: Overall 3.0, W 2.5
+                </div>
               </div>
 
-              <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-3 shadow-2xs">
-                <div className="inline-flex items-center gap-1.5 text-xs font-mono font-black px-3 py-1 rounded-lg bg-brand-blue-soft text-brand-blue w-fit">
-                  <span>Giai đoạn 3</span>
-                  <div className="inline-flex items-center -space-x-0.5">
-                    <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
-                    <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
-                    <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+              <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-3.5 shadow-2xs flex flex-col justify-between">
+                <div className="space-y-2">
+                  <div className="inline-flex items-center gap-1.5 text-xs font-mono font-black px-3 py-1 rounded-lg bg-brand-blue-soft text-brand-blue w-fit">
+                    <span>2★</span>
+                    <div className="inline-flex items-center -space-x-0.5">
+                      <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                      <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                    </div>
                   </div>
+                  <h4 className="font-black text-foreground text-xl">Trung Kỳ (Phase II)</h4>
+                  <div className="text-xs font-mono font-bold text-brand-blue">
+                    Overall X • Tất cả kỹ năng ≥ X
+                  </div>
+                  <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed">
+                    Đạt được sự cân bằng thực chất: Cả 4 kỹ năng Nghe - Nói - Đọc - Viết đều đạt mốc $X$, không còn kỹ năng bị hổng nền tảng.
+                  </p>
                 </div>
-                <h4 className="font-black text-foreground text-xl">Hậu Kỳ (Phase III)</h4>
-                <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed">
-                  Nâng cao độ chính xác và tính mạch lạc, rèn luyện kỹ năng xử lý các bài thi trong điều kiện thời gian thực tế.
-                </p>
+                <div className="p-3 rounded-xl bg-muted/40 border border-border/50 text-[11px] font-mono text-muted-foreground">
+                  Ví dụ: Overall 3.0, 4 kỹ năng ≥ 3.0
+                </div>
               </div>
 
-              <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-3 shadow-2xs">
-                <div className="inline-flex items-center gap-1.5 text-xs font-mono font-black px-3 py-1 rounded-lg bg-brand-red-soft text-brand-red w-fit">
-                  <span>Giai đoạn 4</span>
-                  <div className="inline-flex items-center -space-x-0.5">
-                    <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
-                    <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
-                    <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
-                    <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+              <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-3.5 shadow-2xs flex flex-col justify-between">
+                <div className="space-y-2">
+                  <div className="inline-flex items-center gap-1.5 text-xs font-mono font-black px-3 py-1 rounded-lg bg-brand-blue-soft text-brand-blue w-fit">
+                    <span>3★</span>
+                    <div className="inline-flex items-center -space-x-0.5">
+                      <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                      <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                      <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                    </div>
                   </div>
+                  <h4 className="font-black text-foreground text-xl">Hậu Kỳ (Phase III)</h4>
+                  <div className="text-xs font-mono font-bold text-brand-red">
+                    Overall (X+0.5) • Còn kỹ năng ~X
+                  </div>
+                  <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed">
+                    Overall bứt phá lên mốc $(X + 0.5)$ nhờ kỹ năng thế mạnh kéo điểm, nhưng vẫn còn kỹ năng chưa chạm ngưỡng $(X + 0.5)$.
+                  </p>
                 </div>
-                <h4 className="font-black text-foreground text-xl">Đỉnh Phong (Apex)</h4>
-                <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed">
-                  Đạt chuẩn đầu ra vững chắc của rank, sẵn sàng thực hiện bài khảo thí để xác nhận bước lên nấc năng lực tiếp theo.
-                </p>
+                <div className="p-3 rounded-xl bg-muted/40 border border-border/50 text-[11px] font-mono text-muted-foreground">
+                  Ví dụ: Overall 3.5, còn kỹ năng 3.0
+                </div>
+              </div>
+
+              <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-3.5 shadow-2xs flex flex-col justify-between">
+                <div className="space-y-2">
+                  <div className="inline-flex items-center gap-1.5 text-xs font-mono font-black px-3 py-1 rounded-lg bg-brand-red-soft text-brand-red w-fit">
+                    <span>4★</span>
+                    <div className="inline-flex items-center -space-x-0.5">
+                      <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                      <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                      <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                      <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                    </div>
+                  </div>
+                  <h4 className="font-black text-foreground text-xl">Đỉnh Phong (Apex)</h4>
+                  <div className="text-xs font-mono font-bold text-brand-red">
+                    Overall (X+0.5) • Tất cả ≥ (X+0.5)
+                  </div>
+                  <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed">
+                    Năng lực đạt độ hoàn thiện cao nhất của cấp bậc: Toàn bộ 4 kỹ năng đồng đều ở mốc cao $(\ge X + 0.5)$, sẵn sàng bước lên cấp bậc tiếp theo.
+                  </p>
+                </div>
+                <div className="p-3 rounded-xl bg-muted/40 border border-border/50 text-[11px] font-mono text-muted-foreground">
+                  Ví dụ: Overall 3.5, 4 kỹ năng ≥ 3.5
+                </div>
               </div>
             </div>
           </div>

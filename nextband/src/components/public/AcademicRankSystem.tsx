@@ -50,8 +50,8 @@ export const ACADEMIC_RANKS: AcademicRank[] = [
   },
   {
     rankNumber: 4,
-    title: "Học Giả",
-    subtitle: "Academic Scholar",
+    title: "Học Sĩ",
+    subtitle: "Academic Specialist",
     bandPlaceholder: "Phát triển năng lực cấu trúc (IELTS 4.0 – 5.0)",
     description: "Hình thành khả năng diễn giải ý niệm mạch lạc, xử lý các đoạn văn phức hợp và giao tiếp chức năng ổn định.",
     competencyPillars: ["Phân tích đoạn văn bản", "Diễn đạt ý niệm đa chiều", "Liên kết lập luận cơ bản", "Kiểm soát ngữ pháp bài viết"],
@@ -72,8 +72,8 @@ export const ACADEMIC_RANKS: AcademicRank[] = [
   },
   {
     rankNumber: 5,
-    title: "Học Sĩ",
-    subtitle: "Academic Specialist",
+    title: "Học Sư",
+    subtitle: "Academic Master",
     bandPlaceholder: "Làm chủ phương pháp học thuật (IELTS 5.0 – 6.0)",
     description: "Thành thạo cấu trúc bài thi chuẩn hóa, tổng hợp thông tin đa nguồn và xây dựng lập luận có căn cứ rõ ràng.",
     competencyPillars: ["Kỹ năng Paraphrasing học thuật", "Tư duy phản biện sơ cấp", "Tổng hợp thông tin biểu đồ", "Giao tiếp lưu loát theo chủ đề"],
@@ -94,8 +94,8 @@ export const ACADEMIC_RANKS: AcademicRank[] = [
   },
   {
     rankNumber: 6,
-    title: "Học Sư",
-    subtitle: "Academic Master",
+    title: "Học Giả",
+    subtitle: "Academic Scholar",
     bandPlaceholder: "Năng lực chuyên sâu & Vững vàng (IELTS 6.0 – 7.0)",
     description: "Kiểm soát vững vàng các dạng đề nâng cao, tư duy phân tích sắc bén và khả năng xử lý bài thi dưới áp lực thời gian.",
     competencyPillars: ["Phân tích văn bản học thuật khó", "Lập luận chiều sâu Task 2", "Nghe hiểu tốc độ tự nhiên", "Xử lý câu hỏi trừu tượng Part 3"],
@@ -313,10 +313,10 @@ export function AcademicRankSystem({
               {activeRankData.description}
             </p>
 
-            {/* 4 Progression Stages Visualizer (Sơ kỳ -> Đỉnh phong với ảnh ngôi sao) */}
+            {/* 4 Progression Stages Visualizer (Sơ kỳ -> Đỉnh phong với ảnh ngôi sao & quy tắc gốc) */}
             <div className="space-y-3 pt-3 border-t border-border/60">
               <div className="text-xs font-black text-muted-foreground uppercase tracking-wider flex items-center justify-between">
-                <span>4 Giai Đoạn Tiến Trình</span>
+                <span>4 Tầng Tiến Trình Chuẩn Hóa</span>
                 <span className="font-mono text-xs text-foreground/75 inline-flex items-center gap-1">
                   <span className="inline-flex items-center gap-0.5 font-bold">
                     1<img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
@@ -330,36 +330,66 @@ export function AcademicRankSystem({
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {PROGRESSION_STAGES.map((stage, idx) => (
-                  <div
-                    key={stage.id}
-                    className="p-3.5 rounded-2xl border border-border/80 bg-muted/30 text-center space-y-1.5 hover:border-border transition-all"
-                  >
-                    <div className="flex items-center justify-center gap-1">
-                      <span className="inline-flex items-center gap-1 text-xs font-mono font-black px-2 py-0.5 rounded-md bg-background border border-border text-foreground shadow-2xs">
-                        <span>{stage.starCount}</span>
-                        <img
-                          src="/images/star.png"
-                          alt="star"
-                          className="w-3.5 h-3.5 object-contain inline-block -mt-0.5"
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                {(() => {
+                  const baseScore = activeRankData.rankNumber === 3 ? 3.0
+                    : activeRankData.rankNumber === 4 ? 4.0
+                    : activeRankData.rankNumber === 5 ? 5.0
+                    : activeRankData.rankNumber === 6 ? 6.0
+                    : activeRankData.rankNumber === 7 ? 7.0
+                    : activeRankData.rankNumber === 8 ? 8.0
+                    : 8.5;
+                  const nextScore = baseScore + 0.5;
+
+                  const stageCriteria = [
+                    `Overall ${baseScore.toFixed(1)}, có kỹ năng < ${baseScore.toFixed(1)}`,
+                    `Overall ${baseScore.toFixed(1)}, tất cả ≥ ${baseScore.toFixed(1)}`,
+                    `Overall ${nextScore.toFixed(1)}, còn kỹ năng ~${baseScore.toFixed(1)}`,
+                    `Overall ${nextScore.toFixed(1)}, tất cả ≥ ${nextScore.toFixed(1)}`,
+                  ];
+
+                  return PROGRESSION_STAGES.map((stage, idx) => (
+                    <div
+                      key={stage.id}
+                      className="p-3.5 rounded-2xl border border-border/80 bg-muted/30 text-center space-y-1.5 hover:border-border transition-all flex flex-col justify-between"
+                    >
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-center gap-1">
+                          <span className="inline-flex items-center gap-1 text-xs font-mono font-black px-2 py-0.5 rounded-md bg-background border border-border text-foreground shadow-2xs">
+                            <span>{stage.starCount}</span>
+                            <img
+                              src="/images/star.png"
+                              alt="star"
+                              className="w-3.5 h-3.5 object-contain inline-block -mt-0.5"
+                            />
+                          </span>
+                        </div>
+                        <div className="font-black text-sm text-foreground">
+                          {stage.label}
+                        </div>
+                        <div className="text-[10px] font-mono uppercase text-muted-foreground">
+                          {stage.code}
+                        </div>
+                      </div>
+
+                      <div className="pt-1.5 border-t border-border/50 text-[11px] font-bold text-foreground/80 leading-tight">
+                        {stageCriteria[idx]}
+                      </div>
+
+                      <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden mt-1">
+                        <div
+                          className={cn("h-full rounded-full transition-all", activeRankData.theme.progressBar)}
+                          style={{ width: `${(idx + 1) * 25}%` }}
                         />
-                      </span>
+                      </div>
                     </div>
-                    <div className="font-black text-sm text-foreground">
-                      {stage.label}
-                    </div>
-                    <div className="text-[10px] font-mono uppercase text-muted-foreground">
-                      {stage.code}
-                    </div>
-                    <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden mt-1">
-                      <div
-                        className={cn("h-full rounded-full transition-all", activeRankData.theme.progressBar)}
-                        style={{ width: `${(idx + 1) * 25}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
+                  ));
+                })()}
+              </div>
+
+              <div className="text-[11px] text-muted-foreground font-medium flex items-center gap-1.5 pt-1">
+                <span className="font-bold text-foreground">Quy tắc chuẩn hóa:</span>
+                <span>Sơ kỳ (X, lệch kỹ năng) → Trung kỳ (X đồng đều) → Hậu kỳ (X+0.5, lệch kỹ năng) → Đỉnh phong (X+0.5 đồng đều).</span>
               </div>
             </div>
           </div>
@@ -386,6 +416,29 @@ export function AcademicRankSystem({
             <div className="pt-2 text-xs text-muted-foreground leading-relaxed border-t border-border/60">
               Mỗi cấp bậc đại diện cho một mốc tiến bộ năng lực được đo lường chính xác và lưu vết qua hệ thống NextBand.
             </div>
+          </div>
+        </div>
+
+        {/* Trao tặng danh hiệu chính thức khi đạt kết quả thi */}
+        <div
+          className={cn(
+            "mt-6 p-4 sm:p-5 rounded-2xl border flex items-start sm:items-center gap-3.5 text-xs sm:text-sm leading-relaxed",
+            activeRankData.theme.badgeBg,
+            activeRankData.theme.badgeBorder
+          )}
+        >
+          <Award className={cn("h-5 w-5 sm:h-6 sm:w-6 shrink-0 mt-0.5 sm:mt-0", activeRankData.theme.accentColor)} />
+          <div>
+            <span className="font-extrabold text-foreground block sm:inline">
+              Vinh Danh &amp; Trao Tặng Danh Hiệu:{" "}
+            </span>
+            <span className="text-foreground/85">
+              Học viên đạt kết quả sau khi thi IELTS chính thức sẽ được Hội đồng học thuật ARIS trao tặng danh hiệu{" "}
+              <strong className="text-foreground font-black underline decoration-2">
+                Rank {activeRankData.rankNumber} — {activeRankData.title} ({activeRankData.subtitle})
+              </strong>
+              , ghi dấu thành tích thực chất và vinh danh trên bảng vàng tiến bộ.
+            </span>
           </div>
         </div>
       </div>

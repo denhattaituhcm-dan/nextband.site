@@ -107,6 +107,15 @@ export const StudentsTab: React.FC = () => {
       studentName: student.fullName || student.full_name || student.email || "Học viên",
       className: classData?.name || "Lớp học",
       teacherName: classData?.teacher?.fullName || classData?.teacher_name || null,
+      targetBand:
+        student.targetBand ||
+        student.target_band ||
+        student.targetScore ||
+        student.target_score ||
+        classData?.target_band ||
+        classData?.targetBand ||
+        (classData?.course?.level ? `IELTS ${classData.course.level}` : null),
+      programTitle: classData?.course?.title || classData?.name || null,
       courseProgress: {
         completedSessions: completedSessionsCount,
         totalSessions: sessions.length,

@@ -353,7 +353,7 @@ LEVEL 5 — PROGRESSION & GAMIFICATION (Tiến trình & Động lực Nội bộ
    - *Giải pháp*: Admin Content & Grading QA Dashboard giám sát chất lượng nhận xét định kỳ, đặt ra tiêu chuẩn tối thiểu cho từng bài chấm.
 3. **Rủi ro Bị Hiểu Nhầm là "Quá Hàn Lâm / Khó Tiếp Cận"**:
    - *Nguy cơ*: Người học trình độ cơ bản sợ hãi vì nghĩ ARIS chỉ dành cho người giỏi.
-   - *Giải pháp*: Khung Rank 3 (Học Đồ) và Rank 4 (Học Giả) được thiết kế đặc biệt rõ ràng, ân cần, chia nhỏ các bước để người mất gốc có thể từng bước xây dựng nền tảng vững chắc.
+   - *Giải pháp*: Khung Rank 3 (Học Đồ) và Rank 4 (Học Sĩ) được thiết kế đặc biệt rõ ràng, ân cần, chia nhỏ các bước để người mất gốc có thể từng bước xây dựng nền tảng vững chắc.
 
 ---
 

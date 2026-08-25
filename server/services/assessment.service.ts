@@ -158,7 +158,7 @@ export function mapRawScoreToArisLevel(correctCount: number, totalQuestions: num
   if (percentage < 25) {
     return {
       levelNumber: 1,
-      levelTitle: "Cấp 1 — Khởi Nền (Starter)",
+      levelTitle: "Cấp 1 — Học Đồ (Starter)",
       estimatedIeltsRange: "Band 2.5 – 3.5",
       description: "Thí sinh có vốn từ vựng ban đầu, cần củng cố lại phương pháp xây nền ngữ âm IPA và cấu trúc câu đơn hoàn chỉnh trước khi luyện đề.",
       recommendedCourse: {
@@ -173,7 +173,7 @@ export function mapRawScoreToArisLevel(correctCount: number, totalQuestions: num
   if (percentage < 45) {
     return {
       levelNumber: 2,
-      levelTitle: "Cấp 2 — Tập Sự (Dreamer)",
+      levelTitle: "Cấp 2 — Học Sĩ (Dreamer)",
       estimatedIeltsRange: "Band 3.5 – 4.5",
       description: "Đã có phản xạ nghe và hiểu các hội thoại quen thuộc. Cần mở rộng câu ghép, mệnh đề quan hệ và củng cố ngữ pháp trung cấp.",
       recommendedCourse: {
@@ -188,7 +188,7 @@ export function mapRawScoreToArisLevel(correctCount: number, totalQuestions: num
   if (percentage < 65) {
     return {
       levelNumber: 3,
-      levelTitle: "Cấp 3 — Học Sĩ (Builder)",
+      levelTitle: "Cấp 3 — Học Sư (Builder)",
       estimatedIeltsRange: "Band 5.0 – 5.5",
       description: "Nền tảng từ vựng và ngữ pháp khá vững. Cần chuyên sâu rèn luyện câu phức nhiều mệnh đề, các dạng bài suy luận logic IELTS và collocations học thuật.",
       recommendedCourse: {
@@ -203,7 +203,7 @@ export function mapRawScoreToArisLevel(correctCount: number, totalQuestions: num
   if (percentage < 82) {
     return {
       levelNumber: 4,
-      levelTitle: "Cấp 4 — Học Sư (Master)",
+      levelTitle: "Cấp 4 — Học Giả (Master)",
       estimatedIeltsRange: "Band 6.0 – 6.5",
       description: "Kỹ năng xử lý bài đọc và bài nghe rất tốt. Cần rèn luyện tư duy lập luận phản biện, bứt phá bài viết Task 2 và nói chuyên sâu Part 2-3.",
       recommendedCourse: {

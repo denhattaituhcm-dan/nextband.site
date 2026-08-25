@@ -214,9 +214,9 @@ BƯỚC 2: TỰ ĐÁNH GIÁ NĂNG LỰC (SELF-ASSESSMENT)
 ├── Người dùng click CTA "Đánh giá năng lực" ──► Điều hướng sang /assessment
 ├── Thực hiện bài khảo thí đầu vào chuẩn hóa
 └── Nhận báo cáo phân tích tại /assessment/result/:id:
-    • Rank hiện tại: Ví dụ Rank 4 — Học Giả (Trung kỳ)
+    • Rank hiện tại: Ví dụ Rank 4 — Học Sĩ (Trung kỳ)
     • Điểm nghẽn chính: Ngữ pháp câu phức, triển khai luận điểm Task 2
-    • Khóa học đề xuất: ARIS Intensive (Mục tiêu nâng lên Rank 6 — Học Sư).
+    • Khóa học đề xuất: ARIS Intensive (Mục tiêu nâng lên Rank 6 — Học Giả).
 
 BƯỚC 3: XÁC MINH & LỰA CHỌN (VALIDATE & CHOOSE)
 ├── Người dùng xem chi tiết khóa học tại /courses/intensive

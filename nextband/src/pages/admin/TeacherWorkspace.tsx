@@ -425,6 +425,14 @@ export default function TeacherWorkspace() {
       studentName: currentStudent?.fullName || "Học viên",
       className: currentClass?.name || "Lớp học",
       teacherName: currentClass?.teacher?.fullName || null,
+      targetBand:
+        currentStudent?.targetBand ||
+        currentStudent?.target_band ||
+        currentStudent?.targetScore ||
+        currentClass?.target_band ||
+        currentClass?.targetBand ||
+        (currentClass?.course?.level ? `IELTS ${currentClass.course.level}` : null),
+      programTitle: currentClass?.course?.title || currentClass?.name || null,
       courseProgress: {
         completedSessions: attendanceData?.completedSessions,
         totalSessions: attendanceData?.totalSessions,

@@ -16,7 +16,13 @@ import {
   Award,
   BookOpen,
 } from "lucide-react";
-import { getPublishedEvidence, fetchEvidenceListAsync, EvidenceItem } from "@/lib/evidenceStore";
+import { cn } from "@/lib/utils";
+import {
+  getPublishedEvidence,
+  fetchEvidenceListAsync,
+  getAcademicRankHonor,
+  EvidenceItem,
+} from "@/lib/evidenceStore";
 import {
   Dialog,
   DialogContent,
@@ -211,61 +217,96 @@ export default function ResultsPage() {
               Không có câu chuyện nào thuộc nhóm điểm này.
             </div>
           ) : (
-            filteredList.map((item) => (
-              <div
-                key={item.id}
-                className="p-6 sm:p-7 rounded-3xl border-2 border-border/80 bg-card hover:border-brand-red/40 hover:shadow-md transition-all flex flex-col justify-between space-y-4"
-              >
-                <div className="flex gap-4 sm:gap-5 items-start justify-between">
-                  {/* Left Text Info */}
-                  <div className="space-y-2.5 flex-1 min-w-0">
-                    <h3 className="font-black text-foreground text-base sm:text-lg leading-snug line-clamp-2">
-                      {item.title}
-                    </h3>
+            filteredList.map((item) => {
+              const honor = getAcademicRankHonor(item.academicRankTitle || item.overallScore, {
+                listening: item.listeningScore,
+                reading: item.readingScore,
+                writing: item.writingScore,
+                speaking: item.speakingScore,
+              });
+              return (
+                <div
+                  key={item.id}
+                  className="p-6 sm:p-7 rounded-3xl border-2 border-border/80 bg-card hover:border-brand-red/40 hover:shadow-md transition-all flex flex-col justify-between space-y-4"
+                >
+                  <div className="flex gap-4 sm:gap-5 items-start justify-between">
+                    {/* Left Text Info */}
+                    <div className="space-y-2.5 flex-1 min-w-0">
+                      {/* Trao tặng danh hiệu học thuật & Tầng tiến trình */}
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span
+                          className={cn(
+                            "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-black border tracking-tight shadow-2xs",
+                            honor.badgeBg,
+                            honor.badgeText,
+                            honor.badgeBorder
+                          )}
+                        >
+                          <Award className="h-3.5 w-3.5 shrink-0" />
+                          <span>Trao tặng: {honor.fullTitle}</span>
+                        </span>
 
-                    <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed line-clamp-3">
-                      "{item.story}"
-                    </p>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-bold bg-muted/70 text-foreground border border-border/80">
+                          <span>{honor.stage.stageName}</span>
+                          <span className="inline-flex items-center gap-0.5 font-mono text-[10px] font-black text-brand-red">
+                            {honor.stage.starCount}
+                            <img
+                              src="/images/star.png"
+                              alt="star"
+                              className="w-3 h-3 object-contain inline-block -mt-0.5"
+                            />
+                          </span>
+                        </span>
+                      </div>
 
-                    <button
-                      onClick={() => setSelectedStory(item)}
-                      className="text-xs font-extrabold text-brand-blue hover:text-brand-red transition-colors inline-block pt-1"
-                    >
-                      Nhấn để xem thêm
-                    </button>
+                      <h3 className="font-black text-foreground text-base sm:text-lg leading-snug line-clamp-2">
+                        {item.title}
+                      </h3>
+
+                      <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed line-clamp-3">
+                        "{item.story}"
+                      </p>
+
+                      <button
+                        onClick={() => setSelectedStory(item)}
+                        className="text-xs font-extrabold text-brand-blue hover:text-brand-red transition-colors inline-block pt-1 cursor-pointer"
+                      >
+                        Nhấn để xem thêm
+                      </button>
+                    </div>
+
+                    {/* Right Image with Score Badge */}
+                    <div className="relative shrink-0">
+                      <img
+                        src={item.imageUrl}
+                        alt={item.studentName}
+                        className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl object-cover border border-border/80"
+                      />
+                      <div className="absolute top-2 right-2 px-2 py-0.5 rounded-lg bg-brand-red text-white font-black text-xs shadow-xs tracking-tight">
+                        {item.overallScore} IELTS
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Right Image with Score Badge */}
-                  <div className="relative shrink-0">
-                    <img
-                      src={item.imageUrl}
-                      alt={item.studentName}
-                      className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl object-cover border border-border/80"
-                    />
-                    <div className="absolute top-2 right-2 px-2 py-0.5 rounded-lg bg-brand-red text-white font-black text-xs shadow-xs tracking-tight">
-                      {item.overallScore} IELTS
+                  {/* Card Footer: Student Info & Duration */}
+                  <div className="pt-3 border-t border-border/60 flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-1.5 font-bold text-foreground">
+                      <span>{item.studentName}</span>
+                      {item.studentSchool && (
+                        <>
+                          <span className="text-muted-foreground">•</span>
+                          <span className="text-muted-foreground font-medium">{item.studentSchool}</span>
+                        </>
+                      )}
+                    </div>
+
+                    <div className="text-muted-foreground font-bold font-mono">
+                      {item.studyDuration}
                     </div>
                   </div>
                 </div>
-
-                {/* Card Footer: Student Info & Duration */}
-                <div className="pt-3 border-t border-border/60 flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-1.5 font-bold text-foreground">
-                    <span>{item.studentName}</span>
-                    {item.studentSchool && (
-                      <>
-                        <span className="text-muted-foreground">•</span>
-                        <span className="text-muted-foreground font-medium">{item.studentSchool}</span>
-                      </>
-                    )}
-                  </div>
-
-                  <div className="text-muted-foreground font-bold font-mono">
-                    {item.studyDuration}
-                  </div>
-                </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       </SectionContainer>
@@ -380,6 +421,52 @@ export default function ResultsPage() {
                   </div>
                 </div>
               </div>
+
+              {/* Honorary Academic Rank Award Banner */}
+              {(() => {
+                const honor = getAcademicRankHonor(selectedStory.academicRankTitle || selectedStory.overallScore, {
+                  listening: selectedStory.listeningScore,
+                  reading: selectedStory.readingScore,
+                  writing: selectedStory.writingScore,
+                  speaking: selectedStory.speakingScore,
+                });
+                return (
+                  <div
+                    className={cn(
+                      "p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4",
+                      honor.badgeBg,
+                      honor.badgeBorder
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={cn("p-2.5 rounded-xl bg-card border shadow-2xs shrink-0", honor.badgeBorder)}>
+                        <Award className={cn("h-6 w-6", honor.accentColor)} />
+                      </div>
+                      <div>
+                        <span className="text-[10px] sm:text-[11px] uppercase font-black tracking-wider text-muted-foreground block">
+                          Danh Hiệu Học Thuật Chính Thức Được Trao Tặng
+                        </span>
+                        <div className="text-base sm:text-lg font-black text-foreground flex flex-wrap items-center gap-2">
+                          <span>{honor.fullTitle}</span>
+                          <span className={cn("text-xs font-bold", honor.accentColor)}>({honor.subtitle})</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="inline-flex items-center gap-1 text-xs font-black px-2.5 py-1 rounded-lg bg-background border text-foreground shadow-2xs">
+                        <span>{honor.stage.stageName}</span>
+                        <span className="inline-flex items-center gap-0.5 text-brand-red font-mono">
+                          {honor.stage.starCount}
+                          <img src="/images/star.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                        </span>
+                      </span>
+                      <span className="text-xs font-mono font-black px-2.5 py-1 rounded-lg bg-background border text-foreground shadow-2xs">
+                        IELTS {selectedStory.overallScore}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Score Breakdown Bar */}
               <div className="p-4 rounded-2xl bg-brand-blue-soft/50 border border-brand-blue/20 grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">

@@ -75,7 +75,7 @@ Trang chủ được rút gọn thành **8 sections trọng tâm**, dẫn dắt 
 │ • Lead Text:       ARIS chuẩn hóa lộ trình thành 7 cấp bậc rõ ràng. Mỗi bậc đều có tiêu chuẩn    │
 │                    năng lực cụ thể, giúp bạn biết mình đã làm được gì và cần thêm điều gì.       │
 │ • Interactive Selector:                                                                          │
-│   Rank 3 (Học Đồ) ──► Rank 4 (Học Giả) ──► Rank 5 (Học Sĩ) ──► Rank 6 (Học Sư)                  │
+│   Rank 3 (Học Đồ) ──► Rank 4 (Học Sĩ) ──► Rank 5 (Học Sư) ──► Rank 6 (Học Giả)                  │
 │   ──► Rank 7 (Học Bá) ──► Rank 8 (Học Tôn) ──► Rank 9 (Học Đế)                                   │
 │ • 4 Giai đoạn phát triển: Sơ kỳ  •  Trung kỳ  •  Hậu kỳ  •  Đỉnh phong                           │
 │ • Section Link:    Xem toàn bộ tiêu chuẩn 7 cấp bậc →                                            │
@@ -172,13 +172,16 @@ Các trang con đảm nhiệm việc giải thích sâu cho những người h�
 - **Lead Text**: *"Từ người mới bắt đầu đến người sử dụng thành thạo, mỗi bước tiến đều được định lượng rõ ràng."*
 - **Cấu Trúc 7 Bậc**:
   - `Rank 3 — Học Đồ`: Nắm vững phát âm IPA, ngữ pháp căn bản và từ vựng thông dụng.
-  - `Rank 4 — Học Giả`: Viết được đoạn văn hoàn chỉnh, hiểu ý chính của bài đọc và bài nghe.
-  - `Rank 5 — Học Sĩ`: Diễn đạt ý niệm đa chiều, bắt đầu làm quen cấu trúc bài thi IELTS.
-  - `Rank 6 — Học Sư`: Xử lý tốt các dạng đề nâng cao, lập luận có căn cứ trong Writing & Speaking.
+  - `Rank 4 — Học Sĩ`: Viết được đoạn văn hoàn chỉnh, hiểu ý chính của bài đọc và bài nghe.
+  - `Rank 5 — Học Sư`: Diễn đạt ý niệm đa chiều, bắt đầu làm quen cấu trúc bài thi IELTS.
+  - `Rank 6 — Học Giả`: Xử lý tốt các dạng đề nâng cao, lập luận có căn cứ trong Writing & Speaking.
   - `Rank 7 — Học Bá`: Dùng từ tự nhiên, linh hoạt, kiểm soát tốt độ mạch lạc và ngữ pháp khó.
   - `Rank 8 — Học Tôn`: Năng lực ngôn ngữ gần như bản ngữ, phản xạ tự nhiên không độ trễ.
-  - `Rank 9 — Học Đế`: Chuẩn mực học thuật cao nhất, làm chủ hoàn hảo cả 4 kỹ năng.
-- **Tiến trình 4 giai đoạn**: *Sơ kỳ (Tiếp cận) $\rightarrow$ Trung kỳ (Thực hành) $\rightarrow$ Hậu kỳ (Hoàn thiện) $\rightarrow$ Đỉnh phong (Vững vàng)*.
+- **Quy Tắc Gốc 4 Tầng Tiến Trình**:
+  - `1★ Sơ kỳ`: Overall $X$, có ít nhất 1 kỹ năng dưới mốc $X$.
+  - `2★ Trung kỳ`: Overall $X$, tất cả 4 kỹ năng đồng đều $\ge X$.
+  - `3★ Hậu kỳ`: Overall đạt $(X + 0.5)$, nhưng còn ít nhất 1 kỹ năng chưa đạt $(X + 0.5)$ (ở mốc $\sim X$).
+  - `4★ Đỉnh phong`: Overall đạt $(X + 0.5)$, tất cả 4 kỹ năng đồng đều $\ge (X + 0.5)$.
 
 ### 4. Trang Khóa Học (`/courses` & `/courses/:slug`)
 - **Hero Headline**: *"Chương trình học thiết kế theo mục tiêu của bạn."*

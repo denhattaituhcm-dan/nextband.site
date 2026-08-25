@@ -9,6 +9,7 @@ export interface EvidenceItem {
   story: string;
   scoreBefore?: string;
   overallScore: string;
+  academicRankTitle?: string;
   listeningScore?: string;
   readingScore?: string;
   writingScore?: string;
@@ -21,6 +22,250 @@ export interface EvidenceItem {
   displayOrder: number;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface AcademicRankHonor {
+  rankNumber: number;
+  title: string;
+  subtitle: string;
+  fullTitle: string;
+  badgeBg: string;
+  badgeText: string;
+  badgeBorder: string;
+  accentColor: string;
+  iconColor: string;
+}
+
+export interface AcademicStageInfo {
+  stageId: string;
+  stageName: string;
+  stageCode: string;
+  starCount: number;
+  stageRequirement: string;
+  fullTitle: string;
+}
+
+/**
+ * QUY TẮC GỐC (Áp dụng cho mọi cấp năng lực ARIS-7):
+ * Mỗi cấp có mốc chuẩn X (ví dụ 3.0, 4.0, 5.0, 6.0, 7.0, 8.0):
+ * - Sơ kỳ (1★): Overall X, có ít nhất 1 kỹ năng dưới mốc X
+ * - Trung kỳ (2★): Overall X, tất cả kỹ năng đạt mốc >= X
+ * - Hậu kỳ (3★): Overall vượt mốc (X + 0.5), nhưng còn ít nhất 1 kỹ năng chưa đạt (X + 0.5) (ở mốc ~X)
+ * - Đỉnh phong (4★): Overall vượt mốc (X + 0.5), tất cả kỹ năng đồng đều ở mốc cao hơn >= (X + 0.5)
+ */
+export function calculateAcademicStage(
+  overallStr: string | number,
+  subscores?: {
+    listening?: string | number;
+    reading?: string | number;
+    writing?: string | number;
+    speaking?: string | number;
+  }
+): AcademicStageInfo {
+  const overall = typeof overallStr === "number" ? overallStr : parseFloat(overallStr || "6.5");
+
+  // Determine base X according to ARIS-7 rank scale
+  let baseScore = 3.0;
+  if (overall >= 8.5) baseScore = 8.5;
+  else if (overall >= 8.0) baseScore = 8.0;
+  else if (overall >= 7.0) baseScore = 7.0;
+  else if (overall >= 6.0) baseScore = 6.0;
+  else if (overall >= 5.0) baseScore = 5.0;
+  else if (overall >= 4.0) baseScore = 4.0;
+  else baseScore = 3.0;
+
+  const nextScore = baseScore + 0.5;
+
+  const parseScore = (val?: string | number) => {
+    if (val === undefined || val === null || val === "") return NaN;
+    return typeof val === "number" ? val : parseFloat(val);
+  };
+
+  const subs = subscores
+    ? [
+        parseScore(subscores.listening),
+        parseScore(subscores.reading),
+        parseScore(subscores.writing),
+        parseScore(subscores.speaking),
+      ].filter((s) => !isNaN(s))
+    : [];
+
+  // If no subscores provided, fallback estimation
+  if (subs.length === 0) {
+    if (overall >= nextScore) {
+      return {
+        stageId: "stage-3",
+        stageName: "Hậu kỳ",
+        stageCode: "Phase III",
+        starCount: 3,
+        stageRequirement: `Overall ${nextScore.toFixed(1)}`,
+        fullTitle: "Hậu kỳ (3★)",
+      };
+    }
+    return {
+      stageId: "stage-2",
+      stageName: "Trung kỳ",
+      stageCode: "Phase II",
+      starCount: 2,
+      stageRequirement: `Overall ${baseScore.toFixed(1)}`,
+      fullTitle: "Trung kỳ (2★)",
+    };
+  }
+
+  const allAboveOrEqualNext = subs.every((s) => s >= nextScore);
+  const anyBelowBase = subs.some((s) => s < baseScore);
+
+  if (overall >= nextScore) {
+    if (allAboveOrEqualNext) {
+      return {
+        stageId: "stage-4",
+        stageName: "Đỉnh phong",
+        stageCode: "Apex",
+        starCount: 4,
+        stageRequirement: `Overall ${nextScore.toFixed(1)}, tất cả kỹ năng ≥ ${nextScore.toFixed(1)}`,
+        fullTitle: "Đỉnh phong (4★)",
+      };
+    } else {
+      return {
+        stageId: "stage-3",
+        stageName: "Hậu kỳ",
+        stageCode: "Phase III",
+        starCount: 3,
+        stageRequirement: `Overall ${nextScore.toFixed(1)}, còn kỹ năng ~${baseScore.toFixed(1)}`,
+        fullTitle: "Hậu kỳ (3★)",
+      };
+    }
+  } else {
+    if (anyBelowBase) {
+      return {
+        stageId: "stage-1",
+        stageName: "Sơ kỳ",
+        stageCode: "Phase I",
+        starCount: 1,
+        stageRequirement: `Overall ${baseScore.toFixed(1)}, có kỹ năng < ${baseScore.toFixed(1)}`,
+        fullTitle: "Sơ kỳ (1★)",
+      };
+    } else {
+      return {
+        stageId: "stage-2",
+        stageName: "Trung kỳ",
+        stageCode: "Phase II",
+        starCount: 2,
+        stageRequirement: `Overall ${baseScore.toFixed(1)}, tất cả kỹ năng ≥ ${baseScore.toFixed(1)}`,
+        fullTitle: "Trung kỳ (2★)",
+      };
+    }
+  }
+}
+
+export function getAcademicRankHonor(
+  scoreStr: string | number,
+  subscores?: {
+    listening?: string | number;
+    reading?: string | number;
+    writing?: string | number;
+    speaking?: string | number;
+  }
+): AcademicRankHonor & { stage: AcademicStageInfo } {
+  const num = typeof scoreStr === "number" ? scoreStr : parseFloat(scoreStr || "0");
+  const stage = calculateAcademicStage(num, subscores);
+
+  if (isNaN(num) || num < 4.0) {
+    return {
+      rankNumber: 3,
+      title: "Học Đồ",
+      subtitle: "Academic Apprentice",
+      fullTitle: "Rank 3 — Học Đồ",
+      badgeBg: "bg-[#0e8388]/15",
+      badgeText: "text-[#0e8388] dark:text-[#2dd4bf]",
+      badgeBorder: "border-[#0e8388]/30",
+      accentColor: "text-[#0e8388]",
+      iconColor: "#0e8388",
+      stage,
+    };
+  }
+  if (num <= 5.0) {
+    return {
+      rankNumber: 4,
+      title: "Học Sĩ",
+      subtitle: "Academic Specialist",
+      fullTitle: "Rank 4 — Học Sĩ",
+      badgeBg: "bg-[#b85d19]/15",
+      badgeText: "text-[#b85d19] dark:text-[#fb923c]",
+      badgeBorder: "border-[#b85d19]/30",
+      accentColor: "text-[#b85d19]",
+      iconColor: "#b85d19",
+      stage,
+    };
+  }
+  if (num <= 6.0) {
+    return {
+      rankNumber: 5,
+      title: "Học Sư",
+      subtitle: "Academic Master",
+      fullTitle: "Rank 5 — Học Sư",
+      badgeBg: "bg-[#64748b]/15",
+      badgeText: "text-[#475569] dark:text-[#cbd5e1]",
+      badgeBorder: "border-[#64748b]/30",
+      accentColor: "text-[#475569]",
+      iconColor: "#64748b",
+      stage,
+    };
+  }
+  if (num <= 6.5) {
+    return {
+      rankNumber: 6,
+      title: "Học Giả",
+      subtitle: "Academic Scholar",
+      fullTitle: "Rank 6 — Học Giả",
+      badgeBg: "bg-[#d97706]/15",
+      badgeText: "text-[#b45309] dark:text-[#fcd34d]",
+      badgeBorder: "border-[#d97706]/30",
+      accentColor: "text-[#b45309]",
+      iconColor: "#d97706",
+      stage,
+    };
+  }
+  if (num <= 7.5) {
+    return {
+      rankNumber: 7,
+      title: "Học Bá",
+      subtitle: "Academic Elite",
+      fullTitle: "Rank 7 — Học Bá",
+      badgeBg: "bg-[#dc2626]/15",
+      badgeText: "text-[#dc2626] dark:text-[#f87171]",
+      badgeBorder: "border-[#dc2626]/30",
+      accentColor: "text-[#dc2626]",
+      iconColor: "#dc2626",
+      stage,
+    };
+  }
+  if (num <= 8.5) {
+    return {
+      rankNumber: 8,
+      title: "Học Tôn",
+      subtitle: "Academic Grandmaster",
+      fullTitle: "Rank 8 — Học Tôn",
+      badgeBg: "bg-[#2563eb]/15",
+      badgeText: "text-[#2563eb] dark:text-[#60a5fa]",
+      badgeBorder: "border-[#2563eb]/30",
+      accentColor: "text-[#2563eb]",
+      iconColor: "#2563eb",
+      stage,
+    };
+  }
+  return {
+    rankNumber: 9,
+    title: "Học Đế",
+    subtitle: "Academic Sovereign",
+    fullTitle: "Rank 9 — Học Đế",
+    badgeBg: "bg-[#4f46e5]/15",
+    badgeText: "text-[#4f46e5] dark:text-[#a5b4fc]",
+    badgeBorder: "border-[#4f46e5]/30",
+    accentColor: "text-[#4f46e5]",
+    iconColor: "#4f46e5",
+    stage,
+  };
 }
 
 const STORAGE_KEY = "aris_evidence_records_v1";
@@ -36,6 +281,7 @@ const INITIAL_EVIDENCE_DATA: EvidenceItem[] = [
       "Mình thật sự rất vui vì đã chọn ARIS là nơi bắt đầu hành trình chinh phục IELTS. Điều mình ấn tượng nhất là phương pháp bóc tách cấu trúc câu, giúp mình không còn thói quen dịch thô từ tiếng Việt.",
     scoreBefore: "5.0",
     overallScore: "6.5",
+    academicRankTitle: "Rank 6 — Học Giả",
     listeningScore: "7.0",
     readingScore: "6.5",
     writingScore: "6.0",
@@ -59,6 +305,7 @@ const INITIAL_EVIDENCE_DATA: EvidenceItem[] = [
       "Đạt được aim 7.0 ngay trong lần thi IELTS đầu tiên là một cột mốc rất đáng nhớ. Thầy cô tại ARIS chỉ rõ từng lỗi sai lập luận và bắt buộc mình phải tự tay viết lại bài sửa sau mỗi buổi học.",
     scoreBefore: "5.5",
     overallScore: "7.0",
+    academicRankTitle: "Rank 7 — Học Bá",
     listeningScore: "7.5",
     readingScore: "7.5",
     writingScore: "6.5",
@@ -82,6 +329,7 @@ const INITIAL_EVIDENCE_DATA: EvidenceItem[] = [
       "Sau khóa học tại ARIS, mình thấy bản thân tiến bộ rõ rệt nhất ở kỹ năng Writing Task 2. Lần đầu tiên mình viết được bài luận hơn 300 từ có cấu trúc mạch lạc, ít sai ngữ pháp và luận điểm sắc bén.",
     scoreBefore: "6.0",
     overallScore: "7.5",
+    academicRankTitle: "Rank 7 — Học Bá",
     listeningScore: "8.0",
     readingScore: "8.0",
     writingScore: "7.0",
@@ -105,6 +353,7 @@ const INITIAL_EVIDENCE_DATA: EvidenceItem[] = [
       "Quy trình chấm chữa từng câu và làm lại bài sửa trên NextBand đã tạo ra sự khác biệt hoàn toàn. Mình kiểm soát được hoàn toàn độ chính xác về ngữ nghĩa và phản xạ nói tự nhiên.",
     scoreBefore: "6.5",
     overallScore: "8.0",
+    academicRankTitle: "Rank 8 — Học Tôn",
     listeningScore: "8.5",
     readingScore: "8.5",
     writingScore: "7.5",
@@ -122,6 +371,8 @@ const INITIAL_EVIDENCE_DATA: EvidenceItem[] = [
 
 // Helper to normalize Supabase record to EvidenceItem
 function mapSupabaseToEvidence(row: any): EvidenceItem {
+  const overall = row.overall_score || row.overallScore || "6.5";
+  const defaultHonor = getAcademicRankHonor(overall).fullTitle;
   return {
     id: row.id,
     studentName: row.student_name || row.studentName || "Học viên ARIS",
@@ -130,7 +381,8 @@ function mapSupabaseToEvidence(row: any): EvidenceItem {
     imageUrl: row.image_url || row.imageUrl || "",
     story: row.story || "",
     scoreBefore: row.score_before || row.scoreBefore || "",
-    overallScore: row.overall_score || row.overallScore || "6.5",
+    overallScore: overall,
+    academicRankTitle: row.academic_rank_title || row.academicRankTitle || defaultHonor,
     listeningScore: row.listening_score || row.listeningScore || "",
     readingScore: row.reading_score || row.readingScore || "",
     writingScore: row.writing_score || row.writingScore || "",

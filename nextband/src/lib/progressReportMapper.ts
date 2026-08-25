@@ -293,7 +293,12 @@ export function mapToProgressReportData(input: ProgressReportInput): ProgressRep
       name: input.studentName || "Học viên",
       className: input.className || "Lớp học",
       teacherName: input.teacherName || "Giảng viên phụ trách",
-      targetBand: input.targetBand || null,
+      targetBand:
+        input.targetBand ||
+        (input as any).student?.targetBand ||
+        (input as any).student?.target_band ||
+        (input as any).target_band ||
+        null,
       programTitle: input.programTitle || null,
     },
     period: {
