@@ -8,7 +8,12 @@ import {
   isContentWord,
   MULTI_WORD_PHRASES,
 } from "@/features/reading/services/readingDictionary";
+import { CrimeSceneBlueprint } from "@/features/reading/components/CrimeSceneBlueprint";
 import { Button } from "@/components/ui/button";
+import {
+  ReadingSettingsPopover,
+  ReaderSettings,
+} from "@/features/reading/components/ReadingSettingsPopover";
 import {
   FileText,
   UserCheck,
@@ -21,11 +26,41 @@ import {
   Sparkles,
   Info,
   Layers,
+  Map as MapIcon,
 } from "lucide-react";
 import { SEO } from "@/components/common/SEO";
 
 export default function ReadingCasePage() {
   const readingCase = CASE_001;
+
+  // Reader Settings (Font size, line height, font family, theme, alignment)
+  const [readerSettings, setReaderSettings] = useState<ReaderSettings>(() => {
+    try {
+      const saved = localStorage.getItem("nextband_reading_settings");
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return {
+      fontSize: 16,
+      lineHeight: "relaxed",
+      fontFamily: "sans",
+      theme: "light",
+      textAlign: "left",
+    };
+  });
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const handleUpdateReaderSettings = (updates: Partial<ReaderSettings>) => {
+    setReaderSettings((prev) => {
+      const next = { ...prev, ...updates };
+      try {
+        localStorage.setItem("nextband_reading_settings", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  };
+
+  // Hover Context Teaser State
+  const [isIntroHovered, setIsIntroHovered] = useState(false);
 
   // Active source filter (or all)
   const [activeSourceId, setActiveSourceId] = useState<string>("all");
@@ -46,8 +81,8 @@ export default function ReadingCasePage() {
   const [finalHypothesis, setFinalHypothesis] = useState<string | null>(null);
   const [selectedEvidenceIds, setSelectedEvidenceIds] = useState<string[]>([]);
 
-  // Page View State: "briefing" | "investigating" | "autopsy"
-  const [viewState, setViewState] = useState<"briefing" | "investigating" | "autopsy">("briefing");
+  // Page View State: "investigating" | "autopsy"
+  const [viewState, setViewState] = useState<"investigating" | "autopsy">("investigating");
 
   // Close tooltip when clicking outside
   useEffect(() => {
@@ -127,11 +162,8 @@ export default function ReadingCasePage() {
     setFinalHypothesis(null);
     setSelectedEvidenceIds([]);
     setActiveTranslatedWords({});
-    setViewState("briefing");
+    setViewState("investigating");
   };
-
-  // State for hover intro teaser
-  const [isIntroHovered, setIsIntroHovered] = useState(false);
 
   // Helper to parse a sentence into tokens where all content words and multi-word idioms are clickable
   const renderSentenceWords = (sentence: string, sentenceIdx: number, paragraphId: string) => {
@@ -180,44 +212,42 @@ export default function ReadingCasePage() {
         const termKey = `${paragraphId}-s${sentenceIdx}-p${segIdx}-${segment.text.toLowerCase()}`;
         const termData = lookupWord(segment.text) || {
           term: segment.text,
-          pronunciation: `/${segment.text.toLowerCase()}/`,
-          pos: "phrase",
-          meaning_en: `Contextual phrase: ${segment.text}`,
-          meaning_vi: `Cụm từ: ${segment.text}`,
-          context_note: "Cụm từ ngữ cảnh trong hồ sơ.",
+          pronunciation: "",
+          pos: "",
+          meaning_en: "",
+          meaning_vi: segment.text,
+          context_note: "",
         };
         const isTranslated = Boolean(activeTranslatedWords[termKey]);
-        const shortVi = termData.meaning_vi.split("/")[0].replace(/\(.*?\)/g, "").trim();
-
-        if (isTranslated) {
-          return (
-            <span
-              key={`phrase-${segIdx}`}
-              className="relative inline-block mx-0.5 align-baseline"
-            >
-              <span className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap text-[11px] font-bold text-[#14532d] bg-[#dcfce7] px-2 py-0.5 rounded border border-[#86efac] shadow-xs animate-in fade-in zoom-in-95 duration-150 pointer-events-none flex items-center justify-center">
-                {shortVi}
-                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#dcfce7] border-r border-b border-[#86efac] rotate-45" />
-              </span>
-              <span
-                onClick={(e) => handleWordClick(e, termData, termKey)}
-                className="cursor-pointer font-semibold bg-[#369E7A] text-white rounded px-1.5 py-0.5 shadow-xs select-none"
-                title="Click để tắt tra cứu"
-              >
-                {segment.text}
-              </span>
-            </span>
-          );
-        }
+        const shortVi = (termData.meaning_vi || "")
+          .replace(/^Từ vựng:\s*/i, "")
+          .replace(/^Cụm từ:\s*/i, "")
+          .split("/")[0]
+          .replace(/\(.*?\)/g, "")
+          .trim();
 
         return (
           <span
             key={`phrase-${segIdx}`}
-            onClick={(e) => handleWordClick(e, termData, termKey)}
-            className="cursor-pointer text-stone-800 hover:text-emerald-900 hover:underline decoration-emerald-500/80 transition-colors inline select-none"
-            title="Click để tra cứu nghĩa theo ngữ cảnh"
+            className="relative inline mx-0.5"
           >
-            {segment.text}
+            {isTranslated && (
+              <span className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap text-[11px] font-bold text-[#14532d] bg-[#dcfce7] px-2 py-0.5 rounded border border-[#86efac] shadow-xs animate-in fade-in duration-150 pointer-events-none flex items-center justify-center">
+                {shortVi}
+                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#dcfce7] border-r border-b border-[#86efac] rotate-45" />
+              </span>
+            )}
+            <span
+              onClick={(e) => handleWordClick(e, termData, termKey)}
+              className={`cursor-pointer transition-colors select-none ${
+                isTranslated
+                  ? "font-bold text-emerald-950 underline decoration-emerald-600 decoration-2"
+                  : "text-stone-800 hover:text-stone-950 hover:underline decoration-stone-300"
+              }`}
+              title="Click để tra cứu nghĩa theo ngữ cảnh"
+            >
+              {segment.text}
+            </span>
           </span>
         );
       }
@@ -230,44 +260,42 @@ export default function ReadingCasePage() {
           const termKey = `${paragraphId}-s${sentenceIdx}-t${segIdx}-${tokIdx}-${token.toLowerCase()}`;
           const termData = lookupWord(token) || {
             term: token,
-            pronunciation: `/${token.toLowerCase()}/`,
-            pos: "content word",
-            meaning_en: `Academic term: ${token}`,
-            meaning_vi: `Từ vựng: ${token}`,
-            context_note: "Từ vựng trong bài đọc.",
+            pronunciation: "",
+            pos: "",
+            meaning_en: "",
+            meaning_vi: token,
+            context_note: "",
           };
           const isTranslated = Boolean(activeTranslatedWords[termKey]);
-          const shortVi = termData.meaning_vi.split("/")[0].replace(/\(.*?\)/g, "").trim();
-
-          if (isTranslated) {
-            return (
-              <span
-                key={`tok-${segIdx}-${tokIdx}`}
-                className="relative inline-block mx-0.5 align-baseline"
-              >
-                <span className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap text-[11px] font-bold text-[#14532d] bg-[#dcfce7] px-2 py-0.5 rounded border border-[#86efac] shadow-xs animate-in fade-in zoom-in-95 duration-150 pointer-events-none flex items-center justify-center">
-                  {shortVi}
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#dcfce7] border-r border-b border-[#86efac] rotate-45" />
-                </span>
-                <span
-                  onClick={(e) => handleWordClick(e, termData, termKey)}
-                  className="cursor-pointer font-semibold bg-[#369E7A] text-white rounded px-1 py-0.5 shadow-xs select-none"
-                  title="Click để tắt tra cứu"
-                >
-                  {token}
-                </span>
-              </span>
-            );
-          }
+          const shortVi = (termData.meaning_vi || "")
+          .replace(/^Từ vựng:\s*/i, "")
+          .replace(/^Cụm từ:\s*/i, "")
+          .split("/")[0]
+          .replace(/\(.*?\)/g, "")
+          .trim();
 
           return (
             <span
               key={`tok-${segIdx}-${tokIdx}`}
-              onClick={(e) => handleWordClick(e, termData, termKey)}
-              className="cursor-pointer text-stone-800 hover:text-emerald-900 hover:underline decoration-emerald-500/80 transition-colors inline select-none"
-              title="Click để tra cứu nghĩa theo ngữ cảnh"
+              className="relative inline mx-0.5"
             >
-              {token}
+              {isTranslated && (
+                <span className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap text-[11px] font-bold text-[#14532d] bg-[#dcfce7] px-2 py-0.5 rounded border border-[#86efac] shadow-xs animate-in fade-in duration-150 pointer-events-none flex items-center justify-center">
+                  {shortVi}
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#dcfce7] border-r border-b border-[#86efac] rotate-45" />
+                </span>
+              )}
+              <span
+                onClick={(e) => handleWordClick(e, termData, termKey)}
+                className={`cursor-pointer transition-colors select-none ${
+                  isTranslated
+                    ? "font-bold text-emerald-950 underline decoration-emerald-600 decoration-2"
+                    : "text-stone-800 hover:text-stone-950 hover:underline decoration-stone-300"
+                }`}
+                title="Click để tra cứu nghĩa theo ngữ cảnh"
+              >
+                {token}
+              </span>
             </span>
           );
         }
@@ -304,84 +332,7 @@ export default function ReadingCasePage() {
     );
   };
 
-  // 15-Second Assessment Briefing Screen (Onboarding Screen)
-  if (viewState === "briefing") {
-    return (
-      <div className="min-h-screen bg-[#FAF8F5] text-stone-900 flex items-center justify-center p-4 sm:p-6 font-sans">
-        <SEO
-          title={`Briefing: ${readingCase.title} | ARIS IELTS Reading`}
-          description="Khảo hạch năng lực nhận thức & giải mã đọc hiểu IELTS Band 5.0"
-        />
-
-        <div className="max-w-xl w-full rounded-3xl border border-stone-200 bg-white p-6 sm:p-8 shadow-md space-y-6 animate-in fade-in zoom-in-95 duration-200">
-          {/* Header */}
-          <div className="space-y-2 border-b border-stone-100 pb-5 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-xs font-black uppercase tracking-wider text-amber-800">
-              <ShieldAlert className="h-3.5 w-3.5 text-amber-600" />
-              ST. JUDE · COGNITIVE ASSESSMENT
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight">
-              {readingCase.title}
-            </h1>
-            <p className="text-xs sm:text-sm text-stone-500">
-              {readingCase.level.realm_name_vi} · IELTS Band {readingCase.level.ielts_band.toFixed(1)} · Thời lượng: ~5-10 phút
-            </p>
-          </div>
-
-          {/* Context Intro */}
-          <div className="rounded-2xl bg-amber-50/70 border border-amber-200/80 p-4 space-y-2">
-            <p className="text-xs sm:text-sm font-semibold text-amber-950 leading-relaxed">
-              &ldquo;Read the sources carefully. Find the evidence, compare the information, and choose the answer best supported by the sources.&rdquo;
-            </p>
-            <p className="text-[11px] text-stone-600">
-              (Đọc kỹ 3 nguồn tài liệu. Tìm bằng chứng, đối chiếu thông tin và chọn kết luận được chứng minh bởi dữ kiện, không đoán mò.)
-            </p>
-          </div>
-
-          {/* 3 Core Assessment Dimensions */}
-          <div className="rounded-2xl bg-stone-50 border border-stone-200/80 p-4 space-y-3">
-            <p className="text-xs font-bold text-stone-900 uppercase tracking-wider">
-              Quy trình khảo hạch (Cognitive Operations):
-            </p>
-            <ul className="space-y-2.5 text-xs text-stone-700">
-              <li className="flex items-start gap-2.5">
-                <span className="h-5 w-5 rounded-full bg-blue-100 text-blue-800 font-bold flex items-center justify-center shrink-0 text-[11px]">1</span>
-                <div>
-                  <strong>FIND (Quét chi tiết):</strong> Xác định chi tiết vật lý tại hiện trường.
-                </div>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <span className="h-5 w-5 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center shrink-0 text-[11px]">2</span>
-                <div>
-                  <strong>MATCH (Đối chiếu):</strong> Phát hiện xung đột mốc thời gian giữa lời khai & nhật ký điện tử.
-                </div>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <span className="h-5 w-5 rounded-full bg-purple-100 text-purple-800 font-bold flex items-center justify-center shrink-0 text-[11px]">3</span>
-                <div>
-                  <strong>INFER & PROVE (Suy luận & Chứng minh):</strong> Chọn câu văn bằng chứng trực tiếp trong văn bản.
-                </div>
-              </li>
-            </ul>
-          </div>
-
-          <div className="text-[11px] text-center text-stone-500 italic">
-            💡 Độ khó tiếng Anh: Band 5.0 (B1) | Độ khó tư duy: Nhận thức logic. Click từ vựng để tra nghĩa nhanh.
-          </div>
-
-          {/* Start CTA */}
-          <Button
-            onClick={() => setViewState("investigating")}
-            className="w-full h-12 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-sm uppercase tracking-wider shadow-md shadow-amber-500/20 transition-all cursor-pointer"
-          >
-            Bắt Đầu Khảo Hạch
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
+  // Case Autopsy Screen (Post-submission)
   if (viewState === "autopsy") {
     return (
       <div className="min-h-screen bg-[#FAF8F5] text-stone-900 py-10 font-sans">
@@ -432,6 +383,15 @@ export default function ReadingCasePage() {
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Reading Typography & Size Settings Popover */}
+            <ReadingSettingsPopover
+              settings={readerSettings}
+              onChange={handleUpdateReaderSettings}
+              isOpen={isSettingsOpen}
+              onToggle={() => setIsSettingsOpen((prev) => !prev)}
+              onClose={() => setIsSettingsOpen(false)}
+            />
+
             {/* Hover/Click Context Intro Teaser */}
             <div 
               className="relative"
@@ -464,6 +424,7 @@ export default function ReadingCasePage() {
                       <p>• Giáo sư Arthur Vance bất tỉnh trên bàn, thân thể không một vết thương.</p>
                       <p>• Lối thoát duy nhất là ống thông gió trần chỉ 30x40cm — người lớn không thể chui lọt.</p>
                     </div>
+                    <CrimeSceneBlueprint isCompact className="mt-2" />
                     <p className="font-semibold text-stone-800 pt-1 text-[11px]">
                       Kẻ trộm đã lấy cắp đề thi và khóa trái căn phòng từ bên trong bằng cách nào? Hãy lần theo 3 nguồn hồ sơ bên dưới để vạch trần chân tướng!
                     </p>
@@ -521,42 +482,111 @@ export default function ReadingCasePage() {
                   Source {idx + 1}
                 </Button>
               ))}
+              <Button
+                size="sm"
+                variant={activeSourceId === "diagram" ? "default" : "ghost"}
+                onClick={() => setActiveSourceId("diagram")}
+                className={`text-xs h-8 rounded-lg whitespace-nowrap ${
+                  activeSourceId === "diagram"
+                    ? "bg-amber-600 text-white font-bold shadow-xs"
+                    : "bg-amber-50 border border-amber-200 text-amber-900 hover:bg-amber-100"
+                }`}
+              >
+                <MapIcon className="h-3.5 w-3.5 mr-1.5 text-amber-600" />
+                Sơ Đồ Hiện Trường (Map)
+              </Button>
             </div>
 
             {/* Dossier Document Cards */}
             <div className="space-y-6">
-              {readingCase.sources
-                .filter((src) => activeSourceId === "all" || activeSourceId === src.id)
-                .map((src, idx) => (
-                  <div
-                    key={src.id}
-                    className="rounded-2xl border border-stone-200/90 bg-white p-5 sm:p-7 shadow-xs relative overflow-hidden"
-                  >
-                    {/* Source Header */}
-                    <div className="flex items-start justify-between gap-2 border-b border-stone-100 pb-3 mb-5">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-600 px-2 py-0.5 rounded bg-stone-100 border border-stone-200">
-                            SOURCE #{idx + 1}
-                          </span>
-                          <span className="text-xs text-stone-500">{src.subtitle}</span>
-                        </div>
-                        <h2 className="text-base sm:text-lg font-bold text-stone-900 mt-1.5">
-                          {src.title}
-                        </h2>
-                      </div>
-                    </div>
-
-                    {/* Paragraphs */}
-                    <div className="space-y-4 text-sm sm:text-[15px]">
-                      {src.paragraphs.map((p) => (
-                        <div key={p.id}>
-                          {renderInteractiveText(p.text, p.id)}
-                        </div>
-                      ))}
-                    </div>
+              {/* Standalone Diagram Tab View */}
+              {activeSourceId === "diagram" && (
+                <div className="animate-in fade-in duration-150 space-y-3">
+                  <div className="rounded-xl bg-amber-50 p-3 border border-amber-200 text-xs text-amber-900">
+                    💡 <strong>Mặt bằng hiện trường:</strong> Căn phòng Archive Room B-12 với kích thước thực tế, vị trí két sắt, bàn làm việc của GS. Vance và ống thông gió trần.
                   </div>
-                ))}
+                  <CrimeSceneBlueprint />
+                </div>
+              )}
+
+              {/* Text Sources */}
+              {activeSourceId !== "diagram" &&
+                readingCase.sources
+                  .filter((src) => activeSourceId === "all" || activeSourceId === src.id)
+                  .map((src, idx) => {
+                    const cardThemeClass =
+                      readerSettings.theme === "eink"
+                        ? "bg-[#FAF4E6] text-[#2C2213] border-[#E2D5B8]"
+                        : readerSettings.theme === "dark"
+                        ? "bg-[#1C1917] text-[#E7E5E4] border-[#292524]"
+                        : "bg-white text-stone-900 border-stone-200/90";
+
+                    const fontClass =
+                      readerSettings.fontFamily === "serif"
+                        ? "font-serif"
+                        : readerSettings.fontFamily === "mono"
+                        ? "font-mono"
+                        : "font-sans";
+
+                    const leadingClass =
+                      readerSettings.lineHeight === "loose"
+                        ? "leading-loose"
+                        : readerSettings.lineHeight === "normal"
+                        ? "leading-normal"
+                        : "leading-relaxed";
+
+                    const alignClass =
+                      readerSettings.textAlign === "justify"
+                        ? "text-justify"
+                        : "text-left";
+
+                    return (
+                      <div
+                        key={src.id}
+                        className={`rounded-2xl border p-5 sm:p-7 shadow-xs relative overflow-hidden transition-colors ${cardThemeClass}`}
+                      >
+                        {/* Source Header */}
+                        <div className="flex items-start justify-between gap-2 border-b border-stone-200/60 pb-3 mb-5">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-600 px-2 py-0.5 rounded bg-stone-100/80 border border-stone-200">
+                                SOURCE #{idx + 1}
+                              </span>
+                              <span className="text-xs text-stone-500">{src.subtitle}</span>
+                            </div>
+                            <h2 className="text-base sm:text-lg font-bold text-stone-900 mt-1.5">
+                              {src.title}
+                            </h2>
+                          </div>
+                        </div>
+
+                        {/* Paragraphs with customizable reader typography */}
+                        <div
+                          className={`space-y-4 ${fontClass} ${leadingClass} ${alignClass}`}
+                          style={{ fontSize: `${readerSettings.fontSize}px` }}
+                        >
+                          {src.paragraphs.map((p) => (
+                            <div key={p.id}>
+                              {renderInteractiveText(p.text, p.id)}
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Attached Diagram in Source 1 */}
+                        {src.id === "source-01" && (
+                          <div className="mt-6 pt-5 border-t border-stone-200/70">
+                            <div className="flex items-center gap-2 mb-3">
+                              <span className="text-xs font-bold text-stone-800 uppercase tracking-wider flex items-center gap-1.5">
+                                <MapIcon className="h-3.5 w-3.5 text-amber-600" />
+                                📎 Phụ lục: Sơ đồ mặt bằng hiện trường B-12
+                              </span>
+                            </div>
+                            <CrimeSceneBlueprint isCompact />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
             </div>
           </div>
 

@@ -45,24 +45,28 @@ export const ContextualGlossTooltip: React.FC<ContextualGlossTooltipProps> = ({
             <span className="text-base font-black text-emerald-800 capitalize tracking-wide">
               {term.term}
             </span>
-            <span className="text-[11px] font-mono text-stone-500">
-              {term.pronunciation}
-            </span>
+            {term.pronunciation && term.pronunciation !== `/${term.term.toLowerCase()}/` && (
+              <span className="text-[11px] font-mono text-stone-500">
+                {term.pronunciation}
+              </span>
+            )}
             <button
               onClick={handlePlayAudio}
-              className="rounded-full p-1 text-stone-400 hover:bg-stone-100 hover:text-emerald-700 transition-colors"
+              className="rounded-full p-1 text-stone-400 hover:bg-stone-100 hover:text-emerald-700 transition-colors cursor-pointer"
               title="Phát âm"
             >
               <Volume2 className="h-4 w-4" />
             </button>
           </div>
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-stone-500">
-            {term.pos}
-          </span>
+          {term.pos && !["content word", "phrase"].includes(term.pos.toLowerCase()) && (
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-stone-500">
+              {term.pos}
+            </span>
+          )}
         </div>
         <button
           onClick={onClose}
-          className="rounded-lg p-1 text-stone-400 hover:bg-stone-100 hover:text-stone-700 transition-colors"
+          className="rounded-lg p-1 text-stone-400 hover:bg-stone-100 hover:text-stone-700 transition-colors cursor-pointer"
         >
           <X className="h-4 w-4" />
         </button>
@@ -70,19 +74,25 @@ export const ContextualGlossTooltip: React.FC<ContextualGlossTooltipProps> = ({
 
       {/* Content */}
       <div className="mt-2.5 space-y-2 text-xs">
-        <div>
-          <p className="text-stone-700 font-normal leading-relaxed">
-            {term.meaning_en}
-          </p>
-        </div>
+        {term.meaning_en && 
+          !term.meaning_en.toLowerCase().startsWith("academic term:") &&
+          !term.meaning_en.toLowerCase().startsWith("contextual phrase:") &&
+          !term.meaning_en.toLowerCase().startsWith("vocabulary in context:") && (
+          <div>
+            <p className="text-stone-700 font-normal leading-relaxed">
+              {term.meaning_en}
+            </p>
+          </div>
+        )}
 
         <div className="rounded-lg bg-emerald-50 p-2.5 border border-emerald-200/80">
           <p className="font-bold text-emerald-900">
-            🇻🇳 {term.meaning_vi}
+            🇻🇳 {term.meaning_vi.replace(/^Cụm từ:\s*/i, "").replace(/^Từ vựng:\s*/i, "")}
           </p>
         </div>
 
-        {term.context_note && (
+        {term.context_note && 
+          !term.context_note.includes("Xuất hiện trong hồ sơ vụ án để xây dựng") && (
           <div className="rounded-md bg-stone-50 p-2 text-[11px] text-stone-600 border border-stone-200/60">
             <span className="font-bold text-stone-700 block mb-0.5">📌 Trong ngữ cảnh này:</span>
             {term.context_note}

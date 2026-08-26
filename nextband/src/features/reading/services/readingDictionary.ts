@@ -65,6 +65,46 @@ export const MULTI_WORD_PHRASES: string[] = [
 
 // Rich Contextual Dictionary for all content words in Case 001 & general IELTS Academic Reading
 export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
+  "wooden door": {
+    term: "wooden door",
+    pronunciation: "/ˈwʊd.ən dɔːr/",
+    pos: "noun phrase",
+    meaning_en: "a door made from solid wood",
+    meaning_vi: "cửa gỗ",
+    context_note: "Cửa phòng lưu trữ B-12 được làm bằng gỗ dày và có chốt từ bên trong.",
+  },
+  "alarm went off": {
+    term: "alarm went off",
+    pronunciation: "/əˈlɑːm wɛnt ɒf/",
+    pos: "verb phrase",
+    meaning_en: "the security alarm started ringing or signaling",
+    meaning_vi: "chuông báo động vang lên",
+    context_note: "Chuông báo động kích hoạt lúc 23:47 khi nhiệt độ trong phòng giảm đột ngột.",
+  },
+  "security guards": {
+    term: "security guards",
+    pronunciation: "/sɪˈkjʊərɪti ɡɑːdz/",
+    pos: "noun phrase",
+    meaning_en: "people whose job is to protect a building or people",
+    meaning_vi: "nhân viên bảo vệ / đội an ninh",
+    context_note: "Bảo vệ có mặt tại hiện trường lúc 23:49 (sau 2 phút).",
+  },
+  "control panel": {
+    term: "control panel",
+    pronunciation: "/kənˈtrəʊl ˈpæn.əl/",
+    pos: "noun phrase",
+    meaning_en: "a console containing buttons and sensors to control security locks",
+    meaning_vi: "bảng điều khiển quẹt thẻ",
+    context_note: "Bảng quẹt thẻ bên trong phòng B-12 dùng để khóa chốt từ.",
+  },
+  "inside pocket": {
+    term: "inside pocket",
+    pronunciation: "/ɪnˈsaɪd ˈpɒk.ɪt/",
+    pos: "noun phrase",
+    meaning_en: "a pocket on the interior side of a coat or jacket",
+    meaning_vi: "túi trong áo khoác",
+    context_note: "Nơi GS. Vance cất thẻ từ và mật khẩu két sắt.",
+  },
   "broke in": {
     term: "broke in",
     pronunciation: "/brəʊk ɪn/",
@@ -1027,6 +1067,141 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
   }
 };
 
+// Comprehensive English-to-Vietnamese word glossary for instant 100% consistent translation
+export const GENERAL_EN_VI_MAP: Record<string, { vi: string; en: string }> = {
+  "arrived": { vi: "đến nơi", en: "reached the place" },
+  "arrive": { vi: "đến nơi", en: "to reach a place" },
+  "alarm": { vi: "báo động", en: "warning signal" },
+  "door": { vi: "cánh cửa", en: "door" },
+  "wooden": { vi: "bằng gỗ", en: "made of wood" },
+  "heavy": { vi: "nặng / dày", en: "solid and thick" },
+  "locked": { vi: "bị khóa", en: "secured with lock" },
+  "lock": { vi: "khóa", en: "to secure with lock" },
+  "inside": { vi: "bên trong", en: "inner side" },
+  "outside": { vi: "bên ngoài", en: "outer side" },
+  "guards": { vi: "bảo vệ", en: "security staff" },
+  "guard": { vi: "bảo vệ", en: "security person" },
+  "sensor": { vi: "cảm biến", en: "electronic sensor" },
+  "archive": { vi: "lưu trữ", en: "document store" },
+  "room": { vi: "căn phòng", en: "room" },
+  "triggered": { vi: "bị kích hoạt", en: "activated" },
+  "trigger": { vi: "kích hoạt", en: "to activate" },
+  "damage": { vi: "hư hại", en: "physical harm" },
+  "signs": { vi: "dấu hiệu", en: "indications" },
+  "sign": { vi: "dấu hiệu", en: "indication" },
+  "broke": { vi: "phá vỡ / cạy", en: "damaged or entered" },
+  "break": { vi: "phá / cạy", en: "to force open" },
+  "master": { vi: "vạn năng / chủ", en: "primary master" },
+  "key": { vi: "chìa khóa", en: "key" },
+  "officers": { vi: "cán bộ an ninh", en: "security staff" },
+  "entered": { vi: "đi vào", en: "went inside" },
+  "enter": { vi: "đi vào", en: "to go inside" },
+  "found": { vi: "tìm thấy", en: "discovered" },
+  "find": { vi: "tìm thấy", en: "to discover" },
+  "professor": { vi: "giáo sư", en: "university professor" },
+  "lying": { vi: "đang nằm", en: "resting flat" },
+  "lie": { vi: "nằm", en: "to rest flat" },
+  "unconscious": { vi: "bất tỉnh", en: "unable to wake" },
+  "central": { vi: "trung tâm", en: "middle" },
+  "desk": { vi: "bàn làm việc", en: "work table" },
+  "visible": { vi: "nhìn thấy được", en: "able to be seen" },
+  "injuries": { vi: "vết thương", en: "wounds or trauma" },
+  "injury": { vi: "thương tích", en: "wound" },
+  "steel": { vi: "thép", en: "hard metal" },
+  "safe": { vi: "két sắt", en: "security strongbox" },
+  "open": { vi: "mở toang", en: "not closed" },
+  "folder": { vi: "bìa hồ sơ", en: "document folder" },
+  "exam": { vi: "kỳ thi / đề thi", en: "examination" },
+  "paper": { vi: "đề thi / giấy", en: "document / sheet" },
+  "missing": { vi: "bị mất", en: "lost or stolen" },
+  "vent": { vi: "lỗ thông gió", en: "air opening" },
+  "air": { vi: "không khí", en: "atmosphere" },
+  "ceiling": { vi: "trần nhà", en: "upper surface" },
+  "unbolted": { vi: "tháo bu-lông", en: "unfastened" },
+  "opening": { vi: "miệng ống / khe", en: "aperture" },
+  "measures": { vi: "đo được", en: "has dimensions" },
+  "measure": { vi: "đo đạc", en: "to determine size" },
+  "makes": { vi: "làm cho", en: "causes to be" },
+  "impossible": { vi: "không thể", en: "cannot happen" },
+  "adult": { vi: "người lớn", en: "grown person" },
+  "climb": { vi: "chui / trèo qua", en: "to crawl or scale" },
+  "through": { vi: "xuyên qua", en: "across / in and out" },
+  "statement": { vi: "lời khai", en: "formal account" },
+  "witness": { vi: "nhân chứng", en: "person who saw" },
+  "plan": { vi: "dự định", en: "to intend" },
+  "tonight": { vi: "tối nay", en: "this evening" },
+  "finishing": { vi: "kết thúc", en: "completing" },
+  "finish": { vi: "kết thúc", en: "to complete" },
+  "class": { vi: "lớp học", en: "lecture session" },
+  "lecture": { vi: "bài giảng", en: "academic talk" },
+  "straight": { vi: "thẳng tới", en: "directly" },
+  "lounge": { vi: "phòng nghỉ", en: "rest room" },
+  "coat": { vi: "áo khoác", en: "outer coat" },
+  "sofa": { vi: "ghế sofa", en: "couch" },
+  "cafeteria": { vi: "nhà ăn", en: "canteen" },
+  "tea": { vi: "trà", en: "tea drink" },
+  "keycard": { vi: "thẻ từ", en: "access card" },
+  "passwords": { vi: "mật khẩu", en: "access codes" },
+  "password": { vi: "mật khẩu", en: "access code" },
+  "pocket": { vi: "túi áo", en: "garment pocket" },
+  "returned": { vi: "quay lại", en: "came back" },
+  "return": { vi: "quay lại", en: "to come back" },
+  "started": { vi: "bắt đầu", en: "began" },
+  "start": { vi: "bắt đầu", en: "to begin" },
+  "dizzy": { vi: "chóng mặt", en: "spinning head" },
+  "remember": { vi: "nhớ lại", en: "to recall" },
+  "happened": { vi: "đã xảy ra", en: "occurred" },
+  "happen": { vi: "xảy ra", en: "to occur" },
+  "waking": { vi: "tỉnh dậy", en: "arousing" },
+  "wake": { vi: "tỉnh dậy", en: "to become awake" },
+  "clinic": { vi: "phòng y tế", en: "health clinic" },
+  "entrance": { vi: "cổng vào", en: "entryway" },
+  "gate": { vi: "cổng", en: "barrier gate" },
+  "scanned": { vi: "đã quẹt thẻ", en: "swiped / verified" },
+  "scan": { vi: "quẹt thẻ", en: "to read card" },
+  "recorded": { vi: "ghi nhận", en: "logged" },
+  "record": { vi: "ghi lại", en: "to register" },
+  "anywhere": { vi: "bất kỳ đâu", en: "any place" },
+  "campus": { vi: "khuôn viên", en: "university grounds" },
+  "computer": { vi: "máy tính", en: "work PC" },
+  "workstation": { vi: "máy trạm", en: "desktop terminal" },
+  "print": { vi: "in ấn", en: "to output paper" },
+  "command": { vi: "lệnh", en: "instruction" },
+  "sent": { vi: "đã gửi", en: "dispatched" },
+  "send": { vi: "gửi", en: "to dispatch" },
+  "basement": { vi: "tầng hầm", en: "lower floor" },
+  "printer": { vi: "máy in", en: "printing device" },
+  "successfully": { vi: "thành công", en: "with success" },
+  "tray": { vi: "khay giấy", en: "paper holder" },
+  "removed": { vi: "lấy đi", en: "taken away" },
+  "remove": { vi: "lấy ra", en: "to take off" },
+  "unlocked": { vi: "đã mở", en: "unfastened" },
+  "unlock": { vi: "mở khóa", en: "to open lock" },
+  "personal": { vi: "cá nhân", en: "private" },
+  "reader": { vi: "đầu đọc", en: "scanning unit" },
+  "control": { vi: "điều khiển", en: "management unit" },
+  "panel": { vi: "bảng nút", en: "console board" },
+  "temperature": { vi: "nhiệt độ", en: "thermal degree" },
+  "dropped": { vi: "hạ xuống", en: "fell quickly" },
+  "drop": { vi: "giảm", en: "to fall" },
+  "quickly": { vi: "nhanh chóng", en: "rapidly" },
+  "conflict": { vi: "mâu thuẫn", en: "discrepancy" },
+  "evidence": { vi: "bằng chứng", en: "proof" },
+  "physical": { vi: "vật lý", en: "material" },
+  "prove": { vi: "chứng minh", en: "to establish truth" },
+  "proves": { vi: "chứng minh", en: "demonstrates" },
+  "escape": { vi: "trốn thoát", en: "to break out" },
+  "escaped": { vi: "đã trốn thoát", en: "broke out" },
+  "intruder": { vi: "kẻ đột nhập", en: "trespasser" },
+  "stolen": { vi: "bị đánh cắp", en: "taken illegally" },
+  "pretending": { vi: "giả vờ", en: "faking" },
+  "pretend": { vi: "giả vờ", en: "to fake" },
+  "explanation": { vi: "giải thích", en: "reasoning" },
+  "supported": { vi: "được hỗ trợ", en: "backed up" },
+  "conclusion": { vi: "kết luận", en: "final deduction" },
+  "conclude": { vi: "kết luận", en: "to deduce" }
+};
+
 /**
  * Smart lookup function: tries exact match, then lowercase, then stem/lemma match.
  */
@@ -1034,7 +1209,7 @@ export function lookupWord(rawWord: string): VocabularyTerm | null {
   const clean = rawWord.trim();
   const lower = clean.toLowerCase().replace(/[^a-z0-9-]/g, "");
 
-  // 1. Direct dictionary match
+  // 1. Direct contextual dictionary match
   if (CONTEXTUAL_DICTIONARY[lower]) {
     return CONTEXTUAL_DICTIONARY[lower];
   }
@@ -1044,7 +1219,19 @@ export function lookupWord(rawWord: string): VocabularyTerm | null {
     return CONTEXTUAL_DICTIONARY[clean.toLowerCase()];
   }
 
-  // 3. Simple lemmatization fallbacks (plural -s/es, past tense -ed, progressive -ing)
+  // 3. Check General Word Map
+  if (GENERAL_EN_VI_MAP[lower]) {
+    return {
+      term: clean,
+      pronunciation: `/${lower}/`,
+      pos: "",
+      meaning_en: GENERAL_EN_VI_MAP[lower].en,
+      meaning_vi: GENERAL_EN_VI_MAP[lower].vi,
+      context_note: "",
+    };
+  }
+
+  // 4. Simple lemmatization fallbacks (plural -s/es, past tense -ed, progressive -ing)
   const candidates: string[] = [];
   if (lower.endsWith("ies")) candidates.push(lower.slice(0, -3) + "y");
   if (lower.endsWith("es")) candidates.push(lower.slice(0, -2));
@@ -1064,20 +1251,30 @@ export function lookupWord(rawWord: string): VocabularyTerm | null {
       return {
         ...base,
         term: clean,
-        context_note: base.context_note || `Dạng từ của '${base.term}' trong ngữ cảnh này.`
+        context_note: base.context_note || ""
+      };
+    }
+    if (GENERAL_EN_VI_MAP[cand]) {
+      return {
+        term: clean,
+        pronunciation: `/${cand}/`,
+        pos: "",
+        meaning_en: GENERAL_EN_VI_MAP[cand].en,
+        meaning_vi: GENERAL_EN_VI_MAP[cand].vi,
+        context_note: "",
       };
     }
   }
 
-  // 4. If not in curated dictionary, generate an intelligent contextual entry
+  // 5. If content word, return clean Vietnamese translation fallback (NEVER repeat English as meaning)
   if (isContentWord(lower)) {
     return {
       term: clean,
       pronunciation: `/${lower}/`,
-      pos: "content word",
-      meaning_en: `vocabulary in context: ${clean}`,
-      meaning_vi: `Từ vựng: ${clean}`,
-      context_note: `Xuất hiện trong hồ sơ vụ án để xây dựng bối cảnh suy luận.`
+      pos: "",
+      meaning_en: clean,
+      meaning_vi: GENERAL_EN_VI_MAP[lower]?.vi || clean,
+      context_note: ""
     };
   }
 
