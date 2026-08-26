@@ -35,34 +35,34 @@ export const ContextualGlossTooltip: React.FC<ContextualGlossTooltipProps> = ({
         top: `${position.top}px`,
         left: `${position.left}px`,
       }}
-      className="fixed z-50 -translate-x-1/2 -translate-y-full mb-2 w-80 max-w-[90vw] rounded-xl border border-slate-700 bg-slate-900/95 p-4 text-white shadow-2xl backdrop-blur-md animate-in fade-in zoom-in-95 duration-150"
+      className="fixed z-50 -translate-x-1/2 -translate-y-full mb-2 w-80 max-w-[90vw] rounded-xl border border-stone-200 bg-white p-4 text-stone-900 shadow-2xl animate-in fade-in zoom-in-95 duration-150"
       onClick={(e) => e.stopPropagation()}
     >
       {/* Header */}
-      <div className="flex items-start justify-between gap-2 border-b border-slate-800 pb-2">
+      <div className="flex items-start justify-between gap-2 border-b border-stone-100 pb-2">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-base font-extrabold text-amber-400 capitalize tracking-wide">
+            <span className="text-base font-black text-emerald-800 capitalize tracking-wide">
               {term.term}
             </span>
-            <span className="text-[11px] font-mono text-slate-400">
+            <span className="text-[11px] font-mono text-stone-500">
               {term.pronunciation}
             </span>
             <button
               onClick={handlePlayAudio}
-              className="rounded-full p-1 text-slate-400 hover:bg-slate-800 hover:text-amber-300 transition-colors"
+              className="rounded-full p-1 text-stone-400 hover:bg-stone-100 hover:text-emerald-700 transition-colors"
               title="Phát âm"
             >
               <Volume2 className="h-4 w-4" />
             </button>
           </div>
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-stone-500">
             {term.pos}
           </span>
         </div>
         <button
           onClick={onClose}
-          className="rounded-lg p-1 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+          className="rounded-lg p-1 text-stone-400 hover:bg-stone-100 hover:text-stone-700 transition-colors"
         >
           <X className="h-4 w-4" />
         </button>
@@ -71,20 +71,20 @@ export const ContextualGlossTooltip: React.FC<ContextualGlossTooltipProps> = ({
       {/* Content */}
       <div className="mt-2.5 space-y-2 text-xs">
         <div>
-          <p className="text-slate-300 font-medium leading-relaxed">
+          <p className="text-stone-700 font-normal leading-relaxed">
             {term.meaning_en}
           </p>
         </div>
 
-        <div className="rounded-lg bg-amber-500/10 p-2 border border-amber-500/20">
-          <p className="font-semibold text-amber-300">
+        <div className="rounded-lg bg-emerald-50 p-2.5 border border-emerald-200/80">
+          <p className="font-bold text-emerald-900">
             🇻🇳 {term.meaning_vi}
           </p>
         </div>
 
         {term.context_note && (
-          <div className="rounded-md bg-slate-800/80 p-2 text-[11px] text-slate-300">
-            <span className="font-bold text-slate-400 block mb-0.5">📌 Trong ngữ cảnh này:</span>
+          <div className="rounded-md bg-stone-50 p-2 text-[11px] text-stone-600 border border-stone-200/60">
+            <span className="font-bold text-stone-700 block mb-0.5">📌 Trong ngữ cảnh này:</span>
             {term.context_note}
           </div>
         )}
@@ -92,21 +92,21 @@ export const ContextualGlossTooltip: React.FC<ContextualGlossTooltipProps> = ({
 
       {/* Footer action */}
       {onSave && (
-        <div className="mt-3 flex justify-end border-t border-slate-800/80 pt-2">
+        <div className="mt-3 flex justify-end border-t border-stone-100 pt-2">
           <Button
             size="sm"
             variant="ghost"
             onClick={() => onSave(term.term)}
-            className="h-7 text-xs text-slate-300 hover:text-amber-400 hover:bg-slate-800"
+            className="h-7 text-xs text-stone-600 hover:text-emerald-800 hover:bg-emerald-50 font-medium"
           >
-            <BookmarkCheck className="mr-1.5 h-3.5 w-3.5 text-amber-400" />
+            <BookmarkCheck className="mr-1.5 h-3.5 w-3.5 text-emerald-600" />
             {isSaved ? "Đã lưu vào sổ tay" : "Lưu vào sổ từ"}
           </Button>
         </div>
       )}
 
       {/* Little arrow */}
-      <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 border-solid border-t-slate-900 border-t-8 border-x-transparent border-x-8 border-b-0" />
+      <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 border-solid border-t-white border-t-8 border-x-transparent border-x-8 border-b-0 drop-shadow-xs" />
     </div>
   );
 };

@@ -76,7 +76,7 @@ export function ConsultationBubble() {
     {
       id: "assessment",
       icon: <ShieldCheck className="w-4 h-4 text-brand-red" />,
-      title: "Kiểm tra trình độ tiếng Anh (Entrance Test)",
+      title: "Kiểm tra trình độ tiếng Anh",
       subtitle: "Nhận được kết quả trong vòng 24 giờ qua Zalo",
     },
     {
