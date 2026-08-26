@@ -165,7 +165,7 @@ export function ConsultationBubble() {
         {/* Floating CTA Button (Desktop Pill, Mobile Circle) */}
         <button
           onClick={() => setIsOpen((prev) => !prev)}
-          className="group relative flex items-center justify-center h-11 w-11 sm:w-auto sm:pl-4 sm:pr-1.5 rounded-full bg-brand-red hover:bg-brand-red-hover text-white shadow-[0_4px_18px_rgba(229,16,64,0.28)] hover:shadow-[0_6px_22px_rgba(229,16,64,0.38)] transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+          className="group relative flex items-center justify-center h-12 w-12 sm:w-auto sm:pl-4.5 sm:pr-1 rounded-full bg-brand-red hover:bg-brand-red-hover text-white shadow-[0_4px_18px_rgba(229,16,64,0.28)] hover:shadow-[0_6px_22px_rgba(229,16,64,0.38)] transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
           aria-expanded={isOpen}
           aria-label="Tư vấn ngay"
         >
@@ -175,7 +175,7 @@ export function ConsultationBubble() {
           </span>
 
           {/* Zalo Icon & Centered Radar Light Rings */}
-          <div className="relative w-8 h-8 rounded-full bg-[#0068FF] text-white flex items-center justify-center shrink-0 shadow-xs p-1.5">
+          <div className="relative w-10 h-10 rounded-full bg-[#0068FF] text-white flex items-center justify-center shrink-0 shadow-xs p-2">
             {/* Main Ripple Ring */}
             <span
               aria-hidden="true"
