@@ -3705,8 +3705,18 @@ export const sessionsApi = {
 // SITE SETTINGS API (REST FASTIFY ADAPTER)
 // =============================================
 export const siteSettingsApi = {
-  get: async () => {
-    const res = await fetch(`${API_BASE_URL}/site-settings`);
+  get: async (options?: { bypassCache?: boolean }) => {
+    const token = await getAuthToken();
+    const headers: Record<string, string> = {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+    const url = options?.bypassCache
+      ? `${API_BASE_URL}/site-settings?_t=${Date.now()}`
+      : `${API_BASE_URL}/site-settings`;
+    const res = await fetch(url, {
+      headers,
+      cache: options?.bypassCache || token ? "no-store" : "default",
+    });
     if (!res.ok) {
       throw new Error("Không thể tải cài đặt hệ thống");
     }

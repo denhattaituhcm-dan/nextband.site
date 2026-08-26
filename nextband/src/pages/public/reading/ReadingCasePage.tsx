@@ -660,7 +660,15 @@ export default function ReadingCasePage() {
                           TASK 01 · FIND (Locating Detail)
                         </span>
                         {taskAnswers["task-01"] && (
-                          <CheckCircle className="h-4 w-4 text-emerald-600" />
+                          taskAnswers["task-01"] === "B" ? (
+                            <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
+                              <CheckCircle className="h-3.5 w-3.5" /> Đúng
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-full">
+                              Sai
+                            </span>
+                          )
                         )}
                       </div>
                       <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
@@ -668,142 +676,289 @@ export default function ReadingCasePage() {
                       </p>
                       {"options" in readingCase.tasks[0] && (
                         <div className="space-y-1.5 pt-1">
-                          {readingCase.tasks[0].options.map((opt) => (
-                            <label
-                              key={opt.id}
-                              className={`flex items-start gap-2.5 p-2.5 rounded-lg border text-xs cursor-pointer transition-all ${
-                                taskAnswers["task-01"] === opt.id
-                                  ? "bg-amber-50 border-amber-400 text-amber-950 font-medium ring-1 ring-amber-400/40"
-                                  : "border-stone-200/80 bg-white hover:bg-stone-50 text-stone-700"
-                              }`}
-                            >
-                              <input
-                                type="radio"
-                                name="task-01"
-                                checked={taskAnswers["task-01"] === opt.id}
-                                onChange={() => setTaskAnswers({ ...taskAnswers, "task-01": opt.id })}
-                                className="mt-0.5 text-amber-600 focus:ring-0"
-                              />
-                              <span>
-                                <strong className="mr-1">{opt.id}.</strong> {opt.text}
-                              </span>
-                            </label>
-                          ))}
+                          {readingCase.tasks[0].options.map((opt) => {
+                            const userAns = taskAnswers["task-01"];
+                            const isAnswered = Boolean(userAns);
+                            const isThisSelected = userAns === opt.id;
+                            const isCorrectOpt = opt.id === "B";
+
+                            let cardStyle = "border-stone-200/80 bg-white hover:bg-stone-50 text-stone-700";
+                            if (isAnswered) {
+                              if (isThisSelected && isCorrectOpt) {
+                                cardStyle = "bg-emerald-50 border-emerald-500 text-emerald-950 font-bold ring-1 ring-emerald-500/40";
+                              } else if (isThisSelected && !isCorrectOpt) {
+                                cardStyle = "bg-rose-50 border-rose-400 text-rose-950 font-bold ring-1 ring-rose-400/40";
+                              } else if (!isThisSelected && isCorrectOpt) {
+                                cardStyle = "bg-emerald-50/60 border-emerald-300 text-emerald-900 font-semibold";
+                              }
+                            }
+
+                            return (
+                              <label
+                                key={opt.id}
+                                className={`flex items-start gap-2.5 p-2.5 rounded-lg border text-xs cursor-pointer transition-all ${cardStyle}`}
+                              >
+                                <input
+                                  type="radio"
+                                  name="task-01"
+                                  checked={taskAnswers["task-01"] === opt.id}
+                                  onChange={() => setTaskAnswers({ ...taskAnswers, "task-01": opt.id })}
+                                  className="mt-0.5 text-emerald-600 focus:ring-0"
+                                />
+                                <span>
+                                  <strong className="mr-1">{opt.id}.</strong> {opt.text}
+                                </span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Instant Explanation for Task 1 */}
+                      {taskAnswers["task-01"] && (
+                        <div className={`p-3 rounded-xl border text-xs leading-relaxed animate-in fade-in duration-150 ${
+                          taskAnswers["task-01"] === "B"
+                            ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
+                            : "bg-rose-50/80 border-rose-200 text-rose-950"
+                        }`}>
+                          <p className="font-bold flex items-center gap-1.5 mb-1">
+                            {taskAnswers["task-01"] === "B" ? (
+                              <span className="text-emerald-800">✅ Chính xác!</span>
+                            ) : (
+                              <span className="text-rose-800">❌ Chưa chính xác. Đáp án đúng là B.</span>
+                            )}
+                          </p>
+                          <p className="text-stone-700">
+                            💡 <strong>Giải thích:</strong> Trong Source 1 (đoạn 2) ghi rõ: <em>&ldquo;The perimeter ice ridges showed no signs of overflow or horizontal collapse&rdquo;</em> chứng minh nước không hề tràn qua bề mặt hay làm sụp các gờ băng xung quanh.
+                          </p>
                         </div>
                       )}
                     </div>
 
-                {/* Task 2: MATCH */}
-                <div className="rounded-xl border border-stone-200/80 bg-[#FAF9F6] p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono font-black uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">
-                      TASK 02 · MATCH (Cross-Source Timeline)
-                    </span>
-                    {taskAnswers["task-02"] && (
-                      <CheckCircle className="h-4 w-4 text-emerald-600" />
-                    )}
-                  </div>
-                  <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
-                    {readingCase.tasks[1].question}
-                  </p>
-                  {"options" in readingCase.tasks[1] && (
-                    <div className="space-y-1.5 pt-1">
-                      {readingCase.tasks[1].options.map((opt) => (
-                        <label
-                          key={opt.id}
-                          className={`flex items-start gap-2.5 p-2.5 rounded-lg border text-xs cursor-pointer transition-all ${
-                            taskAnswers["task-02"] === opt.id
-                              ? "bg-amber-50 border-amber-400 text-amber-950 font-medium ring-1 ring-amber-400/40"
-                              : "border-stone-200/80 bg-white hover:bg-stone-50 text-stone-700"
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="task-02"
-                            checked={taskAnswers["task-02"] === opt.id}
-                            onChange={() => setTaskAnswers({ ...taskAnswers, "task-02": opt.id })}
-                            className="mt-0.5 text-amber-600 focus:ring-0"
-                          />
-                          <span>
-                            <strong className="mr-1">{opt.id}.</strong> {opt.text}
-                          </span>
-                        </label>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Task 3: INFER */}
-                <div className="rounded-xl border border-stone-200/80 bg-[#FAF9F6] p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono font-black uppercase tracking-wider px-2 py-0.5 rounded bg-purple-100 text-purple-800 border border-purple-200">
-                      TASK 03 · INFER (Boundary-Restricted)
-                    </span>
-                    {taskAnswers["task-03"] && (
-                      <CheckCircle className="h-4 w-4 text-emerald-600" />
-                    )}
-                  </div>
-                  <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
-                    {readingCase.tasks[2].question}
-                  </p>
-                  {"options" in readingCase.tasks[2] && (
-                    <div className="space-y-1.5 pt-1">
-                      {readingCase.tasks[2].options.map((opt) => (
-                        <label
-                          key={opt.id}
-                          className={`flex items-start gap-2.5 p-2.5 rounded-lg border text-xs cursor-pointer transition-all ${
-                            taskAnswers["task-03"] === opt.id
-                              ? "bg-amber-50 border-amber-400 text-amber-950 font-medium ring-1 ring-amber-400/40"
-                              : "border-stone-200/80 bg-white hover:bg-stone-50 text-stone-700"
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="task-03"
-                            checked={taskAnswers["task-03"] === opt.id}
-                            onChange={() => setTaskAnswers({ ...taskAnswers, "task-03": opt.id })}
-                            className="mt-0.5 text-amber-600 focus:ring-0"
-                          />
-                          <span>
-                            <strong className="mr-1">{opt.id}.</strong> {opt.text}
-                          </span>
-                        </label>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Task 4: PROVE (Click-to-Source) */}
-                <div className="rounded-xl border border-stone-200/80 bg-[#FAF9F6] p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono font-black uppercase tracking-wider px-2 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-200">
-                      TASK 04 · PROVE (Click Câu Làm Bằng Chứng)
-                    </span>
-                    {selectedEvidenceSentence && (
-                      <CheckCircle className="h-4 w-4 text-emerald-600" />
-                    )}
-                  </div>
-                  <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
-                    {readingCase.tasks[3].instruction}
-                  </p>
-                  
-                  <div className="rounded-lg bg-white p-3 border border-stone-200 text-xs">
-                    {selectedEvidenceSentence ? (
-                      <div className="space-y-1.5">
-                        <span className="text-[11px] font-bold text-emerald-700 flex items-center gap-1">
-                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Câu văn đã chọn làm bằng chứng:
+                    {/* Task 2: MATCH */}
+                    <div className="rounded-xl border border-stone-200/80 bg-[#FAF9F6] p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono font-black uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">
+                          TASK 02 · MATCH (Cross-Source Timeline)
                         </span>
-                        <p className="italic text-stone-800 bg-emerald-50/60 p-2.5 rounded border border-emerald-200/60 leading-relaxed">
-                          "{selectedEvidenceSentence}"
-                        </p>
+                        {taskAnswers["task-02"] && (
+                          taskAnswers["task-02"] === "C" ? (
+                            <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
+                              <CheckCircle className="h-3.5 w-3.5" /> Đúng
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-full">
+                              Sai
+                            </span>
+                          )
+                        )}
                       </div>
-                    ) : (
-                      <p className="text-stone-500 italic">
-                        👉 Hãy click trực tiếp vào câu văn trong <strong>Source 1 (Cột Trái)</strong> để ghim làm bằng chứng.
+                      <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
+                        {readingCase.tasks[1].question}
                       </p>
-                    )}
-                  </div>
-                </div>
+                      {"options" in readingCase.tasks[1] && (
+                        <div className="space-y-1.5 pt-1">
+                          {readingCase.tasks[1].options.map((opt) => {
+                            const userAns = taskAnswers["task-02"];
+                            const isAnswered = Boolean(userAns);
+                            const isThisSelected = userAns === opt.id;
+                            const isCorrectOpt = opt.id === "C";
+
+                            let cardStyle = "border-stone-200/80 bg-white hover:bg-stone-50 text-stone-700";
+                            if (isAnswered) {
+                              if (isThisSelected && isCorrectOpt) {
+                                cardStyle = "bg-emerald-50 border-emerald-500 text-emerald-950 font-bold ring-1 ring-emerald-500/40";
+                              } else if (isThisSelected && !isCorrectOpt) {
+                                cardStyle = "bg-rose-50 border-rose-400 text-rose-950 font-bold ring-1 ring-rose-400/40";
+                              } else if (!isThisSelected && isCorrectOpt) {
+                                cardStyle = "bg-emerald-50/60 border-emerald-300 text-emerald-900 font-semibold";
+                              }
+                            }
+
+                            return (
+                              <label
+                                key={opt.id}
+                                className={`flex items-start gap-2.5 p-2.5 rounded-lg border text-xs cursor-pointer transition-all ${cardStyle}`}
+                              >
+                                <input
+                                  type="radio"
+                                  name="task-02"
+                                  checked={taskAnswers["task-02"] === opt.id}
+                                  onChange={() => setTaskAnswers({ ...taskAnswers, "task-02": opt.id })}
+                                  className="mt-0.5 text-emerald-600 focus:ring-0"
+                                />
+                                <span>
+                                  <strong className="mr-1">{opt.id}.</strong> {opt.text}
+                                </span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Instant Explanation for Task 2 */}
+                      {taskAnswers["task-02"] && (
+                        <div className={`p-3 rounded-xl border text-xs leading-relaxed animate-in fade-in duration-150 ${
+                          taskAnswers["task-02"] === "C"
+                            ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
+                            : "bg-rose-50/80 border-rose-200 text-rose-950"
+                        }`}>
+                          <p className="font-bold flex items-center gap-1.5 mb-1">
+                            {taskAnswers["task-02"] === "C" ? (
+                              <span className="text-emerald-800">✅ Chính xác!</span>
+                            ) : (
+                              <span className="text-rose-800">❌ Chưa chính xác. Đáp án đúng là C.</span>
+                            )}
+                          </p>
+                          <p className="text-stone-700">
+                            💡 <strong>Giải thích:</strong> Dr. Vance giả thuyết nhiệt địa nhiệt/núi lửa làm ấm đá đáy (Source 2), nhưng số liệu cảm biến viễn thám tại Source 3 chứng minh nhiệt độ đá đáy cố định ở mức -1.8°C suốt quá trình xả nước, bác bỏ hoàn toàn giả thuyết làm ấm.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Task 3: INFER */}
+                    <div className="rounded-xl border border-stone-200/80 bg-[#FAF9F6] p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono font-black uppercase tracking-wider px-2 py-0.5 rounded bg-purple-100 text-purple-800 border border-purple-200">
+                          TASK 03 · INFER (Boundary-Restricted)
+                        </span>
+                        {taskAnswers["task-03"] && (
+                          taskAnswers["task-03"] === "A" ? (
+                            <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
+                              <CheckCircle className="h-3.5 w-3.5" /> Đúng
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-full">
+                              Sai
+                            </span>
+                          )
+                        )}
+                      </div>
+                      <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
+                        {readingCase.tasks[2].question}
+                      </p>
+                      {"options" in readingCase.tasks[2] && (
+                        <div className="space-y-1.5 pt-1">
+                          {readingCase.tasks[2].options.map((opt) => {
+                            const userAns = taskAnswers["task-03"];
+                            const isAnswered = Boolean(userAns);
+                            const isThisSelected = userAns === opt.id;
+                            const isCorrectOpt = opt.id === "A";
+
+                            let cardStyle = "border-stone-200/80 bg-white hover:bg-stone-50 text-stone-700";
+                            if (isAnswered) {
+                              if (isThisSelected && isCorrectOpt) {
+                                cardStyle = "bg-emerald-50 border-emerald-500 text-emerald-950 font-bold ring-1 ring-emerald-500/40";
+                              } else if (isThisSelected && !isCorrectOpt) {
+                                cardStyle = "bg-rose-50 border-rose-400 text-rose-950 font-bold ring-1 ring-rose-400/40";
+                              } else if (!isThisSelected && isCorrectOpt) {
+                                cardStyle = "bg-emerald-50/60 border-emerald-300 text-emerald-900 font-semibold";
+                              }
+                            }
+
+                            return (
+                              <label
+                                key={opt.id}
+                                className={`flex items-start gap-2.5 p-2.5 rounded-lg border text-xs cursor-pointer transition-all ${cardStyle}`}
+                              >
+                                <input
+                                  type="radio"
+                                  name="task-03"
+                                  checked={taskAnswers["task-03"] === opt.id}
+                                  onChange={() => setTaskAnswers({ ...taskAnswers, "task-03": opt.id })}
+                                  className="mt-0.5 text-emerald-600 focus:ring-0"
+                                />
+                                <span>
+                                  <strong className="mr-1">{opt.id}.</strong> {opt.text}
+                                </span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Instant Explanation for Task 3 */}
+                      {taskAnswers["task-03"] && (
+                        <div className={`p-3 rounded-xl border text-xs leading-relaxed animate-in fade-in duration-150 ${
+                          taskAnswers["task-03"] === "A"
+                            ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
+                            : "bg-rose-50/80 border-rose-200 text-rose-950"
+                        }`}>
+                          <p className="font-bold flex items-center gap-1.5 mb-1">
+                            {taskAnswers["task-03"] === "A" ? (
+                              <span className="text-emerald-800">✅ Chính xác!</span>
+                            ) : (
+                              <span className="text-rose-800">❌ Chưa chính xác. Đáp án đúng là A.</span>
+                            )}
+                          </p>
+                          <p className="text-stone-700">
+                            💡 <strong>Giải thích:</strong> Cảm biến áp suất ghi nhận sóng xung kích thẳng đứng cực lớn lúc 03:12 AM (Source 3), đúng 3 phút trước khi nước bắt đầu rút ồ ạt lúc 03:15 AM, chứng minh vết nứt lớn đã mở toang xuyên suốt dải băng ngay tại thời điểm này.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Task 4: PROVE (Click-to-Source) */}
+                    <div className="rounded-xl border border-stone-200/80 bg-[#FAF9F6] p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono font-black uppercase tracking-wider px-2 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-200">
+                          TASK 04 · PROVE (Click Câu Làm Bằng Chứng)
+                        </span>
+                        {selectedEvidenceSentence && (
+                          selectedEvidenceSentence === "However, the crevasse extends straight down through the entire 850-meter ice sheet, so the water drained directly to the bedrock." ? (
+                            <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
+                              <CheckCircle className="h-3.5 w-3.5" /> Đúng
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-full">
+                              Chưa đúng
+                            </span>
+                          )
+                        )}
+                      </div>
+                      <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
+                        {readingCase.tasks[3].instruction}
+                      </p>
+                      
+                      <div className="rounded-lg bg-white p-3 border border-stone-200 text-xs">
+                        {selectedEvidenceSentence ? (
+                          <div className="space-y-2">
+                            <span className="text-[11px] font-bold text-stone-800 flex items-center gap-1">
+                              Câu văn đã chọn:
+                            </span>
+                            <p className={`p-2.5 rounded border leading-relaxed italic ${
+                              selectedEvidenceSentence === "However, the crevasse extends straight down through the entire 850-meter ice sheet, so the water drained directly to the bedrock."
+                                ? "bg-emerald-50 border-emerald-300 text-emerald-950 font-medium"
+                                : "bg-rose-50 border-rose-300 text-rose-950"
+                            }`}>
+                              &ldquo;{selectedEvidenceSentence}&rdquo;
+                            </p>
+
+                            {/* Instant Explanation for Task 4 */}
+                            <div className={`p-2.5 rounded-lg border text-xs leading-relaxed ${
+                              selectedEvidenceSentence === "However, the crevasse extends straight down through the entire 850-meter ice sheet, so the water drained directly to the bedrock."
+                                ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
+                                : "bg-rose-50/80 border-rose-200 text-rose-950"
+                            }`}>
+                              {selectedEvidenceSentence === "However, the crevasse extends straight down through the entire 850-meter ice sheet, so the water drained directly to the bedrock." ? (
+                                <p>
+                                  ✅ <strong>Chính xác!</strong> Câu văn tại Source 1 (đoạn 3) nêu rõ khe nứt đâm thẳng qua toàn bộ 850m tầng băng tới tận lớp đá đáy (bedrock).
+                                </p>
+                              ) : (
+                                <p>
+                                  ❌ <strong>Chưa chính xác.</strong> Câu bạn chọn không chứa bằng chứng trực tiếp về độ sâu 850m và đường thoát nước xuống đá đáy. Hãy click vào câu cuối ở đoạn 3 của Source 1.
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-stone-500 italic">
+                            👉 Hãy click trực tiếp vào câu văn trong <strong>Source 1 (Cột Trái)</strong> để ghim làm bằng chứng.
+                          </p>
+                        )}
+                      </div>
+                    </div>
 
                 {/* Final Deduction Section */}
                 <div className="border-t border-stone-200 pt-5 space-y-4">
@@ -819,28 +974,61 @@ export default function ReadingCasePage() {
                   </p>
 
                   <div className="space-y-2">
-                    {readingCase.final_deduction.options.map((opt) => (
-                      <label
-                        key={opt.id}
-                        className={`flex items-start gap-2.5 p-3 rounded-xl border text-xs cursor-pointer transition-all ${
-                          finalHypothesis === opt.id
-                            ? "bg-amber-50 border-amber-400 text-amber-950 font-medium ring-1 ring-amber-400/40"
-                            : "border-stone-200/80 bg-white hover:bg-stone-50 text-stone-700"
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="final_hypothesis"
-                          checked={finalHypothesis === opt.id}
-                          onChange={() => setFinalHypothesis(opt.id)}
-                          className="mt-0.5 text-amber-600 focus:ring-0"
-                        />
-                        <span>
-                          <strong className="mr-1">{opt.id}.</strong> {opt.text}
-                        </span>
-                      </label>
-                    ))}
+                    {readingCase.final_deduction.options.map((opt) => {
+                      const isAnswered = Boolean(finalHypothesis);
+                      const isThisSelected = finalHypothesis === opt.id;
+                      const isCorrectOpt = opt.id === "hyp-2";
+
+                      let cardStyle = "border-stone-200/80 bg-white hover:bg-stone-50 text-stone-700";
+                      if (isAnswered) {
+                        if (isThisSelected && isCorrectOpt) {
+                          cardStyle = "bg-emerald-50 border-emerald-500 text-emerald-950 font-bold ring-1 ring-emerald-500/40";
+                        } else if (isThisSelected && !isCorrectOpt) {
+                          cardStyle = "bg-rose-50 border-rose-400 text-rose-950 font-bold ring-1 ring-rose-400/40";
+                        } else if (!isThisSelected && isCorrectOpt) {
+                          cardStyle = "bg-emerald-50/60 border-emerald-300 text-emerald-900 font-semibold";
+                        }
+                      }
+
+                      return (
+                        <label
+                          key={opt.id}
+                          className={`flex items-start gap-2.5 p-3 rounded-xl border text-xs cursor-pointer transition-all ${cardStyle}`}
+                        >
+                          <input
+                            type="radio"
+                            name="final_hypothesis"
+                            checked={finalHypothesis === opt.id}
+                            onChange={() => setFinalHypothesis(opt.id)}
+                            className="mt-0.5 text-emerald-600 focus:ring-0"
+                          />
+                          <span>
+                            <strong className="mr-1">{opt.id.replace("hyp-", "Giả thuyết ")}:</strong> {opt.text}
+                          </span>
+                        </label>
+                      );
+                    })}
                   </div>
+
+                  {/* Instant Explanation for Final Deduction */}
+                  {finalHypothesis && (
+                    <div className={`p-3 rounded-xl border text-xs leading-relaxed animate-in fade-in duration-150 ${
+                      finalHypothesis === "hyp-2"
+                        ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
+                        : "bg-rose-50/80 border-rose-200 text-rose-950"
+                    }`}>
+                      <p className="font-bold flex items-center gap-1.5 mb-1">
+                        {finalHypothesis === "hyp-2" ? (
+                          <span className="text-emerald-800">✅ Kết Luận Chính Xác!</span>
+                        ) : (
+                          <span className="text-rose-800">❌ Chưa chính xác. Kết luận đúng là Fast Hydro-Fracturing.</span>
+                        )}
+                      </p>
+                      <p className="text-stone-700">
+                        💡 <strong>Giải thích:</strong> Áp lực cơ học từ 8 triệu m³ nước kết hợp biến dạng bề mặt (nhô lên 18cm) đã kích hoạt hiện tượng nứt gãy thủy lực nhanh, mở toang vết nứt thẳng đứng sâu 850m xuyên suốt dải băng tới lớp đá đáy.
+                      </p>
+                    </div>
+                  )}
 
                   {/* Required Supporting Evidence Selection */}
                   <div className="space-y-2 pt-2">

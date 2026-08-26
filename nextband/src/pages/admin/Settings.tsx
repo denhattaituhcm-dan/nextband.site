@@ -38,7 +38,7 @@ export default function AdminSettings() {
 
   const { data: remoteSettings, isLoading } = useQuery({
     queryKey: ["site-settings"],
-    queryFn: () => siteSettingsApi.get(),
+    queryFn: () => siteSettingsApi.get({ bypassCache: true }),
   });
 
   const saveMutation = useMutation({
