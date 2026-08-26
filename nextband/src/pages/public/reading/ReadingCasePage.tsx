@@ -329,39 +329,44 @@ export default function ReadingCasePage() {
           </div>
 
           {/* Context Intro */}
-          <p className="text-xs sm:text-sm text-stone-700 leading-relaxed">
-            Bạn sẽ xử lý một hồ sơ điều tra gồm <strong>3 nguồn tài liệu khách quan và lời khai</strong>. Một số chi tiết có thể mâu thuẫn hoặc chứa bẫy suy diễn quá đà.
-          </p>
+          <div className="rounded-2xl bg-amber-50/70 border border-amber-200/80 p-4 space-y-2">
+            <p className="text-xs sm:text-sm font-semibold text-amber-950 leading-relaxed">
+              &ldquo;Read the sources carefully. Find the evidence, compare the information, and choose the answer best supported by the sources.&rdquo;
+            </p>
+            <p className="text-[11px] text-stone-600">
+              (Đọc kỹ 3 nguồn tài liệu. Tìm bằng chứng, đối chiếu thông tin và chọn kết luận được chứng minh bởi dữ kiện, không đoán mò.)
+            </p>
+          </div>
 
-          {/* 3 Core Assessment Rules */}
+          {/* 3 Core Assessment Dimensions */}
           <div className="rounded-2xl bg-stone-50 border border-stone-200/80 p-4 space-y-3">
             <p className="text-xs font-bold text-stone-900 uppercase tracking-wider">
-              Quy tắc thực hiện:
+              Quy trình khảo hạch (Cognitive Operations):
             </p>
             <ul className="space-y-2.5 text-xs text-stone-700">
               <li className="flex items-start gap-2.5">
                 <span className="h-5 w-5 rounded-full bg-blue-100 text-blue-800 font-bold flex items-center justify-center shrink-0 text-[11px]">1</span>
                 <div>
-                  <strong>Đọc thông tin:</strong> Tìm chi tiết cụ thể để trả lời câu hỏi <em>(Locating Detail)</em>.
+                  <strong>FIND (Quét chi tiết):</strong> Xác định chi tiết vật lý tại hiện trường.
                 </div>
               </li>
               <li className="flex items-start gap-2.5">
                 <span className="h-5 w-5 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center shrink-0 text-[11px]">2</span>
                 <div>
-                  <strong>Đối chiếu đa nguồn:</strong> So sánh mâu thuẫn giữa Lời khai & Nhật ký kỹ thuật số <em>(Cross-Source Matching)</em>.
+                  <strong>MATCH (Đối chiếu):</strong> Phát hiện xung đột mốc thời gian giữa lời khai & nhật ký điện tử.
                 </div>
               </li>
               <li className="flex items-start gap-2.5">
                 <span className="h-5 w-5 rounded-full bg-purple-100 text-purple-800 font-bold flex items-center justify-center shrink-0 text-[11px]">3</span>
                 <div>
-                  <strong>Bằng chứng khách quan:</strong> Chỉ chọn kết luận được chứng minh bằng văn bản, không đoán mò <em>(Text-Grounded Evidence)</em>.
+                  <strong>INFER & PROVE (Suy luận & Chứng minh):</strong> Chọn câu văn bằng chứng trực tiếp trong văn bản.
                 </div>
               </li>
             </ul>
           </div>
 
           <div className="text-[11px] text-center text-stone-500 italic">
-            💡 Không cần kiến thức chuyên ngành. Mọi câu trả lời đều nằm trong hồ sơ. Có thể click vào từ để tra cứu nhanh.
+            💡 Độ khó tiếng Anh: Band 5.0 (B1) | Độ khó tư duy: Nhận thức logic. Click từ vựng để tra nghĩa nhanh.
           </div>
 
           {/* Start CTA */}
@@ -421,7 +426,7 @@ export default function ReadingCasePage() {
                 <span className="text-xs text-amber-500 hidden sm:inline-block">★★☆☆</span>
               </div>
               <p className="text-[11px] text-stone-500 hidden sm:block">
-                {readingCase.universe.name} · Thời lượng khuyến nghị: ~15 phút
+                {readingCase.universe.name} · Thời lượng khuyến nghị: ~10 phút
               </p>
             </div>
           </div>

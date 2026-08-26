@@ -1,8 +1,9 @@
 import React from "react";
 import { ReadingCase } from "../types";
-import { CheckCircle2, AlertTriangle, XCircle, ArrowRight, RotateCcw, Award, Compass, BookOpen } from "lucide-react";
+import { CheckCircle2, AlertTriangle, XCircle, ArrowRight, RotateCcw, Award, Compass, BookOpen, Map as MapIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { CrimeSceneBlueprint } from "./CrimeSceneBlueprint";
 
 interface CaseAutopsyProps {
   readingCase: ReadingCase;
@@ -26,7 +27,9 @@ export const CaseAutopsyView: React.FC<CaseAutopsyProps> = ({
   const task2Correct = taskAnswers["task-02"] === "A";
   const task3Correct = taskAnswers["task-03"] === "B";
   const task4ProveCorrect =
-    selectedEvidenceSentence?.includes("precludes any adult human") ?? false;
+    selectedEvidenceSentence?.includes("cannot climb through it") ||
+    selectedEvidenceSentence?.includes("precludes any adult human") ||
+    false;
 
   const hypothesisCorrect =
     finalHypothesis === readingCase.final_deduction.correct_hypothesis;
@@ -202,6 +205,22 @@ export const CaseAutopsyView: React.FC<CaseAutopsyProps> = ({
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Post-Submission Spatial Artifact: Crime Scene Blueprint */}
+      <div className="mt-8 rounded-2xl border border-stone-200 bg-white p-6 space-y-3 shadow-xs">
+        <div className="flex items-center gap-2 border-b border-stone-100 pb-3">
+          <MapIcon className="h-5 w-5 text-amber-600" />
+          <div>
+            <h2 className="text-base font-bold text-stone-900">
+              Sơ Đồ Giải Mã Hiện Trường Phòng B-12 (Spatial Forensic Resolution)
+            </h2>
+            <p className="text-xs text-stone-500">
+              Đối chiếu sơ đồ mặt bằng giúp hiểu rõ vì sao kẻ trộm chỉ có thể thoát bằng đường nội bộ sau khi khóa trái từ bên trong.
+            </p>
+          </div>
+        </div>
+        <CrimeSceneBlueprint />
       </div>
 
       {/* Bottom Actions */}
