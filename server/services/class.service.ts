@@ -270,6 +270,19 @@ export class ClassService {
       },
     });
 
+    // Mark active students in this class as completed with timestamp
+    await this.prisma.classStudent.updateMany({
+      where: {
+        classId: id,
+        status: "ACTIVE",
+        deletedAt: null,
+      },
+      data: {
+        status: "COMPLETED",
+        completedAt: new Date(),
+      },
+    });
+
     await this.sendClassClosedNotifications({
       id: updatedClass.id,
       name: updatedClass.name,

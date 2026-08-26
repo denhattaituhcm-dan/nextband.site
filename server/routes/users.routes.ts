@@ -643,6 +643,8 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         parentName,
         parentPhone,
         bio,
+        joinedAt,
+        resignedAt,
       } = request.body as any;
 
       const existingUser = await fastify.prisma.user.findFirst({
@@ -689,7 +691,16 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         where: { id: existingUser.id },
         data: {
           ...(fullName !== undefined && { fullName }),
-          ...(isActive !== undefined && { isActive }),
+          ...(isActive !== undefined && {
+            isActive,
+            ...(isActive === false && resignedAt === undefined && !existingUser.resignedAt
+              ? { resignedAt: new Date() }
+              : isActive === true && resignedAt === undefined
+              ? { resignedAt: null }
+              : {}),
+          }),
+          ...(joinedAt !== undefined && { joinedAt: joinedAt ? new Date(joinedAt) : null }),
+          ...(resignedAt !== undefined && { resignedAt: resignedAt ? new Date(resignedAt) : null }),
           ...(updatedBio !== undefined && { bio: updatedBio }),
           ...(gender !== undefined && { gender }),
           ...(dateOfBirth !== undefined && {

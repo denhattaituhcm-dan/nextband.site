@@ -11,7 +11,6 @@ import {
   BookOpen,
   Target,
   Brain,
-  Award,
   CheckCircle2,
   FileCheck,
   RefreshCw,
@@ -21,26 +20,9 @@ import {
   Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getFeaturedEvidence, fetchEvidenceListAsync, getAcademicRankHonor, EvidenceItem } from "@/lib/evidenceStore";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 export default function PublicHomePage() {
   const navigate = useNavigate();
-  const [featuredItems, setFeaturedItems] = React.useState<EvidenceItem[]>(getFeaturedEvidence);
-  const [selectedEvidence, setSelectedEvidence] = React.useState<EvidenceItem | null>(null);
-
-  React.useEffect(() => {
-    fetchEvidenceListAsync().then((list) => {
-      const published = list.filter((item) => item.published && item.consentConfirmed);
-      const featured = published.filter((item) => item.featured);
-      setFeaturedItems(featured.length > 0 ? featured.slice(0, 4) : published.slice(0, 3));
-    }).catch(() => {});
-  }, []);
 
   return (
     <div className="flex flex-col">
@@ -614,163 +596,7 @@ export default function PublicHomePage() {
       </SectionContainer>
 
       {/* ========================================================================= */}
-      {/* SECTION 7: EVIDENCE OF PROGRESS (MINH CHỨNG TIẾN BỘ)                       */}
-      {/* ========================================================================= */}
-      <SectionContainer
-        id="evidence"
-        badge="Minh Chứng Tiến Bộ"
-        title="Tiến bộ thực tế từ sự rèn luyện nghiêm túc"
-        description="Toàn bộ bảng vàng thành tích, lịch sử nâng band và các bước bứt phá năng lực của học viên được lưu vết chi tiết tại chuyên trang Tiến Bộ."
-        background="default"
-      >
-        <div className="p-8 sm:p-12 rounded-3xl bg-muted/40 border border-border/80 text-center space-y-6 max-w-4xl mx-auto">
-          <div className="space-y-2">
-            <h4 className="text-2xl sm:text-3xl font-black text-foreground">
-              Khám Phá Các Câu Chuyện Nâng Band &amp; Hồ Sơ Thực Nghiệm
-            </h4>
-            <p className="text-sm sm:text-base text-foreground/75 max-w-2xl mx-auto leading-relaxed">
-              Mỗi câu chuyện là một hành trình rèn luyện kỷ luật thật, giải phẫu từng điểm nghẽn học thuật và đạt kết quả có thể kiểm chứng tại Học Viện ARIS.
-            </p>
-          </div>
-
-          <Button
-            size="lg"
-            onClick={() => navigate("/results")}
-            className="rounded-2xl px-8 h-14 font-extrabold text-base bg-brand-red hover:bg-brand-red-hover text-white shadow-md gap-2"
-          >
-            <span>Xem toàn bộ hồ sơ bằng chứng tiến bộ</span>
-            <ArrowRight className="h-5 w-5" />
-          </Button>
-        </div>
-      </SectionContainer>
-
-      {/* Story Detail Dialog */}
-      <Dialog open={Boolean(selectedEvidence)} onOpenChange={() => setSelectedEvidence(null)}>
-        <DialogContent className="max-w-2xl text-left">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-black text-foreground">
-              {selectedEvidence?.title}
-            </DialogTitle>
-          </DialogHeader>
-
-          {selectedEvidence && (
-            <div className="space-y-6 pt-2">
-              <div className="flex gap-4 sm:gap-6 items-center">
-                <img
-                  src={selectedEvidence.imageUrl}
-                  alt={selectedEvidence.studentName}
-                  className="w-20 h-20 rounded-2xl object-cover border border-border/80 shrink-0"
-                />
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-extrabold text-foreground text-lg">
-                      {selectedEvidence.studentName}
-                    </span>
-                    {selectedEvidence.studentSchool && (
-                      <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-brand-blue-soft text-brand-blue">
-                        {selectedEvidence.studentSchool}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground font-bold">
-                    <span>{selectedEvidence.courseName}</span>
-                    <span>•</span>
-                    <span>{selectedEvidence.studyDuration}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Honorary Academic Rank Award Banner */}
-              {(() => {
-                const honor = getAcademicRankHonor(selectedEvidence.academicRankTitle || selectedEvidence.overallScore);
-                return (
-                  <div
-                    className={cn(
-                      "p-4 rounded-2xl border flex items-center justify-between gap-4",
-                      honor.badgeBg,
-                      honor.badgeBorder
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={cn("p-2.5 rounded-xl bg-card border shadow-2xs", honor.badgeBorder)}>
-                        <Award className={cn("h-6 w-6", honor.accentColor)} />
-                      </div>
-                      <div>
-                        <span className="text-[10px] sm:text-[11px] uppercase font-black tracking-wider text-muted-foreground block">
-                          Danh Hiệu Học Thuật Chính Thức Được Trao Tặng
-                        </span>
-                        <div className="text-base sm:text-lg font-black text-foreground flex items-center gap-2">
-                          <span>{honor.fullTitle}</span>
-                          <span className={cn("text-xs font-bold", honor.accentColor)}>({honor.subtitle})</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-right shrink-0 hidden sm:block">
-                      <span className="text-xs font-mono font-black px-2.5 py-1 rounded-lg bg-background border text-foreground shadow-2xs">
-                        IELTS {selectedEvidence.overallScore}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })()}
-
-              {/* Score Breakdown Bar */}
-              <div className="p-4 rounded-2xl bg-brand-blue-soft/50 border border-brand-blue/20 grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
-                <div className="space-y-0.5">
-                  <span className="text-[11px] uppercase font-bold text-muted-foreground">Overall</span>
-                  <p className="text-lg font-black text-brand-red">{selectedEvidence.overallScore}</p>
-                </div>
-                {selectedEvidence.listeningScore && (
-                  <div className="space-y-0.5">
-                    <span className="text-[11px] uppercase font-bold text-muted-foreground">Listening</span>
-                    <p className="text-base font-extrabold text-foreground">{selectedEvidence.listeningScore}</p>
-                  </div>
-                )}
-                {selectedEvidence.readingScore && (
-                  <div className="space-y-0.5">
-                    <span className="text-[11px] uppercase font-bold text-muted-foreground">Reading</span>
-                    <p className="text-base font-extrabold text-foreground">{selectedEvidence.readingScore}</p>
-                  </div>
-                )}
-                {selectedEvidence.writingScore && (
-                  <div className="space-y-0.5">
-                    <span className="text-[11px] uppercase font-bold text-muted-foreground">Writing</span>
-                    <p className="text-base font-extrabold text-foreground">{selectedEvidence.writingScore}</p>
-                  </div>
-                )}
-                {selectedEvidence.speakingScore && (
-                  <div className="space-y-0.5">
-                    <span className="text-[11px] uppercase font-bold text-muted-foreground">Speaking</span>
-                    <p className="text-base font-extrabold text-foreground">{selectedEvidence.speakingScore}</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Story Content */}
-              <div className="space-y-2">
-                <h4 className="text-xs uppercase font-extrabold text-muted-foreground tracking-wider">
-                  Chia sẻ của học viên
-                </h4>
-                <p className="text-sm sm:text-base text-foreground/85 leading-relaxed bg-muted/30 p-5 rounded-2xl border border-border/60">
-                  "{selectedEvidence.story}"
-                </p>
-              </div>
-
-              <div className="pt-2 flex justify-end">
-                <Button
-                  onClick={() => setSelectedEvidence(null)}
-                  className="rounded-xl font-bold text-xs"
-                >
-                  Đóng
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* ========================================================================= */}
-      {/* SECTION 8: FINAL CONVERSION BANNER (HÀNH ĐỘNG NGAY)                       */}
+      {/* SECTION 7: FINAL CONVERSION BANNER (HÀNH ĐỘNG NGAY)                       */}
       {/* ========================================================================= */}
       <section className="py-20 sm:py-24 bg-brand-blue text-white">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center space-y-7">

@@ -278,11 +278,12 @@ export class LeadService {
           });
         }
 
-        // C. Update Lead with convertedUserId and Status
+        // C. Update Lead with convertedUserId, convertedAt and Status
         const updatedLead = await tx.contactLead.update({
           where: { id: leadId },
           data: {
             convertedUserId: supabaseUserId,
+            convertedAt: new Date(),
             status: (input.status as LeadStatus) || LeadStatus.ENROLLED,
           },
           include: {

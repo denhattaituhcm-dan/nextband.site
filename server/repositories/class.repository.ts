@@ -92,6 +92,19 @@ export class ClassRepository {
   }
 
   async addStudent(classId: string, studentId: string) {
+    const existing = await this.prisma.classStudent.findUnique({
+      where: { classId_studentId: { classId, studentId } },
+    });
+    if (existing) {
+      return this.prisma.classStudent.update({
+        where: { id: existing.id },
+        data: {
+          status: "ACTIVE",
+          deletedAt: null,
+          joinedAt: new Date(),
+        },
+      });
+    }
     return this.prisma.classStudent.create({
       data: { classId, studentId },
     });
@@ -102,8 +115,12 @@ export class ClassRepository {
   }
 
   async removeStudent(classId: string, studentId: string) {
-    return this.prisma.classStudent.deleteMany({
-      where: { classId, studentId },
+    return this.prisma.classStudent.updateMany({
+      where: { classId, studentId, deletedAt: null },
+      data: {
+        status: "DROPPED",
+        deletedAt: new Date(),
+      },
     });
   }
 

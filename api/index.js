@@ -102979,7 +102979,9 @@ var usersRoutes = async (fastify) => {
         phone,
         parentName,
         parentPhone,
-        bio
+        bio,
+        joinedAt,
+        resignedAt
       } = request.body;
       const existingUser = await fastify.prisma.user.findFirst({
         where: {
@@ -103020,7 +103022,12 @@ var usersRoutes = async (fastify) => {
         where: { id: existingUser.id },
         data: {
           ...fullName !== void 0 && { fullName },
-          ...isActive !== void 0 && { isActive },
+          ...isActive !== void 0 && {
+            isActive,
+            ...isActive === false && resignedAt === void 0 && !existingUser.resignedAt ? { resignedAt: /* @__PURE__ */ new Date() } : isActive === true && resignedAt === void 0 ? { resignedAt: null } : {}
+          },
+          ...joinedAt !== void 0 && { joinedAt: joinedAt ? new Date(joinedAt) : null },
+          ...resignedAt !== void 0 && { resignedAt: resignedAt ? new Date(resignedAt) : null },
           ...updatedBio !== void 0 && { bio: updatedBio },
           ...gender !== void 0 && { gender },
           ...dateOfBirth !== void 0 && {
@@ -103577,6 +103584,19 @@ var ClassRepository = class {
     return !!cs;
   }
   async addStudent(classId, studentId) {
+    const existing = await this.prisma.classStudent.findUnique({
+      where: { classId_studentId: { classId, studentId } }
+    });
+    if (existing) {
+      return this.prisma.classStudent.update({
+        where: { id: existing.id },
+        data: {
+          status: "ACTIVE",
+          deletedAt: null,
+          joinedAt: /* @__PURE__ */ new Date()
+        }
+      });
+    }
     return this.prisma.classStudent.create({
       data: { classId, studentId }
     });
@@ -103585,8 +103605,12 @@ var ClassRepository = class {
     return this.addStudent(classId, studentId);
   }
   async removeStudent(classId, studentId) {
-    return this.prisma.classStudent.deleteMany({
-      where: { classId, studentId }
+    return this.prisma.classStudent.updateMany({
+      where: { classId, studentId, deletedAt: null },
+      data: {
+        status: "DROPPED",
+        deletedAt: /* @__PURE__ */ new Date()
+      }
     });
   }
   async removeStudentFromClass(classId, studentId) {
@@ -103859,6 +103883,17 @@ var ClassService = class {
         isActive: true,
         closedAt: true,
         students: { select: { studentId: true } }
+      }
+    });
+    await this.prisma.classStudent.updateMany({
+      where: {
+        classId: id,
+        status: "ACTIVE",
+        deletedAt: null
+      },
+      data: {
+        status: "COMPLETED",
+        completedAt: /* @__PURE__ */ new Date()
       }
     });
     await this.sendClassClosedNotifications({
@@ -106201,6 +106236,7 @@ var LeadService = class {
           where: { id: leadId },
           data: {
             convertedUserId: supabaseUserId,
+            convertedAt: /* @__PURE__ */ new Date(),
             status: input.status || LeadStatus.ENROLLED
           },
           include: {
@@ -107162,6 +107198,717 @@ var periodicReportsRoutes = async (fastify) => {
 };
 var periodic_reports_routes_default = periodicReportsRoutes;
 
+// server/routes/admin-dashboard.routes.ts
+async function adminDashboardRoutes(fastify) {
+  fastify.get(
+    "/dashboard-summary",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { branchId = "ALL" } = request.query || {};
+      const now = /* @__PURE__ */ new Date();
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1e3);
+      const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1e3);
+      const twoDaysAgo = new Date(now.getTime() - 48 * 60 * 60 * 1e3);
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1e3);
+      const hasBranchFilter = branchId && branchId !== "ALL";
+      const classBranchFilter = hasBranchFilter ? { branchId } : {};
+      const leadBranchFilter = hasBranchFilter ? { preferredBranchId: branchId } : {};
+      const assessmentBranchFilter = hasBranchFilter ? { branchId } : {};
+      try {
+        const [
+          activeStudentsCount,
+          reservedStudentsCount,
+          newLeadsCount,
+          overdueLeadsCount,
+          enrolledLeadsCount,
+          placementTestsCount,
+          activeClasses,
+          pendingGradingCount,
+          overdueGradingCount,
+          recentAbsents,
+          teachersData
+        ] = await Promise.all([
+          // 1. Học viên đang theo học (ACTIVE)
+          fastify.prisma.classStudent.count({
+            where: {
+              status: "ACTIVE",
+              deletedAt: null,
+              class: { isActive: true, ...classBranchFilter }
+            }
+          }),
+          // 2. Học viên đang bảo lưu (SUSPENDED)
+          fastify.prisma.classStudent.count({
+            where: {
+              status: "SUSPENDED",
+              deletedAt: null,
+              class: { isActive: true, ...classBranchFilter }
+            }
+          }),
+          // 3. Lead mới trong 7 ngày
+          fastify.prisma.contactLead.count({
+            where: {
+              createdAt: { gte: sevenDaysAgo },
+              ...leadBranchFilter
+            }
+          }),
+          // 4. Lead mới tồn đọng quá 24h chưa liên hệ (status = NEW)
+          fastify.prisma.contactLead.count({
+            where: {
+              status: "NEW",
+              createdAt: { lte: oneDayAgo },
+              ...leadBranchFilter
+            }
+          }),
+          // 5. Lead chốt nhập học trong 7 ngày
+          fastify.prisma.contactLead.count({
+            where: {
+              status: "ENROLLED",
+              updatedAt: { gte: sevenDaysAgo },
+              ...leadBranchFilter
+            }
+          }),
+          // 6. Số lượt test đầu vào trong 7 ngày
+          fastify.prisma.assessmentSession.count({
+            where: {
+              createdAt: { gte: sevenDaysAgo },
+              ...assessmentBranchFilter
+            }
+          }),
+          // 7. Lớp học đang chạy kèm sức chứa phòng
+          fastify.prisma.class.findMany({
+            where: {
+              isActive: true,
+              ...classBranchFilter
+            },
+            select: {
+              id: true,
+              name: true,
+              startDate: true,
+              endDate: true,
+              room: {
+                select: {
+                  capacity: true
+                }
+              },
+              _count: {
+                select: {
+                  students: {
+                    where: { status: "ACTIVE", deletedAt: null }
+                  }
+                }
+              }
+            }
+          }),
+          // 8. Tổng số bài chờ chấm trên toàn hệ thống
+          fastify.prisma.submission.count({
+            where: {
+              status: "SUBMITTED"
+            }
+          }),
+          // 9. Số bài nộp chờ chấm quá hạn 48h (SLA vi phạm)
+          fastify.prisma.submission.count({
+            where: {
+              status: "SUBMITTED",
+              submittedAt: { lte: twoDaysAgo }
+            }
+          }),
+          // 10. Danh sách các lượt vắng trong 30 ngày để phát hiện học viên At-Risk
+          fastify.prisma.classAttendance.findMany({
+            where: {
+              status: { in: ["ABSENT", "absent"] },
+              sessionDate: { gte: thirtyDaysAgo },
+              ...hasBranchFilter ? { class: { branchId } } : {}
+            },
+            select: {
+              studentId: true
+            }
+          }),
+          // 11. Danh sách giáo viên đang hoạt động kèm thống kê tải công việc
+          fastify.prisma.user.findMany({
+            where: {
+              roles: { some: { role: "teacher" } },
+              isActive: true
+            },
+            select: {
+              userId: true,
+              fullName: true,
+              email: true,
+              avatarUrl: true,
+              classesAsTeacher: {
+                where: { isActive: true, ...classBranchFilter },
+                select: {
+                  id: true,
+                  name: true,
+                  _count: {
+                    select: {
+                      students: { where: { status: "ACTIVE", deletedAt: null } }
+                    }
+                  },
+                  homeworks: {
+                    select: {
+                      id: true,
+                      submissions: {
+                        where: { status: "SUBMITTED" },
+                        select: { id: true, submittedAt: true }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          })
+        ]);
+        const absentCountByStudent = /* @__PURE__ */ new Map();
+        recentAbsents.forEach((record) => {
+          absentCountByStudent.set(
+            record.studentId,
+            (absentCountByStudent.get(record.studentId) || 0) + 1
+          );
+        });
+        let atRiskStudentsCount = 0;
+        absentCountByStudent.forEach((absentCount) => {
+          if (absentCount >= 2) atRiskStudentsCount++;
+        });
+        let totalStudentsInClasses = 0;
+        let totalRoomCapacity = 0;
+        let lowFillClassesCount = 0;
+        activeClasses.forEach((cls) => {
+          const studentCount = cls._count.students;
+          const capacity = cls.room?.capacity || 15;
+          totalStudentsInClasses += studentCount;
+          totalRoomCapacity += capacity;
+          if (capacity > 0 && studentCount / capacity < 0.5) {
+            lowFillClassesCount++;
+          }
+        });
+        const averageFillRate = totalRoomCapacity > 0 ? Math.round(totalStudentsInClasses / totalRoomCapacity * 100) : 0;
+        const teachersSummary = teachersData.map((t) => {
+          const classesCount = t.classesAsTeacher.length;
+          const totalStudents = t.classesAsTeacher.reduce(
+            (sum, cl) => sum + cl._count.students,
+            0
+          );
+          let pendingCount = 0;
+          let overdueCount = 0;
+          t.classesAsTeacher.forEach((cl) => {
+            cl.homeworks.forEach((hw) => {
+              hw.submissions.forEach((sub) => {
+                pendingCount++;
+                if (sub.submittedAt && new Date(sub.submittedAt) <= twoDaysAgo) {
+                  overdueCount++;
+                }
+              });
+            });
+          });
+          return {
+            id: t.userId,
+            name: t.fullName || t.email?.split("@")[0] || "Gi\xE1o vi\xEAn",
+            email: t.email,
+            avatarUrl: t.avatarUrl,
+            activeClassesCount: classesCount,
+            totalStudents,
+            pendingGrading: pendingCount,
+            overdueGrading: overdueCount
+          };
+        });
+        const conversionRate = newLeadsCount > 0 ? Math.round(enrolledLeadsCount / newLeadsCount * 100) : 0;
+        return reply.send({
+          success: true,
+          data: {
+            kpis: {
+              activeStudents: activeStudentsCount,
+              newLeads: newLeadsCount,
+              activeClasses: activeClasses.length,
+              averageFillRate
+            },
+            actionItems: [
+              {
+                key: "at_risk_students",
+                label: "H\u1ECDc vi\xEAn c\xF3 nguy c\u01A1 b\u1ECF h\u1ECDc (V\u1EAFng \u2265 2 bu\u1ED5i g\u1EA7n \u0111\xE2y)",
+                count: atRiskStudentsCount,
+                severity: "HIGH",
+                link: "/admin/users?role=student&status=at-risk"
+              },
+              {
+                key: "overdue_leads",
+                label: "Lead m\u1EDBi ch\u01B0a li\xEAn h\u1EC7 qu\xE1 24h",
+                count: overdueLeadsCount,
+                severity: "HIGH",
+                link: "/admin/leads?status=NEW"
+              },
+              {
+                key: "low_fill_classes",
+                label: "L\u1EDBp h\u1ECDc c\xF3 s\u0129 s\u1ED1 th\u1EA5p (< 50% s\u1EE9c ch\u1EE9a ph\xF2ng)",
+                count: lowFillClassesCount,
+                severity: "MEDIUM",
+                link: "/admin/classes?filter=low-fill"
+              },
+              {
+                key: "overdue_grading",
+                label: "B\xE0i n\u1ED9p ch\u1EDD ch\u1EA5m qu\xE1 h\u1EA1n 48h (SLA vi ph\u1EA1m)",
+                count: overdueGradingCount,
+                severity: "MEDIUM",
+                link: "/admin/teacher-workspace?tab=grading&filter=overdue"
+              }
+            ],
+            funnel: {
+              leads: {
+                new: newLeadsCount,
+                tested: placementTestsCount,
+                enrolled: enrolledLeadsCount,
+                conversionRate
+              },
+              students: {
+                active: activeStudentsCount,
+                atRisk: atRiskStudentsCount,
+                reserved: reservedStudentsCount
+              }
+            },
+            teachers: teachersSummary
+          }
+        });
+      } catch (err) {
+        request.log.error(err, "Failed to compute admin dashboard summary");
+        return reply.status(500).send({
+          success: false,
+          error: "Kh\xF4ng th\u1EC3 t\u1ED5ng h\u1EE3p b\xE1o c\xE1o \u0111i\u1EC1u h\xE0nh l\xFAc n\xE0y."
+        });
+      }
+    }
+  );
+}
+
+// server/services/periodic-report.service.ts
+function calculateDateRange(params) {
+  const year = params.year || (/* @__PURE__ */ new Date()).getFullYear();
+  let startDate;
+  let endDate;
+  if (params.periodType === "MONTH") {
+    const m = params.month && params.month >= 1 && params.month <= 12 ? params.month : 1;
+    const startMonthStr = String(m).padStart(2, "0");
+    const nextMonth = new Date(Date.UTC(year, m, 1));
+    const lastDay = new Date(nextMonth.getTime() - 1);
+    const endDayStr = String(lastDay.getUTCDate()).padStart(2, "0");
+    startDate = /* @__PURE__ */ new Date(`${year}-${startMonthStr}-01T00:00:00+07:00`);
+    endDate = /* @__PURE__ */ new Date(`${year}-${startMonthStr}-${endDayStr}T23:59:59.999+07:00`);
+  } else if (params.periodType === "QUARTER") {
+    const q = params.quarter && params.quarter >= 1 && params.quarter <= 4 ? params.quarter : 1;
+    const startMonth = (q - 1) * 3 + 1;
+    const endMonth = q * 3;
+    const lastDays = [31, 30, 30, 31];
+    const endDay = lastDays[q - 1];
+    startDate = /* @__PURE__ */ new Date(`${year}-${String(startMonth).padStart(2, "0")}-01T00:00:00+07:00`);
+    endDate = /* @__PURE__ */ new Date(`${year}-${String(endMonth).padStart(2, "0")}-${String(endDay).padStart(2, "0")}T23:59:59.999+07:00`);
+  } else {
+    startDate = /* @__PURE__ */ new Date(`${year}-01-01T00:00:00+07:00`);
+    endDate = /* @__PURE__ */ new Date(`${year}-12-31T23:59:59.999+07:00`);
+  }
+  return { startDate, endDate };
+}
+var PeriodicReportService = class {
+  constructor(prisma) {
+    this.prisma = prisma;
+  }
+  async generateReport(query) {
+    const { periodType = "YEAR", year = (/* @__PURE__ */ new Date()).getFullYear(), month, quarter, branchId = "ALL" } = query;
+    const { startDate, endDate } = calculateDateRange({ periodType, year, month, quarter });
+    const hasBranchFilter = branchId && branchId !== "ALL" && branchId !== "all";
+    const branchFilter = hasBranchFilter ? { branchId } : {};
+    const leadBranchFilter = hasBranchFilter ? { preferredBranchId: branchId } : {};
+    let branchName = "To\xE0n b\u1ED9 h\u1EC7 th\u1ED1ng";
+    if (hasBranchFilter) {
+      const b = await this.prisma.branch.findUnique({ where: { id: branchId }, select: { name: true } });
+      if (b) branchName = b.name;
+    }
+    const [newLeadsCount, placementTestsCount, enrolledLeadsCount, rawLeadsBySource] = await Promise.all([
+      this.prisma.contactLead.count({
+        where: {
+          createdAt: { gte: startDate, lte: endDate },
+          ...leadBranchFilter
+        }
+      }),
+      this.prisma.assessmentSession.count({
+        where: {
+          createdAt: { gte: startDate, lte: endDate },
+          ...hasBranchFilter ? { branchId } : {}
+        }
+      }),
+      this.prisma.contactLead.count({
+        where: {
+          OR: [
+            { convertedAt: { gte: startDate, lte: endDate } },
+            {
+              convertedAt: null,
+              status: "ENROLLED",
+              updatedAt: { gte: startDate, lte: endDate }
+            }
+          ],
+          ...leadBranchFilter
+        }
+      }),
+      this.prisma.contactLead.findMany({
+        where: {
+          createdAt: { gte: startDate, lte: endDate },
+          ...leadBranchFilter
+        },
+        select: {
+          source: true,
+          status: true,
+          convertedUserId: true
+        }
+      })
+    ]);
+    const sourceMap = /* @__PURE__ */ new Map();
+    rawLeadsBySource.forEach((item) => {
+      const src = item.source || "Kh\xE1c";
+      const curr = sourceMap.get(src) || { leads: 0, enrolled: 0 };
+      curr.leads += 1;
+      if (item.status === "ENROLLED" || item.convertedUserId) {
+        curr.enrolled += 1;
+      }
+      sourceMap.set(src, curr);
+    });
+    const bySource = Array.from(sourceMap.entries()).map(([source, data]) => ({
+      source,
+      leads: data.leads,
+      enrolled: data.enrolled,
+      conversionRate: data.leads > 0 ? Number((data.enrolled / data.leads * 100).toFixed(1)) : 0
+    })).sort((a, b) => b.leads - a.leads);
+    const leadConversionRate = newLeadsCount > 0 ? Number((enrolledLeadsCount / newLeadsCount * 100).toFixed(1)) : 0;
+    const [openedClassesCount, completedClassesCount, runningClassesCount, classesForSize] = await Promise.all([
+      this.prisma.class.count({
+        where: {
+          startDate: { gte: startDate, lte: endDate },
+          ...branchFilter
+        }
+      }),
+      this.prisma.class.count({
+        where: {
+          OR: [
+            { endDate: { gte: startDate, lte: endDate } },
+            { closedAt: { gte: startDate, lte: endDate } },
+            { status: "COMPLETED", updatedAt: { gte: startDate, lte: endDate } }
+          ],
+          ...branchFilter
+        }
+      }),
+      this.prisma.class.count({
+        where: {
+          isActive: true,
+          createdAt: { lte: endDate },
+          ...branchFilter
+        }
+      }),
+      this.prisma.class.findMany({
+        where: {
+          createdAt: { lte: endDate },
+          OR: [
+            { closedAt: null },
+            { closedAt: { gte: startDate } }
+          ],
+          ...branchFilter
+        },
+        select: {
+          _count: {
+            select: {
+              students: { where: { deletedAt: null } }
+            }
+          }
+        }
+      })
+    ]);
+    const totalStudentsInClasses = classesForSize.reduce((acc, c) => acc + (c._count?.students || 0), 0);
+    const avgClassSize = classesForSize.length > 0 ? Number((totalStudentsInClasses / classesForSize.length).toFixed(1)) : 0;
+    const studentClassWhere = hasBranchFilter ? { class: { branchId } } : {};
+    const [newEnrollmentsCount, activeStudentsCount, graduatedStudentsCount, reservedStudentsCount, droppedStudentsCount] = await Promise.all([
+      this.prisma.classStudent.count({
+        where: {
+          joinedAt: { gte: startDate, lte: endDate },
+          ...studentClassWhere
+        }
+      }),
+      this.prisma.classStudent.count({
+        where: {
+          status: "ACTIVE",
+          deletedAt: null,
+          joinedAt: { lte: endDate },
+          ...studentClassWhere
+        }
+      }),
+      this.prisma.classStudent.count({
+        where: {
+          OR: [
+            { completedAt: { gte: startDate, lte: endDate } },
+            { status: "COMPLETED", joinedAt: { lte: endDate } }
+          ],
+          ...studentClassWhere
+        }
+      }),
+      this.prisma.classStudent.count({
+        where: {
+          status: "SUSPENDED",
+          deletedAt: null,
+          ...studentClassWhere
+        }
+      }),
+      this.prisma.classStudent.count({
+        where: {
+          OR: [
+            { status: "DROPPED" },
+            { deletedAt: { gte: startDate, lte: endDate } }
+          ],
+          ...studentClassWhere
+        }
+      })
+    ]);
+    const teacherBaseFilter = { roles: { some: { role: "teacher" } } };
+    const [startTeachers, newTeachers, resignedTeachers, endTeachers] = await Promise.all([
+      // Đầu kỳ: joinedAt < startDate và (resignedAt == null hoặc resignedAt >= startDate)
+      this.prisma.user.count({
+        where: {
+          ...teacherBaseFilter,
+          OR: [
+            { joinedAt: { lt: startDate } },
+            { joinedAt: null, createdAt: { lt: startDate } }
+          ],
+          AND: [
+            {
+              OR: [
+                { resignedAt: null },
+                { resignedAt: { gte: startDate } }
+              ]
+            }
+          ]
+        }
+      }),
+      // Tuyển mới: joinedAt nằm trong kỳ
+      this.prisma.user.count({
+        where: {
+          ...teacherBaseFilter,
+          OR: [
+            { joinedAt: { gte: startDate, lte: endDate } },
+            { joinedAt: null, createdAt: { gte: startDate, lte: endDate } }
+          ]
+        }
+      }),
+      // Nghỉ dạy: resignedAt nằm trong kỳ
+      this.prisma.user.count({
+        where: {
+          ...teacherBaseFilter,
+          resignedAt: { gte: startDate, lte: endDate }
+        }
+      }),
+      // Cuối kỳ: joinedAt <= endDate và (resignedAt == null hoặc resignedAt > endDate)
+      this.prisma.user.count({
+        where: {
+          ...teacherBaseFilter,
+          OR: [
+            { joinedAt: { lte: endDate } },
+            { joinedAt: null, createdAt: { lte: endDate } }
+          ],
+          AND: [
+            {
+              OR: [
+                { resignedAt: null },
+                { resignedAt: { gt: endDate } }
+              ]
+            }
+          ]
+        }
+      })
+    ]);
+    const academicClassWhere = hasBranchFilter ? { class: { branchId } } : {};
+    const [totalSessionsCount, attendanceRecords, homeworksAssignedCount, homeworksSubmittedCount] = await Promise.all([
+      this.prisma.classSession.count({
+        where: {
+          plannedDate: { gte: startDate, lte: endDate },
+          status: { not: "CANCELLED" },
+          ...academicClassWhere
+        }
+      }),
+      this.prisma.classAttendance.findMany({
+        where: {
+          sessionDate: { gte: startDate, lte: endDate },
+          ...academicClassWhere
+        },
+        select: {
+          status: true
+        }
+      }),
+      this.prisma.homework.count({
+        where: {
+          createdAt: { gte: startDate, lte: endDate },
+          ...academicClassWhere
+        }
+      }),
+      this.prisma.submission.count({
+        where: {
+          submittedAt: { gte: startDate, lte: endDate },
+          homework: academicClassWhere
+        }
+      })
+    ]);
+    const totalAttendanceCount = attendanceRecords.length;
+    const presentAttendanceCount = attendanceRecords.filter(
+      (r) => r.status === "PRESENT" || r.status === "EXCUSED"
+    ).length;
+    const attendanceRate = totalAttendanceCount > 0 ? Number((presentAttendanceCount / totalAttendanceCount * 100).toFixed(1)) : 0;
+    const submissionRate = homeworksAssignedCount > 0 && totalStudentsInClasses > 0 ? Number((homeworksSubmittedCount / Math.max(1, homeworksAssignedCount * (totalStudentsInClasses / Math.max(1, classesForSize.length))) * 100).toFixed(1)) : homeworksSubmittedCount > 0 ? 100 : 0;
+    const branchesData = await this.prisma.branch.findMany({
+      where: { isActive: true },
+      select: {
+        id: true,
+        code: true,
+        name: true,
+        address: true,
+        rooms: {
+          where: { isActive: true },
+          select: { id: true, name: true, capacity: true }
+        },
+        classes: {
+          where: {
+            createdAt: { lte: endDate },
+            OR: [{ closedAt: null }, { closedAt: { gte: startDate } }]
+          },
+          select: {
+            id: true,
+            _count: {
+              select: {
+                students: { where: { deletedAt: null } }
+              }
+            }
+          }
+        }
+      }
+    });
+    const branchesBreakdown = branchesData.map((b) => {
+      const branchClassesCount = b.classes.length;
+      const branchStudentsCount = b.classes.reduce((acc, c) => acc + (c._count?.students || 0), 0);
+      const totalRoomCapacity = b.rooms.reduce((acc, r) => acc + r.capacity, 0);
+      const fillRate = totalRoomCapacity > 0 ? Number((branchStudentsCount / totalRoomCapacity * 100).toFixed(1)) : 0;
+      return {
+        id: b.id,
+        code: b.code,
+        name: b.name,
+        roomsCount: b.rooms.length,
+        classesCount: branchClassesCount,
+        studentsCount: branchStudentsCount,
+        fillRate
+      };
+    });
+    const periodLabel = periodType === "YEAR" ? `N\u0102M ${year}` : periodType === "QUARTER" ? `QU\xDD ${quarter}/${year}` : `TH\xC1NG ${month}/${year}`;
+    const summaryText = `B\xC1O C\xC1O T\u1ED4NG K\u1EBET K\u1EBET QU\u1EA2 HO\u1EA0T \u0110\u1ED8NG ${periodLabel}
+Ph\u1EA1m vi: ${branchName}
+Kho\u1EA3ng th\u1EDDi gian: ${startDate.toLocaleDateString("vi-VN")} \u2013 ${endDate.toLocaleDateString("vi-VN")}
+
+1. Quy m\xF4 & \u0110\xE0o t\u1EA1o:
+- S\u1ED1 l\u1EDBp m\u1EDF m\u1EDBi: ${openedClassesCount} l\u1EDBp. L\u1EDBp ho\xE0n th\xE0nh: ${completedClassesCount} l\u1EDBp. S\u1ED1 l\u1EDBp \u0111ang v\u1EADn h\xE0nh cu\u1ED1i k\u1EF3: ${runningClassesCount} l\u1EDBp.
+- S\u0129 s\u1ED1 l\u1EDBp trung b\xECnh: ${avgClassSize} h\u1ECDc vi\xEAn/l\u1EDBp.
+- T\u1ED5ng l\u01B0\u1EE3t h\u1ECDc vi\xEAn \u0111\u0103ng k\xFD m\u1EDBi: ${newEnrollmentsCount} h\u1ECDc vi\xEAn. H\u1ECDc vi\xEAn ho\xE0n th\xE0nh kh\xF3a: ${graduatedStudentsCount} h\u1ECDc vi\xEAn. H\u1ECDc vi\xEAn \u0111ang h\u1ECDc cu\u1ED1i k\u1EF3: ${activeStudentsCount} h\u1ECDc vi\xEAn. H\u1ECDc vi\xEAn b\u1EA3o l\u01B0u: ${reservedStudentsCount} h\u1ECDc vi\xEAn.
+
+2. Tuy\u1EC3n sinh & Ph\xE1t tri\u1EC3n:
+- Ti\u1EBFp nh\u1EADn t\u1ED5ng c\u1ED9ng ${newLeadsCount} kh\xE1ch h\xE0ng ti\u1EC1m n\u0103ng; t\u1ED5 ch\u1EE9c ${placementTestsCount} l\u01B0\u1EE3t kh\u1EA3o th\xED ch\u1EA9n \u0111o\xE1n \u0111\u1EA7u v\xE0o.
+- S\u1ED1 h\u1ECDc vi\xEAn ch\u1ED1t \u0111\u0103ng k\xFD th\xE0nh c\xF4ng: ${enrolledLeadsCount} h\u1ECDc vi\xEAn (T\u1EF7 l\u1EC7 chuy\u1EC3n \u0111\u1ED5i \u0111\u1EA1t ${leadConversionRate}%).
+${bySource.length > 0 ? `- Ngu\u1ED3n ti\u1EBFp c\u1EADn ch\xEDnh: ${bySource.slice(0, 3).map((s) => `${s.source} (${s.leads} leads, ${s.enrolled} ch\u1ED1t)`).join("; ")}.` : ""}
+
+3. \u0110\u1ED9i ng\u0169 Gi\u1EA3ng vi\xEAn:
+- \u0110\u1EA7u k\u1EF3: ${startTeachers} gi\xE1o vi\xEAn. Tuy\u1EC3n m\u1EDBi trong k\u1EF3: ${newTeachers} gi\xE1o vi\xEAn. Ngh\u1EC9/ng\u1EEBng d\u1EA1y: ${resignedTeachers} gi\xE1o vi\xEAn.
+- T\u1ED5ng s\u1ED1 gi\xE1o vi\xEAn \u0111ang ho\u1EA1t \u0111\u1ED9ng cu\u1ED1i k\u1EF3: ${endTeachers} gi\xE1o vi\xEAn.
+
+4. Ho\u1EA1t \u0111\u1ED9ng H\u1ECDc thu\u1EADt:
+- T\u1ED5 ch\u1EE9c ${totalSessionsCount} bu\u1ED5i h\u1ECDc; t\u1ED5ng l\u01B0\u1EE3t \u0111i\u1EC3m danh: ${totalAttendanceCount} l\u01B0\u1EE3t.
+- T\u1EF7 l\u1EC7 chuy\xEAn c\u1EA7n b\xECnh qu\xE2n \u0111\u1EA1t ${attendanceRate}%.
+- T\u1ED5ng s\u1ED1 b\xE0i t\u1EADp giao: ${homeworksAssignedCount} b\xE0i; b\xE0i n\u1ED9p ho\xE0n th\xE0nh: ${homeworksSubmittedCount} b\xE0i (T\u1EF7 l\u1EC7 n\u1ED9p b\xE0i \u0111\u1EA1t ${submissionRate}%).
+`;
+    return {
+      period: {
+        type: periodType,
+        year,
+        month: month || null,
+        quarter: quarter || null,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        branchId,
+        branchName,
+        periodLabel
+      },
+      summaryText,
+      admissions: {
+        newLeads: newLeadsCount,
+        placementTests: placementTestsCount,
+        enrolled: enrolledLeadsCount,
+        conversionRate: leadConversionRate,
+        bySource
+      },
+      classes: {
+        opened: openedClassesCount,
+        completed: completedClassesCount,
+        runningAtEnd: runningClassesCount,
+        avgClassSize
+      },
+      students: {
+        newEnrollments: newEnrollmentsCount,
+        activeAtEnd: activeStudentsCount,
+        graduated: graduatedStudentsCount,
+        reserved: reservedStudentsCount,
+        dropped: droppedStudentsCount
+      },
+      teachers: {
+        startOfPeriod: startTeachers,
+        newlyRecruited: newTeachers,
+        resigned: resignedTeachers,
+        endOfPeriod: endTeachers
+      },
+      academic: {
+        totalSessions: totalSessionsCount,
+        totalAttendances: totalAttendanceCount,
+        attendanceRate,
+        homeworkAssigned: homeworksAssignedCount,
+        homeworkSubmitted: homeworksSubmittedCount,
+        submissionRate
+      },
+      branches: branchesBreakdown
+    };
+  }
+};
+
+// server/routes/reports.routes.ts
+async function reportsRoutes(fastify) {
+  const reportService = new PeriodicReportService(fastify.prisma);
+  fastify.get(
+    "/periodic",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const query = request.query || {};
+      const normalizedPeriodType = query.periodType || (query.period ? query.period.toUpperCase() : "YEAR");
+      const currentYear = (/* @__PURE__ */ new Date()).getFullYear();
+      const year = query.year ? Number(query.year) : currentYear;
+      const month = query.month ? Number(query.month) : void 0;
+      const quarter = query.quarter ? Number(query.quarter) : void 0;
+      const branchId = query.branchId || "ALL";
+      try {
+        const report = await reportService.generateReport({
+          periodType: normalizedPeriodType,
+          year,
+          month,
+          quarter,
+          branchId
+        });
+        return reply.send({
+          success: true,
+          data: report
+        });
+      } catch (err) {
+        request.log.error(err, "Failed to generate periodic report");
+        return reply.status(500).send({
+          error: "InternalServerError",
+          message: "Kh\xF4ng th\u1EC3 t\u1ED5ng h\u1EE3p b\xE1o c\xE1o \u0111\u1ECBnh k\u1EF3: " + err.message
+        });
+      }
+    }
+  );
+}
+
 // server/routes/index.ts
 var routes = async (fastify) => {
   fastify.get("/health", async () => {
@@ -107194,6 +107941,8 @@ var routes = async (fastify) => {
   await fastify.register(speaking_forecast_routes_default, { prefix: "/speaking-forecast" });
   await fastify.register(lesson_routes_default);
   await fastify.register(periodic_reports_routes_default);
+  await fastify.register(adminDashboardRoutes, { prefix: "/admin" });
+  await fastify.register(reportsRoutes, { prefix: "/admin/reports" });
 };
 var routes_default = routes;
 

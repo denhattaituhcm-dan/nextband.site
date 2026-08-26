@@ -121,10 +121,15 @@ export default function ContactPage() {
                   <div className="p-3 rounded-2xl bg-brand-blue-soft text-brand-blue shrink-0">
                     <MapPin className="h-6 w-6" />
                   </div>
-                  <div>
-                    <div className="font-black text-foreground text-base">Địa Điểm Đào Tạo</div>
-                    <div className="text-foreground/75 mt-1 leading-relaxed">
-                      68B Phan Bội Châu, phường Dĩ An, TP. Dĩ An, Tỉnh Bình Dương
+                  <div className="space-y-1">
+                    <div className="font-black text-foreground text-base">Hệ Thống Cơ Sở Đào Tạo</div>
+                    <div className="text-foreground/80 space-y-1.5 mt-1 leading-relaxed text-sm sm:text-base">
+                      <div>
+                        <strong className="text-foreground font-extrabold">Cơ sở 1:</strong> 68B, Phan Bội Châu, P. Dĩ An, TP. HCM
+                      </div>
+                      <div>
+                        <strong className="text-foreground font-extrabold">Cơ sở 2 (DAN IELTS):</strong> 113b, đường 12, P. Tam Bình, TP. HCM
+                      </div>
                     </div>
                   </div>
                 </div>

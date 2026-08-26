@@ -60,7 +60,7 @@ import {
   MapPin,
   Building2,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { DataTablePagination } from "@/components/admin/DataTablePagination";
@@ -98,9 +98,19 @@ const emptyForm = {
 export default function AdminClasses() {
   const { user, isAdmin, isTeacher } = useAuth();
   const { selectedBranch, branches, primaryBranch } = useBranch();
+  const [searchParams] = useSearchParams();
+  const initialFilter = searchParams.get("filter") || "all";
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState(initialFilter);
+
+  useEffect(() => {
+    const urlFilter = searchParams.get("filter");
+    if (urlFilter) {
+      setStatusFilter(urlFilter);
+    }
+  }, [searchParams]);
+
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [sortField, setSortField] = useState<SortField>("createdAt");
@@ -177,7 +187,15 @@ export default function AdminClasses() {
   }, [rawClasses]);
 
   const filteredClasses = useMemo(() => {
-    return [...(rawClasses || [])].sort((a: any, b: any) => {
+    let result = [...(rawClasses || [])];
+    if (statusFilter === "low-fill") {
+      result = result.filter((c: any) => {
+        const studentCount = c.studentsCount || c.student_count || c._count?.students || (c.students ? c.students.length : 0);
+        const capacity = c.room?.capacity || 15;
+        return capacity > 0 && studentCount / capacity < 0.5;
+      });
+    }
+    return result.sort((a: any, b: any) => {
       const mult = sortOrder === "asc" ? 1 : -1;
       if (sortField === "name") {
         return (a.name || "").localeCompare(b.name || "") * mult;
@@ -190,7 +208,7 @@ export default function AdminClasses() {
       }
       return 0;
     });
-  }, [rawClasses, sortField, sortOrder]);
+  }, [rawClasses, sortField, sortOrder, statusFilter]);
 
   const createMutation = useMutation({
     mutationFn: (body: typeof emptyForm) =>
@@ -430,6 +448,7 @@ export default function AdminClasses() {
             <SelectContent>
               <SelectItem value="all">Tất cả lớp</SelectItem>
               <SelectItem value="active">🟢 Đang hoạt động</SelectItem>
+              <SelectItem value="low-fill">🔴 Sĩ số thấp (&lt; 50%)</SelectItem>
               <SelectItem value="inactive">⚪ Đã kết thúc</SelectItem>
               <SelectItem value="no_teacher">⚠️ Chưa có giáo viên</SelectItem>
             </SelectContent>

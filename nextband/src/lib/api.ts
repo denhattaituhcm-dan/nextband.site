@@ -1948,7 +1948,75 @@ export interface MonthlyAttendanceSummary {
   monthsSummary: MonthSummaryItem[];
 }
 
+export interface AdminDashboardActionItem {
+  key: string;
+  label: string;
+  count: number;
+  severity: "HIGH" | "MEDIUM" | "LOW";
+  link: string;
+}
+
+export interface AdminDashboardTeacher {
+  id: string;
+  name: string;
+  email?: string;
+  avatarUrl?: string;
+  activeClassesCount: number;
+  totalStudents: number;
+  pendingGrading: number;
+  overdueGrading: number;
+}
+
+export interface AdminDashboardSummaryData {
+  kpis: {
+    activeStudents: number;
+    newLeads: number;
+    activeClasses: number;
+    averageFillRate: number;
+  };
+  actionItems: AdminDashboardActionItem[];
+  funnel: {
+    leads: {
+      new: number;
+      tested: number;
+      enrolled: number;
+      conversionRate: number;
+    };
+    students: {
+      active: number;
+      atRisk: number;
+      reserved: number;
+    };
+  };
+  teachers: AdminDashboardTeacher[];
+}
+
 export const statsApi = {
+  getDashboardSummary: async (params?: {
+    branchId?: string;
+  }): Promise<AdminDashboardSummaryData> => {
+    const token = await getAuthToken();
+    const query = new URLSearchParams();
+    if (params?.branchId) query.set("branchId", params.branchId);
+
+    const res = await fetch(
+      `${API_BASE_URL}/admin/dashboard-summary?${query.toString()}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch admin dashboard summary");
+    }
+
+    const json = await res.json();
+    return json.data;
+  },
+
   getAdminStats: async () => {
     try {
       const [cRes, uRes, eRes] = await Promise.all([
@@ -2163,6 +2231,110 @@ export const statsApi = {
         monthsSummary: [],
       };
     }
+  },
+};
+
+// =============================================
+// PERIODIC REPORTS API
+// =============================================
+export interface PeriodicReportData {
+  period: {
+    type: "MONTH" | "QUARTER" | "YEAR";
+    year: number;
+    month: number | null;
+    quarter: number | null;
+    startDate: string;
+    endDate: string;
+    branchId: string;
+    branchName: string;
+    periodLabel: string;
+  };
+  summaryText: string;
+  admissions: {
+    newLeads: number;
+    placementTests: number;
+    enrolled: number;
+    conversionRate: number;
+    bySource: Array<{
+      source: string;
+      leads: number;
+      enrolled: number;
+      conversionRate: number;
+    }>;
+  };
+  classes: {
+    opened: number;
+    completed: number;
+    runningAtEnd: number;
+    avgClassSize: number;
+  };
+  students: {
+    newEnrollments: number;
+    activeAtEnd: number;
+    graduated: number;
+    reserved: number;
+    dropped: number;
+  };
+  teachers: {
+    startOfPeriod: number;
+    newlyRecruited: number;
+    resigned: number;
+    endOfPeriod: number;
+  };
+  academic: {
+    totalSessions: number;
+    totalAttendances: number;
+    attendanceRate: number;
+    homeworkAssigned: number;
+    homeworkSubmitted: number;
+    submissionRate: number;
+  };
+  branches: Array<{
+    id: string;
+    code: string;
+    name: string;
+    roomsCount: number;
+    classesCount: number;
+    studentsCount: number;
+    fillRate: number;
+  }>;
+}
+
+export const reportsApi = {
+  getPeriodicReport: async (params: {
+    periodType?: "MONTH" | "QUARTER" | "YEAR";
+    period?: "month" | "quarter" | "year";
+    year: number;
+    month?: number;
+    quarter?: number;
+    branchId?: string;
+  }): Promise<PeriodicReportData> => {
+    const token = await getAuthToken();
+    const query = new URLSearchParams();
+    if (params.periodType) query.set("periodType", params.periodType);
+    if (params.period) query.set("period", params.period);
+    if (params.year) query.set("year", String(params.year));
+    if (params.month) query.set("month", String(params.month));
+    if (params.quarter) query.set("quarter", String(params.quarter));
+    if (params.branchId) query.set("branchId", params.branchId);
+
+    const res = await fetch(
+      `${API_BASE_URL}/admin/reports/periodic?${query.toString()}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      }
+    );
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || "Không thể tải báo cáo định kỳ");
+    }
+
+    const json = await res.json();
+    return json.data;
   },
 };
 

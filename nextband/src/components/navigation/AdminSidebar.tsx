@@ -15,6 +15,7 @@ import {
   UserPlus,
   Bell,
   FileCheck,
+  TrendingUp,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -65,6 +66,11 @@ const adminItems = [
     title: "Dashboard",
     url: "/admin",
     icon: LayoutDashboard,
+  },
+  {
+    title: "Báo cáo định kỳ",
+    url: "/admin/reports",
+    icon: TrendingUp,
   },
   {
     title: "Khách tư vấn (Leads)",

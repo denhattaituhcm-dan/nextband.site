@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { usersApi } from "@/lib/api";
 import { Input } from "@/components/ui/input";
@@ -68,12 +68,13 @@ import {
   Trash2,
   Clock,
   BookOpen,
-  GraduationCap
+  GraduationCap,
+  AlertTriangle,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { DataTablePagination } from "@/components/admin/DataTablePagination";
 import { StudentWorkspaceDrawer } from "@/components/admin/StudentWorkspaceDrawer";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 type SortField = "fullName" | "email" | "createdAt";
 
@@ -95,7 +96,9 @@ const emptyForm = {
 
 export default function AdminUsers() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const initialRole = searchParams.get("role") || "student";
+  const statusParam = searchParams.get("status");
 
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -323,7 +326,17 @@ export default function AdminUsers() {
 
   // Tận gốc rễ: API `usersApi.list` trả về cấu trúc `{ data: [...], meta: { total, totalPages } }`.
   // Sử dụng fallback an toàn (supports cả data.data, data.users, data) để không bao giờ bị rỗng khi API trả về thành công.
-  const usersList = (data as any)?.data || (data as any)?.users || (Array.isArray(data) ? data : []);
+  const rawUsersList = (data as any)?.data || (data as any)?.users || (Array.isArray(data) ? data : []);
+  const usersList = useMemo(() => {
+    if (statusParam === "at-risk") {
+      return rawUsersList.filter((u: any) => {
+        const isRiskHealth = u.academicHealth !== null && u.academicHealth !== undefined && u.academicHealth < 60;
+        const isLowAttendance = u.attendance?.percentage !== null && u.attendance?.percentage !== undefined && u.attendance.percentage < 75;
+        return isRiskHealth || isLowAttendance;
+      });
+    }
+    return rawUsersList;
+  }, [rawUsersList, statusParam]);
   const total = (data as any)?.meta?.total ?? (data as any)?.total ?? usersList.length;
   const totalPages = (data as any)?.meta?.totalPages ?? (data as any)?.totalPages ?? 1;
 
@@ -434,6 +447,26 @@ export default function AdminUsers() {
           </div>
         )}
       </div>
+
+      {/* AT-RISK FILTER BANNER */}
+      {statusParam === "at-risk" && (
+        <div className="flex items-center justify-between p-3 rounded-xl bg-red-50 text-red-800 border border-red-200 text-xs font-medium">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 text-red-600 flex-shrink-0" />
+            <span>
+              Đang lọc danh sách: <strong>Học viên có nguy cơ bỏ học</strong> (Điểm chuyên cần &lt; 75% hoặc chỉ số sức khỏe học tập &lt; 60).
+            </span>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 text-xs border-red-300 text-red-700 hover:bg-red-100"
+            onClick={() => navigate("/admin/users?role=student")}
+          >
+            Xem tất cả học viên
+          </Button>
+        </div>
+      )}
 
       {/* TABLE SECTION */}
       <div className="border rounded-xl bg-card shadow-sm overflow-hidden">

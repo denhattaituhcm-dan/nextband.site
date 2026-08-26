@@ -54,7 +54,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 const STATUS_CONFIG: Record<
   string,
@@ -134,8 +134,18 @@ const SOURCE_CONFIG: Record<
 
 export default function AdminLeads() {
   const { selectedBranch, branches, primaryBranch } = useBranch();
+  const [searchParams] = useSearchParams();
+  const initialStatus = searchParams.get("status") || "ALL";
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("ALL");
+  const [statusFilter, setStatusFilter] = useState<string>(initialStatus);
+
+  useEffect(() => {
+    const urlStatus = searchParams.get("status");
+    if (urlStatus) {
+      setStatusFilter(urlStatus);
+    }
+  }, [searchParams]);
+
   const [selectedLead, setSelectedLead] = useState<ContactLead | null>(null);
   const [editNotes, setEditNotes] = useState("");
   const [editStatus, setEditStatus] = useState<any>("NEW");

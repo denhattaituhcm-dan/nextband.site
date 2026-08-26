@@ -21,6 +21,8 @@ model User {
   parentName        String?           @map("parent_name")
   parentPhone       String?           @map("parent_phone")
   isActive          Boolean           @default(true) @map("is_active")
+  joinedAt          DateTime?         @default(now()) @map("joined_at")
+  resignedAt        DateTime?         @map("resigned_at")
   createdAt         DateTime          @default(now()) @map("created_at")
   updatedAt         DateTime          @default(now()) @updatedAt @map("updated_at")
 
@@ -227,6 +229,7 @@ model ClassStudent {
   studentId String           @map("student_id")
   status    EnrollmentStatus @default(ACTIVE)
   joinedAt  DateTime         @default(now()) @map("joined_at")
+  completedAt DateTime?      @map("completed_at")
   createdAt DateTime         @default(now()) @map("created_at")
   deletedAt DateTime?        @map("deleted_at")
 
@@ -544,6 +547,7 @@ model ContactLead {
   notes             String?
   createdByUserId   String?    @map("created_by_user_id")
   convertedUserId   String?    @unique @map("converted_user_id")
+  convertedAt       DateTime?  @map("converted_at")
   createdAt         DateTime   @default(now()) @map("created_at")
   updatedAt         DateTime   @default(now()) @updatedAt @map("updated_at")
 
@@ -726,6 +730,7 @@ enum EnrollmentStatus {
   ACTIVE
   SUSPENDED
   COMPLETED
+  DROPPED
 }
 
 enum ClassSessionStatus {

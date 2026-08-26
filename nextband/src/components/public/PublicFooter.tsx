@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { SiteLogo } from "@/components/common/SiteLogo";
-import { Award, ArrowRight, ShieldCheck } from "lucide-react";
+import { Award, ArrowRight, ShieldCheck, MapPin } from "lucide-react";
 
 export function PublicFooter() {
   const currentYear = new Date().getFullYear();
@@ -29,7 +29,23 @@ export function PublicFooter() {
               Hệ thống khảo thí và đào tạo IELTS chuẩn học thuật. Định hướng nâng cao năng lực ngôn ngữ thực chất và phương pháp tư duy phản biện.
             </p>
 
-            <div className="pt-2 flex items-center gap-2 text-xs text-muted-foreground">
+            {/* Hệ thống cơ sở đào tạo */}
+            <div className="space-y-1.5 text-xs text-muted-foreground pt-1">
+              <div className="font-bold text-foreground flex items-center gap-1.5">
+                <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
+                <span>Hệ thống cơ sở đào tạo:</span>
+              </div>
+              <div className="space-y-1 pl-5 text-xs leading-relaxed">
+                <div>
+                  <span className="font-semibold text-foreground/90">Cơ sở 1:</span> 68B, Phan Bội Châu, P. Dĩ An, TP. HCM
+                </div>
+                <div>
+                  <span className="font-semibold text-foreground/90">Cơ sở 2 (DAN IELTS):</span> 113b, đường 12, P. Tam Bình, TP. HCM
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-1 flex items-center gap-2 text-xs text-muted-foreground">
               <ShieldCheck className="h-4 w-4 text-primary" />
               <span>Nền tảng học tập số NextBand Learning System</span>
             </div>

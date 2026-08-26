@@ -94,7 +94,8 @@ export default function StudentLessonViewerPage() {
     staleTime: 1000 * 60 * 2,
   });
 
-  const rawLessons = classLessonData?.data?.lessons;
+  const classData = classLessonData?.data || {};
+  const rawLessons = classData?.lessons;
   const lessons = useMemo(() => {
     if (!Array.isArray(rawLessons)) return [];
     return [...rawLessons].sort(compareHomeworkOrder);

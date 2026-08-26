@@ -316,7 +316,7 @@ export function AcademicRankSystem({
             {/* 4 Progression Stages Visualizer (Sơ kỳ -> Đỉnh phong với ảnh ngôi sao & quy tắc gốc) */}
             <div className="space-y-3 pt-3 border-t border-border/60">
               <div className="text-xs font-black text-muted-foreground uppercase tracking-wider flex items-center justify-between">
-                <span>4 Tầng Tiến Trình Chuẩn Hóa</span>
+                <span>4 Tầng Tiến Trình Năng Lực</span>
                 <span className="font-mono text-xs text-foreground/75 inline-flex items-center gap-1">
                   <span className="inline-flex items-center gap-0.5 font-bold">
                     1<img src="/images/star1.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
@@ -388,7 +388,7 @@ export function AcademicRankSystem({
               </div>
 
               <div className="text-[11px] text-muted-foreground font-medium flex items-center gap-1.5 pt-1">
-                <span className="font-bold text-foreground">Quy tắc chuẩn hóa:</span>
+                <span className="font-bold text-foreground">Tiến trình năng lực:</span>
                 <span>Sơ kỳ (X, lệch kỹ năng) → Trung kỳ (X đồng đều) → Hậu kỳ (X+0.5, lệch kỹ năng) → Đỉnh phong (X+0.5 đồng đều).</span>
               </div>
             </div>

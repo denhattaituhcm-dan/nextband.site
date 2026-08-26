@@ -312,7 +312,10 @@ export default function CourseDetailPage() {
                     <Phone className="w-3.5 h-3.5" />
                     <span>Hotline: <a href="tel:0933319693" className="font-bold text-foreground hover:underline">0933.319.693</a></span>
                   </div>
-                  <p>Cơ sở: 68B Phan Bội Châu, P. Dĩ An, TP. Dĩ An</p>
+                  <div className="space-y-0.5 text-[11px]">
+                    <p>CS1: 68B, Phan Bội Châu, P. Dĩ An, TP. HCM</p>
+                    <p>CS2 (DAN IELTS): 113b, đường 12, P. Tam Bình, TP. HCM</p>
+                  </div>
                 </div>
               </div>
             </div>

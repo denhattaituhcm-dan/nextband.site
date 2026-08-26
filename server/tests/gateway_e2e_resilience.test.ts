@@ -385,7 +385,7 @@ describe("🚀 PHASE 2: GATEWAY E2E BUSINESS FLOW & FAILURE ISOLATION TESTS", ()
         });
         const subIds = subs.map((s) => s.id);
         if (subIds.length > 0) {
-          await prisma.examAnswer.deleteMany({
+          await prisma.answer.deleteMany({
             where: { submissionId: { in: subIds } },
           });
           await prisma.examSubmission.deleteMany({
