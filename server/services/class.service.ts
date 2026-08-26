@@ -287,18 +287,11 @@ export class ClassService {
 
       // 1. Completion rate across the class
       let totalCompletedSubmissions = 0;
-      const studentActivityDates: Record<string, Set<string>> = {};
 
       for (const hw of c.homeworks) {
         for (const sub of hw.submissions) {
           if (sub.status === "SUBMITTED" || sub.status === "GRADED") {
             totalCompletedSubmissions++;
-            if (sub.submittedAt) {
-              if (!studentActivityDates[sub.studentId]) {
-                studentActivityDates[sub.studentId] = new Set();
-              }
-              studentActivityDates[sub.studentId].add(new Date(sub.submittedAt).toISOString().split("T")[0]);
-            }
           }
         }
       }
@@ -311,20 +304,11 @@ export class ClassService {
       const attendedCount = c.attendance.filter((a) => a.status === "PRESENT" || a.status === "LATE").length;
       const attendanceRate = totalAttendanceSlots > 0 ? Math.round((attendedCount / totalAttendanceSlots) * 100) : 100;
 
-      // 3. Average Streak Days across students
-      let totalStreak = 0;
-      if (totalStudents > 0) {
-        for (const cs of c.students) {
-          const days = studentActivityDates[cs.student.userId]?.size || 0;
-          const streak = days > 0 ? Math.min(14, days * 2) : 1;
-          totalStreak += streak;
-        }
-      }
-      const avgStreak = totalStudents > 0 ? Number((totalStreak / totalStudents).toFixed(1)) : 0;
-
-      // 4. League Score calculation (Fair scale out of 10,000 points)
-      // LeagueScore = (completionRate * 70) + (attendanceRate * 20) + (avgStreak * 50)
-      const leagueScore = Math.round(completionRate * 70 + attendanceRate * 20 + avgStreak * 50);
+      // 3. League Score calculation (Fair scale: 70% Homework + 30% Attendance)
+      // If no assignments or sessions have happened yet, score is 0.
+      const leagueScore = (totalAssignedSlots === 0 && totalAttendanceSlots === 0)
+        ? 0
+        : Math.round(completionRate * 70 + attendanceRate * 30);
 
       return {
         classId: c.id,
@@ -341,7 +325,6 @@ export class ClassService {
         totalAssignedSlots,
         completionRate,
         attendanceRate,
-        avgStreak,
         leagueScore,
       };
     });
@@ -422,7 +405,7 @@ export class ClassService {
         }
       : null;
 
-    // 2. Calculate individual student metrics & streak
+    // 2. Calculate individual student metrics
     const studentRanks = classData.students.map((cs) => {
       const student = cs.student;
       const studentId = student.userId;
@@ -434,15 +417,10 @@ export class ClassService {
         const sub = hw.submissions.find((s) => s.studentId === studentId);
         if (sub && (sub.status === "SUBMITTED" || sub.status === "GRADED")) {
           completedCount++;
-          if (sub.submittedAt) {
-            activityDays.add(new Date(sub.submittedAt).toISOString().split("T")[0]);
-          }
         }
       }
 
       const completionRate = totalHomeworks > 0 ? Math.round((completedCount / totalHomeworks) * 100) : 0;
-      // Meaningful streak: active submission days (or baseline proportional to work)
-      const streakDays = Math.max(1, activityDays.size > 0 ? Math.min(14, activityDays.size * 2) : (completedCount > 0 ? Math.min(completedCount + 1, 7) : 1));
 
       return {
         studentId,
@@ -451,7 +429,6 @@ export class ClassService {
         completedCount,
         totalHomeworks,
         completionRate,
-        streakDays,
         isMe: studentId === user.id,
       };
     });

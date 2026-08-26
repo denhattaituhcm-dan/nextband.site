@@ -65,6 +65,24 @@ export function calculateDateRange(params: {
   return { startDate, endDate };
 }
 
+/**
+ * Safe execution helper for optional/subordinate data sections
+ * Returns { data, isAvailable } to maintain data provenance without false 0s.
+ */
+async function safeOptionalQuery<T>(
+  queryFn: () => Promise<T>,
+  fallback: T,
+  label: string
+): Promise<{ data: T; isAvailable: boolean }> {
+  try {
+    const data = await queryFn();
+    return { data, isAvailable: true };
+  } catch (err: any) {
+    console.warn(`[PeriodicReportService] Optional query "${label}" failed:`, err?.message || err);
+    return { data: fallback, isAvailable: false };
+  }
+}
+
 export class PeriodicReportService {
   constructor(private prisma: PrismaClient) {}
 
@@ -75,6 +93,8 @@ export class PeriodicReportService {
     const hasBranchFilter = branchId && branchId !== "ALL" && branchId !== "all";
     const branchFilter = hasBranchFilter ? { branchId } : {};
     const leadBranchFilter = hasBranchFilter ? { preferredBranchId: branchId } : {};
+    const studentClassWhere = hasBranchFilter ? { class: { branchId } } : {};
+    const academicClassWhere = hasBranchFilter ? { class: { branchId } } : {};
 
     // Retrieve active branch name for header
     let branchName = "Toàn bộ hệ thống";
@@ -83,8 +103,12 @@ export class PeriodicReportService {
       if (b) branchName = b.name;
     }
 
-    // 1. TUYỂN SINH (Admissions)
-    const [newLeadsCount, placementTestsCount, enrolledLeadsCount, rawLeadsBySource] = await Promise.all([
+    // ─────────────────────────────────────────────────────────────────────────────
+    // CRITICAL PIPELINE (Must succeed; failure throws and marks report invalid)
+    // ─────────────────────────────────────────────────────────────────────────────
+
+    // 1. TUYỂN SINH (Admissions - Core Counts)
+    const [newLeadsCount, placementTestsCount, enrolledLeadsCount] = await Promise.all([
       this.prisma.contactLead.count({
         where: {
           createdAt: { gte: startDate, lte: endDate },
@@ -110,43 +134,14 @@ export class PeriodicReportService {
           ...leadBranchFilter,
         },
       }),
-      this.prisma.contactLead.findMany({
-        where: {
-          createdAt: { gte: startDate, lte: endDate },
-          ...leadBranchFilter,
-        },
-        select: {
-          source: true,
-          status: true,
-          convertedUserId: true,
-        },
-      }),
     ]);
-
-    // Aggregate leads by source
-    const sourceMap = new Map<string, { leads: number; enrolled: number }>();
-    rawLeadsBySource.forEach((item) => {
-      const src = item.source || "Khác";
-      const curr = sourceMap.get(src) || { leads: 0, enrolled: 0 };
-      curr.leads += 1;
-      if (item.status === "ENROLLED" || item.convertedUserId) {
-        curr.enrolled += 1;
-      }
-      sourceMap.set(src, curr);
-    });
-
-    const bySource = Array.from(sourceMap.entries()).map(([source, data]) => ({
-      source,
-      leads: data.leads,
-      enrolled: data.enrolled,
-      conversionRate: data.leads > 0 ? Number(((data.enrolled / data.leads) * 100).toFixed(1)) : 0,
-    })).sort((a, b) => b.leads - a.leads);
 
     const leadConversionRate = newLeadsCount > 0
       ? Number(((enrolledLeadsCount / newLeadsCount) * 100).toFixed(1))
       : 0;
 
-    // 2. LỚP HỌC (Classes)
+    // 2. LỚP HỌC (Classes - Core Lifecycle & Size)
+    // Q6 fix: Match both CLOSED and COMPLETED, checking closedAt, endDate and updatedAt
     const [openedClassesCount, completedClassesCount, runningClassesCount, classesForSize] = await Promise.all([
       this.prisma.class.count({
         where: {
@@ -157,9 +152,9 @@ export class PeriodicReportService {
       this.prisma.class.count({
         where: {
           OR: [
-            { endDate: { gte: startDate, lte: endDate } },
             { closedAt: { gte: startDate, lte: endDate } },
-            { status: "COMPLETED", updatedAt: { gte: startDate, lte: endDate } },
+            { endDate: { gte: startDate, lte: endDate }, status: { in: ["CLOSED", "COMPLETED"] } },
+            { status: { in: ["CLOSED", "COMPLETED"] }, updatedAt: { gte: startDate, lte: endDate } },
           ],
           ...branchFilter,
         },
@@ -195,9 +190,8 @@ export class PeriodicReportService {
       ? Number((totalStudentsInClasses / classesForSize.length).toFixed(1))
       : 0;
 
-    // 3. HỌC VIÊN (Students Lifecycle)
-    const studentClassWhere = hasBranchFilter ? { class: { branchId } } : {};
-    const [newEnrollmentsCount, activeStudentsCount, graduatedStudentsCount, reservedStudentsCount, droppedStudentsCount] = await Promise.all([
+    // 3. HỌC VIÊN (Students Lifecycle - Core Metrics)
+    const [newEnrollmentsCount, activeStudentsCount, graduatedStudentsCount, reservedStudentsCount] = await Promise.all([
       this.prisma.classStudent.count({
         where: {
           joinedAt: { gte: startDate, lte: endDate },
@@ -228,21 +222,11 @@ export class PeriodicReportService {
           ...studentClassWhere,
         },
       }),
-      this.prisma.classStudent.count({
-        where: {
-          OR: [
-            { status: "DROPPED" },
-            { deletedAt: { gte: startDate, lte: endDate } },
-          ],
-          ...studentClassWhere,
-        },
-      }),
     ]);
 
-    // 4. GIÁO VIÊN (Teachers)
+    // 4. GIÁO VIÊN (Teachers - Lifecycle in Period)
     const teacherBaseFilter = { roles: { some: { role: "teacher" as const } } };
     const [startTeachers, newTeachers, resignedTeachers, endTeachers] = await Promise.all([
-      // Đầu kỳ: joinedAt < startDate và (resignedAt == null hoặc resignedAt >= startDate)
       this.prisma.user.count({
         where: {
           ...teacherBaseFilter,
@@ -260,7 +244,6 @@ export class PeriodicReportService {
           ],
         },
       }),
-      // Tuyển mới: joinedAt nằm trong kỳ
       this.prisma.user.count({
         where: {
           ...teacherBaseFilter,
@@ -270,14 +253,12 @@ export class PeriodicReportService {
           ],
         },
       }),
-      // Nghỉ dạy: resignedAt nằm trong kỳ
       this.prisma.user.count({
         where: {
           ...teacherBaseFilter,
           resignedAt: { gte: startDate, lte: endDate },
         },
       }),
-      // Cuối kỳ: joinedAt <= endDate và (resignedAt == null hoặc resignedAt > endDate)
       this.prisma.user.count({
         where: {
           ...teacherBaseFilter,
@@ -297,8 +278,7 @@ export class PeriodicReportService {
       }),
     ]);
 
-    // 5. HOẠT ĐỘNG HỌC THUẬT (Academic Activity)
-    const academicClassWhere = hasBranchFilter ? { class: { branchId } } : {};
+    // 5. HOẠT ĐỘNG HỌC THUẬT (Academic Activity - Core Counts)
     const [totalSessionsCount, attendanceRecords, homeworksAssignedCount, homeworksSubmittedCount] = await Promise.all([
       this.prisma.classSession.count({
         where: {
@@ -342,36 +322,97 @@ export class PeriodicReportService {
       ? Number(((homeworksSubmittedCount / Math.max(1, homeworksAssignedCount * (totalStudentsInClasses / Math.max(1, classesForSize.length)))) * 100).toFixed(1))
       : homeworksSubmittedCount > 0 ? 100 : 0;
 
-    // 6. PHÂN TÍCH THEO CƠ SỞ (Branches Breakdown)
-    const branchesData = await this.prisma.branch.findMany({
-      where: { isActive: true },
-      select: {
-        id: true,
-        code: true,
-        name: true,
-        address: true,
-        rooms: {
-          where: { isActive: true },
-          select: { id: true, name: true, capacity: true },
-        },
-        classes: {
+    // ─────────────────────────────────────────────────────────────────────────────
+    // DEGRADED / OPTIONAL PIPELINE (Isolated with provenance tracking)
+    // ─────────────────────────────────────────────────────────────────────────────
+
+    // Optional 1: Dropped Students (Soft-delete deletedAt and status DROPPED)
+    const droppedStudentsQueryResult = await safeOptionalQuery(
+      () =>
+        this.prisma.classStudent.count({
           where: {
-            createdAt: { lte: endDate },
-            OR: [{ closedAt: null }, { closedAt: { gte: startDate } }],
+            OR: [
+              { deletedAt: { gte: startDate, lte: endDate } },
+              { status: "DROPPED", deletedAt: { not: null } },
+            ],
+            ...studentClassWhere,
+          },
+        }),
+      null,
+      "droppedStudentsCount"
+    );
+
+    // Optional 2: Lead breakdown by source
+    const rawLeadsBySourceResult = await safeOptionalQuery(
+      () =>
+        this.prisma.contactLead.findMany({
+          where: {
+            createdAt: { gte: startDate, lte: endDate },
+            ...leadBranchFilter,
           },
           select: {
+            source: true,
+            status: true,
+            convertedUserId: true,
+          },
+        }),
+      [],
+      "rawLeadsBySource"
+    );
+
+    const sourceMap = new Map<string, { leads: number; enrolled: number }>();
+    (rawLeadsBySourceResult.data || []).forEach((item) => {
+      const src = item.source || "Khác";
+      const curr = sourceMap.get(src) || { leads: 0, enrolled: 0 };
+      curr.leads += 1;
+      if (item.status === "ENROLLED" || item.convertedUserId) {
+        curr.enrolled += 1;
+      }
+      sourceMap.set(src, curr);
+    });
+
+    const bySource = Array.from(sourceMap.entries()).map(([source, data]) => ({
+      source,
+      leads: data.leads,
+      enrolled: data.enrolled,
+      conversionRate: data.leads > 0 ? Number(((data.enrolled / data.leads) * 100).toFixed(1)) : 0,
+    })).sort((a, b) => b.leads - a.leads);
+
+    // Optional 3: Branches room capacity & fill rate breakdown
+    const branchesDataResult = await safeOptionalQuery(
+      () =>
+        this.prisma.branch.findMany({
+          where: { isActive: true },
+          select: {
             id: true,
-            _count: {
+            code: true,
+            name: true,
+            address: true,
+            rooms: {
+              where: { isActive: true },
+              select: { id: true, name: true, capacity: true },
+            },
+            classes: {
+              where: {
+                createdAt: { lte: endDate },
+                OR: [{ closedAt: null }, { closedAt: { gte: startDate } }],
+              },
               select: {
-                students: { where: { deletedAt: null } },
+                id: true,
+                _count: {
+                  select: {
+                    students: { where: { deletedAt: null } },
+                  },
+                },
               },
             },
           },
-        },
-      },
-    });
+        }),
+      [],
+      "branchesBreakdown"
+    );
 
-    const branchesBreakdown = branchesData.map((b) => {
+    const branchesBreakdown = (branchesDataResult.data || []).map((b) => {
       const branchClassesCount = b.classes.length;
       const branchStudentsCount = b.classes.reduce((acc, c) => acc + (c._count?.students || 0), 0);
       const totalRoomCapacity = b.rooms.reduce((acc, r) => acc + r.capacity, 0);
@@ -390,7 +431,9 @@ export class PeriodicReportService {
       };
     });
 
-    // Build Executive Summary Text for copy-paste to Word/Docs
+    // ─────────────────────────────────────────────────────────────────────────────
+    // EXECUTIVE SUMMARY FORMATTING
+    // ─────────────────────────────────────────────────────────────────────────────
     const periodLabel = periodType === "CUSTOM"
       ? `GIAI ĐOẠN ${startDate.toLocaleDateString("vi-VN")} – ${endDate.toLocaleDateString("vi-VN")}`
       : periodType === "YEAR"
@@ -399,14 +442,18 @@ export class PeriodicReportService {
       ? `QUÝ ${quarter}/${year}`
       : `THÁNG ${month}/${year}`;
 
+    const droppedStudentsDisplay = droppedStudentsQueryResult.isAvailable
+      ? `${droppedStudentsQueryResult.data} học viên`
+      : "Chưa có dữ liệu";
+
     const summaryText = `BÁO CÁO TỔNG KẾT KẾT QUẢ HOẠT ĐỘNG ${periodLabel}
 Phạm vi: ${branchName}
 Khoảng thời gian: ${startDate.toLocaleDateString("vi-VN")} – ${endDate.toLocaleDateString("vi-VN")}
 
 1. Quy mô & Đào tạo:
-- Số lớp mở mới: ${openedClassesCount} lớp. Lớp hoàn thành: ${completedClassesCount} lớp. Số lớp đang vận hành cuối kỳ: ${runningClassesCount} lớp.
+- Số lớp mở mới: ${openedClassesCount} lớp. Lớp hoàn thành/đóng: ${completedClassesCount} lớp. Số lớp đang vận hành cuối kỳ: ${runningClassesCount} lớp.
 - Sĩ số lớp trung bình: ${avgClassSize} học viên/lớp.
-- Tổng lượt học viên đăng ký mới: ${newEnrollmentsCount} học viên. Học viên hoàn thành khóa: ${graduatedStudentsCount} học viên. Học viên đang học cuối kỳ: ${activeStudentsCount} học viên. Học viên bảo lưu: ${reservedStudentsCount} học viên.
+- Tổng lượt học viên đăng ký mới: ${newEnrollmentsCount} học viên. Học viên hoàn thành khóa: ${graduatedStudentsCount} học viên. Học viên đang học cuối kỳ: ${activeStudentsCount} học viên. Học viên bảo lưu: ${reservedStudentsCount} học viên. Học viên thôi học: ${droppedStudentsDisplay}.
 
 2. Tuyển sinh & Phát triển:
 - Tiếp nhận tổng cộng ${newLeadsCount} khách hàng tiềm năng; tổ chức ${placementTestsCount} lượt khảo thí chẩn đoán đầu vào.
@@ -454,7 +501,8 @@ ${bySource.length > 0 ? `- Nguồn tiếp cận chính: ${bySource.slice(0, 3).m
         activeAtEnd: activeStudentsCount,
         graduated: graduatedStudentsCount,
         reserved: reservedStudentsCount,
-        dropped: droppedStudentsCount,
+        dropped: droppedStudentsQueryResult.data,
+        isDroppedAvailable: droppedStudentsQueryResult.isAvailable,
       },
       teachers: {
         startOfPeriod: startTeachers,

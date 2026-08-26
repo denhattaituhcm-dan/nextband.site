@@ -70,7 +70,6 @@ export default function Profile() {
   const myStudent = leaderboardData?.students?.find((s) => s.isMe);
   const myRank = leaderboardData?.myRank;
   const totalStudents = leaderboardData?.totalStudents ?? 0;
-  const streakDays = myStudent?.streakDays ?? 0;
   const completionRate = myStudent?.completionRate ?? 0;
   const completedCount = myStudent?.completedCount ?? 0;
   const totalHomeworks = leaderboardData?.totalHomeworks ?? 0;
@@ -101,22 +100,6 @@ export default function Profile() {
         icon: <CheckCircle2 className="h-4 w-4" />,
         color: "bg-emerald-100 text-emerald-700 border-emerald-300",
         earned: completionRate === 100 && totalHomeworks > 0,
-      },
-      {
-        id: "streak7",
-        label: `Chuỗi ${streakDays} ngày`,
-        desc: `Học liên tục ${streakDays} ngày không gián đoạn`,
-        icon: <Flame className="h-4 w-4" />,
-        color: "bg-orange-100 text-orange-700 border-orange-300",
-        earned: streakDays >= 7,
-      },
-      {
-        id: "streak3",
-        label: `Chuỗi ${streakDays} ngày`,
-        desc: `Duy trì chuỗi học ${streakDays} ngày`,
-        icon: <Flame className="h-4 w-4" />,
-        color: "bg-amber-100 text-amber-600 border-amber-200",
-        earned: streakDays >= 3 && streakDays < 7,
       },
       {
         id: "graded10",
@@ -160,11 +143,8 @@ export default function Profile() {
       },
     ];
 
-    // De-duplicate streak (chỉ hiện badge cao nhất)
+    // De-duplicate multi-tier badges (chỉ hiện badge cao nhất)
     const earnedIds = list.filter((a) => a.earned).map((a) => a.id);
-    if (earnedIds.includes("streak7")) {
-      return list.filter((a) => a.id !== "streak3" || !earnedIds.includes("streak7"));
-    }
     if (earnedIds.includes("graded10")) {
       return list.filter((a) => a.id !== "graded5" || !earnedIds.includes("graded10"));
     }
@@ -172,7 +152,7 @@ export default function Profile() {
       return list.filter((a) => a.id !== "submitted5" || !earnedIds.includes("submitted10"));
     }
     return list;
-  }, [myRank, totalStudents, completionRate, totalHomeworks, streakDays, gradedCount, submittedCount]);
+  }, [myRank, totalStudents, completionRate, totalHomeworks, gradedCount, submittedCount]);
 
   const earnedAchievements = achievements.filter((a) => a.earned);
   const lockedAchievements = achievements.filter((a) => !a.earned);
@@ -396,10 +376,10 @@ export default function Profile() {
                         <div className="text-[10px] text-muted-foreground font-medium">Hạng trong lớp</div>
                       </div>
                     )}
-                    {streakDays > 0 && (
+                    {completionRate > 0 && (
                       <div className="p-3 rounded-xl bg-muted/40 border border-border/50 text-center space-y-1">
-                        <div className="text-xl font-black text-orange-600">{streakDays}🔥</div>
-                        <div className="text-[10px] text-muted-foreground font-medium">Chuỗi ngày học</div>
+                        <div className="text-xl font-black text-emerald-600">{Math.round(completionRate)}%</div>
+                        <div className="text-[10px] text-muted-foreground font-medium">Tỷ lệ hoàn thành</div>
                       </div>
                     )}
                     {submittedCount > 0 && (
@@ -423,7 +403,7 @@ export default function Profile() {
                   </div>
                   <p className="text-sm font-medium text-foreground">Chưa có danh hiệu nào</p>
                   <p className="text-xs text-muted-foreground">
-                    Hoàn thành bài tập, duy trì chuỗi học và leo hạng trong lớp để mở khóa danh hiệu đầu tiên.
+                    Hoàn thành bài tập, nâng cao tỷ lệ nộp bài đúng hạn và leo hạng trong lớp để mở khóa danh hiệu đầu tiên.
                   </p>
                 </div>
               )}

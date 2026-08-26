@@ -103915,16 +103915,9 @@ var ClassService = class {
       const totalAttendanceSlots = totalStudents * totalSessions;
       const attendedCount = c.attendance.filter((a) => a.status === "PRESENT" || a.status === "LATE").length;
       const attendanceRate = totalAttendanceSlots > 0 ? Math.round(attendedCount / totalAttendanceSlots * 100) : 100;
-      let totalStreak = 0;
-      if (totalStudents > 0) {
-        for (const cs of c.students) {
-          const days = studentActivityDates[cs.student.userId]?.size || 0;
-          const streak = days > 0 ? Math.min(14, days * 2) : 1;
-          totalStreak += streak;
-        }
-      }
-      const avgStreak = totalStudents > 0 ? Number((totalStreak / totalStudents).toFixed(1)) : 0;
-      const leagueScore = Math.round(completionRate * 70 + attendanceRate * 20 + avgStreak * 50);
+      const leagueScore = (totalAssignedSlots === 0 && totalAttendanceSlots === 0)
+        ? 0
+        : Math.round(completionRate * 70 + attendanceRate * 30);
       return {
         classId: c.id,
         className: c.name,
@@ -103940,7 +103933,6 @@ var ClassService = class {
         totalAssignedSlots,
         completionRate,
         attendanceRate,
-        avgStreak,
         leagueScore
       };
     });
@@ -104009,18 +104001,13 @@ var ClassService = class {
       const student = cs.student;
       const studentId = student.userId;
       let completedCount = 0;
-      const activityDays = /* @__PURE__ */ new Set();
       for (const hw of classData.homeworks) {
         const sub = hw.submissions.find((s) => s.studentId === studentId);
         if (sub && (sub.status === "SUBMITTED" || sub.status === "GRADED")) {
           completedCount++;
-          if (sub.submittedAt) {
-            activityDays.add(new Date(sub.submittedAt).toISOString().split("T")[0]);
-          }
         }
       }
       const completionRate = totalHomeworks > 0 ? Math.round(completedCount / totalHomeworks * 100) : 0;
-      const streakDays = Math.max(1, activityDays.size > 0 ? Math.min(14, activityDays.size * 2) : completedCount > 0 ? Math.min(completedCount + 1, 7) : 1);
       return {
         studentId,
         fullName: student.fullName || "H\u1ECDc vi\xEAn",
@@ -104028,7 +104015,6 @@ var ClassService = class {
         completedCount,
         totalHomeworks,
         completionRate,
-        streakDays,
         isMe: studentId === user.id
       };
     });

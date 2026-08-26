@@ -295,11 +295,11 @@ export default function AssessmentPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-border/60 text-xs sm:text-sm font-semibold">
                 <div className="flex items-center gap-2.5">
                   <Clock className="h-4 w-4 text-primary shrink-0" />
-                  <span>Thời lượng: <strong className="text-foreground">45 Phút (Bấm giờ tự động)</strong></span>
+                  <span>Thời lượng: <strong className="text-foreground">60 Phút (Bấm giờ tự động)</strong></span>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <Target className="h-4 w-4 text-primary shrink-0" />
-                  <span>Định lượng: <strong className="text-foreground">Band 3.0 – 9.0</strong></span>
+                  <span>Định lượng: <strong className="text-foreground">Band 3.0 – 7.0+</strong></span>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <ShieldCheck className="h-4 w-4 text-primary shrink-0" />
@@ -315,7 +315,7 @@ export default function AssessmentPage() {
                   className="w-full h-14 rounded-2xl font-black text-base sm:text-lg bg-brand-red hover:bg-brand-red-hover text-white gap-3 shadow-md transition-all cursor-pointer"
                 >
                   <Play className="h-5 w-5 fill-current" />
-                  <span>Bắt đầu bài khảo thí trực tuyến ngay (45 Phút)</span>
+                  <span>Bắt đầu bài khảo thí trực tuyến ngay (60 Phút)</span>
                   <ArrowRight className="h-5 w-5" />
                 </Button>
               </div>

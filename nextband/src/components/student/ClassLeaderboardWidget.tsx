@@ -12,7 +12,6 @@ import {
   ChevronDown,
   ChevronUp,
   Sparkles,
-  Flame,
   Clock,
   Target,
   Handshake,
@@ -274,13 +273,8 @@ export const ClassLeaderboardWidget: React.FC<ClassLeaderboardWidgetProps> = ({
                         </span>
 
                         <div className="flex items-center gap-2 shrink-0">
-                          {/* Streak fire */}
-                          <span className="text-[11px] font-bold text-amber-600 dark:text-amber-400 flex items-center gap-0.5">
-                            <Flame className="h-3 w-3 fill-amber-500 text-amber-500 inline" />
-                            {st.streakDays}d
-                          </span>
-                          <span className="text-[11px] font-semibold text-muted-foreground ml-1">
-                            {st.completedCount}/{totalHomeworks} bài
+                          <span className="text-[11px] font-semibold text-muted-foreground">
+                            {st.completedCount}/{totalHomeworks} bài ({st.completionRate}%)
                           </span>
                         </div>
                       </div>
@@ -325,12 +319,8 @@ export const ClassLeaderboardWidget: React.FC<ClassLeaderboardWidgetProps> = ({
                           {myStudentObj.fullName} <span className="text-[10px] font-extrabold text-primary">(Bạn)</span>
                         </span>
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className="text-[11px] font-bold text-amber-600 flex items-center gap-0.5">
-                            <Flame className="h-3 w-3 fill-amber-500 text-amber-500 inline" />
-                            {myStudentObj.streakDays}d
-                          </span>
-                          <span className="text-[11px] font-semibold text-primary ml-1">
-                            {myStudentObj.completedCount}/{totalHomeworks} bài
+                          <span className="text-[11px] font-semibold text-primary">
+                            {myStudentObj.completedCount}/{totalHomeworks} bài ({myStudentObj.completionRate}%)
                           </span>
                         </div>
                       </div>

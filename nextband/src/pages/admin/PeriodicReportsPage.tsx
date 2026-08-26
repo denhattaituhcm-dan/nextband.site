@@ -488,7 +488,7 @@ export default function PeriodicReportsPage() {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Bảo lưu / Thôi học:</span>
                   <span className="text-muted-foreground">
-                    {report.students.reserved} BL • {report.students.dropped} TH
+                    {report.students.reserved} BL • {report.students.dropped !== null ? `${report.students.dropped} TH` : "N/A"}
                   </span>
                 </div>
               </CardContent>

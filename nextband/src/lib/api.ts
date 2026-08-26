@@ -97,7 +97,7 @@ export class GatewayUnavailableError extends Error {
   isGatewayError = true;
   httpStatus: number;
   constructor(
-    message: string = "Máy chủ phòng thi đang khởi động lại (Render cold-start). Vui lòng thử lại sau 30 giây.",
+    message: string = "Máy chủ đang khởi động lại hoặc kết nối không ổn định. Vui lòng thử lại sau giây lát.",
     status: number = 502
   ) {
     super(message);
@@ -142,7 +142,7 @@ export async function fetchWithResilience(
           continue;
         }
         throw new GatewayUnavailableError(
-          "Máy chủ phòng thi đang khởi động lại (Render cold-start). Vui lòng thử lại sau 30 giây.",
+          "Máy chủ đang khởi động lại. Vui lòng thử lại sau giây lát.",
           response.status
         );
       }
@@ -172,7 +172,7 @@ export async function fetchWithResilience(
 
       if (isNetwork) {
         throw new GatewayUnavailableError(
-          "Không thể kết nối tới máy chủ phòng thi (Render cold-start). Vui lòng thử lại sau 30 giây.",
+          "Không thể kết nối tới máy chủ. Đang tự động kết nối lại...",
           502
         );
       }
@@ -2273,7 +2273,8 @@ export interface PeriodicReportData {
     activeAtEnd: number;
     graduated: number;
     reserved: number;
-    dropped: number;
+    dropped: number | null;
+    isDroppedAvailable?: boolean;
   };
   teachers: {
     startOfPeriod: number;
@@ -2604,7 +2605,6 @@ export interface ClassPeerRank {
   completedCount: number;
   totalHomeworks: number;
   completionRate: number;
-  streakDays: number;
   rank: number;
   isMe: boolean;
 }
@@ -2644,7 +2644,6 @@ export interface ClassLeagueStanding {
   totalAssignedSlots: number;
   completionRate: number;
   attendanceRate: number;
-  avgStreak: number;
   leagueScore: number;
   rank: number;
 }
@@ -4520,7 +4519,7 @@ export const assessmentApi = {
         phone: "0900000000",
         targetBand: "IELTS 6.5",
         status: "ACTIVE",
-        remainingSeconds: 2700,
+        remainingSeconds: 3600,
         answers: {},
       },
       test: canonicalPlacementTestPayload,

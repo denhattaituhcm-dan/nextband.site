@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-export function useAssessmentTimer(initialSeconds: number = 2700, onTimeUp?: () => void) {
+export function useAssessmentTimer(initialSeconds: number = 3600, onTimeUp?: () => void) {
   const [secondsLeft, setSecondsLeft] = useState<number>(initialSeconds);
   const onTimeUpRef = useRef(onTimeUp);
   onTimeUpRef.current = onTimeUp;

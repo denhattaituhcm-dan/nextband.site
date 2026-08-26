@@ -165,7 +165,7 @@ export default function HomePage() {
     });
   }, [actionQueue, submittedCount, gradedCount, pendingCount, activeClassName, courseTitle]);
 
-  // Bảng thi đua lớp để suy ra thứ hạng, chuỗi học (streak) & động lực học tập
+  // Bảng thi đua lớp để suy ra thứ hạng, tiến độ hoàn thành & động lực học tập
   const { data: leaderboardData } = useQuery({
     queryKey: ["class-leaderboard", enrolledClassId],
     queryFn: () => classesApi.getLeaderboard(enrolledClassId || ""),

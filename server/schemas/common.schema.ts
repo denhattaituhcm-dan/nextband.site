@@ -5,7 +5,7 @@ export const paginationSchema = z.object({
   limit: z.coerce
     .number()
     .min(1, "Giới hạn phải ít nhất là 1")
-    .max(100, "Giới hạn tối đa là 100")
+    .max(500, "Giới hạn tối đa là 500")
     .default(10),
   search: z.string().optional(),
   sortBy: z.string().optional(),

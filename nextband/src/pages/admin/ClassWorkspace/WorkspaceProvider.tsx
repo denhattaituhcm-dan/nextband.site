@@ -127,8 +127,19 @@ export const WorkspaceProvider: React.FC<{
       // Fetch submissions for this class
       let submissions: any[] = [];
       try {
-        const subRes = await submissionsApi.list({ classId, limit: 200 });
+        const subRes = await submissionsApi.list({ classId, limit: 100 });
         submissions = subRes.data || [];
+        
+        // If total records exceed 100, fetch next pages
+        if (subRes.meta && subRes.meta.totalPages > 1) {
+          const remainingPages = Array.from({ length: subRes.meta.totalPages - 1 }, (_, idx) => idx + 2);
+          const additionalResults = await Promise.all(
+            remainingPages.map((page) => submissionsApi.list({ classId, page, limit: 100 }).catch(() => ({ data: [] })))
+          );
+          additionalResults.forEach((res) => {
+            if (res.data) submissions.push(...res.data);
+          });
+        }
       } catch (subErr) {
         console.warn("[WorkspaceProvider] Could not fetch submissions:", subErr);
       }
@@ -136,6 +147,9 @@ export const WorkspaceProvider: React.FC<{
       // Enrich activeStudents with live real-time metrics
       const enrichedActiveStudents = activeStudents.map((st: any) => {
         const studentId = st.studentId || st.student_id || st.id || st.userId;
+        const joinedDate = st.joinedAt || st.joined_at || st.createdAt || st.created_at;
+        const studentJoinedTime = joinedDate ? new Date(joinedDate).getTime() : null;
+
         const studentSubs = submissions.filter(
           (s: any) => (s.studentId || s.student_id || s.userId) === studentId
         );
@@ -161,10 +175,16 @@ export const WorkspaceProvider: React.FC<{
           );
           const isGraded = sub?.status === "graded" || sub?.status === "GRADED";
           const isSubmitted = sub?.status === "submitted" || sub?.status === "SUBMITTED" || isGraded;
+
+          // Nếu học viên vào lớp sau khi bài học đã diễn ra/hết hạn thì đánh dấu là chưa học (pending) thay vì quá hạn (missed)
+          const lessonDeadlineTime = lesson.deadline ? new Date(lesson.deadline).getTime() : null;
+          const isBeforeEnrolled = studentJoinedTime && lessonDeadlineTime && (lessonDeadlineTime < studentJoinedTime);
+
           const isOverdue =
             !isSubmitted &&
-            lesson.deadline &&
-            new Date().getTime() > new Date(lesson.deadline).getTime();
+            !isBeforeEnrolled &&
+            lessonDeadlineTime &&
+            new Date().getTime() > lessonDeadlineTime;
 
           const status = isGraded || isSubmitted ? "done" : isOverdue ? "missed" : "pending";
           return {

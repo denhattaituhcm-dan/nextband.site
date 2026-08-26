@@ -55,7 +55,6 @@ describe("Student Motivation Copy Engine: State-Driven Micro-copy", () => {
           completedCount: 10,
           totalHomeworks: 10,
           completionRate: 100,
-          streakDays: 5,
           rank: 1,
           isMe: true,
         },
@@ -65,7 +64,6 @@ describe("Student Motivation Copy Engine: State-Driven Micro-copy", () => {
           completedCount: 8,
           totalHomeworks: 10,
           completionRate: 80,
-          streakDays: 3,
           rank: 2,
           isMe: false,
         },
@@ -102,7 +100,6 @@ describe("Student Motivation Copy Engine: State-Driven Micro-copy", () => {
           completedCount: 8,
           totalHomeworks: 10,
           completionRate: 80,
-          streakDays: 4,
           rank: 1,
           isMe: false,
         },
@@ -112,7 +109,6 @@ describe("Student Motivation Copy Engine: State-Driven Micro-copy", () => {
           completedCount: 7, // chỉ kém 1 bài
           totalHomeworks: 10,
           completionRate: 70,
-          streakDays: 1,
           rank: 2,
           isMe: true,
         },
@@ -128,54 +124,7 @@ describe("Student Motivation Copy Engine: State-Driven Micro-copy", () => {
     expect(result.copy).toBe("Chỉ còn một bước nữa để vượt hạng. Hoàn thành bài và bứt lên!");
   });
 
-  it("State 5: STREAK_ACTIVE (Streak >= 2) -> 'Giữ vững chuỗi học hôm nay — đừng để công sức đã tích lũy bị gián đoạn!'", () => {
-    const actionQueue: ActionQueueItem[] = [
-      {
-        id: "hw-5",
-        title: "W2 - D3 - WRI",
-        status: "UPCOMING",
-        priority: 4,
-      },
-    ];
-
-    const leaderboardData: Partial<ClassLeaderboardData> = {
-      myRank: 5,
-      myCompletedCount: 4,
-      totalStudents: 10,
-      students: [
-        {
-          studentId: "user-top4",
-          fullName: "Bạn Thứ 4",
-          completedCount: 7, // cách 3 bài, không phải close
-          totalHomeworks: 10,
-          completionRate: 70,
-          streakDays: 2,
-          rank: 4,
-          isMe: false,
-        },
-        {
-          studentId: "user-me",
-          fullName: "Tôi",
-          completedCount: 4,
-          totalHomeworks: 10,
-          completionRate: 40,
-          streakDays: 3, // streak 3 ngày
-          rank: 5,
-          isMe: true,
-        },
-      ],
-    };
-
-    const result = getStudentMotivationCopy({
-      actionQueue,
-      leaderboardData: leaderboardData as ClassLeaderboardData,
-    });
-
-    expect(result.stateKey).toBe("STREAK_ACTIVE");
-    expect(result.copy).toBe("Giữ vững chuỗi học hôm nay — đừng để công sức đã tích lũy bị gián đoạn!");
-  });
-
-  it("State 6: ALL_DONE -> 'Phong độ đang lên. Tiếp tục hoàn thành bài để giữ đà!'", () => {
+  it("State 5: ALL_DONE -> 'Phong độ đang lên. Tiếp tục hoàn thành bài để giữ đà!'", () => {
     const result = getStudentMotivationCopy({
       actionQueue: [],
       submittedCount: 5,
@@ -186,7 +135,7 @@ describe("Student Motivation Copy Engine: State-Driven Micro-copy", () => {
     expect(result.copy).toBe("Phong độ đang lên. Tiếp tục hoàn thành bài để giữ đà!");
   });
 
-  it("State 7: PENDING_HOMEWORK -> 'Bài tập hôm nay đang chờ bạn. Làm ngay để giữ nhịp tiến bộ!'", () => {
+  it("State 6: PENDING_HOMEWORK -> 'Bài tập hôm nay đang chờ bạn. Làm ngay để giữ nhịp tiến bộ!'", () => {
     const actionQueue: ActionQueueItem[] = [
       {
         id: "hw-7",
@@ -205,7 +154,7 @@ describe("Student Motivation Copy Engine: State-Driven Micro-copy", () => {
     expect(result.copy).toBe("Bài tập hôm nay đang chờ bạn. Làm ngay để giữ nhịp tiến bộ!");
   });
 
-  it("State 8: DEFAULT -> 'Làm bài ngay — bứt phá tiến độ, leo hạng và chinh phục mục tiêu!'", () => {
+  it("State 7: DEFAULT -> 'Làm bài ngay — bứt phá tiến độ, leo hạng và chinh phục mục tiêu!'", () => {
     const result = getStudentMotivationCopy({
       actionQueue: [],
       submittedCount: 0,

@@ -56,6 +56,9 @@ export const StudentsTab: React.FC = () => {
       (s: any) => (s.studentId || s.student_id) === studentId
     );
 
+    const joinedDate = student.joinedAt || student.joined_at || student.createdAt || student.created_at;
+    const studentJoinedTime = joinedDate ? new Date(joinedDate).getTime() : null;
+
     const studentHomeworks = lessons.map((lesson: any, i: number) => {
       const hwNum = String(i + 1).padStart(2, "0");
       const sub = studentSubmissions.find(
@@ -68,7 +71,11 @@ export const StudentsTab: React.FC = () => {
       );
       const isGraded = sub?.status === "graded" || sub?.status === "GRADED" || sub?.grade_status === "graded";
       const isSubmitted = sub?.status === "submitted" || sub?.status === "SUBMITTED" || isGraded;
-      const isOverdue = !isSubmitted && lesson.deadline && new Date().getTime() > new Date(lesson.deadline).getTime();
+
+      const lessonDeadlineTime = lesson.deadline ? new Date(lesson.deadline).getTime() : null;
+      const isBeforeEnrolled = studentJoinedTime && lessonDeadlineTime && (lessonDeadlineTime < studentJoinedTime);
+
+      const isOverdue = !isSubmitted && !isBeforeEnrolled && lessonDeadlineTime && new Date().getTime() > lessonDeadlineTime;
 
       return {
         id: lesson.id,

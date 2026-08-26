@@ -75,7 +75,6 @@ export default function ClassLeague() {
       "Bài nộp",
       "Tỷ lệ hoàn thành (%)",
       "Chuyên cần (%)",
-      "Streak TB (ngày)",
       "Điểm thi đua",
     ];
 
@@ -89,7 +88,6 @@ export default function ClassLeague() {
       `"${item.totalCompletedSubmissions}/${item.totalAssignedSlots}"`,
       `${item.completionRate}%`,
       `${item.attendanceRate}%`,
-      item.avgStreak,
       item.leagueScore,
     ]);
 
@@ -271,7 +269,7 @@ export default function ClassLeague() {
                   <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground mt-1">
                     <span>Bài tập: <strong className="text-foreground">{top2.completionRate}%</strong></span>
                     <span>·</span>
-                    <span>Streak: <strong className="text-foreground">{top2.avgStreak}d</strong></span>
+                    <span>Chuyên cần: <strong className="text-foreground">{top2.attendanceRate}%</strong></span>
                   </div>
                 </div>
                 <div className="text-xs text-muted-foreground flex items-center justify-center gap-1.5 pt-1">
@@ -306,8 +304,6 @@ export default function ClassLeague() {
                     <span>Bài tập: <strong className="text-emerald-600 font-bold">{top1.completionRate}%</strong></span>
                     <span>·</span>
                     <span>Chuyên cần: <strong className="text-blue-600 font-bold">{top1.attendanceRate}%</strong></span>
-                    <span>·</span>
-                    <span>Streak: <strong className="text-rose-600 font-bold">{top1.avgStreak}d</strong></span>
                   </div>
                 </div>
                 <div className="text-xs text-muted-foreground flex items-center justify-center gap-1.5 pt-1">
@@ -338,7 +334,7 @@ export default function ClassLeague() {
                   <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground mt-1">
                     <span>Bài tập: <strong className="text-foreground">{top3.completionRate}%</strong></span>
                     <span>·</span>
-                    <span>Streak: <strong className="text-foreground">{top3.avgStreak}d</strong></span>
+                    <span>Chuyên cần: <strong className="text-foreground">{top3.attendanceRate}%</strong></span>
                   </div>
                 </div>
                 <div className="text-xs text-muted-foreground flex items-center justify-center gap-1.5 pt-1">
@@ -358,7 +354,7 @@ export default function ClassLeague() {
               Bảng Tổng Sắp Chi Tiết ({filteredStandings.length} Lớp)
             </CardTitle>
             <CardDescription className="text-xs text-muted-foreground">
-              Điểm số được tính tự động từ tỷ lệ nộp bài tập (70%), chuyên cần (20%) và chuỗi ngày học TB (10%)
+              Điểm số được tính tự động từ tỷ lệ hoàn thành bài tập (70%) và tỷ lệ chuyên cần (30%)
             </CardDescription>
           </div>
 
@@ -395,7 +391,6 @@ export default function ClassLeague() {
                     <th className="py-3 px-4 text-center">Sĩ Số</th>
                     <th className="py-3 px-4">Tiến Độ Bài Tập</th>
                     <th className="py-3 px-4 text-center">Chuyên Cần</th>
-                    <th className="py-3 px-4 text-center">Streak TB</th>
                     <th className="py-3 px-4 text-right">Điểm Thi Đua</th>
                     <th className="py-3 px-4 text-center">Thao Tác</th>
                   </tr>
@@ -477,14 +472,6 @@ export default function ClassLeague() {
                         >
                           {item.attendanceRate}%
                         </Badge>
-                      </td>
-
-                      {/* Avg Streak */}
-                      <td className="py-3.5 px-4 text-center">
-                        <span className="inline-flex items-center gap-0.5 font-bold text-amber-600 dark:text-amber-400 text-xs">
-                          <Flame className="h-3.5 w-3.5 fill-amber-500 text-amber-500 inline" />
-                          {item.avgStreak}d
-                        </span>
                       </td>
 
                       {/* League Score */}

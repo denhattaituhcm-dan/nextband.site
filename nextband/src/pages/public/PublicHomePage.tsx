@@ -408,7 +408,7 @@ export default function PublicHomePage() {
             onClick={() => navigate("/assessment")}
             className="rounded-2xl px-8 h-14 text-sm sm:text-base font-extrabold bg-brand-red hover:bg-brand-red-hover text-white shadow-md gap-2.5"
           >
-            <span>Khảo thí kiểm tra Rank hiện tại của bạn ngay (45 Phút)</span>
+            <span>Khảo thí kiểm tra Rank hiện tại của bạn ngay (60 Phút)</span>
             <ArrowRight className="h-5 w-5" />
           </Button>
 

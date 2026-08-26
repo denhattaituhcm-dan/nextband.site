@@ -437,7 +437,7 @@ export default function AcademicSystemPage() {
                       Làm bài khảo thí để xác định chính xác Rank của bạn
                     </span>
                     <span className="hidden md:inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-white/20 text-white border border-white/30">
-                      45 Phút
+                      60 Phút
                     </span>
                   </div>
                   <p className="text-xs sm:text-sm font-medium text-white/90 mt-0.5 flex items-center gap-1.5">

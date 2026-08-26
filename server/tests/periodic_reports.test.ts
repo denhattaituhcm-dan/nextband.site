@@ -170,4 +170,26 @@ describe("PeriodicReportService - Date Range & Calculations", () => {
     expect(result.summaryText).toContain("3. Đội ngũ Giảng viên:");
     expect(result.summaryText).toContain("4. Hoạt động Học thuật:");
   });
+
+  it("successfully generates report on actual PostgreSQL database without throwing", async () => {
+    const { PrismaClient } = await import("@prisma/client");
+    const prisma = new PrismaClient();
+    const service = new PeriodicReportService(prisma);
+
+    try {
+      const realReport = await service.generateReport({
+        periodType: "YEAR",
+        year: 2026,
+        branchId: "ALL",
+      });
+
+      expect(realReport).toBeDefined();
+      expect(realReport.period.year).toBe(2026);
+      expect(realReport.classes.runningAtEnd).toBeGreaterThanOrEqual(0);
+      expect(realReport.students.activeAtEnd).toBeGreaterThanOrEqual(0);
+      expect(realReport.summaryText).toBeDefined();
+    } finally {
+      await prisma.$disconnect();
+    }
+  });
 });
