@@ -9,6 +9,7 @@ import {
   MULTI_WORD_PHRASES,
 } from "@/features/reading/services/readingDictionary";
 import { CrimeSceneBlueprint } from "@/features/reading/components/CrimeSceneBlueprint";
+import { ReadlangExplorationSidebar } from "@/features/reading/components/ReadlangExplorationSidebar";
 import { Button } from "@/components/ui/button";
 import {
   ReadingSettingsPopover,
@@ -94,6 +95,10 @@ export default function ReadingCasePage() {
   // Active translated words map (token key -> translation text)
   const [activeTranslatedWords, setActiveTranslatedWords] = useState<Record<string, VocabularyTerm>>({});
 
+  // Right Panel Tab State: "tasks" | "explain"
+  const [rightPanelTab, setRightPanelTab] = useState<"tasks" | "explain">("tasks");
+  const [activeExplainTerm, setActiveExplainTerm] = useState<VocabularyTerm | null>(null);
+
   const handleWordClick = (e: React.MouseEvent, termObj: VocabularyTerm, wordKey?: string) => {
     e.stopPropagation();
     
@@ -117,6 +122,10 @@ export default function ReadingCasePage() {
       return { ...prev, [key]: termObj };
     });
 
+    // Automatically set active explain term and switch to Explain sidebar (Readlang style)
+    setActiveExplainTerm(termObj);
+    setRightPanelTab("explain");
+
     const rect = (e.target as HTMLElement).getBoundingClientRect();
     setActiveGloss({
       term: termObj,
@@ -128,6 +137,12 @@ export default function ReadingCasePage() {
     setHasInteractedGloss(true);
   };
 
+  const handleSaveTerm = (term: string) => {
+    setSavedTerms((prev) =>
+      prev.includes(term) ? prev.filter((t) => t !== term) : [...prev, term]
+    );
+  };
+
   const handleSentenceClick = (sentenceText: string) => {
     setSelectedEvidenceSentence(sentenceText);
   };
@@ -135,12 +150,6 @@ export default function ReadingCasePage() {
   const toggleEvidenceId = (evId: string) => {
     setSelectedEvidenceIds((prev) =>
       prev.includes(evId) ? prev.filter((id) => id !== evId) : [...prev, evId]
-    );
-  };
-
-  const handleSaveTerm = (term: string) => {
-    setSavedTerms((prev) =>
-      prev.includes(term) ? prev.filter((t) => t !== term) : [...prev, term]
     );
   };
 
@@ -594,59 +603,95 @@ export default function ReadingCasePage() {
           {/* RIGHT COLUMN: INVESTIGATION & REASONING PANEL (5 Columns ~ 42%)           */}
           {/* ========================================================================= */}
           <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-20">
-            <div className="rounded-2xl border border-stone-200/90 bg-white p-5 sm:p-6 shadow-xs">
-              <div className="flex items-center justify-between border-b border-stone-100 pb-3 mb-5">
-                <div className="flex items-center gap-2">
-                  <ShieldAlert className="h-5 w-5 text-amber-600" />
-                  <h3 className="font-extrabold text-stone-900 text-sm sm:text-base uppercase tracking-wide">
-                    Hồ Sơ Thử Thách Nhận Thức
-                  </h3>
-                </div>
-                <span className="text-xs font-mono text-stone-500">4 Tasks</span>
+            <div className="rounded-2xl border border-stone-200/90 bg-white shadow-xs overflow-hidden">
+              {/* Right Panel Tabs: Tasks vs Explain */}
+              <div className="flex items-center border-b border-stone-200 bg-stone-50/80 p-1.5 gap-1.5">
+                <button
+                  onClick={() => setRightPanelTab("tasks")}
+                  className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    rightPanelTab === "tasks"
+                      ? "bg-white text-stone-900 shadow-xs border border-stone-200/80 font-black"
+                      : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/60"
+                  }`}
+                >
+                  <ShieldAlert className="h-3.5 w-3.5 text-amber-600" />
+                  <span>Khảo Hạch (Tasks)</span>
+                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-stone-100 text-stone-700">
+                    {Object.keys(taskAnswers).length + (selectedEvidenceSentence ? 1 : 0)}/4
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setRightPanelTab("explain")}
+                  className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    rightPanelTab === "explain"
+                      ? "bg-white text-emerald-950 shadow-xs border border-stone-200/80 font-black"
+                      : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/60"
+                  }`}
+                >
+                  <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
+                  <span>Giải Thích (Explain)</span>
+                  {activeExplainTerm && (
+                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                  )}
+                </button>
               </div>
 
-              {/* Tasks List */}
-              <div className="space-y-6">
-                
-                {/* Task 1: FIND */}
-                <div className="rounded-xl border border-stone-200/80 bg-[#FAF9F6] p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono font-black uppercase tracking-wider px-2 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-200">
-                      TASK 01 · FIND (Locating Detail)
-                    </span>
-                    {taskAnswers["task-01"] && (
-                      <CheckCircle className="h-4 w-4 text-emerald-600" />
-                    )}
-                  </div>
-                  <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
-                    {readingCase.tasks[0].question}
-                  </p>
-                  {"options" in readingCase.tasks[0] && (
-                    <div className="space-y-1.5 pt-1">
-                      {readingCase.tasks[0].options.map((opt) => (
-                        <label
-                          key={opt.id}
-                          className={`flex items-start gap-2.5 p-2.5 rounded-lg border text-xs cursor-pointer transition-all ${
-                            taskAnswers["task-01"] === opt.id
-                              ? "bg-amber-50 border-amber-400 text-amber-950 font-medium ring-1 ring-amber-400/40"
-                              : "border-stone-200/80 bg-white hover:bg-stone-50 text-stone-700"
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="task-01"
-                            checked={taskAnswers["task-01"] === opt.id}
-                            onChange={() => setTaskAnswers({ ...taskAnswers, "task-01": opt.id })}
-                            className="mt-0.5 text-amber-600 focus:ring-0"
-                          />
-                          <span>
-                            <strong className="mr-1">{opt.id}.</strong> {opt.text}
-                          </span>
-                        </label>
-                      ))}
+              {/* TAB 1: READLANG EXPLAIN SIDEBAR */}
+              {rightPanelTab === "explain" && (
+                <ReadlangExplorationSidebar
+                  activeTerm={activeExplainTerm}
+                  savedTerms={savedTerms}
+                  onToggleSave={handleSaveTerm}
+                  onBackToTasks={() => setRightPanelTab("tasks")}
+                />
+              )}
+
+              {/* TAB 2: TASKS & FINAL DEDUCTION */}
+              {rightPanelTab === "tasks" && (
+                <div className="p-5 sm:p-6 space-y-6">
+                  {/* Tasks List */}
+                  <div className="space-y-6">
+                    
+                    {/* Task 1: FIND */}
+                    <div className="rounded-xl border border-stone-200/80 bg-[#FAF9F6] p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono font-black uppercase tracking-wider px-2 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-200">
+                          TASK 01 · FIND (Locating Detail)
+                        </span>
+                        {taskAnswers["task-01"] && (
+                          <CheckCircle className="h-4 w-4 text-emerald-600" />
+                        )}
+                      </div>
+                      <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
+                        {readingCase.tasks[0].question}
+                      </p>
+                      {"options" in readingCase.tasks[0] && (
+                        <div className="space-y-1.5 pt-1">
+                          {readingCase.tasks[0].options.map((opt) => (
+                            <label
+                              key={opt.id}
+                              className={`flex items-start gap-2.5 p-2.5 rounded-lg border text-xs cursor-pointer transition-all ${
+                                taskAnswers["task-01"] === opt.id
+                                  ? "bg-amber-50 border-amber-400 text-amber-950 font-medium ring-1 ring-amber-400/40"
+                                  : "border-stone-200/80 bg-white hover:bg-stone-50 text-stone-700"
+                              }`}
+                            >
+                              <input
+                                type="radio"
+                                name="task-01"
+                                checked={taskAnswers["task-01"] === opt.id}
+                                onChange={() => setTaskAnswers({ ...taskAnswers, "task-01": opt.id })}
+                                className="mt-0.5 text-amber-600 focus:ring-0"
+                              />
+                              <span>
+                                <strong className="mr-1">{opt.id}.</strong> {opt.text}
+                              </span>
+                            </label>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
 
                 {/* Task 2: MATCH */}
                 <div className="rounded-xl border border-stone-200/80 bg-[#FAF9F6] p-4 space-y-3">
@@ -847,10 +892,11 @@ export default function ReadingCasePage() {
                     </p>
                   )}
                 </div>
-
               </div>
             </div>
-          </div>
+          )}
+        </div>
+      </div>
 
         </div>
       </div>
