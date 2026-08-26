@@ -11,6 +11,15 @@ export default async function classesRoutes(fastify: FastifyInstance) {
     return controller.getMyClasses(request, reply);
   });
 
+  // GET /classes/league-standings - Bảng tổng sắp thi đua liên lớp toàn trung tâm
+  fastify.get<{ Querystring: { branchId?: string } }>(
+    "/league-standings",
+    { preHandler: authenticate },
+    async (request, reply) => {
+      return controller.getLeagueStandings(request, reply);
+    }
+  );
+
   // GET /classes - Lấy danh sách lớp
   fastify.get("/", { preHandler: authenticate }, async (request, reply) => {
     return controller.list(request, reply);
@@ -63,6 +72,24 @@ export default async function classesRoutes(fastify: FastifyInstance) {
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       return controller.setHomeworkDeadline(request, reply);
+    }
+  );
+
+  // GET /classes/:id/leaderboard - Bảng xếp hạng tiến độ thi đua của các bạn trong lớp
+  fastify.get<{ Params: { id: string } }>(
+    "/:id/leaderboard",
+    { preHandler: authenticate },
+    async (request, reply) => {
+      return controller.getLeaderboard(request, reply);
+    }
+  );
+
+  // GET /classes/:id/graduation-summary - Báo cáo tổng kết & vinh danh tốt nghiệp cuối khóa
+  fastify.get<{ Params: { id: string } }>(
+    "/:id/graduation-summary",
+    { preHandler: authenticate },
+    async (request, reply) => {
+      return controller.getGraduationSummary(request, reply);
     }
   );
 

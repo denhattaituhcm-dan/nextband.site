@@ -14,17 +14,28 @@ export default async function reportsRoutes(fastify: FastifyInstance) {
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       const query = (request.query || {}) as {
-        periodType?: "MONTH" | "QUARTER" | "YEAR";
-        period?: "month" | "quarter" | "year";
+        periodType?: "MONTH" | "QUARTER" | "YEAR" | "CUSTOM";
+        period?: "month" | "quarter" | "year" | "custom";
         year?: string | number;
         month?: string | number;
         quarter?: string | number;
+        startDate?: string;
+        endDate?: string;
+        fromDate?: string;
+        toDate?: string;
         branchId?: string;
       };
 
-      const normalizedPeriodType = (
+      const start = query.startDate || query.fromDate;
+      const end = query.endDate || query.toDate;
+
+      let normalizedPeriodType = (
         query.periodType || (query.period ? query.period.toUpperCase() : "YEAR")
-      ) as "MONTH" | "QUARTER" | "YEAR";
+      ) as "MONTH" | "QUARTER" | "YEAR" | "CUSTOM";
+
+      if (start && end) {
+        normalizedPeriodType = "CUSTOM";
+      }
 
       const currentYear = new Date().getFullYear();
       const year = query.year ? Number(query.year) : currentYear;
@@ -38,6 +49,8 @@ export default async function reportsRoutes(fastify: FastifyInstance) {
           year,
           month,
           quarter,
+          startDate: start,
+          endDate: end,
           branchId,
         });
 

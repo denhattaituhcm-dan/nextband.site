@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useWorkspace } from "../WorkspaceProvider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, UserPlus, GraduationCap, MapPin } from "lucide-react";
+import { ArrowLeft, UserPlus, GraduationCap, MapPin, Award } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { ClassGraduationModal } from "@/components/admin/ClassGraduationModal";
 
 export const FixedHeader: React.FC = () => {
   const {
@@ -11,6 +13,7 @@ export const FixedHeader: React.FC = () => {
     openAddStudentModal,
   } = useWorkspace();
   const navigate = useNavigate();
+  const [graduationModalOpen, setGraduationModalOpen] = useState(false);
 
   const activeStudents = classData?.activeStudents || [];
   const studentsCount = activeStudents.length || classData?.studentCount || 0;
@@ -67,18 +70,42 @@ export const FixedHeader: React.FC = () => {
           </div>
         </div>
 
-        {/* Top Right Action: Single Primary Action (+ Thêm học viên) */}
+        {/* Top Right Action: Graduation Summary & Primary Action */}
         <div className="flex items-center gap-2">
           <Button
             size="sm"
-            onClick={() => openAddStudentModal()}
-            className="h-8 text-xs gap-1.5 bg-primary font-semibold shadow-2xs"
+            variant={classData?.status === "CLOSED" || classData?.isActive === false ? "secondary" : "outline"}
+            onClick={() => setGraduationModalOpen(true)}
+            className={cn(
+              "h-8 text-xs gap-1.5 font-bold shadow-2xs",
+              classData?.status !== "CLOSED" && classData?.isActive !== false && "border-amber-400 text-amber-900 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-700"
+            )}
           >
-            <UserPlus className="h-3.5 w-3.5" />
-            + Thêm học viên
+            <Award className="h-3.5 w-3.5 text-amber-600" />
+            {classData?.status === "CLOSED" || classData?.isActive === false ? "Báo cáo tốt nghiệp" : "Tổng kết & Đóng lớp"}
           </Button>
+
+          {classData?.status !== "CLOSED" && classData?.isActive !== false && (
+            <Button
+              size="sm"
+              onClick={() => openAddStudentModal()}
+              className="h-8 text-xs gap-1.5 bg-primary font-semibold shadow-2xs"
+            >
+              <UserPlus className="h-3.5 w-3.5" />
+              + Thêm học viên
+            </Button>
+          )}
         </div>
       </div>
+
+      {classData?.id && (
+        <ClassGraduationModal
+          classId={classData.id}
+          isOpen={graduationModalOpen}
+          onClose={() => setGraduationModalOpen(false)}
+          isAlreadyClosed={classData?.status === "CLOSED" || classData?.isActive === false}
+        />
+      )}
     </div>
   );
 };

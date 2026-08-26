@@ -54,10 +54,17 @@ export default function PeriodicReportsPage() {
   const currentMonth = new Date().getMonth() + 1;
   const currentQuarter = Math.ceil(currentMonth / 3);
 
-  const [periodType, setPeriodType] = useState<"YEAR" | "QUARTER" | "MONTH">("YEAR");
+  const [periodType, setPeriodType] = useState<"YEAR" | "QUARTER" | "MONTH" | "CUSTOM">("YEAR");
   const [selectedYear, setSelectedYear] = useState<number>(currentYear);
   const [selectedQuarter, setSelectedQuarter] = useState<number>(currentQuarter);
   const [selectedMonth, setSelectedMonth] = useState<number>(currentMonth);
+
+  // Custom date range state (Defaults to year-to-date)
+  const defaultFrom = `${currentYear}-01-01`;
+  const defaultTo = new Date().toISOString().split("T")[0];
+  const [customStartDate, setCustomStartDate] = useState<string>(defaultFrom);
+  const [customEndDate, setCustomEndDate] = useState<string>(defaultTo);
+
   const [copied, setCopied] = useState(false);
 
   const yearOptions = useMemo(() => {
@@ -72,6 +79,8 @@ export default function PeriodicReportsPage() {
       selectedYear,
       periodType === "MONTH" ? selectedMonth : undefined,
       periodType === "QUARTER" ? selectedQuarter : undefined,
+      periodType === "CUSTOM" ? customStartDate : undefined,
+      periodType === "CUSTOM" ? customEndDate : undefined,
       selectedBranch,
     ],
     queryFn: () =>
@@ -80,6 +89,8 @@ export default function PeriodicReportsPage() {
         year: selectedYear,
         month: periodType === "MONTH" ? selectedMonth : undefined,
         quarter: periodType === "QUARTER" ? selectedQuarter : undefined,
+        startDate: periodType === "CUSTOM" ? customStartDate : undefined,
+        endDate: periodType === "CUSTOM" ? customEndDate : undefined,
         branchId: selectedBranch,
       }),
   });
@@ -156,7 +167,7 @@ export default function PeriodicReportsPage() {
                 Chu kỳ tổng kết
               </label>
               <div className="flex rounded-lg border bg-muted/40 p-0.5">
-                {(["YEAR", "QUARTER", "MONTH"] as const).map((type) => (
+                {(["YEAR", "QUARTER", "MONTH", "CUSTOM"] as const).map((type) => (
                   <button
                     key={type}
                     type="button"
@@ -167,78 +178,152 @@ export default function PeriodicReportsPage() {
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
-                    {type === "YEAR" ? "Cả năm" : type === "QUARTER" ? "Theo Quý" : "Theo Tháng"}
+                    {type === "YEAR"
+                      ? "Cả năm"
+                      : type === "QUARTER"
+                      ? "Theo Quý"
+                      : type === "MONTH"
+                      ? "Theo Tháng"
+                      : "Tùy chọn ngày"}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Year Selector */}
-            <div className="space-y-1 min-w-[120px]">
-              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Năm
-              </label>
-              <Select
-                value={String(selectedYear)}
-                onValueChange={(val) => setSelectedYear(Number(val))}
-              >
-                <SelectTrigger className="h-8 text-xs">
-                  <SelectValue placeholder="Chọn năm" />
-                </SelectTrigger>
-                <SelectContent>
-                  {yearOptions.map((y) => (
-                    <SelectItem key={y} value={String(y)} className="text-xs">
-                      Năm {y}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {/* If Not CUSTOM: Year / Quarter / Month Selectors */}
+            {periodType !== "CUSTOM" && (
+              <>
+                {/* Year Selector */}
+                <div className="space-y-1 min-w-[120px]">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Năm
+                  </label>
+                  <Select
+                    value={String(selectedYear)}
+                    onValueChange={(val) => setSelectedYear(Number(val))}
+                  >
+                    <SelectTrigger className="h-8 text-xs">
+                      <SelectValue placeholder="Chọn năm" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {yearOptions.map((y) => (
+                        <SelectItem key={y} value={String(y)} className="text-xs">
+                          Năm {y}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            {/* Quarter Selector (if QUARTER) */}
-            {periodType === "QUARTER" && (
-              <div className="space-y-1 min-w-[120px]">
-                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Quý
-                </label>
-                <Select
-                  value={String(selectedQuarter)}
-                  onValueChange={(val) => setSelectedQuarter(Number(val))}
-                >
-                  <SelectTrigger className="h-8 text-xs">
-                    <SelectValue placeholder="Chọn quý" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1" className="text-xs">Quý 1 (T1 – T3)</SelectItem>
-                    <SelectItem value="2" className="text-xs">Quý 2 (T4 – T6)</SelectItem>
-                    <SelectItem value="3" className="text-xs">Quý 3 (T7 – T9)</SelectItem>
-                    <SelectItem value="4" className="text-xs">Quý 4 (T10 – T12)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                {/* Quarter Selector (if QUARTER) */}
+                {periodType === "QUARTER" && (
+                  <div className="space-y-1 min-w-[120px]">
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      Quý
+                    </label>
+                    <Select
+                      value={String(selectedQuarter)}
+                      onValueChange={(val) => setSelectedQuarter(Number(val))}
+                    >
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue placeholder="Chọn quý" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="1" className="text-xs">Quý 1 (T1 – T3)</SelectItem>
+                        <SelectItem value="2" className="text-xs">Quý 2 (T4 – T6)</SelectItem>
+                        <SelectItem value="3" className="text-xs">Quý 3 (T7 – T9)</SelectItem>
+                        <SelectItem value="4" className="text-xs">Quý 4 (T10 – T12)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {/* Month Selector (if MONTH) */}
+                {periodType === "MONTH" && (
+                  <div className="space-y-1 min-w-[120px]">
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      Tháng
+                    </label>
+                    <Select
+                      value={String(selectedMonth)}
+                      onValueChange={(val) => setSelectedMonth(Number(val))}
+                    >
+                      <SelectTrigger className="h-8 text-xs">
+                        <SelectValue placeholder="Chọn tháng" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+                          <SelectItem key={m} value={String(m)} className="text-xs">
+                            Tháng {m}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              </>
             )}
 
-            {/* Month Selector (if MONTH) */}
-            {periodType === "MONTH" && (
-              <div className="space-y-1 min-w-[120px]">
-                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Tháng
-                </label>
-                <Select
-                  value={String(selectedMonth)}
-                  onValueChange={(val) => setSelectedMonth(Number(val))}
-                >
-                  <SelectTrigger className="h-8 text-xs">
-                    <SelectValue placeholder="Chọn tháng" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-                      <SelectItem key={m} value={String(m)} className="text-xs">
-                        Tháng {m}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            {/* If CUSTOM: Date Pickers (Từ ngày ... Đến ngày ...) */}
+            {periodType === "CUSTOM" && (
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Từ ngày
+                  </label>
+                  <input
+                    type="date"
+                    value={customStartDate}
+                    onChange={(e) => setCustomStartDate(e.target.value)}
+                    className="h-8 text-xs px-2.5 py-1 rounded-md border bg-background focus:outline-none focus:ring-1 focus:ring-primary"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Đến ngày
+                  </label>
+                  <input
+                    type="date"
+                    value={customEndDate}
+                    onChange={(e) => setCustomEndDate(e.target.value)}
+                    className="h-8 text-xs px-2.5 py-1 rounded-md border bg-background focus:outline-none focus:ring-1 focus:ring-primary"
+                  />
+                </div>
+                {/* Presets */}
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Phím tắt nhanh
+                  </label>
+                  <div className="flex items-center gap-1.5 pt-0.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const now = new Date();
+                        const curYear = now.getFullYear();
+                        // School year: 01/09 last year to 31/08 this year
+                        const syStart = now.getMonth() >= 8 ? `${curYear}-09-01` : `${curYear - 1}-09-01`;
+                        const syEnd = now.getMonth() >= 8 ? `${curYear + 1}-08-31` : `${curYear}-08-31`;
+                        setCustomStartDate(syStart);
+                        setCustomEndDate(syEnd);
+                      }}
+                      className="px-2 py-1 text-[11px] rounded bg-muted/60 hover:bg-muted font-medium text-foreground transition-colors"
+                    >
+                      Niên khóa (01/09 – 31/08)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const now = new Date();
+                        const sixMonthsAgo = new Date(now.getTime() - 180 * 24 * 60 * 60 * 1000);
+                        setCustomStartDate(sixMonthsAgo.toISOString().split("T")[0]);
+                        setCustomEndDate(now.toISOString().split("T")[0]);
+                      }}
+                      className="px-2 py-1 text-[11px] rounded bg-muted/60 hover:bg-muted font-medium text-foreground transition-colors"
+                    >
+                      6 tháng gần đây
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
 

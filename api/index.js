@@ -107483,7 +107483,22 @@ function calculateDateRange(params) {
   const year = params.year || (/* @__PURE__ */ new Date()).getFullYear();
   let startDate;
   let endDate;
-  if (params.periodType === "MONTH") {
+  if (params.periodType === "CUSTOM" && params.startDate && params.endDate) {
+    if (typeof params.startDate === "string" && !params.startDate.includes("T")) {
+      startDate = /* @__PURE__ */ new Date(`${params.startDate}T00:00:00+07:00`);
+    } else {
+      startDate = new Date(params.startDate);
+    }
+    if (typeof params.endDate === "string" && !params.endDate.includes("T")) {
+      endDate = /* @__PURE__ */ new Date(`${params.endDate}T23:59:59.999+07:00`);
+    } else {
+      const e = new Date(params.endDate);
+      endDate = new Date(e.getTime());
+      if (endDate.getHours() === 0 && endDate.getMinutes() === 0) {
+        endDate.setHours(23, 59, 59, 999);
+      }
+    }
+  } else if (params.periodType === "MONTH") {
     const m = params.month && params.month >= 1 && params.month <= 12 ? params.month : 1;
     const startMonthStr = String(m).padStart(2, "0");
     const nextMonth = new Date(Date.UTC(year, m, 1));
@@ -107510,8 +107525,8 @@ var PeriodicReportService = class {
     this.prisma = prisma;
   }
   async generateReport(query) {
-    const { periodType = "YEAR", year = (/* @__PURE__ */ new Date()).getFullYear(), month, quarter, branchId = "ALL" } = query;
-    const { startDate, endDate } = calculateDateRange({ periodType, year, month, quarter });
+    const { periodType = "YEAR", year = (/* @__PURE__ */ new Date()).getFullYear(), month, quarter, startDate: customStart, endDate: customEnd, branchId = "ALL" } = query;
+    const { startDate, endDate } = calculateDateRange({ periodType, year, month, quarter, startDate: customStart, endDate: customEnd });
     const hasBranchFilter = branchId && branchId !== "ALL" && branchId !== "all";
     const branchFilter = hasBranchFilter ? { branchId } : {};
     const leadBranchFilter = hasBranchFilter ? { preferredBranchId: branchId } : {};
@@ -107796,7 +107811,7 @@ var PeriodicReportService = class {
         fillRate
       };
     });
-    const periodLabel = periodType === "YEAR" ? `N\u0102M ${year}` : periodType === "QUARTER" ? `QU\xDD ${quarter}/${year}` : `TH\xC1NG ${month}/${year}`;
+    const periodLabel = periodType === "CUSTOM" ? `GIAI \u0110O\u1EA0N ${startDate.toLocaleDateString("vi-VN")} \u2013 ${endDate.toLocaleDateString("vi-VN")}` : periodType === "YEAR" ? `N\u0102M ${year}` : periodType === "QUARTER" ? `QU\xDD ${quarter}/${year}` : `TH\xC1NG ${month}/${year}`;
     const summaryText = `B\xC1O C\xC1O T\u1ED4NG K\u1EBET K\u1EBET QU\u1EA2 HO\u1EA0T \u0110\u1ED8NG ${periodLabel}
 Ph\u1EA1m vi: ${branchName}
 Kho\u1EA3ng th\u1EDDi gian: ${startDate.toLocaleDateString("vi-VN")} \u2013 ${endDate.toLocaleDateString("vi-VN")}
@@ -107880,7 +107895,12 @@ async function reportsRoutes(fastify) {
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       const query = request.query || {};
-      const normalizedPeriodType = query.periodType || (query.period ? query.period.toUpperCase() : "YEAR");
+      const start = query.startDate || query.fromDate;
+      const end = query.endDate || query.toDate;
+      let normalizedPeriodType = query.periodType || (query.period ? query.period.toUpperCase() : "YEAR");
+      if (start && end) {
+        normalizedPeriodType = "CUSTOM";
+      }
       const currentYear = (/* @__PURE__ */ new Date()).getFullYear();
       const year = query.year ? Number(query.year) : currentYear;
       const month = query.month ? Number(query.month) : void 0;
@@ -107892,6 +107912,8 @@ async function reportsRoutes(fastify) {
           year,
           month,
           quarter,
+          startDate: start,
+          endDate: end,
           branchId
         });
         return reply.send({

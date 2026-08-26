@@ -148,6 +148,38 @@ export class ClassController {
     }
   }
 
+  async getGraduationSummary(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+    try {
+      const result = await this.service.getGraduationSummary(request.params.id);
+      return reply.send({ success: true, data: result });
+    } catch (err: any) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
+
+  async getLeaderboard(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+    try {
+      const user = (request as any).user;
+      const result = await this.service.getClassLeaderboard(user, request.params.id);
+      return reply.send({ success: true, data: result });
+    } catch (err: any) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
+
+  async getLeagueStandings(request: FastifyRequest<{ Querystring: { branchId?: string } }>, reply: FastifyReply) {
+    try {
+      const { branchId } = request.query;
+      const result = await this.service.getLeagueStandings(branchId);
+      return reply.send({ success: true, data: result });
+    } catch (err: any) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
+
   async close(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
     try {
       const user = (request as any).user;

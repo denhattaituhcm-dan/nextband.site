@@ -1,32 +1,38 @@
 import { useStudentLifecycle } from "@/hooks/useStudentLifecycle";
+import { useAuth } from "@/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, GraduationCap, Play, UserCheck, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { ClassLeaderboardWidget } from "@/components/student/ClassLeaderboardWidget";
 
 export default function MyCourses() {
+  const { user } = useAuth();
   const { state, enrollments, isLoading, retry } = useStudentLifecycle();
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-fade-in pb-12">
       <div>
-        <h1 className="text-2xl font-bold text-foreground mb-2">
+        <h1 className="text-2xl font-bold text-foreground mb-1.5">
           Lớp Học & Khóa Học Của Tôi
         </h1>
-        <p className="text-muted-foreground">
-          Quản lý và tiếp tục học các lớp học và bài tập bạn đã tham gia
+        <p className="text-sm text-muted-foreground">
+          Quản lý, tiếp tục học và theo dõi tiến độ thi đua làm bài tập cùng các bạn trong lớp
         </p>
       </div>
 
       {isLoading ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="space-y-4">
-              <Skeleton className="h-48 w-full rounded-xl" />
-              <Skeleton className="h-4 w-3/4" />
-              <Skeleton className="h-4 w-1/2" />
+        <div className="space-y-6">
+          {[...Array(2)].map((_, i) => (
+            <div key={i} className="grid gap-6 grid-cols-1 lg:grid-cols-12">
+              <div className="lg:col-span-5">
+                <Skeleton className="h-64 w-full rounded-2xl" />
+              </div>
+              <div className="lg:col-span-7">
+                <Skeleton className="h-64 w-full rounded-2xl" />
+              </div>
             </div>
           ))}
         </div>
@@ -40,55 +46,72 @@ export default function MyCourses() {
           </Button>
         </Card>
       ) : enrollments && enrollments.length > 0 ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="space-y-8">
           {enrollments.map((item) => (
-            <Card
+            <div
               key={item.id}
-              className="group overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between border-border"
+              className="grid gap-6 grid-cols-1 lg:grid-cols-12 items-stretch"
             >
-              <div className="h-40 bg-gradient-to-br from-primary/15 via-primary/5 to-secondary/15 p-6 flex flex-col justify-between relative overflow-hidden">
-                <div className="flex items-center justify-between">
-                  <Badge variant="outline" className="bg-white/80 font-bold text-[10px] text-primary border-primary/20">
-                    LỚP HỌC CHÍNH THỨC
-                  </Badge>
-                  <Badge variant="success" className="text-[10px]">
-                    Đang hoạt động
-                  </Badge>
-                </div>
-                <div>
-                  <h3 className="text-xl font-extrabold text-foreground tracking-tight group-hover:text-primary transition-colors">
-                    {item.className}
-                  </h3>
-                  <p className="text-xs text-muted-foreground font-medium mt-0.5">
-                    Khóa {item.courseTitle}
-                  </p>
-                </div>
+              {/* Bên trái: Thẻ Lớp Học (lg:col-span-5) */}
+              <div className="lg:col-span-5 flex">
+                <Card
+                  className="w-full group overflow-hidden hover:shadow-md transition-all duration-300 flex flex-col justify-between border-border bg-card shadow-xs rounded-2xl"
+                >
+                  <div className="h-36 bg-gradient-to-br from-primary/15 via-primary/5 to-secondary/15 p-6 flex flex-col justify-between relative overflow-hidden">
+                    <div className="flex items-center justify-between">
+                      <Badge variant="outline" className="bg-white/90 dark:bg-card/90 font-bold text-[10px] text-primary border-primary/20">
+                        LỚP HỌC CHÍNH THỨC
+                      </Badge>
+                      <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] font-bold">
+                        Đang hoạt động
+                      </Badge>
+                    </div>
+                    <div>
+                      <h3 className="text-xl sm:text-2xl font-extrabold text-foreground tracking-tight group-hover:text-primary transition-colors">
+                        {item.className}
+                      </h3>
+                      <p className="text-xs text-muted-foreground font-semibold mt-0.5 flex items-center gap-1.5">
+                        <GraduationCap className="h-3.5 w-3.5 text-primary" />
+                        Khóa {item.courseTitle}
+                      </p>
+                    </div>
+                  </div>
+
+                  <CardContent className="p-5 space-y-4 flex-1 flex flex-col justify-between">
+                    <div className="space-y-2.5">
+                      {item.teacherName && (
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <UserCheck className="h-4 w-4 text-primary shrink-0" />
+                          <span>Giáo viên: <strong className="text-foreground font-semibold">{item.teacherName}</strong></span>
+                        </div>
+                      )}
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <BookOpen className="h-4 w-4 text-primary shrink-0" />
+                        <span>Luyện tập bài tập, nộp bài & nhận xét trực tuyến</span>
+                      </div>
+                    </div>
+
+                    <div className="pt-3 border-t flex items-center justify-end">
+                      <Button size="sm" asChild className="font-bold text-xs gap-2 rounded-xl px-5 h-9 bg-primary shadow-sm hover:shadow-md transition-all">
+                        <Link to={`/app/class/${item.classId}/lessons`}>
+                          <Play className="h-3.5 w-3.5 fill-current" />
+                          Vào Lớp Học
+                        </Link>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
 
-              <CardContent className="p-5 space-y-4 flex-1 flex flex-col justify-between">
-                <div className="space-y-2">
-                  {item.teacherName && (
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <UserCheck className="h-4 w-4 text-primary shrink-0" />
-                      <span>Giáo viên phụ trách: <strong className="text-foreground">{item.teacherName}</strong></span>
-                    </div>
-                  )}
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <BookOpen className="h-4 w-4 text-primary shrink-0" />
-                    <span>Luyện tập bài tập & thi trực tuyến</span>
-                  </div>
-                </div>
-
-                <div className="pt-2 border-t flex items-center justify-end">
-                  <Button size="sm" asChild className="font-bold text-xs gap-1.5 rounded-xl">
-                    <Link to={`/app/class/${item.classId}/lessons`}>
-                      <Play className="h-3.5 w-3.5 fill-current" />
-                      Vào Lớp Học
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+              {/* Bên phải: Thẻ Thông tin Lớp học & Bảng Thi đua Tiến độ (lg:col-span-7) */}
+              <div className="lg:col-span-7 flex">
+                <ClassLeaderboardWidget
+                  classId={item.classId}
+                  className={item.className}
+                  currentUserId={user?.id}
+                />
+              </div>
+            </div>
           ))}
         </div>
       ) : (

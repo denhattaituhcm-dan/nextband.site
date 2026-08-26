@@ -1,24 +1,44 @@
 import { PrismaClient } from "@prisma/client";
 
 export interface PeriodicReportQuery {
-  periodType: "MONTH" | "QUARTER" | "YEAR";
-  year: number;
+  periodType: "MONTH" | "QUARTER" | "YEAR" | "CUSTOM";
+  year?: number;
   month?: number;
   quarter?: number;
+  startDate?: string | Date;
+  endDate?: string | Date;
   branchId?: string;
 }
 
 export function calculateDateRange(params: {
-  periodType: "MONTH" | "QUARTER" | "YEAR";
-  year: number;
+  periodType: "MONTH" | "QUARTER" | "YEAR" | "CUSTOM";
+  year?: number;
   month?: number;
   quarter?: number;
+  startDate?: string | Date;
+  endDate?: string | Date;
 }) {
   const year = params.year || new Date().getFullYear();
   let startDate: Date;
   let endDate: Date;
 
-  if (params.periodType === "MONTH") {
+  if (params.periodType === "CUSTOM" && params.startDate && params.endDate) {
+    if (typeof params.startDate === "string" && !params.startDate.includes("T")) {
+      startDate = new Date(`${params.startDate}T00:00:00+07:00`);
+    } else {
+      startDate = new Date(params.startDate);
+    }
+
+    if (typeof params.endDate === "string" && !params.endDate.includes("T")) {
+      endDate = new Date(`${params.endDate}T23:59:59.999+07:00`);
+    } else {
+      const e = new Date(params.endDate);
+      endDate = new Date(e.getTime());
+      if (endDate.getHours() === 0 && endDate.getMinutes() === 0) {
+        endDate.setHours(23, 59, 59, 999);
+      }
+    }
+  } else if (params.periodType === "MONTH") {
     const m = params.month && params.month >= 1 && params.month <= 12 ? params.month : 1;
     const startMonthStr = String(m).padStart(2, "0");
     const nextMonth = new Date(Date.UTC(year, m, 1));
@@ -49,8 +69,8 @@ export class PeriodicReportService {
   constructor(private prisma: PrismaClient) {}
 
   async generateReport(query: PeriodicReportQuery) {
-    const { periodType = "YEAR", year = new Date().getFullYear(), month, quarter, branchId = "ALL" } = query;
-    const { startDate, endDate } = calculateDateRange({ periodType, year, month, quarter });
+    const { periodType = "YEAR", year = new Date().getFullYear(), month, quarter, startDate: customStart, endDate: customEnd, branchId = "ALL" } = query;
+    const { startDate, endDate } = calculateDateRange({ periodType, year, month, quarter, startDate: customStart, endDate: customEnd });
 
     const hasBranchFilter = branchId && branchId !== "ALL" && branchId !== "all";
     const branchFilter = hasBranchFilter ? { branchId } : {};
@@ -371,7 +391,9 @@ export class PeriodicReportService {
     });
 
     // Build Executive Summary Text for copy-paste to Word/Docs
-    const periodLabel = periodType === "YEAR"
+    const periodLabel = periodType === "CUSTOM"
+      ? `GIAI ĐOẠN ${startDate.toLocaleDateString("vi-VN")} – ${endDate.toLocaleDateString("vi-VN")}`
+      : periodType === "YEAR"
       ? `NĂM ${year}`
       : periodType === "QUARTER"
       ? `QUÝ ${quarter}/${year}`

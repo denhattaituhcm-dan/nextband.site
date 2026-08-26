@@ -2239,7 +2239,7 @@ export const statsApi = {
 // =============================================
 export interface PeriodicReportData {
   period: {
-    type: "MONTH" | "QUARTER" | "YEAR";
+    type: "MONTH" | "QUARTER" | "YEAR" | "CUSTOM";
     year: number;
     month: number | null;
     quarter: number | null;
@@ -2302,11 +2302,13 @@ export interface PeriodicReportData {
 
 export const reportsApi = {
   getPeriodicReport: async (params: {
-    periodType?: "MONTH" | "QUARTER" | "YEAR";
-    period?: "month" | "quarter" | "year";
-    year: number;
+    periodType?: "MONTH" | "QUARTER" | "YEAR" | "CUSTOM";
+    period?: "month" | "quarter" | "year" | "custom";
+    year?: number;
     month?: number;
     quarter?: number;
+    startDate?: string;
+    endDate?: string;
     branchId?: string;
   }): Promise<PeriodicReportData> => {
     const token = await getAuthToken();
@@ -2316,6 +2318,8 @@ export const reportsApi = {
     if (params.year) query.set("year", String(params.year));
     if (params.month) query.set("month", String(params.month));
     if (params.quarter) query.set("quarter", String(params.quarter));
+    if (params.startDate) query.set("startDate", params.startDate);
+    if (params.endDate) query.set("endDate", params.endDate);
     if (params.branchId) query.set("branchId", params.branchId);
 
     const res = await fetch(
@@ -2558,6 +2562,97 @@ export const roomsApi = {
     return json.data;
   },
 };
+
+export interface ClassGraduationStudent {
+  studentId: string;
+  fullName: string;
+  email: string;
+  avatarUrl?: string;
+  classStudentStatus: string;
+  totalHomeworks: number;
+  submittedCount: number;
+  completionRate: number;
+  onTimeCount: number;
+  overdueCount: number;
+  overdueRate: number;
+  totalSessions: number;
+  attendedSessions: number;
+  attendanceRate: number;
+  isHonorRoll: boolean;
+}
+
+export interface ClassGraduationSummary {
+  classId: string;
+  className: string;
+  teacherName: string;
+  courseTitle: string;
+  startDate?: string;
+  endDate?: string;
+  status: string;
+  closedAt?: string;
+  totalSessions: number;
+  totalHomeworks: number;
+  totalStudents: number;
+  honorRollCount: number;
+  students: ClassGraduationStudent[];
+}
+
+export interface ClassPeerRank {
+  studentId: string;
+  fullName: string;
+  avatarUrl?: string | null;
+  completedCount: number;
+  totalHomeworks: number;
+  completionRate: number;
+  streakDays: number;
+  rank: number;
+  isMe: boolean;
+}
+
+export interface ClassLeaderboardData {
+  classId: string;
+  className: string;
+  courseTitle?: string;
+  targetBand?: string;
+  totalStudents: number;
+  totalHomeworks: number;
+  classCompletionRate: number;
+  totalSubmittedSlots: number;
+  totalAssignedSlots: number;
+  nextUpcomingHomework?: {
+    title: string;
+    deadline: string;
+    isUrgent?: boolean;
+  } | null;
+  myRank: number | null;
+  myCompletedCount: number;
+  students: ClassPeerRank[];
+}
+
+export interface ClassLeagueStanding {
+  classId: string;
+  className: string;
+  courseTitle: string;
+  branchName: string;
+  branchId?: string | null;
+  teacherName: string;
+  teacherAvatar?: string | null;
+  totalStudents: number;
+  totalHomeworks: number;
+  totalSessions: number;
+  totalCompletedSubmissions: number;
+  totalAssignedSlots: number;
+  completionRate: number;
+  attendanceRate: number;
+  avgStreak: number;
+  leagueScore: number;
+  rank: number;
+}
+
+export interface ClassLeagueResponse {
+  totalClasses: number;
+  standings: ClassLeagueStanding[];
+}
 
 // =============================================
 // CLASSES API
@@ -3253,6 +3348,71 @@ export const classesApi = {
     }
     const errData = await res.json().catch(() => ({}));
     throw new Error(errData.error || "Cập nhật hạn nộp bài tập thất bại");
+  },
+
+  getGraduationSummary: async (classId: string): Promise<ClassGraduationSummary> => {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/classes/${classId}/graduation-summary`, {
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (res.ok) {
+      const json = await res.json();
+      return json.data;
+    }
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || "Không thể lấy báo cáo tổng kết lớp học");
+  },
+
+  close: async (classId: string): Promise<{ success: boolean; message: string; data: any }> => {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/classes/${classId}/close`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || "Đóng lớp học thất bại");
+  },
+
+  getLeaderboard: async (classId: string): Promise<ClassLeaderboardData> => {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/classes/${classId}/leaderboard`, {
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (res.ok) {
+      const json = await res.json();
+      return json.data;
+    }
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || "Không thể lấy bảng thi đua lớp học");
+  },
+
+  getLeagueStandings: async (branchId?: string): Promise<ClassLeagueResponse> => {
+    const token = await getAuthToken();
+    const query = branchId && branchId !== "ALL" ? `?branchId=${branchId}` : "";
+    const res = await fetch(`${API_BASE_URL}/classes/league-standings${query}`, {
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (res.ok) {
+      const json = await res.json();
+      return json.data;
+    }
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || "Không thể lấy bảng tổng sắp thi đua liên lớp");
   },
 };
 

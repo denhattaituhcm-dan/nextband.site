@@ -16,6 +16,7 @@ import {
   Bell,
   FileCheck,
   TrendingUp,
+  Trophy,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -57,6 +58,11 @@ const teachingItems = [
     title: "Ngân hàng bài",
     url: "/admin/exams",
     icon: FolderKanban,
+  },
+  {
+    title: "Thi đua lớp học",
+    url: "/admin/class-league",
+    icon: Trophy,
   },
 ];
 

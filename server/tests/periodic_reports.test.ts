@@ -45,6 +45,22 @@ describe("PeriodicReportService - Date Range & Calculations", () => {
     expect(endDate.getDate()).toBe(31);
   });
 
+  it("calculates exact date range for CUSTOM academic year (2025-09-01 to 2026-08-31)", () => {
+    const { startDate, endDate } = calculateDateRange({
+      periodType: "CUSTOM",
+      startDate: "2025-09-01",
+      endDate: "2026-08-31",
+    });
+
+    expect(startDate.getFullYear()).toBe(2025);
+    expect(startDate.getMonth()).toBe(8); // September
+    expect(startDate.getDate()).toBe(1);
+
+    expect(endDate.getFullYear()).toBe(2026);
+    expect(endDate.getMonth()).toBe(7); // August
+    expect(endDate.getDate()).toBe(31);
+  });
+
   it("aggregates report correctly and formats executive summary text", async () => {
     const mockPrisma: any = {
       branch: {

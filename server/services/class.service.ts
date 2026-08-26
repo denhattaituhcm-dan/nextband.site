@@ -232,6 +232,407 @@ export class ClassService {
     await this.notifService.createBatchNotifications(this.prisma, notifPayloads);
   }
 
+  // Use Case: Get Center-Wide Inter-Class League Standings (Class Competition & Gamification)
+  async getLeagueStandings(branchId?: string) {
+    const where: any = {
+      status: "ACTIVE",
+    };
+    if (branchId && branchId !== "ALL") {
+      where.branchId = branchId;
+    }
+
+    const classes = await this.prisma.class.findMany({
+      where,
+      include: {
+        course: { select: { id: true, title: true } },
+        branch: { select: { id: true, name: true } },
+        teacher: { select: { id: true, fullName: true, avatarUrl: true } },
+        sessions: { select: { id: true } },
+        students: {
+          where: { deletedAt: null },
+          include: {
+            student: {
+              select: {
+                userId: true,
+                fullName: true,
+              },
+            },
+          },
+        },
+        homeworks: {
+          select: {
+            id: true,
+            submissions: {
+              select: {
+                studentId: true,
+                status: true,
+                submittedAt: true,
+              },
+            },
+          },
+        },
+        attendance: {
+          select: {
+            studentId: true,
+            status: true,
+          },
+        },
+      },
+    });
+
+    const standings = classes.map((c) => {
+      const totalStudents = c.students.length;
+      const totalHomeworks = c.homeworks.length;
+      const totalSessions = c.sessions.length;
+
+      // 1. Completion rate across the class
+      let totalCompletedSubmissions = 0;
+      const studentActivityDates: Record<string, Set<string>> = {};
+
+      for (const hw of c.homeworks) {
+        for (const sub of hw.submissions) {
+          if (sub.status === "SUBMITTED" || sub.status === "GRADED") {
+            totalCompletedSubmissions++;
+            if (sub.submittedAt) {
+              if (!studentActivityDates[sub.studentId]) {
+                studentActivityDates[sub.studentId] = new Set();
+              }
+              studentActivityDates[sub.studentId].add(new Date(sub.submittedAt).toISOString().split("T")[0]);
+            }
+          }
+        }
+      }
+
+      const totalAssignedSlots = totalStudents * totalHomeworks;
+      const completionRate = totalAssignedSlots > 0 ? Math.round((totalCompletedSubmissions / totalAssignedSlots) * 100) : 0;
+
+      // 2. Attendance rate
+      const totalAttendanceSlots = totalStudents * totalSessions;
+      const attendedCount = c.attendance.filter((a) => a.status === "PRESENT" || a.status === "LATE").length;
+      const attendanceRate = totalAttendanceSlots > 0 ? Math.round((attendedCount / totalAttendanceSlots) * 100) : 100;
+
+      // 3. Average Streak Days across students
+      let totalStreak = 0;
+      if (totalStudents > 0) {
+        for (const cs of c.students) {
+          const days = studentActivityDates[cs.student.userId]?.size || 0;
+          const streak = days > 0 ? Math.min(14, days * 2) : 1;
+          totalStreak += streak;
+        }
+      }
+      const avgStreak = totalStudents > 0 ? Number((totalStreak / totalStudents).toFixed(1)) : 0;
+
+      // 4. League Score calculation (Fair scale out of 10,000 points)
+      // LeagueScore = (completionRate * 70) + (attendanceRate * 20) + (avgStreak * 50)
+      const leagueScore = Math.round(completionRate * 70 + attendanceRate * 20 + avgStreak * 50);
+
+      return {
+        classId: c.id,
+        className: c.name,
+        courseTitle: c.course?.title || "Khóa học",
+        branchName: c.branch?.name || "Chưa gán",
+        branchId: c.branchId,
+        teacherName: c.teacher?.fullName || "Chưa phân công",
+        teacherAvatar: c.teacher?.avatarUrl || null,
+        totalStudents,
+        totalHomeworks,
+        totalSessions,
+        totalCompletedSubmissions,
+        totalAssignedSlots,
+        completionRate,
+        attendanceRate,
+        avgStreak,
+        leagueScore,
+      };
+    });
+
+    // Sort descending by leagueScore, then by completionRate
+    standings.sort((a, b) => {
+      if (b.leagueScore !== a.leagueScore) {
+        return b.leagueScore - a.leagueScore;
+      }
+      return b.completionRate - a.completionRate;
+    });
+
+    // Assign rank
+    const rankedStandings = standings.map((item, index) => ({
+      ...item,
+      rank: index + 1,
+    }));
+
+    return {
+      totalClasses: rankedStandings.length,
+      standings: rankedStandings,
+    };
+  }
+
+  // Use Case: Get Class Progress Leaderboard for Students & Peers (Gamified Race to 100%)
+  async getClassLeaderboard(user: { id: string; roles: string[] }, classId: string) {
+    const classData = await this.prisma.class.findUnique({
+      where: { id: classId },
+      include: {
+        course: { select: { id: true, title: true } },
+        students: {
+          where: { deletedAt: null },
+          include: {
+            student: {
+              select: {
+                userId: true,
+                fullName: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+        homeworks: {
+          select: {
+            id: true,
+            title: true,
+            deadline: true,
+            submissions: {
+              select: {
+                studentId: true,
+                status: true,
+                submittedAt: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!classData) {
+      throw new NotFoundError("Không tìm thấy lớp học");
+    }
+
+    const totalHomeworks = classData.homeworks.length;
+    const now = new Date();
+
+    // 1. Next upcoming homework deadline for the whole class
+    const upcomingHomeworks = classData.homeworks
+      .filter((h) => h.deadline && new Date(h.deadline) >= now)
+      .sort((a, b) => new Date(a.deadline!).getTime() - new Date(b.deadline!).getTime());
+    
+    const nextHw = upcomingHomeworks[0] || null;
+    const nextUpcomingHomework = nextHw
+      ? {
+          title: nextHw.title,
+          deadline: nextHw.deadline,
+          isUrgent: new Date(nextHw.deadline!).getTime() - now.getTime() < 48 * 60 * 60 * 1000,
+        }
+      : null;
+
+    // 2. Calculate individual student metrics & streak
+    const studentRanks = classData.students.map((cs) => {
+      const student = cs.student;
+      const studentId = student.userId;
+
+      let completedCount = 0;
+      const activityDays = new Set<string>();
+
+      for (const hw of classData.homeworks) {
+        const sub = hw.submissions.find((s) => s.studentId === studentId);
+        if (sub && (sub.status === "SUBMITTED" || sub.status === "GRADED")) {
+          completedCount++;
+          if (sub.submittedAt) {
+            activityDays.add(new Date(sub.submittedAt).toISOString().split("T")[0]);
+          }
+        }
+      }
+
+      const completionRate = totalHomeworks > 0 ? Math.round((completedCount / totalHomeworks) * 100) : 0;
+      // Meaningful streak: active submission days (or baseline proportional to work)
+      const streakDays = Math.max(1, activityDays.size > 0 ? Math.min(14, activityDays.size * 2) : (completedCount > 0 ? Math.min(completedCount + 1, 7) : 1));
+
+      return {
+        studentId,
+        fullName: student.fullName || "Học viên",
+        avatarUrl: student.avatarUrl,
+        completedCount,
+        totalHomeworks,
+        completionRate,
+        streakDays,
+        isMe: studentId === user.id,
+      };
+    });
+
+    // 3. Calculate collective class progress
+    const totalStudents = studentRanks.length;
+    const totalAssignedSlots = totalStudents * totalHomeworks;
+    const totalSubmittedSlots = studentRanks.reduce((acc, s) => acc + s.completedCount, 0);
+    const classCompletionRate = totalAssignedSlots > 0 ? Math.round((totalSubmittedSlots / totalAssignedSlots) * 100) : 0;
+
+    // Target Band
+    const bandMatch = classData.course?.title?.match(/\d+(\.\d+)?/);
+    const targetBand = bandMatch ? `Band ${bandMatch[0]}+` : "Band 6.5+";
+
+    // Sort descending by completedCount, then by fullName
+    studentRanks.sort((a, b) => {
+      if (b.completedCount !== a.completedCount) {
+        return b.completedCount - a.completedCount;
+      }
+      return a.fullName.localeCompare(b.fullName);
+    });
+
+    let currentRank = 1;
+    const rankedStudents = studentRanks.map((s, index) => {
+      if (index > 0 && s.completedCount < studentRanks[index - 1].completedCount) {
+        currentRank = index + 1;
+      }
+      return {
+        ...s,
+        rank: currentRank,
+      };
+    });
+
+    const myRankItem = rankedStudents.find((s) => s.isMe);
+
+    return {
+      classId: classData.id,
+      className: classData.name,
+      courseTitle: classData.course?.title || "IELTS Course",
+      targetBand,
+      totalStudents,
+      totalHomeworks,
+      classCompletionRate,
+      totalSubmittedSlots,
+      totalAssignedSlots,
+      nextUpcomingHomework,
+      myRank: myRankItem?.rank || null,
+      myCompletedCount: myRankItem?.completedCount || 0,
+      students: rankedStudents,
+    };
+  }
+
+  // Use Case: Get End-of-Course Graduation Summary (Honor Roll, Completion & Overdue Rates)
+  async getGraduationSummary(classId: string) {
+    const classData = await this.prisma.class.findUnique({
+      where: { id: classId },
+      include: {
+        course: { select: { id: true, title: true } },
+        teacher: { select: { id: true, fullName: true, email: true } },
+        sessions: { select: { id: true, sessionNumber: true, plannedDate: true } },
+        students: {
+          where: { deletedAt: null },
+          include: {
+            student: {
+              select: {
+                userId: true,
+                fullName: true,
+                email: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+        homeworks: {
+          select: {
+            id: true,
+            title: true,
+            deadline: true,
+            submissions: {
+              select: {
+                id: true,
+                studentId: true,
+                status: true,
+                submittedAt: true,
+                score: true,
+              },
+            },
+          },
+        },
+        attendance: {
+          select: {
+            studentId: true,
+            status: true,
+          },
+        },
+      },
+    });
+
+    if (!classData) {
+      throw new NotFoundError("Không tìm thấy lớp học");
+    }
+
+    const totalHomeworks = classData.homeworks.length;
+    const totalSessions = classData.sessions.length;
+
+    const studentResults = classData.students.map((cs) => {
+      const student = cs.student;
+      const studentId = student.userId;
+
+      // Calculate homework metrics
+      let submittedCount = 0;
+      let onTimeCount = 0;
+      let overdueCount = 0;
+
+      for (const hw of classData.homeworks) {
+        const sub = hw.submissions.find((s) => s.studentId === studentId);
+        const isSubmitted = sub && (sub.status === "SUBMITTED" || sub.status === "GRADED");
+        if (isSubmitted) {
+          submittedCount++;
+          if (sub.submittedAt && hw.deadline) {
+            const subTime = new Date(sub.submittedAt).getTime();
+            const deadTime = new Date(hw.deadline).getTime();
+            if (subTime > deadTime) {
+              overdueCount++;
+            } else {
+              onTimeCount++;
+            }
+          } else {
+            onTimeCount++;
+          }
+        }
+      }
+
+      const completionRate = totalHomeworks > 0 ? Math.round((submittedCount / totalHomeworks) * 100) : 100;
+      const overdueRate = submittedCount > 0 ? Math.round((overdueCount / submittedCount) * 100) : 0;
+
+      // Calculate attendance metrics
+      const studentAttendances = classData.attendance.filter((a) => a.studentId === studentId);
+      const attendedSessions = studentAttendances.filter((a) => a.status === "PRESENT" || a.status === "LATE").length;
+      const attendanceRate = totalSessions > 0 ? Math.round((attendedSessions / totalSessions) * 100) : 100;
+
+      const isHonorRoll = totalHomeworks > 0 && completionRate === 100 && overdueCount === 0;
+
+      return {
+        studentId,
+        fullName: student.fullName,
+        email: student.email,
+        avatarUrl: student.avatarUrl,
+        classStudentStatus: cs.status,
+        totalHomeworks,
+        submittedCount,
+        completionRate,
+        onTimeCount,
+        overdueCount,
+        overdueRate,
+        totalSessions,
+        attendedSessions,
+        attendanceRate,
+        isHonorRoll,
+      };
+    });
+
+    const honorRollCount = studentResults.filter((s) => s.isHonorRoll).length;
+
+    return {
+      classId: classData.id,
+      className: classData.name,
+      teacherName: classData.teacher?.fullName || "Chưa phân công",
+      courseTitle: classData.course?.title || "IELTS Program",
+      startDate: classData.startDate,
+      endDate: classData.endDate,
+      status: classData.status,
+      closedAt: classData.closedAt,
+      totalSessions,
+      totalHomeworks,
+      totalStudents: studentResults.length,
+      honorRollCount,
+      students: studentResults,
+    };
+  }
+
   // Use Case: Close Class (Teacher or Admin)
   async closeClass(user: { id: string; roles: string[] }, id: string) {
     const classData = await this.repo.findById(id);
@@ -244,11 +645,16 @@ export class ClassService {
       throw new AuthorizationError("Từ chối truy cập - bạn không có quyền đóng lớp này", 403);
     }
 
+    const graduationSummary = await this.getGraduationSummary(id);
+
     if (classData.status === "CLOSED" || !classData.isActive) {
       return {
         success: true,
         message: "Lớp học đã ở trạng thái đóng.",
-        data: classData,
+        data: {
+          class: classData,
+          graduationSummary,
+        },
       };
     }
 
@@ -292,50 +698,65 @@ export class ClassService {
 
     return {
       success: true,
-      message: `Đã đóng lớp "${updatedClass.name}" thành công và gửi thông báo đến học viên.`,
-      data: updatedClass,
+      message: `Đã đóng lớp "${updatedClass.name}" thành công và tổng hợp kết quả tốt nghiệp cho ${graduationSummary.totalStudents} học viên (${graduationSummary.honorRollCount} học viên vinh danh 100%).`,
+      data: {
+        class: updatedClass,
+        graduationSummary,
+      },
     };
   }
 
-  // Use Case: Run Lifecycle Maintenance (Auto-close after 6 months & Auto-cleanup after 3 months)
+  // Use Case: Run Lifecycle Maintenance (Auto-close after 7 days grace period & 6 months safety cutoff)
   async runClassLifecycleMaintenance() {
     const now = new Date();
+    let closedCount = 0;
 
-    // 1. Tự động đóng các lớp ACTIVE quá 6 tháng kể từ ngày khai giảng (startDate)
-    const sixMonthsAgo = new Date(now.getTime() - 180 * 24 * 60 * 60 * 1000);
-    const expiredClasses = await this.prisma.class.findMany({
+    // 1. Tự động đóng lớp sau 1 tuần (7 ngày grace period) kể từ buổi học cuối cùng hoặc endDate
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const candidateClasses = await this.prisma.class.findMany({
       where: {
         status: "ACTIVE",
-        startDate: {
-          lte: sixMonthsAgo,
-        },
       },
-      select: {
-        id: true,
-        name: true,
-        teacherId: true,
+      include: {
+        sessions: {
+          select: { plannedDate: true },
+          orderBy: { plannedDate: "desc" },
+          take: 1,
+        },
         students: { select: { studentId: true } },
       },
     });
 
-    let closedCount = 0;
-    for (const cls of expiredClasses) {
-      await this.prisma.class.update({
-        where: { id: cls.id },
-        data: {
-          status: "CLOSED",
-          isActive: false,
-          closedAt: now,
-        },
-      });
+    for (const cls of candidateClasses) {
+      const lastSessionDate = cls.sessions[0]?.plannedDate || cls.endDate;
+      const isPastGracePeriod = lastSessionDate && new Date(lastSessionDate) <= sevenDaysAgo;
 
-      await this.sendClassClosedNotifications({
-        id: cls.id,
-        name: cls.name,
-        teacherId: cls.teacherId,
-        students: cls.students,
-      });
-      closedCount++;
+      // Safety cutoff: Lớp mở quá 180 ngày kể từ startDate
+      const isSixMonthsOld = cls.startDate && new Date(cls.startDate) <= new Date(now.getTime() - 180 * 24 * 60 * 60 * 1000);
+
+      if (isPastGracePeriod || isSixMonthsOld) {
+        await this.prisma.class.update({
+          where: { id: cls.id },
+          data: {
+            status: "CLOSED",
+            isActive: false,
+            closedAt: now,
+          },
+        });
+
+        await this.prisma.classStudent.updateMany({
+          where: { classId: cls.id, status: "ACTIVE", deletedAt: null },
+          data: { status: "COMPLETED", completedAt: now },
+        });
+
+        await this.sendClassClosedNotifications({
+          id: cls.id,
+          name: cls.name,
+          teacherId: cls.teacherId,
+          students: cls.students,
+        });
+        closedCount++;
+      }
     }
 
     // 2. Tự động dọn dẹp / xóa sạch các lớp đã CLOSED quá 3 tháng (90 ngày) kể từ ngày closedAt
