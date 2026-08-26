@@ -122,40 +122,31 @@ export const ReadlangExplorationSidebar: React.FC<ReadlangExplorationSidebarProp
 
       {/* Detailed Contextual Breakdown (Readlang Style) */}
       <div className="space-y-3.5 text-xs text-stone-700 leading-relaxed">
-        {/* Section 1: Core Meaning */}
-        <div className="space-y-1.5">
-          <p className="font-bold text-stone-900 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
-            <span className="text-amber-500">💡</span> Định Nghĩa Tổng Quát:
-          </p>
-          <p className="bg-amber-50/60 p-3 rounded-xl border border-amber-200/60 text-amber-950">
-            Từ <strong>&ldquo;{activeTerm.term}&rdquo;</strong> trong tiếng Anh biểu thị ý nghĩa <strong>&ldquo;{cleanVi.split("/")[0].trim()}&rdquo;</strong>.
-            {activeTerm.meaning_en && activeTerm.meaning_en !== activeTerm.term && (
-              <span className="block mt-1 italic text-stone-600">
-                &ldquo;{activeTerm.meaning_en}&rdquo;
-              </span>
-            )}
-          </p>
-        </div>
+        {/* Section 1: Core Meaning & English Definition */}
+        {activeTerm.meaning_en && 
+          activeTerm.meaning_en.toLowerCase().trim() !== activeTerm.term.toLowerCase().trim() && 
+          activeTerm.meaning_en.toLowerCase().trim() !== cleanVi.toLowerCase().trim() && (
+          <div className="space-y-1.5">
+            <p className="font-bold text-stone-900 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+              <span className="text-amber-500">💡</span> Định Nghĩa Tiếng Anh:
+            </p>
+            <p className="bg-amber-50/60 p-3 rounded-xl border border-amber-200/60 text-amber-950 italic">
+              &ldquo;{activeTerm.meaning_en}&rdquo;
+            </p>
+          </div>
+        )}
 
-        {/* Section 2: Contextual Application in Glaciology Case */}
+        {/* Section 2: Contextual Application in Case Dossier */}
         {activeTerm.context_note && (
           <div className="space-y-1.5">
             <p className="font-bold text-stone-900 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
               <span className="text-emerald-600">📌</span> Trong Ngữ Cảnh Bài Đọc Này:
             </p>
-            <div className="bg-emerald-50/70 p-3 rounded-xl border border-emerald-200/80 text-emerald-950">
+            <div className="bg-emerald-50/70 p-3 rounded-xl border border-emerald-200/80 text-emerald-950 font-medium">
               {activeTerm.context_note}
             </div>
           </div>
         )}
-
-        {/* Section 3: Academic Takeaway */}
-        <div className="rounded-xl bg-stone-50 p-3 border border-stone-200/80 space-y-1">
-          <span className="font-bold text-stone-800 block text-[11px]">🎯 Ghi chú học thuật IELTS:</span>
-          <p className="text-stone-600 text-[11px]">
-            Chú ý cách kết hợp từ (collocations) và dạng thức biến đổi của từ trong các văn bản học thuật và báo cáo khoa học.
-          </p>
-        </div>
       </div>
     </div>
   );
