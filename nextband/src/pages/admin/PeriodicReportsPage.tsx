@@ -44,6 +44,13 @@ import {
   BarChart3,
   Layers,
   Sparkles,
+  BookOpen,
+  LayoutGrid,
+  AlignLeft,
+  CalendarRange,
+  ArrowUpRight,
+  UserCheck,
+  Award,
 } from "lucide-react";
 
 export default function PeriodicReportsPage() {
@@ -66,6 +73,7 @@ export default function PeriodicReportsPage() {
   const [customEndDate, setCustomEndDate] = useState<string>(defaultTo);
 
   const [copied, setCopied] = useState(false);
+  const [summaryViewMode, setSummaryViewMode] = useState<"visual" | "text">("visual");
 
   const yearOptions = useMemo(() => {
     return [currentYear, currentYear - 1, currentYear - 2, currentYear - 3];
@@ -119,29 +127,38 @@ export default function PeriodicReportsPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto print:p-0 print:space-y-4">
+    <div className="space-y-6 max-w-7xl mx-auto print:p-0 print:space-y-4 pb-12">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden bg-card/60 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border shadow-sm">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight">Báo cáo & Tổng kết Hoạt động</h1>
-            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-xs font-semibold">
-              Định kỳ
-            </Badge>
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-primary/10 text-primary">
+              <BarChart3 className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+                  Báo cáo & Tổng kết Hoạt động
+                </h1>
+                <Badge className="bg-primary/15 text-primary border-primary/30 font-semibold px-2 py-0.5 text-[11px]">
+                  Định kỳ
+                </Badge>
+              </div>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+                Tổng hợp chỉ số toàn diện theo Tháng, Quý hoặc Năm phục vụ công tác điều hành & hoạch định.
+              </p>
+            </div>
           </div>
-          <p className="text-sm text-muted-foreground mt-1">
-            Tổng kết dữ liệu toàn diện theo Tháng, Quý hoặc Năm phục vụ công tác viết báo cáo và hoạch định.
-          </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5 self-start sm:self-auto">
           <Button
             variant="outline"
             size="sm"
             onClick={handlePrint}
-            className="text-xs h-9 gap-1.5"
+            className="text-xs h-9 gap-1.5 bg-background shadow-xs hover:bg-muted"
           >
-            <Printer className="h-4 w-4" />
+            <Printer className="h-4 w-4 text-muted-foreground" />
             In báo cáo
           </Button>
           <Button
@@ -149,7 +166,7 @@ export default function PeriodicReportsPage() {
             size="sm"
             onClick={handleCopySummary}
             disabled={!report || isLoading}
-            className="text-xs h-9 gap-1.5 shadow-sm bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+            className="text-xs h-9 gap-1.5 shadow-sm font-medium transition-all"
           >
             {copied ? <Check className="h-4 w-4 text-emerald-300" /> : <Copy className="h-4 w-4" />}
             {copied ? "Đã sao chép Word" : "Sao chép tóm tắt Word"}
@@ -158,24 +175,35 @@ export default function PeriodicReportsPage() {
       </div>
 
       {/* Filter Toolbar */}
-      <Card className="bg-card/80 border shadow-sm print:hidden">
-        <CardContent className="p-4">
-          <div className="flex flex-wrap items-center gap-4">
+      <Card className="border-slate-200/90 dark:border-border shadow-sm bg-card overflow-hidden">
+        <div className="bg-muted/40 px-4 py-2.5 border-b flex items-center justify-between">
+          <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
+            <Calendar className="h-3.5 w-3.5 text-primary" />
+            <span>Bộ lọc báo cáo</span>
+          </div>
+          {report && (
+            <Badge variant="outline" className="text-[11px] font-medium bg-background text-muted-foreground">
+              {report.period.periodLabel} • {report.period.branchName}
+            </Badge>
+          )}
+        </div>
+        <CardContent className="p-4 sm:p-5">
+          <div className="flex flex-wrap items-end gap-4 lg:gap-6">
             {/* Period Type Selector */}
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
                 Chu kỳ tổng kết
               </label>
-              <div className="flex rounded-lg border bg-muted/40 p-0.5">
+              <div className="inline-flex rounded-lg border bg-muted/50 p-1 gap-1">
                 {(["YEAR", "QUARTER", "MONTH", "CUSTOM"] as const).map((type) => (
                   <button
                     key={type}
                     type="button"
                     onClick={() => setPeriodType(type)}
-                    className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
+                    className={`px-3 py-1.5 text-xs rounded-md transition-all font-medium ${
                       periodType === type
-                        ? "bg-background text-foreground shadow-sm font-semibold"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "bg-background text-foreground shadow-xs font-semibold border border-border/60 text-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-background/50"
                     }`}
                   >
                     {type === "YEAR"
@@ -194,15 +222,15 @@ export default function PeriodicReportsPage() {
             {periodType !== "CUSTOM" && (
               <>
                 {/* Year Selector */}
-                <div className="space-y-1 min-w-[120px]">
-                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                <div className="space-y-1.5 min-w-[120px]">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
                     Năm
                   </label>
                   <Select
                     value={String(selectedYear)}
                     onValueChange={(val) => setSelectedYear(Number(val))}
                   >
-                    <SelectTrigger className="h-8 text-xs">
+                    <SelectTrigger className="h-9 text-xs bg-background">
                       <SelectValue placeholder="Chọn năm" />
                     </SelectTrigger>
                     <SelectContent>
@@ -217,15 +245,15 @@ export default function PeriodicReportsPage() {
 
                 {/* Quarter Selector (if QUARTER) */}
                 {periodType === "QUARTER" && (
-                  <div className="space-y-1 min-w-[120px]">
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  <div className="space-y-1.5 min-w-[140px]">
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
                       Quý
                     </label>
                     <Select
                       value={String(selectedQuarter)}
                       onValueChange={(val) => setSelectedQuarter(Number(val))}
                     >
-                      <SelectTrigger className="h-8 text-xs">
+                      <SelectTrigger className="h-9 text-xs bg-background">
                         <SelectValue placeholder="Chọn quý" />
                       </SelectTrigger>
                       <SelectContent>
@@ -240,15 +268,15 @@ export default function PeriodicReportsPage() {
 
                 {/* Month Selector (if MONTH) */}
                 {periodType === "MONTH" && (
-                  <div className="space-y-1 min-w-[120px]">
-                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  <div className="space-y-1.5 min-w-[120px]">
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
                       Tháng
                     </label>
                     <Select
                       value={String(selectedMonth)}
                       onValueChange={(val) => setSelectedMonth(Number(val))}
                     >
-                      <SelectTrigger className="h-8 text-xs">
+                      <SelectTrigger className="h-9 text-xs bg-background">
                         <SelectValue placeholder="Chọn tháng" />
                       </SelectTrigger>
                       <SelectContent>
@@ -264,49 +292,48 @@ export default function PeriodicReportsPage() {
               </>
             )}
 
-            {/* If CUSTOM: Date Pickers (Từ ngày ... Đến ngày ...) */}
+            {/* If CUSTOM: Date Pickers */}
             {periodType === "CUSTOM" && (
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              <div className="flex flex-wrap items-end gap-3">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
                     Từ ngày
                   </label>
                   <input
                     type="date"
                     value={customStartDate}
                     onChange={(e) => setCustomStartDate(e.target.value)}
-                    className="h-8 text-xs px-2.5 py-1 rounded-md border bg-background focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="h-9 text-xs px-3 py-1 rounded-md border bg-background text-foreground shadow-xs focus:outline-none focus:ring-1 focus:ring-primary"
                   />
                 </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
                     Đến ngày
                   </label>
                   <input
                     type="date"
                     value={customEndDate}
                     onChange={(e) => setCustomEndDate(e.target.value)}
-                    className="h-8 text-xs px-2.5 py-1 rounded-md border bg-background focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="h-9 text-xs px-3 py-1 rounded-md border bg-background text-foreground shadow-xs focus:outline-none focus:ring-1 focus:ring-primary"
                   />
                 </div>
                 {/* Presets */}
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
                     Phím tắt nhanh
                   </label>
-                  <div className="flex items-center gap-1.5 pt-0.5">
+                  <div className="flex items-center gap-1.5 h-9">
                     <button
                       type="button"
                       onClick={() => {
                         const now = new Date();
                         const curYear = now.getFullYear();
-                        // School year: 01/09 last year to 31/08 this year
                         const syStart = now.getMonth() >= 8 ? `${curYear}-09-01` : `${curYear - 1}-09-01`;
                         const syEnd = now.getMonth() >= 8 ? `${curYear + 1}-08-31` : `${curYear}-08-31`;
                         setCustomStartDate(syStart);
                         setCustomEndDate(syEnd);
                       }}
-                      className="px-2 py-1 text-[11px] rounded bg-muted/60 hover:bg-muted font-medium text-foreground transition-colors"
+                      className="h-9 px-2.5 text-[11px] rounded-md bg-secondary/80 hover:bg-secondary border font-medium text-secondary-foreground transition-all shadow-xs"
                     >
                       Niên khóa (01/09 – 31/08)
                     </button>
@@ -318,7 +345,7 @@ export default function PeriodicReportsPage() {
                         setCustomStartDate(sixMonthsAgo.toISOString().split("T")[0]);
                         setCustomEndDate(now.toISOString().split("T")[0]);
                       }}
-                      className="px-2 py-1 text-[11px] rounded bg-muted/60 hover:bg-muted font-medium text-foreground transition-colors"
+                      className="h-9 px-2.5 text-[11px] rounded-md bg-secondary/80 hover:bg-secondary border font-medium text-secondary-foreground transition-all shadow-xs"
                     >
                       6 tháng gần đây
                     </button>
@@ -328,16 +355,19 @@ export default function PeriodicReportsPage() {
             )}
 
             {/* Branch Selector */}
-            <div className="space-y-1 min-w-[180px]">
-              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            <div className="space-y-1.5 min-w-[200px] sm:ml-auto">
+              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
                 Phạm vi cơ sở
               </label>
               <Select
                 value={selectedBranch}
                 onValueChange={(val) => setSelectedBranch(val)}
               >
-                <SelectTrigger className="h-8 text-xs">
-                  <SelectValue placeholder="Chọn cơ sở" />
+                <SelectTrigger className="h-9 text-xs bg-background">
+                  <div className="flex items-center gap-1.5 truncate">
+                    <Building2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                    <SelectValue placeholder="Chọn cơ sở" />
+                  </div>
                 </SelectTrigger>
                 <SelectContent>
                   {canSelectAll && (
@@ -359,17 +389,17 @@ export default function PeriodicReportsPage() {
 
       {/* Loading state */}
       {isLoading && (
-        <div className="flex flex-col items-center justify-center p-16 space-y-4 border rounded-xl bg-card/50">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="text-sm text-muted-foreground animate-pulse">
-            Đang tổng hợp các sự kiện lịch sử của trung tâm...
+        <div className="flex flex-col items-center justify-center p-16 space-y-4 border rounded-2xl bg-card/60 shadow-sm">
+          <div className="h-9 w-9 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <p className="text-sm font-medium text-muted-foreground animate-pulse">
+            Đang tổng hợp các chỉ số hoạt động định kỳ...
           </p>
         </div>
       )}
 
       {/* Error state */}
       {isError && (
-        <Card className="border-destructive/30 bg-destructive/5 p-6 text-center">
+        <Card className="border-destructive/30 bg-destructive/5 p-6 text-center shadow-sm">
           <AlertCircle className="h-8 w-8 text-destructive mx-auto mb-2" />
           <h3 className="font-semibold text-destructive">Không thể tải báo cáo</h3>
           <p className="text-xs text-muted-foreground mt-1 mb-4">
@@ -395,38 +425,163 @@ export default function PeriodicReportsPage() {
           </div>
 
           {/* 1. Executive Summary Box */}
-          <Card className="border-primary/20 bg-gradient-to-br from-primary/[0.04] to-card shadow-sm overflow-hidden">
-            <CardHeader className="p-4 pb-2 border-b bg-primary/[0.02] flex flex-row items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-primary" />
-                <CardTitle className="text-sm font-bold tracking-tight">
-                  Tóm tắt Điều hành ({report.period.periodLabel})
-                </CardTitle>
+          <Card className="border-indigo-200/70 dark:border-indigo-900/50 bg-gradient-to-br from-indigo-50/50 via-card to-background shadow-sm overflow-hidden">
+            <CardHeader className="p-4 sm:p-5 pb-3 border-b bg-indigo-500/[0.04] dark:bg-indigo-500/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <div className="p-1.5 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                  <Sparkles className="h-4 w-4" />
+                </div>
+                <div>
+                  <CardTitle className="text-base font-bold tracking-tight text-foreground flex items-center gap-2">
+                    Tóm tắt Điều hành
+                    <Badge variant="outline" className="bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 border-indigo-200 text-[11px] font-semibold">
+                      {report.period.periodLabel}
+                    </Badge>
+                  </CardTitle>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Phạm vi: <span className="font-medium text-foreground">{report.period.branchName}</span>
+                  </p>
+                </div>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleCopySummary}
-                className="h-7 text-xs text-primary hover:bg-primary/10 gap-1.5 print:hidden"
-              >
-                {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
-                {copied ? "Đã chép" : "Sao chép"}
-              </Button>
+
+              {/* View Switcher & Copy Action */}
+              <div className="flex items-center gap-2 self-start sm:self-auto print:hidden">
+                <div className="inline-flex rounded-lg border bg-muted/60 p-0.5 gap-0.5">
+                  <button
+                    type="button"
+                    onClick={() => setSummaryViewMode("visual")}
+                    className={`px-2.5 py-1 text-xs rounded-md transition-all flex items-center gap-1 font-medium ${
+                      summaryViewMode === "visual"
+                        ? "bg-background text-foreground shadow-xs font-semibold"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <LayoutGrid className="h-3 w-3" />
+                    Trực quan
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSummaryViewMode("text")}
+                    className={`px-2.5 py-1 text-xs rounded-md transition-all flex items-center gap-1 font-medium ${
+                      summaryViewMode === "text"
+                        ? "bg-background text-foreground shadow-xs font-semibold"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <AlignLeft className="h-3 w-3" />
+                    Văn bản Word
+                  </button>
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCopySummary}
+                  className="h-7 text-xs text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950 border-indigo-200 gap-1.5"
+                >
+                  {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                  {copied ? "Đã chép" : "Sao chép"}
+                </Button>
+              </div>
             </CardHeader>
-            <CardContent className="p-4">
-              <pre className="whitespace-pre-wrap font-sans text-xs sm:text-sm leading-relaxed text-foreground/90 bg-card/60 p-4 rounded-lg border">
-                {report.summaryText}
-              </pre>
+
+            <CardContent className="p-4 sm:p-5">
+              {summaryViewMode === "visual" ? (
+                <div className="grid gap-3.5 sm:grid-cols-2">
+                  {/* Section 1: Quy mô & Đào tạo */}
+                  <div className="p-3.5 rounded-xl border border-blue-100 dark:border-blue-900/40 bg-blue-50/40 dark:bg-blue-950/20 space-y-2">
+                    <div className="flex items-center gap-2 text-xs font-bold text-blue-800 dark:text-blue-300">
+                      <GraduationCap className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                      <span>1. Quy mô & Đào tạo</span>
+                    </div>
+                    <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1 leading-relaxed">
+                      <p>
+                        • Mở mới: <span className="font-semibold text-blue-700 dark:text-blue-300">{report.classes.opened} lớp</span> • Hoàn thành: <span className="font-medium">{report.classes.completed} lớp</span> • Đang chạy: <span className="font-semibold">{report.classes.runningAtEnd} lớp</span>
+                      </p>
+                      <p>
+                        • Sĩ số trung bình: <span className="font-semibold text-blue-700 dark:text-blue-300">{report.classes.avgClassSize} học viên/lớp</span>
+                      </p>
+                      <p>
+                        • Đăng ký mới: <span className="font-semibold">{report.students.newEnrollments} hv</span> • Đang học cuối kỳ: <span className="font-semibold text-blue-700 dark:text-blue-300">{report.students.activeAtEnd} hv</span>
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">
+                        • Hoàn thành khóa: {report.students.graduated} hv | Bảo lưu: {report.students.reserved} hv | Thôi học: {report.students.dropped !== null ? `${report.students.dropped} hv` : "N/A"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Section 2: Tuyển sinh & Phát triển */}
+                  <div className="p-3.5 rounded-xl border border-emerald-100 dark:border-emerald-900/40 bg-emerald-50/40 dark:bg-emerald-950/20 space-y-2">
+                    <div className="flex items-center gap-2 text-xs font-bold text-emerald-800 dark:text-emerald-300">
+                      <TrendingUp className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                      <span>2. Tuyển sinh & Phát triển</span>
+                    </div>
+                    <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1 leading-relaxed">
+                      <p>
+                        • Tiếp nhận: <span className="font-semibold">{report.admissions.newLeads} leads</span> • Khảo thí test: <span className="font-medium">{report.admissions.placementTests} lượt</span>
+                      </p>
+                      <p>
+                        • Chốt đăng ký: <span className="font-bold text-emerald-700 dark:text-emerald-300">{report.admissions.enrolled} học viên</span>
+                        <Badge className="ml-2 text-[10px] font-bold bg-emerald-600 text-white px-1.5 py-0 h-4">
+                          Chuyển đổi {report.admissions.conversionRate}%
+                        </Badge>
+                      </p>
+                      {report.admissions.bySource.length > 0 && (
+                        <p className="text-[11px] text-muted-foreground truncate">
+                          • Nguồn chính: {report.admissions.bySource.slice(0, 2).map((s) => `${s.source} (${s.enrolled} chốt)`).join(", ")}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Section 3: Đội ngũ Giảng viên */}
+                  <div className="p-3.5 rounded-xl border border-purple-100 dark:border-purple-900/40 bg-purple-50/40 dark:bg-purple-950/20 space-y-2">
+                    <div className="flex items-center gap-2 text-xs font-bold text-purple-800 dark:text-purple-300">
+                      <Users className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                      <span>3. Đội ngũ Giảng viên</span>
+                    </div>
+                    <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1 leading-relaxed">
+                      <p>
+                        • Quy mô cuối kỳ: <span className="font-bold text-purple-700 dark:text-purple-300">{report.teachers.endOfPeriod} giáo viên</span> (Đầu kỳ: {report.teachers.startOfPeriod})
+                      </p>
+                      <p>
+                        • Biến động: Tuyển mới <span className="font-semibold text-emerald-600">+{report.teachers.newlyRecruited}</span> • Nghỉ / thôi dạy <span className="font-semibold text-rose-600">-{report.teachers.resigned}</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Section 4: Hoạt động Học thuật */}
+                  <div className="p-3.5 rounded-xl border border-amber-100 dark:border-amber-900/40 bg-amber-50/40 dark:bg-amber-950/20 space-y-2">
+                    <div className="flex items-center gap-2 text-xs font-bold text-amber-800 dark:text-amber-300">
+                      <BookOpen className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                      <span>4. Hoạt động Học thuật</span>
+                    </div>
+                    <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1 leading-relaxed">
+                      <p>
+                        • Buổi học tổ chức: <span className="font-semibold">{report.academic.totalSessions} buổi</span> • Lượt điểm danh: <span className="font-medium">{report.academic.totalAttendance}</span>
+                      </p>
+                      <p>
+                        • Chuyên cần: <span className="font-bold text-amber-700 dark:text-amber-300">{report.academic.attendanceRate}%</span> • Tỷ lệ nộp bài tập: <span className="font-semibold">{report.academic.submissionRate}%</span> ({report.academic.homeworksSubmitted}/{report.academic.homeworksAssigned})
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <pre className="whitespace-pre-wrap font-sans text-xs leading-relaxed text-foreground bg-card p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs overflow-x-auto">
+                  {report.summaryText}
+                </pre>
+              )}
             </CardContent>
           </Card>
 
           {/* 2. Four Key Indicator Cards */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {/* Card 1: Tuyển sinh */}
-            <Card className="border shadow-sm hover:border-primary/40 transition-colors">
+            <Card className="relative overflow-hidden border-slate-200/90 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+              <div className="h-1.5 w-full bg-blue-500" />
               <CardHeader className="p-4 pb-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
                     Tuyển sinh
                   </span>
                   <div className="h-8 w-8 rounded-lg bg-blue-500/10 text-blue-600 flex items-center justify-center">
@@ -437,21 +592,21 @@ export default function PeriodicReportsPage() {
                   <span className="text-2xl font-black text-foreground">
                     {report.admissions.enrolled}
                   </span>
-                  <span className="text-xs text-muted-foreground">học viên chốt</span>
+                  <span className="text-xs font-medium text-muted-foreground">học viên chốt</span>
                 </div>
               </CardHeader>
-              <CardContent className="p-4 pt-1 text-xs space-y-1.5 border-t mt-2">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Leads mới:</span>
-                  <span className="font-semibold">{report.admissions.newLeads}</span>
+              <CardContent className="p-4 pt-2 text-xs space-y-2 border-t mt-1 bg-muted/20">
+                <div className="flex justify-between items-center">
+                  <span className="text-muted-foreground">Leads tiếp nhận:</span>
+                  <span className="font-semibold text-foreground">{report.admissions.newLeads}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Lượt test đầu vào:</span>
-                  <span className="font-semibold">{report.admissions.placementTests}</span>
+                  <span className="font-semibold text-foreground">{report.admissions.placementTests}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Tỷ lệ chuyển đổi:</span>
-                  <Badge variant="secondary" className="text-[10px] font-bold bg-blue-50 text-blue-700">
+                <div className="flex justify-between items-center pt-1 border-t border-dashed">
+                  <span className="text-muted-foreground font-medium">Tỷ lệ chuyển đổi:</span>
+                  <Badge className="text-[10px] font-bold bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 border-blue-200">
                     {report.admissions.conversionRate}%
                   </Badge>
                 </div>
@@ -459,10 +614,11 @@ export default function PeriodicReportsPage() {
             </Card>
 
             {/* Card 2: Học viên */}
-            <Card className="border shadow-sm hover:border-primary/40 transition-colors">
+            <Card className="relative overflow-hidden border-slate-200/90 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+              <div className="h-1.5 w-full bg-emerald-500" />
               <CardHeader className="p-4 pb-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
                     Quy mô Học viên
                   </span>
                   <div className="h-8 w-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
@@ -473,21 +629,21 @@ export default function PeriodicReportsPage() {
                   <span className="text-2xl font-black text-foreground">
                     {report.students.activeAtEnd}
                   </span>
-                  <span className="text-xs text-muted-foreground">đang học cuối kỳ</span>
+                  <span className="text-xs font-medium text-muted-foreground">đang học cuối kỳ</span>
                 </div>
               </CardHeader>
-              <CardContent className="p-4 pt-1 text-xs space-y-1.5 border-t mt-2">
-                <div className="flex justify-between">
+              <CardContent className="p-4 pt-2 text-xs space-y-2 border-t mt-1 bg-muted/20">
+                <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Đăng ký mới:</span>
-                  <span className="font-semibold">{report.students.newEnrollments}</span>
+                  <span className="font-semibold text-foreground">{report.students.newEnrollments}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Hoàn thành khóa:</span>
                   <span className="font-semibold text-emerald-600">{report.students.graduated}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Bảo lưu / Thôi học:</span>
-                  <span className="text-muted-foreground">
+                <div className="flex justify-between items-center pt-1 border-t border-dashed">
+                  <span className="text-muted-foreground font-medium">Bảo lưu / Thôi học:</span>
+                  <span className="font-semibold text-foreground">
                     {report.students.reserved} BL • {report.students.dropped !== null ? `${report.students.dropped} TH` : "N/A"}
                   </span>
                 </div>
@@ -495,10 +651,11 @@ export default function PeriodicReportsPage() {
             </Card>
 
             {/* Card 3: Lớp học */}
-            <Card className="border shadow-sm hover:border-primary/40 transition-colors">
+            <Card className="relative overflow-hidden border-slate-200/90 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+              <div className="h-1.5 w-full bg-amber-500" />
               <CardHeader className="p-4 pb-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
                     Lớp học
                   </span>
                   <div className="h-8 w-8 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center">
@@ -509,21 +666,21 @@ export default function PeriodicReportsPage() {
                   <span className="text-2xl font-black text-foreground">
                     {report.classes.opened}
                   </span>
-                  <span className="text-xs text-muted-foreground">lớp mở mới</span>
+                  <span className="text-xs font-medium text-muted-foreground">lớp mở mới</span>
                 </div>
               </CardHeader>
-              <CardContent className="p-4 pt-1 text-xs space-y-1.5 border-t mt-2">
-                <div className="flex justify-between">
+              <CardContent className="p-4 pt-2 text-xs space-y-2 border-t mt-1 bg-muted/20">
+                <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Lớp hoàn thành:</span>
-                  <span className="font-semibold">{report.classes.completed}</span>
+                  <span className="font-semibold text-foreground">{report.classes.completed}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Đang chạy cuối kỳ:</span>
-                  <span className="font-semibold">{report.classes.runningAtEnd}</span>
+                  <span className="font-semibold text-foreground">{report.classes.runningAtEnd}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Sĩ số trung bình:</span>
-                  <Badge variant="secondary" className="text-[10px] font-bold bg-amber-50 text-amber-700">
+                <div className="flex justify-between items-center pt-1 border-t border-dashed">
+                  <span className="text-muted-foreground font-medium">Sĩ số trung bình:</span>
+                  <Badge className="text-[10px] font-bold bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300 border-amber-200">
                     {report.classes.avgClassSize} hv/lớp
                   </Badge>
                 </div>
@@ -531,10 +688,11 @@ export default function PeriodicReportsPage() {
             </Card>
 
             {/* Card 4: Giáo viên & Đào tạo */}
-            <Card className="border shadow-sm hover:border-primary/40 transition-colors">
+            <Card className="relative overflow-hidden border-slate-200/90 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+              <div className="h-1.5 w-full bg-purple-500" />
               <CardHeader className="p-4 pb-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
                     Đội ngũ & Học thuật
                   </span>
                   <div className="h-8 w-8 rounded-lg bg-purple-500/10 text-purple-600 flex items-center justify-center">
@@ -545,23 +703,23 @@ export default function PeriodicReportsPage() {
                   <span className="text-2xl font-black text-foreground">
                     {report.teachers.endOfPeriod}
                   </span>
-                  <span className="text-xs text-muted-foreground">giáo viên cuối kỳ</span>
+                  <span className="text-xs font-medium text-muted-foreground">giáo viên cuối kỳ</span>
                 </div>
               </CardHeader>
-              <CardContent className="p-4 pt-1 text-xs space-y-1.5 border-t mt-2">
-                <div className="flex justify-between">
+              <CardContent className="p-4 pt-2 text-xs space-y-2 border-t mt-1 bg-muted/20">
+                <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Tuyển mới / Nghỉ:</span>
-                  <span className="font-semibold">
-                    +{report.teachers.newlyRecruited} / -{report.teachers.resigned}
+                  <span className="font-semibold text-foreground">
+                    <span className="text-emerald-600">+{report.teachers.newlyRecruited}</span> / <span className="text-rose-600">-{report.teachers.resigned}</span>
                   </span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Buổi học tổ chức:</span>
-                  <span className="font-semibold">{report.academic.totalSessions}</span>
+                  <span className="font-semibold text-foreground">{report.academic.totalSessions}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Tỷ lệ chuyên cần:</span>
-                  <Badge variant="secondary" className="text-[10px] font-bold bg-purple-50 text-purple-700">
+                <div className="flex justify-between items-center pt-1 border-t border-dashed">
+                  <span className="text-muted-foreground font-medium">Tỷ lệ chuyên cần:</span>
+                  <Badge className="text-[10px] font-bold bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 border-purple-200">
                     {report.academic.attendanceRate}%
                   </Badge>
                 </div>
@@ -572,49 +730,67 @@ export default function PeriodicReportsPage() {
           {/* 3. Detailed Data Tables (2 Columns) */}
           <div className="grid gap-6 lg:grid-cols-2">
             {/* Table 1: Phân tích Nguồn Tuyển sinh */}
-            <Card className="border shadow-sm">
-              <CardHeader className="p-4 pb-2 border-b bg-muted/20">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4 text-blue-600" />
-                    <CardTitle className="text-sm font-bold">
+            <Card className="border-slate-200/90 dark:border-slate-800 shadow-sm overflow-hidden">
+              <CardHeader className="p-4 pb-3 border-b bg-muted/40 flex flex-row items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-1.5 rounded-md bg-blue-500/10 text-blue-600">
+                    <TrendingUp className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-sm font-bold text-foreground">
                       Hiệu quả theo Nguồn Tuyển sinh
                     </CardTitle>
+                    <p className="text-[11px] text-muted-foreground">Bóc tách lượng lead và tỷ lệ chốt đăng ký</p>
                   </div>
-                  <span className="text-xs text-muted-foreground">
-                    Tổng: {report.admissions.newLeads} leads
-                  </span>
                 </div>
+                <Badge variant="outline" className="text-[11px] font-semibold bg-background">
+                  Tổng: {report.admissions.newLeads} leads
+                </Badge>
               </CardHeader>
               <CardContent className="p-0">
                 <Table>
-                  <TableHeader>
-                    <TableRow className="text-xs">
-                      <TableHead className="py-2.5">Nguồn tiếp cận</TableHead>
-                      <TableHead className="py-2.5 text-right">Số Leads</TableHead>
-                      <TableHead className="py-2.5 text-right">Đã nhập học</TableHead>
-                      <TableHead className="py-2.5 text-right">Chuyển đổi</TableHead>
+                  <TableHeader className="bg-muted/20">
+                    <TableRow className="text-xs hover:bg-transparent">
+                      <TableHead className="py-2.5 font-semibold text-foreground">Nguồn tiếp cận</TableHead>
+                      <TableHead className="py-2.5 text-right font-semibold text-foreground">Số Leads</TableHead>
+                      <TableHead className="py-2.5 text-right font-semibold text-foreground">Đã nhập học</TableHead>
+                      <TableHead className="py-2.5 text-right font-semibold text-foreground">Chuyển đổi</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {report.admissions.bySource.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={4} className="text-center py-6 text-xs text-muted-foreground">
+                        <TableCell colSpan={4} className="text-center py-8 text-xs text-muted-foreground">
                           Chưa có dữ liệu nguồn tuyển sinh trong kỳ này.
                         </TableCell>
                       </TableRow>
                     ) : (
-                      report.admissions.bySource.map((s) => (
-                        <TableRow key={s.source} className="text-xs">
-                          <TableCell className="font-medium py-2.5">{s.source}</TableCell>
-                          <TableCell className="text-right py-2.5">{s.leads}</TableCell>
-                          <TableCell className="text-right py-2.5 font-semibold text-emerald-600">
+                      report.admissions.bySource.map((s, idx) => (
+                        <TableRow key={s.source} className={`text-xs hover:bg-muted/40 transition-colors ${idx % 2 === 1 ? 'bg-muted/10' : ''}`}>
+                          <TableCell className="font-medium py-3 text-foreground">{s.source}</TableCell>
+                          <TableCell className="text-right py-3 font-medium text-muted-foreground">{s.leads}</TableCell>
+                          <TableCell className="text-right py-3 font-bold text-emerald-600">
                             {s.enrolled}
                           </TableCell>
-                          <TableCell className="text-right py-2.5">
-                            <Badge variant="outline" className="text-[10px] font-semibold">
-                              {s.conversionRate}%
-                            </Badge>
+                          <TableCell className="text-right py-3">
+                            <div className="flex items-center justify-end gap-2">
+                              <div className="w-12 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden hidden sm:block">
+                                <div
+                                  className="h-full bg-emerald-500 rounded-full"
+                                  style={{ width: `${Math.min(s.conversionRate, 100)}%` }}
+                                />
+                              </div>
+                              <Badge
+                                variant="outline"
+                                className={`text-[10px] font-bold ${
+                                  s.conversionRate > 0
+                                    ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-300"
+                                    : "bg-muted text-muted-foreground"
+                                }`}
+                              >
+                                {s.conversionRate}%
+                              </Badge>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))
@@ -625,63 +801,80 @@ export default function PeriodicReportsPage() {
             </Card>
 
             {/* Table 2: Bóc tách theo Cơ sở */}
-            <Card className="border shadow-sm">
-              <CardHeader className="p-4 pb-2 border-b bg-muted/20">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Building2 className="h-4 w-4 text-primary" />
-                    <CardTitle className="text-sm font-bold">
+            <Card className="border-slate-200/90 dark:border-slate-800 shadow-sm overflow-hidden">
+              <CardHeader className="p-4 pb-3 border-b bg-muted/40 flex flex-row items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-1.5 rounded-md bg-primary/10 text-primary">
+                    <Building2 className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-sm font-bold text-foreground">
                       Quy mô & Lấp đầy theo Cơ sở
                     </CardTitle>
+                    <p className="text-[11px] text-muted-foreground">Tình hình phân bổ phòng học, lớp và học viên</p>
                   </div>
-                  <span className="text-xs text-muted-foreground">
-                    {report.branches.length} chi nhánh
-                  </span>
                 </div>
+                <Badge variant="outline" className="text-[11px] font-semibold bg-background">
+                  {report.branches.length} cơ sở
+                </Badge>
               </CardHeader>
               <CardContent className="p-0">
                 <Table>
-                  <TableHeader>
-                    <TableRow className="text-xs">
-                      <TableHead className="py-2.5">Cơ sở</TableHead>
-                      <TableHead className="py-2.5 text-right">Phòng học</TableHead>
-                      <TableHead className="py-2.5 text-right">Lớp tổ chức</TableHead>
-                      <TableHead className="py-2.5 text-right">Học viên</TableHead>
-                      <TableHead className="py-2.5 text-right">Lấp đầy</TableHead>
+                  <TableHeader className="bg-muted/20">
+                    <TableRow className="text-xs hover:bg-transparent">
+                      <TableHead className="py-2.5 font-semibold text-foreground">Cơ sở</TableHead>
+                      <TableHead className="py-2.5 text-right font-semibold text-foreground">Phòng học</TableHead>
+                      <TableHead className="py-2.5 text-right font-semibold text-foreground">Lớp tổ chức</TableHead>
+                      <TableHead className="py-2.5 text-right font-semibold text-foreground">Học viên</TableHead>
+                      <TableHead className="py-2.5 text-right font-semibold text-foreground">Tỷ lệ lấp đầy</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {report.branches.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={5} className="text-center py-6 text-xs text-muted-foreground">
+                        <TableCell colSpan={5} className="text-center py-8 text-xs text-muted-foreground">
                           Chưa có dữ liệu cơ sở.
                         </TableCell>
                       </TableRow>
                     ) : (
-                      report.branches.map((b) => (
-                        <TableRow key={b.id} className="text-xs">
-                          <TableCell className="py-2.5">
+                      report.branches.map((b, idx) => (
+                        <TableRow key={b.id} className={`text-xs hover:bg-muted/40 transition-colors ${idx % 2 === 1 ? 'bg-muted/10' : ''}`}>
+                          <TableCell className="py-3">
                             <div className="font-semibold text-foreground">{b.name}</div>
                             <div className="text-[10px] text-muted-foreground">{b.code}</div>
                           </TableCell>
-                          <TableCell className="text-right py-2.5">{b.roomsCount}</TableCell>
-                          <TableCell className="text-right py-2.5 font-medium">{b.classesCount}</TableCell>
-                          <TableCell className="text-right py-2.5 font-semibold text-primary">
+                          <TableCell className="text-right py-3 text-muted-foreground">{b.roomsCount}</TableCell>
+                          <TableCell className="text-right py-3 font-semibold text-foreground">{b.classesCount}</TableCell>
+                          <TableCell className="text-right py-3 font-bold text-primary">
                             {b.studentsCount}
                           </TableCell>
-                          <TableCell className="text-right py-2.5">
-                            <Badge
-                              variant="outline"
-                              className={`text-[10px] font-semibold ${
-                                b.fillRate >= 70
-                                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                  : b.fillRate >= 40
-                                  ? "bg-blue-50 text-blue-700 border-blue-200"
-                                  : "bg-muted text-muted-foreground"
-                              }`}
-                            >
-                              {b.fillRate}%
-                            </Badge>
+                          <TableCell className="text-right py-3">
+                            <div className="flex items-center justify-end gap-2">
+                              <div className="w-12 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden hidden sm:block">
+                                <div
+                                  className={`h-full rounded-full ${
+                                    b.fillRate >= 70
+                                      ? "bg-emerald-500"
+                                      : b.fillRate >= 40
+                                      ? "bg-blue-500"
+                                      : "bg-slate-400"
+                                  }`}
+                                  style={{ width: `${Math.min(b.fillRate, 100)}%` }}
+                                />
+                              </div>
+                              <Badge
+                                variant="outline"
+                                className={`text-[10px] font-bold ${
+                                  b.fillRate >= 70
+                                    ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-300"
+                                    : b.fillRate >= 40
+                                    ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300"
+                                    : "bg-muted text-muted-foreground"
+                                }`}
+                              >
+                                {b.fillRate}%
+                              </Badge>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))
@@ -696,3 +889,4 @@ export default function PeriodicReportsPage() {
     </div>
   );
 }
+

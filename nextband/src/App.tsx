@@ -77,6 +77,9 @@ const PrivacyPage = lazyWithRetry(() => import("@/pages/public/PrivacyPage"));
 const SpeakingForecastHubPage = lazyWithRetry(() => import("@/pages/public/speaking-forecast/SpeakingForecastHub"));
 const SpeakingForecastSeasonPage = lazyWithRetry(() => import("@/pages/public/speaking-forecast/SpeakingForecastSeason"));
 const SpeakingForecastTopicPage = lazyWithRetry(() => import("@/pages/public/speaking-forecast/SpeakingForecastTopic"));
+const ReadingUniversePage = lazyWithRetry(() => import("@/pages/public/reading/ReadingUniversePage"));
+const ReadingCasePage = lazyWithRetry(() => import("@/pages/public/reading/ReadingCasePage"));
+
 
 // Lazy-loaded Auth Pages
 const LoginPage = lazyWithRetry(() => import("@/pages/auth/LoginPage"));
@@ -282,11 +285,14 @@ const App = () => (
                 <Route path="/ielts-speaking-forecast/:seasonSlug/:topicSlug" element={<SpeakingForecastTopicPage />} />
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
+                <Route path="/reading" element={<ReadingUniversePage />} />
               </Route>
 
               {/* ============================================================ */}
-              {/* 1.1 CLEAN-ROOM ASSESSMENT EXAM INTERFACE (Public Focus Mode) */}
+              {/* 1.1 CLEAN-ROOM ASSESSMENT & READING INTERFACE (Focus Mode)   */}
               {/* ============================================================ */}
+              <Route path="/reading/case-001" element={<ReadingCasePage />} />
+              <Route path="/reading/:caseId" element={<ReadingCasePage />} />
               <Route path="/assessment/take/:sessionId" element={<PlacementExamInterface />} />
               <Route path="/assessment/take" element={<Navigate to="/assessment" replace />} />
 

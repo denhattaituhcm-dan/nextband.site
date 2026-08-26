@@ -22,6 +22,7 @@ interface NavItem {
 
 const PUBLIC_NAV_ITEMS: NavItem[] = [
   { label: "Khảo thí năng lực", href: "/assessment" },
+  { label: "Reading", href: "/reading" },
   { label: "Hệ thống học thuật", href: "/academic-system" },
   { label: "Khóa học", href: "/courses" },
   { label: "Tiến bộ", href: "/results" },
