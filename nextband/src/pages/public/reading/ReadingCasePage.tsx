@@ -46,8 +46,8 @@ export default function ReadingCasePage() {
   const [finalHypothesis, setFinalHypothesis] = useState<string | null>(null);
   const [selectedEvidenceIds, setSelectedEvidenceIds] = useState<string[]>([]);
 
-  // Page View State: "investigating" | "autopsy"
-  const [viewState, setViewState] = useState<"investigating" | "autopsy">("investigating");
+  // Page View State: "briefing" | "investigating" | "autopsy"
+  const [viewState, setViewState] = useState<"briefing" | "investigating" | "autopsy">("briefing");
 
   // Close tooltip when clicking outside
   useEffect(() => {
@@ -127,8 +127,11 @@ export default function ReadingCasePage() {
     setFinalHypothesis(null);
     setSelectedEvidenceIds([]);
     setActiveTranslatedWords({});
-    setViewState("investigating");
+    setViewState("briefing");
   };
+
+  // State for hover intro teaser
+  const [isIntroHovered, setIsIntroHovered] = useState(false);
 
   // Helper to parse a sentence into tokens where all content words and multi-word idioms are clickable
   const renderSentenceWords = (sentence: string, sentenceIdx: number, paragraphId: string) => {
@@ -186,28 +189,35 @@ export default function ReadingCasePage() {
         const isTranslated = Boolean(activeTranslatedWords[termKey]);
         const shortVi = termData.meaning_vi.split("/")[0].replace(/\(.*?\)/g, "").trim();
 
-        return (
-          <span
-            key={`phrase-${segIdx}`}
-            className="relative inline-block my-1 mx-0.5 align-baseline"
-          >
-            {isTranslated && (
+        if (isTranslated) {
+          return (
+            <span
+              key={`phrase-${segIdx}`}
+              className="relative inline-block mx-0.5 align-baseline"
+            >
               <span className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap text-[11px] font-bold text-[#14532d] bg-[#dcfce7] px-2 py-0.5 rounded border border-[#86efac] shadow-xs animate-in fade-in zoom-in-95 duration-150 pointer-events-none flex items-center justify-center">
                 {shortVi}
                 <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#dcfce7] border-r border-b border-[#86efac] rotate-45" />
               </span>
-            )}
-            <span
-              onClick={(e) => handleWordClick(e, termData, termKey)}
-              className={`cursor-pointer font-semibold rounded px-1.5 py-0.5 transition-all duration-150 select-none ${
-                isTranslated
-                  ? "bg-[#369E7A] text-white shadow-xs"
-                  : "bg-emerald-100/90 hover:bg-emerald-200/90 text-emerald-950 border-b-2 border-emerald-600"
-              }`}
-              title="Click để tra cứu nghĩa theo ngữ cảnh"
-            >
-              {segment.text}
+              <span
+                onClick={(e) => handleWordClick(e, termData, termKey)}
+                className="cursor-pointer font-semibold bg-[#369E7A] text-white rounded px-1.5 py-0.5 shadow-xs select-none"
+                title="Click để tắt tra cứu"
+              >
+                {segment.text}
+              </span>
             </span>
+          );
+        }
+
+        return (
+          <span
+            key={`phrase-${segIdx}`}
+            onClick={(e) => handleWordClick(e, termData, termKey)}
+            className="cursor-pointer text-stone-800 hover:text-emerald-900 hover:underline decoration-emerald-500/80 transition-colors inline select-none"
+            title="Click để tra cứu nghĩa theo ngữ cảnh"
+          >
+            {segment.text}
           </span>
         );
       }
@@ -229,28 +239,35 @@ export default function ReadingCasePage() {
           const isTranslated = Boolean(activeTranslatedWords[termKey]);
           const shortVi = termData.meaning_vi.split("/")[0].replace(/\(.*?\)/g, "").trim();
 
-          return (
-            <span
-              key={`tok-${segIdx}-${tokIdx}`}
-              className="relative inline-block my-1 mx-0.5 align-baseline"
-            >
-              {isTranslated && (
+          if (isTranslated) {
+            return (
+              <span
+                key={`tok-${segIdx}-${tokIdx}`}
+                className="relative inline-block mx-0.5 align-baseline"
+              >
                 <span className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap text-[11px] font-bold text-[#14532d] bg-[#dcfce7] px-2 py-0.5 rounded border border-[#86efac] shadow-xs animate-in fade-in zoom-in-95 duration-150 pointer-events-none flex items-center justify-center">
                   {shortVi}
                   <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#dcfce7] border-r border-b border-[#86efac] rotate-45" />
                 </span>
-              )}
-              <span
-                onClick={(e) => handleWordClick(e, termData, termKey)}
-                className={`cursor-pointer rounded px-1 py-0.5 transition-all duration-150 select-none ${
-                  isTranslated
-                    ? "bg-[#369E7A] text-white font-semibold shadow-xs"
-                    : "font-normal text-stone-800 hover:text-emerald-950 hover:bg-emerald-100/80 hover:underline decoration-emerald-500"
-                }`}
-                title="Click để tra cứu nghĩa theo ngữ cảnh"
-              >
-                {token}
+                <span
+                  onClick={(e) => handleWordClick(e, termData, termKey)}
+                  className="cursor-pointer font-semibold bg-[#369E7A] text-white rounded px-1 py-0.5 shadow-xs select-none"
+                  title="Click để tắt tra cứu"
+                >
+                  {token}
+                </span>
               </span>
+            );
+          }
+
+          return (
+            <span
+              key={`tok-${segIdx}-${tokIdx}`}
+              onClick={(e) => handleWordClick(e, termData, termKey)}
+              className="cursor-pointer text-stone-800 hover:text-emerald-900 hover:underline decoration-emerald-500/80 transition-colors inline select-none"
+              title="Click để tra cứu nghĩa theo ngữ cảnh"
+            >
+              {token}
             </span>
           );
         }
@@ -286,6 +303,79 @@ export default function ReadingCasePage() {
       </div>
     );
   };
+
+  // 15-Second Assessment Briefing Screen (Onboarding Screen)
+  if (viewState === "briefing") {
+    return (
+      <div className="min-h-screen bg-[#FAF8F5] text-stone-900 flex items-center justify-center p-4 sm:p-6 font-sans">
+        <SEO
+          title={`Briefing: ${readingCase.title} | ARIS IELTS Reading`}
+          description="Khảo hạch năng lực nhận thức & giải mã đọc hiểu IELTS Band 5.0"
+        />
+
+        <div className="max-w-xl w-full rounded-3xl border border-stone-200 bg-white p-6 sm:p-8 shadow-md space-y-6 animate-in fade-in zoom-in-95 duration-200">
+          {/* Header */}
+          <div className="space-y-2 border-b border-stone-100 pb-5 text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-xs font-black uppercase tracking-wider text-amber-800">
+              <ShieldAlert className="h-3.5 w-3.5 text-amber-600" />
+              ST. JUDE · COGNITIVE ASSESSMENT
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight">
+              {readingCase.title}
+            </h1>
+            <p className="text-xs sm:text-sm text-stone-500">
+              {readingCase.level.realm_name_vi} · IELTS Band {readingCase.level.ielts_band.toFixed(1)} · Thời lượng: ~5-10 phút
+            </p>
+          </div>
+
+          {/* Context Intro */}
+          <p className="text-xs sm:text-sm text-stone-700 leading-relaxed">
+            Bạn sẽ xử lý một hồ sơ điều tra gồm <strong>3 nguồn tài liệu khách quan và lời khai</strong>. Một số chi tiết có thể mâu thuẫn hoặc chứa bẫy suy diễn quá đà.
+          </p>
+
+          {/* 3 Core Assessment Rules */}
+          <div className="rounded-2xl bg-stone-50 border border-stone-200/80 p-4 space-y-3">
+            <p className="text-xs font-bold text-stone-900 uppercase tracking-wider">
+              Quy tắc thực hiện:
+            </p>
+            <ul className="space-y-2.5 text-xs text-stone-700">
+              <li className="flex items-start gap-2.5">
+                <span className="h-5 w-5 rounded-full bg-blue-100 text-blue-800 font-bold flex items-center justify-center shrink-0 text-[11px]">1</span>
+                <div>
+                  <strong>Đọc thông tin:</strong> Tìm chi tiết cụ thể để trả lời câu hỏi <em>(Locating Detail)</em>.
+                </div>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <span className="h-5 w-5 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center shrink-0 text-[11px]">2</span>
+                <div>
+                  <strong>Đối chiếu đa nguồn:</strong> So sánh mâu thuẫn giữa Lời khai & Nhật ký kỹ thuật số <em>(Cross-Source Matching)</em>.
+                </div>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <span className="h-5 w-5 rounded-full bg-purple-100 text-purple-800 font-bold flex items-center justify-center shrink-0 text-[11px]">3</span>
+                <div>
+                  <strong>Bằng chứng khách quan:</strong> Chỉ chọn kết luận được chứng minh bằng văn bản, không đoán mò <em>(Text-Grounded Evidence)</em>.
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div className="text-[11px] text-center text-stone-500 italic">
+            💡 Không cần kiến thức chuyên ngành. Mọi câu trả lời đều nằm trong hồ sơ. Có thể click vào từ để tra cứu nhanh.
+          </div>
+
+          {/* Start CTA */}
+          <Button
+            onClick={() => setViewState("investigating")}
+            className="w-full h-12 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-sm uppercase tracking-wider shadow-md shadow-amber-500/20 transition-all cursor-pointer"
+          >
+            Bắt Đầu Khảo Hạch
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   if (viewState === "autopsy") {
     return (
@@ -337,12 +427,46 @@ export default function ReadingCasePage() {
           </div>
 
           <div className="flex items-center gap-3">
-            {!hasInteractedGloss && (
-              <div className="hidden md:flex items-center gap-1.5 text-xs text-amber-900 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
-                <Sparkles className="h-3.5 w-3.5 text-amber-600" />
-                <span>Mẹo: Click bất kỳ từ vựng nào để tra cứu giải nghĩa theo ngữ cảnh</span>
-              </div>
-            )}
+            {/* Hover/Click Context Intro Teaser */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setIsIntroHovered(true)}
+              onMouseLeave={() => setIsIntroHovered(false)}
+            >
+              <button
+                onClick={() => setIsIntroHovered((prev) => !prev)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-100/90 hover:bg-amber-200 text-amber-950 border border-amber-300 text-xs font-black transition-all shadow-xs cursor-pointer active:scale-95"
+              >
+                <Sparkles className="h-3.5 w-3.5 text-amber-700 animate-pulse" />
+                <span>💡 Giới thiệu bối cảnh vụ án</span>
+              </button>
+
+              {/* Hover/Click Context Popover */}
+              {isIntroHovered && (
+                <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 rounded-2xl border border-amber-300 bg-[#FFFDF9] p-4 text-stone-900 shadow-2xl z-40 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="flex items-center gap-2 border-b border-amber-200 pb-2 mb-2.5">
+                    <span className="text-base">🕵️</span>
+                    <h4 className="text-xs sm:text-sm font-black text-amber-950 uppercase tracking-wide">
+                      Bối cảnh vụ án: Căn Phòng Khóa Kín
+                    </h4>
+                  </div>
+                  <div className="space-y-2 text-xs text-stone-700 leading-relaxed">
+                    <p>
+                      <strong className="text-amber-950 font-bold">23:47 đêm tại Viện Nghiên cứu St. Jude:</strong> Bản thảo Đề thi Học bổng Quốc gia bất ngờ không cánh mà bay khỏi két sắt thép kiên cố.
+                    </p>
+                    <div className="rounded-xl bg-amber-50 p-2.5 border border-amber-200 space-y-1 text-[11px] text-amber-950 font-medium">
+                      <p>• Cửa gỗ sồi bị khóa trái từ bên trong — khung cửa không một vết cạy phá.</p>
+                      <p>• Giáo sư Arthur Vance bất tỉnh trên bàn, thân thể không một vết thương.</p>
+                      <p>• Lối thoát duy nhất là ống thông gió trần chỉ 30x40cm — người lớn không thể chui lọt.</p>
+                    </div>
+                    <p className="font-semibold text-stone-800 pt-1 text-[11px]">
+                      Kẻ trộm đã lấy cắp đề thi và khóa trái căn phòng từ bên trong bằng cách nào? Hãy lần theo 3 nguồn hồ sơ bên dưới để vạch trần chân tướng!
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div className="text-xs font-mono text-stone-700 bg-white px-2.5 py-1 rounded-md border border-stone-200 shadow-xs">
               Tasks: {Object.keys(taskAnswers).length + (selectedEvidenceSentence ? 1 : 0)} / 4
             </div>
