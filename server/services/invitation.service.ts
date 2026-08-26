@@ -1,7 +1,7 @@
 import { PrismaClient, InvitationStatus } from '@prisma/client';
 import { InvitationRepository } from '../repositories/invitation.repository.js';
 import { ClassRepository } from '../repositories/class.repository.js';
-import { AuthorizationService, AuthorizationError, NotFoundError } from './authorization.service.js';
+import { AuthorizationService } from './authorization.service.js';
 
 export class InvitationService {
   private invitationRepo: InvitationRepository;

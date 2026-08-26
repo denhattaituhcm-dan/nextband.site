@@ -1,16 +1,5 @@
 import { FastifyPluginAsync } from "fastify";
-import {
-  loginSchema,
-  registerSchema,
-  googleLoginSchema,
-  LoginInput,
-  RegisterInput,
-  GoogleLoginInput,
-} from "../schemas/auth.schema.js";
-import { OAuth2Client } from "google-auth-library";
-import { hashPassword, verifyPassword } from "../utils/password.js";
 import { authenticate } from "../middlewares/auth.middleware.js";
-import { handleValidation } from "../utils/validation.js";
 import { toFileUrl } from "../utils/file.js";
 
 const authRoutes: FastifyPluginAsync = async (fastify) => {

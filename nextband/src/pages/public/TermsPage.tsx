@@ -1,7 +1,7 @@
 import React from "react";
 import { SectionContainer } from "@/components/public/SectionContainer";
 import { SEO } from "@/components/common/SEO";
-import { ShieldCheck, Scale, FileText, CheckCircle2 } from "lucide-react";
+import { Scale, CheckCircle2 } from "lucide-react";
 
 export default function TermsPage() {
   return (

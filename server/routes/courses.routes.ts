@@ -11,7 +11,6 @@ import {
 import { authenticate, optionalAuthenticate, requireRoles } from "../middlewares/auth.middleware.js";
 import { handleValidation } from "../utils/validation.js";
 import { toFileUrl, withFileUrls } from "../utils/file.js";
-import { verifyPassword } from "../utils/password.js";
 
 const coursesRoutes: FastifyPluginAsync = async (fastify) => {
   const slugify = (value: string) =>

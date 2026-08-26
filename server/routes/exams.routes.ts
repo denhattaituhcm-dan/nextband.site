@@ -1,16 +1,13 @@
 import { FastifyPluginAsync } from "fastify";
-import { Prisma } from "@prisma/client";
 import { paginationSchema } from "../schemas/common.schema.js";
 import {
   createExamSchema,
   updateExamSchema,
   createSectionSchema,
-  updateSectionSchema,
 } from "../schemas/exam.schema.js";
 import { authenticate, requireRoles } from "../middlewares/auth.middleware.js";
 import { handleValidation } from "../utils/validation.js";
 import { toFileUrl } from "../utils/file.js";
-import { verifyPassword } from "../utils/password.js";
 import { AuthorizationService } from "../services/authorization.service.js";
 
 const examsRoutes: FastifyPluginAsync = async (fastify) => {

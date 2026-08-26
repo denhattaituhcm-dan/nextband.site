@@ -1,9 +1,6 @@
 import { FastifyPluginAsync } from "fastify";
-import { createClient } from "@supabase/supabase-js";
-import { env } from "../config/env.js";
 import { paginationSchema } from "../schemas/common.schema.js";
 import { authenticate, requireRoles, invalidateUserAuthCache } from "../middlewares/auth.middleware.js";
-import { hashPassword } from "../utils/password.js";
 import { handleValidation } from "../utils/validation.js";
 import { withFileUrls, withFileUrlsMany } from "../utils/file.js";
 import {

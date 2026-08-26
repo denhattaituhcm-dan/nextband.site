@@ -99411,7 +99411,7 @@ var createSectionSchema2 = external_exports.object({
   durationMinutes: external_exports.number({ invalid_type_error: "Th\u1EDDi gian ph\u1EA3i l\xE0 s\u1ED1" }).int().optional(),
   orderIndex: external_exports.number().int().optional()
 });
-var updateSectionSchema3 = external_exports.object({
+var updateSectionSchema2 = external_exports.object({
   title: external_exports.string().min(1, "Ti\xEAu \u0111\u1EC1 l\xE0 b\u1EAFt bu\u1ED9c").optional(),
   instructions: external_exports.string().max(5e6, "N\u1ED9i dung h\u01B0\u1EDBng d\u1EABn qu\xE1 d\xE0i").optional(),
   content: external_exports.any().optional(),
@@ -99562,7 +99562,7 @@ var sectionsRoutes = async (fastify) => {
     async (request, reply) => {
       const { id } = request.params;
       const data = handleValidation(
-        updateSectionSchema3.safeParse(request.body),
+        updateSectionSchema2.safeParse(request.body),
         request,
         reply
       );

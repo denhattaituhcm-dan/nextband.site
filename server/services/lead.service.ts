@@ -1,8 +1,6 @@
 import { PrismaClient, LeadStatus } from "@prisma/client";
 import { CreateLeadInput, UpdateLeadInput, ListLeadsQuery, ConvertLeadInput } from "../schemas/lead.schema.js";
 import { leadNotificationService } from "./leadNotification.service.js";
-import { createClient } from "@supabase/supabase-js";
-import { env } from "../config/env.js";
 
 export class LeadService {
   constructor(private prisma: PrismaClient) {}

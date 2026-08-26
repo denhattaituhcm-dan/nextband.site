@@ -2,7 +2,6 @@ import { PrismaClient } from "@prisma/client";
 import { SubmissionRepository } from "../repositories/submission.repository.js";
 import { canonicalScoringService } from "./scoring/CanonicalScoringService.js";
 import { auditOutboxService } from "./audit/AuditOutboxService.js";
-import { idempotencyService } from "./idempotency/IdempotencyService.js";
 import { AuthorizationError, NotFoundError } from "./authorization.service.js";
 import { SubmissionStateMachine, SubmissionState, StateTransitionError } from "./submission-state-machine.js";
 import { NotificationService } from "./notification.service.js";
