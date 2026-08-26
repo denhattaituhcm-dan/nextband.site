@@ -273,38 +273,6 @@ export const authApi = {
     return data;
   },
 
-  getMe: async () => {
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-    if (error || !user) throw error || new Error("User not authenticated");
-
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("user_id", user.id)
-      .single();
-
-    const { data: rolesData } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id);
-
-    const roles = rolesData ? rolesData.map((r) => r.role) : ["student"];
-
-    return {
-      id: user.id,
-      email: user.email,
-      fullName: profile?.full_name || user.user_metadata?.full_name || null,
-      avatarUrl: profile?.avatar_url || user.user_metadata?.avatar_url || null,
-      bio: profile?.bio || null,
-      phone: profile?.phone || null,
-      gender: profile?.gender || null,
-      roles,
-    };
-  },
-
   updateProfile: async (profile: {
     fullName?: string;
     bio?: string;
@@ -332,14 +300,6 @@ export const authApi = {
 
     if (error) throw error;
     return data;
-  },
-
-  changePassword: async (currentPassword: string, newPassword: string) => {
-    const { error } = await supabase.auth.updateUser({
-      password: newPassword,
-    });
-    if (error) throw error;
-    return { success: true };
   },
 };
 
@@ -422,10 +382,6 @@ export const coursesApi = {
 
     const errData = await res.json().catch(() => ({}));
     throw new Error(errData.error || errData.message || "Không tìm thấy khóa học");
-  },
-
-  getBySlug: async (slug: string) => {
-    return coursesApi.getById(slug);
   },
 
   create: async (course: {

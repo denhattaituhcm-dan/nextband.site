@@ -441,13 +441,6 @@ export function getPublishedEvidence(): EvidenceItem[] {
     .sort((a, b) => a.displayOrder - b.displayOrder || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 }
 
-// Featured query for homepage
-export function getFeaturedEvidence(): EvidenceItem[] {
-  const published = getPublishedEvidence();
-  const featured = published.filter((item) => item.featured);
-  return featured.length > 0 ? featured.slice(0, 4) : published.slice(0, 3);
-}
-
 // Save or Update with Supabase sync
 export async function saveEvidenceItemAsync(itemData: Partial<EvidenceItem>): Promise<EvidenceItem> {
   const localItem = saveEvidenceItem(itemData);
