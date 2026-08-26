@@ -88,8 +88,8 @@ export const ContextualGlossTooltip: React.FC<ContextualGlossTooltipProps> = ({
 
         {term.meaning_vi && (
           <div className="rounded-lg bg-emerald-50 p-2.5 border border-emerald-200/80">
-            <p className="font-bold text-emerald-900">
-              🇻🇳 {term.meaning_vi.replace(/^Cụm từ:\s*/i, "").replace(/^Từ vựng:\s*/i, "")}
+            <p className="font-bold text-emerald-900 text-sm">
+              {term.meaning_vi.replace(/^(🇻🇳|VN|vn|Cụm từ:|Từ vựng:)\s*/i, "").trim()}
             </p>
           </div>
         )}

@@ -113,11 +113,8 @@ export const ReadlangExplorationSidebar: React.FC<ReadlangExplorationSidebarProp
         </div>
 
         {/* Translation Banner */}
-        <div className="rounded-xl bg-[#FAF9F5] border border-stone-200 p-3 text-stone-900">
-          <div className="flex items-center gap-1.5 text-xs text-stone-500 font-medium">
-            <span>🇻🇳 Nghĩa tiếng Việt:</span>
-          </div>
-          <p className="text-base font-extrabold text-emerald-900 mt-0.5">
+        <div className="rounded-xl bg-emerald-50/90 border border-emerald-200/80 p-3 text-stone-900 shadow-xs">
+          <p className="text-base font-black text-emerald-950">
             {cleanVi}
           </p>
         </div>
