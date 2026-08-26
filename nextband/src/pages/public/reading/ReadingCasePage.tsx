@@ -56,8 +56,32 @@ export default function ReadingCasePage() {
     return () => window.removeEventListener("click", handleWindowClick);
   }, []);
 
-  const handleWordClick = (e: React.MouseEvent, termObj: VocabularyTerm) => {
+  // Active translated words map (token key -> translation text)
+  const [activeTranslatedWords, setActiveTranslatedWords] = useState<Record<string, VocabularyTerm>>({});
+
+  const handleWordClick = (e: React.MouseEvent, termObj: VocabularyTerm, wordKey?: string) => {
     e.stopPropagation();
+    
+    // Auto-pronounce using SpeechSynthesis API (Readlang feature)
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(termObj.term);
+      utterance.lang = "en-US";
+      utterance.rate = 0.95;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // Toggle inline translation tag
+    const key = wordKey || termObj.term.toLowerCase();
+    setActiveTranslatedWords((prev) => {
+      if (prev[key]) {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      }
+      return { ...prev, [key]: termObj };
+    });
+
     const rect = (e.target as HTMLElement).getBoundingClientRect();
     setActiveGloss({
       term: termObj,
@@ -102,11 +126,12 @@ export default function ReadingCasePage() {
     setSelectedEvidenceSentence(null);
     setFinalHypothesis(null);
     setSelectedEvidenceIds([]);
+    setActiveTranslatedWords({});
     setViewState("investigating");
   };
 
   // Helper to parse a sentence into tokens where all content words and multi-word idioms are clickable
-  const renderSentenceWords = (sentence: string) => {
+  const renderSentenceWords = (sentence: string, sentenceIdx: number, paragraphId: string) => {
     // 1. Identify multi-word phrases and protect them
     const phraseMatches: { start: number; end: number; phrase: string }[] = [];
     
@@ -149,6 +174,7 @@ export default function ReadingCasePage() {
 
     return segments.map((segment, segIdx) => {
       if (segment.isPhrase) {
+        const termKey = `${paragraphId}-s${sentenceIdx}-p${segIdx}-${segment.text.toLowerCase()}`;
         const termData = lookupWord(segment.text) || {
           term: segment.text,
           pronunciation: `/${segment.text.toLowerCase()}/`,
@@ -157,14 +183,31 @@ export default function ReadingCasePage() {
           meaning_vi: `Cụm từ: ${segment.text}`,
           context_note: "Cụm từ ngữ cảnh trong hồ sơ.",
         };
+        const isTranslated = Boolean(activeTranslatedWords[termKey]);
+        const shortVi = termData.meaning_vi.split("/")[0].replace(/\(.*?\)/g, "").trim();
+
         return (
           <span
             key={`phrase-${segIdx}`}
-            onClick={(e) => handleWordClick(e, termData)}
-            className="cursor-pointer font-semibold bg-emerald-100/90 hover:bg-emerald-200/90 text-emerald-950 px-1 py-0.5 rounded border-b-2 border-emerald-600 transition-colors inline-block mx-0.5"
-            title="Click để tra nghĩa cụm từ theo ngữ cảnh"
+            className="relative inline-block my-1 mx-0.5 align-baseline"
           >
-            {segment.text}
+            {isTranslated && (
+              <span className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap text-[11px] font-bold text-[#14532d] bg-[#dcfce7] px-2 py-0.5 rounded border border-[#86efac] shadow-xs animate-in fade-in zoom-in-95 duration-150 pointer-events-none flex items-center justify-center">
+                {shortVi}
+                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#dcfce7] border-r border-b border-[#86efac] rotate-45" />
+              </span>
+            )}
+            <span
+              onClick={(e) => handleWordClick(e, termData, termKey)}
+              className={`cursor-pointer font-semibold rounded px-1.5 py-0.5 transition-all duration-150 select-none ${
+                isTranslated
+                  ? "bg-[#369E7A] text-white shadow-xs"
+                  : "bg-emerald-100/90 hover:bg-emerald-200/90 text-emerald-950 border-b-2 border-emerald-600"
+              }`}
+              title="Click để tra cứu nghĩa theo ngữ cảnh"
+            >
+              {segment.text}
+            </span>
           </span>
         );
       }
@@ -174,6 +217,7 @@ export default function ReadingCasePage() {
       return tokens.map((token, tokIdx) => {
         if (!token) return null;
         if (isContentWord(token)) {
+          const termKey = `${paragraphId}-s${sentenceIdx}-t${segIdx}-${tokIdx}-${token.toLowerCase()}`;
           const termData = lookupWord(token) || {
             term: token,
             pronunciation: `/${token.toLowerCase()}/`,
@@ -182,14 +226,31 @@ export default function ReadingCasePage() {
             meaning_vi: `Từ vựng: ${token}`,
             context_note: "Từ vựng trong bài đọc.",
           };
+          const isTranslated = Boolean(activeTranslatedWords[termKey]);
+          const shortVi = termData.meaning_vi.split("/")[0].replace(/\(.*?\)/g, "").trim();
+
           return (
             <span
               key={`tok-${segIdx}-${tokIdx}`}
-              onClick={(e) => handleWordClick(e, termData)}
-              className="cursor-pointer font-medium hover:text-emerald-900 hover:bg-emerald-100/80 hover:underline decoration-emerald-500 rounded px-0.5 transition-colors inline"
-              title="Click để tra nghĩa theo ngữ cảnh"
+              className="relative inline-block my-1 mx-0.5 align-baseline"
             >
-              {token}
+              {isTranslated && (
+                <span className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap text-[11px] font-bold text-[#14532d] bg-[#dcfce7] px-2 py-0.5 rounded border border-[#86efac] shadow-xs animate-in fade-in zoom-in-95 duration-150 pointer-events-none flex items-center justify-center">
+                  {shortVi}
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#dcfce7] border-r border-b border-[#86efac] rotate-45" />
+                </span>
+              )}
+              <span
+                onClick={(e) => handleWordClick(e, termData, termKey)}
+                className={`cursor-pointer rounded px-1 py-0.5 transition-all duration-150 select-none ${
+                  isTranslated
+                    ? "bg-[#369E7A] text-white font-semibold shadow-xs"
+                    : "font-normal text-stone-800 hover:text-emerald-950 hover:bg-emerald-100/80 hover:underline decoration-emerald-500"
+                }`}
+                title="Click để tra cứu nghĩa theo ngữ cảnh"
+              >
+                {token}
+              </span>
             </span>
           );
         }
@@ -212,13 +273,13 @@ export default function ReadingCasePage() {
             <p
               key={sIdx}
               onClick={() => handleSentenceClick(sentence)}
-              className={`rounded-lg px-3 py-1.5 transition-all text-stone-800 leading-[1.8] cursor-pointer ${
+              className={`rounded-lg px-3 py-2 transition-all leading-[2.2] cursor-pointer ${
                 isSelectedEvidence
                   ? "bg-amber-100/80 border-l-4 border-amber-500 text-amber-950 font-medium shadow-xs"
                   : "hover:bg-stone-100/80 border-l-4 border-transparent"
               }`}
             >
-              {renderSentenceWords(sentence)}
+              {renderSentenceWords(sentence, sIdx, paragraphId)}
             </p>
           );
         })}
