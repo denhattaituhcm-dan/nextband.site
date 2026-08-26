@@ -849,14 +849,6 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_vi: "sâu / hun hút",
     context_note: "Vết nứt sâu 850m xuyên thủng tầng băng.",
   },
-  "disappeared": {
-    term: "disappeared",
-    pronunciation: "/ˌdɪsəˈpɪəd/",
-    pos: "verb (past)",
-    meaning_en: "ceased to be visible or present; vanished completely",
-    meaning_vi: "biến mất hoàn toàn",
-    context_note: "8 triệu m³ nước biến mất trong chưa đầy 90 phút.",
-  },
   "disappear": {
     term: "disappear",
     pronunciation: "/ˌdɪsəˈpɪər/",

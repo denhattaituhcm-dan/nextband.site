@@ -20,6 +20,7 @@ import {
   Cpu,
   GraduationCap,
   Scale,
+  Quote,
 } from "lucide-react";
 
 export default function AboutPage() {
@@ -132,66 +133,144 @@ export default function AboutPage() {
       {/* ========================================================================= */}
       <section id="the-manifesto" className="scroll-mt-20">
         <SectionContainer
-          badge="02 — The ARIS Manifesto"
-          title="ARIS tin vào điều gì về việc tiếp thu ngoại ngữ?"
-          description="Bốn niềm tin cốt lõi chi phối mọi hoạt động đào tạo, biên soạn giáo trình và quy chuẩn chấm chữa tại ARIS."
+          badge="02 — Tuyên Ngôn Học Thuật"
+          title="Tại sao là ARIS?"
+          description="ARIS lấy cảm hứng từ Aristotle — một trong những tư tưởng gia có ảnh hưởng sâu rộng đến lịch sử của tư duy logic và nghệ thuật lập luận."
           background="default"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-            <div className="p-8 rounded-3xl border border-border/80 bg-card space-y-4 shadow-2xs">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-brand-blue-soft text-brand-blue flex items-center justify-center font-black text-lg">
-                  I
-                </div>
-                <h3 className="text-xl font-black text-foreground">
-                  Năng Lực Trước, Điểm Số Sau
-                </h3>
-              </div>
-              <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-                Điểm số IELTS chỉ là hệ quả tự nhiên (lagging indicator) của một năng lực tư duy ngôn ngữ thực chất. Khi người học hiểu rõ cấu trúc câu, ngữ pháp chức năng và logic diễn đạt, điểm số sẽ tự khắc nâng tầm.
+          {/* Main Manifesto & Aristotle Inspiration Feature Card */}
+          <div className="p-8 sm:p-12 rounded-3xl border border-border/80 bg-card space-y-8 shadow-2xs mb-12 text-left">
+            <div className="space-y-3">
+              <p className="text-base sm:text-lg text-foreground/85 leading-relaxed font-medium">
+                Chúng tôi tin rằng năng lực ngôn ngữ không dừng lại ở việc ghi nhớ từ vựng hay ráp nối những cấu trúc có sẵn.
+              </p>
+              <p className="text-xs sm:text-sm text-brand-blue font-bold tracking-wider uppercase">
+                Người học cần được rèn luyện để có thể:
               </p>
             </div>
 
-            <div className="p-8 rounded-3xl border border-border/80 bg-card space-y-4 shadow-2xs">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-brand-blue-soft text-brand-blue flex items-center justify-center font-black text-lg">
-                  II
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+              <div className="p-5 sm:p-6 rounded-2xl bg-muted/50 border border-border/60 space-y-2.5">
+                <div className="w-8 h-8 rounded-lg bg-brand-blue-soft text-brand-blue flex items-center justify-center font-black text-sm">
+                  1
                 </div>
-                <h3 className="text-xl font-black text-foreground">
-                  Tiến Bộ Phải Đo Lường Bằng Bằng Chứng
-                </h3>
+                <h4 className="font-black text-foreground text-base">
+                  Tư duy rõ ràng
+                </h4>
+                <p className="text-sm text-foreground/75 leading-relaxed">
+                  Trước khi đặt bút hay cất lời.
+                </p>
               </div>
-              <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-                Sự tiến bộ không thể đánh giá bằng cảm giác hay lời khen xã giao. Mọi bài nộp, bản nháp và lịch sử sửa bài đều được lưu vết minh bạch để đối chiếu chính xác sự chuyển biến của học viên qua từng tuần.
+
+              <div className="p-5 sm:p-6 rounded-2xl bg-muted/50 border border-border/60 space-y-2.5">
+                <div className="w-8 h-8 rounded-lg bg-brand-blue-soft text-brand-blue flex items-center justify-center font-black text-sm">
+                  2
+                </div>
+                <h4 className="font-black text-foreground text-base">
+                  Lập luận có căn cứ
+                </h4>
+                <p className="text-sm text-foreground/75 leading-relaxed">
+                  Biết phân biệt giữa ý kiến và bằng chứng.
+                </p>
+              </div>
+
+              <div className="p-5 sm:p-6 rounded-2xl bg-muted/50 border border-border/60 space-y-2.5">
+                <div className="w-8 h-8 rounded-lg bg-brand-blue-soft text-brand-blue flex items-center justify-center font-black text-sm">
+                  3
+                </div>
+                <h4 className="font-black text-foreground text-base">
+                  Diễn đạt chính xác
+                </h4>
+                <p className="text-sm text-foreground/75 leading-relaxed">
+                  Mạch lạc và có chủ đích.
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-border/70 space-y-4">
+              <div className="space-y-2">
+                <h4 className="text-xs sm:text-sm font-black uppercase tracking-wider text-muted-foreground">
+                  Tinh Thần Cốt Lõi Của ARIS
+                </h4>
+                <p className="text-base sm:text-lg text-foreground/90 font-medium leading-relaxed">
+                  Không chạy theo những mẹo vặt để đối phó với bài thi, mà xây dựng năng lực ngôn ngữ thực chất, có thể quan sát, đánh giá và phát triển theo thời gian.
+                </p>
+              </div>
+
+              <div className="pt-2 flex items-center gap-2.5 text-xs sm:text-sm font-bold text-brand-blue">
+                <Quote className="h-4 w-4 shrink-0 text-brand-blue/70" />
+                <span className="italic">ARIS — Inspired by Aristotle, built for modern language learning.</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 4 Core Operational Beliefs */}
+          <div className="space-y-6 text-left">
+            <div className="space-y-2 text-center max-w-2xl mx-auto">
+              <h3 className="text-xl sm:text-2xl font-black text-foreground">
+                4 Niềm Tin Vận Hành Cốt Lõi
+              </h3>
+              <p className="text-sm text-foreground/70 leading-relaxed">
+                Bốn nguyên lý chi phối mọi hoạt động đào tạo, biên soạn giáo trình và quy chuẩn chấm chữa tại ARIS.
               </p>
             </div>
 
-            <div className="p-8 rounded-3xl border border-border/80 bg-card space-y-4 shadow-2xs">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-brand-blue-soft text-brand-blue flex items-center justify-center font-black text-lg">
-                  III
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 pt-2">
+              <div className="p-8 rounded-3xl border border-border/80 bg-card space-y-4 shadow-2xs">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-brand-blue-soft text-brand-blue flex items-center justify-center font-black text-lg">
+                    I
+                  </div>
+                  <h4 className="text-xl font-black text-foreground">
+                    Năng Lực Trước, Điểm Số Sau
+                  </h4>
                 </div>
-                <h3 className="text-xl font-black text-foreground">
-                  Luyện Tập Có Chủ Đích &amp; Phản Hồi Kép
-                </h3>
+                <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
+                  Điểm số IELTS chỉ là hệ quả tự nhiên (lagging indicator) của một năng lực tư duy ngôn ngữ thực chất. Khi người học hiểu rõ cấu trúc câu, ngữ pháp chức năng và logic diễn đạt, điểm số sẽ tự khắc nâng tầm.
+                </p>
               </div>
-              <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-                Làm 100 đề mà không sửa lỗi thì chỉ lặp lại lỗi sai 100 lần. Làm 10 bài được mổ xẻ chi tiết từng câu và tự tay viết lại bài sửa sẽ tạo ra bước nhảy vọt về độ chính xác và tư duy viết luận.
-              </p>
-            </div>
 
-            <div className="p-8 rounded-3xl border border-border/80 bg-card space-y-4 shadow-2xs">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-brand-blue-soft text-brand-blue flex items-center justify-center font-black text-lg">
-                  IV
+              <div className="p-8 rounded-3xl border border-border/80 bg-card space-y-4 shadow-2xs">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-brand-blue-soft text-brand-blue flex items-center justify-center font-black text-lg">
+                    II
+                  </div>
+                  <h4 className="text-xl font-black text-foreground">
+                    Tiến Bộ Phải Đo Lường Bằng Bằng Chứng
+                  </h4>
                 </div>
-                <h3 className="text-xl font-black text-foreground">
-                  Trách Nhiệm Tối Cao Với Sự Tiến Bộ
-                </h3>
+                <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
+                  Sự tiến bộ không thể đánh giá bằng cảm giác hay lời khen xã giao. Mọi bài nộp, bản nháp và lịch sử sửa bài đều được lưu vết minh bạch để đối chiếu chính xác sự chuyển biến của học viên qua từng tuần.
+                </p>
               </div>
-              <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-                Giáo viên là người bóc tách lỗi sai và cung cấp bản đồ học thuật; học viên là người trực tiếp bước đi và rèn luyện. Chúng tôi xây dựng một môi trường nghiêm túc, đề cao tính chủ động và kỷ luật tự thân.
-              </p>
+
+              <div className="p-8 rounded-3xl border border-border/80 bg-card space-y-4 shadow-2xs">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-brand-blue-soft text-brand-blue flex items-center justify-center font-black text-lg">
+                    III
+                  </div>
+                  <h4 className="text-xl font-black text-foreground">
+                    Luyện Tập Có Chủ Đích &amp; Phản Hồi Kép
+                  </h4>
+                </div>
+                <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
+                  Làm 100 đề mà không sửa lỗi thì chỉ lặp lại lỗi sai 100 lần. Làm 10 bài được mổ xẻ chi tiết từng câu và tự tay viết lại bài sửa sẽ tạo ra bước nhảy vọt về độ chính xác và tư duy viết luận.
+                </p>
+              </div>
+
+              <div className="p-8 rounded-3xl border border-border/80 bg-card space-y-4 shadow-2xs">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-brand-blue-soft text-brand-blue flex items-center justify-center font-black text-lg">
+                    IV
+                  </div>
+                  <h4 className="text-xl font-black text-foreground">
+                    Trách Nhiệm Tối Cao Với Sự Tiến Bộ
+                  </h4>
+                </div>
+                <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
+                  Giáo viên là người bóc tách lỗi sai và cung cấp bản đồ học thuật; học viên là người trực tiếp bước đi và rèn luyện. Chúng tôi xây dựng một môi trường nghiêm túc, đề cao tính chủ động và kỷ luật tự thân.
+                </p>
+              </div>
             </div>
           </div>
         </SectionContainer>

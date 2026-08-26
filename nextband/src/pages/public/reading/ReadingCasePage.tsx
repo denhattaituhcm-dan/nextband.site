@@ -41,18 +41,6 @@ export default function ReadingCasePage() {
   const [selectedCaseId, setSelectedCaseId] = useState<string>("case-002");
   const readingCase = ALL_CASES[selectedCaseId] || CASE_001;
 
-  const handleSwitchCase = (caseId: string) => {
-    setSelectedCaseId(caseId);
-    setActiveSourceId("all");
-    setTaskAnswers({});
-    setSelectedEvidenceSentence(null);
-    setSelectedHypothesisId(null);
-    setSelectedEvidenceIds([]);
-    setIsAutopsyUnlocked(false);
-    setActiveExplainTerm(null);
-    setRightPanelTab("tasks");
-  };
-
   // Reader Settings (Font size, line height, font family, theme, alignment)
   const [readerSettings, setReaderSettings] = useState<ReaderSettings>(() => {
     try {
@@ -117,6 +105,18 @@ export default function ReadingCasePage() {
   // Right Panel Tab State: "tasks" | "explain"
   const [rightPanelTab, setRightPanelTab] = useState<"tasks" | "explain">("tasks");
   const [activeExplainTerm, setActiveExplainTerm] = useState<VocabularyTerm | null>(null);
+
+  const handleSwitchCase = (caseId: string) => {
+    setSelectedCaseId(caseId);
+    setActiveSourceId("all");
+    setTaskAnswers({});
+    setSelectedEvidenceSentence(null);
+    setFinalHypothesis(null);
+    setSelectedEvidenceIds([]);
+    setViewState("investigating");
+    setActiveExplainTerm(null);
+    setRightPanelTab("tasks");
+  };
 
   const handleWordClick = (e: React.MouseEvent, termObj: VocabularyTerm, wordKey?: string) => {
     e.stopPropagation();

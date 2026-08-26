@@ -177,7 +177,7 @@ export const CASE_002: ReadingCase = {
   autopsy: {
     traps: [
       {
-        type: "PROMPT_ENGINEERING_OVEREMPHASIS",
+        type: "OVER_INFERENCE",
         description: "Bẫy ngộ nhận rằng trong kỷ nguyên AI thì kỹ năng viết prompt là quan trọng nhất. Bài viết chứng minh người lãnh đạo thành công là người chuyển hóa sự phức tạp thành rõ ràng và xây dựng sự tin cậy giữa người với người.",
       },
     ],
