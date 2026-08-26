@@ -1,5 +1,38 @@
 export type RealmLevel = "HOC_DO" | "HOC_GIA" | "HOC_SI" | "HOC_SU" | "HOC_BA" | "HOC_TON" | "HOC_DE";
 
+export interface CognitiveFrame {
+  actor?: string;
+  recipient?: string;
+  entity?: string;
+  direction?: string;
+  recipient_choice?: string;
+  mental_scene: string;
+}
+
+export interface CognitiveExample {
+  domain_label: string;
+  sentence: string;
+  invariant_connection: string;
+}
+
+export interface CognitiveCollocation {
+  pattern: string;
+  meaning: string;
+  concept_note?: string;
+}
+
+export interface CognitiveAnalysis {
+  core_concept: string;
+  cognitive_frame?: CognitiveFrame;
+  meaning_in_context?: string;
+  semantic_range?: string[];
+  collocations_patterns?: CognitiveCollocation[];
+  contrast?: string;
+  transfer_contexts?: CognitiveExample[];
+  boundaries?: string;
+  retrieval_rule: string;
+}
+
 export interface VocabularyTerm {
   term: string;
   pronunciation: string;
@@ -7,6 +40,7 @@ export interface VocabularyTerm {
   meaning_en: string;
   meaning_vi: string;
   context_note: string;
+  cognitive?: CognitiveAnalysis;
 }
 
 export interface Paragraph {

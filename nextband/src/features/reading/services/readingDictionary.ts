@@ -1131,6 +1131,133 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
   },
 
   // CASE 002: Warren Buffett & Fast Company Article Vocabulary
+  "offered": {
+    term: "offered",
+    pronunciation: "/ˈɒfəd/",
+    pos: "verb (past of offer)",
+    meaning_en: "presented something to someone for acceptance or consideration",
+    meaning_vi: "đưa ra / đề nghị / trao cơ hội",
+    context_note: "Buffett chủ động đưa ra lời khuyên quý báu để sinh viên Stanford có thể tiếp nhận và suy ngẫm.",
+    cognitive: {
+      core_concept: "Một người chủ động đưa một thứ gì đó vào khả năng tiếp nhận/lựa chọn của người khác — thứ đó có thể là vật chất, sự giúp đỡ, lời khuyên, cơ hội, tiền bạc, công việc hoặc một hành động.",
+      cognitive_frame: {
+        actor: "Người chủ động (Warren Buffett)",
+        recipient: "Người nghe (Sinh viên tốt nghiệp Stanford)",
+        entity: "Lời khuyên kinh nghiệm sống (Advice)",
+        direction: "Từ chủ thể ra phía trước người nhận",
+        recipient_choice: "Người nhận hoàn toàn tự do tiếp nhận, suy ngẫm hoặc từ chối mà không bị ép buộc.",
+        mental_scene: "Buffett có một lời khuyên → chủ động đặt lời khuyên đó trước người nghe → người nghe đón nhận và cân nhắc áp dụng.",
+      },
+      meaning_in_context: "Trong câu này, 'offered this advice' biểu thị việc chia sẻ lời khuyên chân thành mang tính định hướng cho thế hệ trẻ, không phải mệnh lệnh hay ép buộc.",
+      transfer_contexts: [
+        {
+          domain_label: "Đời sống hàng ngày",
+          sentence: "She offered me a cup of warm coffee when I arrived.",
+          invariant_connection: "Cô ấy chủ động đưa cà phê vào khả năng tôi có thể nhận hoặc từ chối.",
+        },
+        {
+          domain_label: "Công việc / Business",
+          sentence: "The corporation offered her a senior managerial position.",
+          invariant_connection: "Công ty chủ động đặt một cơ hội nghề nghiệp trước mặt ứng viên để họ cân nhắc.",
+        },
+        {
+          domain_label: "Hành động sẵn sàng",
+          sentence: "He offered to drive me home during the heavy rain.",
+          invariant_connection: "Chủ động đưa sự sẵn sàng hành động của mình vào khả năng người khác có thể sử dụng (cấu trúc offer to do sth).",
+        },
+        {
+          domain_label: "Học thuật / Formal",
+          sentence: "The research findings offer a compelling explanation for glacial melt.",
+          invariant_connection: "Kết quả nghiên cứu mở ra một cách giải thích để giới khoa học xem xét.",
+        },
+      ],
+      contrast: "So với 'give' (tập trung vào việc thứ gì đó đã được chuyển giao hoàn tất), 'offer' nhấn mạnh vào việc chủ động đưa ra một khả năng/lựa chọn để đối phương tự do quyết định tiếp nhận.",
+      boundaries: "Không thể dùng 'give to help' ❌ mà phải dùng 'offer to help' ✅ vì 'offer' có thể xây dựng ý niệm đưa một hành động vào cho người khác lựa chọn.",
+      retrieval_rule: "Khi bạn muốn diễn tả việc chủ động đưa một vật, lời khuyên, cơ hội hoặc sự sẵn sàng giúp đỡ cho người khác tự do đón nhận hoặc từ chối → Hãy nghĩ đến 'OFFER'.",
+    },
+  },
+  "offer": {
+    term: "offer",
+    pronunciation: "/ˈɒfər/",
+    pos: "verb / noun",
+    meaning_en: "to present something for someone to accept or reject",
+    meaning_vi: "đưa ra / đề nghị / chào mời",
+    context_note: "Chủ động đưa một thực thể vào khả năng tiếp nhận của người khác.",
+    cognitive: {
+      core_concept: "Chủ động làm cho một thứ (vật chất, cơ hội, lời khuyên, sự giúp đỡ) trở thành một lựa chọn/khả năng có thể được người khác tiếp nhận.",
+      cognitive_frame: {
+        actor: "Chủ thể đề xuất",
+        recipient: "Người tiếp nhận",
+        entity: "Cơ hội, vật chất hoặc lời khuyên",
+        direction: "Chủ động đưa ra phía trước",
+        recipient_choice: "Có toàn quyền chấp nhận hoặc từ chối",
+        mental_scene: "Đặt một giá trị/lựa chọn vào tầm tay của người khác để họ quyết định.",
+      },
+      meaning_in_context: "Chủ động đưa ra đề xuất hoặc cơ hội.",
+      transfer_contexts: [
+        {
+          domain_label: "Thương mại",
+          sentence: "The store offers a 20% discount for first-time buyers.",
+          invariant_connection: "Đưa ra mức ưu đãi để khách hàng tự do hưởng lợi.",
+        },
+        {
+          domain_label: "Hợp tác",
+          sentence: "They offered their assistance throughout the investigation.",
+          invariant_connection: "Chủ động đưa sự hỗ trợ vào tầm sử dụng của đối tác.",
+        },
+      ],
+      contrast: "'offer' khác 'provide': 'provide' tập trung vào việc cung cấp cái cần thiết; 'offer' tập trung vào tính chủ động đưa ra để đối phương cân nhắc.",
+      boundaries: "Không nhầm lẫn 'offer sth to sb' và 'offer sb sth' — cả 2 đều chuẩn ngữ pháp.",
+      retrieval_rule: "Khi xuất hiện tình huống: Chủ thể A có X → A chủ động đưa X ra cho B lựa chọn tiếp nhận → Chọn 'OFFER'.",
+    },
+  },
+  "dispensing": {
+    term: "dispensing",
+    pronunciation: "/dɪˈspɛnsɪŋ/",
+    pos: "verb (-ing)",
+    meaning_en: "distributing or providing advice from a position of authority/experience",
+    meaning_vi: "chia sẻ / ban phát (lời khuyên kinh nghiệm)",
+    context_note: "Warren Buffett dành nhiều thập kỷ chia sẻ những lời khuyên thông thái từ vị thế một bậc thầy đầu tư.",
+    cognitive: {
+      core_concept: "Phân phát hoặc trao đi từng phần từ một nguồn dự trữ lớn hoặc từ vị thế của một người nắm giữ thẩm quyền/kinh nghiệm/nguồn lực.",
+      cognitive_frame: {
+        actor: "Nguồn thẩm quyền / Chuyên gia (Buffett)",
+        recipient: "Cộng đồng / Người học",
+        entity: "Những đúc kết thông thái (Advice)",
+        direction: "Phân phối đều đặn từ nguồn uy tín ra xung quanh",
+        mental_scene: "Một người nắm giữ kho tàng kinh nghiệm dày dặn → phân phát từng phần giá trị thiết thực cho người cần.",
+      },
+      meaning_in_context: "Buffett ở vị thế nhà lãnh đạo lỗi lạc đều đặn chia sẻ các bài học kinh nghiệm sâu sắc cho thế hệ sau.",
+      transfer_contexts: [
+        {
+          domain_label: "Y tế",
+          sentence: "The hospital pharmacy dispenses vital medication to patients.",
+          invariant_connection: "Cấp phát thuốc từ kho dược theo đơn chỉ định.",
+        },
+        {
+          domain_label: "Tư pháp",
+          sentence: "Courts are responsible for dispensing equal justice under the law.",
+          invariant_connection: "Thực thi và phân xử công lý từ thẩm quyền của nhà nước.",
+        },
+        {
+          domain_label: "Thiết bị tự động",
+          sentence: "The vending machine dispenses hot tea within seconds.",
+          invariant_connection: "Nhả sản phẩm theo từng đơn vị được yêu cầu.",
+        },
+      ],
+      contrast: "'dispense' khác 'give': 'give' là trao tặng đơn thuần giữa bất kỳ ai; 'dispense' mang hàm ý phân phối có thẩm quyền, có hệ thống hoặc từ kho dự trữ uy tín.",
+      boundaries: "'dispense with sth' là thành ngữ mang nghĩa 'bỏ qua / không dùng đến thứ gì nữa' (vd: Let's dispense with formalities).",
+      retrieval_rule: "Khi diễn tả hành động phân phát có thẩm quyền, chia sẻ kinh nghiệm từ nguồn uy tín hoặc cấp phát theo quy trình → Nghĩ đến 'DISPENSE'.",
+    },
+  },
+  "dispense": {
+    term: "dispense",
+    pronunciation: "/dɪˈspɛns/",
+    pos: "verb",
+    meaning_en: "distribute or provide, or manage without",
+    meaning_vi: "phân phát / đưa ra (lời khuyên)",
+    context_note: "Phân phát hoặc đưa ra có hệ thống.",
+  },
   "force multiplier": {
     term: "force multiplier",
     pronunciation: "/fɔːs ˈmʌltɪplaɪər/",
@@ -1138,6 +1265,29 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_en: "a factor that dramatically increases the effectiveness of an effort or skill",
     meaning_vi: "đòn bẩy nhân đôi sức mạnh / hệ số nhân sức mạnh",
     context_note: "Kỹ năng giao tiếp là đòn bẩy khuếch đại mọi kết quả trong công việc và cuộc sống.",
+    cognitive: {
+      core_concept: "Một yếu tố, công cụ hoặc năng lực khi được kết hợp vào sẽ làm tăng gấp nhiều lần hiệu quả của toàn bộ hệ thống hoặc các năng lực khác, thay vì chỉ tăng theo phép cộng đơn thuần.",
+      cognitive_frame: {
+        actor: "Năng lực / Yếu tố đòn bẩy (Communication)",
+        recipient: "Toàn bộ kết quả và nỗ lực (Career results)",
+        mental_scene: "Đầu vào là 1 đơn vị kỹ thuật → qua bộ khuếch đại giao tiếp → đầu ra tạo ra 10 đơn vị tầm ảnh hưởng và thành công.",
+      },
+      meaning_in_context: "Giao tiếp không chỉ là kỹ năng bổ trợ, mà là hệ số nhân giúp mọi ý tưởng kinh doanh hay mã nguồn phần mềm phát huy tối đa giá trị.",
+      transfer_contexts: [
+        {
+          domain_label: "Quân sự & Chiến lược",
+          sentence: "Night-vision technology acted as a force multiplier for the tactical team.",
+          invariant_connection: "Công nghệ nhìn đêm nhân đôi hiệu quả tác chiến của cả đội.",
+        },
+        {
+          domain_label: "Công nghệ & AI",
+          sentence: "Automation is a force multiplier for modern software developers.",
+          invariant_connection: "Tự động hóa giúp một kỹ sư làm việc tương đương cả nhóm.",
+        },
+      ],
+      contrast: "'force multiplier' khác 'addition': Phép nhân (multiplier) tạo sự bùng nổ cấp số nhân, trong khi addition chỉ là phép cộng tích lũy nhỏ lẻ.",
+      retrieval_rule: "Khi muốn mô tả một yếu tố biến 1 thành 10, khuếch đại toàn bộ sức mạnh tổng thể → Dùng 'FORCE MULTIPLIER'.",
+    },
   },
   "competitive advantage": {
     term: "competitive advantage",
@@ -1146,6 +1296,24 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_en: "a condition or circumstance that puts a person or company in a favorable business position",
     meaning_vi: "lợi thế cạnh tranh vượt trội",
     context_note: "Khả năng giao tiếp giữa người với người trở thành lợi thế cạnh tranh cốt lõi trong kỷ nguyên AI.",
+    cognitive: {
+      core_concept: "Một thuộc tính hoặc năng lực độc nhất giúp một cá nhân hoặc tổ chức tạo ra giá trị vượt trội mà đối thủ cạnh tranh không thể dễ dàng sao chép hoặc thay thế.",
+      cognitive_frame: {
+        actor: "Người sở hữu năng lực giao tiếp con người",
+        recipient: "Thị trường / Môi trường AI cạnh tranh",
+        mental_scene: "Trong một thị trường mà ai cũng dùng chung các công cụ AI giống nhau, khả năng thấu cảm và tạo dựng niềm tin trở thành điểm phân tách độc nhất vô nhị.",
+      },
+      meaning_in_context: "Khi AI san bằng kỹ năng viết lách cơ bản, năng lực kết nối cảm xúc giữa người với người trở thành vũ khí cạnh tranh chiến lược.",
+      transfer_contexts: [
+        {
+          domain_label: "Kinh doanh chiến lược",
+          sentence: "Proprietary battery technology gave the automaker a clear competitive advantage.",
+          invariant_connection: "Nắm giữ công nghệ độc quyền mà đối thủ không thể sao chép trong ngắn hạn.",
+        },
+      ],
+      contrast: "'competitive advantage' khác 'temporary benefit': Lợi thế cạnh tranh mang tính bền vững dài hạn, không phải là ưu thế nhất thời.",
+      retrieval_rule: "Khi muốn chỉ ra yếu tố độc nhất giúp vượt lên trên đối thủ trong một cuộc đua dài hạn → Dùng 'COMPETITIVE ADVANTAGE'.",
+    },
   },
   "strategic business skill": {
     term: "strategic business skill",
@@ -1162,6 +1330,24 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_en: "fully concentrating, understanding, responding, and remembering what is being said",
     meaning_vi: "lắng nghe chủ động / lắng nghe thấu cảm",
     context_note: "Lắng nghe để thấu hiểu chứ không phải chuẩn bị sẵn câu phản bác trong đầu.",
+    cognitive: {
+      core_concept: "Tiến trình giao tiếp mà người nghe chủ động dồn toàn bộ sự chú tâm vào người nói, kìm nén phản xạ chen ngang để giải mã trọn vẹn cả nội dung lẫn cảm xúc của đối phương trước khi phản hồi.",
+      cognitive_frame: {
+        actor: "Người nghe (Leader / Colleague)",
+        recipient: "Người nói",
+        mental_scene: "Tạm gác lại ý kiến cá nhân và các thiết bị gây xao nhãng → hoàn toàn hiện diện trong câu chuyện của người nói → phản ánh lại những gì đã hiểu.",
+      },
+      meaning_in_context: "Buffett và Schwantes nhấn mạnh rằng lãnh đạo xuất sắc lắng nghe để thấu hiểu căn nguyên vấn đề chứ không phải để vội vàng đáp trả.",
+      transfer_contexts: [
+        {
+          domain_label: "Đàm phán & Ngoại giao",
+          sentence: "Through active listening, the mediator identified the core fears of both parties.",
+          invariant_connection: "Dồn tâm trí lắng nghe để tìm ra điểm nghẽn ẩn sâu bên dưới lời nói.",
+        },
+      ],
+      contrast: "'active listening' khác 'passive hearing': 'Hearing' chỉ là tiếp nhận sóng âm thụ động của đôi tai; 'Active listening' là hành động chủ động của tư duy và sự thấu cảm.",
+      retrieval_rule: "Khi nói về việc lắng nghe sâu sắc, có chủ đích và thấu cảm trọn vẹn → Dùng 'ACTIVE LISTENING'.",
+    },
   },
   "compounds over time": {
     term: "compounds over time",
@@ -1170,6 +1356,43 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_en: "accumulates exponential value progressively like compound interest",
     meaning_vi: "tích lũy sinh lãi kép theo thời gian",
     context_note: "Mỗi cuộc trò chuyện, thuyết trình hay phản hồi đều tích lũy uy tín sinh lãi kép theo năm tháng.",
+    cognitive: {
+      core_concept: "Sự tích lũy theo cấp số nhân trong đó giá trị tạo ra ở mỗi chu kỳ tiếp tục trở thành nền tảng sinh thêm giá trị mới ở chu kỳ kế tiếp, tạo ra kết quả khổng lồ sau thời gian dài.",
+      cognitive_frame: {
+        actor: "Hành động / Thói quen nhỏ hàng ngày",
+        mental_scene: "Từng tương tác giao tiếp tốt như một khoản gửi tiết kiệm → sinh lãi uy tín → lãi mẹ đẻ lãi con sau nhiều năm.",
+      },
+      meaning_in_context: "Hiệu quả của việc học giao tiếp không dừng lại ở một sự kiện đơn lẻ mà nhân lên dần theo toàn bộ sự nghiệp.",
+      transfer_contexts: [
+        {
+          domain_label: "Tài chính & Đầu tư",
+          sentence: "Reinvesting dividends allows your wealth to compound over time.",
+          invariant_connection: "Tái đầu tư lợi nhuận để sinh lãi cấp số nhân.",
+        },
+        {
+          domain_label: "Học tập & Tri thức",
+          sentence: "Reading 20 pages a day compounds over time into deep domain mastery.",
+          invariant_connection: "Tri thức tích lũy hàng ngày tạo nên bước nhảy vọt chuyên môn.",
+        },
+      ],
+      retrieval_rule: "Khi một hành động nhỏ tích lũy tạo ra sức mạnh tăng trưởng phi mã theo thời gian (lãi kép) → Dùng 'COMPOUND OVER TIME'.",
+    },
+  },
+  "compounds": {
+    term: "compounds",
+    pronunciation: "/kəmˈpaʊndz/",
+    pos: "verb (third person singular)",
+    meaning_en: "increases exponentially over successive periods",
+    meaning_vi: "sinh lãi kép / tích lũy cấp số nhân",
+    context_note: "Sinh lãi kép tích lũy theo thời gian.",
+  },
+  "compound": {
+    term: "compound",
+    pronunciation: "/kəmˈpaʊnd/",
+    pos: "verb / noun",
+    meaning_en: "to make something progressively greater or combine into whole",
+    meaning_vi: "sinh lãi kép / kết hợp tạo nên",
+    context_note: "Tích lũy theo nguyên lý lãi kép.",
   },
   "magnified": {
     term: "magnified",
@@ -1178,6 +1401,29 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_en: "made greater in size, importance, or impact",
     meaning_vi: "được nhân lên gấp bội / khuếch đại",
     context_note: "Thành tựu cuộc đời của bạn sẽ được nhân lên gấp bội nếu biết cách truyền đạt hiệu quả.",
+    cognitive: {
+      core_concept: "Làm cho một vật thể, năng lực hoặc thành quả vốn có trở nên lớn hơn, rõ ràng hơn và có tầm ảnh hưởng sâu rộng hơn gấp nhiều lần so với kích thước ban đầu.",
+      cognitive_frame: {
+        actor: "Năng lực giao tiếp (Lens / Amplifier)",
+        recipient: "Thành quả cuộc sống (Results in life)",
+        mental_scene: "Giống như đặt một thấu kính phóng đại lên một đốm sáng nhỏ → biến nó thành chùm sáng rực rỡ chiếu xa.",
+      },
+      meaning_in_context: "Buffett giải thích rằng nếu bạn có ý tưởng 10 điểm nhưng chỉ truyền đạt được 2 điểm thì kết quả bị teo nhỏ; nhưng nếu giao tiếp xuất sắc thì kết quả sẽ được nhân lên gấp bội.",
+      transfer_contexts: [
+        {
+          domain_label: "Khoa học & Kính hiển vi",
+          sentence: "The microscope magnified the ice bacteria 500 times.",
+          invariant_connection: "Phóng to kích thước vật lý để quan sát rõ ràng.",
+        },
+        {
+          domain_label: "Kinh tế & Rủi ro",
+          sentence: "High inflation magnified the financial difficulties of small firms.",
+          invariant_connection: "Làm cho mức độ nghiêm trọng của vấn đề tăng lên gấp bội.",
+        },
+      ],
+      contrast: "'magnify' khác 'create': 'Magnify' không tự sinh ra cái mới từ hư vô, mà nó phóng đại và nhân rộng thứ vốn đã có sẵn.",
+      retrieval_rule: "Khi muốn diễn tả việc làm cho một thành quả, tầm ảnh hưởng hay vấn đề trở nên lớn hơn gấp nhiều lần → Dùng 'MAGNIFY'.",
+    },
   },
   "magnify": {
     term: "magnify",
@@ -1187,61 +1433,56 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_vi: "nhân lên / khuếch đại",
     context_note: "Khuếch đại tầm ảnh hưởng.",
   },
-  "multiplier": {
-    term: "multiplier",
-    pronunciation: "/ˈmʌltɪplaɪər/",
-    pos: "noun",
-    meaning_en: "a factor that increases something by multiplication",
-    meaning_vi: "hệ số nhân / đòn bẩy",
-    context_note: "Đòn bẩy nâng tầm sự nghiệp.",
-  },
-  "multiply": {
-    term: "multiply",
-    pronunciation: "/ˈmʌltɪplaɪ/",
-    pos: "verb",
-    meaning_en: "to increase greatly in number or quantity",
-    meaning_vi: "nhân lên / gia tăng gấp nhiều lần",
-    context_note: "Nhân đôi nhân ba sự thành công của bạn theo Warren Buffett.",
-  },
-  "diploma": {
-    term: "diploma",
-    pronunciation: "/dɪˈpləʊmə/",
-    pos: "noun",
-    meaning_en: "a certificate awarded by an educational establishment",
-    meaning_vi: "bằng cấp / chứng chỉ tốt nghiệp",
-    context_note: "Bằng duy nhất Warren Buffett treo trong văn phòng là chứng chỉ thuyết trình Dale Carnegie năm 1952.",
-  },
-  "dispensing": {
-    term: "dispensing",
-    pronunciation: "/dɪˈspɛnsɪŋ/",
-    pos: "verb (-ing)",
-    meaning_en: "distributing or providing advice",
-    meaning_vi: "đưa ra / chia sẻ (lời khuyên)",
-    context_note: "Warren Buffett dành nhiều thập kỷ chia sẻ những lời khuyên thông thái.",
-  },
-  "skyrocketed": {
-    term: "skyrocketed",
-    pronunciation: "/ˈskaɪˌrɒkɪtɪd/",
-    pos: "verb (past)",
-    meaning_en: "increased very rapidly and steeply",
-    meaning_vi: "tăng vọt / tăng đột biến",
-    context_note: "Giá trị của kỹ năng giao tiếp tăng vọt trong kỷ nguyên AI.",
-  },
   "curiosity": {
     term: "curiosity",
     pronunciation: "/ˌkjʊərɪˈɒsɪti/",
     pos: "noun",
     meaning_en: "a strong desire to know or learn something",
-    meaning_vi: "tính hiếu kỳ / sự tò mò học hỏi",
-    context_note: "Thay thế các định kiến chủ quan bằng sự tò mò chân thành.",
+    meaning_vi: "tính hiếu kỳ / sự tò mò học hỏi chân thành",
+    context_note: "Thay thế các định kiến chủ quan bằng sự tò mò chân thành để mở khóa đối thoại.",
+    cognitive: {
+      core_concept: "Trạng thái tâm trí cởi mở, chủ động muốn khám phá, thấu hiểu nguyên do sâu xa của một hiện tượng hoặc quan điểm của người khác mà không vội vàng phán xét.",
+      cognitive_frame: {
+        actor: "Người giao tiếp khôn ngoan",
+        recipient: "Góc nhìn của đối phương",
+        mental_scene: "Thay vì dựng bức tường định kiến 'tôi đã biết hết rồi', chủ thể mở cánh cửa 'hãy kể tôi nghe tại sao bạn lại nghĩ vậy'.",
+      },
+      meaning_in_context: "Trong giao tiếp lãnh đạo, sự tò mò chân thành giúp dập tắt xung đột và xây dựng niềm tin bền vững.",
+      transfer_contexts: [
+        {
+          domain_label: "Khoa học khám phá",
+          sentence: "Scientific breakthrough is driven by relentless curiosity about natural laws.",
+          invariant_connection: "Động lực thôi thúc tìm hiểu bản chất thế giới.",
+        },
+      ],
+      contrast: "'curiosity' khác 'inquisitiveness / nosiness': 'Curiosity' là sự tò mò khám phá mang tính xây dựng, còn 'nosiness' là tọc mạch chuyện riêng tư.",
+      retrieval_rule: "Khi muốn diễn tả tinh thần cởi mở học hỏi và khám phá không phán xét → Dùng 'CURIOSITY'.",
+    },
   },
   "rebuttal": {
     term: "rebuttal",
     pronunciation: "/rɪˈbʌtəl/",
     pos: "noun",
     meaning_en: "a refutation or contradiction in an argument",
-    meaning_vi: "lời phản bác / sự đáp trả",
-    context_note: "Thay vì chuẩn bị sẵn lời phản bác, hãy đặt thêm một câu hỏi sâu hơn.",
+    meaning_vi: "lời phản bác / sự đáp trả luận điểm",
+    context_note: "Thay vì chuẩn bị sẵn lời phản bác trong đầu, hãy đặt thêm một câu hỏi sâu hơn.",
+    cognitive: {
+      core_concept: "Một phát biểu hoặc luận cứ được chuẩn bị kỹ lưỡng nhằm chỉ ra điểm sai, vô hiệu hóa hoặc đánh bại lập luận của đối phương trong một cuộc tranh luận.",
+      cognitive_frame: {
+        actor: "Người phản biện",
+        recipient: "Luận điểm của đối thủ",
+        mental_scene: "Hai bên đối đầu trên sàn đấu lý lẽ → bên A tung ra đòn lập luận để bẻ gãy đòn tấn công của bên B.",
+      },
+      meaning_in_context: "Tác giả cảnh báo rằng việc chăm chăm chuẩn bị câu phản bác (rebuttal) trong lúc người khác đang nói sẽ giết chết cuộc đối thoại thấu hiểu.",
+      transfer_contexts: [
+        {
+          domain_label: "Tòa án & Tranh tụng",
+          sentence: "The defense attorney presented a fierce rebuttal to the prosecutor's claims.",
+          invariant_connection: "Đưa ra bằng chứng bẻ gãy cáo buộc của đối phương.",
+        },
+      ],
+      retrieval_rule: "Khi nói về hành động đưa ra lý lẽ để bác bỏ luận điểm của người khác → Dùng 'REBUTTAL'.",
+    },
   },
   "assumptions": {
     term: "assumptions",
