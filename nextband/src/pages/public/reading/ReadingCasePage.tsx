@@ -405,27 +405,41 @@ export default function ReadingCasePage() {
         <div className="w-full flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             {/* Case Switcher Tabs */}
-            <div className="flex items-center bg-stone-200/80 p-1 rounded-xl gap-1 shrink-0">
+            <div className="flex items-center bg-stone-200/90 p-1 rounded-xl gap-1 shrink-0 border border-stone-300/80 shadow-xs">
               <button
                 onClick={() => handleSwitchCase("case-001")}
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
                   selectedCaseId === "case-001"
-                    ? "bg-white text-stone-900 shadow-xs"
-                    : "text-stone-600 hover:text-stone-900"
+                    ? "bg-white text-stone-900 shadow-sm border border-stone-200 ring-1 ring-stone-900/5 scale-[1.02]"
+                    : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/60 font-bold"
                 }`}
                 title="Hồ Sơ #01: Vụ Án Biến Mất Hồ Băng Greenland"
               >
+                <span
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    selectedCaseId === "case-001"
+                      ? "bg-sky-500 shadow-xs"
+                      : "bg-stone-400"
+                  }`}
+                />
                 Case #01
               </button>
               <button
                 onClick={() => handleSwitchCase("case-002")}
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
                   selectedCaseId === "case-002"
-                    ? "bg-white text-emerald-950 shadow-xs"
-                    : "text-stone-600 hover:text-stone-900"
+                    ? "bg-white text-stone-900 shadow-sm border border-stone-200 ring-1 ring-stone-900/5 scale-[1.02]"
+                    : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/60 font-bold"
                 }`}
                 title="Hồ Sơ #02: Warren Buffett - Kỹ Năng Đòn Bẩy Nhân Bản Thành Công"
               >
+                <span
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    selectedCaseId === "case-002"
+                      ? "bg-emerald-500 shadow-xs"
+                      : "bg-stone-400"
+                  }`}
+                />
                 Case #02
               </button>
             </div>
@@ -529,62 +543,64 @@ export default function ReadingCasePage() {
           {/* ========================================================================= */}
           {/* LEFT COLUMN: MULTI-SOURCE DOSSIER (Independent Scroll, 7 Cols ~ 58%)      */}
           {/* ========================================================================= */}
-          <section className="lg:col-span-7 h-full overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 custom-scrollbar bg-[#FBFBFA]">
+          <section className="lg:col-span-7 h-full flex flex-col overflow-hidden bg-[#FBFBFA]">
             
-            {/* Source Tab Filter */}
-            <div className="flex items-center gap-2 border-b border-stone-200/90 pb-3 overflow-x-auto sticky top-0 bg-[#FBFBFA] z-10 py-1">
-              <Button
-                size="sm"
-                variant={activeSourceId === "all" ? "default" : "ghost"}
-                onClick={() => setActiveSourceId("all")}
-                className={`text-xs h-8 rounded-lg ${
-                  activeSourceId === "all"
-                    ? "bg-sky-600 hover:bg-sky-700 text-white font-bold shadow-xs"
-                    : "bg-white border border-stone-200 text-stone-600 hover:text-stone-900 hover:bg-white"
-                }`}
-              >
-                <Layers className="h-3.5 w-3.5 mr-1.5" />
-                Toàn Bộ Hồ Sơ (3 Nguồn)
-              </Button>
-              {readingCase.sources.map((src, idx) => (
-                <Button
-                  key={src.id}
-                  size="sm"
-                  variant={activeSourceId === src.id ? "default" : "ghost"}
-                  onClick={() => setActiveSourceId(src.id)}
-                  className={`text-xs h-8 rounded-lg whitespace-nowrap ${
-                    activeSourceId === src.id
-                      ? "bg-slate-800 text-white font-bold"
-                      : "bg-white/80 border border-stone-200 text-stone-600 hover:text-stone-900 hover:bg-white"
-                  }`}
-                >
-                  {idx === 0 && <FileText className="h-3.5 w-3.5 mr-1.5 text-sky-400" />}
-                  {idx === 1 && <UserCheck className="h-3.5 w-3.5 mr-1.5 text-emerald-400" />}
-                  {idx === 2 && <Cpu className="h-3.5 w-3.5 mr-1.5 text-purple-400" />}
-                  Source {idx + 1}
-                </Button>
-              ))}
-              {readingCase.id === "case-001" && (
+            {/* Source Tab Filter (Fixed Header of Left Column) */}
+            <div className="border-b border-stone-200/90 bg-[#FAF8F5] px-4 sm:px-6 lg:px-8 py-2.5 shrink-0 z-10">
+              <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar no-scrollbar">
                 <Button
                   size="sm"
-                  variant={activeSourceId === "diagram" ? "default" : "ghost"}
-                  onClick={() => setActiveSourceId("diagram")}
-                  className={`text-xs h-8 rounded-lg whitespace-nowrap ${
-                    activeSourceId === "diagram"
-                      ? "bg-sky-700 text-white font-bold shadow-xs"
-                      : "bg-sky-50 border border-sky-200 text-sky-900 hover:bg-sky-100"
+                  variant={activeSourceId === "all" ? "default" : "ghost"}
+                  onClick={() => setActiveSourceId("all")}
+                  className={`text-xs h-8 rounded-lg ${
+                    activeSourceId === "all"
+                      ? "bg-sky-600 hover:bg-sky-700 text-white font-bold shadow-xs"
+                      : "bg-white border border-stone-200 text-stone-600 hover:text-stone-900 hover:bg-white"
                   }`}
                 >
-                  <MapIcon className="h-3.5 w-3.5 mr-1.5 text-sky-600" />
-                  Sơ Đồ Mặt Cắt Địa Chất (Map)
+                  <Layers className="h-3.5 w-3.5 mr-1.5" />
+                  Toàn Bộ Hồ Sơ (3 Nguồn)
                 </Button>
-              )}
+                {readingCase.sources.map((src, idx) => (
+                  <Button
+                    key={src.id}
+                    size="sm"
+                    variant={activeSourceId === src.id ? "default" : "ghost"}
+                    onClick={() => setActiveSourceId(src.id)}
+                    className={`text-xs h-8 rounded-lg whitespace-nowrap ${
+                      activeSourceId === src.id
+                        ? "bg-slate-800 text-white font-bold"
+                        : "bg-white/80 border border-stone-200 text-stone-600 hover:text-stone-900 hover:bg-white"
+                    }`}
+                  >
+                    {idx === 0 && <FileText className="h-3.5 w-3.5 mr-1.5 text-sky-400" />}
+                    {idx === 1 && <UserCheck className="h-3.5 w-3.5 mr-1.5 text-emerald-400" />}
+                    {idx === 2 && <Cpu className="h-3.5 w-3.5 mr-1.5 text-purple-400" />}
+                    Source {idx + 1}
+                  </Button>
+                ))}
+                {readingCase.id === "case-001" && (
+                  <Button
+                    size="sm"
+                    variant={activeSourceId === "diagram" ? "default" : "ghost"}
+                    onClick={() => setActiveSourceId("diagram")}
+                    className={`text-xs h-8 rounded-lg whitespace-nowrap ${
+                      activeSourceId === "diagram"
+                        ? "bg-sky-700 text-white font-bold shadow-xs"
+                        : "bg-sky-50 border border-sky-200 text-sky-900 hover:bg-sky-100"
+                    }`}
+                  >
+                    <MapIcon className="h-3.5 w-3.5 mr-1.5 text-sky-600" />
+                    Sơ Đồ Mặt Cắt Địa Chất (Map)
+                  </Button>
+                )}
+              </div>
             </div>
 
-            {/* Dossier Document Cards */}
-            <div className="space-y-6">
+            {/* Dossier Document Cards (Scrollable content area) */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 custom-scrollbar">
               {/* Standalone Diagram Tab View */}
-              {activeSourceId === "diagram" && (
+              {activeSourceId === "diagram" && readingCase.id === "case-001" && (
                 <div className="animate-in fade-in duration-150 space-y-3">
                   <div className="rounded-xl bg-sky-50 p-3 border border-sky-200 text-xs text-sky-950 font-medium">
                     💡 <strong>Sơ đồ địa vật lý:</strong> Mặt cắt dải băng Greenland dày 850m, vị trí hồ băng G-4, khe nứt thủy lực thẳng đứng và lớp đá đáy bedrock.
@@ -656,8 +672,8 @@ export default function ReadingCasePage() {
                           ))}
                         </div>
 
-                        {/* Attached Diagram in Source 1 */}
-                        {src.id === "source-01" && (
+                        {/* Attached Diagram in Source 1 (Only for Case 001) */}
+                        {readingCase.id === "case-001" && src.id === "source-01" && (
                           <div className="mt-6 pt-5 border-t border-stone-200/70">
                             <div className="flex items-center gap-2 mb-3">
                               <span className="text-xs font-bold text-stone-800 uppercase tracking-wider flex items-center gap-1.5">
