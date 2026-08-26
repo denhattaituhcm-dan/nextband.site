@@ -2972,45 +2972,55 @@ export function enrichCognitiveTerm(term: VocabularyTerm): VocabularyTerm {
 
   let core_concept = "";
   let mental_scene = "";
-  let actor = "Chủ thể trong ngữ cảnh";
-  let recipient = "Đối tượng / Môi trường xung quanh";
+  let actor = "Chủ thể tác động trong tình huống";
+  let recipient = "Đối tượng tiếp nhận hoặc môi trường tương tác";
   let contrast = "";
   let retrieval_rule = "";
-  let domainEx1 = "";
-  let domainEx2 = "";
+  let exEveryday = "";
+  let exBusiness = "";
+  let exAcademic = "";
+  let exAbstract = "";
   let boundary = "";
 
   if (pos.includes("verb")) {
-    core_concept = `Hành động hoặc tiến trình mà chủ thể tạo ra sự chuyển dịch trạng thái: "${primaryVi}". Người bản ngữ hình dung một tác lực hoặc ý thức làm thay đổi cục diện sang trạng thái "${primaryVi}".`;
-    mental_scene = `Chủ thể tác động → kích hoạt trạng thái "${primaryVi}" lên đối tượng trong không gian sự kiện.`;
-    contrast = `Phân biệt với các hành động tĩnh: '${cleanTerm}' biểu thị sự chuyển động hoặc hành vi có chủ đích hướng tới mục tiêu "${primaryVi}".`;
-    retrieval_rule = `Khi muốn diễn đạt một hành động hoặc biến chuyển mang bản chất "${primaryVi}" → Hãy nghĩ đến động từ '${cleanTerm.toUpperCase()}'.`;
-    domainEx1 = `The team worked diligently to ${cleanTerm} positive outcomes across all departments.`;
-    domainEx2 = `Regular reflection helps professionals ${cleanTerm} better habits in their daily routines.`;
-    boundary = `Tránh dịch theo nghĩa đen của từng từ con; hãy bám sát tiến trình hành động '${primaryVi}'.`;
+    core_concept = `Hành động hoặc tiến trình mà chủ thể chủ động hoặc tự nhiên tạo ra sự chuyển dịch trạng thái: "${primaryVi}". Người bản ngữ hình dung một tác lực, ý chí hoặc cơ chế vận hành làm thay đổi cục diện sang trạng thái "${primaryVi}".`;
+    mental_scene = `Chủ thể tác động một lực hoặc định hướng → kích hoạt tiến trình "${primaryVi}" lên đối tượng trong không gian sự kiện.`;
+    contrast = `Phân biệt với các động từ tĩnh hoặc hành động khác: '${cleanTerm}' biểu thị sự chuyển động có chủ đích hoặc cơ chế nội tại hướng tới kết quả "${primaryVi}".`;
+    retrieval_rule = `Khi muốn diễn đạt một hành động hoặc biến chuyển làm thay đổi trạng thái mang bản chất "${primaryVi}" → Hãy nghĩ đến động từ '${cleanTerm.toUpperCase()}'.`;
+    exEveryday = `In daily life, people actively ${cleanTerm} their personal goals with determination.`;
+    exBusiness = `Strategic leaders ${cleanTerm} core business operations to maintain sustainable growth.`;
+    exAcademic = `Scientific empirical models ${cleanTerm} observed environmental phenomena accurately.`;
+    exAbstract = `Philosophical principles ${cleanTerm} how human consciousness interprets ethical dilemmas.`;
+    boundary = `Tránh dịch thô theo từng từ con; cần gắn '${cleanTerm}' với tiến trình hành động chuyển dịch trạng thái '${primaryVi}'.`;
   } else if (pos.includes("noun")) {
-    core_concept = `Khái niệm lõi chỉ một thực thể, trạng thái, hiện tượng hoặc giá trị đại diện cho: "${primaryVi}". Người bản ngữ hình dung đây là một cấu phần mang tính chất cốt lõi trong hệ thống.`;
+    core_concept = `Khái niệm lõi chỉ một thực thể, trạng thái, hiện tượng hoặc giá trị đại diện cho: "${primaryVi}". Người bản ngữ hình dung đây là một cấu phần hoặc vai trò chức năng cốt lõi trong hệ thống.`;
     mental_scene = `Một thực thể hoặc giá trị mang thuộc tính "${primaryVi}" hiện diện rõ ràng trong cấu trúc tư duy hoặc không gian vật lý.`;
-    contrast = `Khác với các danh từ chung chung, '${cleanTerm}' chỉ đích danh bản chất "${primaryVi}" với vai trò chức năng cụ thể.`;
+    contrast = `Khác với các danh từ chung chung, '${cleanTerm}' chỉ đích danh bản chất "${primaryVi}" với vai trò chức năng cụ thể trong mối tương quan với các thực thể khác.`;
     retrieval_rule = `Khi cần định danh một đối tượng, hiện tượng hoặc giá trị mang bản chất "${primaryVi}" → Dùng danh từ '${cleanTerm.toUpperCase()}'.`;
-    domainEx1 = `The core ${cleanTerm} of the organization remained resilient during the transition.`;
-    domainEx2 = `Gaining a deep understanding of this ${cleanTerm} is essential for continuous growth.`;
-    boundary = `Lưu ý xem danh từ là đếm được hay không đếm được trong câu để kết hợp mạo từ chính xác.`;
+    exEveryday = `Maintaining a balanced ${cleanTerm} promotes well-being and clear communication.`;
+    exBusiness = `The ${cleanTerm} of the enterprise determined its competitive positioning in the global market.`;
+    exAcademic = `Rigorous research defines the fundamental ${cleanTerm} governing this physical mechanism.`;
+    exAbstract = `Human intuition perceives this ${cleanTerm} as an indispensable element of trust and influence.`;
+    boundary = `Lưu ý xem danh từ là đếm được hay không đếm được trong câu để kết hợp mạo từ và lượng từ chính xác.`;
   } else if (pos.includes("adj")) {
-    core_concept = `Đặc tính hoặc thuộc tính nổi bật biểu thị: "${primaryVi}". Người bản ngữ dùng từ này để khu biệt đối tượng này với các đối tượng thông thường khác.`;
-    mental_scene = `Gán nhãn phẩm chất "${primaryVi}" lên đối tượng để làm nổi bật giá trị hoặc bản chất của nó trong bức tranh tổng thể.`;
-    contrast = `So với các tính từ thông thường, '${cleanTerm}' nhấn mạnh mức độ đặc trưng và sắc thái riêng biệt của "${primaryVi}".`;
+    core_concept = `Đặc tính hoặc thuộc tính nổi bật biểu thị: "${primaryVi}". Người bản ngữ dùng từ này để khu biệt đối tượng này với các đối tượng thông thường khác trên thang đo tính chất.`;
+    mental_scene = `Gán nhãn phẩm chất "${primaryVi}" lên đối tượng để làm nổi bật giá trị hoặc bản chất đặc trưng của nó trong bức tranh tổng thể.`;
+    contrast = `So với các tính từ thông thường, '${cleanTerm}' nhấn mạnh mức độ đặc trưng và sắc thái riêng biệt của thuộc tính "${primaryVi}".`;
     retrieval_rule = `Khi cần làm nổi bật phẩm chất hoặc tính chất mang đặc trưng "${primaryVi}" của một đối tượng → Dùng tính từ '${cleanTerm.toUpperCase()}'.`;
-    domainEx1 = `Maintaining a ${cleanTerm} approach allows experts to solve complex challenges effectively.`;
-    domainEx2 = `Her ${cleanTerm} response during the meeting instilled confidence in the entire group.`;
+    exEveryday = `Her ${cleanTerm} approach made complex personal conversations feel effortless and warm.`;
+    exBusiness = `Adopting a ${cleanTerm} framework allowed the executive board to mitigate strategic risks.`;
+    exAcademic = `The experimental telemetry yielded ${cleanTerm} data regarding thermodynamic changes.`;
+    exAbstract = `An inherently ${cleanTerm} perspective helps navigate ambiguity and moral complexity.`;
     boundary = `Đảm bảo tính từ đứng trước danh từ bổ nghĩa hoặc sau liên động từ (linking verb) một cách tự nhiên.`;
   } else {
-    core_concept = `Yếu tố ngôn ngữ biểu thị phương thức, mức độ hoặc hoàn cảnh: "${primaryVi}".`;
-    mental_scene = `Bổ sung điều kiện và sắc thái cho hành động/trạng thái trong câu.`;
-    contrast = `Làm rõ mức độ và phương thức so với các trạng thái tiêu chuẩn.`;
+    core_concept = `Yếu tố ngôn ngữ biểu thị phương thức, mức độ hoặc hoàn cảnh kích hoạt: "${primaryVi}".`;
+    mental_scene = `Bổ sung điều kiện và sắc thái cho hành động/trạng thái trong câu để định hình bức tranh tư duy chính xác.`;
+    contrast = `Làm rõ mức độ và phương thức so với các trạng thái tiêu chuẩn thông thường.`;
     retrieval_rule = `Khi muốn bổ nghĩa về mức độ hoặc cách thức mang tính chất "${primaryVi}" → Dùng '${cleanTerm.toUpperCase()}'.`;
-    domainEx1 = `The strategy was executed ${cleanTerm}, achieving optimal performance.`;
-    domainEx2 = `They addressed the critical feedback ${cleanTerm} and constructive clarity.`;
+    exEveryday = `She expressed her thoughts ${cleanTerm}, ensuring everyone felt respected.`;
+    exBusiness = `The team executed the project ${cleanTerm}, achieving optimal operational performance.`;
+    exAcademic = `The statistical telemetry correlated ${cleanTerm} with observed climate variations.`;
+    exAbstract = `Principles that function ${cleanTerm} transcend temporary industry trends.`;
     boundary = `Chú ý vị trí bổ nghĩa trong câu để không làm thay đổi trọng tâm thông điệp.`;
   }
 
@@ -3026,14 +3036,24 @@ export function enrichCognitiveTerm(term: VocabularyTerm): VocabularyTerm {
       meaning_in_context: term.context_note || `Trong bài đọc này, từ đang thể hiện ý niệm "${primaryVi}" gắn chặt với mạch tư duy của tác giả.`,
       transfer_contexts: [
         {
-          domain_label: "Bối cảnh Chuyên môn / Công việc",
-          sentence: domainEx1,
-          invariant_connection: `Điểm chung ý niệm: Thể hiện thuộc tính/tiến trình ${primaryVi} trong môi trường tổ chức.`,
+          domain_label: "1. Đời sống hàng ngày (Everyday Context)",
+          sentence: exEveryday,
+          invariant_connection: `Điểm chung ý niệm: Ứng dụng bản chất "${primaryVi}" vào tương tác và hành vi đời thường.`,
         },
         {
-          domain_label: "Bối cảnh Đời sống & Giao tiếp",
-          sentence: domainEx2,
-          invariant_connection: `Điểm chung ý niệm: Ứng dụng bản chất ${primaryVi} vào tương tác hàng ngày.`,
+          domain_label: "2. Công việc & Kinh doanh (Business Context)",
+          sentence: exBusiness,
+          invariant_connection: `Điểm chung ý niệm: Thể hiện giá trị/tiến trình "${primaryVi}" trong quản trị và điều hành tổ chức.`,
+        },
+        {
+          domain_label: "3. Học thuật & Nghiên cứu (Academic Context)",
+          sentence: exAcademic,
+          invariant_connection: `Điểm chung ý niệm: Định danh hoặc chứng minh thuộc tính "${primaryVi}" trong phân tích khoa học.`,
+        },
+        {
+          domain_label: "4. Tư duy trừu tượng (Abstract Domain)",
+          sentence: exAbstract,
+          invariant_connection: `Điểm chung ý niệm: Khái quát hóa nguyên lý "${primaryVi}" ở tầng nhận thức phổ quát.`,
         },
       ],
       contrast,
