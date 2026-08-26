@@ -353,36 +353,35 @@ export default function ReadingCasePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] text-stone-900 flex flex-col font-sans">
+    <div className="h-screen w-full bg-[#FBFBFA] text-stone-900 font-sans flex flex-col overflow-hidden select-text">
       <SEO
-        title={`Case #001: ${readingCase.title} | ARIS IELTS Reading`}
-        description="Vụ án Khoa học Greenland: Sự Biến Mất Của Hồ Băng - Khảo hạch đọc hiểu IELTS Band 5.0"
+        title={`${readingCase.title} - IELTS Reading Case Studio`}
+        description="IELTS Academic Case Study Reading Studio - Dual-Panel Independent Investigation System"
       />
 
-      {/* Top Case Header Bar */}
-      <div className="border-b border-stone-200/90 bg-[#FAF8F5]/95 sticky top-0 z-30 backdrop-blur-md px-4 py-3 sm:px-6 shadow-xs">
-        <div className="mx-auto max-w-7xl flex flex-wrap items-center justify-between gap-3">
+      {/* Top Fixed Case Header Bar */}
+      <header className="h-14 border-b border-stone-200/90 bg-[#FAF8F5] z-30 backdrop-blur-md px-4 sm:px-6 shadow-xs flex items-center justify-between shrink-0">
+        <div className="w-full flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-sky-100 border border-sky-300 text-sky-950 font-black text-xs">
+            <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-sky-100 border border-sky-300 text-sky-950 font-black text-xs shrink-0">
               #01
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-sm sm:text-base font-black text-stone-900 uppercase tracking-wide">
+                <h1 className="text-xs sm:text-sm font-black text-stone-900 uppercase tracking-wide truncate max-w-[200px] sm:max-w-none">
                   {readingCase.title}
                 </h1>
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-sky-50 border border-sky-200 text-sky-800">
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-50 border border-sky-200 text-sky-800 shrink-0">
                   {readingCase.level.realm_name_vi} · Band {readingCase.level.ielts_band.toFixed(1)}
                 </span>
-                <span className="text-xs text-amber-500 hidden sm:inline-block">★★☆☆</span>
               </div>
-              <p className="text-[11px] text-stone-500 hidden sm:block">
-                {readingCase.universe.name} · Thời lượng khuyến nghị: ~10 phút
+              <p className="text-[10px] text-stone-500 hidden md:block">
+                {readingCase.universe.name} · Thời lượng: ~10 phút
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             {/* Reading Typography & Size Settings Popover */}
             <ReadingSettingsPopover
               settings={readerSettings}
@@ -400,10 +399,11 @@ export default function ReadingCasePage() {
             >
               <button
                 onClick={() => setIsIntroHovered((prev) => !prev)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-100/90 hover:bg-sky-200 text-sky-950 border border-sky-300 text-xs font-black transition-all shadow-xs cursor-pointer active:scale-95"
+                className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-100/90 hover:bg-sky-200 text-sky-950 border border-sky-300 text-xs font-black transition-all shadow-xs cursor-pointer active:scale-95"
               >
                 <Sparkles className="h-3.5 w-3.5 text-sky-700 animate-pulse" />
-                <span>💡 Bối cảnh hồ sơ nghiên cứu</span>
+                <span className="hidden sm:inline">💡 Bối cảnh nghiên cứu</span>
+                <span className="sm:hidden">💡 Bối cảnh</span>
               </button>
 
               {/* Hover/Click Context Popover */}
@@ -433,24 +433,24 @@ export default function ReadingCasePage() {
               )}
             </div>
 
-            <div className="text-xs font-mono text-stone-700 bg-white px-2.5 py-1 rounded-md border border-stone-200 shadow-xs">
+            <div className="text-xs font-mono font-bold text-stone-700 bg-white px-2.5 py-1 rounded-md border border-stone-200 shadow-xs">
               Tasks: {Object.keys(taskAnswers).length + (selectedEvidenceSentence ? 1 : 0)} / 4
             </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Main Split-View Layout */}
-      <div className="flex-1 mx-auto max-w-7xl w-full p-4 sm:p-6 lg:p-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      {/* Main Dual-Column Split Layout with Independent Scrolling */}
+      <main className="flex-1 w-full overflow-hidden">
+        <div className="h-full grid grid-cols-1 lg:grid-cols-12">
           
           {/* ========================================================================= */}
-          {/* LEFT COLUMN: MULTI-SOURCE DOSSIER (7 Columns on large screens ~ 58%)      */}
+          {/* LEFT COLUMN: MULTI-SOURCE DOSSIER (Independent Scroll, 7 Cols ~ 58%)      */}
           {/* ========================================================================= */}
-          <div className="lg:col-span-7 space-y-6">
+          <section className="lg:col-span-7 h-full overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 custom-scrollbar bg-[#FBFBFA]">
             
             {/* Source Tab Filter */}
-            <div className="flex items-center gap-2 border-b border-stone-200 pb-3 overflow-x-auto">
+            <div className="flex items-center gap-2 border-b border-stone-200/90 pb-3 overflow-x-auto sticky top-0 bg-[#FBFBFA] z-10 py-1">
               <Button
                 size="sm"
                 variant={activeSourceId === "all" ? "default" : "ghost"}
@@ -458,7 +458,7 @@ export default function ReadingCasePage() {
                 className={`text-xs h-8 rounded-lg ${
                   activeSourceId === "all"
                     ? "bg-sky-600 hover:bg-sky-700 text-white font-bold shadow-xs"
-                    : "bg-white/80 border border-stone-200 text-stone-600 hover:text-stone-900 hover:bg-white"
+                    : "bg-white border border-stone-200 text-stone-600 hover:text-stone-900 hover:bg-white"
                 }`}
               >
                 <Layers className="h-3.5 w-3.5 mr-1.5" />
@@ -588,12 +588,12 @@ export default function ReadingCasePage() {
                     );
                   })}
             </div>
-          </div>
+          </section>
 
           {/* ========================================================================= */}
-          {/* RIGHT COLUMN: INVESTIGATION & REASONING PANEL (5 Columns ~ 42%)           */}
+          {/* RIGHT COLUMN: INVESTIGATION & REASONING PANEL (Independent Scroll ~ 42%)  */}
           {/* ========================================================================= */}
-          <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-20">
+          <section className="lg:col-span-5 h-full overflow-y-auto p-4 sm:p-6 space-y-6 border-t lg:border-t-0 lg:border-l border-stone-200 bg-[#FAF9F6]/80 custom-scrollbar">
             <div className="rounded-2xl border border-stone-200/90 bg-white shadow-xs overflow-hidden">
               {/* Right Panel Tabs: Tasks vs Explain */}
               <div className="flex items-center border-b border-stone-200 bg-stone-50/80 p-1.5 gap-1.5">
@@ -1075,10 +1075,10 @@ export default function ReadingCasePage() {
             </div>
           )}
         </div>
-      </div>
+      </section>
 
         </div>
-      </div>
+      </main>
     </div>
   );
 }
