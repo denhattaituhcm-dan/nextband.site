@@ -482,7 +482,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
     },
   );
 
-  // POST /users - Create user (admin only with idempotency & compensation rollback protection)
+  // POST /users - Create user (admin only with atomic DB transaction & idempotency protection)
   fastify.post(
     "/",
     { preHandler: [authenticate, requireRoles("admin")] },
@@ -500,71 +500,69 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
       } = request.body as any;
 
       if (!email || typeof email !== "string" || !email.includes("@")) {
-        return reply.status(400).send({ error: "Email không hợp lệ" });
+        return reply.status(400).send({
+          statusCode: 400,
+          error: "Email không hợp lệ",
+          message: "Email không hợp lệ",
+        });
       }
 
-      // 1. Idempotency Check: Prevent duplicate user registration
-      const existing = await fastify.prisma.user.findUnique({
-        where: { email: email.trim().toLowerCase() },
+      if (!fullName || typeof fullName !== "string" || !fullName.trim()) {
+        return reply.status(400).send({
+          statusCode: 400,
+          error: "Vui lòng nhập họ và tên",
+          message: "Vui lòng nhập họ và tên",
+        });
+      }
+
+      const cleanEmail = email.trim().toLowerCase();
+
+      // 1. Idempotency Check: Check if user already exists
+      const existing = await fastify.prisma.user.findFirst({
+        where: { email: cleanEmail },
       });
 
       if (existing) {
-        return reply.status(409).send({ error: "Email đã tồn tại trong hệ thống" });
-      }
-
-      const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || (env as any).SUPABASE_SERVICE_ROLE_KEY;
-      if (!serviceRoleKey) {
-        return reply.status(500).send({
-          error: "SUPABASE_SERVICE_ROLE_KEY_REQUIRED",
-          message: "Hệ thống chưa cấu hình SUPABASE_SERVICE_ROLE_KEY cho chức năng quản trị viên tạo người dùng.",
+        return reply.status(409).send({
+          statusCode: 409,
+          error: "Email đã tồn tại trong hệ thống",
+          message: "Email đã tồn tại trong hệ thống",
         });
       }
 
+      // Final password (provided or securely generated)
       const finalPassword = password || Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
-
-      const supabaseAdmin = createClient(env.SUPABASE_URL, serviceRoleKey, {
-        auth: { autoRefreshToken: false, persistSession: false },
-      });
-
-      const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-        email: email.trim().toLowerCase(),
-        password: finalPassword,
-        email_confirm: true,
-        user_metadata: { full_name: fullName },
-      });
-
-      if (authError || !authData.user) {
-        if (authError?.message?.toLowerCase().includes("already") || authError?.status === 422) {
-          return reply.status(409).send({ error: "Email đã tồn tại trong hệ thống xác thực" });
-        }
-        return reply.status(400).send({ error: authError?.message || "Không thể tạo tài khoản xác thực" });
-      }
-
-      const supabaseUserId = authData.user.id;
-      let createdUserId: string | null = null;
+      const parsedDob = dateOfBirth ? new Date(dateOfBirth).toISOString().split("T")[0] : null;
 
       try {
-        // 2. Atomic Transaction: Create user profile and role mapping together
-        const user = await fastify.prisma.$transaction(async (tx) => {
-          const newUser = await tx.user.create({
-            data: {
-              userId: supabaseUserId,
-              email: email.trim().toLowerCase(),
-              fullName,
-              gender,
-              dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined,
-              phone,
-              parentName,
-              parentPhone,
-              roles: {
-                create: { role },
-              },
-            },
-            include: { roles: true },
-          });
-          createdUserId = newUser.id;
-          return newUser;
+        // 2. Atomic Execution: Call PostgreSQL stored function to create Auth identity, profile, and role atomically
+        const dbResult: any = await fastify.prisma.$queryRawUnsafe(`
+          SELECT public.admin_create_user(
+            $1::text,
+            $2::text,
+            $3::text,
+            $4::text,
+            $5::text,
+            $6::text,
+            $7::text,
+            $8::text,
+            $9::date
+          ) as result;
+        `, cleanEmail, fullName.trim(), phone || null, gender || null, role, finalPassword, parentName || null, parentPhone || null, parsedDob);
+
+        const profileData = dbResult?.[0]?.result;
+        if (!profileData) {
+          throw new Error("Không thể tạo hồ sơ người dùng trong cơ sở dữ liệu");
+        }
+
+        const user = await fastify.prisma.user.findFirst({
+          where: { userId: profileData.user_id || profileData.id },
+          include: { roles: true },
         });
+
+        if (!user) {
+          throw new Error("Không tìm thấy thông tin người dùng sau khi tạo");
+        }
 
         // 3. Non-blocking In-App & Email/Telegram notification to Admins
         (async () => {
@@ -605,22 +603,20 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           createdAt: user.createdAt,
         });
       } catch (err: any) {
-        // 3. Compensation Cleanup Safety: Rollback Supabase user and local DB state
-        if (supabaseUserId) {
-          try {
-            await supabaseAdmin.auth.admin.deleteUser(supabaseUserId);
-          } catch (cleanupErr) {
-            request.log.error(cleanupErr, "Compensation cleanup error deleting Supabase auth user");
-          }
+        request.log.error({ err, email: cleanEmail }, "User creation failed");
+        const errMsg = err?.message || "Không thể tạo tài khoản người dùng";
+        if (errMsg.toLowerCase().includes("already") || errMsg.toLowerCase().includes("duplicate") || errMsg.includes("trùng lặp")) {
+          return reply.status(409).send({
+            statusCode: 409,
+            error: "Email đã tồn tại trong hệ thống",
+            message: "Email đã tồn tại trong hệ thống",
+          });
         }
-        if (createdUserId) {
-          try {
-            await fastify.prisma.user.delete({ where: { id: createdUserId } });
-          } catch (cleanupErr) {
-            request.log.error(cleanupErr, "Compensation cleanup error during user creation");
-          }
-        }
-        throw err;
+        return reply.status(400).send({
+          statusCode: 400,
+          error: errMsg,
+          message: errMsg,
+        });
       }
     },
   );

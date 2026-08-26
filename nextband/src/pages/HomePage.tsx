@@ -1,7 +1,8 @@
 import { useState, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
-import { submissionsApi, lessonsApi } from "@/lib/api";
+import { classesApi, submissionsApi, lessonsApi } from "@/lib/api";
+import { getStudentMotivationCopy } from "@/lib/studentMotivationCopy";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -164,6 +165,25 @@ export default function HomePage() {
     });
   }, [actionQueue, submittedCount, gradedCount, pendingCount, activeClassName, courseTitle]);
 
+  // Bảng thi đua lớp để suy ra thứ hạng, chuỗi học (streak) & động lực học tập
+  const { data: leaderboardData } = useQuery({
+    queryKey: ["class-leaderboard", enrolledClassId],
+    queryFn: () => classesApi.getLeaderboard(enrolledClassId || ""),
+    enabled: !!enrolledClassId && state === "ENROLLED",
+    staleTime: 1000 * 60 * 2,
+  });
+
+  // Micro-copy động theo trạng thái học sinh (Game loop & Kích hoạt hành vi học tập)
+  const motivation = useMemo(() => {
+    return getStudentMotivationCopy({
+      actionQueue,
+      leaderboardData,
+      submittedCount,
+      gradedCount,
+      pendingCount,
+    });
+  }, [actionQueue, leaderboardData, submittedCount, gradedCount, pendingCount]);
+
   // ── State machine render ─────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-background pb-16">
@@ -255,9 +275,8 @@ export default function HomePage() {
                   Xin chào, {user?.fullName || "Học viên"}!
                 </h1>
                 <p className="text-sm md:text-base text-primary-foreground/90 font-normal leading-relaxed">
-                  Bạn đang truy cập lớp{" "}
-                  <strong className="text-white font-semibold">{activeClassName}</strong>{" "}
-                  ({courseTitle}). Chọn bài tập để làm và nhận nhận xét từ giáo viên!
+                  Lớp <strong className="text-white font-semibold">{activeClassName}</strong>{" "}
+                  ({courseTitle}) · <span className="text-white font-medium">{motivation.copy}</span>
                 </p>
               </div>
 
@@ -392,8 +411,8 @@ export default function HomePage() {
                     <CheckCircle2 className="h-4 w-4 text-success" />
                     Tổng bài đã nộp
                   </span>
-                  <Badge variant="muted" className="text-[10px] font-mono font-normal">
-                    submitted + graded
+                  <Badge variant="muted" className="text-[10px] font-medium">
+                    Đã hoàn thành
                   </Badge>
                 </div>
                 <h3 className="text-2xl font-bold text-foreground tracking-tight">{submittedCount} bài</h3>
@@ -406,8 +425,8 @@ export default function HomePage() {
                     <Award className="h-4 w-4 text-info" />
                     Bài đã nhận xét
                   </span>
-                  <Badge variant="info" className="text-[10px] font-mono font-normal">
-                    graded
+                  <Badge variant="info" className="text-[10px] font-medium">
+                    Đã chấm & sửa
                   </Badge>
                 </div>
                 <h3 className="text-2xl font-bold text-info tracking-tight">{gradedCount} bài</h3>
@@ -420,8 +439,8 @@ export default function HomePage() {
                     <Clock className="h-4 w-4 text-warning" />
                     Bài chờ giáo viên chấm
                   </span>
-                  <Badge variant="warning" className="text-[10px] font-mono font-normal">
-                    pending
+                  <Badge variant="warning" className="text-[10px] font-medium">
+                    Đang đợi chấm
                   </Badge>
                 </div>
                 <h3 className="text-2xl font-bold text-warning tracking-tight">{pendingCount} bài</h3>

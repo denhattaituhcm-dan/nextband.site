@@ -196,7 +196,7 @@ export default function AdminUsers() {
       setForm(emptyForm);
     },
     onError: (err: any) => {
-      const msg = err?.message || err?.response?.data?.error || "Không thể tạo người dùng";
+      const msg = err?.message || err?.response?.data?.message || err?.response?.data?.error || "Không thể tạo người dùng";
       toast({ title: "Lỗi", description: msg, variant: "destructive" });
     },
   });
@@ -821,9 +821,32 @@ export default function AdminUsers() {
             </div>
 
             <div className="flex justify-end gap-2 pt-4">
-              <Button variant="outline" onClick={() => setDialogOpen(false)}>Hủy</Button>
               <Button
+                variant="outline"
+                disabled={createMutation.isPending || updateMutation.isPending}
+                onClick={() => setDialogOpen(false)}
+              >
+                Hủy
+              </Button>
+              <Button
+                disabled={createMutation.isPending || updateMutation.isPending}
                 onClick={() => {
+                  if (!editingUser && (!form.email || !form.email.includes("@"))) {
+                    toast({
+                      title: "Thiếu thông tin",
+                      description: "Vui lòng nhập địa chỉ email hợp lệ",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
+                  if (!form.fullName || !form.fullName.trim()) {
+                    toast({
+                      title: "Thiếu thông tin",
+                      description: "Vui lòng nhập họ và tên học viên",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
                   if (editingUser) {
                     updateMutation.mutate({ id: editingUser.id, ...form });
                   } else {
@@ -831,6 +854,9 @@ export default function AdminUsers() {
                   }
                 }}
               >
+                {(createMutation.isPending || updateMutation.isPending) && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 {editingUser ? "Lưu cập nhật" : "Tạo học viên"}
               </Button>
             </div>

@@ -97,3 +97,10 @@ const __dirname = __esbuild_dirname(__filename);
 });
 
 console.log("✅ 100% self-contained Fastify Serverless Gateway bundled into api/index.js!");
+
+import { copyFileSync, existsSync as fsExists } from "fs";
+const nextbandApiDir = resolve(rootDir, "nextband/api");
+if (fsExists(nextbandApiDir)) {
+  copyFileSync(resolve(rootDir, "api/index.js"), resolve(nextbandApiDir, "index.js"));
+  console.log("✅ Synced bundle to nextband/api/index.js!");
+}

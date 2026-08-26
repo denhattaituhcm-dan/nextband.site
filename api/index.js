@@ -102439,8 +102439,6 @@ async function submissionsRoutes(fastify) {
 }
 
 // server/routes/users.routes.ts
-init_dist4();
-init_env();
 var usersRoutes = async (fastify) => {
   fastify.get(
     "/",
@@ -102855,60 +102853,57 @@ var usersRoutes = async (fastify) => {
         parentPhone
       } = request.body;
       if (!email || typeof email !== "string" || !email.includes("@")) {
-        return reply.status(400).send({ error: "Email kh\xF4ng h\u1EE3p l\u1EC7" });
+        return reply.status(400).send({
+          statusCode: 400,
+          error: "Email kh\xF4ng h\u1EE3p l\u1EC7",
+          message: "Email kh\xF4ng h\u1EE3p l\u1EC7"
+        });
       }
-      const existing = await fastify.prisma.user.findUnique({
-        where: { email: email.trim().toLowerCase() }
+      if (!fullName || typeof fullName !== "string" || !fullName.trim()) {
+        return reply.status(400).send({
+          statusCode: 400,
+          error: "Vui l\xF2ng nh\u1EADp h\u1ECD v\xE0 t\xEAn",
+          message: "Vui l\xF2ng nh\u1EADp h\u1ECD v\xE0 t\xEAn"
+        });
+      }
+      const cleanEmail = email.trim().toLowerCase();
+      const existing = await fastify.prisma.user.findFirst({
+        where: { email: cleanEmail }
       });
       if (existing) {
-        return reply.status(409).send({ error: "Email \u0111\xE3 t\u1ED3n t\u1EA1i trong h\u1EC7 th\u1ED1ng" });
-      }
-      const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_SERVICE_ROLE_KEY;
-      if (!serviceRoleKey) {
-        return reply.status(500).send({
-          error: "SUPABASE_SERVICE_ROLE_KEY_REQUIRED",
-          message: "H\u1EC7 th\u1ED1ng ch\u01B0a c\u1EA5u h\xECnh SUPABASE_SERVICE_ROLE_KEY cho ch\u1EE9c n\u0103ng qu\u1EA3n tr\u1ECB vi\xEAn t\u1EA1o ng\u01B0\u1EDDi d\xF9ng."
+        return reply.status(409).send({
+          statusCode: 409,
+          error: "Email \u0111\xE3 t\u1ED3n t\u1EA1i trong h\u1EC7 th\u1ED1ng",
+          message: "Email \u0111\xE3 t\u1ED3n t\u1EA1i trong h\u1EC7 th\u1ED1ng"
         });
       }
       const finalPassword = password || Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
-      const supabaseAdmin = createClient(env.SUPABASE_URL, serviceRoleKey, {
-        auth: { autoRefreshToken: false, persistSession: false }
-      });
-      const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-        email: email.trim().toLowerCase(),
-        password: finalPassword,
-        email_confirm: true,
-        user_metadata: { full_name: fullName }
-      });
-      if (authError || !authData.user) {
-        if (authError?.message?.toLowerCase().includes("already") || authError?.status === 422) {
-          return reply.status(409).send({ error: "Email \u0111\xE3 t\u1ED3n t\u1EA1i trong h\u1EC7 th\u1ED1ng x\xE1c th\u1EF1c" });
-        }
-        return reply.status(400).send({ error: authError?.message || "Kh\xF4ng th\u1EC3 t\u1EA1o t\xE0i kho\u1EA3n x\xE1c th\u1EF1c" });
-      }
-      const supabaseUserId = authData.user.id;
-      let createdUserId = null;
+      const parsedDob = dateOfBirth ? new Date(dateOfBirth).toISOString().split("T")[0] : null;
       try {
-        const user = await fastify.prisma.$transaction(async (tx) => {
-          const newUser = await tx.user.create({
-            data: {
-              userId: supabaseUserId,
-              email: email.trim().toLowerCase(),
-              fullName,
-              gender,
-              dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : void 0,
-              phone,
-              parentName,
-              parentPhone,
-              roles: {
-                create: { role }
-              }
-            },
-            include: { roles: true }
-          });
-          createdUserId = newUser.id;
-          return newUser;
+        const dbResult = await fastify.prisma.$queryRawUnsafe(`
+          SELECT public.admin_create_user(
+            $1::text,
+            $2::text,
+            $3::text,
+            $4::text,
+            $5::text,
+            $6::text,
+            $7::text,
+            $8::text,
+            $9::date
+          ) as result;
+        `, cleanEmail, fullName.trim(), phone || null, gender || null, role, finalPassword, parentName || null, parentPhone || null, parsedDob);
+        const profileData = dbResult?.[0]?.result;
+        if (!profileData) {
+          throw new Error("Kh\xF4ng th\u1EC3 t\u1EA1o h\u1ED3 s\u01A1 ng\u01B0\u1EDDi d\xF9ng trong c\u01A1 s\u1EDF d\u1EEF li\u1EC7u");
+        }
+        const user = await fastify.prisma.user.findFirst({
+          where: { userId: profileData.user_id || profileData.id },
+          include: { roles: true }
         });
+        if (!user) {
+          throw new Error("Kh\xF4ng t\xECm th\u1EA5y th\xF4ng tin ng\u01B0\u1EDDi d\xF9ng sau khi t\u1EA1o");
+        }
         (async () => {
           try {
             const { NotificationService: NotificationService2 } = await Promise.resolve().then(() => (init_notification_service(), notification_service_exports));
@@ -102945,21 +102940,20 @@ var usersRoutes = async (fastify) => {
           createdAt: user.createdAt
         });
       } catch (err) {
-        if (supabaseUserId) {
-          try {
-            await supabaseAdmin.auth.admin.deleteUser(supabaseUserId);
-          } catch (cleanupErr) {
-            request.log.error(cleanupErr, "Compensation cleanup error deleting Supabase auth user");
-          }
+        request.log.error({ err, email: cleanEmail }, "User creation failed");
+        const errMsg = err?.message || "Kh\xF4ng th\u1EC3 t\u1EA1o t\xE0i kho\u1EA3n ng\u01B0\u1EDDi d\xF9ng";
+        if (errMsg.toLowerCase().includes("already") || errMsg.toLowerCase().includes("duplicate") || errMsg.includes("tr\xF9ng l\u1EB7p")) {
+          return reply.status(409).send({
+            statusCode: 409,
+            error: "Email \u0111\xE3 t\u1ED3n t\u1EA1i trong h\u1EC7 th\u1ED1ng",
+            message: "Email \u0111\xE3 t\u1ED3n t\u1EA1i trong h\u1EC7 th\u1ED1ng"
+          });
         }
-        if (createdUserId) {
-          try {
-            await fastify.prisma.user.delete({ where: { id: createdUserId } });
-          } catch (cleanupErr) {
-            request.log.error(cleanupErr, "Compensation cleanup error during user creation");
-          }
-        }
-        throw err;
+        return reply.status(400).send({
+          statusCode: 400,
+          error: errMsg,
+          message: errMsg
+        });
       }
     }
   );
@@ -103851,6 +103845,347 @@ var ClassService = class {
     }));
     await this.notifService.createBatchNotifications(this.prisma, notifPayloads);
   }
+  // Use Case: Get Center-Wide Inter-Class League Standings (Class Competition & Gamification)
+  async getLeagueStandings(branchId) {
+    const where = {
+      status: "ACTIVE"
+    };
+    if (branchId && branchId !== "ALL") {
+      where.branchId = branchId;
+    }
+    const classes = await this.prisma.class.findMany({
+      where,
+      include: {
+        course: { select: { id: true, title: true } },
+        branch: { select: { id: true, name: true } },
+        teacher: { select: { id: true, fullName: true, avatarUrl: true } },
+        sessions: { select: { id: true } },
+        students: {
+          where: { deletedAt: null },
+          include: {
+            student: {
+              select: {
+                userId: true,
+                fullName: true
+              }
+            }
+          }
+        },
+        homeworks: {
+          select: {
+            id: true,
+            submissions: {
+              select: {
+                studentId: true,
+                status: true,
+                submittedAt: true
+              }
+            }
+          }
+        },
+        attendance: {
+          select: {
+            studentId: true,
+            status: true
+          }
+        }
+      }
+    });
+    const standings = classes.map((c) => {
+      const totalStudents = c.students.length;
+      const totalHomeworks = c.homeworks.length;
+      const totalSessions = c.sessions.length;
+      let totalCompletedSubmissions = 0;
+      const studentActivityDates = {};
+      for (const hw of c.homeworks) {
+        for (const sub of hw.submissions) {
+          if (sub.status === "SUBMITTED" || sub.status === "GRADED") {
+            totalCompletedSubmissions++;
+            if (sub.submittedAt) {
+              if (!studentActivityDates[sub.studentId]) {
+                studentActivityDates[sub.studentId] = /* @__PURE__ */ new Set();
+              }
+              studentActivityDates[sub.studentId].add(new Date(sub.submittedAt).toISOString().split("T")[0]);
+            }
+          }
+        }
+      }
+      const totalAssignedSlots = totalStudents * totalHomeworks;
+      const completionRate = totalAssignedSlots > 0 ? Math.round(totalCompletedSubmissions / totalAssignedSlots * 100) : 0;
+      const totalAttendanceSlots = totalStudents * totalSessions;
+      const attendedCount = c.attendance.filter((a) => a.status === "PRESENT" || a.status === "LATE").length;
+      const attendanceRate = totalAttendanceSlots > 0 ? Math.round(attendedCount / totalAttendanceSlots * 100) : 100;
+      let totalStreak = 0;
+      if (totalStudents > 0) {
+        for (const cs of c.students) {
+          const days = studentActivityDates[cs.student.userId]?.size || 0;
+          const streak = days > 0 ? Math.min(14, days * 2) : 1;
+          totalStreak += streak;
+        }
+      }
+      const avgStreak = totalStudents > 0 ? Number((totalStreak / totalStudents).toFixed(1)) : 0;
+      const leagueScore = Math.round(completionRate * 70 + attendanceRate * 20 + avgStreak * 50);
+      return {
+        classId: c.id,
+        className: c.name,
+        courseTitle: c.course?.title || "Kh\xF3a h\u1ECDc",
+        branchName: c.branch?.name || "Ch\u01B0a g\xE1n",
+        branchId: c.branchId,
+        teacherName: c.teacher?.fullName || "Ch\u01B0a ph\xE2n c\xF4ng",
+        teacherAvatar: c.teacher?.avatarUrl || null,
+        totalStudents,
+        totalHomeworks,
+        totalSessions,
+        totalCompletedSubmissions,
+        totalAssignedSlots,
+        completionRate,
+        attendanceRate,
+        avgStreak,
+        leagueScore
+      };
+    });
+    standings.sort((a, b) => {
+      if (b.leagueScore !== a.leagueScore) {
+        return b.leagueScore - a.leagueScore;
+      }
+      return b.completionRate - a.completionRate;
+    });
+    const rankedStandings = standings.map((item, index) => ({
+      ...item,
+      rank: index + 1
+    }));
+    return {
+      totalClasses: rankedStandings.length,
+      standings: rankedStandings
+    };
+  }
+  // Use Case: Get Class Progress Leaderboard for Students & Peers (Gamified Race to 100%)
+  async getClassLeaderboard(user, classId) {
+    const classData = await this.prisma.class.findUnique({
+      where: { id: classId },
+      include: {
+        course: { select: { id: true, title: true } },
+        students: {
+          where: { deletedAt: null },
+          include: {
+            student: {
+              select: {
+                userId: true,
+                fullName: true,
+                avatarUrl: true
+              }
+            }
+          }
+        },
+        homeworks: {
+          select: {
+            id: true,
+            title: true,
+            deadline: true,
+            submissions: {
+              select: {
+                studentId: true,
+                status: true,
+                submittedAt: true
+              }
+            }
+          }
+        }
+      }
+    });
+    if (!classData) {
+      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+    }
+    const totalHomeworks = classData.homeworks.length;
+    const now = /* @__PURE__ */ new Date();
+    const upcomingHomeworks = classData.homeworks.filter((h) => h.deadline && new Date(h.deadline) >= now).sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime());
+    const nextHw = upcomingHomeworks[0] || null;
+    const nextUpcomingHomework = nextHw ? {
+      title: nextHw.title,
+      deadline: nextHw.deadline,
+      isUrgent: new Date(nextHw.deadline).getTime() - now.getTime() < 48 * 60 * 60 * 1e3
+    } : null;
+    const studentRanks = classData.students.map((cs) => {
+      const student = cs.student;
+      const studentId = student.userId;
+      let completedCount = 0;
+      const activityDays = /* @__PURE__ */ new Set();
+      for (const hw of classData.homeworks) {
+        const sub = hw.submissions.find((s) => s.studentId === studentId);
+        if (sub && (sub.status === "SUBMITTED" || sub.status === "GRADED")) {
+          completedCount++;
+          if (sub.submittedAt) {
+            activityDays.add(new Date(sub.submittedAt).toISOString().split("T")[0]);
+          }
+        }
+      }
+      const completionRate = totalHomeworks > 0 ? Math.round(completedCount / totalHomeworks * 100) : 0;
+      const streakDays = Math.max(1, activityDays.size > 0 ? Math.min(14, activityDays.size * 2) : completedCount > 0 ? Math.min(completedCount + 1, 7) : 1);
+      return {
+        studentId,
+        fullName: student.fullName || "H\u1ECDc vi\xEAn",
+        avatarUrl: student.avatarUrl,
+        completedCount,
+        totalHomeworks,
+        completionRate,
+        streakDays,
+        isMe: studentId === user.id
+      };
+    });
+    const totalStudents = studentRanks.length;
+    const totalAssignedSlots = totalStudents * totalHomeworks;
+    const totalSubmittedSlots = studentRanks.reduce((acc, s) => acc + s.completedCount, 0);
+    const classCompletionRate = totalAssignedSlots > 0 ? Math.round(totalSubmittedSlots / totalAssignedSlots * 100) : 0;
+    const bandMatch = classData.course?.title?.match(/\d+(\.\d+)?/);
+    const targetBand = bandMatch ? `Band ${bandMatch[0]}+` : "Band 6.5+";
+    studentRanks.sort((a, b) => {
+      if (b.completedCount !== a.completedCount) {
+        return b.completedCount - a.completedCount;
+      }
+      return a.fullName.localeCompare(b.fullName);
+    });
+    let currentRank = 1;
+    const rankedStudents = studentRanks.map((s, index) => {
+      if (index > 0 && s.completedCount < studentRanks[index - 1].completedCount) {
+        currentRank = index + 1;
+      }
+      return {
+        ...s,
+        rank: currentRank
+      };
+    });
+    const myRankItem = rankedStudents.find((s) => s.isMe);
+    return {
+      classId: classData.id,
+      className: classData.name,
+      courseTitle: classData.course?.title || "IELTS Course",
+      targetBand,
+      totalStudents,
+      totalHomeworks,
+      classCompletionRate,
+      totalSubmittedSlots,
+      totalAssignedSlots,
+      nextUpcomingHomework,
+      myRank: myRankItem?.rank || null,
+      myCompletedCount: myRankItem?.completedCount || 0,
+      students: rankedStudents
+    };
+  }
+  // Use Case: Get End-of-Course Graduation Summary (Honor Roll, Completion & Overdue Rates)
+  async getGraduationSummary(classId) {
+    const classData = await this.prisma.class.findUnique({
+      where: { id: classId },
+      include: {
+        course: { select: { id: true, title: true } },
+        teacher: { select: { id: true, fullName: true, email: true } },
+        sessions: { select: { id: true, sessionNumber: true, plannedDate: true } },
+        students: {
+          where: { deletedAt: null },
+          include: {
+            student: {
+              select: {
+                userId: true,
+                fullName: true,
+                email: true,
+                avatarUrl: true
+              }
+            }
+          }
+        },
+        homeworks: {
+          select: {
+            id: true,
+            title: true,
+            deadline: true,
+            submissions: {
+              select: {
+                id: true,
+                studentId: true,
+                status: true,
+                submittedAt: true,
+                score: true
+              }
+            }
+          }
+        },
+        attendance: {
+          select: {
+            studentId: true,
+            status: true
+          }
+        }
+      }
+    });
+    if (!classData) {
+      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+    }
+    const totalHomeworks = classData.homeworks.length;
+    const totalSessions = classData.sessions.length;
+    const studentResults = classData.students.map((cs) => {
+      const student = cs.student;
+      const studentId = student.userId;
+      let submittedCount = 0;
+      let onTimeCount = 0;
+      let overdueCount = 0;
+      for (const hw of classData.homeworks) {
+        const sub = hw.submissions.find((s) => s.studentId === studentId);
+        const isSubmitted = sub && (sub.status === "SUBMITTED" || sub.status === "GRADED");
+        if (isSubmitted) {
+          submittedCount++;
+          if (sub.submittedAt && hw.deadline) {
+            const subTime = new Date(sub.submittedAt).getTime();
+            const deadTime = new Date(hw.deadline).getTime();
+            if (subTime > deadTime) {
+              overdueCount++;
+            } else {
+              onTimeCount++;
+            }
+          } else {
+            onTimeCount++;
+          }
+        }
+      }
+      const completionRate = totalHomeworks > 0 ? Math.round(submittedCount / totalHomeworks * 100) : 100;
+      const overdueRate = submittedCount > 0 ? Math.round(overdueCount / submittedCount * 100) : 0;
+      const studentAttendances = classData.attendance.filter((a) => a.studentId === studentId);
+      const attendedSessions = studentAttendances.filter((a) => a.status === "PRESENT" || a.status === "LATE").length;
+      const attendanceRate = totalSessions > 0 ? Math.round(attendedSessions / totalSessions * 100) : 100;
+      const isHonorRoll = totalHomeworks > 0 && completionRate === 100 && overdueCount === 0;
+      return {
+        studentId,
+        fullName: student.fullName,
+        email: student.email,
+        avatarUrl: student.avatarUrl,
+        classStudentStatus: cs.status,
+        totalHomeworks,
+        submittedCount,
+        completionRate,
+        onTimeCount,
+        overdueCount,
+        overdueRate,
+        totalSessions,
+        attendedSessions,
+        attendanceRate,
+        isHonorRoll
+      };
+    });
+    const honorRollCount = studentResults.filter((s) => s.isHonorRoll).length;
+    return {
+      classId: classData.id,
+      className: classData.name,
+      teacherName: classData.teacher?.fullName || "Ch\u01B0a ph\xE2n c\xF4ng",
+      courseTitle: classData.course?.title || "IELTS Program",
+      startDate: classData.startDate,
+      endDate: classData.endDate,
+      status: classData.status,
+      closedAt: classData.closedAt,
+      totalSessions,
+      totalHomeworks,
+      totalStudents: studentResults.length,
+      honorRollCount,
+      students: studentResults
+    };
+  }
   // Use Case: Close Class (Teacher or Admin)
   async closeClass(user, id) {
     const classData = await this.repo.findById(id);
@@ -103861,11 +104196,15 @@ var ClassService = class {
     if (!isAdmin && classData.teacherId !== user.id) {
       throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n \u0111\xF3ng l\u1EDBp n\xE0y", 403);
     }
+    const graduationSummary = await this.getGraduationSummary(id);
     if (classData.status === "CLOSED" || !classData.isActive) {
       return {
         success: true,
         message: "L\u1EDBp h\u1ECDc \u0111\xE3 \u1EDF tr\u1EA1ng th\xE1i \u0111\xF3ng.",
-        data: classData
+        data: {
+          class: classData,
+          graduationSummary
+        }
       };
     }
     const updatedClass = await this.prisma.class.update({
@@ -103904,45 +104243,56 @@ var ClassService = class {
     });
     return {
       success: true,
-      message: `\u0110\xE3 \u0111\xF3ng l\u1EDBp "${updatedClass.name}" th\xE0nh c\xF4ng v\xE0 g\u1EEDi th\xF4ng b\xE1o \u0111\u1EBFn h\u1ECDc vi\xEAn.`,
-      data: updatedClass
+      message: `\u0110\xE3 \u0111\xF3ng l\u1EDBp "${updatedClass.name}" th\xE0nh c\xF4ng v\xE0 t\u1ED5ng h\u1EE3p k\u1EBFt qu\u1EA3 t\u1ED1t nghi\u1EC7p cho ${graduationSummary.totalStudents} h\u1ECDc vi\xEAn (${graduationSummary.honorRollCount} h\u1ECDc vi\xEAn vinh danh 100%).`,
+      data: {
+        class: updatedClass,
+        graduationSummary
+      }
     };
   }
-  // Use Case: Run Lifecycle Maintenance (Auto-close after 6 months & Auto-cleanup after 3 months)
+  // Use Case: Run Lifecycle Maintenance (Auto-close after 7 days grace period & 6 months safety cutoff)
   async runClassLifecycleMaintenance() {
     const now = /* @__PURE__ */ new Date();
-    const sixMonthsAgo = new Date(now.getTime() - 180 * 24 * 60 * 60 * 1e3);
-    const expiredClasses = await this.prisma.class.findMany({
+    let closedCount = 0;
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1e3);
+    const candidateClasses = await this.prisma.class.findMany({
       where: {
-        status: "ACTIVE",
-        startDate: {
-          lte: sixMonthsAgo
-        }
+        status: "ACTIVE"
       },
-      select: {
-        id: true,
-        name: true,
-        teacherId: true,
+      include: {
+        sessions: {
+          select: { plannedDate: true },
+          orderBy: { plannedDate: "desc" },
+          take: 1
+        },
         students: { select: { studentId: true } }
       }
     });
-    let closedCount = 0;
-    for (const cls of expiredClasses) {
-      await this.prisma.class.update({
-        where: { id: cls.id },
-        data: {
-          status: "CLOSED",
-          isActive: false,
-          closedAt: now
-        }
-      });
-      await this.sendClassClosedNotifications({
-        id: cls.id,
-        name: cls.name,
-        teacherId: cls.teacherId,
-        students: cls.students
-      });
-      closedCount++;
+    for (const cls of candidateClasses) {
+      const lastSessionDate = cls.sessions[0]?.plannedDate || cls.endDate;
+      const isPastGracePeriod = lastSessionDate && new Date(lastSessionDate) <= sevenDaysAgo;
+      const isSixMonthsOld = cls.startDate && new Date(cls.startDate) <= new Date(now.getTime() - 180 * 24 * 60 * 60 * 1e3);
+      if (isPastGracePeriod || isSixMonthsOld) {
+        await this.prisma.class.update({
+          where: { id: cls.id },
+          data: {
+            status: "CLOSED",
+            isActive: false,
+            closedAt: now
+          }
+        });
+        await this.prisma.classStudent.updateMany({
+          where: { classId: cls.id, status: "ACTIVE", deletedAt: null },
+          data: { status: "COMPLETED", completedAt: now }
+        });
+        await this.sendClassClosedNotifications({
+          id: cls.id,
+          name: cls.name,
+          teacherId: cls.teacherId,
+          students: cls.students
+        });
+        closedCount++;
+      }
     }
     const threeMonthsAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1e3);
     const classesToDelete = await this.prisma.class.findMany({
@@ -104237,6 +104587,35 @@ var ClassController = class {
       return reply.status(status).send({ error: err.message });
     }
   }
+  async getGraduationSummary(request, reply) {
+    try {
+      const result = await this.service.getGraduationSummary(request.params.id);
+      return reply.send({ success: true, data: result });
+    } catch (err) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
+  async getLeaderboard(request, reply) {
+    try {
+      const user = request.user;
+      const result = await this.service.getClassLeaderboard(user, request.params.id);
+      return reply.send({ success: true, data: result });
+    } catch (err) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
+  async getLeagueStandings(request, reply) {
+    try {
+      const { branchId } = request.query;
+      const result = await this.service.getLeagueStandings(branchId);
+      return reply.send({ success: true, data: result });
+    } catch (err) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
   async close(request, reply) {
     try {
       const user = request.user;
@@ -104264,6 +104643,13 @@ async function classesRoutes(fastify) {
   fastify.get("/my-classes", { preHandler: authenticate }, async (request, reply) => {
     return controller.getMyClasses(request, reply);
   });
+  fastify.get(
+    "/league-standings",
+    { preHandler: authenticate },
+    async (request, reply) => {
+      return controller.getLeagueStandings(request, reply);
+    }
+  );
   fastify.get("/", { preHandler: authenticate }, async (request, reply) => {
     return controller.list(request, reply);
   });
@@ -104303,6 +104689,20 @@ async function classesRoutes(fastify) {
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       return controller.setHomeworkDeadline(request, reply);
+    }
+  );
+  fastify.get(
+    "/:id/leaderboard",
+    { preHandler: authenticate },
+    async (request, reply) => {
+      return controller.getLeaderboard(request, reply);
+    }
+  );
+  fastify.get(
+    "/:id/graduation-summary",
+    { preHandler: authenticate },
+    async (request, reply) => {
+      return controller.getGraduationSummary(request, reply);
     }
   );
   fastify.post(
@@ -105991,8 +106391,6 @@ var notifications_routes_default = notificationsRoutes;
 
 // server/services/lead.service.ts
 init_leadNotification_service();
-init_dist4();
-init_env();
 import { LeadStatus } from "@prisma/client";
 var LeadService = class {
   constructor(prisma) {
@@ -106189,41 +106587,34 @@ var LeadService = class {
     if (existingUser) {
       throw new Error(`Email ${email} \u0111\xE3 t\u1ED3n t\u1EA1i tr\xEAn h\u1EC7 th\u1ED1ng`);
     }
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!serviceRoleKey) {
-      throw new Error("H\u1EC7 th\u1ED1ng ch\u01B0a c\u1EA5u h\xECnh SUPABASE_SERVICE_ROLE_KEY cho ch\u1EE9c n\u0103ng t\u1EA1o t\xE0i kho\u1EA3n");
-    }
     const finalPassword = input.password || Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
-    const supabaseAdmin = createClient(env.SUPABASE_URL, serviceRoleKey, {
-      auth: { autoRefreshToken: false, persistSession: false }
-    });
-    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-      email,
-      password: finalPassword,
-      email_confirm: true,
-      user_metadata: { full_name: fullName }
-    });
-    if (authError || !authData.user) {
-      if (authError?.message?.toLowerCase().includes("already") || authError?.status === 422) {
-        throw new Error("Email \u0111\xE3 t\u1ED3n t\u1EA1i trong h\u1EC7 th\u1ED1ng x\xE1c th\u1EF1c Supabase");
-      }
-      throw new Error(authError?.message || "Kh\xF4ng th\u1EC3 t\u1EA1o t\xE0i kho\u1EA3n x\xE1c th\u1EF1c");
+    const dbResult = await this.prisma.$queryRawUnsafe(`
+      SELECT public.admin_create_user(
+        $1::text,
+        $2::text,
+        $3::text,
+        NULL::text,
+        'student'::text,
+        $4::text,
+        NULL::text,
+        NULL::text,
+        NULL::date
+      ) as result;
+    `, email, fullName, phone, finalPassword);
+    const profileData = dbResult?.[0]?.result;
+    if (!profileData) {
+      throw new Error("Kh\xF4ng th\u1EC3 t\u1EA1o t\xE0i kho\u1EA3n h\u1ECDc vi\xEAn trong c\u01A1 s\u1EDF d\u1EEF li\u1EC7u");
     }
-    const supabaseUserId = authData.user.id;
+    const supabaseUserId = profileData.user_id || profileData.id;
     try {
       const result = await this.prisma.$transaction(async (tx) => {
-        const newUser = await tx.user.create({
-          data: {
-            userId: supabaseUserId,
-            email,
-            fullName,
-            phone,
-            roles: {
-              create: { role: "student" }
-            }
-          },
+        const newUser = await tx.user.findFirst({
+          where: { userId: supabaseUserId },
           include: { roles: true }
         });
+        if (!newUser) {
+          throw new Error("Kh\xF4ng t\xECm th\u1EA5y th\xF4ng tin h\u1ECDc vi\xEAn sau khi t\u1EA1o");
+        }
         if (branchId) {
           await tx.userBranch.create({
             data: {
@@ -106286,9 +106677,9 @@ var LeadService = class {
     } catch (err) {
       if (supabaseUserId) {
         try {
-          await supabaseAdmin.auth.admin.deleteUser(supabaseUserId);
+          await this.prisma.$executeRawUnsafe(`DELETE FROM auth.users WHERE id = $1::uuid`, supabaseUserId);
         } catch (cleanupErr) {
-          console.error("[LeadService] Compensation rollback failed for supabase user:", cleanupErr);
+          console.error("[LeadService] Compensation rollback failed for user:", cleanupErr);
         }
       }
       throw err;

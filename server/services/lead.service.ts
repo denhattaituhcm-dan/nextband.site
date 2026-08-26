@@ -223,50 +223,41 @@ export class LeadService {
       throw new Error(`Email ${email} đã tồn tại trên hệ thống`);
     }
 
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || (env as any).SUPABASE_SERVICE_ROLE_KEY;
-    if (!serviceRoleKey) {
-      throw new Error("Hệ thống chưa cấu hình SUPABASE_SERVICE_ROLE_KEY cho chức năng tạo tài khoản");
-    }
-
     const finalPassword = input.password || Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
 
-    const supabaseAdmin = createClient(env.SUPABASE_URL, serviceRoleKey, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    });
+    // 1. Create User via atomic PostgreSQL function
+    const dbResult: any = await this.prisma.$queryRawUnsafe(`
+      SELECT public.admin_create_user(
+        $1::text,
+        $2::text,
+        $3::text,
+        NULL::text,
+        'student'::text,
+        $4::text,
+        NULL::text,
+        NULL::text,
+        NULL::date
+      ) as result;
+    `, email, fullName, phone, finalPassword);
 
-    // 1. Create Supabase Auth User
-    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-      email,
-      password: finalPassword,
-      email_confirm: true,
-      user_metadata: { full_name: fullName },
-    });
-
-    if (authError || !authData.user) {
-      if (authError?.message?.toLowerCase().includes("already") || authError?.status === 422) {
-        throw new Error("Email đã tồn tại trong hệ thống xác thực Supabase");
-      }
-      throw new Error(authError?.message || "Không thể tạo tài khoản xác thực");
+    const profileData = dbResult?.[0]?.result;
+    if (!profileData) {
+      throw new Error("Không thể tạo tài khoản học viên trong cơ sở dữ liệu");
     }
 
-    const supabaseUserId = authData.user.id;
+    const supabaseUserId = profileData.user_id || profileData.id;
 
     try {
-      // 2. Atomic Database Transaction
+      // 2. Atomic Database Transaction: Link branch and update lead
       const result = await this.prisma.$transaction(async (tx) => {
-        // A. Create User Profile
-        const newUser = await tx.user.create({
-          data: {
-            userId: supabaseUserId,
-            email,
-            fullName,
-            phone,
-            roles: {
-              create: { role: "student" },
-            },
-          },
+        const newUser = await tx.user.findFirst({
+          where: { userId: supabaseUserId },
           include: { roles: true },
         });
+
+        if (!newUser) {
+          throw new Error("Không tìm thấy thông tin học viên sau khi tạo");
+        }
 
         // B. Create UserBranch (if branchId provided)
         if (branchId) {
@@ -336,12 +327,11 @@ export class LeadService {
         lead: result.lead,
       };
     } catch (err: any) {
-      // 4. Compensation Rollback: Delete Supabase Auth User if DB transaction fails
       if (supabaseUserId) {
         try {
-          await supabaseAdmin.auth.admin.deleteUser(supabaseUserId);
+          await this.prisma.$executeRawUnsafe(`DELETE FROM auth.users WHERE id = $1::uuid`, supabaseUserId);
         } catch (cleanupErr) {
-          console.error("[LeadService] Compensation rollback failed for supabase user:", cleanupErr);
+          console.error("[LeadService] Compensation rollback failed for user:", cleanupErr);
         }
       }
       throw err;

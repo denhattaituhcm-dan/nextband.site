@@ -191,6 +191,7 @@ export default function AdminTeachers() {
     onError: (err: any) => {
       const msg =
         err?.message ||
+        err?.response?.data?.message ||
         err?.response?.data?.error ||
         "Không thể tạo giáo viên. Vui lòng kiểm tra dữ liệu!";
       toast({

@@ -35,7 +35,21 @@ if (existsSync(bundleScript)) {
   execSync(`node "${bundleScript}"`, { stdio: "inherit" });
 }
 
-// 3. Strict TypeScript Verification
+// 3. Ensure frontend dependencies are installed before typecheck
+const nextbandDir = resolve(rootDir, "nextband");
+const nextbandReact = resolve(nextbandDir, "node_modules/react");
+const rootReact = resolve(rootDir, "node_modules/react");
+
+if (existsSync(nextbandDir) && !existsSync(nextbandReact) && !existsSync(rootReact)) {
+  console.log("📦 Frontend dependencies missing. Installing nextband dependencies...");
+  try {
+    execSync("npm install", { cwd: nextbandDir, stdio: "inherit" });
+  } catch (installErr) {
+    console.warn("⚠️ Failed to auto-install nextband dependencies:", installErr?.message);
+  }
+}
+
+// 4. Strict TypeScript Verification
 console.log("🔍 Running Strict TypeScript Typecheck...");
 const tsconfigPath = existsSync(resolve(rootDir, "nextband/tsconfig.app.json"))
   ? resolve(rootDir, "nextband/tsconfig.app.json")
