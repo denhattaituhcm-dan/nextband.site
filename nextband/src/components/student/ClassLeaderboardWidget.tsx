@@ -140,7 +140,7 @@ export const ClassLeaderboardWidget: React.FC<ClassLeaderboardWidgetProps> = ({
               {targetBand}
             </Badge>
 
-            {myRank && (
+            {myRank && totalHomeworks > 0 && totalSubmittedSlots > 0 && (
               <Badge
                 variant="outline"
                 className={cn(
@@ -219,12 +219,31 @@ export const ClassLeaderboardWidget: React.FC<ClassLeaderboardWidgetProps> = ({
             {/* TIER 2: BẢNG XẾP HẠNG THI ĐUA CÁ NHÂN */}
             <div className="space-y-2">
               <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-muted-foreground px-1">
-                <span>Bảng Thi Đua Làm Bài</span>
-                <span>Chuỗi học · Tiến độ</span>
+                {totalHomeworks === 0 ? (
+                  <span className="flex items-center gap-1.5">
+                    <Users className="h-3.5 w-3.5" />
+                    Thành viên lớp học
+                  </span>
+                ) : (
+                  <span>Bảng Thi Đua Làm Bài</span>
+                )}
+                {totalHomeworks > 0 && <span>Chuỗi học · Tiến độ</span>}
               </div>
 
-              {topStudents.map((st) => {
-                const is100 = totalHomeworks > 0 && st.completedCount === totalHomeworks;
+              {/* No homework yet: show participant list without rank */}
+              {totalHomeworks === 0 && (
+                <div className="rounded-xl border border-dashed border-border/70 bg-muted/20 p-4 text-center space-y-1.5">
+                  <AlertCircle className="h-5 w-5 text-muted-foreground mx-auto" />
+                  <p className="text-xs font-semibold text-foreground">Chưa có bài tập nào được giao</p>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Bảng xếp hạng sẽ bắt đầu ngay khi giáo viên giao bài đầu tiên.<br />
+                    {totalStudents} thành viên đã sẵn sàng thi đua!
+                  </p>
+                </div>
+              )}
+
+              {totalHomeworks > 0 && topStudents.map((st) => {
+                const is100 = st.completedCount === totalHomeworks;
 
                 return (
                   <div
@@ -285,8 +304,8 @@ export const ClassLeaderboardWidget: React.FC<ClassLeaderboardWidgetProps> = ({
                 );
               })}
 
-              {/* Pin current student if outside top 4 and showAll is false */}
-              {!showAll && !isMeInTop && myStudentObj && (
+
+              {totalHomeworks > 0 && !showAll && !isMeInTop && myStudentObj && (
                 <>
                   <div className="flex items-center justify-center gap-2 py-0.5 text-[10px] text-muted-foreground font-medium">
                     <span>· · ·</span>
@@ -327,7 +346,12 @@ export const ClassLeaderboardWidget: React.FC<ClassLeaderboardWidgetProps> = ({
         {/* TIER 3: FOOTER MOTIVATION & TOGGLE */}
         <div className="pt-2 border-t flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
           <div className="text-[11px] text-muted-foreground flex items-center gap-1.5">
-            {myRank === 1 ? (
+            {totalHomeworks === 0 ? (
+              <span className="flex items-center gap-1">
+                <Sparkles className="h-3.5 w-3.5 text-primary" />
+                {totalStudents} thành viên đã sẵn sàng — bảng xếp hạng sẽ bắt đầu khi có bài tập.
+              </span>
+            ) : myRank === 1 ? (
               <span className="text-amber-600 font-semibold flex items-center gap-1">
                 <Sparkles className="h-3.5 w-3.5" /> Bạn đang dẫn đầu lớp! Hãy giữ vững phong độ nhé.
               </span>
@@ -340,7 +364,7 @@ export const ClassLeaderboardWidget: React.FC<ClassLeaderboardWidgetProps> = ({
             )}
           </div>
 
-          {students.length > 4 && (
+          {totalHomeworks > 0 && students.length > 4 && (
             <Button
               variant="ghost"
               size="sm"

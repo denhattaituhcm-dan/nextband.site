@@ -168,15 +168,18 @@ export default function Auth() {
             </div>
           </Link>
           <div className="space-y-1">
-            <p className="text-base font-semibold tracking-tight text-muted-foreground">
-              {settings.authTagline}
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground uppercase">
+              Chinh phục IELTS
+            </h1>
+            <p className="text-sm sm:text-base text-muted-foreground font-medium">
+              Từ nền tảng đến band điểm mục tiêu.
             </p>
           </div>
         </div>
 
         {/* Left side Primary Content */}
-        <div className="relative z-10 w-full max-w-3xl my-auto py-4 space-y-6">
-          {/* Feature Pillars */}
+        <div className="relative z-10 w-full max-w-3xl my-auto py-4 space-y-5">
+          {/* Feature Pillars: Giữ nguyên 2 ô và Việt hóa chuẩn hành trình học thuật */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center gap-3.5 p-3.5 rounded-xl bg-card border border-border/60 shadow-xs">
               <div className="rounded-lg bg-primary-soft p-2.5 shrink-0">
@@ -184,10 +187,10 @@ export default function Auth() {
               </div>
               <div className="min-w-0">
                 <h3 className="font-semibold text-foreground text-sm sm:text-base tracking-tight truncate">
-                  Learning Workspace
+                  Hành trình học tập
                 </h3>
                 <p className="text-xs text-muted-foreground truncate">
-                  Lộ trình IELTS chuẩn
+                  Lộ trình IELTS của bạn
                 </p>
               </div>
             </div>
@@ -198,24 +201,29 @@ export default function Auth() {
               </div>
               <div className="min-w-0">
                 <h3 className="font-semibold text-foreground text-sm sm:text-base tracking-tight truncate">
-                  Track Progress
+                  Tiến độ chinh phục
                 </h3>
                 <p className="text-xs text-muted-foreground truncate">
-                  Theo dõi tiến độ
+                  Theo dõi từng bước tiến bộ
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Hero Illustration */}
-          <div className="w-full rounded-[24px] overflow-hidden shadow-xs border border-border/40">
-            <img
-              src="/your-journey.webp"
-              alt="ARIS IELTS Learning Journey"
-              className="w-full h-auto object-cover rounded-[24px] scale-100 hover:scale-[1.01] transition-transform duration-300"
-              loading="eager"
-              decoding="async"
-            />
+          {/* Hero Progression Illustration & Motivation Caption */}
+          <div className="space-y-2.5">
+            <div className="w-full rounded-[24px] overflow-hidden shadow-xs border border-border/40">
+              <img
+                src="/your-journey.webp"
+                alt="ARIS IELTS Learning Journey: Starter -> Dreamer -> Builder -> Master -> Leader"
+                className="w-full h-auto object-cover rounded-[24px] scale-100 hover:scale-[1.01] transition-transform duration-300"
+                loading="eager"
+                decoding="async"
+              />
+            </div>
+            <p className="text-center text-xs sm:text-sm text-muted-foreground font-medium">
+              Mỗi bài hoàn thành đưa bạn tiến gần hơn tới cấp độ tiếp theo.
+            </p>
           </div>
         </div>
 
@@ -256,10 +264,10 @@ export default function Auth() {
               </Link>
             </div>
             <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
-              Đăng nhập hệ thống
+              Tiếp tục hành trình
             </CardTitle>
-            <p className="text-xs text-muted-foreground">
-              Dành cho Học viên, Giáo viên và Quản trị viên
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Đăng nhập để trở lại lớp học và tiếp tục chinh phục mục tiêu IELTS.
             </p>
           </CardHeader>
           <CardContent className="space-y-6 p-0">

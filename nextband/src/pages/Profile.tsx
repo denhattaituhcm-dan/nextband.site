@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { authApi, uploadsApi } from "@/lib/api";
+import { authApi, uploadsApi, classesApi, submissionsApi } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -15,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, User, Camera, Save } from "lucide-react";
+import { Loader2, User, Camera, Save, Trophy, Flame, Star, CheckCircle2, Zap, Users, Medal } from "lucide-react";
 
 export default function Profile() {
   const { user, refreshUser } = useAuth();
@@ -40,6 +42,141 @@ export default function Profile() {
       setGender(user.gender || "");
     }
   }, [user]);
+
+  // --- Data: leaderboard & submissions for achievements ---
+  // Lấy enrolledClassId từ user profile nếu có (hoặc từ localStorage fallback)
+  const enrolledClassId: string | null = (user as any)?.enrolledClassId ?? null;
+
+  const { data: leaderboardData } = useQuery({
+    queryKey: ["class-leaderboard-profile", enrolledClassId],
+    queryFn: () => classesApi.getLeaderboard(enrolledClassId!),
+    enabled: !!enrolledClassId,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const { data: submissionsData } = useQuery({
+    queryKey: ["profile-submissions", user?.id],
+    queryFn: () => submissionsApi.list({ studentId: user?.id, limit: 200 }).catch(() => ({ data: [] })),
+    enabled: !!user?.id,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const userSubmissions = Array.isArray(submissionsData?.data) ? submissionsData.data : [];
+  const gradedCount = userSubmissions.filter((s: any) => ["graded", "GRADED"].includes(s.status)).length;
+  const submittedCount = userSubmissions.filter((s: any) =>
+    ["submitted", "SUBMITTED", "graded", "GRADED"].includes(s.status)
+  ).length;
+
+  const myStudent = leaderboardData?.students?.find((s) => s.isMe);
+  const myRank = leaderboardData?.myRank;
+  const totalStudents = leaderboardData?.totalStudents ?? 0;
+  const streakDays = myStudent?.streakDays ?? 0;
+  const completionRate = myStudent?.completionRate ?? 0;
+  const completedCount = myStudent?.completedCount ?? 0;
+  const totalHomeworks = leaderboardData?.totalHomeworks ?? 0;
+
+  // --- Achievement engine: derive badges from real data ---
+  const achievements = useMemo(() => {
+    const list: { id: string; label: string; desc: string; icon: React.ReactNode; color: string; earned: boolean }[] = [
+      {
+        id: "top1",
+        label: "Dẫn đầu lớp",
+        desc: "Đang xếp hạng #1 trong lớp học",
+        icon: <Trophy className="h-4 w-4" />,
+        color: "bg-amber-100 text-amber-700 border-amber-300",
+        earned: myRank === 1 && totalStudents > 1,
+      },
+      {
+        id: "top3",
+        label: "Top 3 lớp",
+        desc: "Đang nằm trong Top 3 học viên xuất sắc nhất lớp",
+        icon: <Medal className="h-4 w-4" />,
+        color: "bg-blue-100 text-blue-700 border-blue-300",
+        earned: !!myRank && myRank <= 3 && myRank > 1 && totalStudents > 3,
+      },
+      {
+        id: "complete100",
+        label: "Hoàn thành 100%",
+        desc: "Đã hoàn thành toàn bộ bài tập được giao trong lớp",
+        icon: <CheckCircle2 className="h-4 w-4" />,
+        color: "bg-emerald-100 text-emerald-700 border-emerald-300",
+        earned: completionRate === 100 && totalHomeworks > 0,
+      },
+      {
+        id: "streak7",
+        label: `Chuỗi ${streakDays} ngày`,
+        desc: `Học liên tục ${streakDays} ngày không gián đoạn`,
+        icon: <Flame className="h-4 w-4" />,
+        color: "bg-orange-100 text-orange-700 border-orange-300",
+        earned: streakDays >= 7,
+      },
+      {
+        id: "streak3",
+        label: `Chuỗi ${streakDays} ngày`,
+        desc: `Duy trì chuỗi học ${streakDays} ngày`,
+        icon: <Flame className="h-4 w-4" />,
+        color: "bg-amber-100 text-amber-600 border-amber-200",
+        earned: streakDays >= 3 && streakDays < 7,
+      },
+      {
+        id: "graded10",
+        label: "Được chấm 10+ bài",
+        desc: `Đã có ${gradedCount} bài được giáo viên chấm & nhận xét`,
+        icon: <Star className="h-4 w-4" />,
+        color: "bg-violet-100 text-violet-700 border-violet-300",
+        earned: gradedCount >= 10,
+      },
+      {
+        id: "graded5",
+        label: "Được chấm 5+ bài",
+        desc: `Đã có ${gradedCount} bài được giáo viên chấm & nhận xét`,
+        icon: <Star className="h-4 w-4" />,
+        color: "bg-violet-100 text-violet-600 border-violet-200",
+        earned: gradedCount >= 5 && gradedCount < 10,
+      },
+      {
+        id: "submitted10",
+        label: "Nộp 10+ bài",
+        desc: `Đã nộp tổng cộng ${submittedCount} bài cho giáo viên`,
+        icon: <Zap className="h-4 w-4" />,
+        color: "bg-sky-100 text-sky-700 border-sky-300",
+        earned: submittedCount >= 10,
+      },
+      {
+        id: "submitted5",
+        label: "Nộp 5+ bài",
+        desc: `Đã nộp tổng cộng ${submittedCount} bài cho giáo viên`,
+        icon: <Zap className="h-4 w-4" />,
+        color: "bg-sky-100 text-sky-600 border-sky-200",
+        earned: submittedCount >= 5 && submittedCount < 10,
+      },
+      {
+        id: "active80",
+        label: "Tiến độ tích cực",
+        desc: `Hoàn thành ${Math.round(completionRate)}% bài tập được giao`,
+        icon: <Users className="h-4 w-4" />,
+        color: "bg-teal-100 text-teal-700 border-teal-300",
+        earned: completionRate >= 80 && completionRate < 100 && totalHomeworks > 0,
+      },
+    ];
+
+    // De-duplicate streak (chỉ hiện badge cao nhất)
+    const earnedIds = list.filter((a) => a.earned).map((a) => a.id);
+    if (earnedIds.includes("streak7")) {
+      return list.filter((a) => a.id !== "streak3" || !earnedIds.includes("streak7"));
+    }
+    if (earnedIds.includes("graded10")) {
+      return list.filter((a) => a.id !== "graded5" || !earnedIds.includes("graded10"));
+    }
+    if (earnedIds.includes("submitted10")) {
+      return list.filter((a) => a.id !== "submitted5" || !earnedIds.includes("submitted10"));
+    }
+    return list;
+  }, [myRank, totalStudents, completionRate, totalHomeworks, streakDays, gradedCount, submittedCount]);
+
+  const earnedAchievements = achievements.filter((a) => a.earned);
+  const lockedAchievements = achievements.filter((a) => !a.earned);
+
 
   const handleUpdateInfo = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -185,15 +322,24 @@ export default function Profile() {
                     </Select>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="bio">Giới thiệu</Label>
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="bio">Giới thiệu</Label>
+                    <span className={`text-xs font-mono ${bio.length >= 150 ? "text-destructive font-semibold" : bio.length >= 120 ? "text-warning" : "text-muted-foreground"}`}>
+                      {bio.length}/150
+                    </span>
+                  </div>
                   <Textarea
                     id="bio"
                     value={bio}
-                    onChange={(e) => setBio(e.target.value)}
+                    onChange={(e) => setBio(e.target.value.slice(0, 150))}
                     placeholder="Một chút về bản thân bạn..."
-                    rows={4}
+                    rows={3}
+                    maxLength={150}
                   />
+                  {bio.length >= 150 && (
+                    <p className="text-xs text-destructive">Đã đạt giới hạn 150 ký tự.</p>
+                  )}
                 </div>
               </CardContent>
               <CardFooter className="border-t pt-6">
@@ -210,6 +356,99 @@ export default function Profile() {
                 </Button>
               </CardFooter>
             </form>
+          </Card>
+
+          {/* Thành tích & Danh hiệu */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Trophy className="h-5 w-5 text-amber-500" /> Thành tích & Danh hiệu
+              </CardTitle>
+              <CardDescription>
+                Các danh hiệu được tính tự động từ tiến độ học tập, thứ hạng lớp và chuỗi học liên tục của bạn.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              {/* Earned achievements */}
+              {earnedAchievements.length > 0 ? (
+                <div className="space-y-3">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Đã đạt được · {earnedAchievements.length} danh hiệu
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {earnedAchievements.map((a) => (
+                      <div
+                        key={a.id}
+                        title={a.desc}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold ${a.color} cursor-default select-none`}
+                      >
+                        {a.icon}
+                        {a.label}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Stats snapshot */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+                    {myRank && (
+                      <div className="p-3 rounded-xl bg-muted/40 border border-border/50 text-center space-y-1">
+                        <div className="text-xl font-black text-foreground">#{myRank}</div>
+                        <div className="text-[10px] text-muted-foreground font-medium">Hạng trong lớp</div>
+                      </div>
+                    )}
+                    {streakDays > 0 && (
+                      <div className="p-3 rounded-xl bg-muted/40 border border-border/50 text-center space-y-1">
+                        <div className="text-xl font-black text-orange-600">{streakDays}🔥</div>
+                        <div className="text-[10px] text-muted-foreground font-medium">Chuỗi ngày học</div>
+                      </div>
+                    )}
+                    {submittedCount > 0 && (
+                      <div className="p-3 rounded-xl bg-muted/40 border border-border/50 text-center space-y-1">
+                        <div className="text-xl font-black text-foreground">{submittedCount}</div>
+                        <div className="text-[10px] text-muted-foreground font-medium">Bài đã nộp</div>
+                      </div>
+                    )}
+                    {totalHomeworks > 0 && (
+                      <div className="p-3 rounded-xl bg-muted/40 border border-border/50 text-center space-y-1">
+                        <div className="text-xl font-black text-foreground">{completedCount}/{totalHomeworks}</div>
+                        <div className="text-[10px] text-muted-foreground font-medium">Tiến độ lớp</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="py-6 text-center space-y-2">
+                  <div className="w-12 h-12 mx-auto rounded-full bg-muted flex items-center justify-center">
+                    <Trophy className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <p className="text-sm font-medium text-foreground">Chưa có danh hiệu nào</p>
+                  <p className="text-xs text-muted-foreground">
+                    Hoàn thành bài tập, duy trì chuỗi học và leo hạng trong lớp để mở khóa danh hiệu đầu tiên.
+                  </p>
+                </div>
+              )}
+
+              {/* Locked / upcoming achievements */}
+              {lockedAchievements.length > 0 && (
+                <div className="space-y-2 pt-2 border-t border-border/60">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Chưa đạt · Mục tiêu tiếp theo
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {lockedAchievements.map((a) => (
+                      <div
+                        key={a.id}
+                        title={a.desc}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border/60 bg-muted/30 text-xs font-medium text-muted-foreground cursor-default select-none opacity-60"
+                      >
+                        {a.icon}
+                        {a.label}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </CardContent>
           </Card>
         </div>
       </div>

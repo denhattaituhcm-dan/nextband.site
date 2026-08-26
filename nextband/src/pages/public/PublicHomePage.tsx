@@ -89,7 +89,11 @@ export default function PublicHomePage() {
                 </span>
                 <span className="flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5 text-success" />
-                  Hệ thống học tập riêng
+                  Lộ trình cá nhân hóa
+                </span>
+                <span className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-success" />
+                  Học cùng lớp — thi đua cùng tiến
                 </span>
               </div>
             </div>
@@ -144,7 +148,7 @@ export default function PublicHomePage() {
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-brand-blue text-white text-left space-y-1.5 shadow-2xs">
+                <div className="p-5 rounded-2xl bg-brand-blue text-white text-left space-y-2 shadow-2xs">
                   <div className="text-base font-bold flex items-center gap-2">
                     <ShieldCheck className="h-5 w-5 text-brand-cyan" />
                     <span>Học có kỷ luật &amp; đo lường minh bạch</span>
@@ -152,6 +156,10 @@ export default function PublicHomePage() {
                   <p className="text-sm text-white/90 leading-relaxed">
                     Mọi bài nộp được lưu trữ và chấm chữa chi tiết trên hệ thống để bạn thấy rõ sự tiến bộ qua từng ngày.
                   </p>
+                  <div className="flex items-center gap-2 pt-1 text-white/75 text-xs font-semibold border-t border-white/15 mt-1">
+                    <Users className="h-3.5 w-3.5 text-brand-cyan shrink-0" />
+                    Tiến độ của bạn hiển thị cùng cả lớp — mỗi bài nộp là một bước leo hạng.
+                  </div>
                 </div>
               </div>
             </div>
@@ -398,19 +406,20 @@ export default function PublicHomePage() {
           <Button
             size="lg"
             onClick={() => navigate("/assessment")}
-            className="rounded-2xl px-8 h-13 text-sm sm:text-base font-extrabold bg-brand-red hover:bg-brand-red-hover text-white shadow-md gap-2"
+            className="rounded-2xl px-8 h-14 text-sm sm:text-base font-extrabold bg-brand-red hover:bg-brand-red-hover text-white shadow-md gap-2.5"
           >
             <span>Khảo thí kiểm tra Rank hiện tại của bạn ngay (45 Phút)</span>
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-5 w-5" />
           </Button>
 
           <Button
+            size="lg"
             variant="outline"
             onClick={() => navigate("/academic-system")}
-            className="rounded-2xl px-6 h-13 text-sm sm:text-base font-bold border-2 border-border/80 hover:bg-muted text-foreground"
+            className="rounded-2xl px-8 h-14 text-sm sm:text-base font-bold border-2 border-border/80 hover:bg-muted text-foreground gap-2"
           >
             <span>Xem chi tiết 7 cấp bậc &amp; 4 giai đoạn</span>
-            <ArrowRight className="h-4 w-4 ml-1.5" />
+            <ArrowRight className="h-5 w-5" />
           </Button>
         </div>
       </SectionContainer>
@@ -419,9 +428,9 @@ export default function PublicHomePage() {
       {/* SECTION 5: NEXTBAND LEARNING SYSTEM (HỆ THỐNG HỌC TẬP RIÊNG)              */}
       {/* ========================================================================= */}
       <SectionContainer
-        badge="Hệ Thống Học Tập Riêng"
-        title="Mọi bài làm của bạn đều được theo dõi và sửa chữa kỹ lưỡng."
-        description="Không gửi bài qua tin nhắn trôi nổi. Toàn bộ bài nộp, nhận xét của giáo viên và lịch sử bài sửa đều được lưu trữ minh bạch trên hệ thống học tập của ARIS."
+        badge="Lớp Học & Hệ Thống Học Tập"
+        title="Học một mình hay học cùng lớp — hành trình của bạn đều được ghi nhận."
+        description="Bài nộp, nhận xét giáo viên và tiến độ của từng học viên được lưu trữ minh bạch. Bảng xếp hạng lớp tạo động lực thi đua — không phải để cạnh tranh, mà để cùng nhau không bỏ cuộc."
         background="default"
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 text-left">
@@ -574,11 +583,14 @@ export default function PublicHomePage() {
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-brand-blue-soft/50 border border-brand-blue/20 text-xs text-foreground/80 font-bold space-y-1">
+            <div className="p-4 rounded-2xl bg-brand-blue-soft/50 border border-brand-blue/20 text-xs text-foreground/80 font-bold space-y-1.5">
               <div className="flex items-center gap-2 text-brand-blue">
                 <Users className="h-4 w-4" />
-                <span>Quy chuẩn lớp học: Tối đa 08 học viên / lớp</span>
+                <span>Lớp nhỏ — kết nối thật</span>
               </div>
+              <p className="text-foreground/65 font-medium leading-relaxed">
+                Tối đa 8 học viên mỗi lớp. Giáo viên biết tên từng người — bảng xếp hạng không phải con số ẩn danh mà là những người học thật, cùng tiến bộ với bạn mỗi ngày.
+              </p>
             </div>
           </div>
         </div>
@@ -612,6 +624,12 @@ export default function PublicHomePage() {
           <p className="text-base sm:text-lg lg:text-xl text-white/90 leading-relaxed max-w-2xl mx-auto">
             Làm bài kiểm tra năng lực đầu vào miễn phí để nhận phân tích chi tiết điểm mạnh, điểm yếu và gợi ý lộ trình học tập phù hợp từ ARIS.
           </p>
+
+          {/* Community social proof line */}
+          <div className="flex items-center justify-center gap-2 text-white/70 text-sm font-semibold">
+            <Users className="h-4 w-4 text-brand-cyan shrink-0" />
+            <span>Tham gia cùng hàng trăm học viên đang thi đua và cùng nhau chinh phục mục tiêu IELTS.</span>
+          </div>
 
           <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
             <Button

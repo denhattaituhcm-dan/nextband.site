@@ -419,28 +419,46 @@ export function AcademicRankSystem({
           </div>
         </div>
 
-        {/* Trao tặng danh hiệu chính thức khi đạt kết quả thi */}
-        <div
-          className={cn(
-            "mt-6 p-4 sm:p-5 rounded-2xl border flex items-start sm:items-center gap-3.5 text-xs sm:text-sm leading-relaxed",
-            activeRankData.theme.badgeBg,
-            activeRankData.theme.badgeBorder
-          )}
-        >
-          <Award className={cn("h-5 w-5 sm:h-6 sm:w-6 shrink-0 mt-0.5 sm:mt-0", activeRankData.theme.accentColor)} />
-          <div>
-            <span className="font-extrabold text-foreground block sm:inline">
-              Vinh Danh &amp; Trao Tặng Danh Hiệu:{" "}
-            </span>
-            <span className="text-foreground/85">
-              Học viên đạt kết quả sau khi thi IELTS chính thức sẽ được Hội đồng học thuật ARIS trao tặng danh hiệu{" "}
-              <strong className="text-foreground font-black underline decoration-2">
-                Rank {activeRankData.rankNumber} — {activeRankData.title} ({activeRankData.subtitle})
-              </strong>
-              , ghi dấu thành tích thực chất và vinh danh trên bảng vàng tiến bộ.
-            </span>
+        {/* Vinh Danh & Trao Tặng Danh Hiệu: Chỉ áp dụng từ Rank 6 — Học Giả trở lên */}
+        {activeRankData.rankNumber >= 6 ? (
+          <div
+            className={cn(
+              "mt-6 p-4 sm:p-5 rounded-2xl border flex items-start sm:items-center gap-3.5 text-xs sm:text-sm leading-relaxed",
+              activeRankData.theme.badgeBg,
+              activeRankData.theme.badgeBorder
+            )}
+          >
+            <Award className={cn("h-5 w-5 sm:h-6 sm:w-6 shrink-0 mt-0.5 sm:mt-0", activeRankData.theme.accentColor)} />
+            <div>
+              <span className="font-extrabold text-foreground block sm:inline">
+                Vinh Danh &amp; Trao Tặng Danh Hiệu:{" "}
+              </span>
+              <span className="text-foreground/85">
+                Học viên đạt kết quả sau khi thi IELTS chính thức sẽ được Hội đồng học thuật ARIS trao tặng danh hiệu{" "}
+                <strong className="text-foreground font-black underline decoration-2">
+                  Rank {activeRankData.rankNumber} — {activeRankData.title} ({activeRankData.subtitle})
+                </strong>
+                , ghi dấu thành tích thực chất và vinh danh trên bảng vàng học thuật.
+              </span>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div
+            className={cn(
+              "mt-6 p-4 sm:p-5 rounded-2xl border flex items-start sm:items-center gap-3.5 text-xs sm:text-sm leading-relaxed bg-muted/40 border-border/80 text-muted-foreground"
+            )}
+          >
+            <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6 shrink-0 mt-0.5 sm:mt-0 text-muted-foreground" />
+            <div>
+              <span className="font-extrabold text-foreground block sm:inline">
+                Giai Đoạn Nền Tảng &amp; Rèn Luyện:{" "}
+              </span>
+              <span className="text-foreground/80">
+                Mốc <strong className="text-foreground font-bold">Rank {activeRankData.rankNumber} — {activeRankData.title}</strong> là giai đoạn tích lũy và hoàn thiện năng lực được đo lường, lưu vết qua hệ thống NextBand. Danh hiệu và bảng vàng vinh danh chính thức của ARIS được trao tặng bắt đầu từ cấp bậc <strong className="text-foreground font-black">Rank 6 — Học Giả (IELTS 6.0+)</strong> trở lên.
+              </span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

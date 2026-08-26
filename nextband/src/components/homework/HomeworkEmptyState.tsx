@@ -59,39 +59,51 @@ export function HomeworkEmptyState({ onJoinClick, hasClasses, state }: HomeworkE
         </Card>
       )}
 
-      {/* 1. HERO WELCOME BANNER FOR UNENROLLED OR PENDING/SUSPENDED STUDENTS */}
+      {/* 1. HERO: "CỔNG KHỞI HÀNH" — Prologue for unenrolled students */}
       <Card className={`border-0 text-white rounded-2xl shadow-lg p-6 md:p-8 text-center space-y-5 relative overflow-hidden ${
         isSuspended
-          ? "bg-gradient-to-r from-amber-600 via-red-600 to-rose-700"
+          ? "bg-gradient-to-br from-amber-600 via-red-600 to-rose-700"
           : isPending
-          ? "bg-gradient-to-r from-sky-600 via-indigo-600 to-blue-700"
-          : "bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600"
+          ? "bg-gradient-to-br from-sky-600 via-indigo-600 to-blue-700"
+          : "bg-gradient-to-br from-[#1a2e6f] via-blue-700 to-blue-500"
       }`}>
-        <div className="space-y-2 max-w-3xl mx-auto">
-          <h1 className="text-xl md:text-2xl font-extrabold text-white tracking-tight">
+        {/* Subtle ambient orb */}
+        <div className="absolute -top-16 -right-16 w-48 h-48 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-12 -left-12 w-40 h-40 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 space-y-3 max-w-2xl mx-auto">
+          {/* State badge */}
+          {!isSuspended && !isPending && (
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/25 text-white text-[11px] font-bold backdrop-blur-sm">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              Hành trình IELTS · Sẵn sàng khởi hành
+            </div>
+          )}
+
+          <h1 className="text-xl md:text-3xl font-extrabold text-white tracking-tight leading-tight">
             {isSuspended
-              ? "Tài khoản Lớp học tạm thời bị tạm dừng"
+              ? "Tài khoản tạm thời bị tạm dừng"
               : isPending
-              ? "Tài khoản của bạn đang chờ Giáo viên Kích hoạt"
-              : "Chào mừng bạn đến với ARIS IELTS (NextBand)"}
+              ? "Đang chờ Giáo viên kích hoạt"
+              : "Hành trình của bạn sắp bắt đầu"}
           </h1>
-          <p className="text-xs md:text-sm text-blue-100 font-medium leading-relaxed">
+          <p className="text-xs md:text-sm text-blue-100 font-medium leading-relaxed max-w-lg mx-auto">
             {isSuspended
-              ? "Lớp học của bạn đang ở trạng thái Tạm dừng. Vui lòng liên hệ Giáo viên hoặc Trung tâm để kiểm tra thông tin và mở lại quyền học."
+              ? "Lớp học của bạn đang ở trạng thái Tạm dừng. Vui lòng liên hệ Giáo viên hoặc Trung tâm để mở lại quyền học."
               : isPending
-              ? "Hệ thống đã ghi nhận lớp học của bạn. Giáo viên sẽ bật Kích hoạt để bạn bắt đầu truy cập bài học."
-              : "Tài khoản Email của bạn chưa được liên kết với Lớp học nào. Vui lòng liên hệ Giáo viên / Trung tâm ARIS IELTS hoặc nhập mã lớp được cấp để xếp lớp."}
+              ? "Hệ thống đã ghi nhận lớp học của bạn. Giáo viên sẽ kích hoạt để bạn bắt đầu truy cập bài học."
+              : "Chưa gia nhập lớp? Không sao. Hoàn tất bước đầu tiên để mở khóa hành trình chinh phục IELTS của bạn."}
           </p>
         </div>
 
-        {/* DUAL ACTION CTAS matching Student Lifecycle Job-to-be-Done */}
-        <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+        {/* CTAs */}
+        <div className="relative z-10 flex flex-wrap items-center justify-center gap-3 pt-1">
           <Button
             onClick={handleOpenJoinModal}
-            className="rounded-full bg-white text-blue-700 hover:bg-blue-50 font-bold px-5 py-2.5 shadow-md active:scale-95 text-xs transition-all"
+            className="rounded-xl bg-white text-blue-700 hover:bg-blue-50 font-bold px-6 py-2.5 shadow-md active:scale-95 text-sm transition-all gap-2 border-0"
           >
-            <KeyRound className="h-4 w-4 mr-1.5 text-blue-600" />
-            <span>Nhập mã lớp học</span>
+            <KeyRound className="h-4 w-4 text-blue-600" />
+            Nhập mã lớp để khởi hành
           </Button>
 
           {settings.zaloLink && (
@@ -99,53 +111,61 @@ export function HomeworkEmptyState({ onJoinClick, hasClasses, state }: HomeworkE
               href={settings.zaloLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/25 backdrop-blur-md text-xs font-semibold transition-all shadow-sm active:scale-95"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/25 backdrop-blur-md text-xs font-semibold transition-all shadow-sm active:scale-95"
             >
               <MessageCircle className="h-4 w-4 text-sky-300" />
-              <span>Support / Liên hệ Giáo viên</span>
+              Liên hệ Giáo viên
             </a>
           )}
         </div>
       </Card>
 
-      {/* 2. 5-STEP GUIDELINE WORKFLOW */}
-      <Card className="rounded-2xl border border-slate-100 bg-white p-6 md:p-8 space-y-5 shadow-sm">
-        <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wider text-center">
-          Hệ thống hoạt động như thế nào? (5 Bước đơn giản)
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 pt-2">
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center space-y-2 flex flex-col items-center justify-center">
-            <span className="w-7 h-7 rounded-full bg-blue-100 text-blue-600 font-extrabold text-xs inline-flex items-center justify-center">1</span>
-            <div className="font-bold text-xs text-slate-900">Đăng nhập</div>
+      {/* 2. NHIỆM VỤ ĐẦU TIÊN — compact mission card, replaces the 5-step docblock */}
+      {!isSuspended && !isPending && (
+        <Card className="rounded-2xl border border-primary/20 bg-primary/5 p-5 md:p-6 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <CheckCircle2 className="h-5 w-5" />
+              </div>
+              <div>
+                <div className="text-[10px] font-extrabold text-primary uppercase tracking-widest mb-0.5">
+                  Nhiệm vụ đầu tiên
+                </div>
+                <h4 className="text-sm font-bold text-foreground">Gia nhập lớp học để mở khóa hành trình</h4>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Nhập mã lớp được giáo viên cấp — chỉ mất 30 giây để bắt đầu.
+                </p>
+              </div>
+            </div>
+            <Button
+              size="sm"
+              onClick={handleOpenJoinModal}
+              className="font-bold text-xs gap-1.5 shadow-sm shrink-0"
+            >
+              <KeyRound className="h-3.5 w-3.5" />
+              Nhập mã lớp ngay
+            </Button>
           </div>
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center space-y-2 flex flex-col items-center justify-center">
-            <span className="w-7 h-7 rounded-full bg-blue-100 text-blue-600 font-extrabold text-xs inline-flex items-center justify-center">2</span>
-            <div className="font-bold text-xs text-slate-900">Giáo viên xếp lớp</div>
-          </div>
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center space-y-2 flex flex-col items-center justify-center">
-            <span className="w-7 h-7 rounded-full bg-blue-100 text-blue-600 font-extrabold text-xs inline-flex items-center justify-center">3</span>
-            <div className="font-bold text-xs text-slate-900">Nhận bài tập</div>
-          </div>
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center space-y-2 flex flex-col items-center justify-center">
-            <span className="w-7 h-7 rounded-full bg-blue-100 text-blue-600 font-extrabold text-xs inline-flex items-center justify-center">4</span>
-            <div className="font-bold text-xs text-slate-900">Làm & Nộp bài</div>
-          </div>
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center space-y-2 flex flex-col items-center justify-center">
-            <span className="w-7 h-7 rounded-full bg-blue-100 text-blue-600 font-extrabold text-xs inline-flex items-center justify-center">5</span>
-            <div className="font-bold text-xs text-slate-900">Giáo viên nhận xét</div>
-          </div>
-        </div>
-      </Card>
+        </Card>
+      )}
 
-      {/* 3. 5-LEVEL IELTS ROADMAP SUMMARY - YOUR IELTS GROWTH PATH (BUILDER JOURNEY METAPHOR) */}
+      {/* 3. 5-LEVEL IELTS ROADMAP — renamed to journey framing, with Level 0 badge */}
       <Card className="rounded-2xl border border-slate-100 bg-white p-6 md:p-8 space-y-6 shadow-sm overflow-hidden">
-        <div className="text-center space-y-1.5 max-w-3xl mx-auto">
+        <div className="text-center space-y-2 max-w-3xl mx-auto">
           <h3 className="text-lg md:text-xl font-black text-slate-900 tracking-tight">
-            YOUR IELTS GROWTH PATH
+            Hành trình chinh phục IELTS
           </h3>
           <p className="text-xs text-slate-500 font-medium">
-            Từng bước kiến tạo tri thức – Từ nền tảng vững chắc đến vị thế Leader
+            Bạn sẽ bắt đầu từ đâu và tiến xa đến đâu?
           </p>
+          {/* Level 0 marker — student is at the gate, not in a void */}
+          {!isSuspended && !isPending && (
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/8 border border-primary/20 text-primary text-[11px] font-bold">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              Bạn đang ở · Cổng Khởi Hành
+            </div>
+          )}
         </div>
 
         {/* ROADMAP GRID (5 COLUMNS DESKTOP / VERTICAL TIMELINE MOBILE) */}
