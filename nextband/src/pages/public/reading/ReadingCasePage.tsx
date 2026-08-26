@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { CASE_001 } from "@/data/readingCases/case001";
 import { CASE_002 } from "@/data/readingCases/case002";
 import { VocabularyTerm } from "@/features/reading/types";
@@ -38,7 +39,28 @@ const ALL_CASES: Record<string, typeof CASE_001> = {
 };
 
 export default function ReadingCasePage() {
-  const [selectedCaseId, setSelectedCaseId] = useState<string>("case-002");
+  const { caseId } = useParams<{ caseId?: string }>();
+  const navigate = useNavigate();
+
+  const [selectedCaseId, setSelectedCaseId] = useState<string>(() => {
+    if (caseId && ALL_CASES[caseId]) return caseId;
+    return "case-002";
+  });
+
+  useEffect(() => {
+    if (caseId && ALL_CASES[caseId] && caseId !== selectedCaseId) {
+      setSelectedCaseId(caseId);
+      setActiveSourceId("all");
+      setTaskAnswers({});
+      setSelectedEvidenceSentence(null);
+      setFinalHypothesis(null);
+      setSelectedEvidenceIds([]);
+      setViewState("investigating");
+      setActiveExplainTerm(null);
+      setRightPanelTab("tasks");
+    }
+  }, [caseId]);
+
   const readingCase = ALL_CASES[selectedCaseId] || CASE_001;
 
   // Reader Settings (Font size, line height, font family, theme, alignment)

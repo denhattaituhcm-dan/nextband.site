@@ -49,57 +49,117 @@ export default function ReadingUniversePage() {
             <Button
               asChild
               size="lg"
-              className="h-12 px-8 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm uppercase tracking-wider shadow-lg shadow-amber-500/25 transition-all cursor-pointer"
+              className="h-12 px-7 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm uppercase tracking-wider shadow-lg shadow-emerald-500/25 transition-all cursor-pointer"
+            >
+              <Link to="/reading/case-002">
+                🚀 Khảo Hạch Vụ Án #002 (Warren Buffett)
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="h-12 px-7 rounded-full border-amber-500/60 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-black text-sm uppercase tracking-wider transition-all cursor-pointer"
             >
               <Link to="/reading/case-001">
-                Bắt Đầu Vụ Án #001 (Miễn Phí)
-                <ArrowRight className="ml-2 h-4 w-4" />
+                ❄️ Vụ Án #001 (Hồ Băng Greenland)
               </Link>
             </Button>
           </div>
         </div>
       </section>
 
-      {/* Featured Case: The Locked Room */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+      {/* Featured Cases Section */}
+      <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-8">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
           <div className="flex items-center gap-2.5">
             <Search className="h-5 w-5 text-amber-400" />
             <h2 className="text-lg sm:text-xl font-black uppercase tracking-wider text-white">
-              Vụ Án Khảo Hạch Hiện Tại (Featured Case)
+              Hồ Sơ Vụ Án Khảo Hạch (Active Case Dossiers)
             </h2>
           </div>
-          <span className="text-xs font-mono text-amber-400 font-semibold px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20">
-            Không cần đăng nhập
+          <span className="text-xs font-mono text-emerald-400 font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+            2 Vụ Án Đang Mở
           </span>
         </div>
 
-        <div className="rounded-3xl border border-amber-500/30 bg-gradient-to-br from-slate-900/90 via-slate-900/60 to-slate-950 p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+        {/* CASE #002 (NEW - FEATURED): WARREN BUFFETT */}
+        <div className="rounded-3xl border border-emerald-500/40 bg-gradient-to-br from-slate-900 via-[#0a1f18] to-slate-950 p-6 sm:p-8 shadow-2xl relative overflow-hidden">
           <div className="grid md:grid-cols-12 gap-6 items-center">
-            
             <div className="md:col-span-8 space-y-4">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                  Học Sĩ · Band 5.0
+                <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                  MỚI NHẤT · Học Sĩ · Band 6.0
                 </span>
-                <span className="text-xs text-amber-400">★★☆☆ (Trung Kỳ)</span>
-                <span className="text-xs text-slate-400">· St. Jude Investigation Bureau</span>
+                <span className="text-xs text-amber-400">★★★☆ (Cao Kỳ)</span>
+                <span className="text-xs text-slate-400">· Fast Company Strategy Archive</span>
               </div>
 
               <h3 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight">
-                Case #001: The Locked Room (Căn Phòng Khóa Kín)
+                Case #002: The Buffett Multiplier (Kỹ Năng Đòn Bẩy Nhân Bản Thành Công)
               </h3>
 
               <p className="text-sm text-slate-300 leading-relaxed max-w-xl">
-                11:47 PM. Bản thảo Đề thi Học bổng Quốc gia biến mất khỏi két sắt. Cửa phòng khóa trái từ bên trong, giáo sư trưởng ban bất tỉnh trên bàn làm việc. Bạn có đủ năng lực đọc hiểu để giải mã sự thật?
+                Trong kỷ nguyên AI có thể viết code và soạn kế hoạch kinh doanh trong vài giây, Warren Buffett chỉ ra kỹ năng duy nhất có tính chất "lãi kép" để vượt qua AI: Kỹ năng giao tiếp và thấu cảm giữa người với người.
               </p>
 
               <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pt-2">
                 <span className="flex items-center gap-1.5">
-                  <Clock className="h-4 w-4 text-slate-500" /> ~15 phút
+                  <Clock className="h-4 w-4 text-slate-500" /> ~12 phút
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Layers className="h-4 w-4 text-slate-500" /> 3 Nguồn Hồ Sơ (~700 từ)
+                  <Layers className="h-4 w-4 text-slate-500" /> 3 Nguồn Hồ Sơ (Fast Company)
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Shield className="h-4 w-4 text-slate-500" /> Boss: Prompt-Engineering Overemphasis Trap
+                </span>
+              </div>
+            </div>
+
+            <div className="md:col-span-4 flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-slate-800 pt-4 md:pt-0 md:pl-6">
+              <Button
+                asChild
+                className="w-full h-12 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/20 cursor-pointer"
+              >
+                <Link to="/reading/case-002">
+                  Khảo Hạch Case #002
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <p className="text-[11px] text-slate-500 mt-2 text-center">
+                Đối chiếu 3 nguồn & Khảo hạch 4 tasks
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* CASE #001: THE VANISHING GLACIAL LAKE */}
+        <div className="rounded-3xl border border-sky-500/30 bg-gradient-to-br from-slate-900 via-[#0a1628] to-slate-950 p-6 sm:p-8 shadow-xl relative overflow-hidden">
+          <div className="grid md:grid-cols-12 gap-6 items-center">
+            <div className="md:col-span-8 space-y-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/40">
+                  Học Sĩ · Band 5.0
+                </span>
+                <span className="text-xs text-amber-400">★★☆☆ (Trung Kỳ)</span>
+                <span className="text-xs text-slate-400">· Arctic Climate & Glaciology Archive</span>
+              </div>
+
+              <h3 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight">
+                Case #001: The Vanishing Glacial Lake (Hồ Băng Biến Mất)
+              </h3>
+
+              <p className="text-sm text-slate-300 leading-relaxed max-w-xl">
+                03:15 AM. 8 triệu mét khối nước biến mất khỏi bề mặt dải băng Greenland trong 90 phút. Gờ băng nguyên vẹn không tràn ra ngoài. Nước đã thoát đi đâu và theo cơ chế nào?
+              </p>
+
+              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pt-2">
+                <span className="flex items-center gap-1.5">
+                  <Clock className="h-4 w-4 text-slate-500" /> ~10 phút
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Layers className="h-4 w-4 text-slate-500" /> 3 Nguồn Hồ Sơ + Sơ Đồ Địa Chất
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Shield className="h-4 w-4 text-slate-500" /> Boss: Over-Inference Trap
@@ -110,18 +170,18 @@ export default function ReadingUniversePage() {
             <div className="md:col-span-4 flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-slate-800 pt-4 md:pt-0 md:pl-6">
               <Button
                 asChild
-                className="w-full h-12 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-amber-500/20"
+                variant="outline"
+                className="w-full h-12 rounded-xl border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20 text-sky-200 font-black text-xs uppercase tracking-wider cursor-pointer"
               >
                 <Link to="/reading/case-001">
-                  Khảo Hạch Ngay
+                  Khảo Hạch Case #001
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
               <p className="text-[11px] text-slate-500 mt-2 text-center">
-                Hoàn thành để nhận Báo cáo Chẩn đoán Năng lực
+                Mở khóa sơ đồ mặt cắt địa chất
               </p>
             </div>
-
           </div>
         </div>
       </section>
