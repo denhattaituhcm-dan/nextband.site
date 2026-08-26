@@ -125,15 +125,6 @@ export default function ReadingCasePage() {
     // Automatically set active explain term and switch to Explain sidebar (Readlang style)
     setActiveExplainTerm(termObj);
     setRightPanelTab("explain");
-
-    const rect = (e.target as HTMLElement).getBoundingClientRect();
-    setActiveGloss({
-      term: termObj,
-      position: {
-        top: rect.top - 8,
-        left: rect.left + rect.width / 2,
-      },
-    });
     setHasInteractedGloss(true);
   };
 
@@ -1088,17 +1079,6 @@ export default function ReadingCasePage() {
 
         </div>
       </div>
-
-      {/* Floating Contextual Gloss Tooltip */}
-      {activeGloss && (
-        <ContextualGlossTooltip
-          term={activeGloss.term}
-          position={activeGloss.position}
-          onClose={() => setActiveGloss(null)}
-          onSave={handleSaveTerm}
-          isSaved={savedTerms.includes(activeGloss.term.term)}
-        />
-      )}
     </div>
   );
 }
