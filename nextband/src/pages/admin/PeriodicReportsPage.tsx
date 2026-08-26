@@ -558,10 +558,10 @@ export default function PeriodicReportsPage() {
                     </div>
                     <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1 leading-relaxed">
                       <p>
-                        • Buổi học tổ chức: <span className="font-semibold">{report.academic.totalSessions} buổi</span> • Lượt điểm danh: <span className="font-medium">{report.academic.totalAttendance}</span>
+                        • Buổi học tổ chức: <span className="font-semibold">{report.academic.totalSessions} buổi</span> • Lượt điểm danh: <span className="font-medium">{report.academic.totalAttendances}</span>
                       </p>
                       <p>
-                        • Chuyên cần: <span className="font-bold text-amber-700 dark:text-amber-300">{report.academic.attendanceRate}%</span> • Tỷ lệ nộp bài tập: <span className="font-semibold">{report.academic.submissionRate}%</span> ({report.academic.homeworksSubmitted}/{report.academic.homeworksAssigned})
+                        • Chuyên cần: <span className="font-bold text-amber-700 dark:text-amber-300">{report.academic.attendanceRate}%</span> • Tỷ lệ nộp bài tập: <span className="font-semibold">{report.academic.submissionRate}%</span> ({report.academic.homeworkSubmitted}/{report.academic.homeworkAssigned})
                       </p>
                     </div>
                   </div>

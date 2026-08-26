@@ -16,6 +16,7 @@ import {
   Target,
   Handshake,
   AlertCircle,
+  Flame,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
