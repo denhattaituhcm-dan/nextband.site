@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { CASE_001 } from "@/data/readingCases/case001";
+import { CASE_002 } from "@/data/readingCases/case002";
 import { VocabularyTerm } from "@/features/reading/types";
 import { ContextualGlossTooltip } from "@/features/reading/components/ContextualGlossTooltip";
 import { CaseAutopsyView } from "@/features/reading/components/CaseAutopsyView";
@@ -31,8 +32,26 @@ import {
 } from "lucide-react";
 import { SEO } from "@/components/common/SEO";
 
+const ALL_CASES: Record<string, typeof CASE_001> = {
+  "case-001": CASE_001,
+  "case-002": CASE_002,
+};
+
 export default function ReadingCasePage() {
-  const readingCase = CASE_001;
+  const [selectedCaseId, setSelectedCaseId] = useState<string>("case-002");
+  const readingCase = ALL_CASES[selectedCaseId] || CASE_001;
+
+  const handleSwitchCase = (caseId: string) => {
+    setSelectedCaseId(caseId);
+    setActiveSourceId("all");
+    setTaskAnswers({});
+    setSelectedEvidenceSentence(null);
+    setSelectedHypothesisId(null);
+    setSelectedEvidenceIds([]);
+    setIsAutopsyUnlocked(false);
+    setActiveExplainTerm(null);
+    setRightPanelTab("tasks");
+  };
 
   // Reader Settings (Font size, line height, font family, theme, alignment)
   const [readerSettings, setReaderSettings] = useState<ReaderSettings>(() => {
@@ -363,9 +382,32 @@ export default function ReadingCasePage() {
       <header className="h-14 border-b border-stone-200/90 bg-[#FAF8F5] z-30 backdrop-blur-md px-4 sm:px-6 shadow-xs flex items-center justify-between shrink-0">
         <div className="w-full flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-sky-100 border border-sky-300 text-sky-950 font-black text-xs shrink-0">
-              #01
+            {/* Case Switcher Tabs */}
+            <div className="flex items-center bg-stone-200/80 p-1 rounded-xl gap-1 shrink-0">
+              <button
+                onClick={() => handleSwitchCase("case-001")}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  selectedCaseId === "case-001"
+                    ? "bg-white text-stone-900 shadow-xs"
+                    : "text-stone-600 hover:text-stone-900"
+                }`}
+                title="Hồ Sơ #01: Vụ Án Biến Mất Hồ Băng Greenland"
+              >
+                Case #01
+              </button>
+              <button
+                onClick={() => handleSwitchCase("case-002")}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  selectedCaseId === "case-002"
+                    ? "bg-white text-emerald-950 shadow-xs"
+                    : "text-stone-600 hover:text-stone-900"
+                }`}
+                title="Hồ Sơ #02: Warren Buffett - Kỹ Năng Đòn Bẩy Nhân Bản Thành Công"
+              >
+                Case #02
+              </button>
             </div>
+
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-xs sm:text-sm font-black text-stone-900 uppercase tracking-wide truncate max-w-[200px] sm:max-w-none">
@@ -376,7 +418,7 @@ export default function ReadingCasePage() {
                 </span>
               </div>
               <p className="text-[10px] text-stone-500 hidden md:block">
-                {readingCase.universe.name} · Thời lượng: ~10 phút
+                {readingCase.universe.name} · Thời lượng: ~{readingCase.estimated_minutes} phút
               </p>
             </div>
           </div>
@@ -402,7 +444,7 @@ export default function ReadingCasePage() {
                 className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-100/90 hover:bg-sky-200 text-sky-950 border border-sky-300 text-xs font-black transition-all shadow-xs cursor-pointer active:scale-95"
               >
                 <Sparkles className="h-3.5 w-3.5 text-sky-700 animate-pulse" />
-                <span className="hidden sm:inline">💡 Bối cảnh nghiên cứu</span>
+                <span className="hidden sm:inline">💡 Bối cảnh hồ sơ</span>
                 <span className="sm:hidden">💡 Bối cảnh</span>
               </button>
 
@@ -410,25 +452,43 @@ export default function ReadingCasePage() {
               {isIntroHovered && (
                 <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 rounded-2xl border border-sky-300 bg-[#FFFDF9] p-4 text-stone-900 shadow-2xl z-40 animate-in fade-in zoom-in-95 duration-150">
                   <div className="flex items-center gap-2 border-b border-sky-200 pb-2 mb-2.5">
-                    <span className="text-base">❄️</span>
+                    <span className="text-base">{selectedCaseId === "case-002" ? "📈" : "❄️"}</span>
                     <h4 className="text-xs sm:text-sm font-black text-sky-950 uppercase tracking-wide">
-                      Hồ sơ nghiên cứu: Hồ Băng Greenland
+                      {selectedCaseId === "case-002"
+                        ? "Chiến Lược Lãnh Đạo: Đòn Bẩy Warren Buffett"
+                        : "Hồ sơ nghiên cứu: Hồ Băng Greenland"}
                     </h4>
                   </div>
-                  <div className="space-y-2 text-xs text-stone-700 leading-relaxed">
-                    <p>
-                      <strong className="text-sky-950 font-bold">03:15 AM tại Băng tầng Greenland:</strong> Một hồ nước băng trên mặt (Supraglacial Lake G-4) dung tích 8,000,000 m³ bất ngờ biến mất hoàn toàn trong 90 phút.
-                    </p>
-                    <div className="rounded-xl bg-sky-50 p-2.5 border border-sky-200 space-y-1 text-[11px] text-sky-950 font-medium">
-                      <p>• Gờ băng xung quanh hồ nguyên vẹn — không hề có dòng nước tràn qua bề mặt.</p>
-                      <p>• Xuất hiện khe nứt sâu 850m xuyên thủng toàn bộ dải băng tới lớp đá đáy.</p>
-                      <p>• Cảm biến địa chấn ghi nhận sóng xung kích thẳng đứng lúc 03:12 AM.</p>
+                  {selectedCaseId === "case-002" ? (
+                    <div className="space-y-2 text-xs text-stone-700 leading-relaxed">
+                      <p>
+                        <strong className="text-sky-950 font-bold">Fast Company Analysis (2026):</strong> Trong kỷ nguyên AI tạo sinh có thể viết code và soạn kế hoạch kinh doanh trong vài giây, kỹ năng giao tiếp thấu cảm giữa người với người trở thành lợi thế cạnh tranh sống còn.
+                      </p>
+                      <div className="rounded-xl bg-sky-50 p-2.5 border border-sky-200 space-y-1 text-[11px] text-sky-950 font-medium">
+                        <p>• Bằng chứng duy nhất Warren Buffett treo tại văn phòng: Chứng chỉ Dale Carnegie 1952.</p>
+                        <p>• Khách hàng mua sự tự tin, nhà đầu tư rót vốn cho người sáng lập mà họ tin tưởng.</p>
+                        <p>• 3 thói quen chuyển hóa: Tò mò thay vì định kiến, phản hồi liên tục, lắng nghe để thấu hiểu.</p>
+                      </div>
+                      <p className="font-semibold text-stone-800 pt-1 text-[11px]">
+                        Đối chiếu 3 nguồn tư liệu để phân tích nguyên lý lãi kép của kỹ năng giao tiếp theo Warren Buffett!
+                      </p>
                     </div>
-                    <CrimeSceneBlueprint isCompact className="mt-2" />
-                    <p className="font-semibold text-stone-800 pt-1 text-[11px]">
-                      Nước đã thoát đi theo cơ chế nào? Đối chiếu 3 nguồn tài liệu bên dưới để tìm ra lời giải thích khoa học chuẩn xác nhất!
-                    </p>
-                  </div>
+                  ) : (
+                    <div className="space-y-2 text-xs text-stone-700 leading-relaxed">
+                      <p>
+                        <strong className="text-sky-950 font-bold">03:15 AM tại Băng tầng Greenland:</strong> Một hồ nước băng trên mặt (Supraglacial Lake G-4) dung tích 8,000,000 m³ bất ngờ biến mất hoàn toàn trong 90 phút.
+                      </p>
+                      <div className="rounded-xl bg-sky-50 p-2.5 border border-sky-200 space-y-1 text-[11px] text-sky-950 font-medium">
+                        <p>• Gờ băng xung quanh hồ nguyên vẹn — không hề có dòng nước tràn qua bề mặt.</p>
+                        <p>• Xuất hiện khe nứt sâu 850m xuyên thủng toàn bộ dải băng tới lớp đá đáy.</p>
+                        <p>• Cảm biến địa chấn ghi nhận sóng xung kích thẳng đứng lúc 03:12 AM.</p>
+                      </div>
+                      <CrimeSceneBlueprint isCompact className="mt-2" />
+                      <p className="font-semibold text-stone-800 pt-1 text-[11px]">
+                        Nước đã thoát đi theo cơ chế nào? Đối chiếu 3 nguồn tài liệu bên dưới để tìm ra lời giải thích khoa học chuẩn xác nhất!
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -482,19 +542,21 @@ export default function ReadingCasePage() {
                   Source {idx + 1}
                 </Button>
               ))}
-              <Button
-                size="sm"
-                variant={activeSourceId === "diagram" ? "default" : "ghost"}
-                onClick={() => setActiveSourceId("diagram")}
-                className={`text-xs h-8 rounded-lg whitespace-nowrap ${
-                  activeSourceId === "diagram"
-                    ? "bg-sky-700 text-white font-bold shadow-xs"
-                    : "bg-sky-50 border border-sky-200 text-sky-900 hover:bg-sky-100"
-                }`}
-              >
-                <MapIcon className="h-3.5 w-3.5 mr-1.5 text-sky-600" />
-                Sơ Đồ Mặt Cắt Địa Chất (Map)
-              </Button>
+              {readingCase.id === "case-001" && (
+                <Button
+                  size="sm"
+                  variant={activeSourceId === "diagram" ? "default" : "ghost"}
+                  onClick={() => setActiveSourceId("diagram")}
+                  className={`text-xs h-8 rounded-lg whitespace-nowrap ${
+                    activeSourceId === "diagram"
+                      ? "bg-sky-700 text-white font-bold shadow-xs"
+                      : "bg-sky-50 border border-sky-200 text-sky-900 hover:bg-sky-100"
+                  }`}
+                >
+                  <MapIcon className="h-3.5 w-3.5 mr-1.5 text-sky-600" />
+                  Sơ Đồ Mặt Cắt Địa Chất (Map)
+                </Button>
+              )}
             </div>
 
             {/* Dossier Document Cards */}
