@@ -356,14 +356,14 @@ export default function ReadingCasePage() {
     <div className="min-h-screen bg-[#FAF8F5] text-stone-900 flex flex-col font-sans">
       <SEO
         title={`Case #001: ${readingCase.title} | ARIS IELTS Reading`}
-        description="Vụ án Căn Phòng Khóa Kín - Thử thách giải mã đọc hiểu IELTS Band 5.0"
+        description="Vụ án Khoa học Greenland: Sự Biến Mất Của Hồ Băng - Khảo hạch đọc hiểu IELTS Band 5.0"
       />
 
       {/* Top Case Header Bar */}
       <div className="border-b border-stone-200/90 bg-[#FAF8F5]/95 sticky top-0 z-30 backdrop-blur-md px-4 py-3 sm:px-6 shadow-xs">
         <div className="mx-auto max-w-7xl flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-amber-100 border border-amber-300 text-amber-900 font-black text-xs">
+            <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-sky-100 border border-sky-300 text-sky-950 font-black text-xs">
               #01
             </div>
             <div>
@@ -371,7 +371,7 @@ export default function ReadingCasePage() {
                 <h1 className="text-sm sm:text-base font-black text-stone-900 uppercase tracking-wide">
                   {readingCase.title}
                 </h1>
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800">
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-sky-50 border border-sky-200 text-sky-800">
                   {readingCase.level.realm_name_vi} · Band {readingCase.level.ielts_band.toFixed(1)}
                 </span>
                 <span className="text-xs text-amber-500 hidden sm:inline-block">★★☆☆</span>
@@ -400,33 +400,33 @@ export default function ReadingCasePage() {
             >
               <button
                 onClick={() => setIsIntroHovered((prev) => !prev)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-100/90 hover:bg-amber-200 text-amber-950 border border-amber-300 text-xs font-black transition-all shadow-xs cursor-pointer active:scale-95"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-100/90 hover:bg-sky-200 text-sky-950 border border-sky-300 text-xs font-black transition-all shadow-xs cursor-pointer active:scale-95"
               >
-                <Sparkles className="h-3.5 w-3.5 text-amber-700 animate-pulse" />
-                <span>💡 Giới thiệu bối cảnh vụ án</span>
+                <Sparkles className="h-3.5 w-3.5 text-sky-700 animate-pulse" />
+                <span>💡 Bối cảnh hồ sơ nghiên cứu</span>
               </button>
 
               {/* Hover/Click Context Popover */}
               {isIntroHovered && (
-                <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 rounded-2xl border border-amber-300 bg-[#FFFDF9] p-4 text-stone-900 shadow-2xl z-40 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="flex items-center gap-2 border-b border-amber-200 pb-2 mb-2.5">
-                    <span className="text-base">🕵️</span>
-                    <h4 className="text-xs sm:text-sm font-black text-amber-950 uppercase tracking-wide">
-                      Bối cảnh vụ án: Căn Phòng Khóa Kín
+                <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 rounded-2xl border border-sky-300 bg-[#FFFDF9] p-4 text-stone-900 shadow-2xl z-40 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="flex items-center gap-2 border-b border-sky-200 pb-2 mb-2.5">
+                    <span className="text-base">❄️</span>
+                    <h4 className="text-xs sm:text-sm font-black text-sky-950 uppercase tracking-wide">
+                      Hồ sơ nghiên cứu: Hồ Băng Greenland
                     </h4>
                   </div>
                   <div className="space-y-2 text-xs text-stone-700 leading-relaxed">
                     <p>
-                      <strong className="text-amber-950 font-bold">23:47 đêm tại Viện Nghiên cứu St. Jude:</strong> Bản thảo Đề thi Học bổng Quốc gia bất ngờ không cánh mà bay khỏi két sắt thép kiên cố.
+                      <strong className="text-sky-950 font-bold">03:15 AM tại Băng tầng Greenland:</strong> Một hồ nước băng trên mặt (Supraglacial Lake G-4) dung tích 8,000,000 m³ bất ngờ biến mất hoàn toàn trong 90 phút.
                     </p>
-                    <div className="rounded-xl bg-amber-50 p-2.5 border border-amber-200 space-y-1 text-[11px] text-amber-950 font-medium">
-                      <p>• Cửa gỗ sồi bị khóa trái từ bên trong — khung cửa không một vết cạy phá.</p>
-                      <p>• Giáo sư Arthur Vance bất tỉnh trên bàn, thân thể không một vết thương.</p>
-                      <p>• Lối thoát duy nhất là ống thông gió trần chỉ 30x40cm — người lớn không thể chui lọt.</p>
+                    <div className="rounded-xl bg-sky-50 p-2.5 border border-sky-200 space-y-1 text-[11px] text-sky-950 font-medium">
+                      <p>• Gờ băng xung quanh hồ nguyên vẹn — không hề có dòng nước tràn qua bề mặt.</p>
+                      <p>• Xuất hiện khe nứt sâu 850m xuyên thủng toàn bộ dải băng tới lớp đá đáy.</p>
+                      <p>• Cảm biến địa chấn ghi nhận sóng xung kích thẳng đứng lúc 03:12 AM.</p>
                     </div>
                     <CrimeSceneBlueprint isCompact className="mt-2" />
                     <p className="font-semibold text-stone-800 pt-1 text-[11px]">
-                      Kẻ trộm đã lấy cắp đề thi và khóa trái căn phòng từ bên trong bằng cách nào? Hãy lần theo 3 nguồn hồ sơ bên dưới để vạch trần chân tướng!
+                      Nước đã thoát đi theo cơ chế nào? Đối chiếu 3 nguồn tài liệu bên dưới để tìm ra lời giải thích khoa học chuẩn xác nhất!
                     </p>
                   </div>
                 </div>
@@ -457,7 +457,7 @@ export default function ReadingCasePage() {
                 onClick={() => setActiveSourceId("all")}
                 className={`text-xs h-8 rounded-lg ${
                   activeSourceId === "all"
-                    ? "bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold shadow-xs"
+                    ? "bg-sky-600 hover:bg-sky-700 text-white font-bold shadow-xs"
                     : "bg-white/80 border border-stone-200 text-stone-600 hover:text-stone-900 hover:bg-white"
                 }`}
               >
@@ -472,11 +472,11 @@ export default function ReadingCasePage() {
                   onClick={() => setActiveSourceId(src.id)}
                   className={`text-xs h-8 rounded-lg whitespace-nowrap ${
                     activeSourceId === src.id
-                      ? "bg-stone-800 text-white font-bold"
+                      ? "bg-slate-800 text-white font-bold"
                       : "bg-white/80 border border-stone-200 text-stone-600 hover:text-stone-900 hover:bg-white"
                   }`}
                 >
-                  {idx === 0 && <FileText className="h-3.5 w-3.5 mr-1.5 text-blue-400" />}
+                  {idx === 0 && <FileText className="h-3.5 w-3.5 mr-1.5 text-sky-400" />}
                   {idx === 1 && <UserCheck className="h-3.5 w-3.5 mr-1.5 text-emerald-400" />}
                   {idx === 2 && <Cpu className="h-3.5 w-3.5 mr-1.5 text-purple-400" />}
                   Source {idx + 1}
@@ -488,12 +488,12 @@ export default function ReadingCasePage() {
                 onClick={() => setActiveSourceId("diagram")}
                 className={`text-xs h-8 rounded-lg whitespace-nowrap ${
                   activeSourceId === "diagram"
-                    ? "bg-amber-600 text-white font-bold shadow-xs"
-                    : "bg-amber-50 border border-amber-200 text-amber-900 hover:bg-amber-100"
+                    ? "bg-sky-700 text-white font-bold shadow-xs"
+                    : "bg-sky-50 border border-sky-200 text-sky-900 hover:bg-sky-100"
                 }`}
               >
-                <MapIcon className="h-3.5 w-3.5 mr-1.5 text-amber-600" />
-                Sơ Đồ Hiện Trường (Map)
+                <MapIcon className="h-3.5 w-3.5 mr-1.5 text-sky-600" />
+                Sơ Đồ Mặt Cắt Địa Chất (Map)
               </Button>
             </div>
 
@@ -502,8 +502,8 @@ export default function ReadingCasePage() {
               {/* Standalone Diagram Tab View */}
               {activeSourceId === "diagram" && (
                 <div className="animate-in fade-in duration-150 space-y-3">
-                  <div className="rounded-xl bg-amber-50 p-3 border border-amber-200 text-xs text-amber-900">
-                    💡 <strong>Mặt bằng hiện trường:</strong> Căn phòng Archive Room B-12 với kích thước thực tế, vị trí két sắt, bàn làm việc của GS. Vance và ống thông gió trần.
+                  <div className="rounded-xl bg-sky-50 p-3 border border-sky-200 text-xs text-sky-950 font-medium">
+                    💡 <strong>Sơ đồ địa vật lý:</strong> Mặt cắt dải băng Greenland dày 850m, vị trí hồ băng G-4, khe nứt thủy lực thẳng đứng và lớp đá đáy bedrock.
                   </div>
                   <CrimeSceneBlueprint />
                 </div>
@@ -577,8 +577,8 @@ export default function ReadingCasePage() {
                           <div className="mt-6 pt-5 border-t border-stone-200/70">
                             <div className="flex items-center gap-2 mb-3">
                               <span className="text-xs font-bold text-stone-800 uppercase tracking-wider flex items-center gap-1.5">
-                                <MapIcon className="h-3.5 w-3.5 text-amber-600" />
-                                📎 Phụ lục: Sơ đồ mặt bằng hiện trường B-12
+                                <MapIcon className="h-3.5 w-3.5 text-sky-600" />
+                                📎 Phụ lục: Sơ đồ mặt cắt địa chất băng tầng G-4
                               </span>
                             </div>
                             <CrimeSceneBlueprint isCompact />

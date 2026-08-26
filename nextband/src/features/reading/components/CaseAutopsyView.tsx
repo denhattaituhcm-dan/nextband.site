@@ -23,16 +23,15 @@ export const CaseAutopsyView: React.FC<CaseAutopsyProps> = ({
   onRetry,
 }) => {
   // Score calculations
-  const task1Correct = taskAnswers["task-01"] === "C";
-  const task2Correct = taskAnswers["task-02"] === "A";
-  const task3Correct = taskAnswers["task-03"] === "B";
+  const task1Correct = taskAnswers["task-01"] === "B";
+  const task2Correct = taskAnswers["task-02"] === "C";
+  const task3Correct = taskAnswers["task-03"] === "A";
   const task4ProveCorrect =
-    selectedEvidenceSentence?.includes("cannot climb through it") ||
-    selectedEvidenceSentence?.includes("precludes any adult human") ||
+    selectedEvidenceSentence?.includes("850-meter ice sheet") ||
+    selectedEvidenceSentence?.includes("drained directly to the bedrock") ||
     false;
 
-  const hypothesisCorrect =
-    finalHypothesis === readingCase.final_deduction.correct_hypothesis;
+  const hypothesisCorrect = finalHypothesis === "hyp-2";
 
   // Check required evidence: ev-02 & ev-03
   const evidence1Correct = selectedEvidenceIds.includes("ev-02");
@@ -40,7 +39,7 @@ export const CaseAutopsyView: React.FC<CaseAutopsyProps> = ({
   const evidenceCorrect =
     evidence1Correct &&
     evidence2Correct &&
-    selectedEvidenceIds.length === readingCase.final_deduction.correct_evidence_ids.length;
+    selectedEvidenceIds.length === 2;
 
   const isFullMastery =
     task1Correct &&
@@ -82,15 +81,15 @@ export const CaseAutopsyView: React.FC<CaseAutopsyProps> = ({
         </div>
 
         <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-stone-900 mb-2">
-          THE CASE AUTOPSY: {readingCase.title.toUpperCase()}
+          SCIENTIFIC AUTOPSY: {readingCase.title.toUpperCase()}
         </h1>
 
         <p className="text-sm font-medium text-stone-600 max-w-xl mx-auto">
           {isFullMastery
-            ? "Tuyệt vời! Bạn đã phá án chuẩn xác 100% dựa trên chuỗi bằng chứng không thể chối cãi."
+            ? "Tuyệt vời! Bạn đã kết luận chính xác cơ chế nứt gãy thủy lực ngầm (Hydro-Fracturing) dựa trên dữ liệu cảm biến thực địa."
             : isOverInference
-            ? "Bạn đã đoán đúng thủ phạm, nhưng dẫn chứng chứng minh chưa đầy đủ (Phát hiện bẫy Over-Inference)."
-            : "Vụ án chưa được giải mã hoàn toàn. Hãy đối chiếu lại các mốc thời gian khách quan trong hồ sơ."}
+            ? "Bạn đã chọn đúng cơ chế, nhưng các bằng chứng đối chiếu chưa đầy đủ (Cần chú ý đối chiếu dữ liệu nhiệt độ đá đáy)."
+            : "Chưa giải mã hoàn tất hồ sơ. Hãy chú ý đối chiếu mâu thuẫn giữa giả thuyết nhiệt địa chất và số liệu cảm biến thực tế."}
         </p>
       </div>
 
@@ -99,7 +98,7 @@ export const CaseAutopsyView: React.FC<CaseAutopsyProps> = ({
         {/* Left Column: Skills Breakdown */}
         <div className="rounded-2xl border border-stone-200 bg-white p-6 space-y-4 shadow-xs">
           <h2 className="text-base font-bold text-stone-900 flex items-center gap-2 border-b border-stone-100 pb-3">
-            <BookOpen className="h-5 w-5 text-amber-600" />
+            <BookOpen className="h-5 w-5 text-sky-600" />
             Bảng Chẩn Đoán Năng Lực Đọc (Reading Skills)
           </h2>
 
@@ -108,7 +107,7 @@ export const CaseAutopsyView: React.FC<CaseAutopsyProps> = ({
             <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200/80">
               <div>
                 <p className="font-bold text-stone-800">1. Locating Specific Detail (Task 1)</p>
-                <p className="text-xs text-stone-500">Quét chi tiết không có dấu hiệu cạy cửa</p>
+                <p className="text-xs text-stone-500">Quét chi tiết gờ băng không có dấu hiệu tràn nước</p>
               </div>
               {task1Correct ? (
                 <span className="flex items-center text-xs font-bold text-emerald-600">
@@ -125,7 +124,7 @@ export const CaseAutopsyView: React.FC<CaseAutopsyProps> = ({
             <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200/80">
               <div>
                 <p className="font-bold text-stone-800">2. Cross-Source Matching (Task 2)</p>
-                <p className="text-xs text-stone-500">Đối chiếu mâu thuẫn giữa Lời khai & Nhật ký</p>
+                <p className="text-xs text-stone-500">Đối chiếu mâu thuẫn giữa Giả thuyết & Cảm biến</p>
               </div>
               {task2Correct ? (
                 <span className="flex items-center text-xs font-bold text-emerald-600">
@@ -142,7 +141,7 @@ export const CaseAutopsyView: React.FC<CaseAutopsyProps> = ({
             <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200/80">
               <div>
                 <p className="font-bold text-stone-800">3. Boundary-Restricted Inference (Task 3)</p>
-                <p className="text-xs text-stone-500">Suy luận trong giới hạn dữ liệu máy in</p>
+                <p className="text-xs text-stone-500">Suy luận chính xác dữ liệu sóng xung kích 03:12</p>
               </div>
               {task3Correct ? (
                 <span className="flex items-center text-xs font-bold text-emerald-600">
@@ -159,7 +158,7 @@ export const CaseAutopsyView: React.FC<CaseAutopsyProps> = ({
             <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200/80">
               <div>
                 <p className="font-bold text-stone-800">4. Text-Grounded Evidence (Task 4 - Prove)</p>
-                <p className="text-xs text-stone-500">Click trích dẫn câu văn loại trừ đường trần</p>
+                <p className="text-xs text-stone-500">Trích dẫn câu văn xác nhận khe nứt sâu 850m tới đá đáy</p>
               </div>
               {task4ProveCorrect ? (
                 <span className="flex items-center text-xs font-bold text-emerald-600">
@@ -178,45 +177,42 @@ export const CaseAutopsyView: React.FC<CaseAutopsyProps> = ({
         <div className="rounded-2xl border border-stone-200 bg-white p-6 space-y-4 shadow-xs">
           <h2 className="text-base font-bold text-stone-900 flex items-center gap-2 border-b border-stone-100 pb-3">
             <AlertTriangle className="h-5 w-5 text-amber-600" />
-            Bóc Tách Bẫy Tư Duy (Traps & Takeaways)
+            Bóc Tách Bẫy Tư Duy Khoa Học (Traps & Takeaways)
           </h2>
 
           <div className="space-y-3">
-            {readingCase.autopsy.traps.map((trap, idx) => (
-              <div key={idx} className="rounded-xl bg-amber-50 border border-amber-200 p-3">
-                <p className="text-xs font-bold text-amber-900 uppercase tracking-wider mb-1">
-                  ⚠️ Bẫy #{idx + 1}: {trap.type === "OVER_INFERENCE" ? "Suy diễn quá đà (Over-Inference)" : "Từ vựng & Paraphrase"}
-                </p>
-                <p className="text-xs text-stone-700 leading-relaxed">
-                  {trap.description}
-                </p>
-              </div>
-            ))}
+            <div className="rounded-xl bg-amber-50 border border-amber-200 p-3">
+              <p className="text-xs font-bold text-amber-900 uppercase tracking-wider mb-1">
+                ⚠️ Bẫy #1: Tin vào lời giải thích chưa kiểm chứng (Unverified Hypothesis)
+              </p>
+              <p className="text-xs text-stone-700 leading-relaxed">
+                Lời giải thích của nhà nghiên cứu (Dr. Vance) cho rằng nhiệt lòng đất làm tan băng đáy, nhưng dữ liệu cảm biến thực nghiệm chứng minh đá đáy vẫn ở mức -1.8°C. Không được xem giả thuyết là sự thật (Fact) khi chưa đối chiếu số liệu.
+              </p>
+            </div>
 
             <div className="rounded-xl bg-stone-50 p-3.5 border border-stone-200">
               <p className="text-xs font-bold text-stone-800 uppercase tracking-wider mb-1.5">
-                💡 Quy Tắc Đọc Cốt Lõi:
+                💡 Quy Tắc IELTS Reading Cốt Lõi:
               </p>
               <ul className="list-disc list-inside space-y-1 text-xs text-stone-700">
-                {readingCase.autopsy.takeaways.map((takeaway, idx) => (
-                  <li key={idx}>{takeaway}</li>
-                ))}
+                <li>Chỉ chọn đáp án được xác nhận trực tiếp bằng dữ liệu và câu chữ trong bài đọc.</li>
+                <li>Luôn phân biệt rõ ràng giữa <em>Quan sát thực tế (Observation)</em>, <em>Giả thuyết cá nhân (Hypothesis)</em> và <em>Dữ liệu cảm biến khách quan (Sensor Data)</em>.</li>
               </ul>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Post-Submission Spatial Artifact: Crime Scene Blueprint */}
+      {/* Post-Submission Spatial Artifact: Glaciological Cross-Section */}
       <div className="mt-8 rounded-2xl border border-stone-200 bg-white p-6 space-y-3 shadow-xs">
         <div className="flex items-center gap-2 border-b border-stone-100 pb-3">
-          <MapIcon className="h-5 w-5 text-amber-600" />
+          <MapIcon className="h-5 w-5 text-sky-600" />
           <div>
             <h2 className="text-base font-bold text-stone-900">
-              Sơ Đồ Giải Mã Hiện Trường Phòng B-12 (Spatial Forensic Resolution)
+              Sơ Đồ Địa Chất Cắt Ngang: Cơ Chế Nứt Gãy Thủy Lực (Hydro-Fracturing Resolution)
             </h2>
             <p className="text-xs text-stone-500">
-              Đối chiếu sơ đồ mặt bằng giúp hiểu rõ vì sao kẻ trộm chỉ có thể thoát bằng đường nội bộ sau khi khóa trái từ bên trong.
+              Mô hình cắt ngang 850m tầng băng giải thích hiện tượng thoát nước tốc độ cao từ hồ mặt xuống mạng lưới thủy văn đáy băng.
             </p>
           </div>
         </div>
