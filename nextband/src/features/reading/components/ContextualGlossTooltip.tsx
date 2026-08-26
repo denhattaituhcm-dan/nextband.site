@@ -75,6 +75,7 @@ export const ContextualGlossTooltip: React.FC<ContextualGlossTooltipProps> = ({
       {/* Content */}
       <div className="mt-2.5 space-y-2 text-xs">
         {term.meaning_en && 
+          term.meaning_en.toLowerCase().trim() !== term.term.toLowerCase().trim() &&
           !term.meaning_en.toLowerCase().startsWith("academic term:") &&
           !term.meaning_en.toLowerCase().startsWith("contextual phrase:") &&
           !term.meaning_en.toLowerCase().startsWith("vocabulary in context:") && (
@@ -85,11 +86,13 @@ export const ContextualGlossTooltip: React.FC<ContextualGlossTooltipProps> = ({
           </div>
         )}
 
-        <div className="rounded-lg bg-emerald-50 p-2.5 border border-emerald-200/80">
-          <p className="font-bold text-emerald-900">
-            🇻🇳 {term.meaning_vi.replace(/^Cụm từ:\s*/i, "").replace(/^Từ vựng:\s*/i, "")}
-          </p>
-        </div>
+        {term.meaning_vi && (
+          <div className="rounded-lg bg-emerald-50 p-2.5 border border-emerald-200/80">
+            <p className="font-bold text-emerald-900">
+              🇻🇳 {term.meaning_vi.replace(/^Cụm từ:\s*/i, "").replace(/^Từ vựng:\s*/i, "")}
+            </p>
+          </div>
+        )}
 
         {term.context_note && 
           !term.context_note.includes("Xuất hiện trong hồ sơ vụ án để xây dựng") && (
