@@ -34,19 +34,20 @@ export function isContentWord(word: string): boolean {
 
 // Multi-word phrases priority list (longest matches first)
 export const MULTI_WORD_PHRASES: string[] = [
+  "acoustic water sensors",
+  "perimeter ice ridges",
+  "field research team",
+  "satellite radar confirmed",
+  "sub-ice bedrock temperature",
   "supraglacial lake",
-  "ice sheet",
+  "ice core sampling",
   "vertical fracture",
   "seismic sensor",
   "satellite radar",
-  "acoustic water sensors",
-  "ice core sampling",
   "geothermal heat",
   "shock wave",
   "continuous drainage",
-  "perimeter ice ridges",
   "horizontal collapse",
-  "field research team",
   "surface streams",
   "water temperature",
   "volcanic warming",
@@ -59,6 +60,7 @@ export const MULTI_WORD_PHRASES: string[] = [
   "water level",
   "cubic meters",
   "pressure sensors",
+  "ice sheet",
   "rolled in",
   "walked back",
   "straight down",
@@ -68,6 +70,22 @@ export const MULTI_WORD_PHRASES: string[] = [
 
 // Rich Contextual Dictionary for Case 001 Scientific Expedition & Climate Anomaly
 export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
+  "perimeter ice ridges": {
+    term: "perimeter ice ridges",
+    pronunciation: "/pəˈrɪmɪtər aɪs ˈrɪdʒɪz/",
+    pos: "noun phrase",
+    meaning_en: "the elevated outer border of ice surrounding a glacial basin",
+    meaning_vi: "các gờ băng xung quanh hồ",
+    context_note: "Gờ băng viền quanh hồ G-4 vẫn nguyên vẹn, chứng minh nước không hề tràn qua bề mặt.",
+  },
+  "horizontal collapse": {
+    term: "horizontal collapse",
+    pronunciation: "/ˌhɒrɪˈzɒntəl kəˈlæps/",
+    pos: "noun phrase",
+    meaning_en: "sideways structural breakdown of a boundary wall or ice ridge",
+    meaning_vi: "sự sụp đổ theo chiều ngang",
+    context_note: "Không có dấu hiệu sụp vách ngang nào xung quanh lòng hồ.",
+  },
   "supraglacial lake": {
     term: "supraglacial lake",
     pronunciation: "/ˌsuːprəˈɡleɪʃəl leɪk/",
@@ -110,11 +128,11 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
   },
   "rapid drop": {
     term: "rapid drop",
-    pronunciation: "/ˈræp.ɪd drɒp/",
+    pronunciation: "/ˈræpɪd drɒp/",
     pos: "noun phrase",
-    meaning_en: "a very fast decrease in level or quantity",
+    meaning_en: "a very fast decrease in water level or quantity",
     meaning_vi: "sự sụt giảm nhanh chóng",
-    context_note: "Mực nước hồ giảm đột ngột lúc 03:15 AM.",
+    context_note: "Mực nước hồ giảm đột ngột từ 03:15 AM.",
   },
   "reached": {
     term: "reached",
@@ -203,22 +221,6 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_en: "the flowing over of a liquid beyond its container boundaries",
     meaning_vi: "sự tràn bờ / nước tràn",
     context_note: "Gờ băng quanh hồ không hề có dấu hiệu tràn nước qua bề mặt.",
-  },
-  "perimeter ice ridges": {
-    term: "perimeter ice ridges",
-    pronunciation: "/pəˈrɪmɪtər aɪs ˈrɪdʒɪz/",
-    pos: "noun phrase",
-    meaning_en: "the elevated outer border of ice surrounding a glacial basin",
-    meaning_vi: "các gờ băng xung quanh hồ",
-    context_note: "Gờ băng viền quanh hồ nguyên vẹn, không có vết nước tràn.",
-  },
-  "horizontal collapse": {
-    term: "horizontal collapse",
-    pronunciation: "/ˌhɒrɪˈzɒntəl kəˈlæps/",
-    pos: "noun phrase",
-    meaning_en: "sideways structural breakdown of a boundary wall or ice ridge",
-    meaning_vi: "sự sụp đổ theo chiều ngang",
-    context_note: "Không có sự sụp vách ngang nào quanh hồ.",
   },
   "field research team": {
     term: "field research team",
@@ -340,6 +342,62 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_vi: "đâm thẳng xuống đáy",
     context_note: "Khe nứt đâm thẳng 850m xuống lớp đá đáy.",
   },
+  "perimeter": {
+    term: "perimeter",
+    pronunciation: "/pəˈrɪmɪtər/",
+    pos: "noun",
+    meaning_en: "the continuous line forming the boundary of a closed geometric figure",
+    meaning_vi: "chu vi / viền xung quanh",
+    context_note: "Gờ băng bao quanh hồ nguyên vẹn.",
+  },
+  "ridges": {
+    term: "ridges",
+    pronunciation: "/ˈrɪdʒɪz/",
+    pos: "noun (plural)",
+    meaning_en: "long narrow elevated crests of ice",
+    meaning_vi: "các gờ băng / rặng băng",
+    context_note: "Các gờ băng viền quanh hồ.",
+  },
+  "ridge": {
+    term: "ridge",
+    pronunciation: "/rɪdʒ/",
+    pos: "noun",
+    meaning_en: "a long narrow crest or edge",
+    meaning_vi: "gờ băng",
+    context_note: "Gờ băng bao quanh hồ.",
+  },
+  "horizontal": {
+    term: "horizontal",
+    pronunciation: "/ˌhɒrɪˈzɒntəl/",
+    pos: "adjective",
+    meaning_en: "parallel to the plane of the horizon; at right angles to the vertical",
+    meaning_vi: "theo chiều ngang",
+    context_note: "Không có sự sụp đổ hay nứt gãy theo chiều ngang.",
+  },
+  "collapse": {
+    term: "collapse",
+    pronunciation: "/kəˈlæps/",
+    pos: "noun / verb",
+    meaning_en: "sudden falling down or giving way",
+    meaning_vi: "sự sụp đổ",
+    context_note: "Không có hiện tượng sụp vách hồ.",
+  },
+  "vertical": {
+    term: "vertical",
+    pronunciation: "/ˈvɜːtɪkəl/",
+    pos: "adjective",
+    meaning_en: "at right angles to a horizontal plane; straight up and down",
+    meaning_vi: "thẳng đứng",
+    context_note: "Vết nứt thẳng đứng xuyên suốt 850m băng.",
+  },
+  "fracture": {
+    term: "fracture",
+    pronunciation: "/ˈfræktʃər/",
+    pos: "noun / verb",
+    meaning_en: "the cracking or breaking of a hard object or material",
+    meaning_vi: "vết nứt gãy",
+    context_note: "Vết nứt rộng 1.2m.",
+  },
   "disappeared": {
     term: "disappeared",
     pronunciation: "/ˌdɪsəˈpɪəd/",
@@ -436,53 +494,13 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_vi: "chảy ra",
     context_note: "Không có dòng nước nào chảy tràn.",
   },
-  "perimeter": {
-    term: "perimeter",
-    pronunciation: "/pəˈrɪmɪtər/",
-    pos: "noun",
-    meaning_en: "the continuous line forming the boundary of a closed geometric figure",
-    meaning_vi: "viền quanh / chu vi hồ",
-    context_note: "Gờ băng bao quanh hồ nguyên vẹn.",
-  },
-  "ridges": {
-    term: "ridges",
-    pronunciation: "/ˈrɪdʒɪz/",
-    pos: "noun (plural)",
-    meaning_en: "long narrow crests or elevated edges",
-    meaning_vi: "gờ băng / rặng băng",
-    context_note: "Các gờ băng viền quanh hồ.",
-  },
-  "horizontal": {
-    term: "horizontal",
-    pronunciation: "/ˌhɒrɪˈzɒntəl/",
-    pos: "adjective",
-    meaning_en: "parallel to the plane of the horizon; at right angles to the vertical",
-    meaning_vi: "nằm ngang",
-    context_note: "Không có sự sụp đổ hay nứt gãy theo chiều ngang.",
-  },
-  "collapse": {
-    term: "collapse",
-    pronunciation: "/kəˈlæps/",
-    pos: "noun / verb",
-    meaning_en: "sudden falling down or giving way",
-    meaning_vi: "sự sụp đổ",
-    context_note: "Không có hiện tượng sụp vách hồ.",
-  },
-  "vertical": {
-    term: "vertical",
-    pronunciation: "/ˈvɜːtɪkəl/",
-    pos: "adjective",
-    meaning_en: "at right angles to a horizontal plane; straight up and down",
-    meaning_vi: "thẳng đứng",
-    context_note: "Vết nứt thẳng đứng xuyên suốt 850m băng.",
-  },
-  "fracture": {
-    term: "fracture",
-    pronunciation: "/ˈfræktʃər/",
-    pos: "noun / verb",
-    meaning_en: "the cracking or breaking of a hard object or material",
-    meaning_vi: "vết nứt gãy",
-    context_note: "Vết nứt rộng 1.2m.",
+  "showed": {
+    term: "showed",
+    pronunciation: "/ʃəʊd/",
+    pos: "verb (past)",
+    meaning_en: "demonstrated or revealed",
+    meaning_vi: "cho thấy / thể hiện",
+    context_note: "Cho thấy không có dấu hiệu tràn bờ.",
   },
   "measuring": {
     term: "measuring",
@@ -508,14 +526,6 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_vi: "đã thoát nước / xả cạn",
     context_note: "Nước xả thẳng xuống lớp đá đáy.",
   },
-  "completed": {
-    term: "completed",
-    pronunciation: "/kəmˈpliːtɪd/",
-    pos: "verb (past)",
-    meaning_en: "finished making or doing",
-    meaning_vi: "đã hoàn thành",
-    context_note: "Hoàn thành việc lấy mẫu lõi băng.",
-  },
   "sampling": {
     term: "sampling",
     pronunciation: "/ˈsɑːmplɪŋ/",
@@ -523,22 +533,6 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_en: "the taking of specimens for testing",
     meaning_vi: "lấy mẫu thử nghiệm",
     context_note: "Lấy mẫu lõi băng gần bờ hồ.",
-  },
-  "fog": {
-    term: "fog",
-    pronunciation: "/fɒɡ/",
-    pos: "noun",
-    meaning_en: "thick cloud of tiny water droplets suspended in the atmosphere",
-    meaning_vi: "sương mù",
-    context_note: "Sương mù tràn đến sau 01:30 AM.",
-  },
-  "stable": {
-    term: "stable",
-    pronunciation: "/ˈsteɪbəl/",
-    pos: "adjective",
-    meaning_en: "firmly fixed; not likely to give way or overturn",
-    meaning_vi: "ổn định / vững chắc",
-    context_note: "Mặt băng ổn định trước thời điểm xả cạn.",
   },
   "calm": {
     term: "calm",
@@ -552,25 +546,9 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     term: "cracks",
     pronunciation: "/kræks/",
     pos: "noun (plural)",
-    meaning_en: "lines on the surface of something along which it has split without breaking into parts",
+    meaning_en: "lines on the surface of something along which it has split",
     meaning_vi: "các vết rạn nứt",
     context_note: "Không có vết rạn nứt nào nhìn thấy được trên bờ nam.",
-  },
-  "logged": {
-    term: "logged",
-    pronunciation: "/lɒɡd/",
-    pos: "verb (past)",
-    meaning_en: "entered details of an event or measurement in an official record",
-    meaning_vi: "đã ghi vào nhật ký",
-    context_note: "Dr. Vance ghi nhận nhiệt độ nước 0.4°C lúc 02:10 AM.",
-  },
-  "manual": {
-    term: "manual",
-    pronunciation: "/ˈmænjuəl/",
-    pos: "adjective",
-    meaning_en: "done with the hands rather than automatically",
-    meaning_vi: "thủ công / đo tay",
-    context_note: "Đo nhiệt độ thủ công.",
   },
   "temperature": {
     term: "temperature",
@@ -580,30 +558,6 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_vi: "nhiệt độ",
     context_note: "Nhiệt độ đá đáy cố định ở mức -1.8°C.",
   },
-  "laboratory": {
-    term: "laboratory",
-    pronunciation: "/ləˈbɒrətri/",
-    pos: "noun",
-    meaning_en: "a room or building equipped for scientific experiments, research, or teaching",
-    meaning_vi: "phòng thí nghiệm",
-    context_note: "Phòng thí nghiệm của trạm Summit Alpha-4.",
-  },
-  "automated": {
-    term: "automated",
-    pronunciation: "/ˈɔːtəmeɪtɪd/",
-    pos: "adjective",
-    meaning_en: "operated by largely automatic equipment",
-    meaning_vi: "tự động hóa",
-    context_note: "Hệ thống cảm biến và còi báo động tự động.",
-  },
-  "alarm": {
-    term: "alarm",
-    pronunciation: "/əˈlɑːm/",
-    pos: "noun",
-    meaning_en: "an anxious awareness of danger; a warning sound",
-    meaning_vi: "còi báo động / cảnh báo",
-    context_note: "Còi báo động kích hoạt lúc 03:20 AM.",
-  },
   "geothermal": {
     term: "geothermal",
     pronunciation: "/ˌdʒiːəʊˈθɜːməl/",
@@ -611,22 +565,6 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_en: "relating to or produced by the internal heat of the earth",
     meaning_vi: "địa nhiệt / nhiệt lòng đất",
     context_note: "Giả thuyết nhiệt địa nhiệt.",
-  },
-  "warmed": {
-    term: "warmed",
-    pronunciation: "/wɔːmd/",
-    pos: "verb (past)",
-    meaning_en: "made or became warm",
-    meaning_vi: "làm ấm / nóng lên",
-    context_note: "Làm nóng lớp đá đáy.",
-  },
-  "melted": {
-    term: "melted",
-    pronunciation: "/ˈmɛltɪd/",
-    pos: "verb (past)",
-    meaning_en: "made or became liquefied by heat",
-    meaning_vi: "làm tan chảy",
-    context_note: "Làm tan chảy băng từ dưới lên.",
   },
   "volcanic": {
     term: "volcanic",
@@ -660,14 +598,6 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_vi: "địa chấn / rung chấn ngầm",
     context_note: "Dữ liệu vi địa chấn của cảm biến B-02.",
   },
-  "cluster": {
-    term: "cluster",
-    pronunciation: "/ˈklʌstər/",
-    pos: "noun",
-    meaning_en: "a group of similar things occurring closely together",
-    meaning_vi: "chuỗi / cụm vết nứt",
-    context_note: "Cụm vết rạn nứt vi mô dưới đáy hồ 200m.",
-  },
   "satellite": {
     term: "satellite",
     pronunciation: "/ˈsætəlaɪt/",
@@ -683,22 +613,6 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_en: "a system for detecting the presence, direction, and elevation of objects",
     meaning_vi: "ra-đa",
     context_note: "Ra-đa vệ tinh đo cao độ bề mặt.",
-  },
-  "confirmed": {
-    term: "confirmed",
-    pronunciation: "/kənˈfɜːmd/",
-    pos: "verb (past)",
-    meaning_en: "established the truth or correctness of something",
-    meaning_vi: "đã xác nhận",
-    context_note: "Vệ tinh xác nhận mặt hồ phồng lên 18cm.",
-  },
-  "massive": {
-    term: "massive",
-    pronunciation: "/ˈmæsɪv/",
-    pos: "adjective",
-    meaning_en: "exceptionally large, heavy, or solid",
-    meaning_vi: "khổng lồ / cực lớn",
-    context_note: "Sóng xung kích cực lớn lúc 03:12 AM.",
   },
   "continuous": {
     term: "continuous",
@@ -719,34 +633,41 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
 };
 
 /**
- * Smart lookup function: tries exact match, then lowercase, then stem/lemma match.
+ * Smart lookup function: tries exact phrase with spaces, then normalized, then stem/lemma match.
  */
 export function lookupWord(rawWord: string): VocabularyTerm | null {
-  const clean = rawWord.trim();
-  const lower = clean.toLowerCase().replace(/[^a-z0-9-]/g, "");
+  if (!rawWord) return null;
+  const clean = rawWord.trim().toLowerCase();
 
-  // 1. Direct contextual dictionary match
-  if (CONTEXTUAL_DICTIONARY[lower]) {
-    return CONTEXTUAL_DICTIONARY[lower];
+  // 1. Direct match with exact phrase
+  if (CONTEXTUAL_DICTIONARY[clean]) {
+    return CONTEXTUAL_DICTIONARY[clean];
   }
 
-  // 2. Multi-word phrase check in dictionary
-  if (CONTEXTUAL_DICTIONARY[clean.toLowerCase()]) {
-    return CONTEXTUAL_DICTIONARY[clean.toLowerCase()];
+  // 2. Match with punctuation stripped but SPACES PRESERVED
+  const normalized = clean.replace(/[^a-z0-9\s-]/g, " ").replace(/\s+/g, " ").trim();
+  if (CONTEXTUAL_DICTIONARY[normalized]) {
+    return CONTEXTUAL_DICTIONARY[normalized];
   }
 
-  // 3. Simple lemmatization fallbacks (plural -s/es, past tense -ed, progressive -ing)
+  // 3. Single-word stripped match
+  const singleWord = clean.replace(/[^a-z0-9-]/g, "").trim();
+  if (CONTEXTUAL_DICTIONARY[singleWord]) {
+    return CONTEXTUAL_DICTIONARY[singleWord];
+  }
+
+  // 4. Lemmatization fallbacks (plural -s/es, past tense -ed, progressive -ing)
   const candidates: string[] = [];
-  if (lower.endsWith("ies")) candidates.push(lower.slice(0, -3) + "y");
-  if (lower.endsWith("es")) candidates.push(lower.slice(0, -2));
-  if (lower.endsWith("s")) candidates.push(lower.slice(0, -1));
-  if (lower.endsWith("ed")) {
-    candidates.push(lower.slice(0, -2));
-    candidates.push(lower.slice(0, -1));
+  if (singleWord.endsWith("ies")) candidates.push(singleWord.slice(0, -3) + "y");
+  if (singleWord.endsWith("es")) candidates.push(singleWord.slice(0, -2));
+  if (singleWord.endsWith("s")) candidates.push(singleWord.slice(0, -1));
+  if (singleWord.endsWith("ed")) {
+    candidates.push(singleWord.slice(0, -2));
+    candidates.push(singleWord.slice(0, -1));
   }
-  if (lower.endsWith("ing")) {
-    candidates.push(lower.slice(0, -3));
-    candidates.push(lower.slice(0, -3) + "e");
+  if (singleWord.endsWith("ing")) {
+    candidates.push(singleWord.slice(0, -3));
+    candidates.push(singleWord.slice(0, -3) + "e");
   }
 
   for (const cand of candidates) {
@@ -754,7 +675,7 @@ export function lookupWord(rawWord: string): VocabularyTerm | null {
       const base = CONTEXTUAL_DICTIONARY[cand];
       return {
         ...base,
-        term: clean,
+        term: rawWord.trim(),
         context_note: base.context_note || ""
       };
     }

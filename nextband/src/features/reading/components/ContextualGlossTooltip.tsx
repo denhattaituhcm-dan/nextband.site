@@ -45,7 +45,8 @@ export const ContextualGlossTooltip: React.FC<ContextualGlossTooltipProps> = ({
             <span className="text-base font-black text-emerald-800 capitalize tracking-wide">
               {term.term}
             </span>
-            {term.pronunciation && term.pronunciation !== `/${term.term.toLowerCase()}/` && (
+            {term.pronunciation && 
+              term.pronunciation.replace(/[^a-z]/gi, "").toLowerCase() !== term.term.replace(/[^a-z]/gi, "").toLowerCase() && (
               <span className="text-[11px] font-mono text-stone-500">
                 {term.pronunciation}
               </span>
@@ -76,6 +77,7 @@ export const ContextualGlossTooltip: React.FC<ContextualGlossTooltipProps> = ({
       <div className="mt-2.5 space-y-2 text-xs">
         {term.meaning_en && 
           term.meaning_en.toLowerCase().trim() !== term.term.toLowerCase().trim() &&
+          term.meaning_en.toLowerCase().trim() !== term.meaning_vi.toLowerCase().trim() &&
           !term.meaning_en.toLowerCase().startsWith("academic term:") &&
           !term.meaning_en.toLowerCase().startsWith("contextual phrase:") &&
           !term.meaning_en.toLowerCase().startsWith("vocabulary in context:") && (
@@ -86,7 +88,8 @@ export const ContextualGlossTooltip: React.FC<ContextualGlossTooltipProps> = ({
           </div>
         )}
 
-        {term.meaning_vi && (
+        {term.meaning_vi && 
+          term.meaning_vi.toLowerCase().trim() !== term.term.toLowerCase().trim() && (
           <div className="rounded-lg bg-emerald-50 p-2.5 border border-emerald-200/80">
             <p className="font-bold text-emerald-900 text-sm">
               {term.meaning_vi.replace(/^(🇻🇳|VN|vn|Cụm từ:|Từ vựng:)\s*/i, "").trim()}
