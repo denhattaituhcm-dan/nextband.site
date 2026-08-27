@@ -65,6 +65,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { DataTablePagination } from "@/components/admin/DataTablePagination";
 import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
+import { getCourseBrand } from "@/lib/courseBrand";
 
 type SortField = "name" | "createdAt";
 
@@ -636,6 +637,9 @@ export default function AdminClasses() {
                 const progressPercent = totalSessions > 0 ? Math.min(100, Math.round((currentHw / totalSessions) * 100)) : 0;
                 const pendingCount = cls.pendingSubmissionsCount || 0;
 
+                const courseMatch = courses.find((c: any) => c.id === (cls.courseId || cls.course_id || cls.course?.id));
+                const brand = getCourseBrand(courseMatch || cls.course || cls.name);
+
                 return (
                   <TableRow
                     key={cls.id}
@@ -651,13 +655,33 @@ export default function AdminClasses() {
                     }}
                   >
                     <TableCell className="font-semibold text-slate-900 dark:text-slate-100">
-                      <div className="flex items-center gap-2">
-                        <span className="group-hover:text-emerald-600 transition-colors">
-                          {cls.name}
-                        </span>
-                        {cls.isActive === false && (
-                          <Badge variant="outline" className="text-xs text-muted-foreground">Tạm dừng</Badge>
-                        )}
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`h-9 w-9 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 border shadow-2xs ${brand.avatarClass}`}
+                          title={`${brand.name} (${brand.band})`}
+                        >
+                          {brand.code}
+                        </div>
+                        <div className="flex flex-col min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="group-hover:text-primary transition-colors font-semibold truncate">
+                              {cls.name}
+                            </span>
+                            {cls.isActive === false && (
+                              <Badge variant="outline" className="text-[10px] text-muted-foreground py-0 px-1.5 h-4">Tạm dừng</Badge>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1.5 mt-0.5 text-xs">
+                            <span className={`font-semibold text-[11px] ${brand.textClass}`}>
+                              {brand.name}
+                            </span>
+                            {brand.band && (
+                              <span className="text-[10px] text-muted-foreground font-mono">
+                                • {brand.band}
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>

@@ -39,6 +39,7 @@ import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { DataTablePagination } from "@/components/admin/DataTablePagination";
 import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
+import { getCourseBrand } from "@/lib/courseBrand";
 
 type SortOption = "newest" | "name" | "level";
 
@@ -223,29 +224,34 @@ export default function AdminCourses() {
               </TableRow>
             ) : (
               /* 4. SUCCESS DATA STATE */
-              coursesList.map((course: any) => (
-                <TableRow key={course.id} className="hover:bg-muted/40 transition-colors">
-                  {/* PROGRAM TITLE */}
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center font-bold text-primary text-xs shrink-0">
-                        {course.title ? course.title.substring(0, 2).toUpperCase() : "CS"}
+              coursesList.map((course: any) => {
+                const brand = getCourseBrand(course);
+                return (
+                  <TableRow key={course.id} className="hover:bg-muted/40 transition-colors">
+                    {/* PROGRAM TITLE */}
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`h-9 w-9 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 border shadow-2xs ${brand.avatarClass}`}
+                          title={`${brand.name} (${brand.band})`}
+                        >
+                          {brand.code}
+                        </div>
+                        <div>
+                          <Link to={`/admin/courses/${course.id}`} className="font-semibold text-sm hover:text-primary transition-colors block">
+                            {course.title}
+                          </Link>
+                          <p className="text-xs text-muted-foreground line-clamp-1">{course.description || "Chưa có mô tả ngắn"}</p>
+                        </div>
                       </div>
-                      <div>
-                        <Link to={`/admin/courses/${course.id}`} className="font-semibold text-sm hover:text-primary transition-colors block">
-                          {course.title}
-                        </Link>
-                        <p className="text-xs text-muted-foreground line-clamp-1">{course.description || "Chưa có mô tả ngắn"}</p>
-                      </div>
-                    </div>
-                  </TableCell>
+                    </TableCell>
 
-                  {/* BAND */}
-                  <TableCell className="text-xs font-semibold text-foreground">
-                    <Badge variant="outline" className="bg-muted/50 font-mono">
-                      {course.band || "Target 6.5"}
-                    </Badge>
-                  </TableCell>
+                    {/* BAND */}
+                    <TableCell className="text-xs font-semibold">
+                      <Badge variant="outline" className={`font-mono border ${brand.badgeClass}`}>
+                        {course.band || brand.band || "Target 6.5"}
+                      </Badge>
+                    </TableCell>
 
                   {/* TUITION FEE */}
                   <TableCell className="text-xs font-medium text-right text-emerald-700 font-mono">
@@ -365,8 +371,9 @@ export default function AdminCourses() {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
-                </TableRow>
-              ))
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>
