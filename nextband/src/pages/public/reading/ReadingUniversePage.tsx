@@ -3,56 +3,52 @@ import { Link } from "react-router-dom";
 import { SEO } from "@/components/common/SEO";
 import { Button } from "@/components/ui/button";
 import {
-  Compass,
-  ArrowRight,
-  Sparkles,
-  Search,
   BookOpen,
-  Globe2,
-  GraduationCap,
-  CheckCircle2,
+  Sparkles,
   Clock,
-  Shield,
+  ArrowRight,
+  CheckCircle2,
   Layers,
 } from "lucide-react";
 
 export default function ReadingUniversePage() {
   return (
-    <div className="min-h-screen bg-[#070e18] text-white font-sans selection:bg-amber-400 selection:text-slate-950">
+    <div className="min-h-screen bg-[#FDFBF7] text-stone-900 font-sans selection:bg-amber-200 selection:text-stone-900">
       <SEO
-        title="Reading Universe | ARIS IELTS"
-        description="Đừng chỉ đọc. Hãy bước vào thế giới và giải mã. Hệ thống luyện IELTS Reading theo phương pháp Narrative Reading & Case Dossier."
+        title="Thư Viện Bài Đọc Tiếng Anh | ARIS IELTS"
+        description="Đọc tiếng Anh nhẹ nhàng và tự nhiên. Nhấp vào từ bất kỳ để xem ngay nghĩa tiếng Việt và cách dùng."
       />
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden border-b border-slate-800/80 bg-gradient-to-b from-[#0c1e38] via-[#091526] to-[#070e18] py-16 sm:py-24">
-        <div className="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
+      {/* Hero Header Section */}
+      <section className="relative overflow-hidden border-b border-stone-200/80 bg-gradient-to-b from-[#F7F3EB] to-[#FDFBF7] py-14 sm:py-20">
+        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
           
-          <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-bold text-amber-300 uppercase tracking-widest mb-6 animate-pulse">
-            <Sparkles className="h-4 w-4 text-amber-400" />
-            Next-Gen IELTS Reflective Reading Engine
+          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300 bg-emerald-50 px-4 py-1.5 text-xs font-bold text-emerald-800 tracking-wide mb-6">
+            <Sparkles className="h-4 w-4 text-emerald-600" />
+            Luyện Đọc Hiểu Tiếng Anh Tự Nhiên & Thư Giãn
           </div>
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white uppercase leading-tight">
-            Read Deeply. <br />
-            <span className="bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-500 bg-clip-text text-transparent">
-              Think Clearly.
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-stone-900 leading-tight">
+            Đọc Tiếng Anh Nhẹ Nhàng. <br />
+            <span className="text-emerald-700">
+              Hiểu Sâu & Mở Rộng Tư Duy.
             </span>
           </h1>
 
-          <p className="mt-6 text-base sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Đừng chỉ đọc để làm bài tập trắc nghiệm. Hãy đọc để chiêm nghiệm, đối chiếu đa chiều và cảm nhận trọn vẹn chiều sâu tri thức của văn bản — câu hỏi chỉ đóng vai trò hỗ trợ tư duy.
+          <p className="mt-5 text-base sm:text-lg text-stone-600 max-w-2xl mx-auto leading-relaxed">
+            Không cần tra từ điển phức tạp. Đọc các bài viết chọn lọc về cuộc sống, kỹ năng và khoa học — nhấp vào bất kỳ từ nào để hiểu ngay nghĩa tiếng Việt sát ngữ cảnh.
           </p>
 
-          {/* Quick CTA */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+          {/* Quick Start Buttons */}
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3.5">
             <Button
               asChild
               size="lg"
-              className="h-12 px-7 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm uppercase tracking-wider shadow-lg shadow-emerald-500/25 transition-all cursor-pointer"
+              className="h-12 px-7 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md shadow-emerald-600/15 transition-all cursor-pointer"
             >
               <Link to="/reading/case-002">
-                📖 Đọc Bài Viết #002 (Warren Buffett)
+                <BookOpen className="mr-2 h-4 w-4" />
+                Đọc Bài #02: Lời Khuyên Warren Buffett
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
@@ -60,235 +56,184 @@ export default function ReadingUniversePage() {
               asChild
               size="lg"
               variant="outline"
-              className="h-12 px-7 rounded-full border-amber-500/60 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-black text-sm uppercase tracking-wider transition-all cursor-pointer"
+              className="h-12 px-6 rounded-xl border-stone-300 bg-white hover:bg-stone-50 text-stone-700 font-bold text-sm shadow-xs transition-all cursor-pointer"
             >
               <Link to="/reading/case-001">
-                ❄️ Bài Đọc #001 (Hồ Băng Greenland)
+                ❄️ Đọc Bài #01: Hiện Tượng Hồ Băng
               </Link>
             </Button>
           </div>
         </div>
       </section>
 
-      {/* Featured Cases Section */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-8">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-          <div className="flex items-center gap-2.5">
-            <BookOpen className="h-5 w-5 text-amber-400" />
-            <h2 className="text-lg sm:text-xl font-black uppercase tracking-wider text-white">
-              Tủ Sách Chuyên Đề & Bài Đọc Đối Chiếu
+      {/* Reading Feature Highlights */}
+      <section className="py-8 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="rounded-2xl border border-stone-200 bg-white p-4.5 flex items-start gap-3.5 shadow-xs">
+            <div className="h-10 w-10 rounded-xl bg-emerald-100/80 text-emerald-800 flex items-center justify-center shrink-0 font-bold">
+              💡
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-stone-900">Dịch từ tức thì</h3>
+              <p className="text-xs text-stone-500 mt-1 leading-relaxed">
+                Nhấp chuột vào từ hoặc cụm từ để xem ngay nghĩa tiếng Việt và cách dùng trong câu.
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-stone-200 bg-white p-4.5 flex items-start gap-3.5 shadow-xs">
+            <div className="h-10 w-10 rounded-xl bg-sky-100/80 text-sky-800 flex items-center justify-center shrink-0 font-bold">
+              🎧
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-stone-900">Nghe phát âm chuẩn</h3>
+              <p className="text-xs text-stone-500 mt-1 leading-relaxed">
+                Nghe giọng đọc bản xứ để cải thiện phát âm và phản xạ từ vựng tự nhiên.
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-stone-200 bg-white p-4.5 flex items-start gap-3.5 shadow-xs">
+            <div className="h-10 w-10 rounded-xl bg-amber-100/80 text-amber-800 flex items-center justify-center shrink-0 font-bold">
+              🌱
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-stone-900">Đọc không áp lực</h3>
+              <p className="text-xs text-stone-500 mt-1 leading-relaxed">
+                Không tính thời gian, không áp lực thi cử — đọc để tích lũy kiến thức và thư giãn.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Articles Section */}
+      <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto space-y-6">
+        <div className="flex items-center justify-between border-b border-stone-200 pb-3">
+          <div className="flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-emerald-600" />
+            <h2 className="text-lg sm:text-xl font-bold text-stone-900">
+              Bài Đọc Tuyển Chọn
             </h2>
           </div>
-          <span className="text-xs font-mono text-emerald-400 font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-            2 Chuyên Đề Sẵn Sàng
+          <span className="text-xs font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+            2 bài đọc sẵn sàng
           </span>
         </div>
 
-        {/* CASE #002 (NEW - FEATURED): WARREN BUFFETT */}
-        <div className="rounded-3xl border border-emerald-500/40 bg-gradient-to-br from-slate-900 via-[#0a1f18] to-slate-950 p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+        {/* ARTICLE #02: WARREN BUFFETT */}
+        <div className="rounded-2xl border border-emerald-200 bg-white p-6 sm:p-7 shadow-sm hover:shadow-md transition-all">
           <div className="grid md:grid-cols-12 gap-6 items-center">
-            <div className="md:col-span-8 space-y-4">
+            <div className="md:col-span-8 space-y-3">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                  MỚI NHẤT · Học Sĩ · Band 6.0
+                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                  Phát triển bản thân
                 </span>
-                <span className="text-xs text-amber-400">★★★☆ (Cao Kỳ)</span>
-                <span className="text-xs text-slate-400">· Fast Company Strategy Archive</span>
+                <span className="text-xs text-stone-500">· Fast Company Strategy</span>
+                <span className="text-xs text-stone-500">· Trình độ: Thân thiện với mọi người</span>
               </div>
 
-              <h3 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight">
-                Case #002: The Buffett Multiplier (Kỹ Năng Đòn Bẩy Nhân Bản Thành Công)
+              <h3 className="text-xl sm:text-2xl font-bold text-stone-900 leading-snug">
+                Bài #02: Kỹ Năng Đòn Bẩy Của Warren Buffett
               </h3>
 
-              <p className="text-sm text-slate-300 leading-relaxed max-w-xl">
-                Trong kỷ nguyên AI có thể viết code và soạn kế hoạch kinh doanh trong vài giây, Warren Buffett chỉ ra kỹ năng duy nhất có tính chất "lãi kép" để vượt qua AI: Kỹ năng giao tiếp và thấu cảm giữa người với người.
+              <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">
+                Trong thời đại AI có thể viết email và soạn thảo văn bản trong tích tắc, Warren Buffett chia sẻ một lời khuyên đắt giá: Năng lực giao tiếp và thấu cảm giữa người với người chính là kỹ năng đòn bẩy tạo nên thành công bền vững nhất.
               </p>
 
-              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pt-2">
+              <div className="flex flex-wrap items-center gap-4 text-xs text-stone-500 pt-1">
                 <span className="flex items-center gap-1.5">
-                  <Clock className="h-4 w-4 text-slate-500" /> ~12 phút
+                  <Clock className="h-4 w-4 text-stone-400" /> ~10 phút đọc
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Layers className="h-4 w-4 text-slate-500" /> 3 Nguồn Bài Đọc (Fast Company)
+                  <Layers className="h-4 w-4 text-stone-400" /> 3 phần đọc ngắn gọn
                 </span>
-                <span className="flex items-center gap-1.5 text-emerald-400/90 font-medium">
-                  <BookOpen className="h-4 w-4 text-emerald-400" /> Trọng tâm: Sức mạnh giao tiếp trong kỷ nguyên AI
+                <span className="flex items-center gap-1.5 text-emerald-700 font-medium">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600" /> Có hỗ trợ dịch từ & phát âm
                 </span>
               </div>
             </div>
 
-            <div className="md:col-span-4 flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-slate-800 pt-4 md:pt-0 md:pl-6">
+            <div className="md:col-span-4 flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-stone-100 pt-4 md:pt-0 md:pl-6">
               <Button
                 asChild
-                className="w-full h-12 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/20 cursor-pointer"
+                className="w-full h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider shadow-xs cursor-pointer"
               >
                 <Link to="/reading/case-002">
-                  Đọc & Chiêm Nghiệm
+                  Bắt Đầu Đọc
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <p className="text-[11px] text-slate-500 mt-2 text-center">
-                Đọc đối chiếu 3 nguồn & 4 câu hỏi suy ngẫm
+              <p className="text-[11px] text-stone-400 mt-2 text-center">
+                Đọc thư giãn kèm giải nghĩa từ vựng
               </p>
             </div>
           </div>
         </div>
 
-        {/* CASE #001: THE VANISHING GLACIAL LAKE */}
-        <div className="rounded-3xl border border-sky-500/30 bg-gradient-to-br from-slate-900 via-[#0a1628] to-slate-950 p-6 sm:p-8 shadow-xl relative overflow-hidden">
+        {/* ARTICLE #01: THE VANISHING GLACIAL LAKE */}
+        <div className="rounded-2xl border border-stone-200 bg-white p-6 sm:p-7 shadow-sm hover:shadow-md transition-all">
           <div className="grid md:grid-cols-12 gap-6 items-center">
-            <div className="md:col-span-8 space-y-4">
+            <div className="md:col-span-8 space-y-3">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/40">
-                  Học Sĩ · Band 5.0
+                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800">
+                  Khám phá khoa học
                 </span>
-                <span className="text-xs text-amber-400">★★☆☆ (Trung Kỳ)</span>
-                <span className="text-xs text-slate-400">· Arctic Climate & Glaciology Archive</span>
+                <span className="text-xs text-stone-500">· Địa lý & Khí hậu Greenland</span>
+                <span className="text-xs text-stone-500">· Trình độ: Dễ đọc</span>
               </div>
 
-              <h3 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight">
-                Case #001: The Vanishing Glacial Lake (Hồ Băng Biến Mất)
+              <h3 className="text-xl sm:text-2xl font-bold text-stone-900 leading-snug">
+                Bài #01: Hiện Tượng Hồ Băng Greenland Biến Mất
               </h3>
 
-              <p className="text-sm text-slate-300 leading-relaxed max-w-xl">
-                03:15 AM. 8 triệu mét khối nước biến mất khỏi bề mặt dải băng Greenland trong 90 phút. Gờ băng nguyên vẹn không tràn ra ngoài. Nước đã thoát đi đâu và theo cơ chế nào?
+              <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">
+                03:15 sáng tại dải băng Greenland, 8 triệu mét khối nước băng bất ngờ biến mất hoàn toàn trong 90 phút mà không hề tràn ra ngoài. Khám phá cách các nhà khoa học tìm ra lời giải thích thú vị về hiện tượng này.
               </p>
 
-              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pt-2">
+              <div className="flex flex-wrap items-center gap-4 text-xs text-stone-500 pt-1">
                 <span className="flex items-center gap-1.5">
-                  <Clock className="h-4 w-4 text-slate-500" /> ~10 phút
+                  <Clock className="h-4 w-4 text-stone-400" /> ~8 phút đọc
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Layers className="h-4 w-4 text-slate-500" /> 3 Nguồn Dữ Liệu + Sơ Đồ Địa Chất
+                  <Layers className="h-4 w-4 text-stone-400" /> 3 nguồn dữ liệu ngắn
                 </span>
-                <span className="flex items-center gap-1.5 text-sky-300/90 font-medium">
-                  <BookOpen className="h-4 w-4 text-sky-400" /> Trọng tâm: Cơ chế nứt gãy thoát nước dải băng
+                <span className="flex items-center gap-1.5 text-sky-700 font-medium">
+                  <CheckCircle2 className="h-4 w-4 text-sky-600" /> Có sơ đồ trực quan minh họa
                 </span>
               </div>
             </div>
 
-            <div className="md:col-span-4 flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-slate-800 pt-4 md:pt-0 md:pl-6">
+            <div className="md:col-span-4 flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-stone-100 pt-4 md:pt-0 md:pl-6">
               <Button
                 asChild
                 variant="outline"
-                className="w-full h-12 rounded-xl border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20 text-sky-200 font-black text-xs uppercase tracking-wider cursor-pointer"
+                className="w-full h-11 rounded-xl border-stone-300 bg-white hover:bg-stone-50 text-stone-800 font-bold text-xs uppercase tracking-wider cursor-pointer"
               >
                 <Link to="/reading/case-001">
-                  Đọc & Chiêm Nghiệm
+                  Bắt Đầu Đọc
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <p className="text-[11px] text-slate-500 mt-2 text-center">
-                Đọc đối chiếu 3 nguồn & Sơ đồ địa chất
+              <p className="text-[11px] text-stone-400 mt-2 text-center">
+                Đọc đối chiếu & xem sơ đồ trực quan
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 4 Universe Realms */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-white">
-            Khám Phá Các Vũ Trụ Đọc (Content Realms)
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-400 mt-2">
-            Cùng một Reading Engine chuẩn IELTS, nhưng bạn được quyền lựa chọn thế giới mình muốn bước vào.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          
-          {/* Card 1: Case Files */}
-          <div className="rounded-2xl border border-amber-500/30 bg-slate-900/80 p-5 space-y-3 hover:border-amber-500 transition-all group">
-            <div className="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 font-bold">
-              🕵️
-            </div>
-            <h3 className="font-extrabold text-white text-base">Case Files</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Trinh thám, Conan, bí ẩn học viện & hồ sơ điều tra đa nguồn. Rèn luyện đối chiếu mâu thuẫn và chứng minh logic.
+      {/* Helpful Reading Tip */}
+      <section className="py-8 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto mb-12">
+        <div className="rounded-2xl bg-[#F7F3EB] border border-stone-200/90 p-5 sm:p-6 flex items-center gap-4">
+          <div className="h-10 w-10 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 font-bold">
+            🌱
+          </div>
+          <div className="space-y-0.5">
+            <h4 className="text-sm font-bold text-stone-900">Lời khuyên cho người mới luyện đọc:</h4>
+            <p className="text-xs text-stone-600 leading-relaxed">
+              Bạn không cần phải dịch từng chữ một sang tiếng Việt. Hãy đọc lướt qua cả câu để hiểu ý chính, và nhấp vào từ vựng chỉ khi từ đó cản trở việc hiểu nội dung của bạn.
             </p>
-            <span className="text-[11px] font-bold text-amber-400 inline-block pt-1">
-              12 Vụ Án Có Sẵn →
-            </span>
-          </div>
-
-          {/* Card 2: Great Stories */}
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 space-y-3 hover:border-slate-700 transition-all group">
-            <div className="h-10 w-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold">
-              ⚔️
-            </div>
-            <h3 className="font-extrabold text-white text-base">Great Stories</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Fantasy, phiêu lưu thám hiểm, văn học kinh điển. Đọc sâu không ma sát với hệ thống giải mã ngữ cảnh tức thì.
-            </p>
-            <span className="text-[11px] font-bold text-slate-500 inline-block pt-1">
-              Sắp Ra Mắt
-            </span>
-          </div>
-
-          {/* Card 3: Real World */}
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 space-y-3 hover:border-slate-700 transition-all group">
-            <div className="h-10 w-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 font-bold">
-              🌍
-            </div>
-            <h3 className="font-extrabold text-white text-base">Real World</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Khoa học, công nghệ, biến đổi khí hậu & xã hội hiện đại. Xây dựng kiến thức nền (Schema) cho các bài thi học thuật.
-            </p>
-            <span className="text-[11px] font-bold text-slate-500 inline-block pt-1">
-              Sắp Ra Mắt
-            </span>
-          </div>
-
-          {/* Card 4: IELTS Challenge */}
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 space-y-3 hover:border-slate-700 transition-all group">
-            <div className="h-10 w-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-bold">
-              🎯
-            </div>
-            <h3 className="font-extrabold text-white text-base">IELTS Challenge</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Các bài đọc chuẩn đề thi Cambridge Academic, kiểm tra độ thuần thục kỹ năng trước khi đột phá đại cảnh giới.
-            </p>
-            <span className="text-[11px] font-bold text-slate-500 inline-block pt-1">
-              Sắp Ra Mắt
-            </span>
-          </div>
-
-        </div>
-      </section>
-
-      {/* Mastery Progression Guide */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto border-t border-slate-800">
-        <div className="rounded-2xl bg-slate-900/90 border border-slate-800 p-6 sm:p-8 space-y-4">
-          <div className="flex items-center gap-2">
-            <GraduationCap className="h-6 w-6 text-amber-400" />
-            <h3 className="text-lg font-black text-white uppercase tracking-wide">
-              Hệ Thống Tiến Trình Cảnh Giới (Mastery-Based Progression)
-            </h3>
-          </div>
-
-          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-            Khác với các hệ thống game hóa tích lũy điểm XP ảo, NextBand Reading đo lường <strong>bằng chứng năng lực thực tế</strong>. Bạn chỉ có thể đột phá cảnh giới khi chứng minh được khả năng tìm kiếm thông tin, suy luận có dẫn chứng và xử lý paraphrase qua các bài khảo hạch Đỉnh Phong.
-          </p>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2 text-xs">
-            <div className="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700">
-              <span className="text-slate-400 block text-[10px]">3.0 – 4.0</span>
-              <strong className="text-white">Học Đồ</strong>
-            </div>
-            <div className="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700">
-              <span className="text-slate-400 block text-[10px]">4.0 – 5.0</span>
-              <strong className="text-white">Học Giả</strong>
-            </div>
-            <div className="p-2.5 rounded-lg bg-amber-500/20 border border-amber-500/40">
-              <span className="text-amber-300 block text-[10px]">5.0 – 6.0 (Hiện tại)</span>
-              <strong className="text-amber-300">Học Sĩ</strong>
-            </div>
-            <div className="p-2.5 rounded-lg bg-slate-800/80 border border-slate-700">
-              <span className="text-slate-400 block text-[10px]">6.0 – 7.0</span>
-              <strong className="text-white">Học Sư</strong>
-            </div>
           </div>
         </div>
       </section>
