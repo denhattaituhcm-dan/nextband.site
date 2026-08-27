@@ -103145,6 +103145,7 @@ var usersRoutes = async (fastify) => {
     async (request, reply) => {
       const { id } = request.params;
       const {
+        email,
         fullName,
         isActive,
         isReserved,
@@ -103170,6 +103171,45 @@ var usersRoutes = async (fastify) => {
       });
       if (!existingUser) {
         return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y ng\u01B0\u1EDDi d\xF9ng" });
+      }
+      let cleanEmail = void 0;
+      if (email !== void 0 && email !== null && String(email).trim() !== "") {
+        if (typeof email !== "string" || !email.includes("@")) {
+          return reply.status(400).send({
+            statusCode: 400,
+            error: "Email kh\xF4ng h\u1EE3p l\u1EC7",
+            message: "Email kh\xF4ng h\u1EE3p l\u1EC7"
+          });
+        }
+        cleanEmail = email.trim().toLowerCase();
+        if (cleanEmail !== existingUser.email?.toLowerCase()) {
+          const duplicate = await fastify.prisma.user.findFirst({
+            where: {
+              email: cleanEmail,
+              id: { not: existingUser.id },
+              userId: { not: existingUser.userId }
+            }
+          });
+          if (duplicate) {
+            return reply.status(409).send({
+              statusCode: 409,
+              error: "Email \u0111\xE3 t\u1ED3n t\u1EA1i trong h\u1EC7 th\u1ED1ng",
+              message: "Email \u0111\xE3 t\u1ED3n t\u1EA1i trong h\u1EC7 th\u1ED1ng"
+            });
+          }
+          try {
+            await fastify.prisma.$executeRawUnsafe(`
+              UPDATE auth.users
+              SET email = $1,
+                  email_confirmed_at = COALESCE(email_confirmed_at, now()),
+                  raw_user_meta_data = jsonb_set(COALESCE(raw_user_meta_data, '{}'::jsonb), '{email}', to_jsonb($1::text)),
+                  updated_at = now()
+              WHERE id = $2::uuid
+            `, cleanEmail, existingUser.userId || existingUser.id);
+          } catch (authErr) {
+            fastify.log.warn({ authErr }, "Notice: could not update auth.users email directly, continuing profile update");
+          }
+        }
       }
       let updatedBio = bio;
       if (isReserved !== void 0 || status !== void 0) {
@@ -103197,6 +103237,7 @@ var usersRoutes = async (fastify) => {
       const user = await fastify.prisma.user.update({
         where: { id: existingUser.id },
         data: {
+          ...cleanEmail !== void 0 && { email: cleanEmail },
           ...fullName !== void 0 && { fullName },
           ...isActive !== void 0 && {
             isActive,
@@ -103840,6 +103881,139 @@ var ClassRepository = class {
 
 // server/services/class.service.ts
 init_notification_service();
+
+// server/services/room-collision.service.ts
+function timeToMinutes(time) {
+  if (time instanceof Date) {
+    const hours = time.getUTCHours();
+    const minutes = time.getUTCMinutes();
+    return hours * 60 + minutes;
+  }
+  if (typeof time === "string") {
+    if (time.includes("T")) {
+      const d = new Date(time);
+      if (!isNaN(d.getTime())) {
+        return d.getUTCHours() * 60 + d.getUTCMinutes();
+      }
+    }
+    const parts = time.split(":").map(Number);
+    if (parts.length >= 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+      return parts[0] * 60 + parts[1];
+    }
+  }
+  return 0;
+}
+function minutesToTimeString(totalMinutes) {
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+function doTimeIntervalsOverlap(start1, end1, start2, end2) {
+  return start1 < end2 && start2 < end1;
+}
+function formatDateKey(date) {
+  if (date instanceof Date) {
+    const y = date.getUTCFullYear();
+    const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const d = String(date.getUTCDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+  return String(date).split("T")[0];
+}
+var RoomCollisionService = class {
+  /**
+   * Validates whether a set of planned sessions in a specified room collides with any
+   * existing active sessions from other classes.
+   */
+  static async checkRoomConflictForSessions(prisma, params) {
+    const { roomId, sessions, excludeClassId } = params;
+    if (!roomId || !sessions || sessions.length === 0) {
+      return { hasConflict: false, conflicts: [] };
+    }
+    const targetRoom = await prisma.room.findUnique({
+      where: { id: roomId },
+      select: { id: true, name: true, branch: { select: { id: true, name: true } } }
+    });
+    if (!targetRoom) {
+      return { hasConflict: false, conflicts: [] };
+    }
+    const dateKeys = Array.from(
+      new Set(sessions.map((s) => formatDateKey(s.plannedDate)))
+    );
+    const dateObjects = dateKeys.map((k) => /* @__PURE__ */ new Date(`${k}T00:00:00.000Z`));
+    const existingSessions = await prisma.classSession.findMany({
+      where: {
+        class: {
+          roomId,
+          id: excludeClassId ? { not: excludeClassId } : void 0,
+          isActive: true,
+          status: { notIn: ["CLOSED", "ARCHIVED"] }
+        },
+        status: { not: "CANCELLED" },
+        plannedDate: { in: dateObjects }
+      },
+      select: {
+        id: true,
+        plannedDate: true,
+        startTime: true,
+        endTime: true,
+        status: true,
+        class: {
+          select: {
+            id: true,
+            name: true,
+            course: { select: { title: true } }
+          }
+        }
+      }
+    });
+    if (existingSessions.length === 0) {
+      return { hasConflict: false, conflicts: [] };
+    }
+    const existingByDate = /* @__PURE__ */ new Map();
+    for (const s of existingSessions) {
+      const k = formatDateKey(s.plannedDate);
+      if (!existingByDate.has(k)) {
+        existingByDate.set(k, []);
+      }
+      existingByDate.get(k).push(s);
+    }
+    const conflicts = [];
+    for (const req of sessions) {
+      const dateKey = formatDateKey(req.plannedDate);
+      const candidates = existingByDate.get(dateKey);
+      if (!candidates || candidates.length === 0) continue;
+      const reqStartMin = timeToMinutes(req.startTime);
+      const reqEndMin = timeToMinutes(req.endTime);
+      for (const ex of candidates) {
+        const exStartMin = timeToMinutes(ex.startTime);
+        const exEndMin = timeToMinutes(ex.endTime);
+        if (doTimeIntervalsOverlap(reqStartMin, reqEndMin, exStartMin, exEndMin)) {
+          conflicts.push({
+            date: dateKey,
+            requestedTime: `${minutesToTimeString(reqStartMin)} - ${minutesToTimeString(reqEndMin)}`,
+            conflictingClassId: ex.class.id,
+            conflictingClassName: ex.class.name,
+            conflictingTime: `${minutesToTimeString(exStartMin)} - ${minutesToTimeString(exEndMin)}`,
+            roomName: targetRoom.name
+          });
+        }
+      }
+    }
+    if (conflicts.length > 0) {
+      const first = conflicts[0];
+      const summaryMsg = `Xung \u0111\u1ED9t ph\xF2ng h\u1ECDc: Ph\xF2ng "${first.roomName}" \u0111\xE3 c\xF3 l\u1EDBp "${first.conflictingClassName}" h\u1ECDc v\xE0o ng\xE0y ${first.date} (${first.conflictingTime}). Kh\xF4ng th\u1EC3 x\u1EBFp l\u1ECBch tr\xF9ng v\xE0o khung gi\u1EDD ${first.requestedTime}.`;
+      return {
+        hasConflict: true,
+        conflicts,
+        message: summaryMsg
+      };
+    }
+    return { hasConflict: false, conflicts: [] };
+  }
+};
+
+// server/services/class.service.ts
 var ClassService = class {
   constructor(prisma) {
     this.prisma = prisma;
@@ -104005,6 +104179,35 @@ var ClassService = class {
           "Ph\xF2ng h\u1ECDc kh\xF4ng thu\u1ED9c c\u01A1 s\u1EDF \u0111\xE3 ch\u1ECDn. Vui l\xF2ng ch\u1ECDn ph\xF2ng h\u1ECDc thu\u1ED9c \u0111\xFAng c\u01A1 s\u1EDF.",
           400
         );
+      }
+    }
+    if (data.roomId !== void 0 && effectiveRoomId && effectiveRoomId !== classData.roomId) {
+      const existingClassSessions = await this.prisma.classSession.findMany({
+        where: {
+          classId: id,
+          status: { not: "CANCELLED" }
+        },
+        select: {
+          plannedDate: true,
+          startTime: true,
+          endTime: true
+        }
+      });
+      if (existingClassSessions.length > 0) {
+        const collisionResult = await RoomCollisionService.checkRoomConflictForSessions(
+          this.prisma,
+          {
+            roomId: effectiveRoomId,
+            sessions: existingClassSessions,
+            excludeClassId: id
+          }
+        );
+        if (collisionResult.hasConflict) {
+          throw new AuthorizationError(
+            collisionResult.message || "Xung \u0111\u1ED9t ph\xF2ng h\u1ECDc v\u1EDBi l\u1EDBp kh\xE1c trong c\xF9ng khung gi\u1EDD.",
+            409
+          );
+        }
       }
     }
     return this.repo.update(id, updatePayload);
@@ -105790,6 +105993,27 @@ var attendanceRoutes = async (fastify) => {
             dates.push(`${cur.getFullYear()}-${mm}-${dd}`);
           }
           cur.setDate(cur.getDate() + 1);
+        }
+        if (cls.roomId) {
+          const candidateSlots = dates.map((dStr) => ({
+            plannedDate: dStr,
+            startTime,
+            endTime
+          }));
+          const collisionResult = await RoomCollisionService.checkRoomConflictForSessions(
+            prisma,
+            {
+              roomId: cls.roomId,
+              sessions: candidateSlots,
+              excludeClassId: classId
+            }
+          );
+          if (collisionResult.hasConflict) {
+            return reply.status(409).send({
+              error: collisionResult.message,
+              conflicts: collisionResult.conflicts
+            });
+          }
         }
         const createdSessions = [];
         for (let i = 0; i < dates.length; i++) {

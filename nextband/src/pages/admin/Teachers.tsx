@@ -212,10 +212,15 @@ export default function AdminTeachers() {
       setEditingUser(null);
       setForm(emptyForm);
     },
-    onError: () => {
+    onError: (err: any) => {
+      const msg =
+        err?.message ||
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        "Không thể cập nhật thông tin giáo viên";
       toast({
         title: "Lỗi",
-        description: "Không thể cập nhật",
+        description: msg,
         variant: "destructive",
       });
     },
@@ -256,8 +261,17 @@ export default function AdminTeachers() {
   };
 
   const handleSave = () => {
+    if (!form.email || !form.email.includes("@")) {
+      toast({
+        title: "Thiếu thông tin",
+        description: "Vui lòng nhập địa chỉ email hợp lệ",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (editingUser) {
-      const { email, password, ...rest } = form;
+      const { password, ...rest } = form;
       updateMutation.mutate({ id: editingUser.id, ...rest });
     } else {
       createMutation.mutate(form);
@@ -744,7 +758,17 @@ export default function AdminTeachers() {
             </DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-2">
-            {!editingUser && (
+            {editingUser ? (
+              <div className="space-y-2">
+                <Label>Email *</Label>
+                <Input
+                  type="email"
+                  placeholder="email@example.com"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                />
+              </div>
+            ) : (
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
                   <Label>Email *</Label>
@@ -810,7 +834,8 @@ export default function AdminTeachers() {
             <Button
               onClick={handleSave}
               disabled={
-                (!editingUser && (!form.email || !form.password)) ||
+                !form.email ||
+                (!editingUser && !form.password) ||
                 createMutation.isPending ||
                 updateMutation.isPending
               }

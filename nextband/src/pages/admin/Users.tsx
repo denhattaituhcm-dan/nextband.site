@@ -219,8 +219,9 @@ export default function AdminUsers() {
       setEditingUser(null);
       setForm(emptyForm);
     },
-    onError: () => {
-      toast({ title: "Lỗi", description: "Không thể cập nhật", variant: "destructive" });
+    onError: (err: any) => {
+      const msg = err?.message || err?.response?.data?.message || err?.response?.data?.error || "Không thể cập nhật";
+      toast({ title: "Lỗi", description: msg, variant: "destructive" });
     },
   });
 
@@ -794,17 +795,15 @@ export default function AdminUsers() {
             </DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-2">
-            {!editingUser && (
-              <div className="space-y-2">
-                <Label>Email học viên *</Label>
-                <Input
-                  type="email"
-                  placeholder="student@gmail.com"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                />
-              </div>
-            )}
+            <div className="space-y-2">
+              <Label>Email học viên *</Label>
+              <Input
+                type="email"
+                placeholder="student@gmail.com"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />
+            </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
@@ -855,7 +854,7 @@ export default function AdminUsers() {
               <Button
                 disabled={createMutation.isPending || updateMutation.isPending}
                 onClick={() => {
-                  if (!editingUser && (!form.email || !form.email.includes("@"))) {
+                  if (!form.email || !form.email.includes("@")) {
                     toast({
                       title: "Thiếu thông tin",
                       description: "Vui lòng nhập địa chỉ email hợp lệ",

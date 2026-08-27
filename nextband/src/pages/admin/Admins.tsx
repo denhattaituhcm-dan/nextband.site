@@ -202,8 +202,17 @@ export default function AdminAdmins() {
   };
 
   const handleSave = () => {
+    if (!form.email || !form.email.includes("@")) {
+      toast({
+        title: "Thiếu thông tin",
+        description: "Vui lòng nhập địa chỉ email hợp lệ",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (editingUser) {
-      const { email, password, ...rest } = form;
+      const { password, ...rest } = form;
       updateMutation.mutate({ id: editingUser.id, ...rest });
     } else {
       createMutation.mutate(form);
@@ -506,7 +515,17 @@ export default function AdminAdmins() {
             </DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-2">
-            {!editingUser && (
+            {editingUser ? (
+              <div className="space-y-2">
+                <Label>Email Đăng nhập *</Label>
+                <Input
+                  type="email"
+                  placeholder="admin@ielts.com"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                />
+              </div>
+            ) : (
               <>
                 <div className="space-y-2">
                   <Label>Email Đăng nhập *</Label>
@@ -571,7 +590,8 @@ export default function AdminAdmins() {
               onClick={handleSave}
               className="bg-amber-600 hover:bg-amber-700 text-white font-bold"
               disabled={
-                (!editingUser && (!form.email || !form.password)) ||
+                !form.email ||
+                (!editingUser && !form.password) ||
                 createMutation.isPending ||
                 updateMutation.isPending
               }

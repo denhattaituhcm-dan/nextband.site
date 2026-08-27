@@ -696,6 +696,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
     async (request, reply) => {
       const { id } = request.params;
       const {
+        email,
         fullName,
         isActive,
         isReserved,
@@ -723,6 +724,48 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
 
       if (!existingUser) {
         return reply.status(404).send({ error: "Không tìm thấy người dùng" });
+      }
+
+      let cleanEmail: string | undefined = undefined;
+      if (email !== undefined && email !== null && String(email).trim() !== "") {
+        if (typeof email !== "string" || !email.includes("@")) {
+          return reply.status(400).send({
+            statusCode: 400,
+            error: "Email không hợp lệ",
+            message: "Email không hợp lệ",
+          });
+        }
+        cleanEmail = email.trim().toLowerCase();
+        if (cleanEmail !== existingUser.email?.toLowerCase()) {
+          const duplicate = await fastify.prisma.user.findFirst({
+            where: {
+              email: cleanEmail,
+              id: { not: existingUser.id },
+              userId: { not: existingUser.userId },
+            },
+          });
+          if (duplicate) {
+            return reply.status(409).send({
+              statusCode: 409,
+              error: "Email đã tồn tại trong hệ thống",
+              message: "Email đã tồn tại trong hệ thống",
+            });
+          }
+
+          // Keep auth.users email in sync
+          try {
+            await fastify.prisma.$executeRawUnsafe(`
+              UPDATE auth.users
+              SET email = $1,
+                  email_confirmed_at = COALESCE(email_confirmed_at, now()),
+                  raw_user_meta_data = jsonb_set(COALESCE(raw_user_meta_data, '{}'::jsonb), '{email}', to_jsonb($1::text)),
+                  updated_at = now()
+              WHERE id = $2::uuid
+            `, cleanEmail, existingUser.userId || existingUser.id);
+          } catch (authErr) {
+            fastify.log.warn({ authErr }, "Notice: could not update auth.users email directly, continuing profile update");
+          }
+        }
       }
 
       let updatedBio = bio;
@@ -754,6 +797,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
       const user = await fastify.prisma.user.update({
         where: { id: existingUser.id },
         data: {
+          ...(cleanEmail !== undefined && { email: cleanEmail }),
           ...(fullName !== undefined && { fullName }),
           ...(isActive !== undefined && {
             isActive,

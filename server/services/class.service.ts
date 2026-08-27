@@ -2,6 +2,7 @@ import { PrismaClient, NotificationType } from "@prisma/client";
 import { ClassRepository } from "../repositories/class.repository.js";
 import { AuthorizationService, AuthorizationError, NotFoundError } from "./authorization.service.js";
 import { NotificationService } from "./notification.service.js";
+import { RoomCollisionService } from "./room-collision.service.js";
 
 export class ClassService {
   private repo: ClassRepository;
@@ -199,6 +200,39 @@ export class ClassService {
           "Phòng học không thuộc cơ sở đã chọn. Vui lòng chọn phòng học thuộc đúng cơ sở.",
           400
         );
+      }
+    }
+
+    // OP-GAP-03: Room collision check when changing room for an active class with existing sessions
+    if (data.roomId !== undefined && effectiveRoomId && effectiveRoomId !== classData.roomId) {
+      const existingClassSessions = await this.prisma.classSession.findMany({
+        where: {
+          classId: id,
+          status: { not: "CANCELLED" },
+        },
+        select: {
+          plannedDate: true,
+          startTime: true,
+          endTime: true,
+        },
+      });
+
+      if (existingClassSessions.length > 0) {
+        const collisionResult = await RoomCollisionService.checkRoomConflictForSessions(
+          this.prisma,
+          {
+            roomId: effectiveRoomId,
+            sessions: existingClassSessions,
+            excludeClassId: id,
+          }
+        );
+
+        if (collisionResult.hasConflict) {
+          throw new AuthorizationError(
+            collisionResult.message || "Xung đột phòng học với lớp khác trong cùng khung giờ.",
+            409
+          );
+        }
       }
     }
 

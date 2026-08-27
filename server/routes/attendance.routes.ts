@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { authenticate, requireRoles } from '../middlewares/auth.middleware.js';
 import { AttendanceService } from '../services/attendance.service.js';
 import { AuthorizationService, AuthorizationError, NotFoundError } from '../services/authorization.service.js';
+import { RoomCollisionService } from '../services/room-collision.service.js';
 
 const markAttendanceSchema = z.object({
   items: z.array(
@@ -260,6 +261,31 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify: any) => {
             dates.push(`${cur.getFullYear()}-${mm}-${dd}`);
           }
           cur.setDate(cur.getDate() + 1);
+        }
+
+        // OP-GAP-03: Verify room temporal overlap before creating sessions
+        if (cls.roomId) {
+          const candidateSlots = dates.map((dStr) => ({
+            plannedDate: dStr,
+            startTime,
+            endTime,
+          }));
+
+          const collisionResult = await RoomCollisionService.checkRoomConflictForSessions(
+            prisma,
+            {
+              roomId: cls.roomId,
+              sessions: candidateSlots,
+              excludeClassId: classId,
+            }
+          );
+
+          if (collisionResult.hasConflict) {
+            return reply.status(409).send({
+              error: collisionResult.message,
+              conflicts: collisionResult.conflicts,
+            });
+          }
         }
 
         const createdSessions = [];
