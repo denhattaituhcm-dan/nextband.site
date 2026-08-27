@@ -88,7 +88,7 @@ export const GradingTab: React.FC = () => {
         </div>
 
         <Button
-          onClick={handleOpenTeacherWorkspace}
+          onClick={() => handleOpenTeacherWorkspace()}
           className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold h-9 text-xs px-4 gap-2 shadow-sm"
         >
           Mở hàng đợi chấm bài
