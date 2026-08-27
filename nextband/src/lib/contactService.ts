@@ -410,6 +410,7 @@ export interface ConvertLeadParams {
   fullName?: string;
   phone?: string;
   branchId?: string | null;
+  targetClassId?: string | null;
   password?: string;
   status?: string;
 }

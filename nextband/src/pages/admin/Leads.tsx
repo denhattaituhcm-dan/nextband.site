@@ -8,6 +8,7 @@ import {
   convertLeadToStudent,
   ContactLead,
 } from "@/lib/contactService";
+import { classesApi } from "@/lib/api";
 import { useBranch } from "@/contexts/BranchContext";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -54,6 +55,7 @@ import {
   Calendar,
   ExternalLink,
   FileText,
+  BookOpen,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link, useSearchParams } from "react-router-dom";
@@ -175,9 +177,18 @@ export default function AdminLeads() {
     fullName: "",
     phone: "",
     branchId: "",
+    targetClassId: "",
     password: "",
     status: "ENROLLED",
   });
+
+  // OP-GAP-02: Query active classes for integrated lead conversion & placement
+  const { data: activeClassesData, isLoading: isActiveClassesLoading } = useQuery({
+    queryKey: ["active-classes-convert-lead"],
+    queryFn: () => classesApi.list({ isActive: true, limit: 100 }),
+    enabled: !!convertingLead,
+  });
+  const activeClasses = (activeClassesData?.data || []) as any[];
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -300,9 +311,15 @@ export default function AdminLeads() {
         queryClient.invalidateQueries({ queryKey: ["admin_leads"] });
         queryClient.invalidateQueries({ queryKey: ["admin-students-management"] });
         queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+        queryClient.invalidateQueries({ queryKey: ["admin-classes"] });
+        queryClient.invalidateQueries({ queryKey: ["class-workspace"] });
+
+        const placedClass = res.data?.class;
         toast({
           title: "Chuyển đổi thành công!",
-          description: `Đã tạo tài khoản LMS cho học viên (${convertForm.email}) và liên kết hồ sơ khách tư vấn.`,
+          description: placedClass
+            ? `Đã tạo tài khoản LMS (${convertForm.email}) và xếp trực tiếp vào lớp ${placedClass.name}.`
+            : `Đã tạo tài khoản LMS cho học viên (${convertForm.email}) và liên kết hồ sơ khách tư vấn.`,
         });
         setConvertingLead(null);
       } else {
@@ -370,6 +387,7 @@ export default function AdminLeads() {
       phone: lead.phone,
       email: lead.email || "",
       branchId: defaultBranchId,
+      targetClassId: "",
       password: "",
       status: "ENROLLED",
     });
@@ -957,6 +975,68 @@ export default function AdminLeads() {
               </div>
 
 
+              {/* OP-GAP-02: Initial Class Placement */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 text-foreground">
+                    <BookOpen className="w-3.5 h-3.5 text-primary" />
+                    Lớp học ban đầu (Tùy chọn)
+                  </Label>
+                  <span className="text-[11px] text-muted-foreground">
+                    Xếp ngay vào danh sách lớp
+                  </span>
+                </div>
+
+                {isActiveClassesLoading ? (
+                  <div className="rounded-xl border p-2.5 text-xs text-muted-foreground bg-muted/20">
+                    Đang tải danh sách lớp học mở...
+                  </div>
+                ) : (
+                  <Select
+                    value={convertForm.targetClassId || "NONE"}
+                    onValueChange={(val) => setConvertForm({ ...convertForm, targetClassId: val === "NONE" ? "" : val })}
+                  >
+                    <SelectTrigger className="rounded-xl h-10">
+                      <SelectValue placeholder="-- Chưa xếp lớp ngay --" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl text-xs max-h-60">
+                      <SelectItem value="NONE" className="font-medium text-muted-foreground">
+                        -- Chưa xếp lớp ngay (Tạo tài khoản học viên trước) --
+                      </SelectItem>
+                      {activeClasses
+                        .slice()
+                        .sort((a, b) => {
+                          const targetBranch = convertForm.branchId || convertingLead.preferredBranchId;
+                          const aMatch = a.branchId === targetBranch ? -1 : 1;
+                          const bMatch = b.branchId === targetBranch ? -1 : 1;
+                          return aMatch - bMatch;
+                        })
+                        .map((cls) => {
+                          const studentCount = cls.students?.length || cls._count?.students || 0;
+                          const teacherName = cls.teacher?.fullName || "Chưa gán GV";
+                          const branchName = cls.branch?.name || "Tất cả CS";
+                          const isMatchBranch = cls.branchId && cls.branchId === (convertForm.branchId || convertingLead.preferredBranchId);
+
+                          return (
+                            <SelectItem key={cls.id} value={cls.id}>
+                              <span className="font-semibold text-foreground">{cls.name}</span>
+                              {" "}• <span className="text-muted-foreground">{cls.course?.title || "IELTS"}</span>
+                              {" "}• <span className={isMatchBranch ? "text-primary font-medium" : "text-muted-foreground"}>{branchName}</span>
+                              {" "}• <span className="text-muted-foreground">GV: {teacherName}</span>
+                              {" "}• <span className="text-muted-foreground">({studentCount} HV)</span>
+                            </SelectItem>
+                          );
+                        })}
+                    </SelectContent>
+                  </Select>
+                )}
+                {convertForm.targetClassId && (
+                  <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
+                    ✓ Học viên sẽ được tự động xếp vào danh sách lớp ngay khi hoàn tất giao dịch.
+                  </p>
+                )}
+              </div>
+
               <div className="space-y-1.5">
                 <Label className="text-xs font-bold uppercase tracking-wider">
                   Mật khẩu khởi tạo (Tùy chọn)
@@ -1000,7 +1080,11 @@ export default function AdminLeads() {
               disabled={convertMutation.isPending}
               className="rounded-xl font-bold bg-primary text-primary-foreground gap-1.5"
             >
-              {convertMutation.isPending ? "Đang xử lý..." : "Xác Nhận Chuyển Đổi"}
+              {convertMutation.isPending
+                ? "Đang xử lý..."
+                : convertForm.targetClassId
+                ? "Tạo Học Viên & Xếp Vào Lớp"
+                : "Tạo Học Viên"}
             </Button>
           </DialogFooter>
         </DialogContent>

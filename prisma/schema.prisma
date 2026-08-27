@@ -918,7 +918,7 @@ model StudentInterventionLog {
   id           String    @id @default(uuid())
   studentId    String    @map("student_id")
   classId      String?   @map("class_id")
-  authorId     String    @map("author_id")
+  authorId     String?   @map("author_id")
   category     String    @default("ACADEMIC_RISK") // ACADEMIC_RISK, ATTENDANCE, HOMEWORK, MOTIVATION, MEDICAL, TUITION, OTHER
   title        String?
   notes        String
@@ -931,7 +931,7 @@ model StudentInterventionLog {
   updatedAt    DateTime  @default(now()) @updatedAt @map("updated_at")
 
   student      User      @relation("StudentInterventions", fields: [studentId], references: [userId], onDelete: Cascade)
-  author       User      @relation("StaffInterventions", fields: [authorId], references: [userId], onDelete: Cascade)
+  author       User?     @relation("StaffInterventions", fields: [authorId], references: [userId], onDelete: SetNull)
   class        Class?    @relation(fields: [classId], references: [id], onDelete: SetNull)
 
   @@index([studentId, createdAt])

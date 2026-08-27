@@ -223,6 +223,25 @@ export class LeadService {
 
     const finalPassword = input.password || Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
 
+    // OP-GAP-02: Pre-validate targetClassId before creating user in Postgres
+    let validatedTargetClass: any = null;
+    if (input.targetClassId) {
+      validatedTargetClass = await this.prisma.class.findUnique({
+        where: { id: input.targetClassId },
+        include: {
+          branch: { select: { id: true, name: true } },
+        },
+      });
+
+      if (!validatedTargetClass) {
+        throw new Error("Lớp học mục tiêu không tồn tại");
+      }
+
+      if (validatedTargetClass.status === "CLOSED" || validatedTargetClass.status === "ARCHIVED" || !validatedTargetClass.isActive) {
+        throw new Error("Lớp học đã đóng hoặc không còn hoạt động, không thể xếp học viên vào lớp này");
+      }
+    }
+
     // 1. Create User via atomic PostgreSQL function
     const dbResult: any = await this.prisma.$queryRawUnsafe(`
       SELECT public.admin_create_user(
@@ -246,7 +265,7 @@ export class LeadService {
     const supabaseUserId = profileData.user_id || profileData.id;
 
     try {
-      // 2. Atomic Database Transaction: Link branch and update lead
+      // 2. Atomic Database Transaction: Link branch, update lead, and optionally place into class
       const result = await this.prisma.$transaction(async (tx) => {
         const newUser = await tx.user.findFirst({
           where: { userId: supabaseUserId },
@@ -267,7 +286,49 @@ export class LeadService {
           });
         }
 
-        // C. Update Lead with convertedUserId, convertedAt and Status
+        // C. OP-GAP-02: Class Placement into class_students
+        let placedClassInfo: any = null;
+        if (input.targetClassId) {
+          const existingMembership = await tx.classStudent.findUnique({
+            where: {
+              classId_studentId: {
+                classId: input.targetClassId,
+                studentId: supabaseUserId,
+              },
+            },
+          });
+
+          if (!existingMembership) {
+            await tx.classStudent.create({
+              data: {
+                classId: input.targetClassId,
+                studentId: supabaseUserId,
+                joinedAt: new Date(),
+              },
+            });
+
+            if (_operatorId) {
+              await tx.enrollmentAuditLog.create({
+                data: {
+                  operatorId: _operatorId,
+                  studentId: supabaseUserId,
+                  classId: input.targetClassId,
+                  action: "LEAD_CONVERSION_PLACEMENT",
+                  reason: `Xếp lớp ban đầu khi chuyển đổi từ Khách tư vấn #${lead.id} (${fullName})`,
+                  toStatus: "ACTIVE",
+                },
+              });
+            }
+          }
+
+          placedClassInfo = {
+            id: validatedTargetClass.id,
+            name: validatedTargetClass.name,
+            branchName: validatedTargetClass.branch?.name || null,
+          };
+        }
+
+        // D. Update Lead with convertedUserId, convertedAt and Status
         const updatedLead = await tx.contactLead.update({
           where: { id: leadId },
           data: {
@@ -282,7 +343,7 @@ export class LeadService {
           },
         });
 
-        return { user: newUser, lead: updatedLead };
+        return { user: newUser, lead: updatedLead, placedClass: placedClassInfo };
       });
 
       // 3. Dispatch in-app notification & Email/Telegram notification to Admins
@@ -293,7 +354,7 @@ export class LeadService {
           await notifService.notifyUsersByRole(["admin"], {
             type: "SYSTEM",
             title: "Khách tư vấn đã chuyển thành Học viên",
-            message: `Lead ${fullName} (${phone}) đã được chuyển đổi thành học viên chính thức (${email}).`,
+            message: `Lead ${fullName} (${phone}) đã được chuyển đổi thành học viên chính thức (${email})${result.placedClass ? ` và xếp vào lớp ${result.placedClass.name}` : ""}.`,
             link: "/admin/users",
             entityType: "USER",
             entityId: supabaseUserId,
@@ -306,7 +367,9 @@ export class LeadService {
             email,
             phone,
             branchName: lead.preferredBranch?.name,
-            source: "Chuyển đổi từ Khách tư vấn (Lead Conversion)",
+            source: result.placedClass
+              ? `Chuyển đổi từ Lead -> Xếp vào lớp ${result.placedClass.name}`
+              : "Chuyển đổi từ Khách tư vấn (Lead Conversion)",
           });
         } catch (notifErr) {
           console.error("[LeadService] Conversion notification error:", notifErr);
@@ -323,6 +386,7 @@ export class LeadService {
           branchId,
         },
         lead: result.lead,
+        class: result.placedClass || null,
       };
     } catch (err: any) {
       if (supabaseUserId) {

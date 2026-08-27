@@ -62,6 +62,7 @@ export const convertLeadSchema = z.object({
   phone: z.string().trim().optional(),
   branchId: z.string().optional().nullable(),
   password: z.string().min(6, "Mật khẩu tối thiểu 6 ký tự").optional(),
+  targetClassId: z.string().optional().nullable(),
   status: z
     .enum(["NEW", "CONTACTED", "ENROLLED", "CANCELLED", "ARCHIVED"])
     .optional()

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { usersApi, classesApi } from "@/lib/api";
+import { usersApi, classesApi, interventionsApi } from "@/lib/api";
 import { useNavigate, Link } from "react-router-dom";
 import { normalizePhoneNumber } from "@/lib/phoneUtils";
 import {
@@ -55,6 +55,10 @@ import {
   School,
   Mail,
   Send,
+  ClipboardList,
+  HeartHandshake,
+  Plus,
+  CheckSquare,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -129,6 +133,90 @@ export function StudentWorkspaceDrawer({
     enabled: changeClassDialogOpen,
   });
   const availableClasses = (classesData?.data || []) as any[];
+
+  // OP-GAP-01: Student Care & Intervention Log
+  const effectiveStudentId = student?.id || student?.userId;
+  const { data: interventions = [], isLoading: isInterventionsLoading } = useQuery({
+    queryKey: ["student-interventions", effectiveStudentId],
+    queryFn: () => interventionsApi.listByStudent(effectiveStudentId),
+    enabled: !!effectiveStudentId && open,
+  });
+
+  const [interventionModalOpen, setInterventionModalOpen] = useState(false);
+  const [interventionForm, setInterventionForm] = useState({
+    category: "ACADEMIC_RISK",
+    title: "",
+    notes: "",
+    actionTaken: "",
+    agreedPlan: "",
+    followUpDate: "",
+    status: "OPEN",
+    classId: "",
+  });
+  const [isSubmittingIntervention, setIsSubmittingIntervention] = useState(false);
+
+  const handleCreateIntervention = async () => {
+    if (!interventionForm.notes.trim()) {
+      toast({ title: "Lỗi", description: "Vui lòng nhập nội dung trao đổi / vấn đề cần can thiệp", variant: "destructive" });
+      return;
+    }
+    setIsSubmittingIntervention(true);
+    try {
+      await interventionsApi.create({
+        studentId: effectiveStudentId,
+        classId: interventionForm.classId || student?.classes?.[0]?.id || null,
+        category: interventionForm.category,
+        title: interventionForm.title || null,
+        notes: interventionForm.notes,
+        actionTaken: interventionForm.actionTaken || null,
+        agreedPlan: interventionForm.agreedPlan || null,
+        followUpDate: interventionForm.followUpDate || null,
+        status: interventionForm.status,
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["student-interventions", effectiveStudentId] });
+      toast({
+        title: "Đã lưu can thiệp học vụ",
+        description: "Nhật ký chăm sóc học viên đã được cập nhật thành công.",
+      });
+      setInterventionModalOpen(false);
+      setInterventionForm({
+        category: "ACADEMIC_RISK",
+        title: "",
+        notes: "",
+        actionTaken: "",
+        agreedPlan: "",
+        followUpDate: "",
+        status: "OPEN",
+        classId: "",
+      });
+    } catch (err: any) {
+      toast({
+        title: "Lỗi",
+        description: err.message || "Không thể tạo bản ghi can thiệp",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmittingIntervention(false);
+    }
+  };
+
+  const handleUpdateInterventionStatus = async (id: string, newStatus: string) => {
+    try {
+      await interventionsApi.update(id, { status: newStatus });
+      queryClient.invalidateQueries({ queryKey: ["student-interventions", effectiveStudentId] });
+      toast({
+        title: "Đã cập nhật trạng thái",
+        description: `Can thiệp học vụ đã được chuyển sang trạng thái: ${newStatus === "RESOLVED" ? "Đã giải quyết" : newStatus}.`,
+      });
+    } catch (err: any) {
+      toast({
+        title: "Lỗi",
+        description: err.message || "Không thể cập nhật trạng thái can thiệp",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleOpenFullPage = () => {
     onOpenChange(false);
@@ -548,6 +636,75 @@ export function StudentWorkspaceDrawer({
               )}
             </div>
 
+            {/* 4B. OP-GAP-05: ENTRY DIAGNOSTIC BASELINE */}
+            {student.diagnosticBaseline ? (
+              <div className="border rounded-xl p-4 bg-gradient-to-br from-indigo-500/5 via-primary/5 to-transparent border-indigo-500/20 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 font-bold text-xs text-indigo-900 dark:text-indigo-300 uppercase tracking-wider">
+                    <GraduationCap className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                    <span>Mốc Năng Lực Đầu Vào (Diagnostic Baseline)</span>
+                  </div>
+                  <Badge variant="outline" className="bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border-indigo-300 font-bold text-xs">
+                    {student.diagnosticBaseline.estimatedBand || "Đã khảo thí"}
+                  </Badge>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 text-xs pt-1">
+                  <div>
+                    <span className="text-muted-foreground">Phân loại trình độ:</span>
+                    <p className="font-semibold text-foreground mt-0.5">
+                      {student.diagnosticBaseline.levelTitle || "Đạt chuẩn khảo thí"}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Mục tiêu đầu ra:</span>
+                    <p className="font-semibold text-primary mt-0.5">
+                      {student.diagnosticBaseline.targetBand ? `Band ${student.diagnosticBaseline.targetBand}` : "Chưa đặt mục tiêu"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Sub-skill breakdown */}
+                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-indigo-500/15 text-center text-xs">
+                  <div className="bg-background/80 rounded-lg p-1.5 border border-border/60">
+                    <span className="text-[10px] text-muted-foreground block font-medium">Listening</span>
+                    <span className="font-bold text-indigo-600 dark:text-indigo-400 text-xs">
+                      {student.diagnosticBaseline.listeningBand ? `Band ${student.diagnosticBaseline.listeningBand}` : "—"}
+                    </span>
+                  </div>
+                  <div className="bg-background/80 rounded-lg p-1.5 border border-border/60">
+                    <span className="text-[10px] text-muted-foreground block font-medium">Reading</span>
+                    <span className="font-bold text-indigo-600 dark:text-indigo-400 text-xs">
+                      {student.diagnosticBaseline.readingBand ? `Band ${student.diagnosticBaseline.readingBand}` : "—"}
+                    </span>
+                  </div>
+                  <div className="bg-background/80 rounded-lg p-1.5 border border-border/60">
+                    <span className="text-[10px] text-muted-foreground block font-medium">Độ chính xác</span>
+                    <span className="font-bold text-foreground text-xs">
+                      {student.diagnosticBaseline.accuracyPercent != null ? `${student.diagnosticBaseline.accuracyPercent}%` : "—"}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between text-[10px] text-muted-foreground pt-1">
+                  <span>Khảo thí: {student.diagnosticBaseline.examTitle}</span>
+                  {student.diagnosticBaseline.testDate && (
+                    <span>Ngày test: {new Date(student.diagnosticBaseline.testDate).toLocaleDateString("vi-VN")}</span>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="border border-dashed rounded-xl p-3 bg-muted/20 text-xs text-muted-foreground flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                  <span>Chưa có kết quả khảo thí đầu vào (Placement Test)</span>
+                </div>
+                <Button variant="ghost" size="sm" asChild className="h-6 text-[10px] text-primary hover:bg-primary/10">
+                  <Link to="/admin/assessments">Xem khảo thí</Link>
+                </Button>
+              </div>
+            )}
+
             {/* 5. ACADEMIC HEALTH & OVERVIEW */}
             <div className="border rounded-xl p-4 bg-card space-y-4">
               <div className="flex items-center justify-between">
@@ -719,6 +876,154 @@ export function StudentWorkspaceDrawer({
                 </div>
               </div>
             )}
+
+            {/* 6C. OP-GAP-01: STUDENT CARE & INTERVENTION LOG */}
+            <div className="space-y-3 rounded-lg border border-primary/20 bg-primary/5 p-3 text-xs">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 font-semibold text-primary">
+                  <ClipboardList className="h-4 w-4" />
+                  <span>Nhật ký Can thiệp & Chăm sóc Học vụ</span>
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setInterventionModalOpen(true)}
+                  className="h-7 text-xs border-primary/30 text-primary hover:bg-primary/10 gap-1 font-medium"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  <span>Ghi nhận can thiệp</span>
+                </Button>
+              </div>
+
+              {isInterventionsLoading ? (
+                <div className="py-4 text-center text-muted-foreground text-xs">
+                  Đang tải lịch sử can thiệp...
+                </div>
+              ) : interventions.length === 0 ? (
+                <div className="rounded-md border border-dashed border-border bg-background/60 p-3 text-center text-muted-foreground text-[11px]">
+                  Chưa có ghi nhận can thiệp nào cho học viên này. Nhấn nút bên trên để ghi lại lịch sử gọi điện phụ huynh, hỗ trợ chuyên cần hoặc kế hoạch phụ đạo.
+                </div>
+              ) : (
+                <div className="space-y-2.5">
+                  {interventions.map((item: any) => {
+                    const isResolved = item.status === "RESOLVED";
+                    const isInProgress = item.status === "IN_PROGRESS";
+
+                    const categoryLabels: Record<string, { label: string; color: string }> = {
+                      ACADEMIC_RISK: { label: "Học vụ / Điểm số", color: "bg-destructive/10 text-destructive border-destructive/20" },
+                      ATTENDANCE: { label: "Chuyên cần / Vắng", color: "bg-amber-500/10 text-amber-600 border-amber-500/20" },
+                      HOMEWORK: { label: "Bài tập về nhà", color: "bg-orange-500/10 text-orange-600 border-orange-500/20" },
+                      MOTIVATION: { label: "Động lực học tập", color: "bg-blue-500/10 text-blue-600 border-blue-500/20" },
+                      MEDICAL: { label: "Sức khỏe / Nghỉ phép", color: "bg-purple-500/10 text-purple-600 border-purple-500/20" },
+                      TUITION: { label: "Học phí", color: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" },
+                      OTHER: { label: "Khác", color: "bg-muted text-muted-foreground border-border" },
+                    };
+
+                    const cat = categoryLabels[item.category] || categoryLabels.OTHER;
+
+                    return (
+                      <div
+                        key={item.id}
+                        className={`rounded-md border p-2.5 transition-all ${
+                          isResolved
+                            ? "bg-muted/40 border-border opacity-85"
+                            : "bg-background border-primary/20 shadow-xs"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-2 mb-1.5">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${cat.color}`}>
+                              {cat.label}
+                            </Badge>
+                            {item.className && (
+                              <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                                {item.className}
+                              </Badge>
+                            )}
+                            <Badge
+                              variant="outline"
+                              className={`text-[10px] px-1.5 py-0 ${
+                                isResolved
+                                  ? "bg-success/10 text-success border-success/20 font-medium"
+                                  : isInProgress
+                                  ? "bg-blue-500/10 text-blue-600 border-blue-500/20"
+                                  : "bg-amber-500/10 text-amber-600 border-amber-500/20"
+                              }`}
+                            >
+                              {isResolved ? "Đã giải quyết" : isInProgress ? "Đang theo dõi" : "Mới mở"}
+                            </Badge>
+                          </div>
+                          <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                            {new Date(item.createdAt).toLocaleDateString("vi-VN", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
+                        </div>
+
+                        {item.title && (
+                          <div className="font-semibold text-foreground text-xs mb-1">
+                            {item.title}
+                          </div>
+                        )}
+
+                        <div className="text-muted-foreground text-[11px] whitespace-pre-wrap mb-1.5">
+                          {item.notes}
+                        </div>
+
+                        {(item.actionTaken || item.agreedPlan || item.followUpDate) && (
+                          <div className="bg-muted/40 rounded p-1.5 space-y-1 text-[11px] mb-1.5">
+                            {item.actionTaken && (
+                              <div className="flex items-start gap-1">
+                                <span className="font-medium text-foreground min-w-[70px]">Đã xử lý:</span>
+                                <span className="text-muted-foreground">{item.actionTaken}</span>
+                              </div>
+                            )}
+                            {item.agreedPlan && (
+                              <div className="flex items-start gap-1">
+                                <span className="font-medium text-foreground min-w-[70px]">Kế hoạch:</span>
+                                <span className="text-muted-foreground">{item.agreedPlan}</span>
+                              </div>
+                            )}
+                            {item.followUpDate && (
+                              <div className="flex items-center gap-1 text-[10px] text-amber-700 dark:text-amber-300 font-medium">
+                                <Calendar className="w-3 h-3" />
+                                <span>Hạn theo dõi: {new Date(item.followUpDate).toLocaleDateString("vi-VN")}</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        <div className="flex items-center justify-between pt-1 border-t border-border/50 text-[10px] text-muted-foreground">
+                          <div>
+                            Ghi nhận bởi: <span className="font-medium text-foreground">{item.authorName}</span>
+                          </div>
+                          {!isResolved ? (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleUpdateInterventionStatus(item.id, "RESOLVED")}
+                              className="h-6 text-[10px] text-success hover:bg-success/10 hover:text-success gap-1 px-2 font-medium"
+                            >
+                              <CheckSquare className="w-3 h-3" />
+                              <span>Đánh dấu Đã xử lý xong</span>
+                            </Button>
+                          ) : (
+                            <span className="text-success font-medium flex items-center gap-1">
+                              <CheckCircle2 className="w-3 h-3" />
+                              Hoàn tất
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
 
             {/* 7. UNIFIED TIMELINE (GitHub Activity Style) */}
             <div className="space-y-3">
@@ -1145,6 +1450,143 @@ export function StudentWorkspaceDrawer({
           <DialogFooter>
             <Button variant="outline" size="sm" onClick={() => setMessageDialogOpen(false)} className="rounded-xl">
               Đóng
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* DIALOG: OP-GAP-01 GHI NHẬN CAN THIỆP HỌC VỤ */}
+      <Dialog open={interventionModalOpen} onOpenChange={setInterventionModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <ClipboardList className="h-5 w-5 text-primary" />
+              <span>Ghi nhận Can thiệp & Chăm sóc Học vụ</span>
+            </DialogTitle>
+            <DialogDescription>
+              Lưu lại lịch sử trao đổi phụ huynh, nguyên nhân vắng học, bài tập nợ hoặc kế hoạch học bù cho học viên {student.fullName || fullName || ""}.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3 py-2 text-xs">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label htmlFor="int-category">Phân loại vấn đề *</Label>
+                <Select
+                  value={interventionForm.category}
+                  onValueChange={(val) => setInterventionForm((prev) => ({ ...prev, category: val }))}
+                >
+                  <SelectTrigger id="int-category">
+                    <SelectValue placeholder="Chọn phân loại" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ACADEMIC_RISK">Học vụ / Điểm số thấp</SelectItem>
+                    <SelectItem value="ATTENDANCE">Chuyên cần / Vắng học</SelectItem>
+                    <SelectItem value="HOMEWORK">Bài tập về nhà / Nợ bài</SelectItem>
+                    <SelectItem value="MOTIVATION">Động lực học tập</SelectItem>
+                    <SelectItem value="MEDICAL">Sức khỏe / Nghỉ phép</SelectItem>
+                    <SelectItem value="TUITION">Học phí</SelectItem>
+                    <SelectItem value="OTHER">Khác</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1">
+                <Label htmlFor="int-status">Trạng thái ban đầu</Label>
+                <Select
+                  value={interventionForm.status}
+                  onValueChange={(val) => setInterventionForm((prev) => ({ ...prev, status: val }))}
+                >
+                  <SelectTrigger id="int-status">
+                    <SelectValue placeholder="Trạng thái" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="OPEN">Mới mở (Cần theo dõi)</SelectItem>
+                    <SelectItem value="IN_PROGRESS">Đang xử lý</SelectItem>
+                    <SelectItem value="RESOLVED">Đã giải quyết xong</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="int-title">Tiêu đề vắn tắt (tùy chọn)</Label>
+              <Input
+                id="int-title"
+                placeholder="VD: Gọi phụ huynh nhắc nợ 2 bài Writing..."
+                value={interventionForm.title}
+                onChange={(e) => setInterventionForm((prev) => ({ ...prev, title: e.target.value }))}
+              />
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="int-notes">Nội dung trao đổi / Tình trạng học viên *</Label>
+              <Textarea
+                id="int-notes"
+                rows={3}
+                placeholder="Ghi nhận cụ thể lý do học viên gặp khó khăn, nội dung phụ huynh phản hồi..."
+                value={interventionForm.notes}
+                onChange={(e) => setInterventionForm((prev) => ({ ...prev, notes: e.target.value }))}
+              />
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="int-action">Hành động đã thực hiện</Label>
+              <Input
+                id="int-action"
+                placeholder="VD: Gọi điện cho mẹ, hẹn phụ đạo 15p trước giờ học..."
+                value={interventionForm.actionTaken}
+                onChange={(e) => setInterventionForm((prev) => ({ ...prev, actionTaken: e.target.value }))}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label htmlFor="int-plan">Kế hoạch cam kết</Label>
+                <Input
+                  id="int-plan"
+                  placeholder="VD: Nộp bù bài trước Thứ 6..."
+                  value={interventionForm.agreedPlan}
+                  onChange={(e) => setInterventionForm((prev) => ({ ...prev, agreedPlan: e.target.value }))}
+                />
+              </div>
+
+              <div className="space-y-1">
+                <Label htmlFor="int-followup">Hạn theo dõi lại</Label>
+                <Input
+                  id="int-followup"
+                  type="date"
+                  value={interventionForm.followUpDate}
+                  onChange={(e) => setInterventionForm((prev) => ({ ...prev, followUpDate: e.target.value }))}
+                />
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => setInterventionModalOpen(false)}
+              disabled={isSubmittingIntervention}
+            >
+              Hủy
+            </Button>
+            <Button
+              onClick={handleCreateIntervention}
+              disabled={isSubmittingIntervention}
+              className="gap-1.5"
+            >
+              {isSubmittingIntervention ? (
+                <>
+                  <RefreshCw className="h-4 w-4 animate-spin" />
+                  <span>Đang lưu...</span>
+                </>
+              ) : (
+                <>
+                  <ClipboardList className="h-4 w-4" />
+                  <span>Lưu nhật ký can thiệp</span>
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

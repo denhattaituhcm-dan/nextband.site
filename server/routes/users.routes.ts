@@ -236,6 +236,21 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
                 createdAt: true,
               },
             },
+            studentAssessments: {
+              select: {
+                id: true,
+                examId: true,
+                targetBand: true,
+                status: true,
+                gradingStatus: true,
+                result: true,
+                submittedAt: true,
+                createdAt: true,
+                exam: { select: { id: true, title: true } },
+              },
+              orderBy: { createdAt: "desc" },
+              take: 1,
+            },
             classesAsStudent: {
               where: { deletedAt: null },
               include: {
@@ -448,6 +463,27 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         const isReserved = isClassSuspended || isBioReserved;
         const status = isReserved ? "suspended" : (st.isActive === false ? "inactive" : "active");
 
+        // 6. OP-GAP-05: Entry Diagnostic Baseline (Placement Assessment)
+        let diagnosticBaseline: any = null;
+        const assessment = (st.studentAssessments || [])[0];
+        if (assessment) {
+          const resObj = (assessment.result || {}) as any;
+          diagnosticBaseline = {
+            id: assessment.id,
+            examTitle: assessment.exam?.title || "Bài thi đánh giá năng lực đầu vào",
+            targetBand: assessment.targetBand || null,
+            estimatedBand: resObj?.estimatedIeltsRange || resObj?.overallBand || null,
+            levelTitle: resObj?.levelTitle || null,
+            levelNumber: resObj?.levelNumber ?? null,
+            accuracyPercent: resObj?.accuracyPercent ?? null,
+            listeningBand: resObj?.listeningBandInfo?.band || null,
+            readingBand: resObj?.readingBandInfo?.band || null,
+            grammarBand: resObj?.grammarBandInfo?.band || null,
+            gradingStatus: assessment.gradingStatus,
+            testDate: assessment.submittedAt || assessment.createdAt,
+          };
+        }
+
         return {
           id: st.id,
           userId: st.userId,
@@ -480,6 +516,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           recentActivities: recentActivities.slice(0, 10),
           academicHealth,
           convertedLead: st.convertedLead || null,
+          diagnosticBaseline,
         };
       }));
 
