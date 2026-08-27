@@ -185,12 +185,30 @@ export default function TeacherWorkspace() {
 
       const rawStudents = cls.students || cls.class_students || [];
       const canonicalStudents = rawStudents.map((st: any) => {
-        const studentId = st.studentId || st.student_id || st.id;
-        const studentName = st.fullName || st.full_name || st.name || st.email || "Học viên";
-        const avatarUrl = st.avatarUrl || st.avatar_url;
+        const studentId = st.studentId || st.student_id || st.student?.id || st.id;
+        const studentName =
+          st.student?.fullName ||
+          st.fullName ||
+          st.full_name ||
+          st.name ||
+          st.email ||
+          "Học viên";
+        const avatarUrl = st.student?.avatarUrl || st.avatarUrl || st.avatar_url;
+
+        const candidateIds = [
+          st.studentId,
+          st.student_id,
+          st.id,
+          st.student?.id,
+          st.student?.userId,
+        ].filter(Boolean);
 
         const studentSubs = submissions.filter(
-          (sub: any) => sub.studentId === studentId || sub.student_id === studentId,
+          (sub: any) =>
+            candidateIds.includes(sub.studentId) ||
+            candidateIds.includes(sub.student_id) ||
+            candidateIds.includes(sub.student?.id) ||
+            candidateIds.includes(sub.student?.userId)
         );
 
         const homeworks = exams.map((ex: any, idx: number) => {
