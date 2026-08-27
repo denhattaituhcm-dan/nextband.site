@@ -3151,24 +3151,6 @@ export const classesApi = {
     throw new Error(errData.error || "Xóa lớp học thất bại");
   },
 
-  delete: async (id: string) => {
-    const token = await getAuthToken();
-    const res = await fetch(`${API_BASE_URL}/classes/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-
-    if (res.ok) {
-      return { success: true };
-    }
-
-    const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.error || "Xóa lớp học thất bại");
-  },
-
   /**
    * Kiểm tra trạng thái hoạt động học tập (Academic Activity) của lớp học:
    * Trả về UNSTARTED nếu chưa từng có COMPLETED Session, Attendance, hay Exam Submission nào.

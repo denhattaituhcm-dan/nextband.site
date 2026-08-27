@@ -108880,30 +108880,17 @@ async function adminDashboardRoutes(fastify) {
               }
             }
           }),
-          // 8. Tổng số bài chờ chấm trên toàn hệ thống (cả Homework & Exam Submissions)
-          Promise.all([
-            fastify.prisma.submission.count({
-              where: { status: "SUBMITTED" }
-            }),
-            fastify.prisma.examSubmission.count({
-              where: { status: "SUBMITTED" }
-            })
-          ]).then(([hwCount, examCount]) => hwCount + examCount),
+          // 8. Tổng số bài chờ chấm trên toàn hệ thống
+          fastify.prisma.examSubmission.count({
+            where: { status: "SUBMITTED" }
+          }),
           // 9. Số bài nộp chờ chấm quá hạn 48h (SLA vi phạm)
-          Promise.all([
-            fastify.prisma.submission.count({
-              where: {
-                status: "SUBMITTED",
-                submittedAt: { lte: twoDaysAgo }
-              }
-            }),
-            fastify.prisma.examSubmission.count({
-              where: {
-                status: "SUBMITTED",
-                submittedAt: { lte: twoDaysAgo }
-              }
-            })
-          ]).then(([hwOverdue, examOverdue]) => hwOverdue + examOverdue),
+          fastify.prisma.examSubmission.count({
+            where: {
+              status: "SUBMITTED",
+              submittedAt: { lte: twoDaysAgo }
+            }
+          }),
           // 9b. GAP 1: Ca can thiệp học vụ đến hạn/quá hạn follow-up (followUpDate <= now)
           fastify.prisma.studentInterventionLog.count({
             where: {
