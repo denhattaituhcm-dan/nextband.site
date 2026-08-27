@@ -15,30 +15,62 @@ export const GradingTab: React.FC = () => {
   const students = classData?.students || [];
 
   const queue = submissions
-    .filter((s: any) => s.grade_status === "pending" || s.status === "submitted" || s.status === "SUBMITTED" || s.status === "overdue")
+    .filter(
+      (s: any) =>
+        s.grade_status === "pending" ||
+        s.status === "submitted" ||
+        s.status === "SUBMITTED" ||
+        s.status === "overdue"
+    )
     .map((s: any) => {
       const targetStudentId = s.studentId || s.student_id;
-      const student = students.find((st: any) => st.studentId === targetStudentId);
+      const student = students.find(
+        (st: any) =>
+          st.studentId === targetStudentId ||
+          st.student_id === targetStudentId ||
+          st.id === targetStudentId ||
+          st.userId === targetStudentId
+      );
       return {
         id: s.id,
-        studentName: student?.fullName || student?.full_name || student?.email || "Học viên",
-        homeworkTitle: s.homework_title || s.title || s.homework?.title || "Homework",
-        submittedAt: s.submittedAt || s.created_at
-          ? new Date(s.submittedAt || s.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          : "Chưa xác định",
+        studentId: targetStudentId,
+        studentName:
+          s.student?.fullName ||
+          student?.fullName ||
+          student?.full_name ||
+          student?.email ||
+          "Học viên",
+        homeworkTitle:
+          s.exam?.title ||
+          s.homework_title ||
+          s.title ||
+          s.homework?.title ||
+          "Bài tập",
+        submittedAt:
+          s.submittedAt || s.created_at
+            ? new Date(s.submittedAt || s.created_at).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "Chưa xác định",
       };
     });
 
-  const filteredQueue = queue.filter((item: any) =>
-    item.studentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.homeworkTitle.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredQueue = queue.filter(
+    (item: any) =>
+      item.studentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.homeworkTitle.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleOpenTeacherWorkspace = () => {
+  const handleOpenTeacherWorkspace = (studentId?: string) => {
     if (classData?.id) {
-      navigate(`/admin/teacher-workspace?classId=${encodeURIComponent(classData.id)}`);
+      navigate(
+        `/admin/teacher-workspace?classId=${encodeURIComponent(
+          classData.id
+        )}${studentId ? `&studentId=${encodeURIComponent(studentId)}` : ""}&filter=pending`
+      );
     } else {
-      navigate("/admin/teacher-workspace");
+      navigate("/admin/teacher-workspace?filter=pending");
     }
   };
 
@@ -91,7 +123,7 @@ export const GradingTab: React.FC = () => {
             {filteredQueue.map((item: any) => (
               <div
                 key={item.id}
-                onClick={handleOpenTeacherWorkspace}
+                onClick={() => handleOpenTeacherWorkspace(item.studentId)}
                 className="p-3 hover:bg-muted/40 transition-colors flex items-center justify-between cursor-pointer group"
               >
                 <div className="flex items-center gap-3">

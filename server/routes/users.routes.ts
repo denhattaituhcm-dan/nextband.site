@@ -472,10 +472,17 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         }
 
         // Check reservation / suspended status
-        const isClassSuspended = (st.classesAsStudent || []).some((cs: any) => cs.status === "SUSPENDED");
+        const suspendedEnrollment = (st.classesAsStudent || []).find((cs: any) => cs.status === "SUSPENDED");
+        const isClassSuspended = !!suspendedEnrollment;
         const isBioReserved = !!(st.bio?.includes('"isReserved":true') || st.bio?.includes('"status":"suspended"') || st.bio === "RESERVED");
         const isReserved = isClassSuspended || isBioReserved;
         const status = isReserved ? "suspended" : (st.isActive === false ? "inactive" : "active");
+
+        const suspensionInfo = suspendedEnrollment ? {
+          suspendedAt: suspendedEnrollment.suspendedAt || null,
+          expectedReturnDate: suspendedEnrollment.expectedReturnDate || null,
+          suspensionReason: suspendedEnrollment.suspensionReason || null,
+        } : null;
 
         // 6. OP-GAP-05: Entry Diagnostic Baseline (Placement Assessment)
         let diagnosticBaseline: any = null;
@@ -512,6 +519,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           isActive: st.isActive,
           isReserved,
           status,
+          suspensionInfo,
           bio: st.bio,
           createdAt: st.createdAt,
           classes,
@@ -831,6 +839,16 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         const shouldReserve = isReserved === true || status === "suspended";
         const newEnrollmentStatus = shouldReserve ? "SUSPENDED" : "ACTIVE";
 
+        const {
+          suspendedAt,
+          expectedReturnDate,
+          suspensionReason,
+        } = (request.body || {}) as {
+          suspendedAt?: string;
+          expectedReturnDate?: string;
+          suspensionReason?: string;
+        };
+
         await fastify.prisma.classStudent.updateMany({
           where: {
             studentId: existingUser.userId,
@@ -838,18 +856,11 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           },
           data: {
             status: newEnrollmentStatus,
+            suspendedAt: shouldReserve ? (suspendedAt ? new Date(suspendedAt) : new Date()) : null,
+            expectedReturnDate: shouldReserve && expectedReturnDate ? new Date(expectedReturnDate) : null,
+            suspensionReason: shouldReserve ? (suspensionReason || null) : null,
           },
         });
-
-        const currentBio = existingUser.bio || "";
-        try {
-          const bioObj = currentBio.startsWith("{") ? JSON.parse(currentBio) : { note: currentBio };
-          bioObj.isReserved = shouldReserve;
-          bioObj.status = shouldReserve ? "suspended" : "active";
-          updatedBio = JSON.stringify(bioObj);
-        } catch {
-          updatedBio = JSON.stringify({ isReserved: shouldReserve, status: shouldReserve ? "suspended" : "active" });
-        }
       }
 
       const user = await fastify.prisma.user.update({

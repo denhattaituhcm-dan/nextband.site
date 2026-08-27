@@ -228,19 +228,22 @@ model ClassAttendance {
 }
 
 model ClassStudent {
-  id        String           @id @default(uuid())
-  classId   String           @map("class_id")
-  studentId String           @map("student_id")
-  status    EnrollmentStatus @default(ACTIVE)
-  tuitionFee Decimal?        @default(0.00) @map("tuition_fee")
-  paidAmount Decimal?        @default(0.00) @map("paid_amount")
-  paymentStatus PaymentStatus @default(UNPAID) @map("payment_status")
-  paymentNote String?        @map("payment_note")
-  externalRef String?        @map("external_ref")
-  joinedAt  DateTime         @default(now()) @map("joined_at")
-  completedAt DateTime?      @map("completed_at")
-  createdAt DateTime         @default(now()) @map("created_at")
-  deletedAt DateTime?        @map("deleted_at")
+  id                 String           @id @default(uuid())
+  classId            String           @map("class_id")
+  studentId          String           @map("student_id")
+  status             EnrollmentStatus @default(ACTIVE)
+  tuitionFee         Decimal?         @default(0.00) @map("tuition_fee")
+  paidAmount         Decimal?         @default(0.00) @map("paid_amount")
+  paymentStatus      PaymentStatus    @default(UNPAID) @map("payment_status")
+  paymentNote        String?          @map("payment_note")
+  externalRef        String?          @map("external_ref")
+  suspendedAt        DateTime?        @map("suspended_at")
+  expectedReturnDate DateTime?        @map("expected_return_date")
+  suspensionReason   String?          @map("suspension_reason")
+  joinedAt           DateTime         @default(now()) @map("joined_at")
+  completedAt        DateTime?        @map("completed_at")
+  createdAt          DateTime         @default(now()) @map("created_at")
+  deletedAt          DateTime?        @map("deleted_at")
 
   class     Class            @relation(fields: [classId], references: [id], onDelete: Cascade)
   student   User             @relation(fields: [studentId], references: [userId], onDelete: Cascade)
@@ -248,6 +251,7 @@ model ClassStudent {
   @@unique([classId, studentId])
   @@index([studentId])
   @@index([classId])
+  @@index([status, expectedReturnDate])
   @@map("class_students")
 }
 

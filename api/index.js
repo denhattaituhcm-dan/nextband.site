@@ -101423,20 +101423,47 @@ async function getTeacherStudentIds(prisma, teacherId) {
     where: {
       class: {
         teacherId
-      }
+      },
+      deletedAt: null
     },
     select: {
       studentId: true
     }
   });
-  return [...new Set(classStudents.map((cs) => cs.studentId))];
+  const rawIds = [...new Set(classStudents.map((cs) => cs.studentId))];
+  if (rawIds.length === 0) return [];
+  const users = await prisma.user.findMany({
+    where: {
+      OR: [{ id: { in: rawIds } }, { userId: { in: rawIds } }]
+    },
+    select: { id: true, userId: true }
+  });
+  const allIds = new Set(rawIds);
+  users.forEach((u) => {
+    if (u.id) allIds.add(u.id);
+    if (u.userId) allIds.add(u.userId);
+  });
+  return Array.from(allIds);
 }
 async function getClassStudentIds(prisma, classId) {
   const classStudents = await prisma.classStudent.findMany({
-    where: { classId },
+    where: { classId, deletedAt: null },
     select: { studentId: true }
   });
-  return [...new Set(classStudents.map((cs) => cs.studentId))];
+  const rawIds = [...new Set(classStudents.map((cs) => cs.studentId))];
+  if (rawIds.length === 0) return [];
+  const users = await prisma.user.findMany({
+    where: {
+      OR: [{ id: { in: rawIds } }, { userId: { in: rawIds } }]
+    },
+    select: { id: true, userId: true }
+  });
+  const allIds = new Set(rawIds);
+  users.forEach((u) => {
+    if (u.id) allIds.add(u.id);
+    if (u.userId) allIds.add(u.userId);
+  });
+  return Array.from(allIds);
 }
 async function isStudentInTeacherClasses(prisma, teacherId, studentId) {
   const count = await prisma.classStudent.count({
@@ -103051,10 +103078,16 @@ var usersRoutes = async (fastify) => {
             academicHealth = Math.min(100, Math.max(0, Math.round(score)));
           }
         }
-        const isClassSuspended = (st.classesAsStudent || []).some((cs) => cs.status === "SUSPENDED");
+        const suspendedEnrollment = (st.classesAsStudent || []).find((cs) => cs.status === "SUSPENDED");
+        const isClassSuspended = !!suspendedEnrollment;
         const isBioReserved = !!(st.bio?.includes('"isReserved":true') || st.bio?.includes('"status":"suspended"') || st.bio === "RESERVED");
         const isReserved = isClassSuspended || isBioReserved;
         const status2 = isReserved ? "suspended" : st.isActive === false ? "inactive" : "active";
+        const suspensionInfo = suspendedEnrollment ? {
+          suspendedAt: suspendedEnrollment.suspendedAt || null,
+          expectedReturnDate: suspendedEnrollment.expectedReturnDate || null,
+          suspensionReason: suspendedEnrollment.suspensionReason || null
+        } : null;
         let diagnosticBaseline = null;
         const assessment = (st.studentAssessments || [])[0];
         if (assessment) {
@@ -103088,6 +103121,7 @@ var usersRoutes = async (fastify) => {
           isActive: st.isActive,
           isReserved,
           status: status2,
+          suspensionInfo,
           bio: st.bio,
           createdAt: st.createdAt,
           classes,
@@ -103367,24 +103401,23 @@ var usersRoutes = async (fastify) => {
       if (isReserved !== void 0 || status !== void 0) {
         const shouldReserve = isReserved === true || status === "suspended";
         const newEnrollmentStatus = shouldReserve ? "SUSPENDED" : "ACTIVE";
+        const {
+          suspendedAt,
+          expectedReturnDate,
+          suspensionReason
+        } = request.body || {};
         await fastify.prisma.classStudent.updateMany({
           where: {
             studentId: existingUser.userId,
             deletedAt: null
           },
           data: {
-            status: newEnrollmentStatus
+            status: newEnrollmentStatus,
+            suspendedAt: shouldReserve ? suspendedAt ? new Date(suspendedAt) : /* @__PURE__ */ new Date() : null,
+            expectedReturnDate: shouldReserve && expectedReturnDate ? new Date(expectedReturnDate) : null,
+            suspensionReason: shouldReserve ? suspensionReason || null : null
           }
         });
-        const currentBio = existingUser.bio || "";
-        try {
-          const bioObj = currentBio.startsWith("{") ? JSON.parse(currentBio) : { note: currentBio };
-          bioObj.isReserved = shouldReserve;
-          bioObj.status = shouldReserve ? "suspended" : "active";
-          updatedBio = JSON.stringify(bioObj);
-        } catch {
-          updatedBio = JSON.stringify({ isReserved: shouldReserve, status: shouldReserve ? "suspended" : "active" });
-        }
       }
       const user = await fastify.prisma.user.update({
         where: { id: existingUser.id },
@@ -108757,6 +108790,8 @@ async function adminDashboardRoutes(fastify) {
           activeClasses,
           pendingGradingCount,
           overdueGradingCount,
+          overdueInterventionsCount,
+          dueSuspensionsCount,
           recentAbsents,
           teachersData
         ] = await Promise.all([
@@ -108863,6 +108898,22 @@ async function adminDashboardRoutes(fastify) {
               }
             })
           ]).then(([hwOverdue, examOverdue]) => hwOverdue + examOverdue),
+          // 9b. GAP 1: Ca can thiệp học vụ đến hạn/quá hạn follow-up (followUpDate <= now)
+          fastify.prisma.studentInterventionLog.count({
+            where: {
+              status: { in: ["OPEN", "IN_PROGRESS"] },
+              followUpDate: { lte: now }
+            }
+          }),
+          // 9c. GAP 2: Học viên bảo lưu sắp đến / quá hạn quay lại học (expectedReturnDate <= now + 7 ngày)
+          fastify.prisma.classStudent.count({
+            where: {
+              status: "SUSPENDED",
+              deletedAt: null,
+              expectedReturnDate: { lte: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1e3) },
+              class: { isActive: true, ...classBranchFilter }
+            }
+          }),
           // 10. Danh sách các lượt vắng trong 30 ngày để phát hiện học viên At-Risk
           fastify.prisma.classAttendance.findMany({
             where: {
@@ -108979,6 +109030,20 @@ async function adminDashboardRoutes(fastify) {
                 count: atRiskStudentsCount,
                 severity: "HIGH",
                 link: "/admin/users?role=student&status=at-risk"
+              },
+              {
+                key: "overdue_interventions",
+                label: "Can thi\u1EC7p h\u1ECDc v\u1EE5 \u0111\u1EBFn h\u1EA1n/qu\xE1 h\u1EA1n follow-up",
+                count: overdueInterventionsCount,
+                severity: "HIGH",
+                link: "/admin/users?role=student&tab=interventions&filter=due"
+              },
+              {
+                key: "due_suspensions",
+                label: "H\u1ECDc vi\xEAn b\u1EA3o l\u01B0u s\u1EAFp \u0111\u1EBFn/qu\xE1 h\u1EA1n quay l\u1EA1i h\u1ECDc",
+                count: dueSuspensionsCount,
+                severity: "HIGH",
+                link: "/admin/users?role=student&status=suspended"
               },
               {
                 key: "unassigned_leads",

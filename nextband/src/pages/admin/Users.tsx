@@ -15,6 +15,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -138,6 +139,12 @@ export default function AdminUsers() {
 
   // Role Promotion Dialog state
   const [promoteDialogUser, setPromoteDialogUser] = useState<any>(null);
+  const [suspensionDialogUser, setSuspensionDialogUser] = useState<any>(null);
+  const [suspensionForm, setSuspensionForm] = useState({
+    suspendedAt: new Date().toISOString().split("T")[0],
+    expectedReturnDate: "",
+    suspensionReason: "",
+  });
 
   // Debounce search
   useEffect(() => {
@@ -205,16 +212,32 @@ export default function AdminUsers() {
   });
 
   const toggleReservationMutation = useMutation({
-    mutationFn: async ({ id, isReserved }: { id: string; isReserved: boolean }) => {
+    mutationFn: async ({
+      id,
+      isReserved,
+      suspendedAt,
+      expectedReturnDate,
+      suspensionReason,
+    }: {
+      id: string;
+      isReserved: boolean;
+      suspendedAt?: string;
+      expectedReturnDate?: string;
+      suspensionReason?: string;
+    }) => {
       return usersApi.update(id, {
         isReserved,
         status: isReserved ? "suspended" : "active",
+        suspendedAt,
+        expectedReturnDate,
+        suspensionReason,
       });
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["admin-students-management"] });
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
       queryClient.invalidateQueries({ queryKey: ["class-workspace"] });
+      setSuspensionDialogUser(null);
       toast({
         title: variables.isReserved ? "Đã đặt bảo lưu" : "Đã mở bảo lưu",
         description: variables.isReserved
@@ -686,9 +709,16 @@ export default function AdminUsers() {
                     <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                       <div className="flex flex-col items-center gap-1">
                         {user.isReserved || user.status === "suspended" ? (
-                          <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 text-[11px] font-medium">
-                            ⏸️ Đang bảo lưu
-                          </Badge>
+                          <div className="flex flex-col items-center gap-0.5">
+                            <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 text-[11px] font-medium">
+                              ⏸️ Đang bảo lưu
+                            </Badge>
+                            {user.suspensionInfo?.expectedReturnDate && (
+                              <span className="text-[10px] text-amber-700 dark:text-amber-400 font-medium">
+                                Hạn: {new Date(user.suspensionInfo.expectedReturnDate).toLocaleDateString("vi-VN")}
+                              </span>
+                            )}
+                          </div>
                         ) : (
                           <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]">
                             🟢 Đang học
@@ -733,18 +763,29 @@ export default function AdminUsers() {
                           <DropdownMenuItem
                             onClick={() => {
                               const isCurrentlyReserved = Boolean(user.isReserved || user.status === "suspended");
-                              toggleReservationMutation.mutate({ id: user.id, isReserved: !isCurrentlyReserved });
+                              if (isCurrentlyReserved) {
+                                toggleReservationMutation.mutate({ id: user.id, isReserved: false });
+                              } else {
+                                setSuspensionForm({
+                                  suspendedAt: new Date().toISOString().split("T")[0],
+                                  expectedReturnDate: user.suspensionInfo?.expectedReturnDate
+                                    ? new Date(user.suspensionInfo.expectedReturnDate).toISOString().split("T")[0]
+                                    : "",
+                                  suspensionReason: user.suspensionInfo?.suspensionReason || "",
+                                });
+                                setSuspensionDialogUser(user);
+                              }
                             }}
                           >
                             {user.isReserved || user.status === "suspended" ? (
                               <>
                                 <PlayCircle className="h-3.5 w-3.5 mr-2 text-emerald-600" />
-                                Mở bảo lưu
+                                Mở lại học tập (Hết bảo lưu)
                               </>
                             ) : (
                               <>
                                 <PauseCircle className="h-3.5 w-3.5 mr-2 text-amber-500" />
-                                Đặt bảo lưu
+                                Đặt bảo lưu khóa học
                               </>
                             )}
                           </DropdownMenuItem>
@@ -998,6 +1039,87 @@ export default function AdminUsers() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* SET SUSPENSION DIALOG */}
+      <Dialog
+        open={Boolean(suspensionDialogUser)}
+        onOpenChange={(open) => {
+          if (!open) setSuspensionDialogUser(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-[450px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-amber-600">
+              <PauseCircle className="h-5 w-5" />
+              Đặt bảo lưu khóa học
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2 text-sm">
+            <p className="text-xs text-muted-foreground">
+              Học viên: <strong className="text-foreground">{suspensionDialogUser?.fullName}</strong> ({suspensionDialogUser?.email})
+            </p>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold">Ngày bắt đầu bảo lưu</Label>
+              <Input
+                type="date"
+                value={suspensionForm.suspendedAt}
+                onChange={(e) => setSuspensionForm({ ...suspensionForm, suspendedAt: e.target.value })}
+                className="h-9"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold">Ngày dự kiến quay lại học (Hạn bảo lưu)</Label>
+              <Input
+                type="date"
+                value={suspensionForm.expectedReturnDate}
+                onChange={(e) => setSuspensionForm({ ...suspensionForm, expectedReturnDate: e.target.value })}
+                className="h-9"
+              />
+              <p className="text-[11px] text-muted-foreground">
+                Hệ thống sẽ nhắc việc trên Dashboard trước ngày này 7 ngày để CSKH chủ động liên hệ.
+              </p>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold">Lý do bảo lưu</Label>
+              <Input
+                placeholder="VD: Bận thi đại học, đi công tác 2 tháng..."
+                value={suspensionForm.suspensionReason}
+                onChange={(e) => setSuspensionForm({ ...suspensionForm, suspensionReason: e.target.value })}
+                className="h-9"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setSuspensionDialogUser(null)}
+              disabled={toggleReservationMutation.isPending}
+            >
+              Hủy
+            </Button>
+            <Button
+              className="bg-amber-600 hover:bg-amber-700 text-white"
+              disabled={toggleReservationMutation.isPending}
+              onClick={() => {
+                if (suspensionDialogUser) {
+                  toggleReservationMutation.mutate({
+                    id: suspensionDialogUser.id || suspensionDialogUser.userId,
+                    isReserved: true,
+                    suspendedAt: suspensionForm.suspendedAt || undefined,
+                    expectedReturnDate: suspensionForm.expectedReturnDate || undefined,
+                    suspensionReason: suspensionForm.suspensionReason || undefined,
+                  });
+                }
+              }}
+            >
+              {toggleReservationMutation.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Xác nhận đặt bảo lưu
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

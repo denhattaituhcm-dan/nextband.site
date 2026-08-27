@@ -32,6 +32,8 @@ export default async function adminDashboardRoutes(fastify: FastifyInstance) {
           activeClasses,
           pendingGradingCount,
           overdueGradingCount,
+          overdueInterventionsCount,
+          dueSuspensionsCount,
           recentAbsents,
           teachersData,
         ] = await Promise.all([
@@ -147,6 +149,24 @@ export default async function adminDashboardRoutes(fastify: FastifyInstance) {
               },
             }),
           ]).then(([hwOverdue, examOverdue]) => hwOverdue + examOverdue),
+
+          // 9b. GAP 1: Ca can thiệp học vụ đến hạn/quá hạn follow-up (followUpDate <= now)
+          fastify.prisma.studentInterventionLog.count({
+            where: {
+              status: { in: ["OPEN", "IN_PROGRESS"] },
+              followUpDate: { lte: now },
+            },
+          }),
+
+          // 9c. GAP 2: Học viên bảo lưu sắp đến / quá hạn quay lại học (expectedReturnDate <= now + 7 ngày)
+          fastify.prisma.classStudent.count({
+            where: {
+              status: "SUSPENDED",
+              deletedAt: null,
+              expectedReturnDate: { lte: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000) },
+              class: { isActive: true, ...classBranchFilter },
+            },
+          }),
 
           // 10. Danh sách các lượt vắng trong 30 ngày để phát hiện học viên At-Risk
           fastify.prisma.classAttendance.findMany({
@@ -284,6 +304,20 @@ export default async function adminDashboardRoutes(fastify: FastifyInstance) {
                 count: atRiskStudentsCount,
                 severity: "HIGH",
                 link: "/admin/users?role=student&status=at-risk",
+              },
+              {
+                key: "overdue_interventions",
+                label: "Can thiệp học vụ đến hạn/quá hạn follow-up",
+                count: overdueInterventionsCount,
+                severity: "HIGH",
+                link: "/admin/users?role=student&tab=interventions&filter=due",
+              },
+              {
+                key: "due_suspensions",
+                label: "Học viên bảo lưu sắp đến/quá hạn quay lại học",
+                count: dueSuspensionsCount,
+                severity: "HIGH",
+                link: "/admin/users?role=student&status=suspended",
               },
               {
                 key: "unassigned_leads",
