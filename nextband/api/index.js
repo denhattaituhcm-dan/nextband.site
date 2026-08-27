@@ -101491,7 +101491,12 @@ var ExamSubmissionService = class {
     const isAdmin = user.roles.includes("admin");
     const isTeacher = user.roles.includes("teacher");
     if (!isAdmin && !isTeacher) {
-      where.studentId = user.id;
+      const dbUser = await this.prisma.user.findFirst({
+        where: { OR: [{ id: user.id }, { userId: user.id }] },
+        select: { id: true, userId: true }
+      });
+      const ids = dbUser ? [dbUser.id, dbUser.userId].filter(Boolean) : [user.id];
+      where.studentId = ids.length === 1 ? ids[0] : { in: ids };
     } else if (isTeacher && !isAdmin) {
       let teacherStudentIds = [];
       if (classId) {
@@ -101510,7 +101515,12 @@ var ExamSubmissionService = class {
         where.studentId = teacherStudentIds.includes(studentId) ? studentId : "__none__";
       }
     } else if (studentId) {
-      where.studentId = studentId;
+      const dbUser = await this.prisma.user.findFirst({
+        where: { OR: [{ id: studentId }, { userId: studentId }] },
+        select: { id: true, userId: true }
+      });
+      const ids = dbUser ? [dbUser.id, dbUser.userId].filter(Boolean) : [studentId];
+      where.studentId = ids.length === 1 ? ids[0] : { in: ids };
     }
     if (isAdmin && classId) {
       const classStudentIds = await getClassStudentIds(this.prisma, classId);
@@ -101663,7 +101673,7 @@ var ExamSubmissionService = class {
     return submission;
   }
   // Use Case: Start Exam Attempt (with Open Exam & Dual-Channel Authorization)
-  async startAttempt(user, examId) {
+  async startAttempt(user, examId, options) {
     const exam = await this.prisma.exam.findUnique({
       where: { id: examId }
     });
@@ -101772,6 +101782,29 @@ var ExamSubmissionService = class {
             isNew: false
           };
         }
+      }
+      const existingSubmitted = await tx.examSubmission.findFirst({
+        where: {
+          examId,
+          studentId: user.id,
+          status: { in: ["SUBMITTED", "GRADED"] }
+        },
+        orderBy: { createdAt: "desc" },
+        include: {
+          answers: true
+        }
+      });
+      if (existingSubmitted && !options?.allowRetake) {
+        return {
+          submission: {
+            ...existingSubmitted,
+            remainingSeconds: 0,
+            serverTime: (/* @__PURE__ */ new Date()).toISOString(),
+            isResumed: true,
+            alreadyFinalized: true
+          },
+          isNew: false
+        };
       }
       const newSubmission = await tx.examSubmission.create({
         data: {
@@ -102453,11 +102486,11 @@ var SubmissionController = class {
   async start(request, reply) {
     try {
       const user = request.user;
-      const { examId } = request.body || {};
+      const { examId, allowRetake } = request.body || {};
       if (!examId) {
         return reply.status(400).send({ error: "examId l\xE0 b\u1EAFt bu\u1ED9c" });
       }
-      const { submission, isNew } = await this.service.startAttempt(user, examId);
+      const { submission, isNew } = await this.service.startAttempt(user, examId, { allowRetake });
       return reply.status(isNew ? 201 : 200).send(submission);
     } catch (err) {
       const status = err.statusCode || 500;
