@@ -354,8 +354,8 @@ export default function MySubmissions() {
               : "Bạn chưa làm bài tập nào"}
           </h3>
           {!debouncedSearch && statusFilter === "all" && (
-            <Button asChild>
-              <Link to="/courses">Khám phá khóa học</Link>
+            <Button asChild className="font-semibold rounded-xl">
+              <Link to="/app">Vào làm bài tập lớp học</Link>
             </Button>
           )}
         </div>

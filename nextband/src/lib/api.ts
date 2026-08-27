@@ -7,7 +7,9 @@ import {
   selectCanonicalSubmission,
 } from "./homeworkStatusHelper";
 import { adaptSection } from "../adapters/section.adapter";
+import { adaptExam } from "../adapters/exam.adapter";
 import { adaptSession } from "../adapters/session.adapter";
+import { normalizeSubmissionStatus } from "./submissionStatus";
 
 export const resolveApiBaseUrl = (): string => {
   const envUrl =

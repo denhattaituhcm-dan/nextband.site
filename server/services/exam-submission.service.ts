@@ -81,7 +81,12 @@ export class ExamSubmissionService {
     const isTeacher = user.roles.includes("teacher");
 
     if (!isAdmin && !isTeacher) {
-      where.studentId = user.id;
+      const dbUser = await this.prisma.user.findFirst({
+        where: { OR: [{ id: user.id }, { userId: user.id }] },
+        select: { id: true, userId: true },
+      });
+      const ids = dbUser ? [dbUser.id, dbUser.userId].filter(Boolean) as string[] : [user.id];
+      where.studentId = ids.length === 1 ? ids[0] : { in: ids };
     } else if (isTeacher && !isAdmin) {
       let teacherStudentIds: string[] = [];
 
@@ -102,7 +107,12 @@ export class ExamSubmissionService {
         where.studentId = teacherStudentIds.includes(studentId) ? studentId : "__none__";
       }
     } else if (studentId) {
-      where.studentId = studentId;
+      const dbUser = await this.prisma.user.findFirst({
+        where: { OR: [{ id: studentId }, { userId: studentId }] },
+        select: { id: true, userId: true },
+      });
+      const ids = dbUser ? [dbUser.id, dbUser.userId].filter(Boolean) as string[] : [studentId];
+      where.studentId = ids.length === 1 ? ids[0] : { in: ids };
     }
 
     if (isAdmin && classId) {

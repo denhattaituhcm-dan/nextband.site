@@ -44,6 +44,8 @@ import {
   SentenceFeedbackItem,
   parseStructuredFeedback,
 } from "@/lib/sentenceFeedback";
+import { mapToProgressReportData } from "@/lib/progressReportMapper";
+import { SentenceLevelGrader } from "@/components/grading/SentenceLevelGrader";
 
 // Model Workbook Homework Item (Gắn với Buổi học / Lesson)
 interface WorkbookItem {
