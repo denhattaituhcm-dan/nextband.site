@@ -350,8 +350,10 @@ export default function ReadingCasePage() {
 
   // Helper to render paragraph with clickable vocabulary words
   const renderInteractiveText = (text: string, paragraphId: string) => {
-    // Break into sentences
-    const sentences = text.split(/(?<=[.!?])\s+/);
+    // Break into sentences cleanly without splitting on decimals or abbreviations
+    const sentences = text
+      .split(/(?<=[.!?])\s+(?=[A-Z“"'])/)
+      .filter((s) => s.trim().length > 0);
 
     return (
       <div className="space-y-2">

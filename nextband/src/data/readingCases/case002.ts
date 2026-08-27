@@ -19,7 +19,7 @@ export const CASE_002: ReadingCase = {
       id: "source-01",
       type: "witness_statement",
       title: "The Stanford Conversation & The 1952 Diploma",
-      subtitle: "Executive Memoir · Warren Buffett Advice Archive",
+      subtitle: "Warren Buffett Advice Archive · Dale Carnegie 1952",
       paragraphs: [
         {
           id: "p01",
@@ -39,7 +39,7 @@ export const CASE_002: ReadingCase = {
       id: "source-02",
       type: "scientific_report",
       title: "The Strategic Multiplier in the AI Era",
-      subtitle: "Fast Company Strategic Analysis · Marcel Schwantes",
+      subtitle: "Fast Company · Marcel Schwantes",
       paragraphs: [
         {
           id: "p04",
@@ -63,19 +63,19 @@ export const CASE_002: ReadingCase = {
       id: "source-03",
       type: "digital_audit",
       title: "Three Habits of Transformational Communicators",
-      subtitle: "Applied Leadership Protocol & Behavioral Research",
+      subtitle: "Fast Company Leadership Insights",
       paragraphs: [
         {
           id: "p08",
-          text: "1. Replace assumptions with curiosity. The fastest way to derail communication is to assume you already know what someone thinks or why they acted a certain way. Curiosity changes the conversation. Instead of preparing your rebuttal, ask another question. Instead of defending your position, seek to understand theirs. Research consistently shows that people who demonstrate genuine curiosity build stronger relationships, collaborate more effectively, and are viewed as more trustworthy.",
+          text: "Replace assumptions with curiosity. The fastest way to derail communication is to assume you already know what someone thinks or why they acted a certain way. Curiosity changes the conversation. Instead of preparing your rebuttal, ask another question. Instead of defending your position, seek to understand theirs. Research consistently shows that people who demonstrate genuine curiosity build stronger relationships, collaborate more effectively, and are viewed as more trustworthy.",
         },
         {
           id: "p09",
-          text: "2. Make feedback an everyday conversation. The strongest leaders don’t save feedback for annual performance reviews. They offer it consistently, specifically, and with the person’s success in mind. What’s the end goal here? It’s clarity. People want to know what’s working, where they can improve, and how to move forward. Clarity builds confidence because it removes uncertainty. The best feedback answers three questions: What should I keep doing? What should I change? Why does it matter?",
+          text: "Make feedback an everyday conversation. The strongest leaders don’t save feedback for annual performance reviews. They offer it consistently, specifically, and with the person’s success in mind. What’s the end goal here? It’s clarity. People want to know what’s working, where they can improve, and how to move forward. Clarity builds confidence because it removes uncertainty. The best feedback answers three questions: What should I keep doing? What should I change? Why does it matter?",
         },
         {
           id: "p10",
-          text: "3. Listen to understand, not to respond. With all the notifications and daily distractions we face, attention and active listening are among the rarest gifts you can give another person. Active listening means resisting the urge to formulate your response while someone else is still speaking. It means putting away your phone, asking follow-up questions, and reflecting back what you’ve heard before offering advice. People rarely remember every word you said. They almost always remember how you made them feel.",
+          text: "Listen to understand, not to respond. With all the notifications and daily distractions we face, attention and active listening are among the rarest gifts you can give another person. Active listening means resisting the urge to formulate your response while someone else is still speaking. It means putting away your phone, asking follow-up questions, and reflecting back what you’ve heard before offering advice. People rarely remember every word you said. They almost always remember how you made them feel.",
         },
       ],
     },
