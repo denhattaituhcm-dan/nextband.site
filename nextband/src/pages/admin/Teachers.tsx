@@ -133,6 +133,10 @@ export default function AdminTeachers() {
   const [confirmUser, setConfirmUser] = useState<any>(null);
   const [pendingActiveState, setPendingActiveState] = useState<boolean>(false);
 
+  // Smart Role Transfer / Conflict State
+  const [conflictExistingUser, setConflictExistingUser] = useState<any>(null);
+  const [demoteDialogUser, setDemoteDialogUser] = useState<any>(null);
+
   // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -178,6 +182,62 @@ export default function AdminTeachers() {
     },
   });
 
+  const promoteToTeacherMutation = useMutation({
+    mutationFn: async ({ id, fullName, phone }: { id: string; fullName?: string; phone?: string }) => {
+      return usersApi.update(id, {
+        role: "teacher",
+        ...(fullName ? { fullName } : {}),
+        ...(phone ? { phone } : {}),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-teachers"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-students-management"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ADMIN_STATS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TEACHERS_LIST });
+      toast({
+        title: "Chuyển đổi thành Giáo viên thành công",
+        description: "Tài khoản đã được nâng cấp thành Giáo viên và đồng bộ vào danh sách",
+      });
+      setConflictExistingUser(null);
+      setDialogOpen(false);
+      setForm(emptyForm);
+    },
+    onError: (err: any) => {
+      toast({
+        title: "Lỗi",
+        description: err?.message || "Không thể chuyển đổi vai trò sang Giáo viên",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const demoteMutation = useMutation({
+    mutationFn: async ({ id }: { id: string }) => {
+      return usersApi.update(id, { role: "student" });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-teachers"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-students-management"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ADMIN_STATS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TEACHERS_LIST });
+      toast({
+        title: "Chuyển thành Học viên thành công",
+        description: "Đã chuyển tài khoản về vai trò Học viên",
+      });
+      setDemoteDialogUser(null);
+    },
+    onError: (err: any) => {
+      toast({
+        title: "Lỗi",
+        description: err?.message || "Không thể chuyển đổi vai trò sang Học viên",
+        variant: "destructive",
+      });
+    },
+  });
+
   const createMutation = useMutation({
     mutationFn: (body: typeof emptyForm) => usersApi.create(body),
     onSuccess: () => {
@@ -189,11 +249,24 @@ export default function AdminTeachers() {
       setForm(emptyForm);
     },
     onError: (err: any) => {
+      const existingUser = err?.response?.data?.existingUser;
       const msg =
         err?.message ||
         err?.response?.data?.message ||
         err?.response?.data?.error ||
         "Không thể tạo giáo viên. Vui lòng kiểm tra dữ liệu!";
+
+      if (existingUser || msg.toLowerCase().includes("đã tồn tại") || msg.toLowerCase().includes("already") || msg.toLowerCase().includes("duplicate")) {
+        setConflictExistingUser(
+          existingUser || {
+            email: form.email,
+            fullName: form.fullName,
+            roles: ["student"],
+          }
+        );
+        return;
+      }
+
       toast({
         title: "Lỗi",
         description: msg,
@@ -672,6 +745,19 @@ export default function AdminTeachers() {
                           <DropdownMenuSeparator />
 
                           <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+                            Phân quyền
+                          </DropdownMenuLabel>
+                          <DropdownMenuItem
+                            className="text-amber-700 dark:text-amber-400 focus:text-amber-800"
+                            onClick={() => setDemoteDialogUser(teacher)}
+                          >
+                            <GraduationCap className="mr-2 h-3.5 w-3.5" />
+                            Chuyển thành Học viên
+                          </DropdownMenuItem>
+
+                          <DropdownMenuSeparator />
+
+                          <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
                             Nguy hiểm
                           </DropdownMenuLabel>
                           <DropdownMenuItem
@@ -848,6 +934,115 @@ export default function AdminTeachers() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* SMART EMAIL CONFLICT & CONVERT TO TEACHER DIALOG */}
+      <AlertDialog
+        open={Boolean(conflictExistingUser)}
+        onOpenChange={(open) => {
+          if (!open) setConflictExistingUser(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-indigo-600">
+              <GraduationCap className="h-5 w-5" />
+              Phát hiện Email đã tồn tại trong hệ thống
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-3 pt-2">
+              <p>
+                Email <strong className="text-foreground">{conflictExistingUser?.email}</strong> hiện đã có tài khoản
+                {conflictExistingUser?.fullName ? (
+                  <>
+                    {" "}thuộc về <strong className="text-foreground">{conflictExistingUser.fullName}</strong>
+                  </>
+                ) : null}
+                {" "}với vai trò{" "}
+                <Badge variant="outline" className="bg-blue-50 text-blue-700 font-medium">
+                  {conflictExistingUser?.roles?.includes("teacher") ? "Giáo viên" : "Học viên"}
+                </Badge>
+                .
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Do giáo viên đã từng đăng nhập Google vào hệ thống, tài khoản đã được lưu mặc định là Học viên. Bạn có muốn chuyển đổi tài khoản này sang <strong>Giáo viên</strong> ngay bây giờ không?
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={promoteToTeacherMutation.isPending}>
+              Hủy bỏ
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-indigo-600 hover:bg-indigo-700 text-white"
+              disabled={promoteToTeacherMutation.isPending}
+              onClick={() => {
+                if (conflictExistingUser) {
+                  promoteToTeacherMutation.mutate({
+                    id: conflictExistingUser.id,
+                    fullName: form.fullName || conflictExistingUser.fullName,
+                    phone: form.phone || undefined,
+                  });
+                }
+              }}
+            >
+              {promoteToTeacherMutation.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Đồng ý chuyển thành Giáo viên
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* CONFIRM DEMOTE TO STUDENT DIALOG */}
+      <AlertDialog
+        open={Boolean(demoteDialogUser)}
+        onOpenChange={(open) => {
+          if (!open) setDemoteDialogUser(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-amber-600">
+              <User className="h-5 w-5" />
+              Chuyển vai trò sang Học viên
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-2 pt-2">
+              <p>
+                Bạn có chắc muốn chuyển tài khoản của{" "}
+                <strong className="text-foreground">
+                  {demoteDialogUser?.fullName || "giáo viên này"}
+                </strong>{" "}
+                (<span className="font-mono text-xs">{demoteDialogUser?.email}</span>) sang vai trò{" "}
+                <strong className="text-amber-600">Học viên</strong>?
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Tài khoản sẽ không còn quyền truy cập Cổng quản lý giảng dạy cho đến khi được phân quyền lại.
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={demoteMutation.isPending}>
+              Hủy
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-amber-600 hover:bg-amber-700 text-white"
+              disabled={demoteMutation.isPending}
+              onClick={() => {
+                if (demoteDialogUser) {
+                  demoteMutation.mutate({
+                    id: demoteDialogUser.id,
+                  });
+                }
+              }}
+            >
+              {demoteMutation.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Xác nhận chuyển thành Học viên
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
         </>
       )}
     </div>

@@ -103111,13 +103111,20 @@ var usersRoutes = async (fastify) => {
       }
       const cleanEmail = email.trim().toLowerCase();
       const existing = await fastify.prisma.user.findFirst({
-        where: { email: cleanEmail }
+        where: { email: cleanEmail },
+        include: { roles: true }
       });
       if (existing) {
         return reply.status(409).send({
           statusCode: 409,
           error: "Email \u0111\xE3 t\u1ED3n t\u1EA1i trong h\u1EC7 th\u1ED1ng",
-          message: "Email \u0111\xE3 t\u1ED3n t\u1EA1i trong h\u1EC7 th\u1ED1ng"
+          message: "Email \u0111\xE3 t\u1ED3n t\u1EA1i trong h\u1EC7 th\u1ED1ng",
+          existingUser: {
+            id: existing.userId || existing.id,
+            email: existing.email,
+            fullName: existing.fullName,
+            roles: (existing.roles || []).map((r) => r.role)
+          }
         });
       }
       const finalPassword = password || Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);

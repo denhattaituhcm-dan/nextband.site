@@ -270,7 +270,11 @@ export class ExamSubmissionService {
   }
 
   // Use Case: Start Exam Attempt (with Open Exam & Dual-Channel Authorization)
-  async startAttempt(user: { id: string; roles: string[] }, examId: string): Promise<{ submission: any; isNew: boolean }> {
+  async startAttempt(
+    user: { id: string; roles: string[] },
+    examId: string,
+    options?: { allowRetake?: boolean }
+  ): Promise<{ submission: any; isNew: boolean }> {
     const exam = await this.prisma.exam.findUnique({
       where: { id: examId },
     });
@@ -396,6 +400,33 @@ export class ExamSubmissionService {
             isNew: false,
           };
         }
+      }
+
+      // Invariant: If student already has a valid SUBMITTED or GRADED attempt and no active IN_PROGRESS attempt,
+      // return the existing submitted attempt rather than silently creating an empty in-progress attempt.
+      const existingSubmitted = await tx.examSubmission.findFirst({
+        where: {
+          examId,
+          studentId: user.id,
+          status: { in: ["SUBMITTED", "GRADED"] },
+        },
+        orderBy: { createdAt: "desc" },
+        include: {
+          answers: true,
+        },
+      });
+
+      if (existingSubmitted && !options?.allowRetake) {
+        return {
+          submission: {
+            ...existingSubmitted,
+            remainingSeconds: 0,
+            serverTime: new Date().toISOString(),
+            isResumed: true,
+            alreadyFinalized: true,
+          },
+          isNew: false,
+        };
       }
 
       const newSubmission = await tx.examSubmission.create({

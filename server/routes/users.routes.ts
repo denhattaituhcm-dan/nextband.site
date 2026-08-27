@@ -625,6 +625,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
       // 1. Idempotency Check: Check if user already exists
       const existing = await fastify.prisma.user.findFirst({
         where: { email: cleanEmail },
+        include: { roles: true },
       });
 
       if (existing) {
@@ -632,6 +633,12 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           statusCode: 409,
           error: "Email đã tồn tại trong hệ thống",
           message: "Email đã tồn tại trong hệ thống",
+          existingUser: {
+            id: existing.userId || existing.id,
+            email: existing.email,
+            fullName: existing.fullName,
+            roles: (existing.roles || []).map((r: any) => r.role),
+          },
         });
       }
 

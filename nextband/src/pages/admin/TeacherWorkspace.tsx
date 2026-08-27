@@ -35,9 +35,11 @@ import {
   FileText,
 } from "lucide-react";
 import { ProgressReportModal } from "@/components/admin/ProgressReportModal";
-import { mapToProgressReportData } from "@/lib/progressReportMapper";
-import { deriveSubmissionTiming } from "@/lib/homeworkStatusHelper";
-import { SentenceLevelGrader } from "@/components/grading/SentenceLevelGrader";
+import {
+  deriveSubmissionTiming,
+  selectCanonicalSubmission,
+  compareHomeworkOrder,
+} from "@/lib/homeworkStatusHelper";
 import {
   SentenceFeedbackItem,
   parseStructuredFeedback,
@@ -164,7 +166,8 @@ export default function TeacherWorkspace() {
       if (courseId) {
         try {
           const examRes = await examsApi.list({ courseId, limit: 100 });
-          exams = examRes.data || [];
+          const rawExams = examRes.data || [];
+          exams = [...rawExams].sort(compareHomeworkOrder);
         } catch (e) {
           console.warn("[TeacherWorkspace] Could not load exams:", e);
         }
@@ -189,9 +192,7 @@ export default function TeacherWorkspace() {
         );
 
         const homeworks = exams.map((ex: any, idx: number) => {
-          const sub = studentSubs.find(
-            (s: any) => s.examId === ex.id || s.exam_id === ex.id,
-          );
+          const sub = selectCanonicalSubmission(studentSubs, ex.id);
           const firstAnswer = sub?.answers?.[0];
           const rawFeedback = firstAnswer?.feedback || sub?.feedback || "";
           const structured = parseStructuredFeedback(rawFeedback);

@@ -236,6 +236,18 @@ export default function ExamInterface() {
     }
   }, [submissionData]);
 
+  // Invariant Guard: If user lands on /exam/:id with a completed submission, redirect to submission review
+  useEffect(() => {
+    if (
+      submission &&
+      (String(submission.status).toUpperCase() === "SUBMITTED" ||
+        String(submission.status).toUpperCase() === "GRADED" ||
+        submission.alreadyFinalized)
+    ) {
+      navigate(`/submission/${submission.id}`, { replace: true });
+    }
+  }, [submission?.id, submission?.status, (submission as any)?.alreadyFinalized, navigate]);
+
   useEffect(() => {
     if (examData && submissionData && !perfMetricsRef.current.logged) {
       perfMetricsRef.current.logged = true;

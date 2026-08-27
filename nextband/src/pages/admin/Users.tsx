@@ -19,6 +19,16 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -126,6 +136,9 @@ export default function AdminUsers() {
   const [editingUser, setEditingUser] = useState<any>(null);
   const [form, setForm] = useState(emptyForm);
 
+  // Role Promotion Dialog state
+  const [promoteDialogUser, setPromoteDialogUser] = useState<any>(null);
+
   // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -154,6 +167,30 @@ export default function AdminUsers() {
         classId: classIdParam || undefined,
         status: statusParam || undefined,
       }),
+  });
+
+  const promoteMutation = useMutation({
+    mutationFn: async ({ id, role }: { id: string; role: string }) => {
+      return usersApi.update(id, { role });
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-students-management"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-teachers"] });
+      queryClient.invalidateQueries({ queryKey: ["teachers-list"] });
+      toast({
+        title: "Chuyển đổi vai trò thành công",
+        description: `Đã chuyển tài khoản sang vai trò ${variables.role === "teacher" ? "Giáo viên" : "Học viên"}`,
+      });
+      setPromoteDialogUser(null);
+    },
+    onError: (err: any) => {
+      toast({
+        title: "Lỗi",
+        description: err?.message || "Không thể chuyển đổi vai trò",
+        variant: "destructive",
+      });
+    },
   });
 
   const toggleLockMutation = useMutation({
@@ -682,6 +719,13 @@ export default function AdminUsers() {
                             <Edit className="h-3.5 w-3.5 mr-2 text-slate-500" />
                             Chỉnh sửa thông tin
                           </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => setPromoteDialogUser(user)}
+                            className="text-indigo-600 focus:text-indigo-700 focus:bg-indigo-50 font-medium"
+                          >
+                            <GraduationCap className="h-3.5 w-3.5 mr-2 text-indigo-600" />
+                            Chuyển thành Giáo viên
+                          </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => toast({ title: "Đã mở Modal Đổi lớp" })}>
                             <RefreshCw className="h-3.5 w-3.5 mr-2 text-emerald-500" />
                             Đổi lớp / Chuyển lớp
@@ -824,6 +868,22 @@ export default function AdminUsers() {
               </div>
             </div>
 
+            <div className="space-y-2">
+              <Label>Vai trò hệ thống</Label>
+              <Select
+                value={form.role || "student"}
+                onValueChange={(val) => setForm({ ...form, role: val })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Chọn vai trò" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="student">Học viên (Student)</SelectItem>
+                  <SelectItem value="teacher">Giáo viên (Teacher)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
                 <Label>Tên Phụ huynh</Label>
@@ -865,7 +925,7 @@ export default function AdminUsers() {
                   if (!form.fullName || !form.fullName.trim()) {
                     toast({
                       title: "Thiếu thông tin",
-                      description: "Vui lòng nhập họ và tên học viên",
+                      description: "Vui lòng nhập họ và tên",
                       variant: "destructive",
                     });
                     return;
@@ -886,6 +946,58 @@ export default function AdminUsers() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* CONFIRM ROLE PROMOTION ALERT DIALOG */}
+      <AlertDialog
+        open={Boolean(promoteDialogUser)}
+        onOpenChange={(open) => {
+          if (!open) setPromoteDialogUser(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <GraduationCap className="h-5 w-5 text-indigo-600" />
+              Chuyển đổi thành Giáo viên
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-2 pt-2">
+              <p>
+                Bạn có chắc chắn muốn chuyển tài khoản của{" "}
+                <strong className="text-foreground">
+                  {promoteDialogUser?.fullName || "học viên này"}
+                </strong>{" "}
+                (<span className="font-mono text-xs">{promoteDialogUser?.email}</span>) sang vai trò{" "}
+                <strong className="text-indigo-600">Giáo viên</strong> không?
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Tài khoản này sẽ có quyền truy cập vào Cổng quản lý giảng dạy, chấm bài và quản lý lớp học.
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={promoteMutation.isPending}>
+              Hủy
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-indigo-600 hover:bg-indigo-700 text-white"
+              disabled={promoteMutation.isPending}
+              onClick={() => {
+                if (promoteDialogUser) {
+                  promoteMutation.mutate({
+                    id: promoteDialogUser.id || promoteDialogUser.userId,
+                    role: "teacher",
+                  });
+                }
+              }}
+            >
+              {promoteMutation.isPending && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Xác nhận chuyển thành Giáo viên
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

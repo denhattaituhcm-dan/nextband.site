@@ -1,9 +1,11 @@
 import { supabase } from "./supabase";
 import { normalizeSiteSettings } from "./site-settings";
 import { isValidUUID } from "./classContext";
-import { normalizeSubmissionStatus } from "./submissionStatus";
-import { resolveEffectiveDeadline, compareHomeworkOrder } from "./homeworkStatusHelper";
-import { adaptExam } from "../adapters/exam.adapter";
+import {
+  resolveEffectiveDeadline,
+  compareHomeworkOrder,
+  selectCanonicalSubmission,
+} from "./homeworkStatusHelper";
 import { adaptSection } from "../adapters/section.adapter";
 import { adaptSession } from "../adapters/session.adapter";
 
@@ -302,6 +304,37 @@ export const authApi = {
       .select()
       .single();
 
+    if (error) throw error;
+    return data;
+  },
+
+  changePassword: async ({
+    currentPassword,
+    newPassword,
+  }: {
+    currentPassword?: string;
+    newPassword: string;
+  }) => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user || !user.email) {
+      throw new Error("Vui lòng đăng nhập lại để thực hiện.");
+    }
+
+    if (currentPassword) {
+      const { error: verifyError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: currentPassword,
+      });
+      if (verifyError) {
+        throw new Error("Mật khẩu hiện tại không chính xác.");
+      }
+    }
+
+    const { data, error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
     if (error) throw error;
     return data;
   },
@@ -1112,8 +1145,8 @@ export const submissionsApi = {
 
   getLatestByExam: async (examId: string) => {
     try {
-      const res = await submissionsApi.list({ examId, limit: 1 });
-      return res.data?.[0] || null;
+      const res = await submissionsApi.list({ examId, limit: 10 });
+      return selectCanonicalSubmission(res.data, examId) || res.data?.[0] || null;
     } catch {
       return null;
     }

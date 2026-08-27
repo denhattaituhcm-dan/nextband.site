@@ -42,15 +42,15 @@ export class SubmissionController {
     }
   }
 
-  async start(request: FastifyRequest<{ Body: { examId: string } }>, reply: FastifyReply) {
+  async start(request: FastifyRequest<{ Body: { examId: string; allowRetake?: boolean } }>, reply: FastifyReply) {
     try {
       const user = (request as any).user;
-      const { examId } = request.body || {};
+      const { examId, allowRetake } = request.body || {};
       if (!examId) {
         return reply.status(400).send({ error: "examId là bắt buộc" });
       }
 
-      const { submission, isNew } = await this.service.startAttempt(user, examId);
+      const { submission, isNew } = await this.service.startAttempt(user, examId, { allowRetake });
       return reply.status(isNew ? 201 : 200).send(submission);
     } catch (err: any) {
       const status = err.statusCode || 500;

@@ -7,6 +7,7 @@ import {
   formatDeadlineCountdown,
   deriveSubmissionTiming,
   compareHomeworkOrder,
+  selectCanonicalSubmission,
   CanonicalVisualStatus,
 } from "@/lib/homeworkStatusHelper";
 import { Card } from "@/components/ui/card";
@@ -172,22 +173,8 @@ export default function StudentLessonViewerPage() {
 
   const userSubmissions = Array.isArray(submissionsData?.data) ? submissionsData.data : [];
 
-  const sortedSubmissions = [...userSubmissions].sort((a: any, b: any) => {
-    const timeA = new Date(a.createdAt || a.created_at || a.submittedAt || 0).getTime();
-    const timeB = new Date(b.createdAt || b.created_at || b.submittedAt || 0).getTime();
-    return timeB - timeA;
-  });
-
-  const submissionsMap: Record<string, any> = {};
-  sortedSubmissions.forEach((s: any) => {
-    const targetId = s.homework_id || s.homeworkId || s.exam_id || s.examId;
-    if (targetId && !submissionsMap[targetId]) {
-      submissionsMap[targetId] = s;
-    }
-  });
-
   const homeworkList = lessons.map((item: any, idx: number) => {
-    const sub = submissionsMap[item.id] || item.submission;
+    const sub = selectCanonicalSubmission(userSubmissions, item.id) || item.submission;
     const deadline = item.homework?.deadline;
     const visualStatus = deriveCanonicalVisualStatus({
       submissionStatus: sub?.status,
@@ -513,7 +500,12 @@ export default function StudentLessonViewerPage() {
                         onMouseEnter={() => handlePrefetchExam(hw.examId || hw.id)}
                         onFocus={() => handlePrefetchExam(hw.examId || hw.id)}
                         onClick={() => {
-                          if (hw.submission?.id && (hw.status === "GRADED" || hw.status === "REVISION_REQUIRED")) {
+                          if (
+                            hw.submission?.id &&
+                            (hw.status === "GRADED" ||
+                              hw.status === "REVISION_REQUIRED" ||
+                              hw.status === "SUBMITTED")
+                          ) {
                             navigate(`/submission/${hw.submission.id}`);
                           } else {
                             handleOpenExam(hw.examId || hw.id);

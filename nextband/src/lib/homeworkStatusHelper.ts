@@ -74,6 +74,71 @@ export function deriveCanonicalVisualStatus(params: VisualStatusParams): Canonic
 }
 
 /**
+ * Authoritative Canonical Submission Selector:
+ * Resolves multiple attempts for a student on a specific exam/homework with strict business priority:
+ * 1. GRADED / REVISION_REQUIRED (Highest legal/academic authority)
+ * 2. SUBMITTED / GRADING (Valid completed submission waiting for teacher review)
+ * 3. IN_PROGRESS with answers / latest activity
+ * 4. Most recent attempt fallback
+ */
+export function selectCanonicalSubmission(
+  submissions: any[] | undefined | null,
+  examId?: string
+): any | null {
+  if (!Array.isArray(submissions) || submissions.length === 0) {
+    return null;
+  }
+
+  const matchingSubs = examId
+    ? submissions.filter((s: any) => {
+        const id =
+          s.examId ||
+          s.exam_id ||
+          s.homework_id ||
+          s.homeworkId ||
+          s.lesson_id ||
+          s.lessonId;
+        return id === examId;
+      })
+    : submissions;
+
+  if (matchingSubs.length === 0) return null;
+  if (matchingSubs.length === 1) return matchingSubs[0];
+
+  const getPrecedence = (sub: any): number => {
+    const st = String(sub.status || "").toUpperCase();
+    const hasAnswers =
+      Array.isArray(sub.answers) && sub.answers.length > 0
+        ? true
+        : sub.correctAnswers != null || sub.totalScore != null;
+
+    if (st === "GRADED" || sub.revisionRequired || sub.revision_required) return 100;
+    if (st === "SUBMITTED" || st === "GRADING") return 80;
+    if (st === "IN_PROGRESS" && hasAnswers) return 50;
+    if (st === "IN_PROGRESS") return 30;
+    return 10;
+  };
+
+  return matchingSubs.reduce((best: any, current: any) => {
+    if (!best) return current;
+    const pCurrent = getPrecedence(current);
+    const pBest = getPrecedence(best);
+
+    if (pCurrent > pBest) return current;
+    if (pCurrent < pBest) return best;
+
+    // Tie-breaker: most recent submission/creation time
+    const timeCurrent = new Date(
+      current.submittedAt || current.updatedAt || current.createdAt || 0
+    ).getTime();
+    const timeBest = new Date(
+      best.submittedAt || best.updatedAt || best.createdAt || 0
+    ).getTime();
+    return timeCurrent >= timeBest ? current : best;
+  }, null);
+}
+
+/**
  * Determines whether a submitted attempt was late without altering SUBMITTED visual state.
  */
 export function deriveSubmissionTiming(

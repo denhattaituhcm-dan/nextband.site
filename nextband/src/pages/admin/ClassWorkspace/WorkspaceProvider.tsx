@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { classesApi, sessionsApi, examsApi, submissionsApi, normalizeSession, lessonsApi } from "@/lib/api";
-import { resolveEffectiveDeadline } from "@/lib/homeworkStatusHelper";
+import { resolveEffectiveDeadline, selectCanonicalSubmission } from "@/lib/homeworkStatusHelper";
 
 interface WorkspaceContextType {
   classId: string;
@@ -166,13 +166,7 @@ export const WorkspaceProvider: React.FC<{
         // Structured homework items for Progress Strip
         const homeworkItems = lessons.map((lesson: any, i: number) => {
           const hwNumber = i + 1;
-          const sub = studentSubs.find(
-            (s: any) =>
-              s.examId === lesson.id ||
-              s.exam_id === lesson.id ||
-              s.homework_id === lesson.id ||
-              s.lesson_id === lesson.id
-          );
+          const sub = selectCanonicalSubmission(studentSubs, lesson.id);
           const isGraded = sub?.status === "graded" || sub?.status === "GRADED";
           const isSubmitted = sub?.status === "submitted" || sub?.status === "SUBMITTED" || isGraded;
 

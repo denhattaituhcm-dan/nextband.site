@@ -22,7 +22,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, Users, Building2, MapPin, Plus, Phone, School, Star, Power, PowerOff } from "lucide-react";
+import { BookOpen, Users, Building2, MapPin, Plus, Phone, School, Star, Power, PowerOff, KeyRound, ShieldCheck } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { ChangePasswordDialog } from "@/components/auth/ChangePasswordDialog";
 
 import {
   DEFAULT_SITE_SETTINGS,
@@ -32,9 +34,11 @@ import {
 import { siteSettingsApi, branchesApi, roomsApi } from "@/lib/api";
 
 export default function AdminSettings() {
+  const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [data, setData] = useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
   const { data: remoteSettings, isLoading } = useQuery({
     queryKey: ["site-settings"],
@@ -102,6 +106,31 @@ export default function AdminSettings() {
           Thiết lập tên site, logo, màu highlight và slogan trang chủ.
         </p>
       </div>
+
+      {/* Admin Account Security Card */}
+      <Card className="border-primary/20 bg-gradient-to-r from-primary/5 via-card to-card shadow-sm">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4">
+          <div className="space-y-1">
+            <CardTitle className="text-base flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-primary" />
+              Bảo mật tài khoản Quản trị viên
+            </CardTitle>
+            <CardDescription className="text-xs">
+              Tài khoản đang đăng nhập: <strong className="text-foreground font-semibold">{user?.email}</strong> ({user?.fullName || "Admin"})
+            </CardDescription>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setChangePasswordOpen(true)}
+            className="gap-2 text-xs font-semibold bg-background shadow-xs hover:border-primary hover:text-primary shrink-0"
+          >
+            <KeyRound className="h-4 w-4 text-primary" />
+            Đổi mật khẩu đăng nhập
+          </Button>
+        </CardHeader>
+      </Card>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
@@ -723,6 +752,11 @@ export default function AdminSettings() {
           {saveMutation.isPending ? "Đang lưu..." : "Lưu cài đặt"}
         </Button>
       </div>
+
+      <ChangePasswordDialog
+        open={changePasswordOpen}
+        onOpenChange={setChangePasswordOpen}
+      />
     </div>
   );
 }
