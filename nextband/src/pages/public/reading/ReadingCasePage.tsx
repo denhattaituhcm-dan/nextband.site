@@ -126,7 +126,7 @@ export default function ReadingCasePage() {
   const [activeTranslatedWords, setActiveTranslatedWords] = useState<Record<string, VocabularyTerm>>({});
 
   // Right Panel Tab State: "tasks" | "explain"
-  const [rightPanelTab, setRightPanelTab] = useState<"tasks" | "explain">("tasks");
+  const [rightPanelTab, setRightPanelTab] = useState<"tasks" | "explain">("explain");
   const [activeExplainTerm, setActiveExplainTerm] = useState<VocabularyTerm | null>(null);
 
   const handleSwitchCase = (caseId: string) => {
@@ -485,7 +485,7 @@ export default function ReadingCasePage() {
                 className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-100/90 hover:bg-sky-200 text-sky-950 border border-sky-300 text-xs font-black transition-all shadow-xs cursor-pointer active:scale-95"
               >
                 <Sparkles className="h-3.5 w-3.5 text-sky-700 animate-pulse" />
-                <span className="hidden sm:inline">💡 Bối cảnh hồ sơ</span>
+                <span className="hidden sm:inline">💡 Bối cảnh bài viết</span>
                 <span className="sm:hidden">💡 Bối cảnh</span>
               </button>
 
@@ -534,8 +534,9 @@ export default function ReadingCasePage() {
               )}
             </div>
 
-            <div className="text-xs font-mono font-bold text-stone-700 bg-white px-2.5 py-1 rounded-md border border-stone-200 shadow-xs">
-              Tasks: {Object.keys(taskAnswers).length + (selectedEvidenceSentence ? 1 : 0)} / 4
+            <div className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-emerald-800 bg-emerald-50/90 px-3 py-1 rounded-full border border-emerald-200/80 shadow-xs">
+              <BookOpen className="h-3.5 w-3.5 text-emerald-600" />
+              <span>Trạm Đọc Thư Giãn</span>
             </div>
           </div>
         </div>
@@ -564,7 +565,7 @@ export default function ReadingCasePage() {
                   }`}
                 >
                   <Layers className="h-3.5 w-3.5 mr-1.5" />
-                  Toàn Bộ Hồ Sơ (3 Nguồn)
+                  Toàn bộ bài đọc (3 Nguồn)
                 </Button>
                 {readingCase.sources.map((src, idx) => (
                   <Button
@@ -581,7 +582,7 @@ export default function ReadingCasePage() {
                     {idx === 0 && <FileText className="h-3.5 w-3.5 mr-1.5 text-sky-400" />}
                     {idx === 1 && <UserCheck className="h-3.5 w-3.5 mr-1.5 text-emerald-400" />}
                     {idx === 2 && <Cpu className="h-3.5 w-3.5 mr-1.5 text-purple-400" />}
-                    Source {idx + 1}
+                    Nguồn {idx + 1}
                   </Button>
                 ))}
                 {readingCase.id === "case-001" && (
@@ -752,8 +753,8 @@ export default function ReadingCasePage() {
                     {/* Task 1: FIND */}
                     <div className="rounded-xl border border-stone-200/80 bg-[#FAF9F6] p-4 space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-mono font-black uppercase tracking-wider px-2 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-200">
-                          TASK 01 · FIND (Locating Detail)
+                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 text-blue-900 border border-blue-200">
+                          GỢI Ý 1 · CHI TIẾT BÀI ĐỌC
                         </span>
                         {taskAnswers["task-01"] && (
                           taskAnswers["task-01"] === "B" ? (
@@ -834,8 +835,8 @@ export default function ReadingCasePage() {
                     {/* Task 2: MATCH */}
                     <div className="rounded-xl border border-stone-200/80 bg-[#FAF9F6] p-4 space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-mono font-black uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">
-                          TASK 02 · MATCH (Cross-Source Timeline)
+                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-900 border border-emerald-200">
+                          GỢI Ý 2 · ĐỐI CHIẾU Ý TƯỞNG
                         </span>
                         {taskAnswers["task-02"] && (
                           taskAnswers["task-02"] === "C" ? (
@@ -916,8 +917,8 @@ export default function ReadingCasePage() {
                     {/* Task 3: INFER */}
                     <div className="rounded-xl border border-stone-200/80 bg-[#FAF9F6] p-4 space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-mono font-black uppercase tracking-wider px-2 py-0.5 rounded bg-purple-100 text-purple-800 border border-purple-200">
-                          TASK 03 · INFER (Boundary-Restricted)
+                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-50 text-purple-900 border border-purple-200">
+                          GỢI Ý 3 · SUY NGẪM & GÓC NHÌN
                         </span>
                         {taskAnswers["task-03"] && (
                           taskAnswers["task-03"] === "A" ? (
@@ -998,8 +999,8 @@ export default function ReadingCasePage() {
                     {/* Task 4: PROVE (Click-to-Source) */}
                     <div className="rounded-xl border border-stone-200/80 bg-[#FAF9F6] p-4 space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-mono font-black uppercase tracking-wider px-2 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-200">
-                          TASK 04 · PROVE (Click Câu Làm Bằng Chứng)
+                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-50 text-amber-900 border border-amber-200">
+                          GỢI Ý 4 · CÂU VĂN TÂM ĐẮC
                         </span>
                         {selectedEvidenceSentence && (
                           selectedEvidenceSentence === "However, the crevasse extends straight down through the entire 850-meter ice sheet, so the water drained directly to the bedrock." ? (
@@ -1050,7 +1051,7 @@ export default function ReadingCasePage() {
                           </div>
                         ) : (
                           <p className="text-stone-500 italic">
-                            👉 Hãy click trực tiếp vào câu văn trong <strong>Source 1 (Cột Trái)</strong> để ghim làm bằng chứng.
+                            👉 Nhấp trực tiếp vào câu văn trong bài đọc (cột trái) để ghim làm dẫn chứng.
                           </p>
                         )}
                       </div>
@@ -1060,8 +1061,8 @@ export default function ReadingCasePage() {
                 <div className="border-t border-stone-200 pt-5 space-y-4">
                   <div className="flex items-center gap-2">
                     <HelpCircle className="h-5 w-5 text-amber-600" />
-                    <h4 className="font-black text-stone-900 text-sm uppercase tracking-wide">
-                      Final Deduction: Kết Án
+                    <h4 className="font-bold text-stone-900 text-sm uppercase tracking-wide">
+                      ĐÚC KẾT & CHIÊM NGHIỆM
                     </h4>
                   </div>
 
@@ -1099,7 +1100,7 @@ export default function ReadingCasePage() {
                             className="mt-0.5 text-emerald-600 focus:ring-0"
                           />
                           <span>
-                            <strong className="mr-1">{opt.id.replace("hyp-", "Giả thuyết ")}:</strong> {opt.text}
+                            <strong className="mr-1">{opt.id.replace("hyp-", "Nhận định ")}:</strong> {opt.text}
                           </span>
                         </label>
                       );
@@ -1115,7 +1116,7 @@ export default function ReadingCasePage() {
                     }`}>
                       <p className="font-bold flex items-center gap-1.5 mb-1">
                         {finalHypothesis === "hyp-2" ? (
-                          <span className="text-emerald-800">✅ Kết Luận Chính Xác!</span>
+                          <span className="text-emerald-800">✅ Đúc Kết Rất Sâu Sắc!</span>
                         ) : (
                           <span className="text-rose-800">❌ Chưa chính xác. Kết luận đúng là Fast Hydro-Fracturing.</span>
                         )}
@@ -1129,7 +1130,7 @@ export default function ReadingCasePage() {
                   {/* Required Supporting Evidence Selection */}
                   <div className="space-y-2 pt-2">
                     <p className="text-[11px] font-bold uppercase tracking-wider text-stone-600">
-                      Chọn ĐÚNG 2 chứng cứ chứng minh kết luận trên:
+                      Gợi ý chọn 2 nhận định then chốt làm sáng tỏ thông điệp trên:
                     </p>
                     <div className="space-y-1.5">
                       {readingCase.final_deduction.required_evidence_pool.map((ev) => {
@@ -1166,13 +1167,13 @@ export default function ReadingCasePage() {
                         : "bg-stone-200 text-stone-400 cursor-not-allowed"
                     }`}
                   >
-                    Xem Báo Cáo Phá Án (Case Autopsy)
+                    Xem Đúc Kết Bài Đọc (Takeaways & Insights)
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
 
                   {!canSubmitAutopsy && (
                     <p className="text-[11px] text-center text-stone-500">
-                      Cần hoàn thành đủ 4 Tasks + Chọn Giả Thuyết + Chọn Bằng Chứng để mở khóa Autopsy.
+                      Gợi ý: Trả lời các câu hỏi suy ngẫm để mở khóa phần tổng kết chuyên sâu.
                     </p>
                   )}
                 </div>

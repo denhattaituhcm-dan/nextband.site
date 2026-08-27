@@ -56,16 +56,25 @@ export const ReadlangExplorationSidebar: React.FC<ReadlangExplorationSidebarProp
 
   if (!processedTerm) {
     return (
-      <div className="flex flex-col items-center justify-center p-8 text-center text-stone-500 space-y-3 min-h-[320px]">
-        <div className="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
-          <Sparkles className="h-6 w-6" />
+      <div className="flex flex-col items-center justify-center p-8 text-center text-stone-500 space-y-4 min-h-[360px]">
+        <div className="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center shadow-xs">
+          <Sparkles className="h-6 w-6 text-emerald-600" />
         </div>
-        <div className="space-y-1">
-          <p className="text-sm font-bold text-stone-800">Chạm vào bất kỳ từ nào</p>
-          <p className="text-xs text-stone-500 max-w-xs leading-relaxed">
-            Click vào bất kỳ từ vựng hoặc cụm từ nào trong bài đọc để nhận diện bản chất ngữ nghĩa và ngữ cảnh ứng dụng.
+        <div className="space-y-1.5 max-w-xs">
+          <p className="text-sm font-bold text-stone-800">Không Gian Đọc Thư Giãn</p>
+          <p className="text-xs text-stone-500 leading-relaxed">
+            Nhấp vào bất kỳ từ vựng hoặc câu văn nào trong bài đọc để xem giải nghĩa sâu, bản chất ngữ nghĩa và ngữ cảnh ứng dụng.
           </p>
         </div>
+        {onBackToTasks && (
+          <button
+            onClick={onBackToTasks}
+            className="text-xs font-medium text-amber-800 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 px-3.5 py-1.5 rounded-full border border-amber-200/80 transition-all cursor-pointer flex items-center gap-1.5"
+          >
+            <Lightbulb className="h-3.5 w-3.5 text-amber-600" />
+            Xem các câu hỏi suy ngẫm
+          </button>
+        )}
       </div>
     );
   }
