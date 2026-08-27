@@ -1,7 +1,21 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { VocabularyTerm } from "../types";
-import { Volume2, Sparkles, BookOpen, Check, BookmarkPlus, BookmarkCheck, ArrowLeft } from "lucide-react";
+import {
+  Volume2,
+  Sparkles,
+  BookmarkPlus,
+  BookmarkCheck,
+  ArrowLeft,
+  Lightbulb,
+  Target,
+  Repeat,
+  AlertTriangle,
+  Zap,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { humanizeVocabularyTerm } from "../services/humanizationEngine";
+import { sanitizeVocabularyTerm } from "../services/contentSanitizer";
+import { validateSemanticEntry } from "../services/semanticValidator";
 
 interface ReadlangExplorationSidebarProps {
   activeTerm: VocabularyTerm | null;
@@ -18,18 +32,27 @@ export const ReadlangExplorationSidebar: React.FC<ReadlangExplorationSidebarProp
 }) => {
   const isSaved = activeTerm ? savedTerms.includes(activeTerm.term) : false;
 
+  // Process term through the 7-stage pipeline:
+  // 1. Validate -> 2. Humanize -> 3. Sanitize
+  const processedTerm = useMemo(() => {
+    if (!activeTerm) return null;
+    const validated = { ...activeTerm, validation_report: validateSemanticEntry(activeTerm) };
+    const humanized = humanizeVocabularyTerm(validated);
+    return sanitizeVocabularyTerm(humanized);
+  }, [activeTerm]);
+
   const handlePlayAudio = () => {
-    if (!activeTerm) return;
+    if (!processedTerm) return;
     if ("speechSynthesis" in window) {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(activeTerm.term);
+      const utterance = new SpeechSynthesisUtterance(processedTerm.term);
       utterance.lang = "en-US";
       utterance.rate = 0.9;
       window.speechSynthesis.speak(utterance);
     }
   };
 
-  if (!activeTerm) {
+  if (!processedTerm) {
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center text-stone-500 space-y-3 min-h-[320px]">
         <div className="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
@@ -38,18 +61,22 @@ export const ReadlangExplorationSidebar: React.FC<ReadlangExplorationSidebarProp
         <div className="space-y-1">
           <p className="text-sm font-bold text-stone-800">Chạm vào bất kỳ từ nào</p>
           <p className="text-xs text-stone-500 max-w-xs leading-relaxed">
-            Click vào bất kỳ từ vựng hoặc cụm từ nào trong bài đọc để xem phân tích ngữ cảnh chi tiết chuẩn Readlang.
+            Click vào bất kỳ từ vựng hoặc cụm từ nào trong bài đọc để nhận diện bản chất ngữ nghĩa và ngữ cảnh ứng dụng.
           </p>
         </div>
       </div>
     );
   }
 
-  // Generate rich contextual explanation
-  const cleanVi = activeTerm.meaning_vi.replace(/^Cụm từ:\s*/i, "").replace(/^Từ vựng:\s*/i, "");
+  const cleanVi = (processedTerm.meaning_vi || "")
+    .replace(/^Cụm từ:\s*/i, "")
+    .replace(/^Từ vựng:\s*/i, "");
+
+  const h = processedTerm.humanized;
+  const isDeep = processedTerm.depth === "deep";
 
   return (
-    <div className="p-4 sm:p-5 space-y-5 animate-in fade-in duration-150 font-sans">
+    <div className="p-4 sm:p-5 space-y-4 animate-in fade-in duration-150 font-sans">
       {/* Top action bar */}
       <div className="flex items-center justify-between border-b border-stone-100 pb-3">
         {onBackToTasks && (
@@ -64,7 +91,7 @@ export const ReadlangExplorationSidebar: React.FC<ReadlangExplorationSidebarProp
         <Button
           size="sm"
           variant="ghost"
-          onClick={() => onToggleSave(activeTerm.term)}
+          onClick={() => onToggleSave(processedTerm.term)}
           className={`h-7 px-2.5 text-xs gap-1.5 rounded-lg ${
             isSaved ? "text-emerald-700 bg-emerald-50 font-bold" : "text-stone-600 hover:bg-stone-100"
           }`}
@@ -83,7 +110,7 @@ export const ReadlangExplorationSidebar: React.FC<ReadlangExplorationSidebarProp
         </Button>
       </div>
 
-      {/* Main Term Header */}
+      {/* Main Term Header - First Screen Comprehension */}
       <div className="space-y-2.5">
         <div className="flex items-start gap-2.5">
           <button
@@ -96,23 +123,30 @@ export const ReadlangExplorationSidebar: React.FC<ReadlangExplorationSidebarProp
           <div className="flex-1 min-w-0">
             <div className="flex items-baseline gap-2 flex-wrap">
               <h3 className="text-xl font-black text-emerald-950 tracking-tight leading-tight">
-                {activeTerm.term}
+                {processedTerm.term}
               </h3>
-              {activeTerm.pronunciation && (
+              {processedTerm.pronunciation && (
                 <span className="text-xs font-mono text-stone-500">
-                  {activeTerm.pronunciation}
+                  {processedTerm.pronunciation}
                 </span>
               )}
             </div>
-            {activeTerm.pos && (
-              <span className="inline-block mt-1 text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/70 px-2 py-0.5 rounded border border-emerald-300">
-                {activeTerm.pos}
-              </span>
-            )}
+            <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+              {processedTerm.pos && (
+                <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/70 px-2 py-0.5 rounded border border-emerald-300">
+                  {processedTerm.pos}
+                </span>
+              )}
+              {isDeep && (
+                <span className="inline-block text-[10px] font-bold tracking-wider text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded border border-amber-300">
+                  ⭐ Khái niệm đòn bẩy
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Vietnamese Gloss Label (Nhãn tham khảo) */}
+        {/* Vietnamese Gloss Label (Nhãn tham khảo nhanh) */}
         <div className="rounded-xl bg-emerald-50/90 border border-emerald-300 p-3 text-stone-900 shadow-xs">
           <span className="text-[10px] uppercase font-bold text-emerald-800 tracking-wider block mb-0.5">
             🏷️ Nhãn dịch tham khảo (Gloss):
@@ -124,126 +158,96 @@ export const ReadlangExplorationSidebar: React.FC<ReadlangExplorationSidebarProp
       </div>
 
       {/* ========================================================================= */}
-      {/* COGNITIVE & TRI NHẬN FRAMEWORK BREAKDOWN                                  */}
+      {/* HUMANIZED PEDAGOGICAL BREAKDOWN (Zero Framework Jargon / Pure Teacher Voice) */}
       {/* ========================================================================= */}
-      <div className="space-y-4 text-xs text-stone-800 leading-relaxed">
+      <div className="space-y-3.5 text-xs text-stone-800 leading-relaxed">
         
-        {/* 1. CORE CONCEPT (Khái Niệm Lõi & Mental Representation) */}
-        <div className="space-y-1.5">
-          <p className="font-bold text-emerald-950 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
-            <span className="text-sm">🧠</span> 1. Khái Niệm Lõi (Core Concept):
-          </p>
-          <div className="bg-[#f0fdf4] p-3.5 rounded-xl border border-emerald-200 text-emerald-950 space-y-2">
-            <p className="font-medium leading-relaxed">
-              {activeTerm.cognitive?.core_concept || (
-                <>
-                  Khi người bản ngữ dùng từ <strong>&ldquo;{activeTerm.term}&rdquo;</strong>, họ không chỉ dùng một nhãn dịch mà đang hình dung một trạng thái/hành động mang bản chất: <em>&ldquo;{cleanVi.split("/")[0].trim()}&rdquo;</em>.
-                </>
-              )}
-            </p>
-            {activeTerm.meaning_en && activeTerm.meaning_en !== activeTerm.term && (
-              <p className="text-[11px] italic text-emerald-800 pt-1 border-t border-emerald-100">
-                &ldquo;{activeTerm.meaning_en}&rdquo;
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* 2. COGNITIVE FRAME (Khung Tri Nhận & Mental Scene) */}
-        {activeTerm.cognitive?.cognitive_frame && (
+        {/* 1. HIỂU ĐƠN GIẢN (Simple Intuition) */}
+        {h?.simple_intuition && (
           <div className="space-y-1.5">
-            <p className="font-bold text-sky-950 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
-              <span className="text-sm">🖼️</span> 2. Khung Cảnh Tâm Trí (Mental Scene):
+            <p className="font-bold text-emerald-950 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+              <Lightbulb className="h-3.5 w-3.5 text-emerald-600" />
+              Hiểu đơn giản
             </p>
-            <div className="bg-sky-50/80 p-3 rounded-xl border border-sky-200 text-sky-950 space-y-1.5 text-[11px]">
-              <p className="font-medium text-sky-900">
-                {activeTerm.cognitive.cognitive_frame.mental_scene}
+            <div className="bg-[#f0fdf4] p-3.5 rounded-xl border border-emerald-200 text-emerald-950 space-y-1.5">
+              <p className="font-medium leading-relaxed">
+                {h.simple_intuition}
               </p>
-              {activeTerm.cognitive.cognitive_frame.actor && (
-                <div className="grid grid-cols-2 gap-1.5 pt-1.5 border-t border-sky-100 text-[10px] text-stone-600">
-                  <div>• <strong>Tác thể:</strong> {activeTerm.cognitive.cognitive_frame.actor}</div>
-                  <div>• <strong>Đối tượng:</strong> {activeTerm.cognitive.cognitive_frame.recipient}</div>
-                  {activeTerm.cognitive.cognitive_frame.entity && (
-                    <div className="col-span-2">• <strong>Thực thể trao/chuyển:</strong> {activeTerm.cognitive.cognitive_frame.entity}</div>
-                  )}
-                  {activeTerm.cognitive.cognitive_frame.recipient_choice && (
-                    <div className="col-span-2 text-sky-800 font-semibold">• <strong>Quyền lựa chọn:</strong> {activeTerm.cognitive.cognitive_frame.recipient_choice}</div>
-                  )}
-                </div>
+              {processedTerm.meaning_en && processedTerm.meaning_en !== processedTerm.term && (
+                <p className="text-[11px] italic text-emerald-800 pt-1 border-t border-emerald-100">
+                  &ldquo;{processedTerm.meaning_en}&rdquo;
+                </p>
               )}
             </div>
           </div>
         )}
 
-        {/* 3. MEANING IN THIS SENTENCE (Ngữ Cảnh Bài Đọc) */}
-        {(activeTerm.cognitive?.meaning_in_context || activeTerm.context_note) && (
+        {/* 2. TRONG CÂU NÀY (In-context Story) */}
+        {h?.in_context_story && (
           <div className="space-y-1.5">
             <p className="font-bold text-amber-950 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
-              <span className="text-sm">📌</span> 3. Trong Ngữ Cảnh Câu Hiện Tại:
+              <Target className="h-3.5 w-3.5 text-amber-600" />
+              Trong câu này
             </p>
             <div className="bg-amber-50/70 p-3 rounded-xl border border-amber-200 text-amber-950 font-medium">
-              {activeTerm.cognitive?.meaning_in_context || activeTerm.context_note}
+              {h.in_context_story}
             </div>
           </div>
         )}
 
-        {/* 4. TRANSFER TO NEW CONTEXTS (Chuyển Sang Bối Cảnh Mới & Semantic Invariant) */}
-        {activeTerm.cognitive?.transfer_contexts && activeTerm.cognitive.transfer_contexts.length > 0 && (
+        {/* 3. BẠN SẼ GẶP NÓ Ở NHỮNG ĐÂU? (Real-world Transfers) */}
+        {h?.real_world_transfers && h.real_world_transfers.length > 0 && (
           <div className="space-y-1.5">
             <p className="font-bold text-indigo-950 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
-              <span className="text-sm">🔄</span> 4. Chuyển Bối Cảnh & Điểm Chung Ý Niệm:
+              <Repeat className="h-3.5 w-3.5 text-indigo-600" />
+              Bạn sẽ gặp nó ở những đâu?
             </p>
             <div className="space-y-2">
-              {activeTerm.cognitive.transfer_contexts.map((ex, idx) => (
+              {h.real_world_transfers.map((ex, idx) => (
                 <div key={idx} className="bg-indigo-50/60 p-2.5 rounded-xl border border-indigo-100 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-indigo-800 uppercase px-1.5 py-0.5 rounded bg-indigo-100">
-                      {ex.domain_label}
-                    </span>
-                  </div>
+                  {ex.domain_label && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-indigo-800 uppercase px-1.5 py-0.5 rounded bg-indigo-100">
+                        {ex.domain_label}
+                      </span>
+                    </div>
+                  )}
                   <p className="font-serif italic text-stone-900 text-xs">
                     &ldquo;{ex.sentence}&rdquo;
                   </p>
-                  <p className="text-[11px] text-indigo-950 font-medium pt-0.5">
-                    💡 <em>Điểm chung ý niệm:</em> {ex.invariant_connection}
-                  </p>
+                  {ex.connection_note && (
+                    <p className="text-[11px] text-indigo-950 font-medium pt-0.5">
+                      👉 <em>{ex.connection_note}</em>
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* 5. CONTRAST & BOUNDARIES (Phân Biệt Từ Gần Nghĩa & Ranh Giới Sai Lầm) */}
-        {(activeTerm.cognitive?.contrast || activeTerm.cognitive?.boundaries) && (
+        {/* 4. PHÂN BIỆT & ĐỪNG HIỂU NHẦM (Nuance Distinction & Boundary) */}
+        {h?.nuance_warning && (
           <div className="space-y-1.5">
             <p className="font-bold text-purple-950 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
-              <span className="text-sm">⚖️</span> 5. Phân Biệt Sắc Thái & Ranh Giới:
+              <AlertTriangle className="h-3.5 w-3.5 text-purple-600" />
+              Phân biệt & Lưu ý
             </p>
             <div className="bg-purple-50/60 p-3 rounded-xl border border-purple-200 text-purple-950 space-y-2 text-[11px]">
-              {activeTerm.cognitive.contrast && (
-                <div>
-                  <strong className="text-purple-900 block mb-0.5">So sánh với từ gần nghĩa:</strong>
-                  <p className="leading-relaxed">{activeTerm.cognitive.contrast}</p>
-                </div>
-              )}
-              {activeTerm.cognitive.boundaries && (
-                <div className="pt-1.5 border-t border-purple-200">
-                  <strong className="text-red-800 block mb-0.5">⚠️ Ranh giới sử dụng (Lưu ý tránh nhầm):</strong>
-                  <p className="leading-relaxed text-stone-700">{activeTerm.cognitive.boundaries}</p>
-                </div>
-              )}
+              <p className="leading-relaxed whitespace-pre-line">{h.nuance_warning}</p>
             </div>
           </div>
         )}
 
-        {/* 6. RETRIEVAL RULE (Quy Tắc Tự Nhận Diện) */}
-        {activeTerm.cognitive?.retrieval_rule && (
+        {/* 5. CÁCH NHẬN DIỆN KHI ĐỌC / DÙNG (Retrieval Heuristic) */}
+        {h?.retrieval_tip && (
           <div className="space-y-1.5">
             <p className="font-bold text-emerald-950 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
-              <span className="text-sm">⚡</span> 6. Quy Tắc Tự Nhận Diện (Retrieval Rule):
+              <Zap className="h-3.5 w-3.5 text-emerald-600" />
+              Cách nhận diện khi đọc
             </p>
             <div className="bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/30 text-emerald-950 font-semibold text-[11px] leading-relaxed">
-              {activeTerm.cognitive.retrieval_rule}
+              {h.retrieval_tip}
             </div>
           </div>
         )}

@@ -1,4 +1,6 @@
 import { VocabularyTerm } from "../types";
+import { determineExplanationDepth } from "./semanticValidator";
+import { humanizeVocabularyTerm } from "./humanizationEngine";
 
 // Standard English function words / stop words to exclude from click-to-lookup
 export const FUNCTION_WORDS = new Set([
@@ -1218,36 +1220,29 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_en: "distributing or providing advice from a position of authority/experience",
     meaning_vi: "chia sẻ / ban phát (lời khuyên kinh nghiệm)",
     context_note: "Warren Buffett dành nhiều thập kỷ chia sẻ những lời khuyên thông thái từ vị thế một bậc thầy đầu tư.",
-    cognitive: {
-      core_concept: "Phân phát hoặc trao đi từng phần từ một nguồn dự trữ lớn hoặc từ vị thế của một người nắm giữ thẩm quyền/kinh nghiệm/nguồn lực.",
-      cognitive_frame: {
-        actor: "Nguồn thẩm quyền / Chuyên gia (Buffett)",
-        recipient: "Cộng đồng / Người học",
-        entity: "Những đúc kết thông thái (Advice)",
-        direction: "Phân phối đều đặn từ nguồn uy tín ra xung quanh",
-        mental_scene: "Một người nắm giữ kho tàng kinh nghiệm dày dặn → phân phát từng phần giá trị thiết thực cho người cần.",
-      },
-      meaning_in_context: "Buffett ở vị thế nhà lãnh đạo lỗi lạc đều đặn chia sẻ các bài học kinh nghiệm sâu sắc cho thế hệ sau.",
-      transfer_contexts: [
+    depth: "deep",
+    humanized: {
+      simple_intuition: "dispense là đưa một thứ ra cho người khác nhận hoặc sử dụng, thường từ một nguồn có sẵn và theo một cách khá có tổ chức.",
+      in_context_story: "Buffett đang 'phân phát' những lời khuyên của mình. Ở đây 'nguồn' không phải một cái kho vật lý, mà là kiến thức và kho kinh nghiệm dày dặn của ông sau nhiều thập kỷ đúc kết được chia sẻ đều đặn cho người học.",
+      real_world_transfers: [
         {
           domain_label: "Y tế",
           sentence: "The hospital pharmacy dispenses vital medication to patients.",
-          invariant_connection: "Cấp phát thuốc từ kho dược theo đơn chỉ định.",
+          connection_note: "dispense medication → cấp phát thuốc từ kho dược theo quy trình chuẩn.",
         },
         {
           domain_label: "Tư pháp",
           sentence: "Courts are responsible for dispensing equal justice under the law.",
-          invariant_connection: "Thực thi và phân xử công lý từ thẩm quyền của nhà nước.",
+          connection_note: "dispense justice → thực thi và phân xử công lý từ thẩm quyền của nhà nước.",
         },
         {
           domain_label: "Thiết bị tự động",
           sentence: "The vending machine dispenses hot tea within seconds.",
-          invariant_connection: "Nhả sản phẩm theo từng đơn vị được yêu cầu.",
+          connection_note: "dispense drinks → tự động nhả sản phẩm theo từng đơn vị được yêu cầu.",
         },
       ],
-      contrast: "'dispense' khác 'give': 'give' là trao tặng đơn thuần giữa bất kỳ ai; 'dispense' mang hàm ý phân phối có thẩm quyền, có hệ thống hoặc từ kho dự trữ uy tín.",
-      boundaries: "'dispense with sth' là thành ngữ mang nghĩa 'bỏ qua / không dùng đến thứ gì nữa' (vd: Let's dispense with formalities).",
-      retrieval_rule: "Khi diễn tả hành động phân phát có thẩm quyền, chia sẻ kinh nghiệm từ nguồn uy tín hoặc cấp phát theo quy trình → Nghĩ đến 'DISPENSE'.",
+      nuance_warning: "Đừng hiểu nhầm dispense = give:\n• 'give' chỉ đơn giản là trao tay bình thường giữa bất kỳ ai.\n• 'dispense' thường gợi cảm giác có một nguồn hoặc thẩm quyền đưa thứ gì đó ra theo quy trình hoặc mang tính biểu tượng sâu sắc hơn.\n\nLưu ý thành ngữ: 'dispense with something' mang nghĩa 'bỏ qua / không cần dùng đến' (ví dụ: Let's dispense with formalities).",
+      retrieval_tip: "Khi muốn diễn tả hành động cấp phát thuốc, thực thi công lý hoặc một chuyên gia chia sẻ kinh nghiệm từ nguồn kiến thức uy tín → Hãy nhớ tới 'DISPENSE'.",
     },
   },
   "dispense": {
@@ -1255,8 +1250,22 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     pronunciation: "/dɪˈspɛns/",
     pos: "verb",
     meaning_en: "distribute or provide, or manage without",
-    meaning_vi: "phân phát / đưa ra (lời khuyên)",
-    context_note: "Phân phát hoặc đưa ra có hệ thống.",
+    meaning_vi: "phân phát / đưa ra (lời khuyên, thuốc men)",
+    context_note: "Phân phát hoặc đưa ra có tổ chức từ một nguồn sẵn có.",
+    depth: "deep",
+    humanized: {
+      simple_intuition: "dispense là đưa một thứ ra cho người khác nhận hoặc sử dụng từ một nguồn có sẵn và theo cách có tổ chức.",
+      in_context_story: "Trong văn cảnh lãnh đạo, dispense advice thể hiện việc đưa ra các lời khuyên từ nguồn kinh nghiệm đúc kết.",
+      real_world_transfers: [
+        {
+          domain_label: "Đời sống & Công việc",
+          sentence: "Experienced mentors regularly dispense practical career advice to junior colleagues.",
+          connection_note: "Chia sẻ kinh nghiệm định hướng nghề nghiệp từ người đi trước.",
+        },
+      ],
+      nuance_warning: "Phân biệt 'dispense' (cấp phát) và 'dispense with' (bãi bỏ/bỏ qua thứ gì).",
+      retrieval_tip: "Dùng 'dispense' khi hành động đưa ra mang tính chuyên môn, thẩm quyền hoặc quy trình bài bản.",
+    },
   },
   "force multiplier": {
     term: "force multiplier",
@@ -1265,28 +1274,24 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_en: "a factor that dramatically increases the effectiveness of an effort or skill",
     meaning_vi: "đòn bẩy nhân đôi sức mạnh / hệ số nhân sức mạnh",
     context_note: "Kỹ năng giao tiếp là đòn bẩy khuếch đại mọi kết quả trong công việc và cuộc sống.",
-    cognitive: {
-      core_concept: "Một yếu tố, công cụ hoặc năng lực khi được kết hợp vào sẽ làm tăng gấp nhiều lần hiệu quả của toàn bộ hệ thống hoặc các năng lực khác, thay vì chỉ tăng theo phép cộng đơn thuần.",
-      cognitive_frame: {
-        actor: "Năng lực / Yếu tố đòn bẩy (Communication)",
-        recipient: "Toàn bộ kết quả và nỗ lực (Career results)",
-        mental_scene: "Đầu vào là 1 đơn vị kỹ thuật → qua bộ khuếch đại giao tiếp → đầu ra tạo ra 10 đơn vị tầm ảnh hưởng và thành công.",
-      },
-      meaning_in_context: "Giao tiếp không chỉ là kỹ năng bổ trợ, mà là hệ số nhân giúp mọi ý tưởng kinh doanh hay mã nguồn phần mềm phát huy tối đa giá trị.",
-      transfer_contexts: [
+    depth: "deep",
+    humanized: {
+      simple_intuition: "Một yếu tố, công cụ hoặc năng lực khi được kết hợp vào sẽ làm nhân gấp nhiều lần hiệu quả của toàn bộ hệ thống hoặc các năng lực khác, thay vì chỉ tăng theo phép cộng đơn thuần.",
+      in_context_story: "Giao tiếp không chỉ là kỹ năng bổ trợ, mà là hệ số nhân giúp mọi ý tưởng kinh doanh hay mã nguồn phần mềm phát huy tối đa giá trị và tầm ảnh hưởng.",
+      real_world_transfers: [
         {
           domain_label: "Quân sự & Chiến lược",
           sentence: "Night-vision technology acted as a force multiplier for the tactical team.",
-          invariant_connection: "Công nghệ nhìn đêm nhân đôi hiệu quả tác chiến của cả đội.",
+          connection_note: "Công nghệ nhìn đêm nhân đôi hiệu quả tác chiến của cả đội.",
         },
         {
           domain_label: "Công nghệ & AI",
           sentence: "Automation is a force multiplier for modern software developers.",
-          invariant_connection: "Tự động hóa giúp một kỹ sư làm việc tương đương cả nhóm.",
+          connection_note: "Tự động hóa giúp một kỹ sư làm việc với năng suất tương đương cả nhóm.",
         },
       ],
-      contrast: "'force multiplier' khác 'addition': Phép nhân (multiplier) tạo sự bùng nổ cấp số nhân, trong khi addition chỉ là phép cộng tích lũy nhỏ lẻ.",
-      retrieval_rule: "Khi muốn mô tả một yếu tố biến 1 thành 10, khuếch đại toàn bộ sức mạnh tổng thể → Dùng 'FORCE MULTIPLIER'.",
+      nuance_warning: "'force multiplier' khác 'addition': Phép nhân (multiplier) tạo sự bùng nổ cấp số nhân (1 biến thành 10), trong khi addition chỉ là phép cộng tích lũy nhỏ lẻ.",
+      retrieval_tip: "Khi muốn mô tả một đòn bẩy biến 1 thành 10, khuếch đại toàn bộ sức mạnh tổng thể → Dùng 'FORCE MULTIPLIER'.",
     },
   },
   "competitive advantage": {
@@ -1296,23 +1301,24 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_en: "a condition or circumstance that puts a person or company in a favorable business position",
     meaning_vi: "lợi thế cạnh tranh vượt trội",
     context_note: "Khả năng giao tiếp giữa người với người trở thành lợi thế cạnh tranh cốt lõi trong kỷ nguyên AI.",
-    cognitive: {
-      core_concept: "Một thuộc tính hoặc năng lực độc nhất giúp một cá nhân hoặc tổ chức tạo ra giá trị vượt trội mà đối thủ cạnh tranh không thể dễ dàng sao chép hoặc thay thế.",
-      cognitive_frame: {
-        actor: "Người sở hữu năng lực giao tiếp con người",
-        recipient: "Thị trường / Môi trường AI cạnh tranh",
-        mental_scene: "Trong một thị trường mà ai cũng dùng chung các công cụ AI giống nhau, khả năng thấu cảm và tạo dựng niềm tin trở thành điểm phân tách độc nhất vô nhị.",
-      },
-      meaning_in_context: "Khi AI san bằng kỹ năng viết lách cơ bản, năng lực kết nối cảm xúc giữa người với người trở thành vũ khí cạnh tranh chiến lược.",
-      transfer_contexts: [
+    depth: "deep",
+    humanized: {
+      simple_intuition: "Lợi thế hoặc năng lực độc nhất giúp một cá nhân hoặc tổ chức tạo ra giá trị vượt trội và đứng ở vị trí ưu thế hơn so với đối thủ.",
+      in_context_story: "Khi AI san bằng kỹ năng viết lách cơ bản, khả năng thấu cảm và tạo dựng niềm tin giữa người với người trở thành lợi thế cạnh tranh khó sao chép.",
+      real_world_transfers: [
         {
           domain_label: "Kinh doanh chiến lược",
           sentence: "Proprietary battery technology gave the automaker a clear competitive advantage.",
-          invariant_connection: "Nắm giữ công nghệ độc quyền mà đối thủ không thể sao chép trong ngắn hạn.",
+          connection_note: "Nắm giữ công nghệ độc quyền giúp duy trì ưu thế thị phần dài hạn.",
+        },
+        {
+          domain_label: "Sự nghiệp cá nhân",
+          sentence: "Empathy and clear synthesis provide a decisive competitive advantage in executive roles.",
+          connection_note: "Kỹ năng lãnh đạo con người tạo nên điểm khác biệt quyết định.",
         },
       ],
-      contrast: "'competitive advantage' khác 'temporary benefit': Lợi thế cạnh tranh mang tính bền vững dài hạn, không phải là ưu thế nhất thời.",
-      retrieval_rule: "Khi muốn chỉ ra yếu tố độc nhất giúp vượt lên trên đối thủ trong một cuộc đua dài hạn → Dùng 'COMPETITIVE ADVANTAGE'.",
+      nuance_warning: "'competitive advantage' khác 'temporary benefit': Lợi thế cạnh tranh mang tính bền vững dài hạn và khó bắt chước, không phải là ưu thế nhất thời.",
+      retrieval_tip: "Khi muốn chỉ ra yếu tố độc nhất giúp vượt lên trên đối thủ trong một cuộc đua dài hạn → Dùng 'COMPETITIVE ADVANTAGE'.",
     },
   },
   "strategic business skill": {
@@ -2903,108 +2909,23 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
 };
 
 /**
- * Dynamic Intelligent Cognitive Synthesizer
- * Guarantees 100% of all content words have the complete 6-layer Cognitive & Semantic Analysis!
+ * Dynamic Intelligent Pedagogical Synthesizer
+ * Formulates humanized teacher explanations adapted to the word's complexity profile.
  */
 export function enrichCognitiveTerm(term: VocabularyTerm): VocabularyTerm {
-  if (term.cognitive) return term;
-
-  const cleanTerm = term.term.trim();
-  const cleanVi = (term.meaning_vi || cleanTerm).replace(/^(Từ vựng|Cụm từ):\s*/i, "").trim();
-  const primaryVi = cleanVi.split("/")[0].trim();
-  const pos = (term.pos || "").toLowerCase();
-
-  let core_concept = "";
-  let mental_scene = "";
-  let actor = "Chủ thể tác động trong tình huống";
-  let recipient = "Đối tượng tiếp nhận hoặc môi trường tương tác";
-  let contrast = "";
-  let retrieval_rule = "";
-  let exEveryday = "";
-  let exBusiness = "";
-  let exAcademic = "";
-  let exAbstract = "";
-  let boundary = "";
-
-  if (pos.includes("verb")) {
-    core_concept = `Hành động hoặc tiến trình mà chủ thể chủ động hoặc tự nhiên tạo ra sự chuyển dịch trạng thái: "${primaryVi}". Người bản ngữ hình dung một tác lực, ý chí hoặc cơ chế vận hành làm thay đổi cục diện sang trạng thái "${primaryVi}".`;
-    mental_scene = `Chủ thể tác động một lực hoặc định hướng → kích hoạt tiến trình "${primaryVi}" lên đối tượng trong không gian sự kiện.`;
-    contrast = `Phân biệt với các động từ tĩnh hoặc hành động khác: '${cleanTerm}' biểu thị sự chuyển động có chủ đích hoặc cơ chế nội tại hướng tới kết quả "${primaryVi}".`;
-    retrieval_rule = `Khi muốn diễn đạt một hành động hoặc biến chuyển làm thay đổi trạng thái mang bản chất "${primaryVi}" → Hãy nghĩ đến động từ '${cleanTerm.toUpperCase()}'.`;
-    exEveryday = `In daily life, people actively ${cleanTerm} their personal goals with determination.`;
-    exBusiness = `Strategic leaders ${cleanTerm} core business operations to maintain sustainable growth.`;
-    exAcademic = `Scientific empirical models ${cleanTerm} observed environmental phenomena accurately.`;
-    exAbstract = `Philosophical principles ${cleanTerm} how human consciousness interprets ethical dilemmas.`;
-    boundary = `Tránh dịch thô theo từng từ con; cần gắn '${cleanTerm}' với tiến trình hành động chuyển dịch trạng thái '${primaryVi}'.`;
-  } else if (pos.includes("noun")) {
-    core_concept = `Khái niệm lõi chỉ một thực thể, trạng thái, hiện tượng hoặc giá trị đại diện cho: "${primaryVi}". Người bản ngữ hình dung đây là một cấu phần hoặc vai trò chức năng cốt lõi trong hệ thống.`;
-    mental_scene = `Một thực thể hoặc giá trị mang thuộc tính "${primaryVi}" hiện diện rõ ràng trong cấu trúc tư duy hoặc không gian vật lý.`;
-    contrast = `Khác với các danh từ chung chung, '${cleanTerm}' chỉ đích danh bản chất "${primaryVi}" với vai trò chức năng cụ thể trong mối tương quan với các thực thể khác.`;
-    retrieval_rule = `Khi cần định danh một đối tượng, hiện tượng hoặc giá trị mang bản chất "${primaryVi}" → Dùng danh từ '${cleanTerm.toUpperCase()}'.`;
-    exEveryday = `Maintaining a balanced ${cleanTerm} promotes well-being and clear communication.`;
-    exBusiness = `The ${cleanTerm} of the enterprise determined its competitive positioning in the global market.`;
-    exAcademic = `Rigorous research defines the fundamental ${cleanTerm} governing this physical mechanism.`;
-    exAbstract = `Human intuition perceives this ${cleanTerm} as an indispensable element of trust and influence.`;
-    boundary = `Lưu ý xem danh từ là đếm được hay không đếm được trong câu để kết hợp mạo từ và lượng từ chính xác.`;
-  } else if (pos.includes("adj")) {
-    core_concept = `Đặc tính hoặc thuộc tính nổi bật biểu thị: "${primaryVi}". Người bản ngữ dùng từ này để khu biệt đối tượng này với các đối tượng thông thường khác trên thang đo tính chất.`;
-    mental_scene = `Gán nhãn phẩm chất "${primaryVi}" lên đối tượng để làm nổi bật giá trị hoặc bản chất đặc trưng của nó trong bức tranh tổng thể.`;
-    contrast = `So với các tính từ thông thường, '${cleanTerm}' nhấn mạnh mức độ đặc trưng và sắc thái riêng biệt của thuộc tính "${primaryVi}".`;
-    retrieval_rule = `Khi cần làm nổi bật phẩm chất hoặc tính chất mang đặc trưng "${primaryVi}" của một đối tượng → Dùng tính từ '${cleanTerm.toUpperCase()}'.`;
-    exEveryday = `Her ${cleanTerm} approach made complex personal conversations feel effortless and warm.`;
-    exBusiness = `Adopting a ${cleanTerm} framework allowed the executive board to mitigate strategic risks.`;
-    exAcademic = `The experimental telemetry yielded ${cleanTerm} data regarding thermodynamic changes.`;
-    exAbstract = `An inherently ${cleanTerm} perspective helps navigate ambiguity and moral complexity.`;
-    boundary = `Đảm bảo tính từ đứng trước danh từ bổ nghĩa hoặc sau liên động từ (linking verb) một cách tự nhiên.`;
-  } else {
-    core_concept = `Yếu tố ngôn ngữ biểu thị phương thức, mức độ hoặc hoàn cảnh kích hoạt: "${primaryVi}".`;
-    mental_scene = `Bổ sung điều kiện và sắc thái cho hành động/trạng thái trong câu để định hình bức tranh tư duy chính xác.`;
-    contrast = `Làm rõ mức độ và phương thức so với các trạng thái tiêu chuẩn thông thường.`;
-    retrieval_rule = `Khi muốn bổ nghĩa về mức độ hoặc cách thức mang tính chất "${primaryVi}" → Dùng '${cleanTerm.toUpperCase()}'.`;
-    exEveryday = `She expressed her thoughts ${cleanTerm}, ensuring everyone felt respected.`;
-    exBusiness = `The team executed the project ${cleanTerm}, achieving optimal operational performance.`;
-    exAcademic = `The statistical telemetry correlated ${cleanTerm} with observed climate variations.`;
-    exAbstract = `Principles that function ${cleanTerm} transcend temporary industry trends.`;
-    boundary = `Chú ý vị trí bổ nghĩa trong câu để không làm thay đổi trọng tâm thông điệp.`;
+  const depth = determineExplanationDepth(term);
+  
+  if (term.humanized) {
+    return {
+      ...term,
+      depth,
+    };
   }
 
-  return {
+  return humanizeVocabularyTerm({
     ...term,
-    cognitive: {
-      core_concept,
-      cognitive_frame: {
-        actor,
-        recipient,
-        mental_scene,
-      },
-      meaning_in_context: term.context_note || `Trong bài đọc này, từ đang thể hiện ý niệm "${primaryVi}" gắn chặt với mạch tư duy của tác giả.`,
-      transfer_contexts: [
-        {
-          domain_label: "1. Đời sống hàng ngày (Everyday Context)",
-          sentence: exEveryday,
-          invariant_connection: `Điểm chung ý niệm: Ứng dụng bản chất "${primaryVi}" vào tương tác và hành vi đời thường.`,
-        },
-        {
-          domain_label: "2. Công việc & Kinh doanh (Business Context)",
-          sentence: exBusiness,
-          invariant_connection: `Điểm chung ý niệm: Thể hiện giá trị/tiến trình "${primaryVi}" trong quản trị và điều hành tổ chức.`,
-        },
-        {
-          domain_label: "3. Học thuật & Nghiên cứu (Academic Context)",
-          sentence: exAcademic,
-          invariant_connection: `Điểm chung ý niệm: Định danh hoặc chứng minh thuộc tính "${primaryVi}" trong phân tích khoa học.`,
-        },
-        {
-          domain_label: "4. Tư duy trừu tượng (Abstract Domain)",
-          sentence: exAbstract,
-          invariant_connection: `Điểm chung ý niệm: Khái quát hóa nguyên lý "${primaryVi}" ở tầng nhận thức phổ quát.`,
-        },
-      ],
-      contrast,
-      boundaries: boundary,
-      retrieval_rule,
-    },
-  };
+    depth,
+  });
 }
 
 /**

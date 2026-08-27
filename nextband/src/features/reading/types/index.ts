@@ -33,6 +33,34 @@ export interface CognitiveAnalysis {
   retrieval_rule: string;
 }
 
+export type ExplanationDepth = "concise" | "standard" | "deep";
+
+export interface HumanizedTransferItem {
+  pattern?: string;
+  domain_label?: string;
+  sentence: string;
+  connection_note: string;
+}
+
+export interface HumanizedExplanation {
+  simple_intuition: string; // 💡 Hiểu đơn giản
+  in_context_story?: string; // 🎯 Trong câu này
+  real_world_transfers?: HumanizedTransferItem[]; // 🔄 Bạn sẽ gặp nó ở những đâu?
+  nuance_warning?: string; // ⚠️ Phân biệt & Đừng hiểu nhầm
+  retrieval_tip?: string; // ⚡ Cách nhận diện khi đọc/dùng
+}
+
+export interface SemanticValidationReport {
+  isValid: boolean;
+  depth: ExplanationDepth;
+  warnings?: string[];
+  flags?: {
+    isOversimplified?: boolean;
+    isPosMismatch?: boolean;
+    isMetaphorLiteralized?: boolean;
+  };
+}
+
 export interface VocabularyTerm {
   term: string;
   pronunciation: string;
@@ -40,7 +68,10 @@ export interface VocabularyTerm {
   meaning_en: string;
   meaning_vi: string;
   context_note: string;
+  depth?: ExplanationDepth;
   cognitive?: CognitiveAnalysis;
+  humanized?: HumanizedExplanation;
+  validation_report?: SemanticValidationReport;
 }
 
 export interface Paragraph {
