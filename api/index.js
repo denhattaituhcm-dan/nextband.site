@@ -103316,10 +103316,20 @@ var usersRoutes = async (fastify) => {
         request.log.error({ err, email: cleanEmail }, "User creation failed");
         const errMsg = err?.message || "Kh\xF4ng th\u1EC3 t\u1EA1o t\xE0i kho\u1EA3n ng\u01B0\u1EDDi d\xF9ng";
         if (errMsg.toLowerCase().includes("already") || errMsg.toLowerCase().includes("duplicate") || errMsg.includes("tr\xF9ng l\u1EB7p")) {
+          const existing2 = await fastify.prisma.user.findFirst({
+            where: { email: cleanEmail },
+            include: { roles: true }
+          });
           return reply.status(409).send({
             statusCode: 409,
             error: "Email \u0111\xE3 t\u1ED3n t\u1EA1i trong h\u1EC7 th\u1ED1ng",
-            message: "Email \u0111\xE3 t\u1ED3n t\u1EA1i trong h\u1EC7 th\u1ED1ng"
+            message: "Email \u0111\xE3 t\u1ED3n t\u1EA1i trong h\u1EC7 th\u1ED1ng",
+            existingUser: existing2 ? {
+              id: existing2.userId || existing2.id,
+              email: existing2.email,
+              fullName: existing2.fullName,
+              roles: (existing2.roles || []).map((r) => r.role)
+            } : void 0
           });
         }
         return reply.status(400).send({
@@ -103351,12 +103361,25 @@ var usersRoutes = async (fastify) => {
         joinedAt,
         resignedAt
       } = request.body;
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      const isEmail = typeof id === "string" && id.includes("@");
+      const orConditions = [];
+      if (isUUID) {
+        orConditions.push({ userId: id }, { id });
+      }
+      if (isEmail) {
+        orConditions.push({ email: id.toLowerCase().trim() });
+      }
+      if (orConditions.length === 0) {
+        return reply.status(400).send({
+          statusCode: 400,
+          error: "ID ng\u01B0\u1EDDi d\xF9ng kh\xF4ng h\u1EE3p l\u1EC7",
+          message: "ID ng\u01B0\u1EDDi d\xF9ng kh\xF4ng h\u1EE3p l\u1EC7"
+        });
+      }
       const existingUser = await fastify.prisma.user.findFirst({
         where: {
-          OR: [
-            { userId: id },
-            { id }
-          ]
+          OR: orConditions
         },
         include: { roles: true }
       });

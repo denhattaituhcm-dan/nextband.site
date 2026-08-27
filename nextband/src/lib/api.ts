@@ -1578,7 +1578,10 @@ export const usersApi = {
     }
 
     const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.message || errData.error || "Tạo người dùng thất bại");
+    const err: any = new Error(errData.message || errData.error || "Tạo người dùng thất bại");
+    err.response = { data: errData, status: res.status };
+    err.existingUser = errData.existingUser;
+    throw err;
   },
 
   update: async (id: string, user: any) => {
@@ -1597,7 +1600,9 @@ export const usersApi = {
     }
 
     const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.message || errData.error || "Cập nhật người dùng thất bại");
+    const err: any = new Error(errData.message || errData.error || "Cập nhật người dùng thất bại");
+    err.response = { data: errData, status: res.status };
+    throw err;
   },
 
   delete: async (id: string) => {

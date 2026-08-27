@@ -742,10 +742,22 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         request.log.error({ err, email: cleanEmail }, "User creation failed");
         const errMsg = err?.message || "Không thể tạo tài khoản người dùng";
         if (errMsg.toLowerCase().includes("already") || errMsg.toLowerCase().includes("duplicate") || errMsg.includes("trùng lặp")) {
+          const existing = await fastify.prisma.user.findFirst({
+            where: { email: cleanEmail },
+            include: { roles: true },
+          });
           return reply.status(409).send({
             statusCode: 409,
             error: "Email đã tồn tại trong hệ thống",
             message: "Email đã tồn tại trong hệ thống",
+            existingUser: existing
+              ? {
+                  id: existing.userId || existing.id,
+                  email: existing.email,
+                  fullName: existing.fullName,
+                  roles: (existing.roles || []).map((r: any) => r.role),
+                }
+              : undefined,
           });
         }
         return reply.status(400).send({
@@ -780,12 +792,28 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         resignedAt,
       } = request.body as any;
 
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      const isEmail = typeof id === "string" && id.includes("@");
+
+      const orConditions: any[] = [];
+      if (isUUID) {
+        orConditions.push({ userId: id }, { id: id });
+      }
+      if (isEmail) {
+        orConditions.push({ email: id.toLowerCase().trim() });
+      }
+
+      if (orConditions.length === 0) {
+        return reply.status(400).send({
+          statusCode: 400,
+          error: "ID người dùng không hợp lệ",
+          message: "ID người dùng không hợp lệ",
+        });
+      }
+
       const existingUser = await fastify.prisma.user.findFirst({
         where: {
-          OR: [
-            { userId: id },
-            { id: id },
-          ],
+          OR: orConditions,
         },
         include: { roles: true },
       });

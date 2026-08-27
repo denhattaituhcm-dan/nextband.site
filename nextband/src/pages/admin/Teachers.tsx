@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { usersApi } from "@/lib/api";
+import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
 import { PublicFacultyTab } from "@/components/admin/faculty/PublicFacultyTab";
 import { Input } from "@/components/ui/input";
@@ -71,6 +72,7 @@ import {
   AlertTriangle,
   RefreshCw,
   UserX,
+  Trash2,
   ExternalLink,
   Award,
 } from "lucide-react";
@@ -132,6 +134,7 @@ export default function AdminTeachers() {
   // Confirm Toggle Safety State
   const [confirmUser, setConfirmUser] = useState<any>(null);
   const [pendingActiveState, setPendingActiveState] = useState<boolean>(false);
+  const [deleteUser, setDeleteUser] = useState<any>(null);
 
   // Smart Role Transfer / Conflict State
   const [conflictExistingUser, setConflictExistingUser] = useState<any>(null);
@@ -183,8 +186,20 @@ export default function AdminTeachers() {
   });
 
   const promoteToTeacherMutation = useMutation({
-    mutationFn: async ({ id, fullName, phone }: { id: string; fullName?: string; phone?: string }) => {
-      return usersApi.update(id, {
+    mutationFn: async ({ id, email, fullName, phone }: { id?: string; email?: string; fullName?: string; phone?: string }) => {
+      let targetId = id;
+      if ((!targetId || targetId === "undefined") && email) {
+        const { data } = await supabase
+          .from("profiles")
+          .select("user_id, id")
+          .eq("email", email.trim().toLowerCase())
+          .maybeSingle();
+        targetId = data?.user_id || data?.id || email;
+      }
+      if (!targetId || targetId === "undefined") {
+        throw new Error("Không xác định được ID người dùng để chuyển đổi vai trò.");
+      }
+      return usersApi.update(targetId, {
         role: "teacher",
         ...(fullName ? { fullName } : {}),
         ...(phone ? { phone } : {}),
@@ -207,7 +222,7 @@ export default function AdminTeachers() {
     onError: (err: any) => {
       toast({
         title: "Lỗi",
-        description: err?.message || "Không thể chuyển đổi vai trò sang Giáo viên",
+        description: err?.message || err?.response?.data?.message || "Không thể chuyển đổi vai trò sang Giáo viên",
         variant: "destructive",
       });
     },
@@ -238,6 +253,22 @@ export default function AdminTeachers() {
     },
   });
 
+  const deleteTeacherMutation = useMutation({
+    mutationFn: (id: string) => usersApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-teachers"] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ADMIN_STATS });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.TEACHERS_LIST });
+      toast({ title: "Đã xóa vĩnh viễn giáo viên khỏi hệ thống" });
+      setDeleteUser(null);
+    },
+    onError: (err: any) => {
+      const msg = err?.message || err?.response?.data?.error || "Không thể xóa giáo viên";
+      toast({ title: "Lỗi", description: msg, variant: "destructive" });
+      setDeleteUser(null);
+    },
+  });
+
   const createMutation = useMutation({
     mutationFn: (body: typeof emptyForm) => usersApi.create(body),
     onSuccess: () => {
@@ -249,11 +280,11 @@ export default function AdminTeachers() {
       setForm(emptyForm);
     },
     onError: (err: any) => {
-      const existingUser = err?.response?.data?.existingUser;
+      const existingUser = err?.existingUser || err?.response?.data?.existingUser;
       const msg =
-        err?.message ||
         err?.response?.data?.message ||
         err?.response?.data?.error ||
+        err?.message ||
         "Không thể tạo giáo viên. Vui lòng kiểm tra dữ liệu!";
 
       if (existingUser || msg.toLowerCase().includes("đã tồn tại") || msg.toLowerCase().includes("already") || msg.toLowerCase().includes("duplicate")) {
@@ -770,6 +801,13 @@ export default function AdminTeachers() {
                             <UserX className="mr-2 h-3.5 w-3.5" />
                             Vô hiệu hóa
                           </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-destructive focus:text-destructive focus:bg-destructive/10 cursor-pointer"
+                            onClick={() => setDeleteUser(teacher)}
+                          >
+                            <Trash2 className="mr-2 h-3.5 w-3.5" />
+                            Xóa giáo viên
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -829,6 +867,53 @@ export default function AdminTeachers() {
             >
               {toggleMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Xác nhận vô hiệu hóa
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Safety Delete Teacher Confirm Dialog */}
+      <AlertDialog open={!!deleteUser} onOpenChange={(open) => !open && setDeleteUser(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-destructive">
+              <Trash2 className="h-5 w-5" />
+              Xóa vĩnh viễn giáo viên khỏi hệ thống?
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-2 text-sm text-muted-foreground pt-2">
+                <p>
+                  Bạn có chắc chắn muốn xóa vĩnh viễn giáo viên{" "}
+                  <strong className="text-foreground">{deleteUser?.fullName || deleteUser?.email}</strong>?
+                </p>
+                {deleteUser && (
+                  <div className="rounded-md bg-destructive/10 border border-destructive/20 p-3 text-xs space-y-1 my-2 text-destructive">
+                    <p className="font-semibold">Cảnh báo quan trọng:</p>
+                    <p>• Hành động này không thể hoàn tác.</p>
+                    <p>• Toàn bộ tài khoản và thông tin hồ sơ của giáo viên sẽ bị xóa hoàn toàn khỏi cơ sở dữ liệu.</p>
+                    {(deleteUser.activeClassesCount > 0 || deleteUser.pendingSubmissionsCount > 0) && (
+                      <p className="font-medium text-amber-700 dark:text-amber-400 mt-1">
+                        ⚠️ Giáo viên hiện đang phụ trách {deleteUser.activeClassesCount || 0} lớp học và {deleteUser.pendingSubmissionsCount || 0} bài chờ chấm.
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteTeacherMutation.isPending}>Hủy</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={deleteTeacherMutation.isPending}
+              onClick={() => {
+                if (deleteUser) {
+                  deleteTeacherMutation.mutate(deleteUser.id);
+                }
+              }}
+            >
+              {deleteTeacherMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Xác nhận xóa vĩnh viễn
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -978,6 +1063,7 @@ export default function AdminTeachers() {
                 if (conflictExistingUser) {
                   promoteToTeacherMutation.mutate({
                     id: conflictExistingUser.id,
+                    email: conflictExistingUser.email || form.email,
                     fullName: form.fullName || conflictExistingUser.fullName,
                     phone: form.phone || undefined,
                   });
