@@ -11,6 +11,8 @@ import {
   Repeat,
   AlertTriangle,
   Zap,
+  Tag,
+  ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { humanizeVocabularyTerm } from "../services/humanizationEngine";
@@ -138,8 +140,9 @@ export const ReadlangExplorationSidebar: React.FC<ReadlangExplorationSidebarProp
                 </span>
               )}
               {isDeep && (
-                <span className="inline-block text-[10px] font-bold tracking-wider text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded border border-amber-300">
-                  ⭐ Khái niệm đòn bẩy
+                <span className="inline-flex items-center text-[10px] font-bold tracking-wider text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded border border-amber-300">
+                  <Sparkles className="h-3 w-3 text-amber-600 inline mr-1" />
+                  Khái niệm đòn bẩy
                 </span>
               )}
             </div>
@@ -148,8 +151,9 @@ export const ReadlangExplorationSidebar: React.FC<ReadlangExplorationSidebarProp
 
         {/* Vietnamese Gloss Label (Nhãn tham khảo nhanh) */}
         <div className="rounded-xl bg-emerald-50/90 border border-emerald-300 p-3 text-stone-900 shadow-xs">
-          <span className="text-[10px] uppercase font-bold text-emerald-800 tracking-wider block mb-0.5">
-            🏷️ Nhãn dịch tham khảo (Gloss):
+          <span className="text-[10px] uppercase font-bold text-emerald-800 tracking-wider flex items-center gap-1 mb-0.5">
+            <Tag className="h-3 w-3 text-emerald-700" />
+            Nhãn dịch tham khảo (Gloss):
           </span>
           <p className="text-base font-black text-emerald-950">
             {cleanVi}
@@ -216,8 +220,9 @@ export const ReadlangExplorationSidebar: React.FC<ReadlangExplorationSidebarProp
                     &ldquo;{ex.sentence}&rdquo;
                   </p>
                   {ex.connection_note && (
-                    <p className="text-[11px] text-indigo-950 font-medium pt-0.5">
-                      👉 <em>{ex.connection_note}</em>
+                    <p className="text-[11px] text-indigo-950 font-medium pt-0.5 flex items-center gap-1">
+                      <ArrowRight className="h-3 w-3 text-indigo-600 shrink-0" />
+                      <em>{ex.connection_note}</em>
                     </p>
                   )}
                 </div>

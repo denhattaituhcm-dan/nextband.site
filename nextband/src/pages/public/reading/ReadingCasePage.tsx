@@ -10,6 +10,7 @@ import {
   isContentWord,
   MULTI_WORD_PHRASES,
 } from "@/features/reading/services/readingDictionary";
+import { sanitizeLearnerText } from "@/features/reading/services/contentSanitizer";
 import { CrimeSceneBlueprint } from "@/features/reading/components/CrimeSceneBlueprint";
 import { ReadlangExplorationSidebar } from "@/features/reading/components/ReadlangExplorationSidebar";
 import { Button } from "@/components/ui/button";
@@ -260,12 +261,13 @@ export default function ReadingCasePage() {
           context_note: "",
         };
         const isTranslated = Boolean(activeTranslatedWords[termKey]);
-        const shortVi = (termData.meaning_vi || "")
-          .replace(/^Từ vựng:\s*/i, "")
-          .replace(/^Cụm từ:\s*/i, "")
-          .split("/")[0]
-          .replace(/\(.*?\)/g, "")
-          .trim();
+        const shortVi = sanitizeLearnerText(
+          (termData.meaning_vi || "")
+            .replace(/^Từ vựng:\s*/i, "")
+            .replace(/^Cụm từ:\s*/i, "")
+            .split("/")[0]
+            .replace(/\(.*?\)/g, "")
+        ).normalize("NFC");
 
         return (
           <span
@@ -273,7 +275,7 @@ export default function ReadingCasePage() {
             className="relative inline mx-0.5"
           >
             {isTranslated && (
-              <span className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap text-[11px] font-bold text-[#14532d] bg-[#dcfce7] px-2 py-0.5 rounded border border-[#86efac] shadow-xs animate-in fade-in duration-150 pointer-events-none flex items-center justify-center">
+              <span className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap text-[11px] font-bold text-[#14532d] bg-[#dcfce7] px-2 py-0.5 rounded border border-[#86efac] shadow-xs animate-in fade-in duration-150 pointer-events-none flex items-center justify-center tracking-normal font-sans">
                 {shortVi}
                 <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#dcfce7] border-r border-b border-[#86efac] rotate-45" />
               </span>
@@ -308,12 +310,13 @@ export default function ReadingCasePage() {
             context_note: "",
           };
           const isTranslated = Boolean(activeTranslatedWords[termKey]);
-          const shortVi = (termData.meaning_vi || "")
-          .replace(/^Từ vựng:\s*/i, "")
-          .replace(/^Cụm từ:\s*/i, "")
-          .split("/")[0]
-          .replace(/\(.*?\)/g, "")
-          .trim();
+          const shortVi = sanitizeLearnerText(
+            (termData.meaning_vi || "")
+              .replace(/^Từ vựng:\s*/i, "")
+              .replace(/^Cụm từ:\s*/i, "")
+              .split("/")[0]
+              .replace(/\(.*?\)/g, "")
+          ).normalize("NFC");
 
           return (
             <span

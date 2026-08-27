@@ -23,7 +23,7 @@ const NAMESPACED_INTERNAL_MARKERS = [
 export function sanitizeLearnerText(input: string | null | undefined): string {
   if (!input || typeof input !== "string") return "";
 
-  let text = input;
+  let text = input.normalize("NFC");
 
   // 1. Remove namespaced internal tokens & debug markers
   for (const pattern of NAMESPACED_INTERNAL_MARKERS) {

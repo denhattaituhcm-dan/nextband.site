@@ -4,27 +4,28 @@ import { humanizeVocabularyTerm } from "./humanizationEngine";
 
 // Standard English function words / stop words to exclude from click-to-lookup
 export const FUNCTION_WORDS = new Set([
-  "a", "about", "above", "after", "again", "against", "all", "am", "an", "and",
-  "any", "are", "aren't", "as", "at", "be", "because", "been", "before", "being",
+  "a", "about", "above", "after", "again", "against", "all", "almost", "already",
+  "also", "although", "always", "am", "among", "an", "and", "another", "any", "are",
+  "aren't", "around", "as", "at", "away", "be", "because", "been", "before", "being",
   "below", "between", "both", "but", "by", "can", "can't", "cannot", "could", "couldn't",
-  "did", "didn't", "do", "does", "doesn't", "doing", "don't", "down", "during",
-  "each", "few", "for", "from", "further", "had", "hadn't", "has", "hasn't",
-  "have", "haven't", "having", "he", "he'd", "he'll", "he's", "her", "here",
-  "here's", "hers", "herself", "him", "himself", "his", "how", "how's", "i",
-  "i'd", "i'll", "i'm", "i've", "if", "in", "into", "is", "isn't", "it",
-  "it's", "its", "itself", "let's", "me", "more", "most", "mustn't", "my",
-  "myself", "no", "nor", "not", "of", "off", "on", "once", "only", "or",
-  "other", "ought", "our", "ours", "ourselves", "out", "over", "own", "per",
-  "pm", "am", "same", "shan't", "she", "she'd", "she'll", "she's", "should",
-  "shouldn't", "so", "some", "such", "than", "that", "that's", "the", "their",
-  "theirs", "them", "themselves", "then", "there", "there's", "these", "they",
-  "they'd", "they'll", "they're", "they've", "this", "those", "through", "to",
-  "too", "under", "until", "up", "very", "was", "wasn't", "we", "we'd", "we'll",
-  "we're", "we've", "were", "weren't", "what", "what's", "when", "when's",
-  "where", "where's", "which", "while", "who", "who's", "whom", "why", "why's",
-  "with", "won't", "would", "wouldn't", "you", "you'd", "you'll", "you're",
-  "you've", "your", "yours", "yourself", "yourselves", "also", "since", "although",
-  "though", "either", "neither", "nor", "yet", "via", "vs"
+  "d", "did", "didn't", "do", "does", "doesn't", "doing", "don", "don't", "down", "during",
+  "each", "either", "else", "even", "every", "few", "for", "from", "further", "had",
+  "hadn't", "has", "hasn't", "have", "haven't", "having", "he", "he'd", "he'll", "he's",
+  "her", "here", "here's", "hers", "herself", "him", "himself", "his", "how", "how's",
+  "however", "i", "i'd", "i'll", "i'm", "i've", "if", "in", "into", "is", "isn't",
+  "it", "it's", "its", "itself", "let's", "ll", "m", "many", "me", "more", "most",
+  "mustn't", "my", "myself", "neither", "no", "nor", "not", "of", "off", "on", "once",
+  "ones", "only", "or", "other", "ought", "our", "ours", "ourselves", "out", "over",
+  "own", "per", "pm", "re", "s", "same", "shan't", "she", "she'd", "she'll", "she's",
+  "should", "shouldn't", "since", "so", "some", "such", "t", "than", "that", "that's",
+  "the", "their", "theirs", "them", "themselves", "then", "there", "there's", "these",
+  "they", "they'd", "they'll", "they're", "they've", "this", "those", "though",
+  "through", "to", "too", "under", "until", "up", "us", "ve", "very", "via", "vs",
+  "was", "wasn't", "we", "we'd", "we'll", "we're", "we've", "were", "weren't",
+  "what", "what's", "when", "when's", "where", "where's", "which", "while", "who",
+  "who's", "whom", "why", "why's", "will", "with", "without", "won", "won't",
+  "would", "wouldn't", "yet", "you", "you'd", "you'll", "you're", "you've", "your",
+  "yours", "yourself", "yourselves"
 ]);
 
 export function isContentWord(word: string): boolean {
@@ -2082,22 +2083,6 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_vi: "sản phẩm",
     context_note: "Sản phẩm.",
   },
-  "confidence": {
-    term: "confidence",
-    pronunciation: "/ˈkɒnfɪdəns/",
-    pos: "noun",
-    meaning_en: "feeling of self-assurance arising from appreciation of abilities",
-    meaning_vi: "sự tự tin / lòng tin",
-    context_note: "Khách hàng mua sự tự tin và an tâm từ người bán.",
-  },
-  "investors": {
-    term: "investors",
-    pronunciation: "/ɪnˈvɛstəz/",
-    pos: "noun (plural)",
-    meaning_en: "people or organizations that put money into financial schemes with expectation of profit",
-    meaning_vi: "các nhà đầu tư",
-    context_note: "Nhà đầu tư rót vốn cho người sáng lập mà họ tin tưởng.",
-  },
   "investor": {
     term: "investor",
     pronunciation: "/ɪnˈvɛstər/",
@@ -2185,14 +2170,6 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_en: "a fundamental truth or proposition that serves as the foundation for a system of belief",
     meaning_vi: "nguyên lý cốt lõi / quy luật",
     context_note: "Nguyên lý sinh lãi kép theo thời gian.",
-  },
-  "interview": {
-    term: "interview",
-    pronunciation: "/ˈɪntəvjuː/",
-    pos: "noun",
-    meaning_en: "a formal consultation or meeting for evaluation",
-    meaning_vi: "buổi phỏng vấn",
-    context_note: "Mỗi buổi phỏng vấn đều là cơ hội tạo dựng uy tín.",
   },
   "difficult": {
     term: "difficult",
@@ -2905,6 +2882,2145 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_en: "a collection of historical documents or records",
     meaning_vi: "kho lưu trữ tài liệu",
     context_note: "Kho dữ liệu và tài liệu nghiên cứu.",
+  },
+  // === FULL CASE VOCABULARY EXTENSION (100% COMPLETE COVERAGE) ===
+  "analyze": {
+      "term": "analyze",
+      "pronunciation": "/ˈænəlaɪz/",
+      "pos": "verb",
+      "meaning_en": "examine methodically and in detail the constitution or structure of something",
+      "meaning_vi": "phân tích dữ liệu / mổ xẻ chi tiết",
+      "context_note": "AI có thể phân tích bảng tính và dữ liệu số trong tích tắc.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "analyze là việc xem xét, bóc tách và phân tích kỹ lưỡng từng thành phần của một vấn đề hoặc dữ liệu để hiểu rõ bản chất.",
+          "in_context_story": "Trong bài đọc, tác giả chỉ ra AI rất giỏi phân tích bảng tính (analyze spreadsheets) nhưng lại thiếu khả năng thấu hiểu cảm xúc con người.",
+          "real_world_transfers": [
+              {
+                  "domain_label": "Tài chính & Dữ liệu",
+                  "sentence": "Data analysts analyze financial trends to forecast quarterly revenue.",
+                  "connection_note": "Phân tích xu hướng số liệu để đưa ra dự báo tài chính."
+              }
+          ],
+          "retrieval_tip": "Dùng 'analyze' khi muốn diễn tả hành động nghiên cứu sâu, bóc tách dữ liệu có phương pháp."
+      }
+  },
+  "plans": {
+      "term": "plans",
+      "pronunciation": "/plænz/",
+      "pos": "noun (plural)",
+      "meaning_en": "detailed proposals for doing or achieving something",
+      "meaning_vi": "các kế hoạch / dự định",
+      "context_note": "AI có thể phác thảo các bản kế hoạch kinh doanh trong vài giây.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Định danh các bản kế hoạch, lộ trình hoặc dự án được vạch ra từ trước.",
+          "in_context_story": "AI có thể tạo ra các bản kế hoạch kinh doanh nhanh chóng nhưng cần con người thực thi."
+      }
+  },
+  "produce": {
+      "term": "produce",
+      "pronunciation": "/prəˈdjuːs/",
+      "pos": "verb",
+      "meaning_en": "make or manufacture from components or raw materials",
+      "meaning_vi": "tạo ra / sản xuất / sinh mã",
+      "context_note": "AI có thể sinh mã nguồn phần mềm trong vài giây.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "produce là tạo ra hoặc làm xuất hiện một sản phẩm, tài liệu hay mã lệnh từ quá trình xử lý.",
+          "in_context_story": "Ở đây, produce software code thể hiện năng lực sinh mã nguồn tự động của các mô hình AI.",
+          "real_world_transfers": [
+              {
+                  "domain_label": "Công nghệ",
+                  "sentence": "Generative models produce high-quality code snippets instantly.",
+                  "connection_note": "Sinh ra mã lập trình tự động."
+              }
+          ]
+      }
+  },
+  "marketing": {
+      "term": "marketing",
+      "pronunciation": "/ˈmɑːkɪtɪŋ/",
+      "pos": "noun",
+      "meaning_en": "the action or business of promoting and selling products or services",
+      "meaning_vi": "tiếp thị / quảng bá thương hiệu",
+      "context_note": "Nội dung tiếp thị và quảng cáo sản phẩm.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hoạt động tiếp thị, quảng bá nhằm thu hút khách hàng và xây dựng vị thế thương hiệu.",
+          "in_context_story": "Marketing copy là các bài viết bán hàng và quảng bá mà AI có thể soạn thảo nhanh chóng."
+      }
+  },
+  "skyrocketed": {
+      "term": "skyrocketed",
+      "pronunciation": "/ˈskaɪˌrɒkɪtɪd/",
+      "pos": "verb (past)",
+      "meaning_en": "increased rapidly and dramatically",
+      "meaning_vi": "tăng vọt / tăng phi mã",
+      "context_note": "Giá trị của kỹ năng giao tiếp con người đã tăng vọt trong kỷ nguyên AI.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "skyrocket ví như tên lửa phóng vút lên bầu trời — diễn tả sự tăng trưởng cực nhanh và đột biến về giá trị hoặc số lượng.",
+          "in_context_story": "Tác giả nhấn mạnh giá trị của lời khuyên từ Buffett không hề giảm đi mà trái lại còn tăng vọt (skyrocketed) khi AI xuất hiện.",
+          "real_world_transfers": [
+              {
+                  "domain_label": "Thị trường & Giá cả",
+                  "sentence": "Demand for human leadership skills skyrocketed after the automation wave.",
+                  "connection_note": "Nhu cầu tăng đột biến theo cấp số nhân."
+              }
+          ],
+          "retrieval_tip": "Khi muốn mô tả giá trị hoặc số lượng tăng vọt theo phương thẳng đứng → Nghĩ đến 'SKYROCKET'."
+      }
+  },
+  "communication": {
+      "term": "communication",
+      "pronunciation": "/kəˌmjuːnɪˈkeɪʃən/",
+      "pos": "noun",
+      "meaning_en": "the imparting or exchanging of information by speaking, writing, or using some other medium",
+      "meaning_vi": "giao tiếp / năng lực truyền đạt",
+      "context_note": "Năng lực giao tiếp như một con người thực thụ.",
+      "depth": "deep",
+      "humanized": {
+          "simple_intuition": "communication là quá trình truyền đạt, kết nối và trao đổi thông điệp, cảm xúc và niềm tin giữa các chủ thể.",
+          "in_context_story": "Trong bài viết của Schwantes và Buffett, giao tiếp không phải là nói nhiều mà là năng lực lắng nghe, thấu cảm và chuyển hóa sự phức tạp thành rõ ràng.",
+          "real_world_transfers": [
+              {
+                  "domain_label": "Lãnh đạo",
+                  "sentence": "Authentic communication builds enduring loyalty within high-stakes teams.",
+                  "connection_note": "Giao tiếp chân thực tạo nên sự gắn kết bền chặt."
+              }
+          ],
+          "nuance_warning": "Phân biệt 'communication' (giao tiếp hai chiều, tạo sự thấu hiểu) với 'broadcasting' (chỉ phát đi thông tin một chiều).",
+          "retrieval_tip": "Dùng 'communication' khi nói về sự kết nối, truyền tải ý niệm và tạo dựng sự hiểu biết chung."
+      }
+  },
+  "communications": {
+      "term": "communications",
+      "pronunciation": "/kəˌmjuːnɪˈkeɪʃənz/",
+      "pos": "noun (plural/discipline)",
+      "meaning_en": "the study or field of sharing and conveying information effectively",
+      "meaning_vi": "ngành truyền thông / kỹ năng giao tiếp",
+      "context_note": "Tấm bằng đào tạo kỹ năng giao tiếp Dale Carnegie năm 1952.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Chỉ lĩnh vực, khóa học hoặc chuyên ngành đào tạo kỹ năng giao tiếp và nghệ thuật truyền đạt.",
+          "in_context_story": "Buffett treo tấm bằng tốt nghiệp khóa học giao tiếp (communications diploma) của Dale Carnegie."
+      }
+  },
+  "advantage": {
+      "term": "advantage",
+      "pronunciation": "/ədˈvɑːntɪdʒ/",
+      "pos": "noun",
+      "meaning_en": "a condition or circumstance that puts one in a favorable or superior position",
+      "meaning_vi": "lợi thế / điểm ưu việt",
+      "context_note": "Trở thành lợi thế cạnh tranh thực sự.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "advantage là điểm mạnh hoặc điều kiện thuận lợi giúp một bên vượt trội hơn bên khác trong cùng một hoàn cảnh.",
+          "in_context_story": "Trong kỷ nguyên AI, khả năng giao tiếp giữa người với người chính là lợi thế cạnh tranh thật sự (genuine competitive advantage).",
+          "real_world_transfers": [
+              {
+                  "domain_label": "Chiến lược",
+                  "sentence": "Speed of execution gives startups a distinct advantage over legacy corporations.",
+                  "connection_note": "Tạo ưu thế vượt trội so với đối thủ."
+              }
+          ]
+      }
+  },
+  "opportunity": {
+      "term": "opportunity",
+      "pronunciation": "/ˌɒpəˈtjuːnɪti/",
+      "pos": "noun",
+      "meaning_en": "a set of circumstances that makes it possible to do something",
+      "meaning_vi": "cơ hội / thời cơ",
+      "context_note": "Mỗi cuộc trò chuyện đều là cơ hội tạo dựng tầm ảnh hưởng.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Thời cơ hoặc hoàn cảnh thuận lợi để hành động và tạo ra kết quả tích cực.",
+          "in_context_story": "Mỗi buổi thuyết trình hay phỏng vấn đều là cơ hội để tạo dựng ảnh hưởng hoặc đánh mất nó."
+      }
+  },
+  "skills": {
+      "term": "skills",
+      "pronunciation": "/skɪlz/",
+      "pos": "noun (plural)",
+      "meaning_en": "the abilities to do something well; expertise",
+      "meaning_vi": "các kỹ năng / năng lực chuyên môn",
+      "context_note": "Nếu không có kỹ năng giao tiếp tốt, bạn sẽ không thể thuyết phục người khác.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Tập hợp các năng lực hoặc kỹ năng được rèn luyện để thực hiện tốt một công việc.",
+          "in_context_story": "Kỹ năng giao tiếp xuất sắc giúp biến ý tưởng thành hiện thực."
+      }
+  },
+  "skill": {
+      "term": "skill",
+      "pronunciation": "/skɪl/",
+      "pos": "noun",
+      "meaning_en": "the ability to do something well",
+      "meaning_vi": "kỹ năng",
+      "context_note": "Giao tiếp là một kỹ năng kinh doanh mang tính chiến lược.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Một năng lực thuần thục đạt được qua học hỏi và rèn luyện.",
+          "in_context_story": "Giao tiếp đã chuyển dịch từ soft skill thành strategic business skill."
+      }
+  },
+  "shows": {
+      "term": "shows",
+      "pronunciation": "/ʃəʊz/",
+      "pos": "verb (third person singular)",
+      "meaning_en": "allows or causes to be visible; demonstrates",
+      "meaning_vi": "chỉ ra / chứng minh",
+      "context_note": "Nghiên cứu chỉ ra rằng người có tính tò mò sẽ xây dựng được niềm tin mạnh mẽ hơn.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hành động chỉ ra, minh chứng hoặc làm lộ rõ một sự thật thông qua dữ liệu hoặc thực tế.",
+          "in_context_story": "Các nghiên cứu hành vi chỉ ra lợi ích của việc lắng nghe tích cực."
+      }
+  },
+  "signs": {
+      "term": "signs",
+      "pronunciation": "/saɪnz/",
+      "pos": "noun (plural)",
+      "meaning_en": "indications that something exists or is happening",
+      "meaning_vi": "các dấu hiệu / chỉ dấu",
+      "context_note": "Gờ băng không hề có dấu hiệu tràn bờ hay sụp đổ.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Các hiện tượng hoặc vết tích cụ thể giúp nhận biết trạng thái của sự việc.",
+          "in_context_story": "Không tìm thấy bất kỳ dấu hiệu nước tràn qua gờ băng bề mặt hồ."
+      }
+  },
+  "trust": {
+      "term": "trust",
+      "pronunciation": "/trʌst/",
+      "pos": "noun / verb",
+      "meaning_en": "firm belief in the reliability, truth, ability, or strength of someone or something",
+      "meaning_vi": "niềm tin / sự tin cậy",
+      "context_note": "AI không thể tạo dựng được niềm tin giữa con người với nhau.",
+      "depth": "deep",
+      "humanized": {
+          "simple_intuition": "trust là niềm tin chắc chắn vào sự trung thực, năng lực và chữ tín của người khác — thứ chỉ được xây dựng qua thời gian và sự nhất quán.",
+          "in_context_story": "Tác giả chỉ ra AI có thể xử lý bảng tính nhưng không thể kiếm được niềm tin (earn trust) từ đồng nghiệp và đối tác.",
+          "real_world_transfers": [
+              {
+                  "domain_label": "Quản trị",
+                  "sentence": "High-trust organizations move faster and experience lower friction in decision making.",
+                  "connection_note": "Niềm tin giúp tổ chức ra quyết định nhanh chóng và giảm xung đột."
+              }
+          ],
+          "retrieval_tip": "Khi nói về sự tin tưởng cốt lõi làm nền tảng cho mọi mối quan hệ → Dùng 'TRUST'."
+      }
+  },
+  "understand": {
+      "term": "understand",
+      "pronunciation": "/ˌʌndəˈstænd/",
+      "pos": "verb",
+      "meaning_en": "perceive the intended meaning of words, a language, or a person",
+      "meaning_vi": "thấu hiểu / nắm bắt bản chất",
+      "context_note": "Lắng nghe để thấu hiểu chứ không phải để phản bác.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "understand là nắm bắt trọn vẹn ý nghĩa, động cơ và cảm xúc ẩn sâu bên dưới thông điệp.",
+          "in_context_story": "Quy tắc cốt lõi: 'Listen to understand, not to respond' — lắng nghe để thấu suốt lòng người.",
+          "real_world_transfers": [
+              {
+                  "domain_label": "Tâm lý học",
+                  "sentence": "Empathic leaders seek first to understand before seeking to be understood.",
+                  "connection_note": "Chủ động thấu hiểu trước khi đòi hỏi người khác hiểu mình."
+              }
+          ]
+      }
+  },
+  "listening": {
+      "term": "listening",
+      "pronunciation": "/ˈlɪsənɪŋ/",
+      "pos": "noun / verb (-ing)",
+      "meaning_en": "giving one's attention to a sound or message",
+      "meaning_vi": "việc lắng nghe / sự lắng nghe",
+      "context_note": "Lắng nghe chủ động là món quà hiếm hoi bạn có thể trao tặng cho người khác.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "Tiến trình tập trung dồn sự chú ý để giải mã ý niệm và cảm xúc của người nói.",
+          "in_context_story": "Active listening là hành động kìm nén phản xạ chen ngang để thấu hiểu câu chuyện của người khác."
+      }
+  },
+  "listen": {
+      "term": "listen",
+      "pronunciation": "/ˈlɪsən/",
+      "pos": "verb",
+      "meaning_en": "give one's attention to a sound or speaker",
+      "meaning_vi": "lắng nghe",
+      "context_note": "Lắng nghe để thấu cảm.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Dành sự chú tâm lắng nghe người khác chia sẻ.",
+          "in_context_story": "Lắng nghe với tinh thần cởi mở và không định kiến."
+      }
+  },
+  "reading": {
+      "term": "reading",
+      "pronunciation": "/ˈriːdɪŋ/",
+      "pos": "noun",
+      "meaning_en": "a measurement indicated on an instrument, or the action of reading",
+      "meaning_vi": "chỉ số đo lường / việc đọc",
+      "context_note": "Ghi nhận chỉ số nhiệt độ nước đo thủ công là 0.4°C.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Chỉ số hoặc giá trị đo được hiển thị trên thiết bị đo đạc khoa học.",
+          "in_context_story": "Dr. Vance ghi nhận chỉ số nhiệt độ nước (water temperature reading) là 0.4°C lúc 02:10 AM."
+      }
+  },
+  "results": {
+      "term": "results",
+      "pronunciation": "/rɪˈzʌlts/",
+      "pos": "noun (plural)",
+      "meaning_en": "consequences, outcomes, or products of something",
+      "meaning_vi": "kết quả / thành quả",
+      "context_note": "Mọi thành quả trong cuộc đời bạn sẽ được nhân lên gấp bội.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Những thành tựu, giá trị hoặc kết quả đạt được từ nỗ lực và hành động.",
+          "in_context_story": "Buffett khẳng định kết quả cuộc đời (results in life) sẽ được khuếch đại nhờ giao tiếp."
+      }
+  },
+  "fastest": {
+      "term": "fastest",
+      "pronunciation": "/ˈfɑːstɪst/",
+      "pos": "adjective (superlative)",
+      "meaning_en": "moving or operating at highest speed",
+      "meaning_vi": "nhanh nhất",
+      "context_note": "Cách nhanh nhất để phá hỏng giao tiếp là suy đoán định kiến.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Chỉ phương thức hoặc con đường có tốc độ diễn ra nhanh nhất.",
+          "in_context_story": "Giả định chủ quan là con đường ngắn nhất và nhanh nhất làm đổ vỡ một cuộc đối thoại."
+      }
+  },
+  "stronger": {
+      "term": "stronger",
+      "pronunciation": "/ˈstrɒŋər/",
+      "pos": "adjective (comparative)",
+      "meaning_en": "having greater power, intensity, or durability",
+      "meaning_vi": "vững chắc hơn / mạnh mẽ hơn",
+      "context_note": "Xây dựng những mối quan hệ bền chặt và gắn kết hơn.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Có mức độ bền vững, tin cậy hoặc sức mạnh cao hơn so với thông thường.",
+          "in_context_story": "Sự tò mò chân thành giúp tạo nên các mối quan hệ bền vững hơn (stronger relationships)."
+      }
+  },
+  "strategic": {
+      "term": "strategic",
+      "pronunciation": "/strəˈtiːdʒɪk/",
+      "pos": "adjective",
+      "meaning_en": "relating to the identification of long-term aims and interests",
+      "meaning_vi": "mang tính chiến lược / có tầm nhìn dài hạn",
+      "context_note": "Giao tiếp đã trở thành một kỹ năng kinh doanh mang tính chiến lược cốt lõi.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "strategic là những gì liên quan đến định hướng dài hạn, tạo ra lợi thế cạnh tranh bền vững và quyết định sự sống còn của tổ chức.",
+          "in_context_story": "Tác giả chỉ ra giao tiếp không còn là kỹ năng bổ trợ phụ mà là kỹ năng chiến lược quyết định thành bại.",
+          "real_world_transfers": [
+              {
+                  "domain_label": "Quản trị",
+                  "sentence": "Strategic investments focus on core competencies that compound over decades.",
+                  "connection_note": "Đầu tư mang tính chiến lược dài hạn."
+              }
+          ]
+      }
+  },
+  "sub-glacial": {
+      "term": "sub-glacial",
+      "pronunciation": "/sʌbˈɡleɪʃəl/",
+      "pos": "adjective",
+      "meaning_en": "occurring or situated underneath a glacier or ice sheet",
+      "meaning_vi": "dưới tầng băng / đáy sông băng",
+      "context_note": "Các cảm biến áp suất dưới đáy băng tầng ghi nhận sóng xung kích lớn.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "Nằm ở vị trí bên dưới đáy của khối băng vĩnh cửu hoặc sông băng khổng lồ.",
+          "in_context_story": "Cảm biến áp suất ngầm dưới đáy băng (sub-glacial sensors) phát hiện rung chấn lúc 03:12 AM."
+      }
+  },
+  "supraglacial": {
+      "term": "supraglacial",
+      "pronunciation": "/ˌsuːprəˈɡleɪʃəl/",
+      "pos": "adjective",
+      "meaning_en": "situated on the surface of a glacier",
+      "meaning_vi": "trên bề mặt băng tầng",
+      "context_note": "Hồ nước nằm trên bề mặt dải băng Greenland.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "Tồn tại hoặc hình thành ngay trên lớp mặt trên cùng của khối băng khổng lồ.",
+          "in_context_story": "Hồ G-4 là một hồ nước mặt băng tầng (supraglacial lake) chứa 8 triệu m³ nước."
+      }
+  },
+  "warming": {
+      "term": "warming",
+      "pronunciation": "/ˈwɔːmɪŋ/",
+      "pos": "noun",
+      "meaning_en": "the process of becoming warmer",
+      "meaning_vi": "sự ấm lên / gia nhiệt",
+      "context_note": "Sự nóng lên của địa chất ngầm.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Quá trình gia tăng nhiệt độ của môi trường hoặc vật thể.",
+          "in_context_story": "Giả thuyết về sự ấm lên dưới đáy băng bị bác bỏ do nhiệt độ đo được là -1.8°C."
+      }
+  },
+  "business": {
+      "term": "business",
+      "pronunciation": "/ˈbɪznɪs/",
+      "pos": "noun",
+      "meaning_en": "commercial activity or enterprise",
+      "meaning_vi": "kinh doanh / doanh nghiệp",
+      "context_note": "Kế hoạch kinh doanh và hoạt động thương mại.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hoạt động thương mại, kinh doanh hoặc doanh nghiệp.",
+          "in_context_story": "Giao tiếp là kỹ năng kinh doanh chiến lược trong kỷ nguyên số."
+      }
+  },
+  "buy": {
+      "term": "buy",
+      "pronunciation": "/baɪ/",
+      "pos": "verb",
+      "meaning_en": "obtain in exchange for payment, or accept as trustworthy",
+      "meaning_vi": "mua sắm / đặt niềm tin vào",
+      "context_note": "Khách hàng không mua sản phẩm đơn thuần — họ mua sự an tâm và niềm tin.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "buy ngoài nghĩa đen là trả tiền mua đồ, trong kinh doanh còn mang nghĩa 'chấp nhận và đặt trọn niềm tin' vào một giải pháp hoặc con người.",
+          "in_context_story": "Tác giả chỉ ra: 'Customers don't buy products—they buy confidence.' (Khách hàng mua sự an tâm).",
+          "real_world_transfers": [
+              {
+                  "domain_label": "Bán hàng & Đàm phán",
+                  "sentence": "Stakeholders buy into the leader's long-term vision before funding execution.",
+                  "connection_note": "Đặt trọn niềm tin và sự đồng thuận vào tầm nhìn."
+              }
+          ]
+      }
+  },
+  "change": {
+      "term": "change",
+      "pronunciation": "/tʃeɪndʒ/",
+      "pos": "verb / noun",
+      "meaning_en": "make or become different",
+      "meaning_vi": "thay đổi / chuyển biến",
+      "context_note": "Sự tò mò chân thành làm thay đổi hoàn toàn tính chất cuộc trò chuyện.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hành động làm thay đổi cục diện hoặc chuyển biến trạng thái từ dạng này sang dạng khác.",
+          "in_context_story": "Curiosity changes the conversation — sự tò mò chân thành đổi hướng cuộc trò chuyện từ đối đầu sang thấu hiểu."
+      }
+  },
+  "changes": {
+      "term": "changes",
+      "pronunciation": "/tʃeɪndʒɪz/",
+      "pos": "verb (third person singular) / noun (plural)",
+      "meaning_en": "makes or becomes different; alterations",
+      "meaning_vi": "làm thay đổi / những sự đổi thay",
+      "context_note": "Sự tò mò làm thay đổi cục diện cuộc đối thoại.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Tác động làm chuyển biến hoặc tạo ra sự khác biệt tích cực.",
+          "in_context_story": "Curiosity changes the conversation."
+      }
+  },
+  "code": {
+      "term": "code",
+      "pronunciation": "/kəʊd/",
+      "pos": "noun",
+      "meaning_en": "instructions written in a programming language",
+      "meaning_vi": "mã nguồn lập trình",
+      "context_note": "Mã nguồn phần mềm máy tính.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Đoạn mã lệnh được viết bằng ngôn ngữ lập trình để máy tính thực thi.",
+          "in_context_story": "AI có thể viết mã nguồn phần mềm nhưng không thể truyền cảm hứng cho đồng đội."
+      }
+  },
+  "conversation": {
+      "term": "conversation",
+      "pronunciation": "/ˌkɒnvəˈseɪʃən/",
+      "pos": "noun",
+      "meaning_en": "a talk between two or more people",
+      "meaning_vi": "cuộc trò chuyện / cuộc đối thoại",
+      "context_note": "Mỗi cuộc trò chuyện là một cơ hội để tạo dựng uy tín.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Cuộc đối thoại trao đổi trực tiếp giữa hai hay nhiều người.",
+          "in_context_story": "Biến việc phản hồi và góp ý thành một cuộc trò chuyện thường nhật."
+      }
+  },
+  "copy": {
+      "term": "copy",
+      "pronunciation": "/ˈkɒpi/",
+      "pos": "noun",
+      "meaning_en": "text written for advertising, or a reproduction",
+      "meaning_vi": "nội dung bài viết quảng cáo / bản sao",
+      "context_note": "Nội dung quảng cáo tiếp thị.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Bản thảo nội dung chữ được viết chuyên biệt cho mục đích quảng bá hoặc truyền thông.",
+          "in_context_story": "AI có thể viết marketing copy nhanh chóng trong vài giây."
+      }
+  },
+  "crack": {
+      "term": "crack",
+      "pronunciation": "/kræk/",
+      "pos": "noun / verb",
+      "meaning_en": "a line on a surface along which it has split without breaking into parts",
+      "meaning_vi": "vết rạn nứt",
+      "context_note": "Vết rạn nứt băng chính mở toang lập tức lúc 03:12 AM.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "Vết rạn vỡ hoặc đường nứt xuất hiện trên bề mặt chất rắn do áp lực lớn.",
+          "in_context_story": "Vết nứt băng chính mở toang xuyên thủng 850m tầng băng."
+      }
+  },
+  "create": {
+      "term": "create",
+      "pronunciation": "/kriˈeɪt/",
+      "pos": "verb",
+      "meaning_en": "bring something into existence",
+      "meaning_vi": "tạo ra / thiết lập",
+      "context_note": "Tạo ra sức ảnh hưởng hoặc đánh mất nó.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hành động làm xuất hiện hoặc xây dựng nên một giá trị mới.",
+          "in_context_story": "Mỗi cuộc trò chuyện là cơ hội để tạo ra tầm ảnh hưởng (create influence)."
+      }
+  },
+  "feel": {
+      "term": "feel",
+      "pronunciation": "/fiːl/",
+      "pos": "verb",
+      "meaning_en": "experience an emotion or sensation",
+      "meaning_vi": "cảm thấy / cảm nhận",
+      "context_note": "Người ta sẽ luôn nhớ cách bạn làm cho họ cảm thấy như thế nào.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Trải nghiệm cảm xúc hoặc nhận thức nội tâm sâu sắc.",
+          "in_context_story": "Mọi người có thể quên lời bạn nói, nhưng sẽ nhớ mãi cảm giác bạn mang lại cho họ."
+      }
+  },
+  "follow": {
+      "term": "follow",
+      "pronunciation": "/ˈfɒləʊ/",
+      "pos": "verb",
+      "meaning_en": "go or come after; support or accept the leadership of",
+      "meaning_vi": "đi theo / đồng hành cùng lãnh đạo",
+      "context_note": "Thuyết phục mọi người tin tưởng và đi theo tầm nhìn của bạn.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Đồng hành, ủng hộ và đi theo sự dẫn dắt của một nhà lãnh đạo có tầm nhìn.",
+          "in_context_story": "Nếu không biết truyền đạt, bạn sẽ không thể thuyết phục người khác đi theo bạn (convince people to follow you)."
+      }
+  },
+  "goal": {
+      "term": "goal",
+      "pronunciation": "/ɡəʊl/",
+      "pos": "noun",
+      "meaning_en": "the object of a person's ambition or effort; an aim or desired result",
+      "meaning_vi": "mục tiêu cuối cùng / đích đến",
+      "context_note": "Mục tiêu cuối cùng của việc phản hồi là sự rõ ràng.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Đích đến hoặc kết quả mong đợi mà mọi nỗ lực hướng tới.",
+          "in_context_story": "Mục tiêu tối thượng của việc góp ý là mang lại sự rõ ràng và định hướng hành động."
+      }
+  },
+  "good": {
+      "term": "good",
+      "pronunciation": "/ɡʊd/",
+      "pos": "adjective",
+      "meaning_en": "to be desired or approved of; having high standard",
+      "meaning_vi": "tốt / xuất sắc",
+      "context_note": "Kỹ năng giao tiếp xuất sắc.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Đạt tiêu chuẩn cao, mang lại giá trị tích cực và hiệu quả.",
+          "in_context_story": "Kỹ năng giao tiếp tốt là điều kiện tiên quyết để lãnh đạo thành công."
+      }
+  },
+  "heat": {
+      "term": "heat",
+      "pronunciation": "/hiːt/",
+      "pos": "noun",
+      "meaning_en": "the quality of being hot; high temperature",
+      "meaning_vi": "nhiệt lượng / nhiệt địa chất",
+      "context_note": "Nhiệt địa chất dưới đáy băng.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Năng lượng nhiệt toả ra làm tăng nhiệt độ của môi trường xung quanh.",
+          "in_context_story": "Nhiệt địa chất (geothermal heat) từ lớp đá đáy băng."
+      }
+  },
+  "ice": {
+      "term": "ice",
+      "pronunciation": "/aɪs/",
+      "pos": "noun",
+      "meaning_en": "frozen water, a brittle transparent crystalline solid",
+      "meaning_vi": "băng tuyết / tầng băng",
+      "context_note": "Tầng băng dày 850m tại Greenland.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Khối nước đóng băng dạng rắn ở vùng cực hoặc sông băng.",
+          "in_context_story": "Tầng băng dày đặc 850m bao phủ toàn bộ vùng trũng hồ Greenland."
+      }
+  },
+  "keep": {
+      "term": "keep",
+      "pronunciation": "/kiːp/",
+      "pos": "verb",
+      "meaning_en": "continue or cause to continue in a specified condition",
+      "meaning_vi": "duy trì / tiếp tục phát huy",
+      "context_note": "Tôi nên tiếp tục duy trì và phát huy điều gì?",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Duy trì liên tục một hành động hoặc trạng thái tốt đẹp.",
+          "in_context_story": "Câu hỏi phản hồi quan trọng: 'Tôi nên tiếp tục làm tốt điều gì?' (What should I keep doing?)."
+      }
+  },
+  "know": {
+      "term": "know",
+      "pronunciation": "/nəʊ/",
+      "pos": "verb",
+      "meaning_en": "be aware of through observation, inquiry, or information",
+      "meaning_vi": "biết / hiểu rõ",
+      "context_note": "Mọi người luôn muốn biết điều gì đang hoạt động hiệu quả.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Nắm bắt thông tin và hiểu rõ thực trạng vấn đề.",
+          "in_context_story": "Nhân viên luôn muốn biết rõ định hướng và kết quả công việc của mình."
+      }
+  },
+  "laboratory": {
+      "term": "laboratory",
+      "pronunciation": "/ləˈbɒrətəri/",
+      "pos": "noun",
+      "meaning_en": "a room or building equipped for scientific experiments",
+      "meaning_vi": "phòng thí nghiệm / trạm nghiên cứu",
+      "context_note": "Phòng thí nghiệm tại trạm nghiên cứu Alpha-4.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Không gian làm việc được trang bị máy móc chuyên dụng cho nghiên cứu khoa học.",
+          "in_context_story": "Dr. Vance ở trong phòng thí nghiệm trạm Alpha-4 đến khi còi báo động vang lên."
+      }
+  },
+  "lake": {
+      "term": "lake",
+      "pronunciation": "/leɪk/",
+      "pos": "noun",
+      "meaning_en": "a large body of water surrounded by land or ice",
+      "meaning_vi": "hồ nước / hồ băng",
+      "context_note": "Hồ băng G-4 chứa 8 triệu m³ nước.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Vùng trũng chứa khối lượng lớn nước trên mặt đất hoặc bề mặt băng tầng.",
+          "in_context_story": "Hồ băng G-4 biến mất hoàn toàn chỉ sau 90 phút xả đáy."
+      }
+  },
+  "level": {
+      "term": "level",
+      "pronunciation": "/ˈlɛvəl/",
+      "pos": "noun",
+      "meaning_en": "a horizontal plane or height of something",
+      "meaning_vi": "mực nước / mức độ",
+      "context_note": "Mực nước hồ sụt giảm nhanh chóng.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Độ cao của mặt nước hoặc thang đo mức độ của một hiện tượng.",
+          "in_context_story": "Cảm biến ghi nhận mực nước hồ (water level) tụt dốc không phanh."
+      }
+  },
+  "life": {
+      "term": "life",
+      "pronunciation": "/laɪf/",
+      "pos": "noun",
+      "meaning_en": "the existence of an individual human being",
+      "meaning_vi": "cuộc sống / cuộc đời",
+      "context_note": "Mọi thành quả trong cuộc đời bạn sẽ được nhân lên gấp bội.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Toàn bộ tiến trình sống, sự nghiệp và trải nghiệm của một con người.",
+          "in_context_story": "Thành tựu cuộc đời (results in life) được khuếch đại nhờ tài năng giao tiếp."
+      }
+  },
+  "likely": {
+      "term": "likely",
+      "pronunciation": "/ˈlaɪkli/",
+      "pos": "adverb / adjective",
+      "meaning_en": "probable; such as well might happen",
+      "meaning_vi": "nhiều khả năng / có thể",
+      "context_note": "Nhiều khả năng là do nhiệt núi lửa ngầm.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Diễn tả khả năng xảy ra cao của một giả thuyết hoặc sự kiện.",
+          "in_context_story": "Sự cố thoát nước nhiều khả năng do cơ chế đứt gãy thủy lực."
+      }
+  },
+  "logged": {
+      "term": "logged",
+      "pronunciation": "/lɒɡd/",
+      "pos": "verb (past)",
+      "meaning_en": "recorded systematically in a log or record book",
+      "meaning_vi": "đã ghi nhật ký / ghi nhận dữ liệu",
+      "context_note": "Đã ghi nhận chỉ số nhiệt độ nước lúc 02:10 AM.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hành động ghi chép dữ liệu đo đạc vào sổ nhật ký nghiên cứu.",
+          "in_context_story": "Dr. Vance ghi nhận chỉ số đo nhiệt độ nước vào hệ thống trạm Alpha-4."
+      }
+  },
+  "long": {
+      "term": "long",
+      "pronunciation": "/lɒŋ/",
+      "pos": "adverb / adjective",
+      "meaning_en": "for a considerable time, or long before",
+      "meaning_vi": "từ rất lâu trước đó",
+      "context_note": "Buffett đã thấu hiểu nguyên lý này từ rất lâu trước khi AI xuất hiện.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Khoảng thời gian dài hoặc thời điểm diễn ra từ rất sớm trong quá khứ.",
+          "in_context_story": "Buffett hiểu rõ sức mạnh của giao tiếp từ rất lâu trước thời đại AI."
+      }
+  },
+  "lose": {
+      "term": "lose",
+      "pronunciation": "/luːz/",
+      "pos": "verb",
+      "meaning_en": "be deprived of or cease to have or retain",
+      "meaning_vi": "đánh mất (tầm ảnh hưởng)",
+      "context_note": "Mỗi cuộc trò chuyện là cơ hội tạo dựng hoặc đánh mất tầm ảnh hưởng.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hành động để tuột mất hoặc làm suy giảm một giá trị hay vị thế.",
+          "in_context_story": "Giao tiếp kém cỏi khiến bạn đánh mất niềm tin và sức ảnh hưởng."
+      }
+  },
+  "make": {
+      "term": "make",
+      "pronunciation": "/meɪk/",
+      "pos": "verb",
+      "meaning_en": "form by putting parts together or causing a state",
+      "meaning_vi": "làm cho / tạo nên",
+      "context_note": "Làm cho người khác cảm thấy được thấu hiểu.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Tạo ra một tác động khiến đối phương chuyển sang trạng thái cảm xúc mới.",
+          "in_context_story": "Làm cho một con người cảm thấy thực sự được tôn trọng và thấu hiểu."
+      }
+  },
+  "manual": {
+      "term": "manual",
+      "pronunciation": "/ˈmænjʊəl/",
+      "pos": "adjective",
+      "meaning_en": "using human effort, not automated",
+      "meaning_vi": "thủ công / bằng tay",
+      "context_note": "Chỉ số đo nhiệt độ nước bằng tay là 0.4°C.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Thực hiện trực tiếp bằng sức người, không qua máy móc tự động.",
+          "in_context_story": "Phép đo nhiệt độ nước thủ công (manual reading) do Dr. Vance tự tay thực hiện."
+      }
+  },
+  "means": {
+      "term": "means",
+      "pronunciation": "/miːnz/",
+      "pos": "verb (third person) / noun",
+      "meaning_en": "signifies or conveys; or an action by which result is achieved",
+      "meaning_vi": "có nghĩa là / phương tiện",
+      "context_note": "Lắng nghe chủ động có nghĩa là kìm nén phản xạ vội vàng đáp lời.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Chỉ ý nghĩa cốt lõi hoặc định nghĩa hành vi thực chất.",
+          "in_context_story": "Lắng nghe tích cực có nghĩa là gác lại điện thoại và tập trung trọn vẹn."
+      }
+  },
+  "melted": {
+      "term": "melted",
+      "pronunciation": "/ˈmɛltɪd/",
+      "pos": "verb (past)",
+      "meaning_en": "became liquefied by heat",
+      "meaning_vi": "đã làm tan chảy",
+      "context_note": "Nhiệt lượng làm tan chảy một đường thoát nước lên trên.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Trạng thái chất rắn biến đổi thành chất lỏng dưới tác động của nhiệt.",
+          "in_context_story": "Băng tầng bị tan chảy tạo thành dòng chảy xiết."
+      }
+  },
+  "multiplier": {
+      "term": "multiplier",
+      "pronunciation": "/ˈmʌltɪplaɪər/",
+      "pos": "noun",
+      "meaning_en": "a factor by which a quantity is multiplied",
+      "meaning_vi": "hệ số nhân / đòn bẩy khuếch đại",
+      "context_note": "Hệ số nhân chiến lược trong thời đại số.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "Yếu tố làm nhân gấp nhiều lần giá trị ban đầu thay vì chỉ cộng dồn.",
+          "in_context_story": "Giao tiếp là hệ số nhân giúp khuếch đại toàn bộ các kỹ năng kỹ thuật khác."
+      }
+  },
+  "path": {
+      "term": "path",
+      "pronunciation": "/pɑːθ/",
+      "pos": "noun",
+      "meaning_en": "a way or track laid down for walking or flowing",
+      "meaning_vi": "con đường / đường dẫn nước",
+      "context_note": "Làm tan chảy mở ra một đường dẫn nước từ đáy lên.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Lối đi hoặc đường dẫn để dòng chảy di chuyển qua.",
+          "in_context_story": "Dòng nước xả thẳng theo đường nứt gãy xuyên qua 850m băng."
+      }
+  },
+  "people": {
+      "term": "people",
+      "pronunciation": "/ˈpiːpəl/",
+      "pos": "noun (plural)",
+      "meaning_en": "human beings in general or considered collectively",
+      "meaning_vi": "mọi người / con người",
+      "context_note": "Thuyết phục mọi người đồng hành cùng bạn.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Tập thể con người hoặc cộng đồng xung quanh.",
+          "in_context_story": "Lãnh đạo xuất sắc là người biết cách tập hợp và truyền cảm hứng cho mọi người."
+      }
+  },
+  "performance": {
+      "term": "performance",
+      "pronunciation": "/pəˈfɔːməns/",
+      "pos": "noun",
+      "meaning_en": "the action or process of carrying out a task; functioning",
+      "meaning_vi": "hiệu suất / năng lực thực hiện",
+      "context_note": "Đánh giá hiệu suất làm việc định kỳ hàng năm.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hiệu quả và chất lượng hoàn thành công việc của cá nhân hoặc tổ chức.",
+          "in_context_story": "Không nên chỉ đợi đến đợt đánh giá hiệu suất cuối năm mới đưa ra lời góp ý."
+      }
+  },
+  "person": {
+      "term": "person",
+      "pronunciation": "/ˈpɜːsən/",
+      "pos": "noun",
+      "meaning_en": "a human being regarded as an individual",
+      "meaning_vi": "một cá nhân / một con người",
+      "context_note": "Món quà quý giá nhất bạn có thể trao cho một người là sự chú tâm lắng nghe.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Một cá nhân con người độc lập.",
+          "in_context_story": "Đặt sự thành công và phát triển của từng cá nhân lên hàng đầu."
+      }
+  },
+  "pitch": {
+      "term": "pitch",
+      "pronunciation": "/pɪtʃ/",
+      "pos": "noun",
+      "meaning_en": "a form of words used when trying to persuade someone to buy or accept",
+      "meaning_vi": "bài thuyết trình thuyết phục",
+      "context_note": "Bài thuyết trình bán hàng hoặc kêu gọi đầu tư.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Bài nói ngắn gọn nhằm thuyết phục đối tác mua hàng hoặc rót vốn.",
+          "in_context_story": "Sales pitch là cơ hội thể hiện năng lực kết nối và tạo dựng niềm tin."
+      }
+  },
+  "respond": {
+      "term": "respond",
+      "pronunciation": "/rɪˈspɒnd/",
+      "pos": "verb",
+      "meaning_en": "say something in reply; react",
+      "meaning_vi": "đáp lời / phản hồi",
+      "context_note": "Lắng nghe để thấu hiểu chứ không phải để vội vàng đáp lời.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hành động trả lời hoặc phản ứng lại lời nói của đối phương.",
+          "in_context_story": "Đừng vội vàng nghĩ cách đáp lời khi người khác chưa nói hết câu."
+      }
+  },
+  "response": {
+      "term": "response",
+      "pronunciation": "/rɪˈspɒns/",
+      "pos": "noun",
+      "meaning_en": "a verbal or written answer; a reaction",
+      "meaning_vi": "câu trả lời / sự phản hồi",
+      "context_note": "Kìm nén việc soạn sẵn câu trả lời trong đầu.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Lời hồi đáp hoặc phản ứng trước một thông điệp.",
+          "in_context_story": "Nhiều người có thói quen chuẩn bị sẵn câu phản hồi thay vì thực sự chú tâm nghe."
+      }
+  },
+  "said": {
+      "term": "said",
+      "pronunciation": "/sɛd/",
+      "pos": "verb (past)",
+      "meaning_en": "uttered words so as to convey information",
+      "meaning_vi": "đã nói",
+      "context_note": "Người ta hiếm khi nhớ từng từ bạn đã nói, nhưng sẽ nhớ cảm xúc bạn đem lại.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Lời nói đã được phát ra trong quá khứ.",
+          "in_context_story": "Lời bạn đã nói có thể phai mờ, nhưng cảm xúc và niềm tin sẽ đọng lại lâu dài."
+      }
+  },
+  "sales": {
+      "term": "sales",
+      "pronunciation": "/seɪlz/",
+      "pos": "noun",
+      "meaning_en": "the exchange of a commodity for money; activities in selling",
+      "meaning_vi": "bán hàng / kinh doanh",
+      "context_note": "Hoạt động bán hàng và thuyết phục khách hàng.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hoạt động giao thương và bán sản phẩm ra thị trường.",
+          "in_context_story": "Trong bán hàng, khách hàng mua sự tự tin trước khi mua sản phẩm."
+      }
+  },
+  "save": {
+      "term": "save",
+      "pronunciation": "/seɪv/",
+      "pos": "verb",
+      "meaning_en": "keep safe or reserve for future use",
+      "meaning_vi": "dành dụm / để dành",
+      "context_note": "Lãnh đạo xuất sắc không để dành phản hồi cho đến đợt đánh giá cuối năm.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Giữ lại hoặc để dành một thứ gì đó cho một dịp đặc biệt.",
+          "in_context_story": "Không nên để dành (don't save) những lời góp ý quý giá cho các kỳ đánh giá hàng năm."
+      }
+  },
+  "says": {
+      "term": "says",
+      "pronunciation": "/sɛz/",
+      "pos": "verb (third person singular)",
+      "meaning_en": "utters words so as to convey information",
+      "meaning_vi": "nói rằng / khẳng định",
+      "context_note": "Khi Buffett nói rằng thành quả cuộc đời bạn sẽ được nhân lên gấp bội.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hành động phát biểu, chia sẻ hoặc khẳng định quan điểm.",
+          "in_context_story": "Buffett khẳng định kỹ năng giao tiếp là đòn bẩy lãi kép của sự nghiệp."
+      }
+  },
+  "see": {
+      "term": "see",
+      "pronunciation": "/siː/",
+      "pos": "verb",
+      "meaning_en": "perceive with the eyes; discern visually or understand mentally",
+      "meaning_vi": "nhìn thấy / nhận thức được",
+      "context_note": "Dù bạn nhìn thấu qua bên kia ngọn núi nhưng người khác chưa nhận thấy.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Nhìn thấy bằng mắt hoặc thấu hiểu một tầm nhìn chiến lược trong tư duy.",
+          "in_context_story": "Lãnh đạo có thể nhìn thấy tương lai nhưng cần giao tiếp để người khác cùng thấy."
+      }
+  },
+  "sheet": {
+      "term": "sheet",
+      "pronunciation": "/ʃiːt/",
+      "pos": "noun",
+      "meaning_en": "an extensive expanse or layer of something (e.g. ice)",
+      "meaning_vi": "dải băng / tấm băng tầng",
+      "context_note": "Dải băng Greenland có độ dày 850m.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "Khối băng vĩnh cửu rộng lớn trải dài hàng ngàn cây số vuông.",
+          "in_context_story": "Dải băng Greenland (ice sheet) chứa trữ lượng băng khổng lồ của bán cầu Bắc."
+      }
+  },
+  "shore": {
+      "term": "shore",
+      "pronunciation": "/ʃɔːr/",
+      "pos": "noun",
+      "meaning_en": "the land along the edge of a body of water",
+      "meaning_vi": "bờ hồ / mép băng",
+      "context_note": "Bờ hồ phía Nam hoàn toàn ổn định và không có vết nứt.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Dải đất hoặc gờ băng viền quanh mép hồ nước.",
+          "in_context_story": "Bờ phía Nam của hồ băng G-4 không ghi nhận bất kỳ dấu vết rạn nứt bề mặt nào."
+      }
+  },
+  "simply": {
+      "term": "simply",
+      "pronunciation": "/ˈsɪmpli/",
+      "pos": "adverb",
+      "meaning_en": "merely; purely; easily and plainly",
+      "meaning_vi": "đơn thuần / đơn giản là",
+      "context_note": "Những mối quan hệ mà AI đơn giản là không thể sao chép được.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Diễn tả sự thuần túy hoặc không có ngoại lệ.",
+          "in_context_story": "AI đơn thuần không thể thay thế sự ấm áp và thấu cảm giữa người với người."
+      }
+  },
+  "soft": {
+      "term": "soft",
+      "pronunciation": "/sɒft/",
+      "pos": "adjective",
+      "meaning_en": "easy to mold, or relating to interpersonal rather than technical skills",
+      "meaning_vi": "mềm (kỹ năng con người)",
+      "context_note": "Không chỉ dừng lại là một kỹ năng mềm.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Chỉ các kỹ năng thiên về con người, giao tiếp và trí tuệ cảm xúc.",
+          "in_context_story": "Giao tiếp đã chuyển hóa từ kỹ năng mềm (soft skill) sang kỹ năng kinh doanh sống còn."
+      }
+  },
+  "solid": {
+      "term": "solid",
+      "pronunciation": "/ˈsɒlɪd/",
+      "pos": "adjective",
+      "meaning_en": "firm and stable in shape; not liquid or fluid",
+      "meaning_vi": "đặc / vững chắc",
+      "context_note": "Khối băng đặc cách bề mặt 200m bên dưới lòng hồ.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Có kết cấu rắn chắc, liền khối và không có bọt khí hay rạn vỡ.",
+          "in_context_story": "Vết nứt vi mô xuất hiện bên trong khối băng đặc dày hàng trăm mét."
+      }
+  },
+  "someone": {
+      "term": "someone",
+      "pronunciation": "/ˈsʌmwʌn/",
+      "pos": "pronoun",
+      "meaning_en": "an unknown or unspecified person",
+      "meaning_vi": "một ai đó",
+      "context_note": "Giả định rằng bạn đã biết ai đó đang nghĩ gì.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Một người nào đó trong tình huống giao tiếp.",
+          "in_context_story": "Đừng vội cho rằng bạn đã thấu hiểu suy nghĩ của người khác."
+      }
+  },
+  "stable": {
+      "term": "stable",
+      "pronunciation": "/ˈsteɪbəl/",
+      "pos": "adjective",
+      "meaning_en": "not likely to change or fail; firmly established",
+      "meaning_vi": "ổn định / vững vàng",
+      "context_note": "Bề mặt băng hoàn toàn ổn định trước 01:30 AM.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Ở trạng thái cân bằng, không có dấu hiệu dao động hay sụp đổ.",
+          "in_context_story": "Mặt băng hồ G-4 hoàn toàn ổn định trước khi xảy ra đứt gãy thủy lực."
+      }
+  },
+  "stay": {
+      "term": "stay",
+      "pronunciation": "/steɪ/",
+      "pos": "verb",
+      "meaning_en": "remain in the same place or position; continue to be in a state",
+      "meaning_vi": "gắn bó / ở lại",
+      "context_note": "Nhân viên gắn bó lâu dài vì họ tin vào người lãnh đạo.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Gắn bó lâu dài và tiếp tục đồng hành cùng tổ chức.",
+          "in_context_story": "Nhân viên ở lại cống hiến vì họ tin tưởng và nể phục người dẫn dắt mình."
+      }
+  },
+  "straight": {
+      "term": "straight",
+      "pronunciation": "/streɪt/",
+      "pos": "adverb",
+      "meaning_en": "in a straight line; directly",
+      "meaning_vi": "thẳng đứng / trực tiếp",
+      "context_note": "Khe nứt băng kéo dài thẳng đứng xuyên qua toàn bộ 850m băng.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Theo một phương thẳng tắp, không lệch hướng.",
+          "in_context_story": "Vết nứt sâu đâm thẳng đứng xuống lớp đá đáy của dải băng."
+      }
+  },
+  "success": {
+      "term": "success",
+      "pronunciation": "/səkˈsɛs/",
+      "pos": "noun",
+      "meaning_en": "the accomplishment of an aim or purpose",
+      "meaning_vi": "sự thành công / bước tiến",
+      "context_note": "Đưa ra lời góp ý chân thành vì sự thành công của đối phương.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Việc đạt được mục tiêu và tạo ra kết quả tốt đẹp mỹ mãn.",
+          "in_context_story": "Góp ý chân thành xuất phát từ mong muốn nhìn thấy người khác thành công."
+      }
+  },
+  "sudden": {
+      "term": "sudden",
+      "pronunciation": "/ˈsʌdən/",
+      "pos": "adjective",
+      "meaning_en": "occurring or done quickly and unexpectedly",
+      "meaning_vi": "đột ngột / bất ngờ",
+      "context_note": "Sự xả nước đột ngột của hồ băng trong 90 phút.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Diễn ra với tốc độ rất nhanh và không hề báo trước.",
+          "in_context_story": "Hiện tượng hồ băng tháo cạn đột ngột làm kinh ngạc các nhà khoa học."
+      }
+  },
+  "thinks": {
+      "term": "thinks",
+      "pronunciation": "/θɪŋks/",
+      "pos": "verb (third person singular)",
+      "meaning_en": "has a particular opinion, belief, or idea",
+      "meaning_vi": "suy nghĩ / nhận định",
+      "context_note": "Giả định rằng bạn đã biết người khác đang nghĩ gì.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Quá trình tư duy và hình thành suy nghĩ của một cá nhân.",
+          "in_context_story": "Thay vì đoán người khác nghĩ gì, hãy chủ động đặt câu hỏi mở."
+      }
+  },
+  "three": {
+      "term": "three",
+      "pronunciation": "/θriː/",
+      "pos": "numeral",
+      "meaning_en": "the number 3",
+      "meaning_vi": "ba (3)",
+      "context_note": "Ba thói quen cốt lõi của người giao tiếp xuất sắc.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Số lượng ba đơn vị.",
+          "in_context_story": "Ba câu hỏi then chốt định hình chất lượng của lời phản hồi."
+      }
+  },
+  "time": {
+      "term": "time",
+      "pronunciation": "/taɪm/",
+      "pos": "noun",
+      "meaning_en": "the indefinite continued progress of existence and events",
+      "meaning_vi": "thời gian / thời khắc",
+      "context_note": "Tích lũy sinh lãi kép theo thời gian.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Dòng chảy thời gian giúp tích lũy và khuếch đại giá trị của thói quen.",
+          "in_context_story": "Hiệu ứng lãi kép của kỹ năng giao tiếp phát huy sức mạnh vượt trội theo thời gian."
+      }
+  },
+  "underground": {
+      "term": "underground",
+      "pronunciation": "/ˈʌndəɡraʊnd/",
+      "pos": "adjective / adverb",
+      "meaning_en": "beneath the surface of the ground",
+      "meaning_vi": "dưới lòng đất / ngầm bên dưới",
+      "context_note": "Sự nóng lên của địa chất ngầm dưới đáy băng.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Nằm ẩn sâu bên dưới lớp bề mặt của vỏ Trái Đất hoặc dải băng.",
+          "in_context_story": "Hoạt động địa chất ngầm dưới đáy sâu 850m băng."
+      }
+  },
+  "upward": {
+      "term": "upward",
+      "pronunciation": "/ˈʌpwəd/",
+      "pos": "adverb / adjective",
+      "meaning_en": "towards a higher place, point, or level",
+      "meaning_vi": "hướng lên trên / nhô lên",
+      "context_note": "Mặt hồ nhô cong hình vòm hướng lên trên 18cm do áp lực nước bên dưới.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "Chuyển động hoặc xu hướng nâng cao dần theo chiều thẳng đứng từ dưới lên.",
+          "in_context_story": "Vệ tinh ghi nhận mặt hồ bị đẩy nhô cao lên 18cm do áp lực nước đáy dâng trào."
+      }
+  },
+  "visible": {
+      "term": "visible",
+      "pronunciation": "/ˈvɪzəbəl/",
+      "pos": "adjective",
+      "meaning_en": "able to be seen",
+      "meaning_vi": "có thể nhìn thấy được",
+      "context_note": "Không có vết nứt nào có thể nhìn thấy trên bờ hồ phía Nam.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hiện diện rõ ràng trước mắt và có thể quan sát bằng mắt thường.",
+          "in_context_story": "Mặt hồ phẳng lặng và không có bất kỳ vết nứt rạn nào lộ ra trên bề mặt."
+      }
+  },
+  "want": {
+      "term": "want",
+      "pronunciation": "/wɒnt/",
+      "pos": "verb",
+      "meaning_en": "have a desire to possess or do something",
+      "meaning_vi": "mong muốn / khao khát",
+      "context_note": "Mọi người luôn mong muốn biết điều gì đang làm tốt và cần cải thiện.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Mong muốn và nhu cầu tự nhiên của con người.",
+          "in_context_story": "Nhân viên luôn mong muốn nhận được sự rõ ràng và phản hồi cụ thể."
+      }
+  },
+  "warmed": {
+      "term": "warmed",
+      "pronunciation": "/wɔːmd/",
+      "pos": "verb (past)",
+      "meaning_en": "made or became warm",
+      "meaning_vi": "đã làm ấm lên / gia nhiệt",
+      "context_note": "Nhiệt lượng địa chất làm ấm lớp đá đáy băng.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hành động làm tăng nhiệt độ của một bề mặt trong quá khứ.",
+          "in_context_story": "Giả thuyết cho rằng nhiệt địa chất đã làm ấm lớp đá đáy băng."
+      }
+  },
+  "water": {
+      "term": "water",
+      "pronunciation": "/ˈwɔːtər/",
+      "pos": "noun",
+      "meaning_en": "a colorless, transparent, odorless liquid (H2O)",
+      "meaning_vi": "nước / khối nước",
+      "context_note": "Cảm biến âm học đo mực nước hồ.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Khối lượng nước lỏng chứa trong hồ hoặc sông suối.",
+          "in_context_story": "8 triệu mét khối nước băng tan thoát thẳng xuống đáy trong tích tắc."
+      }
+  },
+  "way": {
+      "term": "way",
+      "pronunciation": "/weɪ/",
+      "pos": "noun",
+      "meaning_en": "a method, style, or manner of doing something",
+      "meaning_vi": "phương thức / cách thức",
+      "context_note": "Cách tốt nhất để tự hoàn thiện bản thân.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Phương thức, con đường hoặc cách tiếp cận để đạt kết quả tối ưu.",
+          "in_context_story": "Cách tốt nhất để nâng tầm bản thân là học cách truyền đạt rõ ràng."
+      }
+  },
+  "wide": {
+      "term": "wide",
+      "pronunciation": "/waɪd/",
+      "pos": "adjective",
+      "meaning_en": "of great or more than average width",
+      "meaning_vi": "rộng / có bề rộng",
+      "context_note": "Vết nứt thẳng đứng có bề rộng 1.2 mét.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Kích thước đo theo phương ngang của một khe hở hoặc bề mặt.",
+          "in_context_story": "Vết nứt băng rộng 1.2m mở toang lúc rạng sáng."
+      }
+  },
+  "without": {
+      "term": "without",
+      "pronunciation": "/wɪðˈaʊt/",
+      "pos": "preposition",
+      "meaning_en": "in the absence of",
+      "meaning_vi": "nếu không có / thiếu đi",
+      "context_note": "Nếu không có kỹ năng giao tiếp tốt, bạn sẽ không thể thuyết phục người khác.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Diễn tả sự vắng mặt hoặc thiếu hụt một yếu tố then chốt.",
+          "in_context_story": "Thiếu đi kỹ năng giao tiếp, mọi ý tưởng xuất chúng đều khó thành hiện thực."
+      }
+  },
+  "woke": {
+      "term": "woke",
+      "pronunciation": "/wəʊk/",
+      "pos": "verb (past)",
+      "meaning_en": "emerged or caused to emerge from sleep",
+      "meaning_vi": "đã đánh thức",
+      "context_note": "Hệ thống còi báo động tự động đã đánh thức chúng tôi lúc 03:20 AM.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hành động đánh thức ai đó dậy khỏi giấc ngủ.",
+          "in_context_story": "Chuông báo động tự động réo vang đánh thức cả đội nghiên cứu lúc 03:20 AM."
+      }
+  },
+  "word": {
+      "term": "word",
+      "pronunciation": "/wɜːd/",
+      "pos": "noun",
+      "meaning_en": "a single distinct meaningful element of speech or writing",
+      "meaning_vi": "lời nói / câu từ",
+      "context_note": "Người ta hiếm khi nhớ từng câu từ bạn đã nói.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Đơn vị câu từ cấu thành nên lời nói và văn bản.",
+          "in_context_story": "Mọi người có thể quên từng câu từ, nhưng nhớ mãi cảm giác bạn mang lại."
+      }
+  },
+  "working": {
+      "term": "working",
+      "pronunciation": "/ˈwɜːkɪŋ/",
+      "pos": "verb (-ing)",
+      "meaning_en": "functioning properly; or being engaged in labor",
+      "meaning_vi": "đang vận hành hiệu quả / đang làm việc",
+      "context_note": "Mọi người muốn biết điều gì đang hoạt động hiệu quả.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Đang phát huy tác dụng và mang lại hiệu quả trong thực tế.",
+          "in_context_story": "Chỉ rõ cho nhân viên thấy những gì họ đang làm rất tốt và hiệu quả."
+      }
+  },
+  "write": {
+      "term": "write",
+      "pronunciation": "/raɪt/",
+      "pos": "verb",
+      "meaning_en": "mark letters or words on a surface; compose text",
+      "meaning_vi": "viết / soạn thảo",
+      "context_note": "AI có thể viết email và soạn thảo các bài tiếp thị.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hành động soạn thảo và tạo ra nội dung chữ.",
+          "in_context_story": "AI có thể viết email và tài liệu trong vài giây ngắn ngủi."
+      }
+  },
+  "years": {
+      "term": "years",
+      "pronunciation": "/jɪəz/",
+      "pos": "noun (plural)",
+      "meaning_en": "periods of 365 days; long times",
+      "meaning_vi": "nhiều năm / năm tháng",
+      "context_note": "Nhiều năm về trước khi trò chuyện cùng sinh viên Stanford.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Khoảng thời gian tính bằng nhiều năm trôi qua.",
+          "in_context_story": "Bài học kinh nghiệm được đúc kết và chứng thực qua nhiều năm tháng."
+      }
+  },
+  "ago": {
+      "term": "ago",
+      "pronunciation": "/əˈɡəʊ/",
+      "pos": "adverb",
+      "meaning_en": "before the present; earlier",
+      "meaning_vi": "trước đây",
+      "context_note": "Nhiều năm trước đây.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Chỉ thời điểm trong quá khứ so với hiện tại.",
+          "in_context_story": "Nhiều năm về trước, Buffett đã đưa ra lời khuyên này."
+      }
+  },
+  "alarm": {
+      "term": "alarm",
+      "pronunciation": "/əˈlɑːm/",
+      "pos": "noun",
+      "meaning_en": "an anxious awareness of danger; or a warning device",
+      "meaning_vi": "còi báo động / chuông cảnh báo",
+      "context_note": "Chuông báo động tự động réo vang lúc 03:20 AM.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Thiết bị phát âm thanh cảnh báo sự cố khẩn cấp.",
+          "in_context_story": "Còi báo động trạm nghiên cứu tự động kích hoạt khi mực nước hồ tụt dốc."
+      }
+  },
+  "already": {
+      "term": "already",
+      "pronunciation": "/ɔːlˈrɛdi/",
+      "pos": "adverb",
+      "meaning_en": "before or by now or the time in question",
+      "meaning_vi": "đã... rồi / từ trước",
+      "context_note": "Cho rằng bạn đã biết trước người khác nghĩ gì.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Diễn tả sự việc đã hoàn thành hoặc tồn tại từ trước.",
+          "in_context_story": "Vội vàng cho rằng mình đã hiểu hết suy nghĩ của người khác."
+      }
+  },
+  "assume": {
+      "term": "assume",
+      "pronunciation": "/əˈsjuːm/",
+      "pos": "verb",
+      "meaning_en": "suppose to be the case, without proof",
+      "meaning_vi": "tự suy đoán / giả định vội vàng",
+      "context_note": "Đừng vội giả định rằng bạn đã biết lý do người khác hành động.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "assume là việc vội vàng kết luận hoặc gán ghép suy nghĩ cho người khác mà chưa hề kiểm chứng hay lắng nghe.",
+          "in_context_story": "Tác giả khuyên: 'Replace assumptions with curiosity' — hãy thay định kiến bằng sự tò mò chân thành.",
+          "real_world_transfers": [
+              {
+                  "domain_label": "Giao tiếp",
+                  "sentence": "Never assume intent in an email; pick up the phone to clarify.",
+                  "connection_note": "Không tự suy đoán ý đồ mà hãy trao đổi trực tiếp."
+              }
+          ]
+      }
+  },
+  "automated": {
+      "term": "automated",
+      "pronunciation": "/ˈɔːtəmeɪtɪd/",
+      "pos": "adjective",
+      "meaning_en": "converted to largely automatic operation",
+      "meaning_vi": "tự động hóa / tự động",
+      "context_note": "Hệ thống cảm biến địa chấn tự động B-02.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Vận hành hoàn toàn tự động bằng máy móc mà không cần con người can thiệp.",
+          "in_context_story": "Cảm biến tự động ghi nhận rung chấn dưới lòng băng lúc 01:45 AM."
+      }
+  },
+  "become": {
+      "term": "become",
+      "pronunciation": "/bɪˈkʌm/",
+      "pos": "verb",
+      "meaning_en": "begin to be; turn into",
+      "meaning_vi": "trở thành / chuyển hóa thành",
+      "context_note": "Giao tiếp đã trở thành một lợi thế cạnh tranh thực sự.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Chuyển biến trạng thái để trở thành một giá trị hoặc vị thế mới.",
+          "in_context_story": "Khả năng kết nối giữa người với người đã trở thành vũ khí cạnh tranh chiến lược."
+      }
+  },
+  "becomes": {
+      "term": "becomes",
+      "pronunciation": "/bɪˈkʌmz/",
+      "pos": "verb (third person)",
+      "meaning_en": "begins to be; grows to be",
+      "meaning_vi": "trở thành",
+      "context_note": "Mỗi buổi thuyết trình trở thành cơ hội tạo dựng uy tín.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Biến đổi để trở thành một cơ hội mới.",
+          "in_context_story": "Mỗi tương tác hàng ngày trở thành đòn bẩy nhân bản tầm ảnh hưởng."
+      }
+  },
+  "believe": {
+      "term": "believe",
+      "pronunciation": "/bɪˈliːv/",
+      "pos": "verb",
+      "meaning_en": "accept that something is true, especially without proof",
+      "meaning_vi": "tin rằng / có niềm tin",
+      "context_note": "Nhà đầu tư rót vốn cho những người sáng lập mà họ tin tưởng.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Đặt niềm tin chắc chắn vào năng lực hoặc sự thật của một điều gì đó.",
+          "in_context_story": "Khách hàng và nhà đầu tư luôn tìm kiếm những con người họ có thể đặt trọn niềm tin."
+      }
+  },
+  "best": {
+      "term": "best",
+      "pronunciation": "/bɛst/",
+      "pos": "adjective (superlative)",
+      "meaning_en": "of the most excellent, effective, or desirable quality",
+      "meaning_vi": "tốt nhất / tối ưu nhất",
+      "context_note": "Cách tốt nhất để tự hoàn thiện bản thân.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Có chất lượng hoặc giá trị vượt trội nhất so với mọi lựa chọn.",
+          "in_context_story": "Lời khuyên tốt nhất của Buffett cho tuổi trẻ là học cách giao tiếp xuất sắc."
+      }
+  },
+  "bottom": {
+      "term": "bottom",
+      "pronunciation": "/ˈbɒtəm/",
+      "pos": "noun",
+      "meaning_en": "the lowest point or part",
+      "meaning_vi": "đáy / phần dưới cùng",
+      "context_note": "Lớp đá đáy bên dưới 850m băng tầng.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Vị trí sâu nhất hoặc thấp nhất của một khối vật thể.",
+          "in_context_story": "Nước xả thẳng xuống lớp đá nền dưới đáy sâu của dải băng."
+      }
+  },
+  "bowl": {
+      "term": "bowl",
+      "pronunciation": "/bəʊl/",
+      "pos": "noun",
+      "meaning_en": "a round, deep dish or basin-shaped depression",
+      "meaning_vi": "lòng chảo băng / vùng trũng",
+      "context_note": "Một lòng chảo băng trũng rỗng không còn giọt nước nào.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Vùng địa hình trũng hình lòng chảo chứa nước.",
+          "in_context_story": "Đội nghiên cứu phát hiện lòng chảo hồ băng rỗng không sau 90 phút."
+      }
+  },
+  "build": {
+      "term": "build",
+      "pronunciation": "/bɪld/",
+      "pos": "verb",
+      "meaning_en": "construct something by putting parts or materials together",
+      "meaning_vi": "xây dựng / kiến tạo",
+      "context_note": "Xây dựng những mối quan hệ bền vững mà AI không thể sao chép.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hành động bồi đắp và kiến tạo nên những giá trị bền vững.",
+          "in_context_story": "Chủ động xây dựng niềm tin và sự thấu cảm trong từng cuộc đối thoại."
+      }
+  },
+  "builds": {
+      "term": "builds",
+      "pronunciation": "/bɪldz/",
+      "pos": "verb (third person)",
+      "meaning_en": "constructs or establishes progressively",
+      "meaning_vi": "xây dựng / bồi đắp",
+      "context_note": "Sự rõ ràng bồi đắp nên sự tự tin.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Bồi đắp và củng cố vững chắc.",
+          "in_context_story": "Clarity builds confidence — sự rõ ràng kiến tạo nên niềm tin vững chắc."
+      }
+  },
+  "caused": {
+      "term": "caused",
+      "pronunciation": "/kɔːzd/",
+      "pos": "verb (past)",
+      "meaning_en": "made something happen",
+      "meaning_vi": "được gây ra bởi",
+      "context_note": "Sự thoát nước đột ngột được gây ra bởi cơ chế đứt gãy thủy lực.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Nguyên nhân dẫn đến sự xuất hiện của một hiện tượng.",
+          "in_context_story": "Hiện tượng tháo cạn nước được gây ra bởi áp lực thủy tĩnh làm nứt băng."
+      }
+  },
+  "certain": {
+      "term": "certain",
+      "pronunciation": "/ˈsɜːtən/",
+      "pos": "adjective",
+      "meaning_en": "specific but not explicitly named",
+      "meaning_vi": "cụ thể / nhất định",
+      "context_note": "Lý do vì sao họ lại hành động theo một cách nhất định.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Có tính chất cụ thể, rõ ràng.",
+          "in_context_story": "Hiểu rõ căn nguyên vì sao một người lại hành xử theo cách thức nhất định."
+      }
+  },
+  "complexity": {
+      "term": "complexity",
+      "pronunciation": "/kəmˈplɛksɪti/",
+      "pos": "noun",
+      "meaning_en": "the state or quality of being intricate or complicated",
+      "meaning_vi": "sự phức tạp",
+      "context_note": "Chuyển hóa sự phức tạp thành thông điệp rõ ràng.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "complexity là trạng thái bao gồm nhiều yếu tố đan xen, rối rắm và khó nắm bắt.",
+          "in_context_story": "Lãnh đạo giỏi là người có thể bóc tách sự phức tạp thành những điều đơn giản, dễ hiểu.",
+          "real_world_transfers": [
+              {
+                  "domain_label": "Quản trị",
+                  "sentence": "Great engineers reduce system complexity to prevent operational failure.",
+                  "connection_note": "Đơn giản hóa sự phức tạp để vận hành trơn tru."
+              }
+          ]
+      }
+  },
+  "describing": {
+      "term": "describing",
+      "pronunciation": "/dɪˈskraɪbɪŋ/",
+      "pos": "verb (-ing)",
+      "meaning_en": "giving an account in words of someone or something",
+      "meaning_vi": "đang mô tả / phác họa",
+      "context_note": "Buffett đang mô tả một nguyên lý sinh lãi kép theo thời gian.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hành động diễn giải, khắc họa rõ nét một quy luật hoặc hiện tượng.",
+          "in_context_story": "Buffett đang mô tả một quy luật phát triển tự nhiên của năng lực con người."
+      }
+  },
+  "directly": {
+      "term": "directly",
+      "pronunciation": "/daɪˈrɛktli/",
+      "pos": "adverb",
+      "meaning_en": "without changing direction or stopping; immediately",
+      "meaning_vi": "trực tiếp / thẳng xuống",
+      "context_note": "Nước xả thẳng trực tiếp xuống lớp đá nền.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Không qua trung gian hay đường vòng, tác động thẳng vào đối tượng.",
+          "in_context_story": "Dòng nước xả thẳng trực tiếp qua vết nứt sâu xuống nền đá."
+      }
+  },
+  "discovers": {
+      "term": "discovers",
+      "pronunciation": "/dɪˈskʌvərz/",
+      "pos": "verb (third person)",
+      "meaning_en": "finds unexpectedly or during a search",
+      "meaning_vi": "nhận ra / khám phá ra",
+      "context_note": "Mọi doanh nhân cuối cùng đều nhận ra khách hàng mua niềm tin.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Nhận thức hoặc khám phá ra một chân lý quan trọng sau quá trình trải nghiệm.",
+          "in_context_story": "Mọi nhà sáng lập đều nhận ra sản phẩm tốt cần đi kèm niềm tin từ khách hàng."
+      }
+  },
+  "dome": {
+      "term": "dome",
+      "pronunciation": "/dəʊm/",
+      "pos": "noun / verb",
+      "meaning_en": "a rounded vault, or to swell upward in a curve",
+      "meaning_vi": "nhô vòm lên / cấu trúc hình vòm",
+      "context_note": "Mặt hồ nhô vòm lên 18cm do áp lực dâng cao.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "Trạng thái bề mặt bị đội cong tròn hình vòm hướng lên trên.",
+          "in_context_story": "Áp lực nước ngầm đội bề mặt hồ nhô vòm lên 18cm trước khi nứt toang."
+      }
+  },
+  "due": {
+      "term": "due",
+      "pronunciation": "/djuː/",
+      "pos": "adjective / preposition",
+      "meaning_en": "caused by; owing to",
+      "meaning_vi": "do / bởi vì",
+      "context_note": "Do áp lực nước dâng cao bên dưới.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Chỉ nguyên nhân trực tiếp dẫn tới hiện tượng.",
+          "in_context_story": "Mặt hồ phồng lên do áp lực thủy tĩnh tăng đột biến."
+      }
+  },
+  "entire": {
+      "term": "entire",
+      "pronunciation": "/ɪnˈtaɪər/",
+      "pos": "adjective",
+      "meaning_en": "with no part left out; whole",
+      "meaning_vi": "toàn bộ / trọn vẹn",
+      "context_note": "Xuyên thủng toàn bộ 850m dải băng.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Bao gồm trọn vẹn 100% chiều sâu hoặc quy mô.",
+          "in_context_story": "Vết nứt xuyên thủng toàn bộ bề dày của tầng băng Greenland."
+      }
+  },
+  "eventually": {
+      "term": "eventually",
+      "pronunciation": "/ɪˈvɛntʃuəli/",
+      "pos": "adverb",
+      "meaning_en": "in the end, especially after a long delay or series of events",
+      "meaning_vi": "cuối cùng / rốt cuộc",
+      "context_note": "Mọi doanh nhân cuối cùng rồi cũng nhận ra chân lý này.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Kết quả cuối cùng sau một quá trình trải nghiệm và học hỏi.",
+          "in_context_story": "Rốt cuộc, niềm tin vẫn là yếu tố quyết định sự gắn kết của khách hàng."
+      }
+  },
+  "everyday": {
+      "term": "everyday",
+      "pronunciation": "/ˈɛvrɪdeɪ/",
+      "pos": "adjective",
+      "meaning_en": "daily; ordinary or typical",
+      "meaning_vi": "thường nhật / hàng ngày",
+      "context_note": "Biến việc phản hồi và góp ý thành cuộc trò chuyện thường nhật.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Diễn ra thường xuyên mỗi ngày, trở thành thói quen tự nhiên.",
+          "in_context_story": "Đưa phản hồi và lắng nghe vào các cuộc trò chuyện thường nhật."
+      }
+  },
+  "face": {
+      "term": "face",
+      "pronunciation": "/feɪs/",
+      "pos": "verb / noun",
+      "meaning_en": "confront and deal with; or the front of the head",
+      "meaning_vi": "đối mặt / đương đầu",
+      "context_note": "Với vô vàn thông báo và xao nhãng mà chúng ta phải đối mặt hàng ngày.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Trực tiếp đương đầu và xử lý các tình huống diễn ra xung quanh.",
+          "in_context_story": "Chúng ta đối mặt với hàng trăm thông báo gây phân tâm mỗi ngày."
+      }
+  },
+  "fact": {
+      "term": "fact",
+      "pronunciation": "/fækt/",
+      "pos": "noun",
+      "meaning_en": "a thing that is known or proved to be true",
+      "meaning_vi": "thực tế là / sự thật",
+      "context_note": "Trên thực tế, giao tiếp đã trở thành kỹ năng kinh doanh chiến lược.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Sự thật hiển nhiên đã được chứng minh qua thực tiễn.",
+          "in_context_story": "In fact — trên thực tế, giao tiếp chính là đòn bẩy khuếch đại thành công."
+      }
+  },
+  "fog": {
+      "term": "fog",
+      "pronunciation": "/fɒɡ/",
+      "pos": "noun",
+      "meaning_en": "a thick cloud of tiny water droplets in atmosphere",
+      "meaning_vi": "sương mù dày đặc",
+      "context_note": "Trước khi màn sương mù tràn tới bao phủ lòng hồ.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Lớp hơi nước dày đặc làm giảm tầm nhìn ở vùng cực.",
+          "in_context_story": "Đội lấy mẫu lõi băng hoàn tất công việc trước khi sương mù tràn tới."
+      }
+  },
+  "forward": {
+      "term": "forward",
+      "pronunciation": "/ˈfɔːwəd/",
+      "pos": "adverb",
+      "meaning_en": "in the direction that one is facing or travelling; onward",
+      "meaning_vi": "tiến về phía trước / phát triển",
+      "context_note": "Làm thế nào để tiếp tục tiến về phía trước.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Định hướng phát triển và tiến bước trong tương lai.",
+          "in_context_story": "Phản hồi tốt giúp nhân viên biết cách tự tin tiến về phía trước."
+      }
+  },
+  "generative": {
+      "term": "generative",
+      "pronunciation": "/ˈdʒɛnərətɪv/",
+      "pos": "adjective",
+      "meaning_en": "capable of producing or creating (e.g. generative AI)",
+      "meaning_vi": "tạo sinh / có khả năng tự sinh nội dung",
+      "context_note": "Trí tuệ nhân tạo tạo sinh (Generative AI).",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "Có năng lực tự động sinh ra nội dung mới như văn bản, hình ảnh, mã nguồn.",
+          "in_context_story": "Rất lâu trước khi AI tạo sinh ra đời, Buffett đã hiểu rõ sức mạnh của giao tiếp con người."
+      }
+  },
+  "give": {
+      "term": "give",
+      "pronunciation": "/ɡɪv/",
+      "pos": "verb",
+      "meaning_en": "freely transfer the possession of something to someone",
+      "meaning_vi": "trao tặng / trao cho",
+      "context_note": "Món quà quý giá nhất bạn có thể trao tặng cho người khác.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hành động trao tặng hoặc chia sẻ một giá trị cho người nhận.",
+          "in_context_story": "Sự chú tâm lắng nghe là món quà tuyệt vời nhất bạn có thể trao cho người đối diện."
+      }
+  },
+  "got": {
+      "term": "got",
+      "pronunciation": "/ɡɒt/",
+      "pos": "verb (past)",
+      "meaning_en": "received or obtained",
+      "meaning_vi": "đã nhận được / đạt được",
+      "context_note": "Tấm bằng giao tiếp mà tôi đã nhận được từ Dale Carnegie năm 1952.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Đã tiếp nhận hoặc đạt được một thành quả trong quá khứ.",
+          "in_context_story": "Tấm bằng duy nhất Buffett treo trong văn phòng là bằng Dale Carnegie nhận năm 1952."
+      }
+  },
+  "instead": {
+      "term": "instead",
+      "pronunciation": "/ɪnˈstɛd/",
+      "pos": "adverb",
+      "meaning_en": "as an alternative or substitute",
+      "meaning_vi": "thay vì / thay vào đó",
+      "context_note": "Thay vì chuẩn bị lời phản bác, hãy đặt thêm câu hỏi.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Lựa chọn hành động tích cực thay thế cho thói quen cũ.",
+          "in_context_story": "Thay vì tranh cãi bảo vệ quan điểm, hãy tò mò tìm hiểu góc nhìn của đối phương."
+      }
+  },
+  "move": {
+      "term": "move",
+      "pronunciation": "/muːv/",
+      "pos": "verb",
+      "meaning_en": "change position or progress in a course",
+      "meaning_vi": "tiến bước / chuyển động",
+      "context_note": "Làm thế nào để tiếp tục tiến bước và hoàn thiện.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hành động tiến bước và chuyển động về phía trước.",
+          "in_context_story": "Làm thế nào để tiếp tục tiến bộ trong công việc (how to move forward)."
+      }
+  },
+  "near": {
+      "term": "near",
+      "pronunciation": "/nɪər/",
+      "pos": "preposition / adjective",
+      "meaning_en": "at or to a short distance away",
+      "meaning_vi": "gần / cận kề",
+      "context_note": "Lấy mẫu lõi băng gần khu vực bờ hồ G-4.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Khoảng cách địa lý cận kề một vị trí cụ thể.",
+          "in_context_story": "Đội nghiên cứu lấy mẫu băng gần lòng hồ trước khi sương mù kéo đến."
+      }
+  },
+  "next": {
+      "term": "next",
+      "pronunciation": "/nɛkst/",
+      "pos": "adjective",
+      "meaning_en": "coming immediately after the present one in time",
+      "meaning_vi": "kế tiếp / tiếp theo",
+      "context_note": "Những nhà lãnh đạo sẽ thành công vượt bậc trong thập kỷ tiếp theo.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Khoảng thời gian hoặc sự kiện nối tiếp ngay sau hiện tại.",
+          "in_context_story": "Trong thập kỷ kế tiếp, người thành công là người có năng lực thấu cảm con người."
+      }
+  },
+  "outward": {
+      "term": "outward",
+      "pronunciation": "/ˈaʊtwəd/",
+      "pos": "adverb",
+      "meaning_en": "towards the outside or away from a center",
+      "meaning_vi": "chảy tràn ra ngoài",
+      "context_note": "Không hề có dòng suối mặt nào chảy tràn ra ngoài lòng hồ.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hướng di chuyển từ trung tâm tỏa ra các phía bên ngoài.",
+          "in_context_story": "Không có bất kỳ dòng chảy bề mặt nào tràn ra ngoài gờ băng."
+      }
+  },
+  "850-meter": {
+      "term": "850-meter",
+      "pronunciation": "/eɪt ˈhʌndrəd ˈfɪfti ˈmiːtər/",
+      "pos": "adjective",
+      "meaning_en": "having a thickness or depth of 850 meters",
+      "meaning_vi": "dày 850 mét (độ dày dải băng)",
+      "context_note": "Độ dày khổng lồ 850 mét của dải băng Greenland.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Chỉ độ dày hoặc chiều sâu 850 mét của khối băng vĩnh cửu Greenland.",
+          "in_context_story": "Vết nứt xuyên thủng toàn bộ 850m tầng băng để xả nước xuống đáy."
+      }
+  },
+  "able": {
+      "term": "able",
+      "pronunciation": "/ˈeɪbəl/",
+      "pos": "adjective",
+      "meaning_en": "having the power, skill, or opportunity to do something",
+      "meaning_vi": "có khả năng / có thể",
+      "context_note": "Bạn sẽ không thể thuyết phục được người khác đi theo mình.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Có đủ điều kiện, năng lực hoặc phương tiện để thực hiện một hành động.",
+          "in_context_story": "You won't be able to convince people — bạn sẽ không thể thuyết phục được ai nếu thiếu khả năng truyền đạt."
+      }
+  },
+  "active": {
+      "term": "active",
+      "pronunciation": "/ˈæktɪv/",
+      "pos": "adjective",
+      "meaning_en": "engaging or ready to engage in physically or mentally energetic pursuits",
+      "meaning_vi": "chủ động / tích cực",
+      "context_note": "Lắng nghe chủ động (Active listening).",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "Có tính chủ động, dồn toàn tâm trí và hành động cụ thể chứ không thụ động.",
+          "in_context_story": "Active listening là sự lắng nghe chủ động, thấu cảm bằng cả tư duy và trái tim."
+      }
+  },
+  "added": {
+      "term": "added",
+      "pronunciation": "/ˈædɪd/",
+      "pos": "verb (past)",
+      "meaning_en": "joined something to something else so as to increase size or say further",
+      "meaning_vi": "bổ sung / nói thêm rằng",
+      "context_note": "Buffett nói thêm rằng nếu không có giao tiếp bạn sẽ không thuyết phục được ai.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hành động chia sẻ thêm một góc nhìn hoặc bổ sung luận điểm mới.",
+          "in_context_story": "Buffett added that — Buffett nhấn mạnh thêm tầm quan trọng sống còn của kỹ năng này."
+      }
+  },
+  "competitive": {
+      "term": "competitive",
+      "pronunciation": "/kəmˈpɛtɪtɪv/",
+      "pos": "adjective",
+      "meaning_en": "relating to or characterized by competition",
+      "meaning_vi": "cạnh tranh / mang tính thi đua",
+      "context_note": "Lợi thế cạnh tranh vượt trội.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "competitive là khả năng vươn lên, tạo sự khác biệt và chiến thắng trong cuộc đua so tài.",
+          "in_context_story": "Năng lực giao tiếp con người trở thành lợi thế cạnh tranh cốt lõi (competitive advantage).",
+          "real_world_transfers": [
+              {
+                  "domain_label": "Kinh doanh",
+                  "sentence": "Innovation provides a competitive edge in fast-moving industries.",
+                  "connection_note": "Tạo lợi thế thi đua và thị phần."
+              }
+          ]
+      }
+  },
+  "completed": {
+      "term": "completed",
+      "pronunciation": "/kəmˈpliːtɪd/",
+      "pos": "verb (past)",
+      "meaning_en": "finished making or doing",
+      "meaning_vi": "đã hoàn thành / hoàn tất",
+      "context_note": "Đội nghiên cứu đã hoàn tất lấy mẫu lõi băng lúc 01:30 AM.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hành động thực hiện xong xuôi trọn vẹn một nhiệm vụ.",
+          "in_context_story": "Dr. Vance hoàn tất lấy mẫu băng trước khi sương mù tràn tới."
+      }
+  },
+  "core": {
+      "term": "core",
+      "pronunciation": "/kɔːr/",
+      "pos": "noun / adjective",
+      "meaning_en": "the central or most important part; or a cylindrical sample",
+      "meaning_vi": "mẫu lõi băng / phần cốt lõi",
+      "context_note": "Lấy mẫu lõi băng hình trụ (Ice core sampling).",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "Mẫu hình trụ khoan từ tầng sâu để phân tích cấu trúc địa chất, hoặc phần tinh túy cốt lõi.",
+          "in_context_story": "Ice core sampling là phương pháp khoan lấy mẫu lõi băng để đo tuổi và cấu trúc khí hậu cổ đại."
+      }
+  },
+  "end": {
+      "term": "end",
+      "pronunciation": "/ɛnd/",
+      "pos": "noun / adjective",
+      "meaning_en": "the furthest point or part; or the final purpose/goal",
+      "meaning_vi": "mục tiêu tối hậu / đích đến",
+      "context_note": "Mục tiêu tối hậu ở đây là gì? Đó là sự rõ ràng (end goal).",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Đích đến tối hậu hoặc kết quả cuối cùng mong muốn đạt được.",
+          "in_context_story": "End goal là đích đến rõ ràng và minh bạch cho mọi nỗ lực của tập thể."
+      }
+  },
+  "follow-up": {
+      "term": "follow-up",
+      "pronunciation": "/ˈfɒləʊ ʌp/",
+      "pos": "adjective / noun",
+      "meaning_en": "continuing or repeating something done previously",
+      "meaning_vi": "đào sâu thêm / câu hỏi tiếp nối",
+      "context_note": "Đặt các câu hỏi đào sâu tiếp nối để hiểu thấu vấn đề.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Hành động hỏi tiếp nối để làm rõ thêm các chi tiết chưa rõ ràng.",
+          "in_context_story": "Follow-up questions giúp đối phương cảm nhận được bạn đang thực sự chú tâm nghe họ."
+      }
+  },
+  "force": {
+      "term": "force",
+      "pronunciation": "/fɔːs/",
+      "pos": "noun",
+      "meaning_en": "strength or energy as an attribute of physical action; power",
+      "meaning_vi": "sức mạnh / lực đòn bẩy",
+      "context_note": "Giao tiếp là một lực đòn bẩy nhân bản kết quả (Force multiplier).",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "Nguồn sức mạnh hoặc lực tác động tạo ra sự biến đổi to lớn.",
+          "in_context_story": "Force multiplier — lực đòn bẩy khuếch đại mọi kỹ năng chuyên môn."
+      }
+  },
+  "made": {
+      "term": "made",
+      "pronunciation": "/meɪd/",
+      "pos": "verb (past)",
+      "meaning_en": "formed or caused someone to feel a certain way",
+      "meaning_vi": "đã làm cho / mang lại",
+      "context_note": "Họ sẽ luôn nhớ cảm giác bạn đã mang lại cho họ.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Đã tạo ra một trải nghiệm hoặc cảm xúc sâu sắc cho người đối diện.",
+          "in_context_story": "How you made them feel — dấu ấn cảm xúc mà bạn đã để lại trong lòng người nghe."
+      }
+  },
+  "still": {
+      "term": "still",
+      "pronunciation": "/stɪl/",
+      "pos": "adverb / adjective",
+      "meaning_en": "up to and including the present; or not moving",
+      "meaning_vi": "vẫn đang / còn đang tiếp diễn",
+      "context_note": "Khi người khác vẫn đang còn nói.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Trạng thái đang tiếp diễn chưa dừng lại tại thời điểm nói.",
+          "in_context_story": "Kìm nén thói quen chen ngang khi người khác vẫn còn đang chia sẻ."
+      }
+  },
+  "interview": {
+      "term": "interview",
+      "pronunciation": "/ˈɪntəvjuː/",
+      "pos": "noun",
+      "meaning_en": "a formal meeting for consultation, assessment, or strategic discussion",
+      "meaning_vi": "cuộc phỏng vấn / buổi trò chuyện",
+      "context_note": "Mỗi cuộc phỏng vấn tuyển dụng hoặc trao đổi chiến lược.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Buổi trò chuyện hoặc trao đổi chính thức để đánh giá hoặc chia sẻ góc nhìn.",
+          "in_context_story": "Mỗi buổi phỏng vấn (interview) là cơ hội thể hiện năng lực và tạo dựng uy tín."
+      }
+  },
+  "graduate": {
+      "term": "graduate",
+      "pronunciation": "/ˈɡrædʒuət/",
+      "pos": "noun",
+      "meaning_en": "a person who has successfully completed a course of study",
+      "meaning_vi": "sinh viên tốt nghiệp",
+      "context_note": "Trò chuyện cùng sinh viên vừa tốt nghiệp Stanford.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Chỉ người vừa hoàn thành chương trình đào tạo học thuật tại trường đại học.",
+          "in_context_story": "Buffett trò chuyện cùng một sinh viên tốt nghiệp Stanford để truyền lại lời khuyên đắt giá nhất."
+      }
+  },
+  "improve": {
+      "term": "improve",
+      "pronunciation": "/ɪmˈpruːv/",
+      "pos": "verb",
+      "meaning_en": "to make or become better in skill, quality, or value",
+      "meaning_vi": "cải thiện / tự hoàn thiện bản thân",
+      "context_note": "Cách tốt nhất để tự hoàn thiện bản thân là học cách giao tiếp tốt hơn.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "improve là hành động chủ động nâng cao năng lực, phẩm chất và kỹ năng của bản thân lên một tầm cao mới.",
+          "in_context_story": "Buffett khuyên người trẻ cách tốt nhất để hoàn thiện bản thân (improve yourself) là nâng cao năng lực giao tiếp.",
+          "real_world_transfers": [
+              {
+                  "domain_label": "Phát triển cá nhân",
+                  "sentence": "Continuous deliberate practice is the surest path to improve core skills.",
+                  "connection_note": "Rèn luyện có chủ đích giúp nâng cao kỹ năng cốt lõi."
+              }
+          ]
+      }
+  },
+  "learn": {
+      "term": "learn",
+      "pronunciation": "/lɜːn/",
+      "pos": "verb",
+      "meaning_en": "to gain knowledge or skill through study, experience, or being taught",
+      "meaning_vi": "học hỏi / rèn luyện kỹ năng",
+      "context_note": "Học cách giao tiếp và truyền đạt thông điệp hiệu quả.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "learn là quá trình tiếp thu tri thức và rèn luyện thành thục một kỹ năng qua trải nghiệm thực tế.",
+          "in_context_story": "Học cách giao tiếp (learn to communicate) là một kỹ năng có thể đào tạo và tích lũy được chứ không phải chỉ do bẩm sinh."
+      }
+  },
+  "learning": {
+      "term": "learning",
+      "pronunciation": "/ˈlɜːnɪŋ/",
+      "pos": "verb (-ing) / noun",
+      "meaning_en": "the acquisition of knowledge or skills through experience or study",
+      "meaning_vi": "việc học tập / rèn luyện",
+      "context_note": "Học cách giao tiếp giúp thành quả cuộc đời nhân lên gấp bội.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Tiến trình tiếp thu và mài giũa kỹ năng qua năm tháng.",
+          "in_context_story": "Việc học tập cách giao tiếp hiệu quả đem lại đòn bẩy sự nghiệp bền vững."
+      }
+  },
+  "better": {
+      "term": "better",
+      "pronunciation": "/ˈbɛtər/",
+      "pos": "adverb / adjective",
+      "meaning_en": "in a more effective, persuasive, or higher standard manner",
+      "meaning_vi": "tốt hơn / hiệu quả hơn",
+      "context_note": "Giao tiếp hiệu quả và thuyết phục hơn.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Đạt được mức độ hiệu quả và sức thuyết phục cao hơn trước.",
+          "in_context_story": "Communicate better — giao tiếp rõ ràng, thấu cảm và truyền cảm hứng hơn."
+      }
+  },
+  "diploma": {
+      "term": "diploma",
+      "pronunciation": "/dɪˈpləʊmə/",
+      "pos": "noun",
+      "meaning_en": "a certificate awarded by an educational establishment to show that someone has completed a course",
+      "meaning_vi": "tấm bằng / chứng chỉ tốt nghiệp",
+      "context_note": "Tấm bằng duy nhất treo trong văn phòng của Buffett.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Giấy chứng nhận tốt nghiệp khóa đào tạo kỹ năng hoặc học thuật.",
+          "in_context_story": "Tấm bằng duy nhất Buffett tự hào treo trong phòng làm việc là chứng chỉ Dale Carnegie 1952."
+      }
+  },
+  "hang": {
+      "term": "hang",
+      "pronunciation": "/hæŋ/",
+      "pos": "verb",
+      "meaning_en": "to attach or suspend something on a wall for display",
+      "meaning_vi": "treo (trên tường văn phòng)",
+      "context_note": "Tấm bằng duy nhất tôi treo trong văn phòng làm việc.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Treo một vật kỷ niệm lên tường để trân trọng và ghi nhớ.",
+          "in_context_story": "Buffett không treo bằng đại học danh giá mà chỉ treo tấm bằng rèn luyện kỹ năng giao tiếp."
+      }
+  },
+  "office": {
+      "term": "office",
+      "pronunciation": "/ˈɒfɪs/",
+      "pos": "noun",
+      "meaning_en": "a room, set of rooms, or building used as a place for commercial or professional work",
+      "meaning_vi": "văn phòng làm việc",
+      "context_note": "Văn phòng làm việc của Warren Buffett.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Không gian làm việc và điều hành chiến lược của nhà lãnh đạo.",
+          "in_context_story": "Văn phòng làm việc của Warren Buffett tại Berkshire Hathaway."
+      }
+  },
+  "confidence": {
+      "term": "confidence",
+      "pronunciation": "/ˈkɒnfɪdəns/",
+      "pos": "noun",
+      "meaning_en": "the feeling or belief that one can have faith in or rely on someone or something",
+      "meaning_vi": "sự tự tin / niềm tin cậy tuyệt đối",
+      "context_note": "Khách hàng không chỉ mua sản phẩm — họ mua sự an tâm và niềm tin.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "confidence là cảm giác an tâm, tin tưởng tuyệt đối vào uy tín và năng lực của người cung cấp giải pháp.",
+          "in_context_story": "Khách hàng chi tiền vì họ mua sự an tâm và tự tin (they buy confidence) mà người bán tạo dựng.",
+          "real_world_transfers": [
+              {
+                  "domain_label": "Bán hàng",
+                  "sentence": "Top salespeople instill unwavering confidence before closing strategic deals.",
+                  "connection_note": "Truyền sự tự tin và niềm tin trước khi chốt thỏa thuận."
+              }
+          ]
+      }
+  },
+  "employees": {
+      "term": "employees",
+      "pronunciation": "/ɪmˈplɔɪiːz/",
+      "pos": "noun (plural)",
+      "meaning_en": "people employed for wages or salary, especially at non-executive level",
+      "meaning_vi": "nhân viên / đội ngũ nhân sự",
+      "context_note": "Nhân viên gắn bó lâu dài vì họ tin vào người dẫn dắt mình.",
+      "depth": "concise",
+      "humanized": {
+          "simple_intuition": "Tập thể đội ngũ nhân sự làm việc và cống hiến trong tổ chức.",
+          "in_context_story": "Nhân viên ở lại cống hiến vì niềm tin vào tầm nhìn của người lãnh đạo chứ không phải chỉ vì đãi ngộ phụ trợ."
+      }
+  },
+  "distractions": {
+      "term": "distractions",
+      "pronunciation": "/dɪˈstrækʃənz/",
+      "pos": "noun (plural)",
+      "meaning_en": "things that prevent someone from giving full attention to something else",
+      "meaning_vi": "các yếu tố gây xao nhãng",
+      "context_note": "Thời đại ngập tràn thông báo và các yếu tố gây xao nhãng hàng ngày.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "distractions là những tiếng chuông thông báo, thiết bị hay suy nghĩ vụn vặt làm phân tán sự tập trung khỏi cuộc trò chuyện hiện tại.",
+          "in_context_story": "Gạt bỏ các thiết bị xao nhãng (daily distractions) là bước đầu tiên để lắng nghe thấu cảm."
+      }
+  },
+  "feedback": {
+      "term": "feedback",
+      "pronunciation": "/ˈfiːdbæk/",
+      "pos": "noun",
+      "meaning_en": "helpful information or constructive criticism about performance",
+      "meaning_vi": "phản hồi / lời góp ý mang tính xây dựng",
+      "context_note": "Biến việc phản hồi thành cuộc trò chuyện thường nhật.",
+      "depth": "standard",
+      "humanized": {
+          "simple_intuition": "feedback là những lời nhận xét, góp ý mang tính xây dựng giúp người khác nhìn rõ điểm mạnh và định hướng hoàn thiện.",
+          "in_context_story": "Lãnh đạo xuất sắc đưa ra phản hồi thường xuyên và cụ thể vì sự tiến bộ của người khác.",
+          "real_world_transfers": [
+              {
+                  "domain_label": "Quản trị đội ngũ",
+                  "sentence": "Constructive feedback empowers team members to adapt rapidly.",
+                  "connection_note": "Góp ý chân thành giúp thành viên tiến bộ nhanh chóng."
+              }
+          ]
+      }
   },
 };
 
