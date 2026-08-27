@@ -101,25 +101,27 @@ export function humanizeVocabularyTerm(term: VocabularyTerm): VocabularyTerm {
     };
   }
 
-  // Dynamic pedagogical fallback for terms without manual cognitive entries
-  let simple_intuition = "";
-  let in_context_story = term.context_note || `Trong bài đọc, "${cleanTerm}" thể hiện nghĩa "${primaryVi}".`;
-  let nuance_warning: string | undefined = undefined;
-  let retrieval_tip: string | undefined = undefined;
-  const real_world_transfers: HumanizedTransferItem[] = [];
+  // Dynamic pedagogical synthesis for terms without manual cognitive entries
+  const englishClarification = term.meaning_en && term.meaning_en !== term.term
+    ? ` (“${term.meaning_en}”)`
+    : "";
 
-  if (pos.includes("verb")) {
-    simple_intuition = `Diễn tả hành động hoặc tiến trình mang bản chất "${primaryVi}".`;
-    retrieval_tip = `Khi gặp ngữ cảnh chủ thể thực hiện hành động "${primaryVi}" → Hãy chú ý đến động từ "${cleanTerm}".`;
-  } else if (pos.includes("noun")) {
-    simple_intuition = `Định danh đối tượng, hiện tượng hoặc khái niệm mang nghĩa "${primaryVi}".`;
-    retrieval_tip = `Dùng khi cần gọi tên một yếu tố "${primaryVi}" trong câu.`;
-  } else if (pos.includes("adj")) {
-    simple_intuition = `Dùng để miêu tả đặc điểm, tính chất mang sắc thái "${primaryVi}".`;
-    retrieval_tip = `Dùng trước danh từ hoặc sau to be để nhấn mạnh tính chất "${primaryVi}".`;
+  let simple_intuition = "";
+  if (term.context_note && term.context_note.length > 25) {
+    simple_intuition = `“${cleanTerm}” mang ý niệm “${primaryVi}”${englishClarification}. Từ này được dùng để chỉ bản chất thực tế trong bài: ${term.context_note}`;
   } else {
-    simple_intuition = `Thể hiện ý nghĩa "${primaryVi}".`;
+    simple_intuition = `“${cleanTerm}” diễn đạt ý niệm “${primaryVi}”${englishClarification}, giúp làm sáng tỏ trọng tâm ý nghĩa của câu văn.`;
   }
+
+  const in_context_story = term.context_note
+    ? `Trong văn cảnh này: ${term.context_note}`
+    : `Trong ngữ cảnh bài đọc, tác giả sử dụng “${cleanTerm}” với hàm ý “${primaryVi}”.`;
+
+  const nuance_warning: string | undefined = undefined;
+  const retrieval_tip: string | undefined = depth === "deep"
+    ? `Khi gặp văn cảnh liên quan đến “${primaryVi}” → Chú ý đến thuật ngữ “${cleanTerm.toUpperCase()}”.`
+    : undefined;
+  const real_world_transfers: HumanizedTransferItem[] = [];
 
   return {
     ...term,
@@ -129,7 +131,7 @@ export function humanizeVocabularyTerm(term: VocabularyTerm): VocabularyTerm {
       in_context_story,
       real_world_transfers: depth !== "concise" && real_world_transfers.length > 0 ? real_world_transfers : undefined,
       nuance_warning,
-      retrieval_tip: depth === "deep" ? retrieval_tip : undefined,
+      retrieval_tip,
     },
   };
 }
