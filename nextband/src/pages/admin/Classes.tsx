@@ -135,24 +135,34 @@ export default function AdminClasses() {
     return () => clearTimeout(timer);
   }, [search]);
 
+  const teacherIdParam = searchParams.get("teacherId");
+  const courseIdParam = searchParams.get("courseId");
+
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: [
       "admin-classes",
       selectedBranch,
       debouncedSearch,
+      teacherIdParam,
+      courseIdParam,
+      statusFilter,
       sortField,
       sortOrder,
       page,
       pageSize,
     ],
-    queryFn: () =>
-      classesApi.list({
+    queryFn: () => {
+      const isActiveParam = statusFilter === "inactive" ? false : statusFilter === "all" ? undefined : true;
+      return classesApi.list({
         search: debouncedSearch || undefined,
-        isActive: statusFilter === "all" ? undefined : statusFilter === "active",
+        isActive: isActiveParam,
         branchId: selectedBranch !== "ALL" ? selectedBranch : undefined,
+        teacherId: teacherIdParam || undefined,
+        courseId: courseIdParam || undefined,
         page,
         limit: pageSize,
-      }),
+      });
+    },
   });
 
   const { data: coursesData } = useQuery({
@@ -194,6 +204,8 @@ export default function AdminClasses() {
         const capacity = c.room?.capacity || 15;
         return capacity > 0 && studentCount / capacity < 0.5;
       });
+    } else if (statusFilter === "no_teacher") {
+      result = result.filter((c: any) => !c.teacherId && !c.teacher?.id && !c.teacher?.fullName);
     }
     return result.sort((a: any, b: any) => {
       const mult = sortOrder === "asc" ? 1 : -1;
@@ -455,6 +467,30 @@ export default function AdminClasses() {
           </Select>
         </div>
       </div>
+
+      {(teacherIdParam || courseIdParam) && (
+        <div className="flex items-center gap-2 p-2.5 rounded-lg bg-primary/5 border border-primary/20 text-xs text-primary font-medium">
+          <span>Đang lọc:</span>
+          {teacherIdParam && (
+            <Badge variant="secondary" className="gap-1 bg-primary/10 text-primary">
+              Giáo viên: {teachers.find((t: any) => t.id === teacherIdParam || t.user_id === teacherIdParam)?.fullName || teacherIdParam}
+            </Badge>
+          )}
+          {courseIdParam && (
+            <Badge variant="secondary" className="gap-1 bg-primary/10 text-primary">
+              Khóa học: {courses.find((c: any) => c.id === courseIdParam)?.title || courseIdParam}
+            </Badge>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate("/admin/classes")}
+            className="h-6 text-xs px-2 ml-auto text-muted-foreground hover:text-foreground"
+          >
+            Xóa bộ lọc
+          </Button>
+        </div>
+      )}
 
       <div className="border rounded-xl bg-card shadow-sm overflow-hidden">
         <Table>

@@ -41,6 +41,12 @@ export class ClassService {
       where.teacherId = user.id;
     } else if (!isAdmin && !isTeacher) {
       where.students = { some: { studentId: user.id } };
+    } else if (isAdmin && query.teacherId) {
+      where.teacherId = query.teacherId;
+    }
+
+    if (query.courseId) {
+      where.courseId = query.courseId;
     }
 
     // Branch Scoping (INV-2, INV-3, INV-5)

@@ -424,6 +424,21 @@ export default function AdminExamEdit() {
                       <BookOpen className="h-4 w-4 mr-1.5" /> + Reading
                     </Button>
                     <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-indigo-600 border-indigo-200 hover:bg-indigo-50"
+                      onClick={() => {
+                        setNewSection({
+                          title: "Grammar",
+                          sectionType: "general",
+                          orderIndex: 0,
+                        });
+                        setCreateDialogOpen(true);
+                      }}
+                    >
+                      <FileText className="h-4 w-4 mr-1.5" /> + General
+                    </Button>
+                    <Button
                       variant="default"
                       size="sm"
                       onClick={() => {
@@ -458,7 +473,7 @@ export default function AdminExamEdit() {
             <div className="space-y-2">
               <Label>Tiêu đề Section</Label>
               <Input
-                placeholder="VD: Listening Section 1, Reading Passage 1..."
+                placeholder="VD: Listening Section 1, Reading Passage 1, Grammar..."
                 value={newSection.title}
                 onChange={(e) =>
                   setNewSection((s) => ({ ...s, title: e.target.value }))
@@ -482,6 +497,7 @@ export default function AdminExamEdit() {
                     <SelectItem value="reading">Reading</SelectItem>
                     <SelectItem value="writing">Writing</SelectItem>
                     <SelectItem value="speaking">Speaking</SelectItem>
+                    <SelectItem value="general">General (Grammar / Vocab)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

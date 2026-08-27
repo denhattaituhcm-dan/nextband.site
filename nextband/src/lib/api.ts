@@ -231,6 +231,10 @@ export function normalizeCourseData(course: any): any {
     createdAt: course.createdAt || course.created_at,
     updatedAt: course.updatedAt || course.updated_at,
     exams: Array.isArray(course.exams) ? course.exams.map(normalizeExamData) : [],
+    lessonsCount: course.lessonsCount ?? course._count?.exams ?? (course.exams && Array.isArray(course.exams) ? course.exams.length : 0),
+    activeClassesCount: course.activeClassesCount ?? course._count?.classes ?? 0,
+    totalClassesCount: course.totalClassesCount ?? course._count?.classes ?? 0,
+    studentsCount: course.studentsCount ?? course._count?.enrollments ?? 0,
   };
 }
 
@@ -339,6 +343,7 @@ export const coursesApi = {
       const result = await res.json();
       const rawData = result.data || [];
       const formattedData = rawData.map((c: any) => ({
+        ...c,
         id: c.id,
         title: c.title,
         description: c.description,
@@ -349,11 +354,10 @@ export const coursesApi = {
         thumbnailUrl: c.thumbnailUrl || c.thumbnail_url,
         createdAt: c.createdAt || c.created_at,
         band: c.level === "beginner" ? "3.0 - 4.0" : c.level === "intermediate" ? "5.0 - 5.5" : "6.0 - 6.5+",
-        lessonsCount: c._count?.exams ?? (c.exams && Array.isArray(c.exams) ? c.exams.length : 0),
-        activeClassesCount: c._count?.classes ?? 0,
-        totalClassesCount: c._count?.classes ?? 0,
-        studentsCount: c._count?.enrollments ?? 0,
-        ...c,
+        lessonsCount: c.lessonsCount ?? c._count?.exams ?? (c.exams && Array.isArray(c.exams) ? c.exams.length : 0),
+        activeClassesCount: c.activeClassesCount ?? c._count?.classes ?? 0,
+        totalClassesCount: c.totalClassesCount ?? c._count?.classes ?? 0,
+        studentsCount: c.studentsCount ?? c._count?.enrollments ?? 0,
       }));
 
       return {
@@ -1490,13 +1494,22 @@ export const usersApi = {
     return data;
   },
 
-  getStudentManagement: async (params?: { page?: number; limit?: number; search?: string }) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token;
+  getStudentManagement: async (params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    classId?: string;
+    courseId?: string;
+    status?: string;
+  }) => {
+    const token = await getAuthToken();
     const searchParams = new URLSearchParams();
     if (params?.page) searchParams.set("page", String(params.page));
     if (params?.limit) searchParams.set("limit", String(params.limit));
     if (params?.search) searchParams.set("search", params.search);
+    if (params?.classId) searchParams.set("classId", params.classId);
+    if (params?.courseId) searchParams.set("courseId", params.courseId);
+    if (params?.status) searchParams.set("status", params.status);
 
     const response = await fetch(`${API_BASE_URL}/users/students-management?${searchParams.toString()}`, {
       headers: {
@@ -2619,6 +2632,8 @@ export const classesApi = {
     search?: string;
     branchId?: string;
     isActive?: boolean;
+    teacherId?: string;
+    courseId?: string;
     sortBy?: string;
     sortOrder?: "asc" | "desc";
   }) => {
@@ -2631,6 +2646,8 @@ export const classesApi = {
       if (params?.search) queryParams.set("search", params.search);
       if (params?.branchId && params.branchId !== "ALL") queryParams.set("branchId", params.branchId);
       if (params?.isActive !== undefined) queryParams.set("isActive", String(params.isActive));
+      if (params?.teacherId) queryParams.set("teacherId", params.teacherId);
+      if (params?.courseId) queryParams.set("courseId", params.courseId);
 
       const res = await fetch(`${API_BASE_URL}/classes?${queryParams.toString()}`, {
         headers: {

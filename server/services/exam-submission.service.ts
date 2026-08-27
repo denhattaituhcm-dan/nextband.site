@@ -112,6 +112,13 @@ export class ExamSubmissionService {
     }
 
     if (examId) where.examId = examId;
+
+    if (status) {
+      const normStatus = String(status).toUpperCase();
+      where.status = normStatus;
+    } else if (needGrading === true || needGrading === "true") {
+      where.status = "SUBMITTED";
+    }
     const sortFieldMap: Record<string, string> = {
       newest: "createdAt",
       createdAt: "createdAt",

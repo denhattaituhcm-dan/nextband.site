@@ -31,7 +31,9 @@ import {
   Archive,
   AlertTriangle,
   RefreshCw,
-  Loader2
+  Loader2,
+  School,
+  Users
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -246,18 +248,36 @@ export default function AdminCourses() {
 
                   {/* LESSONS / EXAMS */}
                   <TableCell className="text-xs text-muted-foreground">
-                    <span className="font-semibold text-primary">{course.lessonsCount ?? 0}</span> bài tập
+                    <Link
+                      to={`/admin/exams?courseId=${course.id}`}
+                      className="hover:underline hover:text-primary transition-colors inline-block"
+                      title="Xem ngân hàng đề bài của khóa học"
+                    >
+                      <span className="font-semibold text-primary">{course.lessonsCount ?? 0}</span> bài tập
+                    </Link>
                   </TableCell>
 
                   {/* CLASSES (ACTIVE / TOTAL) - ALIGNED RIGHT */}
                   <TableCell className="text-right text-xs">
-                    <span className="font-bold text-primary">{course.activeClassesCount ?? 0}</span>
-                    <span className="text-muted-foreground"> / {course.totalClassesCount ?? 0} lớp</span>
+                    <Link
+                      to={`/admin/classes?courseId=${course.id}`}
+                      className="hover:underline transition-colors inline-block"
+                      title="Xem danh sách lớp thuộc khóa học"
+                    >
+                      <span className="font-bold text-primary">{course.activeClassesCount ?? 0}</span>
+                      <span className="text-muted-foreground"> / {course.totalClassesCount ?? 0} lớp</span>
+                    </Link>
                   </TableCell>
 
                   {/* STUDENTS - ALIGNED RIGHT */}
                   <TableCell className="text-right text-xs font-semibold text-foreground">
-                    {course.studentsCount ?? 0} HV
+                    <Link
+                      to={`/admin/users?role=student&courseId=${course.id}`}
+                      className="hover:underline hover:text-primary transition-colors inline-block"
+                      title="Xem danh sách học viên theo học khóa này"
+                    >
+                      {course.studentsCount ?? 0} HV
+                    </Link>
                   </TableCell>
 
                   {/* STATUS */}
@@ -282,13 +302,36 @@ export default function AdminCourses() {
                           <MoreVertical className="h-4 w-4 text-muted-foreground" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48 text-xs">
+                      <DropdownMenuContent align="end" className="w-52 text-xs">
                         <DropdownMenuItem asChild>
                           <Link to={`/admin/courses/${course.id}`}>
                             <Edit className="h-3.5 w-3.5 mr-2 text-slate-500" />
-                            Edit Program
+                            Chỉnh sửa chương trình
                           </Link>
                         </DropdownMenuItem>
+
+                        <DropdownMenuItem asChild>
+                          <Link to={`/admin/classes?courseId=${course.id}`}>
+                            <School className="h-3.5 w-3.5 mr-2 text-primary" />
+                            Xem các lớp học ({course.totalClassesCount ?? 0})
+                          </Link>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem asChild>
+                          <Link to={`/admin/exams?courseId=${course.id}`}>
+                            <BookOpen className="h-3.5 w-3.5 mr-2 text-indigo-500" />
+                            Ngân hàng đề bài ({course.lessonsCount ?? 0})
+                          </Link>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem asChild>
+                          <Link to={`/admin/users?role=student&courseId=${course.id}`}>
+                            <Users className="h-3.5 w-3.5 mr-2 text-blue-500" />
+                            Danh sách học viên ({course.studentsCount ?? 0})
+                          </Link>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuSeparator />
 
                         <DropdownMenuItem onClick={() => togglePublishMutation.mutate({ id: course.id, isPublished: !course.isPublished })}>
                           <Globe className="h-3.5 w-3.5 mr-2 text-emerald-500" />
@@ -297,7 +340,7 @@ export default function AdminCourses() {
 
                         <DropdownMenuItem onClick={() => toast({ title: "Đã chuyển khóa học sang trạng thái Lưu trữ" })}>
                           <Archive className="h-3.5 w-3.5 mr-2 text-amber-500" />
-                          Archive Program
+                          Lưu trữ chương trình
                         </DropdownMenuItem>
 
                         <DropdownMenuSeparator />
@@ -307,7 +350,7 @@ export default function AdminCourses() {
                           onClick={() => setDeleteCourse({ id: course.id, title: course.title })}
                         >
                           <Trash2 className="h-3.5 w-3.5 mr-2 text-red-600" />
-                          Delete Program
+                          Xóa khóa học
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

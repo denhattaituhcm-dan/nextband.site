@@ -31,7 +31,7 @@ import {
   Unlock,
   BookOpen,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { DataTablePagination } from "@/components/admin/DataTablePagination";
 import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
@@ -45,6 +45,9 @@ import {
 type SortField = "title" | "createdAt" | "week";
 
 export default function AdminExams() {
+  const [searchParams] = useSearchParams();
+  const urlCourseId = searchParams.get("courseId") || "all";
+
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -59,7 +62,14 @@ export default function AdminExams() {
     isLocked?: boolean;
   } | null>(null);  
 
-  const [selectedCourseId, setSelectedCourseId] = useState<string>("all");
+  const [selectedCourseId, setSelectedCourseId] = useState<string>(urlCourseId);
+
+  useEffect(() => {
+    const pCourseId = searchParams.get("courseId");
+    if (pCourseId) {
+      setSelectedCourseId(pCourseId);
+    }
+  }, [searchParams]);
 
   // Debounce search
   useEffect(() => {
@@ -289,7 +299,20 @@ export default function AdminExams() {
               exams.map((exam: any) => (
                 <TableRow key={exam.id}>
                   <TableCell className="font-medium">{exam.title}</TableCell>
-                  <TableCell>{exam.course?.title || "-"}</TableCell>
+                  <TableCell>
+                    {exam.course?.title ? (
+                      <Link
+                        to={`/admin/courses/${exam.course.id || exam.courseId}`}
+                        className="text-primary font-medium hover:underline inline-flex items-center gap-1.5"
+                        title={`Mở trang quản lý khóa học: ${exam.course.title}`}
+                      >
+                        <BookOpen className="w-3.5 h-3.5 opacity-70 shrink-0" />
+                        <span>{exam.course.title}</span>
+                      </Link>
+                    ) : (
+                      <span className="text-muted-foreground italic">—</span>
+                    )}
+                  </TableCell>
                   <TableCell>Tuần {exam.week || 1}</TableCell>
                   <TableCell>
                     <Badge variant={exam.isPublished ? "default" : "secondary"}>

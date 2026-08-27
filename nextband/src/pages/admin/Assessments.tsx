@@ -53,6 +53,8 @@ import {
   Pause,
 } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
+import { normalizePhoneNumber } from "@/lib/phoneUtils";
 
 interface SpeakingReviewPlayerProps {
   title: string;
@@ -567,7 +569,7 @@ Nếu bạn cần tư vấn chi tiết hơn về bài sửa hoặc lộ trình h
                       <TableCell>
                         <div className="space-y-1">
                           <p className="font-bold text-foreground text-sm">{item.candidateName}</p>
-                          <div className="flex items-center gap-1.5">
+                          <div className="flex flex-wrap items-center gap-1.5">
                             <a
                               href={`https://zalo.me/${cleanZaloPhone(item.phone)}`}
                               target="_blank"
@@ -577,6 +579,18 @@ Nếu bạn cần tư vấn chi tiết hơn về bài sửa hoặc lộ trình h
                               <Phone className="w-3 h-3" />
                               <span>Zalo: {item.phone}</span>
                             </a>
+                            {item.phone && (
+                              <Link
+                                to={`/admin/leads?search=${encodeURIComponent(normalizePhoneNumber(item.phone))}`}
+                                className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700 dark:text-amber-300 hover:underline bg-amber-500/10 border border-amber-200 px-1.5 py-0.5 rounded-md"
+                                title="Tra cứu hồ sơ tư vấn (Lead) có số điện thoại tương ứng để đối chiếu (Advisory Reference)"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <UserCheck className="w-2.5 h-2.5" />
+                                <span>Xem Lead</span>
+                                <ExternalLink className="w-2.5 h-2.5 opacity-60" />
+                              </Link>
+                            )}
                           </div>
                         </div>
                       </TableCell>

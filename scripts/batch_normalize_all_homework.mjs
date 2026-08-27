@@ -1,11 +1,15 @@
-/**
- * HTML Normalizer for IELTS LMS Question and Content
- *
- * Strips disruptive font-size, font-family, line-height, and Word/Google Docs styling artifacts
- * while preserving semantic markup (bold, italic, underline, lists, tables, images, fill blank tokens, intentional highlights).
- */
+import { JSDOM } from "jsdom";
+import { PrismaClient } from "@prisma/client";
+import dotenv from "dotenv";
+dotenv.config();
 
-function normalizeColor(colorStr: string): string {
+const prisma = new PrismaClient();
+
+const dom = new JSDOM("<!DOCTYPE html><html><body></body></html>");
+const { window } = dom;
+const { Node, HTMLElement, DOMParser } = window;
+
+function normalizeColor(colorStr) {
   if (!colorStr) return "";
   const trimmed = colorStr.trim().toLowerCase();
   if (trimmed === "transparent" || trimmed === "rgba(0, 0, 0, 0)") return "";
@@ -57,13 +61,11 @@ const ALLOWED_TAGS = new Set([
   "CODE",
 ]);
 
-function cleanStringPreNormalization(raw: string): string {
+function cleanStringPreNormalization(raw) {
   if (!raw || typeof raw !== "string") return raw;
 
   let s = raw;
-  const isJson =
-    (s.startsWith("{") && s.endsWith("}")) ||
-    (s.startsWith("[") && s.endsWith("]"));
+  const isJson = (s.startsWith("{") && s.endsWith("}")) || (s.startsWith("[") && s.endsWith("]"));
   if (isJson) return s;
 
   // Unescape backslashes before quotes
@@ -88,16 +90,7 @@ function cleanStringPreNormalization(raw: string): string {
   return s;
 }
 
-/**
- * Normalizes question HTML content:
- * 1. Strips <font> tags and size/face attributes.
- * 2. Strips inline font-size, font-family, line-height, margin/padding styles.
- * 3. Converts H1-H6 headings into <p><strong>...</strong></p> to prevent gigantic fonts while keeping emphasis.
- * 4. Preserves semantic structures: bold, italic, underline, lists, tables, links, images, colors.
- * 5. Cleans up redundant empty tags and normalize spacing.
- * 6. Fixes /n, \n, and quote escape artifacts.
- */
-export function normalizeQuestionHtml(rawHtml: string | null | undefined): string {
+export function normalizeHtml(rawHtml) {
   if (!rawHtml) return "";
 
   const precleaned = cleanStringPreNormalization(rawHtml);
@@ -105,6 +98,7 @@ export function normalizeQuestionHtml(rawHtml: string | null | undefined): strin
 
   // Fast path for simple plain text without HTML tags
   if (!/<[a-z][\s\S]*>/i.test(precleaned)) {
+    // If it has multiple newlines, format into clean text
     return precleaned.trim();
   }
 
@@ -113,7 +107,7 @@ export function normalizeQuestionHtml(rawHtml: string | null | undefined): strin
     const doc = parser.parseFromString(precleaned, "text/html");
     const body = doc.body;
 
-    const cleanNode = (node: Node): Node | null => {
+    const cleanNode = (node) => {
       if (node.nodeType === Node.TEXT_NODE) {
         const textVal = (node.textContent || "").replace(/\r/g, "");
         const cleanedText = textVal
@@ -127,11 +121,11 @@ export function normalizeQuestionHtml(rawHtml: string | null | undefined): strin
         return null;
       }
 
-      const el = node as HTMLElement;
+      const el = node;
       const tagName = el.tagName.toUpperCase();
       const styleAttr = (el.getAttribute("style") || "").toLowerCase();
 
-      // Detect font-weight attributes (e.g. Google Docs/Word wrappers vs real bold)
+      // Detect font-weight attributes
       const isNormalFontWeight =
         el.style.fontWeight === "normal" ||
         el.style.fontWeight === "400" ||
@@ -172,8 +166,6 @@ export function normalizeQuestionHtml(rawHtml: string | null | undefined): strin
         styleAttr.includes("text-decoration: line-through");
 
       // 1. Google Docs / Word normal weight wrapper detection for <B> and <STRONG>
-      // When pasting from Google Docs, it wraps the entire text in <b style="font-weight:normal;">.
-      // We must unwrap this fake bold tag to prevent regular text from becoming bold!
       if ((tagName === "B" || tagName === "STRONG") && isNormalFontWeight) {
         const frag = doc.createDocumentFragment();
         el.childNodes.forEach((child) => {
@@ -183,7 +175,7 @@ export function normalizeQuestionHtml(rawHtml: string | null | undefined): strin
         return frag;
       }
 
-      // 2. Convert headings (H1-H6) to <p> to prevent gigantic fonts without forcing bold
+      // 2. Convert headings (H1-H6) to <p>
       if (["H1", "H2", "H3", "H4", "H5", "H6"].includes(tagName)) {
         const pEl = doc.createElement("p");
         el.childNodes.forEach((child) => {
@@ -211,14 +203,13 @@ export function normalizeQuestionHtml(rawHtml: string | null | undefined): strin
       const styleBg = el.style.backgroundColor ? normalizeColor(el.style.backgroundColor) : "";
 
       // Process children recursively
-      const cleanedChildren: Node[] = [];
+      const cleanedChildren = [];
       el.childNodes.forEach((child) => {
         const cleanedChild = cleanNode(child);
         if (cleanedChild) cleanedChildren.push(cleanedChild);
       });
 
-      // Wrap helper for semantic styles extracted from inline CSS (e.g. span style="font-weight:bold")
-      const applySemanticWrappers = (targetNode: Node): Node => {
+      const applySemanticWrappers = (targetNode) => {
         let currentNode = targetNode;
         if (isBoldFontWeight && tagName !== "STRONG" && tagName !== "B") {
           const strong = doc.createElement("strong");
@@ -243,16 +234,14 @@ export function normalizeQuestionHtml(rawHtml: string | null | undefined): strin
         return currentNode;
       };
 
-      // If tag is not in allowed list (e.g. <font>, <o:p>, custom tags), unwrap and return fragment with semantic wrappers
       if (!targetTagName) {
         const frag = doc.createDocumentFragment();
         cleanedChildren.forEach((child) => frag.appendChild(child));
         return applySemanticWrappers(frag);
       }
 
-      // If SPAN has no meaningful attributes (no color/bg, no class, no dataset), unwrap it
       const hasDataAttrs = Array.from(el.attributes).some(
-        (attr) => attr.name.startsWith("data-fill-blank") || attr.name.startsWith("data-blank-id"),
+        (attr) => attr.name.startsWith("data-fill-blank") || attr.name.startsWith("data-blank-id")
       );
 
       if (
@@ -270,7 +259,6 @@ export function normalizeQuestionHtml(rawHtml: string | null | undefined): strin
       const newEl = doc.createElement(targetTagName);
       cleanedChildren.forEach((child) => newEl.appendChild(child));
 
-      // Preserve specific allowed attributes
       if (targetTagName === "A" && el.hasAttribute("href")) {
         newEl.setAttribute("href", el.getAttribute("href") || "#");
         newEl.setAttribute("target", "_blank");
@@ -288,15 +276,13 @@ export function normalizeQuestionHtml(rawHtml: string | null | undefined): strin
         if (el.hasAttribute("rowspan")) newEl.setAttribute("rowspan", el.getAttribute("rowspan") || "1");
       }
 
-      // Preserve normalized color & background-color only
-      if (styleColor && styleColor !== "#000000" && styleColor !== "inherit") {
+      if (styleColor && styleColor !== "#000000" && styleColor !== "inherit" && styleColor !== "#0f1729") {
         newEl.style.color = styleColor;
       }
       if (styleBg && styleBg !== "transparent") {
         newEl.style.backgroundColor = styleBg;
       }
 
-      // Preserve app-specific data attributes (fill blank tokens, etc.)
       Array.from(el.attributes).forEach((attr) => {
         if (attr.name.startsWith("data-fill-blank") || attr.name.startsWith("data-blank-id")) {
           newEl.setAttribute(attr.name, attr.value);
@@ -314,15 +300,128 @@ export function normalizeQuestionHtml(rawHtml: string | null | undefined): strin
 
     let result = container.innerHTML.trim();
 
-    // Clean up empty paragraphs like <p></p> or <p><br></p><p><br></p> sequences
     result = result
       .replace(/(<p>\s*<\/p>)+/gi, "")
       .replace(/(<p>\s*<br\s*\/?>\s*<\/p>\s*){2,}/gi, "<p><br></p>")
       .trim();
 
-    return result || rawHtml.trim();
+    return result || precleaned.trim();
   } catch (err) {
-    console.error("normalizeQuestionHtml error:", err);
-    return rawHtml.trim();
+    console.error("normalizeHtml error:", err);
+    return precleaned.trim();
   }
 }
+
+async function runBatchNormalization(dryRun = true) {
+  console.log(`\n========================================`);
+  console.log(`STARTING BATCH NORMALIZATION (dryRun = ${dryRun})`);
+  console.log(`========================================\n`);
+
+  let updatedSections = 0;
+  let updatedGroups = 0;
+  let updatedQuestions = 0;
+
+  // 1. ExamSections
+  const sections = await prisma.examSection.findMany();
+  console.log(`Scanning ${sections.length} ExamSections...`);
+  for (const s of sections) {
+    let changed = false;
+    const updates = {};
+
+    if (s.instructions) {
+      const norm = normalizeHtml(s.instructions);
+      if (norm !== s.instructions) {
+        updates.instructions = norm;
+        changed = true;
+      }
+    }
+    if (s.audioScript) {
+      const norm = normalizeHtml(s.audioScript);
+      if (norm !== s.audioScript) {
+        updates.audioScript = norm;
+        changed = true;
+      }
+    }
+
+    if (changed) {
+      updatedSections++;
+      if (!dryRun) {
+        await prisma.examSection.update({
+          where: { id: s.id },
+          data: updates,
+        });
+      }
+    }
+  }
+
+  // 2. QuestionGroups
+  const groups = await prisma.questionGroup.findMany();
+  console.log(`Scanning ${groups.length} QuestionGroups...`);
+  for (const g of groups) {
+    let changed = false;
+    const updates = {};
+
+    if (g.passage) {
+      const norm = normalizeHtml(g.passage);
+      if (norm !== g.passage) {
+        updates.passage = norm;
+        changed = true;
+      }
+    }
+    if (g.instructions) {
+      const norm = normalizeHtml(g.instructions);
+      if (norm !== g.instructions) {
+        updates.instructions = norm;
+        changed = true;
+      }
+    }
+
+    if (changed) {
+      updatedGroups++;
+      if (!dryRun) {
+        await prisma.questionGroup.update({
+          where: { id: g.id },
+          data: updates,
+        });
+      }
+    }
+  }
+
+  // 3. Questions
+  const questions = await prisma.question.findMany();
+  console.log(`Scanning ${questions.length} Questions...`);
+  for (const q of questions) {
+    let changed = false;
+    const updates = {};
+
+    if (q.questionText) {
+      const norm = normalizeHtml(q.questionText);
+      if (norm !== q.questionText) {
+        updates.questionText = norm;
+        changed = true;
+      }
+    }
+
+    if (changed) {
+      updatedQuestions++;
+      if (!dryRun) {
+        await prisma.question.update({
+          where: { id: q.id },
+          data: updates,
+        });
+      }
+    }
+  }
+
+  console.log(`\n========================================`);
+  console.log(`BATCH NORMALIZATION SUMMARY (dryRun = ${dryRun})`);
+  console.log(`========================================`);
+  console.log(`ExamSections to update: ${updatedSections} / ${sections.length}`);
+  console.log(`QuestionGroups to update: ${updatedGroups} / ${groups.length}`);
+  console.log(`Questions to update: ${updatedQuestions} / ${questions.length}`);
+
+  await prisma.$disconnect();
+}
+
+const isDryRun = process.argv.includes("--dry-run");
+runBatchNormalization(isDryRun).catch(console.error);

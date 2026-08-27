@@ -99,6 +99,8 @@ export default function AdminUsers() {
   const navigate = useNavigate();
   const initialRole = searchParams.get("role") || "student";
   const statusParam = searchParams.get("status");
+  const courseIdParam = searchParams.get("courseId");
+  const classIdParam = searchParams.get("classId");
 
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -137,6 +139,9 @@ export default function AdminUsers() {
     queryKey: [
       "admin-students-management",
       debouncedSearch,
+      courseIdParam,
+      classIdParam,
+      statusParam,
       page,
       pageSize,
     ],
@@ -145,6 +150,9 @@ export default function AdminUsers() {
         page,
         limit: pageSize,
         search: debouncedSearch || undefined,
+        courseId: courseIdParam || undefined,
+        classId: classIdParam || undefined,
+        status: statusParam || undefined,
       }),
   });
 
@@ -324,19 +332,8 @@ export default function AdminUsers() {
     );
   };
 
-  // Tận gốc rễ: API `usersApi.list` trả về cấu trúc `{ data: [...], meta: { total, totalPages } }`.
-  // Sử dụng fallback an toàn (supports cả data.data, data.users, data) để không bao giờ bị rỗng khi API trả về thành công.
   const rawUsersList = (data as any)?.data || (data as any)?.users || (Array.isArray(data) ? data : []);
-  const usersList = useMemo(() => {
-    if (statusParam === "at-risk") {
-      return rawUsersList.filter((u: any) => {
-        const isRiskHealth = u.academicHealth !== null && u.academicHealth !== undefined && u.academicHealth < 60;
-        const isLowAttendance = u.attendance?.percentage !== null && u.attendance?.percentage !== undefined && u.attendance.percentage < 75;
-        return isRiskHealth || isLowAttendance;
-      });
-    }
-    return rawUsersList;
-  }, [rawUsersList, statusParam]);
+  const usersList = rawUsersList;
   const total = (data as any)?.meta?.total ?? (data as any)?.total ?? usersList.length;
   const totalPages = (data as any)?.meta?.totalPages ?? (data as any)?.totalPages ?? 1;
 
@@ -464,6 +461,33 @@ export default function AdminUsers() {
             onClick={() => navigate("/admin/users?role=student")}
           >
             Xem tất cả học viên
+          </Button>
+        </div>
+      )}
+
+      {/* COURSE / CLASS FILTER BANNER */}
+      {(courseIdParam || classIdParam) && (
+        <div className="flex items-center justify-between p-3 rounded-xl bg-primary/5 text-primary border border-primary/20 text-xs font-medium">
+          <div className="flex items-center gap-2">
+            <span>Đang lọc học viên theo:</span>
+            {courseIdParam && (
+              <Badge variant="secondary" className="bg-primary/10 text-primary">
+                Khóa học: {courseIdParam}
+              </Badge>
+            )}
+            {classIdParam && (
+              <Badge variant="secondary" className="bg-primary/10 text-primary">
+                Lớp học: {classIdParam}
+              </Badge>
+            )}
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 text-xs"
+            onClick={() => navigate("/admin/users?role=student")}
+          >
+            Xóa bộ lọc
           </Button>
         </div>
       )}

@@ -52,9 +52,12 @@ import {
   User,
   Sparkles,
   Calendar,
+  ExternalLink,
+  FileText,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link, useSearchParams } from "react-router-dom";
+import { normalizePhoneNumber } from "@/lib/phoneUtils";
 
 const STATUS_CONFIG: Record<
   string,
@@ -530,7 +533,7 @@ export default function AdminLeads() {
                           <div className="flex items-center gap-1.5">
                             <span className="font-bold text-foreground text-sm">{lead.fullName}</span>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
                             <a
                               href={`tel:${lead.phone}`}
                               className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
@@ -545,6 +548,18 @@ export default function AdminLeads() {
                               </span>
                             )}
                           </div>
+                          {lead.phone && (
+                            <Link
+                              to={`/admin/assessments?search=${encodeURIComponent(normalizePhoneNumber(lead.phone))}`}
+                              className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-700 dark:text-blue-300 hover:underline bg-blue-500/10 border border-blue-200/60 px-1.5 py-0.5 rounded-md w-fit"
+                              title="Tra cứu bài Khảo thí 4 kỹ năng có số điện thoại tương ứng để đối chiếu (Advisory Reference)"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <FileText className="w-2.5 h-2.5" />
+                              <span>Tra cứu bài Test</span>
+                              <ExternalLink className="w-2.5 h-2.5 opacity-60" />
+                            </Link>
+                          )}
                         </div>
                       </TableCell>
 

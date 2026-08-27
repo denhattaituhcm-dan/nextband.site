@@ -93,6 +93,17 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
             isActive: true,
             createdAt: true,
             roles: true,
+            classesAsTeacher: {
+              where: { isActive: true, status: "ACTIVE" },
+              select: {
+                id: true,
+                _count: {
+                  select: {
+                    students: { where: { status: "ACTIVE", deletedAt: null } },
+                  },
+                },
+              },
+            },
             _count: {
               select: { enrollments: true, submissions: true },
             },
@@ -101,10 +112,20 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         fastify.prisma.user.count({ where }),
       ]);
 
-      const users = data.map((u) => ({
-        ...u,
-        roles: u.roles.map((r) => r.role),
-      }));
+      const users = data.map((u: any) => {
+        const activeClassesCount = (u.classesAsTeacher || []).length;
+        const totalStudents = (u.classesAsTeacher || []).reduce(
+          (sum: number, cl: any) => sum + (cl._count?.students || 0),
+          0
+        );
+        const { classesAsTeacher, ...rest } = u;
+        return {
+          ...rest,
+          roles: u.roles.map((r: any) => r.role),
+          activeClassesCount,
+          totalStudents,
+        };
+      });
 
       return {
         data: withFileUrlsMany(users, ["avatarUrl"]),
@@ -118,7 +139,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
     "/students-management",
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
-      const { page = 1, limit = 10, search } = (request.query || {}) as any;
+      const { page = 1, limit = 10, search, classId, courseId, status } = (request.query || {}) as any;
       const pageNum = Number(page) || 1;
       const limitNum = Number(limit) || 10;
       const skip = (pageNum - 1) * limitNum;
@@ -137,6 +158,43 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
       if (isTeacher && !isAdmin) {
         const teacherStudentIds = await getTeacherStudentIds(fastify.prisma, user.id);
         where.userId = { in: teacherStudentIds };
+      }
+
+      if (classId) {
+        where.classesAsStudent = {
+          some: { classId, deletedAt: null },
+        };
+      } else if (courseId) {
+        where.classesAsStudent = {
+          some: { class: { courseId }, deletedAt: null },
+        };
+      }
+
+      if (status === "active") {
+        where.isActive = true;
+      } else if (status === "suspended") {
+        where.classesAsStudent = {
+          some: { status: "SUSPENDED", deletedAt: null },
+        };
+      } else if (status === "at-risk" || status === "at_risk") {
+        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        const absentRecords = await fastify.prisma.classAttendance.findMany({
+          where: {
+            status: { in: ["ABSENT", "absent"] },
+            sessionDate: { gte: thirtyDaysAgo },
+          },
+          select: { studentId: true },
+        });
+        const absentCounts: Record<string, number> = {};
+        absentRecords.forEach((r: any) => {
+          absentCounts[r.studentId] = (absentCounts[r.studentId] || 0) + 1;
+        });
+        const atRiskStudentIds = Object.keys(absentCounts).filter((id) => absentCounts[id] >= 2);
+        where.OR = [
+          { userId: { in: atRiskStudentIds.length > 0 ? atRiskStudentIds : ["__none__"] } },
+          { id: { in: atRiskStudentIds.length > 0 ? atRiskStudentIds : ["__none__"] } },
+          { attendanceRecords: { some: { status: { in: ["ABSENT", "absent"] }, sessionDate: { gte: thirtyDaysAgo } } } },
+        ];
       }
 
       if (search) {
@@ -166,6 +224,18 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
             isActive: true,
             bio: true,
             createdAt: true,
+            convertedLead: {
+              select: {
+                id: true,
+                fullName: true,
+                phone: true,
+                email: true,
+                source: true,
+                goal: true,
+                notes: true,
+                createdAt: true,
+              },
+            },
             classesAsStudent: {
               where: { deletedAt: null },
               include: {
@@ -409,6 +479,7 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           lastActivity,
           recentActivities: recentActivities.slice(0, 10),
           academicHealth,
+          convertedLead: st.convertedLead || null,
         };
       }));
 

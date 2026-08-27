@@ -2,10 +2,11 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, BookOpen, Users, FileText } from "lucide-react";
+import { ArrowLeft, BookOpen, Users, FileText, School } from "lucide-react";
 import CourseForm from "@/components/admin/CourseForm";
 import CourseExamsList from "@/components/admin/CourseExamsList";
 import CourseStudentsList from "@/components/admin/CourseStudentsList";
+import CourseClassesList from "@/components/admin/CourseClassesList";
 
 export default function AdminCourseEdit() {
   const { id } = useParams<{ id: string }>();
@@ -54,6 +55,10 @@ export default function AdminCourseEdit() {
             <FileText className="h-4 w-4" />
             Bài thi
           </TabsTrigger>
+          <TabsTrigger value="classes" className="gap-2">
+            <School className="h-4 w-4" />
+            Lớp học
+          </TabsTrigger>
           <TabsTrigger value="students" className="gap-2">
             <Users className="h-4 w-4" />
             Học viên
@@ -66,6 +71,10 @@ export default function AdminCourseEdit() {
 
         <TabsContent value="exams">
           <CourseExamsList courseId={id} />
+        </TabsContent>
+
+        <TabsContent value="classes">
+          <CourseClassesList courseId={id} />
         </TabsContent>
 
         <TabsContent value="students">

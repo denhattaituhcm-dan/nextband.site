@@ -176,4 +176,39 @@ describe("🏛️ Journey 1: Admin Exam & Section Management Integration", () =>
       expect(screen.getByText(/Đã nhận diện: 1 câu hỏi/i)).toBeInTheDocument();
     });
   });
+
+  it("Step 7: Renders all 5 section types including General in empty state quick-add buttons", async () => {
+    const emptyExam = {
+      ...mockExam,
+      sections: [],
+    };
+    (examsApi.getById as any).mockResolvedValue(emptyExam);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={["/admin/exams/exam-123?tab=sections"]}>
+          <Routes>
+            <Route path="/admin/exams/:id" element={<AdminExamEdit />} />
+          </Routes>
+        </MemoryRouter>
+      </QueryClientProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Chưa có phần thi (Section) nào")).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole("button", { name: /\+ Speaking/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /\+ Writing/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /\+ Listening/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /\+ Reading/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /\+ General/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Tùy chỉnh phần thi/i })).toBeInTheDocument();
+
+    // Click "+ General"
+    fireEvent.click(screen.getByRole("button", { name: /\+ General/i }));
+    expect(screen.getByText("Thêm Section mới")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("Grammar")).toBeInTheDocument();
+  });
 });
+

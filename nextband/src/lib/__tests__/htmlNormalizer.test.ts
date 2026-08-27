@@ -87,4 +87,14 @@ describe("HTML Question Normalizer", () => {
     expect(normalized).toContain('style="color: rgb(239, 68, 68);"');
     expect(normalized).toContain('style="background-color: rgb(254, 240, 138);"');
   });
+
+  it("cleans literal /n and \\n newline artifacts", () => {
+    const dirty = `<p class=\\"MsoNormal\\">Đoạn văn 1 /n Đoạn văn 2 với literal\\nnewline và \\"quotes\\".</p>`;
+    const normalized = normalizeQuestionHtml(dirty);
+    expect(normalized).not.toContain("/n");
+    expect(normalized).not.toContain("\\n");
+    expect(normalized).not.toContain('\\"');
+    expect(normalized).toContain("Đoạn văn 1 Đoạn văn 2 với literal newline và \"quotes\".");
+  });
 });
+

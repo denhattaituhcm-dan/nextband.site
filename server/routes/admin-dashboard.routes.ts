@@ -112,20 +112,31 @@ export default async function adminDashboardRoutes(fastify: FastifyInstance) {
             },
           }),
 
-          // 8. Tổng số bài chờ chấm trên toàn hệ thống
-          fastify.prisma.submission.count({
-            where: {
-              status: "SUBMITTED",
-            },
-          }),
+          // 8. Tổng số bài chờ chấm trên toàn hệ thống (cả Homework & Exam Submissions)
+          Promise.all([
+            fastify.prisma.submission.count({
+              where: { status: "SUBMITTED" },
+            }),
+            fastify.prisma.examSubmission.count({
+              where: { status: "SUBMITTED" },
+            }),
+          ]).then(([hwCount, examCount]) => hwCount + examCount),
 
           // 9. Số bài nộp chờ chấm quá hạn 48h (SLA vi phạm)
-          fastify.prisma.submission.count({
-            where: {
-              status: "SUBMITTED",
-              submittedAt: { lte: twoDaysAgo },
-            },
-          }),
+          Promise.all([
+            fastify.prisma.submission.count({
+              where: {
+                status: "SUBMITTED",
+                submittedAt: { lte: twoDaysAgo },
+              },
+            }),
+            fastify.prisma.examSubmission.count({
+              where: {
+                status: "SUBMITTED",
+                submittedAt: { lte: twoDaysAgo },
+              },
+            }),
+          ]).then(([hwOverdue, examOverdue]) => hwOverdue + examOverdue),
 
           // 10. Danh sách các lượt vắng trong 30 ngày để phát hiện học viên At-Risk
           fastify.prisma.classAttendance.findMany({

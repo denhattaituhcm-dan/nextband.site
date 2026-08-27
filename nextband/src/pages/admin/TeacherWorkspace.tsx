@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { classesApi, examsApi, submissionsApi, attendanceApi, periodicReportsApi, formatStorageUrl } from "@/lib/api";
 import { deriveHomeworkStatus, HomeworkStatus } from "@/types/homework";
@@ -74,12 +75,25 @@ interface WorkbookItem {
 
 export default function TeacherWorkspace() {
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+  const urlClassId = searchParams.get("classId");
+  const urlTeacherId = searchParams.get("id") || searchParams.get("teacherId");
+  const urlStudentId = searchParams.get("studentId");
+  const urlFilter = searchParams.get("filter");
+  const urlTab = searchParams.get("tab");
 
   // State quản lý lựa chọn
+  const initialStudentFilter = (urlFilter === "overdue" || urlFilter === "pending" || urlTab === "grading") ? "pending" : "all";
   const [selectedClassId, setSelectedClassId] = useState<string>("");
   const [selectedStudentId, setSelectedStudentId] = useState<string>("");
   const [selectedHomeworkId, setSelectedHomeworkId] = useState<string>("");
-  const [studentFilter, setStudentFilter] = useState<"all" | "pending">("all");
+  const [studentFilter, setStudentFilter] = useState<"all" | "pending">(initialStudentFilter);
+
+  useEffect(() => {
+    if (urlFilter === "overdue" || urlFilter === "pending" || urlTab === "grading") {
+      setStudentFilter("pending");
+    }
+  }, [urlFilter, urlTab]);
 
   // State Quản lý popup Gia hạn từng bài
   const [reopenTargetId, setReopenTargetId] = useState<string | null>(null);
@@ -109,10 +123,29 @@ export default function TeacherWorkspace() {
   const classes = useMemo(() => classesData || [], [classesData]);
 
   useEffect(() => {
-    if (!selectedClassId && classesData && classesData.length > 0) {
-      setSelectedClassId(classesData[0].id);
+    if (classesData && classesData.length > 0) {
+      if (urlClassId && classesData.some((c: any) => c.id === urlClassId)) {
+        setSelectedClassId(urlClassId);
+      } else if (urlTeacherId) {
+        const teacherClass = classesData.find(
+          (c: any) => c.teacherId === urlTeacherId || c.teacher_id === urlTeacherId
+        );
+        if (teacherClass) {
+          setSelectedClassId(teacherClass.id);
+        } else if (!selectedClassId) {
+          setSelectedClassId(classesData[0].id);
+        }
+      } else if (!selectedClassId) {
+        setSelectedClassId(classesData[0].id);
+      }
     }
-  }, [selectedClassId, classesData]);
+  }, [classesData, urlClassId, urlTeacherId]);
+
+  useEffect(() => {
+    if (urlStudentId && !selectedStudentId) {
+      setSelectedStudentId(urlStudentId);
+    }
+  }, [urlStudentId]);
 
   const currentClass = useMemo(() => {
     return classes.find((c: any) => c.id === selectedClassId) || classes[0];

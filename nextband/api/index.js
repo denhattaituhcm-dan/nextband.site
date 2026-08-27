@@ -98258,6 +98258,20 @@ var coursesRoutes = async (fastify) => {
           creator: {
             select: { id: true, fullName: true, avatarUrl: true }
           },
+          classes: {
+            select: {
+              id: true,
+              status: true,
+              isActive: true,
+              students: {
+                where: { deletedAt: null, status: "ACTIVE" },
+                select: { studentId: true }
+              }
+            }
+          },
+          enrollments: {
+            select: { studentId: true }
+          },
           _count: {
             select: { exams: true, enrollments: true, classes: true }
           }
@@ -98265,14 +98279,32 @@ var coursesRoutes = async (fastify) => {
       }),
       fastify.prisma.course.count({ where })
     ]);
-    const courses = data.map((c) => ({
-      ...c,
-      thumbnailUrl: toFileUrl(c.thumbnailUrl),
-      teacher: c.creator ? {
-        ...c.creator,
-        avatarUrl: toFileUrl(c.creator.avatarUrl)
-      } : null
-    }));
+    const courses = data.map((c) => {
+      const activeClasses = (c.classes || []).filter(
+        (cls) => cls.isActive !== false && cls.status === "ACTIVE"
+      );
+      const totalClassesCount = (c.classes || []).length;
+      const activeClassesCount = activeClasses.length;
+      const classStudentIds = (c.classes || []).flatMap(
+        (cls) => (cls.students || []).map((s) => s.studentId)
+      );
+      const directStudentIds = (c.enrollments || []).map((e) => e.studentId);
+      const uniqueStudentIds = /* @__PURE__ */ new Set([...classStudentIds, ...directStudentIds]);
+      const studentsCount = uniqueStudentIds.size;
+      const { classes, enrollments, ...rest } = c;
+      return {
+        ...rest,
+        activeClassesCount,
+        totalClassesCount,
+        studentsCount,
+        lessonsCount: c._count?.exams ?? 0,
+        thumbnailUrl: toFileUrl(c.thumbnailUrl),
+        teacher: c.creator ? {
+          ...c.creator,
+          avatarUrl: toFileUrl(c.creator.avatarUrl)
+        } : null
+      };
+    });
     return {
       data: courses,
       meta: {
@@ -98294,6 +98326,20 @@ var coursesRoutes = async (fastify) => {
         include: {
           creator: {
             select: { id: true, fullName: true, avatarUrl: true }
+          },
+          classes: {
+            select: {
+              id: true,
+              status: true,
+              isActive: true,
+              students: {
+                where: { deletedAt: null, status: "ACTIVE" },
+                select: { studentId: true }
+              }
+            }
+          },
+          enrollments: {
+            select: { studentId: true }
           },
           exams: {
             where: { isActive: true },
@@ -98331,8 +98377,24 @@ var coursesRoutes = async (fastify) => {
           "public, max-age=60, s-maxage=300, stale-while-revalidate=600"
         );
       }
+      const activeClasses = (course.classes || []).filter(
+        (cls) => cls.isActive !== false && cls.status === "ACTIVE"
+      );
+      const totalClassesCount = (course.classes || []).length;
+      const activeClassesCount = activeClasses.length;
+      const classStudentIds = (course.classes || []).flatMap(
+        (cls) => (cls.students || []).map((s) => s.studentId)
+      );
+      const directStudentIds = (course.enrollments || []).map((e) => e.studentId);
+      const uniqueStudentIds = /* @__PURE__ */ new Set([...classStudentIds, ...directStudentIds]);
+      const studentsCount = uniqueStudentIds.size;
+      const { classes, enrollments, ...restCourse } = course;
       return {
-        ...course,
+        ...restCourse,
+        activeClassesCount,
+        totalClassesCount,
+        studentsCount,
+        lessonsCount: course.exams?.length ?? 0,
         thumbnailUrl: toFileUrl(course.thumbnailUrl),
         teacher: course.creator ? {
           ...course.creator,
@@ -98352,6 +98414,20 @@ var coursesRoutes = async (fastify) => {
         include: {
           creator: {
             select: { id: true, fullName: true, avatarUrl: true }
+          },
+          classes: {
+            select: {
+              id: true,
+              status: true,
+              isActive: true,
+              students: {
+                where: { deletedAt: null, status: "ACTIVE" },
+                select: { studentId: true }
+              }
+            }
+          },
+          enrollments: {
+            select: { studentId: true }
           },
           exams: {
             where: { isActive: true, isPublished: true },
@@ -98389,8 +98465,24 @@ var coursesRoutes = async (fastify) => {
           "public, max-age=60, s-maxage=300, stale-while-revalidate=600"
         );
       }
+      const activeClasses = (course.classes || []).filter(
+        (cls) => cls.isActive !== false && cls.status === "ACTIVE"
+      );
+      const totalClassesCount = (course.classes || []).length;
+      const activeClassesCount = activeClasses.length;
+      const classStudentIds = (course.classes || []).flatMap(
+        (cls) => (cls.students || []).map((s) => s.studentId)
+      );
+      const directStudentIds = (course.enrollments || []).map((e) => e.studentId);
+      const uniqueStudentIds = /* @__PURE__ */ new Set([...classStudentIds, ...directStudentIds]);
+      const studentsCount = uniqueStudentIds.size;
+      const { classes, enrollments, ...restCourse } = course;
       return {
-        ...course,
+        ...restCourse,
+        activeClassesCount,
+        totalClassesCount,
+        studentsCount,
+        lessonsCount: course.exams?.length ?? 0,
         thumbnailUrl: toFileUrl(course.thumbnailUrl),
         teacher: course.creator ? {
           ...course.creator,
@@ -101400,6 +101492,12 @@ var ExamSubmissionService = class {
       where.studentId = studentId ? classStudentIds.includes(studentId) ? studentId : "__none__" : { in: inClass };
     }
     if (examId) where.examId = examId;
+    if (status) {
+      const normStatus = String(status).toUpperCase();
+      where.status = normStatus;
+    } else if (needGrading === true || needGrading === "true") {
+      where.status = "SUBMITTED";
+    }
     const sortFieldMap = {
       newest: "createdAt",
       createdAt: "createdAt",
@@ -102528,6 +102626,17 @@ var usersRoutes = async (fastify) => {
             isActive: true,
             createdAt: true,
             roles: true,
+            classesAsTeacher: {
+              where: { isActive: true, status: "ACTIVE" },
+              select: {
+                id: true,
+                _count: {
+                  select: {
+                    students: { where: { status: "ACTIVE", deletedAt: null } }
+                  }
+                }
+              }
+            },
             _count: {
               select: { enrollments: true, submissions: true }
             }
@@ -102535,10 +102644,20 @@ var usersRoutes = async (fastify) => {
         }),
         fastify.prisma.user.count({ where })
       ]);
-      const users = data.map((u) => ({
-        ...u,
-        roles: u.roles.map((r) => r.role)
-      }));
+      const users = data.map((u) => {
+        const activeClassesCount = (u.classesAsTeacher || []).length;
+        const totalStudents = (u.classesAsTeacher || []).reduce(
+          (sum, cl) => sum + (cl._count?.students || 0),
+          0
+        );
+        const { classesAsTeacher, ...rest } = u;
+        return {
+          ...rest,
+          roles: u.roles.map((r) => r.role),
+          activeClassesCount,
+          totalStudents
+        };
+      });
       return {
         data: withFileUrlsMany(users, ["avatarUrl"]),
         meta: { total, page, limit, totalPages: Math.ceil(total / limit) }
@@ -102549,7 +102668,7 @@ var usersRoutes = async (fastify) => {
     "/students-management",
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
-      const { page = 1, limit = 10, search } = request.query || {};
+      const { page = 1, limit = 10, search, classId, courseId, status } = request.query || {};
       const pageNum = Number(page) || 1;
       const limitNum = Number(limit) || 10;
       const skip = (pageNum - 1) * limitNum;
@@ -102565,6 +102684,41 @@ var usersRoutes = async (fastify) => {
       if (isTeacher && !isAdmin) {
         const teacherStudentIds = await getTeacherStudentIds(fastify.prisma, user.id);
         where.userId = { in: teacherStudentIds };
+      }
+      if (classId) {
+        where.classesAsStudent = {
+          some: { classId, deletedAt: null }
+        };
+      } else if (courseId) {
+        where.classesAsStudent = {
+          some: { class: { courseId }, deletedAt: null }
+        };
+      }
+      if (status === "active") {
+        where.isActive = true;
+      } else if (status === "suspended") {
+        where.classesAsStudent = {
+          some: { status: "SUSPENDED", deletedAt: null }
+        };
+      } else if (status === "at-risk" || status === "at_risk") {
+        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1e3);
+        const absentRecords = await fastify.prisma.classAttendance.findMany({
+          where: {
+            status: { in: ["ABSENT", "absent"] },
+            sessionDate: { gte: thirtyDaysAgo }
+          },
+          select: { studentId: true }
+        });
+        const absentCounts = {};
+        absentRecords.forEach((r) => {
+          absentCounts[r.studentId] = (absentCounts[r.studentId] || 0) + 1;
+        });
+        const atRiskStudentIds = Object.keys(absentCounts).filter((id) => absentCounts[id] >= 2);
+        where.OR = [
+          { userId: { in: atRiskStudentIds.length > 0 ? atRiskStudentIds : ["__none__"] } },
+          { id: { in: atRiskStudentIds.length > 0 ? atRiskStudentIds : ["__none__"] } },
+          { attendanceRecords: { some: { status: { in: ["ABSENT", "absent"] }, sessionDate: { gte: thirtyDaysAgo } } } }
+        ];
       }
       if (search) {
         where.OR = [
@@ -102592,6 +102746,18 @@ var usersRoutes = async (fastify) => {
             isActive: true,
             bio: true,
             createdAt: true,
+            convertedLead: {
+              select: {
+                id: true,
+                fullName: true,
+                phone: true,
+                email: true,
+                source: true,
+                goal: true,
+                notes: true,
+                createdAt: true
+              }
+            },
             classesAsStudent: {
               where: { deletedAt: null },
               include: {
@@ -102763,7 +102929,7 @@ var usersRoutes = async (fastify) => {
         const isClassSuspended = (st.classesAsStudent || []).some((cs) => cs.status === "SUSPENDED");
         const isBioReserved = !!(st.bio?.includes('"isReserved":true') || st.bio?.includes('"status":"suspended"') || st.bio === "RESERVED");
         const isReserved = isClassSuspended || isBioReserved;
-        const status = isReserved ? "suspended" : st.isActive === false ? "inactive" : "active";
+        const status2 = isReserved ? "suspended" : st.isActive === false ? "inactive" : "active";
         return {
           id: st.id,
           userId: st.userId,
@@ -102777,7 +102943,7 @@ var usersRoutes = async (fastify) => {
           dateOfBirth: st.dateOfBirth,
           isActive: st.isActive,
           isReserved,
-          status,
+          status: status2,
           bio: st.bio,
           createdAt: st.createdAt,
           classes,
@@ -102794,7 +102960,8 @@ var usersRoutes = async (fastify) => {
           },
           lastActivity,
           recentActivities: recentActivities.slice(0, 10),
-          academicHealth
+          academicHealth,
+          convertedLead: st.convertedLead || null
         };
       }));
       return reply.send({
@@ -103707,6 +103874,11 @@ var ClassService = class {
       where.teacherId = user.id;
     } else if (!isAdmin && !isTeacher) {
       where.students = { some: { studentId: user.id } };
+    } else if (isAdmin && query.teacherId) {
+      where.teacherId = query.teacherId;
+    }
+    if (query.courseId) {
+      where.courseId = query.courseId;
     }
     const authService = new AuthorizationService(this.prisma);
     const branchScope = await authService.resolveAuthorizedBranchScope({
@@ -107683,19 +107855,30 @@ async function adminDashboardRoutes(fastify) {
               }
             }
           }),
-          // 8. Tổng số bài chờ chấm trên toàn hệ thống
-          fastify.prisma.submission.count({
-            where: {
-              status: "SUBMITTED"
-            }
-          }),
+          // 8. Tổng số bài chờ chấm trên toàn hệ thống (cả Homework & Exam Submissions)
+          Promise.all([
+            fastify.prisma.submission.count({
+              where: { status: "SUBMITTED" }
+            }),
+            fastify.prisma.examSubmission.count({
+              where: { status: "SUBMITTED" }
+            })
+          ]).then(([hwCount, examCount]) => hwCount + examCount),
           // 9. Số bài nộp chờ chấm quá hạn 48h (SLA vi phạm)
-          fastify.prisma.submission.count({
-            where: {
-              status: "SUBMITTED",
-              submittedAt: { lte: twoDaysAgo }
-            }
-          }),
+          Promise.all([
+            fastify.prisma.submission.count({
+              where: {
+                status: "SUBMITTED",
+                submittedAt: { lte: twoDaysAgo }
+              }
+            }),
+            fastify.prisma.examSubmission.count({
+              where: {
+                status: "SUBMITTED",
+                submittedAt: { lte: twoDaysAgo }
+              }
+            })
+          ]).then(([hwOverdue, examOverdue]) => hwOverdue + examOverdue),
           // 10. Danh sách các lượt vắng trong 30 ngày để phát hiện học viên At-Risk
           fastify.prisma.classAttendance.findMany({
             where: {

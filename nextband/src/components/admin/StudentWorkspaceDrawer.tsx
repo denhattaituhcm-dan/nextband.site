@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { usersApi } from "@/lib/api";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { usersApi, classesApi } from "@/lib/api";
+import { useNavigate, Link } from "react-router-dom";
+import { normalizePhoneNumber } from "@/lib/phoneUtils";
 import {
   Sheet,
   SheetContent,
@@ -49,6 +51,10 @@ import {
   GraduationCap,
   Edit,
   User,
+  Sparkles,
+  School,
+  Mail,
+  Send,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -105,6 +111,70 @@ export function StudentWorkspaceDrawer({
 
   // Reservation Toggle State
   const [isTogglingReservation, setIsTogglingReservation] = useState(false);
+
+  const navigate = useNavigate();
+
+  // Change Class Dialog State (GAP-09)
+  const [changeClassDialogOpen, setChangeClassDialogOpen] = useState(false);
+  const [selectedNewClassId, setSelectedNewClassId] = useState("");
+  const [isChangingClass, setIsChangingClass] = useState(false);
+
+  // Direct Message Dialog State (GAP-09)
+  const [messageDialogOpen, setMessageDialogOpen] = useState(false);
+
+  // Active classes for Class Transfer
+  const { data: classesData, isLoading: isClassesLoading } = useQuery({
+    queryKey: ["active-classes-list-drawer"],
+    queryFn: () => classesApi.list({ isActive: true, limit: 100 }),
+    enabled: changeClassDialogOpen,
+  });
+  const availableClasses = (classesData?.data || []) as any[];
+
+  const handleOpenFullPage = () => {
+    onOpenChange(false);
+    navigate(`/admin/users?search=${encodeURIComponent(student?.email || student?.fullName || student?.id || "")}`);
+  };
+
+  const handleChangeClass = async () => {
+    if (!selectedNewClassId) {
+      toast({ title: "Lỗi", description: "Vui lòng chọn lớp học mới", variant: "destructive" });
+      return;
+    }
+    const studentId = student.id || student.userId;
+    const currentClassId = student.classes?.[0]?.id;
+
+    if (selectedNewClassId === currentClassId) {
+      toast({ title: "Lỗi", description: "Học viên hiện đã ở trong lớp học này", variant: "destructive" });
+      return;
+    }
+
+    setIsChangingClass(true);
+    try {
+      if (currentClassId) {
+        await classesApi.removeStudent(currentClassId, studentId);
+      }
+      await classesApi.addStudents(selectedNewClassId, [studentId]);
+
+      queryClient.invalidateQueries({ queryKey: ["admin-students-management"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["class-workspace"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-classes"] });
+
+      toast({
+        title: "Chuyển lớp thành công",
+        description: `Đã chuyển học viên ${student.fullName || fullName || ""} sang lớp mới.`,
+      });
+      setChangeClassDialogOpen(false);
+    } catch (err: any) {
+      toast({
+        title: "Lỗi",
+        description: err.message || "Không thể chuyển lớp học",
+        variant: "destructive",
+      });
+    } finally {
+      setIsChangingClass(false);
+    }
+  };
 
   if (!student) return null;
 
@@ -358,7 +428,8 @@ export function StudentWorkspaceDrawer({
                 variant="outline"
                 size="sm"
                 className="gap-1 text-xs text-muted-foreground hover:text-foreground"
-                onClick={() => toast({ title: "Hồ sơ học viên", description: `ID: ${student.id || student.userId}` })}
+                onClick={handleOpenFullPage}
+                title="Mở hồ sơ chi tiết tại Quản lý Học viên"
               >
                 Mở toàn trang
                 <ExternalLink className="h-3.5 w-3.5" />
@@ -379,11 +450,21 @@ export function StudentWorkspaceDrawer({
                 <Edit className="h-4 w-4 text-primary" />
                 Đổi tên / Sửa
               </Button>
-              <Button variant="outline" size="sm" className="flex flex-col h-14 items-center justify-center gap-1 text-[11px] font-normal" onClick={() => toast({ title: "Nhắn tin", description: `Gửi thông báo đến ${student.email}` })}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex flex-col h-14 items-center justify-center gap-1 text-[11px] font-normal hover:bg-primary/5 hover:text-primary transition-colors"
+                onClick={() => setMessageDialogOpen(true)}
+              >
                 <MessageSquare className="h-4 w-4 text-primary" />
                 Nhắn tin
               </Button>
-              <Button variant="outline" size="sm" className="flex flex-col h-14 items-center justify-center gap-1 text-[11px] font-normal" onClick={() => toast({ title: "Đổi lớp", description: "Vui lòng vào chi tiết Lớp học để gán học viên" })}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex flex-col h-14 items-center justify-center gap-1 text-[11px] font-normal hover:bg-primary/5 hover:text-primary transition-colors"
+                onClick={() => setChangeClassDialogOpen(true)}
+              >
                 <RefreshCw className="h-4 w-4 text-primary" />
                 Đổi lớp
               </Button>
@@ -573,6 +654,71 @@ export function StudentWorkspaceDrawer({
                 </div>
               </div>
             </div>
+
+            {/* 6B. ORIGINATING LEAD SECTION (GAP-08) */}
+            {student.convertedLead && (
+              <div className="border rounded-xl p-4 bg-amber-500/5 border-amber-500/20 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-amber-900 dark:text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <Sparkles className="h-3.5 w-3.5 text-amber-600" />
+                    Nguồn gốc tiếp nhận (Originating Lead)
+                  </span>
+                  <Badge variant="outline" className="bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-300 text-[10px] font-semibold">
+                    Đã chuyển đổi từ Lead
+                  </Badge>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2.5 text-xs pt-1">
+                  <div>
+                    <span className="text-muted-foreground">Kênh tiếp cận / Source:</span>
+                    <p className="font-semibold text-foreground mt-0.5 capitalize">
+                      {student.convertedLead.source || "Web Contact"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <span className="text-muted-foreground">Ngày tiếp nhận:</span>
+                    <p className="font-semibold text-foreground mt-0.5">
+                      {student.convertedLead.createdAt
+                        ? new Date(student.convertedLead.createdAt).toLocaleDateString("vi-VN")
+                        : "—"}
+                    </p>
+                  </div>
+
+                  {student.convertedLead.goal && (
+                    <div className="col-span-2">
+                      <span className="text-muted-foreground">Mục tiêu / Nhu cầu ban đầu:</span>
+                      <p className="font-medium text-foreground mt-0.5 bg-background/60 p-2 rounded-lg border border-border/50 text-[11px]">
+                        {student.convertedLead.goal}
+                      </p>
+                    </div>
+                  )}
+
+                  {student.convertedLead.notes && (
+                    <div className="col-span-2">
+                      <span className="text-muted-foreground">Ghi chú tư vấn:</span>
+                      <p className="font-medium text-muted-foreground mt-0.5 bg-background/60 p-2 rounded-lg border border-border/50 text-[11px] whitespace-pre-wrap">
+                        {student.convertedLead.notes}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="pt-1 flex justify-end">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    asChild
+                    className="h-7 text-xs text-amber-800 dark:text-amber-300 hover:bg-amber-500/10 gap-1 font-semibold"
+                  >
+                    <Link to={`/admin/leads?search=${encodeURIComponent(student.convertedLead.phone || student.convertedLead.fullName || student.convertedLead.id)}`}>
+                      <span>Mở hồ sơ Lead trong CRM</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            )}
 
             {/* 7. UNIFIED TIMELINE (GitHub Activity Style) */}
             <div className="space-y-3">
@@ -857,6 +1003,148 @@ export function StudentWorkspaceDrawer({
               onClick={handleConfirmDelete}
             >
               Xóa vĩnh viễn
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* DIALOG 3: CHANGE CLASS / TRANSFER (GAP-09) */}
+      <Dialog open={changeClassDialogOpen} onOpenChange={setChangeClassDialogOpen}>
+        <DialogContent className="max-w-md rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base font-bold text-foreground">
+              <RefreshCw className="h-4 w-4 text-primary" />
+              Chuyển Lớp & Phân Lớp Học Viên
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              Chuyển học viên sang lớp học đang mở khác. Lịch sử bài tập và điểm số vẫn được bảo toàn nguyên vẹn.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2 text-xs">
+            <div className="p-3 rounded-xl bg-muted/40 border space-y-1">
+              <span className="text-muted-foreground block text-[11px]">Lớp học hiện tại:</span>
+              <p className="font-bold text-sm text-foreground">
+                {classNames}
+              </p>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs font-bold text-foreground">
+                Chọn Lớp học mới muốn chuyển tới *
+              </Label>
+              <Select value={selectedNewClassId} onValueChange={setSelectedNewClassId}>
+                <SelectTrigger className="rounded-xl h-10 text-xs">
+                  <SelectValue placeholder={isClassesLoading ? "Đang tải danh sách lớp..." : "Chọn lớp học mới..."} />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl text-xs max-h-56">
+                  {availableClasses.map((c: any) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.name} {c.code ? `(${c.code})` : ""} {c.teacher?.fullName ? `• GV: ${c.teacher.fullName}` : ""}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 pt-2">
+            <Button variant="outline" size="sm" onClick={() => setChangeClassDialogOpen(false)} className="rounded-xl">
+              Hủy
+            </Button>
+            <Button
+              size="sm"
+              disabled={isChangingClass || !selectedNewClassId}
+              onClick={handleChangeClass}
+              className="bg-primary text-primary-foreground font-semibold rounded-xl"
+            >
+              {isChangingClass ? "Đang chuyển..." : "Xác nhận chuyển lớp"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* DIALOG 4: DIRECT MESSAGE & COMMUNICATION (GAP-09) */}
+      <Dialog open={messageDialogOpen} onOpenChange={setMessageDialogOpen}>
+        <DialogContent className="max-w-md rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base font-bold text-foreground">
+              <MessageSquare className="h-4 w-4 text-primary" />
+              Liên hệ & Gửi Thông báo Học viên
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              Lựa chọn phương thức giao tiếp trực tiếp với học viên hoặc phụ huynh.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3 py-2 text-xs">
+            {/* 1. Direct Email */}
+            {student.email && (
+              <a
+                href={`mailto:${student.email}?subject=${encodeURIComponent(`[NextBand IELTS] Thông báo học tập dành cho học viên ${student.fullName || ""}`)}`}
+                className="flex items-center justify-between p-3 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                    <Mail className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-foreground text-xs">Gửi Email trực tiếp</p>
+                    <p className="text-[11px] text-muted-foreground font-mono">{student.email}</p>
+                  </div>
+                </div>
+                <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+              </a>
+            )}
+
+            {/* 2. Direct Zalo / Phone */}
+            {student.phone && (
+              <a
+                href={`https://zalo.me/${normalizePhoneNumber(student.phone)}`}
+                className="flex items-center justify-between p-3 rounded-xl border border-blue-500/20 bg-blue-500/5 hover:bg-blue-500/10 transition-colors"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-lg bg-blue-500/10 text-blue-600">
+                    <Phone className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-foreground text-xs">Nhắn tin Zalo / Gọi điện</p>
+                    <p className="text-[11px] text-muted-foreground font-mono">{student.phone}</p>
+                  </div>
+                </div>
+                <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+              </a>
+            )}
+
+            {/* 3. System Notification Broadcast */}
+            <div
+              onClick={() => {
+                setMessageDialogOpen(false);
+                onOpenChange(false);
+                navigate(`/admin/notifications`);
+              }}
+              className="flex items-center justify-between p-3 rounded-xl border border-border hover:bg-muted/40 transition-colors cursor-pointer"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-lg bg-slate-500/10 text-slate-700 dark:text-slate-300">
+                  <Send className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="font-bold text-foreground text-xs">Tạo Thông báo Hệ thống (In-App Notification)</p>
+                  <p className="text-[11px] text-muted-foreground">Mở module Thông báo Quản trị</p>
+                </div>
+              </div>
+              <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" size="sm" onClick={() => setMessageDialogOpen(false)} className="rounded-xl">
+              Đóng
             </Button>
           </DialogFooter>
         </DialogContent>

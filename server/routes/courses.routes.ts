@@ -130,6 +130,20 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
           creator: {
             select: { id: true, fullName: true, avatarUrl: true },
           },
+          classes: {
+            select: {
+              id: true,
+              status: true,
+              isActive: true,
+              students: {
+                where: { deletedAt: null, status: "ACTIVE" },
+                select: { studentId: true },
+              },
+            },
+          },
+          enrollments: {
+            select: { studentId: true },
+          },
           _count: {
             select: { exams: true, enrollments: true, classes: true },
           },
@@ -138,16 +152,37 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
       fastify.prisma.course.count({ where }),
     ]);
 
-    const courses = data.map((c) => ({
-      ...c,
-      thumbnailUrl: toFileUrl(c.thumbnailUrl),
-      teacher: c.creator
-        ? {
-            ...c.creator,
-            avatarUrl: toFileUrl(c.creator.avatarUrl),
-          }
-        : null,
-    }));
+    const courses = data.map((c: any) => {
+      const activeClasses = (c.classes || []).filter(
+        (cls: any) => cls.isActive !== false && cls.status === "ACTIVE"
+      );
+      const totalClassesCount = (c.classes || []).length;
+      const activeClassesCount = activeClasses.length;
+
+      const classStudentIds = (c.classes || []).flatMap((cls: any) =>
+        (cls.students || []).map((s: any) => s.studentId)
+      );
+      const directStudentIds = (c.enrollments || []).map((e: any) => e.studentId);
+      const uniqueStudentIds = new Set([...classStudentIds, ...directStudentIds]);
+      const studentsCount = uniqueStudentIds.size;
+
+      const { classes, enrollments, ...rest } = c;
+
+      return {
+        ...rest,
+        activeClassesCount,
+        totalClassesCount,
+        studentsCount,
+        lessonsCount: c._count?.exams ?? 0,
+        thumbnailUrl: toFileUrl(c.thumbnailUrl),
+        teacher: c.creator
+          ? {
+              ...c.creator,
+              avatarUrl: toFileUrl(c.creator.avatarUrl),
+            }
+          : null,
+      };
+    });
 
     return {
       data: courses,
@@ -173,6 +208,20 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
         include: {
           creator: {
             select: { id: true, fullName: true, avatarUrl: true },
+          },
+          classes: {
+            select: {
+              id: true,
+              status: true,
+              isActive: true,
+              students: {
+                where: { deletedAt: null, status: "ACTIVE" },
+                select: { studentId: true },
+              },
+            },
+          },
+          enrollments: {
+            select: { studentId: true },
           },
           exams: {
             where: { isActive: true },
@@ -215,8 +264,27 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
         );
       }
 
+      const activeClasses = (course.classes || []).filter(
+        (cls: any) => cls.isActive !== false && cls.status === "ACTIVE"
+      );
+      const totalClassesCount = (course.classes || []).length;
+      const activeClassesCount = activeClasses.length;
+
+      const classStudentIds = (course.classes || []).flatMap((cls: any) =>
+        (cls.students || []).map((s: any) => s.studentId)
+      );
+      const directStudentIds = (course.enrollments || []).map((e: any) => e.studentId);
+      const uniqueStudentIds = new Set([...classStudentIds, ...directStudentIds]);
+      const studentsCount = uniqueStudentIds.size;
+
+      const { classes, enrollments, ...restCourse } = course;
+
       return {
-        ...course,
+        ...restCourse,
+        activeClassesCount,
+        totalClassesCount,
+        studentsCount,
+        lessonsCount: course.exams?.length ?? 0,
         thumbnailUrl: toFileUrl(course.thumbnailUrl),
         teacher: course.creator
           ? {
@@ -241,6 +309,20 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
         include: {
           creator: {
             select: { id: true, fullName: true, avatarUrl: true },
+          },
+          classes: {
+            select: {
+              id: true,
+              status: true,
+              isActive: true,
+              students: {
+                where: { deletedAt: null, status: "ACTIVE" },
+                select: { studentId: true },
+              },
+            },
+          },
+          enrollments: {
+            select: { studentId: true },
           },
           exams: {
             where: { isActive: true, isPublished: true },
@@ -283,8 +365,27 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
         );
       }
 
+      const activeClasses = (course.classes || []).filter(
+        (cls: any) => cls.isActive !== false && cls.status === "ACTIVE"
+      );
+      const totalClassesCount = (course.classes || []).length;
+      const activeClassesCount = activeClasses.length;
+
+      const classStudentIds = (course.classes || []).flatMap((cls: any) =>
+        (cls.students || []).map((s: any) => s.studentId)
+      );
+      const directStudentIds = (course.enrollments || []).map((e: any) => e.studentId);
+      const uniqueStudentIds = new Set([...classStudentIds, ...directStudentIds]);
+      const studentsCount = uniqueStudentIds.size;
+
+      const { classes, enrollments, ...restCourse } = course;
+
       return {
-        ...course,
+        ...restCourse,
+        activeClassesCount,
+        totalClassesCount,
+        studentsCount,
+        lessonsCount: course.exams?.length ?? 0,
         thumbnailUrl: toFileUrl(course.thumbnailUrl),
         teacher: course.creator
           ? {
