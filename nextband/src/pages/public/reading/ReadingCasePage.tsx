@@ -31,6 +31,7 @@ import {
   Info,
   Layers,
   Map as MapIcon,
+  BookOpen,
 } from "lucide-react";
 import { SEO } from "@/components/common/SEO";
 
