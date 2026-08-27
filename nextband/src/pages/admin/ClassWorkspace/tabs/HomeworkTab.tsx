@@ -43,12 +43,16 @@ export const HomeworkTab: React.FC = () => {
     );
 
     const pendingSubmissions = lessonSubmissions
-      .filter((s: any) => s.grade_status === "pending" || s.status === "submitted" || s.status === "overdue")
+      .filter((s: any) => s.grade_status === "pending" || s.status === "submitted" || s.status === "SUBMITTED" || s.status === "overdue")
       .map((s: any) => {
-        const student = students.find((st: any) => (st.id || st.studentId) === (s.studentId || s.student_id));
+        const targetStudentId = s.studentId || s.student_id || s.student?.id;
+        const student = students.find(
+          (st: any) =>
+            (st.studentId || st.student_id || st.student?.userId || st.student?.id || st.id) === targetStudentId
+        );
         return {
           id: s.id,
-          studentName: student?.fullName || student?.full_name || student?.email || "Học viên",
+          studentName: s.student?.fullName || student?.fullName || student?.full_name || student?.email || "Học viên",
           submittedAt: (s.submittedAt || s.createdAt || s.created_at)
             ? new Date(s.submittedAt || s.createdAt || s.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             : "Chưa xác định",

@@ -557,8 +557,10 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
     async (request, reply) => {
       const { id } = request.params;
 
-      const user = await fastify.prisma.user.findUnique({
-        where: { userId: id },
+      const user = await fastify.prisma.user.findFirst({
+        where: {
+          OR: [{ userId: id }, { id: id }],
+        },
         select: {
           id: true,
           userId: true,

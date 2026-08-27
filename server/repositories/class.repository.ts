@@ -18,6 +18,7 @@ export class ClassRepository {
             student: {
               select: {
                 id: true,
+                userId: true,
                 fullName: true,
                 email: true,
                 avatarUrl: true,

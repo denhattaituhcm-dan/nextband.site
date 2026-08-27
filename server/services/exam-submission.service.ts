@@ -73,8 +73,10 @@ export class ExamSubmissionService {
 
   // Use Case: List Submissions with Role-based filtering
   async listSubmissions(user: { id: string; roles: string[] }, query: any) {
-    const { examId, studentId, status, classId, needGrading, page = 1, limit = 10, sortBy = "createdAt", sortOrder = "desc" } = query;
-    const skip = (page - 1) * limit;
+    const { examId, studentId, status, classId, needGrading, sortBy = "createdAt", sortOrder = "desc" } = query;
+    const pageNum = Math.max(1, Number(query.page) || 1);
+    const limitNum = Math.max(1, Math.min(500, Number(query.limit) || 10));
+    const skip = (pageNum - 1) * limitNum;
 
     const where: any = {};
     const isAdmin = user.roles.includes("admin");
@@ -132,7 +134,7 @@ export class ExamSubmissionService {
     const sortFieldMap: Record<string, string> = {
       newest: "createdAt",
       createdAt: "createdAt",
-      updatedAt: "updatedAt",
+      updatedAt: "createdAt",
       score: "totalScore",
       totalScore: "totalScore",
       status: "status",
@@ -147,7 +149,7 @@ export class ExamSubmissionService {
       this.repo.findMany(
         where,
         skip,
-        limit,
+        limitNum,
         orderBy,
         {
           id: true,
@@ -161,10 +163,10 @@ export class ExamSubmissionService {
           correctAnswers: true,
           totalQuestions: true,
           createdAt: true,
-          updatedAt: true,
           student: {
             select: {
               id: true,
+              userId: true,
               email: true,
               fullName: true,
               avatarUrl: true,
@@ -195,10 +197,10 @@ export class ExamSubmissionService {
     return {
       data,
       meta: {
-        page,
-        limit,
+        page: pageNum,
+        limit: limitNum,
         total,
-        totalPages: Math.ceil(total / limit),
+        totalPages: Math.ceil(total / limitNum),
       },
     };
   }
@@ -209,6 +211,7 @@ export class ExamSubmissionService {
       student: {
         select: {
           id: true,
+          userId: true,
           email: true,
           fullName: true,
           avatarUrl: true,

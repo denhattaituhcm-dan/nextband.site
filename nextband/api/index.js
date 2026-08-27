@@ -101520,8 +101520,10 @@ var ExamSubmissionService = class {
   notificationService;
   // Use Case: List Submissions with Role-based filtering
   async listSubmissions(user, query) {
-    const { examId, studentId, status, classId, needGrading, page = 1, limit = 10, sortBy = "createdAt", sortOrder = "desc" } = query;
-    const skip = (page - 1) * limit;
+    const { examId, studentId, status, classId, needGrading, sortBy = "createdAt", sortOrder = "desc" } = query;
+    const pageNum = Math.max(1, Number(query.page) || 1);
+    const limitNum = Math.max(1, Math.min(500, Number(query.limit) || 10));
+    const skip = (pageNum - 1) * limitNum;
     const where = {};
     const isAdmin = user.roles.includes("admin");
     const isTeacher = user.roles.includes("teacher");
@@ -101572,7 +101574,7 @@ var ExamSubmissionService = class {
     const sortFieldMap = {
       newest: "createdAt",
       createdAt: "createdAt",
-      updatedAt: "updatedAt",
+      updatedAt: "createdAt",
       score: "totalScore",
       totalScore: "totalScore",
       status: "status",
@@ -101586,7 +101588,7 @@ var ExamSubmissionService = class {
       this.repo.findMany(
         where,
         skip,
-        limit,
+        limitNum,
         orderBy,
         {
           id: true,
@@ -101600,10 +101602,10 @@ var ExamSubmissionService = class {
           correctAnswers: true,
           totalQuestions: true,
           createdAt: true,
-          updatedAt: true,
           student: {
             select: {
               id: true,
+              userId: true,
               email: true,
               fullName: true,
               avatarUrl: true
@@ -101633,10 +101635,10 @@ var ExamSubmissionService = class {
     return {
       data,
       meta: {
-        page,
-        limit,
+        page: pageNum,
+        limit: limitNum,
         total,
-        totalPages: Math.ceil(total / limit)
+        totalPages: Math.ceil(total / limitNum)
       }
     };
   }
@@ -101646,6 +101648,7 @@ var ExamSubmissionService = class {
       student: {
         select: {
           id: true,
+          userId: true,
           email: true,
           fullName: true,
           avatarUrl: true
@@ -103155,8 +103158,10 @@ var usersRoutes = async (fastify) => {
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       const { id } = request.params;
-      const user = await fastify.prisma.user.findUnique({
-        where: { userId: id },
+      const user = await fastify.prisma.user.findFirst({
+        where: {
+          OR: [{ userId: id }, { id }]
+        },
         select: {
           id: true,
           userId: true,
@@ -103920,6 +103925,7 @@ var ClassRepository = class {
             student: {
               select: {
                 id: true,
+                userId: true,
                 fullName: true,
                 email: true,
                 avatarUrl: true

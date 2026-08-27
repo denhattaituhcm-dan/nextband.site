@@ -5,6 +5,26 @@
  * Invariants: OVERDUE is derived only. SUBMITTED + LATE exist independently.
  */
 
+/**
+ * Canonical Student Identity Helper:
+ * Extracts the single authoritative user UUID (profiles.user_id) across any DTO shape.
+ */
+export function getCanonicalStudentId(st: any): string {
+  if (!st) return "";
+  if (typeof st === "string") return st;
+  return (
+    st.studentId ||
+    st.student_id ||
+    st.student?.userId ||
+    st.student?.user_id ||
+    st.userId ||
+    st.user_id ||
+    st.student?.id ||
+    st.id ||
+    ""
+  );
+}
+
 export type CanonicalVisualStatus =
   | "GRADED"            // Đã chấm điểm hoàn tất
   | "REVISION_REQUIRED" // Đã chấm nhưng cần làm bài sửa (Attempt 2)

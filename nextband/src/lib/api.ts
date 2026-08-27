@@ -2798,11 +2798,44 @@ export const classesApi = {
       }
     }
 
+    const branchIds = Array.from(new Set((data || []).map((c: any) => c.branch_id).filter(Boolean)));
+    const roomIds = Array.from(new Set((data || []).map((c: any) => c.room_id).filter(Boolean)));
+    const courseIds = Array.from(new Set((data || []).map((c: any) => c.course_id).filter(Boolean)));
+
+    let branchMap: Record<string, any> = {};
+    if (branchIds.length > 0) {
+      const { data: bList } = await supabase.from("branches").select("id, name, code").in("id", branchIds);
+      (bList || []).forEach((b: any) => {
+        branchMap[b.id] = b;
+      });
+    }
+
+    let roomMap: Record<string, any> = {};
+    if (roomIds.length > 0) {
+      const { data: rList } = await supabase.from("rooms").select("id, name, capacity").in("id", roomIds);
+      (rList || []).forEach((r: any) => {
+        roomMap[r.id] = r;
+      });
+    }
+
+    let courseMap: Record<string, any> = {};
+    if (courseIds.length > 0) {
+      const { data: cList } = await supabase.from("courses").select("id, title").in("id", courseIds);
+      (cList || []).forEach((c: any) => {
+        courseMap[c.id] = c;
+      });
+    }
+
     const formatted = (data || []).map((c: any) => ({
       id: c.id,
       name: c.name,
       description: c.description || "",
       courseId: c.course_id,
+      course: courseMap[c.course_id] || null,
+      branchId: c.branch_id || null,
+      branch: branchMap[c.branch_id] || null,
+      roomId: c.room_id || null,
+      room: roomMap[c.room_id] || null,
       teacherId: c.teacher_id,
       teacher: {
         id: c.teacher_id,
@@ -2833,6 +2866,35 @@ export const classesApi = {
   },
 
   getById: async (id: string) => {
+    // 1. Try Fastify backend with relation embeds
+    try {
+      const token = await getAuthToken();
+      const res = await fetch(`${API_BASE_URL}/classes/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data) {
+          return {
+            ...data,
+            courseId: data.courseId || data.course_id,
+            branchId: data.branchId || data.branch_id,
+            roomId: data.roomId || data.room_id,
+            teacherId: data.teacherId || data.teacher_id,
+            startDate: data.startDate || data.start_date,
+            endDate: data.endDate || data.end_date,
+            isActive: data.isActive ?? data.is_active ?? true,
+          };
+        }
+      }
+    } catch {
+      // Backend REST offline -> Fallback to Supabase
+    }
+
     const { data, error } = await supabase
       .from("classes")
       .select("*, class_students(*)")
@@ -2905,6 +2967,26 @@ export const classesApi = {
       }
     }
 
+    let branchProfile = null;
+    if (data.branch_id) {
+      const { data: bRow } = await supabase
+        .from("branches")
+        .select("id, name, code")
+        .eq("id", data.branch_id)
+        .maybeSingle();
+      if (bRow) branchProfile = bRow;
+    }
+
+    let roomProfile = null;
+    if (data.room_id) {
+      const { data: rRow } = await supabase
+        .from("rooms")
+        .select("id, name, capacity")
+        .eq("id", data.room_id)
+        .maybeSingle();
+      if (rRow) roomProfile = rRow;
+    }
+
     return {
       ...data,
       id: data.id,
@@ -2916,8 +2998,12 @@ export const classesApi = {
       endDate: data.end_date,
       teacherId: data.teacher_id,
       courseId: data.course_id,
+      branchId: data.branch_id,
+      roomId: data.room_id,
       teacher: teacherProfile,
       course: courseProfile,
+      branch: branchProfile,
+      room: roomProfile,
       class_students: canonicalStudents,
       students: canonicalStudents,
       activeStudents,
@@ -2930,56 +3016,139 @@ export const classesApi = {
 
   create: async (body: any) => {
     const token = await getAuthToken();
-    const res = await fetch(`${API_BASE_URL}/classes`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify(body),
-    });
+    try {
+      const res = await fetch(`${API_BASE_URL}/classes`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(body),
+      });
 
-    if (res.ok) {
-      const data = await res.json();
-      return {
-        ...data,
-        courseId: data.courseId || data.course_id,
-        teacherId: data.teacherId || data.teacher_id,
-        startDate: data.startDate || data.start_date,
-        endDate: data.endDate || data.end_date,
-        isActive: data.isActive ?? data.is_active ?? true,
-      };
+      if (res.ok) {
+        const data = await res.json();
+        return {
+          ...data,
+          courseId: data.courseId || data.course_id,
+          branchId: data.branchId || data.branch_id,
+          roomId: data.roomId || data.room_id,
+          teacherId: data.teacherId || data.teacher_id,
+          startDate: data.startDate || data.start_date,
+          endDate: data.endDate || data.end_date,
+          isActive: data.isActive ?? data.is_active ?? true,
+        };
+      }
+    } catch {
+      // Backend REST offline -> Fallback to Supabase
     }
 
-    const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.error || "Tạo lớp học thất bại");
+    const { data, error } = await supabase
+      .from("classes")
+      .insert({
+        name: body.name,
+        description: body.description ?? "",
+        course_id: body.courseId || null,
+        branch_id: body.branchId || null,
+        room_id: body.roomId || null,
+        teacher_id: body.teacherId || null,
+        start_date: body.startDate || null,
+        end_date: body.endDate || null,
+        is_active: body.isActive !== undefined ? body.isActive : true,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return {
+      ...data,
+      courseId: data.course_id,
+      branchId: data.branch_id,
+      roomId: data.room_id,
+      teacherId: data.teacher_id,
+      startDate: data.start_date,
+      endDate: data.end_date,
+      isActive: data.is_active ?? true,
+    };
   },
 
   update: async (id: string, body: any) => {
     const token = await getAuthToken();
+    try {
+      const res = await fetch(`${API_BASE_URL}/classes/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        return {
+          ...data,
+          courseId: data.courseId || data.course_id,
+          branchId: data.branchId || data.branch_id,
+          roomId: data.roomId || data.room_id,
+          teacherId: data.teacherId || data.teacher_id,
+          startDate: data.startDate || data.start_date,
+          endDate: data.endDate || data.end_date,
+          isActive: data.isActive ?? data.is_active ?? true,
+        };
+      }
+    } catch {
+      // Backend REST offline -> Fallback to Supabase
+    }
+
+    const { data, error } = await supabase
+      .from("classes")
+      .update({
+        name: body.name,
+        description: body.description ?? "",
+        course_id: body.courseId || null,
+        branch_id: body.branchId || null,
+        room_id: body.roomId || null,
+        teacher_id: body.teacherId || null,
+        start_date: body.startDate || null,
+        end_date: body.endDate || null,
+        is_active: body.isActive !== undefined ? body.isActive : true,
+      })
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return {
+      ...data,
+      courseId: data.course_id,
+      branchId: data.branch_id,
+      roomId: data.room_id,
+      teacherId: data.teacher_id,
+      startDate: data.start_date,
+      endDate: data.end_date,
+      isActive: data.is_active ?? true,
+    };
+  },
+
+  delete: async (id: string) => {
+    const token = await getAuthToken();
     const res = await fetch(`${API_BASE_URL}/classes/${id}`, {
-      method: "PUT",
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-      body: JSON.stringify(body),
     });
 
     if (res.ok) {
-      const data = await res.json();
-      return {
-        ...data,
-        courseId: data.courseId || data.course_id,
-        teacherId: data.teacherId || data.teacher_id,
-        startDate: data.startDate || data.start_date,
-        endDate: data.endDate || data.end_date,
-        isActive: data.isActive ?? data.is_active ?? true,
-      };
+      return { success: true };
     }
 
     const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.error || "Cập nhật lớp học thất bại");
+    throw new Error(errData.error || "Xóa lớp học thất bại");
   },
 
   delete: async (id: string) => {

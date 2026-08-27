@@ -223,8 +223,8 @@ export default function AdminClasses() {
   }, [rawClasses, sortField, sortOrder, statusFilter]);
 
   const createMutation = useMutation({
-    mutationFn: (body: typeof emptyForm) =>
-      classesApi.create({
+    mutationFn: async (body: typeof emptyForm) => {
+      const created = await classesApi.create({
         name: body.name,
         description: body.description,
         courseId: body.courseId || null,
@@ -234,7 +234,23 @@ export default function AdminClasses() {
         startDate: body.startDate || null,
         endDate: body.endDate || null,
         isActive: body.isActive,
-      }),
+      });
+
+      if (created?.id && body.startDate && body.weekdays.length > 0) {
+        try {
+          await sessionsApi.generateForClass(created.id, {
+            startDate: body.startDate,
+            weekdays: body.weekdays,
+            totalSessions: body.totalSessions || 27,
+            startTime: body.startTime || "18:00",
+            endTime: body.endTime || "20:00",
+          });
+        } catch (sessErr) {
+          console.warn("Could not generate sessions for new class:", sessErr);
+        }
+      }
+      return created;
+    },
     onSuccess: async () => {
       await queryClient.refetchQueries({ queryKey: ["admin-classes"] });
       toast({ title: "Đã tạo lớp học thành công" });
@@ -251,8 +267,8 @@ export default function AdminClasses() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: (body: typeof emptyForm & { id: string }) =>
-      classesApi.update(body.id, {
+    mutationFn: async (body: typeof emptyForm & { id: string }) => {
+      const updated = await classesApi.update(body.id, {
         name: body.name,
         description: body.description,
         courseId: body.courseId || null,
@@ -262,9 +278,15 @@ export default function AdminClasses() {
         startDate: body.startDate || null,
         endDate: body.endDate || null,
         isActive: body.isActive,
-      }),
-    onSuccess: async () => {
+      });
+      return updated;
+    },
+    onSuccess: async (_data, variables) => {
       await queryClient.refetchQueries({ queryKey: ["admin-classes"] });
+      if (variables?.id) {
+        queryClient.invalidateQueries({ queryKey: ["class", variables.id] });
+        queryClient.invalidateQueries({ queryKey: ["class-sessions", variables.id] });
+      }
       toast({ title: "Đã cập nhật lớp học" });
       setDialogOpen(false);
       setEditingClass(null);
@@ -328,15 +350,15 @@ export default function AdminClasses() {
     setDialogOpen(true);
   };
 
-  const openEdit = (cls: any) => {
+  const openEdit = async (cls: any) => {
     setEditingClass(cls);
-    setForm({
+    const initialForm: ClassForm = {
       name: cls.name || "",
       description: cls.description || "",
-      courseId: cls.courseId || cls.course_id || "",
+      courseId: cls.courseId || cls.course_id || cls.course?.id || "",
       branchId: cls.branchId || cls.branch_id || cls.branch?.id || "",
       roomId: cls.roomId || cls.room_id || cls.room?.id || "",
-      teacherId: cls.teacherId || cls.teacher?.id || "",
+      teacherId: cls.teacherId || cls.teacher_id || cls.teacher?.id || "",
       startDate: cls.startDate
         ? new Date(cls.startDate).toISOString().split("T")[0]
         : "",
@@ -348,8 +370,73 @@ export default function AdminClasses() {
       startTime: cls.startTime || "18:00",
       endTime: cls.endTime || "20:00",
       totalSessions: cls.totalSessions ?? 27,
-    });
+    };
+    setForm(initialForm);
     setDialogOpen(true);
+
+    try {
+      const [fullClass, sessions] = await Promise.all([
+        classesApi.getById(cls.id).catch(() => null),
+        sessionsApi.list(cls.id).catch(() => []),
+      ]);
+
+      const weekdaysSet = new Set<number>();
+      let foundStartTime = initialForm.startTime;
+      let foundEndTime = initialForm.endTime;
+
+      if (Array.isArray(sessions) && sessions.length > 0) {
+        sessions.forEach((s: any) => {
+          const dateStr = s.plannedDate || s.sessionDate;
+          if (dateStr) {
+            const [y, m, d] = String(dateStr).split("T")[0].split("-").map(Number);
+            if (y && m && d) {
+              const dt = new Date(y, m - 1, d);
+              weekdaysSet.add(dt.getDay());
+            }
+          }
+          if (s.startTime && (!foundStartTime || foundStartTime === "18:00")) {
+            foundStartTime = s.startTime.slice(0, 5);
+          }
+          if (s.endTime && (!foundEndTime || foundEndTime === "20:00")) {
+            foundEndTime = s.endTime.slice(0, 5);
+          }
+        });
+      }
+
+      const inferredWeekdays = weekdaysSet.size > 0
+        ? Array.from(weekdaysSet).sort((a, b) => (a === 0 ? 7 : a) - (b === 0 ? 7 : b))
+        : initialForm.weekdays;
+
+      const courseMatch = courses.find(
+        (c: any) => c.id === (fullClass?.courseId || fullClass?.course_id || initialForm.courseId)
+      );
+      const totalSessionsCount = (Array.isArray(sessions) && sessions.length > 0)
+        ? sessions.length
+        : (courseMatch?.totalLessons || 27);
+
+      setForm((prev) => ({
+        ...prev,
+        name: fullClass?.name ?? prev.name,
+        description: fullClass?.description ?? prev.description,
+        courseId: fullClass?.courseId || fullClass?.course_id || prev.courseId,
+        branchId: fullClass?.branchId || fullClass?.branch_id || fullClass?.branch?.id || prev.branchId,
+        roomId: fullClass?.roomId || fullClass?.room_id || fullClass?.room?.id || prev.roomId,
+        teacherId: fullClass?.teacherId || fullClass?.teacher_id || fullClass?.teacher?.id || prev.teacherId,
+        startDate: fullClass?.startDate
+          ? new Date(fullClass.startDate).toISOString().split("T")[0]
+          : prev.startDate,
+        endDate: fullClass?.endDate
+          ? new Date(fullClass.endDate).toISOString().split("T")[0]
+          : prev.endDate,
+        isActive: fullClass?.isActive ?? prev.isActive,
+        weekdays: inferredWeekdays,
+        startTime: foundStartTime,
+        endTime: foundEndTime,
+        totalSessions: totalSessionsCount,
+      }));
+    } catch (e) {
+      console.warn("Failed to load full class info for edit:", e);
+    }
   };
 
   const handleSave = () => {
