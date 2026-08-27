@@ -710,8 +710,8 @@ export default function ReadingCasePage() {
                       : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/60"
                   }`}
                 >
-                  <ShieldAlert className="h-3.5 w-3.5 text-amber-600" />
-                  <span>Khảo Hạch (Tasks)</span>
+                  <BookOpen className="h-3.5 w-3.5 text-amber-600" />
+                  <span>Góc Chiêm Nghiệm</span>
                   <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-stone-100 text-stone-700">
                     {Object.keys(taskAnswers).length + (selectedEvidenceSentence ? 1 : 0)}/4
                   </span>
@@ -726,7 +726,7 @@ export default function ReadingCasePage() {
                   }`}
                 >
                   <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
-                  <span>Giải Thích (Explain)</span>
+                  <span>Giải Nghĩa Sâu</span>
                   {activeExplainTerm && (
                     <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                   )}

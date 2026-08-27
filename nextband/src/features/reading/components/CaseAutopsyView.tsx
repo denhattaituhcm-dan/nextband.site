@@ -90,7 +90,7 @@ export const CaseAutopsyView: React.FC<CaseAutopsyProps> = ({
         </div>
 
         <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-stone-900 mb-2">
-          {isCase1 ? "SCIENTIFIC AUTOPSY" : "STRATEGIC AUTOPSY"}: {readingCase.title.toUpperCase()}
+          {isCase1 ? "TỔNG KẾT KHOA HỌC" : "TỔNG KẾT CHIÊM NGHIỆM"}: {readingCase.title.toUpperCase()}
         </h1>
 
         <p className="text-sm font-medium text-stone-600 max-w-xl mx-auto">
@@ -350,7 +350,7 @@ export const CaseAutopsyView: React.FC<CaseAutopsyProps> = ({
               className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-md cursor-pointer"
             >
               <Link to="/reading">
-                Hoàn Thành Khảo Hạch & Về Thư Viện
+                Hoàn Thành Bài Đọc & Về Tủ Sách
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>

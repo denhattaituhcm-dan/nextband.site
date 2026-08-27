@@ -30,18 +30,18 @@ export default function ReadingUniversePage() {
           
           <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-xs font-bold text-amber-300 uppercase tracking-widest mb-6 animate-pulse">
             <Sparkles className="h-4 w-4 text-amber-400" />
-            Next-Gen IELTS Narrative Reading Engine
+            Next-Gen IELTS Reflective Reading Engine
           </div>
 
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white uppercase leading-tight">
-            Every text hides something. <br />
+            Read Deeply. <br />
             <span className="bg-gradient-to-r from-amber-300 via-amber-400 to-yellow-500 bg-clip-text text-transparent">
-              Find it.
+              Think Clearly.
             </span>
           </h1>
 
           <p className="mt-6 text-base sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Đừng chỉ đọc để làm bài tập trắc nghiệm. Hãy bước vào hồ sơ vụ án, tự thu thập chứng cứ, đối chiếu mâu thuẫn và giải mã năng lực đọc hiểu học thuật của chính mình.
+            Đừng chỉ đọc để làm bài tập trắc nghiệm. Hãy đọc để chiêm nghiệm, đối chiếu đa chiều và cảm nhận trọn vẹn chiều sâu tri thức của văn bản — câu hỏi chỉ đóng vai trò hỗ trợ tư duy.
           </p>
 
           {/* Quick CTA */}
@@ -52,7 +52,7 @@ export default function ReadingUniversePage() {
               className="h-12 px-7 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm uppercase tracking-wider shadow-lg shadow-emerald-500/25 transition-all cursor-pointer"
             >
               <Link to="/reading/case-002">
-                🚀 Khảo Hạch Vụ Án #002 (Warren Buffett)
+                📖 Đọc Bài Viết #002 (Warren Buffett)
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
@@ -63,7 +63,7 @@ export default function ReadingUniversePage() {
               className="h-12 px-7 rounded-full border-amber-500/60 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-black text-sm uppercase tracking-wider transition-all cursor-pointer"
             >
               <Link to="/reading/case-001">
-                ❄️ Vụ Án #001 (Hồ Băng Greenland)
+                ❄️ Bài Đọc #001 (Hồ Băng Greenland)
               </Link>
             </Button>
           </div>
@@ -74,13 +74,13 @@ export default function ReadingUniversePage() {
       <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto space-y-8">
         <div className="flex items-center justify-between border-b border-slate-800 pb-4">
           <div className="flex items-center gap-2.5">
-            <Search className="h-5 w-5 text-amber-400" />
+            <BookOpen className="h-5 w-5 text-amber-400" />
             <h2 className="text-lg sm:text-xl font-black uppercase tracking-wider text-white">
-              Hồ Sơ Vụ Án Khảo Hạch (Active Case Dossiers)
+              Tủ Sách Chuyên Đề & Bài Đọc Đối Chiếu
             </h2>
           </div>
           <span className="text-xs font-mono text-emerald-400 font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-            2 Vụ Án Đang Mở
+            2 Chuyên Đề Sẵn Sàng
           </span>
         </div>
 
@@ -109,10 +109,10 @@ export default function ReadingUniversePage() {
                   <Clock className="h-4 w-4 text-slate-500" /> ~12 phút
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Layers className="h-4 w-4 text-slate-500" /> 3 Nguồn Hồ Sơ (Fast Company)
+                  <Layers className="h-4 w-4 text-slate-500" /> 3 Nguồn Bài Đọc (Fast Company)
                 </span>
-                <span className="flex items-center gap-1.5">
-                  <Shield className="h-4 w-4 text-slate-500" /> Boss: Prompt-Engineering Overemphasis Trap
+                <span className="flex items-center gap-1.5 text-emerald-400/90 font-medium">
+                  <BookOpen className="h-4 w-4 text-emerald-400" /> Trọng tâm: Sức mạnh giao tiếp trong kỷ nguyên AI
                 </span>
               </div>
             </div>
@@ -123,12 +123,12 @@ export default function ReadingUniversePage() {
                 className="w-full h-12 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/20 cursor-pointer"
               >
                 <Link to="/reading/case-002">
-                  Khảo Hạch Case #002
+                  Đọc & Chiêm Nghiệm
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
               <p className="text-[11px] text-slate-500 mt-2 text-center">
-                Đối chiếu 3 nguồn & Khảo hạch 4 tasks
+                Đọc đối chiếu 3 nguồn & 4 câu hỏi suy ngẫm
               </p>
             </div>
           </div>
@@ -159,10 +159,10 @@ export default function ReadingUniversePage() {
                   <Clock className="h-4 w-4 text-slate-500" /> ~10 phút
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Layers className="h-4 w-4 text-slate-500" /> 3 Nguồn Hồ Sơ + Sơ Đồ Địa Chất
+                  <Layers className="h-4 w-4 text-slate-500" /> 3 Nguồn Dữ Liệu + Sơ Đồ Địa Chất
                 </span>
-                <span className="flex items-center gap-1.5">
-                  <Shield className="h-4 w-4 text-slate-500" /> Boss: Over-Inference Trap
+                <span className="flex items-center gap-1.5 text-sky-300/90 font-medium">
+                  <BookOpen className="h-4 w-4 text-sky-400" /> Trọng tâm: Cơ chế nứt gãy thoát nước dải băng
                 </span>
               </div>
             </div>
@@ -174,12 +174,12 @@ export default function ReadingUniversePage() {
                 className="w-full h-12 rounded-xl border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20 text-sky-200 font-black text-xs uppercase tracking-wider cursor-pointer"
               >
                 <Link to="/reading/case-001">
-                  Khảo Hạch Case #001
+                  Đọc & Chiêm Nghiệm
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
               <p className="text-[11px] text-slate-500 mt-2 text-center">
-                Mở khóa sơ đồ mặt cắt địa chất
+                Đọc đối chiếu 3 nguồn & Sơ đồ địa chất
               </p>
             </div>
           </div>
