@@ -26,6 +26,7 @@ export default async function adminDashboardRoutes(fastify: FastifyInstance) {
           reservedStudentsCount,
           newLeadsCount,
           overdueLeadsCount,
+          unassignedLeadsCount,
           enrolledLeadsCount,
           placementTestsCount,
           activeClasses,
@@ -65,6 +66,15 @@ export default async function adminDashboardRoutes(fastify: FastifyInstance) {
             where: {
               status: "NEW",
               createdAt: { lte: oneDayAgo },
+              ...leadBranchFilter,
+            },
+          }),
+
+          // 4b. Lead chưa phân bổ tư vấn viên (assignedToUserId = null)
+          fastify.prisma.contactLead.count({
+            where: {
+              assignedToUserId: null,
+              status: { notIn: ["ENROLLED", "CANCELLED", "ARCHIVED"] },
               ...leadBranchFilter,
             },
           }),
@@ -274,6 +284,13 @@ export default async function adminDashboardRoutes(fastify: FastifyInstance) {
                 count: atRiskStudentsCount,
                 severity: "HIGH",
                 link: "/admin/users?role=student&status=at-risk",
+              },
+              {
+                key: "unassigned_leads",
+                label: "Lead chưa phân bổ người phụ trách tư vấn",
+                count: unassignedLeadsCount,
+                severity: "HIGH",
+                link: "/admin/leads?owner=UNASSIGNED",
               },
               {
                 key: "overdue_leads",

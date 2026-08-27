@@ -108,18 +108,34 @@ export class SubmissionController {
         primaryErrorCategory?: "CONCEPT" | "STRUCTURE" | "EXPRESSION" | "GRAMMAR" | null;
         revisionRequired?: boolean;
         criteriaScores?: any;
+        sentenceFeedbacks?: any[];
+        tabSwitchCount?: number;
+        finalize?: boolean;
       };
     }>,
     reply: FastifyReply
   ) {
     try {
       const user = (request as any).user;
-      const { grades = [], totalScore, feedback, primaryErrorCategory, revisionRequired, criteriaScores } = request.body || {};
+      const {
+        grades = [],
+        totalScore,
+        feedback,
+        primaryErrorCategory,
+        revisionRequired,
+        criteriaScores,
+        sentenceFeedbacks,
+        tabSwitchCount,
+        finalize = true,
+      } = request.body || {};
       const result = await this.service.gradeManualSubmission(user, request.params.id, grades, totalScore, {
         feedback,
         primaryErrorCategory,
         revisionRequired,
         criteriaScores,
+        sentenceFeedbacks,
+        tabSwitchCount,
+        finalize,
       });
       return reply.send(result);
     } catch (err: any) {

@@ -57,6 +57,9 @@ export default async function submissionsRoutes(fastify: FastifyInstance) {
       primaryErrorCategory?: "CONCEPT" | "STRUCTURE" | "EXPRESSION" | "GRAMMAR" | null;
       revisionRequired?: boolean;
       criteriaScores?: any;
+      sentenceFeedbacks?: any[];
+      tabSwitchCount?: number;
+      finalize?: boolean;
     };
   }>(
     "/:id/grade",

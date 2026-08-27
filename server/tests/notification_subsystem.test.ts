@@ -318,12 +318,12 @@ describe('Notification Subsystem End-to-End Test Suite', () => {
         }
       );
 
-      // Student should receive SUBMISSION_GRADED notification
+      // Student should receive SUBMISSION_GRADED notification with canonical route
       const studentNotifs = await notificationService.listNotifications({ userId: student1Id });
       expect(studentNotifs.items.length).toBe(1);
       expect(studentNotifs.items[0].type).toBe(NotificationType.SUBMISSION_GRADED);
       expect(studentNotifs.items[0].entityId).toBe(subId);
-      expect(studentNotifs.items[0].link).toBe(`/results/${subId}`);
+      expect(studentNotifs.items[0].link).toBe(`/app/submissions/${subId}`);
     });
 
     it('Business Event 5: ExamSubmissionService.submitExam (Essay/Manual) creates NEW_SUBMISSION notification for teacher', async () => {
@@ -377,7 +377,57 @@ describe('Notification Subsystem End-to-End Test Suite', () => {
       expect(teacherNotifs.items[0].link).toBe(`/admin/submissions/${subId}`);
     });
 
-    it('Business Event 6: ExamSubmissionService.gradeSubmission creates TEACHER_FEEDBACK notification for student', async () => {
+    it('Business Event 6A: ExamSubmissionService.gradeSubmission (Save Draft) persists draft without notification and keeps SUBMITTED', async () => {
+      const examSubService = new ExamSubmissionService(mockPrisma as any);
+      const subId = 'sub-draft-1';
+
+      const essayExam = {
+        id: 'exam-essay-draft',
+        title: 'IELTS Writing Task 2 - Technology',
+        courseId: courseId,
+      };
+      mockPrisma.exams.push(essayExam);
+      mockPrisma.examSubmissions.push({
+        id: subId,
+        examId: essayExam.id,
+        studentId: student1Id,
+        status: 'SUBMITTED',
+        startedAt: new Date(),
+        version: 2,
+      });
+      mockPrisma.answers.push({
+        id: 'ans-draft-1',
+        questionId: 'q-draft-1',
+        submissionId: subId,
+        answerText: 'Essay body draft',
+      });
+
+      // Clear notifications before test
+      mockPrisma.notifications = [];
+
+      // Teacher saves draft (finalize: false)
+      const draftResult = await examSubService.gradeManualSubmission(
+        { id: teacherId, roles: ['teacher'] },
+        subId,
+        [{ answerId: 'ans-draft-1', score: 6.0, feedback: 'Draft comments: needs work on body 2' }],
+        6.0,
+        { feedback: 'Draft overall feedback', finalize: false }
+      );
+
+      // Status must remain SUBMITTED
+      expect(draftResult.status).toBe('SUBMITTED');
+
+      // NO notification must be sent to student
+      const studentNotifs = await notificationService.listNotifications({ userId: student1Id });
+      expect(studentNotifs.items.length).toBe(0);
+
+      // Verify draft feedback is saved on answer
+      const updatedAnswer = mockPrisma.answers.find((a: any) => a.id === 'ans-draft-1');
+      expect(updatedAnswer).toBeDefined();
+      expect(updatedAnswer.score).toBe(6.0);
+    });
+
+    it('Business Event 6B: ExamSubmissionService.gradeSubmission (Finalize Return) transitions to GRADED and creates TEACHER_FEEDBACK notification', async () => {
       const examSubService = new ExamSubmissionService(mockPrisma as any);
       const subId = 'sub-graded-by-teacher-1';
 
@@ -396,22 +446,36 @@ describe('Notification Subsystem End-to-End Test Suite', () => {
         answers: [{ id: 'ans-1', questionId: 'q-1', submissionId: subId, answerText: 'Essay body' }],
         version: 2,
       });
+      mockPrisma.answers.push({
+        id: 'ans-1',
+        questionId: 'q-1',
+        submissionId: subId,
+        answerText: 'Essay body',
+      });
 
-      await examSubService.gradeManualSubmission(
+      // Clear notifications before test
+      mockPrisma.notifications = [];
+
+      // Teacher finalizes return (finalize: true)
+      const finalizeResult = await examSubService.gradeManualSubmission(
         { id: teacherId, roles: ['teacher'] },
         subId,
         [{ answerId: 'ans-1', score: 7.5, feedback: 'Well structured arguments!' }],
         7.5,
-        { feedback: 'Overall great performance.' }
+        { feedback: 'Overall great performance.', finalize: true }
       );
 
-      // Student should receive TEACHER_FEEDBACK notification
+      expect(finalizeResult.status).toBe('GRADED');
+      expect(finalizeResult.totalScore).toBe(7.5);
+
+      // Student should receive exactly 1 TEACHER_FEEDBACK notification with canonical route
       const studentNotifs = await notificationService.listNotifications({ userId: student1Id });
-      const feedbackNotif = studentNotifs.items.find(n => n.type === NotificationType.TEACHER_FEEDBACK);
-      expect(feedbackNotif).toBeDefined();
-      expect(feedbackNotif?.entityId).toBe(subId);
-      expect(feedbackNotif?.title).toBe('Giáo viên đã chấm bài thi');
-      expect(feedbackNotif?.link).toBe(`/results/${subId}`);
+      expect(studentNotifs.items.length).toBe(1);
+      const feedbackNotif = studentNotifs.items[0];
+      expect(feedbackNotif.type).toBe(NotificationType.TEACHER_FEEDBACK);
+      expect(feedbackNotif.entityId).toBe(subId);
+      expect(feedbackNotif.title).toBe('Giáo viên đã chấm bài thi');
+      expect(feedbackNotif.link).toBe(`/app/submissions/${subId}`);
     });
   });
 });

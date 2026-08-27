@@ -60,12 +60,16 @@ export class LeadService {
         preferredBranchId: input.preferredBranchId || null,
         notes: input.notes && input.notes.length > 0 ? input.notes : null,
         createdByUserId: input.createdByUserId || null,
+        // Auto-assign to the staff member who manually created this lead
+        assignedToUserId: input.createdByUserId || null,
+        assignedAt: input.createdByUserId ? new Date() : null,
         status: LeadStatus.NEW,
       },
       include: {
         preferredBranch: { select: { id: true, name: true, code: true } },
         createdByUser: { select: { id: true, userId: true, fullName: true } },
         convertedUser: { select: { id: true, userId: true, fullName: true, email: true } },
+        assignedToUser: { select: { id: true, userId: true, fullName: true, avatarUrl: true } },
       },
     });
 
@@ -117,6 +121,14 @@ export class LeadService {
     if (query.preferredBranchId && query.preferredBranchId !== "ALL" && query.preferredBranchId !== "all") {
       where.preferredBranchId = query.preferredBranchId;
     }
+    // Filter by specific assigned user (supports "me" token resolved at route level)
+    if (query.assignedToUserId) {
+      where.assignedToUserId = query.assignedToUserId;
+    }
+    // Filter unassigned leads only
+    if (query.unassigned === "true") {
+      where.assignedToUserId = null;
+    }
     if (search) {
       where.OR = [
         { fullName: { contains: search, mode: "insensitive" } },
@@ -128,17 +140,20 @@ export class LeadService {
       ];
     }
 
+    const leadInclude = {
+      preferredBranch: { select: { id: true, name: true, code: true } },
+      createdByUser: { select: { id: true, userId: true, fullName: true } },
+      convertedUser: { select: { id: true, userId: true, fullName: true, email: true } },
+      assignedToUser: { select: { id: true, userId: true, fullName: true, avatarUrl: true } },
+    };
+
     const [total, items] = await Promise.all([
       this.prisma.contactLead.count({ where }),
       this.prisma.contactLead.findMany({
         where,
         skip,
         take: limit,
-        include: {
-          preferredBranch: { select: { id: true, name: true, code: true } },
-          createdByUser: { select: { id: true, userId: true, fullName: true } },
-          convertedUser: { select: { id: true, userId: true, fullName: true, email: true } },
-        },
+        include: leadInclude,
         orderBy: { createdAt: "desc" },
       }),
     ]);
@@ -164,20 +179,28 @@ export class LeadService {
         preferredBranch: { select: { id: true, name: true, code: true } },
         createdByUser: { select: { id: true, userId: true, fullName: true } },
         convertedUser: { select: { id: true, userId: true, fullName: true, email: true } },
+        assignedToUser: { select: { id: true, userId: true, fullName: true, avatarUrl: true } },
       },
     });
   }
 
   /**
-   * Update lead status / notes / assigned staff
+   * Update lead status / notes / assigned staff (with FK ownership)
    */
   async updateLead(id: string, input: UpdateLeadInput) {
     const data: any = {};
     if (input.status !== undefined) data.status = input.status as LeadStatus;
-    if (input.assignedTo !== undefined) data.assignedTo = input.assignedTo;
+    if (input.assignedTo !== undefined) data.assignedTo = input.assignedTo; // deprecated, keep for compat
     if (input.preferredBranchId !== undefined) data.preferredBranchId = input.preferredBranchId;
     if (input.notes !== undefined) data.notes = input.notes;
     if (input.convertedUserId !== undefined) data.convertedUserId = input.convertedUserId;
+
+    // New FK-based assignment
+    if (input.assignedToUserId !== undefined) {
+      data.assignedToUserId = input.assignedToUserId;
+      // Record timestamp when assignment changes (set to now if assigning, clear if unassigning)
+      data.assignedAt = input.assignedToUserId ? new Date() : null;
+    }
 
     return this.prisma.contactLead.update({
       where: { id },
@@ -186,6 +209,7 @@ export class LeadService {
         preferredBranch: { select: { id: true, name: true, code: true } },
         createdByUser: { select: { id: true, userId: true, fullName: true } },
         convertedUser: { select: { id: true, userId: true, fullName: true, email: true } },
+        assignedToUser: { select: { id: true, userId: true, fullName: true, avatarUrl: true } },
       },
     });
   }
@@ -299,10 +323,25 @@ export class LeadService {
           });
 
           if (!existingMembership) {
+            const coursePrice = Number(validatedTargetClass.course?.price || 0);
+            const fee = input.tuitionFee !== undefined ? input.tuitionFee : coursePrice;
+            const paid = input.paidAmount !== undefined ? input.paidAmount : 0;
+            let pStatus: any = input.paymentStatus;
+            if (!pStatus) {
+              if (fee > 0 && paid >= fee) pStatus = "PAID";
+              else if (paid > 0) pStatus = "PARTIAL";
+              else pStatus = "UNPAID";
+            }
+
             await tx.classStudent.create({
               data: {
                 classId: input.targetClassId,
                 studentId: supabaseUserId,
+                tuitionFee: fee,
+                paidAmount: paid,
+                paymentStatus: pStatus,
+                paymentNote: input.paymentNote || null,
+                externalRef: input.externalRef || null,
                 joinedAt: new Date(),
               },
             });

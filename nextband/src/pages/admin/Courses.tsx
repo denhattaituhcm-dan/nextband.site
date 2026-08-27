@@ -168,6 +168,7 @@ export default function AdminCourses() {
                 </div>
               </TableHead>
               <TableHead className="font-semibold">Band</TableHead>
+              <TableHead className="font-semibold text-right">Học phí niêm yết</TableHead>
               <TableHead className="font-semibold">Lessons</TableHead>
               <TableHead className="font-semibold text-right">Classes (Đang mở / Tổng)</TableHead>
               <TableHead className="font-semibold text-right">Students</TableHead>
@@ -179,7 +180,7 @@ export default function AdminCourses() {
             {/* 1. LOADING STATE */}
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-32 text-center">
+                <TableCell colSpan={8} className="h-32 text-center">
                   <div className="flex items-center justify-center gap-2 text-muted-foreground">
                     <Loader2 className="h-5 w-5 animate-spin text-primary" />
                     Đang tải danh sách chương trình đào tạo...
@@ -189,7 +190,7 @@ export default function AdminCourses() {
             ) : isError ? (
               /* 2. ERROR STATE (Phân biệt rõ rệt với Empty State) */
               <TableRow>
-                <TableCell colSpan={7} className="h-40 text-center bg-red-50/30">
+                <TableCell colSpan={8} className="h-40 text-center bg-red-50/30">
                   <div className="flex flex-col items-center justify-center gap-2 max-w-md mx-auto py-4">
                     <AlertTriangle className="h-8 w-8 text-red-600" />
                     <p className="font-semibold text-sm text-red-900">Không thể tải dữ liệu khóa học</p>
@@ -206,7 +207,7 @@ export default function AdminCourses() {
             ) : coursesList.length === 0 ? (
               /* 3. EMPTY STATE */
               <TableRow>
-                <TableCell colSpan={7} className="h-40 text-center">
+                <TableCell colSpan={8} className="h-40 text-center">
                   <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground py-6">
                     <BookOpen className="h-8 w-8 text-muted-foreground/50" />
                     <p className="font-medium text-sm">Chưa có chương trình đào tạo nào</p>
@@ -244,6 +245,15 @@ export default function AdminCourses() {
                     <Badge variant="outline" className="bg-muted/50 font-mono">
                       {course.band || "Target 6.5"}
                     </Badge>
+                  </TableCell>
+
+                  {/* TUITION FEE */}
+                  <TableCell className="text-xs font-medium text-right text-emerald-700 font-mono">
+                    {course.price && Number(course.price) > 0 ? (
+                      `${Number(course.price).toLocaleString("vi-VN")} đ`
+                    ) : (
+                      <span className="text-muted-foreground italic">Chưa set giá</span>
+                    )}
                   </TableCell>
 
                   {/* LESSONS / EXAMS */}

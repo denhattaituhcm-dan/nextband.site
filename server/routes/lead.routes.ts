@@ -135,6 +135,49 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
     }
   );
 
+  // GET /leads/assignable-staff - Fetch all admin/teacher users usable as lead owners
+  fastify.get(
+    "/assignable-staff",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      // Get all admin/teacher users with lead count
+      const staffWithLeads = await fastify.prisma.user.findMany({
+        where: {
+          roles: { some: { role: { in: ["admin", "teacher"] } } },
+        },
+        select: {
+          id: true,
+          userId: true,
+          fullName: true,
+          email: true,
+          avatarUrl: true,
+          roles: { select: { role: true } },
+          _count: {
+            select: {
+              assignedLeads: {
+                where: { status: { notIn: ["ENROLLED", "CANCELLED", "ARCHIVED"] } },
+              },
+            },
+          },
+        },
+        orderBy: { fullName: "asc" },
+      });
+
+      return reply.send({
+        success: true,
+        data: staffWithLeads.map((u) => ({
+          id: u.id,
+          userId: u.userId,
+          fullName: u.fullName,
+          email: u.email,
+          avatarUrl: u.avatarUrl,
+          roles: u.roles.map((r) => r.role),
+          activeLeadCount: u._count.assignedLeads,
+        })),
+      });
+    }
+  );
+
   // GET /leads - Admin/Teacher list all leads with pagination
   fastify.get(
     "/",
@@ -146,6 +189,11 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
         reply
       );
       if (!validatedQuery) return;
+
+      // Resolve "me" shorthand to the authenticated user's ID
+      if ((validatedQuery as any).assignedToUserId === "me") {
+        (validatedQuery as any).assignedToUserId = request.user.id;
+      }
 
       const result = await leadService.listLeads(validatedQuery);
       return reply.send({

@@ -62,7 +62,6 @@ const STRICT_CONFIG: Config = {
   ],
   ALLOWED_ATTR: [
     "class",
-    "style",
     "color",
     "face",
     "size",
@@ -82,9 +81,9 @@ const STRICT_CONFIG: Config = {
     "align",
     "valign",
   ],
-  ADD_ATTR: ["target", "rel", "style", "color"],
+  ADD_ATTR: ["target", "rel", "color"],
   FORBID_TAGS: ["script", "iframe", "object", "embed", "form", "svg"],
-  FORBID_ATTR: [],
+  FORBID_ATTR: ["style"],
   ALLOWED_URI_REGEXP:
     /^(?:(?:https?|mailto|tel):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
   ALLOW_DATA_ATTR: false, // Disallow arbitrary data-*

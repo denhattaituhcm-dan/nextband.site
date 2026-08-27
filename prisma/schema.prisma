@@ -50,6 +50,7 @@ model User {
   authoredReports   StudentPeriodicReport[] @relation("TeacherPeriodicReports")
   interventionsReceived StudentInterventionLog[] @relation("StudentInterventions")
   interventionsAuthored StudentInterventionLog[] @relation("StaffInterventions")
+  assignedLeads         ContactLead[]            @relation("LeadAssignedToUser")
 
   @@map("profiles")
 }
@@ -231,6 +232,11 @@ model ClassStudent {
   classId   String           @map("class_id")
   studentId String           @map("student_id")
   status    EnrollmentStatus @default(ACTIVE)
+  tuitionFee Decimal?        @default(0.00) @map("tuition_fee")
+  paidAmount Decimal?        @default(0.00) @map("paid_amount")
+  paymentStatus PaymentStatus @default(UNPAID) @map("payment_status")
+  paymentNote String?        @map("payment_note")
+  externalRef String?        @map("external_ref")
   joinedAt  DateTime         @default(now()) @map("joined_at")
   completedAt DateTime?      @map("completed_at")
   createdAt DateTime         @default(now()) @map("created_at")
@@ -545,7 +551,10 @@ model ContactLead {
   goal              String?
   source            String     @default("contact_page")
   status            LeadStatus @default(NEW)
+  /// @deprecated Use assignedToUserId (FK) instead. Kept for backward-compat until cleanup migration.
   assignedTo        String?    @map("assigned_to")
+  assignedToUserId  String?    @map("assigned_to_user_id")
+  assignedAt        DateTime?  @map("assigned_at")
   preferredBranchId String?    @map("preferred_branch_id")
   notes             String?
   createdByUserId   String?    @map("created_by_user_id")
@@ -557,9 +566,12 @@ model ContactLead {
   preferredBranch   Branch?    @relation(fields: [preferredBranchId], references: [id], onDelete: SetNull)
   createdByUser     User?      @relation("LeadCreatedByUser", fields: [createdByUserId], references: [userId], onDelete: SetNull)
   convertedUser     User?      @relation("LeadConvertedUser", fields: [convertedUserId], references: [userId], onDelete: SetNull)
+  assignedToUser    User?      @relation("LeadAssignedToUser", fields: [assignedToUserId], references: [userId], onDelete: SetNull)
 
   @@index([preferredBranchId])
   @@index([createdByUserId])
+  @@index([assignedToUserId])
+  @@index([status, createdAt])
   @@map("contact_leads")
 }
 
@@ -734,6 +746,14 @@ enum EnrollmentStatus {
   SUSPENDED
   COMPLETED
   DROPPED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PARTIAL
+  PAID
+  WAIVED
+  REFUNDED
 }
 
 enum ClassSessionStatus {

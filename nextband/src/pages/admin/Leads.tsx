@@ -6,7 +6,9 @@ import {
   createManualContactLead,
   checkDuplicateLeadPhone,
   convertLeadToStudent,
+  fetchAssignableStaff,
   ContactLead,
+  type AssignableStaff,
 } from "@/lib/contactService";
 import { classesApi } from "@/lib/api";
 import { useBranch } from "@/contexts/BranchContext";
@@ -51,6 +53,9 @@ import {
   CheckCircle2,
   AlertTriangle,
   User,
+  Users,
+  UserCheck,
+  UserX,
   Sparkles,
   Calendar,
   ExternalLink,
@@ -60,6 +65,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Link, useSearchParams } from "react-router-dom";
 import { normalizePhoneNumber } from "@/lib/phoneUtils";
+import { useAuth } from "@/hooks/useAuth";
 
 const STATUS_CONFIG: Record<
   string,
@@ -138,23 +144,38 @@ const SOURCE_CONFIG: Record<
 };
 
 export default function AdminLeads() {
+  const { user: currentUser } = useAuth();
   const { selectedBranch, branches, primaryBranch } = useBranch();
   const [searchParams] = useSearchParams();
   const initialStatus = searchParams.get("status") || "ALL";
+  const initialOwner = (searchParams.get("owner") as any) || "ALL";
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>(initialStatus);
+  const [ownerFilter, setOwnerFilter] = useState<"ALL" | "ME" | "UNASSIGNED">(initialOwner);
 
   useEffect(() => {
     const urlStatus = searchParams.get("status");
     if (urlStatus) {
       setStatusFilter(urlStatus);
     }
+    const urlOwner = searchParams.get("owner");
+    if (urlOwner && (urlOwner === "ALL" || urlOwner === "ME" || urlOwner === "UNASSIGNED")) {
+      setOwnerFilter(urlOwner as any);
+    }
   }, [searchParams]);
 
   const [selectedLead, setSelectedLead] = useState<ContactLead | null>(null);
   const [editNotes, setEditNotes] = useState("");
   const [editStatus, setEditStatus] = useState<any>("NEW");
+  const [editAssignedToUserId, setEditAssignedToUserId] = useState<string>("unassigned");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Fetch assignable staff list (Admin/Teachers)
+  const { data: assignableStaff = [] } = useQuery<AssignableStaff[]>({
+    queryKey: ["assignable-staff"],
+    queryFn: fetchAssignableStaff,
+    staleTime: 60000,
+  });
 
   // Quick Manual Intake State
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -179,6 +200,11 @@ export default function AdminLeads() {
     branchId: "",
     targetClassId: "",
     password: "",
+    tuitionFee: 0,
+    paidAmount: 0,
+    paymentStatus: "UNPAID",
+    paymentNote: "",
+    externalRef: "",
     status: "ENROLLED",
   });
 
@@ -228,15 +254,18 @@ export default function AdminLeads() {
       id,
       status,
       notes,
+      assignedToUserId,
     }: {
       id: string;
       status?: any;
       notes?: string;
+      assignedToUserId?: string | null;
     }) => {
-      return updateContactLead(id, { status, notes });
+      return updateContactLead(id, { status, notes, assignedToUserId });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin_leads"] });
+      queryClient.invalidateQueries({ queryKey: ["assignable-staff"] });
       toast({
         title: "Cập nhật thành công",
         description: "Thông tin tư vấn lead đã được lưu.",
@@ -344,6 +373,7 @@ export default function AdminLeads() {
     setEditNotes(lead.notes || "");
     const normalizedStatus = lead.status?.toUpperCase() || "NEW";
     setEditStatus(normalizedStatus);
+    setEditAssignedToUserId(lead.assignedToUserId || "unassigned");
     setIsDialogOpen(true);
   };
 
@@ -353,6 +383,7 @@ export default function AdminLeads() {
       id: selectedLead.id,
       status: editStatus,
       notes: editNotes,
+      assignedToUserId: editAssignedToUserId === "unassigned" ? null : editAssignedToUserId,
     });
   };
 
@@ -361,6 +392,15 @@ export default function AdminLeads() {
       id: lead.id,
       status: newStatus,
       notes: lead.notes,
+    });
+  };
+
+  const handleQuickAssign = (lead: ContactLead, newAssignedToUserId: string) => {
+    updateMutation.mutate({
+      id: lead.id,
+      status: lead.status,
+      notes: lead.notes,
+      assignedToUserId: newAssignedToUserId === "unassigned" ? null : newAssignedToUserId,
     });
   };
 
@@ -389,10 +429,18 @@ export default function AdminLeads() {
       branchId: defaultBranchId,
       targetClassId: "",
       password: "",
+      tuitionFee: 0,
+      paidAmount: 0,
+      paymentStatus: "UNPAID",
+      paymentNote: "",
+      externalRef: "",
       status: "ENROLLED",
     });
   };
 
+  // Count leads by owner filter
+  const myLeadsCount = leads.filter((l) => l.assignedToUserId === currentUser?.id || l.assignedToUserId === (currentUser as any)?.userId).length;
+  const unassignedCount = leads.filter((l) => !l.assignedToUserId).length;
 
   // Filter leads
   const filteredLeads = leads.filter((lead) => {
@@ -400,6 +448,15 @@ export default function AdminLeads() {
     if (statusFilter !== "ALL" && normStatus !== statusFilter) {
       return false;
     }
+
+    // Owner filter
+    if (ownerFilter === "ME") {
+      const isMyLead = lead.assignedToUserId === currentUser?.id || lead.assignedToUserId === (currentUser as any)?.userId;
+      if (!isMyLead) return false;
+    } else if (ownerFilter === "UNASSIGNED") {
+      if (lead.assignedToUserId) return false;
+    }
+
     if (search.trim()) {
       const q = search.toLowerCase();
       const matchName = lead.fullName?.toLowerCase().includes(q);
@@ -407,7 +464,8 @@ export default function AdminLeads() {
       const matchEmail = lead.email?.toLowerCase().includes(q);
       const matchGoal = lead.goal?.toLowerCase().includes(q);
       const matchSource = lead.source?.toLowerCase().includes(q);
-      return matchName || matchPhone || matchEmail || matchGoal || matchSource;
+      const matchAssignee = lead.assignedToUser?.fullName?.toLowerCase().includes(q);
+      return matchName || matchPhone || matchEmail || matchGoal || matchSource || matchAssignee;
     }
     return true;
   });
@@ -462,34 +520,89 @@ export default function AdminLeads() {
         </div>
       </div>
 
-      {/* Filter & Search Bar */}
-      <div className="flex flex-col sm:flex-row items-center gap-3 bg-card p-4 rounded-2xl border border-border">
-        <div className="relative flex-1 w-full">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Tìm theo Tên, Số điện thoại, Email, Khóa học, Nguồn..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 bg-background h-10 rounded-xl"
-          />
+      {/* Filter & Search Bar with Owner Tabs */}
+      <div className="space-y-3">
+        {/* Owner Segmented Controls */}
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant={ownerFilter === "ALL" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setOwnerFilter("ALL")}
+            className="rounded-xl h-8 text-xs font-semibold gap-1.5"
+          >
+            <Users className="w-3.5 h-3.5" />
+            <span>Tất cả leads ({leads.length})</span>
+          </Button>
+
+          <Button
+            variant={ownerFilter === "ME" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setOwnerFilter("ME")}
+            className={`rounded-xl h-8 text-xs font-semibold gap-1.5 ${
+              ownerFilter === "ME" ? "bg-indigo-600 hover:bg-indigo-700 text-white" : ""
+            }`}
+          >
+            <UserCheck className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Lead của tôi</span>
+            {myLeadsCount > 0 && (
+              <Badge className="ml-0.5 px-1.5 py-0 text-[10px] bg-indigo-500 text-white border-0">
+                {myLeadsCount}
+              </Badge>
+            )}
+          </Button>
+
+          <Button
+            variant={ownerFilter === "UNASSIGNED" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setOwnerFilter("UNASSIGNED")}
+            className={`rounded-xl h-8 text-xs font-semibold gap-1.5 ${
+              ownerFilter === "UNASSIGNED"
+                ? "bg-amber-600 hover:bg-amber-700 text-white"
+                : unassignedCount > 0
+                ? "border-amber-400 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10"
+                : ""
+            }`}
+          >
+            <UserX className="w-3.5 h-3.5" />
+            <span>Chưa phân bổ</span>
+            {unassignedCount > 0 && (
+              <Badge className="ml-0.5 px-1.5 py-0 text-[10px] bg-amber-500 text-white border-0">
+                {unassignedCount}
+              </Badge>
+            )}
+          </Button>
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <Filter className="w-4 h-4 text-muted-foreground hidden sm:block" />
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full sm:w-[190px] h-10 rounded-xl bg-background">
-              <SelectValue placeholder="Lọc trạng thái" />
-            </SelectTrigger>
-            <SelectContent className="rounded-xl">
-              <SelectItem value="ALL">Tất cả trạng thái ({leads.length})</SelectItem>
-              <SelectItem value="NEW">🔵 Mới tiếp nhận</SelectItem>
-              <SelectItem value="CONTACTED">🟡 Đã liên hệ</SelectItem>
-              <SelectItem value="ENROLLED">🟢 Đã nhập học</SelectItem>
-              <SelectItem value="CANCELLED">🔴 Hủy / Mất lead</SelectItem>
-            </SelectContent>
-          </Select>
+        {/* Filter & Search Bar */}
+        <div className="flex flex-col sm:flex-row items-center gap-3 bg-card p-4 rounded-2xl border border-border">
+          <div className="relative flex-1 w-full">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Tìm theo Tên, Số điện thoại, Email, Khóa học, Tư vấn viên..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9 bg-background h-10 rounded-xl"
+            />
+          </div>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <Filter className="w-4 h-4 text-muted-foreground hidden sm:block" />
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full sm:w-[190px] h-10 rounded-xl bg-background">
+                <SelectValue placeholder="Lọc trạng thái" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl">
+                <SelectItem value="ALL">Tất cả trạng thái ({leads.length})</SelectItem>
+                <SelectItem value="NEW">🔵 Mới tiếp nhận</SelectItem>
+                <SelectItem value="CONTACTED">🟡 Đã liên hệ</SelectItem>
+                <SelectItem value="ENROLLED">🟢 Đã nhập học</SelectItem>
+                <SelectItem value="CANCELLED">🔴 Hủy / Mất lead</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
+
 
       {/* Main Table */}
       <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm">
@@ -523,6 +636,7 @@ export default function AdminLeads() {
               <TableHeader>
                 <TableRow className="bg-muted/40 hover:bg-muted/40">
                   <TableHead className="font-bold text-xs uppercase tracking-wider">Khách hàng</TableHead>
+                  <TableHead className="font-bold text-xs uppercase tracking-wider">Người phụ trách</TableHead>
                   <TableHead className="font-bold text-xs uppercase tracking-wider">Cơ sở</TableHead>
                   <TableHead className="font-bold text-xs uppercase tracking-wider">Nhu cầu / Mục tiêu</TableHead>
                   <TableHead className="font-bold text-xs uppercase tracking-wider">Nguồn tiếp cận</TableHead>
@@ -581,7 +695,55 @@ export default function AdminLeads() {
                         </div>
                       </TableCell>
 
+                      {/* Lead Owner / Assignee */}
+                      <TableCell>
+                        <Select
+                          value={lead.assignedToUserId || "unassigned"}
+                          onValueChange={(val) => handleQuickAssign(lead, val)}
+                        >
+                          <SelectTrigger className={`h-8 w-[150px] text-xs font-medium rounded-lg border ${
+                            lead.assignedToUserId
+                              ? "bg-indigo-50/50 dark:bg-indigo-950/20 border-indigo-200/60 text-indigo-950 dark:text-indigo-200"
+                              : "border-dashed border-amber-300 bg-amber-50/40 text-amber-700 dark:text-amber-400"
+                          }`}>
+                            <SelectValue>
+                              {lead.assignedToUser ? (
+                                <div className="flex items-center gap-1.5 truncate">
+                                  <div className="w-4 h-4 rounded-full bg-indigo-600 text-[9px] text-white flex items-center justify-center font-bold shrink-0">
+                                    {lead.assignedToUser.fullName?.charAt(0) || "U"}
+                                  </div>
+                                  <span className="truncate">{lead.assignedToUser.fullName}</span>
+                                </div>
+                              ) : (
+                                <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400 font-semibold text-[11px]">
+                                  <AlertTriangle className="w-3 h-3 shrink-0" />
+                                  Chưa gán
+                                </span>
+                              )}
+                            </SelectValue>
+                          </SelectTrigger>
+                          <SelectContent className="rounded-xl text-xs max-h-56">
+                            <SelectItem value="unassigned" className="text-muted-foreground italic">
+                              -- Chưa phân bổ --
+                            </SelectItem>
+                            {assignableStaff.map((staff) => (
+                              <SelectItem key={staff.userId} value={staff.userId}>
+                                <div className="flex items-center justify-between gap-2 w-full">
+                                  <span className="font-medium">{staff.fullName}</span>
+                                  {staff.activeLeadCount > 0 && (
+                                    <span className="text-[10px] text-muted-foreground">
+                                      ({staff.activeLeadCount} leads)
+                                    </span>
+                                  )}
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+
                       {/* Preferred Branch */}
+
                       <TableCell>
                         {lead.preferredBranch ? (
                           <Badge variant="outline" className="gap-1 text-xs font-normal border-primary/20 bg-primary/5">
@@ -1037,20 +1199,73 @@ export default function AdminLeads() {
                 )}
               </div>
 
-              <div className="space-y-1.5">
-                <Label className="text-xs font-bold uppercase tracking-wider">
-                  Mật khẩu khởi tạo (Tùy chọn)
-                </Label>
-                <Input
-                  type="text"
-                  placeholder="Tự động tạo ngẫu nhiên nếu để trống"
-                  value={convertForm.password}
-                  onChange={(e) => setConvertForm({ ...convertForm, password: e.target.value })}
-                  className="rounded-xl h-10"
-                />
+                {convertForm.targetClassId && convertForm.targetClassId !== "NONE" && (
+                  <div className="p-3 bg-muted/40 rounded-xl space-y-3 border border-border/60">
+                    <p className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-emerald-500 inline-block" />
+                      Thông tin học phí & Thu tiền ban đầu
+                    </p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <Label className="text-[11px] font-medium text-muted-foreground">Học phí thỏa thuận (đ)</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="50000"
+                          value={convertForm.tuitionFee}
+                          onChange={(e) => setConvertForm({ ...convertForm, tuitionFee: Number(e.target.value) })}
+                          className="h-8 text-xs rounded-lg"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-[11px] font-medium text-muted-foreground">Đã thanh toán (đ)</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="50000"
+                          value={convertForm.paidAmount}
+                          onChange={(e) => setConvertForm({ ...convertForm, paidAmount: Number(e.target.value) })}
+                          className="h-8 text-xs rounded-lg"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <Label className="text-[11px] font-medium text-muted-foreground">Mã biên lai / Phiếu thu</Label>
+                        <Input
+                          placeholder="VD: PT-102..."
+                          value={convertForm.externalRef}
+                          onChange={(e) => setConvertForm({ ...convertForm, externalRef: e.target.value })}
+                          className="h-8 text-xs rounded-lg"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-[11px] font-medium text-muted-foreground">Ghi chú thu tiền</Label>
+                        <Input
+                          placeholder="Hẹn ngày đóng..."
+                          value={convertForm.paymentNote}
+                          onChange={(e) => setConvertForm({ ...convertForm, paymentNote: e.target.value })}
+                          className="h-8 text-xs rounded-lg"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold uppercase tracking-wider">
+                    Mật khẩu khởi tạo (Tùy chọn)
+                  </Label>
+                  <Input
+                    type="text"
+                    placeholder="Tự động tạo ngẫu nhiên nếu để trống"
+                    value={convertForm.password}
+                    onChange={(e) => setConvertForm({ ...convertForm, password: e.target.value })}
+                    className="rounded-xl h-10"
+                  />
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           <DialogFooter className="gap-2 sm:gap-0 pt-2">
             <Button
@@ -1145,6 +1360,34 @@ export default function AdminLeads() {
                     </Badge>
                   </div>
                 )}
+              </div>
+
+              {/* Assignee Selector */}
+              <div className="space-y-1.5">
+                <Label className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+                  <UserCheck className="w-3.5 h-3.5 text-primary" />
+                  Người phụ trách tư vấn
+                </Label>
+                <Select value={editAssignedToUserId} onValueChange={setEditAssignedToUserId}>
+                  <SelectTrigger className="h-10 rounded-xl">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl text-xs max-h-56">
+                    <SelectItem value="unassigned" className="text-muted-foreground italic">
+                      -- Chưa phân bổ (Unassigned) --
+                    </SelectItem>
+                    {assignableStaff.map((staff) => (
+                      <SelectItem key={staff.userId} value={staff.userId}>
+                        <div className="flex items-center justify-between gap-2 w-full">
+                          <span className="font-medium">{staff.fullName}</span>
+                          <span className="text-[10px] text-muted-foreground">
+                            ({staff.roles.join(", ")}) {staff.activeLeadCount > 0 ? `• ${staff.activeLeadCount} active` : ""}
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Status Selector */}

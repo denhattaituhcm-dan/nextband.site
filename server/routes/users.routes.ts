@@ -325,13 +325,27 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         const classesMap = new Map<string, any>();
         (st.classesAsStudent || []).forEach((cs: any) => {
           if (cs.class) {
+            const standardFee = Number(cs.class.course?.price || 0);
+            const tuitionFee = cs.tuitionFee !== null && Number(cs.tuitionFee) > 0 ? Number(cs.tuitionFee) : standardFee;
+            const paidAmount = Number(cs.paidAmount || 0);
+            const outstandingAmount = Math.max(0, tuitionFee - paidAmount);
+
             classesMap.set(cs.class.id, {
               id: cs.class.id,
+              classStudentId: cs.id,
               name: cs.class.name,
               courseId: cs.class.courseId,
               courseTitle: cs.class.course?.title || undefined,
               teacherId: cs.class.teacher?.id || undefined,
               teacherName: cs.class.teacher?.fullName || cs.class.teacher?.email || undefined,
+              financial: {
+                tuitionFee,
+                paidAmount,
+                outstandingAmount,
+                paymentStatus: cs.paymentStatus || (paidAmount >= tuitionFee && tuitionFee > 0 ? "PAID" : paidAmount > 0 ? "PARTIAL" : "UNPAID"),
+                paymentNote: cs.paymentNote || null,
+                externalRef: cs.externalRef || null,
+              },
             });
           }
         });

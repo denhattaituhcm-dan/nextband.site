@@ -172,7 +172,7 @@ export default function SubmissionGrade() {
         return sum + Number(score);
       }, 0);
 
-      // Call grade API with Lean Learning Loop metadata
+      // Call grade API with Lean Learning Loop metadata & explicit finalize flag
       await submissionsApi.grade(
         id!,
         updates.map((u) => ({
@@ -180,11 +180,12 @@ export default function SubmissionGrade() {
           score: u.score || 0,
           feedback: u.feedback || undefined,
         })),
-        finalize ? currentTotalValue : 0,
+        currentTotalValue,
         {
           feedback: overallFeedback || undefined,
           primaryErrorCategory,
           revisionRequired,
+          finalize,
         }
       );
 

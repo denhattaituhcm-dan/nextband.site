@@ -94447,6 +94447,7 @@ var init_lead_schema = __esm({
     updateLeadSchema = external_exports.object({
       status: external_exports.enum(["NEW", "CONTACTED", "ENROLLED", "CANCELLED", "ARCHIVED"]).optional(),
       assignedTo: external_exports.string().optional().nullable(),
+      assignedToUserId: external_exports.string().optional().nullable(),
       preferredBranchId: external_exports.string().optional().nullable(),
       notes: external_exports.string().max(2e3).optional().nullable(),
       convertedUserId: external_exports.string().optional().nullable()
@@ -94456,6 +94457,8 @@ var init_lead_schema = __esm({
       limit: external_exports.coerce.number().min(1).max(100).default(20),
       status: external_exports.enum(["NEW", "CONTACTED", "ENROLLED", "CANCELLED", "ARCHIVED"]).optional(),
       preferredBranchId: external_exports.string().optional(),
+      assignedToUserId: external_exports.string().optional(),
+      unassigned: external_exports.enum(["true", "false"]).optional(),
       search: external_exports.string().optional()
     });
     convertLeadSchema = external_exports.object({
@@ -94465,6 +94468,11 @@ var init_lead_schema = __esm({
       branchId: external_exports.string().optional().nullable(),
       password: external_exports.string().min(6, "M\u1EADt kh\u1EA9u t\u1ED1i thi\u1EC3u 6 k\xFD t\u1EF1").optional(),
       targetClassId: external_exports.string().optional().nullable(),
+      tuitionFee: external_exports.number().min(0).optional(),
+      paidAmount: external_exports.number().min(0).optional(),
+      paymentStatus: external_exports.enum(["UNPAID", "PARTIAL", "PAID", "WAIVED", "REFUNDED"]).optional(),
+      paymentNote: external_exports.string().optional().nullable(),
+      externalRef: external_exports.string().optional().nullable(),
       status: external_exports.enum(["NEW", "CONTACTED", "ENROLLED", "CANCELLED", "ARCHIVED"]).optional().default("ENROLLED")
     });
     checkPhoneQuerySchema = external_exports.object({
@@ -101670,6 +101678,15 @@ var ExamSubmissionService = class {
         })
       };
     }
+    if (!canSeeSecrets && submission.answers) {
+      submission.answers = submission.answers.map((a) => {
+        const sanitizedAns = { ...a };
+        if (!isGraded) {
+          sanitizedAns.feedback = null;
+        }
+        return sanitizedAns;
+      });
+    }
     return submission;
   }
   // Use Case: Start Exam Attempt (with Open Exam & Dual-Channel Authorization)
@@ -102255,8 +102272,11 @@ var ExamSubmissionService = class {
         throw new AuthorizationError("H\u1ECDc vi\xEAn kh\xF4ng thu\u1ED9c l\u1EDBp do b\u1EA1n ph\u1EE5 tr\xE1ch", 403);
       }
     }
+    const isFinalize = options?.finalize !== false;
     const currentStatus = String(submission.status).toUpperCase();
-    SubmissionStateMachine.assertTransition(currentStatus, "GRADED", true);
+    if (isFinalize) {
+      SubmissionStateMachine.assertTransition(currentStatus, "GRADED", true);
+    }
     return this.repo.transaction(async (tx) => {
       let computedTotal = 0;
       for (let i = 0; i < grades.length; i++) {
@@ -102301,39 +102321,44 @@ var ExamSubmissionService = class {
         where: { submissionId: id }
       });
       const finalTotalScore = typeof totalScore === "number" ? totalScore : allAnswers.reduce((sum, a) => sum + (Number(a.score) || 0), 0);
+      const targetStatus = isFinalize ? "GRADED" : currentStatus;
       const updated = await tx.examSubmission.update({
         where: { id },
         data: {
-          status: "GRADED",
-          gradedAt: /* @__PURE__ */ new Date(),
-          gradedBy: user.id,
-          totalScore: finalTotalScore
+          status: targetStatus,
+          ...isFinalize ? {
+            gradedAt: /* @__PURE__ */ new Date(),
+            gradedBy: user.id,
+            totalScore: finalTotalScore
+          } : {}
         },
         include: { answers: true }
       });
-      if (tx.auditOutboxList && tx.auditOutbox) {
-        const auditEvent = auditOutboxService.buildSanitizedEvent({
-          eventType: "TEACHER_REGRADED",
-          actorId: user.id,
-          actorRole: user.roles.includes("admin") ? "admin" : "teacher",
-          submissionId: id,
-          examId: submission.examId,
-          oldState: { status: submission.status, totalScore: submission.totalScore },
-          newState: { status: "GRADED", totalScore: finalTotalScore }
-        });
-        await tx.auditOutbox.create({ data: auditEvent });
-      }
-      if (tx.notification && submission.studentId) {
-        const examTitle = submission.exam?.title || "IELTS Exam";
-        await this.notificationService.createNotification(tx, {
-          userId: submission.studentId,
-          type: "TEACHER_FEEDBACK",
-          title: "Gi\xE1o vi\xEAn \u0111\xE3 ch\u1EA5m b\xE0i thi",
-          message: `Th\u1EA7y/C\xF4 \u0111\xE3 ch\u1EA5m v\xE0 g\u1EEDi nh\u1EADn x\xE9t cho b\xE0i thi "${examTitle}" c\u1EE7a b\u1EA1n.`,
-          link: `/app/submissions/${id}`,
-          entityType: "SUBMISSION",
-          entityId: id
-        });
+      if (isFinalize) {
+        if (tx.auditOutboxList && tx.auditOutbox) {
+          const auditEvent = auditOutboxService.buildSanitizedEvent({
+            eventType: "TEACHER_REGRADED",
+            actorId: user.id,
+            actorRole: user.roles.includes("admin") ? "admin" : "teacher",
+            submissionId: id,
+            examId: submission.examId,
+            oldState: { status: submission.status, totalScore: submission.totalScore },
+            newState: { status: "GRADED", totalScore: finalTotalScore }
+          });
+          await tx.auditOutbox.create({ data: auditEvent });
+        }
+        if (tx.notification && submission.studentId) {
+          const examTitle = submission.exam?.title || "IELTS Exam";
+          await this.notificationService.createNotification(tx, {
+            userId: submission.studentId,
+            type: "TEACHER_FEEDBACK",
+            title: "Gi\xE1o vi\xEAn \u0111\xE3 ch\u1EA5m b\xE0i thi",
+            message: `Th\u1EA7y/C\xF4 \u0111\xE3 ch\u1EA5m v\xE0 g\u1EEDi nh\u1EADn x\xE9t cho b\xE0i thi "${examTitle}" c\u1EE7a b\u1EA1n.`,
+            link: `/app/submissions/${id}`,
+            entityType: "SUBMISSION",
+            entityId: id
+          });
+        }
       }
       return updated;
     });
@@ -102536,12 +102561,25 @@ var SubmissionController = class {
   async grade(request, reply) {
     try {
       const user = request.user;
-      const { grades = [], totalScore, feedback, primaryErrorCategory, revisionRequired, criteriaScores } = request.body || {};
+      const {
+        grades = [],
+        totalScore,
+        feedback,
+        primaryErrorCategory,
+        revisionRequired,
+        criteriaScores,
+        sentenceFeedbacks,
+        tabSwitchCount,
+        finalize = true
+      } = request.body || {};
       const result = await this.service.gradeManualSubmission(user, request.params.id, grades, totalScore, {
         feedback,
         primaryErrorCategory,
         revisionRequired,
-        criteriaScores
+        criteriaScores,
+        sentenceFeedbacks,
+        tabSwitchCount,
+        finalize
       });
       return reply.send(result);
     } catch (err) {
@@ -102897,13 +102935,26 @@ var usersRoutes = async (fastify) => {
         const classesMap = /* @__PURE__ */ new Map();
         (st.classesAsStudent || []).forEach((cs) => {
           if (cs.class) {
+            const standardFee = Number(cs.class.course?.price || 0);
+            const tuitionFee = cs.tuitionFee !== null && Number(cs.tuitionFee) > 0 ? Number(cs.tuitionFee) : standardFee;
+            const paidAmount = Number(cs.paidAmount || 0);
+            const outstandingAmount = Math.max(0, tuitionFee - paidAmount);
             classesMap.set(cs.class.id, {
               id: cs.class.id,
+              classStudentId: cs.id,
               name: cs.class.name,
               courseId: cs.class.courseId,
               courseTitle: cs.class.course?.title || void 0,
               teacherId: cs.class.teacher?.id || void 0,
-              teacherName: cs.class.teacher?.fullName || cs.class.teacher?.email || void 0
+              teacherName: cs.class.teacher?.fullName || cs.class.teacher?.email || void 0,
+              financial: {
+                tuitionFee,
+                paidAmount,
+                outstandingAmount,
+                paymentStatus: cs.paymentStatus || (paidAmount >= tuitionFee && tuitionFee > 0 ? "PAID" : paidAmount > 0 ? "PARTIAL" : "UNPAID"),
+                paymentNote: cs.paymentNote || null,
+                externalRef: cs.externalRef || null
+              }
             });
           }
         });
@@ -106936,12 +106987,16 @@ var LeadService = class {
         preferredBranchId: input.preferredBranchId || null,
         notes: input.notes && input.notes.length > 0 ? input.notes : null,
         createdByUserId: input.createdByUserId || null,
+        // Auto-assign to the staff member who manually created this lead
+        assignedToUserId: input.createdByUserId || null,
+        assignedAt: input.createdByUserId ? /* @__PURE__ */ new Date() : null,
         status: LeadStatus.NEW
       },
       include: {
         preferredBranch: { select: { id: true, name: true, code: true } },
         createdByUser: { select: { id: true, userId: true, fullName: true } },
-        convertedUser: { select: { id: true, userId: true, fullName: true, email: true } }
+        convertedUser: { select: { id: true, userId: true, fullName: true, email: true } },
+        assignedToUser: { select: { id: true, userId: true, fullName: true, avatarUrl: true } }
       }
     });
     leadNotificationService.notifyNewLead({
@@ -106986,6 +107041,12 @@ var LeadService = class {
     if (query.preferredBranchId && query.preferredBranchId !== "ALL" && query.preferredBranchId !== "all") {
       where.preferredBranchId = query.preferredBranchId;
     }
+    if (query.assignedToUserId) {
+      where.assignedToUserId = query.assignedToUserId;
+    }
+    if (query.unassigned === "true") {
+      where.assignedToUserId = null;
+    }
     if (search) {
       where.OR = [
         { fullName: { contains: search, mode: "insensitive" } },
@@ -106996,17 +107057,19 @@ var LeadService = class {
         { source: { contains: search, mode: "insensitive" } }
       ];
     }
+    const leadInclude = {
+      preferredBranch: { select: { id: true, name: true, code: true } },
+      createdByUser: { select: { id: true, userId: true, fullName: true } },
+      convertedUser: { select: { id: true, userId: true, fullName: true, email: true } },
+      assignedToUser: { select: { id: true, userId: true, fullName: true, avatarUrl: true } }
+    };
     const [total, items] = await Promise.all([
       this.prisma.contactLead.count({ where }),
       this.prisma.contactLead.findMany({
         where,
         skip,
         take: limit,
-        include: {
-          preferredBranch: { select: { id: true, name: true, code: true } },
-          createdByUser: { select: { id: true, userId: true, fullName: true } },
-          convertedUser: { select: { id: true, userId: true, fullName: true, email: true } }
-        },
+        include: leadInclude,
         orderBy: { createdAt: "desc" }
       })
     ]);
@@ -107029,12 +107092,13 @@ var LeadService = class {
       include: {
         preferredBranch: { select: { id: true, name: true, code: true } },
         createdByUser: { select: { id: true, userId: true, fullName: true } },
-        convertedUser: { select: { id: true, userId: true, fullName: true, email: true } }
+        convertedUser: { select: { id: true, userId: true, fullName: true, email: true } },
+        assignedToUser: { select: { id: true, userId: true, fullName: true, avatarUrl: true } }
       }
     });
   }
   /**
-   * Update lead status / notes / assigned staff
+   * Update lead status / notes / assigned staff (with FK ownership)
    */
   async updateLead(id, input) {
     const data = {};
@@ -107043,13 +107107,18 @@ var LeadService = class {
     if (input.preferredBranchId !== void 0) data.preferredBranchId = input.preferredBranchId;
     if (input.notes !== void 0) data.notes = input.notes;
     if (input.convertedUserId !== void 0) data.convertedUserId = input.convertedUserId;
+    if (input.assignedToUserId !== void 0) {
+      data.assignedToUserId = input.assignedToUserId;
+      data.assignedAt = input.assignedToUserId ? /* @__PURE__ */ new Date() : null;
+    }
     return this.prisma.contactLead.update({
       where: { id },
       data,
       include: {
         preferredBranch: { select: { id: true, name: true, code: true } },
         createdByUser: { select: { id: true, userId: true, fullName: true } },
-        convertedUser: { select: { id: true, userId: true, fullName: true, email: true } }
+        convertedUser: { select: { id: true, userId: true, fullName: true, email: true } },
+        assignedToUser: { select: { id: true, userId: true, fullName: true, avatarUrl: true } }
       }
     });
   }
@@ -107139,10 +107208,24 @@ var LeadService = class {
             }
           });
           if (!existingMembership) {
+            const coursePrice = Number(validatedTargetClass.course?.price || 0);
+            const fee = input.tuitionFee !== void 0 ? input.tuitionFee : coursePrice;
+            const paid = input.paidAmount !== void 0 ? input.paidAmount : 0;
+            let pStatus = input.paymentStatus;
+            if (!pStatus) {
+              if (fee > 0 && paid >= fee) pStatus = "PAID";
+              else if (paid > 0) pStatus = "PARTIAL";
+              else pStatus = "UNPAID";
+            }
             await tx.classStudent.create({
               data: {
                 classId: input.targetClassId,
                 studentId: supabaseUserId,
+                tuitionFee: fee,
+                paidAmount: paid,
+                paymentStatus: pStatus,
+                paymentNote: input.paymentNote || null,
+                externalRef: input.externalRef || null,
                 joinedAt: /* @__PURE__ */ new Date()
               }
             });
@@ -107354,6 +107437,45 @@ var leadRoutes = async (fastify) => {
     }
   );
   fastify.get(
+    "/assignable-staff",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const staffWithLeads = await fastify.prisma.user.findMany({
+        where: {
+          roles: { some: { role: { in: ["admin", "teacher"] } } }
+        },
+        select: {
+          id: true,
+          userId: true,
+          fullName: true,
+          email: true,
+          avatarUrl: true,
+          roles: { select: { role: true } },
+          _count: {
+            select: {
+              assignedLeads: {
+                where: { status: { notIn: ["ENROLLED", "CANCELLED", "ARCHIVED"] } }
+              }
+            }
+          }
+        },
+        orderBy: { fullName: "asc" }
+      });
+      return reply.send({
+        success: true,
+        data: staffWithLeads.map((u) => ({
+          id: u.id,
+          userId: u.userId,
+          fullName: u.fullName,
+          email: u.email,
+          avatarUrl: u.avatarUrl,
+          roles: u.roles.map((r) => r.role),
+          activeLeadCount: u._count.assignedLeads
+        }))
+      });
+    }
+  );
+  fastify.get(
     "/",
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
@@ -107363,6 +107485,9 @@ var leadRoutes = async (fastify) => {
         reply
       );
       if (!validatedQuery) return;
+      if (validatedQuery.assignedToUserId === "me") {
+        validatedQuery.assignedToUserId = request.user.id;
+      }
       const result = await leadService.listLeads(validatedQuery);
       return reply.send({
         success: true,
@@ -108132,297 +108257,6 @@ var periodicReportsRoutes = async (fastify) => {
 };
 var periodic_reports_routes_default = periodicReportsRoutes;
 
-// server/routes/admin-dashboard.routes.ts
-async function adminDashboardRoutes(fastify) {
-  fastify.get(
-    "/dashboard-summary",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
-    async (request, reply) => {
-      const { branchId = "ALL" } = request.query || {};
-      const now = /* @__PURE__ */ new Date();
-      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1e3);
-      const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1e3);
-      const twoDaysAgo = new Date(now.getTime() - 48 * 60 * 60 * 1e3);
-      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1e3);
-      const hasBranchFilter = branchId && branchId !== "ALL";
-      const classBranchFilter = hasBranchFilter ? { branchId } : {};
-      const leadBranchFilter = hasBranchFilter ? { preferredBranchId: branchId } : {};
-      const assessmentBranchFilter = hasBranchFilter ? { branchId } : {};
-      try {
-        const [
-          activeStudentsCount,
-          reservedStudentsCount,
-          newLeadsCount,
-          overdueLeadsCount,
-          enrolledLeadsCount,
-          placementTestsCount,
-          activeClasses,
-          pendingGradingCount,
-          overdueGradingCount,
-          recentAbsents,
-          teachersData
-        ] = await Promise.all([
-          // 1. Học viên đang theo học (ACTIVE)
-          fastify.prisma.classStudent.count({
-            where: {
-              status: "ACTIVE",
-              deletedAt: null,
-              class: { isActive: true, ...classBranchFilter }
-            }
-          }),
-          // 2. Học viên đang bảo lưu (SUSPENDED)
-          fastify.prisma.classStudent.count({
-            where: {
-              status: "SUSPENDED",
-              deletedAt: null,
-              class: { isActive: true, ...classBranchFilter }
-            }
-          }),
-          // 3. Lead mới trong 7 ngày
-          fastify.prisma.contactLead.count({
-            where: {
-              createdAt: { gte: sevenDaysAgo },
-              ...leadBranchFilter
-            }
-          }),
-          // 4. Lead mới tồn đọng quá 24h chưa liên hệ (status = NEW)
-          fastify.prisma.contactLead.count({
-            where: {
-              status: "NEW",
-              createdAt: { lte: oneDayAgo },
-              ...leadBranchFilter
-            }
-          }),
-          // 5. Lead chốt nhập học trong 7 ngày
-          fastify.prisma.contactLead.count({
-            where: {
-              status: "ENROLLED",
-              updatedAt: { gte: sevenDaysAgo },
-              ...leadBranchFilter
-            }
-          }),
-          // 6. Số lượt test đầu vào trong 7 ngày
-          fastify.prisma.assessmentSession.count({
-            where: {
-              createdAt: { gte: sevenDaysAgo },
-              ...assessmentBranchFilter
-            }
-          }),
-          // 7. Lớp học đang chạy kèm sức chứa phòng
-          fastify.prisma.class.findMany({
-            where: {
-              isActive: true,
-              ...classBranchFilter
-            },
-            select: {
-              id: true,
-              name: true,
-              startDate: true,
-              endDate: true,
-              room: {
-                select: {
-                  capacity: true
-                }
-              },
-              _count: {
-                select: {
-                  students: {
-                    where: { status: "ACTIVE", deletedAt: null }
-                  }
-                }
-              }
-            }
-          }),
-          // 8. Tổng số bài chờ chấm trên toàn hệ thống (cả Homework & Exam Submissions)
-          Promise.all([
-            fastify.prisma.submission.count({
-              where: { status: "SUBMITTED" }
-            }),
-            fastify.prisma.examSubmission.count({
-              where: { status: "SUBMITTED" }
-            })
-          ]).then(([hwCount, examCount]) => hwCount + examCount),
-          // 9. Số bài nộp chờ chấm quá hạn 48h (SLA vi phạm)
-          Promise.all([
-            fastify.prisma.submission.count({
-              where: {
-                status: "SUBMITTED",
-                submittedAt: { lte: twoDaysAgo }
-              }
-            }),
-            fastify.prisma.examSubmission.count({
-              where: {
-                status: "SUBMITTED",
-                submittedAt: { lte: twoDaysAgo }
-              }
-            })
-          ]).then(([hwOverdue, examOverdue]) => hwOverdue + examOverdue),
-          // 10. Danh sách các lượt vắng trong 30 ngày để phát hiện học viên At-Risk
-          fastify.prisma.classAttendance.findMany({
-            where: {
-              status: { in: ["ABSENT", "absent"] },
-              sessionDate: { gte: thirtyDaysAgo },
-              ...hasBranchFilter ? { class: { branchId } } : {}
-            },
-            select: {
-              studentId: true
-            }
-          }),
-          // 11. Danh sách giáo viên đang hoạt động kèm thống kê tải công việc
-          fastify.prisma.user.findMany({
-            where: {
-              roles: { some: { role: "teacher" } },
-              isActive: true
-            },
-            select: {
-              userId: true,
-              fullName: true,
-              email: true,
-              avatarUrl: true,
-              classesAsTeacher: {
-                where: { isActive: true, ...classBranchFilter },
-                select: {
-                  id: true,
-                  name: true,
-                  _count: {
-                    select: {
-                      students: { where: { status: "ACTIVE", deletedAt: null } }
-                    }
-                  },
-                  homeworks: {
-                    select: {
-                      id: true,
-                      submissions: {
-                        where: { status: "SUBMITTED" },
-                        select: { id: true, submittedAt: true }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          })
-        ]);
-        const absentCountByStudent = /* @__PURE__ */ new Map();
-        recentAbsents.forEach((record) => {
-          absentCountByStudent.set(
-            record.studentId,
-            (absentCountByStudent.get(record.studentId) || 0) + 1
-          );
-        });
-        let atRiskStudentsCount = 0;
-        absentCountByStudent.forEach((absentCount) => {
-          if (absentCount >= 2) atRiskStudentsCount++;
-        });
-        let totalStudentsInClasses = 0;
-        let totalRoomCapacity = 0;
-        let lowFillClassesCount = 0;
-        activeClasses.forEach((cls) => {
-          const studentCount = cls._count.students;
-          const capacity = cls.room?.capacity || 15;
-          totalStudentsInClasses += studentCount;
-          totalRoomCapacity += capacity;
-          if (capacity > 0 && studentCount / capacity < 0.5) {
-            lowFillClassesCount++;
-          }
-        });
-        const averageFillRate = totalRoomCapacity > 0 ? Math.round(totalStudentsInClasses / totalRoomCapacity * 100) : 0;
-        const teachersSummary = teachersData.map((t) => {
-          const classesCount = t.classesAsTeacher.length;
-          const totalStudents = t.classesAsTeacher.reduce(
-            (sum, cl) => sum + cl._count.students,
-            0
-          );
-          let pendingCount = 0;
-          let overdueCount = 0;
-          t.classesAsTeacher.forEach((cl) => {
-            cl.homeworks.forEach((hw) => {
-              hw.submissions.forEach((sub) => {
-                pendingCount++;
-                if (sub.submittedAt && new Date(sub.submittedAt) <= twoDaysAgo) {
-                  overdueCount++;
-                }
-              });
-            });
-          });
-          return {
-            id: t.userId,
-            name: t.fullName || t.email?.split("@")[0] || "Gi\xE1o vi\xEAn",
-            email: t.email,
-            avatarUrl: t.avatarUrl,
-            activeClassesCount: classesCount,
-            totalStudents,
-            pendingGrading: pendingCount,
-            overdueGrading: overdueCount
-          };
-        });
-        const conversionRate = newLeadsCount > 0 ? Math.round(enrolledLeadsCount / newLeadsCount * 100) : 0;
-        return reply.send({
-          success: true,
-          data: {
-            kpis: {
-              activeStudents: activeStudentsCount,
-              newLeads: newLeadsCount,
-              activeClasses: activeClasses.length,
-              averageFillRate
-            },
-            actionItems: [
-              {
-                key: "at_risk_students",
-                label: "H\u1ECDc vi\xEAn c\xF3 nguy c\u01A1 b\u1ECF h\u1ECDc (V\u1EAFng \u2265 2 bu\u1ED5i g\u1EA7n \u0111\xE2y)",
-                count: atRiskStudentsCount,
-                severity: "HIGH",
-                link: "/admin/users?role=student&status=at-risk"
-              },
-              {
-                key: "overdue_leads",
-                label: "Lead m\u1EDBi ch\u01B0a li\xEAn h\u1EC7 qu\xE1 24h",
-                count: overdueLeadsCount,
-                severity: "HIGH",
-                link: "/admin/leads?status=NEW"
-              },
-              {
-                key: "low_fill_classes",
-                label: "L\u1EDBp h\u1ECDc c\xF3 s\u0129 s\u1ED1 th\u1EA5p (< 50% s\u1EE9c ch\u1EE9a ph\xF2ng)",
-                count: lowFillClassesCount,
-                severity: "MEDIUM",
-                link: "/admin/classes?filter=low-fill"
-              },
-              {
-                key: "overdue_grading",
-                label: "B\xE0i n\u1ED9p ch\u1EDD ch\u1EA5m qu\xE1 h\u1EA1n 48h (SLA vi ph\u1EA1m)",
-                count: overdueGradingCount,
-                severity: "MEDIUM",
-                link: "/admin/teacher-workspace?tab=grading&filter=overdue"
-              }
-            ],
-            funnel: {
-              leads: {
-                new: newLeadsCount,
-                tested: placementTestsCount,
-                enrolled: enrolledLeadsCount,
-                conversionRate
-              },
-              students: {
-                active: activeStudentsCount,
-                atRisk: atRiskStudentsCount,
-                reserved: reservedStudentsCount
-              }
-            },
-            teachers: teachersSummary
-          }
-        });
-      } catch (err) {
-        request.log.error(err, "Failed to compute admin dashboard summary");
-        return reply.status(500).send({
-          success: false,
-          error: "Kh\xF4ng th\u1EC3 t\u1ED5ng h\u1EE3p b\xE1o c\xE1o \u0111i\u1EC1u h\xE0nh l\xFAc n\xE0y."
-        });
-      }
-    }
-  );
-}
-
 // server/services/periodic-report.service.ts
 function calculateDateRange(params) {
   const year = params.year || (/* @__PURE__ */ new Date()).getFullYear();
@@ -108895,6 +108729,313 @@ async function reportsRoutes(fastify) {
   );
 }
 
+// server/routes/admin-dashboard.routes.ts
+async function adminDashboardRoutes(fastify) {
+  fastify.get(
+    "/dashboard-summary",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { branchId = "ALL" } = request.query || {};
+      const now = /* @__PURE__ */ new Date();
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1e3);
+      const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1e3);
+      const twoDaysAgo = new Date(now.getTime() - 48 * 60 * 60 * 1e3);
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1e3);
+      const hasBranchFilter = branchId && branchId !== "ALL";
+      const classBranchFilter = hasBranchFilter ? { branchId } : {};
+      const leadBranchFilter = hasBranchFilter ? { preferredBranchId: branchId } : {};
+      const assessmentBranchFilter = hasBranchFilter ? { branchId } : {};
+      try {
+        const [
+          activeStudentsCount,
+          reservedStudentsCount,
+          newLeadsCount,
+          overdueLeadsCount,
+          unassignedLeadsCount,
+          enrolledLeadsCount,
+          placementTestsCount,
+          activeClasses,
+          pendingGradingCount,
+          overdueGradingCount,
+          recentAbsents,
+          teachersData
+        ] = await Promise.all([
+          // 1. Học viên đang theo học (ACTIVE)
+          fastify.prisma.classStudent.count({
+            where: {
+              status: "ACTIVE",
+              deletedAt: null,
+              class: { isActive: true, ...classBranchFilter }
+            }
+          }),
+          // 2. Học viên đang bảo lưu (SUSPENDED)
+          fastify.prisma.classStudent.count({
+            where: {
+              status: "SUSPENDED",
+              deletedAt: null,
+              class: { isActive: true, ...classBranchFilter }
+            }
+          }),
+          // 3. Lead mới trong 7 ngày
+          fastify.prisma.contactLead.count({
+            where: {
+              createdAt: { gte: sevenDaysAgo },
+              ...leadBranchFilter
+            }
+          }),
+          // 4. Lead mới tồn đọng quá 24h chưa liên hệ (status = NEW)
+          fastify.prisma.contactLead.count({
+            where: {
+              status: "NEW",
+              createdAt: { lte: oneDayAgo },
+              ...leadBranchFilter
+            }
+          }),
+          // 4b. Lead chưa phân bổ tư vấn viên (assignedToUserId = null)
+          fastify.prisma.contactLead.count({
+            where: {
+              assignedToUserId: null,
+              status: { notIn: ["ENROLLED", "CANCELLED", "ARCHIVED"] },
+              ...leadBranchFilter
+            }
+          }),
+          // 5. Lead chốt nhập học trong 7 ngày
+          fastify.prisma.contactLead.count({
+            where: {
+              status: "ENROLLED",
+              updatedAt: { gte: sevenDaysAgo },
+              ...leadBranchFilter
+            }
+          }),
+          // 6. Số lượt test đầu vào trong 7 ngày
+          fastify.prisma.assessmentSession.count({
+            where: {
+              createdAt: { gte: sevenDaysAgo },
+              ...assessmentBranchFilter
+            }
+          }),
+          // 7. Lớp học đang chạy kèm sức chứa phòng
+          fastify.prisma.class.findMany({
+            where: {
+              isActive: true,
+              ...classBranchFilter
+            },
+            select: {
+              id: true,
+              name: true,
+              startDate: true,
+              endDate: true,
+              room: {
+                select: {
+                  capacity: true
+                }
+              },
+              _count: {
+                select: {
+                  students: {
+                    where: { status: "ACTIVE", deletedAt: null }
+                  }
+                }
+              }
+            }
+          }),
+          // 8. Tổng số bài chờ chấm trên toàn hệ thống (cả Homework & Exam Submissions)
+          Promise.all([
+            fastify.prisma.submission.count({
+              where: { status: "SUBMITTED" }
+            }),
+            fastify.prisma.examSubmission.count({
+              where: { status: "SUBMITTED" }
+            })
+          ]).then(([hwCount, examCount]) => hwCount + examCount),
+          // 9. Số bài nộp chờ chấm quá hạn 48h (SLA vi phạm)
+          Promise.all([
+            fastify.prisma.submission.count({
+              where: {
+                status: "SUBMITTED",
+                submittedAt: { lte: twoDaysAgo }
+              }
+            }),
+            fastify.prisma.examSubmission.count({
+              where: {
+                status: "SUBMITTED",
+                submittedAt: { lte: twoDaysAgo }
+              }
+            })
+          ]).then(([hwOverdue, examOverdue]) => hwOverdue + examOverdue),
+          // 10. Danh sách các lượt vắng trong 30 ngày để phát hiện học viên At-Risk
+          fastify.prisma.classAttendance.findMany({
+            where: {
+              status: { in: ["ABSENT", "absent"] },
+              sessionDate: { gte: thirtyDaysAgo },
+              ...hasBranchFilter ? { class: { branchId } } : {}
+            },
+            select: {
+              studentId: true
+            }
+          }),
+          // 11. Danh sách giáo viên đang hoạt động kèm thống kê tải công việc
+          fastify.prisma.user.findMany({
+            where: {
+              roles: { some: { role: "teacher" } },
+              isActive: true
+            },
+            select: {
+              userId: true,
+              fullName: true,
+              email: true,
+              avatarUrl: true,
+              classesAsTeacher: {
+                where: { isActive: true, ...classBranchFilter },
+                select: {
+                  id: true,
+                  name: true,
+                  _count: {
+                    select: {
+                      students: { where: { status: "ACTIVE", deletedAt: null } }
+                    }
+                  },
+                  homeworks: {
+                    select: {
+                      id: true,
+                      submissions: {
+                        where: { status: "SUBMITTED" },
+                        select: { id: true, submittedAt: true }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          })
+        ]);
+        const absentCountByStudent = /* @__PURE__ */ new Map();
+        recentAbsents.forEach((record) => {
+          absentCountByStudent.set(
+            record.studentId,
+            (absentCountByStudent.get(record.studentId) || 0) + 1
+          );
+        });
+        let atRiskStudentsCount = 0;
+        absentCountByStudent.forEach((absentCount) => {
+          if (absentCount >= 2) atRiskStudentsCount++;
+        });
+        let totalStudentsInClasses = 0;
+        let totalRoomCapacity = 0;
+        let lowFillClassesCount = 0;
+        activeClasses.forEach((cls) => {
+          const studentCount = cls._count.students;
+          const capacity = cls.room?.capacity || 15;
+          totalStudentsInClasses += studentCount;
+          totalRoomCapacity += capacity;
+          if (capacity > 0 && studentCount / capacity < 0.5) {
+            lowFillClassesCount++;
+          }
+        });
+        const averageFillRate = totalRoomCapacity > 0 ? Math.round(totalStudentsInClasses / totalRoomCapacity * 100) : 0;
+        const teachersSummary = teachersData.map((t) => {
+          const classesCount = t.classesAsTeacher.length;
+          const totalStudents = t.classesAsTeacher.reduce(
+            (sum, cl) => sum + cl._count.students,
+            0
+          );
+          let pendingCount = 0;
+          let overdueCount = 0;
+          t.classesAsTeacher.forEach((cl) => {
+            cl.homeworks.forEach((hw) => {
+              hw.submissions.forEach((sub) => {
+                pendingCount++;
+                if (sub.submittedAt && new Date(sub.submittedAt) <= twoDaysAgo) {
+                  overdueCount++;
+                }
+              });
+            });
+          });
+          return {
+            id: t.userId,
+            name: t.fullName || t.email?.split("@")[0] || "Gi\xE1o vi\xEAn",
+            email: t.email,
+            avatarUrl: t.avatarUrl,
+            activeClassesCount: classesCount,
+            totalStudents,
+            pendingGrading: pendingCount,
+            overdueGrading: overdueCount
+          };
+        });
+        const conversionRate = newLeadsCount > 0 ? Math.round(enrolledLeadsCount / newLeadsCount * 100) : 0;
+        return reply.send({
+          success: true,
+          data: {
+            kpis: {
+              activeStudents: activeStudentsCount,
+              newLeads: newLeadsCount,
+              activeClasses: activeClasses.length,
+              averageFillRate
+            },
+            actionItems: [
+              {
+                key: "at_risk_students",
+                label: "H\u1ECDc vi\xEAn c\xF3 nguy c\u01A1 b\u1ECF h\u1ECDc (V\u1EAFng \u2265 2 bu\u1ED5i g\u1EA7n \u0111\xE2y)",
+                count: atRiskStudentsCount,
+                severity: "HIGH",
+                link: "/admin/users?role=student&status=at-risk"
+              },
+              {
+                key: "unassigned_leads",
+                label: "Lead ch\u01B0a ph\xE2n b\u1ED5 ng\u01B0\u1EDDi ph\u1EE5 tr\xE1ch t\u01B0 v\u1EA5n",
+                count: unassignedLeadsCount,
+                severity: "HIGH",
+                link: "/admin/leads?owner=UNASSIGNED"
+              },
+              {
+                key: "overdue_leads",
+                label: "Lead m\u1EDBi ch\u01B0a li\xEAn h\u1EC7 qu\xE1 24h",
+                count: overdueLeadsCount,
+                severity: "HIGH",
+                link: "/admin/leads?status=NEW"
+              },
+              {
+                key: "low_fill_classes",
+                label: "L\u1EDBp h\u1ECDc c\xF3 s\u0129 s\u1ED1 th\u1EA5p (< 50% s\u1EE9c ch\u1EE9a ph\xF2ng)",
+                count: lowFillClassesCount,
+                severity: "MEDIUM",
+                link: "/admin/classes?filter=low-fill"
+              },
+              {
+                key: "overdue_grading",
+                label: "B\xE0i n\u1ED9p ch\u1EDD ch\u1EA5m qu\xE1 h\u1EA1n 48h (SLA vi ph\u1EA1m)",
+                count: overdueGradingCount,
+                severity: "MEDIUM",
+                link: "/admin/teacher-workspace?tab=grading&filter=overdue"
+              }
+            ],
+            funnel: {
+              leads: {
+                new: newLeadsCount,
+                tested: placementTestsCount,
+                enrolled: enrolledLeadsCount,
+                conversionRate
+              },
+              students: {
+                active: activeStudentsCount,
+                atRisk: atRiskStudentsCount,
+                reserved: reservedStudentsCount
+              }
+            },
+            teachers: teachersSummary
+          }
+        });
+      } catch (err) {
+        request.log.error(err, "Failed to compute admin dashboard summary");
+        return reply.status(500).send({
+          success: false,
+          error: "Kh\xF4ng th\u1EC3 t\u1ED5ng h\u1EE3p b\xE1o c\xE1o \u0111i\u1EC1u h\xE0nh l\xFAc n\xE0y."
+        });
+      }
+    }
+  );
+}
+
 // server/services/intervention.service.ts
 var InterventionService = class {
   constructor(prisma) {
@@ -109188,6 +109329,244 @@ async function interventionRoutes(fastify) {
   );
 }
 
+// server/routes/tuition.routes.ts
+init_zod();
+
+// server/services/tuition.service.ts
+import { PaymentStatus } from "@prisma/client";
+var TuitionService = class {
+  constructor(prisma) {
+    this.prisma = prisma;
+  }
+  /**
+   * Tổng hợp báo cáo học phí vận hành & danh sách công nợ
+   */
+  async getTuitionSummary(branchId) {
+    const hasBranchFilter = branchId && branchId !== "ALL" && branchId !== "all";
+    const classBranchFilter = hasBranchFilter ? { branchId } : {};
+    const activeClassStudents = await this.prisma.classStudent.findMany({
+      where: {
+        deletedAt: null,
+        class: {
+          isActive: true,
+          ...classBranchFilter
+        }
+      },
+      include: {
+        student: {
+          select: {
+            id: true,
+            userId: true,
+            fullName: true,
+            email: true,
+            phone: true,
+            avatarUrl: true
+          }
+        },
+        class: {
+          select: {
+            id: true,
+            name: true,
+            branchId: true,
+            branch: { select: { id: true, name: true, code: true } },
+            course: { select: { id: true, title: true, price: true } },
+            teacher: { select: { id: true, fullName: true } }
+          }
+        }
+      },
+      orderBy: { createdAt: "desc" }
+    });
+    let totalExpectedTuition = 0;
+    let totalCollectedTuition = 0;
+    let totalOutstandingTuition = 0;
+    let fullyPaidCount = 0;
+    let partialPaidCount = 0;
+    let unpaidCount = 0;
+    const outstandingReceivables = [];
+    const classFinancialMap = /* @__PURE__ */ new Map();
+    activeClassStudents.forEach((cs) => {
+      const standardFee = Number(cs.class?.course?.price || 0);
+      const tuitionFee = cs.tuitionFee !== null && Number(cs.tuitionFee) > 0 ? Number(cs.tuitionFee) : standardFee;
+      const paidAmount = Number(cs.paidAmount || 0);
+      const outstanding = Math.max(0, tuitionFee - paidAmount);
+      totalExpectedTuition += tuitionFee;
+      totalCollectedTuition += paidAmount;
+      totalOutstandingTuition += outstanding;
+      const status = cs.paymentStatus || (paidAmount >= tuitionFee && tuitionFee > 0 ? "PAID" : paidAmount > 0 ? "PARTIAL" : "UNPAID");
+      if (status === "PAID" || tuitionFee > 0 && paidAmount >= tuitionFee) {
+        fullyPaidCount++;
+      } else if (status === "PARTIAL" || paidAmount > 0) {
+        partialPaidCount++;
+      } else {
+        unpaidCount++;
+      }
+      if (status === "UNPAID" || status === "PARTIAL" || outstanding > 0) {
+        outstandingReceivables.push({
+          id: cs.id,
+          studentId: cs.studentId,
+          studentName: cs.student?.fullName || cs.student?.email || "H\u1ECDc vi\xEAn",
+          studentEmail: cs.student?.email,
+          studentPhone: cs.student?.phone,
+          avatarUrl: cs.student?.avatarUrl,
+          classId: cs.classId,
+          className: cs.class?.name || "L\u1EDBp h\u1ECDc",
+          courseTitle: cs.class?.course?.title || "Kh\xF3a h\u1ECDc",
+          branchName: cs.class?.branch?.name || null,
+          tuitionFee,
+          paidAmount,
+          outstandingAmount: outstanding,
+          paymentStatus: status,
+          paymentNote: cs.paymentNote,
+          externalRef: cs.externalRef,
+          joinedAt: cs.joinedAt
+        });
+      }
+      const clId = cs.classId;
+      if (!classFinancialMap.has(clId)) {
+        classFinancialMap.set(clId, {
+          classId: clId,
+          className: cs.class?.name || "L\u1EDBp h\u1ECDc",
+          courseTitle: cs.class?.course?.title || "Kh\xF3a h\u1ECDc",
+          teacherName: cs.class?.teacher?.fullName || "Ch\u01B0a ph\xE2n c\xF4ng",
+          branchName: cs.class?.branch?.name || null,
+          totalStudents: 0,
+          totalExpected: 0,
+          totalCollected: 0,
+          totalOutstanding: 0,
+          paidStudentsCount: 0,
+          unpaidStudentsCount: 0
+        });
+      }
+      const clSummary = classFinancialMap.get(clId);
+      clSummary.totalStudents += 1;
+      clSummary.totalExpected += tuitionFee;
+      clSummary.totalCollected += paidAmount;
+      clSummary.totalOutstanding += outstanding;
+      if (outstanding === 0 && tuitionFee > 0) {
+        clSummary.paidStudentsCount += 1;
+      } else {
+        clSummary.unpaidStudentsCount += 1;
+      }
+    });
+    const classBreakdown = Array.from(classFinancialMap.values()).map((c) => ({
+      ...c,
+      collectionRate: c.totalExpected > 0 ? Math.round(c.totalCollected / c.totalExpected * 100) : 100
+    }));
+    return {
+      kpis: {
+        totalExpectedTuition,
+        totalCollectedTuition,
+        totalOutstandingTuition,
+        totalStudentsCount: activeClassStudents.length,
+        fullyPaidCount,
+        partialPaidCount,
+        unpaidCount,
+        collectionRate: totalExpectedTuition > 0 ? Math.round(totalCollectedTuition / totalExpectedTuition * 100) : 100
+      },
+      outstandingReceivables,
+      classBreakdown
+    };
+  }
+  /**
+   * Cập nhật thông tin học phí của 1 học viên trong lớp
+   */
+  async updateStudentTuition(classStudentId, input) {
+    const existing = await this.prisma.classStudent.findUnique({
+      where: { id: classStudentId }
+    });
+    if (!existing) {
+      throw new Error("Kh\xF4ng t\xECm th\u1EA5y th\xF4ng tin ghi danh l\u1EDBp h\u1ECDc");
+    }
+    const data = {};
+    if (input.tuitionFee !== void 0) data.tuitionFee = input.tuitionFee;
+    if (input.paidAmount !== void 0) data.paidAmount = input.paidAmount;
+    if (input.paymentStatus !== void 0) data.paymentStatus = input.paymentStatus;
+    if (input.paymentNote !== void 0) data.paymentNote = input.paymentNote;
+    if (input.externalRef !== void 0) data.externalRef = input.externalRef;
+    if (input.paymentStatus === void 0 && (input.tuitionFee !== void 0 || input.paidAmount !== void 0)) {
+      const fee = input.tuitionFee !== void 0 ? Number(input.tuitionFee) : Number(existing.tuitionFee || 0);
+      const paid = input.paidAmount !== void 0 ? Number(input.paidAmount) : Number(existing.paidAmount || 0);
+      if (fee > 0 && paid >= fee) {
+        data.paymentStatus = PaymentStatus.PAID;
+      } else if (paid > 0) {
+        data.paymentStatus = PaymentStatus.PARTIAL;
+      } else {
+        data.paymentStatus = PaymentStatus.UNPAID;
+      }
+    }
+    const updated = await this.prisma.classStudent.update({
+      where: { id: classStudentId },
+      data,
+      include: {
+        student: { select: { id: true, userId: true, fullName: true, email: true } },
+        class: { select: { id: true, name: true } }
+      }
+    });
+    return updated;
+  }
+};
+
+// server/routes/tuition.routes.ts
+var updateTuitionSchema = external_exports.object({
+  tuitionFee: external_exports.number().min(0).optional(),
+  paidAmount: external_exports.number().min(0).optional(),
+  paymentStatus: external_exports.enum(["UNPAID", "PARTIAL", "PAID", "WAIVED", "REFUNDED"]).optional(),
+  paymentNote: external_exports.string().nullable().optional(),
+  externalRef: external_exports.string().nullable().optional()
+});
+async function tuitionRoutes(fastify) {
+  const service = new TuitionService(fastify.prisma);
+  fastify.get(
+    "/summary",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { branchId = "ALL" } = request.query || {};
+      try {
+        const summary = await service.getTuitionSummary(branchId);
+        return reply.send({
+          success: true,
+          data: summary
+        });
+      } catch (err) {
+        request.log.error(err, "Failed to compute tuition summary");
+        return reply.status(500).send({
+          success: false,
+          error: "Kh\xF4ng th\u1EC3 t\u1ED5ng h\u1EE3p b\xE1o c\xE1o h\u1ECDc ph\xED l\xFAc n\xE0y."
+        });
+      }
+    }
+  );
+  fastify.patch(
+    "/students/:classStudentId",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { classStudentId } = request.params;
+      const parsed = updateTuitionSchema.safeParse(request.body);
+      if (!parsed.success) {
+        return reply.status(400).send({
+          success: false,
+          error: "D\u1EEF li\u1EC7u h\u1ECDc ph\xED kh\xF4ng h\u1EE3p l\u1EC7",
+          details: parsed.error.flatten()
+        });
+      }
+      try {
+        const updated = await service.updateStudentTuition(classStudentId, parsed.data);
+        return reply.send({
+          success: true,
+          message: "C\u1EADp nh\u1EADt h\u1ECDc ph\xED th\xE0nh c\xF4ng.",
+          data: updated
+        });
+      } catch (err) {
+        request.log.error(err, "Failed to update student tuition");
+        return reply.status(400).send({
+          success: false,
+          error: err.message || "Kh\xF4ng th\u1EC3 c\u1EADp nh\u1EADt h\u1ECDc ph\xED h\u1ECDc vi\xEAn."
+        });
+      }
+    }
+  );
+}
+
 // server/routes/index.ts
 var routes = async (fastify) => {
   fastify.get("/health", async () => {
@@ -109223,6 +109602,7 @@ var routes = async (fastify) => {
   await fastify.register(adminDashboardRoutes, { prefix: "/admin" });
   await fastify.register(reportsRoutes, { prefix: "/admin/reports" });
   await fastify.register(interventionRoutes, { prefix: "/interventions" });
+  await fastify.register(tuitionRoutes, { prefix: "/admin/tuition" });
 };
 var routes_default = routes;
 

@@ -38,6 +38,7 @@ export const updateLeadSchema = z.object({
     .enum(["NEW", "CONTACTED", "ENROLLED", "CANCELLED", "ARCHIVED"])
     .optional(),
   assignedTo: z.string().optional().nullable(),
+  assignedToUserId: z.string().optional().nullable(),
   preferredBranchId: z.string().optional().nullable(),
   notes: z.string().max(2000).optional().nullable(),
   convertedUserId: z.string().optional().nullable(),
@@ -50,6 +51,8 @@ export const listLeadsQuerySchema = z.object({
     .enum(["NEW", "CONTACTED", "ENROLLED", "CANCELLED", "ARCHIVED"])
     .optional(),
   preferredBranchId: z.string().optional(),
+  assignedToUserId: z.string().optional(),
+  unassigned: z.enum(["true", "false"]).optional(),
   search: z.string().optional(),
 });
 
@@ -63,6 +66,11 @@ export const convertLeadSchema = z.object({
   branchId: z.string().optional().nullable(),
   password: z.string().min(6, "Mật khẩu tối thiểu 6 ký tự").optional(),
   targetClassId: z.string().optional().nullable(),
+  tuitionFee: z.number().min(0).optional(),
+  paidAmount: z.number().min(0).optional(),
+  paymentStatus: z.enum(["UNPAID", "PARTIAL", "PAID", "WAIVED", "REFUNDED"]).optional(),
+  paymentNote: z.string().optional().nullable(),
+  externalRef: z.string().optional().nullable(),
   status: z
     .enum(["NEW", "CONTACTED", "ENROLLED", "CANCELLED", "ARCHIVED"])
     .optional()

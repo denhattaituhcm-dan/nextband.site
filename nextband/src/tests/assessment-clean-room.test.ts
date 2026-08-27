@@ -27,7 +27,7 @@ describe("ARIS Clean-Room Assessment Engine Test Suite", () => {
   it("Test 1: Sanitized Client Payload must NOT contain any answer keys or secret fields", () => {
     const payload = canonicalPlacementTestPayload;
     expect(payload).toBeDefined();
-    expect(payload.testId).toBe("aris-placement-v1");
+    expect(payload.testId).toBe("cce291f7-d88b-4976-8ed3-cc21daca7023");
 
     // Check listening questions
     payload.skills.listening.questions.forEach((q) => {
@@ -110,19 +110,27 @@ describe("ARIS Clean-Room Assessment Engine Test Suite", () => {
       targetBand: "IELTS 7.0",
     });
 
-    // Submit correct answers for Listening, Reading, Grammar
+    // Submit correct answers for Listening, Reading, Grammar with canonical UUIDs
     const studentAnswers: Record<string, any> = {
-      L1: "Thứ Ba & Thứ Năm",
-      L2: "Ngày 15 hàng tháng",
-      L3: "Nguyễn Tri Phương",
-      R1: "Phương pháp luyện tập có chủ đích (Deliberate practice)",
-      R2: "Xem phim có phụ đề mà không phân tích cấu trúc câu",
-      R5: "FALSE (Sai)",
-      R6: "TRUE (Đúng)",
-      G1: "will have completed",
-      G2: "would not have risen",
-      G9: "to",
-      G11: "has increased",
+      "43907def-1f78-4839-8751-ff1079fdee91": {
+        0: "choose",
+        1: "private",
+        2: "20%",
+        3: "healthy",
+        4: "bones",
+      },
+      "c0d8e9bd-f426-42c3-b051-4c15df13543a": {
+        0: "update",
+        1: "environment",
+        2: "captain",
+        3: "films",
+      },
+      "e6084ef6-30d7-421b-9935-c15e506d4049": "FALSE",
+      "de50e60b-f74c-4948-905f-03f5ba2c0b6d": "NOT GIVEN",
+      "7b3cc213-6fbc-4e41-8ed7-9420773fd55a": "goes",
+      "5ba28972-e776-4953-b05e-41d6a862c4ed": "have read",
+      "afd8852d-5f56-413d-99ef-73cd89c969d4": "will be sent",
+      "59739e98-711b-4d4b-8927-e5f97c0d3a32": "much",
       writing_response: "I strongly believe that higher education should be supported by government subsidies...",
       speaking_completed: true,
     };

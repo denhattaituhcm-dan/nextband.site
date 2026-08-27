@@ -17,6 +17,7 @@ import {
   FileCheck,
   TrendingUp,
   Trophy,
+  CreditCard,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -87,6 +88,11 @@ const adminItems = [
     title: "Khóa học",
     url: "/admin/courses",
     icon: BookOpen,
+  },
+  {
+    title: "Học phí & Công nợ",
+    url: "/admin/tuition",
+    icon: CreditCard,
   },
   {
     title: "Speaking Forecast",

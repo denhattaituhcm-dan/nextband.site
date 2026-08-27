@@ -276,6 +276,17 @@ export class ExamSubmissionService {
       };
     }
 
+    // Hide unpublished draft teacher feedback from student
+    if (!canSeeSecrets && submission.answers) {
+      submission.answers = submission.answers.map((a: any) => {
+        const sanitizedAns = { ...a };
+        if (!isGraded) {
+          sanitizedAns.feedback = null;
+        }
+        return sanitizedAns;
+      });
+    }
+
     return submission;
   }
 
@@ -988,6 +999,7 @@ export class ExamSubmissionService {
         suggestedSentence?: string;
       }>;
       tabSwitchCount?: number;
+      finalize?: boolean;
     }
   ) {
     const isAdmin = user.roles.includes("admin");
@@ -1009,8 +1021,12 @@ export class ExamSubmissionService {
       }
     }
 
+    const isFinalize = options?.finalize !== false;
     const currentStatus = String(submission.status).toUpperCase() as SubmissionState;
-    SubmissionStateMachine.assertTransition(currentStatus, "GRADED", true);
+
+    if (isFinalize) {
+      SubmissionStateMachine.assertTransition(currentStatus, "GRADED", true);
+    }
 
     return this.repo.transaction(async (tx) => {
       let computedTotal = 0;
@@ -1073,43 +1089,50 @@ export class ExamSubmissionService {
         ? totalScore
         : allAnswers.reduce((sum: number, a: any) => sum + (Number(a.score) || 0), 0);
 
+      const targetStatus = isFinalize ? "GRADED" : currentStatus;
       const updated = await tx.examSubmission.update({
         where: { id },
         data: {
-          status: "GRADED" as any,
-          gradedAt: new Date(),
-          gradedBy: user.id,
-          totalScore: finalTotalScore,
+          status: targetStatus as any,
+          ...(isFinalize
+            ? {
+                gradedAt: new Date(),
+                gradedBy: user.id,
+                totalScore: finalTotalScore,
+              }
+            : {}),
         },
         include: { answers: true },
       });
 
-      // Audit Outbox Event (Enabled when backed by storage)
-      if ((tx as any).auditOutboxList && tx.auditOutbox) {
-        const auditEvent = auditOutboxService.buildSanitizedEvent({
-          eventType: "TEACHER_REGRADED",
-          actorId: user.id,
-          actorRole: user.roles.includes("admin") ? "admin" : "teacher",
-          submissionId: id,
-          examId: submission.examId as string,
-          oldState: { status: submission.status, totalScore: submission.totalScore },
-          newState: { status: "GRADED", totalScore: finalTotalScore },
-        });
-        await tx.auditOutbox.create({ data: auditEvent });
-      }
+      if (isFinalize) {
+        // Audit Outbox Event (Enabled when backed by storage)
+        if ((tx as any).auditOutboxList && tx.auditOutbox) {
+          const auditEvent = auditOutboxService.buildSanitizedEvent({
+            eventType: "TEACHER_REGRADED",
+            actorId: user.id,
+            actorRole: user.roles.includes("admin") ? "admin" : "teacher",
+            submissionId: id,
+            examId: submission.examId as string,
+            oldState: { status: submission.status, totalScore: submission.totalScore },
+            newState: { status: "GRADED", totalScore: finalTotalScore },
+          });
+          await tx.auditOutbox.create({ data: auditEvent });
+        }
 
-      // Notification Trigger: TEACHER_FEEDBACK to the student
-      if ((tx as any).notification && submission.studentId) {
-        const examTitle = submission.exam?.title || "IELTS Exam";
-        await this.notificationService.createNotification(tx, {
-          userId: submission.studentId,
-          type: "TEACHER_FEEDBACK",
-          title: "Giáo viên đã chấm bài thi",
-          message: `Thầy/Cô đã chấm và gửi nhận xét cho bài thi "${examTitle}" của bạn.`,
-          link: `/app/submissions/${id}`,
-          entityType: "SUBMISSION",
-          entityId: id,
-        });
+        // Notification Trigger: TEACHER_FEEDBACK to the student
+        if ((tx as any).notification && submission.studentId) {
+          const examTitle = submission.exam?.title || "IELTS Exam";
+          await this.notificationService.createNotification(tx, {
+            userId: submission.studentId,
+            type: "TEACHER_FEEDBACK",
+            title: "Giáo viên đã chấm bài thi",
+            message: `Thầy/Cô đã chấm và gửi nhận xét cho bài thi "${examTitle}" của bạn.`,
+            link: `/app/submissions/${id}`,
+            entityType: "SUBMISSION",
+            entityId: id,
+          });
+        }
       }
 
       return updated;

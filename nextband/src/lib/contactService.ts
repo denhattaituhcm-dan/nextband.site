@@ -10,6 +10,9 @@ export interface ContactLead {
   source?: string;
   status: "NEW" | "CONTACTED" | "ENROLLED" | "CANCELLED" | "ARCHIVED" | "new" | "contacted" | "enrolled" | "archived";
   assignedTo?: string;
+  assignedToUserId?: string | null;
+  assignedToUser?: { id: string; userId: string; fullName?: string; avatarUrl?: string | null } | null;
+  assignedAt?: string | null;
   preferredBranchId?: string | null;
   preferredBranch?: { id: string; name: string; code: string } | null;
   notes?: string;
@@ -170,11 +173,21 @@ export async function submitContactLead(
 /**
  * Admin: Get all leads (Backend Server -> Supabase -> Local)
  */
-export async function fetchAllContactLeads(params?: { preferredBranchId?: string }): Promise<ContactLead[]> {
+export async function fetchAllContactLeads(params?: { preferredBranchId?: string; assignedToUserId?: string; unassigned?: boolean }): Promise<ContactLead[]> {
   // 1. Try Backend Server
   try {
     const token = await getAuthToken();
-    const query = params?.preferredBranchId && params.preferredBranchId !== "ALL" ? `?preferredBranchId=${params.preferredBranchId}` : "";
+    const qs = new URLSearchParams();
+    if (params?.preferredBranchId && params.preferredBranchId !== "ALL") {
+      qs.set("preferredBranchId", params.preferredBranchId);
+    }
+    if (params?.assignedToUserId) {
+      qs.set("assignedToUserId", params.assignedToUserId);
+    }
+    if (params?.unassigned) {
+      qs.set("unassigned", "true");
+    }
+    const query = qs.toString() ? `?${qs.toString()}` : "";
     const res = await fetch(`${API_BASE_URL}/leads${query}`, {
       headers: {
         "Content-Type": "application/json",
@@ -197,7 +210,14 @@ export async function fetchAllContactLeads(params?: { preferredBranchId?: string
           preferredBranchId: d.preferredBranchId || d.preferred_branch_id || null,
           preferredBranch: d.preferredBranch || null,
           assignedTo: d.assignedTo || d.assigned_to || "",
+          assignedToUserId: d.assignedToUserId || d.assigned_to_user_id || null,
+          assignedToUser: d.assignedToUser || null,
+          assignedAt: d.assignedAt || d.assigned_at || null,
           notes: d.notes || "",
+          createdByUserId: d.createdByUserId || d.created_by_user_id || null,
+          createdByUser: d.createdByUser || null,
+          convertedUserId: d.convertedUserId || d.converted_user_id || null,
+          convertedUser: d.convertedUser || null,
           createdAt: d.createdAt || d.created_at,
         }));
       }
@@ -295,6 +315,7 @@ export async function updateContactLead(
   params: {
     status?: "NEW" | "CONTACTED" | "ENROLLED" | "CANCELLED" | "ARCHIVED";
     assignedTo?: string | null;
+    assignedToUserId?: string | null;
     preferredBranchId?: string | null;
     notes?: string | null;
     convertedUserId?: string | null;
@@ -441,3 +462,35 @@ export async function convertLeadToStudent(
   }
 }
 
+export interface AssignableStaff {
+  id: string;
+  userId: string;
+  fullName: string;
+  email?: string;
+  avatarUrl?: string | null;
+  roles: string[];
+  activeLeadCount: number;
+}
+
+/**
+ * Admin: Fetch list of admin/teacher users that can be assigned as lead owners
+ */
+export async function fetchAssignableStaff(): Promise<AssignableStaff[]> {
+  try {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/leads/assignable-staff`, {
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+
+    if (res.ok) {
+      const json = await res.json();
+      return json.data || [];
+    }
+  } catch (err) {
+    console.warn("[ContactService] fetchAssignableStaff error:", err);
+  }
+  return [];
+}
