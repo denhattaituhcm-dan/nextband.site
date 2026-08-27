@@ -162,15 +162,33 @@ export function createMockPrisma() {
       findFirst: async ({ where, include }: any) => {
         const u = users.find((x) => {
           if (where.id && x.id === where.id) return true;
+          if (where.userId && (x.userId === where.userId || x.id === where.userId)) return true;
           if (where.email && x.email === where.email) return true;
           if (where.OR) {
-            return where.OR.some((cond: any) => (cond.id && x.id === cond.id) || (cond.email && x.email === cond.email));
+            return where.OR.some((cond: any) => (cond.id && x.id === cond.id) || (cond.userId && (x.userId === cond.userId || x.id === cond.userId)) || (cond.email && x.email === cond.email));
           }
           return false;
         });
         if (!u) return null;
         const roles = userRoles.filter((r) => r.userId === u.id);
-        return { ...u, ...(include?.roles ? { roles } : {}) };
+        return { ...u, userId: u.userId || u.id, ...(include?.roles ? { roles } : {}) };
+      },
+      findMany: async ({ where, include }: any = {}) => {
+        let list = [...users];
+        if (where) {
+          if (where.OR) {
+            list = list.filter((u) =>
+              where.OR.some((cond: any) => {
+                if (cond.id?.in && cond.id.in.includes(u.id)) return true;
+                if (cond.userId?.in && cond.userId.in.includes(u.userId || u.id)) return true;
+                if (cond.id && u.id === cond.id) return true;
+                if (cond.userId && (u.userId === cond.userId || u.id === cond.userId)) return true;
+                return false;
+              })
+            );
+          }
+        }
+        return list.map((u) => ({ ...u, userId: u.userId || u.id }));
       },
       deleteMany: async () => {
         users.length = 0;

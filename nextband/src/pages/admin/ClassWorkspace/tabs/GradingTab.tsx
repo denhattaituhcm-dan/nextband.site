@@ -29,7 +29,9 @@ export const GradingTab: React.FC = () => {
           st.studentId === targetStudentId ||
           st.student_id === targetStudentId ||
           st.id === targetStudentId ||
-          st.userId === targetStudentId
+          st.userId === targetStudentId ||
+          st.student?.id === targetStudentId ||
+          st.student?.userId === targetStudentId
       );
       return {
         id: s.id,

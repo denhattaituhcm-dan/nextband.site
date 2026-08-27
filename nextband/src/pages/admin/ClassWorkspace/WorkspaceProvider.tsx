@@ -146,12 +146,26 @@ export const WorkspaceProvider: React.FC<{
 
       // Enrich activeStudents with live real-time metrics
       const enrichedActiveStudents = activeStudents.map((st: any) => {
-        const studentId = st.studentId || st.student_id || st.id || st.userId;
+        const studentId = st.studentId || st.student_id || st.student?.id || st.student?.userId || st.id || st.userId;
+        const candidateIds = [
+          st.studentId,
+          st.student_id,
+          st.id,
+          st.userId,
+          st.student?.id,
+          st.student?.userId,
+        ].filter(Boolean);
+
         const joinedDate = st.joinedAt || st.joined_at || st.createdAt || st.created_at;
         const studentJoinedTime = joinedDate ? new Date(joinedDate).getTime() : null;
 
         const studentSubs = submissions.filter(
-          (s: any) => (s.studentId || s.student_id || s.userId) === studentId
+          (s: any) =>
+            candidateIds.includes(s.studentId) ||
+            candidateIds.includes(s.student_id) ||
+            candidateIds.includes(s.student?.id) ||
+            candidateIds.includes(s.student?.userId) ||
+            candidateIds.includes(s.userId)
         );
 
         // Submissions matched to published lessons
@@ -194,7 +208,11 @@ export const WorkspaceProvider: React.FC<{
         const studentAttendances = canonicalSessions
           .map((sess: any) => {
             const att = (sess.attendance || []).find(
-              (a: any) => (a.studentId || a.student_id) === studentId
+              (a: any) =>
+                candidateIds.includes(a.studentId) ||
+                candidateIds.includes(a.student_id) ||
+                candidateIds.includes(a.student?.id) ||
+                candidateIds.includes(a.student?.userId)
             );
             return att?.status || "UNMARKED";
           })

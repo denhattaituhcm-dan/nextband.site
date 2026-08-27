@@ -49,11 +49,24 @@ export const StudentsTab: React.FC = () => {
   };
 
   const handleOpenReport = async (student: any) => {
-    const studentId = student.studentId || student.id;
+    const studentId = student.studentId || student.student_id || student.student?.id || student.student?.userId || student.id || student.userId;
+    const candidateIds = [
+      student.studentId,
+      student.student_id,
+      student.id,
+      student.userId,
+      student.student?.id,
+      student.student?.userId,
+    ].filter(Boolean);
     const submissions = classData?.submissions || [];
 
     const studentSubmissions = submissions.filter(
-      (s: any) => (s.studentId || s.student_id) === studentId
+      (s: any) =>
+        candidateIds.includes(s.studentId) ||
+        candidateIds.includes(s.student_id) ||
+        candidateIds.includes(s.student?.id) ||
+        candidateIds.includes(s.student?.userId) ||
+        candidateIds.includes(s.userId)
     );
 
     const joinedDate = student.joinedAt || student.joined_at || student.createdAt || student.created_at;
@@ -90,7 +103,11 @@ export const StudentsTab: React.FC = () => {
     const studentAttendanceRecords = sessions
       .map((sess: any) => {
         const att = (sess.attendance || []).find(
-          (a: any) => (a.studentId || a.student_id) === studentId
+          (a: any) =>
+            candidateIds.includes(a.studentId) ||
+            candidateIds.includes(a.student_id) ||
+            candidateIds.includes(a.student?.id) ||
+            candidateIds.includes(a.student?.userId)
         );
         return {
           sessionId: sess.id,
