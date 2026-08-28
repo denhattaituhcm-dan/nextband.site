@@ -91,17 +91,17 @@ export function QuickTrialModal({
       }
       onOpenChange(open);
     }}>
-      <DialogContent className="sm:max-w-[480px] p-6 sm:p-8 rounded-3xl bg-background border border-border">
+      <DialogContent className="sm:max-w-[480px] p-0 rounded-3xl bg-card border border-border overflow-hidden shadow-2xl">
         {isSubmitted ? (
-          <div className="text-center py-6 space-y-4">
-            <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 flex items-center justify-center mx-auto">
+          <div className="text-center p-6 sm:p-7 space-y-4">
+            <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-2xs">
               <CheckCircle2 className="w-10 h-10" />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <h3 className="text-2xl font-black text-foreground">
                 Đăng Ký Thành Công!
               </h3>
-              <p className="text-sm text-foreground/80 leading-relaxed max-w-sm mx-auto">
+              <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed max-w-sm mx-auto">
                 Cảm ơn <strong>{fullName}</strong>. ARIS IELTS sẽ liên hệ qua SĐT/Zalo{" "}
                 <strong>{phone}</strong> để xác nhận lịch 02 buổi học thử và gửi tài liệu chuẩn bị.
               </p>
@@ -125,115 +125,120 @@ export function QuickTrialModal({
             <div className="pt-2">
               <Button
                 onClick={handleReset}
-                className="w-full h-11 rounded-xl font-bold bg-primary text-primary-foreground"
+                className="w-full h-11 rounded-full font-bold bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 Hoàn tất
               </Button>
             </div>
           </div>
         ) : (
-          <>
-            <DialogHeader className="space-y-2 text-left">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 text-xs font-bold w-fit">
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Trải nghiệm 02 buổi học thử không rủi ro</span>
+          <div>
+            {/* Tier 1: Top Warm Banner */}
+            <div className="relative p-5 sm:p-6 bg-gradient-to-br from-amber-100/70 via-orange-50/50 to-amber-50/30 border-b border-amber-200/50 text-left">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 text-amber-800 border border-amber-500/30 text-[11px] font-extrabold uppercase tracking-wider mb-2.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-amber-700" />
+                <span>Trải Nghiệm 02 Buổi Học Thử</span>
               </div>
-              <DialogTitle className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
-                Nhận Lịch Học Thử 02 Buổi
-              </DialogTitle>
-              <DialogDescription className="text-sm text-foreground/75 leading-relaxed">
-                Trực tiếp trải nghiệm không gian học lớp tối đa 08 học viên và phương pháp giảng dạy của giáo viên IELTS 8.0+.
-              </DialogDescription>
-            </DialogHeader>
+              <h3 className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
+                NHẬN LỊCH HỌC THỬ MIỄN PHÍ
+              </h3>
+              <p className="text-xs text-foreground/75 leading-relaxed mt-1">
+                Trực tiếp trải nghiệm không gian học lớp tối đa 08 học viên &amp; phương pháp bóc tách tư duy từ giáo viên IELTS 8.0+.
+              </p>
+            </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4 pt-2">
-              {/* 1. Họ và tên */}
-              <div className="space-y-1.5 text-left">
-                <Label htmlFor="trial-name" className="text-xs font-bold text-foreground uppercase tracking-wider">
-                  Họ và tên <span className="text-brand-red">*</span>
-                </Label>
-                <Input
-                  id="trial-name"
-                  required
-                  placeholder="Ví dụ: Nguyễn Văn A"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="h-11 rounded-xl border-border bg-card text-foreground"
-                />
-              </div>
+            {/* Tier 2: Form & CTA */}
+            <div className="p-5 sm:p-6 space-y-3.5">
+              <form onSubmit={handleSubmit} className="space-y-3.5">
+                {/* 1. Họ và tên */}
+                <div className="space-y-1 text-left">
+                  <Label htmlFor="trial-name" className="text-xs font-bold text-foreground">
+                    Họ và tên học viên <span className="text-brand-red">*</span>
+                  </Label>
+                  <Input
+                    id="trial-name"
+                    required
+                    placeholder="Ví dụ: Nguyễn Văn A"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="h-10 rounded-xl border-border bg-card text-foreground text-sm"
+                  />
+                </div>
 
-              {/* 2. Số điện thoại / Zalo */}
-              <div className="space-y-1.5 text-left">
-                <Label htmlFor="trial-phone" className="text-xs font-bold text-foreground uppercase tracking-wider">
-                  Số điện thoại / Zalo <span className="text-brand-red">*</span>
-                </Label>
-                <Input
-                  id="trial-phone"
-                  required
-                  type="tel"
-                  placeholder="Ví dụ: 0933 319 693"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="h-11 rounded-xl border-border bg-card text-foreground"
-                />
-              </div>
+                {/* 2. Số điện thoại / Zalo */}
+                <div className="space-y-1 text-left">
+                  <Label htmlFor="trial-phone" className="text-xs font-bold text-foreground">
+                    Số điện thoại có Zalo <span className="text-brand-red">*</span>
+                  </Label>
+                  <Input
+                    id="trial-phone"
+                    required
+                    type="tel"
+                    placeholder="Ví dụ: 0933 319 693"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="h-10 rounded-xl border-border bg-card text-foreground text-sm"
+                  />
+                </div>
 
-              {/* Khóa học quan tâm */}
-              <div className="space-y-1.5 text-left">
-                <Label htmlFor="trial-course" className="text-xs font-bold text-foreground uppercase tracking-wider">
-                  Khóa học quan tâm
-                </Label>
-                <Select value={selectedCourse} onValueChange={setSelectedCourse}>
-                  <SelectTrigger id="trial-course" className="h-11 rounded-xl border-border bg-card text-foreground">
-                    <SelectValue placeholder="Chọn khóa học" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl">
-                    <SelectItem value="starter">Khóa STARTER (Mất gốc → 3.0) — 4.400.000đ</SelectItem>
-                    <SelectItem value="dreamer">Khóa DREAMER (3.0 → 4.0) — 4.900.000đ</SelectItem>
-                    <SelectItem value="builder">Khóa BUILDER (4.0 → 5.0) — 5.400.000đ</SelectItem>
-                    <SelectItem value="master">Khóa MASTER (5.0 → 6.0) — 5.900.000đ</SelectItem>
-                    <SelectItem value="leader">Khóa LEADER (6.0 → 6.5+) — 6.400.000đ</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                {/* Khóa học quan tâm */}
+                <div className="space-y-1 text-left">
+                  <Label htmlFor="trial-course" className="text-xs font-bold text-foreground">
+                    Khóa học quan tâm
+                  </Label>
+                  <Select value={selectedCourse} onValueChange={setSelectedCourse}>
+                    <SelectTrigger id="trial-course" className="h-10 rounded-xl border-border bg-card text-foreground text-sm">
+                      <SelectValue placeholder="Chọn khóa học" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="starter">Khóa STARTER (Mất gốc → 3.0) — 4.400.000đ</SelectItem>
+                      <SelectItem value="dreamer">Khóa DREAMER (3.0 → 4.0) — 4.900.000đ</SelectItem>
+                      <SelectItem value="builder">Khóa BUILDER (4.0 → 5.0) — 5.400.000đ</SelectItem>
+                      <SelectItem value="master">Khóa MASTER (5.0 → 6.0) — 5.900.000đ</SelectItem>
+                      <SelectItem value="leader">Khóa LEADER (6.0 → 6.5+) — 6.400.000đ</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              {/* 3. Ca học mong muốn */}
-              <div className="space-y-1.5 text-left">
-                <Label htmlFor="trial-shift" className="text-xs font-bold text-foreground uppercase tracking-wider">
-                  Ca học mong muốn
-                </Label>
-                <Select value={shiftPreference} onValueChange={setShiftPreference}>
-                  <SelectTrigger id="trial-shift" className="h-11 rounded-xl border-border bg-card text-foreground">
-                    <SelectValue placeholder="Chọn ca học" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl">
-                    <SelectItem value="Tối Thứ 2 - 4 - 6 (Ca 1: 17:30 - 19:30)">Tối Thứ 2 - 4 - 6 (Ca 1: 17:30 - 19:30)</SelectItem>
-                    <SelectItem value="Tối Thứ 2 - 4 - 6 (Ca 2: 19:30 - 21:30)">Tối Thứ 2 - 4 - 6 (Ca 2: 19:30 - 21:30)</SelectItem>
-                    <SelectItem value="Tối Thứ 3 - 5 - 7 (Ca 1: 17:30 - 19:30)">Tối Thứ 3 - 5 - 7 (Ca 1: 17:30 - 19:30)</SelectItem>
-                    <SelectItem value="Tối Thứ 3 - 5 - 7 (Ca 2: 19:30 - 21:30)">Tối Thứ 3 - 5 - 7 (Ca 2: 19:30 - 21:30)</SelectItem>
-                    <SelectItem value="Cuối tuần T7 - CN (Sáng: 09:00 - 11:00)">Cuối tuần T7 - CN (Sáng: 09:00 - 11:00)</SelectItem>
-                    <SelectItem value="Cuối tuần T7 - CN (Chiều: 15:00 - 17:00)">Cuối tuần T7 - CN (Chiều: 15:00 - 17:00)</SelectItem>
-                    <SelectItem value="Linh hoạt theo tư vấn">Linh hoạt theo tư vấn của trung tâm</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                {/* 3. Ca học mong muốn */}
+                <div className="space-y-1 text-left">
+                  <Label htmlFor="trial-shift" className="text-xs font-bold text-foreground">
+                    Ca học mong muốn
+                  </Label>
+                  <Select value={shiftPreference} onValueChange={setShiftPreference}>
+                    <SelectTrigger id="trial-shift" className="h-10 rounded-xl border-border bg-card text-foreground text-sm">
+                      <SelectValue placeholder="Chọn ca học" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="Tối Thứ 2 - 4 - 6 (Ca 1: 17:30 - 19:30)">Tối Thứ 2 - 4 - 6 (Ca 1: 17:30 - 19:30)</SelectItem>
+                      <SelectItem value="Tối Thứ 2 - 4 - 6 (Ca 2: 19:30 - 21:30)">Tối Thứ 2 - 4 - 6 (Ca 2: 19:30 - 21:30)</SelectItem>
+                      <SelectItem value="Tối Thứ 3 - 5 - 7 (Ca 1: 17:30 - 19:30)">Tối Thứ 3 - 5 - 7 (Ca 1: 17:30 - 19:30)</SelectItem>
+                      <SelectItem value="Tối Thứ 3 - 5 - 7 (Ca 2: 19:30 - 21:30)">Tối Thứ 3 - 5 - 7 (Ca 2: 19:30 - 21:30)</SelectItem>
+                      <SelectItem value="Cuối tuần T7 - CN (Sáng: 09:00 - 11:00)">Cuối tuần T7 - CN (Sáng: 09:00 - 11:00)</SelectItem>
+                      <SelectItem value="Cuối tuần T7 - CN (Chiều: 15:00 - 17:00)">Cuối tuần T7 - CN (Chiều: 15:00 - 17:00)</SelectItem>
+                      <SelectItem value="Linh hoạt theo tư vấn">Linh hoạt theo tư vấn của trung tâm</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div className="pt-2">
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full h-12 rounded-xl font-extrabold text-base bg-brand-red hover:bg-brand-red-hover text-brand-red-foreground shadow-sm transition-all"
-                >
-                  {loading ? "Đang xử lý..." : "Nhận lịch học thử"}
-                </Button>
-              </div>
+                {/* Primary Action Button (Soft Blue Pill CTA) */}
+                <div className="pt-2">
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full h-12 rounded-full font-bold text-sm bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800 border border-blue-200/80 shadow-xs transition-all cursor-pointer active:scale-[0.99]"
+                  >
+                    {loading ? "Đang xử lý..." : "Nhận lịch 02 buổi học thử"}
+                  </Button>
+                </div>
 
-              <div className="flex items-center justify-center gap-2 pt-1 text-xs text-muted-foreground">
-                <Phone className="w-3.5 h-3.5" />
-                <span>Hotline giải đáp trực tiếp: <a href="tel:0933319693" className="font-bold text-foreground hover:underline">0933.319.693</a></span>
-              </div>
-            </form>
-          </>
+                <div className="flex items-center justify-center gap-2 pt-1 text-xs text-muted-foreground">
+                  <Phone className="w-3.5 h-3.5" />
+                  <span>Hotline giải đáp trực tiếp: <a href="tel:0933319693" className="font-bold text-foreground hover:underline">0933.319.693</a></span>
+                </div>
+              </form>
+            </div>
+          </div>
         )}
       </DialogContent>
     </Dialog>

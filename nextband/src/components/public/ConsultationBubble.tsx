@@ -109,57 +109,85 @@ export function ConsultationBubble() {
         ref={containerRef}
         className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end select-none font-sans"
       >
-        {/* Popover Mini-Card */}
+        {/* Popover Mini-Card (2-tier Academic Card inspired by Zalo) */}
         {isOpen && (
-          <div className="mb-3 w-72 sm:w-80 rounded-2xl bg-background/95 backdrop-blur-md border border-border shadow-[0_12px_40px_-5px_rgba(0,0,0,0.15)] p-3.5 sm:p-4 animate-in fade-in zoom-in-95 duration-150 origin-bottom-right">
-            {/* Header */}
-            <div className="flex items-center justify-between pb-2.5 mb-1.5 border-b border-border/60">
-              <span className="text-xs sm:text-sm font-bold text-foreground tracking-tight">
-                Bạn cần hỗ trợ gì?
-              </span>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/70 transition-colors"
-                aria-label="Đóng"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            {/* 3 Action Options List */}
-            <div className="py-1 space-y-1">
-              {supportOptions.map((opt) => (
-                <button
-                  key={opt.id}
-                  onClick={() => handleOptionClick(opt.id)}
-                  className="w-full flex items-start gap-2.5 p-2 rounded-xl text-left hover:bg-muted/70 transition-colors group cursor-pointer"
-                >
-                  <div className="p-1.5 rounded-lg bg-muted/80 group-hover:bg-brand-red/10 group-hover:text-brand-red transition-colors shrink-0 mt-0.5">
-                    {opt.icon}
+          <div className="mb-3 w-80 sm:w-88 rounded-3xl bg-card border border-border/80 shadow-[0_16px_48px_-8px_rgba(0,0,0,0.18)] overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-bottom-right">
+            {/* Tier 1: Top Warm Banner */}
+            <div className="relative p-4 bg-gradient-to-br from-amber-100/70 via-orange-50/50 to-amber-50/30 border-b border-amber-200/40">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-700 shrink-0 shadow-2xs">
+                    <GraduationCap className="w-5 h-5" />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xs font-bold text-foreground group-hover:text-brand-red transition-colors leading-tight">
-                      {opt.title}
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] font-mono font-extrabold uppercase tracking-wider text-amber-800/80 bg-amber-500/15 px-2 py-0.5 rounded-full">
+                        Ban Học Thuật
+                      </span>
+                      <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Đang trực tuyến" />
                     </div>
-                    <div className="text-[11px] text-muted-foreground leading-snug mt-0.5">
-                      {opt.subtitle}
-                    </div>
+                    <h3 className="text-sm font-extrabold text-foreground tracking-tight mt-0.5">
+                      Cố Vấn Học Thuật ARIS
+                    </h3>
                   </div>
-                </button>
-              ))}
-            </div>
-
-            {/* Direct Zalo Shortcut Button */}
-            <div className="pt-2.5 mt-1 border-t border-border/60">
-              <button
-                onClick={handleDirectZaloClick}
-                className="w-full flex items-center justify-center gap-2 h-9 px-3 rounded-xl bg-[#0068FF] hover:bg-[#0057d9] text-white text-xs font-semibold transition-all shadow-xs active:scale-[0.98] cursor-pointer"
-              >
-                <div className="w-4 h-4 shrink-0">
-                  <ZaloIcon className="w-full h-full text-white" />
                 </div>
-                <span>Nhắn trực tiếp qua Zalo</span>
-              </button>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-1 rounded-xl text-muted-foreground hover:text-foreground hover:bg-black/5 transition-colors"
+                  aria-label="Đóng"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <p className="text-xs text-foreground/75 mt-2 leading-relaxed pl-0.5">
+                Giải đáp lộ trình cá nhân hóa &amp; hỗ trợ bài test năng lực 4 kỹ năng miễn phí.
+              </p>
+            </div>
+
+            {/* Tier 2: Suggestion Pills / Option Cards */}
+            <div className="p-3.5 space-y-2 bg-card">
+              <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider px-1">
+                Chọn nhu cầu của bạn:
+              </div>
+              <div className="space-y-1.5">
+                {supportOptions.map((opt) => (
+                  <button
+                    key={opt.id}
+                    onClick={() => handleOptionClick(opt.id)}
+                    className="w-full flex items-center justify-between p-3 rounded-2xl text-left bg-muted/40 hover:bg-muted border border-border/60 hover:border-border transition-all duration-150 group cursor-pointer active:scale-[0.99]"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="p-2 rounded-xl bg-background border border-border/60 group-hover:border-primary/30 group-hover:scale-105 transition-all shrink-0">
+                        {opt.icon}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-extrabold text-foreground group-hover:text-primary transition-colors leading-snug">
+                          {opt.title}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground leading-tight mt-0.5 truncate">
+                          {opt.subtitle}
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-xs font-bold text-muted-foreground group-hover:text-primary transition-colors pl-1">
+                      →
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Direct Zalo Action (Soft Pill CTA) */}
+              <div className="pt-2 border-t border-border/50">
+                <button
+                  onClick={handleDirectZaloClick}
+                  className="w-full flex items-center justify-center gap-2 h-10 px-4 rounded-full bg-[#0068FF] hover:bg-[#0057d9] text-white text-xs font-bold transition-all shadow-xs hover:shadow-md active:scale-[0.98] cursor-pointer"
+                >
+                  <div className="w-4 h-4 shrink-0">
+                    <ZaloIcon className="w-full h-full text-white" />
+                  </div>
+                  <span>Nhắn trực tiếp qua Zalo OA</span>
+                </button>
+              </div>
             </div>
           </div>
         )}

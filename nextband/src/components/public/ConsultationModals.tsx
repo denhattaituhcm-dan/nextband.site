@@ -88,18 +88,18 @@ export function RoadmapConsultationModal({ isOpen, onOpenChange }: ModalBaseProp
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-[440px] p-6 sm:p-7 rounded-3xl bg-background border border-border">
+      <DialogContent className="sm:max-w-[460px] p-0 rounded-3xl bg-card border border-border overflow-hidden shadow-2xl">
         {isSubmitted ? (
-          <div className="text-center py-4 space-y-4">
-            <div className="w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 flex items-center justify-center mx-auto">
+          <div className="text-center p-6 sm:p-7 space-y-4">
+            <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-2xs">
               <CheckCircle2 className="w-8 h-8" />
             </div>
             <div className="space-y-1.5">
-              <h3 className="text-xl font-bold text-foreground">
+              <h3 className="text-xl font-black text-foreground">
                 Đã Nhận Thông Tin
               </h3>
               <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed max-w-sm mx-auto">
-                Cảm ơn <strong>{fullName}</strong>. ARIS sẽ liên hệ với bạn qua Zalo/SĐT{" "}
+                Cảm ơn <strong>{fullName}</strong>. Cố vấn học thuật ARIS sẽ liên hệ qua Zalo/SĐT{" "}
                 <strong>{phone}</strong> để tư vấn lộ trình học phù hợp nhất.
               </p>
             </div>
@@ -118,107 +118,112 @@ export function RoadmapConsultationModal({ isOpen, onOpenChange }: ModalBaseProp
             <div className="pt-2">
               <Button
                 onClick={handleClose}
-                className="w-full h-10 rounded-xl font-bold bg-primary text-primary-foreground"
+                className="w-full h-11 rounded-full font-bold bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 Hoàn tất
               </Button>
             </div>
           </div>
         ) : (
-          <>
-            <DialogHeader className="space-y-1.5 text-left">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-brand-red/10 text-brand-red border border-brand-red/20 text-[11px] font-bold w-fit">
-                <Compass className="w-3 h-3" />
-                <span>Định hướng học tập 1:1</span>
+          <div>
+            {/* Tier 1: Top Warm Banner */}
+            <div className="relative p-5 sm:p-6 bg-gradient-to-br from-amber-100/70 via-orange-50/50 to-amber-50/30 border-b border-amber-200/50 text-left">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 text-amber-800 border border-amber-500/30 text-[11px] font-extrabold uppercase tracking-wider mb-2.5">
+                <Compass className="w-3.5 h-3.5 text-amber-700" />
+                <span>Định Hướng Học Tập 1:1</span>
               </div>
-              <DialogTitle className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
+              <h3 className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
                 TƯ VẤN LỘ TRÌNH IELTS
-              </DialogTitle>
-              <DialogDescription className="text-xs text-foreground/75 leading-relaxed">
-                ARIS sẽ liên hệ để tư vấn trình độ hiện tại, mục tiêu và lộ trình học tối ưu.
-              </DialogDescription>
-            </DialogHeader>
+              </h3>
+              <p className="text-xs text-foreground/75 leading-relaxed mt-1">
+                ARIS bóc tách năng lực hiện tại, tư vấn mục tiêu và xây dựng lộ trình học cá nhân hóa cho bạn.
+              </p>
+            </div>
 
-            {errorMessage && (
-              <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs space-y-2">
-                <div className="flex items-start gap-2">
-                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                  <span>{errorMessage}</span>
+            {/* Tier 2: Form Content & Soft Pill CTA */}
+            <div className="p-5 sm:p-6 space-y-4">
+              {errorMessage && (
+                <div className="p-3 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive text-xs space-y-2">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                    <span>{errorMessage}</span>
+                  </div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => window.open(zaloUrl, "_blank", "noopener,noreferrer")}
+                    className="w-full h-8 rounded-full bg-[#0068FF] hover:bg-[#0057d9] text-white text-xs font-semibold"
+                  >
+                    <Send className="w-3 h-3 mr-1.5" />
+                    Nhắn trực tiếp qua Zalo
+                  </Button>
                 </div>
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={() => window.open(zaloUrl, "_blank", "noopener,noreferrer")}
-                  className="w-full h-8 bg-[#0068FF] hover:bg-[#0057d9] text-white text-xs font-semibold"
-                >
-                  <Send className="w-3 h-3 mr-1.5" />
-                  Nhắn trực tiếp qua Zalo
-                </Button>
-              </div>
-            )}
+              )}
 
-            <form onSubmit={handleSubmit} className="space-y-3.5 pt-1">
-              {/* Họ và tên */}
-              <div className="space-y-1 text-left">
-                <Label htmlFor="roadmap-name" className="text-xs font-bold text-foreground">
-                  Họ và tên <span className="text-brand-red">*</span>
-                </Label>
-                <Input
-                  id="roadmap-name"
-                  required
-                  placeholder="Ví dụ: Nguyễn Văn A"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="h-10 rounded-xl border-border bg-card text-foreground text-sm"
-                />
-              </div>
+              <form onSubmit={handleSubmit} className="space-y-3.5">
+                {/* Họ và tên */}
+                <div className="space-y-1 text-left">
+                  <Label htmlFor="roadmap-name" className="text-xs font-bold text-foreground">
+                    Họ và tên <span className="text-brand-red">*</span>
+                  </Label>
+                  <Input
+                    id="roadmap-name"
+                    required
+                    placeholder="Ví dụ: Nguyễn Văn A"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="h-10 rounded-xl border-border bg-card text-foreground text-sm"
+                  />
+                </div>
 
-              {/* Số điện thoại / Zalo */}
-              <div className="space-y-1 text-left">
-                <Label htmlFor="roadmap-phone" className="text-xs font-bold text-foreground">
-                  Số điện thoại có Zalo <span className="text-brand-red">*</span>
-                </Label>
-                <Input
-                  id="roadmap-phone"
-                  required
-                  type="tel"
-                  placeholder="Nhập SĐT có Zalo (Ví dụ: 0933 319 693)"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="h-10 rounded-xl border-border bg-card text-foreground text-sm"
-                />
-              </div>
+                {/* Số điện thoại / Zalo */}
+                <div className="space-y-1 text-left">
+                  <Label htmlFor="roadmap-phone" className="text-xs font-bold text-foreground">
+                    Số điện thoại có Zalo <span className="text-brand-red">*</span>
+                  </Label>
+                  <Input
+                    id="roadmap-phone"
+                    required
+                    type="tel"
+                    placeholder="Nhập SĐT có Zalo (Ví dụ: 0933 319 693)"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="h-10 rounded-xl border-border bg-card text-foreground text-sm"
+                  />
+                </div>
 
-              {/* Mục tiêu IELTS */}
-              <div className="space-y-1 text-left">
-                <Label htmlFor="roadmap-target" className="text-xs font-bold text-foreground">
-                  Mục tiêu IELTS
-                </Label>
-                <Select value={targetBand} onValueChange={setTargetBand}>
-                  <SelectTrigger id="roadmap-target" className="h-10 rounded-xl border-border bg-card text-foreground text-sm">
-                    <SelectValue placeholder="Chọn mục tiêu" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl">
-                    <SelectItem value="Chưa xác định">Chưa xác định (Cần định hướng)</SelectItem>
-                    <SelectItem value="5.0">Mục tiêu 5.0</SelectItem>
-                    <SelectItem value="6.0">Mục tiêu 6.0</SelectItem>
-                    <SelectItem value="6.5">Mục tiêu 6.5</SelectItem>
-                    <SelectItem value="7.0+">Mục tiêu 7.0+</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                {/* Mục tiêu IELTS */}
+                <div className="space-y-1 text-left">
+                  <Label htmlFor="roadmap-target" className="text-xs font-bold text-foreground">
+                    Mục tiêu IELTS
+                  </Label>
+                  <Select value={targetBand} onValueChange={setTargetBand}>
+                    <SelectTrigger id="roadmap-target" className="h-10 rounded-xl border-border bg-card text-foreground text-sm">
+                      <SelectValue placeholder="Chọn mục tiêu" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="Chưa xác định">Chưa xác định (Cần định hướng)</SelectItem>
+                      <SelectItem value="5.0">Mục tiêu 5.0</SelectItem>
+                      <SelectItem value="6.0">Mục tiêu 6.0</SelectItem>
+                      <SelectItem value="6.5">Mục tiêu 6.5</SelectItem>
+                      <SelectItem value="7.0+">Mục tiêu 7.0+</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div className="pt-2">
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full h-11 rounded-xl font-bold text-sm bg-brand-red hover:bg-brand-red-hover text-white shadow-xs transition-all"
-                >
-                  {loading ? "Đang xử lý..." : "Đăng ký tư vấn"}
-                </Button>
-              </div>
-            </form>
-          </>
+                {/* Primary Action Button (Soft Pill CTA) */}
+                <div className="pt-2">
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full h-12 rounded-full font-bold text-sm bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800 border border-blue-200/80 shadow-xs transition-all cursor-pointer active:scale-[0.99]"
+                  >
+                    {loading ? "Đang xử lý..." : "Đăng ký nhận tư vấn lộ trình"}
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
         )}
       </DialogContent>
     </Dialog>
@@ -306,10 +311,10 @@ export function AssessmentRegistrationModal({ isOpen, onOpenChange }: ModalBaseP
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-[460px] p-6 sm:p-7 rounded-3xl bg-background border border-border">
+      <DialogContent className="sm:max-w-[480px] p-0 rounded-3xl bg-card border border-border overflow-hidden shadow-2xl">
         {isSubmitted ? (
-          <div className="text-center py-3 space-y-4">
-            <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 flex items-center justify-center mx-auto shadow-xs">
+          <div className="text-center p-6 sm:p-7 space-y-4">
+            <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-xs">
               <CheckCircle2 className="w-9 h-9" />
             </div>
             <div className="space-y-1.5">
@@ -328,7 +333,7 @@ export function AssessmentRegistrationModal({ isOpen, onOpenChange }: ModalBaseP
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Thời lượng:</span>
-                <strong className="text-foreground">60 Phút</strong>
+                <strong className="text-foreground">60 Phút (Miễn phí)</strong>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Mục tiêu Band:</span>
@@ -343,7 +348,7 @@ export function AssessmentRegistrationModal({ isOpen, onOpenChange }: ModalBaseP
             <div className="pt-2 space-y-2">
               <Button
                 onClick={handleStartExam}
-                className="w-full h-12 rounded-2xl font-black text-sm bg-brand-red hover:bg-brand-red-hover text-white shadow-md gap-2 cursor-pointer"
+                className="w-full h-12 rounded-full font-black text-sm bg-brand-red hover:bg-brand-red-hover text-white shadow-md gap-2 cursor-pointer"
               >
                 <Play className="w-4 h-4 fill-current" />
                 <span>Bắt Đầu Làm Bài Kiểm Tra Ngay</span>
@@ -353,112 +358,121 @@ export function AssessmentRegistrationModal({ isOpen, onOpenChange }: ModalBaseP
               <Button
                 variant="outline"
                 onClick={handleClose}
-                className="w-full h-10 rounded-xl font-bold text-xs border border-border hover:bg-muted"
+                className="w-full h-10 rounded-full font-bold text-xs border border-border hover:bg-muted"
               >
                 Huỷ
               </Button>
             </div>
           </div>
         ) : (
-          <>
-            <DialogHeader className="space-y-2 text-center items-center pb-1">
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-brand-red-soft text-brand-red border border-brand-red/25 text-xs font-black uppercase tracking-wider mx-auto shadow-xs">
-                <FileCheck className="w-4 h-4 text-brand-red" />
-                <span>KIỂM TRA TRÌNH ĐỘ</span>
+          <div>
+            {/* Tier 1: Top Warm Banner */}
+            <div className="relative p-5 sm:p-6 bg-gradient-to-br from-amber-100/70 via-orange-50/50 to-amber-50/30 border-b border-amber-200/50 text-left">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 text-amber-800 border border-amber-500/30 text-[11px] font-extrabold uppercase tracking-wider mb-2.5">
+                <FileCheck className="w-3.5 h-3.5 text-amber-700" />
+                <span>Định Vị Năng Lực 4 Kỹ Năng</span>
               </div>
-              <DialogTitle className="text-xl sm:text-2xl font-black text-foreground tracking-tight text-center">
-                ĐÁNH GIÁ NĂNG LỰC 4 KỸ NĂNG
-              </DialogTitle>
-              <DialogDescription className="text-xs font-semibold text-brand-blue leading-relaxed text-center max-w-sm mx-auto">
-                Thời lượng: 60 phút.
-              </DialogDescription>
-            </DialogHeader>
+              <h3 className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
+                BÀI TEST TRÌNH ĐỘ IELTS
+              </h3>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-foreground/75 mt-1.5">
+                <span className="font-semibold text-amber-800">⏱️ Thời lượng: 60 phút</span>
+                <span>•</span>
+                <span>Miễn phí 100%</span>
+                <span>•</span>
+                <span>Nhận phân tích lỗi sai qua Zalo</span>
+              </div>
+            </div>
 
-            {errorMessage && (
-              <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs space-y-2">
-                <div className="flex items-start gap-2">
-                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                  <span>{errorMessage}</span>
+            {/* Tier 2: Form & CTA */}
+            <div className="p-5 sm:p-6 space-y-4">
+              {errorMessage && (
+                <div className="p-3 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive text-xs space-y-2">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                    <span>{errorMessage}</span>
+                  </div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => window.open(zaloUrl, "_blank", "noopener,noreferrer")}
+                    className="w-full h-8 rounded-full bg-[#0068FF] hover:bg-[#0057d9] text-white text-xs font-semibold"
+                  >
+                    <Send className="w-3 h-3 mr-1.5" />
+                    Nhắn trực tiếp qua Zalo
+                  </Button>
                 </div>
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={() => window.open(zaloUrl, "_blank", "noopener,noreferrer")}
-                  className="w-full h-8 bg-[#0068FF] hover:bg-[#0057d9] text-white text-xs font-semibold"
-                >
-                  <Send className="w-3 h-3 mr-1.5" />
-                  Nhắn trực tiếp qua Zalo
-                </Button>
-              </div>
-            )}
+              )}
 
-            <form onSubmit={handleSubmit} className="space-y-3.5 pt-1">
-              {/* Họ và tên */}
-              <div className="space-y-1 text-left">
-                <Label htmlFor="assessment-name" className="text-xs font-bold text-foreground">
-                  Họ và tên thí sinh <span className="text-brand-red">*</span>
-                </Label>
-                <Input
-                  id="assessment-name"
-                  required
-                  placeholder="Ví dụ: Nguyễn Văn A"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="h-10 rounded-xl border-border bg-card text-foreground text-sm"
-                />
-              </div>
+              <form onSubmit={handleSubmit} className="space-y-3.5">
+                {/* Họ và tên */}
+                <div className="space-y-1 text-left">
+                  <Label htmlFor="assessment-name" className="text-xs font-bold text-foreground">
+                    Họ và tên thí sinh <span className="text-brand-red">*</span>
+                  </Label>
+                  <Input
+                    id="assessment-name"
+                    required
+                    placeholder="Ví dụ: Nguyễn Văn A"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="h-10 rounded-xl border-border bg-card text-foreground text-sm"
+                  />
+                </div>
 
-              {/* Số điện thoại / Zalo */}
-              <div className="space-y-1 text-left">
-                <Label htmlFor="assessment-phone" className="text-xs font-bold text-foreground">
-                  Số điện thoại có Zalo (để nhận kết quả test) <span className="text-brand-red">*</span>
-                </Label>
-                <Input
-                  id="assessment-phone"
-                  required
-                  type="tel"
-                  placeholder="Nhập SĐT có Zalo (Ví dụ: 0933 319 693)"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="h-10 rounded-xl border-border bg-card text-foreground text-sm"
-                />
-                <p className="text-[11px] text-muted-foreground leading-normal">
-                  * Giáo viên ARIS sẽ gửi bài chấm chi tiết và nhận xét qua Zalo theo số này.
-                </p>
-              </div>
+                {/* Số điện thoại / Zalo */}
+                <div className="space-y-1 text-left">
+                  <Label htmlFor="assessment-phone" className="text-xs font-bold text-foreground">
+                    Số điện thoại có Zalo (để nhận bài chấm chi tiết) <span className="text-brand-red">*</span>
+                  </Label>
+                  <Input
+                    id="assessment-phone"
+                    required
+                    type="tel"
+                    placeholder="Nhập SĐT có Zalo (Ví dụ: 0933 319 693)"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="h-10 rounded-xl border-border bg-card text-foreground text-sm"
+                  />
+                  <p className="text-[11px] text-muted-foreground leading-normal">
+                    * Cố vấn học thuật ARIS sẽ gửi bài chấm chi tiết và nhận xét qua Zalo theo số này.
+                  </p>
+                </div>
 
-              {/* Mục tiêu IELTS */}
-              <div className="space-y-1 text-left">
-                <Label htmlFor="assessment-target" className="text-xs font-bold text-foreground">
-                  Mục tiêu Band điểm
-                </Label>
-                <Select value={targetBand} onValueChange={setTargetBand}>
-                  <SelectTrigger id="assessment-target" className="h-10 rounded-xl border-border bg-card text-foreground text-sm">
-                    <SelectValue placeholder="Chọn mục tiêu" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl">
-                    <SelectItem value="Chưa xác định">Chưa xác định (Cần định hướng)</SelectItem>
-                    <SelectItem value="5.0">Mục tiêu 5.0</SelectItem>
-                    <SelectItem value="6.0">Mục tiêu 6.0</SelectItem>
-                    <SelectItem value="6.5">Mục tiêu 6.5</SelectItem>
-                    <SelectItem value="7.0+">Mục tiêu 7.0+</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                {/* Mục tiêu IELTS */}
+                <div className="space-y-1 text-left">
+                  <Label htmlFor="assessment-target" className="text-xs font-bold text-foreground">
+                    Mục tiêu Band điểm
+                  </Label>
+                  <Select value={targetBand} onValueChange={setTargetBand}>
+                    <SelectTrigger id="assessment-target" className="h-10 rounded-xl border-border bg-card text-foreground text-sm">
+                      <SelectValue placeholder="Chọn mục tiêu" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="Chưa xác định">Chưa xác định (Cần định hướng)</SelectItem>
+                      <SelectItem value="5.0">Mục tiêu 5.0</SelectItem>
+                      <SelectItem value="6.0">Mục tiêu 6.0</SelectItem>
+                      <SelectItem value="6.5">Mục tiêu 6.5</SelectItem>
+                      <SelectItem value="7.0+">Mục tiêu 7.0+</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              <div className="pt-2">
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full h-12 rounded-2xl font-black text-sm bg-brand-red hover:bg-brand-red-hover text-white shadow-sm transition-all gap-2 cursor-pointer"
-                >
-                  <Play className="w-4 h-4 fill-current" />
-                  <span>{loading ? "Đang khởi tạo phòng thi..." : "Vào Làm Bài Kiểm Tra Trình Độ"}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              </div>
-            </form>
-          </>
+                {/* Primary Action Button (Soft Blue Pill CTA) */}
+                <div className="pt-2">
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full h-12 rounded-full font-bold text-sm bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800 border border-blue-200/80 shadow-xs transition-all gap-2 cursor-pointer active:scale-[0.99]"
+                  >
+                    <Play className="w-4 h-4 fill-current text-blue-600" />
+                    <span>{loading ? "Đang khởi tạo phòng thi..." : "Bắt Đầu Làm Bài Kiểm Tra"}</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
         )}
       </DialogContent>
     </Dialog>
@@ -533,14 +547,14 @@ export function TrialClassModal({ isOpen, onOpenChange }: ModalBaseProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-[440px] p-6 sm:p-7 rounded-3xl bg-background border border-border">
+      <DialogContent className="sm:max-w-[460px] p-0 rounded-3xl bg-card border border-border overflow-hidden shadow-2xl">
         {isSubmitted ? (
-          <div className="text-center py-4 space-y-4">
-            <div className="w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 flex items-center justify-center mx-auto">
+          <div className="text-center p-6 sm:p-7 space-y-4">
+            <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-2xs">
               <CheckCircle2 className="w-8 h-8" />
             </div>
             <div className="space-y-1.5">
-              <h3 className="text-xl font-bold text-foreground">
+              <h3 className="text-xl font-black text-foreground">
                 Đã Nhận Đăng Ký Học Thử
               </h3>
               <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed max-w-sm mx-auto">
@@ -569,158 +583,163 @@ export function TrialClassModal({ isOpen, onOpenChange }: ModalBaseProps) {
             <div className="pt-2">
               <Button
                 onClick={handleClose}
-                className="w-full h-10 rounded-xl font-bold bg-primary text-primary-foreground"
+                className="w-full h-11 rounded-full font-bold bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 Hoàn tất
               </Button>
             </div>
           </div>
         ) : (
-          <>
-            <DialogHeader className="space-y-1.5 text-left">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-brand-red/10 text-brand-red border border-brand-red/20 text-[11px] font-bold w-fit">
-                <BookOpen className="w-3 h-3" />
-                <span>Trải nghiệm lớp thực tế</span>
+          <div>
+            {/* Tier 1: Top Warm Banner */}
+            <div className="relative p-5 sm:p-6 bg-gradient-to-br from-amber-100/70 via-orange-50/50 to-amber-50/30 border-b border-amber-200/50 text-left">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 text-amber-800 border border-amber-500/30 text-[11px] font-extrabold uppercase tracking-wider mb-2.5">
+                <BookOpen className="w-3.5 h-3.5 text-amber-700" />
+                <span>Trải Nghiệm Thực Tế</span>
               </div>
-              <DialogTitle className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
-                ĐĂNG KÝ HỌC THỬ
-              </DialogTitle>
-              <DialogDescription className="text-xs text-foreground/75 leading-relaxed">
-                Trải nghiệm lớp học thực tế và phương pháp học thuật tại ARIS IELTS.
-              </DialogDescription>
-            </DialogHeader>
+              <h3 className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
+                ĐĂNG KÝ HỌC THỬ MIỄN PHÍ
+              </h3>
+              <p className="text-xs text-foreground/75 leading-relaxed mt-1">
+                Trải nghiệm lớp học thực tế và phương pháp học thuật tại Học viện ARIS.
+              </p>
+            </div>
 
-            {errorMessage && (
-              <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs space-y-2">
-                <div className="flex items-start gap-2">
-                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                  <span>{errorMessage}</span>
-                </div>
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={() => window.open(zaloUrl, "_blank", "noopener,noreferrer")}
-                  className="w-full h-8 bg-[#0068FF] hover:bg-[#0057d9] text-white text-xs font-semibold"
-                >
-                  <Send className="w-3 h-3 mr-1.5" />
-                  Nhắn trực tiếp qua Zalo
-                </Button>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-3 pt-1">
-              {/* Họ và tên */}
-              <div className="space-y-1 text-left">
-                <Label htmlFor="trial-name" className="text-xs font-bold text-foreground">
-                  Họ và tên <span className="text-brand-red">*</span>
-                </Label>
-                <Input
-                  id="trial-name"
-                  required
-                  placeholder="Ví dụ: Nguyễn Văn A"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="h-10 rounded-xl border-border bg-card text-foreground text-sm"
-                />
-              </div>
-
-              {/* Số điện thoại / Zalo */}
-              <div className="space-y-1 text-left">
-                <Label htmlFor="trial-phone" className="text-xs font-bold text-foreground">
-                  Số điện thoại có Zalo <span className="text-brand-red">*</span>
-                </Label>
-                <Input
-                  id="trial-phone"
-                  required
-                  type="tel"
-                  placeholder="Nhập SĐT có Zalo (Ví dụ: 0933 319 693)"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="h-10 rounded-xl border-border bg-card text-foreground text-sm"
-                />
-              </div>
-
-              {/* Hình thức học */}
-              <div className="space-y-1 text-left">
-                <Label className="text-xs font-bold text-foreground">Hình thức học</Label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
+            {/* Tier 2: Form & Pill CTA */}
+            <div className="p-5 sm:p-6 space-y-3.5">
+              {errorMessage && (
+                <div className="p-3 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive text-xs space-y-2">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                    <span>{errorMessage}</span>
+                  </div>
+                  <Button
                     type="button"
-                    onClick={() => setLearningMode("offline")}
-                    className={`h-9 px-3 rounded-xl text-xs font-semibold border transition-all text-center ${
-                      learningMode === "offline"
-                        ? "bg-brand-red text-white border-brand-red shadow-xs"
-                        : "bg-muted/50 border-border text-foreground/80 hover:bg-muted"
-                    }`}
+                    size="sm"
+                    onClick={() => window.open(zaloUrl, "_blank", "noopener,noreferrer")}
+                    className="w-full h-8 rounded-full bg-[#0068FF] hover:bg-[#0057d9] text-white text-xs font-semibold"
                   >
-                    Offline tại cơ sở
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setLearningMode("online")}
-                    className={`h-9 px-3 rounded-xl text-xs font-semibold border transition-all text-center ${
-                      learningMode === "online"
-                        ? "bg-brand-red text-white border-brand-red shadow-xs"
-                        : "bg-muted/50 border-border text-foreground/80 hover:bg-muted"
-                    }`}
-                  >
-                    Online qua Zoom
-                  </button>
+                    <Send className="w-3 h-3 mr-1.5" />
+                    Nhắn trực tiếp qua Zalo
+                  </Button>
                 </div>
-              </div>
+              )}
 
-              {/* Khóa học quan tâm */}
-              <div className="space-y-1 text-left">
-                <Label htmlFor="trial-course" className="text-xs font-bold text-foreground">
-                  Khóa học quan tâm
-                </Label>
-                <Select value={course} onValueChange={setCourse}>
-                  <SelectTrigger id="trial-course" className="h-10 rounded-xl border-border bg-card text-foreground text-sm">
-                    <SelectValue placeholder="Chọn khóa học" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl">
-                    <SelectItem value="STARTER (Mất gốc → 3.0)">STARTER (Mất gốc → 3.0)</SelectItem>
-                    <SelectItem value="DREAMER (3.0 → 4.0)">DREAMER (3.0 → 4.0)</SelectItem>
-                    <SelectItem value="BUILDER (4.0 → 5.0)">BUILDER (4.0 → 5.0)</SelectItem>
-                    <SelectItem value="MASTER (5.0 → 6.0)">MASTER (5.0 → 6.0)</SelectItem>
-                    <SelectItem value="LEADER (6.0 → 6.5+)">LEADER (6.0 → 6.5+)</SelectItem>
-                    <SelectItem value="Cần ARIS tư vấn thêm">Chưa rõ (Cần ARIS tư vấn)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <form onSubmit={handleSubmit} className="space-y-3">
+                {/* Họ và tên */}
+                <div className="space-y-1 text-left">
+                  <Label htmlFor="trial-name" className="text-xs font-bold text-foreground">
+                    Họ và tên <span className="text-brand-red">*</span>
+                  </Label>
+                  <Input
+                    id="trial-name"
+                    required
+                    placeholder="Ví dụ: Nguyễn Văn A"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="h-10 rounded-xl border-border bg-card text-foreground text-sm"
+                  />
+                </div>
 
-              {/* Ca học mong muốn */}
-              <div className="space-y-1 text-left">
-                <Label htmlFor="trial-schedule" className="text-xs font-bold text-foreground">
-                  Ca học mong muốn
-                </Label>
-                <Select value={schedule} onValueChange={setSchedule}>
-                  <SelectTrigger id="trial-schedule" className="h-10 rounded-xl border-border bg-card text-foreground text-sm">
-                    <SelectValue placeholder="Chọn ca học" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl">
-                    <SelectItem value="Tối Thứ 2 - 4 - 6 (Ca 1: 17:30 - 19:30)">Tối Thứ 2 - 4 - 6 (Ca 1: 17:30 - 19:30)</SelectItem>
-                    <SelectItem value="Tối Thứ 2 - 4 - 6 (Ca 2: 19:30 - 21:30)">Tối Thứ 2 - 4 - 6 (Ca 2: 19:30 - 21:30)</SelectItem>
-                    <SelectItem value="Tối Thứ 3 - 5 - 7 (Ca 1: 17:30 - 19:30)">Tối Thứ 3 - 5 - 7 (Ca 1: 17:30 - 19:30)</SelectItem>
-                    <SelectItem value="Tối Thứ 3 - 5 - 7 (Ca 2: 19:30 - 21:30)">Tối Thứ 3 - 5 - 7 (Ca 2: 19:30 - 21:30)</SelectItem>
-                    <SelectItem value="Cuối tuần T7 - CN (Sáng: 09:00 - 11:00)">Cuối tuần T7 - CN (Sáng: 09:00 - 11:00)</SelectItem>
-                    <SelectItem value="Cuối tuần T7 - CN (Chiều: 15:00 - 17:00)">Cuối tuần T7 - CN (Chiều: 15:00 - 17:00)</SelectItem>
-                    <SelectItem value="Linh hoạt theo tư vấn">Linh hoạt theo tư vấn của trung tâm</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                {/* Số điện thoại / Zalo */}
+                <div className="space-y-1 text-left">
+                  <Label htmlFor="trial-phone" className="text-xs font-bold text-foreground">
+                    Số điện thoại có Zalo <span className="text-brand-red">*</span>
+                  </Label>
+                  <Input
+                    id="trial-phone"
+                    required
+                    type="tel"
+                    placeholder="Nhập SĐT có Zalo (Ví dụ: 0933 319 693)"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="h-10 rounded-xl border-border bg-card text-foreground text-sm"
+                  />
+                </div>
 
-              <div className="pt-2">
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full h-11 rounded-xl font-bold text-sm bg-brand-red hover:bg-brand-red-hover text-white shadow-xs transition-all"
-                >
-                  {loading ? "Đang xử lý..." : "Đăng ký học thử"}
-                </Button>
-              </div>
-            </form>
-          </>
+                {/* Hình thức học */}
+                <div className="space-y-1 text-left">
+                  <Label className="text-xs font-bold text-foreground">Hình thức học</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setLearningMode("offline")}
+                      className={`h-9 px-3 rounded-full text-xs font-semibold border transition-all text-center ${
+                        learningMode === "offline"
+                          ? "bg-amber-500/15 text-amber-900 border-amber-500/40 shadow-xs font-bold"
+                          : "bg-muted/50 border-border text-foreground/80 hover:bg-muted"
+                      }`}
+                    >
+                      Offline tại cơ sở
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLearningMode("online")}
+                      className={`h-9 px-3 rounded-full text-xs font-semibold border transition-all text-center ${
+                        learningMode === "online"
+                          ? "bg-amber-500/15 text-amber-900 border-amber-500/40 shadow-xs font-bold"
+                          : "bg-muted/50 border-border text-foreground/80 hover:bg-muted"
+                      }`}
+                    >
+                      Online qua Zoom
+                    </button>
+                  </div>
+                </div>
+
+                {/* Khóa học quan tâm */}
+                <div className="space-y-1 text-left">
+                  <Label htmlFor="trial-course" className="text-xs font-bold text-foreground">
+                    Khóa học quan tâm
+                  </Label>
+                  <Select value={course} onValueChange={setCourse}>
+                    <SelectTrigger id="trial-course" className="h-10 rounded-xl border-border bg-card text-foreground text-sm">
+                      <SelectValue placeholder="Chọn khóa học" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="STARTER (Mất gốc → 3.0)">STARTER (Mất gốc → 3.0)</SelectItem>
+                      <SelectItem value="DREAMER (3.0 → 4.0)">DREAMER (3.0 → 4.0)</SelectItem>
+                      <SelectItem value="BUILDER (4.0 → 5.0)">BUILDER (4.0 → 5.0)</SelectItem>
+                      <SelectItem value="MASTER (5.0 → 6.0)">MASTER (5.0 → 6.0)</SelectItem>
+                      <SelectItem value="LEADER (6.0 → 6.5+)">LEADER (6.0 → 6.5+)</SelectItem>
+                      <SelectItem value="Cần ARIS tư vấn thêm">Chưa rõ (Cần ARIS tư vấn)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Ca học mong muốn */}
+                <div className="space-y-1 text-left">
+                  <Label htmlFor="trial-schedule" className="text-xs font-bold text-foreground">
+                    Ca học mong muốn
+                  </Label>
+                  <Select value={schedule} onValueChange={setSchedule}>
+                    <SelectTrigger id="trial-schedule" className="h-10 rounded-xl border-border bg-card text-foreground text-sm">
+                      <SelectValue placeholder="Chọn ca học" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="Tối Thứ 2 - 4 - 6 (Ca 1: 17:30 - 19:30)">Tối Thứ 2 - 4 - 6 (Ca 1: 17:30 - 19:30)</SelectItem>
+                      <SelectItem value="Tối Thứ 2 - 4 - 6 (Ca 2: 19:30 - 21:30)">Tối Thứ 2 - 4 - 6 (Ca 2: 19:30 - 21:30)</SelectItem>
+                      <SelectItem value="Tối Thứ 3 - 5 - 7 (Ca 1: 17:30 - 19:30)">Tối Thứ 3 - 5 - 7 (Ca 1: 17:30 - 19:30)</SelectItem>
+                      <SelectItem value="Tối Thứ 3 - 5 - 7 (Ca 2: 19:30 - 21:30)">Tối Thứ 3 - 5 - 7 (Ca 2: 19:30 - 21:30)</SelectItem>
+                      <SelectItem value="Cuối tuần T7 - CN (Sáng: 09:00 - 11:00)">Cuối tuần T7 - CN (Sáng: 09:00 - 11:00)</SelectItem>
+                      <SelectItem value="Cuối tuần T7 - CN (Chiều: 15:00 - 17:00)">Cuối tuần T7 - CN (Chiều: 15:00 - 17:00)</SelectItem>
+                      <SelectItem value="Linh hoạt theo tư vấn">Linh hoạt theo tư vấn của trung tâm</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Primary Action Button (Soft Blue Pill CTA) */}
+                <div className="pt-2">
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full h-12 rounded-full font-bold text-sm bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800 border border-blue-200/80 shadow-xs transition-all cursor-pointer active:scale-[0.99]"
+                  >
+                    {loading ? "Đang xử lý..." : "Đăng ký xếp lớp học thử"}
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
         )}
       </DialogContent>
     </Dialog>

@@ -17,7 +17,10 @@ const schemaPath = candidateSchemaPaths.find((p) => existsSync(p));
 if (schemaPath) {
   console.log(`📦 Generating Prisma Client from: ${schemaPath}`);
   try {
-    execSync(`npx prisma generate --schema="${schemaPath}"`, { stdio: "inherit" });
+    execSync(`npx prisma generate --schema="${schemaPath}"`, {
+      stdio: "inherit",
+      env: { ...process.env, NODE_OPTIONS: "--max-old-space-size=4096" },
+    });
   } catch (err) {
     console.warn("⚠️ Prisma generate warning:", err?.message);
   }
@@ -55,19 +58,9 @@ const tsconfigPath = existsSync(resolve(rootDir, "nextband/tsconfig.app.json"))
   ? resolve(rootDir, "nextband/tsconfig.app.json")
   : resolve(rootDir, "tsconfig.app.json");
 
-const tscBin = existsSync(resolve(rootDir, "node_modules/typescript/bin/tsc"))
-  ? resolve(rootDir, "node_modules/typescript/bin/tsc")
-  : existsSync(resolve(rootDir, "nextband/node_modules/typescript/bin/tsc"))
-  ? resolve(rootDir, "nextband/node_modules/typescript/bin/tsc")
-  : null;
-
 if (existsSync(tsconfigPath)) {
-  const tscCommand = tscBin
-    ? `node --max-old-space-size=4096 "${tscBin}" -p "${tsconfigPath}" --noEmit`
-    : `npx --node-options="--max-old-space-size=4096" tsc -p "${tsconfigPath}" --noEmit`;
-
-  execSync(tscCommand, {
-    cwd: existsSync(resolve(rootDir, "nextband")) ? resolve(rootDir, "nextband") : rootDir,
+  execSync(`npx tsc -p "${tsconfigPath}" --noEmit`, {
+    cwd: rootDir,
     stdio: "inherit",
   });
 }

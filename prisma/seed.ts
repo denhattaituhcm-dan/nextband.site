@@ -1,14 +1,13 @@
 import { PrismaClient, AppRole, ResourceType, AttendanceStatus, InvitationStatus } from '@prisma/client';
-import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('🌱 Seeding database for Phase 0 Sprint 1...');
 
-  const defaultAdminPassword = await bcrypt.hash('admin123', 10);
-  const defaultTeacherPassword = await bcrypt.hash('teacher123', 10);
-  const defaultStudentPassword = await bcrypt.hash('student123', 10);
+  const defaultAdminPassword = 'seed_admin_password_hash';
+  const defaultTeacherPassword = 'seed_teacher_password_hash';
+  const defaultStudentPassword = 'seed_student_password_hash';
 
   // 1. Create Teacher & Admin Users if not exist
   const teacherUser = await prisma.user.upsert({

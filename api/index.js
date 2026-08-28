@@ -104473,14 +104473,13 @@ var ClassService = class {
     }
     return classData;
   }
-  // Use Case: Create Class (Admin or Teacher)
+  // Use Case: Create Class (Admin Only)
   async createClass(user, data) {
     const isAdmin = user.roles.includes("admin");
-    const isTeacher = user.roles.includes("teacher");
-    if (!isAdmin && !isTeacher) {
-      throw new AuthorizationError("Ch\u1EC9 gi\xE1o vi\xEAn ho\u1EB7c admin m\u1EDBi c\xF3 quy\u1EC1n t\u1EA1o l\u1EDBp", 403);
+    if (!isAdmin) {
+      throw new AuthorizationError("Ch\u1EC9 qu\u1EA3n tr\u1ECB vi\xEAn (Admin) m\u1EDBi c\xF3 quy\u1EC1n t\u1EA1o l\u1EDBp h\u1ECDc", 403);
     }
-    const teacherId = isAdmin ? data.teacherId || user.id : user.id;
+    const teacherId = data.teacherId || null;
     let courseId = data.courseId;
     if (!courseId) {
       const firstCourse = await this.prisma.course.findFirst();
@@ -104513,15 +104512,15 @@ var ClassService = class {
       isActive: data.isActive !== void 0 ? data.isActive : true
     });
   }
-  // Use Case: Update Class with Ownership Guard
+  // Use Case: Update Class (Admin Only)
   async updateClass(user, id, data) {
     const classData = await this.repo.findById(id);
     if (!classData) {
       throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
     }
     const isAdmin = user.roles.includes("admin");
-    if (!isAdmin && classData.teacherId !== user.id) {
-      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n s\u1EEDa l\u1EDBp n\xE0y", 403);
+    if (!isAdmin) {
+      throw new AuthorizationError("Ch\u1EC9 qu\u1EA3n tr\u1ECB vi\xEAn (Admin) m\u1EDBi c\xF3 quy\u1EC1n ch\u1EC9nh s\u1EEDa th\xF4ng tin l\u1EDBp h\u1ECDc", 403);
     }
     const updatePayload = {};
     if (data.name !== void 0) updatePayload.name = data.name;
@@ -105392,14 +105391,14 @@ async function classesRoutes(fastify) {
   });
   fastify.post(
     "/",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
       return controller.create(request, reply);
     }
   );
   fastify.put(
     "/:id",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
       return controller.update(request, reply);
     }
