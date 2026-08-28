@@ -28,6 +28,7 @@ import {
   MessageSquare,
   ArrowRight,
   Lightbulb,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -304,33 +305,36 @@ export function SentenceLevelGrader({
           if (!open) setActiveSentenceIndex(null);
         }}
       >
-        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-6">
-          <DialogHeader className="border-b border-slate-100 pb-3">
-            <DialogTitle className="text-base font-bold flex items-center gap-2 text-slate-900">
-              <Edit3 className="h-4 w-4 text-blue-600" />
+        <DialogContent className="sm:max-w-4xl lg:max-w-5xl w-[94vw] max-h-[92vh] overflow-y-auto p-6 sm:p-8 rounded-3xl">
+          <DialogHeader className="border-b border-slate-100 pb-3.5">
+            <DialogTitle className="text-lg font-black flex items-center gap-2.5 text-slate-900">
+              <Edit3 className="h-5 w-5 text-blue-600" />
               {activeSentenceIndex !== null && (
                 <span>Chỉnh sửa & Góp ý Câu #{activeSentenceIndex + 1}</span>
               )}
             </DialogTitle>
-            <DialogDescription className="text-xs text-slate-500">
-              Khen ngợi câu viết tốt (Praise) hoặc gắn nhóm lỗi cần sửa và ghi gợi ý câu mẫu.
+            <DialogDescription className="text-xs sm:text-sm text-slate-500">
+              Khen ngợi câu viết tốt (Praise) hoặc gắn nhóm lỗi cần sửa và ghi gợi ý câu mẫu cho học sinh.
             </DialogDescription>
           </DialogHeader>
 
           {activeSentenceIndex !== null && (
-            <div className="space-y-4 py-3 font-sans">
+            <div className="space-y-5 py-3 font-sans">
               {/* Original sentence banner */}
-              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-sm font-medium text-slate-900 italic leading-relaxed">
-                <span className="font-bold text-slate-500 not-italic text-xs block mb-1">
+              <div className="p-4 sm:p-5 bg-slate-50/80 rounded-2xl border border-slate-200 text-sm sm:text-base font-medium text-slate-900 italic leading-relaxed shadow-2xs">
+                <span className="font-extrabold text-slate-600 not-italic text-xs uppercase tracking-wider block mb-1.5 flex items-center gap-1.5">
+                  <FileText className="h-3.5 w-3.5 text-blue-600" />
                   Câu gốc của học sinh:
                 </span>
                 "{sentences[activeSentenceIndex]}"
               </div>
 
               {/* Error / Praise Category Selector */}
-              <div className="space-y-1.5">
-                <Label className="text-xs font-bold text-slate-800">Phân loại nhận xét (Category):</Label>
-                <div className="grid grid-cols-2 sm:grid-cols-6 gap-1.5">
+              <div className="space-y-2">
+                <Label className="text-xs sm:text-sm font-extrabold text-slate-800">
+                  Phân loại nhận xét (Category):
+                </Label>
+                <div className="grid grid-cols-2 sm:grid-cols-6 gap-2">
                   <Button
                     type="button"
                     variant={category === "PRAISE" ? "default" : "outline"}
@@ -341,7 +345,7 @@ export function SentenceLevelGrader({
                       setTag(PRESET_ERROR_TAGS.PRAISE[0]);
                     }}
                     className={cn(
-                      "text-xs h-8 font-bold transition-all sm:col-span-1",
+                      "text-xs sm:text-sm h-9 sm:h-10 font-bold transition-all rounded-xl",
                       category === "PRAISE"
                         ? "bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-600 shadow-xs"
                         : "bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100"
@@ -362,7 +366,7 @@ export function SentenceLevelGrader({
                           setTag(PRESET_ERROR_TAGS[cat][0]);
                         }}
                         className={cn(
-                          "text-xs h-8 font-bold transition-all",
+                          "text-xs sm:text-sm h-9 sm:h-10 font-bold transition-all rounded-xl",
                           category === cat
                             ? "bg-blue-600 text-white border-blue-600 shadow-xs"
                             : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
@@ -376,11 +380,11 @@ export function SentenceLevelGrader({
               </div>
 
               {/* Quick Tag Pills */}
-              <div className="space-y-1.5">
-                <Label className="text-xs font-bold text-slate-800">
+              <div className="space-y-2">
+                <Label className="text-xs sm:text-sm font-extrabold text-slate-800">
                   {category === "PRAISE" ? "Nhãn khen ngợi / Điểm sáng (Tag):" : "Nhãn lỗi chi tiết (Tag):"}
                 </Label>
-                <div className="flex flex-wrap gap-1.5 p-2 border border-slate-200 rounded-xl bg-slate-50/50">
+                <div className="flex flex-wrap gap-2 p-3 border border-slate-200 rounded-2xl bg-slate-50/50">
                   {PRESET_ERROR_TAGS[category].map((presetTag) => (
                     <button
                       key={presetTag}
@@ -388,7 +392,7 @@ export function SentenceLevelGrader({
                       disabled={readOnly}
                       onClick={() => setTag(presetTag)}
                       className={cn(
-                        "text-xs px-2.5 py-1 rounded-lg border font-medium transition-all text-left",
+                        "text-xs sm:text-sm px-3 py-1.5 rounded-xl border font-medium transition-all text-left",
                         tag === presetTag
                           ? category === "PRAISE"
                             ? "bg-emerald-600 text-white border-emerald-600 font-bold shadow-2xs"
@@ -404,17 +408,17 @@ export function SentenceLevelGrader({
                   value={tag}
                   onChange={(e) => setTag(e.target.value)}
                   placeholder={category === "PRAISE" ? "Hoặc tự gõ nhãn khen khác..." : "Hoặc tự gõ nhãn lỗi khác..."}
-                  className="h-8 text-xs mt-1.5 bg-white border-slate-200"
+                  className="h-9 sm:h-10 text-xs sm:text-sm mt-2 bg-white border-slate-200 rounded-xl"
                   disabled={readOnly}
                 />
               </div>
 
-              {/* 2 Cột: Ghi chú của GV & Gợi ý viết lại */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* 2 Cột Rộng Rãi: Ghi chú của GV & Gợi ý viết lại */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-1">
                 {/* Teacher Note */}
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-bold text-slate-800">
-                    {category === "PRAISE" ? "Lời khen & Nhận xét (Praise Note):" : "Ghi chú của giáo viên (Note):"}
+                <div className="space-y-2">
+                  <Label className="text-xs sm:text-sm font-extrabold text-slate-800">
+                    {category === "PRAISE" ? "Lời khen & Nhận xét của giáo viên (Praise Note):" : "Ghi chú & Chỉ lỗi của giáo viên (Note):"}
                   </Label>
                   <Textarea
                     value={note}
@@ -424,16 +428,16 @@ export function SentenceLevelGrader({
                         ? "Khen ngợi cách dùng từ, cấu trúc nâng cao, lập luận tự nhiên..."
                         : "Chỉ rõ điểm sai hoặc lưu ý ngữ pháp..."
                     }
-                    rows={3}
-                    className="text-xs border-slate-200 bg-white leading-relaxed focus-visible:ring-1 focus-visible:ring-blue-500"
+                    rows={4}
+                    className="min-h-[120px] text-xs sm:text-sm border-slate-200 bg-white leading-relaxed focus-visible:ring-1 focus-visible:ring-blue-500 rounded-xl p-3"
                     disabled={readOnly}
                   />
                 </div>
 
                 {/* Suggested Rewrite */}
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-bold text-emerald-800 flex items-center gap-1">
-                    <Lightbulb className="h-3.5 w-3.5 text-emerald-600" />
+                <div className="space-y-2">
+                  <Label className="text-xs sm:text-sm font-extrabold text-emerald-800 flex items-center gap-1.5">
+                    <Lightbulb className="h-4 w-4 text-emerald-600" />
                     <span>
                       {category === "PRAISE"
                         ? "Gợi ý cách viết nâng cao hơn (Optional Upgrade):"
@@ -448,8 +452,8 @@ export function SentenceLevelGrader({
                         ? "(Tùy chọn) Gợi ý cách diễn đạt band 8.0+ cao cấp hơn..."
                         : "Gõ câu viết lại mẫu để học sinh tham khảo..."
                     }
-                    rows={3}
-                    className="text-xs border-emerald-300 bg-emerald-50/30 text-slate-900 leading-relaxed focus-visible:ring-1 focus-visible:ring-emerald-500"
+                    rows={4}
+                    className="min-h-[120px] text-xs sm:text-sm border-emerald-300 bg-emerald-50/30 text-slate-900 leading-relaxed focus-visible:ring-1 focus-visible:ring-emerald-500 rounded-xl p-3"
                     disabled={readOnly}
                   />
                 </div>
@@ -457,29 +461,29 @@ export function SentenceLevelGrader({
             </div>
           )}
 
-          <DialogFooter className="flex items-center justify-between gap-2 sm:justify-between pt-3 border-t border-slate-100">
+          <DialogFooter className="flex items-center justify-between gap-2 sm:justify-between pt-4 border-t border-slate-100">
             {feedbackMap.has(activeSentenceIndex || 0) && !readOnly ? (
               <Button
                 type="button"
                 variant="destructive"
                 size="sm"
                 onClick={handleDeleteSentenceFeedback}
-                className="h-8 text-xs gap-1 font-semibold"
+                className="h-9 sm:h-10 text-xs sm:text-sm gap-1.5 font-semibold rounded-xl"
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <Trash2 className="h-4 w-4" />
                 <span>Xóa ghi chú câu này</span>
               </Button>
             ) : (
               <div />
             )}
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
                 onClick={() => setActiveSentenceIndex(null)}
-                className="h-8 text-xs font-medium text-slate-600"
+                className="h-9 sm:h-10 text-xs sm:text-sm font-medium text-slate-600 rounded-xl px-4"
               >
                 Đóng
               </Button>
@@ -488,9 +492,9 @@ export function SentenceLevelGrader({
                   type="button"
                   size="sm"
                   onClick={handleSaveSentenceFeedback}
-                  className="h-8 text-xs font-bold gap-1 bg-blue-600 hover:bg-blue-700 text-white shadow-xs px-4"
+                  className="h-9 sm:h-10 text-xs sm:text-sm font-extrabold gap-1.5 bg-blue-600 hover:bg-blue-700 text-white shadow-xs px-6 rounded-xl"
                 >
-                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  <CheckCircle2 className="h-4 w-4" />
                   <span>Lưu nhận xét</span>
                 </Button>
               )}
