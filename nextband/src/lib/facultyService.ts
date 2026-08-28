@@ -25,7 +25,6 @@ export const INITIAL_FACULTY_SEED: FacultyProfile = {
   ielts_badge: "8.0",
   ielts_badge_sub: "Listening & Reading 8.5",
   achievements: [
-    "IELTS 8.0 Academic (Listening 8.5, Reading 8.5) — Verified Test Report Form",
     "Tác giả khung năng lực 7 cấp bậc (ARIS-7) & phương pháp đào tạo The ARIS Way",
     "Hơn 5 năm kinh nghiệm giảng dạy & chuẩn hóa tiêu chuẩn chấm chữa trên NextBand",
     "Cử nhân Sư phạm Tiếng Anh, chuyên sâu phương pháp luận khảo thí quốc tế",

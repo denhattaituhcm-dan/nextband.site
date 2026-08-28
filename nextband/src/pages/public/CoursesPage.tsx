@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SectionContainer } from "@/components/public/SectionContainer";
-import { CoursePricingCard } from "@/components/public/CoursePricingCard";
+import { CourseRoadmapRow } from "@/components/public/CourseRoadmapRow";
 import { TrustValueStrip } from "@/components/public/TrustValueStrip";
 import { QuickTrialModal } from "@/components/public/QuickTrialModal";
 import { Button } from "@/components/ui/button";
@@ -82,48 +82,69 @@ export default function CoursesPage() {
       {/* 4 Trust Points Strip */}
       <TrustValueStrip />
 
-      {/* Pathway 1: Giai Đoạn Xây Nền Năng Lực (3 Khóa) */}
+      {/* 5-Stage Complete Roadmap Section */}
       <SectionContainer
-        badge="Giai Đoạn 1: Xây Nền Năng Lực"
-        title="Chặng Xây Nền: Phát âm, Từ vựng &amp; Cấu trúc câu"
+        badge="Lộ Trình Bậc Thang Tuyến Tính"
+        title="Hành Trình 5 Chặng: Từ Mất Gốc Đến Chinh Phục 6.5+"
+        description="Mỗi chặng được thiết kế khép kín chuẩn ARIS-7, tập trung đúng trọng tâm kiến thức và kỹ năng cần bứt phá cho từng ngưỡng điểm."
         background="default"
       >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 text-left">
-          <CoursePricingCard
+        {/* Quick jump navigation pills */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground mr-1 hidden sm:inline">
+            Chọn band mục tiêu:
+          </span>
+          {[
+            { label: "Tất cả", targetId: "course-starter" },
+            { label: "Mất gốc → 3.0", targetId: "course-starter" },
+            { label: "3.0 → 4.0", targetId: "course-dreamer" },
+            { label: "4.0 → 5.0", targetId: "course-builder" },
+            { label: "5.0 → 6.0", targetId: "course-master" },
+            { label: "6.0 → 6.5+", targetId: "course-leader" },
+          ].map((item) => (
+            <button
+              key={item.label}
+              type="button"
+              onClick={() => {
+                const el = document.getElementById(item.targetId);
+                if (el) {
+                  el.scrollIntoView({ behavior: "smooth", block: "center" });
+                }
+              }}
+              className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-muted/80 hover:bg-brand-blue hover:text-white text-foreground/80 border border-border/70 transition-all duration-200"
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Linear Roadmap Rows from Starter to Leader */}
+        <div className="space-y-6 sm:space-y-7 max-w-5xl mx-auto">
+          <CourseRoadmapRow
             course={COURSE_CATALOG.starter}
             onTrialClick={handleOpenTrial}
             onDetailClick={handleOpenDetail}
           />
 
-          <CoursePricingCard
+          <CourseRoadmapRow
             course={COURSE_CATALOG.dreamer}
             onTrialClick={handleOpenTrial}
             onDetailClick={handleOpenDetail}
           />
 
-          <CoursePricingCard
+          <CourseRoadmapRow
             course={COURSE_CATALOG.builder}
             onTrialClick={handleOpenTrial}
             onDetailClick={handleOpenDetail}
           />
-        </div>
-      </SectionContainer>
 
-      {/* Pathway 2: Giai Đoạn Bứt Phá Band Điểm (2 Khóa) */}
-      <SectionContainer
-        badge="Giai Đoạn 2: Bứt Phá Điểm Số"
-        title="Chặng Chuyên Sâu: Viết luận, Phản xạ &amp; Tư duy phản biện"
-        description="Huấn luyện phương pháp The ARIS Way để làm chủ các dạng đề nâng cao và tối ưu hóa điểm số trong phòng thi IELTS thực tế."
-        background="muted"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left max-w-4xl mx-auto">
-          <CoursePricingCard
+          <CourseRoadmapRow
             course={COURSE_CATALOG.master}
             onTrialClick={handleOpenTrial}
             onDetailClick={handleOpenDetail}
           />
 
-          <CoursePricingCard
+          <CourseRoadmapRow
             course={COURSE_CATALOG.leader}
             onTrialClick={handleOpenTrial}
             onDetailClick={handleOpenDetail}

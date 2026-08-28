@@ -77,7 +77,7 @@ export function FacultyDrawer({
       setIeltsBadge("8.0");
       setIeltsBadgeSub("Listening & Reading 8.5");
       setAchievementsText(
-        "IELTS 8.0 Academic (Listening 8.5, Reading 8.5) — Verified Test Report Form\nTác giả khung năng lực 7 cấp bậc (ARIS-7) & phương pháp đào tạo The ARIS Way\nHơn 5 năm kinh nghiệm giảng dạy & chuẩn hóa tiêu chuẩn chấm chữa trên NextBand\nCử nhân Sư phạm Tiếng Anh, chuyên sâu phương pháp luận khảo thí quốc tế"
+        "Tác giả khung năng lực 7 cấp bậc (ARIS-7) & phương pháp đào tạo The ARIS Way\nHơn 5 năm kinh nghiệm giảng dạy & chuẩn hóa tiêu chuẩn chấm chữa trên NextBand\nCử nhân Sư phạm Tiếng Anh, chuyên sâu phương pháp luận khảo thí quốc tế"
       );
       setTrfImageUrl("");
       setIsPublished(true);

@@ -585,103 +585,112 @@ export default function AssessmentPage() {
         </div>
       </SectionContainer>
 
-      {/* Quick Clean-Room Assessment Start Dialog Modal */}
+      {/* Quick Clean-Room Assessment Start Dialog Modal (Zalo-inspired 2-tier Card & Pill CTA) */}
       <Dialog open={isStartModalOpen} onOpenChange={setIsStartModalOpen}>
-        <DialogContent className="sm:max-w-[460px] p-6 sm:p-8 rounded-3xl bg-background border border-border">
-          <DialogHeader className="space-y-2 text-left">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-blue-soft text-brand-blue border border-brand-blue/20 text-xs font-bold w-fit">
-              <ShieldCheck className="w-3.5 h-3.5" />
+        <DialogContent className="sm:max-w-[480px] p-0 rounded-3xl bg-card border border-border overflow-hidden shadow-2xl">
+          {/* Tier 1: Top Warm Banner */}
+          <div className="relative p-5 sm:p-6 bg-gradient-to-br from-amber-100/70 via-orange-50/50 to-amber-50/30 border-b border-amber-200/50 text-left">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 text-amber-800 border border-amber-500/30 text-[11px] font-extrabold uppercase tracking-wider mb-2.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-700" />
               <span>Clean-Room IELTS Assessment</span>
             </div>
-            <DialogTitle className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
+            <h3 className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
               {startExamTitle}
-            </DialogTitle>
-            <DialogDescription className="text-xs sm:text-sm text-foreground/75 leading-relaxed">
-              Nhập thông tin thí sinh để khởi tạo phòng thi trực tuyến. Hệ thống sẽ tự động chấm điểm và lập báo cáo phân tích năng lực.
-            </DialogDescription>
-          </DialogHeader>
-
-          <form onSubmit={handleConfirmStartAssessment} className="space-y-4 pt-2">
-            <div className="space-y-1.5 text-left">
-              <Label htmlFor="start-name" className="text-xs font-bold text-foreground uppercase tracking-wider">
-                Họ và tên thí sinh <span className="text-brand-red">*</span>
-              </Label>
-              <Input
-                id="start-name"
-                required
-                placeholder="Ví dụ: Nguyễn Văn A"
-                value={startCandidateName}
-                onChange={(e) => setStartCandidateName(e.target.value)}
-                className="h-11 rounded-xl border-border bg-card text-foreground"
-              />
+            </h3>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-foreground/75 mt-1.5">
+              <span className="font-semibold text-amber-800">⏱️ Thời lượng: 60 phút</span>
+              <span>•</span>
+              <span>Miễn phí 100%</span>
+              <span>•</span>
+              <span>Phân tích lỗi sai qua Zalo</span>
             </div>
+          </div>
 
-            <div className="space-y-1.5 text-left">
-              <Label htmlFor="start-phone" className="text-xs font-bold text-foreground uppercase tracking-wider">
-                Số điện thoại có Zalo (để nhận kết quả test) <span className="text-brand-red">*</span>
-              </Label>
-              <Input
-                id="start-phone"
-                required
-                type="tel"
-                placeholder="Nhập SĐT có Zalo (Ví dụ: 0933 319 693)"
-                value={startCandidatePhone}
-                onChange={(e) => setStartCandidatePhone(e.target.value)}
-                className="h-11 rounded-xl border-border bg-card text-foreground"
-              />
-              <p className="text-[11px] text-muted-foreground leading-normal">
-                * Giáo viên ARIS sẽ gửi bài chấm chi tiết và nhận xét qua Zalo theo số này.
-              </p>
-            </div>
+          {/* Tier 2: Form & Pill CTA */}
+          <div className="p-5 sm:p-6 space-y-4">
+            <form onSubmit={handleConfirmStartAssessment} className="space-y-3.5">
+              <div className="space-y-1 text-left">
+                <Label htmlFor="start-name" className="text-xs font-bold text-foreground">
+                  Họ và tên thí sinh <span className="text-brand-red">*</span>
+                </Label>
+                <Input
+                  id="start-name"
+                  required
+                  placeholder="Ví dụ: Nguyễn Văn A"
+                  value={startCandidateName}
+                  onChange={(e) => setStartCandidateName(e.target.value)}
+                  className="h-10 rounded-xl border-border bg-card text-foreground text-sm"
+                />
+              </div>
 
-            <div className="space-y-1.5 text-left">
-              <Label htmlFor="start-band" className="text-xs font-bold text-foreground uppercase tracking-wider">
-                Mục tiêu Band điểm
-              </Label>
-              <Select value={startTargetBand} onValueChange={setStartTargetBand}>
-                <SelectTrigger id="start-band" className="h-11 rounded-xl border-border bg-card text-foreground">
-                  <SelectValue placeholder="Chọn mục tiêu" />
-                </SelectTrigger>
-                <SelectContent className="rounded-xl">
-                  <SelectItem value="IELTS 5.0">IELTS 5.0 (Cơ bản / Tốt nghiệp ĐH)</SelectItem>
-                  <SelectItem value="IELTS 5.5">IELTS 5.5 (Sơ trung cấp)</SelectItem>
-                  <SelectItem value="IELTS 6.0">IELTS 6.0 (Xét tuyển ĐH / Du học)</SelectItem>
-                  <SelectItem value="IELTS 6.5">IELTS 6.5 (Tiêu chuẩn đầu ra)</SelectItem>
-                  <SelectItem value="IELTS 7.0">IELTS 7.0 (Chuyên sâu)</SelectItem>
-                  <SelectItem value="IELTS 7.5+">IELTS 7.5+ (Xuất sắc / Định cư)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+              <div className="space-y-1 text-left">
+                <Label htmlFor="start-phone" className="text-xs font-bold text-foreground">
+                  Số điện thoại có Zalo (để nhận kết quả test) <span className="text-brand-red">*</span>
+                </Label>
+                <Input
+                  id="start-phone"
+                  required
+                  type="tel"
+                  placeholder="Nhập SĐT có Zalo (Ví dụ: 0933 319 693)"
+                  value={startCandidatePhone}
+                  onChange={(e) => setStartCandidatePhone(e.target.value)}
+                  className="h-10 rounded-xl border-border bg-card text-foreground text-sm"
+                />
+                <p className="text-[11px] text-muted-foreground leading-normal">
+                  * Giáo viên ARIS sẽ gửi bài chấm chi tiết và nhận xét qua Zalo theo số này.
+                </p>
+              </div>
 
-            <div className="pt-2 space-y-2">
-              <Button
-                type="submit"
-                disabled={isStartingSession}
-                className="w-full h-12 rounded-xl font-extrabold text-sm sm:text-base bg-brand-red hover:bg-brand-red-hover text-white shadow-sm transition-all gap-2"
-              >
-                {isStartingSession ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Đang kết nối phòng thi...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Vào phòng thi khảo thí ngay</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </>
-                )}
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => setIsStartModalOpen(false)}
-                disabled={isStartingSession}
-                className="w-full h-9 rounded-xl text-xs text-muted-foreground hover:text-foreground"
-              >
-                Hủy bỏ
-              </Button>
-            </div>
-          </form>
+              <div className="space-y-1 text-left">
+                <Label htmlFor="start-band" className="text-xs font-bold text-foreground">
+                  Mục tiêu Band điểm
+                </Label>
+                <Select value={startTargetBand} onValueChange={setStartTargetBand}>
+                  <SelectTrigger id="start-band" className="h-10 rounded-xl border-border bg-card text-foreground text-sm">
+                    <SelectValue placeholder="Chọn mục tiêu" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl">
+                    <SelectItem value="IELTS 5.0">IELTS 5.0 (Cơ bản / Tốt nghiệp ĐH)</SelectItem>
+                    <SelectItem value="IELTS 5.5">IELTS 5.5 (Sơ trung cấp)</SelectItem>
+                    <SelectItem value="IELTS 6.0">IELTS 6.0 (Xét tuyển ĐH / Du học)</SelectItem>
+                    <SelectItem value="IELTS 6.5">IELTS 6.5 (Tiêu chuẩn đầu ra)</SelectItem>
+                    <SelectItem value="IELTS 7.0">IELTS 7.0 (Chuyên sâu)</SelectItem>
+                    <SelectItem value="IELTS 7.5+">IELTS 7.5+ (Xuất sắc / Định cư)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="pt-2 space-y-2">
+                <Button
+                  type="submit"
+                  disabled={isStartingSession}
+                  className="w-full h-12 rounded-full font-bold text-sm bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800 border border-blue-200/80 shadow-xs transition-all gap-2 cursor-pointer active:scale-[0.99]"
+                >
+                  {isStartingSession ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
+                      <span>Đang kết nối phòng thi...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-4 h-4 fill-current text-blue-600" />
+                      <span>Vào phòng thi khảo thí ngay</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setIsStartModalOpen(false)}
+                  disabled={isStartingSession}
+                  className="w-full h-8 rounded-full text-xs text-muted-foreground hover:text-foreground"
+                >
+                  Hủy bỏ
+                </Button>
+              </div>
+            </form>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

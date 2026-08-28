@@ -58,6 +58,19 @@ export class TabLeaseManager {
     return this.hasLease;
   }
 
+  public async recordLocalDraftSave(version?: number): Promise<void> {
+    if (this.channel && this.hasLease) {
+      try {
+        this.channel.postMessage({
+          type: "DRAFT_SAVED",
+          submissionId: this.submissionId,
+          tabId: this.tabId,
+          version,
+        });
+      } catch {}
+    }
+  }
+
   public subscribe(listener: LeaseStatusListener): () => void {
     this.listeners.add(listener);
     listener(this.hasLease, this.readStoredLease());

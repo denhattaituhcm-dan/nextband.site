@@ -102028,20 +102028,26 @@ var ExamSubmissionService = class {
         });
         const answerText = typeof ans.answerText === "object" ? JSON.stringify(ans.answerText) : ans.answerText;
         if (existingAns) {
+          const updateData = {};
+          if (answerText !== void 0) {
+            updateData.answerText = answerText;
+          }
+          if (typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "") {
+            updateData.audioUrl = ans.audioUrl.trim();
+          } else if (ans.clearAudio === true || ans.audioUrl === null) {
+            updateData.audioUrl = null;
+          }
           await tx.answer.update({
             where: { id: existingAns.id },
-            data: {
-              answerText,
-              audioUrl: ans.audioUrl || null
-            }
+            data: updateData
           });
         } else {
           await tx.answer.create({
             data: {
               submissionId: id,
               questionId: ans.questionId,
-              answerText,
-              audioUrl: ans.audioUrl || null
+              answerText: answerText ?? null,
+              audioUrl: typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "" ? ans.audioUrl.trim() : null
             }
           });
         }
@@ -102172,21 +102178,28 @@ var ExamSubmissionService = class {
         });
         let savedAns;
         if (existingAns) {
+          const updateData = {
+            score: evalResult ? evalResult.score : existingAns.score
+          };
+          if (answerText !== void 0) {
+            updateData.answerText = answerText;
+          }
+          if (typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "") {
+            updateData.audioUrl = ans.audioUrl.trim();
+          } else if (ans.clearAudio === true || ans.audioUrl === null) {
+            updateData.audioUrl = null;
+          }
           savedAns = await tx.answer.update({
             where: { id: existingAns.id },
-            data: {
-              answerText,
-              audioUrl: ans.audioUrl || null,
-              score: evalResult ? evalResult.score : null
-            }
+            data: updateData
           });
         } else {
           savedAns = await tx.answer.create({
             data: {
               submissionId: id,
               questionId: ans.questionId,
-              answerText,
-              audioUrl: ans.audioUrl || null,
+              answerText: answerText ?? null,
+              audioUrl: typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "" ? ans.audioUrl.trim() : null,
               score: evalResult ? evalResult.score : null
             }
           });

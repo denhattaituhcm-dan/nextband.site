@@ -575,7 +575,7 @@ export default function TeacherWorkspace() {
     const hwTitle = String(currentHomework.title || "").toLowerCase();
     const secType = String(currentSubmissionDetail?.exam?.sections?.[0]?.sectionType || "").toLowerCase();
     const examType = String(currentSubmissionDetail?.exam?.examType || "").toLowerCase();
-    const hasAudio = resolvedAnswers.some((a) => (!!a.audioUrl && a.audioUrl.trim().length > 0) || isAudioFile(a.answerText));
+    const hasAudio = resolvedAnswers.some((a) => (!!a.audioUrl && a.audioUrl.trim().length > 0) || AudioStorageService.isAudio(a.answerText));
     return (
       hwType === "speaking" ||
       secType === "speaking" ||

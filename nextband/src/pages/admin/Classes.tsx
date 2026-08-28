@@ -27,6 +27,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectSeparator,
 } from "@/components/ui/select";
 import {
   DropdownMenu,
@@ -59,6 +60,10 @@ import {
   BookOpen,
   MapPin,
   Building2,
+  Crown,
+  Sparkles,
+  ArrowDownUp,
+  X,
 } from "lucide-react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -66,6 +71,112 @@ import { useAuth } from "@/hooks/useAuth";
 import { DataTablePagination } from "@/components/admin/DataTablePagination";
 import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
 import { getCourseBrand } from "@/lib/courseBrand";
+
+export interface LevelRoadmapConfig {
+  key: "leader" | "master" | "builder" | "dreamer" | "starter";
+  name: string;
+  band: string;
+  duration: string;
+  entry: string;
+  target: string;
+  theme: {
+    badgeClass: string;
+    borderClass: string;
+    bgSoftClass: string;
+    textClass: string;
+    dotClass: string;
+    durationBadgeClass: string;
+    accentHex: string;
+  };
+}
+
+export const IELTS_LEVEL_ROADMAP: LevelRoadmapConfig[] = [
+  {
+    key: "leader",
+    name: "KHÓA LEADER",
+    band: "6.0 → 6.5+",
+    duration: "10 TUẦN",
+    entry: "IELTS 6.0",
+    target: "Chinh phục 6.5+",
+    theme: {
+      badgeClass: "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800",
+      borderClass: "border-rose-200/80 dark:border-rose-900/60",
+      bgSoftClass: "bg-rose-50/40 dark:bg-rose-950/10",
+      textClass: "text-rose-700 dark:text-rose-300",
+      dotClass: "bg-rose-500",
+      durationBadgeClass: "bg-gradient-to-br from-red-600 to-rose-700 text-white shadow-xs",
+      accentHex: "#DC342D",
+    },
+  },
+  {
+    key: "master",
+    name: "KHÓA MASTER",
+    band: "5.0 → 6.0",
+    duration: "09 TUẦN",
+    entry: "IELTS 5.0",
+    target: "Bứt phá 6.0",
+    theme: {
+      badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800",
+      borderClass: "border-emerald-200/80 dark:border-emerald-900/60",
+      bgSoftClass: "bg-emerald-50/40 dark:bg-emerald-950/10",
+      textClass: "text-emerald-700 dark:text-emerald-300",
+      dotClass: "bg-emerald-500",
+      durationBadgeClass: "bg-gradient-to-br from-emerald-600 to-green-700 text-white shadow-xs",
+      accentHex: "#289B6E",
+    },
+  },
+  {
+    key: "builder",
+    name: "KHÓA BUILDER",
+    band: "4.0 → 5.0",
+    duration: "09 TUẦN",
+    entry: "IELTS 4.0",
+    target: "Nền tảng vững chắc",
+    theme: {
+      badgeClass: "bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-800",
+      borderClass: "border-orange-200/80 dark:border-orange-900/60",
+      bgSoftClass: "bg-orange-50/40 dark:bg-orange-950/10",
+      textClass: "text-orange-700 dark:text-orange-300",
+      dotClass: "bg-orange-500",
+      durationBadgeClass: "bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-xs",
+      accentHex: "#EE8722",
+    },
+  },
+  {
+    key: "dreamer",
+    name: "KHÓA DREAMER",
+    band: "3.0 → 4.0",
+    duration: "09 TUẦN",
+    entry: "IELTS 3.0",
+    target: "Xây nền tảng toàn diện",
+    theme: {
+      badgeClass: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800",
+      borderClass: "border-blue-200/80 dark:border-blue-900/60",
+      bgSoftClass: "bg-blue-50/40 dark:bg-blue-950/10",
+      textClass: "text-blue-700 dark:text-blue-300",
+      dotClass: "bg-blue-500",
+      durationBadgeClass: "bg-gradient-to-br from-blue-600 to-sky-700 text-white shadow-xs",
+      accentHex: "#2582D7",
+    },
+  },
+  {
+    key: "starter",
+    name: "KHÓA STARTER",
+    band: "ĐẦU RA 3.0",
+    duration: "09 TUẦN",
+    entry: "Các bạn mất gốc tiếng Anh",
+    target: "Đạt đầu ra 3.0",
+    theme: {
+      badgeClass: "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200 dark:bg-fuchsia-950/40 dark:text-fuchsia-300 dark:border-fuchsia-800",
+      borderClass: "border-fuchsia-200/80 dark:border-fuchsia-900/60",
+      bgSoftClass: "bg-fuchsia-50/40 dark:bg-fuchsia-950/10",
+      textClass: "text-fuchsia-700 dark:text-fuchsia-300",
+      dotClass: "bg-fuchsia-500",
+      durationBadgeClass: "bg-gradient-to-br from-fuchsia-600 to-pink-600 text-white shadow-xs",
+      accentHex: "#D83A94",
+    },
+  },
+];
 
 type SortField = "name" | "createdAt";
 
@@ -113,7 +224,8 @@ export default function AdminClasses() {
   }, [searchParams]);
 
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(100);
+  const [levelSortOrder, setLevelSortOrder] = useState<"desc" | "asc">("desc");
   const [sortField, setSortField] = useState<SortField>("createdAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const { toast } = useToast();
@@ -153,7 +265,12 @@ export default function AdminClasses() {
       pageSize,
     ],
     queryFn: () => {
-      const isActiveParam = statusFilter === "inactive" ? false : statusFilter === "all" ? undefined : true;
+      const isActiveParam =
+        statusFilter === "inactive"
+          ? false
+          : statusFilter === "all" || statusFilter.startsWith("course_")
+          ? undefined
+          : true;
       return classesApi.list({
         search: debouncedSearch || undefined,
         isActive: isActiveParam,
@@ -199,15 +316,60 @@ export default function AdminClasses() {
 
   const filteredClasses = useMemo(() => {
     let result = [...(rawClasses || [])];
-    if (statusFilter === "low-fill") {
+
+    // Client-side text search (covering className, teacher, branch, room, course title, brand name, band)
+    if (debouncedSearch) {
+      const q = debouncedSearch.toLowerCase().trim();
       result = result.filter((c: any) => {
-        const studentCount = c.studentsCount || c.student_count || c._count?.students || (c.students ? c.students.length : 0);
+        const courseMatch = courses.find(
+          (crs: any) => crs.id === (c.courseId || c.course_id || c.course?.id)
+        );
+        const courseTitle = (courseMatch?.title || c.course?.title || "").toLowerCase();
+        const brand = getCourseBrand(courseMatch || c.course || c.name);
+        const brandName = (brand.name || "").toLowerCase();
+        const brandBand = (brand.band || "").toLowerCase();
+        const className = (c.name || "").toLowerCase();
+        const teacherName = (c.teacher?.fullName || "").toLowerCase();
+        const branchName = (c.branch?.name || "").toLowerCase();
+        const roomName = (c.room?.name || "").toLowerCase();
+
+        return (
+          className.includes(q) ||
+          teacherName.includes(q) ||
+          branchName.includes(q) ||
+          roomName.includes(q) ||
+          courseTitle.includes(q) ||
+          brandName.includes(q) ||
+          brandBand.includes(q)
+        );
+      });
+    }
+
+    // Filter by course dropdown selection
+    if (statusFilter.startsWith("course_")) {
+      const targetCourseKey = statusFilter.replace("course_", "");
+      result = result.filter((c: any) => {
+        const courseMatch = courses.find(
+          (crs: any) => crs.id === (c.courseId || c.course_id || c.course?.id)
+        );
+        const brand = getCourseBrand(courseMatch || c.course || c.name);
+        return brand.key === targetCourseKey;
+      });
+    } else if (statusFilter === "active") {
+      result = result.filter((c: any) => c.isActive !== false);
+    } else if (statusFilter === "inactive") {
+      result = result.filter((c: any) => c.isActive === false);
+    } else if (statusFilter === "low-fill") {
+      result = result.filter((c: any) => {
+        const studentCount =
+          c.studentsCount || c.student_count || c._count?.students || (c.students ? c.students.length : 0);
         const capacity = c.room?.capacity || 15;
         return capacity > 0 && studentCount / capacity < 0.5;
       });
     } else if (statusFilter === "no_teacher") {
       result = result.filter((c: any) => !c.teacherId && !c.teacher?.id && !c.teacher?.fullName);
     }
+
     return result.sort((a: any, b: any) => {
       const mult = sortOrder === "asc" ? 1 : -1;
       if (sortField === "name") {
@@ -221,7 +383,41 @@ export default function AdminClasses() {
       }
       return 0;
     });
-  }, [rawClasses, sortField, sortOrder, statusFilter]);
+  }, [rawClasses, sortField, sortOrder, statusFilter, debouncedSearch, courses]);
+
+  const roadmapLevels = useMemo(() => {
+    return levelSortOrder === "asc"
+      ? [...IELTS_LEVEL_ROADMAP].reverse()
+      : IELTS_LEVEL_ROADMAP;
+  }, [levelSortOrder]);
+
+  const getClassesForLevel = (levelKey: string) => {
+    return filteredClasses.filter((c: any) => {
+      const courseMatch = courses.find(
+        (crs: any) => crs.id === (c.courseId || c.course_id || c.course?.id)
+      );
+      const brand = getCourseBrand(courseMatch || c.course || c.name);
+      return brand.key === levelKey;
+    });
+  };
+
+  const getDbCourseForLevel = (levelKey: string) => {
+    return courses.find((crs: any) => {
+      const brand = getCourseBrand(crs);
+      return brand.key === levelKey;
+    });
+  };
+
+  const otherClasses = useMemo(() => {
+    const coreKeys = new Set<string>(IELTS_LEVEL_ROADMAP.map((l) => l.key));
+    return filteredClasses.filter((c: any) => {
+      const courseMatch = courses.find(
+        (crs: any) => crs.id === (c.courseId || c.course_id || c.course?.id)
+      );
+      const brand = getCourseBrand(courseMatch || c.course || c.name);
+      return !coreKeys.has(brand.key);
+    });
+  }, [filteredClasses, courses]);
 
   const createMutation = useMutation({
     mutationFn: async (body: typeof emptyForm) => {
@@ -340,11 +536,15 @@ export default function AdminClasses() {
     </TableHead>
   );
 
-  const openCreate = () => {
+  const openCreate = (defaultCourseId?: string) => {
     setEditingClass(null);
     const defaultBranchId = selectedBranch !== "ALL" ? selectedBranch : (primaryBranch?.id || branches[0]?.id || "");
+    const matchedCourse = courses.find((c: any) => c.id === defaultCourseId);
+    const inferredSessions = matchedCourse?.totalLessons || matchedCourse?.lessons?.length || 27;
     setForm({
       ...emptyForm,
+      courseId: defaultCourseId || "",
+      totalSessions: inferredSessions,
       branchId: defaultBranchId,
       teacherId: !isAdmin && isTeacher ? (user?.id || "") : "",
     });
@@ -448,6 +648,184 @@ export default function AdminClasses() {
     }
   };
 
+  const renderClassRow = (cls: any) => {
+    const totalSessions = cls.totalSessions || 27;
+    const currentHw = cls.completedSessions || cls.homeworkCount || 0;
+    const progressPercent =
+      totalSessions > 0
+        ? Math.min(100, Math.round((currentHw / totalSessions) * 100))
+        : 0;
+    const pendingCount = cls.pendingSubmissionsCount || 0;
+
+    const courseMatch = courses.find(
+      (c: any) => c.id === (cls.courseId || cls.course_id || cls.course?.id)
+    );
+    const brand = getCourseBrand(courseMatch || cls.course || cls.name);
+
+    return (
+      <TableRow
+        key={cls.id}
+        tabIndex={0}
+        role="button"
+        className="cursor-pointer hover:bg-muted/50 focus:bg-muted/60 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors group"
+        onClick={() => navigate(`/admin/classes/${cls.id}`)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            navigate(`/admin/classes/${cls.id}`);
+          }
+        }}
+      >
+        <TableCell className="font-semibold text-slate-900 dark:text-slate-100">
+          <div className="flex items-center gap-3">
+            <div
+              className={`h-9 w-9 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 border shadow-2xs ${brand.avatarClass}`}
+              title={`${brand.name} (${brand.band})`}
+            >
+              {brand.code}
+            </div>
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="group-hover:text-primary transition-colors font-semibold truncate">
+                  {cls.name}
+                </span>
+                {cls.isActive === false && (
+                  <Badge
+                    variant="outline"
+                    className="text-[10px] text-muted-foreground py-0 px-1.5 h-4"
+                  >
+                    Tạm dừng
+                  </Badge>
+                )}
+              </div>
+              <div className="flex items-center gap-1.5 mt-0.5 text-xs">
+                <span className={`font-semibold text-[11px] ${brand.textClass}`}>
+                  {brand.name}
+                </span>
+                {brand.band && (
+                  <span className="text-[10px] text-muted-foreground font-mono">
+                    • {brand.band}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </TableCell>
+        <TableCell>
+          {cls.branch ? (
+            <div className="flex flex-col gap-0.5">
+              <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1">
+                <MapPin className="h-3 w-3 text-emerald-600" />
+                {cls.branch.name}
+              </span>
+              {cls.room && (
+                <span className="text-[11px] text-muted-foreground">
+                  {cls.room.name}
+                </span>
+              )}
+            </div>
+          ) : (
+            <span className="text-xs text-muted-foreground italic">Chưa gán</span>
+          )}
+        </TableCell>
+        <TableCell>
+          {cls.teacher?.fullName ? (
+            <div className="flex items-center gap-2">
+              <Avatar className="h-6 w-6">
+                <AvatarImage src={cls.teacher.avatarUrl} />
+                <AvatarFallback className="text-xs bg-emerald-100 text-emerald-800">
+                  {cls.teacher.fullName.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-sm font-medium">{cls.teacher.fullName}</span>
+            </div>
+          ) : (
+            <Badge variant="secondary" className="text-xs text-amber-700 bg-amber-50">
+              Chưa phân công
+            </Badge>
+          )}
+        </TableCell>
+        <TableCell>
+          <Badge variant="outline" className="gap-1.5 font-normal">
+            <Users className="h-3 w-3 text-muted-foreground" />
+            {cls._count?.students || 0} HV
+          </Badge>
+        </TableCell>
+        <TableCell>
+          <Badge
+            variant="secondary"
+            className="font-medium text-emerald-700 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-300"
+          >
+            HW {currentHw} / {totalSessions}
+          </Badge>
+        </TableCell>
+        <TableCell className="w-36">
+          <div className="space-y-1">
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>{progressPercent}%</span>
+            </div>
+            <Progress value={progressPercent} className="h-1.5" />
+          </div>
+        </TableCell>
+        <TableCell>
+          {pendingCount > 0 ? (
+            <Badge className="bg-amber-500 hover:bg-amber-600 text-white gap-1 font-normal">
+              <Clock className="h-3 w-3" />
+              🔴 {pendingCount} cần chấm
+            </Badge>
+          ) : (
+            <Badge
+              variant="outline"
+              className="text-emerald-600 border-emerald-200 bg-emerald-50/50 gap-1 font-normal"
+            >
+              ✓ Đã hoàn thành
+            </Badge>
+          )}
+        </TableCell>
+        <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+          <div className="flex items-center justify-end gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 px-2.5 text-xs text-slate-700 hover:text-emerald-600 hover:bg-emerald-50"
+              onClick={() => navigate(`/admin/classes/${cls.id}`)}
+            >
+              Workspace
+              <ArrowRight className="ml-1 h-3.5 w-3.5" />
+            </Button>
+            {isAdmin && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => navigate(`/admin/classes/${cls.id}`)}>
+                    <BookOpen className="mr-2 h-4 w-4 text-emerald-600" />
+                    Mở Workspace
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => openEdit(cls)}>
+                    <Edit className="mr-2 h-4 w-4" />
+                    Sửa thông tin
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="text-destructive focus:text-destructive"
+                    onClick={() => setDeleteClass({ id: cls.id, name: cls.name })}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Xóa lớp
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
+        </TableCell>
+      </TableRow>
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -458,12 +836,12 @@ export default function AdminClasses() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Quản lý lớp học</h1>
             <p className="text-sm text-muted-foreground">
-              Vận hành và theo dõi tiến độ các lớp học trong hệ thống
+              Vận hành và theo dõi tiến độ các lớp học theo từng cấp độ chuẩn trong lộ trình
             </p>
           </div>
         </div>
         {isAdmin && (
-          <Button onClick={openCreate}>
+          <Button onClick={() => openCreate()}>
             <Plus className="mr-2 h-4 w-4" />
             Thêm lớp học
           </Button>
@@ -532,21 +910,76 @@ export default function AdminClasses() {
         <div className="relative w-full sm:w-80">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Tìm theo tên lớp, giáo viên..."
+            placeholder="Tìm theo tên lớp, giáo viên, khóa học..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-10"
           />
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <Filter className="h-4 w-4 text-muted-foreground" />
+        <div className="flex items-center gap-2.5 w-full sm:w-auto">
+          {/* Nút đảo chiều thứ tự lộ trình Level */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setLevelSortOrder(levelSortOrder === "desc" ? "asc" : "desc")}
+            className="h-10 text-xs gap-1.5 border-dashed text-muted-foreground hover:text-foreground hidden sm:flex"
+            title="Đổi thứ tự Level"
+          >
+            <ArrowDownUp className="h-3.5 w-3.5" />
+            <span>Lộ trình: {levelSortOrder === "desc" ? "6.5+ → 3.0" : "3.0 → 6.5+"}</span>
+          </Button>
+
+          {/* Dropdown tìm / lọc nâng cao theo khóa và trạng thái (ảnh 3) */}
+          <Filter className="h-4 w-4 text-muted-foreground hidden sm:inline-block" />
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Trạng thái" />
+            <SelectTrigger className="w-full sm:w-[250px] font-medium">
+              <SelectValue placeholder="Lọc danh sách" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tất cả lớp</SelectItem>
+            <SelectContent className="max-h-[380px]">
+              <SelectItem value="all">
+                <span className="font-semibold">Tất cả lớp</span>
+              </SelectItem>
+
+              <SelectSeparator />
+              <div className="px-2 py-1.5 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                Tìm theo khóa học
+              </div>
+              <SelectItem value="course_leader">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0" />
+                  <span className="font-medium text-rose-700 dark:text-rose-300">Khóa LEADER (6.0 → 6.5+)</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="course_master">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" />
+                  <span className="font-medium text-emerald-700 dark:text-emerald-300">Khóa MASTER (5.0 → 6.0)</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="course_builder">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0" />
+                  <span className="font-medium text-amber-700 dark:text-amber-300">Khóa BUILDER (4.0 → 5.0)</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="course_dreamer">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-blue-500 shrink-0" />
+                  <span className="font-medium text-blue-700 dark:text-blue-300">Khóa DREAMER (3.0 → 4.0)</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="course_starter">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-fuchsia-500 shrink-0" />
+                  <span className="font-medium text-fuchsia-700 dark:text-fuchsia-300">Khóa STARTER (Đầu ra 3.0)</span>
+                </div>
+              </SelectItem>
+
+              <SelectSeparator />
+              <div className="px-2 py-1.5 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                Tìm theo trạng thái
+              </div>
               <SelectItem value="active">🟢 Đang hoạt động</SelectItem>
               <SelectItem value="low-fill">🔴 Sĩ số thấp (&lt; 50%)</SelectItem>
               <SelectItem value="inactive">⚪ Đã kết thúc</SelectItem>
@@ -556,9 +989,39 @@ export default function AdminClasses() {
         </div>
       </div>
 
-      {(teacherIdParam || courseIdParam) && (
-        <div className="flex items-center gap-2 p-2.5 rounded-lg bg-primary/5 border border-primary/20 text-xs text-primary font-medium">
+      {(teacherIdParam || courseIdParam || statusFilter !== "all" || debouncedSearch) && (
+        <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-lg bg-primary/5 border border-primary/20 text-xs text-primary font-medium">
           <span>Đang lọc:</span>
+          {statusFilter.startsWith("course_") && (
+            <Badge variant="secondary" className="gap-1 bg-primary/10 text-primary">
+              Khóa: {IELTS_LEVEL_ROADMAP.find((l) => l.key === statusFilter.replace("course_", ""))?.name || statusFilter}
+            </Badge>
+          )}
+          {statusFilter === "active" && (
+            <Badge variant="secondary" className="gap-1 bg-primary/10 text-primary">
+              🟢 Đang hoạt động
+            </Badge>
+          )}
+          {statusFilter === "low-fill" && (
+            <Badge variant="secondary" className="gap-1 bg-primary/10 text-primary">
+              🔴 Sĩ số thấp (&lt; 50%)
+            </Badge>
+          )}
+          {statusFilter === "inactive" && (
+            <Badge variant="secondary" className="gap-1 bg-primary/10 text-primary">
+              ⚪ Đã kết thúc
+            </Badge>
+          )}
+          {statusFilter === "no_teacher" && (
+            <Badge variant="secondary" className="gap-1 bg-primary/10 text-primary">
+              ⚠️ Chưa có giáo viên
+            </Badge>
+          )}
+          {debouncedSearch && (
+            <Badge variant="secondary" className="gap-1 bg-primary/10 text-primary">
+              Từ khóa: "{debouncedSearch}"
+            </Badge>
+          )}
           {teacherIdParam && (
             <Badge variant="secondary" className="gap-1 bg-primary/10 text-primary">
               Giáo viên: {teachers.find((t: any) => t.id === teacherIdParam || t.user_id === teacherIdParam)?.fullName || teacherIdParam}
@@ -572,241 +1035,230 @@ export default function AdminClasses() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate("/admin/classes")}
-            className="h-6 text-xs px-2 ml-auto text-muted-foreground hover:text-foreground"
+            onClick={() => {
+              setStatusFilter("all");
+              setSearch("");
+              navigate("/admin/classes");
+            }}
+            className="h-6 text-xs px-2 ml-auto text-muted-foreground hover:text-foreground gap-1"
           >
+            <X className="h-3 w-3" />
             Xóa bộ lọc
           </Button>
         </div>
       )}
 
-      <div className="border rounded-xl bg-card shadow-sm overflow-hidden">
-        <Table>
-          <TableHeader className="bg-muted/40">
-            <TableRow>
-              <SortHeader field="name">Lớp học</SortHeader>
-              <TableHead>Cơ sở / Phòng</TableHead>
-              <TableHead>Giáo viên</TableHead>
-              <TableHead>Học viên</TableHead>
-              <TableHead>Homework</TableHead>
-              <TableHead>Tiến độ</TableHead>
-              <TableHead>Cần chấm</TableHead>
-              <TableHead className="w-[140px] text-right">Thao tác</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={8} className="text-center py-10">
-                  <div className="flex items-center justify-center gap-2 text-muted-foreground">
-                    <Loader2 className="h-5 w-5 animate-spin text-emerald-600" />
-                    Đang tải danh sách lớp học...
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : isError ? (
-              <TableRow>
-                <TableCell colSpan={8} className="text-center py-10">
-                  <div className="flex flex-col items-center justify-center gap-2 text-destructive">
-                    <AlertCircle className="h-5 w-5" />
-                    <span>Không thể tải danh sách lớp học</span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => refetch()}
-                      className="mt-2 text-foreground"
-                    >
-                      Thử lại
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : filteredClasses.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={8}
-                  className="text-center py-12 text-muted-foreground"
+      {isLoading ? (
+        <div className="border rounded-xl bg-card p-12 text-center text-muted-foreground shadow-xs">
+          <div className="flex items-center justify-center gap-2">
+            <Loader2 className="h-5 w-5 animate-spin text-emerald-600" />
+            Đang tải danh sách lớp học...
+          </div>
+        </div>
+      ) : isError ? (
+        <div className="border rounded-xl bg-card p-12 text-center text-destructive shadow-xs">
+          <div className="flex flex-col items-center justify-center gap-2">
+            <AlertCircle className="h-5 w-5" />
+            <span>Không thể tải danh sách lớp học</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => refetch()}
+              className="mt-2 text-foreground"
+            >
+              Thử lại
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {roadmapLevels
+            .filter((level) => {
+              if (statusFilter.startsWith("course_")) {
+                return statusFilter === `course_${level.key}`;
+              }
+              return true;
+            })
+            .map((level) => {
+              const levelClasses = getClassesForLevel(level.key);
+              const matchedDbCourse = getDbCourseForLevel(level.key);
+
+              return (
+                <div
+                  key={level.key}
+                  className={`rounded-2xl border shadow-sm overflow-hidden transition-all bg-card ${level.theme.borderClass}`}
                 >
-                  Không tìm thấy lớp học nào phù hợp
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredClasses.map((cls: any) => {
-                const totalSessions = cls.totalSessions || 27;
-                const currentHw = cls.completedSessions || cls.homeworkCount || 0;
-                const progressPercent = totalSessions > 0 ? Math.min(100, Math.round((currentHw / totalSessions) * 100)) : 0;
-                const pendingCount = cls.pendingSubmissionsCount || 0;
-
-                const courseMatch = courses.find((c: any) => c.id === (cls.courseId || cls.course_id || cls.course?.id));
-                const brand = getCourseBrand(courseMatch || cls.course || cls.name);
-
-                return (
-                  <TableRow
-                    key={cls.id}
-                    tabIndex={0}
-                    role="button"
-                    className="cursor-pointer hover:bg-muted/50 focus:bg-muted/60 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition-colors group"
-                    onClick={() => navigate(`/admin/classes/${cls.id}`)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        navigate(`/admin/classes/${cls.id}`);
-                      }
-                    }}
+                  {/* Level Header Banner - Styled after Image 2 */}
+                  <div
+                    className={`p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b ${level.theme.bgSoftClass}`}
                   >
-                    <TableCell className="font-semibold text-slate-900 dark:text-slate-100">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`h-9 w-9 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 border shadow-2xs ${brand.avatarClass}`}
-                          title={`${brand.name} (${brand.band})`}
-                        >
-                          {brand.code}
-                        </div>
-                        <div className="flex flex-col min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="group-hover:text-primary transition-colors font-semibold truncate">
-                              {cls.name}
-                            </span>
-                            {cls.isActive === false && (
-                              <Badge variant="outline" className="text-[10px] text-muted-foreground py-0 px-1.5 h-4">Tạm dừng</Badge>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-1.5 mt-0.5 text-xs">
-                            <span className={`font-semibold text-[11px] ${brand.textClass}`}>
-                              {brand.name}
-                            </span>
-                            {brand.band && (
-                              <span className="text-[10px] text-muted-foreground font-mono">
-                                • {brand.band}
-                              </span>
-                            )}
-                          </div>
-                        </div>
+                    <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                      {/* Huy hiệu số tuần như ảnh 2 */}
+                      <div
+                        className={`flex flex-col items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-xl shrink-0 ${level.theme.durationBadgeClass}`}
+                      >
+                        <span className="text-base sm:text-lg font-black tracking-tight leading-none">
+                          {level.duration.split(" ")[0]}
+                        </span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider mt-0.5 opacity-90">
+                          {level.duration.split(" ")[1]}
+                        </span>
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      {cls.branch ? (
-                        <div className="flex flex-col gap-0.5">
-                          <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1">
-                            <MapPin className="h-3 w-3 text-emerald-600" />
-                            {cls.branch.name}
-                          </span>
-                          {cls.room && (
-                            <span className="text-[11px] text-muted-foreground">
-                              {cls.room.name}
-                            </span>
-                          )}
-                        </div>
-                      ) : (
-                        <span className="text-xs text-muted-foreground italic">Chưa gán</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {cls.teacher?.fullName ? (
-                        <div className="flex items-center gap-2">
-                          <Avatar className="h-6 w-6">
-                            <AvatarImage src={cls.teacher.avatarUrl} />
-                            <AvatarFallback className="text-xs bg-emerald-100 text-emerald-800">
-                              {cls.teacher.fullName.slice(0, 2).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="text-sm font-medium">{cls.teacher.fullName}</span>
-                        </div>
-                      ) : (
-                        <Badge variant="secondary" className="text-xs text-amber-700 bg-amber-50">
-                          Chưa phân công
-                        </Badge>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="gap-1.5 font-normal">
-                        <Users className="h-3 w-3 text-muted-foreground" />
-                        {cls._count?.students || 0} HV
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className="font-medium text-emerald-700 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-300">
-                        HW {currentHw} / 27
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="w-36">
-                      <div className="space-y-1">
-                        <div className="flex justify-between text-xs text-muted-foreground">
-                          <span>{progressPercent}%</span>
-                        </div>
-                        <Progress value={progressPercent} className="h-1.5" />
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {pendingCount > 0 ? (
-                        <Badge className="bg-amber-500 hover:bg-amber-600 text-white gap-1 font-normal">
-                          <Clock className="h-3 w-3" />
-                          🔴 {pendingCount} cần chấm
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="text-emerald-600 border-emerald-200 bg-emerald-50/50 gap-1 font-normal">
-                          ✓ Đã hoàn thành
-                        </Badge>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
-                      <div className="flex items-center justify-end gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 px-2.5 text-xs text-slate-700 hover:text-emerald-600 hover:bg-emerald-50"
-                          onClick={() => navigate(`/admin/classes/${cls.id}`)}
-                        >
-                          Workspace
-                          <ArrowRight className="ml-1 h-3.5 w-3.5" />
-                        </Button>
-                        {isAdmin && (
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
-                                <MoreVertical className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => navigate(`/admin/classes/${cls.id}`)}>
-                                <BookOpen className="mr-2 h-4 w-4 text-emerald-600" />
-                                Mở Workspace
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => openEdit(cls)}>
-                                <Edit className="mr-2 h-4 w-4" />
-                                Sửa thông tin
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                className="text-destructive focus:text-destructive"
-                                onClick={() => setDeleteClass({ id: cls.id, name: cls.name })}
-                              >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Xóa lớp
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })
-            )}
-          </TableBody>
-        </Table>
 
-        {data && (
-          <DataTablePagination
-            currentPage={page}
-            totalPages={totalPages}
-            pageSize={pageSize}
-            totalItems={total}
-            onPageChange={setPage}
-            onPageSizeChange={setPageSize}
-          />
-        )}
-      </div>
+                      {/* Tiêu đề cấp độ, Badge Band & Bullets */}
+                      <div className="space-y-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <div className="flex items-center gap-1.5">
+                            <Crown className={`h-4 w-4 sm:h-5 sm:w-5 ${level.theme.textClass}`} />
+                            <h2 className={`text-base sm:text-lg font-black tracking-tight ${level.theme.textClass}`}>
+                              {level.name}
+                            </h2>
+                          </div>
+
+                          <Badge
+                            variant="outline"
+                            className={`font-bold text-xs px-2.5 py-0.5 rounded-full ${level.theme.badgeClass}`}
+                          >
+                            {level.band}
+                          </Badge>
+
+                          <Badge
+                            variant="secondary"
+                            className="text-xs font-semibold"
+                          >
+                            {levelClasses.length > 0
+                              ? `${levelClasses.length} lớp học`
+                              : "0 lớp"}
+                          </Badge>
+                        </div>
+
+                        {/* Thông tin đầu vào & mục tiêu chuẩn theo ảnh 2 */}
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <span className={`w-1.5 h-1.5 rounded-full ${level.theme.dotClass}`} />
+                            <span><strong>Đầu vào:</strong> {level.entry}</span>
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <span className={`w-1.5 h-1.5 rounded-full ${level.theme.dotClass}`} />
+                            <span><strong>Mục tiêu:</strong> {level.target}</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Nút hành động nhanh trong Header */}
+                    <div className="flex items-center gap-2 shrink-0 self-end md:self-center">
+                      {isAdmin && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className={`h-8 text-xs font-semibold gap-1.5 bg-background hover:bg-background/80 ${level.theme.textClass} ${level.theme.borderClass}`}
+                          onClick={() => openCreate(matchedDbCourse?.id)}
+                        >
+                          <Plus className="h-3.5 w-3.5" />
+                          Thêm lớp {level.key.toUpperCase()}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Bảng danh sách lớp của Level hoặc Trạng thái trống (ảnh 2) */}
+                  {levelClasses.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader className="bg-muted/30">
+                          <TableRow>
+                            <SortHeader field="name">Lớp học</SortHeader>
+                            <TableHead>Cơ sở / Phòng</TableHead>
+                            <TableHead>Giáo viên</TableHead>
+                            <TableHead>Học viên</TableHead>
+                            <TableHead>Homework</TableHead>
+                            <TableHead>Tiến độ</TableHead>
+                            <TableHead>Cần chấm</TableHead>
+                            <TableHead className="w-[140px] text-right">Thao tác</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {levelClasses.map((cls: any) => renderClassRow(cls))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  ) : (
+                    /* Level chưa có lớp: Để trống trang nhã kèm nút mở lớp */
+                    <div className="py-9 px-4 text-center bg-card flex flex-col items-center justify-center gap-2 border-t border-dashed">
+                      <div className={`p-3 rounded-full bg-muted/60 ${level.theme.textClass}`}>
+                        <School className="h-6 w-6 opacity-60" />
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {debouncedSearch
+                          ? `Không tìm thấy lớp học nào khớp với "${debouncedSearch}" trong cấp độ này`
+                          : statusFilter !== "all" && !statusFilter.startsWith("course_")
+                          ? `Chưa có lớp học nào thỏa mãn bộ lọc trong cấp độ này`
+                          : (
+                            <>
+                              Chưa có lớp học nào thuộc <strong>{level.name}</strong> ({level.band})
+                            </>
+                          )}
+                      </p>
+                      {isAdmin && !debouncedSearch && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className={`text-xs gap-1.5 mt-1 font-semibold ${level.theme.textClass} hover:${level.theme.bgSoftClass}`}
+                          onClick={() => openCreate(matchedDbCourse?.id)}
+                        >
+                          <Plus className="h-3.5 w-3.5" />
+                          Mở lớp học đầu tiên cho {level.name}
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+          {/* Khối các lớp học khác / ngoài 5 level chính (nếu có) */}
+          {(!statusFilter.startsWith("course_") || statusFilter === "course_other") && otherClasses.length > 0 && (
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden bg-card">
+              <div className="p-4 sm:p-5 flex items-center justify-between border-b bg-slate-50/60 dark:bg-slate-900/20">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 font-bold">
+                    <BookOpen className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-base font-bold text-slate-800 dark:text-slate-200">
+                      Khóa học & Chuyên đề khác
+                    </h2>
+                    <p className="text-xs text-muted-foreground">
+                      Các lớp thuộc khóa bổ trợ, thi thử hoặc kiểm tra đầu vào
+                    </p>
+                  </div>
+                </div>
+                <Badge variant="secondary">{otherClasses.length} lớp học</Badge>
+              </div>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader className="bg-muted/30">
+                    <TableRow>
+                      <SortHeader field="name">Lớp học</SortHeader>
+                      <TableHead>Cơ sở / Phòng</TableHead>
+                      <TableHead>Giáo viên</TableHead>
+                      <TableHead>Học viên</TableHead>
+                      <TableHead>Homework</TableHead>
+                      <TableHead>Tiến độ</TableHead>
+                      <TableHead>Cần chấm</TableHead>
+                      <TableHead className="w-[140px] text-right">Thao tác</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {otherClasses.map((cls: any) => renderClassRow(cls))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <CreateEditClassDialog
         open={dialogOpen}
