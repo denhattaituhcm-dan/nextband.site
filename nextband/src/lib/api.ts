@@ -985,18 +985,22 @@ export function normalizeSubmissionData(data: any, examData?: any): any {
       grammar: number | null;
     } | null = null;
 
+    let sentenceFeedbacks: any[] = [];
     if (parsedFeedback && typeof parsedFeedback === "string" && parsedFeedback.startsWith("{")) {
       try {
         const json = JSON.parse(parsedFeedback);
         parsedFeedback = json.text || json.feedback || "";
+        sentenceFeedbacks = Array.isArray(json.sentenceFeedbacks) ? json.sentenceFeedbacks : [];
         ansErrorCategory = json.primaryErrorCategory || null;
         ansRevisionRequired = !!json.revisionRequired;
         if (json.criteriaScores && typeof json.criteriaScores === "object") {
           ansCriteriaScores = {
             taskResponse: json.criteriaScores.taskResponse != null ? Number(json.criteriaScores.taskResponse) : null,
             coherence: json.criteriaScores.coherence != null ? Number(json.criteriaScores.coherence) : null,
+            fluencyAndCoherence: json.criteriaScores.fluencyAndCoherence != null ? Number(json.criteriaScores.fluencyAndCoherence) : null,
             lexical: json.criteriaScores.lexical != null ? Number(json.criteriaScores.lexical) : null,
             grammar: json.criteriaScores.grammar != null ? Number(json.criteriaScores.grammar) : null,
+            pronunciation: json.criteriaScores.pronunciation != null ? Number(json.criteriaScores.pronunciation) : null,
           };
         }
         if (!primaryErrorCategory && ansErrorCategory) primaryErrorCategory = ansErrorCategory;
@@ -1016,7 +1020,9 @@ export function normalizeSubmissionData(data: any, examData?: any): any {
       answerText: a.answer_text || a.answerText || "",
       audioUrl: formatStorageUrl(a.audio_url || a.audioUrl),
       score: a.score != null ? Number(a.score) : null,
-      feedback: parsedFeedback,
+      feedback: a.feedback || "",
+      parsedText: parsedFeedback,
+      sentenceFeedbacks,
       primaryErrorCategory: ansErrorCategory,
       revisionRequired: ansRevisionRequired,
       criteriaScores: ansCriteriaScores,

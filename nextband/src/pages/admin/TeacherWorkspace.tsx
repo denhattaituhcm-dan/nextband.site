@@ -48,6 +48,7 @@ import {
 import { mapToProgressReportData } from "@/lib/progressReportMapper";
 import { WritingGrader } from "@/components/grading/WritingGrader";
 import { SpeakingGrader } from "@/components/grading/SpeakingGrader";
+import { ExamPreviewPanel } from "@/components/grading/ExamPreviewPanel";
 
 // Model Workbook Homework Item (Gắn với Buổi học / Lesson)
 interface WorkbookItem {
@@ -1023,8 +1024,17 @@ export default function TeacherWorkspace() {
             </div>
           ) : !currentHomework ? (
             <div className="h-full flex items-center justify-center p-8 text-center text-xs text-slate-400">
-              Chọn một bài tập trong sổ bài tập để chấm điểm.
+              Chọn một bài tập trong sổ bài tập để chấm điểm hoặc xem đề bài.
             </div>
+          ) : !currentHomework.submissionId || currentHomework.status === "unsubmitted" ? (
+            <ExamPreviewPanel
+              examId={currentHomework.id}
+              homeworkTitle={currentHomework.title}
+              studentName={currentStudent.fullName}
+              className={currentClass?.name || "Lớp IELTS"}
+              status={currentHomework.status}
+              dueDate={currentHomework.dueDate}
+            />
           ) : currentHomework.type === "speaking" ? (
             <SpeakingGrader
               submissionId={currentHomework.submissionId || ""}
