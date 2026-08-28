@@ -165,8 +165,8 @@ export function WritingGrader({
   const displayScore = useRubric
     ? overallBandPreview
     : directScore.trim()
-    ? `${parseFloat(directScore).toFixed(1)}`
-    : "Chưa nhập";
+    ? `Band ${parseFloat(directScore).toFixed(1)}`
+    : "—";
 
   const handleSave = async (finalize: boolean) => {
     if (!questionId) return;
@@ -401,29 +401,45 @@ export function WritingGrader({
 
         {/* RIGHT COLUMN (32%): GRADING CONTROLS (STICKY) */}
         <aside className="lg:col-span-4 h-full overflow-y-auto p-5 border-l border-slate-200 bg-white space-y-4 shadow-xs">
-          {/* OPTION BẬT / TẮT 4 TIÊU CHÍ IELTS */}
-          <Card className="border border-slate-200/80 shadow-2xs rounded-xl p-3.5 bg-slate-50/50">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                  <Award className="h-3.5 w-3.5 text-blue-600" />
-                  Chấm theo 4 tiêu chí IELTS
-                </Label>
-                <p className="text-[11px] text-slate-500">
-                  {useRubric ? "Bật cho bài luận (TR, CC, LR, GRA)" : "Tắt để cho điểm trực tiếp (bài viết câu)"}
-                </p>
-              </div>
-              <Switch
-                checked={useRubric}
-                onCheckedChange={(checked) => {
-                  setUseRubric(checked);
+          {/* PHƯƠNG THỨC CHẤM BÀI (Quick Band vs Chi Tiết 4 Tiêu Chí) */}
+          <div className="space-y-1.5 font-sans">
+            <Label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <Award className="h-3.5 w-3.5 text-blue-600" />
+              Phương thức chấm bài:
+            </Label>
+            <div className="grid grid-cols-2 p-1 bg-slate-100 rounded-xl border border-slate-200 gap-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setUseRubric(false);
                   setIsDirty(true);
                 }}
-              />
+                className={`py-1.5 px-2 text-xs font-extrabold rounded-lg transition-all text-center ${
+                  !useRubric
+                    ? "bg-white text-blue-700 shadow-xs border border-slate-200"
+                    : "text-slate-600 hover:text-slate-900 font-semibold"
+                }`}
+              >
+                Band Tổng Hợp (Quick Band)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setUseRubric(true);
+                  setIsDirty(true);
+                }}
+                className={`py-1.5 px-2 text-xs font-extrabold rounded-lg transition-all text-center ${
+                  useRubric
+                    ? "bg-white text-blue-700 shadow-xs border border-slate-200"
+                    : "text-slate-600 hover:text-slate-900 font-semibold"
+                }`}
+              >
+                Chi Tiết 4 Tiêu Chí
+              </button>
             </div>
-          </Card>
+          </div>
 
-          {/* NẾU BẬT: HIỆN RUBRIC CARD 4 TIÊU CHÍ */}
+          {/* NẾU CHỌN CHI TIẾT 4 TIÊU CHÍ: HIỆN RUBRIC CARD (TR, CC, LR, GRA) */}
           {useRubric ? (
             <WritingRubricCard
               scores={criteriaScores}
@@ -434,35 +450,24 @@ export function WritingGrader({
               disabled={isSubmitting}
             />
           ) : (
-            /* NẾU TẮT: HIỆN Ô NHẬP ĐIỂM TRỰC TIẾP CHO BÀI VIẾT CÂU */
-            <Card className="border border-slate-200/80 shadow-2xs rounded-xl p-4 space-y-3 bg-white">
-              <div className="flex items-center justify-between">
-                <Label className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+            /* NẾU CHỌN BAND TỔNG HỢP: HIỆN CHỌN BAND NHANH (4.0 - 9.0) DÀNH CHO BÀI VIẾT CÂU */
+            <Card className="border border-slate-200 shadow-2xs rounded-xl p-4 space-y-3 bg-white font-sans">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                <Label className="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
                   <Award className="h-4 w-4 text-blue-600" />
-                  Điểm số bài làm (Score / Band)
+                  Band Score bài làm (Thang 4.0 - 8.0)
                 </Label>
-                <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                  Bài viết câu
-                </span>
+                <div className="text-xs font-extrabold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-lg border border-blue-200">
+                  {directScore ? `Band ${directScore}` : "—"}
+                </div>
               </div>
 
               <div className="space-y-2">
-                <Input
-                  type="number"
-                  step="0.5"
-                  min="0"
-                  max="10"
-                  placeholder="Nhập điểm (Ví dụ: 8.0, 9.0 hoặc 10)..."
-                  value={directScore}
-                  onChange={(e) => {
-                    setDirectScore(e.target.value);
-                    setIsDirty(true);
-                  }}
-                  className="h-10 text-base font-bold font-mono text-blue-900 bg-slate-50 border-slate-200"
-                />
-                <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                  <span className="text-[10px] text-slate-400 font-medium">Chọn nhanh:</span>
-                  {["4.0", "4.5", "5.0", "5.5", "6.0", "6.5", "7.0", "7.5", "8.0", "8.5", "9.0", "10"].map((pt) => (
+                <p className="text-[11px] text-slate-500 font-medium">
+                  Đánh giá chất lượng tổng thể bài viết câu / dịch câu theo chuẩn IELTS Band.
+                </p>
+                <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-5 gap-2 pt-1">
+                  {["4.0", "4.5", "5.0", "5.5", "6.0", "6.5", "7.0", "7.5", "8.0"].map((pt) => (
                     <button
                       key={pt}
                       type="button"
@@ -470,13 +475,13 @@ export function WritingGrader({
                         setDirectScore(pt);
                         setIsDirty(true);
                       }}
-                      className={`px-2 py-0.5 text-[10px] font-bold rounded border transition-all ${
+                      className={`py-2 text-xs font-extrabold rounded-lg border transition-all ${
                         directScore === pt
-                          ? "bg-blue-600 text-white border-blue-600"
-                          : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                          ? "bg-blue-600 text-white border-blue-600 shadow-2xs scale-[1.02]"
+                          : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:border-slate-300"
                       }`}
                     >
-                      {pt}
+                      Band {pt}
                     </button>
                   ))}
                 </div>
