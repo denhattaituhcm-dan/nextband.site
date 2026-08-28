@@ -51,7 +51,13 @@ export default function AdminCourses() {
   const [sortOption, setSortOption] = useState<SortOption>("newest");
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [deleteCourse, setDeleteCourse] = useState<{ id: string; title: string; isLocked?: boolean } | null>(null);
+  const [deleteCourse, setDeleteCourse] = useState<{
+    id: string;
+    title: string;
+    isLocked?: boolean;
+    studentsCount?: number;
+    lessonsCount?: number;
+  } | null>(null);
 
   // Debounce search
   useEffect(() => {
@@ -101,15 +107,15 @@ export default function AdminCourses() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-courses"] });
       toast({
-        title: "Đã xóa vĩnh viễn khóa học",
-        variant: "destructive",
+        title: "Đã xóa khóa học",
+        description: "Khóa học đã được xóa thành công khỏi hệ thống.",
       });
       setDeleteCourse(null);
     },
     onError: (err: any) => {
       toast({
-        title: "Lỗi",
-        description: err.response?.data?.error || "Không thể xóa khóa học",
+        title: "Không thể xóa khóa học",
+        description: err.message || err.response?.data?.error || "Đã xảy ra lỗi khi xóa khóa học",
         variant: "destructive",
       });
     },
@@ -355,7 +361,23 @@ export default function AdminCourses() {
 
                         <DropdownMenuItem
                           className="text-red-600 focus:text-red-700 focus:bg-red-50 font-medium"
-                          onClick={() => setDeleteCourse({ id: course.id, title: course.title })}
+                          onClick={() => {
+                            if (course.isLocked) {
+                              toast({
+                                title: "Không thể xóa",
+                                description: "Khóa học đang bị khóa. Hãy mở khóa trước khi xóa.",
+                                variant: "destructive",
+                              });
+                              return;
+                            }
+                            setDeleteCourse({
+                              id: course.id,
+                              title: course.title,
+                              isLocked: course.isLocked,
+                              studentsCount: course.studentsCount ?? 0,
+                              lessonsCount: course.lessonsCount ?? 0,
+                            });
+                          }}
                         >
                           <Trash2 className="h-3.5 w-3.5 mr-2 text-red-600" />
                           Xóa khóa học
@@ -384,18 +406,43 @@ export default function AdminCourses() {
       </div>
 
       {/* DELETE CONFIRM DIALOG */}
-      {deleteCourse && (
-        <DeleteConfirmDialog
-          open={!!deleteCourse}
-          onOpenChange={(open) => !open && setDeleteCourse(null)}
-          title="Xóa chương trình đào tạo"
-          description={`Bạn có chắc chắn muốn xóa vĩnh viễn khóa học "${deleteCourse.title}"?`}
-          onConfirm={(payload) =>
-            deleteMutation.mutate({ id: deleteCourse.id, password: payload?.password || "" })
-          }
-          loading={deleteMutation.isPending}
-        />
-      )}
+      {deleteCourse && (() => {
+        const hasData = (deleteCourse.studentsCount ?? 0) > 0;
+        return (
+          <DeleteConfirmDialog
+            open={!!deleteCourse}
+            onOpenChange={(open) => !open && setDeleteCourse(null)}
+            title="Xóa khóa học?"
+            description={
+              <div className="space-y-3 text-sm text-foreground">
+                <p className="font-semibold text-base">{deleteCourse.title}</p>
+                <div className="rounded-md bg-muted/50 p-2.5 space-y-1.5 text-xs text-muted-foreground border">
+                  <div className="flex justify-between items-center">
+                    <span>Học viên đăng ký:</span>
+                    <span className={`font-semibold text-sm ${hasData ? "text-destructive" : "text-foreground"}`}>
+                      {deleteCourse.studentsCount ?? 0}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span>Bài tập / Đề thi:</span>
+                    <span className="font-semibold text-sm text-foreground">
+                      {deleteCourse.lessonsCount ?? 0}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            }
+            blocked={hasData}
+            blockedMessage="Không thể xóa khóa học vì đã có dữ liệu học tập."
+            confirmKeyword={deleteCourse.title}
+            confirmText="Xóa vĩnh viễn"
+            onConfirm={(payload) =>
+              deleteMutation.mutate({ id: deleteCourse.id, password: payload?.password || "" })
+            }
+            loading={deleteMutation.isPending}
+          />
+        );
+      })()}
     </div>
   );
 }

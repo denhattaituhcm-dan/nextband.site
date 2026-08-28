@@ -3621,9 +3621,10 @@ export function normalizeSession(s: any): CanonicalSessionDTO {
     id: adapted.id,
     classId: adapted.classId,
     sessionNumber: adapted.sessionNumber,
+    plannedDate: adapted.plannedDate,
     scheduledDate: adapted.plannedDate,
-    startTime: adapted.startTime || "00:00",
-    endTime: adapted.endTime || "00:00",
+    startTime: adapted.startTime || "18:00",
+    endTime: adapted.endTime || "20:00",
     status: adapted.status === "COMPLETED" ? "COMPLETED" : adapted.status === "CANCELLED" ? "CANCELLED" : "SCHEDULED",
     rescheduleReason: adapted.rescheduleReason || undefined,
     note: adapted.note || undefined,
@@ -3752,7 +3753,7 @@ export const sessionsApi = {
 
       const { data, error } = await supabase
         .from("class_sessions")
-        .insert(rows)
+        .upsert(rows, { onConflict: "class_id,session_number" })
         .select();
 
       if (error) throw error;

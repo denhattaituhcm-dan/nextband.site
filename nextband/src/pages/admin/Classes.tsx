@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { classesApi, usersApi, coursesApi, sessionsApi, generateSessionDates, roomsApi } from "@/lib/api";
+import { normalizeTimeToHHmm } from "@/adapters/session.adapter";
 import { useBranch } from "@/contexts/BranchContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -238,6 +239,7 @@ export default function AdminClasses() {
   } | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingClass, setEditingClass] = useState<any>(null);
+  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [form, setForm] = useState(emptyForm);
 
   useEffect(() => {
@@ -476,6 +478,22 @@ export default function AdminClasses() {
         endDate: body.endDate || null,
         isActive: body.isActive,
       });
+
+      // Synchronize/generate sessions if schedule is configured
+      if (body.startDate && body.weekdays.length > 0) {
+        try {
+          await sessionsApi.generateForClass(body.id, {
+            startDate: body.startDate,
+            weekdays: body.weekdays,
+            totalSessions: body.totalSessions || 27,
+            startTime: body.startTime || "18:00",
+            endTime: body.endTime || "20:00",
+          });
+        } catch (sessErr) {
+          console.warn("Could not sync sessions for updated class:", sessErr);
+        }
+      }
+
       return updated;
     },
     onSuccess: async (_data, variables) => {
@@ -538,6 +556,7 @@ export default function AdminClasses() {
 
   const openCreate = (defaultCourseId?: string) => {
     setEditingClass(null);
+    setIsLoadingDetails(false);
     const defaultBranchId = selectedBranch !== "ALL" ? selectedBranch : (primaryBranch?.id || branches[0]?.id || "");
     const matchedCourse = courses.find((c: any) => c.id === defaultCourseId);
     const inferredSessions = matchedCourse?.totalLessons || matchedCourse?.lessons?.length || 27;
@@ -553,6 +572,15 @@ export default function AdminClasses() {
 
   const openEdit = async (cls: any) => {
     setEditingClass(cls);
+    setIsLoadingDetails(true);
+
+    const initialStartDate = cls.startDate
+      ? String(cls.startDate).split("T")[0]
+      : "";
+    const initialEndDate = cls.endDate
+      ? String(cls.endDate).split("T")[0]
+      : "";
+
     const initialForm: ClassForm = {
       name: cls.name || "",
       description: cls.description || "",
@@ -560,53 +588,71 @@ export default function AdminClasses() {
       branchId: cls.branchId || cls.branch_id || cls.branch?.id || "",
       roomId: cls.roomId || cls.room_id || cls.room?.id || "",
       teacherId: cls.teacherId || cls.teacher_id || cls.teacher?.id || "",
-      startDate: cls.startDate
-        ? new Date(cls.startDate).toISOString().split("T")[0]
-        : "",
-      endDate: cls.endDate
-        ? new Date(cls.endDate).toISOString().split("T")[0]
-        : "",
+      startDate: initialStartDate,
+      endDate: initialEndDate,
       isActive: cls.isActive ?? true,
       weekdays: Array.isArray(cls.weekdays) ? cls.weekdays : [],
-      startTime: cls.startTime || "18:00",
-      endTime: cls.endTime || "20:00",
+      startTime: normalizeTimeToHHmm(cls.startTime, "18:00"),
+      endTime: normalizeTimeToHHmm(cls.endTime, "20:00"),
       totalSessions: cls.totalSessions ?? 27,
     };
     setForm(initialForm);
     setDialogOpen(true);
 
     try {
-      const [fullClass, sessions] = await Promise.all([
+      const [fullClass, sessionsList] = await Promise.all([
         classesApi.getById(cls.id).catch(() => null),
         sessionsApi.list(cls.id).catch(() => []),
       ]);
 
-      const weekdaysSet = new Set<number>();
-      let foundStartTime = initialForm.startTime;
-      let foundEndTime = initialForm.endTime;
+      const sessions: any[] = (Array.isArray(sessionsList) && sessionsList.length > 0)
+        ? sessionsList
+        : (Array.isArray(fullClass?.sessions) ? fullClass.sessions : []);
 
+      const weekdaysSet = new Set<number>();
+      let foundStartTime = "";
+      let foundEndTime = "";
+
+      // 1. Trích xuất thứ trong tuần và giờ học từ danh sách buổi học
       if (Array.isArray(sessions) && sessions.length > 0) {
         sessions.forEach((s: any) => {
-          const dateStr = s.plannedDate || s.sessionDate;
+          const dateStr = s.scheduledDate || s.plannedDate || s.planned_date || s.sessionDate || s.session_date;
           if (dateStr) {
-            const [y, m, d] = String(dateStr).split("T")[0].split("-").map(Number);
+            const datePart = String(dateStr).split("T")[0];
+            const [y, m, d] = datePart.split("-").map(Number);
             if (y && m && d) {
               const dt = new Date(y, m - 1, d);
               weekdaysSet.add(dt.getDay());
             }
           }
-          if (s.startTime && (!foundStartTime || foundStartTime === "18:00")) {
-            foundStartTime = s.startTime.slice(0, 5);
+          if (s.startTime && !foundStartTime) {
+            const t = normalizeTimeToHHmm(s.startTime);
+            if (t) foundStartTime = t;
           }
-          if (s.endTime && (!foundEndTime || foundEndTime === "20:00")) {
-            foundEndTime = s.endTime.slice(0, 5);
+          if (s.endTime && !foundEndTime) {
+            const t = normalizeTimeToHHmm(s.endTime);
+            if (t) foundEndTime = t;
+          }
+        });
+      }
+
+      // 2. Trích xuất từ schedules nếu có
+      const schedules = fullClass?.schedules || fullClass?.class_schedules || [];
+      if (Array.isArray(schedules) && schedules.length > 0) {
+        schedules.forEach((sc: any) => {
+          if (typeof sc.dayOfWeek === "number") {
+            weekdaysSet.add(sc.dayOfWeek);
+          }
+          if (sc.startTime && !foundStartTime) {
+            const t = normalizeTimeToHHmm(sc.startTime);
+            if (t) foundStartTime = t;
           }
         });
       }
 
       const inferredWeekdays = weekdaysSet.size > 0
         ? Array.from(weekdaysSet).sort((a, b) => (a === 0 ? 7 : a) - (b === 0 ? 7 : b))
-        : initialForm.weekdays;
+        : (initialForm.weekdays.length > 0 ? initialForm.weekdays : []);
 
       const courseMatch = courses.find(
         (c: any) => c.id === (fullClass?.courseId || fullClass?.course_id || initialForm.courseId)
@@ -614,6 +660,14 @@ export default function AdminClasses() {
       const totalSessionsCount = (Array.isArray(sessions) && sessions.length > 0)
         ? sessions.length
         : (courseMatch?.totalLessons || 27);
+
+      const resolvedStartDate = fullClass?.startDate
+        ? String(fullClass.startDate).split("T")[0]
+        : (initialForm.startDate || (sessions[0]?.scheduledDate ? String(sessions[0].scheduledDate).split("T")[0] : (sessions[0]?.plannedDate ? String(sessions[0].plannedDate).split("T")[0] : "")));
+
+      const resolvedEndDate = fullClass?.endDate
+        ? String(fullClass.endDate).split("T")[0]
+        : initialForm.endDate;
 
       setForm((prev) => ({
         ...prev,
@@ -623,20 +677,18 @@ export default function AdminClasses() {
         branchId: fullClass?.branchId || fullClass?.branch_id || fullClass?.branch?.id || prev.branchId,
         roomId: fullClass?.roomId || fullClass?.room_id || fullClass?.room?.id || prev.roomId,
         teacherId: fullClass?.teacherId || fullClass?.teacher_id || fullClass?.teacher?.id || prev.teacherId,
-        startDate: fullClass?.startDate
-          ? new Date(fullClass.startDate).toISOString().split("T")[0]
-          : prev.startDate,
-        endDate: fullClass?.endDate
-          ? new Date(fullClass.endDate).toISOString().split("T")[0]
-          : prev.endDate,
+        startDate: resolvedStartDate,
+        endDate: resolvedEndDate,
         isActive: fullClass?.isActive ?? prev.isActive,
         weekdays: inferredWeekdays,
-        startTime: foundStartTime,
-        endTime: foundEndTime,
+        startTime: foundStartTime || prev.startTime || "18:00",
+        endTime: foundEndTime || prev.endTime || "20:00",
         totalSessions: totalSessionsCount,
       }));
     } catch (e) {
       console.warn("Failed to load full class info for edit:", e);
+    } finally {
+      setIsLoadingDetails(false);
     }
   };
 
@@ -1271,6 +1323,7 @@ export default function AdminClasses() {
         branches={branches}
         onSave={handleSave}
         isSaving={createMutation.isPending || updateMutation.isPending}
+        isLoadingDetails={isLoadingDetails}
       />
 
       <DeleteConfirmDialog
@@ -1316,6 +1369,7 @@ function CreateEditClassDialog({
   branches,
   onSave,
   isSaving,
+  isLoadingDetails,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
@@ -1327,13 +1381,20 @@ function CreateEditClassDialog({
   branches: any[];
   onSave: () => void;
   isSaving: boolean;
+  isLoadingDetails?: boolean;
 }) {
   const { data: roomsData } = useQuery({
     queryKey: ["branch-rooms", form.branchId],
     queryFn: () => roomsApi.list(form.branchId),
     enabled: !!form.branchId && form.branchId !== "__none__",
   });
-  const rooms = roomsData || [];
+  const rooms = useMemo(() => {
+    const list = roomsData || [];
+    if (editingClass?.room && !list.some((r: any) => r.id === editingClass.room.id)) {
+      return [editingClass.room, ...list];
+    }
+    return list;
+  }, [roomsData, editingClass]);
 
   // Preview lịch học – tính realtime khi chọn ngày bắt đầu + thứ
   const previewDates = useMemo(() => {
@@ -1351,9 +1412,15 @@ function CreateEditClassDialog({
     });
   };
 
-  const formatDate = (iso: string) => {
-    const [y, m, d] = iso.split("-");
-    return `${d}/${m}/${y}`;
+  const formatDateWithDow = (iso: string) => {
+    if (!iso) return "";
+    const [y, m, d] = iso.split("-").map(Number);
+    const dt = new Date(y, m - 1, d);
+    const dowLabels: Record<number, string> = { 0: "CN", 1: "T2", 2: "T3", 3: "T4", 4: "T5", 5: "T6", 6: "T7" };
+    const dow = dowLabels[dt.getDay()] || "";
+    const dd = String(d).padStart(2, "0");
+    const mm = String(m).padStart(2, "0");
+    return `${dd}/${mm}/${y} (${dow})`;
   };
 
   return (
@@ -1546,11 +1613,15 @@ function CreateEditClassDialog({
               <Label className="text-sm font-bold text-emerald-800 flex items-center gap-1.5">
                 📅 LỊCH HỌC HÀNG TUẦN
               </Label>
-              {form.weekdays.length > 0 && (
+              {isLoadingDetails ? (
+                <span className="text-xs text-emerald-700 font-medium flex items-center gap-1">
+                  <Loader2 className="h-3 w-3 animate-spin" /> Đang tải lịch học...
+                </span>
+              ) : form.weekdays.length > 0 ? (
                 <span className="text-xs text-emerald-700 font-medium">
                   {form.weekdays.length} ngày/tuần
                 </span>
-              )}
+              ) : null}
             </div>
 
             {/* 7 nút toggle ngày */}
@@ -1618,7 +1689,7 @@ function CreateEditClassDialog({
                   📋 Preview lịch học ({previewDates.length} buổi)
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  Kết thúc: {formatDate(previewDates[previewDates.length - 1])}
+                  Kết thúc: {formatDateWithDow(previewDates[previewDates.length - 1])}
                 </span>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 max-h-44 overflow-y-auto">
@@ -1630,7 +1701,7 @@ function CreateEditClassDialog({
                     <span className="text-emerald-600 font-semibold min-w-[44px]">
                       Buổi {i + 1}
                     </span>
-                    <span className="text-slate-600">{formatDate(date)}</span>
+                    <span className="text-slate-600">{formatDateWithDow(date)}</span>
                   </div>
                 ))}
               </div>

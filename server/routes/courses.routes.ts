@@ -498,10 +498,14 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
     { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
       const { id } = request.params;
-      const { password } = (request.body || {}) as { password?: string };
 
       const actor = await fastify.prisma.user.findFirst({
-        where: { userId: request.user.id },
+        where: {
+          OR: [
+            { userId: request.user.id },
+            { id: request.user.id },
+          ],
+        },
       });
       if (!actor) {
         return reply.status(401).send({ error: "Không thể xác thực người dùng" });
@@ -509,23 +513,20 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
 
       const existing = await fastify.prisma.course.findUnique({
         where: { id },
-        select: { id: true },
+        select: { id: true, isLocked: true },
       });
       if (!existing) {
         return reply.status(404).send({ error: "Không tìm thấy khóa học" });
       }
 
-      const lockRows = await fastify.prisma.$queryRaw<
-        Array<{ is_locked: number | boolean | null }>
-      >(Prisma.sql`SELECT is_locked FROM courses WHERE id = ${id} LIMIT 1`);
-      const isLocked = Boolean(lockRows[0]?.is_locked);
-
-      if (isLocked) {
+      // Check 1: Khóa học đang bị khóa -> chặn
+      if (existing.isLocked) {
         return reply.status(423).send({
           error: "Khóa học đang bị khóa. Hãy mở khóa trước khi xóa",
         });
       }
 
+      // Check 2 & 3: Kiểm tra dữ liệu học tập liên quan
       const [enrollmentCount, submissionCount] = await Promise.all([
         fastify.prisma.enrollment.count({ where: { courseId: id } }),
         fastify.prisma.examSubmission.count({
@@ -533,22 +534,34 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
         }),
       ]);
 
-      if (enrollmentCount > 0 || submissionCount > 0) {
+      if (enrollmentCount > 0) {
         return reply.status(409).send({
-          error:
-            "Không thể xóa khóa học khi vẫn còn học viên hoặc bài nộp liên quan",
+          error: "Không thể xóa khóa học vì đã có học viên đăng ký",
         });
       }
 
-      await fastify.prisma.course.update({
-        where: { id },
-        data: {
-          isActive: false,
-          isPublished: false,
-        },
-      });
+      if (submissionCount > 0) {
+        return reply.status(409).send({
+          error: "Không thể xóa khóa học vì đã có bài nộp thi liên quan",
+        });
+      }
 
-      return { success: true, softDeleted: true };
+      // Soft delete: chuyển trạng thái khóa học và bài thi liên quan
+      await fastify.prisma.$transaction([
+        fastify.prisma.exam.updateMany({
+          where: { courseId: id },
+          data: { isActive: false, isPublished: false },
+        }),
+        fastify.prisma.course.update({
+          where: { id },
+          data: {
+            isActive: false,
+            isPublished: false,
+          },
+        }),
+      ]);
+
+      return { success: true, softDeleted: true, message: "Đã xóa khóa học thành công" };
     },
   );
 };

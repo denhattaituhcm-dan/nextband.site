@@ -200,4 +200,38 @@ export class ClassController {
       return reply.status(status).send({ error: err.message });
     }
   }
+
+  async getSessions(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+    try {
+      const user = (request as any).user;
+      const result = await this.service.getClassSessions(user, request.params.id);
+      return reply.send(result);
+    } catch (err: any) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
+
+  async generateSessions(
+    request: FastifyRequest<{
+      Params: { id: string };
+      Body: {
+        startDate: string;
+        weekdays: number[];
+        totalSessions: number;
+        startTime: string;
+        endTime: string;
+      };
+    }>,
+    reply: FastifyReply
+  ) {
+    try {
+      const user = (request as any).user;
+      const result = await this.service.generateSessionsForClass(user, request.params.id, request.body);
+      return reply.send(result);
+    } catch (err: any) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
 }

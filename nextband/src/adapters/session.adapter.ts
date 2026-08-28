@@ -1,6 +1,25 @@
 import { CanonicalSessionSchema, SessionDTO, SessionStatus } from "../contracts/session.contract";
 
 /**
+ * Converts any date or time representation into standard HH:mm string format.
+ * Handles ISO strings (1970-01-01T18:00:00.000Z), HH:mm:ss, HH:mm, or Date instances.
+ */
+export function normalizeTimeToHHmm(val: any, fallback: string = ""): string {
+  if (!val) return fallback;
+  if (val instanceof Date) {
+    const iso = val.toISOString();
+    const m = iso.match(/T(\d{2}:\d{2})/);
+    if (m) return m[1];
+  }
+  const s = String(val).trim();
+  const isoMatch = s.match(/T(\d{2}:\d{2})/);
+  if (isoMatch) return isoMatch[1];
+  const plainMatch = s.match(/^(\d{2}:\d{2})/);
+  if (plainMatch) return plainMatch[1];
+  return fallback;
+}
+
+/**
  * Normalizes and validates raw session data into Canonical SessionDTO.
  */
 export function adaptSession(raw: any): SessionDTO {
@@ -18,14 +37,19 @@ export function adaptSession(raw: any): SessionDTO {
     });
   }
 
+  const rawDate = raw.plannedDate || raw.planned_date || raw.scheduledDate || raw.session_date;
+  const plannedDate = rawDate
+    ? (rawDate instanceof Date ? rawDate.toISOString().split("T")[0] : String(rawDate).split("T")[0])
+    : new Date().toISOString().split("T")[0];
+
   const candidate = {
     id: String(raw.id || `sess-${Date.now()}`),
     classId: String(raw.classId || raw.class_id || ""),
     sessionNumber: typeof (raw.sessionNumber ?? raw.session_number) === "number" ? (raw.sessionNumber ?? raw.session_number) : 1,
-    plannedDate: String(raw.plannedDate || raw.planned_date || raw.scheduledDate || raw.session_date || new Date().toISOString().split("T")[0]),
+    plannedDate,
     actualDate: raw.actualDate || raw.actual_date || null,
-    startTime: String(raw.startTime || raw.start_time || ""),
-    endTime: String(raw.endTime || raw.end_time || ""),
+    startTime: normalizeTimeToHHmm(raw.startTime || raw.start_time),
+    endTime: normalizeTimeToHHmm(raw.endTime || raw.end_time),
     status: (raw.status as SessionStatus) || "SCHEDULED",
     rescheduleReason: raw.rescheduleReason || raw.reschedule_reason || null,
     note: raw.note ?? null,
@@ -45,3 +69,4 @@ export function adaptSession(raw: any): SessionDTO {
 
   return parseResult.data;
 }
+

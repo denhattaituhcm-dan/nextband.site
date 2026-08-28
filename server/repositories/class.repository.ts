@@ -13,6 +13,10 @@ export class ClassRepository {
         teacher: {
           select: { id: true, fullName: true, email: true },
         },
+        schedules: true,
+        sessions: {
+          orderBy: { sessionNumber: "asc" },
+        },
         students: {
           include: {
             student: {

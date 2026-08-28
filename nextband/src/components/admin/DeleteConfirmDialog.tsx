@@ -17,10 +17,13 @@ interface DeleteConfirmDialogProps {
   onOpenChange: (open: boolean) => void;
   onConfirm: (payload?: { password?: string }) => void;
   title?: string;
-  description?: string;
+  description?: React.ReactNode;
   loading?: boolean;
   confirmKeyword?: string;
   requirePassword?: boolean;
+  confirmText?: string;
+  blocked?: boolean;
+  blockedMessage?: string;
 }
 
 export default function DeleteConfirmDialog({
@@ -32,6 +35,9 @@ export default function DeleteConfirmDialog({
   loading = false,
   confirmKeyword,
   requirePassword = false,
+  confirmText = "Xóa",
+  blocked = false,
+  blockedMessage,
 }: DeleteConfirmDialogProps) {
   const [typedKeyword, setTypedKeyword] = useState("");
   const [password, setPassword] = useState("");
@@ -58,55 +64,73 @@ export default function DeleteConfirmDialog({
             {title}
           </AlertDialogTitle>
           <AlertDialogDescription className="space-y-3">
-            <p>{description}</p>
-            <div className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-left">
-              <p className="text-xs font-medium text-destructive">Danger zone</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Thao tác xóa là vĩnh viễn và có thể gây mất dữ liệu.
-              </p>
-            </div>
-            {confirmKeyword && (
-              <div className="space-y-2">
-                <p className="text-xs text-muted-foreground">
-                  Nhập <span className="font-semibold">{confirmKeyword}</span> để xác nhận lần 2.
+            {typeof description === "string" ? <p>{description}</p> : description}
+
+            {blocked ? (
+              <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-left">
+                <p className="text-xs font-semibold text-amber-800">Không thể xóa</p>
+                <p className="mt-1 text-xs text-amber-700">
+                  {blockedMessage || "Không thể thực hiện thao tác xóa vì đã có dữ liệu liên quan."}
                 </p>
-                <Input
-                  value={typedKeyword}
-                  onChange={(e) => setTypedKeyword(e.target.value)}
-                  placeholder={confirmKeyword}
-                  disabled={loading}
-                />
               </div>
-            )}
-            {requirePassword && (
-              <div className="space-y-2">
-                <p className="text-xs text-muted-foreground">
-                  Nhập mật khẩu tài khoản hiện tại để xác nhận xóa.
-                </p>
-                <Input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Mật khẩu xác nhận"
-                  disabled={loading}
-                />
-              </div>
+            ) : (
+              <>
+                <div className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-left">
+                  <p className="text-xs font-medium text-destructive">Danger zone</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Thao tác xóa là vĩnh viễn và có thể gây mất dữ liệu.
+                  </p>
+                </div>
+                {confirmKeyword && (
+                  <div className="space-y-2">
+                    <p className="text-xs text-muted-foreground">
+                      Nhập <span className="font-semibold text-foreground">{confirmKeyword}</span> để xác nhận:
+                    </p>
+                    <Input
+                      value={typedKeyword}
+                      onChange={(e) => setTypedKeyword(e.target.value)}
+                      placeholder={confirmKeyword}
+                      disabled={loading}
+                    />
+                  </div>
+                )}
+                {requirePassword && (
+                  <div className="space-y-2">
+                    <p className="text-xs text-muted-foreground">
+                      Nhập mật khẩu tài khoản hiện tại để xác nhận xóa.
+                    </p>
+                    <Input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Mật khẩu xác nhận"
+                      disabled={loading}
+                    />
+                  </div>
+                )}
+              </>
             )}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={loading}>Hủy bỏ</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={(e) => {
-              e.preventDefault();
-              onConfirm({ password });
-            }}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            disabled={loading || !canConfirm}
-          >
-            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Xóa
-          </AlertDialogAction>
+          {blocked ? (
+            <AlertDialogCancel>Đóng</AlertDialogCancel>
+          ) : (
+            <>
+              <AlertDialogCancel disabled={loading}>Hủy bỏ</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={(e) => {
+                  e.preventDefault();
+                  onConfirm({ password });
+                }}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                disabled={loading || !canConfirm}
+              >
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {confirmText}
+              </AlertDialogAction>
+            </>
+          )}
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

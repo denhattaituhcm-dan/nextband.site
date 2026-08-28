@@ -232,6 +232,106 @@ export class ClassService {
     return classData;
   }
 
+  // Use Case: Get Class Sessions
+  async getClassSessions(user: { id: string; roles: string[] }, classId: string) {
+    const classData = await this.repo.findById(classId);
+    if (!classData) {
+      throw new NotFoundError("Không tìm thấy lớp học");
+    }
+    return this.prisma.classSession.findMany({
+      where: { classId },
+      orderBy: { sessionNumber: "asc" },
+    });
+  }
+
+  // Use Case: Generate or Update Class Sessions
+  async generateSessionsForClass(
+    user: { id: string; roles: string[] },
+    classId: string,
+    options: {
+      startDate: string;
+      weekdays: number[];
+      totalSessions: number;
+      startTime: string;
+      endTime: string;
+    }
+  ) {
+    const classData = await this.repo.findById(classId);
+    if (!classData) {
+      throw new NotFoundError("Không tìm thấy lớp học");
+    }
+
+    const { startDate, weekdays, totalSessions = 27, startTime = "18:00", endTime = "20:00" } = options;
+    if (!startDate || !Array.isArray(weekdays) || weekdays.length === 0) {
+      throw new AuthorizationError("Ngày bắt đầu và thứ trong tuần không được để trống", 400);
+    }
+
+    const dates: string[] = [];
+    const [y, m, d] = startDate.split("-").map(Number);
+    const cur = new Date(y, m - 1, d);
+
+    while (dates.length < totalSessions) {
+      const dow = cur.getDay();
+      if (weekdays.includes(dow)) {
+        const mm = String(cur.getMonth() + 1).padStart(2, "0");
+        const dd = String(cur.getDate()).padStart(2, "0");
+        dates.push(`${cur.getFullYear()}-${mm}-${dd}`);
+      }
+      cur.setDate(cur.getDate() + 1);
+    }
+
+    const startTimeDate = new Date(`1970-01-01T${startTime.slice(0, 5)}:00.000Z`);
+    const endTimeDate = new Date(`1970-01-01T${endTime.slice(0, 5)}:00.000Z`);
+
+    const existingSessions = await this.prisma.classSession.findMany({
+      where: { classId },
+    });
+
+    const result = [];
+    for (let idx = 0; idx < dates.length; idx++) {
+      const sessionNumber = idx + 1;
+      const plannedDate = new Date(`${dates[idx]}T00:00:00.000Z`);
+      const existing = existingSessions.find((s) => s.sessionNumber === sessionNumber);
+
+      if (existing) {
+        const updated = await this.prisma.classSession.update({
+          where: { id: existing.id },
+          data: {
+            plannedDate,
+            startTime: startTimeDate,
+            endTime: endTimeDate,
+          },
+        });
+        result.push(updated);
+      } else {
+        const created = await this.prisma.classSession.create({
+          data: {
+            classId,
+            sessionNumber,
+            plannedDate,
+            startTime: startTimeDate,
+            endTime: endTimeDate,
+            status: "PLANNED",
+          },
+        });
+        result.push(created);
+      }
+    }
+
+    if (existingSessions.length > dates.length) {
+      const extraneousIds = existingSessions
+        .filter((s) => s.sessionNumber > dates.length && s.status === "PLANNED")
+        .map((s) => s.id);
+      if (extraneousIds.length > 0) {
+        await this.prisma.classSession.deleteMany({
+          where: { id: { in: extraneousIds } },
+        });
+      }
+    }
+
+    return result;
+  }
+
   // Use Case: Create Class (Admin Only)
   async createClass(user: { id: string; roles: string[] }, data: any) {
     const isAdmin = user.roles.includes("admin");

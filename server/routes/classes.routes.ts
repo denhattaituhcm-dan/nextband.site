@@ -30,6 +30,29 @@ export default async function classesRoutes(fastify: FastifyInstance) {
     return controller.getById(request, reply);
   });
 
+  // GET /classes/:id/sessions - Lấy danh sách buổi học của lớp
+  fastify.get<{ Params: { id: string } }>("/:id/sessions", { preHandler: authenticate }, async (request, reply) => {
+    return controller.getSessions(request, reply);
+  });
+
+  // POST /classes/:id/generate-sessions - Sinh / cập nhật danh sách buổi học
+  fastify.post<{
+    Params: { id: string };
+    Body: {
+      startDate: string;
+      weekdays: number[];
+      totalSessions: number;
+      startTime: string;
+      endTime: string;
+    };
+  }>(
+    "/:id/generate-sessions",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      return controller.generateSessions(request, reply);
+    }
+  );
+
   // POST /classes - Tạo lớp mới (Chỉ dành cho Quản trị viên / Admin)
   fastify.post(
     "/",
