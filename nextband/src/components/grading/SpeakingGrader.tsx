@@ -265,7 +265,7 @@ export function SpeakingGrader({
             <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
               <span className="text-xs font-extrabold text-orange-900 flex items-center gap-1.5 uppercase tracking-wider">
                 <BookOpen className="h-4 w-4 text-orange-600" />
-                {currentAnswer.questionTitle || "Yêu cầu Đề bài (Speaking Prompt)"}
+                {(currentAnswer.questionTitle ? currentAnswer.questionTitle.replace(/<[^>]*>/g, " ").trim() : "") || "Yêu cầu Đề bài (Speaking Prompt)"}
               </span>
             </div>
 

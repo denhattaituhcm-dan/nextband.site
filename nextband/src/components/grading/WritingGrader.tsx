@@ -277,7 +277,7 @@ export function WritingGrader({
             <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
               <span className="text-xs font-extrabold text-blue-900 flex items-center gap-1.5 uppercase tracking-wider">
                 <BookOpen className="h-4 w-4 text-blue-600" />
-                {currentAnswer.questionTitle || "Yêu cầu Đề bài (Writing Prompt)"}
+                {(currentAnswer.questionTitle ? currentAnswer.questionTitle.replace(/<[^>]*>/g, " ").trim() : "") || "Yêu cầu Đề bài (Writing Prompt)"}
               </span>
             </div>
 

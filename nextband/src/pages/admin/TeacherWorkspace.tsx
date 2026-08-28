@@ -50,6 +50,7 @@ import { mapToProgressReportData } from "@/lib/progressReportMapper";
 import { WritingGrader } from "@/components/grading/WritingGrader";
 import { SpeakingGrader } from "@/components/grading/SpeakingGrader";
 import { ExamPreviewPanel } from "@/components/grading/ExamPreviewPanel";
+import { SubmissionOverviewPanel } from "@/components/grading/SubmissionOverviewPanel";
 
 // Model Workbook Homework Item (Gắn với Buổi học / Lesson)
 interface WorkbookItem {
@@ -283,7 +284,12 @@ export default function TeacherWorkspace() {
             lessonTitle: `Buổi ${ex.week || Math.ceil((idx + 1) / 2)}`,
             orderIndex: idx + 1,
             title: ex.title || `Bài tập ${String(idx + 1).padStart(2, "0")}`,
-            type: ex.examType === "writing" ? "writing" : ex.examType === "speaking" ? "speaking" : "homework",
+            type:
+              String(ex.examType || "").toLowerCase() === "speaking" ||
+              String(ex.title || "").toLowerCase().includes("speaking") ||
+              !!firstAnswer?.audioUrl
+                ? "speaking"
+                : "writing",
             status: normalizedStatus,
             isOverdue: false,
             score: sub?.totalScore ?? sub?.total_score ?? sub?.bandScore ?? null,
@@ -391,7 +397,13 @@ export default function TeacherWorkspace() {
         lessonTitle: hw.lessonTitle || `Buổi ${Math.ceil((idx + 1) / 2)}`,
         orderIndex: idx + 1,
         title: hw.title,
-        type: (hw.type || "writing") as "writing" | "speaking" | "homework",
+        type: (
+          String(hw.type || "").toLowerCase() === "speaking" ||
+          String(hw.title || "").toLowerCase().includes("speaking") ||
+          !!hw.audioUrl
+            ? "speaking"
+            : "writing"
+        ) as "writing" | "speaking",
         dueDate: deadline,
         status: (hw.status || "unsubmitted") as any,
         isOverdue: false,
@@ -512,6 +524,16 @@ export default function TeacherWorkspace() {
     }
     return currentHomework?.answers || [];
   }, [currentSubmissionDetail, currentHomework]);
+
+  const isSpeaking = useMemo(() => {
+    if (!currentHomework) return false;
+    const hwType = String(currentHomework.type || "").toLowerCase();
+    const hwTitle = String(currentHomework.title || "").toLowerCase();
+    const secType = String(currentSubmissionDetail?.exam?.sections?.[0]?.sectionType || "").toLowerCase();
+    const hasAudio = resolvedAnswers.some((a) => !!a.audioUrl && a.audioUrl.trim().length > 0);
+    return hwType === "speaking" || secType === "speaking" || hwTitle.includes("speaking") || hasAudio;
+  }, [currentHomework, currentSubmissionDetail, resolvedAnswers]);
+
   const workbookSummary = useMemo(() => {
     if (!currentStudent) return { graded: 0, pending: 0, inProgress: 0, overdue: 0 };
     return {
@@ -834,7 +856,7 @@ export default function TeacherWorkspace() {
       {/* 🌟 FOCUS GRADING MODE: DÀNH 100% DIỆN TÍCH CHO VIỆC ĐỌC BÀI VÀ CHẤM BÀI 🌟 */}
       {isFocusMode && currentStudent && currentHomework && currentHomework.submissionId && currentHomework.status !== "unsubmitted" ? (
         <div className="flex-1 flex min-h-0 overflow-hidden bg-white">
-          {currentHomework.type === "speaking" ? (
+          {isSpeaking ? (
             <SpeakingGrader
               submissionId={currentHomework.submissionId}
               studentName={currentStudent.fullName}
@@ -1011,12 +1033,7 @@ export default function TeacherWorkspace() {
                         return (
                           <div
                             key={item.id}
-                            onClick={() => {
-                              setSelectedHomeworkId(item.id);
-                              if (item.submissionId && item.status !== "unsubmitted") {
-                                setIsFocusMode(true);
-                              }
-                            }}
+                            onClick={() => setSelectedHomeworkId(item.id)}
                             className={`p-2.5 rounded-xl border transition-all cursor-pointer space-y-1.5 ${
                               isSelected
                                 ? "bg-white border-blue-500 shadow-sm ring-1 ring-blue-500/20"
@@ -1067,7 +1084,7 @@ export default function TeacherWorkspace() {
           </div>
 
           {/* ========================================================================= */}
-          {/* CỘT 3: KHAY CHẤM BÀI VÀ XEM TRƯỚC ĐỀ BÀI                                 */}
+          {/* CỘT 3: PREVIEW & XEM KHÁI QUÁT BÀI NỘP / KẾT QUẢ ĐÃ CHẤM                  */}
           {/* ========================================================================= */}
           <div className="flex-1 bg-white flex flex-col justify-between overflow-hidden">
             {!currentStudent ? (
@@ -1088,30 +1105,14 @@ export default function TeacherWorkspace() {
                 dueDate={currentHomework.dueDate}
               />
             ) : (
-              <div className="h-full flex flex-col items-center justify-center p-8 text-center bg-slate-50/50 space-y-4">
-                <div className="p-4 rounded-3xl bg-blue-50 text-blue-600 border border-blue-200/80 shadow-xs">
-                  <FileText className="h-10 w-10" />
-                </div>
-                <div className="space-y-1.5 max-w-md">
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="text-sm font-bold text-slate-900">{currentHomework.title}</span>
-                    {renderStatusBadge(currentHomework)}
-                  </div>
-                  <p className="text-xs text-slate-600">
-                    Học viên: <span className="font-bold text-blue-700">{currentStudent.fullName}</span>
-                  </p>
-                  <p className="text-[11px] text-slate-400">
-                    Bài làm của học viên đã có trong hệ thống. Nhấn nút bên dưới để mở giao diện chấm tập trung toàn màn hình.
-                  </p>
-                </div>
-                <Button
-                  onClick={() => setIsFocusMode(true)}
-                  className="h-10 px-6 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white gap-2 shadow-sm rounded-xl"
-                >
-                  <span>Mở Chấm Bài (Focus Mode)</span>
-                  <ExternalLink className="h-4 w-4" />
-                </Button>
-              </div>
+              <SubmissionOverviewPanel
+                homework={currentHomework}
+                student={currentStudent}
+                className={currentClass?.name || "Lớp IELTS"}
+                isSpeaking={isSpeaking}
+                resolvedAnswers={resolvedAnswers}
+                onOpenFocusMode={() => setIsFocusMode(true)}
+              />
             )}
           </div>
         </div>
