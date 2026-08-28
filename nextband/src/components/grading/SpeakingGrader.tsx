@@ -26,6 +26,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { SpeakingRubricCard } from "@/components/grading/SpeakingRubricCard";
+import { SpeakingTranscriptViewer } from "@/components/admin/SpeakingTranscriptViewer";
 import { RichContent } from "@/components/exam/RichContent";
 import {
   CriteriaScores,
@@ -43,6 +44,7 @@ export interface SpeakingAnswerItem {
   instructions?: string;
   passage?: string;
   audioUrl?: string | null;
+  answerText?: string;
   score?: number | null;
   feedback?: string | null;
 }
@@ -222,9 +224,8 @@ export function SpeakingGrader({
             </div>
 
             <div className="text-xs text-slate-600 font-medium flex items-center gap-2 mt-0.5">
+              <span>Học viên:</span>
               <span className="font-bold text-blue-700">{studentName}</span>
-              <span>•</span>
-              <span className="text-slate-500">{className}</span>
               <span>•</span>
               <span className="text-slate-700 font-bold">Overall Band: {overallBandPreview}</span>
             </div>
@@ -272,7 +273,7 @@ export function SpeakingGrader({
             {/* Instructions */}
             {currentAnswer.instructions && (
               <div className="text-xs text-slate-600 font-medium bg-orange-50/50 p-3 rounded-xl border border-orange-100 leading-relaxed">
-                {currentAnswer.instructions}
+                <RichContent html={currentAnswer.instructions} />
               </div>
             )}
 
@@ -293,18 +294,18 @@ export function SpeakingGrader({
             )}
           </Card>
 
-          {/* BẢN THU ÂM CỦA HỌC VIÊN */}
-          <Card className="border border-slate-200 shadow-xs rounded-2xl p-6 bg-white space-y-4">
+          {/* BẢN THU ÂM & BÓC BĂNG ĐỐI CHIẾU CỦA HỌC VIÊN */}
+          <Card className="border border-slate-200 shadow-xs rounded-2xl p-6 bg-white space-y-4 font-sans">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 <Volume2 className="h-4 w-4 text-orange-600" />
                 <h3 className="text-sm font-extrabold text-slate-900 tracking-tight">
-                  Bản Thu Âm Của Học Viên
+                  Bản Thu Âm & Bóc Băng Văn Bản (Speech-to-Text)
                 </h3>
               </div>
               {currentAnswer.audioUrl ? (
-                <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs">
-                  Audio khả dụng
+                <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs font-semibold">
+                  Audio & Transcript khả dụng
                 </Badge>
               ) : (
                 <Badge variant="outline" className="bg-slate-100 text-slate-500 border-slate-200 text-xs">
@@ -314,14 +315,16 @@ export function SpeakingGrader({
             </div>
 
             {currentAnswer.audioUrl ? (
-              <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
-                <audio
-                  controls
-                  src={formatStorageUrl(currentAnswer.audioUrl)}
-                  className="w-full h-12 rounded"
+              <div className="space-y-3">
+                <SpeakingTranscriptViewer
+                  audioUrl={formatStorageUrl(currentAnswer.audioUrl)}
+                  initialTranscript={currentAnswer.answerText || undefined}
+                  onTranscriptEdited={(_updatedTranscript) => {
+                    setIsDirty(true);
+                  }}
                 />
-                <p className="text-xs text-slate-500 text-center">
-                  Giáo viên có thể nghe, tạm dừng và tua lại để đánh giá từng tiêu chí Fluency, Lexical, Grammar và Pronunciation.
+                <p className="text-[11px] text-slate-500 text-center font-sans">
+                  💡 Bạn có thể click vào bất kỳ đoạn văn bản nào để tua âm thanh đến đúng mốc thời gian đó và nghe lại.
                 </p>
               </div>
             ) : (

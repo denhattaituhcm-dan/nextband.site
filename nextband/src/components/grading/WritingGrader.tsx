@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -22,6 +23,7 @@ import {
   Clock,
   BookOpen,
   ArrowLeft,
+  Award,
 } from "lucide-react";
 import { SentenceLevelGrader } from "@/components/grading/SentenceLevelGrader";
 import { WritingRubricCard } from "@/components/grading/WritingRubricCard";
@@ -97,6 +99,10 @@ export function WritingGrader({
   const questionId = currentAnswer?.questionId || "";
   const answerId = currentAnswer?.id;
 
+  // Toggle mode: Bật chấm 4 tiêu chí IELTS vs Tắt (Chấm điểm trực tiếp cho viết câu)
+  const [useRubric, setUseRubric] = useState<boolean>(true);
+  const [directScore, setDirectScore] = useState<string>("");
+
   // Local grading state for this single answer
   const [criteriaScores, setCriteriaScores] = useState<CriteriaScores>({
     taskResponse: null,
@@ -113,6 +119,24 @@ export function WritingGrader({
   useEffect(() => {
     if (!currentAnswer) return;
     const structured = parseStructuredFeedback(currentAnswer.feedback);
+
+    const hasCriteria = !!structured.criteriaScores && (
+      structured.criteriaScores.taskResponse != null ||
+      structured.criteriaScores.coherence != null ||
+      structured.criteriaScores.lexical != null ||
+      structured.criteriaScores.grammar != null
+    );
+
+    if (hasCriteria) {
+      setUseRubric(true);
+      setDirectScore("");
+    } else if (currentAnswer.score != null && Number(currentAnswer.score) > 0) {
+      setUseRubric(false);
+      setDirectScore(String(currentAnswer.score));
+    } else {
+      const wordCount = (currentAnswer.answerText || "").trim().split(/\s+/).filter(Boolean).length;
+      setUseRubric(wordCount >= 60);
+    }
 
     setCriteriaScores(
       structured.criteriaScores || {
@@ -134,11 +158,26 @@ export function WritingGrader({
     return calculateWritingBand(criteriaScores);
   }, [criteriaScores]);
 
+  const displayScore = useRubric
+    ? overallBandPreview
+    : directScore.trim()
+    ? `${parseFloat(directScore).toFixed(1)}`
+    : "Chưa nhập";
+
   const handleSave = async (finalize: boolean) => {
     if (!questionId) return;
 
-    const bandStr = calculateWritingBand(criteriaScores);
-    const score = parseFloat(bandStr) || 0;
+    let score: number = 0;
+    let finalCriteriaScores: CriteriaScores | null = null;
+
+    if (useRubric) {
+      const bandStr = calculateWritingBand(criteriaScores);
+      score = parseFloat(bandStr) || 0;
+      finalCriteriaScores = criteriaScores;
+    } else {
+      score = parseFloat(directScore) || 0;
+      finalCriteriaScores = null;
+    }
 
     const gradesPayload = [
       {
@@ -146,7 +185,7 @@ export function WritingGrader({
         questionId,
         score,
         feedback: feedbackText,
-        criteriaScores,
+        criteriaScores: finalCriteriaScores || undefined,
         sentenceFeedbacks,
         primaryErrorCategory: revisionRequired ? primaryErrorCategory : null,
         revisionRequired,
@@ -159,7 +198,7 @@ export function WritingGrader({
         feedback: feedbackText,
         primaryErrorCategory: revisionRequired ? primaryErrorCategory : null,
         revisionRequired,
-        criteriaScores,
+        criteriaScores: finalCriteriaScores,
         sentenceFeedbacks,
         finalize,
       },
@@ -184,7 +223,8 @@ export function WritingGrader({
   }
 
   const rawAnswerText = currentAnswer.answerText || "";
-  const wordCount = rawAnswerText.trim().split(/\s+/).filter(Boolean).length;
+  const wordCount = rawAnswerText.trim() ? rawAnswerText.trim().split(/\s+/).filter(Boolean).length : 0;
+  const promptTitle = (currentAnswer.questionTitle ? currentAnswer.questionTitle.replace(/<[^>]*>/g, " ").trim() : "") || "Yêu cầu Đề bài (Writing Prompt)";
 
   return (
     <div className="flex-1 bg-slate-50/50 flex flex-col h-full overflow-hidden">
@@ -234,11 +274,12 @@ export function WritingGrader({
             </div>
 
             <div className="text-xs text-slate-600 font-medium flex items-center gap-2 mt-0.5">
+              <span>Học viên:</span>
               <span className="font-bold text-blue-700">{studentName}</span>
               <span>•</span>
-              <span className="text-slate-500">{className}</span>
-              <span>•</span>
-              <span className="text-slate-700 font-bold">Overall Band: {overallBandPreview}</span>
+              <span className="text-slate-700 font-bold">
+                {useRubric ? "Overall Band" : "Điểm trực tiếp"}: {displayScore}
+              </span>
             </div>
           </div>
         </div>
@@ -277,14 +318,14 @@ export function WritingGrader({
             <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
               <span className="text-xs font-extrabold text-blue-900 flex items-center gap-1.5 uppercase tracking-wider">
                 <BookOpen className="h-4 w-4 text-blue-600" />
-                {(currentAnswer.questionTitle ? currentAnswer.questionTitle.replace(/<[^>]*>/g, " ").trim() : "") || "Yêu cầu Đề bài (Writing Prompt)"}
+                {promptTitle}
               </span>
             </div>
 
             {/* Question instructions if available */}
             {currentAnswer.instructions && (
               <div className="text-xs text-slate-600 font-medium bg-blue-50/50 p-3 rounded-xl border border-blue-100 leading-relaxed">
-                {currentAnswer.instructions}
+                <RichContent html={currentAnswer.instructions} />
               </div>
             )}
 
@@ -306,7 +347,7 @@ export function WritingGrader({
           </Card>
 
           {/* BÀI LÀM CỦA HỌC VIÊN (Student Essay - Document Style) */}
-          <Card className="border border-slate-200 shadow-xs rounded-2xl p-6 bg-white space-y-4">
+          <Card className="border border-slate-200 shadow-xs rounded-2xl p-6 bg-white space-y-4 font-sans">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 <FileText className="h-4 w-4 text-slate-700" />
@@ -320,7 +361,7 @@ export function WritingGrader({
             </div>
 
             {rawAnswerText.trim() ? (
-              <div className="text-base font-serif leading-[1.8] text-slate-900 select-text">
+              <div className="text-sm font-sans leading-relaxed text-slate-900 select-text">
                 <SentenceLevelGrader
                   essayText={rawAnswerText}
                   sentenceFeedbacks={sentenceFeedbacks}
@@ -339,21 +380,94 @@ export function WritingGrader({
         </div>
 
         {/* RIGHT COLUMN (32%): GRADING CONTROLS (STICKY) */}
-        <aside className="lg:col-span-4 h-full overflow-y-auto p-5 border-l border-slate-200 bg-white space-y-5 shadow-xs">
-          {/* Rubric Card */}
-          <WritingRubricCard
-            scores={criteriaScores}
-            onChange={(updated) => {
-              setCriteriaScores(updated);
-              setIsDirty(true);
-            }}
-            disabled={isSubmitting}
-          />
+        <aside className="lg:col-span-4 h-full overflow-y-auto p-5 border-l border-slate-200 bg-white space-y-4 shadow-xs">
+          {/* OPTION BẬT / TẮT 4 TIÊU CHÍ IELTS */}
+          <Card className="border border-slate-200/80 shadow-2xs rounded-xl p-3.5 bg-slate-50/50">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                  <Award className="h-3.5 w-3.5 text-blue-600" />
+                  Chấm theo 4 tiêu chí IELTS
+                </Label>
+                <p className="text-[11px] text-slate-500">
+                  {useRubric ? "Bật cho bài luận (TR, CC, LR, GRA)" : "Tắt để cho điểm trực tiếp (bài viết câu)"}
+                </p>
+              </div>
+              <Switch
+                checked={useRubric}
+                onCheckedChange={(checked) => {
+                  setUseRubric(checked);
+                  setIsDirty(true);
+                }}
+              />
+            </div>
+          </Card>
+
+          {/* NẾU BẬT: HIỆN RUBRIC CARD 4 TIÊU CHÍ */}
+          {useRubric ? (
+            <WritingRubricCard
+              scores={criteriaScores}
+              onChange={(updated) => {
+                setCriteriaScores(updated);
+                setIsDirty(true);
+              }}
+              disabled={isSubmitting}
+            />
+          ) : (
+            /* NẾU TẮT: HIỆN Ô NHẬP ĐIỂM TRỰC TIẾP CHO BÀI VIẾT CÂU */
+            <Card className="border border-slate-200/80 shadow-2xs rounded-xl p-4 space-y-3 bg-white">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                  <Award className="h-4 w-4 text-blue-600" />
+                  Điểm số bài làm (Score / Band)
+                </Label>
+                <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                  Bài viết câu
+                </span>
+              </div>
+
+              <div className="space-y-2">
+                <Input
+                  type="number"
+                  step="0.5"
+                  min="0"
+                  max="10"
+                  placeholder="Nhập điểm (Ví dụ: 8.0, 9.0 hoặc 10)..."
+                  value={directScore}
+                  onChange={(e) => {
+                    setDirectScore(e.target.value);
+                    setIsDirty(true);
+                  }}
+                  className="h-10 text-base font-bold font-mono text-blue-900 bg-slate-50 border-slate-200"
+                />
+                <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                  <span className="text-[10px] text-slate-400 font-medium">Chọn nhanh:</span>
+                  {["6.0", "6.5", "7.0", "7.5", "8.0", "8.5", "9.0", "10"].map((pt) => (
+                    <button
+                      key={pt}
+                      type="button"
+                      onClick={() => {
+                        setDirectScore(pt);
+                        setIsDirty(true);
+                      }}
+                      className={`px-2 py-0.5 text-[10px] font-bold rounded border transition-all ${
+                        directScore === pt
+                          ? "bg-blue-600 text-white border-blue-600"
+                          : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                      }`}
+                    >
+                      {pt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </Card>
+          )}
 
           {/* Teacher General Feedback Textarea */}
           <Card className="border border-slate-200/80 shadow-2xs rounded-xl p-4 space-y-2 bg-slate-50/40">
             <Label className="text-xs font-bold text-slate-900 flex items-center justify-between">
-              <span>Nhận xét tổng thể của Giáo viên</span>
+              <span>Nhận xét / Góp ý sửa câu của Giáo viên</span>
             </Label>
             <Textarea
               value={feedbackText}
@@ -361,7 +475,7 @@ export function WritingGrader({
                 setFeedbackText(e.target.value);
                 setIsDirty(true);
               }}
-              placeholder="Gõ nhận xét chi tiết cho học viên (Ví dụ: Bố cục rõ ràng, lập luận tốt, cần chú ý thì quá khứ ở đoạn thân bài...)"
+              placeholder="Gõ nhận xét, gợi ý sửa câu hoặc đáp án mẫu cho học viên..."
               className="min-h-[120px] text-xs font-sans border-slate-200 focus-visible:ring-1 focus-visible:ring-blue-500/40 leading-relaxed bg-white"
             />
           </Card>

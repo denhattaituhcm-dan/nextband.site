@@ -467,6 +467,20 @@ export default function TeacherWorkspace() {
     enabled: !!currentHomework?.submissionId,
   });
 
+  const isAudioFile = (val?: string) => {
+    if (!val) return false;
+    const lower = String(val).toLowerCase().trim();
+    return (
+      lower.endsWith(".webm") ||
+      lower.endsWith(".mp3") ||
+      lower.endsWith(".wav") ||
+      lower.endsWith(".ogg") ||
+      lower.endsWith(".m4a") ||
+      lower.includes("speaking-recordings/") ||
+      lower.includes("/audio/")
+    );
+  };
+
   const resolvedAnswers = useMemo(() => {
     if (currentSubmissionDetail && Array.isArray(currentSubmissionDetail.answers) && currentSubmissionDetail.answers.length > 0) {
       const examQuestions: any[] = [];
@@ -475,7 +489,7 @@ export default function TeacherWorkspace() {
           (grp.questions || []).forEach((q: any) => {
             examQuestions.push({
               id: q.id,
-              groupTitle: grp.title || (currentHomework?.type === "speaking" ? "Speaking Task" : "Writing Task"),
+              groupTitle: (grp.title ? grp.title.replace(/<[^>]*>/g, " ").trim() : "") || (currentHomework?.type === "speaking" ? "Speaking Task" : "Writing Task"),
               instructions: grp.instructions || sec.instructions || "",
               passage: grp.passage || "",
               questionText: q.questionText || q.question_text || "",
@@ -492,6 +506,11 @@ export default function TeacherWorkspace() {
       if (examQuestions.length > 0) {
         return examQuestions.map((q) => {
           const a: any = answerByQuestionId.get(q.id);
+          const rawAns = a?.answerText || a?.studentAnswer || "";
+          const rawAudio = a?.audioUrl || "";
+          const resolvedAudioUrl = rawAudio || (isAudioFile(rawAns) ? rawAns : "");
+          const resolvedAnswerText = isAudioFile(rawAns) ? "" : rawAns;
+
           return {
             id: a?.id,
             questionId: q.id,
@@ -500,27 +519,34 @@ export default function TeacherWorkspace() {
             passage: q.passage,
             imageUrl: q.imageUrl,
             questionText: q.questionText,
-            answerText: a?.answerText || a?.studentAnswer || "",
-            audioUrl: a?.audioUrl || "",
+            answerText: resolvedAnswerText,
+            audioUrl: resolvedAudioUrl,
             score: a?.score != null ? Number(a?.score) : null,
             feedback: a?.feedback || "",
           };
         });
       }
 
-      return currentSubmissionDetail.answers.map((a: any) => ({
-        id: a.id,
-        questionId: a.questionId || a.question_id,
-        questionTitle: currentHomework?.title || "Task",
-        instructions: "",
-        passage: "",
-        imageUrl: null,
-        questionText: "",
-        answerText: a.answerText || a.studentAnswer || "",
-        audioUrl: a.audioUrl || "",
-        score: a.score != null ? Number(a.score) : null,
-        feedback: a.feedback || "",
-      }));
+      return currentSubmissionDetail.answers.map((a: any) => {
+        const rawAns = a.answerText || a.studentAnswer || "";
+        const rawAudio = a.audioUrl || "";
+        const resolvedAudioUrl = rawAudio || (isAudioFile(rawAns) ? rawAns : "");
+        const resolvedAnswerText = isAudioFile(rawAns) ? "" : rawAns;
+
+        return {
+          id: a.id,
+          questionId: a.questionId || a.question_id,
+          questionTitle: currentHomework?.title || "Task",
+          instructions: "",
+          passage: "",
+          imageUrl: null,
+          questionText: "",
+          answerText: resolvedAnswerText,
+          audioUrl: resolvedAudioUrl,
+          score: a.score != null ? Number(a.score) : null,
+          feedback: a.feedback || "",
+        };
+      });
     }
     return currentHomework?.answers || [];
   }, [currentSubmissionDetail, currentHomework]);
@@ -530,8 +556,15 @@ export default function TeacherWorkspace() {
     const hwType = String(currentHomework.type || "").toLowerCase();
     const hwTitle = String(currentHomework.title || "").toLowerCase();
     const secType = String(currentSubmissionDetail?.exam?.sections?.[0]?.sectionType || "").toLowerCase();
-    const hasAudio = resolvedAnswers.some((a) => !!a.audioUrl && a.audioUrl.trim().length > 0);
-    return hwType === "speaking" || secType === "speaking" || hwTitle.includes("speaking") || hasAudio;
+    const examType = String(currentSubmissionDetail?.exam?.examType || "").toLowerCase();
+    const hasAudio = resolvedAnswers.some((a) => (!!a.audioUrl && a.audioUrl.trim().length > 0) || isAudioFile(a.answerText));
+    return (
+      hwType === "speaking" ||
+      secType === "speaking" ||
+      examType === "speaking" ||
+      hwTitle.includes("speaking") ||
+      hasAudio
+    );
   }, [currentHomework, currentSubmissionDetail, resolvedAnswers]);
 
   const workbookSummary = useMemo(() => {
@@ -803,9 +836,42 @@ export default function TeacherWorkspace() {
     }
   };
 
+  // 🌟 FOCUS GRADING MODE: DÀNH 100% DIỆN TÍCH CHO VIỆC ĐỌC BÀI VÀ CHẤM BÀI (ẨN HOÀN TOÀN HEADER CỦA WORKSPACE) 🌟
+  if (isFocusMode && currentStudent && currentHomework && currentHomework.submissionId && currentHomework.status !== "unsubmitted") {
+    return (
+      <div className="h-[calc(100vh-4rem)] flex flex-col bg-white font-sans text-slate-900 overflow-hidden">
+        {isSpeaking ? (
+          <SpeakingGrader
+            submissionId={currentHomework.submissionId}
+            studentName={currentStudent.fullName}
+            className={currentClass?.name || "Lớp IELTS"}
+            homeworkTitle={currentHomework.title}
+            submissionStatus={currentHomework.status}
+            answers={resolvedAnswers}
+            isSubmitting={isSubmitting}
+            onBack={() => setIsFocusMode(false)}
+            onGradeSubmit={handleGradeSubmit}
+          />
+        ) : (
+          <WritingGrader
+            submissionId={currentHomework.submissionId}
+            studentName={currentStudent.fullName}
+            className={currentClass?.name || "Lớp IELTS"}
+            homeworkTitle={currentHomework.title}
+            submissionStatus={currentHomework.status}
+            answers={resolvedAnswers}
+            isSubmitting={isSubmitting}
+            onBack={() => setIsFocusMode(false)}
+            onGradeSubmit={handleGradeSubmit}
+          />
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="h-[calc(100vh-4rem)] flex flex-col bg-slate-50 font-sans text-slate-900 overflow-hidden">
-      {/* 🟢 HEADER TIÊU CHUẨN */}
+      {/* 🟢 HEADER TIÊU CHUẨN (CHỈ HIỆN TRONG CHẾ ĐỘ 3 CỘT) */}
       <header className="bg-white border-b border-slate-200 px-6 py-3 shrink-0 flex items-center justify-between shadow-2xs z-10">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
@@ -814,7 +880,7 @@ export default function TeacherWorkspace() {
             </div>
             <div>
               <h1 className="text-sm font-bold text-slate-900 tracking-tight">Teacher Workspace</h1>
-              <p className="text-[11px] text-slate-500">Sổ bài tập Lật mở & Chấm bài Học viên</p>
+              <p className="text-[11px] text-slate-500">Sổ bài tập & Chấm bài Học viên</p>
             </div>
           </div>
 
@@ -843,9 +909,6 @@ export default function TeacherWorkspace() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs font-medium px-3 py-1">
-            📖 Workbook: {currentClass?.name || "Lớp IELTS"}
-          </Badge>
           <Button variant="ghost" size="sm" onClick={() => refetchWorkspace()} className="h-8 text-xs text-slate-500 hover:text-slate-900">
             <RefreshCw className="h-3.5 w-3.5 mr-1" />
             Làm mới
@@ -853,41 +916,11 @@ export default function TeacherWorkspace() {
         </div>
       </header>
 
-      {/* 🌟 FOCUS GRADING MODE: DÀNH 100% DIỆN TÍCH CHO VIỆC ĐỌC BÀI VÀ CHẤM BÀI 🌟 */}
-      {isFocusMode && currentStudent && currentHomework && currentHomework.submissionId && currentHomework.status !== "unsubmitted" ? (
-        <div className="flex-1 flex min-h-0 overflow-hidden bg-white">
-          {isSpeaking ? (
-            <SpeakingGrader
-              submissionId={currentHomework.submissionId}
-              studentName={currentStudent.fullName}
-              className={currentClass?.name || "Lớp IELTS"}
-              homeworkTitle={currentHomework.title}
-              submissionStatus={currentHomework.status}
-              answers={resolvedAnswers}
-              isSubmitting={isSubmitting}
-              onBack={() => setIsFocusMode(false)}
-              onGradeSubmit={handleGradeSubmit}
-            />
-          ) : (
-            <WritingGrader
-              submissionId={currentHomework.submissionId}
-              studentName={currentStudent.fullName}
-              className={currentClass?.name || "Lớp IELTS"}
-              homeworkTitle={currentHomework.title}
-              submissionStatus={currentHomework.status}
-              answers={resolvedAnswers}
-              isSubmitting={isSubmitting}
-              onBack={() => setIsFocusMode(false)}
-              onGradeSubmit={handleGradeSubmit}
-            />
-          )}
-        </div>
-      ) : (
-        /* 📐 BỐ CỤC 3 CỘT SINGLE-SCREEN WORKBOOK VIEWER */
-        <div className="flex-1 flex min-h-0 overflow-hidden">
-          {/* ========================================================================= */}
-          {/* CỘT 1: DANH SÁCH HỌC VIÊN TRONG LỚP (KÈM CHỈ SỐ TIẾN ĐỘ 12/27)            */}
-          {/* ========================================================================= */}
+      {/* 📐 BỐ CỤC 3 CỘT SINGLE-SCREEN WORKBOOK VIEWER */}
+      <div className="flex-1 flex min-h-0 overflow-hidden">
+        {/* ========================================================================= */}
+        {/* CỘT 1: DANH SÁCH HỌC VIÊN TRONG LỚP (KÈM CHỈ SỐ TIẾN ĐỘ 12/27)            */}
+        {/* ========================================================================= */}
           <div className="w-1/4 min-w-[260px] max-w-[320px] bg-white border-r border-slate-200 flex flex-col justify-between overflow-hidden">
             <div className="p-3.5 border-b border-slate-100 space-y-2.5 shrink-0 bg-slate-50/50">
               <div className="flex items-center justify-between">
@@ -976,10 +1009,10 @@ export default function TeacherWorkspace() {
               <div>
                 <span className="text-xs font-bold text-slate-800 tracking-tight flex items-center gap-1.5">
                   <BookOpen className="h-3.5 w-3.5 text-blue-600" />
-                  Sổ Bài Tập: {currentStudent?.fullName || "Chưa chọn"}
+                  Sổ Bài Tập {currentStudent ? `— ${currentStudent.fullName}` : ""}
                 </span>
-                <span className="text-[10px] text-slate-500 font-mono">
-                  Workbook lớp {currentClass?.name || "IELTS"}
+                <span className="text-[10px] text-slate-500">
+                  {currentStudent ? "Danh sách bài tập được giao" : "Chọn học viên để xem bài"}
                 </span>
               </div>
 
@@ -1116,7 +1149,6 @@ export default function TeacherWorkspace() {
             )}
           </div>
         </div>
-      )}
 
       {/* MODAL BÁO CÁO TIẾN ĐỘ HỌC TẬP (PHỤ HUYNH) */}
       <ProgressReportModal
