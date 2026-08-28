@@ -33,6 +33,7 @@ import {
   FolderOpen,
   AlertTriangle,
   FileText,
+  ExternalLink,
 } from "lucide-react";
 import { ProgressReportModal } from "@/components/admin/ProgressReportModal";
 import {
@@ -105,6 +106,7 @@ export default function TeacherWorkspace() {
   const [selectedStudentId, setSelectedStudentId] = useState<string>("");
   const [selectedHomeworkId, setSelectedHomeworkId] = useState<string>("");
   const [studentFilter, setStudentFilter] = useState<"all" | "pending">(initialStudentFilter);
+  const [isFocusMode, setIsFocusMode] = useState<boolean>(false);
 
   useEffect(() => {
     if (urlFilter === "overdue" || urlFilter === "pending" || urlTab === "grading") {
@@ -460,29 +462,53 @@ export default function TeacherWorkspace() {
         (sec.questionGroups || sec.question_groups || []).forEach((grp: any) => {
           (grp.questions || []).forEach((q: any) => {
             examQuestions.push({
-              ...q,
-              groupTitle: grp.title || (currentHomework?.type === "speaking" ? `Speaking Part ${examQuestions.length + 1}` : `Task ${examQuestions.length + 1}`),
-              groupInstructions: grp.instructions || "",
+              id: q.id,
+              groupTitle: grp.title || (currentHomework?.type === "speaking" ? "Speaking Task" : "Writing Task"),
+              instructions: grp.instructions || sec.instructions || "",
               passage: grp.passage || "",
+              questionText: q.questionText || q.question_text || "",
+              imageUrl: q.imageUrl || q.image_url || null,
             });
           });
         });
       });
 
-      return currentSubmissionDetail.answers.map((a: any) => {
-        const matchedQ = examQuestions.find((q) => q.id === a.questionId || q.id === a.question_id);
-        return {
-          id: a.id,
-          questionId: a.questionId || a.question_id,
-          questionTitle: matchedQ?.groupTitle || matchedQ?.title || "",
-          questionText: matchedQ?.questionText || matchedQ?.question_text || matchedQ?.groupInstructions || "",
-          passage: matchedQ?.passage || "",
-          answerText: a.answerText || a.studentAnswer || "",
-          audioUrl: a.audioUrl || "",
-          score: a.score != null ? Number(a.score) : null,
-          feedback: a.feedback || "",
-        };
-      });
+      const answerByQuestionId = new Map(
+        (currentSubmissionDetail.answers || []).map((a: any) => [a.questionId || a.question_id, a])
+      );
+
+      if (examQuestions.length > 0) {
+        return examQuestions.map((q) => {
+          const a: any = answerByQuestionId.get(q.id);
+          return {
+            id: a?.id,
+            questionId: q.id,
+            questionTitle: q.groupTitle,
+            instructions: q.instructions,
+            passage: q.passage,
+            imageUrl: q.imageUrl,
+            questionText: q.questionText,
+            answerText: a?.answerText || a?.studentAnswer || "",
+            audioUrl: a?.audioUrl || "",
+            score: a?.score != null ? Number(a?.score) : null,
+            feedback: a?.feedback || "",
+          };
+        });
+      }
+
+      return currentSubmissionDetail.answers.map((a: any) => ({
+        id: a.id,
+        questionId: a.questionId || a.question_id,
+        questionTitle: currentHomework?.title || "Task",
+        instructions: "",
+        passage: "",
+        imageUrl: null,
+        questionText: "",
+        answerText: a.answerText || a.studentAnswer || "",
+        audioUrl: a.audioUrl || "",
+        score: a.score != null ? Number(a.score) : null,
+        feedback: a.feedback || "",
+      }));
     }
     return currentHomework?.answers || [];
   }, [currentSubmissionDetail, currentHomework]);
@@ -805,259 +831,291 @@ export default function TeacherWorkspace() {
         </div>
       </header>
 
-      {/* 📐 BỐ CỤC 3 CỘT SINGLE-SCREEN WORKBOOK VIEWER */}
-      <div className="flex-1 flex min-h-0 overflow-hidden">
-        {/* ========================================================================= */}
-        {/* CỘT 1: DANH SÁCH HỌC VIÊN TRONG LỚP (KÈM CHỈ SỐ TIẾN ĐỘ 12/27)            */}
-        {/* ========================================================================= */}
-        <div className="w-1/4 min-w-[260px] max-w-[320px] bg-white border-r border-slate-200 flex flex-col justify-between overflow-hidden">
-          <div className="p-3.5 border-b border-slate-100 space-y-2.5 shrink-0 bg-slate-50/50">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-800 tracking-tight flex items-center gap-1.5">
-                <User className="h-3.5 w-3.5 text-blue-600" />
-                Học viên ({filteredStudents.length})
-              </span>
-              <div className="flex gap-1">
-                <button
-                  onClick={() => setStudentFilter("all")}
-                  className={`text-[10px] font-medium px-2 py-0.5 rounded-md border transition-all ${
-                    studentFilter === "all"
-                      ? "bg-slate-800 text-white border-slate-800"
-                      : "bg-white text-slate-600 border-slate-200 hover:bg-slate-100"
-                  }`}
-                >
-                  Tất cả
-                </button>
-                <button
-                  onClick={() => setStudentFilter("pending")}
-                  className={`text-[10px] font-medium px-2 py-0.5 rounded-md border transition-all ${
-                    studentFilter === "pending"
-                      ? "bg-blue-600 text-white border-blue-600"
-                      : "bg-white text-blue-600 border-blue-200 hover:bg-blue-50"
-                  }`}
-                >
-                  Bài chờ 🔴
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* List Học viên */}
-          <div className="flex-1 overflow-y-auto p-2 space-y-1">
-            {filteredStudents.length === 0 ? (
-              <div className="p-6 text-center text-xs text-slate-400">Không có học viên phù hợp</div>
-            ) : (
-              filteredStudents.map((st: any) => {
-                const isSelected = st.id === selectedStudentId;
-                return (
-                  <div
-                    key={st.id}
-                    onClick={() => {
-                      setSelectedStudentId(st.id);
-                      setSelectedHomeworkId("");
-                    }}
-                    className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
-                      isSelected
-                        ? "bg-blue-50/80 border-blue-300 shadow-2xs"
-                        : "bg-white border-slate-100 hover:bg-slate-50"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <Avatar className="h-8 w-8 shrink-0 border border-slate-200">
-                        <AvatarImage src={st.avatarUrl} />
-                        <AvatarFallback className="text-xs bg-slate-100 font-bold text-slate-600">
-                          {st.fullName.substring(0, 2).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="min-w-0">
-                        <div className="text-xs font-bold text-slate-800 truncate">{st.fullName}</div>
-                        {/* 1. HIỂN THỊ CON SỐ TIẾN ĐỘ HỌC VIÊN (12 / 27) */}
-                        <div className="text-[10px] font-mono text-slate-500 flex items-center gap-1.5 mt-0.5">
-                          <span>HW {st.submittedCount} / {st.totalAssignedCount}</span>
-                          {st.hasPending && (
-                            <span className="text-[9px] font-bold text-blue-600 bg-blue-100 px-1.5 py-0.2 rounded">
-                              🔵 {st.pendingCount} chờ
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {st.hasPending && (
-                      <span className="w-2.5 h-2.5 rounded-full bg-rose-500 ring-4 ring-rose-100 shrink-0" />
-                    )}
-                  </div>
-                );
-              })
-            )}
-          </div>
-        </div>
-
-        {/* ========================================================================= */}
-        {/* CỘT 2: SỔ WORKBOOK NHÓM THEO BUỔI HỌC (LESSON GROUPING)                   */}
-        {/* ========================================================================= */}
-        <div className="w-[35%] bg-slate-50/50 border-r border-slate-200 flex flex-col justify-between overflow-hidden">
-          {/* Header Sổ Bài Tập & Thống kê Tóm Tắt Badges */}
-          <div className="p-3.5 bg-white border-b border-slate-200 space-y-2 shrink-0">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-xs font-bold text-slate-900 tracking-tight flex items-center gap-1.5">
-                  <BookOpen className="h-4 w-4 text-blue-600" />
-                  Sổ Bài Tập: <span className="text-blue-600">{currentStudent?.fullName || "Chưa chọn học viên"}</span>
-                </h3>
-                <p className="text-[10px] text-slate-400">Workbook lớp {currentClass?.name || "IELTS"}</p>
-              </div>
-
-              {/* THỐNG KÊ NHANH BADGES & BÁO CÁO TIẾN ĐỘ */}
-              {currentStudent && (
-                <div className="flex items-center gap-1.5">
-                  <div className="flex items-center gap-1">
-                    <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] px-1.5 py-0.2">
-                      🟢 {workbookSummary.graded}
-                    </Badge>
-                    <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-[10px] px-1.5 py-0.2">
-                      🔵 {workbookSummary.pending}
-                    </Badge>
-                    <Badge variant="outline" className="bg-slate-100 text-slate-600 border-slate-200 text-[10px] px-1.5 py-0.2">
-                      ⚪ {workbookSummary.inProgress}
-                    </Badge>
-                    {workbookSummary.overdue > 0 && (
-                      <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200 text-[10px] px-1.5 py-0.2">
-                        ⚫ {workbookSummary.overdue}
-                      </Badge>
-                    )}
-                  </div>
-
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setIsReportModalOpen(true)}
-                    className="h-7 text-[11px] font-bold gap-1 rounded-lg border-blue-200 text-blue-700 bg-blue-50/70 hover:bg-blue-100 shrink-0"
-                    title="Tạo báo cáo tiến độ gửi Zalo cho phụ huynh"
-                  >
-                    <FileText className="h-3 w-3" />
-                    Báo Cáo
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Danh sách 27 Bài Tập gom theo Buổi học */}
-          <div className="flex-1 overflow-y-auto p-3 space-y-4">
-            {!currentStudent ? (
-              <div className="h-full flex items-center justify-center p-6 text-center text-xs text-slate-400">
-                Chưa có học viên nào trong lớp
-              </div>
-            ) : (
-              groupedWorkbook.map((group) => (
-                <div key={group.lessonNumber} className="space-y-1.5">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-200/60 px-2.5 py-1 rounded-md">
-                    📖 BUỔI {group.lessonNumber}: KỸ NĂNG {group.items[0]?.type.toUpperCase()}
-                  </div>
-
-                  <div className="space-y-1">
-                    {group.items.map((item) => {
-                      const isSelected = item.id === selectedHomeworkId;
-                      const isReopenOpen = reopenTargetId === item.id;
-
-                      return (
-                        <div
-                          key={item.id}
-                          onClick={() => setSelectedHomeworkId(item.id)}
-                          className={`p-2.5 rounded-xl border transition-all cursor-pointer space-y-1.5 ${
-                            isSelected
-                              ? "bg-white border-blue-500 shadow-sm ring-1 ring-blue-500/20"
-                              : "bg-white/80 border-slate-200/80 hover:bg-white hover:border-slate-300"
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-semibold text-slate-800 truncate max-w-[200px]">
-                              {item.title}
-                            </span>
-                            {renderStatusBadge(item)}
-                          </div>
-
-                          {/* Dòng Quá hạn -> nút Gia hạn mở Inline */}
-                          {item.isOverdue && item.status !== "graded" && item.status !== "submitted" && (
-                            <div className="text-[10px] text-slate-500 flex items-center justify-between pt-1 border-t border-slate-100">
-                              <span>Hạn: {item.dueDate}</span>
-                              {!isReopenOpen ? (
-                                <button
-                                  onClick={() => setReopenTargetId(item.id)}
-                                  className="text-blue-600 font-bold hover:underline"
-                                >
-                                  [Gia hạn]
-                                </button>
-                              ) : (
-                                <div className="flex items-center gap-1 bg-slate-50 p-1 rounded border border-slate-200">
-                                  <Input
-                                    type="date"
-                                    value={reopenDate}
-                                    onChange={(e) => setReopenDate(e.target.value)}
-                                    className="h-6 text-[9px] w-24 bg-white"
-                                  />
-                                  <Button size="sm" onClick={() => handleConfirmReopen(item)} className="h-6 text-[9px] px-2 bg-slate-900 text-white">
-                                    Lưu
-                                  </Button>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-
-        {/* ========================================================================= */}
-        {/* CỘT 3: KHAY CHẤM BÀI VỚI ĐỦ THÔNG TIN ĐỊNH DANH HỌC VIÊN                  */}
-        {/* ========================================================================= */}
-        <div className="flex-1 bg-white flex flex-col justify-between overflow-hidden">
-          {!currentStudent ? (
-            <div className="h-full flex items-center justify-center p-8 text-center text-xs text-slate-400">
-              Chọn một học viên từ danh sách để xem bài làm và chấm điểm.
-            </div>
-          ) : !currentHomework ? (
-            <div className="h-full flex items-center justify-center p-8 text-center text-xs text-slate-400">
-              Chọn một bài tập trong sổ bài tập để chấm điểm hoặc xem đề bài.
-            </div>
-          ) : !currentHomework.submissionId || currentHomework.status === "unsubmitted" ? (
-            <ExamPreviewPanel
-              examId={currentHomework.id}
-              homeworkTitle={currentHomework.title}
-              studentName={currentStudent.fullName}
-              className={currentClass?.name || "Lớp IELTS"}
-              status={currentHomework.status}
-              dueDate={currentHomework.dueDate}
-            />
-          ) : currentHomework.type === "speaking" ? (
+      {/* 🌟 FOCUS GRADING MODE: DÀNH 100% DIỆN TÍCH CHO VIỆC ĐỌC BÀI VÀ CHẤM BÀI 🌟 */}
+      {isFocusMode && currentStudent && currentHomework && currentHomework.submissionId && currentHomework.status !== "unsubmitted" ? (
+        <div className="flex-1 flex min-h-0 overflow-hidden bg-white">
+          {currentHomework.type === "speaking" ? (
             <SpeakingGrader
-              submissionId={currentHomework.submissionId || ""}
+              submissionId={currentHomework.submissionId}
               studentName={currentStudent.fullName}
               className={currentClass?.name || "Lớp IELTS"}
               homeworkTitle={currentHomework.title}
+              submissionStatus={currentHomework.status}
               answers={resolvedAnswers}
               isSubmitting={isSubmitting}
+              onBack={() => setIsFocusMode(false)}
               onGradeSubmit={handleGradeSubmit}
             />
           ) : (
             <WritingGrader
-              submissionId={currentHomework.submissionId || ""}
+              submissionId={currentHomework.submissionId}
               studentName={currentStudent.fullName}
               className={currentClass?.name || "Lớp IELTS"}
               homeworkTitle={currentHomework.title}
+              submissionStatus={currentHomework.status}
               answers={resolvedAnswers}
               isSubmitting={isSubmitting}
+              onBack={() => setIsFocusMode(false)}
               onGradeSubmit={handleGradeSubmit}
             />
           )}
         </div>
-      </div>
+      ) : (
+        /* 📐 BỐ CỤC 3 CỘT SINGLE-SCREEN WORKBOOK VIEWER */
+        <div className="flex-1 flex min-h-0 overflow-hidden">
+          {/* ========================================================================= */}
+          {/* CỘT 1: DANH SÁCH HỌC VIÊN TRONG LỚP (KÈM CHỈ SỐ TIẾN ĐỘ 12/27)            */}
+          {/* ========================================================================= */}
+          <div className="w-1/4 min-w-[260px] max-w-[320px] bg-white border-r border-slate-200 flex flex-col justify-between overflow-hidden">
+            <div className="p-3.5 border-b border-slate-100 space-y-2.5 shrink-0 bg-slate-50/50">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-800 tracking-tight flex items-center gap-1.5">
+                  <User className="h-3.5 w-3.5 text-blue-600" />
+                  Học viên ({filteredStudents.length})
+                </span>
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => setStudentFilter("all")}
+                    className={`text-[10px] font-medium px-2 py-0.5 rounded-md border transition-all ${
+                      studentFilter === "all"
+                        ? "bg-slate-800 text-white border-slate-800"
+                        : "bg-white text-slate-600 border-slate-200 hover:bg-slate-100"
+                    }`}
+                  >
+                    Tất cả
+                  </button>
+                  <button
+                    onClick={() => setStudentFilter("pending")}
+                    className={`text-[10px] font-medium px-2 py-0.5 rounded-md border transition-all ${
+                      studentFilter === "pending"
+                        ? "bg-blue-600 text-white border-blue-600"
+                        : "bg-white text-blue-600 border-blue-200 hover:bg-blue-50"
+                    }`}
+                  >
+                    Bài chờ 🔴
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* List Học viên */}
+            <div className="flex-1 overflow-y-auto p-2 space-y-1">
+              {filteredStudents.length === 0 ? (
+                <div className="p-6 text-center text-xs text-slate-400">Không có học viên phù hợp</div>
+              ) : (
+                filteredStudents.map((st: any) => {
+                  const isSelected = st.id === selectedStudentId;
+                  return (
+                    <div
+                      key={st.id}
+                      onClick={() => {
+                        setSelectedStudentId(st.id);
+                        setSelectedHomeworkId("");
+                      }}
+                      className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
+                        isSelected
+                          ? "bg-blue-50/70 border-blue-200 shadow-xs"
+                          : "bg-white border-transparent hover:bg-slate-50"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <Avatar className="h-8 w-8 rounded-lg border border-slate-200 shrink-0">
+                          <AvatarImage src={st.avatarUrl} />
+                          <AvatarFallback className="bg-slate-100 text-slate-700 text-xs font-bold">
+                            {st.fullName?.slice(0, 2).toUpperCase() || "HV"}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="min-w-0">
+                          <p className="text-xs font-bold text-slate-900 truncate">{st.fullName}</p>
+                          <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-medium mt-0.5">
+                            <span>{st.gradedCount + st.pendingCount} / {st.totalAssignedCount} bài</span>
+                            {st.pendingCount > 0 && (
+                              <span className="text-blue-600 font-bold">• {st.pendingCount} chờ</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {st.hasPending && (
+                        <span className="h-2 w-2 rounded-full bg-rose-500 shrink-0 ring-2 ring-rose-100" />
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+
+          {/* ========================================================================= */}
+          {/* CỘT 2: SỔ BÀI TẬP WORKBOOK (BUỔI HỌC & TRẠNG THÁI NỘP BÀI)                 */}
+          {/* ========================================================================= */}
+          <div className="w-1/3 min-w-[320px] max-w-[420px] bg-slate-50/30 border-r border-slate-200 flex flex-col justify-between overflow-hidden">
+            <div className="p-3.5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between shrink-0">
+              <div>
+                <span className="text-xs font-bold text-slate-800 tracking-tight flex items-center gap-1.5">
+                  <BookOpen className="h-3.5 w-3.5 text-blue-600" />
+                  Sổ Bài Tập: {currentStudent?.fullName || "Chưa chọn"}
+                </span>
+                <span className="text-[10px] text-slate-500 font-mono">
+                  Workbook lớp {currentClass?.name || "IELTS"}
+                </span>
+              </div>
+
+              {/* Status counter indicators */}
+              <div className="flex items-center gap-1.5 text-[10px] font-mono">
+                <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold" title="Đã chấm">
+                  🟢 {workbookSummary.graded}
+                </span>
+                <span className="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 font-bold" title="Chờ chấm">
+                  🔵 {workbookSummary.pending}
+                </span>
+                <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200" title="Chưa làm">
+                  ⚪ {workbookSummary.inProgress}
+                </span>
+                {currentStudent && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsReportModalOpen(true)}
+                    className="h-6 text-[10px] font-bold px-2 ml-1 text-blue-700 border-blue-200 hover:bg-blue-50 gap-1 shadow-2xs"
+                  >
+                    <Award className="h-3 w-3" />
+                    Báo cáo
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {/* List Buổi học & Bài tập trong Sổ */}
+            <div className="flex-1 overflow-y-auto p-3 space-y-3">
+              {!currentStudent ? (
+                <div className="p-8 text-center text-xs text-slate-400">
+                  Chọn học viên bên trái để xem sổ bài tập.
+                </div>
+              ) : groupedWorkbook.length === 0 ? (
+                <div className="p-8 text-center text-xs text-slate-400">
+                  Không có bài tập nào được giao cho học viên này.
+                </div>
+              ) : (
+                groupedWorkbook.map((group) => (
+                  <div key={group.lessonNumber} className="space-y-1.5">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-200/60 px-2.5 py-1 rounded-md">
+                      📖 BUỔI {group.lessonNumber}: KỸ NĂNG {group.items[0]?.type.toUpperCase()}
+                    </div>
+
+                    <div className="space-y-1">
+                      {group.items.map((item) => {
+                        const isSelected = item.id === selectedHomeworkId;
+                        const isReopenOpen = reopenTargetId === item.id;
+
+                        return (
+                          <div
+                            key={item.id}
+                            onClick={() => {
+                              setSelectedHomeworkId(item.id);
+                              if (item.submissionId && item.status !== "unsubmitted") {
+                                setIsFocusMode(true);
+                              }
+                            }}
+                            className={`p-2.5 rounded-xl border transition-all cursor-pointer space-y-1.5 ${
+                              isSelected
+                                ? "bg-white border-blue-500 shadow-sm ring-1 ring-blue-500/20"
+                                : "bg-white/80 border-slate-200/80 hover:bg-white hover:border-slate-300"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-semibold text-slate-800 truncate max-w-[200px]">
+                                {item.title}
+                              </span>
+                              {renderStatusBadge(item)}
+                            </div>
+
+                            {/* Dòng Quá hạn -> nút Gia hạn mở Inline */}
+                            {item.isOverdue && item.status !== "graded" && item.status !== "submitted" && (
+                              <div className="text-[10px] text-slate-500 flex items-center justify-between pt-1 border-t border-slate-100">
+                                <span>Hạn: {item.dueDate}</span>
+                                {!isReopenOpen ? (
+                                  <button
+                                    onClick={() => setReopenTargetId(item.id)}
+                                    className="text-blue-600 font-bold hover:underline"
+                                  >
+                                    [Gia hạn]
+                                  </button>
+                                ) : (
+                                  <div className="flex items-center gap-1 bg-slate-50 p-1 rounded border border-slate-200">
+                                    <Input
+                                      type="date"
+                                      value={reopenDate}
+                                      onChange={(e) => setReopenDate(e.target.value)}
+                                      className="h-6 text-[9px] w-24 bg-white"
+                                    />
+                                    <Button size="sm" onClick={() => handleConfirmReopen(item)} className="h-6 text-[9px] px-2 bg-slate-900 text-white">
+                                      Lưu
+                                    </Button>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* ========================================================================= */}
+          {/* CỘT 3: KHAY CHẤM BÀI VÀ XEM TRƯỚC ĐỀ BÀI                                 */}
+          {/* ========================================================================= */}
+          <div className="flex-1 bg-white flex flex-col justify-between overflow-hidden">
+            {!currentStudent ? (
+              <div className="h-full flex items-center justify-center p-8 text-center text-xs text-slate-400">
+                Chọn một học viên từ danh sách để xem bài làm và chấm điểm.
+              </div>
+            ) : !currentHomework ? (
+              <div className="h-full flex items-center justify-center p-8 text-center text-xs text-slate-400">
+                Chọn một bài tập trong sổ bài tập để chấm điểm hoặc xem đề bài.
+              </div>
+            ) : !currentHomework.submissionId || currentHomework.status === "unsubmitted" ? (
+              <ExamPreviewPanel
+                examId={currentHomework.id}
+                homeworkTitle={currentHomework.title}
+                studentName={currentStudent.fullName}
+                className={currentClass?.name || "Lớp IELTS"}
+                status={currentHomework.status}
+                dueDate={currentHomework.dueDate}
+              />
+            ) : (
+              <div className="h-full flex flex-col items-center justify-center p-8 text-center bg-slate-50/50 space-y-4">
+                <div className="p-4 rounded-3xl bg-blue-50 text-blue-600 border border-blue-200/80 shadow-xs">
+                  <FileText className="h-10 w-10" />
+                </div>
+                <div className="space-y-1.5 max-w-md">
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="text-sm font-bold text-slate-900">{currentHomework.title}</span>
+                    {renderStatusBadge(currentHomework)}
+                  </div>
+                  <p className="text-xs text-slate-600">
+                    Học viên: <span className="font-bold text-blue-700">{currentStudent.fullName}</span>
+                  </p>
+                  <p className="text-[11px] text-slate-400">
+                    Bài làm của học viên đã có trong hệ thống. Nhấn nút bên dưới để mở giao diện chấm tập trung toàn màn hình.
+                  </p>
+                </div>
+                <Button
+                  onClick={() => setIsFocusMode(true)}
+                  className="h-10 px-6 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white gap-2 shadow-sm rounded-xl"
+                >
+                  <span>Mở Chấm Bài (Focus Mode)</span>
+                  <ExternalLink className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* MODAL BÁO CÁO TIẾN ĐỘ HỌC TẬP (PHỤ HUYNH) */}
       <ProgressReportModal
