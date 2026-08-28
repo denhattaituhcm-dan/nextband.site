@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { X, Compass, ShieldCheck, BookOpen, Send } from "lucide-react";
+import { X, Compass, ShieldCheck, BookOpen, Send, GraduationCap } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import {
   RoadmapConsultationModal,
