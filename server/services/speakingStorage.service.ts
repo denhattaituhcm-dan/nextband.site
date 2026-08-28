@@ -147,6 +147,48 @@ export class SpeakingStorageService {
   }
 
   /**
+   * Tải buffer tệp âm thanh từ Storage phục vụ STT
+   */
+  async downloadAudioBuffer(storagePath: string): Promise<{ buffer: Buffer; mimeType: string; fileName: string }> {
+    if (!storagePath) {
+      throw new Error("Đường dẫn tệp âm thanh không hợp lệ");
+    }
+    const cleanPath = storagePath.replace(/^\/+/, "");
+
+    // 1. Thử tải từ exam-assets
+    let downloadRes = await this.supabase.storage.from("exam-assets").download(cleanPath);
+
+    // 2. Thử tải từ speaking-recordings nếu thất bại
+    if (downloadRes.error || !downloadRes.data) {
+      const subCleanPath = cleanPath.replace(/^speaking-recordings\//, "");
+      downloadRes = await this.supabase.storage.from(SPEAKING_BUCKET).download(subCleanPath);
+    }
+
+    // 3. Nếu vẫn không tải được và là URL bên ngoài (http/https), fetch trực tiếp
+    if (downloadRes.error || !downloadRes.data) {
+      if (storagePath.startsWith("http://") || storagePath.startsWith("https://")) {
+        const fetchRes = await fetch(storagePath);
+        if (!fetchRes.ok) {
+          throw new Error(`Không thể tải tệp âm thanh từ URL: ${storagePath}`);
+        }
+        const arrayBuf = await fetchRes.arrayBuffer();
+        const buffer = Buffer.from(arrayBuf);
+        const mimeType = fetchRes.headers.get("content-type") || "audio/webm";
+        const fileName = storagePath.split("/").pop()?.split("?")[0] || "recording.webm";
+        return { buffer, mimeType, fileName };
+      }
+      throw new Error(`Không tìm thấy file ghi âm trong Storage: ${storagePath}`);
+    }
+
+    const blob = downloadRes.data;
+    const arrayBuf = await blob.arrayBuffer();
+    const buffer = Buffer.from(arrayBuf);
+    const mimeType = blob.type || "audio/webm";
+    const fileName = cleanPath.split("/").pop()?.split("?")[0] || "recording.webm";
+    return { buffer, mimeType, fileName };
+  }
+
+  /**
    * Idempotent Retention Cleanup Worker
    * Desired state: Storage object = ABSENT, DB status = PURGED
    */

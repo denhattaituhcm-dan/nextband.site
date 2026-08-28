@@ -998,7 +998,17 @@ export class ExamSubmissionService {
   async gradeManualSubmission(
     user: { id: string; roles: string[] },
     id: string,
-    grades: Array<{ answerId: string; score: number; feedback?: string }>,
+    grades: Array<{
+      answerId?: string;
+      questionId?: string;
+      score: number;
+      feedback?: string;
+      primaryErrorCategory?: "CONCEPT" | "STRUCTURE" | "EXPRESSION" | "GRAMMAR" | null;
+      revisionRequired?: boolean;
+      criteriaScores?: CriteriaScores | null;
+      sentenceFeedbacks?: any[];
+      tabSwitchCount?: number;
+    }>,
     totalScore?: number,
     options?: {
       feedback?: string;

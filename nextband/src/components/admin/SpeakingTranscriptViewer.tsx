@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Play, Pause, RotateCcw, Volume2, Edit2, Check, AlertCircle, Sparkles, Wand2, FileText, Loader2 } from "lucide-react";
+import { Play, Pause, RotateCcw, Volume2, Edit2, Check, AlertCircle, Sparkles, Wand2, FileText, Loader2, AlertTriangle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
+import { API_BASE_URL, getAuthToken } from "@/lib/api";
 
 export interface TranscriptSegment {
   id: string;
@@ -17,6 +18,9 @@ interface SpeakingTranscriptViewerProps {
   audioUrl: string;
   initialTranscript?: string | null;
   segments?: TranscriptSegment[] | null;
+  submissionId?: string;
+  answerId?: string;
+  questionId?: string;
   onTranscriptEdited?: (updatedTranscript: string, updatedSegments: TranscriptSegment[]) => void;
   readOnly?: boolean;
 }
@@ -33,7 +37,7 @@ function formatTime(ms: number): string {
 }
 
 /**
- * Fallback segment generator from raw transcript string
+ * Split plain text into default segments with evenly distributed durations
  */
 function generateDefaultSegments(text: string, totalDurationMs: number = 60000): TranscriptSegment[] {
   if (!text || text.trim() === "") return [];
@@ -48,7 +52,7 @@ function generateDefaultSegments(text: string, totalDurationMs: number = 60000):
     return [{ id: "seg-1", startMs: 0, endMs: totalDurationMs || 10000, text }];
   }
 
-  const avgDurationMs = Math.max(3000, Math.floor((totalDurationMs || 60000) / sentences.length));
+  const avgDurationMs = Math.max(2000, Math.floor((totalDurationMs || 60000) / sentences.length));
   return sentences.map((sentence, idx) => ({
     id: `seg-${idx + 1}`,
     startMs: idx * avgDurationMs,
@@ -57,10 +61,45 @@ function generateDefaultSegments(text: string, totalDurationMs: number = 60000):
   }));
 }
 
+/**
+ * Safe parser for raw text or JSON serialized { rawText, segments }
+ */
+function parseInitialTranscript(raw?: string | null): { rawText: string; segments: TranscriptSegment[] } {
+  if (!raw || !raw.trim()) {
+    return { rawText: "", segments: [] };
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed && Array.isArray(parsed.segments) && parsed.segments.length > 0) {
+      return {
+        rawText: parsed.rawText || parsed.text || "",
+        segments: parsed.segments.map((s: any, idx: number) => ({
+          id: s.id || `seg-${idx + 1}`,
+          startMs: typeof s.startMs === "number" ? s.startMs : Math.round((s.start || 0) * 1000),
+          endMs: typeof s.endMs === "number" ? s.endMs : Math.round((s.end || 0) * 1000),
+          text: (s.text || "").trim(),
+          editedText: s.editedText,
+        })),
+      };
+    }
+  } catch {
+    // If not JSON, treat as raw plain text
+  }
+
+  return {
+    rawText: raw,
+    segments: generateDefaultSegments(raw),
+  };
+}
+
 export function SpeakingTranscriptViewer({
   audioUrl,
   initialTranscript,
   segments: initialSegments,
+  submissionId,
+  answerId,
+  questionId,
   onTranscriptEdited,
   readOnly = false,
 }: SpeakingTranscriptViewerProps) {
@@ -69,17 +108,30 @@ export function SpeakingTranscriptViewer({
   const [currentTimeMs, setCurrentTimeMs] = useState(0);
   const [durationMs, setDurationMs] = useState(0);
   const [isTranscribing, setIsTranscribing] = useState(false);
+  const [transcribeError, setTranscribeError] = useState<string | null>(null);
   const [manualInputOpen, setManualInputOpen] = useState(false);
   const [manualText, setManualText] = useState("");
 
   // Segments state
   const [segments, setSegments] = useState<TranscriptSegment[]>(() => {
     if (initialSegments && initialSegments.length > 0) return initialSegments;
-    return generateDefaultSegments(initialTranscript || "");
+    return parseInitialTranscript(initialTranscript).segments;
   });
 
   const [editingSegmentId, setEditingSegmentId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
+
+  // Sync state if initialTranscript changes externally
+  useEffect(() => {
+    if (initialSegments && initialSegments.length > 0) {
+      setSegments(initialSegments);
+    } else if (initialTranscript) {
+      const parsed = parseInitialTranscript(initialTranscript);
+      if (parsed.segments.length > 0) {
+        setSegments(parsed.segments);
+      }
+    }
+  }, [initialTranscript, initialSegments]);
 
   // Handle duration fix for WebM files
   const handleLoadedMetadata = () => {
@@ -152,39 +204,65 @@ export function SpeakingTranscriptViewer({
     setSegments(updated);
     setEditingSegmentId(null);
 
-    const fullText = updated.map((s) => s.editedText || s.text).join(" ");
+    const fullPayload = JSON.stringify({
+      rawText: updated.map((s) => s.editedText || s.text).join(" "),
+      segments: updated,
+    });
+
     if (onTranscriptEdited) {
-      onTranscriptEdited(fullText, updated);
+      onTranscriptEdited(fullPayload, updated);
     }
   };
 
-  // Auto Speech-to-Text Simulator / Processor
+  // Call NextBand Fastify Backend STT Endpoint
   const handleAutoTranscribe = async () => {
     setIsTranscribing(true);
+    setTranscribeError(null);
     try {
-      // If Web Speech Recognition API is available or we have audio to transcribe
-      await new Promise((resolve) => setTimeout(resolve, 1200));
+      const token = await getAuthToken();
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
 
-      // Generated sample transcript from the recording if no previous text
-      const sampleSentences = [
-        "In my opinion, describing someone who has a big influence on my life is very inspiring.",
-        "That person is my high school English teacher who always encouraged me to pursue my goals.",
-        "She taught me how to express ideas clearly and have self-confidence when speaking in public.",
-        "Because of her guidance, I decided to focus seriously on IELTS and academic communication.",
-      ];
+      const res = await fetch(`${API_BASE_URL}/speaking/transcribe`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          submissionId,
+          answerId,
+          questionId,
+          storagePath: audioUrl,
+        }),
+      });
 
-      const newSegments = sampleSentences.map((text, idx) => ({
-        id: `seg-${idx + 1}`,
-        startMs: idx * 8000,
-        endMs: (idx + 1) * 8000,
-        text,
+      const data = await res.json();
+      if (!res.ok || data.status === "FAILED") {
+        throw new Error(data.error || "Không thể bóc băng tệp âm thanh này.");
+      }
+
+      const newSegments: TranscriptSegment[] = (data.segments || []).map((s: any, idx: number) => ({
+        id: s.id || `seg-${idx + 1}`,
+        startMs: s.startMs || 0,
+        endMs: s.endMs || 0,
+        text: s.text || "",
       }));
 
       setSegments(newSegments);
-      const fullText = newSegments.map((s) => s.text).join(" ");
+
+      const serializedPayload = JSON.stringify({
+        rawText: data.rawText || newSegments.map((s) => s.text).join(" "),
+        segments: newSegments,
+      });
+
       if (onTranscriptEdited) {
-        onTranscriptEdited(fullText, newSegments);
+        onTranscriptEdited(serializedPayload, newSegments);
       }
+    } catch (err: any) {
+      console.error("[SpeechToText Error]", err);
+      setTranscribeError(err?.message || "Bóc băng thất bại. Vui lòng kiểm tra lại dịch vụ STT.");
     } finally {
       setIsTranscribing(false);
     }
@@ -195,8 +273,15 @@ export function SpeakingTranscriptViewer({
     const generated = generateDefaultSegments(manualText.trim(), durationMs || 60000);
     setSegments(generated);
     setManualInputOpen(false);
+    setTranscribeError(null);
+
+    const serializedPayload = JSON.stringify({
+      rawText: manualText.trim(),
+      segments: generated,
+    });
+
     if (onTranscriptEdited) {
-      onTranscriptEdited(manualText.trim(), generated);
+      onTranscriptEdited(serializedPayload, generated);
     }
   };
 
@@ -212,7 +297,7 @@ export function SpeakingTranscriptViewer({
         onEnded={() => setIsPlaying(false)}
       />
 
-      {/* AUDIO PLAYER CONTROLS (Thanh điều khiển & Thanh trượt tua âm thanh) */}
+      {/* AUDIO PLAYER CONTROLS */}
       <div className="p-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center gap-3">
         <Button
           size="sm"
@@ -233,7 +318,7 @@ export function SpeakingTranscriptViewer({
           <RotateCcw className="h-3.5 w-3.5" />
         </Button>
 
-        {/* Thanh trượt tua Audio (Interactive Scrubber Slider) */}
+        {/* Interactive Scrubber Slider */}
         <div className="flex-1 min-w-[140px] px-1 flex items-center">
           <Slider
             value={[currentTimeMs]}
@@ -244,13 +329,13 @@ export function SpeakingTranscriptViewer({
           />
         </div>
 
-        {/* Đồng hồ hiển thị thời gian */}
+        {/* Time display */}
         <div className="text-xs font-mono font-bold text-slate-700 px-2 py-1 bg-white rounded-md border border-slate-200 shrink-0">
           {formatTime(currentTimeMs)} / {formatTime(durationMs || 0)}
         </div>
       </div>
 
-      {/* TRANSCRIPT LAYER (Văn bản bóc băng tương tác) */}
+      {/* TRANSCRIPT LAYER */}
       <div className="p-4 space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900">
@@ -271,7 +356,20 @@ export function SpeakingTranscriptViewer({
           )}
         </div>
 
-        {/* Manual Transcript Input Drawer/Box */}
+        {/* Error notification banner */}
+        {transcribeError && (
+          <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800 flex items-start gap-2 animate-in fade-in">
+            <AlertTriangle className="h-4 w-4 text-rose-600 shrink-0 mt-0.5" />
+            <div className="flex-1 space-y-1">
+              <p className="font-semibold">{transcribeError}</p>
+              <p className="text-[11px] text-rose-600">
+                Bạn có thể bấm <strong>Nhập văn bản thủ công</strong> hoặc thử lại bóc băng.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Manual Transcript Input Box */}
         {manualInputOpen && (
           <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
             <Textarea
@@ -315,7 +413,7 @@ export function SpeakingTranscriptViewer({
                 {isTranscribing ? (
                   <>
                     <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    <span>Đang bóc băng âm thanh...</span>
+                    <span>Đang gửi audio đến STT service...</span>
                   </>
                 ) : (
                   <>
@@ -425,6 +523,7 @@ export function SpeakingTranscriptViewer({
             })}
           </div>
         )}
+
         {/* DISCLAIMER INVARIANT */}
         <div className="pt-2 border-t border-slate-100 flex items-center gap-1.5 text-[11px] text-slate-500 font-sans">
           <AlertCircle className="h-3.5 w-3.5 text-slate-400 shrink-0" />

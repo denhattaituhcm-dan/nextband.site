@@ -334,7 +334,7 @@ export function WritingSection({
                       <RichContent
                         html={group.passage}
                         variant="passage"
-                        className="text-gray-900 dark:text-gray-100 text-base leading-relaxed font-medium"
+                        className="text-gray-900 dark:text-gray-100 text-base leading-relaxed font-normal"
                       />
                     </div>
                   )}
@@ -358,7 +358,7 @@ export function WritingSection({
                                   {cleanHtmlText(question.question_text) && (
                                     <RichContent
                                       html={question.question_text}
-                                      className="text-gray-900 dark:text-gray-100 text-base leading-relaxed font-medium"
+                                      className="text-gray-900 dark:text-gray-100 text-base leading-relaxed font-normal"
                                     />
                                   )}
 

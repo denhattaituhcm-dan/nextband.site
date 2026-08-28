@@ -292,14 +292,14 @@ export function SpeakingGrader({
 
             {/* Instructions */}
             {currentAnswer.instructions && (
-              <div className="text-xs text-slate-700 font-medium bg-white/90 p-3 rounded-xl border border-amber-100 leading-relaxed shadow-2xs">
+              <div className="text-xs text-slate-700 font-normal bg-white/90 p-3 rounded-xl border border-amber-100 leading-relaxed shadow-2xs">
                 <RichContent html={currentAnswer.instructions} />
               </div>
             )}
 
             {/* Question Text */}
             {currentAnswer.questionText && (
-              <div className="text-sm text-slate-900 leading-relaxed font-semibold bg-white/60 p-3.5 rounded-xl border border-amber-100/70">
+              <div className="text-sm text-slate-900 leading-relaxed font-normal bg-white/60 p-3.5 rounded-xl border border-amber-100/70">
                 <RichContent html={currentAnswer.questionText} />
               </div>
             )}
@@ -339,6 +339,9 @@ export function SpeakingGrader({
                 <SpeakingTranscriptViewer
                   audioUrl={formatStorageUrl(currentAnswer.audioUrl)}
                   initialTranscript={currentAnswer.answerText || undefined}
+                  submissionId={submissionId}
+                  answerId={answerId}
+                  questionId={questionId}
                   onTranscriptEdited={(_updatedTranscript) => {
                     setIsDirty(true);
                   }}

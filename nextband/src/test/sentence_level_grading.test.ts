@@ -100,4 +100,48 @@ describe("🎯 Sentence-Level Grading & Feedback Serialization Test Suite", () =
     expect(hasAdded).toBe(true);
     expect(hasRemoved).toBe(true);
   });
+
+  it("1.7 should calculate accurate skill overall band from 4 whole-integer criteria", async () => {
+    const { calculateSpeakingBand, calculateWritingBand } = await import("@/lib/sentenceFeedback");
+
+    // Case 1: FC=5, LR=6, GRA=5, PR=6 -> avg=5.5 -> Band 5.5
+    expect(
+      calculateSpeakingBand({
+        fluencyAndCoherence: 5,
+        lexical: 6,
+        grammar: 5,
+        pronunciation: 6,
+      })
+    ).toBe("5.5");
+
+    // Case 2: FC=5, LR=6, GRA=5, PR=5 -> avg=5.25 -> Band 5.5 (IELTS .25 rounds up to .5)
+    expect(
+      calculateSpeakingBand({
+        fluencyAndCoherence: 5,
+        lexical: 6,
+        grammar: 5,
+        pronunciation: 5,
+      })
+    ).toBe("5.5");
+
+    // Case 3: TR=6, CC=6, LR=6, GRA=5 -> avg=5.75 -> Band 6.0 (IELTS .75 rounds up to next whole)
+    expect(
+      calculateWritingBand({
+        taskResponse: 6,
+        coherence: 6,
+        lexical: 6,
+        grammar: 5,
+      })
+    ).toBe("6.0");
+
+    // Case 4: TR=7, CC=7, LR=7, GRA=7 -> avg=7.0 -> Band 7.0
+    expect(
+      calculateWritingBand({
+        taskResponse: 7,
+        coherence: 7,
+        lexical: 7,
+        grammar: 7,
+      })
+    ).toBe("7.0");
+  });
 });

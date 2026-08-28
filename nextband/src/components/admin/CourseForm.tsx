@@ -109,26 +109,21 @@ export default function CourseForm({
   const onSubmit = async (values: CourseFormData) => {
     setLoading(true);
     try {
-      if (mode === "create") {
-        await coursesApi.create({
-          title: values.title,
-          description: values.description,
-          price: values.price,
-          // thumbnailUrl, isPublished, isActive might not be in create payload based on current api.ts
-          // Assume backend accepts them or update api.ts.
-          // Let's pass them via spread if api calling supports.
-          // Based on api.ts: create takes { title, description?, level?, price? }
-          // So we might miss thumbnail and status fields on create.
-          // We should update the course immediately after create to set these fields if create doesn't support them.
-          // Or better, assume I've updated the backend/api client to accept them.
-          // For safety, I'll spread extra fields as `any`.
-          ...values,
-        } as any);
+      const payload = {
+        title: values.title,
+        description: values.description,
+        price: values.price !== undefined ? Number(values.price) : 0,
+        thumbnailUrl: values.thumbnailUrl,
+        isPublished: values.isPublished,
+        isActive: values.isActive,
+      };
 
+      if (mode === "create") {
+        await coursesApi.create(payload);
         toast({ title: "Thành công", description: "Khóa học đã được tạo!" });
         navigate("/admin/courses");
       } else if (mode === "edit") {
-        await coursesApi.update(courseId!, values as any);
+        await coursesApi.update(courseId!, payload);
         toast({
           title: "Thành công",
           description: "Khóa học đã được cập nhật!",
@@ -209,26 +204,47 @@ export default function CourseForm({
               )}
             />
 
-            {/* <div className="grid gap-4 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="price"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Giá (VND)</FormLabel>
-                    <FormControl>
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Học phí niêm yết (VNĐ)</FormLabel>
+                  <FormControl>
+                    <div className="relative max-w-md">
                       <Input
                         type="number"
+                        min={0}
+                        step={50000}
                         {...field}
+                        value={field.value ?? ""}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value === "" ? 0 : Number(e.target.value)
+                          )
+                        }
                         disabled={isReadOnly}
                         placeholder="0"
+                        className="pr-14 font-mono font-medium"
                       />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div> */}
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-xs font-semibold text-muted-foreground">
+                        VNĐ
+                      </div>
+                    </div>
+                  </FormControl>
+                  <FormDescription>
+                    {field.value && Number(field.value) > 0 ? (
+                      <span className="text-emerald-600 font-medium">
+                        Số tiền: {Number(field.value).toLocaleString("vi-VN")} đ
+                      </span>
+                    ) : (
+                      "Nhập 0 nếu khóa học miễn phí hoặc chưa thiết lập giá"
+                    )}
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}

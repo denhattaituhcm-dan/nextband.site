@@ -94,6 +94,7 @@ export const CASE_002: ReadingCase = {
       ],
       answer: "A",
       evidence_paragraph_id: "p02",
+      explanation: "Trong Source 1 (đoạn 2), Warren Buffett chia sẻ: “The only diploma I hang in my office is the communications diploma I got from Dale Carnegie in 1952.” — chứng minh đây là tấm bằng duy nhất ông treo trang trọng tại văn phòng làm việc.",
     },
     {
       id: "task-02",
@@ -107,6 +108,7 @@ export const CASE_002: ReadingCase = {
       ],
       answer: "C",
       evidence_paragraph_id: "p04",
+      explanation: "Trong Source 2 (đoạn 1), bài viết chỉ ra AI có thể phân tích và viết code trong vài giây nhưng “What it can’t do is earn trust, inspire commitment, navigate conflict, or make another human feel understood.”",
     },
     {
       id: "task-03",
@@ -120,6 +122,7 @@ export const CASE_002: ReadingCase = {
       ],
       answer: "A",
       evidence_paragraph_id: "p10",
+      explanation: "Trong Source 3 (đoạn 3), tác giả đúc kết nguyên lý: “People rarely remember every word you said. They almost always remember how you made them feel.” — người nghe đánh giá hiệu quả lãnh đạo qua cảm giác được thấu hiểu và tôn trọng hơn là câu chữ cụ thể.",
     },
     {
       id: "task-04",
@@ -127,6 +130,7 @@ export const CASE_002: ReadingCase = {
       instruction: "Click directly on the sentence in Source 2 that explains what customers, investors, and employees genuinely seek when making decisions.",
       target_paragraph_id: "p06",
       target_sentence: "Every entrepreneur eventually discovers that customers don’t buy products—they buy confidence.",
+      explanation: "Câu văn tại Source 2 (đoạn 3) làm rõ bản chất: “Every entrepreneur eventually discovers that customers don’t buy products—they buy confidence. Investors don’t fund ideas—they fund founders they believe can execute. Employees don’t stay because of perks alone—they stay because they trust the people leading them.”",
     },
   ],
 
@@ -170,6 +174,7 @@ export const CASE_002: ReadingCase = {
       },
     ],
     correct_evidence_ids: ["ev-01", "ev-02", "ev-03"],
+    explanation: "Giao tiếp tạo ra vốn quan hệ (relational capital) và sự tin cậy tích lũy qua từng tương tác. Trong kỷ nguyên AI có thể đảm nhận mọi tác vụ kỹ thuật, khả năng truyền cảm hứng, thấu cảm và chuyển hóa sự phức tạp thành rõ ràng chính là đòn bẩy khuếch đại (multiplier) giá trị của người lãnh đạo.",
   },
 
   vocabulary: [],

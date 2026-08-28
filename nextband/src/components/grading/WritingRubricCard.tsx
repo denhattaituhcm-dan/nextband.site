@@ -17,7 +17,14 @@ interface WritingRubricCardProps {
   disabled?: boolean;
 }
 
-const BAND_OPTIONS = ["4.0", "4.5", "5.0", "5.5", "6.0", "6.5", "7.0", "7.5", "8.0"];
+const BAND_OPTIONS = ["1.0", "2.0", "3.0", "4.0", "5.0", "6.0", "7.0", "8.0", "9.0"];
+
+function getOptionsForValue(currentVal?: number | null): string[] {
+  if (currentVal == null || isNaN(currentVal)) return BAND_OPTIONS;
+  const formatted = currentVal.toFixed(1);
+  if (BAND_OPTIONS.includes(formatted)) return BAND_OPTIONS;
+  return [...BAND_OPTIONS, formatted].sort((a, b) => parseFloat(a) - parseFloat(b));
+}
 
 export function WritingRubricCard({ scores, onChange, disabled = false }: WritingRubricCardProps) {
   const calculatedBand = useMemo(() => calculateWritingBand(scores), [scores]);
@@ -54,7 +61,7 @@ export function WritingRubricCard({ scores, onChange, disabled = false }: Writin
               <SelectValue placeholder="—" />
             </SelectTrigger>
             <SelectContent>
-              {BAND_OPTIONS.map((v) => (
+              {getOptionsForValue(scores.taskResponse).map((v) => (
                 <SelectItem key={v} value={v} className="text-xs font-bold">{v}</SelectItem>
               ))}
             </SelectContent>
@@ -72,7 +79,7 @@ export function WritingRubricCard({ scores, onChange, disabled = false }: Writin
               <SelectValue placeholder="—" />
             </SelectTrigger>
             <SelectContent>
-              {BAND_OPTIONS.map((v) => (
+              {getOptionsForValue(scores.coherence).map((v) => (
                 <SelectItem key={v} value={v} className="text-xs font-bold">{v}</SelectItem>
               ))}
             </SelectContent>
@@ -90,7 +97,7 @@ export function WritingRubricCard({ scores, onChange, disabled = false }: Writin
               <SelectValue placeholder="—" />
             </SelectTrigger>
             <SelectContent>
-              {BAND_OPTIONS.map((v) => (
+              {getOptionsForValue(scores.lexical).map((v) => (
                 <SelectItem key={v} value={v} className="text-xs font-bold">{v}</SelectItem>
               ))}
             </SelectContent>
@@ -108,7 +115,7 @@ export function WritingRubricCard({ scores, onChange, disabled = false }: Writin
               <SelectValue placeholder="—" />
             </SelectTrigger>
             <SelectContent>
-              {BAND_OPTIONS.map((v) => (
+              {getOptionsForValue(scores.grammar).map((v) => (
                 <SelectItem key={v} value={v} className="text-xs font-bold">{v}</SelectItem>
               ))}
             </SelectContent>

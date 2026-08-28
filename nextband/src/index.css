@@ -185,10 +185,12 @@
     word-break: break-word;
     overflow-wrap: break-word;
     width: 100%;
+    font-weight: 400;
   }
 
   .rich-content p {
     margin-bottom: 1em;
+    font-weight: 400;
   }
   .rich-content p:last-child {
     margin-bottom: 0;

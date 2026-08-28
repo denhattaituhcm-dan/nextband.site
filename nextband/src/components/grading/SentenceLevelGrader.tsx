@@ -277,7 +277,7 @@ export function SentenceLevelGrader({
 
                   {/* Teacher Note */}
                   {item.note && (
-                    <div className="text-slate-800 dark:text-slate-200 font-medium">
+                    <div className="text-slate-800 dark:text-slate-200 font-medium whitespace-pre-wrap">
                       <strong>{item.category === "PRAISE" ? "Lời khen:" : "Nhận xét:"}</strong> {item.note}
                     </div>
                   )}
@@ -286,7 +286,7 @@ export function SentenceLevelGrader({
                   {item.suggestedSentence && (
                     <div className="flex items-start gap-1.5 p-2 rounded-lg bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 text-emerald-900 dark:text-emerald-200 text-xs">
                       <Lightbulb className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                      <div>
+                      <div className="whitespace-pre-wrap">
                         <strong>{item.category === "PRAISE" ? "Gợi ý nâng cao:" : "Gợi ý viết lại:"}</strong> {item.suggestedSentence}
                       </div>
                     </div>
@@ -423,15 +423,25 @@ export function SentenceLevelGrader({
                   <Textarea
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
+                    onKeyDown={(e) => {
+                      e.stopPropagation();
+                      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                        e.preventDefault();
+                        handleSaveSentenceFeedback();
+                      }
+                    }}
                     placeholder={
                       category === "PRAISE"
                         ? "Khen ngợi cách dùng từ, cấu trúc nâng cao, lập luận tự nhiên..."
                         : "Chỉ rõ điểm sai hoặc lưu ý ngữ pháp..."
                     }
                     rows={4}
-                    className="min-h-[120px] text-xs sm:text-sm border-slate-200 bg-white leading-relaxed focus-visible:ring-1 focus-visible:ring-blue-500 rounded-xl p-3"
+                    className="min-h-[120px] text-xs sm:text-sm border-slate-200 bg-white leading-relaxed focus-visible:ring-1 focus-visible:ring-blue-500 rounded-xl p-3 whitespace-pre-wrap"
                     disabled={readOnly}
                   />
+                  <p className="text-[11px] text-slate-400">
+                    Mẹo: Nhấn <strong>Enter</strong> để xuống dòng, <strong>Ctrl + Enter</strong> để lưu nhanh.
+                  </p>
                 </div>
 
                 {/* Suggested Rewrite */}
@@ -447,15 +457,25 @@ export function SentenceLevelGrader({
                   <Textarea
                     value={suggestedSentence}
                     onChange={(e) => setSuggestedSentence(e.target.value)}
+                    onKeyDown={(e) => {
+                      e.stopPropagation();
+                      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+                        e.preventDefault();
+                        handleSaveSentenceFeedback();
+                      }
+                    }}
                     placeholder={
                       category === "PRAISE"
                         ? "(Tùy chọn) Gợi ý cách diễn đạt band 8.0+ cao cấp hơn..."
                         : "Gõ câu viết lại mẫu để học sinh tham khảo..."
                     }
                     rows={4}
-                    className="min-h-[120px] text-xs sm:text-sm border-emerald-300 bg-emerald-50/30 text-slate-900 leading-relaxed focus-visible:ring-1 focus-visible:ring-emerald-500 rounded-xl p-3"
+                    className="min-h-[120px] text-xs sm:text-sm border-emerald-300 bg-emerald-50/30 text-slate-900 leading-relaxed focus-visible:ring-1 focus-visible:ring-emerald-500 rounded-xl p-3 whitespace-pre-wrap"
                     disabled={readOnly}
                   />
+                  <p className="text-[11px] text-emerald-600/70">
+                    Mẹo: Nhấn <strong>Enter</strong> để xuống dòng, <strong>Ctrl + Enter</strong> để lưu nhanh.
+                  </p>
                 </div>
               </div>
             </div>

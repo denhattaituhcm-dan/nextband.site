@@ -117,7 +117,7 @@ export class SubmissionController {
   ) {
     try {
       const user = (request as any).user;
-      const body = request.body || {};
+      const body = (request.body || {}) as any;
       const {
         grades = [],
         totalScore,

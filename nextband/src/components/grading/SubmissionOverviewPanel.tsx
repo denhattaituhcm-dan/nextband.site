@@ -152,13 +152,13 @@ export function SubmissionOverviewPanel({
           </div>
 
           {instructions && (
-            <div className="text-[11px] text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-100 leading-relaxed">
-              {instructions}
+            <div className="text-[11px] text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-100 leading-relaxed font-normal">
+              <RichContent html={instructions} />
             </div>
           )}
 
           {promptText && (
-            <div className="text-xs text-slate-900 font-semibold leading-relaxed">
+            <div className="text-xs text-slate-900 font-normal leading-relaxed">
               <RichContent html={promptText} />
             </div>
           )}
@@ -256,38 +256,54 @@ export function SubmissionOverviewPanel({
                     <>
                       <div className="p-2 bg-slate-50 rounded-lg border border-slate-100 flex justify-between">
                         <span className="text-slate-600 font-medium">Fluency (FC):</span>
-                        <span className="font-bold text-slate-900 font-mono">{criteria.fluencyAndCoherence ?? "—"}</span>
+                        <span className="font-bold text-slate-900 font-mono">
+                          {criteria.fluencyAndCoherence != null ? Number(criteria.fluencyAndCoherence).toFixed(1) : "—"}
+                        </span>
                       </div>
                       <div className="p-2 bg-slate-50 rounded-lg border border-slate-100 flex justify-between">
                         <span className="text-slate-600 font-medium">Lexical (LR):</span>
-                        <span className="font-bold text-slate-900 font-mono">{criteria.lexical ?? "—"}</span>
+                        <span className="font-bold text-slate-900 font-mono">
+                          {criteria.lexical != null ? Number(criteria.lexical).toFixed(1) : "—"}
+                        </span>
                       </div>
                       <div className="p-2 bg-slate-50 rounded-lg border border-slate-100 flex justify-between">
                         <span className="text-slate-600 font-medium">Grammar (GRA):</span>
-                        <span className="font-bold text-slate-900 font-mono">{criteria.grammar ?? "—"}</span>
+                        <span className="font-bold text-slate-900 font-mono">
+                          {criteria.grammar != null ? Number(criteria.grammar).toFixed(1) : "—"}
+                        </span>
                       </div>
                       <div className="p-2 bg-slate-50 rounded-lg border border-slate-100 flex justify-between">
                         <span className="text-slate-600 font-medium">Pronun (PR):</span>
-                        <span className="font-bold text-slate-900 font-mono">{criteria.pronunciation ?? "—"}</span>
+                        <span className="font-bold text-slate-900 font-mono">
+                          {criteria.pronunciation != null ? Number(criteria.pronunciation).toFixed(1) : "—"}
+                        </span>
                       </div>
                     </>
                   ) : (
                     <>
                       <div className="p-2 bg-slate-50 rounded-lg border border-slate-100 flex justify-between">
                         <span className="text-slate-600 font-medium">Task Resp (TR):</span>
-                        <span className="font-bold text-slate-900 font-mono">{criteria.taskResponse ?? "—"}</span>
+                        <span className="font-bold text-slate-900 font-mono">
+                          {criteria.taskResponse != null ? Number(criteria.taskResponse).toFixed(1) : "—"}
+                        </span>
                       </div>
                       <div className="p-2 bg-slate-50 rounded-lg border border-slate-100 flex justify-between">
                         <span className="text-slate-600 font-medium">Coherence (CC):</span>
-                        <span className="font-bold text-slate-900 font-mono">{criteria.coherence ?? "—"}</span>
+                        <span className="font-bold text-slate-900 font-mono">
+                          {criteria.coherence != null ? Number(criteria.coherence).toFixed(1) : "—"}
+                        </span>
                       </div>
                       <div className="p-2 bg-slate-50 rounded-lg border border-slate-100 flex justify-between">
                         <span className="text-slate-600 font-medium">Lexical (LR):</span>
-                        <span className="font-bold text-slate-900 font-mono">{criteria.lexical ?? "—"}</span>
+                        <span className="font-bold text-slate-900 font-mono">
+                          {criteria.lexical != null ? Number(criteria.lexical).toFixed(1) : "—"}
+                        </span>
                       </div>
                       <div className="p-2 bg-slate-50 rounded-lg border border-slate-100 flex justify-between">
                         <span className="text-slate-600 font-medium">Grammar (GRA):</span>
-                        <span className="font-bold text-slate-900 font-mono">{criteria.grammar ?? "—"}</span>
+                        <span className="font-bold text-slate-900 font-mono">
+                          {criteria.grammar != null ? Number(criteria.grammar).toFixed(1) : "—"}
+                        </span>
                       </div>
                     </>
                   )}

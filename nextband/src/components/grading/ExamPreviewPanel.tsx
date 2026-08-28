@@ -14,6 +14,7 @@ import {
   Loader2,
   ExternalLink,
 } from "lucide-react";
+import { RichContent } from "@/components/exam/RichContent";
 
 interface ExamPreviewPanelProps {
   examId: string;
@@ -139,8 +140,8 @@ export function ExamPreviewPanel({
                     )}
 
                     {grp.instructions && (
-                      <div className="text-xs text-slate-700 font-medium bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-                        {grp.instructions}
+                      <div className="text-xs text-slate-700 font-normal bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                        <RichContent html={grp.instructions} />
                       </div>
                     )}
 
@@ -150,8 +151,8 @@ export function ExamPreviewPanel({
                           <BookOpen className="h-3 w-3 text-slate-400" />
                           Đoạn văn / Đọc hiểu:
                         </span>
-                        <div className="text-xs text-slate-800 bg-slate-50/50 p-3 rounded-lg border border-slate-200 max-h-60 overflow-y-auto leading-relaxed whitespace-pre-line font-serif">
-                          {grp.passage}
+                        <div className="text-xs text-slate-800 bg-slate-50/50 p-3 rounded-lg border border-slate-200 max-h-60 overflow-y-auto leading-relaxed">
+                          <RichContent html={grp.passage} variant="passage" />
                         </div>
                       </div>
                     )}
@@ -183,9 +184,9 @@ export function ExamPreviewPanel({
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-slate-800 leading-relaxed font-medium">
-                            {q.questionText || q.question_text || "(Không có nội dung câu hỏi)"}
-                          </p>
+                          <div className="text-xs text-slate-800 leading-relaxed font-normal">
+                            <RichContent html={q.questionText || q.question_text || "(Không có nội dung câu hỏi)"} />
+                          </div>
                         </div>
                       ))}
                     </div>

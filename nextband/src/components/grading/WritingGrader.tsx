@@ -344,14 +344,14 @@ export function WritingGrader({
 
             {/* Question instructions if available */}
             {currentAnswer.instructions && (
-              <div className="text-xs text-slate-700 font-medium bg-white/90 p-3 rounded-xl border border-blue-100 leading-relaxed shadow-2xs">
+              <div className="text-xs text-slate-700 font-normal bg-white/90 p-3 rounded-xl border border-blue-100 leading-relaxed shadow-2xs">
                 <RichContent html={currentAnswer.instructions} />
               </div>
             )}
 
             {/* Question prompt text */}
             {currentAnswer.questionText && (
-              <div className="text-sm text-slate-900 leading-relaxed font-semibold bg-white/60 p-3.5 rounded-xl border border-blue-100/70">
+              <div className="text-sm text-slate-900 leading-relaxed font-normal bg-white/60 p-3.5 rounded-xl border border-blue-100/70">
                 <RichContent html={currentAnswer.questionText} />
               </div>
             )}
@@ -500,8 +500,11 @@ export function WritingGrader({
                 setFeedbackText(e.target.value);
                 setIsDirty(true);
               }}
+              onKeyDown={(e) => {
+                e.stopPropagation();
+              }}
               placeholder="Gõ nhận xét, gợi ý sửa câu hoặc đáp án mẫu cho học viên..."
-              className="min-h-[120px] text-xs font-sans border-slate-200 focus-visible:ring-1 focus-visible:ring-blue-500/40 leading-relaxed bg-white"
+              className="min-h-[120px] text-xs font-sans border-slate-200 focus-visible:ring-1 focus-visible:ring-blue-500/40 leading-relaxed bg-white whitespace-pre-wrap"
             />
           </Card>
 

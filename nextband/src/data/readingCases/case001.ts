@@ -94,6 +94,7 @@ export const CASE_001: ReadingCase = {
       ],
       answer: "B",
       evidence_paragraph_id: "p02",
+      explanation: "Trong Source 1 (đoạn 2) ghi rõ: “The perimeter ice ridges showed no signs of overflow or horizontal collapse” chứng minh nước không hề tràn qua bề mặt hay làm sụp các gờ băng xung quanh.",
     },
     {
       id: "task-02",
@@ -107,6 +108,7 @@ export const CASE_001: ReadingCase = {
       ],
       answer: "C",
       evidence_paragraph_ids: ["p06", "p10"],
+      explanation: "Dr. Vance giả thuyết nhiệt địa nhiệt/núi lửa làm ấm đá đáy (Source 2), nhưng số liệu cảm biến viễn thám tại Source 3 chứng minh nhiệt độ đá đáy cố định ở mức -1.8°C suốt quá trình xả nước, bác bỏ hoàn toàn giả thuyết làm ấm.",
     },
     {
       id: "task-03",
@@ -120,6 +122,7 @@ export const CASE_001: ReadingCase = {
       ],
       answer: "A",
       evidence_paragraph_id: "p09",
+      explanation: "Cảm biến áp suất ghi nhận sóng xung kích thẳng đứng cực lớn lúc 03:12 AM (Source 3), đúng 3 phút trước khi nước bắt đầu rút ồ ạt lúc 03:15 AM, chứng minh vết nứt lớn đã mở toang xuyên suốt dải băng ngay tại thời điểm này.",
     },
     {
       id: "task-04",
@@ -127,6 +130,7 @@ export const CASE_001: ReadingCase = {
       instruction: "Click directly on the sentence in Source 1 that proves the meltwater drained straight down through the entire depth of the ice sheet to the rock beneath.",
       target_paragraph_id: "p03",
       target_sentence: "However, the crevasse extends straight down through the entire 850-meter ice sheet, so the water drained directly to the bedrock.",
+      explanation: "Câu văn tại Source 1 (đoạn 3) nêu rõ khe nứt đâm thẳng qua toàn bộ 850m tầng băng tới tận lớp đá đáy (bedrock).",
     },
   ],
 
@@ -170,6 +174,7 @@ export const CASE_001: ReadingCase = {
       },
     ],
     correct_evidence_ids: ["ev-02", "ev-03"],
+    explanation: "Áp lực cơ học từ 8 triệu m³ nước kết hợp biến dạng bề mặt (nhô lên 18cm) đã kích hoạt hiện tượng nứt gãy thủy lực nhanh, mở toang vết nứt thẳng đứng sâu 850m xuyên suốt dải băng tới lớp đá đáy.",
   },
 
   vocabulary: [],

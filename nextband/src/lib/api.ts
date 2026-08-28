@@ -452,6 +452,7 @@ export const coursesApi = {
       title: string;
       description: string;
       level: string;
+      price: number;
       thumbnailUrl: string;
       isPublished: boolean;
       isActive: boolean;

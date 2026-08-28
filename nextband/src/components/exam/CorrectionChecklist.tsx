@@ -175,7 +175,7 @@ export function CorrectionChecklist({
 
                       {/* Teacher Note */}
                       {item.note && (
-                        <p className="text-slate-800 dark:text-slate-200 font-medium">
+                        <p className="text-slate-800 dark:text-slate-200 font-medium whitespace-pre-wrap">
                           <strong>Ghi chú:</strong> {item.note}
                         </p>
                       )}
@@ -184,7 +184,7 @@ export function CorrectionChecklist({
                       {item.suggestedSentence && (
                         <div className="flex items-start gap-1.5 p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-900 dark:text-emerald-200 text-xs">
                           <Lightbulb className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                          <div>
+                          <div className="whitespace-pre-wrap">
                             <strong>Gợi ý:</strong> {item.suggestedSentence}
                           </div>
                         </div>

@@ -108,6 +108,7 @@ export interface MultipleChoiceTask extends BaseTask {
   answer: string;
   evidence_paragraph_id?: string;
   evidence_paragraph_ids?: string[];
+  explanation?: string;
 }
 
 export interface ProveTask extends BaseTask {
@@ -115,6 +116,7 @@ export interface ProveTask extends BaseTask {
   instruction: string;
   target_paragraph_id: string;
   target_sentence: string;
+  explanation?: string;
 }
 
 export type ReadingTask = MultipleChoiceTask | ProveTask;
@@ -131,6 +133,7 @@ export interface FinalDeduction {
   correct_hypothesis: string;
   required_evidence_pool: EvidenceItem[];
   correct_evidence_ids: string[];
+  explanation?: string;
 }
 
 export interface AutopsyTrap {

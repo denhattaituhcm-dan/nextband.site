@@ -374,9 +374,12 @@ export function AnswerGradingCard({
                   setFeedback(e.target.value);
                   onFeedbackChange(e.target.value);
                 }}
+                onKeyDown={(e) => {
+                  e.stopPropagation();
+                }}
                 placeholder="Nhập nhận xét cho câu trả lời..."
                 rows={4}
-                className="mt-1"
+                className="mt-1 whitespace-pre-wrap"
                 disabled={readOnly}
               />
             </div>

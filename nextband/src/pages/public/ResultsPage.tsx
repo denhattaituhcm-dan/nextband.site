@@ -438,7 +438,7 @@ export default function ResultsPage() {
                       {/* Middle: Student Avatar + Score Trajectory Bar */}
                       <div className="flex gap-5 items-start">
                         {/* Student Image */}
-                        <div className="relative shrink-0 w-20 h-20 sm:w-24 sm:h-24">
+                        <div className="relative shrink-0 w-28 h-28 sm:w-36 sm:h-36">
                           <img
                             src={item.imageUrl}
                             alt={item.studentName}
@@ -686,7 +686,7 @@ export default function ResultsPage() {
                 <img
                   src={selectedStory.imageUrl}
                   alt={selectedStory.studentName}
-                  className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border border-border/80 shrink-0 shadow-2xs"
+                  className="w-28 h-28 sm:w-36 sm:h-36 rounded-2xl object-cover border border-border/80 shrink-0 shadow-2xs"
                 />
                 <div className="space-y-1">
                   <div className="flex flex-wrap items-center gap-2">
