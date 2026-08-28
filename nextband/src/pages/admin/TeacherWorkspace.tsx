@@ -438,7 +438,53 @@ export default function TeacherWorkspace() {
     return workbookItems.find((h) => h.id === selectedHomeworkId) || workbookItems[0];
   }, [workbookItems, selectedHomeworkId]);
 
-  // Thống kê nhanh Sổ bài tập Cột 2 từ CSDL Thật
+  // 4. Fetch detailed submission (with exam sections, question prompts, passages)
+  const { data: currentSubmissionDetail } = useQuery({
+    queryKey: ["submission-detail-for-grading", currentHomework?.submissionId],
+    queryFn: async () => {
+      if (!currentHomework?.submissionId) return null;
+      try {
+        return await submissionsApi.getById(currentHomework.submissionId);
+      } catch (e) {
+        return null;
+      }
+    },
+    enabled: !!currentHomework?.submissionId,
+  });
+
+  const resolvedAnswers = useMemo(() => {
+    if (currentSubmissionDetail && Array.isArray(currentSubmissionDetail.answers) && currentSubmissionDetail.answers.length > 0) {
+      const examQuestions: any[] = [];
+      (currentSubmissionDetail.exam?.sections || []).forEach((sec: any) => {
+        (sec.questionGroups || sec.question_groups || []).forEach((grp: any) => {
+          (grp.questions || []).forEach((q: any) => {
+            examQuestions.push({
+              ...q,
+              groupTitle: grp.title || (currentHomework?.type === "speaking" ? `Speaking Part ${examQuestions.length + 1}` : `Task ${examQuestions.length + 1}`),
+              groupInstructions: grp.instructions || "",
+              passage: grp.passage || "",
+            });
+          });
+        });
+      });
+
+      return currentSubmissionDetail.answers.map((a: any) => {
+        const matchedQ = examQuestions.find((q) => q.id === a.questionId || q.id === a.question_id);
+        return {
+          id: a.id,
+          questionId: a.questionId || a.question_id,
+          questionTitle: matchedQ?.groupTitle || matchedQ?.title || "",
+          questionText: matchedQ?.questionText || matchedQ?.question_text || matchedQ?.groupInstructions || "",
+          passage: matchedQ?.passage || "",
+          answerText: a.answerText || a.studentAnswer || "",
+          audioUrl: a.audioUrl || "",
+          score: a.score != null ? Number(a.score) : null,
+          feedback: a.feedback || "",
+        };
+      });
+    }
+    return currentHomework?.answers || [];
+  }, [currentSubmissionDetail, currentHomework]);
   const workbookSummary = useMemo(() => {
     if (!currentStudent) return { graded: 0, pending: 0, inProgress: 0, overdue: 0 };
     return {
@@ -985,7 +1031,7 @@ export default function TeacherWorkspace() {
               studentName={currentStudent.fullName}
               className={currentClass?.name || "Lớp IELTS"}
               homeworkTitle={currentHomework.title}
-              answers={currentHomework.answers}
+              answers={resolvedAnswers}
               isSubmitting={isSubmitting}
               onGradeSubmit={handleGradeSubmit}
             />
@@ -995,7 +1041,7 @@ export default function TeacherWorkspace() {
               studentName={currentStudent.fullName}
               className={currentClass?.name || "Lớp IELTS"}
               homeworkTitle={currentHomework.title}
-              answers={currentHomework.answers}
+              answers={resolvedAnswers}
               isSubmitting={isSubmitting}
               onGradeSubmit={handleGradeSubmit}
             />
