@@ -14,10 +14,17 @@ import {
 const MAX_EXAM_ATTEMPTS = 3;
 
 export interface CriteriaScores {
-  taskResponse: number | null;
-  coherence: number | null;
-  lexical: number | null;
-  grammar: number | null;
+  // Writing Criteria
+  taskResponse?: number | null;
+  coherence?: number | null;
+
+  // Speaking Criteria
+  fluencyAndCoherence?: number | null;
+  pronunciation?: number | null;
+
+  // Shared Criteria
+  lexical?: number | null;
+  grammar?: number | null;
 }
 
 export interface TeacherFeedbackPayload {
@@ -279,15 +286,20 @@ export class ExamSubmissionService {
       };
     }
 
-    // Hide unpublished draft teacher feedback from student
+    // Hide unpublished draft teacher feedback and draft score from student
     if (!canSeeSecrets && submission.answers) {
       submission.answers = submission.answers.map((a: any) => {
         const sanitizedAns = { ...a };
         if (!isGraded) {
           sanitizedAns.feedback = null;
+          sanitizedAns.score = null;
         }
         return sanitizedAns;
       });
+      if (!isGraded) {
+        submission.totalScore = null;
+        submission.total_score = null;
+      }
     }
 
     return submission;
@@ -926,13 +938,13 @@ export class ExamSubmissionService {
     }
 
     // Invariant Check: Verify that teacher explicitly marked revisionRequired: true
-    let isRevisionRequired = true;
+    let isRevisionRequired = false;
     for (const ans of latestSubmission.answers || []) {
       if (ans.feedback) {
         try {
           const parsed = JSON.parse(ans.feedback);
-          if (parsed && typeof parsed === "object" && parsed.revisionRequired !== undefined) {
-            isRevisionRequired = !!parsed.revisionRequired;
+          if (parsed && typeof parsed === "object" && parsed.revisionRequired) {
+            isRevisionRequired = true;
             break;
           }
         } catch {
@@ -1033,70 +1045,119 @@ export class ExamSubmissionService {
 
     return this.repo.transaction(async (tx) => {
       let computedTotal = 0;
+      const answerScores: number[] = [];
 
       for (let i = 0; i < grades.length; i++) {
         const g = grades[i];
-        let answerFeedback = g.feedback || null;
+        let answerFeedback: string | null = null;
 
-        // If top-level feedback metadata is provided and this is the first answer, format feedback
+        // Extract criteria from g or top-level options for first answer
+        const effectiveFeedbackText = g.feedback || (i === 0 ? options?.feedback : "") || "";
+        const effectivePrimaryCategory = g.primaryErrorCategory || (i === 0 ? options?.primaryErrorCategory : null) || null;
+        const effectiveRevisionRequired = g.revisionRequired !== undefined ? !!g.revisionRequired : (i === 0 ? !!options?.revisionRequired : false);
+        const effectiveCriteriaScores = g.criteriaScores || (i === 0 ? options?.criteriaScores : null) || null;
+        const effectiveSentenceFeedbacks = g.sentenceFeedbacks || (i === 0 ? options?.sentenceFeedbacks : []) || [];
+        const effectiveTabSwitchCount = g.tabSwitchCount || (i === 0 ? options?.tabSwitchCount : 0) || 0;
+
         if (
-          i === 0 &&
-          options &&
-          (options.feedback ||
-            options.primaryErrorCategory !== undefined ||
-            options.revisionRequired !== undefined ||
-            options.criteriaScores !== undefined ||
-            options.sentenceFeedbacks !== undefined)
+          effectiveFeedbackText ||
+          effectivePrimaryCategory !== null ||
+          effectiveRevisionRequired ||
+          effectiveCriteriaScores !== null ||
+          effectiveSentenceFeedbacks.length > 0
         ) {
-          const structuredPayload: TeacherFeedbackPayload = {
-            text: options.feedback || g.feedback || "",
-            primaryErrorCategory: options.primaryErrorCategory || null,
-            revisionRequired: !!options.revisionRequired,
-            criteriaScores: options.criteriaScores || null,
-            sentenceFeedbacks: options.sentenceFeedbacks || [],
-            tabSwitchCount: options.tabSwitchCount || 0,
-          };
-          answerFeedback = JSON.stringify(structuredPayload);
+          if (typeof effectiveFeedbackText === "string" && effectiveFeedbackText.trim().startsWith("{") && !effectiveCriteriaScores) {
+            answerFeedback = effectiveFeedbackText;
+          } else {
+            const structuredPayload: TeacherFeedbackPayload = {
+              text: effectiveFeedbackText,
+              primaryErrorCategory: effectivePrimaryCategory,
+              revisionRequired: effectiveRevisionRequired,
+              criteriaScores: effectiveCriteriaScores,
+              sentenceFeedbacks: effectiveSentenceFeedbacks,
+              tabSwitchCount: effectiveTabSwitchCount,
+            };
+            answerFeedback = JSON.stringify(structuredPayload);
+          }
+        } else if (typeof g.feedback === "string") {
+          answerFeedback = g.feedback;
         }
 
-        if (g.answerId) {
-          await tx.answer.update({
-            where: { id: g.answerId },
+        // Authoritative score for this answer from criteria if available
+        let answerScore = typeof g.score === "number" ? g.score : null;
+        if (effectiveCriteriaScores) {
+          const { taskResponse, coherence, fluencyAndCoherence, lexical, grammar, pronunciation } = effectiveCriteriaScores;
+          if (taskResponse != null || coherence != null) {
+            // Writing rubric
+            const scores = [taskResponse, coherence, lexical, grammar].filter((v): v is number => typeof v === "number" && !isNaN(v));
+            if (scores.length > 0) {
+              const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+              answerScore = Math.round(avg * 2) / 2;
+            }
+          } else if (fluencyAndCoherence != null || pronunciation != null) {
+            // Speaking rubric
+            const scores = [fluencyAndCoherence, lexical, grammar, pronunciation].filter((v): v is number => typeof v === "number" && !isNaN(v));
+            if (scores.length > 0) {
+              const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+              answerScore = Math.round(avg * 2) / 2;
+            }
+          }
+        }
+
+        if (answerScore != null) {
+          answerScores.push(answerScore);
+        }
+
+        const targetWhere: any = g.answerId
+          ? { id: g.answerId }
+          : g.questionId
+          ? { submissionId: id, questionId: g.questionId }
+          : null;
+
+        if (targetWhere) {
+          await tx.answer.updateMany({
+            where: targetWhere,
             data: {
-              score: g.score,
+              score: answerScore,
               feedback: answerFeedback,
             },
           });
-        } else {
-          const fallbackAns = await tx.answer.findFirst({
-            where: { submissionId: id },
-          });
-          if (fallbackAns) {
-            await tx.answer.update({
-              where: { id: fallbackAns.id },
-              data: {
-                score: g.score,
-                feedback: answerFeedback,
-              },
-            });
-          }
         }
-        computedTotal += g.score;
       }
 
       const allAnswers = await tx.answer.findMany({
         where: { submissionId: id },
       });
 
-      const finalTotalScore = typeof totalScore === "number"
-        ? totalScore
-        : allAnswers.reduce((sum: number, a: any) => sum + (Number(a.score) || 0), 0);
+      // Authoritative Overall Band Calculation
+      let finalTotalScore: number;
+      if (typeof totalScore === "number" && totalScore > 0) {
+        finalTotalScore = totalScore;
+      } else if (answerScores.length > 0) {
+        if (answerScores.length === 2) {
+          // Standard IELTS Task 1 + Task 2 weighting: (Task 1 + 2*Task 2)/3 rounded to 0.5
+          const weightedAvg = (answerScores[0] + 2 * answerScores[1]) / 3;
+          finalTotalScore = Math.round(weightedAvg * 2) / 2;
+        } else {
+          const avg = answerScores.reduce((a, b) => a + b, 0) / answerScores.length;
+          finalTotalScore = Math.round(avg * 2) / 2;
+        }
+      } else {
+        const dbScores = allAnswers.map((a: any) => Number(a.score)).filter((s) => !isNaN(s) && s > 0);
+        if (dbScores.length > 0) {
+          const avg = dbScores.reduce((a, b) => a + b, 0) / dbScores.length;
+          finalTotalScore = Math.round(avg * 2) / 2;
+        } else {
+          finalTotalScore = 0;
+        }
+      }
 
       const targetStatus = isFinalize ? "GRADED" : currentStatus;
       const updated = await tx.examSubmission.update({
         where: { id },
         data: {
           status: targetStatus as any,
+          version: (submission.version || 1) + 1,
           ...(isFinalize
             ? {
                 gradedAt: new Date(),

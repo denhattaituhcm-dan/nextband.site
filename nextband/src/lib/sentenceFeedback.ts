@@ -9,18 +9,53 @@ export interface SentenceFeedbackItem {
   suggestedSentence?: string;
 }
 
+export interface CriteriaScores {
+  // Writing Criteria
+  taskResponse?: number | null;
+  coherence?: number | null;
+
+  // Speaking Criteria
+  fluencyAndCoherence?: number | null;
+  pronunciation?: number | null;
+
+  // Shared Criteria
+  lexical?: number | null;
+  grammar?: number | null;
+}
+
 export interface StructuredFeedbackPayload {
   text?: string;
   primaryErrorCategory?: ErrorCategory | null;
   revisionRequired?: boolean;
-  criteriaScores?: {
-    taskResponse?: number | null;
-    coherence?: number | null;
-    lexical?: number | null;
-    grammar?: number | null;
-  } | null;
+  criteriaScores?: CriteriaScores | null;
   sentenceFeedbacks?: SentenceFeedbackItem[];
   tabSwitchCount?: number;
+}
+
+export function calculateWritingBand(scores?: CriteriaScores | null): string {
+  if (!scores) return "—";
+  const tr = scores.taskResponse;
+  const cc = scores.coherence;
+  const lr = scores.lexical;
+  const gr = scores.grammar;
+  const valid = [tr, cc, lr, gr].filter((s): s is number => typeof s === "number" && !isNaN(s));
+  if (valid.length === 0) return "—";
+  const sum = valid.reduce((a, b) => a + b, 0);
+  const avg = sum / valid.length;
+  return (Math.round(avg * 2) / 2).toFixed(1);
+}
+
+export function calculateSpeakingBand(scores?: CriteriaScores | null): string {
+  if (!scores) return "—";
+  const fc = scores.fluencyAndCoherence;
+  const lr = scores.lexical;
+  const gr = scores.grammar;
+  const pr = scores.pronunciation;
+  const valid = [fc, lr, gr, pr].filter((s): s is number => typeof s === "number" && !isNaN(s));
+  if (valid.length === 0) return "—";
+  const sum = valid.reduce((a, b) => a + b, 0);
+  const avg = sum / valid.length;
+  return (Math.round(avg * 2) / 2).toFixed(1);
 }
 
 export const PRESET_ERROR_TAGS: Record<ErrorCategory, string[]> = {

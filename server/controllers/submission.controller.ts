@@ -117,6 +117,7 @@ export class SubmissionController {
   ) {
     try {
       const user = (request as any).user;
+      const body = request.body || {};
       const {
         grades = [],
         totalScore,
@@ -126,15 +127,21 @@ export class SubmissionController {
         criteriaScores,
         sentenceFeedbacks,
         tabSwitchCount,
-        finalize = true,
-      } = request.body || {};
+      } = body;
+      const finalize =
+        body.options?.finalize !== undefined
+          ? !!body.options.finalize
+          : body.finalize !== undefined
+          ? !!body.finalize
+          : true;
+
       const result = await this.service.gradeManualSubmission(user, request.params.id, grades, totalScore, {
-        feedback,
-        primaryErrorCategory,
-        revisionRequired,
-        criteriaScores,
-        sentenceFeedbacks,
-        tabSwitchCount,
+        feedback: body.options?.feedback ?? feedback,
+        primaryErrorCategory: body.options?.primaryErrorCategory ?? primaryErrorCategory,
+        revisionRequired: body.options?.revisionRequired ?? revisionRequired,
+        criteriaScores: body.options?.criteriaScores ?? criteriaScores,
+        sentenceFeedbacks: body.options?.sentenceFeedbacks ?? sentenceFeedbacks,
+        tabSwitchCount: body.options?.tabSwitchCount ?? tabSwitchCount,
         finalize,
       });
       return reply.send(result);

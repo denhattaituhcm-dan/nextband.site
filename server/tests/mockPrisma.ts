@@ -792,7 +792,8 @@ export function createMockPrisma() {
       updateMany: async ({ where, data }: any) => {
         let count = 0;
         answers.forEach((a) => {
-          if ((!where?.submissionId || a.submissionId === where.submissionId) &&
+          if ((!where?.id || a.id === where.id) &&
+              (!where?.submissionId || a.submissionId === where.submissionId) &&
               (!where?.questionId || a.questionId === where.questionId)) {
             Object.assign(a, data);
             count++;

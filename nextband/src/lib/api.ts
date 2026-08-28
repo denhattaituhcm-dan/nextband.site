@@ -1317,18 +1317,22 @@ export const submissionsApi = {
 
   grade: async (
     id: string,
-    grades: Array<{ answerId: string; score: number; feedback?: string }>,
+    grades: Array<{
+      answerId?: string;
+      questionId?: string;
+      score: number;
+      feedback?: string;
+      criteriaScores?: any;
+      sentenceFeedbacks?: any[];
+      primaryErrorCategory?: any;
+      revisionRequired?: boolean;
+    }>,
     totalScore?: number,
     options?: {
       feedback?: string;
       primaryErrorCategory?: "CONCEPT" | "STRUCTURE" | "EXPRESSION" | "GRAMMAR" | null;
       revisionRequired?: boolean;
-      criteriaScores?: {
-        taskResponse?: number | null;
-        coherence?: number | null;
-        lexical?: number | null;
-        grammar?: number | null;
-      } | null;
+      criteriaScores?: any;
       sentenceFeedbacks?: any[];
       tabSwitchCount?: number;
       finalize?: boolean;

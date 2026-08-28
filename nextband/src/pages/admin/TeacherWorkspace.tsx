@@ -43,9 +43,11 @@ import {
 import {
   SentenceFeedbackItem,
   parseStructuredFeedback,
+  CriteriaScores,
 } from "@/lib/sentenceFeedback";
 import { mapToProgressReportData } from "@/lib/progressReportMapper";
-import { SentenceLevelGrader } from "@/components/grading/SentenceLevelGrader";
+import { WritingGrader } from "@/components/grading/WritingGrader";
+import { SpeakingGrader } from "@/components/grading/SpeakingGrader";
 
 // Model Workbook Homework Item (Gắn với Buổi học / Lesson)
 interface WorkbookItem {
@@ -75,6 +77,16 @@ interface WorkbookItem {
   objectiveScore?: number;
   bandScore?: number;
   criteriaScores?: any;
+  answers: Array<{
+    id?: string;
+    questionId: string;
+    questionTitle?: string;
+    questionText?: string;
+    answerText?: string;
+    audioUrl?: string;
+    score?: number | null;
+    feedback?: string | null;
+  }>;
 }
 
 export default function TeacherWorkspace() {
@@ -103,15 +115,6 @@ export default function TeacherWorkspace() {
   const [reopenTargetId, setReopenTargetId] = useState<string | null>(null);
   const [reopenDate, setReopenDate] = useState<string>("");
 
-  // Form Chấm Điểm
-  const [taskResponse, setTaskResponse] = useState<string>("");
-  const [coherence, setCoherence] = useState<string>("");
-  const [lexical, setLexical] = useState<string>("");
-  const [grammar, setGrammar] = useState<string>("");
-  const [feedback, setFeedback] = useState<string>("");
-  const [primaryErrorCategory, setPrimaryErrorCategory] = useState<"CONCEPT" | "STRUCTURE" | "EXPRESSION" | "GRAMMAR">("STRUCTURE");
-  const [revisionRequired, setRevisionRequired] = useState<boolean>(false);
-  const [sentenceFeedbacks, setSentenceFeedbacks] = useState<SentenceFeedbackItem[]>([]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState<boolean>(false);
 
@@ -232,6 +235,43 @@ export default function TeacherWorkspace() {
                     ? "in_progress"
                     : "unsubmitted";
 
+          // Extract all answers mapped with question details
+          const examQuestions: any[] = [];
+          (ex.sections || []).forEach((sec: any) => {
+            (sec.questionGroups || sec.question_groups || []).forEach((grp: any) => {
+              (grp.questions || []).forEach((q: any) => {
+                examQuestions.push({
+                  ...q,
+                  groupTitle: grp.title || (ex.examType === "speaking" ? `Speaking Part ${examQuestions.length + 1}` : `Task ${examQuestions.length + 1}`),
+                });
+              });
+            });
+          });
+
+          const subAnswers = (sub?.answers || []).map((a: any) => {
+            const matchedQ = examQuestions.find((q) => q.id === a.questionId || q.id === a.question_id);
+            return {
+              id: a.id,
+              questionId: a.questionId || a.question_id,
+              questionTitle: matchedQ?.groupTitle || matchedQ?.title || "",
+              questionText: matchedQ?.questionText || matchedQ?.question_text || "",
+              answerText: a.answerText || a.studentAnswer || "",
+              audioUrl: a.audioUrl || "",
+              score: a.score != null ? Number(a.score) : null,
+              feedback: a.feedback || "",
+            };
+          });
+
+          const finalAnswers = subAnswers.length > 0 ? subAnswers : examQuestions.map((q, qIdx) => ({
+            questionId: q.id,
+            questionTitle: q.groupTitle || (ex.examType === "speaking" ? `Part ${qIdx + 1}` : `Task ${qIdx + 1}`),
+            questionText: q.questionText || q.question_text || "",
+            answerText: "",
+            audioUrl: "",
+            score: null,
+            feedback: "",
+          }));
+
           return {
             id: ex.id,
             submissionId: sub?.id,
@@ -254,6 +294,7 @@ export default function TeacherWorkspace() {
             submittedAt: sub?.submittedAt || sub?.submitted_at,
             answerText: firstAnswer?.answerText || firstAnswer?.studentAnswer || "",
             audioUrl: firstAnswer?.audioUrl || "",
+            answers: finalAnswers,
           };
         });
 
@@ -365,6 +406,7 @@ export default function TeacherWorkspace() {
         revisionRequired: hw.revisionRequired,
         sentenceFeedbacks: hw.sentenceFeedbacks || [],
         score: hw.bandScore != null ? hw.bandScore : hw.objectiveScore,
+        answers: hw.answers || [],
       };
     });
   }, [currentStudent]);
@@ -395,52 +437,6 @@ export default function TeacherWorkspace() {
   const currentHomework = useMemo(() => {
     return workbookItems.find((h) => h.id === selectedHomeworkId) || workbookItems[0];
   }, [workbookItems, selectedHomeworkId]);
-
-  // Population Form Chấm điểm từ CSDL Thật
-  useEffect(() => {
-    if (currentHomework) {
-      if (currentHomework.criteriaScores) {
-        setTaskResponse(currentHomework.criteriaScores.taskResponse != null ? String(currentHomework.criteriaScores.taskResponse) : "");
-        setCoherence(currentHomework.criteriaScores.coherence != null ? String(currentHomework.criteriaScores.coherence) : "");
-        setLexical(currentHomework.criteriaScores.lexical != null ? String(currentHomework.criteriaScores.lexical) : "");
-        setGrammar(currentHomework.criteriaScores.grammar != null ? String(currentHomework.criteriaScores.grammar) : "");
-      } else {
-        setTaskResponse("");
-        setCoherence("");
-        setLexical("");
-        setGrammar("");
-      }
-      if (currentHomework.primaryErrorCategory) {
-        setPrimaryErrorCategory(currentHomework.primaryErrorCategory);
-      }
-      setRevisionRequired(!!currentHomework.revisionRequired);
-      setFeedback(currentHomework.feedback || "");
-      setSentenceFeedbacks(currentHomework.sentenceFeedbacks || []);
-    } else {
-      setTaskResponse("");
-      setCoherence("");
-      setLexical("");
-      setGrammar("");
-      setFeedback("");
-      setRevisionRequired(false);
-      setSentenceFeedbacks([]);
-    }
-  }, [currentHomework]);
-
-  // Overall Band Calculation (Trả về "—" nếu chưa nhập)
-  const calculatedOverall = useMemo(() => {
-    const tr = parseFloat(taskResponse);
-    const cc = parseFloat(coherence);
-    const lr = parseFloat(lexical);
-    const gr = parseFloat(grammar);
-    const validScores = [tr, cc, lr, gr].filter((s) => !isNaN(s));
-
-    if (validScores.length === 0) return "—";
-
-    const sum = (isNaN(tr) ? 0 : tr) + (isNaN(cc) ? 0 : cc) + (isNaN(lr) ? 0 : lr) + (isNaN(gr) ? 0 : gr);
-    const avg = sum / (validScores.length || 1);
-    return (Math.round(avg * 2) / 2).toFixed(1);
-  }, [taskResponse, coherence, lexical, grammar]);
 
   // Thống kê nhanh Sổ bài tập Cột 2 từ CSDL Thật
   const workbookSummary = useMemo(() => {
@@ -563,60 +559,69 @@ export default function TeacherWorkspace() {
     }
   };
 
-  // THAO TÁC TRẢ BÀI & TỰ ĐỘNG CHUYỂN BÀI THEO QUEUE CHỜ CHẤM
-  const handleGradeSubmit = async () => {
+  // THAO TÁC LƯU NHÁP / TRẢ BÀI & TỰ ĐỘNG CHUYỂN BÀI THEO QUEUE CHỜ CHẤM
+  const handleGradeSubmit = async (payload: {
+    grades: Array<{
+      answerId?: string;
+      questionId: string;
+      score: number;
+      feedback?: string;
+      criteriaScores?: CriteriaScores;
+      sentenceFeedbacks?: SentenceFeedbackItem[];
+      primaryErrorCategory?: any;
+      revisionRequired?: boolean;
+    }>;
+    totalScore?: number;
+    options: {
+      feedback?: string;
+      primaryErrorCategory?: any;
+      revisionRequired?: boolean;
+      criteriaScores?: CriteriaScores | null;
+      sentenceFeedbacks?: SentenceFeedbackItem[];
+      finalize: boolean;
+    };
+  }) => {
     setIsSubmitting(true);
     try {
       if (currentHomework && currentStudent && currentHomework.submissionId) {
-        const trNum = parseFloat(taskResponse);
-        const ccNum = parseFloat(coherence);
-        const lrNum = parseFloat(lexical);
-        const grNum = parseFloat(grammar);
-        const criteriaScores = {
-          taskResponse: !isNaN(trNum) ? trNum : null,
-          coherence: !isNaN(ccNum) ? ccNum : null,
-          lexical: !isNaN(lrNum) ? lrNum : null,
-          grammar: !isNaN(grNum) ? grNum : null,
-        };
-
-        const targetAnswerId = currentHomework.answerId || "";
-
         await submissionsApi.grade(
           currentHomework.submissionId,
-          [{ answerId: targetAnswerId, score: parseFloat(calculatedOverall) || 0, feedback }],
-          parseFloat(calculatedOverall) || 0,
-          {
-            feedback,
-            primaryErrorCategory: revisionRequired ? primaryErrorCategory : null,
-            revisionRequired,
-            criteriaScores,
-            sentenceFeedbacks,
-          }
+          payload.grades,
+          payload.totalScore,
+          payload.options
         );
 
-        toast({
-          title: "Đã trả bài thành công 🎉",
-          description: `Đã lưu điểm Band ${calculatedOverall} cho học viên ${currentStudent.fullName}.${revisionRequired ? " (Đã gửi yêu cầu sửa bài Attempt 2)" : ""}`,
-        });
+        if (payload.options.finalize) {
+          toast({
+            title: "Đã trả bài thành công 🎉",
+            description: `Đã lưu điểm cho học viên ${currentStudent.fullName}.${payload.options.revisionRequired ? " (Đã gửi yêu cầu sửa bài Attempt 2)" : ""}`,
+          });
 
-        refetchWorkspace();
+          refetchWorkspace();
 
-        // 🟢 LOGIC TỰ ĐỘNG CHUYỂN BÀI CHỜ CHẤM THEO QUEUE (Cột 2 / Cột 1)
-        const nextPendingInWorkbook = workbookItems.find(
-          (h) => h.status === "submitted" && h.id !== currentHomework.id
-        );
-
-        if (nextPendingInWorkbook) {
-          setSelectedHomeworkId(nextPendingInWorkbook.id);
-        } else {
-          // Nếu học viên hiện tại đã hết bài chờ chấm, nhảy sang học viên có bài chờ chấm tiếp theo trong Queue Cột 1
-          const nextStudentWithPending = students.find(
-            (s: any) => s.hasPending && s.id !== currentStudent.id
+          // 🟢 LOGIC TỰ ĐỘNG CHUYỂN BÀI CHỜ CHẤM THEO QUEUE (Cột 2 / Cột 1)
+          const nextPendingInWorkbook = workbookItems.find(
+            (h) => h.status === "submitted" && h.id !== currentHomework.id
           );
-          if (nextStudentWithPending) {
-            setSelectedStudentId(nextStudentWithPending.id);
-            setSelectedHomeworkId("");
+
+          if (nextPendingInWorkbook) {
+            setSelectedHomeworkId(nextPendingInWorkbook.id);
+          } else {
+            // Nếu học viên hiện tại đã hết bài chờ chấm, nhảy sang học viên có bài chờ chấm tiếp theo trong Queue Cột 1
+            const nextStudentWithPending = students.find(
+              (s: any) => s.hasPending && s.id !== currentStudent.id
+            );
+            if (nextStudentWithPending) {
+              setSelectedStudentId(nextStudentWithPending.id);
+              setSelectedHomeworkId("");
+            }
           }
+        } else {
+          toast({
+            title: "Đã lưu nháp thành công 💾",
+            description: "Điểm và nhận xét đã được lưu. Học viên chưa thấy kết quả cho đến khi Trả bài.",
+          });
+          refetchWorkspace();
         }
       }
     } catch (err: any) {
@@ -970,185 +975,30 @@ export default function TeacherWorkspace() {
             <div className="h-full flex items-center justify-center p-8 text-center text-xs text-slate-400">
               Chọn một học viên từ danh sách để xem bài làm và chấm điểm.
             </div>
+          ) : !currentHomework ? (
+            <div className="h-full flex items-center justify-center p-8 text-center text-xs text-slate-400">
+              Chọn một bài tập trong sổ bài tập để chấm điểm.
+            </div>
+          ) : currentHomework.type === "speaking" ? (
+            <SpeakingGrader
+              submissionId={currentHomework.submissionId || ""}
+              studentName={currentStudent.fullName}
+              className={currentClass?.name || "Lớp IELTS"}
+              homeworkTitle={currentHomework.title}
+              answers={currentHomework.answers}
+              isSubmitting={isSubmitting}
+              onGradeSubmit={handleGradeSubmit}
+            />
           ) : (
-            <>
-              {/* 3. HEADER THÊM ĐỦ THÔNG TIN NHẬN DIỆN HỌC VIÊN & LỚP */}
-              <div className="p-3.5 border-b border-slate-200 bg-slate-50/50 flex items-center justify-between shrink-0">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-slate-900">{currentHomework?.title || "Chưa chọn bài"}</span>
-                    {currentHomework && renderStatusBadge(currentHomework)}
-                  </div>
-                  <div className="text-[11px] text-slate-600 font-medium flex items-center gap-2 mt-1">
-                    <span className="font-bold text-blue-700">{currentStudent?.fullName}</span>
-                    <span>•</span>
-                    <span className="text-slate-500">{currentClass?.name || "Lớp IELTS"}</span>
-                    <span>•</span>
-                    <span className="text-slate-500">{currentHomework?.type === "writing" ? "Writing Task 2" : "Speaking Part 2"}</span>
-                  </div>
-                </div>
-
-                <Button
-                  onClick={handleGradeSubmit}
-                  disabled={isSubmitting || !currentHomework}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold h-8 text-xs px-3 shadow-xs"
-                >
-                  {isSubmitting ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : <Send className="h-3.5 w-3.5 mr-1.5" />}
-                  Trả bài 🚀
-                </Button>
-              </div>
-
-          {/* Body Nội dung & Form Chấm điểm */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {/* Nội dung Bài làm */}
-            <Card className="border border-slate-200/80 shadow-2xs rounded-xl p-3.5 bg-slate-50/30 space-y-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">📝 Nội dung Bài Làm Học Viên</span>
-              {currentHomework?.type === "speaking" && currentHomework?.audioUrl ? (
-                <div className="p-3 rounded-lg bg-white border border-slate-200 space-y-1.5">
-                  <p className="text-xs text-slate-600 font-medium">Bản thu âm Speaking của học viên:</p>
-                  <audio controls src={formatStorageUrl(currentHomework.audioUrl)} className="w-full h-8" />
-                </div>
-              ) : (
-                <SentenceLevelGrader
-                  essayText={currentHomework?.answerText || ""}
-                  sentenceFeedbacks={sentenceFeedbacks}
-                  onChange={setSentenceFeedbacks}
-                />
-              )}
-            </Card>
-
-            {/* BẢNG CHẤM ĐIỂM 4 TIÊU CHÍ IELTS */}
-            <Card className="border border-slate-200/80 shadow-2xs rounded-xl p-4 space-y-3 bg-white">
-              <div className="flex items-center justify-between border-b pb-2">
-                <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                  <Award className="h-3.5 w-3.5 text-blue-600" />
-                  Đánh giá Band Score (IELTS 4 Tiêu chí)
-                </span>
-                <div className="text-xs font-extrabold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
-                  Overall Band: {calculatedOverall}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 pt-1">
-                <div className="space-y-1">
-                  <Label className="text-[11px] font-medium text-slate-600">Task Response / Achievement</Label>
-                  <Select value={taskResponse} onValueChange={setTaskResponse}>
-                    <SelectTrigger className="h-8 text-xs font-bold bg-slate-50 border-slate-200">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {["5.0", "5.5", "6.0", "6.5", "7.0", "7.5", "8.0", "8.5", "9.0"].map((v) => (
-                        <SelectItem key={v} value={v} className="text-xs font-semibold">{v}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-1">
-                  <Label className="text-[11px] font-medium text-slate-600">Coherence & Cohesion</Label>
-                  <Select value={coherence} onValueChange={setCoherence}>
-                    <SelectTrigger className="h-8 text-xs font-bold bg-slate-50 border-slate-200">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {["5.0", "5.5", "6.0", "6.5", "7.0", "7.5", "8.0", "8.5", "9.0"].map((v) => (
-                        <SelectItem key={v} value={v} className="text-xs font-semibold">{v}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-1">
-                  <Label className="text-[11px] font-medium text-slate-600">Lexical Resource</Label>
-                  <Select value={lexical} onValueChange={setLexical}>
-                    <SelectTrigger className="h-8 text-xs font-bold bg-slate-50 border-slate-200">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {["5.0", "5.5", "6.0", "6.5", "7.0", "7.5", "8.0", "8.5", "9.0"].map((v) => (
-                        <SelectItem key={v} value={v} className="text-xs font-semibold">{v}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-1">
-                  <Label className="text-[11px] font-medium text-slate-600">Grammar Range & Accuracy</Label>
-                  <Select value={grammar} onValueChange={setGrammar}>
-                    <SelectTrigger className="h-8 text-xs font-bold bg-slate-50 border-slate-200">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {["5.0", "5.5", "6.0", "6.5", "7.0", "7.5", "8.0", "8.5", "9.0"].map((v) => (
-                        <SelectItem key={v} value={v} className="text-xs font-semibold">{v}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* KHUNG NHẬN XẾT TEXTAREA ĐƠN GIẢN */}
-              <div className="space-y-1.5 pt-2">
-                <Label className="text-[11px] font-medium text-slate-600">Nhận xét chi tiết của Giáo viên</Label>
-                <Textarea
-                  value={feedback || currentHomework?.feedback || ""}
-                  onChange={(e) => setFeedback(e.target.value)}
-                  placeholder="Gõ nhận xét cho học viên (Ví dụ: Bài làm tốt, cần chú ý cấu trúc đoạn thân bài 2...)"
-                  className="min-h-[90px] text-xs font-sans border-slate-200 focus-visible:ring-1 focus-visible:ring-blue-500/40"
-                />
-              </div>
-
-              {/* P1 LEAN LEARNING LOOP CONTROLS */}
-              <div className="pt-3 border-t border-slate-200/80 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                      <AlertTriangle className="h-3.5 w-3.5 text-amber-600" />
-                      Yêu cầu học viên sửa bài (Attempt 2)
-                    </Label>
-                    <p className="text-[11px] text-slate-500">
-                      Bật nếu học viên cần nộp bài sửa trước khi tính hoàn thành.
-                    </p>
-                  </div>
-                  <Switch
-                    checked={revisionRequired}
-                    onCheckedChange={setRevisionRequired}
-                  />
-                </div>
-
-                {revisionRequired && (
-                  <div className="space-y-1.5 p-3 rounded-lg bg-amber-50/60 border border-amber-200">
-                    <Label className="text-[11px] font-bold text-amber-900">
-                      Lỗi chính cần tập trung khắc phục (Primary Error)
-                    </Label>
-                    <Select
-                      value={primaryErrorCategory}
-                      onValueChange={(val: any) => setPrimaryErrorCategory(val)}
-                    >
-                      <SelectTrigger className="h-8 text-xs font-bold bg-white border-amber-300 text-amber-900">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="CONCEPT" className="text-xs font-semibold">
-                          CONCEPT — Hiểu sai đề / Luận điểm chưa phù hợp
-                        </SelectItem>
-                        <SelectItem value="STRUCTURE" className="text-xs font-semibold">
-                          STRUCTURE — Bố cục chưa chuẩn / Thiếu liên kết (Coherence & Cohesion)
-                        </SelectItem>
-                        <SelectItem value="EXPRESSION" className="text-xs font-semibold">
-                          EXPRESSION — Dùng từ chưa chuẩn / Thiếu tự nhiên (Lexical Resource)
-                        </SelectItem>
-                        <SelectItem value="GRAMMAR" className="text-xs font-semibold">
-                          GRAMMAR — Sai ngữ pháp / Thì / Dấu câu
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-              </div>
-            </Card>
-          </div>
-            </>
+            <WritingGrader
+              submissionId={currentHomework.submissionId || ""}
+              studentName={currentStudent.fullName}
+              className={currentClass?.name || "Lớp IELTS"}
+              homeworkTitle={currentHomework.title}
+              answers={currentHomework.answers}
+              isSubmitting={isSubmitting}
+              onGradeSubmit={handleGradeSubmit}
+            />
           )}
         </div>
       </div>
