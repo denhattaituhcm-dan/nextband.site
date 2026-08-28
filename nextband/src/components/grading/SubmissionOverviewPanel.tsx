@@ -11,18 +11,30 @@ import {
   CheckCircle2,
   AlertTriangle,
   FileAudio,
+  CheckCircle,
+  XCircle,
+  Headphones,
 } from "lucide-react";
 import { RichContent } from "@/components/exam/RichContent";
 import { formatStorageUrl } from "@/lib/api";
+import {
+  detectExamSkill,
+  isAutoGradedExam,
+  getSkillBadgeConfig,
+  ExamSkillType,
+} from "@/lib/examSkillHelper";
 
 interface SubmissionOverviewPanelProps {
   homework: {
     id: string;
     title: string;
     type: string;
+    skill?: ExamSkillType;
+    isAutoGraded?: boolean;
     status: string;
     score?: number | null;
     bandScore?: number | null;
+    objectiveScore?: number | null;
     criteriaScores?: any;
     feedback?: string | null;
     primaryErrorCategory?: string | null;
@@ -37,6 +49,7 @@ interface SubmissionOverviewPanelProps {
   className?: string;
   isSpeaking: boolean;
   resolvedAnswers: any[];
+  submissionDetail?: any;
   onOpenFocusMode: () => void;
 }
 
@@ -59,11 +72,17 @@ export function SubmissionOverviewPanel({
   className = "Lớp IELTS",
   isSpeaking,
   resolvedAnswers,
+  submissionDetail,
   onOpenFocusMode,
 }: SubmissionOverviewPanelProps) {
   const currentAnswer = resolvedAnswers[0];
-  const isGraded = homework.status === "graded" || (homework.score != null && Number(homework.score) > 0);
-  const bandScore = homework.score ?? homework.bandScore ?? null;
+  const detectedSkill: ExamSkillType = homework.skill || detectExamSkill(homework);
+  const isAutoGraded = homework.isAutoGraded ?? isAutoGradedExam(homework);
+  const skillBadge = getSkillBadgeConfig(detectedSkill);
+
+  const isGraded = homework.status === "graded" || isAutoGraded || (homework.score != null && Number(homework.score) > 0);
+  const bandScore = homework.score ?? homework.bandScore ?? homework.objectiveScore ?? null;
+
   const criteria = currentAnswer?.feedback
     ? (() => {
         try {
@@ -90,10 +109,13 @@ export function SubmissionOverviewPanel({
   const wordCount = rawAnswerText.trim() ? rawAnswerText.trim().split(/\s+/).filter(Boolean).length : 0;
   const rawAudioUrl = currentAnswer?.audioUrl || "";
 
-  const promptTitle = stripHtmlTags(currentAnswer?.questionTitle) || (isSpeaking ? "Đề bài Speaking" : "Đề bài Writing");
+  const promptTitle = stripHtmlTags(currentAnswer?.questionTitle) || (isSpeaking ? "Đề bài Speaking" : isAutoGraded ? "Nội dung Bài thi" : "Đề bài Writing");
   const promptText = cleanPromptHtml(currentAnswer?.questionText || "");
   const promptPassage = cleanPromptHtml(currentAnswer?.passage || "");
   const instructions = cleanPromptHtml(currentAnswer?.instructions || "");
+
+  const totalQuestions = resolvedAnswers.length;
+  const answeredQuestions = resolvedAnswers.filter((a) => !!(a.answerText || a.audioUrl)).length;
 
   return (
     <div className="h-full flex flex-col bg-slate-50/40 overflow-hidden">
@@ -105,13 +127,9 @@ export function SubmissionOverviewPanel({
               <span className="text-sm font-extrabold text-slate-900 truncate">{homework.title}</span>
               <Badge
                 variant="outline"
-                className={
-                  isSpeaking
-                    ? "bg-orange-50 text-orange-700 border-orange-200 text-xs font-semibold"
-                    : "bg-teal-50 text-teal-700 border-teal-200 text-xs font-semibold"
-                }
+                className={`text-xs font-semibold ${skillBadge.badgeClass}`}
               >
-                {isSpeaking ? "🎙️ Speaking" : "✍️ Writing"}
+                {skillBadge.label}
               </Badge>
               <Badge
                 variant="outline"
@@ -130,13 +148,17 @@ export function SubmissionOverviewPanel({
           </div>
         </div>
 
-        {/* NÚT CHÍNH VÀO CHẤM BÀI RIÊNG */}
+        {/* NÚT CHÍNH VÀO CHẤM / XEM BÀI */}
         <Button
           onClick={onOpenFocusMode}
           className="w-full h-10 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-xs gap-2 text-xs transition-all"
         >
           <ExternalLink className="h-4 w-4" />
-          <span>{isGraded ? "Xem lại / Chấm lại bài (Focus Mode)" : "Vào giao diện chấm bài (Focus Mode) 🚀"}</span>
+          <span>
+            {isGraded || isAutoGraded
+              ? "Xem chi tiết bài làm & đáp án (Focus Mode) 🚀"
+              : "Vào giao diện chấm bài (Focus Mode) 🚀"}
+          </span>
         </Button>
       </div>
 
@@ -174,7 +196,13 @@ export function SubmissionOverviewPanel({
         <Card className="p-4 border-slate-200 bg-white shadow-2xs rounded-xl space-y-3">
           <div className="flex items-center justify-between border-b border-slate-100 pb-2">
             <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-              {isSpeaking ? <Volume2 className="h-3.5 w-3.5 text-orange-600" /> : <FileText className="h-3.5 w-3.5 text-teal-600" />}
+              {isSpeaking ? (
+                <Volume2 className="h-3.5 w-3.5 text-orange-600" />
+              ) : isAutoGraded ? (
+                <BookOpen className="h-3.5 w-3.5 text-indigo-600" />
+              ) : (
+                <FileText className="h-3.5 w-3.5 text-teal-600" />
+              )}
               Bài làm của học viên
             </span>
             {isSpeaking ? (
@@ -187,6 +215,10 @@ export function SubmissionOverviewPanel({
                   Chưa nộp audio
                 </Badge>
               )
+            ) : isAutoGraded || totalQuestions > 1 ? (
+              <span className="text-[11px] font-mono font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">
+                Đã làm {answeredQuestions}/{totalQuestions} câu
+              </span>
             ) : (
               <span className="text-[11px] font-mono font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
                 {wordCount} từ
@@ -212,6 +244,32 @@ export function SubmissionOverviewPanel({
                 <span>Học viên chưa gửi file ghi âm.</span>
               </div>
             )
+          ) : isAutoGraded || totalQuestions > 1 ? (
+            <div className="space-y-2">
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-700 space-y-1">
+                <p className="font-semibold text-slate-900">
+                  Tổng quan: {answeredQuestions}/{totalQuestions} câu hỏi đã được làm.
+                </p>
+                <p className="text-[11px] text-slate-500">
+                  Bấm "Xem chi tiết bài làm & đáp án" để xem đối chiếu đầy đủ từng câu hỏi với đáp án học viên và đáp án chuẩn.
+                </p>
+              </div>
+
+              {resolvedAnswers.slice(0, 3).map((ans, idx) => (
+                <div key={ans.questionId || idx} className="p-2.5 bg-white rounded-lg border border-slate-200 text-xs space-y-1">
+                  <div className="font-semibold text-slate-800 line-clamp-1">
+                    Câu {idx + 1}: {stripHtmlTags(ans.questionText) || "Câu hỏi"}
+                  </div>
+                  <div className="text-slate-600 text-[11px]">
+                    <span className="font-medium text-slate-500">Bài làm: </span>
+                    <span className="font-semibold text-blue-700">{ans.answerText || "(Chưa trả lời)"}</span>
+                  </div>
+                </div>
+              ))}
+              {totalQuestions > 3 && (
+                <p className="text-center text-[11px] text-slate-400">... và còn {totalQuestions - 3} câu hỏi khác</p>
+              )}
+            </div>
           ) : rawAnswerText.trim() ? (
             <div className="text-xs text-slate-800 font-serif leading-relaxed line-clamp-6 bg-slate-50/50 p-3 rounded-xl border border-slate-100 whitespace-pre-wrap">
               {rawAnswerText}
@@ -228,11 +286,11 @@ export function SubmissionOverviewPanel({
           <div className="flex items-center justify-between border-b border-slate-100 pb-2">
             <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
               <Award className="h-3.5 w-3.5 text-blue-600" />
-              Kết quả chấm điểm (Giáo viên)
+              Kết quả chấm điểm {isAutoGraded ? "(Tự động)" : "(Giáo viên)"}
             </span>
             {isGraded ? (
               <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px] font-bold">
-                <CheckCircle2 className="w-3 h-3 mr-1" /> Đã chấm chính thức
+                <CheckCircle2 className="w-3 h-3 mr-1" /> {isAutoGraded ? "Đã chấm tự động" : "Đã chấm chính thức"}
               </Badge>
             ) : (
               <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 text-[10px] font-semibold">
@@ -245,12 +303,16 @@ export function SubmissionOverviewPanel({
             <div className="space-y-3">
               {/* Overall Band */}
               <div className="flex items-center justify-between p-3 rounded-xl bg-blue-50/60 border border-blue-100">
-                <span className="text-xs font-bold text-blue-900">Overall Band Score</span>
-                <span className="text-lg font-black text-blue-700 font-mono">{Number(bandScore).toFixed(1)}</span>
+                <span className="text-xs font-bold text-blue-900">
+                  {isAutoGraded ? "Điểm Tổng Kết / Band" : "Overall Band Score"}
+                </span>
+                <span className="text-lg font-black text-blue-700 font-mono">
+                  {typeof bandScore === "number" && bandScore <= 9 ? `Band ${Number(bandScore).toFixed(1)}` : `${bandScore}đ`}
+                </span>
               </div>
 
-              {/* 4 Criteria Scores */}
-              {criteria && (
+              {/* 4 Criteria Scores (if writing/speaking) */}
+              {criteria && !isAutoGraded && (
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   {isSpeaking ? (
                     <>
@@ -331,9 +393,11 @@ export function SubmissionOverviewPanel({
             </div>
           ) : (
             <div className="p-4 text-center text-xs text-slate-500 bg-slate-50/60 rounded-xl border border-slate-100 space-y-1">
-              <p className="font-semibold text-slate-700">Bài thi chưa được chấm điểm.</p>
+              <p className="font-semibold text-slate-700">
+                {isAutoGraded ? "Học viên chưa làm bài này." : "Bài thi chưa được chấm điểm."}
+              </p>
               <p className="text-[11px] text-slate-400">
-                Nhấn nút "Vào giao diện chấm bài" bên trên để mở phòng chấm toàn màn hình.
+                Nhấn nút "Xem chi tiết bài làm & đáp án" bên trên để mở phòng xem toàn màn hình.
               </p>
             </div>
           )}

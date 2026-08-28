@@ -14,6 +14,7 @@ import {
 } from "@/lib/homeworkStatusHelper";
 import { BookOpen, Users, Inbox, PlusCircle, Calendar, Clock, Edit3 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { isAutoGradedExam } from "@/lib/examSkillHelper";
 
 export const HomeworkTab: React.FC = () => {
   const { classData, setActiveTab, refetchClass } = useWorkspace();
@@ -33,28 +34,31 @@ export const HomeworkTab: React.FC = () => {
     
     // Calculate submissions strictly belonging to this lesson/homework canonical ID
     const lessonSubmissions = filterCanonicalSubmissionsForHomework(submissions, lesson.id);
+    const isLessonAutoGraded = isAutoGradedExam(lesson);
 
-    const pendingSubmissions = lessonSubmissions
-      .filter((s: any) => s.grade_status === "pending" || s.status === "submitted" || s.status === "SUBMITTED" || s.status === "overdue")
-      .map((s: any) => {
-        const targetStudentId = s.studentId || s.student_id || s.student?.id;
-        const student = students.find(
-          (st: any) =>
-            (st.studentId || st.student_id || st.student?.userId || st.student?.id || st.id) === targetStudentId
-        );
-        return {
-          id: s.id,
-          studentName: s.student?.fullName || student?.fullName || student?.full_name || student?.email || "Học viên",
-          submittedAt: (s.submittedAt || s.createdAt || s.created_at)
-            ? new Date(s.submittedAt || s.createdAt || s.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            : "Chưa xác định",
-        };
-      });
+    const pendingSubmissions = isLessonAutoGraded
+      ? []
+      : lessonSubmissions
+          .filter((s: any) => s.grade_status === "pending" || s.status === "submitted" || s.status === "SUBMITTED" || s.status === "overdue")
+          .map((s: any) => {
+            const targetStudentId = s.studentId || s.student_id || s.student?.id;
+            const student = students.find(
+              (st: any) =>
+                (st.studentId || st.student_id || st.student?.userId || st.student?.id || st.id) === targetStudentId
+            );
+            return {
+              id: s.id,
+              studentName: s.student?.fullName || student?.fullName || student?.full_name || student?.email || "Học viên",
+              submittedAt: (s.submittedAt || s.createdAt || s.created_at)
+                ? new Date(s.submittedAt || s.createdAt || s.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                : "Chưa xác định",
+            };
+          });
 
     const submittedCount = lessonSubmissions.length;
     const waitingReviewCount = pendingSubmissions.length;
     const gradedCount = lessonSubmissions.filter(
-      (s: any) => s.grade_status === "graded" || s.status === "graded"
+      (s: any) => s.grade_status === "graded" || s.status === "graded" || isLessonAutoGraded
     ).length;
 
     // Progress percentage of total enrolled class (Heatmap metric)

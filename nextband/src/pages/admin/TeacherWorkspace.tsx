@@ -52,6 +52,12 @@ import { WritingGrader } from "@/components/grading/WritingGrader";
 import { SpeakingGrader } from "@/components/grading/SpeakingGrader";
 import { ExamPreviewPanel } from "@/components/grading/ExamPreviewPanel";
 import { SubmissionOverviewPanel } from "@/components/grading/SubmissionOverviewPanel";
+import {
+  detectExamSkill,
+  isAutoGradedExam,
+  getSkillBadgeConfig,
+  ExamSkillType,
+} from "@/lib/examSkillHelper";
 
 // Model Workbook Homework Item (Gắn với Buổi học / Lesson)
 interface WorkbookItem {
@@ -62,7 +68,9 @@ interface WorkbookItem {
   lessonTitle: string;
   orderIndex: number;
   title: string;
-  type: "writing" | "speaking" | "homework";
+  type: string;
+  skill?: ExamSkillType;
+  isAutoGraded?: boolean;
   dueDate?: string;
   status: "unsubmitted" | "in_progress" | "submitted" | "graded" | "needs_revision";
   isOverdue: boolean;
@@ -225,6 +233,9 @@ export default function TeacherWorkspace() {
           const rawFeedback = firstAnswer?.feedback || sub?.feedback || "";
           const structured = parseStructuredFeedback(rawFeedback);
 
+          const skill = detectExamSkill(ex);
+          const isAutoGraded = isAutoGradedExam(ex);
+
           const isRevision = !!(structured.revisionRequired ?? firstAnswer?.revisionRequired ?? sub?.revisionRequired ?? sub?.revision_required);
           const canonicalStatus = deriveHomeworkStatus(
             sub ? { ...sub, revisionRequired: isRevision } : null,
@@ -232,7 +243,7 @@ export default function TeacherWorkspace() {
           const normalizedStatus =
             canonicalStatus === "REVISION_REQUIRED"
               ? "needs_revision"
-              : canonicalStatus === "GRADED"
+              : canonicalStatus === "GRADED" || (isAutoGraded && (canonicalStatus === "SUBMITTED" || canonicalStatus === "GRADING" || (sub?.submittedAt && sub?.totalScore != null)))
                 ? "graded"
                 : canonicalStatus === "SUBMITTED" || canonicalStatus === "GRADING"
                   ? "submitted"
@@ -307,12 +318,9 @@ export default function TeacherWorkspace() {
             lessonTitle: `Buổi ${ex.week || Math.ceil((idx + 1) / 2)}`,
             orderIndex: idx + 1,
             title: ex.title || `Bài tập ${String(idx + 1).padStart(2, "0")}`,
-            type:
-              String(ex.examType || "").toLowerCase() === "speaking" ||
-              String(ex.title || "").toLowerCase().includes("speaking") ||
-              !!finalAnswers[0]?.audioUrl
-                ? "speaking"
-                : "writing",
+            skill,
+            isAutoGraded,
+            type: skill === "speaking" ? "speaking" : skill === "writing" ? "writing" : skill,
             status: normalizedStatus,
             isOverdue: false,
             score: sub?.totalScore ?? sub?.total_score ?? sub?.bandScore ?? null,
@@ -332,7 +340,7 @@ export default function TeacherWorkspace() {
 
         const submittedCount = homeworks.filter((h: any) => h.status === "submitted" || h.status === "graded").length;
         const gradedCount = homeworks.filter((h: any) => h.status === "graded").length;
-        const pendingCount = homeworks.filter((h: any) => h.status === "submitted").length;
+        const pendingCount = homeworks.filter((h: any) => h.status === "submitted" && !h.isAutoGraded).length;
         const unsubmittedCount = homeworks.filter((h: any) => h.status === "unsubmitted").length;
 
         return {
@@ -420,13 +428,9 @@ export default function TeacherWorkspace() {
         lessonTitle: hw.lessonTitle || `Buổi ${Math.ceil((idx + 1) / 2)}`,
         orderIndex: idx + 1,
         title: hw.title,
-        type: (
-          String(hw.type || "").toLowerCase() === "speaking" ||
-          String(hw.title || "").toLowerCase().includes("speaking") ||
-          !!hw.audioUrl
-            ? "speaking"
-            : "writing"
-        ) as "writing" | "speaking",
+        skill: hw.skill || detectExamSkill(hw),
+        isAutoGraded: hw.isAutoGraded ?? isAutoGradedExam(hw),
+        type: hw.type || hw.skill || "writing",
         dueDate: deadline,
         status: (hw.status || "unsubmitted") as any,
         isOverdue: false,
@@ -901,6 +905,9 @@ export default function TeacherWorkspace() {
             submissionStatus={currentHomework.status}
             submittedAt={currentHomework.submittedAt}
             answers={resolvedAnswers}
+            submissionDetail={currentSubmissionDetail}
+            skill={currentHomework.skill}
+            isAutoGraded={currentHomework.isAutoGraded}
             isSubmitting={isSubmitting}
             onBack={() => setIsFocusMode(false)}
             onGradeSubmit={handleGradeSubmit}
@@ -1115,7 +1122,7 @@ export default function TeacherWorkspace() {
                 groupedWorkbook.map((group) => (
                   <div key={group.lessonNumber} className="space-y-1.5">
                     <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-200/60 px-2.5 py-1 rounded-md">
-                      📖 BUỔI {group.lessonNumber}: KỸ NĂNG {group.items[0]?.type.toUpperCase()}
+                      📖 BUỔI {group.lessonNumber}: KỸ NĂNG {getSkillBadgeConfig(group.items[0]?.skill || "objective").shortLabel}
                     </div>
 
                     <div className="space-y-1">
@@ -1204,6 +1211,7 @@ export default function TeacherWorkspace() {
                 className={currentClass?.name || "Lớp IELTS"}
                 isSpeaking={isSpeaking}
                 resolvedAnswers={resolvedAnswers}
+                submissionDetail={currentSubmissionDetail}
                 onOpenFocusMode={() => setIsFocusMode(true)}
               />
             )}

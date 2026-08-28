@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Search, ArrowRight, CheckCircle2, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { isAutoGradedExam } from "@/lib/examSkillHelper";
 
 export const GradingTab: React.FC = () => {
   const { classData } = useWorkspace();
@@ -16,11 +17,16 @@ export const GradingTab: React.FC = () => {
 
   const queue = submissions
     .filter(
-      (s: any) =>
-        s.grade_status === "pending" ||
-        s.status === "submitted" ||
-        s.status === "SUBMITTED" ||
-        s.status === "overdue"
+      (s: any) => {
+        const isAuto = isAutoGradedExam(s.exam || { title: s.title || s.homework_title || s.homework?.title });
+        if (isAuto) return false;
+        return (
+          s.grade_status === "pending" ||
+          s.status === "submitted" ||
+          s.status === "SUBMITTED" ||
+          s.status === "overdue"
+        );
+      }
     )
     .map((s: any) => {
       const targetStudentId = s.studentId || s.student_id;
