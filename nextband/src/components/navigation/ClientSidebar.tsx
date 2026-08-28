@@ -28,7 +28,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SiteLogo } from "@/components/common/SiteLogo";
 
 interface NavGroup {
-  groupLabel: string;
+  groupLabel?: string;
   items: {
     title: string;
     url: string;
@@ -39,7 +39,6 @@ interface NavGroup {
 
 const fullNavigationGroups: NavGroup[] = [
   {
-    groupLabel: "HÀNH TRÌNH",
     items: [
       {
         title: "Tổng quan",
@@ -47,33 +46,18 @@ const fullNavigationGroups: NavGroup[] = [
         icon: Compass,
         description: "IELTS Command Center",
       },
-    ],
-  },
-  {
-    groupLabel: "LỚP HỌC",
-    items: [
       {
         title: "Lớp của tôi",
         url: "/app/my-courses",
         icon: BookOpen,
         description: "Lớp học và lộ trình",
       },
-    ],
-  },
-  {
-    groupLabel: "TIẾN TRÌNH",
-    items: [
       {
         title: "Kết quả & Nhận xét",
         url: "/app/my-submissions",
         icon: GraduationCap,
         description: "Lịch sử nộp bài & Đánh giá",
       },
-    ],
-  },
-  {
-    groupLabel: "TÀI KHOẢN",
-    items: [
       {
         title: "Cá nhân",
         url: "/app/profile",
@@ -86,7 +70,6 @@ const fullNavigationGroups: NavGroup[] = [
 
 const preEnrollmentGroups: NavGroup[] = [
   {
-    groupLabel: "KHỞI ĐẦU",
     items: [
       {
         title: "Chào mừng",
@@ -141,11 +124,13 @@ export function ClientSidebar() {
       </SidebarHeader>
 
       <SidebarContent className="px-1.5 py-2">
-        {navigationGroups.map((group) => (
-          <SidebarGroup key={group.groupLabel} className="py-1.5">
-            <SidebarGroupLabel className="text-[10px] font-bold tracking-wider text-slate-400 px-2.5 uppercase font-mono">
-              {group.groupLabel}
-            </SidebarGroupLabel>
+        {navigationGroups.map((group, index) => (
+          <SidebarGroup key={group.groupLabel || index} className="py-1.5">
+            {group.groupLabel && (
+              <SidebarGroupLabel className="text-[10px] font-bold tracking-wider text-slate-400 px-2.5 uppercase font-mono">
+                {group.groupLabel}
+              </SidebarGroupLabel>
+            )}
             <SidebarGroupContent>
               <SidebarMenu>
                 {group.items.map((item) => (
