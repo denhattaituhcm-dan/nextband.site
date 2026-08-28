@@ -112,6 +112,24 @@ export class LessonService {
     let sessions: any[] = [];
 
     if (courseId) {
+      let submissionWhere: any;
+      if (!isTeacherOrAdmin) {
+        submissionWhere = {
+          studentId: userId,
+          exam: { courseId },
+        };
+      } else {
+        const classStudents = await this.prisma.classStudent.findMany({
+          where: { classId, deletedAt: null, status: 'ACTIVE' },
+          select: { studentId: true },
+        });
+        const studentIds = classStudents.map((cs) => cs.studentId);
+        submissionWhere = {
+          studentId: { in: studentIds.length > 0 ? studentIds : ['__none__'] },
+          exam: { courseId },
+        };
+      }
+
       const [fetchedExams, fetchedSubmissions, fetchedHomeworks, fetchedSessions] = await Promise.all([
         this.prisma.exam.findMany({
           where: { courseId, isPublished: true },
@@ -119,10 +137,7 @@ export class LessonService {
           include: { sections: true },
         }),
         this.prisma.examSubmission.findMany({
-          where: {
-            studentId: userId,
-            exam: { courseId },
-          },
+          where: submissionWhere,
           orderBy: { createdAt: 'desc' },
         }),
         this.prisma.homework.findMany({
@@ -142,11 +157,17 @@ export class LessonService {
     let completedCount = 0;
 
     const lessonsProjection: StudentLessonItemDTO[] = exams.map((exam: any, idx: number) => {
-      const sub = submissions.find((s: any) => s.examId === exam.id);
-      const isGraded = sub?.status === 'GRADED' || sub?.status === 'graded';
-      const isSubmitted = sub?.status === 'SUBMITTED' || sub?.status === 'submitted' || isGraded;
+      const lessonSubs = isTeacherOrAdmin
+        ? submissions.filter((s: any) => s.examId === exam.id)
+        : [submissions.find((s: any) => s.examId === exam.id)].filter(Boolean);
 
-      if (isGraded) completedCount++;
+      const sub = lessonSubs[0] || null;
+      const isGraded = lessonSubs.some((s: any) => s.status === 'GRADED' || s.status === 'graded');
+      const isSubmitted = lessonSubs.some(
+        (s: any) => s.status === 'SUBMITTED' || s.status === 'submitted' || s.status === 'GRADED' || s.status === 'graded'
+      );
+
+      if (isGraded || isSubmitted) completedCount++;
 
       const lessonOrder = idx + 1;
       const lessonWeek = exam.week || Math.ceil((idx + 1) / 3);

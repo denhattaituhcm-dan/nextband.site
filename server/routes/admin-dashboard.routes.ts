@@ -183,25 +183,47 @@ export default async function adminDashboardRoutes(fastify: FastifyInstance) {
                 select: {
                   id: true,
                   name: true,
+                  courseId: true,
                   _count: {
                     select: {
                       students: { where: { status: "ACTIVE", deletedAt: null } },
                     },
                   },
-                  homeworks: {
-                    select: {
-                      id: true,
-                      submissions: {
-                        where: { status: "SUBMITTED" },
-                        select: { id: true, submittedAt: true },
-                      },
-                    },
+                  students: {
+                    where: { status: "ACTIVE", deletedAt: null },
+                    select: { studentId: true },
                   },
                 },
               },
             },
           }),
         ]);
+
+        // Query pending exam submissions for teachers' active classes
+        const allTeacherClassStudentIds = Array.from(
+          new Set(
+            teachersData.flatMap((t) =>
+              t.classesAsTeacher.flatMap((cl) => cl.students.map((s) => s.studentId))
+            )
+          )
+        );
+
+        const pendingExamSubmissions = allTeacherClassStudentIds.length > 0
+          ? await fastify.prisma.examSubmission.findMany({
+              where: {
+                studentId: { in: allTeacherClassStudentIds },
+                status: "SUBMITTED",
+              },
+              select: {
+                id: true,
+                studentId: true,
+                examId: true,
+                submittedAt: true,
+                createdAt: true,
+                exam: { select: { courseId: true } },
+              },
+            })
+          : [];
 
         // Tính toán danh sách học viên At-Risk (vắng >= 2 buổi)
         const absentCountByStudent = new Map<string, number>();
@@ -248,13 +270,16 @@ export default async function adminDashboardRoutes(fastify: FastifyInstance) {
           let overdueCount = 0;
 
           t.classesAsTeacher.forEach((cl) => {
-            cl.homeworks.forEach((hw) => {
-              hw.submissions.forEach((sub) => {
-                pendingCount++;
-                if (sub.submittedAt && new Date(sub.submittedAt) <= twoDaysAgo) {
-                  overdueCount++;
-                }
-              });
+            const classStudentIds = new Set(cl.students.map((s) => s.studentId));
+            const classSubs = pendingExamSubmissions.filter(
+              (sub) => classStudentIds.has(sub.studentId) && (!cl.courseId || sub.exam?.courseId === cl.courseId)
+            );
+            classSubs.forEach((sub) => {
+              pendingCount++;
+              const subDate = sub.submittedAt || sub.createdAt;
+              if (subDate && new Date(subDate) <= twoDaysAgo) {
+                overdueCount++;
+              }
             });
           });
 

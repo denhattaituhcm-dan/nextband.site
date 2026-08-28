@@ -1,7 +1,6 @@
-import { useState } from "react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { KeyRound, LogOut, Settings, User } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
   DropdownMenu,
@@ -14,13 +13,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useParams, useNavigate } from "react-router-dom";
 import { useStudentLifecycle } from "@/hooks/useStudentLifecycle";
 import { NotificationBell } from "./NotificationBell";
-import { ChangePasswordDialog } from "@/components/auth/ChangePasswordDialog";
 
 export function ClientHeader() {
   const { user, signOut, isAdmin, isAuthenticated, isTeacher } = useAuth();
   const navigate = useNavigate();
   const { classId: urlClassId } = useParams<{ classId?: string }>();
-  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
   const { state, resolveClass } = useStudentLifecycle();
 
@@ -95,10 +92,6 @@ export function ClientHeader() {
                   <User className="mr-2 h-4 w-4" />
                   Hồ sơ cá nhân
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setChangePasswordOpen(true)} className="cursor-pointer">
-                  <KeyRound className="mr-2 h-4 w-4" />
-                  Đổi mật khẩu
-                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={handleSignOut}
@@ -112,11 +105,6 @@ export function ClientHeader() {
           </div>
         </div>
       </header>
-
-      <ChangePasswordDialog
-        open={changePasswordOpen}
-        onOpenChange={setChangePasswordOpen}
-      />
     </>
   );
 }

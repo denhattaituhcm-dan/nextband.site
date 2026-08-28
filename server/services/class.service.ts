@@ -75,10 +75,127 @@ export class ClassService {
       ];
     }
 
-    const [data, total] = await Promise.all([
+    const [rawData, total] = await Promise.all([
       this.repo.findMany(where, skip, limit),
       this.repo.count(where),
     ]);
+
+    // Canonical Enrichment: Aggregate real-time exam and submission metrics for classes
+    const classIds = rawData.map((c) => c.id);
+    const courseIds = Array.from(new Set(rawData.map((c) => c.courseId).filter(Boolean))) as string[];
+
+    const examsCountByCourse = new Map<string, number>();
+    if (courseIds.length > 0) {
+      const courseExams = await this.prisma.exam.groupBy({
+        by: ["courseId"],
+        where: {
+          courseId: { in: courseIds },
+          isPublished: true,
+          isActive: true,
+        },
+        _count: { id: true },
+      });
+      courseExams.forEach((ce) => {
+        if (ce.courseId) examsCountByCourse.set(ce.courseId, ce._count.id);
+      });
+    }
+
+    const classStudents = classIds.length > 0
+      ? await this.prisma.classStudent.findMany({
+          where: {
+            classId: { in: classIds },
+            status: "ACTIVE",
+            deletedAt: null,
+          },
+          select: {
+            classId: true,
+            studentId: true,
+          },
+        })
+      : [];
+
+    const studentsByClass = new Map<string, string[]>();
+    classStudents.forEach((cs) => {
+      if (!studentsByClass.has(cs.classId)) studentsByClass.set(cs.classId, []);
+      studentsByClass.get(cs.classId)!.push(cs.studentId);
+    });
+
+    const allStudentIds = Array.from(new Set(classStudents.map((cs) => cs.studentId)));
+    const studentUsers = allStudentIds.length > 0
+      ? await this.prisma.user.findMany({
+          where: {
+            OR: [{ id: { in: allStudentIds } }, { userId: { in: allStudentIds } }],
+          },
+          select: { id: true, userId: true },
+        })
+      : [];
+
+    const userToCanonicalId = new Map<string, string>();
+    studentUsers.forEach((u) => {
+      if (u.id) userToCanonicalId.set(u.id, u.userId);
+      if (u.userId) userToCanonicalId.set(u.userId, u.userId);
+    });
+
+    const canonicalStudentUserIds = Array.from(new Set(studentUsers.map((u) => u.userId).filter(Boolean)));
+    const submissions = canonicalStudentUserIds.length > 0
+      ? await this.prisma.examSubmission.findMany({
+          where: {
+            studentId: { in: canonicalStudentUserIds },
+          },
+          select: {
+            id: true,
+            studentId: true,
+            examId: true,
+            status: true,
+            submittedAt: true,
+            exam: {
+              select: { courseId: true },
+            },
+          },
+        })
+      : [];
+
+    const data = rawData.map((c: any) => {
+      const courseExamCount = c.courseId ? (examsCountByCourse.get(c.courseId) || 0) : 0;
+      const classStudentIds = studentsByClass.get(c.id) || [];
+      const classCanonicalUserIds = new Set(
+        classStudentIds.map((sId) => userToCanonicalId.get(sId) || sId)
+      );
+
+      const classSubmissions = submissions.filter(
+        (s) =>
+          classCanonicalUserIds.has(s.studentId) &&
+          (!c.courseId || s.exam?.courseId === c.courseId)
+      );
+
+      const pendingSubmissionsCount = classSubmissions.filter(
+        (s) => s.status === "SUBMITTED"
+      ).length;
+
+      const completedSubmissions = classSubmissions.filter(
+        (s) => s.status === "SUBMITTED" || s.status === "GRADED"
+      );
+      const uniqueCompletedExams = new Set(
+        completedSubmissions.map((s) => `${s.studentId}_${s.examId}`)
+      );
+      const completedSubmissionsCount = uniqueCompletedExams.size;
+
+      const totalStudents = classStudentIds.length;
+      const totalAssigned = courseExamCount * Math.max(1, totalStudents);
+      const progressPercent = totalAssigned > 0
+        ? Math.min(100, Math.round((completedSubmissionsCount / totalAssigned) * 100))
+        : 0;
+
+      return {
+        ...c,
+        homeworkCount: courseExamCount,
+        completedSessions: courseExamCount,
+        pendingSubmissionsCount,
+        completedSubmissionsCount,
+        overdueCount: 0,
+        progressPercent,
+      };
+    });
 
     return {
       data,
@@ -283,29 +400,27 @@ export class ClassService {
     const classes = await this.prisma.class.findMany({
       where,
       include: {
-        course: { select: { id: true, title: true } },
+        course: {
+          select: {
+            id: true,
+            title: true,
+            exams: {
+              where: { isPublished: true, isActive: true },
+              select: { id: true },
+            },
+          },
+        },
         branch: { select: { id: true, name: true } },
         teacher: { select: { id: true, fullName: true, avatarUrl: true } },
         sessions: { select: { id: true } },
         students: {
-          where: { deletedAt: null },
+          where: { deletedAt: null, status: "ACTIVE" },
           include: {
             student: {
               select: {
+                id: true,
                 userId: true,
                 fullName: true,
-              },
-            },
-          },
-        },
-        homeworks: {
-          select: {
-            id: true,
-            submissions: {
-              select: {
-                studentId: true,
-                status: true,
-                submittedAt: true,
               },
             },
           },
@@ -319,21 +434,52 @@ export class ClassService {
       },
     });
 
+    // Fetch canonical exam submissions for all students in active classes
+    const allStudentUserIds = Array.from(
+      new Set(
+        classes.flatMap((c) =>
+          c.students.map((cs) => cs.student.userId || cs.student.id).filter(Boolean)
+        )
+      )
+    );
+
+    const allExamsInCourses = Array.from(
+      new Set(classes.flatMap((c) => (c.course?.exams || []).map((e) => e.id)))
+    );
+
+    const allSubmissions = allStudentUserIds.length > 0 && allExamsInCourses.length > 0
+      ? await this.prisma.examSubmission.findMany({
+          where: {
+            studentId: { in: allStudentUserIds },
+            examId: { in: allExamsInCourses },
+            status: { in: ["SUBMITTED", "GRADED"] },
+          },
+          select: {
+            studentId: true,
+            examId: true,
+            status: true,
+          },
+        })
+      : [];
+
     const standings = classes.map((c) => {
       const totalStudents = c.students.length;
-      const totalHomeworks = c.homeworks.length;
+      const totalHomeworks = c.course?.exams?.length || 0;
       const totalSessions = c.sessions.length;
 
-      // 1. Completion rate across the class
-      let totalCompletedSubmissions = 0;
+      const courseExamIds = new Set((c.course?.exams || []).map((e) => e.id));
+      const classStudentIds = new Set(
+        c.students.map((cs) => cs.student.userId || cs.student.id).filter(Boolean)
+      );
 
-      for (const hw of c.homeworks) {
-        for (const sub of hw.submissions) {
-          if (sub.status === "SUBMITTED" || sub.status === "GRADED") {
-            totalCompletedSubmissions++;
-          }
-        }
-      }
+      const completedSubmissions = allSubmissions.filter(
+        (s) => classStudentIds.has(s.studentId) && courseExamIds.has(s.examId)
+      );
+
+      const uniqueCompletedSlots = new Set(
+        completedSubmissions.map((s) => `${s.studentId}_${s.examId}`)
+      );
+      const totalCompletedSubmissions = uniqueCompletedSlots.size;
 
       const totalAssignedSlots = totalStudents * totalHomeworks;
       const completionRate = totalAssignedSlots > 0 ? Math.round((totalCompletedSubmissions / totalAssignedSlots) * 100) : 0;
@@ -393,12 +539,23 @@ export class ClassService {
     const classData = await this.prisma.class.findUnique({
       where: { id: classId },
       include: {
-        course: { select: { id: true, title: true } },
+        course: {
+          select: {
+            id: true,
+            title: true,
+            exams: {
+              where: { isPublished: true, isActive: true },
+              select: { id: true, title: true, week: true },
+              orderBy: { week: "asc" },
+            },
+          },
+        },
         students: {
-          where: { deletedAt: null },
+          where: { deletedAt: null, status: "ACTIVE" },
           include: {
             student: {
               select: {
+                id: true,
                 userId: true,
                 fullName: true,
                 avatarUrl: true,
@@ -406,19 +563,13 @@ export class ClassService {
             },
           },
         },
-        homeworks: {
+        sessions: {
           select: {
             id: true,
-            title: true,
-            deadline: true,
-            submissions: {
-              select: {
-                studentId: true,
-                status: true,
-                submittedAt: true,
-              },
-            },
+            sessionNumber: true,
+            plannedDate: true,
           },
+          orderBy: { sessionNumber: "asc" },
         },
       },
     });
@@ -427,38 +578,58 @@ export class ClassService {
       throw new NotFoundError("Không tìm thấy lớp học");
     }
 
-    const totalHomeworks = classData.homeworks.length;
+    const courseExams = classData.course?.exams || [];
+    const totalHomeworks = courseExams.length;
+    const examIds = courseExams.map((e) => e.id);
+
+    const studentUserIds = classData.students.map((cs) => cs.student.userId || cs.student.id).filter(Boolean);
+    const submissions = studentUserIds.length > 0 && examIds.length > 0
+      ? await this.prisma.examSubmission.findMany({
+          where: {
+            studentId: { in: studentUserIds },
+            examId: { in: examIds },
+            status: { in: ["SUBMITTED", "GRADED"] },
+          },
+          select: {
+            studentId: true,
+            examId: true,
+            status: true,
+            submittedAt: true,
+          },
+        })
+      : [];
+
     const now = new Date();
 
-    // 1. Next upcoming homework deadline for the whole class
-    const upcomingHomeworks = classData.homeworks
-      .filter((h) => h.deadline && new Date(h.deadline) >= now)
-      .sort((a, b) => new Date(a.deadline!).getTime() - new Date(b.deadline!).getTime());
-    
-    const nextHw = upcomingHomeworks[0] || null;
-    const nextUpcomingHomework = nextHw
+    // 1. Next upcoming session / homework deadline for the whole class
+    const upcomingSessions = classData.sessions
+      .filter((s) => s.plannedDate && new Date(s.plannedDate) >= now)
+      .sort((a, b) => new Date(a.plannedDate).getTime() - new Date(b.plannedDate).getTime());
+
+    const nextSession = upcomingSessions[0] || null;
+    const nextExam = nextSession ? courseExams[nextSession.sessionNumber - 1] || courseExams[0] : courseExams[0] || null;
+    const nextDeadline = nextSession?.plannedDate
+      ? new Date(new Date(nextSession.plannedDate).getTime() + 7 * 24 * 60 * 60 * 1000)
+      : null;
+
+    const nextUpcomingHomework = nextExam
       ? {
-          title: nextHw.title,
-          deadline: nextHw.deadline,
-          isUrgent: new Date(nextHw.deadline!).getTime() - now.getTime() < 48 * 60 * 60 * 1000,
+          title: nextExam.title,
+          deadline: nextDeadline,
+          isUrgent: nextDeadline ? nextDeadline.getTime() - now.getTime() < 48 * 60 * 60 * 1000 : false,
         }
       : null;
 
     // 2. Calculate individual student metrics
     const studentRanks = classData.students.map((cs) => {
       const student = cs.student;
-      const studentId = student.userId;
+      const studentId = student.userId || student.id;
 
-      let completedCount = 0;
-      const activityDays = new Set<string>();
-
-      for (const hw of classData.homeworks) {
-        const sub = hw.submissions.find((s) => s.studentId === studentId);
-        if (sub && (sub.status === "SUBMITTED" || sub.status === "GRADED")) {
-          completedCount++;
-        }
-      }
-
+      const studentSubs = submissions.filter(
+        (s) => s.studentId === student.userId || s.studentId === student.id
+      );
+      const uniqueSubmittedExams = new Set(studentSubs.map((s) => s.examId));
+      const completedCount = uniqueSubmittedExams.size;
       const completionRate = totalHomeworks > 0 ? Math.round((completedCount / totalHomeworks) * 100) : 0;
 
       return {
@@ -525,34 +696,32 @@ export class ClassService {
     const classData = await this.prisma.class.findUnique({
       where: { id: classId },
       include: {
-        course: { select: { id: true, title: true } },
+        course: {
+          select: {
+            id: true,
+            title: true,
+            exams: {
+              where: { isPublished: true, isActive: true },
+              select: { id: true, title: true, week: true },
+              orderBy: { week: "asc" },
+            },
+          },
+        },
         teacher: { select: { id: true, fullName: true, email: true } },
-        sessions: { select: { id: true, sessionNumber: true, plannedDate: true } },
+        sessions: {
+          select: { id: true, sessionNumber: true, plannedDate: true },
+          orderBy: { sessionNumber: "asc" },
+        },
         students: {
-          where: { deletedAt: null },
+          where: { deletedAt: null, status: "ACTIVE" },
           include: {
             student: {
               select: {
+                id: true,
                 userId: true,
                 fullName: true,
                 email: true,
                 avatarUrl: true,
-              },
-            },
-          },
-        },
-        homeworks: {
-          select: {
-            id: true,
-            title: true,
-            deadline: true,
-            submissions: {
-              select: {
-                id: true,
-                studentId: true,
-                status: true,
-                submittedAt: true,
-                score: true,
               },
             },
           },
@@ -570,42 +739,49 @@ export class ClassService {
       throw new NotFoundError("Không tìm thấy lớp học");
     }
 
-    const totalHomeworks = classData.homeworks.length;
+    const courseExams = classData.course?.exams || [];
+    const totalHomeworks = courseExams.length;
     const totalSessions = classData.sessions.length;
+    const examIds = courseExams.map((e) => e.id);
+
+    const studentUserIds = classData.students.map((cs) => cs.student.userId || cs.student.id).filter(Boolean);
+    const submissions = studentUserIds.length > 0 && examIds.length > 0
+      ? await this.prisma.examSubmission.findMany({
+          where: {
+            studentId: { in: studentUserIds },
+            examId: { in: examIds },
+            status: { in: ["SUBMITTED", "GRADED"] },
+          },
+          select: {
+            studentId: true,
+            examId: true,
+            status: true,
+            submittedAt: true,
+          },
+        })
+      : [];
 
     const studentResults = classData.students.map((cs) => {
       const student = cs.student;
-      const studentId = student.userId;
+      const studentId = student.userId || student.id;
 
-      // Calculate homework metrics
-      let submittedCount = 0;
-      let onTimeCount = 0;
-      let overdueCount = 0;
+      const studentSubs = submissions.filter(
+        (s) => s.studentId === student.userId || s.studentId === student.id
+      );
 
-      for (const hw of classData.homeworks) {
-        const sub = hw.submissions.find((s) => s.studentId === studentId);
-        const isSubmitted = sub && (sub.status === "SUBMITTED" || sub.status === "GRADED");
-        if (isSubmitted) {
-          submittedCount++;
-          if (sub.submittedAt && hw.deadline) {
-            const subTime = new Date(sub.submittedAt).getTime();
-            const deadTime = new Date(hw.deadline).getTime();
-            if (subTime > deadTime) {
-              overdueCount++;
-            } else {
-              onTimeCount++;
-            }
-          } else {
-            onTimeCount++;
-          }
-        }
-      }
+      // Deduplicate by examId
+      const uniqueSubmittedExams = new Set(studentSubs.map((s) => s.examId));
+      const submittedCount = uniqueSubmittedExams.size;
+      const onTimeCount = submittedCount; // Exam submissions recorded within academic term
+      const overdueCount = 0;
 
       const completionRate = totalHomeworks > 0 ? Math.round((submittedCount / totalHomeworks) * 100) : 100;
       const overdueRate = submittedCount > 0 ? Math.round((overdueCount / submittedCount) * 100) : 0;
 
       // Calculate attendance metrics
-      const studentAttendances = classData.attendance.filter((a) => a.studentId === studentId);
+      const studentAttendances = classData.attendance.filter(
+        (a) => a.studentId === student.userId || a.studentId === student.id
+      );
       const attendedSessions = studentAttendances.filter((a) => a.status === "PRESENT" || a.status === "LATE").length;
       const attendanceRate = totalSessions > 0 ? Math.round((attendedSessions / totalSessions) * 100) : 100;
 

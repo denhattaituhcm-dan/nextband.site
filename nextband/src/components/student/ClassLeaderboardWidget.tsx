@@ -24,12 +24,16 @@ interface ClassLeaderboardWidgetProps {
   classId: string;
   className: string;
   currentUserId?: string;
+  targetBand?: string;
+  badgeClass?: string;
 }
 
 export const ClassLeaderboardWidget: React.FC<ClassLeaderboardWidgetProps> = ({
   classId,
   className,
   currentUserId,
+  targetBand: propTargetBand,
+  badgeClass,
 }) => {
   const [showAll, setShowAll] = useState(false);
 
@@ -47,7 +51,7 @@ export const ClassLeaderboardWidget: React.FC<ClassLeaderboardWidgetProps> = ({
   const totalSubmittedSlots = data?.totalSubmittedSlots ?? 0;
   const totalAssignedSlots = data?.totalAssignedSlots ?? 0;
   const nextUpcoming = data?.nextUpcomingHomework;
-  const targetBand = data?.targetBand || "Band 6.5+";
+  const targetBand = propTargetBand || data?.targetBand || "Band 6.5+";
   const myRank = data?.myRank;
   const myCompletedCount = data?.myCompletedCount || 0;
 
@@ -135,7 +139,13 @@ export const ClassLeaderboardWidget: React.FC<ClassLeaderboardWidgetProps> = ({
           </div>
 
           <div className="flex items-center gap-1.5 flex-wrap">
-            <Badge variant="outline" className="text-[11px] font-semibold bg-primary/5 text-primary border-primary/20 gap-1">
+            <Badge
+              variant="outline"
+              className={cn(
+                "text-[11px] font-semibold gap-1",
+                badgeClass || "bg-primary/5 text-primary border-primary/20"
+              )}
+            >
               <Target className="h-3 w-3" />
               {targetBand}
             </Badge>

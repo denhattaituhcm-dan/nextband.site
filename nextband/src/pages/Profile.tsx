@@ -18,8 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, User, Camera, Save, Trophy, Flame, Star, CheckCircle2, Zap, Users, Medal, KeyRound } from "lucide-react";
-import { ChangePasswordDialog } from "@/components/auth/ChangePasswordDialog";
+import { Loader2, User, Camera, Save, Trophy, Flame, Star, CheckCircle2, Zap, Users, Medal } from "lucide-react";
 
 export default function Profile() {
   const { user, refreshUser } = useAuth();
@@ -27,7 +26,6 @@ export default function Profile() {
 
   const [isUpdatingInfo, setIsUpdatingInfo] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
-  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
 
   // Form states
   const [fullName, setFullName] = useState("");
@@ -254,19 +252,6 @@ export default function Profile() {
                 <h3 className="text-lg font-semibold">{user?.fullName || "Học viên"}</h3>
                 <p className="text-sm text-muted-foreground">{user?.email}</p>
               </div>
-
-              <div className="mt-6 pt-4 border-t">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="w-full text-xs font-semibold gap-2 border-primary/20 hover:bg-primary/5 hover:text-primary"
-                  onClick={() => setIsChangePasswordOpen(true)}
-                >
-                  <KeyRound className="h-4 w-4 text-primary" />
-                  Đổi mật khẩu đăng nhập
-                </Button>
-              </div>
             </CardContent>
           </Card>
         </div>
@@ -450,10 +435,6 @@ export default function Profile() {
         </div>
       </div>
 
-      <ChangePasswordDialog
-        open={isChangePasswordOpen}
-        onOpenChange={setIsChangePasswordOpen}
-      />
     </div>
   );
 }

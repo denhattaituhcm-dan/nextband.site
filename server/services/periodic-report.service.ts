@@ -296,16 +296,17 @@ export class PeriodicReportService {
           status: true,
         },
       }),
-      this.prisma.homework.count({
+      this.prisma.exam.count({
         where: {
           createdAt: { gte: startDate, lte: endDate },
-          ...academicClassWhere,
+          isPublished: true,
+          isActive: true,
         },
       }),
-      this.prisma.submission.count({
+      this.prisma.examSubmission.count({
         where: {
           submittedAt: { gte: startDate, lte: endDate },
-          homework: academicClassWhere,
+          status: { in: ["SUBMITTED", "GRADED"] },
         },
       }),
     ]);
