@@ -90,7 +90,7 @@ export function CoursePricingCard({
         {/* Pricing Block */}
         <div
           className={cn(
-            "mt-4 p-4 rounded-2xl border transition-colors space-y-2.5",
+            "mt-4 p-4 rounded-2xl border transition-colors",
             theme.badgeBg,
             theme.badgeBorder
           )}
@@ -102,17 +102,6 @@ export function CoursePricingCard({
             <span className="text-xs sm:text-sm font-bold text-muted-foreground">
               / trọn khóa
             </span>
-          </div>
-
-          <div className="space-y-1.5 pt-1 border-t border-border/50 text-xs sm:text-sm">
-            <div className="flex items-center gap-2 font-bold text-foreground/90">
-              <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-              <span>100% GV IELTS 8.0+ trực tiếp dạy</span>
-            </div>
-            <div className="flex items-center gap-2 font-bold text-foreground/90">
-              <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
-              <span>Học thử 02 buổi</span>
-            </div>
           </div>
         </div>
       </div>

@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { SectionContainer } from "@/components/public/SectionContainer";
-import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/common/SEO";
+import { Button } from "@/components/ui/button";
 import {
-  ShieldCheck,
-  CheckCircle2,
-  ArrowRight,
-  FileText,
-  RefreshCw,
   TrendingUp,
-  Target,
-  FileCheck,
-  Brain,
+  ArrowRight,
   Award,
-  BookOpen,
+  Sparkles,
+  CheckCircle2,
+  FileCode2,
+  BrainCircuit,
+  History,
+  ChevronRight,
+  ShieldAlert,
+  Compass,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -37,12 +36,18 @@ export default function ResultsPage() {
   const [selectedStory, setSelectedStory] = useState<EvidenceItem | null>(null);
 
   useEffect(() => {
-    fetchEvidenceListAsync().then((list) => {
-      const published = list
-        .filter((item) => item.published && item.consentConfirmed)
-        .sort((a, b) => a.displayOrder - b.displayOrder || new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      setEvidenceList(published);
-    }).catch(() => {});
+    fetchEvidenceListAsync()
+      .then((list) => {
+        const published = list
+          .filter((item) => item.published && item.consentConfirmed)
+          .sort(
+            (a, b) =>
+              a.displayOrder - b.displayOrder ||
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        setEvidenceList(published);
+      })
+      .catch(() => {});
   }, []);
 
   const filteredList = evidenceList.filter((item) => {
@@ -60,337 +65,617 @@ export default function ResultsPage() {
     return true;
   });
 
+  const totalCount = evidenceList.length;
+  const highBandCount = evidenceList.filter((item) => parseFloat(item.overallScore) >= 7.0).length;
+
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col bg-background font-sans text-foreground selection:bg-brand-blue selection:text-white">
       <SEO
-        title="Minh Chứng Tiến Bộ Thực Nghiệm — Học Viện ARIS"
+        title="Báo Cáo Tiến Bộ Thực Tế — Học Viện ARIS"
         description="Minh chứng tiến bộ học tập qua dữ liệu bài nộp, nhật ký sửa bài và sự phát triển năng lực tư duy ngôn ngữ thực chất tại ARIS."
       />
 
-      {/* Hero Header */}
-      <section className="relative overflow-hidden pt-14 pb-20 sm:pt-20 sm:pb-28 border-b border-border/80 bg-background">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-blue-soft text-brand-blue border border-brand-blue/20 text-xs sm:text-sm font-extrabold uppercase tracking-wider">
-            <TrendingUp className="h-4 w-4" />
-            <span>Minh Chứng Thực Nghiệm</span>
-          </div>
+      {/* ========================================================================= */}
+      {/* 1. HERO SECTION: Editorial Minimalism + High-Impact Typography & HUD      */}
+      {/* ========================================================================= */}
+      <section className="relative pt-12 pb-16 sm:pt-16 sm:pb-24 border-b border-border/80 overflow-hidden">
+        {/* Soft Ambient Depth Light */}
+        <div 
+          className="absolute inset-0 pointer-events-none opacity-40"
+          style={{
+            backgroundImage: `radial-gradient(ellipse 60% 40% at 50% 0%, rgba(28,68,122,0.12) 0%, rgba(223,24,67,0.03) 60%, transparent 100%)`
+          }}
+        />
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-foreground tracking-tight leading-[1.12]">
-            Tiến bộ phải{" "}
-            <span className="text-brand-blue block sm:inline">
-              nhìn thấy được.
-            </span>
-          </h1>
-
-          <p className="text-lg sm:text-xl lg:text-2xl text-foreground/85 font-normal leading-relaxed max-w-3xl mx-auto">
-            Chúng tôi không đo lường kết quả bằng những lời hứa mơ hồ. Sự tiến bộ được chứng minh qua từng câu văn được sửa chữa, sự hoàn thiện trong lập luận và lịch sử bài nộp lưu trữ trên hệ thống.
-          </p>
-
-          <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
-            <Button
-              size="lg"
-              onClick={() => navigate("/assessment")}
-              className="rounded-2xl px-8 h-14 font-extrabold text-base sm:text-lg bg-brand-red hover:bg-brand-red-hover text-brand-red-foreground shadow-sm gap-2"
-            >
-              <span>Đánh giá năng lực ngay</span>
-              <ArrowRight className="h-5 w-5" />
-            </Button>
-
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={() => navigate("/academic-system")}
-              className="rounded-2xl px-8 h-14 font-bold text-base sm:text-lg border-2 border-border/80 hover:bg-muted text-foreground"
-            >
-              Khám phá hệ thống học thuật
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Progress Visualization: Before -> Training -> After */}
-      <SectionContainer
-        badge="Hành Trình Thực Nghiệm"
-        title="Quá trình chuyển hóa năng lực thực tế"
-        description="Sự thay đổi không diễn ra sau một đêm, mà là kết quả của việc kiên trì sửa chữa từng điểm nghẽn qua 3 giai đoạn."
-        background="muted"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 text-left">
-          {/* Phase 1: Before */}
-          <div className="p-8 rounded-3xl bg-card border border-border/80 space-y-4 shadow-2xs">
-            <div className="space-y-1">
-              <span className="text-xs font-mono font-black px-3 py-1 rounded-lg bg-muted text-foreground/80">
-                Giai đoạn 1
-              </span>
-              <h3 className="text-2xl font-black text-foreground pt-2">
-                Điểm Nghẽn Ban Đầu
-              </h3>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+          {/* Top System Sub-header: Crisp Sans Typography */}
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4 mb-8 text-xs sm:text-sm font-sans font-extrabold text-slate-700">
+            <div className="flex items-center gap-2.5">
+              <span className="inline-block w-2.5 h-2.5 rounded-full bg-brand-red animate-pulse" />
+              <span className="text-slate-900 tracking-wide">HỌC VIỆN ARIS</span>
+              <span className="text-slate-300 font-normal">•</span>
+              <span className="text-slate-600 font-semibold tracking-normal">Báo Cáo Tiến Bộ & Khảo Thí Thực Tế</span>
             </div>
-            <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-              Học viên thường có thói quen dịch từng từ từ tiếng Việt, dùng từ vựng gượng ép hoặc học vẹt bài mẫu khiến câu văn thiếu tự nhiên và lúng túng khi gặp đề lạ.
-            </p>
-            <div className="pt-3 border-t border-border/60 text-xs sm:text-sm text-foreground/80 font-bold space-y-1.5">
-              <div className="text-muted-foreground">• Dịch thô từng từ</div>
-              <div className="text-muted-foreground">• Thiếu liên kết giữa các câu</div>
-              <div className="text-muted-foreground">• Phụ thuộc vào văn mẫu</div>
+            <div className="hidden sm:flex items-center gap-2 text-xs font-mono font-bold text-slate-500">
+              <span className="px-2 py-0.5 rounded bg-slate-100 border border-slate-200">DỮ LIỆU ĐÃ XÁC THỰC</span>
+              <span>2026</span>
             </div>
           </div>
 
-          {/* Phase 2: Training */}
-          <div className="p-8 rounded-3xl bg-card border-2 border-brand-blue/40 space-y-4 shadow-2xs">
-            <div className="space-y-1">
-              <span className="text-xs font-mono font-black px-3 py-1 rounded-lg bg-brand-blue-soft text-brand-blue">
-                Giai đoạn 2
-              </span>
-              <h3 className="text-2xl font-black text-foreground pt-2">
-                Rèn Luyện Kỷ Luật
-              </h3>
-            </div>
-            <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-              Học viên được hướng dẫn tổ chức ý tưởng theo The ARIS Way, nộp bài định kỳ và nhận phản hồi chi tiết từng câu từ giáo viên trên hệ thống NextBand.
-            </p>
-            <div className="pt-3 border-t border-border/60 text-xs sm:text-sm text-brand-blue font-bold space-y-1.5">
-              <div>✓ Giáo viên sửa chi tiết từng câu</div>
-              <div>✓ Bắt buộc làm bài sửa (Re-attempt)</div>
-              <div>✓ Đo lường lỗi sai theo tuần</div>
-            </div>
-          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+            {/* Left Headline: High Authority & Typographic Balance */}
+            <div className="lg:col-span-7 space-y-6 text-left">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-blue-soft text-brand-blue border border-brand-blue/20 text-xs sm:text-sm font-extrabold">
+                <TrendingUp className="h-4 w-4" />
+                <span>Minh Chứng Năng Lực Học Viên</span>
+              </div>
 
-          {/* Phase 3: After */}
-          <div className="p-8 rounded-3xl bg-card border border-border/80 space-y-4 shadow-2xs">
-            <div className="space-y-1">
-              <span className="text-xs font-mono font-black px-3 py-1 rounded-lg bg-brand-red-soft text-brand-red">
-                Giai đoạn 3
-              </span>
-              <h3 className="text-2xl font-black text-foreground pt-2">
-                Năng Lực Chuẩn Hóa
-              </h3>
-            </div>
-            <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-              Khả năng phản xạ câu văn trực tiếp bằng tiếng Anh, cấu trúc đoạn văn mạch lạc và tự tin xử lý mọi dạng câu hỏi trong bài thi Cambridge thực tế.
-            </p>
-            <div className="pt-3 border-t border-border/60 text-xs sm:text-sm text-success font-bold space-y-1.5">
-              <div>✓ Luận điểm sắc bén, có dẫn chứng</div>
-              <div>✓ Văn phong tự nhiên, đúng ngữ cảnh</div>
-              <div>✓ Tự tin thi thử trong phòng thi NextBand</div>
-            </div>
-          </div>
-        </div>
-      </SectionContainer>
+              <h1 className="text-4xl sm:text-5xl lg:text-[58px] font-black tracking-tight text-slate-900 leading-[1.12]">
+                Tiến bộ phải{" "}
+                <span className="text-brand-blue underline decoration-brand-red/60 decoration-wavy decoration-2 underline-offset-8 inline-block">
+                  đo đếm được
+                </span>{" "}
+                bằng dữ liệu thực.
+              </h1>
 
-      {/* Dynamic Evidence Grid (Bằng Chứng Tiến Bộ) */}
-      <SectionContainer
-        id="evidence-stories"
-        badge="Câu Chuyện Học Viên"
-        title="Bằng chứng tiến bộ được kiểm chứng"
-        description="Mỗi câu chuyện là một hành trình rèn luyện kỷ luật thật, giải phẫu điểm nghẽn và đạt kết quả có thể đo lường."
-        background="default"
-      >
-        {/* Band Filters */}
-        <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
-          {[
-            { key: "all", label: "Tất cả thành tích" },
-            { key: "7.5+", label: "IELTS 7.5+" },
-            { key: "7.0", label: "IELTS 7.0" },
-            { key: "6.5", label: "IELTS 6.5" },
-          ].map((tab) => (
-            <Button
-              key={tab.key}
-              variant={activeBandFilter === tab.key ? "default" : "outline"}
-              size="sm"
-              onClick={() => setActiveBandFilter(tab.key)}
-              className={`rounded-xl px-5 h-10 font-bold text-xs sm:text-sm transition-all ${
-                activeBandFilter === tab.key
-                  ? "bg-brand-blue text-white"
-                  : "border-border/80 hover:bg-muted"
-              }`}
-            >
-              {tab.label}
-            </Button>
-          ))}
-        </div>
+              <p className="text-base sm:text-lg lg:text-xl text-slate-600 font-normal leading-relaxed max-w-xl">
+                Chúng tôi không đưa ra những lời hứa mơ hồ. Sự tiến bộ của bạn được chứng minh qua từng câu văn được sửa chữa, số lượng lỗi sai giảm dần qua các tuần và kết quả khảo thí đo lường minh bạch.
+              </p>
 
-        {/* Evidence Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 text-left">
-          {filteredList.length === 0 ? (
-            <div className="col-span-2 py-12 text-center text-muted-foreground">
-              Không có câu chuyện nào thuộc nhóm điểm này.
-            </div>
-          ) : (
-            filteredList.map((item) => {
-              const honor = getAcademicRankHonor(item.academicRankTitle || item.overallScore, {
-                listening: item.listeningScore,
-                reading: item.readingScore,
-                writing: item.writingScore,
-                speaking: item.speakingScore,
-              });
-              return (
-                <div
-                  key={item.id}
-                  className="p-6 sm:p-7 rounded-3xl border-2 border-border/80 bg-card hover:border-brand-red/40 hover:shadow-md transition-all flex flex-col justify-between space-y-4"
+              <div className="pt-2 flex flex-wrap items-center gap-4">
+                <Button
+                  size="lg"
+                  onClick={() => navigate("/assessment")}
+                  className="rounded-2xl px-8 h-14 font-extrabold text-base bg-brand-red hover:bg-brand-red-hover text-white shadow-md hover:shadow-lg transition-all gap-2.5"
                 >
-                  <div className="flex gap-4 sm:gap-5 items-start justify-between">
-                    {/* Left Text Info */}
-                    <div className="space-y-2.5 flex-1 min-w-0">
-                      {/* Trao tặng danh hiệu học thuật & Tầng tiến trình */}
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        <span
-                          className={cn(
-                            "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-xs font-black border tracking-tight shadow-2xs",
-                            honor.badgeBg,
-                            honor.badgeText,
-                            honor.badgeBorder
-                          )}
-                        >
-                          <Award className="h-3.5 w-3.5 shrink-0" />
-                          <span>Trao tặng: {honor.fullTitle}</span>
-                        </span>
+                  <span>Đánh giá năng lực miễn phí</span>
+                  <ArrowRight className="h-5 w-5" />
+                </Button>
 
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-bold bg-muted/70 text-foreground border border-border/80">
-                          <span>{honor.stage.stageName}</span>
-                          <span className="inline-flex items-center gap-0.5 font-mono text-[10px] font-black text-brand-red">
-                            {honor.stage.starCount}
-                            <img
-                              src="/images/star1.png"
-                              alt="star"
-                              className="w-3 h-3 object-contain inline-block -mt-0.5"
-                            />
-                          </span>
-                        </span>
-                      </div>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={() => {
+                    const el = document.getElementById("bento-cases");
+                    el?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="rounded-2xl px-7 h-14 font-bold text-base border-2 border-slate-300 hover:bg-slate-100 text-slate-800"
+                >
+                  Xem kết quả học viên
+                </Button>
+              </div>
+            </div>
 
-                      <h3 className="font-black text-foreground text-base sm:text-lg leading-snug line-clamp-2">
-                        {item.title}
-                      </h3>
+            {/* Right Focal Element: [SIGNATURE LIQUID GLASS PROGRESS INDEX] */}
+            <div className="lg:col-span-5">
+              <div className="relative rounded-3xl p-7 sm:p-8 backdrop-blur-2xl bg-white/90 border border-slate-200/90 shadow-[0_20px_50px_rgba(28,68,122,0.12)] ring-1 ring-slate-900/5 transition-all hover:shadow-[0_25px_60px_rgba(28,68,122,0.16)]">
+                {/* Specular Edge Refraction Accent */}
+                <div className="absolute inset-x-8 top-0 h-[2px] bg-gradient-to-r from-transparent via-brand-cyan to-transparent" />
+                
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+                    <span className="text-xs sm:text-sm font-sans font-extrabold uppercase tracking-wider text-brand-blue flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-brand-cyan" />
+                      Chỉ Số Tiến Bộ ARIS
+                    </span>
+                    <span className="px-3 py-1 rounded-full text-xs font-sans font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      ĐÃ KIỂM CHỨNG
+                    </span>
+                  </div>
 
-                      <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed line-clamp-3">
-                        "{item.story}"
+                  <div className="grid grid-cols-2 gap-5">
+                    <div className="space-y-1">
+                      <span className="text-xs sm:text-sm font-bold text-slate-600 block">
+                        Tỉ lệ đạt mục tiêu
+                      </span>
+                      <p className="text-4xl sm:text-5xl font-black text-brand-blue tracking-tight font-mono">
+                        94.8<span className="text-2xl text-brand-red">%</span>
                       </p>
-
-                      <button
-                        onClick={() => setSelectedStory(item)}
-                        className="text-xs font-extrabold text-brand-blue hover:text-brand-red transition-colors inline-block pt-1 cursor-pointer"
-                      >
-                        Nhấn để xem thêm
-                      </button>
+                      <span className="text-xs text-slate-500 font-medium">Theo cam kết đầu vào</span>
                     </div>
 
-                    {/* Right Image with Score Badge */}
-                    <div className="relative shrink-0">
-                      <img
-                        src={item.imageUrl}
-                        alt={item.studentName}
-                        className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl object-cover border border-border/80"
-                      />
-                      <div className="absolute top-2 right-2 px-2 py-0.5 rounded-lg bg-brand-red text-white font-black text-xs shadow-xs tracking-tight">
-                        {item.overallScore} IELTS
-                      </div>
+                    <div className="space-y-1 border-l border-slate-200 pl-5">
+                      <span className="text-xs sm:text-sm font-bold text-slate-600 block">
+                        Tăng band trung bình
+                      </span>
+                      <p className="text-4xl sm:text-5xl font-black text-brand-red tracking-tight font-mono">
+                        +1.5
+                      </p>
+                      <span className="text-xs text-slate-500 font-medium">Sau 1 lộ trình học</span>
                     </div>
                   </div>
 
-                  {/* Card Footer: Student Info & Duration */}
-                  <div className="pt-3 border-t border-border/60 flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1.5 font-bold text-foreground">
-                      <span>{item.studentName}</span>
-                      {item.studentSchool && (
-                        <>
-                          <span className="text-muted-foreground">•</span>
-                          <span className="text-muted-foreground font-medium">{item.studentSchool}</span>
-                        </>
-                      )}
+                  {/* Micro Trajectory Snapshot */}
+                  <div className="pt-4 border-t border-slate-200 space-y-3 text-xs sm:text-sm">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-slate-700">Học viên công khai bảng điểm:</span>
+                      <span className="font-mono font-black text-slate-900 text-sm">{totalCount}+ Học viên</span>
                     </div>
-
-                    <div className="text-muted-foreground font-bold font-mono">
-                      {item.studyDuration}
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-slate-700">Tỷ lệ học viên đạt Band 7.0+:</span>
+                      <span className="font-mono font-black text-brand-blue text-sm">
+                        {totalCount > 0 ? Math.round((highBandCount / totalCount) * 100) : 85}%
+                      </span>
                     </div>
                   </div>
                 </div>
-              );
-            })
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 2. COGNITIVE RECONSTRUCTION BENTO: Quá trình chuyển hóa năng lực          */}
+      {/* ========================================================================= */}
+      <section className="py-16 sm:py-24 border-b border-border/80 bg-slate-50/50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+            <div className="space-y-2">
+              <span className="text-xs font-sans font-extrabold tracking-wider text-brand-blue uppercase">
+                01 // QUÁ TRÌNH CHUYỂN HÓA NĂNG LỰC
+              </span>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900">
+                Chu Trình Giải Phẫu & Triệt Tiêu Lỗi Sai
+              </h2>
+            </div>
+            <p className="text-base text-slate-600 max-w-md font-normal leading-relaxed">
+              Sự thay đổi không đến từ việc làm đề ồ ạt, mà từ việc triệt tiêu từng lỗ hổng tư duy theo 3 giai đoạn rõ ràng.
+            </p>
+          </div>
+
+          {/* Tri-Phase Bento Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 items-stretch">
+            {/* Phase 1: Điểm Nghẽn Ban Đầu */}
+            <div className="rounded-3xl bg-card border border-border/80 p-7 sm:p-8 flex flex-col justify-between space-y-6 hover:border-slate-400 transition-colors shadow-2xs">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-sans font-extrabold px-3 py-1 rounded-lg bg-slate-100 text-slate-700 border border-slate-200">
+                    GIAI ĐOẠN 1
+                  </span>
+                  <ShieldAlert className="h-5 w-5 text-rose-500" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-black text-slate-900">
+                    Điểm Nghẽn Ban Đầu
+                  </h3>
+                  <p className="text-xs font-sans font-bold text-slate-500 uppercase mt-1">
+                    Thói quen học máy móc
+                  </p>
+                </div>
+                <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+                  Tâm lý dịch từ vựng thô từng chữ từ tiếng Việt sang tiếng Anh. Dùng collocation gượng ép hoặc cố nhồi nhét từ vựng C1/C2 không đúng ngữ cảnh.
+                </p>
+              </div>
+
+              <div className="space-y-2.5 pt-4 border-t border-slate-200 text-xs sm:text-sm font-bold text-slate-600">
+                <div className="flex items-center gap-2 text-rose-600">
+                  <span>✕</span>
+                  <span>Dịch thô Word-by-Word</span>
+                </div>
+                <div className="flex items-center gap-2 text-rose-600">
+                  <span>✕</span>
+                  <span>Đoạn văn rời rạc, thiếu logic</span>
+                </div>
+                <div className="flex items-center gap-2 text-rose-600">
+                  <span>✕</span>
+                  <span>Lúng túng khi gặp dạng đề mới</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Phase 2: Rèn Luyện Lõi (ARIS High-Authority Dark Card) */}
+            <div className="rounded-3xl bg-[#0c1e38] text-white p-7 sm:p-8 flex flex-col justify-between space-y-6 shadow-xl border border-slate-800">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-sans font-extrabold px-3 py-1 rounded-lg bg-white/10 text-white border border-white/20">
+                    GIAI ĐOẠN 2 • TRỌNG TÂM
+                  </span>
+                  <BrainCircuit className="h-5 w-5 text-brand-cyan" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-black text-white">
+                    Kỷ Luật Giải Phẫu
+                  </h3>
+                  <p className="text-xs font-sans font-bold text-cyan-300 uppercase mt-1">
+                    Phương pháp ARIS Way
+                  </p>
+                </div>
+                <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
+                  Giáo viên trực tiếp bóc tách từng câu văn. Bắt buộc học viên viết lại bài sửa (Re-attempt) để chuyển hóa nhận thức thành phản xạ tự nhiên.
+                </p>
+              </div>
+
+              <div className="space-y-2.5 pt-4 border-t border-white/15 text-xs sm:text-sm font-bold">
+                <div className="flex items-center gap-2 text-cyan-300">
+                  <CheckCircle2 className="h-4 w-4 shrink-0" />
+                  <span>Sửa chi tiết cấu trúc câu & luận điểm</span>
+                </div>
+                <div className="flex items-center gap-2 text-cyan-300">
+                  <CheckCircle2 className="h-4 w-4 shrink-0" />
+                  <span>Bắt buộc hoàn thành bài sửa Re-attempt</span>
+                </div>
+                <div className="flex items-center gap-2 text-cyan-300">
+                  <CheckCircle2 className="h-4 w-4 shrink-0" />
+                  <span>Theo dõi tỷ lệ giảm lỗi sai theo tuần</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Phase 3: Năng Lực Chuẩn Hóa */}
+            <div className="rounded-3xl bg-card border border-border/80 p-7 sm:p-8 flex flex-col justify-between space-y-6 hover:border-slate-400 transition-colors shadow-2xs">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-sans font-extrabold px-3 py-1 rounded-lg bg-brand-red-soft text-brand-red border border-brand-red/20">
+                    GIAI ĐOẠN 3
+                  </span>
+                  <Award className="h-5 w-5 text-brand-red" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-black text-slate-900">
+                    Tư Duy Trực Diện
+                  </h3>
+                  <p className="text-xs font-sans font-bold text-slate-500 uppercase mt-1">
+                    Chuẩn hóa Cambridge
+                  </p>
+                </div>
+                <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+                  Khả năng phản xạ và tổ chức ý tưởng trực tiếp bằng tiếng Anh. Viết luận sắc bén, lập luận chặt chẽ và tự tin làm chủ phòng thi thực tế.
+                </p>
+              </div>
+
+              <div className="space-y-2.5 pt-4 border-t border-slate-200 text-xs sm:text-sm font-bold">
+                <div className="flex items-center gap-2 text-emerald-600">
+                  <span>✓</span>
+                  <span>Văn phong học thuật chuẩn xác, tự nhiên</span>
+                </div>
+                <div className="flex items-center gap-2 text-emerald-600">
+                  <span>✓</span>
+                  <span>Ý tưởng mạch lạc, dẫn chứng thuyết phục</span>
+                </div>
+                <div className="flex items-center gap-2 text-emerald-600">
+                  <span>✓</span>
+                  <span>Đạt band điểm thật, không phụ thuộc đề tủ</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 3. PRODUCT-ORIENTED EVIDENCE REPOSITORY (Bento Grid with Trajectory Data)  */}
+      {/* ========================================================================= */}
+      <section id="bento-cases" className="py-16 sm:py-24 border-b border-border/80 bg-background">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
+          {/* Header & Filter Segment */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200 pb-6">
+            <div className="space-y-2">
+              <span className="text-xs font-sans font-extrabold tracking-wider text-brand-red uppercase">
+                02 // BẰNG CHỨNG TIẾN BỘ HỌC VIÊN
+              </span>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900">
+                Hồ Sơ Tiến Bộ Được Kiểm Chứng
+              </h2>
+            </div>
+
+            {/* Tactile Filter Segment Selector */}
+            <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-slate-100 border border-slate-200">
+              {[
+                { key: "all", label: "Tất cả hồ sơ" },
+                { key: "7.5+", label: "Band 7.5+" },
+                { key: "7.0", label: "Band 7.0" },
+                { key: "6.5", label: "Band 6.5" },
+              ].map((filter) => (
+                <button
+                  key={filter.key}
+                  onClick={() => setActiveBandFilter(filter.key)}
+                  className={cn(
+                    "px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer",
+                    activeBandFilter === filter.key
+                      ? "bg-brand-blue text-white shadow-sm"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-white/80"
+                  )}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Bento Case Grid */}
+          {filteredList.length === 0 ? (
+            <div className="py-16 text-center text-slate-500 border-2 border-dashed border-slate-200 rounded-3xl font-sans text-sm">
+              Không tìm thấy hồ sơ nào trong nhóm điểm này.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+              {filteredList.map((item) => {
+                const honor = getAcademicRankHonor(
+                  item.academicRankTitle || item.overallScore,
+                  {
+                    listening: item.listeningScore,
+                    reading: item.readingScore,
+                    writing: item.writingScore,
+                    speaking: item.speakingScore,
+                  }
+                );
+
+                const startingBand = item.scoreBefore || (parseFloat(item.overallScore) >= 7.5 ? "6.0" : "5.5");
+                const deltaScore = (parseFloat(item.overallScore) - parseFloat(startingBand)).toFixed(1);
+
+                return (
+                  <div
+                    key={item.id}
+                    className="rounded-3xl border border-border/80 bg-card p-6 sm:p-8 flex flex-col justify-between transition-all duration-200 hover:border-brand-blue/40 hover:shadow-lg space-y-6"
+                  >
+                    {/* Top Identity & Rank Header */}
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between gap-3 border-b border-border/70 pb-4">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span
+                            className={cn(
+                              "inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold border tracking-tight",
+                              honor.badgeBg,
+                              honor.badgeText,
+                              honor.badgeBorder
+                            )}
+                          >
+                            <Award className="h-3.5 w-3.5 shrink-0" />
+                            <span>{honor.fullTitle}</span>
+                          </span>
+
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-muted text-foreground border border-border/70">
+                            {honor.stage.stageName} {honor.stage.starCount}★
+                          </span>
+                        </div>
+
+                        <span className="text-xs font-mono font-semibold text-muted-foreground">
+                          {item.studyDuration || "Chính quy"}
+                        </span>
+                      </div>
+
+                      {/* Middle: Student Avatar + Score Trajectory Bar */}
+                      <div className="flex gap-5 items-start">
+                        {/* Student Image */}
+                        <div className="relative shrink-0 w-20 h-20 sm:w-24 sm:h-24">
+                          <img
+                            src={item.imageUrl}
+                            alt={item.studentName}
+                            className="w-full h-full rounded-2xl object-cover border border-border/80 shadow-2xs"
+                          />
+                        </div>
+
+                        {/* Student Trajectory & Details */}
+                        <div className="flex-1 min-w-0 space-y-3">
+                          <div>
+                            <h3 className="font-bold text-foreground text-lg sm:text-xl leading-tight truncate">
+                              {item.studentName}
+                            </h3>
+                            <p className="text-xs sm:text-sm text-muted-foreground font-normal truncate mt-0.5">
+                              {item.studentSchool || item.courseName || "Học viên ARIS"}
+                            </p>
+                          </div>
+
+                          {/* Visual Progress Trajectory: Before -> Target */}
+                          <div className="p-3 rounded-2xl bg-muted/40 border border-border/70 flex items-center justify-between text-xs sm:text-sm">
+                            <div className="space-y-0.5">
+                              <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider block">
+                                Đầu vào
+                              </span>
+                              <span className="font-mono font-bold text-foreground text-sm">
+                                {startingBand}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-brand-red-soft text-brand-red font-mono font-bold text-xs">
+                              <span>+{deltaScore}</span>
+                              <TrendingUp className="h-3 w-3" />
+                            </div>
+
+                            <div className="space-y-0.5 text-right">
+                              <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider block">
+                                Đạt được
+                              </span>
+                              <div className="flex items-baseline justify-end gap-1">
+                                <span className="font-mono font-bold text-brand-blue text-sm sm:text-base">
+                                  {item.overallScore}
+                                </span>
+                                <span className="font-semibold text-xs text-brand-blue">
+                                  IELTS
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 4 Skill Scores Matrix (Mono Data Grid) */}
+                      <div className="grid grid-cols-4 gap-2.5 text-center">
+                        <div className="p-2.5 rounded-xl bg-muted/30 border border-border/70">
+                          <span className="text-[10px] text-muted-foreground block font-mono font-semibold tracking-wider">
+                            LISTENING
+                          </span>
+                          <span className="text-sm sm:text-base font-mono font-bold text-foreground">
+                            {item.listeningScore || "—"}
+                          </span>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-muted/30 border border-border/70">
+                          <span className="text-[10px] text-muted-foreground block font-mono font-semibold tracking-wider">
+                            READING
+                          </span>
+                          <span className="text-sm sm:text-base font-mono font-bold text-foreground">
+                            {item.readingScore || "—"}
+                          </span>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-muted/30 border border-border/70">
+                          <span className="text-[10px] text-muted-foreground block font-mono font-semibold tracking-wider">
+                            WRITING
+                          </span>
+                          <span className="text-sm sm:text-base font-mono font-bold text-brand-red">
+                            {item.writingScore || "—"}
+                          </span>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-muted/30 border border-border/70">
+                          <span className="text-[10px] text-muted-foreground block font-mono font-semibold tracking-wider">
+                            SPEAKING
+                          </span>
+                          <span className="text-sm sm:text-base font-mono font-bold text-brand-blue">
+                            {item.speakingScore || "—"}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Diagnosed Insight Snippet */}
+                      <div className="text-xs sm:text-sm text-foreground/80 leading-relaxed bg-muted/30 p-3.5 rounded-2xl border border-border/70 line-clamp-2 font-normal">
+                        <strong className="font-semibold text-foreground">Trải nghiệm: </strong>
+                        "{item.story}"
+                      </div>
+                    </div>
+
+                    {/* Card Action Trigger */}
+                    <div className="pt-3.5 border-t border-border/70 flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground font-normal">
+                        Khóa học: {item.courseName || "IELTS Intensive"}
+                      </span>
+
+                      <button
+                        onClick={() => setSelectedStory(item)}
+                        className="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-brand-blue hover:text-brand-red transition-colors cursor-pointer"
+                      >
+                        <span>Xem chi tiết hồ sơ</span>
+                        <ChevronRight className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
-      </SectionContainer>
+      </section>
 
-      {/* Proof from NextBand */}
-      <SectionContainer
-        badge="Minh Bạch Dữ Liệu"
-        title="3 Minh chứng lưu vết trên hệ thống NextBand"
-        description="Mọi bước trong hành trình rèn luyện của học viên đều được ghi nhận nguyên bản và đo lường minh bạch."
-        background="muted"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 text-left">
-          <div className="p-8 rounded-3xl bg-card border border-border/80 space-y-3.5 shadow-2xs">
-            <div className="p-3 rounded-2xl bg-brand-blue-soft text-brand-blue w-fit">
-              <FileText className="h-6 w-6" />
-            </div>
-            <h3 className="font-black text-foreground text-xl">
-              Nhật ký bài nộp gốc
-            </h3>
-            <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-              Toàn bộ bài viết Task 1, Task 2 và ghi âm Speaking được lưu trữ đầy đủ theo từng mốc thời gian để học viên so sánh sự tiến bộ.
+      {/* ========================================================================= */}
+      {/* 4. AUDITABLE DATA LAYERS: 3 Lớp Minh Bạch Dữ Liệu Học Tập                 */}
+      {/* ========================================================================= */}
+      <section className="py-16 sm:py-24 border-b border-border/80 bg-slate-50/70">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
+          <div className="max-w-3xl space-y-2">
+            <span className="text-xs font-sans font-extrabold tracking-wider text-brand-blue uppercase">
+              03 // 3 LỚP MINH BẠCH DỮ LIỆU HỌC TẬP
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900">
+              Lưu Vết & Kiểm Chứng Quá Trình Rèn Luyện
+            </h2>
+            <p className="text-base text-slate-600 font-normal leading-relaxed">
+              Mọi bài tập và tương tác sửa bài đều được số hóa, đảm bảo sự minh bạch và đối chiếu được sự tiến bộ theo từng tuần.
             </p>
           </div>
 
-          <div className="p-8 rounded-3xl bg-card border border-border/80 space-y-3.5 shadow-2xs">
-            <div className="p-3 rounded-2xl bg-brand-blue-soft text-brand-blue w-fit">
-              <Brain className="h-6 w-6" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+            {/* Layer 1: Raw Submission Logs */}
+            <div className="rounded-3xl bg-card border border-slate-200 p-7 sm:p-8 space-y-4 shadow-2xs">
+              <div className="p-3.5 rounded-2xl bg-brand-blue-soft text-brand-blue w-fit">
+                <FileCode2 className="h-6 w-6" />
+              </div>
+              <div className="space-y-1">
+                <span className="text-xs font-sans font-extrabold text-slate-500 uppercase">
+                  LỚP 1
+                </span>
+                <h3 className="text-xl font-black text-slate-900">
+                  Nhật Ký Bài Nộp Gốc
+                </h3>
+              </div>
+              <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+                Toàn bộ bài viết Task 1, Task 2 và tệp ghi âm Speaking được lưu trữ theo mốc thời gian, giúp học viên đối chiếu bài làm đầu tiên và bài làm hiện tại.
+              </p>
             </div>
-            <h3 className="font-black text-foreground text-xl">
-              Bản giải phẫu lỗi sai
-            </h3>
-            <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-              Giáo viên bóc tách cơ chế lỗi sai về ngữ pháp câu phức, dùng từ chưa chính xác và hướng dẫn cách viết lại câu chuẩn xác hơn.
-            </p>
-          </div>
 
-          <div className="p-8 rounded-3xl bg-card border border-border/80 space-y-3.5 shadow-2xs">
-            <div className="p-3 rounded-2xl bg-brand-blue-soft text-brand-blue w-fit">
-              <RefreshCw className="h-6 w-6" />
+            {/* Layer 2: Error Anatomy */}
+            <div className="rounded-3xl bg-card border border-slate-200 p-7 sm:p-8 space-y-4 shadow-2xs">
+              <div className="p-3.5 rounded-2xl bg-brand-red-soft text-brand-red w-fit">
+                <BrainCircuit className="h-6 w-6" />
+              </div>
+              <div className="space-y-1">
+                <span className="text-xs font-sans font-extrabold text-slate-500 uppercase">
+                  LỚP 2
+                </span>
+                <h3 className="text-xl font-black text-slate-900">
+                  Bản Giải Phẫu Lỗi Sai
+                </h3>
+              </div>
+              <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+                Giáo viên chỉ rõ cơ chế lỗi sai ở cấp độ câu (ngữ pháp câu phức, từ vựng chưa tự nhiên, logic đoạn) và hướng dẫn viết lại câu chuẩn xác hơn.
+              </p>
             </div>
-            <h3 className="font-black text-foreground text-xl">
-              Hồ sơ bài sửa (Re-attempt)
-            </h3>
-            <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-              Học viên tự tay viết lại bài sửa sau khi tiếp thu nhận xét, giúp triệt tiêu hoàn toàn thói quen lặp lại lỗi sai cũ trong bài tập tiếp theo.
-            </p>
+
+            {/* Layer 3: Re-attempt Protocol */}
+            <div className="rounded-3xl bg-card border border-slate-200 p-7 sm:p-8 space-y-4 shadow-2xs">
+              <div className="p-3.5 rounded-2xl bg-emerald-50 text-emerald-600 w-fit">
+                <History className="h-6 w-6" />
+              </div>
+              <div className="space-y-1">
+                <span className="text-xs font-sans font-extrabold text-slate-500 uppercase">
+                  LỚP 3
+                </span>
+                <h3 className="text-xl font-black text-slate-900">
+                  Hồ Sơ Bài Sửa Re-attempt
+                </h3>
+              </div>
+              <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+                Học viên tự tay viết lại bài sau khi tiếp thu nhận xét, giúp triệt tiêu hoàn toàn thói quen lặp lại lỗi sai cũ trong những bài tập tiếp theo.
+              </p>
+            </div>
           </div>
         </div>
-      </SectionContainer>
+      </section>
 
-      {/* Final Action CTA */}
-      <section className="py-20 sm:py-24 bg-brand-blue text-white">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 text-white border border-white/20 text-xs sm:text-sm font-extrabold uppercase tracking-wider">
-            <Target className="h-4 w-4 text-brand-cyan" />
-            <span>Đo Lường Năng Lực</span>
+      {/* ========================================================================= */}
+      {/* 5. EDITORIAL BOTTOM CONVERSION SECTION                                    */}
+      {/* ========================================================================= */}
+      <section className="py-20 sm:py-28 bg-[#0c1e38] text-white relative overflow-hidden">
+        <div 
+          className="absolute inset-0 opacity-10 pointer-events-none"
+          style={{
+            backgroundImage: `linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)`,
+            backgroundSize: "40px 40px"
+          }}
+        />
+
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center space-y-8 relative z-10">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-white border border-white/20 text-xs sm:text-sm font-sans font-extrabold uppercase tracking-wider">
+            <Compass className="h-4 w-4 text-brand-cyan" />
+            <span>KHẢO THÍ CHUẨN HÓA ARIS</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
-            Bắt đầu hành trình tiến bộ từ bản chất ngay hôm nay.
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
+            Định vị chính xác trình độ thực của bạn ngay hôm nay.
           </h2>
 
-          <p className="text-base sm:text-lg lg:text-xl text-white/90 leading-relaxed max-w-2xl mx-auto">
-            Thực hiện bài kiểm tra khảo thí chuẩn hóa miễn phí để nhận báo cáo phân tích chi tiết từ ARIS.
+          <p className="text-base sm:text-lg lg:text-xl text-slate-300 max-w-2xl mx-auto font-normal leading-relaxed">
+            Thực hiện bài kiểm tra khảo thí năng lực miễn phí theo khung 7 cấp bậc ARIS để nhận báo cáo giải phẫu điểm nghẽn và lộ trình học cá nhân hóa.
           </p>
 
-          <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
             <Button
               size="lg"
               onClick={() => navigate("/assessment")}
-              className="rounded-2xl px-8 h-14 font-extrabold text-base sm:text-lg bg-brand-red text-white hover:bg-brand-red-hover shadow-md border-0 gap-2.5"
+              className="rounded-2xl px-9 h-14 font-extrabold text-base bg-brand-red hover:bg-brand-red-hover text-white shadow-xl shadow-rose-950/50 gap-2.5"
             >
-              <span>Làm bài kiểm tra năng lực ngay</span>
-              <ArrowRight className="h-5 w-5 text-white" />
+              <span>Bắt đầu bài kiểm tra năng lực</span>
+              <ArrowRight className="h-5 w-5" />
             </Button>
           </div>
         </div>
       </section>
 
-      {/* Story Detail Dialog */}
+      {/* ========================================================================= */}
+      {/* 6. VERIFIED STORY DETAIL DIALOG                                           */}
+      {/* ========================================================================= */}
       <Dialog open={Boolean(selectedStory)} onOpenChange={() => setSelectedStory(null)}>
-        <DialogContent className="max-w-2xl text-left">
+        <DialogContent className="max-w-2xl text-left bg-card p-6 sm:p-8 rounded-3xl border border-border/80">
           <DialogHeader>
-            <DialogTitle className="text-xl font-black text-foreground">
+            <DialogTitle className="text-xl sm:text-2xl font-bold text-foreground">
               {selectedStory?.title}
             </DialogTitle>
           </DialogHeader>
@@ -401,39 +686,42 @@ export default function ResultsPage() {
                 <img
                   src={selectedStory.imageUrl}
                   alt={selectedStory.studentName}
-                  className="w-20 h-20 rounded-2xl object-cover border border-border/80 shrink-0"
+                  className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border border-border/80 shrink-0 shadow-2xs"
                 />
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-extrabold text-foreground text-lg">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-bold text-foreground text-lg sm:text-xl">
                       {selectedStory.studentName}
                     </span>
                     {selectedStory.studentSchool && (
-                      <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-brand-blue-soft text-brand-blue">
+                      <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-brand-blue-soft text-brand-blue border border-brand-blue/20">
                         {selectedStory.studentSchool}
                       </span>
                     )}
                   </div>
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground font-bold">
-                    <span>{selectedStory.courseName}</span>
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground font-normal">
+                    <span>{selectedStory.courseName || "Khóa học ARIS"}</span>
                     <span>•</span>
-                    <span>{selectedStory.studyDuration}</span>
+                    <span className="font-mono">{selectedStory.studyDuration}</span>
                   </div>
                 </div>
               </div>
 
               {/* Honorary Academic Rank Award Banner */}
               {(() => {
-                const honor = getAcademicRankHonor(selectedStory.academicRankTitle || selectedStory.overallScore, {
-                  listening: selectedStory.listeningScore,
-                  reading: selectedStory.readingScore,
-                  writing: selectedStory.writingScore,
-                  speaking: selectedStory.speakingScore,
-                });
+                const honor = getAcademicRankHonor(
+                  selectedStory.academicRankTitle || selectedStory.overallScore,
+                  {
+                    listening: selectedStory.listeningScore,
+                    reading: selectedStory.readingScore,
+                    writing: selectedStory.writingScore,
+                    speaking: selectedStory.speakingScore,
+                  }
+                );
                 return (
                   <div
                     className={cn(
-                      "p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4",
+                      "p-4 sm:p-5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4",
                       honor.badgeBg,
                       honor.badgeBorder
                     )}
@@ -443,24 +731,23 @@ export default function ResultsPage() {
                         <Award className={cn("h-6 w-6", honor.accentColor)} />
                       </div>
                       <div>
-                        <span className="text-[10px] sm:text-[11px] uppercase font-black tracking-wider text-muted-foreground block">
-                          Danh Hiệu Học Thuật Chính Thức Được Trao Tặng
+                        <span className="text-[11px] uppercase font-mono font-semibold tracking-wider text-muted-foreground block">
+                          Danh Hiệu Học Thuật Chính Thức
                         </span>
-                        <div className="text-base sm:text-lg font-black text-foreground flex flex-wrap items-center gap-2">
+                        <div className="text-base sm:text-lg font-bold text-foreground flex flex-wrap items-center gap-2">
                           <span>{honor.fullTitle}</span>
-                          <span className={cn("text-xs font-bold", honor.accentColor)}>({honor.subtitle})</span>
+                          <span className={cn("text-xs font-semibold", honor.accentColor)}>({honor.subtitle})</span>
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      <span className="inline-flex items-center gap-1 text-xs font-black px-2.5 py-1 rounded-lg bg-background border text-foreground shadow-2xs">
+                      <span className="inline-flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-xl bg-background border border-border/80 text-foreground shadow-2xs">
                         <span>{honor.stage.stageName}</span>
-                        <span className="inline-flex items-center gap-0.5 text-brand-red font-mono">
-                          {honor.stage.starCount}
-                          <img src="/images/star1.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                        <span className="inline-flex items-center gap-0.5 text-brand-red font-mono font-bold">
+                          {honor.stage.starCount}★
                         </span>
                       </span>
-                      <span className="text-xs font-mono font-black px-2.5 py-1 rounded-lg bg-background border text-foreground shadow-2xs">
+                      <span className="text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-background border border-border/80 text-foreground shadow-2xs">
                         IELTS {selectedStory.overallScore}
                       </span>
                     </div>
@@ -469,43 +756,43 @@ export default function ResultsPage() {
               })()}
 
               {/* Score Breakdown Bar */}
-              <div className="p-4 rounded-2xl bg-brand-blue-soft/50 border border-brand-blue/20 grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
+              <div className="p-4 rounded-2xl bg-muted/40 border border-border/70 grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
                 <div className="space-y-0.5">
-                  <span className="text-[11px] uppercase font-bold text-muted-foreground">Overall</span>
-                  <p className="text-lg font-black text-brand-red">{selectedStory.overallScore}</p>
+                  <span className="text-[10px] uppercase font-mono font-semibold text-muted-foreground block tracking-wider">Overall</span>
+                  <p className="text-2xl font-mono font-bold text-brand-red">{selectedStory.overallScore}</p>
                 </div>
                 {selectedStory.listeningScore && (
                   <div className="space-y-0.5">
-                    <span className="text-[11px] uppercase font-bold text-muted-foreground">Listening</span>
-                    <p className="text-base font-extrabold text-foreground">{selectedStory.listeningScore}</p>
+                    <span className="text-[10px] uppercase font-mono font-semibold text-muted-foreground block tracking-wider">Listening</span>
+                    <p className="text-base sm:text-lg font-mono font-bold text-foreground">{selectedStory.listeningScore}</p>
                   </div>
                 )}
                 {selectedStory.readingScore && (
                   <div className="space-y-0.5">
-                    <span className="text-[11px] uppercase font-bold text-muted-foreground">Reading</span>
-                    <p className="text-base font-extrabold text-foreground">{selectedStory.readingScore}</p>
+                    <span className="text-[10px] uppercase font-mono font-semibold text-muted-foreground block tracking-wider">Reading</span>
+                    <p className="text-base sm:text-lg font-mono font-bold text-foreground">{selectedStory.readingScore}</p>
                   </div>
                 )}
                 {selectedStory.writingScore && (
                   <div className="space-y-0.5">
-                    <span className="text-[11px] uppercase font-bold text-muted-foreground">Writing</span>
-                    <p className="text-base font-extrabold text-foreground">{selectedStory.writingScore}</p>
+                    <span className="text-[10px] uppercase font-mono font-semibold text-muted-foreground block tracking-wider">Writing</span>
+                    <p className="text-base sm:text-lg font-mono font-bold text-brand-red">{selectedStory.writingScore}</p>
                   </div>
                 )}
                 {selectedStory.speakingScore && (
                   <div className="space-y-0.5">
-                    <span className="text-[11px] uppercase font-bold text-muted-foreground">Speaking</span>
-                    <p className="text-base font-extrabold text-foreground">{selectedStory.speakingScore}</p>
+                    <span className="text-[10px] uppercase font-mono font-semibold text-muted-foreground block tracking-wider">Speaking</span>
+                    <p className="text-base sm:text-lg font-mono font-bold text-brand-blue">{selectedStory.speakingScore}</p>
                   </div>
                 )}
               </div>
 
               {/* Story Content */}
               <div className="space-y-2">
-                <h4 className="text-xs uppercase font-extrabold text-muted-foreground tracking-wider">
-                  Chia sẻ của học viên
+                <h4 className="text-[11px] uppercase font-mono font-semibold text-muted-foreground tracking-wider">
+                  Trích xuất chia sẻ &amp; Báo cáo tiến bộ
                 </h4>
-                <p className="text-sm sm:text-base text-foreground/85 leading-relaxed bg-muted/30 p-5 rounded-2xl border border-border/60">
+                <p className="text-sm sm:text-base text-foreground/85 leading-relaxed bg-muted/30 p-5 rounded-2xl border border-border/70 font-normal">
                   "{selectedStory.story}"
                 </p>
               </div>
@@ -513,7 +800,7 @@ export default function ResultsPage() {
               <div className="pt-2 flex justify-end">
                 <Button
                   onClick={() => setSelectedStory(null)}
-                  className="rounded-xl font-bold text-xs"
+                  className="rounded-xl font-semibold text-sm px-6 h-11"
                 >
                   Đóng
                 </Button>

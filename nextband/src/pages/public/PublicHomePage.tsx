@@ -222,16 +222,16 @@ export default function PublicHomePage() {
         <div className="space-y-8 text-left max-w-5xl mx-auto">
           {/* Input Thought / Điểm xuất phát ý niệm */}
           <div className="p-5 sm:p-6 rounded-3xl bg-muted/40 border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-muted-foreground font-mono">
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2 text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground">
                 <span className="h-2 w-2 rounded-full bg-brand-blue animate-pulse" />
                 <span>Ý tưởng ban đầu (The Input Thought)</span>
               </div>
-              <p className="text-base sm:text-lg font-bold text-foreground">
+              <p className="text-base sm:text-lg font-semibold text-foreground leading-relaxed">
                 "Chính phủ cần cấp ngân sách đáng kể để hỗ trợ các cộng đồng gặp khó khăn."
               </p>
             </div>
-            <div className="shrink-0 text-xs font-bold px-3 py-1.5 rounded-xl bg-brand-blue-soft text-brand-blue border border-brand-blue/20 w-fit">
+            <div className="shrink-0 text-xs font-semibold px-3 py-1.5 rounded-xl bg-brand-blue-soft text-brand-blue border border-brand-blue/20 w-fit">
               Xuất phát điểm tư duy
             </div>
           </div>
@@ -243,35 +243,35 @@ export default function PublicHomePage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-2 border-b border-border/60 pb-3">
                   <div className="flex items-center gap-2">
-                    <span className="h-6 w-6 rounded-lg bg-muted text-muted-foreground text-xs font-mono font-black flex items-center justify-center">
+                    <span className="h-6 w-6 rounded-lg bg-muted text-muted-foreground text-xs font-mono font-bold flex items-center justify-center">
                       A
                     </span>
-                    <h3 className="font-black text-foreground text-base sm:text-lg">
+                    <h3 className="font-bold text-foreground text-base sm:text-lg">
                       Lối Dịch Trực Tiếp
                     </h3>
                   </div>
-                  <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-muted-foreground bg-muted px-2.5 py-1 rounded-md">
+                  <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground bg-muted px-2.5 py-1 rounded-md">
                     Direct Translation
                   </span>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-muted/50 border border-border/70 space-y-2">
-                  <div className="text-xs font-mono font-bold text-muted-foreground uppercase">
+                  <div className="text-xs font-medium text-muted-foreground">
                     Câu hình thành:
                   </div>
-                  <p className="font-mono text-sm sm:text-base font-bold text-foreground leading-relaxed">
+                  <p className="text-sm sm:text-base font-semibold text-foreground leading-relaxed">
                     "The government gave a lot of money to help poor people."
                   </p>
                 </div>
 
                 <div className="space-y-2.5 text-xs sm:text-sm text-foreground/75 leading-relaxed">
                   <p>
-                    <strong className="text-foreground">Đặc điểm:</strong> Người học dịch nối từng cụm từ tiếng Việt sang tiếng Anh. Câu truyền đạt được nghĩa cơ bản nhưng ở văn phong sinh hoạt thông thường, chưa thể hiện được sự tinh tế và chuẩn xác trong ngữ cảnh học thuật.
+                    <strong className="text-foreground font-semibold">Đặc điểm:</strong> Người học dịch nối từng cụm từ tiếng Việt sang tiếng Anh. Câu truyền đạt được nghĩa cơ bản nhưng ở văn phong sinh hoạt thông thường, chưa thể hiện được sự tinh tế và chuẩn xác trong ngữ cảnh học thuật.
                   </p>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-border/60 text-xs text-muted-foreground font-medium italic">
+              <div className="pt-3 border-t border-border/60 text-xs text-muted-foreground font-normal italic">
                 Dừng lại ở việc biểu đạt nghĩa bề mặt.
               </div>
             </div>
@@ -281,14 +281,14 @@ export default function PublicHomePage() {
               <div className="space-y-5">
                 <div className="flex items-center justify-between gap-2 border-b border-brand-blue/20 pb-3">
                   <div className="flex items-center gap-2">
-                    <span className="h-6 w-6 rounded-lg bg-brand-blue text-white text-xs font-mono font-black flex items-center justify-center shadow-xs">
+                    <span className="h-6 w-6 rounded-lg bg-brand-blue text-white text-xs font-mono font-bold flex items-center justify-center shadow-xs">
                       B
                     </span>
-                    <h3 className="font-black text-foreground text-base sm:text-lg">
+                    <h3 className="font-bold text-foreground text-base sm:text-lg">
                       Cơ Chế The ARIS Way
                     </h3>
                   </div>
-                  <span className="text-[11px] font-mono font-extrabold uppercase tracking-wider text-brand-blue bg-brand-blue-soft px-2.5 py-1 rounded-md border border-brand-blue/20">
+                  <span className="text-[11px] font-mono font-semibold uppercase tracking-wider text-brand-blue bg-brand-blue-soft px-2.5 py-1 rounded-md border border-brand-blue/20">
                     Cognitive Framing
                   </span>
                 </div>
@@ -296,8 +296,8 @@ export default function PublicHomePage() {
                 {/* 4 Nấc thang */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs sm:text-sm">
                   <div className="p-3.5 rounded-2xl bg-muted/30 border border-border/70 space-y-1">
-                    <div className="flex items-center gap-2 font-black text-foreground">
-                      <span className="font-mono text-xs px-2 py-0.5 rounded-md bg-brand-blue-soft text-brand-blue font-bold">
+                    <div className="flex items-center gap-2 font-bold text-foreground">
+                      <span className="font-mono text-xs px-2 py-0.5 rounded-md bg-brand-blue-soft text-brand-blue font-semibold">
                         01
                       </span>
                       <span>Ý Niệm (Concept)</span>
@@ -308,8 +308,8 @@ export default function PublicHomePage() {
                   </div>
 
                   <div className="p-3.5 rounded-2xl bg-muted/30 border border-border/70 space-y-1">
-                    <div className="flex items-center gap-2 font-black text-foreground">
-                      <span className="font-mono text-xs px-2 py-0.5 rounded-md bg-brand-blue-soft text-brand-blue font-bold">
+                    <div className="flex items-center gap-2 font-bold text-foreground">
+                      <span className="font-mono text-xs px-2 py-0.5 rounded-md bg-brand-blue-soft text-brand-blue font-semibold">
                         02
                       </span>
                       <span>Góc Nhìn (Perspective)</span>
@@ -320,43 +320,43 @@ export default function PublicHomePage() {
                   </div>
 
                   <div className="p-3.5 rounded-2xl bg-muted/30 border border-border/70 space-y-1">
-                    <div className="flex items-center gap-2 font-black text-foreground">
-                      <span className="font-mono text-xs px-2 py-0.5 rounded-md bg-brand-blue-soft text-brand-blue font-bold">
+                    <div className="flex items-center gap-2 font-bold text-foreground">
+                      <span className="font-mono text-xs px-2 py-0.5 rounded-md bg-brand-blue-soft text-brand-blue font-semibold">
                         03
                       </span>
                       <span>Cấu Trúc (Structure)</span>
                     </div>
-                    <p className="text-foreground/75 pl-7 text-xs leading-relaxed font-mono">
+                    <p className="text-foreground/75 pl-7 text-xs leading-relaxed">
                       allocated [funding] to support...
                     </p>
                   </div>
 
                   <div className="p-3.5 rounded-2xl bg-brand-blue-soft/50 border border-brand-blue/30 space-y-1">
-                    <div className="flex items-center gap-2 font-black text-brand-blue">
-                      <span className="font-mono text-xs px-2 py-0.5 rounded-md bg-brand-blue text-white font-bold">
+                    <div className="flex items-center gap-2 font-bold text-brand-blue">
+                      <span className="font-mono text-xs px-2 py-0.5 rounded-md bg-brand-blue text-white font-semibold">
                         04
                       </span>
                       <span>Diễn Đạt (Expression)</span>
                     </div>
-                    <p className="text-foreground/80 pl-7 text-xs leading-relaxed font-medium">
+                    <p className="text-foreground/80 pl-7 text-xs leading-relaxed font-normal">
                       Lựa chọn từ ngữ học thuật chuẩn xác.
                     </p>
                   </div>
                 </div>
 
                 {/* Final Sentence Result */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-brand-blue text-white space-y-1.5 shadow-sm">
-                  <div className="text-xs font-mono font-black uppercase tracking-wider text-brand-cyan flex items-center gap-1.5">
+                <div className="p-4 sm:p-5 rounded-2xl bg-brand-blue text-white space-y-2 shadow-sm">
+                  <div className="text-[11px] font-mono font-semibold uppercase tracking-wider text-brand-cyan flex items-center gap-1.5">
                     <CheckCircle2 className="h-4 w-4" />
                     <span>Câu hoàn chỉnh theo cấu trúc học thuật:</span>
                   </div>
-                  <p className="font-mono text-sm sm:text-base font-bold text-white leading-relaxed">
+                  <p className="text-sm sm:text-base font-semibold text-white leading-relaxed">
                     "The government allocated substantial funding to support vulnerable communities."
                   </p>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-border/60 text-xs text-brand-blue font-bold flex items-center gap-1.5">
+              <div className="pt-3 border-t border-border/60 text-xs text-brand-blue font-semibold flex items-center gap-1.5">
                 <ShieldCheck className="h-4 w-4 shrink-0" />
                 <span>Hiểu cơ chế lựa chọn ngôn ngữ thay vì học thuộc bài mẫu.</span>
               </div>

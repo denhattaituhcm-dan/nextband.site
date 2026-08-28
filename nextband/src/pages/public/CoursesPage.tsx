@@ -86,7 +86,6 @@ export default function CoursesPage() {
       <SectionContainer
         badge="Giai Đoạn 1: Xây Nền Năng Lực"
         title="Chặng Xây Nền: Phát âm, Từ vựng &amp; Cấu trúc câu"
-        description="Dành cho người mất gốc hoặc có nền tảng cơ bản, tập trung làm chủ ngữ pháp câu và khả năng đọc hiểu/nghe hiểu văn bản học thuật."
         background="default"
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 text-left">

@@ -172,6 +172,22 @@ Mọi thay đổi về Mã nguồn UI, API DTO, hay Database Schema **BẮT BU�
 
 ---
 
+## 1.19 SYSTEM INVARIANT CORE-026: ARIS TYPOGRAPHY LOCKDOWN & DUAL-FONT HIERARCHY CONTRACT
+
+- **Giới hạn Cứng 2 Họ Phông (Hard Limit: 2 Font Families Only)**:
+  - **Primary (Sans-Serif)**: `Plus Jakarta Sans` (hoặc `Inter` fallback) — Dùng cho 100% Tiêu đề (Heading), Thân bài (Body), Nút bấm (Button), Thanh điều hướng (Navigation), Thẻ (Card), Giải thích (Explanation). Tuyệt đối không đổi họ phông giữa Heading và Body.
+  - **System / Accent (Monospace)**: `JetBrains Mono` / `IBM Plex Mono` — Chỉ dùng độc quyền cho thành phần kỹ thuật/hệ thống: Mã số bước (`01`, `02`), Chỉ số Band (`BAND 6.5`), Nhãn trạng thái/Dossier (`DIRECT TRANSLATION`, `COGNITIVE FRAMING`, `STATUS: ACTIVE`).
+  - **Cấm Tuyệt Đối Phông Thứ 3**: Không nạp hoặc sử dụng bất kỳ họ phông thứ ba nào.
+- **Quy tắc Phân cấp Thị giác (Hierarchy via Properties, Not Font Switching)**:
+  - Phân cấp thông tin BẮT BUỘC thực hiện qua chuỗi: `size → weight (400, 500, 600, 700) → spacing → color → container`. Cấm dùng việc đổi họ phông chữ để tạo điểm nhấn hay phân cấp.
+- **Mô hình 4 Tầng Phân cấp Nhận diện (4-Level Typography Hierarchy)**:
+  - **Level 1 — Nội dung thật (Content & Sentences)**: Primary Sans-serif, kích thước chuẩn, rõ ràng, dễ đọc, không dùng Monospace cho nội dung câu diễn đạt.
+  - **Level 2 — UI Label (System Tags)**: Monospace, kích thước nhỏ (`11px - 12px`), trọng lượng vừa phải, tracking tinh tế, không lạm dụng uppercase đậm đặc khắp nơi.
+  - **Level 3 — Metadata / Index**: Monospace thanh lịch (`01`, `02`, `CASE 01`).
+  - **Level 4 — Diễn giải (Body & Explanations)**: Trở về Primary Sans-serif chuẩn mực, tối ưu khả năng đọc học thuật.
+
+---
+
 ## 1. PHÂN CẤP TIÊU CHUẨN TIER KIỂM TOÁN (TIERED AUDIT SYSTEM)
 
 ### Tier 0: Critical System Core (Release Blocking)
