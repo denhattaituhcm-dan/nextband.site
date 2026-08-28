@@ -27,6 +27,7 @@ import { AnswerResultCard } from "@/components/submission/AnswerResultCard";
 import { VisualDiffViewer } from "@/components/submission/VisualDiffViewer";
 import { parseStructuredFeedback } from "@/lib/sentenceFeedback";
 import { RichContent } from "@/components/exam/RichContent";
+import { convertOptionValToIndex } from "@/components/exam/MatchingRenderer";
 import { getFillBlankBlankCount } from "@/lib/fillBlank";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
@@ -37,6 +38,8 @@ import {
   isSubmissionCompleted,
 } from "@/lib/submissionStatus";
 import { calculateGradingSla } from "@/lib/gradingSla";
+import { routes } from "@/lib/routes";
+import { submissionKeys } from "@/lib/queryKeys";
 
 const statusConfig: Record<
   CanonicalSubmissionStatus,
@@ -117,7 +120,7 @@ export default function SubmissionDetail() {
         clonePreviousAnswers: true,
       });
       toast.success("Đã tạo phiên làm bài sửa (Attempt 2). Bài làm cũ của bạn được bảo toàn nguyên vẹn.");
-      navigate(`/exam/${targetExamId}?submissionId=${revisionSub.id}&isRevision=true`);
+      navigate(routes.exam.take(targetExamId, { submissionId: revisionSub.id, isRevision: true }));
     } catch (err: any) {
       toast.error(err.message || "Không thể tạo bài sửa.");
     } finally {
@@ -126,18 +129,27 @@ export default function SubmissionDetail() {
   };
 
   const { data: submission, isLoading } = useQuery({
-    queryKey: ["student-submission", submissionId],
+    queryKey: submissionKeys.detail(submissionId || ""),
     queryFn: () => submissionsApi.getById(submissionId!),
     enabled: !!submissionId && isAuthenticated,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+    // Cross-Client Sync: Smart polling every 15s when waiting for teacher grading (SUBMITTED)
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      const status = data?.status ? String(data.status).toUpperCase() : "";
+      return status === "SUBMITTED" ? 15000 : false;
+    },
   });
 
   const targetExamId = submission?.examId || submission?.exam_id;
   const targetStudentId = submission?.studentId || submission?.student_id;
 
   const { data: siblingSubmissionsData } = useQuery({
-    queryKey: ["sibling-submissions", targetExamId, targetStudentId],
+    queryKey: submissionKeys.siblings(targetExamId, targetStudentId),
     queryFn: () => submissionsApi.list({ examId: targetExamId, studentId: targetStudentId, limit: 10 }),
     enabled: !!targetExamId && !!targetStudentId && isAuthenticated,
+    staleTime: 1000 * 30,
   });
 
   const siblingSubmissions = siblingSubmissionsData?.data || [];
@@ -309,7 +321,9 @@ export default function SubmissionDetail() {
             if (keys.length > 0) {
               let correctPairs = 0;
               for (const k of keys) {
-                if (String(parsedStudent?.[k] || "").trim().toUpperCase() === String(parsedCorrect.pairs[k] || "").trim().toUpperCase()) {
+                const studentIdx = convertOptionValToIndex(parsedStudent?.[k]);
+                const correctIdx = convertOptionValToIndex(parsedCorrect.pairs[k]);
+                if (studentIdx !== null && correctIdx !== null && studentIdx === correctIdx) {
                   correctPairs++;
                 }
               }
@@ -867,6 +881,10 @@ export default function SubmissionDetail() {
                         isGraded={isGraded}
                         isSubmitted={isSubmissionCompleted(submission?.status)}
                         sectionType={section.sectionType}
+                        assessmentMode={question.assessmentMode}
+                        scoreScope={question.scoreScope}
+                        holisticParentId={question.holisticParentId}
+                        holisticParentScore={submission?.totalScore ?? null}
                       />
                     );
                   })}

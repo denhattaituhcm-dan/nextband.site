@@ -62,7 +62,7 @@ describe("HUYEN CO LAO NHAN V1: Rule Engine Invariant Tests", () => {
 
     expect(result.urgency).toBe("ORANGE");
     expect(result.badgeText).toBe("Cần Sửa Bài");
-    expect(result.ctaPath).toBe("/submission/sub-999");
+    expect(result.ctaPath).toBe("/app/submissions/sub-999");
     expect(result.ctaLabel).toContain("Writing Task 2");
     expect(result.advice).toContain("Writing Task 2");
   });

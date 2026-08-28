@@ -2,10 +2,8 @@ import { useState, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { classesApi, submissionsApi, lessonsApi } from "@/lib/api";
-import { getStudentMotivationCopy } from "@/lib/studentMotivationCopy";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { HomeworkEmptyState } from "@/components/homework/HomeworkEmptyState";
 import { AnnouncementBanner } from "@/components/AnnouncementBanner";
@@ -18,20 +16,18 @@ import {
   compareHomeworkOrder,
 } from "@/lib/homeworkStatusHelper";
 import { getHuanCoState } from "@/lib/huanCoState";
+import { routes } from "@/lib/routes";
+import { submissionKeys } from "@/lib/queryKeys";
 import { HuanCoMascot } from "@/components/mascot/HuanCoMascot";
+import { StudentStageBanner } from "@/components/student/StudentStageBanner";
+import { StudentMissionQueue } from "@/components/student/StudentMissionQueue";
+import { StudentSkillMatrix } from "@/components/student/StudentSkillMatrix";
+import { calculateStudentJourney } from "@/lib/studentJourney";
 import {
-  BookOpen,
-  ArrowRight,
-  CheckCircle2,
-  Clock,
-  Award,
   Layers,
   WifiOff,
   AlertCircle,
   RefreshCw,
-  Sparkles,
-  AlertTriangle,
-  RotateCcw,
 } from "lucide-react";
 
 // ─── Lifecycle-derived sub-views ─────────────────────────────────────────────
@@ -39,11 +35,11 @@ import {
 function LifecycleLoadingSkeleton() {
   return (
     <div className="space-y-4 animate-pulse">
-      <div className="h-40 rounded-2xl bg-muted" />
-      <div className="grid grid-cols-3 gap-3">
-        <div className="h-24 rounded-xl bg-muted" />
-        <div className="h-24 rounded-xl bg-muted" />
-        <div className="h-24 rounded-xl bg-muted" />
+      <div className="h-36 rounded-2xl bg-slate-200" />
+      <div className="h-44 rounded-2xl bg-slate-200" />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="h-56 rounded-2xl bg-slate-200" />
+        <div className="h-56 rounded-2xl bg-slate-200" />
       </div>
     </div>
   );
@@ -82,7 +78,7 @@ function LifecycleErrorBanner({
   );
 }
 
-// ─── Main page ────────────────────────────────────────────────────────────────
+// ─── Main Student Command Center ──────────────────────────────────────────────
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -97,9 +93,11 @@ export default function HomePage() {
 
   // KPI submissions — only load when ENROLLED
   const { data: submissionsData } = useQuery({
-    queryKey: ["my-student-kpis", user?.id],
+    queryKey: submissionKeys.kpis(user?.id),
     queryFn: () => submissionsApi.list({ studentId: user?.id, limit: 100 }).catch(() => ({ data: [] })),
     enabled: !!user?.id && state === "ENROLLED",
+    staleTime: 1000 * 60 * 2,
+    refetchOnWindowFocus: true,
   });
 
   const userSubmissions = Array.isArray(submissionsData?.data) ? submissionsData.data : [];
@@ -123,7 +121,7 @@ export default function HomePage() {
 
   const rawLessons = classLessonData?.data?.lessons;
 
-  // Hàng đợi hành động 4 tầng ưu tiên sư phạm: Revision > Overdue > Due Soon > Upcoming
+  // Hàng đợi hành động 4 tầng ưu tiên: Revision > Overdue > Due Soon > Upcoming
   const actionQueue = useMemo(() => {
     const sortedLessons = [...(rawLessons || [])].sort(compareHomeworkOrder);
     const formatted = sortedLessons.map((item: any, idx: number) => {
@@ -153,7 +151,12 @@ export default function HomePage() {
     return sortStudentActionQueue(formatted);
   }, [rawLessons, userSubmissions]);
 
-  // Trạng thái sư phạm của Huyền Cơ Lão Nhân (Pure rule engine)
+  // ARIS Student Journey calculations
+  const journey = useMemo(() => {
+    return calculateStudentJourney(userSubmissions, 5.5, 6.5);
+  }, [userSubmissions]);
+
+  // Trạng thái sư phạm của Huyền Cơ Lão Nhân
   const huanCoState = useMemo(() => {
     return getHuanCoState({
       actionQueue,
@@ -165,36 +168,16 @@ export default function HomePage() {
     });
   }, [actionQueue, submittedCount, gradedCount, pendingCount, activeClassName, courseTitle]);
 
-  // Bảng thi đua lớp để suy ra thứ hạng, tiến độ hoàn thành & động lực học tập
-  const { data: leaderboardData } = useQuery({
-    queryKey: ["class-leaderboard", enrolledClassId],
-    queryFn: () => classesApi.getLeaderboard(enrolledClassId || ""),
-    enabled: !!enrolledClassId && state === "ENROLLED",
-    staleTime: 1000 * 60 * 2,
-  });
-
-  // Micro-copy động theo trạng thái học sinh (Game loop & Kích hoạt hành vi học tập)
-  const motivation = useMemo(() => {
-    return getStudentMotivationCopy({
-      actionQueue,
-      leaderboardData,
-      submittedCount,
-      gradedCount,
-      pendingCount,
-    });
-  }, [actionQueue, leaderboardData, submittedCount, gradedCount, pendingCount]);
-
   // ── State machine render ─────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-background pb-16">
+    <div className="min-h-screen bg-slate-50/60 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 space-y-6">
         <AnnouncementBanner scopeRole="student" />
 
         {/* LOADING */}
         {state === "LOADING" && <LifecycleLoadingSkeleton />}
 
-        {/* NETWORK_ERROR
-            INVARIANT: Must NEVER show HomeworkEmptyState or "Chưa có lớp học" */}
+        {/* NETWORK_ERROR */}
         {state === "NETWORK_ERROR" && (
           <LifecycleErrorBanner
             icon={<WifiOff className="h-6 w-6" />}
@@ -208,8 +191,7 @@ export default function HomePage() {
           />
         )}
 
-        {/* API_ERROR (4xx / 5xx)
-            INVARIANT: Must NEVER show HomeworkEmptyState or "Chưa có lớp học" */}
+        {/* API_ERROR */}
         {state === "API_ERROR" && (
           <LifecycleErrorBanner
             icon={<AlertCircle className="h-6 w-6" />}
@@ -225,274 +207,62 @@ export default function HomePage() {
           />
         )}
 
-        {/* PRE_ENROLLMENT
-            INVARIANT: Only shown when Backend confirms 200 + data:[] */}
+        {/* PRE_ENROLLMENT */}
         {state === "PRE_ENROLLMENT" && (
           <HomeworkEmptyState state="NO_ENROLLMENT" />
         )}
 
-        {/* ENROLLED — full student dashboard */}
+        {/* ENROLLED — Full ARIS IELTS Command Center */}
         {state === "ENROLLED" && (
           <div className="space-y-6">
-            {/* HERO WELCOME BANNER */}
-            <Card className="border-0 text-primary-foreground rounded-2xl shadow-md p-6 md:p-8 bg-primary space-y-5">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/15 text-white border border-white/20 text-xs font-semibold backdrop-blur-md">
-                  <BookOpen className="w-4 h-4 text-white/70" />
-                  <span>Đang chọn: {activeClassName}</span>
-                </div>
-
-                {/* Multi-Class Selector */}
-                {enrollments.length > 1 && (
-                  <div className="flex items-center gap-1.5 overflow-x-auto py-1">
-                    <span className="text-xs text-white/80 font-medium mr-1 flex items-center gap-1">
-                      <Layers className="h-3.5 w-3.5" /> Lớp khác:
-                    </span>
-                    {enrollments.map((item, idx) => {
-                      const isSelected = idx === selectedClassIndex;
-                      return (
-                        <Button
-                          key={item.id}
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setSelectedClassIndex(idx)}
-                          className={`h-7 text-xs rounded-full px-3 transition-all ${
-                            isSelected
-                              ? "bg-white text-primary font-bold shadow-xs"
-                              : "bg-white/20 text-white hover:bg-white/30"
-                          }`}
-                        >
-                          {item.className}
-                        </Button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-2 max-w-3xl">
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-tight">
-                  Xin chào, {user?.fullName || "Học viên"}!
-                </h1>
-                <p className="text-sm md:text-base text-primary-foreground/90 font-normal leading-relaxed">
-                  Lớp <strong className="text-white font-semibold">{activeClassName}</strong>{" "}
-                  ({courseTitle}) · <span className="text-white font-medium">{motivation.copy}</span>
-                </p>
-              </div>
-
-              {enrolledClassId && (
-                <div className="pt-1">
-                  <Button
-                    onClick={() => navigate(`/app/class/${enrolledClassId}/lessons`)}
-                    className="rounded-xl bg-white text-primary hover:bg-white/95 font-bold px-6 py-5 shadow-sm active:scale-95 text-sm transition-all gap-2 border-0"
-                  >
-                    <BookOpen className="h-4 w-4 text-primary" />
-                    <span>Vào Lớp {activeClassName} để Làm Bài</span>
-                    <ArrowRight className="w-4 h-4 text-primary" />
-                  </Button>
-                </div>
-              )}
-            </Card>
-
-            {/* ACTION QUEUE: VIỆC CẦN XỬ LÝ (Tối đa 3 việc ưu tiên nhất) */}
-            {actionQueue.length > 0 && (
-              <Card className="p-4 sm:p-5 rounded-2xl border border-border/80 bg-card space-y-3.5 shadow-xs">
-                <div className="flex items-center justify-between border-b border-border/60 pb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
-                      <Clock className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <h2 className="text-sm font-bold text-foreground flex items-center gap-1.5">
-                        Việc cần xử lý
-                        <Badge variant="secondary" className="text-[10px] h-4 px-1.5 font-bold">
-                          {actionQueue.length}
-                        </Badge>
-                      </h2>
-                      <p className="text-[11px] text-muted-foreground">
-                        Thứ tự ưu tiên: Cần sửa Attempt 2 ➔ Quá hạn ➔ Sắp hết hạn
-                      </p>
-                    </div>
-                  </div>
-                  {enrolledClassId && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => navigate(`/app/class/${enrolledClassId}/lessons`)}
-                      className="text-xs text-primary font-semibold hover:bg-primary/5 h-8 gap-1"
-                    >
-                      Xem tất cả <ArrowRight className="w-3.5 h-3.5" />
-                    </Button>
-                  )}
-                </div>
-
-                <div className="grid gap-3 sm:grid-cols-3">
-                  {actionQueue.slice(0, 3).map((item) => {
-                    const isRevision = item.status === "REVISION_REQUIRED";
-                    const isOverdue = item.status === "OVERDUE";
-                    const isDueSoon = item.priority === 3;
-
+            {/* Multi-Class Selector (if student has multiple active enrollments) */}
+            {enrollments.length > 1 && (
+              <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs shadow-xs">
+                <span className="text-slate-500 font-medium flex items-center gap-1">
+                  <Layers className="h-3.5 w-3.5 text-indigo-600" /> Đổi lớp học:
+                </span>
+                <div className="flex items-center gap-1.5 overflow-x-auto">
+                  {enrollments.map((item, idx) => {
+                    const isSelected = idx === selectedClassIndex;
                     return (
-                      <div
+                      <Button
                         key={item.id}
-                        className={`p-3.5 rounded-xl border transition-all flex flex-col justify-between space-y-3 ${
-                          isRevision
-                            ? "bg-amber-500/5 border-amber-300 dark:border-amber-800 ring-1 ring-amber-500/20"
-                            : isOverdue
-                            ? "bg-rose-500/5 border-rose-300 dark:border-rose-800 ring-1 ring-rose-500/20"
-                            : isDueSoon
-                            ? "bg-amber-500/5 border-amber-200 dark:border-amber-900"
-                            : "bg-muted/20 border-border/60"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSelectedClassIndex(idx)}
+                        className={`h-6 text-xs rounded-full px-3 transition-all ${
+                          isSelected
+                            ? "bg-slate-900 text-white font-bold shadow-xs hover:bg-slate-800"
+                            : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                         }`}
                       >
-                        <div className="space-y-1.5">
-                          <div className="flex items-center justify-between gap-1">
-                            {isRevision ? (
-                              <Badge variant="destructive" className="bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-300 text-[10px] font-bold">
-                                🔄 Cần sửa bài
-                              </Badge>
-                            ) : isOverdue ? (
-                              <Badge variant="destructive" className="bg-rose-500/15 text-rose-700 dark:text-rose-400 border-rose-300 text-[10px] font-bold">
-                                ⚠️ Quá hạn
-                              </Badge>
-                            ) : isDueSoon ? (
-                              <Badge variant="warning" className="text-[10px] font-bold">
-                                ⏳ Sắp hết hạn
-                              </Badge>
-                            ) : (
-                              <Badge variant="outline" className="text-[10px] text-muted-foreground">
-                                📅 Tiếp theo
-                              </Badge>
-                            )}
-
-                            {item.countdown && (
-                              <span className="text-[10px] font-mono text-muted-foreground">
-                                {item.countdown.text}
-                              </span>
-                            )}
-                          </div>
-
-                          <h3 className="font-bold text-xs text-foreground line-clamp-1">
-                            {item.title}
-                          </h3>
-                        </div>
-
-                        <Button
-                          size="sm"
-                          onClick={() => {
-                            if (isRevision && item.submission?.id) {
-                              navigate(`/submission/${item.submission.id}`);
-                            } else {
-                              navigate(`/exam/${item.examId || item.id}`);
-                            }
-                          }}
-                          className={`w-full font-bold text-xs h-8 rounded-lg ${
-                            isRevision
-                              ? "bg-amber-600 hover:bg-amber-700 text-white shadow-xs"
-                              : isOverdue
-                              ? "bg-rose-600 hover:bg-rose-700 text-white shadow-xs"
-                              : ""
-                          }`}
-                        >
-                          {isRevision ? "Sửa bài ngay" : isOverdue ? "Làm bù ngay" : "Làm bài"}
-                        </Button>
-                      </div>
+                        {item.className}
+                      </Button>
                     );
                   })}
                 </div>
-              </Card>
+              </div>
             )}
 
-            {/* 3 KPI CARDS */}
-            <div className="grid gap-3.5 sm:grid-cols-3">
-              <Card className="p-3.5 md:p-4 space-y-1.5 bg-card border border-border/70 rounded-xl shadow-xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
-                    <CheckCircle2 className="h-4 w-4 text-success" />
-                    Tổng bài đã nộp
-                  </span>
-                  <Badge variant="muted" className="text-[10px] font-medium">
-                    Đã hoàn thành
-                  </Badge>
-                </div>
-                <h3 className="text-2xl font-bold text-foreground tracking-tight">{submittedCount} bài</h3>
-                <p className="text-[11px] text-muted-foreground">Đã gửi cho giáo viên</p>
-              </Card>
+            {/* 1. STAGE BANNER: Cảnh Giới & Điểm Neo Chặng Đường (20% Progression) */}
+            <StudentStageBanner
+              studentName={user?.fullName || "Học viên"}
+              className={activeClassName}
+              courseTitle={courseTitle}
+              journey={journey}
+            />
 
-              <Card className="p-3.5 md:p-4 space-y-1.5 bg-card border border-border/70 rounded-xl shadow-xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
-                    <Award className="h-4 w-4 text-info" />
-                    Bài đã nhận xét
-                  </span>
-                  <Badge variant="info" className="text-[10px] font-medium">
-                    Đã chấm & sửa
-                  </Badge>
-                </div>
-                <h3 className="text-2xl font-bold text-info tracking-tight">{gradedCount} bài</h3>
-                <p className="text-[11px] text-muted-foreground">Đã có điểm & feedback</p>
-              </Card>
+            {/* 2. MISSION QUEUE: Hàng Đợi Nhiệm Vụ Tiêu Điểm Max 3 Items (10% Focus Action) */}
+            <StudentMissionQueue
+              missions={actionQueue}
+              enrolledClassId={enrolledClassId}
+            />
 
-              <Card className="p-3.5 md:p-4 space-y-1.5 bg-card border border-border/70 rounded-xl shadow-xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
-                    <Clock className="h-4 w-4 text-warning" />
-                    Bài chờ giáo viên chấm
-                  </span>
-                  <Badge variant="warning" className="text-[10px] font-medium">
-                    Đang đợi chấm
-                  </Badge>
-                </div>
-                <h3 className="text-2xl font-bold text-warning tracking-tight">{pendingCount} bài</h3>
-                <p className="text-[11px] text-muted-foreground">Đang trong hàng đợi chấm</p>
-              </Card>
-            </div>
-
-            {/* 5-STEP WORKFLOW */}
-            <Card className="rounded-2xl border border-border/70 bg-card p-5 md:p-7 space-y-4 shadow-xs">
-              <h2 className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-wider text-center">
-                Lộ Trình Học 5 Bước Chuẩn IELTS
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-5 gap-2.5 pt-1">
-                {[
-                  { label: "1. Đăng nhập", done: true },
-                  { label: "2. Xếp lớp", done: true },
-                  { label: "3. Vào Lớp làm bài", current: true },
-                  { label: "4. Làm & Nộp bài", done: false },
-                  { label: "5. GV nhận xét", done: false },
-                ].map(({ label, done, current }) => (
-                  <div
-                    key={label}
-                    className={`p-3.5 rounded-xl text-center space-y-1.5 flex flex-col items-center justify-center ${
-                      current
-                        ? "bg-primary text-primary-foreground shadow-xs"
-                        : done
-                        ? "bg-success/10 border border-success/20"
-                        : "bg-muted/40 border border-border/40"
-                    }`}
-                  >
-                    <span
-                      className={`w-6 h-6 rounded-full font-bold text-xs inline-flex items-center justify-center ${
-                        current
-                          ? "bg-white text-primary"
-                          : done
-                          ? "bg-success/20 text-success"
-                          : "bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      {done && !current ? <CheckCircle2 className="w-3.5 h-3.5" /> : label.charAt(0)}
-                    </span>
-                    <div
-                      className={`font-semibold text-xs ${
-                        current ? "" : done ? "text-foreground" : "text-muted-foreground"
-                      }`}
-                    >
-                      {label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Card>
+            {/* 3. SKILL MATRIX & TEACHER DEBRIEF: Năng Lực 4 Kỹ Năng & Báo Cáo Sửa Lỗi (70% Academic Base) */}
+            <StudentSkillMatrix
+              skills={journey.skills}
+              latestSubmission={userSubmissions[0]}
+            />
 
             {/* HUYỀN CƠ LÃO NHÂN FLOATING MASCOT */}
             <HuanCoMascot state={huanCoState} />

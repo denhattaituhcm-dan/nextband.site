@@ -4723,80 +4723,13 @@ export const assessmentApi = {
       }
 
       const err = await res.json().catch(() => ({}));
-      if (err.message || err.error) {
-        throw new Error(err.message || err.error);
-      }
+      throw new Error(err.message || err.error || "Nộp bài khảo thí thất bại");
     } catch (networkErr: any) {
-      if (networkErr?.message && !networkErr.message.includes("Failed to fetch")) {
+      if (networkErr?.message && !networkErr.message.includes("Failed to fetch") && !networkErr.message.includes("NetworkError")) {
         throw networkErr;
       }
+      throw new Error("Không thể kết nối đến máy chủ khảo thí. Bài làm của bạn đã được lưu an toàn trên thiết bị. Vui lòng kiểm tra lại kết nối mạng và bấm Thử nộp lại.");
     }
-
-    // Client offline fallback without leaking secret answer keys
-    const { getArisDiagnosticLevel, calculateEstimatedSkillBand } = await import("@/features/assessment/domain/diagnostic.rules");
-    const totalAnswered = Object.keys(answers || {}).length;
-    const estimatedRawScore = Math.max(1, Math.min(30, totalAnswered));
-    const arisInfo = getArisDiagnosticLevel(estimatedRawScore, 35);
-    const lisBand = calculateEstimatedSkillBand(7, 10);
-    const readBand = calculateEstimatedSkillBand(7, 10);
-    const gramBand = calculateEstimatedSkillBand(10, 15);
-
-    const report = {
-      sessionId,
-      candidateName: "Thí Sinh",
-      phone: "",
-      targetBand: "IELTS 6.5",
-      arisLevel: arisInfo,
-      objectiveBreakdown: {
-        rawScore: estimatedRawScore,
-        totalQuestions: 35,
-        accuracyPercent: Math.round((estimatedRawScore / 35) * 100),
-        listening: {
-          correct: 7,
-          total: 10,
-          scorePercent: 70,
-          estimatedBand: lisBand.band,
-          level: lisBand.level,
-          feedback: "Nghe hiểu tốt các ngữ cảnh hội thoại thông dụng.",
-        },
-        reading: {
-          correct: 7,
-          total: 10,
-          scorePercent: 70,
-          estimatedBand: readBand.band,
-          level: readBand.level,
-          feedback: "Đọc hiểu nhanh, nắm bắt ý chính đoạn văn tốt.",
-        },
-        grammar: {
-          correct: 10,
-          total: 15,
-          scorePercent: 67,
-          level: gramBand.level,
-          feedback: "Làm chủ các cấu trúc ngữ pháp học thuật thông dụng.",
-        },
-      },
-      subjectiveEvaluation: {
-        status: "PENDING_REVIEW",
-        hasWritingSubmission: true,
-        hasSpeakingRecording: true,
-        writing: {
-          submitted: true,
-          status: "Đang chờ Giảng viên chấm",
-          message: "Bài viết tự luận Task 2 đã được ghi nhận và gửi đến Hội đồng Giảng viên ARIS. Kết quả chấm chi tiết theo 4 tiêu chí sẽ được gửi qua Zalo/SĐT.",
-        },
-        speaking: {
-          submitted: true,
-          status: "Đang chờ Giảng viên chấm",
-          message: "2 bản ghi âm Speaking đã được niêm phong. Giảng viên chuyên môn sẽ chấm phát âm & độ trôi chảy và gửi audio feedback chi tiết sau.",
-        },
-        note: "Bài làm đã được niêm phong an toàn và gửi đến Giảng viên/AI chấm chuyên sâu.",
-      },
-      strengths: ["Hoàn thành trọn vẹn toàn bộ các phần thi chẩn đoán năng lực."],
-      weaknesses: ["Cần tiếp tục trau dồi ngữ pháp câu phức và từ vựng chuyên sâu."],
-      submittedAt: new Date().toISOString(),
-    };
-
-    return { success: true, result: report };
   },
 
   getResult: async (sessionId: string, customToken?: string) => {

@@ -25,6 +25,7 @@ import {
   SubmissionFlowStatus,
 } from "@/lib/examSyncEngine";
 import { compareCanonicalOrder } from "@/lib/questionOrder";
+import { routes } from "@/lib/routes";
 import {
   ArrowLeft,
   Clock,
@@ -119,6 +120,7 @@ export default function ExamInterface() {
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [initialTimeLeft, setInitialTimeLeft] = useState<number | null>(null);
   const [isRecordingActive, setIsRecordingActive] = useState(false);
+  const [isAudioUploading, setIsAudioUploading] = useState(false);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [syncVisualState, setSyncVisualState] = useState<SyncVisualState>("LOCAL_SAVED");
   const [hasTabLease, setHasTabLease] = useState(true);
@@ -244,7 +246,7 @@ export default function ExamInterface() {
         String(submission.status).toUpperCase() === "GRADED" ||
         submission.alreadyFinalized)
     ) {
-      navigate(`/submission/${submission.id}`, { replace: true });
+      navigate(routes.student.submission(submission.id), { replace: true });
     }
   }, [submission?.id, submission?.status, (submission as any)?.alreadyFinalized, navigate]);
 
@@ -466,30 +468,38 @@ export default function ExamInterface() {
       }
 
       // Split matching into sub-questions based on items
-      if (q.questionType === "matching" && q.correctAnswer) {
-        try {
-          const parsed = JSON.parse(q.correctAnswer);
-          if (
-            typeof parsed === "object" &&
-            parsed !== null &&
-            Array.isArray(parsed.items)
-          ) {
-            if (parsed.items.length > 0) {
-              parsed.items.forEach((_, idx) => {
-                displayCursor += 1;
-                list.push({
-                  ...q,
-                  isSubQuestion: true,
-                  subIndex: String(idx),
-                  displayNumber: displayCursor,
-                  displayLabel: String(displayCursor),
-                });
-              });
-              return;
-            }
-          }
-        } catch {
-          // fallback
+      if (q.questionType === "matching" || q.question_type === "matching") {
+        let itemsList: string[] = [];
+        if (q.options && typeof q.options === "object" && Array.isArray(q.options.items)) {
+          itemsList = q.options.items;
+        } else if (typeof q.options === "string" && q.options.trim()) {
+          try {
+            const parsed = JSON.parse(q.options);
+            if (Array.isArray(parsed?.items)) itemsList = parsed.items;
+          } catch {}
+        }
+        if (itemsList.length === 0 && (q.correctAnswer || q.correct_answer)) {
+          try {
+            const parsed = JSON.parse(q.correctAnswer || q.correct_answer);
+            if (Array.isArray(parsed?.items)) itemsList = parsed.items;
+          } catch {}
+        }
+        if (itemsList.length === 0 && Array.isArray(q.items)) {
+          itemsList = q.items;
+        }
+
+        if (itemsList.length > 0) {
+          itemsList.forEach((_, idx) => {
+            displayCursor += 1;
+            list.push({
+              ...q,
+              isSubQuestion: true,
+              subIndex: String(idx),
+              displayNumber: displayCursor,
+              displayLabel: String(displayCursor),
+            });
+          });
+          return;
         }
       }
 
@@ -733,6 +743,15 @@ export default function ExamInterface() {
     // 1. Cancel pending debounce timer
     if (autosaveTimerRef.current) {
       clearTimeout(autosaveTimerRef.current);
+    }
+
+    if (isAudioUploading) {
+      toast({
+        title: "Tệp ghi âm đang tải lên",
+        description: "Vui lòng đợi vài giây để tệp âm thanh hoàn tất tải lên trước khi nộp bài.",
+        variant: "destructive",
+      });
+      return;
     }
 
     if (!user || !examId || !submission || !syncEngineRef.current) return;
@@ -1255,6 +1274,7 @@ export default function ExamInterface() {
             answers={answers}
             onAnswerChange={handleAnswerChange}
             onRecordingStateChange={setIsRecordingActive}
+            onUploadingStateChange={setIsAudioUploading}
             questionRefs={questionRefs}
             currentQuestionId={currentQuestionId}
             onQuestionFocus={setCurrentQuestionId}

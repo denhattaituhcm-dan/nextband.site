@@ -332,6 +332,8 @@ const App = () => (
               <Route path="/class/:classId/lessons" element={<RedirectClassLessons />} />
               <Route path="/my-submissions" element={<Navigate to="/app/my-submissions" replace />} />
               <Route path="/submissions/:id" element={<RedirectSubmission />} />
+              <Route path="/submission/:id" element={<RedirectSubmission />} />
+              <Route path="/app/submission/:id" element={<RedirectSubmission />} />
               <Route path="/course/:slug" element={<RedirectCourse />} />
 
               {/* ============================================================ */}

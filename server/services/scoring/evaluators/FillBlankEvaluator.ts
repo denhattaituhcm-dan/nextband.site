@@ -55,6 +55,8 @@ export class FillBlankEvaluator implements IQuestionEvaluator {
         questionId: question.id,
         questionType: question.questionType,
         isManual: false,
+        assessmentMode: "OBJECTIVE",
+        scoreScope: "ITEM",
         isCorrect: false,
         score: 0,
         maxScore: points,
@@ -88,6 +90,8 @@ export class FillBlankEvaluator implements IQuestionEvaluator {
       questionId: question.id,
       questionType: question.questionType,
       isManual: false,
+      assessmentMode: "OBJECTIVE",
+      scoreScope: "ITEM",
       isCorrect: isMatch,
       score: isMatch ? points : 0,
       maxScore: points,
@@ -179,11 +183,13 @@ export class FillBlankEvaluator implements IQuestionEvaluator {
       questionId: question.id,
       questionType: question.questionType,
       isManual: false,
+      assessmentMode: "OBJECTIVE",
+      scoreScope: "ITEM",
       isCorrect: correctBlanks === blankCount,
       score: finalScore,
       maxScore: maxScore,
       correctCount: correctBlanks,
-      itemCount: blankCount, // CRITICAL FIX: EXACTLY blankCount (N), never N + 1 or N + 2
+      itemCount: blankCount,
       details,
     };
   }

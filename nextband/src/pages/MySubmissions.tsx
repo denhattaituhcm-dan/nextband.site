@@ -40,6 +40,8 @@ import {
   normalizeSubmissionStatus,
 } from "@/lib/submissionStatus";
 import { calculateGradingSla } from "@/lib/gradingSla";
+import { routes } from "@/lib/routes";
+import { submissionKeys } from "@/lib/queryKeys";
 
 const statusConfig: Record<
   CanonicalSubmissionStatus,
@@ -94,7 +96,7 @@ export default function MySubmissions() {
   }, []);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["my-submissions", page, pageSize, debouncedSearch, statusFilter],
+    queryKey: submissionKeys.list({ page, pageSize, search: debouncedSearch, status: statusFilter }),
     queryFn: () =>
       submissionsApi.list({
         page,
@@ -102,6 +104,8 @@ export default function MySubmissions() {
         status: statusFilter !== "all" ? statusFilter : undefined,
       }),
     enabled: isAuthenticated,
+    staleTime: 1000 * 30,
+    refetchOnWindowFocus: true,
   });
 
   const submissions = data?.data || [];
@@ -133,9 +137,10 @@ export default function MySubmissions() {
 
   const latestSubmissionQueries = useQueries({
     queries: examIds.map((examId) => ({
-      queryKey: ["latest-submission-by-exam", examId],
+      queryKey: submissionKeys.latestByExam(examId),
       queryFn: () => submissionsApi.getLatestByExam(examId),
       enabled: isAuthenticated && !!examId,
+      staleTime: 1000 * 30,
     })),
   });
 
@@ -239,8 +244,8 @@ export default function MySubmissions() {
                   const latestReviewError = submission.examId
                     ? latestSubmissionErrorByExam[submission.examId]
                     : false;
-                  const latestReviewLink = latestReviewSubmission
-                    ? `/exam/${submission.examId}/review?submissionId=${latestReviewSubmission.id}`
+                  const latestReviewLink = latestReviewSubmission && submission.examId
+                    ? routes.exam.review(submission.examId, latestReviewSubmission.id)
                     : null;
 
                   const courseTitle = submission.exam?.course?.title || "";
@@ -299,13 +304,13 @@ export default function MySubmissions() {
                         <div className="flex items-center justify-end gap-2">
                           {submission.status === "in_progress" ? (
                             <Button size="sm" asChild>
-                              <Link to={`/exam/${submission.examId}`}>
+                              <Link to={routes.exam.take(submission.examId)}>
                                 Tiếp tục
                               </Link>
                             </Button>
                           ) : (
                             <Button size="sm" variant="outline" asChild>
-                              <Link to={`/app/submissions/${submission.id}`}>
+                              <Link to={routes.student.submission(submission.id)}>
                                 <Eye className="mr-1 h-3.5 w-3.5" />
                                 {submission.status === "graded"
                                   ? "Xem kết quả"

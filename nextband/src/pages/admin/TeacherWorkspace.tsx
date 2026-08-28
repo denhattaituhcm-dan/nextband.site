@@ -253,15 +253,37 @@ export default function TeacherWorkspace() {
             });
           });
 
+          const isAudioPath = (path?: string) => {
+            if (!path || typeof path !== "string") return false;
+            const clean = path.trim().toLowerCase();
+            return (
+              clean.startsWith("http://") ||
+              clean.startsWith("https://") ||
+              clean.startsWith("blob:") ||
+              clean.startsWith("/uploads/") ||
+              clean.startsWith("speaking-recordings/") ||
+              clean.startsWith("exam-assets/") ||
+              clean.endsWith(".webm") ||
+              clean.endsWith(".mp3") ||
+              clean.endsWith(".wav") ||
+              clean.endsWith(".m4a") ||
+              clean.endsWith(".ogg")
+            );
+          };
+
           const subAnswers = (sub?.answers || []).map((a: any) => {
             const matchedQ = examQuestions.find((q) => q.id === a.questionId || q.id === a.question_id);
+            const isMedia = isAudioPath(a.answerText);
+            const resolvedAudio = a.audioUrl || (isMedia ? a.answerText : "");
+            const resolvedText = isMedia ? "" : (a.answerText || a.studentAnswer || "");
+
             return {
               id: a.id,
               questionId: a.questionId || a.question_id,
               questionTitle: matchedQ?.groupTitle || matchedQ?.title || "",
               questionText: matchedQ?.questionText || matchedQ?.question_text || "",
-              answerText: a.answerText || a.studentAnswer || "",
-              audioUrl: a.audioUrl || "",
+              answerText: resolvedText,
+              audioUrl: resolvedAudio,
               score: a.score != null ? Number(a.score) : null,
               feedback: a.feedback || "",
             };
@@ -288,7 +310,7 @@ export default function TeacherWorkspace() {
             type:
               String(ex.examType || "").toLowerCase() === "speaking" ||
               String(ex.title || "").toLowerCase().includes("speaking") ||
-              !!firstAnswer?.audioUrl
+              !!finalAnswers[0]?.audioUrl
                 ? "speaking"
                 : "writing",
             status: normalizedStatus,
@@ -302,8 +324,8 @@ export default function TeacherWorkspace() {
             revisionRequired: isRevision,
             sentenceFeedbacks: structured.sentenceFeedbacks || [],
             submittedAt: sub?.submittedAt || sub?.submitted_at,
-            answerText: firstAnswer?.answerText || firstAnswer?.studentAnswer || "",
-            audioUrl: firstAnswer?.audioUrl || "",
+            answerText: finalAnswers[0]?.answerText || "",
+            audioUrl: finalAnswers[0]?.audioUrl || "",
             answers: finalAnswers,
           };
         });

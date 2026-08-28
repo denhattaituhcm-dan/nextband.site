@@ -15,6 +15,7 @@ interface QuestionRecorderProps {
   maxDurationSeconds?: number;
   onAnswerChange: (questionId: string, storagePath: string) => void;
   onRecordingStateChange?: (isRecording: boolean) => void;
+  onUploadingStateChange?: (isUploading: boolean) => void;
   className?: string;
 }
 
@@ -156,6 +157,11 @@ export function QuestionRecorder({
   useEffect(() => {
     onRecordingStateChange?.(isRecording || phase === "recording");
   }, [isRecording, phase, onRecordingStateChange]);
+
+  // Notify parent of uploading state
+  useEffect(() => {
+    onUploadingStateChange?.(phase === "processing");
+  }, [phase, onUploadingStateChange]);
 
   // Synchronize phase when answer changes externally
   useEffect(() => {

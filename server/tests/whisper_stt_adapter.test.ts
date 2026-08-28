@@ -10,10 +10,11 @@ describe("WhisperSttService Adapter", () => {
 
   it("should return FAILED status if OPENAI_API_KEY is missing", async () => {
     // When no API key
-    (service as any).apiKey = null;
-    const dummyBuffer = Buffer.from("fake-audio-data");
+    const customService = new WhisperSttService();
+    (customService as any).apiKey = "";
 
-    const result = await service.transcribeAudio(dummyBuffer, "test.webm", "audio/webm");
+    const dummyBuffer = Buffer.from("fake-audio-data");
+    const result = await customService.transcribeAudio(dummyBuffer, "test.webm", "audio/webm");
 
     expect(result.status).toBe("FAILED");
     expect(result.rawText).toBe("");

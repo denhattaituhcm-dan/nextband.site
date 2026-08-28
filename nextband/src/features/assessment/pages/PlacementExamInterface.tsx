@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { Loader2, AlertCircle, RefreshCw, ArrowLeft, FileQuestion, AlertTriangle, LogOut } from "lucide-react";
 import { assessmentApi } from "@/lib/api";
+import { routes } from "@/lib/routes";
 import { toast } from "sonner";
 
 export default function PlacementExamInterface() {
@@ -120,7 +121,7 @@ export default function PlacementExamInterface() {
       await assessmentApi.submit(sessionId, answers);
       clearLocalDraft();
       toast.success("Nộp bài khảo thí thành công! Đang chuyển đến Báo cáo năng lực ARIS-7.");
-      navigate(`/assessment/result/${sessionId}`);
+      navigate(routes.assessment.result(sessionId));
     } catch (err: any) {
       toast.error(err.message || "Có lỗi xảy ra khi nộp bài. Vui lòng thử lại.");
     } finally {

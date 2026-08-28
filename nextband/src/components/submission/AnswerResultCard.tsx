@@ -21,7 +21,14 @@ import { convertOptionValToIndex } from "@/components/exam/MatchingRenderer";
 import { SentenceLevelGrader } from "@/components/grading/SentenceLevelGrader";
 import { parseStructuredFeedback } from "@/lib/sentenceFeedback";
 
-import { isSubjectiveQuestion } from "@/lib/questionOrder";
+import {
+  compareCanonicalOrder,
+  getAssessmentMode,
+  getScoreScope,
+  isSubjectiveQuestion,
+  type AssessmentMode,
+  type ScoreScope,
+} from "@/lib/questionOrder";
 
 interface AnswerResultCardProps {
   questionIndex: number;
@@ -38,6 +45,10 @@ interface AnswerResultCardProps {
   isGraded: boolean;
   isSubmitted?: boolean;
   sectionType?: string;
+  assessmentMode?: AssessmentMode;
+  scoreScope?: ScoreScope;
+  holisticParentId?: string | null;
+  holisticParentScore?: number | null;
 }
 
 const questionTypeLabels: Record<string, string> = {
@@ -66,12 +77,18 @@ export function AnswerResultCard({
   isGraded,
   isSubmitted = false,
   sectionType,
+  assessmentMode,
+  scoreScope,
+  holisticParentId,
+  holisticParentScore,
 }: AnswerResultCardProps) {
-  const isSubjective = isSubjectiveQuestion({ questionType, correctAnswer }, sectionType);
-  const isManualPending = isSubjective && (!isGraded || score == null);
+  const resolvedMode = assessmentMode || getAssessmentMode({ questionType, correctAnswer }, sectionType);
+  const resolvedScope = scoreScope || (resolvedMode === "HOLISTIC" ? "HOLISTIC" : "ITEM");
+  const isSubjective = resolvedMode !== "OBJECTIVE";
+  const isManualPending = resolvedMode === "MANUAL_ITEM" && (!isGraded || score == null);
   const shouldHideCorrectAnswerForStudent =
     sectionType === "speaking" || questionType === "speaking";
-  const isAutoGradable = !isSubjective && ["listening", "reading", "general", "grammar"].includes(sectionType || "");
+  const isAutoGradable = resolvedMode === "OBJECTIVE";
   const isFillBlankWithPlaceholders =
     questionType === "fill_blank" && hasFillBlankPlaceholders(questionText);
   const fillBlankPointCount = getFillBlankBlankCount(correctAnswer);
@@ -95,10 +112,10 @@ export function AnswerResultCard({
 
   // Frontend-side auto-comparison for auto-gradable sections when score is null
   const computedScore = (() => {
-    // If backend already provided a score, use it
+    // Only compute auto score for OBJECTIVE questions
+    if (resolvedMode !== "OBJECTIVE") return null;
     if (score != null) return score;
-    // If subjective or not auto-gradable or no correct answer, we can't auto-determine
-    if (isSubjective || !isAutoGradable || !correctAnswer || !answerText) return null;
+    if (!correctAnswer || !answerText) return null;
 
     const autoGradableTypes = [
       "multiple_choice", "true_false_not_given", "yes_no_not_given",
@@ -218,40 +235,98 @@ export function AnswerResultCard({
       "yes_no_not_given",
     ].includes(questionType);
 
-  const rawScore = score != null ? score : computedScore;
-  const isFullCredit = rawScore != null && Number(rawScore) >= Number(effectivePoints);
-  const isZeroCredit = rawScore != null && Number(rawScore) === 0;
-  const isPartialCredit = rawScore != null && Number(rawScore) > 0 && Number(rawScore) < Number(effectivePoints);
-  const isUnanswered = !answerText && shouldShowAutoResult && !isSubjective;
+  const rawScore = resolvedMode === "OBJECTIVE" ? (score != null ? score : computedScore) : (resolvedMode === "MANUAL_ITEM" ? score : null);
+  const isFullCredit = resolvedMode === "OBJECTIVE" && rawScore != null && Number(rawScore) >= Number(effectivePoints);
+  const isZeroCredit = resolvedMode === "OBJECTIVE" && rawScore != null && Number(rawScore) === 0;
+  const isPartialCredit = resolvedMode === "OBJECTIVE" && rawScore != null && Number(rawScore) > 0 && Number(rawScore) < Number(effectivePoints);
+  const isUnanswered = !answerText && shouldShowAutoResult && resolvedMode === "OBJECTIVE";
 
   const getStatusIcon = () => {
-    if (isManualPending)
+    // 1. HOLISTIC Mode
+    if (resolvedMode === "HOLISTIC") {
+      if (isGraded) return <CheckCircle className="h-4 w-4 text-purple-600 dark:text-purple-400" />;
       return <Clock className="h-4 w-4 text-amber-500" />;
-    if (!canShowResult)
-      return <Minus className="h-4 w-4 text-muted-foreground" />;
+    }
 
+    // 2. MANUAL_ITEM Mode
+    if (resolvedMode === "MANUAL_ITEM") {
+      if (!isGraded || score == null) return <Clock className="h-4 w-4 text-amber-500" />;
+      if (Number(score) > 0) return <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />;
+      return <Minus className="h-4 w-4 text-slate-500" />;
+    }
+
+    // 3. OBJECTIVE Mode
+    if (!canShowResult) return <Minus className="h-4 w-4 text-muted-foreground" />;
     if (rawScore != null) {
       if (isFullCredit) return <CheckCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />;
       if (isZeroCredit) return <XCircle className="h-4 w-4 text-rose-600 dark:text-rose-400" />;
       return <Minus className="h-4 w-4 text-amber-600 dark:text-amber-400" />;
     }
-
-    if (isSubjective) return <Clock className="h-4 w-4 text-amber-500" />;
     if (!answerText) return <XCircle className="h-4 w-4 text-rose-600 dark:text-rose-400" />;
     return <Minus className="h-4 w-4 text-muted-foreground" />;
   };
 
   const getScoreBadge = () => {
-    if (isManualPending) {
+    // GATE D1: HOLISTIC Mode Badge
+    if (resolvedMode === "HOLISTIC") {
+      if (isGraded) {
+        return (
+          <Badge
+            data-testid="holistic-assessment-badge"
+            variant="outline"
+            className="text-xs font-bold bg-purple-50 text-purple-800 border-purple-300 dark:bg-purple-950/40 dark:text-purple-300"
+          >
+            📝 Đánh giá trong điểm Writing tổng thể
+          </Badge>
+        );
+      }
       return (
         <Badge
+          data-testid="holistic-pending-badge"
           variant="outline"
           className="text-xs font-bold bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300"
         >
-          ⏳ Tự luận - Chờ giáo viên chấm
+          ⏳ Tự luận - Chờ chấm
         </Badge>
       );
     }
+
+    // GATE D2: MANUAL_ITEM Mode Badge
+    if (resolvedMode === "MANUAL_ITEM") {
+      if (!isGraded || score == null) {
+        return (
+          <Badge
+            data-testid="manual-pending-badge"
+            variant="outline"
+            className="text-xs font-bold bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300"
+          >
+            ⏳ Chờ giáo viên chấm riêng
+          </Badge>
+        );
+      }
+      const itemScore = Number(score);
+      const numPoints = Number(effectivePoints);
+      if (itemScore > 0) {
+        return (
+          <Badge
+            data-testid="manual-scored-badge"
+            className="text-xs font-bold bg-blue-100 text-blue-800 border-blue-300 hover:bg-blue-100 dark:bg-blue-950/60 dark:text-blue-300"
+          >
+            ⭐ Đạt ({Number(itemScore.toFixed(2))}/{numPoints} điểm)
+          </Badge>
+        );
+      }
+      return (
+        <Badge
+          data-testid="manual-zero-badge"
+          className="text-xs font-bold bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-100 dark:bg-slate-900 dark:text-slate-300"
+        >
+          0/{numPoints} điểm (Cần cải thiện)
+        </Badge>
+      );
+    }
+
+    // GATE D3: OBJECTIVE Mode Badge
     if (!canShowResult) return null;
     
     if (rawScore != null) {
@@ -259,32 +334,30 @@ export function AnswerResultCard({
       const numPoints = Number(effectivePoints);
       if (isFullCredit) {
         return (
-          <Badge className="text-xs font-bold bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800">
+          <Badge
+            data-testid="answer-correctness-badge"
+            className="text-xs font-bold bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800"
+          >
             ✓ Đúng ({Number(effectiveScore.toFixed(2))}/{numPoints})
           </Badge>
         );
       }
       if (isZeroCredit) {
         return (
-          <Badge className="text-xs font-bold bg-rose-100 text-rose-800 border-rose-300 hover:bg-rose-100 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800">
+          <Badge
+            data-testid="answer-correctness-badge"
+            className="text-xs font-bold bg-rose-100 text-rose-800 border-rose-300 hover:bg-rose-100 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800"
+          >
             ✗ Sai (0/{numPoints})
           </Badge>
         );
       }
       return (
-        <Badge className="text-xs font-bold bg-amber-100 text-amber-800 border-amber-300 hover:bg-amber-100 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800">
-          Đúng 1 phần ({Number(effectiveScore.toFixed(2))}/{numPoints})
-        </Badge>
-      );
-    }
-
-    if (isSubjective) {
-      return (
         <Badge
-          variant="outline"
-          className="text-xs font-bold bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300"
+          data-testid="answer-correctness-badge"
+          className="text-xs font-bold bg-amber-100 text-amber-800 border-amber-300 hover:bg-amber-100 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800"
         >
-          ⏳ Tự luận - Chờ chấm
+          Đúng 1 phần ({Number(effectiveScore.toFixed(2))}/{numPoints})
         </Badge>
       );
     }
@@ -299,53 +372,27 @@ export function AnswerResultCard({
     return null;
   };
 
-  const parseJsonAnswer = (text: string | null) => {
-    if (!text) return {};
-    try {
-      const parsed = JSON.parse(text);
-      return typeof parsed === "object" && parsed !== null ? parsed : {};
-    } catch {
-      return {};
-    }
-  };
-
-  const parseStudentSelections = (text: string | null) => {
-    if (!text) return [];
-    try {
-      const parsed = JSON.parse(text);
-      if (Array.isArray(parsed)) return parsed.map((item) => String(item).trim()).filter(Boolean);
-    } catch {}
-    return text.split("|").flatMap((part) => part.split(",")).map((item) => item.trim()).filter(Boolean);
-  };
-
-  const parseCorrectSelections = (text: string | null) => {
-    if (!text) return [];
-    return text.split("|").map((item) => item.trim()).filter(Boolean);
-  };
-
-  const normalizeOptionValue = (value: string) => value.trim().toLowerCase();
-  const studentSelections = parseStudentSelections(answerText);
-  const correctSelections = parseCorrectSelections(correctAnswer);
-  const normalizedStudentSelections = new Set(
-    studentSelections.map(normalizeOptionValue),
-  );
-  const normalizedCorrectSelections = new Set(
-    correctSelections.map(normalizeOptionValue),
-  );
-
   const cardStyle = cn(
     "transition-all border shadow-2xs rounded-xl overflow-hidden",
-    isManualPending
-      ? "border-amber-200/80 bg-amber-50/15 border-l-4 border-l-amber-400 dark:border-amber-900/60 dark:bg-amber-950/10"
-      : canShowResult
-        ? isFullCredit
-          ? "border-emerald-300/80 bg-emerald-50/15 border-l-4 border-l-emerald-500 dark:border-emerald-800 dark:bg-emerald-950/10"
-          : isZeroCredit || isUnanswered
-          ? "border-rose-200/80 bg-rose-50/15 border-l-4 border-l-rose-500 dark:border-rose-900/60 dark:bg-rose-950/10"
-          : isPartialCredit
-          ? "border-amber-200/80 bg-amber-50/15 border-l-4 border-l-amber-500 dark:border-amber-900/60 dark:bg-amber-950/10"
+    resolvedMode === "HOLISTIC"
+      ? isGraded
+        ? "border-purple-200/80 bg-purple-50/10 border-l-4 border-l-purple-400 dark:border-purple-900/60 dark:bg-purple-950/10"
+        : "border-amber-200/80 bg-amber-50/15 border-l-4 border-l-amber-400 dark:border-amber-900/60 dark:bg-amber-950/10"
+      : resolvedMode === "MANUAL_ITEM"
+        ? !isGraded || score == null
+          ? "border-amber-200/80 bg-amber-50/15 border-l-4 border-l-amber-400 dark:border-amber-900/60 dark:bg-amber-950/10"
+          : Number(score) > 0
+            ? "border-blue-200/80 bg-blue-50/15 border-l-4 border-l-blue-500 dark:border-blue-900/60 dark:bg-blue-950/10"
+            : "border-slate-200/80 bg-slate-50/15 border-l-4 border-l-slate-400 dark:border-slate-800"
+        : canShowResult
+          ? isFullCredit
+            ? "border-emerald-300/80 bg-emerald-50/15 border-l-4 border-l-emerald-500 dark:border-emerald-800 dark:bg-emerald-950/10"
+            : isZeroCredit || isUnanswered
+            ? "border-rose-200/80 bg-rose-50/15 border-l-4 border-l-rose-500 dark:border-rose-900/60 dark:bg-rose-950/10"
+            : isPartialCredit
+            ? "border-amber-200/80 bg-amber-50/15 border-l-4 border-l-amber-500 dark:border-amber-900/60 dark:bg-amber-950/10"
+            : "border-border/70"
           : "border-border/70"
-        : "border-border/70"
   );
 
   return (
@@ -528,12 +575,12 @@ export function AnswerResultCard({
               <div className="flex items-center justify-between mb-1.5">
                 <Label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
                   <span>Câu trả lời của bạn</span>
-                  {canShowResult && isFullCredit && (
+                  {canShowResult && resolvedMode === "OBJECTIVE" && isFullCredit && (
                     <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
                       (Chính xác ✓)
                     </span>
                   )}
-                  {canShowResult && isZeroCredit && (
+                  {canShowResult && resolvedMode === "OBJECTIVE" && isZeroCredit && (
                     <span className="text-[11px] font-bold text-rose-600 dark:text-rose-400">
                       (Chưa chính xác ✗)
                     </span>
@@ -592,17 +639,23 @@ export function AnswerResultCard({
           {questionType === "matching" && canShowResult && correctAnswer && (() => {
             try {
               const parsedCorrect = JSON.parse(correctAnswer);
-              const items: string[] = parsedCorrect.items || [];
-              const pairs: Record<string, any> = parsedCorrect.pairs || {};
-              const parsedStudent: Record<string, any> = answerText ? JSON.parse(answerText) : {};
-
-              // Get options list from question options or parsedCorrect options
               let optionTexts: string[] = [];
-              if (Array.isArray(options) && options.some((o) => typeof o === "string" && o.trim().length > 0)) {
+              let itemTexts: string[] = [];
+              if (options && typeof options === "object" && !Array.isArray(options)) {
+                if (Array.isArray((options as any).options)) optionTexts = (options as any).options;
+                if (Array.isArray((options as any).items)) itemTexts = (options as any).items;
+              } else if (Array.isArray(options) && options.some((o) => typeof o === "string" && o.trim().length > 0)) {
                 optionTexts = options;
-              } else if (Array.isArray(parsedCorrect.options)) {
+              }
+              if (optionTexts.length === 0 && Array.isArray(parsedCorrect.options)) {
                 optionTexts = parsedCorrect.options;
               }
+              if (itemTexts.length === 0 && Array.isArray(parsedCorrect.items)) {
+                itemTexts = parsedCorrect.items;
+              }
+              const items: string[] = itemTexts.length > 0 ? itemTexts : (parsedCorrect.items || []);
+              const pairs: Record<string, any> = parsedCorrect.pairs || {};
+              const parsedStudent: Record<string, any> = answerText ? JSON.parse(answerText) : {};
 
               const getOptionDisplay = (optVal: any): string => {
                 const idx = convertOptionValToIndex(optVal);

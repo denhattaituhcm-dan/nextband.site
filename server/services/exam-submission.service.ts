@@ -57,6 +57,18 @@ export function getRemainingSeconds(startedAt: Date | null, durationMinutes: num
 function sanitizeQuestionForStudent(q: any, showAnswerKey: boolean) {
   const cleaned = { ...q };
   if (!showAnswerKey) {
+    if ((q.questionType === "matching" || q.question_type === "matching") && (q.correctAnswer || q.correct_answer)) {
+      try {
+        const raw = q.correctAnswer || q.correct_answer;
+        const config = typeof raw === "string" ? JSON.parse(raw) : raw;
+        cleaned.options = {
+          items: Array.isArray(config?.items) ? config.items : [],
+          options: Array.isArray(config?.options) ? config.options : [],
+        };
+      } catch {
+        cleaned.options = { items: [], options: [] };
+      }
+    }
     delete cleaned.correctAnswer;
     delete cleaned.correct_answer;
     delete cleaned.audioScript;
@@ -277,9 +289,27 @@ export class ExamSubmissionService {
           }
           sanitizedSec.questionGroups = sec.questionGroups?.map((g: any) => ({
             ...g,
-            questions: g.questions?.map((q: any) =>
-              sanitizeQuestionForStudent(q, canSeeSecrets)
-            ),
+            questions: g.questions?.map((q: any) => {
+              const cleaned = sanitizeQuestionForStudent(q, canSeeSecrets);
+              const qType = String(q.questionType || q.question_type || "").toLowerCase();
+              const sType = String(sec.sectionType || sec.section_type || "").toLowerCase();
+
+              const isSubjective =
+                qType === "essay" ||
+                qType === "speaking" ||
+                sType === "speaking" ||
+                (sType === "writing" && !["multiple_choice", "fill_blank", "matching"].includes(qType));
+
+              const isHolistic =
+                q.assessmentMode === "HOLISTIC" ||
+                q.scoreScope === "HOLISTIC" ||
+                (isSubjective && sType === "writing");
+
+              cleaned.assessmentMode = q.assessmentMode || (isHolistic ? "HOLISTIC" : isSubjective ? "MANUAL_ITEM" : "OBJECTIVE");
+              cleaned.scoreScope = q.scoreScope || (cleaned.assessmentMode === "HOLISTIC" ? "HOLISTIC" : "ITEM");
+              cleaned.holisticParentId = q.holisticParentId || (cleaned.assessmentMode === "HOLISTIC" ? sec.id : null);
+              return cleaned;
+            }),
           }));
           return sanitizedSec;
         }),

@@ -1,3 +1,6 @@
+export type AssessmentMode = "OBJECTIVE" | "MANUAL_ITEM" | "HOLISTIC";
+export type ScoreScope = "ITEM" | "HOLISTIC";
+
 export interface ScoringQuestion {
   id: string;
   questionType: string;
@@ -8,6 +11,10 @@ export interface ScoringQuestion {
   orderIndex?: number;
   selectionMode?: "single" | "multiple";
   maxSelections?: number;
+  assessmentMode?: AssessmentMode;
+  scoreScope?: ScoreScope;
+  holisticParentId?: string | null;
+  sectionType?: string | null;
 }
 
 export interface StudentRawAnswer {
@@ -20,17 +27,20 @@ export interface ItemEvaluationDetail {
   key: string;
   studentValue: any;
   correctValue: any;
-  isCorrect: boolean;
-  score: number;
+  isCorrect: boolean | null;
+  score: number | null;
 }
 
 export interface QuestionEvaluationResult {
   questionId: string;
   questionType: string;
   isManual: boolean;
-  isCorrect: boolean;
-  score: number;
-  maxScore: number;
+  assessmentMode: AssessmentMode;
+  scoreScope: ScoreScope;
+  holisticParentId?: string | null;
+  isCorrect: boolean | null;
+  score: number | null;
+  maxScore: number | null;
   correctCount: number;
   itemCount: number;
   details?: ItemEvaluationDetail[];

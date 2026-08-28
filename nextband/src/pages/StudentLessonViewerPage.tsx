@@ -10,6 +10,8 @@ import {
   selectCanonicalSubmission,
   CanonicalVisualStatus,
 } from "@/lib/homeworkStatusHelper";
+import { routes } from "@/lib/routes";
+import { submissionKeys } from "@/lib/queryKeys";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -87,10 +89,11 @@ export default function StudentLessonViewerPage() {
     data: submissionsData,
     isLoading: isSubmissionsLoading,
   } = useQuery({
-    queryKey: ["my-submissions", user?.id],
+    queryKey: submissionKeys.list({ studentId: user?.id }),
     queryFn: () => submissionsApi.list({ studentId: user?.id, limit: 100 }),
     enabled: !!user?.id,
     staleTime: 1000 * 60 * 2,
+    refetchOnWindowFocus: true,
   });
 
   const classData = classLessonData?.data || {};
@@ -506,7 +509,7 @@ export default function StudentLessonViewerPage() {
                               hw.status === "REVISION_REQUIRED" ||
                               hw.status === "SUBMITTED")
                           ) {
-                            navigate(`/submission/${hw.submission.id}`);
+                            navigate(routes.student.submission(hw.submission.id));
                           } else {
                             handleOpenExam(hw.examId || hw.id);
                           }

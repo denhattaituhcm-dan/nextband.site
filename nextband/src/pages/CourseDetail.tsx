@@ -23,6 +23,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { isSubmissionCompleted } from "@/lib/submissionStatus";
+import { routes } from "@/lib/routes";
 import { compareHomeworkOrder } from "@/lib/homeworkStatusHelper";
 
 export default function CourseDetail() {
@@ -247,7 +248,7 @@ export default function CourseDetail() {
                           </div>
                         </div>
                       </div>
-                      <Link to={`/submission/${item.submission?.id}`}>
+                      <Link to={item.submission?.id ? routes.student.submission(item.submission.id) : "#"}>
                         <Button variant="outline" size="sm" className="rounded-xl text-xs gap-1">
                           Xem bài làm
                           <ChevronRight className="w-3.5 h-3.5" />

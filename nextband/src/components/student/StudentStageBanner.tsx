@@ -1,0 +1,78 @@
+import React from "react";
+import { Compass, Target, ArrowRight } from "lucide-react";
+import { StudentJourneyOverview } from "@/lib/studentJourney";
+
+interface StudentStageBannerProps {
+  studentName: string;
+  className: string;
+  courseTitle: string;
+  journey: StudentJourneyOverview;
+}
+
+export function StudentStageBanner({
+  studentName,
+  className,
+  courseTitle,
+  journey,
+}: StudentStageBannerProps) {
+  const { currentRealm, currentBand, targetBand, nextRealmName, nextBandThreshold } = journey;
+
+  return (
+    <div className="rounded-2xl bg-white border border-slate-200/90 p-6 md:p-7 shadow-xs space-y-5">
+      {/* Top Header: Badge Cảnh Giới & Lớp học */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-slate-900 text-white text-xs font-semibold">
+          <Compass className="w-3.5 h-3.5 text-amber-400" />
+          <span className="tracking-wide uppercase font-mono text-[11px]">
+            CẢNH GIỚI: {currentRealm.name} · BAND {currentBand.toFixed(1)}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
+          <span className="inline-block w-2 h-2 rounded-full bg-emerald-500" />
+          <span className="font-semibold text-slate-800">{className}</span>
+          <span className="text-slate-400">({courseTitle})</span>
+        </div>
+      </div>
+
+      {/* Main Journey Stage Content */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="space-y-1 max-w-2xl">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+            Hành trình của {studentName || "Học viên"}
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            {currentRealm.description}. Trọng tâm chặng: Chinh phục mốc{" "}
+            <strong className="text-slate-900 font-bold">{nextRealmName} (Band {nextBandThreshold.toFixed(1)})</strong>.
+          </p>
+        </div>
+
+        {/* Milestone Steps Indicator (Tối giản, chân thực, không vẽ bar ảo) */}
+        <div className="flex items-center gap-2 sm:gap-3 bg-slate-50 border border-slate-200/80 rounded-xl px-4 py-2.5 shrink-0 self-start md:self-auto">
+          <div className="text-center">
+            <div className="text-[10px] uppercase font-bold text-slate-400 font-mono">Khởi đầu</div>
+            <div className="text-xs font-bold text-slate-700">{currentRealm.minBand.toFixed(1)}</div>
+          </div>
+
+          <div className="h-0.5 w-6 sm:w-10 bg-slate-300 relative">
+            <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-indigo-600 ring-2 ring-indigo-100" />
+          </div>
+
+          <div className="text-center">
+            <div className="text-[10px] uppercase font-bold text-indigo-700 font-mono">Hiện tại</div>
+            <div className="text-xs font-bold text-indigo-950">Band {currentBand.toFixed(1)}</div>
+          </div>
+
+          <div className="h-0.5 w-6 sm:w-10 bg-slate-300 relative">
+            <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-slate-400" />
+          </div>
+
+          <div className="text-center">
+            <div className="text-[10px] uppercase font-bold text-amber-700 font-mono">Mục tiêu</div>
+            <div className="text-xs font-bold text-amber-900">Band {targetBand.toFixed(1)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

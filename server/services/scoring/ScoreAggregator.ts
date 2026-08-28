@@ -15,14 +15,20 @@ export class ScoreAggregator {
     let hasManualQuestions = false;
 
     for (const res of evaluations) {
-      if (res.isManual) {
+      if (res.isManual || res.assessmentMode !== "OBJECTIVE") {
         hasManualQuestions = true;
         // Subjective questions (Writing/Speaking) don't count toward auto objective score initially
         totalQuestions += res.itemCount;
-        maxScore += res.maxScore;
+        if (typeof res.maxScore === "number") {
+          maxScore += res.maxScore;
+        }
       } else {
-        totalScore += res.score;
-        maxScore += res.maxScore;
+        if (typeof res.score === "number") {
+          totalScore += res.score;
+        }
+        if (typeof res.maxScore === "number") {
+          maxScore += res.maxScore;
+        }
         correctAnswers += res.correctCount;
         totalQuestions += res.itemCount;
       }

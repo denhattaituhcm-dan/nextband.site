@@ -53364,7 +53364,15 @@ var init_env = __esm({
       SMTP_PASS: external_exports.string().optional(),
       SMTP_FROM: external_exports.string().optional(),
       TELEGRAM_BOT_TOKEN: external_exports.string().optional(),
-      TELEGRAM_CHAT_ID: external_exports.string().optional()
+      TELEGRAM_CHAT_ID: external_exports.string().optional(),
+      STT_API_KEY: external_exports.string().optional(),
+      GROQ_API_KEY: external_exports.string().optional(),
+      OPENAI_API_KEY: external_exports.string().optional(),
+      STT_API_URL: external_exports.string().optional(),
+      WHISPER_API_URL: external_exports.string().optional(),
+      STT_MODEL: external_exports.string().optional(),
+      WHISPER_MODEL: external_exports.string().optional(),
+      STT_PROVIDER: external_exports.string().optional()
     }).refine(
       (data) => {
         if (data.NODE_ENV === "production") {
@@ -81748,6 +81756,40 @@ var init_speakingStorage_service = __esm({
         return data.signedUrl;
       }
       /**
+       * Tải buffer tệp âm thanh từ Storage phục vụ STT
+       */
+      async downloadAudioBuffer(storagePath) {
+        if (!storagePath) {
+          throw new Error("\u0110\u01B0\u1EDDng d\u1EABn t\u1EC7p \xE2m thanh kh\xF4ng h\u1EE3p l\u1EC7");
+        }
+        const cleanPath = storagePath.replace(/^\/+/, "");
+        let downloadRes = await this.supabase.storage.from("exam-assets").download(cleanPath);
+        if (downloadRes.error || !downloadRes.data) {
+          const subCleanPath = cleanPath.replace(/^speaking-recordings\//, "");
+          downloadRes = await this.supabase.storage.from(SPEAKING_BUCKET).download(subCleanPath);
+        }
+        if (downloadRes.error || !downloadRes.data) {
+          if (storagePath.startsWith("http://") || storagePath.startsWith("https://")) {
+            const fetchRes = await fetch(storagePath);
+            if (!fetchRes.ok) {
+              throw new Error(`Kh\xF4ng th\u1EC3 t\u1EA3i t\u1EC7p \xE2m thanh t\u1EEB URL: ${storagePath}`);
+            }
+            const arrayBuf2 = await fetchRes.arrayBuffer();
+            const buffer2 = Buffer.from(arrayBuf2);
+            const mimeType2 = fetchRes.headers.get("content-type") || "audio/webm";
+            const fileName2 = storagePath.split("/").pop()?.split("?")[0] || "recording.webm";
+            return { buffer: buffer2, mimeType: mimeType2, fileName: fileName2 };
+          }
+          throw new Error(`Kh\xF4ng t\xECm th\u1EA5y file ghi \xE2m trong Storage: ${storagePath}`);
+        }
+        const blob = downloadRes.data;
+        const arrayBuf = await blob.arrayBuffer();
+        const buffer = Buffer.from(arrayBuf);
+        const mimeType = blob.type || "audio/webm";
+        const fileName = cleanPath.split("/").pop()?.split("?")[0] || "recording.webm";
+        return { buffer, mimeType, fileName };
+      }
+      /**
        * Idempotent Retention Cleanup Worker
        * Desired state: Storage object = ABSENT, DB status = PURGED
        */
@@ -99011,14 +99053,16 @@ var examsRoutes = async (fastify) => {
       };
     }
     const cleaned = { ...q };
-    if (q.questionType === "matching" && q.correctAnswer) {
+    if ((q.questionType === "matching" || q.question_type === "matching") && (q.correctAnswer || q.correct_answer)) {
       try {
-        const config = JSON.parse(q.correctAnswer);
-        delete config.pairs;
-        if (!cleaned.options || typeof cleaned.options !== "object") {
-          cleaned.options = { items: config.items || [], options: config.options || [] };
-        }
+        const raw = q.correctAnswer || q.correct_answer;
+        const config = typeof raw === "string" ? JSON.parse(raw) : raw;
+        cleaned.options = {
+          items: Array.isArray(config?.items) ? config.items : [],
+          options: Array.isArray(config?.options) ? config.options : []
+        };
       } catch {
+        cleaned.options = { items: [], options: [] };
       }
     }
     delete cleaned.correctAnswer;
@@ -99026,10 +99070,9 @@ var examsRoutes = async (fastify) => {
     delete cleaned.audioScript;
     delete cleaned.audio_script;
     delete cleaned.acceptedAnswers;
+    delete cleaned.accepted_answers;
     delete cleaned.answerKey;
     delete cleaned.answer_key;
-    cleaned.correctAnswer = null;
-    cleaned.audioScript = null;
     cleaned.selectionMode = selectionMode;
     cleaned.maxSelections = maxSelections;
     cleaned.isMultiChoice = selectionMode === "multiple";
@@ -99538,17 +99581,26 @@ var sectionsRoutes = async (fastify) => {
   const cleanQuestionData = (q, isAdminOrTeacher) => {
     if (isAdminOrTeacher) return q;
     const cleaned = { ...q };
-    if (q.questionType === "matching" && q.correctAnswer) {
+    if ((q.questionType === "matching" || q.question_type === "matching") && (q.correctAnswer || q.correct_answer)) {
       try {
-        const config = JSON.parse(q.correctAnswer);
-        delete config.pairs;
-        cleaned.correctAnswer = JSON.stringify(config);
+        const raw = q.correctAnswer || q.correct_answer;
+        const config = typeof raw === "string" ? JSON.parse(raw) : raw;
+        cleaned.options = {
+          items: Array.isArray(config?.items) ? config.items : [],
+          options: Array.isArray(config?.options) ? config.options : []
+        };
       } catch {
-        cleaned.correctAnswer = null;
+        cleaned.options = { items: [], options: [] };
       }
-    } else {
-      cleaned.correctAnswer = null;
     }
+    delete cleaned.correctAnswer;
+    delete cleaned.correct_answer;
+    delete cleaned.audioScript;
+    delete cleaned.audio_script;
+    delete cleaned.acceptedAnswers;
+    delete cleaned.accepted_answers;
+    delete cleaned.answerKey;
+    delete cleaned.answer_key;
     return cleaned;
   };
   fastify.get(
@@ -100590,7 +100642,12 @@ var AnswerResolver = class {
           const correctCount = rawCorrect.split("|").filter((p) => p.trim()).length;
           const isMultiChoice = q.questionType === "multiple_choice_multi" || q.selectionMode === "multiple" || Boolean(q.isMultiChoice) || q.questionType === "multiple_choice" && correctCount > 1;
           const selectionMode = isMultiChoice ? "multiple" : "single";
-          const maxSelections = isMultiChoice ? Math.max(2, correctCount) : 1;
+          const maxSelections = isMultiChoice ? correctCount > 1 ? correctCount : 2 : 1;
+          const sectionType = section.sectionType || section.section_type || null;
+          const isExplicitHolistic = q.assessmentMode === "HOLISTIC" || q.scoreScope === "HOLISTIC";
+          const isImplicitHolistic = !q.assessmentMode && (q.questionType === "essay" || sectionType === "writing" && !["multiple_choice", "fill_blank", "matching"].includes(q.questionType));
+          const resolvedMode = q.assessmentMode || (isExplicitHolistic || isImplicitHolistic ? "HOLISTIC" : q.questionType === "speaking" ? "MANUAL_ITEM" : "OBJECTIVE");
+          const resolvedScope = q.scoreScope || (resolvedMode === "HOLISTIC" ? "HOLISTIC" : "ITEM");
           flattenedQuestions.push({
             id: q.id,
             questionType: q.questionType || q.question_type || "multiple_choice",
@@ -100600,7 +100657,11 @@ var AnswerResolver = class {
             points: q.points !== void 0 && q.points !== null ? Number(q.points) : 1,
             orderIndex: q.orderIndex || q.order_index || 0,
             selectionMode,
-            maxSelections
+            maxSelections,
+            assessmentMode: resolvedMode,
+            scoreScope: resolvedScope,
+            holisticParentId: q.holisticParentId || (resolvedScope === "HOLISTIC" ? section.id || null : null),
+            sectionType
           });
         }
       }
@@ -100654,6 +100715,8 @@ var MultipleChoiceEvaluator = class {
         questionId: question.id,
         questionType: question.questionType,
         isManual: false,
+        assessmentMode: "OBJECTIVE",
+        scoreScope: "ITEM",
         isCorrect: false,
         score: 0,
         maxScore: points,
@@ -100679,6 +100742,8 @@ var MultipleChoiceEvaluator = class {
       questionId: question.id,
       questionType: question.questionType,
       isManual: false,
+      assessmentMode: "OBJECTIVE",
+      scoreScope: "ITEM",
       isCorrect: isMatch,
       score: isMatch ? points : 0,
       maxScore: points,
@@ -100750,6 +100815,8 @@ var MultipleChoiceEvaluator = class {
       questionId: question.id,
       questionType: question.questionType,
       isManual: false,
+      assessmentMode: "OBJECTIVE",
+      scoreScope: "ITEM",
       isCorrect: finalCorrectCount === expectedCount,
       score: finalScore,
       maxScore: totalPoints,
@@ -100792,6 +100859,8 @@ var FillBlankEvaluator = class {
         questionId: question.id,
         questionType: question.questionType,
         isManual: false,
+        assessmentMode: "OBJECTIVE",
+        scoreScope: "ITEM",
         isCorrect: false,
         score: 0,
         maxScore: points,
@@ -100821,6 +100890,8 @@ var FillBlankEvaluator = class {
       questionId: question.id,
       questionType: question.questionType,
       isManual: false,
+      assessmentMode: "OBJECTIVE",
+      scoreScope: "ITEM",
       isCorrect: isMatch,
       score: isMatch ? points : 0,
       maxScore: points,
@@ -100894,12 +100965,13 @@ var FillBlankEvaluator = class {
       questionId: question.id,
       questionType: question.questionType,
       isManual: false,
+      assessmentMode: "OBJECTIVE",
+      scoreScope: "ITEM",
       isCorrect: correctBlanks === blankCount,
       score: finalScore,
       maxScore,
       correctCount: correctBlanks,
       itemCount: blankCount,
-      // CRITICAL FIX: EXACTLY blankCount (N), never N + 1 or N + 2
       details
     };
   }
@@ -100934,6 +101006,8 @@ var MatchingEvaluator = class {
         questionId: question.id,
         questionType: question.questionType,
         isManual: false,
+        assessmentMode: "OBJECTIVE",
+        scoreScope: "ITEM",
         isCorrect: isMatch,
         score: isMatch ? defaultPoints : 0,
         maxScore: defaultPoints,
@@ -100979,6 +101053,8 @@ var MatchingEvaluator = class {
       questionId: question.id,
       questionType: question.questionType,
       isManual: false,
+      assessmentMode: "OBJECTIVE",
+      scoreScope: "ITEM",
       isCorrect: correctPairs === pairsCount,
       score: finalScore,
       maxScore,
@@ -101010,6 +101086,8 @@ var TFNG_Evaluator = class {
         questionId: question.id,
         questionType: question.questionType,
         isManual: false,
+        assessmentMode: "OBJECTIVE",
+        scoreScope: "ITEM",
         isCorrect: false,
         score: 0,
         maxScore: defaultPoints,
@@ -101024,6 +101102,8 @@ var TFNG_Evaluator = class {
       questionId: question.id,
       questionType: question.questionType,
       isManual: false,
+      assessmentMode: "OBJECTIVE",
+      scoreScope: "ITEM",
       isCorrect: isMatch,
       score: isMatch ? defaultPoints : 0,
       maxScore: defaultPoints,
@@ -101070,13 +101150,21 @@ var ManualEvaluator = class {
     return this.supportedTypes.includes(questionType?.toLowerCase());
   }
   evaluate(question, studentAnswer, _normalizer) {
-    const maxScore = question.points && question.points > 0 ? question.points : 1;
+    const isHolistic = question.assessmentMode === "HOLISTIC" || question.scoreScope === "HOLISTIC" || question.sectionType === "writing" || question.questionType === "essay" || question.questionType === "ielts_writing_task1" || question.questionType === "ielts_writing_task2" || question.questionType === "writing";
+    const assessmentMode = question.assessmentMode || (isHolistic ? "HOLISTIC" : "MANUAL_ITEM");
+    const scoreScope = question.scoreScope || (isHolistic ? "HOLISTIC" : "ITEM");
+    const maxScore = isHolistic ? null : question.points && question.points > 0 ? question.points : 1;
     return {
       questionId: question.id,
       questionType: question.questionType,
       isManual: true,
-      isCorrect: false,
-      score: 0,
+      assessmentMode,
+      scoreScope,
+      holisticParentId: question.holisticParentId || null,
+      isCorrect: null,
+      // INVARIANT #2: isCorrect is strictly null for subjective items
+      score: null,
+      // INVARIANT #1: score is null until authoritatively awarded by teacher
       maxScore,
       correctCount: 0,
       itemCount: 1,
@@ -101085,8 +101173,8 @@ var ManualEvaluator = class {
           key: "manual",
           studentValue: studentAnswer?.answerText || studentAnswer?.audioUrl || null,
           correctValue: null,
-          isCorrect: false,
-          score: 0
+          isCorrect: null,
+          score: null
         }
       ]
     };
@@ -101196,13 +101284,19 @@ var ScoreAggregator = class {
     let totalQuestions = 0;
     let hasManualQuestions = false;
     for (const res of evaluations) {
-      if (res.isManual) {
+      if (res.isManual || res.assessmentMode !== "OBJECTIVE") {
         hasManualQuestions = true;
         totalQuestions += res.itemCount;
-        maxScore += res.maxScore;
+        if (typeof res.maxScore === "number") {
+          maxScore += res.maxScore;
+        }
       } else {
-        totalScore += res.score;
-        maxScore += res.maxScore;
+        if (typeof res.score === "number") {
+          totalScore += res.score;
+        }
+        if (typeof res.maxScore === "number") {
+          maxScore += res.maxScore;
+        }
         correctAnswers += res.correctCount;
         totalQuestions += res.itemCount;
       }
@@ -101487,6 +101581,18 @@ function getRemainingSeconds(startedAt, durationMinutes) {
 function sanitizeQuestionForStudent(q, showAnswerKey) {
   const cleaned = { ...q };
   if (!showAnswerKey) {
+    if ((q.questionType === "matching" || q.question_type === "matching") && (q.correctAnswer || q.correct_answer)) {
+      try {
+        const raw = q.correctAnswer || q.correct_answer;
+        const config = typeof raw === "string" ? JSON.parse(raw) : raw;
+        cleaned.options = {
+          items: Array.isArray(config?.items) ? config.items : [],
+          options: Array.isArray(config?.options) ? config.options : []
+        };
+      } catch {
+        cleaned.options = { items: [], options: [] };
+      }
+    }
     delete cleaned.correctAnswer;
     delete cleaned.correct_answer;
     delete cleaned.audioScript;
@@ -101688,9 +101794,17 @@ var ExamSubmissionService = class {
           }
           sanitizedSec.questionGroups = sec.questionGroups?.map((g) => ({
             ...g,
-            questions: g.questions?.map(
-              (q) => sanitizeQuestionForStudent(q, canSeeSecrets)
-            )
+            questions: g.questions?.map((q) => {
+              const cleaned = sanitizeQuestionForStudent(q, canSeeSecrets);
+              const qType = String(q.questionType || q.question_type || "").toLowerCase();
+              const sType = String(sec.sectionType || sec.section_type || "").toLowerCase();
+              const isSubjective = qType === "essay" || qType === "speaking" || sType === "speaking" || sType === "writing" && !["multiple_choice", "fill_blank", "matching"].includes(qType);
+              const isHolistic = q.assessmentMode === "HOLISTIC" || q.scoreScope === "HOLISTIC" || isSubjective && sType === "writing";
+              cleaned.assessmentMode = q.assessmentMode || (isHolistic ? "HOLISTIC" : isSubjective ? "MANUAL_ITEM" : "OBJECTIVE");
+              cleaned.scoreScope = q.scoreScope || (cleaned.assessmentMode === "HOLISTIC" ? "HOLISTIC" : "ITEM");
+              cleaned.holisticParentId = q.holisticParentId || (cleaned.assessmentMode === "HOLISTIC" ? sec.id : null);
+              return cleaned;
+            })
           }));
           return sanitizedSec;
         })
@@ -107664,6 +107778,114 @@ var lead_routes_default = leadRoutes;
 // server/routes/speakingStorage.routes.ts
 init_zod();
 init_speakingStorage_service();
+
+// server/services/whisperStt.service.ts
+init_env();
+function splitTextIntoDefaultSegments(text, totalDurationMs = 6e4) {
+  if (!text || text.trim() === "") return [];
+  const sentences = text.split(/(?<=[.?!])\s+/).map((s) => s.trim()).filter(Boolean);
+  if (sentences.length === 0) {
+    return [{ id: "seg-1", startMs: 0, endMs: totalDurationMs || 1e4, text }];
+  }
+  const avgDurationMs = Math.max(2e3, Math.floor((totalDurationMs || 6e4) / sentences.length));
+  return sentences.map((sentence, idx) => ({
+    id: `seg-${idx + 1}`,
+    startMs: idx * avgDurationMs,
+    endMs: (idx + 1) * avgDurationMs,
+    text: sentence
+  }));
+}
+var WhisperSttService = class {
+  apiKey;
+  apiUrl;
+  model;
+  constructor() {
+    this.apiKey = process.env.OPENAI_API_KEY || process.env.WHISPER_API_KEY || null;
+    this.apiUrl = process.env.WHISPER_API_URL || "https://api.openai.com/v1/audio/transcriptions";
+    this.model = process.env.WHISPER_MODEL || "whisper-1";
+  }
+  /**
+   * Transcribes an audio buffer into normalized NextBand SpeakingTranscript contract
+   */
+  async transcribeAudio(audioBuffer, fileName = "audio.webm", mimeType = "audio/webm", totalDurationMs) {
+    const apiKey = this.apiKey !== void 0 && this.apiKey !== null ? this.apiKey : process.env.STT_API_KEY || process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY || process.env.WHISPER_API_KEY || env.STT_API_KEY || env.GROQ_API_KEY || env.OPENAI_API_KEY || null;
+    const apiUrl = process.env.STT_API_URL || process.env.GROQ_WHISPER_API_URL || process.env.WHISPER_API_URL || env.STT_API_URL || env.WHISPER_API_URL || this.apiUrl;
+    const model = process.env.STT_MODEL || process.env.GROQ_WHISPER_MODEL || process.env.WHISPER_MODEL || env.STT_MODEL || env.WHISPER_MODEL || this.model;
+    if (!apiKey) {
+      return {
+        rawText: "",
+        segments: [],
+        status: "FAILED",
+        error: "Ch\u01B0a c\u1EA5u h\xECnh API Key cho Speech-to-Text (Vui l\xF2ng thi\u1EBFt l\u1EADp STT_API_KEY / GROQ_API_KEY / OPENAI_API_KEY trong file m\xF4i tr\u01B0\u1EDDng .env)."
+      };
+    }
+    try {
+      const formData = new FormData();
+      const uint8Array = new Uint8Array(audioBuffer);
+      const audioBlob = new Blob([uint8Array], { type: mimeType });
+      formData.append("file", audioBlob, fileName);
+      formData.append("model", model);
+      formData.append("response_format", "verbose_json");
+      formData.append("language", "en");
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`
+        },
+        body: formData
+      });
+      if (!response.ok) {
+        let errorDetails = "";
+        try {
+          const errJson = await response.json();
+          errorDetails = errJson?.error?.message || JSON.stringify(errJson);
+        } catch {
+          errorDetails = await response.text();
+        }
+        console.error(`[WhisperSttService] HTTP Error ${response.status}:`, errorDetails);
+        return {
+          rawText: "",
+          segments: [],
+          status: "FAILED",
+          error: `L\u1ED7i t\u1EEB nh\xE0 cung c\u1EA5p STT (${response.status}): ${errorDetails || "Kh\xF4ng th\u1EC3 x\u1EED l\xFD \xE2m thanh"}`
+        };
+      }
+      const data = await response.json();
+      const rawText = (data.text || "").trim();
+      let normalizedSegments = [];
+      if (Array.isArray(data.segments) && data.segments.length > 0) {
+        normalizedSegments = data.segments.map((seg, idx) => {
+          const startSeconds = typeof seg.start === "number" ? seg.start : 0;
+          const endSeconds = typeof seg.end === "number" ? seg.end : startSeconds + 2;
+          return {
+            id: `seg-${idx + 1}`,
+            startMs: Math.round(startSeconds * 1e3),
+            endMs: Math.round(endSeconds * 1e3),
+            text: (seg.text || "").trim()
+          };
+        }).filter((s) => s.text.length > 0);
+      } else if (rawText) {
+        normalizedSegments = splitTextIntoDefaultSegments(rawText, totalDurationMs || (data.duration ? Math.round(data.duration * 1e3) : 6e4));
+      }
+      return {
+        rawText,
+        segments: normalizedSegments,
+        status: "COMPLETED"
+      };
+    } catch (err) {
+      console.error("[WhisperSttService] Execution error:", err);
+      return {
+        rawText: "",
+        segments: [],
+        status: "FAILED",
+        error: err?.message || "L\u1ED7i b\u1EA5t ng\u1EDD trong qu\xE1 tr\xECnh nh\u1EADn d\u1EA1ng \xE2m thanh"
+      };
+    }
+  }
+};
+var whisperSttService = new WhisperSttService();
+
+// server/routes/speakingStorage.routes.ts
 var registerDraftSchema = external_exports.object({
   id: external_exports.string().uuid("ID ph\u1EA3i l\xE0 UUID h\u1EE3p l\u1EC7"),
   referenceType: external_exports.string().min(1, "referenceType l\xE0 b\u1EAFt bu\u1ED9c"),
@@ -107679,6 +107901,12 @@ var confirmUploadSchema = external_exports.object({
 });
 var playbackUrlSchema = external_exports.object({
   storagePath: external_exports.string().min(1, "storagePath l\xE0 b\u1EAFt bu\u1ED9c")
+});
+var transcribeSchema = external_exports.object({
+  submissionId: external_exports.string().optional(),
+  answerId: external_exports.string().optional(),
+  questionId: external_exports.string().optional(),
+  storagePath: external_exports.string().optional()
 });
 var speakingStorageRoutes = async (fastify) => {
   const speakingService = new SpeakingStorageService(fastify.prisma);
@@ -107731,6 +107959,71 @@ var speakingStorageRoutes = async (fastify) => {
         return reply.send({ signedUrl, storagePath: data.storagePath, expiresInSeconds: 3600 });
       } catch (err) {
         return reply.status(404).send({ error: err?.message || "Kh\xF4ng th\u1EC3 l\u1EA5y \u0111\u01B0\u1EDDng d\u1EABn ph\xE1t l\u1EA1i" });
+      }
+    }
+  );
+  fastify.post(
+    "/transcribe",
+    { preHandler: optionalAuthenticate },
+    async (request, reply) => {
+      const data = handleValidation(
+        transcribeSchema.safeParse(request.body),
+        request,
+        reply
+      );
+      if (!data) return;
+      let answer = null;
+      if (data.answerId) {
+        answer = await fastify.prisma.answer.findUnique({
+          where: { id: data.answerId }
+        });
+      } else if (data.submissionId && data.questionId) {
+        answer = await fastify.prisma.answer.findUnique({
+          where: {
+            submissionId_questionId: {
+              submissionId: data.submissionId,
+              questionId: data.questionId
+            }
+          }
+        });
+      }
+      const audioUrl = answer?.audioUrl || data.storagePath;
+      if (!audioUrl) {
+        return reply.status(400).send({
+          rawText: "",
+          segments: [],
+          status: "FAILED",
+          error: "Kh\xF4ng t\xECm th\u1EA5y t\u1EC7p \xE2m thanh ghi \xE2m cho c\xE2u tr\u1EA3 l\u1EDDi n\xE0y."
+        });
+      }
+      try {
+        const audioFile = await speakingService.downloadAudioBuffer(audioUrl);
+        const result = await whisperSttService.transcribeAudio(
+          audioFile.buffer,
+          audioFile.fileName,
+          audioFile.mimeType
+        );
+        if (result.status === "COMPLETED" && answer?.id) {
+          const payloadString = JSON.stringify({
+            rawText: result.rawText,
+            segments: result.segments
+          });
+          await fastify.prisma.answer.update({
+            where: { id: answer.id },
+            data: {
+              answerText: payloadString
+            }
+          });
+        }
+        return reply.send(result);
+      } catch (err) {
+        console.error("[Transcribe Route] Error:", err);
+        return reply.status(500).send({
+          rawText: "",
+          segments: [],
+          status: "FAILED",
+          error: err?.message || "L\u1ED7i trong qu\xE1 tr\xECnh x\u1EED l\xFD b\xF3c b\u0103ng \xE2m thanh"
+        });
       }
     }
   );

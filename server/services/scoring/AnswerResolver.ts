@@ -42,7 +42,13 @@ export class AnswerResolver {
             (q.questionType === "multiple_choice" && correctCount > 1);
 
           const selectionMode: "single" | "multiple" = isMultiChoice ? "multiple" : "single";
-          const maxSelections = isMultiChoice ? Math.max(2, correctCount) : 1;
+          const maxSelections = isMultiChoice ? (correctCount > 1 ? correctCount : 2) : 1;
+
+          const sectionType = section.sectionType || section.section_type || null;
+          const isExplicitHolistic = q.assessmentMode === "HOLISTIC" || q.scoreScope === "HOLISTIC";
+          const isImplicitHolistic = !q.assessmentMode && (q.questionType === "essay" || (sectionType === "writing" && !["multiple_choice", "fill_blank", "matching"].includes(q.questionType)));
+          const resolvedMode = q.assessmentMode || (isExplicitHolistic || isImplicitHolistic ? "HOLISTIC" : (q.questionType === "speaking" ? "MANUAL_ITEM" : "OBJECTIVE"));
+          const resolvedScope = q.scoreScope || (resolvedMode === "HOLISTIC" ? "HOLISTIC" : "ITEM");
 
           flattenedQuestions.push({
             id: q.id,
@@ -54,6 +60,10 @@ export class AnswerResolver {
             orderIndex: q.orderIndex || q.order_index || 0,
             selectionMode,
             maxSelections,
+            assessmentMode: resolvedMode,
+            scoreScope: resolvedScope,
+            holisticParentId: q.holisticParentId || (resolvedScope === "HOLISTIC" ? (section.id || null) : null),
+            sectionType,
           });
         }
       }

@@ -15,6 +15,8 @@ import { RichContent } from "@/components/exam/RichContent";
 import { getFillBlankBlankCount } from "@/lib/fillBlank";
 
 import { compareCanonicalOrder } from "@/lib/questionOrder";
+import { routes } from "@/lib/routes";
+import { submissionKeys } from "@/lib/queryKeys";
 
 interface GradeUpdate {
   answerId: string;
@@ -192,12 +194,12 @@ export default function SubmissionGrade() {
       return finalize;
     },
     onSuccess: (finalize) => {
-      queryClient.invalidateQueries({ queryKey: ["submission-grade", id] });
+      queryClient.invalidateQueries({ queryKey: submissionKeys.all });
       queryClient.invalidateQueries({ queryKey: ["admin-submissions"] });
 
       if (finalize) {
         toast.success("Đã hoàn tất chấm và trả bài thành công!");
-        navigate("/admin/check-attempt");
+        navigate(routes.admin.checkAttempt());
       } else {
         toast.success("Đã lưu điểm nháp!");
       }
@@ -246,7 +248,7 @@ export default function SubmissionGrade() {
         <Button
           variant="outline"
           className="mt-4"
-          onClick={() => navigate("/admin/check-attempt")}
+          onClick={() => navigate(routes.admin.checkAttempt())}
         >
           <ArrowLeft className="h-4 w-4 mr-2" /> Quay lại
         </Button>
@@ -263,7 +265,7 @@ export default function SubmissionGrade() {
       <Button
         variant="ghost"
         size="sm"
-        onClick={() => navigate("/admin/check-attempt")}
+        onClick={() => navigate(routes.admin.checkAttempt())}
       >
         <ArrowLeft className="h-4 w-4 mr-1" /> Danh sách bài nộp
       </Button>

@@ -56,6 +56,14 @@ const envSchema = z
     SMTP_FROM: z.string().optional(),
     TELEGRAM_BOT_TOKEN: z.string().optional(),
     TELEGRAM_CHAT_ID: z.string().optional(),
+    STT_API_KEY: z.string().optional(),
+    GROQ_API_KEY: z.string().optional(),
+    OPENAI_API_KEY: z.string().optional(),
+    STT_API_URL: z.string().optional(),
+    WHISPER_API_URL: z.string().optional(),
+    STT_MODEL: z.string().optional(),
+    WHISPER_MODEL: z.string().optional(),
+    STT_PROVIDER: z.string().optional(),
   })
   .refine(
     (data) => {

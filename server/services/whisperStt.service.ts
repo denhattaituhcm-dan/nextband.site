@@ -58,16 +58,40 @@ export class WhisperSttService {
     mimeType: string = "audio/webm",
     totalDurationMs?: number,
   ): Promise<SpeakingTranscript> {
-    const apiKey = process.env.OPENAI_API_KEY || process.env.WHISPER_API_KEY || this.apiKey;
-    const apiUrl = process.env.WHISPER_API_URL || this.apiUrl;
-    const model = process.env.WHISPER_MODEL || this.model;
+    const apiKey =
+      this.apiKey !== undefined && this.apiKey !== null
+        ? this.apiKey
+        : (process.env.STT_API_KEY ||
+           process.env.GROQ_API_KEY ||
+           process.env.OPENAI_API_KEY ||
+           process.env.WHISPER_API_KEY ||
+           (env as any).STT_API_KEY ||
+           (env as any).GROQ_API_KEY ||
+           (env as any).OPENAI_API_KEY ||
+           null);
+
+    const apiUrl =
+      process.env.STT_API_URL ||
+      process.env.GROQ_WHISPER_API_URL ||
+      process.env.WHISPER_API_URL ||
+      (env as any).STT_API_URL ||
+      (env as any).WHISPER_API_URL ||
+      this.apiUrl;
+
+    const model =
+      process.env.STT_MODEL ||
+      process.env.GROQ_WHISPER_MODEL ||
+      process.env.WHISPER_MODEL ||
+      (env as any).STT_MODEL ||
+      (env as any).WHISPER_MODEL ||
+      this.model;
 
     if (!apiKey) {
       return {
         rawText: "",
         segments: [],
         status: "FAILED",
-        error: "Chưa cấu hình API Key cho Speech-to-Text (Vui lòng thiết lập OPENAI_API_KEY trong file môi trường .env).",
+        error: "Chưa cấu hình API Key cho Speech-to-Text (Vui lòng thiết lập STT_API_KEY / GROQ_API_KEY / OPENAI_API_KEY trong file môi trường .env).",
       };
     }
 

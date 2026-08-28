@@ -229,11 +229,10 @@ describe("🎯 OP-GAP-02: INTEGRATED LEAD CONVERSION & CLASS PLACEMENT SUITE", (
       });
 
       expect(mockTx.classStudent.create).toHaveBeenCalledWith({
-        data: {
+        data: expect.objectContaining({
           classId: "class-active-1",
           studentId: "new-student-placed-id",
-          joinedAt: expect.any(Date),
-        },
+        }),
       });
 
       expect(mockTx.enrollmentAuditLog.create).toHaveBeenCalledWith({

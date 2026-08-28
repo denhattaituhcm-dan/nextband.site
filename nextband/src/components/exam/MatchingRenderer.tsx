@@ -85,11 +85,37 @@ export function convertOptionValToIndex(val: any): number | null {
  * Single source of truth for MatchingRenderer.
  */
 export const parseMatchingData = (question: any): NormalizedMatchingModel => {
+  if (!question) {
+    return { items: [], options: [], pairs: {}, allowMultipleUse: false };
+  }
+
   let rawOptions: string[] = [];
   let rawItems: string[] = [];
   let rawPairs: Record<string, any> = {};
 
-  // Parse correctAnswer / correct_answer JSON
+  // 1. Primary Source: Canonical Student DTO question.options = { items: string[], options: string[] }
+  let optsObj = question.options;
+  if (typeof optsObj === "string" && optsObj.trim()) {
+    try {
+      optsObj = JSON.parse(optsObj);
+    } catch {}
+  }
+
+  if (optsObj && typeof optsObj === "object" && !Array.isArray(optsObj)) {
+    if (Array.isArray(optsObj.options)) {
+      rawOptions = optsObj.options;
+    }
+    if (Array.isArray(optsObj.items)) {
+      rawItems = optsObj.items;
+    }
+    if (optsObj.pairs && typeof optsObj.pairs === "object") {
+      rawPairs = optsObj.pairs;
+    }
+  } else if (Array.isArray(optsObj)) {
+    rawOptions = optsObj;
+  }
+
+  // 2. Secondary / Admin Preview Source: question.correctAnswer
   const jsonStr = question.correctAnswer || question.correct_answer;
   let parsedCorrect: any = null;
   if (jsonStr) {
@@ -98,33 +124,21 @@ export const parseMatchingData = (question: any): NormalizedMatchingModel => {
     } catch {}
   }
 
-  // Check question.options
-  let questionOptions: string[] = [];
-  if (Array.isArray(question.options)) {
-    questionOptions = question.options;
-  } else if (typeof question.options === "string" && question.options.trim()) {
-    try {
-      const parsed = JSON.parse(question.options);
-      if (Array.isArray(parsed)) questionOptions = parsed;
-    } catch {}
-  }
-
-  // Fallback Logic: Only use question.options if it contains valid non-empty option text
-  const hasValidQuestionOptions =
-    questionOptions.length > 0 &&
-    questionOptions.some((opt) => typeof opt === "string" && opt.trim().length > 0);
-
-  if (hasValidQuestionOptions) {
-    rawOptions = questionOptions;
-  } else if (parsedCorrect && Array.isArray(parsedCorrect.options)) {
-    rawOptions = parsedCorrect.options;
-  }
-
-  if (parsedCorrect) {
-    if (Array.isArray(parsedCorrect.items)) rawItems = parsedCorrect.items;
-    if (parsedCorrect.pairs && typeof parsedCorrect.pairs === "object") {
+  if (parsedCorrect && typeof parsedCorrect === "object") {
+    if (rawOptions.length === 0 && Array.isArray(parsedCorrect.options)) {
+      rawOptions = parsedCorrect.options;
+    }
+    if (rawItems.length === 0 && Array.isArray(parsedCorrect.items)) {
+      rawItems = parsedCorrect.items;
+    }
+    if (Object.keys(rawPairs).length === 0 && parsedCorrect.pairs && typeof parsedCorrect.pairs === "object") {
       rawPairs = parsedCorrect.pairs;
     }
+  }
+
+  // 3. Direct question.items fallback if present
+  if (rawItems.length === 0 && Array.isArray(question.items)) {
+    rawItems = question.items;
   }
 
   // Filter & Map options

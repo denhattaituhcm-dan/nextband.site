@@ -37,14 +37,17 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
 
     // 2. Student Safe DTO: Strip 100% of secret fields
     const cleaned = { ...q };
-    if (q.questionType === "matching" && q.correctAnswer) {
+    if ((q.questionType === "matching" || q.question_type === "matching") && (q.correctAnswer || q.correct_answer)) {
       try {
-        const config = JSON.parse(q.correctAnswer);
-        delete config.pairs;
-        if (!cleaned.options || typeof cleaned.options !== "object") {
-          cleaned.options = { items: config.items || [], options: config.options || [] };
-        }
-      } catch {}
+        const raw = q.correctAnswer || q.correct_answer;
+        const config = typeof raw === "string" ? JSON.parse(raw) : raw;
+        cleaned.options = {
+          items: Array.isArray(config?.items) ? config.items : [],
+          options: Array.isArray(config?.options) ? config.options : [],
+        };
+      } catch {
+        cleaned.options = { items: [], options: [] };
+      }
     }
 
     delete cleaned.correctAnswer;
@@ -52,11 +55,10 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
     delete cleaned.audioScript;
     delete cleaned.audio_script;
     delete cleaned.acceptedAnswers;
+    delete cleaned.accepted_answers;
     delete cleaned.answerKey;
     delete cleaned.answer_key;
 
-    cleaned.correctAnswer = null;
-    cleaned.audioScript = null;
     cleaned.selectionMode = selectionMode;
     cleaned.maxSelections = maxSelections;
     cleaned.isMultiChoice = selectionMode === "multiple";

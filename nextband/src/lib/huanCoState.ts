@@ -1,4 +1,5 @@
 import { ActionQueueItem } from "./homeworkStatusHelper";
+import { routes } from "./routes";
 
 export type HuanCoUrgency = "RED" | "ORANGE" | "YELLOW" | "BLUE" | "GREEN" | "GRAY";
 
@@ -47,7 +48,7 @@ export function getHuanCoState(input: HuanCoInput): HuanCoState {
 
   if (overdueItems.length > 0) {
     const target = overdueItems[0];
-    const targetPath = `/exam/${target.examId || target.id}`;
+    const targetPath = routes.exam.take(target.examId || target.id);
     const count = overdueItems.length;
 
     return {
@@ -72,8 +73,8 @@ export function getHuanCoState(input: HuanCoInput): HuanCoState {
   if (revisionItems.length > 0) {
     const target = revisionItems[0];
     const targetPath = target.submission?.id
-      ? `/submission/${target.submission.id}`
-      : `/exam/${target.examId || target.id}`;
+      ? routes.student.submission(target.submission.id)
+      : routes.exam.take(target.examId || target.id);
 
     return {
       urgency: "ORANGE",

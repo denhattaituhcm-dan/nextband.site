@@ -19,6 +19,7 @@ interface SpeakingSectionProps {
   answers: Record<string, any>;
   onAnswerChange: (questionId: string, answer: any) => void;
   onRecordingStateChange?: (isRecording: boolean) => void;
+  onUploadingStateChange?: (isUploading: boolean) => void;
   questionRefs?: MutableRefObject<Map<string, HTMLElement>>;
   currentQuestionId?: string;
   onQuestionFocus?: (questionId: string) => void;
@@ -262,6 +263,7 @@ export function SpeakingSection({
                                     maxDurationSeconds={120}
                                     onAnswerChange={onAnswerChange}
                                     onRecordingStateChange={onRecordingStateChange}
+                                    onUploadingStateChange={onUploadingStateChange}
                                   />
                                 )}
 

@@ -612,7 +612,7 @@
     "category": "manual_grading",
     "question": { "id": "q-man-1", "questionType": "ielts_writing_task1", "questionText": "Describe the chart.", "points": 3 },
     "studentAnswer": { "questionId": "q-man-1", "answerText": "The bar chart illustrates..." },
-    "expected": { "isCorrect": false, "score": 0, "maxScore": 3, "correctCount": 0, "itemCount": 1, "isManual": true }
+    "expected": { "isCorrect": null, "score": null, "maxScore": null, "correctCount": 0, "itemCount": 1, "isManual": true }
   },
   {
     "id": "MAN-002",
@@ -620,7 +620,7 @@
     "category": "manual_grading",
     "question": { "id": "q-man-2", "questionType": "ielts_writing_task2", "questionText": "Discuss both views.", "points": 6 },
     "studentAnswer": { "questionId": "q-man-2", "answerText": "In modern society..." },
-    "expected": { "isCorrect": false, "score": 0, "maxScore": 6, "correctCount": 0, "itemCount": 1, "isManual": true }
+    "expected": { "isCorrect": null, "score": null, "maxScore": null, "correctCount": 0, "itemCount": 1, "isManual": true }
   },
   {
     "id": "MAN-003",
@@ -628,7 +628,7 @@
     "category": "manual_grading",
     "question": { "id": "q-man-3", "questionType": "ielts_speaking_part1", "questionText": "Tell me about your hometown.", "points": 3 },
     "studentAnswer": { "questionId": "q-man-3", "audioUrl": "/uploads/speaking1.mp3" },
-    "expected": { "isCorrect": false, "score": 0, "maxScore": 3, "correctCount": 0, "itemCount": 1, "isManual": true }
+    "expected": { "isCorrect": null, "score": null, "maxScore": 3, "correctCount": 0, "itemCount": 1, "isManual": true }
   },
   {
     "id": "MAN-004",
@@ -636,7 +636,7 @@
     "category": "manual_grading",
     "question": { "id": "q-man-4", "questionType": "ielts_speaking_part2", "questionText": "Describe a book you read.", "points": 3 },
     "studentAnswer": { "questionId": "q-man-4", "audioUrl": "/uploads/speaking2.mp3" },
-    "expected": { "isCorrect": false, "score": 0, "maxScore": 3, "correctCount": 0, "itemCount": 1, "isManual": true }
+    "expected": { "isCorrect": null, "score": null, "maxScore": 3, "correctCount": 0, "itemCount": 1, "isManual": true }
   },
   {
     "id": "MAN-005",
@@ -644,6 +644,6 @@
     "category": "manual_grading",
     "question": { "id": "q-man-5", "questionType": "ielts_speaking_part3", "questionText": "Why do people read books?", "points": 3 },
     "studentAnswer": { "questionId": "q-man-5", "audioUrl": "/uploads/speaking3.mp3" },
-    "expected": { "isCorrect": false, "score": 0, "maxScore": 3, "correctCount": 0, "itemCount": 1, "isManual": true }
+    "expected": { "isCorrect": null, "score": null, "maxScore": 3, "correctCount": 0, "itemCount": 1, "isManual": true }
   }
 ]

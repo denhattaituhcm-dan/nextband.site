@@ -11,6 +11,7 @@ import { ReviewAudioPlayer } from "@/components/exam/ReviewAudioPlayer";
 import { SpeakingTranscriptViewer } from "@/components/admin/SpeakingTranscriptViewer";
 import { getFillBlankBlankCount, parseFillBlankCorrectAnswers } from "@/lib/fillBlank";
 import { SentenceLevelGrader } from "@/components/grading/SentenceLevelGrader";
+import { convertOptionValToIndex } from "@/components/exam/MatchingRenderer";
 import {
   SentenceFeedbackItem,
   parseStructuredFeedback,
@@ -224,6 +225,14 @@ export function AnswerGradingCard({
                           {items.map((item: string, idx: number) => {
                             const studentOpt = parsedStudent[String(idx)];
                             const correctOpt = pairs[String(idx)];
+
+                            const studentIdx = convertOptionValToIndex(studentOpt);
+                            const correctIdx = convertOptionValToIndex(correctOpt);
+                            const isMatch = studentIdx !== null && correctIdx !== null && studentIdx === correctIdx;
+
+                            const studentLabel = studentIdx !== null ? String.fromCharCode(65 + studentIdx) : (studentOpt != null ? String(studentOpt) : "");
+                            const correctLabel = correctIdx !== null ? String.fromCharCode(65 + correctIdx) : (correctOpt != null ? String(correctOpt) : "");
+
                             return (
                               <div key={idx} className="p-2 flex items-start gap-3 bg-background">
                                 <div className="flex-1 text-xs">
@@ -231,15 +240,15 @@ export function AnswerGradingCard({
                                   {item}
                                 </div>
                                 <div className="text-xs font-semibold">
-                                  {studentOpt ? (
-                                    <span className={studentOpt === correctOpt ? "text-green-600" : "text-destructive"}>
-                                      {studentOpt}
+                                  {studentLabel ? (
+                                    <span className={isMatch ? "text-green-600 font-bold" : "text-destructive font-bold"}>
+                                      {studentLabel}
                                     </span>
                                   ) : (
                                     <span className="text-muted-foreground italic">Trống</span>
                                   )}
-                                  {studentOpt !== correctOpt && correctOpt && (
-                                    <span className="text-[10px] text-green-600 ml-2">(Đúng: {correctOpt})</span>
+                                  {!isMatch && correctLabel && (
+                                    <span className="text-[10px] text-green-600 ml-2 font-normal">(Đúng: {correctLabel})</span>
                                   )}
                                 </div>
                               </div>

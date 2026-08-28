@@ -31,23 +31,44 @@ export function compareCanonicalOrder(a: any, b: any): number {
   return String(a.id || "").localeCompare(String(b.id || ""));
 }
 
+export type AssessmentMode = "OBJECTIVE" | "MANUAL_ITEM" | "HOLISTIC";
+export type ScoreScope = "ITEM" | "HOLISTIC";
+
+/**
+ * Resolves the explicit assessment mode of a question.
+ */
+export function getAssessmentMode(question: any, sectionType?: string): AssessmentMode {
+  if (question?.assessmentMode) return question.assessmentMode;
+  if (question?.scoreScope === "HOLISTIC") return "HOLISTIC";
+
+  const qType = String(question?.questionType || question?.question_type || "").toLowerCase();
+  const secType = String(sectionType || question?.sectionType || "").toLowerCase();
+
+  const isSubjective =
+    qType === "essay" ||
+    qType === "speaking" ||
+    secType === "speaking" ||
+    (secType === "writing" && !["multiple_choice", "fill_blank", "matching"].includes(qType));
+
+  if (!isSubjective) return "OBJECTIVE";
+  if (secType === "writing" || qType === "essay") return "HOLISTIC";
+  return "MANUAL_ITEM";
+}
+
+/**
+ * Resolves the score scope (ITEM vs HOLISTIC) of a question.
+ */
+export function getScoreScope(question: any, sectionType?: string): ScoreScope {
+  if (question?.scoreScope) return question.scoreScope;
+  const mode = getAssessmentMode(question, sectionType);
+  return mode === "HOLISTIC" ? "HOLISTIC" : "ITEM";
+}
+
 /**
  * Checks whether a question is subjective (requires manual teacher evaluation/grading)
  */
 export function isSubjectiveQuestion(question: any, sectionType?: string): boolean {
   if (!question) return false;
-  const qType = String(question.questionType || question.question_type || "").toLowerCase();
-  const secType = String(sectionType || question.sectionType || "").toLowerCase();
-
-  if (qType === "essay" || qType === "speaking") return true;
-  if (secType === "speaking") return true;
-  if (secType === "writing" && qType !== "multiple_choice" && qType !== "matching" && qType !== "fill_blank") {
-    return true;
-  }
-  // Short answer without an answer key is subjective translation/essay
-  if (qType === "short_answer") {
-    const hasAnswerKey = Boolean(question.correctAnswer || question.correct_answer);
-    if (!hasAnswerKey) return true;
-  }
-  return false;
+  const mode = getAssessmentMode(question, sectionType);
+  return mode !== "OBJECTIVE";
 }

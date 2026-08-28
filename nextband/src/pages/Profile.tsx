@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { authApi, uploadsApi, classesApi, submissionsApi } from "@/lib/api";
+import { submissionKeys } from "@/lib/queryKeys";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
@@ -57,10 +58,11 @@ export default function Profile() {
   });
 
   const { data: submissionsData } = useQuery({
-    queryKey: ["profile-submissions", user?.id],
+    queryKey: submissionKeys.profileSubmissions(user?.id),
     queryFn: () => submissionsApi.list({ studentId: user?.id, limit: 200 }).catch(() => ({ data: [] })),
     enabled: !!user?.id,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 2,
+    refetchOnWindowFocus: true,
   });
 
   const userSubmissions = Array.isArray(submissionsData?.data) ? submissionsData.data : [];
