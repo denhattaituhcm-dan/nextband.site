@@ -36,6 +36,7 @@ import {
   isSubmissionGraded,
   isSubmissionCompleted,
 } from "@/lib/submissionStatus";
+import { calculateGradingSla } from "@/lib/gradingSla";
 
 const statusConfig: Record<
   CanonicalSubmissionStatus,
@@ -521,11 +522,20 @@ export default function SubmissionDetail() {
               </div>
 
               {!isGraded && (
-                <div className="p-3.5 rounded-xl border border-amber-200/90 bg-amber-50/70 dark:bg-amber-950/30 dark:border-amber-800/70 text-xs text-amber-900 dark:text-amber-200 flex items-center gap-2.5">
-                  <AlertCircle className="h-4 w-4 text-amber-600 shrink-0" />
-                  <span>
-                    Bài làm tự luận của bạn đã được ghi nhận và nộp thành công. Giáo viên sẽ chấm điểm, sửa từng câu và gửi phản hồi cho bạn.
-                  </span>
+                <div className="p-3.5 rounded-xl border border-blue-200/90 bg-blue-50/70 dark:bg-blue-950/30 dark:border-blue-800/70 text-xs text-blue-900 dark:text-blue-200 flex items-start gap-2.5">
+                  <Clock className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
+                  <div className="space-y-0.5">
+                    <p className="font-bold">
+                      Bài làm đã được ghi nhận và đang chờ giáo viên chấm chữa.
+                    </p>
+                    <p className="text-blue-800/90 dark:text-blue-300 leading-relaxed font-medium">
+                      Giáo viên phụ trách sẽ chấm chữa chi tiết và gửi phản hồi cho bạn trong vòng <strong>tối đa 7 ngày</strong>
+                      {submission?.submittedAt || submission?.submitted_at ? (
+                        <> (Dự kiến trước <strong>{calculateGradingSla(submission.submittedAt || submission.submitted_at, null, "SUBMITTED").formattedDeadline}</strong>)</>
+                      ) : null}
+                      . Bạn sẽ nhận được thông báo ngay khi bài được trả.
+                    </p>
+                  </div>
                 </div>
               )}
             </div>

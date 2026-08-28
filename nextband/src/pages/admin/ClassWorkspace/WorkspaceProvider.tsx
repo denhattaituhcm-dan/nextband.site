@@ -1,7 +1,11 @@
 import React, { createContext, useContext, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { classesApi, sessionsApi, examsApi, submissionsApi, normalizeSession, lessonsApi } from "@/lib/api";
-import { resolveEffectiveDeadline, selectCanonicalSubmission } from "@/lib/homeworkStatusHelper";
+import {
+  resolveEffectiveDeadline,
+  selectCanonicalSubmission,
+  compareHomeworkOrder,
+} from "@/lib/homeworkStatusHelper";
 
 interface WorkspaceContextType {
   classId: string;
@@ -74,7 +78,8 @@ export const WorkspaceProvider: React.FC<{
           const projectionLessons: any[] = lessonRes?.data?.lessons || [];
 
           if (rawExams.length > 0) {
-            lessons = rawExams.map((exam: any, idx: number) => {
+            const sortedRawExams = [...rawExams].sort(compareHomeworkOrder);
+            lessons = sortedRawExams.map((exam: any, idx: number) => {
               const matchedProj = projectionLessons.find((p: any) => p.id === exam.id);
               const lessonOrder = exam.week || (idx + 1);
 
@@ -117,7 +122,7 @@ export const WorkspaceProvider: React.FC<{
               };
             });
           } else if (projectionLessons.length > 0) {
-            lessons = projectionLessons;
+            lessons = [...projectionLessons].sort(compareHomeworkOrder);
           }
         } catch (examErr) {
           console.warn("[WorkspaceProvider] Could not fetch exams/lessons:", examErr);

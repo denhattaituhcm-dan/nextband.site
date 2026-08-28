@@ -39,6 +39,7 @@ import {
   CanonicalSubmissionStatus,
   normalizeSubmissionStatus,
 } from "@/lib/submissionStatus";
+import { calculateGradingSla } from "@/lib/gradingSla";
 
 const statusConfig: Record<
   CanonicalSubmissionStatus,
@@ -261,6 +262,14 @@ export default function MySubmissions() {
                           <StatusIcon className="h-3 w-3" />
                           {status.label}
                         </Badge>
+                        {canonicalStatus === "SUBMITTED" && submission.submittedAt && (() => {
+                          const sla = calculateGradingSla(submission.submittedAt, null, "SUBMITTED");
+                          return (
+                            <span className="block text-[10px] text-muted-foreground mt-0.5 font-medium">
+                              Dự kiến: {sla.formattedDeadline}
+                            </span>
+                          );
+                        })()}
                       </TableCell>
                       <TableCell className="text-center">
                         {submission.correctAnswers != null &&

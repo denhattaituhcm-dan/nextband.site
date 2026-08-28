@@ -46,6 +46,7 @@ import {
   parseStructuredFeedback,
   CriteriaScores,
 } from "@/lib/sentenceFeedback";
+import { calculateGradingSla, summarizeSlaStats } from "@/lib/gradingSla";
 import { mapToProgressReportData } from "@/lib/progressReportMapper";
 import { WritingGrader } from "@/components/grading/WritingGrader";
 import { SpeakingGrader } from "@/components/grading/SpeakingGrader";
@@ -567,15 +568,23 @@ export default function TeacherWorkspace() {
     );
   }, [currentHomework, currentSubmissionDetail, resolvedAnswers]);
 
+  const slaStats = useMemo(() => {
+    if (!currentStudent?.homeworkItems) {
+      return { overdueCount: 0, approachingCount: 0, onTrackCount: 0, totalPending: 0, gradedCount: 0 };
+    }
+    const pendingItems = currentStudent.homeworkItems.filter((i: any) => i.status === "submitted");
+    return summarizeSlaStats(pendingItems);
+  }, [currentStudent]);
+
   const workbookSummary = useMemo(() => {
     if (!currentStudent) return { graded: 0, pending: 0, inProgress: 0, overdue: 0 };
     return {
       graded: currentStudent.gradedCount || 0,
       pending: currentStudent.pendingCount || 0,
       inProgress: currentStudent.unsubmittedCount || 0,
-      overdue: 0,
+      overdue: slaStats.overdueCount,
     };
-  }, [currentStudent]);
+  }, [currentStudent, slaStats]);
 
   // 4. Fetch báo cáo định kỳ đã lưu của học viên hiện tại (nếu có)
   const { data: latestPeriodicReport, refetch: refetchPeriodicReport } = useQuery({
@@ -809,12 +818,20 @@ export default function TeacherWorkspace() {
             🟢 Band {item.score ?? "6.5"} {item.submissionTiming?.isLate ? `(Trễ ${item.submissionTiming.lateDays}d)` : ""}
           </Badge>
         );
-      case "submitted":
+      case "submitted": {
+        const sla = calculateGradingSla(item.submittedAt, null, "submitted");
+        let badgeStyle = "bg-blue-50 text-blue-700 border-blue-200";
+        if (sla.status === "OVERDUE") {
+          badgeStyle = "bg-rose-50 text-rose-700 border-rose-200 font-bold";
+        } else if (sla.status === "APPROACHING") {
+          badgeStyle = "bg-amber-50 text-amber-800 border-amber-300 font-bold";
+        }
         return (
-          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-[10px] animate-pulse">
-            🔵 Chờ chấm {item.submissionTiming?.isLate ? `(Trễ ${item.submissionTiming.lateDays}d)` : ""}
+          <Badge variant="outline" className={`text-[10px] ${badgeStyle}`} title={`Nộp: ${sla.formattedSubmitted} • Hạn SLA: ${sla.formattedDeadline}`}>
+            {sla.badgeText}
           </Badge>
         );
+      }
       case "in_progress":
         return (
           <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 text-[10px]">
@@ -847,6 +864,7 @@ export default function TeacherWorkspace() {
             className={currentClass?.name || "Lớp IELTS"}
             homeworkTitle={currentHomework.title}
             submissionStatus={currentHomework.status}
+            submittedAt={currentHomework.submittedAt}
             answers={resolvedAnswers}
             isSubmitting={isSubmitting}
             onBack={() => setIsFocusMode(false)}
@@ -859,6 +877,7 @@ export default function TeacherWorkspace() {
             className={currentClass?.name || "Lớp IELTS"}
             homeworkTitle={currentHomework.title}
             submissionStatus={currentHomework.status}
+            submittedAt={currentHomework.submittedAt}
             answers={resolvedAnswers}
             isSubmitting={isSubmitting}
             onBack={() => setIsFocusMode(false)}
@@ -1018,15 +1037,34 @@ export default function TeacherWorkspace() {
 
               {/* Status counter indicators */}
               <div className="flex items-center gap-1.5 text-[10px] font-mono">
-                <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold" title="Đã chấm">
-                  🟢 {workbookSummary.graded}
-                </span>
-                <span className="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 font-bold" title="Chờ chấm">
-                  🔵 {workbookSummary.pending}
-                </span>
-                <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200" title="Chưa làm">
-                  ⚪ {workbookSummary.inProgress}
-                </span>
+                {slaStats.totalPending > 0 ? (
+                  <>
+                    {slaStats.overdueCount > 0 && (
+                      <span className="px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200 font-bold" title="Quá hạn SLA 7 ngày">
+                        🔴 {slaStats.overdueCount} quá hạn
+                      </span>
+                    )}
+                    {slaStats.approachingCount > 0 && (
+                      <span className="px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-300 font-bold" title="Sắp đến hạn SLA (≤ 2 ngày)">
+                        ⚠️ {slaStats.approachingCount} sắp hạn
+                      </span>
+                    )}
+                    {slaStats.onTrackCount > 0 && (
+                      <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium" title="Trong hạn SLA (> 2 ngày)">
+                        ⏱ {slaStats.onTrackCount} trong hạn
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold" title="Đã chấm">
+                      🟢 {workbookSummary.graded}
+                    </span>
+                    <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200" title="Chưa làm">
+                      ⚪ {workbookSummary.inProgress}
+                    </span>
+                  </>
+                )}
                 {currentStudent && (
                   <Button
                     variant="outline"

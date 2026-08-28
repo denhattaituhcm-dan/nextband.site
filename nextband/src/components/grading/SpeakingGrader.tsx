@@ -35,6 +35,7 @@ import {
   calculateSpeakingBand,
 } from "@/lib/sentenceFeedback";
 import { formatStorageUrl } from "@/lib/api";
+import { calculateGradingSla } from "@/lib/gradingSla";
 
 export interface SpeakingAnswerItem {
   id?: string;
@@ -55,6 +56,7 @@ interface SpeakingGraderProps {
   className?: string;
   homeworkTitle: string;
   submissionStatus?: string;
+  submittedAt?: string;
   answers: SpeakingAnswerItem[];
   isSubmitting: boolean;
   onBack?: () => void;
@@ -80,10 +82,12 @@ interface SpeakingGraderProps {
 }
 
 export function SpeakingGrader({
+  submissionId,
   studentName,
   className = "Lớp IELTS",
   homeworkTitle,
   submissionStatus = "SUBMITTED",
+  submittedAt,
   answers,
   isSubmitting,
   onBack,
@@ -212,6 +216,19 @@ export function SpeakingGrader({
               >
                 {submissionStatus === "GRADED" ? "Đã chấm điểm" : "Chờ chấm"}
               </Badge>
+              {submissionStatus !== "GRADED" && submittedAt && (() => {
+                const sla = calculateGradingSla(submittedAt, null, submissionStatus);
+                const badgeClass = sla.status === "OVERDUE"
+                  ? "bg-rose-50 text-rose-700 border-rose-200 text-[11px] font-bold"
+                  : sla.status === "APPROACHING"
+                  ? "bg-amber-50 text-amber-800 border-amber-300 text-[11px] font-bold"
+                  : "bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px] font-semibold";
+                return (
+                  <Badge variant="outline" className={badgeClass} title={`Nộp: ${sla.formattedSubmitted} • Hạn trả: ${sla.formattedDeadline}`}>
+                    {sla.badgeText} (Hạn: {sla.formattedDeadline})
+                  </Badge>
+                );
+              })()}
               {isDirty ? (
                 <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 text-[10px]">
                   <Clock className="w-3 h-3 mr-1" /> Chưa lưu
@@ -262,32 +279,35 @@ export function SpeakingGrader({
         {/* LEFT COLUMN (68%): PROMPT & AUDIO PLAYBACK */}
         <div className="lg:col-span-8 h-full overflow-y-auto p-6 space-y-6 bg-slate-50/50">
           {/* ĐỀ BÀI (Speaking Question / Cue Card) */}
-          <Card className="border border-orange-200/80 shadow-xs rounded-2xl p-5 bg-white space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
-              <span className="text-xs font-extrabold text-orange-900 flex items-center gap-1.5 uppercase tracking-wider">
+          <Card className="border border-amber-200 shadow-xs rounded-2xl p-5 bg-amber-50/60 space-y-3 font-sans">
+            <div className="flex items-center justify-between border-b border-amber-100/80 pb-2.5">
+              <span className="text-xs font-extrabold text-amber-900 flex items-center gap-1.5 uppercase tracking-wider">
                 <BookOpen className="h-4 w-4 text-orange-600" />
                 {(currentAnswer.questionTitle ? currentAnswer.questionTitle.replace(/<[^>]*>/g, " ").trim() : "") || "Yêu cầu Đề bài (Speaking Prompt)"}
               </span>
+              <Badge variant="outline" className="bg-amber-100/70 text-amber-800 border-amber-200 text-[11px] font-bold">
+                Đề bài
+              </Badge>
             </div>
 
             {/* Instructions */}
             {currentAnswer.instructions && (
-              <div className="text-xs text-slate-600 font-medium bg-orange-50/50 p-3 rounded-xl border border-orange-100 leading-relaxed">
+              <div className="text-xs text-slate-700 font-medium bg-white/90 p-3 rounded-xl border border-amber-100 leading-relaxed shadow-2xs">
                 <RichContent html={currentAnswer.instructions} />
               </div>
             )}
 
             {/* Question Text */}
             {currentAnswer.questionText && (
-              <div className="text-sm text-slate-900 leading-relaxed font-semibold">
+              <div className="text-sm text-slate-900 leading-relaxed font-semibold bg-white/60 p-3.5 rounded-xl border border-amber-100/70">
                 <RichContent html={currentAnswer.questionText} />
               </div>
             )}
 
             {/* Cue Card / Passage */}
             {currentAnswer.passage && (
-              <div className="pt-2 border-t border-slate-100">
-                <div className="text-sm text-slate-800 leading-relaxed max-h-96 overflow-y-auto">
+              <div className="pt-2 border-t border-amber-100">
+                <div className="text-sm text-slate-800 leading-relaxed max-h-96 overflow-y-auto bg-white/90 p-3.5 rounded-xl border border-amber-100">
                   <RichContent html={currentAnswer.passage} variant="passage" />
                 </div>
               </div>

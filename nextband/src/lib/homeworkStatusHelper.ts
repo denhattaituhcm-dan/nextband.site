@@ -94,6 +94,31 @@ export function deriveCanonicalVisualStatus(params: VisualStatusParams): Canonic
 }
 
 /**
+ * Authoritative Canonical Submission Filter for Homework/Exam:
+ * Safely filters all submissions belonging to a specific canonical homework/exam ID without false collisions.
+ */
+export function filterCanonicalSubmissionsForHomework(
+  submissions: any[] | undefined | null,
+  examId?: string | null
+): any[] {
+  if (!Array.isArray(submissions) || submissions.length === 0 || !examId) {
+    return [];
+  }
+
+  return submissions.filter((s: any) => {
+    const id =
+      s.examId ||
+      s.exam_id ||
+      s.homework_id ||
+      s.homeworkId ||
+      s.lesson_id ||
+      s.lessonId ||
+      s.exam?.id;
+    return Boolean(id && id === examId);
+  });
+}
+
+/**
  * Authoritative Canonical Submission Selector:
  * Resolves multiple attempts for a student on a specific exam/homework with strict business priority:
  * 1. GRADED / REVISION_REQUIRED (Highest legal/academic authority)
@@ -103,24 +128,23 @@ export function deriveCanonicalVisualStatus(params: VisualStatusParams): Canonic
  */
 export function selectCanonicalSubmission(
   submissions: any[] | undefined | null,
-  examId?: string
+  examId?: string | null
 ): any | null {
-  if (!Array.isArray(submissions) || submissions.length === 0) {
+  if (!Array.isArray(submissions) || submissions.length === 0 || !examId) {
     return null;
   }
 
-  const matchingSubs = examId
-    ? submissions.filter((s: any) => {
-        const id =
-          s.examId ||
-          s.exam_id ||
-          s.homework_id ||
-          s.homeworkId ||
-          s.lesson_id ||
-          s.lessonId;
-        return id === examId;
-      })
-    : submissions;
+  const matchingSubs = submissions.filter((s: any) => {
+    const id =
+      s.examId ||
+      s.exam_id ||
+      s.homework_id ||
+      s.homeworkId ||
+      s.lesson_id ||
+      s.lessonId ||
+      s.exam?.id;
+    return Boolean(id && id === examId);
+  });
 
   if (matchingSubs.length === 0) return null;
   if (matchingSubs.length === 1) return matchingSubs[0];

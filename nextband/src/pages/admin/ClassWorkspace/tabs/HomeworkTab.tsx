@@ -10,6 +10,7 @@ import { SetHomeworkDeadlineModal } from "../components/SetHomeworkDeadlineModal
 import {
   formatVietnameseDeadline,
   formatDeadlineCountdown,
+  filterCanonicalSubmissionsForHomework,
 } from "@/lib/homeworkStatusHelper";
 import { BookOpen, Users, Inbox, PlusCircle, Calendar, Clock, Edit3 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -30,17 +31,8 @@ export const HomeworkTab: React.FC = () => {
     const deadline = lesson.deadline || lesson.homework?.deadline || null;
     const deadlineSource: "MANUAL" | "AUTO" = lesson.deadlineSource || lesson.homework?.deadlineSource || "AUTO";
     
-    // Calculate submissions for this lesson/homework
-    const lessonSubmissions = submissions.filter(
-      (s: any) =>
-        s.examId === lesson.exam_id ||
-        s.examId === lesson.id ||
-        s.exam_id === lesson.exam_id ||
-        s.exam_id === lesson.id ||
-        s.homework_id === lesson.id ||
-        s.lesson_id === lesson.id ||
-        s.homework_title?.includes(hwNum)
-    );
+    // Calculate submissions strictly belonging to this lesson/homework canonical ID
+    const lessonSubmissions = filterCanonicalSubmissionsForHomework(submissions, lesson.id);
 
     const pendingSubmissions = lessonSubmissions
       .filter((s: any) => s.grade_status === "pending" || s.status === "submitted" || s.status === "SUBMITTED" || s.status === "overdue")

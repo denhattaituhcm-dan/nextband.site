@@ -24,6 +24,7 @@ import { ProgressReportModal } from "@/components/admin/ProgressReportModal";
 import { mapToProgressReportData } from "@/lib/progressReportMapper";
 import { ProgressReportData } from "@/types/progressReport";
 import { classesApi, periodicReportsApi, invalidateClassQueries } from "@/lib/api";
+import { selectCanonicalSubmission } from "@/lib/homeworkStatusHelper";
 import { Users, Eye, UserPlus, CalendarCheck, Grid, List, UserMinus, Loader2, FileText } from "lucide-react";
 import { toast } from "sonner";
 
@@ -74,14 +75,7 @@ export const StudentsTab: React.FC = () => {
 
     const studentHomeworks = lessons.map((lesson: any, i: number) => {
       const hwNum = String(i + 1).padStart(2, "0");
-      const sub = studentSubmissions.find(
-        (s: any) =>
-          s.examId === lesson.id ||
-          s.exam_id === lesson.id ||
-          s.homework_id === lesson.id ||
-          s.lesson_id === lesson.id ||
-          s.homework_title?.includes(hwNum)
-      );
+      const sub = selectCanonicalSubmission(studentSubmissions, lesson.id);
       const isGraded = sub?.status === "graded" || sub?.status === "GRADED" || sub?.grade_status === "graded";
       const isSubmitted = sub?.status === "submitted" || sub?.status === "SUBMITTED" || isGraded;
 

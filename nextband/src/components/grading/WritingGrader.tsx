@@ -35,6 +35,7 @@ import {
   parseStructuredFeedback,
   calculateWritingBand,
 } from "@/lib/sentenceFeedback";
+import { calculateGradingSla } from "@/lib/gradingSla";
 
 export interface WritingAnswerItem {
   id?: string;
@@ -55,6 +56,7 @@ interface WritingGraderProps {
   className?: string;
   homeworkTitle: string;
   submissionStatus?: string;
+  submittedAt?: string;
   answers: WritingAnswerItem[];
   isSubmitting: boolean;
   onBack?: () => void;
@@ -82,10 +84,12 @@ interface WritingGraderProps {
 }
 
 export function WritingGrader({
+  submissionId,
   studentName,
   className = "Lớp IELTS",
   homeworkTitle,
   submissionStatus = "SUBMITTED",
+  submittedAt,
   answers,
   isSubmitting,
   onBack,
@@ -262,6 +266,19 @@ export function WritingGrader({
               >
                 {submissionStatus === "GRADED" ? "Đã chấm điểm" : "Chờ chấm"}
               </Badge>
+              {submissionStatus !== "GRADED" && submittedAt && (() => {
+                const sla = calculateGradingSla(submittedAt, null, submissionStatus);
+                const badgeClass = sla.status === "OVERDUE"
+                  ? "bg-rose-50 text-rose-700 border-rose-200 text-[11px] font-bold"
+                  : sla.status === "APPROACHING"
+                  ? "bg-amber-50 text-amber-800 border-amber-300 text-[11px] font-bold"
+                  : "bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px] font-semibold";
+                return (
+                  <Badge variant="outline" className={badgeClass} title={`Nộp: ${sla.formattedSubmitted} • Hạn trả: ${sla.formattedDeadline}`}>
+                    {sla.badgeText} (Hạn: {sla.formattedDeadline})
+                  </Badge>
+                );
+              })()}
               {isDirty ? (
                 <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 text-[10px]">
                   <Clock className="w-3 h-3 mr-1" /> Chưa lưu
@@ -314,32 +331,35 @@ export function WritingGrader({
         {/* LEFT COLUMN (68%): READING & ANNOTATION SURFACE */}
         <div className="lg:col-span-8 h-full overflow-y-auto p-6 space-y-6 bg-slate-50/50">
           {/* ĐỀ BÀI (Question & Task Specification) */}
-          <Card className="border border-blue-200/80 shadow-xs rounded-2xl p-5 bg-white space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+          <Card className="border border-blue-200 shadow-xs rounded-2xl p-5 bg-blue-50/60 space-y-3 font-sans">
+            <div className="flex items-center justify-between border-b border-blue-100/80 pb-2.5">
               <span className="text-xs font-extrabold text-blue-900 flex items-center gap-1.5 uppercase tracking-wider">
                 <BookOpen className="h-4 w-4 text-blue-600" />
                 {promptTitle}
               </span>
+              <Badge variant="outline" className="bg-blue-100/70 text-blue-800 border-blue-200 text-[11px] font-bold">
+                Đề bài
+              </Badge>
             </div>
 
             {/* Question instructions if available */}
             {currentAnswer.instructions && (
-              <div className="text-xs text-slate-600 font-medium bg-blue-50/50 p-3 rounded-xl border border-blue-100 leading-relaxed">
+              <div className="text-xs text-slate-700 font-medium bg-white/90 p-3 rounded-xl border border-blue-100 leading-relaxed shadow-2xs">
                 <RichContent html={currentAnswer.instructions} />
               </div>
             )}
 
             {/* Question prompt text */}
             {currentAnswer.questionText && (
-              <div className="text-sm text-slate-900 leading-relaxed font-semibold">
+              <div className="text-sm text-slate-900 leading-relaxed font-semibold bg-white/60 p-3.5 rounded-xl border border-blue-100/70">
                 <RichContent html={currentAnswer.questionText} />
               </div>
             )}
 
             {/* Task Passage / Image / Chart if present */}
             {currentAnswer.passage && (
-              <div className="pt-2 border-t border-slate-100">
-                <div className="text-sm text-slate-800 leading-relaxed max-h-96 overflow-y-auto">
+              <div className="pt-2 border-t border-blue-100">
+                <div className="text-sm text-slate-800 leading-relaxed max-h-96 overflow-y-auto bg-white/90 p-3.5 rounded-xl border border-blue-100">
                   <RichContent html={currentAnswer.passage} variant="passage" />
                 </div>
               </div>
@@ -442,7 +462,7 @@ export function WritingGrader({
                 />
                 <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
                   <span className="text-[10px] text-slate-400 font-medium">Chọn nhanh:</span>
-                  {["6.0", "6.5", "7.0", "7.5", "8.0", "8.5", "9.0", "10"].map((pt) => (
+                  {["4.0", "4.5", "5.0", "5.5", "6.0", "6.5", "7.0", "7.5", "8.0", "8.5", "9.0", "10"].map((pt) => (
                     <button
                       key={pt}
                       type="button"
