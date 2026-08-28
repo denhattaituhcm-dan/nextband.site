@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
-import { API_BASE_URL, getAuthToken } from "@/lib/api";
+import { API_BASE_URL, getAuthToken, formatStorageUrl } from "@/lib/api";
+import { supabase } from "@/lib/supabase";
+import { AudioStorageService } from "@/lib/audioStorageService";
 
 export interface TranscriptSegment {
   id: string;
@@ -120,6 +122,23 @@ export function SpeakingTranscriptViewer({
 
   const [editingSegmentId, setEditingSegmentId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
+  const [resolvedAudioSrc, setResolvedAudioSrc] = useState<string>(audioUrl);
+
+  useEffect(() => {
+    if (!audioUrl) {
+      setResolvedAudioSrc("");
+      return;
+    }
+    let isMounted = true;
+    AudioStorageService.resolvePlayableUrl(audioUrl).then((src) => {
+      if (isMounted) {
+        setResolvedAudioSrc(src || formatStorageUrl(audioUrl));
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [audioUrl]);
 
   // Sync state if initialTranscript changes externally
   useEffect(() => {
@@ -290,7 +309,7 @@ export function SpeakingTranscriptViewer({
       {/* Audio element */}
       <audio
         ref={audioRef}
-        src={audioUrl}
+        src={resolvedAudioSrc || audioUrl}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onDurationChange={handleLoadedMetadata}

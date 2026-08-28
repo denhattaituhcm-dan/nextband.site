@@ -37,6 +37,9 @@ import {
 import { formatStorageUrl } from "@/lib/api";
 import { calculateGradingSla } from "@/lib/gradingSla";
 
+import { cn } from "@/lib/utils";
+import { AudioStorageService } from "@/lib/audioStorageService";
+
 export interface SpeakingAnswerItem {
   id?: string;
   questionId: string;
@@ -58,6 +61,7 @@ interface SpeakingGraderProps {
   submissionStatus?: string;
   submittedAt?: string;
   answers: SpeakingAnswerItem[];
+  submissionDetail?: any;
   isSubmitting: boolean;
   onBack?: () => void;
   onGradeSubmit: (payload: {
@@ -89,6 +93,7 @@ export function SpeakingGrader({
   submissionStatus = "SUBMITTED",
   submittedAt,
   answers,
+  submissionDetail,
   isSubmitting,
   onBack,
   onGradeSubmit,
@@ -96,10 +101,61 @@ export function SpeakingGrader({
   const [isDirty, setIsDirty] = useState<boolean>(false);
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
 
-  // 1 Speaking Submission = 1 Assignment Question = 1 Student Recording Answer
-  const currentAnswer = answers[0];
+  // Determine initial active index: prioritize answer with audio recording
+  const initialIndex = useMemo(() => {
+    if (!answers || answers.length === 0) return 0;
+    const idxWithAudio = answers.findIndex(
+      (a) => (a.audioUrl && a.audioUrl.trim().length > 0) || AudioStorageService.isAudio(a.answerText)
+    );
+    return idxWithAudio >= 0 ? idxWithAudio : 0;
+  }, [answers]);
+
+  const [activeAnswerIndex, setActiveAnswerIndex] = useState<number>(initialIndex);
+
+  // Sync active answer index if answers change
+  useEffect(() => {
+    setActiveAnswerIndex((prev) => (prev < answers.length ? prev : 0));
+  }, [answers.length]);
+
+  const currentAnswer = answers[activeAnswerIndex] || answers[0];
   const questionId = currentAnswer?.questionId || "";
   const answerId = currentAnswer?.id;
+
+  // Robust audio resolution with multiple fallbacks
+  const resolvedAudioUrl = useMemo(() => {
+    if (currentAnswer?.audioUrl && currentAnswer.audioUrl.trim().length > 0) {
+      return currentAnswer.audioUrl.trim();
+    }
+    if (AudioStorageService.isAudio(currentAnswer?.answerText)) {
+      return (currentAnswer?.answerText || "").trim();
+    }
+    // Fallback: look in other answers of the submission
+    const otherWithAudio = answers.find(
+      (a) => (a.audioUrl && a.audioUrl.trim().length > 0) || AudioStorageService.isAudio(a.answerText)
+    );
+    if (otherWithAudio) {
+      return (otherWithAudio.audioUrl || otherWithAudio.answerText || "").trim();
+    }
+    // Fallback: look in submissionDetail raw answers if available
+    const rawDetailAnswers = submissionDetail?.answers || [];
+    const matchedRaw = rawDetailAnswers.find(
+      (a: any) =>
+        (a.audioUrl && a.audioUrl.trim().length > 0) ||
+        (a.audio_url && a.audio_url.trim().length > 0) ||
+        AudioStorageService.isAudio(a.answerText || a.answer_text || a.studentAnswer)
+    );
+    if (matchedRaw) {
+      return (
+        matchedRaw.audioUrl ||
+        matchedRaw.audio_url ||
+        matchedRaw.answerText ||
+        matchedRaw.answer_text ||
+        matchedRaw.studentAnswer ||
+        ""
+      ).trim();
+    }
+    return "";
+  }, [currentAnswer, answers, submissionDetail]);
 
   const [criteriaScores, setCriteriaScores] = useState<CriteriaScores>({
     fluencyAndCoherence: null,
@@ -134,22 +190,42 @@ export function SpeakingGrader({
   }, [criteriaScores]);
 
   const handleSave = async (finalize: boolean) => {
-    if (!questionId) return;
+    if (!questionId && answers.length === 0) return;
 
     const bandStr = calculateSpeakingBand(criteriaScores);
     const score = parseFloat(bandStr) || 0;
 
-    const gradesPayload = [
-      {
-        answerId,
-        questionId,
-        score,
-        feedback: feedbackText,
-        criteriaScores,
-        primaryErrorCategory: revisionRequired ? primaryErrorCategory : null,
-        revisionRequired,
-      },
-    ];
+    const gradesPayload = answers.length > 0
+      ? answers.map((ans, idx) => {
+          if (idx === activeAnswerIndex || answers.length === 1) {
+            return {
+              answerId: ans.id,
+              questionId: ans.questionId,
+              score,
+              feedback: feedbackText,
+              criteriaScores,
+              primaryErrorCategory: revisionRequired ? primaryErrorCategory : null,
+              revisionRequired,
+            };
+          }
+          return {
+            answerId: ans.id,
+            questionId: ans.questionId,
+            score: ans.score ?? score,
+            feedback: ans.feedback || "",
+          };
+        })
+      : [
+          {
+            answerId,
+            questionId,
+            score,
+            feedback: feedbackText,
+            criteriaScores,
+            primaryErrorCategory: revisionRequired ? primaryErrorCategory : null,
+            revisionRequired,
+          },
+        ];
 
     await onGradeSubmit({
       grades: gradesPayload,
@@ -278,12 +354,50 @@ export function SpeakingGrader({
       <div className="flex-1 overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-0">
         {/* LEFT COLUMN (68%): PROMPT & AUDIO PLAYBACK */}
         <div className="lg:col-span-8 h-full overflow-y-auto p-6 space-y-6 bg-slate-50/50">
+          {/* MULTI-PART SELECTOR TABS (If exam has multiple questions / parts) */}
+          {answers.length > 1 && (
+            <div className="flex items-center gap-2 overflow-x-auto pb-1">
+              <span className="text-xs font-bold text-slate-500 mr-1 shrink-0">Chọn phần thi:</span>
+              {answers.map((ans, idx) => {
+                const hasAudio = !!(ans.audioUrl || AudioStorageService.isAudio(ans.answerText));
+                const isSelected = idx === activeAnswerIndex;
+                const partLabel = ans.questionTitle ? ans.questionTitle.replace(/<[^>]*>/g, " ").trim() : `Part ${idx + 1}`;
+                return (
+                  <button
+                    key={ans.questionId || idx}
+                    type="button"
+                    onClick={() => setActiveAnswerIndex(idx)}
+                    className={cn(
+                      "px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border shadow-2xs shrink-0 cursor-pointer",
+                      isSelected
+                        ? "bg-orange-600 text-white border-orange-600 shadow-orange-500/20"
+                        : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300"
+                    )}
+                  >
+                    <span>{partLabel}</span>
+                    {hasAudio ? (
+                      <span
+                        className={cn("w-2 h-2 rounded-full", isSelected ? "bg-white" : "bg-emerald-500")}
+                        title="Đã có file ghi âm"
+                      />
+                    ) : (
+                      <span
+                        className={cn("w-1.5 h-1.5 rounded-full", isSelected ? "bg-orange-300" : "bg-slate-300")}
+                        title="Chưa có file ghi âm"
+                      />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
           {/* ĐỀ BÀI (Speaking Question / Cue Card) */}
           <Card className="border border-amber-200 shadow-xs rounded-2xl p-5 bg-amber-50/60 space-y-3 font-sans">
             <div className="flex items-center justify-between border-b border-amber-100/80 pb-2.5">
               <span className="text-xs font-extrabold text-amber-900 flex items-center gap-1.5 uppercase tracking-wider">
                 <BookOpen className="h-4 w-4 text-orange-600" />
-                {(currentAnswer.questionTitle ? currentAnswer.questionTitle.replace(/<[^>]*>/g, " ").trim() : "") || "Yêu cầu Đề bài (Speaking Prompt)"}
+                {(currentAnswer?.questionTitle ? currentAnswer.questionTitle.replace(/<[^>]*>/g, " ").trim() : "") || "Yêu cầu Đề bài (Speaking Prompt)"}
               </span>
               <Badge variant="outline" className="bg-amber-100/70 text-amber-800 border-amber-200 text-[11px] font-bold">
                 Đề bài
@@ -291,21 +405,21 @@ export function SpeakingGrader({
             </div>
 
             {/* Instructions */}
-            {currentAnswer.instructions && (
+            {currentAnswer?.instructions && (
               <div className="text-xs text-slate-700 font-normal bg-white/90 p-3 rounded-xl border border-amber-100 leading-relaxed shadow-2xs">
                 <RichContent html={currentAnswer.instructions} />
               </div>
             )}
 
             {/* Question Text */}
-            {currentAnswer.questionText && (
+            {currentAnswer?.questionText && (
               <div className="text-sm text-slate-900 leading-relaxed font-normal bg-white/60 p-3.5 rounded-xl border border-amber-100/70">
                 <RichContent html={currentAnswer.questionText} />
               </div>
             )}
 
             {/* Cue Card / Passage */}
-            {currentAnswer.passage && (
+            {currentAnswer?.passage && (
               <div className="pt-2 border-t border-amber-100">
                 <div className="text-sm text-slate-800 leading-relaxed max-h-96 overflow-y-auto bg-white/90 p-3.5 rounded-xl border border-amber-100">
                   <RichContent html={currentAnswer.passage} variant="passage" />
@@ -323,7 +437,7 @@ export function SpeakingGrader({
                   Bản Thu Âm & Bóc Băng Văn Bản (Speech-to-Text)
                 </h3>
               </div>
-              {currentAnswer.audioUrl ? (
+              {resolvedAudioUrl ? (
                 <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs font-semibold">
                   Audio & Transcript khả dụng
                 </Badge>
@@ -334,11 +448,11 @@ export function SpeakingGrader({
               )}
             </div>
 
-            {currentAnswer.audioUrl ? (
+            {resolvedAudioUrl ? (
               <div className="space-y-3">
                 <SpeakingTranscriptViewer
-                  audioUrl={formatStorageUrl(currentAnswer.audioUrl)}
-                  initialTranscript={currentAnswer.answerText || undefined}
+                  audioUrl={resolvedAudioUrl}
+                  initialTranscript={AudioStorageService.isAudio(currentAnswer?.answerText) ? undefined : currentAnswer?.answerText || undefined}
                   submissionId={submissionId}
                   answerId={answerId}
                   questionId={questionId}

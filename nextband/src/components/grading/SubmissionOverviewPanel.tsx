@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { RichContent } from "@/components/exam/RichContent";
 import { formatStorageUrl } from "@/lib/api";
+import { AudioStorageService } from "@/lib/audioStorageService";
 import {
   detectExamSkill,
   isAutoGradedExam,
@@ -107,7 +108,14 @@ export function SubmissionOverviewPanel({
 
   const rawAnswerText = currentAnswer?.answerText || "";
   const wordCount = rawAnswerText.trim() ? rawAnswerText.trim().split(/\s+/).filter(Boolean).length : 0;
-  const rawAudioUrl = currentAnswer?.audioUrl || "";
+  const rawAudioUrl =
+    (currentAnswer?.audioUrl && currentAnswer.audioUrl.trim().length > 0)
+      ? currentAnswer.audioUrl.trim()
+      : AudioStorageService.isAudio(currentAnswer?.answerText)
+      ? currentAnswer?.answerText?.trim() || ""
+      : (resolvedAnswers.find((a) => (a.audioUrl && a.audioUrl.trim().length > 0) || AudioStorageService.isAudio(a.answerText))?.audioUrl ||
+         resolvedAnswers.find((a) => AudioStorageService.isAudio(a.answerText))?.answerText ||
+         "");
 
   const promptTitle = stripHtmlTags(currentAnswer?.questionTitle) || (isSpeaking ? "Đề bài Speaking" : isAutoGraded ? "Nội dung Bài thi" : "Đề bài Writing");
   const promptText = cleanPromptHtml(currentAnswer?.questionText || "");

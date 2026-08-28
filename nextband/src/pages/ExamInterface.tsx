@@ -25,6 +25,7 @@ import {
   SubmissionFlowStatus,
 } from "@/lib/examSyncEngine";
 import { compareCanonicalOrder } from "@/lib/questionOrder";
+import { AudioStorageService } from "@/lib/audioStorageService";
 import { routes } from "@/lib/routes";
 import {
   ArrowLeft,
@@ -600,15 +601,43 @@ export default function ExamInterface() {
     }
   };
 
+  // 1. Quét toàn bộ Question IDs từ TẤT CẢ sections của đề thi (Tuyệt đối không lấy cục bộ theo Active Section)
+  const allExamQuestionIds = useMemo(() => {
+    if (!examData?.sections) return new Set<string>();
+    const ids = new Set<string>();
+    (examData.sections || []).forEach((s: any) => {
+      (s.questionGroups || s.question_groups || []).forEach((g: any) => {
+        (g.questions || []).forEach((q: any) => {
+          if (q?.id) ids.add(q.id);
+        });
+      });
+    });
+    return ids;
+  }, [examData]);
+
+  // 2. Hàm chuẩn hóa payload answers dùng chung cho cả Autosave và Submit (Đảm bảo Data Contract)
+  const buildPayloadAnswers = useCallback(() => {
+    const currentAnswers = { ...answers, ...(answersRef.current || {}) };
+    return Object.entries(currentAnswers)
+      .filter(([qId]) => allExamQuestionIds.size === 0 || allExamQuestionIds.has(qId))
+      .map(([questionId, ansVal]) => {
+        const isAudio = AudioStorageService.isAudio(ansVal);
+        return {
+          questionId,
+          answerText: isAudio ? "" : typeof ansVal === "string" ? ansVal : ansVal != null ? JSON.stringify(ansVal) : "",
+          audioUrl: isAudio ? String(ansVal).trim() : undefined,
+        };
+      });
+  }, [answers, allExamQuestionIds]);
+
+  // Handle Answer Change with Local Draft & Debounced Remote Autosave
   const handleAnswerChange = useCallback(
     (questionId: string, answer: any) => {
       if (!hasTabLease) return; // Prevent mutation if secondary tab
 
-      setAnswers((prev) => {
-        const next = { ...prev, [questionId]: answer };
-        answersRef.current = next;
-        return next;
-      });
+      const newAnswers = { ...answersRef.current, [questionId]: answer };
+      answersRef.current = newAnswers;
+      setAnswers(newAnswers);
 
       // 1. Debounced Local Offline Persistence (300ms)
       if (submission?.id && user?.id && examId) {
@@ -627,6 +656,9 @@ export default function ExamInterface() {
             if (res.status === "SAVE_SUCCESS") {
               draftVersionRef.current = res.version;
               syncEngineRef.current?.onLocalSaved();
+              if (tabLeaseManagerRef.current) {
+                await tabLeaseManagerRef.current.recordLocalDraftSave(draftVersionRef.current);
+              }
             }
           } catch (err) {
             console.error("[DraftStore Save Error]", err);
@@ -643,28 +675,7 @@ export default function ExamInterface() {
         }
         autosaveTimerRef.current = setTimeout(async () => {
           try {
-            const currentAnswers = answersRef.current;
-            const validQuestionIds = new Set(
-              sections?.flatMap(
-                (s: any) =>
-                  (s.questionGroups || s.question_groups)?.flatMap((g: any) =>
-                    (g.questions || []).map((q: any) => q.id),
-                  ) || [],
-              ) || [],
-            );
-
-            const answerEntries = Object.entries(currentAnswers)
-              .filter(([qId]) => validQuestionIds.has(qId))
-              .map(([qId, ansText]) => ({
-                questionId: qId,
-                answerText:
-                  typeof ansText === "string"
-                    ? ansText
-                    : ansText != null
-                    ? JSON.stringify(ansText)
-                    : "",
-              }));
-
+            const answerEntries = buildPayloadAnswers();
             if (answerEntries.length > 0) {
               await submissionsApi.saveAnswers(submission.id, answerEntries);
             }
@@ -678,7 +689,7 @@ export default function ExamInterface() {
         }, 1500);
       }
     },
-    [submission?.id, sections, user?.id, examId, hasTabLease],
+    [submission?.id, user?.id, examId, hasTabLease, buildPayloadAnswers],
   );
 
   const handleQuestionClick = useCallback((questionId: string) => {
@@ -740,15 +751,16 @@ export default function ExamInterface() {
   );
 
   const handleSubmit = useCallback(async () => {
-    // 1. Cancel pending debounce timer
+    // 1. Hủy timer autosave đang chờ
     if (autosaveTimerRef.current) {
       clearTimeout(autosaveTimerRef.current);
     }
 
+    // 2. Chặn nộp bài nếu file ghi âm đang tải lên ngầm
     if (isAudioUploading) {
       toast({
         title: "Tệp ghi âm đang tải lên",
-        description: "Vui lòng đợi vài giây để tệp âm thanh hoàn tất tải lên trước khi nộp bài.",
+        description: "Hệ thống đang tải lên file thu âm, vui lòng đợi trong giây lát...",
         variant: "destructive",
       });
       return;
@@ -758,29 +770,10 @@ export default function ExamInterface() {
 
     setIsSubmitting(true);
     try {
-      // 2. Collect all valid question answers
-      const validQuestionIds = new Set(
-        sections?.flatMap(
-          (s: any) =>
-            (s.questionGroups || s.question_groups)?.flatMap((g: any) =>
-              (g.questions || []).map((q: any) => q.id),
-            ) || [],
-        ) || [],
-      );
+      // 3. Tổng hợp toàn bộ câu trả lời từ tất cả các Section/Part của bài thi
+      const answerEntries = buildPayloadAnswers();
 
-      const currentAnswers = { ...answers, ...(answersRef.current || {}) };
-      const answerEntries = Object.entries(currentAnswers)
-        .filter(([questionId]) => validQuestionIds.has(questionId))
-        .map(([questionId, answerVal]) => {
-          const isAudio = typeof answerVal === "string" && (answerVal.startsWith("http://") || answerVal.startsWith("https://") || answerVal.startsWith("/uploads/"));
-          return {
-            questionId,
-            answerText: typeof answerVal === "string" ? answerVal : JSON.stringify(answerVal),
-            audioUrl: isAudio ? answerVal : undefined,
-          };
-        });
-
-      // 3. Submit atomically via Sync Engine (Atomic Enqueue -> Idempotent Post -> Reconciliation)
+      // 4. Submit atomically qua Sync Engine
       const res = await syncEngineRef.current.submitExam(answerEntries);
 
       if (res.success && res.status === "SUBMITTED") {
@@ -841,14 +834,14 @@ export default function ExamInterface() {
       setShowReviewDialog(false);
     }
   }, [
-    answers,
+    buildPayloadAnswers,
+    isAudioUploading,
     exam,
     examId,
     location.state,
     navigate,
     queryClient,
     searchParams,
-    sections,
     submission,
     toast,
     user,

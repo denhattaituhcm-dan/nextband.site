@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { classesApi, examsApi, submissionsApi, attendanceApi, periodicReportsApi, formatStorageUrl } from "@/lib/api";
+import { AudioStorageService } from "@/lib/audioStorageService";
 import { deriveHomeworkStatus, HomeworkStatus } from "@/types/homework";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -494,20 +495,6 @@ export default function TeacherWorkspace() {
     enabled: !!currentHomework?.submissionId,
   });
 
-  const isAudioFile = (val?: string) => {
-    if (!val) return false;
-    const lower = String(val).toLowerCase().trim();
-    return (
-      lower.endsWith(".webm") ||
-      lower.endsWith(".mp3") ||
-      lower.endsWith(".wav") ||
-      lower.endsWith(".ogg") ||
-      lower.endsWith(".m4a") ||
-      lower.includes("speaking-recordings/") ||
-      lower.includes("/audio/")
-    );
-  };
-
   const resolvedAnswers = useMemo(() => {
     if (currentSubmissionDetail && Array.isArray(currentSubmissionDetail.answers) && currentSubmissionDetail.answers.length > 0) {
       const examQuestions: any[] = [];
@@ -531,12 +518,16 @@ export default function TeacherWorkspace() {
       );
 
       if (examQuestions.length > 0) {
-        return examQuestions.map((q) => {
-          const a: any = answerByQuestionId.get(q.id);
-          const rawAns = a?.answerText || a?.studentAnswer || "";
-          const rawAudio = a?.audioUrl || "";
-          const resolvedAudioUrl = rawAudio || (isAudioFile(rawAns) ? rawAns : "");
-          const resolvedAnswerText = isAudioFile(rawAns) ? "" : rawAns;
+        return examQuestions.map((q, idx) => {
+          const a: any =
+            answerByQuestionId.get(q.id) ||
+            (currentSubmissionDetail.answers || [])[idx] ||
+            (currentHomework?.answers || [])[idx];
+          const rawAns = a?.answerText || a?.answer_text || a?.studentAnswer || "";
+          const rawAudio = a?.audioUrl || a?.audio_url || "";
+          const isAudio = AudioStorageService.isAudio(rawAudio) || AudioStorageService.isAudio(rawAns);
+          const resolvedAudioUrl = (rawAudio && rawAudio.trim().length > 0) ? rawAudio.trim() : (AudioStorageService.isAudio(rawAns) ? rawAns.trim() : "");
+          const resolvedAnswerText = AudioStorageService.isAudio(rawAns) ? "" : rawAns;
 
           return {
             id: a?.id,
@@ -555,10 +546,10 @@ export default function TeacherWorkspace() {
       }
 
       return currentSubmissionDetail.answers.map((a: any) => {
-        const rawAns = a.answerText || a.studentAnswer || "";
-        const rawAudio = a.audioUrl || "";
-        const resolvedAudioUrl = rawAudio || (isAudioFile(rawAns) ? rawAns : "");
-        const resolvedAnswerText = isAudioFile(rawAns) ? "" : rawAns;
+        const rawAns = a.answerText || a.answer_text || a.studentAnswer || "";
+        const rawAudio = a.audioUrl || a.audio_url || "";
+        const resolvedAudioUrl = (rawAudio && rawAudio.trim().length > 0) ? rawAudio.trim() : (AudioStorageService.isAudio(rawAns) ? rawAns.trim() : "");
+        const resolvedAnswerText = AudioStorageService.isAudio(rawAns) ? "" : rawAns;
 
         return {
           id: a.id,
@@ -892,6 +883,7 @@ export default function TeacherWorkspace() {
             submissionStatus={currentHomework.status}
             submittedAt={currentHomework.submittedAt}
             answers={resolvedAnswers}
+            submissionDetail={currentSubmissionDetail}
             isSubmitting={isSubmitting}
             onBack={() => setIsFocusMode(false)}
             onGradeSubmit={handleGradeSubmit}

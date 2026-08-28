@@ -168,11 +168,11 @@ export default function Auth() {
             </div>
           </Link>
           <div className="space-y-1">
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground uppercase">
-              Chinh phục IELTS
+            <h1 className="text-[30px] font-semibold tracking-tight text-primary uppercase">
+              TƯ DUY BẢN XỨ TỪ GỐC RỄ
             </h1>
-            <p className="text-sm sm:text-base text-muted-foreground font-medium">
-              Từ nền tảng đến band điểm mục tiêu.
+            <p className="text-[14px] text-slate-500 font-normal">
+              Hiểu đúng cơ chế ngôn ngữ — Học từ bản chất, dùng trọn đời.
             </p>
           </div>
         </div>

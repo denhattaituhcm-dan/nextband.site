@@ -194,6 +194,16 @@ export const formatStorageUrl = (path: string | null | undefined) => {
   if (!path) return "";
   if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("blob:") || path.startsWith("data:")) return path;
   let cleanPath = path.startsWith("/") ? path.slice(1) : path;
+  if (cleanPath.startsWith("speaking-recordings/")) {
+    const subClean = cleanPath.replace(/^speaking-recordings\//, "");
+    const { data } = supabase.storage.from("speaking-recordings").getPublicUrl(subClean);
+    return data.publicUrl;
+  }
+  if (cleanPath.startsWith("exam-assets/")) {
+    const subClean = cleanPath.replace(/^exam-assets\//, "");
+    const { data } = supabase.storage.from("exam-assets").getPublicUrl(subClean);
+    return data.publicUrl;
+  }
   if (!cleanPath.includes("/")) {
     if (/\.(mp3|wav|ogg|webm|m4a|aac)$/i.test(cleanPath)) {
       cleanPath = `uploads/audio/${cleanPath}`;

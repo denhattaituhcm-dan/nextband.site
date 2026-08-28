@@ -576,20 +576,31 @@ export class ExamSubmissionService {
         const answerText = typeof ans.answerText === "object" ? JSON.stringify(ans.answerText) : ans.answerText;
 
         if (existingAns) {
+          const updateData: any = {};
+          if (answerText !== undefined) {
+            updateData.answerText = answerText;
+          }
+          // 1. Chuỗi audioUrl hợp lệ -> cập nhật mới
+          if (typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "") {
+            updateData.audioUrl = ans.audioUrl.trim();
+          }
+          // 2. Yêu cầu xóa rõ ràng (explicit clear) -> gán null
+          else if (ans.clearAudio === true || ans.audioUrl === null) {
+            updateData.audioUrl = null;
+          }
+          // 3. Nếu ans.audioUrl là undefined (autosave thông thường) -> Giữ nguyên audioUrl cũ trong DB
+
           await tx.answer.update({
             where: { id: existingAns.id },
-            data: {
-              answerText,
-              audioUrl: ans.audioUrl || null,
-            },
+            data: updateData,
           });
         } else {
           await tx.answer.create({
             data: {
               submissionId: id,
               questionId: ans.questionId,
-              answerText,
-              audioUrl: ans.audioUrl || null,
+              answerText: answerText ?? null,
+              audioUrl: typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "" ? ans.audioUrl.trim() : null,
             },
           });
         }
@@ -763,21 +774,29 @@ export class ExamSubmissionService {
 
         let savedAns: any;
         if (existingAns) {
+          const updateData: any = {
+            score: evalResult ? evalResult.score : existingAns.score,
+          };
+          if (answerText !== undefined) {
+            updateData.answerText = answerText;
+          }
+          if (typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "") {
+            updateData.audioUrl = ans.audioUrl.trim();
+          } else if (ans.clearAudio === true || ans.audioUrl === null) {
+            updateData.audioUrl = null;
+          }
+
           savedAns = await tx.answer.update({
             where: { id: existingAns.id },
-            data: {
-              answerText,
-              audioUrl: ans.audioUrl || null,
-              score: evalResult ? evalResult.score : null,
-            },
+            data: updateData,
           });
         } else {
           savedAns = await tx.answer.create({
             data: {
               submissionId: id,
               questionId: ans.questionId,
-              answerText,
-              audioUrl: ans.audioUrl || null,
+              answerText: answerText ?? null,
+              audioUrl: typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "" ? ans.audioUrl.trim() : null,
               score: evalResult ? evalResult.score : null,
             },
           });
