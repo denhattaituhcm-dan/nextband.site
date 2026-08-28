@@ -10,6 +10,7 @@ import { adaptSection } from "../adapters/section.adapter";
 import { adaptExam } from "../adapters/exam.adapter";
 import { adaptSession } from "../adapters/session.adapter";
 import { normalizeSubmissionStatus } from "./submissionStatus";
+import { toCanonicalClass, toCanonicalStudent } from "./classDataMapper";
 
 export const resolveApiBaseUrl = (): string => {
   const envUrl =
@@ -2892,16 +2893,7 @@ export const classesApi = {
       if (res.ok) {
         const data = await res.json();
         if (data) {
-          return {
-            ...data,
-            courseId: data.courseId || data.course_id,
-            branchId: data.branchId || data.branch_id,
-            roomId: data.roomId || data.room_id,
-            teacherId: data.teacherId || data.teacher_id,
-            startDate: data.startDate || data.start_date,
-            endDate: data.endDate || data.end_date,
-            isActive: data.isActive ?? data.is_active ?? true,
-          };
+          return toCanonicalClass(data);
         }
       }
     } catch {
@@ -2945,22 +2937,14 @@ export const classesApi = {
       }
     }
 
-    // Map canonical students array with strict type structure
-    const canonicalStudents = (data.class_students || []).map((cs: any) => {
+    // Map raw class_students with attached profiles before canonical normalization
+    const mergedClassStudents = (data.class_students || []).map((cs: any) => {
       const matchedProfile = students.find((p: any) => (p.user_id || p.id) === cs.student_id);
       return {
-        id: cs.id,
-        studentId: cs.student_id,
-        fullName: matchedProfile?.full_name || matchedProfile?.fullName || matchedProfile?.email || "Học viên",
-        email: matchedProfile?.email || "",
-        avatarUrl: matchedProfile?.avatar_url || matchedProfile?.avatarUrl || undefined,
-        joinedAt: cs.created_at || data.created_at,
-        status: matchedProfile?.is_active === false || matchedProfile?.status === "suspended" ? "suspended" : "active",
-        is_active: matchedProfile?.is_active !== false,
+        ...cs,
+        student: matchedProfile || null,
       };
     });
-
-    const activeStudents = canonicalStudents.filter((s: any) => s.status === "active");
 
     // Fetch course information if course_id exists
     let courseProfile = null;
@@ -3000,31 +2984,16 @@ export const classesApi = {
       if (rRow) roomProfile = rRow;
     }
 
-    return {
+    const mergedPayload = {
       ...data,
-      id: data.id,
-      name: data.name,
-      description: data.description || "",
-      status: data.status || (data.is_active === false ? "CLOSED" : "IN_PROGRESS"),
-      isActive: data.is_active ?? true,
-      startDate: data.start_date,
-      endDate: data.end_date,
-      teacherId: data.teacher_id,
-      courseId: data.course_id,
-      branchId: data.branch_id,
-      roomId: data.room_id,
+      students: mergedClassStudents,
       teacher: teacherProfile,
       course: courseProfile,
       branch: branchProfile,
       room: roomProfile,
-      class_students: canonicalStudents,
-      students: canonicalStudents,
-      activeStudents,
-      studentCount: activeStudents.length,
-      _count: {
-        students: activeStudents.length,
-      },
     };
+
+    return toCanonicalClass(mergedPayload);
   },
 
   create: async (body: any) => {

@@ -87,9 +87,11 @@ export const StudentsTab: React.FC = () => {
       return {
         id: lesson.id,
         title: lesson.title || `Homework ${hwNum}`,
+        type: lesson.type || lesson.exam?.type || lesson.sectionType || sub?.exam?.examType || (lesson.title || "").toLowerCase(),
         status: isGraded ? "graded" : isSubmitted ? "submitted" : isOverdue ? "overdue" : "unsubmitted",
         score: sub?.totalScore ?? sub?.total_score ?? null,
         bandScore: sub?.totalScore ?? sub?.total_score ?? null,
+        gradedBy: sub?.gradedBy || sub?.graded_by,
         isOverdue,
       };
     });
@@ -139,7 +141,7 @@ export const StudentsTab: React.FC = () => {
     const mapped = mapToProgressReportData({
       classId,
       studentId,
-      studentName: student.fullName || student.full_name || student.email || "Học viên",
+      studentName: student.fullName,
       className: classData?.name || "Lớp học",
       teacherName: classData?.teacher?.fullName || classData?.teacher_name || null,
       targetBand:
@@ -292,14 +294,14 @@ export const StudentsTab: React.FC = () => {
                       <TableCell>
                         <div className="flex items-center gap-2.5">
                           <Avatar className="h-7 w-7">
-                            <AvatarImage src={student.avatarUrl || student.avatar_url} />
-                            <AvatarFallback className="text-xs bg-emerald-100 text-emerald-800">
-                              {(student.fullName || student.full_name || student.email || "HV")?.slice(0, 2).toUpperCase()}
+                            <AvatarImage src={student.avatarUrl} />
+                            <AvatarFallback className="text-xs bg-emerald-100 text-emerald-800 font-semibold">
+                              {(student.fullName || "HV").slice(0, 2).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className="font-medium text-sm">{student.fullName || student.full_name || student.email}</div>
-                            <div className="text-xs text-muted-foreground">{student.email}</div>
+                            <div className="font-medium text-sm text-foreground">{student.fullName}</div>
+                            {student.email && <div className="text-xs text-muted-foreground">{student.email}</div>}
                           </div>
                         </div>
                       </TableCell>

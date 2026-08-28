@@ -132,13 +132,13 @@ export const AttendanceSheet: React.FC<AttendanceSheetProps> = ({ classId, sessi
         // Map and merge with active students to ensure all class students are listed
         const existingRecords = data.students || [];
         const mergedItems: StudentAttendanceItem[] = activeStudents.map((st: any) => {
-          const stId = st.studentId || st.id || st.user_id;
+          const stId = st.studentId || st.id;
           const found = existingRecords.find((r: any) => r.studentId === stId);
 
           return {
             studentId: stId,
-            studentName: st.fullName || st.full_name || st.email || "Học viên",
-            avatarUrl: st.avatarUrl || st.avatar_url,
+            studentName: st.fullName,
+            avatarUrl: st.avatarUrl,
             status: found ? found.status : "UNMARKED",
             note: found ? (found.notes || found.note || "") : "",
           };
@@ -150,9 +150,9 @@ export const AttendanceSheet: React.FC<AttendanceSheetProps> = ({ classId, sessi
         // Fallback default list from activeStudents
         setItems(
           activeStudents.map((st: any) => ({
-            studentId: st.studentId || st.id || st.user_id,
-            studentName: st.fullName || st.full_name || st.email || "Học viên",
-            avatarUrl: st.avatarUrl || st.avatar_url,
+            studentId: st.studentId || st.id,
+            studentName: st.fullName,
+            avatarUrl: st.avatarUrl,
             status: "UNMARKED",
             note: "",
           }))
@@ -163,9 +163,9 @@ export const AttendanceSheet: React.FC<AttendanceSheetProps> = ({ classId, sessi
       // Populate with active students as fallback so UI remains functional
       setItems(
         activeStudents.map((st: any) => ({
-          studentId: st.studentId || st.id || st.user_id,
-          studentName: st.fullName || st.full_name || st.email || "Học viên",
-          avatarUrl: st.avatarUrl || st.avatar_url,
+          studentId: st.studentId || st.id,
+          studentName: st.fullName,
+          avatarUrl: st.avatarUrl,
           status: "UNMARKED",
           note: "",
         }))

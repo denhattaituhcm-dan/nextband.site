@@ -50,7 +50,7 @@ export const StudentDrawer: React.FC<StudentDrawerProps> = ({
 
   useEffect(() => {
     if (student) {
-      setFullName(student.fullName || student.full_name || "");
+      setFullName(student.fullName || "");
       setPhone(student.phone || "");
     }
   }, [student]);
@@ -64,14 +64,13 @@ export const StudentDrawer: React.FC<StudentDrawerProps> = ({
     }
     setIsSaving(true);
     try {
-      const studentId = student.studentId || student.student_id || student.id || student.userId;
+      const studentId = student.studentId || student.id;
       await usersApi.update(studentId, {
         fullName: fullName.trim(),
         phone: phone.trim(),
       });
 
       student.fullName = fullName.trim();
-      student.full_name = fullName.trim();
       student.phone = phone.trim();
 
       queryClient.invalidateQueries({ queryKey: ["class-workspace"] });
@@ -102,15 +101,15 @@ export const StudentDrawer: React.FC<StudentDrawerProps> = ({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <Avatar className="h-12 w-12">
-                  <AvatarImage src={student.avatarUrl || student.avatar_url} />
+                  <AvatarImage src={student.avatarUrl} />
                   <AvatarFallback className="bg-emerald-100 text-emerald-800 font-bold">
-                    {(fullName || student.email || "HV")?.slice(0, 2).toUpperCase()}
+                    {(fullName || "HV")?.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <div className="flex items-center gap-1.5">
                     <SheetTitle className="text-xl font-bold">
-                      {fullName || student.email}
+                      {fullName || "Học viên"}
                     </SheetTitle>
                     <Button
                       variant="ghost"

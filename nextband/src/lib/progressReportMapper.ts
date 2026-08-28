@@ -139,6 +139,10 @@ export function mapToProgressReportData(input: ProgressReportInput): ProgressRep
   let needsImprovementCount = 0;
   let totalScoreSum = 0;
   let scoredItemsCount = 0;
+  let speakingScoreSum = 0;
+  let speakingCount = 0;
+  let writingScoreSum = 0;
+  let writingCount = 0;
 
   hwList.forEach((hw: any) => {
     const st = String(hw.status || "").toLowerCase();
@@ -147,6 +151,7 @@ export function mapToProgressReportData(input: ProgressReportInput): ProgressRep
     const isOverdue = !!hw.isOverdue || st === "overdue";
     const isInProgress = st === "in_progress" || st === "needs_revision";
     const type = String(hw.type || "").toLowerCase();
+    const title = String(hw.title || "").toLowerCase();
 
     if (isSubmitted) {
       completedCount++;
@@ -173,6 +178,27 @@ export function mapToProgressReportData(input: ProgressReportInput): ProgressRep
           passedCount++;
         } else {
           needsImprovementCount++;
+        }
+
+        const isSpeaking =
+          type.includes("speak") ||
+          title.includes("speaking") ||
+          title.includes("nói") ||
+          !!hw.audioUrl;
+        const isWriting =
+          type.includes("writ") ||
+          title.includes("writing") ||
+          title.includes("viết") ||
+          title.includes("task 1") ||
+          title.includes("task 2") ||
+          title.includes("essay");
+
+        if (isSpeaking) {
+          speakingScoreSum += scoreVal;
+          speakingCount++;
+        } else if (isWriting) {
+          writingScoreSum += scoreVal;
+          writingCount++;
         }
       } else {
         passedCount++;
@@ -203,6 +229,19 @@ export function mapToProgressReportData(input: ProgressReportInput): ProgressRep
     const avg = totalScoreSum / scoredItemsCount;
     averageScore = `${(Math.round(avg * 10) / 10).toFixed(1)}/10`;
   }
+
+  // Format skill average rounded to nearest 0.5 (e.g. 5.38 -> 5.5)
+  const formatSkillAvg = (sum: number, count: number): string | null => {
+    if (count === 0) return null;
+    const rawAvg = sum / count;
+    const rounded = Math.round(rawAvg * 2) / 2;
+    return rounded.toFixed(1);
+  };
+
+  const skillAverages = {
+    speaking: speakingCount > 0 ? { averageBand: formatSkillAvg(speakingScoreSum, speakingCount)!, count: speakingCount } : null,
+    writing: writingCount > 0 ? { averageBand: formatSkillAvg(writingScoreSum, writingCount)!, count: writingCount } : null,
+  };
 
   // 3. Kết quả các bài đánh giá gần nhất
   const gradedHws = hwList.filter(
@@ -329,6 +368,7 @@ export function mapToProgressReportData(input: ProgressReportInput): ProgressRep
       teacherGradedCount,
       passedCount,
       needsImprovementCount,
+      skillAverages,
       submitted: completedCount, // backward compat
       pending: unsubmittedCount + inProgressCount, // backward compat
     },

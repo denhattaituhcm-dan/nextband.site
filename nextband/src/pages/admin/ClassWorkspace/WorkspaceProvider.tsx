@@ -52,10 +52,10 @@ export const WorkspaceProvider: React.FC<{
       // Single-point normalization of sessions
       const canonicalSessions = (rawSessions || []).map(normalizeSession);
 
-      // Single canonical mapping for students from class_students / profiles
-      const canonicalStudents = cls.students || cls.class_students || [];
-      const activeStudents = canonicalStudents.filter(
-        (s: any) => s.isActive !== false && s.status !== "suspended" && s.status !== "inactive"
+      // Consume CanonicalClass students directly from boundary
+      const canonicalStudents = cls.students || [];
+      const activeStudents = cls.activeStudents || canonicalStudents.filter(
+        (s: any) => s.isActive !== false && s.status !== "suspended" && s.status !== "inactive" && s.status !== "SUSPENDED" && s.status !== "DROPPED"
       );
 
       // Fetch course homeworks/exams and class-specific deadlines

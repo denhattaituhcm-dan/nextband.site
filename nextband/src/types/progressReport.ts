@@ -61,6 +61,10 @@ export interface ProgressReportData {
     teacherGradedCount: number;           // Writing, Speaking do giáo viên chấm
     passedCount: number;                  // Số bài đạt chuẩn
     needsImprovementCount: number;        // Số bài cần sửa / cải thiện
+    skillAverages?: {
+      speaking?: { averageBand: number | string; count: number } | null;
+      writing?: { averageBand: number | string; count: number } | null;
+    } | null;
     submitted?: number;                   // for backward compatibility
     pending?: number;                     // for backward compatibility
   };

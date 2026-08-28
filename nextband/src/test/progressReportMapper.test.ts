@@ -198,6 +198,12 @@ describe("Academic Progress Report Mapper - Unit Tests", () => {
     // 4. Homework Layer 3: Nguồn chấm
     expect(result.homework.autoGradedCount).toBe(10);
     expect(result.homework.teacherGradedCount).toBe(8);
+
+    // 5. Skill Averages: Writing (5x7.5 + 3x4.5) / 8 = 6.375 -> "6.5"
+    expect(result.homework.skillAverages?.writing).toBeDefined();
+    expect(result.homework.skillAverages?.writing?.count).toBe(8);
+    expect(result.homework.skillAverages?.writing?.averageBand).toBe("6.5");
+    expect(result.homework.skillAverages?.speaking).toBeNull();
   });
 
   it("Scenario 6: Target Band extraction and flexible fallback resolution", () => {
@@ -239,6 +245,40 @@ describe("Academic Progress Report Mapper - Unit Tests", () => {
 
     expect(res.period.from).toBe("01/07/2026");
     expect(res.period.to).toBe("25/08/2026");
+  });
+
+  it("Scenario 8: Speaking & Writing course averages (5.0, 5.5, 5.5, 6.0 -> 5.5 and 5.0, 5.0, 5.5, 6.0 -> 5.5)", () => {
+    const homeworks = [
+      // 4 Speaking sessions
+      { id: "s1", title: "Speaking Mock 1", type: "speaking", status: "graded", bandScore: 5.0 },
+      { id: "s2", title: "Speaking Mock 2", type: "speaking", status: "graded", bandScore: 5.5 },
+      { id: "s3", title: "Speaking Mock 3", type: "speaking", status: "graded", bandScore: 5.5 },
+      { id: "s4", title: "Speaking Mock 4", type: "speaking", status: "graded", bandScore: 6.0 },
+
+      // 4 Writing sessions
+      { id: "w1", title: "Writing Task 1 Essay", type: "writing", status: "graded", bandScore: 5.0 },
+      { id: "w2", title: "Writing Task 2 Essay", type: "writing", status: "graded", bandScore: 5.0 },
+      { id: "w3", title: "Writing Task 1 Chart", type: "writing", status: "graded", bandScore: 5.5 },
+      { id: "w4", title: "Writing Task 2 Opinion", type: "writing", status: "graded", bandScore: 6.0 },
+    ];
+
+    const result = mapToProgressReportData({
+      studentName: "Học Viên A",
+      className: "M01 07.2026",
+      homeworks,
+    });
+
+    // Speaking: (5.0 + 5.5 + 5.5 + 6.0) / 4 = 22.0 / 4 = 5.5
+    expect(result.homework.skillAverages?.speaking).toEqual({
+      averageBand: "5.5",
+      count: 4,
+    });
+
+    // Writing: (5.0 + 5.0 + 5.5 + 6.0) / 4 = 21.5 / 4 = 5.375 -> rounded to 5.5
+    expect(result.homework.skillAverages?.writing).toEqual({
+      averageBand: "5.5",
+      count: 4,
+    });
   });
 });
 

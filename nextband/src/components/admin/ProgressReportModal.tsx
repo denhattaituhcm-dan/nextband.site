@@ -242,7 +242,7 @@ export function ProgressReportModal({
     const logoImg = await loadLogoImage();
 
     const width = 760;
-    const height = 980;
+    const height = 1008;
     const canvas = document.createElement("canvas");
     canvas.width = width * 2;
     canvas.height = height * 2;
@@ -416,7 +416,7 @@ export function ProgressReportModal({
     currY += 16;
 
     const hw = data.homework;
-    const hwBoxH = 126;
+    const hwBoxH = 152;
     drawRoundedRect(ctx, 20, currY, width - 40, hwBoxH, 10, "#f8fafc", "#e2e8f0", 1);
 
     // Lớp 1: Mức độ hoàn thành
@@ -462,7 +462,21 @@ export function ProgressReportModal({
     ctx.fillText(
       `• Nguồn chấm: ${hw.autoGradedCount || 0} bài tự động · ${hw.teacherGradedCount || 0} bài giáo viên chấm & nhận xét`,
       36,
-      currY + 104
+      currY + 102
+    );
+
+    // Lớp 4: Điểm TB Speaking & Writing trong khóa (Chỉ số cốt lõi giảm nhiễu)
+    const spkAvg = hw.skillAverages?.speaking;
+    const wrtAvg = hw.skillAverages?.writing;
+    const spkText = spkAvg ? `Speaking: ${spkAvg.averageBand} (${spkAvg.count} bài)` : "Speaking: Đang tích lũy";
+    const wrtText = wrtAvg ? `Writing: ${wrtAvg.averageBand} (${wrtAvg.count} bài)` : "Writing: Đang tích lũy";
+
+    ctx.fillStyle = "#4338ca";
+    ctx.font = `700 13px ${FONT_FAMILY}`;
+    ctx.fillText(
+      `• TB Kỹ năng (GV chấm): 🗣️ ${spkText}   |   ✍️ ${wrtText}`,
+      36,
+      currY + 128
     );
 
     currY += hwBoxH + 20;
@@ -843,6 +857,26 @@ export function ProgressReportModal({
                 </div>
                 <div className="text-[10px] text-sky-700 dark:text-sky-400">
                   • Nguồn chấm: {data.homework.autoGradedCount || 0} bài tự động · {data.homework.teacherGradedCount || 0} bài giáo viên chấm & nhận xét
+                </div>
+                <div className="text-[10.5px] font-semibold text-indigo-700 dark:text-indigo-400 pt-1 border-t border-slate-200/60 dark:border-slate-800 flex flex-wrap items-center gap-x-2.5 gap-y-0.5">
+                  <span className="font-bold text-slate-700 dark:text-slate-300">• TB Kỹ năng (GV chấm):</span>
+                  <span>
+                    🗣️ Speaking:{" "}
+                    <strong>
+                      {data.homework.skillAverages?.speaking
+                        ? `${data.homework.skillAverages.speaking.averageBand} (${data.homework.skillAverages.speaking.count} bài)`
+                        : "Đang tích lũy"}
+                    </strong>
+                  </span>
+                  <span className="text-slate-300 dark:text-slate-700">|</span>
+                  <span>
+                    ✍️ Writing:{" "}
+                    <strong>
+                      {data.homework.skillAverages?.writing
+                        ? `${data.homework.skillAverages.writing.averageBand} (${data.homework.skillAverages.writing.count} bài)`
+                        : "Đang tích lũy"}
+                    </strong>
+                  </span>
                 </div>
               </div>
             </div>
