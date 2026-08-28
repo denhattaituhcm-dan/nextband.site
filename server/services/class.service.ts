@@ -115,16 +115,15 @@ export class ClassService {
     return classData;
   }
 
-  // Use Case: Create Class (Admin or Teacher)
+  // Use Case: Create Class (Admin Only)
   async createClass(user: { id: string; roles: string[] }, data: any) {
     const isAdmin = user.roles.includes("admin");
-    const isTeacher = user.roles.includes("teacher");
 
-    if (!isAdmin && !isTeacher) {
-      throw new AuthorizationError("Chỉ giáo viên hoặc admin mới có quyền tạo lớp", 403);
+    if (!isAdmin) {
+      throw new AuthorizationError("Chỉ quản trị viên (Admin) mới có quyền tạo lớp học", 403);
     }
 
-    const teacherId = isAdmin ? (data.teacherId || user.id) : user.id;
+    const teacherId = data.teacherId || null;
 
     let courseId = data.courseId;
     if (!courseId) {
@@ -164,7 +163,7 @@ export class ClassService {
   }
 
 
-  // Use Case: Update Class with Ownership Guard
+  // Use Case: Update Class (Admin Only)
   async updateClass(user: { id: string; roles: string[] }, id: string, data: any) {
     const classData = await this.repo.findById(id);
     if (!classData) {
@@ -172,8 +171,8 @@ export class ClassService {
     }
 
     const isAdmin = user.roles.includes("admin");
-    if (!isAdmin && classData.teacherId !== user.id) {
-      throw new AuthorizationError("Từ chối truy cập - bạn không có quyền sửa lớp này", 403);
+    if (!isAdmin) {
+      throw new AuthorizationError("Chỉ quản trị viên (Admin) mới có quyền chỉnh sửa thông tin lớp học", 403);
     }
 
     const updatePayload: any = {};

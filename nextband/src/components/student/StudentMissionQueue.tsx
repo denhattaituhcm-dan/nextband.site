@@ -14,21 +14,10 @@ import {
   FileEdit,
 } from "lucide-react";
 import { routes } from "@/lib/routes";
-
-interface MissionItem {
-  id: string;
-  examId: string;
-  title: string;
-  description?: string;
-  status: string;
-  deadline?: string;
-  countdown?: { text: string; urgent?: boolean };
-  submission?: any;
-  priority?: number;
-}
+import { ActionQueueItem } from "@/lib/homeworkStatusHelper";
 
 interface StudentMissionQueueProps {
-  missions: MissionItem[];
+  missions: ActionQueueItem[];
   enrolledClassId?: string;
 }
 
@@ -126,7 +115,7 @@ export function StudentMissionQueue({
           const isTopOne = index === 0; // Bài ưu tiên số 1 tuyệt đối
           const isRevision = item.status === "REVISION_REQUIRED";
           const isOverdue = item.status === "OVERDUE";
-          const isDueSoon = item.priority === 3 || item.countdown?.urgent;
+          const isDueSoon = item.priority === 3;
 
           return (
             <div

@@ -36,6 +36,7 @@ export function SpeakingSection({
   answers,
   onAnswerChange,
   onRecordingStateChange,
+  onUploadingStateChange,
   questionRefs,
   currentQuestionId,
   onQuestionFocus,

@@ -30,19 +30,19 @@ export default async function classesRoutes(fastify: FastifyInstance) {
     return controller.getById(request, reply);
   });
 
-  // POST /classes - Tạo lớp mới
+  // POST /classes - Tạo lớp mới (Chỉ dành cho Quản trị viên / Admin)
   fastify.post(
     "/",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
       return controller.create(request, reply);
     }
   );
 
-  // PUT /classes/:id - Cập nhật lớp
+  // PUT /classes/:id - Cập nhật thông tin lớp (Chỉ dành cho Quản trị viên / Admin)
   fastify.put<{ Params: { id: string } }>(
     "/:id",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
       return controller.update(request, reply);
     }

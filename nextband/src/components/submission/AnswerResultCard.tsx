@@ -51,6 +51,20 @@ interface AnswerResultCardProps {
   holisticParentScore?: number | null;
 }
 
+function parseJsonAnswer(val: string | null): any {
+  if (!val) return {};
+  try {
+    const parsed = JSON.parse(val);
+    return typeof parsed === "object" && parsed !== null ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function normalizeOptionValue(val: string): string {
+  return String(val || "").trim().toLowerCase();
+}
+
 const questionTypeLabels: Record<string, string> = {
   multiple_choice: "Trắc nghiệm",
   fill_blank: "Điền đáp án",
@@ -106,6 +120,33 @@ export function AnswerResultCard({
   const choiceOptions = Array.isArray(options)
     ? options.map((option) => String(option).trim()).filter(Boolean)
     : [];
+
+  const correctSelections = (correctAnswer || "")
+    .split("|")
+    .map((v) => v.trim())
+    .filter(Boolean);
+
+  const studentSelections: string[] = (() => {
+    if (!answerText) return [];
+    try {
+      const parsed = JSON.parse(answerText);
+      if (Array.isArray(parsed)) return parsed.map((v) => String(v).trim());
+    } catch {
+      // fallback to delimiter
+    }
+    return answerText
+      .split("|")
+      .flatMap((p) => p.split(","))
+      .map((v) => v.trim())
+      .filter(Boolean);
+  })();
+
+  const normalizedStudentSelections = new Set(
+    studentSelections.map((v) => normalizeOptionValue(v))
+  );
+  const normalizedCorrectSelections = new Set(
+    correctSelections.map((v) => normalizeOptionValue(v))
+  );
 
   // For auto-gradable sections that have been submitted, always show results
   const shouldShowAutoResult = isAutoGradable && (isSubmitted || isGraded);

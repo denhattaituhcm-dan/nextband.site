@@ -131,6 +131,7 @@ export function QuestionRecorder({
   maxDurationSeconds = 120,
   onAnswerChange,
   onRecordingStateChange,
+  onUploadingStateChange,
   className,
 }: QuestionRecorderProps) {
   const [phase, setPhase] = useState<"idle" | "recording" | "processing" | "review" | "failed">(

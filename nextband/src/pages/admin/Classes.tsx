@@ -462,7 +462,7 @@ export default function AdminClasses() {
             </p>
           </div>
         </div>
-        {(isAdmin || isTeacher) && (
+        {isAdmin && (
           <Button onClick={openCreate}>
             <Plus className="mr-2 h-4 w-4" />
             Thêm lớp học
@@ -760,7 +760,7 @@ export default function AdminClasses() {
                           Workspace
                           <ArrowRight className="ml-1 h-3.5 w-3.5" />
                         </Button>
-                        {(isAdmin || isTeacher) && (
+                        {isAdmin && (
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
@@ -776,18 +776,14 @@ export default function AdminClasses() {
                                 <Edit className="mr-2 h-4 w-4" />
                                 Sửa thông tin
                               </DropdownMenuItem>
-                              {isAdmin && (
-                                <>
-                                  <DropdownMenuSeparator />
-                                  <DropdownMenuItem
-                                    className="text-destructive focus:text-destructive"
-                                    onClick={() => setDeleteClass({ id: cls.id, name: cls.name })}
-                                  >
-                                    <Trash2 className="mr-2 h-4 w-4" />
-                                    Xóa lớp
-                                  </DropdownMenuItem>
-                                </>
-                              )}
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                className="text-destructive focus:text-destructive"
+                                onClick={() => setDeleteClass({ id: cls.id, name: cls.name })}
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Xóa lớp
+                              </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
                         )}
