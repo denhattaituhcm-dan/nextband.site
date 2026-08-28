@@ -141,11 +141,8 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
               },
             },
           },
-          enrollments: {
-            select: { studentId: true },
-          },
           _count: {
-            select: { exams: true, enrollments: true, classes: true },
+            select: { exams: true, classes: true },
           },
         },
       }),
@@ -162,11 +159,10 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
       const classStudentIds = (c.classes || []).flatMap((cls: any) =>
         (cls.students || []).map((s: any) => s.studentId)
       );
-      const directStudentIds = (c.enrollments || []).map((e: any) => e.studentId);
-      const uniqueStudentIds = new Set([...classStudentIds, ...directStudentIds]);
+      const uniqueStudentIds = new Set(classStudentIds);
       const studentsCount = uniqueStudentIds.size;
 
-      const { classes, enrollments, ...rest } = c;
+      const { classes, ...rest } = c;
 
       return {
         ...rest,
@@ -220,9 +216,6 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
               },
             },
           },
-          enrollments: {
-            select: { studentId: true },
-          },
           exams: {
             where: { isActive: true },
             orderBy: { week: "asc" },
@@ -273,11 +266,10 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
       const classStudentIds = (course.classes || []).flatMap((cls: any) =>
         (cls.students || []).map((s: any) => s.studentId)
       );
-      const directStudentIds = (course.enrollments || []).map((e: any) => e.studentId);
-      const uniqueStudentIds = new Set([...classStudentIds, ...directStudentIds]);
+      const uniqueStudentIds = new Set(classStudentIds);
       const studentsCount = uniqueStudentIds.size;
 
-      const { classes, enrollments, ...restCourse } = course;
+      const { classes, ...restCourse } = course;
 
       return {
         ...restCourse,
@@ -320,9 +312,6 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
                 select: { studentId: true },
               },
             },
-          },
-          enrollments: {
-            select: { studentId: true },
           },
           exams: {
             where: { isActive: true, isPublished: true },
@@ -374,11 +363,10 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
       const classStudentIds = (course.classes || []).flatMap((cls: any) =>
         (cls.students || []).map((s: any) => s.studentId)
       );
-      const directStudentIds = (course.enrollments || []).map((e: any) => e.studentId);
-      const uniqueStudentIds = new Set([...classStudentIds, ...directStudentIds]);
+      const uniqueStudentIds = new Set(classStudentIds);
       const studentsCount = uniqueStudentIds.size;
 
-      const { classes, enrollments, ...restCourse } = course;
+      const { classes, ...restCourse } = course;
 
       return {
         ...restCourse,

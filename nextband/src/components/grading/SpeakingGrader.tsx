@@ -413,6 +413,9 @@ export function SpeakingGrader({
                     <SelectItem value="GRAMMAR" className="text-xs font-semibold">
                       GRAMMAR — Phát âm sai / Sai ngữ pháp (Pronunciation & Grammar)
                     </SelectItem>
+                    <SelectItem value="OTHER" className="text-xs font-semibold">
+                      OTHER — Lỗi khác / Ghi chú riêng
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>

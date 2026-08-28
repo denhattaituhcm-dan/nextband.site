@@ -51,7 +51,11 @@ export class ClassRepository {
           select: { id: true, title: true },
         },
         _count: {
-          select: { students: true },
+          select: {
+            students: {
+              where: { status: "ACTIVE", deletedAt: null },
+            },
+          },
         },
       },
     });

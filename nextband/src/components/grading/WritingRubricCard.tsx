@@ -31,85 +31,85 @@ export function WritingRubricCard({ scores, onChange, disabled = false }: Writin
   };
 
   return (
-    <Card className="border border-slate-200/80 shadow-2xs rounded-xl p-4 space-y-3 bg-white">
-      <div className="flex items-center justify-between border-b pb-2">
+    <Card className="border border-slate-200 shadow-2xs rounded-xl p-3.5 space-y-3 bg-white font-sans">
+      <div className="flex items-center justify-between border-b border-slate-100 pb-2">
         <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
           <Award className="h-3.5 w-3.5 text-blue-600" />
-          Đánh giá Band Score (IELTS Writing 4 Tiêu chí)
+          Tiêu chí Writing
         </span>
-        <div className="text-xs font-extrabold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
-          Overall Band: {calculatedBand}
+        <div className="text-xs font-extrabold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-lg border border-blue-200">
+          Band: {calculatedBand}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+      <div className="grid grid-cols-2 gap-2.5 pt-0.5">
         <div className="space-y-1">
-          <Label className="text-[11px] font-medium text-slate-600">Task Response / Achievement</Label>
+          <Label className="text-xs font-bold text-slate-700">TR</Label>
           <Select
             value={scores.taskResponse != null ? String(scores.taskResponse.toFixed(1)) : ""}
             onValueChange={(v) => handleScoreChange("taskResponse", v)}
             disabled={disabled}
           >
             <SelectTrigger className="h-8 text-xs font-bold bg-slate-50 border-slate-200">
-              <SelectValue placeholder="Chọn điểm TR..." />
+              <SelectValue placeholder="—" />
             </SelectTrigger>
             <SelectContent>
               {BAND_OPTIONS.map((v) => (
-                <SelectItem key={v} value={v} className="text-xs font-semibold">{v}</SelectItem>
+                <SelectItem key={v} value={v} className="text-xs font-bold">{v}</SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
         <div className="space-y-1">
-          <Label className="text-[11px] font-medium text-slate-600">Coherence & Cohesion</Label>
+          <Label className="text-xs font-bold text-slate-700">CC</Label>
           <Select
             value={scores.coherence != null ? String(scores.coherence.toFixed(1)) : ""}
             onValueChange={(v) => handleScoreChange("coherence", v)}
             disabled={disabled}
           >
             <SelectTrigger className="h-8 text-xs font-bold bg-slate-50 border-slate-200">
-              <SelectValue placeholder="Chọn điểm CC..." />
+              <SelectValue placeholder="—" />
             </SelectTrigger>
             <SelectContent>
               {BAND_OPTIONS.map((v) => (
-                <SelectItem key={v} value={v} className="text-xs font-semibold">{v}</SelectItem>
+                <SelectItem key={v} value={v} className="text-xs font-bold">{v}</SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
         <div className="space-y-1">
-          <Label className="text-[11px] font-medium text-slate-600">Lexical Resource</Label>
+          <Label className="text-xs font-bold text-slate-700">LR</Label>
           <Select
             value={scores.lexical != null ? String(scores.lexical.toFixed(1)) : ""}
             onValueChange={(v) => handleScoreChange("lexical", v)}
             disabled={disabled}
           >
             <SelectTrigger className="h-8 text-xs font-bold bg-slate-50 border-slate-200">
-              <SelectValue placeholder="Chọn điểm LR..." />
+              <SelectValue placeholder="—" />
             </SelectTrigger>
             <SelectContent>
               {BAND_OPTIONS.map((v) => (
-                <SelectItem key={v} value={v} className="text-xs font-semibold">{v}</SelectItem>
+                <SelectItem key={v} value={v} className="text-xs font-bold">{v}</SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
         <div className="space-y-1">
-          <Label className="text-[11px] font-medium text-slate-600">Grammar Range & Accuracy</Label>
+          <Label className="text-xs font-bold text-slate-700">GRA</Label>
           <Select
             value={scores.grammar != null ? String(scores.grammar.toFixed(1)) : ""}
             onValueChange={(v) => handleScoreChange("grammar", v)}
             disabled={disabled}
           >
             <SelectTrigger className="h-8 text-xs font-bold bg-slate-50 border-slate-200">
-              <SelectValue placeholder="Chọn điểm GRA..." />
+              <SelectValue placeholder="—" />
             </SelectTrigger>
             <SelectContent>
               {BAND_OPTIONS.map((v) => (
-                <SelectItem key={v} value={v} className="text-xs font-semibold">{v}</SelectItem>
+                <SelectItem key={v} value={v} className="text-xs font-bold">{v}</SelectItem>
               ))}
             </SelectContent>
           </Select>

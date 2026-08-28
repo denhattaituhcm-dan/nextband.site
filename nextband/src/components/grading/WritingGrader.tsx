@@ -529,6 +529,9 @@ export function WritingGrader({
                     <SelectItem value="GRAMMAR" className="text-xs font-semibold">
                       GRAMMAR — Sai ngữ pháp / Thì / Dấu câu
                     </SelectItem>
+                    <SelectItem value="OTHER" className="text-xs font-semibold">
+                      OTHER — Lỗi khác / Dịch sai nghĩa / Bỏ sót ý
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>

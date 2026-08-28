@@ -227,7 +227,6 @@ export function normalizeCourseData(course: any): any {
     id: course.id,
     title: course.title,
     description: course.description ?? null,
-    level: course.level || "beginner",
     price: course.price ?? 0,
     isPublished: course.isPublished ?? course.is_published ?? false,
     isActive: course.isActive ?? course.is_active ?? true,
@@ -349,7 +348,6 @@ export const coursesApi = {
   list: async (params?: {
     page?: number;
     limit?: number;
-    level?: string;
     search?: string;
     sortBy?: string;
     sortOrder?: "asc" | "desc";
@@ -360,7 +358,6 @@ export const coursesApi = {
     const query = new URLSearchParams();
     if (params?.page) query.set("page", String(params.page));
     if (params?.limit) query.set("limit", String(params.limit));
-    if (params?.level) query.set("level", params.level);
     if (params?.search) query.set("search", params.search);
     if (params?.sortBy) query.set("sortBy", params.sortBy);
     if (params?.sortOrder) query.set("sortOrder", params.sortOrder);
@@ -382,13 +379,11 @@ export const coursesApi = {
         id: c.id,
         title: c.title,
         description: c.description,
-        level: c.level || "beginner",
         price: c.price || 0,
         isPublished: c.isPublished ?? c.is_published ?? false,
         isActive: c.isActive ?? c.is_active ?? true,
         thumbnailUrl: c.thumbnailUrl || c.thumbnail_url,
         createdAt: c.createdAt || c.created_at,
-        band: c.level === "beginner" ? "3.0 - 4.0" : c.level === "intermediate" ? "5.0 - 5.5" : "6.0 - 6.5+",
         lessonsCount: c.lessonsCount ?? c._count?.exams ?? (c.exams && Array.isArray(c.exams) ? c.exams.length : 0),
         activeClassesCount: c.activeClassesCount ?? c._count?.classes ?? 0,
         totalClassesCount: c.totalClassesCount ?? c._count?.classes ?? 0,

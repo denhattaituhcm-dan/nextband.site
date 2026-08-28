@@ -160,94 +160,118 @@ export function getCourseBrand(
 ): CourseBrandInfo {
   if (!input) return COURSE_BRANDS.fallback;
 
-  let rawStr = '';
+  let titleStr = '';
+  let slugStr = '';
+  let bandStr = '';
+
   if (typeof input === 'string') {
-    rawStr = input.trim();
+    titleStr = input.trim();
   } else {
-    rawStr = [input.slug, input.title, input.name, input.band]
-      .filter(Boolean)
-      .join(' ')
-      .trim();
+    titleStr = (input.title || input.name || '').trim();
+    slugStr = (input.slug || '').trim();
+    bandStr = (input.band || '').trim();
   }
 
-  const lower = rawStr.toLowerCase();
-  const upper = rawStr.toUpperCase();
+  const primaryText = `${slugStr} ${titleStr}`.toLowerCase();
 
-  // 1. Check Master (Green)
+  // 1. Check Starter (ST - Pink/Fuchsia)
   if (
-    lower.includes('master') ||
-    /\b(MA|M\d+)\b/i.test(rawStr) ||
-    /^M\d+/i.test(rawStr) ||
-    lower.includes('6.0')
-  ) {
-    return COURSE_BRANDS.master;
-  }
-
-  // 2. Check Builder (Orange)
-  if (
-    lower.includes('builder') ||
-    /\b(BU|B\d+)\b/i.test(rawStr) ||
-    /^B\d+/i.test(rawStr) ||
-    lower.includes('5.0')
-  ) {
-    return COURSE_BRANDS.builder;
-  }
-
-  // 3. Check Dreamer (Blue)
-  if (
-    lower.includes('dreamer') ||
-    /\b(DR|D\d+)\b/i.test(rawStr) ||
-    /^D\d+/i.test(rawStr) ||
-    lower.includes('4.0')
-  ) {
-    return COURSE_BRANDS.dreamer;
-  }
-
-  // 4. Check Starter (Pink/Fuchsia)
-  if (
-    lower.includes('starter') ||
-    /\b(ST|S\d+)\b/i.test(rawStr) ||
-    /^S\d+/i.test(rawStr) ||
-    lower.includes('3.0')
+    primaryText.includes('starter') ||
+    /\b(st|s\d+)\b/i.test(titleStr) ||
+    /^s\d+/i.test(titleStr)
   ) {
     return COURSE_BRANDS.starter;
   }
 
-  // 5. Check Leader (Red)
+  // 2. Check Leader (LE - Rose/Red)
   if (
-    lower.includes('leader') ||
-    /\b(LE|L\d+)\b/i.test(rawStr) ||
-    /^L\d+/i.test(rawStr) ||
-    lower.includes('6.5') ||
-    lower.includes('7.0')
+    primaryText.includes('leader') ||
+    /\b(le|l\d+)\b/i.test(titleStr) ||
+    /^l\d+/i.test(titleStr)
   ) {
     return COURSE_BRANDS.leader;
   }
 
-  // 6. Placement Test
-  if (lower.includes('placement') || upper.startsWith('PL') || /\bPL\b/i.test(rawStr)) {
+  // 3. Check Master (MA - Green)
+  if (
+    primaryText.includes('master') ||
+    /\b(ma|m\d+)\b/i.test(titleStr) ||
+    /^m\d+/i.test(titleStr)
+  ) {
+    return COURSE_BRANDS.master;
+  }
+
+  // 4. Check Builder (BU - Orange)
+  if (
+    primaryText.includes('builder') ||
+    /\b(bu|b\d+)\b/i.test(titleStr) ||
+    /^b\d+/i.test(titleStr)
+  ) {
+    return COURSE_BRANDS.builder;
+  }
+
+  // 5. Check Dreamer (DR - Blue)
+  if (
+    primaryText.includes('dreamer') ||
+    /\b(dr|d\d+)\b/i.test(titleStr) ||
+    /^d\d+/i.test(titleStr)
+  ) {
+    return COURSE_BRANDS.dreamer;
+  }
+
+  // 6. Check Placement Test (PL - Indigo)
+  if (
+    primaryText.includes('placement') ||
+    /\b(pl|p\d+)\b/i.test(titleStr) ||
+    /^pl/i.test(titleStr)
+  ) {
     return COURSE_BRANDS.placement;
   }
 
-  // 7. Extra Listening
-  if (lower.includes('extra') || lower.includes('listening') || upper.startsWith('EX') || /\bEX\b/i.test(rawStr)) {
+  // 7. Check Extra Listening (EX - Purple)
+  if (
+    primaryText.includes('extra') ||
+    primaryText.includes('listening') ||
+    /\b(ex|e\d+)\b/i.test(titleStr) ||
+    /^ex/i.test(titleStr)
+  ) {
     return COURSE_BRANDS.extra_listening;
   }
 
-  // 8. Entrance Test THPTQG
-  if (lower.includes('entrance') || upper.startsWith('EN') || /\bEN\b/i.test(rawStr)) {
+  // 8. Check Entrance Test THPTQG (EN - Amber)
+  if (
+    primaryText.includes('entrance') ||
+    primaryText.includes('thptqg') ||
+    /\b(en)\b/i.test(titleStr) ||
+    /^en/i.test(titleStr)
+  ) {
     return COURSE_BRANDS.entrance_thpt;
   }
 
-  // 9. Luyện thi TN THPT
-  if (lower.includes('luyện thi') || lower.includes('luyen thi') || upper.startsWith('LU') || /\bLU\b/i.test(rawStr)) {
+  // 9. Check Luyện thi TN THPT (LU - Teal)
+  if (
+    primaryText.includes('luyện thi') ||
+    primaryText.includes('luyen thi') ||
+    primaryText.includes('tn thpt') ||
+    /\b(lu)\b/i.test(titleStr) ||
+    /^lu/i.test(titleStr)
+  ) {
     return COURSE_BRANDS.luyen_thi_thpt;
   }
 
-  const code = rawStr.length >= 2 ? rawStr.substring(0, 2).toUpperCase() : 'CS';
+  // Fallback check by specific exact band (if title is generic)
+  const fullText = `${titleStr} ${bandStr}`.toLowerCase();
+  if (fullText.includes('band 3.0') || fullText.includes('đầu ra 3.0')) return COURSE_BRANDS.starter;
+  if (fullText.includes('band 4.0') || fullText.includes('đầu ra 4.0')) return COURSE_BRANDS.dreamer;
+  if (fullText.includes('band 5.0') || fullText.includes('đầu ra 5.0')) return COURSE_BRANDS.builder;
+  if (fullText.includes('band 6.0') || fullText.includes('đầu ra 6.0')) return COURSE_BRANDS.master;
+  if (fullText.includes('band 6.5') || fullText.includes('đầu ra 6.5') || fullText.includes('7.0')) return COURSE_BRANDS.leader;
+
+  const rawForCode = titleStr || slugStr || 'CS';
+  const code = rawForCode.length >= 2 ? rawForCode.substring(0, 2).toUpperCase() : 'CS';
   return {
     ...COURSE_BRANDS.fallback,
     code,
-    name: typeof input === 'string' ? input : input.title || input.name || 'Khóa học',
+    name: titleStr || 'Khóa học',
   };
 }

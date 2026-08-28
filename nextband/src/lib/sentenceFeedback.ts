@@ -1,4 +1,4 @@
-export type ErrorCategory = "CONCEPT" | "STRUCTURE" | "EXPRESSION" | "GRAMMAR";
+export type ErrorCategory = "CONCEPT" | "STRUCTURE" | "EXPRESSION" | "GRAMMAR" | "OTHER" | "PRAISE";
 
 export interface SentenceFeedbackItem {
   sentenceIndex: number;
@@ -92,6 +92,21 @@ export const PRESET_ERROR_TAGS: Record<ErrorCategory, string[]> = {
     "Logic Flaw / Contradiction",
     "Underdeveloped Argument",
   ],
+  OTHER: [
+    "Translation / Meaning Drift",
+    "Omission / Missing Details",
+    "Formatting / Layout",
+    "General Improvement",
+    "Custom Note",
+  ],
+  PRAISE: [
+    "Good Vocabulary / Collocation",
+    "Advanced Structure",
+    "Natural Flow",
+    "Accurate Translation",
+    "Clear Argument",
+    "Well-formed Sentence",
+  ],
 };
 
 export const CATEGORY_COLORS: Record<
@@ -104,33 +119,47 @@ export const CATEGORY_COLORS: Record<
     highlightBg: string;
   }
 > = {
+  PRAISE: {
+    bg: "bg-emerald-50 dark:bg-emerald-950/30",
+    text: "text-emerald-700 dark:text-emerald-300",
+    border: "border-emerald-300 dark:border-emerald-800",
+    badgeBg: "bg-emerald-100 text-emerald-800 border-emerald-200",
+    highlightBg: "bg-emerald-100/70 hover:bg-emerald-100",
+  },
   GRAMMAR: {
     bg: "bg-rose-50 dark:bg-rose-950/30",
     text: "text-rose-700 dark:text-rose-300",
     border: "border-rose-300 dark:border-rose-800",
-    badgeBg: "bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-200",
-    highlightBg: "bg-rose-100/80 hover:bg-rose-200/80 dark:bg-rose-900/40 dark:hover:bg-rose-900/60",
+    badgeBg: "bg-rose-100 text-rose-800 border-rose-200",
+    highlightBg: "bg-rose-100/70 hover:bg-rose-100",
   },
   EXPRESSION: {
     bg: "bg-amber-50 dark:bg-amber-950/30",
     text: "text-amber-700 dark:text-amber-300",
     border: "border-amber-300 dark:border-amber-800",
-    badgeBg: "bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-200",
-    highlightBg: "bg-amber-100/80 hover:bg-amber-200/80 dark:bg-amber-900/40 dark:hover:bg-amber-900/60",
+    badgeBg: "bg-amber-100 text-amber-800 border-amber-200",
+    highlightBg: "bg-amber-100/70 hover:bg-amber-100",
   },
   STRUCTURE: {
+    bg: "bg-sky-50 dark:bg-sky-950/30",
+    text: "text-sky-700 dark:text-sky-300",
+    border: "border-sky-300 dark:border-sky-800",
+    badgeBg: "bg-sky-100 text-sky-800 border-sky-200",
+    highlightBg: "bg-sky-100/70 hover:bg-sky-100",
+  },
+  CONCEPT: {
     bg: "bg-purple-50 dark:bg-purple-950/30",
     text: "text-purple-700 dark:text-purple-300",
     border: "border-purple-300 dark:border-purple-800",
-    badgeBg: "bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-200",
-    highlightBg: "bg-purple-100/80 hover:bg-purple-200/80 dark:bg-purple-900/40 dark:hover:bg-purple-900/60",
+    badgeBg: "bg-purple-100 text-purple-800 border-purple-200",
+    highlightBg: "bg-purple-100/70 hover:bg-purple-100",
   },
-  CONCEPT: {
-    bg: "bg-blue-50 dark:bg-blue-950/30",
-    text: "text-blue-700 dark:text-blue-300",
-    border: "border-blue-300 dark:border-blue-800",
-    badgeBg: "bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-200",
-    highlightBg: "bg-blue-100/80 hover:bg-blue-200/80 dark:bg-blue-900/40 dark:hover:bg-blue-900/60",
+  OTHER: {
+    bg: "bg-slate-50 dark:bg-slate-900/30",
+    text: "text-slate-700 dark:text-slate-300",
+    border: "border-slate-300 dark:border-slate-700",
+    badgeBg: "bg-slate-100 text-slate-800 border-slate-300",
+    highlightBg: "bg-slate-100/80 hover:bg-slate-200/70",
   },
 };
 

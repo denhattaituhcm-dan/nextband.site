@@ -98303,11 +98303,8 @@ var coursesRoutes = async (fastify) => {
               }
             }
           },
-          enrollments: {
-            select: { studentId: true }
-          },
           _count: {
-            select: { exams: true, enrollments: true, classes: true }
+            select: { exams: true, classes: true }
           }
         }
       }),
@@ -98322,10 +98319,9 @@ var coursesRoutes = async (fastify) => {
       const classStudentIds = (c.classes || []).flatMap(
         (cls) => (cls.students || []).map((s) => s.studentId)
       );
-      const directStudentIds = (c.enrollments || []).map((e) => e.studentId);
-      const uniqueStudentIds = /* @__PURE__ */ new Set([...classStudentIds, ...directStudentIds]);
+      const uniqueStudentIds = new Set(classStudentIds);
       const studentsCount = uniqueStudentIds.size;
-      const { classes, enrollments, ...rest } = c;
+      const { classes, ...rest } = c;
       return {
         ...rest,
         activeClassesCount,
@@ -98372,9 +98368,6 @@ var coursesRoutes = async (fastify) => {
               }
             }
           },
-          enrollments: {
-            select: { studentId: true }
-          },
           exams: {
             where: { isActive: true },
             orderBy: { week: "asc" },
@@ -98419,10 +98412,9 @@ var coursesRoutes = async (fastify) => {
       const classStudentIds = (course.classes || []).flatMap(
         (cls) => (cls.students || []).map((s) => s.studentId)
       );
-      const directStudentIds = (course.enrollments || []).map((e) => e.studentId);
-      const uniqueStudentIds = /* @__PURE__ */ new Set([...classStudentIds, ...directStudentIds]);
+      const uniqueStudentIds = new Set(classStudentIds);
       const studentsCount = uniqueStudentIds.size;
-      const { classes, enrollments, ...restCourse } = course;
+      const { classes, ...restCourse } = course;
       return {
         ...restCourse,
         activeClassesCount,
@@ -98459,9 +98451,6 @@ var coursesRoutes = async (fastify) => {
                 select: { studentId: true }
               }
             }
-          },
-          enrollments: {
-            select: { studentId: true }
           },
           exams: {
             where: { isActive: true, isPublished: true },
@@ -98507,10 +98496,9 @@ var coursesRoutes = async (fastify) => {
       const classStudentIds = (course.classes || []).flatMap(
         (cls) => (cls.students || []).map((s) => s.studentId)
       );
-      const directStudentIds = (course.enrollments || []).map((e) => e.studentId);
-      const uniqueStudentIds = /* @__PURE__ */ new Set([...classStudentIds, ...directStudentIds]);
+      const uniqueStudentIds = new Set(classStudentIds);
       const studentsCount = uniqueStudentIds.size;
-      const { classes, enrollments, ...restCourse } = course;
+      const { classes, ...restCourse } = course;
       return {
         ...restCourse,
         activeClassesCount,
@@ -104026,7 +104014,11 @@ var ClassRepository = class {
           select: { id: true, title: true }
         },
         _count: {
-          select: { students: true }
+          select: {
+            students: {
+              where: { status: "ACTIVE", deletedAt: null }
+            }
+          }
         }
       }
     });
