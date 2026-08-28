@@ -101713,9 +101713,14 @@ var ExamSubmissionService = class {
         const sanitizedAns = { ...a };
         if (!isGraded) {
           sanitizedAns.feedback = null;
+          sanitizedAns.score = null;
         }
         return sanitizedAns;
       });
+      if (!isGraded) {
+        submission.totalScore = null;
+        submission.total_score = null;
+      }
     }
     return submission;
   }
@@ -102238,13 +102243,13 @@ var ExamSubmissionService = class {
     if (latestStatus !== "GRADED") {
       throw new AuthorizationError("B\xE0i n\u1ED9p tr\u01B0\u1EDBc \u0111\xF3 ch\u01B0a \u0111\u01B0\u1EE3c ch\u1EA5m \u0111i\u1EC3m. Ch\u1EC9 c\xF3 th\u1EC3 s\u1EEDa b\xE0i sau khi \u0111\xE3 c\xF3 \u0111\xE1nh gi\xE1 t\u1EEB gi\xE1o vi\xEAn.", 400);
     }
-    let isRevisionRequired = true;
+    let isRevisionRequired = false;
     for (const ans of latestSubmission.answers || []) {
       if (ans.feedback) {
         try {
           const parsed = JSON.parse(ans.feedback);
-          if (parsed && typeof parsed === "object" && parsed.revisionRequired !== void 0) {
-            isRevisionRequired = !!parsed.revisionRequired;
+          if (parsed && typeof parsed === "object" && parsed.revisionRequired) {
+            isRevisionRequired = true;
             break;
           }
         } catch {
@@ -102309,53 +102314,93 @@ var ExamSubmissionService = class {
     }
     return this.repo.transaction(async (tx) => {
       let computedTotal = 0;
+      const answerScores = [];
       for (let i = 0; i < grades.length; i++) {
         const g = grades[i];
-        let answerFeedback = g.feedback || null;
-        if (i === 0 && options && (options.feedback || options.primaryErrorCategory !== void 0 || options.revisionRequired !== void 0 || options.criteriaScores !== void 0 || options.sentenceFeedbacks !== void 0)) {
-          const structuredPayload = {
-            text: options.feedback || g.feedback || "",
-            primaryErrorCategory: options.primaryErrorCategory || null,
-            revisionRequired: !!options.revisionRequired,
-            criteriaScores: options.criteriaScores || null,
-            sentenceFeedbacks: options.sentenceFeedbacks || [],
-            tabSwitchCount: options.tabSwitchCount || 0
-          };
-          answerFeedback = JSON.stringify(structuredPayload);
+        let answerFeedback = null;
+        const effectiveFeedbackText = g.feedback || (i === 0 ? options?.feedback : "") || "";
+        const effectivePrimaryCategory = g.primaryErrorCategory || (i === 0 ? options?.primaryErrorCategory : null) || null;
+        const effectiveRevisionRequired = g.revisionRequired !== void 0 ? !!g.revisionRequired : i === 0 ? !!options?.revisionRequired : false;
+        const effectiveCriteriaScores = g.criteriaScores || (i === 0 ? options?.criteriaScores : null) || null;
+        const effectiveSentenceFeedbacks = g.sentenceFeedbacks || (i === 0 ? options?.sentenceFeedbacks : []) || [];
+        const effectiveTabSwitchCount = g.tabSwitchCount || (i === 0 ? options?.tabSwitchCount : 0) || 0;
+        if (effectiveFeedbackText || effectivePrimaryCategory !== null || effectiveRevisionRequired || effectiveCriteriaScores !== null || effectiveSentenceFeedbacks.length > 0) {
+          if (typeof effectiveFeedbackText === "string" && effectiveFeedbackText.trim().startsWith("{") && !effectiveCriteriaScores) {
+            answerFeedback = effectiveFeedbackText;
+          } else {
+            const structuredPayload = {
+              text: effectiveFeedbackText,
+              primaryErrorCategory: effectivePrimaryCategory,
+              revisionRequired: effectiveRevisionRequired,
+              criteriaScores: effectiveCriteriaScores,
+              sentenceFeedbacks: effectiveSentenceFeedbacks,
+              tabSwitchCount: effectiveTabSwitchCount
+            };
+            answerFeedback = JSON.stringify(structuredPayload);
+          }
+        } else if (typeof g.feedback === "string") {
+          answerFeedback = g.feedback;
         }
-        if (g.answerId) {
-          await tx.answer.update({
-            where: { id: g.answerId },
+        let answerScore = typeof g.score === "number" ? g.score : null;
+        if (effectiveCriteriaScores) {
+          const { taskResponse, coherence, fluencyAndCoherence, lexical, grammar, pronunciation } = effectiveCriteriaScores;
+          if (taskResponse != null || coherence != null) {
+            const scores = [taskResponse, coherence, lexical, grammar].filter((v) => typeof v === "number" && !isNaN(v));
+            if (scores.length > 0) {
+              const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+              answerScore = Math.round(avg * 2) / 2;
+            }
+          } else if (fluencyAndCoherence != null || pronunciation != null) {
+            const scores = [fluencyAndCoherence, lexical, grammar, pronunciation].filter((v) => typeof v === "number" && !isNaN(v));
+            if (scores.length > 0) {
+              const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+              answerScore = Math.round(avg * 2) / 2;
+            }
+          }
+        }
+        if (answerScore != null) {
+          answerScores.push(answerScore);
+        }
+        const targetWhere = g.answerId ? { id: g.answerId } : g.questionId ? { submissionId: id, questionId: g.questionId } : null;
+        if (targetWhere) {
+          await tx.answer.updateMany({
+            where: targetWhere,
             data: {
-              score: g.score,
+              score: answerScore,
               feedback: answerFeedback
             }
           });
-        } else {
-          const fallbackAns = await tx.answer.findFirst({
-            where: { submissionId: id }
-          });
-          if (fallbackAns) {
-            await tx.answer.update({
-              where: { id: fallbackAns.id },
-              data: {
-                score: g.score,
-                feedback: answerFeedback
-              }
-            });
-          }
         }
-        computedTotal += g.score;
       }
       const allAnswers = await tx.answer.findMany({
         where: { submissionId: id }
       });
-      const finalTotalScore = typeof totalScore === "number" ? totalScore : allAnswers.reduce((sum, a) => sum + (Number(a.score) || 0), 0);
+      let finalTotalScore;
+      if (typeof totalScore === "number" && totalScore > 0) {
+        finalTotalScore = totalScore;
+      } else if (answerScores.length > 0) {
+        if (answerScores.length === 2) {
+          const weightedAvg = (answerScores[0] + 2 * answerScores[1]) / 3;
+          finalTotalScore = Math.round(weightedAvg * 2) / 2;
+        } else {
+          const avg = answerScores.reduce((a, b) => a + b, 0) / answerScores.length;
+          finalTotalScore = Math.round(avg * 2) / 2;
+        }
+      } else {
+        const dbScores = allAnswers.map((a) => Number(a.score)).filter((s) => !isNaN(s) && s > 0);
+        if (dbScores.length > 0) {
+          const avg = dbScores.reduce((a, b) => a + b, 0) / dbScores.length;
+          finalTotalScore = Math.round(avg * 2) / 2;
+        } else {
+          finalTotalScore = 0;
+        }
+      }
       const targetStatus = isFinalize ? "GRADED" : currentStatus;
       const updated = await tx.examSubmission.update({
         where: { id },
         data: {
           status: targetStatus,
+          version: (submission.version || 1) + 1,
           ...isFinalize ? {
             gradedAt: /* @__PURE__ */ new Date(),
             gradedBy: user.id,
@@ -102591,6 +102636,7 @@ var SubmissionController = class {
   async grade(request, reply) {
     try {
       const user = request.user;
+      const body = request.body || {};
       const {
         grades = [],
         totalScore,
@@ -102599,16 +102645,16 @@ var SubmissionController = class {
         revisionRequired,
         criteriaScores,
         sentenceFeedbacks,
-        tabSwitchCount,
-        finalize = true
-      } = request.body || {};
+        tabSwitchCount
+      } = body;
+      const finalize = body.options?.finalize !== void 0 ? !!body.options.finalize : body.finalize !== void 0 ? !!body.finalize : true;
       const result = await this.service.gradeManualSubmission(user, request.params.id, grades, totalScore, {
-        feedback,
-        primaryErrorCategory,
-        revisionRequired,
-        criteriaScores,
-        sentenceFeedbacks,
-        tabSwitchCount,
+        feedback: body.options?.feedback ?? feedback,
+        primaryErrorCategory: body.options?.primaryErrorCategory ?? primaryErrorCategory,
+        revisionRequired: body.options?.revisionRequired ?? revisionRequired,
+        criteriaScores: body.options?.criteriaScores ?? criteriaScores,
+        sentenceFeedbacks: body.options?.sentenceFeedbacks ?? sentenceFeedbacks,
+        tabSwitchCount: body.options?.tabSwitchCount ?? tabSwitchCount,
         finalize
       });
       return reply.send(result);

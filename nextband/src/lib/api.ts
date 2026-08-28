@@ -979,10 +979,12 @@ export function normalizeSubmissionData(data: any, examData?: any): any {
     let ansErrorCategory: string | null = null;
     let ansRevisionRequired = false;
     let ansCriteriaScores: {
-      taskResponse: number | null;
-      coherence: number | null;
-      lexical: number | null;
-      grammar: number | null;
+      taskResponse?: number | null;
+      coherence?: number | null;
+      fluencyAndCoherence?: number | null;
+      lexical?: number | null;
+      grammar?: number | null;
+      pronunciation?: number | null;
     } | null = null;
 
     let sentenceFeedbacks: any[] = [];
