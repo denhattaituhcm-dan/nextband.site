@@ -78,22 +78,41 @@ describe("🚀 PHASE 2: GATEWAY E2E BUSINESS FLOW & FAILURE ISOLATION TESTS", ()
       },
     });
 
-    if (student?.id && student.id !== studentId) {
-      await prisma.enrollment.upsert({
-        where: {
-          courseId_studentId: {
-            courseId,
-            studentId: student.id,
-          },
-        },
-        update: { progressPercent: 0 },
-        create: {
+    // Ensure teacher and student are connected via class for authorized grading
+    let testClass = await prisma.class.findFirst({
+      where: { name: "E2E Gateway Test Class" },
+    });
+    if (!testClass) {
+      testClass = await prisma.class.create({
+        data: {
+          name: "E2E Gateway Test Class",
           courseId,
-          studentId: student.id,
-          progressPercent: 0,
+          teacherId,
+          status: "ACTIVE",
+          isActive: true,
         },
-      }).catch(() => {});
+      });
+    } else if (testClass.teacherId !== teacherId) {
+      await prisma.class.update({
+        where: { id: testClass.id },
+        data: { teacherId },
+      });
     }
+
+    await prisma.classStudent.upsert({
+      where: {
+        classId_studentId: {
+          classId: testClass.id,
+          studentId,
+        },
+      },
+      update: { status: "ACTIVE", deletedAt: null },
+      create: {
+        classId: testClass.id,
+        studentId,
+        status: "ACTIVE",
+      },
+    });
 
     let exam = await prisma.exam.findFirst({
       where: { title: "E2E IELTS Gateway Dedicated Test Exam" },

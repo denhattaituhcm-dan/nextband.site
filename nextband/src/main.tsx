@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 
 // Auto-recover from stale chunks on new deployments (with reload loop guard)
 window.addEventListener("vite:preloadError", (event) => {
+  event.preventDefault();
   const CHUNK_RELOAD_KEY = "nb_chunk_reload_ts";
   const now = Date.now();
   const lastReload = Number(sessionStorage.getItem(CHUNK_RELOAD_KEY) || 0);
@@ -93,6 +94,21 @@ class GlobalErrorBoundary extends Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
+      const isChunk =
+        this.state.error?.message?.includes("Failed to fetch dynamically imported module") ||
+        this.state.error?.message?.includes("Importing a module script failed") ||
+        this.state.error?.message?.includes("dynamically imported module") ||
+        this.state.error?.name === "ChunkLoadError";
+
+      if (isChunk) {
+        return (
+          <div className="min-h-screen w-full flex flex-col items-center justify-center space-y-3 p-12 bg-background">
+            <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            <p className="text-xs font-medium text-muted-foreground animate-pulse">Đang tải trang...</p>
+          </div>
+        );
+      }
+
       return (
         <div
           className="min-h-screen w-full flex items-center justify-center bg-slate-50 p-4"

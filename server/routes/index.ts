@@ -29,6 +29,7 @@ import adminDashboardRoutes from "./admin-dashboard.routes.js";
 import interventionRoutes from "./intervention.routes.js";
 import tuitionRoutes from "./tuition.routes.js";
 import milestoneRoutes from "./milestone.routes.js";
+import referralsRoutes from "./referrals.routes.js";
 
 const routes: FastifyPluginAsync = async (fastify) => {
   // Health check
@@ -63,6 +64,7 @@ const routes: FastifyPluginAsync = async (fastify) => {
   await fastify.register(speakingStorageRoutes, { prefix: "/speaking" });
   await fastify.register(speakingEvidenceRoutes, { prefix: "/speaking" });
   await fastify.register(speakingForecastRoutes, { prefix: "/speaking-forecast" });
+  await fastify.register(referralsRoutes, { prefix: "/referrals" });
   await fastify.register(lessonRoutes);
   await fastify.register(periodicReportsRoutes);
   await fastify.register(adminDashboardRoutes, { prefix: "/admin" });

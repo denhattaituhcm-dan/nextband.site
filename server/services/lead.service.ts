@@ -50,6 +50,24 @@ export class LeadService {
       }
     }
 
+    // Resolve structured referral code if provided
+    let referralCode: string | null = null;
+    let inviterUserId: string | null = null;
+
+    if (input.referralCode && input.referralCode.trim().length > 0) {
+      const cleanRef = input.referralCode.trim().toUpperCase();
+      const inviter = await this.prisma.user.findUnique({
+        where: { referralCode: cleanRef },
+        select: { userId: true, phone: true, fullName: true },
+      });
+
+      // Anti-cheat: inviter must exist, and phone must not match referee phone
+      if (inviter && (!inviter.phone || inviter.phone.trim() !== input.phone.trim())) {
+        referralCode = cleanRef;
+        inviterUserId = inviter.userId;
+      }
+    }
+
     const lead = await this.prisma.contactLead.create({
       data: {
         fullName: input.fullName,
@@ -57,7 +75,9 @@ export class LeadService {
         email: input.email && input.email.length > 0 ? input.email : null,
         goal: input.goal && input.goal.length > 0 ? input.goal : null,
         source: input.source || "contact_page",
-        preferredBranchId: input.preferredBranchId || null,
+        preferredBranch: input.preferredBranchId ? { connect: { id: input.preferredBranchId } } : undefined,
+        referralCode,
+        inviter: inviterUserId ? { connect: { userId: inviterUserId } } : undefined,
         notes: input.notes && input.notes.length > 0 ? input.notes : null,
         createdByUserId: input.createdByUserId || null,
         // Auto-assign to the staff member who manually created this lead
@@ -254,6 +274,7 @@ export class LeadService {
         where: { id: input.targetClassId },
         include: {
           branch: { select: { id: true, name: true } },
+          course: { select: { id: true, title: true, price: true } },
         },
       });
 
@@ -310,6 +331,68 @@ export class LeadService {
           });
         }
 
+        // Ensure new student has a stable unique referralCode
+        if (!newUser.referralCode) {
+          const cleanName = (fullName || "STUDENT")
+            .toUpperCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^A-Z]/g, "")
+            .slice(0, 5)
+            .padEnd(5, "X");
+          const idSuffix = supabaseUserId.replace(/-/g, "").slice(-4).toUpperCase();
+          const autoCode = `ARIS-${cleanName}${idSuffix}`;
+          await tx.user.update({
+            where: { userId: supabaseUserId },
+            data: { referralCode: autoCode },
+          }).catch(() => {});
+        }
+
+        // Referral Attribution & 200.000đ Tuition Discount
+        let discountApplied = 0;
+        let attributionRecord: any = null;
+        if (lead.referralCode && lead.inviterUserId && lead.inviterUserId !== supabaseUserId) {
+          discountApplied = 200000;
+          try {
+            attributionRecord = await tx.referralAttribution.create({
+              data: {
+                inviterUserId: lead.inviterUserId,
+                refereeLeadId: lead.id,
+                refereeUserId: supabaseUserId,
+                referralCode: lead.referralCode,
+                discountAmount: 200000,
+                status: "CONVERTED",
+              },
+            });
+
+            await tx.referralReward.create({
+              data: {
+                attributionId: attributionRecord.id,
+                inviterUserId: lead.inviterUserId,
+                rewardType: "ARIS_GIFT_BOX",
+                status: "PENDING_QUALIFICATION",
+                notes: `Người được mời: ${fullName} (${supabaseUserId}) đã ghi danh`,
+              },
+            });
+
+            if ((tx as any).notification) {
+              const { NotificationService } = await import("./notification.service.js");
+              const notifService = new NotificationService(tx as any);
+              await notifService.createNotification(tx, {
+                userId: lead.inviterUserId,
+                type: "STUDENT_ACHIEVEMENT",
+                title: "🎉 Bạn đồng hành đã hoàn tất đăng ký!",
+                message: `Bạn ${fullName} đã đăng ký thành công! Bạn đang có 01 Bộ Quà Tặng ARIS chờ kích hoạt khi bạn mới hoàn tất học phí.`,
+                link: "/app/profile",
+                entityType: "REFERRAL",
+                entityId: attributionRecord.id,
+              }).catch(() => {});
+            }
+          } catch (refErr) {
+            console.error("[LeadService] Error recording referral attribution:", refErr);
+          }
+        }
+
         // C. OP-GAP-02: Class Placement into class_students
         let placedClassInfo: any = null;
         if (input.targetClassId) {
@@ -324,7 +407,10 @@ export class LeadService {
 
           if (!existingMembership) {
             const coursePrice = Number(validatedTargetClass.course?.price || 0);
-            const fee = input.tuitionFee !== undefined ? input.tuitionFee : coursePrice;
+            let fee = input.tuitionFee !== undefined ? input.tuitionFee : coursePrice;
+            if (discountApplied > 0 && input.tuitionFee === undefined) {
+              fee = Math.max(0, fee - discountApplied);
+            }
             const paid = input.paidAmount !== undefined ? input.paidAmount : 0;
             let pStatus: any = input.paymentStatus;
             if (!pStatus) {
@@ -340,7 +426,7 @@ export class LeadService {
                 tuitionFee: fee,
                 paidAmount: paid,
                 paymentStatus: pStatus,
-                paymentNote: input.paymentNote || null,
+                paymentNote: input.paymentNote || (discountApplied > 0 ? "[Ưu đãi Study Buddy] Giảm 200.000đ" : null),
                 externalRef: input.externalRef || null,
                 joinedAt: new Date(),
               },
@@ -353,7 +439,7 @@ export class LeadService {
                   studentId: supabaseUserId,
                   classId: input.targetClassId,
                   action: "LEAD_CONVERSION_PLACEMENT",
-                  reason: `Xếp lớp ban đầu khi chuyển đổi từ Khách tư vấn #${lead.id} (${fullName})`,
+                  reason: `Xếp lớp ban đầu khi chuyển đổi từ Khách tư vấn #${lead.id} (${fullName})${discountApplied > 0 ? " [Đã áp dụng mã giới thiệu -200k]" : ""}`,
                   toStatus: "ACTIVE",
                 },
               });

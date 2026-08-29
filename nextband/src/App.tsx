@@ -17,39 +17,58 @@ import HomePage from "@/pages/HomePage";
 import NotFound from "@/pages/NotFound";
 
 /**
- * Detects stale Vite chunk errors (happen after a new deployment).
- * Returns true for "Failed to fetch dynamically imported module" errors.
+ * Detects stale Vite chunk errors (happen after a new deployment or network hiccup).
+ * Covers Chrome, Safari, Firefox, and Rollup/Vite error signatures.
  */
-const isChunkLoadError = (error: unknown): boolean => {
-  if (!(error instanceof Error)) return false;
+export const isChunkLoadError = (error: unknown): boolean => {
+  if (!error) return false;
+  const msg = error instanceof Error ? error.message : String(error);
+  const name = error instanceof Error ? error.name : "";
   return (
-    error.message.includes("Failed to fetch dynamically imported module") ||
-    error.message.includes("Importing a module script failed") ||
-    error.name === "ChunkLoadError"
+    msg.includes("Failed to fetch dynamically imported module") ||
+    msg.includes("Importing a module script failed") ||
+    msg.includes("error loading dynamically imported module") ||
+    msg.includes("dynamically imported module") ||
+    msg.includes("Loading chunk") ||
+    name === "ChunkLoadError"
   );
 };
 
 const CHUNK_RELOAD_KEY = "__nb_chunk_reloaded__";
 
 /**
- * Wraps React.lazy with automatic page reload on stale-chunk errors.
- * Uses a sessionStorage flag to prevent infinite reload loops.
+ * Wraps React.lazy with automatic in-memory retry and silent page reload on stale-chunk errors.
+ * Stays in Suspense fallback (PageLoader) during reload so users never see an error flash.
  */
 function lazyWithRetry<T extends React.ComponentType<any>>(
-  factory: () => Promise<{ default: T }>
+  factory: () => Promise<{ default: T }>,
+  retries = 2,
+  interval = 400
 ): React.LazyExoticComponent<T> {
   return lazy(() =>
-    factory().catch((err: unknown) => {
-      if (isChunkLoadError(err)) {
-        const alreadyReloaded = sessionStorage.getItem(CHUNK_RELOAD_KEY);
-        if (!alreadyReloaded) {
-          sessionStorage.setItem(CHUNK_RELOAD_KEY, "1");
-          window.location.reload();
-          // Return a never-resolving promise so React doesn't render anything
-          return new Promise(() => {}) as never;
-        }
-      }
-      throw err;
+    new Promise<{ default: T }>((resolve, reject) => {
+      const attempt = (remainingRetries: number) => {
+        factory()
+          .then(resolve)
+          .catch((err: unknown) => {
+            if (isChunkLoadError(err)) {
+              if (remainingRetries > 0) {
+                setTimeout(() => attempt(remainingRetries - 1), interval);
+                return;
+              }
+              const now = Date.now();
+              const lastReload = Number(sessionStorage.getItem(CHUNK_RELOAD_KEY) || 0);
+              if (!lastReload || now - lastReload > 15000) {
+                sessionStorage.setItem(CHUNK_RELOAD_KEY, String(now));
+                window.location.reload();
+                // Keep promise pending so React keeps showing Suspense PageLoader seamlessly
+                return;
+              }
+            }
+            reject(err);
+          });
+      };
+      attempt(retries);
     })
   );
 }
@@ -189,6 +208,10 @@ class AppErrorBoundary extends React.Component<{ children: React.ReactNode }, { 
 
   render() {
     if (this.state.hasError) {
+      if (isChunkLoadError(this.state.error)) {
+        return <PageLoader />;
+      }
+
       const errorDisplay = formatAppErrorMessage(this.state.error);
       const rawError = String(this.state.error?.message || this.state.error || "Unknown Error");
 

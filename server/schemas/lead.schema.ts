@@ -30,6 +30,7 @@ export const createLeadSchema = z.object({
     .optional()
     .default("contact_page"),
   preferredBranchId: z.string().optional().nullable(),
+  referralCode: z.string().trim().max(50).optional().nullable(),
   notes: z.string().max(2000).optional().nullable(),
 });
 

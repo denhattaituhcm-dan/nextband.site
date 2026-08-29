@@ -22,6 +22,7 @@ interface StudyBuddyModalProps {
   studentName: string;
   className: string;
   userId?: string;
+  code?: string;
 }
 
 export function StudyBuddyModal({
@@ -30,11 +31,12 @@ export function StudyBuddyModal({
   studentName,
   className,
   userId,
+  code,
 }: StudyBuddyModalProps) {
   const [copied, setCopied] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
-  const referralCode = generateReferralCode(studentName, userId);
+  const referralCode = code || generateReferralCode(studentName, userId);
   const targetUrl = `${window.location.origin}/buddy?ref=${referralCode}&from=${encodeURIComponent(studentName)}`;
 
   const handleCopyLink = async () => {

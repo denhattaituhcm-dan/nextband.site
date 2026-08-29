@@ -198,6 +198,46 @@ export class TuitionService {
       },
     });
 
+    // Check and qualify Referral Reward when tuition is fully paid
+    if (updated.paymentStatus === PaymentStatus.PAID) {
+      try {
+        const attribution = await this.prisma.referralAttribution.findFirst({
+          where: { refereeUserId: updated.studentId },
+          include: {
+            rewards: { where: { status: "PENDING_QUALIFICATION" } },
+            inviter: { select: { userId: true, fullName: true } },
+          },
+        });
+
+        if (attribution && attribution.rewards.length > 0) {
+          for (const rew of attribution.rewards) {
+            await this.prisma.referralReward.update({
+              where: { id: rew.id },
+              data: {
+                status: "ELIGIBLE",
+                qualifiedAt: new Date(),
+                notes: `Đã kích hoạt quà tặng khi học viên ${updated.student?.fullName || updated.studentId} hoàn tất học phí`,
+              },
+            });
+
+            const { NotificationService } = await import("./notification.service.js");
+            const notifService = new NotificationService(this.prisma);
+            await notifService.createNotification(this.prisma as any, {
+              userId: attribution.inviterUserId,
+              type: "STUDENT_ACHIEVEMENT",
+              title: "🎁 Bạn đã mở khóa Bộ Quà Tặng ARIS!",
+              message: `Bạn ${updated.student?.fullName || "đồng hành"} đã hoàn tất học phí. Bạn đã chính thức đủ điều kiện nhận 01 Bộ Quà Tặng ARIS từ trung tâm!`,
+              link: "/app/profile",
+              entityType: "REWARD",
+              entityId: rew.id,
+            }).catch(() => {});
+          }
+        }
+      } catch (rewardErr) {
+        console.error("[TuitionService] Error qualifying referral reward:", rewardErr);
+      }
+    }
+
     return updated;
   }
 }

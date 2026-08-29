@@ -48,6 +48,7 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
       return reply.status(500).send({
         success: false,
         error: "Không thể xử lý yêu cầu lúc này. Vui lòng liên hệ Hotline 0933.319.693.",
+        details: err?.message || String(err),
       });
     }
   });

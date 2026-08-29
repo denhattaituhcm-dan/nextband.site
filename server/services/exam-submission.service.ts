@@ -582,7 +582,7 @@ export class ExamSubmissionService {
 
     const currentStatus = String(submission.status).toUpperCase() as SubmissionState;
     if (currentStatus === "SUBMITTED" || currentStatus === "GRADED" || (currentStatus as string) === "EXPIRED" || (currentStatus as string) === "ABANDONED") {
-      throw new AuthorizationError("ANSWERS_IMMUTABLE: Không thể sửa câu trả lời sau khi bài thi đã nộp hoặc kết thúc", 403);
+      throw new StateTransitionError("SUBMISSION_ALREADY_FINALIZED");
     }
 
     if (currentStatus !== "IN_PROGRESS") {
@@ -897,7 +897,7 @@ export class ExamSubmissionService {
       };
 
       // Audit Outbox Event (Enabled when backed by storage)
-      if ((tx as any).auditOutboxList && tx.auditOutbox) {
+      if (tx.auditOutbox) {
         const auditEvent = auditOutboxService.buildSanitizedEvent({
           eventType: "SUBMISSION_FINALIZED",
           actorId: user.id,
@@ -914,15 +914,31 @@ export class ExamSubmissionService {
 
       // Idempotency Record (Enabled when backed by storage)
       if (payload.idempotencyKey && tx.idempotencyRecord) {
-        await tx.idempotencyRecord.create({
-          data: {
-            key: payload.idempotencyKey,
-            submissionId: id,
-            payloadHash: "sha256-payload",
-            responsePayload: JSON.stringify(fullResult),
-            status: "COMMITTED",
-          },
-        });
+        try {
+          await tx.idempotencyRecord.create({
+            data: {
+              key: payload.idempotencyKey,
+              submissionId: id,
+              payloadHash: "sha256-payload",
+              responsePayload: JSON.stringify(fullResult),
+              status: "COMMITTED",
+            },
+          });
+        } catch (idemErr: any) {
+          // Gracefully recover if concurrent request already committed the idempotency record (P2002)
+          if (idemErr?.code === "P2002" || idemErr?.message?.includes("Unique constraint")) {
+            const existing = await tx.idempotencyRecord.findUnique({
+              where: { key: payload.idempotencyKey },
+            });
+            if (existing) {
+              const cached = typeof existing.responsePayload === "string"
+                ? JSON.parse(existing.responsePayload)
+                : existing.responsePayload;
+              return cached;
+            }
+          }
+          throw idemErr;
+        }
       }
 
       // Notification Trigger: SUBMITTED (Requires teacher manual grading) vs GRADED (Auto-graded result)
@@ -1275,7 +1291,7 @@ export class ExamSubmissionService {
 
       if (isFinalize) {
         // Audit Outbox Event (Enabled when backed by storage)
-        if ((tx as any).auditOutboxList && tx.auditOutbox) {
+        if (tx.auditOutbox) {
           const auditEvent = auditOutboxService.buildSanitizedEvent({
             eventType: "TEACHER_REGRADED",
             actorId: user.id,
@@ -1421,7 +1437,7 @@ export class ExamSubmissionService {
       });
 
       // Immutable Audit Trail (Enabled when backed by storage)
-      if ((tx as any).auditOutboxList && tx.auditOutbox) {
+      if (tx.auditOutbox) {
         const auditEvent = auditOutboxService.buildSanitizedEvent({
           eventType: "SUBMISSION_REGRADED",
           actorId: user.id,

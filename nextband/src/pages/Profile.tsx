@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { authApi, uploadsApi, classesApi, submissionsApi } from "@/lib/api";
+import { authApi, uploadsApi, classesApi, submissionsApi, referralsApi } from "@/lib/api";
 import { submissionKeys } from "@/lib/queryKeys";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
@@ -68,6 +68,13 @@ export default function Profile() {
     enabled: !!user?.id,
     staleTime: 1000 * 60 * 2,
     refetchOnWindowFocus: true,
+  });
+
+  const { data: referralsData } = useQuery({
+    queryKey: ["my-referrals", user?.id],
+    queryFn: () => referralsApi.getMyReferrals().catch(() => null),
+    enabled: !!user?.id,
+    staleTime: 1000 * 60 * 2,
   });
 
   const userSubmissions = Array.isArray(submissionsData?.data) ? submissionsData.data : [];
@@ -263,72 +270,105 @@ export default function Profile() {
           </Card>
 
           {/* Study Buddy Pass Card */}
-          <Card className="border-slate-200/90 bg-[#FAF9F6] text-slate-900 overflow-hidden rounded-2xl shadow-xs">
-            <CardHeader className="p-4 pb-2 border-b border-black/[0.06] bg-black/[0.02]">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 font-extrabold text-xs tracking-tight text-slate-900">
-                  <Gift className="h-3.5 w-3.5 text-rose-600" />
-                  <span>THẺ ĐỒNG HÀNH ARIS</span>
-                </div>
-                <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200 text-[10px] font-bold px-1.5 py-0">
-                  Quà Tặng
-                </Badge>
-              </div>
-            </CardHeader>
+          {(() => {
+            const activeRefCode = referralsData?.referralCode || (user as any)?.referralCode || generateReferralCode(user?.fullName, user?.id);
+            const totalInvited = referralsData?.stats?.totalInvited ?? 0;
+            const totalEligible = referralsData?.stats?.totalEligible ?? 0;
+            const rewardsList = referralsData?.rewards ?? [];
 
-            <CardContent className="p-4 space-y-3">
-              <div className="space-y-1">
-                <div className="text-[10px] uppercase font-mono tracking-wider text-slate-500 font-bold">
-                  Mã mời của bạn
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="flex-1 font-mono font-black text-xs sm:text-sm bg-white border border-slate-200 px-2.5 py-1 rounded-lg text-slate-900 truncate shadow-2xs">
-                    {generateReferralCode(user?.fullName, user?.id)}
+            return (
+              <Card className="border-slate-200/90 bg-[#FAF9F6] text-slate-900 overflow-hidden rounded-2xl shadow-xs">
+                <CardHeader className="p-4 pb-2 border-b border-black/[0.06] bg-black/[0.02]">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 font-extrabold text-xs tracking-tight text-slate-900">
+                      <Gift className="h-3.5 w-3.5 text-rose-600" />
+                      <span>THẺ ĐỒNG HÀNH ARIS</span>
+                    </div>
+                    <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200 text-[10px] font-bold px-1.5 py-0">
+                      {totalInvited > 0 ? `${totalInvited} bạn đã mời` : "Ưu Đãi"}
+                    </Badge>
                   </div>
+                </CardHeader>
+
+                <CardContent className="p-4 space-y-3">
+                  <div className="space-y-1">
+                    <div className="text-[10px] uppercase font-mono tracking-wider text-slate-500 font-bold">
+                      Mã mời cố định của bạn
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="flex-1 font-mono font-black text-xs sm:text-sm bg-white border border-slate-200 px-2.5 py-1 rounded-lg text-slate-900 truncate shadow-2xs">
+                        {activeRefCode}
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={async () => {
+                          const inviter = user?.fullName || "Học viên";
+                          const targetUrl = `${window.location.origin}/buddy?ref=${activeRefCode}&from=${encodeURIComponent(inviter)}`;
+                          const shareText = getBuddyShareText(inviter, activeRefCode, targetUrl);
+                          try {
+                            await navigator.clipboard.writeText(shareText);
+                            setIsCopiedCode(true);
+                            toast({ title: "Thành công", description: "Đã sao chép tin nhắn mời kèm mã ưu đãi." });
+                            setTimeout(() => setIsCopiedCode(false), 3000);
+                          } catch {
+                            toast({ title: "Thông báo", description: "Vui lòng sao chép thủ công." });
+                          }
+                        }}
+                        className="h-8 px-2.5 text-xs font-bold gap-1 rounded-lg border-slate-200 bg-white hover:bg-slate-50"
+                      >
+                        {isCopiedCode ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                        <span>{isCopiedCode ? "Đã chép" : "Chép"}</span>
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-white border border-slate-200/80 space-y-1 text-xs text-slate-600">
+                    <div className="flex items-center gap-1.5 font-bold text-rose-600 text-[11px]">
+                      <span>• Bạn bè: Giảm 200.000đ học phí</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 font-bold text-slate-800 text-[11px]">
+                      <span>• Bạn nhận: 01 Bộ Quà Tặng ARIS</span>
+                    </div>
+                  </div>
+
+                  {/* Trạng thái phần thưởng */}
+                  {rewardsList.length > 0 && (
+                    <div className="space-y-1.5 pt-1 border-t border-slate-200/60">
+                      <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                        Tiến độ quà tặng ({rewardsList.length})
+                      </div>
+                      <div className="space-y-1">
+                        {rewardsList.map((r: any) => (
+                          <div key={r.id} className="text-[11px] p-2 rounded-lg bg-white border border-slate-200 flex items-center justify-between">
+                            <span className="font-semibold text-slate-800">Bộ Quà Tặng ARIS</span>
+                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                              r.status === "ELIGIBLE"
+                                ? "bg-emerald-100 text-emerald-800"
+                                : r.status === "DELIVERED"
+                                ? "bg-blue-100 text-blue-800"
+                                : "bg-amber-100 text-amber-800"
+                            }`}>
+                              {r.status === "ELIGIBLE" ? "🎁 Đủ điều kiện nhận" : r.status === "DELIVERED" ? "Đã nhận quà" : "Chờ bạn đóng học phí"}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   <Button
                     size="sm"
-                    variant="outline"
-                    onClick={async () => {
-                      const code = generateReferralCode(user?.fullName, user?.id);
-                      const inviter = user?.fullName || "Học viên";
-                      const targetUrl = `${window.location.origin}/buddy?ref=${code}&from=${encodeURIComponent(inviter)}`;
-                      const shareText = getBuddyShareText(inviter, code, targetUrl);
-                      try {
-                        await navigator.clipboard.writeText(shareText);
-                        setIsCopiedCode(true);
-                        toast({ title: "Thành công", description: "Đã sao chép tin nhắn mời kèm mã ưu đãi." });
-                        setTimeout(() => setIsCopiedCode(false), 3000);
-                      } catch {
-                        toast({ title: "Thông báo", description: "Vui lòng sao chép thủ công." });
-                      }
-                    }}
-                    className="h-8 px-2.5 text-xs font-bold gap-1 rounded-lg border-slate-200 bg-white hover:bg-slate-50"
+                    onClick={() => setIsBuddyModalOpen(true)}
+                    className="w-full text-xs font-bold h-8 rounded-xl bg-slate-900 hover:bg-slate-800 text-white gap-1.5 shadow-xs"
                   >
-                    {isCopiedCode ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
-                    <span>{isCopiedCode ? "Đã chép" : "Chép"}</span>
+                    <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+                    <span>Xem thẻ mời & Tải ảnh</span>
                   </Button>
-                </div>
-              </div>
-
-              <div className="p-2.5 rounded-xl bg-white border border-slate-200/80 space-y-1 text-xs text-slate-600">
-                <div className="flex items-center gap-1.5 font-bold text-rose-600 text-[11px]">
-                  <span>• Bạn bè: Giảm 200.000đ học phí</span>
-                </div>
-                <div className="flex items-center gap-1.5 font-bold text-slate-800 text-[11px]">
-                  <span>• Bạn nhận: 01 Bộ Quà Tặng ARIS</span>
-                </div>
-              </div>
-
-              <Button
-                size="sm"
-                onClick={() => setIsBuddyModalOpen(true)}
-                className="w-full text-xs font-bold h-8 rounded-xl bg-slate-900 hover:bg-slate-800 text-white gap-1.5 shadow-xs"
-              >
-                <Sparkles className="h-3.5 w-3.5 text-amber-400" />
-                <span>Xem thẻ mời & Tải ảnh</span>
-              </Button>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            );
+          })()}
         </div>
 
         {/* Right Column: Forms */}
@@ -520,6 +560,7 @@ export default function Profile() {
         studentName={user?.fullName || "Học viên"}
         className={enrollments[0]?.className || "Lớp học cá nhân"}
         userId={user?.id}
+        code={referralsData?.referralCode || (user as any)?.referralCode}
       />
     </div>
   );

@@ -61,6 +61,7 @@ export interface SubmitLeadParams {
   goal?: string;
   message?: string;
   source?: string;
+  referralCode?: string;
   metadata?: Record<string, any>;
 }
 
@@ -113,6 +114,8 @@ export async function submitContactLead(
         goal: fallbackGoal,
         course: params.course,
         preferredSchedule: params.preferredSchedule,
+        preferredBranchId: params.preferredBranchId,
+        referralCode: params.referralCode,
         message: params.message || params.goal,
         source: lead.source,
         metadata: params.metadata,

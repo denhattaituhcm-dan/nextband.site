@@ -4,8 +4,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -23,6 +24,7 @@ model User {
   isActive          Boolean           @default(true) @map("is_active")
   joinedAt          DateTime?         @default(now()) @map("joined_at")
   resignedAt        DateTime?         @map("resigned_at")
+  referralCode      String?           @unique @map("referral_code")
   createdAt         DateTime          @default(now()) @map("created_at")
   updatedAt         DateTime          @default(now()) @updatedAt @map("updated_at")
 
@@ -51,6 +53,10 @@ model User {
   interventionsAuthored StudentInterventionLog[] @relation("StaffInterventions")
   assignedLeads         ContactLead[]            @relation("LeadAssignedToUser")
   milestoneClaims       StudentMilestoneClaim[]
+  invitedLeads          ContactLead[]            @relation("InviterLeads")
+  inviterAttributions   ReferralAttribution[]    @relation("InviterAttributions")
+  refereeAttribution    ReferralAttribution?     @relation("RefereeAttribution")
+  referralRewards       ReferralReward[]         @relation("InviterRewards")
 
   @@map("profiles")
 }
@@ -473,6 +479,25 @@ model IdempotencyRecord {
   @@map("idempotency_records")
 }
 
+model AuditOutbox {
+  id                 String   @id @default(uuid())
+  eventType          String   @map("event_type")
+  actorId            String   @map("actor_id")
+  actorRole          String   @map("actor_role")
+  submissionId       String?  @map("submission_id")
+  examId             String?  @map("exam_id")
+  requestId          String?  @map("request_id")
+  idempotencyKeyHash String?  @map("idempotency_key_hash")
+  oldState           String?  @map("old_state")
+  newState           String?  @map("new_state")
+  resultSummary      String?  @map("result_summary")
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  @@index([eventType, createdAt])
+  @@index([submissionId])
+  @@map("audit_outbox")
+}
+
 model SiteSettings {
   id        String   @id @default(uuid())
   key       String   @default("global")
@@ -537,7 +562,8 @@ model ContactLead {
   /// @deprecated Use assignedToUserId (FK) instead. Kept for backward-compat until cleanup migration.
   assignedTo        String?    @map("assigned_to")
   assignedToUserId  String?    @map("assigned_to_user_id")
-  assignedAt        DateTime?  @map("assigned_at")
+  referralCode      String?    @map("referral_code")
+  inviterUserId     String?    @map("inviter_user_id")
   preferredBranchId String?    @map("preferred_branch_id")
   notes             String?
   createdByUserId   String?    @map("created_by_user_id")
@@ -550,12 +576,68 @@ model ContactLead {
   createdByUser     User?      @relation("LeadCreatedByUser", fields: [createdByUserId], references: [userId], onDelete: SetNull)
   convertedUser     User?      @relation("LeadConvertedUser", fields: [convertedUserId], references: [userId], onDelete: SetNull)
   assignedToUser    User?      @relation("LeadAssignedToUser", fields: [assignedToUserId], references: [userId], onDelete: SetNull)
+  inviter           User?      @relation("InviterLeads", fields: [inviterUserId], references: [userId], onDelete: SetNull)
+  attribution       ReferralAttribution?
 
   @@index([preferredBranchId])
   @@index([createdByUserId])
   @@index([assignedToUserId])
+  @@index([inviterUserId])
   @@index([status, createdAt])
   @@map("contact_leads")
+}
+
+model ReferralAttribution {
+  id             String            @id @default(uuid())
+  inviterUserId  String            @map("inviter_user_id")
+  refereeLeadId  String?           @unique @map("referee_lead_id")
+  refereeUserId  String            @unique @map("referee_user_id")
+  referralCode   String            @map("referral_code")
+  discountAmount Decimal           @default(200000.00) @map("discount_amount") @db.Decimal(12, 2)
+  status         AttributionStatus @default(ATTRIBUTED)
+  createdAt      DateTime          @default(now()) @map("created_at")
+
+  inviter        User              @relation("InviterAttributions", fields: [inviterUserId], references: [userId], onDelete: Cascade)
+  referee        User              @relation("RefereeAttribution", fields: [refereeUserId], references: [userId], onDelete: Cascade)
+  refereeLead    ContactLead?      @relation(fields: [refereeLeadId], references: [id], onDelete: SetNull)
+  rewards        ReferralReward[]
+
+  @@index([inviterUserId])
+  @@map("referral_attributions")
+}
+
+model ReferralReward {
+  id             String            @id @default(uuid())
+  attributionId  String            @map("attribution_id")
+  inviterUserId  String            @map("inviter_user_id")
+  rewardType     String            @default("ARIS_GIFT_BOX") @map("reward_type")
+  status         RewardStatus      @default(PENDING_QUALIFICATION)
+  qualifiedAt    DateTime?         @map("qualified_at")
+  deliveredAt    DateTime?         @map("delivered_at")
+  notes          String?
+  createdAt      DateTime          @default(now()) @map("created_at")
+
+  attribution    ReferralAttribution @relation(fields: [attributionId], references: [id], onDelete: Cascade)
+  inviter        User                @relation("InviterRewards", fields: [inviterUserId], references: [userId], onDelete: Cascade)
+
+  @@unique([attributionId, rewardType])
+  @@index([inviterUserId, status])
+  @@map("referral_rewards")
+}
+
+enum AttributionStatus {
+  ATTRIBUTED
+  CONVERTED
+  ENROLLED
+  CANCELLED
+}
+
+enum RewardStatus {
+  PENDING_QUALIFICATION
+  ELIGIBLE
+  PROCESSING
+  DELIVERED
+  CANCELLED
 }
 
 model AssessmentSession {

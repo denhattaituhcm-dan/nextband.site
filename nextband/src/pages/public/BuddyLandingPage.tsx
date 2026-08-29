@@ -31,8 +31,9 @@ export default function BuddyLandingPage() {
     searchParams.get("name") ||
     searchParams.get("inviter") ||
     searchParams.get("sender") ||
+    localStorage.getItem("aris_buddy_from") ||
     "";
-  const initialRef = searchParams.get("ref") || "ARIS-BUDDY";
+  const initialRef = searchParams.get("ref") || localStorage.getItem("aris_buddy_ref") || "";
 
   const [inviterName, setInviterName] = useState(initialInviter);
   const [referralCode, setReferralCode] = useState(initialRef);
@@ -41,9 +42,21 @@ export default function BuddyLandingPage() {
   const [targetBand, setTargetBand] = useState("6.5");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (initialRef) {
+      localStorage.setItem("aris_buddy_ref", initialRef);
+    }
+    if (initialInviter) {
+      localStorage.setItem("aris_buddy_from", initialInviter);
+    }
+  }, [initialRef, initialInviter]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
+
     if (!fullName.trim() || !phone.trim()) {
       toast.error("Vui lòng điền họ tên và số điện thoại.");
       return;
@@ -51,24 +64,31 @@ export default function BuddyLandingPage() {
 
     setIsSubmitting(true);
     try {
-      await submitContactLead({
+      const cleanRef = referralCode.trim() || undefined;
+      const res = await submitContactLead({
         leadType: "CONTACT",
         fullName: fullName.trim(),
         phone: phone.trim(),
-        goal: `[Thẻ Mời Đồng Hành] Mã: ${referralCode || "ARIS-BUDDY"} | Người giới thiệu: ${inviterName.trim() || "Chưa rõ"} | Mục tiêu: Band ${targetBand}`,
+        referralCode: cleanRef,
+        goal: `[Thẻ Mời Đồng Hành] Mã: ${cleanRef || "ARIS-BUDDY"} | Người giới thiệu: ${inviterName.trim() || "Chưa rõ"} | Mục tiêu: Band ${targetBand}`,
         source: "web_study_buddy",
         metadata: {
-          referralCode: referralCode || "ARIS-BUDDY",
+          referralCode: cleanRef || "ARIS-BUDDY",
           inviterName: inviterName.trim(),
           targetBand,
         },
       });
 
-      setIsRegistered(true);
-      toast.success("Đã ghi nhận thông tin ưu đãi thành công!");
-    } catch {
-      setIsRegistered(true);
-      toast.success("Đã ghi nhận thông tin ưu đãi thành công!");
+      if (res?.success) {
+        setIsRegistered(true);
+        toast.success("Đã ghi nhận thông tin ưu đãi thành công!");
+      } else {
+        throw new Error(res?.message || "Không thể gửi thông tin đăng ký");
+      }
+    } catch (err: any) {
+      const msg = err?.message || "Không thể kết nối đến máy chủ. Vui lòng kiểm tra đường truyền và thử lại!";
+      setSubmitError(msg);
+      toast.error(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -315,6 +335,13 @@ export default function BuddyLandingPage() {
                         <option value="7.5">Band 7.0 - 7.5+ (Làm Chủ Kỹ Năng)</option>
                       </select>
                     </div>
+
+                    {submitError && (
+                      <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-left space-y-1 text-red-700 text-xs">
+                        <p className="font-bold">Đăng ký chưa thành công:</p>
+                        <p>{submitError}</p>
+                      </div>
+                    )}
 
                     <div className="pt-1">
                       <Button
