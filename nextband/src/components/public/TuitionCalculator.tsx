@@ -15,8 +15,7 @@ import {
 interface ScholarshipOption {
   id: string;
   label: string;
-  pct?: number;
-  amt?: number;
+  amt: number;
 }
 
 const COURSES_SEQUENCE = ["starter", "dreamer", "builder", "master", "leader"] as const;
@@ -41,14 +40,11 @@ const COURSE_TUITION: Record<CourseKey, number> = {
 
 // 1. Học bổng Tinh Anh (Khóa đầu tiên)
 const TINH_ANH_OPTIONS: ScholarshipOption[] = [
-  { id: "none", label: "Chọn thành tích năng lực đầu vào...", pct: 0 },
-  { id: "gpa_xuat_sac", label: "Sinh viên Xuất sắc (GPA ≥ 3.6/4.0 hoặc ≥ 9.0/10) — 20%", pct: 0.20 },
-  { id: "hsg_qg", label: "HSG cấp Quốc gia các môn văn hoá — 25%", pct: 0.25 },
-  { id: "hsg_tinh", label: "HSG cấp Tỉnh / TP • Olympic 30/4 — 20%", pct: 0.20 },
-  { id: "tan_sv", label: "Tân sinh viên (ĐGNL ≥ 850 hoặc THPT ≥ 26đ) — 15%", pct: 0.15 },
-  { id: "nckh_sv5tot", label: "Giải NCKH cấp Trường / Sinh viên 5 Tốt — 15%", pct: 0.15 },
-  { id: "gpa_gioi", label: "Sinh viên Giỏi (GPA ≥ 3.2/4.0 hoặc ≥ 8.5/10) — 10%", pct: 0.10 },
-  { id: "hsg_thpt", label: "Học sinh Giỏi THPT (GPA năm gần nhất ≥ 9.0) — 10%", pct: 0.10 },
+  { id: "none", label: "Chọn thành tích năng lực đầu vào...", amt: 0 },
+  { id: "bac1", label: "Bậc 1: SV Giỏi (GPA ≥ 3.2) / HSG THPT (GPA ≥ 9.0) — 500k", amt: 500000 },
+  { id: "bac2", label: "Bậc 2: Tân SV (ĐGNL ≥ 850 / THPT ≥ 26đ) / NCKH — 700k", amt: 700000 },
+  { id: "bac3", label: "Bậc 3: SV Xuất sắc (GPA ≥ 3.6) / HSG Tỉnh — 900k", amt: 900000 },
+  { id: "bac4", label: "Bậc 4: HSG cấp Quốc gia các môn văn hóa — 1.200k", amt: 1200000 },
 ];
 
 // 2. Học bổng Kỷ Luật (Từ khóa 2 trở đi)
@@ -59,8 +55,8 @@ const KY_LUAT_OPTIONS: ScholarshipOption[] = [
   { id: "cap3", label: "Cấp 3 — Kỷ Luật Thép: BTVN 100% & Chuyên cần 100% (500k)", amt: 500000 },
 ];
 
-// 3. Đặc Quyền Đồng Môn (300k/khóa)
-const DONG_MON_VOUCHER_AMT = 300000;
+// 3. Đặc Quyền Đồng Môn (200k/khóa)
+const DONG_MON_VOUCHER_AMT = 200000;
 
 const formatVND = (num: number) => {
   return Math.round(num).toLocaleString("vi-VN").replace(/,/g, ".") + "đ";
@@ -119,21 +115,20 @@ export function TuitionCalculator() {
       if (idx === 0) {
         // Khóa đầu tiên: Học bổng Tinh Anh
         const taOpt = TINH_ANH_OPTIONS.find((o) => o.id === pick.ta);
-        if (taOpt && taOpt.pct && taOpt.pct > 0) {
-          const dAmt = tuition * taOpt.pct;
-          discount += dAmt;
-          policyNotes.push(`Tinh Anh: Giảm ${formatVND(dAmt)} (${Math.round(taOpt.pct * 100)}%)`);
+        if (taOpt && taOpt.amt > 0) {
+          discount += taOpt.amt;
+          policyNotes.push(`Tinh Anh: Giảm ${formatVND(taOpt.amt)}`);
         }
       } else {
         // Từ khóa thứ 2: Học bổng Kỷ Luật
         const klOpt = KY_LUAT_OPTIONS.find((o) => o.id === pick.kl);
-        if (klOpt && klOpt.amt && klOpt.amt > 0) {
+        if (klOpt && klOpt.amt > 0) {
           discount += klOpt.amt;
           policyNotes.push(`Kỷ Luật: Giảm ${formatVND(klOpt.amt)}`);
         }
       }
 
-      // Đặc Quyền Đồng Môn (300k)
+      // Đặc Quyền Đồng Môn (200k)
       if (pick.dm) {
         discount += DONG_MON_VOUCHER_AMT;
         policyNotes.push(`Đồng Môn: Giảm ${formatVND(DONG_MON_VOUCHER_AMT)}`);
@@ -188,7 +183,7 @@ export function TuitionCalculator() {
             Tính học phí của bạn
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-            Ước tính mức học phí thực tế sau khi áp dụng chính sách <strong>Học bổng Tinh Anh</strong>, <strong>Học bổng Kỷ Luật</strong> và <strong>Đặc quyền Đồng Môn</strong>.
+            Ước tính mức học phí thực tế sau khi áp dụng <strong>Học bổng Tinh Anh</strong>, <strong>Học bổng Kỷ Luật</strong> và <strong>Đặc quyền Đồng Môn</strong>.
           </p>
         </div>
 
@@ -341,7 +336,7 @@ export function TuitionCalculator() {
                       className="w-full text-xs sm:text-sm bg-background border border-border/80 rounded-xl px-3 py-2 text-foreground font-medium focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue outline-hidden cursor-pointer"
                     >
                       <option value="no">Không</option>
-                      <option value="yes">Có (-300k)</option>
+                      <option value="yes">Có (-200k)</option>
                     </select>
                     {c.hasDm && (
                       <p className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
@@ -428,7 +423,7 @@ export function TuitionCalculator() {
                 <div className="p-2.5 rounded-xl bg-muted/50 space-y-1">
                   <div className="font-bold text-foreground flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-brand-red shrink-0" />
-                    <span>Học bổng Tinh Anh: Giảm 10% – 25% (Khóa 1)</span>
+                    <span>Học bổng Tinh Anh: Giảm 500k – 1.200k (Khóa 1)</span>
                   </div>
                 </div>
                 <div className="p-2.5 rounded-xl bg-muted/50 space-y-1">
@@ -440,7 +435,7 @@ export function TuitionCalculator() {
                 <div className="p-2.5 rounded-xl bg-muted/50 space-y-1">
                   <div className="font-bold text-foreground flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-                    <span>Đặc quyền Đồng Môn: Giảm 300.000đ / khóa</span>
+                    <span>Đặc quyền Đồng Môn: Giảm 200.000đ / khóa</span>
                   </div>
                 </div>
               </div>
@@ -501,20 +496,32 @@ export function TuitionCalculator() {
               {/* Tiers List */}
               <div className="space-y-2.5 text-xs">
                 <div className="p-2.5 rounded-xl bg-muted/60 flex justify-between items-center">
-                  <span>HSG Quốc gia</span>
-                  <span className="font-extrabold text-brand-red text-sm">25%</span>
+                  <div>
+                    <p className="font-bold text-foreground">Bậc 4: HSG Quốc gia</p>
+                    <p className="text-[11px] text-muted-foreground">Giải Nhất, Nhì, Ba, KK các môn văn hóa</p>
+                  </div>
+                  <span className="font-extrabold text-brand-red text-sm shrink-0 pl-2">1.200.000đ</span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-muted/60 flex justify-between items-center">
-                  <span>SV Xuất sắc (GPA ≥ 3.6) / HSG Tỉnh</span>
-                  <span className="font-extrabold text-brand-red text-sm">20%</span>
+                  <div>
+                    <p className="font-bold text-foreground">Bậc 3: SV Xuất sắc / HSG Tỉnh</p>
+                    <p className="text-[11px] text-muted-foreground">GPA ≥ 3.6/4.0 | Olympic 30/4</p>
+                  </div>
+                  <span className="font-extrabold text-brand-red text-sm shrink-0 pl-2">900.000đ</span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-muted/60 flex justify-between items-center">
-                  <span>Tân SV (ĐGNL ≥ 850 / THPT ≥ 26đ) / NCKH</span>
-                  <span className="font-extrabold text-brand-red text-sm">15%</span>
+                  <div>
+                    <p className="font-bold text-foreground">Bậc 2: Tân SV / NCKH</p>
+                    <p className="text-[11px] text-muted-foreground">ĐGNL ≥ 850 | THPT ≥ 26đ | SV 5 Tốt</p>
+                  </div>
+                  <span className="font-extrabold text-brand-red text-sm shrink-0 pl-2">700.000đ</span>
                 </div>
                 <div className="p-2.5 rounded-xl bg-muted/60 flex justify-between items-center">
-                  <span>SV Giỏi (GPA ≥ 3.2) / HSG THPT</span>
-                  <span className="font-extrabold text-brand-red text-sm">10%</span>
+                  <div>
+                    <p className="font-bold text-foreground">Bậc 1: SV Giỏi / HSG THPT</p>
+                    <p className="text-[11px] text-muted-foreground">GPA ≥ 3.2/4.0 | GPA THPT ≥ 9.0</p>
+                  </div>
+                  <span className="font-extrabold text-brand-red text-sm shrink-0 pl-2">500.000đ</span>
                 </div>
               </div>
             </div>
@@ -600,7 +607,7 @@ export function TuitionCalculator() {
                 <div className="p-3 rounded-xl bg-muted/60 space-y-1">
                   <div className="flex justify-between items-center">
                     <span className="font-bold text-foreground">Người được giới thiệu</span>
-                    <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm">300.000đ</span>
+                    <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm">200.000đ</span>
                   </div>
                   <p className="text-muted-foreground text-[11px]">Giảm trực tiếp vào học phí khóa đầu tiên</p>
                 </div>
@@ -608,7 +615,7 @@ export function TuitionCalculator() {
                 <div className="p-3 rounded-xl bg-muted/60 space-y-1">
                   <div className="flex justify-between items-center">
                     <span className="font-bold text-foreground">Người giới thiệu</span>
-                    <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm">300.000đ</span>
+                    <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm">200.000đ</span>
                   </div>
                   <p className="text-muted-foreground text-[11px]">Nhận Voucher áp dụng cho khóa tiếp theo</p>
                 </div>
@@ -662,5 +669,6 @@ export function TuitionCalculator() {
     </div>
   );
 }
+
 
 
