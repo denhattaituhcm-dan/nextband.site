@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { X, Compass, ShieldCheck, BookOpen, Send, GraduationCap, Gift } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { cn } from "@/lib/utils";
 import {
   RoadmapConsultationModal,
   AssessmentRegistrationModal,
@@ -122,35 +123,55 @@ export function ConsultationBubble() {
 
   return (
     <>
+      {/* Mobile Backdrop Overlay when popover is open */}
+      {isOpen && (
+        <div
+          onClick={() => setIsOpen(false)}
+          className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 sm:hidden animate-in fade-in duration-200"
+          aria-hidden="true"
+        />
+      )}
+
       <div
         ref={containerRef}
-        className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end select-none font-sans"
+        className={cn(
+          "fixed z-50 font-sans select-none",
+          // On mobile: if open, center as bottom sheet / drawer; if closed, stick to bottom right
+          isOpen
+            ? "inset-x-3 bottom-3 sm:inset-x-auto sm:bottom-6 sm:right-6 flex flex-col items-center sm:items-end"
+            : "bottom-5 right-5 sm:bottom-6 sm:right-6 flex flex-col items-end"
+        )}
       >
-        {/* Popover Mini-Card */}
+        {/* Popover Card: Bottom Sheet on Mobile, Floating Card on Desktop */}
         {isOpen && (
-          <div className="mb-3 w-80 sm:w-88 rounded-3xl bg-card border border-border/80 shadow-[0_16px_48px_-8px_rgba(0,0,0,0.18)] overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-bottom-right">
+          <div className="w-full max-w-sm sm:w-88 rounded-3xl bg-card border border-border shadow-[0_20px_50px_rgba(0,0,0,0.25)] overflow-hidden animate-in fade-in slide-in-from-bottom-4 sm:zoom-in-95 duration-200 sm:origin-bottom-right sm:mb-3">
+            {/* Mobile drag handle bar */}
+            <div className="pt-2 pb-1 flex justify-center sm:hidden bg-amber-100/70">
+              <div className="w-10 h-1 rounded-full bg-amber-700/25" />
+            </div>
+
             {/* Header: Academic Advisor Banner */}
-            <div className="relative p-4 bg-gradient-to-br from-amber-100/70 via-orange-50/50 to-amber-50/30 border-b border-amber-200/40">
+            <div className="relative px-4 py-3.5 sm:p-4 bg-gradient-to-br from-amber-100/70 via-orange-50/50 to-amber-50/30 border-b border-amber-200/40">
               <div className="flex items-start justify-between gap-2">
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-2.5 min-w-0">
                   <div className="w-10 h-10 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-700 shrink-0 shadow-2xs">
                     <GraduationCap className="w-5 h-5" />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] font-mono font-extrabold uppercase tracking-wider text-amber-800/80 bg-amber-500/15 px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] font-mono font-extrabold uppercase tracking-wider text-amber-800/80 bg-amber-500/15 px-2 py-0.5 rounded-full shrink-0">
                         Ban Học Thuật
                       </span>
-                      <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Đang trực tuyến" />
+                      <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" title="Đang trực tuyến" />
                     </div>
-                    <h3 className="text-sm font-extrabold text-foreground tracking-tight mt-0.5">
+                    <h3 className="text-sm font-extrabold text-foreground tracking-tight mt-0.5 truncate">
                       Cố Vấn Học Thuật ARIS
                     </h3>
                   </div>
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-1 rounded-xl text-muted-foreground hover:text-foreground hover:bg-black/5 transition-colors cursor-pointer"
+                  className="p-1.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-black/5 transition-colors cursor-pointer shrink-0"
                   aria-label="Đóng"
                 >
                   <X className="w-4 h-4" />
@@ -162,19 +183,19 @@ export function ConsultationBubble() {
             </div>
 
             {/* Actions Section with clear visual hierarchy */}
-            <div className="p-3 space-y-2 bg-card">
+            <div className="p-3 space-y-2 bg-card max-h-[70vh] sm:max-h-none overflow-y-auto">
               {/* PRIMARY ACTION: Referral Card */}
               <button
                 onClick={() => handleOptionClick(primaryOption)}
                 className="w-full flex items-center justify-between p-3 rounded-2xl text-left bg-gradient-to-r from-[#EEF2FF] to-[#FDF2F8] dark:from-indigo-950/40 dark:to-pink-950/30 border border-indigo-200/60 dark:border-indigo-900/40 hover:border-pink-300 dark:hover:border-pink-700/60 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200 group cursor-pointer active:scale-[0.99]"
               >
-                <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <div className="flex items-center gap-2.5 min-w-0 flex-1 mr-2">
                   {/* Brand Gradient Circle with Gift Icon */}
                   <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#0052CC] via-indigo-600 to-pink-500 flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform">
                     {primaryOption.icon}
                   </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-1.5">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5 flex-wrap sm:flex-nowrap">
                       <span className="text-xs font-extrabold text-foreground group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-snug truncate">
                         {primaryOption.title}
                       </span>
@@ -187,8 +208,8 @@ export function ConsultationBubble() {
                     </div>
                   </div>
                 </div>
-                <div className="text-xs font-bold text-indigo-600 dark:text-indigo-400 group-hover:translate-x-0.5 transition-transform flex items-center shrink-0 pl-1">
-                  <span>Mời bạn</span>
+                <div className="text-xs font-bold text-indigo-600 dark:text-indigo-400 group-hover:translate-x-0.5 transition-transform flex items-center shrink-0">
+                  <span className="hidden xs:inline">Mời bạn</span>
                   <span className="ml-0.5">→</span>
                 </div>
               </button>
@@ -201,11 +222,11 @@ export function ConsultationBubble() {
                     onClick={() => handleOptionClick(opt)}
                     className="w-full flex items-center justify-between p-2.5 sm:p-3 rounded-2xl text-left bg-muted/40 hover:bg-muted/80 border border-border/60 hover:border-border transition-all duration-150 group cursor-pointer active:scale-[0.99]"
                   >
-                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1 mr-2">
                       <div className="p-2 rounded-xl bg-background border border-border/60 group-hover:border-primary/30 group-hover:scale-105 shrink-0 transition-all">
                         {opt.icon}
                       </div>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors leading-snug truncate block">
                           {opt.title}
                         </span>
@@ -214,7 +235,7 @@ export function ConsultationBubble() {
                         </div>
                       </div>
                     </div>
-                    <span className="text-xs font-bold text-muted-foreground group-hover:text-primary transition-colors pl-1">
+                    <span className="text-xs font-bold text-muted-foreground group-hover:text-primary transition-colors shrink-0">
                       →
                     </span>
                   </button>
@@ -225,7 +246,7 @@ export function ConsultationBubble() {
               <div className="pt-2 border-t border-border/50">
                 <button
                   onClick={handleDirectZaloClick}
-                  className="w-full flex items-center justify-center gap-2 h-10 px-4 rounded-full bg-[#0068FF] hover:bg-[#0057d9] text-white text-xs font-bold transition-all shadow-xs hover:shadow-md active:scale-[0.98] cursor-pointer"
+                  className="w-full flex items-center justify-center gap-2 h-11 sm:h-10 px-4 rounded-full bg-[#0068FF] hover:bg-[#0057d9] text-white text-xs font-bold transition-all shadow-xs hover:shadow-md active:scale-[0.98] cursor-pointer"
                 >
                   <div className="w-4 h-4 shrink-0">
                     <ZaloIcon className="w-full h-full text-white" />
@@ -237,10 +258,13 @@ export function ConsultationBubble() {
           </div>
         )}
 
-        {/* Floating CTA Button */}
+        {/* Floating CTA Button - Hidden on mobile when modal sheet is open */}
         <button
           onClick={() => setIsOpen((prev) => !prev)}
-          className="group relative flex items-center gap-2.5 h-12 pl-4 sm:pl-5 pr-1.5 rounded-full bg-gradient-to-r from-[#0052CC] to-[#0068FF] hover:from-[#0047B3] hover:to-[#005AE0] text-white shadow-[0_4px_20px_rgba(0,104,255,0.35)] hover:shadow-[0_6px_26px_rgba(0,104,255,0.48)] border border-white/20 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer select-none"
+          className={cn(
+            "group relative flex items-center gap-2.5 h-12 pl-4 sm:pl-5 pr-1.5 rounded-full bg-gradient-to-r from-[#0052CC] to-[#0068FF] hover:from-[#0047B3] hover:to-[#005AE0] text-white shadow-[0_4px_20px_rgba(0,104,255,0.35)] hover:shadow-[0_6px_26px_rgba(0,104,255,0.48)] border border-white/20 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer select-none",
+            isOpen && "hidden sm:flex"
+          )}
           aria-expanded={isOpen}
           aria-label="Tư vấn ngay"
         >
