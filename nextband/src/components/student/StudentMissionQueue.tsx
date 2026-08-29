@@ -50,7 +50,16 @@ export function StudentMissionQueue({
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate("/reading")}
+              className="text-xs font-semibold h-8 rounded-lg border-indigo-200 bg-indigo-50/60 text-indigo-700 hover:bg-indigo-100 hover:text-indigo-900 gap-1.5"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>Khám phá Reading Universe</span>
+            </Button>
             {enrolledClassId && (
               <Button
                 variant="outline"
@@ -59,7 +68,7 @@ export function StudentMissionQueue({
                 className="text-xs font-semibold h-8 rounded-lg border-slate-200 text-slate-700 hover:bg-slate-50 gap-1.5"
               >
                 <BookOpen className="w-3.5 h-3.5 text-slate-500" />
-                <span>Xem lại toàn bộ kho bài</span>
+                <span>Xem lại kho bài lớp</span>
               </Button>
             )}
           </div>

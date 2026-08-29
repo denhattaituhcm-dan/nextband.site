@@ -62,8 +62,7 @@ describe("GATE G1: BEHAVIOR & CONTRACT BASELINE VERIFICATION", () => {
     mockPrisma.exams.length = 0;
     mockPrisma.examSubmissions.length = 0;
     mockPrisma.answers.length = 0;
-    mockPrisma.homeworks.length = 0;
-    mockPrisma.submissions.length = 0;
+    mockPrisma.classExamAssignments.length = 0;
     mockPrisma.enrollments.length = 0;
     mockPrisma.idempotencyRecords.length = 0;
 

@@ -1,4 +1,4 @@
-import { ClassPeerRank } from "./classDataMapper";
+import { ClassPeerRank } from "./api";
 import { ActionQueueItem } from "./homeworkStatusHelper";
 
 export type BattleMode =

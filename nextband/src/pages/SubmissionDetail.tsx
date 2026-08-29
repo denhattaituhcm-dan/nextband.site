@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { submissionsApi } from "@/lib/api";
@@ -118,7 +118,8 @@ export default function SubmissionDetail() {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { isAuthenticated, isAdmin, isTeacher } = useAuth();
+  const location = useLocation();
+  const { user, isAuthenticated, isAdmin, isTeacher } = useAuth();
   const submissionId = id || searchParams.get("submissionId") || undefined;
   const [showCorrectAnswers, setShowCorrectAnswers] = useState(false);
   const [showVisualDiff, setShowVisualDiff] = useState(true);
@@ -480,7 +481,6 @@ export default function SubmissionDetail() {
     return aggregateObjectiveBattleDebrief(formattedQuestions, answerMap);
   }, [objectiveQuestions, answerMap]);
 
-  const location = useLocation();
   const handleBack = () => {
     const destination = resolveExitDestination(
       submission?.exam,

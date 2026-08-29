@@ -13,13 +13,8 @@ async function main() {
           student: true,
         },
       },
-      homeworks: {
+      assignments: {
         include: {
-          submissions: {
-            include: {
-              student: true,
-            },
-          },
           exam: true,
         },
       },
@@ -39,13 +34,9 @@ async function main() {
   for (const s of m01.students) {
     console.log(`  - Student: [${s.studentId}] ${s.student.fullName} (email: ${s.student.email}, userId: ${s.student.userId})`);
   }
-  console.log("HOMEWORKS IN CLASS:");
-  for (const hw of m01.homeworks) {
-    console.log(`  - Homework: [${hw.id}] "${hw.title}" | examId: ${hw.examId} | deadline: ${hw.deadline}`);
-    console.log(`    Submissions count: ${hw.submissions.length}`);
-    for (const sub of hw.submissions) {
-      console.log(`      * Sub: [${sub.id}] Student: ${sub.student.fullName} (${sub.studentId}) | status: ${sub.status} | score: ${sub.score}`);
-    }
+  console.log("ASSIGNMENTS IN CLASS:");
+  for (const a of m01.assignments) {
+    console.log(`  - Assignment: [${a.id}] "${a.exam.title}" | examId: ${a.examId} | deadline: ${a.deadline}`);
   }
 
   // Check all submissions from students in this class

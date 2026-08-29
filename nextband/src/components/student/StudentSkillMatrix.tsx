@@ -13,6 +13,7 @@ import {
   Mic,
   AlertCircle,
   FileCheck2,
+  Sparkles,
 } from "lucide-react";
 import { SkillMastery } from "@/lib/studentJourney";
 
@@ -107,6 +108,20 @@ export function StudentSkillMatrix({
               </div>
             );
           })}
+        </div>
+
+        {/* Subtle Reading Universe Contextual Link */}
+        <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+          <span className="text-[11px] text-slate-500">Luyện đọc hiểu mở rộng:</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate("/reading")}
+            className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 h-7 px-2 gap-1 rounded-lg"
+          >
+            <Sparkles className="w-3 h-3 text-amber-500" />
+            <span>Reading Universe ↗</span>
+          </Button>
         </div>
       </Card>
 

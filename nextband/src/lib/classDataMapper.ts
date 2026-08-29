@@ -5,6 +5,7 @@
  * Supabase direct queries, legacy flattened structures) into a single unified domain model.
  */
 
+export type { ClassPeerRank } from "./api";
 export type StudentStatus = "ACTIVE" | "SUSPENDED" | "DROPPED";
 
 export interface CanonicalStudent {

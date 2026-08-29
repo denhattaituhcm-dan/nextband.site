@@ -42,6 +42,8 @@ import {
   Flag,
   X,
   AlertTriangle,
+  AlertCircle,
+  RefreshCw,
   ShieldCheck,
   WifiOff,
   ShieldAlert,
