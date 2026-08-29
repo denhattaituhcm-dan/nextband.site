@@ -504,7 +504,9 @@ export const coursesApi = {
     }
 
     const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.error || errData.message || "Xóa khóa học thất bại");
+    const err: any = new Error(errData.error || errData.message || "Xóa khóa học thất bại");
+    err.response = { status: res.status, data: errData };
+    throw err;
   },
 };
 
@@ -802,7 +804,9 @@ export const sectionsApi = {
 
     if (res.ok) return { success: true };
     const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.error || errData.message || "Không thể xóa Section");
+    const err: any = new Error(errData.error || errData.message || "Không thể xóa Section");
+    err.response = { status: res.status, data: errData };
+    throw err;
   },
 };
 
@@ -947,7 +951,9 @@ export const questionsApi = {
     });
     if (res.ok) return { success: true };
     const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.error || "Xóa câu hỏi thất bại");
+    const err: any = new Error(errData.error || errData.message || "Xóa câu hỏi thất bại");
+    err.response = { status: res.status, data: errData };
+    throw err;
   },
 
   bulkCreate: async (groupId: string, questions: any[]) => {
@@ -3140,7 +3146,9 @@ export const classesApi = {
     }
 
     const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.error || "Xóa lớp học thất bại");
+    const err: any = new Error(errData.error || errData.message || "Xóa lớp học thất bại");
+    err.response = { status: res.status, data: errData };
+    throw err;
   },
 
   /**

@@ -90,6 +90,13 @@ export default function CourseExamsList({ courseId }: CourseExamsListProps) {
       toast({ title: "Đã xóa", description: "bài tập đã được xóa" });
       setDeleteExam(null);
     },
+    onError: (err: any) => {
+      toast({
+        title: "Không thể xóa bài tập",
+        description: err.message || err.response?.data?.error || "Đã xảy ra lỗi khi xóa bài tập",
+        variant: "destructive",
+      });
+    },
   });
 
   const lockMutation = useMutation({
@@ -103,7 +110,7 @@ export default function CourseExamsList({ courseId }: CourseExamsListProps) {
       toast({
         title: "Lỗi",
         description:
-          err.response?.data?.error || "Không thể cập nhật trạng thái khóa",
+          err.message || err.response?.data?.error || "Không thể cập nhật trạng thái khóa",
         variant: "destructive",
       });
     },

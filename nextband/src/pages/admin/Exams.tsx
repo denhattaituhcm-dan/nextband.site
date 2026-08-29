@@ -168,7 +168,7 @@ export default function AdminExams() {
       toast({
         title: "Lỗi",
         description:
-          err.response?.data?.error || "Không thể cập nhật trạng thái khóa",
+          err.message || err.response?.data?.error || "Không thể cập nhật trạng thái khóa",
         variant: "destructive",
       });
     },

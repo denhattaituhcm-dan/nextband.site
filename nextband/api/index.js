@@ -99503,7 +99503,12 @@ var examsRoutes = async (fastify) => {
       const { id } = request.params;
       const { password } = request.body || {};
       const actor = await fastify.prisma.user.findFirst({
-        where: { userId: request.user.id }
+        where: {
+          OR: [
+            { userId: request.user.id },
+            { id: request.user.id }
+          ]
+        }
       });
       if (!actor) {
         return reply.status(401).send({ error: "Kh\xF4ng th\u1EC3 x\xE1c th\u1EF1c ng\u01B0\u1EDDi d\xF9ng" });
@@ -105687,6 +105692,41 @@ async function classesRoutes(fastify) {
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       return controller.removeStudent(request, reply);
+    }
+  );
+  fastify.delete(
+    "/:id",
+    { preHandler: [authenticate, requireRoles("admin")] },
+    async (request, reply) => {
+      const { id } = request.params;
+      const existing = await fastify.prisma.class.findUnique({
+        where: { id },
+        select: { id: true, name: true, status: true, isActive: true }
+      });
+      if (!existing) {
+        return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc" });
+      }
+      const activeStudentCount = await fastify.prisma.classStudent.count({
+        where: {
+          classId: id,
+          status: "ACTIVE",
+          deletedAt: null
+        }
+      });
+      if (activeStudentCount > 0) {
+        return reply.status(409).send({
+          error: `Kh\xF4ng th\u1EC3 x\xF3a l\u1EDBp h\u1ECDc v\xEC v\u1EABn c\xF2n ${activeStudentCount} h\u1ECDc vi\xEAn \u0111ang theo h\u1ECDc. Vui l\xF2ng chuy\u1EC3n ho\u1EB7c cho h\u1ECDc vi\xEAn t\u1ED1t nghi\u1EC7p tr\u01B0\u1EDBc khi x\xF3a.`
+        });
+      }
+      await fastify.prisma.class.update({
+        where: { id },
+        data: {
+          isActive: false,
+          status: "ARCHIVED",
+          archivedAt: /* @__PURE__ */ new Date()
+        }
+      });
+      return reply.send({ success: true, message: "\u0110\xE3 x\xF3a l\u1EDBp h\u1ECDc th\xE0nh c\xF4ng" });
     }
   );
   fastify.post(

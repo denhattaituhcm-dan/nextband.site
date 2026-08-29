@@ -89,6 +89,49 @@ export default async function classesRoutes(fastify: FastifyInstance) {
     }
   );
 
+  // DELETE /classes/:id - Xóa / Lưu trữ lớp học (Admin only)
+  fastify.delete<{ Params: { id: string } }>(
+    "/:id",
+    { preHandler: [authenticate, requireRoles("admin")] },
+    async (request, reply) => {
+      const { id } = request.params;
+
+      const existing = await fastify.prisma.class.findUnique({
+        where: { id },
+        select: { id: true, name: true, status: true, isActive: true },
+      });
+
+      if (!existing) {
+        return reply.status(404).send({ error: "Không tìm thấy lớp học" });
+      }
+
+      const activeStudentCount = await fastify.prisma.classStudent.count({
+        where: {
+          classId: id,
+          status: "ACTIVE",
+          deletedAt: null,
+        },
+      });
+
+      if (activeStudentCount > 0) {
+        return reply.status(409).send({
+          error: `Không thể xóa lớp học vì vẫn còn ${activeStudentCount} học viên đang theo học. Vui lòng chuyển hoặc cho học viên tốt nghiệp trước khi xóa.`,
+        });
+      }
+
+      await fastify.prisma.class.update({
+        where: { id },
+        data: {
+          isActive: false,
+          status: "ARCHIVED",
+          archivedAt: new Date(),
+        },
+      });
+
+      return reply.send({ success: true, message: "Đã xóa lớp học thành công" });
+    },
+  );
+
   // POST /classes/:id/homework-deadline - Cập nhật deadline bài tập cho lớp
   fastify.post<{ Params: { id: string }; Body: { examId: string; deadline: string | null } }>(
     "/:id/homework-deadline",

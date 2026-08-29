@@ -523,6 +523,13 @@ export default function AdminClasses() {
       toast({ title: "Đã xóa", description: "Lớp học đã được xóa" });
       setDeleteClass(null);
     },
+    onError: (err: any) => {
+      toast({
+        title: "Không thể xóa lớp học",
+        description: err.message || err.response?.data?.error || "Đã xảy ra lỗi khi xóa lớp học",
+        variant: "destructive",
+      });
+    },
   });
 
   const toggleSort = (field: SortField) => {

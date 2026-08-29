@@ -557,7 +557,12 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
       const { password } = (request.body || {}) as { password?: string };
 
       const actor = await fastify.prisma.user.findFirst({
-        where: { userId: request.user.id },
+        where: {
+          OR: [
+            { userId: request.user.id },
+            { id: request.user.id },
+          ],
+        },
       });
       if (!actor) {
         return reply.status(401).send({ error: "Không thể xác thực người dùng" });
