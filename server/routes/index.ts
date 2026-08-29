@@ -19,6 +19,7 @@ import lessonRoutes from "./lesson.routes.js";
 import notificationsRoutes from "./notifications.routes.js";
 import leadRoutes from "./lead.routes.js";
 import speakingStorageRoutes from "./speakingStorage.routes.js";
+import speakingEvidenceRoutes from "./speaking-evidence.routes.js";
 import speakingForecastRoutes from "./speaking-forecast.routes.js";
 import branchRoutes from "./branch.routes.js";
 import roomRoutes from "./room.routes.js";
@@ -59,6 +60,7 @@ const routes: FastifyPluginAsync = async (fastify) => {
   await fastify.register(branchRoutes, { prefix: "/branches" });
   await fastify.register(roomRoutes, { prefix: "/rooms" });
   await fastify.register(speakingStorageRoutes, { prefix: "/speaking" });
+  await fastify.register(speakingEvidenceRoutes, { prefix: "/speaking" });
   await fastify.register(speakingForecastRoutes, { prefix: "/speaking-forecast" });
   await fastify.register(lessonRoutes);
   await fastify.register(periodicReportsRoutes);

@@ -62,10 +62,10 @@ export default async function classesRoutes(fastify: FastifyInstance) {
     }
   );
 
-  // PUT /classes/:id - Cập nhật thông tin lớp (Chỉ dành cho Quản trị viên / Admin)
+  // PUT /classes/:id - Cập nhật thông tin lớp (Admin hoặc Teacher phụ trách lớp)
   fastify.put<{ Params: { id: string } }>(
     "/:id",
-    { preHandler: [authenticate, requireRoles("admin")] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       return controller.update(request, reply);
     }

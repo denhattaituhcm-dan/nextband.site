@@ -526,13 +526,22 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
         });
       }
 
-      // Check 2 & 3: Kiểm tra dữ liệu học tập liên quan
-      const [enrollmentCount, submissionCount] = await Promise.all([
+      // Check 2, 3 & 4: Kiểm tra dữ liệu học tập và lớp học liên quan
+      const [enrollmentCount, submissionCount, activeClassCount] = await Promise.all([
         fastify.prisma.enrollment.count({ where: { courseId: id } }),
         fastify.prisma.examSubmission.count({
           where: { exam: { courseId: id } },
         }),
+        fastify.prisma.class.count({
+          where: { courseId: id, isActive: true },
+        }),
       ]);
+
+      if (activeClassCount > 0) {
+        return reply.status(409).send({
+          error: `Không thể xóa khóa học vì vẫn còn ${activeClassCount} lớp học đang hoạt động thuộc khóa học này. Vui lòng lưu trữ hoặc chuyển lớp trước khi xóa.`,
+        });
+      }
 
       if (enrollmentCount > 0) {
         return reply.status(409).send({

@@ -61,8 +61,7 @@ export default async function handler(req, res) {
       JSON.stringify({
         statusCode: 500,
         error: "Internal Server Error",
-        message: err?.message || "Serverless runtime error",
-        stack: err?.stack,
+        message: "Đã xảy ra lỗi hệ thống. Vui lòng liên hệ quản trị viên.",
       })
     );
   }

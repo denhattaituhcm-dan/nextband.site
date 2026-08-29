@@ -235,9 +235,6 @@ export async function buildApp() {
     };
   });
 
-  // API Routes
-  await app.register(routes, { prefix: "/api/v1" });
-
   // Global error handler - Structured logging on server & Clean sanitized response for client
   app.setErrorHandler((error: any, request, reply) => {
     let statusCode = error.statusCode || 500;
@@ -272,8 +269,13 @@ export async function buildApp() {
           break;
         default:
           statusCode = 400;
-          clientMessage = error.message || "Lỗi truy vấn cơ sở dữ liệu.";
+          clientMessage = "Lỗi truy vấn dữ liệu không hợp lệ.";
+          errorType = "DatabaseQueryError";
       }
+    } else if (error.name === "PrismaClientValidationError") {
+      statusCode = 400;
+      clientMessage = "Dữ liệu hoặc mã định danh (ID) không đúng định dạng.";
+      errorType = "ValidationError";
     } else if (error.message && typeof error.message === "string") {
       if (error.message.includes("violates check constraint")) {
         statusCode = 400;
@@ -283,6 +285,10 @@ export async function buildApp() {
         statusCode = 400;
         clientMessage = "Dữ liệu liên kết không tồn tại.";
         errorType = "ForeignKeyError";
+      } else if (error.message.includes("Inconsistent column data") || error.message.includes("Error creating UUID")) {
+        statusCode = 400;
+        clientMessage = "Mã định danh (ID) không đúng định dạng.";
+        errorType = "ValidationError";
       }
     }
 
@@ -293,24 +299,41 @@ export async function buildApp() {
       errorType = "ValidationError";
     }
 
-    // Full diagnostic in server log
+    // 3. In production / serverless, sanitize any 5xx error to prevent leaking internals
+    const isProdOrServerless =
+      process.env.NODE_ENV === "production" ||
+      process.env.VERCEL === "1" ||
+      isServerless;
+
+    if (statusCode >= 500 && isProdOrServerless) {
+      clientMessage = "Đã xảy ra lỗi hệ thống. Vui lòng liên hệ quản trị viên.";
+      errorType = "InternalServerError";
+    }
+
+    // Full diagnostic in server log (preserves forensic details)
     app.log.error({
       requestId: request.id,
       url: request.url,
       method: request.method,
       statusCode,
+      errName: error.name,
+      errCode: error.code,
+      errMessage: error.message,
       err: error,
     });
 
     return reply.status(statusCode).send({
       statusCode,
-      error: clientMessage,
+      error: statusCode >= 500 && isProdOrServerless ? "Internal Server Error" : clientMessage,
       message: clientMessage,
       errorType,
       requestId: request.id,
       ...(error.issues ? { details: error.issues } : {}),
     });
   });
+
+  // API Routes
+  await app.register(routes, { prefix: "/api/v1" });
 
   // Not found handler
   app.setNotFoundHandler((_request, reply) => {

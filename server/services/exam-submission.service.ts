@@ -121,11 +121,33 @@ export class ExamSubmissionService {
         teacherStudentIds = await getTeacherStudentIds(this.prisma, user.id);
       }
 
-      where.studentId = {
-        in: teacherStudentIds.length > 0 ? teacherStudentIds : ["__none__"],
-      };
+      if (teacherStudentIds.length === 0) {
+        return {
+          data: [],
+          meta: {
+            page: pageNum,
+            limit: limitNum,
+            total: 0,
+            totalPages: 0,
+          },
+        };
+      }
+
       if (studentId) {
-        where.studentId = teacherStudentIds.includes(studentId) ? studentId : "__none__";
+        if (!teacherStudentIds.includes(studentId)) {
+          return {
+            data: [],
+            meta: {
+              page: pageNum,
+              limit: limitNum,
+              total: 0,
+              totalPages: 0,
+            },
+          };
+        }
+        where.studentId = studentId;
+      } else {
+        where.studentId = { in: teacherStudentIds };
       }
     } else if (studentId) {
       const dbUser = await this.prisma.user.findFirst({
@@ -138,8 +160,33 @@ export class ExamSubmissionService {
 
     if (isAdmin && classId) {
       const classStudentIds = await getClassStudentIds(this.prisma, classId);
-      const inClass = classStudentIds.length > 0 ? classStudentIds : ["__none__"];
-      where.studentId = studentId ? (classStudentIds.includes(studentId) ? studentId : "__none__") : { in: inClass };
+      if (classStudentIds.length === 0) {
+        return {
+          data: [],
+          meta: {
+            page: pageNum,
+            limit: limitNum,
+            total: 0,
+            totalPages: 0,
+          },
+        };
+      }
+      if (studentId) {
+        if (!classStudentIds.includes(studentId)) {
+          return {
+            data: [],
+            meta: {
+              page: pageNum,
+              limit: limitNum,
+              total: 0,
+              totalPages: 0,
+            },
+          };
+        }
+        where.studentId = studentId;
+      } else {
+        where.studentId = { in: classStudentIds };
+      }
     }
 
     if (examId) where.examId = examId;

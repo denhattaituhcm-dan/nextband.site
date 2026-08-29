@@ -403,8 +403,19 @@ export class ClassService {
     }
 
     const isAdmin = user.roles.includes("admin");
-    if (!isAdmin) {
-      throw new AuthorizationError("Chỉ quản trị viên (Admin) mới có quyền chỉnh sửa thông tin lớp học", 403);
+    const isTeacher = user.roles.includes("teacher");
+
+    if (!isAdmin && !isTeacher) {
+      throw new AuthorizationError("Bạn không có quyền chỉnh sửa thông tin lớp học này", 403);
+    }
+
+    if (isTeacher && !isAdmin) {
+      const isOwner =
+        (classData.teacherId && classData.teacherId === user.id) ||
+        (classData.teacherId && (user as any).userId === classData.teacherId);
+      if (!isOwner) {
+        throw new AuthorizationError("Bạn không có quyền sửa lớp này", 403);
+      }
     }
 
     const updatePayload: any = {};
@@ -1066,9 +1077,10 @@ export class ClassService {
       }
     }
 
-    // 2. Tự động dọn dẹp / xóa sạch các lớp đã CLOSED quá 3 tháng (90 ngày) kể từ ngày closedAt
+    // 2. Tự động lưu trữ (ARCHIVED) các lớp đã CLOSED quá 3 tháng (90 ngày) kể từ ngày closedAt
+    // TUYỆT ĐỐI KHÔNG HARD-DELETE để bảo toàn 100% dữ liệu lịch sử (Attendance, Homework, Submissions, Reports)
     const threeMonthsAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-    const classesToDelete = await this.prisma.class.findMany({
+    const classesToArchive = await this.prisma.class.findMany({
       where: {
         status: "CLOSED",
         closedAt: {
@@ -1078,19 +1090,25 @@ export class ClassService {
       select: { id: true, name: true },
     });
 
-    let deletedCount = 0;
-    for (const cls of classesToDelete) {
-      await this.prisma.class.delete({
+    let archivedCount = 0;
+    for (const cls of classesToArchive) {
+      await this.prisma.class.update({
         where: { id: cls.id },
+        data: {
+          status: "ARCHIVED",
+          archivedAt: now,
+          isActive: false,
+        },
       });
-      deletedCount++;
+      archivedCount++;
     }
 
     return {
       success: true,
       timestamp: now.toISOString(),
       closedClassesCount: closedCount,
-      deletedClassesCount: deletedCount,
+      archivedClassesCount: archivedCount,
+      deletedClassesCount: 0, // Invariant: Hard delete is strictly eliminated (always 0)
     };
   }
 
