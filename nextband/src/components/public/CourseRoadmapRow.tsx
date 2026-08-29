@@ -117,12 +117,13 @@ export function CourseRoadmapRow({
       )}
     >
       {/* ---------------------------------------------------- */}
+      {/* ---------------------------------------------------- */}
       {/* KHỐI 1 (TRÁI): THỜI LƯỢNG & HUY HIỆU VÀNG 3D        */}
       {/* ---------------------------------------------------- */}
-      <div className="relative flex-shrink-0 flex items-center lg:w-[210px] p-2 lg:p-2.5">
+      <div className="relative flex-shrink-0 flex items-center lg:w-[180px] p-2 lg:p-2.5">
         {/* Main 3D Glossy Badge Container */}
         <div
-          className="relative w-full h-28 sm:h-32 lg:h-full min-h-[120px] rounded-2xl sm:rounded-3xl flex items-center justify-between lg:justify-start px-6 lg:px-5 py-4 overflow-hidden text-white"
+          className="relative w-full h-24 sm:h-28 lg:h-full min-h-[96px] rounded-2xl sm:rounded-3xl flex items-center justify-between lg:justify-start px-5 lg:px-4 py-3 overflow-hidden text-white"
           style={{
             background: rank.leftGradient,
             boxShadow: `0 10px 24px -4px ${rank.leftGlow}, inset 0 2px 4px rgba(255, 255, 255, 0.4), inset 0 -3px 6px rgba(0, 0, 0, 0.25)`,
@@ -140,17 +141,17 @@ export function CourseRoadmapRow({
 
           {/* Duration text */}
           <div className="relative z-10 flex flex-col items-start leading-none select-none">
-            <span className="text-4xl sm:text-5xl lg:text-5xl font-black tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]">
+            <span className="text-3xl sm:text-4xl lg:text-4xl font-black tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]">
               {formattedWeeks}
             </span>
-            <span className="text-sm sm:text-base font-extrabold tracking-widest mt-1 uppercase text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">
+            <span className="text-xs sm:text-sm font-extrabold tracking-widest mt-1 uppercase text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">
               TUẦN
             </span>
           </div>
 
           {/* Gold Medal Icon on Mobile (inline) */}
           <div className="relative z-10 lg:hidden">
-            <CourseGoldMedal size={64} />
+            <CourseGoldMedal size={54} />
           </div>
         </div>
 
@@ -158,17 +159,17 @@ export function CourseRoadmapRow({
         <div
           className="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-20 transition-transform duration-300 group-hover:scale-110"
         >
-          <CourseGoldMedal size={72} />
+          <CourseGoldMedal size={60} />
         </div>
       </div>
 
       {/* ---------------------------------------------------- */}
       {/* KHỐI 2 (GIỮA): ĐỊNH VỊ, TIÊU CHÍ & THÔNG SỐ KỸ THUẬT */}
       {/* ---------------------------------------------------- */}
-      <div className="flex-1 flex flex-col justify-between p-5 sm:p-6 lg:pl-12 lg:pr-6 space-y-4">
-        <div className="space-y-2.5">
+      <div className="flex-1 flex flex-col justify-center p-5 sm:p-6 lg:pl-10 lg:pr-6 space-y-3">
+        <div className="space-y-2">
           {/* Header Row: Course Title + Target Band Badge */}
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
             <h3
               className="text-2xl sm:text-3xl font-black tracking-tight uppercase transition-colors"
               style={{ color: rank.themeColor }}
@@ -179,7 +180,7 @@ export function CourseRoadmapRow({
             {/* Target band pill */}
             <span
               className={cn(
-                "inline-flex items-center px-3.5 py-1 rounded-full text-xs sm:text-sm font-extrabold tracking-wide border shadow-2xs",
+                "inline-flex items-center px-3 py-0.5 rounded-full text-xs sm:text-sm font-extrabold tracking-wide border shadow-2xs",
                 rank.targetBadgeBg,
                 rank.targetBadgeText,
                 rank.targetBadgeBorder
@@ -195,8 +196,8 @@ export function CourseRoadmapRow({
           </div>
         </div>
 
-        {/* Technical specs pill tags (Lấy từ Ảnh 2: giờ, buổi, sĩ số) */}
-        <div className="flex flex-wrap items-center gap-2 pt-1">
+        {/* Technical specs pill tags (giờ, buổi, sĩ số) */}
+        <div className="flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs sm:text-sm font-semibold bg-muted/80 text-foreground/80 border border-border/60">
             <span>⏱</span>
             <span>{course.durationLabel}</span>
@@ -217,17 +218,17 @@ export function CourseRoadmapRow({
       {/* ---------------------------------------------------- */}
       {/* KHỐI 3 (PHẢI): HỌC PHÍ & CỤM NÚT HÀNH ĐỘNG (CRO)     */}
       {/* ---------------------------------------------------- */}
-      <div className="flex-shrink-0 flex flex-col justify-center items-center lg:items-end p-5 sm:p-6 lg:w-[260px] border-t lg:border-t-0 lg:border-l border-border/70 bg-muted/25 rounded-b-3xl lg:rounded-b-none lg:rounded-r-3xl space-y-3.5">
+      <div className="flex-shrink-0 flex flex-col justify-center items-center lg:items-end p-5 sm:p-6 lg:w-[280px] border-t lg:border-t-0 lg:border-l border-border/70 bg-muted/25 rounded-b-3xl lg:rounded-b-none lg:rounded-r-3xl space-y-3.5">
         {/* Pricing tag */}
-        <div className="text-center lg:text-right">
-          <div className="flex items-baseline justify-center lg:justify-end gap-1.5">
+        <div className="text-center lg:text-right w-full">
+          <div className="flex items-baseline justify-center lg:justify-end gap-1.5 whitespace-nowrap">
             <span
               className="text-2xl sm:text-3xl font-black tracking-tight"
               style={{ color: rank.themeColor }}
             >
               {course.tuition}
             </span>
-            <span className="text-xs sm:text-sm font-medium text-muted-foreground">
+            <span className="text-xs sm:text-sm font-bold text-muted-foreground whitespace-nowrap">
               / trọn khóa
             </span>
           </div>
