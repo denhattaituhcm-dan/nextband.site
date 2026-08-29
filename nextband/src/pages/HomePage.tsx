@@ -23,6 +23,7 @@ import { StudentStageBanner } from "@/components/student/StudentStageBanner";
 import { StudentMissionQueue } from "@/components/student/StudentMissionQueue";
 import { StudentSkillMatrix } from "@/components/student/StudentSkillMatrix";
 import { ClassLeaderboardWidget } from "@/components/student/ClassLeaderboardWidget";
+import { DisciplineScholarshipTracker } from "@/components/student/DisciplineScholarshipTracker";
 import { calculateStudentJourney } from "@/lib/studentJourney";
 import { getStudentMotivationCopy } from "@/lib/studentMotivationCopy";
 import { calculateStudentStreak } from "@/lib/studentStreakHelper";
@@ -339,6 +340,14 @@ export default function HomePage() {
               journey={journey}
               motivation={motivation}
               streak={streak}
+            />
+
+            {/* 1.5 DISCIPLINE SCHOLARSHIP TRACKER: Bảng Cam Kết & Thanh Động Lực Học Bổng Kỷ Luật */}
+            <DisciplineScholarshipTracker
+              submittedCount={submittedCount}
+              totalHomeworks={rawLessons?.length || Math.max(submittedCount, 1)}
+              studentId={user?.id}
+              classId={enrolledClassId}
             />
 
             {/* BATTLEGROUND & ACADEMIC CORE: LƯỚI 2 CỘT (7:5) */}

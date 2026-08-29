@@ -18,11 +18,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, User, Camera, Save, Trophy, Flame, Star, CheckCircle2, Zap, Users, Medal, Gift, Copy, Check, Sparkles } from "lucide-react";
+import { Loader2, User, Camera, Save, Trophy, Flame, Star, CheckCircle2, Zap, Users, Medal, Gift, Copy, Check, Sparkles, Award, Target } from "lucide-react";
 import { StudentEvidenceProfileCard } from "@/components/profile/StudentEvidenceProfileCard";
 import { useStudentLifecycle } from "@/hooks/useStudentLifecycle";
 import { StudyBuddyModal } from "@/components/student/StudyBuddyModal";
 import { generateReferralCode, getBuddyShareText } from "@/lib/studyBuddyHelper";
+import { DisciplineGoalModal } from "@/components/student/DisciplineGoalModal";
+import {
+  calculateDisciplineStanding,
+  getSavedDisciplineGoal,
+  DisciplineTierKey,
+} from "@/lib/disciplineScholarshipHelper";
 
 export default function Profile() {
   const { user, refreshUser } = useAuth();
@@ -33,6 +39,10 @@ export default function Profile() {
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [isBuddyModalOpen, setIsBuddyModalOpen] = useState(false);
   const [isCopiedCode, setIsCopiedCode] = useState(false);
+  const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
+  const [currentGoal, setCurrentGoal] = useState<DisciplineTierKey>(() =>
+    getSavedDisciplineGoal(user?.id, enrollments[0]?.classId)
+  );
 
   // Form states
   const [fullName, setFullName] = useState("");
@@ -385,6 +395,63 @@ export default function Profile() {
               </Card>
             );
           })()}
+
+          {/* Discipline Scholarship Voucher Card */}
+          {(() => {
+            const standing = calculateDisciplineStanding({
+              submittedCount,
+              totalHomeworks: Math.max(totalHomeworks, 1),
+              targetTier: currentGoal,
+            });
+
+            return (
+              <Card className="relative overflow-hidden rounded-2xl border border-slate-200/90 bg-gradient-to-b from-slate-50/60 to-white text-slate-900 shadow-sm hover:shadow-md transition-all duration-200">
+                <CardHeader className="relative p-4 pb-3 border-b border-slate-100 bg-white/80">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-rose-50 text-rose-600 border border-rose-100 shadow-2xs">
+                        <Award className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-rose-600">Học Bổng Chuyển Chặng</div>
+                        <div className="text-xs font-bold tracking-tight text-slate-900">HỌC BỔNG KỶ LUẬT</div>
+                      </div>
+                    </div>
+                    <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-200 text-[10px] font-bold px-2 py-0.5">
+                      +{standing.rewardFormatted}
+                    </Badge>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="relative p-4 space-y-3">
+                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-slate-500 font-medium">Mục tiêu cam kết:</span>
+                      <strong className="text-slate-900 font-bold">{standing.targetTierConfig.levelName}</strong>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-slate-500 font-medium">Tỷ lệ nộp BTVN:</span>
+                      <strong className="text-rose-600 font-mono font-bold">{standing.currentHomeworkRate}% ({submittedCount}/{totalHomeworks} bài)</strong>
+                    </div>
+                  </div>
+
+                  <p className="text-[11px] text-slate-600 italic leading-tight">
+                    &ldquo;{standing.motivationalQuote}&rdquo;
+                  </p>
+
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setIsGoalModalOpen(true)}
+                    className="w-full text-xs font-semibold h-9 rounded-xl border-slate-200 text-slate-700 hover:bg-slate-50 gap-1.5 transition-all"
+                  >
+                    <Target className="h-3.5 w-3.5 text-rose-600" />
+                    <span>Thay đổi mục tiêu cam kết</span>
+                  </Button>
+                </CardContent>
+              </Card>
+            );
+          })()}
         </div>
 
         {/* Right Column: Forms */}
@@ -577,6 +644,16 @@ export default function Profile() {
         className={enrollments[0]?.className || "Lớp học cá nhân"}
         userId={user?.id}
         code={referralsData?.referralCode || (user as any)?.referralCode}
+      />
+
+      {/* Discipline Goal Pledge Modal */}
+      <DisciplineGoalModal
+        isOpen={isGoalModalOpen}
+        onClose={() => setIsGoalModalOpen(false)}
+        currentGoal={currentGoal}
+        onGoalChange={setCurrentGoal}
+        studentId={user?.id}
+        classId={enrollments[0]?.classId}
       />
     </div>
   );

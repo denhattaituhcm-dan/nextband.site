@@ -336,28 +336,27 @@ export function TuitionCalculator() {
       const tuition = COURSE_TUITION[courseKey];
       const pick = picks[courseKey] || { ta: "none", kl: "none", dm: false };
       let discount = 0;
-      const policyNotes: string[] = [];
+      let scholarshipDiscount = 0;
 
       if (idx === 0) {
         // Khóa đầu tiên: Học bổng Tinh Anh
         const taOpt = TINH_ANH_OPTIONS.find((o) => o.id === pick.ta);
         if (taOpt && taOpt.amt > 0) {
           discount += taOpt.amt;
-          policyNotes.push(`Tinh Anh: Giảm ${formatVND(taOpt.amt)}`);
+          scholarshipDiscount = taOpt.amt;
         }
       } else {
         // Từ khóa thứ 2: Học bổng Kỷ Luật
         const klOpt = KY_LUAT_OPTIONS.find((o) => o.id === pick.kl);
         if (klOpt && klOpt.amt > 0) {
           discount += klOpt.amt;
-          policyNotes.push(`Kỷ Luật: Giảm ${formatVND(klOpt.amt)}`);
+          scholarshipDiscount = klOpt.amt;
         }
       }
 
       // Đặc Quyền Đồng Môn (200k)
       if (pick.dm) {
         discount += DONG_MON_VOUCHER_AMT;
-        policyNotes.push(`Đồng Môn: Giảm ${formatVND(DONG_MON_VOUCHER_AMT)}`);
       }
 
       // Cap discount defensively
@@ -374,8 +373,8 @@ export function TuitionCalculator() {
         isFirst: idx === 0,
         tuition,
         discount,
+        scholarshipDiscount,
         net,
-        policyNotes: policyNotes.join(" + "),
         hasDm: pick.dm,
         taValue: pick.ta,
         klValue: pick.kl,
@@ -579,9 +578,9 @@ export function TuitionCalculator() {
                           ))}
                         </select>
                       )}
-                      {c.policyNotes && (
+                      {c.scholarshipDiscount > 0 && (
                         <p className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 pl-1">
-                          {c.policyNotes}
+                          Mức giảm: {formatVND(c.scholarshipDiscount)}
                         </p>
                       )}
                     </div>
