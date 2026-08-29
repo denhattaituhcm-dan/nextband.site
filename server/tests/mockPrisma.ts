@@ -9,8 +9,7 @@ export function createMockPrisma() {
   const classStudents: any[] = [];
   const classSessions: any[] = [];
   const classAttendances: any[] = [];
-  const homeworks: any[] = [];
-  const submissions: any[] = [];
+  const classExamAssignments: any[] = [];
   const invitations: any[] = [];
   const enrollments: any[] = [];
   const exams: any[] = [];
@@ -470,77 +469,57 @@ export function createMockPrisma() {
       },
     },
 
-    homework: {
+    classExamAssignment: {
       create: async ({ data }: any) => {
-        const classId = data.class?.connect?.id || data.classId;
-        const createdBy = data.creator?.connect?.id || data.createdBy;
-        const hw = {
+        const item = {
           id: randomUUID(),
-          classId,
-          createdBy,
-          title: data.title,
-          description: data.description,
+          classId: data.classId || data.class?.connect?.id,
+          examId: data.examId || data.exam?.connect?.id,
+          createdBy: data.createdBy || data.creator?.connect?.userId,
           deadline: data.deadline,
           status: data.status || "PUBLISHED",
           createdAt: new Date(),
           updatedAt: new Date(),
         };
-        homeworks.push(hw);
-        return hw;
-      },
-      createMany: async ({ data }: any) => {
-        homeworks.push(...data);
-        return { count: data.length };
-      },
-      findUnique: async ({ where, include }: any) => {
-        const hw = homeworks.find((h) => h.id === where.id);
-        if (!hw) return null;
-        const cls = classes.find((c) => c.id === hw.classId);
-        return { ...hw, ...(include?.class ? { class: cls } : {}) };
-      },
-      findMany: async ({ where }: any) => {
-        return homeworks.filter((h) => !where?.classId || h.classId === where.classId);
-      },
-      deleteMany: async () => {
-        homeworks.length = 0;
-        return { count: 0 };
-      },
-    },
-
-    submission: {
-      create: async ({ data }: any) => {
-        submissions.push(data);
-        return data;
-      },
-      upsert: async ({ where, update, create }: any) => {
-        const idx = submissions.findIndex(
-          (s) => s.homeworkId === where.homeworkId_studentId.homeworkId && s.studentId === where.homeworkId_studentId.studentId,
-        );
-        if (idx >= 0) {
-          Object.assign(submissions[idx], update);
-          return submissions[idx];
-        }
-        const item = {
-          id: create.id || randomUUID(),
-          ...create,
-        };
-        submissions.push(item);
+        classExamAssignments.push(item);
         return item;
       },
-      findUnique: async ({ where }: any) => {
-        return submissions.find(
-          (s) => s.homeworkId === where.homeworkId_studentId.homeworkId && s.studentId === where.homeworkId_studentId.studentId,
+      upsert: async ({ where, update, create }: any) => {
+        const classId = where.classId_examId?.classId || where.classId;
+        const examId = where.classId_examId?.examId || where.examId;
+        const idx = classExamAssignments.findIndex(
+          (a) => a.classId === classId && a.examId === examId
+        );
+        if (idx >= 0) {
+          Object.assign(classExamAssignments[idx], update, { updatedAt: new Date() });
+          return classExamAssignments[idx];
+        }
+        const item = {
+          id: randomUUID(),
+          classId,
+          examId,
+          ...create,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+        classExamAssignments.push(item);
+        return item;
+      },
+      findFirst: async ({ where }: any) => {
+        return classExamAssignments.find(
+          (a) => (!where.classId || a.classId === where.classId) && (!where.examId || a.examId === where.examId)
         ) || null;
       },
       findMany: async ({ where }: any) => {
-        return submissions.filter((s) => {
-          if (where.studentId?.in && !where.studentId.in.includes(s.studentId)) return false;
-          if (where.homeworkId?.in && !where.homeworkId.in.includes(s.homeworkId)) return false;
+        return classExamAssignments.filter((a) => {
+          if (where?.classId && a.classId !== where.classId) return false;
+          if (where?.examId && a.examId !== where.examId) return false;
+          if (where?.examId?.in && !where.examId.in.includes(a.examId)) return false;
           return true;
         });
       },
       deleteMany: async () => {
-        submissions.length = 0;
+        classExamAssignments.length = 0;
         return { count: 0 };
       },
     },
@@ -1016,8 +995,7 @@ export function createMockPrisma() {
     classStudents,
     classSessions,
     classAttendances,
-    homeworks,
-    submissions,
+    classExamAssignments,
     invitations,
     enrollments,
     exams,

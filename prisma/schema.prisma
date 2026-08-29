@@ -37,8 +37,7 @@ model User {
   attendanceRecords ClassAttendance[] @relation("AttendanceStudent")
   attendanceMarked  ClassAttendance[] @relation("AttendanceTeacher")
   createdInvitations Invitation[]     @relation("CreatedInvitations")
-  createdHomeworks  Homework[]        @relation("CreatedHomeworks")
-  homeworkSubmissions Submission[]     @relation("StudentHomeworkSubmissions")
+  createdAssignments ClassExamAssignment[] @relation("CreatedAssignments")
   auditLogsPerformed EnrollmentAuditLog[] @relation("OperatorAuditLogs")
   notifications     Notification[]   @relation("UserNotifications")
   assignedAssessments AssessmentSession[] @relation("AssignedTeacherAssessments")
@@ -51,6 +50,7 @@ model User {
   interventionsReceived StudentInterventionLog[] @relation("StudentInterventions")
   interventionsAuthored StudentInterventionLog[] @relation("StaffInterventions")
   assignedLeads         ContactLead[]            @relation("LeadAssignedToUser")
+  milestoneClaims       StudentMilestoneClaim[]
 
   @@map("profiles")
 }
@@ -104,7 +104,6 @@ model Lesson {
 
   course           Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
   resources        LessonResource[]
-  homeworks        Homework[]
 
   @@unique([courseId, lessonOrder])
   @@map("lessons")
@@ -149,7 +148,7 @@ model Class {
   invitations Invitation[]
   sessions    ClassSession[]
   attendance  ClassAttendance[]
-  homeworks   Homework[]
+  assignments ClassExamAssignment[]
   periodicReports StudentPeriodicReport[]
   interventions   StudentInterventionLog[]
 
@@ -271,45 +270,24 @@ model EnrollmentAuditLog {
   @@map("enrollment_audit_logs")
 }
 
-model Homework {
-  id             String         @id @default(uuid())
-  classId        String         @map("class_id")
-  createdBy      String         @map("created_by")
-  lessonId       String?        @map("lesson_id")
-  examId         String?        @map("exam_id")
-  title          String
-  description    String?
-  deadline       DateTime?      @map("deadline")
-  status         HomeworkStatus @default(PUBLISHED)
-  createdAt      DateTime       @default(now()) @map("created_at")
-  updatedAt      DateTime       @default(now()) @updatedAt @map("updated_at")
+model ClassExamAssignment {
+  id             String    @id @default(uuid())
+  classId        String    @map("class_id")
+  examId         String    @map("exam_id")
+  deadline       DateTime? @map("deadline")
+  status         String    @default("PUBLISHED") // PUBLISHED, DRAFT, CLOSED
+  createdBy      String?   @map("created_by")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at")
 
-  class          Class          @relation(fields: [classId], references: [id], onDelete: Cascade)
-  creator        User           @relation("CreatedHomeworks", fields: [createdBy], references: [userId])
-  lesson         Lesson?        @relation(fields: [lessonId], references: [id], onDelete: SetNull)
-  exam           Exam?          @relation(fields: [examId], references: [id], onDelete: SetNull)
-  submissions    Submission[]
+  class          Class     @relation(fields: [classId], references: [id], onDelete: Cascade)
+  exam           Exam      @relation(fields: [examId], references: [id], onDelete: Cascade)
+  creator        User?     @relation("CreatedAssignments", fields: [createdBy], references: [userId], onDelete: SetNull)
 
-  @@map("homeworks")
-}
-
-model Submission {
-  id          String           @id @default(uuid())
-  homeworkId  String           @map("homework_id")
-  studentId   String           @map("student_id")
-  status      SubmissionStatus @default(IN_PROGRESS)
-  submittedAt DateTime?        @map("submitted_at")
-  gradedAt    DateTime?        @map("graded_at")
-  score       Decimal?
-  feedback    String?
-  createdAt   DateTime         @default(now()) @map("created_at")
-  updatedAt   DateTime         @default(now()) @updatedAt @map("updated_at")
-
-  homework    Homework         @relation(fields: [homeworkId], references: [id], onDelete: Cascade)
-  student     User             @relation("StudentHomeworkSubmissions", fields: [studentId], references: [userId], onDelete: Cascade)
-
-  @@unique([homeworkId, studentId])
-  @@map("submissions")
+  @@unique([classId, examId])
+  @@index([classId])
+  @@index([examId])
+  @@map("class_exam_assignments")
 }
 
 model Enrollment {
@@ -347,7 +325,7 @@ model Exam {
   sections            ExamSection[]
   submissions         ExamSubmission[]
   assessmentSessions  AssessmentSession[]
-  homeworks           Homework[]
+  assignments         ClassExamAssignment[]
   policy              ExamPolicy?
   examVersions        ExamVersion[]
   course              Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
@@ -1002,6 +980,19 @@ model SpeakingAssessmentEvidence {
   @@index([assessmentId, criterion])
   @@index([tagId, createdAt])
   @@map("speaking_assessment_evidence")
+}
+
+model StudentMilestoneClaim {
+  id           String   @id @default(uuid())
+  studentId    String   @map("student_id")
+  milestoneKey String   @map("milestone_key")
+  claimedAt    DateTime @default(now()) @map("claimed_at")
+
+  student      User     @relation(fields: [studentId], references: [userId], onDelete: Cascade)
+
+  @@unique([studentId, milestoneKey])
+  @@index([studentId])
+  @@map("student_milestone_claims")
 }
 
 

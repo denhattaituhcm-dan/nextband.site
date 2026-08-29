@@ -26,6 +26,12 @@ import { toast } from "sonner";
 import { AnswerResultCard } from "@/components/submission/AnswerResultCard";
 import { VisualDiffViewer } from "@/components/submission/VisualDiffViewer";
 import { parseStructuredFeedback } from "@/lib/sentenceFeedback";
+import {
+  aggregateObjectiveBattleDebrief,
+  QuestionTypeStat,
+} from "@/lib/objectiveEvidenceAggregator";
+import { ReadingBattleDebriefView } from "@/components/submission/ReadingBattleDebriefView";
+import { QuestionTypeRevengeModal } from "@/components/submission/QuestionTypeRevengeModal";
 import { RichContent } from "@/components/exam/RichContent";
 import { convertOptionValToIndex } from "@/components/exam/MatchingRenderer";
 import { getFillBlankBlankCount } from "@/lib/fillBlank";
@@ -40,6 +46,14 @@ import {
 import { calculateGradingSla } from "@/lib/gradingSla";
 import { routes } from "@/lib/routes";
 import { submissionKeys } from "@/lib/queryKeys";
+import {
+  evaluateAllAchievedMilestones,
+  selectHighestPriorityPendingMilestone,
+  DecisionMilestone,
+  CourseLessonItem,
+} from "@/lib/milestoneEngine";
+import { CelebrationModal } from "@/components/celebration/CelebrationModal";
+import { milestonesApi, coursesApi } from "@/lib/api";
 
 const statusConfig: Record<
   CanonicalSubmissionStatus,
@@ -145,12 +159,70 @@ export default function SubmissionDetail() {
   const targetExamId = submission?.examId || submission?.exam_id;
   const targetStudentId = submission?.studentId || submission?.student_id;
 
+  const { data: allStudentSubmissionsData } = useQuery({
+    queryKey: ["all-student-submissions", targetStudentId],
+    queryFn: () => submissionsApi.list({ studentId: targetStudentId, limit: 100 }),
+    enabled: !!targetStudentId && isAuthenticated,
+    staleTime: 1000 * 60,
+  });
+
   const { data: siblingSubmissionsData } = useQuery({
     queryKey: submissionKeys.siblings(targetExamId, targetStudentId),
     queryFn: () => submissionsApi.list({ examId: targetExamId, studentId: targetStudentId, limit: 10 }),
     enabled: !!targetExamId && !!targetStudentId && isAuthenticated,
     staleTime: 1000 * 30,
   });
+
+  const [activeMilestone, setActiveMilestone] = useState<DecisionMilestone | null>(null);
+
+  // Milestone evaluation with Canonical DB Claim
+  useEffect(() => {
+    if (!user?.id || !submission || activeMilestone) return;
+    const isJustSubmitted = (location.state as any)?.justSubmitted;
+    if (!isJustSubmitted) return;
+
+    const completedSubs = (allStudentSubmissionsData?.data || []).filter(
+      (s: any) => isSubmissionCompleted(s.status)
+    );
+    const uniqueExamIds = new Set(completedSubs.map((s: any) => s.examId || s.exam_id).filter(Boolean));
+    if (targetExamId) uniqueExamIds.add(targetExamId);
+
+    const examData = submission.exam || (location.state as any)?.milestoneContext;
+    const courseId = examData?.courseId || "default";
+
+    // Build course structure
+    const totalCount = 27;
+    const lessons: CourseLessonItem[] = [];
+    for (let w = 1; w <= 9; w++) {
+      for (let d = 1; d <= 3; d++) {
+        const order = (w - 1) * 3 + d;
+        lessons.push({
+          id: `exam-${order}`,
+          title: `Week ${w} - Day ${d}`,
+          semanticType: "REGULAR",
+          weekGroup: w,
+          orderInWeek: d,
+          isCompleted: order <= uniqueExamIds.size,
+        });
+      }
+    }
+
+    const allMilestones = evaluateAllAchievedMilestones({ courseId, lessons });
+    
+    // Check with backend DB claims
+    milestonesApi.getClaims().then((claimedList) => {
+      const claimedSet = new Set(claimedList);
+      const pending = selectHighestPriorityPendingMilestone(allMilestones, claimedSet);
+      if (pending) {
+        // Atomic claim on server
+        milestonesApi.claim(pending.key).then((res) => {
+          if (res.isFirstClaim) {
+            setActiveMilestone(pending);
+          }
+        });
+      }
+    });
+  }, [submission, allStudentSubmissionsData, user?.id, location.state, targetExamId, activeMilestone]);
 
   const siblingSubmissions = siblingSubmissionsData?.data || [];
   const sortedAttempts = useMemo(() => {
@@ -393,6 +465,21 @@ export default function SubmissionDetail() {
   const objTotal = objectiveGradedResults?.totalQuestions ?? objectiveQuestions.length;
   const objPercentage = objTotal > 0 ? Math.round((objCorrect / objTotal) * 100) : 0;
 
+  // Automated Question-Type Battle Debrief & Revenge Loop
+  const [revengeTargetType, setRevengeTargetType] = useState<QuestionTypeStat | null>(null);
+  const [isRevengeModalOpen, setIsRevengeModalOpen] = useState<boolean>(false);
+
+  const objectiveBattleDebrief = useMemo(() => {
+    if (!objectiveQuestions || objectiveQuestions.length === 0) return null;
+    const formattedQuestions = objectiveQuestions.map((q: any) => ({
+      id: q.id,
+      questionType: getQuestionType(q) || q.questionType || "multiple_choice",
+      questionText: getQuestionText(q),
+      correctAnswer: getCorrectAnswer(q),
+    }));
+    return aggregateObjectiveBattleDebrief(formattedQuestions, answerMap);
+  }, [objectiveQuestions, answerMap]);
+
   const location = useLocation();
   const handleBack = () => {
     const destination = resolveExitDestination(
@@ -434,6 +521,15 @@ export default function SubmissionDetail() {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto animate-fade-in">
+      {/* Milestone Celebration Modal */}
+      {activeMilestone && user?.id && (
+        <CelebrationModal
+          milestone={activeMilestone}
+          userId={user.id}
+          onClose={() => setActiveMilestone(null)}
+        />
+      )}
+
       {/* Back */}
       <Button
         variant="ghost"
@@ -680,6 +776,26 @@ export default function SubmissionDetail() {
               </div>
             </div>
           )}
+
+          {/* AUTOMATED OBJECTIVE QUESTION-TYPE BATTLE DEBRIEF (Reading / Listening) */}
+          {objectiveBattleDebrief && objectiveBattleDebrief.totalQuestions > 0 && (
+            <div className="mt-4">
+              <ReadingBattleDebriefView
+                debrief={objectiveBattleDebrief}
+                onOpenRevenge={(typeStat) => {
+                  setRevengeTargetType(typeStat);
+                  setIsRevengeModalOpen(true);
+                }}
+              />
+            </div>
+          )}
+
+          {/* QUESTION TYPE REVENGE PRACTICE MODAL */}
+          <QuestionTypeRevengeModal
+            isOpen={isRevengeModalOpen}
+            onClose={() => setIsRevengeModalOpen(false)}
+            typeStat={revengeTargetType}
+          />
 
           {/* Teacher total score display (if teacher graded) */}
           {isGraded && submission.totalScore != null && (

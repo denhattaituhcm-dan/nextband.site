@@ -28,6 +28,7 @@ import reportsRoutes from "./reports.routes.js";
 import adminDashboardRoutes from "./admin-dashboard.routes.js";
 import interventionRoutes from "./intervention.routes.js";
 import tuitionRoutes from "./tuition.routes.js";
+import milestoneRoutes from "./milestone.routes.js";
 
 const routes: FastifyPluginAsync = async (fastify) => {
   // Health check
@@ -68,6 +69,7 @@ const routes: FastifyPluginAsync = async (fastify) => {
   await fastify.register(reportsRoutes, { prefix: "/admin/reports" });
   await fastify.register(interventionRoutes, { prefix: "/interventions" });
   await fastify.register(tuitionRoutes, { prefix: "/admin/tuition" });
+  await fastify.register(milestoneRoutes, { prefix: "/milestones" });
 };
 
 export default routes;

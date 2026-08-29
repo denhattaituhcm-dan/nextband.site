@@ -18,6 +18,10 @@ import {
   ShieldCheck,
   UserCheck,
   Users,
+  Compass,
+  Flame,
+  FileText,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -457,6 +461,87 @@ export default function PublicHomePage() {
             description="Dễ dàng xem lại toàn bộ lịch sử bài nộp, so sánh bài làm đầu khóa và hiện tại để thấy rõ sự tiến bộ thực tế."
             metadata={["Lưu trữ bài nộp", "Biểu đồ kỹ năng"]}
           />
+        </div>
+      </SectionContainer>
+
+      {/* ========================================================================= */}
+      {/* SECTION 5.5: THE METACOGNITIVE MIRROR (TẤM GƯƠNG TỰ SOI CHIẾU NĂNG LỰC)   */}
+      {/* ========================================================================= */}
+      <SectionContainer
+        badge="Triết Lý Chẩn Đoán Độc Quyền"
+        title="Muốn nâng cao Band điểm, trước hết phải hiểu rõ chính mình."
+        description="Luyện 50 bộ đề mà không hiểu bản thân thì bạn chỉ đang lặp lại những thói quen sai lầm trong vô thức. ARIS trang bị cho bạn một Tấm Gương Tự Soi Chiếu (Metacognitive Mirror) — bóc tách từng lỗi sai, vạch rõ nút thắt cản trở và trao cho bạn cuốn Sổ Tay Bẫy Lỗi độc bản trước giờ thi thật."
+        background="elevated"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 text-left">
+          {/* Card 1 */}
+          <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-4 shadow-2xs flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 w-fit">
+                <Compass className="h-6 w-6" />
+              </div>
+              <h3 className="font-extrabold text-foreground text-lg sm:text-xl">
+                Tấm Gương Tự Soi Chiếu (Metacognition)
+              </h3>
+              <p className="text-sm text-foreground/75 leading-relaxed">
+                Không dùng AI đoán mò. Dữ liệu lỗi ngữ pháp, phát âm và dạng bài yếu nhất được thẩm định trực tiếp bởi giáo viên chuyên môn và thuật toán so khớp khách quan.
+              </p>
+            </div>
+            <div className="pt-3 border-t border-border/60 text-xs font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
+              <CheckCircle2 className="h-4 w-4" />
+              <span>Chẩn đoán chính xác 100% sự thật</span>
+            </div>
+          </div>
+
+          {/* Card 2 */}
+          <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-4 shadow-2xs flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="p-3 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 w-fit">
+                <Flame className="h-6 w-6" />
+              </div>
+              <h3 className="font-extrabold text-foreground text-lg sm:text-xl">
+                Nút Thắt Quyết Định (+0.5 Band ROI)
+              </h3>
+              <p className="text-sm text-foreground/75 leading-relaxed">
+                Chỉ đích danh đúng 2 thói quen vô thức đang cản trở bạn bứt phá lên Band 6.5 - 7.0+, kèm chiến lược giải thoát cụ thể để bạn thấy rõ lộ trình tăng điểm.
+              </p>
+            </div>
+            <div className="pt-3 border-t border-border/60 text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+              <CheckCircle2 className="h-4 w-4" />
+              <span>Tập trung gỡ đúng nút thắt</span>
+            </div>
+          </div>
+
+          {/* Card 3 */}
+          <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-4 shadow-2xs flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 w-fit">
+                <FileText className="h-6 w-6" />
+              </div>
+              <h3 className="font-extrabold text-foreground text-lg sm:text-xl">
+                Sổ Tay Bẫy Lỗi Cá Nhân Hóa (My Cheat Sheet)
+              </h3>
+              <p className="text-sm text-foreground/75 leading-relaxed">
+                Mỗi học viên sở hữu cuốn cẩm nang bỏ túi độc bản — tổng hợp chính xác những câu mình từng viết sai và lời chữa của thầy cô để tự tin đọc ôn tập 15 phút trước giờ thi thật.
+              </p>
+            </div>
+            <div className="pt-3 border-t border-border/60 text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+              <CheckCircle2 className="h-4 w-4" />
+              <span>Bảo bối độc bản mang vào phòng thi</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Button */}
+        <div className="mt-10 text-center">
+          <Button
+            size="lg"
+            onClick={() => navigate("/assessment")}
+            className="rounded-2xl px-8 h-14 font-extrabold text-base bg-brand-red hover:bg-brand-red-hover text-white shadow-md gap-2.5"
+          >
+            <span>Trải nghiệm Chẩn đoán Năng lực ARIS Miễn Phí</span>
+            <ArrowRight className="h-5 w-5" />
+          </Button>
         </div>
       </SectionContainer>
 

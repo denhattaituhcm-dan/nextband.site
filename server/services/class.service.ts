@@ -1222,39 +1222,33 @@ export class ClassService {
 
     const parsedDeadline = deadline ? new Date(deadline) : null;
 
-    // Find existing homework record or create one
-    const existingHw = await this.prisma.homework.findFirst({
-      where: { classId, examId },
-    });
-
-    let updatedHw;
-    if (existingHw) {
-      updatedHw = await this.prisma.homework.update({
-        where: { id: existingHw.id },
-        data: {
-          deadline: parsedDeadline,
-          status: "PUBLISHED",
-        },
-      });
-    } else {
-      updatedHw = await this.prisma.homework.create({
-        data: {
+    // Upsert assignment record for the class-exam pair
+    const assignment = await this.prisma.classExamAssignment.upsert({
+      where: {
+        classId_examId: {
           classId,
           examId,
-          createdBy: user.id,
-          title: exam.title,
-          deadline: parsedDeadline,
-          status: "PUBLISHED",
         },
-      });
-    }
+      },
+      update: {
+        deadline: parsedDeadline,
+        status: "PUBLISHED",
+      },
+      create: {
+        classId,
+        examId,
+        createdBy: user.id,
+        deadline: parsedDeadline,
+        status: "PUBLISHED",
+      },
+    });
 
     return {
       success: true,
       classId,
       examId,
-      deadline: updatedHw.deadline,
-      deadlineSource: updatedHw.deadline ? "MANUAL" : "AUTO",
+      deadline: assignment.deadline,
+      deadlineSource: assignment.deadline ? "MANUAL" : "AUTO",
     };
   }
 }

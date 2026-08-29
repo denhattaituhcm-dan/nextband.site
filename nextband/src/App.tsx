@@ -93,6 +93,7 @@ const CourseDetail = lazyWithRetry(() => import("@/pages/CourseDetail"));
 const SubmissionDetail = lazyWithRetry(() => import("@/pages/SubmissionDetail"));
 const ExamInterface = lazyWithRetry(() => import("@/pages/ExamInterface"));
 const Profile = lazyWithRetry(() => import("@/pages/Profile"));
+const StudentAnalyticsPage = lazyWithRetry(() => import("@/pages/StudentAnalyticsPage"));
 
 // Lazy-loaded Admin Pages
 const AdminDashboard = lazyWithRetry(() => import("@/pages/admin/Dashboard"));
@@ -319,12 +320,14 @@ const App = () => (
                 <Route path="/app/my-submissions" element={<MySubmissions />} />
                 <Route path="/app/course/:slug" element={<CourseDetail />} />
                 <Route path="/app/submissions/:id" element={<SubmissionDetail />} />
+                <Route path="/app/analytics" element={<StudentAnalyticsPage />} />
                 <Route path="/app/profile" element={<Profile />} />
               </Route>
 
               {/* ============================================================ */}
               {/* 4. BACKWARD-COMPATIBILITY REDIRECTS (Declarative /replace)   */}
               {/* ============================================================ */}
+              <Route path="/analytics" element={<Navigate to="/app/analytics" replace />} />
               <Route path="/my-courses" element={<Navigate to="/app/my-courses" replace />} />
               <Route path="/profile" element={<Navigate to="/app/profile" replace />} />
               <Route path="/class/:classId/lessons" element={<RedirectClassLessons />} />

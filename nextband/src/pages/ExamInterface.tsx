@@ -808,6 +808,14 @@ export default function ExamInterface() {
             state: {
               exitContext: { destination: exitDestination },
               returnUrl: exitDestination,
+              justSubmitted: true,
+              milestoneContext: {
+                examId: exam?.id || examId,
+                examTitle: exam?.title || "Bài tập",
+                examWeek: exam?.week || null,
+                examType: exam?.examType || "ielts",
+                courseId: exam?.courseId || "",
+              },
             },
           },
         );

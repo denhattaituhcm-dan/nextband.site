@@ -20,6 +20,7 @@ import {
 import { convertOptionValToIndex } from "@/components/exam/MatchingRenderer";
 import { SentenceLevelGrader } from "@/components/grading/SentenceLevelGrader";
 import { parseStructuredFeedback } from "@/lib/sentenceFeedback";
+import { SpeakingEvidenceResultView } from "@/components/submission/SpeakingEvidenceResultView";
 
 import {
   compareCanonicalOrder,
@@ -789,16 +790,33 @@ export function AnswerResultCard({
           {isGraded && feedback && (() => {
             const parsed = parseStructuredFeedback(feedback);
             const displayText = parsed.text || (typeof feedback === "string" && !feedback.startsWith("{") ? feedback : "");
-            if (!displayText) return null;
+            const hasSpeakingReport =
+              sectionType === "speaking" ||
+              questionType === "speaking" ||
+              parsed?.criteriaScores?.pronunciation != null ||
+              parsed?.criteriaScores?.fluencyAndCoherence != null ||
+              (Array.isArray((parsed?.criteriaScores as any)?.speakingTags) &&
+                (parsed?.criteriaScores as any)?.speakingTags.length > 0);
+
             return (
-              <div className="rounded-xl border border-blue-200 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-3.5 space-y-1">
-                <div className="flex items-center gap-1.5 mb-1">
-                  <MessageSquare className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
-                  <Label className="text-xs font-bold text-blue-700 dark:text-blue-400">
-                    Nhận xét tổng quan từ giáo viên
-                  </Label>
-                </div>
-                <p className="text-sm whitespace-pre-wrap leading-relaxed text-foreground">{displayText}</p>
+              <div className="space-y-3">
+                {displayText && (
+                  <div className="rounded-xl border border-blue-200 bg-blue-50/70 dark:bg-blue-950/20 dark:border-blue-900 p-3.5 space-y-1">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <MessageSquare className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                      <Label className="text-xs font-bold text-blue-700 dark:text-blue-400">
+                        Nhận xét tổng quan từ giáo viên
+                      </Label>
+                    </div>
+                    <p className="text-sm whitespace-pre-wrap leading-relaxed text-foreground">{displayText}</p>
+                  </div>
+                )}
+
+                {hasSpeakingReport && (
+                  <SpeakingEvidenceResultView
+                    criteriaScores={parsed?.criteriaScores as any}
+                  />
+                )}
               </div>
             );
           })()}

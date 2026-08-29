@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2, User, Camera, Save, Trophy, Flame, Star, CheckCircle2, Zap, Users, Medal } from "lucide-react";
+import { StudentEvidenceProfileCard } from "@/components/profile/StudentEvidenceProfileCard";
 
 export default function Profile() {
   const { user, refreshUser } = useAuth();
@@ -339,6 +340,9 @@ export default function Profile() {
               </CardFooter>
             </form>
           </Card>
+
+          {/* Hồ sơ Năng lực Dọc (Longitudinal Evidence Profile) */}
+          <StudentEvidenceProfileCard submissions={userSubmissions} />
 
           {/* Thành tích & Danh hiệu */}
           <Card>

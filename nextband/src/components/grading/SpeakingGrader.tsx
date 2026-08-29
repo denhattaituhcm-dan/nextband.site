@@ -39,6 +39,15 @@ import { calculateGradingSla } from "@/lib/gradingSla";
 
 import { cn } from "@/lib/utils";
 import { AudioStorageService } from "@/lib/audioStorageService";
+import { speakingEvidenceApi } from "@/lib/speakingEvidenceApi";
+import {
+  SpeakingEvidenceTagDTO,
+  SpeakingEvidenceGroupedDTO,
+  SpeakingCriterion,
+} from "@/contracts/speaking-evidence.contract";
+import { SpeakingEvidenceTagGroup } from "@/components/grading/SpeakingEvidenceTagGroup";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Sparkles, Tag } from "lucide-react";
 
 export interface SpeakingAnswerItem {
   id?: string;
@@ -167,6 +176,68 @@ export function SpeakingGrader({
   const [primaryErrorCategory, setPrimaryErrorCategory] = useState<ErrorCategory>("STRUCTURE");
   const [revisionRequired, setRevisionRequired] = useState<boolean>(false);
 
+  // ARIS Speaking Evidence State (Dynamic Candidate Taxonomy v1.0)
+  const [groupedTags, setGroupedTags] = useState<SpeakingEvidenceGroupedDTO>({
+    pr: [],
+    fc: [],
+    lr: [],
+    gra: [],
+  });
+  const [allEvidenceTags, setAllEvidenceTags] = useState<SpeakingEvidenceTagDTO[]>([]);
+  const [selectedEvidenceTagIds, setSelectedEvidenceTagIds] = useState<Set<string>>(new Set());
+  const [activeCriterionTab, setActiveCriterionTab] = useState<string>("pr");
+
+  // Load candidate evidence tags from API & existing evidence for this submission
+  useEffect(() => {
+    let isMounted = true;
+    async function loadEvidence() {
+      try {
+        const res = await speakingEvidenceApi.getTags();
+        if (!isMounted) return;
+        setGroupedTags(res.grouped);
+        setAllEvidenceTags(res.tags);
+
+        if (submissionId) {
+          try {
+            const existingEvidence = await speakingEvidenceApi.getAssessmentEvidence(submissionId);
+            if (!isMounted) return;
+            const ids = new Set<string>(existingEvidence.map((e) => e.tagId));
+
+            // Also check criteriaScores.speakingTags fallback
+            const structured = parseStructuredFeedback(currentAnswer?.feedback);
+            if (Array.isArray((structured?.criteriaScores as any)?.speakingTags)) {
+              for (const tid of (structured.criteriaScores as any).speakingTags) {
+                ids.add(tid);
+              }
+            }
+            setSelectedEvidenceTagIds(ids);
+          } catch (e) {
+            console.warn("[SpeakingGrader] Could not load existing assessment evidence:", e);
+          }
+        }
+      } catch (err) {
+        console.warn("[SpeakingGrader] Could not load candidate speaking tags:", err);
+      }
+    }
+    loadEvidence();
+    return () => {
+      isMounted = false;
+    };
+  }, [submissionId]);
+
+  const handleToggleEvidenceTag = (tagId: string, _criterion: SpeakingCriterion) => {
+    setSelectedEvidenceTagIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(tagId)) {
+        next.delete(tagId);
+      } else {
+        next.add(tagId);
+      }
+      return next;
+    });
+    setIsDirty(true);
+  };
+
   useEffect(() => {
     if (!currentAnswer) return;
     const structured = parseStructuredFeedback(currentAnswer.feedback);
@@ -195,6 +266,27 @@ export function SpeakingGrader({
     const bandStr = calculateSpeakingBand(criteriaScores);
     const score = parseFloat(bandStr) || 0;
 
+    const enrichedCriteriaScores: CriteriaScores = {
+      ...criteriaScores,
+      ...(selectedEvidenceTagIds.size > 0
+        ? { speakingTags: Array.from(selectedEvidenceTagIds) }
+        : {}),
+    };
+
+    // Synchronize speaking evidence tags via API
+    if (submissionId && allEvidenceTags.length > 0) {
+      const syncItems = Array.from(selectedEvidenceTagIds).map((tagId) => {
+        const tagDef = allEvidenceTags.find((t) => t.id === tagId);
+        return {
+          tagId,
+          criterion: (tagDef?.criterion || "PR") as SpeakingCriterion,
+        };
+      });
+      speakingEvidenceApi.syncAssessmentEvidence(submissionId, syncItems).catch((err) => {
+        console.error("[SpeakingGrader] Failed to sync evidence tags:", err);
+      });
+    }
+
     const gradesPayload = answers.length > 0
       ? answers.map((ans, idx) => {
           if (idx === activeAnswerIndex || answers.length === 1) {
@@ -203,7 +295,7 @@ export function SpeakingGrader({
               questionId: ans.questionId,
               score,
               feedback: feedbackText,
-              criteriaScores,
+              criteriaScores: enrichedCriteriaScores,
               primaryErrorCategory: revisionRequired ? primaryErrorCategory : null,
               revisionRequired,
             };
@@ -221,7 +313,7 @@ export function SpeakingGrader({
             questionId,
             score,
             feedback: feedbackText,
-            criteriaScores,
+            criteriaScores: enrichedCriteriaScores,
             primaryErrorCategory: revisionRequired ? primaryErrorCategory : null,
             revisionRequired,
           },
@@ -233,7 +325,7 @@ export function SpeakingGrader({
         feedback: feedbackText,
         primaryErrorCategory: revisionRequired ? primaryErrorCategory : null,
         revisionRequired,
-        criteriaScores,
+        criteriaScores: enrichedCriteriaScores,
         finalize,
       },
     });
@@ -484,6 +576,111 @@ export function SpeakingGrader({
             }}
             disabled={isSubmitting}
           />
+
+          {/* ARIS Speaking Evidence Tags Card (Candidate Taxonomy v1.0) */}
+          <Card className="border border-slate-200 shadow-2xs rounded-xl p-3.5 space-y-3 bg-white font-sans">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5 text-orange-600" />
+                Bằng chứng chẩn đoán (Candidate v1.0)
+              </span>
+              <Badge variant="outline" className="text-[11px] font-semibold bg-slate-50 text-slate-700 border-slate-200">
+                {selectedEvidenceTagIds.size} nhãn đã chọn
+              </Badge>
+            </div>
+
+            <Tabs value={activeCriterionTab} onValueChange={setActiveCriterionTab} className="w-full space-y-2.5">
+              <TabsList className="grid grid-cols-4 h-8 bg-slate-100/80 p-0.5 rounded-lg text-xs">
+                <TabsTrigger value="pr" className="text-xs font-bold gap-1 py-1 data-[state=active]:bg-white data-[state=active]:shadow-2xs">
+                  <span>PR</span>
+                  {groupedTags.pr.filter((t) => selectedEvidenceTagIds.has(t.id)).length > 0 && (
+                    <span className="w-4 h-4 rounded-full bg-orange-600 text-white text-[10px] flex items-center justify-center font-extrabold">
+                      {groupedTags.pr.filter((t) => selectedEvidenceTagIds.has(t.id)).length}
+                    </span>
+                  )}
+                </TabsTrigger>
+
+                <TabsTrigger value="fc" className="text-xs font-bold gap-1 py-1 data-[state=active]:bg-white data-[state=active]:shadow-2xs">
+                  <span>FC</span>
+                  {groupedTags.fc.filter((t) => selectedEvidenceTagIds.has(t.id)).length > 0 && (
+                    <span className="w-4 h-4 rounded-full bg-orange-600 text-white text-[10px] flex items-center justify-center font-extrabold">
+                      {groupedTags.fc.filter((t) => selectedEvidenceTagIds.has(t.id)).length}
+                    </span>
+                  )}
+                </TabsTrigger>
+
+                <TabsTrigger value="lr" className="text-xs font-bold gap-1 py-1 data-[state=active]:bg-white data-[state=active]:shadow-2xs">
+                  <span>LR</span>
+                  {groupedTags.lr.filter((t) => selectedEvidenceTagIds.has(t.id)).length > 0 && (
+                    <span className="w-4 h-4 rounded-full bg-orange-600 text-white text-[10px] flex items-center justify-center font-extrabold">
+                      {groupedTags.lr.filter((t) => selectedEvidenceTagIds.has(t.id)).length}
+                    </span>
+                  )}
+                </TabsTrigger>
+
+                <TabsTrigger value="gra" className="text-xs font-bold gap-1 py-1 data-[state=active]:bg-white data-[state=active]:shadow-2xs">
+                  <span>GRA</span>
+                  {groupedTags.gra.filter((t) => selectedEvidenceTagIds.has(t.id)).length > 0 && (
+                    <span className="w-4 h-4 rounded-full bg-orange-600 text-white text-[10px] flex items-center justify-center font-extrabold">
+                      {groupedTags.gra.filter((t) => selectedEvidenceTagIds.has(t.id)).length}
+                    </span>
+                  )}
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="pr" className="m-0 focus-visible:outline-hidden">
+                <div className="text-[11px] text-slate-500 font-medium mb-1.5">
+                  Phát âm & Ngữ điệu (Pronunciation)
+                </div>
+                <SpeakingEvidenceTagGroup
+                  criterion="PR"
+                  tags={groupedTags.pr}
+                  selectedTagIds={selectedEvidenceTagIds}
+                  onToggleTag={handleToggleEvidenceTag}
+                  disabled={isSubmitting}
+                />
+              </TabsContent>
+
+              <TabsContent value="fc" className="m-0 focus-visible:outline-hidden">
+                <div className="text-[11px] text-slate-500 font-medium mb-1.5">
+                  Trôi chảy & Mạch lạc (Fluency & Coherence)
+                </div>
+                <SpeakingEvidenceTagGroup
+                  criterion="FC"
+                  tags={groupedTags.fc}
+                  selectedTagIds={selectedEvidenceTagIds}
+                  onToggleTag={handleToggleEvidenceTag}
+                  disabled={isSubmitting}
+                />
+              </TabsContent>
+
+              <TabsContent value="lr" className="m-0 focus-visible:outline-hidden">
+                <div className="text-[11px] text-slate-500 font-medium mb-1.5">
+                  Vốn từ & Độ chuẩn xác (Lexical Resource)
+                </div>
+                <SpeakingEvidenceTagGroup
+                  criterion="LR"
+                  tags={groupedTags.lr}
+                  selectedTagIds={selectedEvidenceTagIds}
+                  onToggleTag={handleToggleEvidenceTag}
+                  disabled={isSubmitting}
+                />
+              </TabsContent>
+
+              <TabsContent value="gra" className="m-0 focus-visible:outline-hidden">
+                <div className="text-[11px] text-slate-500 font-medium mb-1.5">
+                  Độ đa dạng & Chuẩn xác ngữ pháp (Grammar)
+                </div>
+                <SpeakingEvidenceTagGroup
+                  criterion="GRA"
+                  tags={groupedTags.gra}
+                  selectedTagIds={selectedEvidenceTagIds}
+                  onToggleTag={handleToggleEvidenceTag}
+                  disabled={isSubmitting}
+                />
+              </TabsContent>
+            </Tabs>
+          </Card>
 
           {/* Teacher General Feedback Textarea */}
           <Card className="border border-slate-200/80 shadow-2xs rounded-xl p-4 space-y-2 bg-slate-50/40">

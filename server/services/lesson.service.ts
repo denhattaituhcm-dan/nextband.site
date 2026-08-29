@@ -130,7 +130,7 @@ export class LessonService {
         };
       }
 
-      const [fetchedExams, fetchedSubmissions, fetchedHomeworks, fetchedSessions] = await Promise.all([
+      const [fetchedExams, fetchedSubmissions, fetchedAssignments, fetchedSessions] = await Promise.all([
         this.prisma.exam.findMany({
           where: { courseId, isPublished: true },
           orderBy: { week: 'asc' },
@@ -140,7 +140,7 @@ export class LessonService {
           where: submissionWhere,
           orderBy: { createdAt: 'desc' },
         }),
-        this.prisma.homework.findMany({
+        this.prisma.classExamAssignment.findMany({
           where: { classId },
         }),
         this.prisma.classSession.findMany({
@@ -150,7 +150,7 @@ export class LessonService {
       ]);
       exams = [...fetchedExams].sort(compareHomeworkOrder);
       submissions = fetchedSubmissions;
-      manualHomeworks = fetchedHomeworks;
+      manualHomeworks = fetchedAssignments;
       sessions = fetchedSessions;
     }
 
@@ -171,7 +171,7 @@ export class LessonService {
 
       const lessonOrder = idx + 1;
       const lessonWeek = exam.week || Math.ceil((idx + 1) / 3);
-      const customHw = manualHomeworks.find((h: any) => h.examId === exam.id || h.lessonId === exam.id);
+      const customAssignment = manualHomeworks.find((h: any) => h.examId === exam.id);
       const matchingSession = sessions.find((s: any) => s.sessionNumber === lessonOrder);
       const sessionDate = matchingSession?.plannedDate || null;
 
@@ -179,7 +179,7 @@ export class LessonService {
         classStartDate: classData.startDate || classData.createdAt,
         sessionDate,
         lessonWeek,
-        manualDeadline: customHw?.deadline,
+        manualDeadline: customAssignment?.deadline,
         defaultOffsetDays: 7,
       });
 

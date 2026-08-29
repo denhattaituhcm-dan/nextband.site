@@ -55,8 +55,7 @@ describe("GATE 1 SECURITY AUDIT & OBJECT-LEVEL AUTHORIZATION TEST SUITE", () => 
     prisma = mockPrisma;
 
     // Clean up mock
-    await prisma.submission.deleteMany();
-    await prisma.homework.deleteMany();
+    await prisma.classExamAssignment.deleteMany();
     await prisma.classAttendance.deleteMany();
     await prisma.classSession.deleteMany();
     await prisma.lesson.deleteMany();

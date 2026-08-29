@@ -1394,6 +1394,40 @@ export const submissionsApi = {
   },
 };
 
+export const milestonesApi = {
+  getClaims: async (): Promise<string[]> => {
+    const token = await getAuthToken();
+    if (!token) return [];
+    const res = await fetchWithResilience(`${API_BASE_URL}/milestones/claims`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      return data.claimedKeys || [];
+    }
+    return [];
+  },
+
+  claim: async (milestoneKey: string): Promise<{ isFirstClaim: boolean; claim: any }> => {
+    const token = await getAuthToken();
+    if (!token) return { isFirstClaim: false, claim: null };
+    const res = await fetchWithResilience(`${API_BASE_URL}/milestones/claim`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ milestoneKey }),
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+    return { isFirstClaim: false, claim: null };
+  },
+};
+
 // =============================================
 // In-memory store for newly created users in session
 const localUsersStore: any[] = [
@@ -1478,33 +1512,20 @@ export const usersApi = {
 
     const targetUserIds = (data || []).map((p: any) => p.user_id || p.id).filter(Boolean);
 
-    // Fetch batch activeClassesCount & pendingSubmissionsCount in parallel (No N+1)
+    // Fetch batch activeClassesCount in parallel
     let classCountsMap: Record<string, number> = {};
     let pendingSubmissionsMap: Record<string, number> = {};
 
     if (targetUserIds.length > 0) {
-      const [{ data: classesData }, { data: submissionsData }] = await Promise.all([
-        supabase
-          .from("classes")
-          .select("teacher_id")
-          .in("teacher_id", targetUserIds)
-          .eq("is_active", true),
-        supabase
-          .from("submissions")
-          .select("teacher_id")
-          .in("teacher_id", targetUserIds)
-          .eq("grade_status", "pending"),
-      ]);
+      const { data: classesData } = await supabase
+        .from("classes")
+        .select("teacher_id")
+        .in("teacher_id", targetUserIds)
+        .eq("is_active", true);
 
       (classesData || []).forEach((c: any) => {
         if (c.teacher_id) {
           classCountsMap[c.teacher_id] = (classCountsMap[c.teacher_id] || 0) + 1;
-        }
-      });
-
-      (submissionsData || []).forEach((s: any) => {
-        if (s.teacher_id) {
-          pendingSubmissionsMap[s.teacher_id] = (pendingSubmissionsMap[s.teacher_id] || 0) + 1;
         }
       });
     }
@@ -4120,8 +4141,8 @@ export const lessonsApi = {
           .eq("student_id", user.id)
           .in("exam_id", examIds),
         supabase
-          .from("homeworks")
-          .select("id, exam_id, lesson_id, deadline, status")
+          .from("class_exam_assignments")
+          .select("id, exam_id, deadline, status")
           .eq("class_id", classId),
       ]);
 

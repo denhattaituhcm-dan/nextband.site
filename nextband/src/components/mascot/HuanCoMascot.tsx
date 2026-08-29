@@ -4,7 +4,7 @@ import { HuanCoState } from "@/lib/huanCoState";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Sparkles, X, BookOpen, AlertTriangle } from "lucide-react";
+import { ArrowRight, Sparkles, X, BookOpen, AlertCircle, Award } from "lucide-react";
 
 interface HuanCoMascotProps {
   state: HuanCoState;
@@ -15,7 +15,8 @@ export function HuanCoMascot({ state, className = "" }: HuanCoMascotProps) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
-  const isUrgent = state.urgency === "RED" || state.urgency === "ORANGE" || state.urgency === "YELLOW";
+  const isCelebration = state.visualLevel === "celebration" || state.visualLevel === "ceremony";
+  const isConcerned = state.visualLevel === "concerned";
 
   const handleCtaClick = () => {
     if (state.ctaPath) {
@@ -33,14 +34,14 @@ export function HuanCoMascot({ state, className = "" }: HuanCoMascotProps) {
             className="group relative flex items-center justify-center p-0.5 rounded-full transition-transform duration-200 hover:scale-105 active:scale-95 focus:outline-hidden"
             aria-label="Mở bảng chỉ dẫn của Huyền Cơ Lão Nhân"
           >
-            {/* Urgency Ambient Glow for High Priority */}
-            {isUrgent && (
-              <span className={`absolute -inset-1 rounded-full animate-ping opacity-25 ${state.dotColorClass}`} />
+            {/* Subtle Celebration Glow (No aggressive pulsing/pinging) */}
+            {isCelebration && (
+              <span className="absolute -inset-1 rounded-full bg-amber-400/20 blur-xs transition-opacity duration-300 group-hover:opacity-100" />
             )}
 
             {/* Mascot Circular Avatar */}
             <div
-              className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden shadow-lg border-2 bg-card transition-all ${state.ringColorClass}`}
+              className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden shadow-md border-2 bg-card transition-all ${state.ringColorClass}`}
             >
               <img
                 src="/mascot/Huyenco.png"
@@ -50,7 +51,7 @@ export function HuanCoMascot({ state, className = "" }: HuanCoMascotProps) {
               />
             </div>
 
-            {/* Notification Dot */}
+            {/* Subtle Notification Dot (Static, non-flashing) */}
             <span
               className={`absolute top-0.5 right-0.5 w-3.5 h-3.5 rounded-full border-2 border-background shadow-xs ${state.dotColorClass}`}
             />
@@ -102,14 +103,16 @@ export function HuanCoMascot({ state, className = "" }: HuanCoMascotProps) {
                   </Badge>
                 </div>
                 <p className="text-[10px] text-muted-foreground font-medium">
-                  Chỉ Dẫn Tu Luyện
+                  {state.realm?.academicRank
+                    ? `${state.realm.academicRank} • ${state.realm.realmName}`
+                    : "Chỉ Dẫn Đồng Hành"}
                 </p>
               </div>
             </div>
 
             <button
               onClick={() => setIsOpen(false)}
-              className="p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              className="p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
               aria-label="Đóng bảng chỉ dẫn"
             >
               <X className="w-4 h-4" />
@@ -118,6 +121,17 @@ export function HuanCoMascot({ state, className = "" }: HuanCoMascotProps) {
 
           {/* Body Content */}
           <div className="p-4 space-y-3.5">
+            {/* Reward Banner if present */}
+            {state.reward && (
+              <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-300 text-xs font-semibold">
+                <span className="flex items-center gap-1.5">
+                  <Award className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                  <span>{state.reward.label || "Thành tích đạt được"}</span>
+                </span>
+                {state.reward.xp && <span className="font-bold">+{state.reward.xp} XP</span>}
+              </div>
+            )}
+
             {/* Quote with Mascot Voice */}
             <div className="relative p-3 rounded-xl bg-primary-soft/40 border border-primary/15 text-foreground space-y-1">
               <span className="text-xs font-serif italic leading-relaxed block text-foreground/90">
@@ -128,8 +142,8 @@ export function HuanCoMascot({ state, className = "" }: HuanCoMascotProps) {
             {/* Concrete Action Card */}
             <div className="p-3 rounded-xl bg-card border border-border/70 shadow-2xs space-y-1.5">
               <div className="flex items-center gap-1.5 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-                {isUrgent ? (
-                  <AlertTriangle className="w-3.5 h-3.5 text-warning" />
+                {isConcerned ? (
+                  <AlertCircle className="w-3.5 h-3.5 text-rose-500" />
                 ) : (
                   <Sparkles className="w-3.5 h-3.5 text-primary" />
                 )}
@@ -163,3 +177,4 @@ export function HuanCoMascot({ state, className = "" }: HuanCoMascotProps) {
     </div>
   );
 }
+

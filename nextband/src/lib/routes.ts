@@ -7,6 +7,7 @@ export const routes = {
   // Student Portal Routes
   student: {
     dashboard: () => "/app",
+    analytics: () => "/app/analytics",
     submissions: () => "/app/submissions",
     submission: (id: string) => `/app/submissions/${encodeURIComponent(id)}`,
     profile: () => "/app/profile",

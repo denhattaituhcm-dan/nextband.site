@@ -1,18 +1,57 @@
 import { ActionQueueItem } from "./homeworkStatusHelper";
 import { routes } from "./routes";
 
+export type MascotState = "IDLE" | "WELCOME" | "GUIDE" | "CELEBRATE" | "MENTOR" | "ALERT";
+
+export type MascotEventType =
+  | "LEVEL_UP"
+  | "PERSONAL_BEST"
+  | "STREAK_MILESTONE"
+  | "SUBMISSION_SUCCESS"
+  | "REVISION_REQUIRED"
+  | "OVERDUE"
+  | "DUE_SOON"
+  | "GUIDE"
+  | "WELCOME"
+  | "IDLE";
+
+export type VisualLevel = "ambient" | "subtle" | "celebration" | "ceremony" | "concerned";
+
 export type HuanCoUrgency = "RED" | "ORANGE" | "YELLOW" | "BLUE" | "GREEN" | "GRAY";
 
-export interface HuanCoState {
-  urgency: HuanCoUrgency;
-  badgeText: string;
-  quote: string;
-  advice: string;
-  ctaLabel?: string;
-  ctaPath?: string;
-  dotColorClass: string;
-  ringColorClass: string;
-  targetItem?: ActionQueueItem;
+export interface RealmConfig {
+  academicRank: string;
+  realmName: string;
+}
+
+export const REALM_MAP: Record<string, RealmConfig> = {
+  "3.0": { academicRank: "Học Đồ", realmName: "Khai Mạch" },
+  "3.5": { academicRank: "Học Đồ", realmName: "Khai Mạch" },
+  "4.0": { academicRank: "Học Giả", realmName: "Luyện Khí" },
+  "4.5": { academicRank: "Học Giả", realmName: "Luyện Khí" },
+  "5.0": { academicRank: "Học Sĩ", realmName: "Trúc Cơ" },
+  "5.5": { academicRank: "Học Sĩ", realmName: "Trúc Cơ" },
+  "6.0": { academicRank: "Học Sư", realmName: "Kết Đan" },
+  "6.5": { academicRank: "Học Sư", realmName: "Kết Đan" },
+  "7.0": { academicRank: "Học Bá", realmName: "Nguyên Anh" },
+  "7.5": { academicRank: "Học Bá", realmName: "Nguyên Anh" },
+  "8.0": { academicRank: "Học Tôn", realmName: "Hóa Thần" },
+  "8.5": { academicRank: "Học Tôn", realmName: "Hóa Thần" },
+  "9.0": { academicRank: "Học Đế", realmName: "Phi Thăng" },
+};
+
+export function getRealmFromBand(band?: number): RealmConfig {
+  if (!band || band < 3.0) return { academicRank: "Học Đồ", realmName: "Khai Mạch" };
+  if (band >= 9.0) return { academicRank: "Học Đế", realmName: "Phi Thăng" };
+  const rounded = (Math.floor(band * 2) / 2).toFixed(1);
+  return REALM_MAP[rounded] || { academicRank: "Học Sĩ", realmName: "Trúc Cơ" };
+}
+
+export interface HuanCoRecentTrigger {
+  type: "LEVEL_UP" | "PERSONAL_BEST" | "STREAK_MILESTONE" | "SUBMISSION_SUCCESS";
+  title?: string;
+  score?: string | number;
+  xpEarned?: number;
 }
 
 export interface HuanCoInput {
@@ -22,142 +61,297 @@ export interface HuanCoInput {
   pendingCount?: number;
   enrolledClassName?: string;
   courseTitle?: string;
+  streakDays?: number;
+  currentBand?: number;
+  recentTrigger?: HuanCoRecentTrigger;
+}
+
+export interface HuanCoState {
+  state: MascotState;
+  eventType: MascotEventType;
+  urgency: HuanCoUrgency;
+  badgeText: string;
+  quote: string;
+  advice: string;
+  ctaLabel?: string;
+  ctaPath?: string;
+  dotColorClass: string;
+  ringColorClass: string;
+  visualLevel: VisualLevel;
+  reward?: { xp?: number; label?: string };
+  realm?: RealmConfig;
+  targetItem?: ActionQueueItem;
 }
 
 /**
- * Pure deterministic rule engine for Huyền Cơ Lão Nhân.
- * Prioritizes student learning action:
- * 1. OVERDUE (RED) -> Oldest overdue homework first
- * 2. REVISION_REQUIRED (ORANGE) -> Attempt 2 needs revision
- * 3. DUE_SOON (YELLOW) -> Due within 48 hours
- * 4. PENDING (BLUE) -> Active assignments awaiting student
- * 5. POSITIVE (GREEN) -> All pending done, review progress/graded
- * 6. IDLE (GRAY) -> No active homework assigned yet
+ * 1. RESOLVER: Deterministic event resolver according to strict invariant priority:
+ * LEVEL_UP > PERSONAL_BEST > STREAK_MILESTONE > SUBMISSION_SUCCESS > REVISION_REQUIRED > OVERDUE > DUE_SOON > GUIDE > WELCOME > IDLE
  */
-export function getHuanCoState(input: HuanCoInput): HuanCoState {
-  const {
-    actionQueue = [],
-    submittedCount = 0,
-    gradedCount = 0,
-  } = input;
+export function resolveMascotEvent(input: HuanCoInput): MascotEventType {
+  // 1. Level up (Ceremony)
+  if (input.recentTrigger?.type === "LEVEL_UP") return "LEVEL_UP";
 
-  // Priority 1: OVERDUE items
-  const overdueItems = actionQueue.filter(
-    (item) => item.status === "OVERDUE" || (item.countdown?.isOverdue && item.status !== "SUBMITTED" && item.status !== "GRADED")
+  // 2. Personal best (Celebration)
+  if (input.recentTrigger?.type === "PERSONAL_BEST") return "PERSONAL_BEST";
+
+  // 3. Streak milestone (Celebration)
+  if (input.recentTrigger?.type === "STREAK_MILESTONE") return "STREAK_MILESTONE";
+
+  // 4. Submission success (Subtle)
+  if (input.recentTrigger?.type === "SUBMISSION_SUCCESS") return "SUBMISSION_SUCCESS";
+
+  const actionQueue = input.actionQueue || [];
+
+  // 5. Revision required (Attempt 2)
+  const hasRevision = actionQueue.some((i) => i.status === "REVISION_REQUIRED");
+  if (hasRevision) return "REVISION_REQUIRED";
+
+  // 6. Overdue (Alert)
+  const hasOverdue = actionQueue.some(
+    (item) =>
+      item.status === "OVERDUE" ||
+      (item.countdown?.isOverdue && item.status !== "SUBMITTED" && item.status !== "GRADED")
   );
+  if (hasOverdue) return "OVERDUE";
 
-  if (overdueItems.length > 0) {
-    const target = overdueItems[0];
-    const targetPath = routes.exam.take(target.examId || target.id);
-    const count = overdueItems.length;
-
-    return {
-      urgency: "RED",
-      badgeText: "Cần Xử Lý Gấp",
-      quote:
-        count > 1
-          ? `Ta đang nghỉ cũng được, nhưng ngươi thì đang nợ ${count} bài đấy.`
-          : `Đừng nhìn ta nữa. Ngươi đang nợ một bài tập quá hạn kìa.`,
-      advice: `Trước tiên hãy xử lý dứt điểm bài "${target.title}" này đã.`,
-      ctaLabel: `Làm bù bài: ${target.title}`,
-      ctaPath: targetPath,
-      dotColorClass: "bg-rose-500",
-      ringColorClass: "ring-rose-500/30 border-rose-500",
-      targetItem: target,
-    };
-  }
-
-  // Priority 2: REVISION_REQUIRED items (Attempt 2)
-  const revisionItems = actionQueue.filter((item) => item.status === "REVISION_REQUIRED");
-
-  if (revisionItems.length > 0) {
-    const target = revisionItems[0];
-    const targetPath = target.submission?.id
-      ? routes.student.submission(target.submission.id)
-      : routes.exam.take(target.examId || target.id);
-
-    return {
-      urgency: "ORANGE",
-      badgeText: "Cần Sửa Bài",
-      quote: `Ta đã xem qua rồi. Bài này chưa đạt yêu cầu, cần mài giũa lại.`,
-      advice: `Xem nhận xét của giáo viên và sửa bài "${target.title}" (Attempt 2).`,
-      ctaLabel: `Sửa bài: ${target.title}`,
-      ctaPath: targetPath,
-      dotColorClass: "bg-amber-500",
-      ringColorClass: "ring-amber-500/30 border-amber-500",
-      targetItem: target,
-    };
-  }
-
-  // Priority 3: DUE_SOON items (priority === 3 or countdown active within 48h)
-  const dueSoonItems = actionQueue.filter(
+  // 7. Due soon items (within 48h / priority 3)
+  const hasDueSoon = actionQueue.some(
     (item) => item.priority === 3 || (item.countdown && !item.countdown.isOverdue && item.priority === 3)
   );
+  if (hasDueSoon) return "DUE_SOON";
 
-  if (dueSoonItems.length > 0) {
-    const target = dueSoonItems[0];
-    const targetPath = `/exam/${target.examId || target.id}`;
-    const countdownText = target.countdown?.text ? ` (${target.countdown.text})` : "";
+  // 8. Normal upcoming / pending items
+  if (actionQueue.length > 0) return "GUIDE";
 
-    return {
-      urgency: "YELLOW",
-      badgeText: "Sắp Hết Hạn",
-      quote: `Thời gian không đợi ai. Bài tập sắp đến hạn chót rồi đấy.`,
-      advice: `Bài "${target.title}"${countdownText} cần hoàn thành sớm kẻo dồn việc.`,
-      ctaLabel: `Làm bài: ${target.title}`,
-      ctaPath: targetPath,
-      dotColorClass: "bg-amber-400",
-      ringColorClass: "ring-amber-400/30 border-amber-400",
-      targetItem: target,
-    };
-  }
+  // 9. All submitted / positive
+  if ((input.submittedCount || 0) > 0) return "WELCOME";
 
-  // Priority 4: PENDING items (normal upcoming tasks)
-  if (actionQueue.length > 0) {
-    const target = actionQueue[0];
-    const targetPath = `/exam/${target.examId || target.id}`;
-    const totalPending = actionQueue.length;
-
-    return {
-      urgency: "BLUE",
-      badgeText: "Nhiệm Vụ Mới",
-      quote:
-        totalPending > 1
-          ? `Hành trình phía trước còn ${totalPending} bài tập đang đợi ngươi khai phá.`
-          : `Có nhiệm vụ mới đang chờ ngươi rèn luyện.`,
-      advice: `Hãy bắt đầu ngay với bài "${target.title}".`,
-      ctaLabel: `Làm bài: ${target.title}`,
-      ctaPath: targetPath,
-      dotColorClass: "bg-primary",
-      ringColorClass: "ring-primary/30 border-primary",
-      targetItem: target,
-    };
-  }
-
-  // Priority 5: POSITIVE (All homework submitted, no pending tasks)
-  if (submittedCount > 0) {
-    return {
-      urgency: "GREEN",
-      badgeText: "Tiến Triển Tốt",
-      quote: `Khá lắm! Ngươi đã giải quyết xong hết các bài tập được giao đợt này.`,
-      advice:
-        gradedCount > 0
-          ? `Đã có ${gradedCount} bài được chấm nhận xét. Xem lại để rút kinh nghiệm.`
-          : `Bài nộp đang trong hàng đợi chấm, tranh thủ xem lại bài cũ.`,
-      ctaLabel: "Xem lịch sử nộp bài",
-      ctaPath: "/app/my-submissions",
-      dotColorClass: "bg-emerald-500",
-      ringColorClass: "ring-emerald-500/30 border-emerald-500",
-    };
-  }
-
-  // Priority 6: IDLE (No assignments in class)
-  return {
-    urgency: "GRAY",
-    badgeText: "Đang Thảnh Thơi",
-    quote: `Kinh các để sau đi, ta đang nghỉ ngơi... Ngươi cũng chưa có bài tập nào.`,
-    advice: `Khi giáo viên giao bài tập mới, ta sẽ lập tức chỉ dẫn cho ngươi.`,
-    dotColorClass: "bg-muted-foreground",
-    ringColorClass: "ring-border border-border",
-  };
+  // 10. Idle
+  return "IDLE";
 }
+
+/**
+ * 2. PRESENTATION MAPPER: Transforms canonical learner state and event into clean presentation
+ */
+export function getMascotPresentation(input: HuanCoInput): HuanCoState {
+  const { actionQueue = [], submittedCount = 0, gradedCount = 0, currentBand, streakDays } = input;
+  const eventType = resolveMascotEvent(input);
+  const realm = getRealmFromBand(currentBand);
+
+  switch (eventType) {
+    case "LEVEL_UP":
+      return {
+        state: "CELEBRATE",
+        eventType,
+        urgency: "GREEN",
+        badgeText: "Đột Phá Cảnh Giới",
+        quote: `Chúc mừng ngươi! Ngươi đã bước lên cảnh giới ${realm.academicRank} (${realm.realmName}).`,
+        advice: "Căn cơ của ngươi đã vững chắc hơn rất nhiều, tiếp tục phát huy nhé.",
+        ctaLabel: "Xem lộ trình tiếp theo",
+        ctaPath: routes.student.submissions(),
+        dotColorClass: "bg-amber-400",
+        ringColorClass: "ring-amber-400/40 border-amber-400",
+        visualLevel: "ceremony",
+        reward: { xp: input.recentTrigger?.xpEarned || 200, label: "Đột phá cảnh giới" },
+        realm,
+      };
+
+    case "PERSONAL_BEST":
+      return {
+        state: "CELEBRATE",
+        eventType,
+        urgency: "GREEN",
+        badgeText: "Kỷ Lục Mới",
+        quote: `Tuyệt vời! Ngươi vừa vượt qua kỷ lục của chính mình${
+          input.recentTrigger?.score ? ` (${input.recentTrigger.score})` : ""
+        }.`,
+        advice: "Đây là kết quả xứng đáng cho sự nỗ lực kiên trì của ngươi.",
+        ctaLabel: "Xem chi tiết bài làm",
+        ctaPath: routes.student.submissions(),
+        dotColorClass: "bg-emerald-400",
+        ringColorClass: "ring-emerald-400/40 border-emerald-400",
+        visualLevel: "celebration",
+        reward: { xp: input.recentTrigger?.xpEarned || 100, label: "Kỷ lục cá nhân" },
+        realm,
+      };
+
+    case "STREAK_MILESTONE":
+      return {
+        state: "CELEBRATE",
+        eventType,
+        urgency: "GREEN",
+        badgeText: `Chuỗi ${streakDays || 7} Ngày`,
+        quote: `Sự rèn luyện liên tục ${streakDays || 7} ngày qua đang tạo nên nền móng vững vàng.`,
+        advice: "Hãy giữ vững nhịp độ này trong buổi học hôm nay.",
+        ctaLabel: "Tiếp tục rèn luyện",
+        ctaPath: routes.student.submissions(),
+        dotColorClass: "bg-amber-500",
+        ringColorClass: "ring-amber-500/40 border-amber-500",
+        visualLevel: "celebration",
+        reward: { xp: input.recentTrigger?.xpEarned || 50, label: "Duy trì rèn luyện" },
+        realm,
+      };
+
+    case "SUBMISSION_SUCCESS":
+      return {
+        state: "CELEBRATE",
+        eventType,
+        urgency: "GREEN",
+        badgeText: "Đã Hoàn Thành",
+        quote: "Khá lắm. Một nhiệm vụ nữa đã được giải quyết trọn vẹn.",
+        advice: "Nghỉ tay một chút rồi xem lại lời giải chi tiết và nhận xét nhé.",
+        ctaLabel: "Xem bài đã nộp",
+        ctaPath: routes.student.submissions(),
+        dotColorClass: "bg-emerald-500",
+        ringColorClass: "ring-emerald-500/30 border-emerald-500",
+        visualLevel: "subtle",
+        reward: { xp: input.recentTrigger?.xpEarned || 50, label: "Kinh nghiệm tu luyện" },
+        realm,
+      };
+
+    case "REVISION_REQUIRED": {
+      const target = actionQueue.find((item) => item.status === "REVISION_REQUIRED") || actionQueue[0];
+      const targetPath = target.submission?.id
+        ? routes.student.submission(target.submission.id)
+        : routes.exam.take(target.examId || target.id);
+
+      return {
+        state: "MENTOR",
+        eventType,
+        urgency: "ORANGE",
+        badgeText: "Cần Mài Giũa",
+        quote: "Chiêu thức còn chút sơ hở, ta cùng xem lại và mài giũa thêm một lần nữa.",
+        advice: `Xem nhận xét của giáo viên và hoàn thiện bài "${target.title}" (Attempt 2).`,
+        ctaLabel: `Sửa bài: ${target.title}`,
+        ctaPath: targetPath,
+        dotColorClass: "bg-amber-500",
+        ringColorClass: "ring-amber-500/30 border-amber-500",
+        visualLevel: "subtle",
+        targetItem: target,
+        realm,
+      };
+    }
+
+    case "OVERDUE": {
+      const overdueItems = actionQueue.filter(
+        (item) =>
+          item.status === "OVERDUE" ||
+          (item.countdown?.isOverdue && item.status !== "SUBMITTED" && item.status !== "GRADED")
+      );
+      const target = overdueItems[0] || actionQueue[0];
+      const targetPath = routes.exam.take(target.examId || target.id);
+      const count = overdueItems.length;
+
+      return {
+        state: "ALERT",
+        eventType,
+        urgency: "RED",
+        badgeText: "Cần Xử Lý",
+        quote:
+          count > 1
+            ? `Có ${count} nhiệm vụ đang chờ xử lý. Đừng lo, chúng ta giải quyết từng bài một là ổn ngay.`
+            : `Có nhiệm vụ chưa hoàn tất. Chúng ta cùng bắt tay xử lý bài này nhé.`,
+        advice: `Trước tiên hãy giải quyết bài "${target.title}" này đã.`,
+        ctaLabel: `Xử lý nhiệm vụ: ${target.title}`,
+        ctaPath: targetPath,
+        dotColorClass: "bg-rose-500",
+        ringColorClass: "ring-rose-500/20 border-rose-400/60",
+        visualLevel: "concerned",
+        targetItem: target,
+        realm,
+      };
+    }
+
+    case "DUE_SOON": {
+      const dueSoonItems = actionQueue.filter(
+        (item) => item.priority === 3 || (item.countdown && !item.countdown.isOverdue && item.priority === 3)
+      );
+      const target = dueSoonItems[0] || actionQueue[0];
+      const targetPath = routes.exam.take(target.examId || target.id);
+      const countdownText = target.countdown?.text ? ` (${target.countdown.text})` : "";
+
+      return {
+        state: "GUIDE",
+        eventType,
+        urgency: "YELLOW",
+        badgeText: "Sắp Đến Hạn",
+        quote: "Thời gian rất quý báu. Bài tập này sắp đến hạn, tranh thủ làm sớm để giữ tiến độ nhé.",
+        advice: `Bài "${target.title}"${countdownText} cần hoàn thành sớm kẻo dồn việc.`,
+        ctaLabel: `Làm bài: ${target.title}`,
+        ctaPath: targetPath,
+        dotColorClass: "bg-amber-400",
+        ringColorClass: "ring-amber-400/30 border-amber-400",
+        visualLevel: "subtle",
+        targetItem: target,
+        realm,
+      };
+    }
+
+    case "GUIDE": {
+      const target = actionQueue[0];
+      const targetPath = routes.exam.take(target.examId || target.id);
+      const totalPending = actionQueue.length;
+
+      return {
+        state: "GUIDE",
+        eventType,
+        urgency: "BLUE",
+        badgeText: "Nhiệm Vụ Mới",
+        quote:
+          totalPending > 1
+            ? `Hành trình phía trước có ${totalPending} bài tập rèn luyện. Từng bước tiến lên nào.`
+            : `Có nhiệm vụ mới đang chờ ngươi rèn luyện.`,
+        advice: `Hãy bắt đầu ngay với bài "${target.title}".`,
+        ctaLabel: `Làm bài: ${target.title}`,
+        ctaPath: targetPath,
+        dotColorClass: "bg-primary",
+        ringColorClass: "ring-primary/30 border-primary",
+        visualLevel: "subtle",
+        targetItem: target,
+        realm,
+      };
+    }
+
+    case "WELCOME":
+      return {
+        state: "WELCOME",
+        eventType,
+        urgency: "GREEN",
+        badgeText: "Tiến Triển Tốt",
+        quote: "Khá lắm! Ngươi đã giải quyết xong các bài tập được giao đợt này.",
+        advice:
+          gradedCount > 0
+            ? `Đã có ${gradedCount} bài được chấm nhận xét. Xem lại để củng cố kiến thức.`
+            : `Bài nộp đang trong hàng đợi chấm, tranh thủ xem lại bài cũ nhé.`,
+        ctaLabel: "Xem lịch sử nộp bài",
+        ctaPath: routes.student.submissions(),
+        dotColorClass: "bg-emerald-500",
+        ringColorClass: "ring-emerald-500/30 border-emerald-500",
+        visualLevel: "ambient",
+        realm,
+      };
+
+    case "IDLE":
+    default:
+      return {
+        state: "IDLE",
+        eventType: "IDLE",
+        urgency: "GRAY",
+        badgeText: "Đang Thảnh Thơi",
+        quote: "Hiện tại chưa có bài tập mới. Ngươi có thể nghỉ ngơi tĩnh dưỡng hoặc ôn lại bài cũ.",
+        advice: "Khi giáo viên giao bài tập mới, ta sẽ lập tức chỉ dẫn cho ngươi.",
+        dotColorClass: "bg-muted-foreground",
+        ringColorClass: "ring-border border-border",
+        visualLevel: "ambient",
+        realm,
+      };
+  }
+}
+
+/**
+ * Backward-compatible entrypoint
+ */
+export function getHuanCoState(input: HuanCoInput): HuanCoState {
+  return getMascotPresentation(input);
+}
+

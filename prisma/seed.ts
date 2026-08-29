@@ -164,34 +164,44 @@ async function main() {
       }
     });
 
-    // 8. Create Homework for Lesson 1
-    const homework = await prisma.homework.create({
-      data: {
-        classId: dreamerClass.id,
-        classSessionId: session1.id,
-        createdBy: teacherUser.id,
-        title: 'Bài tập về nhà Buổi 1: Reading Cambridge 18 Test 1 Passage 1',
-        description: 'Đọc đoạn văn và làm 13 câu hỏi trong file đính kèm.',
-        deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        status: 'PUBLISHED'
-      }
-    });
+    // 8. Seed sample Exam if needed
+    const sampleExam = await prisma.exam.findFirst();
+    if (sampleExam) {
+      await prisma.classExamAssignment.upsert({
+        where: {
+          classId_examId: {
+            classId: dreamerClass.id,
+            examId: sampleExam.id,
+          },
+        },
+        update: {
+          deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          status: "PUBLISHED",
+        },
+        create: {
+          classId: dreamerClass.id,
+          examId: sampleExam.id,
+          createdBy: teacherUser.id,
+          deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          status: "PUBLISHED",
+        },
+      });
 
-    // 9. Create Student Submission
-    await prisma.submission.create({
-      data: {
-        homeworkId: homework.id,
-        studentId: studentUser.id,
-        status: 'GRADED',
-        submittedAt: new Date(),
-        gradedAt: new Date(),
-        score: 8.5,
-        feedback: '## Nhận xét bài làm\n- **Ưu điểm**: Làm tốt các câu hỏi True/False/Not Given.\n- **Cần cải thiện**: Chú ý đếm số từ giới hạn (NO MORE THAN TWO WORDS).'
-      }
-    });
+      await prisma.examSubmission.create({
+        data: {
+          examId: sampleExam.id,
+          studentId: studentUser.id,
+          status: "GRADED",
+          submittedAt: new Date(),
+          gradedAt: new Date(),
+          totalScore: 8.5,
+          feedback: "## Nhận xét bài làm\n- **Ưu điểm**: Làm tốt các câu hỏi True/False/Not Given.\n- **Cần cải thiện**: Chú ý đếm số từ giới hạn (NO MORE THAN TWO WORDS).",
+        },
+      });
+    }
   }
 
-  console.log('✅ Seed successfully completed for Phase 0 Sprint 1!');
+  console.log("✅ Seed successfully completed for Phase 0 Sprint 1!");
 }
 
 main()

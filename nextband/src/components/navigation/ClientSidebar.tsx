@@ -59,6 +59,12 @@ const fullNavigationGroups: NavGroup[] = [
         description: "Lịch sử nộp bài & Đánh giá",
       },
       {
+        title: "Thống kê năng lực",
+        url: "/app/analytics",
+        icon: ShieldCheck,
+        description: "Phân tích lỗi & Điểm mạnh",
+      },
+      {
         title: "Cá nhân",
         url: "/app/profile",
         icon: User,

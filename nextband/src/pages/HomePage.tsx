@@ -22,7 +22,17 @@ import { HuanCoMascot } from "@/components/mascot/HuanCoMascot";
 import { StudentStageBanner } from "@/components/student/StudentStageBanner";
 import { StudentMissionQueue } from "@/components/student/StudentMissionQueue";
 import { StudentSkillMatrix } from "@/components/student/StudentSkillMatrix";
+import { ClassLeaderboardWidget } from "@/components/student/ClassLeaderboardWidget";
 import { calculateStudentJourney } from "@/lib/studentJourney";
+import {
+  evaluateAllAchievedMilestones,
+  selectHighestPriorityPendingMilestone,
+  DecisionMilestone,
+  CourseLessonItem,
+  inferLessonSemanticType,
+} from "@/lib/milestoneEngine";
+import { CelebrationModal } from "@/components/celebration/CelebrationModal";
+import { milestonesApi } from "@/lib/api";
 import {
   Layers,
   WifiOff,
@@ -156,6 +166,46 @@ export default function HomePage() {
     return calculateStudentJourney(userSubmissions, 5.5, 6.5);
   }, [userSubmissions]);
 
+  // Offline Recovery Milestone Trigger
+  const [recoveryMilestone, setRecoveryMilestone] = useState<DecisionMilestone | null>(null);
+
+  useMemo(() => {
+    if (!user?.id || !rawLessons || rawLessons.length === 0 || recoveryMilestone) return;
+
+    const lessons: CourseLessonItem[] = rawLessons.map((item: any, idx: number) => {
+      const sub = userSubmissions.find((s: any) => (s.examId || s.exam_id) === item.id) || item.submission;
+      const isCompleted = sub && ["submitted", "SUBMITTED", "graded", "GRADED"].includes(sub.status);
+      const weekGroup = item.week || Math.ceil((idx + 1) / 3);
+      const semanticType = inferLessonSemanticType(item.title, idx + 1, rawLessons.length);
+
+      return {
+        id: item.id,
+        title: item.title || `Lesson ${idx + 1}`,
+        semanticType,
+        weekGroup,
+        orderInWeek: ((idx) % 3) + 1,
+        isCompleted: !!isCompleted,
+      };
+    });
+
+    const allAchieved = evaluateAllAchievedMilestones({
+      courseId: enrolledClassId || "home",
+      lessons,
+    });
+
+    milestonesApi.getClaims().then((claimedList) => {
+      const claimedSet = new Set(claimedList);
+      const pending = selectHighestPriorityPendingMilestone(allAchieved, claimedSet);
+      if (pending) {
+        milestonesApi.claim(pending.key).then((res) => {
+          if (res.isFirstClaim) {
+            setRecoveryMilestone(pending);
+          }
+        });
+      }
+    });
+  }, [user?.id, rawLessons, userSubmissions, enrolledClassId, recoveryMilestone]);
+
   // Trạng thái sư phạm của Huyền Cơ Lão Nhân
   const huanCoState = useMemo(() => {
     return getHuanCoState({
@@ -215,6 +265,15 @@ export default function HomePage() {
         {/* ENROLLED — Full ARIS IELTS Command Center */}
         {state === "ENROLLED" && (
           <div className="space-y-6">
+            {/* Offline Recovery Milestone Celebration Modal */}
+            {recoveryMilestone && user?.id && (
+              <CelebrationModal
+                milestone={recoveryMilestone}
+                userId={user.id}
+                onClose={() => setRecoveryMilestone(null)}
+              />
+            )}
+
             {/* Multi-Class Selector (if student has multiple active enrollments) */}
             {enrollments.length > 1 && (
               <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs shadow-xs">
@@ -252,17 +311,34 @@ export default function HomePage() {
               journey={journey}
             />
 
-            {/* 2. MISSION QUEUE: Hàng Đợi Nhiệm Vụ Tiêu Điểm Max 3 Items (10% Focus Action) */}
-            <StudentMissionQueue
-              missions={actionQueue}
-              enrolledClassId={enrolledClassId}
-            />
+            {/* BATTLEGROUND & ACADEMIC CORE: LƯỚI 2 CỘT (7:5) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              {/* CỘT TRÁI (7/12): HÀNG ĐỢI NHIỆM VỤ & BÁO CÁO HỌC THUẬT */}
+              <div className="lg:col-span-7 space-y-6">
+                {/* 2. MISSION QUEUE: Hàng Đợi Nhiệm Vụ Tiêu Điểm Max 3 Items (10% Focus Action) */}
+                <StudentMissionQueue
+                  missions={actionQueue}
+                  enrolledClassId={enrolledClassId}
+                />
 
-            {/* 3. SKILL MATRIX & TEACHER DEBRIEF: Năng Lực 4 Kỹ Năng & Báo Cáo Sửa Lỗi (70% Academic Base) */}
-            <StudentSkillMatrix
-              skills={journey.skills}
-              latestSubmission={userSubmissions[0]}
-            />
+                {/* 3. SKILL MATRIX & TEACHER DEBRIEF: Năng Lực 4 Kỹ Năng & Báo Cáo Sửa Lỗi (70% Academic Base) */}
+                <StudentSkillMatrix
+                  skills={journey.skills}
+                  latestSubmission={userSubmissions[0]}
+                />
+              </div>
+
+              {/* CỘT PHẢI (5/12): VÒNG LẶP TRANH ĐUA LỚP HỌC (BATTLE LOOP ENGINE) */}
+              <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-6">
+                <ClassLeaderboardWidget
+                  classId={enrolledClassId || ""}
+                  className={activeClassName}
+                  currentUserId={user?.id}
+                  targetBand={journey.targetBand ? `Band ${journey.targetBand}+` : undefined}
+                  topMission={actionQueue[0] || null}
+                />
+              </div>
+            </div>
 
             {/* HUYỀN CƠ LÃO NHÂN FLOATING MASCOT */}
             <HuanCoMascot state={huanCoState} />
