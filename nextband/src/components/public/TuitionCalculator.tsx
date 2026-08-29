@@ -172,194 +172,189 @@ export function TuitionCalculator() {
   return (
     <div id="tuition-calculator" className="space-y-16 py-16 sm:py-24 bg-slate-50/70 dark:bg-slate-900/30">
       {/* SECTION 1: INTERACTIVE CALCULATOR */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Header */}
         <div className="text-center space-y-3 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-red/10 text-brand-red font-bold text-xs sm:text-sm tracking-wide uppercase">
-            <Calculator className="w-4 h-4" />
-            <span>Bảng Tính Nhanh Học Phí & Học Bổng</span>
-          </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-foreground tracking-tight">
             Tính học phí của bạn
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-            Ước tính mức học phí thực tế sau khi áp dụng <strong>Học bổng Tinh Anh</strong>, <strong>Học bổng Kỷ Luật</strong> và <strong>Đặc quyền Đồng Môn</strong>.
+            Chọn khóa học khởi đầu theo trình độ hiện tại để xem lộ trình và dự toán học phí sau học bổng.
           </p>
         </div>
 
-        {/* Controls Bar: Start Course */}
-        <div className="bg-card border border-border/80 rounded-3xl p-5 sm:p-7 shadow-xs space-y-5">
-          <div className="space-y-2.5">
-            <label className="block text-xs sm:text-sm font-bold uppercase tracking-wider text-muted-foreground">
-              Khoá bắt đầu theo trình độ của bạn
-            </label>
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 p-1.5 bg-muted/70 rounded-2xl border border-border/60">
-              {COURSES_SEQUENCE.map((key) => {
-                const isActive = startCourse === key;
-                return (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => setStartCourse(key)}
-                    className={`py-2.5 px-3 rounded-xl text-xs sm:text-sm font-extrabold transition-all text-center truncate ${
-                      isActive
-                        ? "bg-brand-blue text-white shadow-sm"
-                        : "text-foreground/80 hover:text-foreground hover:bg-background/60"
-                    }`}
-                  >
-                    {COURSE_NAMES[key]}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Path banner */}
-          <div className="flex items-center gap-2.5 px-4 py-3 bg-brand-blue-soft/50 border border-brand-blue/20 rounded-2xl text-brand-blue text-xs sm:text-sm font-semibold">
-            <Sparkles className="w-4 h-4 shrink-0 text-brand-blue" />
-            <span>
-              Lộ trình của bạn:{" "}
-              <strong className="font-extrabold">
-                {activePath.map((k) => COURSE_NAMES[k]).join(" → ")}
-              </strong>{" "}
-              ({activePath.length} khoá học)
-            </span>
-          </div>
-        </div>
-
-        {/* Main Grid: Calculation Rows Table + Total Sidebar */}
+        {/* Main Grid: Calculation Table Card (Left) + Total Sidebar (Right) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Courses Rows (Col 1 to 8) */}
-          <div className="lg:col-span-8 space-y-4">
+          {/* Main Card (Col 1 to 8) */}
+          <div className="lg:col-span-8 bg-card border border-border/90 rounded-3xl p-5 sm:p-7 shadow-sm space-y-6">
+            {/* Top Bar: Khoá bắt đầu */}
+            <div className="space-y-2">
+              <label className="block text-xs font-black uppercase tracking-wider text-brand-red">
+                Khoá bắt đầu
+              </label>
+              <div className="flex flex-wrap sm:flex-nowrap gap-1 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-2xl border border-border/60">
+                {COURSES_SEQUENCE.map((key) => {
+                  const isActive = startCourse === key;
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setStartCourse(key)}
+                      className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-black transition-all text-center uppercase tracking-wide ${
+                        isActive
+                          ? "bg-[#0f294d] text-white shadow-sm"
+                          : "text-slate-600 dark:text-slate-300 hover:text-foreground hover:bg-white/60 dark:hover:bg-slate-700/50"
+                      }`}
+                    >
+                      {COURSE_NAMES[key]}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Path summary banner (Phong cách IELTS 1984 với viền đỏ bên trái) */}
+            <div className="px-4 py-3 bg-red-50/70 dark:bg-red-950/20 border-l-4 border-brand-red rounded-r-2xl text-brand-red text-xs sm:text-sm font-semibold flex items-center gap-2">
+              <span>
+                Lộ trình của bạn:{" "}
+                <strong className="font-extrabold">
+                  {activePath.map((k) => COURSE_NAMES[k]).join(" → ")}
+                </strong>{" "}
+                ({activePath.length} khoá)
+              </span>
+            </div>
+
             {/* Desktop Table Header */}
-            <div className="hidden md:grid grid-cols-12 gap-3 px-6 py-3 bg-muted/60 rounded-2xl border border-border/50 text-xs font-bold text-muted-foreground uppercase tracking-wider">
-              <div className="col-span-3">Khóa học</div>
+            <div className="hidden md:grid grid-cols-12 gap-3 px-4 py-2.5 bg-slate-100/70 dark:bg-slate-800/50 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
+              <div className="col-span-3">Khoá học</div>
               <div className="col-span-2 text-right">Học phí gốc</div>
-              <div className="col-span-2 text-right">Thực đóng</div>
-              <div className="col-span-3">Chương trình học bổng</div>
-              <div className="col-span-2">Đồng Môn</div>
+              <div className="col-span-2 text-right">Học phí sau giảm</div>
+              <div className="col-span-3">Chính sách học bổng</div>
+              <div className="col-span-2 text-center">Đặc quyền Đồng Môn</div>
             </div>
 
             {/* Course Rows */}
-            {courseCalculations.map((c) => (
-              <div
-                key={c.courseKey}
-                className="bg-card border border-border/80 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4 transition-all hover:border-brand-blue/40"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-                  {/* Course Name */}
-                  <div className="md:col-span-3 flex items-center justify-between md:block">
-                    <div>
-                      <span className="text-xs font-bold text-muted-foreground uppercase block">
-                        Khoá {c.courseNum}
-                      </span>
-                      <span className="text-base sm:text-lg font-black text-foreground">
-                        {c.courseName}
+            <div className="space-y-4">
+              {courseCalculations.map((c) => (
+                <div
+                  key={c.courseKey}
+                  className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-border/80 shadow-2xs hover:border-brand-blue/40 transition-all space-y-3"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+                    {/* Course Title & Step */}
+                    <div className="md:col-span-3 flex items-center justify-between md:block">
+                      <div>
+                        <span className="text-[11px] font-black text-brand-red uppercase tracking-wider block">
+                          Khoá {c.courseNum}
+                        </span>
+                        <span className="text-lg font-black text-[#0f294d] dark:text-slate-100 uppercase tracking-tight">
+                          {c.courseName}
+                        </span>
+                      </div>
+                      {/* Mobile price summary */}
+                      <div className="md:hidden text-right">
+                        {c.discount > 0 && (
+                          <span className="text-xs line-through text-muted-foreground block">
+                            {formatVND(c.tuition)}
+                          </span>
+                        )}
+                        <span className="text-base font-black text-brand-red">
+                          {formatVND(c.net)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Desktop Tuition Gốc */}
+                    <div className="hidden md:block md:col-span-2 text-right">
+                      <span className={`text-sm font-bold ${c.discount > 0 ? "line-through text-muted-foreground/60" : "text-foreground/90"}`}>
+                        {formatVND(c.tuition)}
                       </span>
                     </div>
-                    {/* Mobile price summary */}
-                    <div className="md:hidden text-right">
-                      {c.discount > 0 && (
-                        <span className="text-xs line-through text-muted-foreground block">
-                          {formatVND(c.tuition)}
-                        </span>
-                      )}
-                      <span className="text-base font-black text-brand-red">
+
+                    {/* Desktop Tuition Net */}
+                    <div className="hidden md:block md:col-span-2 text-right">
+                      <span
+                        className={`text-base font-black ${
+                          c.discount > 0 ? "text-brand-red" : "text-foreground"
+                        }`}
+                      >
                         {formatVND(c.net)}
                       </span>
+                      {c.discount > 0 && (
+                        <span className="block text-[10.5px] font-extrabold text-emerald-600 dark:text-emerald-400 mt-0.5">
+                          −{formatVND(c.discount)}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Scholarship Picker */}
+                    <div className="md:col-span-3 space-y-1">
+                      <label className="block md:hidden text-xs font-bold text-muted-foreground uppercase">
+                        {c.isFirst ? "Học bổng Tinh Anh (Đầu vào)" : "Học bổng Kỷ Luật"}
+                      </label>
+                      {c.isFirst ? (
+                        <select
+                          value={c.taValue}
+                          onChange={(e) => handleTaChange(c.courseKey, e.target.value)}
+                          className="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-border/80 rounded-xl px-3 py-2 text-foreground font-medium focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue outline-hidden cursor-pointer"
+                        >
+                          {TINH_ANH_OPTIONS.map((opt) => (
+                            <option key={opt.id} value={opt.id}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <select
+                          value={c.klValue}
+                          onChange={(e) => handleKlChange(c.courseKey, e.target.value)}
+                          className="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-border/80 rounded-xl px-3 py-2 text-foreground font-medium focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue outline-hidden cursor-pointer"
+                        >
+                          {KY_LUAT_OPTIONS.map((opt) => (
+                            <option key={opt.id} value={opt.id}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                      {c.policyNotes && (
+                        <p className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 pl-1">
+                          {c.policyNotes}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Đồng Môn Referral */}
+                    <div className="md:col-span-2 space-y-1">
+                      <label className="block md:hidden text-xs font-bold text-muted-foreground uppercase">
+                        Đặc quyền Đồng Môn
+                      </label>
+                      <select
+                        value={c.hasDm ? "yes" : "no"}
+                        onChange={(e) => handleDmChange(c.courseKey, e.target.value === "yes")}
+                        className="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-border/80 rounded-xl px-3 py-2 text-foreground font-medium focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue outline-hidden cursor-pointer"
+                      >
+                        <option value="no">Không</option>
+                        <option value="yes">Có</option>
+                      </select>
+                      {c.hasDm && (
+                        <p className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 text-right pr-1">
+                          Mức giảm: {formatVND(DONG_MON_VOUCHER_AMT)}
+                        </p>
+                      )}
                     </div>
                   </div>
-
-                  {/* Desktop Tuition Gốc */}
-                  <div className="hidden md:block md:col-span-2 text-right">
-                    <span className={`text-sm font-semibold ${c.discount > 0 ? "line-through text-muted-foreground/70" : "text-muted-foreground"}`}>
-                      {formatVND(c.tuition)}
-                    </span>
-                  </div>
-
-                  {/* Desktop Tuition Net */}
-                  <div className="hidden md:block md:col-span-2 text-right">
-                    <span
-                      className={`text-base sm:text-lg font-black ${
-                        c.discount > 0 ? "text-brand-red" : "text-foreground"
-                      }`}
-                    >
-                      {formatVND(c.net)}
-                    </span>
-                    {c.discount > 0 && (
-                      <span className="block text-[11px] font-extrabold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md mt-0.5 w-fit ml-auto">
-                        Tiết kiệm {formatVND(c.discount)}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Scholarship Picker */}
-                  <div className="md:col-span-3 space-y-1.5">
-                    <label className="block md:hidden text-xs font-bold text-muted-foreground uppercase">
-                      {c.isFirst ? "Học bổng Tinh Anh" : "Học bổng Kỷ Luật"}
-                    </label>
-                    {c.isFirst ? (
-                      <select
-                        value={c.taValue}
-                        onChange={(e) => handleTaChange(c.courseKey, e.target.value)}
-                        className="w-full text-xs sm:text-sm bg-background border border-border/80 rounded-xl px-3 py-2 text-foreground font-medium focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue outline-hidden cursor-pointer"
-                      >
-                        {TINH_ANH_OPTIONS.map((opt) => (
-                          <option key={opt.id} value={opt.id}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <select
-                        value={c.klValue}
-                        onChange={(e) => handleKlChange(c.courseKey, e.target.value)}
-                        className="w-full text-xs sm:text-sm bg-background border border-border/80 rounded-xl px-3 py-2 text-foreground font-medium focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue outline-hidden cursor-pointer"
-                      >
-                        {KY_LUAT_OPTIONS.map((opt) => (
-                          <option key={opt.id} value={opt.id}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-                    )}
-                    {c.policyNotes && (
-                      <p className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                        {c.policyNotes}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Đồng Môn Referral */}
-                  <div className="md:col-span-2 space-y-1.5">
-                    <label className="block md:hidden text-xs font-bold text-muted-foreground uppercase">
-                      Đặc quyền Đồng Môn
-                    </label>
-                    <select
-                      value={c.hasDm ? "yes" : "no"}
-                      onChange={(e) => handleDmChange(c.courseKey, e.target.value === "yes")}
-                      className="w-full text-xs sm:text-sm bg-background border border-border/80 rounded-xl px-3 py-2 text-foreground font-medium focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue outline-hidden cursor-pointer"
-                    >
-                      <option value="no">Không</option>
-                      <option value="yes">Có (-200k)</option>
-                    </select>
-                    {c.hasDm && (
-                      <p className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                        Giảm {formatVND(DONG_MON_VOUCHER_AMT)}
-                      </p>
-                    )}
-                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
 
-            {/* Note under list */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs sm:text-sm text-foreground/80 leading-relaxed space-y-1">
+            {/* Note under table */}
+            <div className="pt-3 border-t border-border/70 text-xs text-foreground/80 leading-relaxed">
               <p>
-                <strong className="text-amber-700 dark:text-amber-400">Lưu ý:</strong> Đây chỉ là
+                <strong className="text-brand-red font-bold">Lưu ý:</strong> Đây chỉ là
                 bảng tính mô phỏng tổng học phí của bạn suốt lộ trình học. Bạn không cần đóng học phí
                 cả lộ trình mà{" "}
-                <span className="font-bold underline decoration-amber-500">
+                <span className="font-bold underline text-brand-red decoration-brand-red">
                   chỉ cần đóng học phí từng khóa
                 </span>
                 . Học Viện ARIS không thu học phí toàn bộ lộ trình.
