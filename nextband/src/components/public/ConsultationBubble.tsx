@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { X, Compass, ShieldCheck, BookOpen, Send, GraduationCap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { X, Compass, ShieldCheck, BookOpen, Send, GraduationCap, Gift } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import {
   RoadmapConsultationModal,
@@ -24,14 +25,17 @@ function ZaloIcon({ className = "w-full h-full" }: { className?: string }) {
 type ModalType = "roadmap" | "assessment" | "trial" | null;
 
 interface SupportOption {
-  id: "roadmap" | "assessment" | "trial";
+  id: "buddy" | "roadmap" | "assessment" | "trial";
   icon: React.ReactNode;
   title: string;
   subtitle: string;
+  path?: string;
+  badge?: string;
 }
 
 export function ConsultationBubble() {
   const { settings } = useSiteSettings();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -74,14 +78,22 @@ export function ConsultationBubble() {
 
   const supportOptions: SupportOption[] = [
     {
+      id: "buddy",
+      icon: <Gift className="w-4 h-4 text-amber-500" />,
+      title: "Thẻ mời học cùng bạn",
+      subtitle: "Kích hoạt ưu đãi giảm 200.000đ học phí",
+      path: "/buddy",
+      badge: "Ưu đãi -200k",
+    },
+    {
       id: "assessment",
-      icon: <ShieldCheck className="w-4 h-4 text-amber-500" />,
+      icon: <ShieldCheck className="w-4 h-4 text-[#0068FF]" />,
       title: "Kiểm tra trình độ tiếng Anh",
-      subtitle: "Nhận được kết quả trong vòng 24 giờ qua Zalo",
+      subtitle: "Nhận kết quả phân tích trong 24 giờ",
     },
     {
       id: "roadmap",
-      icon: <Compass className="w-4 h-4 text-brand-blue" />,
+      icon: <Compass className="w-4 h-4 text-indigo-600" />,
       title: "Tư vấn lộ trình học IELTS",
       subtitle: "Được tư vấn level và khóa học phù hợp",
     },
@@ -93,9 +105,13 @@ export function ConsultationBubble() {
     },
   ];
 
-  const handleOptionClick = (optionId: "roadmap" | "assessment" | "trial") => {
+  const handleOptionClick = (option: SupportOption) => {
     setIsOpen(false);
-    setActiveModal(optionId);
+    if (option.path) {
+      navigate(option.path);
+      return;
+    }
+    setActiveModal(option.id as ModalType);
   };
 
   const handleDirectZaloClick = () => {
@@ -133,7 +149,7 @@ export function ConsultationBubble() {
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-1 rounded-xl text-muted-foreground hover:text-foreground hover:bg-black/5 transition-colors"
+                  className="p-1 rounded-xl text-muted-foreground hover:text-foreground hover:bg-black/5 transition-colors cursor-pointer"
                   aria-label="Đóng"
                 >
                   <X className="w-4 h-4" />
@@ -145,24 +161,38 @@ export function ConsultationBubble() {
             </div>
 
             {/* Tier 2: Suggestion Pills / Option Cards */}
-            <div className="p-3.5 space-y-2 bg-card">
-              <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider px-1">
-                Chọn nhu cầu của bạn:
-              </div>
+            <div className="p-3 space-y-1.5 bg-card">
               <div className="space-y-1.5">
                 {supportOptions.map((opt) => (
                   <button
                     key={opt.id}
-                    onClick={() => handleOptionClick(opt.id)}
-                    className="w-full flex items-center justify-between p-3 rounded-2xl text-left bg-muted/40 hover:bg-muted border border-border/60 hover:border-border transition-all duration-150 group cursor-pointer active:scale-[0.99]"
+                    onClick={() => handleOptionClick(opt)}
+                    className={`w-full flex items-center justify-between p-2.5 sm:p-3 rounded-2xl text-left border transition-all duration-150 group cursor-pointer active:scale-[0.99] ${
+                      opt.id === "buddy"
+                        ? "bg-gradient-to-r from-amber-50/70 to-orange-50/40 hover:from-amber-100/80 hover:to-orange-100/60 border-amber-200/80"
+                        : "bg-muted/40 hover:bg-muted border-border/60 hover:border-border"
+                    }`}
                   >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="p-2 rounded-xl bg-background border border-border/60 group-hover:border-primary/30 group-hover:scale-105 transition-all shrink-0">
+                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                      <div
+                        className={`p-2 rounded-xl border shrink-0 transition-all ${
+                          opt.id === "buddy"
+                            ? "bg-white border-amber-300 shadow-2xs group-hover:scale-105"
+                            : "bg-background border-border/60 group-hover:border-primary/30 group-hover:scale-105"
+                        }`}
+                      >
                         {opt.icon}
                       </div>
                       <div className="min-w-0">
-                        <div className="text-xs font-extrabold text-foreground group-hover:text-primary transition-colors leading-snug">
-                          {opt.title}
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs font-extrabold text-foreground group-hover:text-primary transition-colors leading-snug truncate">
+                            {opt.title}
+                          </span>
+                          {opt.badge && (
+                            <span className="text-[9px] font-extrabold px-1.5 py-0.2 rounded-full bg-amber-500 text-white shrink-0 shadow-2xs">
+                              {opt.badge}
+                            </span>
+                          )}
                         </div>
                         <div className="text-[11px] text-muted-foreground leading-tight mt-0.5 truncate">
                           {opt.subtitle}
