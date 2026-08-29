@@ -61,6 +61,8 @@ export interface ProgressReportData {
     teacherGradedCount: number;           // Writing, Speaking do giáo viên chấm
     passedCount: number;                  // Số bài đạt chuẩn
     needsImprovementCount: number;        // Số bài cần sửa / cải thiện
+    totalTimeSpentMinutes?: number;       // Tổng thời gian làm bài (phút)
+    avgTimeSpentMinutes?: number;         // Thời gian trung bình mỗi bài (phút)
     skillAverages?: {
       speaking?: { averageBand: number | string; count: number } | null;
       writing?: { averageBand: number | string; count: number } | null;
@@ -96,10 +98,11 @@ export interface ProgressReportData {
     strengths: string;
     weaknesses: string;
     recommendations: string;
-    nextGoals: string[];
+    nextGoals?: string[];
   };
 
   // Backward compatibility alias
   teacherNote?: string;
   generatedAt: string; // DD/MM/YYYY
 }
+

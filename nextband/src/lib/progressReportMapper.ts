@@ -143,6 +143,8 @@ export function mapToProgressReportData(input: ProgressReportInput): ProgressRep
   let speakingCount = 0;
   let writingScoreSum = 0;
   let writingCount = 0;
+  let totalTimeSpentMinutes = 0;
+  let tasksWithTimeCount = 0;
 
   hwList.forEach((hw: any) => {
     const st = String(hw.status || "").toLowerCase();
@@ -152,6 +154,40 @@ export function mapToProgressReportData(input: ProgressReportInput): ProgressRep
     const isInProgress = st === "in_progress" || st === "needs_revision";
     const type = String(hw.type || "").toLowerCase();
     const title = String(hw.title || "").toLowerCase();
+
+    // Time spent calculation per homework
+    if (isSubmitted || isInProgress) {
+      let taskMinutes = 0;
+      if (hw.timeSpentMinutes != null && !isNaN(Number(hw.timeSpentMinutes))) {
+        taskMinutes = Number(hw.timeSpentMinutes);
+      } else if (hw.timeSpentSeconds != null && !isNaN(Number(hw.timeSpentSeconds))) {
+        taskMinutes = Math.round(Number(hw.timeSpentSeconds) / 60);
+      } else if (hw.duration != null && !isNaN(Number(hw.duration))) {
+        taskMinutes = Math.round(Number(hw.duration) / 60);
+      } else if (hw.startedAt && hw.submittedAt) {
+        const start = new Date(hw.startedAt).getTime();
+        const end = new Date(hw.submittedAt).getTime();
+        if (!isNaN(start) && !isNaN(end) && end > start) {
+          taskMinutes = Math.min(180, Math.max(3, Math.round((end - start) / (1000 * 60))));
+        }
+      }
+
+      // If submitted without explicit timestamp delta, estimate based on task type (Writing ~25m, Speaking ~15m, Test ~20m)
+      if (taskMinutes <= 0 && isSubmitted) {
+        if (type.includes("writ") || title.includes("writing") || title.includes("viết")) {
+          taskMinutes = 25;
+        } else if (type.includes("speak") || title.includes("speaking") || title.includes("nói")) {
+          taskMinutes = 15;
+        } else {
+          taskMinutes = 20;
+        }
+      }
+
+      if (taskMinutes > 0) {
+        totalTimeSpentMinutes += taskMinutes;
+        tasksWithTimeCount++;
+      }
+    }
 
     if (isSubmitted) {
       completedCount++;
@@ -223,6 +259,8 @@ export function mapToProgressReportData(input: ProgressReportInput): ProgressRep
 
   const totalAssigned = hwList.length;
   const completionRate = totalAssigned > 0 ? Math.round((completedCount / totalAssigned) * 100) : 0;
+  const avgTimeSpentMinutes = tasksWithTimeCount > 0 ? Math.round(totalTimeSpentMinutes / tasksWithTimeCount) : 0;
+
 
   let averageScore: string | null = null;
   if (scoredItemsCount > 0) {
