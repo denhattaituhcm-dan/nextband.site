@@ -109,6 +109,8 @@ export function SpeakingTranscriptViewer({
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTimeMs, setCurrentTimeMs] = useState(0);
   const [durationMs, setDurationMs] = useState(0);
+  const [isAudioLoading, setIsAudioLoading] = useState(false);
+  const [audioError, setAudioError] = useState<string | null>(null);
   const [isTranscribing, setIsTranscribing] = useState(false);
   const [transcribeError, setTranscribeError] = useState<string | null>(null);
   const [manualInputOpen, setManualInputOpen] = useState(false);
@@ -124,21 +126,27 @@ export function SpeakingTranscriptViewer({
   const [editText, setEditText] = useState("");
   const [resolvedAudioSrc, setResolvedAudioSrc] = useState<string>(audioUrl);
 
-  useEffect(() => {
+  const resolveAudio = useCallback(async (forceRefresh = false) => {
     if (!audioUrl) {
       setResolvedAudioSrc("");
       return;
     }
-    let isMounted = true;
-    AudioStorageService.resolvePlayableUrl(audioUrl).then((src) => {
-      if (isMounted) {
-        setResolvedAudioSrc(src || formatStorageUrl(audioUrl));
-      }
-    });
-    return () => {
-      isMounted = false;
-    };
+    setIsAudioLoading(true);
+    setAudioError(null);
+    try {
+      const src = await AudioStorageService.resolvePlayableUrl(audioUrl, forceRefresh);
+      setResolvedAudioSrc(src || formatStorageUrl(audioUrl));
+    } catch (err: any) {
+      console.warn("[SpeakingTranscriptViewer] Audio resolution error:", err);
+      setResolvedAudioSrc(formatStorageUrl(audioUrl) || audioUrl);
+    } finally {
+      setIsAudioLoading(false);
+    }
   }, [audioUrl]);
+
+  useEffect(() => {
+    resolveAudio(false);
+  }, [resolveAudio]);
 
   // Sync state if initialTranscript changes externally
   useEffect(() => {
@@ -154,6 +162,7 @@ export function SpeakingTranscriptViewer({
 
   // Handle duration fix for WebM files
   const handleLoadedMetadata = () => {
+    setAudioError(null);
     if (audioRef.current) {
       const dur = audioRef.current.duration;
       if (Number.isFinite(dur) && dur > 0) {
@@ -186,14 +195,35 @@ export function SpeakingTranscriptViewer({
     }
   };
 
+  const handleAudioError = () => {
+    setIsPlaying(false);
+    const mediaErr = audioRef.current?.error;
+    let msg = "Không thể tải hoặc phát tệp âm thanh này.";
+    if (mediaErr?.code === 4) {
+      msg = "Định dạng âm thanh không được hỗ trợ hoặc đường dẫn tệp đã hết hạn / không tồn tại.";
+    } else if (mediaErr?.code === 2) {
+      msg = "Lỗi kết nối mạng khi tải tệp âm thanh.";
+    }
+    setAudioError(msg);
+  };
+
   const togglePlay = () => {
     if (!audioRef.current) return;
     if (isPlaying) {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
-      audioRef.current.play().catch((err) => console.warn("Audio play failed:", err));
-      setIsPlaying(true);
+      audioRef.current
+        .play()
+        .then(() => {
+          setIsPlaying(true);
+          setAudioError(null);
+        })
+        .catch((err) => {
+          console.warn("Audio play failed:", err);
+          setIsPlaying(false);
+          setAudioError("Không thể phát âm thanh. Vui lòng bấm 'Tải lại' hoặc kiểm tra kết nối mạng.");
+        });
     }
   };
 
@@ -313,6 +343,7 @@ export function SpeakingTranscriptViewer({
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onDurationChange={handleLoadedMetadata}
+        onError={handleAudioError}
         onEnded={() => setIsPlaying(false)}
       />
 
@@ -322,6 +353,7 @@ export function SpeakingTranscriptViewer({
           size="sm"
           variant="default"
           onClick={togglePlay}
+          disabled={isAudioLoading}
           className="h-9 w-9 rounded-full p-0 shadow-xs bg-blue-600 hover:bg-blue-700 text-white shrink-0"
         >
           {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 ml-0.5" />}
@@ -352,27 +384,88 @@ export function SpeakingTranscriptViewer({
         <div className="text-xs font-mono font-bold text-slate-700 px-2 py-1 bg-white rounded-md border border-slate-200 shrink-0">
           {formatTime(currentTimeMs)} / {formatTime(durationMs || 0)}
         </div>
+
+        {/* Force Reload Audio Button */}
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => resolveAudio(true)}
+          disabled={isAudioLoading}
+          className="h-8 px-2 text-slate-500 hover:text-slate-900 text-xs font-semibold shrink-0 gap-1"
+          title="Tải lại link âm thanh (làm mới signed URL nếu hết hạn)"
+        >
+          <RefreshCw className={cn("h-3.5 w-3.5", isAudioLoading && "animate-spin text-blue-600")} />
+          <span className="hidden sm:inline">Tải lại</span>
+        </Button>
       </div>
+
+      {/* Audio Playback Error Warning */}
+      {audioError && (
+        <div className="p-3 bg-amber-50 border-b border-amber-200 text-xs text-amber-900 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0" />
+            <span>{audioError}</span>
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => resolveAudio(true)}
+            className="h-6 text-[11px] font-bold border-amber-300 text-amber-800 hover:bg-amber-100 shrink-0 gap-1"
+          >
+            <RefreshCw className="h-3 w-3" /> Thử tải lại
+          </Button>
+        </div>
+      )}
 
       {/* TRANSCRIPT LAYER */}
       <div className="p-4 space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900">
             <Sparkles className="h-3.5 w-3.5 text-blue-600" />
             <span>Văn bản bóc băng đối chiếu (Click vào câu để tua âm thanh):</span>
           </div>
 
-          {segments.length > 0 && !readOnly && (
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setManualInputOpen(!manualInputOpen)}
-              className="h-7 text-[11px] font-semibold gap-1 text-slate-600"
-            >
-              <Edit2 className="h-3 w-3" />
-              Sửa toàn bộ văn bản
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            {/* NÚT CHUYỂN AUDIO THÀNH VĂN BẢN (SPEECH-TO-TEXT) DÀNH CHO GIÁO VIÊN */}
+            {!readOnly && (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={handleAutoTranscribe}
+                disabled={isTranscribing}
+                className="h-7 text-[11px] font-bold gap-1 text-blue-700 border-blue-200 bg-blue-50/50 hover:bg-blue-100/80 shadow-2xs"
+                title="Dùng AI nhận diện giọng nói tự động bóc băng đoạn audio này thành văn bản"
+              >
+                {isTranscribing ? (
+                  <>
+                    <Loader2 className="h-3 w-3 animate-spin text-blue-600" />
+                    <span>Đang bóc băng AI...</span>
+                  </>
+                ) : (
+                  <>
+                    <Wand2 className="h-3 w-3 text-blue-600" />
+                    <span>{segments.length > 0 ? "Bóc băng lại bằng AI" : "Chuyển audio thành text (AI)"}</span>
+                  </>
+                )}
+              </Button>
+            )}
+
+            {segments.length > 0 && !readOnly && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  setManualText(segments.map((s) => s.editedText || s.text).join(" "));
+                  setManualInputOpen(!manualInputOpen);
+                }}
+                className="h-7 text-[11px] font-semibold gap-1 text-slate-600 hover:text-slate-900"
+              >
+                <Edit2 className="h-3 w-3" />
+                Sửa toàn bộ văn bản
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Error notification banner */}
