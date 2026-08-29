@@ -7,6 +7,7 @@ import { Slider } from "@/components/ui/slider";
 import { API_BASE_URL, getAuthToken, formatStorageUrl } from "@/lib/api";
 import { supabase } from "@/lib/supabase";
 import { AudioStorageService } from "@/lib/audioStorageService";
+import { cn } from "@/lib/utils";
 
 export interface TranscriptSegment {
   id: string;

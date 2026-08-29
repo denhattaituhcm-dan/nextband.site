@@ -81741,16 +81741,38 @@ var init_speakingStorage_service = __esm({
       /**
        * Tạo Signed URL hoặc Public URL có thời hạn để phát âm thanh
        */
-      async getSignedPlaybackUrl(storagePath, expiresInSeconds = 3600) {
+      async getSignedPlaybackUrl(storagePath, expiresInSeconds = 7200) {
         if (!storagePath) return null;
-        const cleanPath = storagePath.replace(/^\/+/, "");
-        const { data: pubData } = this.supabase.storage.from("exam-assets").getPublicUrl(cleanPath);
-        if (pubData?.publicUrl) {
-          return pubData.publicUrl;
+        const clean = storagePath.trim();
+        const supabaseUrlMatch = clean.match(
+          /\/storage\/v1\/object\/(?:public|authenticated|sign)\/([^/?#]+)\/(.+?)(?:\?.*)?$/i
+        );
+        if (supabaseUrlMatch) {
+          const bucket = supabaseUrlMatch[1];
+          const subPath = decodeURIComponent(supabaseUrlMatch[2]);
+          if (bucket === SPEAKING_BUCKET) {
+            const { data: data2, error: error2 } = await this.supabase.storage.from(SPEAKING_BUCKET).createSignedUrl(subPath, expiresInSeconds);
+            if (!error2 && data2?.signedUrl) return data2.signedUrl;
+          } else if (bucket === "exam-assets") {
+            const { data: data2 } = this.supabase.storage.from("exam-assets").getPublicUrl(subPath);
+            if (data2?.publicUrl) return data2.publicUrl;
+          }
+        }
+        if (clean.startsWith("http://") || clean.startsWith("https://") || clean.startsWith("blob:") || clean.startsWith("data:")) {
+          return clean;
+        }
+        const cleanPath = clean.replace(/^\/+/, "");
+        const isExamAsset = cleanPath.startsWith("exam-assets/") || cleanPath.startsWith("uploads/");
+        if (isExamAsset) {
+          const assetSubPath = cleanPath.replace(/^exam-assets\//, "");
+          const { data: pubData } = this.supabase.storage.from("exam-assets").getPublicUrl(assetSubPath);
+          if (pubData?.publicUrl) return pubData.publicUrl;
         }
         const subCleanPath = cleanPath.replace(/^speaking-recordings\//, "");
         const { data, error } = await this.supabase.storage.from(SPEAKING_BUCKET).createSignedUrl(subCleanPath, expiresInSeconds);
         if (error || !data?.signedUrl) {
+          const { data: fallbackPub } = this.supabase.storage.from("exam-assets").getPublicUrl(cleanPath);
+          if (fallbackPub?.publicUrl) return fallbackPub.publicUrl;
           throw new Error(error?.message || "Kh\xF4ng th\u1EC3 t\u1EA1o li\xEAn k\u1EBFt ph\xE1t \xE2m thanh");
         }
         return data.signedUrl;
@@ -81762,32 +81784,59 @@ var init_speakingStorage_service = __esm({
         if (!storagePath) {
           throw new Error("\u0110\u01B0\u1EDDng d\u1EABn t\u1EC7p \xE2m thanh kh\xF4ng h\u1EE3p l\u1EC7");
         }
-        const cleanPath = storagePath.replace(/^\/+/, "");
-        let downloadRes = await this.supabase.storage.from("exam-assets").download(cleanPath);
-        if (downloadRes.error || !downloadRes.data) {
-          const subCleanPath = cleanPath.replace(/^speaking-recordings\//, "");
-          downloadRes = await this.supabase.storage.from(SPEAKING_BUCKET).download(subCleanPath);
-        }
-        if (downloadRes.error || !downloadRes.data) {
-          if (storagePath.startsWith("http://") || storagePath.startsWith("https://")) {
-            const fetchRes = await fetch(storagePath);
-            if (!fetchRes.ok) {
-              throw new Error(`Kh\xF4ng th\u1EC3 t\u1EA3i t\u1EC7p \xE2m thanh t\u1EEB URL: ${storagePath}`);
-            }
-            const arrayBuf2 = await fetchRes.arrayBuffer();
-            const buffer2 = Buffer.from(arrayBuf2);
-            const mimeType2 = fetchRes.headers.get("content-type") || "audio/webm";
-            const fileName2 = storagePath.split("/").pop()?.split("?")[0] || "recording.webm";
-            return { buffer: buffer2, mimeType: mimeType2, fileName: fileName2 };
+        const clean = storagePath.trim();
+        const supabaseUrlMatch = clean.match(
+          /\/storage\/v1\/object\/(?:public|authenticated|sign)\/([^/?#]+)\/(.+?)(?:\?.*)?$/i
+        );
+        if (supabaseUrlMatch) {
+          const bucket = supabaseUrlMatch[1];
+          const subPath = decodeURIComponent(supabaseUrlMatch[2]);
+          const downloadRes = await this.supabase.storage.from(bucket).download(subPath);
+          if (!downloadRes.error && downloadRes.data) {
+            const blob = downloadRes.data;
+            const arrayBuf = await blob.arrayBuffer();
+            const buffer = Buffer.from(arrayBuf);
+            const mimeType = blob.type || "audio/webm";
+            const fileName = subPath.split("/").pop() || "recording.webm";
+            return { buffer, mimeType, fileName };
           }
-          throw new Error(`Kh\xF4ng t\xECm th\u1EA5y file ghi \xE2m trong Storage: ${storagePath}`);
         }
-        const blob = downloadRes.data;
-        const arrayBuf = await blob.arrayBuffer();
-        const buffer = Buffer.from(arrayBuf);
-        const mimeType = blob.type || "audio/webm";
-        const fileName = cleanPath.split("/").pop()?.split("?")[0] || "recording.webm";
-        return { buffer, mimeType, fileName };
+        const cleanPath = clean.replace(/^\/+/, "");
+        const isExamAsset = cleanPath.startsWith("exam-assets/") || cleanPath.startsWith("uploads/");
+        if (!isExamAsset) {
+          const subCleanPath = cleanPath.replace(/^speaking-recordings\//, "");
+          const downloadRes = await this.supabase.storage.from(SPEAKING_BUCKET).download(subCleanPath);
+          if (!downloadRes.error && downloadRes.data) {
+            const blob = downloadRes.data;
+            const arrayBuf = await blob.arrayBuffer();
+            const buffer = Buffer.from(arrayBuf);
+            const mimeType = blob.type || "audio/webm";
+            const fileName = subCleanPath.split("/").pop() || "recording.webm";
+            return { buffer, mimeType, fileName };
+          }
+        }
+        const examSubPath = cleanPath.replace(/^exam-assets\//, "");
+        const examDownload = await this.supabase.storage.from("exam-assets").download(examSubPath);
+        if (!examDownload.error && examDownload.data) {
+          const blob = examDownload.data;
+          const arrayBuf = await blob.arrayBuffer();
+          const buffer = Buffer.from(arrayBuf);
+          const mimeType = blob.type || "audio/webm";
+          const fileName = examSubPath.split("/").pop() || "recording.webm";
+          return { buffer, mimeType, fileName };
+        }
+        if (clean.startsWith("http://") || clean.startsWith("https://")) {
+          const fetchRes = await fetch(clean);
+          if (!fetchRes.ok) {
+            throw new Error(`Kh\xF4ng th\u1EC3 t\u1EA3i t\u1EC7p \xE2m thanh t\u1EEB URL: ${clean}`);
+          }
+          const arrayBuf = await fetchRes.arrayBuffer();
+          const buffer = Buffer.from(arrayBuf);
+          const mimeType = fetchRes.headers.get("content-type") || "audio/webm";
+          const fileName = clean.split("/").pop()?.split("?")[0] || "recording.webm";
+          return { buffer, mimeType, fileName };
+        }
+        throw new Error(`Kh\xF4ng t\xECm th\u1EA5y file ghi \xE2m trong Storage: ${storagePath}`);
       }
       /**
        * Idempotent Retention Cleanup Worker
@@ -108754,7 +108803,18 @@ var speakingStorageRoutes = async (fastify) => {
           }
         });
       }
-      const audioUrl = answer?.audioUrl || data.storagePath;
+      const isAudioText = (val) => {
+        if (!val || typeof val !== "string") return false;
+        const c = val.trim().toLowerCase();
+        return c.startsWith("http://") || c.startsWith("https://") || c.startsWith("blob:") || c.startsWith("speaking-recordings/") || c.startsWith("/speaking-recordings/") || c.startsWith("exam-assets/") || c.startsWith("/exam-assets/") || c.startsWith("uploads/audio/") || c.startsWith("/uploads/audio/") || /\.(webm|mp3|wav|ogg|m4a|aac)$/i.test(c);
+      };
+      if (!answer && data.submissionId) {
+        const subAnswers = await fastify.prisma.answer.findMany({
+          where: { submissionId: data.submissionId }
+        });
+        answer = subAnswers.find((a) => a.audioUrl || isAudioText(a.answerText)) || subAnswers[0] || null;
+      }
+      const audioUrl = answer?.audioUrl || (isAudioText(answer?.answerText) ? answer?.answerText : null) || data.storagePath;
       if (!audioUrl) {
         return reply.status(400).send({
           rawText: "",

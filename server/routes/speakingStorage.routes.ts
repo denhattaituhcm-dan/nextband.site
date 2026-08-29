@@ -126,8 +126,36 @@ const speakingStorageRoutes: FastifyPluginAsync = async (fastify) => {
         });
       }
 
+      const isAudioText = (val?: string | null) => {
+        if (!val || typeof val !== "string") return false;
+        const c = val.trim().toLowerCase();
+        return (
+          c.startsWith("http://") ||
+          c.startsWith("https://") ||
+          c.startsWith("blob:") ||
+          c.startsWith("speaking-recordings/") ||
+          c.startsWith("/speaking-recordings/") ||
+          c.startsWith("exam-assets/") ||
+          c.startsWith("/exam-assets/") ||
+          c.startsWith("uploads/audio/") ||
+          c.startsWith("/uploads/audio/") ||
+          /\.(webm|mp3|wav|ogg|m4a|aac)$/i.test(c)
+        );
+      };
+
+      if (!answer && data.submissionId) {
+        const subAnswers = await fastify.prisma.answer.findMany({
+          where: { submissionId: data.submissionId },
+        });
+        answer = subAnswers.find((a) => a.audioUrl || isAudioText(a.answerText)) || subAnswers[0] || null;
+      }
+
       // 2. Lấy audioUrl từ Answer hoặc data.storagePath
-      const audioUrl = answer?.audioUrl || data.storagePath;
+      const audioUrl =
+        answer?.audioUrl ||
+        (isAudioText(answer?.answerText) ? answer?.answerText : null) ||
+        data.storagePath;
+
       if (!audioUrl) {
         return reply.status(400).send({
           rawText: "",
