@@ -76,15 +76,16 @@ export function ConsultationBubble() {
     };
   }, [isOpen]);
 
-  const supportOptions: SupportOption[] = [
-    {
-      id: "buddy",
-      icon: <Gift className="w-4 h-4 text-amber-500" />,
-      title: "Thẻ mời học cùng bạn",
-      subtitle: "Kích hoạt ưu đãi giảm 200.000đ học phí",
-      path: "/buddy",
-      badge: "Ưu đãi -200k",
-    },
+  const primaryOption = {
+    id: "buddy",
+    icon: <Gift className="w-4 h-4 text-white" />,
+    title: "Mời bạn học cùng",
+    subtitle: "Bạn cùng học — bạn cùng nhận ưu đãi.",
+    path: "/buddy",
+    badge: "GIẢM 200K",
+  };
+
+  const secondaryOptions: SupportOption[] = [
     {
       id: "assessment",
       icon: <ShieldCheck className="w-4 h-4 text-[#0068FF]" />,
@@ -105,7 +106,7 @@ export function ConsultationBubble() {
     },
   ];
 
-  const handleOptionClick = (option: SupportOption) => {
+  const handleOptionClick = (option: { id: string; path?: string }) => {
     setIsOpen(false);
     if (option.path) {
       navigate(option.path);
@@ -125,10 +126,10 @@ export function ConsultationBubble() {
         ref={containerRef}
         className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end select-none font-sans"
       >
-        {/* Popover Mini-Card (2-tier Academic Card inspired by Zalo) */}
+        {/* Popover Mini-Card */}
         {isOpen && (
           <div className="mb-3 w-80 sm:w-88 rounded-3xl bg-card border border-border/80 shadow-[0_16px_48px_-8px_rgba(0,0,0,0.18)] overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-bottom-right">
-            {/* Tier 1: Top Warm Banner */}
+            {/* Header: Academic Advisor Banner */}
             <div className="relative p-4 bg-gradient-to-br from-amber-100/70 via-orange-50/50 to-amber-50/30 border-b border-amber-200/40">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2.5">
@@ -160,40 +161,54 @@ export function ConsultationBubble() {
               </p>
             </div>
 
-            {/* Tier 2: Suggestion Pills / Option Cards */}
-            <div className="p-3 space-y-1.5 bg-card">
-              <div className="space-y-1.5">
-                {supportOptions.map((opt) => (
+            {/* Actions Section with clear visual hierarchy */}
+            <div className="p-3 space-y-2 bg-card">
+              {/* PRIMARY ACTION: Referral Card */}
+              <button
+                onClick={() => handleOptionClick(primaryOption)}
+                className="w-full flex items-center justify-between p-3 rounded-2xl text-left bg-gradient-to-r from-[#EEF2FF] to-[#FDF2F8] dark:from-indigo-950/40 dark:to-pink-950/30 border border-indigo-200/60 dark:border-indigo-900/40 hover:border-pink-300 dark:hover:border-pink-700/60 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200 group cursor-pointer active:scale-[0.99]"
+              >
+                <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                  {/* Brand Gradient Circle with Gift Icon */}
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#0052CC] via-indigo-600 to-pink-500 flex items-center justify-center shrink-0 shadow-xs group-hover:scale-105 transition-transform">
+                    {primaryOption.icon}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-extrabold text-foreground group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-snug truncate">
+                        {primaryOption.title}
+                      </span>
+                      <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-amber-400 text-amber-950 shrink-0 shadow-2xs">
+                        {primaryOption.badge}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-muted-foreground leading-tight mt-0.5 truncate">
+                      {primaryOption.subtitle}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-xs font-bold text-indigo-600 dark:text-indigo-400 group-hover:translate-x-0.5 transition-transform flex items-center shrink-0 pl-1">
+                  <span>Mời bạn</span>
+                  <span className="ml-0.5">→</span>
+                </div>
+              </button>
+
+              {/* SECONDARY ACTIONS: Academic Consultation Options */}
+              <div className="space-y-1.5 pt-0.5">
+                {secondaryOptions.map((opt) => (
                   <button
                     key={opt.id}
                     onClick={() => handleOptionClick(opt)}
-                    className={`w-full flex items-center justify-between p-2.5 sm:p-3 rounded-2xl text-left border transition-all duration-150 group cursor-pointer active:scale-[0.99] ${
-                      opt.id === "buddy"
-                        ? "bg-gradient-to-r from-amber-50/70 to-orange-50/40 hover:from-amber-100/80 hover:to-orange-100/60 border-amber-200/80"
-                        : "bg-muted/40 hover:bg-muted border-border/60 hover:border-border"
-                    }`}
+                    className="w-full flex items-center justify-between p-2.5 sm:p-3 rounded-2xl text-left bg-muted/40 hover:bg-muted/80 border border-border/60 hover:border-border transition-all duration-150 group cursor-pointer active:scale-[0.99]"
                   >
                     <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                      <div
-                        className={`p-2 rounded-xl border shrink-0 transition-all ${
-                          opt.id === "buddy"
-                            ? "bg-white border-amber-300 shadow-2xs group-hover:scale-105"
-                            : "bg-background border-border/60 group-hover:border-primary/30 group-hover:scale-105"
-                        }`}
-                      >
+                      <div className="p-2 rounded-xl bg-background border border-border/60 group-hover:border-primary/30 group-hover:scale-105 shrink-0 transition-all">
                         {opt.icon}
                       </div>
                       <div className="min-w-0">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-xs font-extrabold text-foreground group-hover:text-primary transition-colors leading-snug truncate">
-                            {opt.title}
-                          </span>
-                          {opt.badge && (
-                            <span className="text-[9px] font-extrabold px-1.5 py-0.2 rounded-full bg-amber-500 text-white shrink-0 shadow-2xs">
-                              {opt.badge}
-                            </span>
-                          )}
-                        </div>
+                        <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors leading-snug truncate block">
+                          {opt.title}
+                        </span>
                         <div className="text-[11px] text-muted-foreground leading-tight mt-0.5 truncate">
                           {opt.subtitle}
                         </div>
@@ -206,7 +221,7 @@ export function ConsultationBubble() {
                 ))}
               </div>
 
-              {/* Direct Zalo Action (Soft Pill CTA) */}
+              {/* TERTIARY ACTION: Direct Zalo Chat Button */}
               <div className="pt-2 border-t border-border/50">
                 <button
                   onClick={handleDirectZaloClick}

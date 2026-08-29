@@ -277,31 +277,42 @@ export default function Profile() {
             const rewardsList = referralsData?.rewards ?? [];
 
             return (
-              <Card className="border-slate-200/90 bg-[#FAF9F6] text-slate-900 overflow-hidden rounded-2xl shadow-xs">
-                <CardHeader className="p-4 pb-2 border-b border-black/[0.06] bg-black/[0.02]">
+              <Card className="relative overflow-hidden rounded-2xl border-2 border-rose-200/90 bg-gradient-to-br from-rose-50/90 via-orange-50/50 to-amber-50/70 text-slate-900 shadow-md hover:shadow-lg transition-all duration-300">
+                {/* Decorative background glow accents */}
+                <div className="absolute -top-12 -right-12 w-28 h-28 bg-rose-400/20 rounded-full blur-2xl pointer-events-none" />
+                <div className="absolute -bottom-10 -left-10 w-28 h-28 bg-amber-400/20 rounded-full blur-2xl pointer-events-none" />
+
+                <CardHeader className="relative p-4 pb-3 border-b border-rose-100/80 bg-white/60 backdrop-blur-xs">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5 font-extrabold text-xs tracking-tight text-slate-900">
-                      <Gift className="h-3.5 w-3.5 text-rose-600" />
-                      <span>THẺ ĐỒNG HÀNH ARIS</span>
+                    <div className="flex items-center gap-2">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-tr from-rose-500 to-amber-500 text-white shadow-xs">
+                        <Gift className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <div className="text-[10px] font-black uppercase tracking-wider text-rose-600">Đặc Quyền Học Viên</div>
+                        <div className="text-xs font-black tracking-tight text-slate-900">THẺ ĐỒNG HÀNH ARIS</div>
+                      </div>
                     </div>
-                    <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200 text-[10px] font-bold px-1.5 py-0">
-                      {totalInvited > 0 ? `${totalInvited} bạn đã mời` : "Ưu Đãi"}
+                    <Badge className="bg-rose-500 hover:bg-rose-600 text-white border-0 text-[10px] font-extrabold px-2 py-0.5 shadow-2xs">
+                      {totalInvited > 0 ? `🎉 ${totalInvited} bạn đã mời` : "🎁 Ưu Đãi HOT"}
                     </Badge>
                   </div>
                 </CardHeader>
 
-                <CardContent className="p-4 space-y-3">
-                  <div className="space-y-1">
-                    <div className="text-[10px] uppercase font-mono tracking-wider text-slate-500 font-bold">
-                      Mã mời cố định của bạn
+                <CardContent className="relative p-4 space-y-3.5">
+                  {/* Voucher code box */}
+                  <div className="space-y-1.5">
+                    <div className="text-[10px] uppercase font-bold tracking-wider text-slate-500 flex items-center justify-between">
+                      <span className="flex items-center gap-1">
+                        <Sparkles className="h-3 w-3 text-amber-500" /> Mã giới thiệu của bạn
+                      </span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <div className="flex-1 font-mono font-black text-xs sm:text-sm bg-white border border-slate-200 px-2.5 py-1 rounded-lg text-slate-900 truncate shadow-2xs">
+                    <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white/90 border-2 border-dashed border-rose-300 shadow-2xs">
+                      <div className="flex-1 font-mono font-black text-xs sm:text-sm px-2 text-rose-700 tracking-wider truncate">
                         {activeRefCode}
                       </div>
                       <Button
                         size="sm"
-                        variant="outline"
                         onClick={async () => {
                           const inviter = user?.fullName || "Học viên";
                           const targetUrl = `${window.location.origin}/buddy?ref=${activeRefCode}&from=${encodeURIComponent(inviter)}`;
@@ -315,39 +326,48 @@ export default function Profile() {
                             toast({ title: "Thông báo", description: "Vui lòng sao chép thủ công." });
                           }
                         }}
-                        className="h-8 px-2.5 text-xs font-bold gap-1 rounded-lg border-slate-200 bg-white hover:bg-slate-50"
+                        className="h-7.5 px-3 text-xs font-bold gap-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white shadow-xs shrink-0 transition-colors"
                       >
-                        {isCopiedCode ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
-                        <span>{isCopiedCode ? "Đã chép" : "Chép"}</span>
+                        {isCopiedCode ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                        <span>{isCopiedCode ? "Đã chép" : "Sao chép"}</span>
                       </Button>
                     </div>
                   </div>
 
-                  <div className="p-2.5 rounded-xl bg-white border border-slate-200/80 space-y-1 text-xs text-slate-600">
-                    <div className="flex items-center gap-1.5 font-bold text-rose-600 text-[11px]">
-                      <span>• Bạn bè: Giảm 200.000đ học phí</span>
+                  {/* Highlights / Benefits */}
+                  <div className="grid grid-cols-1 gap-1.5">
+                    <div className="p-2 rounded-xl bg-rose-100/50 border border-rose-200/80 flex items-center gap-2">
+                      <span className="text-sm shrink-0">🎉</span>
+                      <div className="text-[11px] leading-tight">
+                        <span className="text-slate-600 font-medium">Bạn bè nhận: </span>
+                        <strong className="text-rose-600 font-bold">Giảm 200.000đ học phí</strong>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1.5 font-bold text-slate-800 text-[11px]">
-                      <span>• Bạn nhận: 01 Bộ Quà Tặng ARIS</span>
+                    <div className="p-2 rounded-xl bg-amber-100/50 border border-amber-200/80 flex items-center gap-2">
+                      <span className="text-sm shrink-0">🎁</span>
+                      <div className="text-[11px] leading-tight">
+                        <span className="text-slate-600 font-medium">Bạn nhận: </span>
+                        <strong className="text-amber-800 font-bold">01 Bộ Quà Tặng ARIS</strong>
+                      </div>
                     </div>
                   </div>
 
                   {/* Trạng thái phần thưởng */}
                   {rewardsList.length > 0 && (
-                    <div className="space-y-1.5 pt-1 border-t border-slate-200/60">
+                    <div className="space-y-1.5 pt-1 border-t border-rose-200/60">
                       <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                         Tiến độ quà tặng ({rewardsList.length})
                       </div>
                       <div className="space-y-1">
                         {rewardsList.map((r: any) => (
-                          <div key={r.id} className="text-[11px] p-2 rounded-lg bg-white border border-slate-200 flex items-center justify-between">
+                          <div key={r.id} className="text-[11px] p-2 rounded-lg bg-white/90 border border-rose-100 flex items-center justify-between shadow-2xs">
                             <span className="font-semibold text-slate-800">Bộ Quà Tặng ARIS</span>
                             <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
                               r.status === "ELIGIBLE"
-                                ? "bg-emerald-100 text-emerald-800"
+                                ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
                                 : r.status === "DELIVERED"
-                                ? "bg-blue-100 text-blue-800"
-                                : "bg-amber-100 text-amber-800"
+                                ? "bg-blue-100 text-blue-800 border border-blue-200"
+                                : "bg-amber-100 text-amber-800 border border-amber-200"
                             }`}>
                               {r.status === "ELIGIBLE" ? "🎁 Đủ điều kiện nhận" : r.status === "DELIVERED" ? "Đã nhận quà" : "Chờ bạn đóng học phí"}
                             </span>
@@ -360,10 +380,10 @@ export default function Profile() {
                   <Button
                     size="sm"
                     onClick={() => setIsBuddyModalOpen(true)}
-                    className="w-full text-xs font-bold h-8 rounded-xl bg-slate-900 hover:bg-slate-800 text-white gap-1.5 shadow-xs"
+                    className="w-full text-xs font-bold h-9 rounded-xl bg-gradient-to-r from-rose-600 via-rose-500 to-amber-500 hover:from-rose-700 hover:to-amber-600 text-white gap-2 shadow-sm hover:shadow-md transition-all transform active:scale-[0.99]"
                   >
-                    <Sparkles className="h-3.5 w-3.5 text-amber-400" />
-                    <span>Xem thẻ mời & Tải ảnh</span>
+                    <Sparkles className="h-4 w-4 text-amber-200 animate-pulse" />
+                    <span>Xem thẻ mời & Tải ảnh chia sẻ</span>
                   </Button>
                 </CardContent>
               </Card>

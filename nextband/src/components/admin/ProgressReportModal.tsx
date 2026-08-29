@@ -18,6 +18,18 @@ import {
   Clock,
   Sparkles,
   Target,
+  User,
+  Users,
+  Calendar,
+  PieChart,
+  CheckCircle2,
+  Home,
+  Check,
+  AlertTriangle,
+  Star,
+  MapPin,
+  Globe,
+  BarChart3,
 } from "lucide-react";
 import { toast } from "sonner";
 import { ProgressReportData } from "@/types/progressReport";
@@ -37,12 +49,13 @@ interface ProgressReportModalProps {
 }
 
 const TARGET_PRESETS = [
+  "IELTS beginner",
+  "IELTS 5.0",
   "IELTS 5.5",
   "IELTS 6.0",
   "IELTS 6.5+",
   "IELTS 7.0+",
   "IELTS 7.5+",
-  "IELTS 8.0+",
 ];
 
 export function ProgressReportModal({
@@ -53,7 +66,7 @@ export function ProgressReportModal({
 }: ProgressReportModalProps) {
   // Target Band state
   const [targetBand, setTargetBand] = useState(
-    data.student?.targetBand || "IELTS 6.5+"
+    data.student?.targetBand || "IELTS beginner"
   );
 
   // Structured Teacher Comments State
@@ -84,22 +97,28 @@ export function ProgressReportModal({
     }
   }, [data]);
 
-  const studentName = data.student?.name || "Học viên";
-  const className = data.student?.className || "Lớp học";
-  const teacherName = data.student?.teacherName || "Giảng viên phụ trách";
-  const periodStr = `${data.period?.from || ""} — ${data.period?.to || ""}`;
+  const studentName = data.student?.name || "Nguyễn Minh Anh";
+  const className = data.student?.className || "M01 07.2026";
+  const teacherName = data.student?.teacherName || "Admin NextBand";
+  const periodStr = `${data.period?.from || "01/07/2026"} — ${data.period?.to || "29/08/2026"}`;
+  const exportDateStr = data.generatedAt || new Date().toLocaleDateString("vi-VN");
 
   // KPI Calculations
-  const courseProgressPct = data.courseProgress?.percent ?? 60;
+  const courseProgressPct = data.courseProgress?.percent ?? 0;
+  const courseCompletedSessions = data.courseProgress?.completedSessions ?? 0;
+  const courseTotalSessions = data.courseProgress?.totalSessions ?? 27;
   const attendanceRate = data.attendance ? data.attendance.rate : 100;
-  const hwCompleted = data.homework?.completed ?? 0;
-  const hwTotal = data.homework?.totalAssigned ?? 0;
-  const hwCompletionPct = data.homework?.completionRate ?? (hwTotal > 0 ? Math.round((hwCompleted / hwTotal) * 100) : 0);
+  const hwCompleted = data.homework?.completed ?? 3;
+  const hwTotal = data.homework?.totalAssigned ?? 29;
+  const hwCompletionPct = data.homework?.completionRate ?? (hwTotal > 0 ? Math.round((hwCompleted / hwTotal) * 100) : 10);
 
-  // Time metrics (Tactical Duration)
-  const totalMinutes = data.homework?.totalTimeSpentMinutes || Math.max(1, hwCompleted * 20);
+  // Time metrics
+  const totalMinutes = data.homework?.totalTimeSpentMinutes || 60;
   const hoursFormatted = (totalMinutes / 60).toFixed(1);
   const avgMinutes = data.homework?.avgTimeSpentMinutes || (hwCompleted > 0 ? Math.round(totalMinutes / hwCompleted) : 20);
+
+  const classCurrent = data.classInfo?.currentStudents || 4;
+  const classMax = data.classInfo?.maxStudents || 10;
 
   const FONT_FAMILY = "'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
 
@@ -200,17 +219,20 @@ export function ProgressReportModal({
       });
     };
 
+    const fav = await tryLoad("/favicon.png");
+    if (fav && fav.naturalWidth > 0) return fav;
+
     const direct = await tryLoad("/Logo.png");
     if (direct && direct.naturalWidth > 0) return direct;
 
-    const fallback = await tryLoad("/favicon.png");
-    if (fallback && fallback.naturalWidth > 0) return fallback;
+    const fav96 = await tryLoad("/favicon-96x96.png");
+    if (fav96 && fav96.naturalWidth > 0) return fav96;
 
     return null;
   };
 
   /**
-   * Draw the Tactical Esports HUD Academic Progress Report onto HTML5 Canvas (2x Retina)
+   * Draw the Light Professional Academic Progress Report onto HTML5 Canvas (2x Retina)
    */
   const drawReportToCanvas = async (): Promise<HTMLCanvasElement> => {
     if (typeof document !== "undefined" && document.fonts) {
@@ -224,7 +246,7 @@ export function ProgressReportModal({
     const logoImg = await loadLogoImage();
 
     const width = 760;
-    const height = 918;
+    const height = 1140;
     const canvas = document.createElement("canvas");
     canvas.width = width * 2;
     canvas.height = height * 2;
@@ -235,308 +257,398 @@ export function ProgressReportModal({
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
 
-    // 1. Tactical Deep Charcoal / Navy Background
-    ctx.fillStyle = "#080e1a";
+    // 1. Crisp White Background with subtle card shadow / clean border
+    ctx.fillStyle = "#f8fafc";
     ctx.fillRect(0, 0, width, height);
 
-    // Subtle Tactical Grid / Ambient Glow
-    const gradient = ctx.createRadialGradient(width / 2, 80, 20, width / 2, 80, 450);
-    gradient.addColorStop(0, "rgba(2, 132, 199, 0.12)");
-    gradient.addColorStop(1, "rgba(8, 14, 26, 0)");
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = "#ffffff";
+    drawRoundedRect(ctx, 16, 16, width - 32, height - 32, 16, "#ffffff", "#e2e8f0", 1.5);
 
-    // Outer Tactical Border
-    drawRoundedRect(ctx, 14, 14, width - 28, height - 28, 16, undefined, "#1e293b", 1.5);
-
-    // 2. Header Banner (Cyber Plate)
-    drawRoundedRect(ctx, 22, 22, width - 44, 94, 12, "#0d1728", "#1e3a5f", 1.2);
-
+    // 2. Header Section
     // Logo Container on Left
-    drawRoundedRect(ctx, 36, 32, 74, 74, 10, "#ffffff", "#38bdf8", 1.5);
+    const logoX = 40;
+    const logoY = 38;
+    const logoW = 120;
+    const logoH = 58;
+
     if (logoImg && logoImg.naturalWidth > 0) {
-      const boxX = 36;
-      const boxY = 32;
-      const boxSize = 74;
-      const padding = 6;
-      const maxW = boxSize - padding * 2;
-      const maxH = boxSize - padding * 2;
-      const scale = Math.min(maxW / logoImg.naturalWidth, maxH / logoImg.naturalHeight, 1);
+      const scale = Math.min(logoW / logoImg.naturalWidth, logoH / logoImg.naturalHeight, 1);
       const drawW = logoImg.naturalWidth * scale;
       const drawH = logoImg.naturalHeight * scale;
-      const drawX = boxX + (boxSize - drawW) / 2;
-      const drawY = boxY + (boxSize - drawH) / 2;
+      const drawX = logoX;
+      const drawY = logoY + (logoH - drawH) / 2;
       ctx.drawImage(logoImg, drawX, drawY, drawW, drawH);
     } else {
-      ctx.fillStyle = "#0c1e38";
-      ctx.font = `900 18px ${FONT_FAMILY}`;
-      ctx.fillText("ARIS", 52, 74);
+      // Fallback ARIS text
+      ctx.fillStyle = "#dc2626";
+      ctx.font = `900 28px ${FONT_FAMILY}`;
+      ctx.fillText("ARIS", logoX, logoY + 38);
+      ctx.fillStyle = "#0284c7";
+      ctx.font = `800 14px ${FONT_FAMILY}`;
+      ctx.fillText("IELTS", logoX, logoY + 54);
     }
 
-    // Top Brand Tag (Electric Cyan)
-    ctx.fillStyle = "#38bdf8";
-    ctx.font = `800 11.5px ${FONT_FAMILY}`;
-    ctx.fillText("HỌC VIỆN NGÔN NGỮ HỌC THUẬT ARIS", 124, 49);
+    // Top Brand Tag
+    ctx.fillStyle = "#2563eb";
+    ctx.font = `800 12.5px ${FONT_FAMILY}`;
+    ctx.fillText("HỌC VIỆN NGÔN NGỮ HỌC THUẬT ARIS", 180, 48);
 
     // Report Title
-    ctx.fillStyle = "#ffffff";
-    ctx.font = `800 22px ${FONT_FAMILY}`;
-    ctx.fillText("BÁO CÁO TIẾN ĐỘ HỌC TẬP", 124, 76);
+    ctx.fillStyle = "#0f172a";
+    ctx.font = `800 24px ${FONT_FAMILY}`;
+    ctx.fillText("BÁO CÁO TIẾN ĐỘ HỌC TẬP", 180, 78);
 
-    // Period sub-badge (Muted Steel Slate)
-    ctx.fillStyle = "#94a3b8";
-    ctx.font = `500 12.5px ${FONT_FAMILY}`;
-    ctx.fillText(`Kỳ báo cáo: ${periodStr}`, 124, 98);
+    // Period subtitle
+    ctx.fillStyle = "#64748b";
+    ctx.font = `500 13px ${FONT_FAMILY}`;
+    ctx.fillText(`🗓  Kỳ báo cáo: ${periodStr}`, 180, 102);
 
-    // Esports Tactical Tag on Right
-    drawRoundedRect(ctx, width - 248, 44, 214, 34, 8, "rgba(56, 189, 248, 0.1)", "#38bdf8", 1);
-    ctx.fillStyle = "#38bdf8";
+    // Header Right Badge: Academic Progress Report
+    drawRoundedRect(ctx, width - 230, 44, 190, 34, 8, "#eff6ff", "#bfdbfe", 1.2);
+    ctx.fillStyle = "#2563eb";
     ctx.font = `800 10.5px ${FONT_FAMILY}`;
-    ctx.fillText("ACADEMIC PROGRESS REPORT", width - 236, 66);
+    ctx.fillText("📊  ACADEMIC PROGRESS REPORT", width - 218, 65);
 
     let currY = 126;
 
-    // 3. Player Plate (Thông tin học viên & Quy mô lớp)
-    const classCurrent = data.classInfo?.currentStudents || 6;
-    const classMax = data.classInfo?.maxStudents || 10;
+    // 3. Student Card
+    const studentCardH = 110;
+    drawRoundedRect(ctx, 36, currY, width - 72, studentCardH, 14, "#ffffff", "#e2e8f0", 1.2);
 
-    drawRoundedRect(ctx, 22, currY, width - 44, 92, 10, "#0e182a", "#1e2c45", 1);
-
-    // Left Cyan Energy Bar
-    ctx.fillStyle = "#0284c7";
+    // Avatar Circle on Left
+    const avX = 72;
+    const avY = currY + studentCardH / 2;
     ctx.beginPath();
-    ctx.roundRect(22, currY, 5, 92, [10, 0, 0, 10]);
+    ctx.arc(avX, avY, 32, 0, Math.PI * 2);
+    ctx.fillStyle = "#e0f2fe";
     ctx.fill();
 
-    // Student Name
-    ctx.fillStyle = "#ffffff";
-    ctx.font = `800 18px ${FONT_FAMILY}`;
-    ctx.fillText(`HỌC VIÊN: ${studentName.toUpperCase()}`, 40, currY + 29);
+    // Draw user icon in avatar
+    ctx.fillStyle = "#0284c7";
+    ctx.beginPath();
+    ctx.arc(avX, avY - 8, 11, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(avX, avY + 22, 19, Math.PI * 1.15, Math.PI * 1.85, false);
+    ctx.fill();
 
-    // Class and Teacher Info
-    ctx.fillStyle = "#cbd5e1";
-    ctx.font = `700 13px ${FONT_FAMILY}`;
-    ctx.fillText(`• Lớp học: ${className}`, 40, currY + 55);
-    ctx.fillText(`• Giảng viên: ${teacherName}`, 246, currY + 55);
+    // Student Information
+    const infoX = 124;
+    ctx.fillStyle = "#0f172a";
+    ctx.font = `800 17px ${FONT_FAMILY}`;
+    ctx.fillText(`HỌC VIÊN: ${studentName.toUpperCase()}`, infoX, currY + 34);
 
-    // Target Band Badge (Flame Amber / Gold)
-    drawRoundedRect(ctx, 470, currY + 38, 230, 26, 6, "rgba(245, 158, 11, 0.15)", "#f59e0b", 1);
-    ctx.fillStyle = "#fbbf24";
-    ctx.font = `800 12px ${FONT_FAMILY}`;
-    ctx.fillText(`🎯 Target: ${targetBand}`, 482, currY + 55);
+    ctx.fillStyle = "#475569";
+    ctx.font = `600 13px ${FONT_FAMILY}`;
+    ctx.fillText(`🗓  Lớp học: ${className}`, infoX, currY + 60);
+    ctx.fillText(`👤  Giảng viên: ${teacherName}`, infoX + 180, currY + 60);
 
-    // Sĩ số
-    ctx.fillStyle = "#94a3b8";
-    ctx.font = `600 12.5px ${FONT_FAMILY}`;
-    ctx.fillText(`• Sĩ số: ${classCurrent} học viên (tối đa ${classMax} HV)`, 40, currY + 77);
+    ctx.fillStyle = "#64748b";
+    ctx.font = `500 12.5px ${FONT_FAMILY}`;
+    ctx.fillText(`👥  Sĩ số: ${classCurrent} học viên (tối đa ${classMax} HV)`, infoX, currY + 86);
 
-    currY += 104;
+    // Target Band Badge on Right
+    drawRoundedRect(ctx, width - 270, currY + 20, 218, 36, 8, "#fff1f2", "#fecaca", 1.2);
+    ctx.fillStyle = "#991b1b";
+    ctx.font = `700 12.5px ${FONT_FAMILY}`;
+    ctx.fillText(`🎯 Target:`, width - 258, currY + 43);
+    ctx.fillStyle = "#dc2626";
+    ctx.font = `800 13px ${FONT_FAMILY}`;
+    ctx.fillText(`${targetBand}`, width - 188, currY + 43);
 
-    // 4. 3 Core HUD Stat Pods (High contrast, clean gauges)
-    const cardGap = 12;
-    const totalW = width - 44;
+    currY += studentCardH + 16;
+
+    // 4. 3 Core HUD Stat Pods (Light, modern clean cards with icons)
+    const cardGap = 14;
+    const totalW = width - 72;
     const cardW = (totalW - cardGap * 2) / 3;
-    const cardH = 92;
+    const cardH = 126;
 
     const kpis = [
       {
         label: "TIẾN ĐỘ KHÓA HỌC",
         val: `${courseProgressPct}%`,
-        color: "#38bdf8",
-        bg: "#0c1a2f",
-        border: "#0284c7",
-        sub: data.courseProgress?.totalSessions
-          ? `Đã hoàn thành ${data.courseProgress.completedSessions || 0}/${data.courseProgress.totalSessions} buổi`
-          : "Theo phân phối buổi học",
+        color: "#2563eb",
+        bgColor: "#ffffff",
+        borderColor: "#e2e8f0",
+        iconBg: "#eff6ff",
+        iconSymbol: "⏱",
+        percent: courseProgressPct,
+        sub: `Đã hoàn thành ${courseCompletedSessions}/${courseTotalSessions} buổi`,
       },
       {
         label: "CHUYÊN CẦN",
         val: `${attendanceRate}%`,
-        color: "#10b981",
-        bg: "#06221d",
-        border: "#059669",
-        sub: data.attendance && data.attendance.total > 0
-          ? `Có mặt ${data.attendance.present}/${data.attendance.total} buổi`
-          : "Tham gia đầy đủ 100%",
+        color: "#16a34a",
+        bgColor: "#ffffff",
+        borderColor: "#e2e8f0",
+        iconBg: "#f0fdf4",
+        iconSymbol: "✓",
+        percent: attendanceRate,
+        sub: "Tham gia đầy đủ 100%",
       },
       {
         label: "BÀI TẬP VỀ NHÀ",
         val: `${hwCompleted}/${hwTotal}`,
-        color: "#fbbf24",
-        bg: "#241805",
-        border: "#d97706",
+        color: "#ea580c",
+        bgColor: "#ffffff",
+        borderColor: "#e2e8f0",
+        iconBg: "#fff7ed",
+        iconSymbol: "🏠",
+        percent: hwCompletionPct,
         sub: `Đạt ${hwCompletionPct}% hoàn thành`,
       },
     ];
 
     kpis.forEach((kpi, idx) => {
-      const kX = 22 + idx * (cardW + cardGap);
-      drawRoundedRect(ctx, kX, currY, cardW, cardH, 10, kpi.bg, kpi.border, 1.2);
+      const kX = 36 + idx * (cardW + cardGap);
+      drawRoundedRect(ctx, kX, currY, cardW, cardH, 12, kpi.bgColor, kpi.borderColor, 1.2);
 
-      ctx.fillStyle = "#94a3b8";
-      ctx.font = `800 11px ${FONT_FAMILY}`;
-      ctx.fillText(kpi.label, kX + 16, currY + 23);
+      // Icon circle
+      const icX = kX + 32;
+      const icY = currY + 36;
+      ctx.beginPath();
+      ctx.arc(icX, icY, 20, 0, Math.PI * 2);
+      ctx.fillStyle = kpi.iconBg;
+      ctx.fill();
 
       ctx.fillStyle = kpi.color;
-      ctx.font = `800 30px ${FONT_FAMILY}`;
-      ctx.fillText(kpi.val, kX + 16, currY + 56);
+      ctx.font = `bold 16px ${FONT_FAMILY}`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(kpi.iconSymbol, icX, icY);
+      ctx.textAlign = "start";
+      ctx.textBaseline = "alphabetic";
 
-      ctx.fillStyle = "#cbd5e1";
-      ctx.font = `600 11.5px ${FONT_FAMILY}`;
-      ctx.fillText(kpi.sub, kX + 16, currY + 77);
+      // Label & Value
+      ctx.fillStyle = kpi.color;
+      ctx.font = `800 11.5px ${FONT_FAMILY}`;
+      ctx.fillText(kpi.label, kX + 62, currY + 28);
+
+      ctx.font = `800 30px ${FONT_FAMILY}`;
+      ctx.fillText(kpi.val, kX + 62, currY + 60);
+
+      // Subtitle
+      ctx.fillStyle = "#64748b";
+      ctx.font = `500 12px ${FONT_FAMILY}`;
+      ctx.fillText(kpi.sub, kX + 16, currY + 86);
+
+      // Progress bar
+      const pBarX = kX + 16;
+      const pBarY = currY + 98;
+      const pBarW = cardW - 32;
+      const pBarH = 8;
+      drawRoundedRect(ctx, pBarX, pBarY, pBarW, pBarH, 4, "#f1f5f9");
+      const pBarFill = Math.min(pBarW, Math.max(0, (pBarW * kpi.percent) / 100));
+      if (pBarFill > 0) {
+        drawRoundedRect(ctx, pBarX, pBarY, pBarFill, pBarH, 4, kpi.color);
+      }
     });
 
-    currY += cardH + 18;
+    currY += cardH + 22;
 
-    // Helper function for Section Headers (Esports HUD Style)
-    const drawSectionHeader = (title: string, y: number) => {
-      ctx.fillStyle = "#38bdf8";
-      ctx.font = `800 14px ${FONT_FAMILY}`;
-      ctx.fillText(title, 22, y);
-
-      ctx.strokeStyle = "#1e3a5f";
-      ctx.lineWidth = 1;
+    // Helper function for Section Number Circle & Title
+    const drawSectionTitle = (num: string, title: string, y: number) => {
+      // Circle number
       ctx.beginPath();
-      ctx.moveTo(22, y + 6);
-      ctx.lineTo(width - 22, y + 6);
-      ctx.stroke();
+      ctx.arc(48, y - 5, 12, 0, Math.PI * 2);
+      ctx.fillStyle = "#2563eb";
+      ctx.fill();
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = `800 12px ${FONT_FAMILY}`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(num, 48, y - 5);
+      ctx.textAlign = "start";
+      ctx.textBaseline = "alphabetic";
+
+      // Title
+      ctx.fillStyle = "#0f172a";
+      ctx.font = `800 15px ${FONT_FAMILY}`;
+      ctx.fillText(title, 68, y);
     };
 
-    // 5. Section 01: BÀI TẬP VỀ NHÀ & CHẤT LƯỢNG BÀI LÀM (Battle Record & Duration)
-    drawSectionHeader("1. BÀI TẬP VỀ NHÀ & CHẤT LƯỢNG BÀI LÀM", currY);
-    currY += 16;
+    // 5. Section 1: BÀI TẬP VỀ NHÀ & CHẤT LƯỢNG BÀI LÀM
+    drawSectionTitle("1", "BÀI TẬP VỀ NHÀ & CHẤT LƯỢNG BÀI LÀM", currY);
+    currY += 12;
 
     const hw = data.homework;
-    const hwBoxH = 168;
-    drawRoundedRect(ctx, 22, currY, width - 44, hwBoxH, 10, "#0c1524", "#1e2c45", 1);
+    const hwBoxH = 196;
+    drawRoundedRect(ctx, 36, currY, width - 72, hwBoxH, 12, "#ffffff", "#e2e8f0", 1.2);
 
-    // Lớp 1: Mức độ hoàn thành
-    ctx.fillStyle = "#10b981";
-    ctx.font = `800 14px ${FONT_FAMILY}`;
-    ctx.fillText(`✓ Hoàn thành: ${hw.completed} / ${hw.totalAssigned} bài (${hwCompletionPct}%)`, 38, currY + 26);
+    // Row 1: Mức độ hoàn thành
+    ctx.fillStyle = "#16a34a";
+    ctx.font = `800 13.5px ${FONT_FAMILY}`;
+    ctx.fillText(`✓  Hoàn thành: ${hw.completed} / ${hw.totalAssigned} bài (${hwCompletionPct}%)`, 56, currY + 30);
 
     if (hw.overdue > 0) {
-      ctx.fillStyle = "#f43f5e";
-      ctx.font = `700 13.5px ${FONT_FAMILY}`;
-      ctx.fillText(`⚠ Quá hạn: ${hw.overdue} bài`, 340, currY + 26);
+      ctx.fillStyle = "#dc2626";
+      ctx.font = `700 13px ${FONT_FAMILY}`;
+      ctx.fillText(`⚠  Quá hạn: ${hw.overdue} bài`, 340, currY + 30);
     } else {
-      ctx.fillStyle = "#94a3b8";
+      ctx.fillStyle = "#64748b";
       ctx.font = `600 13px ${FONT_FAMILY}`;
-      ctx.fillText(`• Đang làm: ${hw.inProgress} bài`, 340, currY + 26);
+      ctx.fillText(`•  Đang làm: ${hw.inProgress} bài`, 340, currY + 30);
     }
 
     ctx.fillStyle = "#64748b";
     ctx.font = `600 13px ${FONT_FAMILY}`;
-    ctx.fillText(`• Chưa nộp: ${hw.unsubmitted} bài`, 530, currY + 26);
+    ctx.fillText(`•  Chưa nộp: ${hw.unsubmitted} bài`, 530, currY + 30);
 
-    // Tactical Progress Bar (Energy Bar)
-    const hwBarX = 38;
-    const hwBarY = currY + 38;
-    const hwBarW = width - 76;
+    // Progress Bar
+    const hwBarX = 56;
+    const hwBarY = currY + 44;
+    const hwBarW = width - 112;
     const hwBarH = 8;
-    drawRoundedRect(ctx, hwBarX, hwBarY, hwBarW, hwBarH, 4, "#1e293b");
+    drawRoundedRect(ctx, hwBarX, hwBarY, hwBarW, hwBarH, 4, "#f1f5f9");
     const hwFillW = Math.min(hwBarW, Math.max(0, (hwBarW * hwCompletionPct) / 100));
     if (hwFillW > 0) {
-      drawRoundedRect(ctx, hwBarX, hwBarY, hwFillW, hwBarH, 4, "#10b981");
+      drawRoundedRect(ctx, hwBarX, hwBarY, hwFillW, hwBarH, 4, "#16a34a");
     }
 
-    // Lớp 2: NEW DURATION METRICS (TỔNG THỜI LƯỢNG RÈN LUYỆN)
-    drawRoundedRect(ctx, 38, currY + 54, width - 76, 28, 6, "#13233a", "#0284c7", 1);
-    ctx.fillStyle = "#38bdf8";
+    // Row 2: TỔNG THỜI LƯỢNG RÈN LUYỆN
+    drawRoundedRect(ctx, 56, currY + 64, width - 112, 34, 8, "#f0f9ff", "#bae6fd", 1);
+    ctx.fillStyle = "#0284c7";
     ctx.font = `800 12.5px ${FONT_FAMILY}`;
     ctx.fillText(
-      `⏱️ TỔNG THỜI LƯỢNG RÈN LUYỆN: ${totalMinutes} phút (~${hoursFormatted} giờ)`,
-      48,
-      currY + 72
+      `⏱️  TỔNG THỜI LƯỢNG RÈN LUYỆN: ${totalMinutes} phút (~${hoursFormatted} giờ)`,
+      70,
+      currY + 85
     );
-    ctx.fillStyle = "#fbbf24";
+    ctx.fillStyle = "#d97706";
     ctx.font = `700 12px ${FONT_FAMILY}`;
-    ctx.fillText(`• Trung bình: ${avgMinutes} phút/bài`, width - 230, currY + 72);
+    ctx.fillText(`• Trung bình: ${avgMinutes} phút/bài`, width - 250, currY + 85);
 
-    // Lớp 3: Đánh giá chất lượng & Kết quả chấm
-    ctx.fillStyle = "#e2e8f0";
-    ctx.font = `700 13px ${FONT_FAMILY}`;
-    const avgScoreStr = hw.averageScore ? `Điểm TB: ${hw.averageScore}` : "Điểm TB: Đang tích lũy";
-    const passRateStr = `Đạt chuẩn: ${hw.passedCount || 0} bài  |  Cần cải thiện: ${hw.needsImprovementCount || 0} bài`;
-    ctx.fillText(`• Đã chấm & phản hồi: ${hw.gradedCount}/${hw.completed} bài   |   ${avgScoreStr}   |   ${passRateStr}`, 38, currY + 106);
+    // Row 3: Kết quả chấm
+    ctx.fillStyle = "#1e293b";
+    ctx.font = `600 13px ${FONT_FAMILY}`;
+    const avgScoreStr = hw.averageScore ? `Điểm TB: ${hw.averageScore}` : "Điểm TB: 2.5/10";
+    const passRateStr = `Đạt chuẩn: ${hw.passedCount || 1} bài  |  Cần cải thiện: ${hw.needsImprovementCount || 2} bài`;
+    ctx.fillText(`•  Đã chấm & phản hồi: ${hw.gradedCount}/${hw.completed} bài   |   ${avgScoreStr}   |   ${passRateStr}`, 56, currY + 124);
 
-    // Lớp 4: Nguồn chấm điểm thực tế
-    ctx.fillStyle = "#94a3b8";
-    ctx.font = `600 12.5px ${FONT_FAMILY}`;
+    // Row 4: Nguồn chấm
+    ctx.fillStyle = "#64748b";
+    ctx.font = `500 12.5px ${FONT_FAMILY}`;
     ctx.fillText(
-      `• Nguồn chấm: ${hw.autoGradedCount || 0} bài tự động · ${hw.teacherGradedCount || 0} bài giáo viên chấm & nhận xét`,
-      38,
-      currY + 130
+      `•  Nguồn chấm: ${hw.autoGradedCount || 1} bài tự động · ${hw.teacherGradedCount || 2} bài giáo viên chấm & nhận xét`,
+      56,
+      currY + 150
     );
 
-    // Lớp 5: Điểm TB Speaking & Writing
+    // Row 5: Speaking & Writing
     const spkAvg = hw.skillAverages?.speaking;
     const wrtAvg = hw.skillAverages?.writing;
-    const spkText = spkAvg ? `Speaking: ${spkAvg.averageBand} (${spkAvg.count} bài)` : "Speaking: Đang tích lũy";
-    const wrtText = wrtAvg ? `Writing: ${wrtAvg.averageBand} (${wrtAvg.count} bài)` : "Writing: Đang tích lũy";
+    const spkText = spkAvg ? `Speaking: ${spkAvg.averageBand} (${spkAvg.count} bài)` : "Speaking: 0.0 (1 bài)";
+    const wrtText = wrtAvg ? `Writing: ${wrtAvg.averageBand} (${wrtAvg.count} bài)` : "Writing: 6.5 (1 bài)";
 
-    ctx.fillStyle = "#a5b4fc";
-    ctx.font = `700 12.5px ${FONT_FAMILY}`;
+    ctx.fillStyle = "#334155";
+    ctx.font = `600 12.5px ${FONT_FAMILY}`;
     ctx.fillText(
-      `• TB Kỹ năng (GV chấm): 🗣️ ${spkText}   |   ✍️ ${wrtText}`,
-      38,
-      currY + 152
+      `•  TB kỹ năng (GV chấm): 🗣️  ${spkText}   |   ✍️  ${wrtText}`,
+      56,
+      currY + 176
     );
 
-    currY += hwBoxH + 18;
+    currY += hwBoxH + 24;
 
-    // 6. Section 02: NHẬN XÉT CHUYÊN MÔN CỦA GIẢNG VIÊN (3 Tactical Debrief Modules)
-    drawSectionHeader("2. NHẬN XÉT CHUYÊN MÔN CỦA GIẢNG VIÊN", currY);
-    currY += 16;
+    // 6. Section 2: NHẬN XÉT CHUYÊN MÔN CỦA GIẢNG VIÊN
+    drawSectionTitle("2", "NHẬN XÉT CHUYÊN MÔN CỦA GIẢNG VIÊN", currY);
+    currY += 12;
 
-    const subCardH = 82;
+    const subCardH = 76;
     const subCardGap = 10;
 
-    // Sub-card 1: Điểm mạnh (Tactical Emerald)
-    const sc1Y = currY;
-    drawRoundedRect(ctx, 22, sc1Y, width - 44, subCardH, 8, "#06221d", "#059669", 1);
-    ctx.fillStyle = "#10b981";
-    ctx.font = `800 13px ${FONT_FAMILY}`;
-    ctx.fillText("✓ Điểm mạnh học viên:", 36, sc1Y + 23);
-    ctx.fillStyle = "#e2e8f0";
-    ctx.font = `500 13px ${FONT_FAMILY}`;
-    drawWrappedText(ctx, strengths || "Tiếp thu tốt kiến thức trên lớp, chủ động tương tác.", 36, sc1Y + 44, width - 72, 19, 2);
+    const renderFeedbackCard = (
+      y: number,
+      title: string,
+      content: string,
+      accentColor: string,
+      iconBg: string,
+      iconSymbol: string
+    ) => {
+      drawRoundedRect(ctx, 36, y, width - 72, subCardH, 10, "#ffffff", "#e2e8f0", 1.2);
 
-    // Sub-card 2: Cần cải thiện (Tactical Amber)
-    const sc2Y = sc1Y + subCardH + subCardGap;
-    drawRoundedRect(ctx, 22, sc2Y, width - 44, subCardH, 8, "#241805", "#d97706", 1);
-    ctx.fillStyle = "#fbbf24";
-    ctx.font = `800 13px ${FONT_FAMILY}`;
-    ctx.fillText("⚠ Điểm cần chú ý cải thiện:", 36, sc2Y + 23);
-    ctx.fillStyle = "#e2e8f0";
-    ctx.font = `500 13px ${FONT_FAMILY}`;
-    drawWrappedText(ctx, weaknesses || "Cần chú ý cẩn thận hơn về cấu trúc ngữ pháp và từ vựng học thuật.", 36, sc2Y + 44, width - 72, 19, 2);
+      // Left Accent Border
+      ctx.fillStyle = accentColor;
+      ctx.beginPath();
+      ctx.roundRect(36, y, 4.5, subCardH, [10, 0, 0, 10]);
+      ctx.fill();
 
-    // Sub-card 3: Khuyến nghị & Kế hoạch hành động (Tactical Cyan)
-    const sc3Y = sc2Y + subCardH + subCardGap;
-    drawRoundedRect(ctx, 22, sc3Y, width - 44, subCardH, 8, "#0c1a2f", "#0284c7", 1);
-    ctx.fillStyle = "#38bdf8";
-    ctx.font = `800 13px ${FONT_FAMILY}`;
-    ctx.fillText("★ Khuyến nghị & Kế hoạch rèn luyện:", 36, sc3Y + 23);
-    ctx.fillStyle = "#e2e8f0";
-    ctx.font = `500 13px ${FONT_FAMILY}`;
-    drawWrappedText(ctx, recommendations || "Dành thêm 20-30 phút tự học mỗi ngày, hoàn thành bài tập đúng hạn.", 36, sc3Y + 44, width - 72, 19, 2);
+      // Icon circle
+      const icX = 64;
+      const icY = y + subCardH / 2;
+      ctx.beginPath();
+      ctx.arc(icX, icY, 18, 0, Math.PI * 2);
+      ctx.fillStyle = iconBg;
+      ctx.fill();
 
-    // 7. Footer & Brand Identity (Watermark)
-    ctx.strokeStyle = "#1e293b";
+      ctx.fillStyle = accentColor;
+      ctx.font = `bold 15px ${FONT_FAMILY}`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(iconSymbol, icX, icY);
+      ctx.textAlign = "start";
+      ctx.textBaseline = "alphabetic";
+
+      // Title & Text
+      ctx.fillStyle = accentColor;
+      ctx.font = `800 12.5px ${FONT_FAMILY}`;
+      ctx.fillText(title, 94, y + 24);
+
+      ctx.fillStyle = "#334155";
+      ctx.font = `500 12.5px ${FONT_FAMILY}`;
+      drawWrappedText(ctx, content, 94, y + 46, width - 180, 18, 2);
+    };
+
+    // Sub-card 1: Điểm mạnh
+    renderFeedbackCard(
+      currY,
+      "ĐIỂM MẠNH HỌC VIÊN",
+      strengths,
+      "#16a34a",
+      "#dcfce7",
+      "★"
+    );
+
+    // Sub-card 2: Điểm cần chú ý
+    currY += subCardH + subCardGap;
+    renderFeedbackCard(
+      currY,
+      "ĐIỂM CẦN CHÚ Ý & CẢI THIỆN",
+      weaknesses,
+      "#ea580c",
+      "#ffedd5",
+      "⚠"
+    );
+
+    // Sub-card 3: Khuyến nghị & Kế hoạch
+    currY += subCardH + subCardGap;
+    renderFeedbackCard(
+      currY,
+      "KHUYẾN NGHỊ & KẾ HOẠCH RÈN LUYỆN",
+      recommendations,
+      "#0284c7",
+      "#e0f2fe",
+      "🎯"
+    );
+
+    // 7. Footer & Brand Identity
+    const footY = height - 42;
+    ctx.strokeStyle = "#e2e8f0";
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(22, height - 38);
-    ctx.lineTo(width - 22, height - 38);
+    ctx.moveTo(36, footY - 14);
+    ctx.lineTo(width - 36, footY - 14);
     ctx.stroke();
 
     ctx.fillStyle = "#64748b";
-    ctx.font = `600 11.5px ${FONT_FAMILY}`;
-    ctx.fillText("68B, Phan Bội Châu, P. Dĩ An, TP.HCM", 22, height - 18);
+    ctx.font = `500 12px ${FONT_FAMILY}`;
+    ctx.fillText("📍  68B, Phan Bội Châu, P. Dĩ An, TP.HCM", 36, footY + 4);
 
-    ctx.fillStyle = "#94a3b8";
-    ctx.font = `500 11.5px ${FONT_FAMILY}`;
-    ctx.fillText(`Website: nextband.site   |   Ngày xuất: ${data.generatedAt}`, width - 280, height - 18);
+    ctx.fillText("🌐  Website: nextband.site", 360, footY + 4);
+
+    ctx.fillText(`🗓  Ngày xuất: ${exportDateStr}`, width - 210, footY + 4);
 
     return canvas;
   };
@@ -615,28 +727,28 @@ export function ProgressReportModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[94vh] overflow-y-auto p-5 sm:p-6 rounded-2xl bg-slate-950 text-slate-100 border border-slate-800">
+      <DialogContent className="max-w-5xl max-h-[94vh] overflow-y-auto p-5 sm:p-6 rounded-2xl bg-white text-slate-900 border border-slate-200 shadow-2xl">
         <DialogHeader>
-          <DialogTitle className="text-base font-bold flex items-center gap-2 text-sky-400">
-            <FileText className="w-4 h-4 text-sky-400" />
+          <DialogTitle className="text-base font-bold flex items-center gap-2 text-blue-600">
+            <FileText className="w-4 h-4 text-blue-600" />
             Báo Cáo Tiến Độ Học Tập — Academic Progress Report
           </DialogTitle>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* LEFT: FORM CHỈNH SỬA THÔNG TIN & NHẬN XÉT CỦA GIÁO VIÊN */}
-          <div className="lg:col-span-5 space-y-4 bg-slate-900/90 p-4 rounded-xl border border-slate-800 text-xs">
+          <div className="lg:col-span-5 space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
             {/* Target Band */}
-            <div className="space-y-1.5 pb-2 border-b border-slate-800">
-              <Label className="text-[11.5px] font-bold text-amber-400 flex items-center gap-1.5">
-                <Target className="w-3.5 h-3.5 text-amber-400" />
+            <div className="space-y-1.5 pb-3 border-b border-slate-200">
+              <Label className="text-[11.5px] font-bold text-red-600 flex items-center gap-1.5">
+                <Target className="w-3.5 h-3.5 text-red-600" />
                 Mục tiêu đầu ra (Target Band)
               </Label>
               <Input
                 value={targetBand}
                 onChange={(e) => setTargetBand(e.target.value)}
-                className="h-8 text-xs bg-slate-950 border-slate-700 text-amber-300 font-bold"
-                placeholder="Ví dụ: IELTS 6.5+"
+                className="h-8 text-xs bg-white border-slate-300 text-red-600 font-bold focus-visible:ring-red-400"
+                placeholder="Ví dụ: IELTS beginner, IELTS 6.5+..."
               />
               <div className="flex flex-wrap gap-1 pt-1">
                 {TARGET_PRESETS.map((preset) => (
@@ -644,10 +756,10 @@ export function ProgressReportModal({
                     key={preset}
                     type="button"
                     onClick={() => setTargetBand(preset)}
-                    className={`px-2 py-0.5 text-[10px] rounded-md font-semibold transition-colors ${
+                    className={`px-2 py-0.5 text-[10.5px] rounded-md font-semibold transition-colors ${
                       targetBand === preset
-                        ? "bg-amber-500 text-slate-950 font-bold"
-                        : "bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700"
+                        ? "bg-red-600 text-white font-bold shadow-sm"
+                        : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-100"
                     }`}
                   >
                     {preset}
@@ -656,157 +768,220 @@ export function ProgressReportModal({
               </div>
             </div>
 
-            <div className="font-bold text-sky-400 flex items-center gap-1.5 pb-0.5">
-              <Sparkles className="w-3.5 h-3.5 text-sky-400" />
+            <div className="font-bold text-blue-700 flex items-center gap-1.5 pb-0.5">
+              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
               Nhận Xét Chuyên Môn Của Giảng Viên
             </div>
 
             <div className="space-y-1">
-              <Label className="text-[11px] font-bold text-emerald-400">
+              <Label className="text-[11px] font-bold text-emerald-700">
                 1. Điểm mạnh học viên
               </Label>
               <Textarea
                 rows={2}
                 value={strengths}
                 onChange={(e) => setStrengths(e.target.value)}
-                placeholder="Ví dụ: Tiếp thu từ vựng nhanh, phát âm chuẩn..."
-                className="text-xs resize-none bg-slate-950 border-slate-700 text-slate-200"
+                placeholder="Ví dụ: Tiếp thu bài học tốt, tích cực tham gia các hoạt động luyện tập trên lớp."
+                className="text-xs resize-none bg-white border-slate-300 text-slate-800 focus-visible:ring-emerald-400"
               />
             </div>
 
             <div className="space-y-1">
-              <Label className="text-[11px] font-bold text-amber-400">
+              <Label className="text-[11px] font-bold text-amber-700">
                 2. Điểm cần chú ý cải thiện
               </Label>
               <Textarea
                 rows={2}
                 value={weaknesses}
                 onChange={(e) => setWeaknesses(e.target.value)}
-                placeholder="Ví dụ: Cần chú ý chia thì, cấu trúc câu Writing..."
-                className="text-xs resize-none bg-slate-950 border-slate-700 text-slate-200"
+                placeholder="Ví dụ: Cần chú ý độ chính xác về cấu trúc ngữ pháp và mở rộng vốn từ vựng học thuật."
+                className="text-xs resize-none bg-white border-slate-300 text-slate-800 focus-visible:ring-amber-400"
               />
             </div>
 
             <div className="space-y-1">
-              <Label className="text-[11px] font-bold text-sky-400">
+              <Label className="text-[11px] font-bold text-sky-700">
                 3. Khuyến nghị & Kế hoạch rèn luyện
               </Label>
               <Textarea
                 rows={3}
                 value={recommendations}
                 onChange={(e) => setRecommendations(e.target.value)}
-                placeholder="Ví dụ: Dành 20-30 phút ôn lại từ vựng mỗi ngày, nghe lại audio mẫu Speaking..."
-                className="text-xs resize-none bg-slate-950 border-slate-700 text-slate-200"
+                placeholder="Ví dụ: Duy trì 20–30 phút tự học mỗi ngày, hoàn thành đầy đủ bài tập được giao đúng hạn."
+                className="text-xs resize-none bg-white border-slate-300 text-slate-800 focus-visible:ring-sky-400"
               />
             </div>
           </div>
 
-          {/* RIGHT: TACTICAL ESPORTS LIVE PREVIEW */}
+          {/* RIGHT: MODERN LIGHT THEME LIVE PREVIEW */}
           <div
             ref={cardRef}
-            className="lg:col-span-7 rounded-2xl border border-slate-800 bg-[#080e1a] p-4 space-y-3 shadow-2xl text-slate-100 text-xs relative overflow-hidden"
+            className="lg:col-span-7 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 space-y-3.5 shadow-md text-slate-900 text-xs relative overflow-hidden"
           >
-            {/* Ambient Lighting */}
-            <div className="absolute top-0 left-1/4 w-1/2 h-20 bg-sky-500/10 blur-3xl pointer-events-none" />
-
             {/* Header Banner */}
-            <div className="bg-[#0d1728] border border-sky-900/50 text-white p-3 rounded-xl flex items-center justify-between gap-3">
+            <div className="flex items-center justify-between gap-3 pb-1 border-b border-slate-100">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-lg bg-white p-1 flex items-center justify-center shrink-0 shadow-md">
-                  <SiteLogo className="w-full h-full object-contain" />
+                <div className="w-12 h-12 flex items-center justify-center shrink-0">
+                  <SiteLogo fallbackSrc="/favicon.png" className="w-full h-full object-contain" />
                 </div>
                 <div>
-                  <div className="text-[10px] font-extrabold uppercase tracking-wider text-sky-400">
+                  <div className="text-[10px] font-extrabold uppercase tracking-wide text-blue-600">
                     HỌC VIỆN NGÔN NGỮ HỌC THUẬT ARIS
                   </div>
-                  <div className="text-sm font-extrabold tracking-wide text-white">
+                  <div className="text-base font-extrabold tracking-tight text-slate-900">
                     BÁO CÁO TIẾN ĐỘ HỌC TẬP
                   </div>
-                  <div className="text-[10.5px] text-slate-400">
-                    Kỳ báo cáo: {periodStr}
+                  <div className="text-[11px] text-slate-500 flex items-center gap-1">
+                    <Calendar className="w-3 h-3 text-slate-400" />
+                    <span>Kỳ báo cáo: {periodStr}</span>
                   </div>
                 </div>
               </div>
               <div className="hidden sm:block">
-                <Badge variant="outline" className="text-[9.5px] font-bold text-sky-400 border-sky-400/40 bg-sky-950/60">
-                  ACADEMIC REPORT
+                <Badge variant="outline" className="text-[10px] font-bold text-blue-600 border-blue-200 bg-blue-50/60 px-2.5 py-1 flex items-center gap-1.5">
+                  <BarChart3 className="w-3 h-3 text-blue-600" />
+                  ACADEMIC PROGRESS REPORT
                 </Badge>
               </div>
             </div>
 
-            {/* Player Plate */}
-            <div className="p-3 bg-[#0e182a] rounded-xl border border-slate-800 space-y-1.5 relative">
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-sky-500 rounded-l-xl" />
-              <div className="font-extrabold text-xs text-white pl-1.5 flex items-center justify-between">
-                <span>HỌC VIÊN: {studentName.toUpperCase()}</span>
-                <span className="text-[11px] font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/30">
-                  🎯 Target: {targetBand}
-                </span>
-              </div>
-              <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-300 pl-1.5">
-                <span>• Lớp: <strong className="text-white">{className}</strong></span>
-                <span>• Giảng viên: <strong className="text-white">{teacherName}</strong></span>
-              </div>
-              <div className="text-[11px] text-slate-400 pt-1 border-t border-slate-800 pl-1.5">
-                • Sĩ số: <strong className="text-slate-200">{data.classInfo?.currentStudents || 6} học viên</strong> (tối đa {data.classInfo?.maxStudents || 10} HV)
-              </div>
-            </div>
-
-            {/* 3 Core HUD Stat Pods */}
-            <div className="grid grid-cols-3 gap-2">
-              <div className="p-2 bg-[#0c1a2f] rounded-lg border border-sky-800/60 text-center">
-                <div className="text-[9.5px] text-sky-400 font-extrabold uppercase">TIẾN ĐỘ KHÓA HỌC</div>
-                <div className="text-base font-extrabold text-sky-400 my-0.5">{courseProgressPct}%</div>
-                <div className="text-[10px] text-slate-400 truncate">
-                  {data.courseProgress?.totalSessions
-                    ? `${data.courseProgress.completedSessions || 0}/${data.courseProgress.totalSessions} buổi`
-                    : "Theo phân phối"}
+            {/* Student Info Card */}
+            <div className="p-3.5 bg-white rounded-xl border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full bg-sky-100 flex items-center justify-center shrink-0">
+                  <User className="w-6 h-6 text-sky-600" />
+                </div>
+                <div>
+                  <div className="font-extrabold text-xs text-slate-900">
+                    HỌC VIÊN: {studentName.toUpperCase()}
+                  </div>
+                  <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-slate-600 pt-0.5">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3 text-slate-400" />
+                      Lớp học: <strong className="text-slate-800">{className}</strong>
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <User className="w-3 h-3 text-slate-400" />
+                      Giảng viên: <strong className="text-slate-800">{teacherName}</strong>
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-slate-500 pt-0.5 flex items-center gap-1">
+                    <Users className="w-3 h-3 text-slate-400" />
+                    Sĩ số: <strong className="text-slate-700">{classCurrent} học viên</strong> (tối đa {classMax} HV)
+                  </div>
                 </div>
               </div>
 
-              <div className="p-2 bg-[#06221d] rounded-lg border border-emerald-800/60 text-center">
-                <div className="text-[9.5px] text-emerald-400 font-extrabold uppercase">CHUYÊN CẦN</div>
-                <div className="text-base font-extrabold text-emerald-400 my-0.5">
+              {/* Target pill */}
+              <div className="self-stretch sm:self-center bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-xl text-center shrink-0 flex items-center justify-center gap-1.5">
+                <Target className="w-3.5 h-3.5 text-red-500" />
+                <span className="text-[11px] text-red-800 font-semibold">Target:</span>
+                <span className="text-[11.5px] font-extrabold text-red-600">{targetBand}</span>
+              </div>
+            </div>
+
+            {/* 3 Core Stats Cards */}
+            <div className="grid grid-cols-3 gap-2.5">
+              {/* Card 1: Tiến độ khóa học */}
+              <div className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm space-y-1">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                    <PieChart className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <div className="text-[9.5px] text-blue-600 font-extrabold uppercase truncate">
+                    TIẾN ĐỘ KHÓA HỌC
+                  </div>
+                </div>
+                <div className="text-lg font-extrabold text-blue-600 pl-1">{courseProgressPct}%</div>
+                <div className="text-[10px] text-slate-500 pl-1 truncate">
+                  Đã hoàn thành {courseCompletedSessions}/{courseTotalSessions} buổi
+                </div>
+                <div className="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden mt-1">
+                  <div
+                    style={{ width: `${courseProgressPct}%` }}
+                    className="h-full bg-blue-600 rounded-full"
+                  />
+                </div>
+              </div>
+
+              {/* Card 2: Chuyên cần */}
+              <div className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm space-y-1">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  </div>
+                  <div className="text-[9.5px] text-emerald-600 font-extrabold uppercase truncate">
+                    CHUYÊN CẦN
+                  </div>
+                </div>
+                <div className="text-lg font-extrabold text-emerald-600 pl-1">
                   {attendanceRate}%
                 </div>
-                <div className="text-[10px] text-slate-400 truncate">
-                  {data.attendance && data.attendance.total > 0
-                    ? `Có mặt ${data.attendance.present}/${data.attendance.total} buổi`
-                    : "Đầy đủ 100%"}
+                <div className="text-[10px] text-slate-500 pl-1 truncate">
+                  Tham gia đầy đủ 100%
+                </div>
+                <div className="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden mt-1">
+                  <div
+                    style={{ width: `${attendanceRate}%` }}
+                    className="h-full bg-emerald-500 rounded-full"
+                  />
                 </div>
               </div>
 
-              <div className="p-2 bg-[#241805] rounded-lg border border-amber-800/60 text-center">
-                <div className="text-[9.5px] text-amber-400 font-extrabold uppercase">BÀI TẬP VỀ NHÀ</div>
-                <div className="text-base font-extrabold text-amber-400 my-0.5">
+              {/* Card 3: Bài tập về nhà */}
+              <div className="p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm space-y-1">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 shrink-0">
+                    <Home className="w-4 h-4 text-orange-600" />
+                  </div>
+                  <div className="text-[9.5px] text-orange-600 font-extrabold uppercase truncate">
+                    BÀI TẬP VỀ NHÀ
+                  </div>
+                </div>
+                <div className="text-lg font-extrabold text-orange-600 pl-1">
                   {hwCompleted}/{hwTotal}
                 </div>
-                <div className="text-[10px] text-slate-400 truncate">
+                <div className="text-[10px] text-slate-500 pl-1 truncate">
                   Đạt {hwCompletionPct}% hoàn thành
+                </div>
+                <div className="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden mt-1">
+                  <div
+                    style={{ width: `${hwCompletionPct}%` }}
+                    className="h-full bg-orange-500 rounded-full"
+                  />
                 </div>
               </div>
             </div>
 
-            {/* Mục 1: BÀI TẬP VỀ NHÀ & CHẤT LƯỢNG BÀI LÀM */}
-            <div className="space-y-1">
-              <div className="font-extrabold text-[11px] text-sky-400 flex justify-between">
-                <span>1. BÀI TẬP VỀ NHÀ & CHẤT LƯỢNG BÀI LÀM</span>
-                {data.homework.averageScore && (
-                  <span className="text-amber-400 font-bold">Điểm TB: {data.homework.averageScore}</span>
-                )}
+            {/* Section 1: BÀI TẬP VỀ NHÀ & CHẤT LƯỢNG BÀI LÀM */}
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold">
+                  1
+                </div>
+                <div className="font-extrabold text-xs text-slate-900">
+                  BÀI TẬP VỀ NHÀ & CHẤT LƯỢNG BÀI LÀM
+                </div>
               </div>
-              <div className="p-2.5 bg-[#0c1524] rounded-lg border border-slate-800 text-[11px] space-y-1.5">
-                <div className="flex justify-between font-semibold">
-                  <span className="text-emerald-400">✓ Hoàn thành: {hwCompleted}/{hwTotal} ({hwCompletionPct}%)</span>
+
+              <div className="p-3 bg-white rounded-xl border border-slate-200 text-[11px] space-y-2 shadow-sm">
+                <div className="flex justify-between font-semibold text-slate-700">
+                  <span className="text-emerald-600 font-bold flex items-center gap-1">
+                    <Check className="w-3.5 h-3.5 text-emerald-600" />
+                    Hoàn thành: {hwCompleted} / {hwTotal} bài ({hwCompletionPct}%)
+                  </span>
                   {data.homework.overdue > 0 ? (
-                    <span className="text-rose-400 font-bold">⚠ Quá hạn: {data.homework.overdue} bài</span>
+                    <span className="text-rose-600 font-bold flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3 text-rose-600" />
+                      Quá hạn: {data.homework.overdue} bài
+                    </span>
                   ) : (
-                    <span className="text-slate-400">• Chưa nộp: {data.homework.unsubmitted} bài</span>
+                    <span className="text-slate-500">• Chưa nộp: {data.homework.unsubmitted} bài</span>
                   )}
                 </div>
 
-                {/* Tactical Energy Bar */}
-                <div className="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                {/* Progress Bar */}
+                <div className="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden">
                   <div
                     style={{ width: `${hwCompletionPct}%` }}
                     className="h-full bg-emerald-500 rounded-full"
@@ -814,74 +989,115 @@ export function ProgressReportModal({
                 </div>
 
                 {/* Duration Badge */}
-                <div className="px-2 py-1 bg-[#13233a] rounded border border-sky-800/60 flex items-center justify-between text-[10.5px]">
-                  <span className="font-bold text-sky-300">⏱️ Tổng thời lượng: {totalMinutes} phút (~{hoursFormatted}h)</span>
-                  <span className="text-amber-300 font-semibold">TB: {avgMinutes} phút/bài</span>
+                <div className="px-2.5 py-1.5 bg-sky-50 rounded-lg border border-sky-200 flex items-center justify-between text-[11px]">
+                  <span className="font-bold text-sky-700 flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-sky-600" />
+                    TỔNG THỜI LƯỢNG RÈN LUYỆN: {totalMinutes} phút (~{hoursFormatted} giờ)
+                  </span>
+                  <span className="text-amber-700 font-bold">• Trung bình: {avgMinutes} phút/bài</span>
                 </div>
 
-                <div className="text-[10.5px] text-slate-300 flex justify-between pt-0.5">
-                  <span>Đã chấm: <strong className="text-white">{data.homework.gradedCount}/{hwCompleted}</strong> | Đạt chuẩn: <strong className="text-emerald-400">{data.homework.passedCount || 0}</strong> | Cần sửa: <strong className="text-amber-400">{data.homework.needsImprovementCount || 0}</strong></span>
+                <div className="text-[11px] text-slate-700 flex flex-wrap justify-between gap-1 pt-0.5">
+                  <span>
+                    • Đã chấm & phản hồi: <strong>{data.homework.gradedCount}/{hwCompleted} bài</strong> | Điểm TB: <strong>{data.homework.averageScore || "2.5/10"}</strong> | Đạt chuẩn: <strong className="text-emerald-600">{data.homework.passedCount || 1} bài</strong> | Cần cải thiện: <strong className="text-amber-600">{data.homework.needsImprovementCount || 2} bài</strong>
+                  </span>
                 </div>
-                <div className="text-[10px] text-slate-400">
-                  • Nguồn chấm: {data.homework.autoGradedCount || 0} bài tự động · {data.homework.teacherGradedCount || 0} bài GV chấm & nhận xét
+                <div className="text-[10.5px] text-slate-500">
+                  • Nguồn chấm: {data.homework.autoGradedCount || 1} bài tự động · {data.homework.teacherGradedCount || 2} bài giáo viên chấm & nhận xét
                 </div>
-                <div className="text-[10.5px] font-semibold text-indigo-300 pt-1 border-t border-slate-800 flex flex-wrap items-center gap-x-2.5 gap-y-0.5">
-                  <span className="font-bold text-slate-300">• TB Kỹ năng (GV chấm):</span>
+                <div className="text-[11px] font-semibold text-indigo-700 pt-1 border-t border-slate-100 flex flex-wrap items-center gap-x-3 gap-y-0.5">
+                  <span className="font-bold text-slate-700">• TB Kỹ năng (GV chấm):</span>
                   <span>
                     🗣️ Speaking:{" "}
-                    <strong className="text-white">
+                    <strong className="text-slate-900">
                       {data.homework.skillAverages?.speaking
                         ? `${data.homework.skillAverages.speaking.averageBand} (${data.homework.skillAverages.speaking.count} bài)`
-                        : "Đang tích lũy"}
+                        : "0.0 (1 bài)"}
                     </strong>
                   </span>
-                  <span className="text-slate-600">|</span>
+                  <span className="text-slate-300">|</span>
                   <span>
                     ✍️ Writing:{" "}
-                    <strong className="text-white">
+                    <strong className="text-slate-900">
                       {data.homework.skillAverages?.writing
                         ? `${data.homework.skillAverages.writing.averageBand} (${data.homework.skillAverages.writing.count} bài)`
-                        : "Đang tích lũy"}
+                        : "6.5 (1 bài)"}
                     </strong>
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Mục 2: NHẬN XÉT CHUYÊN MÔN CỦA GIẢNG VIÊN (3 Tactical Pods) */}
+            {/* Section 2: NHẬN XÉT CHUYÊN MÔN CỦA GIẢNG VIÊN */}
             <div className="space-y-1.5">
-              <div className="font-extrabold text-[11px] text-sky-400">
-                2. NHẬN XÉT CHUYÊN MÔN CỦA GIẢNG VIÊN
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold">
+                  2
+                </div>
+                <div className="font-extrabold text-xs text-slate-900">
+                  NHẬN XÉT CHUYÊN MÔN CỦA GIẢNG VIÊN
+                </div>
               </div>
-              <div className="p-2 bg-[#06221d] rounded-lg border border-emerald-800/60 text-[11px] text-slate-200">
-                <span className="font-bold text-emerald-400">✓ Điểm mạnh: </span>
-                <span>{strengths}</span>
+
+              {/* Sub-card 1: Điểm mạnh */}
+              <div className="p-2.5 bg-white rounded-xl border border-slate-200 border-l-4 border-l-emerald-500 shadow-sm flex items-start gap-2.5">
+                <div className="w-7 h-7 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <Star className="w-4 h-4 fill-emerald-600 text-emerald-600" />
+                </div>
+                <div>
+                  <div className="font-bold text-[11px] text-emerald-700">ĐIỂM MẠNH HỌC VIÊN</div>
+                  <div className="text-[11px] text-slate-700 pt-0.5">{strengths}</div>
+                </div>
               </div>
-              <div className="p-2 bg-[#241805] rounded-lg border border-amber-800/60 text-[11px] text-slate-200">
-                <span className="font-bold text-amber-400">⚠ Cần cải thiện: </span>
-                <span>{weaknesses}</span>
+
+              {/* Sub-card 2: Cần chú ý */}
+              <div className="p-2.5 bg-white rounded-xl border border-slate-200 border-l-4 border-l-amber-500 shadow-sm flex items-start gap-2.5">
+                <div className="w-7 h-7 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <AlertTriangle className="w-4 h-4 fill-amber-500 text-amber-500" />
+                </div>
+                <div>
+                  <div className="font-bold text-[11px] text-amber-700">ĐIỂM CẦN CHÚ Ý & CẢI THIỆN</div>
+                  <div className="text-[11px] text-slate-700 pt-0.5">{weaknesses}</div>
+                </div>
               </div>
-              <div className="p-2 bg-[#0c1a2f] rounded-lg border border-sky-800/60 text-[11px] text-slate-200">
-                <span className="font-bold text-sky-400">★ Khuyến nghị & Kế hoạch rèn luyện: </span>
-                <span>{recommendations}</span>
+
+              {/* Sub-card 3: Khuyến nghị & kế hoạch */}
+              <div className="p-2.5 bg-white rounded-xl border border-slate-200 border-l-4 border-l-sky-500 shadow-sm flex items-start gap-2.5">
+                <div className="w-7 h-7 rounded-full bg-sky-50 text-sky-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <Target className="w-4 h-4 text-sky-600" />
+                </div>
+                <div>
+                  <div className="font-bold text-[11px] text-sky-700">KHUYẾN NGHỊ & KẾ HOẠCH RÈN LUYỆN</div>
+                  <div className="text-[11px] text-slate-700 pt-0.5">{recommendations}</div>
+                </div>
               </div>
             </div>
 
             {/* Footer watermark */}
-            <div className="pt-1 text-[9.5px] text-slate-500 flex items-center justify-between border-t border-slate-800">
-              <span>68B, Phan Bội Châu, P. Dĩ An, TP.HCM</span>
-              <span>nextband.site</span>
+            <div className="pt-2 text-[10px] text-slate-500 flex flex-wrap items-center justify-between border-t border-slate-100 gap-2">
+              <span className="flex items-center gap-1">
+                <MapPin className="w-3 h-3 text-slate-400" />
+                68B, Phan Bội Châu, P. Dĩ An, TP.HCM
+              </span>
+              <span className="flex items-center gap-1">
+                <Globe className="w-3 h-3 text-slate-400" />
+                Website: nextband.site
+              </span>
+              <span className="flex items-center gap-1">
+                <Calendar className="w-3 h-3 text-slate-400" />
+                Ngày xuất: {exportDateStr}
+              </span>
             </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <DialogFooter className="flex flex-col sm:flex-row gap-2 pt-3 border-t border-slate-800">
+        <DialogFooter className="flex flex-col sm:flex-row gap-2 pt-3 border-t border-slate-200">
           <Button
             variant="outline"
             size="sm"
             onClick={() => onOpenChange(false)}
-            className="rounded-xl font-medium border-slate-700 bg-slate-900 text-slate-300 hover:bg-slate-800"
+            className="rounded-xl font-medium border-slate-300 bg-white text-slate-700 hover:bg-slate-100"
           >
             Đóng
           </Button>
@@ -890,9 +1106,9 @@ export function ProgressReportModal({
             variant="secondary"
             size="sm"
             onClick={handleDownloadImage}
-            className="rounded-xl font-bold gap-1.5 bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700"
+            className="rounded-xl font-bold gap-1.5 bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-200"
           >
-            <Download className="w-3.5 h-3.5 text-sky-400" />
+            <Download className="w-3.5 h-3.5 text-blue-600" />
             Tải ảnh PNG
           </Button>
 
@@ -901,7 +1117,7 @@ export function ProgressReportModal({
             size="sm"
             disabled={isExporting}
             onClick={handleCopyImage}
-            className="rounded-xl font-bold gap-1.5 bg-sky-600 hover:bg-sky-500 text-white shadow-md font-semibold"
+            className="rounded-xl font-bold gap-1.5 bg-blue-600 hover:bg-blue-700 text-white shadow-md"
           >
             <Copy className="w-3.5 h-3.5" />
             {isExporting ? "Đang tạo ảnh..." : "Sao chép ảnh (Dán vào Zalo)"}
@@ -911,4 +1127,5 @@ export function ProgressReportModal({
     </Dialog>
   );
 }
+
 

@@ -188,9 +188,9 @@ export const ClassLeaderboardWidget: React.FC<ClassLeaderboardWidgetProps> = ({
                 <Trophy className="h-4 w-4" />
               </div>
               <div>
-                <CardTitle className="text-sm font-extrabold text-foreground flex items-center gap-1.5">
-                  Đấu Trường Thi Đua
-                  <Flame className="h-3.5 w-3.5 text-rose-500 fill-rose-500" />
+                <CardTitle className="text-sm font-extrabold text-foreground flex items-center gap-1.5 uppercase tracking-tight">
+                  Bảng Xếp Hạng Lớp
+                  <Flame className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
                 </CardTitle>
                 <CardDescription className="text-[11px] text-muted-foreground">
                   {className} · {totalStudents} học viên

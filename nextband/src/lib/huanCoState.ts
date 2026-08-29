@@ -144,9 +144,9 @@ export function getMascotPresentation(input: HuanCoInput): HuanCoState {
         state: "CELEBRATE",
         eventType,
         urgency: "GREEN",
-        badgeText: "Đột Phá Cảnh Giới",
-        quote: `Chúc mừng ngươi! Ngươi đã bước lên cảnh giới ${realm.academicRank} (${realm.realmName}).`,
-        advice: "Căn cơ của ngươi đã vững chắc hơn rất nhiều, tiếp tục phát huy nhé.",
+        badgeText: "Thăng Cảnh Giới",
+        quote: `Căn cơ đã vững. Đã chạm mốc ${realm.academicRank}. Một tầng kiến thức mới đã mở ra.`,
+        advice: "Tiếp tục giữ vững phong độ này trong các bài học tiếp theo.",
         ctaLabel: "Xem lộ trình tiếp theo",
         ctaPath: routes.student.submissions(),
         dotColorClass: "bg-amber-400",
@@ -162,10 +162,10 @@ export function getMascotPresentation(input: HuanCoInput): HuanCoState {
         eventType,
         urgency: "GREEN",
         badgeText: "Kỷ Lục Mới",
-        quote: `Tuyệt vời! Ngươi vừa vượt qua kỷ lục của chính mình${
+        quote: `Band điểm đã nhích lên${
           input.recentTrigger?.score ? ` (${input.recentTrigger.score})` : ""
-        }.`,
-        advice: "Đây là kết quả xứng đáng cho sự nỗ lực kiên trì của ngươi.",
+        }. Tiếp tục giữ cách học này.`,
+        advice: "Sự kiên trì đang mang lại kết quả rõ rệt.",
         ctaLabel: "Xem chi tiết bài làm",
         ctaPath: routes.student.submissions(),
         dotColorClass: "bg-emerald-400",
@@ -181,8 +181,8 @@ export function getMascotPresentation(input: HuanCoInput): HuanCoState {
         eventType,
         urgency: "GREEN",
         badgeText: `Chuỗi ${streakDays || 7} Ngày`,
-        quote: `Sự rèn luyện liên tục ${streakDays || 7} ngày qua đang tạo nên nền móng vững vàng.`,
-        advice: "Hãy giữ vững nhịp độ này trong buổi học hôm nay.",
+        quote: `${streakDays || 7} ngày liên tục không trễ bài. Đây mới là cách Band tăng bền vững.`,
+        advice: "Kỷ luật đều đặn chính là chìa khóa bứt phá.",
         ctaLabel: "Tiếp tục rèn luyện",
         ctaPath: routes.student.submissions(),
         dotColorClass: "bg-amber-500",
@@ -198,14 +198,14 @@ export function getMascotPresentation(input: HuanCoInput): HuanCoState {
         eventType,
         urgency: "GREEN",
         badgeText: "Đã Hoàn Thành",
-        quote: "Khá lắm. Một nhiệm vụ nữa đã được giải quyết trọn vẹn.",
-        advice: "Nghỉ tay một chút rồi xem lại lời giải chi tiết và nhận xét nhé.",
+        quote: "Rất tốt. Một nhiệm vụ nữa đã được giải quyết trọn vẹn.",
+        advice: "Nghỉ ngơi một chút rồi xem lại lời giải chi tiết và nhận xét nhé.",
         ctaLabel: "Xem bài đã nộp",
         ctaPath: routes.student.submissions(),
         dotColorClass: "bg-emerald-500",
         ringColorClass: "ring-emerald-500/30 border-emerald-500",
         visualLevel: "subtle",
-        reward: { xp: input.recentTrigger?.xpEarned || 50, label: "Kinh nghiệm tu luyện" },
+        reward: { xp: input.recentTrigger?.xpEarned || 50, label: "Tiến độ học tập" },
         realm,
       };
 
@@ -219,9 +219,9 @@ export function getMascotPresentation(input: HuanCoInput): HuanCoState {
         state: "MENTOR",
         eventType,
         urgency: "ORANGE",
-        badgeText: "Cần Mài Giũa",
-        quote: "Chiêu thức còn chút sơ hở, ta cùng xem lại và mài giũa thêm một lần nữa.",
-        advice: `Xem nhận xét của giáo viên và hoàn thiện bài "${target.title}" (Attempt 2).`,
+        badgeText: "Cần Sửa Bài",
+        quote: "Bài này còn vài điểm cần mài giũa thêm một lần nữa.",
+        advice: `Xem nhận xét của giáo viên và hoàn thiện bài "${target.title}".`,
         ctaLabel: `Sửa bài: ${target.title}`,
         ctaPath: targetPath,
         dotColorClass: "bg-amber-500",
@@ -240,18 +240,14 @@ export function getMascotPresentation(input: HuanCoInput): HuanCoState {
       );
       const target = overdueItems[0] || actionQueue[0];
       const targetPath = routes.exam.take(target.examId || target.id);
-      const count = overdueItems.length;
 
       return {
         state: "ALERT",
         eventType,
         urgency: "RED",
         badgeText: "Cần Xử Lý",
-        quote:
-          count > 1
-            ? `Có ${count} nhiệm vụ đang chờ xử lý. Đừng lo, chúng ta giải quyết từng bài một là ổn ngay.`
-            : `Có nhiệm vụ chưa hoàn tất. Chúng ta cùng bắt tay xử lý bài này nhé.`,
-        advice: `Trước tiên hãy giải quyết bài "${target.title}" này đã.`,
+        quote: "Đừng để bài cũ kéo chậm chặng hiện tại. Cùng giải quyết bài này nhé.",
+        advice: `Ưu tiên hoàn thành bài "${target.title}" để giữ nhịp học.`,
         ctaLabel: `Xử lý nhiệm vụ: ${target.title}`,
         ctaPath: targetPath,
         dotColorClass: "bg-rose-500",
@@ -275,7 +271,7 @@ export function getMascotPresentation(input: HuanCoInput): HuanCoState {
         eventType,
         urgency: "YELLOW",
         badgeText: "Sắp Đến Hạn",
-        quote: "Thời gian rất quý báu. Bài tập này sắp đến hạn, tranh thủ làm sớm để giữ tiến độ nhé.",
+        quote: "Bài tập này sắp đến hạn, tranh thủ làm sớm để giữ tiến độ nhé.",
         advice: `Bài "${target.title}"${countdownText} cần hoàn thành sớm kẻo dồn việc.`,
         ctaLabel: `Làm bài: ${target.title}`,
         ctaPath: targetPath,
@@ -300,7 +296,7 @@ export function getMascotPresentation(input: HuanCoInput): HuanCoState {
         quote:
           totalPending > 1
             ? `Hành trình phía trước có ${totalPending} bài tập rèn luyện. Từng bước tiến lên nào.`
-            : `Có nhiệm vụ mới đang chờ ngươi rèn luyện.`,
+            : `Có nhiệm vụ mới đang chờ em hoàn thành.`,
         advice: `Hãy bắt đầu ngay với bài "${target.title}".`,
         ctaLabel: `Làm bài: ${target.title}`,
         ctaPath: targetPath,
@@ -317,8 +313,8 @@ export function getMascotPresentation(input: HuanCoInput): HuanCoState {
         state: "WELCOME",
         eventType,
         urgency: "GREEN",
-        badgeText: "Tiến Triển Tốt",
-        quote: "Khá lắm! Ngươi đã giải quyết xong các bài tập được giao đợt này.",
+        badgeText: "Giữ Nhịp Tốt",
+        quote: "Hôm nay em giữ nhịp rất tốt. Không có bài quá hạn.",
         advice:
           gradedCount > 0
             ? `Đã có ${gradedCount} bài được chấm nhận xét. Xem lại để củng cố kiến thức.`
@@ -338,8 +334,8 @@ export function getMascotPresentation(input: HuanCoInput): HuanCoState {
         eventType: "IDLE",
         urgency: "GRAY",
         badgeText: "Đang Thảnh Thơi",
-        quote: "Hiện tại chưa có bài tập mới. Ngươi có thể nghỉ ngơi tĩnh dưỡng hoặc ôn lại bài cũ.",
-        advice: "Khi giáo viên giao bài tập mới, ta sẽ lập tức chỉ dẫn cho ngươi.",
+        quote: "Hiện tại chưa có bài tập mới. Em có thể ôn lại bài cũ hoặc đọc thêm bài đọc.",
+        advice: "Khi giáo viên giao bài mới, thầy sẽ nhắc em ngay.",
         dotColorClass: "bg-muted-foreground",
         ringColorClass: "ring-border border-border",
         visualLevel: "ambient",

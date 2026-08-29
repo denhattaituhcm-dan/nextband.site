@@ -87,6 +87,21 @@ export function NotificationBell({ scope: _scope }: NotificationBellProps) {
           queryClient.invalidateQueries({ queryKey: ["notifications-unread-count"] });
           queryClient.invalidateQueries({ queryKey: ["notifications-list"] });
 
+          // If student scope, ignore admin/CRM events
+          if (_scope === "student") {
+            const text = `${newNotif.title || ""} ${newNotif.message || ""}`.toLowerCase();
+            if (
+              newNotif.entityType === "USER" ||
+              newNotif.entityType === "LEAD" ||
+              newNotif.entityType === "LEAD_INTAKE" ||
+              text.includes("đăng ký tài khoản") ||
+              text.includes("được thêm vào hệ thống") ||
+              text.includes("lead mới")
+            ) {
+              return;
+            }
+          }
+
           const resolvedLink = resolveNotificationLink(newNotif, _scope);
           if (newNotif?.title) {
             toast.info(newNotif.title, {
@@ -138,8 +153,42 @@ export function NotificationBell({ scope: _scope }: NotificationBellProps) {
     refetchInterval: 30000,
   });
 
-  const unreadCount = unreadData?.count ?? 0;
-  const notifications: NotificationItem[] = listData?.data || [];
+  const rawNotifications: NotificationItem[] = listData?.data || [];
+  const notifications = React.useMemo(() => {
+    if (_scope === "student") {
+      return rawNotifications.filter((n) => {
+        if (
+          n.entityType === "USER" ||
+          n.entityType === "LEAD" ||
+          n.entityType === "LEAD_INTAKE" ||
+          n.entityType === "ADMIN_AUDIT"
+        ) {
+          return false;
+        }
+        const text = `${n.title} ${n.message || ""}`.toLowerCase();
+        if (
+          text.includes("đăng ký tài khoản") ||
+          text.includes("được thêm vào hệ thống") ||
+          text.includes("lead mới") ||
+          text.includes("tiếp nhận từ nguồn") ||
+          text.includes("yêu cầu tư vấn") ||
+          text.includes("khách hàng")
+        ) {
+          return false;
+        }
+        return true;
+      });
+    }
+    return rawNotifications;
+  }, [rawNotifications, _scope]);
+
+  const unreadCount = React.useMemo(() => {
+    if (_scope === "student") {
+      return notifications.filter((n) => !n.isRead).length;
+    }
+    return unreadData?.count ?? 0;
+  }, [notifications, _scope, unreadData?.count]);
+
   const hasError = isUnreadError || isListError;
 
   // 3. Mark Single Notification as Read

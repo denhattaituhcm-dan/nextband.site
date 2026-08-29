@@ -12,6 +12,7 @@ import {
   generateReferralCode,
   getBuddyShareText,
   exportBuddyPassToPng,
+  copyBuddyPassImageToClipboard,
 } from "@/lib/studyBuddyHelper";
 import { Copy, Check, Download, Gift, Users, Sparkles } from "lucide-react";
 import { toast } from "sonner";
@@ -34,20 +35,38 @@ export function StudyBuddyModal({
   code,
 }: StudyBuddyModalProps) {
   const [copied, setCopied] = useState(false);
+  const [isCopying, setIsCopying] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
   const referralCode = code || generateReferralCode(studentName, userId);
   const targetUrl = `${window.location.origin}/buddy?ref=${referralCode}&from=${encodeURIComponent(studentName)}`;
 
-  const handleCopyLink = async () => {
+  const handleCopyCard = async () => {
+    setIsCopying(true);
     try {
-      const shareText = getBuddyShareText(studentName, referralCode, targetUrl);
-      await navigator.clipboard.writeText(shareText);
+      await copyBuddyPassImageToClipboard({
+        studentName,
+        className,
+        referralCode,
+        targetUrl,
+      });
       setCopied(true);
-      toast.success("Đã sao chép lời mời và mã vào bộ nhớ tạm!");
+      toast.success("Đã sao chép ảnh thẻ mời! Bạn có thể dán (Ctrl+V) trực tiếp vào Zalo hoặc tin nhắn.");
       setTimeout(() => setCopied(false), 3000);
-    } catch {
-      toast.error("Không thể sao chép tự động, vui lòng sao chép thủ công.");
+    } catch (err: any) {
+      console.error("Copy card error:", err);
+      // Graceful fallback to text copy if image clipboard isn't supported
+      try {
+        const shareText = getBuddyShareText(studentName, referralCode, targetUrl);
+        await navigator.clipboard.writeText(shareText);
+        setCopied(true);
+        toast.info("Đã sao chép tin nhắn và link mời (trình duyệt không hỗ trợ chép ảnh trực tiếp).");
+        setTimeout(() => setCopied(false), 3000);
+      } catch {
+        toast.error("Không thể sao chép thẻ, vui lòng bấm 'Tải ảnh thẻ mời'.");
+      }
+    } finally {
+      setIsCopying(false);
     }
   };
 
@@ -97,19 +116,20 @@ export function StudyBuddyModal({
         {/* Action Buttons */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
           <Button
-            onClick={handleCopyLink}
+            onClick={handleCopyCard}
+            disabled={isCopying || isExporting}
             variant="default"
             className="w-full h-9 text-xs font-bold gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white shadow-xs"
           >
             {copied ? (
               <>
                 <Check className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Đã sao chép tin nhắn</span>
+                <span>Đã sao chép thẻ</span>
               </>
             ) : (
               <>
                 <Copy className="w-3.5 h-3.5" />
-                <span>Sao chép tin nhắn rủ bạn</span>
+                <span>{isCopying ? "Đang sao chép..." : "Sao chép thẻ mời"}</span>
               </>
             )}
           </Button>
@@ -117,7 +137,7 @@ export function StudyBuddyModal({
           <Button
             onClick={handleDownloadImage}
             variant="outline"
-            disabled={isExporting}
+            disabled={isExporting || isCopying}
             className="w-full h-9 text-xs font-bold gap-1.5 rounded-xl border-slate-300 hover:bg-slate-50 text-slate-800"
           >
             <Download className="w-3.5 h-3.5" />

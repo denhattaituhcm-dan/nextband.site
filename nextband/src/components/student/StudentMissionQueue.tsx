@@ -28,38 +28,29 @@ export function StudentMissionQueue({
   const navigate = useNavigate();
   const topMissions = missions.slice(0, 3);
 
-  // ─── Zero Pending Missions: "Cảnh Giới Ổn Định" ────────────────────────
+  // ─── Zero Pending Missions: "Không có bài quá hạn" ────────────────────
   if (topMissions.length === 0) {
     return (
-      <Card className="rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-xs space-y-4">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+      <Card className="rounded-2xl border border-emerald-200/80 bg-gradient-to-r from-emerald-50/50 via-white to-emerald-50/30 p-5 md:p-6 shadow-xs space-y-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold shrink-0 shadow-2xs">
               <CheckCircle2 className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                Cảnh Giới Ổn Định
-                <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100 border-0 text-[10px] font-bold">
-                  Sạch hàng đợi
+              <h2 className="text-sm md:text-base font-bold text-slate-900 flex items-center gap-2">
+                Không có bài quá hạn
+                <Badge className="bg-emerald-100 text-emerald-800 border-0 text-[10px] font-bold">
+                  ✓ Giữ nhịp rất tốt
                 </Badge>
               </h2>
-              <p className="text-xs text-slate-500">
-                Toàn bộ bài tập trong chặng hiện tại đã được bạn hoàn thành và gửi đi.
+              <p className="text-xs text-slate-600 italic">
+                “Giữ được nhịp này rất tốt. Kỷ luật đều đặn mới là thứ kéo Band đi lên.” — <strong className="not-italic text-slate-800">Huyền Cơ</strong>
               </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate("/reading")}
-              className="text-xs font-semibold h-8 rounded-lg border-indigo-200 bg-indigo-50/60 text-indigo-700 hover:bg-indigo-100 hover:text-indigo-900 gap-1.5"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>Khám phá Reading Universe</span>
-            </Button>
+          <div className="flex items-center gap-2 shrink-0">
             {enrolledClassId && (
               <Button
                 variant="outline"
@@ -68,17 +59,10 @@ export function StudentMissionQueue({
                 className="text-xs font-semibold h-8 rounded-lg border-slate-200 text-slate-700 hover:bg-slate-50 gap-1.5"
               >
                 <BookOpen className="w-3.5 h-3.5 text-slate-500" />
-                <span>Xem lại kho bài lớp</span>
+                <span>Kho bài lớp</span>
               </Button>
             )}
           </div>
-        </div>
-
-        <div className="rounded-xl bg-slate-50 border border-slate-200/70 p-4 text-xs text-slate-600 leading-relaxed flex items-center gap-3">
-          <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
-          <span>
-            <strong>Khuyến nghị từ ARIS:</strong> Dành thời gian xem lại các ghi chú nhận xét chi tiết bên dưới để chuẩn bị cho buổi học và bài đánh giá tiếp theo.
-          </span>
         </div>
       </Card>
     );

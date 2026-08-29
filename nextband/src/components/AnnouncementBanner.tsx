@@ -9,13 +9,13 @@ interface AnnouncementBannerProps {
   classId?: string;
 }
 
-export const AnnouncementBanner: React.FC<AnnouncementBannerProps> = () => {
+export const AnnouncementBanner: React.FC<AnnouncementBannerProps> = ({ scopeRole = "student" }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const { data } = useQuery({
     queryKey: ["announcements-banner"],
-    queryFn: () => notificationsApi.list({ limit: 5 }),
+    queryFn: () => notificationsApi.list({ limit: 10 }),
     refetchInterval: 30000,
   });
 
@@ -28,9 +28,35 @@ export const AnnouncementBanner: React.FC<AnnouncementBannerProps> = () => {
     },
   });
 
-  const announcements = (data?.data || []).filter(
-    (n: NotificationItem) => (n.type === "ANNOUNCEMENT" || n.type === "SYSTEM") && !n.isRead
-  );
+  const announcements = (data?.data || []).filter((n: NotificationItem) => {
+    if (n.isRead) return false;
+
+    // Filter out administrative/CRM notices for students
+    if (scopeRole === "student") {
+      if (
+        n.entityType === "USER" ||
+        n.entityType === "LEAD" ||
+        n.entityType === "LEAD_INTAKE" ||
+        n.entityType === "ADMIN_AUDIT"
+      ) {
+        return false;
+      }
+      const text = `${n.title} ${n.message || ""}`.toLowerCase();
+      if (
+        text.includes("đăng ký tài khoản") ||
+        text.includes("được thêm vào hệ thống") ||
+        text.includes("lead mới") ||
+        text.includes("tiếp nhận từ nguồn") ||
+        text.includes("yêu cầu tư vấn") ||
+        text.includes("khách hàng")
+      ) {
+        return false;
+      }
+      return n.type === "ANNOUNCEMENT" || n.type === "SYSTEM";
+    }
+
+    return n.type === "ANNOUNCEMENT" || n.type === "SYSTEM";
+  });
 
   if (!announcements || announcements.length === 0) return null;
 

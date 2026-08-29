@@ -4,6 +4,7 @@ import { SectionContainer } from "@/components/public/SectionContainer";
 import { CourseRoadmapRow } from "@/components/public/CourseRoadmapRow";
 import { TrustValueStrip } from "@/components/public/TrustValueStrip";
 import { QuickTrialModal } from "@/components/public/QuickTrialModal";
+import { TuitionCalculator } from "@/components/public/TuitionCalculator";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/common/SEO";
 import { COURSE_CATALOG } from "@/constants/courses";
@@ -11,10 +12,6 @@ import {
   BookOpen,
   Target,
   ArrowRight,
-  ShieldCheck,
-  Clock,
-  Brain,
-  Users,
 } from "lucide-react";
 
 export default function CoursesPage() {
@@ -152,55 +149,8 @@ export default function CoursesPage() {
         </div>
       </SectionContainer>
 
-      {/* Core Operational Commitments Section */}
-      <SectionContainer
-        badge="Quy Chuẩn Lớp Học"
-        title="Tiêu chuẩn đào tạo tại Học Viện ARIS"
-        description="Những cam kết về môi trường học tập và trách nhiệm giảng dạy được áp dụng đồng bộ trên toàn bộ 5 khóa học."
-        background="default"
-      >
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 text-left">
-          <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-3 shadow-2xs">
-            <div className="p-2.5 rounded-2xl bg-brand-blue-soft text-brand-blue w-fit">
-              <Users className="h-6 w-6" />
-            </div>
-            <h3 className="font-black text-foreground text-xl">Tối đa 08 học viên</h3>
-            <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-              Sĩ số lớp nhỏ đảm bảo giảng viên theo sát và sửa chữa chi tiết bài làm của từng học viên trong suốt khóa học.
-            </p>
-          </div>
-
-          <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-3 shadow-2xs">
-            <div className="p-2.5 rounded-2xl bg-brand-blue-soft text-brand-blue w-fit">
-              <Clock className="h-6 w-6" />
-            </div>
-            <h3 className="font-black text-foreground text-xl">3 Buổi / Tuần</h3>
-            <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-              Lịch học tiêu chuẩn: 03 buổi mỗi tuần, mỗi buổi 02 giờ, kết hợp làm bài tập và nhận phản hồi trên NextBand.
-            </p>
-          </div>
-
-          <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-3 shadow-2xs">
-            <div className="p-2.5 rounded-2xl bg-brand-blue-soft text-brand-blue w-fit">
-              <Brain className="h-6 w-6" />
-            </div>
-            <h3 className="font-black text-foreground text-xl">Sửa lỗi từng câu</h3>
-            <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-              Giáo viên phân tích chi tiết lỗi sai ngữ pháp, từ vựng và lập luận; học viên tự tay viết lại bài sửa trước khi sang bài mới.
-            </p>
-          </div>
-
-          <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-3 shadow-2xs">
-            <div className="p-2.5 rounded-2xl bg-brand-blue-soft text-brand-blue w-fit">
-              <ShieldCheck className="h-6 w-6" />
-            </div>
-            <h3 className="font-black text-foreground text-xl">Giảng viên chuyên môn</h3>
-            <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-              Đội ngũ giảng viên có chứng chỉ chuyên môn cao, trực tiếp đứng lớp giảng dạy và theo sát tiến độ học tập.
-            </p>
-          </div>
-        </div>
-      </SectionContainer>
+      {/* Tuition Calculator Section */}
+      <TuitionCalculator />
 
       {/* Final Action CTA */}
       <section className="py-20 sm:py-24 bg-brand-blue text-white">

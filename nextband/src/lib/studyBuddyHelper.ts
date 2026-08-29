@@ -42,12 +42,12 @@ function loadImage(src: string): Promise<HTMLImageElement> {
  * Pure Canvas Ultra-High-Resolution (2400x1520 Retina 2X) Image Generator for Study Buddy Pass
  * Renders a razor-sharp PNG with true transparent rounded corners matching the live web view.
  */
-export async function exportBuddyPassToPng(params: {
+export async function generateBuddyPassCanvas(params: {
   studentName: string;
   className: string;
   referralCode: string;
   targetUrl: string;
-}): Promise<void> {
+}): Promise<HTMLCanvasElement> {
   const scale = 2; // 2X Super-Sampling for Retina 4K sharpness
   const baseWidth = 1200;
   const baseHeight = 760;
@@ -58,7 +58,7 @@ export async function exportBuddyPassToPng(params: {
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext("2d");
-  if (!ctx) return;
+  if (!ctx) throw new Error("Canvas 2D context not available");
 
   // Enable high-quality image smoothing
   ctx.imageSmoothingEnabled = true;
@@ -369,11 +369,56 @@ export async function exportBuddyPassToPng(params: {
 
   ctx.restore(); // Restore scale
 
-  // Download Trigger - Tên file ngắn gọn tối đa (VD: ARIS-MINH42.png)
+  return canvas;
+}
+
+/**
+ * Downloads the Study Buddy Pass image as a PNG file.
+ */
+export async function exportBuddyPassToPng(params: {
+  studentName: string;
+  className: string;
+  referralCode: string;
+  targetUrl: string;
+}): Promise<void> {
+  const canvas = await generateBuddyPassCanvas(params);
   const dataUrl = canvas.toDataURL("image/png");
   const link = document.createElement("a");
   link.download = `${params.referralCode || "ARIS-BUDDY"}.png`;
   link.href = dataUrl;
   link.click();
+}
+
+/**
+ * Copies the Study Buddy Pass card directly to clipboard as an image (PNG Blob).
+ * Allows users to paste directly (Ctrl+V) into Zalo, Messenger, etc.
+ */
+export async function copyBuddyPassImageToClipboard(params: {
+  studentName: string;
+  className: string;
+  referralCode: string;
+  targetUrl: string;
+}): Promise<void> {
+  const canvas = await generateBuddyPassCanvas(params);
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(async (blob) => {
+      if (!blob) {
+        reject(new Error("Không thể tạo dữ liệu ảnh từ thẻ."));
+        return;
+      }
+      try {
+        if (navigator.clipboard && typeof ClipboardItem !== "undefined") {
+          const item = new ClipboardItem({ "image/png": blob });
+          await navigator.clipboard.write([item]);
+          resolve();
+        } else {
+          throw new Error("Trình duyệt không hỗ trợ sao chép ảnh trực tiếp vào Clipboard.");
+        }
+      } catch (err) {
+        reject(err);
+      }
+    }, "image/png");
+  });
 }
 
