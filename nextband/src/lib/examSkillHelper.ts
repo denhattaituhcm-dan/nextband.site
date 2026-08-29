@@ -51,7 +51,7 @@ export function isAutoGradedExam(examOrItem: any): boolean {
   if (!examOrItem) return true;
 
   const rawExamType = normalizeText(examOrItem.examType || examOrItem.exam_type || examOrItem.type);
-  const rawTitle = normalizeText(examOrItem.title || examOrItem.homeworkTitle || examOrItem.name);
+  const rawTitle = normalizeText(examOrItem.title || examOrItem.homeworkTitle || examOrItem.homework_title || examOrItem.homework?.title || examOrItem.name);
 
   // If explicitly speaking or writing examType
   if (rawExamType === "speaking" || rawExamType === "writing") {

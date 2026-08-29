@@ -6,6 +6,7 @@ import {
   selectCanonicalSubmission,
   compareHomeworkOrder,
 } from "@/lib/homeworkStatusHelper";
+import { isAutoGradedExam } from "@/lib/examSkillHelper";
 
 interface WorkspaceContextType {
   classId: string;
@@ -273,7 +274,11 @@ export const WorkspaceProvider: React.FC<{
   const submissions = classData?.submissions || [];
   
   const pendingReviewsCount = submissions.filter(
-    (s: any) => s.grade_status === "pending" || s.status === "submitted" || s.status === "SUBMITTED"
+    (s: any) => {
+      const isAuto = isAutoGradedExam(s.exam || { title: s.title || s.homework_title || s.homework?.title, examType: s.examType || s.exam_type || s.type });
+      if (isAuto) return false;
+      return s.grade_status === "pending" || s.status === "submitted" || s.status === "SUBMITTED";
+    }
   ).length;
 
   const overdueCount = submissions.filter(

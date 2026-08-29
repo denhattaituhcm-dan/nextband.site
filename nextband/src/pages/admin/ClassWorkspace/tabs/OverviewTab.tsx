@@ -37,7 +37,7 @@ export const OverviewTab: React.FC = () => {
   
   const submittedCount = submissions.filter((s: any) => s.status === "submitted" || s.status === "SUBMITTED" || s.status === "graded" || s.status === "GRADED").length;
   const gradedCount = submissions.filter((s: any) => s.status === "graded" || s.status === "GRADED").length;
-  const pendingCount = pendingReviewsCount || submissions.filter((s: any) => s.status === "submitted" || s.status === "SUBMITTED").length;
+  const pendingCount = pendingReviewsCount;
   const totalAssignedSlots = Math.max(1, studentsCount * totalHomeworks);
   const unsubmittedCount = Math.max(0, totalAssignedSlots - submittedCount);
 

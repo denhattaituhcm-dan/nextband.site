@@ -18,13 +18,12 @@ export const GradingTab: React.FC = () => {
   const queue = submissions
     .filter(
       (s: any) => {
-        const isAuto = isAutoGradedExam(s.exam || { title: s.title || s.homework_title || s.homework?.title });
+        const isAuto = isAutoGradedExam(s.exam || { title: s.title || s.homework_title || s.homework?.title, examType: s.examType || s.exam_type || s.type });
         if (isAuto) return false;
         return (
           s.grade_status === "pending" ||
           s.status === "submitted" ||
-          s.status === "SUBMITTED" ||
-          s.status === "overdue"
+          s.status === "SUBMITTED"
         );
       }
     )

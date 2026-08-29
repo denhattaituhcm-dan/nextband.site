@@ -39,7 +39,7 @@ export const HomeworkTab: React.FC = () => {
     const pendingSubmissions = isLessonAutoGraded
       ? []
       : lessonSubmissions
-          .filter((s: any) => s.grade_status === "pending" || s.status === "submitted" || s.status === "SUBMITTED" || s.status === "overdue")
+          .filter((s: any) => s.grade_status === "pending" || s.status === "submitted" || s.status === "SUBMITTED")
           .map((s: any) => {
             const targetStudentId = s.studentId || s.student_id || s.student?.id;
             const student = students.find(

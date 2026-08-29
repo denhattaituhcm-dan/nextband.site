@@ -3953,34 +3953,6 @@ export const siteSettingsApi = {
   },
 };
 
-// =============================================
-// PHASE 0 SPRINT 3 PROJECTION DTO APIS
-// =============================================
-export enum HomeworkPriority {
-  RESUME = "RESUME",
-  DUE_TODAY = "DUE_TODAY",
-  UPCOMING = "UPCOMING",
-  OVERDUE = "OVERDUE",
-}
-
-export interface StudentWorkspaceTask {
-  id: string;
-  title: string;
-  className: string;
-  deadline: string | null;
-  status: string;
-  score: number | null;
-  feedback: string | null;
-  actionUrl: string;
-}
-
-export interface StudentWorkspaceContract {
-  continue: StudentWorkspaceTask | null;
-  dueToday: StudentWorkspaceTask[];
-  upcoming: StudentWorkspaceTask[];
-  completed: StudentWorkspaceTask[];
-}
-
 export const invitationsApi = {
   joinByCode: async (payload: { code: string }) => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -4014,23 +3986,6 @@ export const invitationsApi = {
     return result;
   },
 };
-
-export interface TeacherGradingItem {
-  homeworkId: string;
-  homeworkTitle: string;
-  className?: string;
-  studentId: string;
-  studentName: string;
-  submittedAt?: string;
-  gradedAt?: string;
-  score?: number | null;
-  status: string;
-}
-
-export interface TeacherWorkspaceContract {
-  needGrading: TeacherGradingItem[];
-  recentGraded: TeacherGradingItem[];
-}
 
 export interface StudentLessonProgress {
   homeworkSubmitted: boolean;
@@ -5309,28 +5264,6 @@ export const interventionsApi = {
     return response.json();
   },
 };
-
-export interface StudentWorkspaceViewModel {
-  state: "NO_ENROLLMENT" | "PENDING_ACTIVATION" | "SUSPENDED_STUDENT" | "ACTIVE_STUDENT";
-  student: { id: string; email: string; fullName: string; avatarUrl?: string };
-  classes: Array<{
-    id: string;
-    name: string;
-    description?: string;
-    courseTitle?: string;
-    status: "INVITED" | "PENDING" | "ACTIVE" | "SUSPENDED" | "COMPLETED";
-    joinedAt?: string;
-  }>;
-  nextAction: {
-    type: "HOMEWORK" | "LESSON" | "EXAM";
-    targetId: string;
-    title: string;
-    classId: string;
-    deadline?: string | null;
-  } | null;
-  announcements: any[];
-  notifications: any[];
-}
 
 // =============================================
 // TUITION API (Financial Awareness)
