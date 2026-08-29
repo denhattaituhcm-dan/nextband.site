@@ -406,10 +406,13 @@ export function mapToProgressReportData(input: ProgressReportInput): ProgressRep
       teacherGradedCount,
       passedCount,
       needsImprovementCount,
+      totalTimeSpentMinutes,
+      avgTimeSpentMinutes,
       skillAverages,
       submitted: completedCount, // backward compat
       pending: unsubmittedCount + inProgressCount, // backward compat
     },
+
     assessment,
     recentResults: recentResults.map((r) => ({ title: r.title, score: r.score })),
     teacherEvaluation,

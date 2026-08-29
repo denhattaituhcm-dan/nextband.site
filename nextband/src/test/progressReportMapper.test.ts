@@ -280,6 +280,33 @@ describe("Academic Progress Report Mapper - Unit Tests", () => {
       count: 4,
     });
   });
+
+  it("Scenario 9: Duration & Time Spent Metrics aggregation", () => {
+    const homeworks = [
+      { id: "h1", title: "Writing Task 1", type: "writing", status: "submitted", timeSpentMinutes: 30 },
+      { id: "h2", title: "Speaking Part 2", type: "speaking", status: "graded", timeSpentSeconds: 1200 }, // 20m
+      {
+        id: "h3",
+        title: "Reading Test",
+        type: "reading",
+        status: "graded",
+        startedAt: "2026-08-20T10:00:00Z",
+        submittedAt: "2026-08-20T10:25:00Z", // 25m
+      },
+      { id: "h4", title: "Listening Test", type: "listening", status: "unsubmitted" },
+    ];
+
+    const result = mapToProgressReportData({
+      studentName: "Nguyễn Văn B",
+      className: "M01 07.2026",
+      homeworks,
+    });
+
+    // 30 + 20 + 25 = 75 minutes. 3 tasks with time -> avg = 25m
+    expect(result.homework.totalTimeSpentMinutes).toBe(75);
+    expect(result.homework.avgTimeSpentMinutes).toBe(25);
+  });
 });
+
 
 
