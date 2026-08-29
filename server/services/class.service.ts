@@ -238,10 +238,25 @@ export class ClassService {
     if (!classData) {
       throw new NotFoundError("Không tìm thấy lớp học");
     }
-    return this.prisma.classSession.findMany({
+    const sessions = await this.prisma.classSession.findMany({
       where: { classId },
       orderBy: { sessionNumber: "asc" },
     });
+
+    return sessions.map((s: any) => ({
+      id: s.id,
+      classId: s.classId,
+      sessionNumber: s.sessionNumber,
+      title: s.note || `Buổi ${s.sessionNumber}`,
+      sessionDate: s.plannedDate,
+      plannedDate: s.plannedDate,
+      startTime: s.startTime || null,
+      endTime: s.endTime || null,
+      status: s.status,
+      note: s.note || null,
+      rescheduleReason: s.rescheduleReason || null,
+      completedAt: null,
+    }));
   }
 
   // Use Case: Generate or Update Class Sessions

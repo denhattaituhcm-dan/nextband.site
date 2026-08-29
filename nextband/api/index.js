@@ -104604,10 +104604,24 @@ var ClassService = class {
     if (!classData) {
       throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
     }
-    return this.prisma.classSession.findMany({
+    const sessions = await this.prisma.classSession.findMany({
       where: { classId },
       orderBy: { sessionNumber: "asc" }
     });
+    return sessions.map((s) => ({
+      id: s.id,
+      classId: s.classId,
+      sessionNumber: s.sessionNumber,
+      title: s.note || `Bu\u1ED5i ${s.sessionNumber}`,
+      sessionDate: s.plannedDate,
+      plannedDate: s.plannedDate,
+      startTime: s.startTime || null,
+      endTime: s.endTime || null,
+      status: s.status,
+      note: s.note || null,
+      rescheduleReason: s.rescheduleReason || null,
+      completedAt: null
+    }));
   }
   // Use Case: Generate or Update Class Sessions
   async generateSessionsForClass(user, classId, options) {
@@ -106579,32 +106593,6 @@ var attendanceRoutes = async (fastify) => {
         }
         throw err;
       }
-    }
-  );
-  fastify.get(
-    "/classes/:classId/sessions",
-    { preHandler: [authenticate] },
-    async (request, reply) => {
-      const { classId } = request.params;
-      const sessions = await prisma.classSession.findMany({
-        where: { classId },
-        orderBy: { sessionNumber: "asc" }
-      });
-      const mapped = sessions.map((s) => ({
-        id: s.id,
-        classId: s.classId,
-        sessionNumber: s.sessionNumber,
-        title: s.note || `Bu\u1ED5i ${s.sessionNumber}`,
-        sessionDate: s.plannedDate,
-        plannedDate: s.plannedDate,
-        startTime: s.startTime || null,
-        endTime: s.endTime || null,
-        status: s.status,
-        note: s.note || null,
-        rescheduleReason: s.rescheduleReason || null,
-        completedAt: null
-      }));
-      return reply.send(mapped);
     }
   );
   fastify.post(

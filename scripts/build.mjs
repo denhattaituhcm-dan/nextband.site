@@ -38,6 +38,16 @@ if (existsSync(bundleScript)) {
   execSync(`node "${bundleScript}"`, { stdio: "inherit" });
 }
 
+// 2.5. Verify Serverless API Gateway Runtime & Fastify Boot (8-Gate Gatekeeper)
+console.log("🛡️ Running Serverless API Gateway Runtime Verification...");
+const verifyScript = existsSync(resolve(rootDir, "scripts/verify-api-runtime.mjs"))
+  ? resolve(rootDir, "scripts/verify-api-runtime.mjs")
+  : resolve(rootDir, "nextband/scripts/verify-api-runtime.mjs");
+
+if (existsSync(verifyScript)) {
+  execSync(`npx tsx "${verifyScript}"`, { stdio: "inherit" });
+}
+
 // 3. Ensure frontend dependencies are installed before typecheck
 const nextbandDir = resolve(rootDir, "nextband");
 const nextbandReact = resolve(nextbandDir, "node_modules/react");

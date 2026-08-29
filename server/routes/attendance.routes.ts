@@ -156,35 +156,7 @@ const attendanceRoutes: FastifyPluginAsync = async (fastify: any) => {
     },
   );
 
-  // 5. GET /classes/:classId/sessions - Danh sách toàn bộ buổi học của lớp
-  fastify.get(
-    '/classes/:classId/sessions',
-    { preHandler: [authenticate] },
-    async (request: any, reply: any) => {
-      const { classId } = request.params;
-      const sessions = await prisma.classSession.findMany({
-        where: { classId },
-        orderBy: { sessionNumber: 'asc' },
-      });
 
-      const mapped = sessions.map((s: any) => ({
-        id: s.id,
-        classId: s.classId,
-        sessionNumber: s.sessionNumber,
-        title: s.note || `Buổi ${s.sessionNumber}`,
-        sessionDate: s.plannedDate,
-        plannedDate: s.plannedDate,
-        startTime: s.startTime || null,
-        endTime: s.endTime || null,
-        status: s.status,
-        note: s.note || null,
-        rescheduleReason: s.rescheduleReason || null,
-        completedAt: null,
-      }));
-
-      return reply.send(mapped);
-    },
-  );
 
   // 6. POST /classes/:classId/sessions/:sessionId/unlock - Mở lại điểm danh buổi học đã chốt
   fastify.post(
