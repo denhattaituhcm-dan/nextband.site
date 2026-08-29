@@ -1,9 +1,88 @@
 import { describe, it, expect } from "vitest";
-import { getHuanCoState } from "../huanCoState";
-import { ActionQueueItem } from "../homeworkStatusHelper";
+import {
+  getHuanCoState,
+  getMascotPresentation,
+  resolveMascotEvent,
+  getRealmFromBand,
+  ActionQueueItem,
+} from "../huanCoState";
 
-describe("HUYEN CO LAO NHAN V1: Rule Engine Invariant Tests", () => {
-  it("Rule 1: Priority OVERDUE (RED) when overdue items exist", () => {
+describe("HUYEN CO LAO NHAN V2: Lean Companion Architecture Tests", () => {
+  it("Invariant 1: Event Priority - LEVEL_UP takes highest precedence over OVERDUE", () => {
+    const actionQueue: ActionQueueItem[] = [
+      {
+        id: "hw-1",
+        examId: "exam-reading-01",
+        title: "Reading Unit 1",
+        status: "OVERDUE",
+        priority: 2,
+      },
+    ];
+
+    const result = getMascotPresentation({
+      actionQueue,
+      currentBand: 6.0,
+      recentTrigger: {
+        type: "LEVEL_UP",
+        xpEarned: 200,
+      },
+    });
+
+    expect(result.state).toBe("CELEBRATE");
+    expect(result.eventType).toBe("LEVEL_UP");
+    expect(result.visualLevel).toBe("ceremony");
+    expect(result.badgeText).toBe("Đột Phá Cảnh Giới");
+    expect(result.quote).toContain("Học Sư");
+    expect(result.reward?.xp).toBe(200);
+  });
+
+  it("Invariant 2: PERSONAL_BEST & SUBMISSION_SUCCESS - celebration instead of nagging", () => {
+    const result = getMascotPresentation({
+      actionQueue: [],
+      recentTrigger: {
+        type: "PERSONAL_BEST",
+        score: "Reading 8.0",
+        xpEarned: 100,
+      },
+    });
+
+    expect(result.state).toBe("CELEBRATE");
+    expect(result.eventType).toBe("PERSONAL_BEST");
+    expect(result.visualLevel).toBe("celebration");
+    expect(result.badgeText).toBe("Kỷ Lục Mới");
+    expect(result.quote).toContain("vượt qua kỷ lục của chính mình");
+    expect(result.reward?.xp).toBe(100);
+  });
+
+  it("Invariant 3: REVISION_REQUIRED (MENTOR) - Supportive teacher tone, no shaming", () => {
+    const actionQueue: ActionQueueItem[] = [
+      {
+        id: "hw-2",
+        examId: "exam-writing-01",
+        title: "Writing Task 2",
+        status: "REVISION_REQUIRED",
+        priority: 1,
+        submission: { id: "sub-999" },
+      },
+    ];
+
+    const result = getHuanCoState({
+      actionQueue,
+      submittedCount: 1,
+      gradedCount: 1,
+    });
+
+    expect(result.state).toBe("MENTOR");
+    expect(result.eventType).toBe("REVISION_REQUIRED");
+    expect(result.urgency).toBe("ORANGE");
+    expect(result.badgeText).toBe("Cần Mài Giũa");
+    expect(result.quote).toContain("mài giũa");
+    expect(result.quote).not.toContain("nợ");
+    expect(result.ctaLabel).toBe("Sửa bài: Writing Task 2");
+    expect(result.ctaPath).toBe("/app/submissions/sub-999");
+  });
+
+  it("Invariant 4: OVERDUE (ALERT) - Non-toxic companion tone ('Xử lý nhiệm vụ', not 'Làm bù bài nợ')", () => {
     const actionQueue: ActionQueueItem[] = [
       {
         id: "hw-1",
@@ -16,8 +95,8 @@ describe("HUYEN CO LAO NHAN V1: Rule Engine Invariant Tests", () => {
         id: "hw-2",
         examId: "exam-writing-01",
         title: "Writing Task 2",
-        status: "REVISION_REQUIRED",
-        priority: 1,
+        status: "OVERDUE",
+        priority: 2,
       },
     ];
 
@@ -27,79 +106,19 @@ describe("HUYEN CO LAO NHAN V1: Rule Engine Invariant Tests", () => {
       gradedCount: 1,
     });
 
+    expect(result.state).toBe("ALERT");
+    expect(result.eventType).toBe("OVERDUE");
     expect(result.urgency).toBe("RED");
-    expect(result.badgeText).toBe("Cần Xử Lý Gấp");
+    expect(result.badgeText).toBe("Cần Xử Lý");
+    expect(result.visualLevel).toBe("concerned");
+    expect(result.quote).toContain("Đừng lo, chúng ta giải quyết từng bài một là ổn ngay");
+    expect(result.quote).not.toContain("đang nợ");
+    expect(result.quote).not.toContain("Đừng nhìn ta");
+    expect(result.ctaLabel).toBe("Xử lý nhiệm vụ: Reading Unit 1");
     expect(result.ctaPath).toBe("/exam/exam-reading-01");
-    expect(result.ctaLabel).toContain("Reading Unit 1");
-    expect(result.advice).toContain("Reading Unit 1");
   });
 
-  it("Rule 2: Priority REVISION_REQUIRED (ORANGE) when no overdue but revision required", () => {
-    const actionQueue: ActionQueueItem[] = [
-      {
-        id: "hw-2",
-        examId: "exam-writing-01",
-        title: "Writing Task 2",
-        status: "REVISION_REQUIRED",
-        priority: 1,
-        submission: { id: "sub-999" },
-      },
-      {
-        id: "hw-3",
-        examId: "exam-listening-01",
-        title: "Listening Unit 2",
-        status: "UPCOMING",
-        priority: 3,
-        countdown: { text: "Còn 5 giờ", isOverdue: false },
-      },
-    ];
-
-    const result = getHuanCoState({
-      actionQueue,
-      submittedCount: 1,
-      gradedCount: 1,
-    });
-
-    expect(result.urgency).toBe("ORANGE");
-    expect(result.badgeText).toBe("Cần Sửa Bài");
-    expect(result.ctaPath).toBe("/app/submissions/sub-999");
-    expect(result.ctaLabel).toContain("Writing Task 2");
-    expect(result.advice).toContain("Writing Task 2");
-  });
-
-  it("Rule 3: Priority DUE_SOON (YELLOW) when deadline <= 48 hours", () => {
-    const actionQueue: ActionQueueItem[] = [
-      {
-        id: "hw-3",
-        examId: "exam-listening-01",
-        title: "Listening Unit 2",
-        status: "UPCOMING",
-        priority: 3,
-        countdown: { text: "Còn 12 giờ", isOverdue: false },
-      },
-      {
-        id: "hw-4",
-        examId: "exam-vocab-01",
-        title: "Vocab Unit 3",
-        status: "UPCOMING",
-        priority: 4,
-      },
-    ];
-
-    const result = getHuanCoState({
-      actionQueue,
-      submittedCount: 5,
-      gradedCount: 3,
-    });
-
-    expect(result.urgency).toBe("YELLOW");
-    expect(result.badgeText).toBe("Sắp Hết Hạn");
-    expect(result.ctaPath).toBe("/exam/exam-listening-01");
-    expect(result.ctaLabel).toContain("Listening Unit 2");
-    expect(result.advice).toContain("Còn 12 giờ");
-  });
-
-  it("Rule 4: Priority PENDING (BLUE) when upcoming assignments exist", () => {
+  it("Invariant 5: GUIDE - Guides student clearly to next assignment", () => {
     const actionQueue: ActionQueueItem[] = [
       {
         id: "hw-4",
@@ -116,35 +135,42 @@ describe("HUYEN CO LAO NHAN V1: Rule Engine Invariant Tests", () => {
       gradedCount: 1,
     });
 
+    expect(result.state).toBe("GUIDE");
+    expect(result.eventType).toBe("GUIDE");
     expect(result.urgency).toBe("BLUE");
     expect(result.badgeText).toBe("Nhiệm Vụ Mới");
+    expect(result.ctaLabel).toBe("Làm bài: Vocab Unit 3");
     expect(result.ctaPath).toBe("/exam/exam-vocab-01");
-    expect(result.ctaLabel).toContain("Vocab Unit 3");
   });
 
-  it("Rule 5: Priority POSITIVE (GREEN) when all homework submitted", () => {
-    const result = getHuanCoState({
+  it("Invariant 6: WELCOME & IDLE - Peaceful ambient states when no tasks remain", () => {
+    const welcomeResult = getHuanCoState({
       actionQueue: [],
       submittedCount: 4,
       gradedCount: 2,
     });
 
-    expect(result.urgency).toBe("GREEN");
-    expect(result.badgeText).toBe("Tiến Triển Tốt");
-    expect(result.ctaPath).toBe("/app/my-submissions");
-    expect(result.ctaLabel).toBe("Xem lịch sử nộp bài");
-  });
+    expect(welcomeResult.state).toBe("WELCOME");
+    expect(welcomeResult.visualLevel).toBe("ambient");
+    expect(welcomeResult.badgeText).toBe("Tiến Triển Tốt");
 
-  it("Rule 6: Priority IDLE (GRAY) when class is empty with no homework assigned", () => {
-    const result = getHuanCoState({
+    const idleResult = getHuanCoState({
       actionQueue: [],
       submittedCount: 0,
       gradedCount: 0,
     });
 
-    expect(result.urgency).toBe("GRAY");
-    expect(result.badgeText).toBe("Đang Thảnh Thơi");
-    expect(result.ctaPath).toBeUndefined();
-    expect(result.ctaLabel).toBeUndefined();
+    expect(idleResult.state).toBe("IDLE");
+    expect(idleResult.visualLevel).toBe("ambient");
+    expect(idleResult.badgeText).toBe("Đang Thảnh Thơi");
+  });
+
+  it("Narrative Realm mapping reflects Band correctly without secondary score overhead", () => {
+    expect(getRealmFromBand(3.5)).toEqual({ academicRank: "Học Đồ", realmName: "Khai Mạch" });
+    expect(getRealmFromBand(5.5)).toEqual({ academicRank: "Học Sĩ", realmName: "Trúc Cơ" });
+    expect(getRealmFromBand(7.0)).toEqual({ academicRank: "Học Bá", realmName: "Nguyên Anh" });
+    expect(getRealmFromBand(8.5)).toEqual({ academicRank: "Học Tôn", realmName: "Hóa Thần" });
+    expect(getRealmFromBand(9.0)).toEqual({ academicRank: "Học Đế", realmName: "Phi Thăng" });
   });
 });
+
