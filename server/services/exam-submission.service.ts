@@ -687,13 +687,10 @@ export class ExamSubmissionService {
     }
   ) {
     // Check idempotency record first
-    if (payload.idempotencyKey) {
-      let existingIdem: any = null;
-      if ((this.prisma as any).idempotencyRecords) {
-        existingIdem = await this.prisma.idempotencyRecord?.findFirst?.({
-          where: { key: payload.idempotencyKey },
-        });
-      }
+    if (payload.idempotencyKey && this.prisma.idempotencyRecord) {
+      const existingIdem = await this.prisma.idempotencyRecord.findUnique({
+        where: { key: payload.idempotencyKey },
+      });
 
       if (existingIdem) {
         const cached = typeof existingIdem.responsePayload === "string" 
@@ -916,13 +913,14 @@ export class ExamSubmissionService {
       }
 
       // Idempotency Record (Enabled when backed by storage)
-      if (payload.idempotencyKey && (tx as any).idempotencyRecords && tx.idempotencyRecord) {
+      if (payload.idempotencyKey && tx.idempotencyRecord) {
         await tx.idempotencyRecord.create({
           data: {
             key: payload.idempotencyKey,
             submissionId: id,
-            payloadHash: "sha256-mock",
+            payloadHash: "sha256-payload",
             responsePayload: JSON.stringify(fullResult),
+            status: "COMMITTED",
           },
         });
       }
