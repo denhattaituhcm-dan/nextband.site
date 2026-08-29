@@ -88,12 +88,19 @@ export default function BuddyLandingPage() {
         <div className="bg-white rounded-3xl shadow-xl shadow-slate-300/40 border border-slate-200/80 overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12">
             {/* LEFT COLUMN: Invitation Story, Zalo Bubble & Perks (7 cols on lg) */}
-            <div className="lg:col-span-7 p-6 sm:p-8 lg:p-10 bg-gradient-to-b from-[#EDF5FF] via-[#F6F9FD] to-white flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200/70">
-              <div className="space-y-5">
-                {/* Header Badge */}
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white shadow-xs border border-[#0068FF]/20 text-[#0068FF] text-xs font-bold tracking-wide">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
-                  <span>LỜI MỜI ĐỒNG HÀNH · ARIS IELTS</span>
+            <div className="lg:col-span-7 p-6 sm:p-8 lg:p-10 bg-gradient-to-b from-[#EDF5FF] via-[#F6F9FD] to-white flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200/70 relative overflow-hidden">
+              {/* Subtle Decorative Background Asset */}
+              <div className="absolute -top-3 -right-3 opacity-15 pointer-events-none">
+                <Gift className="w-28 h-28 text-[#0068FF]" />
+              </div>
+
+              <div className="space-y-5 relative z-10">
+                {/* Header Badge with Warm Accent Touch */}
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white shadow-2xs border border-amber-400/40 text-xs font-bold tracking-wide">
+                  <Sparkles className="w-4 h-4 text-amber-500 fill-amber-400" />
+                  <span className="text-[#0068FF] font-extrabold">LỜI MỜI ĐỒNG HÀNH</span>
+                  <span className="text-amber-500">•</span>
+                  <span className="text-slate-700">ARIS IELTS</span>
                 </div>
 
                 {/* Main Headline */}
@@ -114,7 +121,7 @@ export default function BuddyLandingPage() {
                 </div>
 
                 {/* Friendly Chat Bubble (Inviter Greeting) */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-white border border-[#0068FF]/20 shadow-xs space-y-2.5">
+                <div className="p-4 sm:p-5 rounded-2xl bg-white border border-[#0068FF]/20 shadow-2xs space-y-2.5">
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="relative shrink-0">
@@ -138,7 +145,7 @@ export default function BuddyLandingPage() {
 
                     <Badge
                       variant="outline"
-                      className="font-mono text-[11px] bg-[#F0F6FF] text-[#0068FF] border-[#0068FF]/30 px-2.5 py-0.5 shrink-0 font-bold"
+                      className="font-mono text-[11px] bg-amber-50 text-amber-900 border-amber-300/80 px-2.5 py-0.5 shrink-0 font-bold shadow-2xs"
                     >
                       {referralCode || "ARIS-BUDDY"}
                     </Badge>
@@ -156,8 +163,8 @@ export default function BuddyLandingPage() {
                     Đặc quyền bạn nhận được:
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                    <div className="p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1">
-                      <div className="w-7 h-7 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+                    <div className="p-3 rounded-2xl bg-gradient-to-b from-amber-50/70 to-white border border-amber-200/80 shadow-2xs space-y-1">
+                      <div className="w-7 h-7 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold text-xs shadow-2xs">
                         🔥
                       </div>
                       <div className="text-xs font-bold text-slate-900">Giảm 200.000đ</div>
@@ -166,8 +173,8 @@ export default function BuddyLandingPage() {
                       </div>
                     </div>
 
-                    <div className="p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1">
-                      <div className="w-7 h-7 rounded-xl bg-blue-50 text-[#0068FF] flex items-center justify-center font-bold">
+                    <div className="p-3 rounded-2xl bg-gradient-to-b from-blue-50/70 to-white border border-blue-200/80 shadow-2xs space-y-1">
+                      <div className="w-7 h-7 rounded-xl bg-[#0068FF] text-white flex items-center justify-center font-bold text-xs shadow-2xs">
                         👥
                       </div>
                       <div className="text-xs font-bold text-slate-900">Ưu tiên xếp lớp</div>
@@ -176,8 +183,8 @@ export default function BuddyLandingPage() {
                       </div>
                     </div>
 
-                    <div className="p-3 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-1">
-                      <div className="w-7 h-7 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+                    <div className="p-3 rounded-2xl bg-gradient-to-b from-indigo-50/70 to-white border border-indigo-200/80 shadow-2xs space-y-1">
+                      <div className="w-7 h-7 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-2xs">
                         ✨
                       </div>
                       <div className="text-xs font-bold text-slate-900">Đánh giá 1-1</div>
@@ -190,7 +197,7 @@ export default function BuddyLandingPage() {
               </div>
 
               {/* Bottom Guarantee */}
-              <div className="pt-6 mt-6 border-t border-slate-200/60 flex items-center gap-2 text-[11px] text-slate-500">
+              <div className="pt-6 mt-6 border-t border-slate-200/60 flex items-center gap-2 text-[11px] text-slate-500 relative z-10">
                 <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>Cam kết chính sách ưu đãi đồng hành chính hãng từ Học Viện ARIS.</span>
               </div>
@@ -200,8 +207,8 @@ export default function BuddyLandingPage() {
             <div className="lg:col-span-5 p-6 sm:p-8 lg:p-9 flex flex-col justify-center bg-white">
               <div className="space-y-4">
                 <div className="space-y-1">
-                  <div className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0068FF] uppercase tracking-wider">
-                    <Award className="w-3.5 h-3.5" />
+                  <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#0068FF] uppercase tracking-wider">
+                    <Award className="w-3.5 h-3.5 text-amber-500" />
                     <span>Phiếu Đăng Ký Giữ Suất</span>
                   </div>
                   <h2 className="text-lg sm:text-xl font-bold text-slate-900">

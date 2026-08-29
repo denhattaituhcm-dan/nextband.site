@@ -75,7 +75,7 @@ export function ConsultationBubble() {
   const supportOptions: SupportOption[] = [
     {
       id: "assessment",
-      icon: <ShieldCheck className="w-4 h-4 text-brand-red" />,
+      icon: <ShieldCheck className="w-4 h-4 text-amber-500" />,
       title: "Kiểm tra trình độ tiếng Anh",
       subtitle: "Nhận được kết quả trong vòng 24 giờ qua Zalo",
     },
@@ -195,7 +195,7 @@ export function ConsultationBubble() {
         {/* Floating CTA Button */}
         <button
           onClick={() => setIsOpen((prev) => !prev)}
-          className="group relative flex items-center gap-2.5 h-12 pl-4 sm:pl-5 pr-1.5 rounded-full bg-brand-red hover:bg-brand-red-hover text-white shadow-[0_4px_18px_rgba(229,16,64,0.32)] hover:shadow-[0_6px_24px_rgba(229,16,64,0.42)] transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer select-none"
+          className="group relative flex items-center gap-2.5 h-12 pl-4 sm:pl-5 pr-1.5 rounded-full bg-gradient-to-r from-[#0052CC] to-[#0068FF] hover:from-[#0047B3] hover:to-[#005AE0] text-white shadow-[0_4px_20px_rgba(0,104,255,0.35)] hover:shadow-[0_6px_26px_rgba(0,104,255,0.48)] border border-white/20 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer select-none"
           aria-expanded={isOpen}
           aria-label="Tư vấn ngay"
         >
@@ -205,21 +205,21 @@ export function ConsultationBubble() {
           </span>
 
           {/* Zalo Circular Badge */}
-          <div className="relative w-9 h-9 rounded-full bg-[#0068FF] text-white flex items-center justify-center shrink-0 p-1.5 shadow-sm">
+          <div className="relative w-9 h-9 rounded-full bg-white text-[#0068FF] flex items-center justify-center shrink-0 p-1.5 shadow-sm">
             {/* Main Ripple Ring */}
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute -inset-1 rounded-full border-2 border-[#0068FF]/50 animate-signal-ripple"
+              className="pointer-events-none absolute -inset-1 rounded-full border-2 border-white/60 animate-signal-ripple"
             />
 
             {/* Delayed Second Ripple Ring */}
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute -inset-1 rounded-full border-2 border-[#0068FF]/50 animate-signal-ripple-delayed"
+              className="pointer-events-none absolute -inset-1 rounded-full border-2 border-white/60 animate-signal-ripple-delayed"
             />
 
             {/* Zalo Icon */}
-            <ZaloIcon className="w-full h-full text-white" />
+            <ZaloIcon className="w-full h-full text-[#0068FF]" />
           </div>
         </button>
       </div>
