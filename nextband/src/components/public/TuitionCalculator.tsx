@@ -272,7 +272,7 @@ export function TuitionCalculator() {
 
                   {/* Desktop Tuition Gốc */}
                   <div className="hidden md:block md:col-span-2 text-right">
-                    <span className="text-sm font-semibold text-muted-foreground">
+                    <span className={`text-sm font-semibold ${c.discount > 0 ? "line-through text-muted-foreground/70" : "text-muted-foreground"}`}>
                       {formatVND(c.tuition)}
                     </span>
                   </div>
@@ -280,12 +280,17 @@ export function TuitionCalculator() {
                   {/* Desktop Tuition Net */}
                   <div className="hidden md:block md:col-span-2 text-right">
                     <span
-                      className={`text-base font-black ${
+                      className={`text-base sm:text-lg font-black ${
                         c.discount > 0 ? "text-brand-red" : "text-foreground"
                       }`}
                     >
                       {formatVND(c.net)}
                     </span>
+                    {c.discount > 0 && (
+                      <span className="block text-[11px] font-extrabold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md mt-0.5 w-fit ml-auto">
+                        Tiết kiệm {formatVND(c.discount)}
+                      </span>
+                    )}
                   </div>
 
                   {/* Scholarship Picker */}
@@ -381,16 +386,16 @@ export function TuitionCalculator() {
 
                 <div className="flex justify-between items-center text-muted-foreground font-medium">
                   <span>Tổng học bổng & Đặc quyền</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-extrabold">
+                  <span className="text-emerald-700 dark:text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 rounded-lg font-black text-sm sm:text-base">
                     −{formatVND(totals.discount)}
                   </span>
                 </div>
 
                 <div className="h-px bg-border/80 my-2" />
 
-                <div className="flex justify-between items-end">
+                <div className="flex justify-between items-end bg-muted/40 p-3.5 rounded-2xl border border-border/70">
                   <div>
-                    <span className="text-xs uppercase font-bold text-muted-foreground block">
+                    <span className="text-[11px] uppercase font-black text-muted-foreground tracking-wider block">
                       Tổng tiền thực đóng
                     </span>
                     <span className="text-2xl sm:text-3xl font-black text-brand-red">
@@ -400,21 +405,32 @@ export function TuitionCalculator() {
                 </div>
               </div>
 
-              {/* Savings callout */}
+              {/* Ultra Prominent Savings callout */}
               {totals.discount > 0 ? (
-                <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs sm:text-sm font-semibold flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
-                  <div>
-                    Bạn tiết kiệm được{" "}
-                    <strong className="font-extrabold text-emerald-800 dark:text-emerald-200">
-                      {formatVND(totals.discount)}
-                    </strong>{" "}
-                    (tương đương ~{totals.savingsPct}% tổng học phí lộ trình)!
+                <div className="relative overflow-hidden p-5 rounded-2xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 text-white shadow-xl shadow-emerald-600/30 border border-emerald-400/40 space-y-2">
+                  <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full blur-xl pointer-events-none" />
+                  
+                  <div className="flex items-center justify-between text-xs uppercase font-extrabold tracking-wider text-emerald-100">
+                    <span className="flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
+                      Bạn Tiết Kiệm Được
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-white font-black text-xs backdrop-blur-xs border border-white/25">
+                      Giảm ~{totals.savingsPct}%
+                    </span>
                   </div>
+                  
+                  <div className="text-3xl sm:text-4xl font-black tracking-tight text-white drop-shadow-md">
+                    {formatVND(totals.discount)}
+                  </div>
+                  
+                  <p className="text-[11.5px] text-emerald-100/90 leading-tight">
+                    ✨ Đã áp dụng đầy đủ học bổng & đặc quyền tối đa cho lộ trình của bạn!
+                  </p>
                 </div>
               ) : (
-                <div className="p-3.5 rounded-2xl bg-muted/60 border border-border/60 text-muted-foreground text-xs leading-relaxed">
-                  💡 Chọn thành tích năng lực đầu vào hoặc mức kỷ luật để nhận học bổng trực tiếp.
+                <div className="p-4 rounded-2xl bg-muted/60 border border-border/60 text-muted-foreground text-xs leading-relaxed text-center">
+                  💡 Chọn thành tích năng lực đầu vào hoặc mức kỷ luật để xem số tiền học phí tiết kiệm được.
                 </div>
               )}
 

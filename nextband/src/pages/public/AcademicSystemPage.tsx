@@ -231,76 +231,115 @@ export default function AcademicSystemPage() {
             <div className="text-center max-w-2xl mx-auto space-y-2">
               <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold px-3 py-1 rounded-lg bg-brand-blue-soft text-brand-blue">
                 <Sparkles className="h-3.5 w-3.5" />
-                <span>Case Study Minh Họa Thực Tế</span>
+                <span>Case Study Minh Họa Tri Nhận Bản Xứ</span>
               </div>
               <h3 className="text-2xl sm:text-3xl font-black text-foreground">
-                Một câu tiếng Anh được hình thành như thế nào?
+                Hiểu ngôn ngữ từ góc nhìn của người bản xứ
               </h3>
+              <p className="text-sm sm:text-base text-foreground/75">
+                Thay vì dịch thô từng chữ hay học vẹt nghĩa tiếng Việt, The ARIS Way giúp người học bóc tách ý niệm hình tượng (Conceptual Metaphor) và cảm giác trực quan.
+              </p>
             </div>
 
-            <div className="max-w-4xl mx-auto space-y-6">
-              {/* Initial Sentence */}
-              <div className="p-6 sm:p-8 rounded-3xl bg-card border border-border/80 space-y-3 shadow-2xs">
-                <div className="text-xs font-mono font-bold text-destructive uppercase tracking-wider flex items-center gap-2">
-                  <XCircle className="h-4 w-4" />
-                  <span>Câu diễn đạt ban đầu của người học:</span>
-                </div>
-                <div className="p-4 rounded-2xl bg-destructive/10 border border-destructive/20 font-mono text-sm sm:text-base text-foreground font-bold break-words">
-                  "The government gave people a lot of money to help them."
-                </div>
-                <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed">
-                  <strong>Cách luyện thi thông thường:</strong> Giáo viên chỉ bảo thay từ <em>"gave"</em> hoặc <em>"a lot of money"</em> bằng từ phức tạp hơn, khiến câu trở nên gượng gạo và thiếu tự nhiên.
-                </p>
-              </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-5xl mx-auto">
+              {/* CASE 1: PULL ONE'S WEIGHT */}
+              <div className="p-6 sm:p-8 rounded-3xl bg-card border-2 border-brand-blue/30 space-y-5 shadow-2xs flex flex-col justify-between">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-xs font-bold px-3 py-1 rounded-full bg-brand-blue-soft text-brand-blue uppercase tracking-wider">
+                      Ví dụ 01 • Teamwork &amp; Effort
+                    </span>
+                    <span className="text-xs font-bold text-foreground/60">Idiom</span>
+                  </div>
+                  
+                  <h4 className="text-xl sm:text-2xl font-black text-foreground font-mono">
+                    "Pull one's weight"
+                  </h4>
 
-              {/* 4 Framing Questions & Result */}
-              <div className="p-6 sm:p-10 rounded-3xl bg-card border-2 border-brand-blue/30 space-y-6 shadow-2xs">
-                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-brand-blue">
-                  <Compass className="h-4 w-4" />
-                  <span>4 Câu Hỏi Định Hình Tư Duy Theo The ARIS Way:</span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                  <div className="p-4 rounded-2xl bg-muted/40 border border-border/60 space-y-1">
-                    <div className="font-bold text-foreground text-xs sm:text-sm">1. Ai đang thực hiện hành động?</div>
-                    <div className="text-foreground/75 text-xs">
-                      → Chính phủ với vai trò quản trị và điều phối chính sách công.
+                  {/* Dịch thô vs Bản xứ */}
+                  <div className="p-4 rounded-2xl bg-destructive/10 border border-destructive/20 space-y-1 text-xs sm:text-sm">
+                    <div className="font-bold text-destructive flex items-center gap-1.5">
+                      <XCircle className="h-4 w-4 shrink-0" />
+                      <span>Cách dịch thô / Học vẹt thông thường:</span>
                     </div>
+                    <p className="text-foreground/80 pl-5">
+                      Dịch từng từ là <em>"kéo trọng lượng của mình"</em> → Khó hiểu và gượng gạo khi nói về làm việc nhóm.
+                    </p>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-muted/40 border border-border/60 space-y-1">
-                    <div className="font-bold text-foreground text-xs sm:text-sm">2. Trọng tâm của câu là gì?</div>
-                    <div className="text-foreground/75 text-xs">
-                      → Khoản ngân sách công cụ: <code className="text-brand-blue font-bold">substantial funding</code>.
+                  <div className="p-4 rounded-2xl bg-muted/50 border border-border/80 space-y-2 text-xs sm:text-sm">
+                    <div className="font-bold text-brand-blue flex items-center gap-1.5">
+                      <Compass className="h-4 w-4 shrink-0" />
+                      <span>Góc nhìn &amp; Hình tượng người bản xứ:</span>
                     </div>
-                  </div>
-
-                  <div className="p-4 rounded-2xl bg-muted/40 border border-border/60 space-y-1">
-                    <div className="font-bold text-foreground text-xs sm:text-sm">3. Hành động cốt lõi là gì?</div>
-                    <div className="text-foreground/75 text-xs">
-                      → Phân bổ / Cấp phát ngân sách: <code className="text-brand-blue font-bold">allocated</code>.
-                    </div>
-                  </div>
-
-                  <div className="p-4 rounded-2xl bg-muted/40 border border-border/60 space-y-1">
-                    <div className="font-bold text-foreground text-xs sm:text-sm">4. Mục đích hướng đến là gì?</div>
-                    <div className="text-foreground/75 text-xs">
-                      → Hỗ trợ các đối tượng thụ hưởng: <code className="text-brand-blue font-bold">to support vulnerable communities</code>.
-                    </div>
+                    <p className="text-foreground/80 leading-relaxed pl-5">
+                      Bắt nguồn từ hình ảnh <strong>đội đua thuyền chèo (rowing crew)</strong>. Mỗi tay chèo phải dùng lực chèo đủ mạnh để tự kéo/đẩy khối lượng cơ thể mình tiến lên, không bắt đồng đội phải chèo gánh thêm phần cân nặng của mình.
+                    </p>
                   </div>
                 </div>
 
-                {/* Final Sentence Box */}
-                <div className="pt-4 border-t border-border/60 space-y-2">
+                {/* Kết quả bản chất */}
+                <div className="pt-4 border-t border-border/60 space-y-3">
                   <div className="text-xs font-mono font-bold text-success uppercase tracking-wider flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4" />
-                    <span>Câu hoàn chỉnh chuẩn xác &amp; tự nhiên:</span>
+                    <span>Bản chất ý niệm &amp; Ứng dụng tự nhiên:</span>
                   </div>
-                  <div className="p-4 sm:p-5 rounded-2xl bg-brand-blue text-white font-mono text-sm sm:text-base font-bold shadow-md break-words">
-                    "The government allocated substantial funding to support vulnerable communities."
+                  <div className="p-3.5 rounded-2xl bg-brand-blue text-white font-mono text-xs sm:text-sm font-semibold shadow-xs">
+                    "In any group project, everyone must <span className="underline decoration-white/60 underline-offset-4">pull their weight</span> to succeed."
                   </div>
-                  <p className="text-xs text-foreground/80 leading-relaxed pt-1">
-                    Người học tạo ra câu văn học thuật không phải do học vẹt từ điển, mà vì đã <strong>thấu hiểu cơ chế cấu trúc góc nhìn và chọn đúng ý niệm ngôn ngữ</strong>.
+                  <p className="text-xs text-foreground/75">
+                    → Mang nghĩa: <strong>Làm tròn trách nhiệm, đóng góp công sức tương xứng</strong> (không ỷ lại, không ăn bám).
+                  </p>
+                </div>
+              </div>
+
+              {/* CASE 2: HAVE THE GUTS */}
+              <div className="p-6 sm:p-8 rounded-3xl bg-card border-2 border-brand-blue/30 space-y-5 shadow-2xs flex flex-col justify-between">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-xs font-bold px-3 py-1 rounded-full bg-brand-blue-soft text-brand-blue uppercase tracking-wider">
+                      Ví dụ 02 • Courage &amp; Grit
+                    </span>
+                    <span className="text-xs font-bold text-foreground/60">Idiom</span>
+                  </div>
+                  
+                  <h4 className="text-xl sm:text-2xl font-black text-foreground font-mono">
+                    "Have the guts (for/to do)"
+                  </h4>
+
+                  {/* Dịch thô vs Bản xứ */}
+                  <div className="p-4 rounded-2xl bg-destructive/10 border border-destructive/20 space-y-1 text-xs sm:text-sm">
+                    <div className="font-bold text-destructive flex items-center gap-1.5">
+                      <XCircle className="h-4 w-4 shrink-0" />
+                      <span>Cách dịch thô / Học vẹt thông thường:</span>
+                    </div>
+                    <p className="text-foreground/80 pl-5">
+                      Dịch thô là <em>"có ruột / lòng mề"</em> → Cảm thấy kỳ quặc và không hiểu nguồn gốc vì sao lại chỉ sự dũng cảm.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-muted/50 border border-border/80 space-y-2 text-xs sm:text-sm">
+                    <div className="font-bold text-brand-blue flex items-center gap-1.5">
+                      <Compass className="h-4 w-4 shrink-0" />
+                      <span>Góc nhìn &amp; Cảm giác trực quan bản xứ:</span>
+                    </div>
+                    <p className="text-foreground/80 leading-relaxed pl-5">
+                      Khi đối mặt với nỗi sợ hoặc rủi ro lớn, phản ứng sinh học tự nhiên là <strong>cảm giác thắt ruột, nôn nao ở vùng bụng (nervous gut)</strong>. Người <em>"have the guts"</em> là người có đủ bản lĩnh để chịu đựng và vượt qua nỗi sợ thắt ruột đó.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Kết quả bản chất */}
+                <div className="pt-4 border-t border-border/60 space-y-3">
+                  <div className="text-xs font-mono font-bold text-success uppercase tracking-wider flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4" />
+                    <span>Bản chất ý niệm &amp; Ứng dụng tự nhiên:</span>
+                  </div>
+                  <div className="p-3.5 rounded-2xl bg-brand-blue text-white font-mono text-xs sm:text-sm font-semibold shadow-xs">
+                    "He talks big, but doesn't <span className="underline decoration-white/60 underline-offset-4">have the guts to</span> take the risk."
+                  </div>
+                  <p className="text-xs text-foreground/75">
+                    → Mang nghĩa: <strong>Có dũng khí, có gan, dám đương đầu với thử thách</strong>.
                   </p>
                 </div>
               </div>

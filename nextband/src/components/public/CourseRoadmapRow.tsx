@@ -96,33 +96,6 @@ const RANK_CONFIGS: Record<
   },
 };
 
-// Trích xuất mục tiêu & đầu vào cho từng khóa
-const REQUIREMENTS_MAP: Record<
-  string,
-  { entry: string; target: string }
-> = {
-  starter: {
-    entry: "Các bạn mất gốc tiếng Anh hoặc chưa từng học IELTS",
-    target: "Đạt chuẩn phát âm IPA, từ vựng nền và ngữ pháp câu đơn (3.0)",
-  },
-  dreamer: {
-    entry: "IELTS 3.0 (hoặc hoàn thành chặng Starter)",
-    target: "Xây dựng câu phức, kỹ năng skimming & scanning học thuật (4.0)",
-  },
-  builder: {
-    entry: "IELTS 4.0 (hoặc hoàn thành chặng Dreamer)",
-    target: "Làm quen cấu trúc 4 kỹ năng & phản xạ lập luận nền tảng vững chắc (5.0)",
-  },
-  master: {
-    entry: "IELTS 5.0 (hoặc hoàn thành chặng Builder)",
-    target: "Bứt phá 6.0 với tư duy The ARIS Way, làm chủ Task 1 & Task 2",
-  },
-  leader: {
-    entry: "IELTS 6.0 (hoặc hoàn thành chặng Master)",
-    target: "Chinh phục 6.5+ với văn phong học thuật tự nhiên & tư duy phản biện",
-  },
-};
-
 export function CourseRoadmapRow({
   course,
   onTrialClick,
@@ -130,11 +103,6 @@ export function CourseRoadmapRow({
   className,
 }: CourseRoadmapRowProps) {
   const rank = RANK_CONFIGS[course.slug] || RANK_CONFIGS.starter;
-  const reqs = REQUIREMENTS_MAP[course.slug] || {
-    entry: course.target,
-    target: course.description,
-  };
-
   const durationWeeks = course.durationWeeks || (course.slug === "leader" ? 10 : 9);
   const formattedWeeks = durationWeeks < 10 ? `0${durationWeeks}` : `${durationWeeks}`;
 
@@ -224,31 +192,6 @@ export function CourseRoadmapRow({
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-muted text-muted-foreground border border-border/60">
               {course.stageNumber}
             </span>
-          </div>
-
-          {/* Entry & Target bullet points (Phong cách chuẩn Ảnh 1) */}
-          <div className="space-y-1.5 text-sm sm:text-base text-foreground/85">
-            <div className="flex items-start gap-2.5">
-              <span
-                className="inline-block w-2 h-2 rounded-full mt-2 flex-shrink-0"
-                style={{ backgroundColor: rank.themeColor }}
-              />
-              <p className="leading-snug">
-                <strong className="font-bold text-foreground">Đầu vào:</strong>{" "}
-                <span className="text-foreground/80">{reqs.entry}</span>
-              </p>
-            </div>
-
-            <div className="flex items-start gap-2.5">
-              <span
-                className="inline-block w-2 h-2 rounded-full mt-2 flex-shrink-0"
-                style={{ backgroundColor: rank.themeColor }}
-              />
-              <p className="leading-snug">
-                <strong className="font-bold text-foreground">Mục tiêu:</strong>{" "}
-                <span className="text-foreground/80">{reqs.target}</span>
-              </p>
-            </div>
           </div>
         </div>
 
