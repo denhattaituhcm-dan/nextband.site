@@ -3595,6 +3595,7 @@ export interface CanonicalSessionDTO {
   id: string;
   classId: string;
   sessionNumber: number;
+  plannedDate?: string;
   scheduledDate: string; // YYYY-MM-DD
   startTime: string;     // HH:MM
   endTime: string;       // HH:MM

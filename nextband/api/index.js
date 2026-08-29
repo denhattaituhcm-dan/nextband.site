@@ -98181,9 +98181,6 @@ var assessmentRoutes = async (fastify) => {
 };
 var assessment_routes_default = assessmentRoutes;
 
-// server/routes/courses.routes.ts
-import { Prisma as Prisma2 } from "@prisma/client";
-
 // server/schemas/common.schema.ts
 init_zod();
 var paginationSchema = external_exports.object({
@@ -98651,23 +98648,25 @@ var coursesRoutes = async (fastify) => {
     { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
       const { id } = request.params;
-      const { password } = request.body || {};
       const actor = await fastify.prisma.user.findFirst({
-        where: { userId: request.user.id }
+        where: {
+          OR: [
+            { userId: request.user.id },
+            { id: request.user.id }
+          ]
+        }
       });
       if (!actor) {
         return reply.status(401).send({ error: "Kh\xF4ng th\u1EC3 x\xE1c th\u1EF1c ng\u01B0\u1EDDi d\xF9ng" });
       }
       const existing = await fastify.prisma.course.findUnique({
         where: { id },
-        select: { id: true }
+        select: { id: true, isLocked: true }
       });
       if (!existing) {
         return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y kh\xF3a h\u1ECDc" });
       }
-      const lockRows = await fastify.prisma.$queryRaw(Prisma2.sql`SELECT is_locked FROM courses WHERE id = ${id} LIMIT 1`);
-      const isLocked = Boolean(lockRows[0]?.is_locked);
-      if (isLocked) {
+      if (existing.isLocked) {
         return reply.status(423).send({
           error: "Kh\xF3a h\u1ECDc \u0111ang b\u1ECB kh\xF3a. H\xE3y m\u1EDF kh\xF3a tr\u01B0\u1EDBc khi x\xF3a"
         });
@@ -98678,19 +98677,30 @@ var coursesRoutes = async (fastify) => {
           where: { exam: { courseId: id } }
         })
       ]);
-      if (enrollmentCount > 0 || submissionCount > 0) {
+      if (enrollmentCount > 0) {
         return reply.status(409).send({
-          error: "Kh\xF4ng th\u1EC3 x\xF3a kh\xF3a h\u1ECDc khi v\u1EABn c\xF2n h\u1ECDc vi\xEAn ho\u1EB7c b\xE0i n\u1ED9p li\xEAn quan"
+          error: "Kh\xF4ng th\u1EC3 x\xF3a kh\xF3a h\u1ECDc v\xEC \u0111\xE3 c\xF3 h\u1ECDc vi\xEAn \u0111\u0103ng k\xFD"
         });
       }
-      await fastify.prisma.course.update({
-        where: { id },
-        data: {
-          isActive: false,
-          isPublished: false
-        }
-      });
-      return { success: true, softDeleted: true };
+      if (submissionCount > 0) {
+        return reply.status(409).send({
+          error: "Kh\xF4ng th\u1EC3 x\xF3a kh\xF3a h\u1ECDc v\xEC \u0111\xE3 c\xF3 b\xE0i n\u1ED9p thi li\xEAn quan"
+        });
+      }
+      await fastify.prisma.$transaction([
+        fastify.prisma.exam.updateMany({
+          where: { courseId: id },
+          data: { isActive: false, isPublished: false }
+        }),
+        fastify.prisma.course.update({
+          where: { id },
+          data: {
+            isActive: false,
+            isPublished: false
+          }
+        })
+      ]);
+      return { success: true, softDeleted: true, message: "\u0110\xE3 x\xF3a kh\xF3a h\u1ECDc th\xE0nh c\xF4ng" };
     }
   );
 };
@@ -104104,6 +104114,10 @@ var ClassRepository = class {
         teacher: {
           select: { id: true, fullName: true, email: true }
         },
+        schedules: true,
+        sessions: {
+          orderBy: { sessionNumber: "asc" }
+        },
         students: {
           include: {
             student: {
@@ -104578,6 +104592,83 @@ var ClassService = class {
       }
     }
     return classData;
+  }
+  // Use Case: Get Class Sessions
+  async getClassSessions(user, classId) {
+    const classData = await this.repo.findById(classId);
+    if (!classData) {
+      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+    }
+    return this.prisma.classSession.findMany({
+      where: { classId },
+      orderBy: { sessionNumber: "asc" }
+    });
+  }
+  // Use Case: Generate or Update Class Sessions
+  async generateSessionsForClass(user, classId, options) {
+    const classData = await this.repo.findById(classId);
+    if (!classData) {
+      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+    }
+    const { startDate, weekdays, totalSessions = 27, startTime = "18:00", endTime = "20:00" } = options;
+    if (!startDate || !Array.isArray(weekdays) || weekdays.length === 0) {
+      throw new AuthorizationError("Ng\xE0y b\u1EAFt \u0111\u1EA7u v\xE0 th\u1EE9 trong tu\u1EA7n kh\xF4ng \u0111\u01B0\u1EE3c \u0111\u1EC3 tr\u1ED1ng", 400);
+    }
+    const dates = [];
+    const [y, m, d] = startDate.split("-").map(Number);
+    const cur = new Date(y, m - 1, d);
+    while (dates.length < totalSessions) {
+      const dow = cur.getDay();
+      if (weekdays.includes(dow)) {
+        const mm = String(cur.getMonth() + 1).padStart(2, "0");
+        const dd = String(cur.getDate()).padStart(2, "0");
+        dates.push(`${cur.getFullYear()}-${mm}-${dd}`);
+      }
+      cur.setDate(cur.getDate() + 1);
+    }
+    const startTimeDate = /* @__PURE__ */ new Date(`1970-01-01T${startTime.slice(0, 5)}:00.000Z`);
+    const endTimeDate = /* @__PURE__ */ new Date(`1970-01-01T${endTime.slice(0, 5)}:00.000Z`);
+    const existingSessions = await this.prisma.classSession.findMany({
+      where: { classId }
+    });
+    const result = [];
+    for (let idx = 0; idx < dates.length; idx++) {
+      const sessionNumber = idx + 1;
+      const plannedDate = /* @__PURE__ */ new Date(`${dates[idx]}T00:00:00.000Z`);
+      const existing = existingSessions.find((s) => s.sessionNumber === sessionNumber);
+      if (existing) {
+        const updated = await this.prisma.classSession.update({
+          where: { id: existing.id },
+          data: {
+            plannedDate,
+            startTime: startTimeDate,
+            endTime: endTimeDate
+          }
+        });
+        result.push(updated);
+      } else {
+        const created = await this.prisma.classSession.create({
+          data: {
+            classId,
+            sessionNumber,
+            plannedDate,
+            startTime: startTimeDate,
+            endTime: endTimeDate,
+            status: "PLANNED"
+          }
+        });
+        result.push(created);
+      }
+    }
+    if (existingSessions.length > dates.length) {
+      const extraneousIds = existingSessions.filter((s) => s.sessionNumber > dates.length && s.status === "PLANNED").map((s) => s.id);
+      if (extraneousIds.length > 0) {
+        await this.prisma.classSession.deleteMany({
+          where: { id: { in: extraneousIds } }
+        });
+      }
+    }
+    return result;
   }
   // Use Case: Create Class (Admin Only)
   async createClass(user, data) {
@@ -105519,6 +105610,26 @@ var ClassController = class {
       return reply.status(status).send({ error: err.message });
     }
   }
+  async getSessions(request, reply) {
+    try {
+      const user = request.user;
+      const result = await this.service.getClassSessions(user, request.params.id);
+      return reply.send(result);
+    } catch (err) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
+  async generateSessions(request, reply) {
+    try {
+      const user = request.user;
+      const result = await this.service.generateSessionsForClass(user, request.params.id, request.body);
+      return reply.send(result);
+    } catch (err) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
 };
 
 // server/routes/classes.routes.ts
@@ -105540,6 +105651,16 @@ async function classesRoutes(fastify) {
   fastify.get("/:id", { preHandler: authenticate }, async (request, reply) => {
     return controller.getById(request, reply);
   });
+  fastify.get("/:id/sessions", { preHandler: authenticate }, async (request, reply) => {
+    return controller.getSessions(request, reply);
+  });
+  fastify.post(
+    "/:id/generate-sessions",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      return controller.generateSessions(request, reply);
+    }
+  );
   fastify.post(
     "/",
     { preHandler: [authenticate, requireRoles("admin")] },
