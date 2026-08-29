@@ -144,7 +144,7 @@ export function getMascotPresentation(input: HuanCoInput): HuanCoState {
         state: "CELEBRATE",
         eventType,
         urgency: "GREEN",
-        badgeText: "Thăng Cảnh Giới",
+        badgeText: "Đột Phá Cảnh Giới",
         quote: `Căn cơ đã vững. Đã chạm mốc ${realm.academicRank}. Một tầng kiến thức mới đã mở ra.`,
         advice: "Tiếp tục giữ vững phong độ này trong các bài học tiếp theo.",
         ctaLabel: "Xem lộ trình tiếp theo",
@@ -164,7 +164,7 @@ export function getMascotPresentation(input: HuanCoInput): HuanCoState {
         badgeText: "Kỷ Lục Mới",
         quote: `Band điểm đã nhích lên${
           input.recentTrigger?.score ? ` (${input.recentTrigger.score})` : ""
-        }. Tiếp tục giữ cách học này.`,
+        }. Bạn đã vượt qua kỷ lục của chính mình. Tiếp tục giữ cách học này.`,
         advice: "Sự kiên trì đang mang lại kết quả rõ rệt.",
         ctaLabel: "Xem chi tiết bài làm",
         ctaPath: routes.student.submissions(),
@@ -219,7 +219,7 @@ export function getMascotPresentation(input: HuanCoInput): HuanCoState {
         state: "MENTOR",
         eventType,
         urgency: "ORANGE",
-        badgeText: "Cần Sửa Bài",
+        badgeText: "Cần Mài Giũa",
         quote: "Bài này còn vài điểm cần mài giũa thêm một lần nữa.",
         advice: `Xem nhận xét của giáo viên và hoàn thiện bài "${target.title}".`,
         ctaLabel: `Sửa bài: ${target.title}`,
@@ -246,7 +246,7 @@ export function getMascotPresentation(input: HuanCoInput): HuanCoState {
         eventType,
         urgency: "RED",
         badgeText: "Cần Xử Lý",
-        quote: "Đừng để bài cũ kéo chậm chặng hiện tại. Cùng giải quyết bài này nhé.",
+        quote: "Đừng lo, chúng ta giải quyết từng bài một là ổn ngay. Đừng để bài cũ kéo chậm chặng hiện tại.",
         advice: `Ưu tiên hoàn thành bài "${target.title}" để giữ nhịp học.`,
         ctaLabel: `Xử lý nhiệm vụ: ${target.title}`,
         ctaPath: targetPath,
@@ -313,7 +313,7 @@ export function getMascotPresentation(input: HuanCoInput): HuanCoState {
         state: "WELCOME",
         eventType,
         urgency: "GREEN",
-        badgeText: "Giữ Nhịp Tốt",
+        badgeText: "Tiến Triển Tốt",
         quote: "Hôm nay em giữ nhịp rất tốt. Không có bài quá hạn.",
         advice:
           gradedCount > 0

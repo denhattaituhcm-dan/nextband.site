@@ -731,6 +731,7 @@ enum AppRole {
   admin
   teacher
   student
+  staff
 
   @@map("app_role")
 }

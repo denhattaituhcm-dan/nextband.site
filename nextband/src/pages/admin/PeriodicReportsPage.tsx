@@ -883,6 +883,85 @@ export default function PeriodicReportsPage() {
                 </Table>
               </CardContent>
             </Card>
+            {/* Table 3: Bóc tách Hiệu quả theo Nhân viên Tư vấn (Staff Performance) */}
+            {report.admissions.byStaff && report.admissions.byStaff.length > 0 && (
+              <Card className="border-slate-200/90 dark:border-slate-800 shadow-sm overflow-hidden lg:col-span-2">
+                <CardHeader className="p-4 pb-3 border-b bg-muted/40 flex flex-row items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-1.5 rounded-md bg-indigo-500/10 text-indigo-600">
+                      <UserCheck className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-sm font-bold text-foreground">
+                        Hiệu quả Tư vấn theo Nhân viên (Staff / CRM Performance)
+                      </CardTitle>
+                      <p className="text-[11px] text-muted-foreground">
+                        Thống kê số lượng leads được phân bổ và tỷ lệ chốt học viên theo từng tư vấn viên
+                      </p>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="text-[11px] font-semibold bg-background">
+                    {report.admissions.byStaff.length} người phụ trách
+                  </Badge>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader className="bg-muted/20">
+                      <TableRow className="text-xs hover:bg-transparent">
+                        <TableHead className="py-2.5 font-semibold text-foreground">Người phụ trách</TableHead>
+                        <TableHead className="py-2.5 text-right font-semibold text-foreground">Leads tiếp nhận</TableHead>
+                        <TableHead className="py-2.5 text-right font-semibold text-foreground">Chốt nhập học</TableHead>
+                        <TableHead className="py-2.5 text-right font-semibold text-foreground">Tỷ lệ chốt</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {report.admissions.byStaff.map((staff, idx) => (
+                        <TableRow
+                          key={staff.staffId}
+                          className={`text-xs hover:bg-muted/40 transition-colors ${idx % 2 === 1 ? 'bg-muted/10' : ''}`}
+                        >
+                          <TableCell className="py-3 font-medium text-foreground flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-indigo-600/10 text-indigo-600 text-[10px] flex items-center justify-center font-bold shrink-0">
+                              {staff.staffName.charAt(0)}
+                            </div>
+                            <div>
+                              <div className="font-semibold">{staff.staffName}</div>
+                              {staff.email && <div className="text-[10px] text-muted-foreground">{staff.email}</div>}
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right py-3 font-medium text-muted-foreground">
+                            {staff.leads}
+                          </TableCell>
+                          <TableCell className="text-right py-3 font-bold text-emerald-600">
+                            {staff.enrolled}
+                          </TableCell>
+                          <TableCell className="text-right py-3">
+                            <div className="flex items-center justify-end gap-2">
+                              <div className="w-16 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden hidden sm:block">
+                                <div
+                                  className="h-full bg-indigo-500 rounded-full"
+                                  style={{ width: `${Math.min(staff.conversionRate, 100)}%` }}
+                                />
+                              </div>
+                              <Badge
+                                variant="outline"
+                                className={`text-[10px] font-bold ${
+                                  staff.conversionRate > 0
+                                    ? "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950 dark:text-indigo-300"
+                                    : "bg-muted text-muted-foreground"
+                                }`}
+                              >
+                                {staff.conversionRate}%
+                              </Badge>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       )}

@@ -2318,6 +2318,14 @@ export interface PeriodicReportData {
       enrolled: number;
       conversionRate: number;
     }>;
+    byStaff?: Array<{
+      staffId: string;
+      staffName: string;
+      email?: string;
+      leads: number;
+      enrolled: number;
+      conversionRate: number;
+    }>;
   };
   classes: {
     opened: number;

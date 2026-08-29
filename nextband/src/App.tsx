@@ -126,6 +126,7 @@ const AdminExamEdit = lazyWithRetry(() => import("@/pages/admin/ExamEdit"));
 const AdminSectionEdit = lazyWithRetry(() => import("@/pages/admin/SectionEdit"));
 const AdminUsers = lazyWithRetry(() => import("@/pages/admin/Users"));
 const AdminTeachers = lazyWithRetry(() => import("@/pages/admin/Teachers"));
+const AdminStaff = lazyWithRetry(() => import("@/pages/admin/Staff"));
 const AdminAdmins = lazyWithRetry(() => import("@/pages/admin/Admins"));
 const AdminCheckAttempt = lazyWithRetry(() => import("@/pages/admin/CheckAttempt"));
 const AdminSubmissionGrade = lazyWithRetry(() => import("@/pages/admin/SubmissionGrade"));
@@ -497,6 +498,14 @@ const App = () => (
                   }
                 />
                 <Route
+                  path="/admin/staff"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin"]}>
+                      <AdminStaff />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
                   path="/admin/admins"
                   element={
                     <ProtectedRoute requiredRoles={["admin"]}>
@@ -563,7 +572,7 @@ const App = () => (
                 <Route
                   path="/admin/leads"
                   element={
-                    <ProtectedRoute requiredRoles={["admin"]}>
+                    <ProtectedRoute requiredRoles={["admin", "staff"]}>
                       <AdminLeads />
                     </ProtectedRoute>
                   }

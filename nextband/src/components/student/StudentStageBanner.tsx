@@ -67,7 +67,7 @@ export function StudentStageBanner({
               <span>{currentRealm.name} · BAND {currentBand.toFixed(1)}</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-              {studentName || "Học viên"}
+              Hành trình của {studentName || "Học viên"}
             </h1>
           </div>
         </div>

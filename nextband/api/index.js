@@ -94484,6 +94484,7 @@ var init_lead_schema = __esm({
       goal: external_exports.string().trim().max(2e3, "M\u1EE5c ti\xEAu/l\u1EDDi nh\u1EAFn kh\xF4ng \u0111\u01B0\u1EE3c v\u01B0\u1EE3t qu\xE1 2000 k\xFD t\u1EF1").optional().or(external_exports.literal("")),
       source: external_exports.string().trim().max(100).optional().default("contact_page"),
       preferredBranchId: external_exports.string().optional().nullable(),
+      referralCode: external_exports.string().trim().max(50).optional().nullable(),
       notes: external_exports.string().max(2e3).optional().nullable()
     });
     updateLeadSchema = external_exports.object({
@@ -102065,7 +102066,7 @@ var ExamSubmissionService = class {
     }
     const currentStatus = String(submission.status).toUpperCase();
     if (currentStatus === "SUBMITTED" || currentStatus === "GRADED" || currentStatus === "EXPIRED" || currentStatus === "ABANDONED") {
-      throw new AuthorizationError("ANSWERS_IMMUTABLE: Kh\xF4ng th\u1EC3 s\u1EEDa c\xE2u tr\u1EA3 l\u1EDDi sau khi b\xE0i thi \u0111\xE3 n\u1ED9p ho\u1EB7c k\u1EBFt th\xFAc", 403);
+      throw new StateTransitionError("SUBMISSION_ALREADY_FINALIZED");
     }
     if (currentStatus !== "IN_PROGRESS") {
       throw new StateTransitionError("SUBMISSION_ALREADY_FINALIZED");
@@ -102137,13 +102138,10 @@ var ExamSubmissionService = class {
   // Use Case: Submit Exam with Canonical Scoring & Idempotency
   // CRITICAL: Pure Server Authority — Strips client score/bandScore/isCorrect injections
   async submitExam(user, id, payload) {
-    if (payload.idempotencyKey) {
-      let existingIdem = null;
-      if (this.prisma.idempotencyRecords) {
-        existingIdem = await this.prisma.idempotencyRecord?.findFirst?.({
-          where: { key: payload.idempotencyKey }
-        });
-      }
+    if (payload.idempotencyKey && this.prisma.idempotencyRecord) {
+      const existingIdem = await this.prisma.idempotencyRecord.findUnique({
+        where: { key: payload.idempotencyKey }
+      });
       if (existingIdem) {
         const cached2 = typeof existingIdem.responsePayload === "string" ? JSON.parse(existingIdem.responsePayload) : existingIdem.responsePayload;
         const cachedAnswers = cached2.answers || [];
@@ -102319,7 +102317,7 @@ var ExamSubmissionService = class {
         answers: createdOrUpdatedAnswers,
         bandScore: gradingSummary.bandScore
       };
-      if (tx.auditOutboxList && tx.auditOutbox) {
+      if (tx.auditOutbox) {
         const auditEvent = auditOutboxService.buildSanitizedEvent({
           eventType: "SUBMISSION_FINALIZED",
           actorId: user.id,
@@ -102333,15 +102331,29 @@ var ExamSubmissionService = class {
         });
         await tx.auditOutbox.create({ data: auditEvent });
       }
-      if (payload.idempotencyKey && tx.idempotencyRecords && tx.idempotencyRecord) {
-        await tx.idempotencyRecord.create({
-          data: {
-            key: payload.idempotencyKey,
-            submissionId: id,
-            payloadHash: "sha256-mock",
-            responsePayload: JSON.stringify(fullResult)
+      if (payload.idempotencyKey && tx.idempotencyRecord) {
+        try {
+          await tx.idempotencyRecord.create({
+            data: {
+              key: payload.idempotencyKey,
+              submissionId: id,
+              payloadHash: "sha256-payload",
+              responsePayload: JSON.stringify(fullResult),
+              status: "COMMITTED"
+            }
+          });
+        } catch (idemErr) {
+          if (idemErr?.code === "P2002" || idemErr?.message?.includes("Unique constraint")) {
+            const existing = await tx.idempotencyRecord.findUnique({
+              where: { key: payload.idempotencyKey }
+            });
+            if (existing) {
+              const cached2 = typeof existing.responsePayload === "string" ? JSON.parse(existing.responsePayload) : existing.responsePayload;
+              return cached2;
+            }
           }
-        });
+          throw idemErr;
+        }
       }
       if (tx.notification) {
         const examTitle = submission.exam?.title || "IELTS Exam";
@@ -102386,6 +102398,9 @@ var ExamSubmissionService = class {
             entityId: id
           });
         }
+      }
+      if (targetStatus === "GRADED") {
+        await this.syncStudentCourseProgressAndMilestones(tx, user.id, submission.exam?.courseId);
       }
       return fullResult;
     });
@@ -102594,7 +102609,7 @@ var ExamSubmissionService = class {
         include: { answers: true }
       });
       if (isFinalize) {
-        if (tx.auditOutboxList && tx.auditOutbox) {
+        if (tx.auditOutbox) {
           const auditEvent = auditOutboxService.buildSanitizedEvent({
             eventType: "TEACHER_REGRADED",
             actorId: user.id,
@@ -102618,6 +102633,7 @@ var ExamSubmissionService = class {
             entityId: id
           });
         }
+        await this.syncStudentCourseProgressAndMilestones(tx, submission.studentId, submission.exam?.courseId);
       }
       return updated;
     });
@@ -102710,7 +102726,7 @@ var ExamSubmissionService = class {
         },
         include: { answers: true }
       });
-      if (tx.auditOutboxList && tx.auditOutbox) {
+      if (tx.auditOutbox) {
         const auditEvent = auditOutboxService.buildSanitizedEvent({
           eventType: "SUBMISSION_REGRADED",
           actorId: user.id,
@@ -102723,12 +102739,97 @@ var ExamSubmissionService = class {
         });
         await tx.auditOutbox.create({ data: auditEvent });
       }
+      await this.syncStudentCourseProgressAndMilestones(tx, submission.studentId, submission.exam?.courseId);
       return {
         ...updated,
         regradeReason: data.reason.trim(),
         previousScore
       };
     });
+  }
+  /**
+   * P1.4: Real Progress & Milestone Synchronization
+   * Computes student's truthful completion percentage for a course and unlocks milestone claims
+   */
+  async syncStudentCourseProgressAndMilestones(tx, studentId, courseId) {
+    if (!courseId || !studentId) return;
+    try {
+      const totalCourseExams = await tx.exam.count({
+        where: {
+          courseId,
+          isActive: true,
+          isPublished: true
+        }
+      });
+      if (totalCourseExams === 0) return;
+      const completedSubmissions = await tx.examSubmission.findMany({
+        where: {
+          studentId,
+          status: "GRADED",
+          exam: {
+            courseId,
+            isActive: true,
+            isPublished: true
+          }
+        },
+        select: { examId: true },
+        distinct: ["examId"]
+      });
+      const completedCount = completedSubmissions.length;
+      const progressPercent = Math.min(100, Math.round(completedCount / totalCourseExams * 100));
+      if (tx.enrollment) {
+        await tx.enrollment.updateMany({
+          where: {
+            courseId,
+            studentId
+          },
+          data: {
+            progressPercent
+          }
+        });
+      }
+      if (tx.studentMilestoneClaim) {
+        const milestonesToClaim = [];
+        if (progressPercent >= 25) milestonesToClaim.push("MILESTONE_25_PERCENT");
+        if (progressPercent >= 50) milestonesToClaim.push("MILESTONE_50_PERCENT");
+        if (progressPercent >= 75) milestonesToClaim.push("MILESTONE_75_PERCENT");
+        if (progressPercent === 100) milestonesToClaim.push("MILESTONE_GRAND_GRADUATION");
+        for (const key of milestonesToClaim) {
+          try {
+            const existingClaim = await tx.studentMilestoneClaim.findUnique({
+              where: {
+                studentId_milestoneKey: {
+                  studentId,
+                  milestoneKey: key
+                }
+              }
+            });
+            if (!existingClaim) {
+              await tx.studentMilestoneClaim.create({
+                data: {
+                  studentId,
+                  milestoneKey: key
+                }
+              });
+            }
+          } catch (_) {
+          }
+        }
+        if (progressPercent === 100 && tx.notification) {
+          await this.notificationService.createNotification(tx, {
+            userId: studentId,
+            type: "ANNOUNCEMENT",
+            title: "\u{1F393} Ch\xFAc m\u1EEBng ho\xE0n th\xE0nh kh\xF3a h\u1ECDc!",
+            message: `B\u1EA1n \u0111\xE3 ho\xE0n th\xE0nh 100% t\u1EA5t c\u1EA3 c\xE1c b\xE0i ki\u1EC3m tra c\u1EE7a kh\xF3a h\u1ECDc. Ch\xFAc m\u1EEBng c\u1ED9t m\u1ED1c xu\u1EA5t s\u1EAFc!`,
+            link: `/app/dashboard`,
+            entityType: "COURSE",
+            entityId: courseId
+          });
+        }
+      }
+    } catch (err) {
+      console.error("[ExamSubmissionService] Error syncing student course progress:", err);
+    }
   }
 };
 
@@ -102983,6 +103084,12 @@ var usersRoutes = async (fastify) => {
             isActive: true,
             createdAt: true,
             roles: true,
+            userBranches: {
+              select: {
+                branchId: true,
+                branch: { select: { id: true, name: true, code: true } }
+              }
+            },
             classesAsTeacher: {
               where: { isActive: true, status: "ACTIVE" },
               select: {
@@ -102995,7 +103102,13 @@ var usersRoutes = async (fastify) => {
               }
             },
             _count: {
-              select: { enrollments: true, submissions: true }
+              select: {
+                enrollments: true,
+                submissions: true,
+                assignedLeads: {
+                  where: { status: { notIn: ["ENROLLED", "CANCELLED", "ARCHIVED"] } }
+                }
+              }
             }
           }
         }),
@@ -103007,10 +103120,14 @@ var usersRoutes = async (fastify) => {
           (sum, cl) => sum + (cl._count?.students || 0),
           0
         );
-        const { classesAsTeacher, ...rest } = u;
+        const branches = (u.userBranches || []).map((ub) => ub.branch).filter(Boolean);
+        const activeLeadCount = u._count?.assignedLeads || 0;
+        const { classesAsTeacher, userBranches, ...rest } = u;
         return {
           ...rest,
           roles: u.roles.map((r) => r.role),
+          branches,
+          activeLeadCount,
           activeClassesCount,
           totalStudents
         };
@@ -103507,16 +103624,34 @@ var usersRoutes = async (fastify) => {
         if (!user) {
           throw new Error("Kh\xF4ng t\xECm th\u1EA5y th\xF4ng tin ng\u01B0\u1EDDi d\xF9ng sau khi t\u1EA1o");
         }
+        const { branchId, branchIds } = request.body;
+        if (branchIds && Array.isArray(branchIds) && branchIds.length > 0) {
+          await fastify.prisma.userBranch.createMany({
+            data: branchIds.map((bId) => ({
+              userId: user.userId,
+              branchId: bId
+            })),
+            skipDuplicates: true
+          });
+        } else if (branchId) {
+          await fastify.prisma.userBranch.create({
+            data: {
+              userId: user.userId,
+              branchId
+            }
+          }).catch(() => {
+          });
+        }
         (async () => {
           try {
             const { NotificationService: NotificationService2 } = await Promise.resolve().then(() => (init_notification_service(), notification_service_exports));
             const notifService = new NotificationService2(fastify.prisma);
-            const roleLabel = role === "student" ? "H\u1ECDc vi\xEAn" : role === "teacher" ? "Gi\xE1o vi\xEAn" : "Qu\u1EA3n tr\u1ECB vi\xEAn";
+            const roleLabel = role === "student" ? "H\u1ECDc vi\xEAn" : role === "teacher" ? "Gi\xE1o vi\xEAn" : role === "staff" ? "Nh\xE2n vi\xEAn" : "Qu\u1EA3n tr\u1ECB vi\xEAn";
             await notifService.notifyUsersByRole(["admin"], {
               type: "SYSTEM",
               title: `${roleLabel} m\u1EDBi \u0111\u01B0\u1EE3c th\xEAm v\xE0o h\u1EC7 th\u1ED1ng`,
               message: `${roleLabel} ${user.fullName || user.email} (${user.email}) v\u1EEBa \u0111\u01B0\u1EE3c t\u1EA1o th\xE0nh c\xF4ng tr\xEAn h\u1EC7 th\u1ED1ng.`,
-              link: "/admin/users",
+              link: role === "staff" ? "/admin/staff" : "/admin/users",
               entityType: "USER",
               entityId: user.userId
             });
@@ -103706,6 +103841,34 @@ var usersRoutes = async (fastify) => {
         await fastify.prisma.userRole.create({
           data: { userId: user.userId, role }
         });
+      }
+      const { branchId, branchIds } = request.body;
+      if (branchIds !== void 0) {
+        await fastify.prisma.userBranch.deleteMany({
+          where: { userId: user.userId }
+        });
+        if (Array.isArray(branchIds) && branchIds.length > 0) {
+          await fastify.prisma.userBranch.createMany({
+            data: branchIds.map((bId) => ({
+              userId: user.userId,
+              branchId: bId
+            })),
+            skipDuplicates: true
+          });
+        }
+      } else if (branchId !== void 0) {
+        await fastify.prisma.userBranch.deleteMany({
+          where: { userId: user.userId }
+        });
+        if (branchId) {
+          await fastify.prisma.userBranch.create({
+            data: {
+              userId: user.userId,
+              branchId
+            }
+          }).catch(() => {
+          });
+        }
       }
       invalidateUserAuthCache(user.userId);
       invalidateUserAuthCache(user.id);
@@ -105380,7 +105543,7 @@ var ClassService = class {
       // Invariant: Hard delete is strictly eliminated (always 0)
     };
   }
-  // Use Case: Add Student to Class
+  // Use Case: Add Student to Class (Bi-directional Cascade to Course Enrollment)
   async addStudent(user, classId, studentId) {
     const classData = await this.repo.findById(classId);
     if (!classData) {
@@ -105397,9 +105560,54 @@ var ClassService = class {
     if (alreadyIn) {
       throw new AuthorizationError("H\u1ECDc vi\xEAn \u0111\xE3 c\xF3 trong l\u1EDBp h\u1ECDc n\xE0y", 409);
     }
-    return this.repo.addStudentToClass(classId, studentId);
+    return this.prisma.$transaction(async (tx) => {
+      const classStudent = await tx.classStudent.upsert({
+        where: { classId_studentId: { classId, studentId } },
+        update: {
+          status: "ACTIVE",
+          deletedAt: null,
+          joinedAt: /* @__PURE__ */ new Date()
+        },
+        create: {
+          classId,
+          studentId,
+          status: "ACTIVE",
+          joinedAt: /* @__PURE__ */ new Date()
+        }
+      });
+      if (classData.courseId) {
+        const existingEnrollment = await tx.enrollment.findUnique({
+          where: {
+            courseId_studentId: {
+              courseId: classData.courseId,
+              studentId
+            }
+          }
+        });
+        if (!existingEnrollment) {
+          await tx.enrollment.create({
+            data: {
+              courseId: classData.courseId,
+              studentId,
+              enrolledAt: /* @__PURE__ */ new Date()
+            }
+          });
+        }
+      }
+      await tx.enrollmentAuditLog.create({
+        data: {
+          operatorId: user.id,
+          studentId,
+          classId,
+          action: "CLASS_PLACEMENT_CASCADE",
+          reason: `X\u1EBFp h\u1ECDc vi\xEAn v\xE0o l\u1EDBp ${classData.name} (T\u1EF1 \u0111\u1ED9ng k\xEDch ho\u1EA1t quy\u1EC1n kh\xF3a h\u1ECDc)`,
+          toStatus: "ACTIVE"
+        }
+      });
+      return classStudent;
+    });
   }
-  // Use Case: Remove Student from Class
+  // Use Case: Remove Student from Class (Cascade check to revoke Course Enrollment if no other active classes)
   async removeStudent(user, classId, studentId) {
     const classData = await this.repo.findById(classId);
     if (!classData) {
@@ -105412,7 +105620,47 @@ var ClassService = class {
     if (!isAdmin && classData.teacherId !== user.id) {
       throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n x\xF3a h\u1ECDc vi\xEAn kh\u1ECFi l\u1EDBp n\xE0y", 403);
     }
-    return this.repo.removeStudentFromClass(classId, studentId);
+    return this.prisma.$transaction(async (tx) => {
+      await tx.classStudent.updateMany({
+        where: { classId, studentId, deletedAt: null },
+        data: {
+          status: "DROPPED",
+          deletedAt: /* @__PURE__ */ new Date()
+        }
+      });
+      if (classData.courseId) {
+        const remainingActiveClasses = await tx.classStudent.count({
+          where: {
+            studentId,
+            status: "ACTIVE",
+            deletedAt: null,
+            class: {
+              courseId: classData.courseId,
+              id: { not: classId }
+            }
+          }
+        });
+        if (remainingActiveClasses === 0) {
+          await tx.enrollment.deleteMany({
+            where: {
+              courseId: classData.courseId,
+              studentId
+            }
+          });
+        }
+      }
+      await tx.enrollmentAuditLog.create({
+        data: {
+          operatorId: user.id,
+          studentId,
+          classId,
+          action: "STUDENT_REMOVAL_CASCADE",
+          reason: `X\xF3a h\u1ECDc vi\xEAn kh\u1ECFi l\u1EDBp ${classData.name}`,
+          toStatus: "DROPPED"
+        }
+      });
+      return { success: true };
+    });
   }
   // Use Case: Record Attendance
   async recordAttendance(user, classId, records) {
@@ -107570,6 +107818,19 @@ var LeadService = class {
         return existingRecentLead;
       }
     }
+    let referralCode = null;
+    let inviterUserId = null;
+    if (input.referralCode && input.referralCode.trim().length > 0) {
+      const cleanRef = input.referralCode.trim().toUpperCase();
+      const inviter = await this.prisma.user.findUnique({
+        where: { referralCode: cleanRef },
+        select: { userId: true, phone: true, fullName: true }
+      });
+      if (inviter && (!inviter.phone || inviter.phone.trim() !== input.phone.trim())) {
+        referralCode = cleanRef;
+        inviterUserId = inviter.userId;
+      }
+    }
     const lead = await this.prisma.contactLead.create({
       data: {
         fullName: input.fullName,
@@ -107577,12 +107838,12 @@ var LeadService = class {
         email: input.email && input.email.length > 0 ? input.email : null,
         goal: input.goal && input.goal.length > 0 ? input.goal : null,
         source: input.source || "contact_page",
-        preferredBranchId: input.preferredBranchId || null,
+        preferredBranch: input.preferredBranchId ? { connect: { id: input.preferredBranchId } } : void 0,
+        referralCode,
+        inviter: inviterUserId ? { connect: { userId: inviterUserId } } : void 0,
         notes: input.notes && input.notes.length > 0 ? input.notes : null,
-        createdByUserId: input.createdByUserId || null,
-        // Auto-assign to the staff member who manually created this lead
-        assignedToUserId: input.createdByUserId || null,
-        assignedAt: input.createdByUserId ? /* @__PURE__ */ new Date() : null,
+        createdByUser: input.createdByUserId ? { connect: { userId: input.createdByUserId } } : void 0,
+        assignedToUser: input.createdByUserId ? { connect: { userId: input.createdByUserId } } : void 0,
         status: LeadStatus.NEW
       },
       include: {
@@ -107745,7 +108006,8 @@ var LeadService = class {
       validatedTargetClass = await this.prisma.class.findUnique({
         where: { id: input.targetClassId },
         include: {
-          branch: { select: { id: true, name: true } }
+          branch: { select: { id: true, name: true } },
+          course: { select: { id: true, title: true, price: true } }
         }
       });
       if (!validatedTargetClass) {
@@ -107790,6 +108052,58 @@ var LeadService = class {
             }
           });
         }
+        if (!newUser.referralCode) {
+          const cleanName = (fullName || "STUDENT").toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Z]/g, "").slice(0, 5).padEnd(5, "X");
+          const idSuffix = supabaseUserId.replace(/-/g, "").slice(-4).toUpperCase();
+          const autoCode = `ARIS-${cleanName}${idSuffix}`;
+          await tx.user.update({
+            where: { userId: supabaseUserId },
+            data: { referralCode: autoCode }
+          }).catch(() => {
+          });
+        }
+        let discountApplied = 0;
+        let attributionRecord = null;
+        if (lead.referralCode && lead.inviterUserId && lead.inviterUserId !== supabaseUserId) {
+          discountApplied = 2e5;
+          try {
+            attributionRecord = await tx.referralAttribution.create({
+              data: {
+                inviterUserId: lead.inviterUserId,
+                refereeLeadId: lead.id,
+                refereeUserId: supabaseUserId,
+                referralCode: lead.referralCode,
+                discountAmount: 2e5,
+                status: "CONVERTED"
+              }
+            });
+            await tx.referralReward.create({
+              data: {
+                attributionId: attributionRecord.id,
+                inviterUserId: lead.inviterUserId,
+                rewardType: "ARIS_GIFT_BOX",
+                status: "PENDING_QUALIFICATION",
+                notes: `Ng\u01B0\u1EDDi \u0111\u01B0\u1EE3c m\u1EDDi: ${fullName} (${supabaseUserId}) \u0111\xE3 ghi danh`
+              }
+            });
+            if (tx.notification) {
+              const { NotificationService: NotificationService2 } = await Promise.resolve().then(() => (init_notification_service(), notification_service_exports));
+              const notifService = new NotificationService2(tx);
+              await notifService.createNotification(tx, {
+                userId: lead.inviterUserId,
+                type: "SYSTEM",
+                title: "\u{1F389} B\u1EA1n \u0111\u1ED3ng h\xE0nh \u0111\xE3 ho\xE0n t\u1EA5t \u0111\u0103ng k\xFD!",
+                message: `B\u1EA1n ${fullName} \u0111\xE3 \u0111\u0103ng k\xFD th\xE0nh c\xF4ng! B\u1EA1n \u0111ang c\xF3 01 B\u1ED9 Qu\xE0 T\u1EB7ng ARIS ch\u1EDD k\xEDch ho\u1EA1t khi b\u1EA1n m\u1EDBi ho\xE0n t\u1EA5t h\u1ECDc ph\xED.`,
+                link: "/app/profile",
+                entityType: "REFERRAL",
+                entityId: attributionRecord.id
+              }).catch(() => {
+              });
+            }
+          } catch (refErr) {
+            console.error("[LeadService] Error recording referral attribution:", refErr);
+          }
+        }
         let placedClassInfo = null;
         if (input.targetClassId) {
           const existingMembership = await tx.classStudent.findUnique({
@@ -107802,7 +108116,10 @@ var LeadService = class {
           });
           if (!existingMembership) {
             const coursePrice = Number(validatedTargetClass.course?.price || 0);
-            const fee = input.tuitionFee !== void 0 ? input.tuitionFee : coursePrice;
+            let fee = input.tuitionFee !== void 0 ? input.tuitionFee : coursePrice;
+            if (discountApplied > 0 && input.tuitionFee === void 0) {
+              fee = Math.max(0, fee - discountApplied);
+            }
             const paid = input.paidAmount !== void 0 ? input.paidAmount : 0;
             let pStatus = input.paymentStatus;
             if (!pStatus) {
@@ -107817,11 +108134,30 @@ var LeadService = class {
                 tuitionFee: fee,
                 paidAmount: paid,
                 paymentStatus: pStatus,
-                paymentNote: input.paymentNote || null,
+                paymentNote: input.paymentNote || (discountApplied > 0 ? "[\u01AFu \u0111\xE3i Study Buddy] Gi\u1EA3m 200.000\u0111" : null),
                 externalRef: input.externalRef || null,
                 joinedAt: /* @__PURE__ */ new Date()
               }
             });
+            if (validatedTargetClass.courseId) {
+              const existingEnrollment = await tx.enrollment.findUnique({
+                where: {
+                  courseId_studentId: {
+                    courseId: validatedTargetClass.courseId,
+                    studentId: supabaseUserId
+                  }
+                }
+              });
+              if (!existingEnrollment) {
+                await tx.enrollment.create({
+                  data: {
+                    courseId: validatedTargetClass.courseId,
+                    studentId: supabaseUserId,
+                    enrolledAt: /* @__PURE__ */ new Date()
+                  }
+                });
+              }
+            }
             if (_operatorId) {
               await tx.enrollmentAuditLog.create({
                 data: {
@@ -107829,7 +108165,7 @@ var LeadService = class {
                   studentId: supabaseUserId,
                   classId: input.targetClassId,
                   action: "LEAD_CONVERSION_PLACEMENT",
-                  reason: `X\u1EBFp l\u1EDBp ban \u0111\u1EA7u khi chuy\u1EC3n \u0111\u1ED5i t\u1EEB Kh\xE1ch t\u01B0 v\u1EA5n #${lead.id} (${fullName})`,
+                  reason: `X\u1EBFp l\u1EDBp ban \u0111\u1EA7u khi chuy\u1EC3n \u0111\u1ED5i t\u1EEB Kh\xE1ch t\u01B0 v\u1EA5n #${lead.id} (${fullName})${discountApplied > 0 ? " [\u0110\xE3 \xE1p d\u1EE5ng m\xE3 gi\u1EDBi thi\u1EC7u -200k]" : ""}`,
                   toStatus: "ACTIVE"
                 }
               });
@@ -107951,14 +108287,15 @@ var leadRoutes = async (fastify) => {
         request.log.error(err, "Failed to create consultation lead");
         return reply.status(500).send({
           success: false,
-          error: "Kh\xF4ng th\u1EC3 x\u1EED l\xFD y\xEAu c\u1EA7u l\xFAc n\xE0y. Vui l\xF2ng li\xEAn h\u1EC7 Hotline 0933.319.693."
+          error: "Kh\xF4ng th\u1EC3 x\u1EED l\xFD y\xEAu c\u1EA7u l\xFAc n\xE0y. Vui l\xF2ng li\xEAn h\u1EC7 Hotline 0933.319.693.",
+          details: err?.message || String(err)
         });
       }
     }
   );
   fastify.get(
     "/check-phone",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
     async (request, reply) => {
       const { phone } = request.query;
       if (!phone || typeof phone !== "string") {
@@ -107973,7 +108310,7 @@ var leadRoutes = async (fastify) => {
   );
   fastify.post(
     "/manual",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
     async (request, reply) => {
       const validatedData = handleValidation(
         createLeadSchema.safeParse(request.body),
@@ -108003,7 +108340,7 @@ var leadRoutes = async (fastify) => {
   );
   fastify.post(
     "/:id/convert",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
     async (request, reply) => {
       const { id } = request.params;
       const { convertLeadSchema: convertLeadSchema2 } = await Promise.resolve().then(() => (init_lead_schema(), lead_schema_exports));
@@ -108031,11 +108368,13 @@ var leadRoutes = async (fastify) => {
   );
   fastify.get(
     "/assignable-staff",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
     async (request, reply) => {
+      const { branchId } = request.query || {};
       const staffWithLeads = await fastify.prisma.user.findMany({
         where: {
-          roles: { some: { role: { in: ["admin", "teacher"] } } }
+          isActive: true,
+          roles: { some: { role: { in: ["staff", "admin", "teacher"] } } }
         },
         select: {
           id: true,
@@ -108043,7 +108382,14 @@ var leadRoutes = async (fastify) => {
           fullName: true,
           email: true,
           avatarUrl: true,
+          phone: true,
           roles: { select: { role: true } },
+          userBranches: {
+            select: {
+              branchId: true,
+              branch: { select: { id: true, name: true, code: true } }
+            }
+          },
           _count: {
             select: {
               assignedLeads: {
@@ -108054,23 +108400,43 @@ var leadRoutes = async (fastify) => {
         },
         orderBy: { fullName: "asc" }
       });
-      return reply.send({
-        success: true,
-        data: staffWithLeads.map((u) => ({
+      const formatted = staffWithLeads.map((u) => {
+        const roles = u.roles.map((r) => r.role);
+        const branches = (u.userBranches || []).map((ub) => ub.branch).filter(Boolean);
+        const isMatchBranch = branchId && branchId !== "ALL" ? branches.some((b) => b.id === branchId) : true;
+        const isStaff = roles.includes("staff");
+        return {
           id: u.id,
           userId: u.userId,
-          fullName: u.fullName,
+          fullName: u.fullName || u.email?.split("@")[0] || "Nh\xE2n vi\xEAn",
           email: u.email,
           avatarUrl: u.avatarUrl,
-          roles: u.roles.map((r) => r.role),
+          phone: u.phone,
+          roles,
+          branches,
+          isMatchBranch,
+          isStaff,
           activeLeadCount: u._count.assignedLeads
-        }))
+        };
+      });
+      formatted.sort((a, b) => {
+        if (branchId && branchId !== "ALL") {
+          if (a.isMatchBranch && !b.isMatchBranch) return -1;
+          if (!a.isMatchBranch && b.isMatchBranch) return 1;
+        }
+        if (a.isStaff && !b.isStaff) return -1;
+        if (!a.isStaff && b.isStaff) return 1;
+        return a.activeLeadCount - b.activeLeadCount;
+      });
+      return reply.send({
+        success: true,
+        data: formatted
       });
     }
   );
   fastify.get(
     "/",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
     async (request, reply) => {
       const validatedQuery = handleValidation(
         listLeadsQuerySchema.safeParse(request.query),
@@ -108078,7 +108444,12 @@ var leadRoutes = async (fastify) => {
         reply
       );
       if (!validatedQuery) return;
-      if (validatedQuery.assignedToUserId === "me") {
+      const userRoles = request.user.roles || [];
+      const isAdmin = userRoles.includes("admin");
+      const isStaffOnly = userRoles.includes("staff") && !isAdmin;
+      if (isStaffOnly) {
+        validatedQuery.assignedToUserId = request.user.id;
+      } else if (validatedQuery.assignedToUserId === "me") {
         validatedQuery.assignedToUserId = request.user.id;
       }
       const result = await leadService.listLeads(validatedQuery);
@@ -108091,7 +108462,7 @@ var leadRoutes = async (fastify) => {
   );
   fastify.get(
     "/:id",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
     async (request, reply) => {
       const { id } = request.params;
       const lead = await leadService.getLeadById(id);
@@ -108099,6 +108470,15 @@ var leadRoutes = async (fastify) => {
         return reply.status(404).send({
           success: false,
           error: "Kh\xF4ng t\xECm th\u1EA5y th\xF4ng tin t\u01B0 v\u1EA5n"
+        });
+      }
+      const userRoles = request.user.roles || [];
+      const isAdmin = userRoles.includes("admin");
+      const isStaffOnly = userRoles.includes("staff") && !isAdmin;
+      if (isStaffOnly && lead.assignedToUserId !== request.user.id) {
+        return reply.status(403).send({
+          success: false,
+          error: "B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n xem th\xF4ng tin kh\xE1ch t\u01B0 v\u1EA5n n\xE0y"
         });
       }
       return reply.send({
@@ -108109,7 +108489,7 @@ var leadRoutes = async (fastify) => {
   );
   fastify.patch(
     "/:id",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
     async (request, reply) => {
       const { id } = request.params;
       const validatedData = handleValidation(
@@ -108118,6 +108498,15 @@ var leadRoutes = async (fastify) => {
         reply
       );
       if (!validatedData) return;
+      const userRoles = request.user.roles || [];
+      const isAdmin = userRoles.includes("admin");
+      const isStaffOnly = userRoles.includes("staff") && !isAdmin;
+      if (isStaffOnly && validatedData.assignedToUserId && validatedData.assignedToUserId !== request.user.id) {
+        return reply.status(403).send({
+          success: false,
+          error: "Ch\u1EC9 Qu\u1EA3n tr\u1ECB vi\xEAn m\u1EDBi c\xF3 quy\u1EC1n chuy\u1EC3n giao ng\u01B0\u1EDDi ph\u1EE5 tr\xE1ch lead"
+        });
+      }
       try {
         const updated = await leadService.updateLead(id, validatedData);
         return reply.send({
@@ -108159,7 +108548,6 @@ init_zod();
 init_speakingStorage_service();
 
 // server/services/whisperStt.service.ts
-init_env();
 function splitTextIntoDefaultSegments(text, totalDurationMs = 6e4) {
   if (!text || text.trim() === "") return [];
   const sentences = text.split(/(?<=[.?!])\s+/).map((s) => s.trim()).filter(Boolean);
@@ -108179,17 +108567,17 @@ var WhisperSttService = class {
   apiUrl;
   model;
   constructor() {
-    this.apiKey = process.env.OPENAI_API_KEY || process.env.WHISPER_API_KEY || null;
-    this.apiUrl = process.env.WHISPER_API_URL || "https://api.openai.com/v1/audio/transcriptions";
-    this.model = process.env.WHISPER_MODEL || "whisper-1";
+    this.apiKey = process.env.GROQ_API_KEY || process.env.STT_API_KEY || process.env.OPENAI_API_KEY || process.env.WHISPER_API_KEY || null;
+    this.apiUrl = process.env.GROQ_WHISPER_API_URL || process.env.STT_API_URL || (process.env.GROQ_API_KEY ? "https://api.groq.com/openai/v1/audio/transcriptions" : "https://api.openai.com/v1/audio/transcriptions");
+    this.model = process.env.GROQ_WHISPER_MODEL || process.env.STT_MODEL || (process.env.GROQ_API_KEY ? "whisper-large-v3-turbo" : "whisper-1");
   }
   /**
    * Transcribes an audio buffer into normalized NextBand SpeakingTranscript contract
    */
   async transcribeAudio(audioBuffer, fileName = "audio.webm", mimeType = "audio/webm", totalDurationMs) {
-    const apiKey = this.apiKey !== void 0 && this.apiKey !== null ? this.apiKey : process.env.STT_API_KEY || process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY || process.env.WHISPER_API_KEY || env.STT_API_KEY || env.GROQ_API_KEY || env.OPENAI_API_KEY || null;
-    const apiUrl = process.env.STT_API_URL || process.env.GROQ_WHISPER_API_URL || process.env.WHISPER_API_URL || env.STT_API_URL || env.WHISPER_API_URL || this.apiUrl;
-    const model = process.env.STT_MODEL || process.env.GROQ_WHISPER_MODEL || process.env.WHISPER_MODEL || env.STT_MODEL || env.WHISPER_MODEL || this.model;
+    const apiKey = this.apiKey;
+    const apiUrl = this.apiUrl;
+    const model = this.model;
     if (!apiKey) {
       return {
         rawText: "",
@@ -108343,7 +108731,7 @@ var speakingStorageRoutes = async (fastify) => {
   );
   fastify.post(
     "/transcribe",
-    { preHandler: optionalAuthenticate },
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       const data = handleValidation(
         transcribeSchema.safeParse(request.body),
@@ -109532,7 +109920,7 @@ var PeriodicReportService = class {
       null,
       "droppedStudentsCount"
     );
-    const rawLeadsBySourceResult = await safeOptionalQuery(
+    const rawLeadsResult = await safeOptionalQuery(
       () => this.prisma.contactLead.findMany({
         where: {
           createdAt: { gte: startDate, lte: endDate },
@@ -109541,24 +109929,54 @@ var PeriodicReportService = class {
         select: {
           source: true,
           status: true,
-          convertedUserId: true
+          convertedUserId: true,
+          assignedToUserId: true,
+          assignedToUser: {
+            select: {
+              userId: true,
+              fullName: true,
+              email: true
+            }
+          }
         }
       }),
       [],
-      "rawLeadsBySource"
+      "rawLeadsBreakdown"
     );
     const sourceMap = /* @__PURE__ */ new Map();
-    (rawLeadsBySourceResult.data || []).forEach((item) => {
+    const staffMap = /* @__PURE__ */ new Map();
+    (rawLeadsResult.data || []).forEach((item) => {
       const src = item.source || "Kh\xE1c";
-      const curr = sourceMap.get(src) || { leads: 0, enrolled: 0 };
-      curr.leads += 1;
+      const currSrc = sourceMap.get(src) || { leads: 0, enrolled: 0 };
+      currSrc.leads += 1;
       if (item.status === "ENROLLED" || item.convertedUserId) {
-        curr.enrolled += 1;
+        currSrc.enrolled += 1;
       }
-      sourceMap.set(src, curr);
+      sourceMap.set(src, currSrc);
+      const staffKey = item.assignedToUserId || "unassigned";
+      const staffName = item.assignedToUser?.fullName || (item.assignedToUserId ? "Nh\xE2n vi\xEAn" : "Ch\u01B0a ph\xE2n b\u1ED5");
+      const currStaff = staffMap.get(staffKey) || {
+        name: staffName,
+        email: item.assignedToUser?.email || void 0,
+        leads: 0,
+        enrolled: 0
+      };
+      currStaff.leads += 1;
+      if (item.status === "ENROLLED" || item.convertedUserId) {
+        currStaff.enrolled += 1;
+      }
+      staffMap.set(staffKey, currStaff);
     });
     const bySource = Array.from(sourceMap.entries()).map(([source, data]) => ({
       source,
+      leads: data.leads,
+      enrolled: data.enrolled,
+      conversionRate: data.leads > 0 ? Number((data.enrolled / data.leads * 100).toFixed(1)) : 0
+    })).sort((a, b) => b.leads - a.leads);
+    const byStaff = Array.from(staffMap.entries()).map(([staffId, data]) => ({
+      staffId,
+      staffName: data.name,
+      email: data.email,
       leads: data.leads,
       enrolled: data.enrolled,
       conversionRate: data.leads > 0 ? Number((data.enrolled / data.leads * 100).toFixed(1)) : 0
@@ -109652,7 +110070,8 @@ ${bySource.length > 0 ? `- Ngu\u1ED3n ti\u1EBFp c\u1EADn ch\xEDnh: ${bySource.sl
         placementTests: placementTestsCount,
         enrolled: enrolledLeadsCount,
         conversionRate: leadConversionRate,
-        bySource
+        bySource,
+        byStaff
       },
       classes: {
         opened: openedClassesCount,
@@ -109762,7 +110181,8 @@ async function adminDashboardRoutes(fastify) {
           overdueInterventionsCount,
           dueSuspensionsCount,
           recentAbsents,
-          teachersData
+          teachersData,
+          staffData
         ] = await Promise.all([
           // 1. Học viên đang theo học (ACTIVE)
           fastify.prisma.classStudent.count({
@@ -109910,6 +110330,28 @@ async function adminDashboardRoutes(fastify) {
                 }
               }
             }
+          }),
+          // 12. Danh sách nhân viên tư vấn đang hoạt động kèm thống kê leads
+          fastify.prisma.user.findMany({
+            where: {
+              roles: { some: { role: "staff" } },
+              isActive: true,
+              ...hasBranchFilter ? { userBranches: { some: { branchId } } } : {}
+            },
+            select: {
+              userId: true,
+              fullName: true,
+              email: true,
+              avatarUrl: true,
+              _count: {
+                select: {
+                  assignedLeads: {
+                    where: { status: { notIn: ["ENROLLED", "CANCELLED", "ARCHIVED"] } }
+                  }
+                }
+              }
+            },
+            orderBy: { fullName: "asc" }
           })
         ]);
         const allTeacherClassStudentIds = Array.from(
@@ -109990,6 +110432,13 @@ async function adminDashboardRoutes(fastify) {
           };
         });
         const conversionRate = newLeadsCount > 0 ? Math.round(enrolledLeadsCount / newLeadsCount * 100) : 0;
+        const staffSummary = staffData.map((s) => ({
+          userId: s.userId,
+          fullName: s.fullName,
+          email: s.email,
+          avatarUrl: s.avatarUrl,
+          activeLeadsCount: s._count.assignedLeads
+        }));
         return reply.send({
           success: true,
           data: {
@@ -109997,7 +110446,8 @@ async function adminDashboardRoutes(fastify) {
               activeStudents: activeStudentsCount,
               newLeads: newLeadsCount,
               activeClasses: activeClasses.length,
-              averageFillRate
+              averageFillRate,
+              activeStaff: staffData.length
             },
             actionItems: [
               {
@@ -110063,7 +110513,8 @@ async function adminDashboardRoutes(fastify) {
                 reserved: reservedStudentsCount
               }
             },
-            teachers: teachersSummary
+            teachers: teachersSummary,
+            staff: staffSummary
           }
         });
       } catch (err) {
@@ -110543,6 +110994,43 @@ var TuitionService = class {
         class: { select: { id: true, name: true } }
       }
     });
+    if (updated.paymentStatus === PaymentStatus.PAID) {
+      try {
+        const attribution = await this.prisma.referralAttribution.findFirst({
+          where: { refereeUserId: updated.studentId },
+          include: {
+            rewards: { where: { status: "PENDING_QUALIFICATION" } },
+            inviter: { select: { userId: true, fullName: true } }
+          }
+        });
+        if (attribution && attribution.rewards.length > 0) {
+          for (const rew of attribution.rewards) {
+            await this.prisma.referralReward.update({
+              where: { id: rew.id },
+              data: {
+                status: "ELIGIBLE",
+                qualifiedAt: /* @__PURE__ */ new Date(),
+                notes: `\u0110\xE3 k\xEDch ho\u1EA1t qu\xE0 t\u1EB7ng khi h\u1ECDc vi\xEAn ${updated.student?.fullName || updated.studentId} ho\xE0n t\u1EA5t h\u1ECDc ph\xED`
+              }
+            });
+            const { NotificationService: NotificationService2 } = await Promise.resolve().then(() => (init_notification_service(), notification_service_exports));
+            const notifService = new NotificationService2(this.prisma);
+            await notifService.createNotification(this.prisma, {
+              userId: attribution.inviterUserId,
+              type: "SYSTEM",
+              title: "\u{1F381} B\u1EA1n \u0111\xE3 m\u1EDF kh\xF3a B\u1ED9 Qu\xE0 T\u1EB7ng ARIS!",
+              message: `B\u1EA1n ${updated.student?.fullName || "\u0111\u1ED3ng h\xE0nh"} \u0111\xE3 ho\xE0n t\u1EA5t h\u1ECDc ph\xED. B\u1EA1n \u0111\xE3 ch\xEDnh th\u1EE9c \u0111\u1EE7 \u0111i\u1EC1u ki\u1EC7n nh\u1EADn 01 B\u1ED9 Qu\xE0 T\u1EB7ng ARIS t\u1EEB trung t\xE2m!`,
+              link: "/app/profile",
+              entityType: "REWARD",
+              entityId: rew.id
+            }).catch(() => {
+            });
+          }
+        }
+      } catch (rewardErr) {
+        console.error("[TuitionService] Error qualifying referral reward:", rewardErr);
+      }
+    }
     return updated;
   }
 };
@@ -110663,7 +111151,7 @@ async function milestoneRoutes(fastify) {
     try {
       const studentId = request.user.id;
       const claimedKeys = await service.getStudentClaims(studentId);
-      return reply.send({ success: true, claimedKeys });
+      return reply.send({ success: true, data: claimedKeys, claimedKeys });
     } catch (err) {
       return reply.status(500).send({ error: err.message });
     }
@@ -110690,6 +111178,134 @@ async function milestoneRoutes(fastify) {
     }
   );
 }
+
+// server/routes/referrals.routes.ts
+var referralsRoutes = async (fastify) => {
+  fastify.get("/validate-code/:code", async (request, reply) => {
+    const { code } = request.params;
+    const cleanCode = (code || "").trim().toUpperCase();
+    if (!cleanCode || cleanCode.length < 5) {
+      return reply.status(400).send({ valid: false, message: "M\xE3 gi\u1EDBi thi\u1EC7u kh\xF4ng h\u1EE3p l\u1EC7" });
+    }
+    const inviter = await fastify.prisma.user.findUnique({
+      where: { referralCode: cleanCode },
+      select: {
+        userId: true,
+        fullName: true,
+        avatarUrl: true
+      }
+    });
+    if (!inviter) {
+      return reply.status(404).send({ valid: false, message: "M\xE3 gi\u1EDBi thi\u1EC7u kh\xF4ng t\u1ED3n t\u1EA1i" });
+    }
+    return {
+      valid: true,
+      referralCode: cleanCode,
+      inviterName: inviter.fullName || "H\u1ECDc vi\xEAn ARIS",
+      inviterAvatar: inviter.avatarUrl
+    };
+  });
+  fastify.get(
+    "/my-referrals",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      const user = request.user;
+      if (!user?.id) {
+        return reply.status(401).send({ error: "Unauthorized" });
+      }
+      let profile = await fastify.prisma.user.findUnique({
+        where: { userId: user.id },
+        select: {
+          id: true,
+          userId: true,
+          fullName: true,
+          referralCode: true
+        }
+      });
+      if (!profile) {
+        return reply.status(404).send({ error: "User profile not found" });
+      }
+      if (!profile.referralCode) {
+        const cleanName = (profile.fullName || "STUDENT").toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Z]/g, "").slice(0, 5).padEnd(5, "X");
+        const idSuffix = profile.userId.replace(/-/g, "").slice(-4).toUpperCase();
+        let code = `ARIS-${cleanName}${idSuffix}`;
+        try {
+          profile = await fastify.prisma.user.update({
+            where: { userId: profile.userId },
+            data: { referralCode: code },
+            select: {
+              id: true,
+              userId: true,
+              fullName: true,
+              referralCode: true
+            }
+          });
+        } catch {
+          code = `ARIS-${cleanName}${Math.floor(1e3 + Math.random() * 9e3)}`;
+          profile = await fastify.prisma.user.update({
+            where: { userId: profile.userId },
+            data: { referralCode: code },
+            select: {
+              id: true,
+              userId: true,
+              fullName: true,
+              referralCode: true
+            }
+          });
+        }
+      }
+      const [attributions, rewards] = await Promise.all([
+        fastify.prisma.referralAttribution.findMany({
+          where: { inviterUserId: user.id },
+          include: {
+            referee: {
+              select: {
+                fullName: true,
+                avatarUrl: true,
+                createdAt: true
+              }
+            }
+          },
+          orderBy: { createdAt: "desc" }
+        }),
+        fastify.prisma.referralReward.findMany({
+          where: { inviterUserId: user.id },
+          orderBy: { createdAt: "desc" }
+        })
+      ]);
+      const totalInvited = attributions.length;
+      const totalEligible = rewards.filter((r) => r.status === "ELIGIBLE").length;
+      const totalDelivered = rewards.filter((r) => r.status === "DELIVERED").length;
+      return {
+        referralCode: profile.referralCode,
+        stats: {
+          totalInvited,
+          totalEligible,
+          totalDelivered
+        },
+        attributions: attributions.map((a) => ({
+          id: a.id,
+          refereeName: a.referee?.fullName || "B\u1EA1n \u0111\u1ED3ng h\xE0nh",
+          refereeAvatar: a.referee?.avatarUrl,
+          discountAmount: Number(a.discountAmount),
+          status: a.status,
+          createdAt: a.createdAt
+        })),
+        rewards: rewards.map((r) => ({
+          id: r.id,
+          attributionId: r.attributionId,
+          rewardType: r.rewardType,
+          status: r.status,
+          qualifiedAt: r.qualifiedAt,
+          deliveredAt: r.deliveredAt,
+          notes: r.notes,
+          createdAt: r.createdAt
+        }))
+      };
+    }
+  );
+};
+var referrals_routes_default = referralsRoutes;
 
 // server/routes/index.ts
 var routes = async (fastify) => {
@@ -110722,6 +111338,7 @@ var routes = async (fastify) => {
   await fastify.register(speakingStorage_routes_default, { prefix: "/speaking" });
   await fastify.register(speaking_evidence_routes_default, { prefix: "/speaking" });
   await fastify.register(speaking_forecast_routes_default, { prefix: "/speaking-forecast" });
+  await fastify.register(referrals_routes_default, { prefix: "/referrals" });
   await fastify.register(lesson_routes_default);
   await fastify.register(periodic_reports_routes_default);
   await fastify.register(adminDashboardRoutes, { prefix: "/admin" });
@@ -110802,7 +111419,7 @@ var ClassSchedulerService = class {
 };
 
 // server/app.ts
-async function buildApp() {
+async function buildApp(_opts) {
   const isServerless = process.env.VERCEL === "1" || Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME) || Boolean(process.env.VERCEL_ENV);
   const isProduction = env.NODE_ENV === "production" || process.env.NODE_ENV === "production";
   let loggerConfig;

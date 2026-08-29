@@ -12,7 +12,7 @@ import authPlugin from "./plugins/auth.js";
 import routes from "./routes/index.js";
 import { ClassSchedulerService } from "./services/class-scheduler.service.js";
 
-export async function buildApp() {
+export async function buildApp(_opts?: any) {
   const isServerless =
     process.env.VERCEL === "1" ||
     Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME) ||

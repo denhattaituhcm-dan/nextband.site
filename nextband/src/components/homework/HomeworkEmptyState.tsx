@@ -1,11 +1,31 @@
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, KeyRound, MessageCircle, ShieldCheck, Layers, GraduationCap } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import {
+  CheckCircle2,
+  KeyRound,
+  MessageCircle,
+  ShieldCheck,
+  Layers,
+  GraduationCap,
+  Target,
+  Brain,
+  Clock,
+  BookOpen,
+  Sparkles,
+  ArrowRight,
+  Gift,
+  FileCheck2,
+  Compass,
+  Award,
+  Zap,
+} from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { JoinClassModal } from "@/components/auth/JoinClassModal";
+import { StudyBuddyModal } from "@/components/student/StudyBuddyModal";
 
 interface HomeworkEmptyStateProps {
   onJoinClick?: () => void;
@@ -15,9 +35,10 @@ interface HomeworkEmptyStateProps {
 
 export function HomeworkEmptyState({ onJoinClick, hasClasses, state }: HomeworkEmptyStateProps) {
   const { settings } = useSiteSettings();
-  const { isAdmin, isTeacher } = useAuth();
+  const { user, isAdmin, isTeacher } = useAuth();
   const navigate = useNavigate();
   const [joinModalOpen, setJoinModalOpen] = useState(false);
+  const [buddyModalOpen, setBuddyModalOpen] = useState(false);
 
   const isSuspended = state === "SUSPENDED_STUDENT";
   const isPending = state === "PENDING_ACTIVATION";
@@ -33,6 +54,13 @@ export function HomeworkEmptyState({ onJoinClick, hasClasses, state }: HomeworkE
   return (
     <div className="space-y-6">
       <JoinClassModal open={joinModalOpen} onOpenChange={setJoinModalOpen} />
+      <StudyBuddyModal
+        isOpen={buddyModalOpen}
+        onClose={() => setBuddyModalOpen(false)}
+        studentName={user?.fullName || "Học viên"}
+        className="Tài khoản tự do"
+        userId={user?.id}
+      />
 
       {/* ADMIN / TEACHER QUICK SHORTCUT */}
       {(isAdmin || isTeacher) && (
@@ -42,8 +70,12 @@ export function HomeworkEmptyState({ onJoinClick, hasClasses, state }: HomeworkE
               <ShieldCheck className="h-5 w-5" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-foreground">Bạn đang đăng nhập với quyền {isAdmin ? "Quản trị viên (Admin)" : "Giáo viên"}</h4>
-              <p className="text-xs text-muted-foreground">Đây là trang làm bài tập của Học viên. Bấm bên dưới để truy cập khu vực quản lý lớp &amp; chấm bài:</p>
+              <h4 className="text-sm font-bold text-foreground">
+                Bạn đang đăng nhập với quyền {isAdmin ? "Quản trị viên (Admin)" : "Giáo viên"}
+              </h4>
+              <p className="text-xs text-muted-foreground">
+                Đây là trang làm bài tập của Học viên. Bấm bên dưới để truy cập khu vực quản lý lớp &amp; chấm bài:
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
@@ -52,386 +84,359 @@ export function HomeworkEmptyState({ onJoinClick, hasClasses, state }: HomeworkE
                 <Layers className="h-3.5 w-3.5" /> Quản lý Lớp học
               </Button>
             )}
-            <Button size="sm" variant={isAdmin ? "outline" : "default"} onClick={() => navigate("/admin/teacher-workspace")} className="font-bold text-xs gap-1.5 shadow-sm">
+            <Button
+              size="sm"
+              variant={isAdmin ? "outline" : "default"}
+              onClick={() => navigate("/admin/teacher-workspace")}
+              className="font-bold text-xs gap-1.5 shadow-sm"
+            >
               <GraduationCap className="h-3.5 w-3.5" /> Bàn làm việc Giáo viên
             </Button>
           </div>
         </Card>
       )}
 
-      {/* 1. HERO: "CỔNG KHỞI HÀNH" — Prologue for unenrolled students */}
-      <Card className={`border-0 text-white rounded-2xl shadow-lg p-6 md:p-8 text-center space-y-5 relative overflow-hidden ${
-        isSuspended
-          ? "bg-gradient-to-br from-amber-600 via-red-600 to-rose-700"
-          : isPending
-          ? "bg-gradient-to-br from-sky-600 via-indigo-600 to-blue-700"
-          : "bg-gradient-to-br from-[#1a2e6f] via-blue-700 to-blue-500"
-      }`}>
-        {/* Subtle ambient orb */}
-        <div className="absolute -top-16 -right-16 w-48 h-48 bg-white/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-12 -left-12 w-40 h-40 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+      {/* 1. HERO: KHU VỰC HUẤN LUYỆN ĐỘC LẬP (INDEPENDENT TRAINING CENTER) */}
+      <Card
+        className={`border-0 text-white rounded-3xl shadow-lg p-6 sm:p-8 md:p-10 relative overflow-hidden ${
+          isSuspended
+            ? "bg-gradient-to-br from-amber-600 via-red-600 to-rose-700"
+            : isPending
+            ? "bg-gradient-to-br from-sky-600 via-indigo-600 to-blue-700"
+            : "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800"
+        }`}
+      >
+        {/* Ambient Glow Orbs */}
+        <div className="absolute -top-16 -right-16 w-56 h-56 bg-rose-600/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-16 -left-16 w-56 h-56 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 space-y-3 max-w-2xl mx-auto">
-          {/* State badge */}
-          {!isSuspended && !isPending && (
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/25 text-white text-[11px] font-bold backdrop-blur-sm">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              Hành trình IELTS · Sẵn sàng khởi hành
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-3 max-w-2xl">
+            {/* Tag Badge */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/15 text-white text-xs font-bold font-mono">
+              <Compass className="w-3.5 h-3.5 text-amber-400" />
+              <span>
+                {isSuspended
+                  ? "TÀI KHOẢN TẠM DỪNG"
+                  : isPending
+                  ? "ĐANG CHỜ KÍCH HOẠT LỚP"
+                  : "KHU VỰC HUẤN LUYỆN ĐỘC LẬP"}
+              </span>
             </div>
-          )}
 
-          <h1 className="text-xl md:text-3xl font-extrabold text-white tracking-tight leading-tight">
-            {isSuspended
-              ? "Tài khoản tạm thời bị tạm dừng"
-              : isPending
-              ? "Đang chờ Giáo viên kích hoạt"
-              : "Hành trình của bạn sắp bắt đầu"}
-          </h1>
-          <p className="text-xs md:text-sm text-blue-100 font-medium leading-relaxed max-w-lg mx-auto">
-            {isSuspended
-              ? "Lớp học của bạn đang ở trạng thái Tạm dừng. Vui lòng liên hệ Giáo viên hoặc Trung tâm để mở lại quyền học."
-              : isPending
-              ? "Hệ thống đã ghi nhận lớp học của bạn. Giáo viên sẽ kích hoạt để bạn bắt đầu truy cập bài học."
-              : "Chưa gia nhập lớp? Không sao. Hoàn tất bước đầu tiên để mở khóa hành trình chinh phục IELTS của bạn."}
-          </p>
-        </div>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight">
+              {isSuspended
+                ? "Tài khoản tạm thời bị tạm dừng"
+                : isPending
+                ? "Lớp học của bạn đang được điều phối"
+                : `Chào mừng ${user?.fullName || "bạn"} đến với ARIS`}
+            </h1>
 
-        {/* CTAs */}
-        <div className="relative z-10 flex flex-wrap items-center justify-center gap-3 pt-1">
-          <Button
-            onClick={handleOpenJoinModal}
-            className="rounded-xl bg-white text-blue-700 hover:bg-blue-50 font-bold px-6 py-2.5 shadow-md active:scale-95 text-sm transition-all gap-2 border-0"
-          >
-            <KeyRound className="h-4 w-4 text-blue-600" />
-            Nhập mã lớp để khởi hành
-          </Button>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl">
+              {isSuspended
+                ? "Lớp học của bạn đang ở trạng thái Tạm dừng. Vui lòng liên hệ Giáo viên hoặc Trung tâm để mở lại quyền học."
+                : isPending
+                ? "Hệ thống đã ghi nhận đăng ký của bạn. Trong lúc chờ giáo viên kích hoạt vào lớp, bạn có thể bắt đầu làm bài test đánh giá năng lực hoặc khám phá kho bài đọc tương tác bên dưới."
+                : "Bạn chưa được ghi danh vào lớp học chính thức. Bạn hoàn toàn có thể tự do rèn luyện: làm bài đánh giá năng lực chuẩn hoá hoặc mở rộng vốn từ vựng với các bài đọc tương tác có sẵn."}
+            </p>
+          </div>
 
-          {settings.zaloLink && (
-            <a
-              href={settings.zaloLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/25 backdrop-blur-md text-xs font-semibold transition-all shadow-sm active:scale-95"
+          {/* Right Action: Nhập mã lớp & Liên hệ */}
+          <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 shrink-0">
+            <Button
+              onClick={handleOpenJoinModal}
+              className="h-11 px-6 rounded-xl bg-white text-slate-950 hover:bg-slate-100 font-extrabold text-xs shadow-md transition-all gap-2"
             >
-              <MessageCircle className="h-4 w-4 text-sky-300" />
-              Liên hệ Giáo viên
-            </a>
-          )}
+              <KeyRound className="h-4 w-4 text-rose-600" />
+              <span>Nhập mã lớp để vào lớp học</span>
+            </Button>
+
+            {settings.zaloLink && (
+              <a
+                href={settings.zaloLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 h-10 px-5 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/20 text-xs font-bold transition-all"
+              >
+                <MessageCircle className="h-4 w-4 text-sky-400" />
+                <span>Liên hệ hỗ trợ</span>
+              </a>
+            )}
+          </div>
         </div>
       </Card>
 
-      {/* 2. NHIỆM VỤ ĐẦU TIÊN — compact mission card, replaces the 5-step docblock */}
-      {!isSuspended && !isPending && (
-        <Card className="rounded-2xl border border-primary/20 bg-primary/5 p-5 md:p-6 shadow-xs">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            <div className="flex items-center gap-3 flex-1 min-w-0">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                <CheckCircle2 className="h-5 w-5" />
-              </div>
-              <div>
-                <div className="text-[10px] font-extrabold text-primary uppercase tracking-widest mb-0.5">
-                  Nhiệm vụ đầu tiên
+      {/* 2. CÁC CÔNG CỤ RÈN LUYỆN SẴN CÓ: ĐÁNH GIÁ NĂNG LỰC & READING UNIVERSE */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        {/* 2.1 CỘT TRÁI (7/12): BÀI ĐÁNH GIÁ NĂNG LỰC 60 PHÚT CHUẨN HOÁ */}
+        <div className="lg:col-span-7 flex flex-col">
+          <Card className="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-7 shadow-xs flex-1 flex flex-col justify-between space-y-6">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 flex items-center justify-center font-bold">
+                    <Target className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-base sm:text-lg font-extrabold text-slate-900">
+                      Đánh Giá Năng Lực Chuẩn Hóa
+                    </h2>
+                    <p className="text-xs text-slate-500">
+                      Định vị chính xác Cảnh Giới xuất phát &amp; bóc tách điểm nghẽn
+                    </p>
+                  </div>
                 </div>
-                <h4 className="text-sm font-bold text-foreground">Gia nhập lớp học để mở khóa hành trình</h4>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Nhập mã lớp được giáo viên cấp — chỉ mất 30 giây để bắt đầu.
-                </p>
+
+                <Badge className="bg-rose-50 text-rose-700 border-rose-200 text-[10px] font-bold px-2 py-0.5">
+                  Miễn Phí
+                </Badge>
+              </div>
+
+              {/* Description & Features */}
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                Bài kiểm tra chuẩn hóa được thiết kế độc quyền bởi ARIS giúp định vị chính xác trình độ hiện tại của bạn từ Band 3.5 đến 7.5+, chỉ ra điểm mạnh và dạng bài bạn hay bị bẫy nhất.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                <div className="rounded-xl bg-slate-50 border border-slate-200/70 p-3 space-y-1">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900">
+                    <Clock className="w-3.5 h-3.5 text-rose-600" />
+                    <span>Thời lượng</span>
+                  </div>
+                  <p className="text-[11px] text-slate-500">60 phút kiểm tra tập trung</p>
+                </div>
+
+                <div className="rounded-xl bg-slate-50 border border-slate-200/70 p-3 space-y-1">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900">
+                    <Brain className="w-3.5 h-3.5 text-indigo-600" />
+                    <span>Nội dung</span>
+                  </div>
+                  <p className="text-[11px] text-slate-500">Đọc hiểu &amp; Ngữ pháp cốt lõi</p>
+                </div>
+
+                <div className="rounded-xl bg-slate-50 border border-slate-200/70 p-3 space-y-1">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900">
+                    <FileCheck2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Kết quả</span>
+                  </div>
+                  <p className="text-[11px] text-slate-500">Báo cáo bóc tách lỗi chi tiết</p>
+                </div>
               </div>
             </div>
-            <Button
-              size="sm"
-              onClick={handleOpenJoinModal}
-              className="font-bold text-xs gap-1.5 shadow-sm shrink-0"
-            >
-              <KeyRound className="h-3.5 w-3.5" />
-              Nhập mã lớp ngay
-            </Button>
-          </div>
-        </Card>
-      )}
 
-      {/* 3. 5-LEVEL IELTS ROADMAP — renamed to journey framing, with Level 0 badge */}
-      <Card className="rounded-2xl border border-slate-100 bg-white p-6 md:p-8 space-y-6 shadow-sm overflow-hidden">
-        <div className="text-center space-y-2 max-w-3xl mx-auto">
-          <h3 className="text-lg md:text-xl font-black text-slate-900 tracking-tight">
-            Hành trình chinh phục IELTS
-          </h3>
-          <p className="text-xs text-slate-500 font-medium">
-            Bạn sẽ bắt đầu từ đâu và tiến xa đến đâu?
-          </p>
-          {/* Level 0 marker — student is at the gate, not in a void */}
-          {!isSuspended && !isPending && (
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/8 border border-primary/20 text-primary text-[11px] font-bold">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-              Bạn đang ở · Cổng Khởi Hành
+            {/* Action CTA */}
+            <div className="pt-2 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <span className="text-xs text-slate-500 font-medium">
+                Kết quả được ghi nhận và lưu vĩnh viễn vào hồ sơ của bạn
+              </span>
+              <Button
+                onClick={() => navigate("/assessment")}
+                className="w-full sm:w-auto h-10 px-6 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs shadow-sm gap-2 transition-all cursor-pointer"
+              >
+                <span>Bắt đầu kiểm tra năng lực</span>
+                <ArrowRight className="w-4 h-4" />
+              </Button>
             </div>
-          )}
+          </Card>
         </div>
 
-        {/* ROADMAP GRID (5 COLUMNS DESKTOP / VERTICAL TIMELINE MOBILE) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 pt-2 relative">
+        {/* 2.2 CỘT PHẢI (5/12): THƯ VIỆN READING UNIVERSE (2 BÀI CÓ SẴN) */}
+        <div className="lg:col-span-5 flex flex-col">
+          <Card className="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-7 shadow-xs flex-1 flex flex-col justify-between space-y-5">
+            <div className="space-y-3.5">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center font-bold">
+                    <BookOpen className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-base font-extrabold text-slate-900">
+                      Reading Universe
+                    </h2>
+                    <p className="text-xs text-slate-500">
+                      Luyện đọc hiểu mở rộng &amp; tra từ ngữ cảnh
+                    </p>
+                  </div>
+                </div>
+
+                <Link
+                  to="/reading"
+                  className="text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline flex items-center gap-1"
+                >
+                  Xem tất cả <ArrowRight className="w-3 h-3" />
+                </Link>
+              </div>
+
+              {/* 2 Interactive Reading Cards */}
+              <div className="space-y-3">
+                {/* Case 01 */}
+                <Link
+                  to="/reading/case-001"
+                  className="block p-3.5 rounded-2xl border border-slate-200/80 bg-slate-50/50 hover:bg-emerald-50/30 hover:border-emerald-200 transition-all group"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5">
+                        <Badge className="bg-sky-100 text-sky-800 hover:bg-sky-100 border-0 text-[10px] font-bold px-1.5 py-0">
+                          Khoa học tự nhiên
+                        </Badge>
+                        <span className="text-[10px] text-slate-400 font-mono">5 phút</span>
+                      </div>
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
+                        ❄️ Bài #01: Hiện Tượng Hồ Băng
+                      </h4>
+                      <p className="text-[11px] text-slate-500 line-clamp-1">
+                        Khám phá bí ẩn của những hồ băng và tra cứu từ vựng học thuật tức thì.
+                      </p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-700 group-hover:translate-x-0.5 transition-all shrink-0 mt-1" />
+                  </div>
+                </Link>
+
+                {/* Case 02 */}
+                <Link
+                  to="/reading/case-002"
+                  className="block p-3.5 rounded-2xl border border-slate-200/80 bg-slate-50/50 hover:bg-emerald-50/30 hover:border-emerald-200 transition-all group"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5">
+                        <Badge className="bg-amber-100 text-amber-900 hover:bg-amber-100 border-0 text-[10px] font-bold px-1.5 py-0">
+                          Tư duy &amp; Đời sống
+                        </Badge>
+                        <span className="text-[10px] text-slate-400 font-mono">6 phút</span>
+                      </div>
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
+                        📈 Bài #02: Lời Khuyên Warren Buffett
+                      </h4>
+                      <p className="text-[11px] text-slate-500 line-clamp-1">
+                        Mở rộng tư duy logic, cấu trúc câu ghép và từ vựng về tài chính cá nhân.
+                      </p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-700 group-hover:translate-x-0.5 transition-all shrink-0 mt-1" />
+                  </div>
+                </Link>
+              </div>
+            </div>
+
+            {/* Referral / Buddy Banner */}
+            <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+              <span className="text-slate-600 flex items-center gap-1.5 text-[11px] font-medium">
+                <Gift className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                <span>Rủ bạn học cùng: Nhận Quà ARIS</span>
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setBuddyModalOpen(true)}
+                className="h-7 text-xs font-bold text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-2 rounded-lg"
+              >
+                <span>Xem Thẻ Mời ➔</span>
+              </Button>
+            </div>
+          </Card>
+        </div>
+      </div>
+
+      {/* 3. 5-LEVEL IELTS ROADMAP */}
+      <Card className="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 space-y-6 shadow-xs overflow-hidden">
+        <div className="text-center space-y-1.5 max-w-2xl mx-auto">
+          <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold font-mono">
+            <span>KHUNG ĐÀO TẠO 5 CHẶNG</span>
+          </div>
+          <h3 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
+            Lộ Trình Nâng Band Từ Bản Chất
+          </h3>
+          <p className="text-xs text-slate-500">
+            Học viên ARIS được bóc tách từng lỗi sai qua từng chặng để đạt mục tiêu Band 6.5 - 7.0+
+          </p>
+        </div>
+
+        {/* ROADMAP GRID */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 pt-1">
           {/* LEVEL 1: STARTER */}
-          <div className="relative group flex flex-col justify-between p-5 rounded-2xl bg-gradient-to-b from-slate-50 to-rose-50/30 border border-slate-200/80 hover:border-[#EE6873]/60 hover:shadow-xl hover:shadow-rose-500/10 transition-all duration-300 hover:-translate-y-1">
-            {/* TOP IELTS BAND BADGE */}
-            <div className="space-y-2">
+          <div className="flex flex-col justify-between p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+            <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <span className="px-2.5 py-1 rounded-full bg-[#EE6873] text-white text-[11px] font-black shadow-xs">
+                <span className="px-2 py-0.5 rounded-md bg-rose-500 text-white text-[10px] font-black">
                   BAND 3.0
                 </span>
-                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">
-                  LVL 01
-                </span>
+                <span className="text-[10px] font-mono text-slate-400 font-bold">LVL 01</span>
               </div>
-
-              <div>
-                <div className="font-black text-base text-slate-900 tracking-tight">STARTER</div>
-                <div className="text-[11px] font-bold text-[#EE6873] italic">"I start"</div>
-              </div>
-
-              {/* PROGRESSIVE METAPHOR ILLUSTRATION: FOUNDATION STONE */}
-              <div className="py-3 flex justify-center items-center">
-                <div className="w-14 h-14 rounded-2xl bg-rose-100/80 text-[#EE6873] flex items-center justify-center shadow-inner border border-rose-200 group-hover:scale-110 transition-transform duration-300">
-                  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                  </svg>
-                </div>
-              </div>
-
-              {/* REAL ACADEMIC BENEFITS */}
-              <div className="space-y-1.5 pt-1">
-                <div className="text-xs font-extrabold text-slate-800">Hiểu bản chất một câu văn</div>
-                <ul className="text-[11px] text-slate-600 space-y-1 font-medium">
-                  <li className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#EE6873]" />
-                    <span>Cách các thành phần liên hệ</span>
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#EE6873]" />
-                    <span>Áp dụng để tự tin Viết/Đọc/Nói</span>
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#EE6873]" />
-                    <span>Nền tảng từ vựng Pre IELTS</span>
-                  </li>
-                </ul>
+              <div className="font-bold text-sm text-slate-900">STARTER</div>
+              <div className="text-[11px] text-slate-600 font-medium">
+                Hiểu bản chất một câu văn &amp; liên kết các thành phần câu vững vàng.
               </div>
             </div>
-
-            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-semibold">
-              <span>⏱ 27 buổi (9 tuần)</span>
-              <span className="text-[10px] text-slate-400">Phase 1</span>
-            </div>
+            <div className="text-[10px] text-slate-400 font-mono border-t pt-2">27 buổi (9 tuần)</div>
           </div>
 
           {/* LEVEL 2: DREAMER */}
-          <div className="relative group flex flex-col justify-between p-5 rounded-2xl bg-gradient-to-b from-slate-50 to-blue-50/30 border border-slate-200/80 hover:border-[#294398]/60 hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1">
-            <div className="space-y-2">
+          <div className="flex flex-col justify-between p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+            <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <span className="px-2.5 py-1 rounded-full bg-[#294398] text-white text-[11px] font-black shadow-xs">
+                <span className="px-2 py-0.5 rounded-md bg-blue-600 text-white text-[10px] font-black">
                   BAND 4.0
                 </span>
-                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">
-                  LVL 02
-                </span>
+                <span className="text-[10px] font-mono text-slate-400 font-bold">LVL 02</span>
               </div>
-
-              <div>
-                <div className="font-black text-base text-slate-900 tracking-tight">DREAMER</div>
-                <div className="text-[11px] font-bold text-[#294398] italic">"I dream"</div>
-              </div>
-
-              {/* PROGRESSIVE METAPHOR ILLUSTRATION: BLUEPRINT */}
-              <div className="py-3 flex justify-center items-center">
-                <div className="w-14 h-14 rounded-2xl bg-blue-100/80 text-[#294398] flex items-center justify-center shadow-inner border border-blue-200 group-hover:scale-110 transition-transform duration-300">
-                  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                    <path d="M3 9h18" />
-                    <path d="M9 21V9" />
-                  </svg>
-                </div>
-              </div>
-
-              <div className="space-y-1.5 pt-1">
-                <div className="text-xs font-extrabold text-slate-800">Sự mạch lạc của đoạn văn</div>
-                <ul className="text-[11px] text-slate-600 space-y-1 font-medium">
-                  <li className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#294398]" />
-                    <span>Liên kết các câu văn với nhau</span>
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#294398]" />
-                    <span>Tự tin viết/đọc/nói đoạn dài</span>
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#294398]" />
-                    <span>Tư duy phản xạ bài thi IELTS</span>
-                  </li>
-                </ul>
+              <div className="font-bold text-sm text-slate-900">DREAMER</div>
+              <div className="text-[11px] text-slate-600 font-medium">
+                Sự mạch lạc của đoạn văn &amp; tự tin viết, đọc hiểu các cấu trúc dài.
               </div>
             </div>
-
-            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-semibold">
-              <span>⏱ 27 buổi (9 tuần)</span>
-              <span className="text-[10px] text-slate-400">Phase 2</span>
-            </div>
+            <div className="text-[10px] text-slate-400 font-mono border-t pt-2">27 buổi (9 tuần)</div>
           </div>
 
           {/* LEVEL 3: BUILDER */}
-          <div className="relative group flex flex-col justify-between p-5 rounded-2xl bg-gradient-to-b from-slate-50 to-orange-50/30 border border-slate-200/80 hover:border-[#F37C42]/60 hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 hover:-translate-y-1">
-            <div className="space-y-2">
+          <div className="flex flex-col justify-between p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+            <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <span className="px-2.5 py-1 rounded-full bg-[#F37C42] text-white text-[11px] font-black shadow-xs">
+                <span className="px-2 py-0.5 rounded-md bg-amber-600 text-white text-[10px] font-black">
                   BAND 5.0
                 </span>
-                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">
-                  LVL 03
-                </span>
+                <span className="text-[10px] font-mono text-slate-400 font-bold">LVL 03</span>
               </div>
-
-              <div>
-                <div className="font-black text-base text-slate-900 tracking-tight">BUILDER</div>
-                <div className="text-[11px] font-bold text-[#F37C42] italic">"I build"</div>
-              </div>
-
-              {/* PROGRESSIVE METAPHOR ILLUSTRATION: BUILDING UNDER CONSTRUCTION */}
-              <div className="py-3 flex justify-center items-center">
-                <div className="w-14 h-14 rounded-2xl bg-orange-100/80 text-[#F37C42] flex items-center justify-center shadow-inner border border-orange-200 group-hover:scale-110 transition-transform duration-300">
-                  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18" />
-                    <path d="M6 12h12" />
-                    <path d="M6 7h12" />
-                    <path d="M6 17h12" />
-                  </svg>
-                </div>
-              </div>
-
-              <div className="space-y-1.5 pt-1">
-                <div className="text-xs font-extrabold text-slate-800">Thi IELTS cơ bản</div>
-                <ul className="text-[11px] text-slate-600 space-y-1 font-medium">
-                  <li className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#F37C42]" />
-                    <span>Hiểu bản chất kỳ thi IELTS</span>
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#F37C42]" />
-                    <span>Trả lời tự nhiên & logic</span>
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#F37C42]" />
-                    <span>Ứng dụng được Tiếng Anh thực tế</span>
-                  </li>
-                </ul>
+              <div className="font-bold text-sm text-slate-900">BUILDER</div>
+              <div className="text-[11px] text-slate-600 font-medium">
+                Nắm bản chất các dạng đề thi IELTS &amp; phản xạ trả lời logic, tự nhiên.
               </div>
             </div>
-
-            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-semibold">
-              <span>⏱ 27 buổi (9 tuần)</span>
-              <span className="text-[10px] text-slate-400">Phase 3</span>
-            </div>
+            <div className="text-[10px] text-slate-400 font-mono border-t pt-2">27 buổi (9 tuần)</div>
           </div>
 
           {/* LEVEL 4: MASTER */}
-          <div className="relative group flex flex-col justify-between p-5 rounded-2xl bg-gradient-to-b from-slate-50 to-emerald-50/30 border border-slate-200/80 hover:border-[#538442]/60 hover:shadow-xl hover:shadow-emerald-500/10 transition-all duration-300 hover:-translate-y-1">
-            <div className="space-y-2">
+          <div className="flex flex-col justify-between p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+            <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <span className="px-2.5 py-1 rounded-full bg-[#538442] text-white text-[11px] font-black shadow-xs">
+                <span className="px-2 py-0.5 rounded-md bg-emerald-600 text-white text-[10px] font-black">
                   BAND 6.0
                 </span>
-                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">
-                  LVL 04
-                </span>
+                <span className="text-[10px] font-mono text-slate-400 font-bold">LVL 04</span>
               </div>
-
-              <div>
-                <div className="font-black text-base text-slate-900 tracking-tight">MASTER</div>
-                <div className="text-[11px] font-bold text-[#538442] italic">"I master"</div>
-              </div>
-
-              {/* PROGRESSIVE METAPHOR ILLUSTRATION: COMPLETED ACADEMY */}
-              <div className="py-3 flex justify-center items-center">
-                <div className="w-14 h-14 rounded-2xl bg-emerald-100/80 text-[#538442] flex items-center justify-center shadow-inner border border-emerald-200 group-hover:scale-110 transition-transform duration-300">
-                  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3 21h18" />
-                    <path d="M5 21V7l7-4 7 4v14" />
-                    <path d="M9 10a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v11" />
-                  </svg>
-                </div>
-              </div>
-
-              <div className="space-y-1.5 pt-1">
-                <div className="text-xs font-extrabold text-slate-800">Luyện thi nâng cao</div>
-                <ul className="text-[11px] text-slate-600 space-y-1 font-medium">
-                  <li className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#538442]" />
-                    <span>Lập luận tốt tất cả dạng đề</span>
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#538442]" />
-                    <span>Nắm rõ xử lý các dạng đề khó</span>
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#538442]" />
-                    <span>Tối ưu hóa thời gian thi thực tế</span>
-                  </li>
-                </ul>
+              <div className="font-bold text-sm text-slate-900">MASTER</div>
+              <div className="text-[11px] text-slate-600 font-medium">
+                Luyện thi nâng cao, làm chủ lập luận chuyên sâu và tối ưu thời gian làm bài.
               </div>
             </div>
-
-            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-semibold">
-              <span>⏱ 27 buổi (9 tuần)</span>
-              <span className="text-[10px] text-slate-400">Phase 4</span>
-            </div>
+            <div className="text-[10px] text-slate-400 font-mono border-t pt-2">27 buổi (9 tuần)</div>
           </div>
 
           {/* LEVEL 5: LEADER */}
-          <div className="relative group flex flex-col justify-between p-5 rounded-2xl bg-gradient-to-b from-slate-50 to-red-50/40 border border-slate-200/80 hover:border-[#D12E33]/60 hover:shadow-xl hover:shadow-red-500/10 transition-all duration-300 hover:-translate-y-1">
-            <div className="space-y-2">
+          <div className="flex flex-col justify-between p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+            <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <span className="px-2.5 py-1 rounded-full bg-[#D12E33] text-white text-[11px] font-black shadow-xs">
+                <span className="px-2 py-0.5 rounded-md bg-rose-700 text-white text-[10px] font-black">
                   BAND 7.0+
                 </span>
-                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">
-                  LVL 05
-                </span>
+                <span className="text-[10px] font-mono text-slate-400 font-bold">LVL 05</span>
               </div>
-
-              <div>
-                <div className="font-black text-base text-slate-900 tracking-tight">LEADER</div>
-                <div className="text-[11px] font-bold text-[#D12E33] italic">"I lead"</div>
-              </div>
-
-              {/* PROGRESSIVE METAPHOR ILLUSTRATION: LANDMARK WITH CROWN */}
-              <div className="py-3 flex justify-center items-center">
-                <div className="w-14 h-14 rounded-2xl bg-red-100/80 text-[#D12E33] flex items-center justify-center shadow-inner border border-red-200 group-hover:scale-110 transition-transform duration-300 relative">
-                  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
-                  </svg>
-                </div>
-              </div>
-
-              <div className="space-y-1.5 pt-1">
-                <div className="text-xs font-extrabold text-slate-800">Master & Chinh phục 7.0+</div>
-                <ul className="text-[11px] text-slate-600 space-y-1 font-medium">
-                  <li className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#D12E33]" />
-                    <span>Tư duy & lập luận chuyên sâu</span>
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#D12E33]" />
-                    <span>Lưu khoát & tự nhiên như bản xứ</span>
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#D12E33]" />
-                    <span>Dẫn dắt & định hình phản xạ</span>
-                  </li>
-                </ul>
+              <div className="font-bold text-sm text-slate-900">LEADER</div>
+              <div className="text-[11px] text-slate-600 font-medium">
+                Tư duy ngôn ngữ học thuật, phản xạ tự nhiên như người bản xứ &amp; chạm mốc 7.5+.
               </div>
             </div>
-
-            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-semibold">
-              <span>⏱ 30 buổi (10 tuần)</span>
-              <span className="text-[10px] text-slate-400">Phase 5</span>
-            </div>
+            <div className="text-[10px] text-slate-400 font-mono border-t pt-2">30 buổi (10 tuần)</div>
           </div>
         </div>
       </Card>
@@ -465,17 +470,17 @@ function TeacherFacultySection() {
   const [imgError, setImgError] = useState(false);
 
   return (
-    <div className="rounded-3xl border border-blue-200/60 bg-[#eef6ff] p-6 md:p-8 space-y-6 shadow-sm">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-blue-200/50 pb-4 gap-3">
+    <div className="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-8 space-y-6 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 gap-3">
         <div>
           <h3 className="text-lg font-black text-slate-900 tracking-tight">
-            Bảng điểm Đội ngũ Giảng dạy ARIS IELTS
+            Bảng Điểm Đội Ngũ Giảng Dạy ARIS IELTS
           </h3>
-          <p className="text-xs text-slate-600 mt-0.5 font-medium">
+          <p className="text-xs text-slate-500 mt-0.5 font-medium">
             100% Giảng viên đạt IELTS 8.0+ với Chứng chỉ TRF được xác thực chính thức
           </p>
         </div>
-        <span className="self-start sm:self-auto px-3 py-1 rounded-full text-xs font-extrabold bg-red-50 text-red-600 border border-red-200 shadow-2xs">
+        <span className="self-start sm:self-auto px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
           VERIFIED TRF 8.0+
         </span>
       </div>
@@ -491,15 +496,15 @@ function TeacherFacultySection() {
                 setSelectedTeacherId(t.id);
                 setImgError(false);
               }}
-              className={`flex items-center gap-2.5 px-4 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
                 isSelected
-                  ? "bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-500/20"
-                  : "bg-white text-slate-700 border-blue-200/60 hover:bg-blue-50/80"
+                  ? "bg-slate-900 text-white border-slate-900 shadow-sm"
+                  : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
               }`}
             >
               <span
-                className={`w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black ${
-                  isSelected ? "bg-white text-blue-600" : "bg-blue-100 text-blue-700"
+                className={`w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-black ${
+                  isSelected ? "bg-white text-slate-900" : "bg-slate-200 text-slate-800"
                 }`}
               >
                 {t.score}
@@ -513,17 +518,17 @@ function TeacherFacultySection() {
       {/* SIDE-BY-SIDE GRID LAYOUT */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
         {/* LEFT COLUMN: SELECTED TEACHER PROFILE CARD */}
-        <div className="md:col-span-5 bg-white p-6 rounded-2xl border border-blue-100/90 shadow-sm flex flex-col justify-between space-y-4">
+        <div className="md:col-span-5 bg-slate-50 p-6 rounded-2xl border border-slate-200/80 flex flex-col justify-between space-y-4">
           <div className="space-y-4">
             <div className="flex items-center gap-3.5">
-              <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white font-black flex items-center justify-center text-lg shadow-md shadow-blue-500/20">
+              <div className="w-14 h-14 rounded-2xl bg-slate-900 text-white font-black flex items-center justify-center text-lg shadow-sm">
                 {currentTeacher.score}
               </div>
               <div>
                 <h4 className="font-extrabold text-base text-slate-900">
                   {currentTeacher.name}
                 </h4>
-                <div className="text-xs text-blue-600 font-extrabold">
+                <div className="text-xs text-rose-600 font-extrabold">
                   IELTS Overall {currentTeacher.score}
                 </div>
                 <div className="text-[11px] text-slate-500 font-medium">
@@ -532,10 +537,10 @@ function TeacherFacultySection() {
               </div>
             </div>
 
-            <div className="space-y-2 text-xs border-t border-slate-100 pt-3">
+            <div className="space-y-2 text-xs border-t border-slate-200/70 pt-3">
               {currentTeacher.credentials.map((cred, idx) => (
                 <div key={idx} className="flex items-start gap-2 text-slate-700 font-medium">
-                  <span className="text-blue-600 font-bold">
+                  <span className="text-rose-600 font-bold">
                     {idx === 0 ? "🎓" : idx === 1 ? "👨‍🏫" : "✍️"}
                   </span>
                   <span>{cred}</span>
@@ -548,7 +553,7 @@ function TeacherFacultySection() {
             href={currentTeacher.pdfUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl font-extrabold text-xs bg-blue-50/80 border border-blue-200/80 text-blue-600 hover:bg-blue-100 transition-all shadow-xs"
+            className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-white border border-slate-200 text-slate-800 hover:bg-slate-50 transition-all shadow-2xs"
           >
             📄 Mở xem Bảng điểm gốc (PDF) ➔
           </a>
@@ -558,34 +563,33 @@ function TeacherFacultySection() {
         <div className="md:col-span-7 space-y-3">
           <div className="flex items-center justify-between px-1 text-xs font-bold text-slate-700">
             <span className="text-slate-800 font-extrabold text-sm">
-              Bảng điểm thi IELTS
+              Chứng chỉ IELTS TRF chính thức
             </span>
             <a
               href={currentTeacher.imageUrl || currentTeacher.pdfUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-blue-600 hover:underline font-extrabold flex items-center gap-1"
+              className="text-xs text-rose-600 hover:underline font-extrabold flex items-center gap-1"
             >
               Phóng to
             </a>
           </div>
 
-          {/* DIRECT FLAT IMAGE VIEW (NO PDF VIEWER FRAME) */}
-          <div className="w-full rounded-2xl bg-white border border-blue-100/90 p-2 sm:p-3 shadow-sm relative overflow-hidden flex items-center justify-center">
+          <div className="w-full rounded-2xl bg-white border border-slate-200 p-2 sm:p-3 shadow-2xs relative overflow-hidden flex items-center justify-center">
             {!imgError && currentTeacher.imageUrl ? (
               <img
                 key={currentTeacher.id}
                 src={currentTeacher.imageUrl}
                 alt={`Bảng điểm IELTS ${currentTeacher.name}`}
                 onError={() => setImgError(true)}
-                className="w-full h-auto max-h-[750px] object-contain rounded-xl"
+                className="w-full h-auto max-h-[700px] object-contain rounded-xl"
               />
             ) : (
               <iframe
                 key={currentTeacher.id}
                 src={`${currentTeacher.pdfUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
                 title={`Bảng điểm IELTS ${currentTeacher.name}`}
-                className="w-full h-[620px] sm:h-[750px] border-0 rounded-xl bg-white"
+                className="w-full h-[600px] border-0 rounded-xl bg-white"
               />
             )}
           </div>
@@ -594,4 +598,3 @@ function TeacherFacultySection() {
     </div>
   );
 }
-

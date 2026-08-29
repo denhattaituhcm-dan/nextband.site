@@ -9,7 +9,7 @@ import { supabase } from "@/lib/supabase";
 import { classesApi } from "@/lib/api";
 import { User as SupabaseAuthUser } from "@supabase/supabase-js";
 
-export type AppRole = "admin" | "teacher" | "student";
+export type AppRole = "admin" | "teacher" | "student" | "staff";
 
 export interface User {
   id: string;
@@ -31,6 +31,7 @@ interface AuthContextType {
   isAdmin: boolean;
   isTeacher: boolean;
   isStudent: boolean;
+  isStaff: boolean;
   isAuthenticated: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (
@@ -277,6 +278,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isAdmin = roles.includes("admin");
   const isTeacher = roles.includes("teacher");
   const isStudent = roles.includes("student");
+  const isStaff = roles.includes("staff");
   const isAuthenticated = !!user;
 
   return (
@@ -289,6 +291,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAdmin,
         isTeacher,
         isStudent,
+        isStaff,
         isAuthenticated,
         signIn,
         signUp,

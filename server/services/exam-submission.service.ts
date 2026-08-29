@@ -1560,7 +1560,7 @@ export class ExamSubmissionService {
         if (progressPercent === 100 && (tx as any).notification) {
           await this.notificationService.createNotification(tx, {
             userId: studentId,
-            type: "SYSTEM_BROADCAST",
+            type: "ANNOUNCEMENT" as any,
             title: "🎓 Chúc mừng hoàn thành khóa học!",
             message: `Bạn đã hoàn thành 100% tất cả các bài kiểm tra của khóa học. Chúc mừng cột mốc xuất sắc!`,
             link: `/app/dashboard`,

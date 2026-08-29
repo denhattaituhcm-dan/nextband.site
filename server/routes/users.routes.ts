@@ -93,6 +93,12 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
             isActive: true,
             createdAt: true,
             roles: true,
+            userBranches: {
+              select: {
+                branchId: true,
+                branch: { select: { id: true, name: true, code: true } },
+              },
+            },
             classesAsTeacher: {
               where: { isActive: true, status: "ACTIVE" },
               select: {
@@ -105,7 +111,13 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
               },
             },
             _count: {
-              select: { enrollments: true, submissions: true },
+              select: {
+                enrollments: true,
+                submissions: true,
+                assignedLeads: {
+                  where: { status: { notIn: ["ENROLLED", "CANCELLED", "ARCHIVED"] } },
+                },
+              },
             },
           },
         }),
@@ -118,10 +130,14 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           (sum: number, cl: any) => sum + (cl._count?.students || 0),
           0
         );
-        const { classesAsTeacher, ...rest } = u;
+        const branches = (u.userBranches || []).map((ub: any) => ub.branch).filter(Boolean);
+        const activeLeadCount = u._count?.assignedLeads || 0;
+        const { classesAsTeacher, userBranches, ...rest } = u;
         return {
           ...rest,
           roles: u.roles.map((r: any) => r.role),
+          branches,
+          activeLeadCount,
           activeClassesCount,
           totalStudents,
         };
@@ -700,17 +716,36 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
           throw new Error("Không tìm thấy thông tin người dùng sau khi tạo");
         }
 
+        // Branch Association
+        const { branchId, branchIds } = request.body as any;
+        if (branchIds && Array.isArray(branchIds) && branchIds.length > 0) {
+          await fastify.prisma.userBranch.createMany({
+            data: branchIds.map((bId: string) => ({
+              userId: user.userId,
+              branchId: bId,
+            })),
+            skipDuplicates: true,
+          });
+        } else if (branchId) {
+          await fastify.prisma.userBranch.create({
+            data: {
+              userId: user.userId,
+              branchId: branchId,
+            },
+          }).catch(() => {});
+        }
+
         // 3. Non-blocking In-App & Email/Telegram notification to Admins
         (async () => {
           try {
             const { NotificationService } = await import("../services/notification.service.js");
             const notifService = new NotificationService(fastify.prisma);
-            const roleLabel = role === "student" ? "Học viên" : role === "teacher" ? "Giáo viên" : "Quản trị viên";
+            const roleLabel = role === "student" ? "Học viên" : role === "teacher" ? "Giáo viên" : role === "staff" ? "Nhân viên" : "Quản trị viên";
             await notifService.notifyUsersByRole(["admin"], {
               type: "SYSTEM",
               title: `${roleLabel} mới được thêm vào hệ thống`,
               message: `${roleLabel} ${user.fullName || user.email} (${user.email}) vừa được tạo thành công trên hệ thống.`,
-              link: "/admin/users",
+              link: role === "staff" ? "/admin/staff" : "/admin/users",
               entityType: "USER",
               entityId: user.userId,
             });
@@ -928,6 +963,35 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         await fastify.prisma.userRole.create({
           data: { userId: user.userId, role },
         });
+      }
+
+      // Update branches if provided
+      const { branchId, branchIds } = request.body as any;
+      if (branchIds !== undefined) {
+        await fastify.prisma.userBranch.deleteMany({
+          where: { userId: user.userId },
+        });
+        if (Array.isArray(branchIds) && branchIds.length > 0) {
+          await fastify.prisma.userBranch.createMany({
+            data: branchIds.map((bId: string) => ({
+              userId: user.userId,
+              branchId: bId,
+            })),
+            skipDuplicates: true,
+          });
+        }
+      } else if (branchId !== undefined) {
+        await fastify.prisma.userBranch.deleteMany({
+          where: { userId: user.userId },
+        });
+        if (branchId) {
+          await fastify.prisma.userBranch.create({
+            data: {
+              userId: user.userId,
+              branchId,
+            },
+          }).catch(() => {});
+        }
       }
 
       // Always invalidate auth cache whenever user is updated or toggled

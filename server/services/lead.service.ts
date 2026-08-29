@@ -378,7 +378,7 @@ export class LeadService {
               const notifService = new NotificationService(tx as any);
               await notifService.createNotification(tx, {
                 userId: lead.inviterUserId,
-                type: "STUDENT_ACHIEVEMENT",
+                type: "SYSTEM" as any,
                 title: "🎉 Bạn đồng hành đã hoàn tất đăng ký!",
                 message: `Bạn ${fullName} đã đăng ký thành công! Bạn đang có 01 Bộ Quà Tặng ARIS chờ kích hoạt khi bạn mới hoàn tất học phí.`,
                 link: "/app/profile",

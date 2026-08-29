@@ -224,7 +224,7 @@ export class TuitionService {
             const notifService = new NotificationService(this.prisma);
             await notifService.createNotification(this.prisma as any, {
               userId: attribution.inviterUserId,
-              type: "STUDENT_ACHIEVEMENT",
+              type: "SYSTEM" as any,
               title: "🎁 Bạn đã mở khóa Bộ Quà Tặng ARIS!",
               message: `Bạn ${updated.student?.fullName || "đồng hành"} đã hoàn tất học phí. Bạn đã chính thức đủ điều kiện nhận 01 Bộ Quà Tặng ARIS từ trung tâm!`,
               link: "/app/profile",

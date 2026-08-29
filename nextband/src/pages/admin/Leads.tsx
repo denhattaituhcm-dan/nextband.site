@@ -144,14 +144,21 @@ const SOURCE_CONFIG: Record<
 };
 
 export default function AdminLeads() {
-  const { user: currentUser } = useAuth();
+  const { user: currentUser, isAdmin, isStaff } = useAuth();
+  const isStaffOnly = isStaff && !isAdmin;
   const { selectedBranch, branches, primaryBranch } = useBranch();
   const [searchParams] = useSearchParams();
   const initialStatus = searchParams.get("status") || "ALL";
-  const initialOwner = (searchParams.get("owner") as any) || "ALL";
+  const initialOwner = (searchParams.get("owner") as any) || (isStaffOnly ? "ME" : "ALL");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>(initialStatus);
   const [ownerFilter, setOwnerFilter] = useState<"ALL" | "ME" | "UNASSIGNED">(initialOwner);
+
+  useEffect(() => {
+    if (isStaffOnly && ownerFilter !== "ME") {
+      setOwnerFilter("ME");
+    }
+  }, [isStaffOnly]);
 
   useEffect(() => {
     const urlStatus = searchParams.get("status");
@@ -160,9 +167,11 @@ export default function AdminLeads() {
     }
     const urlOwner = searchParams.get("owner");
     if (urlOwner && (urlOwner === "ALL" || urlOwner === "ME" || urlOwner === "UNASSIGNED")) {
-      setOwnerFilter(urlOwner as any);
+      if (!isStaffOnly || urlOwner === "ME") {
+        setOwnerFilter(urlOwner as any);
+      }
     }
-  }, [searchParams]);
+  }, [searchParams, isStaffOnly]);
 
   const [selectedLead, setSelectedLead] = useState<ContactLead | null>(null);
   const [editNotes, setEditNotes] = useState("");
@@ -170,10 +179,10 @@ export default function AdminLeads() {
   const [editAssignedToUserId, setEditAssignedToUserId] = useState<string>("unassigned");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // Fetch assignable staff list (Admin/Teachers)
+  // Fetch assignable staff list (filtered by selected branch or all)
   const { data: assignableStaff = [] } = useQuery<AssignableStaff[]>({
-    queryKey: ["assignable-staff"],
-    queryFn: fetchAssignableStaff,
+    queryKey: ["assignable-staff", selectedBranch],
+    queryFn: () => fetchAssignableStaff(selectedBranch),
     staleTime: 60000,
   });
 
@@ -524,22 +533,24 @@ export default function AdminLeads() {
       <div className="space-y-3">
         {/* Owner Segmented Controls */}
         <div className="flex flex-wrap items-center gap-2">
-          <Button
-            variant={ownerFilter === "ALL" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setOwnerFilter("ALL")}
-            className="rounded-xl h-8 text-xs font-semibold gap-1.5"
-          >
-            <Users className="w-3.5 h-3.5" />
-            <span>Tất cả leads ({leads.length})</span>
-          </Button>
+          {!isStaffOnly && (
+            <Button
+              variant={ownerFilter === "ALL" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setOwnerFilter("ALL")}
+              className="rounded-xl h-8 text-xs font-semibold gap-1.5"
+            >
+              <Users className="w-3.5 h-3.5" />
+              <span>Tất cả leads ({leads.length})</span>
+            </Button>
+          )}
 
           <Button
-            variant={ownerFilter === "ME" ? "default" : "outline"}
+            variant={ownerFilter === "ME" || isStaffOnly ? "default" : "outline"}
             size="sm"
             onClick={() => setOwnerFilter("ME")}
             className={`rounded-xl h-8 text-xs font-semibold gap-1.5 ${
-              ownerFilter === "ME" ? "bg-indigo-600 hover:bg-indigo-700 text-white" : ""
+              ownerFilter === "ME" || isStaffOnly ? "bg-indigo-600 hover:bg-indigo-700 text-white" : ""
             }`}
           >
             <UserCheck className="w-3.5 h-3.5 text-indigo-400" />
@@ -551,26 +562,28 @@ export default function AdminLeads() {
             )}
           </Button>
 
-          <Button
-            variant={ownerFilter === "UNASSIGNED" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setOwnerFilter("UNASSIGNED")}
-            className={`rounded-xl h-8 text-xs font-semibold gap-1.5 ${
-              ownerFilter === "UNASSIGNED"
-                ? "bg-amber-600 hover:bg-amber-700 text-white"
-                : unassignedCount > 0
-                ? "border-amber-400 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10"
-                : ""
-            }`}
-          >
-            <UserX className="w-3.5 h-3.5" />
-            <span>Chưa phân bổ</span>
-            {unassignedCount > 0 && (
-              <Badge className="ml-0.5 px-1.5 py-0 text-[10px] bg-amber-500 text-white border-0">
-                {unassignedCount}
-              </Badge>
-            )}
-          </Button>
+          {!isStaffOnly && (
+            <Button
+              variant={ownerFilter === "UNASSIGNED" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setOwnerFilter("UNASSIGNED")}
+              className={`rounded-xl h-8 text-xs font-semibold gap-1.5 ${
+                ownerFilter === "UNASSIGNED"
+                  ? "bg-amber-600 hover:bg-amber-700 text-white"
+                  : unassignedCount > 0
+                  ? "border-amber-400 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10"
+                  : ""
+              }`}
+            >
+              <UserX className="w-3.5 h-3.5" />
+              <span>Chưa phân bổ</span>
+              {unassignedCount > 0 && (
+                <Badge className="ml-0.5 px-1.5 py-0 text-[10px] bg-amber-500 text-white border-0">
+                  {unassignedCount}
+                </Badge>
+              )}
+            </Button>
+          )}
         </div>
 
         {/* Filter & Search Bar */}
@@ -631,19 +644,19 @@ export default function AdminLeads() {
             </Button>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <Table>
+          <div className="overflow-x-auto border rounded-xl">
+            <Table className="min-w-[1150px]">
               <TableHeader>
                 <TableRow className="bg-muted/40 hover:bg-muted/40">
-                  <TableHead className="font-bold text-xs uppercase tracking-wider">Khách hàng</TableHead>
-                  <TableHead className="font-bold text-xs uppercase tracking-wider">Người phụ trách</TableHead>
-                  <TableHead className="font-bold text-xs uppercase tracking-wider">Cơ sở</TableHead>
-                  <TableHead className="font-bold text-xs uppercase tracking-wider">Nhu cầu / Mục tiêu</TableHead>
-                  <TableHead className="font-bold text-xs uppercase tracking-wider">Nguồn tiếp cận</TableHead>
-                  <TableHead className="font-bold text-xs uppercase tracking-wider">Tiếp nhận lúc</TableHead>
-                  <TableHead className="font-bold text-xs uppercase tracking-wider">Trạng thái</TableHead>
-                  <TableHead className="font-bold text-xs uppercase tracking-wider">Liên kết LMS</TableHead>
-                  <TableHead className="text-right font-bold text-xs uppercase tracking-wider">Thao tác</TableHead>
+                  <TableHead className="font-bold text-xs uppercase tracking-wider whitespace-nowrap min-w-[200px]">Khách hàng</TableHead>
+                  <TableHead className="font-bold text-xs uppercase tracking-wider whitespace-nowrap min-w-[160px]">Người phụ trách</TableHead>
+                  <TableHead className="font-bold text-xs uppercase tracking-wider whitespace-nowrap min-w-[100px]">Cơ sở</TableHead>
+                  <TableHead className="font-bold text-xs uppercase tracking-wider whitespace-nowrap min-w-[220px]">Nhu cầu / Mục tiêu</TableHead>
+                  <TableHead className="font-bold text-xs uppercase tracking-wider whitespace-nowrap min-w-[130px]">Nguồn tiếp cận</TableHead>
+                  <TableHead className="font-bold text-xs uppercase tracking-wider whitespace-nowrap min-w-[130px]">Tiếp nhận lúc</TableHead>
+                  <TableHead className="font-bold text-xs uppercase tracking-wider whitespace-nowrap min-w-[140px]">Trạng thái</TableHead>
+                  <TableHead className="font-bold text-xs uppercase tracking-wider whitespace-nowrap min-w-[130px]">Liên kết LMS</TableHead>
+                  <TableHead className="text-right font-bold text-xs uppercase tracking-wider whitespace-nowrap min-w-[90px]">Thao tác</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -660,7 +673,7 @@ export default function AdminLeads() {
                   return (
                     <TableRow key={lead.id} className="hover:bg-muted/30 transition-colors">
                       {/* Customer Info */}
-                      <TableCell>
+                      <TableCell className="min-w-[200px]">
                         <div className="space-y-1">
                           <div className="flex items-center gap-1.5">
                             <span className="font-bold text-foreground text-sm">{lead.fullName}</span>
@@ -696,10 +709,11 @@ export default function AdminLeads() {
                       </TableCell>
 
                       {/* Lead Owner / Assignee */}
-                      <TableCell>
+                      <TableCell className="min-w-[160px]">
                         <Select
                           value={lead.assignedToUserId || "unassigned"}
                           onValueChange={(val) => handleQuickAssign(lead, val)}
+                          disabled={isStaffOnly}
                         >
                           <SelectTrigger className={`h-8 w-[150px] text-xs font-medium rounded-lg border ${
                             lead.assignedToUserId
@@ -726,27 +740,39 @@ export default function AdminLeads() {
                             <SelectItem value="unassigned" className="text-muted-foreground italic">
                               -- Chưa phân bổ --
                             </SelectItem>
-                            {assignableStaff.map((staff) => (
-                              <SelectItem key={staff.userId} value={staff.userId}>
-                                <div className="flex items-center justify-between gap-2 w-full">
-                                  <span className="font-medium">{staff.fullName}</span>
-                                  {staff.activeLeadCount > 0 && (
-                                    <span className="text-[10px] text-muted-foreground">
-                                      ({staff.activeLeadCount} leads)
-                                    </span>
-                                  )}
-                                </div>
-                              </SelectItem>
-                            ))}
+                            {assignableStaff.map((staff) => {
+                              const isMatchBranch = lead.preferredBranchId
+                                ? (staff.branches || []).some((b: any) => b.id === lead.preferredBranchId)
+                                : true;
+
+                              return (
+                                <SelectItem key={staff.userId} value={staff.userId}>
+                                  <div className="flex items-center justify-between gap-2 w-full">
+                                    <div className="flex items-center gap-1.5 truncate">
+                                      <span className="font-medium truncate">{staff.fullName}</span>
+                                      {isMatchBranch && lead.preferredBranchId && (
+                                        <span className="text-[9px] px-1 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 font-bold shrink-0">
+                                          Cùng cơ sở
+                                        </span>
+                                      )}
+                                    </div>
+                                    {staff.activeLeadCount > 0 && (
+                                      <span className="text-[10px] text-muted-foreground shrink-0">
+                                        ({staff.activeLeadCount} leads)
+                                      </span>
+                                    )}
+                                  </div>
+                                </SelectItem>
+                              );
+                            })}
                           </SelectContent>
                         </Select>
                       </TableCell>
 
                       {/* Preferred Branch */}
-
-                      <TableCell>
+                      <TableCell className="min-w-[100px]">
                         {lead.preferredBranch ? (
-                          <Badge variant="outline" className="gap-1 text-xs font-normal border-primary/20 bg-primary/5">
+                          <Badge variant="outline" className="gap-1 text-xs font-normal border-primary/20 bg-primary/5 whitespace-nowrap">
                             <MapPin className="h-3 w-3 text-primary" />
                             {lead.preferredBranch.name}
                           </Badge>
@@ -756,14 +782,14 @@ export default function AdminLeads() {
                       </TableCell>
 
                       {/* Goal / Nhu cầu */}
-                      <TableCell className="max-w-xs">
-                        <p className="text-xs font-medium text-foreground whitespace-pre-wrap">
+                      <TableCell className="min-w-[220px] max-w-[320px]">
+                        <p className="text-xs font-medium text-foreground whitespace-normal leading-relaxed line-clamp-3" title={lead.goal || ""}>
                           {lead.goal || <span className="text-muted-foreground italic">Chưa ghi nhận</span>}
                         </p>
                       </TableCell>
 
                       {/* Source */}
-                      <TableCell>
+                      <TableCell className="min-w-[130px] whitespace-nowrap">
                         <Badge
                           variant="outline"
                           className={`text-[11px] font-semibold px-2 py-0.5 border ${sourceInfo.color}`}
@@ -773,7 +799,7 @@ export default function AdminLeads() {
                       </TableCell>
 
                       {/* Created At & Staff Creator */}
-                      <TableCell>
+                      <TableCell className="min-w-[130px] whitespace-nowrap">
                         <div className="space-y-0.5">
                           <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
                             <Calendar className="w-3 h-3 text-muted-foreground/70" />
@@ -789,7 +815,7 @@ export default function AdminLeads() {
                       </TableCell>
 
                       {/* Status Selector */}
-                      <TableCell>
+                      <TableCell className="min-w-[140px]">
                         <Select
                           value={normStatus}
                           onValueChange={(val) => handleQuickStatusChange(lead, val)}
@@ -822,7 +848,7 @@ export default function AdminLeads() {
                       </TableCell>
 
                       {/* LMS Conversion Column */}
-                      <TableCell>
+                      <TableCell className="min-w-[130px] whitespace-nowrap">
                         {isConverted ? (
                           <div className="flex items-center gap-1.5">
                             <Badge variant="outline" className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-200 text-xs font-semibold gap-1">
@@ -835,7 +861,7 @@ export default function AdminLeads() {
                             size="sm"
                             variant="outline"
                             onClick={() => handleOpenConvert(lead)}
-                            className="h-7 px-2.5 text-xs gap-1 border-primary/30 text-primary hover:bg-primary/10 font-semibold rounded-lg"
+                            className="h-7 px-2.5 text-xs gap-1 border-primary/30 text-primary hover:bg-primary/10 font-semibold rounded-lg whitespace-nowrap"
                           >
                             <GraduationCap className="w-3.5 h-3.5 text-primary" />
                             <span>Tạo Học viên</span>
@@ -844,7 +870,7 @@ export default function AdminLeads() {
                       </TableCell>
 
                       {/* Action */}
-                      <TableCell className="text-right">
+                      <TableCell className="text-right min-w-[90px] whitespace-nowrap">
                         <Button
                           variant="ghost"
                           size="sm"

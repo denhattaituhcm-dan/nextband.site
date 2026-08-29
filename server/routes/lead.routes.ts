@@ -56,7 +56,7 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
   // GET /leads/check-phone - Check duplicate leads by phone number (for UI warnings)
   fastify.get(
     "/check-phone",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
     async (request, reply) => {
       const { phone } = request.query as any;
       if (!phone || typeof phone !== "string") {
@@ -74,7 +74,7 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
   // POST /leads/manual - Authenticated endpoint for Admin/Teacher/Staff to record offline/hotline leads
   fastify.post(
     "/manual",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
     async (request, reply) => {
       const validatedData = handleValidation(
         createLeadSchema.safeParse(request.body),
@@ -108,7 +108,7 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
   // POST /leads/:id/convert - Atomic Conversion: Lead -> Student User + UserBranch + Link Lead
   fastify.post<{ Params: { id: string } }>(
     "/:id/convert",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
     async (request, reply) => {
       const { id } = request.params;
       const { convertLeadSchema } = await import("../schemas/lead.schema.js");
@@ -136,15 +136,18 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
     }
   );
 
-  // GET /leads/assignable-staff - Fetch all admin/teacher users usable as lead owners
+  // GET /leads/assignable-staff - Fetch all staff/admin users usable as lead owners
   fastify.get(
     "/assignable-staff",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
     async (request, reply) => {
-      // Get all admin/teacher users with lead count
+      const { branchId } = (request.query || {}) as { branchId?: string };
+
+      // Get all active staff, admin, and teacher users with lead count and branches
       const staffWithLeads = await fastify.prisma.user.findMany({
         where: {
-          roles: { some: { role: { in: ["admin", "teacher"] } } },
+          isActive: true,
+          roles: { some: { role: { in: ["staff", "admin", "teacher"] } } },
         },
         select: {
           id: true,
@@ -152,7 +155,14 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
           fullName: true,
           email: true,
           avatarUrl: true,
+          phone: true,
           roles: { select: { role: true } },
+          userBranches: {
+            select: {
+              branchId: true,
+              branch: { select: { id: true, name: true, code: true } },
+            },
+          },
           _count: {
             select: {
               assignedLeads: {
@@ -164,25 +174,49 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
         orderBy: { fullName: "asc" },
       });
 
-      return reply.send({
-        success: true,
-        data: staffWithLeads.map((u) => ({
+      const formatted = staffWithLeads.map((u) => {
+        const roles = u.roles.map((r) => r.role);
+        const branches = (u.userBranches || []).map((ub) => ub.branch).filter(Boolean);
+        const isMatchBranch = branchId && branchId !== "ALL" ? branches.some((b) => b.id === branchId) : true;
+        const isStaff = roles.includes("staff");
+
+        return {
           id: u.id,
           userId: u.userId,
-          fullName: u.fullName,
+          fullName: u.fullName || u.email?.split("@")[0] || "Nhân viên",
           email: u.email,
           avatarUrl: u.avatarUrl,
-          roles: u.roles.map((r) => r.role),
+          phone: u.phone,
+          roles,
+          branches,
+          isMatchBranch,
+          isStaff,
           activeLeadCount: u._count.assignedLeads,
-        })),
+        };
+      });
+
+      // Sort priority: matching branch -> staff role -> least active leads
+      formatted.sort((a, b) => {
+        if (branchId && branchId !== "ALL") {
+          if (a.isMatchBranch && !b.isMatchBranch) return -1;
+          if (!a.isMatchBranch && b.isMatchBranch) return 1;
+        }
+        if (a.isStaff && !b.isStaff) return -1;
+        if (!a.isStaff && b.isStaff) return 1;
+        return a.activeLeadCount - b.activeLeadCount;
+      });
+
+      return reply.send({
+        success: true,
+        data: formatted,
       });
     }
   );
 
-  // GET /leads - Admin/Teacher list all leads with pagination
+  // GET /leads - Admin/Staff list leads with pagination & RBAC
   fastify.get(
     "/",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
     async (request, reply) => {
       const validatedQuery = handleValidation(
         listLeadsQuerySchema.safeParse(request.query),
@@ -191,8 +225,14 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
       );
       if (!validatedQuery) return;
 
-      // Resolve "me" shorthand to the authenticated user's ID
-      if ((validatedQuery as any).assignedToUserId === "me") {
+      const userRoles = request.user.roles || [];
+      const isAdmin = userRoles.includes("admin");
+      const isStaffOnly = userRoles.includes("staff") && !isAdmin;
+
+      // RBAC Constraint: Staff can ONLY see their assigned leads
+      if (isStaffOnly) {
+        (validatedQuery as any).assignedToUserId = request.user.id;
+      } else if ((validatedQuery as any).assignedToUserId === "me") {
         (validatedQuery as any).assignedToUserId = request.user.id;
       }
 
@@ -205,10 +245,10 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
     }
   );
 
-  // GET /leads/:id - Admin/Teacher get single lead details
+  // GET /leads/:id - Admin/Staff get single lead details
   fastify.get<{ Params: { id: string } }>(
     "/:id",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
     async (request, reply) => {
       const { id } = request.params;
       const lead = await leadService.getLeadById(id);
@@ -220,6 +260,16 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
         });
       }
 
+      const userRoles = request.user.roles || [];
+      const isAdmin = userRoles.includes("admin");
+      const isStaffOnly = userRoles.includes("staff") && !isAdmin;
+      if (isStaffOnly && lead.assignedToUserId !== request.user.id) {
+        return reply.status(403).send({
+          success: false,
+          error: "Bạn không có quyền xem thông tin khách tư vấn này",
+        });
+      }
+
       return reply.send({
         success: true,
         data: lead,
@@ -227,10 +277,10 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
     }
   );
 
-  // PATCH /leads/:id - Admin/Teacher update status or notes
+  // PATCH /leads/:id - Admin/Staff update status or notes
   fastify.patch<{ Params: { id: string } }>(
     "/:id",
-    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
     async (request, reply) => {
       const { id } = request.params;
       const validatedData = handleValidation(
@@ -239,6 +289,18 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
         reply
       );
       if (!validatedData) return;
+
+      const userRoles = request.user.roles || [];
+      const isAdmin = userRoles.includes("admin");
+      const isStaffOnly = userRoles.includes("staff") && !isAdmin;
+
+      // If staff, ensure they don't reassign lead unless they are admin
+      if (isStaffOnly && validatedData.assignedToUserId && validatedData.assignedToUserId !== request.user.id) {
+        return reply.status(403).send({
+          success: false,
+          error: "Chỉ Quản trị viên mới có quyền chuyển giao người phụ trách lead",
+        });
+      }
 
       try {
         const updated = await leadService.updateLead(id, validatedData);

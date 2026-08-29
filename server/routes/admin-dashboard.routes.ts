@@ -36,6 +36,7 @@ export default async function adminDashboardRoutes(fastify: FastifyInstance) {
           dueSuspensionsCount,
           recentAbsents,
           teachersData,
+          staffData,
         ] = await Promise.all([
           // 1. Học viên đang theo học (ACTIVE)
           fastify.prisma.classStudent.count({
@@ -197,6 +198,29 @@ export default async function adminDashboardRoutes(fastify: FastifyInstance) {
               },
             },
           }),
+
+          // 12. Danh sách nhân viên tư vấn đang hoạt động kèm thống kê leads
+          fastify.prisma.user.findMany({
+            where: {
+              roles: { some: { role: "staff" } },
+              isActive: true,
+              ...(hasBranchFilter ? { userBranches: { some: { branchId } } } : {}),
+            },
+            select: {
+              userId: true,
+              fullName: true,
+              email: true,
+              avatarUrl: true,
+              _count: {
+                select: {
+                  assignedLeads: {
+                    where: { status: { notIn: ["ENROLLED", "CANCELLED", "ARCHIVED"] } },
+                  },
+                },
+              },
+            },
+            orderBy: { fullName: "asc" },
+          }),
         ]);
 
         // Query pending exam submissions for teachers' active classes
@@ -300,6 +324,14 @@ export default async function adminDashboardRoutes(fastify: FastifyInstance) {
             ? Math.round((enrolledLeadsCount / newLeadsCount) * 100)
             : 0;
 
+        const staffSummary = staffData.map((s) => ({
+          userId: s.userId,
+          fullName: s.fullName,
+          email: s.email,
+          avatarUrl: s.avatarUrl,
+          activeLeadsCount: s._count.assignedLeads,
+        }));
+
         return reply.send({
           success: true,
           data: {
@@ -308,6 +340,7 @@ export default async function adminDashboardRoutes(fastify: FastifyInstance) {
               newLeads: newLeadsCount,
               activeClasses: activeClasses.length,
               averageFillRate,
+              activeStaff: staffData.length,
             },
             actionItems: [
               {
@@ -374,6 +407,7 @@ export default async function adminDashboardRoutes(fastify: FastifyInstance) {
               },
             },
             teachers: teachersSummary,
+            staff: staffSummary,
           },
         });
       } catch (err: any) {

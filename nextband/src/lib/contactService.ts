@@ -472,17 +472,22 @@ export interface AssignableStaff {
   fullName: string;
   email?: string;
   avatarUrl?: string | null;
+  phone?: string | null;
   roles: string[];
+  branches?: Array<{ id: string; name: string; code: string }>;
+  isMatchBranch?: boolean;
+  isStaff?: boolean;
   activeLeadCount: number;
 }
 
 /**
- * Admin: Fetch list of admin/teacher users that can be assigned as lead owners
+ * Admin/Staff: Fetch list of staff/admin users that can be assigned as lead owners
  */
-export async function fetchAssignableStaff(): Promise<AssignableStaff[]> {
+export async function fetchAssignableStaff(branchId?: string): Promise<AssignableStaff[]> {
   try {
     const token = await getAuthToken();
-    const res = await fetch(`${API_BASE_URL}/leads/assignable-staff`, {
+    const query = branchId && branchId !== "ALL" ? `?branchId=${encodeURIComponent(branchId)}` : "";
+    const res = await fetch(`${API_BASE_URL}/leads/assignable-staff${query}`, {
       headers: {
         "Content-Type": "application/json",
         ...(token ? { Authorization: `Bearer ${token}` } : {}),

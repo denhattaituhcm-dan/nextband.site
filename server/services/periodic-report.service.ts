@@ -343,8 +343,8 @@ export class PeriodicReportService {
       "droppedStudentsCount"
     );
 
-    // Optional 2: Lead breakdown by source
-    const rawLeadsBySourceResult = await safeOptionalQuery(
+    // Optional 2: Lead breakdown by source & by assigned staff
+    const rawLeadsResult = await safeOptionalQuery(
       () =>
         this.prisma.contactLead.findMany({
           where: {
@@ -355,25 +355,60 @@ export class PeriodicReportService {
             source: true,
             status: true,
             convertedUserId: true,
+            assignedToUserId: true,
+            assignedToUser: {
+              select: {
+                userId: true,
+                fullName: true,
+                email: true,
+              },
+            },
           },
         }),
       [],
-      "rawLeadsBySource"
+      "rawLeadsBreakdown"
     );
 
     const sourceMap = new Map<string, { leads: number; enrolled: number }>();
-    (rawLeadsBySourceResult.data || []).forEach((item) => {
+    const staffMap = new Map<string, { name: string; email?: string; leads: number; enrolled: number }>();
+
+    (rawLeadsResult.data || []).forEach((item) => {
+      // By source
       const src = item.source || "Khác";
-      const curr = sourceMap.get(src) || { leads: 0, enrolled: 0 };
-      curr.leads += 1;
+      const currSrc = sourceMap.get(src) || { leads: 0, enrolled: 0 };
+      currSrc.leads += 1;
       if (item.status === "ENROLLED" || item.convertedUserId) {
-        curr.enrolled += 1;
+        currSrc.enrolled += 1;
       }
-      sourceMap.set(src, curr);
+      sourceMap.set(src, currSrc);
+
+      // By staff
+      const staffKey = item.assignedToUserId || "unassigned";
+      const staffName = item.assignedToUser?.fullName || (item.assignedToUserId ? "Nhân viên" : "Chưa phân bổ");
+      const currStaff = staffMap.get(staffKey) || {
+        name: staffName,
+        email: item.assignedToUser?.email || undefined,
+        leads: 0,
+        enrolled: 0,
+      };
+      currStaff.leads += 1;
+      if (item.status === "ENROLLED" || item.convertedUserId) {
+        currStaff.enrolled += 1;
+      }
+      staffMap.set(staffKey, currStaff);
     });
 
     const bySource = Array.from(sourceMap.entries()).map(([source, data]) => ({
       source,
+      leads: data.leads,
+      enrolled: data.enrolled,
+      conversionRate: data.leads > 0 ? Number(((data.enrolled / data.leads) * 100).toFixed(1)) : 0,
+    })).sort((a, b) => b.leads - a.leads);
+
+    const byStaff = Array.from(staffMap.entries()).map(([staffId, data]) => ({
+      staffId,
+      staffName: data.name,
+      email: data.email,
       leads: data.leads,
       enrolled: data.enrolled,
       conversionRate: data.leads > 0 ? Number(((data.enrolled / data.leads) * 100).toFixed(1)) : 0,
@@ -490,6 +525,7 @@ ${bySource.length > 0 ? `- Nguồn tiếp cận chính: ${bySource.slice(0, 3).m
         enrolled: enrolledLeadsCount,
         conversionRate: leadConversionRate,
         bySource,
+        byStaff,
       },
       classes: {
         opened: openedClassesCount,

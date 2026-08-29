@@ -10,7 +10,17 @@ import {
   Users,
   ShieldCheck,
   GraduationCap,
+  BookOpen,
+  Info,
+  FileText,
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 interface ScholarshipOption {
   id: string;
@@ -51,8 +61,8 @@ const TINH_ANH_OPTIONS: ScholarshipOption[] = [
 const KY_LUAT_OPTIONS: ScholarshipOption[] = [
   { id: "none", label: "Chọn mức nỗ lực kỷ luật dự kiến...", amt: 0 },
   { id: "cap1", label: "Cấp 1: BTVN ≥ 80% & Chuyên cần ≥ 90% (200k)", amt: 200000 },
-  { id: "cap2", label: "Cấp 2: BTVN ≥ 90% & Chuyên cần ≥ 95% (300k)", amt: 300000 },
-  { id: "cap3", label: "Cấp 3 — Kỷ Luật Thép: BTVN 100% & Chuyên cần 100% (500k)", amt: 500000 },
+  { id: "cap2", label: "Cấp 2: BTVN ≥ 90% & Chuyên cần ≥ 90% (300k)", amt: 300000 },
+  { id: "cap3", label: "Cấp 3 — Kỷ Luật Thép: BTVN 100% & Chuyên cần ≥ 90% (500k)", amt: 500000 },
 ];
 
 // 3. Đặc Quyền Đồng Môn (200k/khóa)
@@ -62,6 +72,221 @@ const formatVND = (num: number) => {
   return Math.round(num).toLocaleString("vi-VN").replace(/,/g, ".") + "đ";
 };
 
+export function ScholarshipPolicyDetails() {
+  return (
+    <div className="space-y-8">
+      {/* 3 Main Program Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+        {/* Card 1: Tinh Anh */}
+        <div className="bg-card border-2 border-brand-red/20 rounded-3xl p-5 sm:p-6 shadow-xs space-y-4 flex flex-col justify-between hover:border-brand-red/50 transition-all">
+          <div className="space-y-3.5">
+            <div className="flex items-center justify-between">
+              <div className="p-2.5 rounded-2xl bg-brand-red/10 text-brand-red">
+                <Award className="w-5 h-5" />
+              </div>
+              <span className="text-[11px] font-black px-2.5 py-1 rounded-full bg-brand-red/10 text-brand-red uppercase tracking-wider">
+                Thưởng Năng Lực
+              </span>
+            </div>
+            <div>
+              <h4 className="text-lg font-black text-foreground">Học bổng Tinh Anh</h4>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Dành cho học viên có thành tích nổi bật khi nhập học
+              </p>
+            </div>
+
+            {/* Tiers List */}
+            <div className="space-y-2 text-xs">
+              <div className="p-2.5 rounded-xl bg-muted/60 flex justify-between items-center">
+                <div>
+                  <p className="font-bold text-foreground">Bậc 4: HSG Quốc gia</p>
+                  <p className="text-[11px] text-muted-foreground">Giải Nhất, Nhì, Ba, KK các môn văn hóa</p>
+                </div>
+                <span className="font-extrabold text-brand-red text-xs sm:text-sm shrink-0 pl-2">
+                  1.200.000đ
+                </span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-muted/60 flex justify-between items-center">
+                <div>
+                  <p className="font-bold text-foreground">Bậc 3: SV Xuất sắc / HSG Tỉnh</p>
+                  <p className="text-[11px] text-muted-foreground">GPA ≥ 3.6/4.0 | Olympic 30/4</p>
+                </div>
+                <span className="font-extrabold text-brand-red text-xs sm:text-sm shrink-0 pl-2">
+                  900.000đ
+                </span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-muted/60 flex justify-between items-center">
+                <div>
+                  <p className="font-bold text-foreground">Bậc 2: Tân SV / NCKH</p>
+                  <p className="text-[11px] text-muted-foreground">ĐGNL ≥ 850 | THPT ≥ 26đ | SV 5 Tốt</p>
+                </div>
+                <span className="font-extrabold text-brand-red text-xs sm:text-sm shrink-0 pl-2">
+                  700.000đ
+                </span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-muted/60 flex justify-between items-center">
+                <div>
+                  <p className="font-bold text-foreground">Bậc 1: SV Giỏi / HSG THPT</p>
+                  <p className="text-[11px] text-muted-foreground">GPA ≥ 3.2/4.0 | GPA THPT ≥ 9.0</p>
+                </div>
+                <span className="font-extrabold text-brand-red text-xs sm:text-sm shrink-0 pl-2">
+                  500.000đ
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-3 border-t border-border/70 space-y-2 text-[11px] text-muted-foreground">
+            <p>• Áp dụng cho khóa học đầu tiên tại ARIS.</p>
+            <p>• Chọn mức cao nhất, không cộng dồn nhiều thành tích.</p>
+            <div className="p-2 rounded-xl bg-brand-red/5 text-brand-red font-medium italic">
+              &ldquo;Bạn giỏi trước khi vào ARIS → ARIS đầu tư vào bạn.&rdquo;
+            </div>
+          </div>
+        </div>
+
+        {/* Card 2: Kỷ Luật */}
+        <div className="bg-card border-2 border-brand-blue/20 rounded-3xl p-5 sm:p-6 shadow-xs space-y-4 flex flex-col justify-between hover:border-brand-blue/50 transition-all">
+          <div className="space-y-3.5">
+            <div className="flex items-center justify-between">
+              <div className="p-2.5 rounded-2xl bg-brand-blue-soft text-brand-blue">
+                <Flame className="w-5 h-5" />
+              </div>
+              <span className="text-[11px] font-black px-2.5 py-1 rounded-full bg-brand-blue-soft text-brand-blue uppercase tracking-wider">
+                Thưởng Kỷ Luật
+              </span>
+            </div>
+            <div>
+              <h4 className="text-lg font-black text-foreground">Học bổng Kỷ Luật</h4>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Dành cho học viên duy trì nỗ lực trong từng khóa học
+              </p>
+            </div>
+
+            {/* Tiers List */}
+            <div className="space-y-2 text-xs">
+              <div className="p-2.5 rounded-xl bg-muted/60 space-y-0.5">
+                <div className="flex justify-between items-center">
+                  <span className="font-bold text-foreground">Cấp 1</span>
+                  <span className="font-extrabold text-brand-blue text-xs sm:text-sm">200.000đ</span>
+                </div>
+                <p className="text-muted-foreground text-[11px]">BTVN ≥ 80% & Chuyên cần ≥ 90%</p>
+              </div>
+              <div className="p-2.5 rounded-xl bg-muted/60 space-y-0.5">
+                <div className="flex justify-between items-center">
+                  <span className="font-bold text-foreground">Cấp 2</span>
+                  <span className="font-extrabold text-brand-blue text-xs sm:text-sm">300.000đ</span>
+                </div>
+                <p className="text-muted-foreground text-[11px]">BTVN ≥ 90% & Chuyên cần ≥ 90%</p>
+              </div>
+              <div className="p-2.5 rounded-xl bg-brand-blue-soft/40 border border-brand-blue/20 space-y-0.5">
+                <div className="flex justify-between items-center">
+                  <span className="font-black text-brand-blue">Cấp 3 — Kỷ Luật Thép</span>
+                  <span className="font-black text-brand-blue text-xs sm:text-sm">500.000đ</span>
+                </div>
+                <p className="text-brand-blue/80 text-[11px]">BTVN 100% & Chuyên cần ≥ 90%</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-3 border-t border-border/70 space-y-2 text-[11px] text-muted-foreground">
+            <p>• Dữ liệu đánh giá minh bạch trên NextBand LMS.</p>
+            <p>• Khấu trừ trực tiếp vào học phí khóa kế tiếp.</p>
+            <div className="p-2 rounded-xl bg-brand-blue-soft/50 text-brand-blue font-medium italic">
+              &ldquo;Bền bỉ mỗi ngày → Nỗ lực được ghi nhận xứng đáng.&rdquo;
+            </div>
+          </div>
+        </div>
+
+        {/* Card 3: Đồng Môn */}
+        <div className="bg-card border-2 border-emerald-500/20 rounded-3xl p-5 sm:p-6 shadow-xs space-y-4 flex flex-col justify-between hover:border-emerald-500/50 transition-all">
+          <div className="space-y-3.5">
+            <div className="flex items-center justify-between">
+              <div className="p-2.5 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                <Users className="w-5 h-5" />
+              </div>
+              <span className="text-[11px] font-black px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+                Thưởng Kết Nối
+              </span>
+            </div>
+            <div>
+              <h4 className="text-lg font-black text-foreground">Đặc Quyền Đồng Môn</h4>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Tri ân học viên giới thiệu bạn bè, người thân
+              </p>
+            </div>
+
+            {/* 2-Way Benefit */}
+            <div className="space-y-2 text-xs">
+              <div className="p-2.5 rounded-xl bg-muted/60 space-y-0.5">
+                <div className="flex justify-between items-center">
+                  <span className="font-bold text-foreground">Người được giới thiệu</span>
+                  <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm">
+                    200.000đ
+                  </span>
+                </div>
+                <p className="text-muted-foreground text-[11px]">Giảm trực tiếp vào học phí khóa đầu tiên</p>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-muted/60 space-y-0.5">
+                <div className="flex justify-between items-center">
+                  <span className="font-bold text-foreground">Người giới thiệu</span>
+                  <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm">
+                    200.000đ
+                  </span>
+                </div>
+                <p className="text-muted-foreground text-[11px]">Nhận Voucher áp dụng cho khóa tiếp theo</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-3 border-t border-border/70 space-y-2 text-[11px] text-muted-foreground">
+            <p>• Ghi nhận khi học viên mới hoàn tất ghi danh.</p>
+            <p>• Có giá trị cộng dồn cùng Học bổng Tinh Anh / Kỷ Luật.</p>
+            <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-medium italic">
+              &ldquo;Bạn học của tôi cũng là đồng môn của tôi — Cùng phát triển.&rdquo;
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 4 Core Operational Principles */}
+      <div className="p-5 sm:p-6 rounded-3xl bg-muted/30 border border-border/80 space-y-3">
+        <h4 className="font-black text-sm sm:text-base text-foreground flex items-center gap-2">
+          <GraduationCap className="w-5 h-5 text-brand-blue" />
+          <span>Nguyên Tắc Học Phí & Xét Duyệt Tại ARIS</span>
+        </h4>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs text-foreground/80">
+          <div className="p-3 rounded-2xl bg-card border border-border/50 space-y-1">
+            <p className="font-bold text-foreground">Đồng nhất mức phí</p>
+            <p className="text-muted-foreground text-[11px] leading-relaxed">
+              Học phí Online và Offline áp dụng như nhau, minh bạch theo từng khóa.
+            </p>
+          </div>
+          <div className="p-3 rounded-2xl bg-card border border-border/50 space-y-1">
+            <p className="font-bold text-foreground">Đóng theo từng khóa</p>
+            <p className="text-muted-foreground text-[11px] leading-relaxed">
+              Học viên đóng theo từng chặng học, ARIS không thu gộp học phí cả lộ trình.
+            </p>
+          </div>
+          <div className="p-3 rounded-2xl bg-card border border-border/50 space-y-1">
+            <p className="font-bold text-foreground">Minh bạch trên LMS</p>
+            <p className="text-muted-foreground text-[11px] leading-relaxed">
+              Dữ liệu chuyên cần & BTVN được ghi nhận tự động trên hệ thống NextBand.
+            </p>
+          </div>
+          <div className="p-3 rounded-2xl bg-card border border-border/50 space-y-1">
+            <p className="font-bold text-foreground">Không cộng dồn Tinh Anh</p>
+            <p className="text-muted-foreground text-[11px] leading-relaxed">
+              Mỗi học viên áp dụng 01 mức Tinh Anh cao nhất; cộng dồn được với Đồng Môn.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface CoursePickState {
   ta: string; // Tinh Anh option ID (1st course)
   kl: string; // Kỷ Luật option ID (2nd+ courses)
@@ -70,6 +295,7 @@ interface CoursePickState {
 
 export function TuitionCalculator() {
   const [startCourse, setStartCourse] = useState<CourseKey>("starter");
+  const [isPolicyOpen, setIsPolicyOpen] = useState(false);
   const [picks, setPicks] = useState<Record<CourseKey, CoursePickState>>({
     starter: { ta: "none", kl: "none", dm: false },
     dreamer: { ta: "none", kl: "none", dm: false },
@@ -213,7 +439,7 @@ export function TuitionCalculator() {
               </div>
             </div>
 
-            {/* Path summary banner (Phong cách IELTS 1984 với viền đỏ bên trái) */}
+            {/* Path summary banner */}
             <div className="px-4 py-3 bg-red-50/70 dark:bg-red-950/20 border-l-4 border-brand-red rounded-r-2xl text-brand-red text-xs sm:text-sm font-semibold flex items-center gap-2">
               <span>
                 Lộ trình của bạn:{" "}
@@ -222,6 +448,42 @@ export function TuitionCalculator() {
                 </strong>{" "}
                 ({activePath.length} khoá)
               </span>
+            </div>
+
+            {/* Clickable Scholarship Policy Box */}
+            <div
+              onClick={() => setIsPolicyOpen(true)}
+              className="p-4 sm:p-4.5 rounded-2xl bg-gradient-to-r from-brand-blue/10 via-amber-500/5 to-emerald-500/10 border-2 border-brand-blue/20 hover:border-brand-blue/60 hover:shadow-md transition-all group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-2xl bg-[#0f294d] text-white shadow-xs group-hover:scale-105 transition-transform shrink-0">
+                  <BookOpen className="w-5 h-5 text-amber-300" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[11px] font-black px-2 py-0.5 rounded-md bg-[#0f294d] text-white uppercase tracking-wider">
+                      Quy chế ARIS
+                    </span>
+                    <span className="text-sm font-black text-foreground group-hover:text-brand-blue transition-colors">
+                      Chính Sách Học Bổng & Đặc Quyền
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Click vào đây để đọc chi tiết điều kiện nhận học bổng Tinh Anh (đến 1.200k), Kỷ Luật & Đồng Môn
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsPolicyOpen(true);
+                }}
+                className="w-full sm:w-auto shrink-0 px-3.5 py-2 rounded-xl bg-[#0f294d] text-white text-xs font-black flex items-center justify-center gap-1.5 group-hover:bg-brand-blue transition-all shadow-xs"
+              >
+                <span>Đọc chính sách</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </button>
             </div>
 
             {/* Desktop Table Header */}
@@ -449,6 +711,16 @@ export function TuitionCalculator() {
                     <span>Đặc quyền Đồng Môn: Giảm 200.000đ / khóa</span>
                   </div>
                 </div>
+
+                {/* Read full policy button */}
+                <button
+                  type="button"
+                  onClick={() => setIsPolicyOpen(true)}
+                  className="w-full mt-2 py-2.5 px-3 rounded-xl border border-brand-blue/30 bg-brand-blue/5 hover:bg-brand-blue/10 text-brand-blue font-black text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  <span>Đọc toàn bộ chính sách học bổng</span>
+                </button>
               </div>
             </div>
 
@@ -471,7 +743,7 @@ export function TuitionCalculator() {
         </div>
       </div>
 
-      {/* SECTION 2: CHÍNH SÁCH HỌC BỔNG CHI TIẾT (THE 3 PILLARS) */}
+      {/* SECTION 2: CHÍNH SÁCH HỌC BỔNG CHI TIẾT (THE 3 PILLARS ON PAGE) */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="text-center space-y-3 max-w-3xl mx-auto pt-6 border-t border-border/70">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-blue-soft text-brand-blue font-bold text-xs sm:text-sm tracking-wide uppercase">
@@ -486,197 +758,30 @@ export function TuitionCalculator() {
           </p>
         </div>
 
-        {/* 3 Main Program Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-          {/* Card 1: Tinh Anh */}
-          <div className="bg-card border-2 border-brand-red/20 rounded-3xl p-6 sm:p-7 shadow-xs space-y-5 flex flex-col justify-between hover:border-brand-red/50 transition-all">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="p-2.5 rounded-2xl bg-brand-red/10 text-brand-red">
-                  <Award className="w-6 h-6" />
-                </div>
-                <span className="text-xs font-black px-3 py-1 rounded-full bg-brand-red/10 text-brand-red uppercase">
-                  Thưởng Năng Lực
-                </span>
-              </div>
-              <div>
-                <h4 className="text-xl font-black text-foreground">Học bổng Tinh Anh</h4>
-                <p className="text-xs text-muted-foreground mt-1">Dành cho học viên có thành tích nổi bật khi nhập học</p>
-              </div>
-
-              {/* Tiers List */}
-              <div className="space-y-2.5 text-xs">
-                <div className="p-2.5 rounded-xl bg-muted/60 flex justify-between items-center">
-                  <div>
-                    <p className="font-bold text-foreground">Bậc 4: HSG Quốc gia</p>
-                    <p className="text-[11px] text-muted-foreground">Giải Nhất, Nhì, Ba, KK các môn văn hóa</p>
-                  </div>
-                  <span className="font-extrabold text-brand-red text-sm shrink-0 pl-2">1.200.000đ</span>
-                </div>
-                <div className="p-2.5 rounded-xl bg-muted/60 flex justify-between items-center">
-                  <div>
-                    <p className="font-bold text-foreground">Bậc 3: SV Xuất sắc / HSG Tỉnh</p>
-                    <p className="text-[11px] text-muted-foreground">GPA ≥ 3.6/4.0 | Olympic 30/4</p>
-                  </div>
-                  <span className="font-extrabold text-brand-red text-sm shrink-0 pl-2">900.000đ</span>
-                </div>
-                <div className="p-2.5 rounded-xl bg-muted/60 flex justify-between items-center">
-                  <div>
-                    <p className="font-bold text-foreground">Bậc 2: Tân SV / NCKH</p>
-                    <p className="text-[11px] text-muted-foreground">ĐGNL ≥ 850 | THPT ≥ 26đ | SV 5 Tốt</p>
-                  </div>
-                  <span className="font-extrabold text-brand-red text-sm shrink-0 pl-2">700.000đ</span>
-                </div>
-                <div className="p-2.5 rounded-xl bg-muted/60 flex justify-between items-center">
-                  <div>
-                    <p className="font-bold text-foreground">Bậc 1: SV Giỏi / HSG THPT</p>
-                    <p className="text-[11px] text-muted-foreground">GPA ≥ 3.2/4.0 | GPA THPT ≥ 9.0</p>
-                  </div>
-                  <span className="font-extrabold text-brand-red text-sm shrink-0 pl-2">500.000đ</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-3 border-t border-border/70 space-y-2 text-[11px] text-muted-foreground">
-              <p>• Áp dụng cho khóa học đầu tiên tại ARIS.</p>
-              <p>• Chọn mức cao nhất, không cộng dồn nhiều thành tích.</p>
-              <div className="p-2.5 rounded-xl bg-brand-red/5 text-brand-red font-medium italic">
-                &ldquo;Bạn giỏi trước khi vào ARIS → ARIS đầu tư vào bạn.&rdquo;
-              </div>
-            </div>
-          </div>
-
-          {/* Card 2: Kỷ Luật */}
-          <div className="bg-card border-2 border-brand-blue/20 rounded-3xl p-6 sm:p-7 shadow-xs space-y-5 flex flex-col justify-between hover:border-brand-blue/50 transition-all">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="p-2.5 rounded-2xl bg-brand-blue-soft text-brand-blue">
-                  <Flame className="w-6 h-6" />
-                </div>
-                <span className="text-xs font-black px-3 py-1 rounded-full bg-brand-blue-soft text-brand-blue uppercase">
-                  Thưởng Kỷ Luật
-                </span>
-              </div>
-              <div>
-                <h4 className="text-xl font-black text-foreground">Học bổng Kỷ Luật</h4>
-                <p className="text-xs text-muted-foreground mt-1">Dành cho học viên duy trì nỗ lực trong từng khóa học</p>
-              </div>
-
-              {/* Tiers List */}
-              <div className="space-y-2.5 text-xs">
-                <div className="p-2.5 rounded-xl bg-muted/60 space-y-1">
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-foreground">Cấp 1</span>
-                    <span className="font-extrabold text-brand-blue text-sm">200.000đ</span>
-                  </div>
-                  <p className="text-muted-foreground text-[11px]">BTVN ≥ 80% & Chuyên cần ≥ 90%</p>
-                </div>
-                <div className="p-2.5 rounded-xl bg-muted/60 space-y-1">
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-foreground">Cấp 2</span>
-                    <span className="font-extrabold text-brand-blue text-sm">300.000đ</span>
-                  </div>
-                  <p className="text-muted-foreground text-[11px]">BTVN ≥ 90% & Chuyên cần ≥ 95%</p>
-                </div>
-                <div className="p-2.5 rounded-xl bg-brand-blue-soft/40 border border-brand-blue/20 space-y-1">
-                  <div className="flex justify-between items-center">
-                    <span className="font-black text-brand-blue">Cấp 3 — Kỷ Luật Thép</span>
-                    <span className="font-black text-brand-blue text-sm">500.000đ</span>
-                  </div>
-                  <p className="text-brand-blue/80 text-[11px]">100% BTVN + 100% Chuyên cần</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-3 border-t border-border/70 space-y-2 text-[11px] text-muted-foreground">
-              <p>• Dữ liệu đánh giá minh bạch trên NextBand LMS.</p>
-              <p>• Khấu trừ trực tiếp vào học phí khóa kế tiếp.</p>
-              <div className="p-2.5 rounded-xl bg-brand-blue-soft/50 text-brand-blue font-medium italic">
-                &ldquo;Bền bỉ mỗi ngày → Nỗ lực được ghi nhận xứng đáng.&rdquo;
-              </div>
-            </div>
-          </div>
-
-          {/* Card 3: Đồng Môn */}
-          <div className="bg-card border-2 border-emerald-500/20 rounded-3xl p-6 sm:p-7 shadow-xs space-y-5 flex flex-col justify-between hover:border-emerald-500/50 transition-all">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="p-2.5 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                  <Users className="w-6 h-6" />
-                </div>
-                <span className="text-xs font-black px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 uppercase">
-                  Thưởng Kết Nối
-                </span>
-              </div>
-              <div>
-                <h4 className="text-xl font-black text-foreground">Đặc Quyền Đồng Môn</h4>
-                <p className="text-xs text-muted-foreground mt-1">Tri ân học viên giới thiệu bạn bè, người thân</p>
-              </div>
-
-              {/* 2-Way Benefit */}
-              <div className="space-y-2.5 text-xs">
-                <div className="p-3 rounded-xl bg-muted/60 space-y-1">
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-foreground">Người được giới thiệu</span>
-                    <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm">200.000đ</span>
-                  </div>
-                  <p className="text-muted-foreground text-[11px]">Giảm trực tiếp vào học phí khóa đầu tiên</p>
-                </div>
-
-                <div className="p-3 rounded-xl bg-muted/60 space-y-1">
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-foreground">Người giới thiệu</span>
-                    <span className="font-extrabold text-emerald-600 dark:text-emerald-400 text-sm">200.000đ</span>
-                  </div>
-                  <p className="text-muted-foreground text-[11px]">Nhận Voucher áp dụng cho khóa tiếp theo</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-3 border-t border-border/70 space-y-2 text-[11px] text-muted-foreground">
-              <p>• Ghi nhận khi học viên mới hoàn tất ghi danh.</p>
-              <p>• Có giá trị cộng dồn cùng Học bổng Tinh Anh / Kỷ Luật.</p>
-              <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-medium italic">
-                &ldquo;Bạn học của tôi cũng là đồng môn của tôi — Cùng phát triển.&rdquo;
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 4 Core Operational Principles */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-card border border-border/80 shadow-xs space-y-4">
-          <h4 className="font-black text-base sm:text-lg text-foreground flex items-center gap-2">
-            <GraduationCap className="w-5 h-5 text-brand-blue" />
-            <span>Nguyên Tắc Học Phí & Xét Duyệt Tại ARIS</span>
-          </h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs sm:text-sm text-foreground/80">
-            <div className="p-4 rounded-2xl bg-muted/40 border border-border/50 space-y-1">
-              <p className="font-bold text-foreground">Đồng nhất mức phí</p>
-              <p className="text-muted-foreground text-xs leading-relaxed">
-                Học phí Online và Offline áp dụng như nhau, minh bạch theo từng khóa.
-              </p>
-            </div>
-            <div className="p-4 rounded-2xl bg-muted/40 border border-border/50 space-y-1">
-              <p className="font-bold text-foreground">Đóng theo từng khóa</p>
-              <p className="text-muted-foreground text-xs leading-relaxed">
-                Học viên đóng theo từng chặng học, ARIS không thu gộp học phí cả lộ trình.
-              </p>
-            </div>
-            <div className="p-4 rounded-2xl bg-muted/40 border border-border/50 space-y-1">
-              <p className="font-bold text-foreground">Minh bạch trên LMS</p>
-              <p className="text-muted-foreground text-xs leading-relaxed">
-                Dữ liệu chuyên cần & BTVN được ghi nhận tự động trên hệ thống NextBand.
-              </p>
-            </div>
-            <div className="p-4 rounded-2xl bg-muted/40 border border-border/50 space-y-1">
-              <p className="font-bold text-foreground">Không cộng dồn Tinh Anh</p>
-              <p className="text-muted-foreground text-xs leading-relaxed">
-                Mỗi học viên áp dụng 01 mức Tinh Anh cao nhất; cộng dồn được với Đồng Môn.
-              </p>
-            </div>
-          </div>
-        </div>
+        <ScholarshipPolicyDetails />
       </div>
+
+      {/* MODAL DIALOG: CHÍNH SÁCH HỌC BỔNG POPUP */}
+      <Dialog open={isPolicyOpen} onOpenChange={setIsPolicyOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-6 sm:p-8 rounded-3xl">
+          <DialogHeader className="space-y-2 text-left pb-4 border-b border-border/70">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue-soft text-brand-blue font-bold text-xs tracking-wide uppercase w-fit">
+              <ShieldCheck className="w-4 h-4" />
+              <span>Chính Sách Học Bổng & Đặc Quyền ARIS</span>
+            </div>
+            <DialogTitle className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
+              Ba Giá Trị: Năng Lực — Kỷ Luật — Đồng Hành
+            </DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground">
+              Học bổng tại ARIS không phải giảm giá đại trà. Đây là cơ chế ghi nhận và đồng hành cùng những học viên có năng lực, có kỷ luật và biết kết nối cùng cộng đồng.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-4">
+            <ScholarshipPolicyDetails />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
