@@ -7,6 +7,7 @@ import {
   Briefcase,
   ShieldCheck,
   Home,
+  Sparkles,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -51,6 +52,12 @@ const fullNavigationGroups: NavGroup[] = [
         url: "/app/my-courses",
         icon: BookOpen,
         description: "Lớp học và lộ trình",
+      },
+      {
+        title: "Reading Universe",
+        url: "/reading",
+        icon: Sparkles,
+        description: "Thư viện đọc hiểu & Phá án",
       },
       {
         title: "Kết quả & Nhận xét",

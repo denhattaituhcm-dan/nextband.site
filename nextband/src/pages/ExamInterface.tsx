@@ -44,9 +44,10 @@ import {
   AlertTriangle,
   ShieldCheck,
   WifiOff,
-  AlertCircle,
-  RefreshCw,
   ShieldAlert,
+  Trophy,
+  CheckCircle2,
+  ArrowRight,
 } from "lucide-react";
 import { ListeningSection } from "@/components/exam/ListeningSection";
 import { ReadingSection } from "@/components/exam/ReadingSection";
@@ -99,6 +100,34 @@ const sectionLabels = {
   general: "Grammar",
 };
 
+function playExamVictoryChime() {
+  try {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) return;
+    const ctx = new AudioContextClass();
+
+    const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
+    notes.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.1);
+
+      gain.gain.setValueAtTime(0.01, ctx.currentTime + idx * 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + idx * 0.1 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.1 + 0.48);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(ctx.currentTime + idx * 0.1);
+      osc.stop(ctx.currentTime + idx * 0.1 + 0.52);
+    });
+  } catch (e) {
+    // Fail-safe
+  }
+}
+
 export default function ExamInterface() {
   const { examId } = useParams<{ examId: string }>();
   const navigate = useNavigate();
@@ -119,6 +148,13 @@ export default function ExamInterface() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showReviewDialog, setShowReviewDialog] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
+  const [submitCelebration, setSubmitCelebration] = useState<{
+    isOpen: boolean;
+    title: string;
+    correctCount?: number;
+    totalCount?: number;
+    onProceed: () => void;
+  } | null>(null);
   const [initialTimeLeft, setInitialTimeLeft] = useState<number | null>(null);
   const [isRecordingActive, setIsRecordingActive] = useState(false);
   const [isAudioUploading, setIsAudioUploading] = useState(false);
@@ -795,30 +831,44 @@ export default function ExamInterface() {
           description: `Bài tập của bạn đã được ghi nhận${resultText}`,
         });
 
+        playExamVictoryChime();
+
         const exitDestination = resolveExitDestination(
           exam,
           searchParams,
           location.state,
         );
-        navigate(
-          `/app/submissions/${submission.id}?returnUrl=${encodeURIComponent(
-            exitDestination,
-          )}`,
-          {
-            state: {
-              exitContext: { destination: exitDestination },
-              returnUrl: exitDestination,
-              justSubmitted: true,
-              milestoneContext: {
-                examId: exam?.id || examId,
-                examTitle: exam?.title || "Bài tập",
-                examWeek: exam?.week || null,
-                examType: exam?.examType || "ielts",
-                courseId: exam?.courseId || "",
-              },
-            },
+
+        const targetUrl = `/app/submissions/${submission.id}?returnUrl=${encodeURIComponent(
+          exitDestination,
+        )}`;
+
+        const targetState = {
+          exitContext: { destination: exitDestination },
+          returnUrl: exitDestination,
+          justSubmitted: true,
+          milestoneContext: {
+            examId: exam?.id || examId,
+            examTitle: exam?.title || "Bài tập",
+            examWeek: exam?.week || null,
+            examType: exam?.examType || "ielts",
+            courseId: exam?.courseId || "",
           },
-        );
+        };
+
+        setSubmitCelebration({
+          isOpen: true,
+          title: exam?.title || "Bài tập",
+          correctCount,
+          totalCount,
+          onProceed: () => {
+            navigate(targetUrl, { state: targetState });
+          },
+        });
+
+        setTimeout(() => {
+          navigate(targetUrl, { state: targetState });
+        }, 2200);
       } else if (res.status === "UNKNOWN" || res.status === "LOCAL_SEALED") {
         toast({
           title: "Bài làm đã được niêm phong an toàn",
@@ -1375,6 +1425,44 @@ export default function ExamInterface() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Victory Submit Celebration Modal */}
+      {submitCelebration && submitCelebration.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="relative w-full max-w-md overflow-hidden rounded-3xl bg-white border border-slate-200 p-7 shadow-2xl text-center space-y-5 animate-in zoom-in-95 duration-200">
+            <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 text-white flex items-center justify-center shadow-lg shadow-amber-200 animate-bounce">
+              <Trophy className="w-8 h-8" />
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold font-mono">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                ĐÃ NIÊM PHONG BÀI THI THÀNH CÔNG
+              </div>
+              <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
+                {submitCelebration.title}
+              </h2>
+              {submitCelebration.correctCount != null && submitCelebration.totalCount != null && (
+                <p className="text-sm font-semibold text-indigo-700 bg-indigo-50/80 rounded-xl py-2 px-3 border border-indigo-100">
+                  Kết quả sơ bộ: <strong>{submitCelebration.correctCount}/{submitCelebration.totalCount}</strong> câu đúng
+                </p>
+              )}
+            </div>
+
+            <p className="text-xs text-slate-500">
+              Đang chuyển hướng tới trang tổng quan chiến báo học thuật...
+            </p>
+
+            <Button
+              onClick={submitCelebration.onProceed}
+              className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl h-10 shadow-xs"
+            >
+              Xem báo cáo chi tiết ngay
+              <ArrowRight className="ml-1.5 w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

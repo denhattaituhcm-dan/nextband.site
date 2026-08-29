@@ -119,63 +119,172 @@ export interface StudentJourneyOverview {
   skills: SkillMastery[];
 }
 
+import { detectExamSkill } from "./examSkillHelper";
+
 /**
- * Tính toán tổng quan hành trình của học viên
+ * Maps accuracy ratio (0.0 to 1.0) to standardized IELTS band score (0.0 - 9.0)
+ */
+export function accuracyToIeltsBand(ratio: number): number {
+  const r = Math.max(0, Math.min(1, Number(ratio) || 0));
+  if (r >= 0.95) return 9.0;
+  if (r >= 0.90) return 8.5;
+  if (r >= 0.85) return 8.0;
+  if (r >= 0.78) return 7.5;
+  if (r >= 0.70) return 7.0;
+  if (r >= 0.63) return 6.5;
+  if (r >= 0.55) return 6.0;
+  if (r >= 0.45) return 5.5;
+  if (r >= 0.38) return 5.0;
+  if (r >= 0.30) return 4.5;
+  if (r >= 0.23) return 4.0;
+  if (r >= 0.15) return 3.5;
+  return 3.0;
+}
+
+/**
+ * Extracts IELTS band score from a submission record
+ */
+export function extractSubmissionBand(submission: any): number | null {
+  if (!submission) return null;
+
+  // 1. Direct teacher totalScore (Writing / Speaking / Graded exams)
+  if (submission.totalScore != null && !isNaN(Number(submission.totalScore))) {
+    const rawScore = Number(submission.totalScore);
+    if (rawScore <= 9.0 && rawScore >= 0) {
+      return Math.round(rawScore * 2) / 2;
+    }
+    if (rawScore <= 10 && rawScore > 0) {
+      return accuracyToIeltsBand(rawScore / 10);
+    }
+    if (rawScore <= 100 && rawScore > 0) {
+      return accuracyToIeltsBand(rawScore / 100);
+    }
+  }
+
+  // 2. Direct score field
+  if (submission.score != null && !isNaN(Number(submission.score))) {
+    const s = Number(submission.score);
+    if (s <= 9.0 && s >= 0) return Math.round(s * 2) / 2;
+  }
+
+  // 3. Objective correct / total questions
+  const correct = submission.correctAnswers ?? submission.correct_answers;
+  const total = submission.totalQuestions ?? submission.total_questions;
+  if (correct != null && total != null && Number(total) > 0) {
+    const ratio = Number(correct) / Number(total);
+    return accuracyToIeltsBand(ratio);
+  }
+
+  return null;
+}
+
+/**
+ * Tính toán tổng quan hành trình của học viên dựa trên lịch sử bài nộp thực tế
  */
 export function calculateStudentJourney(
   submissions: any[] = [],
   fallbackCurrentBand = 5.5,
   fallbackTargetBand = 6.5
 ): StudentJourneyOverview {
-  const currentRealm = getRealmByBand(fallbackCurrentBand);
-  
-  // Tính % tiến độ tới chặng tiếp theo
+  const validSubmissions = Array.isArray(submissions) ? submissions : [];
+
+  const computeSkill = (
+    skillName: "Listening" | "Reading" | "Writing" | "Speaking",
+    labelVi: string,
+    skillKey: "listening" | "reading" | "writing" | "speaking"
+  ): { skill: SkillMastery; hasRealData: boolean } => {
+    const matchingScores: number[] = [];
+
+    validSubmissions.forEach((sub) => {
+      const exam = sub.exam || {
+        title: sub.examTitle || sub.title,
+        examType: sub.examType || sub.exam_type,
+      };
+      const detected = detectExamSkill(exam);
+
+      const isMatch =
+        detected === skillKey ||
+        (detected === "reading_listening" && (skillKey === "listening" || skillKey === "reading")) ||
+        (detected === "grammar" && (skillKey === "reading" || skillKey === "writing"));
+
+      if (isMatch) {
+        const b = extractSubmissionBand(sub);
+        if (b != null && !isNaN(b)) {
+          matchingScores.push(b);
+        }
+      }
+    });
+
+    const hasRealData = matchingScores.length > 0;
+    let band = fallbackCurrentBand;
+
+    if (hasRealData) {
+      // Lấy trung bình tối đa 5 bài gần nhất của kỹ năng này
+      const recent = matchingScores.slice(0, 5);
+      const sum = recent.reduce((acc, val) => acc + val, 0);
+      band = Math.round((sum / recent.length) * 2) / 2;
+      band = Math.max(1.0, Math.min(9.0, band));
+    }
+
+    const percent = Math.min(100, Math.round((band / 9.0) * 100));
+
+    return {
+      skill: {
+        skill: skillName,
+        labelVi,
+        currentBand: band,
+        targetBand: fallbackTargetBand,
+        percent,
+        needsFocus: false, // Sẽ xác định sau khi so sánh cả 4 kỹ năng
+      },
+      hasRealData,
+    };
+  };
+
+  const listeningRes = computeSkill("Listening", "Nghe", "listening");
+  const readingRes = computeSkill("Reading", "Đọc", "reading");
+  const writingRes = computeSkill("Writing", "Viết", "writing");
+  const speakingRes = computeSkill("Speaking", "Nói", "speaking");
+
+  const skills = [
+    listeningRes.skill,
+    readingRes.skill,
+    writingRes.skill,
+    speakingRes.skill,
+  ];
+
+  // Xác định kỹ năng cần tập trung (kỹ năng có band thấp nhất hoặc < targetBand)
+  const minBand = Math.min(...skills.map((s) => s.currentBand));
+  skills.forEach((s) => {
+    if (s.currentBand === minBand && s.currentBand < fallbackTargetBand) {
+      s.needsFocus = true;
+    }
+  });
+
+  // Tính Overall Band thực tế nếu có ít nhất 1 kỹ năng có dữ liệu bài làm
+  const hasAnyData =
+    listeningRes.hasRealData ||
+    readingRes.hasRealData ||
+    writingRes.hasRealData ||
+    speakingRes.hasRealData;
+
+  const currentBand = hasAnyData
+    ? Math.round(((skills.reduce((acc, s) => acc + s.currentBand, 0) / 4) * 2)) / 2
+    : fallbackCurrentBand;
+
+  const currentRealm = getRealmByBand(currentBand);
+
+  // Tính % tiến độ tới cảnh giới tiếp theo
   const lower = currentRealm.minBand;
   const upper = currentRealm.nextBandThreshold;
   const range = upper - lower || 1;
   const progressPercent = Math.min(
     100,
-    Math.max(10, Math.round(((fallbackCurrentBand - lower) / range) * 100))
+    Math.max(10, Math.round(((currentBand - lower) / range) * 100))
   );
 
-  // Tính điểm 4 kỹ năng (nếu có submissions, trích xuất điểm gần nhất)
-  const skills: SkillMastery[] = [
-    {
-      skill: "Listening",
-      labelVi: "Nghe",
-      currentBand: 6.5,
-      targetBand: fallbackTargetBand,
-      percent: Math.min(100, Math.round((6.5 / 9.0) * 100)),
-      needsFocus: false,
-    },
-    {
-      skill: "Reading",
-      labelVi: "Đọc",
-      currentBand: 7.0,
-      targetBand: fallbackTargetBand,
-      percent: Math.min(100, Math.round((7.0 / 9.0) * 100)),
-      needsFocus: false,
-    },
-    {
-      skill: "Writing",
-      labelVi: "Viết",
-      currentBand: 5.5,
-      targetBand: fallbackTargetBand,
-      percent: Math.min(100, Math.round((5.5 / 9.0) * 100)),
-      needsFocus: true, // Kỹ năng thấp hơn target
-    },
-    {
-      skill: "Speaking",
-      labelVi: "Nói",
-      currentBand: 5.5,
-      targetBand: fallbackTargetBand,
-      percent: Math.min(100, Math.round((5.5 / 9.0) * 100)),
-      needsFocus: false,
-    },
-  ];
-
   return {
-    currentBand: fallbackCurrentBand,
+    currentBand,
     targetBand: fallbackTargetBand,
     currentRealm,
     nextRealmName: currentRealm.nextRealmName,

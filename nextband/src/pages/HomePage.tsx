@@ -24,6 +24,8 @@ import { StudentMissionQueue } from "@/components/student/StudentMissionQueue";
 import { StudentSkillMatrix } from "@/components/student/StudentSkillMatrix";
 import { ClassLeaderboardWidget } from "@/components/student/ClassLeaderboardWidget";
 import { calculateStudentJourney } from "@/lib/studentJourney";
+import { getStudentMotivationCopy } from "@/lib/studentMotivationCopy";
+import { calculateStudentStreak } from "@/lib/studentStreakHelper";
 import {
   evaluateAllAchievedMilestones,
   selectHighestPriorityPendingMilestone,
@@ -206,6 +208,30 @@ export default function HomePage() {
     });
   }, [user?.id, rawLessons, userSubmissions, enrolledClassId, recoveryMilestone]);
 
+  // Leaderboard data for class & motivation context
+  const { data: leaderboardData } = useQuery({
+    queryKey: ["class-leaderboard-home", enrolledClassId],
+    queryFn: () => classesApi.getLeaderboard(enrolledClassId || ""),
+    enabled: !!enrolledClassId && state === "ENROLLED",
+    staleTime: 1000 * 60 * 2,
+  });
+
+  // Daily Streak Engine
+  const streak = useMemo(() => {
+    return calculateStudentStreak(userSubmissions, user?.id);
+  }, [userSubmissions, user?.id]);
+
+  // Motivational Micro-Copy Engine
+  const motivation = useMemo(() => {
+    return getStudentMotivationCopy({
+      actionQueue,
+      leaderboardData: leaderboardData || null,
+      submittedCount,
+      gradedCount,
+      pendingCount,
+    });
+  }, [actionQueue, leaderboardData, submittedCount, gradedCount, pendingCount]);
+
   // Trạng thái sư phạm của Huyền Cơ Lão Nhân
   const huanCoState = useMemo(() => {
     return getHuanCoState({
@@ -215,8 +241,10 @@ export default function HomePage() {
       pendingCount,
       enrolledClassName: activeClassName,
       courseTitle,
+      streakDays: streak.streakDays,
+      currentBand: journey.currentBand,
     });
-  }, [actionQueue, submittedCount, gradedCount, pendingCount, activeClassName, courseTitle]);
+  }, [actionQueue, submittedCount, gradedCount, pendingCount, activeClassName, courseTitle, streak.streakDays, journey.currentBand]);
 
   // ── State machine render ─────────────────────────────────────────────────────
   return (
@@ -309,6 +337,8 @@ export default function HomePage() {
               className={activeClassName}
               courseTitle={courseTitle}
               journey={journey}
+              motivation={motivation}
+              streak={streak}
             />
 
             {/* BATTLEGROUND & ACADEMIC CORE: LƯỚI 2 CỘT (7:5) */}

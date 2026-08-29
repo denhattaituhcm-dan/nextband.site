@@ -21,8 +21,11 @@ import {
 import { Loader2, User, Camera, Save, Trophy, Flame, Star, CheckCircle2, Zap, Users, Medal } from "lucide-react";
 import { StudentEvidenceProfileCard } from "@/components/profile/StudentEvidenceProfileCard";
 
+import { useStudentLifecycle } from "@/hooks/useStudentLifecycle";
+
 export default function Profile() {
   const { user, refreshUser } = useAuth();
+  const { enrollments } = useStudentLifecycle();
   const { toast } = useToast();
 
   const [isUpdatingInfo, setIsUpdatingInfo] = useState(false);
@@ -46,8 +49,8 @@ export default function Profile() {
   }, [user]);
 
   // --- Data: leaderboard & submissions for achievements ---
-  // Lấy enrolledClassId từ user profile nếu có (hoặc từ localStorage fallback)
-  const enrolledClassId: string | null = (user as any)?.enrolledClassId ?? null;
+  // Lấy enrolledClassId từ useStudentLifecycle chuẩn hóa
+  const enrolledClassId: string | null = enrollments[0]?.classId ?? null;
 
   const { data: leaderboardData } = useQuery({
     queryKey: ["class-leaderboard-profile", enrolledClassId],
