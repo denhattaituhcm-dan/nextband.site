@@ -59,10 +59,10 @@ export async function exportBuddyPassToPng(params: {
 
   // Generate QR Code data URL
   const qrDataUrl = await QRCode.toDataURL(params.targetUrl, {
-    width: 320,
+    width: 340,
     margin: 1,
     color: {
-      dark: "#0F172A",
+      dark: "#17243A",
       light: "#FFFFFF",
     },
     errorCorrectionLevel: "M",
@@ -74,61 +74,62 @@ export async function exportBuddyPassToPng(params: {
   ctx.fillStyle = "#FCFDFE";
   ctx.fillRect(0, 0, width, height);
 
-  // 2. Soft Outer Border & Shadow Simulation
-  ctx.strokeStyle = "#E2E8F0";
-  ctx.lineWidth = 3;
+  // 2. Outer Border & Shadow Simulation
+  ctx.strokeStyle = "#CBD5E1";
+  ctx.lineWidth = 3.5;
   ctx.beginPath();
   ctx.roundRect(24, 24, width - 48, height - 48, 36);
   ctx.stroke();
 
-  // 3. Soft Sky Blue Wave Gradient on Bottom-Left Corner
+  // 3. Soft Sky Blue Wave Gradient on Bottom-Left Corner with Boosted Saturation
   ctx.save();
   ctx.beginPath();
   ctx.roundRect(24, 24, width - 48, height - 48, 36);
   ctx.clip();
 
-  const waveGrad = ctx.createLinearGradient(0, 300, 500, 760);
-  waveGrad.addColorStop(0, "rgba(186, 230, 253, 0.45)");
+  const waveGrad = ctx.createLinearGradient(0, 260, 520, 760);
+  waveGrad.addColorStop(0, "rgba(125, 211, 252, 0.70)");
+  waveGrad.addColorStop(0.6, "rgba(186, 230, 253, 0.40)");
   waveGrad.addColorStop(1, "rgba(224, 242, 254, 0.15)");
   ctx.fillStyle = waveGrad;
   ctx.beginPath();
   ctx.moveTo(24, 760);
-  ctx.lineTo(24, 460);
-  ctx.bezierCurveTo(150, 430, 280, 560, 440, 480);
-  ctx.bezierCurveTo(580, 400, 680, 580, 780, 520);
-  ctx.lineTo(780, 760);
+  ctx.lineTo(24, 440);
+  ctx.bezierCurveTo(160, 390, 300, 540, 460, 460);
+  ctx.bezierCurveTo(600, 380, 700, 560, 820, 500);
+  ctx.lineTo(820, 760);
   ctx.closePath();
   ctx.fill();
 
   // 4. Dot Matrix Pattern on Top-Right
-  ctx.fillStyle = "rgba(2, 132, 199, 0.18)";
+  ctx.fillStyle = "rgba(22, 135, 167, 0.28)";
   for (let r = 0; r < 9; r++) {
     for (let c = 0; c < 9; c++) {
       ctx.beginPath();
-      ctx.arc(width - 180 + c * 14, 50 + r * 14, 2, 0, Math.PI * 2);
+      ctx.arc(width - 180 + c * 14, 50 + r * 14, 2.2, 0, Math.PI * 2);
       ctx.fill();
     }
   }
   ctx.restore();
 
   // 5. Header: Logo & Badge
-  // Logo: ARIS (Black) + IELTS (Red)
+  // Logo: ARIS (Navy #17243A) + IELTS (Red #D6284B)
   ctx.font = "900 36px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
-  ctx.fillStyle = "#0F172A";
+  ctx.fillStyle = "#17243A";
   ctx.fillText("ARIS", 68, 92);
   const arisWidth = ctx.measureText("ARIS").width;
 
-  ctx.fillStyle = "#E11D48";
+  ctx.fillStyle = "#D6284B";
   ctx.fillText("IELTS", 68 + arisWidth + 12, 92);
 
   // Red accent line under ARIS
-  ctx.fillStyle = "#E11D48";
+  ctx.fillStyle = "#D6284B";
   ctx.beginPath();
-  ctx.roundRect(68, 106, 92, 5, 3);
+  ctx.roundRect(68, 106, 92, 6, 3);
   ctx.fill();
 
-  // Header Right: STUDY BUDDY PASS Badge
-  ctx.fillStyle = "#0284C7";
+  // Header Right: STUDY BUDDY PASS Badge (#1687A7)
+  ctx.fillStyle = "#1687A7";
   ctx.font = "800 20px monospace";
   ctx.textAlign = "right";
   ctx.fillText("STUDY BUDDY PASS  👥❤️", width - 68, 92);
@@ -136,12 +137,12 @@ export async function exportBuddyPassToPng(params: {
 
   // 6. Left Column: Inviter Info
   // Icon Badge "BẠN ĐƯỢC MỜI BỞI"
-  ctx.fillStyle = "#0284C7";
-  ctx.font = "bold 17px monospace";
+  ctx.fillStyle = "#1687A7";
+  ctx.font = "800 17px monospace";
   ctx.fillText("👤  BẠN ĐƯỢC MỜI BỞI", 68, 190);
 
   // Inviter Name
-  ctx.fillStyle = "#0F172A";
+  ctx.fillStyle = "#17243A";
   const nameToDisplay = params.studentName.toUpperCase();
   if (nameToDisplay.length > 20) {
     ctx.font = "900 38px 'Plus Jakarta Sans', system-ui, sans-serif";
@@ -151,8 +152,8 @@ export async function exportBuddyPassToPng(params: {
   ctx.fillText(nameToDisplay, 68, 252);
 
   // Class Name
-  ctx.fillStyle = "#64748B";
-  ctx.font = "600 22px 'Plus Jakarta Sans', system-ui, sans-serif";
+  ctx.fillStyle = "#475569";
+  ctx.font = "700 22px 'Plus Jakarta Sans', system-ui, sans-serif";
   ctx.fillText(params.className, 68, 296);
 
   // 7. Middle: 3D Heart Envelope Graphic
@@ -160,154 +161,173 @@ export async function exportBuddyPassToPng(params: {
   const envY = 220;
 
   // Envelope Body
-  ctx.fillStyle = "#93C5FD";
+  ctx.fillStyle = "#60A5FA";
   ctx.beginPath();
-  ctx.roundRect(envX, envY, 84, 56, 10);
+  ctx.roundRect(envX, envY, 86, 58, 10);
   ctx.fill();
 
   // Flap Lines
-  ctx.strokeStyle = "#60A5FA";
-  ctx.lineWidth = 3;
+  ctx.strokeStyle = "#3B82F6";
+  ctx.lineWidth = 3.5;
   ctx.beginPath();
   ctx.moveTo(envX, envY + 6);
-  ctx.lineTo(envX + 42, envY + 32);
-  ctx.lineTo(envX + 84, envY + 6);
+  ctx.lineTo(envX + 43, envY + 34);
+  ctx.lineTo(envX + 86, envY + 6);
   ctx.stroke();
 
   // Letter Paper
   ctx.fillStyle = "#FFFFFF";
   ctx.beginPath();
-  ctx.roundRect(envX + 12, envY - 22, 60, 42, 6);
+  ctx.roundRect(envX + 12, envY - 24, 62, 44, 6);
   ctx.fill();
-  ctx.strokeStyle = "rgba(0,0,0,0.06)";
-  ctx.lineWidth = 1;
+  ctx.strokeStyle = "#CBD5E1";
+  ctx.lineWidth = 1.5;
   ctx.stroke();
 
   // Heart on Letter
-  ctx.fillStyle = "#F43F5E";
-  ctx.font = "24px sans-serif";
+  ctx.fillStyle = "#D6284B";
+  ctx.font = "26px sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText("❤️", envX + 42, envY + 6);
+  ctx.fillText("❤️", envX + 43, envY + 6);
   ctx.textAlign = "left";
 
   // Sparkles around Envelope
-  ctx.font = "18px sans-serif";
-  ctx.fillText("✨", envX - 18, envY - 14);
-  ctx.fillText("✨", envX + 84, envY - 10);
-  ctx.fillText("✨", envX - 10, envY + 54);
+  ctx.font = "20px sans-serif";
+  ctx.fillText("✨", envX - 20, envY - 14);
+  ctx.fillText("✨", envX + 86, envY - 10);
+  ctx.fillText("✨", envX - 12, envY + 56);
 
-  // 8. Right Column: Benefits Box
+  // 8. Right Column: Benefits Box (High Contrast Gold/Amber #FCD34D)
   const boxX = 690;
-  const boxY = 160;
+  const boxY = 155;
   const boxW = 442;
-  const boxH = 175;
+  const boxH = 180;
 
-  ctx.fillStyle = "#FFFDF7";
+  ctx.fillStyle = "#FFFBEB";
   ctx.beginPath();
   ctx.roundRect(boxX, boxY, boxW, boxH, 22);
   ctx.fill();
-  ctx.strokeStyle = "rgba(253, 230, 138, 0.9)";
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#FCD34D";
+  ctx.lineWidth = 3;
   ctx.stroke();
 
   // Benefit 1: Discount
   // Red Circle Tag Icon
-  ctx.fillStyle = "#EF4444";
+  ctx.fillStyle = "#D6284B";
   ctx.beginPath();
-  ctx.arc(boxX + 42, boxY + 48, 22, 0, Math.PI * 2);
+  ctx.arc(boxX + 44, boxY + 48, 24, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = "#FFFFFF";
-  ctx.font = "bold 18px sans-serif";
+  ctx.font = "bold 20px sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText("%", boxX + 42, boxY + 54);
+  ctx.fillText("%", boxX + 44, boxY + 55);
   ctx.textAlign = "left";
 
   // Discount Text
-  ctx.fillStyle = "#DC2626";
+  ctx.fillStyle = "#D6284B";
   ctx.font = "900 24px 'Plus Jakarta Sans', system-ui, sans-serif";
-  ctx.fillText("GIẢM 200.000đ", boxX + 78, boxY + 44);
-  ctx.fillStyle = "#475569";
-  ctx.font = "600 16px 'Plus Jakarta Sans', system-ui, sans-serif";
-  ctx.fillText("cho mỗi khóa học", boxX + 78, boxY + 68);
+  ctx.fillText("GIẢM 200.000đ", boxX + 82, boxY + 44);
+  ctx.fillStyle = "#334155";
+  ctx.font = "700 16px 'Plus Jakarta Sans', system-ui, sans-serif";
+  ctx.fillText("cho mỗi khóa học", boxX + 82, boxY + 70);
 
   // Benefit 2: Priority Grouping
   // Blue Circle Group Icon
   ctx.fillStyle = "#E0F2FE";
   ctx.beginPath();
-  ctx.arc(boxX + 42, boxY + 124, 22, 0, Math.PI * 2);
+  ctx.arc(boxX + 44, boxY + 126, 24, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = "#0284C7";
-  ctx.font = "18px sans-serif";
+  ctx.strokeStyle = "#BAE6FD";
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  ctx.fillStyle = "#1687A7";
+  ctx.font = "20px sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText("👥", boxX + 42, boxY + 130);
+  ctx.fillText("👥", boxX + 44, boxY + 133);
   ctx.textAlign = "left";
 
   // Group Text
-  ctx.fillStyle = "#0F172A";
+  ctx.fillStyle = "#17243A";
   ctx.font = "900 24px 'Plus Jakarta Sans', system-ui, sans-serif";
-  ctx.fillText("ƯU TIÊN", boxX + 78, boxY + 120);
-  ctx.fillStyle = "#475569";
-  ctx.font = "600 16px 'Plus Jakarta Sans', system-ui, sans-serif";
-  ctx.fillText("học cùng lớp", boxX + 78, boxY + 144);
+  ctx.fillText("ƯU TIÊN", boxX + 82, boxY + 122);
+  ctx.fillStyle = "#334155";
+  ctx.font = "700 16px 'Plus Jakarta Sans', system-ui, sans-serif";
+  ctx.fillText("học cùng lớp", boxX + 82, boxY + 148);
 
-  // 9. Tear-Off Line: Scissors + Dashed Line
-  ctx.fillStyle = "#0284C7";
-  ctx.font = "bold 24px sans-serif";
+  // 9. Tear-Off Line: Scissors + Dashed Line (#38BDF8)
+  ctx.fillStyle = "#1687A7";
+  ctx.font = "bold 26px sans-serif";
   ctx.fillText("✂", 64, 400);
 
   ctx.beginPath();
-  ctx.setLineDash([12, 10]);
-  ctx.strokeStyle = "#7DD3FC";
-  ctx.lineWidth = 2.5;
+  ctx.setLineDash([14, 10]);
+  ctx.strokeStyle = "#38BDF8";
+  ctx.lineWidth = 3;
   ctx.moveTo(105, 394);
   ctx.lineTo(width - 68, 394);
   ctx.stroke();
   ctx.setLineDash([]);
 
   // 10. Footer Left: Referral Code & Message
-  ctx.fillStyle = "#0284C7";
+  ctx.fillStyle = "#1687A7";
   ctx.font = "800 18px monospace";
-  ctx.fillText("MÃ MỜI", 68, 452);
+  ctx.fillText("MÃ MỜI", 68, 450);
 
-  // Code Box
+  // Code Box with Crisp Teal Border (#1687A7)
   const codeBoxW = 460;
-  const codeBoxH = 68;
+  const codeBoxH = 70;
   ctx.fillStyle = "#FFFFFF";
   ctx.beginPath();
-  ctx.roundRect(68, 470, codeBoxW, codeBoxH, 18);
+  ctx.roundRect(68, 468, codeBoxW, codeBoxH, 18);
   ctx.fill();
-  ctx.strokeStyle = "#38BDF8";
-  ctx.lineWidth = 2.5;
+  ctx.strokeStyle = "#1687A7";
+  ctx.lineWidth = 3;
   ctx.stroke();
 
   // Referral Code Monospace Text
-  ctx.fillStyle = "#0F172A";
+  ctx.fillStyle = "#17243A";
   ctx.font = "900 32px monospace";
   ctx.letterSpacing = "4px";
-  ctx.fillText(params.referralCode, 94, 516);
+  ctx.fillText(params.referralCode, 94, 515);
   ctx.letterSpacing = "0px";
 
   // Code Box Sparkle
-  ctx.fillStyle = "#38BDF8";
-  ctx.font = "bold 16px monospace";
-  ctx.fillText("\\ | /", 68 + codeBoxW - 46, 460);
+  ctx.fillStyle = "#1687A7";
+  ctx.font = "bold 18px monospace";
+  ctx.fillText("\\ | /", 68 + codeBoxW - 48, 458);
 
   // Web Link & Social Message
-  ctx.fillStyle = "#0284C7";
-  ctx.font = "bold 17px monospace";
+  ctx.fillStyle = "#1687A7";
+  ctx.font = "bold 18px monospace";
   ctx.fillText("🌐 Kích hoạt tại: nextband.site/buddy", 68, 576);
 
-  ctx.fillStyle = "#475569";
-  ctx.font = "600 16px 'Plus Jakarta Sans', system-ui, sans-serif";
+  ctx.fillStyle = "#334155";
+  ctx.font = "700 16px 'Plus Jakarta Sans', system-ui, sans-serif";
   ctx.fillText("❤️ Chia sẻ thẻ này với bạn bè để cùng nhau chinh phục IELTS!", 68, 608);
 
   // 11. Footer Right: Dynamic QR Code Container
-  const qrBoxSize = 175;
+  const qrBoxSize = 180;
   const qrX = width - 68 - qrBoxSize;
   const qrY = 465;
 
+  // Curved Arrow pointing to QR
+  ctx.strokeStyle = "#1687A7";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(qrX - 25, qrY + 70, 22, Math.PI * 0.9, Math.PI * 1.6, false);
+  ctx.stroke();
+  // Arrow head
+  ctx.fillStyle = "#1687A7";
+  ctx.beginPath();
+  ctx.moveTo(qrX - 10, qrY + 54);
+  ctx.lineTo(qrX - 24, qrY + 48);
+  ctx.lineTo(qrX - 18, qrY + 62);
+  ctx.closePath();
+  ctx.fill();
+
   // "SCAN TO JOIN" Label
-  ctx.fillStyle = "#0284C7";
+  ctx.fillStyle = "#1687A7";
   ctx.font = "900 18px monospace";
   ctx.textAlign = "center";
   ctx.fillText("SCAN TO JOIN  \\ | /", qrX + qrBoxSize / 2, 442);
@@ -316,19 +336,19 @@ export async function exportBuddyPassToPng(params: {
   // White Card behind QR with soft shadow
   ctx.fillStyle = "#FFFFFF";
   ctx.beginPath();
-  ctx.roundRect(qrX, qrY, qrBoxSize, qrBoxSize, 20);
+  ctx.roundRect(qrX, qrY, qrBoxSize, qrBoxSize, 22);
   ctx.fill();
-  ctx.strokeStyle = "#E2E8F0";
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#CBD5E1";
+  ctx.lineWidth = 2.5;
   ctx.stroke();
 
   // Draw QR Image onto Canvas
   ctx.drawImage(qrImage, qrX + 10, qrY + 10, qrBoxSize - 20, qrBoxSize - 20);
 
-  // Download Trigger
+  // Download Trigger - Tên file ngắn gọn tối đa (VD: ARIS-MINH42.png)
   const dataUrl = canvas.toDataURL("image/png");
   const link = document.createElement("a");
-  link.download = `ARIS_StudyBuddyPass_${params.referralCode}.png`;
+  link.download = `${params.referralCode || "ARIS-BUDDY"}.png`;
   link.href = dataUrl;
   link.click();
 }

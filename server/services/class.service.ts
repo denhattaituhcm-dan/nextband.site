@@ -1112,7 +1112,7 @@ export class ClassService {
     };
   }
 
-  // Use Case: Add Student to Class
+  // Use Case: Add Student to Class (Bi-directional Cascade to Course Enrollment)
   async addStudent(user: { id: string; roles: string[] }, classId: string, studentId: string) {
     const classData = await this.repo.findById(classId);
     if (!classData) {
@@ -1133,10 +1133,61 @@ export class ClassService {
       throw new AuthorizationError("Học viên đã có trong lớp học này", 409);
     }
 
-    return this.repo.addStudentToClass(classId, studentId);
+    return this.prisma.$transaction(async (tx) => {
+      const classStudent = await tx.classStudent.upsert({
+        where: { classId_studentId: { classId, studentId } },
+        update: {
+          status: "ACTIVE",
+          deletedAt: null,
+          joinedAt: new Date(),
+        },
+        create: {
+          classId,
+          studentId,
+          status: "ACTIVE",
+          joinedAt: new Date(),
+        },
+      });
+
+      // Bi-directional Cascade: Ensure Course Enrollment exists
+      if (classData.courseId) {
+        const existingEnrollment = await tx.enrollment.findUnique({
+          where: {
+            courseId_studentId: {
+              courseId: classData.courseId,
+              studentId,
+            },
+          },
+        });
+
+        if (!existingEnrollment) {
+          await tx.enrollment.create({
+            data: {
+              courseId: classData.courseId,
+              studentId,
+              enrolledAt: new Date(),
+            },
+          });
+        }
+      }
+
+      // Audit Log
+      await tx.enrollmentAuditLog.create({
+        data: {
+          operatorId: user.id,
+          studentId,
+          classId,
+          action: "CLASS_PLACEMENT_CASCADE",
+          reason: `Xếp học viên vào lớp ${classData.name} (Tự động kích hoạt quyền khóa học)`,
+          toStatus: "ACTIVE",
+        },
+      });
+
+      return classStudent;
+    });
   }
 
-  // Use Case: Remove Student from Class
+  // Use Case: Remove Student from Class (Cascade check to revoke Course Enrollment if no other active classes)
   async removeStudent(user: { id: string; roles: string[] }, classId: string, studentId: string) {
     const classData = await this.repo.findById(classId);
     if (!classData) {
@@ -1152,7 +1203,53 @@ export class ClassService {
       throw new AuthorizationError("Từ chối truy cập - bạn không có quyền xóa học viên khỏi lớp này", 403);
     }
 
-    return this.repo.removeStudentFromClass(classId, studentId);
+    return this.prisma.$transaction(async (tx) => {
+      await tx.classStudent.updateMany({
+        where: { classId, studentId, deletedAt: null },
+        data: {
+          status: "DROPPED",
+          deletedAt: new Date(),
+        },
+      });
+
+      // Bi-directional Cascade Check: If student has no other active classes for this course, revoke course enrollment
+      if (classData.courseId) {
+        const remainingActiveClasses = await tx.classStudent.count({
+          where: {
+            studentId,
+            status: "ACTIVE",
+            deletedAt: null,
+            class: {
+              courseId: classData.courseId,
+              id: { not: classId },
+            },
+          },
+        });
+
+        if (remainingActiveClasses === 0) {
+          await tx.enrollment.deleteMany({
+            where: {
+              courseId: classData.courseId,
+              studentId,
+            },
+          });
+        }
+      }
+
+      // Audit Log
+      await tx.enrollmentAuditLog.create({
+        data: {
+          operatorId: user.id,
+          studentId,
+          classId,
+          action: "STUDENT_REMOVAL_CASCADE",
+          reason: `Xóa học viên khỏi lớp ${classData.name}`,
+          toStatus: "DROPPED",
+        },
+      });
+
+      return { success: true };
+    });
   }
 
   // Use Case: Record Attendance

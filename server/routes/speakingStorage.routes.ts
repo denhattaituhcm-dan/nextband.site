@@ -97,10 +97,10 @@ const speakingStorageRoutes: FastifyPluginAsync = async (fastify) => {
     },
   );
 
-  // POST /speaking/transcribe - Bóc băng Speech-to-Text thật từ file âm thanh học viên
+  // POST /speaking/transcribe - Bóc băng Speech-to-Text (Chỉ dành riêng cho Giáo viên & Admin khi chấm bài)
   fastify.post(
     "/transcribe",
-    { preHandler: optionalAuthenticate },
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       const data = handleValidation(
         transcribeSchema.safeParse(request.body),

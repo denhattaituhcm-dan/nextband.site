@@ -10,7 +10,7 @@ export default async function milestoneRoutes(fastify: FastifyInstance) {
     try {
       const studentId = request.user.id;
       const claimedKeys = await service.getStudentClaims(studentId);
-      return reply.send({ success: true, claimedKeys });
+      return reply.send({ success: true, data: claimedKeys, claimedKeys });
     } catch (err: any) {
       return reply.status(500).send({ error: err.message });
     }

@@ -1,8 +1,10 @@
 import { ForecastService } from './ForecastService';
-import { MockForecastService } from './MockForecastService';
+import { ApiForecastService } from './ApiForecastService';
 
-// Singleton instance ready to be replaced with SupabaseForecastService in future phases
-export const forecastService: ForecastService = new MockForecastService();
+// Production API-connected Forecast Service instance
+export const forecastService: ForecastService = new ApiForecastService();
 
 export * from './types';
 export * from './ForecastService';
+export * from './ApiForecastService';
+

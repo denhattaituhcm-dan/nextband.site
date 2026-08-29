@@ -44,9 +44,20 @@ export class WhisperSttService {
   private model: string;
 
   constructor() {
-    this.apiKey = process.env.OPENAI_API_KEY || process.env.WHISPER_API_KEY || null;
-    this.apiUrl = process.env.WHISPER_API_URL || "https://api.openai.com/v1/audio/transcriptions";
-    this.model = process.env.WHISPER_MODEL || "whisper-1";
+    this.apiKey =
+      process.env.GROQ_API_KEY ||
+      process.env.STT_API_KEY ||
+      process.env.OPENAI_API_KEY ||
+      process.env.WHISPER_API_KEY ||
+      null;
+    this.apiUrl =
+      process.env.GROQ_WHISPER_API_URL ||
+      process.env.STT_API_URL ||
+      (process.env.GROQ_API_KEY ? "https://api.groq.com/openai/v1/audio/transcriptions" : "https://api.openai.com/v1/audio/transcriptions");
+    this.model =
+      process.env.GROQ_WHISPER_MODEL ||
+      process.env.STT_MODEL ||
+      (process.env.GROQ_API_KEY ? "whisper-large-v3-turbo" : "whisper-1");
   }
 
   /**
@@ -58,33 +69,9 @@ export class WhisperSttService {
     mimeType: string = "audio/webm",
     totalDurationMs?: number,
   ): Promise<SpeakingTranscript> {
-    const apiKey =
-      this.apiKey !== undefined && this.apiKey !== null
-        ? this.apiKey
-        : (process.env.STT_API_KEY ||
-           process.env.GROQ_API_KEY ||
-           process.env.OPENAI_API_KEY ||
-           process.env.WHISPER_API_KEY ||
-           (env as any).STT_API_KEY ||
-           (env as any).GROQ_API_KEY ||
-           (env as any).OPENAI_API_KEY ||
-           null);
-
-    const apiUrl =
-      process.env.STT_API_URL ||
-      process.env.GROQ_WHISPER_API_URL ||
-      process.env.WHISPER_API_URL ||
-      (env as any).STT_API_URL ||
-      (env as any).WHISPER_API_URL ||
-      this.apiUrl;
-
-    const model =
-      process.env.STT_MODEL ||
-      process.env.GROQ_WHISPER_MODEL ||
-      process.env.WHISPER_MODEL ||
-      (env as any).STT_MODEL ||
-      (env as any).WHISPER_MODEL ||
-      this.model;
+    const apiKey = this.apiKey;
+    const apiUrl = this.apiUrl;
+    const model = this.model;
 
     if (!apiKey) {
       return {

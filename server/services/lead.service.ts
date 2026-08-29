@@ -79,10 +79,8 @@ export class LeadService {
         referralCode,
         inviter: inviterUserId ? { connect: { userId: inviterUserId } } : undefined,
         notes: input.notes && input.notes.length > 0 ? input.notes : null,
-        createdByUserId: input.createdByUserId || null,
-        // Auto-assign to the staff member who manually created this lead
-        assignedToUserId: input.createdByUserId || null,
-        assignedAt: input.createdByUserId ? new Date() : null,
+        createdByUser: input.createdByUserId ? { connect: { userId: input.createdByUserId } } : undefined,
+        assignedToUser: input.createdByUserId ? { connect: { userId: input.createdByUserId } } : undefined,
         status: LeadStatus.NEW,
       },
       include: {
@@ -431,6 +429,28 @@ export class LeadService {
                 joinedAt: new Date(),
               },
             });
+
+            // Bi-directional Cascade: Ensure Course Enrollment exists for target class course
+            if (validatedTargetClass.courseId) {
+              const existingEnrollment = await tx.enrollment.findUnique({
+                where: {
+                  courseId_studentId: {
+                    courseId: validatedTargetClass.courseId,
+                    studentId: supabaseUserId,
+                  },
+                },
+              });
+
+              if (!existingEnrollment) {
+                await tx.enrollment.create({
+                  data: {
+                    courseId: validatedTargetClass.courseId,
+                    studentId: supabaseUserId,
+                    enrolledAt: new Date(),
+                  },
+                });
+              }
+            }
 
             if (_operatorId) {
               await tx.enrollmentAuditLog.create({

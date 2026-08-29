@@ -993,6 +993,11 @@ export class ExamSubmissionService {
         }
       }
 
+      // Sync Course Progress & Milestones (if graded)
+      if (targetStatus === "GRADED") {
+        await this.syncStudentCourseProgressAndMilestones(tx, user.id, submission.exam?.courseId);
+      }
+
       return fullResult;
     });
   }
@@ -1317,6 +1322,9 @@ export class ExamSubmissionService {
             entityId: id,
           });
         }
+
+        // Sync Course Progress & Milestones
+        await this.syncStudentCourseProgressAndMilestones(tx, submission.studentId, submission.exam?.courseId);
       }
 
       return updated;
@@ -1451,11 +1459,118 @@ export class ExamSubmissionService {
         await tx.auditOutbox.create({ data: auditEvent });
       }
 
+      // Sync Course Progress & Milestones
+      await this.syncStudentCourseProgressAndMilestones(tx, submission.studentId, submission.exam?.courseId);
+
       return {
         ...updated,
         regradeReason: data.reason.trim(),
         previousScore,
       };
     });
+  }
+
+  /**
+   * P1.4: Real Progress & Milestone Synchronization
+   * Computes student's truthful completion percentage for a course and unlocks milestone claims
+   */
+  private async syncStudentCourseProgressAndMilestones(
+    tx: any,
+    studentId: string,
+    courseId?: string | null
+  ) {
+    if (!courseId || !studentId) return;
+
+    try {
+      // 1. Count total published exams for this course
+      const totalCourseExams = await tx.exam.count({
+        where: {
+          courseId,
+          isActive: true,
+          isPublished: true,
+        },
+      });
+
+      if (totalCourseExams === 0) return;
+
+      // 2. Count distinct graded exams completed by this student
+      const completedSubmissions = await tx.examSubmission.findMany({
+        where: {
+          studentId,
+          status: "GRADED",
+          exam: {
+            courseId,
+            isActive: true,
+            isPublished: true,
+          },
+        },
+        select: { examId: true },
+        distinct: ["examId"],
+      });
+
+      const completedCount = completedSubmissions.length;
+      const progressPercent = Math.min(100, Math.round((completedCount / totalCourseExams) * 100));
+
+      // 3. Update Course Enrollment progress percent
+      if (tx.enrollment) {
+        await tx.enrollment.updateMany({
+          where: {
+            courseId,
+            studentId,
+          },
+          data: {
+            progressPercent,
+          },
+        });
+      }
+
+      // 4. Milestone Sync: Claim macro milestones based on truthful progress
+      if (tx.studentMilestoneClaim) {
+        const milestonesToClaim: string[] = [];
+        if (progressPercent >= 25) milestonesToClaim.push("MILESTONE_25_PERCENT");
+        if (progressPercent >= 50) milestonesToClaim.push("MILESTONE_50_PERCENT");
+        if (progressPercent >= 75) milestonesToClaim.push("MILESTONE_75_PERCENT");
+        if (progressPercent === 100) milestonesToClaim.push("MILESTONE_GRAND_GRADUATION");
+
+        for (const key of milestonesToClaim) {
+          try {
+            const existingClaim = await tx.studentMilestoneClaim.findUnique({
+              where: {
+                studentId_milestoneKey: {
+                  studentId,
+                  milestoneKey: key,
+                },
+              },
+            });
+
+            if (!existingClaim) {
+              await tx.studentMilestoneClaim.create({
+                data: {
+                  studentId,
+                  milestoneKey: key,
+                },
+              });
+            }
+          } catch (_) {
+            // Ignore unique collision
+          }
+        }
+
+        // If Grand Graduation reached (100%), dispatch celebration notification
+        if (progressPercent === 100 && (tx as any).notification) {
+          await this.notificationService.createNotification(tx, {
+            userId: studentId,
+            type: "SYSTEM_BROADCAST",
+            title: "🎓 Chúc mừng hoàn thành khóa học!",
+            message: `Bạn đã hoàn thành 100% tất cả các bài kiểm tra của khóa học. Chúc mừng cột mốc xuất sắc!`,
+            link: `/app/dashboard`,
+            entityType: "COURSE",
+            entityId: courseId,
+          });
+        }
+      }
+    } catch (err) {
+      console.error("[ExamSubmissionService] Error syncing student course progress:", err);
+    }
   }
 }

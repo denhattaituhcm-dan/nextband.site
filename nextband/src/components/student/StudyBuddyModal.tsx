@@ -60,7 +60,7 @@ export function StudyBuddyModal({
         referralCode,
         targetUrl,
       });
-      toast.success("Đã tải ảnh thẻ mời 1200x630 thành công!");
+      toast.success(`Đã tải ảnh thẻ ${referralCode}.png thành công!`);
     } catch (err: any) {
       toast.error("Không thể xuất ảnh thẻ mời.");
     } finally {
@@ -121,7 +121,7 @@ export function StudyBuddyModal({
             className="w-full h-9 text-xs font-bold gap-1.5 rounded-xl border-slate-300 hover:bg-slate-50 text-slate-800"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>{isExporting ? "Đang xuất ảnh..." : "Tải ảnh thẻ (1200x630)"}</span>
+            <span>{isExporting ? "Đang xuất ảnh..." : "Tải ảnh thẻ mời"}</span>
           </Button>
         </div>
 
