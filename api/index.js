@@ -95604,7 +95604,7 @@ init_env();
 // server/middlewares/auth.middleware.ts
 init_env();
 var userAuthCache = /* @__PURE__ */ new Map();
-var USER_CACHE_TTL_MS = 60 * 1e3;
+var USER_CACHE_TTL_MS = 10 * 1e3;
 function invalidateUserAuthCache(userId) {
   if (userId) {
     userAuthCache.delete(userId);
@@ -98671,12 +98671,20 @@ var coursesRoutes = async (fastify) => {
           error: "Kh\xF3a h\u1ECDc \u0111ang b\u1ECB kh\xF3a. H\xE3y m\u1EDF kh\xF3a tr\u01B0\u1EDBc khi x\xF3a"
         });
       }
-      const [enrollmentCount, submissionCount] = await Promise.all([
+      const [enrollmentCount, submissionCount, activeClassCount] = await Promise.all([
         fastify.prisma.enrollment.count({ where: { courseId: id } }),
         fastify.prisma.examSubmission.count({
           where: { exam: { courseId: id } }
+        }),
+        fastify.prisma.class.count({
+          where: { courseId: id, isActive: true }
         })
       ]);
+      if (activeClassCount > 0) {
+        return reply.status(409).send({
+          error: `Kh\xF4ng th\u1EC3 x\xF3a kh\xF3a h\u1ECDc v\xEC v\u1EABn c\xF2n ${activeClassCount} l\u1EDBp h\u1ECDc \u0111ang ho\u1EA1t \u0111\u1ED9ng thu\u1ED9c kh\xF3a h\u1ECDc n\xE0y. Vui l\xF2ng l\u01B0u tr\u1EEF ho\u1EB7c chuy\u1EC3n l\u1EDBp tr\u01B0\u1EDBc khi x\xF3a.`
+        });
+      }
       if (enrollmentCount > 0) {
         return reply.status(409).send({
           error: "Kh\xF4ng th\u1EC3 x\xF3a kh\xF3a h\u1ECDc v\xEC \u0111\xE3 c\xF3 h\u1ECDc vi\xEAn \u0111\u0103ng k\xFD"
@@ -101654,11 +101662,32 @@ var ExamSubmissionService = class {
       } else {
         teacherStudentIds = await getTeacherStudentIds(this.prisma, user.id);
       }
-      where.studentId = {
-        in: teacherStudentIds.length > 0 ? teacherStudentIds : ["__none__"]
-      };
+      if (teacherStudentIds.length === 0) {
+        return {
+          data: [],
+          meta: {
+            page: pageNum,
+            limit: limitNum,
+            total: 0,
+            totalPages: 0
+          }
+        };
+      }
       if (studentId) {
-        where.studentId = teacherStudentIds.includes(studentId) ? studentId : "__none__";
+        if (!teacherStudentIds.includes(studentId)) {
+          return {
+            data: [],
+            meta: {
+              page: pageNum,
+              limit: limitNum,
+              total: 0,
+              totalPages: 0
+            }
+          };
+        }
+        where.studentId = studentId;
+      } else {
+        where.studentId = { in: teacherStudentIds };
       }
     } else if (studentId) {
       const dbUser = await this.prisma.user.findFirst({
@@ -101670,8 +101699,33 @@ var ExamSubmissionService = class {
     }
     if (isAdmin && classId) {
       const classStudentIds = await getClassStudentIds(this.prisma, classId);
-      const inClass = classStudentIds.length > 0 ? classStudentIds : ["__none__"];
-      where.studentId = studentId ? classStudentIds.includes(studentId) ? studentId : "__none__" : { in: inClass };
+      if (classStudentIds.length === 0) {
+        return {
+          data: [],
+          meta: {
+            page: pageNum,
+            limit: limitNum,
+            total: 0,
+            totalPages: 0
+          }
+        };
+      }
+      if (studentId) {
+        if (!classStudentIds.includes(studentId)) {
+          return {
+            data: [],
+            meta: {
+              page: pageNum,
+              limit: limitNum,
+              total: 0,
+              totalPages: 0
+            }
+          };
+        }
+        where.studentId = studentId;
+      } else {
+        where.studentId = { in: classStudentIds };
+      }
     }
     if (examId) where.examId = examId;
     if (status) {
@@ -104735,8 +104789,15 @@ var ClassService = class {
       throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
     }
     const isAdmin = user.roles.includes("admin");
-    if (!isAdmin) {
-      throw new AuthorizationError("Ch\u1EC9 qu\u1EA3n tr\u1ECB vi\xEAn (Admin) m\u1EDBi c\xF3 quy\u1EC1n ch\u1EC9nh s\u1EEDa th\xF4ng tin l\u1EDBp h\u1ECDc", 403);
+    const isTeacher = user.roles.includes("teacher");
+    if (!isAdmin && !isTeacher) {
+      throw new AuthorizationError("B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n ch\u1EC9nh s\u1EEDa th\xF4ng tin l\u1EDBp h\u1ECDc n\xE0y", 403);
+    }
+    if (isTeacher && !isAdmin) {
+      const isOwner = classData.teacherId && classData.teacherId === user.id || classData.teacherId && user.userId === classData.teacherId;
+      if (!isOwner) {
+        throw new AuthorizationError("B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n s\u1EEDa l\u1EDBp n\xE0y", 403);
+      }
     }
     const updatePayload = {};
     if (data.name !== void 0) updatePayload.name = data.name;
@@ -105289,7 +105350,7 @@ var ClassService = class {
       }
     }
     const threeMonthsAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1e3);
-    const classesToDelete = await this.prisma.class.findMany({
+    const classesToArchive = await this.prisma.class.findMany({
       where: {
         status: "CLOSED",
         closedAt: {
@@ -105298,18 +105359,25 @@ var ClassService = class {
       },
       select: { id: true, name: true }
     });
-    let deletedCount = 0;
-    for (const cls of classesToDelete) {
-      await this.prisma.class.delete({
-        where: { id: cls.id }
+    let archivedCount = 0;
+    for (const cls of classesToArchive) {
+      await this.prisma.class.update({
+        where: { id: cls.id },
+        data: {
+          status: "ARCHIVED",
+          archivedAt: now,
+          isActive: false
+        }
       });
-      deletedCount++;
+      archivedCount++;
     }
     return {
       success: true,
       timestamp: now.toISOString(),
       closedClassesCount: closedCount,
-      deletedClassesCount: deletedCount
+      archivedClassesCount: archivedCount,
+      deletedClassesCount: 0
+      // Invariant: Hard delete is strictly eliminated (always 0)
     };
   }
   // Use Case: Add Student to Class
@@ -105394,36 +105462,31 @@ var ClassService = class {
       throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y b\xE0i t\u1EADp/b\xE0i thi");
     }
     const parsedDeadline = deadline ? new Date(deadline) : null;
-    const existingHw = await this.prisma.homework.findFirst({
-      where: { classId, examId }
-    });
-    let updatedHw;
-    if (existingHw) {
-      updatedHw = await this.prisma.homework.update({
-        where: { id: existingHw.id },
-        data: {
-          deadline: parsedDeadline,
-          status: "PUBLISHED"
-        }
-      });
-    } else {
-      updatedHw = await this.prisma.homework.create({
-        data: {
+    const assignment = await this.prisma.classExamAssignment.upsert({
+      where: {
+        classId_examId: {
           classId,
-          examId,
-          createdBy: user.id,
-          title: exam.title,
-          deadline: parsedDeadline,
-          status: "PUBLISHED"
+          examId
         }
-      });
-    }
+      },
+      update: {
+        deadline: parsedDeadline,
+        status: "PUBLISHED"
+      },
+      create: {
+        classId,
+        examId,
+        createdBy: user.id,
+        deadline: parsedDeadline,
+        status: "PUBLISHED"
+      }
+    });
     return {
       success: true,
       classId,
       examId,
-      deadline: updatedHw.deadline,
-      deadlineSource: updatedHw.deadline ? "MANUAL" : "AUTO"
+      deadline: assignment.deadline,
+      deadlineSource: assignment.deadline ? "MANUAL" : "AUTO"
     };
   }
 };
@@ -105689,7 +105752,7 @@ async function classesRoutes(fastify) {
   );
   fastify.put(
     "/:id",
-    { preHandler: [authenticate, requireRoles("admin")] },
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       return controller.update(request, reply);
     }
@@ -107172,7 +107235,7 @@ var LessonService = class {
           exam: { courseId }
         };
       }
-      const [fetchedExams, fetchedSubmissions, fetchedHomeworks, fetchedSessions] = await Promise.all([
+      const [fetchedExams, fetchedSubmissions, fetchedAssignments, fetchedSessions] = await Promise.all([
         this.prisma.exam.findMany({
           where: { courseId, isPublished: true },
           orderBy: { week: "asc" },
@@ -107182,7 +107245,7 @@ var LessonService = class {
           where: submissionWhere,
           orderBy: { createdAt: "desc" }
         }),
-        this.prisma.homework.findMany({
+        this.prisma.classExamAssignment.findMany({
           where: { classId }
         }),
         this.prisma.classSession.findMany({
@@ -107192,7 +107255,7 @@ var LessonService = class {
       ]);
       exams = [...fetchedExams].sort(compareHomeworkOrder);
       submissions = fetchedSubmissions;
-      manualHomeworks = fetchedHomeworks;
+      manualHomeworks = fetchedAssignments;
       sessions = fetchedSessions;
     }
     let completedCount = 0;
@@ -107206,14 +107269,14 @@ var LessonService = class {
       if (isGraded || isSubmitted) completedCount++;
       const lessonOrder = idx + 1;
       const lessonWeek = exam.week || Math.ceil((idx + 1) / 3);
-      const customHw = manualHomeworks.find((h) => h.examId === exam.id || h.lessonId === exam.id);
+      const customAssignment = manualHomeworks.find((h) => h.examId === exam.id);
       const matchingSession = sessions.find((s) => s.sessionNumber === lessonOrder);
       const sessionDate = matchingSession?.plannedDate || null;
       const { effectiveDeadline, deadlineSource } = resolveEffectiveDeadline({
         classStartDate: classData.startDate || classData.createdAt,
         sessionDate,
         lessonWeek,
-        manualDeadline: customHw?.deadline,
+        manualDeadline: customAssignment?.deadline,
         defaultOffsetDays: 7
       });
       const submissionTiming = sub ? calculateSubmissionTiming(sub.submittedAt || sub.createdAt, effectiveDeadline) : { isLate: false, lateDays: 0 };
@@ -108357,6 +108420,235 @@ var speakingStorageRoutes = async (fastify) => {
   );
 };
 var speakingStorage_routes_default = speakingStorageRoutes;
+
+// server/repositories/speaking-evidence.repository.ts
+var SpeakingEvidenceRepository = class {
+  constructor(prisma) {
+    this.prisma = prisma;
+  }
+  /**
+   * Retrieves all active candidate speaking tags, grouped or filtered by criterion
+   */
+  async listActiveTags(criterion) {
+    const where = { isActive: true };
+    if (criterion) {
+      where.criterion = criterion.toUpperCase();
+    }
+    return this.prisma.speakingEvidenceTag.findMany({
+      where,
+      orderBy: [
+        { criterion: "asc" },
+        { displayOrder: "asc" }
+      ]
+    });
+  }
+  /**
+   * Retrieves active evidence records for a specific assessment
+   */
+  async getEvidenceByAssessment(assessmentId) {
+    return this.prisma.speakingAssessmentEvidence.findMany({
+      where: {
+        assessmentId,
+        removedAt: null
+      },
+      include: {
+        tag: true
+      },
+      orderBy: {
+        createdAt: "asc"
+      }
+    });
+  }
+  /**
+   * Batch synchronizes evidence records for an assessment.
+   * Uses Soft-Delete to preserve audit provenance:
+   * - Tags present in `items` but not in DB -> Created
+   * - Tags in DB that were soft-deleted -> Restored (removedAt = null)
+   * - Tags in DB currently active but not in `items` -> Soft-deleted (removedAt = now(), removedBy = teacherId)
+   */
+  async batchSyncEvidence(assessmentId, items, teacherId) {
+    return this.prisma.$transaction(async (tx) => {
+      const existingRecords = await tx.speakingAssessmentEvidence.findMany({
+        where: { assessmentId }
+      });
+      const incomingTagIds = new Set(items.map((i) => i.tagId));
+      const now = /* @__PURE__ */ new Date();
+      const toSoftDelete = existingRecords.filter(
+        (rec) => rec.removedAt === null && !incomingTagIds.has(rec.tagId)
+      );
+      for (const rec of toSoftDelete) {
+        await tx.speakingAssessmentEvidence.update({
+          where: { id: rec.id },
+          data: {
+            removedAt: now,
+            removedBy: teacherId
+          }
+        });
+      }
+      const results = [];
+      for (const item of items) {
+        const existing = existingRecords.find((rec) => rec.tagId === item.tagId);
+        if (existing) {
+          if (existing.removedAt !== null) {
+            const restored = await tx.speakingAssessmentEvidence.update({
+              where: { id: existing.id },
+              data: {
+                criterion: item.criterion,
+                evidenceNote: item.evidenceNote ?? existing.evidenceNote,
+                removedAt: null,
+                removedBy: null
+              },
+              include: { tag: true }
+            });
+            results.push(restored);
+          } else {
+            const updated = await tx.speakingAssessmentEvidence.update({
+              where: { id: existing.id },
+              data: {
+                evidenceNote: item.evidenceNote ?? existing.evidenceNote
+              },
+              include: { tag: true }
+            });
+            results.push(updated);
+          }
+        } else {
+          const created = await tx.speakingAssessmentEvidence.create({
+            data: {
+              assessmentId,
+              criterion: item.criterion,
+              tagId: item.tagId,
+              evidenceNote: item.evidenceNote,
+              createdBy: teacherId
+            },
+            include: { tag: true }
+          });
+          results.push(created);
+        }
+      }
+      return results;
+    });
+  }
+};
+
+// server/controllers/speaking-evidence.controller.ts
+var SpeakingEvidenceController = class {
+  repository;
+  constructor(fastify) {
+    this.repository = new SpeakingEvidenceRepository(fastify.prisma);
+  }
+  /**
+   * GET /speaking/evidence-tags
+   * Returns all active candidate speaking tags, grouped by criterion
+   */
+  async listTags(request, reply) {
+    try {
+      const { criterion } = request.query || {};
+      const tags = await this.repository.listActiveTags(criterion);
+      const grouped = {
+        pr: tags.filter((t) => t.criterion === "PR"),
+        fc: tags.filter((t) => t.criterion === "FC"),
+        lr: tags.filter((t) => t.criterion === "LR"),
+        gra: tags.filter((t) => t.criterion === "GRA")
+      };
+      return reply.send({
+        success: true,
+        tags,
+        grouped,
+        total: tags.length
+      });
+    } catch (err) {
+      request.log.error(err, "Failed to list speaking evidence tags");
+      return reply.status(500).send({ error: err.message });
+    }
+  }
+  /**
+   * GET /speaking/assessments/:id/evidence
+   * Returns active evidence items attached to a specific speaking assessment
+   */
+  async getEvidenceByAssessment(request, reply) {
+    try {
+      const assessmentId = request.params.id;
+      if (!assessmentId) {
+        return reply.status(400).send({ error: "assessmentId l\xE0 b\u1EAFt bu\u1ED9c" });
+      }
+      const evidence = await this.repository.getEvidenceByAssessment(assessmentId);
+      return reply.send({
+        success: true,
+        assessmentId,
+        evidence,
+        total: evidence.length
+      });
+    } catch (err) {
+      request.log.error(err, "Failed to get assessment evidence");
+      return reply.status(500).send({ error: err.message });
+    }
+  }
+  /**
+   * POST /speaking/assessments/:id/evidence/sync
+   * Batch synchronizes active evidence items for an assessment.
+   * Soft-deletes unselected items and creates/restores selected items.
+   */
+  async syncEvidence(request, reply) {
+    try {
+      const assessmentId = request.params.id;
+      const { items } = request.body || {};
+      const user = request.user;
+      if (!assessmentId) {
+        return reply.status(400).send({ error: "assessmentId l\xE0 b\u1EAFt bu\u1ED9c" });
+      }
+      if (!Array.isArray(items)) {
+        return reply.status(400).send({ error: "items ph\u1EA3i l\xE0 m\u1ED9t m\u1EA3ng evidence" });
+      }
+      const teacherId = user?.id || user?.userId || "system";
+      const synced = await this.repository.batchSyncEvidence(
+        assessmentId,
+        items,
+        teacherId
+      );
+      return reply.send({
+        success: true,
+        assessmentId,
+        evidence: synced,
+        total: synced.length
+      });
+    } catch (err) {
+      request.log.error(err, "Failed to sync assessment evidence");
+      return reply.status(500).send({ error: err.message });
+    }
+  }
+};
+
+// server/routes/speaking-evidence.routes.ts
+var speakingEvidenceRoutes = async (fastify) => {
+  const controller = new SpeakingEvidenceController(fastify);
+  fastify.get(
+    "/evidence-tags",
+    { preHandler: optionalAuthenticate },
+    async (request, reply) => {
+      return controller.listTags(request, reply);
+    }
+  );
+  fastify.get(
+    "/assessments/:id/evidence",
+    { preHandler: authenticate },
+    async (request, reply) => {
+      return controller.getEvidenceByAssessment(request, reply);
+    }
+  );
+  fastify.post(
+    "/assessments/:id/evidence/sync",
+    {
+      preHandler: [
+        authenticate,
+        requireRoles("teacher", "admin", "super_admin", "staff")
+      ]
+    },
+    async (request, reply) => {
+      return controller.syncEvidence(request, reply);
+    }
+  );
+};
+var speaking_evidence_routes_default = speakingEvidenceRoutes;
 
 // server/routes/speaking-forecast.routes.ts
 init_zod();
@@ -110316,6 +110608,89 @@ async function tuitionRoutes(fastify) {
   );
 }
 
+// server/services/milestone.service.ts
+var MilestoneService = class {
+  constructor(prisma) {
+    this.prisma = prisma;
+  }
+  /**
+   * Get all claimed milestone keys for a student
+   */
+  async getStudentClaims(studentId) {
+    const claims = await this.prisma.studentMilestoneClaim.findMany({
+      where: { studentId },
+      select: { milestoneKey: true }
+    });
+    return claims.map((c) => c.milestoneKey);
+  }
+  /**
+   * Atomically claim a milestone for a student
+   * Returns { isFirstClaim: true, claim } if newly claimed, or { isFirstClaim: false } if already existed
+   */
+  async claimMilestone(studentId, milestoneKey) {
+    if (!milestoneKey || typeof milestoneKey !== "string") {
+      throw new Error("milestoneKey l\xE0 b\u1EAFt bu\u1ED9c");
+    }
+    try {
+      const claim = await this.prisma.studentMilestoneClaim.create({
+        data: {
+          studentId,
+          milestoneKey
+        }
+      });
+      return { isFirstClaim: true, claim };
+    } catch (error) {
+      if (error.code === "P2002") {
+        const existing = await this.prisma.studentMilestoneClaim.findUnique({
+          where: {
+            studentId_milestoneKey: {
+              studentId,
+              milestoneKey
+            }
+          }
+        });
+        return { isFirstClaim: false, claim: existing };
+      }
+      throw error;
+    }
+  }
+};
+
+// server/routes/milestone.routes.ts
+async function milestoneRoutes(fastify) {
+  const service = new MilestoneService(fastify.prisma);
+  fastify.get("/claims", { preHandler: authenticate }, async (request, reply) => {
+    try {
+      const studentId = request.user.id;
+      const claimedKeys = await service.getStudentClaims(studentId);
+      return reply.send({ success: true, claimedKeys });
+    } catch (err) {
+      return reply.status(500).send({ error: err.message });
+    }
+  });
+  fastify.post(
+    "/claim",
+    { preHandler: authenticate },
+    async (request, reply) => {
+      try {
+        const studentId = request.user.id;
+        const { milestoneKey } = request.body || {};
+        if (!milestoneKey) {
+          return reply.status(400).send({ error: "milestoneKey l\xE0 b\u1EAFt bu\u1ED9c" });
+        }
+        const result = await service.claimMilestone(studentId, milestoneKey);
+        return reply.status(result.isFirstClaim ? 201 : 200).send({
+          success: true,
+          isFirstClaim: result.isFirstClaim,
+          claim: result.claim
+        });
+      } catch (err) {
+        return reply.status(500).send({ error: err.message });
+      }
+    }
+  );
+}
+
 // server/routes/index.ts
 var routes = async (fastify) => {
   fastify.get("/health", async () => {
@@ -110345,6 +110720,7 @@ var routes = async (fastify) => {
   await fastify.register(branchRoutes, { prefix: "/branches" });
   await fastify.register(roomRoutes, { prefix: "/rooms" });
   await fastify.register(speakingStorage_routes_default, { prefix: "/speaking" });
+  await fastify.register(speaking_evidence_routes_default, { prefix: "/speaking" });
   await fastify.register(speaking_forecast_routes_default, { prefix: "/speaking-forecast" });
   await fastify.register(lesson_routes_default);
   await fastify.register(periodic_reports_routes_default);
@@ -110352,6 +110728,7 @@ var routes = async (fastify) => {
   await fastify.register(reportsRoutes, { prefix: "/admin/reports" });
   await fastify.register(interventionRoutes, { prefix: "/interventions" });
   await fastify.register(tuitionRoutes, { prefix: "/admin/tuition" });
+  await fastify.register(milestoneRoutes, { prefix: "/milestones" });
 };
 var routes_default = routes;
 
@@ -110588,7 +110965,6 @@ async function buildApp() {
       version: "1.0.0"
     };
   });
-  await app.register(routes_default, { prefix: "/api/v1" });
   app.setErrorHandler((error, request, reply) => {
     let statusCode = error.statusCode || 500;
     let clientMessage = error.message || "\u0110\xE3 x\u1EA3y ra l\u1ED7i h\u1EC7 th\u1ED1ng.";
@@ -110618,8 +110994,13 @@ async function buildApp() {
           break;
         default:
           statusCode = 400;
-          clientMessage = error.message || "L\u1ED7i truy v\u1EA5n c\u01A1 s\u1EDF d\u1EEF li\u1EC7u.";
+          clientMessage = "L\u1ED7i truy v\u1EA5n d\u1EEF li\u1EC7u kh\xF4ng h\u1EE3p l\u1EC7.";
+          errorType = "DatabaseQueryError";
       }
+    } else if (error.name === "PrismaClientValidationError") {
+      statusCode = 400;
+      clientMessage = "D\u1EEF li\u1EC7u ho\u1EB7c m\xE3 \u0111\u1ECBnh danh (ID) kh\xF4ng \u0111\xFAng \u0111\u1ECBnh d\u1EA1ng.";
+      errorType = "ValidationError";
     } else if (error.message && typeof error.message === "string") {
       if (error.message.includes("violates check constraint")) {
         statusCode = 400;
@@ -110629,6 +111010,10 @@ async function buildApp() {
         statusCode = 400;
         clientMessage = "D\u1EEF li\u1EC7u li\xEAn k\u1EBFt kh\xF4ng t\u1ED3n t\u1EA1i.";
         errorType = "ForeignKeyError";
+      } else if (error.message.includes("Inconsistent column data") || error.message.includes("Error creating UUID")) {
+        statusCode = 400;
+        clientMessage = "M\xE3 \u0111\u1ECBnh danh (ID) kh\xF4ng \u0111\xFAng \u0111\u1ECBnh d\u1EA1ng.";
+        errorType = "ValidationError";
       }
     }
     if (error.name === "ZodError") {
@@ -110636,22 +111021,31 @@ async function buildApp() {
       clientMessage = "D\u1EEF li\u1EC7u g\u1EEDi l\xEAn kh\xF4ng \u0111\xFAng \u0111\u1ECBnh d\u1EA1ng.";
       errorType = "ValidationError";
     }
+    const isProdOrServerless = process.env.NODE_ENV === "production" || process.env.VERCEL === "1" || isServerless;
+    if (statusCode >= 500 && isProdOrServerless) {
+      clientMessage = "\u0110\xE3 x\u1EA3y ra l\u1ED7i h\u1EC7 th\u1ED1ng. Vui l\xF2ng li\xEAn h\u1EC7 qu\u1EA3n tr\u1ECB vi\xEAn.";
+      errorType = "InternalServerError";
+    }
     app.log.error({
       requestId: request.id,
       url: request.url,
       method: request.method,
       statusCode,
+      errName: error.name,
+      errCode: error.code,
+      errMessage: error.message,
       err: error
     });
     return reply.status(statusCode).send({
       statusCode,
-      error: clientMessage,
+      error: statusCode >= 500 && isProdOrServerless ? "Internal Server Error" : clientMessage,
       message: clientMessage,
       errorType,
       requestId: request.id,
       ...error.issues ? { details: error.issues } : {}
     });
   });
+  await app.register(routes_default, { prefix: "/api/v1" });
   app.setNotFoundHandler((_request, reply) => {
     reply.status(404).send({
       error: "Route not found",
@@ -110721,8 +111115,7 @@ async function handler(req, res) {
       JSON.stringify({
         statusCode: 500,
         error: "Internal Server Error",
-        message: err?.message || "Serverless runtime error",
-        stack: err?.stack
+        message: "\u0110\xE3 x\u1EA3y ra l\u1ED7i h\u1EC7 th\u1ED1ng. Vui l\xF2ng li\xEAn h\u1EC7 qu\u1EA3n tr\u1ECB vi\xEAn."
       })
     );
   }

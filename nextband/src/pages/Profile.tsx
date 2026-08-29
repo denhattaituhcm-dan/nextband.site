@@ -18,10 +18,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, User, Camera, Save, Trophy, Flame, Star, CheckCircle2, Zap, Users, Medal } from "lucide-react";
+import { Loader2, User, Camera, Save, Trophy, Flame, Star, CheckCircle2, Zap, Users, Medal, Gift, Copy, Check, Sparkles } from "lucide-react";
 import { StudentEvidenceProfileCard } from "@/components/profile/StudentEvidenceProfileCard";
-
 import { useStudentLifecycle } from "@/hooks/useStudentLifecycle";
+import { StudyBuddyModal } from "@/components/student/StudyBuddyModal";
+import { generateReferralCode, getBuddyShareText } from "@/lib/studyBuddyHelper";
 
 export default function Profile() {
   const { user, refreshUser } = useAuth();
@@ -30,6 +31,8 @@ export default function Profile() {
 
   const [isUpdatingInfo, setIsUpdatingInfo] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [isBuddyModalOpen, setIsBuddyModalOpen] = useState(false);
+  const [isCopiedCode, setIsCopiedCode] = useState(false);
 
   // Form states
   const [fullName, setFullName] = useState("");
@@ -258,6 +261,73 @@ export default function Profile() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Study Buddy Pass Card */}
+          <Card className="border-slate-200/90 bg-[#FAF9F6] text-slate-900 overflow-hidden rounded-2xl shadow-xs">
+            <CardHeader className="p-4 pb-2 border-b border-black/[0.06] bg-black/[0.02]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 font-extrabold text-xs tracking-tight text-slate-900">
+                  <Gift className="h-3.5 w-3.5 text-rose-600" />
+                  <span>THẺ ĐỒNG HÀNH ARIS</span>
+                </div>
+                <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200 text-[10px] font-bold px-1.5 py-0">
+                  Quà Tặng
+                </Badge>
+              </div>
+            </CardHeader>
+
+            <CardContent className="p-4 space-y-3">
+              <div className="space-y-1">
+                <div className="text-[10px] uppercase font-mono tracking-wider text-slate-500 font-bold">
+                  Mã mời của bạn
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="flex-1 font-mono font-black text-xs sm:text-sm bg-white border border-slate-200 px-2.5 py-1 rounded-lg text-slate-900 truncate shadow-2xs">
+                    {generateReferralCode(user?.fullName, user?.id)}
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={async () => {
+                      const code = generateReferralCode(user?.fullName, user?.id);
+                      const targetUrl = `${window.location.origin}/buddy?ref=${code}`;
+                      const shareText = getBuddyShareText(user?.fullName || "Học viên", code, targetUrl);
+                      try {
+                        await navigator.clipboard.writeText(shareText);
+                        setIsCopiedCode(true);
+                        toast({ title: "Thành công", description: "Đã sao chép tin nhắn mời kèm mã ưu đãi." });
+                        setTimeout(() => setIsCopiedCode(false), 3000);
+                      } catch {
+                        toast({ title: "Thông báo", description: "Vui lòng sao chép thủ công." });
+                      }
+                    }}
+                    className="h-8 px-2.5 text-xs font-bold gap-1 rounded-lg border-slate-200 bg-white hover:bg-slate-50"
+                  >
+                    {isCopiedCode ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+                    <span>{isCopiedCode ? "Đã chép" : "Chép"}</span>
+                  </Button>
+                </div>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-white border border-slate-200/80 space-y-1 text-xs text-slate-600">
+                <div className="flex items-center gap-1.5 font-bold text-rose-600 text-[11px]">
+                  <span>• Bạn bè: Giảm 200.000đ học phí</span>
+                </div>
+                <div className="flex items-center gap-1.5 font-bold text-slate-800 text-[11px]">
+                  <span>• Bạn nhận: 01 Bộ Quà Tặng ARIS</span>
+                </div>
+              </div>
+
+              <Button
+                size="sm"
+                onClick={() => setIsBuddyModalOpen(true)}
+                className="w-full text-xs font-bold h-8 rounded-xl bg-slate-900 hover:bg-slate-800 text-white gap-1.5 shadow-xs"
+              >
+                <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+                <span>Xem thẻ mời & Tải ảnh</span>
+              </Button>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Right Column: Forms */}
@@ -442,6 +512,14 @@ export default function Profile() {
         </div>
       </div>
 
+      {/* Study Buddy Pass Modal */}
+      <StudyBuddyModal
+        isOpen={isBuddyModalOpen}
+        onClose={() => setIsBuddyModalOpen(false)}
+        studentName={user?.fullName || "Học viên"}
+        className={enrollments[0]?.className || "Lớp học cá nhân"}
+        userId={user?.id}
+      />
     </div>
   );
 }

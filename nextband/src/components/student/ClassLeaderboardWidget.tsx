@@ -32,6 +32,8 @@ import { cn } from "@/lib/utils";
 import { ActionQueueItem } from "@/lib/homeworkStatusHelper";
 import { calculateBattleLoopState } from "@/lib/battleLoopEngine";
 import { routes } from "@/lib/routes";
+import { StudyBuddyModal } from "./StudyBuddyModal";
+import { Gift } from "lucide-react";
 
 interface ClassLeaderboardWidgetProps {
   classId: string;
@@ -54,6 +56,7 @@ export const ClassLeaderboardWidget: React.FC<ClassLeaderboardWidgetProps> = ({
 }) => {
   const navigate = useNavigate();
   const [isFullModalOpen, setIsFullModalOpen] = useState(false);
+  const [isBuddyModalOpen, setIsBuddyModalOpen] = useState(false);
 
   const { data, isLoading } = useQuery<ClassLeaderboardData>({
     queryKey: ["class-leaderboard", classId],
@@ -309,26 +312,53 @@ export const ClassLeaderboardWidget: React.FC<ClassLeaderboardWidgetProps> = ({
           )}
 
           {/* 3. CARD FOOTER */}
-          <div className="pt-2 border-t flex items-center justify-between text-[11px] text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-              Cả lớp: <strong>{classCompletionRate}%</strong>
-            </span>
+          <div className="pt-2 border-t space-y-2">
+            <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+                Cả lớp: <strong>{classCompletionRate}%</strong>
+              </span>
 
-            {students.length > 3 && (
+              {students.length > 3 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsFullModalOpen(true)}
+                  className="h-6 text-[11px] text-primary hover:text-primary/80 font-bold px-1.5 gap-0.5"
+                >
+                  <span>Xem đầy đủ ({students.length})</span>
+                  <ChevronRight className="h-3 w-3" />
+                </Button>
+              )}
+            </div>
+
+            {/* Study Buddy Pass Trigger */}
+            <div className="pt-1.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] bg-slate-50/80 dark:bg-slate-900/40 rounded-xl px-2.5 py-1.5">
+              <span className="text-slate-600 dark:text-slate-400 font-medium flex items-center gap-1.5">
+                <Gift className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                <span>Có bạn học cùng sẽ vui hơn</span>
+              </span>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setIsFullModalOpen(true)}
-                className="h-6 text-[11px] text-primary hover:text-primary/80 font-bold px-1.5 gap-0.5"
+                onClick={() => setIsBuddyModalOpen(true)}
+                className="h-6 text-[11px] text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/40 font-bold px-2 gap-0.5 rounded-lg"
               >
-                <span>Xem đầy đủ ({students.length})</span>
-                <ChevronRight className="h-3 w-3" />
+                <span>Mời bạn ➔</span>
               </Button>
-            )}
+            </div>
           </div>
         </CardContent>
       </Card>
+
+      {/* STUDY BUDDY PASS MODAL */}
+      <StudyBuddyModal
+        isOpen={isBuddyModalOpen}
+        onClose={() => setIsBuddyModalOpen(false)}
+        studentName={battle.myStudent?.fullName || "Học viên"}
+        className={className}
+        userId={currentUserId}
+      />
 
       {/* FULL STANDINGS DIALOG MODAL */}
       <Dialog open={isFullModalOpen} onOpenChange={setIsFullModalOpen}>

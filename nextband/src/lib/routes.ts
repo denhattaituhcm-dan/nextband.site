@@ -32,12 +32,13 @@ export const routes = {
       `/exam/${encodeURIComponent(examId)}/review?submissionId=${encodeURIComponent(submissionId)}`,
   },
 
-  // Diagnostic Assessment (ARIS) Routes
+  // Diagnostic Assessment & Referral (ARIS) Routes
   assessment: {
     home: () => "/assessment",
     take: (sessionId: string) => `/assessment/take/${encodeURIComponent(sessionId)}`,
     result: (sessionId: string) => `/assessment/result/${encodeURIComponent(sessionId)}`,
   },
+  buddy: (ref?: string) => (ref ? `/buddy?ref=${encodeURIComponent(ref)}` : "/buddy"),
 
   // Teacher & Admin Management Routes
   admin: {
