@@ -280,24 +280,24 @@ export default function StudentAnalyticsPage() {
       {/* ========================================================================= */}
       {/* 1. HIGH-END ACADEMIC HEADER & PHILOSOPHICAL BANNER                        */}
       {/* ========================================================================= */}
-      <div className="relative overflow-hidden rounded-3xl bg-linear-to-r from-slate-950 via-slate-900 to-indigo-950 p-6 sm:p-8 text-white shadow-lg border border-slate-800">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 p-6 sm:p-8 text-white shadow-xl border border-slate-800/80">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2.5 max-w-3xl">
-            <div className="flex items-center gap-2">
-              <div className="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-                <Compass className="w-3.5 h-3.5 text-indigo-400" />
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="px-3 py-1 rounded-full bg-indigo-500/25 text-indigo-200 border border-indigo-400/40 text-xs font-extrabold uppercase tracking-wider flex items-center gap-1.5 shadow-xs">
+                <Compass className="w-3.5 h-3.5 text-indigo-300" />
                 <span>Tấm Gương Tự Soi Chiếu Năng Lực (Metacognitive Mirror)</span>
               </div>
-              <Badge variant="outline" className="bg-emerald-500/10 text-emerald-300 border-emerald-500/30 text-[11px] font-semibold">
+              <Badge variant="outline" className="bg-emerald-500/20 text-emerald-300 border-emerald-400/40 text-[11px] font-bold">
                 Dữ liệu Human-Verified
               </Badge>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white drop-shadow-xs">
               Hiểu Rõ Bản Thân — Bước Đột Phá Vào Cảnh Giới IELTS Cao Hơn
             </h1>
 
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-200 font-medium leading-relaxed">
               {isViewingOther
                 ? `Hồ sơ tự soi chiếu năng lực của học viên: ${studentName}`
                 : "Không thể nâng Band điểm nếu tiếp tục làm bài trong sự mù mờ. Khi bạn nhìn thấy chính xác ranh giới của những thói quen sai lầm vô thức, bạn đã bước một chân sang ngưỡng tinh thông."}
@@ -309,7 +309,7 @@ export default function StudentAnalyticsPage() {
             <Button
               type="button"
               onClick={() => setIsCheatSheetOpen(true)}
-              className="h-11 px-5 rounded-2xl bg-white hover:bg-slate-100 text-slate-900 font-extrabold text-xs shadow-md border border-slate-200 gap-2 cursor-pointer transition-all"
+              className="h-11 px-5 rounded-2xl bg-white hover:bg-slate-100 text-slate-950 font-black text-xs shadow-lg border border-white/20 gap-2 cursor-pointer transition-all hover:scale-[1.02]"
             >
               <FileText className="w-4 h-4 text-orange-600" />
               <span>Sổ Tay Bẫy Lỗi Cá Nhân Hóa</span>
@@ -318,7 +318,7 @@ export default function StudentAnalyticsPage() {
         </div>
 
         {/* Subtle background glow */}
-        <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
       </div>
 
       {/* ========================================================================= */}

@@ -39,8 +39,8 @@ function loadImage(src: string): Promise<HTMLImageElement> {
 }
 
 /**
- * Pure Canvas High-Resolution (1200x760) Image Generator for Study Buddy Pass
- * Renders a pixel-perfect PNG matching the Zalo-inspired social card with Dynamic QR Code.
+ * Pure Canvas Ultra-High-Resolution (2400x1520 Retina 2X) Image Generator for Study Buddy Pass
+ * Renders a razor-sharp PNG with true transparent rounded corners matching the live web view.
  */
 export async function exportBuddyPassToPng(params: {
   studentName: string;
@@ -48,8 +48,11 @@ export async function exportBuddyPassToPng(params: {
   referralCode: string;
   targetUrl: string;
 }): Promise<void> {
-  const width = 1200;
-  const height = 760;
+  const scale = 2; // 2X Super-Sampling for Retina 4K sharpness
+  const baseWidth = 1200;
+  const baseHeight = 760;
+  const width = baseWidth * scale;
+  const height = baseHeight * scale;
 
   const canvas = document.createElement("canvas");
   canvas.width = width;
@@ -57,62 +60,81 @@ export async function exportBuddyPassToPng(params: {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
-  // Generate QR Code data URL
+  // Enable high-quality image smoothing
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+
+  // Generate Ultra-HD QR Code data URL (680px)
   const qrDataUrl = await QRCode.toDataURL(params.targetUrl, {
-    width: 340,
+    width: 680,
     margin: 1,
     color: {
       dark: "#17243A",
       light: "#FFFFFF",
     },
-    errorCorrectionLevel: "M",
+    errorCorrectionLevel: "H",
   });
 
   const qrImage = await loadImage(qrDataUrl);
 
-  // 1. Background Surface (Clean Warm White #FCFDFE)
-  ctx.fillStyle = "#FCFDFE";
-  ctx.fillRect(0, 0, width, height);
+  // Scale context so we can use base coordinates (1200x760) with 2X subpixel rendering
+  ctx.save();
+  ctx.scale(scale, scale);
 
-  // 2. Outer Border & Shadow Simulation
-  ctx.strokeStyle = "#CBD5E1";
-  ctx.lineWidth = 3.5;
-  ctx.beginPath();
-  ctx.roundRect(24, 24, width - 48, height - 48, 36);
-  ctx.stroke();
+  const cardPad = 8;
+  const cardW = baseWidth - cardPad * 2;
+  const cardH = baseHeight - cardPad * 2;
+  const cardRadius = 38;
 
-  // 3. Soft Sky Blue Wave Gradient on Bottom-Left Corner with Boosted Saturation
+  // 1. Clear full canvas to transparent (Bo góc trong suốt)
+  ctx.clearRect(0, 0, baseWidth, baseHeight);
+
+  // 2. Clip strictly to Rounded Card Area (Các góc bên ngoài hoàn toàn trong suốt)
   ctx.save();
   ctx.beginPath();
-  ctx.roundRect(24, 24, width - 48, height - 48, 36);
+  ctx.roundRect(cardPad, cardPad, cardW, cardH, cardRadius);
   ctx.clip();
 
-  const waveGrad = ctx.createLinearGradient(0, 260, 520, 760);
-  waveGrad.addColorStop(0, "rgba(125, 211, 252, 0.70)");
-  waveGrad.addColorStop(0.6, "rgba(186, 230, 253, 0.40)");
+  // 3. Background Surface inside the Card (Warm White #FCFDFE)
+  ctx.fillStyle = "#FCFDFE";
+  ctx.fillRect(cardPad, cardPad, cardW, cardH);
+
+  // 4. Soft Sky Blue Wave Gradient on Bottom-Left Corner with Boosted Saturation
+  const waveGrad = ctx.createLinearGradient(0, 260, 520, baseHeight);
+  waveGrad.addColorStop(0, "rgba(125, 211, 252, 0.75)");
+  waveGrad.addColorStop(0.6, "rgba(186, 230, 253, 0.45)");
   waveGrad.addColorStop(1, "rgba(224, 242, 254, 0.15)");
   ctx.fillStyle = waveGrad;
   ctx.beginPath();
-  ctx.moveTo(24, 760);
-  ctx.lineTo(24, 440);
-  ctx.bezierCurveTo(160, 390, 300, 540, 460, 460);
-  ctx.bezierCurveTo(600, 380, 700, 560, 820, 500);
-  ctx.lineTo(820, 760);
+  ctx.moveTo(cardPad, baseHeight);
+  ctx.lineTo(cardPad, 430);
+  ctx.bezierCurveTo(160, 380, 300, 530, 460, 450);
+  ctx.bezierCurveTo(600, 370, 700, 550, 830, 490);
+  ctx.lineTo(830, baseHeight);
   ctx.closePath();
   ctx.fill();
 
-  // 4. Dot Matrix Pattern on Top-Right
-  ctx.fillStyle = "rgba(22, 135, 167, 0.28)";
+  // 5. Dot Matrix Pattern on Top-Right
+  ctx.fillStyle = "rgba(22, 135, 167, 0.32)";
   for (let r = 0; r < 9; r++) {
     for (let c = 0; c < 9; c++) {
       ctx.beginPath();
-      ctx.arc(width - 180 + c * 14, 50 + r * 14, 2.2, 0, Math.PI * 2);
+      ctx.arc(baseWidth - 180 + c * 14, 50 + r * 14, 2.2, 0, Math.PI * 2);
       ctx.fill();
     }
   }
+
+  // Restore clip for internal elements, keep card clip
   ctx.restore();
 
-  // 5. Header: Logo & Badge
+  // 6. Outer Rounded Card Border (Vẽ viền bo góc sắc nét)
+  ctx.strokeStyle = "#CBD5E1";
+  ctx.lineWidth = 3.5;
+  ctx.beginPath();
+  ctx.roundRect(cardPad, cardPad, cardW, cardH, cardRadius);
+  ctx.stroke();
+
+  // 7. Header: Logo & Badge
   // Logo: ARIS (Navy #17243A) + IELTS (Red #D6284B)
   ctx.font = "900 36px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
   ctx.fillStyle = "#17243A";
@@ -132,10 +154,10 @@ export async function exportBuddyPassToPng(params: {
   ctx.fillStyle = "#1687A7";
   ctx.font = "800 20px monospace";
   ctx.textAlign = "right";
-  ctx.fillText("STUDY BUDDY PASS  👥❤️", width - 68, 92);
+  ctx.fillText("STUDY BUDDY PASS  👥❤️", baseWidth - 68, 92);
   ctx.textAlign = "left";
 
-  // 6. Left Column: Inviter Info
+  // 8. Left Column: Inviter Info
   // Icon Badge "BẠN ĐƯỢC MỜI BỞI"
   ctx.fillStyle = "#1687A7";
   ctx.font = "800 17px monospace";
@@ -156,7 +178,7 @@ export async function exportBuddyPassToPng(params: {
   ctx.font = "700 22px 'Plus Jakarta Sans', system-ui, sans-serif";
   ctx.fillText(params.className, 68, 296);
 
-  // 7. Middle: 3D Heart Envelope Graphic
+  // 9. Middle: 3D Heart Envelope Graphic
   const envX = 540;
   const envY = 220;
 
@@ -197,7 +219,7 @@ export async function exportBuddyPassToPng(params: {
   ctx.fillText("✨", envX + 86, envY - 10);
   ctx.fillText("✨", envX - 12, envY + 56);
 
-  // 8. Right Column: Benefits Box (High Contrast Gold/Amber #FCD34D)
+  // 10. Right Column: Benefits Box (High Contrast Gold/Amber #FCD34D)
   const boxX = 690;
   const boxY = 155;
   const boxW = 442;
@@ -255,7 +277,7 @@ export async function exportBuddyPassToPng(params: {
   ctx.font = "700 16px 'Plus Jakarta Sans', system-ui, sans-serif";
   ctx.fillText("học cùng lớp", boxX + 82, boxY + 148);
 
-  // 9. Tear-Off Line: Scissors + Dashed Line (#38BDF8)
+  // 11. Tear-Off Line: Scissors + Dashed Line (#38BDF8)
   ctx.fillStyle = "#1687A7";
   ctx.font = "bold 26px sans-serif";
   ctx.fillText("✂", 64, 400);
@@ -265,11 +287,11 @@ export async function exportBuddyPassToPng(params: {
   ctx.strokeStyle = "#38BDF8";
   ctx.lineWidth = 3;
   ctx.moveTo(105, 394);
-  ctx.lineTo(width - 68, 394);
+  ctx.lineTo(baseWidth - 68, 394);
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // 10. Footer Left: Referral Code & Message
+  // 12. Footer Left: Referral Code & Message
   ctx.fillStyle = "#1687A7";
   ctx.font = "800 18px monospace";
   ctx.fillText("MÃ MỜI", 68, 450);
@@ -306,9 +328,9 @@ export async function exportBuddyPassToPng(params: {
   ctx.font = "700 16px 'Plus Jakarta Sans', system-ui, sans-serif";
   ctx.fillText("❤️ Chia sẻ thẻ này với bạn bè để cùng nhau chinh phục IELTS!", 68, 608);
 
-  // 11. Footer Right: Dynamic QR Code Container
+  // 13. Footer Right: Dynamic QR Code Container
   const qrBoxSize = 180;
-  const qrX = width - 68 - qrBoxSize;
+  const qrX = baseWidth - 68 - qrBoxSize;
   const qrY = 465;
 
   // Curved Arrow pointing to QR
@@ -344,6 +366,8 @@ export async function exportBuddyPassToPng(params: {
 
   // Draw QR Image onto Canvas
   ctx.drawImage(qrImage, qrX + 10, qrY + 10, qrBoxSize - 20, qrBoxSize - 20);
+
+  ctx.restore(); // Restore scale
 
   // Download Trigger - Tên file ngắn gọn tối đa (VD: ARIS-MINH42.png)
   const dataUrl = canvas.toDataURL("image/png");

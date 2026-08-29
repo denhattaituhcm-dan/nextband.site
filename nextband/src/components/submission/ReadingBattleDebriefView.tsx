@@ -177,7 +177,7 @@ export function ReadingBattleDebriefView({
 
       {/* 1-CLICK REVENGE LOOP ACTION CALLOUT */}
       {weakestType && weakestType.incorrect > 0 && onOpenRevenge && (
-        <div className="p-4 rounded-xl bg-linear-to-r from-orange-500 to-amber-600 text-white flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
+        <div className="p-4 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 text-white flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
           <div className="space-y-1 text-center sm:text-left">
             <div className="flex items-center justify-center sm:justify-start gap-1.5 font-black text-sm">
               <Swords className="h-4 w-4 text-amber-200" />
