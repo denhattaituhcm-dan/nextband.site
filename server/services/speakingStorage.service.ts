@@ -123,23 +123,51 @@ export class SpeakingStorageService {
   /**
    * Tạo Signed URL hoặc Public URL có thời hạn để phát âm thanh
    */
-  async getSignedPlaybackUrl(storagePath: string, expiresInSeconds: number = 3600): Promise<string | null> {
+  async getSignedPlaybackUrl(storagePath: string, expiresInSeconds: number = 7200): Promise<string | null> {
     if (!storagePath) return null;
-    const cleanPath = storagePath.replace(/^\/+/, "");
-    
-    // 1. Try exam-assets bucket first
-    const { data: pubData } = this.supabase.storage.from("exam-assets").getPublicUrl(cleanPath);
-    if (pubData?.publicUrl) {
-      return pubData.publicUrl;
+    const clean = storagePath.trim();
+
+    // 1. Kiểm tra xem có phải là Supabase Storage URL đầy đủ không
+    const supabaseUrlMatch = clean.match(
+      /\/storage\/v1\/object\/(?:public|authenticated|sign)\/([^/?#]+)\/(.+?)(?:\?.*)?$/i
+    );
+    if (supabaseUrlMatch) {
+      const bucket = supabaseUrlMatch[1];
+      const subPath = decodeURIComponent(supabaseUrlMatch[2]);
+      if (bucket === SPEAKING_BUCKET) {
+        const { data, error } = await this.supabase.storage
+          .from(SPEAKING_BUCKET)
+          .createSignedUrl(subPath, expiresInSeconds);
+        if (!error && data?.signedUrl) return data.signedUrl;
+      } else if (bucket === "exam-assets") {
+        const { data } = this.supabase.storage.from("exam-assets").getPublicUrl(subPath);
+        if (data?.publicUrl) return data.publicUrl;
+      }
     }
 
-    // 2. Fallback to speaking-recordings bucket
+    if (clean.startsWith("http://") || clean.startsWith("https://") || clean.startsWith("blob:") || clean.startsWith("data:")) {
+      return clean;
+    }
+
+    const cleanPath = clean.replace(/^\/+/, "");
+    const isExamAsset = cleanPath.startsWith("exam-assets/") || cleanPath.startsWith("uploads/");
+
+    if (isExamAsset) {
+      const assetSubPath = cleanPath.replace(/^exam-assets\//, "");
+      const { data: pubData } = this.supabase.storage.from("exam-assets").getPublicUrl(assetSubPath);
+      if (pubData?.publicUrl) return pubData.publicUrl;
+    }
+
+    // Mặc định là speaking-recordings bucket (private bucket cần Signed URL)
     const subCleanPath = cleanPath.replace(/^speaking-recordings\//, "");
     const { data, error } = await this.supabase.storage
       .from(SPEAKING_BUCKET)
       .createSignedUrl(subCleanPath, expiresInSeconds);
 
     if (error || !data?.signedUrl) {
+      // Thử fallback sang exam-assets nếu speaking-recordings không có
+      const { data: fallbackPub } = this.supabase.storage.from("exam-assets").getPublicUrl(cleanPath);
+      if (fallbackPub?.publicUrl) return fallbackPub.publicUrl;
       throw new Error(error?.message || "Không thể tạo liên kết phát âm thanh");
     }
 
@@ -153,39 +181,69 @@ export class SpeakingStorageService {
     if (!storagePath) {
       throw new Error("Đường dẫn tệp âm thanh không hợp lệ");
     }
-    const cleanPath = storagePath.replace(/^\/+/, "");
+    const clean = storagePath.trim();
 
-    // 1. Thử tải từ exam-assets
-    let downloadRes = await this.supabase.storage.from("exam-assets").download(cleanPath);
-
-    // 2. Thử tải từ speaking-recordings nếu thất bại
-    if (downloadRes.error || !downloadRes.data) {
-      const subCleanPath = cleanPath.replace(/^speaking-recordings\//, "");
-      downloadRes = await this.supabase.storage.from(SPEAKING_BUCKET).download(subCleanPath);
-    }
-
-    // 3. Nếu vẫn không tải được và là URL bên ngoài (http/https), fetch trực tiếp
-    if (downloadRes.error || !downloadRes.data) {
-      if (storagePath.startsWith("http://") || storagePath.startsWith("https://")) {
-        const fetchRes = await fetch(storagePath);
-        if (!fetchRes.ok) {
-          throw new Error(`Không thể tải tệp âm thanh từ URL: ${storagePath}`);
-        }
-        const arrayBuf = await fetchRes.arrayBuffer();
+    // 1. Nếu là Supabase Storage URL đầy đủ
+    const supabaseUrlMatch = clean.match(
+      /\/storage\/v1\/object\/(?:public|authenticated|sign)\/([^/?#]+)\/(.+?)(?:\?.*)?$/i
+    );
+    if (supabaseUrlMatch) {
+      const bucket = supabaseUrlMatch[1];
+      const subPath = decodeURIComponent(supabaseUrlMatch[2]);
+      const downloadRes = await this.supabase.storage.from(bucket).download(subPath);
+      if (!downloadRes.error && downloadRes.data) {
+        const blob = downloadRes.data;
+        const arrayBuf = await blob.arrayBuffer();
         const buffer = Buffer.from(arrayBuf);
-        const mimeType = fetchRes.headers.get("content-type") || "audio/webm";
-        const fileName = storagePath.split("/").pop()?.split("?")[0] || "recording.webm";
+        const mimeType = blob.type || "audio/webm";
+        const fileName = subPath.split("/").pop() || "recording.webm";
         return { buffer, mimeType, fileName };
       }
-      throw new Error(`Không tìm thấy file ghi âm trong Storage: ${storagePath}`);
     }
 
-    const blob = downloadRes.data;
-    const arrayBuf = await blob.arrayBuffer();
-    const buffer = Buffer.from(arrayBuf);
-    const mimeType = blob.type || "audio/webm";
-    const fileName = cleanPath.split("/").pop()?.split("?")[0] || "recording.webm";
-    return { buffer, mimeType, fileName };
+    const cleanPath = clean.replace(/^\/+/, "");
+    const isExamAsset = cleanPath.startsWith("exam-assets/") || cleanPath.startsWith("uploads/");
+
+    if (!isExamAsset) {
+      // 2. Thử tải từ speaking-recordings trước cho các file ghi âm
+      const subCleanPath = cleanPath.replace(/^speaking-recordings\//, "");
+      const downloadRes = await this.supabase.storage.from(SPEAKING_BUCKET).download(subCleanPath);
+      if (!downloadRes.error && downloadRes.data) {
+        const blob = downloadRes.data;
+        const arrayBuf = await blob.arrayBuffer();
+        const buffer = Buffer.from(arrayBuf);
+        const mimeType = blob.type || "audio/webm";
+        const fileName = subCleanPath.split("/").pop() || "recording.webm";
+        return { buffer, mimeType, fileName };
+      }
+    }
+
+    // 3. Thử tải từ exam-assets
+    const examSubPath = cleanPath.replace(/^exam-assets\//, "");
+    const examDownload = await this.supabase.storage.from("exam-assets").download(examSubPath);
+    if (!examDownload.error && examDownload.data) {
+      const blob = examDownload.data;
+      const arrayBuf = await blob.arrayBuffer();
+      const buffer = Buffer.from(arrayBuf);
+      const mimeType = blob.type || "audio/webm";
+      const fileName = examSubPath.split("/").pop() || "recording.webm";
+      return { buffer, mimeType, fileName };
+    }
+
+    // 4. Nếu là URL bên ngoài (http/https), fetch trực tiếp
+    if (clean.startsWith("http://") || clean.startsWith("https://")) {
+      const fetchRes = await fetch(clean);
+      if (!fetchRes.ok) {
+        throw new Error(`Không thể tải tệp âm thanh từ URL: ${clean}`);
+      }
+      const arrayBuf = await fetchRes.arrayBuffer();
+      const buffer = Buffer.from(arrayBuf);
+      const mimeType = fetchRes.headers.get("content-type") || "audio/webm";
+      const fileName = clean.split("/").pop()?.split("?")[0] || "recording.webm";
+      return { buffer, mimeType, fileName };
+    }
+
+    throw new Error(`Không tìm thấy file ghi âm trong Storage: ${storagePath}`);
   }
 
   /**
