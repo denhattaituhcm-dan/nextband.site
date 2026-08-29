@@ -110,6 +110,7 @@ export async function submitContactLead(
         fullName: cleanName,
         phone: cleanPhone,
         email: cleanEmail || undefined,
+        goal: fallbackGoal,
         course: params.course,
         preferredSchedule: params.preferredSchedule,
         message: params.message || params.goal,

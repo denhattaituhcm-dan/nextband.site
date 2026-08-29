@@ -290,8 +290,9 @@ export default function Profile() {
                     variant="outline"
                     onClick={async () => {
                       const code = generateReferralCode(user?.fullName, user?.id);
-                      const targetUrl = `${window.location.origin}/buddy?ref=${code}`;
-                      const shareText = getBuddyShareText(user?.fullName || "Học viên", code, targetUrl);
+                      const inviter = user?.fullName || "Học viên";
+                      const targetUrl = `${window.location.origin}/buddy?ref=${code}&from=${encodeURIComponent(inviter)}`;
+                      const shareText = getBuddyShareText(inviter, code, targetUrl);
                       try {
                         await navigator.clipboard.writeText(shareText);
                         setIsCopiedCode(true);

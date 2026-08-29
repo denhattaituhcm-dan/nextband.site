@@ -35,7 +35,7 @@ export function StudyBuddyModal({
   const [isExporting, setIsExporting] = useState(false);
 
   const referralCode = generateReferralCode(studentName, userId);
-  const targetUrl = `${window.location.origin}/buddy?ref=${referralCode}`;
+  const targetUrl = `${window.location.origin}/buddy?ref=${referralCode}&from=${encodeURIComponent(studentName)}`;
 
   const handleCopyLink = async () => {
     try {
