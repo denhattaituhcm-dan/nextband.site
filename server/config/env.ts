@@ -58,6 +58,7 @@ const envSchema = z
     TELEGRAM_CHAT_ID: z.string().optional(),
     STT_API_KEY: z.string().optional(),
     GROQ_API_KEY: z.string().optional(),
+    GEMINI_API_KEY: z.string().optional(),
     OPENAI_API_KEY: z.string().optional(),
     STT_API_URL: z.string().optional(),
     WHISPER_API_URL: z.string().optional(),

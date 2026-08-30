@@ -30,6 +30,7 @@ import interventionRoutes from "./intervention.routes.js";
 import tuitionRoutes from "./tuition.routes.js";
 import milestoneRoutes from "./milestone.routes.js";
 import referralsRoutes from "./referrals.routes.js";
+import lexiconRoutes from "./lexicon.routes.js";
 
 const routes: FastifyPluginAsync = async (fastify) => {
   // Health check
@@ -72,6 +73,7 @@ const routes: FastifyPluginAsync = async (fastify) => {
   await fastify.register(interventionRoutes, { prefix: "/interventions" });
   await fastify.register(tuitionRoutes, { prefix: "/admin/tuition" });
   await fastify.register(milestoneRoutes, { prefix: "/milestones" });
+  await fastify.register(lexiconRoutes, { prefix: "/lexicon" });
 };
 
 export default routes;

@@ -15,6 +15,7 @@ import MinimalLayout from "@/layouts/MinimalLayout";
 // Eagerly loaded core initial routes
 import HomePage from "@/pages/HomePage";
 import NotFound from "@/pages/NotFound";
+import { CognitiveWordPopover } from "@/components/lexicon/CognitiveWordPopover";
 
 /**
  * Detects stale Vite chunk errors (happen after a new deployment or network hiccup).
@@ -630,6 +631,7 @@ const App = () => (
               {/* Catch-all */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <CognitiveWordPopover />
           </Suspense>
         </BrowserRouter>
       </TooltipProvider>
