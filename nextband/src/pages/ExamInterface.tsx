@@ -1147,10 +1147,6 @@ export default function ExamInterface() {
             </Button>
             <div className="h-4 w-[1px] bg-border hidden sm:block" />
             <div className="flex items-center gap-2">
-              <span className="hidden sm:inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200/80 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-800 items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 inline-block" />
-                Phòng Làm Bài
-              </span>
               {searchParams.get("isRevision") === "true" && (
                 <span className="inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-700 items-center gap-1">
                   <AlertTriangle className="w-3 h-3 text-amber-600" />

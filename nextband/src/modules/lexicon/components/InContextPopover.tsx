@@ -69,7 +69,7 @@ export const InContextPopover: React.FC<InContextPopoverProps> = ({
       {/* Header bar */}
       <div className="flex items-start justify-between border-b border-slate-800 pb-2.5 mb-3">
         <div className="flex items-center gap-2.5">
-          <HuyenCo state={huyenCoState} size={42} />
+          <HuyenCo variant="inline" state={huyenCoState} size={40} />
           <div>
             <div className="flex items-center gap-2">
               <h4 className="font-semibold text-base text-amber-300 capitalize">

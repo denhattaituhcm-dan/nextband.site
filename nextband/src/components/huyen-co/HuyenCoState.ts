@@ -10,5 +10,7 @@ export type HuyenCoState =
 export interface HuyenCoProps {
   state?: HuyenCoState;
   size?: number | "16" | "32" | "48" | "80" | "160";
+  variant?: "launcher" | "inline";
+  showBadgeRing?: boolean;
   className?: string;
 }

@@ -9,23 +9,23 @@ export function adaptQuestion(raw: any): QuestionDTO {
     throw new Error(`[CONTRACT_VIOLATION] Invalid raw question received: expected object, got ${typeof raw}`);
   }
 
-  // Parse options safely: support JSON string or array
-  let parsedOptions: string[] = [];
+  // Parse options safely: support JSON string, array, or object (for matching questions)
+  let parsedOptions: any = [];
   if (Array.isArray(raw.options)) {
-    parsedOptions = raw.options.map((o: any) => String(o ?? ""));
+    parsedOptions = raw.options.map((o: any) => (typeof o === "string" ? o : String(o ?? "")));
+  } else if (raw.options && typeof raw.options === "object") {
+    parsedOptions = raw.options;
   } else if (typeof raw.options === "string") {
     try {
       const parsed = JSON.parse(raw.options);
-      if (Array.isArray(parsed)) {
-        parsedOptions = parsed.map((o: any) => String(o ?? ""));
+      if (Array.isArray(parsed) || (parsed && typeof parsed === "object")) {
+        parsedOptions = parsed;
       } else {
-        console.warn("[CONTRACT_VIOLATION] Question options string is not an array:", raw.options);
+        parsedOptions = [];
       }
     } catch {
-      console.warn("[CONTRACT_VIOLATION] Failed to JSON parse question options:", raw.options);
+      parsedOptions = [];
     }
-  } else if (raw.options !== null && raw.options !== undefined) {
-    console.warn("[CONTRACT_VIOLATION] Question options is neither array nor string:", raw.options);
   }
 
   // Parse fill-blank answers safely

@@ -30,7 +30,7 @@ export const CanonicalQuestionSchema = z.object({
   selectionMode: z.enum(["single", "multiple"]).default("single"),
   maxSelections: z.number().int().positive().default(1),
   isMultiChoice: z.boolean().default(false),
-  options: z.array(z.string()).default([]),
+  options: z.any().optional(),
   correctAnswer: z.string().nullable().default(null),
   correct_answer: z.string().nullable().optional(),
   answerKey: z.string().nullable().optional(),
