@@ -50,6 +50,7 @@ import FileUpload from "@/components/admin/FileUpload";
 import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { RichContent } from "@/components/exam/RichContent";
+import { parseMatchingData } from "@/components/exam/MatchingRenderer";
 import {
   QuestionFormRenderer,
   stringifyFillBlankAnswers,
@@ -1133,16 +1134,99 @@ export default function AdminSectionEdit() {
                                 <div className="font-medium text-sm line-clamp-2 prose prose-sm max-w-none">
                                   <RichContent html={q.question_text || q.questionText || "Nội dung câu hỏi"} />
                                 </div>
-                                {(q.options || q.options) && Array.isArray(q.options) && q.options.length > 0 && (
-                                  <div className="mt-2 space-y-1 text-xs text-muted-foreground bg-muted/20 p-2 rounded border">
-                                    {q.options.map((opt: string, optIdx: number) => (
-                                      <div key={optIdx} className="flex items-center gap-1.5">
-                                        <span className="font-semibold text-primary">{String.fromCharCode(65 + optIdx)}.</span>
-                                        <span>{opt}</span>
+                                {/* Display Options / Matching items / Fill-in-the-blank answers */}
+                                {(() => {
+                                  const qType = q.question_type || q.questionType;
+                                  if (qType === "matching") {
+                                    const { items, options, pairs } = parseMatchingData(q);
+                                    if (items.length > 0 || options.length > 0) {
+                                      return (
+                                        <div className="mt-2 space-y-2 text-xs text-muted-foreground bg-teal-50/40 dark:bg-teal-950/20 p-2.5 rounded border border-teal-200/50">
+                                          {items.length > 0 && (
+                                            <div>
+                                              <span className="font-semibold text-teal-800 dark:text-teal-300 block mb-1.5">
+                                                Danh sách câu hỏi (vế trái) & Đáp án nối:
+                                              </span>
+                                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pl-1">
+                                                {items.map((item, i) => {
+                                                  const optIdx = pairs[String(i)];
+                                                  const matchedOpt = optIdx !== undefined ? options[optIdx] : null;
+                                                  return (
+                                                    <div
+                                                      key={i}
+                                                      className="flex items-center gap-1.5 text-foreground bg-white dark:bg-neutral-900 px-2 py-1 rounded border border-teal-100 dark:border-teal-900"
+                                                    >
+                                                      <span className="font-bold text-teal-600 dark:text-teal-400 shrink-0">
+                                                        {i + 1}.
+                                                      </span>
+                                                      <span className="truncate flex-1 font-medium">
+                                                        {item.text || `(Câu ${i + 1})`}
+                                                      </span>
+                                                      <span className="font-bold text-teal-700 dark:text-teal-300 shrink-0 bg-teal-100 dark:bg-teal-900/60 px-1.5 py-0.5 rounded text-[11px]">
+                                                        {matchedOpt ? `→ ${matchedOpt.label}` : "Chưa nối"}
+                                                      </span>
+                                                    </div>
+                                                  );
+                                                })}
+                                              </div>
+                                            </div>
+                                          )}
+                                          {options.length > 0 && (
+                                            <div className="pt-2 border-t border-teal-200/40 dark:border-teal-900/40">
+                                              <span className="font-semibold text-teal-800 dark:text-teal-300 block mb-1.5">
+                                                Các lựa chọn (vế phải):
+                                              </span>
+                                              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 pl-1">
+                                                {options.map((opt) => (
+                                                  <div
+                                                    key={opt.index}
+                                                    className="flex items-center gap-1.5 text-muted-foreground bg-white dark:bg-neutral-900 px-2 py-1 rounded border border-teal-100/60 dark:border-teal-900/40"
+                                                  >
+                                                    <span className="font-bold text-teal-600 dark:text-teal-400 shrink-0">
+                                                      {opt.label}.
+                                                    </span>
+                                                    <span className="truncate flex-1">{opt.text}</span>
+                                                  </div>
+                                                ))}
+                                              </div>
+                                            </div>
+                                          )}
+                                        </div>
+                                      );
+                                    }
+                                  }
+
+                                  if (qType === "fill_blank") {
+                                    const fbAnswers = parseFillBlankAnswers(q.correctAnswer || q.correct_answer);
+                                    if (fbAnswers.length > 0) {
+                                      return (
+                                        <div className="mt-2 text-xs bg-amber-50/50 dark:bg-amber-950/20 text-amber-900 dark:text-amber-300 p-2 rounded border border-amber-200/50 flex items-center gap-2">
+                                          <span className="font-semibold shrink-0">Đáp án điền:</span>
+                                          <span className="font-mono bg-white dark:bg-neutral-900 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-800">
+                                            {fbAnswers.join(" | ")}
+                                          </span>
+                                        </div>
+                                      );
+                                    }
+                                  }
+
+                                  if (Array.isArray(q.options) && q.options.length > 0) {
+                                    return (
+                                      <div className="mt-2 space-y-1 text-xs text-muted-foreground bg-muted/20 p-2 rounded border">
+                                        {q.options.map((opt: string, optIdx: number) => (
+                                          <div key={optIdx} className="flex items-center gap-1.5">
+                                            <span className="font-semibold text-primary">
+                                              {String.fromCharCode(65 + optIdx)}.
+                                            </span>
+                                            <span>{opt}</span>
+                                          </div>
+                                        ))}
                                       </div>
-                                    ))}
-                                  </div>
-                                )}
+                                    );
+                                  }
+
+                                  return null;
+                                })()}
                                 <div className="flex items-center gap-2 mt-2">
                                   <Badge
                                     variant="secondary"

@@ -18,13 +18,16 @@ import { DropdownSelect } from "./DropdownSelect";
 import { MatchingRenderer } from "./MatchingRenderer";
 import { formatStorageUrl } from "@/lib/api";
 
-function safeParseOptions(opts: any): any[] {
+function safeParseOptions(opts: any): any {
   if (!opts) return [];
   if (Array.isArray(opts)) return opts;
+  if (typeof opts === "object") return opts;
   if (typeof opts === "string") {
     try {
       const parsed = JSON.parse(opts);
-      return Array.isArray(parsed) ? parsed : [opts];
+      return Array.isArray(parsed) || (parsed && typeof parsed === "object")
+        ? parsed
+        : [opts];
     } catch {
       return [opts];
     }
@@ -279,9 +282,9 @@ export function ListeningSection({
                       const qGlobalIndex =
                         allQuestions.findIndex((q) => q.id === question.id) + 1;
                       const displayNumber =
-                        question.order_index && question.order_index > 0
-                          ? question.order_index
-                          : qGlobalIndex;
+                        question.displayNumber ??
+                        question.displayLabel ??
+                        qGlobalIndex;
 
                       const cleanQText = sanitizeQuestionText(question.question_text);
 

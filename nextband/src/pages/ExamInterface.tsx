@@ -488,8 +488,13 @@ export default function ExamInterface() {
     let displayCursor = 0;
     currentSectionQuestions.forEach((q) => {
       // Split fill_blank into sub-questions
-      if (q.questionType === "fill_blank") {
-        const blankCount = getFillBlankBlankCount(q.correctAnswer);
+      if (q.questionType === "fill_blank" || q.question_type === "fill_blank") {
+        let blankCount = getFillBlankBlankCount(q.correctAnswer || q.correct_answer);
+        if (blankCount === 0 && (q.question_text || q.questionText)) {
+          const qText = q.question_text || q.questionText || "";
+          const matches = qText.match(/(?:\[BLANK(?:_\d+)?\]|\[\d+\]|\{\d+\}|\[\[\d+\]\]|_{3,})/gi);
+          blankCount = matches ? matches.length : 0;
+        }
         if (blankCount > 0) {
           for (let idx = 0; idx < blankCount; idx++) {
             displayCursor += 1;

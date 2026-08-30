@@ -28,8 +28,14 @@ export interface CanonicalQuestionDTO {
 }
 
 export function isValidMCQOptions(options: any): boolean {
-  if (!Array.isArray(options)) return false;
-  const meaningful = options.filter(
+  let opts = options;
+  if (typeof opts === "string" && opts.trim()) {
+    try {
+      opts = JSON.parse(opts);
+    } catch {}
+  }
+  if (!Array.isArray(opts)) return false;
+  const meaningful = opts.filter(
     (o) => typeof o === "string" && o.trim().length > 0,
   );
   return meaningful.length >= 2;

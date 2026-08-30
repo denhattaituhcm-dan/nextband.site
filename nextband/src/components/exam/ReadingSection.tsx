@@ -36,13 +36,16 @@ import {
 import { MatchingRenderer } from "./MatchingRenderer";
 import { QuestionControlRenderer } from "./QuestionControlRenderer";
 
-function safeParseOptions(opts: any): any[] {
+function safeParseOptions(opts: any): any {
   if (!opts) return [];
   if (Array.isArray(opts)) return opts;
+  if (typeof opts === "object") return opts;
   if (typeof opts === "string") {
     try {
       const parsed = JSON.parse(opts);
-      return Array.isArray(parsed) ? parsed : [opts];
+      return Array.isArray(parsed) || (parsed && typeof parsed === "object")
+        ? parsed
+        : [opts];
     } catch {
       return [opts];
     }
@@ -743,7 +746,7 @@ export function ReadingSection({
                     <CardContent className="p-5">
                       <div className="flex items-start gap-4 mb-4">
                         <span className="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-full bg-[hsl(var(--reading))] text-white text-sm font-bold shadow-sm">
-                          {question.order_index || qIndex + 1}
+                          {question.displayNumber ?? question.displayLabel ?? question.order_index ?? (qIndex + 1)}
                         </span>
                         <div className="flex-1 space-y-3">
                           {/* Only show question text here if it's NOT a fill_blank-like question */}

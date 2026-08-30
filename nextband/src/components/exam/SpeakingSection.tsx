@@ -16,13 +16,16 @@ import {
   hasFillBlankPlaceholders,
 } from "./FillBlankHtmlRenderer";
 
-function safeParseOptions(opts: any): any[] {
+function safeParseOptions(opts: any): any {
   if (!opts) return [];
   if (Array.isArray(opts)) return opts;
+  if (typeof opts === "object") return opts;
   if (typeof opts === "string") {
     try {
       const parsed = JSON.parse(opts);
-      return Array.isArray(parsed) ? parsed : [opts];
+      return Array.isArray(parsed) || (parsed && typeof parsed === "object")
+        ? parsed
+        : [opts];
     } catch {
       return [opts];
     }
@@ -209,7 +212,7 @@ export function SpeakingSection({
                                   : "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-orange-500/20",
                               )}
                             >
-                              {question.order_index || qGlobalIndex}
+                              {question.displayNumber ?? question.displayLabel ?? question.order_index ?? qGlobalIndex}
                             </span>
 
                             <div className="flex-1 space-y-4 pt-0.5">

@@ -23,13 +23,16 @@ import { formatStorageUrl } from "@/lib/api";
 
 import { compareCanonicalOrder } from "@/lib/questionOrder";
 
-function safeParseOptions(opts: any): any[] {
+function safeParseOptions(opts: any): any {
   if (!opts) return [];
   if (Array.isArray(opts)) return opts;
+  if (typeof opts === "object") return opts;
   if (typeof opts === "string") {
     try {
       const parsed = JSON.parse(opts);
-      return Array.isArray(parsed) ? parsed : [opts];
+      return Array.isArray(parsed) || (parsed && typeof parsed === "object")
+        ? parsed
+        : [opts];
     } catch {
       return [opts];
     }
@@ -179,7 +182,7 @@ export function GrammarSection({
                               <CardContent className="p-6">
                                 <div className="flex items-start gap-4">
                                   <span className="shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-2xl text-sm font-extrabold bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-teal-500/20 shadow-xs">
-                                    {questionCounter}
+                                     {question.displayNumber ?? question.displayLabel ?? question.order_index ?? questionCounter}
                                   </span>
 
                                   <div className="flex-1 space-y-4 pt-0.5">

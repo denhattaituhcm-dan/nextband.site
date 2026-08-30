@@ -210,5 +210,64 @@ describe("🏛️ Journey 1: Admin Exam & Section Management Integration", () =>
     expect(screen.getByText("Thêm Section mới")).toBeInTheDocument();
     expect(screen.getByDisplayValue("Grammar")).toBeInTheDocument();
   });
+
+  it("Step 8: Correctly renders Matching question items, right options, and paired answers in question card", async () => {
+    const matchingSection = {
+      id: "sec-listening-1",
+      examId: "exam-123",
+      sectionType: "listening",
+      title: "Listening Section 1",
+      questionGroups: [
+        {
+          id: "grp-matching",
+          sectionId: "sec-listening-1",
+          title: "Question 15-20",
+          instructions: "Match each feature",
+          orderIndex: 0,
+          questions: [
+            {
+              id: "q-matching-1",
+              groupId: "grp-matching",
+              questionType: "matching",
+              questionText: "Which feature is related to each of the following areas?",
+              correctAnswer: JSON.stringify({
+                items: ["Asia", "Antarctica", "South America"],
+                options: ["ancient forts", "waterways", "ice and snow"],
+                pairs: { "0": "A", "1": "C", "2": "B" },
+              }),
+              points: 3,
+              orderIndex: 0,
+            },
+          ],
+        },
+      ],
+    };
+
+    (sectionsApi.getById as any).mockResolvedValue(matchingSection);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={["/admin/sections/sec-listening-1"]}>
+          <Routes>
+            <Route path="/admin/sections/:id" element={<AdminSectionEdit />} />
+          </Routes>
+        </MemoryRouter>
+      </QueryClientProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText("Danh sách câu hỏi (vế trái) & Đáp án nối:")).toBeInTheDocument();
+      expect(screen.getByText("Asia")).toBeInTheDocument();
+      expect(screen.getByText("Antarctica")).toBeInTheDocument();
+      expect(screen.getByText("South America")).toBeInTheDocument();
+      expect(screen.getByText("→ A")).toBeInTheDocument();
+      expect(screen.getByText("→ C")).toBeInTheDocument();
+      expect(screen.getByText("→ B")).toBeInTheDocument();
+      expect(screen.getByText("Các lựa chọn (vế phải):")).toBeInTheDocument();
+      expect(screen.getByText("ancient forts")).toBeInTheDocument();
+      expect(screen.getByText("waterways")).toBeInTheDocument();
+      expect(screen.getByText("ice and snow")).toBeInTheDocument();
+    });
+  });
 });
 
