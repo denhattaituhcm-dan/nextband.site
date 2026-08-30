@@ -11,6 +11,11 @@ import { formatStorageUrl } from "@/lib/api";
 
 import {
 
+
+  FillBlankHtmlRenderer,
+  hasFillBlankPlaceholders,
+} from "./FillBlankHtmlRenderer";
+
 function safeParseOptions(opts: any): any[] {
   if (!opts) return [];
   if (Array.isArray(opts)) return opts;
@@ -24,9 +29,7 @@ function safeParseOptions(opts: any): any[] {
   }
   return [];
 }
-  FillBlankHtmlRenderer,
-  hasFillBlankPlaceholders,
-} from "./FillBlankHtmlRenderer";
+
 
 interface SpeakingSectionProps {
   section: any;

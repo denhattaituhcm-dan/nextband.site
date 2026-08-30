@@ -1,5 +1,5 @@
 import React from "react";
-import { HuyenCoState } from "./HuyenCoState";
+import { HuyenCoState } from "../HuyenCoState";
 
 interface BaseSvgProps {
   state: HuyenCoState;

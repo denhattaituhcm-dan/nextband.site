@@ -180,8 +180,10 @@ export function WritingGrader({
     return qCount > 1 || isAutoGraded || detectedSkill === "reading" || detectedSkill === "listening" || detectedSkill === "reading_listening";
   }, [sections, isAutoGraded, detectedSkill]);
 
+  const [activeAnswerIndex, setActiveAnswerIndex] = useState<number>(0);
+
   // Primary single answer for subjective/writing mode
-  const currentAnswer = answers[0] || rawAnswers[0];
+  const currentAnswer = answers[activeAnswerIndex] || rawAnswers[activeAnswerIndex] || answers[0] || rawAnswers[0];
   const questionId = currentAnswer?.questionId || currentAnswer?.question_id || "";
   const answerId = currentAnswer?.id;
 

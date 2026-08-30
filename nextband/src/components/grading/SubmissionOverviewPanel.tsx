@@ -129,9 +129,6 @@ export function SubmissionOverviewPanel({
   const promptPassage = cleanPromptHtml(currentAnswer?.passage || "");
   const instructions = cleanPromptHtml(currentAnswer?.instructions || "");
 
-  const totalQuestions = resolvedAnswers.length;
-  const answeredQuestions = resolvedAnswers.filter((a) => !!(a.answerText || a.audioUrl)).length;
-
   return (
     <div className="h-full flex flex-col bg-slate-50/40 overflow-hidden">
       {/* Top Header Card */}
