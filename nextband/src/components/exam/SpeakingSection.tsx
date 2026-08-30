@@ -10,6 +10,20 @@ import { RichContent } from "./RichContent";
 import { formatStorageUrl } from "@/lib/api";
 
 import {
+
+function safeParseOptions(opts: any): any[] {
+  if (!opts) return [];
+  if (Array.isArray(opts)) return opts;
+  if (typeof opts === "string") {
+    try {
+      const parsed = JSON.parse(opts);
+      return Array.isArray(parsed) ? parsed : [opts];
+    } catch {
+      return [opts];
+    }
+  }
+  return [];
+}
   FillBlankHtmlRenderer,
   hasFillBlankPlaceholders,
 } from "./FillBlankHtmlRenderer";
@@ -59,11 +73,7 @@ export function SpeakingSection({
               q.question_type || q.questionType || "speaking",
             ).toLowerCase(),
             order_index: q.order_index ?? q.orderIndex ?? 0,
-            options: q.options
-              ? typeof q.options === "string"
-                ? JSON.parse(q.options)
-                : q.options
-              : [],
+            options: safeParseOptions(q.options),
           }))
           .sort((a: any, b: any) => {
             const orderDiff = (a.order_index || 0) - (b.order_index || 0);

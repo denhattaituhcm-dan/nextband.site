@@ -53,6 +53,20 @@ const getMinWords = (title: string) => {
 
 import { compareCanonicalOrder } from "@/lib/questionOrder";
 
+function safeParseOptions(opts: any): any[] {
+  if (!opts) return [];
+  if (Array.isArray(opts)) return opts;
+  if (typeof opts === "string") {
+    try {
+      const parsed = JSON.parse(opts);
+      return Array.isArray(parsed) ? parsed : [opts];
+    } catch {
+      return [opts];
+    }
+  }
+  return [];
+}
+
 export function WritingSection({
   section,
   answers,
@@ -76,11 +90,7 @@ export function WritingSection({
             q.audioUrl || q.audio_url || q.question_audio_url || null,
           order_index: q.order_index ?? q.orderIndex ?? 0,
           image_url: q.imageUrl || q.image_url || null,
-          options: q.options
-            ? typeof q.options === "string"
-              ? JSON.parse(q.options)
-              : q.options
-            : [],
+          options: safeParseOptions(q.options),
           correct_answer: q.correct_answer || q.correctAnswer || null,
         }))
         .filter((q: any, idx: number, arr: any[]) => {

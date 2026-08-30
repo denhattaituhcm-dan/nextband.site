@@ -23,6 +23,20 @@ import { formatStorageUrl } from "@/lib/api";
 
 import { compareCanonicalOrder } from "@/lib/questionOrder";
 
+function safeParseOptions(opts: any): any[] {
+  if (!opts) return [];
+  if (Array.isArray(opts)) return opts;
+  if (typeof opts === "string") {
+    try {
+      const parsed = JSON.parse(opts);
+      return Array.isArray(parsed) ? parsed : [opts];
+    } catch {
+      return [opts];
+    }
+  }
+  return [];
+}
+
 interface GrammarSectionProps {
   section: any;
   answers: Record<string, any>;
@@ -61,11 +75,7 @@ export function GrammarSection({
             q.audioUrl || q.audio_url || q.question_audio_url || null,
           order_index: q.order_index ?? q.orderIndex ?? 0,
           correct_answer: q.correct_answer || q.correctAnswer || null,
-          options: q.options
-            ? typeof q.options === "string"
-              ? JSON.parse(q.options)
-              : q.options
-            : [],
+          options: safeParseOptions(q.options),
         }))
         .sort(compareCanonicalOrder),
     }))

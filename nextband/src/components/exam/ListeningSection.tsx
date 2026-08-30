@@ -18,6 +18,20 @@ import { DropdownSelect } from "./DropdownSelect";
 import { MatchingRenderer } from "./MatchingRenderer";
 import { formatStorageUrl } from "@/lib/api";
 
+function safeParseOptions(opts: any): any[] {
+  if (!opts) return [];
+  if (Array.isArray(opts)) return opts;
+  if (typeof opts === "string") {
+    try {
+      const parsed = JSON.parse(opts);
+      return Array.isArray(parsed) ? parsed : [opts];
+    } catch {
+      return [opts];
+    }
+  }
+  return [];
+}
+
 interface ListeningSectionProps {
   section: any;
   answers: Record<string, any>;
@@ -71,11 +85,7 @@ export function ListeningSection({
               q.audioUrl || q.audio_url || q.question_audio_url || null,
             order_index: q.order_index ?? q.orderIndex ?? 0,
             correct_answer: q.correct_answer || q.correctAnswer || null,
-            options: q.options
-              ? typeof q.options === "string"
-                ? JSON.parse(q.options)
-                : q.options
-              : [],
+            options: safeParseOptions(q.options),
           }))
           .sort((a: any, b: any) => {
             const orderDiff = (a.order_index || 0) - (b.order_index || 0);

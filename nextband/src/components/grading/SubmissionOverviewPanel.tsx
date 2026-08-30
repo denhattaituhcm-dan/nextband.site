@@ -81,6 +81,13 @@ export function SubmissionOverviewPanel({
   const isAutoGraded = homework.isAutoGraded ?? isAutoGradedExam(homework);
   const skillBadge = getSkillBadgeConfig(detectedSkill);
 
+  const totalQuestions = resolvedAnswers.length || 11;
+  const answeredQuestions = resolvedAnswers.filter((a) => !!(a.answerText || a.audioUrl)).length;
+  const correctQuestions = resolvedAnswers.filter((a) => a.score != null && Number(a.score) > 0).length;
+  const correctScore = homework.objectiveScore ?? homework.score ?? (correctQuestions > 0 ? correctQuestions : answeredQuestions);
+
+  const hasStudentActivity = answeredQuestions > 0 || homework.status === "submitted" || homework.status === "graded" || (homework.score != null && Number(homework.score) > 0);
+
   const isGraded = homework.status === "graded" || isAutoGraded || (homework.score != null && Number(homework.score) > 0);
   const bandScore = homework.score ?? homework.bandScore ?? homework.objectiveScore ?? null;
 
@@ -307,7 +314,7 @@ export function SubmissionOverviewPanel({
             )}
           </div>
 
-          {isGraded || (bandScore != null && Number(bandScore) > 0) ? (
+          {hasStudentActivity || isGraded || (bandScore != null && Number(bandScore) > 0) ? (
             <div className="space-y-3">
               {/* Overall Score / Band */}
               <div className="flex items-center justify-between p-3 rounded-xl bg-blue-50/60 border border-blue-100">
@@ -318,11 +325,7 @@ export function SubmissionOverviewPanel({
                 </span>
                 <span className="text-lg font-black text-blue-700 font-mono">
                   {isAutoGraded || (!isSpeaking && detectedSkill !== "writing") ? (
-                    homework.objectiveScore != null || homework.score != null ? (
-                      `${homework.objectiveScore ?? homework.score}/${totalQuestions} câu`
-                    ) : (
-                      `Đã làm ${answeredQuestions}/${totalQuestions} câu`
-                    )
+                    `${correctScore}/${totalQuestions} câu`
                   ) : bandScore != null && !isNaN(Number(bandScore)) ? (
                     `Band ${Number(bandScore).toFixed(1)}`
                   ) : (
