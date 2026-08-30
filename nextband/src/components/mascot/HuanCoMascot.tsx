@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { HuanCoState } from "@/lib/huanCoState";
+import { HuyenCo } from "@/components/huyen-co";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -120,16 +121,11 @@ export function HuanCoMascot({ state, className = "" }: HuanCoMascotProps) {
               className={`absolute -inset-1.5 rounded-full ${ambientHaloColor} blur-md transition-opacity duration-500 animate-spatial-aura pointer-events-none`}
             />
 
-            {/* Mascot Circular Avatar */}
+            {/* Mascot Circular Avatar - Replaced PNG with Smart SVG HuyenCo Character */}
             <div
-              className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden shadow-lg border-2 bg-card transition-all ${state.ringColorClass}`}
+              className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden shadow-lg border-2 bg-slate-950 flex items-center justify-center transition-all ${state.ringColorClass}`}
             >
-              <img
-                src="/mascot/Huyenco.png"
-                alt="Huyền Cơ Lão Nhân"
-                className="w-full h-full object-cover pointer-events-none"
-                loading="eager"
-              />
+              <HuyenCo state={isCelebration ? "ENCOURAGING" : isConcerned ? "THINKING" : "IDLE"} size={52} />
             </div>
 
             {/* Subtle Notification Dot (Static, non-flashing) */}
