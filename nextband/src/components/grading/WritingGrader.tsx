@@ -279,12 +279,26 @@ export function WritingGrader({
 
     // Build grades payload for all answers or target answer
     const gradesPayload = rawAnswers.length > 0
-      ? rawAnswers.map((a: any) => ({
-          answerId: a.id,
-          questionId: a.questionId || a.question_id,
-          score: a.score != null ? Number(a.score) : 0,
-          feedback: a.feedback || undefined,
-        }))
+      ? rawAnswers.map((a: any, idx: number) => {
+          if (idx === activeAnswerIndex || rawAnswers.length === 1) {
+            return {
+              answerId: a.id,
+              questionId: a.questionId || a.question_id,
+              score,
+              feedback: feedbackText,
+              criteriaScores: finalCriteriaScores || undefined,
+              sentenceFeedbacks,
+              primaryErrorCategory: revisionRequired ? primaryErrorCategory : null,
+              revisionRequired,
+            };
+          }
+          return {
+            answerId: a.id,
+            questionId: a.questionId || a.question_id,
+            score: a.score != null ? Number(a.score) : 0,
+            feedback: a.feedback || undefined,
+          };
+        })
       : [
           {
             answerId,

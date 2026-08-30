@@ -307,15 +307,27 @@ export function SubmissionOverviewPanel({
             )}
           </div>
 
-          {bandScore != null && Number(bandScore) > 0 ? (
+          {isGraded || (bandScore != null && Number(bandScore) > 0) ? (
             <div className="space-y-3">
-              {/* Overall Band */}
+              {/* Overall Score / Band */}
               <div className="flex items-center justify-between p-3 rounded-xl bg-blue-50/60 border border-blue-100">
                 <span className="text-xs font-bold text-blue-900">
-                  {isAutoGraded ? "Điểm Tổng Kết / Band" : "Overall Band Score"}
+                  {isAutoGraded || (!isSpeaking && detectedSkill !== "writing")
+                    ? "Kết quả làm bài (Tự động)"
+                    : "Overall Band Score"}
                 </span>
                 <span className="text-lg font-black text-blue-700 font-mono">
-                  {typeof bandScore === "number" && bandScore <= 9 ? `Band ${Number(bandScore).toFixed(1)}` : `${bandScore}đ`}
+                  {isAutoGraded || (!isSpeaking && detectedSkill !== "writing") ? (
+                    homework.objectiveScore != null || homework.score != null ? (
+                      `${homework.objectiveScore ?? homework.score}/${totalQuestions} câu`
+                    ) : (
+                      `Đã làm ${answeredQuestions}/${totalQuestions} câu`
+                    )
+                  ) : bandScore != null && !isNaN(Number(bandScore)) ? (
+                    `Band ${Number(bandScore).toFixed(1)}`
+                  ) : (
+                    "Đã chấm chính thức"
+                  )}
                 </span>
               </div>
 

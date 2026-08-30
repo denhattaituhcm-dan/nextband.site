@@ -253,6 +253,9 @@ export function SpeakingGrader({
     setFeedbackText(structured.text || currentAnswer.feedback || "");
     setPrimaryErrorCategory(structured.primaryErrorCategory || "STRUCTURE");
     setRevisionRequired(!!structured.revisionRequired);
+    if (Array.isArray((structured.criteriaScores as any)?.speakingTags)) {
+      setSelectedEvidenceTagIds(new Set((structured.criteriaScores as any).speakingTags));
+    }
     setIsDirty(false);
   }, [currentAnswer]);
 
@@ -321,6 +324,7 @@ export function SpeakingGrader({
 
     await onGradeSubmit({
       grades: gradesPayload,
+      totalScore: score > 0 ? score : undefined,
       options: {
         feedback: feedbackText,
         primaryErrorCategory: revisionRequired ? primaryErrorCategory : null,

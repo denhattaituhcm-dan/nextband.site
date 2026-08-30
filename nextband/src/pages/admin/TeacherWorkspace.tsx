@@ -46,6 +46,8 @@ import {
   SentenceFeedbackItem,
   parseStructuredFeedback,
   CriteriaScores,
+  calculateSpeakingBand,
+  calculateWritingBand,
 } from "@/lib/sentenceFeedback";
 import { calculateGradingSla, summarizeSlaStats } from "@/lib/gradingSla";
 import { mapToProgressReportData } from "@/lib/progressReportMapper";
@@ -324,9 +326,27 @@ export default function TeacherWorkspace() {
             type: skill === "speaking" ? "speaking" : skill === "writing" ? "writing" : skill,
             status: normalizedStatus,
             isOverdue: false,
-            score: sub?.totalScore ?? sub?.total_score ?? sub?.bandScore ?? null,
-            bandScore: sub?.bandScore ?? sub?.band_score ?? null,
-            objectiveScore: sub?.objectiveScore ?? sub?.objective_score ?? null,
+            score: (() => {
+              const isManual = skill === "speaking" || skill === "writing";
+              if (isManual) {
+                const val = sub?.bandScore ?? sub?.band_score ?? sub?.totalScore ?? sub?.total_score ?? firstAnswer?.score ?? (structured.criteriaScores ? (skill === "speaking" ? calculateSpeakingBand(structured.criteriaScores) : calculateWritingBand(structured.criteriaScores)) : null);
+                return val != null && !isNaN(Number(val)) ? Number(val) : null;
+              }
+              const val = sub?.objectiveScore ?? sub?.objective_score ?? sub?.totalScore ?? sub?.total_score ?? (subAnswers.length > 0 ? subAnswers.filter((a: any) => a.score && a.score > 0).length : null);
+              return val != null && !isNaN(Number(val)) ? Number(val) : null;
+            })(),
+            bandScore: (() => {
+              const isManual = skill === "speaking" || skill === "writing";
+              if (!isManual) return null;
+              const val = sub?.bandScore ?? sub?.band_score ?? sub?.totalScore ?? sub?.total_score ?? firstAnswer?.score ?? (structured.criteriaScores ? (skill === "speaking" ? calculateSpeakingBand(structured.criteriaScores) : calculateWritingBand(structured.criteriaScores)) : null);
+              return val != null && !isNaN(Number(val)) ? Number(val) : null;
+            })(),
+            objectiveScore: (() => {
+              const isManual = skill === "speaking" || skill === "writing";
+              if (isManual) return null;
+              const val = sub?.objectiveScore ?? sub?.objective_score ?? sub?.totalScore ?? sub?.total_score ?? (subAnswers.length > 0 ? subAnswers.filter((a: any) => a.score && a.score > 0).length : null);
+              return val != null && !isNaN(Number(val)) ? Number(val) : null;
+            })(),
             criteriaScores: structured.criteriaScores || firstAnswer?.criteriaScores || sub?.criteriaScores || null,
             feedback: structured.text || rawFeedback,
             primaryErrorCategory: structured.primaryErrorCategory || firstAnswer?.primaryErrorCategory || sub?.primaryErrorCategory || null,
@@ -339,8 +359,8 @@ export default function TeacherWorkspace() {
           };
         });
 
-        const submittedCount = homeworks.filter((h: any) => h.status === "submitted" || h.status === "graded").length;
-        const gradedCount = homeworks.filter((h: any) => h.status === "graded").length;
+        const submittedCount = homeworks.filter((h: any) => h.status === "submitted" || h.status === "graded" || h.status === "needs_revision").length;
+        const gradedCount = homeworks.filter((h: any) => h.status === "graded" || h.status === "needs_revision").length;
         const pendingCount = homeworks.filter((h: any) => h.status === "submitted" && !h.isAutoGraded).length;
         const unsubmittedCount = homeworks.filter((h: any) => h.status === "unsubmitted").length;
 
@@ -738,10 +758,14 @@ export default function TeacherWorkspace() {
     setIsSubmitting(true);
     try {
       if (currentHomework && currentStudent && currentHomework.submissionId) {
+        const computedTotalScore =
+          payload.totalScore ??
+          (payload.grades && payload.grades.length > 0 ? payload.grades[0].score : undefined);
+
         await submissionsApi.grade(
           currentHomework.submissionId,
           payload.grades,
-          payload.totalScore,
+          computedTotalScore,
           payload.options
         );
 
@@ -751,31 +775,13 @@ export default function TeacherWorkspace() {
             description: `Đã lưu điểm cho học viên ${currentStudent.fullName}.${payload.options.revisionRequired ? " (Đã gửi yêu cầu sửa bài Attempt 2)" : ""}`,
           });
 
-          refetchWorkspace();
-
-          // 🟢 LOGIC TỰ ĐỘNG CHUYỂN BÀI CHỜ CHẤM THEO QUEUE (Cột 2 / Cột 1)
-          const nextPendingInWorkbook = workbookItems.find(
-            (h) => h.status === "submitted" && h.id !== currentHomework.id
-          );
-
-          if (nextPendingInWorkbook) {
-            setSelectedHomeworkId(nextPendingInWorkbook.id);
-          } else {
-            // Nếu học viên hiện tại đã hết bài chờ chấm, nhảy sang học viên có bài chờ chấm tiếp theo trong Queue Cột 1
-            const nextStudentWithPending = students.find(
-              (s: any) => s.hasPending && s.id !== currentStudent.id
-            );
-            if (nextStudentWithPending) {
-              setSelectedStudentId(nextStudentWithPending.id);
-              setSelectedHomeworkId("");
-            }
-          }
+          await refetchWorkspace();
         } else {
           toast({
             title: "Đã lưu nháp thành công 💾",
             description: "Điểm và nhận xét đã được lưu. Học viên chưa thấy kết quả cho đến khi Trả bài.",
           });
-          refetchWorkspace();
+          await refetchWorkspace();
         }
       }
     } catch (err: any) {
@@ -828,14 +834,32 @@ export default function TeacherWorkspace() {
       );
     }
 
+    const isManual = item.skill === "speaking" || item.skill === "writing";
+    const totalQ = item.answers?.length || 0;
+    const correctQ = item.objectiveScore ?? item.score ?? item.answers?.filter((a) => a.score && a.score > 0).length ?? 0;
+
     switch (item.status) {
       case "graded":
+        if (!isManual || item.isAutoGraded) {
+          return (
+            <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]">
+              🟢 {totalQ > 0 ? `${correctQ}/${totalQ} câu` : "Đã chấm"} {item.submissionTiming?.isLate ? `(Trễ ${item.submissionTiming.lateDays}d)` : ""}
+            </Badge>
+          );
+        }
         return (
           <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]">
-            🟢 Band {item.score ?? "6.5"} {item.submissionTiming?.isLate ? `(Trễ ${item.submissionTiming.lateDays}d)` : ""}
+            🟢 {item.bandScore != null || item.score != null ? `Band ${item.bandScore ?? item.score}` : "Đã chấm"} {item.submissionTiming?.isLate ? `(Trễ ${item.submissionTiming.lateDays}d)` : ""}
           </Badge>
         );
       case "submitted": {
+        if (!isManual || item.isAutoGraded) {
+          return (
+            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-[10px]">
+              🔵 {totalQ > 0 ? `${correctQ}/${totalQ} câu` : "Đã nộp"}
+            </Badge>
+          );
+        }
         const sla = calculateGradingSla(item.submittedAt, null, "submitted");
         let badgeStyle = "bg-blue-50 text-blue-700 border-blue-200";
         if (sla.status === "OVERDUE") {

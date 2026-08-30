@@ -1,3 +1,4 @@
+import { detectExamSkill } from "@/lib/examSkillHelper";
 import { useMemo, useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -802,11 +803,21 @@ export default function SubmissionDetail() {
             <div className="mt-3 p-4 rounded-xl border border-primary/20 bg-primary/5 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Trophy className="h-5 w-5 text-primary" />
-                <span className="font-bold text-sm text-foreground">Điểm Tổng Kết Do Giáo Viên Chấm:</span>
+                <span className="font-bold text-sm text-foreground">
+                  {["speaking", "writing"].includes(detectExamSkill(submission.exam || { title: submission.examTitle }))
+                    ? "Kết Quả Chấm Điểm Giáo Viên:"
+                    : "Kết Quả Làm Bài Tự Động:"}
+                </span>
               </div>
               <div className="text-right">
-                <span className="text-2xl font-extrabold text-primary">{submission.totalScore}</span>
-                <span className="text-sm text-muted-foreground font-semibold"> / {totalPoints}</span>
+                <span className="text-2xl font-extrabold text-primary">
+                  {["speaking", "writing"].includes(detectExamSkill(submission.exam || { title: submission.examTitle }))
+                    ? `Band ${submission.totalScore}`
+                    : submission.totalScore}
+                </span>
+                {!["speaking", "writing"].includes(detectExamSkill(submission.exam || { title: submission.examTitle })) && (
+                  <span className="text-sm text-muted-foreground font-semibold"> / {totalPoints} câu</span>
+                )}
               </div>
             </div>
           )}
