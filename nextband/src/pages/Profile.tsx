@@ -287,11 +287,11 @@ export default function Profile() {
             const rewardsList = referralsData?.rewards ?? [];
 
             return (
-              <Card className="relative overflow-hidden rounded-2xl border border-slate-200/90 bg-gradient-to-b from-slate-50/60 to-white text-slate-900 shadow-sm hover:shadow-md transition-all duration-200">
-                <CardHeader className="relative p-4 pb-3 border-b border-slate-100 bg-white/80">
+              <Card className="relative overflow-hidden rounded-2xl border border-indigo-100/90 bg-gradient-to-br from-indigo-50/40 via-white to-slate-50/40 text-slate-900 shadow-sm hover:shadow-md transition-all duration-200">
+                <CardHeader className="relative p-4 pb-3 border-b border-indigo-50/80 bg-white/70">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 border border-indigo-100 shadow-2xs">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-xs">
                         <Gift className="h-4 w-4" />
                       </div>
                       <div>
@@ -299,9 +299,11 @@ export default function Profile() {
                         <div className="text-xs font-bold tracking-tight text-slate-900">THẺ ĐỒNG HÀNH ARIS</div>
                       </div>
                     </div>
-                    <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-200/80 text-[10px] font-semibold px-2 py-0.5 shadow-2xs">
-                      {totalInvited > 0 ? `🎉 ${totalInvited} bạn đã mời` : "🎁 Ưu Đãi HOT"}
-                    </Badge>
+                    {totalInvited > 0 && (
+                      <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-200/80 text-[10px] font-semibold px-2 py-0.5 shadow-2xs">
+                        🎉 {totalInvited} bạn đã mời
+                      </Badge>
+                    )}
                   </div>
                 </CardHeader>
 
@@ -313,8 +315,8 @@ export default function Profile() {
                         <Sparkles className="h-3 w-3 text-amber-500" /> Mã giới thiệu của bạn
                       </span>
                     </div>
-                    <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-50/90 border border-dashed border-slate-300">
-                      <div className="flex-1 font-mono font-bold text-xs sm:text-sm px-2 text-slate-800 tracking-wider truncate">
+                    <div className="flex items-center gap-1.5 p-1.5 rounded-xl bg-white border border-dashed border-indigo-200 shadow-2xs">
+                      <div className="flex-1 font-mono font-bold text-xs sm:text-sm px-2 text-indigo-950 tracking-wider truncate">
                         {activeRefCode}
                       </div>
                       <Button
@@ -332,7 +334,7 @@ export default function Profile() {
                             toast({ title: "Thông báo", description: "Vui lòng sao chép thủ công." });
                           }
                         }}
-                        className="h-7.5 px-3 text-xs font-semibold gap-1 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground shadow-2xs shrink-0 transition-colors"
+                        className="h-7.5 px-3 text-xs font-semibold gap-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white shadow-2xs shrink-0 transition-colors"
                       >
                         {isCopiedCode ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
                         <span>{isCopiedCode ? "Đã chép" : "Sao chép"}</span>
@@ -341,19 +343,19 @@ export default function Profile() {
                   </div>
 
                   {/* Highlights / Benefits */}
-                  <div className="grid grid-cols-1 gap-1.5">
-                    <div className="p-2 rounded-xl bg-slate-50 border border-slate-150 flex items-center gap-2">
+                  <div className="grid grid-cols-1 gap-2">
+                    <div className="p-2.5 rounded-xl bg-white/90 border border-indigo-100 flex items-center gap-2.5 shadow-2xs">
                       <span className="text-sm shrink-0">🎉</span>
                       <div className="text-[11px] leading-tight">
                         <span className="text-slate-500 font-normal">Bạn bè nhận: </span>
-                        <strong className="text-indigo-900 font-semibold">Giảm 200.000đ học phí</strong>
+                        <strong className="text-indigo-600 font-semibold">Giảm 200.000đ học phí</strong>
                       </div>
                     </div>
-                    <div className="p-2 rounded-xl bg-slate-50 border border-slate-150 flex items-center gap-2">
+                    <div className="p-2.5 rounded-xl bg-white/90 border border-amber-100 flex items-center gap-2.5 shadow-2xs">
                       <span className="text-sm shrink-0">🎁</span>
                       <div className="text-[11px] leading-tight">
                         <span className="text-slate-500 font-normal">Bạn nhận: </span>
-                        <strong className="text-amber-900 font-semibold">01 Bộ Quà Tặng ARIS</strong>
+                        <strong className="text-amber-700 font-semibold">01 Bộ Quà Tặng ARIS</strong>
                       </div>
                     </div>
                   </div>
@@ -386,9 +388,9 @@ export default function Profile() {
                   <Button
                     size="sm"
                     onClick={() => setIsBuddyModalOpen(true)}
-                    className="w-full text-xs font-semibold h-9 rounded-xl bg-slate-900 hover:bg-slate-800 text-white gap-2 shadow-2xs hover:shadow-xs transition-all"
+                    className="w-full text-xs font-semibold h-9 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white gap-2 shadow-xs transition-all"
                   >
-                    <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+                    <Sparkles className="h-3.5 w-3.5 text-amber-300" />
                     <span>Xem thẻ mời & Tải ảnh chia sẻ</span>
                   </Button>
                 </CardContent>

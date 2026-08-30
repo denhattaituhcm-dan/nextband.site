@@ -486,11 +486,11 @@ export function TuitionCalculator() {
             </div>
 
             {/* Desktop Table Header */}
-            <div className="hidden md:grid grid-cols-12 gap-3 px-4 py-2.5 bg-slate-100/70 dark:bg-slate-800/50 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider">
-              <div className="col-span-3">Khoá học</div>
+            <div className="hidden md:grid grid-cols-12 gap-3 px-4 py-2.5 bg-slate-200/60 dark:bg-slate-800/70 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider items-center">
+              <div className="col-span-2">Khoá học</div>
               <div className="col-span-2 text-right">Học phí gốc</div>
               <div className="col-span-2 text-right">Học phí sau giảm</div>
-              <div className="col-span-3">Chính sách học bổng</div>
+              <div className="col-span-4">Chính sách học bổng</div>
               <div className="col-span-2 text-center">Đặc quyền Đồng Môn</div>
             </div>
 
@@ -499,11 +499,11 @@ export function TuitionCalculator() {
               {courseCalculations.map((c) => (
                 <div
                   key={c.courseKey}
-                  className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-border/80 shadow-2xs hover:border-brand-blue/40 transition-all space-y-3"
+                  className="p-4 sm:p-5 rounded-2xl bg-[#edf4fb] dark:bg-slate-800/70 border border-[#d5e3f1] dark:border-slate-700/80 shadow-2xs hover:border-brand-blue/50 hover:shadow-xs transition-all space-y-3"
                 >
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
                     {/* Course Title & Step */}
-                    <div className="md:col-span-3 flex items-center justify-between md:block">
+                    <div className="md:col-span-2 flex items-center justify-between md:block">
                       <div>
                         <span className="text-[11px] font-black text-brand-red uppercase tracking-wider block">
                           Khoá {c.courseNum}
@@ -549,7 +549,7 @@ export function TuitionCalculator() {
                     </div>
 
                     {/* Scholarship Picker */}
-                    <div className="md:col-span-3 space-y-1">
+                    <div className="md:col-span-4 space-y-1">
                       <label className="block md:hidden text-xs font-bold text-muted-foreground uppercase">
                         {c.isFirst ? "Học bổng Tinh Anh (Đầu vào)" : "Học bổng Kỷ Luật"}
                       </label>
@@ -557,7 +557,7 @@ export function TuitionCalculator() {
                         <select
                           value={c.taValue}
                           onChange={(e) => handleTaChange(c.courseKey, e.target.value)}
-                          className="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-border/80 rounded-xl px-3 py-2 text-foreground font-medium focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue outline-hidden cursor-pointer"
+                          className="w-full text-xs bg-white dark:bg-slate-900 border border-[#c7d9ea] dark:border-slate-700 rounded-xl px-3 py-2 text-foreground font-medium shadow-2xs focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue outline-hidden cursor-pointer"
                         >
                           {TINH_ANH_OPTIONS.map((opt) => (
                             <option key={opt.id} value={opt.id}>
@@ -569,7 +569,7 @@ export function TuitionCalculator() {
                         <select
                           value={c.klValue}
                           onChange={(e) => handleKlChange(c.courseKey, e.target.value)}
-                          className="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-border/80 rounded-xl px-3 py-2 text-foreground font-medium focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue outline-hidden cursor-pointer"
+                          className="w-full text-xs bg-white dark:bg-slate-900 border border-[#c7d9ea] dark:border-slate-700 rounded-xl px-3 py-2 text-foreground font-medium shadow-2xs focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue outline-hidden cursor-pointer"
                         >
                           {KY_LUAT_OPTIONS.map((opt) => (
                             <option key={opt.id} value={opt.id}>
@@ -593,7 +593,7 @@ export function TuitionCalculator() {
                       <select
                         value={c.hasDm ? "yes" : "no"}
                         onChange={(e) => handleDmChange(c.courseKey, e.target.value === "yes")}
-                        className="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-border/80 rounded-xl px-3 py-2 text-foreground font-medium focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue outline-hidden cursor-pointer"
+                        className="w-full text-xs bg-white dark:bg-slate-900 border border-[#c7d9ea] dark:border-slate-700 rounded-xl px-3 py-2 text-foreground font-medium shadow-2xs focus:ring-2 focus:ring-brand-blue/30 focus:border-brand-blue outline-hidden cursor-pointer"
                       >
                         <option value="no">Không</option>
                         <option value="yes">Có</option>
