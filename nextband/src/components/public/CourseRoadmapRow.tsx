@@ -218,7 +218,7 @@ export function CourseRoadmapRow({
       {/* ---------------------------------------------------- */}
       {/* KHỐI 3 (PHẢI): HỌC PHÍ & CỤM NÚT HÀNH ĐỘNG (CRO)     */}
       {/* ---------------------------------------------------- */}
-      <div className="flex-shrink-0 flex flex-col justify-center items-center lg:items-end p-5 sm:p-6 lg:w-[280px] border-t lg:border-t-0 lg:border-l border-border/70 bg-muted/25 rounded-b-3xl lg:rounded-b-none lg:rounded-r-3xl space-y-3.5">
+      <div className="flex-shrink-0 flex flex-col justify-center items-center lg:items-end p-5 sm:p-6 lg:w-[330px] border-t lg:border-t-0 lg:border-l border-border/70 bg-muted/25 rounded-b-3xl lg:rounded-b-none lg:rounded-r-3xl space-y-3.5">
         {/* Pricing tag */}
         <div className="text-center lg:text-right w-full">
           <div className="flex items-baseline justify-center lg:justify-end gap-1.5 whitespace-nowrap">
