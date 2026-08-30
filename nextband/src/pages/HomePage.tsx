@@ -12,6 +12,7 @@ import {
   deriveCanonicalVisualStatus,
   deriveSubmissionTiming,
   formatDeadlineCountdown,
+  formatVietnameseDeadline,
   sortStudentActionQueue,
   compareHomeworkOrder,
 } from "@/lib/homeworkStatusHelper";
@@ -24,6 +25,7 @@ import { StudentMissionQueue } from "@/components/student/StudentMissionQueue";
 import { StudentSkillMatrix } from "@/components/student/StudentSkillMatrix";
 import { ClassLeaderboardWidget } from "@/components/student/ClassLeaderboardWidget";
 import { DisciplineScholarshipTracker } from "@/components/student/DisciplineScholarshipTracker";
+import { AcademicAscentWorld, AscentLessonNode } from "@/components/student/AcademicAscentWorld";
 import { calculateStudentJourney } from "@/lib/studentJourney";
 import { getStudentMotivationCopy } from "@/lib/studentMotivationCopy";
 import { calculateStudentStreak } from "@/lib/studentStreakHelper";
@@ -162,6 +164,38 @@ export default function HomePage() {
     });
 
     return sortStudentActionQueue(formatted);
+  }, [rawLessons, userSubmissions]);
+
+  // Full 27-Node Academic Ascent World Mapping
+  const ascentLessons = useMemo<AscentLessonNode[]>(() => {
+    const sortedLessons = [...(rawLessons || [])].sort(compareHomeworkOrder);
+    return sortedLessons.map((item: any, idx: number) => {
+      const sub = userSubmissions.find((s: any) => (s.examId || s.exam_id) === item.id) || item.submission;
+      const deadline = item.homework?.deadline;
+      const status = deriveCanonicalVisualStatus({
+        submissionStatus: sub?.status,
+        revisionRequired: sub?.revisionRequired,
+        deadline,
+      });
+      const chapterIndex = (idx < 9 ? 1 : idx < 18 ? 2 : 3) as 1 | 2 | 3;
+      const chapterTitle = idx < 9 ? "FOUNDATION" : idx < 18 ? "CORE SKILLS" : "PERFORMANCE";
+      const deadlineText = deadline ? formatVietnameseDeadline(deadline) : undefined;
+
+      return {
+        id: item.id,
+        examId: item.id,
+        order: idx + 1,
+        title: item.title || `Bài tập Buổi ${idx + 1}`,
+        description: item.description,
+        status,
+        estimatedMinutes: 35,
+        chapterIndex,
+        chapterTitle,
+        isMilestone: (idx + 1) % 9 === 0,
+        deadlineText,
+        submission: sub,
+      };
+    });
   }, [rawLessons, userSubmissions]);
 
   // ARIS Student Journey calculations
@@ -350,34 +384,15 @@ export default function HomePage() {
               classId={enrolledClassId}
             />
 
-            {/* BATTLEGROUND & ACADEMIC CORE: LƯỚI 2 CỘT (7:5) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              {/* CỘT TRÁI (7/12): HÀNG ĐỢI NHIỆM VỤ & BÁO CÁO HỌC THUẬT */}
-              <div className="lg:col-span-7 space-y-6">
-                {/* 2. MISSION QUEUE: Hàng Đợi Nhiệm Vụ Tiêu Điểm Max 3 Items (10% Focus Action) */}
-                <StudentMissionQueue
-                  missions={actionQueue}
-                  enrolledClassId={enrolledClassId}
-                />
-
-                {/* 3. SKILL MATRIX & TEACHER DEBRIEF: Năng Lực 4 Kỹ Năng & Báo Cáo Sửa Lỗi (70% Academic Base) */}
-                <StudentSkillMatrix
-                  skills={journey.skills}
-                  latestSubmission={userSubmissions[0]}
-                />
-              </div>
-
-              {/* CỘT PHẢI (5/12): VÒNG LẶP TRANH ĐUA LỚP HỌC (BATTLE LOOP ENGINE) */}
-              <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-6">
-                <ClassLeaderboardWidget
-                  classId={enrolledClassId || ""}
-                  className={activeClassName}
-                  currentUserId={user?.id}
-                  targetBand={journey.targetBand ? `Band ${journey.targetBand}+` : undefined}
-                  topMission={actionQueue[0] || null}
-                />
-              </div>
-            </div>
+            {/* 2. ACADEMIC ASCENT WORLD (Signature Spatial Environment: One Action · One Journey · One Goal) */}
+            <AcademicAscentWorld
+              courseTitle={courseTitle}
+              className={activeClassName}
+              currentBand={journey.currentBand || 5.5}
+              targetBand={journey.targetBand || 6.5}
+              lessons={ascentLessons}
+              enrolledClassId={enrolledClassId}
+            />
 
             {/* HUYỀN CƠ LÃO NHÂN FLOATING MASCOT */}
             <HuanCoMascot state={huanCoState} />
