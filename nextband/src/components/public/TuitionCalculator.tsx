@@ -403,7 +403,7 @@ export function TuitionCalculator() {
   }, [courseCalculations]);
 
   return (
-    <div id="tuition-calculator" className="space-y-16 py-16 sm:py-24 bg-slate-50/70 dark:bg-slate-900/30">
+    <div id="tuition-calculator" className="space-y-16 pt-8 pb-16 sm:pt-12 sm:pb-20 bg-slate-50/70 dark:bg-slate-900/30">
       {/* SECTION 1: INTERACTIVE CALCULATOR */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Header */}

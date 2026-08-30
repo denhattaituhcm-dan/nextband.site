@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SectionContainer } from "@/components/public/SectionContainer";
 import { CourseRoadmapRow } from "@/components/public/CourseRoadmapRow";
-import { TrustValueStrip } from "@/components/public/TrustValueStrip";
 import { QuickTrialModal } from "@/components/public/QuickTrialModal";
 import { TuitionCalculator } from "@/components/public/TuitionCalculator";
 import { Button } from "@/components/ui/button";
@@ -36,7 +35,7 @@ export default function CoursesPage() {
       />
 
       {/* Hero Header */}
-      <section className="relative overflow-hidden pt-14 pb-16 sm:pt-20 sm:pb-20 border-b border-border/80 bg-background">
+      <section className="relative overflow-hidden pt-10 pb-10 sm:pt-14 sm:pb-12 border-b border-border/60 bg-background">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-blue-soft text-brand-blue border border-brand-blue/20 text-xs sm:text-sm font-extrabold uppercase tracking-wider">
             <BookOpen className="h-4 w-4" />
@@ -76,15 +75,13 @@ export default function CoursesPage() {
         </div>
       </section>
 
-      {/* 4 Trust Points Strip */}
-      <TrustValueStrip />
-
       {/* 5-Stage Complete Roadmap Section */}
       <SectionContainer
         badge="Lộ Trình Bậc Thang Tuyến Tính"
         title="Hành Trình 5 Chặng: Từ Mất Gốc Đến Chinh Phục 6.5+"
         description="Mỗi chặng được thiết kế khép kín chuẩn ARIS-7, tập trung đúng trọng tâm kiến thức và kỹ năng cần bứt phá cho từng ngưỡng điểm."
         background="default"
+        className="pt-8 pb-8 sm:pt-10 sm:pb-10 lg:pt-12 lg:pb-12"
       >
         {/* Quick jump navigation pills */}
         <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
