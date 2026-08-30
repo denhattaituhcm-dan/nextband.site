@@ -99406,10 +99406,15 @@ var examsRoutes = async (fastify) => {
       }
       const isAdmin = request.user.roles.includes("admin");
       if (existing.isActive === false && safeData.isActive !== true) {
-        return reply.status(409).send({
-          error: "EXAM_ARCHIVED_IMMUTABLE",
-          message: "\u0110\u1EC1 thi \u0111\xE3 l\u01B0u tr\u1EEF, kh\xF4ng th\u1EC3 c\u1EADp nh\u1EADt th\xF4ng tin."
+        const subCount = await fastify.prisma.examSubmission.count({
+          where: { examId: id }
         });
+        if (subCount > 0) {
+          return reply.status(409).send({
+            error: "EXAM_ARCHIVED_IMMUTABLE",
+            message: "\u0110\u1EC1 thi \u0111\xE3 l\u01B0u tr\u1EEF v\xE0 c\xF3 d\u1EEF li\u1EC7u b\xE0i l\xE0m, kh\xF4ng th\u1EC3 c\u1EADp nh\u1EADt th\xF4ng tin."
+          });
+        }
       }
       if (existing.isLocked === true && !isAdmin && safeData.isLocked !== false) {
         return reply.status(409).send({
@@ -99578,18 +99583,24 @@ var examsRoutes = async (fastify) => {
       if (!existing) {
         return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y b\xE0i thi" });
       }
-      if (existing.isActive === false) {
-        return reply.status(409).send({
-          success: false,
-          action: "already_archived",
-          errorCode: "EXAM_ALREADY_ARCHIVED",
-          message: "\u0110\u1EC1 thi n\xE0y \u0111\xE3 \u1EDF trong kho l\u01B0u tr\u1EEF (Archived)."
+      if (existing.isLocked) {
+        return reply.status(423).send({
+          error: "\u0110\u1EC1 thi \u0111ang b\u1ECB kh\xF3a. H\xE3y m\u1EDF kh\xF3a tr\u01B0\u1EDBc khi x\xF3a"
         });
       }
       const submissionCount = await fastify.prisma.examSubmission.count({
         where: { examId: id }
       });
       if (submissionCount > 0) {
+        if (existing.isActive === false) {
+          return reply.status(409).send({
+            success: false,
+            action: "already_archived",
+            errorCode: "EXAM_ALREADY_ARCHIVED",
+            message: "\u0110\u1EC1 thi \u0111\xE3 c\xF3 b\xE0i l\xE0m c\u1EE7a h\u1ECDc vi\xEAn v\xE0 \u0111ang \u1EDF tr\u1EA1ng th\xE1i L\u01B0u tr\u1EEF (Archived) \u0111\u1EC3 b\u1EA3o to\xE0n 100% l\u1ECBch s\u1EED.",
+            submissionCount
+          });
+        }
         await fastify.prisma.$transaction(async (tx) => {
           await tx.exam.update({
             where: { id },
@@ -99601,10 +99612,9 @@ var examsRoutes = async (fastify) => {
             }
           });
         });
-        return reply.status(409).send({
-          success: false,
+        return reply.status(200).send({
+          success: true,
           action: "archived",
-          errorCode: "CANNOT_HARD_DELETE_EXAM_WITH_SUBMISSIONS",
           message: "\u0110\u1EC1 thi \u0111\xE3 c\xF3 b\xE0i l\xE0m c\u1EE7a h\u1ECDc vi\xEAn. H\u1EC7 th\u1ED1ng \u0111\xE3 t\u1EF1 \u0111\u1ED9ng chuy\u1EC3n sang ch\u1EBF \u0111\u1ED9 L\u01B0u tr\u1EEF (Archived) \u0111\u1EC3 b\u1EA3o to\xE0n 100% l\u1ECBch s\u1EED.",
           submissionCount
         });
@@ -99613,7 +99623,7 @@ var examsRoutes = async (fastify) => {
       return {
         success: true,
         action: "hard_deleted",
-        message: "\u0110\xE3 x\xF3a b\xE0i thi ch\u01B0a s\u1EED d\u1EE5ng th\xE0nh c\xF4ng"
+        message: "\u0110\xE3 x\xF3a b\xE0i thi th\xE0nh c\xF4ng"
       };
     }
   );

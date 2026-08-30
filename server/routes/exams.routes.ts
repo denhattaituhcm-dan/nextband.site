@@ -372,12 +372,17 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
 
       const isAdmin = request.user.roles.includes("admin");
 
-      // Nếu bài thi đã lưu trữ (isActive === false) và không phải đang kích hoạt lại
+      // Nếu bài thi đã lưu trữ (isActive === false và có bài nộp) và không phải đang kích hoạt lại
       if (existing.isActive === false && safeData.isActive !== true) {
-        return reply.status(409).send({
-          error: "EXAM_ARCHIVED_IMMUTABLE",
-          message: "Đề thi đã lưu trữ, không thể cập nhật thông tin.",
+        const subCount = await fastify.prisma.examSubmission.count({
+          where: { examId: id },
         });
+        if (subCount > 0) {
+          return reply.status(409).send({
+            error: "EXAM_ARCHIVED_IMMUTABLE",
+            message: "Đề thi đã lưu trữ và có dữ liệu bài làm, không thể cập nhật thông tin.",
+          });
+        }
       }
 
       // Nếu bài thi đang bị khóa, chỉ cho phép admin hoặc tác vụ mở khóa (isLocked === false)
@@ -576,12 +581,10 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
         return reply.status(404).send({ error: "Không tìm thấy bài thi" });
       }
 
-      if (existing.isActive === false) {
-        return reply.status(409).send({
-          success: false,
-          action: "already_archived",
-          errorCode: "EXAM_ALREADY_ARCHIVED",
-          message: "Đề thi này đã ở trong kho lưu trữ (Archived).",
+      // Check locked status
+      if (existing.isLocked) {
+        return reply.status(423).send({
+          error: "Đề thi đang bị khóa. Hãy mở khóa trước khi xóa",
         });
       }
 
@@ -591,6 +594,17 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
       });
 
       if (submissionCount > 0) {
+        if (existing.isActive === false) {
+          return reply.status(409).send({
+            success: false,
+            action: "already_archived",
+            errorCode: "EXAM_ALREADY_ARCHIVED",
+            message:
+              "Đề thi đã có bài làm của học viên và đang ở trạng thái Lưu trữ (Archived) để bảo toàn 100% lịch sử.",
+            submissionCount,
+          });
+        }
+
         // Atomic Safe Archive Transaction
         await fastify.prisma.$transaction(async (tx) => {
           await tx.exam.update({
@@ -604,10 +618,9 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
           });
         });
 
-        return reply.status(409).send({
-          success: false,
+        return reply.status(200).send({
+          success: true,
           action: "archived",
-          errorCode: "CANNOT_HARD_DELETE_EXAM_WITH_SUBMISSIONS",
           message:
             "Đề thi đã có bài làm của học viên. Hệ thống đã tự động chuyển sang chế độ Lưu trữ (Archived) để bảo toàn 100% lịch sử.",
           submissionCount,
@@ -618,7 +631,7 @@ const examsRoutes: FastifyPluginAsync = async (fastify) => {
       return {
         success: true,
         action: "hard_deleted",
-        message: "Đã xóa bài thi chưa sử dụng thành công",
+        message: "Đã xóa bài thi thành công",
       };
     },
   );

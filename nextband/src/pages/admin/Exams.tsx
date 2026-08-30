@@ -137,13 +137,13 @@ export default function AdminExams() {
     },
     onError: (err: any) => {
       const errData = err.response?.data;
-      if (err.response?.status === 409 && errData?.action === "archived") {
+      if (err.response?.status === 409 && (errData?.action === "archived" || errData?.action === "already_archived" || errData?.errorCode === "EXAM_ALREADY_ARCHIVED")) {
         queryClient.invalidateQueries({ queryKey: ["admin-exams"] });
         toast({
-          title: "Đã chuyển sang Lưu trữ (Archived)",
+          title: "Đề thi đã ở trong Lưu trữ (Archived)",
           description:
             errData.message ||
-            "Đề thi đã có bài làm nên được chuyển sang chế độ Lưu trữ để bảo toàn dữ liệu.",
+            "Đề thi đã có bài làm nên được lưu trữ để bảo toàn dữ liệu lịch sử.",
         });
         setDeleteExam(null);
         return;

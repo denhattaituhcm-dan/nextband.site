@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, beforeAll } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, beforeAll, afterAll } from "vitest";
 import { PrismaClient } from "@prisma/client";
 import { ExamSubmissionService } from "../services/exam-submission.service.js";
 
@@ -12,15 +12,16 @@ describe("Cross-Assessment Attempt & Submission Integrity Invariants", () => {
   let createdSubmissionIds: string[] = [];
 
   beforeAll(async () => {
-    const existingUser = await prisma.user.findFirst({
-      where: { email: { contains: "@" } }
+    let existingUser = await prisma.user.findFirst({
+      where: {
+        roles: { some: { role: "student" } },
+      },
     });
+    if (!existingUser) {
+      existingUser = await prisma.user.findFirst();
+    }
     if (!existingUser) throw new Error("No existing user found in DB for testing");
-
-    testStudent = {
-      id: existingUser.userId || existingUser.id,
-      roles: ["student"],
-    };
+    testStudent = { id: existingUser.userId || existingUser.id, roles: ["student"] };
   });
 
   beforeEach(async () => {
@@ -44,24 +45,47 @@ describe("Cross-Assessment Attempt & Submission Integrity Invariants", () => {
   });
 
   afterEach(async () => {
-    if (createdSubmissionIds.length > 0) {
-      await prisma.answer.deleteMany({
-        where: { submissionId: { in: createdSubmissionIds } },
-      });
-      await prisma.examSubmission.deleteMany({
-        where: { id: { in: createdSubmissionIds } },
-      });
-      createdSubmissionIds = [];
+    try {
+      if (createdSubmissionIds.length > 0) {
+        await prisma.answer.deleteMany({
+          where: { submissionId: { in: createdSubmissionIds } },
+        }).catch(() => {});
+        await prisma.examSubmission.deleteMany({
+          where: { id: { in: createdSubmissionIds } },
+        }).catch(() => {});
+        createdSubmissionIds = [];
+      }
+      if (testExamId) {
+        await prisma.exam.delete({
+          where: { id: testExamId },
+        }).catch(() => {});
+      }
+      if (testCourseId) {
+        await prisma.course.delete({
+          where: { id: testCourseId },
+        }).catch(() => {});
+      }
+    } catch (err) {
+      console.warn("afterEach cleanup warning:", err);
     }
-    if (testExamId) {
-      await prisma.exam.delete({
-        where: { id: testExamId },
+  });
+
+  afterAll(async () => {
+    try {
+      const leftoverExams = await prisma.exam.findMany({
+        where: { title: "WEEK 1 - DAY 1 - WRITING TEST INTEGRITY" },
+        select: { id: true, courseId: true },
       });
-    }
-    if (testCourseId) {
-      await prisma.course.delete({
-        where: { id: testCourseId },
-      });
+      for (const e of leftoverExams) {
+        await prisma.answer.deleteMany({ where: { submission: { examId: e.id } } }).catch(() => {});
+        await prisma.examSubmission.deleteMany({ where: { examId: e.id } }).catch(() => {});
+        await prisma.exam.delete({ where: { id: e.id } }).catch(() => {});
+        if (e.courseId) {
+          await prisma.course.delete({ where: { id: e.courseId } }).catch(() => {});
+        }
+      }
+    } finally {
+      await prisma.$disconnect();
     }
   });
 

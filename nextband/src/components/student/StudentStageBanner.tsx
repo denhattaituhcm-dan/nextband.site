@@ -3,7 +3,6 @@ import { Compass, Flame, Sparkles } from "lucide-react";
 import { StudentJourneyOverview } from "@/lib/studentJourney";
 import { StudentMotivationResult } from "@/lib/studentMotivationCopy";
 import { StudentStreakData } from "@/lib/studentStreakHelper";
-import { Badge } from "@/components/ui/badge";
 
 interface StudentStageBannerProps {
   studentName: string;
@@ -22,9 +21,25 @@ export function StudentStageBanner({
   motivation,
   streak,
 }: StudentStageBannerProps) {
-  const { currentRealm, currentBand, targetBand, nextRealmName, nextBandThreshold } = journey;
+  const {
+    currentRealm,
+    currentBand,
+    targetBand,
+    entryBand = 3.0,
+    nextRealmName,
+    nextBandThreshold,
+  } = journey;
+
   const distanceToNext = Math.max(0, Number((nextBandThreshold - currentBand).toFixed(1)));
   const streakCount = streak?.streakCount ?? streak?.streakDays ?? 0;
+
+  // Calculate accurate progress fraction from Entry Band to Target Band
+  const minBound = entryBand !== undefined ? entryBand : currentRealm.minBand;
+  const maxBound = Math.max(minBound + 0.5, targetBand);
+  const progressRatio = Math.min(100, Math.max(10, ((currentBand - minBound) / (maxBound - minBound)) * 100));
+
+  const shouldShowCourseTitle =
+    courseTitle && !className.toLowerCase().includes(courseTitle.toLowerCase());
 
   return (
     <div className="relative rounded-2xl bg-gradient-to-r from-[#0b3b82] via-[#0d275a] to-[#061533] text-white border-2 border-sky-500/30 p-6 md:p-7 shadow-xl shadow-blue-950/40 space-y-6 overflow-hidden">
@@ -42,7 +57,9 @@ export function StudentStageBanner({
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-blue-950/80 border border-sky-400/40 shadow-xs text-sky-200">
             <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span className="font-black uppercase tracking-wider text-white">{className}</span>
-            <span className="text-sky-300/80 font-medium">({courseTitle})</span>
+            {shouldShowCourseTitle && (
+              <span className="text-sky-300/80 font-medium">({courseTitle})</span>
+            )}
           </div>
         </div>
 
@@ -90,7 +107,7 @@ export function StudentStageBanner({
               <div
                 className="h-full bg-gradient-to-r from-sky-400 via-blue-400 to-amber-400 rounded-full shadow-md shadow-amber-400/30 transition-all duration-500"
                 style={{
-                  width: `${Math.min(100, Math.max(12, ((currentBand - currentRealm.minBand) / Math.max(0.1, targetBand - currentRealm.minBand)) * 100))}%`,
+                  width: `${progressRatio}%`,
                 }}
               />
             </div>
@@ -114,7 +131,7 @@ export function StudentStageBanner({
           {/* Labels Underneath */}
           <div className="flex items-center justify-between text-xs pt-0.5">
             <div className="text-sky-200/80 font-mono font-medium">
-              Khởi đầu <strong className="text-white font-bold">{currentRealm.minBand.toFixed(1)}</strong>
+              Khởi đầu <strong className="text-white font-bold">{minBound.toFixed(1)}</strong>
             </div>
             <div className="text-amber-300 font-mono font-bold drop-shadow-xs">
               Hiện tại <strong className="text-white font-extrabold text-sm">Band {currentBand.toFixed(1)}</strong>
@@ -129,9 +146,11 @@ export function StudentStageBanner({
         <div className="pt-2 text-xs text-sky-100 flex items-center gap-2 bg-blue-950/50 p-2.5 rounded-xl border border-sky-400/20">
           <Sparkles className="w-4 h-4 text-amber-400 shrink-0 animate-pulse" />
           <span>
-            {distanceToNext > 0
+            {currentBand >= targetBand
+              ? `Đã hoàn thành xuất sắc mục tiêu Band ${targetBand.toFixed(1)} của khóa học!`
+              : distanceToNext > 0
               ? `Còn ${distanceToNext} Band để chạm mốc ${nextRealmName} (Band ${nextBandThreshold.toFixed(1)}).`
-              : `Đã hoàn thành xuất sắc mục tiêu chặng hiện tại.`}
+              : `Đang tiến bước vững chắc tới mục tiêu Band ${targetBand.toFixed(1)}.`}
           </span>
         </div>
       </div>

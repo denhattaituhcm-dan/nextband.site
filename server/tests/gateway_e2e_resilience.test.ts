@@ -429,6 +429,15 @@ describe("🚀 PHASE 2: GATEWAY E2E BUSINESS FLOW & FAILURE ISOLATION TESTS", ()
           await prisma.course.delete({ where: { id: courseId } });
         }
       }
+
+      // 5. Clean up test class
+      const testClass = await prisma.class.findFirst({
+        where: { name: "E2E Gateway Test Class" },
+      });
+      if (testClass) {
+        await prisma.classStudent.deleteMany({ where: { classId: testClass.id } });
+        await prisma.class.delete({ where: { id: testClass.id } });
+      }
     } catch (err) {
       console.warn("afterAll test cleanup warning:", err);
     } finally {

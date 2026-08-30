@@ -25,26 +25,26 @@ export interface RealmConfig {
 }
 
 export const REALM_MAP: Record<string, RealmConfig> = {
-  "3.0": { academicRank: "Học Đồ", realmName: "Khai Mạch" },
-  "3.5": { academicRank: "Học Đồ", realmName: "Khai Mạch" },
-  "4.0": { academicRank: "Học Giả", realmName: "Luyện Khí" },
-  "4.5": { academicRank: "Học Giả", realmName: "Luyện Khí" },
-  "5.0": { academicRank: "Học Sĩ", realmName: "Trúc Cơ" },
-  "5.5": { academicRank: "Học Sĩ", realmName: "Trúc Cơ" },
-  "6.0": { academicRank: "Học Sư", realmName: "Kết Đan" },
-  "6.5": { academicRank: "Học Sư", realmName: "Kết Đan" },
-  "7.0": { academicRank: "Học Bá", realmName: "Nguyên Anh" },
-  "7.5": { academicRank: "Học Bá", realmName: "Nguyên Anh" },
-  "8.0": { academicRank: "Học Tôn", realmName: "Hóa Thần" },
-  "8.5": { academicRank: "Học Tôn", realmName: "Hóa Thần" },
-  "9.0": { academicRank: "Học Đế", realmName: "Phi Thăng" },
+  "3.0": { academicRank: "Học Đồ", realmName: "Sơ kỳ (Phase I)" },
+  "3.5": { academicRank: "Học Đồ", realmName: "Đỉnh phong (Apex)" },
+  "4.0": { academicRank: "Học Sĩ", realmName: "Sơ kỳ (Phase I)" },
+  "4.5": { academicRank: "Học Sĩ", realmName: "Đỉnh phong (Apex)" },
+  "5.0": { academicRank: "Học Sư", realmName: "Sơ kỳ (Phase I)" },
+  "5.5": { academicRank: "Học Sư", realmName: "Đỉnh phong (Apex)" },
+  "6.0": { academicRank: "Học Giả", realmName: "Sơ kỳ (Phase I)" },
+  "6.5": { academicRank: "Học Giả", realmName: "Đỉnh phong (Apex)" },
+  "7.0": { academicRank: "Học Bá", realmName: "Sơ kỳ (Phase I)" },
+  "7.5": { academicRank: "Học Bá", realmName: "Đỉnh phong (Apex)" },
+  "8.0": { academicRank: "Học Tôn", realmName: "Sơ kỳ (Phase I)" },
+  "8.5": { academicRank: "Học Tôn", realmName: "Đỉnh phong (Apex)" },
+  "9.0": { academicRank: "Học Đế", realmName: "Đỉnh cao Học thuật" },
 };
 
 export function getRealmFromBand(band?: number): RealmConfig {
-  if (!band || band < 3.0) return { academicRank: "Học Đồ", realmName: "Khai Mạch" };
-  if (band >= 9.0) return { academicRank: "Học Đế", realmName: "Phi Thăng" };
+  if (!band || band < 3.0) return { academicRank: "Học Đồ", realmName: "Sơ kỳ (Phase I)" };
+  if (band >= 9.0) return { academicRank: "Học Đế", realmName: "Đỉnh cao Học thuật" };
   const rounded = (Math.floor(band * 2) / 2).toFixed(1);
-  return REALM_MAP[rounded] || { academicRank: "Học Sĩ", realmName: "Trúc Cơ" };
+  return REALM_MAP[rounded] || { academicRank: "Học Sĩ", realmName: "Sơ kỳ (Phase I)" };
 }
 
 export interface HuanCoRecentTrigger {

@@ -32,7 +32,7 @@ describe("HUYEN CO LAO NHAN V2: Lean Companion Architecture Tests", () => {
     expect(result.eventType).toBe("LEVEL_UP");
     expect(result.visualLevel).toBe("ceremony");
     expect(result.badgeText).toBe("Đột Phá Cảnh Giới");
-    expect(result.quote).toContain("Học Sư");
+    expect(result.quote).toContain("Học Giả");
     expect(result.reward?.xp).toBe(200);
   });
 
@@ -165,12 +165,14 @@ describe("HUYEN CO LAO NHAN V2: Lean Companion Architecture Tests", () => {
     expect(idleResult.badgeText).toBe("Đang Thảnh Thơi");
   });
 
-  it("Narrative Realm mapping reflects Band correctly without secondary score overhead", () => {
-    expect(getRealmFromBand(3.5)).toEqual({ academicRank: "Học Đồ", realmName: "Khai Mạch" });
-    expect(getRealmFromBand(5.5)).toEqual({ academicRank: "Học Sĩ", realmName: "Trúc Cơ" });
-    expect(getRealmFromBand(7.0)).toEqual({ academicRank: "Học Bá", realmName: "Nguyên Anh" });
-    expect(getRealmFromBand(8.5)).toEqual({ academicRank: "Học Tôn", realmName: "Hóa Thần" });
-    expect(getRealmFromBand(9.0)).toEqual({ academicRank: "Học Đế", realmName: "Phi Thăng" });
+  it("Narrative Realm mapping reflects Band correctly according to canonical ARIS-7", () => {
+    expect(getRealmFromBand(3.5)).toEqual({ academicRank: "Học Đồ", realmName: "Đỉnh phong (Apex)" });
+    expect(getRealmFromBand(4.0)).toEqual({ academicRank: "Học Sĩ", realmName: "Sơ kỳ (Phase I)" });
+    expect(getRealmFromBand(5.5)).toEqual({ academicRank: "Học Sư", realmName: "Đỉnh phong (Apex)" });
+    expect(getRealmFromBand(6.0)).toEqual({ academicRank: "Học Giả", realmName: "Sơ kỳ (Phase I)" });
+    expect(getRealmFromBand(7.0)).toEqual({ academicRank: "Học Bá", realmName: "Sơ kỳ (Phase I)" });
+    expect(getRealmFromBand(8.5)).toEqual({ academicRank: "Học Tôn", realmName: "Đỉnh phong (Apex)" });
+    expect(getRealmFromBand(9.0)).toEqual({ academicRank: "Học Đế", realmName: "Đỉnh cao Học thuật" });
   });
 });
 

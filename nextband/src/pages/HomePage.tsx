@@ -26,7 +26,7 @@ import { StudentSkillMatrix } from "@/components/student/StudentSkillMatrix";
 import { ClassLeaderboardWidget } from "@/components/student/ClassLeaderboardWidget";
 import { DisciplineScholarshipTracker } from "@/components/student/DisciplineScholarshipTracker";
 import { AcademicAscentWorld, AscentLessonNode } from "@/components/student/AcademicAscentWorld";
-import { calculateStudentJourney } from "@/lib/studentJourney";
+import { calculateStudentJourney, resolveCourseBands } from "@/lib/studentJourney";
 import { getStudentMotivationCopy } from "@/lib/studentMotivationCopy";
 import { calculateStudentStreak } from "@/lib/studentStreakHelper";
 import {
@@ -198,10 +198,20 @@ export default function HomePage() {
     });
   }, [rawLessons, userSubmissions]);
 
+  // Authoritative Course Band Mapping (Starter: 0-3.0, Dreamer: 3.0-4.0, Builder: 4.0-5.0, Master: 5.0-6.0, Leader: 6.0-6.5+)
+  const courseBands = useMemo(() => {
+    return resolveCourseBands(courseTitle, activeClassName, enrolledClass?.courseId);
+  }, [courseTitle, activeClassName, enrolledClass?.courseId]);
+
   // ARIS Student Journey calculations
   const journey = useMemo(() => {
-    return calculateStudentJourney(userSubmissions, 5.5, 6.5);
-  }, [userSubmissions]);
+    return calculateStudentJourney(
+      userSubmissions,
+      courseBands.entryBand,
+      courseBands.targetBand,
+      courseBands.entryBand
+    );
+  }, [userSubmissions, courseBands]);
 
   // Offline Recovery Milestone Trigger
   const [recoveryMilestone, setRecoveryMilestone] = useState<DecisionMilestone | null>(null);
@@ -388,8 +398,8 @@ export default function HomePage() {
             <AcademicAscentWorld
               courseTitle={courseTitle}
               className={activeClassName}
-              currentBand={journey.currentBand || 5.5}
-              targetBand={journey.targetBand || 6.5}
+              currentBand={journey.currentBand ?? courseBands.entryBand}
+              targetBand={journey.targetBand ?? courseBands.targetBand}
               lessons={ascentLessons}
               enrolledClassId={enrolledClassId}
             />

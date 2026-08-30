@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { HuanCoState } from "@/lib/huanCoState";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -14,9 +14,65 @@ interface HuanCoMascotProps {
 export function HuanCoMascot({ state, className = "" }: HuanCoMascotProps) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [isDodging, setIsDodging] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isBouncing, setIsBouncing] = useState(false);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const prevAdviceRef = useRef<string>(state.advice);
 
   const isCelebration = state.visualLevel === "celebration" || state.visualLevel === "ceremony";
   const isConcerned = state.visualLevel === "concerned";
+
+  // 1. One-shot Spring Bounce: Triggered subtly once when advice/trigger changes
+  useEffect(() => {
+    if (state.advice && state.advice !== prevAdviceRef.current) {
+      prevAdviceRef.current = state.advice;
+      setIsBouncing(true);
+      const timer = setTimeout(() => setIsBouncing(false), 650);
+      return () => clearTimeout(timer);
+    }
+  }, [state.advice]);
+
+  // 2. Spatial Smart Evasion (Contextual Dodge):
+  // When the cursor is working in the nearby bottom-right quadrant,
+  // the mascot softly fades and shifts to yield focus to the student,
+  // unless hovered directly or the dialog is open.
+  useEffect(() => {
+    if (isOpen) {
+      setIsDodging(false);
+      return;
+    }
+
+    let rafId: number;
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!containerRef.current || isOpen) return;
+
+      rafId = requestAnimationFrame(() => {
+        const rect = containerRef.current?.getBoundingClientRect();
+        if (!rect) return;
+
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const dx = e.clientX - centerX;
+        const dy = e.clientY - centerY;
+        const distance = Math.hypot(dx, dy);
+
+        // Proximity threshold: 140px dodge boundary, 180px restore boundary
+        if (distance < 140 && !isHovered) {
+          setIsDodging(true);
+        } else if (distance > 180) {
+          setIsDodging(false);
+        }
+      });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      cancelAnimationFrame(rafId);
+    };
+  }, [isOpen, isHovered]);
 
   const handleCtaClick = () => {
     if (state.ctaPath) {
@@ -25,23 +81,48 @@ export function HuanCoMascot({ state, className = "" }: HuanCoMascotProps) {
     }
   };
 
+  // Determine ambient halo tint based on state urgency & visual level
+  const ambientHaloColor = isCelebration
+    ? "bg-amber-400/30"
+    : state.urgency === "RED"
+    ? "bg-rose-500/25"
+    : state.urgency === "ORANGE"
+    ? "bg-amber-500/25"
+    : state.urgency === "GREEN"
+    ? "bg-emerald-500/20"
+    : "bg-primary/20";
+
   return (
-    <div className={`fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 select-none ${className}`}>
+    <div
+      ref={containerRef}
+      onMouseEnter={() => {
+        setIsHovered(true);
+        setIsDodging(false);
+      }}
+      onMouseLeave={() => setIsHovered(false)}
+      className={`fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 select-none transition-all duration-300 ease-out ${
+        isDodging && !isHovered && !isOpen
+          ? "opacity-30 scale-90 translate-x-2 translate-y-2 pointer-events-auto"
+          : "opacity-100 scale-100 translate-x-0 translate-y-0"
+      } ${className}`}
+    >
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <button
             type="button"
-            className="group relative flex items-center justify-center p-0.5 rounded-full transition-transform duration-200 hover:scale-105 active:scale-95 focus:outline-hidden"
+            className={`group relative flex items-center justify-center p-1 rounded-full transition-transform duration-200 hover:scale-105 active:scale-95 focus:outline-hidden cursor-pointer ${
+              isBouncing ? "animate-companion-spring" : ""
+            }`}
             aria-label="Mở bảng chỉ dẫn của Huyền Cơ Lão Nhân"
           >
-            {/* Subtle Celebration Glow (No aggressive pulsing/pinging) */}
-            {isCelebration && (
-              <span className="absolute -inset-1 rounded-full bg-amber-400/20 blur-xs transition-opacity duration-300 group-hover:opacity-100" />
-            )}
+            {/* Subtle Spatial Ambient Aura (Breathing Realm Glow) */}
+            <span
+              className={`absolute -inset-1.5 rounded-full ${ambientHaloColor} blur-md transition-opacity duration-500 animate-spatial-aura pointer-events-none`}
+            />
 
             {/* Mascot Circular Avatar */}
             <div
-              className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden shadow-md border-2 bg-card transition-all ${state.ringColorClass}`}
+              className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden shadow-lg border-2 bg-card transition-all ${state.ringColorClass}`}
             >
               <img
                 src="/mascot/Huyenco.png"
@@ -53,7 +134,7 @@ export function HuanCoMascot({ state, className = "" }: HuanCoMascotProps) {
 
             {/* Subtle Notification Dot (Static, non-flashing) */}
             <span
-              className={`absolute top-0.5 right-0.5 w-3.5 h-3.5 rounded-full border-2 border-background shadow-xs ${state.dotColorClass}`}
+              className={`absolute top-1 right-1 w-3.5 h-3.5 rounded-full border-2 border-background shadow-xs ${state.dotColorClass}`}
             />
 
             {/* Quick Teaser Label on Desktop Hover */}

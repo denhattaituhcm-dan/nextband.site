@@ -22,36 +22,36 @@ export const ARIS_REALMS: RealmDefinition[] = [
     maxBand: 3.5,
     titleEn: "Apprentice",
     description: "Khởi đầu, xây dựng nền móng phát âm & từ vựng căn bản",
-    nextRealmName: "Học Giả",
-    nextBandThreshold: 4.0,
-  },
-  {
-    id: "hoc_gia",
-    name: "Học Giả",
-    minBand: 4.0,
-    maxBand: 4.5,
-    titleEn: "Scholar",
-    description: "Hình thành phản xạ câu đơn & cấu trúc đoạn văn ngắn",
     nextRealmName: "Học Sĩ",
-    nextBandThreshold: 5.0,
+    nextBandThreshold: 4.0,
   },
   {
     id: "hoc_si",
     name: "Học Sĩ",
-    minBand: 5.0,
-    maxBand: 5.5,
-    titleEn: "Practitioner",
-    description: "Làm chủ cấu trúc bài thi IELTS & viết luận có bố cục",
+    minBand: 4.0,
+    maxBand: 4.5,
+    titleEn: "Specialist",
+    description: "Hình thành phản xạ câu ghép & cấu trúc đoạn văn ngắn mạch lạc",
     nextRealmName: "Học Sư",
-    nextBandThreshold: 6.0,
+    nextBandThreshold: 5.0,
   },
   {
     id: "hoc_su",
     name: "Học Sư",
+    minBand: 5.0,
+    maxBand: 5.5,
+    titleEn: "Master",
+    description: "Làm chủ cấu trúc bài thi IELTS & viết luận có bố cục logic",
+    nextRealmName: "Học Giả",
+    nextBandThreshold: 6.0,
+  },
+  {
+    id: "hoc_gia",
+    name: "Học Giả",
     minBand: 6.0,
     maxBand: 6.5,
-    titleEn: "Adept",
-    description: "Kiểm soát ngữ pháp phức hợp & tư duy lập luận phản biện",
+    titleEn: "Scholar",
+    description: "Kiểm soát ngữ pháp phức hợp & tư duy lập luận phản biện sắc sảo",
     nextRealmName: "Học Bá",
     nextBandThreshold: 7.0,
   },
@@ -60,7 +60,7 @@ export const ARIS_REALMS: RealmDefinition[] = [
     name: "Học Bá",
     minBand: 7.0,
     maxBand: 7.5,
-    titleEn: "Master",
+    titleEn: "Elite",
     description: "Sử dụng từ vựng tự nhiên & văn phong học thuật cao cấp",
     nextRealmName: "Học Tôn",
     nextBandThreshold: 8.0,
@@ -91,13 +91,80 @@ export const ARIS_REALMS: RealmDefinition[] = [
  * Suy ra Cảnh Giới ARIS dựa trên Band điểm hiện tại
  */
 export function getRealmByBand(band: number): RealmDefinition {
-  const normalized = Math.max(0, Math.min(9.0, Number(band) || 5.0));
+  const normalized = Math.max(0, Math.min(9.0, Number(band) || 0));
   for (let i = ARIS_REALMS.length - 1; i >= 0; i--) {
     if (normalized >= ARIS_REALMS[i].minBand) {
       return ARIS_REALMS[i];
     }
   }
   return ARIS_REALMS[0];
+}
+
+export interface CourseBandTarget {
+  entryBand: number;
+  targetBand: number;
+  courseKey: string;
+  courseName: string;
+}
+
+/**
+ * Authoritative Course Band Resolver
+ * Extracts entry band and target band strictly from class and course context.
+ */
+export function resolveCourseBands(
+  courseTitle?: string | null,
+  className?: string | null,
+  courseSlug?: string | null
+): CourseBandTarget {
+  const combined = `${courseTitle || ""} ${className || ""} ${courseSlug || ""}`.toLowerCase();
+
+  // 1. Starter: 0.0 -> 3.0
+  if (
+    combined.includes("starter") ||
+    /\b(st|s\d+)\b/i.test(combined) ||
+    /^s\d+/i.test(className?.trim() || "")
+  ) {
+    return { entryBand: 0.0, targetBand: 3.0, courseKey: "starter", courseName: "Starter" };
+  }
+
+  // 2. Dreamer: 3.0 -> 4.0
+  if (
+    combined.includes("dreamer") ||
+    /\b(dr|d\d+)\b/i.test(combined) ||
+    /^d\d+/i.test(className?.trim() || "")
+  ) {
+    return { entryBand: 3.0, targetBand: 4.0, courseKey: "dreamer", courseName: "Dreamer" };
+  }
+
+  // 3. Builder: 4.0 -> 5.0
+  if (
+    combined.includes("builder") ||
+    /\b(bu|b\d+)\b/i.test(combined) ||
+    /^b\d+/i.test(className?.trim() || "")
+  ) {
+    return { entryBand: 4.0, targetBand: 5.0, courseKey: "builder", courseName: "Builder" };
+  }
+
+  // 4. Master: 5.0 -> 6.0
+  if (
+    combined.includes("master") ||
+    /\b(ma|m\d+)\b/i.test(combined) ||
+    /^m\d+/i.test(className?.trim() || "")
+  ) {
+    return { entryBand: 5.0, targetBand: 6.0, courseKey: "master", courseName: "Master" };
+  }
+
+  // 5. Leader: 6.0 -> 6.5
+  if (
+    combined.includes("leader") ||
+    /\b(le|l\d+)\b/i.test(combined) ||
+    /^l\d+/i.test(className?.trim() || "")
+  ) {
+    return { entryBand: 6.0, targetBand: 6.5, courseKey: "leader", courseName: "Leader" };
+  }
+
+  // Generic fallback if not matched
+  return { entryBand: 5.0, targetBand: 6.0, courseKey: "default", courseName: "Khóa học IELTS" };
 }
 
 export interface SkillMastery {
@@ -110,6 +177,7 @@ export interface SkillMastery {
 }
 
 export interface StudentJourneyOverview {
+  entryBand: number;
   currentBand: number;
   targetBand: number;
   currentRealm: RealmDefinition;
@@ -179,14 +247,16 @@ export function extractSubmissionBand(submission: any): number | null {
 }
 
 /**
- * Tính toán tổng quan hành trình của học viên dựa trên lịch sử bài nộp thực tế
+ * Tính toán tổng quan hành trình của học viên dựa trên lịch sử bài nộp thực tế và mục tiêu khóa học
  */
 export function calculateStudentJourney(
   submissions: any[] = [],
-  fallbackCurrentBand = 5.5,
-  fallbackTargetBand = 6.5
+  fallbackCurrentBand = 5.0,
+  fallbackTargetBand = 6.0,
+  entryBand?: number
 ): StudentJourneyOverview {
   const validSubmissions = Array.isArray(submissions) ? submissions : [];
+  const actualEntryBand = entryBand !== undefined ? entryBand : fallbackCurrentBand;
 
   const computeSkill = (
     skillName: "Listening" | "Reading" | "Writing" | "Speaking",
@@ -216,14 +286,14 @@ export function calculateStudentJourney(
     });
 
     const hasRealData = matchingScores.length > 0;
-    let band = fallbackCurrentBand;
+    let band = actualEntryBand;
 
     if (hasRealData) {
       // Lấy trung bình tối đa 5 bài gần nhất của kỹ năng này
       const recent = matchingScores.slice(0, 5);
       const sum = recent.reduce((acc, val) => acc + val, 0);
       band = Math.round((sum / recent.length) * 2) / 2;
-      band = Math.max(1.0, Math.min(9.0, band));
+      band = Math.max(actualEntryBand, Math.min(9.0, band));
     }
 
     const percent = Math.min(100, Math.round((band / 9.0) * 100));
@@ -235,7 +305,7 @@ export function calculateStudentJourney(
         currentBand: band,
         targetBand: fallbackTargetBand,
         percent,
-        needsFocus: false, // Sẽ xác định sau khi so sánh cả 4 kỹ năng
+        needsFocus: false,
       },
       hasRealData,
     };
@@ -270,7 +340,7 @@ export function calculateStudentJourney(
 
   const currentBand = hasAnyData
     ? Math.round(((skills.reduce((acc, s) => acc + s.currentBand, 0) / 4) * 2)) / 2
-    : fallbackCurrentBand;
+    : actualEntryBand;
 
   const currentRealm = getRealmByBand(currentBand);
 
@@ -284,6 +354,7 @@ export function calculateStudentJourney(
   );
 
   return {
+    entryBand: actualEntryBand,
     currentBand,
     targetBand: fallbackTargetBand,
     currentRealm,
