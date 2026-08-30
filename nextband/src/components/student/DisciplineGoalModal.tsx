@@ -57,11 +57,11 @@ export function DisciplineGoalModal({
     }, 500);
   };
 
-  const tierKeys: DisciplineTierKey[] = ["TIER_1", "TIER_2", "TIER_3"];
+  const tierKeys: DisciplineTierKey[] = ["TIER_1", "TIER_2", "TIER_3", "TIER_4"];
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-xl rounded-3xl p-6 sm:p-8 bg-white border border-slate-200/90 shadow-2xl">
+      <DialogContent className="max-w-xl rounded-3xl p-6 sm:p-8 bg-white border border-slate-200/90 shadow-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="space-y-2 text-center pb-2">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold font-mono mx-auto">
             <Target className="w-3.5 h-3.5 text-rose-600" />
@@ -77,12 +77,12 @@ export function DisciplineGoalModal({
           </DialogDescription>
         </DialogHeader>
 
-        {/* 3 Selectable Tier Cards */}
+        {/* 4 Selectable Tier Cards */}
         <div className="space-y-3 py-2">
           {tierKeys.map((key) => {
             const tier = DISCIPLINE_TIERS[key];
             const isSelected = selectedTier === key;
-            const isTopTier = key === "TIER_3";
+            const isTopTier = key === "TIER_4";
 
             return (
               <div
@@ -120,7 +120,7 @@ export function DisciplineGoalModal({
                             Vinh Danh Top 1
                           </Badge>
                         )}
-                        {key === "TIER_2" && (
+                        {key === "TIER_3" && (
                           <Badge className="bg-indigo-100 text-indigo-800 hover:bg-indigo-100 border-0 text-[10px] font-bold px-2 py-0">
                             Khuyên Dùng
                           </Badge>

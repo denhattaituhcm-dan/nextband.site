@@ -1,18 +1,19 @@
 /**
  * ARIS Discipline Scholarship (Học Bổng Kỷ Luật) Engine & State Helper
  * Synchronized with ARIS Course Policy:
- * - Cấp 1: BTVN >= 80% & Chuyên cần >= 90% -> 200.000đ
- * - Cấp 2: BTVN >= 90% & Chuyên cần >= 90% -> 300.000đ
- * - Cấp 3: BTVN 100% & Chuyên cần >= 90% -> 500.000đ
+ * - Cấp 1: Hoàn thành 50–69% bài tập về nhà -> 200.000đ
+ * - Cấp 2: Hoàn thành 70–79% bài tập về nhà -> 300.000đ
+ * - Cấp 3: Hoàn thành 80–89% bài tập về nhà -> 400.000đ
+ * - Cấp 4: Hoàn thành từ 90% bài tập về nhà -> 500.000đ
  */
 
-export type DisciplineTierKey = "TIER_1" | "TIER_2" | "TIER_3";
+export type DisciplineTierKey = "TIER_1" | "TIER_2" | "TIER_3" | "TIER_4";
 
 export interface DisciplineTierConfig {
   key: DisciplineTierKey;
   levelName: string;
   subTitle: string;
-  minHomeworkRate: number; // 0.8, 0.9, 1.0
+  minHomeworkRate: number; // 0.5, 0.7, 0.8, 0.9
   minAttendanceRate: number; // 0.9 for all tiers
   rewardAmount: number; // in VND
   rewardFormatted: string;
@@ -27,9 +28,9 @@ export interface DisciplineTierConfig {
 export const DISCIPLINE_TIERS: Record<DisciplineTierKey, DisciplineTierConfig> = {
   TIER_1: {
     key: "TIER_1",
-    levelName: "Cấp 1 — Duy Trì Vững Vàng",
-    subTitle: "Mục tiêu 80% BTVN",
-    minHomeworkRate: 0.8,
+    levelName: "Cấp 1 — Chăm Chỉ Khởi Đầu",
+    subTitle: "Mục tiêu 50–69% BTVN",
+    minHomeworkRate: 0.5,
     minAttendanceRate: 0.9,
     rewardAmount: 200000,
     rewardFormatted: "200.000đ",
@@ -37,14 +38,14 @@ export const DISCIPLINE_TIERS: Record<DisciplineTierKey, DisciplineTierConfig> =
     colorClass: "text-blue-600 dark:text-blue-400",
     bgClass: "bg-blue-50 dark:bg-blue-950/30",
     borderClass: "border-blue-200 dark:border-blue-800",
-    icon: "🌿",
-    description: "Hoàn thành tối thiểu 80% bài tập đúng hạn & chuyên cần 90%. Khấu trừ 200k vào khóa tiếp theo.",
+    icon: "🌱",
+    description: "Hoàn thành 50–69% bài tập về nhà & chuyên cần ≥ 90%. Khấu trừ 200k vào khóa tiếp theo.",
   },
   TIER_2: {
     key: "TIER_2",
-    levelName: "Cấp 2 — Bứt Phá Chiến Thuật",
-    subTitle: "Mục tiêu 90% BTVN",
-    minHomeworkRate: 0.9,
+    levelName: "Cấp 2 — Duy Trì Vững Vàng",
+    subTitle: "Mục tiêu 70–79% BTVN",
+    minHomeworkRate: 0.7,
     minAttendanceRate: 0.9,
     rewardAmount: 300000,
     rewardFormatted: "300.000đ",
@@ -52,14 +53,29 @@ export const DISCIPLINE_TIERS: Record<DisciplineTierKey, DisciplineTierConfig> =
     colorClass: "text-indigo-600 dark:text-indigo-400",
     bgClass: "bg-indigo-50 dark:bg-indigo-950/30",
     borderClass: "border-indigo-200 dark:border-indigo-800",
-    icon: "⚡",
-    description: "Hoàn thành tối thiểu 90% bài tập đúng hạn & chuyên cần 90%. Khấu trừ 300k vào khóa tiếp theo.",
+    icon: "🌿",
+    description: "Hoàn thành 70–79% bài tập về nhà & chuyên cần ≥ 90%. Khấu trừ 300k vào khóa tiếp theo.",
   },
   TIER_3: {
     key: "TIER_3",
-    levelName: "Cấp 3 — Kỷ Luật Thép",
-    subTitle: "Mục tiêu 100% Tuyệt Đối",
-    minHomeworkRate: 1.0,
+    levelName: "Cấp 3 — Bứt Phá Chiến Thuật",
+    subTitle: "Mục tiêu 80–89% BTVN",
+    minHomeworkRate: 0.8,
+    minAttendanceRate: 0.9,
+    rewardAmount: 400000,
+    rewardFormatted: "400.000đ",
+    badgeLabel: "HỌC BỔNG 400K",
+    colorClass: "text-purple-600 dark:text-purple-400",
+    bgClass: "bg-purple-50 dark:bg-purple-950/30",
+    borderClass: "border-purple-200 dark:border-purple-800",
+    icon: "⚡",
+    description: "Hoàn thành 80–89% bài tập về nhà & chuyên cần ≥ 90%. Khấu trừ 400k vào khóa tiếp theo.",
+  },
+  TIER_4: {
+    key: "TIER_4",
+    levelName: "Cấp 4 — Kỷ Luật Xuất Sắc",
+    subTitle: "Mục tiêu từ 90% BTVN",
+    minHomeworkRate: 0.9,
     minAttendanceRate: 0.9,
     rewardAmount: 500000,
     rewardFormatted: "500.000đ",
@@ -68,7 +84,7 @@ export const DISCIPLINE_TIERS: Record<DisciplineTierKey, DisciplineTierConfig> =
     bgClass: "bg-amber-50 dark:bg-amber-950/30",
     borderClass: "border-amber-300 dark:border-amber-700",
     icon: "🔥",
-    description: "Không bỏ lỡ bất kỳ bài tập nào (100% đúng hạn) & chuyên cần 90%. Khấu trừ 500k vào khóa tiếp theo.",
+    description: "Hoàn thành từ 90% bài tập về nhà trở lên & chuyên cần ≥ 90%. Khấu trừ 500k vào khóa tiếp theo.",
   },
 };
 
@@ -97,10 +113,10 @@ export interface DisciplineCalculationResult {
 const STORAGE_PREFIX = "aris_discipline_goal_";
 
 /**
- * Gets student's saved goal tier from localStorage or defaults to TIER_2 (90% - Recommended)
+ * Gets student's saved goal tier from localStorage or defaults to TIER_3 (80-89%)
  */
 export function getSavedDisciplineGoal(studentId?: string, classId?: string): DisciplineTierKey {
-  if (!studentId) return "TIER_2";
+  if (!studentId) return "TIER_3";
   const key = `${STORAGE_PREFIX}${studentId}_${classId || "global"}`;
   try {
     const saved = localStorage.getItem(key) as DisciplineTierKey;
@@ -110,7 +126,7 @@ export function getSavedDisciplineGoal(studentId?: string, classId?: string): Di
   } catch {
     // ignore storage error
   }
-  return "TIER_2";
+  return "TIER_3";
 }
 
 /**
@@ -140,10 +156,10 @@ export function calculateDisciplineStanding(
     submittedCount = 0,
     totalHomeworks = 0,
     attendanceRate = 1.0, // defaults to 100% if attendance tracking not yet populated
-    targetTier = "TIER_2",
+    targetTier = "TIER_3",
   } = input;
 
-  const targetTierConfig = DISCIPLINE_TIERS[targetTier] || DISCIPLINE_TIERS.TIER_2;
+  const targetTierConfig = DISCIPLINE_TIERS[targetTier] || DISCIPLINE_TIERS.TIER_3;
 
   // If no homework assigned yet, student starts at perfect 100%
   const currentHomeworkRate =
@@ -154,11 +170,13 @@ export function calculateDisciplineStanding(
   const decimalRate = totalHomeworks > 0 ? submittedCount / totalHomeworks : 1.0;
 
   if (attendanceRate >= 0.9) {
-    if (decimalRate >= 1.0 && submittedCount === totalHomeworks) {
-      effectiveTier = DISCIPLINE_TIERS.TIER_3;
-    } else if (decimalRate >= 0.9) {
-      effectiveTier = DISCIPLINE_TIERS.TIER_2;
+    if (decimalRate >= 0.9) {
+      effectiveTier = DISCIPLINE_TIERS.TIER_4;
     } else if (decimalRate >= 0.8) {
+      effectiveTier = DISCIPLINE_TIERS.TIER_3;
+    } else if (decimalRate >= 0.7) {
+      effectiveTier = DISCIPLINE_TIERS.TIER_2;
+    } else if (decimalRate >= 0.5) {
       effectiveTier = DISCIPLINE_TIERS.TIER_1;
     }
   }
@@ -170,7 +188,6 @@ export function calculateDisciplineStanding(
   const missedCount = Math.max(0, totalHomeworks - submittedCount);
   
   // Total allowed misses for the entire course to hit target rate
-  // e.g. for a 20-hw course at 90%: allowed misses = floor(20 * (1 - 0.9)) = 2
   const maxAllowedMisses = Math.floor(Math.max(1, totalHomeworks) * (1 - targetTierConfig.minHomeworkRate));
   const remainingAllowedMisses = Math.max(0, maxAllowedMisses - missedCount);
 
@@ -181,17 +198,20 @@ export function calculateDisciplineStanding(
   let statusMessage = "";
   let motivationalQuote = "";
 
-  if (effectiveTier?.key === "TIER_3") {
-    statusMessage = "Đang giữ trọn vẹn mốc Kỷ Luật Thép (100% đúng hạn)";
-    motivationalQuote = "Phong độ tuyệt đối! Bạn đang nắm chắc 500.000đ học bổng cho khóa kế tiếp.";
+  if (effectiveTier?.key === "TIER_4") {
+    statusMessage = `Đang đạt chuẩn Cấp 4 (${currentHomeworkRate}% BTVN - Từ 90%)`;
+    motivationalQuote = "Phong độ xuất sắc! Bạn đang nắm chắc 500.000đ học bổng cho khóa kế tiếp.";
+  } else if (effectiveTier?.key === "TIER_3") {
+    statusMessage = `Đang đạt chuẩn Cấp 3 (${currentHomeworkRate}% BTVN - 80–89%)`;
+    motivationalQuote = "Tiến độ rất vững vàng. Bạn đang tạm giữ 400.000đ học bổng cho khóa kế tiếp.";
   } else if (effectiveTier?.key === "TIER_2") {
-    statusMessage = `Đang đạt chuẩn Cấp 2 (${currentHomeworkRate}% BTVN)`;
-    motivationalQuote = "Tiến độ rất vững vàng. Bạn đang tạm giữ 300.000đ học bổng cho khóa kế tiếp.";
+    statusMessage = `Đang đạt chuẩn Cấp 2 (${currentHomeworkRate}% BTVN - 70–79%)`;
+    motivationalQuote = "Giữ nhịp đều đặn. Bạn đang tạm giữ 300.000đ học bổng cho khóa kế tiếp.";
   } else if (effectiveTier?.key === "TIER_1") {
-    statusMessage = `Đang đạt chuẩn Cấp 1 (${currentHomeworkRate}% BTVN)`;
-    motivationalQuote = "Giữ nhịp đều đặn. Bạn đang tạm giữ 200.000đ học bổng cho khóa kế tiếp.";
+    statusMessage = `Đang đạt chuẩn Cấp 1 (${currentHomeworkRate}% BTVN - 50–69%)`;
+    motivationalQuote = "Khởi đầu tốt. Bạn đang tạm giữ 200.000đ học bổng cho khóa kế tiếp.";
   } else {
-    statusMessage = `Hiện đạt ${currentHomeworkRate}% BTVN (Cần đạt tối thiểu 80%)`;
+    statusMessage = `Hiện đạt ${currentHomeworkRate}% BTVN (Cần đạt tối thiểu 50%)`;
     motivationalQuote = "Nộp đúng hạn các bài tiếp theo để mở khóa Học bổng Kỷ Luật 200k - 500k!";
   }
 

@@ -61,7 +61,7 @@ export function DisciplineScholarshipTracker({
     motivationalQuote,
   } = standing;
 
-  const isFlawless = effectiveTier?.key === "TIER_3";
+  const isFlawless = effectiveTier?.key === "TIER_4";
 
   return (
     <Card className="rounded-3xl border border-slate-200/90 bg-white shadow-xs overflow-hidden">
@@ -103,7 +103,7 @@ export function DisciplineScholarshipTracker({
                   </Badge>
                 ) : (
                   <Badge variant="outline" className="text-slate-500 border-slate-200 text-[10px] font-semibold">
-                    Chưa đạt mốc tối thiểu
+                    Chưa đạt mốc tối thiểu (50%)
                   </Badge>
                 )}
               </div>
@@ -126,7 +126,7 @@ export function DisciplineScholarshipTracker({
           </Button>
         </div>
 
-        {/* 3-Step Milestone Stepper */}
+        {/* 4-Step Milestone Stepper */}
         <div className="space-y-3">
           <div className="flex items-center justify-between text-xs font-bold text-slate-700">
             <span className="text-slate-500 font-mono text-[11px]">Tiến độ nộp BTVN</span>
@@ -143,9 +143,11 @@ export function DisciplineScholarshipTracker({
                 className={`h-full transition-all duration-500 rounded-full ${
                   isFlawless
                     ? "bg-gradient-to-r from-amber-400 via-rose-500 to-amber-500"
-                    : currentHomeworkRate >= 90
-                    ? "bg-gradient-to-r from-indigo-500 to-blue-600"
                     : currentHomeworkRate >= 80
+                    ? "bg-gradient-to-r from-purple-500 to-indigo-600"
+                    : currentHomeworkRate >= 70
+                    ? "bg-gradient-to-r from-indigo-500 to-blue-600"
+                    : currentHomeworkRate >= 50
                     ? "bg-gradient-to-r from-blue-400 to-blue-600"
                     : "bg-slate-400"
                 }`}
@@ -154,50 +156,71 @@ export function DisciplineScholarshipTracker({
             </div>
 
             {/* Stepping Pills under the bar */}
-            <div className="grid grid-cols-3 gap-2 pt-3">
-              {/* Step 1: 80% */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3">
+              {/* Step 1: 50-69% */}
               <div
-                className={`p-3 rounded-2xl border text-center transition-all ${
-                  currentHomeworkRate >= 80
-                    ? "bg-blue-50/80 border-blue-200 text-blue-900 shadow-2xs"
+                className={`p-2.5 sm:p-3 rounded-2xl border text-center transition-all ${
+                  currentHomeworkRate >= 50 && currentHomeworkRate < 70
+                    ? "bg-blue-50/80 border-blue-200 text-blue-900 shadow-2xs ring-1 ring-blue-400/30"
+                    : currentHomeworkRate >= 70
+                    ? "bg-blue-50/40 border-blue-100 text-blue-800"
                     : "bg-slate-50 border-slate-200/70 text-slate-400 opacity-70"
                 }`}
               >
                 <div className="text-[10px] font-mono font-bold uppercase tracking-wider">
-                  Cấp 1 · 80% BTVN
+                  Cấp 1 · 50–69%
                 </div>
                 <div className="text-sm font-black mt-0.5">200.000đ</div>
                 <div className="text-[10px] font-semibold text-slate-500 mt-0.5">Khấu trừ khóa sau</div>
               </div>
 
-              {/* Step 2: 90% */}
+              {/* Step 2: 70-79% */}
               <div
-                className={`p-3 rounded-2xl border text-center transition-all ${
-                  currentHomeworkRate >= 90
+                className={`p-2.5 sm:p-3 rounded-2xl border text-center transition-all ${
+                  currentHomeworkRate >= 70 && currentHomeworkRate < 80
                     ? "bg-indigo-50/80 border-indigo-200 text-indigo-900 shadow-2xs ring-1 ring-indigo-400/30"
+                    : currentHomeworkRate >= 80
+                    ? "bg-indigo-50/40 border-indigo-100 text-indigo-800"
                     : "bg-slate-50 border-slate-200/70 text-slate-400 opacity-70"
                 }`}
               >
                 <div className="text-[10px] font-mono font-bold uppercase tracking-wider">
-                  Cấp 2 · 90% BTVN
+                  Cấp 2 · 70–79%
                 </div>
                 <div className="text-sm font-black mt-0.5">300.000đ</div>
                 <div className="text-[10px] font-semibold text-slate-500 mt-0.5">Khấu trừ khóa sau</div>
               </div>
 
-              {/* Step 3: 100% */}
+              {/* Step 3: 80-89% */}
               <div
-                className={`p-3 rounded-2xl border text-center transition-all ${
-                  currentHomeworkRate === 100
+                className={`p-2.5 sm:p-3 rounded-2xl border text-center transition-all ${
+                  currentHomeworkRate >= 80 && currentHomeworkRate < 90
+                    ? "bg-purple-50/80 border-purple-200 text-purple-900 shadow-2xs ring-1 ring-purple-400/30"
+                    : currentHomeworkRate >= 90
+                    ? "bg-purple-50/40 border-purple-100 text-purple-800"
+                    : "bg-slate-50 border-slate-200/70 text-slate-400 opacity-70"
+                }`}
+              >
+                <div className="text-[10px] font-mono font-bold uppercase tracking-wider">
+                  Cấp 3 · 80–89%
+                </div>
+                <div className="text-sm font-black mt-0.5">400.000đ</div>
+                <div className="text-[10px] font-semibold text-slate-500 mt-0.5">Khấu trừ khóa sau</div>
+              </div>
+
+              {/* Step 4: >= 90% */}
+              <div
+                className={`p-2.5 sm:p-3 rounded-2xl border text-center transition-all ${
+                  currentHomeworkRate >= 90
                     ? "bg-gradient-to-b from-amber-50 to-amber-100/60 border-amber-300 text-amber-950 shadow-md ring-2 ring-amber-400/30"
                     : "bg-slate-50 border-slate-200/70 text-slate-400 opacity-70"
                 }`}
               >
                 <div className="text-[10px] font-mono font-black uppercase tracking-wider text-amber-700">
-                  Cấp 3 · Kỷ Luật Thép
+                  Cấp 4 · Từ 90%
                 </div>
                 <div className="text-sm font-black text-slate-900 mt-0.5">500.000đ</div>
-                <div className="text-[10px] font-bold text-amber-800 mt-0.5">Tối đa 100%</div>
+                <div className="text-[10px] font-bold text-amber-800 mt-0.5">Tối đa 500k</div>
               </div>
             </div>
           </div>

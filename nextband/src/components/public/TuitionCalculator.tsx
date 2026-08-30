@@ -59,10 +59,11 @@ const TINH_ANH_OPTIONS: ScholarshipOption[] = [
 
 // 2. Học bổng Kỷ Luật (Từ khóa 2 trở đi)
 const KY_LUAT_OPTIONS: ScholarshipOption[] = [
-  { id: "none", label: "Chọn mức nỗ lực kỷ luật dự kiến...", amt: 0 },
-  { id: "cap1", label: "Cấp 1: BTVN ≥ 80% & Chuyên cần ≥ 90% (200k)", amt: 200000 },
-  { id: "cap2", label: "Cấp 2: BTVN ≥ 90% & Chuyên cần ≥ 90% (300k)", amt: 300000 },
-  { id: "cap3", label: "Cấp 3 — Kỷ Luật Thép: BTVN 100% & Chuyên cần ≥ 90% (500k)", amt: 500000 },
+  { id: "none", label: "Chọn mức học chăm chỉ mà bạn dự định đạt được", amt: 0 },
+  { id: "cap1", label: "Hoàn thành 50–69% bài tập về nhà", amt: 200000 },
+  { id: "cap2", label: "Hoàn thành 70–79% bài tập về nhà", amt: 300000 },
+  { id: "cap3", label: "Hoàn thành 80–89% bài tập về nhà", amt: 400000 },
+  { id: "cap4", label: "Hoàn thành từ 90% bài tập về nhà", amt: 500000 },
 ];
 
 // 3. Đặc Quyền Đồng Môn (200k/khóa)
@@ -170,21 +171,28 @@ export function ScholarshipPolicyDetails() {
                   <span className="font-bold text-foreground">Cấp 1</span>
                   <span className="font-extrabold text-brand-blue text-xs sm:text-sm">200.000đ</span>
                 </div>
-                <p className="text-muted-foreground text-[11px]">BTVN ≥ 80% & Chuyên cần ≥ 90%</p>
+                <p className="text-muted-foreground text-[11px]">Hoàn thành 50–69% bài tập về nhà</p>
               </div>
               <div className="p-2.5 rounded-xl bg-muted/60 space-y-0.5">
                 <div className="flex justify-between items-center">
                   <span className="font-bold text-foreground">Cấp 2</span>
                   <span className="font-extrabold text-brand-blue text-xs sm:text-sm">300.000đ</span>
                 </div>
-                <p className="text-muted-foreground text-[11px]">BTVN ≥ 90% & Chuyên cần ≥ 90%</p>
+                <p className="text-muted-foreground text-[11px]">Hoàn thành 70–79% bài tập về nhà</p>
+              </div>
+              <div className="p-2.5 rounded-xl bg-muted/60 space-y-0.5">
+                <div className="flex justify-between items-center">
+                  <span className="font-bold text-foreground">Cấp 3</span>
+                  <span className="font-extrabold text-brand-blue text-xs sm:text-sm">400.000đ</span>
+                </div>
+                <p className="text-muted-foreground text-[11px]">Hoàn thành 80–89% bài tập về nhà</p>
               </div>
               <div className="p-2.5 rounded-xl bg-brand-blue-soft/40 border border-brand-blue/20 space-y-0.5">
                 <div className="flex justify-between items-center">
-                  <span className="font-black text-brand-blue">Cấp 3 — Kỷ Luật Thép</span>
+                  <span className="font-black text-brand-blue">Cấp 4 — Kỷ Luật Xuất Sắc</span>
                   <span className="font-black text-brand-blue text-xs sm:text-sm">500.000đ</span>
                 </div>
-                <p className="text-brand-blue/80 text-[11px]">BTVN 100% & Chuyên cần ≥ 90%</p>
+                <p className="text-brand-blue/80 text-[11px]">Hoàn thành từ 90% bài tập về nhà</p>
               </div>
             </div>
           </div>
