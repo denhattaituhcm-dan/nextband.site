@@ -12,16 +12,13 @@ describe("Cross-Assessment Attempt & Submission Integrity Invariants", () => {
   let createdSubmissionIds: string[] = [];
 
   beforeAll(async () => {
-    let existingUser = await prisma.user.findFirst({
+    const existingUser = await prisma.user.findFirst({
       where: {
         roles: { some: { role: "student" } },
       },
     });
-    if (!existingUser) {
-      existingUser = await prisma.user.findFirst();
-    }
-    if (!existingUser) throw new Error("No existing user found in DB for testing");
-    testStudent = { id: existingUser.userId || existingUser.id, roles: ["student"] };
+    if (!existingUser || !existingUser.userId) throw new Error("No existing user found in DB for testing");
+    testStudent = { id: existingUser.userId, roles: ["student"] };
   });
 
   beforeEach(async () => {
