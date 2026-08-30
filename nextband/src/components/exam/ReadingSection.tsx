@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils";
 import { formatStorageUrl } from "@/lib/api";
 import { DropdownSelect } from "./DropdownSelect";
 import { RichContent } from "./RichContent";
+import { InContextLearningLayer } from "@/modules/lexicon";
 
 import {
   FillBlankHtmlRenderer,
@@ -512,8 +513,9 @@ export function ReadingSection({
 
       {/* Left - Passage */}
       <ScrollArea className="h-[calc(100vh-200px)]">
-        <div ref={passageRef} className="p-6" onMouseUp={handleTextSelection}>
-          <div className="flex items-center justify-between gap-2 mb-4">
+        <InContextLearningLayer sourceContentRef={`reading_section_${section?.id || 'default'}`}>
+          <div ref={passageRef} className="p-6" onMouseUp={handleTextSelection}>
+            <div className="flex items-center justify-between gap-2 mb-4">
             <div className="flex items-center gap-2 text-[hsl(var(--reading))]">
               <BookOpen className="h-5 w-5" />
               <h2 className="text-xl font-semibold">{section.title}</h2>
@@ -643,7 +645,8 @@ export function ReadingSection({
             </div>
           )}
         </div>
-      </ScrollArea>
+      </InContextLearningLayer>
+    </ScrollArea>
 
       {/* Right - Questions */}
       <ScrollArea className="flex-1 h-full">
