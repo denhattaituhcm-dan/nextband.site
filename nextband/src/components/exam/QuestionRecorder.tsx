@@ -6,7 +6,7 @@ import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { AudioWaveform } from "./AudioWaveform";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
-import { API_BASE_URL, getAuthToken } from "@/lib/api";
+import { API_BASE_URL, getAuthToken, formatStorageUrl } from "@/lib/api";
 
 interface QuestionRecorderProps {
   questionId: string;
@@ -28,22 +28,7 @@ function CustomAudioPlayer({ src }: { src: string }) {
 
   useEffect(() => {
     if (!src) return;
-    if (src.startsWith("speaking-recordings/")) {
-      const cleanPath = src.replace(/^speaking-recordings\//, "");
-      supabase.storage
-        .from("speaking-recordings")
-        .createSignedUrl(cleanPath, 3600)
-        .then(({ data }) => {
-          if (data?.signedUrl) {
-            setResolvedSrc(data.signedUrl);
-          }
-        })
-        .catch(() => {
-          setResolvedSrc(src);
-        });
-    } else {
-      setResolvedSrc(src);
-    }
+    setResolvedSrc(formatStorageUrl(src));
   }, [src]);
 
   useEffect(() => {

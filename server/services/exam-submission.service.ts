@@ -1217,14 +1217,14 @@ export class ExamSubmissionService {
             const scores = [taskResponse, coherence, lexical, grammar].filter((v): v is number => typeof v === "number" && !isNaN(v));
             if (scores.length > 0) {
               const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-              answerScore = Math.round(avg * 2) / 2;
+              answerScore = Math.floor(avg * 2) / 2;
             }
           } else if (fluencyAndCoherence != null || pronunciation != null) {
             // Speaking rubric
             const scores = [fluencyAndCoherence, lexical, grammar, pronunciation].filter((v): v is number => typeof v === "number" && !isNaN(v));
             if (scores.length > 0) {
               const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-              answerScore = Math.round(avg * 2) / 2;
+              answerScore = Math.floor(avg * 2) / 2;
             }
           }
         }

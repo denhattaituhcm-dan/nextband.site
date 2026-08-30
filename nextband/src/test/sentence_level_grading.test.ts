@@ -101,7 +101,7 @@ describe("🎯 Sentence-Level Grading & Feedback Serialization Test Suite", () =
     expect(hasRemoved).toBe(true);
   });
 
-  it("1.7 should calculate accurate skill overall band from 4 whole-integer criteria", async () => {
+  it("1.7 should calculate accurate skill overall band from 4 criteria with floor to nearest 0.5 rule", async () => {
     const { calculateSpeakingBand, calculateWritingBand } = await import("@/lib/sentenceFeedback");
 
     // Case 1: FC=5, LR=6, GRA=5, PR=6 -> avg=5.5 -> Band 5.5
@@ -114,7 +114,7 @@ describe("🎯 Sentence-Level Grading & Feedback Serialization Test Suite", () =
       })
     ).toBe("5.5");
 
-    // Case 2: FC=5, LR=6, GRA=5, PR=5 -> avg=5.25 -> Band 5.5 (IELTS .25 rounds up to .5)
+    // Case 2: FC=5, LR=6, GRA=5, PR=5 -> avg=5.25 -> Band 5.0 (Floor to nearest 0.5: .25 -> .0)
     expect(
       calculateSpeakingBand({
         fluencyAndCoherence: 5,
@@ -122,9 +122,19 @@ describe("🎯 Sentence-Level Grading & Feedback Serialization Test Suite", () =
         grammar: 5,
         pronunciation: 5,
       })
-    ).toBe("5.5");
+    ).toBe("5.0");
 
-    // Case 3: TR=6, CC=6, LR=6, GRA=5 -> avg=5.75 -> Band 6.0 (IELTS .75 rounds up to next whole)
+    // Case 3: FC=6, LR=7, GRA=6, PR=6 -> avg=6.25 -> Band 6.0 (User screenshot case)
+    expect(
+      calculateSpeakingBand({
+        fluencyAndCoherence: 6,
+        lexical: 7,
+        grammar: 6,
+        pronunciation: 6,
+      })
+    ).toBe("6.0");
+
+    // Case 4: TR=6, CC=6, LR=6, GRA=5 -> avg=5.75 -> Band 5.5 (Floor to nearest 0.5: .75 -> .5)
     expect(
       calculateWritingBand({
         taskResponse: 6,
@@ -132,9 +142,19 @@ describe("🎯 Sentence-Level Grading & Feedback Serialization Test Suite", () =
         lexical: 6,
         grammar: 5,
       })
-    ).toBe("6.0");
+    ).toBe("5.5");
 
-    // Case 4: TR=7, CC=7, LR=7, GRA=7 -> avg=7.0 -> Band 7.0
+    // Case 5: TR=7, CC=7, LR=7, GRA=6 -> avg=6.75 -> Band 6.5
+    expect(
+      calculateWritingBand({
+        taskResponse: 7,
+        coherence: 7,
+        lexical: 7,
+        grammar: 6,
+      })
+    ).toBe("6.5");
+
+    // Case 6: TR=7, CC=7, LR=7, GRA=7 -> avg=7.0 -> Band 7.0
     expect(
       calculateWritingBand({
         taskResponse: 7,

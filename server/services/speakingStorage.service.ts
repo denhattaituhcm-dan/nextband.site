@@ -22,7 +22,7 @@ export class SpeakingStorageService {
   }
 
   /**
-   * Đảm bảo Bucket speaking-recordings tồn tại và được cấu hình Private
+   * Đảm bảo Bucket speaking-recordings tồn tại và được cấu hình Public
    */
   async ensureBucketExists(): Promise<void> {
     try {
@@ -30,10 +30,12 @@ export class SpeakingStorageService {
       const exists = buckets?.some((b) => b.name === SPEAKING_BUCKET);
       if (!exists) {
         await this.supabase.storage.createBucket(SPEAKING_BUCKET, {
-          public: false,
+          public: true,
           fileSizeLimit: 15 * 1024 * 1024,
           allowedMimeTypes: ["audio/webm", "audio/ogg", "audio/mp4", "audio/wav"],
         });
+      } else {
+        await this.supabase.storage.updateBucket(SPEAKING_BUCKET, { public: true });
       }
     } catch {
       // Safe fallback
@@ -121,7 +123,7 @@ export class SpeakingStorageService {
   }
 
   /**
-   * Tạo Signed URL hoặc Public URL có thời hạn để phát âm thanh
+   * Tạo Public URL (hoặc Signed URL dự phòng) để phát âm thanh
    */
   async getSignedPlaybackUrl(storagePath: string, expiresInSeconds: number = 7200): Promise<string | null> {
     if (!storagePath) return null;
@@ -134,15 +136,8 @@ export class SpeakingStorageService {
     if (supabaseUrlMatch) {
       const bucket = supabaseUrlMatch[1];
       const subPath = decodeURIComponent(supabaseUrlMatch[2]);
-      if (bucket === SPEAKING_BUCKET) {
-        const { data, error } = await this.supabase.storage
-          .from(SPEAKING_BUCKET)
-          .createSignedUrl(subPath, expiresInSeconds);
-        if (!error && data?.signedUrl) return data.signedUrl;
-      } else if (bucket === "exam-assets") {
-        const { data } = this.supabase.storage.from("exam-assets").getPublicUrl(subPath);
-        if (data?.publicUrl) return data.publicUrl;
-      }
+      const { data } = this.supabase.storage.from(bucket).getPublicUrl(subPath);
+      if (data?.publicUrl) return data.publicUrl;
     }
 
     if (clean.startsWith("http://") || clean.startsWith("https://") || clean.startsWith("blob:") || clean.startsWith("data:")) {
@@ -158,14 +153,19 @@ export class SpeakingStorageService {
       if (pubData?.publicUrl) return pubData.publicUrl;
     }
 
-    // Mặc định là speaking-recordings bucket (private bucket cần Signed URL)
+    // Bucket speaking-recordings (Public)
     const subCleanPath = cleanPath.replace(/^speaking-recordings\//, "");
+    const { data: pubSpeaking } = this.supabase.storage.from(SPEAKING_BUCKET).getPublicUrl(subCleanPath);
+    if (pubSpeaking?.publicUrl) {
+      return pubSpeaking.publicUrl;
+    }
+
+    // Fallback sang createSignedUrl nếu cần
     const { data, error } = await this.supabase.storage
       .from(SPEAKING_BUCKET)
       .createSignedUrl(subCleanPath, expiresInSeconds);
 
     if (error || !data?.signedUrl) {
-      // Thử fallback sang exam-assets nếu speaking-recordings không có
       const { data: fallbackPub } = this.supabase.storage.from("exam-assets").getPublicUrl(cleanPath);
       if (fallbackPub?.publicUrl) return fallbackPub.publicUrl;
       throw new Error(error?.message || "Không thể tạo liên kết phát âm thanh");

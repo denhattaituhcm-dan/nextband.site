@@ -132,11 +132,11 @@ export class AudioStorageService {
   }
 
   /**
-   * Lấy URL phát âm thanh với cơ chế Cache Signed URL 2h cho Supabase Storage private buckets
+   * Lấy URL phát âm thanh trực tiếp (Public URL không hết hạn)
    */
   public static async resolvePlayableUrl(
     raw?: string | null,
-    forceRefresh: boolean = false
+    _forceRefresh: boolean = false
   ): Promise<string> {
     const meta = this.parse(raw);
     if (!meta.isAudio || !meta.rawUrl) return "";
@@ -151,35 +151,7 @@ export class AudioStorageService {
       return meta.rawUrl;
     }
 
-    const cacheKey = `${meta.bucket}:${meta.storagePath}`;
-    const now = Date.now();
-
-    if (!forceRefresh) {
-      const cached = signedUrlCache.get(cacheKey);
-      if (cached && cached.expiresAtMs > now + 60000) {
-        return cached.signedUrl;
-      }
-    }
-
-    try {
-      if (meta.bucket && meta.storagePath) {
-        const { data, error } = await supabase.storage
-          .from(meta.bucket)
-          .createSignedUrl(meta.storagePath, 7200);
-
-        if (!error && data?.signedUrl) {
-          signedUrlCache.set(cacheKey, {
-            signedUrl: data.signedUrl,
-            expiresAtMs: now + CACHE_TTL_MS,
-          });
-          return data.signedUrl;
-        }
-      }
-    } catch (e) {
-      console.warn("[AudioStorageService] Fallback to public URL due to signed URL error:", e);
-    }
-
-    // Fallback public url
+    // Public URL từ Supabase (Không giới hạn thời gian / không hết hạn)
     if (meta.bucket && meta.storagePath) {
       const { data } = supabase.storage.from(meta.bucket).getPublicUrl(meta.storagePath);
       if (data?.publicUrl) {

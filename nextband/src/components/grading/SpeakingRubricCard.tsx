@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import {
@@ -8,8 +8,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Award } from "lucide-react";
+import { Award, HelpCircle } from "lucide-react";
 import { CriteriaScores, calculateSpeakingBand } from "@/lib/sentenceFeedback";
+import { SpeakingRubricModal } from "./SpeakingRubricModal";
 
 interface SpeakingRubricCardProps {
   scores: CriteriaScores;
@@ -27,6 +28,7 @@ function getOptionsForValue(currentVal?: number | null): string[] {
 }
 
 export function SpeakingRubricCard({ scores, onChange, disabled = false }: SpeakingRubricCardProps) {
+  const [showRubricModal, setShowRubricModal] = useState(false);
   const calculatedBand = useMemo(() => calculateSpeakingBand(scores), [scores]);
 
   const handleScoreChange = (field: keyof CriteriaScores, val: string) => {
@@ -38,16 +40,26 @@ export function SpeakingRubricCard({ scores, onChange, disabled = false }: Speak
   };
 
   return (
-    <Card className="border border-slate-200 shadow-2xs rounded-xl p-3.5 space-y-3 bg-white font-sans">
-      <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-        <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-          <Award className="h-3.5 w-3.5 text-orange-600" />
-          Tiêu chí Speaking
-        </span>
-        <div className="text-xs font-extrabold text-orange-700 bg-orange-50 px-2.5 py-0.5 rounded-lg border border-orange-200">
-          Band: {calculatedBand}
+    <>
+      <SpeakingRubricModal open={showRubricModal} onOpenChange={setShowRubricModal} />
+      <Card className="border border-slate-200 shadow-2xs rounded-xl p-3.5 space-y-3 bg-white font-sans">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+          <button
+            type="button"
+            onClick={() => setShowRubricModal(true)}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-900 hover:text-orange-700 hover:bg-orange-50 px-2 py-1 -ml-2 rounded-lg transition-all cursor-pointer group focus:outline-none focus:ring-1 focus:ring-orange-300"
+            title="Click để xem bảng mô tả tiêu chí chấm Speaking (Band Descriptors 4.0 - 8.0)"
+          >
+            <Award className="h-3.5 w-3.5 text-orange-600 group-hover:scale-110 transition-transform" />
+            <span className="group-hover:underline">Tiêu chí Speaking</span>
+            <span className="text-[10px] font-semibold text-orange-600 bg-orange-100/80 group-hover:bg-orange-200 px-1.5 py-0.5 rounded border border-orange-200 transition-colors">
+              Xem mô tả band
+            </span>
+          </button>
+          <div className="text-xs font-extrabold text-orange-700 bg-orange-50 px-2.5 py-0.5 rounded-lg border border-orange-200">
+            Band: {calculatedBand}
+          </div>
         </div>
-      </div>
 
       <div className="grid grid-cols-2 gap-2.5 pt-0.5">
         <div className="space-y-1">
@@ -123,5 +135,6 @@ export function SpeakingRubricCard({ scores, onChange, disabled = false }: Speak
         </div>
       </div>
     </Card>
+  </>
   );
 }

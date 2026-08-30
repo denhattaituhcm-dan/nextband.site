@@ -582,7 +582,7 @@ export function SpeakingGrader({
             <div className="flex items-center justify-between border-b border-slate-100 pb-2">
               <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
                 <Sparkles className="h-3.5 w-3.5 text-orange-600" />
-                Bằng chứng chẩn đoán (Candidate v1.0)
+                Bằng chứng chẩn đoán
               </span>
               <Badge variant="outline" className="text-[11px] font-semibold bg-slate-50 text-slate-700 border-slate-200">
                 {selectedEvidenceTagIds.size} nhãn đã chọn

@@ -42,7 +42,7 @@ export function calculateWritingBand(scores?: CriteriaScores | null): string {
   if (valid.length === 0) return "—";
   const sum = valid.reduce((a, b) => a + b, 0);
   const avg = sum / valid.length;
-  return (Math.round(avg * 2) / 2).toFixed(1);
+  return (Math.floor(avg * 2) / 2).toFixed(1);
 }
 
 export function calculateSpeakingBand(scores?: CriteriaScores | null): string {
@@ -55,7 +55,7 @@ export function calculateSpeakingBand(scores?: CriteriaScores | null): string {
   if (valid.length === 0) return "—";
   const sum = valid.reduce((a, b) => a + b, 0);
   const avg = sum / valid.length;
-  return (Math.round(avg * 2) / 2).toFixed(1);
+  return (Math.floor(avg * 2) / 2).toFixed(1);
 }
 
 export const PRESET_ERROR_TAGS: Record<ErrorCategory, string[]> = {

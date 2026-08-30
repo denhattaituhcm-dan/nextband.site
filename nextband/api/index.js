@@ -81663,7 +81663,7 @@ var init_speakingStorage_service = __esm({
       }
       supabase;
       /**
-       * Đảm bảo Bucket speaking-recordings tồn tại và được cấu hình Private
+       * Đảm bảo Bucket speaking-recordings tồn tại và được cấu hình Public
        */
       async ensureBucketExists() {
         try {
@@ -81671,10 +81671,12 @@ var init_speakingStorage_service = __esm({
           const exists = buckets?.some((b) => b.name === SPEAKING_BUCKET);
           if (!exists) {
             await this.supabase.storage.createBucket(SPEAKING_BUCKET, {
-              public: false,
+              public: true,
               fileSizeLimit: 15 * 1024 * 1024,
               allowedMimeTypes: ["audio/webm", "audio/ogg", "audio/mp4", "audio/wav"]
             });
+          } else {
+            await this.supabase.storage.updateBucket(SPEAKING_BUCKET, { public: true });
           }
         } catch {
         }
@@ -81739,7 +81741,7 @@ var init_speakingStorage_service = __esm({
         });
       }
       /**
-       * Tạo Signed URL hoặc Public URL có thời hạn để phát âm thanh
+       * Tạo Public URL (hoặc Signed URL dự phòng) để phát âm thanh
        */
       async getSignedPlaybackUrl(storagePath, expiresInSeconds = 7200) {
         if (!storagePath) return null;
@@ -81750,13 +81752,8 @@ var init_speakingStorage_service = __esm({
         if (supabaseUrlMatch) {
           const bucket = supabaseUrlMatch[1];
           const subPath = decodeURIComponent(supabaseUrlMatch[2]);
-          if (bucket === SPEAKING_BUCKET) {
-            const { data: data2, error: error2 } = await this.supabase.storage.from(SPEAKING_BUCKET).createSignedUrl(subPath, expiresInSeconds);
-            if (!error2 && data2?.signedUrl) return data2.signedUrl;
-          } else if (bucket === "exam-assets") {
-            const { data: data2 } = this.supabase.storage.from("exam-assets").getPublicUrl(subPath);
-            if (data2?.publicUrl) return data2.publicUrl;
-          }
+          const { data: data2 } = this.supabase.storage.from(bucket).getPublicUrl(subPath);
+          if (data2?.publicUrl) return data2.publicUrl;
         }
         if (clean.startsWith("http://") || clean.startsWith("https://") || clean.startsWith("blob:") || clean.startsWith("data:")) {
           return clean;
@@ -81769,6 +81766,10 @@ var init_speakingStorage_service = __esm({
           if (pubData?.publicUrl) return pubData.publicUrl;
         }
         const subCleanPath = cleanPath.replace(/^speaking-recordings\//, "");
+        const { data: pubSpeaking } = this.supabase.storage.from(SPEAKING_BUCKET).getPublicUrl(subCleanPath);
+        if (pubSpeaking?.publicUrl) {
+          return pubSpeaking.publicUrl;
+        }
         const { data, error } = await this.supabase.storage.from(SPEAKING_BUCKET).createSignedUrl(subCleanPath, expiresInSeconds);
         if (error || !data?.signedUrl) {
           const { data: fallbackPub } = this.supabase.storage.from("exam-assets").getPublicUrl(cleanPath);
@@ -102606,13 +102607,13 @@ var ExamSubmissionService = class {
             const scores = [taskResponse, coherence, lexical, grammar].filter((v) => typeof v === "number" && !isNaN(v));
             if (scores.length > 0) {
               const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-              answerScore = Math.round(avg * 2) / 2;
+              answerScore = Math.floor(avg * 2) / 2;
             }
           } else if (fluencyAndCoherence != null || pronunciation != null) {
             const scores = [fluencyAndCoherence, lexical, grammar, pronunciation].filter((v) => typeof v === "number" && !isNaN(v));
             if (scores.length > 0) {
               const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-              answerScore = Math.round(avg * 2) / 2;
+              answerScore = Math.floor(avg * 2) / 2;
             }
           }
         }
