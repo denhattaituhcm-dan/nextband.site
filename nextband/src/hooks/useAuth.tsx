@@ -93,8 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (
         authUser.email?.toLowerCase() === "admin@ielts.com" ||
-        authUser.email?.toLowerCase() === "admin@nextband.site" ||
-        authUser.email?.toLowerCase().startsWith("admin@")
+        authUser.email?.toLowerCase() === "admin@nextband.site"
       ) {
         if (!userRoles.includes("admin")) {
           userRoles.push("admin");

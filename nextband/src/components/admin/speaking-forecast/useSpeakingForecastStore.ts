@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Season, ForecastTopic, SeasonMetrics } from './types';
-import { initialSeasons, initialTopics } from './mockData';
+// mockData is intentionally NOT imported here — see useSpeakingForecastStore fix (BUG-P1-DATA-03)
 import { speakingForecastApi } from '@/lib/api';
 
 const SEASONS_STORAGE_KEY = 'nb_speaking_forecast_seasons';
@@ -17,7 +17,7 @@ function getStoredSeasons(): Season[] {
   } catch (e) {
     console.error('Failed to load seasons from storage', e);
   }
-  return initialSeasons;
+  return []; // Empty default — do NOT fall back to mock data
 }
 
 function normalizeTopic(topic: ForecastTopic): ForecastTopic {
@@ -57,7 +57,7 @@ function getStoredTopics(): ForecastTopic[] {
   } catch (e) {
     console.error('Failed to load topics from storage', e);
   }
-  return initialTopics;
+  return []; // Empty default — do NOT fall back to mock data
 }
 
 function getStoredSelectedSeason(): string {
@@ -67,7 +67,7 @@ function getStoredSelectedSeason(): string {
   } catch (e) {
     console.error('Failed to load selected season from storage', e);
   }
-  return initialSeasons[0]?.id || 'season-2026-q2';
+  return ''; // Empty default — will be set when server data loads
 }
 
 function emitStoreUpdate() {

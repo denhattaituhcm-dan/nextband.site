@@ -185,8 +185,7 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
 
   const isRootAdmin =
     email?.toLowerCase() === "admin@ielts.com" ||
-    email?.toLowerCase() === "admin@nextband.site" ||
-    email?.toLowerCase().startsWith("admin@");
+    email?.toLowerCase() === "admin@nextband.site";
 
   if (isRootAdmin && !finalRoles.includes("admin")) {
     finalRoles.push("admin");

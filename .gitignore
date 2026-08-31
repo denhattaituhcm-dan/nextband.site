@@ -9,3 +9,11 @@ ielts-be/uploads/
 logs/
 
 .vercel
+
+# AI Skills & Local Agent Tools
+.agents/
+
+# Slides & Slide Generator Scripts
+slides/
+scripts/build_*.py
+scripts/export_*.py

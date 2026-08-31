@@ -22,9 +22,13 @@ export class NotificationService {
     tx: Prisma.TransactionClient | PrismaClient,
     data: CreateNotificationDTO
   ): Promise<void> {
-    try {
-      await tx.notification.create({
-        data: {
+    // Use createMany with skipDuplicates: true so Prisma generates
+    // INSERT ... ON CONFLICT DO NOTHING at the PostgreSQL level.
+    // This prevents a duplicate from aborting the enclosing $transaction —
+    // the fix for BUG-P1-TX-02.
+    await tx.notification.createMany({
+      data: [
+        {
           userId: data.userId,
           type: data.type,
           title: data.title,
@@ -33,32 +37,9 @@ export class NotificationService {
           entityType: data.entityType || null,
           entityId: data.entityId || null,
         },
-      });
-    } catch (err: unknown) {
-      // Prisma P2002: Unique constraint failed -> Only skip if it matches idempotency constraint
-      if (
-        typeof err === 'object' &&
-        err !== null &&
-        'code' in err &&
-        (err as { code: string }).code === 'P2002'
-      ) {
-        const meta = (err as { meta?: { target?: string[] | string } }).meta;
-        const target = meta?.target;
-        const isIdempotencyCollision =
-          !target ||
-          (Array.isArray(target) &&
-            (target.includes('entity_type') ||
-             target.includes('entityId') ||
-             target.includes('notifications_idempotency_idx'))) ||
-          (typeof target === 'string' &&
-            (target.includes('idempotency') || target.includes('notifications')));
-
-        if (isIdempotencyCollision) {
-          return;
-        }
-      }
-      throw err;
-    }
+      ],
+      skipDuplicates: true,
+    });
   }
 
   /**
