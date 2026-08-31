@@ -105040,6 +105040,104 @@ var ClassService = class {
     }
     return result;
   }
+  // Use Case: Postpone a session due to unexpected circumstances and shift all subsequent sessions
+  async postponeSessionAndShift(user, classId, sessionId, options = {}) {
+    const classData = await this.repo.findById(classId);
+    if (!classData) {
+      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+    }
+    const isAdmin = user.roles.includes("admin");
+    if (!isAdmin && classData.teacherId !== user.id) {
+      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n d\u1EDDi l\u1ECBch l\u1EDBp h\u1ECDc n\xE0y", 403);
+    }
+    const allSessions = await this.prisma.classSession.findMany({
+      where: { classId },
+      orderBy: { sessionNumber: "asc" }
+    });
+    const targetSession = allSessions.find((s) => s.id === sessionId);
+    if (!targetSession) {
+      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y bu\u1ED5i h\u1ECDc c\u1EA7n d\u1EDDi");
+    }
+    if (targetSession.status === "COMPLETED") {
+      throw new AuthorizationError("Kh\xF4ng th\u1EC3 d\u1EDDi bu\u1ED5i h\u1ECDc \u0111\xE3 ho\xE0n th\xE0nh \u0111i\u1EC3m danh", 400);
+    }
+    let weekdays = [];
+    const schedules = await this.prisma.classSchedule.findMany({
+      where: { classId }
+    });
+    if (schedules.length > 0) {
+      weekdays = schedules.map((sc) => sc.dayOfWeek);
+    } else {
+      const distinctDows = new Set(
+        allSessions.filter((s) => s.plannedDate).map((s) => new Date(s.plannedDate).getDay())
+      );
+      weekdays = Array.from(distinctDows);
+    }
+    if (weekdays.length === 0) {
+      weekdays = [1, 3, 5];
+    }
+    const sessionsToShift = allSessions.filter(
+      (s) => s.sessionNumber >= targetSession.sessionNumber && s.status !== "COMPLETED"
+    );
+    const origDate = new Date(targetSession.plannedDate);
+    const cur = new Date(origDate);
+    cur.setDate(cur.getDate() + 1);
+    const updatedSessions = [];
+    for (const sess of sessionsToShift) {
+      let foundValidDate = false;
+      let safetyCounter = 60;
+      while (!foundValidDate && safetyCounter > 0) {
+        safetyCounter--;
+        const dow = cur.getDay();
+        const isHoliday = isHolidayDate(cur, options.customHolidays);
+        if (weekdays.includes(dow) && !isHoliday) {
+          foundValidDate = true;
+          const newPlannedDate = new Date(cur);
+          newPlannedDate.setUTCHours(0, 0, 0, 0);
+          const updated = await this.prisma.classSession.update({
+            where: { id: sess.id },
+            data: { plannedDate: newPlannedDate }
+          });
+          updatedSessions.push(updated);
+        }
+        cur.setDate(cur.getDate() + 1);
+      }
+    }
+    if (updatedSessions.length > 0) {
+      const lastSession = updatedSessions[updatedSessions.length - 1];
+      const newEndDate = new Date(lastSession.plannedDate);
+      newEndDate.setUTCHours(23, 59, 59, 999);
+      await this.prisma.class.update({
+        where: { id: classId },
+        data: { endDate: newEndDate }
+      });
+    }
+    const reasonText = options.reason ? ` L\xFD do: ${options.reason}.` : "";
+    const newDateStr = updatedSessions[0] ? new Date(updatedSessions[0].plannedDate).toLocaleDateString("vi-VN") : "";
+    const origDateStr = origDate.toLocaleDateString("vi-VN");
+    const students = await this.prisma.classStudent.findMany({
+      where: { classId, status: "ACTIVE", deletedAt: null },
+      select: { studentId: true }
+    });
+    if (students.length > 0) {
+      const notifs = students.map((st) => ({
+        userId: st.studentId,
+        type: NotificationType2.ANNOUNCEMENT,
+        title: `Th\xF4ng b\xE1o d\u1EDDi l\u1ECBch h\u1ECDc: ${classData.name}`,
+        message: `Bu\u1ED5i h\u1ECDc s\u1ED1 ${targetSession.sessionNumber} (d\u1EF1 ki\u1EBFn ng\xE0y ${origDateStr}) \u0111\xE3 \u0111\u01B0\u1EE3c d\u1EDDi sang ng\xE0y ${newDateStr}.${reasonText} C\xE1c bu\u1ED5i h\u1ECDc ti\u1EBFp theo \u0111\u01B0\u1EE3c t\u1EF1 \u0111\u1ED9ng c\u1EADp nh\u1EADt theo l\u1ECBch m\u1EDBi.`,
+        link: `/classes/${classId}`,
+        entityType: "CLASS",
+        entityId: classId
+      }));
+      await this.notifService.createBatchNotifications(this.prisma, notifs);
+    }
+    return {
+      success: true,
+      message: `\u0110\xE3 d\u1EDDi Bu\u1ED5i ${targetSession.sessionNumber} t\u1EEB ${origDateStr} sang ${newDateStr} v\xE0 c\u1EADp nh\u1EADt l\u1ECBch cho ${updatedSessions.length} bu\u1ED5i h\u1ECDc ti\u1EBFp theo.`,
+      shiftedCount: updatedSessions.length,
+      updatedSessions
+    };
+  }
   // Use Case: Create Class (Admin Only)
   async createClass(user, data) {
     const isAdmin = user.roles.includes("admin");
@@ -106144,6 +106242,21 @@ var ClassController = class {
       return reply.status(status).send({ error: err.message });
     }
   }
+  async postponeSession(request, reply) {
+    try {
+      const user = request.user;
+      const result = await this.service.postponeSessionAndShift(
+        user,
+        request.params.id,
+        request.params.sessionId,
+        request.body || {}
+      );
+      return reply.send(result);
+    } catch (err) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
 };
 
 // server/routes/classes.routes.ts
@@ -106173,6 +106286,13 @@ async function classesRoutes(fastify) {
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       return controller.generateSessions(request, reply);
+    }
+  );
+  fastify.post(
+    "/:id/sessions/:sessionId/postpone",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      return controller.postponeSession(request, reply);
     }
   );
   fastify.post(

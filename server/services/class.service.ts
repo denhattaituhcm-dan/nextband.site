@@ -375,6 +375,138 @@ export class ClassService {
     return result;
   }
 
+  // Use Case: Postpone a session due to unexpected circumstances and shift all subsequent sessions
+  async postponeSessionAndShift(
+    user: { id: string; roles: string[] },
+    classId: string,
+    sessionId: string,
+    options: {
+      reason?: string;
+      customHolidays?: HolidayRange[];
+    } = {}
+  ) {
+    const classData = await this.repo.findById(classId);
+    if (!classData) {
+      throw new NotFoundError("Không tìm thấy lớp học");
+    }
+
+    const isAdmin = user.roles.includes("admin");
+    if (!isAdmin && classData.teacherId !== user.id) {
+      throw new AuthorizationError("Từ chối truy cập - bạn không có quyền dời lịch lớp học này", 403);
+    }
+
+    // Fetch all sessions of the class
+    const allSessions = await this.prisma.classSession.findMany({
+      where: { classId },
+      orderBy: { sessionNumber: "asc" },
+    });
+
+    const targetSession = allSessions.find((s) => s.id === sessionId);
+    if (!targetSession) {
+      throw new NotFoundError("Không tìm thấy buổi học cần dời");
+    }
+
+    if (targetSession.status === "COMPLETED") {
+      throw new AuthorizationError("Không thể dời buổi học đã hoàn thành điểm danh", 400);
+    }
+
+    // Determine weekdays of this class from schedules or derive from existing session dates
+    let weekdays: number[] = [];
+    const schedules = await this.prisma.classSchedule.findMany({
+      where: { classId },
+    });
+    if (schedules.length > 0) {
+      weekdays = schedules.map((sc) => sc.dayOfWeek);
+    } else {
+      const distinctDows = new Set(
+        allSessions
+          .filter((s) => s.plannedDate)
+          .map((s) => new Date(s.plannedDate).getDay())
+      );
+      weekdays = Array.from(distinctDows);
+    }
+
+    if (weekdays.length === 0) {
+      weekdays = [1, 3, 5];
+    }
+
+    // Get all sessions from target session onwards that are not completed
+    const sessionsToShift = allSessions.filter(
+      (s) => s.sessionNumber >= targetSession.sessionNumber && s.status !== "COMPLETED"
+    );
+
+    // Starting from the day after the target session's original plannedDate
+    const origDate = new Date(targetSession.plannedDate);
+    const cur = new Date(origDate);
+    cur.setDate(cur.getDate() + 1);
+
+    const updatedSessions = [];
+    for (const sess of sessionsToShift) {
+      let foundValidDate = false;
+      let safetyCounter = 60;
+      while (!foundValidDate && safetyCounter > 0) {
+        safetyCounter--;
+        const dow = cur.getDay();
+        const isHoliday = isHolidayDate(cur, options.customHolidays);
+        if (weekdays.includes(dow) && !isHoliday) {
+          foundValidDate = true;
+          const newPlannedDate = new Date(cur);
+          newPlannedDate.setUTCHours(0, 0, 0, 0);
+
+          const updated = await this.prisma.classSession.update({
+            where: { id: sess.id },
+            data: { plannedDate: newPlannedDate },
+          });
+          updatedSessions.push(updated);
+        }
+        cur.setDate(cur.getDate() + 1);
+      }
+    }
+
+    // Update Class endDate with the last shifted session's date
+    if (updatedSessions.length > 0) {
+      const lastSession = updatedSessions[updatedSessions.length - 1];
+      const newEndDate = new Date(lastSession.plannedDate);
+      newEndDate.setUTCHours(23, 59, 59, 999);
+      await this.prisma.class.update({
+        where: { id: classId },
+        data: { endDate: newEndDate },
+      });
+    }
+
+    // Send announcement to students
+    const reasonText = options.reason ? ` Lý do: ${options.reason}.` : "";
+    const newDateStr = updatedSessions[0]
+      ? new Date(updatedSessions[0].plannedDate).toLocaleDateString("vi-VN")
+      : "";
+    const origDateStr = origDate.toLocaleDateString("vi-VN");
+
+    const students = await this.prisma.classStudent.findMany({
+      where: { classId, status: "ACTIVE", deletedAt: null },
+      select: { studentId: true },
+    });
+
+    if (students.length > 0) {
+      const notifs = students.map((st) => ({
+        userId: st.studentId,
+        type: NotificationType.ANNOUNCEMENT,
+        title: `Thông báo dời lịch học: ${classData.name}`,
+        message: `Buổi học số ${targetSession.sessionNumber} (dự kiến ngày ${origDateStr}) đã được dời sang ngày ${newDateStr}.${reasonText} Các buổi học tiếp theo được tự động cập nhật theo lịch mới.`,
+        link: `/classes/${classId}`,
+        entityType: "CLASS",
+        entityId: classId,
+      }));
+      await this.notifService.createBatchNotifications(this.prisma, notifs);
+    }
+
+    return {
+      success: true,
+      message: `Đã dời Buổi ${targetSession.sessionNumber} từ ${origDateStr} sang ${newDateStr} và cập nhật lịch cho ${updatedSessions.length} buổi học tiếp theo.`,
+      shiftedCount: updatedSessions.length,
+      updatedSessions,
+    };
+  }
+
   // Use Case: Create Class (Admin Only)
   async createClass(user: { id: string; roles: string[] }, data: any) {
     const isAdmin = user.roles.includes("admin");

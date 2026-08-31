@@ -245,4 +245,26 @@ export class ClassController {
       return reply.status(status).send({ error: err.message });
     }
   }
+
+  async postponeSession(
+    request: FastifyRequest<{
+      Params: { id: string; sessionId: string };
+      Body: { reason?: string };
+    }>,
+    reply: FastifyReply
+  ) {
+    try {
+      const user = (request as any).user;
+      const result = await this.service.postponeSessionAndShift(
+        user,
+        request.params.id,
+        request.params.sessionId,
+        request.body || {}
+      );
+      return reply.send(result);
+    } catch (err: any) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
 }

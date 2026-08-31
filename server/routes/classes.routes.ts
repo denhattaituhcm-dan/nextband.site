@@ -53,6 +53,18 @@ export default async function classesRoutes(fastify: FastifyInstance) {
     }
   );
 
+  // POST /classes/:id/sessions/:sessionId/postpone - Hoãn 1 buổi học đột xuất và dời tất cả các buổi tiếp theo
+  fastify.post<{
+    Params: { id: string; sessionId: string };
+    Body: { reason?: string };
+  }>(
+    "/:id/sessions/:sessionId/postpone",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      return controller.postponeSession(request, reply);
+    }
+  );
+
   // POST /classes - Tạo lớp mới (Chỉ dành cho Quản trị viên / Admin)
   fastify.post(
     "/",
