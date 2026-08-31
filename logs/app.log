@@ -13944,3 +13944,11 @@
 {"level":30,"time":1788154911148,"pid":13528,"hostname":"Admin-PC","reqId":"req-8","res":{"statusCode":201},"responseTime":7411.332799999975,"msg":"request completed"}
 {"level":30,"time":1788154912836,"pid":13528,"hostname":"Admin-PC","reqId":"req-9","req":{"method":"POST","url":"/api/v1/submissions/94b46f88-061e-4cc2-afcb-f09494ae1154/submit","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
 {"level":30,"time":1788154920285,"pid":13528,"hostname":"Admin-PC","reqId":"req-9","res":{"statusCode":500},"responseTime":7449.0417999997735,"msg":"request completed"}
+{"level":30,"time":1788155012334,"pid":7456,"hostname":"Admin-PC","msg":"[ClassScheduler] ⏱️ Class Lifecycle Scheduler is enabled (runs every 24h)."}
+{"level":30,"time":1788155022259,"pid":7456,"hostname":"Admin-PC","reqId":"req-1","req":{"method":"GET","url":"/api/v1/health","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788155022263,"pid":7456,"hostname":"Admin-PC","reqId":"req-1","res":{"statusCode":200},"responseTime":3.631599999964237,"msg":"request completed"}
+{"level":30,"time":1788155022986,"pid":7456,"hostname":"Admin-PC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/submissions","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788155027343,"pid":7456,"hostname":"Admin-PC","msg":"[ClassScheduler] 🔄 Running Class Lifecycle Maintenance..."}
+{"level":30,"time":1788155028130,"pid":7456,"hostname":"Admin-PC","reqId":"req-2","res":{"statusCode":201},"responseTime":5144.301700000651,"msg":"request completed"}
+{"level":30,"time":1788155028131,"pid":7456,"hostname":"Admin-PC","reqId":"req-3","req":{"method":"PUT","url":"/api/v1/submissions/81ff4730-a8bf-480a-a918-a6988fd96bad","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788155030400,"pid":7456,"hostname":"Admin-PC","result":{"success":true,"timestamp":"2026-08-31T05:43:47.344Z","closedClassesCount":0,"archivedClassesCount":0,"deletedClassesCount":0},"msg":"[ClassScheduler] ✅ Maintenance finished: Auto-closed 0 classes, Purged 0 old closed classes."}

@@ -21,11 +21,11 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    /* ARIS Brand Colors (Extracted directly from ARIS Logo / Academic Brand) */
-    /* 1. ARIS Red (Deep Academic Crimson) - Emotional Anchor & Key CTAs */
-    --brand-red: 0 70% 36%;
-    --brand-red-hover: 0 75% 28%;
-    --brand-red-soft: 0 60% 97%;
+    /* ARIS Brand Colors (Academic Brand - IELTS 1984 Style Crimson) */
+    /* 1. ARIS Red (True Academic Crimson) - Emotional Anchor & Key CTAs */
+    --brand-red: 0 74% 46%;
+    --brand-red-hover: 0 76% 38%;
+    --brand-red-soft: 0 75% 97%;
     --brand-red-foreground: 0 0% 100%;
 
     /* 2. ARIS Blue (Logo Right: Academic Blue) - System & Infrastructure */
@@ -44,11 +44,11 @@
     --primary-hover: 217 65% 28%;
     --primary-soft: 217 65% 97%;
 
-    /* Semantic Accent (ARIS Red - Deep Crimson) */
-    --accent: 0 70% 36%;
+    /* Semantic Accent (ARIS Red - True Crimson) */
+    --accent: 0 74% 46%;
     --accent-foreground: 0 0% 100%;
-    --accent-hover: 0 75% 28%;
-    --accent-soft: 0 60% 97%;
+    --accent-hover: 0 76% 38%;
+    --accent-soft: 0 75% 97%;
 
     /* Secondary */
     --secondary: 215 20% 96%;
