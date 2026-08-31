@@ -3,6 +3,24 @@ import { RendererProps } from "../CharacterContract";
 import { HUYEN_CO_STATE_MAP } from "../HuyenCoState";
 import { cn } from "@/lib/utils";
 
+// Map từ HuyenCoState sang CSS animation class
+const STATE_MOTION_CLASS: Record<string, string> = {
+  NEUTRAL:      "huyenco-breathe huyenco-glow-idle",
+  IDLE:         "huyenco-breathe huyenco-glow-idle",
+  THINKING:     "huyenco-state-thinking",
+  CURIOUS:      "huyenco-state-thinking",
+  UNDERSTANDING:"huyenco-breathe",
+  TEACHING:     "huyenco-breathe",
+  EXPLAINING:   "huyenco-breathe",
+  ENCOURAGING:  "huyenco-state-encouraging",
+  REMEMBERED:   "huyenco-state-encouraging",
+  RECOGNITION:  "huyenco-breathe huyenco-glow-idle",
+  CELEBRATION:  "huyenco-state-encouraging",
+  CONCERNED:    "huyenco-state-concerned",
+  WARNING:      "huyenco-state-concerned",
+  LEGENDARY:    "huyenco-state-encouraging huyenco-glow-idle",
+};
+
 export const StaticFallback: React.FC<RendererProps> = ({
   state,
   size,
@@ -21,10 +39,12 @@ export const StaticFallback: React.FC<RendererProps> = ({
 
   const [currentSrc, setCurrentSrc] = useState(stateImgSrc);
 
+  const motionClass = STATE_MOTION_CLASS[state] ?? "huyenco-breathe";
+
   const handleError = () => {
-    if (currentSrc !== masterImgSrc && !currentSrc.endsWith("huyen_co_master.png")) {
+    if (!currentSrc.endsWith("huyen_co_master.png")) {
       setCurrentSrc(masterImgSrc);
-    } else if (currentSrc !== legacyImgSrc && !currentSrc.endsWith("/mascot/Huyenco.png")) {
+    } else if (!currentSrc.endsWith("/mascot/Huyenco.png")) {
       setCurrentSrc(legacyImgSrc);
     } else {
       setLoadError(true);
@@ -54,7 +74,10 @@ export const StaticFallback: React.FC<RendererProps> = ({
         height={size}
         loading={isPortrait ? "lazy" : "eager"}
         onError={handleError}
-        className="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-105 motion-reduce:hover:scale-100"
+        className={cn(
+          "w-full h-full object-cover object-center",
+          motionClass
+        )}
       />
     </div>
   );

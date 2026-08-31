@@ -326,4 +326,120 @@
   .animate-spatial-aura {
     animation: spatial-aura-breath 4s ease-in-out infinite;
   }
+
+  /* ─────────────────────────────────────────────
+     Huyền Cơ Lão Nhân — Micro-Motion System
+     Triết lý: Nhân vật thở, không phải nhảy múa.
+     Tất cả chuyển động đều cực kỳ tinh tế.
+  ───────────────────────────────────────────── */
+
+  /* 1. Nhịp thở — ngực hơi nâng lên hạ xuống */
+  @keyframes huyenco-breathe {
+    0%, 100% {
+      transform: translateY(0px) scale(1);
+    }
+    40% {
+      transform: translateY(-3.5px) scale(1.012);
+    }
+    60% {
+      transform: translateY(-2.5px) scale(1.008);
+    }
+  }
+
+  /* 2. Drift — hơi lắc lư nhẹ trái phải, như người đang ngồi thiền */
+  @keyframes huyenco-drift {
+    0%, 100% {
+      transform: rotate(-0.6deg);
+    }
+    50% {
+      transform: rotate(0.6deg);
+    }
+  }
+
+  /* 3. Fan sway — quạt phe phẩy nhẹ (áp dụng cho ảnh tổng, mô phỏng quạt) */
+  @keyframes huyenco-fan {
+    0%, 100% {
+      transform: rotate(-1deg) translateX(0px);
+    }
+    30% {
+      transform: rotate(0.5deg) translateX(1px);
+    }
+    70% {
+      transform: rotate(-0.5deg) translateX(-0.5px);
+    }
+  }
+
+  /* 4. Glow pulse — vầng hào quang nhẹ xung quanh avatar */
+  @keyframes huyenco-glow {
+    0%, 100% {
+      box-shadow: 0 0 0px 0px rgba(251, 191, 36, 0);
+    }
+    50% {
+      box-shadow: 0 0 12px 3px rgba(251, 191, 36, 0.18);
+    }
+  }
+
+  /* Utility classes */
+  .huyenco-breathe {
+    animation:
+      huyenco-breathe 4.2s ease-in-out infinite,
+      huyenco-drift 7s ease-in-out infinite;
+    transform-origin: center bottom;
+    will-change: transform;
+  }
+
+  .huyenco-fan {
+    animation: huyenco-fan 3.6s ease-in-out infinite;
+    transform-origin: bottom right;
+    will-change: transform;
+  }
+
+  .huyenco-glow-idle {
+    animation: huyenco-glow 4.2s ease-in-out infinite;
+  }
+
+  /* Hover: Lão Nhân để ý — scale nhẹ, glow sáng hơn */
+  .huyenco-breathe:hover {
+    animation:
+      huyenco-breathe 4.2s ease-in-out infinite,
+      huyenco-drift 7s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.4));
+    transform-origin: center bottom;
+  }
+
+  /* State-based: THINKING — hơi cúi về phía trước */
+  .huyenco-state-thinking {
+    animation:
+      huyenco-breathe 3s ease-in-out infinite,
+      huyenco-drift 5s ease-in-out infinite;
+    transform: rotate(-1.5deg) !important;
+    transform-origin: center bottom;
+  }
+
+  /* State-based: ENCOURAGING — nhịp thở nhanh hơn, hào hứng */
+  .huyenco-state-encouraging {
+    animation:
+      huyenco-breathe 2.8s ease-in-out infinite,
+      huyenco-drift 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.5));
+    transform-origin: center bottom;
+  }
+
+  /* State-based: CONCERNED — rất ít cử động, trang nghiêm */
+  .huyenco-state-concerned {
+    animation: huyenco-breathe 5.5s ease-in-out infinite;
+    transform-origin: center bottom;
+  }
+
+  /* Respect prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    .huyenco-breathe,
+    .huyenco-fan,
+    .huyenco-glow-idle,
+    .huyenco-state-thinking,
+    .huyenco-state-encouraging,
+    .huyenco-state-concerned {
+      animation: none;
+    }
+  }
 }
