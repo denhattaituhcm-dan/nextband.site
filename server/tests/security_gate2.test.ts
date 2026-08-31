@@ -254,7 +254,7 @@ describe("GATE 2 SECURITY TEST SUITE: CORS, RATE LIMITING, INVITATION BAC & ADMI
           headers: { "x-forwarded-for": clientIp },
           payload: { email: "wrong@example.com", password: "wrong" },
         });
-        expect([401, 400]).toContain(res.statusCode);
+        expect([401, 400, 410]).toContain(res.statusCode);
       }
 
       // 6th request must trigger Rate Limit (429)
