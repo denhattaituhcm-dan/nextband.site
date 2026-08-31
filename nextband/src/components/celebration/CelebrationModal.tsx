@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Sparkles, Flame, Target, Trophy, Crown, ArrowRight, X } from "lucide-react";
 import { DecisionMilestone } from "@/lib/milestoneEngine";
 import { Button } from "@/components/ui/button";
+import { HuyenCo } from "@/components/huyen-co";
 
 interface CelebrationModalProps {
   milestone: DecisionMilestone;
@@ -120,14 +121,7 @@ export function CelebrationModal({ milestone, userId, onClose }: CelebrationModa
           {/* Huan Co Speech Box */}
           <div className="rounded-2xl bg-slate-50 border border-slate-200/80 p-5 space-y-3 relative overflow-hidden">
             <div className="flex items-center gap-3">
-              <img
-                src="/mascot/Huyenco.png"
-                alt="Viện Trưởng Huyền Cơ"
-                className="w-10 h-10 rounded-full border border-amber-300/60 bg-amber-50 shrink-0 object-cover"
-                onError={(e: any) => {
-                  e.target.style.display = "none";
-                }}
-              />
+              <HuyenCo variant="avatar" size={40} state="CELEBRATION" />
               <div>
                 <div className="text-xs font-bold text-slate-900">
                   Viện Trưởng Huyền Cơ Lão Nhân

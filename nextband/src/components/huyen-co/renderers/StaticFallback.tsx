@@ -15,9 +15,22 @@ export const StaticFallback: React.FC<RendererProps> = ({
   const meta = HUYEN_CO_STATE_MAP[state] || HUYEN_CO_STATE_MAP.NEUTRAL;
   const isPortrait = variant === "portrait" || size >= 120;
 
-  const stateImgSrc = `/assets/mascot/huyen_co_${meta.assetKey}.webp`;
+  const stateImgSrc = `/assets/mascot/huyen_co_${meta.assetKey}.png`;
   const masterImgSrc = `/assets/mascot/huyen_co_master.png`;
   const legacyImgSrc = `/mascot/Huyenco.png`;
+
+  const [currentSrc, setCurrentSrc] = useState(stateImgSrc);
+
+  const handleError = () => {
+    if (currentSrc !== masterImgSrc && !currentSrc.endsWith("huyen_co_master.png")) {
+      setCurrentSrc(masterImgSrc);
+    } else if (currentSrc !== legacyImgSrc && !currentSrc.endsWith("/mascot/Huyenco.png")) {
+      setCurrentSrc(legacyImgSrc);
+    } else {
+      setLoadError(true);
+      onFallback?.();
+    }
+  };
 
   if (loadError) {
     return (
@@ -33,26 +46,16 @@ export const StaticFallback: React.FC<RendererProps> = ({
   }
 
   return (
-    <picture className={cn("w-full h-full flex items-center justify-center overflow-hidden", className)}>
-      <source srcSet={stateImgSrc} type="image/webp" />
-      <source srcSet={masterImgSrc} type="image/png" />
+    <div className={cn("w-full h-full flex items-center justify-center overflow-hidden rounded-full", className)}>
       <img
-        src={masterImgSrc}
+        src={currentSrc}
         alt={altText}
         width={size}
         height={size}
         loading={isPortrait ? "lazy" : "eager"}
-        onError={(e) => {
-          const target = e.currentTarget as HTMLImageElement;
-          if (target.src !== legacyImgSrc && !target.src.endsWith("/mascot/Huyenco.png")) {
-            target.src = legacyImgSrc;
-          } else {
-            setLoadError(true);
-            onFallback?.();
-          }
-        }}
+        onError={handleError}
         className="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-105 motion-reduce:hover:scale-100"
       />
-    </picture>
+    </div>
   );
 };
