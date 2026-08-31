@@ -28,13 +28,17 @@ export const InContextPopover: React.FC<InContextPopoverProps> = ({
 }) => {
   const [showMentalModel, setShowMentalModel] = useState(false);
 
-  // Determine Huyen Co Character State based on UI interaction
+  const hasPriorEncounter = Boolean(data?.priorEncounter && data.priorEncounter.encounterCount > 1);
+
+  // Determine Huyen Co Character State based on UI interaction & Memory Layer
   const huyenCoState: HuyenCoState = loading
     ? "THINKING"
     : isSaved
     ? "ENCOURAGING"
     : showMentalModel
-    ? "EXPLAINING"
+    ? "TEACHING"
+    : hasPriorEncounter
+    ? "RECOGNITION"
     : "UNDERSTANDING";
 
   if (!rect) return null;
@@ -105,6 +109,23 @@ export const InContextPopover: React.FC<InContextPopoverProps> = ({
           <X className="w-4 h-4" />
         </button>
       </div>
+
+      {/* Memory Layer: Recognition Chip when student previously encountered this term */}
+      {!loading && data?.priorEncounter && (
+        <div className="mb-2.5 px-2.5 py-1.5 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-between text-[11px] text-amber-300 animate-in fade-in duration-200">
+          <span className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+            <span className="font-medium">
+              Tương ngộ lần {data.priorEncounter.encounterCount}
+            </span>
+          </span>
+          <span className="text-[10px] text-amber-400/80">
+            {data.priorEncounter.firstMetLocation
+              ? `Gặp lần đầu tại ${data.priorEncounter.firstMetLocation}`
+              : "Đã từng lưu trong hành trình"}
+          </span>
+        </div>
+      )}
 
       {/* Loading state: Skeleton mượt mà */}
       {loading && (

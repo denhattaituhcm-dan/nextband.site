@@ -1,3 +1,9 @@
+export interface PriorEncounterInfo {
+  encounterCount: number;
+  firstMetLocation?: string; // e.g. "Homework 12"
+  firstMetDate?: string;     // e.g. "3 tuần trước"
+}
+
 export interface ContextualLearningPayload {
   normalizedTerm: string;
   ipa: string;
@@ -7,6 +13,7 @@ export interface ContextualLearningPayload {
   mentalModel?: string;
   ieltsPatterns: string[];
   isSaved?: boolean;
+  priorEncounter?: PriorEncounterInfo;
 }
 
 export interface UnderstandRequestPayload {
