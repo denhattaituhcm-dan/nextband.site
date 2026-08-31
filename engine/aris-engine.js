@@ -1,7 +1,6 @@
 /**
- * ARIS Interactive Lesson Engine (v1.0)
- * Core Architecture: State-Driven Teaching Scene Engine
- * Powered by Reveal.js + GSAP + Custom Interactive Pedagogical Components
+ * ARIS Interactive Lesson Engine (v1.1)
+ * Rock-Solid Responsive Flex/Grid Layout
  */
 
 class ARISEngine {
@@ -11,7 +10,6 @@ class ARISEngine {
     this.currentSceneIndex = 0;
     this.sceneStates = {};
     this.teacherMode = false;
-    this.focusMode = false;
   }
 
   init() {
@@ -35,21 +33,18 @@ class ARISEngine {
     container.innerHTML = '';
     this.lessonData.scenes.forEach((scene, index) => {
       const sceneEl = document.createElement('div');
-      sceneEl.className = `aris-scene w-full max-w-6xl h-full flex flex-col justify-between ${index === 0 ? 'active' : ''}`;
+      sceneEl.className = `aris-scene ${index === 0 ? 'active' : ''}`;
       sceneEl.setAttribute('data-scene-id', scene.id);
       sceneEl.setAttribute('data-scene-index', index);
       sceneEl.innerHTML = this.renderSceneContent(scene, index);
       container.appendChild(sceneEl);
 
-      // Initialize Scene State
       this.sceneStates[index] = {
         step: 0,
         maxSteps: this.getSceneMaxSteps(scene),
         completed: false
       };
     });
-
-    this.bindInteractiveListeners();
   }
 
   getSceneMaxSteps(scene) {
@@ -78,13 +73,13 @@ class ARISEngine {
   // 1. HERO RENDERER
   renderHero(scene) {
     return `
-      <div class="grid grid-cols-12 gap-8 h-full items-center">
-        <div class="col-span-7 space-y-5">
+      <div class="grid grid-cols-12 gap-8 w-full h-full items-center">
+        <div class="col-span-7 space-y-6">
           <div class="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold uppercase tracking-wider">
             <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
             <span>${scene.badge || 'ARIS Lesson'}</span>
           </div>
-          <h1 class="text-5xl font-black leading-[1.15] tracking-tight text-slate-900">
+          <h1 class="text-4xl md:text-5xl font-black leading-tight text-slate-900">
             ${scene.title}
           </h1>
           <p class="text-slate-600 text-base leading-relaxed max-w-xl">
@@ -134,74 +129,78 @@ class ARISEngine {
   // 2. GRAMMAR TREE RENDERER
   renderGrammarTree(scene) {
     return `
-      <div class="space-y-1">
-        <div class="text-xs font-bold uppercase tracking-wider text-blue-600">01 / Grammar Hierarchy</div>
-        <h2 class="text-3xl font-extrabold text-slate-900">${scene.title}</h2>
-        <p class="text-slate-600 text-sm">${scene.question}</p>
-      </div>
+      <div class="w-full flex flex-col justify-between h-full space-y-4">
+        <div class="space-y-1">
+          <div class="text-xs font-bold uppercase tracking-wider text-blue-600">01 / Grammar Hierarchy</div>
+          <h2 class="text-3xl font-extrabold text-slate-900">${scene.title}</h2>
+          <p class="text-slate-600 text-sm">${scene.question}</p>
+        </div>
 
-      <div class="my-auto grid grid-cols-4 gap-4">
-        ${scene.levels.map(lvl => `
-          <div class="bento-card p-5 space-y-3 relative group ${lvl.highlight ? 'border-2 border-blue-600 shadow-md shadow-blue-500/10' : ''}">
-            <div class="flex items-center justify-between">
-              <span class="token-chip ${lvl.highlight ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700'}">LEVEL ${lvl.level}</span>
-              <span class="text-[11px] font-bold ${lvl.highlight ? 'text-blue-600 font-extrabold' : 'text-slate-400'}">${lvl.tag}</span>
+        <div class="grid grid-cols-4 gap-4 w-full my-auto">
+          ${scene.levels.map(lvl => `
+            <div class="bento-card p-5 space-y-3 relative flex flex-col justify-between ${lvl.highlight ? 'border-2 border-blue-600 shadow-lg shadow-blue-500/10' : ''}">
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="token-chip ${lvl.highlight ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700'}">LEVEL ${lvl.level}</span>
+                  <span class="text-[11px] font-bold ${lvl.highlight ? 'text-blue-600 font-extrabold' : 'text-slate-400'}">${lvl.tag}</span>
+                </div>
+                <div>
+                  <h3 class="text-lg font-bold text-slate-900">${lvl.name}</h3>
+                  <p class="text-xs text-slate-500 mt-0.5">${lvl.desc}</p>
+                </div>
+              </div>
+              <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs font-mono space-y-1 text-slate-700">
+                ${lvl.tokens ? `<div class="text-blue-600 font-bold">8 từ loại:</div><div>${lvl.tokens.join(', ')}</div>` : ''}
+                ${lvl.examples ? lvl.examples.map(ex => `<div>• <em>${ex}</em></div>`).join('') : ''}
+              </div>
             </div>
-            <div>
-              <h3 class="text-lg font-bold text-slate-900">${lvl.name}</h3>
-              <p class="text-xs text-slate-500 mt-0.5">${lvl.desc}</p>
-            </div>
-            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs font-mono space-y-1 text-slate-700">
-              ${lvl.tokens ? `<span class="text-blue-600 font-bold">Từ loại:</span> ${lvl.tokens.join(', ')}` : ''}
-              ${lvl.examples ? lvl.examples.map(ex => `<div>• <em>${ex}</em></div>`).join('') : ''}
-            </div>
-          </div>
-        `).join('')}
-      </div>
+          `).join('')}
+        </div>
 
-      <div class="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-xs text-blue-900 font-medium flex items-center justify-between">
-        <span>💡 <strong>Nguyên lý:</strong> ${scene.takeaway}</span>
+        <div class="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-xs text-blue-900 font-medium flex items-center justify-between">
+          <span>💡 <strong>Nguyên lý:</strong> ${scene.takeaway}</span>
+        </div>
       </div>
     `;
   }
 
-  // 3. SENTENCE DECONSTRUCTOR (SOCRATIC REVEAL)
+  // 3. SENTENCE DECONSTRUCTOR
   renderSentenceDeconstructor(scene, index) {
     return `
-      <div class="space-y-1">
-        <div class="text-xs font-bold uppercase tracking-wider text-blue-600">02 / Socratic Deconstruction</div>
-        <h2 class="text-3xl font-extrabold text-slate-900">${scene.title}</h2>
-        <p class="text-slate-600 text-sm">${scene.instruction}</p>
-      </div>
+      <div class="w-full flex flex-col justify-between h-full space-y-4">
+        <div class="space-y-1">
+          <div class="text-xs font-bold uppercase tracking-wider text-blue-600">02 / Socratic Deconstruction</div>
+          <h2 class="text-3xl font-extrabold text-slate-900">${scene.title}</h2>
+          <p class="text-slate-600 text-sm">${scene.instruction}</p>
+        </div>
 
-      <div class="my-auto space-y-6 max-w-4xl mx-auto w-full">
-        <!-- Interactive Sentence Canvas -->
-        <div class="p-6 rounded-2xl bg-white border-2 border-slate-200 shadow-lg space-y-4">
-          <div class="text-xs font-bold uppercase tracking-wider text-slate-400 font-mono">Sentence Analysis Canvas:</div>
-          
-          <div class="text-xl md:text-2xl font-bold text-slate-900 leading-loose flex flex-wrap gap-2 items-center" id="deconstruct-tokens-${index}">
-            ${scene.sentence.tokens.map((token, tIdx) => `
-              <span class="deconstruct-token px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-blue-50 cursor-pointer transition flex flex-col items-center" data-token-index="${tIdx}" onclick="window.aris.revealDeconstructToken(${index}, ${tIdx})">
-                <span>${token.text}</span>
-                <span class="token-role text-[10px] font-mono font-bold uppercase mt-1 text-slate-400 opacity-0 transition">${token.role}</span>
-              </span>
-            `).join('')}
+        <div class="my-auto space-y-6 max-w-4xl mx-auto w-full">
+          <div class="p-6 rounded-2xl bg-white border-2 border-slate-200 shadow-lg space-y-4">
+            <div class="text-xs font-bold uppercase tracking-wider text-slate-400 font-mono">Sentence Analysis Canvas:</div>
+            
+            <div class="text-lg md:text-xl font-bold text-slate-900 leading-relaxed flex flex-wrap gap-2 items-center" id="deconstruct-tokens-${index}">
+              ${scene.sentence.tokens.map((token, tIdx) => `
+                <span class="deconstruct-token px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-blue-50 cursor-pointer transition flex flex-col items-center" data-token-index="${tIdx}" onclick="window.aris.revealDeconstructToken(${index}, ${tIdx})">
+                  <span>${token.text}</span>
+                  <span class="token-role text-[10px] font-mono font-bold uppercase mt-1 text-slate-400 opacity-0 transition">${token.role}</span>
+                </span>
+              `).join('')}
+            </div>
+          </div>
+
+          <div id="deconstruct-resolution-${index}" class="p-5 rounded-2xl bg-gradient-to-r from-blue-50 via-indigo-50 to-blue-50 border-2 border-blue-200 opacity-30 transition space-y-2 text-center">
+            <div class="text-xs font-bold uppercase tracking-widest text-blue-700 font-mono">CÔNG THỨC MỆNH ĐỀ ĐỘC LẬP</div>
+            <div class="text-base font-extrabold text-slate-900 font-mono">${scene.rule.formula}</div>
+            <div class="text-xs font-bold text-emerald-700 font-mono">&rarr; ${scene.rule.conclusion}</div>
           </div>
         </div>
 
-        <!-- Master Resolution Banner -->
-        <div id="deconstruct-resolution-${index}" class="p-5 rounded-2xl bg-gradient-to-r from-blue-50 via-indigo-50 to-blue-50 border-2 border-blue-200 opacity-30 transition space-y-2 text-center">
-          <div class="text-xs font-bold uppercase tracking-widest text-blue-700 font-mono">CÔNG THỨC MỆNH ĐỀ ĐỘC LẬP</div>
-          <div class="text-base font-extrabold text-slate-900 font-mono">${scene.rule.formula}</div>
-          <div class="text-xs font-bold text-emerald-700 font-mono">&rarr; ${scene.rule.conclusion}</div>
+        <div class="p-4 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-between">
+          <span class="text-xs text-slate-600">Bấm <strong>Space</strong> hoặc click vào từng cụm từ để giáo viên hướng dẫn bóc tách ngữ pháp.</span>
+          <button onclick="window.aris.revealAllDeconstruct(${index})" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition">
+            Bóc Tách Toàn Bộ
+          </button>
         </div>
-      </div>
-
-      <div class="p-4 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-between">
-        <span class="text-xs text-slate-600">Bấm <strong>Space</strong> hoặc click vào từng cụm từ để giáo viên hướng dẫn bóc tách ngữ pháp.</span>
-        <button onclick="window.aris.revealAllDeconstruct(${index})" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition">
-          Bóc Tách Toàn Bộ
-        </button>
       </div>
     `;
   }
@@ -209,130 +208,129 @@ class ARISEngine {
   // 4. VERB MATRIX
   renderVerbMatrix(scene) {
     return `
-      <div class="space-y-1">
-        <div class="text-xs font-bold uppercase tracking-wider text-blue-600">03 / Verb Classification</div>
-        <h2 class="text-3xl font-extrabold text-slate-900">${scene.title}</h2>
-        <p class="text-slate-600 text-sm">${scene.subtitle}</p>
-      </div>
-
-      <div class="grid grid-cols-3 gap-5 my-auto">
-        ${scene.verbs.map(v => `
-          <div class="bento-card p-5 space-y-3 border-t-4 border-t-${v.color === 'blue' ? 'blue-500' : v.color === 'indigo' ? 'indigo-600' : 'amber-500'}">
-            <div class="flex items-center justify-between">
-              <span class="token-chip bg-slate-100 text-slate-800">${v.type}</span>
-              <span class="text-xs font-bold text-slate-500">${v.name}</span>
-            </div>
-            <h3 class="text-base font-bold text-slate-900">${v.rule}</h3>
-            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs font-mono space-y-1.5 text-slate-800">
-              <div class="text-blue-700 font-bold">Cấu trúc: ${v.formula}</div>
-              ${v.examples.map(ex => `<div>&bull; <em>${ex}</em></div>`).join('')}
-            </div>
-            ${v.warning ? `<div class="p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-[11px] text-amber-900 font-medium">⚠️ ${v.warning}</div>` : ''}
-          </div>
-        `).join('')}
-      </div>
-
-      <div class="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-xs text-blue-900 flex items-center justify-between">
-        <span>🎯 <strong>Mẹo IELTS:</strong> Luôn học động từ kèm theo dạng tân ngữ ($V_t + O$) và giới từ bắt buộc của nó.</span>
-      </div>
-    `;
-  }
-
-  // 5. SOCRATIC CLAUSE SPLITTER
-  renderSocraticSplitter(scene, index) {
-    return `
-      <div class="space-y-1">
-        <div class="text-xs font-bold uppercase tracking-wider text-purple-600">04 / Socratic Clause Splitter</div>
-        <h2 class="text-3xl font-extrabold text-slate-900">${scene.title}</h2>
-        <p class="text-slate-600 text-sm">${scene.instruction}</p>
-      </div>
-
-      <div class="my-auto space-y-6 max-w-4xl mx-auto w-full">
-        <div class="grid grid-cols-11 gap-3 items-center p-6 bg-white rounded-3xl border-2 border-slate-200 shadow-xl">
-          <!-- Clause 1 -->
-          <div class="col-span-5 p-5 rounded-2xl bg-slate-50 hover:bg-amber-50/60 border-2 border-dashed border-slate-300 cursor-pointer transition space-y-3" id="split-part1-${index}" onclick="window.aris.revealSplitterPart(${index}, 1)">
-            <div class="text-sm font-semibold text-slate-800 leading-relaxed">
-              "${scene.complexSentence.part1.text}"
-            </div>
-            <div class="split-tag hidden p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-xs font-mono font-bold text-amber-800">
-              ${scene.complexSentence.part1.tag}
-              <div class="text-[11px] font-normal text-amber-900 mt-1">${scene.complexSentence.part1.note}</div>
-            </div>
-          </div>
-
-          <!-- Connector Arrow -->
-          <div class="col-span-1 text-center font-black text-xl text-slate-400" id="split-connector-${index}">
-            +
-          </div>
-
-          <!-- Clause 2 -->
-          <div class="col-span-5 p-5 rounded-2xl bg-slate-50 hover:bg-blue-50/60 border-2 border-dashed border-slate-300 cursor-pointer transition space-y-3" id="split-part2-${index}" onclick="window.aris.revealSplitterPart(${index}, 2)">
-            <div class="text-sm font-semibold text-slate-800 leading-relaxed">
-              "${scene.complexSentence.part2.text}"
-            </div>
-            <div class="split-tag hidden p-2.5 rounded-xl bg-blue-50 border border-blue-200 text-xs font-mono font-bold text-blue-800">
-              ${scene.complexSentence.part2.tag}
-              <div class="text-[11px] font-normal text-blue-900 mt-1">${scene.complexSentence.part2.note}</div>
-            </div>
-          </div>
+      <div class="w-full flex flex-col justify-between h-full space-y-4">
+        <div class="space-y-1">
+          <div class="text-xs font-bold uppercase tracking-wider text-blue-600">03 / Verb Classification</div>
+          <h2 class="text-3xl font-extrabold text-slate-900">${scene.title}</h2>
+          <p class="text-slate-600 text-sm">${scene.subtitle}</p>
         </div>
 
-        <!-- Formula Output -->
-        <div id="split-formula-${index}" class="p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-indigo-50 to-purple-50 border border-purple-200 text-center opacity-30 transition">
-          <span class="text-xs font-mono font-bold text-purple-900">${scene.formula}</span>
-        </div>
-      </div>
-
-      <div class="p-4 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-between">
-        <span class="text-xs text-slate-600">Click trực tiếp vào từng vế câu để giáo viên tương tác Socratic với lớp học.</span>
-        <button onclick="window.aris.revealAllSplitter(${index})" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-sm transition">
-          Hiện Đáp Án Mệnh Đề
-        </button>
-      </div>
-    `;
-  }
-
-  // 6. LIVE QUIZ COMPONENT
-  renderLiveQuiz(scene, index) {
-    return `
-      <div class="space-y-1">
-        <div class="text-xs font-bold uppercase tracking-wider text-blue-600">05 / Live Pedagogical Quiz</div>
-        <h2 class="text-3xl font-extrabold text-slate-900">${scene.title}</h2>
-        <p class="text-slate-600 text-sm">${scene.prompt}</p>
-      </div>
-
-      <div class="my-auto max-w-4xl mx-auto w-full space-y-4">
-        <!-- Question Prompt -->
-        <div class="p-5 rounded-2xl bg-slate-900 text-white shadow-lg space-y-2">
-          <div class="text-xs font-mono text-amber-300 uppercase font-bold">CÂU HỎI TRẮC NGHIỆM:</div>
-          <div class="text-base md:text-lg font-bold leading-relaxed">
-            "${scene.question}"
-          </div>
-        </div>
-
-        <!-- Options Grid -->
-        <div class="grid grid-cols-2 gap-3" id="quiz-options-${index}">
-          ${scene.options.map(opt => `
-            <button class="quiz-opt-btn p-4 rounded-2xl bg-white border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-left transition flex items-start space-x-3 group" onclick="window.aris.handleQuizSelect(${index}, '${opt.id}')" data-opt-id="${opt.id}">
-              <span class="w-7 h-7 rounded-lg bg-slate-100 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center font-mono font-bold text-xs flex-shrink-0 transition">
-                ${opt.id}
-              </span>
-              <span class="text-xs font-semibold text-slate-800 pt-1 leading-relaxed">
-                ${opt.text}
-              </span>
-            </button>
+        <div class="grid grid-cols-3 gap-5 w-full my-auto">
+          ${scene.verbs.map(v => `
+            <div class="bento-card p-5 space-y-3 border-t-4 border-t-${v.color === 'blue' ? 'blue-500' : v.color === 'indigo' ? 'indigo-600' : 'amber-500'}">
+              <div class="flex items-center justify-between">
+                <span class="token-chip bg-slate-100 text-slate-800">${v.type}</span>
+                <span class="text-xs font-bold text-slate-500">${v.name}</span>
+              </div>
+              <h3 class="text-base font-bold text-slate-900">${v.rule}</h3>
+              <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs font-mono space-y-1.5 text-slate-800">
+                <div class="text-blue-700 font-bold">Cấu trúc: ${v.formula}</div>
+                ${v.examples.map(ex => `<div>&bull; <em>${ex}</em></div>`).join('')}
+              </div>
+              ${v.warning ? `<div class="p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-[11px] text-amber-900 font-medium">⚠️ ${v.warning}</div>` : ''}
+            </div>
           `).join('')}
         </div>
 
-        <!-- Feedback Box -->
-        <div id="quiz-feedback-${index}" class="hidden p-4 rounded-2xl border text-xs font-mono leading-relaxed transition"></div>
+        <div class="p-4 rounded-2xl bg-blue-50 border border-blue-200 text-xs text-blue-900 flex items-center justify-between">
+          <span>🎯 <strong>Mẹo IELTS:</strong> Luôn học động từ kèm theo dạng tân ngữ ($V_t + O$) và giới từ bắt buộc của nó.</span>
+        </div>
       </div>
+    `;
+  }
 
-      <div class="p-4 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-between">
-        <span class="text-xs text-slate-600">Chọn phương án để xem giải thích sư phạm chi tiết và highlight lỗi sai.</span>
-        <button onclick="window.aris.resetQuiz(${index})" class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition">
-          Làm Lại (Reset)
-        </button>
+  // 5. SOCRATIC SPLITTER
+  renderSocraticSplitter(scene, index) {
+    return `
+      <div class="w-full flex flex-col justify-between h-full space-y-4">
+        <div class="space-y-1">
+          <div class="text-xs font-bold uppercase tracking-wider text-purple-600">04 / Socratic Clause Splitter</div>
+          <h2 class="text-3xl font-extrabold text-slate-900">${scene.title}</h2>
+          <p class="text-slate-600 text-sm">${scene.instruction}</p>
+        </div>
+
+        <div class="my-auto space-y-6 max-w-4xl mx-auto w-full">
+          <div class="grid grid-cols-11 gap-3 items-center p-6 bg-white rounded-3xl border-2 border-slate-200 shadow-xl">
+            <div class="col-span-5 p-5 rounded-2xl bg-slate-50 hover:bg-amber-50/60 border-2 border-dashed border-slate-300 cursor-pointer transition space-y-3" id="split-part1-${index}" onclick="window.aris.revealSplitterPart(${index}, 1)">
+              <div class="text-sm font-semibold text-slate-800 leading-relaxed">
+                "${scene.complexSentence.part1.text}"
+              </div>
+              <div class="split-tag hidden p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-xs font-mono font-bold text-amber-800">
+                ${scene.complexSentence.part1.tag}
+                <div class="text-[11px] font-normal text-amber-900 mt-1">${scene.complexSentence.part1.note}</div>
+              </div>
+            </div>
+
+            <div class="col-span-1 text-center font-black text-xl text-slate-400" id="split-connector-${index}">
+              +
+            </div>
+
+            <div class="col-span-5 p-5 rounded-2xl bg-slate-50 hover:bg-blue-50/60 border-2 border-dashed border-slate-300 cursor-pointer transition space-y-3" id="split-part2-${index}" onclick="window.aris.revealSplitterPart(${index}, 2)">
+              <div class="text-sm font-semibold text-slate-800 leading-relaxed">
+                "${scene.complexSentence.part2.text}"
+              </div>
+              <div class="split-tag hidden p-2.5 rounded-xl bg-blue-50 border border-blue-200 text-xs font-mono font-bold text-blue-800">
+                ${scene.complexSentence.part2.tag}
+                <div class="text-[11px] font-normal text-blue-900 mt-1">${scene.complexSentence.part2.note}</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="split-formula-${index}" class="p-4 rounded-2xl bg-gradient-to-r from-purple-50 via-indigo-50 to-purple-50 border border-purple-200 text-center opacity-30 transition">
+            <span class="text-xs font-mono font-bold text-purple-900">${scene.formula}</span>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-between">
+          <span class="text-xs text-slate-600">Click trực tiếp vào từng vế câu để giáo viên tương tác Socratic với lớp học.</span>
+          <button onclick="window.aris.revealAllSplitter(${index})" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-sm transition">
+            Hiện Đáp Án Mệnh Đề
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  // 6. LIVE QUIZ
+  renderLiveQuiz(scene, index) {
+    return `
+      <div class="w-full flex flex-col justify-between h-full space-y-4">
+        <div class="space-y-1">
+          <div class="text-xs font-bold uppercase tracking-wider text-blue-600">05 / Live Pedagogical Quiz</div>
+          <h2 class="text-3xl font-extrabold text-slate-900">${scene.title}</h2>
+          <p class="text-slate-600 text-sm">${scene.prompt}</p>
+        </div>
+
+        <div class="my-auto max-w-4xl mx-auto w-full space-y-4">
+          <div class="p-5 rounded-2xl bg-slate-900 text-white shadow-lg space-y-2">
+            <div class="text-xs font-mono text-amber-300 uppercase font-bold">CÂU HỎI TRẮC NGHIỆM:</div>
+            <div class="text-base md:text-lg font-bold leading-relaxed">
+              "${scene.question}"
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3" id="quiz-options-${index}">
+            ${scene.options.map(opt => `
+              <button class="quiz-opt-btn p-4 rounded-2xl bg-white border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 text-left transition flex items-start space-x-3 group" onclick="window.aris.handleQuizSelect(${index}, '${opt.id}')" data-opt-id="${opt.id}">
+                <span class="w-7 h-7 rounded-lg bg-slate-100 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center font-mono font-bold text-xs flex-shrink-0 transition">
+                  ${opt.id}
+                </span>
+                <span class="text-xs font-semibold text-slate-800 pt-1 leading-relaxed">
+                  ${opt.text}
+                </span>
+              </button>
+            `).join('')}
+          </div>
+
+          <div id="quiz-feedback-${index}" class="hidden p-4 rounded-2xl border text-xs font-mono leading-relaxed transition"></div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-between">
+          <span class="text-xs text-slate-600">Chọn phương án để xem giải thích sư phạm chi tiết và highlight lỗi sai.</span>
+          <button onclick="window.aris.resetQuiz(${index})" class="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition">
+            Làm Lại (Reset)
+          </button>
+        </div>
       </div>
     `;
   }
@@ -340,80 +338,84 @@ class ARISEngine {
   // 7. COLLOCATIONS
   renderCollocations(scene) {
     return `
-      <div class="space-y-1">
-        <div class="text-xs font-bold uppercase tracking-wider text-emerald-600">06 / Academic Lexicon</div>
-        <h2 class="text-3xl font-extrabold text-slate-900">${scene.title}</h2>
-        <p class="text-slate-600 text-sm">Bộ 4 cụm từ $V_t + \text{Object}$ kinh điển bắt buộc trong IELTS Writing:</p>
-      </div>
+      <div class="w-full flex flex-col justify-between h-full space-y-4">
+        <div class="space-y-1">
+          <div class="text-xs font-bold uppercase tracking-wider text-emerald-600">06 / Academic Lexicon</div>
+          <h2 class="text-3xl font-extrabold text-slate-900">${scene.title}</h2>
+          <p class="text-slate-600 text-sm">Bộ 4 cụm từ $V_t + \text{Object}$ kinh điển bắt buộc trong IELTS Writing:</p>
+        </div>
 
-      <div class="grid grid-cols-2 gap-4 my-auto">
-        ${scene.items.map(item => `
-          <div class="bento-card img-wrapper p-4 flex space-x-4 items-center border-l-4 border-l-emerald-600">
-            <div class="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 shadow-sm">
-              <img src="${item.image}" alt="${item.topic}" class="w-full h-full object-cover img-zoom">
+        <div class="grid grid-cols-2 gap-4 w-full my-auto">
+          ${scene.items.map(item => `
+            <div class="bento-card img-wrapper p-4 flex space-x-4 items-center border-l-4 border-l-emerald-600">
+              <div class="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 shadow-sm">
+                <img src="${item.image}" alt="${item.topic}" class="w-full h-full object-cover img-zoom">
+              </div>
+              <div class="space-y-1 flex-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-[11px] text-emerald-700 font-mono font-bold">#${item.num} · ${item.topic}</span>
+                  <span class="text-[11px] font-semibold text-slate-400">${item.vietnamese}</span>
+                </div>
+                <div class="text-xs font-bold text-slate-800 leading-relaxed">
+                  ${item.sentence}
+                </div>
+                <div class="text-[11px] font-mono text-slate-500 bg-slate-50 p-1.5 rounded-lg border border-slate-200">
+                  <strong class="text-emerald-700">Synonyms:</strong> ${item.verb} + ${item.object}
+                </div>
+              </div>
             </div>
-            <div class="space-y-1 flex-1">
-              <div class="flex items-center justify-between">
-                <span class="text-[11px] text-emerald-700 font-mono font-bold">#${item.num} · ${item.topic}</span>
-                <span class="text-[11px] font-semibold text-slate-400">${item.vietnamese}</span>
-              </div>
-              <div class="text-xs font-bold text-slate-800 leading-relaxed">
-                ${item.sentence}
-              </div>
-              <div class="text-[11px] font-mono text-slate-500 bg-slate-50 p-1.5 rounded-lg border border-slate-200">
-                <strong class="text-emerald-700">Synonyms:</strong> ${item.verb} + ${item.object}
-              </div>
-            </div>
-          </div>
-        `).join('')}
-      </div>
+          `).join('')}
+        </div>
 
-      <div class="p-4 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-between text-xs text-slate-600">
-        <span>💡 Học theo Collocation $V_t + O$ giúp điểm Lexical Resource bứt phá từ Band 6.0 lên Band 7.5+.</span>
+        <div class="p-4 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-between text-xs text-slate-600">
+          <span>💡 Học theo Collocation $V_t + O$ giúp điểm Lexical Resource bứt phá từ Band 6.0 lên Band 7.5+.</span>
+        </div>
       </div>
     `;
   }
 
-  // 8. IELTS TRANSFORMATION PIPELINE
+  // 8. IELTS TRANSFORMATION
   renderIELTSUpgrade(scene, index) {
     return `
-      <div class="space-y-1">
-        <div class="text-xs font-bold uppercase tracking-wider text-emerald-600">07 / IELTS Transformation Pipeline</div>
-        <h2 class="text-3xl font-extrabold text-slate-900">${scene.title}</h2>
-        <p class="text-slate-600 text-sm">${scene.instruction}</p>
-      </div>
+      <div class="w-full flex flex-col justify-between h-full space-y-4">
+        <div class="space-y-1">
+          <div class="text-xs font-bold uppercase tracking-wider text-emerald-600">07 / IELTS Transformation Pipeline</div>
+          <h2 class="text-3xl font-extrabold text-slate-900">${scene.title}</h2>
+          <p class="text-slate-600 text-sm">${scene.instruction}</p>
+        </div>
 
-      <div class="my-auto max-w-4xl mx-auto w-full space-y-4">
-        ${scene.stages.map((stg, sIdx) => `
-          <div class="upgrade-stage bento-card p-5 space-y-2 border-l-4 border-l-${stg.color === 'slate' ? 'slate-400' : stg.color === 'amber' ? 'amber-500' : 'emerald-600'} ${sIdx > 0 ? 'opacity-40' : ''}" id="upgrade-stage-${index}-${sIdx}">
-            <div class="flex items-center justify-between">
-              <span class="token-chip ${stg.color === 'slate' ? 'bg-slate-100 text-slate-700' : stg.color === 'amber' ? 'bg-amber-50 text-amber-700' : 'bg-emerald-50 text-emerald-700 font-extrabold'}">${stg.band}</span>
-              <span class="text-xs text-slate-400 font-mono">Stage 0${sIdx + 1}</span>
-            </div>
-            <div class="text-sm md:text-base font-bold text-slate-900 leading-relaxed font-sans">
-              "${stg.sentence}"
-            </div>
-            ${stg.breakdown ? `
-              <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-wrap gap-2 text-xs font-mono">
-                ${stg.breakdown.map(b => `<span class="px-2 py-0.5 rounded bg-${b.color}-100 text-${b.color}-800 font-semibold">${b.type}</span>`).join('')}
+        <div class="my-auto max-w-4xl mx-auto w-full space-y-4">
+          ${scene.stages.map((stg, sIdx) => `
+            <div class="upgrade-stage bento-card p-5 space-y-2 border-l-4 border-l-${stg.color === 'slate' ? 'slate-400' : stg.color === 'amber' ? 'amber-500' : 'emerald-600'} ${sIdx > 0 ? 'opacity-40' : ''}" id="upgrade-stage-${index}-${sIdx}">
+              <div class="flex items-center justify-between">
+                <span class="token-chip ${stg.color === 'slate' ? 'bg-slate-100 text-slate-700' : stg.color === 'amber' ? 'bg-amber-50 text-amber-700' : 'bg-emerald-50 text-emerald-700 font-extrabold'}">${stg.band}</span>
+                <span class="text-xs text-slate-400 font-mono">Stage 0${sIdx + 1}</span>
               </div>
-            ` : ''}
-            <p class="text-xs text-slate-600 italic">&bull; ${stg.analysis}</p>
-          </div>
-        `).join('')}
-      </div>
+              <div class="text-sm md:text-base font-bold text-slate-900 leading-relaxed font-sans">
+                "${stg.sentence}"
+              </div>
+              ${stg.breakdown ? `
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex flex-wrap gap-2 text-xs font-mono">
+                  ${stg.breakdown.map(b => `<span class="px-2 py-0.5 rounded bg-${b.color}-100 text-${b.color}-800 font-semibold">${b.type}</span>`).join('')}
+                </div>
+              ` : ''}
+              <p class="text-xs text-slate-600 italic">&bull; ${stg.analysis}</p>
+            </div>
+          `).join('')}
+        </div>
 
-      <div class="p-4 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-between">
-        <span class="text-xs text-slate-600">Bấm nút để nâng cấp từng bước lên chuẩn Band 8.0+.</span>
-        <button onclick="window.aris.advanceUpgrade(${index})" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-600/20 transition flex items-center space-x-2">
-          <i data-lucide="zap" class="w-4 h-4"></i>
-          <span>Morph & Upgrade (Tiếp Theo)</span>
-        </button>
+        <div class="p-4 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-between">
+          <span class="text-xs text-slate-600">Bấm nút để nâng cấp từng bước lên chuẩn Band 8.0+.</span>
+          <button onclick="window.aris.advanceUpgrade(${index})" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-600/20 transition flex items-center space-x-2">
+            <i data-lucide="zap" class="w-4 h-4"></i>
+            <span>Morph & Upgrade (Tiếp Theo)</span>
+          </button>
+        </div>
       </div>
     `;
   }
 
-  // INTERACTIVE METHODS
+  // INTERACTIVE HANDLERS
   revealDeconstructToken(sceneIdx, tokenIdx) {
     const tokenEl = document.querySelector(`#deconstruct-tokens-${sceneIdx} [data-token-index="${tokenIdx}"]`);
     if (!tokenEl) return;
@@ -422,7 +424,6 @@ class ARISEngine {
     roleEl.classList.remove('opacity-0');
     roleEl.classList.add('text-blue-700');
 
-    // Check if all are revealed
     const totalTokens = this.lessonData.scenes[sceneIdx].sentence.tokens.length;
     const revealed = document.querySelectorAll(`#deconstruct-tokens-${sceneIdx} .token-role:not(.opacity-0)`).length;
     if (revealed === totalTokens) {
@@ -444,7 +445,6 @@ class ARISEngine {
     card.classList.add('border-solid');
     card.classList.remove('border-dashed');
 
-    // If both are revealed, highlight connector and formula
     const p1 = document.querySelector(`#split-part1-${sceneIdx} .split-tag:not(.hidden)`);
     const p2 = document.querySelector(`#split-part2-${sceneIdx} .split-tag:not(.hidden)`);
     if (p1 && p2) {
@@ -508,7 +508,7 @@ class ARISEngine {
     });
   }
 
-  // NAVIGATION & CONTROLS
+  // NAVIGATION & PROGRESS
   nextScene() {
     if (this.currentSceneIndex < this.lessonData.scenes.length - 1) {
       this.goToScene(this.currentSceneIndex + 1);
@@ -588,7 +588,6 @@ class ARISEngine {
     if (this.teacherMode) {
       btn.classList.add('bg-amber-500', 'text-white');
       btn.classList.remove('bg-amber-50', 'text-amber-800');
-      // Reveal all active components
       this.revealAllDeconstruct(this.currentSceneIndex);
       this.revealAllSplitter(this.currentSceneIndex);
     } else {
@@ -600,10 +599,6 @@ class ARISEngine {
   resetCurrentScene() {
     const scene = this.lessonData.scenes[this.currentSceneIndex];
     if (scene.type === 'live_quiz') this.resetQuiz(this.currentSceneIndex);
-  }
-
-  bindInteractiveListeners() {
-    // Custom events
   }
 }
 

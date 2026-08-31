@@ -322,12 +322,21 @@ export async function buildApp(_opts?: any) {
       err: error,
     });
 
+    const errorTitle =
+      error.error ||
+      (statusCode === 429
+        ? "Too Many Requests"
+        : statusCode >= 500 && isProdOrServerless
+        ? "Internal Server Error"
+        : clientMessage);
+
     return reply.status(statusCode).send({
       statusCode,
-      error: statusCode >= 500 && isProdOrServerless ? "Internal Server Error" : clientMessage,
+      error: errorTitle,
       message: clientMessage,
       errorType,
       requestId: request.id,
+      ...(error.retryAfter ? { retryAfter: error.retryAfter } : {}),
       ...(error.issues ? { details: error.issues } : {}),
     });
   });
