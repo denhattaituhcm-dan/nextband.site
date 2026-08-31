@@ -28,6 +28,28 @@ export function adaptQuestion(raw: any): QuestionDTO {
     }
   }
 
+  // If matching question and options is array of empty strings or empty, fallback to correctAnswer config
+  const isMatching = raw.questionType === "matching" || raw.question_type === "matching";
+  if (isMatching) {
+    const isOptsEmpty =
+      !parsedOptions ||
+      (Array.isArray(parsedOptions) && (parsedOptions.length === 0 || parsedOptions.every((o: any) => !o || String(o).trim() === "")));
+
+    if (isOptsEmpty && (raw.correctAnswer || raw.correct_answer)) {
+      try {
+        const rawAns = raw.correctAnswer || raw.correct_answer;
+        const config = typeof rawAns === "object" ? rawAns : JSON.parse(rawAns);
+        if (config && (Array.isArray(config.options) || Array.isArray(config.items))) {
+          parsedOptions = {
+            items: Array.isArray(config.items) ? config.items : [],
+            options: Array.isArray(config.options) ? config.options : [],
+            pairs: config.pairs || {},
+          };
+        }
+      } catch {}
+    }
+  }
+
   // Parse fill-blank answers safely
   let fillBlankAnswers: string[] = [];
   if (Array.isArray(raw.fillBlankAnswers || raw.fill_blank_answers)) {

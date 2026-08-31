@@ -149,4 +149,30 @@ describe("Matching Data Contract - Frontend Lifecycle & Sanitization", () => {
     expect(list[0].displayNumber).toBe(1);
     expect(list[5].displayNumber).toBe(6);
   });
+
+  it("7. parseMatchingData gracefully handles legacy empty string array options: ['', '', '', ''] by falling back to correctAnswer", () => {
+    const legacyEmptyArrayQuestion = {
+      id: "q-legacy-empty-array",
+      questionType: "matching",
+      questionText: "Which feature is related to each of the following areas of the world represented in the playground?",
+      options: ["", "", "", ""],
+      correctAnswer: JSON.stringify({
+        items: ["Asia", "Antarctica", "South America", "North America", "Europe", "Africa"],
+        options: ["ancient forts", "waterways", "ice and snow", "jewels", "local animals", "mountains", "music and film", "space travel", "volcanoes"],
+        pairs: { "0": "A", "1": "C", "2": "C", "3": "A", "4": "B", "5": "A" }
+      }),
+      points: 6,
+    };
+
+    const data = parseMatchingData(legacyEmptyArrayQuestion);
+    expect(data.items).toHaveLength(6);
+    expect(data.options).toHaveLength(9);
+    expect(data.items[0].text).toBe("Asia");
+    expect(data.options[0].text).toBe("ancient forts");
+    expect(data.options[0].label).toBe("A");
+    expect(data.options[8].text).toBe("volcanoes");
+    expect(data.options[8].label).toBe("I");
+    expect(data.pairs["0"]).toBe(0); // "A" -> 0
+    expect(data.pairs["1"]).toBe(2); // "C" -> 2
+  });
 });

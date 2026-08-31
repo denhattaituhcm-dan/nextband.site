@@ -13888,3 +13888,59 @@
 {"level":30,"time":1788108552936,"pid":5400,"hostname":"Admin-PC","reqId":"req-7","req":{"method":"GET","url":"/api/v1/submissions","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
 {"level":30,"time":1788108552938,"pid":5400,"hostname":"Admin-PC","reqId":"req-7","res":{"statusCode":200},"responseTime":1.3294000001624227,"msg":"request completed"}
 {"level":30,"time":1788108552939,"pid":5400,"hostname":"Admin-PC","msg":"[ClassScheduler] 🛑 Class Lifecycle Scheduler stopped."}
+{"level":30,"time":1788154790576,"pid":13696,"hostname":"Admin-PC","msg":"[ClassScheduler] ⏱️ Class Lifecycle Scheduler is enabled (runs every 24h)."}
+{"level":30,"time":1788154805580,"pid":13696,"hostname":"Admin-PC","msg":"[ClassScheduler] 🔄 Running Class Lifecycle Maintenance..."}
+{"level":30,"time":1788154810043,"pid":13696,"hostname":"Admin-PC","result":{"success":true,"timestamp":"2026-08-31T05:40:05.580Z","closedClassesCount":1,"archivedClassesCount":0,"deletedClassesCount":0},"msg":"[ClassScheduler] ✅ Maintenance finished: Auto-closed 1 classes, Purged 0 old closed classes."}
+{"level":30,"time":1788154837471,"pid":7292,"hostname":"Admin-PC","msg":"[ClassScheduler] ⏱️ Class Lifecycle Scheduler is enabled (runs every 24h)."}
+{"level":30,"time":1788154837483,"pid":7292,"hostname":"Admin-PC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/users","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154837494,"pid":7292,"hostname":"Admin-PC","reqId":"req-1","res":{"statusCode":403},"responseTime":11.041600000113249,"msg":"request completed"}
+{"level":30,"time":1788154837496,"pid":7292,"hostname":"Admin-PC","reqId":"req-2","req":{"method":"GET","url":"/api/v1/exams/66666666-6666-4666-8666-666666666666","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154837497,"pid":7292,"hostname":"Admin-PC","reqId":"req-2","res":{"statusCode":200},"responseTime":1.275300000794232,"msg":"request completed"}
+{"level":30,"time":1788154837503,"pid":7292,"hostname":"Admin-PC","reqId":"req-3","req":{"method":"GET","url":"/api/v1/exams/66666666-6666-4666-8666-666666666666","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154837504,"pid":7292,"hostname":"Admin-PC","reqId":"req-3","res":{"statusCode":200},"responseTime":1.1206999998539686,"msg":"request completed"}
+{"level":30,"time":1788154837505,"pid":7292,"hostname":"Admin-PC","reqId":"req-4","req":{"method":"POST","url":"/api/v1/submissions","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154837508,"pid":7292,"hostname":"Admin-PC","reqId":"req-4","res":{"statusCode":201},"responseTime":3.4281999999657273,"msg":"request completed"}
+{"level":30,"time":1788154837509,"pid":7292,"hostname":"Admin-PC","reqId":"req-5","req":{"method":"PUT","url":"/api/v1/submissions/sub-1788154837508-g5oda","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154837510,"pid":7292,"hostname":"Admin-PC","reqId":"req-5","res":{"statusCode":200},"responseTime":1.2158999992534518,"msg":"request completed"}
+{"level":30,"time":1788154837511,"pid":7292,"hostname":"Admin-PC","reqId":"req-6","req":{"method":"PUT","url":"/api/v1/submissions/sub-1788154837508-g5oda","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154837512,"pid":7292,"hostname":"Admin-PC","reqId":"req-6","res":{"statusCode":200},"responseTime":0.7883000001311302,"msg":"request completed"}
+{"level":30,"time":1788154837512,"pid":7292,"hostname":"Admin-PC","reqId":"req-7","req":{"method":"POST","url":"/api/v1/submissions/sub-1788154837508-g5oda/submit","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154837522,"pid":7292,"hostname":"Admin-PC","reqId":"req-7","res":{"statusCode":200},"responseTime":9.758099999278784,"msg":"request completed"}
+{"level":30,"time":1788154837523,"pid":7292,"hostname":"Admin-PC","reqId":"req-8","req":{"method":"POST","url":"/api/v1/submissions/sub-1788154837508-g5oda/submit","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154837524,"pid":7292,"hostname":"Admin-PC","reqId":"req-8","res":{"statusCode":200},"responseTime":1.308900000527501,"msg":"request completed"}
+{"level":30,"time":1788154837525,"pid":7292,"hostname":"Admin-PC","reqId":"req-9","req":{"method":"PUT","url":"/api/v1/submissions/sub-1788154837508-g5oda","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154837526,"pid":7292,"hostname":"Admin-PC","reqId":"req-9","res":{"statusCode":409},"responseTime":0.6871999995782971,"msg":"request completed"}
+{"level":30,"time":1788154837527,"pid":7292,"hostname":"Admin-PC","reqId":"req-a","req":{"method":"PUT","url":"/api/v1/submissions/sub-1788154837508-g5oda","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154837527,"pid":7292,"hostname":"Admin-PC","reqId":"req-a","res":{"statusCode":403},"responseTime":0.86739999987185,"msg":"request completed"}
+{"level":30,"time":1788154837528,"pid":7292,"hostname":"Admin-PC","reqId":"req-b","req":{"method":"POST","url":"/api/v1/submissions/sub-1788154837508-g5oda/submit","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154837528,"pid":7292,"hostname":"Admin-PC","reqId":"req-b","res":{"statusCode":403},"responseTime":0.549800000153482,"msg":"request completed"}
+{"level":30,"time":1788154837529,"pid":7292,"hostname":"Admin-PC","reqId":"req-c","req":{"method":"GET","url":"/api/v1/submissions/sub-1788154837508-g5oda","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154837530,"pid":7292,"hostname":"Admin-PC","reqId":"req-c","res":{"statusCode":200},"responseTime":1.451799999922514,"msg":"request completed"}
+{"level":30,"time":1788154837532,"pid":7292,"hostname":"Admin-PC","msg":"[ClassScheduler] 🛑 Class Lifecycle Scheduler stopped."}
+{"level":30,"time":1788154839477,"pid":16580,"hostname":"Admin-PC","msg":"[ClassScheduler] ⏱️ Class Lifecycle Scheduler is enabled (runs every 24h)."}
+{"level":30,"time":1788154839489,"pid":16580,"hostname":"Admin-PC","reqId":"req-1","req":{"method":"POST","url":"/api/v1/submissions/sub-mixed-1/grade","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154839500,"pid":16580,"hostname":"Admin-PC","reqId":"req-1","res":{"statusCode":200},"responseTime":10.598400000482798,"msg":"request completed"}
+{"level":30,"time":1788154839509,"pid":16580,"hostname":"Admin-PC","reqId":"req-2","req":{"method":"POST","url":"/api/v1/submissions/sub-hist-1/submit","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154839514,"pid":16580,"hostname":"Admin-PC","reqId":"req-2","res":{"statusCode":200},"responseTime":4.3684999998658895,"msg":"request completed"}
+{"level":30,"time":1788154839516,"pid":16580,"hostname":"Admin-PC","msg":"[ClassScheduler] 🛑 Class Lifecycle Scheduler stopped."}
+{"level":30,"time":1788154849451,"pid":13528,"hostname":"Admin-PC","msg":"[ClassScheduler] ⏱️ Class Lifecycle Scheduler is enabled (runs every 24h)."}
+{"level":30,"time":1788154855219,"pid":13528,"hostname":"Admin-PC","reqId":"req-1","req":{"method":"PUT","url":"/api/v1/speaking-forecast/admin","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154859013,"pid":13528,"hostname":"Admin-PC","reqId":"req-1","res":{"statusCode":200},"responseTime":3793.3105000006035,"msg":"request completed"}
+{"level":30,"time":1788154859014,"pid":13528,"hostname":"Admin-PC","reqId":"req-2","req":{"method":"GET","url":"/api/v1/speaking-forecast","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154859774,"pid":13528,"hostname":"Admin-PC","reqId":"req-2","res":{"statusCode":200},"responseTime":759.5065000001341,"msg":"request completed"}
+{"level":30,"time":1788154860544,"pid":13528,"hostname":"Admin-PC","reqId":"req-3","req":{"method":"POST","url":"/api/v1/classes/e171126f-216e-4a64-993b-54b0f8e63c8d/students","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154864466,"pid":13528,"hostname":"Admin-PC","msg":"[ClassScheduler] 🔄 Running Class Lifecycle Maintenance..."}
+{"level":30,"time":1788154864952,"pid":13528,"hostname":"Admin-PC","reqId":"req-3","res":{"statusCode":201},"responseTime":4407.845399999991,"msg":"request completed"}
+{"level":30,"time":1788154867395,"pid":13528,"hostname":"Admin-PC","reqId":"req-4","req":{"method":"GET","url":"/api/v1/enrollments","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154867528,"pid":13528,"hostname":"Admin-PC","result":{"success":true,"timestamp":"2026-08-31T05:41:04.466Z","closedClassesCount":0,"archivedClassesCount":0,"deletedClassesCount":0},"msg":"[ClassScheduler] ✅ Maintenance finished: Auto-closed 0 classes, Purged 0 old closed classes."}
+{"level":30,"time":1788154870448,"pid":13528,"hostname":"Admin-PC","reqId":"req-4","res":{"statusCode":200},"responseTime":3053.892199999653,"msg":"request completed"}
+{"level":30,"time":1788154870450,"pid":13528,"hostname":"Admin-PC","reqId":"req-5","req":{"method":"DELETE","url":"/api/v1/classes/e171126f-216e-4a64-993b-54b0f8e63c8d/students/bf2ef66e-7bcb-40ce-8968-5f6b84d415ad","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154876465,"pid":13528,"hostname":"Admin-PC","reqId":"req-5","res":{"statusCode":200},"responseTime":6015.441000000574,"msg":"request completed"}
+{"level":30,"time":1788154885977,"pid":13528,"hostname":"Admin-PC","reqId":"req-6","req":{"method":"POST","url":"/api/v1/submissions","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154893518,"pid":13528,"hostname":"Admin-PC","reqId":"req-6","res":{"statusCode":201},"responseTime":7540.254700000398,"msg":"request completed"}
+{"level":30,"time":1788154895259,"pid":13528,"hostname":"Admin-PC","reqId":"req-7","req":{"method":"POST","url":"/api/v1/submissions/850afb14-f185-4ecc-a6cd-7d4aa4de09d7/submit","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154902064,"pid":13528,"hostname":"Admin-PC","reqId":"req-7","res":{"statusCode":200},"responseTime":6805.279699999839,"msg":"request completed"}
+{"level":30,"time":1788154903737,"pid":13528,"hostname":"Admin-PC","reqId":"req-8","req":{"method":"POST","url":"/api/v1/submissions","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154911148,"pid":13528,"hostname":"Admin-PC","reqId":"req-8","res":{"statusCode":201},"responseTime":7411.332799999975,"msg":"request completed"}
+{"level":30,"time":1788154912836,"pid":13528,"hostname":"Admin-PC","reqId":"req-9","req":{"method":"POST","url":"/api/v1/submissions/94b46f88-061e-4cc2-afcb-f09494ae1154/submit","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1788154920285,"pid":13528,"hostname":"Admin-PC","reqId":"req-9","res":{"statusCode":500},"responseTime":7449.0417999997735,"msg":"request completed"}

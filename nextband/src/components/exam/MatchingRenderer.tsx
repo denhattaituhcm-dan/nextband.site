@@ -112,7 +112,11 @@ export const parseMatchingData = (question: any): NormalizedMatchingModel => {
       rawPairs = optsObj.pairs;
     }
   } else if (Array.isArray(optsObj)) {
-    rawOptions = optsObj;
+    // Only accept if it contains actual non-empty option strings
+    const nonBlank = optsObj.filter((o) => typeof o === "string" && o.trim().length > 0);
+    if (nonBlank.length > 0) {
+      rawOptions = optsObj;
+    }
   }
 
   // 2. Secondary / Admin Preview Source: question.correctAnswer
