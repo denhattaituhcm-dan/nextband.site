@@ -33,8 +33,6 @@ export const HuyenCo: React.FC<HuyenCoProps> = ({
     <div
       className={cn(
         "inline-flex items-center justify-center relative select-none shrink-0 transition-transform duration-300",
-        isLauncher &&
-          "rounded-full bg-slate-950/90 border border-amber-500/30 shadow-lg p-0.5",
         isPortrait && "drop-shadow-xl",
         className
       )}

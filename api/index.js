@@ -53367,6 +53367,7 @@ var init_env = __esm({
       TELEGRAM_CHAT_ID: external_exports.string().optional(),
       STT_API_KEY: external_exports.string().optional(),
       GROQ_API_KEY: external_exports.string().optional(),
+      GEMINI_API_KEY: external_exports.string().optional(),
       OPENAI_API_KEY: external_exports.string().optional(),
       STT_API_URL: external_exports.string().optional(),
       WHISPER_API_URL: external_exports.string().optional(),
@@ -104688,6 +104689,59 @@ var RoomCollisionService = class {
   }
 };
 
+// server/utils/holiday.helper.ts
+var OFFICIAL_VIETNAM_HOLIDAYS = [
+  // 2025
+  { name: "T\u1EBFt D\u01B0\u01A1ng L\u1ECBch 2025", startDate: "2025-01-01", endDate: "2025-01-01" },
+  { name: "T\u1EBFt Nguy\xEAn \u0110\xE1n 2025", startDate: "2025-01-25", endDate: "2025-02-02" },
+  { name: "Gi\u1ED7 T\u1ED5 H\xF9ng V\u01B0\u01A1ng 2025", startDate: "2025-04-07", endDate: "2025-04-07" },
+  { name: "Gi\u1EA3i ph\xF3ng 30/4 & Qu\u1ED1c t\u1EBF Lao \u0111\u1ED9ng 1/5 (2025)", startDate: "2025-04-30", endDate: "2025-05-04" },
+  { name: "Qu\u1ED1c Kh\xE1nh 2/9 (2025)", startDate: "2025-08-30", endDate: "2025-09-02" },
+  // 2026
+  { name: "T\u1EBFt D\u01B0\u01A1ng L\u1ECBch 2026", startDate: "2026-01-01", endDate: "2026-01-01" },
+  { name: "T\u1EBFt Nguy\xEAn \u0110\xE1n 2026", startDate: "2026-02-14", endDate: "2026-02-22" },
+  { name: "Gi\u1ED7 T\u1ED5 H\xF9ng V\u01B0\u01A1ng 2026", startDate: "2026-04-26", endDate: "2026-04-27" },
+  { name: "Gi\u1EA3i ph\xF3ng 30/4 & Qu\u1ED1c t\u1EBF Lao \u0111\u1ED9ng 1/5 (2026)", startDate: "2026-04-30", endDate: "2026-05-03" },
+  { name: "Qu\u1ED1c Kh\xE1nh 2/9 (2026)", startDate: "2026-08-30", endDate: "2026-09-03" },
+  // 2027
+  { name: "T\u1EBFt D\u01B0\u01A1ng L\u1ECBch 2027", startDate: "2027-01-01", endDate: "2027-01-01" },
+  { name: "T\u1EBFt Nguy\xEAn \u0110\xE1n 2027", startDate: "2027-02-05", endDate: "2027-02-14" },
+  { name: "Gi\u1ED7 T\u1ED5 H\xF9ng V\u01B0\u01A1ng 2027", startDate: "2027-04-16", endDate: "2027-04-16" },
+  { name: "Gi\u1EA3i ph\xF3ng 30/4 & Qu\u1ED1c t\u1EBF Lao \u0111\u1ED9ng 1/5 (2027)", startDate: "2027-04-30", endDate: "2027-05-03" },
+  { name: "Qu\u1ED1c Kh\xE1nh 2/9 (2027)", startDate: "2027-09-01", endDate: "2027-09-03" }
+];
+function formatToDateString(date) {
+  if (typeof date === "string") {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      return date;
+    }
+    const d = new Date(date);
+    const y2 = d.getFullYear();
+    const m2 = String(d.getMonth() + 1).padStart(2, "0");
+    const day2 = String(d.getDate()).padStart(2, "0");
+    return `${y2}-${m2}-${day2}`;
+  }
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+function isHolidayDate(date, customHolidays) {
+  const targetDateStr = formatToDateString(date);
+  const allHolidays = customHolidays && customHolidays.length > 0 ? [...OFFICIAL_VIETNAM_HOLIDAYS, ...customHolidays] : OFFICIAL_VIETNAM_HOLIDAYS;
+  for (const h of allHolidays) {
+    if (targetDateStr >= h.startDate && targetDateStr <= h.endDate) {
+      return true;
+    }
+  }
+  const monthDay = targetDateStr.slice(5);
+  const fixedRecurring = ["01-01", "04-30", "05-01", "09-02"];
+  if (fixedRecurring.includes(monthDay)) {
+    return true;
+  }
+  return false;
+}
+
 // server/services/class.service.ts
 var ClassService = class {
   constructor(prisma) {
@@ -104900,25 +104954,38 @@ var ClassService = class {
       completedAt: null
     }));
   }
-  // Use Case: Generate or Update Class Sessions
+  // Use Case: Generate or Update Class Sessions (With Holiday Exclusion)
   async generateSessionsForClass(user, classId, options) {
     const classData = await this.repo.findById(classId);
     if (!classData) {
       throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
     }
-    const { startDate, weekdays, totalSessions = 27, startTime = "18:00", endTime = "20:00" } = options;
+    const {
+      startDate,
+      weekdays,
+      totalSessions = 27,
+      startTime = "18:00",
+      endTime = "20:00",
+      excludeHolidays = true,
+      customHolidays
+    } = options;
     if (!startDate || !Array.isArray(weekdays) || weekdays.length === 0) {
       throw new AuthorizationError("Ng\xE0y b\u1EAFt \u0111\u1EA7u v\xE0 th\u1EE9 trong tu\u1EA7n kh\xF4ng \u0111\u01B0\u1EE3c \u0111\u1EC3 tr\u1ED1ng", 400);
     }
     const dates = [];
     const [y, m, d] = startDate.split("-").map(Number);
     const cur = new Date(y, m - 1, d);
-    while (dates.length < totalSessions) {
+    let maxDaysLookahead = totalSessions * 14;
+    while (dates.length < totalSessions && maxDaysLookahead > 0) {
+      maxDaysLookahead--;
       const dow = cur.getDay();
       if (weekdays.includes(dow)) {
-        const mm = String(cur.getMonth() + 1).padStart(2, "0");
-        const dd = String(cur.getDate()).padStart(2, "0");
-        dates.push(`${cur.getFullYear()}-${mm}-${dd}`);
+        const isHoliday = excludeHolidays && isHolidayDate(cur, customHolidays);
+        if (!isHoliday) {
+          const mm = String(cur.getMonth() + 1).padStart(2, "0");
+          const dd = String(cur.getDate()).padStart(2, "0");
+          dates.push(`${cur.getFullYear()}-${mm}-${dd}`);
+        }
       }
       cur.setDate(cur.getDate() + 1);
     }
@@ -104963,6 +105030,13 @@ var ClassService = class {
           where: { id: { in: extraneousIds } }
         });
       }
+    }
+    if (dates.length > 0) {
+      const finalEndDate = /* @__PURE__ */ new Date(`${dates[dates.length - 1]}T23:59:59.999Z`);
+      await this.prisma.class.update({
+        where: { id: classId },
+        data: { endDate: finalEndDate }
+      });
     }
     return result;
   }
@@ -105528,7 +105602,42 @@ var ClassService = class {
       }
     };
   }
-  // Use Case: Run Lifecycle Maintenance (Auto-close after 7 days grace period & 6 months safety cutoff)
+  // Use Case: Reopen / Extend Class (Teacher or Admin)
+  async reopenClass(user, id) {
+    const classData = await this.repo.findById(id);
+    if (!classData) {
+      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+    }
+    const isAdmin = user.roles.includes("admin");
+    if (!isAdmin && classData.teacherId !== user.id) {
+      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n m\u1EDF l\u1EA1i l\u1EDBp n\xE0y", 403);
+    }
+    const updatedClass = await this.prisma.class.update({
+      where: { id },
+      data: {
+        status: "ACTIVE",
+        isActive: true,
+        closedAt: null
+      }
+    });
+    await this.prisma.classStudent.updateMany({
+      where: {
+        classId: id,
+        status: "COMPLETED",
+        deletedAt: null
+      },
+      data: {
+        status: "ACTIVE",
+        completedAt: null
+      }
+    });
+    return {
+      success: true,
+      message: `\u0110\xE3 m\u1EDF l\u1EA1i l\u1EDBp "${updatedClass.name}" th\xE0nh c\xF4ng.`,
+      data: updatedClass
+    };
+  }
+  // Use Case: Run Lifecycle Maintenance (Auto-close strictly after 7 days grace period post last actual session & all sessions complete)
   async runClassLifecycleMaintenance() {
     const now = /* @__PURE__ */ new Date();
     let closedCount = 0;
@@ -105539,17 +105648,22 @@ var ClassService = class {
       },
       include: {
         sessions: {
-          select: { plannedDate: true },
-          orderBy: { plannedDate: "desc" },
-          take: 1
+          select: { id: true, plannedDate: true, status: true },
+          orderBy: { plannedDate: "desc" }
         },
         students: { select: { studentId: true } }
       }
     });
     for (const cls of candidateClasses) {
+      const hasFutureSessions = cls.sessions.some(
+        (s) => s.plannedDate && new Date(s.plannedDate).getTime() > now.getTime()
+      );
+      const hasRecentPendingSessions = cls.sessions.some(
+        (s) => s.status === "PLANNED" && s.plannedDate && new Date(s.plannedDate).getTime() > sevenDaysAgo.getTime()
+      );
       const lastSessionDate = cls.sessions[0]?.plannedDate || cls.endDate;
-      const isPastGracePeriod = lastSessionDate && new Date(lastSessionDate) <= sevenDaysAgo;
-      const isSixMonthsOld = cls.startDate && new Date(cls.startDate) <= new Date(now.getTime() - 180 * 24 * 60 * 60 * 1e3);
+      const isPastGracePeriod = !hasFutureSessions && !hasRecentPendingSessions && lastSessionDate && new Date(lastSessionDate).getTime() <= sevenDaysAgo.getTime();
+      const isSixMonthsOld = !hasFutureSessions && cls.startDate && new Date(cls.startDate).getTime() <= new Date(now.getTime() - 180 * 24 * 60 * 60 * 1e3).getTime();
       if (isPastGracePeriod || isSixMonthsOld) {
         await this.prisma.class.update({
           where: { id: cls.id },
@@ -105991,6 +106105,16 @@ var ClassController = class {
       return reply.status(status).send({ error: err.message });
     }
   }
+  async reopen(request, reply) {
+    try {
+      const user = request.user;
+      const result = await this.service.reopenClass(user, request.params.id);
+      return reply.send(result);
+    } catch (err) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
   async triggerMaintenance(request, reply) {
     try {
       const result = await this.service.runClassLifecycleMaintenance();
@@ -106140,6 +106264,13 @@ async function classesRoutes(fastify) {
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       return controller.close(request, reply);
+    }
+  );
+  fastify.post(
+    "/:id/reopen",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      return controller.reopen(request, reply);
     }
   );
   fastify.post(
@@ -111378,6 +111509,378 @@ var referralsRoutes = async (fastify) => {
 };
 var referrals_routes_default = referralsRoutes;
 
+// server/routes/lexicon.routes.ts
+init_zod();
+
+// server/services/cognitive-lexicon.service.ts
+init_env();
+var CognitiveLexiconService = class {
+  constructor(prisma) {
+    this.prisma = prisma;
+  }
+  /**
+   * Chuẩn hóa từ vựng (lowercase, trim, bỏ dấu chấm câu ngoại vi)
+   */
+  normalizeWord(raw) {
+    return raw.trim().toLowerCase().replace(/^[^\w]+|[^\w]+$/g, "");
+  }
+  /**
+   * Tra từ với cơ chế Lazy Caching (DB -> Gemini API -> Open Dictionary API fallback)
+   */
+  async lookupWord(wordRaw, contextSentence) {
+    const word = this.normalizeWord(wordRaw);
+    if (!word || word.length > 50) {
+      throw new Error("Invalid word provided for lookup");
+    }
+    const cached2 = await this.prisma.cognitiveWord.findUnique({
+      where: { word }
+    });
+    if (cached2) {
+      return {
+        id: cached2.id,
+        word: cached2.word,
+        ipa: cached2.ipa,
+        audioUrl: cached2.audioUrl,
+        coreIdea: cached2.coreIdea,
+        wordFormation: cached2.wordFormation,
+        collocations: cached2.collocations,
+        cefrLevel: cached2.cefrLevel,
+        sourceContext: contextSentence
+      };
+    }
+    let analysisResult = null;
+    if (env.GEMINI_API_KEY || process.env.GEMINI_API_KEY) {
+      try {
+        analysisResult = await this.analyzeWithGemini(word, contextSentence);
+      } catch (err) {
+        console.error("Gemini Cognitive Analysis failed, falling back to open dictionary:", err);
+      }
+    }
+    if (!analysisResult) {
+      analysisResult = await this.fallbackOpenDictionary(word, contextSentence);
+    }
+    try {
+      const saved = await this.prisma.cognitiveWord.create({
+        data: {
+          word: analysisResult.word,
+          ipa: analysisResult.ipa,
+          audioUrl: analysisResult.audioUrl,
+          coreIdea: analysisResult.coreIdea,
+          wordFormation: analysisResult.wordFormation ? analysisResult.wordFormation : void 0,
+          collocations: analysisResult.collocations,
+          cefrLevel: analysisResult.cefrLevel
+        }
+      });
+      analysisResult.id = saved.id;
+    } catch (saveErr) {
+      const existing = await this.prisma.cognitiveWord.findUnique({ where: { word } });
+      if (existing) {
+        analysisResult.id = existing.id;
+      }
+    }
+    return analysisResult;
+  }
+  /**
+   * Gọi Gemini API phân tích bản chất tri nhận (Core Idea), cấu trúc hình thái (Word Formation) và Collocations
+   */
+  async analyzeWithGemini(word, contextSentence) {
+    const apiKey = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const prompt = `You are a strict Academic Cognitive Linguist and Senior IELTS Lexicographer.
+Analyze the target English word within the given context.
+
+Rules:
+1. "coreIdea": Exactly 1 short, crisp sentence in Vietnamese explaining the fundamental essence/underlying mental schema of the word (DO NOT write verbose philosophical paragraphs).
+2. "ipa": Standard IPA notation (e.g. /\u0259\u02C8li\u02D0vi.e\u026At/).
+3. "wordFormation": If morphological roots (prefix, root, suffix) have clear historical etymology, provide them with Vietnamese translation. If speculative, return null.
+4. "collocations": 3 to 4 high-frequency academic collocations in English.
+5. "cefrLevel": B1, B2, C1, or C2.
+
+Target Word: "${word}"
+Context Sentence: "${contextSentence || "N/A"}"
+
+Return pure JSON only conforming to:
+{
+  "word": "${word}",
+  "ipa": "/.../",
+  "coreIdea": "b\u1EA3n ch\u1EA5t c\u1ED1t l\xF5i ng\u1EAFn g\u1ECDn (1 c\xE2u ti\u1EBFng Vi\u1EC7t)",
+  "wordFormation": { "prefix": "...", "root": "...", "suffix": "...", "confidence": 0.95 } or null,
+  "collocations": ["collocation 1", "collocation 2", "collocation 3"],
+  "cefrLevel": "C1"
+}`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseMimeType: "application/json",
+          temperature: 0.2
+        }
+      })
+    });
+    if (!response.ok) {
+      throw new Error(`Gemini API Error: ${response.statusText}`);
+    }
+    const data = await response.json();
+    const textContent = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!textContent) {
+      throw new Error("Empty response from Gemini");
+    }
+    const parsed = JSON.parse(textContent);
+    return {
+      word: this.normalizeWord(parsed.word || word),
+      ipa: parsed.ipa || null,
+      audioUrl: `https://api.dictionaryapi.dev/media/pronunciations/en/${encodeURIComponent(word)}-us.mp3`,
+      coreIdea: parsed.coreIdea || "Kh\xE1i ni\u1EC7m ho\u1EB7c h\xE0nh \u0111\u1ED9ng trong ng\u1EEF c\u1EA3nh h\u1ECDc thu\u1EADt.",
+      wordFormation: parsed.wordFormation || null,
+      collocations: Array.isArray(parsed.collocations) ? parsed.collocations : [],
+      cefrLevel: parsed.cefrLevel || "B2",
+      sourceContext: contextSentence
+    };
+  }
+  /**
+   * Fallback sang Free Dictionary API khi không có AI
+   */
+  async fallbackOpenDictionary(word, contextSentence) {
+    let ipa = null;
+    let audioUrl = null;
+    let definition = "Thu\u1EADt ng\u1EEF h\u1ECDc thu\u1EADt trong ng\u1EEF c\u1EA3nh.";
+    try {
+      const resp = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
+      if (resp.ok) {
+        const data = await resp.json();
+        if (Array.isArray(data) && data.length > 0) {
+          const entry = data[0];
+          ipa = entry.phonetic || entry.phonetics?.[0]?.text || null;
+          const foundAudio = entry.phonetics?.find((p) => p.audio && p.audio.length > 0);
+          audioUrl = foundAudio ? foundAudio.audio : null;
+          const firstDef = entry.meanings?.[0]?.definitions?.[0]?.definition;
+          if (firstDef) {
+            definition = firstDef;
+          }
+        }
+      }
+    } catch {
+    }
+    return {
+      word,
+      ipa,
+      audioUrl,
+      coreIdea: definition,
+      wordFormation: null,
+      collocations: [],
+      cefrLevel: "B2",
+      sourceContext: contextSentence
+    };
+  }
+};
+
+// server/routes/lexicon.routes.ts
+var lookupQuerySchema = external_exports.object({
+  word: external_exports.string().min(1).max(50),
+  context: external_exports.string().optional()
+});
+var saveWordSchema = external_exports.object({
+  wordId: external_exports.string().uuid().optional(),
+  word: external_exports.string().min(1).max(50),
+  sourceContext: external_exports.string().min(1),
+  sourceLessonId: external_exports.string().optional()
+});
+var reviewSubmitSchema = external_exports.object({
+  userVocabId: external_exports.string().uuid(),
+  isCorrect: external_exports.boolean(),
+  latencyMs: external_exports.number().optional()
+});
+var lexiconRoutes = async (fastify) => {
+  const service = new CognitiveLexiconService(fastify.prisma);
+  fastify.get("/lookup", async (request, reply) => {
+    const parseResult = lookupQuerySchema.safeParse(request.query);
+    if (!parseResult.success) {
+      return reply.status(400).send({
+        status: "error",
+        message: "Invalid word query parameter",
+        errors: parseResult.error.flatten()
+      });
+    }
+    try {
+      const result = await service.lookupWord(
+        parseResult.data.word,
+        parseResult.data.context
+      );
+      return reply.send({
+        status: "success",
+        data: result
+      });
+    } catch (err) {
+      request.log.error(err);
+      return reply.status(500).send({
+        status: "error",
+        message: err.message || "Failed to lookup word"
+      });
+    }
+  });
+  fastify.post("/save", { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    const user = request.user;
+    const body = saveWordSchema.parse(request.body);
+    let wordId = body.wordId;
+    if (!wordId) {
+      const cognitiveEntry = await service.lookupWord(body.word, body.sourceContext);
+      wordId = cognitiveEntry.id;
+    }
+    if (!wordId) {
+      return reply.status(400).send({
+        status: "error",
+        message: "Could not associate word record"
+      });
+    }
+    const saved = await fastify.prisma.userVocabulary.upsert({
+      where: {
+        userId_wordId: {
+          userId: user.userId || user.id,
+          wordId
+        }
+      },
+      create: {
+        userId: user.userId || user.id,
+        wordId,
+        sourceContext: body.sourceContext,
+        sourceLessonId: body.sourceLessonId,
+        masteryState: 0,
+        // Encountered
+        masteryScore: 0.1,
+        intervalDays: 1,
+        easeFactor: 2.5,
+        nextReviewAt: new Date(Date.now() + 24 * 60 * 60 * 1e3)
+        // 1 ngày sau ôn lại
+      },
+      update: {
+        sourceContext: body.sourceContext,
+        sourceLessonId: body.sourceLessonId || void 0
+      },
+      include: {
+        word: true
+      }
+    });
+    return reply.send({
+      status: "success",
+      message: "\u0110\xE3 l\u01B0u v\xE0o S\u1ED5 t\u1EEB",
+      data: saved
+    });
+  });
+  fastify.get("/due-review", { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    const user = request.user;
+    const userId = user.userId || user.id;
+    const dueWords = await fastify.prisma.userVocabulary.findMany({
+      where: {
+        userId,
+        nextReviewAt: {
+          lte: /* @__PURE__ */ new Date()
+        }
+      },
+      include: {
+        word: true
+      },
+      orderBy: [
+        { failedReviews: "desc" },
+        { nextReviewAt: "asc" }
+      ],
+      take: 5
+    });
+    return reply.send({
+      status: "success",
+      data: {
+        count: dueWords.length,
+        items: dueWords
+      }
+    });
+  });
+  fastify.post("/review", { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    const user = request.user;
+    const userId = user.userId || user.id;
+    const body = reviewSubmitSchema.parse(request.body);
+    const record = await fastify.prisma.userVocabulary.findFirst({
+      where: { id: body.userVocabId, userId },
+      include: { word: true }
+    });
+    if (!record) {
+      return reply.status(404).send({
+        status: "error",
+        message: "Vocabulary record not found"
+      });
+    }
+    let interval = record.intervalDays;
+    let ease = record.easeFactor;
+    let masteryState = record.masteryState;
+    let masteryScore = record.masteryScore;
+    if (body.isCorrect) {
+      if (interval === 1) interval = 3;
+      else if (interval === 3) interval = 7;
+      else if (interval === 7) interval = 14;
+      else interval = Math.round(interval * ease);
+      masteryScore = Math.min(1, masteryScore + 0.25);
+      if (masteryScore >= 0.9) masteryState = 3;
+      else if (masteryScore >= 0.6) masteryState = 2;
+      else masteryState = 1;
+    } else {
+      interval = 1;
+      ease = Math.max(1.3, ease - 0.2);
+      masteryScore = Math.max(0.1, masteryScore - 0.2);
+      masteryState = 1;
+    }
+    const nextReviewAt = new Date(Date.now() + interval * 24 * 60 * 60 * 1e3);
+    const currentHistory = Array.isArray(record.history) ? record.history : [];
+    const newHistoryEntry = {
+      date: (/* @__PURE__ */ new Date()).toISOString(),
+      result: body.isCorrect ? "PASS" : "FAIL",
+      latencyMs: body.latencyMs || null
+    };
+    const updated = await fastify.prisma.userVocabulary.update({
+      where: { id: record.id },
+      data: {
+        intervalDays: interval,
+        easeFactor: ease,
+        masteryState,
+        masteryScore,
+        nextReviewAt,
+        totalReviews: record.totalReviews + 1,
+        failedReviews: body.isCorrect ? record.failedReviews : record.failedReviews + 1,
+        history: [...currentHistory, newHistoryEntry]
+      },
+      include: {
+        word: true
+      }
+    });
+    return reply.send({
+      status: "success",
+      data: updated
+    });
+  });
+  fastify.get("/my-lexicon", { preHandler: [fastify.authenticate] }, async (request, reply) => {
+    const user = request.user;
+    const userId = user.userId || user.id;
+    const list = await fastify.prisma.userVocabulary.findMany({
+      where: { userId },
+      include: { word: true },
+      orderBy: { updatedAt: "desc" }
+    });
+    const stats = {
+      total: list.length,
+      learning: list.filter((i) => i.masteryState <= 1).length,
+      consolidating: list.filter((i) => i.masteryState === 2).length,
+      mastered: list.filter((i) => i.masteryState === 3).length
+    };
+    return reply.send({
+      status: "success",
+      data: {
+        stats,
+        items: list
+      }
+    });
+  });
+};
+var lexicon_routes_default = lexiconRoutes;
+
 // server/routes/index.ts
 var routes = async (fastify) => {
   fastify.get("/health", async () => {
@@ -111417,6 +111920,7 @@ var routes = async (fastify) => {
   await fastify.register(interventionRoutes, { prefix: "/interventions" });
   await fastify.register(tuitionRoutes, { prefix: "/admin/tuition" });
   await fastify.register(milestoneRoutes, { prefix: "/milestones" });
+  await fastify.register(lexicon_routes_default, { prefix: "/lexicon" });
 };
 var routes_default = routes;
 

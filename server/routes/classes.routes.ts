@@ -168,6 +168,15 @@ export default async function classesRoutes(fastify: FastifyInstance) {
     }
   );
 
+  // POST /classes/:id/reopen - Mở lại lớp học (Thủ công bởi Teacher hoặc Admin)
+  fastify.post<{ Params: { id: string } }>(
+    "/:id/reopen",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      return controller.reopen(request, reply);
+    }
+  );
+
   // POST /classes/maintenance - Tác vụ bảo trì vòng đời lớp (Quét tự động đóng & xóa dọn dẹp)
   fastify.post(
     "/maintenance",

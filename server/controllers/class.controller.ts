@@ -191,6 +191,17 @@ export class ClassController {
     }
   }
 
+  async reopen(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+    try {
+      const user = (request as any).user;
+      const result = await this.service.reopenClass(user, request.params.id);
+      return reply.send(result);
+    } catch (err: any) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
+
   async triggerMaintenance(request: FastifyRequest, reply: FastifyReply) {
     try {
       const result = await this.service.runClassLifecycleMaintenance();

@@ -75,7 +75,7 @@ export const StaticFallback: React.FC<RendererProps> = ({
         loading={isPortrait ? "lazy" : "eager"}
         onError={handleError}
         className={cn(
-          "w-full h-full object-cover object-center",
+          "w-full h-full object-cover object-center scale-[1.14]",
           motionClass
         )}
       />

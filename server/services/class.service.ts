@@ -3,6 +3,7 @@ import { ClassRepository } from "../repositories/class.repository.js";
 import { AuthorizationService, AuthorizationError, NotFoundError } from "./authorization.service.js";
 import { NotificationService } from "./notification.service.js";
 import { RoomCollisionService } from "./room-collision.service.js";
+import { isHolidayDate, HolidayRange } from "../utils/holiday.helper.js";
 
 export class ClassService {
   private repo: ClassRepository;
@@ -259,7 +260,7 @@ export class ClassService {
     }));
   }
 
-  // Use Case: Generate or Update Class Sessions
+  // Use Case: Generate or Update Class Sessions (With Holiday Exclusion)
   async generateSessionsForClass(
     user: { id: string; roles: string[] },
     classId: string,
@@ -269,6 +270,8 @@ export class ClassService {
       totalSessions: number;
       startTime: string;
       endTime: string;
+      excludeHolidays?: boolean;
+      customHolidays?: HolidayRange[];
     }
   ) {
     const classData = await this.repo.findById(classId);
@@ -276,7 +279,16 @@ export class ClassService {
       throw new NotFoundError("Không tìm thấy lớp học");
     }
 
-    const { startDate, weekdays, totalSessions = 27, startTime = "18:00", endTime = "20:00" } = options;
+    const {
+      startDate,
+      weekdays,
+      totalSessions = 27,
+      startTime = "18:00",
+      endTime = "20:00",
+      excludeHolidays = true,
+      customHolidays,
+    } = options;
+
     if (!startDate || !Array.isArray(weekdays) || weekdays.length === 0) {
       throw new AuthorizationError("Ngày bắt đầu và thứ trong tuần không được để trống", 400);
     }
@@ -285,12 +297,19 @@ export class ClassService {
     const [y, m, d] = startDate.split("-").map(Number);
     const cur = new Date(y, m - 1, d);
 
-    while (dates.length < totalSessions) {
+    // Limit iteration safety counter to prevent infinite loop
+    let maxDaysLookahead = totalSessions * 14;
+    while (dates.length < totalSessions && maxDaysLookahead > 0) {
+      maxDaysLookahead--;
       const dow = cur.getDay();
       if (weekdays.includes(dow)) {
-        const mm = String(cur.getMonth() + 1).padStart(2, "0");
-        const dd = String(cur.getDate()).padStart(2, "0");
-        dates.push(`${cur.getFullYear()}-${mm}-${dd}`);
+        // Check if day falls into holidays
+        const isHoliday = excludeHolidays && isHolidayDate(cur, customHolidays);
+        if (!isHoliday) {
+          const mm = String(cur.getMonth() + 1).padStart(2, "0");
+          const dd = String(cur.getDate()).padStart(2, "0");
+          dates.push(`${cur.getFullYear()}-${mm}-${dd}`);
+        }
       }
       cur.setDate(cur.getDate() + 1);
     }
@@ -342,6 +361,15 @@ export class ClassService {
           where: { id: { in: extraneousIds } },
         });
       }
+    }
+
+    // Automatically sync Class.endDate with the final session date
+    if (dates.length > 0) {
+      const finalEndDate = new Date(`${dates[dates.length - 1]}T23:59:59.999Z`);
+      await this.prisma.class.update({
+        where: { id: classId },
+        data: { endDate: finalEndDate },
+      });
     }
 
     return result;
@@ -1024,7 +1052,48 @@ export class ClassService {
     };
   }
 
-  // Use Case: Run Lifecycle Maintenance (Auto-close after 7 days grace period & 6 months safety cutoff)
+  // Use Case: Reopen / Extend Class (Teacher or Admin)
+  async reopenClass(user: { id: string; roles: string[] }, id: string) {
+    const classData = await this.repo.findById(id);
+    if (!classData) {
+      throw new NotFoundError("Không tìm thấy lớp học");
+    }
+
+    const isAdmin = user.roles.includes("admin");
+    if (!isAdmin && classData.teacherId !== user.id) {
+      throw new AuthorizationError("Từ chối truy cập - bạn không có quyền mở lại lớp này", 403);
+    }
+
+    const updatedClass = await this.prisma.class.update({
+      where: { id },
+      data: {
+        status: "ACTIVE",
+        isActive: true,
+        closedAt: null,
+      },
+    });
+
+    // Revert completed students back to active
+    await this.prisma.classStudent.updateMany({
+      where: {
+        classId: id,
+        status: "COMPLETED",
+        deletedAt: null,
+      },
+      data: {
+        status: "ACTIVE",
+        completedAt: null,
+      },
+    });
+
+    return {
+      success: true,
+      message: `Đã mở lại lớp "${updatedClass.name}" thành công.`,
+      data: updatedClass,
+    };
+  }
+
+  // Use Case: Run Lifecycle Maintenance (Auto-close strictly after 7 days grace period post last actual session & all sessions complete)
   async runClassLifecycleMaintenance() {
     const now = new Date();
     let closedCount = 0;
@@ -1037,20 +1106,37 @@ export class ClassService {
       },
       include: {
         sessions: {
-          select: { plannedDate: true },
+          select: { id: true, plannedDate: true, status: true },
           orderBy: { plannedDate: "desc" },
-          take: 1,
         },
         students: { select: { studentId: true } },
       },
     });
 
     for (const cls of candidateClasses) {
-      const lastSessionDate = cls.sessions[0]?.plannedDate || cls.endDate;
-      const isPastGracePeriod = lastSessionDate && new Date(lastSessionDate) <= sevenDaysAgo;
+      // Check if there are any sessions planned in the future
+      const hasFutureSessions = cls.sessions.some(
+        (s) => s.plannedDate && new Date(s.plannedDate).getTime() > now.getTime()
+      );
 
-      // Safety cutoff: Lớp mở quá 180 ngày kể từ startDate
-      const isSixMonthsOld = cls.startDate && new Date(cls.startDate) <= new Date(now.getTime() - 180 * 24 * 60 * 60 * 1000);
+      // Check if any sessions are still pending/unattended in the past 7 days
+      const hasRecentPendingSessions = cls.sessions.some(
+        (s) => s.status === "PLANNED" && s.plannedDate && new Date(s.plannedDate).getTime() > sevenDaysAgo.getTime()
+      );
+
+      // Last session date
+      const lastSessionDate = cls.sessions[0]?.plannedDate || cls.endDate;
+      const isPastGracePeriod =
+        !hasFutureSessions &&
+        !hasRecentPendingSessions &&
+        lastSessionDate &&
+        new Date(lastSessionDate).getTime() <= sevenDaysAgo.getTime();
+
+      // Safety cutoff: Lớp mở quá 180 ngày kể từ startDate VÀ không còn buổi học nào trong tương lai
+      const isSixMonthsOld =
+        !hasFutureSessions &&
+        cls.startDate &&
+        new Date(cls.startDate).getTime() <= new Date(now.getTime() - 180 * 24 * 60 * 60 * 1000).getTime();
 
       if (isPastGracePeriod || isSixMonthsOld) {
         await this.prisma.class.update({

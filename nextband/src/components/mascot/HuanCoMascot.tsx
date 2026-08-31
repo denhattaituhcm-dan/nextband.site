@@ -132,9 +132,9 @@ export function HuanCoMascot({ state, className = "" }: HuanCoMascotProps) {
 
             {/* Mascot Circular Avatar - Wise Old Sage SVG HuyenCo Character */}
             <div
-              className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden shadow-lg border-2 bg-slate-950 flex items-center justify-center transition-all ${state.ringColorClass}`}
+              className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden shadow-lg border-2 flex items-center justify-center transition-all ${state.ringColorClass}`}
             >
-              <HuyenCo variant="launcher" state={isCelebration ? "ENCOURAGING" : isConcerned ? "THINKING" : "IDLE"} size={54} />
+              <HuyenCo variant="launcher" state={isCelebration ? "ENCOURAGING" : isConcerned ? "THINKING" : "IDLE"} size={64} className="w-full h-full" />
             </div>
 
             {/* Subtle Notification Dot (Static, non-flashing) */}
@@ -159,8 +159,8 @@ export function HuanCoMascot({ state, className = "" }: HuanCoMascotProps) {
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 bg-muted/40 border-b border-border/60">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full overflow-hidden border border-border/80 shadow-2xs shrink-0 flex items-center justify-center bg-slate-950">
-                <HuyenCo variant="inline" state="IDLE" size={32} />
+              <div className="w-8 h-8 rounded-full overflow-hidden border border-border/80 shadow-2xs shrink-0 flex items-center justify-center">
+                <HuyenCo variant="inline" state="IDLE" size={32} className="w-full h-full" />
               </div>
               <div>
                 <div className="flex items-center gap-1.5">

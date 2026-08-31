@@ -65,14 +65,17 @@ export default function AboutPage() {
             <a href="#academic-standards" className="px-3 py-1.5 rounded-lg bg-muted hover:text-foreground transition-colors">
               03 — Chuẩn Mực
             </a>
+            <a href="#procedure" className="px-3 py-1.5 rounded-lg bg-muted hover:text-foreground transition-colors">
+              04 — Quy Trình
+            </a>
             <a href="#the-people" className="px-3 py-1.5 rounded-lg bg-muted hover:text-foreground transition-colors">
-              04 — Đội Ngũ
+              05 — Đội Ngũ
             </a>
             <a href="#aris-nextband" className="px-3 py-1.5 rounded-lg bg-muted hover:text-foreground transition-colors">
-              05 — ARIS &amp; NextBand
+              06 — ARIS &amp; NextBand
             </a>
             <a href="#contact" className="px-3 py-1.5 rounded-lg bg-muted hover:text-foreground transition-colors">
-              06 — Liên Hệ
+              07 — Liên Hệ
             </a>
           </div>
         </div>
@@ -327,14 +330,116 @@ export default function AboutPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 04 — THE PEOPLE (Đội Ngũ Học Thuật)                                       */}
+      {/* 04 — ENROLLMENT PROCEDURE (Quy Trình Nhập Học)                            */}
+      {/* ========================================================================= */}
+      <section id="procedure" className="scroll-mt-20">
+        <SectionContainer
+          badge="04 — Quy Trình Nhập Học"
+          title="Quy trình nhập học & rèn luyện tại ARIS"
+          description="Hành trình chuẩn mực từng bước giúp bạn định vị chính xác năng lực, chọn đúng lộ trình và bắt đầu bứt phá điểm số."
+          background="default"
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center text-left">
+            {/* Cột trái: Tóm tắt 4 bước quy trình */}
+            <div className="lg:col-span-6 space-y-4">
+              <div className="flex gap-4 items-start p-4 rounded-2xl bg-card border border-border/80 shadow-2xs">
+                <div className="w-8 h-8 rounded-xl bg-brand-blue-soft text-brand-blue flex items-center justify-center font-black text-sm shrink-0 mt-0.5">
+                  1
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-black text-foreground text-base">
+                    Đánh Giá Năng Lực Đầu Vào
+                  </h4>
+                  <p className="text-sm text-foreground/75 leading-relaxed">
+                    Khảo thí chuẩn hóa 4 kỹ năng để bóc tách chính xác điểm mạnh, điểm nghẽn và định vị Rank ARIS ban đầu.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 items-start p-4 rounded-2xl bg-card border border-border/80 shadow-2xs">
+                <div className="w-8 h-8 rounded-xl bg-brand-blue-soft text-brand-blue flex items-center justify-center font-black text-sm shrink-0 mt-0.5">
+                  2
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-black text-foreground text-base">
+                    Tư Vấn &amp; Xếp Lộ Trình Mục Tiêu
+                  </h4>
+                  <p className="text-sm text-foreground/75 leading-relaxed">
+                    Phân tích chi tiết kết quả bài test, thiết kế lộ trình cá nhân hóa tương ứng với cấp bậc mục tiêu.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 items-start p-4 rounded-2xl bg-card border border-border/80 shadow-2xs">
+                <div className="w-8 h-8 rounded-xl bg-brand-blue-soft text-brand-blue flex items-center justify-center font-black text-sm shrink-0 mt-0.5">
+                  3
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-black text-foreground text-base">
+                    Kích Hoạt Tài Khoản NextBand
+                  </h4>
+                  <p className="text-sm text-foreground/75 leading-relaxed">
+                    Nhận tài khoản học tập, giáo trình chuyên sâu và làm quen với không gian nộp bài số chuẩn Cambridge.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 items-start p-4 rounded-2xl bg-card border border-border/80 shadow-2xs">
+                <div className="w-8 h-8 rounded-xl bg-brand-blue-soft text-brand-blue flex items-center justify-center font-black text-sm shrink-0 mt-0.5">
+                  4
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-black text-foreground text-base">
+                    Rèn Luyện &amp; Sửa Bài 1:1 Có Bằng Chứng
+                  </h4>
+                  <p className="text-sm text-foreground/75 leading-relaxed">
+                    Học tập theo phương pháp The ARIS Way, nhận chấm chữa chi tiết từng dòng và hoàn thành bài sửa bắt buộc.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-2 flex flex-wrap items-center gap-3">
+                <Button
+                  onClick={() => navigate("/assessment")}
+                  className="rounded-xl px-6 h-12 font-bold bg-brand-red text-white hover:bg-brand-red-hover shadow-sm gap-2"
+                >
+                  <span>Bắt đầu Đánh giá Năng lực</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => navigate("/contact")}
+                  className="rounded-xl px-6 h-12 font-bold border-2 border-border/80 hover:bg-muted text-foreground"
+                >
+                  <span>Tư vấn lộ trình</span>
+                </Button>
+              </div>
+            </div>
+
+            {/* Cột phải: Ảnh sơ đồ quy trình */}
+            <div className="lg:col-span-6 flex items-center justify-center">
+              <div className="w-full rounded-3xl border border-border/80 bg-card p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow overflow-hidden group">
+                <img
+                  src="/assets/procedure/procedure.png"
+                  alt="Sơ đồ quy trình nhập học tại ARIS"
+                  className="w-full h-auto object-contain rounded-2xl transition-transform duration-300 group-hover:scale-[1.01]"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          </div>
+        </SectionContainer>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 05 — THE PEOPLE (Đội Ngũ Học Thuật)                                       */}
       {/* ========================================================================= */}
       <section id="the-people" className="scroll-mt-20">
         <SectionContainer
-          badge="04 — The People"
+          badge="05 — The People"
           title="Ai đứng sau hệ thống học thuật ARIS?"
           description="Đội ngũ giảng viên và chuyên viên học thuật có năng lực thực chiến cao, đam mê phương pháp giảng dạy bản chất."
-          background="default"
+          background="muted"
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center text-left">
             <div className="lg:col-span-7 space-y-5">
@@ -393,14 +498,14 @@ export default function AboutPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 05 — ARIS & NEXTBAND (Học Viện & Nền Tảng Công Nghệ)                      */}
+      {/* 06 — ARIS & NEXTBAND (Học Viện & Nền Tảng Công Nghệ)                      */}
       {/* ========================================================================= */}
       <section id="aris-nextband" className="scroll-mt-20">
         <SectionContainer
-          badge="05 — ARIS & NextBand"
+          badge="06 — ARIS & NextBand"
           title="Học viện và Bàn làm việc số liên kết với nhau như thế nào?"
           description="Sự kết hợp giữa chuẩn mực sư phạm truyền thống và sức mạnh đo lường của công nghệ học tập hiện đại."
-          background="muted"
+          background="default"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
             <div className="p-8 rounded-3xl border border-border/80 bg-card space-y-5 shadow-2xs">
@@ -461,13 +566,13 @@ export default function AboutPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 06 — CONTACT & ACADEMIC EXCHANGE (Liên Hệ Chuyên Môn)                     */}
+      {/* 07 — CONTACT & ACADEMIC EXCHANGE (Liên Hệ Chuyên Môn)                     */}
       {/* ========================================================================= */}
       <section id="contact" className="py-20 sm:py-24 bg-brand-blue text-white scroll-mt-20">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 text-white border border-white/20 text-xs sm:text-sm font-extrabold uppercase tracking-wider">
             <Mail className="h-4 w-4 text-brand-cyan" />
-            <span>06 — Kết Nối Học Thuật</span>
+            <span>07 — Kết Nối Học Thuật</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
