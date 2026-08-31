@@ -266,15 +266,6 @@ const uploadsRoutes: FastifyPluginAsync = async (fastify) => {
     "/",
     { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
-      const supabase = getSupabaseStorageClient();
-      if (!supabase) {
-        return reply.status(500).send({
-          statusCode: 500,
-          error: "SERVICE_CONFIGURATION_ERROR",
-          message: "Hệ thống chưa cấu hình SUPABASE_SERVICE_ROLE_KEY cho chức năng xóa tệp khỏi hệ thống lưu trữ.",
-        });
-      }
-
       const { url } = (request.body || {}) as { url?: string };
 
       if (!url || typeof url !== "string") {
@@ -293,7 +284,12 @@ const uploadsRoutes: FastifyPluginAsync = async (fastify) => {
         return reply.status(400).send({ error: "URL không hợp lệ" });
       }
 
-      if (decodedUrl.includes("..") || decodedUrl.includes(":\\") || decodedUrl.includes(":/..")) {
+      if (
+        decodedUrl.includes("..") ||
+        decodedUrl.includes(":\\") ||
+        decodedUrl.includes(":/..") ||
+        decodedUrl.includes("/./")
+      ) {
         return reply.status(400).send({ error: "Đường dẫn chứa ký tự không hợp lệ" });
       }
 
@@ -308,6 +304,15 @@ const uploadsRoutes: FastifyPluginAsync = async (fastify) => {
         storagePath = `${relativeMatch[1]}/${relativeMatch[2]}`;
       } else {
         return reply.status(400).send({ error: "URL tệp không thuộc phạm vi quản lý exam-assets" });
+      }
+
+      const supabase = getSupabaseStorageClient();
+      if (!supabase) {
+        return reply.status(500).send({
+          statusCode: 500,
+          error: "SERVICE_CONFIGURATION_ERROR",
+          message: "Hệ thống chưa cấu hình SUPABASE_SERVICE_ROLE_KEY cho chức năng xóa tệp khỏi hệ thống lưu trữ.",
+        });
       }
 
       try {

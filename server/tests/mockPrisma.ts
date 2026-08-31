@@ -189,6 +189,24 @@ export function createMockPrisma() {
         }
         return list.map((u) => ({ ...u, userId: u.userId || u.id }));
       },
+      update: async ({ where, data, include }: any) => {
+        const u = users.find((x) => x.id === where?.id || x.userId === where?.userId || x.userId === where?.id || x.id === where?.userId);
+        if (u) {
+          Object.assign(u, data);
+        }
+        const roles = userRoles.filter((r) => r.userId === (u?.id || where?.id));
+        return { ...(u || data), userId: u?.userId || u?.id || where?.id, ...(include?.roles ? { roles } : {}) };
+      },
+      updateMany: async ({ where, data }: any) => {
+        let count = 0;
+        for (const u of users) {
+          if (!where?.id || u.id === where.id || u.userId === where.id) {
+            Object.assign(u, data);
+            count++;
+          }
+        }
+        return { count };
+      },
       deleteMany: async () => {
         users.length = 0;
         return { count: 0 };
@@ -573,6 +591,19 @@ export function createMockPrisma() {
         const en = enrollments.find((e) => e.id === where?.id);
         if (en) Object.assign(en, data);
         return en || data;
+      },
+      updateMany: async ({ where, data }: any) => {
+        let count = 0;
+        for (const en of enrollments) {
+          const matchCourse = !where?.courseId || en.courseId === where.courseId;
+          const matchStudent = !where?.studentId || en.studentId === where.studentId;
+          const matchId = !where?.id || en.id === where.id;
+          if (matchCourse && matchStudent && matchId) {
+            Object.assign(en, data);
+            count++;
+          }
+        }
+        return { count };
       },
       count: async () => enrollments.length,
       deleteMany: async () => {

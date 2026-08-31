@@ -146,16 +146,7 @@ export default function AssessmentResultPage() {
       return;
     }
 
-    // 2. Check local storage fallback
-    if (id) {
-      const local = getLocalAssessmentResult(id);
-      if (local) {
-        setReport(local);
-        return;
-      }
-    }
-
-    // Otherwise report stays null
+    // Otherwise report stays null (shows expired/not found state)
     setReport(null);
   }, [id, isDemo, submissionData]);
 

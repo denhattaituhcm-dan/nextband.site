@@ -15,9 +15,16 @@ export const WebMRenderer: React.FC<RendererProps> = ({
 
   useEffect(() => {
     if (videoRef.current) {
-      videoRef.current.play().catch(() => {
-        // Autoplay may need user gesture or is suppressed in low power mode
-      });
+      try {
+        const playPromise = videoRef.current.play();
+        if (playPromise && typeof playPromise.catch === "function") {
+          playPromise.catch(() => {
+            // Autoplay may need user gesture or is suppressed in low power mode
+          });
+        }
+      } catch {
+        // Safe ignore in headless/test environments
+      }
     }
   }, [state]);
 

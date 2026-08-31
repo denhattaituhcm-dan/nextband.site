@@ -113,6 +113,7 @@ describe("🎯 OP-GAP-02: INTEGRATED LEAD CONVERSION & CLASS PLACEMENT SUITE", (
             fullName: "Học Viên A",
             roles: [{ role: "student" }],
           }),
+          update: vi.fn().mockResolvedValue({}),
         },
         userBranch: { create: vi.fn().mockResolvedValue({}) },
         contactLead: {
@@ -162,6 +163,7 @@ describe("🎯 OP-GAP-02: INTEGRATED LEAD CONVERSION & CLASS PLACEMENT SUITE", (
             fullName: "Học Viên B",
             roles: [{ role: "student" }],
           }),
+          update: vi.fn().mockResolvedValue({}),
         },
         userBranch: { create: vi.fn().mockResolvedValue({}) },
         classStudent: {
