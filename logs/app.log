@@ -15322,3 +15322,6 @@
 {"level":30,"time":1788195983241,"pid":8560,"hostname":"Admin-PC","reqId":"req-v","req":{"method":"POST","url":"/api/v1/invitations/generate","hostname":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
 {"level":30,"time":1788195983241,"pid":8560,"hostname":"Admin-PC","reqId":"req-v","res":{"statusCode":200},"responseTime":0.6377000007778406,"msg":"request completed"}
 {"level":30,"time":1788195983243,"pid":8560,"hostname":"Admin-PC","msg":"[ClassScheduler] 🛑 Class Lifecycle Scheduler stopped."}
+{"level":30,"time":1788196203858,"pid":16712,"hostname":"Admin-PC","msg":"[ClassScheduler] ⏱️ Class Lifecycle Scheduler is enabled (runs every 24h)."}
+{"level":30,"time":1788196218859,"pid":16712,"hostname":"Admin-PC","msg":"[ClassScheduler] 🔄 Running Class Lifecycle Maintenance..."}
+{"level":30,"time":1788196221158,"pid":16712,"hostname":"Admin-PC","result":{"success":true,"timestamp":"2026-08-31T17:10:18.859Z","closedClassesCount":0,"archivedClassesCount":0,"deletedClassesCount":0},"msg":"[ClassScheduler] ✅ Maintenance finished: Auto-closed 0 classes, Purged 0 old closed classes."}

@@ -6,6 +6,14 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
   // POST /auth/register - DECOMMISSIONED (Supabase Auth is canonical)
   fastify.post(
     "/register",
+    {
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: "1 minute",
+        },
+      },
+    },
     async (_request, reply) => {
       return reply.status(410).send({
         error: "GONE",
@@ -17,6 +25,14 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
   // POST /auth/login - DECOMMISSIONED (Supabase Auth is canonical)
   fastify.post(
     "/login",
+    {
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: "1 minute",
+        },
+      },
+    },
     async (_request, reply) => {
       return reply.status(410).send({
         error: "GONE",
