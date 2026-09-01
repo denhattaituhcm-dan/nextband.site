@@ -100,7 +100,12 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
               },
             },
             classesAsTeacher: {
-              where: { isActive: true, status: "ACTIVE" },
+              where: {
+                // Count all non-archived classes the teacher is assigned to,
+                // including ACTIVE and CLOSED (e.g. class finished but still visible).
+                // Exclude only ARCHIVED classes so teacher stats stay accurate.
+                status: { notIn: ["ARCHIVED"] },
+              },
               select: {
                 id: true,
                 _count: {

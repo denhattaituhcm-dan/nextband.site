@@ -58,6 +58,7 @@ model User {
   referralRewards       ReferralReward[]         @relation("InviterRewards")
   refereeAttribution    ReferralAttribution?     @relation("RefereeAttribution")
   userVocabularies      UserVocabulary[]
+  teacherProfile        TeacherProfile?
 
   @@map("profiles")
 }
@@ -1119,8 +1120,40 @@ model UserVocabulary {
   @@index([userId, nextReviewAt])
   @@map("user_vocabularies")
 }
+model TeacherProfile {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String   @unique @map("user_id") @db.Uuid
 
+  // === Qualification ===
+  ieltsOverall         Float?    @map("ielts_overall")
+  ieltsL               Float?    @map("ielts_l")
+  ieltsR               Float?    @map("ielts_r")
+  ieltsW               Float?    @map("ielts_w")
+  ieltsS               Float?    @map("ielts_s")
+  ieltsTestedAt        DateTime? @map("ielts_tested_at")
+  yearsTeachingIelts   Int?      @map("years_teaching_ielts")
+  yearsTeachingEnglish Int?      @map("years_teaching_english")
+  certificates         String[]  // ["IELTS", "TESOL", "CELTA", "TEFL"]
+  educationLevel       String?   @map("education_level") // "BA", "MA", "PhD"
 
+  // === Teaching Capability ===
+  teachableLevels  String[] @map("teachable_levels")  // ["Foundation", "4.0", "5.0", "6.0", "6.5+"]
+  strongSkills     String[] @map("strong_skills")     // ["Writing", "Speaking", "Classroom Management"]
+  strengths        String[]                           // ["Good with Beginners", "Detailed Feedback", ...]
+  developmentAreas String[] @map("development_areas") // ["Speaking correction", "Lesson pacing"]
+  internalNotes    String?  @map("internal_notes")    // Admin-only
 
+  // === Availability & Capacity ===
+  availabilitySlots Json?   @map("availability_slots")
+  // Format: [{ "dayOfWeek": 2, "startTime": "18:00", "endTime": "21:30" }, ...]
+  maxClassesPerWeek Int?    @map("max_classes_per_week")
+  maxHoursPerWeek   Float?  @map("max_hours_per_week")
 
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@map("teacher_profiles")
+}
 

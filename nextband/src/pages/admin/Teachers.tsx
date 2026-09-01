@@ -5,6 +5,7 @@ import { usersApi } from "@/lib/api";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
 import { PublicFacultyTab } from "@/components/admin/faculty/PublicFacultyTab";
+import { TeacherProfileDrawer } from "@/components/teachers/TeacherProfileDrawer";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
@@ -139,6 +140,9 @@ export default function AdminTeachers() {
   // Smart Role Transfer / Conflict State
   const [conflictExistingUser, setConflictExistingUser] = useState<any>(null);
   const [demoteDialogUser, setDemoteDialogUser] = useState<any>(null);
+
+  // Teacher Profile Drawer State
+  const [selectedProfileTeacher, setSelectedProfileTeacher] = useState<any>(null);
 
   // Debounce search
   useEffect(() => {
@@ -736,9 +740,18 @@ export default function AdminTeachers() {
                           <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
                             Thông tin
                           </DropdownMenuLabel>
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedProfileTeacher(teacher);
+                            }}
+                          >
+                            <GraduationCap className="mr-2 h-3.5 w-3.5 text-primary" />
+                            Hồ sơ năng lực
+                          </DropdownMenuItem>
                           <DropdownMenuItem onClick={(e) => openEdit(teacher, e)}>
                             <Edit className="mr-2 h-3.5 w-3.5" />
-                            Sửa thông tin
+                            Sửa thông tin cơ bản
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => navigate(buildTeacherWorkspaceUrl(teacher.id))}>
                             <ExternalLink className="mr-2 h-3.5 w-3.5" />
@@ -1129,6 +1142,14 @@ export default function AdminTeachers() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Teacher Profile Drawer */}
+      <TeacherProfileDrawer
+        open={!!selectedProfileTeacher}
+        onClose={() => setSelectedProfileTeacher(null)}
+        teacher={selectedProfileTeacher}
+        isAdminViewer={true}
+      />
         </>
       )}
     </div>

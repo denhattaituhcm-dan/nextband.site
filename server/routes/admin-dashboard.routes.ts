@@ -180,7 +180,10 @@ export default async function adminDashboardRoutes(fastify: FastifyInstance) {
               email: true,
               avatarUrl: true,
               classesAsTeacher: {
-                where: { isActive: true, ...classBranchFilter },
+                where: {
+                  status: { notIn: ["ARCHIVED"] },
+                  ...classBranchFilter,
+                },
                 select: {
                   id: true,
                   name: true,

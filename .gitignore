@@ -13,7 +13,10 @@ logs/
 # AI Skills & Local Agent Tools
 .agents/
 
-# Slides & Slide Generator Scripts
+# Slides, Engine & Offline Teaching System
 slides/
-scripts/build_*.py
-scripts/export_*.py
+lessons/
+engine/
+scratch/
+scripts/
+
