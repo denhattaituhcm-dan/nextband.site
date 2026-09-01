@@ -25,7 +25,7 @@ export interface UserVocabRecord {
   wordId: string;
   sourceContext: string;
   sourceLessonId?: string | null;
-  masteryState: number; // 0: Encountered, 1: Learning, 2: Consolidating, 3: Mastered
+  masteryState: number;
   masteryScore: number;
   intervalDays: number;
   nextReviewAt: string;
@@ -33,6 +33,8 @@ export interface UserVocabRecord {
   failedReviews: number;
   history: Array<{ date: string; result: "PASS" | "FAIL"; latencyMs?: number }>;
   word: CognitiveWord;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export const lexiconApi = {

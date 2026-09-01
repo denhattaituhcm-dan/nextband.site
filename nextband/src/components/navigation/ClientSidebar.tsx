@@ -8,6 +8,7 @@ import {
   ShieldCheck,
   Home,
   Sparkles,
+  Library,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -58,6 +59,12 @@ const fullNavigationGroups: NavGroup[] = [
         url: "/reading",
         icon: Sparkles,
         description: "Thư viện đọc hiểu & Phá án",
+      },
+      {
+        title: "Sổ từ cá nhân",
+        url: "/app/my-lexicon",
+        icon: Library,
+        description: "Từ vựng đã lưu & Lịch sử làm chủ",
       },
       {
         title: "Kết quả & Nhận xét",
