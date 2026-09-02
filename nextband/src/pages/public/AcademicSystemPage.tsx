@@ -186,8 +186,9 @@ function RevealCardItem({
       {/* MẶT SAU (THE CODEX / MẬT THƯ TRI THỨC VẬN HÀNH)                          */}
       {/* ========================================================================= */}
       <div
+        onClick={handleFlip}
         className={cn(
-          "absolute inset-0 backface-hidden rotate-y-180 rounded-3xl p-6 sm:p-8 bg-card border-2 shadow-2xl flex flex-col justify-between",
+          "absolute inset-0 backface-hidden rotate-y-180 rounded-3xl p-6 sm:p-8 bg-card border-2 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 hover:shadow-xl",
           theme.border,
           theme.cardBg
         )}
@@ -205,11 +206,14 @@ function RevealCardItem({
 
             <button
               type="button"
-              onClick={handleFlip}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleFlip();
+              }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted/80 hover:bg-muted text-foreground text-xs font-bold transition border border-border/60 cursor-pointer"
             >
               <RotateCw className="w-3.5 h-3.5" />
-              <span>Mặt trước</span>
+              <span>Mặt trước ↺</span>
             </button>
           </div>
 
@@ -250,7 +254,10 @@ function RevealCardItem({
         {actionText && (
           <button
             type="button"
-            onClick={() => onActionClick?.()}
+            onClick={(e) => {
+              e.stopPropagation();
+              onActionClick?.();
+            }}
             className={cn(
               "w-full py-3.5 px-5 rounded-2xl font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition hover:scale-[1.01] active:scale-[0.98] cursor-pointer",
               theme.btnGrad
@@ -261,6 +268,7 @@ function RevealCardItem({
           </button>
         )}
       </div>
+
     </div>
   );
 }
