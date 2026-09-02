@@ -157,10 +157,10 @@ export const StudentDrawer: React.FC<StudentDrawerProps> = ({
                     size="sm"
                     onClick={() => onOpenReport(student)}
                     className="gap-1.5 text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-xs shrink-0"
-                    title="Xuất thẻ báo cáo tiến độ học tập gửi Zalo cho phụ huynh"
+                    title="Đánh giá cuối khóa & Xuất thẻ báo cáo học tập"
                   >
                     <FileText className="h-4 w-4" />
-                    Xuất Thẻ Báo Cáo
+                    Đánh Giá & Báo Cáo
                   </Button>
                 )}
               </div>

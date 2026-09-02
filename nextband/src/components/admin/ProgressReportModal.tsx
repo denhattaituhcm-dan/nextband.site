@@ -1092,36 +1092,66 @@ export function ProgressReportModal({
         </div>
 
         {/* Action Buttons */}
-        <DialogFooter className="flex flex-col sm:flex-row gap-2 pt-3 border-t border-slate-200">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onOpenChange(false)}
-            className="rounded-xl font-medium border-slate-300 bg-white text-slate-700 hover:bg-slate-100"
-          >
-            Đóng
-          </Button>
+        <DialogFooter className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-3 border-t border-slate-200">
+          <div className="text-[11px] text-slate-500 hidden sm:block">
+            * Nhận xét được lưu trực tiếp vào hồ sơ học viên cuối khóa (StudentPeriodicReport).
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onOpenChange(false)}
+              className="rounded-xl font-medium border-slate-300 bg-white text-slate-700 hover:bg-slate-100"
+            >
+              Đóng
+            </Button>
 
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={handleDownloadImage}
-            className="rounded-xl font-bold gap-1.5 bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-200"
-          >
-            <Download className="w-3.5 h-3.5 text-blue-600" />
-            Tải ảnh PNG
-          </Button>
+            {onSaveReport && (
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={isExporting}
+                onClick={async () => {
+                  try {
+                    await onSaveReport({
+                      strengths,
+                      weaknesses,
+                      recommendations,
+                      targetBand,
+                    });
+                    toast.success("Đã lưu nhận xét cuối khóa thành công!");
+                  } catch (err: any) {
+                    toast.error("Lỗi khi lưu nhận xét: " + (err.message || ""));
+                  }
+                }}
+                className="rounded-xl font-bold gap-1.5 border-blue-200 text-blue-700 bg-blue-50/70 hover:bg-blue-100"
+              >
+                <Check className="w-3.5 h-3.5" />
+                Lưu nhận xét
+              </Button>
+            )}
 
-          <Button
-            variant="default"
-            size="sm"
-            disabled={isExporting}
-            onClick={handleCopyImage}
-            className="rounded-xl font-bold gap-1.5 bg-blue-600 hover:bg-blue-700 text-white shadow-md"
-          >
-            <Copy className="w-3.5 h-3.5" />
-            {isExporting ? "Đang tạo ảnh..." : "Sao chép ảnh (Dán vào Zalo)"}
-          </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleDownloadImage}
+              className="rounded-xl font-bold gap-1.5 bg-slate-100 text-slate-800 hover:bg-slate-200 border border-slate-200"
+            >
+              <Download className="w-3.5 h-3.5 text-blue-600" />
+              Tải ảnh PNG
+            </Button>
+
+            <Button
+              variant="default"
+              size="sm"
+              disabled={isExporting}
+              onClick={handleCopyImage}
+              className="rounded-xl font-bold gap-1.5 bg-blue-600 hover:bg-blue-700 text-white shadow-md"
+            >
+              <Copy className="w-3.5 h-3.5" />
+              {isExporting ? "Đang tạo ảnh..." : "Sao chép ảnh (Zalo)"}
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

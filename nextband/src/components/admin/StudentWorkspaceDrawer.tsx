@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { usersApi, classesApi, interventionsApi } from "@/lib/api";
+import { usersApi, classesApi, interventionsApi, periodicReportsApi } from "@/lib/api";
 import { useNavigate, Link } from "react-router-dom";
 import { normalizePhoneNumber } from "@/lib/phoneUtils";
 import {
@@ -59,6 +59,7 @@ import {
   HeartHandshake,
   Plus,
   CheckSquare,
+  FileText,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -136,10 +137,19 @@ export function StudentWorkspaceDrawer({
 
   // OP-GAP-01: Student Care & Intervention Log
   const effectiveStudentId = student?.id || student?.userId;
+  const primaryClassId = student?.classes?.[0]?.id || student?.classId;
+
   const { data: interventions = [], isLoading: isInterventionsLoading } = useQuery({
     queryKey: ["student-interventions", effectiveStudentId],
     queryFn: () => interventionsApi.listByStudent(effectiveStudentId),
     enabled: !!effectiveStudentId && open,
+  });
+
+  // Final Evaluation / Periodic Report
+  const { data: latestEvaluation, isLoading: isEvaluationLoading } = useQuery({
+    queryKey: ["student-periodic-report", primaryClassId, effectiveStudentId],
+    queryFn: () => (primaryClassId && effectiveStudentId ? periodicReportsApi.getLatest(primaryClassId, effectiveStudentId) : null),
+    enabled: !!primaryClassId && !!effectiveStudentId && open,
   });
 
   const [interventionModalOpen, setInterventionModalOpen] = useState(false);
@@ -780,6 +790,77 @@ export function StudentWorkspaceDrawer({
                   <p className="font-medium mt-0.5">{attendanceRate}</p>
                 </div>
               </div>
+            </div>
+
+            {/* 5B. FINAL EVALUATION / PERIODIC REPORT SUMMARY (Cuối khóa) */}
+            <div className="border rounded-xl p-4 bg-gradient-to-br from-blue-500/5 via-primary/5 to-transparent border-blue-500/20 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 font-bold text-xs text-blue-900 dark:text-blue-300 uppercase tracking-wider">
+                  <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  <span>Đánh Giá Cuối Khóa (Final Evaluation)</span>
+                </div>
+                {latestEvaluation ? (
+                  <Badge variant="outline" className="bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-300 font-bold text-[10px]">
+                    Đã nhận xét
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="text-[10px] text-muted-foreground">
+                    Chưa có nhận xét
+                  </Badge>
+                )}
+              </div>
+
+              {isEvaluationLoading ? (
+                <div className="py-2 text-center text-muted-foreground text-xs">Đang tải nhận xét...</div>
+              ) : latestEvaluation ? (
+                <div className="space-y-2 text-xs pt-1">
+                  {latestEvaluation.strengths && (
+                    <div className="p-2 rounded-lg bg-background/80 border border-border/60">
+                      <span className="font-bold text-emerald-700 dark:text-emerald-400 text-[11px] block">
+                        • Điểm mạnh:
+                      </span>
+                      <p className="text-foreground mt-0.5 text-[11px] leading-relaxed">
+                        {latestEvaluation.strengths}
+                      </p>
+                    </div>
+                  )}
+
+                  {latestEvaluation.weaknesses && (
+                    <div className="p-2 rounded-lg bg-background/80 border border-border/60">
+                      <span className="font-bold text-amber-700 dark:text-amber-400 text-[11px] block">
+                        • Điểm cần cải thiện:
+                      </span>
+                      <p className="text-foreground mt-0.5 text-[11px] leading-relaxed">
+                        {latestEvaluation.weaknesses}
+                      </p>
+                    </div>
+                  )}
+
+                  {latestEvaluation.recommendations && (
+                    <div className="p-2 rounded-lg bg-background/80 border border-border/60">
+                      <span className="font-bold text-sky-700 dark:text-sky-400 text-[11px] block">
+                        • Lời khuyên & Định hướng:
+                      </span>
+                      <p className="text-foreground mt-0.5 text-[11px] leading-relaxed">
+                        {latestEvaluation.recommendations}
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between text-[10px] text-muted-foreground pt-1">
+                    <span>
+                      Người đánh giá: <strong className="text-foreground">{latestEvaluation.teacher?.fullName || teacherName}</strong>
+                    </span>
+                    <span>
+                      Cập nhật: {new Date(latestEvaluation.updatedAt || latestEvaluation.createdAt).toLocaleDateString("vi-VN")}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground pt-1">
+                  Giáo viên phụ trách lớp ({teacherName}) chưa nhập nhận xét đánh giá cuối khóa cho học viên này trong không gian lớp học.
+                </p>
+              )}
             </div>
 
             {/* 6. GUARDIAN / PARENT SECTION */}

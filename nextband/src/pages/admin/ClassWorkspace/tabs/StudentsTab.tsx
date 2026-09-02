@@ -331,12 +331,12 @@ export const StudentsTab: React.FC = () => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 font-medium gap-1"
-                            title="Xuất thẻ báo cáo tiến độ học tập gửi Zalo phụ huynh"
+                            className="h-8 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 font-medium gap-1.5"
+                            title="Đánh giá cuối khóa & Xuất thẻ báo cáo học viên"
                             onClick={() => handleOpenReport(student)}
                           >
                             <FileText className="h-3.5 w-3.5" />
-                            Báo cáo phụ huynh
+                            <span>Đánh giá & Báo cáo</span>
                           </Button>
                           <Button
                             variant="ghost"
