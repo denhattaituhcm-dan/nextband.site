@@ -17,7 +17,254 @@ import {
   Sparkles,
   FileCheck,
   MessageSquare,
+  RotateCw,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface RevealCardProps {
+  badge: string;
+  badgeType?: "crimson" | "blue" | "amber" | "emerald";
+  title: string;
+  subtitle: string;
+  frontSummary: string;
+  frontBullets: string[];
+  backHeading: string;
+  backSubheading: string;
+  backMechanismTitle: string;
+  backMechanismSteps: { step: string; desc: string }[];
+  backKeyTakeaway: string;
+  actionText?: string;
+  onActionClick?: () => void;
+}
+
+const REVEAL_THEMES = {
+  crimson: {
+    border: "border-brand-red/30 hover:border-brand-red/60",
+    badge: "bg-brand-red/10 text-brand-red border-brand-red/20",
+    accent: "text-brand-red",
+    glow: "shadow-brand-red/10",
+    btnGrad: "bg-gradient-to-r from-brand-red to-[#B71C1C] hover:from-brand-red-hover hover:to-[#880E4E] text-white",
+    cardBg: "bg-gradient-to-b from-card via-card to-brand-red/5",
+    backHeaderBg: "bg-brand-red-soft dark:bg-brand-red/10 text-brand-red border-brand-red/20",
+  },
+  blue: {
+    border: "border-brand-blue/30 hover:border-brand-blue/60",
+    badge: "bg-brand-blue-soft text-brand-blue border-brand-blue/20",
+    accent: "text-brand-blue",
+    glow: "shadow-brand-blue/10",
+    btnGrad: "bg-gradient-to-r from-brand-blue to-[#1E3A8A] hover:from-brand-blue-hover hover:to-[#172554] text-white",
+    cardBg: "bg-gradient-to-b from-card via-card to-brand-blue-soft/30",
+    backHeaderBg: "bg-brand-blue-soft dark:bg-brand-blue/10 text-brand-blue border-brand-blue/20",
+  },
+  amber: {
+    border: "border-amber-500/30 hover:border-amber-500/60",
+    badge: "bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-500/30",
+    accent: "text-amber-600 dark:text-amber-400",
+    glow: "shadow-amber-500/10",
+    btnGrad: "bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white",
+    cardBg: "bg-gradient-to-b from-card via-card to-amber-50/20 dark:to-amber-950/10",
+    backHeaderBg: "bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-500/30",
+  },
+  emerald: {
+    border: "border-emerald-500/30 hover:border-emerald-500/60",
+    badge: "bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-500/30",
+    accent: "text-emerald-600 dark:text-emerald-400",
+    glow: "shadow-emerald-500/10",
+    btnGrad: "bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white",
+    cardBg: "bg-gradient-to-b from-card via-card to-emerald-50/20 dark:to-emerald-950/10",
+    backHeaderBg: "bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/30",
+  },
+};
+
+function RevealCardItem({
+  badge,
+  badgeType = "blue",
+  title,
+  subtitle,
+  frontSummary,
+  frontBullets,
+  backHeading,
+  backSubheading,
+  backMechanismTitle,
+  backMechanismSteps,
+  backKeyTakeaway,
+  actionText,
+  onActionClick,
+}: RevealCardProps) {
+  const [isFlipped, setIsFlipped] = React.useState(false);
+  const theme = REVEAL_THEMES[badgeType];
+
+  const handleFlip = () => setIsFlipped((prev) => !prev);
+
+  return (
+    <div
+      className={cn(
+        "relative w-full h-full min-h-[520px] duration-500 transform-style-3d transition-transform",
+        isFlipped ? "rotate-y-180" : ""
+      )}
+    >
+      {/* ========================================================================= */}
+      {/* MẶT TRƯỚC (THE SEAL / MẶT KHÁM PHÁ)                                      */}
+      {/* ========================================================================= */}
+      <div
+        onClick={handleFlip}
+        className={cn(
+          "absolute inset-0 backface-hidden rounded-3xl p-6 sm:p-8 bg-card border-2 shadow-lg flex flex-col justify-between cursor-pointer transition-all duration-300 hover:shadow-xl",
+          theme.border,
+          theme.glow,
+          theme.cardBg
+        )}
+      >
+        <div className="space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-border/80">
+            <span
+              className={cn(
+                "px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border inline-flex items-center gap-1.5",
+                theme.badge
+              )}
+            >
+              <Sparkles className="w-3.5 h-3.5 shrink-0" />
+              <span>{badge}</span>
+            </span>
+
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleFlip();
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted/80 hover:bg-muted text-foreground text-xs font-bold transition border border-border/60 cursor-pointer"
+            >
+              <RotateCw className="w-3.5 h-3.5 text-brand-blue dark:text-brand-cyan" />
+              <span>Lật mở cơ chế ↺</span>
+            </button>
+          </div>
+
+          <div className="space-y-1.5">
+            <span className="text-xs font-mono font-bold text-muted-foreground uppercase tracking-wider block">
+              {subtitle}
+            </span>
+            <h3 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight leading-tight">
+              {title}
+            </h3>
+          </div>
+        </div>
+
+        <div className="bg-muted/40 dark:bg-muted/20 p-5 rounded-2xl space-y-4 my-4 border border-border/60 flex-1 flex flex-col justify-between">
+          <p className="text-sm sm:text-base text-foreground/85 font-medium leading-relaxed">
+            {frontSummary}
+          </p>
+
+          <div className="space-y-2 pt-2 border-t border-border/50">
+            <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground block">
+              Điểm cốt lõi khám phá:
+            </span>
+            <div className="space-y-1.5">
+              {frontBullets.map((bullet, idx) => (
+                <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-foreground/80 font-medium">
+                  <CheckCircle2 className={cn("w-4 h-4 shrink-0 mt-0.5", theme.accent)} />
+                  <span>{bullet}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          className={cn(
+            "w-full py-3.5 px-5 rounded-2xl font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-[0.98] cursor-pointer",
+            theme.btnGrad
+          )}
+        >
+          <span>KHÁM PHÁ CƠ CHẾ VẬN HÀNH</span>
+          <RotateCw className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* MẶT SAU (THE CODEX / MẬT THƯ TRI THỨC VẬN HÀNH)                          */}
+      {/* ========================================================================= */}
+      <div
+        className={cn(
+          "absolute inset-0 backface-hidden rotate-y-180 rounded-3xl p-6 sm:p-8 bg-card border-2 shadow-2xl flex flex-col justify-between",
+          theme.border,
+          theme.cardBg
+        )}
+      >
+        <div className="space-y-2">
+          <div className="flex items-center justify-between pb-3 border-b border-border/80">
+            <span
+              className={cn(
+                "px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider border inline-flex items-center gap-1.5",
+                theme.backHeaderBg
+              )}
+            >
+              <span>Học Viện Mật Thư</span>
+            </span>
+
+            <button
+              type="button"
+              onClick={handleFlip}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted/80 hover:bg-muted text-foreground text-xs font-bold transition border border-border/60 cursor-pointer"
+            >
+              <RotateCw className="w-3.5 h-3.5" />
+              <span>Mặt trước</span>
+            </button>
+          </div>
+
+          <div>
+            <h4 className="text-lg sm:text-xl font-black text-foreground">{backHeading}</h4>
+            <p className="text-xs text-muted-foreground">{backSubheading}</p>
+          </div>
+        </div>
+
+        <div className="space-y-3 my-3 flex-1 flex flex-col justify-center">
+          <span className="text-[11px] font-black uppercase tracking-widest text-muted-foreground block">
+            {backMechanismTitle}:
+          </span>
+
+          <div className="space-y-2">
+            {backMechanismSteps.map((s, idx) => (
+              <div
+                key={idx}
+                className="p-3 rounded-xl bg-background/90 border border-border/80 text-xs sm:text-sm space-y-0.5 shadow-2xs"
+              >
+                <div className="font-bold text-foreground flex items-center gap-2">
+                  <span className={cn("font-mono text-xs px-2 py-0.5 rounded-md", theme.badge)}>
+                    0{idx + 1}
+                  </span>
+                  <span>{s.step}</span>
+                </div>
+                <p className="text-muted-foreground pl-8 text-xs leading-relaxed">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="p-3 rounded-xl bg-muted/60 border border-border/70 text-xs text-foreground/90 font-medium">
+            <span className="font-bold text-foreground">💡 Cam kết thực chất: </span>
+            {backKeyTakeaway}
+          </div>
+        </div>
+
+        {actionText && (
+          <button
+            type="button"
+            onClick={() => onActionClick?.()}
+            className={cn(
+              "w-full py-3.5 px-5 rounded-2xl font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition hover:scale-[1.01] active:scale-[0.98] cursor-pointer",
+              theme.btnGrad
+            )}
+          >
+            <span>{actionText}</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 
 export default function AcademicSystemPage() {
   const navigate = useNavigate();
@@ -87,70 +334,83 @@ export default function AcademicSystemPage() {
           description="Phần lớn người học gặp bế tắc trong Writing và Speaking không phải vì thiếu từ vựng, mà vì đang mắc kẹt trong cơ chế dịch thô từng chữ từ tiếng Việt."
           background="muted"
         >
-          {/* Comparison Cards: Old vs The ARIS Way */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-            {/* Lối học cũ */}
-            <div className="p-8 sm:p-10 rounded-3xl border-2 border-border/80 bg-card space-y-6 shadow-2xs">
-              <div className="flex items-center gap-3">
-                <span className="font-mono font-black text-xs px-3 py-1.5 rounded-xl bg-destructive/15 text-destructive uppercase tracking-wider">
-                  Lối Học Cũ
-                </span>
-                <h3 className="text-xl sm:text-2xl font-black text-foreground">
-                  Dịch Thô &amp; Ghép Công Thức
-                </h3>
-              </div>
-
-              <div className="space-y-4 text-sm sm:text-base text-foreground/80">
-                <div className="p-4 rounded-2xl bg-destructive/5 border border-destructive/20 space-y-2">
-                  <div className="font-bold text-destructive flex items-center gap-2 text-sm">
-                    <XCircle className="h-4 w-4 shrink-0" />
-                    <span>Quy trình tạo câu máy móc:</span>
-                  </div>
-                  <div className="font-mono text-xs text-foreground/75 pl-6 space-y-1">
-                    <div>1. Nghĩ ý tưởng bằng tiếng Việt</div>
-                    <div>↓ (Tra từ điển tìm từ tương đương)</div>
-                    <div>2. Tìm từ vựng phức tạp ép vào cấu trúc mẫu</div>
-                    <div>↓ (Ghép nối gượng gạo)</div>
-                    <div>3. Câu văn dịch Word-by-Word, sai ngữ cảnh</div>
-                  </div>
-                </div>
-                <p className="text-foreground/75 leading-relaxed text-sm">
-                  Hậu quả: Người học mất nhiều thời gian suy nghĩ, phát âm ngập ngừng và câu văn bị rời rạc, chắp vá.
-                </p>
-              </div>
+          {/* ========================================================================= */}
+          {/* REVEAL CARDS (INTERACTIVE DISCOVERY: THE ARIS WAY & SOCRATIC METHOD)     */}
+          {/* ========================================================================= */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 text-left">
+            {/* THẺ 1: THE ARIS WAY (TRIẾT LÝ TRI NHẬN BẢN CHẤT) */}
+            <div className="perspective-1000 w-full min-h-[520px] select-none text-left">
+              <RevealCardItem
+                badge="Triết Lý Tri Nhận"
+                badgeType="blue"
+                title="The ARIS Way — Xóa Bỏ Tư Duy Dịch Từng Chữ"
+                subtitle="Cơ Chế Tư Duy Độc Quyền"
+                frontSummary="Học tiếng Anh không phải là học ghép từ điển. ARIS giúp bạn kích hoạt trường ý niệm và tiêu điểm ngữ cảnh để tạo câu tự nhiên như người bản xứ."
+                frontBullets={[
+                  "Triệt tiêu thói quen nghĩ tiếng Việt rồi dịch Word-by-Word",
+                  "Phản xạ trực tiếp từ ý niệm (Concept) sang cấu trúc học thuật",
+                  "Làm chủ sắc thái biểu đạt và độ tự nhiên trong Speaking & Writing"
+                ]}
+                backHeading="Bên Trong Cơ Chế Tri Nhận The ARIS Way"
+                backSubheading="Cách ARIS tái lập trình tư duy ngôn ngữ cho học viên"
+                backMechanismTitle="Quy trình 3 bước hình thành câu"
+                backMechanismSteps={[
+                  {
+                    step: "Kích Hoạt Ý Niệm (Concept Activation)",
+                    desc: "Xác định rõ bản chất thông điệp và trường nghĩa cốt lõi thay vì tìm từ dịch tương đương."
+                  },
+                  {
+                    step: "Chọn Tiêu Điểm & Quan Hệ (Perspective Framing)",
+                    desc: "Lựa chọn chủ thể, góc nhìn nhấn mạnh và mối quan hệ nhân quả/nhượng bộ giữa các thực thể."
+                  },
+                  {
+                    step: "Hình Thành Cấu Trúc Chuẩn (Academic Expression)",
+                    desc: "Tạo ra câu văn mạch lạc, chuẩn xác theo văn phong học thuật một cách tự nhiên."
+                  }
+                ]}
+                backKeyTakeaway="Bạn phản xạ trực tiếp bằng tiếng Anh, kiểm soát sắc thái câu chữ mà không cần học thuộc lòng câu mẫu."
+                actionText="Khảo thí đánh giá năng lực tư duy"
+                onActionClick={() => navigate("/assessment")}
+              />
             </div>
 
-            {/* The ARIS Way */}
-            <div className="p-8 sm:p-10 rounded-3xl border-2 border-brand-blue/30 bg-card space-y-6 shadow-2xs">
-              <div className="flex items-center gap-3">
-                <span className="font-mono font-black text-xs px-3 py-1.5 rounded-xl bg-brand-blue-soft text-brand-blue uppercase tracking-wider">
-                  The ARIS Way
-                </span>
-                <h3 className="text-xl sm:text-2xl font-black text-foreground">
-                  Tri Nhận Bản Chất Ngôn Ngữ
-                </h3>
-              </div>
-
-              <div className="space-y-4 text-sm sm:text-base text-foreground/80">
-                <div className="p-4 rounded-2xl bg-brand-blue-soft/40 border border-brand-blue/30 space-y-2">
-                  <div className="font-bold text-brand-blue flex items-center gap-2 text-sm">
-                    <CheckCircle2 className="h-4 w-4 shrink-0" />
-                    <span>Quy trình tri nhận tự nhiên:</span>
-                  </div>
-                  <div className="font-mono text-xs text-foreground/75 pl-6 space-y-1">
-                    <div>1. Kích hoạt Ý niệm &amp; Trường nghĩa (Concept)</div>
-                    <div>↓ (Lựa chọn góc nhìn biểu đạt)</div>
-                    <div>2. Chọn tiêu điểm &amp; Mối quan hệ giữa các thực thể</div>
-                    <div>↓ (Hình thành câu chuẩn xác)</div>
-                    <div>3. Câu văn mạch lạc, chính xác đúng tư duy học thuật</div>
-                  </div>
-                </div>
-                <p className="text-foreground/75 leading-relaxed text-sm">
-                  Kết quả: Bạn phản xạ trực tiếp bằng tiếng Anh, kiểm soát sắc thái câu chữ và diễn đạt tự nhiên theo ngữ cảnh.
-                </p>
-              </div>
+            {/* THẺ 2: SOCRATIC FEEDBACK 1:1 (HỆ THỐNG GIẢNG VIÊN TRUY VẤN) */}
+            <div className="perspective-1000 w-full min-h-[520px] select-none text-left">
+              <RevealCardItem
+                badge="Giảng Dạy Tinh Hoa"
+                badgeType="crimson"
+                title="Sửa Từ Gốc — Không Chữa Lỗi Bề Mặt"
+                subtitle="Phương Pháp Socratic 1:1"
+                frontSummary="Giáo viên ARIS không sửa hộ câu hay đưa đáp án mẫu. Chúng tôi đặt câu hỏi truy vấn logic để bạn tự nhận diện điểm nghẽn và tự sửa câu hoàn chỉnh."
+                frontBullets={[
+                  "Bóc tách nguyên nhân tư duy đằng sau mỗi lỗi sai",
+                  "Truy vấn ngữ pháp chức năng thay vì ép công thức máy móc",
+                  "Lưu vết toàn bộ lịch sử tiến bộ trên hệ thống NextBand"
+                ]}
+                backHeading="Bên Trong Cơ Chế Phản Hồi Socratic 1:1"
+                backSubheading="Cách giảng viên ARIS đồng hành bóc tách điểm nghẽn"
+                backMechanismTitle="Quy trình truy vấn Socratic"
+                backMechanismSteps={[
+                  {
+                    step: "Nhận Diện Điểm Nghẽn (Diagnose Root Cause)",
+                    desc: "Xác định lỗi sai xuất phát từ dịch thô, nhầm lẫn từ loại hay sai lệch cấu trúc biểu đạt."
+                  },
+                  {
+                    step: "Đặt Câu Hỏi Truy Vấn (Socratic Inquiry)",
+                    desc: "Đặt câu hỏi gợi mở để người học tự đối chiếu quy luật và nhận ra sự bất hợp lý trong câu của mình."
+                  },
+                  {
+                    step: "Tự Tái Cấu Trúc (Self-Correction Mastery)",
+                    desc: "Học viên tự tay viết lại câu hoàn chỉnh, khắc sâu nhận thức và không bao giờ tái phạm lỗi cũ."
+                  }
+                ]}
+                backKeyTakeaway="Mỗi lỗi sai là một cơ hội hiểu sâu bản chất, giúp bạn làm chủ năng lực ngôn ngữ bền vững."
+                actionText="Tìm hiểu đội ngũ giảng viên ARIS"
+                onActionClick={() => navigate("/teachers")}
+              />
             </div>
           </div>
+
 
           {/* 4 Nấc Thang Tri Nhận */}
           <div className="pt-12 space-y-8">
