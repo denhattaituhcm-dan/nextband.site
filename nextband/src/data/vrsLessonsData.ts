@@ -7,7 +7,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 1,
     day: 1,
     skill: 'writing',
-    title: 'The Clause Core Engine',
+    title: 'Động Cơ Cấu Trúc Câu (S - FV - O)',
     subtitle: 'Kiến Tạo & Phẫu Thuật Cấu Trúc Câu',
     coreCompetency: 'Nhận diện giải phầu S - FV Core - OC mành mệnh đề v dich chuyển xung đột thừa động từ.',
     bridgeToHomework: {
@@ -69,7 +69,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 1,
     day: 2,
     skill: 'reading',
-    title: 'The Block Reading Map & Scanning Trajectory',
+    title: 'Bản Đồ Đọc Đoạn Văn & Mũi Tên Định Vị Keyword',
     subtitle: 'Khóa Keyword Lần 1 → Phóng Mũi Tên Tọa Độ Lần 2',
     coreCompetency: 'Nén đoạn văn thành nhãn chức năng. Click 1 lần để bóc tách Keywords, Click lần 2 để phóng mũi tên định vị trực tiếp đến vùng văn bản đối chiếu.',
     bridgeToHomework: {
@@ -186,7 +186,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 1,
     day: 3,
     skill: 'speaking',
-    title: 'The 4-Step Speaking Expansion (Work & Studies)',
+    title: 'Nói Về Công Việc & Học Tập (Chủ Đề: Work & Studies)',
     subtitle: 'Mở Rộng Câu Trả Lời Speaking: Từ Câu Cụt 3.0 Lên Câu Ghép Hoàn Chỉnh 4.0 - 4.5',
     coreCompetency: 'Chuẩn hóa đầu ra khóa Dreamer (3.0 → 4.0+): Học viên vượt qua phản xạ nói 1 câu cụt ("I like my job"). Biết dùng liên từ Because, But, So để ghép thành bài nói 3-4 câu hoàn chỉnh theo đúng giáo trình về Công việc (Cô Ánh) và Ngành học (Bạn Huy).',
     bridgeToHomework: {
@@ -428,7 +428,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 2,
     day: 1,
     skill: 'writing',
-    title: 'The Verb Compatibility Engine',
+    title: 'Cổng Kết Nối Động Từ (Vi, Vt & Linking Verbs)',
     subtitle: 'Cổng Kết Nối Động Từ: Lắp Ráp Cú Pháp & Phẫu Thuật Điểm Gãy',
     coreCompetency: 'Nhận diện chuẩn xác 3 cổng kết nối động từ trong giáo trình: Nội động từ (Vi), Ngoại động từ (Vt - gắn thẳng tân ngữ không chèn giới từ thừa), và Động từ nối (Linking Verb - kết nối tính từ, không dùng trạng từ). Chấm dứt lỗi dịch thô tiếng Việt "discuss about" và "look beautifully".',
     bridgeToHomework: {
@@ -491,7 +491,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 2,
     day: 2,
     skill: 'reading',
-    title: 'The T/F/NG Logic Verification Lab',
+    title: 'Bàn Cân Xác Minh Logic (True / False / Not Given)',
     subtitle: 'Phẫu Thuật 3 Bẫy Nhận Thức Kinh Điển',
     coreCompetency: 'Làm chủ Bàn Cân Logic 3 Trạng Thái, loại bỏ bẫy suy đoán đời thực và bẫy thời gian / tần suất.',
     bridgeToHomework: {
@@ -752,7 +752,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 2,
     day: 3,
     skill: 'speaking',
-    title: 'The Spatial Expansion Engine (Topic: Home)',
+    title: 'Nói Về Nơi Ở & Không Gian Sống (Chủ Đề: Home)',
     subtitle: 'Nói Về Nơi Ở & Căn Phòng Yêu Thích: Từ Câu Cụt 3.0 Lên Bài Nói 4.0 - 4.5',
     coreCompetency: 'Chuẩn hóa đầu ra khóa Dreamer (3.0 → 4.0+): Giúp học viên vượt qua thói quen chỉ nói "I live in HCM city". Làm chủ quy luật giới từ IN (thành phố) -> ON (tên đường / tầng lầu) -> AT (địa điểm cụ thể), cấu trúc thời gian di chuyển "It takes me...", và cách mô tả căn nhà/căn phòng yêu thích đúng giáo trình.',
     bridgeToHomework: {
@@ -995,7 +995,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 3,
     day: 1,
     skill: 'writing',
-    title: 'The Timeline Shift Engine',
+    title: 'Neo Mốc Thời Gian (Quá Khứ Đơn vs Hiện Tại Hoàn Thành)',
     subtitle: 'Neo Trục Thời Gian: Lắp Ráp Cú Pháp & Phẫu Thuật Điểm Gãy',
     coreCompetency: 'Làm chủ sự phân định giữa Quá khứ đơn (Simple Past - hành động chấm dứt với điểm neo thời gian xác định) và Hiện tại hoàn thành (Present Perfect - kinh nghiệm, dấu vết chạm đến hiện tại) đúng theo chuẩn giáo trình W3D1.',
     bridgeToHomework: {
@@ -1059,7 +1059,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 3,
     day: 2,
     skill: 'reading',
-    title: 'The Chronological Itinerary Tracker',
+    title: 'Theo Dấu 4 Trạm Dừng Chân Lịch Trình & Bẫy Đọc Hiểu',
     subtitle: 'Theo Dấu 4 Trạm Dừng Chân & Bóc Tách 5 Bẫy Nhận Thức',
     coreCompetency: 'Định vị tọa độ thông tin dọc theo hành trình 4 trạm: Sài Gòn (3 ngày) → Hội An (9 ngày) → Hà Nội (3 ngày) → Hạ Long (2 ngày). Phân biệt bẫy so sánh nhất, bẫy lý do và bẫy cảm xúc quá khứ.',
     bridgeToHomework: {
@@ -1266,7 +1266,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 3,
     day: 3,
     skill: 'speaking',
-    title: 'The Technology & App Utility Engine (Topic: Technology)',
+    title: 'Nói Về Điện Thoại & Ứng Dụng Công Nghệ (Chủ Đề: Technology)',
     subtitle: 'Nói Về Ứng Dụng & Công Nghệ: Từ Câu Cụt 3.0 Lên Bài Nói Hoàn Chỉnh 4.0 - 4.5',
     coreCompetency: 'Chuẩn hóa đầu ra khóa Dreamer (3.0 → 4.0+): Học viên làm chủ 3 mẫu câu nói về lợi ích công nghệ ("I use it to...", "It helps me...", "Thanks to it, I can..."), biết dùng câu điều kiện đơn giản ("If I spend too much time..., it makes me...") để nói về tác hại của điện thoại đúng theo Coursebook.',
     bridgeToHomework: {
@@ -1521,7 +1521,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 4,
     day: 1,
     skill: 'writing',
-    title: 'The Modifier Attachment Engine',
+    title: 'Bổ Ngữ Tính Từ & Trạng Từ (Modifiers Engine)',
     subtitle: 'Bổ Ngữ Tính Từ & Trạng Từ: Lắp Ráp Cú Pháp & Phẫu Thuật Điểm Gãy',
     coreCompetency: 'Làm chủ vị trí và quy tắc bổ nghĩa trong giáo trình W4D1: Tính từ (Adj) đứng trước danh từ để miêu tả đặc điểm, Trạng từ (Adv) bổ nghĩa cho động từ hành động. Nhận diện Động từ nối (Linking Verb) như "smell, taste, look" đòi hỏi Tính từ, chấm dứt lỗi dùng trạng từ đuôi -ly sai chức năng.',
     bridgeToHomework: {
@@ -1584,7 +1584,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 4,
     day: 2,
     skill: 'reading',
-    title: 'The Semantic Boundary & Medical Trap Lab',
+    title: 'Bóc Tách Ranh Giới Thuật Ngữ Y Khoa & Sức Khỏe',
     subtitle: 'Bóc Tách Toàn Bộ 6 Bẫy Nhận Thức Khoa Học Sức Khỏe',
     coreCompetency: 'Phân định ranh giới giữa các thuật ngữ y học có vẻ giống nhau (blood pressure vs blood sugar), bẫy lượng từ (all vs unprocessed), và bẫy suy đoán so sánh nhất.',
     bridgeToHomework: {
@@ -1830,7 +1830,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 4,
     day: 3,
     skill: 'speaking',
-    title: 'The Health Habits & Well-being Engine (Topic: Health)',
+    title: 'Nói Về Thói Quen Sức Khỏe & Dinh Dưỡng (Chủ Đề: Health)',
     subtitle: 'Nói Về Thói Quen Sức Khỏe: Từ Câu Cụt 3.0 Lên Bài Nói Mạch Lạc 4.0 - 4.5',
     coreCompetency: 'Chuẩn hóa đầu ra khóa Dreamer (3.0 → 4.0+): Học viên vượt qua việc chỉ nói "I stay up late and tired". Làm chủ các cụm từ vựng sức khỏe trong giáo trình ("have a bad habit of...", "makes me feel exhausted", "break this bad habit by..."), và các cấu trúc rèn luyện thể chất ("stay in shape", "balanced diet", "do yoga").',
     bridgeToHomework: {
@@ -2085,7 +2085,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 5,
     day: 1,
     skill: 'writing',
-    title: 'The Prepositional Anchor Engine',
+    title: 'Điểm Neo Cụm Giới Từ (Prepositional Phrases)',
     subtitle: 'Cụm Giới Từ Bổ Ngữ: Lắp Ráp Cú Pháp & Phẫu Thuật Điểm Gãy',
     coreCompetency: 'Nhận diện giới từ luôn cần Danh từ làm vật neo (Object of Preposition) đúng theo bài học W5D1. Phân biệt Cụm giới từ đóng vai trò Tính từ (bổ nghĩa vị trí danh từ: "a house by the lake") và làm chủ các cụm giới từ cố định (Fixed collocations: "good at", "think of", "during the trip").',
     bridgeToHomework: {
@@ -2148,7 +2148,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 5,
     day: 2,
     skill: 'reading',
-    title: 'The Topic Sentence Spotlight & Gap-Fill Engine',
+    title: 'Chiếu Sáng Câu Chủ Đề & Nhặt Từ Gốc Gap-Fill',
     subtitle: 'Chiếu Sáng Câu Chủ Đề (Đoạn A - F) & Nhặt Từ Gốc Gap-Fill',
     coreCompetency: 'Nắm vững kỹ năng Skimming (chiếu sáng Topic Sentence ở đầu/cuối đoạn) để hiểu cấu trúc toàn bài, kết hợp kỹ năng Scanning nhặt đúng 1 từ gốc (ONE WORD ONLY) cho câu hỏi tóm tắt.',
     bridgeToHomework: {
@@ -2320,7 +2320,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 5,
     day: 3,
     skill: 'speaking',
-    title: 'The Problems & Advice Engine (Topic: Problems & Advice)',
+    title: 'Nói Về Khó Khăn & Đưa Lời Khuyên (Chủ Đề: Problems & Advice)',
     subtitle: 'Nói Về Khó Khăn & Đưa Lời Khuyên: Từ Câu Cụt 3.0 Lên Bài Nói Mạch Lạc 4.0 - 4.5',
     coreCompetency: 'Chuẩn hóa đầu ra khóa Dreamer (3.0 → 4.0+): Giúp học viên làm chủ cấu trúc nói về khó khăn ("I have a hard time managing/studying...", "I get easily distracted") và bộ cấu trúc đưa lời khuyên lịch sự ("I think you should...", "My advice would be to...", "If you spend 30 minutes..., you will make progress").',
     bridgeToHomework: {
@@ -2575,7 +2575,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 6,
     day: 1,
     skill: 'writing',
-    title: 'The Relative Clause Bridge Engine',
+    title: 'Cầu Nối Mệnh Đề Quan Hệ (Who / Which / That)',
     subtitle: 'Mệnh Đề Quan Hệ: Lắp Ráp Cú Pháp & Phẫu Thuật Điểm Gãy',
     coreCompetency: 'Nhận diện Relative Pronoun (who, which, that) vừa làm liên từ kết nối vừa nuốt chửng danh từ lặp lại đúng theo "Quy tắc số 1" của giáo trình W6D1. Chấm dứt lỗi kinh điển Band 3.0: Dùng đại từ quan hệ nhưng vẫn để lại đại từ thừa ("that you recommended it").',
     bridgeToHomework: {
@@ -2639,7 +2639,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 6,
     day: 2,
     skill: 'reading',
-    title: 'The Origin & Historical Trace Lab',
+    title: 'Truy Vết Dòng Lịch Sử Hình Thành Facebook & Bẫy Đọc',
     subtitle: 'Truy Vết Toàn Bộ 7 Bẫy Nhận Thức Lịch Sử Facebook',
     coreCompetency: 'Đối chiếu trật tự các sự kiện trong bài đọc lịch sử công nghệ (Facemash -> Thefacebook -> Facebook) để phát hiện bẫy tráo thủ phạm (ai hack), bẫy đối tượng sử dụng ban đầu (Harvard outsiders) và bẫy kiện tụng cổ phần.',
     bridgeToHomework: {
@@ -2931,7 +2931,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 6,
     day: 3,
     skill: 'speaking',
-    title: 'The Travel Experience & Past Trip Engine (Topic: Travel)',
+    title: 'Nói Về Chuyến Đi Đáng Nhớ & Lịch Trình Tour (Chủ Đề: Travel)',
     subtitle: 'Nói Về Sở Thích & Chuyến Du Lịch Đáng Nhớ: Từ Câu Cụt 3.0 Lên Bài Nói 4.0 - 4.5',
     coreCompetency: 'Chuẩn hóa đầu ra khóa Dreamer (3.0 → 4.0+): Học viên thành thạo phát âm đuôi -ed (/t/, /d/, /ɪd/), biết cách kể về chuyến đi trong quá khứ ("Recently I visited...", "I tasted...", "I traveled by... for [time]"), và so sánh phương tiện đi lại (máy bay, tàu hỏa, xe máy) đúng như Coursebook.',
     bridgeToHomework: {
@@ -3186,7 +3186,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 7,
     day: 1,
     skill: 'writing',
-    title: 'The Non-Defining Punctuation Engine',
+    title: 'Dấu Phẩy Mệnh Đề Quan Hệ (Defining vs Non-defining)',
     subtitle: 'Mệnh Đề Quan Hệ Xác Định & Không Xác Định: Lắp Ráp & Điểm Gãy Dấu Phẩy',
     coreCompetency: 'Phân biệt rạch ròi Mệnh đề quan hệ xác định (Defining - không dấu phẩy) và không xác định (Non-defining - kẹp giữa 2 dấu phẩy) trong giáo trình W7D1. Làm chủ quy tắc cấm kỵ cốt lõi: Tuyệt đối không bao giờ dùng "THAT" sau dấu phẩy.',
     bridgeToHomework: {
@@ -3249,7 +3249,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 7,
     day: 2,
     skill: 'reading',
-    title: 'The Cause-Attribution Lab',
+    title: 'Xác Minh Trách Nhiệm Nhân Quả & Sự Kiện Formosa',
     subtitle: 'Quy Trách Nhiệm Nhân Quả & 6 Bẫy Tranh Luận Môi Trường Formosa',
     coreCompetency: 'Đối chiếu các mức độ trách nhiệm pháp lý trong sự cố môi trường Formosa (suspected -> admitted -> accepted responsibility) để tránh bẫy thời điểm, bẫy nguyên nhân tự nhiên (thủy triều đỏ) và bẫy phạm vi cấm đánh bắt hải sản.',
     bridgeToHomework: {
@@ -3495,7 +3495,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 7,
     day: 3,
     skill: 'speaking',
-    title: 'The Friendship & Conflict Resolution Engine (Topic: Friendship)',
+    title: 'Nói Về Bạn Thân & Hóa Giải Hiểu Lầm (Chủ Đề: Friendship)',
     subtitle: 'Nói Về Bạn Thân & Giải Quyết Hiểu Lầm: Từ Câu Cụt 3.0 Lên Bài Nói 4.0 - 4.5',
     coreCompetency: 'Chuẩn hóa đầu ra khóa Dreamer (3.0 → 4.0+): Học viên thành thạo quy tắc phát âm đuôi -s/-es (/s/, /z/, /ɪz/), sử dụng linh hoạt câu điều kiện If loại 1 ("If I get into trouble, my friend will help me"), mệnh đề quan hệ Who/Which để tả bạn thân, và bộ từ vựng xử lý hiểu lầm ("resolve misunderstandings", "talk behind my back").',
     bridgeToHomework: {
@@ -3750,7 +3750,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 8,
     day: 1,
     skill: 'writing',
-    title: 'The Focus Inversion Passive Engine',
+    title: 'Thể Bị Động: Đảo Trục Trọng Tâm (Passive Voice)',
     subtitle: 'Thể Bị Động: Lắp Ráp Cú Pháp & Phẫu Thuật Điểm Gãy',
     coreCompetency: 'Nắm vững bản chất Passive Voice là dời tâm điểm chú ý từ "Tác nhân" sang "Đối tượng chịu tác động" đúng theo giáo trình W8D1. Làm chủ công thức Be + V3/ed cho các thì khác nhau và chấm dứt lỗi kinh điển Band 3.0: Biến động từ sang V3 nhưng quên mất trợ động từ "to be".',
     bridgeToHomework: {
@@ -3813,7 +3813,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 8,
     day: 2,
     skill: 'reading',
-    title: 'The Financial Crime Trace Lab',
+    title: 'Bóc Tách Hồ Sơ Pháp Lý & Hành Trình Vượt Biên',
     subtitle: 'Bóc Tách Dòng Dữ Liệu Pháp Luật & 7 Bẫy Nhận Thức Hình Sự',
     coreCompetency: 'Đối chiếu các con số và dữ kiện điều tra tội phạm (nơi ở hiện tại, phương thức vượt biên bằng xe tải, quy mô đường dây cần sa trị giá 3.2 tỷ USD) để tránh bẫy suy diễn và bẫy khái quát hóa luật pháp.',
     bridgeToHomework: {
@@ -4096,7 +4096,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 8,
     day: 3,
     skill: 'speaking',
-    title: 'The Favorite Food & Restaurant Ordering Engine (Topic: Food)',
+    title: 'Nói Về Món Ăn Yêu Thích & Gọi Món Nhà Hàng (Chủ Đề: Food)',
     subtitle: 'Nói Về Món Ăn Yêu Thích & Gọi Món Nhà Hàng: Từ Câu Cụt 3.0 Lên Bài Nói 4.0 - 4.5',
     coreCompetency: 'Chuẩn hóa đầu ra khóa Dreamer (3.0 → 4.0+): Học viên thành thạo trọng âm câu (Sentence Stress), sử dụng chính xác 5 từ vựng điểm nhấn của bài ("originates from", "broth", "affordable", "complicated", "serve"), và làm chủ đoạn hội thoại gọi món tại nhà hàng ("May I take your order?", "I would like...", "Your total is...").',
     bridgeToHomework: {
@@ -4351,7 +4351,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 9,
     day: 1,
     skill: 'writing',
-    title: 'The Subordinating Clause Glue Engine',
+    title: 'Keo Dán Liên Từ & Câu Phức (Subordinating Conjunctions)',
     subtitle: 'Keo Dán Liên Từ: Lắp Ráp Cú Pháp & Phẫu Thuật Điểm Gãy',
     coreCompetency: 'Nắm vững quy tắc "Keo dán liên từ" trong giáo trình W9D1: Để kết nối 2 mệnh đề thành câu phức chỉ được dùng đúng 1 liên từ phụ thuộc. Chấm dứt triệt để lỗi Comma Splice (ghép 2 mệnh đề bằng dấu phẩy không liên từ) và lỗi dịch thô tiếng Việt song trùng liên từ "Bởi vì... cho nên" (Because... so...).',
     bridgeToHomework: {
@@ -4414,7 +4414,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 9,
     day: 2,
     skill: 'reading',
-    title: 'The Influencer Authenticity Lab',
+    title: 'Đối Chiếu Bản Thể Nội Dung & 7 Bẫy Ngôi Sao Mạng Xã Hội',
     subtitle: 'Đối Chiếu Bản Thể Nội Dung & 7 Bẫy Nhận Thức YouTube Stars',
     coreCompetency: 'Đối chiếu lý do thành công của các ngôi sao mạng xã hội (Khoai Lang Thang / YouTube content creators) dựa trên tính chân thực (Authenticity vs PR Staged Images) để phân biệt bẫy thế hệ (Millennials / Gen Z vs Older Generations) và bẫy phạm vi chuyên môn.',
     bridgeToHomework: {
@@ -4698,7 +4698,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 9,
     day: 3,
     skill: 'speaking',
-    title: 'The Hobbies & Tense Flow Engine (Topic: Hobbies & Interests)',
+    title: 'Nói Về Sở Thích & Kỹ Thuật Ngắt Nhịp Chuẩn (Chủ Đề: Hobbies)',
     subtitle: 'Nói Về Sở Thích & Sự Thay Đổi Theo Thời Gian: Từ Câu Cụt 3.0 Lên Bài Nói 4.0 - 4.5',
     coreCompetency: 'Chuẩn hóa đầu ra khóa Dreamer (3.0 → 4.0+): Học viên hoàn thiện khả năng ngắt cụm từ (Chunking / Grouping words), phát triển ý mạch lạc theo mô hình "Reasons - Results - Benefits" ("helps me expand knowledge", "allows me to relax and refresh my mind"), và phối hợp mượt mà 3 thì (Past "used to" - Present "nowadays" - Future "in the future I would like to...").',
     bridgeToHomework: {

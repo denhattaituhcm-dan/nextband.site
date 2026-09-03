@@ -28,15 +28,15 @@ interface WeekMeta {
 }
 
 const WEEKS_META: WeekMeta[] = [
-  { week: 1, title: 'Sentence Foundations', theme: 'Clause Core Engine & Sound Mechanics', progressPercent: 100, status: 'completed', homeworkPendingCount: 0 },
-  { week: 2, title: 'Spatial & Logical Organisation', theme: 'Verb Compatibility & Logic Verification', progressPercent: 67, status: 'active', homeworkPendingCount: 1 },
-  { week: 3, title: 'Timeline & Evidence Lab', theme: 'Tense Anchoring & Semantic Boundaries', progressPercent: 33, status: 'available', homeworkPendingCount: 2 },
-  { week: 4, title: 'Modifiers & Precision', theme: 'Attachment Rules & Technical Traps', progressPercent: 0, status: 'available', homeworkPendingCount: 3 },
-  { week: 5, title: 'Prepositional Anchors', theme: 'Fixed Collocations & Cause Reasoning', progressPercent: 0, status: 'available', homeworkPendingCount: 3 },
-  { week: 6, title: 'Relative Clauses & Identity', theme: 'Complex Synthesis & Contrast Prefs', progressPercent: 0, status: 'available', homeworkPendingCount: 3 },
-  { week: 7, title: 'Punctuation & Conditionals', theme: 'Non-defining Rules & Deep Loyalty', progressPercent: 0, status: 'available', homeworkPendingCount: 3 },
-  { week: 8, title: 'Passive Focus & Crime Trace', theme: 'Object Inversion & Motive Verification', progressPercent: 0, status: 'available', homeworkPendingCount: 3 },
-  { week: 9, title: 'Subordinating Clause Glue', theme: 'Conjunction Traps & Growth Synthesis', progressPercent: 0, status: 'available', homeworkPendingCount: 3 }
+  { week: 1, title: 'Nền Tảng Cấu Trúc Câu', theme: 'Động Cơ Mệnh Đề Cốt Lõi & Cơ Chế Phát Âm', progressPercent: 100, status: 'completed', homeworkPendingCount: 0 },
+  { week: 2, title: 'Tổ Chức Không Gian & Logic', theme: 'Cổng Kết Nối Động Từ & Bàn Cân Xác Minh Logic', progressPercent: 67, status: 'active', homeworkPendingCount: 1 },
+  { week: 3, title: 'Trục Thời Gian & Dữ Liệu Lịch Trình', theme: 'Neo Mốc Thì Quá Khứ - Hiện Tại & Bóc Tách Bằng Chứng', progressPercent: 33, status: 'available', homeworkPendingCount: 2 },
+  { week: 4, title: 'Bổ Ngữ & Định Vị Chính Xác', theme: 'Quy Tắc Ghép Tính Từ - Trạng Từ & Bẫy Khái Niệm Y Tế', progressPercent: 0, status: 'available', homeworkPendingCount: 3 },
+  { week: 5, title: 'Điểm Neo Giới Từ & Nhân Quả', theme: 'Cụm Giới Từ Cố Định & Chiếu Sáng Câu Chủ Đề Đoạn Văn', progressPercent: 0, status: 'available', homeworkPendingCount: 3 },
+  { week: 6, title: 'Mệnh Đề Quan Hệ & Bản Thể', theme: 'Cầu Nối Who/Which Quy Tắc Số 1 & Truy Vết Lịch Sử', progressPercent: 0, status: 'available', homeworkPendingCount: 3 },
+  { week: 7, title: 'Dấu Phẩy & Mệnh Đề Quan Hệ', theme: 'Quy Tắc Non-defining Cấm Kỵ Dùng That & Tranh Luận Môi Trường', progressPercent: 0, status: 'available', homeworkPendingCount: 3 },
+  { week: 8, title: 'Trọng Tâm Bị Động & Truy Vết Hồ Sơ', theme: 'Đảo Trục Trọng Tâm Be + V3 & Bóc Tách Bẫy Pháp Lý', progressPercent: 0, status: 'available', homeworkPendingCount: 3 },
+  { week: 9, title: 'Keo Dán Liên Từ & Câu Phức', theme: 'Bẫy Nhân Quả Song Trùng Because... So & Đối Chiếu Bản Thể', progressPercent: 0, status: 'available', homeworkPendingCount: 3 }
 ];
 
 export default function VisualReconstructionPage() {
@@ -114,13 +114,13 @@ export default function VisualReconstructionPage() {
                   const isCompleted = wm.progressPercent === 100;
                   const isActive = wm.status === 'active';
 
-                  return (
+                    return (
                     <button
                       key={wm.week}
                       onClick={() => setSelectedWeek(wm.week)}
                       className={`w-full text-left p-3 rounded-xl transition-all duration-200 relative z-10 flex items-start gap-3.5 group ${
                         isSelected
-                          ? 'bg-slate-900 text-white shadow-[0_8px_20px_-6px_rgba(15,23,42,0.3)] translate-x-1'
+                          ? 'bg-indigo-600 text-white shadow-[0_8px_20px_-6px_rgba(79,70,229,0.35)] translate-x-1'
                           : 'hover:bg-slate-50 text-slate-700'
                       }`}
                     >
@@ -131,12 +131,12 @@ export default function VisualReconstructionPage() {
                             <Check className="w-3 h-3 stroke-[3]" />
                           </div>
                         ) : isActive ? (
-                          <div className={`w-5 h-5 rounded-full flex items-center justify-center border-2 ${isSelected ? 'border-white bg-indigo-500' : 'border-indigo-600 bg-white'}`}>
+                          <div className={`w-5 h-5 rounded-full flex items-center justify-center border-2 ${isSelected ? 'border-white bg-indigo-700' : 'border-indigo-600 bg-white'}`}>
                             <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
                           </div>
                         ) : (
                           <div className={`w-5 h-5 rounded-full border bg-white flex items-center justify-center text-[10px] font-mono font-bold ${
-                            isSelected ? 'border-slate-600 text-slate-300' : 'border-slate-300 text-slate-400 group-hover:border-slate-400'
+                            isSelected ? 'border-indigo-400 text-indigo-100' : 'border-slate-300 text-slate-400 group-hover:border-slate-400'
                           }`}>
                             {wm.week}
                           </div>
@@ -147,24 +147,24 @@ export default function VisualReconstructionPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
                           <span className={`text-[10px] font-mono font-bold uppercase tracking-wider ${
-                            isSelected ? 'text-indigo-300' : 'text-slate-400'
+                            isSelected ? 'text-indigo-200' : 'text-slate-400'
                           }`}>
                             TUẦN 0{wm.week}
                           </span>
                           <span className={`text-[10px] font-mono font-semibold ${
-                            isSelected ? 'text-slate-300' : 'text-slate-500'
+                            isSelected ? 'text-indigo-100' : 'text-slate-500'
                           }`}>
                             {wm.progressPercent}%
                           </span>
                         </div>
                         <p className={`text-xs font-semibold truncate mt-0.5 ${
-                          isSelected ? 'text-white' : 'text-slate-800'
+                          isSelected ? 'text-white font-bold' : 'text-slate-800'
                         }`}>
                           {wm.title}
                         </p>
                         {wm.homeworkPendingCount > 0 && (
                           <p className={`text-[10px] font-medium mt-1 flex items-center gap-1 ${
-                            isSelected ? 'text-amber-300' : 'text-amber-600'
+                            isSelected ? 'text-amber-200' : 'text-amber-600'
                           }`}>
                             <Clock className="w-2.5 h-2.5" />
                             {wm.homeworkPendingCount} bài tập chờ
@@ -179,29 +179,29 @@ export default function VisualReconstructionPage() {
 
             {/* MAIN CONTENT AREA: TẦNG 2, 3, 4 (9 Cols on LG) */}
             <main className="lg:col-span-9 space-y-8">
-              {/* TẦNG 2: WHAT AM I LEARNING? (Academic Spatial Hero Monograph) */}
-              <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white rounded-3xl p-8 sm:p-10 shadow-[0_20px_40px_-15px_rgba(15,23,42,0.4)] relative overflow-hidden border border-slate-800/80">
+              {/* TẦNG 2: WHAT AM I LEARNING? (Academic Spatial Hero Monograph - Light Theme) */}
+              <section className="bg-gradient-to-br from-white via-indigo-50/40 to-blue-50/60 text-slate-900 rounded-3xl p-8 sm:p-10 shadow-[0_10px_30px_-10px_rgba(79,70,229,0.08)] relative overflow-hidden border border-indigo-100/90">
                 {/* Subtle Spatial Watermark Number */}
-                <div className="absolute -right-4 -bottom-8 select-none pointer-events-none font-mono font-black text-9xl text-white/[0.04] tracking-tighter">
+                <div className="absolute -right-4 -bottom-8 select-none pointer-events-none font-mono font-black text-9xl text-indigo-950/[0.04] tracking-tighter">
                   0{currentWeekMeta.week}
                 </div>
 
                 <div className="relative z-10 max-w-2xl">
                   <div className="flex flex-wrap items-center gap-2.5 mb-3">
-                    <span className="text-[11px] font-mono font-bold uppercase tracking-widest px-2.5 py-1 rounded-md bg-white/10 text-indigo-200 border border-white/10 backdrop-blur-xs">
-                      WEEK 0{currentWeekMeta.week} FOCUS
+                    <span className="text-[11px] font-mono font-bold uppercase tracking-widest px-2.5 py-1 rounded-md bg-indigo-100/80 text-indigo-800 border border-indigo-200">
+                      TRỌNG TÂM TUẦN 0{currentWeekMeta.week}
                     </span>
-                    <span className="text-slate-500">/</span>
-                    <span className="text-xs font-mono tracking-wider text-slate-300">
-                      TARGET BAND 4.0 COGNITIVE ENGINE
+                    <span className="text-slate-300">/</span>
+                    <span className="text-xs font-mono font-semibold tracking-wider text-slate-600">
+                      MỤC TIÊU ĐẦU RA 4.0 · COGNITIVE RECONSTRUCTION
                     </span>
                   </div>
 
-                  <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">
+                  <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-2.5">
                     {currentWeekMeta.title}
                   </h2>
-                  <p className="text-sm text-slate-300 leading-relaxed font-normal">
-                    Trọng tâm khảo cứu: <span className="text-white font-medium">{currentWeekMeta.theme}</span>. Bóc tách cơ chế ngữ pháp cốt lõi, loại trừ bẫy nhận định bằng chứng và tự động hoá tư duy phản xạ giao tiếp.
+                  <p className="text-sm text-slate-600 leading-relaxed font-normal">
+                    Trọng tâm khảo cứu: <span className="text-indigo-900 font-semibold">{currentWeekMeta.theme}</span>. Bóc tách cơ chế ngữ pháp cốt lõi, loại trừ bẫy nhận định bằng chứng và tự động hoá tư duy phản xạ giao tiếp.
                   </p>
                 </div>
               </section>
