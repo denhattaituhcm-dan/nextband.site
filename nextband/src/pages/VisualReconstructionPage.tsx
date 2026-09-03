@@ -333,7 +333,7 @@ export default function VisualReconstructionPage() {
                           <div className="flex items-center justify-between mb-3.5">
                             <span className="text-[11px] font-mono font-bold tracking-wider uppercase text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200 flex items-center gap-1.5">
                               <Scale className="w-3.5 h-3.5" />
-                              ĐỌC · BUỔI 2
+                              READING · BUỔI 2
                             </span>
                             {isReadingDone ? (
                               <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 shadow-xs">
@@ -430,7 +430,7 @@ export default function VisualReconstructionPage() {
                           <div className="flex items-center justify-between mb-3.5">
                             <span className="text-[11px] font-mono font-bold tracking-wider uppercase text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200 flex items-center gap-1.5">
                               <Layers className="w-3.5 h-3.5" />
-                              NÓI · BUỔI 3
+                              SPEAKING · BUỔI 3
                             </span>
                             {isSpeakingDone ? (
                               <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-xs">
