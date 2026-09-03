@@ -277,6 +277,10 @@ export function AnswerResultCard({
       "yes_no_not_given",
     ].includes(questionType);
 
+  const trimmedStudentAnswer = (answerText || "").trim();
+  const hasStudentContent = trimmedStudentAnswer.length > 0 || !!audioUrl;
+  const isSubjectiveUnanswered = isSubjective && !hasStudentContent;
+
   const rawScore = resolvedMode === "OBJECTIVE" ? (score != null ? score : computedScore) : (resolvedMode === "MANUAL_ITEM" ? score : null);
   const isFullCredit = resolvedMode === "OBJECTIVE" && rawScore != null && Number(rawScore) >= Number(effectivePoints);
   const isZeroCredit = resolvedMode === "OBJECTIVE" && rawScore != null && Number(rawScore) === 0;
@@ -287,11 +291,15 @@ export function AnswerResultCard({
     // 1. HOLISTIC Mode
     if (resolvedMode === "HOLISTIC") {
       if (isGraded) return <CheckCircle className="h-4 w-4 text-purple-600 dark:text-purple-400" />;
+      if (isSubjectiveUnanswered) return <Minus className="h-4 w-4 text-slate-400 dark:text-slate-500" />;
       return <Clock className="h-4 w-4 text-amber-500" />;
     }
 
     // 2. MANUAL_ITEM Mode
     if (resolvedMode === "MANUAL_ITEM") {
+      if (isSubjectiveUnanswered && (!isGraded || score == null || Number(score) === 0)) {
+        return <Minus className="h-4 w-4 text-slate-400 dark:text-slate-500" />;
+      }
       if (!isGraded || score == null) return <Clock className="h-4 w-4 text-amber-500" />;
       if (Number(score) > 0) return <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />;
       return <Minus className="h-4 w-4 text-slate-500" />;
@@ -322,6 +330,17 @@ export function AnswerResultCard({
           </Badge>
         );
       }
+      if (isSubjectiveUnanswered) {
+        return (
+          <Badge
+            data-testid="holistic-unanswered-badge"
+            variant="outline"
+            className="text-xs font-semibold bg-slate-100 text-slate-600 border-slate-300 dark:bg-slate-800/80 dark:text-slate-400 dark:border-slate-700"
+          >
+            ⚪ Chưa làm (0 điểm)
+          </Badge>
+        );
+      }
       return (
         <Badge
           data-testid="holistic-pending-badge"
@@ -335,6 +354,17 @@ export function AnswerResultCard({
 
     // GATE D2: MANUAL_ITEM Mode Badge
     if (resolvedMode === "MANUAL_ITEM") {
+      if (isSubjectiveUnanswered && (!isGraded || score == null || Number(score) === 0)) {
+        return (
+          <Badge
+            data-testid="manual-unanswered-badge"
+            variant="outline"
+            className="text-xs font-semibold bg-slate-100 text-slate-600 border-slate-300 dark:bg-slate-800/80 dark:text-slate-400 dark:border-slate-700"
+          >
+            ⚪ Chưa làm (0/{Number(effectivePoints)} điểm)
+          </Badge>
+        );
+      }
       if (!isGraded || score == null) {
         return (
           <Badge
@@ -419,13 +449,17 @@ export function AnswerResultCard({
     resolvedMode === "HOLISTIC"
       ? isGraded
         ? "border-purple-200/80 bg-purple-50/10 border-l-4 border-l-purple-400 dark:border-purple-900/60 dark:bg-purple-950/10"
-        : "border-amber-200/80 bg-amber-50/15 border-l-4 border-l-amber-400 dark:border-amber-900/60 dark:bg-amber-950/10"
+        : isSubjectiveUnanswered
+          ? "border-slate-200/80 bg-slate-50/30 border-l-4 border-l-slate-300 dark:border-slate-800 dark:bg-slate-900/20"
+          : "border-amber-200/80 bg-amber-50/15 border-l-4 border-l-amber-400 dark:border-amber-900/60 dark:bg-amber-950/10"
       : resolvedMode === "MANUAL_ITEM"
-        ? !isGraded || score == null
-          ? "border-amber-200/80 bg-amber-50/15 border-l-4 border-l-amber-400 dark:border-amber-900/60 dark:bg-amber-950/10"
-          : Number(score) > 0
-            ? "border-blue-200/80 bg-blue-50/15 border-l-4 border-l-blue-500 dark:border-blue-900/60 dark:bg-blue-950/10"
-            : "border-slate-200/80 bg-slate-50/15 border-l-4 border-l-slate-400 dark:border-slate-800"
+        ? isSubjectiveUnanswered && (!isGraded || score == null || Number(score) === 0)
+          ? "border-slate-200/80 bg-slate-50/30 border-l-4 border-l-slate-300 dark:border-slate-800 dark:bg-slate-900/20"
+          : !isGraded || score == null
+            ? "border-amber-200/80 bg-amber-50/15 border-l-4 border-l-amber-400 dark:border-amber-900/60 dark:bg-amber-950/10"
+            : Number(score) > 0
+              ? "border-blue-200/80 bg-blue-50/15 border-l-4 border-l-blue-500 dark:border-blue-900/60 dark:bg-blue-950/10"
+              : "border-slate-200/80 bg-slate-50/15 border-l-4 border-l-slate-400 dark:border-slate-800"
         : canShowResult
           ? isFullCredit
             ? "border-emerald-300/80 bg-emerald-50/15 border-l-4 border-l-emerald-500 dark:border-emerald-800 dark:bg-emerald-950/10"

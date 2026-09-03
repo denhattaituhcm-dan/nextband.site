@@ -1609,8 +1609,8 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     day: 2,
     skill: 'reading',
     title: 'The Origin & Historical Trace Lab',
-    subtitle: 'Truy Vết Bằng Chứng Lịch Sử & Bẫy Đảo Trật Tự Thời Gian',
-    coreCompetency: 'Đối chiếu trật tự các sự kiện trong bài đọc lịch sử công nghệ (Facemash -> Thefacebook -> Facebook) để tránh bẫy đảo lộn nhân vật hoặc mục đích sáng lập.',
+    subtitle: 'Truy Vết Toàn Bộ 7 Bẫy Nhận Thức Lịch Sử Facebook',
+    coreCompetency: 'Đối chiếu trật tự các sự kiện trong bài đọc lịch sử công nghệ (Facemash -> Thefacebook -> Facebook) để phát hiện bẫy tráo thủ phạm (ai hack), bẫy đối tượng sử dụng ban đầu (Harvard outsiders) và bẫy kiện tụng cổ phần.',
     bridgeToHomework: {
       promptText: 'Làm bài đọc hiểu về lịch sử hình thành Facebook trong Homework W6D2.',
       targetExamId: 'exam_dreamer_w6d2'
@@ -1619,28 +1619,277 @@ export const vrsMockLessons: VRSVisualLesson[] = [
       {
         stageNumber: 1,
         stageType: 'verification_scale',
-        title: 'Bẫy Mục Đích Ban Đầu (Original Purpose Trap)',
-        pedagogicalObjective: 'Phát hiện sự sai lệch giữa mục đích ban đầu của Facemash (so sánh ảnh sinh viên ký túc xá) và nhận định đề bài.',
+        title: 'Câu 1 (T/F/NG): Bẫy Suy Diễn Độ Phổ Biến (Facemash popular among Harvard?)',
+        pedagogicalObjective: 'Quét Đoạn 1 & 2 để kiểm tra xem có thông tin nào khẳng định Facemash rất được ưa chuộng không.',
         interactionModel: {
           type: 'verification_scale',
-          prompt: 'Đặt nhận định lên bàn cân logic để đối chiếu với bối cảnh ra đời của Facemash năm 2003:',
+          prompt: 'Bấm Radar quét sự ra đời và đóng cửa của Facemash trong Đoạn 1 & 2:',
+          passageContext: {
+            title: 'The History of Facebook and How It Was Invented',
+            paragraphs: [
+              {
+                id: 'p1',
+                label: 'Đoạn 1 · Vụ hack ảnh sinh viên cho trang Facemash',
+                text: 'It all began in 2003, when Zuckerberg, a second-year student at Harvard, wrote the software for a website called Facemash. He put his computer science skills to questionable use by hacking into Harvard\'s security network, where he copied the student ID images used by the dormitories and used them to populate his new website.'
+              },
+              {
+                id: 'p2',
+                label: 'Đoạn 2 · Đóng cửa và nguy cơ bị đuổi học',
+                text: 'Facemash opened on October 28, 2003—and closed a few days later, after it was shut down by Harvard execs. In the aftermath, Zuckerberg faced serious charges of breach of security, violating copyrights, and violating individual privacy.'
+              }
+            ],
+            targetParagraphId: 'p2',
+            targetSnippet: 'Facemash opened on October 28, 2003—and closed a few days later, after it was shut down'
+          },
           statement: {
-            rawText: 'Mark Zuckerberg created Facemash with official permission from Harvard security to connect university students.',
+            rawText: '1. Facemash was very popular among Harvard students.',
             deconstructedVariables: [
-              { name: 'subject', text: 'Mark Zuckerberg' },
-              { name: 'permission', text: 'with official permission from Harvard', isTrapWord: true },
-              { name: 'action', text: 'created Facemash to connect students' }
+              { name: 'subject', text: 'Facemash' },
+              { name: 'popularity_claim', text: 'was very popular among Harvard students', isTrapWord: true }
             ]
           },
           passageEvidence: {
-            rawText: 'He put his computer science skills to questionable use by hacking into Harvard\'s security network, where he copied student ID images.',
+            rawText: 'Bài đọc chỉ cho biết trang mở ngày 28/10/2003 và bị ban giám hiệu đóng cửa vài ngày sau đó do vi phạm bảo mật và bản quyền. Tuyệt nhiên không có số liệu hay kết luận nào về mức độ ưa chuộng ("very popular") của sinh viên đối với Facemash.',
             targetVariables: [
-              { matchingName: 'permission', text: 'hacking into Harvard\'s security network (xâm nhập trái phép, KHÔNG PHẢI có phép)' }
+              { matchingName: 'popularity_claim', text: 'KHÔNG CÓ DỮ LIỆU VỀ ĐỘ PHỔ BIẾN CỦA FACEMASH' }
+            ]
+          },
+          expectedRelation: 'no_evidence',
+          verdict: 'NOT GIVEN',
+          pedagogicalInsight: 'NOT GIVEN! Bài đọc chỉ nêu Facemash tồn tại được vài ngày rồi bị đình chỉ vì xâm nhập bảo mật, hoàn toàn không có thông tin nói rằng trang này rất được sinh viên ưa chuộng ("very popular"). Học sinh thường nhầm với TheFacebook ở Đoạn 5 vốn mới thực sự là "extremely popular".'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'verification_scale',
+        title: 'Câu 2 (T/F/NG): Bẫy Tráo Thủ Phạm Hành Động (who hacked who?)',
+        pedagogicalObjective: 'Phát hiện sự đảo ngược vai trò: Mark hack mạng bảo mật Harvard, chứ ban giám hiệu KHÔNG hack để tắt trang.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét hành động đóng cửa Facemash của ban giám hiệu Harvard ở Đoạn 2:',
+          passageContext: {
+            title: 'The History of Facebook and How It Was Invented',
+            paragraphs: [
+              {
+                id: 'p1',
+                label: 'Đoạn 1 · Mark hack mạng an ninh',
+                text: 'He put his computer science skills to questionable use by hacking into Harvard\'s security network.'
+              },
+              {
+                id: 'p2',
+                label: 'Đoạn 2 · Hành động của ban giám hiệu',
+                text: 'Facemash opened on October 28, 2003—and closed a few days later, after it was shut down by Harvard execs. In the aftermath, Zuckerberg faced serious charges of breach of security.'
+              }
+            ],
+            targetParagraphId: 'p2',
+            targetSnippet: 'after it was shut down by Harvard execs'
+          },
+          statement: {
+            rawText: '2. Harvard executives shut Facemash down by hacking into it.',
+            deconstructedVariables: [
+              { name: 'actor', text: 'Harvard executives' },
+              { name: 'action', text: 'shut Facemash down' },
+              { name: 'method', text: 'by hacking into it', isTrapWord: true }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Facemash ... was shut down by Harvard execs. Người thực hiện hành vi hack là Mark Zuckerberg (hacking into Harvard\'s security network), chứ ban giám hiệu chỉ ra lệnh đình chỉ hoạt động chứ không hề hack vào Facemash.',
+            targetVariables: [
+              { matchingName: 'method', text: 'Ban giám hiệu chỉ đóng cửa (shut down), người "hack" là Mark' }
             ]
           },
           expectedRelation: 'contradiction',
           verdict: 'FALSE',
-          pedagogicalInsight: 'FALSE vì bài đọc chỉ rõ Zuckerberg đã tấn công bảo mật trái phép ("hacking into Harvard\'s security network"), mâu thuẫn trực tiếp với khẳng định "with official permission" của đề bài.'
+          pedagogicalInsight: 'FALSE vì ban giám hiệu Harvard chỉ ra lệnh đóng cửa trang web bằng quyền quản trị ("shut down by Harvard execs"), chứ không phải dùng hành vi tấn công mạng ("by hacking into it")!'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'verification_scale',
+        title: 'Câu 3 (T/F/NG): Khớp Ý Phủ Định Kép (only to Harvard = not for outsiders)',
+        pedagogicalObjective: 'Đối chiếu mệnh đề tương đương: "made available only to Harvard students" đồng nghĩa "not available for outsiders".',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét phạm vi người dùng ban đầu của thefacebook.com ở Đoạn 4:',
+          passageContext: {
+            title: 'The History of Facebook and How It Was Invented',
+            paragraphs: [
+              {
+                id: 'p4',
+                label: 'Đoạn 4 · Phiên bản đầu tiên thefacebook.com',
+                text: 'On February 4 2004, the first version of Facebook was born, known as thefacebook.com and made available only to Harvard students.'
+              }
+            ],
+            targetParagraphId: 'p4',
+            targetSnippet: 'made available only to Harvard students'
+          },
+          statement: {
+            rawText: '3. Thefacebook.com was initially not available for Harvard outsiders.',
+            deconstructedVariables: [
+              { name: 'subject', text: 'Thefacebook.com' },
+              { name: 'time_scope', text: 'initially' },
+              { name: 'availability', text: 'not available for Harvard outsiders (không mở cho người ngoài Harvard)' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'the first version of Facebook was born, known as thefacebook.com and made available only to Harvard students.',
+            targetVariables: [
+              { matchingName: 'availability', text: 'made available only to Harvard students (chỉ dành riêng cho sinh viên Harvard)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'TRUE! Cụm từ "made available only to Harvard students" (chỉ dành riêng cho sinh viên Harvard) đồng nghĩa 100% với việc "không dành cho người bên ngoài Harvard" (not available for Harvard outsiders).'
+        }
+      },
+      {
+        stageNumber: 4,
+        stageType: 'verification_scale',
+        title: 'Câu 4 (T/F/NG): Bẫy Tuyên Bố Tranh Chấp (stolen idea vs unproven accusation)',
+        pedagogicalObjective: 'Bóc trần sự khác nhau giữa lời cáo buộc (allegations) và sự thật lịch sử chưa được chứng minh.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét sự việc tranh chấp ý tưởng của anh em Winklevoss ở Đoạn 4:',
+          passageContext: {
+            title: 'The History of Facebook and How It Was Invented',
+            paragraphs: [
+              {
+                id: 'p4',
+                label: 'Đoạn 4 · Tranh chấp và thỏa thuận 1.2 triệu cổ phiếu',
+                text: 'However, the truth about how Facebook came about isn\'t completely clear. Six days after "TheFacebook" went online by Zuckerberg and his co-founders, they faced accusations by Cameron and Tyler Winklevoss and Divya Narendra that the idea for the site had been stolen from them.'
+              }
+            ],
+            targetParagraphId: 'p4',
+            targetSnippet: 'faced accusations ... that the idea for the site had been stolen from them'
+          },
+          statement: {
+            rawText: '4. Mark got the idea for Thefacebook from Cameron and Tyler Winklevoss and Divya Narendra.',
+            deconstructedVariables: [
+              { name: 'claim', text: 'Mark got the idea from Cameron and Tyler Winklevoss', isTrapWord: true }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Bài đọc chỉ ghi rõ: "the truth about how Facebook came about isn\'t completely clear" (sự thật về việc Facebook ra đời như thế nào là không hoàn toàn rõ ràng) và Mark chỉ đối mặt với "lời cáo buộc" (faced accusations) chứ tác giả không hề khẳng định Mark lấy ý tưởng từ họ.',
+            targetVariables: [
+              { matchingName: 'claim', text: 'sự thật không rõ ràng (truth isn\'t completely clear), chỉ là cáo buộc' }
+            ]
+          },
+          expectedRelation: 'no_evidence',
+          verdict: 'NOT GIVEN',
+          pedagogicalInsight: 'NOT GIVEN vì bài đọc nêu rõ "sự thật không hoàn toàn sáng tỏ" và đó chỉ là lời cáo buộc của đối phương ("faced accusations"), chứ bài viết không hề khẳng định liệu Mark có thực sự lấy ý tưởng từ họ hay không!'
+        }
+      },
+      {
+        stageNumber: 5,
+        stageType: 'verification_scale',
+        title: 'Câu 5 (T/F/NG): Bẫy Mở Rộng Hệ Thống (expand to other colleges vs create own versions)',
+        pedagogicalObjective: 'Phân biệt giữa việc chính Facebook mở rộng sang các trường khác với việc các trường tự tạo bản sao riêng.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét quá trình mở rộng sang các trường đại học khác ở Đoạn 5:',
+          passageContext: {
+            title: 'The History of Facebook and How It Was Invented',
+            paragraphs: [
+              {
+                id: 'p5',
+                label: 'Đoạn 5 · Mở rộng sang Stanford, Yale và Columbia',
+                text: 'Facebook was extremely popular with Harvard students when it was first launched, so much so that the site was soon also made available to students at Stanford, Yale and Columbia before expanding to numerous other colleges.'
+              }
+            ],
+            targetParagraphId: 'p5',
+            targetSnippet: 'the site was soon also made available to students at Stanford, Yale and Columbia'
+          },
+          statement: {
+            rawText: '5. Because of the success of Facebook, other universities created their own version of Facebook.',
+            deconstructedVariables: [
+              { name: 'action', text: 'other universities created their own version of Facebook', isTrapWord: true }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'the site was soon also made available to students at Stanford, Yale and Columbia before expanding to numerous other colleges. Chính nền tảng TheFacebook mở rộng quyền truy cập sang các trường khác, chứ các trường đó KHÔNG hề tự tạo phiên bản riêng của họ.',
+            targetVariables: [
+              { matchingName: 'action', text: 'TheFacebook mở rộng mạng lưới, không phải các trường tự tạo bản sao' }
+            ]
+          },
+          expectedRelation: 'contradiction',
+          verdict: 'FALSE',
+          pedagogicalInsight: 'FALSE vì bài đọc nêu rõ hệ thống TheFacebook được mở rộng sang cho sinh viên Stanford, Yale, Columbia sử dụng ("made available to students..."), mâu thuẫn với việc các trường này tự lập phiên bản riêng ("created their own version").'
+        }
+      },
+      {
+        stageNumber: 6,
+        stageType: 'verification_scale',
+        title: 'Câu 6 (T/F/NG): Khớp Ý Giới Hạn Độ Tuổi (at least 13 years old = teenagers and adults)',
+        pedagogicalObjective: 'Đối chiếu chính sách người dùng từ 13 tuổi trở lên tương đương độ tuổi thanh thiếu niên và người lớn.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét chính sách độ tuổi của Facebook mở rộng năm 2006 ở Đoạn 7:',
+          passageContext: {
+            title: 'The History of Facebook and How It Was Invented',
+            paragraphs: [
+              {
+                id: 'p7',
+                label: 'Đoạn 7 · Chính sách mở cửa toàn cầu năm 2006',
+                text: 'In September of 2006, Facebook announced that anyone who was at least 13 years old and had a valid email address could join.'
+              }
+            ],
+            targetParagraphId: 'p7',
+            targetSnippet: 'anyone who was at least 13 years old and had a valid email address could join'
+          },
+          statement: {
+            rawText: '6. According to Facebook\'s policy, only teenagers and adults can use Facebook.',
+            deconstructedVariables: [
+              { name: 'policy', text: 'According to Facebook\'s policy' },
+              { name: 'eligible_users', text: 'only teenagers and adults can use Facebook' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'anyone who was at least 13 years old and had a valid email address could join.',
+            targetVariables: [
+              { matchingName: 'eligible_users', text: 'at least 13 years old (từ 13 tuổi trở lên = lứa tuổi teen và người lớn, loại trừ trẻ em dưới 13 tuổi)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'TRUE! Chính sách quy định người dùng phải từ đủ 13 tuổi trở lên ("at least 13 years old"), điều này đồng nghĩa chỉ có thanh thiếu niên (teenagers) và người lớn (adults) mới đủ điều kiện tham gia.'
+        }
+      },
+      {
+        stageNumber: 7,
+        stageType: 'verification_scale',
+        title: 'Câu 7 (T/F/NG): Khớp Ý Tỷ Lệ Đóng Góp Từ Thiện (99% = most of their shares)',
+        pedagogicalObjective: 'Đối chiếu con số cụ thể 99% cổ phần tương ứng với khái niệm phần lớn ("most of their shares").',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét cam kết từ thiện của gia đình Zuckerberg ở Đoạn cuối:',
+          passageContext: {
+            title: 'The History of Facebook and How It Was Invented',
+            paragraphs: [
+              {
+                id: 'p8',
+                label: 'Đoạn 8 · Cam kết của quỹ Chan Zuckerberg Initiative',
+                text: 'Zuckerberg and his wife, Priscilla Chan, have announced that they would contribute 99% of their Facebook shares to the Chan Zuckerberg Initiative to improve lives through education, health, scientific research, and energy.'
+              }
+            ],
+            targetParagraphId: 'p8',
+            targetSnippet: 'they would contribute 99% of their Facebook shares to the Chan Zuckerberg Initiative'
+          },
+          statement: {
+            rawText: '7. The Zuckerberg family will donate most of their shares in Facebook to charity.',
+            deconstructedVariables: [
+              { name: 'benefactor', text: 'The Zuckerberg family' },
+              { name: 'charity_amount', text: 'donate most of their shares in Facebook to charity' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'they would contribute 99% of their Facebook shares to the Chan Zuckerberg Initiative to improve lives.',
+            targetVariables: [
+              { matchingName: 'charity_amount', text: 'contribute 99% of their Facebook shares (99% cổ phần = hầu hết cổ phần)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'TRUE! Hai vợ chồng Zuckerberg cam kết đóng góp tới 99% cổ phần Facebook ("contribute 99% of their shares"), con số 99% hoàn toàn khớp với cụm "most of their shares" (phần lớn cổ phần) của đề bài.'
         }
       }
     ]
