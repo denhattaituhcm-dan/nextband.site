@@ -1328,9 +1328,9 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 5,
     day: 2,
     skill: 'reading',
-    title: 'The Tone & Inference Filter Lab',
-    subtitle: 'Giải Mã Sắc Thái Tác Giả & Bẫy Khái Quát Hóa',
-    coreCompetency: 'Phân tích sắc thái (hài hước / châm biếm / cảnh báo) và xác định tính hai mặt của một hiện tượng văn hóa (Karaoke in Vietnam).',
+    title: 'The Topic Sentence Spotlight & Gap-Fill Engine',
+    subtitle: 'Chiếu Sáng Câu Chủ Đề (Đoạn A - F) & Nhặt Từ Gốc Gap-Fill',
+    coreCompetency: 'Nắm vững kỹ năng Skimming (chiếu sáng Topic Sentence ở đầu/cuối đoạn) để hiểu cấu trúc toàn bài, kết hợp kỹ năng Scanning nhặt đúng 1 từ gốc (ONE WORD ONLY) cho câu hỏi tóm tắt.',
     bridgeToHomework: {
       promptText: 'Làm bài đọc hiểu về văn hóa Karaoke ở Việt Nam trong Homework W5D2.',
       targetExamId: 'exam_dreamer_w5d2'
@@ -1339,29 +1339,157 @@ export const vrsMockLessons: VRSVisualLesson[] = [
       {
         stageNumber: 1,
         stageType: 'verification_scale',
-        title: 'Bẫy Khái Quát Hóa Quá Mức (Overgeneralization Trap)',
-        pedagogicalObjective: 'Nhận diện sự đối lập giữa quan sát hài hước về đàn ông Việt Nam và kết luận tuyệt đối của đề bài.',
+        title: 'Câu 7 (Gap-Fill): Nhặt Từ Gốc Đoạn A (tradition by foreigners)',
+        pedagogicalObjective: 'Quét Đoạn A, định vị từ bổ nghĩa cho "musical tradition" để nhặt đúng 1 từ gốc duy nhất.',
         interactionModel: {
           type: 'verification_scale',
-          prompt: 'Đặt nhận định lên bàn cân logic để đối chiếu với nhận xét của tác giả trong đoạn B:',
+          prompt: 'Bấm Radar quét nhận định của tác giả về truyền thống âm nhạc Karaoke ở Đoạn A:',
+          passageContext: {
+            title: 'Karaoke in Vietnam',
+            paragraphs: [
+              {
+                id: 'pA',
+                label: 'Đoạn A · Cảm nhận ban đầu của người nước ngoài',
+                text: 'Karaoke in Vietnam is a very interesting story. When I first arrived in this country, I had many expectations, but none of them involved public singing. This strange musical tradition has become an important part of modern Vietnamese life, and over the next three months, I had to seriously readjust my thoughts of the sing-along art form.'
+              }
+            ],
+            targetParagraphId: 'pA',
+            targetSnippet: 'This strange musical tradition has become an important part of modern Vietnamese life'
+          },
           statement: {
-            rawText: 'Most Vietnamese men are professionally trained singers who rarely miss high notes.',
+            rawText: '7. Although Karaoke is regarded as a [STRANGE] Vietnamese tradition by foreigners, it is an important part of people’s lives.',
             deconstructedVariables: [
-              { name: 'subject', text: 'Most Vietnamese men' },
-              { name: 'ability', text: 'professionally trained singers', isTrapWord: true },
-              { name: 'performance', text: 'rarely miss high notes', isTrapWord: true }
+              { name: 'concession', text: 'Although regarded as a [.....] tradition' },
+              { name: 'gap_word', text: 'strange (kỳ lạ, xa lạ)', isTrapWord: false },
+              { name: 'contrast', text: 'important part of people’s lives' }
             ]
           },
           passageEvidence: {
-            rawText: 'Most Vietnamese men think they can sing. You can tell by the way they close their eyes and look to the heavens as they miss the high notes.',
+            rawText: 'This strange musical tradition has become an important part of modern Vietnamese life.',
             targetVariables: [
-              { matchingName: 'ability', text: 'think they can sing (chỉ tự nghĩ mình hát được)' },
-              { matchingName: 'performance', text: 'as they miss the high notes (hát trật nốt cao)' }
+              { matchingName: 'gap_word', text: 'strange (tính từ đứng trước musical tradition)' }
             ]
           },
-          expectedRelation: 'contradiction',
-          verdict: 'FALSE',
-          pedagogicalInsight: 'FALSE vì tác giả hài hước chỉ ra rằng đàn ông Việt chỉ tự nghĩ mình hát hay ("think they can sing") và thực tế là họ thường xuyên hát trật các nốt cao ("miss the high notes"), mâu thuẫn 100% với nhận định "professionally trained".'
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'Từ cần điền là "strange". Trong câu gốc: "This strange musical tradition has become an important part...", tính từ "strange" bổ nghĩa trực tiếp cho truyền thống âm nhạc này dưới con mắt người nước ngoài.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'verification_scale',
+        title: 'Câu 8 (Gap-Fill): Nhặt Từ Gốc Đoạn B (completely ... places)',
+        pedagogicalObjective: 'Quét Đoạn B, đối chiếu vị trí xuất hiện của dàn máy karaoke di động trên đường phố.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét phản ứng của tác giả khi thấy máy karaoke xuất hiện trên đường phố ở Đoạn B:',
+          passageContext: {
+            title: 'Karaoke in Vietnam',
+            paragraphs: [
+              {
+                id: 'pB',
+                label: 'Đoạn B · Sự cuồng nhiệt & Karaoke đường phố',
+                text: 'It’s pretty hilarious whenever you see a wild karaoke machine pop up out of nowhere at completely inappropriate moments. In Vietnam, Karaoke is love. Karaoke is life.'
+              }
+            ],
+            targetParagraphId: 'pB',
+            targetSnippet: 'pop up out of nowhere at completely inappropriate moments'
+          },
+          statement: {
+            rawText: '8. In Vietnamese cities, it is not uncommon to see a Karaoke machine in completely [INAPPROPRIATE] places.',
+            deconstructedVariables: [
+              { name: 'location_phenomenon', text: 'not uncommon to see a Karaoke machine' },
+              { name: 'modifier', text: 'in completely [.....] places' },
+              { name: 'gap_word', text: 'inappropriate (không phù hợp / trớ trêu)', isTrapWord: false }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'a wild karaoke machine pop up out of nowhere at completely inappropriate moments.',
+            targetVariables: [
+              { matchingName: 'gap_word', text: 'inappropriate (tính từ đứng sau completely)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'Từ cần điền là "inappropriate". Cụm từ "completely inappropriate moments" trong bài đọc tương ứng với "completely inappropriate places" trong đề bài.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'verification_scale',
+        title: 'Câu 9 (Gap-Fill): Cụm Collocation Đoạn C (leave an ... on the locals)',
+        pedagogicalObjective: 'Quét Đoạn C, bắt cụm danh từ đi với động từ tạo ấn tượng (make / leave an impression).',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét lời khuyên dành cho du khách muốn tạo ấn tượng ở Đoạn C:',
+          passageContext: {
+            title: 'Karaoke in Vietnam',
+            paragraphs: [
+              {
+                id: 'pC',
+                label: 'Đoạn C · Thử sức với bài hát tiếng Việt',
+                text: 'If you’re in the country for a while and really want to make an impression, try singing some Vietnamese songs: Vietnamese folk songs are beautiful things - usually about family, loss and home. But you only have to volunteer to sing and the locals will be more than willing to help you out with every single syllable.'
+              }
+            ],
+            targetParagraphId: 'pC',
+            targetSnippet: 'really want to make an impression, try singing some Vietnamese songs'
+          },
+          statement: {
+            rawText: '9. Foreigners who can sing some popular Vietnamese songs can leave a good [IMPRESSION] on the locals.',
+            deconstructedVariables: [
+              { name: 'condition', text: 'sing some popular Vietnamese songs' },
+              { name: 'collocation_verb', text: 'leave a good [.....] on the locals' },
+              { name: 'gap_word', text: 'impression (ấn tượng)', isTrapWord: false }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'If you’re in the country for a while and really want to make an impression, try singing some Vietnamese songs.',
+            targetVariables: [
+              { matchingName: 'gap_word', text: 'impression (collocation: make an impression = leave an impression)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'Từ cần điền là "impression". Cụm diễn đạt trong đề "leave a good impression" tương đương 100% với cấu trúc "make an impression" trong bài đọc!'
+        }
+      },
+      {
+        stageNumber: 4,
+        stageType: 'verification_scale',
+        title: 'Câu 10 (Gap-Fill): Nhặt Động Từ Cốt Lõi Đoạn F (ability to ... people)',
+        pedagogicalObjective: 'Quét Đoạn F để nhặt động từ chỉ khả năng kết nối con người của âm nhạc (capacity / ability to connect).',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét câu mở đoạn triết lý về âm nhạc trong Đoạn F:',
+          passageContext: {
+            title: 'Karaoke in Vietnam',
+            paragraphs: [
+              {
+                id: 'pF',
+                label: 'Đoạn F · Giá trị kết nối cộng đồng của Karaoke',
+                text: 'Music has the capacity to connect us. This is something the Vietnamese understand well. Karaoke is a means of human connection - a way for even terrible singers to immerse themselves in a universal art form and express themselves intimately.'
+              }
+            ],
+            targetParagraphId: 'pF',
+            targetSnippet: 'Music has the capacity to connect us. This is something the Vietnamese understand well.'
+          },
+          statement: {
+            rawText: '10. The Vietnamese know that music has the ability to [CONNECT] people.',
+            deconstructedVariables: [
+              { name: 'subject_clause', text: 'The Vietnamese know that' },
+              { name: 'concept', text: 'music has the ability to [.....] people' },
+              { name: 'gap_word', text: 'connect (kết nối)', isTrapWord: false }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Music has the capacity to connect us. This is something the Vietnamese understand well.',
+            targetVariables: [
+              { matchingName: 'gap_word', text: 'connect (capacity to connect = ability to connect)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'Từ cần điền là "connect". Đề bài paraphrase "capacity to connect us" thành "ability to connect people". Động từ nguyên mẫu chính xác là "connect".'
         }
       }
     ]
