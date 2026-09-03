@@ -975,9 +975,9 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 4,
     day: 2,
     skill: 'reading',
-    title: 'The Evidence Specificity Lab',
-    subtitle: 'Đối Chiếu Chi Tiết Cụ Thể & Bẫy Khái Niệm Tương Tự',
-    coreCompetency: 'Phân định ranh giới giữa các thuật ngữ y học / sinh học có vẻ giống nhau (blood pressure vs blood sugar) và phát hiện bằng chứng nguồn gốc.',
+    title: 'The Semantic Boundary & Medical Trap Lab',
+    subtitle: 'Bóc Tách Toàn Bộ 6 Bẫy Nhận Thức Khoa Học Sức Khỏe',
+    coreCompetency: 'Phân định ranh giới giữa các thuật ngữ y học có vẻ giống nhau (blood pressure vs blood sugar), bẫy lượng từ (all vs unprocessed), và bẫy suy đoán so sánh nhất.',
     bridgeToHomework: {
       promptText: 'Luyện tập giải đề T/F/NG về quan niệm sức khỏe trong Homework W4D2.',
       targetExamId: 'exam_dreamer_w4d2'
@@ -986,28 +986,231 @@ export const vrsMockLessons: VRSVisualLesson[] = [
       {
         stageNumber: 1,
         stageType: 'verification_scale',
-        title: 'Bẫy Thuật Ngữ Gần Nghĩa (Near-Synonym Trap)',
-        pedagogicalObjective: 'Nhận diện lỗi thay tráo thuật ngữ chuyên môn: blood sugar (đường huyết) bị tráo thành blood pressure (huyết áp).',
+        title: 'Câu 1 (T/F/NG): Khớp Ý Trực Diện (large breakfast & weight loss)',
+        pedagogicalObjective: 'Đối chiếu kết quả nghiên cứu trên nhóm phụ nữ thừa cân ăn sáng nhiều.',
         interactionModel: {
           type: 'verification_scale',
-          prompt: 'Đặt nhận định lên bàn cân logic để đối chiếu với trích dẫn của chuyên gia Brady Holmer:',
+          prompt: 'Bấm Radar quét kết quả nghiên cứu về bữa sáng trong Mục A:',
+          passageContext: {
+            title: 'The truth behind some common health beliefs',
+            paragraphs: [
+              {
+                id: 'pA',
+                label: "Mục A · 'Breakfast is the most important meal of the day'",
+                text: 'One study on overweight female volunteers found that those who ate a large breakfast saw greater weight loss than another group who had a low-calorie breakfast and a larger dinner.'
+              }
+            ],
+            targetParagraphId: 'pA',
+            targetSnippet: 'those who ate a large breakfast saw greater weight loss'
+          },
           statement: {
-            rawText: 'According to Brady Holmer, people eating a large breakfast rather than a larger dinner can control their blood pressure better.',
+            rawText: '1. A study showed that eating a large breakfast helped people lose more weight.',
+            deconstructedVariables: [
+              { name: 'evidence_type', text: 'A study showed' },
+              { name: 'action', text: 'eating a large breakfast' },
+              { name: 'outcome', text: 'helped people lose more weight' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'One study on overweight female volunteers found that those who ate a large breakfast saw greater weight loss than another group.',
+            targetVariables: [
+              { matchingName: 'outcome', text: 'saw greater weight loss (giảm cân nhiều hơn)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'TRUE! Nghiên cứu chỉ ra rằng nhóm ăn sáng nhiều đạt mức giảm cân lớn hơn ("saw greater weight loss"), hoàn toàn trùng khớp với khẳng định "helped people lose more weight" của đề bài.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'verification_scale',
+        title: 'Câu 2 (T/F/NG): Bẫy Tráo Thuật Ngữ Y Khoa (blood pressure vs blood sugar)',
+        pedagogicalObjective: 'Phát hiện bẫy tráo đổi thuật ngữ: đường huyết (blood sugar) bị cố tình tráo thành huyết áp (blood pressure).',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét phát biểu của chuyên gia Brady Holmer trong Mục A:',
+          passageContext: {
+            title: 'The truth behind some common health beliefs',
+            paragraphs: [
+              {
+                id: 'pA',
+                label: "Mục A · 'Breakfast is the most important meal of the day'",
+                text: '"People who eat a big breakfast instead of a big dinner also tend to lose more weight, feel less hungry and can control their blood sugar levels better," says Brady Holmer, a researcher at Examine.com.'
+              }
+            ],
+            targetParagraphId: 'pA',
+            targetSnippet: 'can control their blood sugar levels better'
+          },
+          statement: {
+            rawText: '2. According to Brady Holmer, people eating a large breakfast rather than larger dinner can control their blood pressure better.',
             deconstructedVariables: [
               { name: 'subject_source', text: 'According to Brady Holmer' },
-              { name: 'action', text: 'eating a large breakfast rather than dinner' },
-              { name: 'outcome', text: 'control blood pressure better', isTrapWord: true }
+              { name: 'action', text: 'eating a large breakfast rather than larger dinner' },
+              { name: 'medical_term', text: 'control their blood pressure better', isTrapWord: true }
             ]
           },
           passageEvidence: {
             rawText: 'People who eat a big breakfast instead of a big dinner also tend to lose more weight, feel less hungry and can control their blood sugar levels better.',
             targetVariables: [
-              { matchingName: 'outcome', text: 'control their blood sugar levels better (đường huyết, KHÔNG PHẢI huyết áp)' }
+              { matchingName: 'medical_term', text: 'control their blood sugar levels better (ĐƯỜNG HUYẾT, KHÔNG PHẢI HUYẾT ÁP)' }
             ]
           },
           expectedRelation: 'contradiction',
           verdict: 'FALSE',
-          pedagogicalInsight: 'FALSE vì bài đọc chỉ rõ tác dụng là kiểm soát đường huyết ("blood sugar levels"), trong khi đề bài cố tình tráo thành huyết áp ("blood pressure"). Hai khái niệm y học hoàn toàn khác nhau!'
+          pedagogicalInsight: 'FALSE vì Brady Holmer nói rõ là kiểm soát đường huyết ("blood sugar levels"), trong khi đề bài cố tình tráo thành huyết áp ("blood pressure"). Hai thuật ngữ y khoa hoàn toàn khác nhau!'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'verification_scale',
+        title: 'Câu 3 (T/F/NG): Bẫy So Sánh Nhất Không Được Đề Cập (the most serious effects?)',
+        pedagogicalObjective: 'Phát hiện câu khẳng định hậu quả nặng nề nhất đối với người béo phì không hề có căn cứ trong bài đọc.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét đoạn kết luận của Mục A về tác động của việc bỏ bữa sáng:',
+          passageContext: {
+            title: 'The truth behind some common health beliefs',
+            paragraphs: [
+              {
+                id: 'pA',
+                label: 'Mục A · Kết luận về việc bỏ bữa sáng',
+                text: 'Skipping it may have varying effects on weight and energy for different people. If you can make it through the morning on an apple and coffee, just go for it. However, if you tend to overeat later in the day, a larger breakfast could help.'
+              }
+            ],
+            targetParagraphId: 'pA',
+            targetSnippet: 'Skipping it may have varying effects on weight and energy for different people'
+          },
+          statement: {
+            rawText: '3. Skipping breakfast has the most serious effects on overweight people.',
+            deconstructedVariables: [
+              { name: 'condition', text: 'Skipping breakfast' },
+              { name: 'superlative_effect', text: 'has the most serious effects on overweight people', isTrapWord: true }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Bài đọc chỉ nêu việc bỏ bữa sáng có tác động khác nhau tùy cơ địa mỗi người ("varying effects for different people"). Tuyệt nhiên không có bất kỳ dòng nào so sánh rằng người thừa cân chịu hậu quả nặng nề nhất ("most serious effects").',
+            targetVariables: [
+              { matchingName: 'superlative_effect', text: 'KHÔNG CÓ SO SÁNH HẬU QUẢ NẶNG NỀ NHẤT CHO NGƯỜI THỪA CÂN' }
+            ]
+          },
+          expectedRelation: 'no_evidence',
+          verdict: 'NOT GIVEN',
+          pedagogicalInsight: 'NOT GIVEN vì bài đọc chỉ nói bỏ bữa sáng gây tác động khác nhau tùy người ("varying effects"), hoàn toàn không có thông tin nói người thừa cân chịu hậu quả nặng nề nhất ("the most serious effects").'
+        }
+      },
+      {
+        stageNumber: 4,
+        stageType: 'verification_scale',
+        title: 'Câu 4 (T/F/NG): Bẫy Lịch Sử Khoa Học (wasn’t based on science vs proved by science)',
+        pedagogicalObjective: 'Bóc trần mâu thuẫn giữa việc con số 10.000 bước vào thập niên 1960 KHÔNG dựa trên khoa học với việc đề bài nói được khoa học chứng minh.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét nguồn gốc lịch sử của con số 10.000 bước trong Mục B:',
+          passageContext: {
+            title: 'The truth behind some common health beliefs',
+            paragraphs: [
+              {
+                id: 'pB',
+                label: "Mục B · 'You should walk 10,000 steps a day'",
+                text: 'It is surprising that this number wasn’t based on any science when it first came up in the 1960s, but it might be good advice. A study in 2022 found that walking may reduce the risk of death from cardiovascular disease and cancer.'
+              }
+            ],
+            targetParagraphId: 'pB',
+            targetSnippet: 'this number wasn’t based on any science when it first came up in the 1960s'
+          },
+          statement: {
+            rawText: '4. In the 1960s, scientific research proved that walking 10,000 steps a day is beneficial to our health.',
+            deconstructedVariables: [
+              { name: 'timeline', text: 'In the 1960s' },
+              { name: 'claim', text: 'scientific research proved that walking 10,000 steps is beneficial', isTrapWord: true }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'It is surprising that this number wasn’t based on any science when it first came up in the 1960s, but it might be good advice.',
+            targetVariables: [
+              { matchingName: 'claim', text: 'wasn’t based on any science in the 1960s (KHÔNG DỰA TRÊN BẤT KỲ KHOA HỌC NÀO)' }
+            ]
+          },
+          expectedRelation: 'contradiction',
+          verdict: 'FALSE',
+          pedagogicalInsight: 'FALSE vì bài đọc chỉ rõ: khi con số này xuất hiện vào thập niên 1960, nó KHÔNG hề dựa trên bất kỳ cơ sở khoa học nào ("wasn’t based on any science"), đối lập hoàn toàn với khẳng định "scientific research proved" của đề bài!'
+        }
+      },
+      {
+        stageNumber: 5,
+        stageType: 'verification_scale',
+        title: 'Câu 5 (T/F/NG): Khớp Ý Từ Đồng Nghĩa (don’t distinguish = did not differentiate)',
+        pedagogicalObjective: 'Đối chiếu từ đồng nghĩa: don’t distinguish between processed and unprocessed tương đương did not differentiate.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét phương pháp nghiên cứu thịt đỏ trong Mục C:',
+          passageContext: {
+            title: 'The truth behind some common health beliefs',
+            paragraphs: [
+              {
+                id: 'pC',
+                label: "Mục C · 'Red meat is bad for you'",
+                text: 'Several studies have shown a link between a higher intake of red meat and an increased risk of cancer and heart disease. However, it is now widely believed that this might not be correct, because many studies don’t distinguish between processed (bacon, sausages, burgers and deli meats) and unprocessed red meat intake.'
+              }
+            ],
+            targetParagraphId: 'pC',
+            targetSnippet: 'many studies don’t distinguish between processed ... and unprocessed red meat intake'
+          },
+          statement: {
+            rawText: '5. Many studies on red meat did not differentiate between processed and unprocessed red meat in their studies.',
+            deconstructedVariables: [
+              { name: 'subject', text: 'Many studies on red meat' },
+              { name: 'methodological_flaw', text: 'did not differentiate between processed and unprocessed' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'many studies don’t distinguish between processed (bacon, sausages, burgers and deli meats) and unprocessed red meat intake.',
+            targetVariables: [
+              { matchingName: 'methodological_flaw', text: 'don’t distinguish between processed and unprocessed (không phân biệt giữa thịt đã chế biến và thịt chưa chế biến)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'TRUE! Cụm từ "don’t distinguish" trong bài đọc đồng nghĩa 100% với "did not differentiate" trong đề bài. Cả hai đều chỉ lỗi không phân biệt thịt chế biến sẵn và thịt tươi sống.'
+        }
+      },
+      {
+        stageNumber: 6,
+        stageType: 'verification_scale',
+        title: 'Câu 6 (T/F/NG): Bẫy Lượng Từ Tuyệt Đối (all types vs continue unprocessed)',
+        pedagogicalObjective: 'Bóc trần mâu thuẫn giữa việc khuyên tránh mọi loại thịt đỏ (avoid all types) và khuyến cáo vẫn có thể tiếp tục ăn thịt chưa qua chế biến (continue to eat unprocessed).',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét khuyến nghị của các tổ chức y tế lớn trong Mục C:',
+          passageContext: {
+            title: 'The truth behind some common health beliefs',
+            paragraphs: [
+              {
+                id: 'pC',
+                label: 'Mục C · Khuyến nghị của tổ chức y tế lớn',
+                text: '"Several recent studies have found that eating unprocessed red meat may not actually increase the risk of heart disease or cancer, and major health organisations have recommended that people can continue to eat unprocessed red meat," says Holmer.'
+              }
+            ],
+            targetParagraphId: 'pC',
+            targetSnippet: 'major health organisations have recommended that people can continue to eat unprocessed red meat'
+          },
+          statement: {
+            rawText: '6. Major health organizations recommend that people avoid eating all types of red meat.',
+            deconstructedVariables: [
+              { name: 'source', text: 'Major health organizations' },
+              { name: 'recommendation', text: 'avoid eating all types of red meat (tránh TẤT CẢ các loại thịt đỏ)', isTrapWord: true }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'major health organisations have recommended that people can continue to eat unprocessed red meat.',
+            targetVariables: [
+              { matchingName: 'recommendation', text: 'continue to eat unprocessed red meat (vẫn có thể tiếp tục ăn thịt chưa chế biến)' }
+            ]
+          },
+          expectedRelation: 'contradiction',
+          verdict: 'FALSE',
+          pedagogicalInsight: 'FALSE vì các tổ chức y tế lớn khuyến nghị mọi người vẫn CÓ THỂ TIẾP TỤC ĂN thịt đỏ chưa qua chế biến ("can continue to eat unprocessed red meat"), mâu thuẫn trực tiếp với từ "avoid eating ALL types" của đề bài!'
         }
       }
     ]
