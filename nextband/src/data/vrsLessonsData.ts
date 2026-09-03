@@ -365,7 +365,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
   },
   {
     id: 'dreamer_w3d2',
-    courseId: 'reading',
+    courseId: 'dreamer',
     week: 3,
     day: 2,
     skill: 'reading',

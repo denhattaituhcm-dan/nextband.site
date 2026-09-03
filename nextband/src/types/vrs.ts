@@ -54,7 +54,7 @@ export interface VRSRevealInteraction {
       content: string;
       note: string;
     }>;
-  >;
+  }>;
   fullMosaicSummary: string;
 }
 
@@ -65,9 +65,9 @@ export interface VRSSlotSnapInteraction {
   tokens: Array<{
     id: string;
     text: string;
-    role: 'subject' | 'fv_core' | 'object' | 'complement' | 'modifier' | 'preposition' | 'bare_infinitive';
-    colorClass: 'green' | 'orange' | 'blue' | 'red' | 'gray';
-  >;
+    role: 'subject' | 'fv_core' | 'object' | 'complement' | 'modifier' | 'preposition' | 'bare_infinitive' | 'adverb' | 'adjective_clause' | 'connector' | 'subordinating_clause' | 'main_clause' | 'scope_condition';
+    colorClass: 'green' | 'orange' | 'blue' | 'red' | 'gray' | 'purple';
+  }>;
   slots?: Array<{
     slotId: string;
     acceptedRoles: string[];
@@ -92,17 +92,17 @@ export interface VRSScaleInteraction {
   statement: {
     rawText: string;
     deconstructedVariables: Array<{
-      name: 'subject' | 'relation' | 'scope_condition';
+      name: string;
       text: string;
       isTrapWord?: boolean;
-    >;
+    }>;
   };
   passageEvidence: {
     rawText: string;
     targetVariables: Array<{
-      matchingName: 'subject' | 'relation' | 'scope_condition';
+      matchingName: string;
       text: string;
-    >;
+    }>;
   };
   expectedRelation: 'match' | 'contradiction' | 'no_evidence';
   verdict: 'TRUE' | 'FALSE' | 'NOT GIVEN';
