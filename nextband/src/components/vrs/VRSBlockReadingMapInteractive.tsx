@@ -25,7 +25,7 @@ export default function VRSBlockReadingMapInteractive({ model }: Props) {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3.5 rounded-xl bg-slate-100/70 border border-slate-200 text-xs">
         <div className="flex items-center gap-2 text-slate-700 font-semibold">
-          <span className="p-1 rounded bg-indigo-600 text-white font-mono text-[10px]">CÐ CHế 2-CLICK</span>
+          <span className="p-1 rounded bg-indigo-600 text-white font-mono text-[10px]">CƠ CHẾ 2-CLICK</span>
           <span>{model.prompt}</span>
         </div>
         <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500">
