@@ -305,6 +305,16 @@ export default function SubmissionDetail() {
     return { objectiveQuestions: obj, subjectiveQuestions: subj };
   }, [allQuestions]);
 
+  // Số lượng câu tự luận mà học viên THỰC SỰ ĐÃ TRẢ LỜI (không để trống)
+  const answeredSubjectiveCount = useMemo(() => {
+    return subjectiveQuestions.filter((q) => {
+      const ans = answerMap[q.id];
+      if (!ans) return false;
+      const text = (ans.answerText || "").trim();
+      return text.length > 0 || !!ans.audioUrl;
+    }).length;
+  }, [subjectiveQuestions, answerMap]);
+
   const totalQuestionsCount = allQuestions.reduce(
     (sum: number, q: any) => sum + getQuestionAssessmentWeight(q),
     0,
@@ -684,7 +694,11 @@ export default function SubmissionDetail() {
                     <span>Phần Tự Luận</span>
                   </div>
                   <p className="text-lg sm:text-xl font-bold text-amber-800 dark:text-amber-300">
-                    {isGraded ? "Đã chấm" : `⏳ ${subjectiveQuestions.length} câu chờ chấm`}
+                    {isGraded
+                      ? "Đã chấm"
+                      : answeredSubjectiveCount > 0
+                        ? `⏳ ${answeredSubjectiveCount} câu chờ chấm`
+                        : "⚪ Bỏ trống (0 điểm)"}
                   </p>
                 </div>
 
@@ -713,7 +727,9 @@ export default function SubmissionDetail() {
                 <div className="p-3.5 rounded-xl border border-blue-200/80 bg-blue-50/60 dark:bg-blue-950/20 dark:border-blue-800/60 text-xs text-blue-900 dark:text-blue-200 flex items-center gap-2.5">
                   <AlertCircle className="h-4 w-4 text-blue-600 shrink-0" />
                   <span>
-                    Điểm phần trắc nghiệm đã được chấm tự động. {subjectiveQuestions.length} câu tự luận đang chờ giáo viên xem và chấm điểm chi tiết.
+                    {answeredSubjectiveCount > 0
+                      ? `Điểm phần trắc nghiệm đã được chấm tự động. ${answeredSubjectiveCount} câu tự luận có câu trả lời đang chờ giáo viên xem và chấm điểm chi tiết.`
+                      : "Học viên không điền câu trả lời cho phần tự luận (tính 0 điểm). Điểm phần trắc nghiệm đã được cập nhật tự động."}
                   </span>
                 </div>
               )}

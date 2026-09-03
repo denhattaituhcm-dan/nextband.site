@@ -2008,8 +2008,8 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     day: 2,
     skill: 'reading',
     title: 'The Cause-Attribution Lab',
-    subtitle: 'Quy Trách Nhiệm Nhân Quả & Bẫy Suy Diễn Trách Nhiệm Pháp Lý',
-    coreCompetency: 'Đối chiếu các mức độ trách nhiệm pháp lý trong sự cố môi trường Formosa (suspected -> admitted -> accepted responsibility) để tránh bẫy thời điểm và bẫy đổ lỗi sai đối tượng.',
+    subtitle: 'Quy Trách Nhiệm Nhân Quả & 6 Bẫy Tranh Luận Môi Trường Formosa',
+    coreCompetency: 'Đối chiếu các mức độ trách nhiệm pháp lý trong sự cố môi trường Formosa (suspected -> admitted -> accepted responsibility) để tránh bẫy thời điểm, bẫy nguyên nhân tự nhiên (thủy triều đỏ) và bẫy phạm vi cấm đánh bắt hải sản.',
     bridgeToHomework: {
       promptText: 'Làm bài đọc hiểu về sự cố môi trường biển năm 2016 trong Homework W7D2.',
       targetExamId: 'exam_dreamer_w7d2'
@@ -2018,28 +2018,231 @@ export const vrsMockLessons: VRSVisualLesson[] = [
       {
         stageNumber: 1,
         stageType: 'verification_scale',
-        title: 'Bẫy Thời Điểm Nhận Trách Nhiệm (Time of Admission Trap)',
-        pedagogicalObjective: 'Phân định rõ thời điểm xảy ra sự cố (tháng 4/2016) và thời điểm Formosa chính thức thừa nhận trách nhiệm (tháng 6/2016).',
+        title: 'Câu 1 (T/F/NG): Bẫy Thời Điểm Nhận Trách Nhiệm (right after incident vs after months)',
+        pedagogicalObjective: 'Phân định sự đối lập giữa khẳng định nhận trách nhiệm ngay sau sự cố và việc chối bỏ suốt nhiều tháng.',
         interactionModel: {
           type: 'verification_scale',
-          prompt: 'Đặt nhận định lên bàn cân logic để đối chiếu với dòng thời gian của sự cố Formosa:',
+          prompt: 'Bấm Radar quét mốc thời gian nhận trách nhiệm của Formosa ở Đoạn tóm tắt:',
+          passageContext: {
+            title: '2016 Vietnam marine life disaster',
+            paragraphs: [
+              {
+                id: 'p1',
+                label: 'Đoạn tóm tắt · Dòng thời gian phát hiện cá chết',
+                text: 'Dead fish were first found on the beaches of Hà Tĩnh province on 6 April 2016. Formosa Ha Tinh Steel discharged toxic waste illegally into the ocean through drainage pipes. After denying responsibility for months, Formosa accepted responsibility for the fish deaths on June 30, 2016.'
+              }
+            ],
+            targetParagraphId: 'p1',
+            targetSnippet: 'After denying responsibility for months, Formosa accepted responsibility for the fish deaths on June 30, 2016'
+          },
           statement: {
-            rawText: 'Formosa Plastics immediately accepted responsibility as soon as dead fish appeared in April 2016.',
+            rawText: '1. Formosa accepted the responsibility right after the incident.',
             deconstructedVariables: [
-              { name: 'subject', text: 'Formosa Plastics' },
-              { name: 'timing', text: 'immediately accepted responsibility in April 2016', isTrapWord: true },
-              { name: 'trigger', text: 'as soon as dead fish appeared' }
+              { name: 'actor', text: 'Formosa' },
+              { name: 'timing', text: 'accepted the responsibility right after the incident', isTrapWord: true }
             ]
           },
           passageEvidence: {
             rawText: 'After denying responsibility for months, Formosa accepted responsibility for the fish deaths on June 30, 2016.',
             targetVariables: [
-              { matchingName: 'timing', text: 'After denying responsibility for months... on June 30, 2016 (chối bỏ hàng tháng trời)' }
+              { matchingName: 'timing', text: 'After denying responsibility for months (chối bỏ suốt nhiều tháng, tận 30/6 mới nhận)' }
             ]
           },
           expectedRelation: 'contradiction',
           verdict: 'FALSE',
-          pedagogicalInsight: 'FALSE vì bài đọc ghi rõ Formosa đã chối bỏ trách nhiệm trong nhiều tháng ("After denying responsibility for months") và đến tận 30/6 mới nhận, trái ngược 100% với khẳng định "immediately accepted in April".'
+          pedagogicalInsight: 'FALSE vì bài đọc ghi rõ Formosa đã chối bỏ trách nhiệm trong nhiều tháng ("After denying responsibility for months") và mãi đến tận 30/6/2016 mới chịu nhận, mâu thuẫn trực tiếp với khẳng định "right after the incident" (ngay sau sự cố)!'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'verification_scale',
+        title: 'Câu 2 (T/F/NG): Khớp Ý Nhập Khẩu Hóa Chất Súc Rửa Đường Ống (300 tonnes of chemicals)',
+        pedagogicalObjective: 'Đối chiếu dữ kiện công ty thừa nhận có ống xả và đã nhập 300 tấn hóa chất về để tẩy rửa đường ống.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét nguyên nhân và thông tin nhập khẩu hóa chất ở Đoạn Causes:',
+          passageContext: {
+            title: '2016 Vietnam marine life disaster',
+            paragraphs: [
+              {
+                id: 'p2',
+                label: 'Đoạn Causes · Hóa chất sục rửa đường ống',
+                text: 'The company admitted that there was a pipe connecting the plant and the ocean and it was reported that several days before the incident, 300 tonnes of chemicals were imported by Formosa in order to clean the pipe.'
+              }
+            ],
+            targetParagraphId: 'p2',
+            targetSnippet: '300 tonnes of chemicals were imported by Formosa in order to clean the pipe'
+          },
+          statement: {
+            rawText: '2. Formosa imported chemicals to clean the pipe that connect the plant and the ocean.',
+            deconstructedVariables: [
+              { name: 'actor', text: 'Formosa' },
+              { name: 'action', text: 'imported chemicals to clean the pipe' },
+              { name: 'pipe_location', text: 'that connect the plant and the ocean' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'The company admitted that there was a pipe connecting the plant and the ocean and it was reported that several days before the incident, 300 tonnes of chemicals were imported by Formosa in order to clean the pipe.',
+            targetVariables: [
+              { matchingName: 'action', text: '300 tonnes of chemicals were imported by Formosa in order to clean the pipe (nhập 300 tấn hóa chất tẩy rửa ống)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'TRUE! Formosa đã thừa nhận có đường ống nối từ nhà máy ra biển và các báo cáo chỉ ra công ty đã nhập 300 tấn hóa chất nhằm mục đích súc rửa đường ống này trước khi xảy ra vụ việc.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'verification_scale',
+        title: 'Câu 3 (T/F/NG): Bẫy Tọa Độ Địa Lý (Vung Ang Economic Zone vs Formosa steel plant)',
+        pedagogicalObjective: 'Phát hiện sự sai lệch tinh vi: các nhà khoa học đồng thuận nguồn độc tố từ Khu kinh tế Vũng Áng nói chung, chứ không khẳng định trực tiếp là từ riêng nhà máy Formosa ở giai đoạn đó.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét kết luận sơ bộ ban đầu của các nhà khoa học Việt Nam ở Đoạn Causes:',
+          passageContext: {
+            title: '2016 Vietnam marine life disaster',
+            paragraphs: [
+              {
+                id: 'p2',
+                label: 'Đoạn Causes · Nhận định của các nhà khoa học',
+                text: 'Vietnamese scientists largely agreed that the source of the toxins was from the Vung Ang Economic Zone, in which the Formosa steel plant was located. However, it was not determined that the Formosa steel plant was linked to the disaster.'
+              }
+            ],
+            targetParagraphId: 'p2',
+            targetSnippet: 'the source of the toxins was from the Vung Ang Economic Zone, in which the Formosa steel plant was located'
+          },
+          statement: {
+            rawText: '3. Vietnamese scientists largely agreed that the source of toxins was from Formosa steel plant.',
+            deconstructedVariables: [
+              { name: 'subject', text: 'Vietnamese scientists' },
+              { name: 'consensus_claim', text: 'largely agreed that the source of toxins was from Formosa steel plant', isTrapWord: true }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Vietnamese scientists largely agreed that the source of the toxins was from the Vung Ang Economic Zone... However, it was not determined that the Formosa steel plant was linked to the disaster.',
+            targetVariables: [
+              { matchingName: 'consensus_claim', text: 'chỉ đồng thuận từ "Vung Ang Economic Zone", chưa xác định là do Formosa' }
+            ]
+          },
+          expectedRelation: 'contradiction',
+          verdict: 'FALSE',
+          pedagogicalInsight: 'FALSE vì các nhà khoa học chỉ đồng thuận rằng nguồn độc tố bắt nguồn từ "Khu kinh tế Vũng Áng" (nơi Formosa đóng quân), và câu tiếp theo khẳng định rõ "chưa xác định được nhà máy Formosa có liên quan đến thảm họa hay không" (it was not determined that Formosa was linked).'
+        }
+      },
+      {
+        stageNumber: 4,
+        stageType: 'verification_scale',
+        title: 'Câu 4 (T/F/NG): Khớp Ý Vượt Ngưỡng Cho Phép (exceeded the permitted level)',
+        pedagogicalObjective: 'Đối chiếu kết quả thanh tra: chất thải chứa hàm lượng độc tố vượt quá quy chuẩn cho phép.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét kết quả thanh tra của Bộ Tài nguyên & Môi trường trong Đoạn Causes:',
+          passageContext: {
+            title: '2016 Vietnam marine life disaster',
+            paragraphs: [
+              {
+                id: 'p2',
+                label: 'Đoạn Causes · Kết luận họp báo ngày 30/6/2016',
+                text: 'violations regarding Formosa discharging toxic waste into the sea, which contained toxins that exceeded the permitted level.'
+              }
+            ],
+            targetParagraphId: 'p2',
+            targetSnippet: 'contained toxins that exceeded the permitted level'
+          },
+          statement: {
+            rawText: '4. Toxic waste from Formosa contained a level of toxins that was significantly higher than permitted.',
+            deconstructedVariables: [
+              { name: 'source', text: 'Toxic waste from Formosa' },
+              { name: 'toxin_level', text: 'contained a level of toxins significantly higher than permitted' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'contained toxins that exceeded the permitted level.',
+            targetVariables: [
+              { matchingName: 'toxin_level', text: 'exceeded the permitted level (vượt ngưỡng cho phép = higher than permitted)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'TRUE! Cụm từ "exceeded the permitted level" (vượt mức cho phép) trùng khớp hoàn toàn với "significantly higher than permitted" trong câu hỏi đề bài.'
+        }
+      },
+      {
+        stageNumber: 5,
+        stageType: 'verification_scale',
+        title: 'Câu 5 (T/F/NG): Khớp Ý Lệnh Cấm Đánh Bắt & Buôn Bán Hải Sản (20 nautical miles)',
+        pedagogicalObjective: 'Đối chiếu lệnh cấm của Chính phủ sau ngày 4/5/2016 đối với hải sản trong phạm vi 20 hải lý.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét lệnh cấm đánh bắt và chế biến hải sản trong Đoạn Effects:',
+          passageContext: {
+            title: '2016 Vietnam marine life disaster',
+            paragraphs: [
+              {
+                id: 'p3',
+                label: 'Đoạn Effects · Lệnh cấm ngày 4/5/2016',
+                text: 'On 4 May 2016, the Vietnamese government announced a ban on processing and selling seafood (that was) caught within 20 nautical miles of central Vietnam provinces.'
+              }
+            ],
+            targetParagraphId: 'p3',
+            targetSnippet: 'announced a ban on processing and selling seafood caught within 20 nautical miles'
+          },
+          statement: {
+            rawText: '5. After 4 May 2016, it was illegal to process and sell seafood caught within 20 nautical miles of central Vietnamese provinces.',
+            deconstructedVariables: [
+              { name: 'timeline', text: 'After 4 May 2016' },
+              { name: 'legal_status', text: 'it was illegal to process and sell seafood' },
+              { name: 'scope', text: 'caught within 20 nautical miles of central Vietnamese provinces' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'On 4 May 2016, the Vietnamese government announced a ban on processing and selling seafood caught within 20 nautical miles.',
+            targetVariables: [
+              { matchingName: 'legal_status', text: 'announced a ban on processing and selling (ban hành lệnh cấm = illegal)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'TRUE! Cụm "announced a ban on..." (ban hành lệnh cấm) đồng nghĩa với "it was illegal" (trở thành bất hợp pháp) sau ngày 4/5/2016 đối với hải sản đánh bắt trong bán kính 20 hải lý.'
+        }
+      },
+      {
+        stageNumber: 6,
+        stageType: 'verification_scale',
+        title: 'Câu 6 (T/F/NG): Khớp Ý Lý Do Du Lịch Sụt Giảm (tourists canceled planned tours)',
+        pedagogicalObjective: 'Đối chiếu nguyên nhân thiệt hại ngành du lịch do 30% khách hủy tour dịp nghỉ lễ.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét tác động lên ngành du lịch trong Đoạn Effects:',
+          passageContext: {
+            title: '2016 Vietnam marine life disaster',
+            paragraphs: [
+              {
+                id: 'p3',
+                label: 'Đoạn Effects · Thiệt hại du lịch dịp lễ 30/4',
+                text: 'in addition, the disaster also heavily impacted the tourism industry as nearly 30% of tourists canceled their planned tours to the affected provinces for the national holiday season starting on 30 April.'
+              }
+            ],
+            targetParagraphId: 'p3',
+            targetSnippet: 'heavily impacted the tourism industry as nearly 30% of tourists canceled their planned tours'
+          },
+          statement: {
+            rawText: '6. The severe impact on the tourism industry was because tourists canceled their tours to the impacted provinces.',
+            deconstructedVariables: [
+              { name: 'industry_effect', text: 'severe impact on the tourism industry' },
+              { name: 'cause', text: 'because tourists canceled their tours to the impacted provinces' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'heavily impacted the tourism industry as nearly 30% of tourists canceled their planned tours to the affected provinces.',
+            targetVariables: [
+              { matchingName: 'cause', text: 'as nearly 30% of tourists canceled their planned tours (vì gần 30% du khách hủy tour)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'TRUE! Bài đọc dùng liên từ chỉ nguyên nhân "as" ("as nearly 30% of tourists canceled their planned tours"), hoàn toàn khớp với mệnh đề chỉ lý do "because tourists canceled their tours" của đề bài.'
         }
       }
     ]
@@ -2158,8 +2361,8 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     day: 2,
     skill: 'reading',
     title: 'The Financial Crime Trace Lab',
-    subtitle: 'Bóc Tách Dòng Dữ Kiệu Pháp Luật & Bẫy Quy Đổi Tiền Tệ',
-    coreCompetency: 'Đối chiếu các con số và giá trị kinh tế (£2.6 billion vs US$3.2 billion) cũng như chi phí di cư bất hợp pháp (US$15,000) để tránh bẫy đảo lộn số liệu trong văn bản pháp luật / hình sự.',
+    subtitle: 'Bóc Tách Dòng Dữ Liệu Pháp Luật & 7 Bẫy Nhận Thức Hình Sự',
+    coreCompetency: 'Đối chiếu các con số và dữ kiện điều tra tội phạm (nơi ở hiện tại, phương thức vượt biên bằng xe tải, quy mô đường dây cần sa trị giá 3.2 tỷ USD) để tránh bẫy suy diễn và bẫy khái quát hóa luật pháp.',
     bridgeToHomework: {
       promptText: 'Làm bài đọc hiểu điều tra về đường dây trồng cần sa ở Anh trong Homework W8D2.',
       targetExamId: 'exam_dreamer_w8d2'
@@ -2168,28 +2371,268 @@ export const vrsMockLessons: VRSVisualLesson[] = [
       {
         stageNumber: 1,
         stageType: 'verification_scale',
-        title: 'Bẫy Tự Nguyện vs Ép Buộc (Voluntary Motive Trap)',
-        pedagogicalObjective: 'Xác định rõ động cơ di cư của nhân vật Cuong Nguyen (tự nguyện vì tiền hay bị lừa bán).',
+        title: 'Câu 1 (T/F/NG): Khớp Ý Nơi Cư Trú Hiện Tại (now back in Vietnam)',
+        pedagogicalObjective: 'Đối chiếu dữ kiện nhân vật Cuong hiện nay đã bị trục xuất và đang sống tại Việt Nam.',
         interactionModel: {
           type: 'verification_scale',
-          prompt: 'Đặt nhận định lên bàn cân logic để đối chiếu với lời khai trực tiếp của Cuong Nguyen:',
+          prompt: 'Bấm Radar quét nơi ở hiện tại của nhân vật Cuong ở Đoạn 2:',
+          passageContext: {
+            title: "How Vietnamese drug kingpins run Britain's lucrative marijuana trade",
+            paragraphs: [
+              {
+                id: 'p2',
+                label: 'Đoạn 2 · Lời tự sự của Cuong sau khi trở về',
+                text: '"All I ever wanted was to make money... whether it was legal or illegal" says Cuong, who is now back in Vietnam.'
+              }
+            ],
+            targetParagraphId: 'p2',
+            targetSnippet: 'says Cuong, who is now back in Vietnam'
+          },
           statement: {
-            rawText: 'Cuong Nguyen was tricked by human traffickers into working on British cannabis farms against his will.',
+            rawText: '1. Mr. Cuong now resides in Vietnam.',
             deconstructedVariables: [
-              { name: 'subject', text: 'Cuong Nguyen' },
-              { name: 'motive', text: 'tricked by traffickers against his will', isTrapWord: true },
-              { name: 'destination', text: 'British cannabis farms' }
+              { name: 'subject', text: 'Mr. Cuong' },
+              { name: 'current_residence', text: 'now resides in Vietnam (hiện đang cư trú ở Việt Nam)' }
             ]
           },
           passageEvidence: {
-            rawText: '"All I ever wanted was to make money... whether it was legal or illegal" says Cuong, who paid US$15,000 to brokers for a fake passport.',
+            rawText: 'says Cuong, who is now back in Vietnam.',
             targetVariables: [
-              { matchingName: 'motive', text: '"All I ever wanted was to make money... paid US$15,000 to brokers" (chủ động trả tiền để làm giàu)' }
+              { matchingName: 'current_residence', text: 'now back in Vietnam (hiện đã trở về Việt Nam = now resides in Vietnam)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'TRUE! Cụm từ "who is now back in Vietnam" trong bài đọc đồng nghĩa 100% với "now resides in Vietnam" trong câu hỏi đề bài.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'verification_scale',
+        title: 'Câu 2 (T/F/NG): Khớp Ý Phương Thức Vượt Biên (underneath a lorry from France)',
+        pedagogicalObjective: 'Đối chiếu hành trình vượt biên từ Pháp sang Anh trốn dưới gầm xe tải.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét phương tiện vượt biên của Cuong sang Anh ở Đoạn 2:',
+          passageContext: {
+            title: "How Vietnamese drug kingpins run Britain's lucrative marijuana trade",
+            paragraphs: [
+              {
+                id: 'p2',
+                label: 'Đoạn 2 · Hành trình vượt biên bất hợp pháp',
+                text: 'Cuong - who is now 41 - migrated to Britain illegally, hidden under a lorry, before growing cannabis in homes and hotels.'
+              }
+            ],
+            targetParagraphId: 'p2',
+            targetSnippet: 'migrated to Britain illegally, hidden under a lorry'
+          },
+          statement: {
+            rawText: '2. Cuong was transported to the UK from France under a lorry.',
+            deconstructedVariables: [
+              { name: 'passenger', text: 'Cuong' },
+              { name: 'route', text: 'transported to the UK from France' },
+              { name: 'vehicle_hideout', text: 'under a lorry' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'migrated to Britain illegally, hidden under a lorry.',
+            targetVariables: [
+              { matchingName: 'vehicle_hideout', text: 'hidden under a lorry (trốn dưới gầm xe tải)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'TRUE! Bài đọc xác nhận Cuong đã di cư bất hợp pháp sang Anh bằng cách trốn dưới gầm xe tải ("hidden under a lorry").'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'verification_scale',
+        title: 'Câu 3 (T/F/NG): Khớp Ý Mức Độ Nguy Hiểm Của Chuyến Đi (dangerous journey)',
+        pedagogicalObjective: 'Đối chiếu tính từ "dangerous journey" trong bài đọc tương ứng với "extremely dangerous".',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét nhận định về chuyến đi của Cuong ở Đoạn 2:',
+          passageContext: {
+            title: "How Vietnamese drug kingpins run Britain's lucrative marijuana trade",
+            paragraphs: [
+              {
+                id: 'p2',
+                label: 'Đoạn 2 · Động cơ và hiểm nguy',
+                text: 'His dangerous journey from the poor town of Haiphong to Britain\'s illegal cannabis farms was driven by big dreams.'
+              }
+            ],
+            targetParagraphId: 'p2',
+            targetSnippet: 'His dangerous journey from the poor town of Haiphong to Britain\'s illegal cannabis farms'
+          },
+          statement: {
+            rawText: "3. Cuong's journey to the UK was extremely dangerous.",
+            deconstructedVariables: [
+              { name: 'subject', text: "Cuong's journey to the UK" },
+              { name: 'danger_level', text: 'was extremely dangerous' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'His dangerous journey from the poor town of Haiphong to Britain\'s illegal cannabis farms was driven by big dreams.',
+            targetVariables: [
+              { matchingName: 'danger_level', text: 'His dangerous journey (chuyến đi đầy nguy hiểm của anh)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'TRUE! Tác giả dùng cụm từ trực tiếp "His dangerous journey" để miêu tả hành trình từ Hải Phòng sang các nông trại cần sa bất hợp pháp ở Anh.'
+        }
+      },
+      {
+        stageNumber: 4,
+        stageType: 'verification_scale',
+        title: 'Câu 4 (T/F/NG): Bẫy Số Lượng Người Trực Tiếp Cùng Làm Tại Bristol',
+        pedagogicalObjective: 'Kiểm tra xem bài đọc có đề cập cụ thể việc Cuong chăm sóc cây cùng 3 người di cư Việt khác tại Bristol hay không.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét chi tiết làm việc của Cuong tại nông trại ở Bristol:',
+          passageContext: {
+            title: "How Vietnamese drug kingpins run Britain's lucrative marijuana trade",
+            paragraphs: [
+              {
+                id: 'p3',
+                label: 'Đoạn về giai đoạn làm việc ở các thị trấn ngoại ô',
+                text: 'Hiding in a suburban British house thousands of miles from home, cannabis farmer Cuong Nguyen spent months carefully nurturing his plants. He is one of the thousands of Vietnamese migrants working in the UK\'s multibillion-dollar weed industry.'
+              }
+            ],
+            targetParagraphId: 'p3',
+            targetSnippet: 'spent months carefully nurturing his plants. He is one of the thousands of Vietnamese migrants'
+          },
+          statement: {
+            rawText: '4. In Bristol, Cuong took care of cannabis plants with three other Vietnamese migrants.',
+            deconstructedVariables: [
+              { name: 'location', text: 'In Bristol' },
+              { name: 'activity', text: 'took care of cannabis plants' },
+              { name: 'companions', text: 'with three other Vietnamese migrants', isTrapWord: true }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Bài đọc chỉ cho biết Cuong là một trong hàng ngàn người Việt làm nghề này và anh trốn trong nhà chăm sóc cây một mình ("spent months carefully nurturing his plants"). Tuyệt nhiên không có số liệu cụ thể nào nói về "3 người di cư Việt khác cùng làm ở Bristol".',
+            targetVariables: [
+              { matchingName: 'companions', text: 'KHÔNG CÓ THÔNG TIN VỀ 3 NGƯỜI BẠN CÙNG LÀM TẠI BRISTOL' }
+            ]
+          },
+          expectedRelation: 'no_evidence',
+          verdict: 'NOT GIVEN',
+          pedagogicalInsight: 'NOT GIVEN vì bài đọc không hề cung cấp chi tiết nào khẳng định Cuong làm việc cùng "ba người di cư Việt Nam khác tại Bristol"!'
+        }
+      },
+      {
+        stageNumber: 5,
+        stageType: 'verification_scale',
+        title: 'Câu 5 (T/F/NG): Khớp Ý Chuyển Thành Đầu Nậu Buôn Cần Sa Ở London (weed trader)',
+        pedagogicalObjective: 'Đối chiếu bước ngoặt khi nông trại bị đột kích, Cuong trốn lên London và tiếp tục chuyển sang buôn bán cần sa.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét diễn biến khi Cuong chuyển lên London hoạt động:',
+          passageContext: {
+            title: "How Vietnamese drug kingpins run Britain's lucrative marijuana trade",
+            paragraphs: [
+              {
+                id: 'p4',
+                label: 'Đoạn tóm tắt cuộc đời Cuong ở London',
+                text: 'Cuong worked at a cannabis farm until it was raided by the police, forcing him to move to London where he continued to trade cannabis and sell drugs.'
+              }
+            ],
+            targetParagraphId: 'p4',
+            targetSnippet: 'move to London where he continued to trade cannabis'
+          },
+          statement: {
+            rawText: '5. In London, Cuong became a weed trader.',
+            deconstructedVariables: [
+              { name: 'location', text: 'In London' },
+              { name: 'occupation_change', text: 'Cuong became a weed trader' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'forcing him to move to London where he continued to trade cannabis.',
+            targetVariables: [
+              { matchingName: 'occupation_change', text: 'continued to trade cannabis (tiếp tục buôn bán cần sa = weed trader)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'TRUE! Sau khi nông trại bị cảnh sát đột kích, Cuong dạt về London và tiếp tục tham gia mạng lưới buôn bán cần sa ("trade cannabis").'
+        }
+      },
+      {
+        stageNumber: 6,
+        stageType: 'verification_scale',
+        title: 'Câu 6 (T/F/NG): Bẫy Phát Tài Làm Giàu (made a fortune vs ended up with empty hands)',
+        pedagogicalObjective: 'Bóc trần mâu thuẫn giữa việc "làm giàu phát tài" với thực tế bị bắt, bị tịch thu tiền và trục xuất trắng tay.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét kết cục tài chính của Cuong khi bị bắt giữ năm 2014:',
+          passageContext: {
+            title: "How Vietnamese drug kingpins run Britain's lucrative marijuana trade",
+            paragraphs: [
+              {
+                id: 'p5',
+                label: 'Đoạn kết cục bị bắt và trục xuất',
+                text: 'In 2014, Cuong was arrested and all his earnings were confiscated. He was deported back to Vietnam with empty hands, struggling to rebuild his life.'
+              }
+            ],
+            targetParagraphId: 'p5',
+            targetSnippet: 'In 2014, Cuong was arrested and all his earnings were confiscated. He was deported back to Vietnam with empty hands'
+          },
+          statement: {
+            rawText: '6. Cuong made a fortune as a weed trader and a weed farmer trainer.',
+            deconstructedVariables: [
+              { name: 'financial_outcome', text: 'made a fortune (kiếm được cả gia tài)', isTrapWord: true },
+              { name: 'roles', text: 'as a weed trader and a weed farmer trainer' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Cuong was arrested and all his earnings were confiscated. He was deported back to Vietnam with empty hands.',
+            targetVariables: [
+              { matchingName: 'financial_outcome', text: 'confiscated... deported with empty hands (bị tịch thu hết tiền, về nước trắng tay)' }
             ]
           },
           expectedRelation: 'contradiction',
           verdict: 'FALSE',
-          pedagogicalInsight: 'FALSE vì chính Cuong thừa nhận mục đích duy nhất là kiếm tiền ("All I ever wanted was to make money") và đã chủ động chi 15.000 USD mua hộ chiếu giả, mâu thuẫn hoàn toàn với khẳng định "bị lừa ép buộc làm việc ngoài ý muốn".'
+          pedagogicalInsight: 'FALSE vì Cuong bị bắt, toàn bộ tiền kiếm được đều bị tịch thu và bị trục xuất về Việt Nam với hai bàn tay trắng ("empty hands"), hoàn toàn mâu thuẫn với khẳng định "made a fortune" (làm giàu phát tài)!'
+        }
+      },
+      {
+        stageNumber: 7,
+        stageType: 'verification_scale',
+        title: 'Câu 7 (T/F/NG): Bẫy Kiến Thức Ngoài Luồng Về Pháp Luật (smoking weed illegal in UK?)',
+        pedagogicalObjective: 'Phát hiện sự thiếu vắng dữ liệu văn bản: bài đọc chỉ nói về việc TRỒNG VÀ BUÔN BÁN BẤT HỢP PHÁP ("illegal cannabis farms/trade"), không có câu nào nêu luật về việc HÚT CẦN SA ("smoking weed is illegal").',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét toàn bài để tìm điều khoản luật cấm hút cần sa ở Anh:',
+          passageContext: {
+            title: "How Vietnamese drug kingpins run Britain's lucrative marijuana trade",
+            paragraphs: [
+              {
+                id: 'p1',
+                label: 'Đoạn 1 & 2 · Quy mô buôn bán cần sa',
+                text: 'He is one of the thousands of Vietnamese migrants working in the UK\'s multibillion-dollar weed industry... His dangerous journey to Britain\'s illegal cannabis farms... managed by gangsters behind the UK\'s huge cannabis trade.'
+              }
+            ],
+            targetParagraphId: 'p1',
+            targetSnippet: 'working in the UK\'s multibillion-dollar weed industry... Britain\'s illegal cannabis farms'
+          },
+          statement: {
+            rawText: '7. Smoking weed is illegal in the UK.',
+            deconstructedVariables: [
+              { name: 'specific_action', text: 'Smoking weed is illegal in the UK', isTrapWord: true }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Bài đọc chỉ nhắc đến "illegal cannabis farms" (các nông trại trồng cần sa lậu) và "illegal cannabis trade" (buôn bán ma túy bất hợp pháp). Tuyệt nhiên bài viết không đề cập đến điều luật cụ thể về hành vi HÚT CẦN SA ("smoking weed") có bất hợp pháp hay không.',
+            targetVariables: [
+              { matchingName: 'specific_action', text: 'KHÔNG CÓ DỮ KIỆN VỀ ĐIỀU LUẬT HÚT CẦN SA (SMOKING WEED)' }
+            ]
+          },
+          expectedRelation: 'no_evidence',
+          verdict: 'NOT GIVEN',
+          pedagogicalInsight: 'NOT GIVEN! Dù ngoài đời thực hút cần sa là phạm pháp ở Anh, nhưng trong bài đọc người viết CHỈ đề cập đến việc TRỒNG LẬU (illegal farms) và BUÔN LẬU (trade), hoàn toàn KHÔNG hề nói về hành vi "smoking weed". Đây là bẫy kinh điển dựa vào kiến thức đời thực ngoài văn bản!'
         }
       }
     ]
@@ -2308,8 +2751,8 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     day: 2,
     skill: 'reading',
     title: 'The Influencer Authenticity Lab',
-    subtitle: 'Đối Chiếu Bản Thể Nội Dung & Bẫy Mâu Thuẫn Thế Hệ',
-    coreCompetency: 'Đối chiếu lý do thành công của các ngôi sao mạng xã hội (Khoai Lang Thang / YouTube creators) dựa trên tính chân thực (Authenticity vs Commercial Endorsements) để tránh bẫy thế hệ (Gen Z vs Millennials).',
+    subtitle: 'Đối Chiếu Bản Thể Nội Dung & 7 Bẫy Nhận Thức YouTube Stars',
+    coreCompetency: 'Đối chiếu lý do thành công của các ngôi sao mạng xã hội (Khoai Lang Thang / YouTube content creators) dựa trên tính chân thực (Authenticity vs PR Staged Images) để phân biệt bẫy thế hệ (Millennials / Gen Z vs Older Generations) và bẫy phạm vi chuyên môn.',
     bridgeToHomework: {
       promptText: 'Làm bài đọc hiểu về sức hút của YouTube stars đối với giới trẻ trong Homework W9D2.',
       targetExamId: 'exam_dreamer_w9d2'
@@ -2318,28 +2761,269 @@ export const vrsMockLessons: VRSVisualLesson[] = [
       {
         stageNumber: 1,
         stageType: 'verification_scale',
-        title: 'Bẫy Tính Chân Thực vs Quảng Cáo Truyền Thống',
-        pedagogicalObjective: 'Phát hiện sự đối lập giữa quảng cáo người nổi tiếng truyền hình và nội dung đời thực của vlogger.',
+        title: 'Câu 1 (T/F/NG): Khớp Ý Sự Lên Ngôi Của Mạng Xã Hội (declining TV vs rise of social media)',
+        pedagogicalObjective: 'Đối chiếu dữ kiện sự trỗi dậy của mạng xã hội song hành với sự suy giảm mức độ phổ biến của truyền hình.',
         interactionModel: {
           type: 'verification_scale',
-          prompt: 'Đặt nhận định lên bàn cân logic để đối chiếu với bí quyết thành công của Khoai Lang Thang:',
+          prompt: 'Bấm Radar quét bối cảnh thay đổi phương tiện truyền thông ở Đoạn 1:',
+          passageContext: {
+            title: 'Why YouTube stars influence millennials more than traditional celebrities',
+            paragraphs: [
+              {
+                id: 'p1',
+                label: 'Đoạn 1 · Sự thoái trào của truyền hình và lên ngôi của YouTube',
+                text: 'For many decades, television was the primary medium where people consumed news and entertainment. But the rise of social media, the declining popularity of TV, and people\'s distaste for advertising has redefined the word "celebrity."'
+              }
+            ],
+            targetParagraphId: 'p1',
+            targetSnippet: 'the rise of social media, the declining popularity of TV'
+          },
           statement: {
-            rawText: 'Khoai Lang Thang achieved popularity mainly by imitating mainstream celebrities and setting internet trends.',
+            rawText: '1. Social media is now more popular than television.',
             deconstructedVariables: [
-              { name: 'subject', text: 'Khoai Lang Thang' },
-              { name: 'success_factor', text: 'imitating mainstream celebrities to set trends', isTrapWord: true },
-              { name: 'outcome', text: 'achieved massive popularity' }
+              { name: 'medium_A', text: 'Social media' },
+              { name: 'comparison', text: 'is now more popular than' },
+              { name: 'medium_B', text: 'television' }
             ]
           },
           passageEvidence: {
-            rawText: 'Unlike mainstream celebrities who often set trends, Khoai Lang Thang\'s success lies in his authenticity and intimate look into ordinary lives.',
+            rawText: 'the rise of social media, the declining popularity of TV, and people\'s distaste for advertising has redefined the word "celebrity."',
             targetVariables: [
-              { matchingName: 'success_factor', text: 'Unlike mainstream celebrities... success lies in his authenticity (trái ngược với người nổi tiếng xu hướng)' }
+              { matchingName: 'comparison', text: 'the rise of social media vs the declining popularity of TV (mạng xã hội lên ngôi, TV suy giảm phổ biến)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'TRUE! Đoạn văn khẳng định sự trỗi dậy của mạng xã hội ("the rise of social media") đi liền với sự sụt giảm độ phổ biến của truyền hình ("declining popularity of TV"), đồng nghĩa mạng xã hội hiện nay đã phổ biến hơn TV.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'verification_scale',
+        title: 'Câu 2 (T/F/NG): Khớp Ý Người Bình Thường Tạo Xu Hướng (ordinary people setting trends)',
+        pedagogicalObjective: 'Đối chiếu nhận định: giờ đây chính những con người bình thường trên YouTube là người tạo xu hướng và dẫn dắt quan điểm.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét vai trò của người sáng tạo nội dung ở Đoạn 1:',
+          passageContext: {
+            title: 'Why YouTube stars influence millennials more than traditional celebrities',
+            paragraphs: [
+              {
+                id: 'p1',
+                label: 'Đoạn 1 · Định nghĩa lại từ "người nổi tiếng"',
+                text: 'Now it is the ordinary people who are setting the trends and driving opinions, and they are doing it on YouTube.'
+              }
+            ],
+            targetParagraphId: 'p1',
+            targetSnippet: 'ordinary people who are setting the trends and driving opinions, and they are doing it on YouTube'
+          },
+          statement: {
+            rawText: '2. Normal people on YouTube today can create trends and shape others\' opinions.',
+            deconstructedVariables: [
+              { name: 'actors', text: 'Normal people on YouTube' },
+              { name: 'influence_action', text: 'can create trends and shape others\' opinions' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Now it is the ordinary people who are setting the trends and driving opinions, and they are doing it on YouTube.',
+            targetVariables: [
+              { matchingName: 'influence_action', text: 'ordinary people setting the trends and driving opinions (người bình thường tạo trend và định hình quan điểm)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'TRUE! Cụm từ "ordinary people ... setting the trends and driving opinions" trong bài đọc trùng khớp 100% với "normal people ... create trends and shape others\' opinions" của đề bài.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'verification_scale',
+        title: 'Câu 3 (T/F/NG): Bẫy Động Thái Của Doanh Nghiệp (businesses not taken any steps?)',
+        pedagogicalObjective: 'Bóc trần mâu thuẫn giữa việc khẳng định doanh nghiệp chưa có động thái gì với thực tế họ đang chuyển hướng mạnh mẽ sang hợp tác với YouTubers.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét phản ứng của các nhãn hàng ở Đoạn 4:',
+          passageContext: {
+            title: 'Why YouTube stars influence millennials more than traditional celebrities',
+            paragraphs: [
+              {
+                id: 'p4',
+                label: 'Đoạn 4 · Động thái chuyển dịch ngân sách của doanh nghiệp',
+                text: 'Businesses are taking notice and turning more to ordinary people than mainstream celebrities to reach millennials. Interestingly, the influence of YouTube stars on younger people goes well beyond shopping.'
+              }
+            ],
+            targetParagraphId: 'p4',
+            targetSnippet: 'Businesses are taking notice and turning more to ordinary people than mainstream celebrities'
+          },
+          statement: {
+            rawText: '3. Businesses have not taken any steps to take advantage of the increasing popularity of YouTubers.',
+            deconstructedVariables: [
+              { name: 'subject', text: 'Businesses' },
+              { name: 'negative_claim', text: 'have not taken any steps (chưa hề có bất kỳ động thái nào)', isTrapWord: true },
+              { name: 'purpose', text: 'to take advantage of the popularity of YouTubers' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Businesses are taking notice and turning more to ordinary people than mainstream celebrities to reach millennials.',
+            targetVariables: [
+              { matchingName: 'negative_claim', text: 'Businesses are taking notice and turning more to ordinary people (doanh nghiệp đang chú ý và chuyển hướng sang hợp tác)' }
             ]
           },
           expectedRelation: 'contradiction',
           verdict: 'FALSE',
-          pedagogicalInsight: 'FALSE vì bài đọc nhấn mạnh "Khác với người nổi tiếng truyền thống thường tạo trend" (Unlike mainstream celebrities), thành công của anh đến từ sự mộc mạc và chân thực ("authenticity"), mâu thuẫn trực tiếp với khẳng định "imitating celebrities".'
+          pedagogicalInsight: 'FALSE vì các doanh nghiệp đang chủ động chuyển hướng hợp tác với các nhà sáng tạo nội dung bình thường ("turning more to ordinary people"), mâu thuẫn trực tiếp với câu phủ định "have not taken any steps" của đề bài!'
+        }
+      },
+      {
+        stageNumber: 4,
+        stageType: 'verification_scale',
+        title: 'Câu 4 (T/F/NG): Khớp Ý Sẵn Sàng Bàn Luận Đề Tài Nhạy Cảm (not afraid = not hesitate)',
+        pedagogicalObjective: 'Đối chiếu từ đồng nghĩa: "not afraid to talk openly about touchy matters" đồng nghĩa với "not hesitate about discussing sensitive topics".',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét đặc điểm tương tác cởi mở của YouTubers trong Mục 1:',
+          passageContext: {
+            title: 'Why YouTube stars influence millennials more than traditional celebrities',
+            paragraphs: [
+              {
+                id: 'p5',
+                label: 'Mục 1 · Sự gần gũi và không ngại chủ đề nhạy cảm',
+                text: 'They are not afraid to be funny, weird, or talk openly about very touchy and personal matters such as sex, divorce, domestic violence, and racism.'
+              }
+            ],
+            targetParagraphId: 'p5',
+            targetSnippet: 'not afraid to ... talk openly about very touchy and personal matters'
+          },
+          statement: {
+            rawText: '4. YouTubers may not hesitate about discussing sensitive topics.',
+            deconstructedVariables: [
+              { name: 'subject', text: 'YouTubers' },
+              { name: 'attitude_action', text: 'may not hesitate about discussing sensitive topics (không ngần ngại thảo luận chủ đề nhạy cảm)' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'They are not afraid to be funny, weird, or talk openly about very touchy and personal matters.',
+            targetVariables: [
+              { matchingName: 'attitude_action', text: 'not afraid to talk openly about very touchy matters (không sợ bàn luận công khai các vấn đề nhạy cảm)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'TRUE! Cụm từ "not afraid to talk openly about very touchy matters" trong bài đọc đồng nghĩa hoàn toàn với "not hesitate about discussing sensitive topics" trong đề bài.'
+        }
+      },
+      {
+        stageNumber: 5,
+        stageType: 'verification_scale',
+        title: 'Câu 5 (T/F/NG): Bẫy Phạm Vi Mẫu Khảo Sát (top 25 YouTube stars vs all YouTubers)',
+        pedagogicalObjective: 'Phát hiện sự khái quát hóa: số liệu gấp 3 lần view và 12 lần comment chỉ áp dụng cho TOP 25 YouTubers, chứ không phải toàn bộ YouTubers nói chung.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét dữ liệu tương tác của Google chia sẻ trong Mục 2:',
+          passageContext: {
+            title: 'Why YouTube stars influence millennials more than traditional celebrities',
+            paragraphs: [
+              {
+                id: 'p6',
+                label: 'Mục 2 · Thống kê số lượt xem và bình luận',
+                text: 'Compared to videos created by mainstream celebrities, videos created by the top 25 YouTube stars have three times more views, 12 times more comments, and twice as many actions (likes, shares, clicks, etc.).'
+              }
+            ],
+            targetParagraphId: 'p6',
+            targetSnippet: 'videos created by the top 25 YouTube stars have three times more views, 12 times more comments'
+          },
+          statement: {
+            rawText: '5. It is found that YouTubers enjoy three times more views and 12 times more comments in their videos compared to mainstream celebrities\'.',
+            deconstructedVariables: [
+              { name: 'scope_subject', text: 'YouTubers (toàn bộ YouTubers nói chung)', isTrapWord: true },
+              { name: 'metric', text: 'three times more views and 12 times more comments' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Compared to videos created by mainstream celebrities, videos created by the top 25 YouTube stars have three times more views, 12 times more comments.',
+            targetVariables: [
+              { matchingName: 'scope_subject', text: 'chỉ áp dụng riêng cho TOP 25 YouTube stars, KHÔNG PHẢI tất cả YouTubers' }
+            ]
+          },
+          expectedRelation: 'contradiction',
+          verdict: 'FALSE',
+          pedagogicalInsight: 'FALSE vì thống kê "3 lần views và 12 lần comments" chỉ là con số của nhóm "top 25 YouTube stars" hàng đầu, chứ không phải của mọi YouTuber nói chung như đề bài đã khái quát hóa bừa bãi!'
+        }
+      },
+      {
+        stageNumber: 6,
+        stageType: 'verification_scale',
+        title: 'Câu 6 (T/F/NG): Bẫy Danh Xưng Chuyên Gia (experts in many fields?)',
+        pedagogicalObjective: 'Phát hiện sự suy diễn: thiếu niên lắng nghe ý kiến của YouTubers lớn tuổi để hình thành quan điểm, nhưng bài KHÔNG hề nói các YouTubers này là "chuyên gia" (experts).',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét nghiên cứu của Đại học Twente trong Mục 3:',
+          passageContext: {
+            title: 'Why YouTube stars influence millennials more than traditional celebrities',
+            paragraphs: [
+              {
+                id: 'p7',
+                label: 'Mục 3 · Nghiên cứu về thanh thiếu niên của Đại học Twente',
+                text: 'a number of respondents admitted that they are interested "in what older YouTubers have to say about things" as it helps them to shape their own opinions and worldview on certain things such as design, beauty, games, relationships, and conflict management.'
+              }
+            ],
+            targetParagraphId: 'p7',
+            targetSnippet: 'interested in what older YouTubers have to say ... helps them to shape their own opinions and worldview'
+          },
+          statement: {
+            rawText: '6. YouTube stars are experts in many fields including design, beauty, games, relationships, and conflict management.',
+            deconstructedVariables: [
+              { name: 'subject', text: 'YouTube stars' },
+              { name: 'expertise_claim', text: 'are experts in many fields (là chuyên gia trong nhiều lĩnh vực)', isTrapWord: true }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Bài đọc chỉ cho biết giới trẻ lắng nghe góc nhìn của YouTubers lớn tuổi ("what older YouTubers have to say") để giúp họ tự hình thành nhân sinh quan. Bài viết KHÔNG hề có bất kỳ câu từ nào chứng nhận YouTubers là "chuyên gia" ("experts") trong các lĩnh vực này.',
+            targetVariables: [
+              { matchingName: 'expertise_claim', text: 'KHÔNG CÓ DANH XƯNG "CHUYÊN GIA" (EXPERTS)' }
+            ]
+          },
+          expectedRelation: 'no_evidence',
+          verdict: 'NOT GIVEN',
+          pedagogicalInsight: 'NOT GIVEN vì bài đọc chỉ nêu các bạn trẻ thích nghe chia sẻ của YouTubers để tham khảo ("shape their own worldview"), chứ tác giả hoàn toàn không khẳng định YouTubers là "chuyên gia" (experts) trong các lĩnh vực đó!'
+        }
+      },
+      {
+        stageNumber: 7,
+        stageType: 'verification_scale',
+        title: 'Câu 7 (T/F/NG): Bẫy Mâu Thuẫn Thế Hệ (fall flat with older generations)',
+        pedagogicalObjective: 'Bóc trần mâu thuẫn trực diện giữa đề bài khẳng định có sức ảnh hưởng lớn tới người già với thực tế bài đọc nói "fall flat" (không có tác dụng).',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét thái độ của thế hệ lớn tuổi ở Đoạn kết bài:',
+          passageContext: {
+            title: 'Why YouTube stars influence millennials more than traditional celebrities',
+            paragraphs: [
+              {
+                id: 'p8',
+                label: 'Đoạn kết · Sự khác biệt với các thế hệ lớn tuổi',
+                text: 'The influence of YouTube stars may fall flat with older generations, who remain less exposed to YouTube culture and prefer traditional media such as TV and newspapers.'
+              }
+            ],
+            targetParagraphId: 'p8',
+            targetSnippet: 'The influence of YouTube stars may fall flat with older generations'
+          },
+          statement: {
+            rawText: '7. YouTube stars also have a great influence on the older generations.',
+            deconstructedVariables: [
+              { name: 'subject', text: 'YouTube stars' },
+              { name: 'influence_level', text: 'have a great influence on the older generations', isTrapWord: true }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'The influence of YouTube stars may fall flat with older generations, who remain less exposed to YouTube culture and prefer traditional media.',
+            targetVariables: [
+              { matchingName: 'influence_level', text: 'may fall flat with older generations (hoàn toàn không có tác dụng với thế hệ già)' }
+            ]
+          },
+          expectedRelation: 'contradiction',
+          verdict: 'FALSE',
+          pedagogicalInsight: 'FALSE vì thành ngữ "fall flat with older generations" có nghĩa là không hề tạo được ảnh hưởng hay hứng thú với người già, mâu thuẫn 100% với khẳng định "have a great influence" của đề bài!'
         }
       }
     ]
