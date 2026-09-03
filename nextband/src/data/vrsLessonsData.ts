@@ -1231,57 +1231,251 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 3,
     day: 3,
     skill: 'speaking',
-    title: 'The 3-Tier Utility Response Model',
-    subtitle: 'Kiến Tạo Câu Trả Lời Về Công Nghệ & Tiện Ích',
-    coreCompetency: 'Bóc tách cấu trúc trả lời câu hỏi "What do you use your phone/app for?" theo 3 cấp độ: Tool -> Core Action -> Concrete Value.',
+    title: 'The Technology & App Utility Engine (Topic: Technology)',
+    subtitle: 'Nói Về Ứng Dụng & Công Nghệ: Từ Câu Cụt 3.0 Lên Bài Nói Hoàn Chỉnh 4.0 - 4.5',
+    coreCompetency: 'Chuẩn hóa đầu ra khóa Dreamer (3.0 → 4.0+): Học viên làm chủ 3 mẫu câu nói về lợi ích công nghệ ("I use it to...", "It helps me...", "Thanks to it, I can..."), biết dùng câu điều kiện đơn giản ("If I spend too much time..., it makes me...") để nói về tác hại của điện thoại đúng theo Coursebook.',
     bridgeToHomework: {
-      promptText: 'Thu âm câu trả lời về ứng dụng và công nghệ yêu thích trong Homework W3D3.',
+      promptText: 'Thu âm bài nói Part 1 về ứng dụng điện thoại hoặc thiết bị công nghệ bạn thường dùng trong Homework W3D3.',
       targetExamId: 'exam_dreamer_w3d3'
     },
     stages: [
       {
         stageNumber: 1,
         stageType: 'progressive_reveal',
-        title: 'Bóc tách 4 tầng phản xạ trả lời về ứng dụng công nghệ',
-        pedagogicalObjective: 'Nâng cấp câu trả lời từ liệt kê đơn thuần (I use Shopee to buy) thành lập luận hoàn chỉnh.',
+        title: 'Chặng 1: Bạn Dùng Điện Thoại Để Làm Gì? (What Do You Use Your Phone For?)',
+        pedagogicalObjective: 'Bám sát đối thoại Lan & Khang: Học 3 cấu trúc cốt lõi để nói về ứng dụng học tiếng Anh (ELSA, DAN IELTS platform) hoặc tiện ích (Shopee, Google Calendar).',
         interactionModel: {
           type: 'progressive_reveal',
-          prompt: 'Click mở từng tầng để nắm cấu trúc câu trả lời đa tầng về việc dùng app/website:',
+          prompt: 'Click mở từng bước để học cách trả lời câu hỏi "What do you use your phone for?":',
           cards: [
             {
               step: 1,
-              label: 'DIRECT TOOL IDENTIFICATION',
-              cognitiveFunction: 'Tên công cụ & Mục đích chính',
-              content: 'Whenever I need to manage my daily schedule, Google Calendar is my go-to application.',
-              pedagogyNote: 'Dùng cụm "is my go-to application" thay vì chỉ nói "I use Google Calendar".'
+              label: 'BƯỚC 1: TÊN ỨNG DỤNG VÀ THỜI GIAN SỬ DỤNG',
+              cognitiveFunction: '1. Bạn hay dùng ứng dụng nào và dùng bao lâu mỗi ngày?',
+              content: 'I usually use the ELSA app on my smartphone for about 15 minutes every day.',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Bám sát nguyên văn lời Khang: dùng ELSA trên điện thoại 15 phút mỗi ngày.',
+              flipCard: {
+                frontText: 'I use phone to learn English. (Quá chung chung)',
+                backText: 'I usually use the ELSA app on my smartphone for 15 minutes every day. (Cụ thể, rõ ràng)',
+                explanation: 'Nêu tên ứng dụng cụ thể và khoảng thời gian hằng ngày giúp bài nói có chi tiết thực tế.'
+              },
+              vowelHighlight: [
+                { word: 'phone', phonetic: '/fəʊn/', vowelSound: '/f/ âm xát môi răng' },
+                { word: 'practice', phonetic: '/ˈpræk.tɪs/', vowelSound: '/p/ âm chặn môi' }
+              ]
             },
             {
               step: 2,
-              label: 'PRIMARY FUNCTION / CORE BENEFIT',
-              cognitiveFunction: 'Tính năng cốt lõi giúp ích gì?',
-              content: 'It helps me set precise reminders and organize my study tasks effectively.',
-              pedagogyNote: 'Áp dụng cấu trúc "It helps me + bare infinitive" đã học ở W1D1.'
+              label: 'BƯỚC 2: TÍNH NĂNG CHÍNH (IT HELPS ME + V)',
+              cognitiveFunction: '2. Ứng dụng đó giúp bạn làm được việc gì?',
+              content: 'It helps me improve my pronunciation and corrects my speaking errors.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Luyện cấu trúc ngữ pháp trọng tâm 3.1: "It helps me + V nguyên mẫu" (helps me improve pronunciation).',
+              flipCard: {
+                frontText: 'It is good for speak. (Sai ngữ pháp)',
+                backText: 'It helps me improve my pronunciation. (Chuẩn cấu trúc helps me + V)',
+                explanation: 'Cấu trúc chuẩn: "It helps me + [động từ nguyên mẫu]" là vũ khí ghi điểm cực dễ ở Band 4.0.'
+              }
             },
             {
               step: 3,
-              label: 'EXTENDED BENEFIT / CONTRAST',
-              cognitiveFunction: 'Lợi ích nâng cao hoặc tình huống cụ thể',
-              content: 'Thanks to its automated notifications, I never miss important submission deadlines.',
-              pedagogyNote: 'Dùng cấu trúc "Thanks to + Noun phrase" để tạo liên kết nhân quả tự nhiên.',
+              label: 'BƯỚC 3: HIỆU QUẢ ĐẠT ĐƯỢC (THANKS TO IT, I CAN...)',
+              cognitiveFunction: '3. Nhờ có nó, bạn thay đổi được điều gì?',
+              content: 'Thanks to this app, I can communicate more effectively in English.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Bám sát mẫu câu thứ ba trong giáo trình: "Thanks to it, I can communicate more effectively".',
+              flipCard: {
+                frontText: 'So I speak better. (Hơi ngắn)',
+                backText: 'Thanks to this app, I can communicate more effectively. (Đúng mẫu câu giáo trình)',
+                explanation: 'Cụm "Thanks to + Noun, I can..." tạo liên kết kết quả tự nhiên thay vì chỉ lặp từ "so".'
+              },
               branchOptions: [
-                { branchName: 'CONTRAST', content: 'Before using it, I frequently forgot homework deadlines and class schedules.', note: 'Nhánh tương phản với quá khứ lộn xộn.' },
-                { branchName: 'DETAIL / HABIT', content: 'Specifically, I review my task board every evening before going to bed.', note: 'Nhánh thói quen cụ thể hằng ngày.' }
+                {
+                  branchName: 'HỌC TIẾNG ANH (ELSA / DAN IELTS)',
+                  content: 'Thanks to this app, I can communicate more effectively and do my homework online.',
+                  note: 'Trích từ câu trả lời của Khang về việc học tiếng Anh.'
+                },
+                {
+                  branchName: 'QUẢN LÝ THỜI GIAN (GOOGLE CALENDAR)',
+                  content: 'Thanks to Google Calendar, I can set reminders and manage my study time easily.',
+                  note: 'Trích từ ví dụ b trong bài tập 3.1 về quản lý lịch học.'
+                }
               ]
             },
             {
               step: 4,
-              label: 'VALUE IMPACT',
-              cognitiveFunction: 'Tác động lâu dài đến cuộc sống/học tập',
-              content: 'As a result, it has significantly boosted my study productivity and peace of mind.',
-              pedagogyNote: 'Khép lại câu trả lời bằng kết quả chuyển đổi tích cực.'
+              label: 'BƯỚC 4: KẾT LUẬN CÔNG NGHỆ (VERY USEFUL)',
+              cognitiveFunction: '4. Bạn đánh giá thế nào về vai trò của công nghệ?',
+              content: 'I think technology is really useful because it makes my daily study much easier.',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Khép lại câu trả lời bằng nhận xét đơn giản: "makes my daily study much easier".',
+              flipCard: {
+                frontText: 'Phone is very good. (Đơn sơ)',
+                backText: 'I think technology is really useful because it makes my study much easier. (Tròn trịa)',
+                explanation: 'Cấu trúc "make something + tính từ" (makes my study easier) rất tự nhiên và vừa sức.'
+              }
             }
           ],
-          fullMosaicSummary: 'Whenever I need to manage my schedule, Google Calendar is my go-to application. It helps me set precise reminders and organize my tasks. Thanks to its notifications, I never miss deadlines, which has significantly boosted my study productivity.'
+          fullMosaicSummary: 'I usually use the ELSA app on my smartphone for about 15 minutes every day. It helps me improve my pronunciation and corrects my speaking errors. Thanks to this app, I can communicate more effectively in English, and it makes my daily study much easier.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 2: Tác Hại Của Việc Dùng Điện Thoại Quá Nhiều (The Misuse of Smartphones)',
+        pedagogicalObjective: 'Làm chủ bài tập 3.2: Dùng cấu trúc If và "makes it hard for me to..." để nói về các vấn đề: mỏi mắt, nghiện mạng xã hội và mất tập trung.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click mở từng tầng để nắm cách nói về tác hại của điện thoại:',
+          cards: [
+            {
+              step: 1,
+              label: 'BƯỚC 1: THỪA NHẬN TẬT XẤU (SPEND TOO MUCH TIME)',
+              cognitiveFunction: '1. Bạn hay dùng điện thoại sai cách như thế nào?',
+              content: 'To be honest, I often spend too much time surfing social media before going to sleep.',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Bám sát giáo trình: "surf social media for a long time" và thói quen lướt điện thoại muộn.',
+              flipCard: {
+                frontText: 'I use Facebook many hours. (Tiếng bồi)',
+                backText: 'I often spend too much time surfing social media before sleeping. (Chuẩn giáo trình)',
+                explanation: 'Dùng cụm "spend too much time + V-ing" (dành quá nhiều thời gian làm gì).'
+              },
+              vowelHighlight: [
+                { word: 'social', phonetic: '/ˈsəʊ.ʃəl/', vowelSound: '/s/ âm xát' },
+                { word: 'sleep', phonetic: '/sliːp/', vowelSound: '/s/ âm xát' }
+              ]
+            },
+            {
+              step: 2,
+              label: 'BƯỚC 2: ẢNH HƯỞNG SỨC KHỎE (HURT EYES & HARD TO SLEEP)',
+              cognitiveFunction: '2. Thói quen đó ảnh hưởng gì đến cơ thể bạn?',
+              content: 'The blue light from the screen hurts my eyes, and it makes it hard for me to sleep.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Trích nguyên văn giáo trình: "blue light from the screen", "hurt my eyes" và "makes it hard to sleep".',
+              flipCard: {
+                frontText: 'Eye is pain, cannot sleep. (Dịch từng chữ)',
+                backText: 'It hurts my eyes, and makes it hard for me to sleep. (Đúng mẫu câu giáo trình)',
+                explanation: 'Cấu trúc trọng tâm trong bài: "make it hard for someone to + V" (khiến ai đó khó làm gì).'
+              }
+            },
+            {
+              step: 3,
+              label: 'BƯỚC 3: MẤT TẬP TRUNG (HARD TO FOCUS ON WORK)',
+              cognitiveFunction: '3. Điều đó ảnh hưởng thế nào đến việc học hoặc làm việc?',
+              content: 'Also, getting addicted to phone notifications makes it difficult to focus on my study.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Bám sát ý thứ hai trong giáo trình: nghiện điện thoại ("addicted to phones") và mất tập trung ("hard to focus").',
+              flipCard: {
+                frontText: 'I cannot focus on study. (Đơn giản)',
+                backText: 'It makes it difficult for me to focus on my study. (Nâng cấp +0.5)',
+                explanation: 'Thay "cannot focus" bằng cấu trúc "makes it difficult to focus on...".'
+              },
+              branchOptions: [
+                {
+                  branchName: 'MẤT TẬP TRUNG HỌC TẬP (Ý BÀI ĐỌC)',
+                  content: 'Also, getting addicted to phone notifications makes it hard to focus on my study.',
+                  note: 'Bám sát ý phàn nàn trong bài tập 3.2.'
+                },
+                {
+                  branchName: 'SO SÁNH BẢN THÂN VỚI NGƯỜI KHÁC (Ý THỨ 3)',
+                  content: 'Also, seeing only good parts of people on social media makes me feel dissatisfied with my life.',
+                  note: 'Trích từ ý thứ 3 trong bài đọc về tâm lý so sánh trên mạng xã hội.'
+                }
+              ]
+            },
+            {
+              step: 4,
+              label: 'BƯỚC 4: GIẢI PHÁP CỦA BẠN (THAT IS WHY I TRY TO...)',
+              cognitiveFunction: '4. Bạn dự định làm gì để giải quyết vấn đề này?',
+              content: "That's why I try to turn off my phone 30 minutes before bedtime.",
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Bám sát mẫu câu hỏi bài tập: "That\'s why I try to..." khép lại bằng hành động tích cực.',
+              flipCard: {
+                frontText: 'So I will not use phone. (Cụt ý)',
+                backText: "That's why I try to turn off my phone 30 minutes before bedtime. (Hoàn chỉnh)",
+                explanation: 'Dùng cụm kết nối nguyên nhân - kết quả quen thuộc: "That\'s why I try to + V".'
+              }
+            }
+          ],
+          fullMosaicSummary: "To be honest, I often spend too much time surfing social media before going to sleep. The blue light from the screen hurts my eyes, and it makes it hard for me to sleep. Also, getting addicted to my phone makes it difficult to focus on my study. That's why I try to turn off my phone 30 minutes before bedtime."
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 3: Lựa Chọn Thiết Bị Học Tập (Role-Play: Buying a Laptop)',
+        pedagogicalObjective: 'Làm chủ đoạn hội thoại mua laptop 3.3: Nêu nhu cầu sinh viên -> So sánh 2 lựa chọn (giá rẻ Dell vs pin trâu HP/Mac) -> Đưa ra quyết định cuối cùng.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click mở từng bước để học cách nói khi đi mua thiết bị công nghệ:',
+          cards: [
+            {
+              step: 1,
+              label: 'BƯỚC 1: NÊU NHU CẦU MUA SẮM (LOOKING FOR...)',
+              cognitiveFunction: '1. Bạn cần mua máy tính cho mục đích gì?',
+              content: "I'm looking for a laptop for university students with a reasonable price.",
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Bám sát câu mở đầu của Sarah trong bài tập 3.3: tìm laptop cho sinh viên giá cả hợp lý.',
+              flipCard: {
+                frontText: 'I want to buy a computer. (Đơn giản)',
+                backText: "I'm looking for a laptop for university students with a reasonable price. (Tự nhiên)",
+                explanation: 'Dùng cụm "look for" (tìm kiếm) và "at a reasonable price" (với mức giá hợp lý).'
+              }
+            },
+            {
+              step: 2,
+              label: 'BƯỚC 2: CÔNG NĂNG CƠ BẢN CẦN THIẾT (DOCUMENTS & SLIDES)',
+              cognitiveFunction: '2. Bạn cần dùng máy tính đó để làm gì trong việc học?',
+              content: 'I need to use it to create Word documents and make PowerPoint slides for my classes.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Trích từ lời tư vấn trong bài: tạo tài liệu văn bản và làm slide thuyết trình.',
+              flipCard: {
+                frontText: 'I need it for study. (Chung chung)',
+                backText: 'I need to use it to create documents and make PowerPoint slides. (Rõ ràng)',
+                explanation: 'Liệt kê các tác vụ học tập quen thuộc bằng tiếng Anh: "create documents and make slides".'
+              }
+            },
+            {
+              step: 3,
+              label: 'BƯỚC 3: TÍNH NĂNG QUAN TRỌNG (LONG BATTERY LIFE)',
+              cognitiveFunction: '3. Bạn thích tính năng nào khác (pin, cân nặng)?',
+              content: 'Besides, I prefer a laptop with long battery life, so it can last for a whole day without charging.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Bám sát cụm từ trong bài: "long battery life" (thời lượng pin dài) và "last for a whole day" (dùng được cả ngày).',
+              flipCard: {
+                frontText: 'Battery is good, big. (Nói vụng)',
+                backText: 'It has long battery life, so it can last for a whole day without charging.',
+                explanation: 'Dùng cụm chuyên môn chuẩn: "long battery life" và "last for a whole day without charging".'
+              },
+              branchOptions: [
+                {
+                  branchName: 'PIN TRÂU (LONG BATTERY LIFE)',
+                  content: 'Besides, I prefer a laptop with long battery life, so it can last for a whole day without charging.',
+                  note: 'Điểm cộng lớn cho sinh viên thường xuyên học ở trường hay quán cà phê.'
+                },
+                {
+                  branchName: 'NHẸ DỄ MANG ĐI (LIGHTWEIGHT)',
+                  content: 'Besides, I need a lightweight laptop so that I can easily carry it in my backpack.',
+                  note: 'Tiêu chí máy mỏng nhẹ rất thực tế.'
+                }
+              ]
+            },
+            {
+              step: 4,
+              label: 'BƯỚC 4: QUYẾT ĐỊNH CUỐI CÙNG (I HAVE MADE UP MY MIND)',
+              cognitiveFunction: '4. Cuối cùng bạn quyết định chọn phương án nào?',
+              content: 'I have made up my mind, and I will go for a laptop that fits my budget.',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Cụm thành ngữ thông dụng chốt lại bài hội thoại: "I have made up my mind" (Tôi đã quyết định rồi).',
+              flipCard: {
+                frontText: 'I choose this one. (Đơn điệu)',
+                backText: 'I have made up my mind, and I will go for it. (Cách nói tự nhiên của người bản xứ)',
+                explanation: 'Cụm "make up one\'s mind" (quyết định) là thành ngữ rất quen thuộc trong giao tiếp.'
+              }
+            }
+          ],
+          fullMosaicSummary: "I'm looking for a laptop for university students with a reasonable price. I need to use it to create Word documents and make PowerPoint slides for my classes. Besides, I prefer a laptop with long battery life, so it can last for a whole day without charging. I have made up my mind, and I will go for a laptop that fits my budget."
         }
       }
     ]
