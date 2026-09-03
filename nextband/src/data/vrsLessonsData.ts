@@ -2086,18 +2086,35 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     day: 1,
     skill: 'writing',
     title: 'The Prepositional Anchor Engine',
-    subtitle: 'Neo Móc Cụm Giới Từ & Tránh Lỗi Lửng Lơ',
-    coreCompetency: 'Nhận diện giới từ luôn cần Danh từ làm vật neo (Object of Preposition). Phân biệt cụm giới từ đóng vai trò Tính từ (bổ nghĩa danh từ) vs Trạng từ (bổ nghĩa hành động).',
+    subtitle: 'Cụm Giới Từ Bổ Ngữ: Lắp Ráp Cú Pháp & Phẫu Thuật Điểm Gãy',
+    coreCompetency: 'Nhận diện giới từ luôn cần Danh từ làm vật neo (Object of Preposition) đúng theo bài học W5D1. Phân biệt Cụm giới từ đóng vai trò Tính từ (bổ nghĩa vị trí danh từ: "a house by the lake") và làm chủ các cụm giới từ cố định (Fixed collocations: "good at", "think of", "during the trip").',
     bridgeToHomework: {
-      promptText: 'Luyện tập sử dụng cụm giới từ và rút gọn mệnh đề trong Homework W5D1.',
+      promptText: 'Luyện tập sử dụng cụm giới từ và sửa lỗi móc neo trong Homework W5D1.',
       targetExamId: 'exam_dreamer_w5d1'
     },
     stages: [
       {
         stageNumber: 1,
+        stageType: 'syntax_anatomy',
+        title: 'Chặng 1: Kiến Tạo Cụm Giới Từ Định Vị Danh Từ (A House by the Peaceful Lake)',
+        pedagogicalObjective: 'Bám sát ví dụ giáo trình W5D1 mục 2 câu 3: Lắp ráp câu chứa cụm giới từ chỉ nơi chốn "in a house by the peaceful lake" bổ nghĩa cho động từ và danh từ.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Bấm quét giải phẫu để lắp ráp câu văn chứa các cụm giới từ bổ ngữ chuẩn xác:',
+          mode: 'build',
+          tokens: [
+            { id: 't1', text: 'My mother', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'wants to live', role: 'fv_core', colorClass: 'orange' },
+            { id: 't3', text: 'in a cozy house', role: 'modifier', colorClass: 'blue' },
+            { id: 't4', text: 'by the peaceful lake', role: 'modifier', colorClass: 'purple' }
+          ]
+        }
+      },
+      {
+        stageNumber: 2,
         stageType: 'productive_failure',
-        title: 'Break (Phát hiện gãy móc neo Cụm Giới Từ)',
-        pedagogicalObjective: 'Đối diện với lỗi dịch thô bỏ rơi giới từ hoặc chèn giới từ lơ lửng không có đối tượng tiếp nhận.',
+        title: 'Chặng 2: Phẫu Thuật Mâu Thuẫn Gãy Móc Neo Collocation (Good In Singing)',
+        pedagogicalObjective: 'Bám sát ví dụ giáo trình W5D1 mục 2 câu 6: Đối diện với lỗi dịch thô tiếng Việt "giỏi trong việc gì" dùng nhầm giới từ "in" thay vì "at".',
         interactionModel: {
           type: 'slot_snap',
           prompt: 'Click vào cặp từ gây xung đột liên kết giới từ trong câu dưới đây:',
@@ -2110,14 +2127,14 @@ export const vrsMockLessons: VRSVisualLesson[] = [
           ],
           collisionTarget: {
             conflictingTokenIds: ['t2', 't3'],
-            errorMessage: 'Xung đột khớp nối: Cụm tính từ "good" khi đi kèm năng khiếu/kỹ năng bắt buộc phải neo bằng giới từ "at", không dùng "in" theo cách dịch thô tiếng Việt ("giỏi trong việc hát")!',
+            errorMessage: 'Xung đột khớp nối: Tính từ "good" khi đi kèm năng khiếu/kỹ năng bắt buộc phải neo bằng giới từ "at" (Collocation cố định). Dùng giới từ "in" theo cách dịch thô tiếng Việt ("giỏi trong việc hát") làm sai cấu trúc ngữ pháp!',
             repairOptions: [
               {
                 id: 'opt1',
                 action: 'delete',
                 targetTokenId: 't3',
                 resultText: 'at',
-                explanation: 'Đổi giới từ "in" thành "at" để tạo thành cụm cố định "good at + V-ing".'
+                explanation: 'Đổi giới từ "in" thành "at" để tạo thành cụm cố định chuẩn xác "good at + V-ing".'
               }
             ]
           }
