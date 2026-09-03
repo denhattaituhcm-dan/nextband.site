@@ -2576,8 +2576,8 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     day: 1,
     skill: 'writing',
     title: 'The Relative Clause Bridge Engine',
-    subtitle: 'Kiến Tạo Mệnh Đề Quan Hệ & Tránh Lỗi Lặp Đại Từ',
-    coreCompetency: 'Nhận diện Relative Pronoun (who, which, that) vừa làm liên từ kết nối vừa nuốt chửng danh từ lặp lại. Chấm dứt lỗi Band 3.0 giữ nguyên đại từ thừa trong mệnh đề quan hệ.',
+    subtitle: 'Mệnh Đề Quan Hệ: Lắp Ráp Cú Pháp & Phẫu Thuật Điểm Gãy',
+    coreCompetency: 'Nhận diện Relative Pronoun (who, which, that) vừa làm liên từ kết nối vừa nuốt chửng danh từ lặp lại đúng theo "Quy tắc số 1" của giáo trình W6D1. Chấm dứt lỗi kinh điển Band 3.0: Dùng đại từ quan hệ nhưng vẫn để lại đại từ thừa ("that you recommended it").',
     bridgeToHomework: {
       promptText: 'Thực hành nối câu bằng Mệnh đề tính từ trong Homework W6D1.',
       targetExamId: 'exam_dreamer_w6d1'
@@ -2585,9 +2585,26 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     stages: [
       {
         stageNumber: 1,
+        stageType: 'syntax_anatomy',
+        title: 'Chặng 1: Kiến Tạo Cầu Nối Mệnh Đề Quan Hệ (Peter Bought an Apartment Which Overlooks the Park)',
+        pedagogicalObjective: 'Bám sát ví dụ giáo trình W6D1 phần 1: Lắp ráp câu ghép có Mệnh đề tính từ bổ nghĩa cho danh từ vật đứng trước.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Bấm quét giải phẫu để lắp ráp cầu nối Mệnh đề quan hệ WHICH bổ nghĩa danh từ:',
+          mode: 'build',
+          tokens: [
+            { id: 't1', text: 'Peter bought', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'a modern apartment', role: 'object', colorClass: 'blue' },
+            { id: 't3', text: 'which', role: 'connector', colorClass: 'orange' },
+            { id: 't4', text: 'overlooks the green park', role: 'fv_core', colorClass: 'purple' }
+          ]
+        }
+      },
+      {
+        stageNumber: 2,
         stageType: 'productive_failure',
-        title: 'Break (Phát hiện sụp đổ do thừa đại từ lặp)',
-        pedagogicalObjective: 'Đối diện lỗi kinh điển Band 3.0: Dùng "that/which" nhưng vẫn để lại "it/him" trong mệnh đề phụ.',
+        title: 'Chặng 2: Phẫu Thuật Mâu Thuẫn Thừa Đại Từ Lặp Lại (That You Recommended It)',
+        pedagogicalObjective: 'Bám sát "Quy tắc số 1" của giáo trình: Phẫu thuật xung đột thừa 2 tân ngữ tranh chấp một vị trí khi học viên giữ lại đại từ "it".',
         interactionModel: {
           type: 'slot_snap',
           prompt: 'Click vào đại từ gây dư thừa cấu trúc trong mệnh đề quan hệ dưới đây:',
@@ -2601,14 +2618,14 @@ export const vrsMockLessons: VRSVisualLesson[] = [
           ],
           collisionTarget: {
             conflictingTokenIds: ['t2', 't4'],
-            errorMessage: 'Lỗi lặp đại từ: Đại từ quan hệ "that" đã thay thế cho "the book" làm tân ngữ của động từ "recommended", việc giữ lại "it" khiến câu bị thừa 2 tân ngữ tranh chấp một vị trí!',
+            errorMessage: 'Lỗi thừa đại từ lặp: Đại từ quan hệ "that" đã đại diện trọn vẹn cho danh từ "the book" để làm tân ngữ của "recommended". Việc giữ lại "it" khiến câu bị xung đột 2 tân ngữ cùng tranh vị trí!',
             repairOptions: [
               {
                 id: 'opt1',
                 action: 'delete',
                 targetTokenId: 't4',
                 resultText: '',
-                explanation: 'Gọt bỏ đại từ "it" để "that" kết nối trực tiếp với "recommended".'
+                explanation: 'Gọt bỏ đại từ thừa "it" để "that" kết nối trực tiếp tân ngữ vào mệnh đề chính.'
               }
             ]
           }
