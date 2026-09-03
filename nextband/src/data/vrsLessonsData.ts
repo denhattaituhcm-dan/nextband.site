@@ -2845,57 +2845,251 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 6,
     day: 3,
     skill: 'speaking',
-    title: 'The Travel Preference & Contrast Engine',
-    subtitle: 'Cấu Trúc Trả Lời Về Sở Thích Du Lịch & Trải Nghiệm Văn Hóa',
-    coreCompetency: 'Nâng cấp câu trả lời Speaking Part 1 về Travel từ câu đơn (I like traveling because it is fun) thành cấu trúc đối lập tinh tế (Prefer authentic experiences over tourist traps).',
+    title: 'The Travel Experience & Past Trip Engine (Topic: Travel)',
+    subtitle: 'Nói Về Sở Thích & Chuyến Du Lịch Đáng Nhớ: Từ Câu Cụt 3.0 Lên Bài Nói 4.0 - 4.5',
+    coreCompetency: 'Chuẩn hóa đầu ra khóa Dreamer (3.0 → 4.0+): Học viên thành thạo phát âm đuôi -ed (/t/, /d/, /ɪd/), biết cách kể về chuyến đi trong quá khứ ("Recently I visited...", "I tasted...", "I traveled by... for [time]"), và so sánh phương tiện đi lại (máy bay, tàu hỏa, xe máy) đúng như Coursebook.',
     bridgeToHomework: {
-      promptText: 'Luyện tập phát âm đuôi -ed và thu âm bài nói về chuyến du lịch yêu thích trong Homework W6D3.',
+      promptText: 'Luyện tập phát âm đuôi -ed và thu âm bài nói kể về chuyến du lịch gần đây của bạn trong Homework W6D3.',
       targetExamId: 'exam_dreamer_w6d3'
     },
     stages: [
       {
         stageNumber: 1,
         stageType: 'progressive_reveal',
-        title: 'Bóc tách 4 tầng phản xạ trả lời về sở thích du lịch',
-        pedagogicalObjective: 'Xây dựng câu trả lời giàu Lexical Resource thông qua thủ pháp tương phản giữa du lịch thương mại và trải nghiệm bản địa.',
+        title: 'Chặng 1: Thói Quen Du Lịch & Phương Tiện Di Chuyển (An & Nam Dialogue)',
+        pedagogicalObjective: 'Bám sát đối thoại An & Nam: Lợi ích du lịch -> Gu trải nghiệm (cảnh tự nhiên vs món ăn địa phương) -> Phương tiện di chuyển (tàu hỏa / xe máy vs máy bay / ô tô).',
         interactionModel: {
           type: 'progressive_reveal',
-          prompt: 'Click mở từng tầng để nắm cấu trúc bài nói du lịch có chiều sâu nhận thức:',
+          prompt: 'Click mở từng bước để học cách nói về thói quen du lịch:',
           cards: [
             {
               step: 1,
-              label: 'GENUINE STANCE & REASON',
-              cognitiveFunction: 'Khẳng định đam mê và mục đích cốt lõi',
-              content: 'Without a doubt, traveling is my absolute favorite way to unwind and recharge after intensive study periods.',
-              pedagogyNote: 'Dùng cụm "Without a doubt, traveling is my absolute favorite way to unwind..." thay cho "I like traveling".'
+              label: 'BƯỚC 1: SỞ THÍCH VÀ LÝ DO ĐI DU LỊCH',
+              cognitiveFunction: '1. Bạn có thích đi du lịch không và vì sao?',
+              content: 'Traveling is one of my favorite things to do because it helps me get away from work and relax.',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Bám sát câu thoại của Nam: "Traveling is one of my favorite things to do" và cụm "get away from work and relax".',
+              flipCard: {
+                frontText: 'I like travel because fun. (Nói cộc lốc)',
+                backText: 'Traveling is one of my favorite things to do to get away from work. (Chuẩn giáo trình)',
+                explanation: 'Dùng cụm "one of my favorite things to do" và "get away from work" (tạm rời xa công việc).'
+              },
+              vowelHighlight: [
+                { word: 'watched', phonetic: '/wɒtʃt/', vowelSound: '/t/ âm ed đuôi không rung' },
+                { word: 'played', phonetic: '/pleɪd/', vowelSound: '/d/ âm ed đuôi rung' }
+              ]
             },
             {
               step: 2,
-              label: 'CONTRASTING PREFERENCE',
-              cognitiveFunction: 'Sự khác biệt về gu trải nghiệm (Không thích điểm đông đúc)',
-              content: 'Personally, I am not a big fan of overcrowded tourist traps. Instead, I prefer exploring peaceful hidden gems.',
-              pedagogyNote: 'Dùng cấu trúc tương phản: "I am not a fan of [A]... Instead, I prefer [B]".'
+              label: 'BƯỚC 2: GU TRẢI NGHIỆM ĐỊA ĐIỂM (PREFER LESSER-KNOWN)',
+              cognitiveFunction: '2. Bạn thích đến những nơi như thế nào khi đi chơi?',
+              content: 'I am not a fan of crowded tourist attractions; instead, I prefer exploring destinations with natural landscapes.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Mẫu câu đắt giá của bạn An: "I am not a fan of tourist attractions; instead, I prefer natural landscapes".',
+              flipCard: {
+                frontText: 'I hate crowded place. (Đơn sơ)',
+                backText: 'I prefer exploring lesser-known destinations with natural landscapes. (Nâng cấp +0.5)',
+                explanation: 'Học cụm từ hay trong bài: "natural landscapes" (cảnh quan thiên nhiên) và "lesser-known" (ít người biết).'
+              }
             },
             {
               step: 3,
-              label: 'CONCRETE EXPERIENCE',
-              cognitiveFunction: 'Minh chứng bằng hoạt động thực tế',
-              content: 'For instance, I love wandering through small local alleys and tasting authentic street food with residents.',
-              pedagogyNote: 'Đưa ví dụ hoạt động gắn với con người và ẩm thực bản địa.',
+              label: 'BƯỚC 3: PHƯƠNG TIỆN DI CHUYỂN (TRAVEL BY...)',
+              cognitiveFunction: '3. Bạn thường di chuyển bằng phương tiện gì và vì sao?',
+              content: 'Plane tickets are quite expensive, so I prefer to travel by train, and then rent a motorbike to enjoy the views.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Luyện cấu trúc bài học: "travel by + [phương tiện] for + [thời gian]" và lý do thuê xe máy ngắm cảnh.',
+              flipCard: {
+                frontText: 'I go train then drive motorbike. (Tiếng bồi)',
+                backText: 'I prefer to travel by train, and then rent a motorbike to enjoy the views. (Tự nhiên)',
+                explanation: 'Dùng cấu trúc "travel by train" và "rent a motorbike" bám sát lời bạn An.'
+              },
               branchOptions: [
-                { branchName: 'CULTURE / PEOPLE', content: 'For instance, I enjoy volunteering and learning traditional handicrafts from local artisans.', note: 'Nhánh giao lưu văn hóa và làng nghề.' },
-                { branchName: 'NATURE / ADVENTURE', content: 'For instance, I prefer trekking into national parks and camping by serene rivers.', note: 'Nhánh khám phá thiên nhiên hoang sơ.' }
+                {
+                  branchName: 'ĐI TÀU HỎA & XE MÁY (BẠN AN)',
+                  content: 'Plane tickets are quite expensive, so I prefer to travel by train, and rent a motorbike to enjoy views.',
+                  note: 'Phương án tiết kiệm chi phí và ngắm cảnh thong thả.'
+                },
+                {
+                  branchName: 'ĐI MÁY BAY & Ô TÔ (BẠN NAM)',
+                  content: 'I personally prefer to travel by plane because it is fast and convenient for longer distances.',
+                  note: 'Phương án của Nam: đi máy bay nhanh chóng, tiện lợi cho đường dài.'
+                }
               ]
             },
             {
               step: 4,
-              label: 'CULTURAL ENRICHMENT',
-              cognitiveFunction: 'Giá trị tinh thần nhận được',
-              content: 'In the end, these meaningful interactions give me a truly authentic perspective on different cultures.',
-              pedagogyNote: 'Kết bài bằng chiều sâu nhận thức: "give me a truly authentic perspective".'
+              label: 'BƯỚC 4: THƯỞNG THỨC ĐẶC SẢN (LOCAL FOOD)',
+              cognitiveFunction: '4. Bạn thích trải nghiệm ẩm thực địa phương như thế nào?',
+              content: 'Whenever I arrive at a new place, I always love tasting authentic local food with my friends.',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Bám sát sở thích của bạn Nam: "love trying out local food" (như món Cao Lầu ở Đà Nẵng).',
+              flipCard: {
+                frontText: 'I eat food of that city. (Dịch từng chữ)',
+                backText: 'I love tasting authentic local food with my friends. (Chuẩn tự nhiên)',
+                explanation: 'Dùng cụm từ quen thuộc "local food" (đặc sản địa phương) để làm phong phú bài nói.'
+              }
             }
           ],
-          fullMosaicSummary: 'Without a doubt, traveling is my favorite way to unwind. Personally, I am not a fan of overcrowded tourist traps. Instead, I prefer exploring peaceful hidden gems, wandering through local alleys, and tasting street food, which gives me an authentic perspective on different cultures.'
+          fullMosaicSummary: 'Traveling is one of my favorite things to do because it helps me get away from work and relax. I am not a fan of crowded tourist attractions; instead, I prefer exploring destinations with natural landscapes. Plane tickets are expensive, so I prefer to travel by train and rent a motorbike, and I always love tasting authentic local food with friends.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 2: Kể Về Chuyến Đi Đáng Nhớ Trong Quá Khứ (Sharing Your Previous Trip)',
+        pedagogicalObjective: 'Làm chủ bài tập 3.2 & Phát âm đuôi -ed: Kể về chuyến đi bằng thì Quá khứ đơn (visited, traveled, tasted, walked, cooked).',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click mở từng bước để học cách kể về chuyến đi trong quá khứ với phát âm đuôi -ed chuẩn xác:',
+          cards: [
+            {
+              step: 1,
+              label: 'BƯỚC 1: ĐIỂM ĐẾN VÀ THỜI GIAN (VISITED)',
+              cognitiveFunction: '1. Bạn đã đi du lịch ở đâu và đi vào lúc nào?',
+              content: 'Last summer, I visited Da Nang city with my family for four wonderful days.',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Phát âm đuôi -ed chuẩn cho từ "visited" (/ˈvɪz.ɪ.tɪd/ - đuôi /ɪd/). Khởi đầu rõ thời gian và địa điểm.',
+              flipCard: {
+                frontText: 'Last year I go Da Nang. (Sai thì hiện tại)',
+                backText: 'Last summer, I visited Da Nang city with my family. (Đúng thì quá khứ đơn)',
+                explanation: 'Chuyện đã xảy ra phải dùng Quá khứ đơn: "visited" thay vì "go".'
+              },
+              vowelHighlight: [
+                { word: 'visited', phonetic: '/ˈvɪz.ɪ.tɪd/', vowelSound: '/ɪd/ âm ed sau t/d' },
+                { word: 'exhausted', phonetic: '/ɪɡˈzɔː.stɪd/', vowelSound: '/ɪd/ âm ed sau t/d' }
+              ]
+            },
+            {
+              step: 2,
+              label: 'BƯỚC 2: PHƯƠNG TIỆN & HÀNH TRÌNH (TRAVELED BY...)',
+              cognitiveFunction: '2. Bạn đã di chuyển đến đó bằng phương tiện gì?',
+              content: 'We traveled by plane from Ho Chi Minh City, which took only about one hour and twenty minutes.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Áp dụng công thức bài học: "traveled by plane" và cấu trúc quá khứ "it took about [time]".',
+              flipCard: {
+                frontText: 'We go plane 1 hour. (Tiếng bồi)',
+                backText: 'We traveled by plane, which took only about one hour and twenty minutes. (Mạch lạc)',
+                explanation: 'Từ "traveled" phát âm đuôi /d/, kết hợp mệnh đề "which took..." rất tự nhiên.'
+              }
+            },
+            {
+              step: 3,
+              label: 'BƯỚC 3: CÁC HOẠT ĐỘNG ĐÃ LÀM (WALKED & TASTED)',
+              cognitiveFunction: '3. Bạn đã đi ngắm cảnh và thưởng thức món gì tại đó?',
+              content: 'During the trip, we walked along My Khe beach and tasted delicious local dishes like Cao Lau and seafood.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Luyện 2 động từ có đuôi -ed: "walked" (/wɔːkt/ - đuôi /t/) và "tasted" (/ˈteɪ.stɪd/ - đuôi /ɪd/). Nhắc món Cao Lầu đúng sách.',
+              flipCard: {
+                frontText: 'We walk on beach and eat Cao Lau. (Quên chia thì quá khứ)',
+                backText: 'We walked along the beach and tasted delicious dishes like Cao Lau. (Chuẩn ngữ pháp)',
+                explanation: 'Lưu ý phát âm đuôi -ed: "walked" kết thúc bằng âm /t/, "tasted" kết thúc bằng âm /ɪd/.'
+              },
+              branchOptions: [
+                {
+                  branchName: 'TẮM BIỂN & ĂN CAO LẦU (ĐÀ NẴNG - TRONG SÁCH)',
+                  content: 'During the trip, we walked along My Khe beach and tasted delicious local dishes like Cao Lau.',
+                  note: 'Chuyến đi biển Đà Nẵng bám sát ví dụ của Nam.'
+                },
+                {
+                  branchName: 'THAM QUAN BẢO TÀNG & DI TÍCH (HÀ NỘI / HUẾ)',
+                  content: 'During the trip, we visited historic temples and cooked traditional meals together in the evening.',
+                  note: 'Trích từ câu hỏi thực hành 1.2: "visited a museum, cooked a meal".'
+                }
+              ]
+            },
+            {
+              step: 4,
+              label: 'BƯỚC 4: KỶ NIỆM ĐỌNG LẠI (MEMORABLE EXPERIENCE)',
+              cognitiveFunction: '4. Chuyến đi đó để lại cho bạn cảm xúc gì?',
+              content: 'It was truly a memorable vacation because it helped us connect and create wonderful memories together.',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Khép lại bằng cụm từ bài học: "connect with family" và "memorable vacation" (kỳ nghỉ đáng nhớ).',
+              flipCard: {
+                frontText: 'It is very happy trip. (Từ vựng trẻ con)',
+                backText: 'It was truly a memorable vacation because we created wonderful memories. (Nâng tầm +0.5)',
+                explanation: 'Dùng cụm "memorable vacation" và động từ thì quá khứ "created wonderful memories".'
+              }
+            }
+          ],
+          fullMosaicSummary: 'Last summer, I visited Da Nang city with my family for four wonderful days. We traveled by plane from Ho Chi Minh City, which took only about an hour. During the trip, we walked along My Khe beach and tasted delicious local dishes like Cao Lau. It was truly a memorable vacation because it helped us create wonderful memories together.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 3: Thuyết Trình Kế Hoạch Tour 1 Ngày (Role-Play: 1-Day Tour Pitching)',
+        pedagogicalObjective: 'Làm chủ bài tập nhóm 3.3: Đóng vai nhân viên công ty du lịch chào mời khách tour 1 ngày -> Điểm đến -> Hoạt động sáng/chiều -> Lời mời chốt tour.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click mở từng bước để học cách thuyết trình giới thiệu lịch trình tour 1 ngày:',
+          cards: [
+            {
+              step: 1,
+              label: 'BƯỚC 1: LỜI CHÀO & GIỚI THIỆU CÔNG TY DU LỊCH',
+              cognitiveFunction: '1. Bạn đại diện cho công ty du lịch nào và muốn giới thiệu tour gì?',
+              content: "Good morning! My name is An from Dan Travel Agency, and I'm glad to offer you an exciting one-day tour to Da Lat.",
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Bám sát câu mở đầu mẫu bài tập 3.3: "Good evening, my name is... from... I\'m glad to offer you an exciting 1-day trip to...".',
+              flipCard: {
+                frontText: 'Hello, I sell tour to Da Lat. (Tiếng bồi)',
+                backText: "I'm glad to offer you an exciting one-day tour to Da Lat. (Chuẩn bài tập 3.3)",
+                explanation: 'Mẫu câu thuyết trình chuyên nghiệp trong giáo trình: "I\'m glad to offer you an exciting tour...".'
+              }
+            },
+            {
+              step: 2,
+              label: 'BƯỚC 2: LỊCH TRÌNH BUỔI SÁNG (IN THE MORNING)',
+              cognitiveFunction: '2. Du khách sẽ được tham quan những đâu vào buổi sáng?',
+              content: 'In the morning, we will pick you up at your hotel and explore peaceful flower gardens with beautiful landscapes.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Dùng cụm từ vựng của bài: "pick you up at hotel" và "flower gardens with beautiful landscapes".',
+              flipCard: {
+                frontText: 'Morning we go see flowers. (Quá đơn sơ)',
+                backText: 'In the morning, we explore flower gardens with beautiful natural landscapes. (Rõ ràng)',
+                explanation: 'Áp dụng cụm từ "natural landscapes" đã học ở phần hội thoại.'
+              }
+            },
+            {
+              step: 3,
+              label: 'BƯỚC 3: LỊCH TRÌNH BUỔI CHIỀU & ẨM THỰC (AFTERNOON & LOCAL FOOD)',
+              cognitiveFunction: '3. Buổi chiều du khách sẽ tham gia hoạt động và ăn uống món gì?',
+              content: 'In the afternoon, you can walk around Xuan Huong lake and taste delicious local specialties at the night market.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Luyện cấu trúc: "walk around lake" và "taste local specialties" (thưởng thức đặc sản địa phương).',
+              flipCard: {
+                frontText: 'Afternoon we eat food in market. (Đơn sơ)',
+                backText: 'In the afternoon, you can taste delicious local specialties at the night market.',
+                explanation: 'Học từ vựng du lịch chuẩn "local specialties" (đặc sản địa phương).'
+              },
+              branchOptions: [
+                {
+                  branchName: 'DẠO HỒ & CHỢ ĐÊM (ĐÀ LẠT)',
+                  content: 'In the afternoon, you can walk around Xuan Huong lake and taste delicious local specialties at the night market.',
+                  note: 'Lịch trình tham quan hồ và chợ đêm ẩm thực.'
+                },
+                {
+                  branchName: 'CÁP TREO & THÁC NƯỚC (THIÊN NHIÊN)',
+                  content: 'In the afternoon, you can ride a cable car and enjoy breathtaking views of pine forests and waterfalls.',
+                  note: 'Trải nghiệm cáp treo và rừng thông ngắm thác.'
+                }
+              ]
+            },
+            {
+              step: 4,
+              label: 'BƯỚC 4: LỜI MỜI CHỐT TOUR (REASONABLE PRICE)',
+              cognitiveFunction: '4. Mức giá và lời mời chào kết thúc của bạn là gì?',
+              content: 'This exciting tour comes at a very reasonable price, so we hope to welcome you on this wonderful journey!',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Khép lại bằng cụm từ quen thuộc: "at a very reasonable price" và lời mời lịch sự.',
+              flipCard: {
+                frontText: 'The price is cheap, please buy. (Tiếng bồi)',
+                backText: 'This tour comes at a very reasonable price, so we hope to welcome you! (Lịch sự, chuyên nghiệp)',
+                explanation: 'Dùng cụm "at a reasonable price" thay vì nói "cheap" để tăng tính chuyên nghiệp.'
+              }
+            }
+          ],
+          fullMosaicSummary: "Good morning! My name is An from Dan Travel Agency, and I'm glad to offer you an exciting one-day tour to Da Lat. In the morning, we will explore flower gardens with beautiful natural landscapes. In the afternoon, you can walk around Xuan Huong lake and taste local specialties. This tour comes at a very reasonable price, and we hope to welcome you soon!"
         }
       }
     ]
