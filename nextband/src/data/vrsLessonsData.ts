@@ -304,138 +304,246 @@ export const vrsMockLessons: VRSVisualLesson[] = [
       {
         stageNumber: 1,
         stageType: 'verification_scale',
-        title: 'Bẫy 1: Thời gian & Tần suất (Time Trap)',
-        pedagogicalObjective: 'Quét tọa độ từ khóa (Scanning Radar) và chẻ biến số thời gian để phát hiện mâu thuẫn 100% giữa đề bài và bài đọc.',
+        title: 'Câu 1 (T/F/NG): Bẫy Thời Gian & Tần Suất (every weekday vs 6 days a week)',
+        pedagogicalObjective: 'Khóa tọa độ Đoạn 1, phát hiện mâu thuẫn giữa 5 ngày làm việc và 6 ngày/tuần.',
         interactionModel: {
           type: 'verification_scale',
-          prompt: 'Bấm radar quét định vị câu hỏi trong bài đọc, sau đó đặt nhận định lên bàn cân logic:',
+          prompt: 'Bấm Radar quét tìm định nghĩa số giờ và số ngày của văn hóa 996 trong bài đọc:',
           passageContext: {
             title: "The '996' Culture in China",
             paragraphs: [
               {
                 id: 'p1',
-                label: 'Đoạn A · Định nghĩa & Nguồn gốc 996',
+                label: 'Đoạn 1 · Định nghĩa 996 & Lệnh cấm của pháp luật',
                 text: 'Employees of major companies are protesting what is infamous as "996". The name comes from the practice of working from 9 am to 9 pm six days a week, and it is very common among Chinese tech companies and startups. Though the practice is technically prohibited by Chinese law, many companies still enforce the hours informally or formally.'
               },
               {
                 id: 'p2',
-                label: 'Đoạn B · Hậu quả đối với người lao động',
-                text: 'For young tech workers, the tight work schedule means more burnout and less time for basic needs like sleep or a personal life. In December 2019, a 22-year-old employee collapsed and died on the street after leaving work at 1:30 a.m.'
-              },
-              {
-                id: 'p3',
-                label: 'Đoạn C · Làn sóng phản đối kéo dài',
-                text: 'Many in China have been expressing their disagreement with the 996 culture for a long time. In 2019, an online campaign was launched to raise awareness and try to reduce pressure on employees.'
+                label: 'Đoạn 2 · Nhu cầu văn hóa 955',
+                text: 'Several employees are demanding the "955" culture, which is working from 9 am to 5 pm five days a week.'
               }
             ],
             targetParagraphId: 'p1',
             targetSnippet: 'working from 9 am to 9 pm six days a week'
           },
           statement: {
-            rawText: 'The 996 culture involves working from 9 am to 9 pm every weekday.',
+            rawText: '1. The 996 culture involves working from 9 am to 9 pm every weekday.',
             deconstructedVariables: [
               { name: 'subject', text: 'The 996 culture' },
-              { name: 'action', text: 'working from 9 am to 9 pm' },
+              { name: 'hours', text: 'working from 9 am to 9 pm' },
               { name: 'time_scope', text: 'every weekday', isTrapWord: true }
             ]
           },
           passageEvidence: {
             rawText: 'The name comes from the practice of working from 9 am to 9 pm six days a week.',
             targetVariables: [
-              { matchingName: 'time_scope', text: 'six days a week (6 ngày/tuần, gồm cả thứ 7)' }
+              { matchingName: 'time_scope', text: 'six days a week (làm 6 ngày/tuần, bao gồm cả thứ Bảy)' }
             ]
           },
           expectedRelation: 'contradiction',
           verdict: 'FALSE',
-          pedagogicalInsight: 'FALSE vì "every weekday" chỉ gồm 5 ngày (từ thứ 2 đến thứ 6), trong khi bài đọc nêu rõ "six days a week" (buộc phải làm thêm ngày thứ 7). Hai mốc thời gian mâu thuẫn trực diện!'
+          pedagogicalInsight: 'FALSE vì "every weekday" là ngày làm việc trong tuần (thứ 2 đến thứ 6 = 5 ngày), trong khi bài đọc nêu rõ "six days a week" (phải làm thêm thứ Bảy). Hai mốc thời gian mâu thuẫn trực tiếp!'
         }
       },
       {
         stageNumber: 2,
         stageType: 'verification_scale',
-        title: 'Bẫy 2: Suy Đoán Đời Thực vs Tính Pháp Lý (Real-World Bias Trap)',
-        pedagogicalObjective: 'Phân biệt giữa luật pháp chính thức (prohibited by law) và thực tế công ty áp dụng ngầm.',
+        title: 'Câu 2 (T/F/NG): Bẫy Suy Diễn Thực Tế (Is 955 proved to be healthier?)',
+        pedagogicalObjective: 'Phát hiện sự thiếu vắng bằng chứng khoa học chứng minh lịch 955 tốt hơn cho sức khỏe (NOT GIVEN).',
         interactionModel: {
           type: 'verification_scale',
-          prompt: 'Bấm radar quét định vị câu hỏi trong bài đọc, sau đó đối chiếu quy định pháp lý:',
+          prompt: 'Quét văn bản kiểm tra xem có nghiên cứu khoa học nào chứng minh lịch 955 tốt hơn cho sức khỏe không:',
           passageContext: {
             title: "The '996' Culture in China",
             paragraphs: [
               {
-                id: 'p1',
-                label: 'Đoạn A · Định nghĩa & Nguồn gốc 996',
-                text: 'Employees of major companies are protesting what is infamous as "996". The name comes from the practice of working from 9 am to 9 pm six days a week, and it is very common among Chinese tech companies and startups. Though the practice is technically prohibited by Chinese law, many companies still enforce the hours informally or formally.'
+                id: 'p2',
+                label: 'Đoạn 2 · Yêu cầu về lịch trình 955',
+                text: 'Several employees are demanding the "955" culture, which is working from 9 am to 5 pm five days a week.'
               },
               {
-                id: 'p2',
-                label: 'Đoạn B · Hậu quả đối với người lao động',
-                text: 'For young tech workers, the tight work schedule means more burnout and less time for basic needs like sleep or a personal life. In December 2019, a 22-year-old employee collapsed and died on the street after leaving work at 1:30 a.m.'
+                id: 'p3',
+                label: 'Đoạn 3 · Tác hại của 996 đối với người lao động',
+                text: 'For young tech workers, the tight work schedule means more burnout and less time for basic needs like sleep or a personal life, according to the South China morning Post.'
               }
             ],
-            targetParagraphId: 'p1',
-            targetSnippet: 'technically prohibited by Chinese law'
+            targetParagraphId: 'p2',
+            targetSnippet: 'Several employees are demanding the "955" culture'
           },
           statement: {
-            rawText: 'Chinese labor law officially permits technology companies to implement the 996 schedule.',
+            rawText: '2. The 955 schedule is proved to be healthier than the 996 one.',
             deconstructedVariables: [
-              { name: 'subject', text: 'Chinese labor law' },
-              { name: 'action', text: 'officially permits', isTrapWord: true },
-              { name: 'target', text: 'technology companies to implement 996' }
+              { name: 'subject', text: 'The 955 schedule' },
+              { name: 'scientific_claim', text: 'is proved to be healthier than 996', isTrapWord: true }
             ]
           },
           passageEvidence: {
-            rawText: 'Though the practice is technically prohibited by Chinese law, many companies still enforce the hours.',
+            rawText: 'Bài đọc chỉ nêu nhân viên đang đòi hỏi áp dụng 955 (Several employees are demanding the 955 culture). Hoàn toàn không có nghiên cứu hay chứng cứ khoa học nào khẳng định "is proved to be healthier".',
             targetVariables: [
-              { matchingName: 'action', text: 'technically prohibited by Chinese law (về mặt luật pháp là BỊ CẤM)' }
+              { matchingName: 'scientific_claim', text: 'KHÔNG CÓ CHỨNG MINH KHOA HỌC TRONG BÀI ĐỌC' }
             ]
           },
-          expectedRelation: 'contradiction',
-          verdict: 'FALSE',
-          pedagogicalInsight: 'FALSE vì luật pháp Trung Quốc nghiêm cấm văn hóa này ("technically prohibited by Chinese law"), hoàn toàn trái ngược với khẳng định "officially permits" của đề bài.'
+          expectedRelation: 'no_evidence',
+          verdict: 'NOT GIVEN',
+          pedagogicalInsight: 'NOT GIVEN! Dù trong thực tế 955 chắc chắn lành mạnh hơn 996, nhưng bài đọc KHÔNG HỀ CÓ dòng nào nêu "đã được chứng minh là tốt hơn cho sức khỏe" (proved to be healthier). Đây là bẫy suy đoán đời thực kinh điển của IELTS!'
         }
       },
       {
         stageNumber: 3,
         stageType: 'verification_scale',
-        title: 'Bẫy 3: Thông Tin Không Đề Cập (NOT GIVEN Trap)',
-        pedagogicalObjective: 'Phát hiện sự thiếu vắng bằng chứng so sánh mức lương thưởng làm thêm giờ.',
+        title: 'Câu 3 (T/F/NG): Bẫy Mục Đích & Động Cơ (reduce financial pressure?)',
+        pedagogicalObjective: 'Quét Đoạn 3 & 4 để kiểm tra lý do công nhân làm 996 có phải do áp lực tài chính không.',
         interactionModel: {
           type: 'verification_scale',
-          prompt: 'Quét toàn văn bản để kiểm tra xem có số liệu lương ngoài giờ không:',
+          prompt: 'Quét bài đọc xem có thông tin công nhân tự nguyện làm 996 để giảm áp lực tài chính không:',
           passageContext: {
             title: "The '996' Culture in China",
             paragraphs: [
               {
-                id: 'p1',
-                label: 'Đoạn A · Định nghĩa & Nguồn gốc 996',
-                text: 'Employees of major companies are protesting what is infamous as "996". The name comes from the practice of working from 9 am to 9 pm six days a week, and it is very common among Chinese tech companies and startups.'
+                id: 'p3',
+                label: 'Đoạn 3 · Tác động đến người lao động',
+                text: 'For young tech workers, the tight work schedule means more burnout and less time for basic needs like sleep or a personal life, according to the South China morning Post.'
               },
               {
-                id: 'p2',
-                label: 'Đoạn B · Hậu quả đối với người lao động',
-                text: 'For young tech workers, the tight work schedule means more burnout and less time for basic needs like sleep or a personal life. In December 2019, a 22-year-old employee collapsed and died on the street after leaving work at 1:30 a.m.'
+                id: 'p4',
+                label: 'Đoạn 4 · Vụ việc tử vong tại Pinduoduo',
+                text: 'In December, 2019, a 22-year-old working at Pinduoduo collapsed and died on the streets after leaving work at 1:30 a.m. One blogger said: "Is it really worth it to exchange our lives for money?"'
               }
             ],
-            targetParagraphId: 'p2',
-            targetSnippet: 'burnout and less time for basic needs'
+            targetParagraphId: 'p3',
+            targetSnippet: 'tight work schedule means more burnout and less time for basic needs'
           },
           statement: {
-            rawText: 'Tech employees who work the 996 schedule receive triple their normal hourly salary for weekend shifts.',
+            rawText: '3. Young tech workers have work a tight schedule to reduce their financial pressure.',
             deconstructedVariables: [
-              { name: 'subject', text: 'Tech employees under 996' },
-              { name: 'compensation', text: 'receive triple normal hourly salary', isTrapWord: true },
-              { name: 'condition', text: 'for weekend shifts' }
+              { name: 'subject', text: 'Young tech workers' },
+              { name: 'motive', text: 'to reduce their financial pressure', isTrapWord: true }
             ]
           },
           passageEvidence: {
-            rawText: 'Bài đọc chỉ nêu nhân viên bị kiệt sức (burnout) và thiếu ngủ, hoàn toàn không có bất kỳ dòng nào nhắc đến hệ số lương thưởng (triple salary).',
+            rawText: 'Bài đọc chỉ cho biết công ty ép buộc làm việc (companies still enforce the hours) và blogger đặt câu hỏi "đổi mạng lấy tiền có đáng không", chứ không hề có dữ liệu nói công nhân trẻ làm 996 nhằm mục đích "giảm áp lực tài chính".',
             targetVariables: [
-              { matchingName: 'compensation', text: 'KHÔNG CÓ DỮ LIỆU VỀ HỆ SỐ LƯƠNG TRONG TOÀN BÀI ĐỌC' }
+              { matchingName: 'motive', text: 'KHÔNG CÓ THÔNG TIN VỀ MỤC ĐÍCH GIẢM ÁP LỰC TÀI CHÍNH' }
             ]
           },
           expectedRelation: 'no_evidence',
           verdict: 'NOT GIVEN',
-          pedagogicalInsight: 'NOT GIVEN vì bài đọc chỉ tập trung vào áp lực kiệt sức và cái chết do làm quá giờ, tuyệt nhiên không cung cấp thông tin liệu nhân viên có được trả lương gấp ba ("triple salary") hay không.'
+          pedagogicalInsight: 'NOT GIVEN vì bài viết không hề khẳng định lý do làm việc 996 là để giảm bớt áp lực tài chính cá nhân.'
+        }
+      },
+      {
+        stageNumber: 4,
+        stageType: 'verification_scale',
+        title: 'Câu 4 (T/F/NG): Bẫy Đối Nghịch Lập Trường (opposed vs supported)',
+        pedagogicalObjective: 'Quét lời tuyên bố của Jack Ma trong Đoạn 7, bóc trần mâu thuẫn 100% với đề bài.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét lập trường của Jack Ma (Alibaba CEO) trong Đoạn 7:',
+          passageContext: {
+            title: "The '996' Culture in China",
+            paragraphs: [
+              {
+                id: 'p7',
+                label: 'Đoạn 7 · Phát ngôn của Jack Ma (Alibaba)',
+                text: 'Interestingly, in April 2019, Alibaba CEO Jack Ma had supported the culture of overwork, calling it a "blessing". At the time, he wrote that China\'s economy was "very likely to lose its power and momentum if the system wasn\'t there."'
+              }
+            ],
+            targetParagraphId: 'p7',
+            targetSnippet: 'Alibaba CEO Jack Ma had supported the culture of overwork, calling it a "blessing"'
+          },
+          statement: {
+            rawText: '4. Alibaba CEO Jack Ma opposed the "996" work culture.',
+            deconstructedVariables: [
+              { name: 'subject', text: 'Alibaba CEO Jack Ma' },
+              { name: 'stance', text: 'opposed (phản đối)', isTrapWord: true },
+              { name: 'target', text: 'the 996 work culture' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Alibaba CEO Jack Ma had supported the culture of overwork, calling it a "blessing".',
+            targetVariables: [
+              { matchingName: 'stance', text: 'had supported ... calling it a "blessing" (ủng hộ và gọi đó là phước lành)' }
+            ]
+          },
+          expectedRelation: 'contradiction',
+          verdict: 'FALSE',
+          pedagogicalInsight: 'FALSE vì Jack Ma lên tiếng ỦNG HỘ ("supported", gọi 996 là "blessing" - phúc lành), hoàn toàn trái ngược với từ "opposed" (phản đối) của đề bài!'
+        }
+      },
+      {
+        stageNumber: 5,
+        stageType: 'verification_scale',
+        title: 'Câu 5 (T/F/NG): Khớp Ý Trực Diện (important for economic development)',
+        pedagogicalObjective: 'Đối chiếu lập luận của Jack Ma về nguy cơ kinh tế Trung Quốc mất đà tăng trưởng.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét phát biểu của Jack Ma về nền kinh tế Trung Quốc:',
+          passageContext: {
+            title: "The '996' Culture in China",
+            paragraphs: [
+              {
+                id: 'p7',
+                label: 'Đoạn 7 · Phát ngôn của Jack Ma về kinh tế',
+                text: 'Interestingly, in April 2019, Alibaba CEO Jack Ma had supported the culture of overwork, calling it a "blessing". At the time, he wrote that China\'s economy was "very likely to lose its power and momentum if the system wasn\'t there."'
+              }
+            ],
+            targetParagraphId: 'p7',
+            targetSnippet: 'China\'s economy was "very likely to lose its power and momentum if the system wasn\'t there"'
+          },
+          statement: {
+            rawText: '5. According to Jack Ma, “996" is important for the China\'s economic development.',
+            deconstructedVariables: [
+              { name: 'speaker', text: 'According to Jack Ma' },
+              { name: 'significance', text: '996 is important for China\'s economic development' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'He wrote that China\'s economy was "very likely to lose its power and momentum if the system wasn\'t there."',
+            targetVariables: [
+              { matchingName: 'significance', text: 'Kinh tế sẽ mất sức mạnh và động lực nếu không có 996' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'TRUE! Jack Ma viết rằng nền kinh tế Trung Quốc sẽ "mất đi sức mạnh và đà phát triển nếu không có hệ thống làm việc này", nghĩa là 996 đóng vai trò quan trọng đối với sự phát triển kinh tế.'
+        }
+      },
+      {
+        stageNumber: 6,
+        stageType: 'verification_scale',
+        title: 'Câu 6 (T/F/NG): Bẫy Từ Khẳng Định Tuyệt Đối (All developed economies vs Some)',
+        pedagogicalObjective: 'Phát hiện bẫy lượng từ tuyệt đối ALL đối lập với SOME trong Đoạn 9.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét lượng từ mô tả các nền kinh tế thử nghiệm tuần làm việc 4 ngày:',
+          passageContext: {
+            title: "The '996' Culture in China",
+            paragraphs: [
+              {
+                id: 'p9',
+                label: 'Đoạn 9 · Xu hướng tuần làm 4 ngày ở các nước',
+                text: 'Some developed economies around the world are experimenting with the four-day work culture. The well-known ones among them are New Zealand and Japan.'
+              }
+            ],
+            targetParagraphId: 'p9',
+            targetSnippet: 'Some developed economies around the world are experimenting'
+          },
+          statement: {
+            rawText: '6. All developed economies around the world are experimenting with the four-day workweek.',
+            deconstructedVariables: [
+              { name: 'scope_quantifier', text: 'All developed economies (TẤT CẢ)', isTrapWord: true },
+              { name: 'action', text: 'are experimenting with the four-day workweek' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Some developed economies around the world are experimenting with the four-day work culture.',
+            targetVariables: [
+              { matchingName: 'scope_quantifier', text: 'Some developed economies (chỉ MỘT SỐ nền kinh tế)' }
+            ]
+          },
+          expectedRelation: 'contradiction',
+          verdict: 'FALSE',
+          pedagogicalInsight: 'FALSE vì bài đọc chỉ nêu "Some developed economies" (MỘT SỐ nền kinh tế phát triển như New Zealand, Nhật Bản), hoàn toàn mâu thuẫn với từ khẳng định tuyệt đối "ALL" (tất cả) của đề bài!'
         }
       }
     ]
