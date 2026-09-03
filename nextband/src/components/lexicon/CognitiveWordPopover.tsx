@@ -15,6 +15,7 @@ export const CognitiveWordPopover: React.FC = () => {
   const [data, setData] = useState<CognitiveWord | null>(null);
   const [saved, setSaved] = useState<boolean>(false);
   const [saving, setSaving] = useState<boolean>(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -45,10 +46,11 @@ export const CognitiveWordPopover: React.FC = () => {
           setSelectedWord(cleanWord);
           setContextSentence(matchingSentence.trim());
           setPosition({
-            x: Math.max(10, Math.min(window.innerWidth - 340, rect.left + window.scrollX)),
+            x: Math.max(10, Math.min(window.innerWidth - 380, rect.left + window.scrollX)),
             y: rect.bottom + window.scrollY + 8,
           });
           setSaved(false);
+          setSaveError(null);
           fetchWordInsight(cleanWord, matchingSentence.trim());
         }
       }
@@ -60,6 +62,7 @@ export const CognitiveWordPopover: React.FC = () => {
         setPosition(null);
         setSelectedWord(null);
         setData(null);
+        setSaveError(null);
       }
     };
 
@@ -84,17 +87,21 @@ export const CognitiveWordPopover: React.FC = () => {
   };
 
   const handleSaveWord = async () => {
-    if (!data || saving || saved) return;
+    if (saving || saved) return;
     setSaving(true);
+    setSaveError(null);
     try {
+      const wordToSave = data?.word || selectedWord || "";
+      const contextToSave = contextSentence || data?.sourceContext || "";
       await lexiconApi.save({
-        word: data.word,
-        sourceContext: contextSentence || data.sourceContext || "",
-        wordId: data.id,
+        word: wordToSave,
+        sourceContext: contextToSave,
+        wordId: data?.id,
       });
       setSaved(true);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to save vocabulary:", err);
+      setSaveError(err?.message || "Không thể lưu vào Sổ từ. Vui lòng thử lại!");
     } finally {
       setSaving(false);
     }
@@ -118,30 +125,36 @@ export const CognitiveWordPopover: React.FC = () => {
         top: `${position.y}px`,
         zIndex: 9999,
       }}
-      className="w-80 sm:w-96 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl p-4 text-slate-800 dark:text-slate-100 animate-in fade-in zoom-in-95 duration-150"
+      className="w-84 sm:w-96 bg-white dark:bg-slate-900 border-2 border-rose-200/80 dark:border-rose-900/50 rounded-2xl shadow-[0_12px_35px_rgba(225,29,72,0.18)] dark:shadow-[0_12px_35px_rgba(0,0,0,0.5)] p-4 text-slate-800 dark:text-slate-100 animate-in fade-in zoom-in-95 duration-150 backdrop-blur-sm"
     >
-      {/* Header: Word + IPA + Audio + Close */}
-      <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-2 mb-3">
-        <div className="flex items-baseline gap-2">
-          <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-white capitalize">
-            {data?.word || selectedWord}
-          </span>
-          {data?.ipa && (
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
-              {data.ipa}
+      {/* Header: Gradient Banner & Word Info */}
+      <div className="flex items-center justify-between pb-2.5 mb-3 border-b border-rose-100 dark:border-slate-800">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-rose-500 via-pink-500 to-amber-400 flex items-center justify-center text-white shadow-sm shrink-0">
+            <BookmarkPlus className="w-4 h-4" />
+          </div>
+          <div className="flex items-baseline gap-2 min-w-0 flex-wrap">
+            <span className="text-lg font-black tracking-tight text-slate-900 dark:text-white capitalize">
+              {data?.word || selectedWord}
             </span>
-          )}
-          {data?.cefrLevel && (
-            <span className="px-1.5 py-0.5 text-[10px] font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 rounded border border-blue-200 dark:border-blue-800">
-              {data.cefrLevel}
-            </span>
-          )}
+            {data?.ipa && (
+              <span className="text-xs text-rose-500/90 dark:text-rose-400 font-mono font-medium">
+                {data.ipa}
+              </span>
+            )}
+            {data?.cefrLevel && (
+              <span className="px-2 py-0.5 text-[10px] font-bold bg-rose-500 text-white rounded-full shadow-sm">
+                {data.cefrLevel}
+              </span>
+            )}
+          </div>
         </div>
-        <div className="flex items-center gap-1">
+
+        <div className="flex items-center gap-1 shrink-0">
           {data?.audioUrl && (
             <button
               onClick={playAudio}
-              className="p-1 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-md transition-colors"
+              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors"
               title="Phát âm"
             >
               <Volume2 className="w-4 h-4" />
@@ -149,7 +162,7 @@ export const CognitiveWordPopover: React.FC = () => {
           )}
           <button
             onClick={() => setPosition(null)}
-            className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-md transition-colors"
+            className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -157,29 +170,29 @@ export const CognitiveWordPopover: React.FC = () => {
       </div>
 
       {loading ? (
-        <div className="py-6 flex flex-col items-center justify-center gap-2 text-slate-400">
-          <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
-          <span className="text-xs">Đang giải mã bản chất tri nhận...</span>
+        <div className="py-6 flex flex-col items-center justify-center gap-2 text-rose-500">
+          <Loader2 className="w-6 h-6 animate-spin" />
+          <span className="text-xs font-medium text-slate-500">Đang tra cứu từ điển tri nhận...</span>
         </div>
       ) : (
         <div className="space-y-3 text-xs leading-relaxed">
           {/* CORE IDEA */}
-          <div>
-            <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-0.5">
-              Bản chất cốt lõi (Core Idea)
+          <div className="bg-gradient-to-br from-rose-50/70 to-pink-50/40 dark:from-slate-800/80 dark:to-slate-800/40 p-2.5 rounded-xl border border-rose-100/80 dark:border-slate-700/60">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400 mb-1 flex items-center gap-1">
+              <span>✨</span> Bản chất cốt lõi (Core Idea)
             </div>
-            <div className="font-medium text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-800/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800">
+            <div className="font-semibold text-slate-800 dark:text-slate-100">
               {data?.coreIdea || "Khái niệm trong ngữ cảnh học thuật."}
             </div>
           </div>
 
-          {/* WORD FORMATION (chỉ hiện khi có dữ liệu tin cậy) */}
+          {/* WORD FORMATION */}
           {data?.wordFormation && (
-            <div>
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-0.5">
+            <div className="bg-slate-50 dark:bg-slate-800/50 p-2 rounded-lg border border-slate-100 dark:border-slate-800">
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-0.5">
                 Cấu trúc hình thái (Word Formation)
               </div>
-              <div className="text-slate-600 dark:text-slate-300 font-mono text-[11px]">
+              <div className="text-slate-700 dark:text-slate-200 font-mono text-[11px] font-medium">
                 {[data.wordFormation.prefix, data.wordFormation.root, data.wordFormation.suffix]
                   .filter(Boolean)
                   .join(" + ")}
@@ -189,11 +202,11 @@ export const CognitiveWordPopover: React.FC = () => {
 
           {/* CONTEXT GỐC */}
           {contextSentence && (
-            <div>
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-0.5">
-                Ngữ cảnh trong bài (Context)
+            <div className="bg-amber-50/70 dark:bg-amber-950/30 p-2.5 rounded-xl border border-amber-200/60 dark:border-amber-900/40">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 mb-0.5 flex items-center gap-1">
+                <span>📖</span> Ngữ cảnh trong bài
               </div>
-              <div className="text-slate-600 dark:text-slate-400 italic bg-amber-50/50 dark:bg-amber-950/20 p-1.5 rounded border border-amber-100 dark:border-amber-900/30">
+              <div className="text-slate-700 dark:text-slate-300 italic">
                 "{contextSentence}"
               </div>
             </div>
@@ -202,14 +215,14 @@ export const CognitiveWordPopover: React.FC = () => {
           {/* COLLOCATIONS */}
           {data?.collocations && data.collocations.length > 0 && (
             <div>
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-0.5">
-                Cụm từ học thuật đi kèm (Collocations)
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+                Cụm từ học thuật đi kèm
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {data.collocations.map((col, idx) => (
                   <span
                     key={idx}
-                    className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded text-[11px]"
+                    className="px-2 py-0.5 bg-rose-50 text-rose-700 border border-rose-200/70 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800/50 rounded-md font-medium text-[11px]"
                   >
                     {col}
                   </span>
@@ -218,27 +231,37 @@ export const CognitiveWordPopover: React.FC = () => {
             </div>
           )}
 
-          {/* ACTION BUTTON: Sạch sẽ, không XP, không Game hóa */}
-          <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+          {/* ERROR ALERT IF SAVE FAILS */}
+          {saveError && (
+            <div className="text-[11px] font-medium text-rose-600 bg-rose-50 border border-rose-200 p-2 rounded-lg">
+              ⚠️ {saveError}
+            </div>
+          )}
+
+          {/* ACTION BUTTON - Nổi bật rực rỡ như ảnh tham khảo */}
+          <div className="pt-2 border-t border-rose-100 dark:border-slate-800">
             <button
               onClick={handleSaveWord}
               disabled={saved || saving}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold transition-all shadow-md active:scale-98 ${
                 saved
-                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800"
-                  : "bg-slate-900 text-white hover:bg-slate-800 dark:bg-blue-600 dark:hover:bg-blue-500"
+                  ? "bg-emerald-500 text-white shadow-emerald-500/25 cursor-default"
+                  : "bg-gradient-to-r from-rose-500 via-rose-600 to-amber-500 hover:from-rose-600 hover:to-amber-600 text-white shadow-rose-500/30 hover:shadow-rose-500/40"
               }`}
             >
               {saving ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Đang lưu vào Sổ từ...
+                </>
               ) : saved ? (
                 <>
-                  <Check className="w-3.5 h-3.5" />
-                  Đã lưu vào Sổ từ
+                  <Check className="w-4 h-4 stroke-[3]" />
+                  Đã lưu vào Sổ từ thành công!
                 </>
               ) : (
                 <>
-                  <BookmarkPlus className="w-3.5 h-3.5" />
+                  <BookmarkPlus className="w-4 h-4" />
                   Lưu vào Sổ từ
                 </>
               )}

@@ -81922,9 +81922,9 @@ var init_notification_service = __esm({
        * Nếu vi phạm unique constraint (P2002) do retry cùng business event -> skip an toàn (Idempotency).
        */
       async createNotification(tx, data) {
-        try {
-          await tx.notification.create({
-            data: {
+        await tx.notification.createMany({
+          data: [
+            {
               userId: data.userId,
               type: data.type,
               title: data.title,
@@ -81933,18 +81933,9 @@ var init_notification_service = __esm({
               entityType: data.entityType || null,
               entityId: data.entityId || null
             }
-          });
-        } catch (err) {
-          if (typeof err === "object" && err !== null && "code" in err && err.code === "P2002") {
-            const meta = err.meta;
-            const target = meta?.target;
-            const isIdempotencyCollision = !target || Array.isArray(target) && (target.includes("entity_type") || target.includes("entityId") || target.includes("notifications_idempotency_idx")) || typeof target === "string" && (target.includes("idempotency") || target.includes("notifications"));
-            if (isIdempotencyCollision) {
-              return;
-            }
-          }
-          throw err;
-        }
+          ],
+          skipDuplicates: true
+        });
       }
       /**
        * Tạo batch notifications cho nhiều người nhận bằng 1 single query (createMany).
@@ -95792,7 +95783,7 @@ async function verifyAndResolveUser(request) {
     return null;
   }
   const finalRoles = authoritativeRoles.length > 0 ? [...authoritativeRoles] : [...fallbackRoles];
-  const isRootAdmin = email?.toLowerCase() === "admin@ielts.com" || email?.toLowerCase() === "admin@nextband.site" || email?.toLowerCase().startsWith("admin@");
+  const isRootAdmin = email?.toLowerCase() === "admin@ielts.com" || email?.toLowerCase() === "admin@nextband.site";
   if (isRootAdmin && !finalRoles.includes("admin")) {
     finalRoles.push("admin");
   }
@@ -95923,6 +95914,14 @@ function withFileUrlsMany(arr, keys) {
 var authRoutes = async (fastify) => {
   fastify.post(
     "/register",
+    {
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: "1 minute"
+        }
+      }
+    },
     async (_request, reply) => {
       return reply.status(410).send({
         error: "GONE",
@@ -95932,6 +95931,14 @@ var authRoutes = async (fastify) => {
   );
   fastify.post(
     "/login",
+    {
+      config: {
+        rateLimit: {
+          max: 5,
+          timeWindow: "1 minute"
+        }
+      }
+    },
     async (_request, reply) => {
       return reply.status(410).send({
         error: "GONE",
@@ -103152,7 +103159,12 @@ var usersRoutes = async (fastify) => {
               }
             },
             classesAsTeacher: {
-              where: { isActive: true, status: "ACTIVE" },
+              where: {
+                // Count all non-archived classes the teacher is assigned to,
+                // including ACTIVE and CLOSED (e.g. class finished but still visible).
+                // Exclude only ARCHIVED classes so teacher stats stay accurate.
+                status: { notIn: ["ARCHIVED"] }
+              },
               select: {
                 id: true,
                 _count: {
@@ -104318,14 +104330,6 @@ var uploadsRoutes = async (fastify) => {
     "/",
     { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
-      const supabase = getSupabaseStorageClient();
-      if (!supabase) {
-        return reply.status(500).send({
-          statusCode: 500,
-          error: "SERVICE_CONFIGURATION_ERROR",
-          message: "H\u1EC7 th\u1ED1ng ch\u01B0a c\u1EA5u h\xECnh SUPABASE_SERVICE_ROLE_KEY cho ch\u1EE9c n\u0103ng x\xF3a t\u1EC7p kh\u1ECFi h\u1EC7 th\u1ED1ng l\u01B0u tr\u1EEF."
-        });
-      }
       const { url } = request.body || {};
       if (!url || typeof url !== "string") {
         return reply.status(400).send({ error: "Y\xEAu c\u1EA7u URL t\u1EC7p c\u1EA7n x\xF3a" });
@@ -104342,7 +104346,7 @@ var uploadsRoutes = async (fastify) => {
       } catch {
         return reply.status(400).send({ error: "URL kh\xF4ng h\u1EE3p l\u1EC7" });
       }
-      if (decodedUrl.includes("..") || decodedUrl.includes(":\\") || decodedUrl.includes(":/..")) {
+      if (decodedUrl.includes("..") || decodedUrl.includes(":\\") || decodedUrl.includes(":/..") || decodedUrl.includes("/./")) {
         return reply.status(400).send({ error: "\u0110\u01B0\u1EDDng d\u1EABn ch\u1EE9a k\xFD t\u1EF1 kh\xF4ng h\u1EE3p l\u1EC7" });
       }
       let storagePath = "";
@@ -104354,6 +104358,14 @@ var uploadsRoutes = async (fastify) => {
         storagePath = `${relativeMatch[1]}/${relativeMatch[2]}`;
       } else {
         return reply.status(400).send({ error: "URL t\u1EC7p kh\xF4ng thu\u1ED9c ph\u1EA1m vi qu\u1EA3n l\xFD exam-assets" });
+      }
+      const supabase = getSupabaseStorageClient();
+      if (!supabase) {
+        return reply.status(500).send({
+          statusCode: 500,
+          error: "SERVICE_CONFIGURATION_ERROR",
+          message: "H\u1EC7 th\u1ED1ng ch\u01B0a c\u1EA5u h\xECnh SUPABASE_SERVICE_ROLE_KEY cho ch\u1EE9c n\u0103ng x\xF3a t\u1EC7p kh\u1ECFi h\u1EC7 th\u1ED1ng l\u01B0u tr\u1EEF."
+        });
       }
       try {
         const { error: removeError } = await supabase.storage.from(BUCKET_NAME).remove([storagePath]);
@@ -110635,7 +110647,10 @@ async function adminDashboardRoutes(fastify) {
               email: true,
               avatarUrl: true,
               classesAsTeacher: {
-                where: { isActive: true, ...classBranchFilter },
+                where: {
+                  status: { notIn: ["ARCHIVED"] },
+                  ...classBranchFilter
+                },
                 select: {
                   id: true,
                   name: true,
@@ -111705,7 +111720,7 @@ var CognitiveLexiconService = class {
    */
   async analyzeWithGemini(word, contextSentence) {
     const apiKey = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
     const prompt = `You are a strict Academic Cognitive Linguist and Senior IELTS Lexicographer.
 Analyze the target English word within the given context.
 
@@ -111728,7 +111743,7 @@ Return pure JSON only conforming to:
   "collocations": ["collocation 1", "collocation 2", "collocation 3"],
   "cefrLevel": "C1"
 }`;
-    const response = await fetch(url, {
+    let response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -111739,6 +111754,20 @@ Return pure JSON only conforming to:
         }
       })
     });
+    if (!response.ok && response.status !== 400 && response.status !== 403) {
+      const fallbackUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+      response = await fetch(fallbackUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            responseMimeType: "application/json",
+            temperature: 0.2
+          }
+        })
+      });
+    }
     if (!response.ok) {
       throw new Error(`Gemini API Error: ${response.statusText}`);
     }
@@ -112001,6 +112030,99 @@ var lexiconRoutes = async (fastify) => {
 };
 var lexicon_routes_default = lexiconRoutes;
 
+// server/routes/teacher-profile.routes.ts
+var teacherProfileRoutes = async (fastify) => {
+  fastify.get(
+    "/:userId",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { userId } = request.params;
+      const callerRoles = request.user?.roles ?? [];
+      const isAdmin = callerRoles.includes("admin");
+      const profile = await fastify.prisma.teacherProfile.findUnique({
+        where: { userId }
+      });
+      const currentClasses = await fastify.prisma.class.findMany({
+        where: {
+          teacherId: userId,
+          isActive: true,
+          status: "ACTIVE"
+        },
+        include: {
+          _count: { select: { students: { where: { deletedAt: null } } } }
+        },
+        orderBy: { createdAt: "desc" }
+      });
+      const currentClassCount = currentClasses.length;
+      const maxClasses = profile?.maxClassesPerWeek ?? null;
+      const capacityStatus = !maxClasses ? "unknown" : currentClassCount >= maxClasses ? "full" : currentClassCount >= maxClasses * 0.75 ? "nearFull" : "available";
+      const responseProfile = profile ? { ...profile, internalNotes: isAdmin ? profile.internalNotes : void 0 } : null;
+      return reply.send({
+        profile: responseProfile,
+        currentClasses: currentClasses.map((cls) => ({
+          id: cls.id,
+          name: cls.name,
+          status: cls.status,
+          startDate: cls.startDate,
+          endDate: cls.endDate,
+          studentCount: cls._count.students
+        })),
+        workload: {
+          currentClasses: currentClassCount,
+          maxClasses,
+          maxHours: profile?.maxHoursPerWeek ?? null,
+          capacityStatus
+        }
+      });
+    }
+  );
+  fastify.put(
+    "/:userId",
+    { preHandler: [authenticate, requireRoles("admin")] },
+    async (request, reply) => {
+      const { userId } = request.params;
+      const body = request.body;
+      const user = await fastify.prisma.user.findUnique({
+        where: { userId },
+        select: { userId: true, roles: { select: { role: true } } }
+      });
+      if (!user) {
+        return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y ng\u01B0\u1EDDi d\xF9ng" });
+      }
+      const isTeacher = user.roles.some((r) => r.role === "teacher");
+      if (!isTeacher) {
+        return reply.status(400).send({ error: "Ng\u01B0\u1EDDi d\xF9ng n\xE0y kh\xF4ng ph\u1EA3i gi\xE1o vi\xEAn" });
+      }
+      const data = {};
+      if (body.ieltsOverall !== void 0) data.ieltsOverall = body.ieltsOverall != null ? parseFloat(body.ieltsOverall) : null;
+      if (body.ieltsL !== void 0) data.ieltsL = body.ieltsL != null ? parseFloat(body.ieltsL) : null;
+      if (body.ieltsR !== void 0) data.ieltsR = body.ieltsR != null ? parseFloat(body.ieltsR) : null;
+      if (body.ieltsW !== void 0) data.ieltsW = body.ieltsW != null ? parseFloat(body.ieltsW) : null;
+      if (body.ieltsS !== void 0) data.ieltsS = body.ieltsS != null ? parseFloat(body.ieltsS) : null;
+      if (body.ieltsTestedAt !== void 0) data.ieltsTestedAt = body.ieltsTestedAt ? new Date(body.ieltsTestedAt) : null;
+      if (body.yearsTeachingIelts !== void 0) data.yearsTeachingIelts = body.yearsTeachingIelts != null ? parseInt(body.yearsTeachingIelts) : null;
+      if (body.yearsTeachingEnglish !== void 0) data.yearsTeachingEnglish = body.yearsTeachingEnglish != null ? parseInt(body.yearsTeachingEnglish) : null;
+      if (body.certificates !== void 0) data.certificates = Array.isArray(body.certificates) ? body.certificates : [];
+      if (body.educationLevel !== void 0) data.educationLevel = body.educationLevel || null;
+      if (body.teachableLevels !== void 0) data.teachableLevels = Array.isArray(body.teachableLevels) ? body.teachableLevels : [];
+      if (body.strongSkills !== void 0) data.strongSkills = Array.isArray(body.strongSkills) ? body.strongSkills : [];
+      if (body.strengths !== void 0) data.strengths = Array.isArray(body.strengths) ? body.strengths : [];
+      if (body.developmentAreas !== void 0) data.developmentAreas = Array.isArray(body.developmentAreas) ? body.developmentAreas : [];
+      if (body.internalNotes !== void 0) data.internalNotes = body.internalNotes || null;
+      if (body.availabilitySlots !== void 0) data.availabilitySlots = Array.isArray(body.availabilitySlots) ? body.availabilitySlots : null;
+      if (body.maxClassesPerWeek !== void 0) data.maxClassesPerWeek = body.maxClassesPerWeek != null ? parseInt(body.maxClassesPerWeek) : null;
+      if (body.maxHoursPerWeek !== void 0) data.maxHoursPerWeek = body.maxHoursPerWeek != null ? parseFloat(body.maxHoursPerWeek) : null;
+      const profile = await fastify.prisma.teacherProfile.upsert({
+        where: { userId },
+        create: { userId, ...data },
+        update: data
+      });
+      return reply.send({ profile });
+    }
+  );
+};
+var teacher_profile_routes_default = teacherProfileRoutes;
+
 // server/routes/index.ts
 var routes = async (fastify) => {
   fastify.get("/health", async () => {
@@ -112041,6 +112163,7 @@ var routes = async (fastify) => {
   await fastify.register(tuitionRoutes, { prefix: "/admin/tuition" });
   await fastify.register(milestoneRoutes, { prefix: "/milestones" });
   await fastify.register(lexicon_routes_default, { prefix: "/lexicon" });
+  await fastify.register(teacher_profile_routes_default, { prefix: "/teacher-profile" });
 };
 var routes_default = routes;
 
@@ -112348,12 +112471,14 @@ async function buildApp(_opts) {
       errMessage: error.message,
       err: error
     });
+    const errorTitle = error.error || (statusCode === 429 ? "Too Many Requests" : statusCode >= 500 && isProdOrServerless ? "Internal Server Error" : clientMessage);
     return reply.status(statusCode).send({
       statusCode,
-      error: statusCode >= 500 && isProdOrServerless ? "Internal Server Error" : clientMessage,
+      error: errorTitle,
       message: clientMessage,
       errorType,
       requestId: request.id,
+      ...error.retryAfter ? { retryAfter: error.retryAfter } : {},
       ...error.issues ? { details: error.issues } : {}
     });
   });

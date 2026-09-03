@@ -73,7 +73,14 @@ export const lexiconApi = {
     });
 
     if (!res.ok) {
-      throw new Error(`Failed to save vocabulary: ${res.statusText}`);
+      let errMsg = res.statusText;
+      try {
+        const errJson = await res.json();
+        if (errJson.message) errMsg = errJson.message;
+      } catch {
+        // use statusText
+      }
+      throw new Error(errMsg || `Lỗi khi lưu từ (${res.status})`);
     }
     const data = await res.json();
     return data.data;

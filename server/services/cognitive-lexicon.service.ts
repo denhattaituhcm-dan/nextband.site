@@ -106,7 +106,7 @@ export class CognitiveLexiconService {
    */
   private async analyzeWithGemini(word: string, contextSentence?: string): Promise<CognitiveWordResult> {
     const apiKey = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
     const prompt = `You are a strict Academic Cognitive Linguist and Senior IELTS Lexicographer.
 Analyze the target English word within the given context.
@@ -131,7 +131,7 @@ Return pure JSON only conforming to:
   "cefrLevel": "C1"
 }`;
 
-    const response = await fetch(url, {
+    let response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -142,6 +142,22 @@ Return pure JSON only conforming to:
         },
       }),
     });
+
+    // Fallback sang 1.5-flash nếu 2.0 tạm thời bận
+    if (!response.ok && response.status !== 400 && response.status !== 403) {
+      const fallbackUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+      response = await fetch(fallbackUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            responseMimeType: "application/json",
+            temperature: 0.2,
+          },
+        }),
+      });
+    }
 
     if (!response.ok) {
       throw new Error(`Gemini API Error: ${response.statusText}`);
