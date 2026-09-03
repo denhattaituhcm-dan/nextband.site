@@ -2251,57 +2251,251 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 5,
     day: 3,
     skill: 'speaking',
-    title: 'The Problem-Advice Diagnostic Flow',
-    subtitle: 'Chuỗi Phản Xạ Đưa Lời Khuyên & Giải Quyết Vấn Đề',
-    coreCompetency: 'Làm chủ phản xạ đưa lời khuyên cho bạn bè (Giving Advice): Thấu cảm vấn đề -> Giải pháp thực tế -> Khích lệ kiên trì.',
+    title: 'The Problems & Advice Engine (Topic: Problems & Advice)',
+    subtitle: 'Nói Về Khó Khăn & Đưa Lời Khuyên: Từ Câu Cụt 3.0 Lên Bài Nói Mạch Lạc 4.0 - 4.5',
+    coreCompetency: 'Chuẩn hóa đầu ra khóa Dreamer (3.0 → 4.0+): Giúp học viên làm chủ cấu trúc nói về khó khăn ("I have a hard time managing/studying...", "I get easily distracted") và bộ cấu trúc đưa lời khuyên lịch sự ("I think you should...", "My advice would be to...", "If you spend 30 minutes..., you will make progress").',
     bridgeToHomework: {
-      promptText: 'Thu âm bài nói đưa lời khuyên giải quyết áp lực công việc và học tập trong Homework W5D3.',
+      promptText: 'Thu âm bài nói chia sẻ về một khó khăn bạn đang gặp và lời khuyên bạn dành cho bạn bè trong Homework W5D3.',
       targetExamId: 'exam_dreamer_w5d3'
     },
     stages: [
       {
         stageNumber: 1,
         stageType: 'progressive_reveal',
-        title: 'Bóc tách 4 tầng phản xạ đưa lời khuyên (Giving Advice)',
-        pedagogicalObjective: 'Chuyển từ câu khuyên bảo cụt lủn (You should do this) thành cấu trúc tư vấn đồng cảm và thuyết phục.',
+        title: 'Chặng 1: Đưa Lời Khuyên Cho Khang Về Quản Lý Công Việc (Giving Advice to Khang)',
+        pedagogicalObjective: 'Bám sát đối thoại Hân & Khang: Thấu hiểu vấn đề mất tập trung -> Khuyên dùng Google Calendar -> Khuyên tắt điện thoại và đóng tab không cần thiết.',
         interactionModel: {
           type: 'progressive_reveal',
-          prompt: 'Click mở từng tầng để làm chủ cấu trúc đưa lời khuyên giải quyết áp lực học tập/công việc:',
+          prompt: 'Click mở từng bước để học cách nói về khó khăn và đưa lời khuyên:',
           cards: [
             {
               step: 1,
-              label: 'EMPATHY & SITUATION ACKNOWLEDGEMENT',
-              cognitiveFunction: 'Bày tỏ sự đồng cảm với vấn đề của đối phương',
-              content: 'I completely understand how overwhelming it feels when you are struggling with heavy workloads.',
-              pedagogyNote: 'Dùng cụm "I completely understand how overwhelming it feels when..." để tạo cảm giác thấu cảm trước khi khuyên.'
+              label: 'BƯỚC 1: NÊU KHÓ KHĂN CÔNG VIỆC (HAVE A HARD TIME)',
+              cognitiveFunction: '1. Khang gặp khó khăn gì trong công việc?',
+              content: "I'm having a hard time managing my workload because I get easily distracted.",
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Mẫu câu đắt giá của Khang: "have a hard time + V-ing" và "get easily distracted" (dễ bị xao nhãng).',
+              flipCard: {
+                frontText: 'Work is hard and I cannot focus. (Tiếng bồi)',
+                backText: "I'm having a hard time managing my workload because I get easily distracted. (Chuẩn giáo trình)",
+                explanation: 'Dùng cấu trúc trọng tâm của bài: "have a hard time managing..." thay vì nói "work is hard".'
+              },
+              vowelHighlight: [
+                { word: 'dreamed', phonetic: '/driːmd/', vowelSound: '/dr/ cụm phụ âm' },
+                { word: 'bread', phonetic: '/bred/', vowelSound: '/br/ cụm phụ âm' }
+              ]
             },
             {
               step: 2,
-              label: 'CONCRETE IMMEDIATE ACTION',
-              cognitiveFunction: 'Hành động can thiệp tức thời',
-              content: 'In my opinion, you should start using a digital planner to set clear daily goals and eliminate distractions.',
-              pedagogyNote: 'Khuyên giải pháp cụ thể: "start using a planner... to set clear goals".'
+              label: 'BƯỚC 2: LỜI KHUYÊN DÙNG LỊCH (I THINK YOU SHOULD...)',
+              cognitiveFunction: '2. Lời khuyên thứ nhất của bạn Hân là gì?',
+              content: 'I think you should start using a planner on Google Calendar and set clear goals.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Cấu trúc khuyên bảo thông dụng: "I think you should + V nguyên mẫu" (set clear goals).',
+              flipCard: {
+                frontText: 'You must use calendar. (Nghe gắt gỏng)',
+                backText: 'I think you should start using a planner on Google Calendar. (Lịch sự, tự nhiên)',
+                explanation: 'Thêm "I think you should..." giúp lời khuyên trở nên lịch sự và mang tính xây dựng.'
+              }
             },
             {
               step: 3,
-              label: 'ALTERNATIVE STRATEGY / HABIT SHIFT',
-              cognitiveFunction: 'Chiến lược phụ trợ hoặc phương án linh hoạt',
-              content: 'Additionally, turning off unnecessary phone notifications during study hours can double your focus.',
-              pedagogyNote: 'Đưa ra thêm một giải pháp hỗ trợ thiết thực.',
+              label: 'BƯỚC 3: GIẢM XAO NHÃNG (LIMIT DISTRACTIONS BY...)',
+              cognitiveFunction: '3. Bạn khuyên Khang làm gì để không bị phân tâm khi làm việc?',
+              content: 'You should also try to limit distractions by turning off your phone while working.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Luyện cụm từ trong bài: "limit distractions by turning off phone while working".',
+              flipCard: {
+                frontText: 'Turn off phone when work. (Cụt ý)',
+                backText: 'You should try to limit distractions by turning off your phone while working.',
+                explanation: 'Cấu trúc "limit distractions by + V-ing" (hạn chế xao nhãng bằng cách làm gì) rất chuẩn xác.'
+              },
               branchOptions: [
-                { branchName: 'TIME MANAGEMENT', content: 'Additionally, breaking large projects into 25-minute Pomodoro sessions will keep you sharp.', note: 'Nhánh kỹ thuật quản lý thời gian Pomodoro.' },
-                { branchName: 'MINDSET & REST', content: 'Additionally, spending at least 15 minutes meditating or walking helps reset your mental energy.', note: 'Nhánh nghỉ ngơi và nạp lại năng lượng.' }
+                {
+                  branchName: 'TẮT ĐIỆN THOẠI & ĐÓNG TAB (LỜI HÂN KHUYÊN KHANG)',
+                  content: 'You should also try to limit distractions by turning off your phone and closing unnecessary tabs.',
+                  note: 'Lời khuyên nguyên văn của Hân trong bài đọc.'
+                },
+                {
+                  branchName: 'CHIA NHỎ CÔNG VIỆC (GỢI Ý BÀI TẬP 3.2)',
+                  content: 'You should also break large tasks into smaller steps so that you do not feel overwhelmed.',
+                  note: 'Trích từ cụm từ vựng: "break tasks into smaller steps".'
+                }
               ]
             },
             {
               step: 4,
-              label: 'ENCOURAGEMENT & LONG-TERM OUTLOOK',
-              cognitiveFunction: 'Lời động viên và niềm tin tiến bộ',
-              content: 'Building new habits takes time, but if you stay persistent, you will definitely get back on track.',
-              pedagogyNote: 'Khép lại bằng lời khích lệ tích cực: "takes time, but if you stay persistent, you will get back on track".'
+              label: 'BƯỚC 4: LỜI KHUYÊN HỌC TIẾNG ANH (SPEND 30 MINUTES)',
+              cognitiveFunction: '4. Khang khuyên lại Hân điều gì để học tiếng Anh tiến bộ?',
+              content: 'If you spend at least 30 minutes practicing every day, you will definitely make progress.',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Lời động viên tuyệt vời của Khang: Dùng câu điều kiện If loại 1 với cụm "make progress" (tiến bộ).',
+              flipCard: {
+                frontText: 'Practice English and you good. (Tiếng bồi)',
+                backText: 'If you spend 30 minutes practicing every day, you will definitely make progress.',
+                explanation: 'Collocation chuẩn: "make progress" (tiến bộ) đi cùng câu điều kiện đơn giản.'
+              }
             }
           ],
-          fullMosaicSummary: 'I completely understand how overwhelming it feels when struggling with workloads. In my opinion, you should start using a digital planner to set clear goals. Additionally, turning off notifications during study hours can double your focus. Building habits takes time, but if you stay persistent, you will definitely get back on track.'
+          fullMosaicSummary: "I'm having a hard time managing my workload because I get easily distracted. I think you should start using a planner on Google Calendar and set clear goals. You should also try to limit distractions by turning off your phone while working. If you spend at least 30 minutes practicing every day, you will definitely make progress."
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 2: Xử Lý Tiếng Ồn Hàng Xóm Hát Karaoke (Dealing with Loud Neighbors)',
+        pedagogicalObjective: 'Làm chủ bài tập tình huống thực tế 3.1: Miêu tả việc bị mất tập trung do hàng xóm hát karaoke to -> Đưa ra lời khuyên góp ý lịch sự.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click mở từng bước để học cách nói về vấn đề tiếng ồn hàng xóm và cách xử lý:',
+          cards: [
+            {
+              step: 1,
+              label: 'BƯỚC 1: MIÊU TẢ RẮC RỐI TIẾNG ỒN',
+              cognitiveFunction: '1. Bạn đang gặp phiền toái gì tại nơi mình ở?',
+              content: 'I have a hard time focusing on studying because my neighbors usually sing karaoke loudly on weekends.',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Nguyên văn câu ví dụ bài tập 3.1: hàng xóm hát karaoke ồn ào vào cuối tuần.',
+              flipCard: {
+                frontText: 'Neighbor sing karaoke very loud, I cannot study. (Tiếng bồi)',
+                backText: 'I have a hard time focusing because my neighbors sing karaoke loudly. (Chuẩn mẫu câu)',
+                explanation: 'Dùng cấu trúc "have a hard time focusing" (gặp khó khăn khi tập trung).'
+              },
+              vowelHighlight: [
+                { word: 'slices', phonetic: '/slaɪsɪz/', vowelSound: '/sl/ cụm phụ âm' },
+                { word: 'distracted', phonetic: '/dɪˈstræk.tɪd/', vowelSound: '/str/ cụm 3 phụ âm' }
+              ]
+            },
+            {
+              step: 2,
+              label: 'BƯỚC 2: TÁC ĐỘNG TIÊU CỰC (DISTRACT ME A LOT)',
+              cognitiveFunction: '2. Tiếng ồn đó làm phiền bạn như thế nào?',
+              content: 'This distracts me a lot and makes it difficult for me to relax after a tiring week.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Luyện từ vựng: "distracts me a lot" (làm tôi xao nhãng rất nhiều) và "makes it difficult to relax".',
+              flipCard: {
+                frontText: 'It make me angry and no relax. (Nói thô)',
+                backText: 'This distracts me a lot and makes it difficult for me to relax. (Tự nhiên)',
+                explanation: 'Động từ "distract" (làm phân tâm) là từ vựng đắc địa bám sát bài học.'
+              }
+            },
+            {
+              step: 3,
+              label: 'BƯỚC 3: LỜI KHUYÊN GÓP Ý LỊCH SỰ (COMPLAIN POLITELY)',
+              cognitiveFunction: '3. Bạn bè khuyên bạn nên xử lý việc này như thế nào?',
+              content: 'Well, my advice would be to talk to them and complain in a very polite way.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Mẫu câu đưa lời khuyên cao cấp hơn một chút: "My advice would be to + V" (complain in a polite way).',
+              flipCard: {
+                frontText: 'You shout at them. (Tiêu cực)',
+                backText: 'My advice would be to talk to them and complain in a polite way. (Văn minh)',
+                explanation: 'Dùng cụm mẫu: "My advice would be to..." và "complain in a polite way" (góp ý lịch sự).'
+              },
+              branchOptions: [
+                {
+                  branchName: 'GÓP Ý LỊCH SỰ (VÍ DỤ BÀI HỌC)',
+                  content: 'Well, my advice would be to talk to them and complain in a very polite way.',
+                  note: 'Cách xử lý hòa nhã bám sát Coursebook.'
+                },
+                {
+                  branchName: 'ĐEO TAI NGHE CHỐNG ỒN (GIẢI PHÁP THỰC TẾ)',
+                  content: 'Well, you can wear noise-canceling headphones or go to a quiet library to study.',
+                  note: 'Giải pháp tự thích nghi đơn giản, hiệu quả.'
+                }
+              ]
+            },
+            {
+              step: 4,
+              label: 'BƯỚC 4: PHƯƠNG ÁN CUỐI CÙNG (IN THE WORST CASE)',
+              cognitiveFunction: '4. Nếu họ vẫn không hợp tác thì giải pháp cuối cùng là gì?',
+              content: 'In the worst case, if the noise continues, you might consider moving to a quieter area.',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Trích từ câu ví dụ trong sách: "Or in the worst case, I think you should move...".',
+              flipCard: {
+                frontText: 'If not, you move house. (Cộc lốc)',
+                backText: 'In the worst case, you might consider moving to a quieter area. (Mềm mỏng)',
+                explanation: 'Cụm "in the worst case" (trong trường hợp xấu nhất) giúp câu nói logic và đa chiều.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'I have a hard time focusing on studying because my neighbors usually sing karaoke loudly on weekends. This distracts me a lot and makes it difficult for me to relax. Well, my advice would be to talk to them and complain in a very polite way, or in the worst case, consider moving to a quieter place.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 3: Tự Đánh Giá Bản Thân & Đặt Mục Tiêu (Self-Reflection - Bài tập 3.2)',
+        pedagogicalObjective: 'Làm chủ bài tập 3.2: Tự nhìn nhận điểm cần cải thiện trong học tập/công việc -> Lập kế hoạch hành động cụ thể bằng cách chia nhỏ mục tiêu.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click mở từng bước để học cách nói tự phản tỉnh và đặt mục tiêu thay đổi bản thân:',
+          cards: [
+            {
+              step: 1,
+              label: 'BƯỚC 1: NHẬN DIỆN MẶT CẦN CẢI THIỆN',
+              cognitiveFunction: '1. Bạn thấy khía cạnh nào trong cuộc sống mình cần cải thiện nhất?',
+              content: 'Reflecting on my daily routine, I think I need to improve my time management skills.',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Bám sát gợi ý bài tập 3.2: "I think I should do something by..." cho chủ đề công việc/học tập.',
+              flipCard: {
+                frontText: 'I am not good at time. (Tiếng bồi)',
+                backText: 'I think I need to improve my time management skills. (Chuẩn tự nhiên)',
+                explanation: 'Dùng cụm từ "time management skills" (kỹ năng quản lý thời gian) đúng ngữ cảnh.'
+              }
+            },
+            {
+              step: 2,
+              label: 'BƯỚC 2: PHƯƠNG PHÁP CỤ THỂ (SET GOALS & SCHEDULE)',
+              cognitiveFunction: '2. Bạn sẽ cải thiện việc đó bằng những bước nào?',
+              content: 'I think I should do this by setting clear goals and creating a daily study schedule.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Áp dụng bộ từ vựng gợi ý của bài tập 3.2: "set goals" và "create a schedule".',
+              flipCard: {
+                frontText: 'I make a timetable. (Đơn sơ)',
+                backText: 'I should do this by setting goals and creating a daily study schedule. (Chuẩn bài tập)',
+                explanation: 'Cấu trúc "do something by + V-ing" kết hợp với các collocation trong sách.'
+              }
+            },
+            {
+              step: 3,
+              label: 'BƯỚC 3: CHIA NHỎ NHIỆM VỤ (BREAK TASKS INTO SMALLER STEPS)',
+              cognitiveFunction: '3. Bí quyết để không bị ngợp trước các bài tập lớn là gì?',
+              content: 'Also, breaking big projects into smaller steps will help me finish them without feeling stressed.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Bám sát cụm từ vựng đắt giá của giáo trình: "break tasks into smaller steps".',
+              flipCard: {
+                frontText: 'Do small work first. (Tiếng bồi)',
+                backText: 'Breaking big tasks into smaller steps helps me finish them without stress. (Rất tự nhiên)',
+                explanation: 'Cụm từ "break tasks into smaller steps" là kỹ năng quản lý công việc chuẩn quốc tế.'
+              },
+              branchOptions: [
+                {
+                  branchName: 'QUẢN LÝ THỜI GIAN & CHIA NHỎ BÀI HỌC',
+                  content: 'Also, breaking big projects into smaller steps will help me finish them without feeling stressed.',
+                  note: 'Phương pháp quản lý học tập gợi ý trong bài.'
+                },
+                {
+                  branchName: 'SẮP XẾP LẠI GÓC HỌC TẬP (REARRANGE FURNITURE)',
+                  content: 'Also, I would like to redecorate and rearrange my room to create a more inspiring study space.',
+                  note: 'Trích từ từ vựng khía cạnh nhà ở: "redecorate, rearrange furniture".'
+                }
+              ]
+            },
+            {
+              step: 4,
+              label: 'BƯỚC 4: KỲ VỌNG THAY ĐỔI (BECOME MORE PRODUCTIVE)',
+              cognitiveFunction: '4. Kết quả mong đợi sau khi áp dụng những thay đổi này là gì?',
+              content: 'If I can stay persistent with this routine, I will definitely become much more productive.',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Khép lại bằng từ vựng của bài: "stay persistent" (kiên trì) và "become more productive" (làm việc năng suất hơn).',
+              flipCard: {
+                frontText: 'Then I work very fast and good. (Diễn đạt thô)',
+                backText: 'If I stay persistent, I will definitely become much more productive. (Nâng tầm +0.5)',
+                explanation: 'Học từ vựng nâng cao nhẹ nhàng "productive" (năng suất) rất phù hợp đầu ra 4.0 - 4.5.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'Reflecting on my daily routine, I think I need to improve my time management skills. I think I should do this by setting clear goals and creating a daily study schedule. Also, breaking big tasks into smaller steps will help me avoid stress, and if I stay persistent, I will definitely become much more productive.'
         }
       }
     ]
