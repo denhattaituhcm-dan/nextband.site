@@ -45,24 +45,27 @@ export default function VRSSlotSnapInteractive({ model }: Props) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-muted-foreground">
-          {model.prompt}
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+        <div className="flex items-center gap-2.5">
+          <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+          <p className="text-sm font-semibold text-slate-800">
+            {model.prompt}
+          </p>
+        </div>
         {!isBreakMode && (
           <button
             onClick={() => setIsScanned(!isScanned)}
-            className="text-xs px-3 py-1.5 rounded-md bg-primary text-primary-foreground font-semibold"
+            className="text-xs px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-xs hover:shadow-md transition-all shrink-0 cursor-pointer"
           >
-            {isScanned ? 'Thu gọn' : 'Quét giải phẩu' + ' ✨'}
+            {isScanned ? 'Thu Gọn Phân Tích' : '✦ Quét Giải Phẫu Cú Pháp'}
           </button>
         )}
       </div>
 
       {/* Syntax Blocks Canvas - Tactile Academic Surface */}
-      <div className="py-8 px-6 sm:px-10 rounded-2xl bg-slate-50/70 border border-slate-200/80 shadow-[inset_0_1px_3px_rgba(15,23,42,0.03)] flex flex-wrap items-center justify-center gap-3.5 min-h-[140px] relative">
-        <div className="absolute top-2.5 left-3.5 text-[10px] font-mono tracking-widest uppercase text-slate-400 font-semibold select-none">
-          SYNTAX COMPONENT WORKBENCH
+      <div className="py-10 px-6 sm:px-10 rounded-2xl bg-slate-50/50 border border-slate-200 flex flex-wrap items-center justify-center gap-4 min-h-[150px] relative">
+        <div className="absolute top-3 left-4 text-[10px] font-mono tracking-widest uppercase text-slate-400 font-bold select-none">
+          KHÔNG GIAN LẮP GHÉP CÚ PHÁP
         </div>
 
         {model.tokens.map((token) => {
@@ -72,12 +75,12 @@ export default function VRSSlotSnapInteractive({ model }: Props) {
           const displayText = (repairedText && isTargetRepair) ? repairedText : token.text;
 
           // Tactile Elevation & State Styling
-          let tokenStyles = 'bg-white border-slate-200 text-slate-800 shadow-[0_2px_4px_rgba(15,23,42,0.06),0_1px_2px_rgba(15,23,42,0.04)] hover:shadow-[0_6px_16px_rgba(15,23,42,0.08)] hover:-translate-y-0.5 active:translate-y-0 active:shadow-xs border';
+          let tokenStyles = 'bg-white border-slate-300/90 text-slate-800 shadow-[0_3px_8px_rgba(15,23,42,0.06)] hover:border-indigo-400 hover:shadow-[0_8px_20px_rgba(79,70,229,0.12)] hover:-translate-y-1 active:translate-y-0 border';
           
           if (isConflict) {
-            tokenStyles = 'bg-rose-50 border-rose-300 text-rose-900 shadow-[0_0_0_2px_rgba(244,63,94,0.2),0_4px_12px_rgba(244,63,94,0.15)] animate-pulse -translate-y-0.5 border';
+            tokenStyles = 'bg-rose-50 border-rose-400 text-rose-900 shadow-[0_0_0_3px_rgba(244,63,94,0.25),0_6px_16px_rgba(244,63,94,0.18)] animate-pulse -translate-y-1 border';
           } else if (isSelected) {
-            tokenStyles = 'bg-indigo-600 border-indigo-700 text-white shadow-[0_6px_20px_rgba(79,70,229,0.35)] -translate-y-1 font-semibold border';
+            tokenStyles = 'bg-indigo-600 border-indigo-700 text-white shadow-[0_8px_24px_rgba(79,70,229,0.4)] -translate-y-1.5 font-bold border';
           }
 
           return (
@@ -85,12 +88,12 @@ export default function VRSSlotSnapInteractive({ model }: Props) {
               key={token.id}
               type="button"
               onClick={() => toggleToken(token.id)}
-              className={`transition-all duration-200 px-5 py-3 rounded-xl flex flex-col items-center min-w-[110px] select-none cursor-pointer focus:outline-hidden ${tokenStyles}`}
+              className={`transition-all duration-200 px-6 py-3.5 rounded-2xl flex flex-col items-center min-w-[120px] select-none cursor-pointer focus:outline-hidden ${tokenStyles}`}
             >
               <span className="text-base tracking-tight">{displayText}</span>
               {!isBreakMode && isScanned && (
-                <span className={`text-[10px] font-mono font-bold uppercase tracking-wider mt-1 px-1.5 py-0.5 rounded ${
-                  isSelected ? 'bg-indigo-700/80 text-indigo-100' : 'bg-slate-100 text-slate-500'
+                <span className={`text-[10px] font-mono font-bold uppercase tracking-wider mt-1.5 px-2 py-0.5 rounded-md ${
+                  isSelected ? 'bg-indigo-700 text-indigo-100' : 'bg-slate-100 text-indigo-800 border border-slate-200'
                 }`}>
                   {token.role.replace('_', ' ')}
                 </span>

@@ -533,62 +533,96 @@ export default function VisualReconstructionPage() {
           /* LABWORK FOCUS CANVAS: ARIS DIGITAL COURSEBOOK (Academic Spatial UI)      */
           /* ========================================================================= */
           <div className="max-w-4xl mx-auto py-4 px-2 sm:px-6">
-            {/* Editorial Coursebook Header */}
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between pb-8 mb-12 border-b border-slate-200/80 gap-6">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-indigo-700 bg-indigo-50 border border-indigo-100 px-2.5 py-0.5 rounded-md">
-                    COURSEBOOK · {activeLesson.skill} · DAY {activeLesson.day}
+            {/* 1. EDITORIAL HERO CARD - CẤP ĐỘ 1: TỔNG QUAN BÀI HỌC */}
+            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-[0_10px_30px_-10px_rgba(15,23,42,0.06)] mb-10 relative overflow-hidden">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-100">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-lg bg-indigo-600 text-white shadow-xs">
+                    {activeLesson.skill.toUpperCase()} · BUỔI {activeLesson.day}
                   </span>
-                  <span className="text-slate-400">·</span>
-                  <span className="text-xs font-mono font-medium text-slate-500">
-                    WEEK 0{activeLesson.week}
+                  <span className="text-xs font-mono font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">
+                    TUẦN 0{activeLesson.week}
+                  </span>
+                  <span className="text-xs font-mono font-bold text-indigo-700 bg-indigo-50 border border-indigo-200/60 px-2.5 py-1 rounded-lg">
+                    {activeLesson.stages.length} CHẶNG THỰC HÀNH
                   </span>
                 </div>
-                <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-                  {activeLesson.title}
-                </h2>
-                <p className="text-base text-slate-600 mt-1 font-normal leading-relaxed">
-                  {activeLesson.subtitle}
-                </p>
+
+                <button
+                  onClick={() => setActiveLesson(null)}
+                  className="inline-flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-xl border border-slate-200 bg-slate-50 hover:bg-white text-slate-700 hover:text-indigo-700 hover:border-indigo-300 transition-all shadow-xs self-start sm:self-auto cursor-pointer"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  Về Bản Đồ Tuần
+                </button>
               </div>
 
-              <button
-                onClick={() => setActiveLesson(null)}
-                className="inline-flex items-center gap-2 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-all shadow-xs hover:shadow-sm self-start sm:self-auto shrink-0 cursor-pointer"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                Về Bản Đồ Tuần
-              </button>
+              <div className="pt-5">
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                  {activeLesson.title}
+                </h2>
+                <p className="text-sm font-medium text-indigo-900/80 mt-1.5 flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-indigo-600 shrink-0" />
+                  {activeLesson.subtitle}
+                </p>
+                <div className="mt-4 p-4 rounded-2xl bg-slate-50/90 border border-slate-200/70 flex items-start gap-3">
+                  <BookOpen className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
+                  <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                    <span className="font-bold text-slate-800">Mục tiêu nhận thức: </span>
+                    {activeLesson.coreCompetency}
+                  </p>
+                </div>
+              </div>
             </div>
 
-            {/* Stages / Cognitive Engines: Phân cấp Editorial (Bỏ bớt container lồng hộp) */}
-            <div className="space-y-16">
-              {activeLesson.stages.map((stage) => {
+            {/* 2. CHUỖI CHẶNG THỰC HÀNH - CẤP ĐỘ 2 & 3: TỪNG STAGE ĐƯỢC PHÂN TẦNG RÕ RỆT */}
+            <div className="space-y-8">
+              {activeLesson.stages.map((stage, sIdx) => {
                 const isTransfer = stage.interactionModel.type === 'transfer_test';
+                const isBuild = (stage.interactionModel as any).mode === 'build';
+                const isBreak = (stage.interactionModel as any).mode === 'break_and_repair';
 
                 return (
-                  <section key={stage.stageNumber} className="relative">
-                    {/* Editorial Landmark Number */}
-                    <div className="flex items-baseline gap-4 mb-4">
-                      <span className="text-3xl sm:text-4xl font-mono font-extrabold text-slate-300 select-none">
-                        0{stage.stageNumber}
-                      </span>
-                      <div>
-                        <div className="text-[10px] font-mono uppercase tracking-widest text-indigo-600 font-bold">
-                          {isTransfer ? 'TRANSFER CHALLENGE' : 'COGNITIVE STAGE'}
+                  <section 
+                    key={stage.stageNumber} 
+                    className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-[0_6px_24px_-6px_rgba(15,23,42,0.05)] hover:shadow-[0_12px_32px_-8px_rgba(15,23,42,0.08)] transition-all duration-300 relative"
+                  >
+                    {/* Stage Header Band: Phân cấp thị giác rõ ràng với Landmark Badge */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 mb-6 border-b border-slate-100">
+                      <div className="flex items-center gap-3.5">
+                        <span className="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-700 font-mono font-black text-lg flex items-center justify-center shrink-0 shadow-xs">
+                          0{stage.stageNumber}
+                        </span>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">
+                              CHẶNG {stage.stageNumber} / {activeLesson.stages.length}
+                            </span>
+                            <span className={`text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
+                              isBuild
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
+                                : isBreak
+                                ? 'bg-rose-50 text-rose-700 border border-rose-200/60'
+                                : 'bg-indigo-50 text-indigo-700 border border-indigo-200/60'
+                            }`}>
+                              {isBuild ? '✦ LẮP RÁP KIẾN TẠO' : isBreak ? '💥 PHẪU THUẬT ĐIỂM GÃY' : '⚖ XÁC MINH LOGIC'}
+                            </span>
+                          </div>
+                          <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight mt-1">
+                            {stage.title}
+                          </h3>
                         </div>
-                        <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mt-0.5">
-                          {stage.title}
-                        </h3>
-                        <p className="text-sm text-slate-500 mt-1 leading-relaxed">
-                          {stage.pedagogicalObjective}
-                        </p>
                       </div>
                     </div>
 
-                    {/* Interactive Component Mount (Không đóng hộp thô kệch) */}
-                    <div className="mt-6 pt-2">
+                    {/* Pedagogical Purpose Callout (Thanh giải thích mục đích chặng) */}
+                    <div className="mb-6 py-3 px-4 rounded-xl bg-slate-50 border-l-3 border-indigo-500 text-xs text-slate-600 leading-relaxed">
+                      <span className="font-bold text-slate-800">Mục đích bài tập: </span>
+                      {stage.pedagogicalObjective}
+                    </div>
+
+                    {/* Interactive Component Surface */}
+                    <div className="pt-1">
                       {stage.interactionModel.type === 'slot_snap' && (
                         <VRSSlotSnapInteractive model={stage.interactionModel as any} />
                       )}
