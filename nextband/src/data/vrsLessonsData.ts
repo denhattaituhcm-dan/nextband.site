@@ -3751,8 +3751,8 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     day: 1,
     skill: 'writing',
     title: 'The Focus Inversion Passive Engine',
-    subtitle: 'Đảo Trục Trọng Tâm & Quy Luật Bị Động Khách Quan',
-    coreCompetency: 'Nắm vững bản chất Passive Voice là dời tâm điểm chú ý từ "Tác nhân" sang "Đối tượng chịu tác động". Nhận diện cấu trúc Be + V3/ed và cách xử lý động từ 2 tân ngữ (give sb sth -> sb was given sth).',
+    subtitle: 'Thể Bị Động: Lắp Ráp Cú Pháp & Phẫu Thuật Điểm Gãy',
+    coreCompetency: 'Nắm vững bản chất Passive Voice là dời tâm điểm chú ý từ "Tác nhân" sang "Đối tượng chịu tác động" đúng theo giáo trình W8D1. Làm chủ công thức Be + V3/ed cho các thì khác nhau và chấm dứt lỗi kinh điển Band 3.0: Biến động từ sang V3 nhưng quên mất trợ động từ "to be".',
     bridgeToHomework: {
       promptText: 'Thực hành chuyển đổi câu chủ động sang bị động trong Homework W8D1.',
       targetExamId: 'exam_dreamer_w8d1'
@@ -3760,9 +3760,26 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     stages: [
       {
         stageNumber: 1,
+        stageType: 'syntax_anatomy',
+        title: 'Chặng 1: Kiến Tạo Câu Bị Động Hoàn Chỉnh (The Task Will Be Completed Before 8 PM)',
+        pedagogicalObjective: 'Bám sát ví dụ giáo trình W8D1 mục 2 câu 1: Lắp ráp câu bị động thì tương lai "S + will be + V3/ed + by agent + time".',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Bấm quét giải phẫu để lắp ráp trọn vẹn câu bị động với đầy đủ trợ động từ BE và V3/ed:',
+          mode: 'build',
+          tokens: [
+            { id: 't1', text: 'The urgent task', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'will be completed', role: 'fv_core', colorClass: 'orange' },
+            { id: 't3', text: 'by our dedicated team', role: 'modifier', colorClass: 'blue' },
+            { id: 't4', text: 'before 8 PM tonight', role: 'scope_condition', colorClass: 'purple' }
+          ]
+        }
+      },
+      {
+        stageNumber: 2,
         stageType: 'productive_failure',
-        title: 'Break (Phát hiện sụp đổ cấu trúc bị động thiếu "Be")',
-        pedagogicalObjective: 'Đối diện lỗi kinh điển Band 3.0: Biến động từ thành V3/ed nhưng quên mất trợ động từ "to be".',
+        title: 'Chặng 2: Phẫu Thuật Mâu Thuẫn Rơi Mất Trợ Động Từ "Be" (500,000 Workers Recruited)',
+        pedagogicalObjective: 'Đối diện lỗi kinh điển Band 3.0: Nhầm lẫn câu bị động với thì quá khứ đơn chủ động, quên mất trợ động từ "were".',
         interactionModel: {
           type: 'slot_snap',
           prompt: 'Click vào điểm thiếu hụt cấu trúc khiến câu bị động dưới đây bị sụp đổ:',
@@ -3775,7 +3792,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
           ],
           collisionTarget: {
             conflictingTokenIds: ['t1', 't2'],
-            errorMessage: 'Sụp đổ thể bị động: 500.000 công nhân không tự đi tuyển dụng ("recruited") mà là "được tuyển dụng". Câu bị động bắt buộc phải có trợ động từ "to be" đi trước quá khứ phân từ V3!',
+            errorMessage: 'Sụp đổ thể bị động: 500.000 công nhân không tự đi tuyển dụng ("recruited") mà là "được tuyển dụng". Câu bị động bắt buộc phải có trợ động từ "to be" đi kèm quá khứ phân từ V3!',
             repairOptions: [
               {
                 id: 'opt1',
