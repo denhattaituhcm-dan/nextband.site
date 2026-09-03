@@ -91,16 +91,11 @@ export default function VisualReconstructionPage() {
             {/* TẦNG 1: WHERE AM I? (Academic Curriculum Timeline Rail - 3 Cols on LG) */}
             <aside className="lg:col-span-3 bg-white/80 backdrop-blur-xs border border-slate-200/80 rounded-2xl p-5 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.04)]">
               <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-100">
-                <div>
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-400">
-                    CURRICULUM INDEX
-                  </span>
-                  <h3 className="text-sm font-bold text-slate-900 mt-0.5">
-                    Lộ Trình Tái Dựng
-                  </h3>
-                </div>
-                <span className="text-[11px] font-mono font-bold text-indigo-700 bg-indigo-50/80 border border-indigo-100/80 px-2.5 py-0.5 rounded-md">
-                  9 WEEKS
+                <h3 className="text-sm font-bold text-slate-900">
+                  Lộ Trình Tái Dựng
+                </h3>
+                <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
+                  9 Tuần
                 </span>
               </div>
 
@@ -179,25 +174,15 @@ export default function VisualReconstructionPage() {
 
             {/* MAIN CONTENT AREA: TẦNG 2, 3, 4 (9 Cols on LG) */}
             <main className="lg:col-span-9 space-y-8">
-              {/* TẦNG 2: WHAT AM I LEARNING? (Academic Spatial Hero Monograph - Light Theme) */}
-              <section className="bg-gradient-to-br from-white via-indigo-50/40 to-blue-50/60 text-slate-900 rounded-3xl p-8 sm:p-10 shadow-[0_10px_30px_-10px_rgba(79,70,229,0.08)] relative overflow-hidden border border-indigo-100/90">
+              {/* TẦNG 2: WHAT AM I LEARNING? (Academic Spatial Hero Monograph - Clean Light Theme) */}
+              <section className="bg-gradient-to-br from-white via-indigo-50/30 to-blue-50/50 text-slate-900 rounded-3xl p-8 sm:p-9 shadow-[0_10px_30px_-10px_rgba(79,70,229,0.08)] relative overflow-hidden border border-indigo-100/90">
                 {/* Subtle Spatial Watermark Number */}
                 <div className="absolute -right-4 -bottom-8 select-none pointer-events-none font-mono font-black text-9xl text-indigo-950/[0.04] tracking-tighter">
                   0{currentWeekMeta.week}
                 </div>
 
                 <div className="relative z-10 max-w-2xl">
-                  <div className="flex flex-wrap items-center gap-2.5 mb-3">
-                    <span className="text-[11px] font-mono font-bold uppercase tracking-widest px-2.5 py-1 rounded-md bg-indigo-100/80 text-indigo-800 border border-indigo-200">
-                      TRỌNG TÂM TUẦN 0{currentWeekMeta.week}
-                    </span>
-                    <span className="text-slate-300">/</span>
-                    <span className="text-xs font-mono font-semibold tracking-wider text-slate-600">
-                      MỤC TIÊU ĐẦU RA 4.0 · COGNITIVE RECONSTRUCTION
-                    </span>
-                  </div>
-
-                  <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-2.5">
+                  <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-2">
                     {currentWeekMeta.title}
                   </h2>
                   <p className="text-sm text-slate-600 leading-relaxed font-normal">
@@ -209,14 +194,9 @@ export default function VisualReconstructionPage() {
               {/* TẦNG 3 & 4: 3 TACTILE COGNITIVE MODULES (WRITING - READING - SPEAKING) */}
               <div>
                 <div className="flex items-center justify-between mb-4 px-1">
-                  <div>
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400 font-bold">
-                      TRIAD COGNITIVE WORKBENCHES
-                    </span>
-                    <h3 className="text-base font-bold text-slate-900">
-                      3 Khối Thử Thách Nhận Thức Trong Tuần
-                    </h3>
-                  </div>
+                  <h3 className="text-base font-bold text-slate-900">
+                    3 Khối Bài Học Trong Tuần
+                  </h3>
                   <span className="text-xs text-slate-500 font-medium">
                     Nhấp chọn cơ chế để thực hành sâu
                   </span>
@@ -240,13 +220,13 @@ export default function VisualReconstructionPage() {
                         <div>
                           {/* Header Folio */}
                           <div className="flex items-center justify-between mb-3.5">
-                            <span className="text-[11px] font-mono font-bold tracking-wider uppercase text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100 flex items-center gap-1.5">
+                            <span className="text-[11px] font-mono font-bold tracking-wider uppercase text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100 flex items-center gap-1.5">
                               <Cpu className="w-3.5 h-3.5" />
-                              WRITING · DAY 1
+                              VIẾT · BUỔI 1
                             </span>
                             {isWritingDone ? (
                               <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-xs animate-pulse">
-                                <Sparkles className="w-3 h-3 text-emerald-600" /> MASTERED
+                                <Sparkles className="w-3 h-3 text-emerald-600" /> ĐÃ HOÀN THÀNH
                               </span>
                             ) : (
                               <span className="text-xs font-mono font-semibold text-slate-400">01/03</span>
@@ -266,7 +246,7 @@ export default function VisualReconstructionPage() {
                           }`}>
                             <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 mb-2.5 flex items-center gap-1">
                               <Layers className="w-3 h-3 text-indigo-600" />
-                              Sentence Slot Engine
+                              Mô Hình Cú Pháp Câu
                             </div>
                             {/* Tactile Connectors */}
                             <div className="flex items-center justify-center gap-1.5 font-mono text-xs font-bold py-2.5 bg-white rounded-xl border border-slate-200 shadow-xs text-slate-700">
@@ -351,13 +331,13 @@ export default function VisualReconstructionPage() {
                         <div>
                           {/* Header Folio */}
                           <div className="flex items-center justify-between mb-3.5">
-                            <span className="text-[11px] font-mono font-bold tracking-wider uppercase text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-100 flex items-center gap-1.5">
+                            <span className="text-[11px] font-mono font-bold tracking-wider uppercase text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200 flex items-center gap-1.5">
                               <Scale className="w-3.5 h-3.5" />
-                              READING · DAY 2
+                              ĐỌC · BUỔI 2
                             </span>
                             {isReadingDone ? (
                               <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 shadow-xs">
-                                <Sparkles className="w-3 h-3 text-amber-600" /> MASTERED
+                                <Sparkles className="w-3 h-3 text-amber-600" /> ĐÃ HOÀN THÀNH
                               </span>
                             ) : (
                               <span className="text-xs font-mono font-semibold text-slate-400">02/03</span>
@@ -377,13 +357,13 @@ export default function VisualReconstructionPage() {
                           }`}>
                             <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 mb-2.5 flex items-center gap-1">
                               <Scale className="w-3 h-3 text-amber-600" />
-                              Logic Verification Scale
+                              Bàn Cân Đối Chiếu Bằng Chứng
                             </div>
                             {/* Scale Balance Tactile */}
                             <div className="flex items-center justify-between font-mono text-xs font-bold py-2.5 px-3 bg-white rounded-xl border border-slate-200 shadow-xs text-slate-700">
-                              <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 shadow-xs">CLAIM</span>
+                              <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 shadow-xs">NHẬN ĐỊNH</span>
                               <span className="text-amber-600 font-bold text-base">⚖</span>
-                              <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-xs">EVIDENCE</span>
+                              <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-xs">BẰNG CHỨNG</span>
                             </div>
                             <p className="text-[11px] text-slate-600 mt-3 line-clamp-2 leading-relaxed">
                               {readingLesson.coreCompetency}
@@ -394,17 +374,17 @@ export default function VisualReconstructionPage() {
                         {/* Learning Loop & Tactile CTA */}
                         <div className="pt-4 border-t border-slate-100 space-y-3.5">
                           <div className="flex items-center justify-between text-[10px] font-mono">
-                            <span className="text-slate-400 font-bold">CYCLE:</span>
+                            <span className="text-slate-400 font-bold">CHU TRÌNH:</span>
                             <div className="flex items-center gap-1 font-semibold">
                               <span className="text-emerald-600 flex items-center gap-0.5">
-                                <Check className="w-3 h-3" /> LEARN
+                                <Check className="w-3 h-3" /> HỌC
                               </span>
                               <span className="text-slate-300">→</span>
                               <span className="text-amber-600 flex items-center gap-0.5">
-                                <Sparkles className="w-3 h-3" /> REBUILD
+                                <Sparkles className="w-3 h-3" /> TÁI DỰNG
                               </span>
                               <span className="text-slate-300">→</span>
-                              <span className="text-emerald-600 font-bold">DONE</span>
+                              <span className="text-emerald-600 font-bold">XONG</span>
                             </div>
                           </div>
 
@@ -448,13 +428,13 @@ export default function VisualReconstructionPage() {
                         <div>
                           {/* Header Folio */}
                           <div className="flex items-center justify-between mb-3.5">
-                            <span className="text-[11px] font-mono font-bold tracking-wider uppercase text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100 flex items-center gap-1.5">
+                            <span className="text-[11px] font-mono font-bold tracking-wider uppercase text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200 flex items-center gap-1.5">
                               <Layers className="w-3.5 h-3.5" />
-                              SPEAKING · DAY 3
+                              NÓI · BUỔI 3
                             </span>
                             {isSpeakingDone ? (
                               <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-xs">
-                                <Sparkles className="w-3 h-3 text-emerald-600" /> MASTERED
+                                <Sparkles className="w-3 h-3 text-emerald-600" /> ĐÃ HOÀN THÀNH
                               </span>
                             ) : (
                               <span className="text-xs font-mono font-semibold text-slate-400">03/03</span>
@@ -474,7 +454,7 @@ export default function VisualReconstructionPage() {
                           }`}>
                             <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 mb-2 flex items-center gap-1">
                               <Layers className="w-3 h-3 text-emerald-600" />
-                              4-Tier Response Cascade
+                              Bậc Thang 4 Bước Phản Xạ Nói
                             </div>
                             {/* Cascade Steps */}
                             <div className="space-y-1 font-mono text-[10px] font-bold py-1.5 px-2 bg-white rounded-xl border border-slate-200 shadow-xs text-slate-600">
