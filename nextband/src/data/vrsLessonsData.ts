@@ -3392,57 +3392,251 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 7,
     day: 3,
     skill: 'speaking',
-    title: 'The Conditional Loyalty & Support Frame',
-    subtitle: 'Cấu Trúc Nói Về Tình Bạn Bằng Mệnh Đề Điều Kiện & Đại Từ Quan Hệ',
-    coreCompetency: 'Sử dụng mệnh đề điều kiện loại 1 (If I get into trouble, my friend will...) và Relative Clause (...who always stands by my side) để miêu tả tình bạn sâu sắc.',
+    title: 'The Friendship & Conflict Resolution Engine (Topic: Friendship)',
+    subtitle: 'Nói Về Bạn Thân & Giải Quyết Hiểu Lầm: Từ Câu Cụt 3.0 Lên Bài Nói 4.0 - 4.5',
+    coreCompetency: 'Chuẩn hóa đầu ra khóa Dreamer (3.0 → 4.0+): Học viên thành thạo quy tắc phát âm đuôi -s/-es (/s/, /z/, /ɪz/), sử dụng linh hoạt câu điều kiện If loại 1 ("If I get into trouble, my friend will help me"), mệnh đề quan hệ Who/Which để tả bạn thân, và bộ từ vựng xử lý hiểu lầm ("resolve misunderstandings", "talk behind my back").',
     bridgeToHomework: {
-      promptText: 'Thu âm bài nói miêu tả người bạn thân nhất (Best Friend) trong Homework W7D3.',
+      promptText: 'Luyện tập phát âm -s/-es và thu âm bài nói miêu tả người bạn thân nhất (Best Friend) trong Homework W7D3.',
       targetExamId: 'exam_dreamer_w7d3'
     },
     stages: [
       {
         stageNumber: 1,
         stageType: 'progressive_reveal',
-        title: 'Bóc tách 4 tầng phản xạ miêu tả người bạn tri kỷ',
-        pedagogicalObjective: 'Kết hợp linh hoạt Mệnh đề quan hệ (who) và Giả định điều kiện (If) để tạo bài nói Speaking Part 1 giàu cảm xúc.',
+        title: 'Chặng 1: Tình Bạn Bền Vững & Tương Trợ (Friendships We Can Keep - Bài tập 2.1)',
+        pedagogicalObjective: 'Làm chủ mẫu câu điều kiện If loại 1 trong giáo trình: "If I get into trouble / feel nervous, my friend will..." để nói về sự giúp đỡ của bạn bè.',
         interactionModel: {
           type: 'progressive_reveal',
-          prompt: 'Click mở từng tầng để nắm cấu trúc miêu tả phẩm chất người bạn thân:',
+          prompt: 'Click mở từng bước để học cách nói về sự hỗ trợ của bạn bè bằng câu điều kiện If:',
           cards: [
             {
               step: 1,
-              label: 'CORE FRIEND INTRODUCTION',
-              cognitiveFunction: 'Giới thiệu đối tượng và phẩm chất nổi bật',
-              content: 'When it comes to true friendship, I am truly blessed to have Nam, who is my closest confidant since childhood.',
-              pedagogyNote: 'Áp dụng Relative Clause: "have Nam, who is my closest confidant...".'
+              label: 'BƯỚC 1: KHI GẶP KHÓ KHĂN (GET INTO TROUBLE)',
+              cognitiveFunction: '1. Khi bạn gặp rắc rối, bạn thân sẽ làm gì cho bạn?',
+              content: 'If I get into trouble with my studies, my best friend will always stand by me and help me out.',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Bám sát câu hỏi 1 bài tập 2.1: "If I get into trouble, my friend will...". Cụm từ "help me out" rất gần gũi.',
+              flipCard: {
+                frontText: 'When I have problem, my friend help. (Tiếng bồi)',
+                backText: 'If I get into trouble, my best friend will always help me out. (Chuẩn câu điều kiện If)',
+                explanation: 'Dùng câu điều kiện loại 1: "If I get into trouble, my friend will + V".'
+              },
+              vowelHighlight: [
+                { word: 'washes', phonetic: '/ˈwɒʃ.ɪz/', vowelSound: '/ɪz/ âm es sau âm xát' },
+                { word: 'gets', phonetic: '/ɡets/', vowelSound: '/s/ âm s sau âm không rung t' }
+              ]
             },
             {
               step: 2,
-              label: 'CONDITIONAL SUPPORT',
-              cognitiveFunction: 'Hành động hỗ trợ khi gặp nghịch cảnh (Câu điều kiện If)',
-              content: 'Whenever I find myself in a difficult situation, he is always the first person who willingly lends a listening ear.',
-              pedagogyNote: 'Dùng mệnh đề thời gian/điều kiện kết hợp cụm "lends a listening ear".'
+              label: 'BƯỚC 2: KHI CẦN NGƯỜI TÂM SỰ (SOMEONE TO TALK TO)',
+              cognitiveFunction: '2. Khi buồn hoặc cần người lắng nghe, bạn ấy sẽ phản ứng ra sao?',
+              content: 'Whenever I need someone to talk to, she is willing to listen patiently to my stories.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Bám sát câu hỏi 2 bài tập 2.1: "If I need someone to talk to, my friend will...". Cụm từ "listen patiently".',
+              flipCard: {
+                frontText: 'I talk, she listen. (Cụt ý)',
+                backText: 'Whenever I need someone to talk to, she is willing to listen patiently. (Tự nhiên)',
+                explanation: 'Học cụm "be willing to listen patiently" (sẵn sàng lắng nghe một cách kiên nhẫn).'
+              }
             },
             {
               step: 3,
-              label: 'SPECIFIC SHARED EXPERIENCE',
-              cognitiveFunction: 'Minh chứng bằng kỷ niệm hoặc thói quen tương trợ',
-              content: 'For example, when I was feeling anxious before my exams, he patiently helped me review key concepts for hours.',
-              pedagogyNote: 'Đưa ra tình huống hỗ trợ cụ thể chứng minh lòng trung thành.',
+              label: 'BƯỚC 3: KHI CĂNG THẲNG TRƯỚC KỲ THI (FEEL NERVOUS BEFORE TEST)',
+              cognitiveFunction: '3. Khi bạn lo lắng trước ngày thi IELTS, bạn ấy khích lệ bạn thế nào?',
+              content: 'If I feel nervous before an important IELTS test, she will send me encouraging messages to cheer me up.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Bám sát câu hỏi 4 bài tập 2.1: "If I feel nervous and have to sit an IELTS test tomorrow, my friend will...".',
+              flipCard: {
+                frontText: 'Before test she say I can do it. (Đơn sơ)',
+                backText: 'If I feel nervous, she will send me encouraging messages to cheer me up.',
+                explanation: 'Cụm từ "cheer me up" (cổ vũ tinh thần tôi) rất vừa vặn cho mục tiêu 4.0 - 4.5.'
+              },
               branchOptions: [
-                { branchName: 'ACADEMIC SUPPORT', content: 'For example, he spent entire weekends helping me practice English pronunciation patiently.', note: 'Nhánh hỗ trợ học tập kiên nhẫn.' },
-                { branchName: 'EMOTIONAL SUPPORT', content: 'For example, he took me out for a quiet coffee ride to help me clear my head after personal stress.', note: 'Nhánh giải tỏa căng thẳng tinh thần.' }
+                {
+                  branchName: 'CỔ VŨ TRƯỚC KỲ THI IELTS (BÀI TẬP 2.1 CÂU 4)',
+                  content: 'If I feel nervous before an IELTS test, she will send me encouraging messages to cheer me up.',
+                  note: 'Lời chúc và tin nhắn khích lệ trước kỳ thi.'
+                },
+                {
+                  branchName: 'CHO LỜI KHUYÊN KHI QUYẾT ĐỊNH LỚN (CÂU 3)',
+                  content: 'If I need to make a big decision, she will give me honest and helpful advice.',
+                  note: 'Trích từ câu 3 bài tập 2.1 về việc đưa ra quyết định quan trọng.'
+                }
               ]
             },
             {
               step: 4,
-              label: 'ENDURING BOND',
-              cognitiveFunction: 'Khẳng định giá trị gắn kết bền vững',
-              content: 'Because of his unwavering loyalty, I know that our friendship will last for a lifetime.',
-              pedagogyNote: 'Khép lại bằng nhận định sâu sắc: "Because of his unwavering loyalty... will last for a lifetime".'
+              label: 'BƯỚC 4: TỔNG KẾT TÌNH BẠN (LUCKY TO HAVE HER)',
+              cognitiveFunction: '4. Bạn cảm thấy như thế nào khi có một người bạn như vậy?',
+              content: 'I truly feel very lucky to have such a supportive and trustworthy friend in my life.',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Bám sát câu thoại trong bài: "I\'m lucky to have you as my friend" kết hợp tính từ "trustworthy" (đáng tin cậy).',
+              flipCard: {
+                frontText: 'She is a very good friend. (Quá bình thường)',
+                backText: 'I feel very lucky to have such a supportive and trustworthy friend. (Tròn trịa)',
+                explanation: 'Dùng cụm "supportive and trustworthy friend" (người bạn luôn ủng hộ và đáng tin cậy).'
+              }
             }
           ],
-          fullMosaicSummary: 'When it comes to true friendship, I am blessed to have Nam, who is my closest confidant. Whenever I am in a difficult situation, he is the first person who lends a listening ear. For example, he patiently helped me review concepts when I was stressed, and because of his unwavering loyalty, I know our friendship will last for a lifetime.'
+          fullMosaicSummary: 'If I get into trouble with my studies, my best friend will always stand by me and help me out. Whenever I need someone to talk to, she is willing to listen patiently to my stories. If I feel nervous before an IELTS test, she will send me encouraging messages, and I feel very lucky to have such a trustworthy friend.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 2: Giới Thiệu Bạn Thân Bằng Mệnh Đề Quan Hệ (Review Your Best Friend)',
+        pedagogicalObjective: 'Làm chủ bài tập ngữ pháp 2.2: Dùng Mệnh đề tính từ với "who" (bổ sung người) và "which" (bổ sung sự việc) để tả người bạn thân.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click mở từng bước để học cách dùng WHO và WHICH để miêu tả bạn thân:',
+          cards: [
+            {
+              step: 1,
+              label: 'BƯỚC 1: TÊN VÀ NGHỀ NGHIỆP CỦA BẠN (WHO WORKS/STUDIES)',
+              cognitiveFunction: '1. Bạn thân của bạn tên gì và đang học hoặc làm nghề gì?',
+              content: 'My best friend is Nam, who is currently studying finance at the University of Economics.',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Bám sát công thức ngữ pháp 2.2 câu 1: "My best friend is [Name], who works as / studies...".',
+              flipCard: {
+                frontText: 'My best friend is Nam. He studies finance. (Hai câu rời)',
+                backText: 'My best friend is Nam, who is currently studying finance. (Nối bằng WHO)',
+                explanation: 'Dùng đại từ quan hệ "who" nối 2 câu đơn thành 1 câu ghép mượt mà.'
+              },
+              vowelHighlight: [
+                { word: 'studies', phonetic: '/ˈstʌd.iz/', vowelSound: '/z/ âm es sau nguyên âm' },
+                { word: 'exercises', phonetic: '/ˈek.sə.saɪ.zɪz/', vowelSound: '/ɪz/ âm es sau âm z' }
+              ]
+            },
+            {
+              step: 2,
+              label: 'BƯỚC 2: TÍNH CÁCH CHĂM CHỈ & HỖ TRỢ (WHO IS SUPPORTIVE)',
+              cognitiveFunction: '2. Bạn ấy có đức tính gì tốt đối với bạn bè?',
+              content: 'He is a very hard-working student, who is always willing to share study notes with classmates.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Luyện câu 2 & 3 bài tập 2.2: "She is a supportive friend, who is willing to..." / "hard-working student, who...".',
+              flipCard: {
+                frontText: 'He is hard-working and he shares notes. (Lặp từ he)',
+                backText: 'He is a hard-working student, who is always willing to share notes. (Chuẩn xác)',
+                explanation: 'Dùng "who is always willing to..." thay thế cho việc lặp lại chủ ngữ.'
+              }
+            },
+            {
+              step: 3,
+              label: 'BƯỚC 3: ĐIỂM CHUNG GẮN KẾT (HAVE A LOT IN COMMON, WHICH MAKES US...)',
+              cognitiveFunction: '3. Hai bạn có những sở thích chung nào gắn kết với nhau?',
+              content: 'We have a lot of hobbies in common and usually share things together, which makes us closer.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Luyện cấu trúc ngữ pháp dùng WHICH thay thế cho cả mệnh đề: "We have a lot in common..., which makes us closer".',
+              flipCard: {
+                frontText: 'We have same hobbies, so we are close. (Đơn sơ)',
+                backText: 'We have a lot in common, which makes us become closer friends. (Nâng cấp +0.5)',
+                explanation: 'Sử dụng ", which makes us..." bổ nghĩa cho toàn bộ sự việc phía trước.'
+              },
+              branchOptions: [
+                {
+                  branchName: 'SỞ THÍCH CHUNG (HAVE IN COMMON - TRONG SÁCH)',
+                  content: 'We have a lot in common and usually share things together, which makes us become closer friends.',
+                  note: 'Nguyên văn cấu trúc câu 3 phần Which trong bài tập 2.2.'
+                },
+                {
+                  branchName: 'KỂ CHUYỆN HÀI HƯỚC (TELL SILLY JOKES - CÂU 2)',
+                  content: 'He usually tells silly jokes after stressful classes, which makes everyone laugh happily.',
+                  note: 'Trích từ câu 2 bài tập 2.2 về việc kể chuyện cười vui vẻ.'
+                }
+              ]
+            },
+            {
+              step: 4,
+              label: 'BƯỚC 4: KỲ VỌNG TƯƠNG LAI (LONG-LASTING FRIENDSHIP)',
+              cognitiveFunction: '4. Bạn mong ước tình bạn này sẽ như thế nào trong tương lai?',
+              content: 'I believe that our close bond will remain strong even after we graduate from university.',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Khép lại bằng mong ước gắn bó lâu dài sau khi tốt nghiệp ra trường.',
+              flipCard: {
+                frontText: 'I hope we still friend later. (Tiếng bồi)',
+                backText: 'I believe our close bond will remain strong after graduation. (Chuẩn tự nhiên)',
+                explanation: 'Dùng cụm "remain strong after graduation" tạo cái kết đẹp và đúng tầm.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'My best friend is Nam, who is currently studying finance at university. He is a hard-working student, who is always willing to share study notes with classmates. We have a lot of hobbies in common and usually share things together, which makes us closer friends, and I believe our bond will remain strong for years.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 3: Hóa Giải Hiểu Lầm Trong Tình Bạn (Resolving Misunderstandings - Dialogue 3)',
+        pedagogicalObjective: 'Làm chủ tình huống hội thoại 3: Khi bạn bè nói sau lưng gây hiểu lầm (talk behind back) -> Giải thích rõ ràng -> Xin lỗi vì vội kết luận (jumping to conclusions) -> Làm hòa.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click mở từng bước để học cách hóa giải hiểu lầm và bảo vệ tình bạn:',
+          cards: [
+            {
+              step: 1,
+              label: 'BƯỚC 1: NÓI THẲNG ĐIỀU BĂN KHOĂN (TALK BEHIND MY BACK)',
+              cognitiveFunction: '1. Bạn muốn trao đổi thẳng thắn điều gì làm tổn thương mình?',
+              content: "I wanted to talk to you because I thought you were talking about me behind my back.",
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Bám sát câu mở đầu của nhân vật A: "I think you were talking about me behind my back".',
+              flipCard: {
+                frontText: 'You speak bad about me. (Nói thô)',
+                backText: 'I wanted to talk to you because I heard you talking behind my back. (Chuẩn giáo trình)',
+                explanation: 'Thành ngữ đắt giá trong bài: "talk behind someone\'s back" (nói xấu sau lưng ai).'
+              }
+            },
+            {
+              step: 2,
+              label: 'BƯỚC 2: BÀY TỎ TỔN THƯƠNG (HURT MY FEELINGS)',
+              cognitiveFunction: '2. Lời đồn đó đã khiến bạn cảm thấy tổn thương ra sao?',
+              content: 'I heard someone mention that I was not reliable, and it really hurt my feelings.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Trích nguyên văn lời của A: "mention something about me not being reliable, and it really hurt my feelings".',
+              flipCard: {
+                frontText: 'I am sad and angry. (Đơn sơ)',
+                backText: 'It really hurt my feelings. (Cụm từ cảm xúc chuẩn mực của bài)',
+                explanation: 'Dùng cụm "hurt someone\'s feelings" (làm tổn thương cảm xúc của ai).'
+              }
+            },
+            {
+              step: 3,
+              label: 'BƯỚC 3: LỜI GIẢI THÍCH THÀNH THẬT (VALUE OUR FRIENDSHIP)',
+              cognitiveFunction: '3. Người bạn giải thích thế nào để xóa tan nghi ngờ?',
+              content: 'I swear it was not about you; you are one of my closest friends, and I truly value our friendship.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Lời đáp chân thành của B: "I would never say anything negative... I value our friendship".',
+              flipCard: {
+                frontText: 'Not you, I like our friend. (Tiếng bồi)',
+                backText: 'You are one of my closest friends, and I truly value our friendship. (Rất tự nhiên)',
+                explanation: 'Cụm collocation chuẩn trong bài: "value our friendship" (trân trọng tình bạn của chúng ta).'
+              },
+              branchOptions: [
+                {
+                  branchName: 'GIẢI THÍCH & TRÂN TRỌNG TÌNH BẠN (LỜI B)',
+                  content: 'I swear it was not about you; you are one of my closest friends, and I truly value our friendship.',
+                  note: 'Lời thanh minh xóa tan nghi ngờ của bạn B.'
+                },
+                {
+                  branchName: 'XIN LỖI VÌ VỘI KẾT LUẬN (LỜI A ĐÁP LẠI)',
+                  content: "I believe you now, and I am really sorry for jumping to conclusions and assuming the worst.",
+                  note: 'Thành ngữ trong sách: "sorry for jumping to conclusions" (xin lỗi vì vội kết luận).'
+                }
+              ]
+            },
+            {
+              step: 4,
+              label: 'BƯỚC 4: BỎ QUA VÀ TIẾP TỤC BƯỚC TIẾP (MOVE ON)',
+              cognitiveFunction: '4. Hai bạn chốt lại cách giải quyết bất đồng như thế nào?',
+              content: 'Let us resolve this misunderstanding and move on, because true friends always forgive each other.',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Khép lại bằng thông điệp đẹp của bài: "resolve misunderstandings" và "move on from this".',
+              flipCard: {
+                frontText: 'Okay, we are friends again. (Đơn sơ)',
+                backText: 'Let us resolve this misunderstanding and move on together. (Văn minh, lịch thiệp)',
+                explanation: 'Cụm từ vựng trọng tâm: "resolve misunderstandings" (giải quyết hiểu lầm).'
+              }
+            }
+          ],
+          fullMosaicSummary: "I wanted to talk to you because I heard you were talking behind my back, and it really hurt my feelings. However, you explained that it was not about me and that you truly value our friendship. I am sorry for jumping to conclusions, and let us resolve this misunderstanding and move on together."
         }
       }
     ]
