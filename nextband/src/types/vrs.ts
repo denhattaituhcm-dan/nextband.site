@@ -34,12 +34,6 @@ export interface VRSStage {
   interactionModel: VRSInteractionModel;
 }
 
-export type VRSInteractionModel = 
-  | VRSRevealInteraction
-  | VRSSlotSnapInteraction
-  | VRSScaleInteraction
-  | VRSTransferInteraction;
-
 export interface VRSRevealInteraction {
   type: 'progressive_reveal';
   prompt: string;
@@ -119,14 +113,44 @@ export interface VRSScaleInteraction {
   pedagogicalInsight: string;
 }
 
+export interface VRSBlockReadingMapInteraction {
+  type: 'block_reading_map';
+  prompt: string;
+  passage: {
+    title: string;
+    paragraphs: Array<{
+      id: string;
+      number: number;
+      label: string;
+      text: string;
+    }>;
+  };
+  questions: Array<{
+    id: string;
+    code: string;
+    questionText: string;
+    keywords: string[];
+    targetParagraphId: string;
+    targetSnippet: string;
+    explanation: string;
+  }>;
+}
+
 export interface VRSTransferInteraction {
   type: 'transfer_test';
   prompt: string;
-  challengeSentence: string;
-  task: 'fix_error' | 'verify_tfng' | 'categorize_block';
-  solution: any;
-  beforeAfterComparison: {
+  challengeSentence?: string;
+  task?: 'fix_error' | 'verify_tfng' | 'categorize_block';
+  solution?: any;
+  beforeAfterComparison?: {
     oldHabitBand3: string;
     newCompetencyBand4: string;
   };
 }
+
+export type VRSInteractionModel = 
+  | VRSRevealInteraction
+  | VRSSlotSnapInteraction
+  | VRSScaleInteraction
+  | VRSBlockReadingMapInteraction
+  | VRSTransferInteraction;

@@ -69,163 +69,113 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 1,
     day: 2,
     skill: 'reading',
-    title: 'The Block Reading Map',
-    subtitle: 'Định Vị Chức Năng & Truy Vẳt Bằng Chứng',
-    coreCompetency: 'Nén đoạn văn thành nhãn chức năng, quy đổi câu hỏi về khái niệm và cô lập bằng chứng.',
+    title: 'The Block Reading Map & Scanning Trajectory',
+    subtitle: 'Khóa Keyword Lần 1 → Phóng Mũi Tên Tọa Độ Lần 2',
+    coreCompetency: 'Nén đoạn văn thành nhãn chức năng. Click 1 lần để bóc tách Keywords, Click lần 2 để phóng mũi tên định vị trực tiếp đến vùng văn bản đối chiếu.',
     bridgeToHomework: {
-      promptText: 'Làm bài tập đọc hiểu về nghề lính cứu hỏa trong Homework W1D2.',
+      promptText: 'Làm bài tập nối câu hỏi phỏng vấn với 5 đoạn văn trong Homework W1D2.',
       targetExamId: 'exam_dreamer_w1d2'
     },
     stages: [
       {
         stageNumber: 1,
         stageType: 'verification_scale',
-        title: 'Chặng 1: Block Reading & Radar Scanning (Khóa Đoạn Theo Chức Năng)',
-        pedagogicalObjective: 'Quét từ câu hỏi phỏng vấn sang đúng đoạn chức năng trong 5 đoạn văn của bài đọc.',
+        title: 'Chặng 1: Block Reading Map (Nối Câu Hỏi Với 5 Đoạn Văn)',
+        pedagogicalObjective: 'Click lần 1 hiển thị Keyword cốt lõi. Click lần 2 bắn mũi tên chỉ định vị trí đối chiếu trong 5 đoạn văn.',
         interactionModel: {
-          type: 'verification_scale',
-          prompt: 'Bấm Radar quét định vị: Câu hỏi "How physically fit do you have to be?" thuộc về đoạn nào?',
-          passageContext: {
-            title: "Interview with Jack Gomez - Wildfire Firefighter in California",
+          type: 'block_reading_map',
+          prompt: 'Click vào từng câu hỏi: Lần 1 xem Keyword, Lần 2 quét tia đối chiếu đến đoạn văn tương ứng.',
+          passage: {
+            title: 'Interview with Jack Gomez - Wildfire Firefighter in California',
             paragraphs: [
               {
                 id: 'p1',
-                label: 'Đoạn 1 · Động lực vào nghề (Why decide to become a firefighter)',
-                text: "I'm Jack Gomez, and I'm a firefighter in California. I remember watching an interview with a firefighter pilot when I was a child. He'd been fighting a fire for about five days. He was exhausted, but he was still there, talking about how many lives were being saved. He was so optimistic and committed that I thought that I wanted to do the same thing. And I never changed my mind."
+                number: 1,
+                label: 'Đoạn 1',
+                text: "I’m Jack Gomez, and I’m a firefighter in California. I remember watching an interview with a firefighter pilot when I was a child. He’d been fighting a fire for about five days. He was exhausted, but he was still there, talking about how many lives were being saved. He was so optimistic and committed that I thought that I wanted to do the same thing. And I never changed my mind."
               },
               {
                 id: 'p2',
-                label: 'Đoạn 2 · Huấn luyện & Bằng cấp (How did you become a firefighter)',
-                text: "I did a training camp to get my wildfire qualification card – you can't fight fires in the US without one. I learned how to fight controlled fires, and how to put them out again. I also learned how to use all the equipment. The camp was really hard, but I passed first time – which was a big relief to me! After that I applied for a job, and I was lucky enough to get one."
+                number: 2,
+                label: 'Đoạn 2',
+                text: "I did a training camp to get my wildfire qualification card – you can’t fight fires in the US without one. I learned how to fight controlled fires, and how to put them out again. I also learned how to use all the equipment. The camp was really hard, but I passed first time – which was a big relief to me! After that I applied for a job, and I was lucky enough to get one."
               },
               {
                 id: 'p3',
-                label: 'Đoạn 3 · Yêu cầu thể lực (How physically fit do you have to be)',
-                text: "One of the things you have to do in the early days is the pack test. This consists of a five-kilometre walk while carrying a backpack that weighs twenty kilograms. You must be able to complete it in forty-five minutes or less without jogging or running. This shows how strong you are. If you can't do this, how can you carry the heavy fire equipment, or fight fires in difficult conditions for hours at a time?"
+                number: 3,
+                label: 'Đoạn 3',
+                text: "One of the things you have to do in the early days is the pack test. This consists of a five-kilometre walk while carrying a backpack that weights twenty kilograms. You must be able to complete it in forty-five minutes or less without jogging or running. This shows how strong you are. If you can’t do this, how can you carry the heavy fire equipment, or fight fires in difficult conditions for hours at a time?"
               },
               {
                 id: 'p4',
-                label: 'Đoạn 4 · Kỹ năng sinh tồn bổ trợ (What other skills do you need)',
-                text: "You can be out alone in vast forests and national parks, and sometimes the smoke is so thick that you can hardly see. So, it's important to be able to know where you're going, to be able to read a map, and to use a compass. Also, you must know how to put up a tent, cook outdoors, drive a truck, and have other basic survival skills."
+                number: 4,
+                label: 'Đoạn 4',
+                text: "You can be out alone in vast forests and national parks, and sometimes the smoke is so thick that you can hardly see. So, it’s important to be able to know where you’re going, to be able to read a map, and to use a compass. Also, you must know how to put up a tent, cook outdoors, drive a truck, and have other basic survival skills."
               },
               {
                 id: 'p5',
-                label: 'Đoạn 5 · Mối nguy hiểm lớn nhất (What is the most dangerous part)',
-                text: "Wildfires can change direction very quickly because of the wind. One minute everything seems under control, and the next minute the flames are moving towards you. Falling trees, extreme heat, and thick smoke are also serious dangers. Even experienced firefighters can find themselves in difficult situations. That's why we always have to stay alert and follow safety procedures carefully."
+                number: 5,
+                label: 'Đoạn 5',
+                text: "Wildfires can change direction very quickly because of the wind. One minute everything seems under control, and the next minute the flames are moving towards you. Falling trees, extreme heat, and thick smoke are also serious dangers. Even experienced firefighters can find themselves in difficult situations. That’s why we always have to stay alert and follow safety procedures carefully."
               }
-            ],
-            targetParagraphId: 'p3',
-            targetSnippet: 'five-kilometre walk while carrying a backpack that weighs twenty kilograms'
-          },
-          statement: {
-            rawText: 'Question C: How physically fit do you have to be? (Khớp với đoạn nào trong bài?)',
-            deconstructedVariables: [
-              { name: 'question_concept', text: 'How physically fit (thể lực)' },
-              { name: 'target_match', text: 'pack test / 5km walk with 20kg backpack', isTrapWord: true }
             ]
           },
-          passageEvidence: {
-            rawText: 'This consists of a five-kilometre walk while carrying a backpack that weighs twenty kilograms... This shows how strong you are.',
-            targetVariables: [
-              { matchingName: 'target_match', text: 'ĐOẠN 3: Kiểm tra thể lực qua bài Pack Test 5km vác 20kg' }
-            ]
-          },
-          expectedRelation: 'match',
-          verdict: 'TRUE',
-          pedagogicalInsight: 'Chính xác! Đoạn 3 tập trung 100% vào yêu cầu thể chất ("shows how strong you are", "pack test", "carry 20kg backpack"), tương ứng trực tiếp với câu hỏi C: "How physically fit do you have to be?".'
-        }
-      },
-      {
-        stageNumber: 2,
-        stageType: 'verification_scale',
-        title: 'Chặng 2: Bàn Cân Đối Lập Bằng Chứng (Really Hard vs No Difficulty)',
-        pedagogicalObjective: 'Phát hiện bẫy mâu thuẫn trực tiếp giữa nhận định và lời kể của Jack Gomez trong Đoạn 2.',
-        interactionModel: {
-          type: 'verification_scale',
-          prompt: 'Bấm Radar quét tìm câu nói về đợt tập huấn của Jack Gomez trong Đoạn 2:',
-          passageContext: {
-            title: "Interview with Jack Gomez - Wildfire Firefighter in California",
-            paragraphs: [
-              {
-                id: 'p1',
-                label: 'Đoạn 1 · Động lực vào nghề',
-                text: "I remember watching an interview with a firefighter pilot when I was a child. He was exhausted, but he was still there... I thought that I wanted to do the same thing."
-              },
-              {
-                id: 'p2',
-                label: 'Đoạn 2 · Huấn luyện & Bằng cấp',
-                text: "I did a training camp to get my wildfire qualification card – you can't fight fires in the US without one. I learned how to fight controlled fires, and how to put them out again. I also learned how to use all the equipment. The camp was really hard, but I passed first time – which was a big relief to me!"
-              }
-            ],
-            targetParagraphId: 'p2',
-            targetSnippet: 'The camp was really hard, but I passed first time'
-          },
-          statement: {
-            rawText: 'Jack Gomez had no difficulty during the training camp to get his wildfire qualification card.',
-            deconstructedVariables: [
-              { name: 'subject', text: 'Jack Gomez' },
-              { name: 'difficulty_level', text: 'had no difficulty', isTrapWord: true },
-              { name: 'context', text: 'during the training camp' }
-            ]
-          },
-          passageEvidence: {
-            rawText: 'The camp was really hard, but I passed first time – which was a big relief to me!',
-            targetVariables: [
-              { matchingName: 'difficulty_level', text: 'The camp was really hard (rất vất vả, gian nan)' }
-            ]
-          },
-          expectedRelation: 'contradiction',
-          verdict: 'FALSE',
-          pedagogicalInsight: 'FALSE vì bài đọc nêu rõ "The camp was really hard" (đợt tập huấn rất vất vả, đậu được là "a big relief" - nhẹ cả người), mâu thuẫn hoàn toàn với khẳng định "had no difficulty" (không gặp khó khăn gì).'
-        }
-      },
-      {
-        stageNumber: 3,
-        stageType: 'verification_scale',
-        title: 'Chặng 3: Bẫy Thông Tin Suy Diễn Ngoài Vùng (Outside California Trap)',
-        pedagogicalObjective: 'Phát hiện câu khẳng định không có căn cứ trong toàn bộ 5 đoạn đọc (NOT GIVEN).',
-        interactionModel: {
-          type: 'verification_scale',
-          prompt: 'Quét toàn bộ 5 đoạn để kiểm tra xem Jack Gomez đã từng chữa cháy ngoài bang California chưa:',
-          passageContext: {
-            title: "Interview with Jack Gomez - Wildfire Firefighter in California",
-            paragraphs: [
-              {
-                id: 'p1',
-                label: 'Đoạn 1 · Giới thiệu bản thân',
-                text: "I'm Jack Gomez, and I'm a firefighter in California. I remember watching an interview with a firefighter pilot when I was a child."
-              },
-              {
-                id: 'p4',
-                label: 'Đoạn 4 · Rừng và vườn quốc gia',
-                text: "You can be out alone in vast forests and national parks, and sometimes the smoke is so thick that you can hardly see."
-              },
-              {
-                id: 'p5',
-                label: 'Đoạn 5 · Cháy rừng đổi hướng',
-                text: "Wildfires can change direction very quickly because of the wind. That's why we always have to stay alert and follow safety procedures carefully."
-              }
-            ],
-            targetParagraphId: 'p1',
-            targetSnippet: "I'm a firefighter in California"
-          },
-          statement: {
-            rawText: 'Jack Gomez has already fought in a fire outside of California.',
-            deconstructedVariables: [
-              { name: 'subject', text: 'Jack Gomez' },
-              { name: 'action', text: 'has already fought in a fire' },
-              { name: 'location', text: 'outside of California', isTrapWord: true }
-            ]
-          },
-          passageEvidence: {
-            rawText: "Jack chỉ giới thiệu: 'I am a firefighter in California'. Trong cả 5 đoạn không có bất kỳ dòng nào nhắc đến việc anh đã từng đi chữa cháy ở bang khác hay chưa.",
-            targetVariables: [
-              { matchingName: 'location', text: 'HOÀN TOÀN KHÔNG CÓ THÔNG TIN NGOÀI BANG CALIFORNIA' }
-            ]
-          },
-          expectedRelation: 'no_evidence',
-          verdict: 'NOT GIVEN',
-          pedagogicalInsight: 'NOT GIVEN vì bài đọc chỉ cho biết Jack làm lính cứu hỏa ở California, không hề đề cập đến việc anh đã từng hay chưa từng tham gia chữa cháy ở bên ngoài bang California.'
+          questions: [
+            {
+              id: 'qA',
+              code: 'A',
+              questionText: 'What is the most dangerous part of being a firefighter?',
+              keywords: ['most dangerous part', 'dangers', 'risk'],
+              targetParagraphId: 'p5',
+              targetSnippet: 'Wildfires can change direction very quickly because of the wind... Falling trees, extreme heat, and thick smoke are also serious dangers.',
+              explanation: 'Đoạn 5 liệt kê trực diện các mối hiểm nguy lớn nhất: gió đổi chiều làm lửa đuổi theo, cây đổ, nhiệt độ cực hạn và khói độc.'
+            },
+            {
+              id: 'qB',
+              code: 'B',
+              questionText: 'What is the most important personal quality for a firefighter?',
+              keywords: ['important personal quality', 'traits', 'personality'],
+              targetParagraphId: 'none',
+              targetSnippet: '',
+              explanation: 'ĐÂY LÀ CÂU HỎI THỪA (EXTRA QUESTION)! Trong 5 đoạn không có đoạn nào nói về phẩm chất tính cách cần có của người lính cứu hỏa.'
+            },
+            {
+              id: 'qC',
+              code: 'C',
+              questionText: 'How physically fit do you have to be?',
+              keywords: ['physically fit', 'strong', 'pack test', '20kg backpack'],
+              targetParagraphId: 'p3',
+              targetSnippet: 'five-kilometre walk while carrying a backpack that weights twenty kilograms... This shows how strong you are.',
+              explanation: 'Đoạn 3 mô tả bài kiểm tra thể lực Pack Test (đi bộ 5km vác balo 20kg trong 45 phút) để chứng minh thể lực và sức mạnh.'
+            },
+            {
+              id: 'qD',
+              code: 'D',
+              questionText: 'How did you become a firefighter?',
+              keywords: ['become a firefighter', 'training camp', 'qualification card'],
+              targetParagraphId: 'p2',
+              targetSnippet: 'I did a training camp to get my wildfire qualification card... After that I applied for a job',
+              explanation: 'Đoạn 2 giải thích quá trình đào tạo để trở thành lính cứu hỏa: tham gia trại huấn luyện, lấy thẻ chứng chỉ hành nghề và nộp đơn xin việc.'
+            },
+            {
+              id: 'qE',
+              code: 'E',
+              questionText: 'Why did you decide to become a firefighter?',
+              keywords: ['decide to become', 'inspiration', 'childhood'],
+              targetParagraphId: 'p1',
+              targetSnippet: 'I remember watching an interview with a firefighter pilot when I was a child... I wanted to do the same thing',
+              explanation: 'Đoạn 1 nêu động cơ thúc đẩy: Xem phỏng vấn viên phi công chữa cháy cứu mạng người từ khi còn là một đứa trẻ.'
+            },
+            {
+              id: 'qF',
+              code: 'F',
+              questionText: 'What other skills do you need?',
+              keywords: ['other skills', 'read a map', 'compass', 'survival skills'],
+              targetParagraphId: 'p4',
+              targetSnippet: 'read a map, and to use a compass. Also, you must know how to put up a tent, cook outdoors, drive a truck, and have other basic survival skills.',
+              explanation: 'Đoạn 4 nêu các kỹ năng bổ trợ ngoài chữa cháy: đọc bản đồ, la bàn, cắm lều, nấu ăn ngoài trời và sinh tồn trong rừng sâu.'
+            }
+          ]
         }
       }
     ]

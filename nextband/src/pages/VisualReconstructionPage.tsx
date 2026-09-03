@@ -4,6 +4,7 @@ import { VRSVisualLesson } from '@/types/vrs';
 import VRSSlotSnapInteractive from '@/components/vrs/VRSSlotSnapInteractive';
 import VRSVerificationScaleInteractive from '@/components/vrs/VRSVerificationScaleInteractive';
 import VRSProgressiveRevealInteractive from '@/components/vrs/VRSProgressiveRevealInteractive';
+import VRSBlockReadingMapInteractive from '@/components/vrs/VRSBlockReadingMapInteractive';
 import {
   CheckCircle2,
   Clock,
@@ -617,6 +618,9 @@ export default function VisualReconstructionPage() {
                       {stage.interactionModel.type === 'progressive_reveal' && (
                         <VRSProgressiveRevealInteractive model={stage.interactionModel as any} />
                       )}
+                      {stage.interactionModel.type === 'block_reading_map' && (
+                        <VRSBlockReadingMapInteractive model={stage.interactionModel as any} />
+                      )}
                       {stage.interactionModel.type === 'transfer_test' && (
                         <div className="py-8 px-6 rounded-2xl bg-indigo-50/50 border border-indigo-100/80 text-center">
                           <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-indigo-700 bg-white px-3 py-1 rounded-full shadow-xs border border-indigo-100 inline-block mb-3">
@@ -633,19 +637,14 @@ export default function VisualReconstructionPage() {
               })}
             </div>
 
-            {/* Editorial Landmark "CHẶNG 99" & Two-Way Homework Loop Bridge */}
+            {/* Editorial Landmark & Two-Way Homework Loop Bridge */}
             <section className="relative mt-20 pt-12 pb-6 border-t border-slate-200/80">
-              {/* Artistic Watermark "99" */}
-              <div className="absolute top-4 right-4 select-none pointer-events-none font-mono font-black text-8xl sm:text-9xl text-slate-100/80 -z-10">
-                99
-              </div>
-
               <div className="max-w-xl mb-8">
                 <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-indigo-600">
-                  CHẶNG 99 · TRANSFER TO ACTION
+                  TRANSFER TO ACTION · VÒNG LẶP CHUYỂN GIAO
                 </span>
                 <h3 className="text-2xl font-bold text-slate-900 mt-1">
-                  Vòng Lặp Chuyển Giao Sang Bài Tập Về Nhà
+                  Áp Dụng Sang Bài Tập Về Nhà
                 </h3>
                 <p className="text-sm text-slate-600 mt-1 leading-relaxed">
                   {activeLesson.bridgeToHomework.promptText}
