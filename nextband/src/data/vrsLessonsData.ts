@@ -735,57 +735,239 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 2,
     day: 3,
     skill: 'speaking',
-    title: 'The Spatial Coordinate Engine',
-    subtitle: 'Tổ Chức Bài Nói Bằng Tọa Độ & Quan Hệ Không Gian',
-    coreCompetency: 'Làm chủ thước đo phóng đại không gian IN -> ON -> AT và dẫn dắt người nghe qua lộ trình logic.',
+    title: 'The Spatial Expansion Engine (Topic: Home)',
+    subtitle: 'Nói Về Nơi Ở & Căn Phòng Yêu Thích: Từ Câu Cụt 3.0 Lên Bài Nói 4.0 - 4.5',
+    coreCompetency: 'Chuẩn hóa đầu ra khóa Dreamer (3.0 → 4.0+): Giúp học viên vượt qua thói quen chỉ nói "I live in HCM city". Làm chủ quy luật giới từ IN (thành phố) -> ON (tên đường / tầng lầu) -> AT (địa điểm cụ thể), cấu trúc thời gian di chuyển "It takes me...", và cách mô tả căn nhà/căn phòng yêu thích đúng giáo trình.',
     bridgeToHomework: {
-      promptText: 'Thực hành nói mô tả căn phòng và lộ trình di chuyển trong Homework W2D3.',
+      promptText: 'Thu âm bài nói Part 1 miêu tả nơi ở hoặc căn phòng yêu thích của bạn trong Homework W2D3.',
       targetExamId: 'exam_dreamer_w2d3'
     },
     stages: [
       {
         stageNumber: 1,
         stageType: 'progressive_reveal',
-        title: 'Bóc tách 4 tầng tọa độ không gian nơi sinh sống',
-        pedagogicalObjective: 'Khám phá mức độ zoom không gian từ diện tích lớn đến địa chỉ cụ thể.',
+        title: 'Chặng 1: Nơi Ở & Khoảng Cách Di Chuyển (Where You Live & Commute)',
+        pedagogicalObjective: 'Học cách nối câu bám sát đối thoại của Khang: Nơi ở hiện tại -> Tên đường / Tầng -> Khoảng cách và thời gian di chuyển (It takes me...).',
         interactionModel: {
           type: 'progressive_reveal',
-          prompt: 'Click mở từng tầng thẻ để học cách tổ chức bài nói về nơi ở theo tọa độ không gian:',
+          prompt: 'Click mở từng tầng để nắm chắc cách trả lời câu hỏi "Where do you live?":',
           cards: [
             {
               step: 1,
-              label: 'MACRO AREA (IN)',
-              cognitiveFunction: 'Thành phố / Vùng diện tích rộng',
-              content: 'Currently, I am living IN Ho Chi Minh City, which is a bustling metropolis in Vietnam.',
-              pedagogyNote: 'Dùng IN cho các thực thể địa lý bao quát, có ranh giới rộng lớn.'
+              label: 'BƯỚC 1: THÀNH PHỐ VÀ QUÊ QUÁN (IN)',
+              cognitiveFunction: '1. Bạn đến từ đâu và hiện đang ở thành phố nào?',
+              content: 'My hometown is Can Tho, but now I live in Ho Chi Minh City to attend university.',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Bám sát câu thoại của bạn Khang trong giáo trình: quê ở Cần Thơ, lên TP.HCM học đại học.',
+              flipCard: {
+                frontText: 'I live in HCM city. (Quá cộc lốc)',
+                backText: 'My hometown is Can Tho, but now I live in Ho Chi Minh City. (Nối ý tự nhiên)',
+                explanation: 'Nối quê quán (hometown) với nơi ở hiện tại giúp câu trả lời sinh động hơn.'
+              },
+              vowelHighlight: [
+                { word: 'food', phonetic: '/fuːd/', vowelSound: '/u:/ u dài' },
+                { word: 'four', phonetic: '/fɔːr/', vowelSound: '/ɔː/ o dài' }
+              ]
             },
             {
               step: 2,
-              label: 'SURFACE & STREET (ON)',
-              cognitiveFunction: 'Tuyến đường / Mặt phẳng tầng nhà',
-              content: 'More specifically, my apartment is located ON Ba Hat Street, right ON the 5th floor.',
-              pedagogyNote: 'Dùng ON cho tên đường và số tầng của tòa nhà.'
+              label: 'BƯỚC 2: TUYẾN ĐƯỜNG & TẦNG NHÀ (ON)',
+              cognitiveFunction: '2. Cụ thể bạn sống ở đường nào hoặc tầng mấy?',
+              content: 'Currently, I rent a house on Ba Hat Street in District 10.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Quy tắc giới từ vàng trong bài: Dùng "ON" cho tên đường ("on Ba Hat Street") hoặc tầng nhà ("on the fifth floor").',
+              flipCard: {
+                frontText: 'I live Ba Hat street. (Quên giới từ)',
+                backText: 'Currently, I rent a house on Ba Hat Street in District 10. (Đúng giới từ ON và IN)',
+                explanation: 'Nhớ quy tắc kim tự tháp: "on" đi với tên đường, "in" đi với quận/thành phố.'
+              }
             },
             {
               step: 3,
-              label: 'SURROUNDING ANCHORS',
-              cognitiveFunction: 'Các điểm mốc lân cận',
-              content: 'What I love is that there is a quiet park right across from my building.',
-              pedagogyNote: 'Mở rộng bằng các điểm mốc không gian đối chiếu (across from, next to).',
+              label: 'BƯỚC 3: KHOẢNG CÁCH SO VỚI TRƯỜNG/CHỖ LÀM',
+              cognitiveFunction: '3. Nơi đó gần hay xa trường học / trung tâm tiếng Anh?',
+              content: "It's quite far from my school, so I usually leave early to avoid traffic congestion.",
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Bám sát giáo trình: "quite far from..." và cụm từ vựng "traffic congestion" (kẹt xe).',
+              flipCard: {
+                frontText: 'It is far. Traffic is jam. (Tiếng bồi)',
+                backText: "It's quite far from my school, so I leave early to avoid traffic congestion.",
+                explanation: 'Dùng cụm từ tự nhiên trong bài: "avoid traffic congestion" (tránh kẹt xe).'
+              },
               branchOptions: [
-                { branchName: 'CONTRAST', content: 'However, it is quite far from my workplace, taking 45 minutes to commute.', note: 'Nhánh nói về khoảng cách di chuyển.' },
-                { branchName: 'DETAIL / CONVENIENCE', content: 'In addition, it is surrounded by convenience stores and local coffee shops.', note: 'Nhánh liệt kê tiện ích xung quanh.' }
+                {
+                  branchName: 'NHÀ XA (KHANG - 30 PHÚT CHẠY XE)',
+                  content: "It's quite far from my school, so I usually leave early to avoid traffic congestion.",
+                  note: 'Trích từ câu thoại của bạn Khang (quận 10 qua trung tâm).'
+                },
+                {
+                  branchName: 'NHÀ GẦN (AN - 10 PHÚT ĐI BỘ)',
+                  content: "It is pretty convenient for me, because it only takes me 10 minutes to walk to school.",
+                  note: 'Trích từ câu thoại của bạn An (sống ở Thủ Đức).'
+                }
               ]
             },
             {
               step: 4,
-              label: 'COMMUTE & FEELING',
-              cognitiveFunction: 'Cảm nhận và thói quen sinh hoạt',
-              content: 'Overall, despite the long commute, I truly enjoy the cozy atmosphere of my neighborhood.',
-              pedagogyNote: 'Khép lại bài nói bằng đánh giá tổng thể.'
+              label: 'BƯỚC 4: THỜI GIAN DI CHUYỂN (IT TAKES ME...)',
+              cognitiveFunction: '4. Mất bao lâu để bạn đi đến đó?',
+              content: 'It usually takes me around 30 minutes to drive my motorbike there every day.',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Cấu trúc điểm nhấn của bài học: "It takes me + [khoảng thời gian] + to drive / to walk".',
+              flipCard: {
+                frontText: 'I go 30 minutes. (Lỗi dịch từ tiếng Việt)',
+                backText: 'It takes me around 30 minutes to drive there. (Chuẩn ngữ pháp tiếng Anh)',
+                explanation: 'Sử dụng cấu trúc chuẩn "It takes me [time] to [verb]" thay vì nói "I go 30 minutes".'
+              }
             }
           ],
-          fullMosaicSummary: 'Currently, I am living IN Ho Chi Minh City. More specifically, my apartment is located ON Ba Hat Street, right ON the 5th floor. There is a quiet park right across from my building, and despite the commute, I truly enjoy the cozy atmosphere.'
+          fullMosaicSummary: "My hometown is Can Tho, but now I live in Ho Chi Minh City to attend university. Currently, I rent a house on Ba Hat Street in District 10. It's quite far from my school, so I usually leave early to avoid traffic congestion, and it usually takes me around 30 minutes to drive there."
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 2: Miêu Tả Ngôi Nhà (How Many Rooms & House Layout)',
+        pedagogicalObjective: 'Làm chủ bài tập 3.2: Miêu tả nhà mấy tầng, bao nhiêu phòng và vị trí các phòng (on the ground floor, next to, opposite).',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click mở từng tầng để nắm cách miêu tả ngôi nhà của bạn:',
+          cards: [
+            {
+              step: 1,
+              label: 'BƯỚC 1: KIỂU NHÀ VÀ SỐ PHÒNG',
+              cognitiveFunction: '1. Bạn sống ở nhà mấy tầng và có bao nhiêu phòng?',
+              content: 'I live in a three-storey house with about seven rooms.',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Bám sát giáo trình: "I live in a 3-storey house with about 7 rooms".',
+              flipCard: {
+                frontText: 'My house has 3 floors and 7 rooms. (Đơn giản)',
+                backText: 'I live in a three-storey house with about seven rooms. (Chuẩn tự nhiên)',
+                explanation: 'Dùng cụm tính từ "three-storey house" (nhà 3 tầng) như trong bài tập 3.2.'
+              },
+              vowelHighlight: [
+                { word: 'foot', phonetic: '/fʊt/', vowelSound: '/ʊ/ u ngắn' },
+                { word: 'far', phonetic: '/fɑːr/', vowelSound: '/ɑː/ a dài' }
+              ]
+            },
+            {
+              step: 2,
+              label: 'BƯỚC 2: TẦNG TRỆT VÀ PHÒNG KHÁCH (GROUND FLOOR)',
+              cognitiveFunction: '2. Tầng trệt có những phòng gì và nằm ở đâu?',
+              content: 'On the ground floor, there is a small living room in front of the house where my family gathers,',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Dùng cụm vị trí: "On the ground floor" (ở tầng trệt) và "in front of the house" (phía trước nhà).',
+              flipCard: {
+                frontText: 'Floor 1 have living room. (Lỗi dùng từ floor)',
+                backText: 'On the ground floor, there is a living room in front of the house. (Chuẩn Anh-Anh)',
+                explanation: 'Tầng trệt trong tiếng Anh dùng "ground floor", không nói "floor 1".'
+              }
+            },
+            {
+              step: 3,
+              label: 'BƯỚC 3: CÁC PHÒNG BÊN TRONG (NEXT TO & OPPOSITE)',
+              cognitiveFunction: '3. Nhà bếp và các phòng khác nằm ở vị trí nào?',
+              content: 'and next to it is the kitchen, while the bathroom is located at the end of the hallway.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Luyện tập các giới từ chỉ vị trí trong bài: "next to" (kế bên) và "at the end of the hallway" (cuối hành lang).',
+              flipCard: {
+                frontText: 'Kitchen near living room. Toilet is far. (Cụt ý)',
+                backText: 'next to it is the kitchen, and the bathroom is at the end of the hallway. (Rõ ràng)',
+                explanation: 'Dùng cụm từ chỉ vị trí chính xác trong giáo trình: "at the end of the hallway".'
+              }
+            },
+            {
+              step: 4,
+              label: 'BƯỚC 4: TẦNG TRÊN VÀ SÂN THƯỢNG (ROOFTOP)',
+              cognitiveFunction: '4. Tầng 2 và sân thượng có gì đặc biệt?',
+              content: 'On the second floor is my cozy bedroom, and on the rooftop, my mom plants many green trees.',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Bám sát giáo trình: phòng ngủ ấm cúng ("cozy bedroom") và sân thượng trồng cây ("rooftop plants trees").',
+              flipCard: {
+                frontText: 'Top of house has trees. (Tiếng bồi)',
+                backText: 'on the rooftop, my mom plants many green trees. (Đúng từ rooftop)',
+                explanation: 'Dùng từ "rooftop" (sân thượng) chuẩn xác như bài đọc mô tả nhà.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'I live in a three-storey house with about seven rooms. On the ground floor, there is a small living room in front of the house where my family gathers, and next to it is the kitchen, while the bathroom is at the end of the hallway. On the second floor is my cozy bedroom, and on the rooftop, my mom plants many green trees.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 3: Căn Phòng Yêu Thích Của Bạn (Favorite Room - Bạn Hân)',
+        pedagogicalObjective: 'Làm chủ bài tập 3.3: Miêu tả căn phòng yêu thích nhất (bedroom), lý do thích và cách bố trí đồ đạc bên trong.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click mở từng tầng để nắm cách trả lời câu hỏi "What is your favorite room?":',
+          cards: [
+            {
+              step: 1,
+              label: 'BƯỚC 1: NÊU CĂN PHÒNG YÊU THÍCH NHẤT',
+              cognitiveFunction: '1. Căn phòng bạn thích nhất là phòng nào?',
+              content: 'My favorite room is definitely my bedroom, because it is cozy and bright.',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Bám sát đoạn hội thoại của bạn Hân: phòng ngủ ấm cúng ban đêm và đủ sáng ban ngày.',
+              flipCard: {
+                frontText: 'I like my bedroom. (Đơn sơ)',
+                backText: 'My favorite room is definitely my bedroom, because it is cozy and bright.',
+                explanation: 'Học cặp tính từ mô tả phòng trong giáo trình: "cozy" (ấm cúng) và "bright" (sáng sủa).'
+              }
+            },
+            {
+              step: 2,
+              label: 'BƯỚC 2: CÔNG NĂNG & LÝ DO THÍCH',
+              cognitiveFunction: '2. Bạn thường làm gì trong căn phòng này?',
+              content: 'It is a great place where I can relax and get some rest after a long day at work or school.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Nguyên văn mẫu câu của bạn Hân trong giáo trình: nơi thư giãn và nghỉ ngơi sau ngày dài.',
+              flipCard: {
+                frontText: 'I sleep there after work. (Quá ngắn)',
+                backText: 'It is a great place where I can relax and get some rest after a long day.',
+                explanation: 'Học cụm từ hay: "relax and get some rest after a long day".'
+              }
+            },
+            {
+              step: 3,
+              label: 'BƯỚC 3: CÁCH BỐ TRÍ NỘI THẤT (LAYOUT)',
+              cognitiveFunction: '3. Giường ngủ, bàn học và giá sách được đặt ở đâu?',
+              content: 'Next to the door is a comfortable bed, and opposite the bed is my working desk with bookshelves above it.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Luyện cấu trúc bài tập vẽ sơ đồ phòng: "next to the door", "opposite the bed", "above it".',
+              flipCard: {
+                frontText: 'Bed is here, desk is there. (Thiếu giới từ)',
+                backText: 'Next to the door is a comfortable bed, and opposite the bed is my working desk.',
+                explanation: 'Dùng cặp giới từ đối chiếu: "next to" (bên cạnh) và "opposite" (đối diện).'
+              },
+              branchOptions: [
+                {
+                  branchName: 'CÓ BAN CÔNG NHỎ (BÁM SÁT BÀN HÂN)',
+                  content: 'Plus, there is a small balcony where I often grow some flowers and enjoy the street view.',
+                  note: 'Chi tiết ban công ngắm phố như câu thoại của Hân.'
+                },
+                {
+                  branchName: 'CỬA SỔ LỚN THOÁNG MÁT (MỞ RỘNG PHỔ BIẾN)',
+                  content: 'Plus, it has a large window that lets in plenty of fresh air and natural sunlight.',
+                  note: 'Chi tiết cửa sổ đón gió và ánh sáng rất dễ áp dụng.'
+                }
+              ]
+            },
+            {
+              step: 4,
+              label: 'BƯỚC 4: CẢM XÚC TỔNG KẾT',
+              cognitiveFunction: '4. Tóm lại bạn cảm thấy thế nào khi ở trong phòng?',
+              content: 'Whenever I stay in my room, I always feel completely peaceful and comfortable.',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Khép lại bằng cảm xúc tích cực với 2 tính từ thông dụng: "peaceful" (bình yên) và "comfortable" (thoải mái).',
+              flipCard: {
+                frontText: 'I feel good in my room. (Đơn sơ)',
+                backText: 'I always feel completely peaceful and comfortable in my room. (Tròn trịa)',
+                explanation: 'Dùng từ "peaceful and comfortable" giúp bài nói ấm áp và tự nhiên.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'My favorite room is definitely my bedroom, because it is cozy and bright. It is a great place where I can relax and get some rest after a long day at work. Next to the door is a comfortable bed, and opposite the bed is my working desk with bookshelves above it. Whenever I stay in my room, I always feel completely peaceful and comfortable.'
         }
       }
     ]
