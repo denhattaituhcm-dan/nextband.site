@@ -4561,59 +4561,254 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 9,
     day: 3,
     skill: 'speaking',
-    title: 'The Passion & Growth Synthesis Model',
-    subtitle: 'Tổng Hòa Năng Lực Nói Về Đam Mê & Sự Trưởng Thành Cá Nhân',
-    coreCompetency: 'Hoàn thiện năng lực Speaking Band 4.0+: Tích hợp phát âm chuẩn (Grouping words & Rhythm) với chuỗi tư duy nói về sở thích: Trigger -> Immersive Practice -> Self-Growth -> Future Vision.',
+    title: 'The Hobbies & Tense Flow Engine (Topic: Hobbies & Interests)',
+    subtitle: 'Nói Về Sở Thích & Sự Thay Đổi Theo Thời Gian: Từ Câu Cụt 3.0 Lên Bài Nói 4.0 - 4.5',
+    coreCompetency: 'Chuẩn hóa đầu ra khóa Dreamer (3.0 → 4.0+): Học viên hoàn thiện khả năng ngắt cụm từ (Chunking / Grouping words), phát triển ý mạch lạc theo mô hình "Reasons - Results - Benefits" ("helps me expand knowledge", "allows me to relax and refresh my mind"), và phối hợp mượt mà 3 thì (Past "used to" - Present "nowadays" - Future "in the future I would like to...").',
     bridgeToHomework: {
-      promptText: 'Thu âm bài nói tổng kết khóa học về sở thích và đam mê cá nhân trong Homework W9D3.',
+      promptText: 'Thu âm bài nói tốt nghiệp khóa Dreamer chia sẻ về sự thay đổi sở thích cá nhân qua các giai đoạn trong Homework W9D3.',
       targetExamId: 'exam_dreamer_w9d3'
     },
     stages: [
       {
         stageNumber: 1,
         stageType: 'progressive_reveal',
-        title: 'Bóc tách 4 tầng phản xạ miêu tả đam mê và sở thích dài hạn',
-        pedagogicalObjective: 'Nâng cấp bài nói sở thích từ câu trả lời vụn vặt (I like playing football) thành câu chuyện trưởng thành có nhịp điệu và ngắt cụm tự nhiên.',
+        title: 'Chặng 1: Phát Triển Ý Sở Thích Bằng "Reasons - Results" (Activity 2.1)',
+        pedagogicalObjective: 'Làm chủ mẫu câu bài tập 2.1: "In my free time, I am really into... because it helps me... Besides, it also enables me to... so I always try to...".',
         interactionModel: {
           type: 'progressive_reveal',
-          prompt: 'Click mở từng tầng để nắm cấu trúc bài nói tổng kết sở thích và sự phát triển bản thân:',
+          prompt: 'Click mở từng bước để học cách mở rộng câu trả lời về sở thích bằng Lý do và Kết quả:',
           cards: [
             {
               step: 1,
-              label: 'INITIAL SPARK & PASSION IDENTIFICATION',
-              cognitiveFunction: 'Khởi nguồn đam mê và sở thích cốt lõi',
-              content: 'When I look back, my deep passion for photography actually began when my father handed me his vintage camera.',
-              pedagogyNote: 'Dùng cấu trúc tự sự "When I look back, my deep passion for... began when...".'
+              label: 'BƯỚC 1: NÊU SỞ THÍCH & LỢI ÍCH 1 (EXPAND MY KNOWLEDGE)',
+              cognitiveFunction: '1. Bạn thích làm gì trong thời gian rảnh và nó mang lại lợi ích gì?',
+              content: 'In my free time, I am really into reading books because it helps me expand my knowledge on different topics.',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Nguyên văn câu điền từ bài tập 2.1: "I\'m really into reading books because it helps me expand my knowledge".',
+              flipCard: {
+                frontText: 'Free time I like read book. (Tiếng bồi)',
+                backText: 'In my free time, I am really into reading books because it helps me expand my knowledge. (Chuẩn giáo trình)',
+                explanation: 'Dùng cụm hay: "be really into + V-ing" (rất say mê) và "expand my knowledge" (mở rộng kiến thức).'
+              },
+              vowelHighlight: [
+                { word: 'refrigeration', phonetic: '/rɪˌfrɪdʒ.əˈreɪ.ʃən/', vowelSound: '5 âm tiết rõ ràng' },
+                { word: 'interests', phonetic: '/ˈɪn.trəsts/', vowelSound: '/ts/ phát âm đủ đuôi s' }
+              ]
             },
             {
               step: 2,
-              label: 'IMMERSIVE LEARNING PROCESS',
-              cognitiveFunction: 'Quá trình rèn luyện kiên trì (Vận dụng thì và bổ ngữ)',
-              content: 'Over the past three years, I have dedicated countless weekends to mastering composition and capturing authentic street moments.',
-              pedagogyNote: 'Vận dụng thì Present Perfect kết hợp cụm "dedicated countless weekends to + V-ing".'
+              label: 'BƯỚC 2: LỢI ÍCH BỔ SUNG (REFRESH MY MIND)',
+              cognitiveFunction: '2. Sở thích này còn giúp ích gì cho tinh thần của bạn?',
+              content: 'Besides, reading books also allows me to relax and refresh my mind after stressful working hours.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Bám sát câu điền từ tiếp theo của bài tập 2.1: "allows me to relax and refresh my mind".',
+              flipCard: {
+                frontText: 'And it good for brain. (Đơn sơ)',
+                backText: 'Besides, it allows me to relax and refresh my mind. (Cụm từ đắt giá của bài)',
+                explanation: 'Collocation chuẩn trong bài: "refresh my mind" (làm mới và thư thái đầu óc).'
+              }
             },
             {
               step: 3,
-              label: 'TRANSFORMATIVE VALUE',
-              cognitiveFunction: 'Sự thay đổi về tư duy và phong cách sống',
-              content: 'This creative hobby not only helps me decompress from academic pressure, but also teaches me to observe life more deeply.',
-              pedagogyNote: 'Dùng cấu trúc tương quan cao cấp "not only helps me..., but also teaches me to...".',
+              label: 'BƯỚC 3: HÀNH ĐỘNG DUY TRÌ THƯỜNG XUYÊN (PRACTICE ROUTINE)',
+              cognitiveFunction: '3. Bạn duy trì sở thích đó đều đặn như thế nào?',
+              content: 'Therefore, I always try to read at least fifteen minutes every day before going to sleep.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Bám sát câu kết trong bài tập: "so I always try to read a few pages a day".',
+              flipCard: {
+                frontText: 'So I read before sleep. (Cụt ý)',
+                backText: 'Therefore, I always try to read at least 15 minutes before going to sleep. (Mạch lạc)',
+                explanation: 'Dùng liên từ nối "Therefore" và cụm "try to read at least..." thể hiện tính kỷ luật.'
+              },
               branchOptions: [
-                { branchName: 'CREATIVE PERSPECTIVE', content: 'This hobby enables me to notice the extraordinary beauty hidden in everyday ordinary routines.', note: 'Nhánh phát triển cảm thụ nghệ thuật.' },
-                { branchName: 'SOCIAL CONNECTION', content: 'This hobby connects me with like-minded creative friends who constantly inspire my progress.', note: 'Nhánh kết nối cộng đồng bạn bè cùng chí hướng.' }
+                {
+                  branchName: 'ĐỌC SÁCH 15 PHÚT MỖI NGÀY (BÀI TẬP 2.1)',
+                  content: 'Therefore, I always try to read at least fifteen minutes every day before going to sleep.',
+                  note: 'Duy trì đọc sách bám sát bài tập mẫu.'
+                },
+                {
+                  branchName: 'NGHE PODCAST TIẾNG ANH (VÍ DỤ BÀI TẬP 2.1)',
+                  content: 'Therefore, I enjoy listening to English podcasts every morning to gain new insights and inspiration.',
+                  note: 'Trích ví dụ bài tập: "listening to podcasts to gain new insights and inspiration".'
+                }
               ]
             },
             {
               step: 4,
-              label: 'LONG-TERM VISION',
-              cognitiveFunction: 'Tầm nhìn tương lai và sự gắn bó bền vững',
-              content: 'Moving forward, I am determined to hold a small photo exhibition to share these heartfelt stories with the wider community.',
-              pedagogyNote: 'Khép lại bằng định hướng tương lai: "Moving forward, I am determined to...".'
+              label: 'BƯỚC 4: KẾT QUẢ TỔNG THỂ (MAKE PROGRESS)',
+              cognitiveFunction: '4. Sở thích này mang lại sự thay đổi tích cực gì cho bạn?',
+              content: 'This healthy routine not only keeps me calm, but also helps me make continuous progress in life.',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Khép lại bài nói bằng từ vựng của khóa học: "make continuous progress" (không ngừng tiến bộ).',
+              flipCard: {
+                frontText: 'It make me good person. (Dịch thô)',
+                backText: 'This routine helps me make continuous progress in life. (Chuẩn tự nhiên)',
+                explanation: 'Ôn lại cụm "make progress" (tiến bộ) đã rèn luyện ở Tuần 5.'
+              }
             }
           ],
-          fullMosaicSummary: 'When I look back, my passion for photography began when my father gave me his camera. Over the past three years, I have dedicated weekends to capturing authentic moments. This hobby not only relieves academic stress but also teaches me to observe life deeply, and moving forward, I hope to hold an exhibition to share these stories.'
+          fullMosaicSummary: 'In my free time, I am really into reading books because it helps me expand my knowledge on different topics. Besides, reading books also allows me to relax and refresh my mind after stressful hours. Therefore, I always try to read at least fifteen minutes every day, which helps me make continuous progress in life.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 2: Sự Thay Đổi Sở Thích Qua Các Thời Kỳ (How Hobbies Changed - Activity 2.2)',
+        pedagogicalObjective: 'Làm chủ bài tập 2.2: Phối hợp 3 thì: Quá khứ ("used to spend hours playing games -> lost interest") -> Hiện tại ("nowadays pursue reading books") -> Tương lai ("in the future think about taking up guitar").',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click mở từng bước để học cách phối hợp 3 thì Quá khứ - Hiện tại - Tương lai khi nói về sở thích:',
+          cards: [
+            {
+              step: 1,
+              label: 'BƯỚC 1: SỞ THÍCH THỜI THƠ ẤU (WHEN I WAS YOUNG, I USED TO...)',
+              cognitiveFunction: '1. Thời nhỏ bạn thường làm gì và sau này có còn làm không?',
+              content: 'When I was young, I used to spend hours a day playing computer games as a way to relax.',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Nguyên văn câu 1 bài tập 2.2: "When I was young, I used to spend hours a day playing computer games...".',
+              flipCard: {
+                frontText: 'When young, I played game many hours. (Đơn sơ)',
+                backText: 'When I was young, I used to spend hours a day playing computer games. (Chuẩn giáo trình)',
+                explanation: 'Dùng cấu trúc "used to + V nguyên mẫu" chỉ thói quen trong quá khứ đã chấm dứt.'
+              },
+              vowelHighlight: [
+                { word: 'practiced', phonetic: '/ˈpræk.tɪst/', vowelSound: '/t/ âm ed đuôi không rung' },
+                { word: 'decided', phonetic: '/dɪˈsaɪ.dɪd/', vowelSound: '/ɪd/ âm ed sau âm d' }
+              ]
+            },
+            {
+              step: 2,
+              label: 'BƯỚC 2: MẤT HỨNG THÚ THEO THỜI GIAN (LOST INTEREST)',
+              cognitiveFunction: '2. Khi lớn lên, cảm nhận của bạn về trò chơi đó thay đổi ra sao?',
+              content: 'However, as I got older, I gradually lost interest in gaming and rarely play anymore.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Nguyên văn vế 2 câu 1 bài tập 2.2: "as I got older, I lost interest in this hobby and rarely do so anymore".',
+              flipCard: {
+                frontText: 'When older, I not like game anymore. (Tiếng bồi)',
+                backText: 'As I got older, I lost interest in gaming and rarely play anymore. (Rất tự nhiên)',
+                explanation: 'Collocation đắt giá trong bài: "lose interest in + V-ing" (mất dần hứng thú với cái gì).'
+              }
+            },
+            {
+              step: 3,
+              label: 'BƯỚC 3: SỞ THÍCH HIỆN TẠI (NOWADAYS I AM PURSUING...)',
+              cognitiveFunction: '3. Hiện nay bạn đang theo đuổi sở thích lành mạnh nào?',
+              content: "Nowadays, I'm pursuing many new habits, but my favorite one is reading books for 15 minutes a day.",
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Nguyên văn câu 2 bài tập 2.2: "Nowadays, I\'m pursuing many new hobbies, but my favorite one is...".',
+              flipCard: {
+                frontText: 'Now I read books everyday. (Quá bình thường)',
+                backText: "Nowadays, I'm pursuing many new hobbies, especially reading books. (Chuẩn bài học)",
+                explanation: 'Động từ chuẩn: "pursue a hobby" (theo đuổi một sở thích lành mạnh).'
+              },
+              branchOptions: [
+                {
+                  branchName: 'ĐỌC SÁCH PHÁT TRIỂN BẢN THÂN (BÀI TẬP 2.2)',
+                  content: "Nowadays, I'm pursuing many new hobbies, but my favorite one is reading books to expand my knowledge.",
+                  note: 'Theo đúng kịch bản đoạn văn trong sách.'
+                },
+                {
+                  branchName: 'TẬP THỂ DỤC THỂ THAO (BÀI HỌC TUẦN 4)',
+                  content: "Nowadays, I'm pursuing fitness workouts at the gym to stay in shape and stay active.",
+                  note: 'Kết hợp từ vựng giữ dáng ở Tuần 4.'
+                }
+              ]
+            },
+            {
+              step: 4,
+              label: 'BƯỚC 4: DỰ ĐỊNH TƯƠNG LAI (IN THE FUTURE, TAKING UP GUITAR)',
+              cognitiveFunction: '4. Trong tương lai, bạn dự định bắt đầu một sở thích mới nào?',
+              content: "In the future, I have been thinking about taking up the guitar because I love music and singing for my friends.",
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Nguyên văn câu 3 bài tập 2.2: "In the future, I\'ve been thinking about taking up a new hobby... playing guitar...".',
+              flipCard: {
+                frontText: 'Later I want learn guitar. (Cụt ý)',
+                backText: 'In the future, I am thinking about taking up the guitar to sing for my friends. (Nâng tầm +0.5)',
+                explanation: 'Học cụm phrasal verb tuyệt vời: "take up a new hobby / instrument" (bắt đầu học một sở thích/nhạc cụ).'
+              }
+            }
+          ],
+          fullMosaicSummary: 'When I was young, I used to spend hours a day playing computer games as a way to relax. However, as I got older, I lost interest in gaming. Nowadays, I am pursuing new hobbies like reading books, and in the future, I am thinking about taking up the guitar because I love singing for my friends.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 3: Kỹ Thuật Ngắt Cụm Từ Tự Nhiên (Word Grouping & Chunking - Activity 1.3)',
+        pedagogicalObjective: 'Làm chủ bài tập 1.3: Ngắt cụm từ (chunking) có nghĩa theo nhịp hơi thở thay vì đọc từng chữ rời rạc, giúp bài nói trôi chảy và dễ hiểu.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click mở từng bước để học cách ngắt cụm từ (Chunking) giúp giọng nói tự nhiên, không ngắt quãng vụn vặt:',
+          cards: [
+            {
+              step: 1,
+              label: 'BƯỚC 1: CỤM CHỦ NGỮ & ĐỘNG TỪ CHÍNH (CHUNK 1)',
+              cognitiveFunction: '1. Ngắt cụm mở đầu câu như thế nào để người nghe nắm bắt ngay?',
+              content: 'Last weekend / I went to a quiet coffee shop with my best friend.',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Hướng dẫn học viên ngắt cụm: [Last weekend] / [I went to a quiet coffee shop with my best friend]. Không ngắt vụn giữa chừng.',
+              flipCard: {
+                frontText: 'Last... weekend I... went to... a coffee shop. (Nói giật cục từng chữ)',
+                backText: 'Last weekend / I went to a quiet coffee shop with my friend. (Ngắt đúng 2 cụm)',
+                explanation: 'Kỹ thuật Chunking: gom cụm trạng ngữ thời gian và cụm hành động chính thành 2 nhịp hơi.'
+              }
+            },
+            {
+              step: 2,
+              label: 'BƯỚC 2: CỤM MỤC ĐÍCH & HOẠT ĐỘNG (CHUNK 2)',
+              cognitiveFunction: '2. Nói cụm mục đích và việc làm liền mạch ra sao?',
+              content: 'We sat on the balcony / enjoying delicious milk coffee / and chatting about our study plans.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Luyện 3 nhóm từ liền mạch: [We sat on the balcony] / [enjoying delicious milk coffee] / [and chatting about our plans].',
+              flipCard: {
+                frontText: 'We sat on... balcony and... drink coffee. (Ngắt sai vị trí)',
+                backText: 'We sat on the balcony / enjoying milk coffee / and chatting about our plans. (Trôi chảy)',
+                explanation: 'Các từ trong mỗi nhóm được phát âm liền nhau như một từ dài, giúp người nghe dễ tiếp thu.'
+              }
+            },
+            {
+              step: 3,
+              label: 'BƯỚC 3: CỤM MÔ TẢ ĐỒ VẬT (ÁP DỤNG VÍ DỤ TRONG SÁCH)',
+              cognitiveFunction: '3. Áp dụng ví dụ sách: Mô tả chiếc áo khoác mới với các chi tiết liền cụm thế nào?',
+              content: 'My friend wore a nice new jacket / with a zip down the front / and a lot of pockets.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Nguyên văn ví dụ bài tập 1.3: "I bought a nice new jacket / with a zip down the front / and a lot of pockets".',
+              flipCard: {
+                frontText: 'He wore a nice new / jacket with a zip down the / front. (Ngắt sai quy tắc như sách cảnh báo)',
+                backText: 'He wore a nice new jacket / with a zip down the front / and a lot of pockets. (Ngắt chuẩn 100%)',
+                explanation: 'Tuyệt đối không ngắt giữa tính từ và danh từ ("new / jacket"), phải ngắt trọn vẹn từng cụm ngữ nghĩa.'
+              },
+              branchOptions: [
+                {
+                  branchName: 'MÔ TẢ TRANG PHỤC (VÍ DỤ BÀI TẬP 1.3)',
+                  content: 'He wore a nice new jacket / with a zip down the front / and a lot of pockets.',
+                  note: 'Nguyên văn câu chuẩn trong bài tập Chunking.'
+                },
+                {
+                  branchName: 'MÔ TẢ KHÔNG GIAN QUÁN CÀ PHÊ (THỰC TẾ)',
+                  content: 'The cafe has a lovely garden / with plenty of green trees / and soothing acoustic music.',
+                  note: 'Cụm từ tự nhiên miêu tả không gian quán cà phê.'
+                }
+              ]
+            },
+            {
+              step: 4,
+              label: 'BƯỚC 4: CẢM XÚC KẾT NỐI TOÀN BÀI (TỐT NGHIỆP KHÓA DREAMER)',
+              cognitiveFunction: '4. Bạn đúc kết được kỹ năng gì quan trọng nhất sau khi hoàn thành khóa Speaking?',
+              content: 'Practicing word chunking every day / has really helped me speak English / much more fluently and confidently!',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Khép lại chặng đường 9 tuần: Học viên tự tin nói tiếng Anh tự nhiên, phát âm rõ ràng, không còn sợ hãi.',
+              flipCard: {
+                frontText: 'Now I speak English very good. (Tiếng bồi)',
+                backText: 'Practicing word chunking / has helped me speak English / fluently and confidently! (Tốt nghiệp Dreamer)',
+                explanation: 'Chúc mừng bạn đã làm chủ toàn bộ kỹ năng Speaking của khóa Dreamer đạt chuẩn 4.0 - 4.5!'
+              }
+            }
+          ],
+          fullMosaicSummary: 'Last weekend / I went to a quiet coffee shop with my best friend. We sat on the balcony / enjoying delicious milk coffee / and chatting about our study plans. Practicing word chunking every day / has really helped me speak English / much more fluently and confidently!'
         }
       }
     ]
   }
 ];
+
