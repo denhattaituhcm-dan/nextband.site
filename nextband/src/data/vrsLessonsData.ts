@@ -661,39 +661,203 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 3,
     day: 2,
     skill: 'reading',
-    title: 'The Semantic Boundary Lab',
-    subtitle: 'Xác Lập Biên Giới Khái Niệm & Đo Độ Trùng Khớp',
-    coreCompetency: 'Đối chiếu biên giới nghĩa giữa câu đề bài và văn bản đọc để tránh bẫy đồng âm khác nghĩa hoặc suy diễn quá mức.',
+    title: 'The Chronological Itinerary Tracker',
+    subtitle: 'Theo Dấu 4 Trạm Dừng Chân & Bóc Tách 5 Bẫy Nhận Thức',
+    coreCompetency: 'Định vị tọa độ thông tin dọc theo hành trình 4 trạm: Sài Gòn (3 ngày) → Hội An (9 ngày) → Hà Nội (3 ngày) → Hạ Long (2 ngày). Phân biệt bẫy so sánh nhất, bẫy lý do và bẫy cảm xúc quá khứ.',
     bridgeToHomework: {
-      promptText: 'Thực hành định vị bằng chứng lịch trình du lịch Việt Nam trong Homework W3D2.',
+      promptText: 'Làm bài tập đọc hiểu về lịch trình du lịch 1 tháng tại Việt Nam trong Homework W3D2.',
       targetExamId: 'exam_dreamer_w3d2'
     },
     stages: [
       {
         stageNumber: 1,
         stageType: 'verification_scale',
-        title: 'Bẫy Cảm Xúc vs Thực Tế Trải Nghiệm',
-        pedagogicalObjective: 'Xác định rõ sự khác biệt giữa quan điểm quá khứ (thought) và trải nghiệm thực tế tại Việt Nam.',
+        title: 'Câu 1 (T/F/NG): Bẫy So Sánh Nhất (busiest vs one of the busiest)',
+        pedagogicalObjective: 'Phát hiện sự sai lệch giữa khẳng định "bận rộn nhất" (busiest) và "một trong những chuyến bận rộn nhất" (one of the busiest).',
         interactionModel: {
           type: 'verification_scale',
-          prompt: 'Đặt nhận định lên bàn cân logic để đối chiếu với nhận thức của tác giả:',
+          prompt: 'Bấm Radar quét nhận định tổng quan về chuyến đi trong Đoạn mở đầu:',
+          passageContext: {
+            title: 'My 1-Month Vietnam Travel Itinerary: Planning A Vietnam Trip!',
+            paragraphs: [
+              {
+                id: 'p1',
+                label: 'Đoạn mở đầu · Tổng quan 4 tuần xuyên Việt',
+                text: 'I was determined to experience as much of Vietnam as possible during my 1 month of travel through the country. My journey started in Ho Chi Minh City in southern Vietnam, and during our 4-week trip there, I slowly worked my way north to Hanoi via buses and trains. Covering a total of 7 destinations, this was definitely one of my busiest months of travel in Southeast Asia.'
+              }
+            ],
+            targetParagraphId: 'p1',
+            targetSnippet: 'definitely one of my busiest months of travel in Southeast Asia'
+          },
           statement: {
-            rawText: 'The author has always found Vietnamese pho delicious and full of flavour.',
+            rawText: "1. The author's one month in Vietnam was her busiest month of travel in Southeast Asia.",
             deconstructedVariables: [
-              { name: 'subject', text: 'The author' },
-              { name: 'attitude_frequency', text: 'has always found pho delicious', isTrapWord: true },
-              { name: 'object', text: 'Vietnamese pho' }
+              { name: 'subject', text: "The author's one month in Vietnam" },
+              { name: 'comparison_degree', text: 'was her busiest month (bận rộn nhất)', isTrapWord: true },
+              { name: 'region', text: 'in Southeast Asia' }
             ]
           },
           passageEvidence: {
-            rawText: 'I always thought it was such a bland dish without very much flavour, but I just needed to eat it in Vietnam to enjoy it.',
+            rawText: 'Covering a total of 7 destinations, this was definitely one of my busiest months of travel in Southeast Asia.',
             targetVariables: [
-              { matchingName: 'attitude_frequency', text: 'always thought it was such a bland dish without very much flavour' }
+              { matchingName: 'comparison_degree', text: 'one of my busiest months (MỘT TRONG NHỮNG tháng bận rộn nhất)' }
             ]
           },
           expectedRelation: 'contradiction',
           verdict: 'FALSE',
-          pedagogicalInsight: 'FALSE vì tác giả từng nghĩ phở là món nhạt nhẽo ("bland dish without very much flavour"), hoàn toàn trái ngược với khẳng định của đề bài là "has always found pho delicious".'
+          pedagogicalInsight: 'FALSE vì bài đọc nêu rõ đây là "ONE OF my busiest months" (một trong số những tháng bận rộn nhất), chứ KHÔNG khẳng định đây là tháng bận rộn NHẤT tuyệt đối ("her busiest month")! Cấp độ so sánh bị bóp méo.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'verification_scale',
+        title: 'Câu 2 (T/F/NG): Bẫy Nguyên Nhân & Động Cơ (save money vs time was limited)',
+        pedagogicalObjective: 'Quét trạm Sài Gòn để đối chiếu lý do đăng ký tour 1 ngày: do tiết kiệm tiền hay do giới hạn thời gian?',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét tìm lý do tác giả mua city tour 1 ngày tại Trạm 1 (Sài Gòn):',
+          passageContext: {
+            title: 'My 1-Month Vietnam Travel Itinerary: Planning A Vietnam Trip!',
+            paragraphs: [
+              {
+                id: 'p2',
+                label: 'Trạm 1: Ho Chi Minh City / Saigon (3 days)',
+                text: 'In terms of sightseeing, since my time was limited; I decided to sign up for a 1-day tour of the city and I then spent the rest of the time wandering around on my own. My tour took me to the War Remnants Museum, Reunification Palace, Thien Hau Pagoda, Notre-Dame Basilica, and Saigon Central Post office!'
+              }
+            ],
+            targetParagraphId: 'p2',
+            targetSnippet: 'since my time was limited; I decided to sign up for a 1-day tour of the city'
+          },
+          statement: {
+            rawText: '2. The author decided to sign up for a 1-day tour of the city because she wanted to save money.',
+            deconstructedVariables: [
+              { name: 'action', text: 'sign up for a 1-day tour of the city' },
+              { name: 'reason', text: 'because she wanted to save money', isTrapWord: true }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'In terms of sightseeing, since my time was limited; I decided to sign up for a 1-day tour of the city.',
+            targetVariables: [
+              { matchingName: 'reason', text: 'since my time was limited (VÌ THỜI GIAN CÓ HẠN, KHÔNG PHẢI TIẾT KIỆM TIỀN)' }
+            ]
+          },
+          expectedRelation: 'contradiction',
+          verdict: 'FALSE',
+          pedagogicalInsight: 'FALSE vì tác giả đăng ký tour 1 ngày vì "thời gian có hạn" (since my time was limited), mâu thuẫn hoàn toàn với lý do "muốn tiết kiệm tiền" (wanted to save money) của đề bài!'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'verification_scale',
+        title: 'Câu 3 (T/F/NG): Khớp Ý Nhận Định Quá Khứ (bland dish = flavourless dish)',
+        pedagogicalObjective: 'Đối chiếu từ đồng nghĩa: bland dish without very much flavour tương đương flavourless dish.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét cảm nghĩ của tác giả về món phở TRƯỚC KHI đến Việt Nam:',
+          passageContext: {
+            title: 'My 1-Month Vietnam Travel Itinerary: Planning A Vietnam Trip!',
+            paragraphs: [
+              {
+                id: 'p2',
+                label: 'Trạm 1: Ho Chi Minh City / Saigon (3 days)',
+                text: 'Saigon is a city for foodies! When I wasn’t sightseeing, I was eating around town and one of the food highlights turned out to be pho. I had tried pho before and I always thought it was such a bland dish without very much flavour, but as it turns out, I just needed to eat it in Vietnam to enjoy the dish in all its glory.'
+              }
+            ],
+            targetParagraphId: 'p2',
+            targetSnippet: 'I had tried pho before and I always thought it was such a bland dish without very much flavour'
+          },
+          statement: {
+            rawText: '3. She had thought pho was a flavourless dish before traveling to Vietnam.',
+            deconstructedVariables: [
+              { name: 'time_context', text: 'before traveling to Vietnam' },
+              { name: 'past_opinion', text: 'had thought pho was a flavourless dish' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'I had tried pho before and I always thought it was such a bland dish without very much flavour.',
+            targetVariables: [
+              { matchingName: 'past_opinion', text: 'always thought it was such a bland dish without very much flavour (món ăn nhạt nhẽo không có mùi vị)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'TRUE! Cụm từ "bland dish without very much flavour" trong bài đọc đồng nghĩa hoàn toàn với "flavourless dish" trong đề bài. Cả hai đều chỉ quan điểm của tác giả trước khi sang Việt Nam.'
+        }
+      },
+      {
+        stageNumber: 4,
+        stageType: 'verification_scale',
+        title: 'Câu 4 (T/F/NG): Bẫy Tần Suất Lần Đầu Tiên (first time in Vietnam vs had tried before)',
+        pedagogicalObjective: 'Bóc trần mâu thuẫn giữa "thử lần đầu tiên tại VN" và "đã từng ăn phở trước đó rồi".',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét lịch sử trải nghiệm món phở của tác giả:',
+          passageContext: {
+            title: 'My 1-Month Vietnam Travel Itinerary: Planning A Vietnam Trip!',
+            paragraphs: [
+              {
+                id: 'p2',
+                label: 'Trạm 1: Ho Chi Minh City / Saigon (3 days)',
+                text: 'I had tried pho before and I always thought it was such a bland dish without very much flavour, but as it turns out, I just needed to eat it in Vietnam to enjoy the dish in all its glory. The combination of cilantro, chilli peppers, lime, Asian basil and bean sprouts was amazing!'
+              }
+            ],
+            targetParagraphId: 'p2',
+            targetSnippet: 'I had tried pho before and I always thought it was such a bland dish'
+          },
+          statement: {
+            rawText: '4. She tried pho for the first time in Vietnam and was amazed by the combination of several ingredients.',
+            deconstructedVariables: [
+              { name: 'experience', text: 'tried pho for the first time in Vietnam', isTrapWord: true },
+              { name: 'reaction', text: 'amazed by the combination of several ingredients' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'I had tried pho before and I always thought it was such a bland dish without very much flavour.',
+            targetVariables: [
+              { matchingName: 'experience', text: 'I had tried pho before (ĐÃ TỪNG THỬ PHỞ TRƯỚC ĐÓ RỒI, KHÔNG PHẢI LẦN ĐẦU TIÊN)' }
+            ]
+          },
+          expectedRelation: 'contradiction',
+          verdict: 'FALSE',
+          pedagogicalInsight: 'FALSE vì tác giả nói "I had tried pho before" (tôi đã từng ăn phở trước đây rồi), nghĩa là không phải lần đầu tiên ăn phở ở Việt Nam ("tried pho for the first time in Vietnam"). Một nửa câu sau đúng nhưng nửa đầu sai làm toàn câu thành FALSE!'
+        }
+      },
+      {
+        stageNumber: 5,
+        stageType: 'verification_scale',
+        title: 'Câu 5 (T/F/NG): Bẫy So Sánh Nhất Không Được Đề Cập (the most sobering experience?)',
+        pedagogicalObjective: 'Phát hiện sự thiếu vắng từ so sánh nhất: bài chỉ dùng "a sobering look" chứ không hề so sánh "the most sobering".',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét nhận xét của tác giả về Bảo tàng Chứng tích Chiến tranh:',
+          passageContext: {
+            title: 'My 1-Month Vietnam Travel Itinerary: Planning A Vietnam Trip!',
+            paragraphs: [
+              {
+                id: 'p2',
+                label: 'Trạm 1: Ho Chi Minh City / Saigon (3 days)',
+                text: 'My tour took me to the Vietnam War Remnants Museum for a sobering look at the lasting effects of the Vietnam War, the Reunification Palace, the Thien Hau Pagoda, the Saigon Notre-Dame Basilica, and lastly the Saigon Central Post office!'
+              }
+            ],
+            targetParagraphId: 'p2',
+            targetSnippet: 'Vietnam War Remnants Museum for a sobering look at the lasting effects of the Vietnam War'
+          },
+          statement: {
+            rawText: '5. Of all places in Ho Chi Minh City, the visit to the Vietnam War Remnants Museum was the most sobering experience.',
+            deconstructedVariables: [
+              { name: 'scope', text: 'Of all places in Ho Chi Minh City' },
+              { name: 'superlative_claim', text: 'was the most sobering experience', isTrapWord: true }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'My tour took me to the Vietnam War Remnants Museum for a sobering look at the lasting effects of the Vietnam War.',
+            targetVariables: [
+              { matchingName: 'superlative_claim', text: 'CHỈ NÊU "A SOBERING LOOK", KHÔNG CÓ SO SÁNH VỚI CÁC ĐỊA ĐIỂM KHÁC' }
+            ]
+          },
+          expectedRelation: 'no_evidence',
+          verdict: 'NOT GIVEN',
+          pedagogicalInsight: 'NOT GIVEN vì tác giả chỉ miêu tả bảo tàng đem lại "a sobering look" (một góc nhìn trầm mặc, đáng suy ngẫm), hoàn toàn KHÔNG hề so sánh xem đây có phải là trải nghiệm đáng suy ngẫm NHẤT ("the most sobering") so với các địa điểm khác trong thành phố hay không!'
         }
       }
     ]
