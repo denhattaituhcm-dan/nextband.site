@@ -3187,18 +3187,35 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     day: 1,
     skill: 'writing',
     title: 'The Non-Defining Punctuation Engine',
-    subtitle: 'Phẫu Thuật Dấu Phẩy & Bẫy Cấm Kỵ Của "That"',
-    coreCompetency: 'Phân biệt Mệnh đề quan hệ xác định (Defining) vs không xác định (Non-defining). Nắm vững 2 luật cấm kỵ: Non-defining bắt buộc có 2 dấu phẩy bao bọc và TUYỆT ĐỐI KHÔNG DÙNG "THAT".',
+    subtitle: 'Mệnh Đề Quan Hệ Xác Định & Không Xác Định: Lắp Ráp & Điểm Gãy Dấu Phẩy',
+    coreCompetency: 'Phân biệt rạch ròi Mệnh đề quan hệ xác định (Defining - không dấu phẩy) và không xác định (Non-defining - kẹp giữa 2 dấu phẩy) trong giáo trình W7D1. Làm chủ quy tắc cấm kỵ cốt lõi: Tuyệt đối không bao giờ dùng "THAT" sau dấu phẩy.',
     bridgeToHomework: {
-      promptText: 'Luyện tập đặt dấu phẩy và rút gọn mệnh đề quan hệ trong Homework W7D1.',
+      promptText: 'Luyện tập đặt dấu phẩy và phân biệt Defining vs Non-defining trong Homework W7D1.',
       targetExamId: 'exam_dreamer_w7d1'
     },
     stages: [
       {
         stageNumber: 1,
+        stageType: 'syntax_anatomy',
+        title: 'Chặng 1: Kiến Tạo Mệnh Đề Không Xác Định Kẹp Dấu Phẩy (Neil Armstrong, Who Stepped on the Moon)',
+        pedagogicalObjective: 'Bám sát ví dụ giáo trình W7D1 bài tập 3 câu 1: Lắp ráp câu chứa danh từ riêng xác định kết hợp Mệnh đề quan hệ Non-defining được bao bọc bởi 2 dấu phẩy.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Bấm quét giải phẫu để lắp ráp câu văn chứa Mệnh đề quan hệ không xác định chuẩn mực:',
+          mode: 'build',
+          tokens: [
+            { id: 't1', text: 'Neil Armstrong,', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'who first stepped on the moon,', role: 'adjective_clause', colorClass: 'orange' },
+            { id: 't3', text: 'was a courageous', role: 'fv_core', colorClass: 'blue' },
+            { id: 't4', text: 'American astronaut', role: 'complement', colorClass: 'purple' }
+          ]
+        }
+      },
+      {
+        stageNumber: 2,
         stageType: 'productive_failure',
-        title: 'Break (Phát hiện sụp đổ dấu phẩy & dùng sai "that")',
-        pedagogicalObjective: 'Đối diện lỗi cấm kỵ kinh điển trong IELTS Writing: Dùng "that" sau dấu phẩy trong mệnh đề không xác định.',
+        title: 'Chặng 2: Phẫu Thuật Mâu Thuẫn Cấm Kỵ Dùng "That" Sau Dấu Phẩy (My Wife, That Is an English Teacher)',
+        pedagogicalObjective: 'Bám sát ví dụ giáo trình W7D1 bài tập 3 câu 2: Đối diện với lỗi cấm kỵ kinh điển trong IELTS Writing - Dùng đại từ "that" sau dấu phẩy.',
         interactionModel: {
           type: 'slot_snap',
           prompt: 'Click vào cặp điểm gây xung đột quy tắc dấu phẩy trong câu dưới đây:',
@@ -3211,14 +3228,14 @@ export const vrsMockLessons: VRSVisualLesson[] = [
           ],
           collisionTarget: {
             conflictingTokenIds: ['t1', 't2'],
-            errorMessage: 'Vi phạm luật cấm kỵ: "My wife" là danh từ xác định duy nhất, mệnh đề bổ sung thông tin phụ là Non-defining bắt buộc dùng dấu phẩy, và ĐẠI TỪ "THAT" TUYỆT ĐỐI KHÔNG ĐƯỢC ĐỨNG SAU DẤU PHẨY!',
+            errorMessage: 'Vi phạm luật ngữ pháp cấm kỵ: "My wife" là danh từ xác định duy nhất, mệnh đề bổ sung thông tin là Non-defining bắt buộc có dấu phẩy, và ĐẠI TỪ "THAT" TUYỆT ĐỐI KHÔNG ĐƯỢC PHÉP ĐỨNG SAU DẤU PHẨY!',
             repairOptions: [
               {
                 id: 'opt1',
                 action: 'delete',
                 targetTokenId: 't2',
                 resultText: 'who',
-                explanation: 'Đổi "that" thành "who" để đảm bảo chuẩn mực ngữ pháp sau dấu phẩy.'
+                explanation: 'Thay thế "that" bằng đại từ "who" để đảm bảo tính chuẩn xác tuyệt đối trong văn phong học thuật.'
               }
             ]
           }
