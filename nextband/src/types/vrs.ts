@@ -43,6 +43,17 @@ export interface VRSRevealInteraction {
     cognitiveFunction: string;
     content: string;
     pedagogyNote: string;
+    bandLevel?: string;
+    flipCard?: {
+      frontText: string;
+      backText: string;
+      explanation: string;
+    };
+    vowelHighlight?: Array<{
+      word: string;
+      phonetic: string;
+      vowelSound: string;
+    }>;
     branchOptions?: Array<{
       branchName: string;
       content: string;
