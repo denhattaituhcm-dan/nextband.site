@@ -8,7 +8,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     day: 1,
     skill: 'writing',
     title: 'Động Cơ Cấu Trúc Câu (S - FV - O)',
-    subtitle: 'Kiến Tạo & Phẫu Thuật Cấu Trúc Câu',
+    subtitle: 'Lắp ráp mô hình câu & sửa lỗi thừa động từ',
     coreCompetency: 'Nhận diện giải phầu S - FV Core - OC mành mệnh đề v dich chuyển xung đột thừa động từ.',
     bridgeToHomework: {
       promptText: 'Làm 5 câu bài tập cấu trúc câu trong Homework để kiểm chứng phản xạ tự thân.',
@@ -69,8 +69,8 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 1,
     day: 2,
     skill: 'reading',
-    title: 'Bản Đồ Đọc Đoạn Văn & Mũi Tên Định Vị Keyword',
-    subtitle: 'Khóa Keyword Lần 1 → Phóng Mũi Tên Tọa Độ Lần 2',
+    title: 'Bản Đồ Đọc Đoạn Văn & Định Vị Từ Khóa',
+    subtitle: 'Khoanh vùng từ khóa & tìm vị trí thông tin nhanh chóng',
     coreCompetency: 'Nén đoạn văn thành nhãn chức năng. Click 1 lần để bóc tách Keywords, Click lần 2 để phóng mũi tên định vị trực tiếp đến vùng văn bản đối chiếu.',
     bridgeToHomework: {
       promptText: 'Làm bài tập nối câu hỏi phỏng vấn với 5 đoạn văn trong Homework W1D2.',
@@ -186,8 +186,8 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 1,
     day: 3,
     skill: 'speaking',
-    title: 'Nói Về Công Việc & Học Tập (Chủ Đề: Work & Studies)',
-    subtitle: 'Mở Rộng Câu Trả Lời Speaking: Từ Câu Cụt 3.0 Lên Câu Ghép Hoàn Chỉnh 4.0 - 4.5',
+    title: 'Nói Về Công Việc & Học Tập',
+    subtitle: 'Mở rộng câu trả lời từ Band 3.0 lên 4.0 - 4.5',
     coreCompetency: 'Chuẩn hóa đầu ra khóa Dreamer (3.0 → 4.0+): Học viên vượt qua phản xạ nói 1 câu cụt ("I like my job"). Biết dùng liên từ Because, But, So để ghép thành bài nói 3-4 câu hoàn chỉnh theo đúng giáo trình về Công việc (Cô Ánh) và Ngành học (Bạn Huy).',
     bridgeToHomework: {
       promptText: 'Thu âm bài nói Part 1 giới thiệu công việc hoặc ngành học của bạn trong Homework W1D3.',
@@ -429,7 +429,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     day: 1,
     skill: 'writing',
     title: 'Cổng Kết Nối Động Từ (Vi, Vt & Linking Verbs)',
-    subtitle: 'Cổng Kết Nối Động Từ: Lắp Ráp Cú Pháp & Phẫu Thuật Điểm Gãy',
+    subtitle: 'Lắp ráp cú pháp & sửa lỗi dùng sai động từ',
     coreCompetency: 'Nhận diện chuẩn xác 3 cổng kết nối động từ trong giáo trình: Nội động từ (Vi), Ngoại động từ (Vt - gắn thẳng tân ngữ không chèn giới từ thừa), và Động từ nối (Linking Verb - kết nối tính từ, không dùng trạng từ). Chấm dứt lỗi dịch thô tiếng Việt "discuss about" và "look beautifully".',
     bridgeToHomework: {
       promptText: 'Thực hành sửa lỗi cổng kết nối động từ trong Homework W2D1.',
@@ -492,7 +492,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     day: 2,
     skill: 'reading',
     title: 'Bàn Cân Xác Minh Logic (True / False / Not Given)',
-    subtitle: 'Phẫu Thuật 3 Bẫy Nhận Thức Kinh Điển',
+    subtitle: 'Nhận diện & xử lý 3 bẫy thông tin kinh điển',
     coreCompetency: 'Làm chủ Bàn Cân Logic 3 Trạng Thái, loại bỏ bẫy suy đoán đời thực và bẫy thời gian / tần suất.',
     bridgeToHomework: {
       promptText: 'Làm bài đọc kiểm chứng T/F/NG về văn hóa làm việc 996 trong Homework W2D2.',
@@ -752,8 +752,8 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 2,
     day: 3,
     skill: 'speaking',
-    title: 'Nói Về Nơi Ở & Không Gian Sống (Chủ Đề: Home)',
-    subtitle: 'Nói Về Nơi Ở & Căn Phòng Yêu Thích: Từ Câu Cụt 3.0 Lên Bài Nói 4.0 - 4.5',
+    title: 'Nói Về Nơi Ở & Không Gian Sống',
+    subtitle: 'Mở rộng câu trả lời từ Band 3.0 lên 4.0 - 4.5',
     coreCompetency: 'Chuẩn hóa đầu ra khóa Dreamer (3.0 → 4.0+): Giúp học viên vượt qua thói quen chỉ nói "I live in HCM city". Làm chủ quy luật giới từ IN (thành phố) -> ON (tên đường / tầng lầu) -> AT (địa điểm cụ thể), cấu trúc thời gian di chuyển "It takes me...", và cách mô tả căn nhà/căn phòng yêu thích đúng giáo trình.',
     bridgeToHomework: {
       promptText: 'Thu âm bài nói Part 1 miêu tả nơi ở hoặc căn phòng yêu thích của bạn trong Homework W2D3.',

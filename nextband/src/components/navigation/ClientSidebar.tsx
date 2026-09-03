@@ -30,14 +30,17 @@ import { useStudentLifecycle } from "@/hooks/useStudentLifecycle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SiteLogo } from "@/components/common/SiteLogo";
 
+interface NavItem {
+  title: string;
+  url: string;
+  icon: any;
+  description: string;
+  badge?: string;
+}
+
 interface NavGroup {
   groupLabel?: string;
-  items: {
-    title: string;
-    url: string;
-    icon: any;
-    description: string;
-  }[];
+  items: NavItem[];
 }
 
 const fullNavigationGroups: NavGroup[] = [
@@ -60,6 +63,7 @@ const fullNavigationGroups: NavGroup[] = [
         url: "/app/reconstruction",
         icon: Workflow,
         description: "Tái hiện cơ chế tư duy & biến đổi kiến thức",
+        badge: "New",
       },
       {
         title: "Reading Universe",
@@ -171,11 +175,16 @@ export function ClientSidebar() {
                       <NavLink
                         to={item.url}
                         end={item.url === "/app"}
-                        className="flex items-center gap-2.5 text-xs py-2"
+                        className="flex items-center gap-2.5 text-xs py-2 w-full group"
                         activeClassName="bg-indigo-50 text-indigo-700 font-bold"
                       >
                         <item.icon className="h-4 w-4 shrink-0 text-slate-500 group-data-[active=true]:text-indigo-600" />
-                        <span>{item.title}</span>
+                        <span className="truncate">{item.title}</span>
+                        {!collapsed && item.badge && (
+                          <span className="ml-auto shrink-0 inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-500 via-amber-600 to-orange-500 text-white shadow-[0_2px_6px_rgba(245,158,11,0.35)] ring-1 ring-amber-400/40">
+                            {item.badge}
+                          </span>
+                        )}
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
