@@ -429,8 +429,8 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     day: 1,
     skill: 'writing',
     title: 'The Verb Compatibility Engine',
-    subtitle: 'Cổng Kết Nối Động Từ & Khóa Ghép Collocation',
-    coreCompetency: 'Nhận diện cổng kết nối của 3 loại động từ: Vi, Vt và Linking Verb để chấm dứt lỗi chèn giới từ thừa và sai từ loại.',
+    subtitle: 'Cổng Kết Nối Động Từ: Lắp Ráp Cú Pháp & Phẫu Thuật Điểm Gãy',
+    coreCompetency: 'Nhận diện chuẩn xác 3 cổng kết nối động từ trong giáo trình: Nội động từ (Vi), Ngoại động từ (Vt - gắn thẳng tân ngữ không chèn giới từ thừa), và Động từ nối (Linking Verb - kết nối tính từ, không dùng trạng từ). Chấm dứt lỗi dịch thô tiếng Việt "discuss about" và "look beautifully".',
     bridgeToHomework: {
       promptText: 'Thực hành sửa lỗi cổng kết nối động từ trong Homework W2D1.',
       targetExamId: 'exam_dreamer_w2d1'
@@ -438,29 +438,46 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     stages: [
       {
         stageNumber: 1,
+        stageType: 'syntax_anatomy',
+        title: 'Chặng 1: Kiến Tạo Cổng Kết Nối Linking Verb (The Dress Looks Beautiful)',
+        pedagogicalObjective: 'Lắp ráp đúng trật tự cú pháp của Động từ nối (Linking Verb) trong bài tập 1.1 câu 5: Chủ ngữ + Linking Verb + Tính từ bổ ngữ.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Bấm quét giải phẫu để lắp ráp các khoang chức năng của câu dùng Linking Verb:',
+          mode: 'build',
+          tokens: [
+            { id: 't1', text: 'The new dress', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'looks', role: 'fv_core', colorClass: 'orange' },
+            { id: 't3', text: 'beautiful', role: 'complement', colorClass: 'blue' },
+            { id: 't4', text: 'on her', role: 'modifier', colorClass: 'purple' }
+          ]
+        }
+      },
+      {
+        stageNumber: 2,
         stageType: 'productive_failure',
-        title: 'Break (Phát hiện sụp đổ cổng kết nối)',
-        pedagogicalObjective: 'Đối diện với lỗi dịch thô tiếng Việt chèn giới từ thừa: discuss about.',
+        title: 'Chặng 2: Phẫu Thuật Mâu Thuẫn Chèn Giới Từ Thừa (Discussing About Pay Rise)',
+        pedagogicalObjective: 'Bám sát bài tập 1.1 câu 2: Nhận diện xung đột khi dịch thô "thảo luận về" chèn giới từ thừa "about" sau Ngoại động từ "discussing".',
         interactionModel: {
           type: 'slot_snap',
           prompt: 'Click vào cặp từ gây xung đột cổng kết nối trong câu dưới đây:',
           mode: 'break_and_repair',
           tokens: [
-            { id: 't1', text: 'The directors', role: 'subject', colorClass: 'green' },
-            { id: 't2', text: 'are discussing', role: 'fv_core', colorClass: 'orange' },
+            { id: 't1', text: 'The board of directors', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'is discussing', role: 'fv_core', colorClass: 'orange' },
             { id: 't3', text: 'about', role: 'preposition', colorClass: 'red' },
             { id: 't4', text: 'a pay rise', role: 'object', colorClass: 'blue' }
           ],
           collisionTarget: {
             conflictingTokenIds: ['t2', 't3'],
-            errorMessage: 'Xung đột cổng kết nối: discuss là Ngoại động từ (Vt) có lực hút trực tiếp tân ngữ danh từ, không thể chèn giới từ "about" ở giữa!',
+            errorMessage: 'Xung đột cổng kết nối: "discuss" là Ngoại động từ (Vt) mang lực hút trực tiếp tân ngữ danh từ. Chèn giới từ "about" vào giữa sẽ làm gãy liên kết cú pháp!',
             repairOptions: [
               {
                 id: 'opt1',
                 action: 'delete',
                 targetTokenId: 't3',
-                resultText: '',
-                explanation: 'Đẩy văng giới từ "about" ra ngoài để tân ngữ "a pay rise" gắn trực tiếp vào "discussing".'
+                resultText: 'a pay rise',
+                explanation: 'Đẩy văng giới từ thừa "about" ra ngoài để tân ngữ "a pay rise" gắn trực tiếp vào động từ "discussing".'
               }
             ]
           }
