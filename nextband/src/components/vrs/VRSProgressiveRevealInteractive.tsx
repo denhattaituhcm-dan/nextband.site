@@ -26,9 +26,12 @@ export default function VRSProgressiveRevealInteractive({ model }: Props) {
 
   return (
     <div className="space-y-6">
-      <p className="text-sm font-medium text-muted-foreground">
-        {model.prompt}
-      </p>
+      <div className="flex items-center gap-2.5 p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+        <p className="text-sm font-semibold text-slate-800">
+          {model.prompt}
+        </p>
+      </div>
 
       {/* Cards Progressive Stack */}
       <div className="space-y-4">
