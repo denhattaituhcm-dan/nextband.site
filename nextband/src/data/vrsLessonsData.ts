@@ -1522,8 +1522,8 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     day: 1,
     skill: 'writing',
     title: 'The Modifier Attachment Engine',
-    subtitle: 'Khóa Khớp Bổ Ngữ & Định Vị Trọng Lực Nghĩa',
-    coreCompetency: 'Nhận diện đúng đối tượng chịu lực của Bổ ngữ: Tính từ bổ nghĩa Danh từ, Trạng từ bổ nghĩa Động từ/Tính từ khác. Chấm dứt lỗi dịch thô dùng trạng từ sai vị trí hoặc dùng nhầm từ loại.',
+    subtitle: 'Bổ Ngữ Tính Từ & Trạng Từ: Lắp Ráp Cú Pháp & Phẫu Thuật Điểm Gãy',
+    coreCompetency: 'Làm chủ vị trí và quy tắc bổ nghĩa trong giáo trình W4D1: Tính từ (Adj) đứng trước danh từ để miêu tả đặc điểm, Trạng từ (Adv) bổ nghĩa cho động từ hành động. Nhận diện Động từ nối (Linking Verb) như "smell, taste, look" đòi hỏi Tính từ, chấm dứt lỗi dùng trạng từ đuôi -ly sai chức năng.',
     bridgeToHomework: {
       promptText: 'Thực hành sửa lỗi bổ ngữ tính từ - trạng từ trong Homework W4D1.',
       targetExamId: 'exam_dreamer_w4d1'
@@ -1531,9 +1531,26 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     stages: [
       {
         stageNumber: 1,
+        stageType: 'syntax_anatomy',
+        title: 'Chặng 1: Kiến Tạo Mở Rộng Bổ Ngữ Tính Từ & Trạng Từ (Dedicated Doctor Examined Carefully)',
+        pedagogicalObjective: 'Bám sát mục tiêu bài học W4D1 (từ câu "em bé" nâng lên câu giàu bổ ngữ): Lắp ráp Tính từ bổ nghĩa Danh từ và Trạng từ bổ nghĩa Động từ.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Bấm quét giải phẫu để lắp ráp câu văn được mở rộng bằng Tính từ và Trạng từ bổ ngữ:',
+          mode: 'build',
+          tokens: [
+            { id: 't1', text: 'The dedicated doctor', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'carefully examined', role: 'fv_core', colorClass: 'orange' },
+            { id: 't3', text: 'the sick patient', role: 'object', colorClass: 'blue' },
+            { id: 't4', text: 'in the clinic', role: 'modifier', colorClass: 'purple' }
+          ]
+        }
+      },
+      {
+        stageNumber: 2,
         stageType: 'productive_failure',
-        title: 'Break (Phát hiện lệch khớp Bổ Ngữ)',
-        pedagogicalObjective: 'Đối diện lỗi kinh điển nhầm lẫn giữa Tính từ và Trạng từ sau linking verb hoặc trạng từ chỉ mức độ.',
+        title: 'Chặng 2: Phẫu Thuật Mâu Thuẫn Lệch Khớp Sau Linking Verb (The Food Smells Awfully)',
+        pedagogicalObjective: 'Đối diện lỗi kinh điển Band 3.0: Nhầm lẫn giữa Trạng từ chỉ hành động và Tính từ sau Động từ nối (smells / looks / tastes).',
         interactionModel: {
           type: 'slot_snap',
           prompt: 'Click vào cặp từ gây xung đột chức năng bổ ngữ trong câu dưới đây:',
@@ -1546,7 +1563,7 @@ export const vrsMockLessons: VRSVisualLesson[] = [
           ],
           collisionTarget: {
             conflictingTokenIds: ['t2', 't3'],
-            errorMessage: 'Lỗi lệch khớp bổ ngữ: smells ở đây đóng vai trò là Động từ nối (Linking Verb) phản chiếu trạng thái của Thức ăn (The food), đòi hỏi một Tính từ (Adj) chứ không thể dùng Trạng từ đuôi -ly (awfully)!',
+            errorMessage: 'Lỗi lệch khớp bổ ngữ: "smells" ở đây là Động từ nối (Linking Verb) phản chiếu trạng thái/tính chất của Món ăn ("The food"). Động từ nối đòi hỏi Tính từ (Adj), không thể gắn Trạng từ đuôi -ly ("awfully")!',
             repairOptions: [
               {
                 id: 'opt1',
