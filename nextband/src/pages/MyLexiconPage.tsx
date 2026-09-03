@@ -307,21 +307,69 @@ function LexiconStats({
   stats: { total: number; learning: number; consolidating: number; mastered: number };
 }) {
   const items = [
-    { label: "Tổng từ", value: stats.total, color: "text-slate-700 dark:text-slate-300" },
-    { label: "Đang học", value: stats.learning, color: "text-amber-600 dark:text-amber-400" },
-    { label: "Củng cố", value: stats.consolidating, color: "text-blue-600 dark:text-blue-400" },
-    { label: "Làm chủ", value: stats.mastered, color: "text-emerald-600 dark:text-emerald-400" },
+    {
+      label: "Tổng từ vựng",
+      value: stats.total,
+      badge: "Kho tài sản",
+      gradient: "from-rose-500/10 via-pink-500/5 to-transparent",
+      border: "border-rose-200/80 dark:border-rose-900/40",
+      textColor: "text-rose-600 dark:text-rose-400",
+      accentBg: "bg-rose-50 dark:bg-rose-950/40",
+    },
+    {
+      label: "Đang nạp mới",
+      value: stats.learning,
+      badge: "Encountered",
+      gradient: "from-amber-500/10 via-yellow-500/5 to-transparent",
+      border: "border-amber-200/80 dark:border-amber-900/40",
+      textColor: "text-amber-600 dark:text-amber-400",
+      accentBg: "bg-amber-50 dark:bg-amber-950/40",
+    },
+    {
+      label: "Đang củng cố",
+      value: stats.consolidating,
+      badge: "Spaced Review",
+      gradient: "from-blue-500/10 via-indigo-500/5 to-transparent",
+      border: "border-blue-200/80 dark:border-blue-900/40",
+      textColor: "text-blue-600 dark:text-blue-400",
+      accentBg: "bg-blue-50 dark:bg-blue-950/40",
+    },
+    {
+      label: "Đã làm chủ",
+      value: stats.mastered,
+      badge: "In-Longterm",
+      gradient: "from-emerald-500/10 via-teal-500/5 to-transparent",
+      border: "border-emerald-200/80 dark:border-emerald-900/40",
+      textColor: "text-emerald-600 dark:text-emerald-400",
+      accentBg: "bg-emerald-50 dark:bg-emerald-950/40",
+    },
   ];
 
   return (
-    <div className="grid grid-cols-4 gap-3 mb-6">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
       {items.map((s) => (
         <div
           key={s.label}
-          className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 text-center"
+          className={`relative overflow-hidden rounded-2xl border-2 ${s.border} bg-white dark:bg-slate-900/90 p-4 shadow-sm hover:shadow-md transition-all duration-300 group`}
         >
-          <div className={`text-2xl font-bold tabular-nums ${s.color}`}>{s.value}</div>
-          <div className="text-[11px] text-slate-500 dark:text-slate-500 mt-0.5">{s.label}</div>
+          <div
+            className={`absolute -top-12 -right-12 w-28 h-28 bg-gradient-to-br ${s.gradient} rounded-full blur-xl group-hover:scale-125 transition-transform duration-500`}
+          />
+          <div className="relative z-10 flex flex-col justify-between h-full">
+            <div className="flex items-center justify-between gap-1 mb-2">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                {s.label}
+              </span>
+              <span
+                className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${s.accentBg} ${s.textColor}`}
+              >
+                {s.badge}
+              </span>
+            </div>
+            <div className={`text-3xl font-black tabular-nums tracking-tight ${s.textColor}`}>
+              {s.value}
+            </div>
+          </div>
         </div>
       ))}
     </div>
@@ -331,12 +379,12 @@ function LexiconStats({
 // ─── Filter tabs ──────────────────────────────────────────────────────────────
 type FilterKey = "all" | "due" | "learning" | "consolidating" | "mastered";
 
-const FILTER_OPTIONS: { key: FilterKey; label: string }[] = [
-  { key: "all", label: "Tất cả" },
-  { key: "due", label: "Cần ôn hôm nay" },
-  { key: "learning", label: "Đang học" },
-  { key: "consolidating", label: "Củng cố" },
-  { key: "mastered", label: "Đã làm chủ" },
+const FILTER_OPTIONS: { key: FilterKey; label: string; icon?: string }[] = [
+  { key: "all", label: "Tất cả", icon: "📚" },
+  { key: "due", label: "Cần ôn hôm nay", icon: "⚡" },
+  { key: "learning", label: "Đang học", icon: "🌱" },
+  { key: "consolidating", label: "Củng cố", icon: "🧠" },
+  { key: "mastered", label: "Đã làm chủ", icon: "🏆" },
 ];
 
 function filterRecords(records: UserVocabRecord[], key: FilterKey): UserVocabRecord[] {
@@ -345,7 +393,7 @@ function filterRecords(records: UserVocabRecord[], key: FilterKey): UserVocabRec
     case "due":
       return records.filter((r) => new Date(r.nextReviewAt) <= now);
     case "learning":
-      return records.filter((r) => r.masteryState === 1);
+      return records.filter((r) => r.masteryState <= 1);
     case "consolidating":
       return records.filter((r) => r.masteryState === 2);
     case "mastered":
@@ -397,136 +445,163 @@ const MyLexiconPage: React.FC = () => {
   const dueCount = records.filter((r) => new Date(r.nextReviewAt) <= new Date()).length;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
-      {/* Page header */}
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <Library className="w-5 h-5 text-slate-700 dark:text-slate-300" />
-            <h1 className="text-xl font-bold text-slate-900 dark:text-white">
-              Sổ từ cá nhân (My Lexicon)
-            </h1>
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-7">
+      {/* Page Header: Hero Banner style */}
+      <div className="relative overflow-hidden rounded-3xl border-2 border-rose-200/70 dark:border-rose-900/40 bg-gradient-to-r from-rose-50 via-white to-amber-50/60 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800/80 p-6 sm:p-7 shadow-sm">
+        <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-rose-400/15 to-amber-400/15 rounded-full blur-2xl pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-rose-500 via-rose-600 to-amber-500 flex items-center justify-center text-white shadow-md shadow-rose-500/25 shrink-0">
+              <Library className="w-6 h-6 stroke-[2.2]" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                  Sổ từ cá nhân
+                </h1>
+                <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-rose-500 text-white shadow-sm">
+                  My Lexicon
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                Mỗi từ vựng bạn tra cứu tự động chuyển hóa thành tài sản tri thức dài hạn.
+              </p>
+            </div>
           </div>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Mỗi từ bạn từng gặp trở thành tài sản của bạn.
-          </p>
+
+          <button
+            onClick={load}
+            disabled={loading}
+            className="self-start sm:self-auto flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-rose-600 dark:hover:text-rose-400 px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm hover:shadow transition-all duration-150"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-rose-500" : ""}`} />
+            Làm mới
+          </button>
         </div>
-        <button
-          onClick={load}
-          className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 dark:hover:text-white px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
-        >
-          <RefreshCw className="w-3.5 h-3.5" />
-          Làm mới
-        </button>
       </div>
 
-      {/* Stats */}
+      {/* Stats Counter Bar */}
       {!loading && !error && <LexiconStats stats={stats} />}
       {loading && (
-        <div className="grid grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
           {[0, 1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-16 rounded-xl" />
+            <Skeleton key={i} className="h-24 rounded-2xl" />
           ))}
         </div>
       )}
 
-      {/* Due review call-to-action */}
+      {/* Due review call-to-action banner */}
       {!loading && dueCount > 0 && (
-        <div className="rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/60 dark:bg-blue-950/20 px-4 py-3 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+        <div className="relative overflow-hidden rounded-2xl border-2 border-amber-300 dark:border-amber-700/60 bg-gradient-to-r from-amber-500/15 via-rose-500/10 to-transparent p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-rose-500 text-white flex items-center justify-center shrink-0 shadow-md">
+              <TrendingUp className="w-5 h-5 stroke-[2.5]" />
+            </div>
             <div>
-              <p className="text-sm font-semibold text-blue-900 dark:text-blue-200">
-                Ôn từ hôm nay
+              <p className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                Hôm nay có {dueCount} từ cần củng cố trí nhớ
+                <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
               </p>
-              <p className="text-xs text-blue-600 dark:text-blue-400">
-                {dueCount} từ đến hạn · khoảng {Math.ceil(dueCount * 0.4)} phút
+              <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
+                Ôn tập cách quãng (Spaced Repetition) giúp chống lại đường cong quên lãng Ebbinghaus · mất ~{Math.ceil(dueCount * 0.4)} phút
               </p>
             </div>
           </div>
           <button
             onClick={() => setFilter("due")}
-            className="flex-shrink-0 text-xs font-semibold px-3 py-1.5 bg-blue-700 hover:bg-blue-800 text-white rounded-lg transition-colors"
+            className="shrink-0 px-4 py-2 text-xs font-black rounded-xl bg-gradient-to-r from-rose-500 to-amber-500 hover:from-rose-600 hover:to-amber-600 text-white shadow-md shadow-rose-500/20 active:scale-98 transition-all"
           >
-            Ôn tập ngay
+            Ôn tập ngay ⚡
           </button>
         </div>
       )}
 
-      {/* Search + filter */}
-      <div className="space-y-2">
+      {/* Search & Filter Toolbar */}
+      <div className="space-y-3">
+        {/* Search input with sleek pill design */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-rose-500 dark:text-rose-400" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Tìm từ trong Sổ từ..."
-            className="w-full pl-9 pr-4 py-2.5 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 dark:text-slate-200 placeholder:text-slate-400"
+            placeholder="Tìm kiếm từ vựng, ngữ cảnh, phiên âm..."
+            className="w-full pl-10 pr-4 py-3 text-sm bg-white dark:bg-slate-900 border-2 border-slate-200/80 dark:border-slate-800 rounded-2xl focus:outline-none focus:border-rose-500 focus:ring-4 focus:ring-rose-500/10 dark:text-slate-100 placeholder:text-slate-400 transition-all shadow-sm"
           />
         </div>
 
-        {/* Filter tabs */}
-        <div className="flex gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
-          {FILTER_OPTIONS.map((opt) => (
-            <button
-              key={opt.key}
-              onClick={() => setFilter(opt.key)}
-              className={`flex-shrink-0 text-[11px] font-semibold px-3 py-1.5 rounded-lg border transition-colors ${
-                filter === opt.key
-                  ? "bg-slate-900 text-white border-slate-900 dark:bg-slate-100 dark:text-slate-900 dark:border-slate-100"
-                  : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-slate-400"
-              }`}
-            >
-              {opt.label}
-              {opt.key === "due" && dueCount > 0 && (
-                <span className="ml-1.5 inline-flex items-center justify-center w-4 h-4 text-[9px] font-bold rounded-full bg-blue-500 text-white">
-                  {dueCount}
-                </span>
-              )}
-            </button>
-          ))}
+        {/* Filter chips */}
+        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+          {FILTER_OPTIONS.map((opt) => {
+            const isActive = filter === opt.key;
+            return (
+              <button
+                key={opt.key}
+                onClick={() => setFilter(opt.key)}
+                className={`flex-shrink-0 flex items-center gap-1.5 text-xs font-bold px-3.5 py-2 rounded-xl transition-all duration-150 border-2 ${
+                  isActive
+                    ? "bg-gradient-to-r from-rose-500 to-rose-600 border-rose-500 text-white shadow-md shadow-rose-500/25 scale-[1.02]"
+                    : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200/80 dark:border-slate-800 hover:border-rose-300 dark:hover:border-rose-900/60"
+                }`}
+              >
+                <span>{opt.icon}</span>
+                <span>{opt.label}</span>
+                {opt.key === "due" && dueCount > 0 && (
+                  <span
+                    className={`ml-1 px-1.5 py-0.2 text-[10px] font-black rounded-full ${
+                      isActive ? "bg-white text-rose-600" : "bg-rose-500 text-white"
+                    }`}
+                  >
+                    {dueCount}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Word list */}
+      {/* Word list content */}
       {loading ? (
         <div className="space-y-3">
           {[0, 1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-14 rounded-xl" />
+            <Skeleton key={i} className="h-16 rounded-2xl" />
           ))}
         </div>
       ) : error ? (
-        <div className="text-center py-12 text-sm text-slate-500">
-          {error}
+        <div className="text-center py-14 p-6 rounded-3xl border-2 border-dashed border-rose-200 dark:border-rose-900/40 bg-rose-50/50 dark:bg-rose-950/20 text-sm text-rose-600 dark:text-rose-400">
+          <p className="font-semibold">{error}</p>
           <button
             onClick={load}
-            className="block mx-auto mt-3 text-xs text-blue-600 hover:underline"
+            className="mt-3 px-4 py-1.5 text-xs font-bold bg-white dark:bg-slate-800 border border-rose-300 dark:border-rose-800 rounded-lg hover:bg-rose-50 transition-colors"
           >
-            Thử lại
+            Thử tải lại
           </button>
         </div>
       ) : displayed.length === 0 ? (
-        <div className="text-center py-16 space-y-2">
-          <Library className="w-10 h-10 mx-auto text-slate-300 dark:text-slate-700" />
-          <p className="text-sm font-medium text-slate-500 dark:text-slate-500">
+        <div className="text-center py-16 px-6 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 space-y-3">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-rose-100 to-amber-100 dark:from-slate-800 dark:to-slate-800 text-rose-500 mx-auto flex items-center justify-center">
+            <Library className="w-8 h-8 stroke-[1.5]" />
+          </div>
+          <p className="text-base font-bold text-slate-800 dark:text-slate-200">
             {records.length === 0
-              ? "Sổ từ của bạn còn trống."
-              : "Không tìm thấy từ nào phù hợp."}
+              ? "Sổ từ của bạn đang sẵn sàng đón từ mới!"
+              : "Không tìm thấy từ vựng nào khớp với bộ lọc."}
           </p>
           {records.length === 0 && (
-            <p className="text-xs text-slate-400 dark:text-slate-600 max-w-xs mx-auto">
-              Bôi đen bất kỳ từ nào trong bài đọc hoặc bài nghe để lưu từ đầu tiên vào Sổ từ.
+            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
+              💡 <strong>Mẹo:</strong> Bôi đen bất kỳ từ tiếng Anh nào trong bài tập Đọc, Nghe hoặc Viết. Hệ thống sẽ tự động phân tích bản chất tri nhận và hiển thị nút Lưu vào đây!
             </p>
           )}
         </div>
       ) : (
-        <div className="space-y-2.5">
+        <div className="space-y-3">
           {displayed.map((record) => (
             <WordCard key={record.id} record={record} />
           ))}
-          <p className="text-center text-[11px] text-slate-400 dark:text-slate-600 pt-2">
-            Hiển thị {displayed.length} / {records.length} từ
+          <p className="text-center text-xs font-semibold text-slate-400 dark:text-slate-500 pt-3">
+            Đang hiển thị {displayed.length} / {records.length} từ vựng
           </p>
         </div>
       )}
