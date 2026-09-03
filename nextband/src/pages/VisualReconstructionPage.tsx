@@ -222,7 +222,7 @@ export default function VisualReconstructionPage() {
                           <div className="flex items-center justify-between mb-3.5">
                             <span className="text-[11px] font-mono font-bold tracking-wider uppercase text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100 flex items-center gap-1.5">
                               <Cpu className="w-3.5 h-3.5" />
-                              VIẾT · BUỔI 1
+                              WRITING · BUỔI 1
                             </span>
                             {isWritingDone ? (
                               <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-xs animate-pulse">
