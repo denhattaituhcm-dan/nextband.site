@@ -3976,57 +3976,251 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 8,
     day: 3,
     skill: 'speaking',
-    title: 'The Culinary Identity & Origin Engine',
-    subtitle: 'Nghệ Thuật Miêu Tả Ẩm Thực Truyền Thống & Nguồn Gốc Văn Hóa',
-    coreCompetency: 'Nâng cấp câu trả lời Speaking Part 1 về Favorite Food: Tránh lỗi liệt kê nguyên liệu đơn thuần, tổ chức bài nói theo cấu trúc: Dish Choice -> Cultural Roots -> Distinct Flavor Profile -> Emotional Comfort.',
+    title: 'The Favorite Food & Restaurant Ordering Engine (Topic: Food)',
+    subtitle: 'Nói Về Món Ăn Yêu Thích & Gọi Món Nhà Hàng: Từ Câu Cụt 3.0 Lên Bài Nói 4.0 - 4.5',
+    coreCompetency: 'Chuẩn hóa đầu ra khóa Dreamer (3.0 → 4.0+): Học viên thành thạo trọng âm câu (Sentence Stress), sử dụng chính xác 5 từ vựng điểm nhấn của bài ("originates from", "broth", "affordable", "complicated", "serve"), và làm chủ đoạn hội thoại gọi món tại nhà hàng ("May I take your order?", "I would like...", "Your total is...").',
     bridgeToHomework: {
-      promptText: 'Luyện tập trọng âm câu (Sentence Stress) và thu âm bài nói về món ăn yêu thích trong Homework W8D3.',
+      promptText: 'Luyện tập trọng âm câu (Sentence Stress) và thu âm bài nói miêu tả món ăn yêu thích của bạn trong Homework W8D3.',
       targetExamId: 'exam_dreamer_w8d3'
     },
     stages: [
       {
         stageNumber: 1,
         stageType: 'progressive_reveal',
-        title: 'Bóc tách 4 tầng phản xạ miêu tả món ăn truyền thống',
-        pedagogicalObjective: 'Tạo bài nói về món ăn bản địa (Bún Bò Huế) kết hợp cấu trúc bị động và tính từ miêu tả vị giác tinh tế.',
+        title: 'Chặng 1: Miêu Tả Món Ăn Yêu Thích - Bún Bò Huế (Favorite Dish Template)',
+        pedagogicalObjective: 'Làm chủ bài tập 2.1 với 5 từ vựng bắt buộc: "originates from", "broth", "affordable", "complicated", "serve".',
         interactionModel: {
           type: 'progressive_reveal',
-          prompt: 'Click mở từng tầng để nắm cấu trúc miêu tả món ăn truyền thống chuẩn IELTS Speaking:',
+          prompt: 'Click mở từng bước để học cách miêu tả món ăn yêu thích bám sát mẫu câu giáo trình:',
           cards: [
             {
               step: 1,
-              label: 'STANCE & FREQUENCY OF ENJOYMENT',
-              cognitiveFunction: 'Khẳng định món ăn và tần suất thưởng thức',
-              content: 'If I had to pick just one all-time favorite dish, I would definitely go for Bun Bo, a quintessential Vietnamese delicacy.',
-              pedagogyNote: 'Dùng câu điều kiện loại 2: "If I had to pick... I would go for [Dish], a quintessential delicacy".'
+              label: 'BƯỚC 1: TÊN MÓN VÀ NGUỒN GỐC (ORIGINATES FROM)',
+              cognitiveFunction: '1. Món ăn yêu thích của bạn là gì và có nguồn gốc từ đâu?',
+              content: 'My favorite dish is Bun Bo, which originates from Hue, a famous city in central Vietnam.',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Bám sát câu hỏi 1 bài tập 2.1: Dùng cụm từ bắt buộc "originates from" (có nguồn gốc từ).',
+              flipCard: {
+                frontText: 'I like Bun Bo. It from Hue. (Nói cộc lốc)',
+                backText: 'My favorite dish is Bun Bo, which originates from Hue. (Chuẩn giáo trình)',
+                explanation: 'Dùng cụm "originates from Hue" thay vì dịch thô "it from Hue".'
+              },
+              vowelHighlight: [
+                { word: 'chocolates', phonetic: '/ˈtʃɒk.ləts/', vowelSound: 'Trọng âm từ chính' },
+                { word: 'birthday', phonetic: '/ˈbɜːθ.deɪ/', vowelSound: 'Trọng âm từ phụ' }
+              ]
             },
             {
               step: 2,
-              label: 'GEOGRAPHICAL & CULTURAL ORIGIN',
-              cognitiveFunction: 'Nguồn gốc xuất xứ và ý nghĩa văn hóa',
-              content: 'Historically, it originated from Hue, the ancient imperial capital of Vietnam, though it is now cherished nationwide.',
-              pedagogyNote: 'Dùng cụm bị động/nguồn gốc: "originated from Hue... cherished nationwide".'
+              label: 'BƯỚC 2: NƯỚC DÙNG ĐẬM ĐÀ (FLAVORFUL BROTH)',
+              cognitiveFunction: '2. Hương vị và nước dùng của món này có gì đặc sắc?',
+              content: 'I really love this dish because they serve a flavorful broth with tender sliced beef and fresh herbs.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Sử dụng 2 từ vựng bắt buộc: "serve" (phục vụ) và "broth" (nước dùng đậm đà).',
+              flipCard: {
+                frontText: 'Soup is very delicious. (Dùng từ soup chung chung)',
+                backText: 'They serve a flavorful broth with sliced beef and fresh herbs. (Đúng từ chuyên ngành ẩm thực)',
+                explanation: 'Nước dùng của món nước như phở/bún bò trong tiếng Anh dùng "broth", không dùng "soup".'
+              }
             },
             {
               step: 3,
-              label: 'RICH FLAVOR PROFILE',
-              cognitiveFunction: 'Hương vị đặc trưng và sự kết hợp nguyên liệu',
-              content: 'What makes it truly unforgettable is the rich, aromatic broth infused with lemongrass, spicy chili, and tender beef slices.',
-              pedagogyNote: 'Dùng mệnh đề danh từ bắt đầu bằng What: "What makes it truly unforgettable is...".',
+              label: 'BƯỚC 3: GIÁ CẢ PHẢI CHĂNG (AFFORDABLE)',
+              cognitiveFunction: '3. Giá cả của món ăn này như thế nào?',
+              content: 'Although it is a complicated dish to cook at home, it is very affordable for everyone.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Luyện 2 từ vựng bắt buộc tiếp theo: "complicated" (nấu phức tạp) và "affordable" (giá cả phải chăng).',
+              flipCard: {
+                frontText: 'It is cheap so I eat. Cook is hard. (Tiếng bồi)',
+                backText: 'Although it is complicated to cook, it is very affordable for everyone. (Nối câu mượt mà)',
+                explanation: 'Thay "cheap" bằng "affordable" (hợp túi tiền) và "hard" bằng "complicated" (chế biến công phu).'
+              },
               branchOptions: [
-                { branchName: 'HERB COMBINATION', content: 'Specifically, the harmonious balance between lime juice, fresh cilantro, and crispy bean sprouts is heavenly.', note: 'Nhánh miêu tả rau mùi và gia vị tươi.' },
-                { branchName: 'SLOW-COOKED BROTH', content: 'Specifically, the broth is simmered for hours with beef bones to achieve an authentic savory sweetness.', note: 'Nhánh miêu tả nước dùng ninh xương kỳ công.' }
+                {
+                  branchName: 'ĂN TIỆM VÌ NẤU PHỨC TẠP (BÁM SÁT SÁCH)',
+                  content: 'Since it is a complicated dish to cook, I usually eat it at some local eateries near my house.',
+                  note: 'Trích nguyên văn lời kể trong đoạn văn về Bún Bò.'
+                },
+                {
+                  branchName: 'ĂN THƯỜNG XUYÊN VÌ GIÁ RẺ (VÍ DỤ BÀI TẬP)',
+                  content: 'Because this dish is delicious and affordable, I often eat it for breakfast almost every morning.',
+                  note: 'Trích từ câu có lý do số 1 trong bài tập.'
+                }
               ]
             },
             {
               step: 4,
-              label: 'EMOTIONAL VALUE & COMFORT',
-              cognitiveFunction: 'Cảm giác tinh thần mà món ăn mang lại',
-              content: 'Whenever I savor a steaming hot bowl in the morning, it instantly fuels me with tremendous energy for the entire day.',
-              pedagogyNote: 'Khép lại bằng cảm giác tích cực: "instantly fuels me with tremendous energy".'
+              label: 'BƯỚC 4: QUÁN RUỘT CỦA BẠN (A REGULAR CUSTOMER)',
+              cognitiveFunction: '4. Quán quen bạn hay ghé ăn nằm ở đâu?',
+              content: 'My favorite eatery serves this dish very quickly, so I have become a regular customer there.',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Bám sát mẫu câu cuối bài tập: "nhà hàng phục vụ rất ngon nên tôi hay đến" với từ "a regular" (khách quen).',
+              flipCard: {
+                frontText: 'I always come to this shop. (Đơn sơ)',
+                backText: 'They serve delicious food, so I have become a regular customer there. (Chuẩn tự nhiên)',
+                explanation: 'Học cụm từ rất hay trong giao tiếp: "a regular customer" (khách quen của quán).'
+              }
             }
           ],
-          fullMosaicSummary: 'If I had to pick one all-time favorite dish, I would definitely go for Bun Bo. Historically, it originated from Hue, but is now cherished nationwide. What makes it unforgettable is the rich, aromatic broth infused with lemongrass and tender beef. Having a hot bowl in the morning instantly fuels me with energy.'
+          fullMosaicSummary: 'My favorite dish is Bun Bo, which originates from Hue in central Vietnam. I really love this dish because they serve a flavorful broth with tender beef and herbs. Although it is a complicated dish to cook, it is very affordable for everyone, so I have become a regular customer at a local eatery near my house.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 2: Khảo Sát Thói Quen Ăn Uống (Eating Habits & Preferences - Bài tập 2.2)',
+        pedagogicalObjective: 'Làm chủ 4 câu hỏi khảo sát thói quen ẩm thực: Bữa sáng ăn gì -> Biết nấu ăn không -> Món không thích -> Thích đồ ngọt không.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click mở từng bước để học cách trả lời các câu hỏi về thói quen ăn uống hằng ngày:',
+          cards: [
+            {
+              step: 1,
+              label: 'BƯỚC 1: BỮA SÁNG THƯỜNG ĂN GÌ (BREAKFAST)',
+              cognitiveFunction: '1. Bạn thường ăn món gì vào bữa sáng?',
+              content: 'For breakfast, I usually have a bowl of noodles or a Vietnamese banh mi on my way to work.',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Bám sát câu hỏi 1 bài tập 2.2: "What do you usually have for breakfast?".',
+              flipCard: {
+                frontText: 'Morning I eat bread. (Cộc lốc)',
+                backText: 'For breakfast, I usually have a banh mi on my way to work. (Tự nhiên)',
+                explanation: 'Dùng cụm mở đầu: "For breakfast, I usually have..." và "on my way to work" (trên đường đi làm).'
+              },
+              vowelHighlight: [
+                { word: 'coffee', phonetic: '/ˈkɒf.i/', vowelSound: 'Nhấn âm 1' },
+                { word: 'delicious', phonetic: '/dɪˈlɪʃ.əs/', vowelSound: 'Nhấn âm 2' }
+              ]
+            },
+            {
+              step: 2,
+              label: 'BƯỚC 2: KHẢ NĂNG NẤU NƯỚNG (KNOW HOW TO COOK)',
+              cognitiveFunction: '2. Bạn có biết nấu ăn không?',
+              content: 'I know how to cook some simple home dishes, but I am definitely not a good chef.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Bám sát câu hỏi 2 bài tập 2.2: "Do you know how to cook?".',
+              flipCard: {
+                frontText: 'I can cook simple. (Tiếng bồi)',
+                backText: 'I know how to cook some simple home dishes. (Đúng ngữ pháp)',
+                explanation: 'Cấu trúc chuẩn: "know how to cook + [món ăn]" (biết cách nấu ăn).'
+              }
+            },
+            {
+              step: 3,
+              label: 'BƯỚC 3: MÓN KHÔNG THÍCH HOẶC DỊ ỨNG (DISLIKES)',
+              cognitiveFunction: '3. Có món ăn nào bạn không thích hoặc không ăn được không?',
+              content: 'There are a few things that I cannot stand, especially raw seafood and overly greasy food.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Bám sát câu hỏi 3 bài tập 2.2 và bài đọc 1.2: "raw seafood" (hải sản sống / sashimi) và "greasy food" (đồ nhiều dầu mỡ).',
+              flipCard: {
+                frontText: 'I do not like fish not cook. (Dịch từng chữ)',
+                backText: 'I cannot stand raw seafood and overly greasy food. (Nâng cấp +0.5)',
+                explanation: 'Dùng cụm "cannot stand" (không chịu được) và từ "raw seafood" (hải sản tươi sống).'
+              },
+              branchOptions: [
+                {
+                  branchName: 'KHÔNG THÍCH HẢI SẢN SỐNG & ĐỒ DẦU MỠ',
+                  content: 'There are a few things that I cannot stand, especially raw seafood and overly greasy food.',
+                  note: 'Ý bám sát câu hỏi về sashimi trong phần phát âm.'
+                },
+                {
+                  branchName: 'KHÔNG ĂN ĐƯỢC CAY (SPICY FOOD)',
+                  content: 'I cannot eat spicy food because my stomach is quite sensitive to hot chili.',
+                  note: 'Lý do không ăn được cay rất phổ biến và gần gũi.'
+                }
+              ]
+            },
+            {
+              step: 4,
+              label: 'BƯỚC 4: SỞ THÍCH ĐỒ NGỌT (SWEETS & BOBA TEA)',
+              cognitiveFunction: '4. Bạn có thích ăn đồ ngọt hay uống trà sữa không?',
+              content: 'I used to drink a lot of boba milk tea, but now I prefer drinking fresh water to stay healthy.',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Bám sát câu hỏi 4 và câu luyện câu 1.2: "drink coffee than boba tea". Dùng cấu trúc "used to" (đã từng).',
+              flipCard: {
+                frontText: 'I like milk tea very much. (Đơn sơ)',
+                backText: 'I used to drink a lot of boba milk tea, but now I drink water to stay healthy. (Mạch lạc)',
+                explanation: 'Ôn lại cấu trúc "used to + V" đã học để so sánh thói quen quá khứ và hiện tại.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'For breakfast, I usually have a bowl of noodles or a banh mi on my way to work. I know how to cook some simple home dishes, but I cannot stand raw seafood or greasy food. I used to drink a lot of milk tea, but now I drink fresh water to stay healthy.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 3: Đóng Vai Gọi Món Tại Nhà Hàng (Ordering Food - Activity 3)',
+        pedagogicalObjective: 'Làm chủ mẫu hội thoại chuẩn khi đi ăn nhà hàng: Chào hỏi -> Gọi món chính & đồ uống ("I would like...") -> Hỏi gợi ý -> Thanh toán tổng tiền.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click mở từng bước để học cách gọi món tại nhà hàng chuẩn mực:',
+          cards: [
+            {
+              step: 1,
+              label: 'BƯỚC 1: BỒI BÀN HỎI GỌI MÓN (MAY I TAKE YOUR ORDER?)',
+              cognitiveFunction: '1. Người phục vụ mở lời như thế nào?',
+              content: 'Good evening! Welcome to our restaurant. May I take your order now?',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Nguyên văn mẫu câu điền từ trong bài tập 3: "Good evening. [May] I take your order?".',
+              flipCard: {
+                frontText: 'What you want to eat? (Quá suồng sã)',
+                backText: 'Good evening. May I take your order? (Chuẩn mực nhà hàng)',
+                explanation: 'Mẫu câu phục vụ nhà hàng chuẩn: "May I take your order?" (Tôi có thể nhận gọi món chưa ạ?).'
+              }
+            },
+            {
+              step: 2,
+              label: 'BƯỚC 2: KHÁCH HÀNG GỌI MÓN (I WOULD LIKE...)',
+              cognitiveFunction: '2. Khách hàng gọi món chính một cách lịch sự ra sao?',
+              content: 'Yes, please. I would like a bowl of beef noodles and a glass of fresh orange juice.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Bám sát mẫu điền từ của khách: "Yes, I\'d like [Dish name]".',
+              flipCard: {
+                frontText: 'Give me beef noodle. (Nói cộc lốc)',
+                backText: "Yes, please. I would like a bowl of beef noodles. (Chuẩn lịch sự)",
+                explanation: 'Gọi món bằng tiếng Anh bắt buộc dùng "I would like..." hoặc "I\'d like...", không dùng "give me".'
+              }
+            },
+            {
+              step: 3,
+              label: 'BƯỚC 3: BỒI BÀN HỎI THÊM & GỢI Ý (ANYTHING ELSE?)',
+              cognitiveFunction: '3. Phục vụ hỏi dùng thêm món phụ hoặc tráng miệng gì không?',
+              content: 'Would you like some dessert as well? We have freshly baked chocolate cakes today.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Mẫu câu trong bài tập: "Would you like [Dessert]?" và "Anything else?".',
+              flipCard: {
+                frontText: 'You want cake? (Đơn sơ)',
+                backText: 'Would you like some dessert as well? We have fresh chocolate cakes. (Chuyên nghiệp)',
+                explanation: 'Cấu trúc mời dùng thêm món: "Would you like some [món ăn] as well?".'
+              },
+              branchOptions: [
+                {
+                  branchName: 'GỌI THÊM BÁNH TRÁNG MIỆNG (DESSERT)',
+                  content: 'That sounds lovely! I would also like a slice of chocolate cake, please.',
+                  note: 'Khách đồng ý gọi thêm bánh tráng miệng.'
+                },
+                {
+                  branchName: 'TỪ CHỐI LỊCH SỰ (THAT IS ALL)',
+                  content: "That's all for now, thank you. Could you please bring the bill?",
+                  note: 'Trích câu mẫu chốt trong bài: "That\'s all, thank you".'
+                }
+              ]
+            },
+            {
+              step: 4,
+              label: 'BƯỚC 4: TỔNG TIỀN THANH TOÁN (YOUR TOTAL IS...)',
+              cognitiveFunction: '4. Phục vụ thông báo tổng tiền hóa đơn bao nhiêu?',
+              content: 'Certainly! Your total is one hundred and fifty thousand dong. Thank you and enjoy your meal!',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Mẫu câu kết bài tập 3: "Your total is [Amount]. Enjoy your meal!".',
+              flipCard: {
+                frontText: 'All is 150.000 dong. (Tiếng bồi)',
+                backText: 'Your total is 150,000 dong. Enjoy your meal! (Chuẩn nhà hàng)',
+                explanation: 'Thông báo hóa đơn chuẩn: "Your total is [số tiền]".'
+              }
+            }
+          ],
+          fullMosaicSummary: "Good evening, welcome to our restaurant. May I take your order? Yes, please. I would like a bowl of beef noodles and a glass of fresh orange juice. Would you like some dessert as well? That's all for now, thank you. Certainly, your total is 150,000 dong. Enjoy your meal!"
         }
       }
     ]
