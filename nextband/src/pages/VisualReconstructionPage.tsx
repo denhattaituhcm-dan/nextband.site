@@ -41,6 +41,8 @@ const WEEKS_META: WeekMeta[] = [
 export default function VisualReconstructionPage() {
   const [selectedWeek, setSelectedWeek] = useState<number>(2);
   const [activeLesson, setActiveLesson] = useState<VRSVisualLesson | null>(null);
+  // Track lessons marked completed; default W2D2 reading is completed in mock
+  const [completedLessonIds, setCompletedLessonIds] = useState<string[]>(['dreamer_w2d2']);
 
   const currentWeekMeta = useMemo(() => {
     return WEEKS_META.find((w) => w.week === selectedWeek) || WEEKS_META[0];
@@ -82,21 +84,30 @@ export default function VisualReconstructionPage() {
       </header>
 
       {/* Main Workspace */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {!activeLesson ? (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* TẦNG 1: WHERE AM I? (Vertical Progression Rail - 3 Cols on LG) */}
-            <aside className="lg:col-span-3 bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                  Progression Rail
-                </h3>
-                <span className="text-xs font-medium text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">
-                  9 Weeks
+            {/* TẦNG 1: WHERE AM I? (Academic Curriculum Timeline Rail - 3 Cols on LG) */}
+            <aside className="lg:col-span-3 bg-white/80 backdrop-blur-xs border border-slate-200/80 rounded-2xl p-5 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.04)]">
+              <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-100">
+                <div>
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-400">
+                    CURRICULUM INDEX
+                  </span>
+                  <h3 className="text-sm font-bold text-slate-900 mt-0.5">
+                    Lộ Trình Tái Dựng
+                  </h3>
+                </div>
+                <span className="text-[11px] font-mono font-bold text-indigo-700 bg-indigo-50/80 border border-indigo-100/80 px-2.5 py-0.5 rounded-md">
+                  9 WEEKS
                 </span>
               </div>
 
-              <nav className="space-y-1.5" aria-label="Weeks Progression">
+              {/* Connected Timeline List */}
+              <nav className="relative space-y-1" aria-label="Weeks Progression">
+                {/* Visual Continuous Stem Line */}
+                <div className="absolute left-[23px] top-4 bottom-4 w-px bg-slate-200/90 pointer-events-none -z-0" />
+
                 {WEEKS_META.map((wm) => {
                   const isSelected = wm.week === selectedWeek;
                   const isCompleted = wm.progressPercent === 100;
@@ -106,41 +117,56 @@ export default function VisualReconstructionPage() {
                     <button
                       key={wm.week}
                       onClick={() => setSelectedWeek(wm.week)}
-                      className={`w-full text-left p-3 rounded-xl transition-all flex items-start gap-3 border ${
+                      className={`w-full text-left p-3 rounded-xl transition-all duration-200 relative z-10 flex items-start gap-3.5 group ${
                         isSelected
-                          ? 'bg-indigo-50/80 border-indigo-200 text-indigo-950 shadow-xs'
-                          : 'bg-white border-transparent hover:border-slate-200 hover:bg-slate-50/80 text-slate-700'
+                          ? 'bg-slate-900 text-white shadow-[0_8px_20px_-6px_rgba(15,23,42,0.3)] translate-x-1'
+                          : 'hover:bg-slate-50 text-slate-700'
                       }`}
                     >
-                      {/* Status Icon */}
+                      {/* Status Point on Timeline */}
                       <div className="mt-0.5 shrink-0">
                         {isCompleted ? (
-                          <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                          <div className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-xs">
+                            <Check className="w-3 h-3 stroke-[3]" />
+                          </div>
                         ) : isActive ? (
-                          <div className="w-4 h-4 rounded-full border-2 border-indigo-600 flex items-center justify-center">
-                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
+                          <div className={`w-5 h-5 rounded-full flex items-center justify-center border-2 ${isSelected ? 'border-white bg-indigo-500' : 'border-indigo-600 bg-white'}`}>
+                            <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
                           </div>
                         ) : (
-                          <div className="w-4 h-4 rounded-full border border-slate-300" />
+                          <div className={`w-5 h-5 rounded-full border bg-white flex items-center justify-center text-[10px] font-mono font-bold ${
+                            isSelected ? 'border-slate-600 text-slate-300' : 'border-slate-300 text-slate-400 group-hover:border-slate-400'
+                          }`}>
+                            {wm.week}
+                          </div>
                         )}
                       </div>
 
                       {/* Content */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                            Tuần {wm.week}
+                          <span className={`text-[10px] font-mono font-bold uppercase tracking-wider ${
+                            isSelected ? 'text-indigo-300' : 'text-slate-400'
+                          }`}>
+                            TUẦN 0{wm.week}
                           </span>
-                          <span className="text-[11px] font-semibold text-slate-500">
+                          <span className={`text-[10px] font-mono font-semibold ${
+                            isSelected ? 'text-slate-300' : 'text-slate-500'
+                          }`}>
                             {wm.progressPercent}%
                           </span>
                         </div>
-                        <p className={`text-xs font-semibold truncate mt-0.5 ${isSelected ? 'text-indigo-950' : 'text-slate-800'}`}>
+                        <p className={`text-xs font-semibold truncate mt-0.5 ${
+                          isSelected ? 'text-white' : 'text-slate-800'
+                        }`}>
                           {wm.title}
                         </p>
                         {wm.homeworkPendingCount > 0 && (
-                          <p className="text-[10px] text-amber-600 font-medium mt-1">
-                            {wm.homeworkPendingCount} homework pending
+                          <p className={`text-[10px] font-medium mt-1 flex items-center gap-1 ${
+                            isSelected ? 'text-amber-300' : 'text-amber-600'
+                          }`}>
+                            <Clock className="w-2.5 h-2.5" />
+                            {wm.homeworkPendingCount} bài tập chờ
                           </p>
                         )}
                       </div>
@@ -151,360 +177,506 @@ export default function VisualReconstructionPage() {
             </aside>
 
             {/* MAIN CONTENT AREA: TẦNG 2, 3, 4 (9 Cols on LG) */}
-            <main className="lg:col-span-9 space-y-6">
-              {/* TẦNG 2: WHAT AM I LEARNING? (Week Hero Banner) */}
-              <section className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-6 shadow-sm relative overflow-hidden border border-slate-800">
-                <div className="relative z-10">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xs font-bold uppercase px-2.5 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                      WEEK 0{currentWeekMeta.week}
+            <main className="lg:col-span-9 space-y-8">
+              {/* TẦNG 2: WHAT AM I LEARNING? (Academic Spatial Hero Monograph) */}
+              <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white rounded-3xl p-8 sm:p-10 shadow-[0_20px_40px_-15px_rgba(15,23,42,0.4)] relative overflow-hidden border border-slate-800/80">
+                {/* Subtle Spatial Watermark Number */}
+                <div className="absolute -right-4 -bottom-8 select-none pointer-events-none font-mono font-black text-9xl text-white/[0.04] tracking-tighter">
+                  0{currentWeekMeta.week}
+                </div>
+
+                <div className="relative z-10 max-w-2xl">
+                  <div className="flex flex-wrap items-center gap-2.5 mb-3">
+                    <span className="text-[11px] font-mono font-bold uppercase tracking-widest px-2.5 py-1 rounded-md bg-white/10 text-indigo-200 border border-white/10 backdrop-blur-xs">
+                      WEEK 0{currentWeekMeta.week} FOCUS
                     </span>
-                    <span className="text-xs text-slate-400">·</span>
-                    <span className="text-xs font-medium text-slate-300">
-                      Target Band 4.0 Focus
+                    <span className="text-slate-500">/</span>
+                    <span className="text-xs font-mono tracking-wider text-slate-300">
+                      TARGET BAND 4.0 COGNITIVE ENGINE
                     </span>
                   </div>
-                  <h2 className="text-2xl font-bold tracking-tight text-white mb-2">
+
+                  <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">
                     {currentWeekMeta.title}
                   </h2>
-                  <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
-                    Chủ đề trọng tâm: {currentWeekMeta.theme}. Bóc tách cơ chế ngữ pháp, cô lập bằng chứng đọc hiểu và làm chủ cấu trúc phản xạ nói.
+                  <p className="text-sm text-slate-300 leading-relaxed font-normal">
+                    Trọng tâm khảo cứu: <span className="text-white font-medium">{currentWeekMeta.theme}</span>. Bóc tách cơ chế ngữ pháp cốt lõi, loại trừ bẫy nhận định bằng chứng và tự động hoá tư duy phản xạ giao tiếp.
                   </p>
                 </div>
               </section>
 
-              {/* TẦNG 3 & 4: 3 COGNITIVE MODULES (WRITING - READING - SPEAKING) */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                {/* 1. WRITING MODULE: SENTENCE BUILDER ENGINE */}
-                {writingLesson && (
-                  <div className="bg-white border border-indigo-100 rounded-2xl p-5 shadow-xs flex flex-col justify-between hover:border-indigo-300 transition-all group">
-                    <div>
-                      {/* Header Badge */}
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-[11px] font-bold uppercase px-2.5 py-1 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100 flex items-center gap-1.5">
-                          <Cpu className="w-3 h-3" />
-                          WRITING · DAY 1
-                        </span>
-                        <span className="text-[10px] font-semibold text-slate-400">Day 1</span>
-                      </div>
-
-                      <h4 className="text-base font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
-                        {writingLesson.title}
-                      </h4>
-                      <p className="text-xs text-slate-500 mt-1 mb-4">
-                        {writingLesson.subtitle}
-                      </p>
-
-                      {/* Visual Mechanism Miniature (Interactive Preview) */}
-                      <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 mb-4">
-                        <div className="text-[10px] font-bold uppercase tracking-wider text-indigo-700 mb-2 flex items-center gap-1">
-                          <Layers className="w-3 h-3" />
-                          Sentence Slot Engine
-                        </div>
-                        <div className="flex items-center justify-center gap-1.5 font-mono text-[11px] font-bold py-2 bg-white rounded-lg border border-slate-200 text-slate-700">
-                          <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">[ S ]</span>
-                          <span className="text-slate-300">+</span>
-                          <span className="px-1.5 py-0.5 rounded bg-orange-50 text-orange-700 border border-orange-200">[ FV ]</span>
-                          <span className="text-slate-300">+</span>
-                          <span className="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">[ O ]</span>
-                        </div>
-                        <p className="text-[11px] text-slate-500 mt-2 line-clamp-2 leading-relaxed">
-                          {writingLesson.coreCompetency}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* TẦNG 4: LEARNING LOOP & HOMEWORK BRIDGE */}
-                    <div className="pt-3 border-t border-slate-100 space-y-3">
-                      {/* Learning Loop Status */}
-                      <div className="flex items-center justify-between text-[11px] font-semibold">
-                        <span className="text-slate-400">LEARNING LOOP:</span>
-                        <div className="flex items-center gap-1 text-[10px] font-bold">
-                          <span className="text-emerald-600 flex items-center gap-0.5">
-                            <Check className="w-3 h-3" /> LEARN
-                          </span>
-                          <span className="text-slate-300">→</span>
-                          <span className="text-indigo-600 flex items-center gap-0.5">
-                            <Sparkles className="w-3 h-3" /> REBUILD
-                          </span>
-                          <span className="text-slate-300">→</span>
-                          <span className="text-amber-600">HOMEWORK</span>
-                        </div>
-                      </div>
-
-                      {/* Main Action Button */}
-                      <button
-                        onClick={() => setActiveLesson(writingLesson)}
-                        className="w-full py-2.5 px-3 rounded-xl text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition-colors flex items-center justify-center gap-1.5 shadow-xs"
-                      >
-                        Khám Phá Cơ Chế
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
-
-                      {/* Homework Link Pill */}
-                      <div className="bg-slate-50 p-2 rounded-lg border border-slate-200 flex items-center justify-between text-[11px]">
-                        <span className="text-slate-600 font-medium truncate">
-                          HW W{selectedWeek}D1
-                        </span>
-                        <span className="text-amber-600 font-semibold flex items-center gap-1 shrink-0">
-                          <Clock className="w-3 h-3" /> Cần làm
-                        </span>
-                      </div>
-                    </div>
+              {/* TẦNG 3 & 4: 3 TACTILE COGNITIVE MODULES (WRITING - READING - SPEAKING) */}
+              <div>
+                <div className="flex items-center justify-between mb-4 px-1">
+                  <div>
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400 font-bold">
+                      TRIAD COGNITIVE WORKBENCHES
+                    </span>
+                    <h3 className="text-base font-bold text-slate-900">
+                      3 Khối Thử Thách Nhận Thức Trong Tuần
+                    </h3>
                   </div>
-                )}
+                  <span className="text-xs text-slate-500 font-medium">
+                    Nhấp chọn cơ chế để thực hành sâu
+                  </span>
+                </div>
 
-                {/* 2. READING MODULE: EVIDENCE SCALE LAB */}
-                {readingLesson && (
-                  <div className="bg-white border border-amber-100 rounded-2xl p-5 shadow-xs flex flex-col justify-between hover:border-amber-300 transition-all group">
-                    <div>
-                      {/* Header Badge */}
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-[11px] font-bold uppercase px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 border border-amber-100 flex items-center gap-1.5">
-                          <Scale className="w-3 h-3" />
-                          READING · DAY 2
-                        </span>
-                        <span className="text-[10px] font-semibold text-slate-400">Day 2</span>
-                      </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* 1. WRITING MODULE: SENTENCE BUILDER ENGINE */}
+                  {writingLesson && (() => {
+                    const isWritingDone = completedLessonIds.includes(writingLesson.id);
+                    return (
+                      <div className={`bg-white rounded-3xl p-6 flex flex-col justify-between transition-all duration-500 group relative overflow-hidden ${
+                        isWritingDone
+                          ? 'card-glow-mastery-emerald border-2 border-emerald-500/80 -translate-y-1'
+                          : 'shadow-[0_4px_24px_-4px_rgba(15,23,42,0.06)] border border-slate-200/80 hover:shadow-[0_12px_32px_-8px_rgba(15,23,42,0.12)] hover:-translate-y-1'
+                      }`}>
+                        {/* Background Aura Light if completed */}
+                        {isWritingDone && (
+                          <div className="absolute -top-16 -right-16 w-36 h-36 rounded-full bg-emerald-400/20 blur-2xl pointer-events-none" />
+                        )}
 
-                      <h4 className="text-base font-bold text-slate-900 group-hover:text-amber-600 transition-colors">
-                        {readingLesson.title}
-                      </h4>
-                      <p className="text-xs text-slate-500 mt-1 mb-4">
-                        {readingLesson.subtitle}
-                      </p>
-
-                      {/* Visual Mechanism Miniature (Evidence Scale) */}
-                      <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 mb-4">
-                        <div className="text-[10px] font-bold uppercase tracking-wider text-amber-700 mb-2 flex items-center gap-1">
-                          <Scale className="w-3 h-3" />
-                          Logic Verification Scale
-                        </div>
-                        <div className="flex items-center justify-between font-mono text-[10px] font-bold py-2 px-2.5 bg-white rounded-lg border border-slate-200 text-slate-700">
-                          <span className="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">CLAIM</span>
-                          <span className="text-amber-600 text-sm">⚖</span>
-                          <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">EVIDENCE</span>
-                        </div>
-                        <p className="text-[11px] text-slate-500 mt-2 line-clamp-2 leading-relaxed">
-                          {readingLesson.coreCompetency}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* TẦNG 4: LEARNING LOOP & HOMEWORK BRIDGE */}
-                    <div className="pt-3 border-t border-slate-100 space-y-3">
-                      {/* Learning Loop Status */}
-                      <div className="flex items-center justify-between text-[11px] font-semibold">
-                        <span className="text-slate-400">LEARNING LOOP:</span>
-                        <div className="flex items-center gap-1 text-[10px] font-bold">
-                          <span className="text-emerald-600 flex items-center gap-0.5">
-                            <Check className="w-3 h-3" /> LEARN
-                          </span>
-                          <span className="text-slate-300">→</span>
-                          <span className="text-amber-600 flex items-center gap-0.5">
-                            <Sparkles className="w-3 h-3" /> REBUILD
-                          </span>
-                          <span className="text-slate-300">→</span>
-                          <span className="text-emerald-600">DONE</span>
-                        </div>
-                      </div>
-
-                      {/* Main Action Button */}
-                      <button
-                        onClick={() => setActiveLesson(readingLesson)}
-                        className="w-full py-2.5 px-3 rounded-xl text-xs font-bold bg-amber-600 text-white hover:bg-amber-700 transition-colors flex items-center justify-center gap-1.5 shadow-xs"
-                      >
-                        Khám Phá Cơ Chế
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
-
-                      {/* Homework Link Pill */}
-                      <div className="bg-slate-50 p-2 rounded-lg border border-slate-200 flex items-center justify-between text-[11px]">
-                        <span className="text-slate-600 font-medium truncate">
-                          HW W{selectedWeek}D2
-                        </span>
-                        <span className="text-emerald-600 font-semibold flex items-center gap-1 shrink-0">
-                          <CheckCircle2 className="w-3 h-3" /> Hoàn thành
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* 3. SPEAKING MODULE: RESPONSE BUILDER CASCADE */}
-                {speakingLesson && (
-                  <div className="bg-white border border-emerald-100 rounded-2xl p-5 shadow-xs flex flex-col justify-between hover:border-emerald-300 transition-all group">
-                    <div>
-                      {/* Header Badge */}
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-[11px] font-bold uppercase px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center gap-1.5">
-                          <Layers className="w-3 h-3" />
-                          SPEAKING · DAY 3
-                        </span>
-                        <span className="text-[10px] font-semibold text-slate-400">Day 3</span>
-                      </div>
-
-                      <h4 className="text-base font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">
-                        {speakingLesson.title}
-                      </h4>
-                      <p className="text-xs text-slate-500 mt-1 mb-4">
-                        {speakingLesson.subtitle}
-                      </p>
-
-                      {/* Visual Mechanism Miniature (Progressive Reveal Stack) */}
-                      <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 mb-4">
-                        <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 mb-2 flex items-center gap-1">
-                          <Layers className="w-3 h-3" />
-                          4-Tier Response Cascade
-                        </div>
-                        <div className="space-y-1 font-mono text-[9px] font-bold py-1 px-2 bg-white rounded-lg border border-slate-200 text-slate-600">
-                          <div className="flex items-center justify-between bg-emerald-50/60 px-1.5 py-0.5 rounded text-emerald-800">
-                            <span>1. STANCE</span>
-                            <span className="text-[8px] font-normal text-slate-400">Trực diện</span>
+                        <div>
+                          {/* Header Folio */}
+                          <div className="flex items-center justify-between mb-3.5">
+                            <span className="text-[11px] font-mono font-bold tracking-wider uppercase text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100 flex items-center gap-1.5">
+                              <Cpu className="w-3.5 h-3.5" />
+                              WRITING · DAY 1
+                            </span>
+                            {isWritingDone ? (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-xs animate-pulse">
+                                <Sparkles className="w-3 h-3 text-emerald-600" /> MASTERED
+                              </span>
+                            ) : (
+                              <span className="text-xs font-mono font-semibold text-slate-400">01/03</span>
+                            )}
                           </div>
-                          <div className="flex items-center justify-between bg-slate-50 px-1.5 py-0.5 rounded text-slate-700">
-                            <span>2. WHY?</span>
-                            <span className="text-[8px] font-normal text-slate-400">Lý do</span>
-                          </div>
-                          <div className="flex items-center justify-between bg-slate-50 px-1.5 py-0.5 rounded text-slate-700">
-                            <span>3. DEVELOP</span>
-                            <span className="text-[8px] font-normal text-indigo-500">Branch ±</span>
+
+                          <h4 className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors leading-snug">
+                            {writingLesson.title}
+                          </h4>
+                          <p className="text-xs text-slate-500 mt-1 mb-5 line-clamp-2">
+                            {writingLesson.subtitle}
+                          </p>
+
+                          {/* Visual Mechanism Miniature (Tactile Preview) */}
+                          <div className={`py-4 px-3.5 rounded-2xl border mb-6 transition-colors ${
+                            isWritingDone ? 'bg-emerald-50/40 border-emerald-200/70' : 'bg-slate-50/80 border-slate-200/80'
+                          }`}>
+                            <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 mb-2.5 flex items-center gap-1">
+                              <Layers className="w-3 h-3 text-indigo-600" />
+                              Sentence Slot Engine
+                            </div>
+                            {/* Tactile Connectors */}
+                            <div className="flex items-center justify-center gap-1.5 font-mono text-xs font-bold py-2.5 bg-white rounded-xl border border-slate-200 shadow-xs text-slate-700">
+                              <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-xs">[ S ]</span>
+                              <span className="text-slate-300 font-bold">+</span>
+                              <span className="px-2 py-0.5 rounded-md bg-orange-50 text-orange-700 border border-orange-200 shadow-xs">[ FV ]</span>
+                              <span className="text-slate-300 font-bold">+</span>
+                              <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 shadow-xs">[ O ]</span>
+                            </div>
+                            <p className="text-[11px] text-slate-600 mt-3 line-clamp-2 leading-relaxed">
+                              {writingLesson.coreCompetency}
+                            </p>
                           </div>
                         </div>
-                        <p className="text-[11px] text-slate-500 mt-2 line-clamp-2 leading-relaxed">
-                          {speakingLesson.coreCompetency}
-                        </p>
-                      </div>
-                    </div>
 
-                    {/* TẦNG 4: LEARNING LOOP & HOMEWORK BRIDGE */}
-                    <div className="pt-3 border-t border-slate-100 space-y-3">
-                      {/* Learning Loop Status */}
-                      <div className="flex items-center justify-between text-[11px] font-semibold">
-                        <span className="text-slate-400">LEARNING LOOP:</span>
-                        <div className="flex items-center gap-1 text-[10px] font-bold">
-                          <span className="text-emerald-600 flex items-center gap-0.5">
-                            <Check className="w-3 h-3" /> LEARN
-                          </span>
-                          <span className="text-slate-300">→</span>
-                          <span className="text-emerald-600 flex items-center gap-0.5">
-                            <Sparkles className="w-3 h-3" /> REBUILD
-                          </span>
-                          <span className="text-slate-300">→</span>
-                          <span className="text-slate-400">CHƯA LÀM</span>
+                        {/* Learning Loop & Tactile CTA */}
+                        <div className="pt-4 border-t border-slate-100 space-y-3.5">
+                          <div className="flex items-center justify-between text-[10px] font-mono">
+                            <span className="text-slate-400 font-bold">CYCLE:</span>
+                            <div className="flex items-center gap-1 font-semibold">
+                              <span className="text-emerald-600 flex items-center gap-0.5">
+                                <Check className="w-3 h-3" /> LEARN
+                              </span>
+                              <span className="text-slate-300">→</span>
+                              <span className="text-indigo-600 flex items-center gap-0.5">
+                                <Sparkles className="w-3 h-3" /> REBUILD
+                              </span>
+                              <span className="text-slate-300">→</span>
+                              <span className={isWritingDone ? 'text-emerald-600 font-bold' : 'text-amber-600 font-bold'}>
+                                {isWritingDone ? 'DONE' : 'HW'}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Tactile Button */}
+                          <button
+                            onClick={() => setActiveLesson(writingLesson)}
+                            className={`w-full py-3 px-4 rounded-xl text-xs font-bold text-white transition-all flex items-center justify-center gap-2 cursor-pointer active:translate-y-0.5 ${
+                              isWritingDone
+                                ? 'bg-emerald-600 hover:bg-emerald-700 shadow-[0_4px_14px_rgba(5,150,105,0.35)]'
+                                : 'bg-indigo-600 hover:bg-indigo-700 shadow-[0_4px_14px_rgba(79,70,229,0.3)] hover:shadow-[0_6px_20px_rgba(79,70,229,0.4)]'
+                            }`}
+                          >
+                            {isWritingDone ? 'Ôn Luyện Lại Cơ Chế' : 'Khám Phá Cơ Chế'}
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
+
+                          {/* Homework Link Pill */}
+                          <div className="bg-slate-50/80 px-3 py-2 rounded-xl border border-slate-200/80 flex items-center justify-between text-[11px]">
+                            <span className="text-slate-600 font-mono font-medium truncate">
+                              HW W{selectedWeek}D1
+                            </span>
+                            {isWritingDone ? (
+                              <span className="text-emerald-700 font-semibold flex items-center gap-1 shrink-0 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60 text-[10px]">
+                                <CheckCircle2 className="w-3 h-3" /> Đã hoàn thành
+                              </span>
+                            ) : (
+                              <span className="text-amber-700 font-semibold flex items-center gap-1 shrink-0 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/60 text-[10px]">
+                                <Clock className="w-3 h-3" /> Cần làm
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
+                    );
+                  })()}
 
-                      {/* Main Action Button */}
-                      <button
-                        onClick={() => setActiveLesson(speakingLesson)}
-                        className="w-full py-2.5 px-3 rounded-xl text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-700 transition-colors flex items-center justify-center gap-1.5 shadow-xs"
-                      >
-                        Khám Phá Cơ Chế
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
+                  {/* 2. READING MODULE: EVIDENCE SCALE LAB (Đã hoàn thành - Phát sáng Hoàng Kim/Mastery) */}
+                  {readingLesson && (() => {
+                    const isReadingDone = completedLessonIds.includes(readingLesson.id);
+                    return (
+                      <div className={`bg-white rounded-3xl p-6 flex flex-col justify-between transition-all duration-500 group relative overflow-hidden ${
+                        isReadingDone
+                          ? 'card-glow-mastery-gold border-2 border-amber-400/90 -translate-y-1'
+                          : 'shadow-[0_4px_24px_-4px_rgba(15,23,42,0.06)] border border-slate-200/80 hover:shadow-[0_12px_32px_-8px_rgba(15,23,42,0.12)] hover:-translate-y-1'
+                      }`}>
+                        {/* Background Aura Light if completed */}
+                        {isReadingDone && (
+                          <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full bg-amber-300/25 blur-2xl pointer-events-none" />
+                        )}
 
-                      {/* Homework Link Pill */}
-                      <div className="bg-slate-50 p-2 rounded-lg border border-slate-200 flex items-center justify-between text-[11px]">
-                        <span className="text-slate-600 font-medium truncate">
-                          HW W{selectedWeek}D3
-                        </span>
-                        <span className="text-slate-500 font-medium flex items-center gap-1 shrink-0">
-                          Chưa bắt đầu
-                        </span>
+                        <div>
+                          {/* Header Folio */}
+                          <div className="flex items-center justify-between mb-3.5">
+                            <span className="text-[11px] font-mono font-bold tracking-wider uppercase text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-100 flex items-center gap-1.5">
+                              <Scale className="w-3.5 h-3.5" />
+                              READING · DAY 2
+                            </span>
+                            {isReadingDone ? (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 shadow-xs">
+                                <Sparkles className="w-3 h-3 text-amber-600" /> MASTERED
+                              </span>
+                            ) : (
+                              <span className="text-xs font-mono font-semibold text-slate-400">02/03</span>
+                            )}
+                          </div>
+
+                          <h4 className="text-lg font-bold text-slate-900 group-hover:text-amber-700 transition-colors leading-snug">
+                            {readingLesson.title}
+                          </h4>
+                          <p className="text-xs text-slate-500 mt-1 mb-5 line-clamp-2">
+                            {readingLesson.subtitle}
+                          </p>
+
+                          {/* Visual Mechanism Miniature (Evidence Scale) */}
+                          <div className={`py-4 px-3.5 rounded-2xl border mb-6 transition-colors ${
+                            isReadingDone ? 'bg-amber-50/40 border-amber-200/70' : 'bg-slate-50/80 border-slate-200/80'
+                          }`}>
+                            <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 mb-2.5 flex items-center gap-1">
+                              <Scale className="w-3 h-3 text-amber-600" />
+                              Logic Verification Scale
+                            </div>
+                            {/* Scale Balance Tactile */}
+                            <div className="flex items-center justify-between font-mono text-xs font-bold py-2.5 px-3 bg-white rounded-xl border border-slate-200 shadow-xs text-slate-700">
+                              <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 shadow-xs">CLAIM</span>
+                              <span className="text-amber-600 font-bold text-base">⚖</span>
+                              <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-xs">EVIDENCE</span>
+                            </div>
+                            <p className="text-[11px] text-slate-600 mt-3 line-clamp-2 leading-relaxed">
+                              {readingLesson.coreCompetency}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Learning Loop & Tactile CTA */}
+                        <div className="pt-4 border-t border-slate-100 space-y-3.5">
+                          <div className="flex items-center justify-between text-[10px] font-mono">
+                            <span className="text-slate-400 font-bold">CYCLE:</span>
+                            <div className="flex items-center gap-1 font-semibold">
+                              <span className="text-emerald-600 flex items-center gap-0.5">
+                                <Check className="w-3 h-3" /> LEARN
+                              </span>
+                              <span className="text-slate-300">→</span>
+                              <span className="text-amber-600 flex items-center gap-0.5">
+                                <Sparkles className="w-3 h-3" /> REBUILD
+                              </span>
+                              <span className="text-slate-300">→</span>
+                              <span className="text-emerald-600 font-bold">DONE</span>
+                            </div>
+                          </div>
+
+                          {/* Tactile Button */}
+                          <button
+                            onClick={() => setActiveLesson(readingLesson)}
+                            className="w-full py-3 px-4 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-[0_4px_18px_rgba(217,119,6,0.35)] hover:shadow-[0_6px_22px_rgba(217,119,6,0.45)] active:translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                          >
+                            Ôn Luyện Lại Cơ Chế
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
+
+                          {/* Homework Link Pill */}
+                          <div className="bg-amber-50/70 px-3 py-2 rounded-xl border border-amber-200/80 flex items-center justify-between text-[11px]">
+                            <span className="text-slate-700 font-mono font-medium truncate">
+                              HW W{selectedWeek}D2
+                            </span>
+                            <span className="text-emerald-700 font-semibold flex items-center gap-1 shrink-0 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60 text-[10px]">
+                              <CheckCircle2 className="w-3 h-3" /> Đã hoàn thành
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                )}
+                    );
+                  })()}
+
+                  {/* 3. SPEAKING MODULE: RESPONSE BUILDER CASCADE */}
+                  {speakingLesson && (() => {
+                    const isSpeakingDone = completedLessonIds.includes(speakingLesson.id);
+                    return (
+                      <div className={`bg-white rounded-3xl p-6 flex flex-col justify-between transition-all duration-500 group relative overflow-hidden ${
+                        isSpeakingDone
+                          ? 'card-glow-mastery-emerald border-2 border-emerald-500/80 -translate-y-1'
+                          : 'shadow-[0_4px_24px_-4px_rgba(15,23,42,0.06)] border border-slate-200/80 hover:shadow-[0_12px_32px_-8px_rgba(15,23,42,0.12)] hover:-translate-y-1'
+                      }`}>
+                        {/* Background Aura Light if completed */}
+                        {isSpeakingDone && (
+                          <div className="absolute -top-16 -right-16 w-36 h-36 rounded-full bg-emerald-400/20 blur-2xl pointer-events-none" />
+                        )}
+
+                        <div>
+                          {/* Header Folio */}
+                          <div className="flex items-center justify-between mb-3.5">
+                            <span className="text-[11px] font-mono font-bold tracking-wider uppercase text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100 flex items-center gap-1.5">
+                              <Layers className="w-3.5 h-3.5" />
+                              SPEAKING · DAY 3
+                            </span>
+                            {isSpeakingDone ? (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-xs">
+                                <Sparkles className="w-3 h-3 text-emerald-600" /> MASTERED
+                              </span>
+                            ) : (
+                              <span className="text-xs font-mono font-semibold text-slate-400">03/03</span>
+                            )}
+                          </div>
+
+                          <h4 className="text-lg font-bold text-slate-900 group-hover:text-emerald-700 transition-colors leading-snug">
+                            {speakingLesson.title}
+                          </h4>
+                          <p className="text-xs text-slate-500 mt-1 mb-5 line-clamp-2">
+                            {speakingLesson.subtitle}
+                          </p>
+
+                          {/* Visual Mechanism Miniature (Cascade Stack) */}
+                          <div className={`py-4 px-3.5 rounded-2xl border mb-6 transition-colors ${
+                            isSpeakingDone ? 'bg-emerald-50/40 border-emerald-200/70' : 'bg-slate-50/80 border-slate-200/80'
+                          }`}>
+                            <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 mb-2 flex items-center gap-1">
+                              <Layers className="w-3 h-3 text-emerald-600" />
+                              4-Tier Response Cascade
+                            </div>
+                            {/* Cascade Steps */}
+                            <div className="space-y-1 font-mono text-[10px] font-bold py-1.5 px-2 bg-white rounded-xl border border-slate-200 shadow-xs text-slate-600">
+                              <div className="flex items-center justify-between bg-emerald-50/80 px-2 py-1 rounded-md text-emerald-800">
+                                <span>1. STANCE</span>
+                                <span className="text-[9px] font-normal text-emerald-600">Trực diện</span>
+                              </div>
+                              <div className="flex items-center justify-between bg-slate-50 px-2 py-1 rounded-md text-slate-700">
+                                <span>2. WHY?</span>
+                                <span className="text-[9px] font-normal text-slate-400">Lý giải</span>
+                              </div>
+                              <div className="flex items-center justify-between bg-slate-50 px-2 py-1 rounded-md text-slate-700">
+                                <span>3. DEVELOP</span>
+                                <span className="text-[9px] font-normal text-indigo-500">Phát triển +</span>
+                              </div>
+                            </div>
+                            <p className="text-[11px] text-slate-600 mt-3 line-clamp-2 leading-relaxed">
+                              {speakingLesson.coreCompetency}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Learning Loop & Tactile CTA */}
+                        <div className="pt-4 border-t border-slate-100 space-y-3.5">
+                          <div className="flex items-center justify-between text-[10px] font-mono">
+                            <span className="text-slate-400 font-bold">CYCLE:</span>
+                            <div className="flex items-center gap-1 font-semibold">
+                              <span className="text-emerald-600 flex items-center gap-0.5">
+                                <Check className="w-3 h-3" /> LEARN
+                              </span>
+                              <span className="text-slate-300">→</span>
+                              <span className="text-emerald-600 flex items-center gap-0.5">
+                                <Sparkles className="w-3 h-3" /> REBUILD
+                              </span>
+                              <span className="text-slate-300">→</span>
+                              <span className={isSpeakingDone ? 'text-emerald-600 font-bold' : 'text-slate-400'}>
+                                {isSpeakingDone ? 'DONE' : 'CHƯA LÀM'}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Tactile Button */}
+                          <button
+                            onClick={() => setActiveLesson(speakingLesson)}
+                            className="w-full py-3 px-4 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-[0_4px_14px_rgba(5,150,105,0.3)] hover:shadow-[0_6px_20px_rgba(5,150,105,0.4)] active:translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                          >
+                            {isSpeakingDone ? 'Ôn Luyện Lại Cơ Chế' : 'Khám Phá Cơ Chế'}
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
+
+                          {/* Homework Link Pill */}
+                          <div className="bg-slate-50/80 px-3 py-2 rounded-xl border border-slate-200/80 flex items-center justify-between text-[11px]">
+                            <span className="text-slate-600 font-mono font-medium truncate">
+                              HW W{selectedWeek}D3
+                            </span>
+                            {isSpeakingDone ? (
+                              <span className="text-emerald-700 font-semibold flex items-center gap-1 shrink-0 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60 text-[10px]">
+                                <CheckCircle2 className="w-3 h-3" /> Đã hoàn thành
+                              </span>
+                            ) : (
+                              <span className="text-slate-500 font-medium flex items-center gap-1 shrink-0 bg-slate-100 px-2 py-0.5 rounded-md text-[10px]">
+                                Chưa bắt đầu
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
               </div>
             </main>
           </div>
         ) : (
-          /* LABWORK FOCUS CANVAS (Khi học sinh bấm "Khám Phá Cơ Chế") */
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm">
-            {/* Header & Back Button */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-slate-100 gap-4">
+          /* ========================================================================= */
+          /* LABWORK FOCUS CANVAS: ARIS DIGITAL COURSEBOOK (Academic Spatial UI)      */
+          /* ========================================================================= */
+          <div className="max-w-4xl mx-auto py-4 px-2 sm:px-6">
+            {/* Editorial Coursebook Header */}
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between pb-8 mb-12 border-b border-slate-200/80 gap-6">
               <div>
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className="text-xs font-bold uppercase px-2.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100">
-                    {activeLesson.skill} · Day {activeLesson.day}
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-indigo-700 bg-indigo-50 border border-indigo-100 px-2.5 py-0.5 rounded-md">
+                    COURSEBOOK · {activeLesson.skill} · DAY {activeLesson.day}
                   </span>
-                  <span className="text-xs text-slate-400">·</span>
-                  <span className="text-xs font-medium text-slate-500">
-                    Tuần {activeLesson.week}
+                  <span className="text-slate-400">·</span>
+                  <span className="text-xs font-mono font-medium text-slate-500">
+                    WEEK 0{activeLesson.week}
                   </span>
                 </div>
-                <h2 className="text-2xl font-bold text-slate-900">{activeLesson.title}</h2>
-                <p className="text-sm text-slate-500 mt-0.5">{activeLesson.subtitle}</p>
+                <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                  {activeLesson.title}
+                </h2>
+                <p className="text-base text-slate-600 mt-1 font-normal leading-relaxed">
+                  {activeLesson.subtitle}
+                </p>
               </div>
 
               <button
                 onClick={() => setActiveLesson(null)}
-                className="inline-flex items-center gap-2 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-xs"
+                className="inline-flex items-center gap-2 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-all shadow-xs hover:shadow-sm self-start sm:self-auto shrink-0 cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
-                Quay Lại Bản Đồ Tuần
+                Về Bản Đồ Tuần
               </button>
             </div>
 
-            {/* Stages / Cognitive Engines */}
-            <div className="space-y-8">
-              {activeLesson.stages.map((stage) => (
-                <div key={stage.stageNumber} className="border border-slate-200 rounded-2xl p-6 bg-slate-50/50">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-bold text-slate-900 text-base flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-mono">
-                        {stage.stageNumber}
-                      </span>
-                      {stage.title}
-                    </h4>
-                  </div>
-                  <p className="text-xs text-slate-500 mb-4 pl-8">
-                    {stage.pedagogicalObjective}
-                  </p>
+            {/* Stages / Cognitive Engines: Phân cấp Editorial (Bỏ bớt container lồng hộp) */}
+            <div className="space-y-16">
+              {activeLesson.stages.map((stage) => {
+                const isTransfer = stage.interactionModel.type === 'transfer_test';
 
-                  {/* Interactive Component Mount */}
-                  <div className="p-5 sm:p-6 rounded-xl bg-white border border-slate-200 shadow-xs">
-                    {stage.interactionModel.type === 'slot_snap' && (
-                      <VRSSlotSnapInteractive model={stage.interactionModel as any} />
-                    )}
-                    {stage.interactionModel.type === 'verification_scale' && (
-                      <VRSVerificationScaleInteractive model={stage.interactionModel as any} />
-                    )}
-                    {stage.interactionModel.type === 'progressive_reveal' && (
-                      <VRSProgressiveRevealInteractive model={stage.interactionModel as any} />
-                    )}
-                    {stage.interactionModel.type === 'transfer_test' && (
-                      <div className="p-4 rounded-xl bg-indigo-50/50 border border-indigo-100 text-center">
-                        <p className="text-xs font-bold text-indigo-900 mb-1">
-                          🎯 THỬ THÁCH CHUYỂN GIAO NĂNG LỰC
-                        </p>
-                        <p className="text-xs text-indigo-700">
-                          {stage.interactionModel.prompt}
+                return (
+                  <section key={stage.stageNumber} className="relative">
+                    {/* Editorial Landmark Number */}
+                    <div className="flex items-baseline gap-4 mb-4">
+                      <span className="text-3xl sm:text-4xl font-mono font-extrabold text-slate-300 select-none">
+                        0{stage.stageNumber}
+                      </span>
+                      <div>
+                        <div className="text-[10px] font-mono uppercase tracking-widest text-indigo-600 font-bold">
+                          {isTransfer ? 'TRANSFER CHALLENGE' : 'COGNITIVE STAGE'}
+                        </div>
+                        <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mt-0.5">
+                          {stage.title}
+                        </h3>
+                        <p className="text-sm text-slate-500 mt-1 leading-relaxed">
+                          {stage.pedagogicalObjective}
                         </p>
                       </div>
-                    )}
-                  </div>
-                </div>
-              ))}
+                    </div>
+
+                    {/* Interactive Component Mount (Không đóng hộp thô kệch) */}
+                    <div className="mt-6 pt-2">
+                      {stage.interactionModel.type === 'slot_snap' && (
+                        <VRSSlotSnapInteractive model={stage.interactionModel as any} />
+                      )}
+                      {stage.interactionModel.type === 'verification_scale' && (
+                        <VRSVerificationScaleInteractive model={stage.interactionModel as any} />
+                      )}
+                      {stage.interactionModel.type === 'progressive_reveal' && (
+                        <VRSProgressiveRevealInteractive model={stage.interactionModel as any} />
+                      )}
+                      {stage.interactionModel.type === 'transfer_test' && (
+                        <div className="py-8 px-6 rounded-2xl bg-indigo-50/50 border border-indigo-100/80 text-center">
+                          <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-indigo-700 bg-white px-3 py-1 rounded-full shadow-xs border border-indigo-100 inline-block mb-3">
+                            🎯 THỬ THÁCH CHUYỂN GIAO NĂNG LỰC
+                          </span>
+                          <p className="text-sm text-indigo-950 font-medium max-w-lg mx-auto leading-relaxed">
+                            {stage.interactionModel.prompt}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </section>
+                );
+              })}
             </div>
 
-            {/* Two-Way Homework Loop Bridge */}
-            <div className="mt-8 p-6 rounded-2xl bg-indigo-50/80 border border-indigo-200 flex flex-col md:flex-row items-center justify-between gap-4">
-              <div>
-                <h4 className="text-sm font-bold text-indigo-950 flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-indigo-600" />
-                  Vòng Lặp Nhận Thức: Áp Dụng Sang Homework
-                </h4>
-                <p className="text-xs text-indigo-800 mt-1 max-w-xl leading-relaxed">
+            {/* Editorial Landmark "CHẶNG 99" & Two-Way Homework Loop Bridge */}
+            <section className="relative mt-20 pt-12 pb-6 border-t border-slate-200/80">
+              {/* Artistic Watermark "99" */}
+              <div className="absolute top-4 right-4 select-none pointer-events-none font-mono font-black text-8xl sm:text-9xl text-slate-100/80 -z-10">
+                99
+              </div>
+
+              <div className="max-w-xl mb-8">
+                <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-indigo-600">
+                  CHẶNG 99 · TRANSFER TO ACTION
+                </span>
+                <h3 className="text-2xl font-bold text-slate-900 mt-1">
+                  Vòng Lặp Chuyển Giao Sang Bài Tập Về Nhà
+                </h3>
+                <p className="text-sm text-slate-600 mt-1 leading-relaxed">
                   {activeLesson.bridgeToHomework.promptText}
                 </p>
               </div>
-              <button className="py-2.5 px-5 rounded-xl text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shrink-0 shadow-xs flex items-center gap-2">
-                Bắt Đầu Làm Bài Tập W{activeLesson.week}D{activeLesson.day}
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
+
+              {/* Action Monograph Card */}
+              <div className="p-6 sm:p-8 rounded-3xl bg-slate-900 text-white shadow-[0_16px_36px_-10px_rgba(15,23,42,0.3)] flex flex-col md:flex-row items-center justify-between gap-6 border border-slate-800">
+                <div className="space-y-1 text-center md:text-left">
+                  <div className="text-xs font-mono text-indigo-300 uppercase tracking-wider font-semibold flex items-center gap-2 justify-center md:justify-start">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    HOMEWORK MODULE · W{activeLesson.week}D{activeLesson.day}
+                  </div>
+                  <div className="text-lg font-bold text-white">
+                    Kiểm chứng phản xạ tự thân với bài tập thực chiến
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    if (!completedLessonIds.includes(activeLesson.id)) {
+                      setCompletedLessonIds([...completedLessonIds, activeLesson.id]);
+                    }
+                    setActiveLesson(null);
+                  }}
+                  className="py-3.5 px-6 rounded-2xl text-xs font-bold bg-white text-slate-950 hover:bg-emerald-50 hover:text-emerald-950 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all shrink-0 flex items-center gap-2 cursor-pointer"
+                >
+                  Hoàn Thành & Sang Homework
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </section>
           </div>
         )}
       </div>

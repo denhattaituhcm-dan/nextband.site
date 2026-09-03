@@ -80,28 +80,152 @@ export const vrsMockLessons: VRSVisualLesson[] = [
       {
         stageNumber: 1,
         stageType: 'verification_scale',
-        title: 'Transfer via Evidence Isolation',
-        pedagogicalObjective: 'Khẳng định chỉ SAIkhi có thông tin mâu thuẫn trực tiẰp.',
+        title: 'Chặng 1: Block Reading & Radar Scanning (Khóa Đoạn Theo Chức Năng)',
+        pedagogicalObjective: 'Quét từ câu hỏi phỏng vấn sang đúng đoạn chức năng trong 5 đoạn văn của bài đọc.',
         interactionModel: {
           type: 'verification_scale',
-          prompt: 'Đặt bằng chứng lên bàn cân để kiểm chứng nhận định.',
+          prompt: 'Bấm Radar quét định vị: Câu hỏi "How physically fit do you have to be?" thuộc về đoạn nào?',
+          passageContext: {
+            title: "Interview with Jack Gomez - Wildfire Firefighter in California",
+            paragraphs: [
+              {
+                id: 'p1',
+                label: 'Đoạn 1 · Động lực vào nghề (Why decide to become a firefighter)',
+                text: "I'm Jack Gomez, and I'm a firefighter in California. I remember watching an interview with a firefighter pilot when I was a child. He'd been fighting a fire for about five days. He was exhausted, but he was still there, talking about how many lives were being saved. He was so optimistic and committed that I thought that I wanted to do the same thing. And I never changed my mind."
+              },
+              {
+                id: 'p2',
+                label: 'Đoạn 2 · Huấn luyện & Bằng cấp (How did you become a firefighter)',
+                text: "I did a training camp to get my wildfire qualification card – you can't fight fires in the US without one. I learned how to fight controlled fires, and how to put them out again. I also learned how to use all the equipment. The camp was really hard, but I passed first time – which was a big relief to me! After that I applied for a job, and I was lucky enough to get one."
+              },
+              {
+                id: 'p3',
+                label: 'Đoạn 3 · Yêu cầu thể lực (How physically fit do you have to be)',
+                text: "One of the things you have to do in the early days is the pack test. This consists of a five-kilometre walk while carrying a backpack that weighs twenty kilograms. You must be able to complete it in forty-five minutes or less without jogging or running. This shows how strong you are. If you can't do this, how can you carry the heavy fire equipment, or fight fires in difficult conditions for hours at a time?"
+              },
+              {
+                id: 'p4',
+                label: 'Đoạn 4 · Kỹ năng sinh tồn bổ trợ (What other skills do you need)',
+                text: "You can be out alone in vast forests and national parks, and sometimes the smoke is so thick that you can hardly see. So, it's important to be able to know where you're going, to be able to read a map, and to use a compass. Also, you must know how to put up a tent, cook outdoors, drive a truck, and have other basic survival skills."
+              },
+              {
+                id: 'p5',
+                label: 'Đoạn 5 · Mối nguy hiểm lớn nhất (What is the most dangerous part)',
+                text: "Wildfires can change direction very quickly because of the wind. One minute everything seems under control, and the next minute the flames are moving towards you. Falling trees, extreme heat, and thick smoke are also serious dangers. Even experienced firefighters can find themselves in difficult situations. That's why we always have to stay alert and follow safety procedures carefully."
+              }
+            ],
+            targetParagraphId: 'p3',
+            targetSnippet: 'five-kilometre walk while carrying a backpack that weighs twenty kilograms'
+          },
           statement: {
-            rawText: 'Jack Gomez had no difficulty during the training camp.',
+            rawText: 'Question C: How physically fit do you have to be? (Khớp với đoạn nào trong bài?)',
             deconstructedVariables: [
-              { name: 'subject', text: 'Jack Gomez' },
-              { name: 'relation', text: 'had no difficulty', isTrapWord: true },
-              { name: 'scope_condition', text: 'during the training camp' }
+              { name: 'question_concept', text: 'How physically fit (thể lực)' },
+              { name: 'target_match', text: 'pack test / 5km walk with 20kg backpack', isTrapWord: true }
             ]
           },
           passageEvidence: {
-            rawText: 'The camp was really hard, but I passed first time.',
+            rawText: 'This consists of a five-kilometre walk while carrying a backpack that weighs twenty kilograms... This shows how strong you are.',
             targetVariables: [
-              { matchingName: 'relation', text: 'The camp was really hard' }
+              { matchingName: 'target_match', text: 'ĐOẠN 3: Kiểm tra thể lực qua bài Pack Test 5km vác 20kg' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'Chính xác! Đoạn 3 tập trung 100% vào yêu cầu thể chất ("shows how strong you are", "pack test", "carry 20kg backpack"), tương ứng trực tiếp với câu hỏi C: "How physically fit do you have to be?".'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'verification_scale',
+        title: 'Chặng 2: Bàn Cân Đối Lập Bằng Chứng (Really Hard vs No Difficulty)',
+        pedagogicalObjective: 'Phát hiện bẫy mâu thuẫn trực tiếp giữa nhận định và lời kể của Jack Gomez trong Đoạn 2.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm Radar quét tìm câu nói về đợt tập huấn của Jack Gomez trong Đoạn 2:',
+          passageContext: {
+            title: "Interview with Jack Gomez - Wildfire Firefighter in California",
+            paragraphs: [
+              {
+                id: 'p1',
+                label: 'Đoạn 1 · Động lực vào nghề',
+                text: "I remember watching an interview with a firefighter pilot when I was a child. He was exhausted, but he was still there... I thought that I wanted to do the same thing."
+              },
+              {
+                id: 'p2',
+                label: 'Đoạn 2 · Huấn luyện & Bằng cấp',
+                text: "I did a training camp to get my wildfire qualification card – you can't fight fires in the US without one. I learned how to fight controlled fires, and how to put them out again. I also learned how to use all the equipment. The camp was really hard, but I passed first time – which was a big relief to me!"
+              }
+            ],
+            targetParagraphId: 'p2',
+            targetSnippet: 'The camp was really hard, but I passed first time'
+          },
+          statement: {
+            rawText: 'Jack Gomez had no difficulty during the training camp to get his wildfire qualification card.',
+            deconstructedVariables: [
+              { name: 'subject', text: 'Jack Gomez' },
+              { name: 'difficulty_level', text: 'had no difficulty', isTrapWord: true },
+              { name: 'context', text: 'during the training camp' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'The camp was really hard, but I passed first time – which was a big relief to me!',
+            targetVariables: [
+              { matchingName: 'difficulty_level', text: 'The camp was really hard (rất vất vả, gian nan)' }
             ]
           },
           expectedRelation: 'contradiction',
           verdict: 'FALSE',
-          pedagogicalInsight: 'FALSE không phải vi suy đoán vô lý, mà vi bài đọc nói ngược lại 100%: no difficulty mâu thuắn trực tiẟp với really hard.'
+          pedagogicalInsight: 'FALSE vì bài đọc nêu rõ "The camp was really hard" (đợt tập huấn rất vất vả, đậu được là "a big relief" - nhẹ cả người), mâu thuẫn hoàn toàn với khẳng định "had no difficulty" (không gặp khó khăn gì).'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'verification_scale',
+        title: 'Chặng 3: Bẫy Thông Tin Suy Diễn Ngoài Vùng (Outside California Trap)',
+        pedagogicalObjective: 'Phát hiện câu khẳng định không có căn cứ trong toàn bộ 5 đoạn đọc (NOT GIVEN).',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Quét toàn bộ 5 đoạn để kiểm tra xem Jack Gomez đã từng chữa cháy ngoài bang California chưa:',
+          passageContext: {
+            title: "Interview with Jack Gomez - Wildfire Firefighter in California",
+            paragraphs: [
+              {
+                id: 'p1',
+                label: 'Đoạn 1 · Giới thiệu bản thân',
+                text: "I'm Jack Gomez, and I'm a firefighter in California. I remember watching an interview with a firefighter pilot when I was a child."
+              },
+              {
+                id: 'p4',
+                label: 'Đoạn 4 · Rừng và vườn quốc gia',
+                text: "You can be out alone in vast forests and national parks, and sometimes the smoke is so thick that you can hardly see."
+              },
+              {
+                id: 'p5',
+                label: 'Đoạn 5 · Cháy rừng đổi hướng',
+                text: "Wildfires can change direction very quickly because of the wind. That's why we always have to stay alert and follow safety procedures carefully."
+              }
+            ],
+            targetParagraphId: 'p1',
+            targetSnippet: "I'm a firefighter in California"
+          },
+          statement: {
+            rawText: 'Jack Gomez has already fought in a fire outside of California.',
+            deconstructedVariables: [
+              { name: 'subject', text: 'Jack Gomez' },
+              { name: 'action', text: 'has already fought in a fire' },
+              { name: 'location', text: 'outside of California', isTrapWord: true }
+            ]
+          },
+          passageEvidence: {
+            rawText: "Jack chỉ giới thiệu: 'I am a firefighter in California'. Trong cả 5 đoạn không có bất kỳ dòng nào nhắc đến việc anh đã từng đi chữa cháy ở bang khác hay chưa.",
+            targetVariables: [
+              { matchingName: 'location', text: 'HOÀN TOÀN KHÔNG CÓ THÔNG TIN NGOÀI BANG CALIFORNIA' }
+            ]
+          },
+          expectedRelation: 'no_evidence',
+          verdict: 'NOT GIVEN',
+          pedagogicalInsight: 'NOT GIVEN vì bài đọc chỉ cho biết Jack làm lính cứu hỏa ở California, không hề đề cập đến việc anh đã từng hay chưa từng tham gia chữa cháy ở bên ngoài bang California.'
         }
       }
     ]
@@ -231,10 +355,32 @@ export const vrsMockLessons: VRSVisualLesson[] = [
         stageNumber: 1,
         stageType: 'verification_scale',
         title: 'Bẫy 1: Thời gian & Tần suất (Time Trap)',
-        pedagogicalObjective: 'Chẻ biến số thời gian để phát hiện mâu thuẫn 100% giữa đề bài và bài đọc.',
+        pedagogicalObjective: 'Quét tọa độ từ khóa (Scanning Radar) và chẻ biến số thời gian để phát hiện mâu thuẫn 100% giữa đề bài và bài đọc.',
         interactionModel: {
           type: 'verification_scale',
-          prompt: 'Đặt nhận định lên bàn cân logic để đối chiếu với bằng chứng bài đọc:',
+          prompt: 'Bấm radar quét định vị câu hỏi trong bài đọc, sau đó đặt nhận định lên bàn cân logic:',
+          passageContext: {
+            title: "The '996' Culture in China",
+            paragraphs: [
+              {
+                id: 'p1',
+                label: 'Đoạn A · Định nghĩa & Nguồn gốc 996',
+                text: 'Employees of major companies are protesting what is infamous as "996". The name comes from the practice of working from 9 am to 9 pm six days a week, and it is very common among Chinese tech companies and startups. Though the practice is technically prohibited by Chinese law, many companies still enforce the hours informally or formally.'
+              },
+              {
+                id: 'p2',
+                label: 'Đoạn B · Hậu quả đối với người lao động',
+                text: 'For young tech workers, the tight work schedule means more burnout and less time for basic needs like sleep or a personal life. In December 2019, a 22-year-old employee collapsed and died on the street after leaving work at 1:30 a.m.'
+              },
+              {
+                id: 'p3',
+                label: 'Đoạn C · Làn sóng phản đối kéo dài',
+                text: 'Many in China have been expressing their disagreement with the 996 culture for a long time. In 2019, an online campaign was launched to raise awareness and try to reduce pressure on employees.'
+              }
+            ],
+            targetParagraphId: 'p1',
+            targetSnippet: 'working from 9 am to 9 pm six days a week'
+          },
           statement: {
             rawText: 'The 996 culture involves working from 9 am to 9 pm every weekday.',
             deconstructedVariables: [
@@ -244,14 +390,102 @@ export const vrsMockLessons: VRSVisualLesson[] = [
             ]
           },
           passageEvidence: {
-            rawText: 'It requires employees to work from 9:00 am to 9:00 pm, 6 days a week.',
+            rawText: 'The name comes from the practice of working from 9 am to 9 pm six days a week.',
             targetVariables: [
-              { matchingName: 'time_scope', text: '6 days a week (bao gồm cả thứ 7)' }
+              { matchingName: 'time_scope', text: 'six days a week (6 ngày/tuần, gồm cả thứ 7)' }
             ]
           },
           expectedRelation: 'contradiction',
           verdict: 'FALSE',
-          pedagogicalInsight: 'FALSE vì "every weekday" chỉ gồm 5 ngày (thứ 2 đến thứ 6), trong khi bài đọc nêu rõ "6 days a week" (phải làm thêm ngày thứ 7). Hai mốc thời gian mâu thuẫn trực diện!'
+          pedagogicalInsight: 'FALSE vì "every weekday" chỉ gồm 5 ngày (từ thứ 2 đến thứ 6), trong khi bài đọc nêu rõ "six days a week" (buộc phải làm thêm ngày thứ 7). Hai mốc thời gian mâu thuẫn trực diện!'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'verification_scale',
+        title: 'Bẫy 2: Suy Đoán Đời Thực vs Tính Pháp Lý (Real-World Bias Trap)',
+        pedagogicalObjective: 'Phân biệt giữa luật pháp chính thức (prohibited by law) và thực tế công ty áp dụng ngầm.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm radar quét định vị câu hỏi trong bài đọc, sau đó đối chiếu quy định pháp lý:',
+          passageContext: {
+            title: "The '996' Culture in China",
+            paragraphs: [
+              {
+                id: 'p1',
+                label: 'Đoạn A · Định nghĩa & Nguồn gốc 996',
+                text: 'Employees of major companies are protesting what is infamous as "996". The name comes from the practice of working from 9 am to 9 pm six days a week, and it is very common among Chinese tech companies and startups. Though the practice is technically prohibited by Chinese law, many companies still enforce the hours informally or formally.'
+              },
+              {
+                id: 'p2',
+                label: 'Đoạn B · Hậu quả đối với người lao động',
+                text: 'For young tech workers, the tight work schedule means more burnout and less time for basic needs like sleep or a personal life. In December 2019, a 22-year-old employee collapsed and died on the street after leaving work at 1:30 a.m.'
+              }
+            ],
+            targetParagraphId: 'p1',
+            targetSnippet: 'technically prohibited by Chinese law'
+          },
+          statement: {
+            rawText: 'Chinese labor law officially permits technology companies to implement the 996 schedule.',
+            deconstructedVariables: [
+              { name: 'subject', text: 'Chinese labor law' },
+              { name: 'action', text: 'officially permits', isTrapWord: true },
+              { name: 'target', text: 'technology companies to implement 996' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Though the practice is technically prohibited by Chinese law, many companies still enforce the hours.',
+            targetVariables: [
+              { matchingName: 'action', text: 'technically prohibited by Chinese law (về mặt luật pháp là BỊ CẤM)' }
+            ]
+          },
+          expectedRelation: 'contradiction',
+          verdict: 'FALSE',
+          pedagogicalInsight: 'FALSE vì luật pháp Trung Quốc nghiêm cấm văn hóa này ("technically prohibited by Chinese law"), hoàn toàn trái ngược với khẳng định "officially permits" của đề bài.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'verification_scale',
+        title: 'Bẫy 3: Thông Tin Không Đề Cập (NOT GIVEN Trap)',
+        pedagogicalObjective: 'Phát hiện sự thiếu vắng bằng chứng so sánh mức lương thưởng làm thêm giờ.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Quét toàn văn bản để kiểm tra xem có số liệu lương ngoài giờ không:',
+          passageContext: {
+            title: "The '996' Culture in China",
+            paragraphs: [
+              {
+                id: 'p1',
+                label: 'Đoạn A · Định nghĩa & Nguồn gốc 996',
+                text: 'Employees of major companies are protesting what is infamous as "996". The name comes from the practice of working from 9 am to 9 pm six days a week, and it is very common among Chinese tech companies and startups.'
+              },
+              {
+                id: 'p2',
+                label: 'Đoạn B · Hậu quả đối với người lao động',
+                text: 'For young tech workers, the tight work schedule means more burnout and less time for basic needs like sleep or a personal life. In December 2019, a 22-year-old employee collapsed and died on the street after leaving work at 1:30 a.m.'
+              }
+            ],
+            targetParagraphId: 'p2',
+            targetSnippet: 'burnout and less time for basic needs'
+          },
+          statement: {
+            rawText: 'Tech employees who work the 996 schedule receive triple their normal hourly salary for weekend shifts.',
+            deconstructedVariables: [
+              { name: 'subject', text: 'Tech employees under 996' },
+              { name: 'compensation', text: 'receive triple normal hourly salary', isTrapWord: true },
+              { name: 'condition', text: 'for weekend shifts' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Bài đọc chỉ nêu nhân viên bị kiệt sức (burnout) và thiếu ngủ, hoàn toàn không có bất kỳ dòng nào nhắc đến hệ số lương thưởng (triple salary).',
+            targetVariables: [
+              { matchingName: 'compensation', text: 'KHÔNG CÓ DỮ LIỆU VỀ HỆ SỐ LƯƠNG TRONG TOÀN BÀI ĐỌC' }
+            ]
+          },
+          expectedRelation: 'no_evidence',
+          verdict: 'NOT GIVEN',
+          pedagogicalInsight: 'NOT GIVEN vì bài đọc chỉ tập trung vào áp lực kiệt sức và cái chết do làm quá giờ, tuyệt nhiên không cung cấp thông tin liệu nhân viên có được trả lương gấp ba ("triple salary") hay không.'
         }
       }
     ]

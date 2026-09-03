@@ -89,6 +89,16 @@ export interface VRSSlotSnapInteraction {
 export interface VRSScaleInteraction {
   type: 'verification_scale';
   prompt: string;
+  passageContext?: {
+    title: string;
+    paragraphs: Array<{
+      id: string;
+      label: string;
+      text: string;
+    }>;
+    targetParagraphId: string;
+    targetSnippet: string;
+  };
   statement: {
     rawText: string;
     deconstructedVariables: Array<{

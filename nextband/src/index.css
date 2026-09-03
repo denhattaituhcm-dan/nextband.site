@@ -431,19 +431,35 @@
     transform-origin: center bottom;
   }
 
-  /* 3D Flip & Reveal Card Utilities */
-  .perspective-1000 {
-    perspective: 1000px;
+  /* Academic Masterpiece Completion Glow Animations */
+  @keyframes academic-glow-pulse {
+    0%, 100% {
+      box-shadow: 0 0 25px -4px rgba(245, 158, 11, 0.35), 0 10px 30px -5px rgba(217, 119, 6, 0.25), inset 0 0 12px rgba(251, 191, 36, 0.08);
+      border-color: rgba(245, 158, 11, 0.65);
+    }
+    50% {
+      box-shadow: 0 0 45px 4px rgba(245, 158, 11, 0.55), 0 14px 40px -4px rgba(217, 119, 6, 0.4), inset 0 0 20px rgba(251, 191, 36, 0.15);
+      border-color: rgba(245, 158, 11, 0.95);
+    }
   }
-  .transform-style-3d {
-    transform-style: preserve-3d;
+
+  @keyframes academic-glow-emerald {
+    0%, 100% {
+      box-shadow: 0 0 25px -4px rgba(16, 185, 129, 0.35), 0 10px 30px -5px rgba(5, 150, 105, 0.25), inset 0 0 12px rgba(52, 211, 153, 0.08);
+      border-color: rgba(16, 185, 129, 0.65);
+    }
+    50% {
+      box-shadow: 0 0 45px 4px rgba(16, 185, 129, 0.55), 0 14px 40px -4px rgba(5, 150, 105, 0.4), inset 0 0 20px rgba(52, 211, 153, 0.15);
+      border-color: rgba(16, 185, 129, 0.95);
+    }
   }
-  .backface-hidden {
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
+
+  .card-glow-mastery-gold {
+    animation: academic-glow-pulse 3.6s ease-in-out infinite;
   }
-  .rotate-y-180 {
-    transform: rotateY(180deg);
+
+  .card-glow-mastery-emerald {
+    animation: academic-glow-emerald 3.6s ease-in-out infinite;
   }
 }
 
