@@ -9,6 +9,7 @@ import {
   Home,
   Sparkles,
   Library,
+  Workflow,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -53,6 +54,12 @@ const fullNavigationGroups: NavGroup[] = [
         url: "/app/my-courses",
         icon: BookOpen,
         description: "Lớp học và lộ trình",
+      },
+      {
+        title: "Tái Dựng Bài Học",
+        url: "/app/reconstruction",
+        icon: Workflow,
+        description: "Tái hiện cơ chế tư duy & biến đổi kiến thức",
       },
       {
         title: "Reading Universe",

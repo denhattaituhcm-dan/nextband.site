@@ -116,6 +116,7 @@ const ExamInterface = lazyWithRetry(() => import("@/pages/ExamInterface"));
 const Profile = lazyWithRetry(() => import("@/pages/Profile"));
 const StudentAnalyticsPage = lazyWithRetry(() => import("@/pages/StudentAnalyticsPage"));
 const MyLexiconPage = lazyWithRetry(() => import("@/pages/MyLexiconPage"));
+const VisualReconstructionPage = lazyWithRetry(() => import("@/pages/VisualReconstructionPage"));
 
 // Lazy-loaded Admin Pages
 const AdminDashboard = lazyWithRetry(() => import("@/pages/admin/Dashboard"));
@@ -351,6 +352,7 @@ const App = () => (
                 <Route path="/app/analytics" element={<StudentAnalyticsPage />} />
                 <Route path="/app/profile" element={<Profile />} />
                 <Route path="/app/my-lexicon" element={<MyLexiconPage />} />
+                <Route path="/app/reconstruction" element={<VisualReconstructionPage />} />
               </Route>
 
               {/* ============================================================ */}

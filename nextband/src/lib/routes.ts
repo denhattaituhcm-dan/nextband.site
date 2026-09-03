@@ -11,6 +11,7 @@ export const routes = {
     submissions: () => "/app/submissions",
     submission: (id: string) => `/app/submissions/${encodeURIComponent(id)}`,
     profile: () => "/app/profile",
+    reconstruction: () => "/app/reconstruction",
     course: (slug: string) => `/app/courses/${encodeURIComponent(slug)}`,
     lesson: (classId: string, lessonId?: string) =>
       lessonId
