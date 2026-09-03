@@ -4352,8 +4352,8 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     day: 1,
     skill: 'writing',
     title: 'The Subordinating Clause Glue Engine',
-    subtitle: 'Keo Dán Liên Từ & Bẫy Nhân Quả Song Trùng (Because... So)',
-    coreCompetency: 'Nắm vững quy tắc "Keo dán liên từ": Để nối 2 mệnh đề độc lập thành câu phức chỉ được dùng duy nhất 1 liên từ phụ thuộc. Chấm dứt vĩnh viễn lỗi dịch thô tiếng Việt "Vì... nên" (Because... so...).',
+    subtitle: 'Keo Dán Liên Từ: Lắp Ráp Cú Pháp & Phẫu Thuật Điểm Gãy',
+    coreCompetency: 'Nắm vững quy tắc "Keo dán liên từ" trong giáo trình W9D1: Để kết nối 2 mệnh đề thành câu phức chỉ được dùng đúng 1 liên từ phụ thuộc. Chấm dứt triệt để lỗi Comma Splice (ghép 2 mệnh đề bằng dấu phẩy không liên từ) và lỗi dịch thô tiếng Việt song trùng liên từ "Bởi vì... cho nên" (Because... so...).',
     bridgeToHomework: {
       promptText: 'Luyện tập kết nối mệnh đề phụ thuộc và sửa lỗi liên từ trong Homework W9D1.',
       targetExamId: 'exam_dreamer_w9d1'
@@ -4361,29 +4361,46 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     stages: [
       {
         stageNumber: 1,
+        stageType: 'syntax_anatomy',
+        title: 'Chặng 1: Kiến Tạo Câu Phức Bằng Keo Dán "Because" (Students Neglect Studies Because Waste Time)',
+        pedagogicalObjective: 'Bám sát bài tập giáo trình W9D1 mục 3 câu 1: Lắp ráp câu phức chuẩn mực gồm Mệnh đề chính + Liên từ nguyên nhân "because" + Mệnh đề phụ.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Bấm quét giải phẫu để lắp ráp câu phức với keo dán liên từ BECAUSE kết nối 2 mệnh đề:',
+          mode: 'build',
+          tokens: [
+            { id: 't1', text: 'Many students neglect their studies', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'because', role: 'connector', colorClass: 'orange' },
+            { id: 't3', text: 'they waste too much time', role: 'fv_core', colorClass: 'blue' },
+            { id: 't4', text: 'on social media every night', role: 'scope_condition', colorClass: 'purple' }
+          ]
+        }
+      },
+      {
+        stageNumber: 2,
         stageType: 'productive_failure',
-        title: 'Break (Phát hiện sụp đổ thừa liên từ Because... So)',
-        pedagogicalObjective: 'Đối diện lỗi kinh điển nhất của học sinh Việt Nam: Dùng cả "Because" và "So" trong cùng một câu.',
+        title: 'Chặng 2: Phẫu Thuật Mâu Thuẫn Thừa Liên Từ Song Trùng (Because... So...)',
+        pedagogicalObjective: 'Bám sát lỗi kinh điển nhất của học viên Việt Nam trong giáo trình: Dùng song song cả "Because" và "So" trong cùng một câu ghép.',
         interactionModel: {
           type: 'slot_snap',
           prompt: 'Click vào cặp liên từ gây xung đột dư thừa "keo dán" trong câu dưới đây:',
           mode: 'break_and_repair',
           tokens: [
             { id: 't1', text: 'Because', role: 'connector', colorClass: 'orange' },
-            { id: 't2', text: 'I have an important meeting,', role: 'subordinating_clause', colorClass: 'blue' },
+            { id: 't2', text: 'he studied hard for the exam,', role: 'subordinating_clause', colorClass: 'blue' },
             { id: 't3', text: 'so', role: 'connector', colorClass: 'red' },
-            { id: 't4', text: 'I asked for a day off', role: 'main_clause', colorClass: 'green' }
+            { id: 't4', text: 'he achieved an excellent score', role: 'main_clause', colorClass: 'green' }
           ],
           collisionTarget: {
             conflictingTokenIds: ['t1', 't3'],
-            errorMessage: 'Xung đột liên từ kép: Tiếng Anh chỉ cần 1 liên từ duy nhất để kết nối 2 mệnh đề. Dùng cả "Because" và "So" là lỗi dịch thô từ tiếng Việt ("Bởi vì... cho nên..."), khiến câu bị biến dạng!',
+            errorMessage: 'Xung đột liên từ kép: Tiếng Anh chỉ cần đúng 1 liên từ để kết nối 2 mệnh đề. Dùng cả "Because" lẫn "So" là lỗi dịch thô tiếng Việt ("Bởi vì... cho nên..."), gây dư thừa ngữ pháp nghiêm trọng!',
             repairOptions: [
               {
                 id: 'opt1',
                 action: 'delete',
                 targetTokenId: 't3',
                 resultText: '',
-                explanation: 'Gọt bỏ "so" để mệnh đề chính "I asked for a day off" đứng độc lập tự nhiên sau dấu phẩy.'
+                explanation: 'Gọt bỏ liên từ thừa "so" để mệnh đề chính "he achieved an excellent score" đứng độc lập tự nhiên sau dấu phẩy.'
               }
             ]
           }
