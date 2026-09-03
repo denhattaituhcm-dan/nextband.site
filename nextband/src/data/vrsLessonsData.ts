@@ -996,8 +996,8 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     day: 1,
     skill: 'writing',
     title: 'The Timeline Shift Engine',
-    subtitle: 'Neo Trục Thời Gian & Dịch Chuyển Trạng Thái Thì',
-    coreCompetency: 'Nhận diện điểm neo thời gian (Time Anchor) để chọn thì chính xác: Simple Past (chấm dứt hoàn toàn) vs Present Perfect (vết tích chạm hiện tại).',
+    subtitle: 'Neo Trục Thời Gian: Lắp Ráp Cú Pháp & Phẫu Thuật Điểm Gãy',
+    coreCompetency: 'Làm chủ sự phân định giữa Quá khứ đơn (Simple Past - hành động chấm dứt với điểm neo thời gian xác định) và Hiện tại hoàn thành (Present Perfect - kinh nghiệm, dấu vết chạm đến hiện tại) đúng theo chuẩn giáo trình W3D1.',
     bridgeToHomework: {
       promptText: 'Luyện tập phân định thì Simple Past vs Present Perfect trong Homework W3D1.',
       targetExamId: 'exam_dreamer_w3d1'
@@ -1005,12 +1005,30 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     stages: [
       {
         stageNumber: 1,
-        stageType: 'productive_failure',
-        title: 'Break (Phát hiện sụp đổ Trục Thời Gian)',
-        pedagogicalObjective: 'Đối diện với lỗi kinh điển dùng sai thì khi chủ thể hoặc bối cảnh thời gian đã chấm dứt.',
+        stageType: 'syntax_anatomy',
+        title: 'Chặng 1: Kiến Tạo Neo Thời Gian Quá Khứ Đơn (Meeting a Colleague Yesterday)',
+        pedagogicalObjective: 'Bám sát ví dụ giáo trình W3D1 mục 2 câu 1: Lắp ráp câu có mốc thời gian quá khứ đóng kín "yesterday" đi kèm động từ quá khứ đơn "met".',
         interactionModel: {
           type: 'slot_snap',
-          prompt: 'Click vào cặp từ gây sụp đổ logic thời gian trong câu dưới đây:',
+          prompt: 'Bấm quét giải phẫu để lắp ráp câu hoàn chỉnh có điểm neo thời gian quá khứ xác định:',
+          mode: 'build',
+          tokens: [
+            { id: 't1', text: 'She', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'met', role: 'fv_core', colorClass: 'orange' },
+            { id: 't3', text: 'a former colleague', role: 'object', colorClass: 'blue' },
+            { id: 't4', text: 'at a quiet restaurant', role: 'modifier', colorClass: 'purple' },
+            { id: 't5', text: 'yesterday', role: 'scope_condition', colorClass: 'purple' }
+          ]
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'productive_failure',
+        title: 'Chặng 2: Phẫu Thuật Mâu Thuẫn Trục Thời Gian Đóng Kín (Trinh Cong Son Has Written)',
+        pedagogicalObjective: 'Đối diện lỗi kinh điển Band 3.0: Chủ thể hoặc sự kiện đã khép lại vĩnh viễn trong quá khứ nhưng vẫn dùng thì Hiện tại hoàn thành (has written).',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Click vào cặp từ gây xung đột sụp đổ logic thời gian trong câu dưới đây:',
           mode: 'break_and_repair',
           tokens: [
             { id: 't1', text: 'Trinh Cong Son', role: 'subject', colorClass: 'green' },
@@ -1020,14 +1038,14 @@ export const vrsMockLessons: VRSVisualLesson[] = [
           ],
           collisionTarget: {
             conflictingTokenIds: ['t1', 't2'],
-            errorMessage: 'Lỗi neo trục thời gian: Nhạc sĩ Trịnh Công Sơn đã qua đời (sự nghiệp đã khép lại vĩnh viễn trong quá khứ), không thể dùng Present Perfect (has written) để diễn tả khả năng còn tiếp diễn!',
+            errorMessage: 'Lỗi neo trục thời gian: Nhạc sĩ Trịnh Công Sơn đã qua đời (cuộc đời và sự nghiệp đã đóng kín trong quá khứ). Không thể dùng Hiện tại hoàn thành "has written" để ám chỉ khả năng còn tiếp diễn sáng tác!',
             repairOptions: [
               {
                 id: 'opt1',
                 action: 'delete',
                 targetTokenId: 't2',
                 resultText: 'wrote',
-                explanation: 'Chuyển về Simple Past (wrote) vì hành động và chủ thể thuộc về quá khứ đã đóng kín.'
+                explanation: 'Chuyển về thì Quá khứ đơn "wrote" để phản ánh đúng thực tế lịch sử đã hoàn tất trọn vẹn.'
               }
             ]
           }
