@@ -186,242 +186,238 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 1,
     day: 3,
     skill: 'speaking',
-    title: 'The 4-Tier Cognitive Ladder & Future Plan Engine',
-    subtitle: 'Tháp Thẻ 4 Tầng Cấp Độ (Công Việc / Ngành Học) & Kế Hoạch Tương Lai',
-    coreCompetency: 'Bao quát trọn vẹn chủ đề Work & Studies: Nâng cấp câu trả lời Speaking Part 1 từ câu cụt (Band 4.0) lên bài nói đa tầng (Band 6.0 - 6.5+) bằng tháp 4 nấc thang (Stance -> Why -> Reality/Pressure -> Future Direction) cho cả 2 đối tượng Người đi làm (Cô Ánh) và Sinh viên (Bạn Huy).',
+    title: 'The 4-Step Speaking Expansion (Work & Studies)',
+    subtitle: 'Mở Rộng Câu Trả Lời Speaking: Từ Câu Cụt 3.0 Lên Câu Ghép Hoàn Chỉnh 4.0 - 4.5',
+    coreCompetency: 'Chuẩn hóa đầu ra khóa Dreamer (3.0 → 4.0+): Học viên vượt qua phản xạ nói 1 câu cụt ("I like my job"). Biết dùng liên từ Because, But, So để ghép thành bài nói 3-4 câu hoàn chỉnh theo đúng giáo trình về Công việc (Cô Ánh) và Ngành học (Bạn Huy).',
     bridgeToHomework: {
-      promptText: 'Tự thu âm câu trả lời của chính bạn cho 3 câu hỏi Part 1 về Work & Studies trong Homework W1D3.',
+      promptText: 'Thu âm bài nói Part 1 giới thiệu công việc hoặc ngành học của bạn trong Homework W1D3.',
       targetExamId: 'exam_dreamer_w1d3'
     },
     stages: [
       {
         stageNumber: 1,
         stageType: 'progressive_reveal',
-        title: 'Chặng 1 (Người Đi Làm): Tháp Phản Xạ 4 Tầng Của Cô Ánh (Shopkeeper)',
-        pedagogicalObjective: 'Phát triển bài nói về nghề bán hàng: từ niềm vui giao tiếp, áp lực doanh số đến định hướng nâng cao kỹ năng ứng xử.',
+        title: 'Chặng 1 (Người Đi Làm): Bài Nói Của Cô Ánh (Shopkeeper)',
+        pedagogicalObjective: 'Học cách nối câu bằng Because và But: Thích nghề bán hàng vì đồng nghiệp tốt, nhưng thỉnh thoảng bị áp lực doanh số.',
         interactionModel: {
           type: 'progressive_reveal',
-          prompt: 'Click mở từng tầng thẻ nấc thang để học cách phát triển câu nói về công việc:',
+          prompt: 'Click mở từng bước để học cách mở rộng câu nói từ 3.0 lên 4.0+:',
           cards: [
             {
               step: 1,
-              label: 'DIRECT STANCE',
-              cognitiveFunction: '1. Quan điểm & Thái độ trực diện',
-              content: 'To be completely honest, I really enjoy my daily job as a shopkeeper.',
-              bandLevel: 'Band 4.0 - 4.5',
-              pedagogyNote: 'Dùng cụm "To be completely honest, I really enjoy..." để tạo phản xạ tự nhiên thay vì chỉ nói "I like my job".',
+              label: 'BƯỚC 1: CÂU TRẢ LỜI CHÍNH',
+              cognitiveFunction: '1. Nêu nghề nghiệp và cảm xúc ban đầu',
+              content: "I'm a shopkeeper, and I really enjoy my job.",
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Khởi đầu rõ ràng. Dùng "really enjoy" thay vì lặp từ "like" để tự nhiên hơn.',
               flipCard: {
-                frontText: 'I like my job (thích đơn giản)',
-                backText: 'I really enjoy my daily job / I am a huge fan of my profession',
-                explanation: 'Nâng cấp từ "like" lên các động từ chỉ mức độ yêu thích và hào hứng cao hơn trong IELTS Speaking.'
+                frontText: "I'm a shopkeeper. I like it. (Nói cộc lốc 3.0)",
+                backText: "I'm a shopkeeper, and I really enjoy my job. (Nối câu mượt mà 4.0)",
+                explanation: 'Nối 2 vế bằng liên từ "and" giúp câu nói không bị ngắt quãng.'
               },
               vowelHighlight: [
-                { word: 'really', phonetic: '/ˈriː.ə.li/', vowelSound: '/i:/ front' },
-                { word: 'job', phonetic: '/dʒɒb/', vowelSound: '/ɒ/ back' }
+                { word: 'job', phonetic: '/dʒɒb/', vowelSound: '/ɒ/ ngắn' },
+                { word: 'meet', phonetic: '/miːt/', vowelSound: '/i:/ dài' }
               ]
             },
             {
               step: 2,
-              label: 'PRIMARY REASON',
-              cognitiveFunction: '2. Nguyên nhân cốt lõi khiến bạn yêu thích',
-              content: 'mainly because my coworkers are nice, and I love chatting with diverse customers.',
-              bandLevel: 'Band 5.0 - 5.5',
-              pedagogyNote: 'Đưa ra 2 lý do song hành: đồng nghiệp thân thiện và niềm vui tiếp xúc con người mới.',
+              label: 'BƯỚC 2: GIẢI THÍCH LÝ DO (BECAUSE)',
+              cognitiveFunction: '2. Vì sao thích công việc này?',
+              content: 'because I can talk with new people, and my coworkers are nice.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Dùng "because" để đưa ra 2 lý do gần gũi: được nói chuyện với khách và đồng nghiệp dễ mến.',
               flipCard: {
-                frontText: 'my coworkers are nice (đồng nghiệp tốt)',
-                backText: 'my coworkers are supportive and easy to get along with',
-                explanation: 'Thay tính từ chung chung "nice" bằng cụm từ vựng tính cách cụ thể "supportive and easy to get along with".'
-              },
-              vowelHighlight: [
-                { word: 'meet', phonetic: '/miːt/', vowelSound: '/i:/ front' },
-                { word: 'people', phonetic: '/ˈpiː.pəl/', vowelSound: '/i:/ front' }
-              ]
+                frontText: 'Because it is fun. (Lý do quá ngắn)',
+                backText: 'because I can talk with new people, and my coworkers are nice. (Lý do rõ ràng)',
+                explanation: 'Nêu cụ thể hành động (talk with new people) và con người (coworkers are nice) bám sát bài học.'
+              }
             },
             {
               step: 3,
-              label: 'REALITY / CONTRAST',
-              cognitiveFunction: '3. Mặt trái & Áp lực thực tế trong công việc',
-              content: 'However, I am under a lot of pressure sometimes because my manager sets demanding sales targets.',
-              bandLevel: 'Band 6.0',
-              pedagogyNote: 'Bám sát giáo trình: "under a lot of pressure" và người quản lý khó tính đòi hỏi bán thật nhiều sản phẩm.',
+              label: 'BƯỚC 3: MẶT KHÓ KHĂN (BUT)',
+              cognitiveFunction: '3. Có điều gì chưa thích hoặc áp lực không?',
+              content: "But I'm under a lot of pressure sometimes because my boss wants me to sell many products.",
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Học cụm từ chuẩn trong giáo trình: "under a lot of pressure" và lý do sếp đòi bán nhiều hàng.',
               flipCard: {
-                frontText: 'my boss is difficult (sếp khó tính)',
-                backText: 'I am under a lot of pressure from demanding sales targets',
-                explanation: 'Biến câu than phiền thành miêu tả áp lực công việc chuyên nghiệp: "under a lot of pressure from demanding targets".'
+                frontText: 'My boss is bad. (Nói thô)',
+                backText: "I'm under a lot of pressure because my boss wants me to sell many products. (Đúng chuẩn bài học)",
+                explanation: 'Sử dụng cấu trúc "under a lot of pressure" đúng như đoạn văn bài tập 3.2.'
               },
               branchOptions: [
                 {
-                  branchName: 'SALES TARGETS (ÁP LỰC DOANH SỐ)',
-                  content: 'However, I am under a lot of pressure sometimes because my manager expects me to sell as many products as possible.',
-                  note: 'Nhánh áp lực doanh số bán lẻ như trong Coursebook.'
+                  branchName: 'ÁP LỰC DOANH SỐ (BÁM SÁT BÀI ĐỌC)',
+                  content: "But I'm under a lot of pressure sometimes because my boss wants me to sell many products.",
+                  note: 'Mẫu câu chính xác trong giáo trình của cô Ánh.'
                 },
                 {
-                  branchName: 'DEMANDING CUSTOMERS (KHÁCH KHÓ TÍNH)',
-                  content: 'However, dealing with rude or demanding customers can be emotionally draining at the end of the day.',
-                  note: 'Nhánh áp lực xử lý khiếu nại khách hàng.'
+                  branchName: 'GIỜ LÀM VIỆC DÀI (MỞ RỘNG ĐƠN GIẢN)',
+                  content: "However, I have to stand all day, so my legs get very tired after work.",
+                  note: 'Mở rộng thực tế đơn giản, từ vựng vừa sức học viên Dreamer.'
                 }
               ]
             },
             {
               step: 4,
-              label: 'ACTION / COPING',
-              cognitiveFunction: '4. Hành động giải quyết & Thích nghi',
-              content: 'So, I always try my best to understand their needs and improve my persuasion skills.',
-              bandLevel: 'Band 6.5+',
-              pedagogyNote: 'Khép lại bài nói bằng tinh thần cầu tiến và nỗ lực hoàn thiện kỹ năng phục vụ khách hàng.',
+              label: 'BƯỚC 4: HÀNH ĐỘNG CỦA BẠN (SO)',
+              cognitiveFunction: '4. Bạn làm gì để vượt qua khó khăn đó?',
+              content: 'so I always try my best to help customers buy what they need.',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Khép lại bằng cụm "try my best to..." (cố gắng hết sức) rất thông dụng và dễ nhớ.',
               flipCard: {
-                frontText: 'try to make customers buy (cố ép khách mua)',
-                backText: 'try my best to understand their needs and improve persuasion skills',
-                explanation: 'Thể hiện tư duy dịch vụ khách hàng cao cấp trong giao tiếp.'
+                frontText: 'So I must sell. (Câu cụt)',
+                backText: 'so I always try my best to help customers buy what they need. (Câu hoàn chỉnh)',
+                explanation: 'Cụm "try my best to + V" giúp câu trả lời tròn ý và thể hiện thái độ tích cực.'
               }
             }
           ],
-          fullMosaicSummary: 'To be completely honest, I really enjoy my daily job as a shopkeeper, mainly because my coworkers are nice and I love chatting with diverse customers. However, I am under a lot of pressure sometimes because my manager sets demanding sales targets. So, I always try my best to understand their needs and improve my persuasion skills.'
+          fullMosaicSummary: "I'm a shopkeeper, and I really enjoy my job, because I can talk with new people, and my coworkers are nice. But I'm under a lot of pressure sometimes because my boss wants me to sell many products, so I always try my best to help customers buy what they need."
         }
       },
       {
         stageNumber: 2,
         stageType: 'progressive_reveal',
-        title: 'Chặng 2 (Sinh Viên): Tháp Phản Xạ 4 Tầng Của Bạn Huy (Computer Science)',
-        pedagogicalObjective: 'Phát triển bài nói về ngành học: từ niềm đam mê công nghệ, cơ hội việc làm sau tốt nghiệp đến áp lực bài vở mùa thi.',
+        title: 'Chặng 2 (Sinh Viên): Bài Nói Của Bạn Huy (Computer Science)',
+        pedagogicalObjective: 'Học cách nói về ngành học: Ngành CNTT có nhiều việc làm sau tốt nghiệp, nhưng mùa thi bài vở khá nặng.',
         interactionModel: {
           type: 'progressive_reveal',
-          prompt: 'Click mở từng tầng thẻ nấc thang để học cách phát triển câu nói về chuyên ngành đại học:',
+          prompt: 'Click mở từng bước để học cách nói về ngành học của sinh viên:',
           cards: [
             {
               step: 1,
-              label: 'MAJOR & PASSION',
-              cognitiveFunction: '1. Giới thiệu ngành học & Cảm hứng',
-              content: 'Currently, I major in Computer Science at the University of Technology, and I am genuinely passionate about it.',
-              bandLevel: 'Band 4.0 - 4.5',
-              pedagogyNote: 'Dùng cụm "major in + Subject" và "genuinely passionate about it" thay cho "I study...".',
+              label: 'BƯỚC 1: NGÀNH HỌC VÀ TRƯỜNG',
+              cognitiveFunction: '1. Bạn học ngành gì và ở đâu?',
+              content: 'I major in computer science at the University of Technology, and I like it a lot.',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Dùng cụm "major in + ngành học" đúng như bài tập monologue của bạn Huy.',
               flipCard: {
-                frontText: 'I study IT (tôi học CNTT)',
-                backText: 'I major in Computer Science and I am genuinely passionate about it',
-                explanation: 'Dùng động từ học thuật "major in" và tính từ nâng cao "genuinely passionate".'
+                frontText: 'I study computer. (Tiếng bồi)',
+                backText: 'I major in computer science at the University of Technology. (Chuẩn giáo trình)',
+                explanation: 'Cụm từ "major in" (chuyên ngành) là từ chuẩn mực cơ bản nhất khi giới thiệu ngành học.'
               },
               vowelHighlight: [
-                { word: 'university', phonetic: '/ˌjuː.nɪˈvɜː.sə.ti/', vowelSound: '/з:/ central' },
-                { word: 'science', phonetic: '/ˈsaɪ.əns/', vowelSound: '/ə/ central' }
+                { word: 'science', phonetic: '/ˈsaɪ.əns/', vowelSound: '/ə/ âm ơ ngắn' },
+                { word: 'study', phonetic: '/ˈstʌd.i/', vowelSound: '/ʌ/ âm ă' }
               ]
             },
             {
               step: 2,
-              label: 'CORE BENEFITS',
-              cognitiveFunction: '2. Lợi ích kiến thức & Cơ hội nghề nghiệp',
-              content: 'because I can acquire cutting-edge skills, and there are abundant job opportunities for programmers after graduation.',
-              bandLevel: 'Band 5.5 - 6.0',
-              pedagogyNote: 'Bám sát giáo trình: "learn new things" và "many job opportunities after graduation".',
+              label: 'BƯỚC 2: ĐIỂM THÍCH NHẤT (AND / ALSO)',
+              cognitiveFunction: '2. Điểm thuận lợi của ngành học này là gì?',
+              content: 'I can learn many new things, and there are many job opportunities after graduation.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Bám sát giáo trình: học điều mới và có nhiều cơ hội việc làm ("job opportunities").',
               flipCard: {
-                frontText: 'make money / many jobs (dễ kiếm tiền, nhiều việc)',
-                backText: 'abundant job opportunities with handsome salaries',
-                explanation: 'Nâng cấp từ "make money" thành "lucrative career prospects" hoặc "handsome salaries".'
+                frontText: 'It is good, easy to have job. (Sai ngữ pháp)',
+                backText: 'there are many job opportunities after graduation. (Đúng cụm giáo trình)',
+                explanation: 'Thuộc cụm danh từ "job opportunities after graduation" (cơ hội việc làm sau tốt nghiệp).'
               }
             },
             {
               step: 3,
-              label: 'ACADEMIC PRESSURE',
-              cognitiveFunction: '3. Khối lượng bài vở & Căng thẳng thi cử',
-              content: 'On the other hand, the academic workload can be overwhelming, and I often feel burned out before final exams.',
-              bandLevel: 'Band 6.0',
-              pedagogyNote: 'Bám sát giáo trình: "workload is heavy" và cảm giác kiệt sức khi ôn thi cuối kỳ.',
+              label: 'BƯỚC 3: ÁP LỰC HỌC TẬP (HOWEVER)',
+              cognitiveFunction: '3. Khó khăn bạn gặp phải trong việc học là gì?',
+              content: 'However, the workload can be heavy, and I feel very stressed when preparing for exams.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Bám sát từ vựng bài học: "workload is heavy" (bài vở nặng) và "stressed" (căng thẳng).',
               flipCard: {
-                frontText: 'workload is heavy / I am tired (bài tập nặng, mệt mỏi)',
-                backText: 'the academic workload is overwhelming and I feel burned out',
-                explanation: 'Dùng cụm từ tự nhiên: "overwhelming workload" và trạng thái "burned out" thay vì "tired".'
+                frontText: 'I have many homework and tired. (Lỗi ngữ pháp danh từ đếm được)',
+                backText: 'the workload can be heavy, and I feel very stressed. (Chuẩn tự nhiên)',
+                explanation: 'Dùng "workload is heavy" thay vì dịch thô "many homework" (homework là danh từ không đếm được).'
               },
               branchOptions: [
                 {
-                  branchName: 'EXAM BURNOUT (CĂNG THẲNG THI CỬ)',
-                  content: 'On the other hand, the academic workload can be overwhelming, and I often feel burned out before final exams.',
-                  note: 'Nhánh áp lực điểm số và lịch thi dồn dập.'
+                  branchName: 'CĂNG THẲNG ÔN THI (BÁM SÁT BÀI ĐỌC)',
+                  content: 'However, the workload can be heavy, and I feel very stressed when preparing for exams.',
+                  note: 'Nguyên văn ý của bạn Huy trong giáo trình.'
                 },
                 {
-                  branchName: 'THEORETICAL GAP (LÝ THUYẾT KHÔ KHAN)',
-                  content: 'On the other hand, some subjects are rather theoretical and difficult to apply to real-world software projects.',
-                  note: 'Nhánh băn khoăn về tính thực tiễn của môn học như trong Coursebook.'
+                  branchName: 'MÔN HỌC BUỒN CHỦ ĐỀ (Ý PHỤ TRONG SÁCH)',
+                  content: 'However, some subjects are boring, and I cannot apply them to my future job.',
+                  note: 'Trích từ câu phàn nàn thứ 2 của bạn Huy trong Coursebook.'
                 }
               ]
             },
             {
               step: 4,
-              label: 'COPING STRATEGY',
-              cognitiveFunction: '4. Chiến lược cân bằng & Định hướng',
-              content: 'Therefore, I try to balance my study routine by building hands-on coding projects with classmates.',
-              bandLevel: 'Band 6.5+',
-              pedagogyNote: 'Giải pháp biến lý thuyết thành thực hành bằng cách làm dự án thực tế cùng bạn bè.',
+              label: 'BƯỚC 4: GIẢI PHÁP HỌC TẬP (SO)',
+              cognitiveFunction: '4. Bạn làm gì để học tốt hơn?',
+              content: 'so I often study and do projects with my classmates to help each other.',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Kết thúc bằng cách học nhóm ("study with classmates") gần gũi, đúng tầm sinh viên.',
               flipCard: {
-                frontText: 'try to study more (cố học nhiều hơn)',
-                backText: 'balance my study routine by building hands-on coding projects',
-                explanation: 'Nêu phương pháp học chủ động: "hands-on projects" tạo ấn tượng học thuật mạnh mẽ.'
+                frontText: 'So I try to learn. (Quá ngắn)',
+                backText: 'so I often study with my classmates to help each other. (Rõ nghĩa)',
+                explanation: 'Nêu giải pháp học cùng bạn bè để giảm bớt áp lực bài vở.'
               }
             }
           ],
-          fullMosaicSummary: 'Currently, I major in Computer Science at the University of Technology, and I am genuinely passionate about it, because I can acquire cutting-edge skills, and there are abundant job opportunities for programmers after graduation. On the other hand, the academic workload can be overwhelming, and I often feel burned out before final exams. Therefore, I try to balance my study routine by building hands-on coding projects with classmates.'
+          fullMosaicSummary: 'I major in computer science at the University of Technology, and I like it a lot. I can learn many new things, and there are many job opportunities after graduation. However, the workload can be heavy, and I feel very stressed when preparing for exams, so I often study with my classmates to help each other.'
         }
       },
       {
         stageNumber: 3,
         stageType: 'progressive_reveal',
-        title: 'Chặng 3 (Future Plans): Công Thức 3 Bước Lập Kế Hoạch Tương Lai',
-        pedagogicalObjective: 'Làm chủ mẫu câu Dear Diary trong giáo trình: Thừa nhận điểm yếu -> Mục tiêu cải thiện -> Phương thức hành động bằng By + V-ing.',
+        title: 'Chặng 3 (Future Plans): Mẫu Câu Kế Hoạch Tương Lai (Dear Diary)',
+        pedagogicalObjective: 'Làm chủ mẫu câu nói về mục tiêu tương lai bám sát bài tập Dear Diary: Nêu điểm yếu -> Mục tiêu muốn cải thiện -> Cách làm bằng By + V-ing.',
         interactionModel: {
           type: 'progressive_reveal',
-          prompt: 'Click mở từng tầng để nắm chắc công thức nói về kế hoạch tương lai (Future Action Formula):',
+          prompt: 'Click mở từng phần để ghép thành câu nói về kế hoạch tương lai chuẩn chỉnh:',
           cards: [
             {
               step: 1,
-              label: 'WEAKNESS / ROOT CAUSE',
-              cognitiveFunction: '1. Thừa nhận điểm yếu & Nguyên nhân gốc rễ',
-              content: 'To be candid, I am not very confident in my English speaking skills because I used to be quite lazy.',
-              bandLevel: 'Band 4.5',
-              pedagogyNote: 'Bám sát giáo trình: "Dear diary, I am not good at English because I was lazy".',
+              label: 'BƯỚC 1: THỪA NHẬN ĐIỂM YẾU VÀ LÝ DO',
+              cognitiveFunction: '1. Bạn chưa giỏi điều gì và vì sao?',
+              content: 'I am not good at English because I was lazy in the past,',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Bám sát 100% câu mẫu Dear Diary: "I am not good at English because I was lazy".',
               flipCard: {
-                frontText: 'I am bad at English (tôi dốt tiếng Anh)',
-                backText: 'I am not very confident in my English speaking skills',
-                explanation: 'Dùng cách diễn đạt lịch sự và học thuật hơn: "not very confident in..." thay vì tự chê "bad at".'
+                frontText: 'I bad English. (Tiếng bồi)',
+                backText: 'I am not good at English because I was lazy in the past. (Đúng ngữ pháp)',
+                explanation: 'Cấu trúc chuẩn: "be not good at + Noun/V-ing".'
               }
             },
             {
               step: 2,
-              label: 'TARGET GOAL',
-              cognitiveFunction: '2. Mục tiêu cụ thể cần nâng cấp',
-              content: 'So, my immediate priority is to drastically sharpen both my fluency and pronunciation,',
-              bandLevel: 'Band 5.5 - 6.0',
-              pedagogyNote: 'Bám sát giáo trình: "so I want to improve my speaking and writing skills".',
+              label: 'BƯỚC 2: MỤC TIÊU MUỐN ĐẠT ĐƯỢC (SO I WANT TO...)',
+              cognitiveFunction: '2. Bạn muốn cải thiện kỹ năng nào?',
+              content: 'so I want to improve my speaking and writing skills,',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Dùng cấu trúc "so I want to improve..." rất quen thuộc với học viên Dreamer.',
               flipCard: {
-                frontText: 'I want to improve my speaking (muốn cải thiện)',
-                backText: 'my immediate priority is to drastically sharpen my fluency and pronunciation',
-                explanation: 'Dùng cụm mục tiêu hành động: "my immediate priority is to sharpen...".'
+                frontText: 'So I want good speak. (Sai ngữ pháp)',
+                backText: 'so I want to improve my speaking and writing skills. (Chuẩn xác)',
+                explanation: 'Động từ "improve" đi với cụm danh từ "speaking and writing skills".'
               }
             },
             {
               step: 3,
-              label: 'CONCRETE ACTION (BY + V-ING)',
-              cognitiveFunction: '3. Phương thức thực thi cụ thể bằng By + V-ing',
-              content: 'by dedicating 30 minutes every single day to practice on the DAN IELTS interactive platform.',
-              bandLevel: 'Band 6.5+',
-              pedagogyNote: 'Bám sát mẫu câu chốt của Coursebook: "by practicing on the DAN IELTS platform every day".',
+              label: 'BƯỚC 3: PHƯƠNG PHÁP THỰC HIỆN (BY + V-ING)',
+              cognitiveFunction: '3. Bạn sẽ thực hiện việc đó bằng cách nào?',
+              content: 'by practicing speaking on the DAN IELTS platform every day.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Điểm ngữ pháp chốt của bài học: Dùng "by + V-ing" để chỉ phương thức đạt được mục tiêu.',
               flipCard: {
-                frontText: 'by studying at DAN IELTS (học ở DAN)',
-                backText: 'by dedicating 30 minutes every single day to practice on the DAN IELTS platform',
-                explanation: 'Lượng hóa hành động bằng thời gian cụ thể: "dedicating 30 minutes every day by practicing...".'
+                frontText: 'I practice on DAN IELTS every day. (Câu rời)',
+                backText: 'by practicing speaking on the DAN IELTS platform every day. (Nối vào câu chính)',
+                explanation: 'Dùng giới từ "by + V-ing" nối liền mạch vào câu chỉ phương thức hành động.'
               },
               branchOptions: [
                 {
-                  branchName: 'DAN IELTS PLATFORM (LUYỆN NÓI TRÊN APP)',
-                  content: 'by dedicating 30 minutes every single day to practice speaking on the DAN IELTS platform.',
-                  note: 'Phương thức luyện phát âm và phản xạ trực tuyến.'
+                  branchName: 'LUYỆN NÓI TRÊN DAN IELTS (BÁM SÁT BÀI HỌC)',
+                  content: 'by practicing speaking on the DAN IELTS platform every day.',
+                  note: 'Phương thức chính xác trong bài tập tổng kết của giáo trình.'
                 },
                 {
-                  branchName: 'ENGLISH CLUB (THAM GIA CLB)',
-                  content: 'by stepping out of my comfort zone and engaging with international peers in English clubs.',
-                  note: 'Phương thức giao tiếp thực tế với người nước ngoài.'
+                  branchName: 'LẬP THỜI GIAN BIỂU TỐT HƠN (Ý THỨ 2 TRONG BÀI)',
+                  content: 'by making a better daily schedule and not surfing phone late.',
+                  note: 'Trích từ câu Dear diary thứ 4 về việc quản lý thời gian.'
                 }
               ]
             }
           ],
-          fullMosaicSummary: 'To be candid, I am not very confident in my English speaking skills because I used to be quite lazy. So, my immediate priority is to drastically sharpen both my fluency and pronunciation, by dedicating 30 minutes every single day to practice speaking on the DAN IELTS platform.'
+          fullMosaicSummary: 'I am not good at English because I was lazy in the past, so I want to improve my speaking and writing skills, by practicing speaking on the DAN IELTS platform every day.'
         }
       }
     ]
