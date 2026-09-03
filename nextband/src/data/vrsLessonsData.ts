@@ -1370,23 +1370,3 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     ]
   }
 ];
-
-for (const lesson of vrsMockLessons) {
-  lesson.stages.push({
-    stageNumber: 99,
-    stageType: 'transfer_test',
-    title: 'Thử thách chuyển giao năng lực',
-    pedagogicalObjective: 'Kiểm chứng xem học sinh đã tái tạo được tư duy chưa',
-    interactionModel: {
-      type: 'transfer_test',
-      prompt: 'Áp dụng năng lực để xử lý câu mới trên Homework.',
-      challengeSentence: 'Challenge completed.',
-      task: 'fix_error',
-      solution: true,
-      beforeAfterComparison: {
-        oldHabitBand3: 'Thói quen củ Band 3.0',
-        newCompetencyBand4: 'Năng lực mới Band 4.0+'
-      }
-    }
-  });
-}
