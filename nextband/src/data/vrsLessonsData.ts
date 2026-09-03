@@ -1778,57 +1778,251 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 4,
     day: 3,
     skill: 'speaking',
-    title: 'The Habit-Impact-Remedy Framework',
-    subtitle: 'Mô Hình Phản Xạ Nói Về Thói Quen Sức Khỏe',
-    coreCompetency: 'Xây dựng câu trả lời mạch lạc về thói quen sức khỏe (Unhealthy Habits / Staying Healthy) theo tiến trình: Habit -> Consequence -> Remedy.',
+    title: 'The Health Habits & Well-being Engine (Topic: Health)',
+    subtitle: 'Nói Về Thói Quen Sức Khỏe: Từ Câu Cụt 3.0 Lên Bài Nói Mạch Lạc 4.0 - 4.5',
+    coreCompetency: 'Chuẩn hóa đầu ra khóa Dreamer (3.0 → 4.0+): Học viên vượt qua việc chỉ nói "I stay up late and tired". Làm chủ các cụm từ vựng sức khỏe trong giáo trình ("have a bad habit of...", "makes me feel exhausted", "break this bad habit by..."), và các cấu trúc rèn luyện thể chất ("stay in shape", "balanced diet", "do yoga").',
     bridgeToHomework: {
-      promptText: 'Thu âm câu trả lời về thói quen sinh hoạt và sức khỏe trong Homework W4D3.',
+      promptText: 'Thu âm bài nói Part 1 về thói quen sinh hoạt và cách bạn giữ gìn sức khỏe trong Homework W4D3.',
       targetExamId: 'exam_dreamer_w4d3'
     },
     stages: [
       {
         stageNumber: 1,
         stageType: 'progressive_reveal',
-        title: 'Bóc tách 4 tầng phản xạ trả lời về thói quen sinh hoạt',
-        pedagogicalObjective: 'Chấm dứt thói quen chỉ kể lể (I stay up late), nâng cấp thành chuỗi lập luận nguyên nhân - hậu quả - giải pháp.',
+        title: 'Chặng 1: Thói Quen Xấu & Hậu Quả (Unhealthy Habits - Bạn Khang)',
+        pedagogicalObjective: 'Bám sát đối thoại Khang & Hân: Thừa nhận thói quen thức khuya, bỏ bữa sáng -> Hậu quả uể oải, kiệt sức -> Quyết tâm từ bỏ tật xấu.',
         interactionModel: {
           type: 'progressive_reveal',
-          prompt: 'Click mở từng tầng để nắm cấu trúc câu trả lời đa tầng về thói quen sức khỏe:',
+          prompt: 'Click mở từng bước để học cách nói về thói quen xấu ảnh hưởng sức khỏe:',
           cards: [
             {
               step: 1,
-              label: 'HABIT ACKNOWLEDGEMENT',
-              cognitiveFunction: 'Thừa nhận thói quen thực tế',
-              content: 'To be completely honest, I have a terrible habit of staying up late to finish deadlines.',
-              pedagogyNote: 'Dùng cụm "To be completely honest, I have a bad habit of..." để tự nhiên hóa câu mở đầu.'
+              label: 'BƯỚC 1: NÊU THÓI QUEN XẤU (HAVE A BAD HABIT OF)',
+              cognitiveFunction: '1. Bạn có thói quen xấu nào trong sinh hoạt hằng ngày?',
+              content: 'I usually stay up late because of work deadlines, and I have a bad habit of skipping breakfast.',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Bám sát nguyên văn câu thoại của Khang: "stay up late" và "have a bad habit of skipping breakfast".',
+              flipCard: {
+                frontText: 'I sleep late and not eat breakfast. (Nói tiếng bồi)',
+                backText: 'I stay up late, and have a bad habit of skipping breakfast. (Chuẩn giáo trình)',
+                explanation: 'Dùng cụm "have a bad habit of + V-ing" (có thói quen xấu làm gì) và "skip breakfast" (bỏ bữa sáng).'
+              },
+              vowelHighlight: [
+                { word: 'health', phonetic: '/helθ/', vowelSound: '/θ/ âm th thổi hơi' },
+                { word: 'breathed', phonetic: '/briːðd/', vowelSound: '/ð/ âm th rung lưỡi' }
+              ]
             },
             {
               step: 2,
-              label: 'NEGATIVE IMPACT / SYMPTOM',
-              cognitiveFunction: 'Hậu quả thể chất hoặc tinh thần',
-              content: 'Because of not getting enough sleep, it always makes me feel exhausted and inactive during the day.',
-              pedagogyNote: 'Dùng cấu trúc "it makes me feel + adjective" (exhausted / inactive) thay vì chỉ nói "I am tired".'
+              label: 'BƯỚC 2: HẬU QUẢ THỂ CHẤT (MAKES ME FEEL EXHAUSTED)',
+              cognitiveFunction: '2. Thói quen đó khiến cơ thể bạn cảm thấy ra sao?',
+              content: 'I do not get enough sleep or proper nutrition, so it makes me feel exhausted all the time.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Luyện cấu trúc giáo trình: "makes me feel exhausted and inactive" (khiến tôi kiệt sức và uể oải).',
+              flipCard: {
+                frontText: 'I am very tired. (Từ vựng quá đơn giản)',
+                backText: 'It makes me feel exhausted all the time. (Cụm từ đắt giá của bài học)',
+                explanation: 'Nâng cấp từ "tired" lên tính từ "exhausted" (kiệt sức) và cấu trúc "makes me feel + Adj".'
+              }
             },
             {
               step: 3,
-              label: 'ACTION / REMEDY EFFORT',
-              cognitiveFunction: 'Hành động điều chỉnh hoặc giải pháp',
-              content: 'Therefore, I am trying to break this habit by working out at the gym for 30 minutes every morning.',
-              pedagogyNote: 'Áp dụng cụm "break this habit by + V-ing" và "work out at the gym".',
+              label: 'BƯỚC 3: GIẢI PHÁP TỪ BỎ (BREAK THIS BAD HABIT BY...)',
+              cognitiveFunction: '3. Bạn dự định từ bỏ thói quen đó bằng cách nào?',
+              content: 'I want to break this bad habit by managing my time better and ensuring that I eat breakfast every day.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Cụm từ vàng của Khang: "break this bad habit by managing my time better".',
+              flipCard: {
+                frontText: 'I stop it and eat food. (Diễn đạt vụng về)',
+                backText: 'I want to break this bad habit by managing my time better. (Chuẩn tự nhiên)',
+                explanation: 'Cụm "break a bad habit" (từ bỏ một thói quen xấu) là collocation điểm nhấn của bài học.'
+              },
               branchOptions: [
-                { branchName: 'FITNESS ACTION', content: 'Therefore, I decided to do yoga and work out at the gym to stay in shape.', note: 'Nhánh giải pháp tập luyện thể chất.' },
-                { branchName: 'DIET ACTION', content: 'Therefore, I am trying to have a balanced diet and avoid junk food completely.', note: 'Nhánh giải pháp ăn uống lành mạnh.' }
+                {
+                  branchName: 'ĂN SÁNG ĐẦY ĐỦ (BÁM SÁT LỜI KHANG)',
+                  content: 'I want to break this bad habit by managing my time better and ensuring that I eat breakfast every day.',
+                  note: 'Phương án quản lý thời gian và duy trì ăn sáng.'
+                },
+                {
+                  branchName: 'GIẢM ĐỒ ĂN NHANH (BÀI TẬP 3.1)',
+                  content: 'I want to break this bad habit by cutting down on fast food and sugary drinks.',
+                  note: 'Trích từ bài tập 3.1 về giảm thức ăn nhanh và nước ngọt.'
+                }
               ]
             },
             {
               step: 4,
-              label: 'POSITIVE OUTCOME',
-              cognitiveFunction: 'Kỳ vọng phục hồi thể trạng',
-              content: 'This enables me to be much more energetic so that I can work and study effectively.',
-              pedagogyNote: 'Dùng cấu trúc "This enables me to + verb so that..." để kết thúc ấn tượng.'
+              label: 'BƯỚC 4: TẦM QUAN TRỌNG (HEALTH & WELL-BEING)',
+              cognitiveFunction: '4. Vì sao việc thay đổi này lại quan trọng với bạn?',
+              content: "I know it won't be easy, but it is very important for my overall health and well-being.",
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Khép lại bằng cụm từ học thuật nhẹ nhàng của bài: "overall health and well-being" (thể trạng và sức khỏe toàn diện).',
+              flipCard: {
+                frontText: 'Because health is important. (Quá ngắn)',
+                backText: 'It is very important for my overall health and well-being. (Tròn trịa)',
+                explanation: 'Dùng cụm "overall health and well-being" vừa vặn nâng tầm bài nói lên 4.5.'
+              }
             }
           ],
-          fullMosaicSummary: 'To be completely honest, I have a terrible habit of staying up late. Because of not getting enough sleep, it makes me feel exhausted. Therefore, I am trying to break this habit by working out at the gym, which enables me to be more energetic and work effectively.'
+          fullMosaicSummary: "I usually stay up late because of work deadlines, and I have a bad habit of skipping breakfast. I do not get enough sleep or proper nutrition, so it makes me feel exhausted all the time. I want to break this bad habit by managing my time better and ensuring that I eat breakfast every day, because it is important for my overall health and well-being."
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 2: Bạn Làm Gì Để Giữ Gìn Sức Khỏe? (How Do You Stay Healthy?)',
+        pedagogicalObjective: 'Làm chủ bài tập 3.2: Sử dụng các cụm collocation tập luyện thể thao (play soccer, work out at the gym, do yoga) và cấu trúc "help me keep active / stay in shape".',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click mở từng tầng để nắm cách trả lời câu hỏi "How do you stay healthy?":',
+          cards: [
+            {
+              step: 1,
+              label: 'BƯỚC 1: MÔN THỂ THAO HOẶC HOẠT ĐỘNG CHÍNH',
+              cognitiveFunction: '1. Bạn thường tập luyện môn thể thao hay bài tập nào?',
+              content: 'To stay in shape, I decided to work out at the gym near my house three times a week.',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Luyện bài tập 3.2 câu 2: Dùng mục đích "To stay in shape" (để giữ dáng) và "work out at the gym".',
+              flipCard: {
+                frontText: 'I go to gym. (Cộc lốc)',
+                backText: 'To stay in shape, I decided to work out at the gym near my house. (Rõ mục đích)',
+                explanation: 'Mở đầu bằng cụm chỉ mục đích "To stay in shape" giúp câu nói có định hướng rõ ràng.'
+              },
+              vowelHighlight: [
+                { word: 'shape', phonetic: '/ʃeɪp/', vowelSound: '/ʃ/ âm s cong lưỡi' },
+                { word: 'exercise', phonetic: '/ˈek.sə.saɪz/', vowelSound: '/s/ âm xát' }
+              ]
+            },
+            {
+              step: 2,
+              label: 'BƯỚC 2: TÁC DỤNG THỂ LỰC (KEEP ME ACTIVE)',
+              cognitiveFunction: '2. Hoạt động đó giúp bạn nâng cao sức khỏe thế nào?',
+              content: 'Exercising regularly helps improve my physical health and keeps me active throughout the day.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Bám sát mẫu câu bài tập 3.2 câu 1: "helps improve my health and keeps me active".',
+              flipCard: {
+                frontText: 'It is good for health and not lazy. (Tiếng bồi)',
+                backText: 'It helps improve my health and keeps me active throughout the day. (Chuẩn câu bài tập)',
+                explanation: 'Dùng cụm tính từ chuẩn "keep me active" (giữ cho tôi luôn năng động).'
+              }
+            },
+            {
+              step: 3,
+              label: 'BƯỚC 3: CHẾ ĐỘ DINH DƯỠNG (BALANCED DIET)',
+              cognitiveFunction: '3. Ngoài tập luyện, bạn ăn uống ra sao?',
+              content: 'Besides, I try to have a balanced diet, which provides necessary nutrients for my body.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Luyện bài tập 3.2 câu 3: "have a balanced diet" (chế độ ăn cân bằng) và "provides nutrients for my body".',
+              flipCard: {
+                frontText: 'I eat good food with vitamins. (Đơn sơ)',
+                backText: 'I try to have a balanced diet, which provides necessary nutrients for my body.',
+                explanation: 'Học cụm từ chuẩn mực "balanced diet" (chế độ ăn uống cân bằng dinh dưỡng).'
+              },
+              branchOptions: [
+                {
+                  branchName: 'TẬP GYM & ĂN UỐNG (BÀI TẬP 3.2 CÂU 2 & 3)',
+                  content: 'Besides, I try to have a balanced diet, which provides necessary nutrients for my body.',
+                  note: 'Kết hợp tập gym và chế độ dinh dưỡng cân bằng.'
+                },
+                {
+                  branchName: 'TẬP YOGA 15 PHÚT (BÀI TẬP 3.2 CÂU 4)',
+                  content: 'Besides, I do yoga for 15 minutes every morning to become more flexible and reduce stress.',
+                  note: 'Trích từ bài tập 3.2 câu 4 về lợi ích của yoga.'
+                }
+              ]
+            },
+            {
+              step: 4,
+              label: 'BƯỚC 4: KẾT QUẢ CÔNG VIỆC (WORK EFFECTIVELY)',
+              cognitiveFunction: '4. Cơ thể khỏe mạnh giúp ích gì cho công việc của bạn?',
+              content: 'As a result, I have enough energy to study and work effectively without feeling tired.',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Khép lại bằng hiệu quả thực tế: "work effectively without feeling tired".',
+              flipCard: {
+                frontText: 'So I can work good. (Sai ngữ pháp trạng từ)',
+                backText: 'I have enough energy to study and work effectively. (Đúng ngữ pháp)',
+                explanation: 'Dùng trạng từ "effectively" bổ nghĩa cho động từ "work" theo đúng chuẩn ngữ pháp.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'To stay in shape, I decided to work out at the gym near my house three times a week. Exercising regularly helps improve my physical health and keeps me active throughout the day. Besides, I try to have a balanced diet, which provides necessary nutrients for my body, so that I have enough energy to work effectively.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 3: Chăm Sóc Sức Khỏe Tinh Thần (Taking Care of Mental Health)',
+        pedagogicalObjective: 'Làm chủ bài tập 3.3: Học cách tự đánh giá thang điểm (Rate on a scale) và chia sẻ các hoạt động giúp giải tỏa tâm lý (thư giãn, tâm sự, nghỉ ngơi).',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click mở từng bước để học cách nói về chăm sóc sức khỏe tinh thần:',
+          cards: [
+            {
+              step: 1,
+              label: 'BƯỚC 1: TỰ CHẤM ĐIỂM THANG ĐIỂM 10',
+              cognitiveFunction: '1. Bạn tự chấm sức khỏe tinh thần của mình mấy điểm trên thang 10?',
+              content: 'On a scale of 0 to 10, I would give myself an 8 out of 10 for my mental health.',
+              bandLevel: 'Band 3.0 → 3.5',
+              pedagogyNote: 'Bám sát cấu trúc bài tập 3.3: "I will give [Name] [Score] out of 10 because...".',
+              flipCard: {
+                frontText: 'My mind is 8 points. (Tiếng bồi)',
+                backText: 'I would give myself an 8 out of 10 for my mental health. (Chuẩn xác)',
+                explanation: 'Mẫu câu chấm điểm chuẩn tiếng Anh: "give myself an 8 out of 10".'
+              }
+            },
+            {
+              step: 2,
+              label: 'BƯỚC 2: CÁCH QUẢN LÝ CĂNG THẲNG (DEAL WITH STRESS)',
+              cognitiveFunction: '2. Bạn thường làm gì khi gặp căng thẳng trong cuộc sống?',
+              content: 'because whenever I feel overwhelmed with deadlines, I always take a short break to clear my head.',
+              bandLevel: 'Band 3.5 → 4.0',
+              pedagogyNote: 'Dùng cụm gần gũi: "take a short break" (nghỉ ngơi một chút) và "clear my head" (giải tỏa đầu óc).',
+              flipCard: {
+                frontText: 'When stress I stop work. (Cụt ý)',
+                backText: 'Whenever I feel stressed, I take a short break to clear my head. (Tự nhiên)',
+                explanation: 'Cụm "take a short break to clear my head" thể hiện kỹ năng tự chăm sóc bản thân.'
+              }
+            },
+            {
+              step: 3,
+              label: 'BƯỚC 3: CHIA SẺ VỚI NGƯỜI THÂN (TALK TO FRIENDS)',
+              cognitiveFunction: '3. Bạn có tâm sự với ai để giải tỏa áp lực không?',
+              content: 'In addition, I often talk to my close friends or listen to soothing acoustic music to relax.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Bổ sung giải pháp tâm lý lành mạnh: trò chuyện với bạn bè hoặc nghe nhạc êm dịu.',
+              flipCard: {
+                frontText: 'I talk with friend and listen music. (Đơn sơ)',
+                backText: 'I often talk to my close friends or listen to soothing music to relax.',
+                explanation: 'Thêm tính từ "soothing music" (nhạc êm dịu) giúp bài nói sống động hơn.'
+              },
+              branchOptions: [
+                {
+                  branchName: 'TÂM SỰ VỚI BẠN BÈ & NGHE NHẠC',
+                  content: 'In addition, I often talk to my close friends or listen to soothing acoustic music to relax.',
+                  note: 'Giải pháp chia sẻ cảm xúc và nghe nhạc.'
+                },
+                {
+                  branchName: 'ĐI DẠO CÔNG VIÊN (OUTDOOR WALK)',
+                  content: 'In addition, I usually take a walk in the nearby park to breathe in fresh air.',
+                  note: 'Trích từ câu luyện phát âm: "breathed in the fresh air".'
+                }
+              ]
+            },
+            {
+              step: 4,
+              label: 'BƯỚC 4: TỔNG KẾT TƯ TƯỞNG (POSITIVE MINDSET)',
+              cognitiveFunction: '4. Thái độ sống tích cực của bạn là gì?',
+              content: 'I believe keeping a positive mindset is the best way to stay happy and healthy.',
+              bandLevel: 'Band 4.5',
+              pedagogyNote: 'Khép lại bài nói bằng nhận định dễ nhớ: "keeping a positive mindset" (giữ tinh thần tích cực).',
+              flipCard: {
+                frontText: 'Think good is happy. (Dịch từng chữ)',
+                backText: 'Keeping a positive mindset is the best way to stay healthy. (Chuẩn tự nhiên)',
+                explanation: 'Cụm "keep a positive mindset" (giữ tinh thần lạc quan) rất quen thuộc và đắt giá.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'On a scale of 0 to 10, I would give myself an 8 out of 10 for my mental health, because whenever I feel overwhelmed with deadlines, I always take a short break to clear my head. In addition, I often talk to my close friends or listen to soothing music to relax. I believe keeping a positive mindset is the best way to stay happy and healthy.'
         }
       }
     ]
