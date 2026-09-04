@@ -160,7 +160,7 @@ export function PublicFooter() {
                   to="/careers"
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Cơ hội nghề nghiệp
+                  Tuyển dụng
                 </Link>
               </li>
               <li>

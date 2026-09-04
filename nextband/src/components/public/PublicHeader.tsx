@@ -49,6 +49,7 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
   { label: "Speaking Forecast", href: "/ielts-speaking-forecast" },
   { label: "Tiến bộ", href: "/results" },
   { label: "Giảng viên", href: "/teachers" },
+  { label: "Tuyển dụng", href: "/careers" },
 ];
 
 export function PublicHeader() {
