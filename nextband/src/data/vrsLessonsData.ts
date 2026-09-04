@@ -5052,6 +5052,569 @@ export const vrsMockLessons: VRSVisualLesson[] = [
         }
       }
     ]
+  },
+  {
+    id: 'builder_w1d2',
+    courseId: 'builder',
+    week: 1,
+    day: 2,
+    skill: 'writing',
+    title: 'Thành Phần Bổ Ngữ & Mở Rộng Câu (Modifier & Relative Clause)',
+    subtitle: 'Lắp ráp 4 loại bổ ngữ & phẫu thuật điểm gãy dấu phẩy trong mệnh đề quan hệ (, which vs that)',
+    coreCompetency: 'Làm chủ bản chất không bắt buộc của Modifier để mở rộng câu giàu chi tiết, dùng đúng cụm giới từ học thuật và phân biệt chính xác đại từ quan hệ thay thế cho cả mệnh đề (, which).',
+    bridgeToHomework: {
+      promptText: 'Làm bài tập điền giới từ essay và viết lại câu có mệnh đề quan hệ trong Homework Buổi 2.',
+      targetExamId: 'exam_builder_w1d2'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'syntax_anatomy',
+        title: 'Chặng 1: Lắp ráp kiến tạo cú pháp mở rộng (S + Modifier + FV + O + Prep Phrase)',
+        pedagogicalObjective: 'Thấy rõ nguyên lý mở rộng câu từ nòng cốt S-V-O: Thêm Cụm phân từ (Participial Phrase) bổ nghĩa cho danh từ và Cụm giới từ học thuật (Prepositional Phrase) chỉ xuất xứ/mục đích mà không làm vỡ ranh giới câu.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Bấm tách thành phần câu để thấy cách Modifier làm giàu ý nghĩa cho Chủ ngữ và Tân ngữ mà vẫn bảo toàn nòng cốt S + FV.',
+          mode: 'build',
+          tokens: [
+            { id: 't1', text: 'Students', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'living in rural areas', role: 'modifier', colorClass: 'purple' },
+            { id: 't3', text: 'need', role: 'fv_core', colorClass: 'orange' },
+            { id: 't4', text: 'more financial support', role: 'object', colorClass: 'blue' },
+            { id: 't5', text: 'from the government', role: 'modifier', colorClass: 'gray' }
+          ]
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'productive_failure',
+        title: 'Chặng 2: Phẫu thuật điểm gãy 1 – Bẫy mâu thuẫn đối tượng thay thế (, which vs that)',
+        pedagogicalObjective: 'Giải quyết triệt để điểm gãy logic trong phần Nâng cao của giáo trình: "that" không thể thay thế cho toàn bộ sự việc phía trước, bắt buộc phải dùng dấu phẩy và ", which".',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Click vào mệnh đề chính và đại từ quan hệ đang mâu thuẫn về phạm vi thay thế.',
+          mode: 'break_and_repair',
+          tokens: [
+            { id: 't1', text: 'Many people choose to work from home', role: 'main_clause', colorClass: 'green' },
+            { id: 't2', text: 'that affects', role: 'adjective_clause', colorClass: 'red' },
+            { id: 't3', text: 'their social communication', role: 'object', colorClass: 'blue' }
+          ],
+          collisionTarget: {
+            conflictingTokenIds: ['t1', 't2'],
+            errorMessage: 'Điểm gãy ngữ pháp: Đại từ "that" chỉ thay thế cho một danh từ đứng sát trước nó. Khi muốn bổ nghĩa cho TOÀN BỘ hành động/sự việc phía trước, bắt buộc phải dùng dấu phẩy và ", which"!',
+            repairOptions: [
+              {
+                id: 'opt1',
+                action: 'morph',
+                targetTokenId: 't2',
+                resultText: ', which affects',
+                explanation: 'Dùng dấu phẩy kèm ", which" để thay thế cho cả mệnh đề: Many people choose to work from home, which affects their social communication.'
+              },
+              {
+                id: 'opt2',
+                action: 'morph',
+                targetTokenId: 't2',
+                resultText: 'and this affects',
+                explanation: 'Chuyển thành liên từ độc lập: Many people choose to work from home, and this affects their social communication.'
+              }
+            ]
+          }
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'productive_failure',
+        title: 'Chặng 3: Phẫu thuật điểm gãy 2 – Lỗi dùng sai Giới từ cố định trong IELTS Essay',
+        pedagogicalObjective: 'Khắc phục thói quen dịch thô giới từ từ tiếng Việt (Đầu tư vào = invest on) từ bài tập giới từ essay trong giáo trình gốc.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Click vào động từ và cụm giới từ đang xung đột về quy tắc Collocation.',
+          mode: 'break_and_repair',
+          tokens: [
+            { id: 't1', text: 'The government', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'should invest more', role: 'fv_core', colorClass: 'orange' },
+            { id: 't3', text: 'on renewable energy', role: 'modifier', colorClass: 'red' },
+            { id: 't4', text: 'to tackle climate change', role: 'modifier', colorClass: 'gray' }
+          ],
+          collisionTarget: {
+            conflictingTokenIds: ['t2', 't3'],
+            errorMessage: 'Điểm gãy Collocation: Động từ "invest" bắt buộc kết hợp với giới từ "in", không dùng "on" theo thói quen dịch tiếng Việt!',
+            repairOptions: [
+              {
+                id: 'opt1',
+                action: 'morph',
+                targetTokenId: 't3',
+                resultText: 'in renewable energy',
+                explanation: 'Sửa thành giới từ chuẩn: invest more in renewable energy (đầu tư nhiều hơn vào năng lượng tái tạo).'
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w1d3',
+    courseId: 'builder',
+    week: 1,
+    day: 3,
+    skill: 'speaking',
+    title: 'Ẩm Thực & Đồ Uống (Food and Drink)',
+    subtitle: 'Nguyên âm trước/giữa IPA, phản xạ hương vị & thẻ lật 3 chặng mở rộng bài nói Band 4.0 -> 5.0 / 5.5',
+    coreCompetency: 'Làm chủ khẩu hình nguyên âm trước /iː/ vs /ɪ/ và nguyên âm giữa /ə/ vs /ɜː/, áp dụng cấu trúc phản xạ hương vị I really like... because... và nâng cấp câu trả lời Part 1 từ cụt lốc Band 4.0 lên lưu loát tự nhiên Band 5.0 - 5.5.',
+    bridgeToHomework: {
+      promptText: 'Thu âm bài nói Part 1 miêu tả món ăn yêu thích và quán ăn quen thuộc trong Homework Buổi 3.',
+      targetExamId: 'exam_builder_w1d3'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 1: Khẩu Hình IPA & Phản Xạ Hương Vị (I like... because...)',
+        pedagogicalObjective: 'Làm chủ cặp nguyên âm IPA trước /iː/ vs /ɪ/ và phản xạ mô tả hương vị/kết cấu (crispy, tender, spicy, bland, chewy) bám sát bài học.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click mở từng bước để luyện phản xạ nói về món ăn yêu thích và món ăn không hợp khẩu vị:',
+          cards: [
+            {
+              step: 1,
+              label: 'BƯỚC 1: PHẢN XẠ MÓN YÊU THÍCH (THỊT GÀ HẤP - STEAMED CHICKEN)',
+              cognitiveFunction: '1. Nêu món ăn yêu thích kèm cách nấu và kết cấu mềm mọng',
+              content: 'I really like steamed chicken because it is tender and juicy.',
+              bandLevel: 'Band 4.0 → 5.0',
+              pedagogyNote: 'Dùng "steamed" (hấp) và tính từ "tender" (mềm) thay cho từ chung chung "delicious".',
+              flipCard: {
+                frontText: 'I like chicken because it is good. (Nói cộc lốc Band 4.0)',
+                backText: 'I really like steamed chicken because it is tender and juicy. (Cấu trúc chuẩn Band 5.0)',
+                explanation: 'Nêu rõ cách chế biến (steamed) và kết cấu đặc trưng của thịt (tender - mềm mọng).'
+              },
+              vowelHighlight: [
+                { word: 'steamed', phonetic: '/stiːmd/', vowelSound: '/iː/ dài (căng cơ môi)' },
+                { word: 'chicken', phonetic: '/ˈtʃɪk.ɪn/', vowelSound: '/ɪ/ ngắn (thả lỏng dứt khoát)' }
+              ]
+            },
+            {
+              step: 2,
+              label: 'BƯỚC 2: PHẢN XẠ ĐỒ ĂN GIÒN & CAY (FRIED CHICKEN & THAI SOUP)',
+              cognitiveFunction: '2. Mô tả món chiên giòn và món súp cay đậm đà',
+              content: "I'm a big fan of fried chicken because it is crispy on the outside.",
+              bandLevel: 'Band 4.5 → 5.0',
+              pedagogyNote: 'Dùng "crispy" (giòn rụm) và cụm bám sát sách: "satisfy my sweet tooth" khi ăn đồ ngọt.',
+              flipCard: {
+                frontText: 'I like KFC chicken. It is crispy. (Rời rạc)',
+                backText: "I'm a big fan of fried chicken because it is extremely crispy and flavorful. (Mở rộng tự nhiên)",
+                explanation: 'Kết hợp "crispy" (giòn) và "flavorful" (đậm đà) bám sát từ vựng bài học.'
+              },
+              vowelHighlight: [
+                { word: 'crispy', phonetic: '/ˈkrɪs.pi/', vowelSound: '/ɪ/ ngắn' },
+                { word: 'sweet tooth', phonetic: '/swiːt tuːθ/', vowelSound: '/iː/ dài' }
+              ]
+            },
+            {
+              step: 3,
+              label: "BƯỚC 3: PHẢN XẠ NÓI VỀ MÓN GHÉT (I DON'T LIKE... TOO BLAND / CHEWY)",
+              cognitiveFunction: '3. Nêu lý do từ chối món ăn vì quá nhạt nhẽo hoặc quá dai',
+              content: "I don't like boiled pork because it is too bland and lacks flavor.",
+              bandLevel: 'Band 4.5 → 5.0',
+              pedagogyNote: 'Học cách chê đồ ăn lịch sự bằng "too bland" (quá nhạt) hoặc "too chewy" (quá dai).',
+              flipCard: {
+                frontText: 'I hate boiled pork. No taste. (Nói thô)',
+                backText: "I don't like boiled pork because it is too bland and lacks flavor. (Chuẩn Band 5.0)",
+                explanation: 'Dùng "bland" (nhạt nhẽo) bám sát công thức Bài tập 2 trong sách.'
+              },
+              branchOptions: [
+                {
+                  branchName: 'GHÉT ĐỒ NHẠT (BOILED PORK)',
+                  content: "I don't like boiled pork because it is too bland.",
+                  note: 'Mẫu gốc trong giáo trình.'
+                },
+                {
+                  branchName: 'GHÉT ĐỒ DAI (BEEF / SQUID)',
+                  content: "I don't really enjoy squid because it is too chewy to swallow.",
+                  note: 'Áp dụng cho đồ dai (chewy).'
+                }
+              ]
+            }
+          ],
+          fullMosaicSummary: "I really like steamed chicken because it is tender and juicy, and I'm a big fan of fried chicken when it is freshly made and crispy. On the other hand, I don't like boiled pork because it is too bland and lacks flavor."
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 2: Thẻ Lật 3 Chặng Mở Rộng Bài Mẫu Món Phở (Band 4.0 -> 5.0 / 5.5)',
+        pedagogicalObjective: 'Phân tầng tư duy nói theo 3 chặng từ bài đọc mẫu về Phở trong sách: Tên món → Thành phần & Nước dùng đậm đà → Bối cảnh ăn sáng ngày lạnh.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng bước để quan sát sự chuyển dịch từ Band 4.0 lên 5.0 và 5.5:',
+          cards: [
+            {
+              step: 1,
+              label: 'CHẶNG 1: TRẢ LỜI TRỰC DIỆN (TÊN MÓN YÊU THÍCH)',
+              cognitiveFunction: '1. Giới thiệu món ăn bằng cụm từ học thuật tự nhiên',
+              content: 'One of my all-time favorites is Pho, a traditional Vietnamese noodle dish.',
+              bandLevel: 'Band 4.0 → 5.0',
+              pedagogyNote: 'Nâng cấp từ "My favorite food is Pho" lên cụm chuẩn "One of my all-time favorites is Pho".',
+              flipCard: {
+                frontText: 'My favorite food is Pho. (Band 4.0 cộc lốc)',
+                backText: 'One of my all-time favorites is Pho, which is a traditional Vietnamese noodle soup. (Band 5.0 lưu loát)',
+                explanation: 'Dùng cụm mở đầu "One of my all-time favorites" kết hợp mệnh đề quan hệ bổ nghĩa.'
+              },
+              vowelHighlight: [
+                { word: 'traditional', phonetic: '/trəˈdɪʃ.ən.əl/', vowelSound: '/ə/ nguyên âm giữa (thả lỏng)' },
+                { word: 'dish', phonetic: '/dɪʃ/', vowelSound: '/ɪ/ ngắn' }
+              ]
+            },
+            {
+              step: 2,
+              label: 'CHẶNG 2: MÔ TẢ NGUYÊN LIỆU & NƯỚC DÙNG (BROTH & HERBS)',
+              cognitiveFunction: '2. Mô tả thành phần cốt lõi: bánh phở, nước dùng đậm đà và rau thơm',
+              content: 'It is made with soft rice noodles, a flavorful broth, and a variety of fresh herbs.',
+              bandLevel: 'Band 4.5 → 5.0',
+              pedagogyNote: 'Làm chủ từ vựng chất lượng từ bài đọc: "flavorful broth" (nước dùng đậm đà) và "a variety of herbs" (nhiều loại rau thơm).',
+              flipCard: {
+                frontText: 'It has soup, meat and noodles. (Từ vựng sơ cấp 4.0)',
+                backText: 'It is made with soft rice noodles, a flavorful broth, and a variety of fresh herbs. (Từ vựng học thuật 5.0)',
+                explanation: 'Thay "soup" bằng "flavorful broth" và dùng thể bị động "is made with" đúng bài đọc trong sách.'
+              },
+              vowelHighlight: [
+                { word: 'broth', phonetic: '/brɒθ/', vowelSound: '/ɒ/ ngắn' },
+                { word: 'herbs', phonetic: '/hɜːbz/', vowelSound: '/ɜː/ nguyên âm giữa dài' }
+              ]
+            },
+            {
+              step: 3,
+              label: 'CHẶNG 3: BỐI CẢNH & TRẢI NGHIỆM (SERVED PIPING HOT)',
+              cognitiveFunction: '3. Nêu lý do vì sao thích ăn vào bữa sáng hoặc những ngày se lạnh',
+              content: 'It is usually served piping hot, so it is perfect for breakfast on a chilly morning.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Nối câu bằng liên từ kết quả "so" và dùng cụm "served piping hot" (phục vụ nóng hổi).',
+              flipCard: {
+                frontText: 'It is hot. I eat in morning. (Band 4.0 ngắt quãng)',
+                backText: 'It is usually served piping hot, so it is perfect for breakfast on a cold day. (Band 5.5 nối ý mượt mà)',
+                explanation: 'Nối 2 vế câu bằng liên từ "so" và trạng từ chỉ tần suất "usually" bám sát đoạn trích mục 2.1.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'One of my all-time favorites is Pho. It is a Vietnamese traditional dish that is made with rice noodles, a flavorful broth, and a variety of herbs. It is usually served piping hot, so it is perfect for breakfast on a cold day.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 3: Định Vị Quán Ăn Thực Tế & Cấu Trúc Food Review',
+        pedagogicalObjective: 'Phân biệt chính xác Eatery (quán ăn bình dân) vs Food stall (quán cóc vỉa hè) vs Dining spot (địa điểm ăn uống) và hoàn thành bài nói review quán ăn quen thuộc.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng bước để làm chủ các từ vựng chỉ địa điểm quán ăn tại Việt Nam:',
+          cards: [
+            {
+              step: 1,
+              label: 'BƯỚC 1: GIỚI THIỆU QUÁN ĂN QUEN THUỘC (EATERY VS FOOD STALL)',
+              cognitiveFunction: '1. Nêu tên quán và phân biệt loại hình quán ăn theo ngữ cảnh Việt Nam',
+              content: 'There is a local eatery near my house that serves amazing Phở and beef noodles.',
+              bandLevel: 'Band 4.0 → 5.0',
+              pedagogyNote: 'Dùng từ "eatery" (/ˈiːtəri/) cho các quán ăn bình dân Việt Nam thay vì chỉ dùng duy nhất từ "restaurant".',
+              flipCard: {
+                frontText: 'I go to small restaurant near my house. (Band 4.0)',
+                backText: 'There is a local eatery near my house that serves great Phở. (Chuẩn giáo trình Band 5.0)',
+                explanation: 'Sử dụng từ "eatery" bám sát định nghĩa trong sách: chỉ quán phở, cơm tấm bình dân.'
+              },
+              vowelHighlight: [
+                { word: 'eatery', phonetic: '/ˈiː.tər.i/', vowelSound: '/iː/ dài & /ə/ ngắn' },
+                { word: 'stall', phonetic: '/stɔːl/', vowelSound: '/ɔː/ dài' }
+              ]
+            },
+            {
+              step: 2,
+              label: 'BƯỚC 2: KHÔNG GIAN & GIÁ CẢ (ATMOSPHERE & AFFORDABLE PRICES)',
+              cognitiveFunction: '2. Đánh giá chất lượng phục vụ và mức giá hợp lý cho học sinh sinh viên',
+              content: 'The food stall is always crowded because the meals are cheap, fresh, and delicious.',
+              bandLevel: 'Band 4.5 → 5.0',
+              pedagogyNote: 'Dùng cụm bám sát sách: "food stall on the street" hoặc "local eatery with affordable prices".',
+              flipCard: {
+                frontText: 'The food is cheap. Many people eat there. (Cụt lốc)',
+                backText: 'I love eating at food stalls on the street because the food is cheap and delicious. (Đúng câu mẫu mục 2.2)',
+                explanation: 'Nguyên văn câu ví dụ chuẩn mực trong Coursebook mục 2.2.'
+              }
+            },
+            {
+              step: 3,
+              label: 'BƯỚC 3: TRẢI NGHIỆM ĐỊA ĐIỂM TỤ TẬP (DINING SPOT & CẢM XÚC)',
+              cognitiveFunction: '3. Nêu thói quen ghé quán cùng gia đình/bạn bè và cảm nhận chung',
+              content: 'It has become my favorite dining spot whenever I hang out with my close friends on weekends.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Ứng dụng thuật ngữ "dining spot" (/ˈdaɪnɪŋ spɑːt/) cho địa điểm tụ tập ăn uống yêu thích.',
+              flipCard: {
+                frontText: 'Haidilao is good place for my family. (Tiếng Anh bồi)',
+                backText: 'Haidilao is my favorite dining spot when I hang out with my family. (Chuẩn bài học 5.0+)',
+                explanation: 'Sử dụng cụm "dining spot" để chỉ địa điểm ăn uống yêu thích đúng như câu mẫu trong sách.'
+              },
+              branchOptions: [
+                {
+                  branchName: 'QUÁN CÓC VỈA HÈ (FOOD STALL)',
+                  content: 'I love eating at street food stalls because the atmosphere is lively and the food is fast.',
+                  note: 'Phù hợp khi nói về ẩm thực đường phố.'
+                },
+                {
+                  branchName: 'ĐỊA ĐIỂM TỤ TẬP GIA ĐÌNH (DINING SPOT)',
+                  content: 'That restaurant is our go-to dining spot for special family gatherings.',
+                  note: 'Phù hợp khi nói về nhà hàng/quán tụ tập cuối tuần.'
+                }
+              ]
+            }
+          ],
+          fullMosaicSummary: 'There is a local eatery near my house that serves great Phở. Although it is just a small food stall on the street, it is always crowded because the food is cheap and delicious. It has become my favorite dining spot whenever I hang out with my family or close friends.'
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w2d1',
+    courseId: 'builder',
+    week: 2,
+    day: 1,
+    skill: 'writing',
+    title: 'WRITING · BUỔI 1: MỆNH ĐỀ QUAN HỆ & MỆNH ĐỀ TRẠNG NGỮ',
+    subtitle: 'Sentence X-Ray, Tường Lửa Dấu Phẩy & Khắc Phục Xung Đột Liên Từ',
+    coreCompetency: 'Làm chủ Mệnh đề tính từ xác định/không xác định, cơ chế rút gọn (V-ing / V3) và triệt tiêu lỗi liên từ kép (Although... but) cùng lỗi câu què (Sentence fragment).',
+    bridgeToHomework: {
+      promptText: 'Thực hành viết lại 6 câu mệnh đề phức và nhận diện câu què trong Homework Tuần 2 Day 1.',
+      targetExamId: 'exam_builder_w2d1'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'syntax_anatomy',
+        title: 'Chặng 1: Sentence X-Ray — Bóc Tách Khung Xương & Rút Gọn Mệnh Đề Quan Hệ',
+        pedagogicalObjective: 'Nhìn thấu cấu trúc 3 tầng của câu chứa Mệnh đề quan hệ rút gọn chủ động (Active voice V-ing): Khung S-V chính không bị nhầm lẫn với động từ bổ nghĩa.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Bấm phân tích để quan sát cơ chế nén thông tin từ "who taught" thành "teaching" bổ nghĩa cho Chủ ngữ:',
+          mode: 'build',
+          tokens: [
+            { id: 't1', text: 'The teacher', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'teaching me English', role: 'modifier', colorClass: 'purple' },
+            { id: 't3', text: 'was', role: 'fv_core', colorClass: 'orange' },
+            { id: 't4', text: 'very kind and patient', role: 'complement', colorClass: 'blue' }
+          ],
+          slots: [
+            { slotId: 's1', acceptedRoles: ['subject'], label: 'CHỦ NGỮ CỐT LÕI (S)' },
+            { slotId: 's2', acceptedRoles: ['modifier'], label: 'MỆNH ĐỀ RÚT GỌN (V-ING MODIFIER)' },
+            { slotId: 's3', acceptedRoles: ['fv_core'], label: 'ĐỘNG TỪ CHÍNH ĐƯỢC CHIA (FV CORE)' },
+            { slotId: 's4', acceptedRoles: ['complement'], label: 'VỊ NGỮ / BỔ NGỮ (COMPLEMENT)' }
+          ]
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'productive_failure',
+        title: 'Chặng 2: Break & Repair 1 — "Tường Lửa Dấu Phẩy" & Quy Tắc Cấm Kỵ "..., that"',
+        pedagogicalObjective: 'Phát hiện và sửa lỗi dùng "that" sau dấu phẩy trong mệnh đề quan hệ không xác định (Non-defining clause).',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Click vào từ vi phạm quy tắc "tường lửa dấu phẩy" trong câu bên dưới:',
+          mode: 'break_and_repair',
+          tokens: [
+            { id: 't1', text: 'Paris,', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'that', role: 'adjective_clause', colorClass: 'red' },
+            { id: 't3', text: 'is the capital of France,', role: 'modifier', colorClass: 'purple' },
+            { id: 't4', text: 'attracts', role: 'fv_core', colorClass: 'orange' },
+            { id: 't5', text: 'millions of tourists every year.', role: 'object', colorClass: 'blue' }
+          ],
+          collisionTarget: {
+            conflictingTokenIds: ['t1', 't2'],
+            errorMessage: 'CẢNH BÁO QUY TẮC: Mệnh đề không xác định (sau dấu phẩy) tuyệt đối KHÔNG dùng "that". Dấu phẩy ngăn cách thông tin bổ sung phụ!',
+            repairOptions: [
+              {
+                id: 'opt_which',
+                action: 'morph',
+                targetTokenId: 't2',
+                resultText: 'which',
+                explanation: 'Đổi "that" thành "which": Non-defining clause luôn dùng "which" để mở đầu mệnh đề bổ nghĩa cho danh từ chỉ vật/địa danh đứng trước dấu phẩy.'
+              }
+            ]
+          }
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'productive_failure',
+        title: 'Chặng 3: Break & Repair 2 — Triệt Tiêu Xung Đột Liên Từ Kép (Although... but)',
+        pedagogicalObjective: 'Khắc phục tư duy dịch từ tiếng Việt "Mặc dù... nhưng..." dẫn đến va chạm cú pháp 2 liên từ chỉ hướng trong cùng một câu.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Click vào liên từ gây ra xung đột cú pháp trong câu phức bên dưới:',
+          mode: 'break_and_repair',
+          tokens: [
+            { id: 't1', text: 'Although the government has invested a lot of money in education,', role: 'subordinating_clause', colorClass: 'purple' },
+            { id: 't2', text: 'but', role: 'connector', colorClass: 'red' },
+            { id: 't3', text: 'the quality of teaching', role: 'subject', colorClass: 'green' },
+            { id: 't4', text: 'remains', role: 'fv_core', colorClass: 'orange' },
+            { id: 't5', text: 'poor.', role: 'complement', colorClass: 'blue' }
+          ],
+          collisionTarget: {
+            conflictingTokenIds: ['t1', 't2'],
+            errorMessage: 'LỖI XUNG ĐỘT LIÊN TỪ (SYNTAX COLLISION): "Although" đã là liên từ phụ thuộc dẫn đường cho mệnh đề trạng ngữ. Vế sau là mệnh đề chính độc lập, KHÔNG được thêm liên từ kết hợp "but"!',
+            repairOptions: [
+              {
+                id: 'opt_delete_but',
+                action: 'delete',
+                targetTokenId: 't2',
+                resultText: '',
+                explanation: 'Triệt tiêu liên từ "but". Câu chuẩn học thuật: "Although the government has invested a lot of money in education, the quality of teaching remains poor."'
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w2d2',
+    courseId: 'builder',
+    week: 2,
+    day: 2,
+    skill: 'reading',
+    title: 'READING · BUỔI 2: MONITORING COMPREHENSION & DEEP READING',
+    subtitle: 'Cambridge 14 Test 4: The Secret of Staying Young & Chuỗi Lần Vết Bằng Chứng',
+    coreCompetency: 'Làm chủ kỹ thuật Deep Reading (Đọc sâu bám sát Fact), xây dựng Evidence Chain 4 mắt xích cho bài Gap-fill và sử dụng Bàn cân Logic Scale để phán quyết True/False/Not Given chính xác.',
+    bridgeToHomework: {
+      promptText: 'Hoàn thành câu hỏi 1-13 bài đọc Cambridge 14 Test 4 trong phần Reading Homework.',
+      targetExamId: 'exam_builder_w2d2'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'verification_scale',
+        title: 'Chặng 1: Evidence Chain — Chuỗi Lần Vết 4 Mắt Xích (Gap-Fill Summary)',
+        pedagogicalObjective: 'Huấn luyện tư duy lần vết từ khóa từ câu hỏi Gap-fill đến tọa độ bài đọc qua cầu nối Paraphrase mà không bị rối loạn từ mới.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Kéo thả các biến số để thiết lập chuỗi bằng chứng khớp nối giữa câu tóm tắt và đoạn văn:',
+          passageContext: {
+            title: 'Cambridge 14 Test 4 Passage 1: The secret of staying young',
+            paragraphs: [
+              {
+                id: 'p3',
+                label: 'Đoạn 3 (Dòng 1-3)',
+                text: 'In the lab, P. dentata worker ants typically live for around 140 days. Giraldo focused on ants at four age ranges: 20 to 22 days, 45 to 47 days, 95 to 97 days and 120 to 122 days. Unlike all previous studies, which only estimated how old the ants were, her work tracked the ants from the time the pupae became adults, so she knew their exact ages.'
+              },
+              {
+                id: 'p4',
+                label: 'Đoạn 4 (Dòng 3-5)',
+                text: 'She compared how well 20-day-old and 95-day-old ants followed the telltale scent that the insects usually leave to mark a trail to food.'
+              }
+            ],
+            targetParagraphId: 'p4',
+            targetSnippet: '...followed the telltale scent that the insects usually leave to mark a trail to food.'
+          },
+          statement: {
+            rawText: "Question 3 (Gap-fill): The research tested ants' ability to locate [food] using a scent trail.",
+            deconstructedVariables: [
+              { name: 'X_action', text: 'ability to locate' },
+              { name: 'Y_target', text: 'target object (food)', isTrapWord: false },
+              { name: 'Z_method', text: 'using a scent trail' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'followed the telltale scent that the insects usually leave to mark a trail to food.',
+            targetVariables: [
+              { matchingName: 'X_action', text: 'followed / mark a trail' },
+              { matchingName: 'Y_target', text: 'food' },
+              { matchingName: 'Z_method', text: 'telltale scent' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'Mắt xích Paraphrase: "ability to locate" = "followed... to", "scent trail" = "telltale scent... mark a trail". Từ ngữ nguyên bản duy nhất cần điền là "food".'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'verification_scale',
+        title: 'Chặng 2: Logic Verification Scale — Bàn Cân Phán Quyết Bẫy Tuyệt Đối Hóa (Question 9: FALSE)',
+        pedagogicalObjective: 'Phát hiện bẫy từ mang tính tuyệt đối hóa "the only known animals" và dùng bằng chứng so sánh để phán quyết FALSE.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'So khớp biến số tuyệt đối trong câu hỏi với bằng chứng loài Chuột chũi trần (Naked mole rats) trong bài đọc:',
+          passageContext: {
+            title: 'Cambridge 14 Test 4 Passage 1: The secret of staying young',
+            paragraphs: [
+              {
+                id: 'p2',
+                label: 'Đoạn 2 (Dòng 1-3)',
+                text: 'Such age-defying feats are rare in the animal kingdom. Naked mole rats can live for almost 30 years and stay fit for nearly their entire lives. They can still reproduce even when old, and they never get cancer. But the vast majority of animals deteriorate with age...'
+              }
+            ],
+            targetParagraphId: 'p2',
+            targetSnippet: 'Naked mole rats can live for almost 30 years and stay fit for nearly their entire lives.'
+          },
+          statement: {
+            rawText: 'Pheidole dentata ants are the only known animals which remain active for almost their whole lives.',
+            deconstructedVariables: [
+              { name: 'A_subject', text: 'Pheidole dentata ants' },
+              { name: 'B_exclusive_trap', text: 'are the ONLY known animals', isTrapWord: true },
+              { name: 'C_condition', text: 'remain active for almost their whole lives' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Naked mole rats can live for almost 30 years and stay fit for nearly their entire lives.',
+            targetVariables: [
+              { matchingName: 'A_subject', text: 'Naked mole rats (cũng làm được điều tương tự)' },
+              { matchingName: 'B_exclusive_trap', text: 'rare in the animal kingdom (hiếm chứ KHÔNG DUY NHẤT)' },
+              { matchingName: 'C_condition', text: 'stay fit for nearly their entire lives' }
+            ]
+          },
+          expectedRelation: 'contradiction',
+          verdict: 'FALSE',
+          pedagogicalInsight: 'Bẫy tuyệt đối hóa "the only known animals": Bài đọc chỉ ra loài chuột chũi trần (naked mole rats) cũng sống khoẻ gần như trọn đời. Do đó tuyên bố "kiến P. dentata là loài duy nhất" trực tiếp mâu thuẫn với bài đọc -> FALSE.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'verification_scale',
+        title: 'Chặng 3: Logic Verification Scale — Bàn Cân Phán Quyết Bẫy Suy Diễn (Question 12: NOT GIVEN)',
+        pedagogicalObjective: 'Phân biệt ranh giới giữa "Thông tin có đề cập từ khóa" và "Không có dữ kiện so sánh phương pháp" để ra quyết định NOT GIVEN.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Kiểm tra xem bài đọc có đề cập "phương pháp đo lường khác nhau" của các nghiên cứu về loài ong hay không:',
+          passageContext: {
+            title: 'Cambridge 14 Test 4 Passage 1: The secret of staying young',
+            paragraphs: [
+              {
+                id: 'p6',
+                label: 'Đoạn 6 (Dòng 3-6)',
+                text: 'Scientists have looked at some similar aspects in bees, but the results of recent bee studies were mixed – some studies showed age-related declines, which biologists call senescence, and others didn’t.'
+              }
+            ],
+            targetParagraphId: 'p6',
+            targetSnippet: '...the results of recent bee studies were mixed – some studies showed age-related declines... and others didn’t.'
+          },
+          statement: {
+            rawText: 'The recent studies of bees used different methods of measuring age-related decline.',
+            deconstructedVariables: [
+              { name: 'X_topic', text: 'recent studies of bees' },
+              { name: 'Y_action', text: 'used DIFFERENT METHODS of measuring', isTrapWord: true },
+              { name: 'Z_target', text: 'age-related decline' }
+            ]
+          },
+          passageEvidence: {
+            rawText: '...the results of recent bee studies were mixed – some studies showed age-related declines... and others didn’t.',
+            targetVariables: [
+              { matchingName: 'X_topic', text: 'recent bee studies' },
+              { matchingName: 'Y_action', text: 'KHOẢNG TRỐNG DỮ LIỆU: Chỉ nói KẾT QUẢ trái ngược (results were mixed), KHÔNG NÓI VỀ PHƯƠNG PHÁP (methods)' },
+              { matchingName: 'Z_target', text: 'age-related declines' }
+            ]
+          },
+          expectedRelation: 'no_evidence',
+          verdict: 'NOT GIVEN',
+          pedagogicalInsight: 'Bẫy suy diễn ngoài bài: Bài đọc chỉ nói "kết quả nghiên cứu về ong là trái ngược nhau" (results were mixed), hoàn toàn KHÔNG nhắc đến việc các nghiên cứu này có dùng phương pháp đo lường khác nhau (different methods) hay không -> Đĩa cân bị khuyết dữ kiện -> NOT GIVEN.'
+        }
+      }
+    ]
   }
 ];
+
+
 
