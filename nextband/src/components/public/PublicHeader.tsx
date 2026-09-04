@@ -83,16 +83,16 @@ export function PublicHeader() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#002147] text-white shadow-md transition-all">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-20 items-center justify-between gap-6">
+        <div className="flex h-[72px] items-center justify-between gap-6">
           {/* Brand Logo */}
           <div className="flex items-center gap-3">
             <Link to="/" className="flex items-center gap-3 group">
               <SiteLogo
                 alt="ARIS IELTS"
-                className="h-10 w-10 sm:h-11 sm:w-11 object-contain transition-transform group-hover:scale-105 shrink-0"
+                className="h-9 w-9 sm:h-10 sm:w-10 object-contain transition-transform group-hover:scale-105 shrink-0"
               />
-              <div className="flex items-center border-l border-white/20 pl-2.5 sm:pl-3 h-8 sm:h-9">
-                <span className="font-black tracking-wider text-lg sm:text-xl text-white leading-none uppercase whitespace-nowrap">
+              <div className="flex items-center border-l border-white/20 pl-2.5 sm:pl-3 h-7 sm:h-8">
+                <span className="font-black tracking-wider text-base sm:text-lg text-white leading-none uppercase whitespace-nowrap">
                   ARIS IELTS
                 </span>
               </div>
