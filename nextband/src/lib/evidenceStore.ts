@@ -65,9 +65,19 @@ export function calculateAcademicStage(
   const overall = typeof overallStr === "number" ? overallStr : parseFloat(overallStr || "6.5");
 
   // Determine base X according to ARIS-7 rank scale
+  if (overall >= 9.0) {
+    return {
+      stageId: "stage-sovereign",
+      stageName: "Tối Thượng",
+      stageCode: "Sovereign",
+      starCount: 4,
+      stageRequirement: "Overall 9.0 — Cấp bậc học thuật tối thượng",
+      fullTitle: "Tối Thượng (IELTS 9.0)",
+    };
+  }
+
   let baseScore = 3.0;
-  if (overall >= 8.5) baseScore = 8.5;
-  else if (overall >= 8.0) baseScore = 8.0;
+  if (overall >= 8.0) baseScore = 8.0;
   else if (overall >= 7.0) baseScore = 7.0;
   else if (overall >= 6.0) baseScore = 6.0;
   else if (overall >= 5.0) baseScore = 5.0;

@@ -322,7 +322,7 @@ export default function AboutPage() {
                 Khung 7 Cấp Bậc Định Lượng (ARIS-7)
               </h3>
               <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-                Tiêu chuẩn đầu ra của từng cấp bậc (Rank 3 đến Rank 9) được chuẩn hóa tường minh với 4 giai đoạn tiến trình (Sơ kỳ $\rightarrow$ Đỉnh phong), giúp loại bỏ hoàn toàn sự mập mờ trong đánh giá.
+                Tiêu chuẩn đầu ra của các cấp bậc (Rank 3 đến Rank 8) được chuẩn hóa tường minh với 4 giai đoạn tiến trình (Sơ kỳ $\rightarrow$ Đỉnh phong), hướng tới cấp bậc tối thượng Rank 9 (Học Đế — IELTS 9.0), giúp loại bỏ hoàn toàn sự mập mờ trong đánh giá.
               </p>
             </div>
           </div>

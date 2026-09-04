@@ -313,85 +313,137 @@ export function AcademicRankSystem({
               {activeRankData.description}
             </p>
 
-            {/* 4 Progression Stages Visualizer (Sơ kỳ -> Đỉnh phong với ảnh ngôi sao & quy tắc gốc) */}
-            <div className="space-y-3 pt-3 border-t border-border/60">
-              <div className="text-xs font-black text-muted-foreground uppercase tracking-wider flex items-center justify-between">
-                <span>4 Tầng Tiến Trình Năng Lực</span>
-                <span className="font-mono text-xs text-foreground/75 inline-flex items-center gap-1">
-                  <span className="inline-flex items-center gap-0.5 font-bold">
-                    1<img src="/images/star1.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+            {/* Progression Section */}
+            {activeRankData.rankNumber === 9 ? (
+              /* Cấp Bậc Đặc Biệt Rank 9 - Học Đế (Không phân kỳ 4 tầng) */
+              <div className="space-y-3 pt-3 border-t border-border/60">
+                <div className="text-xs font-black text-muted-foreground uppercase tracking-wider flex items-center justify-between">
+                  <span className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400 font-extrabold">
+                    <Sparkles className="h-4 w-4" />
+                    <span>Cấp Bậc Tối Thượng — Độc Bản Học Thuật</span>
                   </span>
-                  <span>Sơ kỳ</span>
-                  <span className="text-muted-foreground font-normal">→</span>
-                  <span className="inline-flex items-center gap-0.5 font-bold">
-                    4<img src="/images/star1.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                  <span className="font-mono text-xs px-2.5 py-0.5 rounded-md bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 font-black border border-indigo-500/30">
+                    IELTS 9.0
                   </span>
-                  <span>Đỉnh phong</span>
-                </span>
-              </div>
+                </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                {(() => {
-                  const baseScore = activeRankData.rankNumber === 3 ? 3.0
-                    : activeRankData.rankNumber === 4 ? 4.0
-                    : activeRankData.rankNumber === 5 ? 5.0
-                    : activeRankData.rankNumber === 6 ? 6.0
-                    : activeRankData.rankNumber === 7 ? 7.0
-                    : activeRankData.rankNumber === 8 ? 8.0
-                    : 8.5;
-                  const nextScore = baseScore + 0.5;
-
-                  const stageCriteria = [
-                    `Overall ${baseScore.toFixed(1)}, có kỹ năng < ${baseScore.toFixed(1)}`,
-                    `Overall ${baseScore.toFixed(1)}, tất cả ≥ ${baseScore.toFixed(1)}`,
-                    `Overall ${nextScore.toFixed(1)}, còn kỹ năng ~${baseScore.toFixed(1)}`,
-                    `Overall ${nextScore.toFixed(1)}, tất cả ≥ ${nextScore.toFixed(1)}`,
-                  ];
-
-                  return PROGRESSION_STAGES.map((stage, idx) => (
-                    <div
-                      key={stage.id}
-                      className="p-3.5 rounded-2xl border border-border/80 bg-muted/30 text-center space-y-1.5 hover:border-border transition-all flex flex-col justify-between"
-                    >
-                      <div className="space-y-1">
-                        <div className="flex items-center justify-center gap-1">
-                          <span className="inline-flex items-center gap-1 text-xs font-mono font-black px-2 py-0.5 rounded-md bg-background border border-border text-foreground shadow-2xs">
-                            <span>{stage.starCount}</span>
-                            <img
-                              src="/images/star1.png"
-                              alt="star"
-                              className="w-3.5 h-3.5 object-contain inline-block -mt-0.5"
-                            />
-                          </span>
-                        </div>
-                        <div className="font-black text-sm text-foreground">
-                          {stage.label}
-                        </div>
-                        <div className="text-[10px] font-mono uppercase text-muted-foreground">
-                          {stage.code}
-                        </div>
-                      </div>
-
-                      <div className="pt-1.5 border-t border-border/50 text-[11px] font-bold text-foreground/80 leading-tight">
-                        {stageCriteria[idx]}
-                      </div>
-
-                      <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden mt-1">
-                        <div
-                          className={cn("h-full rounded-full transition-all", activeRankData.theme.progressBar)}
-                          style={{ width: `${(idx + 1) * 25}%` }}
-                        />
-                      </div>
+                <div className="p-5 sm:p-6 rounded-2xl border-2 border-indigo-500/30 bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-muted/30 relative overflow-hidden space-y-4">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#3730a3] to-[#1e1b4b] text-white flex items-center justify-center shrink-0 shadow-md border border-indigo-400/30">
+                      <Crown className="h-6 w-6 text-amber-300" />
                     </div>
-                  ));
-                })()}
-              </div>
+                    <div className="space-y-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-base sm:text-lg font-black text-foreground">
+                          Đỉnh Cao Tuyệt Đối — Overall 9.0
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-black uppercase tracking-wider bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                          Pinnacle Sovereign
+                        </span>
+                      </div>
+                      <p className="text-xs sm:text-sm text-foreground/80 leading-relaxed">
+                        IELTS 9.0 là mức điểm trần tuyệt đối của chuẩn hóa quốc tế. Cấp bậc <strong>Học Đế</strong> là cảnh giới cao nhất của sự tinh thông học thuật, không áp dụng 4 kỳ chuyển tiếp thông thường (Sơ kỳ → Đỉnh phong) như các cấp bậc trước.
+                      </p>
+                    </div>
+                  </div>
 
-              <div className="text-[11px] text-muted-foreground font-medium flex items-center gap-1.5 pt-1">
-                <span className="font-bold text-foreground">Tiến trình năng lực:</span>
-                <span>Sơ kỳ (X, lệch kỹ năng) → Trung kỳ (X đồng đều) → Hậu kỳ (X+0.5, lệch kỹ năng) → Đỉnh phong (X+0.5 đồng đều).</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                    <div className="p-3 rounded-xl bg-card/80 border border-border/70 flex items-center gap-2.5 text-xs font-semibold text-foreground">
+                      <CheckCircle2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                      <span>Đạt giới hạn trần thang điểm IELTS quốc tế (9.0/9.0)</span>
+                    </div>
+                    <div className="p-3 rounded-xl bg-card/80 border border-border/70 flex items-center gap-2.5 text-xs font-semibold text-foreground">
+                      <CheckCircle2 className="h-4 w-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                      <span>Chuẩn mực chuyên môn cao nhất, vai trò nghiên cứu &amp; cố vấn</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-[11px] text-muted-foreground font-medium flex items-center gap-1.5 pt-1">
+                  <span className="font-bold text-foreground">Đặc thù cấp bậc:</span>
+                  <span>Cấp bậc hoàn thiện cao nhất — Không phân kỳ (Sơ kỳ → Đỉnh phong) do 9.0 đã là giới hạn tối đa của toàn bộ thang đo IELTS.</span>
+                </div>
               </div>
-            </div>
+            ) : (
+              /* 4 Progression Stages Visualizer (Sơ kỳ -> Đỉnh phong với ảnh ngôi sao & quy tắc gốc cho Rank 3 đến 8) */
+              <div className="space-y-3 pt-3 border-t border-border/60">
+                <div className="text-xs font-black text-muted-foreground uppercase tracking-wider flex items-center justify-between">
+                  <span>4 Tầng Tiến Trình Năng Lực</span>
+                  <span className="font-mono text-xs text-foreground/75 inline-flex items-center gap-1">
+                    <span className="inline-flex items-center gap-0.5 font-bold">
+                      1<img src="/images/star1.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                    </span>
+                    <span>Sơ kỳ</span>
+                    <span className="text-muted-foreground font-normal">→</span>
+                    <span className="inline-flex items-center gap-0.5 font-bold">
+                      4<img src="/images/star1.png" alt="star" className="w-3.5 h-3.5 object-contain inline-block -mt-0.5" />
+                    </span>
+                    <span>Đỉnh phong</span>
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  {(() => {
+                    const baseScore = activeRankData.rankNumber === 3 ? 3.0
+                      : activeRankData.rankNumber === 4 ? 4.0
+                      : activeRankData.rankNumber === 5 ? 5.0
+                      : activeRankData.rankNumber === 6 ? 6.0
+                      : activeRankData.rankNumber === 7 ? 7.0
+                      : 8.0;
+                    const nextScore = baseScore + 0.5;
+
+                    const stageCriteria = [
+                      `Overall ${baseScore.toFixed(1)}, có kỹ năng < ${baseScore.toFixed(1)}`,
+                      `Overall ${baseScore.toFixed(1)}, tất cả ≥ ${baseScore.toFixed(1)}`,
+                      `Overall ${nextScore.toFixed(1)}, còn kỹ năng ~${baseScore.toFixed(1)}`,
+                      `Overall ${nextScore.toFixed(1)}, tất cả ≥ ${nextScore.toFixed(1)}`,
+                    ];
+
+                    return PROGRESSION_STAGES.map((stage, idx) => (
+                      <div
+                        key={stage.id}
+                        className="p-3.5 rounded-2xl border border-border/80 bg-muted/30 text-center space-y-1.5 hover:border-border transition-all flex flex-col justify-between"
+                      >
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-center gap-1">
+                            <span className="inline-flex items-center gap-1 text-xs font-mono font-black px-2 py-0.5 rounded-md bg-background border border-border text-foreground shadow-2xs">
+                              <span>{stage.starCount}</span>
+                              <img
+                                src="/images/star1.png"
+                                alt="star"
+                                className="w-3.5 h-3.5 object-contain inline-block -mt-0.5"
+                              />
+                            </span>
+                          </div>
+                          <div className="font-black text-sm text-foreground">
+                            {stage.label}
+                          </div>
+                          <div className="text-[10px] font-mono uppercase text-muted-foreground">
+                            {stage.code}
+                          </div>
+                        </div>
+
+                        <div className="pt-1.5 border-t border-border/50 text-[11px] font-bold text-foreground/80 leading-tight">
+                          {stageCriteria[idx]}
+                        </div>
+
+                        <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden mt-1">
+                          <div
+                            className={cn("h-full rounded-full transition-all", activeRankData.theme.progressBar)}
+                            style={{ width: `${(idx + 1) * 25}%` }}
+                          />
+                        </div>
+                      </div>
+                    ));
+                  })()}
+                </div>
+
+                <div className="text-[11px] text-muted-foreground font-medium flex items-center gap-1.5 pt-1">
+                  <span className="font-bold text-foreground">Tiến trình năng lực:</span>
+                  <span>Sơ kỳ (X, lệch kỹ năng) → Trung kỳ (X đồng đều) → Hậu kỳ (X+0.5, lệch kỹ năng) → Đỉnh phong (X+0.5 đồng đều).</span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right Column: Key Competency Pillars */}
