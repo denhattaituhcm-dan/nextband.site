@@ -5613,8 +5613,864 @@ export const vrsMockLessons: VRSVisualLesson[] = [
         }
       }
     ]
+  },
+  {
+    id: 'builder_w2d3',
+    courseId: 'builder',
+    week: 2,
+    day: 3,
+    skill: 'speaking',
+    title: 'SPEAKING · BUỔI 3: HEALTHY LIFESTYLES & PHẢN XẠ NÓI PART 1',
+    subtitle: 'Transformation Ladder (4.0 -> 5.5), Speaking Flow Map & Cặp Âm /ɔː/ vs /uː/',
+    coreCompetency: 'Luyện phát âm chuẩn nguyên âm sau (/ɔː/, /uː/) và nguyên âm đôi (/əʊ/), làm chủ thang nâng cấp câu nói (Transformation Ladder) và mô hình 3 trạm Speaking Flow Map cho chủ đề Sức Khỏe.',
+    bridgeToHomework: {
+      promptText: 'Ghi âm 2 câu trả lời Part 1 về Unhealthy Habits và Staying Healthy trong phần Speaking Homework.',
+      targetExamId: 'exam_builder_w2d3'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 1: Transformation Ladder — Thang Nâng Cấp Câu Trả Lời Về Thói Quen Lành Mạnh',
+        pedagogicalObjective: 'Quan sát sự chuyển dịch từ câu nói cộc lốc Band 4.0 lên câu ghép mượt mà Band 5.0 và mở rộng cấu trúc học thuật Band 5.5.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng nấc thang để thấy sự tiến hóa của câu trả lời "What do you do to stay healthy?":',
+          cards: [
+            {
+              step: 1,
+              label: 'NẤC 1: TRẢ LỜI TRỰC DIỆN (DIRECT ANSWER)',
+              cognitiveFunction: '1. Nêu hành động thể thao chính kèm tần suất thực tế',
+              content: 'I often play badminton twice a week to stay healthy.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Khởi đầu chắc chắn với tần suất "twice a week" thay vì chỉ nói "I play badminton".',
+              flipCard: {
+                frontText: 'I play badminton to be healthy. (Band 4.0 cộc lốc)',
+                backText: 'I often play badminton twice a week to stay healthy. (Band 4.5 chuẩn xác)',
+                explanation: 'Thêm trạng từ tần suất "often" và cụm "twice a week" để câu nói cụ thể hơn.'
+              },
+              vowelHighlight: [
+                { word: 'sports', phonetic: '/spɔːts/', vowelSound: '/ɔː/ nguyên âm sau tròn môi' },
+                { word: 'choose', phonetic: '/tʃuːz/', vowelSound: '/uː/ nguyên âm sau chu môi' }
+              ]
+            },
+            {
+              step: 2,
+              label: 'NẤC 2: MỤC ĐÍCH & LỢI ÍCH THỂ CHẤT (PHYSICAL BENEFITS)',
+              cognitiveFunction: '2. Giải thích vì sao chọn môn này: giữ dáng & phát triển cơ bắp',
+              content: 'because it helps me stay in good shape and build muscles.',
+              bandLevel: 'Band 4.5 → 5.0',
+              pedagogyNote: 'Dùng cụm collocation đắt giá từ giáo trình: "stay in good shape" và "build muscles".',
+              flipCard: {
+                frontText: 'Because it is good for body. (Từ vựng 4.0 sơ cấp)',
+                backText: 'because it helps me stay in good shape and build muscles. (Collocation chuẩn 5.0)',
+                explanation: 'Thay cụm "good for body" bằng cặp collocation học thuật "stay in good shape" và "build muscles".'
+              },
+              vowelHighlight: [
+                { word: 'food', phonetic: '/fuːd/', vowelSound: '/uː/ ngậm chu môi dài' },
+                { word: 'focus', phonetic: '/ˈfəʊ.kəs/', vowelSound: '/əʊ/ nguyên âm đôi' }
+              ]
+            },
+            {
+              step: 3,
+              label: 'NẤC 3: MỞ RỘNG THÓI QUEN BỔ SUNG (HYDRATION ROUTINE)',
+              cognitiveFunction: '3. Bổ sung thói quen uống nước bằng liên từ liên kết chuẩn',
+              content: 'Besides, I also try to drink 2 liters of water every day by bringing along my own bottle to keep myself hydrated.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Nối ý bằng "Besides" và vận dụng cụm từ vựng "keep myself hydrated" (giữ cơ thể đủ nước).',
+              flipCard: {
+                frontText: 'And I drink 2 liter water every day. (Nói thô)',
+                backText: 'Besides, I also try to drink 2 liters of water every day to keep myself hydrated. (Band 5.5 xuất sắc)',
+                explanation: 'Dùng cấu trúc "to keep myself hydrated" bám sát 100% bài tập 2.2 trong Coursebook.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'I often play badminton twice a week to stay healthy because it helps me stay in good shape and build muscles. Besides, I also try to drink 2 liters of water every day by bringing along my own bottle to keep myself hydrated.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 2: Speaking Flow Map — Bản Đồ Dòng Chảy Về Thói Quen Xấu (Unhealthy Habit)',
+        pedagogicalObjective: 'Kích hoạt phản xạ trả lời câu hỏi hóc búa "Do you have any unhealthy habit?" theo cấu trúc 3 pha: Thừa nhận thói quen ăn nhanh → Hậu quả sức khỏe → Quyết tâm điều chỉnh.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng pha để theo dõi dòng chảy tư duy khi nói về thói quen sinh hoạt không tốt:',
+          cards: [
+            {
+              step: 1,
+              label: 'PHA 1: TRẢ LỜI TRỰC TIẾP & NGUYÊN DO (FAST FOOD & BUSY SCHEDULE)',
+              cognitiveFunction: '1. Thừa nhận thói quen ăn đồ ăn nhanh vì không có thời gian nấu',
+              content: 'Yes, I do. I used to eat a lot of fast food when I didn’t have time to cook a healthy meal.',
+              bandLevel: 'Band 4.5 → 5.0',
+              pedagogyNote: 'Dùng cấu trúc "used to + V" và mệnh đề thời gian "when I didn’t have time to cook...".',
+              flipCard: {
+                frontText: 'Yes, I eat fast food because busy. (Cộc lốc)',
+                backText: 'Yes, I do. I used to eat a lot of fast food when I didn’t have time to cook a healthy meal. (Lưu loát)',
+                explanation: 'Sử dụng câu mẫu nguyên bản trong mục 2.1 của sách.'
+              }
+            },
+            {
+              step: 2,
+              label: 'PHA 2: HẬU QUẢ VỀ SỨC KHỎE (DETERIORATING HEALTH & CALORIES)',
+              cognitiveFunction: '2. Mô tả việc sức khỏe đi xuống do nạp quá nhiều calo, chất béo và muối',
+              content: 'Gradually, my health deteriorated because I was consuming too many foods high in calories, fat, and salt.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Học từ vựng chất lượng từ giáo trình: "health deteriorated" (sức khỏe sa sút) và "high in calories, fat, and salt".',
+              flipCard: {
+                frontText: 'My body got weak because of bad food. (Từ vựng sơ sài)',
+                backText: 'Gradually, my health deteriorated because I was consuming foods high in calories, fat, and salt. (Chuẩn Band 5.5)',
+                explanation: 'Dùng động từ "deteriorated" và cấu trúc "high in calories, fat, and salt" bám sát bài điền từ 2.1.'
+              }
+            },
+            {
+              step: 3,
+              label: 'PHA 3: HÀNH ĐỘNG KHẮC PHỤC (BALANCED DIET REFLEX)',
+              cognitiveFunction: '3. Khép lại bằng mục tiêu thay đổi thói quen ăn uống cân bằng',
+              content: 'Therefore, I want to overcome this habit by following a more balanced diet.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Dùng liên từ "Therefore" và cụm "overcome this habit" (vượt qua thói quen) + "balanced diet" (chế độ ăn cân bằng).',
+              flipCard: {
+                frontText: 'So now I eat good food. (Tiếng Anh giao tiếp đơn giản)',
+                backText: 'Therefore, I want to overcome this habit by following a more balanced diet. (Band 5.5 học thuật)',
+                explanation: 'Thay thế bằng cụm diễn đạt chuẩn: overcome this habit by following a balanced diet.'
+              },
+              branchOptions: [
+                {
+                  branchName: 'THÓI QUEN THỨC KHUYA (STAY UP LATE)',
+                  content: 'I used to stay up late browsing my phone, so I try to go to bed before 11 p.m. to improve my focus.',
+                  note: 'Phương án mở rộng bám sát bài phát âm mục 1.3.'
+                },
+                {
+                  branchName: 'THÓI QUEN ĂN NHANH (FAST FOOD)',
+                  content: 'I used to eat junk food, but now I prefer home-cooked meals with plenty of green vegetables.',
+                  note: 'Phương án đồ ăn nhanh theo đúng bài mẫu 2.1.'
+                }
+              ]
+            }
+          ],
+          fullMosaicSummary: 'Yes, I do. I used to eat a lot of fast food when I didn’t have time to cook a healthy meal. Gradually, my health deteriorated because I was consuming too many foods high in calories, fat, and salt. Therefore, I want to overcome this habit by following a more balanced diet.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 3: Lexical Flip Cards — Bộ Thẻ Lật Lợi Ích Của Thói Quen Lành Mạnh (Activity 2.2)',
+        pedagogicalObjective: 'Nạp nhanh 3 cụm hành động + lợi ích thể chất từ bài tập tư duy Activity 2.2: Bơi lội, Ngủ đủ giấc và Đa dạng thực phẩm.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng thẻ để biến các cụm từ ý niệm rời rạc trong giáo trình thành câu hoàn chỉnh:',
+          cards: [
+            {
+              step: 1,
+              label: 'THẺ 1: BƠI LỘI ĐỀU ĐẶN (SWIM REGULARLY & FLEXIBILITY)',
+              cognitiveFunction: '1. Biến ý niệm "Swim regularly - improve height - more flexible" thành câu',
+              content: 'Swimming regularly not only improves my height but also makes my body much more flexible.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Dùng danh động từ "Swimming regularly" làm Chủ ngữ kết hợp cấu trúc tương quan "not only... but also...".',
+              flipCard: {
+                frontText: 'Swim regularly – improve my height – make me more flexible (Gợi ý bài tập)',
+                backText: 'Swimming regularly helps improve my posture and makes my body much more flexible. (Câu hoàn chỉnh)',
+                explanation: 'Chuyển đổi các từ khóa thành câu ghép nhịp nhàng bám sát câu hỏi 1 mục 2.2.'
+              }
+            },
+            {
+              step: 2,
+              label: 'THẺ 2: NGỦ ĐỦ GIẤC (GET ENOUGH SLEEP & PRODUCTIVITY)',
+              cognitiveFunction: '2. Biến ý niệm "Get enough sleep - stay more focused - work productive" thành câu',
+              content: 'Getting enough sleep helps me stay more focused during the day and work more productively.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Sử dụng cấu trúc "help someone do something" và đổi tính từ "productive" thành trạng từ "productively".',
+              flipCard: {
+                frontText: 'Get enough sleep – stay more focused – work productive (Gợi ý bài tập)',
+                backText: 'Getting enough sleep helps me stay more focused and work productively. (Câu chuẩn xác)',
+                explanation: 'Sửa lỗi sai dạng từ (word form) của từ "productive" thành trạng từ bổ nghĩa cho động từ "work".'
+              }
+            },
+            {
+              step: 3,
+              label: 'THẺ 3: ĂN UỐNG ĐA DẠNG (DIFFERENT KINDS OF FOOD & NUTRIENTS)',
+              cognitiveFunction: '3. Biến ý niệm "Eat different foods - provide - different nutrients" thành câu',
+              content: 'Eating different kinds of fresh foods provides my body with essential nutrients and vitamins.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Làm chủ cấu trúc giới từ: "provide someone with something" (cung cấp cho ai cái gì).',
+              flipCard: {
+                frontText: 'Eat different kinds of foods – provide me – different nutrients (Gợi ý bài tập)',
+                backText: 'Eating different kinds of foods provides my body with essential nutrients to stay strong. (Câu Band 5.5)',
+                explanation: 'Bổ sung giới từ "with" chuẩn xác cho động từ "provide" theo câu hỏi 3 mục 2.2.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'To maintain a healthy lifestyle, swimming regularly makes my body more flexible, getting enough sleep keeps me focused throughout the day, and eating different kinds of food provides essential nutrients for my body.'
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w3d1',
+    courseId: 'builder',
+    week: 3,
+    day: 1,
+    skill: 'writing',
+    title: 'WRITING · BUỔI 1: XÂY DỰNG ĐOẠN VĂN THÂN BÀI (BODY PARAGRAPH)',
+    subtitle: 'Idea Tree, Mối Quan Hệ Nhân Quả (Lead to vs Stem from) & Phát Triển Supporting Idea',
+    coreCompetency: 'Làm chủ cấu trúc đoạn thân bài IELTS Writing Task 2 (Topic Sentence → Core Idea → Reason/Result), kiểm soát chiều nhân quả (Cause → Effect vs Effect ← Cause) và triển khai supporting idea trọn vẹn.',
+    bridgeToHomework: {
+      promptText: 'Viết hoàn chỉnh 1 đoạn thân bài (Body Paragraph) cho đề bài Prevention vs Treatment trong phần Homework Tuần 3 Day 1.',
+      targetExamId: 'exam_builder_w3d1'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'syntax_anatomy',
+        title: 'Chặng 1: Idea Tree — Phân Rã Kiến Trúc Đoạn Thân Bài (Core Idea → Result)',
+        pedagogicalObjective: 'Nhận diện dòng chảy logic của 1 đoạn thân bài: Bắt đầu từ Luận điểm chính (Core Idea), sau đó giải thích Cơ chế (Mechanism) và kết lại bằng Hệ quả xã hội (Result).',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Bấm phân tích để quan sát các mắt xích cấu tạo nên lập luận kinh tế của việc phòng bệnh:',
+          mode: 'build',
+          tokens: [
+            { id: 't1', text: 'Firstly, investing in disease prevention', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'is more cost-effective than', role: 'fv_core', colorClass: 'orange' },
+            { id: 't3', text: 'treating existing patients', role: 'object', colorClass: 'blue' },
+            { id: 't4', text: 'because it reduces the rate of preventable diseases, saving huge medical budgets.', role: 'modifier', colorClass: 'purple' }
+          ],
+          slots: [
+            { slotId: 's1', acceptedRoles: ['subject'], label: 'LUẬN ĐIỂM CHÍNH (CORE IDEA S)' },
+            { slotId: 's2', acceptedRoles: ['fv_core'], label: 'ĐỘNG TỪ TRỌNG TÂM (CORE FV)' },
+            { slotId: 's3', acceptedRoles: ['object'], label: 'ĐỐI TƯỢNG SO SÁNH (TARGET OBJECT)' },
+            { slotId: 's4', acceptedRoles: ['modifier'], label: 'HỆ QUẢ KINH TẾ (RESULT / IMPACT MODIFIER)' }
+          ]
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'productive_failure',
+        title: 'Chặng 2: Break & Repair 1 — Khắc Phục Xung Đột Chiều Nhân Quả (Lead to vs Stem from)',
+        pedagogicalObjective: 'Phát hiện và chỉnh sửa lỗi đảo ngược chiều nguyên nhân - kết quả trong câu luận điểm học thuật.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Click vào cụm liên kết đang làm đảo ngược chiều logic Nguyên nhân → Kết quả trong câu:',
+          mode: 'break_and_repair',
+          tokens: [
+            { id: 't1', text: 'Severe traffic congestion in big cities', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'leads to', role: 'fv_core', colorClass: 'red' },
+            { id: 't3', text: 'rapid population growth and urbanization.', role: 'object', colorClass: 'blue' }
+          ],
+          collisionTarget: {
+            conflictingTokenIds: ['t1', 't2'],
+            errorMessage: 'LỖI ĐẢO CHIỀU NHÂN QUẢ (DIRECTIONAL ERROR): "Dân số tăng nhanh" là NGUYÊN NHÂN, còn "Kẹt xe" là HỆ QUẢ. "Lead to" (dẫn đến) chỉ dùng theo chiều Cause → Effect!',
+            repairOptions: [
+              {
+                id: 'opt_stem_from',
+                action: 'morph',
+                targetTokenId: 't2',
+                resultText: 'stems from',
+                explanation: 'Đổi thành "stems from" (bắt nguồn từ): Cấu trúc đúng Effect ← Cause: "Traffic congestion stems from rapid population growth."'
+              }
+            ]
+          }
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'productive_failure',
+        title: 'Chặng 3: Break & Repair 2 — Khắc Phục Lỗi Liệt Kê Rỗng Ý (Empty Claim Collision)',
+        pedagogicalObjective: 'Học cách gắn kết quả thực tế (Impact) vào luận điểm thay vì chỉ nêu nhận định chung chung thiếu sức thuyết phục.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Click vào nhận định rỗng ý để bổ sung hệ quả cụ thể về năng suất lao động xã hội:',
+          mode: 'break_and_repair',
+          tokens: [
+            { id: 't1', text: 'Secondly, a healthier population', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'is always good,', role: 'fv_core', colorClass: 'red' },
+            { id: 't3', text: 'which makes people happy.', role: 'modifier', colorClass: 'gray' }
+          ],
+          collisionTarget: {
+            conflictingTokenIds: ['t1', 't2'],
+            errorMessage: 'LỖI LIỆT KÊ RỖNG Ý (EMPTY CLAIM): "is always good" quá chung chung và không đạt chuẩn học thuật Writing Task 2. Cần liên kết với Năng suất làm việc (Productivity)!',
+            repairOptions: [
+              {
+                id: 'opt_upgrade_impact',
+                action: 'morph',
+                targetTokenId: 't2',
+                resultText: 'leads to a more productive workforce and sustainable economic growth.',
+                explanation: 'Nâng cấp chuẩn giáo trình: "Secondly, a healthier population leads to a more productive workforce and sustainable economic growth."'
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w3d2',
+    courseId: 'builder',
+    week: 3,
+    day: 2,
+    skill: 'reading',
+    title: 'READING · BUỔI 2: MAIN IDEA & DETAILS (CAMBRIDGE 10 TEST 3)',
+    subtitle: 'Autumn Leaves: Anchor Laser Định Vị Đoạn, Chuỗi Bằng Chứng & Bàn Cân Nghịch Lý',
+    coreCompetency: 'Làm chủ dạng bài Matching Information to Paragraphs bằng kỹ thuật quét Anchor Laser, lần vết điền từ tóm tắt Đoạn H và dùng Logic Scale hóa giải bẫy nghịch lý (Paradoxical) T/F/NG.',
+    bridgeToHomework: {
+      promptText: 'Hoàn thành câu hỏi 1-13 bài đọc Autumn Leaves trong Reading Homework Tuần 3 Day 2.',
+      targetExamId: 'exam_builder_w3d2'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'verification_scale',
+        title: 'Chặng 1: Block Reading Map + Anchor Laser — Định Vị Thông Tin Đoạn Văn (Matching Info)',
+        pedagogicalObjective: 'Huấn luyện kỹ thuật khóa mục tiêu: Quét từ khóa "substance responsible for red colouration" để bắn tia laser trúng ngay Đoạn C chứa định nghĩa Anthocyanins.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Bấm đối chiếu để định vị đoạn văn chứa mô tả chất hóa học tạo nên màu đỏ của lá mùa thu:',
+          passageContext: {
+            title: 'Cambridge 10 Test 3 Passage 3: Autumn Leaves',
+            paragraphs: [
+              {
+                id: 'pB',
+                label: 'Đoạn B',
+                text: 'Summer leaves are green because they are full of chlorophyll, the molecule that captures sunlight and converts that energy into new building materials for the tree... As chlorophyll is depleted, other colours begin to be revealed.'
+              },
+              {
+                id: 'pC',
+                label: 'Đoạn C',
+                text: 'The source of the red is widely known: it is created by anthocyanins, water-soluble plant pigments reflecting the red to blue range of the visible spectrum. They belong to a class of sugar-based chemical compounds also known as flavonoids.'
+              }
+            ],
+            targetParagraphId: 'pC',
+            targetSnippet: 'The source of the red is widely known: it is created by anthocyanins, water-soluble plant pigments...'
+          },
+          statement: {
+            rawText: 'Question 1: A description of the substance responsible for the red colouration of leaves.',
+            deconstructedVariables: [
+              { name: 'X_desc', text: 'description of the substance' },
+              { name: 'Y_cause', text: 'responsible for' },
+              { name: 'Z_target', text: 'red colouration of leaves' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'The source of the red is widely known: it is created by anthocyanins, water-soluble plant pigments...',
+            targetVariables: [
+              { matchingName: 'X_desc', text: 'water-soluble plant pigments / chemical compounds flavonoids' },
+              { matchingName: 'Y_cause', text: 'created by / the source of' },
+              { matchingName: 'Z_target', text: 'the red' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'Tia Anchor Laser: Câu hỏi tìm "substance responsible for red" khớp 100% với Đoạn C: "source of the red... created by anthocyanins, water-soluble plant pigments". Đoạn đáp án: C.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'verification_scale',
+        title: 'Chặng 2: Evidence Chain — Chuỗi Lần Vết 4 Mắt Xích Điền Từ Tóm Tắt (Summary Completion)',
+        pedagogicalObjective: 'Lần vết câu tóm tắt giả thuyết Light Screen ở Đoạn H để chọn chính xác 1 từ duy nhất chỉ hướng nắng.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Thiết lập chuỗi bằng chứng so khớp câu tóm tắt với đoạn trích Đoạn H:',
+          passageContext: {
+            title: 'Cambridge 10 Test 3 Passage 3: Autumn Leaves',
+            paragraphs: [
+              {
+                id: 'pH',
+                label: 'Đoạn H (Dòng 1-4)',
+                text: 'Even if you had never suspected that this is what was going on when leaves turn red, there are clues out there. One is straightforward: on many trees, the leaves that are the reddest are those on the side of the tree which gets most sun. Not only that, but the red is brighter on the upper side of the leaf.'
+              }
+            ],
+            targetParagraphId: 'pH',
+            targetSnippet: '...leaves that are the reddest are those on the side of the tree which gets most sun.'
+          },
+          statement: {
+            rawText: 'Question 6 (Summary): The most vividly coloured red leaves are found on the side of the tree facing the [sun].',
+            deconstructedVariables: [
+              { name: 'A_intensity', text: 'most vividly coloured red leaves' },
+              { name: 'B_location', text: 'found on the side of the tree' },
+              { name: 'C_target_gap', text: 'facing the [sun]', isTrapWord: false }
+            ]
+          },
+          passageEvidence: {
+            rawText: '...leaves that are the reddest are those on the side of the tree which gets most sun.',
+            targetVariables: [
+              { matchingName: 'A_intensity', text: 'the reddest leaves' },
+              { matchingName: 'B_location', text: 'on the side of the tree' },
+              { matchingName: 'C_target_gap', text: 'which gets most sun' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'Cầu nối Paraphrase: "most vividly coloured red leaves" = "the reddest leaves", "facing the..." = "which gets most...". Từ duy nhất đúng quy định là "sun".'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'verification_scale',
+        title: 'Chặng 3: Logic Verification Scale — Hóa Giải Bẫy Nghịch Lý (Question 11: TRUE)',
+        pedagogicalObjective: 'Dùng đĩa cân logic để giải mã từ đồng nghĩa học thuật: "paradoxical" (nghịch lý) tương đương với "contradict what is known" để khẳng định đáp án TRUE.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'So khớp giả thuyết Light Screen với nhận thức ban đầu về chất diệp lục (Chlorophyll):',
+          passageContext: {
+            title: 'Cambridge 10 Test 3 Passage 3: Autumn Leaves',
+            paragraphs: [
+              {
+                id: 'pF',
+                label: 'Đoạn F (Dòng 1-5)',
+                text: 'Perhaps the most plausible suggestion... is the theory known as the ‘light screen’ hypothesis. It sounds paradoxical, because the idea behind this hypothesis is that the red pigment is made in autumn leaves to protect chlorophyll, the light-absorbing chemical, from too much light. Why does chlorophyll need protection when it is the natural world’s supreme light absorber?'
+              }
+            ],
+            targetParagraphId: 'pF',
+            targetSnippet: 'It sounds paradoxical, because the idea behind this hypothesis is that the red pigment is made... to protect chlorophyll... from too much light.'
+          },
+          statement: {
+            rawText: "Question 11: The 'light screen' hypothesis would initially seem to contradict what is known about chlorophyll.",
+            deconstructedVariables: [
+              { name: 'M_subject', text: "'light screen' hypothesis" },
+              { name: 'N_contrast', text: 'initially seem to contradict', isTrapWord: false },
+              { name: 'P_knowledge', text: 'what is known about chlorophyll (supreme light absorber)' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'It sounds paradoxical, because the idea behind this hypothesis is that the red pigment is made in autumn leaves to protect chlorophyll, the light-absorbing chemical, from too much light.',
+            targetVariables: [
+              { matchingName: 'M_subject', text: "'light screen' hypothesis" },
+              { matchingName: 'N_contrast', text: 'sounds paradoxical (nghe có vẻ ngược đời / mâu thuẫn)' },
+              { matchingName: 'P_knowledge', text: 'chlorophyll is supreme light absorber (chất hấp thụ ánh sáng đỉnh cao lại cần được che chắn ánh sáng)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'Bàn cân Logic Scale: "paradoxical" đồng nghĩa 100% với "seem to contradict what is known" (nghe có vẻ nghịch lý/mâu thuẫn với bản chất hấp thụ ánh sáng của diệp lục). Cả hai đĩa cân thăng bằng hoàn hảo -> Đáp án: TRUE.'
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w3d3',
+    courseId: 'builder',
+    week: 3,
+    day: 3,
+    skill: 'speaking',
+    title: 'SPEAKING · BUỔI 3: MOVIES & PHẢN XẠ THẢO LUẬN SỞ THÍCH',
+    subtitle: 'Transformation Ladder (Phim Thích vs Ghét), Speaking Flow Map & Movie Buff Collocations',
+    coreCompetency: 'Luyện chuẩn các phụ âm cơ bản (/s/, /z/, /p/, /b/, /k/, /g/), làm chủ thang nâng cấp Transformation Ladder cho thể loại phim và vận dụng Speaking Flow Map để so sánh rạp chiếu phim vs xem ở nhà.',
+    bridgeToHomework: {
+      promptText: 'Ghi âm bài nói mô tả thể loại phim yêu thích và so sánh Cinema vs Home trong Speaking Homework Tuần 3 Day 3.',
+      targetExamId: 'exam_builder_w3d3'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 1: Transformation Ladder — Thang Nâng Cấp Câu Trả Lời Về Thể Loại Phim (Part 1)',
+        pedagogicalObjective: 'Quan sát sự tiến hóa của câu trả lời về thể loại phim thích nhất (Korean romance) và ghét nhất (Sci-fi) từ Band 4.0 lên 5.0 và 5.5.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng nấc thang để xem cách mở rộng câu nói từ rời rạc lên chuẩn học thuật:',
+          cards: [
+            {
+              step: 1,
+              label: 'NẤC 1: NÊU THỂ LOẠI YÊU THÍCH (MASSIVE FAN OF ROMANCE)',
+              cognitiveFunction: '1. Khởi đầu với thể loại yêu thích và lý do cảm xúc ngọt ngào',
+              content: 'I am a massive fan of Korean romance series because they have sweet moments and are very entertaining.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Nâng cấp từ "I like Korean movies" lên cụm chuẩn "I am a massive fan of Korean romance series".',
+              flipCard: {
+                frontText: 'I like Korean movie because romantic. (Band 4.0 nói cộc)',
+                backText: 'I am a massive fan of Korean romance series because they have sweet moments. (Band 4.5)',
+                explanation: 'Dùng cụm "a massive fan of" và tính từ "entertaining" đúng theo bài tập điền từ 2.1.'
+              },
+              vowelHighlight: [
+                { word: 'series', phonetic: '/ˈsɪə.riːz/', vowelSound: '/s/ và /z/ cặp phụ âm xát' },
+                { word: 'crispy', phonetic: '/ˈkrɪs.pi/', vowelSound: '/k/ và /p/ phụ âm bật hơi' }
+              ]
+            },
+            {
+              step: 2,
+              label: 'NẤC 2: DẪN CHỨNG DIỄN VIÊN & PHIM THỰC TẾ (STARRING ACTOR)',
+              cognitiveFunction: '2. Bổ sung dẫn chứng phim cụ thể và diễn viên đóng chính',
+              content: 'Recently, I watched Boys Over Flowers which stars Lee Min Ho, and I really enjoyed the acting.',
+              bandLevel: 'Band 4.5 → 5.0',
+              pedagogyNote: 'Vận dụng động từ "stars" (có sự tham gia đóng chính của) từ đoạn hội thoại giữa Nam và Lan.',
+              flipCard: {
+                frontText: 'I watch Boys Over Flowers with Lee Min Ho. (Nói đơn giản)',
+                backText: 'Recently, I watched Boys Over Flowers which stars Lee Min Ho, and I really enjoyed it. (Band 5.0)',
+                explanation: 'Sử dụng mệnh đề quan hệ "which stars [Actor]" tạo liên kết câu tự nhiên.'
+              }
+            },
+            {
+              step: 3,
+              label: 'NẤC 3: MỞ RỘNG THỂ LOẠI GHÉT NHẤT (LEAST FAVORITE & TOO COMPLEX)',
+              cognitiveFunction: '3. Chuyển ý mượt mà sang thể loại không thích và giải thích độ khó của cốt truyện',
+              content: 'In contrast, my least favorite genre is sci-fi because I find it hard to follow the details about technology, and it is just too complex to understand.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Dùng liên từ tương phản "In contrast", cụm "my least favorite genre" và cấu trúc "find it hard to follow".',
+              flipCard: {
+                frontText: 'I hate sci-fi. It is difficult for me. (Band 4.0)',
+                backText: 'In contrast, my least favorite genre is sci-fi because I find it hard to follow the complex details. (Band 5.5)',
+                explanation: 'Cấu trúc "find it hard to follow" và tính từ "complex" bám sát 100% mẫu câu mục 2.1.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'I am a massive fan of Korean romance series because they have sweet moments and are very entertaining. Recently, I watched Boys Over Flowers which stars Lee Min Ho, and I really enjoyed it. In contrast, my least favorite genre is sci-fi because I find it hard to follow the details about science, and it is just too complex to understand.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 2: Speaking Flow Map — Bản Đồ So Sánh Trải Nghiệm (Cinema vs At Home)',
+        pedagogicalObjective: 'Kích hoạt phản xạ phân tích 2 chiều cho câu hỏi kinh điển: "Do you prefer watching movies at home or at the cinema?"',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng pha để theo dõi dòng chảy so sánh giữa tính tiện lợi kinh tế và trải nghiệm rạp:',
+          cards: [
+            {
+              step: 1,
+              label: 'PHA 1: THỰC TẾ Ở NHÀ (CATCH UP ON RELEASES & SAVE MONEY)',
+              cognitiveFunction: '1. Nêu thói quen xem phim tại nhà để tiết kiệm chi phí',
+              content: 'To be honest, I usually stay home to catch up on new releases because it helps me save money.',
+              bandLevel: 'Band 4.5 → 5.0',
+              pedagogyNote: 'Làm chủ cụm từ vựng hay từ bài đối thoại: "catch up on new releases" (xem các phim mới ra).',
+              flipCard: {
+                frontText: 'I watch movie at home to save money. (Cộc lốc)',
+                backText: 'I usually stay home to catch up on new releases to save money. (Chuẩn bài học 5.0)',
+                explanation: 'Dùng cụm "catch up on new releases" trích xuất trực tiếp từ lời thoại của bạn Lan.'
+              }
+            },
+            {
+              step: 2,
+              label: 'PHA 2: TRẢI NGHIỆM TẠI RẠP (LARGER SCREEN & SOUND QUALITY)',
+              cognitiveFunction: '2. Nêu lý do vì sao những dịp đặc biệt vẫn muốn ra rạp thưởng thức',
+              content: 'However, I prefer going to the cinema for blockbusters because it offers a much larger screen and better sound quality.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Dùng cụm so sánh "offers a larger screen and better sound quality" từ Coursebook.',
+              flipCard: {
+                frontText: 'Cinema has big screen and loud sound. (Tiếng Anh bồi)',
+                backText: 'Going to the cinema offers a larger screen and superior sound quality. (Band 5.5)',
+                explanation: 'Dùng động từ "offers" kết hợp danh từ "sound quality" để nâng tầm câu nói.'
+              },
+              branchOptions: [
+                {
+                  branchName: 'ƯU TIÊN RẠP CHIẾU (CINEMA ENTHUSIAST)',
+                  content: 'I definitely prefer the cinema because the immersive atmosphere and giant screen make the movie much more exciting.',
+                  note: 'Dành cho học viên thích trải nghiệm rạp.'
+                },
+                {
+                  branchName: 'ƯU TIÊN Ở NHÀ (HOME COMFORT)',
+                  content: 'I prefer watching at home because I can pause anytime and enjoy comfortable snacks on my couch.',
+                  note: 'Dành cho học viên thích sự thoải mái ở nhà.'
+                }
+              ]
+            }
+          ],
+          fullMosaicSummary: 'I usually stay home to catch up on new releases to save money. However, whenever there is a major blockbuster, I prefer going to the cinema because it offers a much larger screen and much better sound quality.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 3: Lexical Flip Cards — Bộ Thẻ Lật Collocation Phim Ảnh (Activity 2.2 & 2.3)',
+        pedagogicalObjective: 'Thẩm thấu và nạp nhanh 3 cụm từ vựng đắt giá từ bài đọc đối thoại: Movie buff, Challenging roles và Stars in.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng thẻ để biến cách diễn đạt thông thường thành Collocation IELTS tự nhiên:',
+          cards: [
+            {
+              step: 1,
+              label: 'THẺ 1: NGƯỜI SÀNH PHIM / MỌT PHIM (A REAL MOVIE BUFF)',
+              cognitiveFunction: '1. Khẳng định niềm đam mê xem phim bằng danh từ học thuật',
+              content: 'You have no idea how much I love movies; I am a real movie buff and never miss good titles.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Từ vựng "movie buff" (/ˈmuː.vi bʌf/) trong giáo trình dùng để chỉ người cực kỳ say mê phim ảnh.',
+              flipCard: {
+                frontText: 'I love movies very much. (Band 4.0)',
+                backText: "I'm a real movie buff and I don't want to miss any good movies. (Band 5.0+)",
+                explanation: 'Cụm từ "a real movie buff" là từ bản xứ đắt giá trích từ lời thoại bạn Lan.'
+              }
+            },
+            {
+              step: 2,
+              label: 'THẺ 2: VAI DIỄN ĐẦY THỬ THÁCH (INTERESTING & CHALLENGING ROLES)',
+              cognitiveFunction: '2. Khen ngợi diễn viên yêu thích nhờ những vai diễn đột phá',
+              content: 'My favorite actress is Ngo Thanh Van because she always chooses interesting and challenging roles.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Cụm "challenging roles" (những vai diễn đầy thử thách) bám sát lời thoại đánh giá diễn viên.',
+              flipCard: {
+                frontText: 'She is good actor and plays difficult parts. (Từ vựng cơ bản)',
+                backText: 'She is a talented actress who always takes on challenging roles. (Chuẩn Band 5.5)',
+                explanation: 'Kết hợp "talented actress" và "challenging roles" theo mẫu đối thoại mục 2.2.'
+              }
+            },
+            {
+              step: 3,
+              label: 'THẺ 3: THAM GIA ĐÓNG VAI CHÍNH (STARS IN ACTION MOVIES)',
+              cognitiveFunction: '3. Giới thiệu dòng phim mà diễn viên sở trường',
+              content: 'Keanu Reeves stars in many famous action movies, and he is my all-time favorite actor.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Dùng cấu trúc "stars in [movie type]" thay cho cách nói vụng về "he is the main actor of".',
+              flipCard: {
+                frontText: 'He is the main character in action films. (Cách nói vụng)',
+                backText: 'He stars in many action movies and he is my all-time favorite actor. (Chuẩn giáo trình)',
+                explanation: 'Động từ "stars in" trích xuất trực tiếp từ lời thoại của Nam về phim John Wick.'
+              }
+            }
+          ],
+          fullMosaicSummary: "As a real movie buff, I love watching movies with talented actors who take on challenging roles. My favorite actor stars in thrilling action films that keep audiences completely hooked."
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w4d1',
+    courseId: 'builder',
+    week: 4,
+    day: 1,
+    skill: 'writing',
+    title: 'WRITING · BUỔI 1: LINKING DEVICES & KỸ THUẬT NỐI Ý (THIS / DOING SO)',
+    subtitle: 'Sentence X-Ray, Nén Hành Động bằng DOING SO & Chỉnh Sửa Va Chạm Liên Từ',
+    coreCompetency: 'Làm chủ kỹ thuật viết Topic Sentence cân đối (lợi ích/tác hại), vận dụng liên từ chuyển tiếp linh hoạt và sử dụng kỹ thuật nén ý nâng cao bằng đại từ THIS và DOING SO.',
+    bridgeToHomework: {
+      promptText: 'Hoàn thiện 5 câu luyện tập liên từ và viết topic sentence trong Writing Homework Tuần 4 Day 1.',
+      targetExamId: 'exam_builder_w4d1'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'syntax_anatomy',
+        title: 'Chặng 1: Sentence X-Ray — Kỹ Thuật Nén Hành Động Bằng "DOING SO"',
+        pedagogicalObjective: 'Quan sát cơ chế nén toàn bộ cụm hành vi dài "investing in renewable energy" thành đại từ hành động "doing so" làm chủ ngữ cho mệnh đề chỉ kết quả.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Bấm phân tích để quan sát cách cấu trúc "doing so" thay thế cho cả một cụm hành động phía trước:',
+          mode: 'build',
+          tokens: [
+            { id: 't1', text: 'Governments should invest in renewable energy', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'because', role: 'connector', colorClass: 'purple' },
+            { id: 't3', text: 'doing so', role: 'subject', colorClass: 'orange' },
+            { id: 't4', text: 'helps reduce carbon emissions effectively.', role: 'fv_core', colorClass: 'blue' }
+          ],
+          slots: [
+            { slotId: 's1', acceptedRoles: ['subject'], label: 'MỆNH ĐỀ HÀNH ĐỘNG GỐC (ACTION CLAUSE)' },
+            { slotId: 's2', acceptedRoles: ['connector'], label: 'LIÊN TỪ LOGIC (REASON CONNECTOR)' },
+            { slotId: 's3', acceptedRoles: ['subject'], label: 'ĐẠI TỪ NÉN HÀNH ĐỘNG (DOING SO)' },
+            { slotId: 's4', acceptedRoles: ['fv_core'], label: 'KẾT QUẢ MÔI TRƯỜNG (ENVIRONMENTAL RESULT)' }
+          ]
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'productive_failure',
+        title: 'Chặng 2: Break & Repair 1 — Va Chạm Liên Từ Chuyển Tiếp (In Addition vs However)',
+        pedagogicalObjective: 'Phát hiện sự xung đột logic khi dùng liên từ bổ sung "In addition" để nối một ý trái ngược (mặt tiêu cực của du lịch).',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Click vào liên từ đang làm xung đột chiều logic giữa lợi ích và bất lợi trong câu bên dưới:',
+          mode: 'break_and_repair',
+          tokens: [
+            { id: 't1', text: 'Travelling helps people extend and deepen their knowledge about other places.', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'In addition,', role: 'connector', colorClass: 'red' },
+            { id: 't3', text: 'doing so may sometimes cause cultural tension', role: 'fv_core', colorClass: 'orange' },
+            { id: 't4', text: 'between tourists and local residents.', role: 'modifier', colorClass: 'blue' }
+          ],
+          collisionTarget: {
+            conflictingTokenIds: ['t1', 't2'],
+            errorMessage: 'LỖI XUNG ĐỘT LOGIC (CONNECTOR CONFLICT): Vế 1 là LỢI ÍCH (deepen knowledge), vế 2 là BẤT LỢI (cultural tension). Dùng "In addition" (thêm vào đó) là sai hoàn toàn logic chuyển ý!',
+            repairOptions: [
+              {
+                id: 'opt_however',
+                action: 'morph',
+                targetTokenId: 't2',
+                resultText: 'However,',
+                explanation: 'Đổi thành "However," (Tuy nhiên): Khi chuyển từ mặt lợi sang mặt hại, bắt buộc dùng liên từ tương phản để báo hiệu sự đối lập.'
+              }
+            ]
+          }
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'productive_failure',
+        title: 'Chặng 3: Break & Repair 2 — Chỉnh Sửa Câu Chủ Đề Lệch Trọng Tâm (Topic Sentence Misalignment)',
+        pedagogicalObjective: 'Khắc phục lỗi câu chủ đề nói về "Lợi ích" trong khi toàn bộ thân bài bên dưới phân tích "Tác hại của việc lạm dụng điện thoại".',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Click vào câu chủ đề đang lệch hướng so với các dẫn chứng về tác hại công nghệ bên dưới:',
+          mode: 'break_and_repair',
+          tokens: [
+            { id: 't1', text: 'Modern technology offers several benefits to society,', role: 'subject', colorClass: 'red' },
+            { id: 't2', text: 'such as improved communication and efficiency.', role: 'modifier', colorClass: 'purple' },
+            { id: 't3', text: 'However, people now talk less face-to-face and feel isolated because of their smartphones.', role: 'modifier', colorClass: 'blue' }
+          ],
+          collisionTarget: {
+            conflictingTokenIds: ['t1', 't3'],
+            errorMessage: 'LỖI LỆCH HƯỚNG CÂU CHỦ ĐỀ (MISALIGNMENT): Nội dung đoạn văn chứng minh người ta ít nói chuyện trực tiếp và bị kiệt sức vì điện thoại. Câu chủ đề không thể là "offers several benefits"!',
+            repairOptions: [
+              {
+                id: 'opt_realign_topic',
+                action: 'morph',
+                targetTokenId: 't1',
+                resultText: 'The overuse of modern technology causes many problems for modern society,',
+                explanation: 'Căn chỉnh câu chủ đề bám sát bài tập mục 1: "The overuse of modern technology causes many problems for modern society, like less talking between people and spending too much time on phones."'
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w4d2',
+    courseId: 'builder',
+    week: 4,
+    day: 2,
+    skill: 'reading',
+    title: 'READING · BUỔI 2: ĐỌC CÓ MỤC TIÊU (CAMBRIDGE 16 TEST 2)',
+    subtitle: 'The White Horse of Uffington: Logic Verification Scale & Chuỗi Bằng Chứng Niên Đại',
+    coreCompetency: 'Làm chủ kỹ thuật đọc có mục tiêu định trước (Reading with a Goal), phân biệt ranh giới giữa Agreement vs Controversy (FALSE) và kiểm soát bẫy quan hệ nhân quả không có thật (NOT GIVEN).',
+    bridgeToHomework: {
+      promptText: 'Hoàn thành câu hỏi 1-13 bài đọc The White Horse of Uffington trong Reading Homework Tuần 4 Day 2.',
+      targetExamId: 'exam_builder_w4d2'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'verification_scale',
+        title: 'Chặng 1: Logic Verification Scale — Bàn Cân Phán Quyết "Đồng Thuận vs Tranh Cãi" (Question 4: FALSE)',
+        pedagogicalObjective: 'Huấn luyện nhận diện mâu thuẫn trực tiếp giữa "have come to an agreement" và "more controversial / historians disagree" để kết luận FALSE.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'So khớp tuyên bố về sự đồng thuận của các sử gia với bằng chứng văn bản Đoạn 2:',
+          passageContext: {
+            title: 'Cambridge 16 Test 2 Passage 1: The White Horse of Uffington',
+            paragraphs: [
+              {
+                id: 'p2',
+                label: 'Đoạn 2 (Dòng 3-7)',
+                text: 'More controversial is the date of the enigmatic Long Man of Wilmington in Sussex. While many historians are convinced the figure is prehistoric, others believe that it was the work of an artistic monk from a nearby priory and was created between the 11th and 15th centuries.'
+              }
+            ],
+            targetParagraphId: 'p2',
+            targetSnippet: 'More controversial is the date of the enigmatic Long Man of Wilmington... While many historians are convinced... others believe...'
+          },
+          statement: {
+            rawText: 'Question 4: Historians have come to an agreement about the origins of the Long Man of Wilmington.',
+            deconstructedVariables: [
+              { name: 'X_actors', text: 'Historians' },
+              { name: 'Y_action', text: 'have COME TO AN AGREEMENT', isTrapWord: true },
+              { name: 'Z_subject', text: 'origins of the Long Man of Wilmington' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'More controversial is the date... While many historians are convinced the figure is prehistoric, others believe that it was the work of an artistic monk...',
+            targetVariables: [
+              { matchingName: 'X_actors', text: 'historians / others' },
+              { matchingName: 'Y_action', text: 'MORE CONTROVERSIAL (tranh cãi gay gắt, người nói thời tiền sử, người nói thời trung cổ)' },
+              { matchingName: 'Z_subject', text: 'origins of the Long Man of Wilmington' }
+            ]
+          },
+          expectedRelation: 'contradiction',
+          verdict: 'FALSE',
+          pedagogicalInsight: 'Mâu thuẫn logic trực diện: Câu hỏi tuyên bố "các sử gia đã đạt được thỏa thuận" (come to an agreement), trong khi bài đọc nêu rõ nguồn gốc bức hình là "tranh cãi gay gắt" (more controversial - ý kiến chia rẽ). Hai bên mâu thuẫn -> Phán quyết: FALSE.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'verification_scale',
+        title: 'Chặng 2: Logic Verification Scale — Bàn Cân Phán Quyết Bẫy Nhân Quả (Question 8: NOT GIVEN)',
+        pedagogicalObjective: 'Phát hiện bẫy suy diễn nguyên nhân: Bài đọc nhắc đến cả "sự nổi tiếng" lẫn "kích thước khổng lồ" nhưng KHÔNG liên kết nhân quả "nổi tiếng là do kích thước".',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Kiểm tra xem tác giả có khẳng định sự nổi tiếng bắt nguồn từ kích thước hay không:',
+          passageContext: {
+            title: 'Cambridge 16 Test 2 Passage 1: The White Horse of Uffington',
+            paragraphs: [
+              {
+                id: 'p2',
+                label: 'Đoạn 2 (Dòng 1-3)',
+                text: 'The most famous of these figures is perhaps also the most mysterious – the Uffington White Horse in Oxfordshire.'
+              },
+              {
+                id: 'p5',
+                label: 'Đoạn 5 (Dòng 4-6)',
+                text: 'Indeed on a clear day the carving can be seen from up to 30 km away.'
+              }
+            ],
+            targetParagraphId: 'p2',
+            targetSnippet: 'The most famous of these figures is perhaps also the most mysterious – the Uffington White Horse...'
+          },
+          statement: {
+            rawText: 'Question 8: The fame of the Uffington White Horse is due to its size.',
+            deconstructedVariables: [
+              { name: 'A_fame', text: 'The fame of the Uffington White Horse' },
+              { name: 'B_cause_trap', text: 'IS DUE TO (nguyên nhân là do)', isTrapWord: true },
+              { name: 'C_size', text: 'its size' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'The most famous of these figures is perhaps also the most mysterious... on a clear day the carving can be seen from up to 30 km away.',
+            targetVariables: [
+              { matchingName: 'A_fame', text: 'The most famous of these figures' },
+              { matchingName: 'B_cause_trap', text: 'KHOẢNG TRỐNG DỮ LIỆU: Bài đọc KHÔNG hề giải thích nguyên nhân vì sao nó nổi tiếng' },
+              { matchingName: 'C_size', text: 'can be seen from 30 km away' }
+            ]
+          },
+          expectedRelation: 'no_evidence',
+          verdict: 'NOT GIVEN',
+          pedagogicalInsight: 'Bẫy quy kết nguyên nhân (False Causality Trap): Bài đọc có nhắc đến "famous" (nổi tiếng) và việc nhìn thấy từ 30km, nhưng hoàn toàn KHÔNG có mối nối nhân quả "is due to its size". Đĩa cân bị khuyết dữ kiện -> NOT GIVEN.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'verification_scale',
+        title: 'Chặng 3: Evidence Chain — Chuỗi Lần Vết 4 Mắt Xích Điền Từ Note Completion (Question 11)',
+        pedagogicalObjective: 'Lần vết tọa độ phân tích niên đại bằng phương pháp OSL để điền chính xác 1 từ duy nhất chỉ vật chất được xét nghiệm.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Thiết lập chuỗi bằng chứng xác định chất liệu được phân tích niên đại ở Đoạn 7:',
+          passageContext: {
+            title: 'Cambridge 16 Test 2 Passage 1: The White Horse of Uffington',
+            paragraphs: [
+              {
+                id: 'p7',
+                label: 'Đoạn 7 (Dòng 1-4)',
+                text: 'However, in 1995 Optically Stimulated Luminescence (OSL) testing was carried out by the Oxford Archaeological Unit on soil from two of the lower layers of the horse’s body, and from another cut near the base. The result was a date for the horse’s construction somewhere between 1400 and 600 BCE...'
+              }
+            ],
+            targetParagraphId: 'p7',
+            targetSnippet: '...testing was carried out... on soil from two of the lower layers of the horse’s body...'
+          },
+          statement: {
+            rawText: 'Question 11 (Note): according to analysis of the surrounding [soil], the Horse is Late Bronze Age / Early Iron Age.',
+            deconstructedVariables: [
+              { name: 'M_method', text: 'according to analysis of' },
+              { name: 'N_target_word', text: 'surrounding [soil]', isTrapWord: false },
+              { name: 'P_result', text: 'Horse is Late Bronze Age / Early Iron Age' }
+            ]
+          },
+          passageEvidence: {
+            rawText: '...testing was carried out... on soil from two of the lower layers of the horse’s body... The result was a date... Late Bronze Age or Early Iron Age origin.',
+            targetVariables: [
+              { matchingName: 'M_method', text: 'OSL testing was carried out' },
+              { matchingName: 'N_target_word', text: 'soil from two of the lower layers' },
+              { matchingName: 'P_result', text: 'Late Bronze Age or Early Iron Age origin' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'Cầu nối Paraphrase: "analysis of..." = "testing was carried out on...". Danh từ gốc duy nhất chỉ mẫu phẩm khảo cổ được xét nghiệm là "soil".'
+        }
+      }
+    ]
   }
 ];
+
+
+
+
+
+
 
 
 
