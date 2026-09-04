@@ -81,7 +81,7 @@ export function PublicHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-800/80 bg-[#0F294D] text-white shadow-md transition-all">
+    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#002147] text-white shadow-md transition-all">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between gap-6">
           {/* Brand Logo */}
@@ -121,15 +121,15 @@ export function PublicHeader() {
                       <ChevronDown className="h-3.5 w-3.5 opacity-70 transition-transform duration-200 group-hover:rotate-180" />
                     </Link>
 
-                    {/* Dropdown Menu - Deep Academic Navy */}
+                    {/* Dropdown Menu - Oxford Academic Navy */}
                     <div className="absolute top-full left-0 pt-2 hidden group-hover:block transition-all z-50 animate-in fade-in-50 slide-in-from-top-1 duration-150">
-                      <div className="w-80 rounded-2xl bg-[#0F294D] border border-slate-700/80 shadow-2xl shadow-slate-950/70 p-2 space-y-1 ring-1 ring-white/10">
+                      <div className="w-80 rounded-2xl bg-[#002147] border border-white/15 shadow-2xl shadow-[#001026]/80 p-2 space-y-1 ring-1 ring-white/10">
                         {item.children!.map((sub, idx) => {
                           if (sub.isDivider) {
                             return (
                               <div
                                 key={`divider-${idx}`}
-                                className="border-t border-slate-700/80 my-1.5 mx-2"
+                                className="border-t border-white/10 my-1.5 mx-2"
                               />
                             );
                           }
@@ -198,7 +198,7 @@ export function PublicHeader() {
                 {/* Authenticated quick state */}
                 <div
                   onClick={() => navigate("/app/profile")}
-                  className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-slate-800/90 border border-slate-700 hover:bg-slate-700 transition-colors cursor-pointer"
+                  className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 hover:bg-white/15 transition-colors cursor-pointer"
                 >
                   <Avatar className="h-7 w-7">
                     <AvatarImage src={user?.avatarUrl || undefined} />
@@ -216,7 +216,7 @@ export function PublicHeader() {
                     variant="outline"
                     size="sm"
                     onClick={() => navigate("/admin")}
-                    className="h-10 px-3.5 text-xs font-bold uppercase tracking-wider gap-1.5 border-slate-700 bg-transparent text-slate-200 hover:bg-white/10 hover:text-white"
+                    className="h-10 px-3.5 text-xs font-bold uppercase tracking-wider gap-1.5 border-white/20 bg-transparent text-slate-100 hover:bg-white/10 hover:text-white"
                   >
                     <Shield className="h-3.5 w-3.5 text-sky-400" />
                     <span>Quản trị</span>
@@ -285,7 +285,7 @@ export function PublicHeader() {
 
       {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-slate-800 bg-[#0F294D] text-white px-4 pt-3 pb-6 space-y-3 shadow-xl animate-in slide-in-from-top-2 duration-200">
+        <div className="lg:hidden border-t border-white/10 bg-[#002147] text-white px-4 pt-3 pb-6 space-y-3 shadow-xl animate-in slide-in-from-top-2 duration-200">
           <nav className="flex flex-col space-y-1">
             {PUBLIC_NAV_ITEMS.map((item) => {
               const active = isNavActive(item);
@@ -313,13 +313,13 @@ export function PublicHeader() {
                     </div>
 
                     {mobileCoursesOpen && (
-                      <div className="pl-3 ml-2 border-l border-slate-700/80 space-y-1 py-1">
+                      <div className="pl-3 ml-2 border-l border-white/15 space-y-1 py-1">
                         {item.children!.map((sub, idx) => {
                           if (sub.isDivider) {
                             return (
                               <div
                                 key={`mob-div-${idx}`}
-                                className="border-t border-slate-700/80 my-1.5 mx-2"
+                                className="border-t border-white/10 my-1.5 mx-2"
                               />
                             );
                           }
