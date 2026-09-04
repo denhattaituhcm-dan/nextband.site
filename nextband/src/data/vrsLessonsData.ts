@@ -6655,8 +6655,2380 @@ export const vrsMockLessons: VRSVisualLesson[] = [
         }
       }
     ]
+  },
+  {
+    id: 'builder_w5d1',
+    courseId: 'builder',
+    week: 5,
+    day: 1,
+    skill: 'writing',
+    title: 'WRITING · BUỔI 1: CÂU PHỨC & PHÁT TRIỂN Ý VỚI CẤU TRÚC ", WHICH + FV"',
+    subtitle: 'Sentence X-Ray, Mệnh Đề Bổ Nghĩa Toàn Vế & Sửa Lỗi Ngắt Dòng Comma Splice',
+    coreCompetency: 'Làm chủ cấu trúc câu phức nâng cao dùng ", which + FV" để bổ nghĩa cho cả mệnh đề đứng trước, khắc phục lỗi Comma Splice và phát triển supporting idea có chiều sâu logic (Reason → Impact).',
+    bridgeToHomework: {
+      promptText: 'Hoàn thành 5 câu ghép nối câu phức và viết 1 supporting idea trong Writing Homework Tuần 5 Day 1.',
+      targetExamId: 'exam_builder_w5d1'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'syntax_anatomy',
+        title: 'Chặng 1: Sentence X-Ray — Ghép Nối Mệnh Đề Bổ Nghĩa Toàn Vế (", which makes it...")',
+        pedagogicalObjective: 'Quan sát cách đại từ ", which" đại diện cho toàn bộ sự thật ở mệnh đề trước, kết hợp với động từ tác động để biến 2 câu đơn thành 1 câu phức học thuật.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Bấm phân tích để quan sát cơ chế ghép nối mệnh đề bổ nghĩa cho toàn bộ sự việc ở vế trước:',
+          mode: 'build',
+          tokens: [
+            { id: 't1', text: 'Urban centers often house modern industries and businesses,', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'which', role: 'connector', colorClass: 'purple' },
+            { id: 't3', text: 'makes it easier', role: 'fv_core', colorClass: 'orange' },
+            { id: 't4', text: 'for newcomers to apply for a decent job.', role: 'modifier', colorClass: 'blue' }
+          ],
+          slots: [
+            { slotId: 's1', acceptedRoles: ['subject'], label: 'MỆNH ĐỀ SỰ THẬT NỀN TẢNG (BASE CLAUSE)' },
+            { slotId: 's2', acceptedRoles: ['connector'], label: 'ĐẠI TỪ MÓC NỐI TOÀN VẾ (, WHICH)' },
+            { slotId: 's3', acceptedRoles: ['fv_core'], label: 'ĐỘNG TỪ TÁC ĐỘNG (ACTION FV)' },
+            { slotId: 's4', acceptedRoles: ['modifier'], label: 'HỆ QUẢ THỰC TẾ (PRAGMATIC IMPACT)' }
+          ]
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'productive_failure',
+        title: 'Chặng 2: Break & Repair 1 — Khắc Phục Lỗi Comma Splice (Ngắt Câu Vụn Bằng Dấu Phẩy)',
+        pedagogicalObjective: 'Phát hiện và sửa lỗi ngắt 2 mệnh đề độc lập chỉ bằng 1 dấu phẩy (Comma Splice) bằng cách cài đặt cấu trúc chuẩn ", which enables them to...".',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Click vào đại từ nhân xưng đang gây ra lỗi Comma Splice trong câu bên dưới:',
+          mode: 'break_and_repair',
+          tokens: [
+            { id: 't1', text: 'Better infrastructure in cities enables newcomers to find jobs more easily,', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'they', role: 'subject', colorClass: 'red' },
+            { id: 't3', text: 'can settle down', role: 'fv_core', colorClass: 'orange' },
+            { id: 't4', text: 'quickly after migration.', role: 'modifier', colorClass: 'blue' }
+          ],
+          collisionTarget: {
+            conflictingTokenIds: ['t1', 't2'],
+            errorMessage: 'LỖI COMMA SPLICE (CÚ PHÁP ĐỨT GÃY): Dấu phẩy không thể ngăn cách trực tiếp 2 mệnh đề độc lập với chủ ngữ "they". Cần dùng đại từ quan hệ ", which"!',
+            repairOptions: [
+              {
+                id: 'opt_which_enables',
+                action: 'morph',
+                targetTokenId: 't2',
+                resultText: 'which enables them to settle down quickly after migration.',
+                explanation: 'Sửa thành ", which enables them to settle down quickly": Thay thế "they can settle down" bằng cấu trúc rút gọn mệnh đề quan hệ học thuật chuẩn giáo trình.'
+              }
+            ]
+          }
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'productive_failure',
+        title: 'Chặng 3: Break & Repair 2 — Nâng Cấp Chuỗi Câu Ngắn Rời Rạc Thành Supporting Idea',
+        pedagogicalObjective: 'Khắc phục thói quen viết các câu đơn cộc lốc bằng liên từ phụ thuộc "Because..." và hệ quả ", which leads to...".',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Click vào câu đơn rời rạc bên dưới để biến chuỗi ý niệm thành câu phức có chiều sâu:',
+          mode: 'break_and_repair',
+          tokens: [
+            { id: 't1', text: 'Science subjects usually require a lot of calculations.', role: 'subject', colorClass: 'red' },
+            { id: 't2', text: 'So, fewer students decide to pursue these majors at university.', role: 'modifier', colorClass: 'orange' }
+          ],
+          collisionTarget: {
+            conflictingTokenIds: ['t1', 't2'],
+            errorMessage: 'LỖI CÂU ĐƠN RỜI RẠC (CHOPPY SENTENCES): Viết 2 câu ngắn bắt đầu bằng "So," khiến bài viết bị giới hạn ở Band 4.5 - 5.0. Cần nối thành câu phức đa tầng!',
+            repairOptions: [
+              {
+                id: 'opt_complex_upgrade',
+                action: 'morph',
+                targetTokenId: 't1',
+                resultText: 'Because science subjects involve complex theories and abstract calculations, many students find them overwhelming, which leads to a significant decline in university enrollments.',
+                explanation: 'Nâng cấp chuẩn giáo trình mục 2: "Because science subjects involve complex theories and abstract calculations, many students find them overwhelming, which leads to a significant decline in university enrollments."'
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w5d2',
+    courseId: 'builder',
+    week: 5,
+    day: 2,
+    skill: 'reading',
+    title: 'READING · BUỔI 2: ĐÁNH GIÁ BẰNG CHỨNG (COMPLETE IELTS BAND 5 - 6.5)',
+    subtitle: 'Why Don\'t Babies Talk Like Adults: Logic Verification Scale & Chuỗi Bằng Chứng Harvard',
+    coreCompetency: 'Làm chủ kỹ thuật Evaluating Evidence, phân định ranh giới đối lập trực diện giữa Easy vs Hard (NO) và hóa giải bẫy suy diễn so sánh ngoài bài (NOT GIVEN).',
+    bridgeToHomework: {
+      promptText: 'Hoàn thành câu hỏi 1-14 bài đọc Why Don\'t Babies Talk Like Adults trong Reading Homework Tuần 5 Day 2.',
+      targetExamId: 'exam_builder_w5d2'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'verification_scale',
+        title: 'Chặng 1: Logic Verification Scale — Bàn Cân Phán Quyết Đối Nghịch Trực Diện (Question 4: NO)',
+        pedagogicalObjective: 'Nhận diện xung đột 180 độ giữa tính từ "easy" trong câu hỏi và "hard" trong bài đọc để ra phán quyết NO.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'So khớp mức độ khó/dễ trong việc giải thích từ đầu tiên của trẻ giữa câu hỏi và Đoạn 3:',
+          passageContext: {
+            title: 'Complete IELTS Band 5-6.5: Why don\'t babies talk like adults?',
+            paragraphs: [
+              {
+                id: 'p3',
+                label: 'Đoạn 3 (Dòng 3-6)',
+                text: 'In fact, it\'s easy for scientists to show that a copycat theory of language acquisition can\'t explain children\'s first words. What is hard for them to do is to explain these first words, and how they fit into the language acquisition pattern.'
+              }
+            ],
+            targetParagraphId: 'p3',
+            targetSnippet: 'What is hard for them to do is to explain these first words, and how they fit into the language acquisition pattern.'
+          },
+          statement: {
+            rawText: 'Question 4: Scientists have found it easy to work out why babies use one-word sentences.',
+            deconstructedVariables: [
+              { name: 'X_subject', text: 'Scientists' },
+              { name: 'Y_difficulty', text: 'HAVE FOUND IT EASY to work out', isTrapWord: true },
+              { name: 'Z_target', text: 'why babies use one-word sentences (first words)' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'What is hard for them to do is to explain these first words, and how they fit into the language acquisition pattern.',
+            targetVariables: [
+              { matchingName: 'X_subject', text: 'scientists' },
+              { matchingName: 'Y_difficulty', text: 'WHAT IS HARD FOR THEM TO DO (điều cực kỳ khó khăn với họ)' },
+              { matchingName: 'Z_target', text: 'explain these first words (one-word sentences)' }
+            ]
+          },
+          expectedRelation: 'contradiction',
+          verdict: 'FALSE',
+          pedagogicalInsight: 'Mâu thuẫn ngữ nghĩa trực tiếp (Direct Contradiction): Câu hỏi nhận định các nhà khoa học thấy "dễ dàng" (found it easy), trong khi bài khẳng định đó là điều "rất khó khăn" (what is hard for them to do). Hai bên trái ngược hoàn toàn -> Phán quyết: NO (FALSE).'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'verification_scale',
+        title: 'Chặng 2: Logic Verification Scale — Bàn Cân Phán Quyết Bẫy So Sánh Ngoài Bài (Question 3: NOT GIVEN)',
+        pedagogicalObjective: 'Phát hiện bẫy so sánh hơn không tồn tại: Bài đọc nói về việc trẻ bắt chước người lớn nhưng KHÔNG có dữ liệu so sánh số lượng hội thoại.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Kiểm tra xem tác giả có so sánh tần suất trò chuyện giữa người lớn và bạn cùng lứa hay không:',
+          passageContext: {
+            title: 'Complete IELTS Band 5-6.5: Why don\'t babies talk like adults?',
+            paragraphs: [
+              {
+                id: 'p2',
+                label: 'Đoạn 2',
+                text: 'Many people assume children learn to talk by copying what they hear. In other words, they listen to the words adults use and the situations in which they use them and imitate accordingly.'
+              },
+              {
+                id: 'p3',
+                label: 'Đoạn 3',
+                text: 'However, this \'copycat\' theory can\'t explain why toddlers aren\'t as conversational as adults.'
+              }
+            ],
+            targetParagraphId: 'p2',
+            targetSnippet: 'Many people assume children learn to talk by copying what they hear... they listen to the words adults use...'
+          },
+          statement: {
+            rawText: 'Question 3: Children have more conversations with adults than with other children.',
+            deconstructedVariables: [
+              { name: 'A_subject', text: 'Children' },
+              { name: 'B_comparison_trap', text: 'have MORE conversations with adults THAN with other children', isTrapWord: true },
+              { name: 'C_context', text: 'conversation frequency' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Many people assume children learn to talk by copying what they hear... listen to the words adults use...',
+            targetVariables: [
+              { matchingName: 'A_subject', text: 'children' },
+              { matchingName: 'B_comparison_trap', text: 'KHOẢNG TRỐNG DỮ LIỆU: Bài đọc KHÔNG hề so sánh số lượng trò chuyện với người lớn so với trẻ em khác' },
+              { matchingName: 'C_context', text: 'copying what they hear' }
+            ]
+          },
+          expectedRelation: 'no_evidence',
+          verdict: 'NOT GIVEN',
+          pedagogicalInsight: 'Bẫy so sánh ngoài bài (Unsubstantiated Comparison Trap): Bài đọc chỉ đề cập trẻ bắt chước người lớn, hoàn toàn KHÔNG có bất kỳ con số hay so sánh nào về việc trẻ nói chuyện với người lớn nhiều hơn với trẻ khác -> Đĩa cân bị khuyết dữ kiện -> Phán quyết: NOT GIVEN.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'verification_scale',
+        title: 'Chặng 3: Evidence Chain — Chuỗi Lần Vết Nghiên Cứu Harvard (Question 13: Ordered Steps)',
+        pedagogicalObjective: 'Lần vết chuỗi bằng chứng của nghiên cứu trẻ nuôi từ Trung Quốc để rút ra kết luận ngôn ngữ diễn ra theo từng bước tuần tự.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Thiết lập chuỗi bằng chứng so khớp kết luận nghiên cứu tại Đại học Harvard ở Đoạn 8:',
+          passageContext: {
+            title: 'Complete IELTS Band 5-6.5: Why don\'t babies talk like adults?',
+            paragraphs: [
+              {
+                id: 'p8',
+                label: 'Đoạn 8 (Dòng 5-10)',
+                text: 'The adoptees then went through the same stages as typical American-born children, albeit at a faster clip. The adoptees and native children started combining words in sentences when their vocabulary reached the same sizes, further suggesting that what matters is not how old you are or how mature your brain is, but the number of words you know.'
+              }
+            ],
+            targetParagraphId: 'p8',
+            targetSnippet: 'The adoptees then went through the same stages as typical American-born children... started combining words in sentences when their vocabulary reached the same sizes...'
+          },
+          statement: {
+            rawText: 'Question 13: What did the Harvard finding show? -> [Language learning takes place in ordered steps].',
+            deconstructedVariables: [
+              { name: 'M_actor', text: 'Harvard study (Snedeker, Geren, Shafto)' },
+              { name: 'N_finding', text: 'Language learning takes place in ordered steps', isTrapWord: false },
+              { name: 'P_evidence', text: 'stages-of-language hypothesis confirmed' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'The adoptees then went through the same stages as typical American-born children... started combining words when their vocabulary reached the same sizes...',
+            targetVariables: [
+              { matchingName: 'M_actor', text: 'studied language development of 27 children adopted from China' },
+              { matchingName: 'N_finding', text: 'went through the same stages... not how mature your brain is, but the number of words you know' },
+              { matchingName: 'P_evidence', text: 'ordered steps based on vocabulary accumulation' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'Cầu nối Paraphrase: "went through the same stages... word-combination process" = "takes place in ordered steps" (học ngôn ngữ diễn ra theo từng bước tuần tự tích lũy từ vựng). Đáp án: B.'
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w5d3',
+    courseId: 'builder',
+    week: 5,
+    day: 3,
+    skill: 'speaking',
+    title: 'SPEAKING · BUỔI 3: FAMILY & LÒNG BIẾT ƠN VỚI TỔ ẤM',
+    subtitle: 'Transformation Ladder (Cảm Xúc Gia Đình), Speaking Flow Map & Giảm Âm Tiết (Syllables)',
+    coreCompetency: 'Luyện chuẩn số âm tiết từ hay nhầm (comfortable, interesting, vehicle), làm chủ quy tắc trọng âm và âm Schwa /ə/, đồng thời vận dụng Transformation Ladder & Speaking Flow Map để chia sẻ sâu sắc về tình cảm gia đình.',
+    bridgeToHomework: {
+      promptText: 'Ghi âm bài nói mô tả thành viên thân thiết nhất trong gia đình và đọc chuẩn 8 từ trọng âm trong Speaking Homework Tuần 5 Day 3.',
+      targetExamId: 'exam_builder_w5d3'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 1: Transformation Ladder — Thang Nâng Cấp Câu Nói Về Tình Cảm Gia Đình (Part 1)',
+        pedagogicalObjective: 'Quan sát sự tiến hóa từ câu nói sơ cấp Band 4.0 lên câu ghép chan chứa lòng biết ơn và các cụm thành ngữ gia đình Band 5.0 - 5.5.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng nấc thang để xem cách diễn đạt lòng biết ơn với Mẹ tiến hóa từ rời rạc lên sâu sắc:',
+          cards: [
+            {
+              step: 1,
+              label: 'NẤC 1: NÊU THÀNH VIÊN THÂN THIẾT (CLOSEST PERSON)',
+              cognitiveFunction: '1. Khởi đầu với người thân thiết nhất trong nhà và sự tận tụy',
+              content: 'The person I feel closest to is my mother, who works tirelessly to care for our family.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Dùng cấu trúc "The person I feel closest to is..." kết hợp trạng từ "tirelessly" (không mệt mỏi).',
+              flipCard: {
+                frontText: 'I love my mom very much. She works hard. (Band 4.0 nói cộc)',
+                backText: 'The person I feel closest to is my mother, who works tirelessly for our family. (Band 4.5)',
+                explanation: 'Nối câu bằng đại từ quan hệ "who" và dùng trạng từ học thuật "tirelessly" từ bài đọc mục 1.4.'
+              },
+              vowelHighlight: [
+                { word: 'comfortable', phonetic: '/ˈkʌmftəbl/', vowelSound: '3 âm tiết (nuốt âm -or-)' },
+                { word: 'interesting', phonetic: '/ˈɪntrəstɪŋ/', vowelSound: '3 âm tiết (nuốt âm -e-)' }
+              ]
+            },
+            {
+              step: 2,
+              label: 'NẤC 2: ĐIỂM TỰA TINH THẦN (A SHOULDER TO CRY ON)',
+              cognitiveFunction: '2. Bổ sung dẫn chứng về sự chia sẻ cảm xúc và điểm tựa khi gặp bế tắc',
+              content: 'Whenever I face stressful moments at work, she always listens patiently and gives me a shoulder to cry on.',
+              bandLevel: 'Band 4.5 → 5.0',
+              pedagogyNote: 'Vận dụng thành ngữ đắt giá từ Coursebook: "give someone a shoulder to cry on" (cho ai điểm tựa tinh thần).',
+              flipCard: {
+                frontText: 'She talks with me when I am sad. (Từ vựng cơ bản)',
+                backText: 'She listens patiently and gives me a shoulder to cry on when things get tough. (Chuẩn Band 5.0)',
+                explanation: 'Cụm từ "gives me a shoulder to cry on" trích xuất trực tiếp từ bài tập điền từ mục 1.4.'
+              },
+              vowelHighlight: [
+                { word: 'family', phonetic: '/ˈfæm.əl.i/', vowelSound: 'Trọng âm rơi vào âm tiết đầu' },
+                { word: 'familiar', phonetic: '/fəˈmɪl.i.ər/', vowelSound: 'Trọng âm rơi vào âm tiết hai, âm đầu Schwa /ə/' }
+              ]
+            },
+            {
+              step: 3,
+              label: 'NẤC 3: MỞ RỘNG LÒNG BIẾT ƠN & Ý NGUYỆN TƯƠNG LAI (REPAY LOVE AND CARE)',
+              cognitiveFunction: '3. Bày tỏ mong muốn đền đáp công ơn và trân trọng từng phút giây bên mẹ',
+              content: 'I hope one day I can repay her for all her sacrifices, but for now, I simply cherish every single moment with her.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Làm chủ cặp động từ học thuật: "repay someone for..." (đền đáp) và "cherish every moment" (trân quý từng khoảnh khắc).',
+              flipCard: {
+                frontText: 'I want to give her money and stay with her. (Nói thô)',
+                backText: 'I hope to repay her for all her love, and I cherish every single moment with her. (Band 5.5 sâu sắc)',
+                explanation: 'Sử dụng cụm "repay her for all the love and care" và "cherish every moment" đúng theo đoạn văn mẫu 1.4.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'The person I feel closest to is my mother, who works tirelessly to make our home a warm place. Whenever I feel overwhelmed, she always gives me a shoulder to cry on. I hope one day I can repay her for all her sacrifices, but for now, I truly cherish every single moment with her.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 2: Speaking Flow Map — Bản Đồ Dòng Chảy Kể Về Gia Đình (Family Bonds)',
+        pedagogicalObjective: 'Kích hoạt phản xạ 3 trạm nói về gia đình: Quy mô & không khí gia đình → Vai trò của trụ cột → Sự gắn kết vào cuối tuần.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng pha để theo dõi dòng chảy phản xạ trôi chảy về gia đình:',
+          cards: [
+            {
+              step: 1,
+              label: 'PHA 1: QUY MÔ & TỔ ẤM (A CLOSE-KNIT NUCLEAR FAMILY)',
+              cognitiveFunction: '1. Nêu loại hình gia đình (hạt nhân) và mối quan hệ gần gũi giữa các thành viên',
+              content: 'I come from a typical nuclear family of four, and we are extremely close-knit.',
+              bandLevel: 'Band 4.5 → 5.0',
+              pedagogyNote: 'Dùng cụm thuật ngữ "nuclear family" (gia đình hạt nhân) và tính từ "close-knit" (gắn bó khăng khít).',
+              flipCard: {
+                frontText: 'My family has 4 people. We are happy. (Tiếng Anh giao tiếp đơn giản)',
+                backText: 'I come from a small nuclear family of four, and we are extremely close-knit. (Band 5.0)',
+                explanation: 'Nâng cấp lên cụm "nuclear family" và "close-knit" để bài nói mang tính học thuật.'
+              }
+            },
+            {
+              step: 2,
+              label: 'PHA 2: TRÁCH NHIỆM & SỰ HỖ TRỢ LẪN NHAU (HAVE EACH OTHER\'S BACK)',
+              cognitiveFunction: '2. Mô tả sự sẻ chia công việc nhà và luôn đồng lòng tương trợ',
+              content: 'Although everyone is occupied with their own jobs and studies, we always have each other\'s back whenever problems arise.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Dùng thành ngữ đắt giá từ sách: "have each other\'s back" (luôn ủng hộ và bảo bọc lẫn nhau).',
+              flipCard: {
+                frontText: 'We help each other when someone has trouble. (Band 4.0)',
+                backText: 'Despite busy schedules, we always have each other\'s back whenever challenges arise. (Band 5.5)',
+                explanation: 'Sử dụng thành ngữ "have each other\'s back" bám sát 100% giáo trình mục 1.4.'
+              },
+              branchOptions: [
+                {
+                  branchName: 'BỮA CƠM GIA ĐÌNH (FAMILY MEALS)',
+                  content: 'No matter how busy we are, we always sit together for dinner to share daily stories.',
+                  note: 'Dành cho gia đình chú trọng bữa cơm tối.'
+                },
+                {
+                  branchName: 'TỤ HỌP CUỐI TUẦN (WEEKEND GATHERINGS)',
+                  content: 'On weekends, we often visit our grandparents or go for a picnic to unwind together.',
+                  note: 'Dành cho gia đình thích hoạt động cuối tuần.'
+                }
+              ]
+            },
+            {
+              step: 3,
+              label: 'PHA 3: Ý NGHĨA TINH THẦN CỐT LÕI (SAFE HAVEN)',
+              cognitiveFunction: '3. Khẳng định gia đình là bến đỗ bình yên nhất sau mọi áp lực ngoài xã hội',
+              content: 'For me, family is truly a safe haven where I can completely unwind and be my true self.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Vận dụng ẩn dụ "a safe haven" (bến đỗ an toàn/bình yên) kết hợp mệnh đề quan hệ nơi chốn "where I can...".',
+              flipCard: {
+                frontText: 'Home is best place for me to rest. (Nói thô)',
+                backText: 'For me, my family is a safe haven where I can fully recharge my energy. (Band 5.5 xuất sắc)',
+                explanation: 'Khép lại bài nói bằng hình ảnh ẩn dụ "safe haven" tạo ấn tượng mạnh với giám khảo.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'I come from a small nuclear family of four, and we are extremely close-knit. Despite our busy schedules, we always have each other\'s back whenever difficulties arise. For me, family is a safe haven where I can completely unwind and feel unconditionally loved.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 3: Lexical Flip Cards — Bộ Thẻ Lật Collocation Gia Đình & Tình Thân (Mục 1.4 & 2.2)',
+        pedagogicalObjective: 'Nạp nhanh 3 cặp từ vựng cảm xúc chất lượng cao: Shoulder to cry on, Have someone\'s back và Cherish every moment.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng thẻ để chuyển hóa cách nói mộc mạc thành cụm Collocation cảm xúc tự nhiên:',
+          cards: [
+            {
+              step: 1,
+              label: 'THẺ 1: ĐIỂM TỰA TINH THẦN (A SHOULDER TO CRY ON)',
+              cognitiveFunction: '1. Diễn đạt sự an ủi và lắng nghe chân thành khi gặp tổn thương',
+              content: 'My mother is always there to offer a shoulder to cry on whenever I feel defeated.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Cụm từ "a shoulder to cry on" (/ə ˈʃoʊl.dər tuː kraɪ ɑːn/) là thành ngữ chuẩn bản xứ về chỗ dựa tâm lý.',
+              flipCard: {
+                frontText: 'She lets me cry when I am sad. (Band 4.0)',
+                backText: 'She always offers a warm shoulder to cry on during tough times. (Band 5.0+)',
+                explanation: 'Thay thế cách nói nghĩa đen bằng thành ngữ "offer a shoulder to cry on" theo Coursebook.'
+              }
+            },
+            {
+              step: 2,
+              label: 'THẺ 2: LUÔN ỦNG HỘ VÀ BẢO VỆ (HAVE SOMEONE\'S BACK)',
+              cognitiveFunction: '2. Khẳng định sự đồng lòng và tương trợ vô điều kiện giữa các thành viên',
+              content: 'In our family, we make sure we always have each other\'s back no matter what happens.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Thành ngữ "have someone\'s back" (/hæv sʌm.wʌnz bæk/) thể hiện sự bảo bọc, sẵn sàng sát cánh.',
+              flipCard: {
+                frontText: 'We help and protect each other. (Cách nói cơ bản)',
+                backText: 'We always have each other\'s back through all ups and downs. (Band 5.5 tự nhiên)',
+                explanation: 'Sử dụng cụm "have someone\'s back" trích xuất trực tiếp từ bài tập điền từ mục 1.4.'
+              }
+            },
+            {
+              step: 3,
+              label: 'THẺ 3: TRÂN QUÝ TỪNG KHOẢNH KHẮC (CHERISH EVERY MOMENT)',
+              cognitiveFunction: '3. Diễn đạt sự trân trọng thời gian sum họp bên cha mẹ',
+              content: 'As my parents grow older, I realize how vital it is to cherish every single moment with them.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Động từ "cherish" (/ˈtʃer.ɪʃ/ - trân quý, nâng niu) giúp câu văn sâu lắng và cảm xúc hơn nhiều so với "remember" hay "enjoy".',
+              flipCard: {
+                frontText: 'I want to enjoy time with my parents. (Giao tiếp đơn giản)',
+                backText: 'I truly cherish every moment I get to spend with my aging parents. (Band 5.5 học thuật)',
+                explanation: 'Động từ "cherish" là từ chốt hạ câu kết bài tập 1.4: "all I can do is cherish every moment with her".'
+              }
+            }
+          ],
+          fullMosaicSummary: 'Family is about unconditional support: someone who gives you a shoulder to cry on, people who always have your back, and memories that you will cherish for the rest of your life.'
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w6d1',
+    courseId: 'builder',
+    week: 6,
+    day: 1,
+    skill: 'writing',
+    title: 'WRITING · BUỔI 1: ĐA DẠNG CẤU TRÚC CÂU & CHỦ NGỮ GIẢ DUMMY SUBJECTS',
+    subtitle: 'Transformation Ladder, Chủ Ngữ Danh Động Từ (Gerund) & Động Từ Học Thuật (Feature, House)',
+    coreCompetency: 'Làm chủ kỹ thuật đa dạng hóa cấu trúc câu (Gerund làm chủ ngữ thay thế Someone), vận dụng cấu trúc chủ ngữ giả (It is / There is) trong Topic Sentence và thay thế từ "have" bằng các động từ học thuật (feature, possess, house).',
+    bridgeToHomework: {
+      promptText: 'Viết lại 4 câu bằng cấu trúc học thuật và hoàn thiện full body paragraph trong Writing Homework Tuần 6 Day 1.',
+      targetExamId: 'exam_builder_w6d1'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'syntax_anatomy',
+        title: 'Chặng 1: Sentence X-Ray — Khung Xương Chủ Ngữ Giả (It is likely for sb to do sth)',
+        pedagogicalObjective: 'Quan sát cách cấu trúc chủ ngữ giả "It is + adj + for sb to do sth" tạo đà trang trọng cho câu Topic Sentence mở đầu đoạn thân bài.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Bấm phân tích để quan sát các thành phần cấu tạo nên câu chủ ngữ giả học thuật:',
+          mode: 'build',
+          tokens: [
+            { id: 't1', text: 'It is highly beneficial', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'for underperforming students', role: 'modifier', colorClass: 'purple' },
+            { id: 't3', text: 'to pursue', role: 'fv_core', colorClass: 'orange' },
+            { id: 't4', text: 'vocational training early in their formative years.', role: 'object', colorClass: 'blue' }
+          ],
+          slots: [
+            { slotId: 's1', acceptedRoles: ['subject'], label: 'CHỦ NGỮ GIẢ & TÍNH TỪ NHẤN MẠNH (DUMMY IT + ADJ)' },
+            { slotId: 's2', acceptedRoles: ['modifier'], label: 'ĐỐI TƯỢNG TÁC ĐỘNG (TARGET BENEFICIARY)' },
+            { slotId: 's3', acceptedRoles: ['fv_core'], label: 'ĐỘNG TỪ HÀNH ĐỘNG NÒNG CỐT (TO-INFINITIVE)' },
+            { slotId: 's4', acceptedRoles: ['object'], label: 'MỤC TIÊU ĐÀO TẠO (VOCATIONAL GOAL)' }
+          ]
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'productive_failure',
+        title: 'Chặng 2: Break & Repair 1 — Nâng Cấp Động Từ Bình Dân "have" Sang "feature / house"',
+        pedagogicalObjective: 'Phát hiện sự đơn điệu khi lặp lại động từ "have" và thay thế bằng các động từ học thuật chuẩn xác theo từng ngữ cảnh.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Click vào động từ bình dân trong câu bên dưới để nâng cấp lên chuẩn từ vựng học thuật:',
+          mode: 'break_and_repair',
+          tokens: [
+            { id: 't1', text: 'The new university research campus', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'has', role: 'fv_core', colorClass: 'red' },
+            { id: 't3', text: 'several state-of-the-art laboratories and modern lecture halls.', role: 'object', colorClass: 'blue' }
+          ],
+          collisionTarget: {
+            conflictingTokenIds: ['t1', 't2'],
+            errorMessage: 'TỪ VỰNG QUÁ ĐƠN ĐIỆU (REPETITIVE VERB): Dùng "has" khiến bài viết mang tính giao tiếp thông thường. Khi nói về khuôn viên chứa các phòng thí nghiệm, cần dùng động từ học thuật!',
+            repairOptions: [
+              {
+                id: 'opt_house_verb',
+                action: 'morph',
+                targetTokenId: 't2',
+                resultText: 'houses',
+                explanation: 'Đổi thành "houses" (chứa đựng/là nơi đặt để): Thuật ngữ chuẩn trong giáo trình mục 1.3: "S + houses + đối tượng" (The campus houses several state-of-the-art laboratories).'
+              }
+            ]
+          }
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'productive_failure',
+        title: 'Chặng 3: Break & Repair 2 — Chuyển Đổi Chủ Ngữ "Someone" Sang Danh Động Từ "Gerund"',
+        pedagogicalObjective: 'Khắc phục thói quen luôn mở đầu câu bằng đại từ chỉ người (Students, People) bằng cách biến hành động thành Chủ ngữ Gerund (V-ing).',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Click vào cụm chỉ người để chuyển đổi hành động rời rạc thành Danh động từ làm Chủ ngữ:',
+          mode: 'break_and_repair',
+          tokens: [
+            { id: 't1', text: 'Students who drop out of school early', role: 'subject', colorClass: 'red' },
+            { id: 't2', text: 'can get a job and save up money.', role: 'fv_core', colorClass: 'blue' }
+          ],
+          collisionTarget: {
+            conflictingTokenIds: ['t1', 't2'],
+            errorMessage: 'CẤU TRÚC CÂU THIẾU LINH HOẠT: Quá nhiều câu mở đầu bằng "Students who...". Hãy đa dạng hóa bằng cách dùng Danh động từ (Gerund) làm Chủ ngữ!',
+            repairOptions: [
+              {
+                id: 'opt_gerund_subject',
+                action: 'morph',
+                targetTokenId: 't1',
+                resultText: 'Choosing to leave school early enables young people to secure immediate employment and build savings,',
+                explanation: 'Nâng cấp chuẩn giáo trình mục 1.2: "Choosing to leave school early helps them to get a job, save up money, and potentially return once their financial worries have been resolved."'
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w6d2',
+    courseId: 'builder',
+    week: 6,
+    day: 2,
+    skill: 'reading',
+    title: 'READING · BUỔI 2: STONEHENGE & BẰNG CHỨNG KHẢO CỔ HỌC',
+    subtitle: 'Orange 18 Reading Test 2: Logic Scale (Mâu Thuẫn Dịch Chuyển) & Chuỗi Bằng Chứng Sông Băng',
+    coreCompetency: 'Làm chủ kỹ thuật đọc bám sát thực chứng khảo cổ, nhận diện mâu thuẫn giữa "stood in the same spot" vs "repositioned multiple times" (FALSE) và kiểm soát bẫy danh tính người phê bình (NOT GIVEN).',
+    bridgeToHomework: {
+      promptText: 'Hoàn thành câu hỏi 1-13 bài đọc Stonehenge trong Reading Homework Tuần 6 Day 2.',
+      targetExamId: 'exam_builder_w6d2'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'verification_scale',
+        title: 'Chặng 1: Logic Verification Scale — Bàn Cân Phán Quyết Mâu Thuẫn Vị Trí (Question 10: FALSE)',
+        pedagogicalObjective: 'Phát hiện sự đối nghịch 180 độ giữa nhận định "đá xanh đứng yên một chỗ" và dữ liệu bài đọc "được sắp đặt lại nhiều lần" để ra phán quyết FALSE.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'So khớp giả thuyết về vị trí cố định của đá xanh với dữ liệu phóng xạ carbon ở Đoạn 2:',
+          passageContext: {
+            title: 'Orange 18 Reading Test 2: Stonehenge',
+            paragraphs: [
+              {
+                id: 'p2',
+                label: 'Đoạn 2 (Dòng 5-7)',
+                text: 'Radiocarbon dating has revealed that work continued at Stonehenge until roughly 1600 BCE, with the bluestones in particular being repositioned multiple times.'
+              }
+            ],
+            targetParagraphId: 'p2',
+            targetSnippet: '...work continued at Stonehenge until roughly 1600 BCE, with the bluestones in particular being repositioned multiple times.'
+          },
+          statement: {
+            rawText: 'Question 10: There is scientific proof that the bluestones stood in the same spot until approximately 1600 BCE.',
+            deconstructedVariables: [
+              { name: 'X_proof', text: 'scientific proof' },
+              { name: 'Y_position_trap', text: 'STOOD IN THE SAME SPOT (đứng yên một chỗ)', isTrapWord: true },
+              { name: 'Z_timeline', text: 'until approximately 1600 BCE' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Radiocarbon dating has revealed that work continued... with the bluestones in particular being repositioned multiple times.',
+            targetVariables: [
+              { matchingName: 'X_proof', text: 'radiocarbon dating has revealed' },
+              { matchingName: 'Y_position_trap', text: 'BEING REPOSITIONED MULTIPLE TIMES (bị di dời, sắp đặt lại rất nhiều lần)' },
+              { matchingName: 'Z_timeline', text: 'until roughly 1600 BCE' }
+            ]
+          },
+          expectedRelation: 'contradiction',
+          verdict: 'FALSE',
+          pedagogicalInsight: 'Mâu thuẫn ngữ nghĩa trực diện: Câu hỏi tuyên bố đá xanh "đứng yên tại một chỗ" (stood in the same spot), trong khi kết quả đo carbon chỉ ra chúng "bị dịch chuyển nhiều lần" (repositioned multiple times). Mâu thuẫn tuyệt đối -> Phán quyết: FALSE.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'verification_scale',
+        title: 'Chặng 2: Logic Verification Scale — Bàn Cân Phán Quyết Bẫy Danh Tính Giới Phê Bình (Question 13: NOT GIVEN)',
+        pedagogicalObjective: 'Phát hiện bẫy gán ghép nghề nghiệp: Bài đọc có nhắc đến giới phê bình nhưng KHÔNG nói rõ họ có phải là "nhà thiên văn học khác" hay không.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Kiểm tra xem tác giả có xác nhận giới phê bình giả thuyết Hawkins là các nhà thiên văn học hay không:',
+          passageContext: {
+            title: 'Orange 18 Reading Test 2: Stonehenge',
+            paragraphs: [
+              {
+                id: 'p6',
+                label: 'Đoạn 6 (Dòng 4-8)',
+                text: 'While his theory has received a considerable amount of attention over the decades, critics maintain that Stonehenge’s builders probably lacked the knowledge necessary to predict such events or that England’s dense cloud cover would have obscured their view of the skies.'
+              }
+            ],
+            targetParagraphId: 'p6',
+            targetSnippet: '...critics maintain that Stonehenge’s builders probably lacked the knowledge necessary to predict such events...'
+          },
+          statement: {
+            rawText: 'Question 13: Criticism of Gerald Hawkins’ theory about Stonehenge has come mainly from other astronomers.',
+            deconstructedVariables: [
+              { name: 'A_subject', text: 'Criticism of Gerald Hawkins’ theory' },
+              { name: 'B_identity_trap', text: 'come MAINLY FROM OTHER ASTRONOMERS', isTrapWord: true },
+              { name: 'C_context', text: 'megalithic calendar debate' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'While his theory has received attention... critics maintain that Stonehenge’s builders lacked knowledge...',
+            targetVariables: [
+              { matchingName: 'A_subject', text: 'critics maintain' },
+              { matchingName: 'B_identity_trap', text: 'KHOẢNG TRỐNG DỮ LIỆU: Chỉ nói chung chung là "critics" (giới phê bình), KHÔNG NÓI RÕ nghề nghiệp của họ là nhà thiên văn học hay nhà khảo cổ' },
+              { matchingName: 'C_context', text: 'knowledge to predict events' }
+            ]
+          },
+          expectedRelation: 'no_evidence',
+          verdict: 'NOT GIVEN',
+          pedagogicalInsight: 'Bẫy danh tính suy diễn (Unverified Identity Trap): Văn bản chỉ ghi nhận "critics maintain" (giới phê bình nhận định), hoàn toàn KHÔNG đề cập thông tin những người phê bình này chủ yếu là các nhà thiên văn học khác (other astronomers) -> Đĩa cân bị khuyết dữ kiện -> Phán quyết: NOT GIVEN.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'verification_scale',
+        title: 'Chặng 3: Evidence Chain — Chuỗi Lần Vết 4 Mắt Xích Điền Từ Note Completion (Question 5: Glaciers)',
+        pedagogicalObjective: 'Lần vết giả thuyết địa chất về sự vận chuyển của đá xanh từ xứ Wales do sông băng tự nhiên mang lại.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Thiết lập chuỗi bằng chứng xác định tác nhân tự nhiên mang đá xanh tới bình nguyên Salisbury ở Đoạn 1:',
+          passageContext: {
+            title: 'Orange 18 Reading Test 2: Stonehenge',
+            paragraphs: [
+              {
+                id: 'p1',
+                label: 'Đoạn 1 (Dòng 3-6)',
+                text: '...some scientists have suggested that it was glaciers, not humans, that carried the bluestones to Salisbury Plain. Most archaeologists have remained sceptical about this theory, however, wondering how the forces of nature could possibly have delivered the exact number of stones needed...'
+              }
+            ],
+            targetParagraphId: 'p1',
+            targetSnippet: '...it was glaciers, not humans, that carried the bluestones to Salisbury Plain.'
+          },
+          statement: {
+            rawText: 'Question 5 (Note): Geological theory: they were brought from Wales by [glaciers].',
+            deconstructedVariables: [
+              { name: 'M_theory', text: 'Geological theory' },
+              { name: 'N_target_word', text: 'brought from Wales by [glaciers]', isTrapWord: false },
+              { name: 'P_subject', text: 'bluestones' }
+            ]
+          },
+          passageEvidence: {
+            rawText: '...some scientists have suggested that it was glaciers, not humans, that carried the bluestones to Salisbury Plain.',
+            targetVariables: [
+              { matchingName: 'M_theory', text: 'geologists / some scientists' },
+              { matchingName: 'N_target_word', text: 'glaciers (carried the bluestones)' },
+              { matchingName: 'P_subject', text: 'bluestones' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'Cầu nối Paraphrase: "brought by..." = "carried the bluestones". Danh từ chỉ tác nhân địa chất tự nhiên duy nhất trong văn bản là "glaciers" (sông băng). Điền: glaciers.'
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w6d3',
+    courseId: 'builder',
+    week: 6,
+    day: 3,
+    skill: 'speaking',
+    title: 'SPEAKING · BUỔI 3: TRAVEL AND TOURISM & KỂ CHUYỆN CHUYẾN ĐI',
+    subtitle: 'Transformation Ladder (Chuyến Đi Đáng Nhớ), Speaking Flow Map & Quy Tắc Phát Âm Đuôi "-ed"',
+    coreCompetency: 'Làm chủ 3 cách phát âm đuôi "-ed" (/ɪd/, /t/, /d/), sử dụng các thành ngữ du lịch (money down the drain, by word of mouth) và vận dụng mô hình Speaking Flow Map để kể về một chuyến đi đáng nhớ (Part 2 Storytelling).',
+    bridgeToHomework: {
+      promptText: 'Ghi âm bài nói kể về chuyến du lịch đáng nhớ nhất và phát âm chuẩn 10 động từ đuôi -ed trong Speaking Homework Tuần 6 Day 3.',
+      targetExamId: 'exam_builder_w6d3'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 1: Transformation Ladder — Thang Nâng Cấp Kể Về Chuyến Đi Đáng Nhớ (Storytelling)',
+        pedagogicalObjective: 'Quan sát sự tiến hóa từ câu kể đơn giản thì quá khứ Band 4.0 lên câu chuyện du lịch giàu tính trải nghiệm và cảm xúc Band 5.0 - 5.5.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng nấc thang để xem cách mở rộng câu chuyện về chuyến du lịch đáng nhớ:',
+          cards: [
+            {
+              step: 1,
+              label: 'NẤC 1: GIỚI THIỆU ĐỊA ĐIỂM & THỜI ĐIỂM (COASTAL DESTINATION)',
+              cognitiveFunction: '1. Khởi đầu với thời điểm, điểm đến và bạn đồng hành',
+              content: 'Last summer, I embarked on a memorable trip to Da Nang with my close friends.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Dùng động từ học thuật "embarked on a trip to..." thay cho cách nói quen thuộc "I went to...".',
+              flipCard: {
+                frontText: 'Last summer I went to Da Nang with friends. (Band 4.0)',
+                backText: 'Last summer, I embarked on a memorable trip to Da Nang with my close friends. (Band 4.5)',
+                explanation: 'Thay "went to" bằng "embarked on a memorable trip to" để bài nói có ngữ điệu tự nhiên hơn.'
+              },
+              vowelHighlight: [
+                { word: 'visited', phonetic: '/ˈvɪz.ɪ.tɪd/', vowelSound: 'Đuôi -ed phát âm /ɪd/ sau âm /t/' },
+                { word: 'walked', phonetic: '/wɔːkt/', vowelSound: 'Đuôi -ed phát âm /t/ sau âm vô thanh /k/' },
+                { word: 'stayed', phonetic: '/steɪd/', vowelSound: 'Đuôi -ed phát âm /d/ sau nguyên âm hữu thanh /eɪ/' }
+              ]
+            },
+            {
+              step: 2,
+              label: 'NẤC 2: TRẢI NGHIỆM PHONG CẢNH & ẨM THỰC (SCENERY & LOCAL CUISINE)',
+              cognitiveFunction: '2. Nêu các hoạt động nổi bật: ngắm cảnh ngoạn mục và thưởng thức đặc sản',
+              content: 'During our stay, we had the chance to enjoy breathtaking coastal scenery and explore unique local dishes.',
+              bandLevel: 'Band 4.5 → 5.0',
+              pedagogyNote: 'Làm chủ cặp collocation đắt giá trong sách: "enjoy breathtaking scenery" và "explore local cuisine".',
+              flipCard: {
+                frontText: 'We saw beautiful sea and ate good seafood. (Từ vựng cơ bản)',
+                backText: 'We had the chance to enjoy breathtaking scenery and explore local cuisine. (Chuẩn Band 5.0)',
+                explanation: 'Sử dụng cụm "enjoy breathtaking scenery" và "explore local cuisine" bám sát mục từ vựng 2.2.'
+              }
+            },
+            {
+              step: 3,
+              label: 'NẤC 3: DẤU ẤN CẢM XÚC & KỶ NIỆM KHÓ PHAI (UNFORGETTABLE MEMORIES)',
+              cognitiveFunction: '3. Khép lại bằng tác động tâm lý tích cực và những ký ức trân quý',
+              content: 'Watching the sunset over My Khe beach truly refreshed my mind and left me with unforgettable memories.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Vận dụng cụm từ kết bài chuẩn mực trong Coursebook: "left me with unforgettable memories".',
+              flipCard: {
+                frontText: 'It was very fun and I will remember it. (Band 4.0)',
+                backText: 'That trip refreshed my mind and left me with unforgettable memories. (Band 5.5 sâu sắc)',
+                explanation: 'Dùng cụm "leave me with unforgettable memories" đúng theo bài tập điền từ mục 2.2.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'Last summer, I embarked on a memorable trip to Da Nang with my close friends. During our stay, we had the wonderful opportunity to enjoy breathtaking coastal scenery and explore local cuisine. Watching the sunset over the sea completely refreshed my mind and left me with unforgettable memories.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 2: Speaking Flow Map — Bản Đồ Dòng Chảy Kể Chuyện Chuyến Đi (Travel Flow)',
+        pedagogicalObjective: 'Kích hoạt phản xạ 3 pha khi giám khảo hỏi Part 2: Bối cảnh khởi hành → Điểm nhấn trải nghiệm → Đánh giá chuyến đi.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng pha để theo dõi dòng chảy tự nhiên khi tường thuật một chuyến đi:',
+          cards: [
+            {
+              step: 1,
+              label: 'PHA 1: LÊN KẾ HOẠCH & ĐIỂM ĐẾN (RESERVATION & DESTINATION)',
+              cognitiveFunction: '1. Nêu bối cảnh kỳ nghỉ, cách đặt vé và lý do chọn điểm đến',
+              content: 'I decided to travel to the central coast after hearing glowing reviews by word of mouth from my colleagues.',
+              bandLevel: 'Band 4.5 → 5.0',
+              pedagogyNote: 'Dùng thành ngữ trong bài đối thoại: "by word of mouth" (qua lời giới thiệu truyền miệng).',
+              flipCard: {
+                frontText: 'My friend told me to go there. (Giao tiếp thông thường)',
+                backText: 'I chose this destination after hearing great reviews by word of mouth. (Band 5.0)',
+                explanation: 'Sử dụng thành ngữ "by word of mouth" trích xuất trực tiếp từ lời thoại của Adam trong bài học 2.1.'
+              }
+            },
+            {
+              step: 2,
+              label: 'PHA 2: KINH NGHIỆM CHI TIÊU & HOẠT ĐỘNG (AVOIDING WASTED MONEY)',
+              cognitiveFunction: '2. Kể về kinh nghiệm đặt vé sớm để tránh lãng phí tiền bạc',
+              content: 'We made our flight reservations well in advance, which saved us a lot of money instead of throwing money down the drain.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Vận dụng thành ngữ đắt giá từ sách: "money down the drain" (tiền ném qua cửa sổ / lãng phí).',
+              flipCard: {
+                frontText: 'We booked early so we did not waste money. (Band 4.0)',
+                backText: 'Booking in advance prevented our budget from going down the drain. (Band 5.5)',
+                explanation: 'Thành ngữ "money down the drain" lấy từ lời thoại của Eva khi xử lý hủy vé máy bay.'
+              },
+              branchOptions: [
+                {
+                  branchName: 'DU LỊCH NGHỈ DƯỠNG BIỂN (COASTAL RESORT)',
+                  content: 'We spent most of our time unwinding on the tranquil beach and enjoying fresh seafood.',
+                  note: 'Dành cho chuyến đi nghỉ dưỡng biển.'
+                },
+                {
+                  branchName: 'DU LỊCH KHÁM PHÁ MIỀN NÚI (MOUNTAIN TREKKING)',
+                  content: 'We hiked along forest trails, climbed rocky peaks, and stayed in peaceful local homestays.',
+                  note: 'Dành cho chuyến đi leo núi dã ngoại.'
+                }
+              ]
+            },
+            {
+              step: 3,
+              label: 'PHA 3: BÀI HỌC VĂN HÓA & TRẢI NGHIỆM (BROADENED HORIZONS)',
+              cognitiveFunction: '3. Khẳng định du lịch giúp mở mang thế giới quan và gắn kết tình bạn',
+              content: 'Overall, the journey not only helped us escape daily pressures but also significantly broadened our horizons.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Khép lại bằng cặp cấu trúc tương quan: "not only helped... but also broadened our horizons".',
+              flipCard: {
+                frontText: 'The trip was great and I learned new things. (Nói thô)',
+                backText: 'The journey relieved our stress and broadened our cultural horizons. (Band 5.5 xuất sắc)',
+                explanation: 'Dùng cụm "broaden our horizons" để tổng kết giá trị nhân văn của chuyến đi.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'I chose this destination after hearing wonderful reviews by word of mouth. By booking our tickets in advance, we avoided wasting money down the drain and had a stress-free holiday. Overall, the journey refreshed our energy and greatly broadened our horizons.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 3: Lexical Flip Cards — Bộ Thẻ Lật Collocation & Thành Ngữ Du Lịch (Mục 2.1 & 2.2)',
+        pedagogicalObjective: 'Nạp nhanh 3 cặp từ vựng & thành ngữ du lịch bản xứ: Word of mouth, Money down the drain và Breathtaking scenery.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng thẻ để biến cách nói sơ sài thành các cụm thành ngữ IELTS tự nhiên:',
+          cards: [
+            {
+              step: 1,
+              label: 'THẺ 1: TRUYỀN MIỆNG (BY WORD OF MOUTH)',
+              cognitiveFunction: '1. Nói về cách biết đến một địa điểm qua lời giới thiệu của người quen',
+              content: 'Most tourists find out about this hidden homestay purely by word of mouth.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Thành ngữ "by word of mouth" (/baɪ wɜːd əv maʊθ/) là cách nói tự nhiên khi thông tin được lan truyền trực tiếp giữa mọi người.',
+              flipCard: {
+                frontText: 'People tell each other about this place. (Band 4.0)',
+                backText: 'This hidden tourist spot became famous purely by word of mouth. (Band 5.0+)',
+                explanation: 'Thành ngữ xuất hiện ngay câu mở đầu đối thoại của Adam: "I heard by word of mouth that you\'re going on vacation".'
+              }
+            },
+            {
+              step: 2,
+              label: 'THẺ 2: TIỀN ĐỔ SÔNG ĐỔ BIỂN (MONEY DOWN THE DRAIN)',
+              cognitiveFunction: '2. Diễn đạt sự lãng phí tài chính khi gặp sự cố du lịch',
+              content: 'If you buy a nonrefundable ticket and miss your flight, that is totally money down the drain.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Thành ngữ "money down the drain" (/ˈmʌn.i daʊn ðə dreɪn/) miêu tả việc lãng phí tiền của vào điều vô ích.',
+              flipCard: {
+                frontText: 'You will lose all your money for nothing. (Nói đơn giản)',
+                backText: 'Booking a nonrefundable ticket in the storm season is just money down the drain. (Band 5.5)',
+                explanation: 'Trích nguyên văn câu cảm thán của Eva: "That would have been money down the drain".'
+              }
+            },
+            {
+              step: 3,
+              label: 'THẺ 3: PHONG CẢNH NGOẠN MỤC (BREATHTAKING SCENERY)',
+              cognitiveFunction: '3. Miêu tả cảnh sắc thiên nhiên hùng vĩ, choáng ngợp',
+              content: 'Standing on the mountain peak, we were completely stunned by the breathtaking scenery below.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Tính từ ghép "breathtaking" (/ˈbreθˌteɪ.kɪŋ/ - đẹp nghẹt thở/ngoạn mục) là collocation số một đi với "scenery" hoặc "views".',
+              flipCard: {
+                frontText: 'The mountain view is very very beautiful. (Band 4.0)',
+                backText: 'The coastal mountains offer truly breathtaking natural scenery. (Band 5.5 học thuật)',
+                explanation: 'Collocation số 1 trong danh mục từ vựng mục 2.2: "Tận hưởng phong cảnh tuyệt đẹp: enjoy breathtaking scenery".'
+              }
+            }
+          ],
+          fullMosaicSummary: 'A perfect holiday is when you discover a peaceful destination by word of mouth, avoid throwing money down the drain, and take in the breathtaking scenery with people you love.'
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w7d1',
+    courseId: 'builder',
+    week: 7,
+    day: 1,
+    skill: 'writing',
+    title: 'WRITING · BUỔI 1: KỸ THUẬT HEDGING & ĐỘNG TỪ TÌNH THÁI (WOULD VS COULD)',
+    subtitle: 'Hedging Spectrum, Tránh Lỗi Tuyệt Đối Hóa (Over-generalization) & Sửa Lỗi Câu Điều Kiện',
+    coreCompetency: 'Làm chủ kỹ thuật Hedging để lập luận học thuật khách quan, phân biệt chính xác cách dùng WOULD (giả định có căn cứ) vs COULD (khả năng tiềm tàng) và sửa lỗi dùng WILL trong mệnh đề IF.',
+    bridgeToHomework: {
+      promptText: 'Viết lại 5 câu với kỹ thuật Hedging và viết 1 đoạn văn chủ đề Bảo vệ động thực vật trong Writing Homework Tuần 7 Day 1.',
+      targetExamId: 'exam_builder_w7d1'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'syntax_anatomy',
+        title: 'Chặng 1: Sentence X-Ray — Thang Đo Sắc Thái Lập Luận Hedging (Will → Could)',
+        pedagogicalObjective: 'Quan sát cách thay thế động từ mang tính khẳng định tuyệt đối "will lead to" bằng động từ tình thái thận trọng "could lead to" để câu văn đạt chuẩn học thuật khách quan.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Bấm phân tích để quan sát cơ chế giảm độ tuyệt đối hóa trong lập luận khoa học:',
+          mode: 'build',
+          tokens: [
+            { id: 't1', text: 'The increasing use of automation in manufacturing', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'could potentially lead to', role: 'fv_core', colorClass: 'orange' },
+            { id: 't3', text: 'widespread unemployment', role: 'object', colorClass: 'blue' },
+            { id: 't4', text: 'especially among low-skilled industrial workers.', role: 'modifier', colorClass: 'purple' }
+          ],
+          slots: [
+            { slotId: 's1', acceptedRoles: ['subject'], label: 'XU HƯỚNG CÔNG NGHỆ (TECHNOLOGY TREND S)' },
+            { slotId: 's2', acceptedRoles: ['fv_core'], label: 'ĐỘNG TỪ TÌNH THÁI HEDGING (COULD POTENTIALLY)' },
+            { slotId: 's3', acceptedRoles: ['object'], label: 'TÁC ĐỘNG TIÊU CỰC DỰ ĐOÁN (PREDICTED IMPACT)' },
+            { slotId: 's4', acceptedRoles: ['modifier'], label: 'NHÓM ĐỐI TƯỢNG BỊ ẢNH HƯỞNG (VULNERABLE GROUP)' }
+          ]
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'productive_failure',
+        title: 'Chặng 2: Break & Repair 1 — Khắc Phục Lỗi Dùng "Would" Lơ Lửng Không Điều Kiện',
+        pedagogicalObjective: 'Phát hiện lỗi dùng "would" khi câu không hề có mệnh đề giả định "if" và morph sang "could" để chỉ khả năng xảy ra.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Click vào động từ tình thái đang dùng sai ngữ cảnh giả định trong câu bên dưới:',
+          mode: 'break_and_repair',
+          tokens: [
+            { id: 't1', text: 'Excessive exposure to digital screens', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'would cause', role: 'fv_core', colorClass: 'red' },
+            { id: 't3', text: 'several developmental problems', role: 'object', colorClass: 'blue' },
+            { id: 't4', text: 'for young children.', role: 'modifier', colorClass: 'gray' }
+          ],
+          collisionTarget: {
+            conflictingTokenIds: ['t1', 't2'],
+            errorMessage: 'LỖI DÙNG "WOULD" THIẾU CĂN CỨ: "Would" chỉ dùng khi có điều kiện giả định rõ ràng (If... would). Khi chỉ nêu khả năng có thể xảy ra, bắt buộc dùng "could" hoặc "may"!',
+            repairOptions: [
+              {
+                id: 'opt_could_cause',
+                action: 'morph',
+                targetTokenId: 't2',
+                resultText: 'could cause',
+                explanation: 'Sửa thành "could cause": Dùng "could" để diễn đạt khả năng tác động chưa chắc chắn 100% trong mọi trường hợp, bám sát quy tắc phân biệt mục 4 trong giáo trình.'
+              }
+            ]
+          }
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'productive_failure',
+        title: 'Chặng 3: Break & Repair 2 — Triệt Tiêu Lỗi Dùng "Will" Trong Mệnh Đề "IF"',
+        pedagogicalObjective: 'Sửa lỗi kinh điển dùng "will" trong mệnh đề phụ điều kiện IF của học viên người Việt.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Click vào trợ động từ gây lỗi cú pháp trong mệnh đề điều kiện bên dưới:',
+          mode: 'break_and_repair',
+          tokens: [
+            { id: 't1', text: 'Governments would reduce carbon emissions significantly', role: 'main_clause', colorClass: 'green' },
+            { id: 't2', text: 'if they', role: 'connector', colorClass: 'purple' },
+            { id: 't3', text: 'will introduce', role: 'fv_core', colorClass: 'red' },
+            { id: 't4', text: 'stricter environmental regulations.', role: 'object', colorClass: 'blue' }
+          ],
+          collisionTarget: {
+            conflictingTokenIds: ['t1', 't3'],
+            errorMessage: 'LỖI CÚ PHÁP MỆNH ĐỀ IF: Mệnh đề chính dùng "would reduce" (Câu điều kiện loại 2), mệnh đề phụ "if" tuyệt đối KHÔNG được dùng "will" mà phải chia thì Quá khứ đơn!',
+            repairOptions: [
+              {
+                id: 'opt_introduced',
+                action: 'morph',
+                targetTokenId: 't3',
+                resultText: 'introduced',
+                explanation: 'Sửa thành "introduced": Công thức chuẩn câu điều kiện loại 2 mục 1.3: "If + S + V2/ed, S + would + V-bare".'
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w7d2',
+    courseId: 'builder',
+    week: 7,
+    day: 2,
+    skill: 'reading',
+    title: 'READING · BUỔI 2: THE THYLACINE & NGUY CƠ TUYỆT CHỦNG',
+    subtitle: 'Cambridge 15 Test 3: Logic Scale (Bẫy Số Lượng Tuyệt Đối) & Chuỗi Bằng Chứng Henry Moore',
+    coreCompetency: 'Làm chủ dạng bài True / False / Not Given, nhận diện mâu thuẫn số lượng giữa "several" vs "only one" (FALSE), phát hiện bẫy ngoại lệ duy nhất (FALSE) và lần vết chuỗi bằng chứng Paraphrase chuẩn xác.',
+    bridgeToHomework: {
+      promptText: 'Hoàn thành câu hỏi 1-8 bài The Thylacine và 1-7 bài Henry Moore trong Reading Homework Tuần 7 Day 2.',
+      targetExamId: 'exam_builder_w7d2'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'verification_scale',
+        title: 'Chặng 1: Logic Verification Scale — Bàn Cân Phán Quyết Mâu Thuẫn Số Lượng (Question 2: FALSE)',
+        pedagogicalObjective: 'Phát hiện sự mâu thuẫn trực tiếp giữa "several thylacines were born in zoos" trong câu hỏi và "only one successful attempt to breed" trong bài đọc để ra phán quyết FALSE.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'So khớp số lượng cá thể hổ Tasmania được sinh ra trong sở thú giữa câu hỏi và Đoạn 2:',
+          passageContext: {
+            title: 'Cambridge 15 Test 3 Passage 1: The thylacine',
+            paragraphs: [
+              {
+                id: 'p2',
+                label: 'Đoạn 2 (Dòng 1-3)',
+                text: 'There was only one successful attempt to breed a thylacine in captivity, at Melbourne Zoo in 1899. This was despite the large numbers that went through some zoos, particularly London Zoo and Tasmania’s Hobart Zoo.'
+              }
+            ],
+            targetParagraphId: 'p2',
+            targetSnippet: 'There was only one successful attempt to breed a thylacine in captivity, at Melbourne Zoo in 1899.'
+          },
+          statement: {
+            rawText: 'Question 2: Several thylacines were born in zoos during the late 1800s.',
+            deconstructedVariables: [
+              { name: 'X_quantity_trap', text: 'SEVERAL THYLACINES (nhiều/vài cá thể)', isTrapWord: true },
+              { name: 'Y_action', text: 'were born in zoos' },
+              { name: 'Z_timeline', text: 'during the late 1800s (1899)' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'There was only one successful attempt to breed a thylacine in captivity, at Melbourne Zoo in 1899.',
+            targetVariables: [
+              { matchingName: 'X_quantity_trap', text: 'ONLY ONE successful attempt to breed (DUY NHẤT 1 lần nhân giống thành công)' },
+              { matchingName: 'Y_action', text: 'in captivity, at Melbourne Zoo' },
+              { matchingName: 'Z_timeline', text: 'in 1899' }
+            ]
+          },
+          expectedRelation: 'contradiction',
+          verdict: 'FALSE',
+          pedagogicalInsight: 'Mâu thuẫn số lượng trực diện: Câu hỏi tuyên bố "vài/nhiều con hổ Tasmania được sinh ra trong sở thú" (several were born), trong khi bài khẳng định "chỉ có duy nhất 1 lần sinh sản thành công" (only one successful attempt in 1899). Hai bên mâu thuẫn -> Phán quyết: FALSE.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'verification_scale',
+        title: 'Chặng 2: Logic Verification Scale — Bàn Cân Phán Quyết Bẫy "Ngoại Lệ Duy Nhất" (Question 4: FALSE)',
+        pedagogicalObjective: 'Phát hiện sự trái ngược giữa phát biểu "nhiều nhà khoa học lo lắng" và dữ liệu bài đọc "hầu như không có ai bày tỏ quan tâm, ngoại trừ 1 giáo sư duy nhất".',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Kiểm tra mức độ quan tâm của giới khoa học đối với sự suy giảm số lượng loài thylacine ở Đoạn 3:',
+          passageContext: {
+            title: 'Cambridge 15 Test 3 Passage 1: The thylacine',
+            paragraphs: [
+              {
+                id: 'p3',
+                label: 'Đoạn 3 (Dòng 1-5)',
+                text: 'However, there seems to have been little public pressure to preserve the thylacine, nor was much concern expressed by scientists at the decline of this species in the decades that followed. A notable exception was T.T. Flynn, Professor of Biology at the University of Tasmania.'
+              }
+            ],
+            targetParagraphId: 'p3',
+            targetSnippet: '...nor was much concern expressed by scientists at the decline of this species... A notable exception was T.T. Flynn...'
+          },
+          statement: {
+            rawText: 'Question 4: In the early 1900s, many scientists became worried about the possible extinction of the thylacine.',
+            deconstructedVariables: [
+              { name: 'A_subject_trap', text: 'MANY SCIENTISTS (nhiều nhà khoa học)', isTrapWord: true },
+              { name: 'B_attitude', text: 'became worried about the possible extinction' },
+              { name: 'C_timeline', text: 'in the early 1900s' }
+            ]
+          },
+          passageEvidence: {
+            rawText: '...nor was much concern expressed by scientists at the decline of this species... A notable exception was T.T. Flynn...',
+            targetVariables: [
+              { matchingName: 'A_subject_trap', text: 'NOR WAS MUCH CONCERN EXPRESSED (hầu như không ai bày tỏ quan tâm) / A notable exception was T.T. Flynn (chỉ có duy nhất 1 ngoại lệ)' },
+              { matchingName: 'B_attitude', text: 'concern at the decline' },
+              { matchingName: 'C_timeline', text: 'in the decades that followed (1914)' }
+            ]
+          },
+          expectedRelation: 'contradiction',
+          verdict: 'FALSE',
+          pedagogicalInsight: 'Bẫy số lượng chủ thể (False Generalization Trap): Câu hỏi khẳng định "nhiều nhà khoa học lo lắng" (many scientists), bài đọc khẳng định "hầu như không có ai quan tâm, chỉ có một ngoại lệ duy nhất là giáo sư Flynn" (notable exception). Hai bên mâu thuẫn -> Phán quyết: FALSE.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'verification_scale',
+        title: 'Chặng 3: Evidence Chain — Chuỗi Lần Vết Paraphrase Khớp 100% Ý Nghĩa (Henry Moore - Question 1: TRUE)',
+        pedagogicalObjective: 'Lần vết cầu nối Paraphrase giữa cụm từ "complied with his father\'s wish" trong bài đọc và "did what his father wanted him to do" trong câu hỏi để chọn TRUE.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Thiết lập chuỗi bằng chứng xác nhận quyết định nghề nghiệp của Henry Moore sau khi rời trường học:',
+          passageContext: {
+            title: 'Cambridge 15 Test 3 Passage 1: Henry Moore (1898-1986)',
+            paragraphs: [
+              {
+                id: 'p1',
+                label: 'Đoạn 1 (Dòng 4-7)',
+                text: 'After leaving school, Moore hoped to become a sculptor, but instead he complied with his father’s wish that he train as a schoolteacher. He had to abandon his training in 1917 when he was sent to France to fight in the First World War.'
+              }
+            ],
+            targetParagraphId: 'p1',
+            targetSnippet: '...but instead he complied with his father’s wish that he train as a schoolteacher.'
+          },
+          statement: {
+            rawText: 'Question 1: On leaving school, Moore did what his father wanted him to do.',
+            deconstructedVariables: [
+              { name: 'M_timeline', text: 'On leaving school' },
+              { name: 'N_action', text: 'DID WHAT HIS FATHER WANTED HIM TO DO', isTrapWord: false },
+              { name: 'P_actor', text: 'Henry Moore' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'After leaving school, Moore hoped to become a sculptor, but instead he complied with his father’s wish that he train as a schoolteacher.',
+            targetVariables: [
+              { matchingName: 'M_timeline', text: 'After leaving school' },
+              { matchingName: 'N_action', text: 'complied with his father’s wish that he train as a schoolteacher (tuân theo nguyện vọng của người cha)' },
+              { matchingName: 'P_actor', text: 'Moore' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'Cầu nối Paraphrase tuyệt đối: "complied with his father’s wish" = "did what his father wanted him to do" (làm theo đúng ý cha là đi học nghề giáo viên). Đĩa cân thăng bằng hoàn hảo -> Phán quyết: TRUE.'
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w7d3',
+    courseId: 'builder',
+    week: 7,
+    day: 3,
+    skill: 'speaking',
+    title: 'SPEAKING · BUỔI 3: CELEBRATIONS AND FESTIVALS & TRỌNG ÂM CÂU',
+    subtitle: 'Transformation Ladder (Lễ Hội Truyền Thống), Speaking Flow Map & Trọng Âm Câu (Sentence Stress)',
+    coreCompetency: 'Làm chủ kỹ thuật nhấn trọng âm câu (Sentence Stress) theo ý đồ nhấn mạnh, sử dụng đúng giới từ thời gian lễ hội (at Christmas, on New Year\'s Eve) và vận dụng Speaking Flow Map để chia sẻ về phong tục ngày Tết / Giáng Sinh.',
+    bridgeToHomework: {
+      promptText: 'Ghi âm bài nói mô tả lễ hội yêu thích nhất và đọc chuẩn 3 câu nhấn trọng âm khác nhau trong Speaking Homework Tuần 7 Day 3.',
+      targetExamId: 'exam_builder_w7d3'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 1: Transformation Ladder — Thang Nâng Cấp Kể Về Lễ Hội Yêu Thích (Christmas / Tet)',
+        pedagogicalObjective: 'Quan sát sự tiến hóa từ câu nói đơn giản Band 4.0 lên câu ghép có mệnh đề quan hệ và từ vựng phong tục ngày lễ Band 5.0 - 5.5.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng nấc thang để xem cách mở rộng câu nói về lễ hội yêu thích:',
+          cards: [
+            {
+              step: 1,
+              label: 'NẤC 1: NÊU TÊN LỄ HỘI & THỜI ĐIỂM (ANNUAL OCCASION)',
+              cognitiveFunction: '1. Khởi đầu với tên ngày lễ, thời gian diễn ra và bản chất sự kiện',
+              content: 'My favorite celebration is Christmas, which takes place annually on December 25th.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Dùng trạng từ "annually" (hàng năm) và mệnh đề quan hệ "which takes place on...".',
+              flipCard: {
+                frontText: 'I like Christmas. It is on December 25. (Band 4.0 nói cộc)',
+                backText: 'My favorite celebration is Christmas, which takes place annually on December 25th. (Band 4.5)',
+                explanation: 'Nối câu mượt mà bằng đại từ quan hệ "which" và dùng trạng từ học thuật "annually" từ câu mẫu mục 2.1.'
+              },
+              vowelHighlight: [
+                { word: 'creative', phonetic: '/kriˈeɪ.tɪv/', vowelSound: 'Trọng âm rơi vào nguyên âm đôi /eɪ/' },
+                { word: 'agreement', phonetic: '/əˈɡriː.mənt/', vowelSound: 'Trọng âm rơi vào nguyên âm dài /iː/' },
+                { word: 'comprehend', phonetic: '/ˌkɒm.prɪˈhend/', vowelSound: 'Trọng âm rơi vào âm tiết cuối kết thúc bằng cụm phụ âm /nd/' }
+              ]
+            },
+            {
+              step: 2,
+              label: 'NẤC 2: PHONG TỤC ĐẶC TRƯNG & SUM HỌP (EXCHANGING GIFTS)',
+              cognitiveFunction: '2. Nêu các hoạt động truyền thống: tụ họp gia đình và trao quà chúc mừng',
+              content: 'It is a special time for family members to gather together, enjoy festive feasts, and exchange meaningful gifts.',
+              bandLevel: 'Band 4.5 → 5.0',
+              pedagogyNote: 'Làm chủ cụm collocation đắt giá: "gather together", "festive feasts" và "exchange gifts".',
+              flipCard: {
+                frontText: 'People eat food and give presents. (Từ vựng cơ bản)',
+                backText: 'It is a special time for families to gather and exchange meaningful gifts. (Chuẩn Band 5.0)',
+                explanation: 'Dùng cụm "gather together" và "exchange gifts" bám sát đoạn trích mẫu trong sách.'
+              }
+            },
+            {
+              step: 3,
+              label: 'NẤC 3: KHÔNG KHÍ ĐƯỜNG PHỐ & CẢM XÚC ẤM ÁP (FESTIVE ATMOSPHERE)',
+              cognitiveFunction: '3. Khép lại bằng trải nghiệm ngắm phố phường trang hoàng lộng lẫy và cảm xúc hân hoan',
+              content: 'I find this holiday truly enchanting because streets are beautifully decorated and seeing people dressed up as Santa Claus brings immense joy.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Vận dụng tính từ mô tả không khí "enchanting" và cụm "brings immense joy" bám sát câu văn mẫu 2.1.',
+              flipCard: {
+                frontText: 'It is fun to see Santa Claus in the city. (Band 4.0)',
+                backText: 'The holiday is special because streets are decorated and people dressed as Santa Claus bring joy. (Band 5.5)',
+                explanation: 'Kết bài bằng câu phức có lý do cảm xúc sâu sắc trích nguyên bản từ bài mẫu 2.1.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'My favorite celebration is Christmas, which takes place annually on December 25th. It is a wonderful occasion for family members to gather together, enjoy festive meals, and exchange gifts. What makes this holiday truly special is the enchanting festive atmosphere across the city.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 2: Speaking Flow Map — Bản Đồ Dòng Chảy Về Phong Tục Ngày Tết (Lunar New Year Flow)',
+        pedagogicalObjective: 'Kích hoạt phản xạ 3 pha khi nói về phong tục ngày Tết truyền thống Việt Nam: Chuẩn bị dọn nhà → Bữa cơm sum họp → Chúc Tết & Lì xì.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng pha để theo dõi dòng chảy tự nhiên khi nói về Tết cổ truyền:',
+          cards: [
+            {
+              step: 1,
+              label: 'PHA 1: KHÔNG KHÍ CHUẨN BỊ (CLEANING & DECORATING)',
+              cognitiveFunction: '1. Nêu truyền thống dọn dẹp và trang hoàng nhà cửa trước thềm năm mới',
+              content: 'In the days leading up to Tet, my family spends quality time cleaning and decorating our home with peach blossoms.',
+              bandLevel: 'Band 4.5 → 5.0',
+              pedagogyNote: 'Dùng cụm thời gian "In the days leading up to Tet" và "decorating our home with peach blossoms".',
+              flipCard: {
+                frontText: 'We clean house before Tet. (Tiếng Anh giao tiếp ngắn)',
+                backText: 'Before Tet, my family spends days cleaning and decorating the house to welcome good fortune. (Band 5.0)',
+                explanation: 'Nâng cấp từ "clean house" lên "cleaning and decorating our home to welcome good fortune" theo bài tập 2.1.'
+              }
+            },
+            {
+              step: 2,
+              label: 'PHA 2: MÂM CƠM TẤT NIÊN (A JOYFUL FAMILY REUNION)',
+              cognitiveFunction: '2. Tả bữa cơm sum vầy đêm giao thừa và thưởng thức bánh chưng truyền thống',
+              content: 'At New Year\'s Eve, all generations gather around a big feast to enjoy traditional dishes like Bánh Chưng.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Sử dụng đúng giới từ: "at New Year\'s Eve" hoặc "at midnight", kết hợp cụm "all generations gather around a big feast".',
+              flipCard: {
+                frontText: 'We eat Bánh Chưng at midnight. (Nói cộc)',
+                backText: 'At midnight, all family members gather for a warm feast and enjoy traditional Bánh Chưng. (Band 5.5)',
+                explanation: 'Dùng cấu trúc "gather for a warm feast" bám sát câu hỏi điền giới từ 1 & 2 mục 2.1.'
+              },
+              branchOptions: [
+                {
+                  branchName: 'TẾT TRUYỀN THỐNG MIỀN BẮC (PEACH BLOSSOMS)',
+                  content: 'We display vibrant peach blossoms and kumquat trees to bring prosperity into our house.',
+                  note: 'Dành cho không khí Tết miền Bắc.'
+                },
+                {
+                  branchName: 'TẾT TRUYỀN THỐNG MIỀN NAM (YELLOW APRICOT BLOSSOMS)',
+                  content: 'Our home is filled with brilliant yellow apricot blossoms symbolizing wealth and luck.',
+                  note: 'Dành cho không khí Tết miền Nam.'
+                }
+              ]
+            },
+            {
+              step: 3,
+              label: 'PHA 3: CHÚC TẾT & LÌ XÌ (EXCHANGING WISHES & LUCKY MONEY)',
+              cognitiveFunction: '3. Khép lại bằng ý nghĩa văn hóa: gửi lời chúc thọ ông bà và phát lì xì may mắn',
+              content: 'On the first day of the new year, we visit our grandparents to express our gratitude and exchange red envelopes containing lucky money.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Dùng giới từ "On the first day..." và cụm "exchange red envelopes containing lucky money".',
+              flipCard: {
+                frontText: 'We visit grandparents and get lucky money. (Band 4.0)',
+                backText: 'We visit our elders to express gratitude and exchange red envelopes for good luck. (Band 5.5 xuất sắc)',
+                explanation: 'Nâng cấp từ "get lucky money" thành "exchange red envelopes containing lucky money" đậm nét văn hóa.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'In the days leading up to Tet, we clean and decorate our house with vibrant blossoms. On New Year\'s Eve, all family members gather around a lavish feast to celebrate midnight. Finally, we visit our elders to express our gratitude and exchange red envelopes filled with best wishes.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 3: Lexical Flip Cards — Bộ Thẻ Lật Giới Từ & Collocation Lễ Hội (Mục 1.2 & 2.1)',
+        pedagogicalObjective: 'Làm chủ 3 cặp giới từ và cụm từ vựng chuẩn mực về lễ hội: At Christmas, Exchange gifts và Family reunion.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng thẻ để làm chủ giới từ thời gian và từ vựng ngày lễ:',
+          cards: [
+            {
+              step: 1,
+              label: 'THẺ 1: ĐÚNG GIỚI TỪ LỄ HỘI (AT CHRISTMAS / AT MIDNIGHT)',
+              cognitiveFunction: '1. Phân biệt giới từ "at" cho kỳ nghỉ/thời khắc và "on" cho ngày cụ thể',
+              content: 'We always enjoy a festive feast at Christmas, and wait for fireworks at midnight.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Dùng "at Christmas / at Tet" cho cả kỳ nghỉ, "on December 25th / on Valentine\'s Day" cho ngày cụ thể.',
+              flipCard: {
+                frontText: 'in Christmas / in midnight (Lỗi dùng sai giới từ)',
+                backText: 'at Christmas / at midnight / on Valentine\'s Day (Chuẩn 100% ngữ pháp)',
+                explanation: 'Quy tắc giới từ trích từ 5 câu bài tập điền từ mục 2.1 của sách.'
+              }
+            },
+            {
+              step: 2,
+              label: 'THẺ 2: TRAO NHAU QUÀ TẶNG & LỜI CHÚC (EXCHANGE GIFTS AND WISHES)',
+              cognitiveFunction: '2. Diễn đạt hành động tặng quà qua lại giữa bạn bè người thân',
+              content: 'Exchanging heartfelt gifts and best wishes is a timeless tradition during the festive season.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Dùng động từ "exchange" thay vì chỉ nói "give presents".',
+              flipCard: {
+                frontText: 'People give and take gifts. (Nói vụng)',
+                backText: 'It is a wonderful custom to exchange meaningful gifts with loved ones. (Band 5.5)',
+                explanation: 'Cụm từ "exchange gifts" trích xuất trực tiếp từ bài mẫu mục 2.1.'
+              }
+            },
+            {
+              step: 3,
+              label: 'THẺ 3: SUM HỌP GIA ĐÌNH ẤM CÚNG (AN INTIMATE FAMILY REUNION)',
+              cognitiveFunction: '3. Nêu bật giá trị đoàn tụ thiêng liêng của ngày lễ truyền thống',
+              content: 'Above all, the festival is cherished because it serves as an intimate family reunion after a busy year.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Cụm danh từ "an intimate family reunion" (/ˈɪn.tɪ.mət ˈfæm.əl.i riːˈjuː.njən/) là collocation điểm 10 trong Speaking.',
+              flipCard: {
+                frontText: 'It is good because family meets. (Band 4.0)',
+                backText: 'The festival serves as a warm family reunion where everyone reconnects. (Band 5.5)',
+                explanation: 'Kết hợp "family reunion" và mệnh đề "where everyone reconnects" để tạo ấn tượng sâu sắc.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'A meaningful celebration is when families gather at Christmas or Tet to enjoy an intimate reunion, where members exchange heartfelt gifts and create lasting memories together.'
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w8d1',
+    courseId: 'builder',
+    week: 8,
+    day: 1,
+    skill: 'writing',
+    title: 'WRITING · BUỔI 1: TỔNG QUAN TASK 1 & TRÍCH XUẤT KEY FEATURES',
+    subtitle: 'Phân Biệt Mechanical Reporting (Band 5.0) vs Key Feature Synthesis (Band 6.0+) & 6 Quy Luật Pattern Recognition',
+    coreCompetency: 'Nắm vững bản chất Writing Task 1, phân biệt cách viết liệt kê số liệu máy móc Band 5.0 với cách gom nhóm tổng hợp điểm nổi bật Band 6.0+, và rèn luyện kỹ năng trích xuất 6 quy luật Key Features cho đoạn Overview hoàn chỉnh.',
+    bridgeToHomework: {
+      promptText: 'Viết đoạn Overview và xác định 3 Key Features chính cho đề bài Fast Food Consumption và Scottish Attractions trong Writing Homework Tuần 8 Day 1.',
+      targetExamId: 'exam_builder_w8d1'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'syntax_anatomy',
+        title: 'Chặng 1: Sentence X-Ray — Bóc Tách Cấu Trúc Câu Overview Band 6.0+ (Australian Fast Food)',
+        pedagogicalObjective: 'Quan sát cách ghép 3 Key Features cốt lõi (Khởi đầu cao nhất + Tăng trưởng vượt bậc + Soán ngôi thứ hạng) vào một câu phức hoàn chỉnh không chứa số liệu thô.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Bấm phân tích để quan sát cấu trúc tích hợp 3 Key Features trong một câu tổng quan chuẩn mực:',
+          mode: 'build',
+          tokens: [
+            { id: 't1', text: 'While fish and chips was initially the most popular fast food', role: 'subordinating_clause', colorClass: 'orange' },
+            { id: 't2', text: ', consumption of hamburgers and pizza experienced dramatic growth', role: 'fv_core', colorClass: 'green' },
+            { id: 't3', text: ', with hamburgers overtaking fish and chips', role: 'modifier', colorClass: 'blue' },
+            { id: 't4', text: 'to take the lead by 2000.', role: 'modifier', colorClass: 'purple' }
+          ],
+          slots: [
+            { slotId: 's1', acceptedRoles: ['subordinating_clause'], label: 'ĐIỂM XUẤT PHÁT CAO NHẤT (INITIAL APEX)' },
+            { slotId: 's2', acceptedRoles: ['fv_core'], label: 'XU HƯỚNG TĂNG TRƯỞNG MẠNH MẼ (DRAMATIC GROWTH)' },
+            { slotId: 's3', acceptedRoles: ['modifier'], label: 'GIAO CẮT VƯỢT THỨ HẠNG (OVERTAKING CLAUSE)' },
+            { slotId: 's4', acceptedRoles: ['modifier'], label: 'VỊ TRÍ DẪN ĐẦU KẾT THÚC (FINAL LEADER)' }
+          ]
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'productive_failure',
+        title: 'Chặng 2: Break & Repair — Thoát Khỏi Bẫy Liệt Kê Số Liệu Máy Móc (Mechanical Listing)',
+        pedagogicalObjective: 'Nhận diện lỗi liệt kê con số thô theo từng mốc năm (bẫy Band 5.0 TA) và nâng cấp thành tư duy tổng hợp xu hướng và điểm cực trị (Band 6.0+).',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Click vào cụm liệt kê số liệu máy móc để bẻ gãy lối hành văn Band 5.0:',
+          mode: 'break_and_repair',
+          tokens: [
+            { id: 't1', text: 'Castles attracted around 23% in 1980,', role: 'subject', colorClass: 'gray' },
+            { id: 't2', text: 'after which it rose to 45% in 1995, followed by a decline to 35% in 2000 and 30% in 2010.', role: 'fv_core', colorClass: 'red' }
+          ],
+          collisionTarget: {
+            conflictingTokenIds: ['t1', 't2'],
+            errorMessage: 'BẪY BAND 5.0 TASK ACHIEVEMENT (BÁO CÁO MÁY MÓC): Liệt kê từng năm từng con số rời rạc mà không chỉ ra được thứ hạng tổng thể hoặc xu hướng nổi bật của dữ liệu!',
+            repairOptions: [
+              {
+                id: 'opt_band6_upgrade',
+                action: 'morph',
+                targetTokenId: 't2',
+                resultText: 'doubling to hit a high of 45% in 1995 to become the most popular destination, despite a sharp decline to 30% by the final year.',
+                explanation: 'Nâng cấp tư duy: Nhấn mạnh "doubling to hit a high" (tăng gấp đôi lập đỉnh) và "become the most popular destination" (thứ hạng dẫn đầu) thay vì chỉ đọc số như một cái máy.'
+              }
+            ]
+          }
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 3: Transformation Ladder — 3 Nấc Lắp Ghép Đoạn Overview Chuẩn Band 5.5 - 6.0',
+        pedagogicalObjective: 'Thực hành nâng cấp từ câu đơn vụn vặt sang đoạn Overview 2 câu chuẩn mực, tổng hợp cả xu hướng đối lập và trật tự thứ hạng.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng nấc thang để xem cách xây dựng một đoạn Overview sắc nét không lỗi số liệu:',
+          cards: [
+            {
+              step: 1,
+              label: 'NẤC 1: XÁC ĐỊNH XU HƯỚNG TĂNG GIẢM CHUNG (GENERAL TREND)',
+              cognitiveFunction: '1. Gom nhóm đối tượng cùng tăng đối lập với đối tượng duy nhất sụt giảm',
+              content: 'Overall, both hamburgers and pizza saw significant increases in consumption, whereas fish and chips was the only fast food to decline.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Dùng liên từ "whereas" để tương phản hai nhóm xu hướng một cách nhịp nhàng.',
+              flipCard: {
+                frontText: 'Hamburgers went up, pizza went up, fish and chips went down. (Band 4.0 rời rạc)',
+                backText: 'Both hamburgers and pizza saw upward trends, whereas fish and chips was the only item to decline. (Band 5.5)',
+                explanation: 'Gom hai đường tăng vào "both X and Y" và định vị đối tượng giảm bằng "the only item to decline".'
+              }
+            },
+            {
+              step: 2,
+              label: 'NẤC 2: XÁC ĐỊNH SỰ THAY ĐỔI THỨ HẠNG VÀ VỊ TRÍ DẪN ĐẦU (RANKING & LEADER)',
+              cognitiveFunction: '2. Nêu bật sự chuyển dịch ngôi đầu bảng giữa năm bắt đầu và năm kết thúc',
+              content: 'In addition, hamburgers became the most widely consumed item by 2000, surpassing fish and chips during the period.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Dùng mệnh đề phân từ "surpassing..." để làm rõ sự đổi ngôi dẫn đầu.',
+              flipCard: {
+                frontText: 'In 2000 hamburgers was top and fish and chips was lower. (Band 4.0)',
+                backText: 'Hamburgers became the most widely consumed item, overtaking fish and chips over the 25-year period. (Band 5.5)',
+                explanation: 'Sử dụng phân từ hiện tại "overtaking..." tạo tính liên kết học thuật chặt chẽ.'
+              }
+            },
+            {
+              step: 3,
+              label: 'NẤC 3: GHÉP THÀNH ĐOẠN OVERVIEW HOÀN CHỈNH (COMPLETE OVERVIEW)',
+              cognitiveFunction: '3. Hòa trộn 2 câu thành đoạn tổng quan sắc sảo hoàn hảo cho Task 1',
+              content: 'Overall, both hamburgers and pizza saw significant increases in consumption, whereas fish and chips was the only item to decline. In addition, hamburgers overtook fish and chips to become the leading fast food by the end of the period.',
+              bandLevel: 'Band 5.5 → 6.0',
+              pedagogyNote: 'Đây là đoạn Overview đạt chuẩn điểm tuyệt đối của tiêu chí Task Achievement cho mức Band 6.0+.',
+              flipCard: {
+                frontText: 'Liệt kê từng đường theo từng mốc số liệu (bẫy liệt kê)',
+                backText: 'Đoạn tổng quan 2 câu gồm 1 câu xu hướng tương phản + 1 câu trật tự thứ hạng.',
+                explanation: 'Không chứa số liệu cụ thể nhưng tóm trọn bức tranh tổng quát của biểu đồ qua 25 năm.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'A band 6.0+ Overview must capture the overall direction of trends (both hamburgers and pizza grew while fish and chips dropped) and major ranking shifts (hamburgers overtook fish and chips) without listing raw figures.'
+        }
+      },
+      {
+        stageNumber: 4,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 4: Lexical Flip Cards — Bộ Lọc Key Features Trong 3 Đề Thi Thực Tế (Giáo Trình Mục 2.2)',
+        pedagogicalObjective: 'Kích hoạt tư duy trích xuất Key Features tức thì trên 3 đề thi trích từ giáo trình: Giá chuối (Banana Prices), Điểm du lịch Scotland (Scottish Attractions) và Khảo sát nghỉ việc (Absenteeism Surveys).',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng thẻ để xem điểm nổi bật (Key Feature) thay vì đọc số liệu rời rạc:',
+          cards: [
+            {
+              step: 1,
+              label: 'ĐỀ 1: GIÁ CHUỐI TẠI 4 QUỐC GIA (BANANA PRICES 1994 - 2004)',
+              cognitiveFunction: '1. Nhận diện quốc gia có giá cao nhất bền vững vs quốc gia thấp nhất và ổn định nhất',
+              content: 'Japan consistently recorded the highest banana prices throughout the decade, while prices in the USA remained the lowest and most stable.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Key Features: Đối tượng giữ vị trí cao nhất toàn kỳ (Japan) và đối tượng thấp nhất + ổn định nhất (USA).',
+              flipCard: {
+                frontText: 'Japan price was 2.5 and USA price was 1 dollar. (Liệt kê số liệu thô)',
+                backText: 'Japan consistently maintained the highest prices, whereas the USA had the lowest and most stable figures. (Band 5.5)',
+                explanation: 'Sử dụng các trạng từ nhận xét bao quát: "consistently", "stable" thay vì chỉ báo cáo con số.'
+              }
+            },
+            {
+              step: 2,
+              label: 'ĐỀ 2: ĐIỂM DU LỊCH TẠI SCOTLAND (SCOTTISH ATTRACTIONS 1980 - 2010)',
+              cognitiveFunction: '2. Nhận diện sự bứt phá lập đỉnh của Lâu đài (Castles) vs sụt giảm đều của Lễ hội (Festivals)',
+              content: 'While castles experienced the most dramatic growth to reach an apex in 1995, festivals saw a steady downward trend over the 30-year period.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Key Features: Đối tượng có biến động mạnh nhất (castles) và đối tượng suy giảm đều đặn nhất (festivals).',
+              flipCard: {
+                frontText: 'Castles was 23% in 1980 and 45% in 1995 and festivals went down. (Band 4.0)',
+                backText: 'Castles experienced the most dramatic fluctuation, peaking in 1995, while festivals witnessed a consistent decline. (Band 5.5)',
+                explanation: 'Thay thế việc kể từng năm bằng cụm "experienced the most dramatic fluctuation, peaking in 1995".'
+              }
+            },
+            {
+              step: 3,
+              label: 'ĐỀ 3: KHẢO SÁT NGHỈ VIỆC KHÔNG PHÉP (ABSENTEEISM SURVEYS 2000, 2005, 2010)',
+              cognitiveFunction: '3. Phân biệt nguyên nhân ốm đau (sức khỏe) áp đảo so với các nguyên nhân cá nhân',
+              content: 'Illness remained the primary reason for workplace absenteeism in all three surveyed years, while personal reasons consistently accounted for the lowest proportion.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Key Features dạng biểu đồ so sánh: Nguyên nhân áp đảo tuyệt đối (illness) vs nguyên nhân có tỷ trọng nhỏ nhất (personal reasons).',
+              flipCard: {
+                frontText: 'Illness was big in 2000, 2005, 2010 and personal reasons was small. (Band 4.0)',
+                backText: 'Illness remained the predominant cause of absenteeism, whereas personal matters represented the smallest share. (Band 5.5)',
+                explanation: 'Dùng collocations học thuật: "remained the predominant cause" và "represented the smallest share".'
+              }
+            }
+          ],
+          fullMosaicSummary: 'Identifying Key Features is pattern recognition: isolate highest and lowest figures, detect rapid changes, and spotlight ranking swaps rather than listing every number.'
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w8d2',
+    courseId: 'builder',
+    week: 8,
+    day: 2,
+    skill: 'reading',
+    title: 'READING · BUỔI 2: PHÂN BIỆT THÔNG TIN CHÍNH - PHỤ & LOGIC TRUE / FALSE / NOT GIVEN',
+    subtitle: 'Cambridge 10 Test 2: Tea and the Industrial Revolution — Chuỗi Mắt Xích Nhân Quả & Bẫy Mâu Thuẫn Luận Điểm',
+    coreCompetency: 'Nắm vững kỹ năng bóc tách thông tin trọng tâm (Major vs Minor Details) để xử lý Matching Headings và rèn luyện tư duy phân định 3 trạng thái Logic Scale (TRUE / FALSE / NOT GIVEN) qua văn bản nghiên cứu lịch sử trà và cuộc cách mạng công nghiệp.',
+    bridgeToHomework: {
+      promptText: 'Hoàn thành bài đọc Cambridge 10 Test 2 Passage 1 (Tea and the Industrial Revolution) và phân tích các câu hỏi True / False / Not Given còn lại trong Reading Homework Tuần 8 Day 2.',
+      targetExamId: 'exam_builder_w8d2'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'verification_scale',
+        title: 'Chặng 1: Verification Scale — Nhận Diện Khoảng Trống Dữ Liệu NOT GIVEN (Question 8: China Transport)',
+        pedagogicalObjective: 'Phát hiện sự vắng mặt của thông tin cụ thể (hệ thống giao thông của Trung Quốc thế kỷ 18) trong văn bản để tránh suy đoán chủ quan và chốt vững chắc NOT GIVEN.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Kéo thả các biến số từ câu hỏi và bài đọc lên bàn cân để kiểm chứng tính xác thực:',
+          passageContext: {
+            title: 'Cambridge 10 Test 2 Passage 1: Tea and the Industrial Revolution (Paragraph B)',
+            paragraphs: [
+              {
+                id: 'pB',
+                label: 'Đoạn B (Dòng 8-12)',
+                text: 'All these factors must have been necessary. But not sufficient to cause the revolution, says Macfarlane. ‘After all, Holland had everything except coal while China also had many of these factors. Most historians are convinced there are one or two missing factors that you need to open the lock.’'
+              }
+            ],
+            targetParagraphId: 'pB',
+            targetSnippet: '...while China also had many of these factors. Most historians are convinced there are one or two missing factors...'
+          },
+          statement: {
+            rawText: 'Question 8: China’s transport system was not suitable for industry in the 18th century.',
+            deconstructedVariables: [
+              { name: 'A_subject', text: 'China’s transport system' },
+              { name: 'B_evaluation', text: 'WAS NOT SUITABLE FOR INDUSTRY', isTrapWord: true },
+              { name: 'C_timeline', text: 'in the 18th century' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Holland had everything except coal while China also had many of these factors.',
+            targetVariables: [
+              { matchingName: 'A_subject', text: 'China also had many of these factors (Trung Quốc có nhiều yếu tố)' },
+              { matchingName: 'B_evaluation', text: 'KHÔNG HỀ ĐỀ CẬP HỆ THỐNG GIAO THÔNG CỦA TRUNG QUỐC CÓ PHÙ HỢP HAY KHÔNG (NO TRANSPORT EVALUATION)' },
+              { matchingName: 'C_timeline', text: '18th century context' }
+            ]
+          },
+          expectedRelation: 'no_evidence',
+          verdict: 'NOT GIVEN',
+          pedagogicalInsight: 'Bẫy suy diễn kiến thức ngoài (Out-of-Text Speculation): Bài đọc chỉ nói chung chung là "China also had many of these factors", hoàn toàn KHÔNG hề nói hệ thống giao thông (transport system) của Trung Quốc có phù hợp cho công nghiệp hay không. Thiếu hẳn bằng chứng đối chiếu -> Phán quyết: NOT GIVEN.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'verification_scale',
+        title: 'Chặng 2: Logic Scale — Bóc Trần Bẫy Mâu Thuẫn Thái Độ Đồng Thuận vs Bác Bỏ (Question 10: FALSE)',
+        pedagogicalObjective: 'Phát hiện sự đối lập trực diện giữa câu hỏi "Roy Porter disagrees" và dẫn chứng văn bản "Roy Porter recently wrote a favourable appraisal" để chốt FALSE.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'So sánh mức độ tương thích giữa nhận định trong câu hỏi và thái độ của Roy Porter trong bài đọc:',
+          passageContext: {
+            title: 'Cambridge 10 Test 2 Passage 1: Tea and the Industrial Revolution (Paragraph C)',
+            paragraphs: [
+              {
+                id: 'pC',
+                label: 'Đoạn C (Dòng 7-9)',
+                text: 'Macfarlane’s case has been strengthened by support from notable quarters – Roy Porter, the distinguished medical historian, recently wrote a favourable appraisal of his research.'
+              }
+            ],
+            targetParagraphId: 'pC',
+            targetSnippet: '...Roy Porter, the distinguished medical historian, recently wrote a favourable appraisal of his research.'
+          },
+          statement: {
+            rawText: 'Question 10: Roy Porter disagrees with Professor Macfarlane’s findings.',
+            deconstructedVariables: [
+              { name: 'X_critic', text: 'Roy Porter' },
+              { name: 'Y_action_trap', text: 'DISAGREES WITH (bác bỏ / không đồng tình)', isTrapWord: true },
+              { name: 'Z_target', text: 'Professor Macfarlane’s findings' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Macfarlane’s case has been strengthened by support from notable quarters – Roy Porter, the distinguished medical historian, recently wrote a favourable appraisal of his research.',
+            targetVariables: [
+              { matchingName: 'X_critic', text: 'Roy Porter, the distinguished medical historian' },
+              { matchingName: 'Y_action_trap', text: 'wrote a FAVOURABLE APPRAISAL (viết bài thẩm định tán thành / ủng hộ mạnh mẽ)' },
+              { matchingName: 'Z_target', text: 'of his research (nghiên cứu của Macfarlane)' }
+            ]
+          },
+          expectedRelation: 'contradiction',
+          verdict: 'FALSE',
+          pedagogicalInsight: 'Mâu thuẫn ngữ nghĩa hoàn toàn (Direct Contradiction): Câu hỏi dùng "disagrees with" (bất đồng), trong khi bài khẳng định Porter "wrote a favourable appraisal" (đánh giá ủng hộ tích cực, củng cố thêm lập luận của Macfarlane). Hai dữ kiện triệt tiêu lẫn nhau -> Phán quyết: FALSE.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'verification_scale',
+        title: 'Chặng 3: Evidence Chain — Chuỗi Nhân Quả Gián Tiếp (Indirect Cause & Effect - Question 13: TRUE)',
+        pedagogicalObjective: 'Lần vết chuỗi mắt xích nguyên nhân - kết quả: Thuế mạch nha tăng → Dân nghèo đổi sang uống rượu/nước lã bẩn → Tỉ lệ tử vong tăng vọt.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Lắp ráp chuỗi logic nhân quả gián tiếp giải thích tác động của thuế mạch nha (malt tax):',
+          passageContext: {
+            title: 'Cambridge 10 Test 2 Passage 1: Tea and the Industrial Revolution (Paragraph E)',
+            paragraphs: [
+              {
+                id: 'pE',
+                label: 'Đoạn E (Dòng 6-10)',
+                text: 'But in the late 17th century a tax was introduced on malt, the basic ingredient of beer. The poor turned to water and gin and in the 1720s the mortality rate began to rise again. Then it suddenly dropped again. What caused this?'
+              }
+            ],
+            targetParagraphId: 'pE',
+            targetSnippet: '...a tax was introduced on malt... The poor turned to water and gin and in the 1720s the mortality rate began to rise again.'
+          },
+          statement: {
+            rawText: 'Question 13: The tax on malt indirectly caused a rise in the death rate.',
+            deconstructedVariables: [
+              { name: 'K_cause', text: 'The tax on malt' },
+              { name: 'L_mechanism', text: 'INDIRECTLY CAUSED (gián tiếp gây ra)' },
+              { name: 'M_result', text: 'a rise in the death rate (tỉ lệ tử vong tăng)' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'A tax was introduced on malt... The poor turned to water and gin and in the 1720s the mortality rate began to rise again.',
+            targetVariables: [
+              { matchingName: 'K_cause', text: 'A tax was introduced on malt, the basic ingredient of beer' },
+              { matchingName: 'L_mechanism', text: 'Mắt xích trung gian: Người nghèo không đủ tiền mua bia kháng khuẩn -> uống nước bẩn và rượu gin' },
+              { matchingName: 'M_result', text: 'the mortality rate began to rise again (= a rise in the death rate)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'Chuỗi nhân quả hoàn toàn trùng khớp (Perfect Indirect Causation): Thuế đánh vào mạch nha làm mất đi lớp bảo vệ kháng khuẩn từ bia, người nghèo phải chuyển sang uống nước bẩn và rượu gin, dẫn đến bệnh tật bùng phát và tỉ lệ chết tăng trở lại. Đây chính xác là "indirectly caused" -> Phán quyết: TRUE.'
+        }
+      },
+      {
+        stageNumber: 4,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 4: Lexical Flip Cards — Bộ Ba Khái Niệm Lịch Sử & Y Tế Trọng Điểm',
+        pedagogicalObjective: 'Ghi nhớ 3 cặp thuật ngữ học thuật cốt lõi trong bài đọc: Antiseptic properties, Water-borne disease và Infant mortality rate.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng thẻ để nạp nhanh vốn từ học thuật then chốt của bài đọc:',
+          cards: [
+            {
+              step: 1,
+              label: 'THUẬT NGỮ 1: TÍNH NĂNG KHÁNG KHUẨN (ANTISEPTIC PROPERTIES)',
+              cognitiveFunction: '1. Hiểu cơ chế hóa sinh giúp trà và bia bảo vệ sức khỏe con người',
+              content: 'The antiseptic properties of tannin in tea and hops in beer prevented deadly infections.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Cụm "antiseptic properties" (/ˌæn.tiˈsep.tɪk ˈprɒp.ə.tiz/) chỉ đặc tính sát trùng, diệt khuẩn.',
+              flipCard: {
+                frontText: 'Tea can kill bacteria. (Từ vựng thường ngày)',
+                backText: 'Tea possesses powerful antiseptic properties that purify the digestive system. (Band 5.5 học thuật)',
+                explanation: 'Nâng cấp từ "kill bacteria" sang cụm danh từ "possess antiseptic properties".'
+              }
+            },
+            {
+              step: 2,
+              label: 'THUẬT NGỮ 2: BỆNH TRUYỀN QUA NGUỒN NƯỚC (WATER-BORNE DISEASES)',
+              cognitiveFunction: '2. Nhận diện các bệnh dịch lây qua đường nước thải đô thị',
+              content: 'Drinking boiled water helped urban populations avoid fatal water-borne diseases such as dysentery.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Tính từ ghép "water-borne" (/ˈwɔː.təˌbɔːn/) có nghĩa là lây truyền theo nguồn nước.',
+              flipCard: {
+                frontText: 'Diseases from dirty water. (Miêu tả sơ cấp)',
+                backText: 'Densely populated industrial towns were vulnerable to catastrophic water-borne diseases. (Band 5.5)',
+                explanation: 'Dùng cụm chuyên môn "water-borne diseases" để miêu tả các dịch bệnh như kiết lỵ (dysentery) hay tả (cholera).'
+              }
+            },
+            {
+              step: 3,
+              label: 'THUẬT NGỮ 3: TỈ LỆ TỬ VONG TRẺ SƠ SINH (INFANT MORTALITY RATE)',
+              cognitiveFunction: '3. Chỉ số nhân khẩu học quyết định sự bùng nổ dân số lao động',
+              content: 'The infant mortality rate halved within twenty years, providing abundant labor for factories.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Collocation nhân khẩu học: "infant mortality rate" (/ˈɪn.fənt mɔːˈtæl.ə.ti reɪt/).',
+              flipCard: {
+                frontText: 'The number of babies dying was lower. (Diễn đạt mộc)',
+                backText: 'A rapid decline in the infant mortality rate fueled the workforce required for industrial expansion. (Band 5.5)',
+                explanation: 'Thay "babies dying" bằng thuật ngữ chính xác "infant mortality rate".'
+              }
+            }
+          ],
+          fullMosaicSummary: 'By drinking tea made with boiled water, the British unwittingly protected their urban labor force from deadly water-borne diseases, allowing industrial cities to grow without succumbing to epidemics.'
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w8d3',
+    courseId: 'builder',
+    week: 8,
+    day: 3,
+    skill: 'speaking',
+    title: 'SPEAKING · BUỔI 3: ENVIRONMENT & NỐI ÂM CONNECTED SPEECH',
+    subtitle: 'Connected Speech (Nối Phụ Âm Với Nguyên Âm), Weak Forms & Intonation Trong Tranh Luận Môi Trường',
+    coreCompetency: 'Làm chủ quy tắc nối âm Connected Speech (phụ âm cuối với nguyên âm đầu: swi-macross, loo-kit-up), dạng phát âm yếu (Weak Forms: to /tə/, gonna) và ngữ điệu (Intonation) để biểu đạt thái độ, quan điểm về các vấn đề ô nhiễm, năng lượng và biến đổi khí hậu.',
+    bridgeToHomework: {
+      promptText: 'Ghi âm bài nói trả lời 3 câu hỏi Part 1 về Environment với kỹ thuật nối âm tự nhiên và intonation chuẩn xác trong Speaking Homework Tuần 8 Day 3.',
+      targetExamId: 'exam_builder_w8d3'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 1: Connected Speech Wave — Cơ Chế Nối Âm Phụ Âm Với Nguyên Âm & Weak Forms (Mục 1.1)',
+        pedagogicalObjective: 'Luyện tập kỹ thuật nối mượt mà phụ âm cuối của từ trước sang nguyên âm đầu của từ kế tiếp để phát âm trôi chảy tự nhiên như người bản xứ.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng nấc để quan sát điểm nối âm (Linking Sound) và dạng nói yếu (Weak Forms):',
+          cards: [
+            {
+              step: 1,
+              label: 'NẤC 1: NỐI ÂM LIỀN MẠCH (CONSONANT TO VOWEL LINKING)',
+              cognitiveFunction: '1. Nối phụ âm cuối với nguyên âm đầu (can’t agree, look it up, swim across)',
+              content: 'I can’t_agree! /kɑːnt əˈɡriː/ → Look_it_up in your dictionary! /lʊk ɪt ʌp/ → I swim_across the river /swɪm əˈkrɒs/.',
+              bandLevel: 'Band 4.5 → 5.0',
+              pedagogyNote: 'Khi nói nhanh, âm /t/ của "can\'t" lướt sang "agree", âm /k/ của "look" ghép vào "it", âm /m/ của "swim" nối với "across".',
+              flipCard: {
+                frontText: 'I ... can not ... a-gree. (Nói ngắt quãng từng từ)',
+                backText: 'I can’t_agree! /kɑːn-tə-ɡriː/ (Nối âm tự nhiên chuẩn người bản xứ)',
+                explanation: 'Quy tắc vàng: Phụ âm cuối + Nguyên âm đầu đứng liền nhau tạo thành một âm tiết liền lạc.'
+              },
+              vowelHighlight: [
+                { word: 'can’t agree', phonetic: '/kɑːn-tə-ɡriː/', vowelSound: 'Nối /t/ sang /ə/' },
+                { word: 'look it up', phonetic: '/lʊ-kɪ-tʌp/', vowelSound: 'Nối /k/ sang /ɪ/ và /t/ sang /ʌ/' },
+                { word: 'swim across', phonetic: '/swɪ-mə-krɒs/', vowelSound: 'Nối /m/ sang /ə/' }
+              ]
+            },
+            {
+              step: 2,
+              label: 'NẤC 2: DẠNG PHÁT ÂM YẾU TRONG GIAO TIẾP NHANH (WEAK FORMS)',
+              cognitiveFunction: '2. Nhận biết và phát âm weak forms của trợ động từ và giới từ (going to → gonna, to /tuː/ → /tə/)',
+              content: 'In normal speech, "going to" reduces to "gonna", and "to" /tuː/ reduces to the neutral weak form /tə/.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Trong IELTS Listening Section 2-3 và Speaking tự nhiên, các từ chức năng (function words) luôn ở dạng Weak Form để nhường trọng âm cho từ nội dung.',
+              flipCard: {
+                frontText: 'I want TO /tuː/ go TO /tuː/ school. (Phát âm gồng cứng)',
+                backText: 'I want to /tə/ reduce plastic waste to /tə/ protect our planet. (Phát âm lướt nhẹ tự nhiên)',
+                explanation: 'Giới từ "to" trong câu nói bình thường phát âm là /tə/ với nguyên âm schwa trung tính.'
+              }
+            },
+            {
+              step: 3,
+              label: 'NẤC 3: NGỮ ĐIỆU BIỂU ĐẠT THÁI ĐỘ CẢM XÚC (INTONATION & ATTITUDE)',
+              cognitiveFunction: '3. Điều khiển giọng đi lên (ngạc nhiên/hứng khởi) vs giọng đi xuống (thất vọng/nghiêm nghị)',
+              content: '"I can’t believe it!" ↗ Giọng đi lên: ngạc nhiên vui mừng ("Ôi, thật không thể tin được!") ↘ Giọng đi xuống: bất lực, buồn bã ("Tôi thật sự không thể tin nổi...").',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Intonation là chiếc chìa khóa thể hiện cảm xúc và lập trường cá nhân trong bài thi Speaking.',
+              flipCard: {
+                frontText: 'Nói bằng giọng đều đều như robot (Flat intonation - Band 4.0)',
+                backText: 'ReCYcling is such a SIMple action, but it can make a HUGE difference! (Nhấn cao trào ở HUGE - Band 5.5)',
+                explanation: 'Lên giọng ở các tính từ nhấn mạnh và xuống giọng dứt khoát ở cuối mệnh đề khẳng định.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'Connected speech bridges word boundaries: consonant endings link directly to vowel beginnings, weak forms (/tə/, gonna) soften unstressed particles, and intonation conveys emotional urgency.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 2: Speaking Flow Map — Dòng Chảy Đối Thoại Về Vấn Đề Môi Trường (Library Dialogue Flow)',
+        pedagogicalObjective: 'Kích hoạt phản xạ lập luận 3 pha theo cấu trúc đối thoại Lan & Nam: Vấn đề ô nhiễm nhiên liệu hóa thạch → Khó khăn chuyển đổi năng lượng → Giải pháp thực tế của mỗi cá nhân.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng pha để theo dõi dòng chảy phản xạ tự nhiên khi thảo luận chủ đề môi trường:',
+          cards: [
+            {
+              step: 1,
+              label: 'PHA 1: NHẬN DIỆN VẤN ĐỀ Ô NHIỄM KHÔNG KHÍ (AIR QUALITY CRISIS)',
+              cognitiveFunction: '1. Nêu thực trạng ô nhiễm không khí tại các đại đô thị do khói xe và khí thải nhà máy',
+              content: 'In big cities, air pollution is becoming harder to breathe because dense traffic produces excessive smoke and fine dust.',
+              bandLevel: 'Band 4.5 → 5.0',
+              pedagogyNote: 'Vận dụng câu thực hành 1.2: "The air in big cities is becoming harder to breathe every year".',
+              flipCard: {
+                frontText: 'Cities have bad air and many cars. (Band 4.0 đơn sơ)',
+                backText: 'Air pollution is a critical issue in major cities as dense vehicles release toxic smoke and dust. (Band 5.0)',
+                explanation: 'Mở rộng câu bằng mệnh đề quan hệ và liên từ nguyên nhân "as dense vehicles release...".'
+              }
+            },
+            {
+              step: 2,
+              label: 'PHA 2: TRANH LUẬN KINH TẾ VS BẢO VỆ THIÊN NHIÊN (ECONOMIC TRADE-OFF)',
+              cognitiveFunction: '2. Nêu sự giằng co giữa nhu cầu phát triển kinh tế và chi phí đắt đỏ của năng lượng thay thế',
+              content: 'While burning fossil fuels generates vital electricity for economic prosperity, renewable energy sources remain quite expensive for developing countries.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Trích từ quan điểm đối thoại giữa Lan và Nam (Mục 2.1): "Alternative energy sources are too expensive right now".',
+              flipCard: {
+                frontText: 'Green energy is good but very expensive so countries burn coal. (Band 4.0 cộc lốc)',
+                backText: 'Although alternative energy is ideal, developing nations still rely on fossil fuels due to high transition costs. (Band 5.5)',
+                explanation: 'Dùng mệnh đề nhượng bộ "Although alternative energy is ideal..." để tạo chiều sâu tư duy.'
+              }
+            },
+            {
+              step: 3,
+              label: 'PHA 3: HÀNH ĐỘNG CỦA CÁ NHÂN & THAY ĐỔI LỚN (INDIVIDUAL ACTION & IMPACT)',
+              cognitiveFunction: '3. Khẳng định các hành động nhỏ của mỗi người (tái chế, giảm túi nilon) tạo ra tác động to lớn',
+              content: 'Recycling and cutting down on single-use plastics are simple everyday actions, but collectively they make a huge difference for our oceans.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Vận dụng câu trọng âm 1.2: "Recycling is such a simple action, but it can make a huge difference".',
+              flipCard: {
+                frontText: 'People should recycle and not use plastic bags. (Band 4.0)',
+                backText: 'Recycling is a simple habit, yet widespread public participation can make a tremendous difference. (Band 5.5)',
+                explanation: 'Kết hợp "yet widespread public participation" với collocation "make a tremendous difference".'
+              }
+            }
+          ],
+          fullMosaicSummary: 'Discussing environmental issues requires balancing real-world challenges: burning fossil fuels causes severe urban pollution, alternative energies carry high initial costs, yet individual recycling efforts create meaningful long-term change.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 3: Lexical Flip Cards — Bộ Ba Cụm Diễn Đạt Môi Trường Trọng Tâm (Mục 2.2 & 2.3)',
+        pedagogicalObjective: 'Làm chủ 3 cụm chuỗi nhân quả môi trường đắt giá: Burn fossil fuels to generate electricity, Natural habitat destruction, và Cut down on plastic waste.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng thẻ để biến câu từ vụn vặt thành câu ghép nhân quả học thuật:',
+          cards: [
+            {
+              step: 1,
+              label: 'THẺ 1: ĐỐT NHIÊN LIỆU HÓA THẠCH (BURN FOSSIL FUELS)',
+              cognitiveFunction: '1. Diễn đạt chuỗi nhân quả: Đốt nhiên liệu hóa thạch phát điện → Ô nhiễm không khí đô thị',
+              content: 'Burning fossil fuels to generate electricity is the main driver of severe air pollution in metropolitan areas.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Cụm diễn đạt mục 2.2: "burn fossil fuels to generate electricity" (/bɜːn ˈfɒs.əl ˌfjuː.əlz/).',
+              flipCard: {
+                frontText: 'Factories burn oil and coal to make power. (Diễn đạt thô)',
+                backText: 'Burning fossil fuels to generate electricity releases massive greenhouse gases into the atmosphere. (Band 5.5)',
+                explanation: 'Dùng danh động từ "Burning fossil fuels to generate electricity" làm chủ ngữ sang trọng.'
+              }
+            },
+            {
+              step: 2,
+              label: 'THẺ 2: PHÁ HỦY MÔI TRƯỜNG SỐNG TỰ NHIÊN (DESTRUCTION OF NATURAL HABITAT)',
+              cognitiveFunction: '2. Nêu tác động của cháy rừng đến sự tuyệt chủng của muông thú',
+              content: 'Frequent forest fires lead to the destruction of natural habitats, putting rare wildlife on the brink of extinction.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Cụm từ vựng mục 2.2: "destruction of natural habitat" (/dɪˈstrʌk.ʃən əv ˈnætʃ.ər.əl ˈhæb.ɪ.tæt/).',
+              flipCard: {
+                frontText: 'Forest fires kill animals and destroy trees. (Band 4.0)',
+                backText: 'Forest fires cause catastrophic destruction of natural habitats, accelerating animal extinction. (Band 5.5)',
+                explanation: 'Kết hợp "destruction of natural habitats" với động từ "accelerating animal extinction".'
+              }
+            },
+            {
+              step: 3,
+              label: 'THẺ 3: HÀNH ĐỘNG NHỎ TẠO KHÁC BIỆT LỚN (MAKE A HUGE DIFFERENCE)',
+              cognitiveFunction: '3. Diễn đạt thông điệp tích cực về hành động bảo vệ môi trường',
+              content: 'Although individual efforts seem small, using public transit and reducing plastic waste can make a huge difference.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Thành ngữ quen thuộc trong chủ đề môi trường: "make a huge difference" (/meɪk ə hjuːdʒ ˈdɪf.ər.əns/).',
+              flipCard: {
+                frontText: 'Small actions help the earth a lot. (Giao tiếp cơ bản)',
+                backText: 'Even minor lifestyle adjustments can collectively make a huge difference in cutting environmental waste. (Band 5.5)',
+                explanation: 'Collocation điểm sáng "make a huge difference" kết hợp cùng trạng từ "collectively".'
+              }
+            }
+          ],
+          fullMosaicSummary: 'Protecting the environment starts with understanding the causes: burning fossil fuels worsens air quality, deforestation destroys habitats, but collective action to reduce plastic waste makes a lasting difference.'
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w9d1',
+    courseId: 'builder',
+    week: 9,
+    day: 1,
+    skill: 'writing',
+    title: 'WRITING · BUỔI 1: VIẾT INTRODUCTION VÀ OVERVIEW TRONG WT1',
+    subtitle: 'Kỹ Thuật Paraphrase Đổi Dạng Từ (Clause ↔ Noun Phrase) & Cấu Trúc Overview 3 Yếu Tố (Trend, Difference, Exception)',
+    coreCompetency: 'Nắm vững công thức viết Introduction chuẩn xác qua kỹ thuật biến đổi từ loại (how much meat was consumed ↔ meat consumption) và làm chủ cấu trúc đoạn Overview hoàn chỉnh bao gồm xu hướng chung, đối tượng áp đảo và ngoại lệ duy nhất.',
+    bridgeToHomework: {
+      promptText: 'Viết Introduction và Overview hoàn chỉnh cho 2 đề thi (International Applicants và Renewable Energy) trong Writing Homework Tuần 9 Day 1.',
+      targetExamId: 'exam_builder_w9d1'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'syntax_anatomy',
+        title: 'Chặng 1: Sentence X-Ray — Bóc Tách Kỹ Thuật Biến Đổi Mệnh Đề Thành Cụm Danh Từ (Paraphrase Engine)',
+        pedagogicalObjective: 'Quan sát cách chuyển đổi từ cụm danh từ ở đề bài "the consumption of fish and different kinds of meat" sang mệnh đề tân ngữ linh hoạt "how much fish and meat were consumed" để ghi điểm Grammatical Range.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Bấm phân tích để quan sát cơ chế biến đổi cú pháp câu mở bài Introduction chuẩn mực:',
+          mode: 'build',
+          tokens: [
+            { id: 't1', text: 'The line graph', role: 'subject', colorClass: 'blue' },
+            { id: 't2', text: 'illustrates', role: 'fv_core', colorClass: 'green' },
+            { id: 't3', text: 'how much fish and meat of different kinds were consumed', role: 'subordinating_clause', colorClass: 'orange' },
+            { id: 't4', text: 'in a European country between 1979 and 2004.', role: 'modifier', colorClass: 'purple' }
+          ],
+          slots: [
+            { slotId: 's1', acceptedRoles: ['subject'], label: 'LOẠI BIỂU ĐỒ (VISUAL TYPE)' },
+            { slotId: 's2', acceptedRoles: ['fv_core'], label: 'ĐỘNG TỪ BÁO CÁO (REPORTING VERB)' },
+            { slotId: 's3', acceptedRoles: ['subordinating_clause'], label: 'MỆNH ĐỀ ĐỐI TƯỢNG ĐƯỢC PARAPHRASE (PARAPHRASED CLAUSE)' },
+            { slotId: 's4', acceptedRoles: ['modifier'], label: 'PHẠM VI KHÔNG GIAN VÀ THỜI GIAN (TIME & PLACE)' }
+          ]
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'productive_failure',
+        title: 'Chặng 2: Break & Repair — Bẻ Gãy Bẫy Chép Nguyên Văn Đề Bài (Prompt Copying Trap)',
+        pedagogicalObjective: 'Phát hiện lỗi sao chép máy móc đề bài thi (bẫy Band 4.0 - 5.0) và morph sang câu mở bài học thuật có biến đổi từ loại và đại từ chỉ số lượng.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Click vào cụm từ bị sao chép nguyên xi đề bài để bẻ gãy lối hành văn sơ cấp:',
+          mode: 'break_and_repair',
+          tokens: [
+            { id: 't1', text: 'The chart below shows', role: 'subject', colorClass: 'red' },
+            { id: 't2', text: 'the number of international applicants to the universities of one European country.', role: 'fv_core', colorClass: 'gray' }
+          ],
+          collisionTarget: {
+            conflictingTokenIds: ['t1', 't2'],
+            errorMessage: 'LỖI CHÉP LẠI ĐỀ BÀI & DÙNG TỪ "BELOW": Bài viết IELTS không được giữ lại từ "below", và việc chép y nguyên cụm "the number of international applicants" sẽ bị trừ nặng điểm Lexical Resource!',
+            repairOptions: [
+              {
+                id: 'opt_intro_paraphrase',
+                action: 'morph',
+                targetTokenId: 't1',
+                resultText: 'The given chart delineates how many international students applied to tertiary institutions in a specific European nation.',
+                explanation: 'Nâng cấp chuẩn Band 6.0+: Bỏ "below", đổi "shows" -> "delineates", đổi "the number of applicants" -> mệnh đề "how many international students applied", và "universities" -> "tertiary institutions".'
+              }
+            ]
+          }
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 3: Transformation Ladder — 3 Nấc Lắp Ghép Đoạn Overview Đầy Đủ Xu Hướng & Ngoại Lệ',
+        pedagogicalObjective: 'Xây dựng đoạn Overview 2 câu chuẩn mực cho bài University Applicants: Câu 1 nêu xu hướng chung và ngoại lệ; Câu 2 nêu đối tượng bứt phá chiếm ngôi đầu bảng.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng nấc để lắp ghép đoạn Overview hội tụ đủ 3 yếu tố: Trend, Major Difference và Exception:',
+          cards: [
+            {
+              step: 1,
+              label: 'NẤC 1: XÁC ĐỊNH XU HƯỚNG CHUNG KÈM NGOẠI LỆ (GENERAL TREND & EXCEPTION)',
+              cognitiveFunction: '1. Nhận diện việc hầu hết các nước đều tăng lượng hồ sơ, ngoại trừ Trung Quốc',
+              content: 'Overall, the number of university applicants from most countries witnessed an upward trend, with the notable exception of China.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Dùng cấu trúc ăn điểm ngoại lệ: "with the notable exception of [X]" (ngoại trừ ngoại lệ đáng chú ý là...).',
+              flipCard: {
+                frontText: 'All countries went up, only China went down. (Band 4.0 đơn điệu)',
+                backText: 'Applicant numbers from most nations witnessed growth, with the sole exception of China. (Band 5.5)',
+                explanation: 'Thay "only China went down" bằng cụm từ học thuật "with the sole exception of China".'
+              }
+            },
+            {
+              step: 2,
+              label: 'NẤC 2: SOÁN NGÔI ĐẦU BẢNG NGOẠN MỤC (RANKING SHIFT & FINAL LEADER)',
+              cognitiveFunction: '2. Nêu sự đổi ngôi giữa Trung Quốc (giảm liên tục) và Mỹ (tăng vọt lên vị trí số 1)',
+              content: 'In addition, while Chinese applicants initially represented the largest group, they were eventually overtaken by applicants from America.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Dùng liên từ tương phản "while" và động từ chuyển giao thứ hạng "were eventually overtaken by...".',
+              flipCard: {
+                frontText: 'China was top at first but America was top in the end. (Band 4.0)',
+                backText: 'While China initially accounted for the majority of applicants, America emerged as the clear leader by the final year. (Band 5.5)',
+                explanation: 'Kết hợp "initially accounted for" với "emerged as the clear leader".'
+              }
+            },
+            {
+              step: 3,
+              label: 'NẤC 3: GHÉP ĐOẠN OVERVIEW HOÀN CHỈNH ĐẠT CHUẨN BAND 6.0+',
+              cognitiveFunction: '3. Tạo thành đoạn Overview 2 câu cân đối, rành mạch và bao quát trọn vẹn dữ liệu',
+              content: 'Overall, applicant numbers from almost all surveyed countries saw consistent increases, with the notable exception of China. Furthermore, despite initial fluctuations, America surpassed China to become by far the largest source of international students by the end of the period.',
+              bandLevel: 'Band 5.5 → 6.0',
+              pedagogyNote: 'Đoạn văn này hội tụ đủ: xu hướng bao quát + trường hợp ngoại lệ duy nhất + sự hoán đổi ngôi vị dẫn đầu.',
+              flipCard: {
+                frontText: 'Viết đoạn Overview chỉ nói chung chung mọi nước đều tăng (bỏ quên ngoại lệ)',
+                backText: 'Đoạn Overview hoàn chỉnh: 1 câu xu hướng kèm ngoại lệ (China) + 1 câu bứt phá dẫn đầu (America).',
+                explanation: 'Đáp ứng 100% tiêu chí Task Achievement của Band 6.0+ không đưa số liệu cụ thể.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'A complete Overview must synthesize three core dimensions: the dominant trend across categories, any single notable exception, and major shifts in ranking over time.'
+        }
+      },
+      {
+        stageNumber: 4,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 4: Lexical Flip Cards — Bộ Ba Cặp Chuyển Đổi Từ Loại (Clause ↔ Noun Phrase)',
+        pedagogicalObjective: 'Làm chủ 3 kỹ thuật chuyển đổi từ loại phổ biến nhất trong đề thi Writing Task 1 từ giáo trình mục 1.b.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng thẻ để biến đổi linh hoạt giữa cụm danh từ và mệnh đề tân ngữ:',
+          cards: [
+            {
+              step: 1,
+              label: 'CẶP 1: SẢN LƯỢNG HOA QUẢ (FRUIT PRODUCTION)',
+              cognitiveFunction: '1. Chuyển đổi giữa how much fruit was produced và fruit production',
+              content: 'how much fruit was produced ↔ the total production of fruit / fruit production figures.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Khi đề bài cho danh từ "fruit production", hãy paraphrase thành mệnh đề "how much fruit was produced" hoặc ngược lại.',
+              flipCard: {
+                frontText: 'The chart shows fruit production... (Chép nguyên đề)',
+                backText: 'The chart illustrates how much fruit was produced by agricultural sectors... (Band 5.5)',
+                explanation: 'Đổi từ cụm danh từ "fruit production" sang mệnh đề quá khứ bị động "how much fruit was produced".'
+              }
+            },
+            {
+              step: 2,
+              label: 'CẶP 2: LƯỢNG TIÊU THỤ CÁ (FISH CONSUMPTION)',
+              cognitiveFunction: '2. Chuyển đổi giữa how much fish was eaten và fish consumption',
+              content: 'the consumption of fish ↔ how much fish was consumed / eaten by citizens.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Động từ "consumed" hoặc "eaten" thay thế hoàn hảo cho danh từ "consumption".',
+              flipCard: {
+                frontText: 'The graph shows fish consumption... (Chép nguyên đề)',
+                backText: 'The graph illustrates how much fish was eaten across various households... (Band 5.5)',
+                explanation: 'Sử dụng cấu trúc câu hỏi gián tiếp "how much [noun] was consumed" rất tự nhiên.'
+              }
+            },
+            {
+              step: 3,
+              label: 'CẶP 3: TỶ LỆ ĐI XEM PHIM (CINEMA ATTENDANCE)',
+              cognitiveFunction: '3. Chuyển đổi giữa what percentage visited và cinema attendance rate',
+              content: 'what percentage of people visited cinemas ↔ the proportion of cinema-goers / cinema attendance rates.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Paraphrase từ "percentage" sang "proportion" và "people who visited" sang "cinema-goers".',
+              flipCard: {
+                frontText: 'The table shows the percentage of people visiting cinema. (Đề bài)',
+                backText: 'The table delineates the cinema attendance rate among different age brackets. (Band 5.5)',
+                explanation: 'Thay "percentage of people visiting" bằng danh từ ghép cô đọng "cinema attendance rate".'
+              }
+            }
+          ],
+          fullMosaicSummary: 'Mastering Task 1 paraphrasing requires bidirectional agility: fluidly transforming noun phrases (production, consumption, attendance) into clauses (how much was produced, consumed, or visited).'
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w9d2',
+    courseId: 'builder',
+    week: 9,
+    day: 2,
+    skill: 'reading',
+    title: 'READING · BUỔI 2: SO SÁNH & ĐỐI LẬP (COMPARE AND CONTRAST)',
+    subtitle: 'Cambridge 9 Test 1: Attitudes to Language — Prescriptivism vs Descriptivism & Logic True / False / Not Given',
+    coreCompetency: 'Nắm vững kỹ năng đối chiếu hai trường phái tư tưởng đối lập (Prescriptivism - Quy tắc chuẩn mực vs Descriptivism - Miêu tả thực tế) qua các từ nối tương phản (conversely, whereas, however) và làm chủ kỹ thuật xác minh True / False / Not Given.',
+    bridgeToHomework: {
+      promptText: 'Hoàn thành bài đọc Cambridge 9 Test 1 Passage 1 (Attitudes to language) và giải các câu hỏi còn lại trong Reading Homework Tuần 9 Day 2.',
+      targetExamId: 'exam_builder_w9d2'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'verification_scale',
+        title: 'Chặng 1: Logic Scale — Bóc Trần Bẫy So Sánh Hơn Kém Khống (Question 2: Degree Comparison Trap - FALSE)',
+        pedagogicalObjective: 'Phát hiện sự sai lệch giữa cấu trúc so sánh ngang bằng trong bài đọc "Arguments can start AS EASILY over minor points AS over major policies" với cấu trúc so sánh hơn sai lệch trong câu hỏi "People feel MORE STRONGLY about... than about...".',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Đặt nhận định của câu hỏi và cấu trúc so sánh trong bài đọc lên bàn cân logic:',
+          passageContext: {
+            title: 'Cambridge IELTS 9 Passage 1: Attitudes to Language (Paragraph 1)',
+            paragraphs: [
+              {
+                id: 'p1',
+                label: 'Đoạn 1 (Dòng 4-6)',
+                text: 'Language belongs to everyone, so most people feel they have a right to hold an opinion about it. And when opinions differ, emotions can run high. Arguments can start as easily over minor points of usage as over major policies of linguistic education.'
+              }
+            ],
+            targetParagraphId: 'p1',
+            targetSnippet: 'Arguments can start as easily over minor points of usage as over major policies of linguistic education.'
+          },
+          statement: {
+            rawText: 'Question 2: People feel more strongly about language education than about small differences in language usage.',
+            deconstructedVariables: [
+              { name: 'A_subject', text: 'People’s emotional reaction' },
+              { name: 'B_comparison_trap', text: 'FEEL MORE STRONGLY ABOUT [education] THAN [usage]', isTrapWord: true },
+              { name: 'C_domain', text: 'language education vs minor usage' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'Arguments can start as easily over minor points of usage as over major policies of linguistic education.',
+            targetVariables: [
+              { matchingName: 'A_subject', text: 'Arguments / emotions can run high' },
+              { matchingName: 'B_comparison_trap', text: 'AS EASILY over minor points... AS OVER major policies (MỨC ĐỘ DỄ BÙNG NỔ TRANH CÃI LÀ NGANG BẰNG NHAU)' },
+              { matchingName: 'C_domain', text: 'minor points of usage vs major policies of linguistic education' }
+            ]
+          },
+          expectedRelation: 'contradiction',
+          verdict: 'FALSE',
+          pedagogicalInsight: 'Bẫy so sánh sai lệch mức độ (Degree Comparison Clash): Câu hỏi khẳng định con người phản ứng mạnh mẽ hơn với giáo dục so với khác biệt nhỏ ("feel more strongly about... than..."). Nhưng bài đọc khẳng định tranh cãi bùng phát DỄ DÀNG NHƯ NHAU ở cả hai trường hợp ("as easily... as..."). Hai khẳng định mâu thuẫn -> Phán quyết: FALSE.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'verification_scale',
+        title: 'Chặng 2: Evidence Chain — Cầu Nối Paraphrase Khớp 100% Ý Tưởng (Question 6: Descriptivists - TRUE)',
+        pedagogicalObjective: 'Lần vết cầu nối Paraphrase giữa nhận định của câu hỏi "it is pointless to try to stop language change" và tuyên ngôn của các nhà ngữ pháp miêu tả trong bài "not to attempt the impossible tasks of halting language change".',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Kiểm chứng sự trùng khớp giữa quan điểm của Descriptivists trong câu hỏi và dẫn chứng bài đọc:',
+          passageContext: {
+            title: 'Cambridge IELTS 9 Passage 1: Attitudes to Language (Paragraph 5)',
+            paragraphs: [
+              {
+                id: 'p5',
+                label: 'Đoạn 5 (Dòng 3-6)',
+                text: 'This approach is summarised in the statement that it is the task of the grammarian to describe, not prescribe - to record the facts of linguistic diversity, and not to attempt the impossible tasks of evaluating language variation or halting language change.'
+              }
+            ],
+            targetParagraphId: 'p5',
+            targetSnippet: '...and not to attempt the impossible tasks of evaluating language variation or halting language change.'
+          },
+          statement: {
+            rawText: 'Question 6: According to descriptivists it is pointless to try to stop language change.',
+            deconstructedVariables: [
+              { name: 'M_actor', text: 'According to descriptivists' },
+              { name: 'N_assessment', text: 'IT IS POINTLESS (vô ích / bất khả thi)' },
+              { name: 'P_action', text: 'to try to stop language change (ngăn chặn ngôn ngữ biến đổi)' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'not to attempt the impossible tasks of evaluating language variation or halting language change.',
+            targetVariables: [
+              { matchingName: 'M_actor', text: 'descriptivist approach (describe, not prescribe)' },
+              { matchingName: 'N_assessment', text: 'THE IMPOSSIBLE TASKS (= it is pointless / bất khả thi, vô ích)' },
+              { matchingName: 'P_action', text: 'halting language change (= stop language change / ngăn chặn ngôn ngữ đổi thay)' }
+            ]
+          },
+          expectedRelation: 'match',
+          verdict: 'TRUE',
+          pedagogicalInsight: 'Cầu nối Paraphrase hoàn hảo: "it is pointless" = "the impossible task" (việc bất khả thi / làm vô ích), "to stop language change" = "halting language change" (ngăn cản sự biến đổi). Hai vế tương thích 100% -> Phán quyết: TRUE.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'verification_scale',
+        title: 'Chặng 3: Verification Scale — Nhận Diện Khoảng Trống Dữ Liệu Giá Sách (Question 4: NOT GIVEN)',
+        pedagogicalObjective: 'Phát hiện sự vắng mặt của thông tin chi phí mua sách ngữ pháp thế kỷ 18 ("cost a lot of money to buy") để kiên quyết chọn NOT GIVEN.',
+        interactionModel: {
+          type: 'verification_scale',
+          prompt: 'Kiểm tra xem giá tiền mua sách ngữ pháp thế kỷ 18 có xuất hiện trong văn bản hay không:',
+          passageContext: {
+            title: 'Cambridge IELTS 9 Passage 1: Attitudes to Language (Paragraph 4)',
+            paragraphs: [
+              {
+                id: 'p4',
+                label: 'Đoạn 4 (Dòng 1-4)',
+                text: 'All the main languages have been studied prescriptively, especially in the 18th century approach to the writing of grammars and dictionaries. The aims of these early grammarians were threefold: (a) they wanted to codify the principles of their languages...'
+              }
+            ],
+            targetParagraphId: 'p4',
+            targetSnippet: 'All the main languages have been studied prescriptively, especially in the 18th century approach to the writing of grammars and dictionaries.'
+          },
+          statement: {
+            rawText: 'Question 4: Prescriptive grammar books cost a lot of money to buy in the 18th century.',
+            deconstructedVariables: [
+              { name: 'X_object', text: 'Prescriptive grammar books in the 18th century' },
+              { name: 'Y_attribute_trap', text: 'COST A LOT OF MONEY TO BUY (rất đắt tiền để mua)', isTrapWord: true },
+              { name: 'Z_timeline', text: 'in the 18th century' }
+            ]
+          },
+          passageEvidence: {
+            rawText: 'All the main languages have been studied prescriptively, especially in the 18th century approach to the writing of grammars and dictionaries.',
+            targetVariables: [
+              { matchingName: 'X_object', text: '18th century approach to writing grammars and dictionaries' },
+              { matchingName: 'Y_attribute_trap', text: 'KHÔNG CÓ DÒNG NÀO NHẮC ĐẾN GIÁ BÁN HAY CHI PHÍ TIỀN BẠC ĐỂ MUA SÁCH (NO PRICE DATA)' },
+              { matchingName: 'Z_timeline', text: '18th century' }
+            ]
+          },
+          expectedRelation: 'no_evidence',
+          verdict: 'NOT GIVEN',
+          pedagogicalInsight: 'Bẫy suy đoán ngoài thực tế: Mặc dù sách vào thế kỷ 18 có thể đắt thật, nhưng bài đọc hoàn toàn KHÔNG hề nhắc đến giá tiền hay chi phí mua sách. Thiếu dữ kiện xác thực từ văn bản -> Phán quyết: NOT GIVEN.'
+        }
+      },
+      {
+        stageNumber: 4,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 4: Lexical Flip Cards — Bộ Ba Khái Niệm So Sánh Hai Trường Phái Ngôn Ngữ',
+        pedagogicalObjective: 'Ghi nhớ bản chất cốt lõi của 3 thuật ngữ nền tảng trong bài: Prescriptivism, Descriptivism và Codify the principles.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng thẻ để phân biệt rõ ranh giới giữa 2 trường phái đối lập:',
+          cards: [
+            {
+              step: 1,
+              label: 'THUẬT NGỮ 1: CHỦ NGHĨA QUY TẮC (PRESCRIPTIVISM)',
+              cognitiveFunction: '1. Hiểu quan điểm áp đặt quy tắc ngữ pháp đúng - sai tuyệt đối',
+              content: 'Prescriptivism is the view that one variety of language has an inherently higher value and should be imposed on all speakers.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Thuật ngữ "prescriptivism" (/prɪˈskrɪp.tɪ.vɪ.zəm/) bắt nguồn từ "prescribe" (kê đơn, áp đặt quy tắc).',
+              flipCard: {
+                frontText: 'Rules say right or wrong. (Cách hiểu đơn sơ)',
+                backText: 'Prescriptive grammarians believe rules must be strictly enforced to preserve linguistic standards. (Band 5.5)',
+                explanation: 'Đặc trưng: Coi trọng quy tắc (rules), phân biệt đúng (correct) và sai (incorrect).'
+              }
+            },
+            {
+              step: 2,
+              label: 'THUẬT NGỮ 2: CHỦ NGHĨA MIÊU TẢ THỰC TẾ (DESCRIPTIVISM)',
+              cognitiveFunction: '2. Hiểu quan điểm ghi nhận sự đa dạng và biến đổi tự nhiên của ngôn ngữ',
+              content: 'Descriptivism holds that the task of linguists is to describe how people actually use language, rather than prescribing how they ought to speak.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Thuật ngữ "descriptivism" (/dɪˈskrɪp.tɪ.vɪ.zəm/) xuất phát từ "describe" (miêu tả hiện trạng thực tế).',
+              flipCard: {
+                frontText: 'People talk how they want. (Cách hiểu thô)',
+                backText: 'Descriptive linguists record the facts of linguistic diversity without judging usage as right or wrong. (Band 5.5)',
+                explanation: 'Đặc trưng: Ghi nhận thực tế giao tiếp (custom of speaking), chấp nhận ngôn ngữ luôn đổi thay.'
+              }
+            },
+            {
+              step: 3,
+              label: 'THUẬT NGỮ 3: HỆ THỐNG HÓA CÁC NGUYÊN TẮC (CODIFY THE PRINCIPLES)',
+              cognitiveFunction: '3. Hiểu mục tiêu của các nhà ngữ pháp thế kỷ 18 khi biên soạn từ điển',
+              content: 'Early grammarians aimed to codify the principles of language to show that there was an orderly system beneath chaotic usage.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Cụm động từ học thuật: "codify the principles" (/ˈkəʊ.dɪ.faɪ ðə ˈprɪn.sə.pəlz/ - pháp điển hóa, đúc kết thành luật).',
+              flipCard: {
+                frontText: 'They make grammar rules for books. (Diễn đạt sơ cấp)',
+                backText: '18th-century scholars sought to codify grammatical principles into authoritative dictionaries. (Band 5.5)',
+                explanation: 'Dùng cụm học thuật "codify the principles" để diễn đạt việc đúc kết các quy chuẩn ngôn ngữ.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'The linguistic debate contrasts two fundamental mindsets: prescriptivists who seek to codify and enforce rigid grammatical standards, versus descriptivists who record living speech and embrace natural language evolution.'
+        }
+      }
+    ]
+  },
+  {
+    id: 'builder_w9d3',
+    courseId: 'builder',
+    week: 9,
+    day: 3,
+    skill: 'speaking',
+    title: 'SPEAKING · BUỔI 3: PERSONAL ACHIEVEMENT & VƯỢT QUA NGHỊCH CẢNH',
+    subtitle: 'Hệ Thống Hóa Phát Âm (-ed, -s/es & Sentence Stress) & Speaking Flow Map Kể Chuyện Khắc Phục Khó Khăn',
+    coreCompetency: 'Làm chủ tổng hợp các trụ cột phát âm của khóa học BUILDER (chuẩn đuôi thì quá khứ -ed, số nhiều -s/es, ngữ điệu & trọng âm câu) và vận dụng linh hoạt Speaking Flow Map để tường thuật một giai đoạn vượt khó đầy cảm xúc đạt chuẩn Band 5.5.',
+    bridgeToHomework: {
+      promptText: 'Ghi âm bài nói 2 phút kể về một khó khăn cá nhân đã vượt qua (Talk about a difficult time you have overcome) trong Speaking Homework Tuần 9 Day 3.',
+      targetExamId: 'exam_builder_w9d3'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 1: Transformation Ladder — Thang Nâng Cấp Câu Chuyện Vượt Khó Của Tom (Mục 1.2)',
+        pedagogicalObjective: 'Quan sát sự tiến hóa từ các câu văn kể chuyện rời rạc đơn điệu sang đoạn văn tự sự giàu cảm xúc với liên từ thời gian và từ vựng nghị lực sống Band 5.5.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng nấc thang để theo dõi hành trình chuyển mình theo đuổi đam mê nghệ thuật của Tom:',
+          cards: [
+            {
+              step: 1,
+              label: 'NẤC 1: XUNG ĐỘT NỘI TÂM & CÔNG VIỆC NHÀM CHÁN (TEDIOUS JOB VS PASSION)',
+              cognitiveFunction: '1. Khởi đầu với sự giằng xé giữa công việc văn phòng tẻ nhạt và khát vọng cháy bỏng',
+              content: 'Although Tom had a burning passion for music, he was initially trapped in a tedious desk job that barely paid the bills.',
+              bandLevel: 'Band 4.5 → 5.0',
+              pedagogyNote: 'Collocation điểm sáng trích từ bài học: "burning passion" và "tedious desk job that barely paid the bills".',
+              flipCard: {
+                frontText: 'Tom loved rap but he worked in an office with low salary. (Band 4.0)',
+                backText: 'Despite having a burning passion for rap, Tom spent his days in a tedious desk job that barely paid the bills. (Band 5.0)',
+                explanation: 'Kết hợp "burning passion" với cụm miêu tả sinh động "a tedious desk job that barely paid the bills".'
+              },
+              vowelHighlight: [
+                { word: 'passion', phonetic: '/ˈpæʃ.ən/', vowelSound: 'Âm /æ/ mở rộng khẩu hình' },
+                { word: 'tedious', phonetic: '/ˈtiː.di.əs/', vowelSound: 'Trọng âm rơi vào nguyên âm dài /iː/' },
+                { word: 'persevered', phonetic: '/ˌpɜː.sɪˈvɪəd/', vowelSound: 'Âm đuôi -ed phát âm là /d/' }
+              ]
+            },
+            {
+              step: 2,
+              label: 'NẤC 2: KIÊN TRÌ VƯỢT QUA VẤP NGÃ (PERSEVERING THROUGH SETBACKS)',
+              cognitiveFunction: '2. Nêu sự nỗ lực rèn luyện không ngừng nghỉ sau khi nhận lời khuyên từ người bạn thân',
+              content: 'Encouraged by his close friend, Tom persevered through numerous setbacks, dedicating countless hours to practicing and perfecting his craft.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Dùng quá khứ phân từ "Encouraged by..." và cụm collocation "persevered through setbacks", "perfecting his craft".',
+              flipCard: {
+                frontText: 'His friend helped him. He practiced every day a lot. (Band 4.0 nói cộc)',
+                backText: 'Encouraged by his friend, Tom persevered through setbacks, spending endless hours perfecting his craft. (Band 5.5)',
+                explanation: 'Cấu trúc rút gọn chủ ngữ "Encouraged by his friend" thể hiện độ làm chủ ngữ pháp xuất sắc.'
+              }
+            },
+            {
+              step: 3,
+              label: 'NẤC 3: BỨT PHÁ THÀNH TỰU & TRUYỀN CẢM HỨNG (ACHIEVEMENT & INSPIRATION)',
+              cognitiveFunction: '3. Khép lại bằng cột mốc ký hợp đồng và truyền cảm hứng dũng cảm theo đuổi ước mơ',
+              content: 'Eventually, a record label signed a contract with him, proving that fearlessly pursuing one’s dreams can truly transform a person’s life.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Vận dụng thông điệp kết bài của đoạn văn mẫu: "fearlessly pursue one’s dreams" và "transformed his life".',
+              flipCard: {
+                frontText: 'A music company gave him a contract and he was happy. (Band 4.0)',
+                backText: 'Eventually, signing a recording contract transformed his life and inspired others to chase their dreams fearlessly. (Band 5.5)',
+                explanation: 'Collocation "transform his life" và trạng từ "fearlessly" tạo kết thúc truyền cảm hứng mạnh mẽ.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'Tom felt torn between financial security and his artistic dreams, but he confided in a trusted friend and persevered through countless setbacks. Ultimately, his tireless dedication earned him a recording contract and transformed his entire destiny.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 2: Speaking Flow Map — Bản Đồ Dòng Chảy Kể Về Giai Đoạn Vượt Khó (Overcoming Adversity Flow)',
+        pedagogicalObjective: 'Kích hoạt phản xạ 3 pha khi giám khảo hỏi Part 2: Đối mặt áp lực / biến cố → Tìm kiếm trợ giúp & Hành động kiên trì → Trưởng thành & Bài học kinh nghiệm.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng pha để theo dõi mạch kể chuyện tự nhiên khi tường thuật một giai đoạn gian nan:',
+          cards: [
+            {
+              step: 1,
+              label: 'PHA 1: BIẾN CỐ & ÁP LỰC BAN ĐẦU (INITIAL ADVERSITY & PRESSURE)',
+              cognitiveFunction: '1. Nêu bối cảnh áp lực học tập/công việc hoặc biến cố tâm lý cá nhân',
+              content: 'A few years ago, I fell behind in my academic studies due to intense peer pressure and felt completely overwhelmed.',
+              bandLevel: 'Band 4.5 → 5.0',
+              pedagogyNote: 'Trích từ danh mục ý tưởng mục 2.2: "falling behind in school/work due to peer pressure".',
+              flipCard: {
+                frontText: 'I had bad study in university and felt stressed. (Band 4.0)',
+                backText: 'During my freshman year, I fell behind with my coursework and struggled under immense peer pressure. (Band 5.0)',
+                explanation: 'Cụm từ "fell behind with coursework" và "immense peer pressure" mô tả rất chân thực.'
+              }
+            },
+            {
+              step: 2,
+              label: 'PHA 2: HÀNH ĐỘNG THAY ĐỔI & TÌM SỰ TRỢ GIÚP (SEEKING GUIDANCE & ACTION)',
+              cognitiveFunction: '2. Kể về bước ngoặt: tâm sự cùng bạn thân hoặc thầy cô và xây dựng lại kỷ luật bản thân',
+              content: 'Instead of suffering in silence, I reached out to my mentor for constructive advice and reorganized my daily study routine.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Collocation mục 2.2: "reach out for guidance / seek advice" và "reorganize my daily routine".',
+              flipCard: {
+                frontText: 'I asked teacher for help and studied hard again. (Band 4.0)',
+                backText: 'Instead of withdrawing, I sought valuable guidance from my instructor and gradually regained my focus. (Band 5.5)',
+                explanation: 'Dùng cụm liên kết đối lập "Instead of withdrawing, I sought valuable guidance...".'
+              }
+            },
+            {
+              step: 3,
+              label: 'PHA 3: BÀI HỌC TRƯỞNG THÀNH & TỰ TIN (RESILIENCE & PERSONAL GROWTH)',
+              cognitiveFunction: '3. Khẳng định thử thách giúp rèn luyện lòng kiên trì và tự tin hơn trước khó khăn tương lai',
+              content: 'Overcoming that challenging ordeal not only restored my self-confidence but also taught me that resilience is key to achieving long-term goals.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Cấu trúc tương quan kết bài: "not only restored my self-confidence but also taught me that resilience is key".',
+              flipCard: {
+                frontText: 'Now I am happy and I am not scared of hard work. (Band 4.0)',
+                backText: 'Conquering that hardship boosted my resilience and gave me the confidence to pursue ambitious future goals. (Band 5.5)',
+                explanation: 'Từ vựng "resilience" (sức bật tinh thần) và "conquering that hardship" ghi điểm vượt trội.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'A compelling personal achievement narrative moves from adversity to resolution: experiencing severe peer pressure or setbacks, proactively seeking guidance, and emerging with restored confidence and emotional resilience.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 3: Lexical Flip Cards — Bộ Ba Collocation Đắt Giá Chủ Đề Vượt Khó (Mục 2.2)',
+        pedagogicalObjective: 'Làm chủ 3 cặp thành ngữ - động từ diễn đạt bản lĩnh vượt qua thử thách: Face steep challenges, Persevere through setbacks, và Transform one’s life.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng thẻ để nâng cấp kho từ vựng kể chuyện cá nhân:',
+          cards: [
+            {
+              step: 1,
+              label: 'THẺ 1: ĐỐI MẶT THÁCH THỨC (FACE STEEP CHALLENGES)',
+              cognitiveFunction: '1. Diễn đạt việc đối diện với những chướng ngại vật cam go trong cuộc sống',
+              content: 'Every young person has to face steep challenges when transitioning from university to the professional workplace.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Tính từ "steep" (/stiːp/ - hiểm trở, cam go) đi với danh từ "challenges".',
+              flipCard: {
+                frontText: 'I had many big problems. (Từ vựng bình dân)',
+                backText: 'I had to face steep challenges and overcome self-doubt during my early career. (Band 5.5)',
+                explanation: 'Nâng cấp từ "big problems" sang collocation "face steep challenges and overcome self-doubt".'
+              }
+            },
+            {
+              step: 2,
+              label: 'THẺ 2: BỀN BỈ VƯỢT QUA VẤP NGÃ (PERSEVERE THROUGH SETBACKS)',
+              cognitiveFunction: '2. Miêu tả đức tính kiên định, không bỏ cuộc trước thất bại',
+              content: 'If you want to master a foreign language, you must persevere through initial setbacks and keep moving forward.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Động từ "persevere" (/ˌpɜː.sɪˈvɪər/ - kiên trì, bền gan) đi với giới từ "through setbacks".',
+              flipCard: {
+                frontText: 'I did not give up when I failed. (Band 4.0)',
+                backText: 'By persevering through repeated setbacks, I eventually attained the target score I had worked for. (Band 5.5)',
+                explanation: 'Thay "did not give up" bằng cụm từ học thuật "persevering through setbacks".'
+              }
+            },
+            {
+              step: 3,
+              label: 'THẺ 3: THAY ĐỔI VẬN MỆNH CUỘC ĐỜI (TRANSFORM ONE’S LIFE)',
+              cognitiveFunction: '3. Diễn đạt sự bứt phá làm thay đổi hoàn toàn cục diện cuộc sống',
+              content: 'Having the courage to embrace change and pursue my genuine aspiration completely transformed my life.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Collocation: "transform one\'s life" (/trænsˈfɔːm wʌnz laɪf/ - biến đổi hoàn toàn cuộc sống).',
+              flipCard: {
+                frontText: 'My decision made my life different and better. (Band 4.0)',
+                backText: 'Embracing that difficult turning point ultimately transformed my life in ways I never imagined. (Band 5.5)',
+                explanation: 'Cụm từ "transformed my life in ways I never imagined" mang âm hưởng tự nhiên của người bản ngữ.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'Achieving genuine personal growth means being willing to face steep challenges, persevere through temporary setbacks, and allow hard-won victories to transform your life and outlook.'
+        }
+      }
+    ]
   }
 ];
+
+
+
+
+
+
+
+
+
+
 
 
 
