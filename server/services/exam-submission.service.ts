@@ -941,47 +941,54 @@ export class ExamSubmissionService {
         }
       }
 
-      // Notification Trigger: SUBMITTED (Requires teacher manual grading) vs GRADED (Auto-graded result)
-      if ((tx as any).notification) {
-        const examTitle = submission.exam?.title || "IELTS Exam";
-        if (targetStatus === "SUBMITTED") {
-          let teacherId: string | null = null;
-          if (submission.exam?.courseId && (tx as any).classStudent) {
-            const classStudent = await (tx as any).classStudent.findFirst({
-              where: {
-                studentId: user.id,
-                class: { courseId: submission.exam.courseId, isActive: true },
-              },
-              include: { class: true },
-            });
-            teacherId = classStudent?.class?.teacherId || null;
-          }
+      return fullResult;
+    });
 
-          if (!teacherId && (tx as any).userRole) {
-            const firstTeacher = await (tx as any).userRole.findFirst({
-              where: { role: "teacher" },
-            });
-            teacherId = firstTeacher?.userId || null;
-          }
+    // ─────────────────────────────────────────────────────────────────────────
+    // POST-COMMIT PIPELINE: Notifications & Milestone Synchronization
+    // Decoupled from critical atomic transaction to prevent transaction timeouts
+    // ─────────────────────────────────────────────────────────────────────────
+    try {
+      const examTitle = submission.exam?.title || "IELTS Exam";
+      if (targetStatus === "SUBMITTED") {
+        let teacherId: string | null = null;
+        if (submission.exam?.courseId && this.prisma.classStudent) {
+          const classStudent = await this.prisma.classStudent.findFirst({
+            where: {
+              studentId: user.id,
+              class: { courseId: submission.exam.courseId, isActive: true },
+            },
+            include: { class: true },
+          });
+          teacherId = classStudent?.class?.teacherId || null;
+        }
 
-          if (teacherId) {
-            await this.notificationService.createNotification(tx, {
-              userId: teacherId,
-              type: "NEW_SUBMISSION",
-              title: "Bài nộp mới cần chấm",
-              message: `Học viên đã nộp bài thi "${examTitle}". Vui lòng chấm điểm và gửi feedback.`,
-              link: `/admin/submissions/${id}`,
-              entityType: "SUBMISSION",
-              entityId: id,
-            });
-          }
-        } else if (targetStatus === "GRADED") {
-          const bandText =
-            gradingSummary.bandScore !== null &&
-            gradingSummary.bandScore !== undefined
-              ? ` Kết quả: Band ${gradingSummary.bandScore}.`
-              : "";
-          await this.notificationService.createNotification(tx, {
+        if (!teacherId && this.prisma.userRole) {
+          const firstTeacher = await this.prisma.userRole.findFirst({
+            where: { role: "teacher" },
+          });
+          teacherId = firstTeacher?.userId || null;
+        }
+
+        if (teacherId && this.notificationService) {
+          await this.notificationService.createNotification(this.prisma, {
+            userId: teacherId,
+            type: "NEW_SUBMISSION",
+            title: "Bài nộp mới cần chấm",
+            message: `Học viên đã nộp bài thi "${examTitle}". Vui lòng chấm điểm và gửi feedback.`,
+            link: `/admin/submissions/${id}`,
+            entityType: "SUBMISSION",
+            entityId: id,
+          });
+        }
+      } else if (targetStatus === "GRADED") {
+        const bandText =
+          gradingSummary.bandScore !== null &&
+          gradingSummary.bandScore !== undefined
+            ? ` Kết quả: Band ${gradingSummary.bandScore}.`
+            : "";
+        if (this.notificationService) {
+          await this.notificationService.createNotification(this.prisma, {
             userId: user.id,
             type: "SUBMISSION_GRADED",
             title: "Kết quả bài thi",
@@ -995,11 +1002,13 @@ export class ExamSubmissionService {
 
       // Sync Course Progress & Milestones (if graded)
       if (targetStatus === "GRADED") {
-        await this.syncStudentCourseProgressAndMilestones(tx, user.id, submission.exam?.courseId);
+        await this.syncStudentCourseProgressAndMilestones(this.prisma, user.id, submission.exam?.courseId);
       }
+    } catch (postCommitErr) {
+      console.warn("[submitExam] Post-commit background tasks notice:", postCommitErr);
+    }
 
-      return fullResult;
-    });
+    return fullResult;
   }
 
   // Use Case: Start Revision Attempt (P1 Canonical Learning Loop)

@@ -75,7 +75,10 @@ export class SubmissionRepository {
     });
   }
 
-  async transaction<T>(fn: (tx: any) => Promise<T>): Promise<T> {
-    return this.prisma.$transaction(fn);
+  async transaction<T>(fn: (tx: any) => Promise<T>, options?: { maxWait?: number; timeout?: number }): Promise<T> {
+    return this.prisma.$transaction(fn, {
+      maxWait: options?.maxWait ?? 10000,
+      timeout: options?.timeout ?? 20000,
+    });
   }
 }

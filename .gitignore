@@ -22,3 +22,9 @@ scripts/
 LESSON_DESIGN_GUIDELINES.md
 # Manuals & Documents
 *.docx
+
+# Internal HR, Salary & Render Tools
+bang_luong*
+*luong*
+render_and_crop.py
+output/

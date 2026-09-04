@@ -267,4 +267,79 @@ export class ClassController {
       return reply.status(status).send({ error: err.message });
     }
   }
+
+  async updateStudentStatus(
+    request: FastifyRequest<{
+      Params: { id: string; studentId: string };
+      Body: { status: string; reason?: string };
+    }>,
+    reply: FastifyReply
+  ) {
+    try {
+      const user = (request as any).user;
+      const result = await this.service.updateStudentStatus(
+        user,
+        request.params.id,
+        request.params.studentId,
+        request.body || { status: "" }
+      );
+      return reply.send(result);
+    } catch (err: any) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
+
+  async rescheduleSession(
+    request: FastifyRequest<{
+      Params: { sessionId: string };
+      Body: { plannedDate: string; reason?: string };
+    }>,
+    reply: FastifyReply
+  ) {
+    try {
+      const user = (request as any).user;
+      const { plannedDate, reason } = request.body || {};
+      if (!plannedDate) {
+        return reply.status(400).send({ error: "plannedDate là bắt buộc" });
+      }
+      const result = await this.service.rescheduleSingleSession(
+        user,
+        request.params.sessionId,
+        plannedDate,
+        reason
+      );
+      return reply.send(result);
+    } catch (err: any) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
+
+  async updateSessionStatus(
+    request: FastifyRequest<{
+      Params: { sessionId: string };
+      Body: { status: string; note?: string };
+    }>,
+    reply: FastifyReply
+  ) {
+    try {
+      const user = (request as any).user;
+      const { status: sessionStatus, note } = request.body || {};
+      if (!sessionStatus) {
+        return reply.status(400).send({ error: "status là bắt buộc" });
+      }
+      const result = await this.service.updateSessionStatus(
+        user,
+        request.params.sessionId,
+        sessionStatus,
+        note
+      );
+      return reply.send(result);
+    } catch (err: any) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
 }
+

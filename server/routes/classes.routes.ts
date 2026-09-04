@@ -65,6 +65,30 @@ export default async function classesRoutes(fastify: FastifyInstance) {
     }
   );
 
+  // PUT /classes/sessions/:sessionId/reschedule - Dời lịch 1 buổi học đơn lẻ
+  fastify.put<{
+    Params: { sessionId: string };
+    Body: { plannedDate: string; reason?: string };
+  }>(
+    "/sessions/:sessionId/reschedule",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      return controller.rescheduleSession(request, reply);
+    }
+  );
+
+  // PUT /classes/sessions/:sessionId/status - Cập nhật trạng thái buổi học
+  fastify.put<{
+    Params: { sessionId: string };
+    Body: { status: string; note?: string };
+  }>(
+    "/sessions/:sessionId/status",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      return controller.updateSessionStatus(request, reply);
+    }
+  );
+
   // POST /classes - Tạo lớp mới (Chỉ dành cho Quản trị viên / Admin)
   fastify.post(
     "/",
@@ -98,6 +122,18 @@ export default async function classesRoutes(fastify: FastifyInstance) {
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       return controller.removeStudent(request, reply);
+    }
+  );
+
+  // PATCH /classes/:id/students/:studentId/status - Cập nhật trạng thái học viên trong lớp
+  fastify.patch<{
+    Params: { id: string; studentId: string };
+    Body: { status: string; reason?: string };
+  }>(
+    "/:id/students/:studentId/status",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      return controller.updateStudentStatus(request, reply);
     }
   );
 

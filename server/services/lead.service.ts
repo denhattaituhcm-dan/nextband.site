@@ -489,6 +489,9 @@ export class LeadService {
         });
 
         return { user: newUser, lead: updatedLead, placedClass: placedClassInfo };
+      }, {
+        maxWait: 10000,
+        timeout: 20000,
       });
 
       // 3. Dispatch in-app notification & Email/Telegram notification to Admins

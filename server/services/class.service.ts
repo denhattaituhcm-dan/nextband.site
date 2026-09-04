@@ -1470,6 +1470,138 @@ export class ClassService {
     });
   }
 
+  // Use Case: Update student status in class (ACTIVE, SUSPENDED, RESERVED, COMPLETED, DROPPED)
+  async updateStudentStatus(
+    user: { id: string; roles: string[] },
+    classId: string,
+    studentId: string,
+    options: { status: string; reason?: string }
+  ) {
+    const classData = await this.repo.findById(classId);
+    if (!classData) {
+      throw new NotFoundError("Không tìm thấy lớp học");
+    }
+
+    const isAdmin = user.roles.includes("admin");
+    if (!isAdmin && classData.teacherId !== user.id) {
+      throw new AuthorizationError("Từ chối truy cập - bạn không có quyền cập nhật trạng thái học viên của lớp này", 403);
+    }
+
+    const validStatuses = ["ACTIVE", "SUSPENDED", "RESERVED", "COMPLETED", "DROPPED"];
+    const targetStatus = (options.status || "").toUpperCase();
+    if (!validStatuses.includes(targetStatus)) {
+      throw new AuthorizationError(`Trạng thái không hợp lệ: ${options.status}. Các trạng thái hợp lệ: ${validStatuses.join(", ")}`, 400);
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      const existing = await tx.classStudent.findFirst({
+        where: { classId, studentId, deletedAt: null },
+      });
+
+      if (!existing) {
+        throw new NotFoundError("Không tìm thấy học viên trong lớp học này");
+      }
+
+      const fromStatus = existing.status;
+      const updated = await tx.classStudent.update({
+        where: { id: existing.id },
+        data: {
+          status: targetStatus as any,
+          completedAt: targetStatus === "COMPLETED" ? new Date() : (targetStatus === "ACTIVE" ? null : existing.completedAt),
+        },
+      });
+
+      // Audit log
+      await tx.enrollmentAuditLog.create({
+        data: {
+          operatorId: user.id,
+          studentId,
+          classId,
+          fromStatus: fromStatus as any,
+          toStatus: targetStatus as any,
+          action: "STUDENT_STATUS_UPDATE",
+          reason: options.reason || `Cập nhật trạng thái học viên từ ${fromStatus} sang ${targetStatus}`,
+        },
+      });
+
+      return { success: true, data: updated };
+    }, { maxWait: 10000, timeout: 20000 });
+  }
+
+  // Use Case: Reschedule a single session
+  async rescheduleSingleSession(
+    user: { id: string; roles: string[] },
+    sessionId: string,
+    plannedDate: string,
+    reason?: string
+  ) {
+    const session = await this.prisma.classSession.findUnique({
+      where: { id: sessionId },
+      include: { class: true },
+    });
+    if (!session) {
+      throw new NotFoundError("Không tìm thấy buổi học");
+    }
+
+    const isAdmin = user.roles.includes("admin");
+    if (!isAdmin && session.class?.teacherId !== user.id) {
+      throw new AuthorizationError("Từ chối truy cập - bạn không có quyền dời lịch buổi học này", 403);
+    }
+
+    if (session.status === "COMPLETED") {
+      throw new AuthorizationError("Không thể dời lịch buổi học đã hoàn tất", 400);
+    }
+
+    const newPlannedDate = new Date(plannedDate);
+    const updated = await this.prisma.classSession.update({
+      where: { id: sessionId },
+      data: {
+        plannedDate: newPlannedDate,
+        rescheduleReason: reason || null,
+        status: "SCHEDULED",
+      },
+    });
+
+    return updated;
+  }
+
+  // Use Case: Update session status
+  async updateSessionStatus(
+    user: { id: string; roles: string[] },
+    sessionId: string,
+    status: string,
+    note?: string
+  ) {
+    const session = await this.prisma.classSession.findUnique({
+      where: { id: sessionId },
+      include: { class: true },
+    });
+    if (!session) {
+      throw new NotFoundError("Không tìm thấy buổi học");
+    }
+
+    const isAdmin = user.roles.includes("admin");
+    if (!isAdmin && session.class?.teacherId !== user.id) {
+      throw new AuthorizationError("Từ chối truy cập - bạn không có quyền cập nhật trạng thái buổi học này", 403);
+    }
+
+    const normalizedStatus = (status || "").toUpperCase();
+    const validStatuses = ["SCHEDULED", "COMPLETED", "CANCELLED", "PLANNED"];
+    if (!validStatuses.includes(normalizedStatus)) {
+      throw new AuthorizationError(`Trạng thái không hợp lệ: ${status}`, 400);
+    }
+
+    const updated = await this.prisma.classSession.update({
+      where: { id: sessionId },
+      data: {
+        status: normalizedStatus,
+        rescheduleReason: note !== undefined ? note : session.rescheduleReason,
+      },
+    });
+
+    return updated;
+  }
+
   // Use Case: Record Attendance
   async recordAttendance(
     user: { id: string; roles: string[] },
