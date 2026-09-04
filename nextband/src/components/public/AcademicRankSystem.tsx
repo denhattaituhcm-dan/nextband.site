@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Award, ChevronRight, CheckCircle2, ShieldCheck, Star, Shield } from "lucide-react";
+import { Award, ChevronRight, CheckCircle2, ShieldCheck, Star, Shield, Crown, Sparkles } from "lucide-react";
 
 export interface AcademicRank {
   rankNumber: number;
@@ -162,7 +162,7 @@ export const ACADEMIC_RANKS: AcademicRank[] = [
     rankNumber: 9,
     title: "Học Đế",
     subtitle: "Academic Sovereign",
-    bandPlaceholder: "Chuẩn mực học thuật cao nhất (IELTS 8.5 – 9.0)",
+    bandPlaceholder: "Chuẩn mực học thuật tối thượng (IELTS 9.0)",
     description: "Cấp bậc học thuật cao nhất. Sử dụng ngôn ngữ và tư duy phản biện thuần thục, đóng vai trò nghiên cứu và chuẩn mực chuyên môn.",
     competencyPillars: ["Thuần thục toàn diện 4 kỹ năng", "Tư duy ngôn ngữ học chuyên sâu", "Khả năng nghiên cứu & Đào tạo", "Chuẩn mực học thuật mẫu mực"],
     theme: {
