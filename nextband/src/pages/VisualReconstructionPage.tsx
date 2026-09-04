@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { vrsMockLessons } from '@/data/vrsLessonsData';
-import { VRSVisualLesson } from '@/types/vrs';
+import { VRSVisualLesson, VRSCourse } from '@/types/vrs';
 import VRSSlotSnapInteractive from '@/components/vrs/VRSSlotSnapInteractive';
 import VRSVerificationScaleInteractive from '@/components/vrs/VRSVerificationScaleInteractive';
 import VRSProgressiveRevealInteractive from '@/components/vrs/VRSProgressiveRevealInteractive';
@@ -193,7 +193,7 @@ const WEEK_THEMES: Record<number, WeekTheme> = {
 
 const DEFAULT_WEEK_THEME = WEEK_THEMES[2];
 
-const WEEKS_META: WeekMeta[] = [
+const DREAMER_WEEKS_META: WeekMeta[] = [
   { week: 1, title: 'Nền Tảng Cấu Trúc Câu', theme: 'Động Cơ Mệnh Đề Cốt Lõi & Cơ Chế Phát Âm', progressPercent: 100, status: 'completed', homeworkPendingCount: 0 },
   { week: 2, title: 'Tổ Chức Không Gian & Logic', theme: 'Cổng Kết Nối Động Từ & Bàn Cân Xác Minh Logic', progressPercent: 67, status: 'active', homeworkPendingCount: 1 },
   { week: 3, title: 'Trục Thời Gian & Dữ Liệu Lịch Trình', theme: 'Neo Mốc Thì Quá Khứ - Hiện Tại & Bóc Tách Bằng Chứng', progressPercent: 33, status: 'available', homeworkPendingCount: 2 },
@@ -205,33 +205,48 @@ const WEEKS_META: WeekMeta[] = [
   { week: 9, title: 'Keo Dán Liên Từ & Câu Phức', theme: 'Bẫy Nhân Quả Song Trùng Because... So & Đối Chiếu Bản Thể', progressPercent: 0, status: 'available', homeworkPendingCount: 3 }
 ];
 
+const BUILDER_WEEKS_META: WeekMeta[] = [
+  { week: 1, title: 'Cấu Tạo Mệnh Đề & Bổ Ngữ Modifier', theme: 'Bản Chất Động Từ Chia Thì & Mệnh Đề Quan Hệ', progressPercent: 33, status: 'active', homeworkPendingCount: 1 },
+  { week: 2, title: 'Mệnh Đề Quan Hệ & Giám Sát Đọc Hiểu', theme: 'Adjective Clauses & Monitoring Comprehension', progressPercent: 0, status: 'available', homeworkPendingCount: 3 },
+  { week: 3, title: 'Cấu Trúc Thân Bài & Ý Chính Đọc Hiểu', theme: 'Body Paragraph Architecture & Main Idea / Details', progressPercent: 0, status: 'available', homeworkPendingCount: 3 },
+  { week: 4, title: 'Từ Nối Liên Kết & Đọc Có Mục Tiêu', theme: 'Linking Devices & Specific Reading Goal', progressPercent: 0, status: 'available', homeworkPendingCount: 3 },
+  { week: 5, title: 'Phát Triển Ý Bổ Trợ & Đánh Giá Dữ Liệu', theme: 'Supporting Ideas & Evaluating Evidence', progressPercent: 0, status: 'available', homeworkPendingCount: 3 },
+  { week: 6, title: 'Đa Dạng Cú Pháp & Đọc Hiểu Khảo Cổ', theme: 'Sentence Variety & Reading Stonehenge', progressPercent: 0, status: 'available', homeworkPendingCount: 3 },
+  { week: 7, title: 'Kỹ Thuật Giảm Tránh (Hedging) & Sinh Học', theme: 'Hedging Academic Skills & Reading The Thylacine', progressPercent: 0, status: 'available', homeworkPendingCount: 3 },
+  { week: 8, title: 'Tổng Quan Task 1 & Phân Biệt Dữ Liệu', theme: 'Task 1 Foundation & Major vs Minor Info', progressPercent: 0, status: 'available', homeworkPendingCount: 3 },
+  { week: 9, title: 'Mở Bài, Overview WT1 & So Sánh Đối Chiếu', theme: 'WT1 Intro / Overview & Compare and Contrast', progressPercent: 0, status: 'available', homeworkPendingCount: 3 }
+];
+
 export default function VisualReconstructionPage() {
-  const [selectedWeek, setSelectedWeek] = useState<number>(2);
+  const [selectedCourse, setSelectedCourse] = useState<VRSCourse>('builder');
+  const [selectedWeek, setSelectedWeek] = useState<number>(1);
   const [activeLesson, setActiveLesson] = useState<VRSVisualLesson | null>(null);
   // Track lessons marked completed; default W2D2 reading is completed in mock
   const [completedLessonIds, setCompletedLessonIds] = useState<string[]>(['dreamer_w2d2']);
 
+  const weeksMeta = selectedCourse === 'builder' ? BUILDER_WEEKS_META : DREAMER_WEEKS_META;
+
   const currentWeekMeta = useMemo(() => {
-    return WEEKS_META.find((w) => w.week === selectedWeek) || WEEKS_META[0];
-  }, [selectedWeek]);
+    return weeksMeta.find((w) => w.week === selectedWeek) || weeksMeta[0];
+  }, [weeksMeta, selectedWeek]);
 
   const currentTheme = useMemo(() => {
     return WEEK_THEMES[currentWeekMeta.week] || DEFAULT_WEEK_THEME;
   }, [currentWeekMeta.week]);
 
   const weekLessons = useMemo(() => {
-    return vrsMockLessons.filter((lesson) => lesson.week === selectedWeek);
-  }, [selectedWeek]);
+    return vrsMockLessons.filter((lesson) => lesson.courseId === selectedCourse && lesson.week === selectedWeek);
+  }, [selectedCourse, selectedWeek]);
 
-  const writingLesson = weekLessons.find((l) => l.skill === 'writing');
-  const readingLesson = weekLessons.find((l) => l.skill === 'reading');
-  const speakingLesson = weekLessons.find((l) => l.skill === 'speaking');
+  const day1Lesson = weekLessons.find((l) => l.day === 1);
+  const day2Lesson = weekLessons.find((l) => l.day === 2);
+  const day3Lesson = weekLessons.find((l) => l.day === 3);
 
   return (
     <div className="min-h-screen bg-slate-50/50 text-slate-900">
       {/* Top Breadcrumb & Target Banner */}
       <header className="border-b border-slate-200 bg-white px-6 py-3.5 sticky top-0 z-20 shadow-xs">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200/70">
               <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
@@ -241,7 +256,37 @@ export default function VisualReconstructionPage() {
               </span>
             </span>
             <span className="text-slate-300">/</span>
-            <span className="text-xs font-medium text-slate-600">Khóa Dreamer (Mục tiêu 4.0)</span>
+            {/* Course Selector Tabs */}
+            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200/80">
+              <button
+                onClick={() => {
+                  setSelectedCourse('builder');
+                  setSelectedWeek(1);
+                  setActiveLesson(null);
+                }}
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  selectedCourse === 'builder'
+                    ? 'bg-white text-indigo-700 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Khóa Builder (4.0 - 5.5)
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedCourse('dreamer');
+                  setSelectedWeek(2);
+                  setActiveLesson(null);
+                }}
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  selectedCourse === 'dreamer'
+                    ? 'bg-white text-indigo-700 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Khóa Dreamer (3.0 - 4.5)
+              </button>
+            </div>
           </div>
 
           <div className="flex items-center gap-4 text-xs font-medium text-slate-500">
@@ -277,7 +322,7 @@ export default function VisualReconstructionPage() {
                 {/* Visual Continuous Stem Line */}
                 <div className="absolute left-[23px] top-4 bottom-4 w-px bg-slate-200/90 pointer-events-none -z-0" />
 
-                {WEEKS_META.map((wm) => {
+                {weeksMeta.map((wm) => {
                   const isSelected = wm.week === selectedWeek;
                   const isCompleted = wm.progressPercent === 100;
                   const isActive = wm.status === 'active';
@@ -372,7 +417,7 @@ export default function VisualReconstructionPage() {
                     </span>
                     <span className="text-slate-300">/</span>
                     <span className="text-xs font-semibold tracking-wide text-slate-500">
-                      Mục tiêu đầu ra Band 4.0
+                      {selectedCourse === 'builder' ? 'Mục tiêu đầu ra Band 4.0 -> 5.0 / 5.5' : 'Mục tiêu đầu ra Band 3.0 -> 4.5'}
                     </span>
                   </div>
 
@@ -403,28 +448,26 @@ export default function VisualReconstructionPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {/* 1. WRITING MODULE: SENTENCE BUILDER ENGINE */}
-                  {writingLesson && (() => {
-                    const isWritingDone = completedLessonIds.includes(writingLesson.id);
+                  {/* 1. DAY 1 MODULE */}
+                  {day1Lesson ? (() => {
+                    const isDay1Done = completedLessonIds.includes(day1Lesson.id);
                     return (
                       <div className={`bg-white rounded-3xl p-6 flex flex-col justify-between transition-all duration-500 group relative overflow-hidden ${
-                        isWritingDone
+                        isDay1Done
                           ? 'card-glow-mastery-emerald border-2 border-emerald-500/80 -translate-y-1'
                           : 'shadow-[0_4px_24px_-4px_rgba(15,23,42,0.06)] border border-slate-200/80 hover:shadow-[0_12px_32px_-8px_rgba(15,23,42,0.12)] hover:-translate-y-1'
                       }`}>
-                        {/* Background Aura Light if completed */}
-                        {isWritingDone && (
+                        {isDay1Done && (
                           <div className="absolute -top-16 -right-16 w-36 h-36 rounded-full bg-emerald-400/20 blur-2xl pointer-events-none" />
                         )}
 
                         <div>
-                          {/* Header Folio */}
                           <div className="flex items-center justify-between mb-3.5">
                             <span className="text-[11px] font-mono font-bold tracking-wider text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100 flex items-center gap-1.5">
                               <Cpu className="w-3.5 h-3.5" />
-                              Writing · Buổi 1
+                              WRITING · BUỔI 1
                             </span>
-                            {isWritingDone && (
+                            {isDay1Done && (
                               <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-xs">
                                 <Sparkles className="w-3 h-3 text-emerald-600" /> Đã hoàn thành
                               </span>
@@ -432,21 +475,20 @@ export default function VisualReconstructionPage() {
                           </div>
 
                           <h4 className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors leading-snug">
-                            {writingLesson.title}
+                            {day1Lesson.title}
                           </h4>
                           <p className="text-xs text-slate-500 mt-1 mb-5 line-clamp-2">
-                            {writingLesson.subtitle}
+                            {day1Lesson.subtitle}
                           </p>
 
                           {/* Visual Mechanism Miniature */}
                           <div className={`py-4 px-3.5 rounded-2xl border mb-6 transition-colors ${
-                            isWritingDone ? 'bg-emerald-50/40 border-emerald-200/70' : 'bg-slate-50/80 border-slate-200/80'
+                            isDay1Done ? 'bg-emerald-50/40 border-emerald-200/70' : 'bg-slate-50/80 border-slate-200/80'
                           }`}>
                             <div className="text-[11px] font-bold text-slate-600 mb-2.5 flex items-center gap-1.5">
                               <Layers className="w-3.5 h-3.5 text-indigo-600" />
                               Cấu trúc câu cơ bản
                             </div>
-                            {/* Tactile Connectors */}
                             <div className="flex items-center justify-center gap-2 text-xs font-bold py-2.5 bg-white rounded-xl border border-slate-200 shadow-xs text-slate-700">
                               <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200/80 font-medium">Chủ ngữ (S)</span>
                               <span className="text-slate-300 font-bold">+</span>
@@ -460,14 +502,14 @@ export default function VisualReconstructionPage() {
                         {/* CTA & Homework */}
                         <div className="pt-4 border-t border-slate-100 space-y-3">
                           <button
-                            onClick={() => setActiveLesson(writingLesson)}
+                            onClick={() => setActiveLesson(day1Lesson)}
                             className={`w-full py-3 px-4 rounded-xl text-xs font-bold text-white transition-all flex items-center justify-center gap-2 cursor-pointer active:translate-y-0.5 ${
-                              isWritingDone
+                              isDay1Done
                                 ? 'bg-emerald-600 hover:bg-emerald-700 shadow-[0_4px_14px_rgba(5,150,105,0.35)]'
                                 : 'bg-indigo-600 hover:bg-indigo-700 shadow-[0_4px_14px_rgba(79,70,229,0.3)] hover:shadow-[0_6px_20px_rgba(79,70,229,0.4)]'
                             }`}
                           >
-                            {isWritingDone ? 'Ôn tập lại' : 'Vào học bài'}
+                            {isDay1Done ? 'Ôn tập lại' : 'Vào học bài'}
                             <ArrowRight className="w-3.5 h-3.5" />
                           </button>
 
@@ -475,7 +517,7 @@ export default function VisualReconstructionPage() {
                             <span className="text-slate-600 font-medium truncate">
                               Bài tập Buổi 1
                             </span>
-                            {isWritingDone ? (
+                            {isDay1Done ? (
                               <span className="text-emerald-700 font-semibold flex items-center gap-1 shrink-0 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60 text-[10px]">
                                 <CheckCircle2 className="w-3 h-3" /> Đã hoàn thành
                               </span>
@@ -488,105 +530,147 @@ export default function VisualReconstructionPage() {
                         </div>
                       </div>
                     );
-                  })()}
+                  })() : (
+                    <div className="bg-slate-50/60 rounded-3xl p-6 flex flex-col justify-center items-center text-center border border-dashed border-slate-200 min-h-[350px]">
+                      <Cpu className="w-8 h-8 text-slate-300 mb-2" />
+                      <p className="text-sm font-bold text-slate-600">Buổi 1</p>
+                      <p className="text-xs text-slate-400 mt-1">Đang cập nhật nội dung bài học</p>
+                    </div>
+                  )}
 
-                  {/* 2. READING MODULE: EVIDENCE SCALE LAB */}
-                  {readingLesson && (() => {
-                    const isReadingDone = completedLessonIds.includes(readingLesson.id);
+                  {/* 2. DAY 2 MODULE */}
+                  {day2Lesson ? (() => {
+                    const isDay2Done = completedLessonIds.includes(day2Lesson.id);
+                    const isWritingDay2 = day2Lesson.skill === 'writing';
                     return (
                       <div className={`bg-white rounded-3xl p-6 flex flex-col justify-between transition-all duration-500 group relative overflow-hidden ${
-                        isReadingDone
-                          ? 'card-glow-mastery-gold border-2 border-amber-400/90 -translate-y-1'
+                        isDay2Done
+                          ? isWritingDay2 ? 'card-glow-mastery-emerald border-2 border-emerald-500/80 -translate-y-1' : 'card-glow-mastery-gold border-2 border-amber-400/90 -translate-y-1'
                           : 'shadow-[0_4px_24px_-4px_rgba(15,23,42,0.06)] border border-slate-200/80 hover:shadow-[0_12px_32px_-8px_rgba(15,23,42,0.12)] hover:-translate-y-1'
                       }`}>
-                        {/* Background Aura Light if completed */}
-                        {isReadingDone && (
-                          <div className="absolute -top-16 -right-16 w-40 h-40 rounded-full bg-amber-300/25 blur-2xl pointer-events-none" />
+                        {isDay2Done && (
+                          <div className={`absolute -top-16 -right-16 w-40 h-40 rounded-full blur-2xl pointer-events-none ${isWritingDay2 ? 'bg-emerald-400/20' : 'bg-amber-300/25'}`} />
                         )}
 
                         <div>
-                          {/* Header Folio */}
                           <div className="flex items-center justify-between mb-3.5">
-                            <span className="text-[11px] font-mono font-bold tracking-wider text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200 flex items-center gap-1.5">
-                              <Scale className="w-3.5 h-3.5" />
-                              Reading · Buổi 2
+                            <span className={`text-[11px] font-mono font-bold tracking-wider px-2.5 py-1 rounded-md border flex items-center gap-1.5 ${
+                              isWritingDay2
+                                ? 'text-indigo-700 bg-indigo-50 border-indigo-100'
+                                : 'text-amber-800 bg-amber-50 border-amber-200'
+                            }`}>
+                              {isWritingDay2 ? <Cpu className="w-3.5 h-3.5" /> : <Scale className="w-3.5 h-3.5" />}
+                              {isWritingDay2 ? 'WRITING · BUỔI 2' : 'READING · BUỔI 2'}
                             </span>
-                            {isReadingDone && (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 shadow-xs">
-                                <Sparkles className="w-3 h-3 text-amber-600" /> Đã hoàn thành
+                            {isDay2Done && (
+                              <span className={`inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border shadow-xs ${
+                                isWritingDay2
+                                  ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                                  : 'bg-amber-100 text-amber-900 border-amber-300'
+                              }`}>
+                                <Sparkles className={`w-3 h-3 ${isWritingDay2 ? 'text-emerald-600' : 'text-amber-600'}`} /> Đã hoàn thành
                               </span>
                             )}
                           </div>
 
-                          <h4 className="text-lg font-bold text-slate-900 group-hover:text-amber-700 transition-colors leading-snug">
-                            {readingLesson.title}
+                          <h4 className={`text-lg font-bold text-slate-900 transition-colors leading-snug ${
+                            isWritingDay2 ? 'group-hover:text-indigo-600' : 'group-hover:text-amber-700'
+                          }`}>
+                            {day2Lesson.title}
                           </h4>
                           <p className="text-xs text-slate-500 mt-1 mb-5 line-clamp-2">
-                            {readingLesson.subtitle}
+                            {day2Lesson.subtitle}
                           </p>
 
-                          {/* Visual Mechanism Miniature (Evidence Scale) */}
+                          {/* Visual Mechanism Miniature */}
                           <div className={`py-4 px-3.5 rounded-2xl border mb-6 transition-colors ${
-                            isReadingDone ? 'bg-amber-50/40 border-amber-200/70' : 'bg-slate-50/80 border-slate-200/80'
+                            isDay2Done 
+                              ? isWritingDay2 ? 'bg-emerald-50/40 border-emerald-200/70' : 'bg-amber-50/40 border-amber-200/70'
+                              : 'bg-slate-50/80 border-slate-200/80'
                           }`}>
                             <div className="text-[11px] font-bold text-slate-600 mb-2.5 flex items-center gap-1.5">
-                              <Scale className="w-3.5 h-3.5 text-amber-600" />
-                              Đối chiếu thông tin
+                              {isWritingDay2 ? <Layers className="w-3.5 h-3.5 text-indigo-600" /> : <Scale className="w-3.5 h-3.5 text-amber-600" />}
+                              {isWritingDay2 ? 'Thành phần bổ ngữ & mở rộng câu' : 'Đối chiếu thông tin'}
                             </div>
-                            {/* Scale Balance Tactile */}
-                            <div className="flex items-center justify-center gap-3 text-xs font-bold py-2.5 px-3 bg-white rounded-xl border border-slate-200 shadow-xs text-slate-700">
-                              <span className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/80 font-semibold">Nhận định</span>
-                              <span className="text-amber-600 font-bold text-base">⚖</span>
-                              <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200/80 font-semibold">Bằng chứng</span>
-                            </div>
+                            {isWritingDay2 ? (
+                              <div className="flex items-center justify-center gap-2 text-xs font-bold py-2.5 bg-white rounded-xl border border-slate-200 shadow-xs text-slate-700">
+                                <span className="px-2.5 py-1 rounded-lg bg-purple-50 text-purple-700 border border-purple-200/80 font-medium">Modifier (Bổ ngữ)</span>
+                                <span className="text-slate-300 font-bold">+</span>
+                                <span className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200/80 font-medium">Mệnh đề quan hệ</span>
+                              </div>
+                            ) : (
+                              <div className="flex items-center justify-center gap-3 text-xs font-bold py-2.5 px-3 bg-white rounded-xl border border-slate-200 shadow-xs text-slate-700">
+                                <span className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/80 font-semibold">Nhận định</span>
+                                <span className="text-amber-600 font-bold text-base">⚖</span>
+                                <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200/80 font-semibold">Bằng chứng</span>
+                              </div>
+                            )}
                           </div>
                         </div>
 
                         {/* CTA & Homework */}
                         <div className="pt-4 border-t border-slate-100 space-y-3">
                           <button
-                            onClick={() => setActiveLesson(readingLesson)}
-                            className="w-full py-3 px-4 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-[0_4px_18px_rgba(217,119,6,0.35)] hover:shadow-[0_6px_22px_rgba(217,119,6,0.45)] active:translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                            onClick={() => setActiveLesson(day2Lesson)}
+                            className={`w-full py-3 px-4 rounded-xl text-xs font-bold text-white transition-all flex items-center justify-center gap-2 cursor-pointer active:translate-y-0.5 ${
+                              isWritingDay2
+                                ? isDay2Done
+                                  ? 'bg-emerald-600 hover:bg-emerald-700 shadow-[0_4px_14px_rgba(5,150,105,0.35)]'
+                                  : 'bg-indigo-600 hover:bg-indigo-700 shadow-[0_4px_14px_rgba(79,70,229,0.3)] hover:shadow-[0_6px_20px_rgba(79,70,229,0.4)]'
+                                : 'bg-amber-600 hover:bg-amber-700 shadow-[0_4px_18px_rgba(217,119,6,0.35)] hover:shadow-[0_6px_22px_rgba(217,119,6,0.45)]'
+                            }`}
                           >
-                            Ôn tập lại
+                            {isDay2Done ? 'Ôn tập lại' : 'Vào học bài'}
                             <ArrowRight className="w-3.5 h-3.5" />
                           </button>
 
-                          <div className="bg-amber-50/70 px-3 py-2 rounded-xl border border-amber-200/80 flex items-center justify-between text-[11px]">
+                          <div className={`px-3 py-2 rounded-xl border flex items-center justify-between text-[11px] ${
+                            isWritingDay2 ? 'bg-slate-50/80 border-slate-200/80' : 'bg-amber-50/70 border-amber-200/80'
+                          }`}>
                             <span className="text-slate-700 font-medium truncate">
                               Bài tập Buổi 2
                             </span>
-                            <span className="text-emerald-700 font-semibold flex items-center gap-1 shrink-0 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60 text-[10px]">
-                              <CheckCircle2 className="w-3 h-3" /> Đã hoàn thành
-                            </span>
+                            {isDay2Done ? (
+                              <span className="text-emerald-700 font-semibold flex items-center gap-1 shrink-0 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60 text-[10px]">
+                                <CheckCircle2 className="w-3 h-3" /> Đã hoàn thành
+                              </span>
+                            ) : (
+                              <span className="text-amber-700 font-semibold flex items-center gap-1 shrink-0 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/60 text-[10px]">
+                                <Clock className="w-3 h-3" /> Cần làm
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
                     );
-                  })()}
+                  })() : (
+                    <div className="bg-slate-50/60 rounded-3xl p-6 flex flex-col justify-center items-center text-center border border-dashed border-slate-200 min-h-[350px]">
+                      <Scale className="w-8 h-8 text-slate-300 mb-2" />
+                      <p className="text-sm font-bold text-slate-600">Buổi 2</p>
+                      <p className="text-xs text-slate-400 mt-1">Đang cập nhật nội dung bài học</p>
+                    </div>
+                  )}
 
-                  {/* 3. SPEAKING MODULE: RESPONSE BUILDER CASCADE */}
-                  {speakingLesson && (() => {
-                    const isSpeakingDone = completedLessonIds.includes(speakingLesson.id);
+                  {/* 3. DAY 3 MODULE */}
+                  {day3Lesson ? (() => {
+                    const isDay3Done = completedLessonIds.includes(day3Lesson.id);
                     return (
                       <div className={`bg-white rounded-3xl p-6 flex flex-col justify-between transition-all duration-500 group relative overflow-hidden ${
-                        isSpeakingDone
+                        isDay3Done
                           ? 'card-glow-mastery-emerald border-2 border-emerald-500/80 -translate-y-1'
                           : 'shadow-[0_4px_24px_-4px_rgba(15,23,42,0.06)] border border-slate-200/80 hover:shadow-[0_12px_32px_-8px_rgba(15,23,42,0.12)] hover:-translate-y-1'
                       }`}>
-                        {/* Background Aura Light if completed */}
-                        {isSpeakingDone && (
+                        {isDay3Done && (
                           <div className="absolute -top-16 -right-16 w-36 h-36 rounded-full bg-emerald-400/20 blur-2xl pointer-events-none" />
                         )}
 
                         <div>
-                          {/* Header Folio */}
                           <div className="flex items-center justify-between mb-3.5">
                             <span className="text-[11px] font-mono font-bold tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200 flex items-center gap-1.5">
                               <Layers className="w-3.5 h-3.5" />
-                              Speaking · Buổi 3
+                              SPEAKING · BUỔI 3
                             </span>
-                            {isSpeakingDone && (
+                            {isDay3Done && (
                               <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-xs">
                                 <Sparkles className="w-3 h-3 text-emerald-600" /> Đã hoàn thành
                               </span>
@@ -594,21 +678,20 @@ export default function VisualReconstructionPage() {
                           </div>
 
                           <h4 className="text-lg font-bold text-slate-900 group-hover:text-emerald-700 transition-colors leading-snug">
-                            {speakingLesson.title}
+                            {day3Lesson.title}
                           </h4>
                           <p className="text-xs text-slate-500 mt-1 mb-5 line-clamp-2">
-                            {speakingLesson.subtitle}
+                            {day3Lesson.subtitle}
                           </p>
 
-                          {/* Visual Mechanism Miniature (Cascade Stack) */}
+                          {/* Visual Mechanism Miniature */}
                           <div className={`py-4 px-3.5 rounded-2xl border mb-6 transition-colors ${
-                            isSpeakingDone ? 'bg-emerald-50/40 border-emerald-200/70' : 'bg-slate-50/80 border-slate-200/80'
+                            isDay3Done ? 'bg-emerald-50/40 border-emerald-200/70' : 'bg-slate-50/80 border-slate-200/80'
                           }`}>
                             <div className="text-[11px] font-bold text-slate-600 mb-2 flex items-center gap-1.5">
                               <Layers className="w-3.5 h-3.5 text-emerald-600" />
                               3 bước trả lời lưu loát
                             </div>
-                            {/* Cascade Steps */}
                             <div className="space-y-1.5 text-xs py-2 px-2.5 bg-white rounded-xl border border-slate-200 shadow-xs text-slate-700">
                               <div className="flex items-center justify-between bg-emerald-50/80 px-2.5 py-1.5 rounded-lg text-emerald-900 font-medium">
                                 <span>1. Trả lời trực diện</span>
@@ -629,10 +712,10 @@ export default function VisualReconstructionPage() {
                         {/* CTA & Homework */}
                         <div className="pt-4 border-t border-slate-100 space-y-3">
                           <button
-                            onClick={() => setActiveLesson(speakingLesson)}
+                            onClick={() => setActiveLesson(day3Lesson)}
                             className="w-full py-3 px-4 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-[0_4px_14px_rgba(5,150,105,0.3)] hover:shadow-[0_6px_20px_rgba(5,150,105,0.4)] active:translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer"
                           >
-                            {isSpeakingDone ? 'Ôn tập lại' : 'Vào học bài'}
+                            {isDay3Done ? 'Ôn tập lại' : 'Vào học bài'}
                             <ArrowRight className="w-3.5 h-3.5" />
                           </button>
 
@@ -640,7 +723,7 @@ export default function VisualReconstructionPage() {
                             <span className="text-slate-600 font-medium truncate">
                               Bài tập Buổi 3
                             </span>
-                            {isSpeakingDone ? (
+                            {isDay3Done ? (
                               <span className="text-emerald-700 font-semibold flex items-center gap-1 shrink-0 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60 text-[10px]">
                                 <CheckCircle2 className="w-3 h-3" /> Đã hoàn thành
                               </span>
@@ -653,7 +736,13 @@ export default function VisualReconstructionPage() {
                         </div>
                       </div>
                     );
-                  })()}
+                  })() : (
+                    <div className="bg-slate-50/60 rounded-3xl p-6 flex flex-col justify-center items-center text-center border border-dashed border-slate-200 min-h-[350px]">
+                      <Layers className="w-8 h-8 text-slate-300 mb-2" />
+                      <p className="text-sm font-bold text-slate-600">Buổi 3</p>
+                      <p className="text-xs text-slate-400 mt-1">Đang cập nhật nội dung bài học</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </main>
@@ -668,7 +757,7 @@ export default function VisualReconstructionPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-100">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-xs font-mono font-bold tracking-wider px-3 py-1 rounded-lg bg-indigo-600 text-white shadow-xs">
-                    {activeLesson.skill.charAt(0).toUpperCase() + activeLesson.skill.slice(1)} · Buổi {activeLesson.day}
+                    {activeLesson.skill.toUpperCase()} · BUỔI {activeLesson.day}
                   </span>
                   <span className="text-xs font-mono font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">
                     Tuần 0{activeLesson.week}

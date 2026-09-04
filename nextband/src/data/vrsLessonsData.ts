@@ -4946,6 +4946,112 @@ export const vrsMockLessons: VRSVisualLesson[] = [
         }
       }
     ]
+  },
+  {
+    id: 'builder_w1d1',
+    courseId: 'builder',
+    week: 1,
+    day: 1,
+    skill: 'writing',
+    title: 'Cấu Tạo Mệnh Đề & 3 Nhóm Động Từ (Vi - Vt - Vl)',
+    subtitle: 'Lắp ráp mô hình S + FV + O & phẫu thuật điểm gãy thừa động từ, dùng sai nội/ngoại động từ',
+    coreCompetency: 'Kiểm soát chặt chẽ 100% câu viết có đúng 1 Động từ chia thì (Finite Verb), không thừa động từ vị ngữ, và làm chủ bản chất 3 nhóm động từ Vi, Vt, Vl.',
+    bridgeToHomework: {
+      promptText: 'Làm bài tập nhận diện S-FV và sửa lỗi động từ trong Homework Buổi 1.',
+      targetExamId: 'exam_builder_w1d1'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'syntax_anatomy',
+        title: 'Chặng 1: Lắp ráp kiến tạo cú pháp (S + FV + O + Modifiers)',
+        pedagogicalObjective: 'Nhận diện rõ Chủ thể (Subject), Động từ chia thì (Finite Verb), Tân ngữ (Object) và Cụm bổ nghĩa từ ngữ liệu thực tế đề thi tốt nghiệp THPT 2023 trong giáo trình.',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Bấm tách thành phần câu để quan sát kết cấu chuẩn S + FV + O + M của một mệnh đề hoàn chỉnh.',
+          mode: 'build',
+          tokens: [
+            { id: 't1', text: 'Trees', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'protect', role: 'fv_core', colorClass: 'orange' },
+            { id: 't3', text: 'the soil', role: 'object', colorClass: 'blue' },
+            { id: 't4', text: 'beneath them', role: 'modifier', colorClass: 'gray' }
+          ]
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'productive_failure',
+        title: 'Chặng 2: Phẫu thuật điểm gãy 1 – Thừa 2 động từ chia thì trong câu đơn',
+        pedagogicalObjective: 'Bóc tách và chữa dứt điểm lỗi sai quen thuộc từ Bài tập 1 trong sách: My goal is have 6.5 IELTS do thói quen dịch thô tiếng Việt (Mục tiêu là có...).',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Click vào 2 động từ đang xung đột vị ngữ trong câu bên dưới.',
+          mode: 'break_and_repair',
+          tokens: [
+            { id: 't1', text: 'My goal', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'is', role: 'fv_core', colorClass: 'orange' },
+            { id: 't3', text: 'have', role: 'fv_core', colorClass: 'red' },
+            { id: 't4', text: 'a 6.5 IELTS score', role: 'object', colorClass: 'blue' }
+          ],
+          collisionTarget: {
+            conflictingTokenIds: ['t2', 't3'],
+            errorMessage: 'Lỗi điểm gãy: Trong một mệnh đề đơn chỉ có DUY NHẤT 1 động từ chia thì (Finite Verb). Không thể đặt "is" và "have" cùng chia thì đứng cạnh nhau!',
+            repairOptions: [
+              {
+                id: 'opt1',
+                action: 'morph',
+                targetTokenId: 't3',
+                resultText: 'to achieve',
+                explanation: 'Chuyển "have" thành To-Infinitive "to achieve" (hoặc "to have") để tạo bổ ngữ vị ngữ: My goal is to achieve a 6.5 IELTS score.'
+              },
+              {
+                id: 'opt2',
+                action: 'morph',
+                targetTokenId: 't3',
+                resultText: 'achieving',
+                explanation: 'Chuyển "have" thành danh động từ "achieving" (Gerund complement): My goal is achieving a 6.5 IELTS score.'
+              }
+            ]
+          }
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'productive_failure',
+        title: 'Chặng 3: Phẫu thuật điểm gãy 2 – Dùng sai Nội động từ (Vi) với Tân ngữ trực tiếp',
+        pedagogicalObjective: 'Bóc tách lỗi sai từ Bài tập 3 trong sách: That terrible marketing campaign has declined our sales do nhầm lẫn giữa Nội động từ (Vi) và Ngoại động từ (Vt).',
+        interactionModel: {
+          type: 'slot_snap',
+          prompt: 'Click vào động từ và tân ngữ đang mâu thuẫn về bản chất nội/ngoại động từ.',
+          mode: 'break_and_repair',
+          tokens: [
+            { id: 't1', text: 'The marketing campaign', role: 'subject', colorClass: 'green' },
+            { id: 't2', text: 'has declined', role: 'fv_core', colorClass: 'red' },
+            { id: 't3', text: 'our company sales', role: 'object', colorClass: 'blue' }
+          ],
+          collisionTarget: {
+            conflictingTokenIds: ['t2', 't3'],
+            errorMessage: 'Lỗi điểm gãy Vi vs Vt: "decline" là Nội động từ (Intransitive Verb), bản thân sự vật tự suy giảm, KHÔNG được gắn trực tiếp với Tân ngữ phía sau!',
+            repairOptions: [
+              {
+                id: 'opt1',
+                action: 'morph',
+                targetTokenId: 't2',
+                resultText: 'has reduced',
+                explanation: 'Thay bằng Ngoại động từ (Vt) "has reduced" hoặc "has decreased" để tác động trực tiếp lên tân ngữ "our company sales".'
+              },
+              {
+                id: 'opt2',
+                action: 'morph',
+                targetTokenId: 't2',
+                resultText: 'caused a drop in',
+                explanation: 'Dùng cụm liên kết danh từ học thuật Band 5.0+: "caused a drop in our company sales".'
+              }
+            ]
+          }
+        }
+      }
+    ]
   }
 ];
 
