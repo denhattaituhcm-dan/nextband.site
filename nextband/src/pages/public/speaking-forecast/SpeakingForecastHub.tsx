@@ -91,7 +91,7 @@ export default function SpeakingForecastHub() {
       {/* ============================================================ */}
       {/* 1. HERO SECTION (NỀN TỐI SÂU THẲM + RADAR STATS CARD)       */}
       {/* ============================================================ */}
-      <section className="relative overflow-hidden bg-[#0c1e38] text-white pt-14 pb-20 sm:pt-20 sm:pb-28 border-b border-slate-800">
+      <section className="relative overflow-hidden bg-[#081B33] text-white pt-14 pb-20 sm:pt-20 sm:pb-28 border-b border-slate-800">
         {/* Subtle grid background overlay */}
         <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none" />
 

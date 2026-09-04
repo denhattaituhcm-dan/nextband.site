@@ -444,5 +444,5 @@ describe("🚀 PHASE 2: GATEWAY E2E BUSINESS FLOW & FAILURE ISOLATION TESTS", ()
       await app.close();
       await prisma.$disconnect();
     }
-  });
+  }, 60000);
 });

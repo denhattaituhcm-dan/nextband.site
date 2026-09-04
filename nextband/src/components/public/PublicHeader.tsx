@@ -81,7 +81,7 @@ export function PublicHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-800/80 bg-[#0c1e38] text-white shadow-md transition-all">
+    <header className="sticky top-0 z-50 w-full border-b border-slate-800/80 bg-[#081B33] text-white shadow-md transition-all">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between gap-6">
           {/* Brand Logo */}
@@ -121,9 +121,9 @@ export function PublicHeader() {
                       <ChevronDown className="h-3.5 w-3.5 opacity-70 transition-transform duration-200 group-hover:rotate-180" />
                     </Link>
 
-                    {/* Dropdown Menu - Midnight Luxury High-Contrast */}
+                    {/* Dropdown Menu - Deep Academic Navy */}
                     <div className="absolute top-full left-0 pt-2 hidden group-hover:block transition-all z-50 animate-in fade-in-50 slide-in-from-top-1 duration-150">
-                      <div className="w-80 rounded-2xl bg-[#0c1e38] border border-slate-700/80 shadow-2xl shadow-slate-950/70 p-2 space-y-1 ring-1 ring-white/10">
+                      <div className="w-80 rounded-2xl bg-[#081B33] border border-slate-700/80 shadow-2xl shadow-slate-950/70 p-2 space-y-1 ring-1 ring-white/10">
                         {item.children!.map((sub, idx) => {
                           if (sub.isDivider) {
                             return (
@@ -285,7 +285,7 @@ export function PublicHeader() {
 
       {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-slate-800 bg-[#0c1e38] text-white px-4 pt-3 pb-6 space-y-3 shadow-xl animate-in slide-in-from-top-2 duration-200">
+        <div className="lg:hidden border-t border-slate-800 bg-[#081B33] text-white px-4 pt-3 pb-6 space-y-3 shadow-xl animate-in slide-in-from-top-2 duration-200">
           <nav className="flex flex-col space-y-1">
             {PUBLIC_NAV_ITEMS.map((item) => {
               const active = isNavActive(item);

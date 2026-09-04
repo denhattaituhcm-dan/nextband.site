@@ -806,7 +806,7 @@ export class ExamSubmissionService {
     // Enforce State Machine Transition
     SubmissionStateMachine.assertTransition(currentStatus, targetStatus);
 
-    return this.repo.transaction(async (tx) => {
+    const fullResult = await this.repo.transaction(async (tx) => {
       const createdOrUpdatedAnswers = [];
       for (const ans of answersToEvaluate) {
         const evalResult = gradingSummary.evaluatedAnswers.find((g) => g.questionId === ans.questionId);
@@ -890,7 +890,7 @@ export class ExamSubmissionService {
         },
       });
 
-      const fullResult = {
+      const txResult = {
         ...updated,
         answers: createdOrUpdatedAnswers,
         bandScore: gradingSummary.bandScore,
@@ -920,7 +920,7 @@ export class ExamSubmissionService {
               key: payload.idempotencyKey,
               submissionId: id,
               payloadHash: "sha256-payload",
-              responsePayload: JSON.stringify(fullResult),
+              responsePayload: JSON.stringify(txResult),
               status: "COMMITTED",
             },
           });
@@ -941,7 +941,7 @@ export class ExamSubmissionService {
         }
       }
 
-      return fullResult;
+      return txResult;
     });
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -1263,24 +1263,36 @@ export class ExamSubmissionService {
         where: { submissionId: id },
       });
 
-      // Authoritative Overall Band Calculation
+      // Authoritative Overall Band / Score Calculation
       let finalTotalScore: number;
+      const examType = (submission.exam?.examType || "").toLowerCase();
+      const isPureSubjective = examType === "writing" || examType === "speaking";
+
       if (typeof totalScore === "number" && totalScore > 0) {
         finalTotalScore = totalScore;
+      } else if (!isPureSubjective && allAnswers.length > answerScores.length) {
+        // Mixed exam or exam containing objective questions: total score is sum of all scored answers
+        finalTotalScore = allAnswers.reduce((sum: number, a: any) => sum + (Number(a.score) || 0), 0);
       } else if (answerScores.length > 0) {
-        if (answerScores.length === 2) {
+        if (answerScores.length === 2 && isPureSubjective) {
           // Standard IELTS Task 1 + Task 2 weighting: (Task 1 + 2*Task 2)/3 rounded to 0.5
           const weightedAvg = (answerScores[0] + 2 * answerScores[1]) / 3;
           finalTotalScore = Math.round(weightedAvg * 2) / 2;
-        } else {
+        } else if (isPureSubjective) {
           const avg = answerScores.reduce((a, b) => a + b, 0) / answerScores.length;
           finalTotalScore = Math.round(avg * 2) / 2;
+        } else {
+          finalTotalScore = allAnswers.reduce((sum: number, a: any) => sum + (Number(a.score) || 0), 0);
         }
       } else {
         const dbScores = allAnswers.map((a: any) => Number(a.score)).filter((s) => !isNaN(s) && s > 0);
         if (dbScores.length > 0) {
-          const avg = dbScores.reduce((a, b) => a + b, 0) / dbScores.length;
-          finalTotalScore = Math.round(avg * 2) / 2;
+          if (isPureSubjective) {
+            const avg = dbScores.reduce((a, b) => a + b, 0) / dbScores.length;
+            finalTotalScore = Math.round(avg * 2) / 2;
+          } else {
+            finalTotalScore = dbScores.reduce((a, b) => a + b, 0);
+          }
         } else {
           finalTotalScore = 0;
         }

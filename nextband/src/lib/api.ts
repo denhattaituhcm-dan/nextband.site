@@ -3808,54 +3808,22 @@ export const sessionsApi = {
     reason: string
   ): Promise<CanonicalSessionDTO> => {
     const token = await getAuthToken();
-    try {
-      const res = await fetch(`${API_BASE_URL}/classes/sessions/${sessionId}/reschedule`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({ plannedDate: newDate, reason }),
-      });
-
-      if (res.ok) {
-        const s = await res.json();
-        return normalizeSession(s);
-      }
-    } catch {
-      // Fallback
-    }
-
-    try {
-      const { data: s, error } = await supabase
-        .from("class_sessions")
-        .update({
-          planned_date: newDate,
-          session_date: newDate,
-          reschedule_reason: reason,
-          status: "RESCHEDULED",
-        })
-        .eq("id", sessionId)
-        .select()
-        .single();
-
-      if (!error && s) {
-        return normalizeSession(s);
-      }
-    } catch {
-      // ignore
-    }
-
-    return normalizeSession({
-      id: sessionId,
-      classId: "",
-      sessionNumber: 1,
-      plannedDate: newDate,
-      startTime: "",
-      endTime: "",
-      status: "SCHEDULED",
-      createdAt: new Date().toISOString(),
+    const res = await fetch(`${API_BASE_URL}/classes/sessions/${sessionId}/reschedule`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ plannedDate: newDate, reason }),
     });
+
+    if (res.ok) {
+      const s = await res.json();
+      return normalizeSession(s);
+    }
+
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || errData.message || "Đổi lịch buổi học thất bại");
   },
 
   /** Cập nhật trạng thái buổi học (COMPLETED, CANCELLED, PLANNED) */
@@ -3879,16 +3847,8 @@ export const sessionsApi = {
       return normalizeSession(data);
     }
 
-    return normalizeSession({
-      id: sessionId,
-      classId: "",
-      sessionNumber: 1,
-      plannedDate: new Date().toISOString().split("T")[0],
-      startTime: "",
-      endTime: "",
-      status,
-      createdAt: new Date().toISOString(),
-    });
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || errData.message || "Cập nhật trạng thái buổi học thất bại");
   },
 };
 

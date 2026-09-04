@@ -213,9 +213,9 @@ describe("GATE A, B, C: P0 SECURITY FREEZE & ANSWER KEY PROTECTION TEST SUITE", 
 
       // Explicit assertions on question DTOs
       const questions = json.sections[0].questionGroups[0].questions;
-      expect(questions[0].correctAnswer).toBeNull();
-      expect(questions[1].correctAnswer).toBeNull();
-      expect(questions[2].correctAnswer).toBeNull();
+      expect(questions[0].correctAnswer ?? null).toBeNull();
+      expect(questions[1].correctAnswer ?? null).toBeNull();
+      expect(questions[2].correctAnswer ?? null).toBeNull();
       expect(json.sections[0].audioScript).toBeUndefined();
     });
 

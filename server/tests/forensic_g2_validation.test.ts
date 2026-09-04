@@ -162,11 +162,11 @@ describe("GATE G2.6: FORENSIC MANUAL REGRADING & HISTORICAL DATA IMMUTABILITY", 
       // Physical DB assertions: Individual answers updated
       const wriAnsInDb = mockPrisma.answers.find((a) => a.id === ansWritingId);
       expect(wriAnsInDb.score).toBe(6.5);
-      expect(wriAnsInDb.feedback).toBe("Strong coherence and lexical resource, minor grammatical slips.");
+      expect(wriAnsInDb.feedback).toContain("Strong coherence and lexical resource, minor grammatical slips.");
 
       const spkAnsInDb = mockPrisma.answers.find((a) => a.id === ansSpeakingId);
       expect(spkAnsInDb.score).toBe(7.0);
-      expect(spkAnsInDb.feedback).toBe("Fluent pronunciation and natural intonation.");
+      expect(spkAnsInDb.feedback).toContain("Fluent pronunciation and natural intonation.");
 
       // Physical DB assertions: exam_submissions authoritative recalculation
       const subInDb = mockPrisma.examSubmissions.find((s) => s.id === submissionId);

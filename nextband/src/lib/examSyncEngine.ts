@@ -78,13 +78,13 @@ export class ExamSyncEngine {
     try {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 2500);
-      const res = await fetch(`${API_BASE_URL}/submissions/health-check-probe`, {
+      const res = await fetch(`${API_BASE_URL}/health`, {
         method: "HEAD",
         signal: controller.signal,
       }).catch(() => null);
       clearTimeout(timeout);
 
-      // If server responds with any HTTP status (even 404/401/405), the API gateway is alive
+      // If server responds with any HTTP status, the API gateway is alive
       return res !== null;
     } catch {
       return false;

@@ -31,7 +31,9 @@ export class ClassSchedulerService {
       this.timer = setInterval(() => {
         this.runMaintenance();
       }, this.INTERVAL_MS);
+      this.timer.unref?.();
     }, this.INITIAL_DELAY_MS);
+    this.initialTimeout.unref?.();
   }
 
   /**

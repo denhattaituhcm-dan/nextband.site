@@ -265,7 +265,7 @@ export default function ResultsPage() {
             </div>
 
             {/* Phase 2: Rèn Luyện Lõi (ARIS High-Authority Dark Card) */}
-            <div className="rounded-3xl bg-[#0c1e38] text-white p-7 sm:p-8 flex flex-col justify-between space-y-6 shadow-xl border border-slate-800">
+            <div className="rounded-3xl bg-[#081B33] text-white p-7 sm:p-8 flex flex-col justify-between space-y-6 shadow-xl border border-slate-800">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-sans font-extrabold px-3 py-1 rounded-lg bg-white/10 text-white border border-white/20">
@@ -632,8 +632,8 @@ export default function ResultsPage() {
 
       {/* ========================================================================= */}
       {/* 5. EDITORIAL BOTTOM CONVERSION SECTION                                    */}
-      {/* ========================================================================= */}
-      <section className="py-20 sm:py-28 bg-[#0c1e38] text-white relative overflow-hidden">
+      {/* ============================================================ */}
+      <section className="py-20 sm:py-28 bg-[#081B33] text-white relative overflow-hidden">
         <div 
           className="absolute inset-0 opacity-10 pointer-events-none"
           style={{

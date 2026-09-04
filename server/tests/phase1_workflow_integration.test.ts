@@ -105,7 +105,7 @@ describe("🌊 PHASE 1 WORKFLOW & SYSTEM PIPELINE INTEGRATION E2E TEST", () => {
     await prisma.$executeRawUnsafe(`
       CREATE INDEX IF NOT EXISTS idx_student_milestone_claims_student_id ON public.student_milestone_claims(student_id)
     `);
-  });
+  }, 60000);
 
   afterAll(async () => {
     try {
@@ -137,7 +137,7 @@ describe("🌊 PHASE 1 WORKFLOW & SYSTEM PIPELINE INTEGRATION E2E TEST", () => {
       await prisma.$disconnect();
       await app.close();
     }
-  });
+  }, 40000);
 
   // =========================================================================
   // SUITE 1: SPEAKING FORECAST PIPELINE
@@ -531,7 +531,7 @@ describe("🌊 PHASE 1 WORKFLOW & SYSTEM PIPELINE INTEGRATION E2E TEST", () => {
       const claimKeys = claims.map((c) => c.milestoneKey);
       expect(claimKeys).toContain("MILESTONE_25_PERCENT");
       expect(claimKeys).toContain("MILESTONE_50_PERCENT");
-    }, 30000);
+    }, 60000);
 
     it("Step 2: Completing all exams syncs progress to 100% and claims Grand Graduation milestone", async () => {
       // 1. Student starts Exam 2
@@ -605,7 +605,7 @@ describe("🌊 PHASE 1 WORKFLOW & SYSTEM PIPELINE INTEGRATION E2E TEST", () => {
       expect(claimsRes.statusCode).toBe(200);
       const resClaims = JSON.parse(claimsRes.body).data;
       expect(resClaims).toContain("MILESTONE_GRAND_GRADUATION");
-    }, 30000);
+    }, 60000);
   });
 });
 

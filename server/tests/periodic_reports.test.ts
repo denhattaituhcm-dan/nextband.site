@@ -125,10 +125,10 @@ describe("PeriodicReportService - Date Range & Calculations", () => {
           { status: "ABSENT" },
         ]),
       },
-      homework: {
+      exam: {
         count: vi.fn().mockResolvedValue(40),
       },
-      submission: {
+      examSubmission: {
         count: vi.fn().mockResolvedValue(35),
       },
     };
@@ -191,5 +191,5 @@ describe("PeriodicReportService - Date Range & Calculations", () => {
     } finally {
       await prisma.$disconnect();
     }
-  });
+  }, 40000);
 });

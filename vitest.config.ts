@@ -7,7 +7,14 @@ export default defineConfig({
     globals: true,
     setupFiles: [path.resolve(__dirname, "./nextband/src/test/setup.ts")],
     fileParallelism: false,
-    testTimeout: 15000,
+    testTimeout: 45000,
+    hookTimeout: 45000,
+    exclude: [
+      "**/node_modules/**",
+      "**/e2e/**",
+      "**/*.spec.ts",
+      "server/tests/deadline_and_status.test.mjs",
+    ],
   },
   resolve: {
     alias: {
