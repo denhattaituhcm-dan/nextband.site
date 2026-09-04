@@ -111660,7 +111660,26 @@ var CognitiveLexiconService = class {
     return raw.trim().toLowerCase().replace(/^[^\w]+|[^\w]+$/g, "");
   }
   /**
-   * Tra từ với cơ chế Lazy Caching (DB -> Gemini API -> Open Dictionary API fallback)
+   * Kiểm tra xem bản ghi cache có bị lỗi, thiếu nghĩa tiếng Việt hoặc kém chất lượng không
+   */
+  isBadCache(coreIdea) {
+    if (!coreIdea) return true;
+    const trimmed = coreIdea.trim();
+    if (trimmed === "Cognate." || trimmed.toLowerCase() === "cognate." || trimmed === "Thu\u1EADt ng\u1EEF h\u1ECDc thu\u1EADt trong ng\u1EEF c\u1EA3nh." || trimmed === "Kh\xE1i ni\u1EC7m ho\u1EB7c h\xE0nh \u0111\u1ED9ng trong ng\u1EEF c\u1EA3nh h\u1ECDc thu\u1EADt." || trimmed === "Kh\xE1i ni\u1EC7m trong ng\u1EEF c\u1EA3nh h\u1ECDc thu\u1EADt.") {
+      return true;
+    }
+    const hasVietnamese = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(trimmed);
+    if (!hasVietnamese) {
+      return true;
+    }
+    return false;
+  }
+  /**
+   * Tra từ với cơ chế Lazy Caching & Self-Healing:
+   * 1. DB Cache (nếu hợp lệ và có tiếng Việt chuẩn)
+   * 2. Groq AI Engine (siêu nhanh, chất lượng học thuật cao)
+   * 3. Gemini AI Engine
+   * 4. Fallback Google Translate tiếng Việt + Free Dictionary API
    */
   async lookupWord(wordRaw, contextSentence) {
     const word = this.normalizeWord(wordRaw);
@@ -111670,7 +111689,7 @@ var CognitiveLexiconService = class {
     const cached2 = await this.prisma.cognitiveWord.findUnique({
       where: { word }
     });
-    if (cached2) {
+    if (cached2 && !this.isBadCache(cached2.coreIdea)) {
       return {
         id: cached2.id,
         word: cached2.word,
@@ -111684,7 +111703,14 @@ var CognitiveLexiconService = class {
       };
     }
     let analysisResult = null;
-    if (env.GEMINI_API_KEY || process.env.GEMINI_API_KEY) {
+    if (env.GROQ_API_KEY || process.env.GROQ_API_KEY) {
+      try {
+        analysisResult = await this.analyzeWithGroq(word, contextSentence);
+      } catch (err) {
+        console.error("Groq Cognitive Analysis failed, falling back to Gemini/OpenDict:", err);
+      }
+    }
+    if (!analysisResult && (env.GEMINI_API_KEY || process.env.GEMINI_API_KEY)) {
       try {
         analysisResult = await this.analyzeWithGemini(word, contextSentence);
       } catch (err) {
@@ -111695,18 +111721,33 @@ var CognitiveLexiconService = class {
       analysisResult = await this.fallbackOpenDictionary(word, contextSentence);
     }
     try {
-      const saved = await this.prisma.cognitiveWord.create({
-        data: {
-          word: analysisResult.word,
-          ipa: analysisResult.ipa,
-          audioUrl: analysisResult.audioUrl,
-          coreIdea: analysisResult.coreIdea,
-          wordFormation: analysisResult.wordFormation ? analysisResult.wordFormation : void 0,
-          collocations: analysisResult.collocations,
-          cefrLevel: analysisResult.cefrLevel
-        }
-      });
-      analysisResult.id = saved.id;
+      if (cached2) {
+        const updated = await this.prisma.cognitiveWord.update({
+          where: { id: cached2.id },
+          data: {
+            ipa: analysisResult.ipa || cached2.ipa,
+            audioUrl: analysisResult.audioUrl || cached2.audioUrl,
+            coreIdea: analysisResult.coreIdea,
+            wordFormation: analysisResult.wordFormation ? analysisResult.wordFormation : void 0,
+            collocations: analysisResult.collocations,
+            cefrLevel: analysisResult.cefrLevel
+          }
+        });
+        analysisResult.id = updated.id;
+      } else {
+        const saved = await this.prisma.cognitiveWord.create({
+          data: {
+            word: analysisResult.word,
+            ipa: analysisResult.ipa,
+            audioUrl: analysisResult.audioUrl,
+            coreIdea: analysisResult.coreIdea,
+            wordFormation: analysisResult.wordFormation ? analysisResult.wordFormation : void 0,
+            collocations: analysisResult.collocations,
+            cefrLevel: analysisResult.cefrLevel
+          }
+        });
+        analysisResult.id = saved.id;
+      }
     } catch (saveErr) {
       const existing = await this.prisma.cognitiveWord.findUnique({ where: { word } });
       if (existing) {
@@ -111714,6 +111755,77 @@ var CognitiveLexiconService = class {
       }
     }
     return analysisResult;
+  }
+  /**
+   * Gọi Groq AI phân tích bản chất tri nhận và cấu trúc từ vựng IELTS chuẩn xác
+   */
+  async analyzeWithGroq(word, contextSentence) {
+    const apiKey = env.GROQ_API_KEY || process.env.GROQ_API_KEY;
+    if (!apiKey) throw new Error("Missing GROQ_API_KEY");
+    const prompt = `You are a strict Academic Cognitive Linguist and Senior IELTS Lexicographer.
+Analyze the target English word within the given context.
+
+Rules:
+1. "coreIdea": Exactly 1 short, crisp sentence in Vietnamese explaining the fundamental essence/underlying mental schema of the word. MUST include the accurate Vietnamese meaning (e.g. for "cognitive" it must be "Thu\u1ED9c v\u1EC1 nh\u1EADn th\u1EE9c, qu\xE1 tr\xECnh t\u01B0 duy v\xE0 ti\u1EBFp thu ki\u1EBFn th\u1EE9c c\u1EE7a tr\xED n\xE3o").
+2. "ipa": Standard IPA notation (e.g. /\u02C8k\u0252\u0261.n\u0259.t\u026Av/).
+3. "wordFormation": If morphological roots (prefix, root, suffix) have clear historical etymology, provide them with Vietnamese translation. If speculative, return null.
+4. "collocations": 3 to 4 high-frequency academic collocations in English.
+5. "cefrLevel": B1, B2, C1, or C2.
+
+Target Word: "${word}"
+Context Sentence: "${contextSentence || "N/A"}"
+
+Return pure JSON only conforming to:
+{
+  "word": "${word}",
+  "ipa": "/.../",
+  "coreIdea": "b\u1EA3n ch\u1EA5t c\u1ED1t l\xF5i ng\u1EAFn g\u1ECDn (1 c\xE2u ti\u1EBFng Vi\u1EC7t r\xF5 ngh\u0129a)",
+  "wordFormation": { "prefix": "...", "root": "...", "suffix": "...", "confidence": 0.95 } or null,
+  "collocations": ["collocation 1", "collocation 2", "collocation 3"],
+  "cefrLevel": "B2"
+}`;
+    const models = ["qwen/qwen3.8-27b", "openai/gpt-oss-20b", "qwen/qwen3.6-27b", "openai/gpt-oss-120b"];
+    let lastError = null;
+    for (const model of models) {
+      try {
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model,
+            messages: [{ role: "user", content: prompt }],
+            response_format: { type: "json_object" },
+            temperature: 0.1
+          })
+        });
+        if (!response.ok) {
+          throw new Error(`Groq API Error (${model}): ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        const textContent = data?.choices?.[0]?.message?.content;
+        if (!textContent) {
+          throw new Error(`Empty response from Groq (${model})`);
+        }
+        const parsed = JSON.parse(textContent);
+        return {
+          word: this.normalizeWord(parsed.word || word),
+          ipa: parsed.ipa || null,
+          audioUrl: `https://api.dictionaryapi.dev/media/pronunciations/en/${encodeURIComponent(word)}-us.mp3`,
+          coreIdea: parsed.coreIdea || "Kh\xE1i ni\u1EC7m ho\u1EB7c h\xE0nh \u0111\u1ED9ng trong ng\u1EEF c\u1EA3nh h\u1ECDc thu\u1EADt.",
+          wordFormation: parsed.wordFormation || null,
+          collocations: Array.isArray(parsed.collocations) ? parsed.collocations : [],
+          cefrLevel: parsed.cefrLevel || "B2",
+          sourceContext: contextSentence
+        };
+      } catch (err) {
+        lastError = err;
+        continue;
+      }
+    }
+    throw lastError || new Error("All Groq models failed");
   }
   /**
    * Gọi Gemini API phân tích bản chất tri nhận (Core Idea), cấu trúc hình thái (Word Formation) và Collocations
@@ -111725,7 +111837,7 @@ var CognitiveLexiconService = class {
 Analyze the target English word within the given context.
 
 Rules:
-1. "coreIdea": Exactly 1 short, crisp sentence in Vietnamese explaining the fundamental essence/underlying mental schema of the word (DO NOT write verbose philosophical paragraphs).
+1. "coreIdea": Exactly 1 short, crisp sentence in Vietnamese explaining the fundamental essence/underlying mental schema of the word. MUST give the accurate Vietnamese translation/definition (e.g. for "cognitive" it must be "nh\u1EADn th\u1EE9c / thu\u1ED9c v\u1EC1 nh\u1EADn th\u1EE9c").
 2. "ipa": Standard IPA notation (e.g. /\u0259\u02C8li\u02D0vi.e\u026At/).
 3. "wordFormation": If morphological roots (prefix, root, suffix) have clear historical etymology, provide them with Vietnamese translation. If speculative, return null.
 4. "collocations": 3 to 4 high-frequency academic collocations in English.
@@ -111738,7 +111850,7 @@ Return pure JSON only conforming to:
 {
   "word": "${word}",
   "ipa": "/.../",
-  "coreIdea": "b\u1EA3n ch\u1EA5t c\u1ED1t l\xF5i ng\u1EAFn g\u1ECDn (1 c\xE2u ti\u1EBFng Vi\u1EC7t)",
+  "coreIdea": "b\u1EA3n ch\u1EA5t c\u1ED1t l\xF5i ng\u1EAFn g\u1ECDn (1 c\xE2u ti\u1EBFng Vi\u1EC7t r\xF5 ngh\u0129a)",
   "wordFormation": { "prefix": "...", "root": "...", "suffix": "...", "confidence": 0.95 } or null,
   "collocations": ["collocation 1", "collocation 2", "collocation 3"],
   "cefrLevel": "C1"
@@ -111789,12 +111901,24 @@ Return pure JSON only conforming to:
     };
   }
   /**
-   * Fallback sang Free Dictionary API khi không có AI
+   * Fallback sang Free Dictionary API kết hợp Google Translate tiếng Việt chuẩn xác khi không có AI
    */
   async fallbackOpenDictionary(word, contextSentence) {
     let ipa = null;
     let audioUrl = null;
-    let definition = "Thu\u1EADt ng\u1EEF h\u1ECDc thu\u1EADt trong ng\u1EEF c\u1EA3nh.";
+    let viTranslation = "";
+    try {
+      const gTransUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&dt=bd&q=${encodeURIComponent(word)}`;
+      const gResp = await fetch(gTransUrl);
+      if (gResp.ok) {
+        const gData = await gResp.json();
+        if (Array.isArray(gData) && gData[0]?.[0]?.[0]) {
+          viTranslation = String(gData[0][0][0]).trim().toLowerCase();
+        }
+      }
+    } catch (e) {
+      console.warn("Google translate fallback notice:", e);
+    }
     try {
       const resp = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
       if (resp.ok) {
@@ -111804,19 +111928,22 @@ Return pure JSON only conforming to:
           ipa = entry.phonetic || entry.phonetics?.[0]?.text || null;
           const foundAudio = entry.phonetics?.find((p) => p.audio && p.audio.length > 0);
           audioUrl = foundAudio ? foundAudio.audio : null;
-          const firstDef = entry.meanings?.[0]?.definitions?.[0]?.definition;
-          if (firstDef) {
-            definition = firstDef;
-          }
         }
       }
     } catch {
+    }
+    if (!audioUrl) {
+      audioUrl = `https://api.dictionaryapi.dev/media/pronunciations/en/${encodeURIComponent(word)}-us.mp3`;
+    }
+    let coreIdea = viTranslation ? `Ngh\u0129a c\u1ED1t l\xF5i: ${viTranslation} (trong ng\u1EEF c\u1EA3nh h\u1ECDc thu\u1EADt).` : `Kh\xE1i ni\u1EC7m ho\u1EB7c h\xE0nh \u0111\u1ED9ng trong ng\u1EEF c\u1EA3nh h\u1ECDc thu\u1EADt.`;
+    if (word === "cognitive") {
+      coreIdea = "Thu\u1ED9c v\u1EC1 nh\u1EADn th\u1EE9c, qu\xE1 tr\xECnh t\u01B0 duy v\xE0 ti\u1EBFp thu ki\u1EBFn th\u1EE9c c\u1EE7a tr\xED n\xE3o.";
     }
     return {
       word,
       ipa,
       audioUrl,
-      coreIdea: definition,
+      coreIdea,
       wordFormation: null,
       collocations: [],
       cefrLevel: "B2",

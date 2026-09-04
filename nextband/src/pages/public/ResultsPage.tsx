@@ -179,7 +179,7 @@ export default function ResultsPage() {
                         Tăng band trung bình
                       </span>
                       <p className="text-4xl sm:text-5xl font-black text-brand-red tracking-tight font-mono">
-                        +1.5
+                        +1.0
                       </p>
                       <span className="text-xs text-slate-500 font-medium">Sau 1 lộ trình học</span>
                     </div>

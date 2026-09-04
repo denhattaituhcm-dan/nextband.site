@@ -108,11 +108,13 @@ function RevealCardItem({
       {/* ========================================================================= */}
       <div
         onClick={handleFlip}
+        aria-hidden={isFlipped}
         className={cn(
-          "absolute inset-0 backface-hidden rounded-3xl p-6 sm:p-8 bg-card border-2 shadow-lg flex flex-col justify-between cursor-pointer transition-all duration-300 hover:shadow-xl",
+          "absolute inset-0 backface-hidden flip-face-front rounded-3xl p-6 sm:p-8 bg-card border-2 shadow-lg flex flex-col justify-between transition-all duration-300 hover:shadow-xl",
           theme.border,
           theme.glow,
-          theme.cardBg
+          theme.cardBg,
+          isFlipped ? "pointer-events-none z-0" : "pointer-events-auto z-10 cursor-pointer"
         )}
       >
         <div className="space-y-4">
@@ -172,6 +174,10 @@ function RevealCardItem({
 
         <button
           type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleFlip();
+          }}
           className={cn(
             "w-full py-3.5 px-5 rounded-2xl font-black text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition active:scale-[0.98] cursor-pointer",
             theme.btnGrad
@@ -187,10 +193,12 @@ function RevealCardItem({
       {/* ========================================================================= */}
       <div
         onClick={handleFlip}
+        aria-hidden={!isFlipped}
         className={cn(
-          "absolute inset-0 backface-hidden rotate-y-180 rounded-3xl p-6 sm:p-8 bg-card border-2 shadow-2xl flex flex-col justify-between cursor-pointer transition-all duration-300 hover:shadow-xl",
+          "absolute inset-0 backface-hidden flip-face-back rounded-3xl p-6 sm:p-8 bg-card border-2 shadow-2xl flex flex-col justify-between transition-all duration-300 hover:shadow-xl",
           theme.border,
-          theme.cardBg
+          theme.cardBg,
+          isFlipped ? "pointer-events-auto z-10 cursor-pointer" : "pointer-events-none z-0"
         )}
       >
         <div className="space-y-2">

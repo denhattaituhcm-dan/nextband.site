@@ -7,9 +7,9 @@ export const vrsMockLessons: VRSVisualLesson[] = [
     week: 1,
     day: 1,
     skill: 'writing',
-    title: 'Động Cơ Cấu Trúc Câu (S - FV - O)',
+    title: 'Cấu Trúc Câu Cơ Bản (S - V - O)',
     subtitle: 'Lắp ráp mô hình câu & sửa lỗi thừa động từ',
-    coreCompetency: 'Nhận diện giải phầu S - FV Core - OC mành mệnh đề v dich chuyển xung đột thừa động từ.',
+    coreCompetency: 'Nhận diện thành phần Chủ ngữ (S), Động từ (V), Tân ngữ (O) và khắc phục lỗi thừa 2 động từ trong câu.',
     bridgeToHomework: {
       promptText: 'Làm 5 câu bài tập cấu trúc câu trong Homework để kiểm chứng phản xạ tự thân.',
       targetExamId: 'exam_dreamer_w1d1'
@@ -18,11 +18,11 @@ export const vrsMockLessons: VRSVisualLesson[] = [
       {
         stageNumber: 1,
         stageType: 'syntax_anatomy',
-        title: 'See the Anatomy (Mổ xẻ giải phẫu)',
-        pedagogicalObjective: 'Nhận diện các khoang chức năng S, FV Core, O thay vì đọc døng chữ dài.',
+        title: 'Nhận diện thành phần câu (S - V - O)',
+        pedagogicalObjective: 'Nhận diện rõ Chủ ngữ (S), Động từ (V) và Tân ngữ (O) thay vì đọc một dòng chữ dài.',
         interactionModel: {
           type: 'slot_snap',
-          prompt: 'Bấm quét giải phẫu để bóc tách câu văn thành 3 khoang chức năng.',
+          prompt: 'Bấm phân tích để nhận diện 3 thành phần chính trong câu.',
           mode: 'build',
           tokens: [
             { id: 't1', text: 'The course', role: 'subject', colorClass: 'green' },
@@ -34,11 +34,11 @@ export const vrsMockLessons: VRSVisualLesson[] = [
       {
         stageNumber: 2,
         stageType: 'productive_failure',
-        title: 'Break (Phát hiện sụp đổ Cấu trúc)',
-        pedagogicalObjective: 'Đối diện lỗi thừa động từ (Double Verbs) kinh diển của Band 3.0.',
+        title: 'Tìm và sửa lỗi sai trong câu',
+        pedagogicalObjective: 'Khắc phục lỗi quen miệng dùng 2 động từ chia cùng lúc trong một câu đơn.',
         interactionModel: {
           type: 'slot_snap',
-          prompt: 'Click vào điểm gây ra xung đột cấu trúc trong câu bên dưới.',
+          prompt: 'Click vào từ gây ra lỗi sai ngữ pháp trong câu bên dưới.',
           mode: 'break_and_repair',
           tokens: [
             { id: 't1', text: 'The course', role: 'subject', colorClass: 'green' },
@@ -48,14 +48,14 @@ export const vrsMockLessons: VRSVisualLesson[] = [
           ],
           collisionTarget: {
             conflictingTokenIds: ['t2', 't4'],
-            errorMessage: 'Xung đột cấu trúc: Trong một mệnh đề đơn không thể có 2 cụm FV cùng tranh vị trí!',
+            errorMessage: 'Lỗi ngữ pháp: Trong một câu đơn chỉ có 1 động từ chính được chia thì!',
             repairOptions: [
               {
                 id: 'opt1',
                 action: 'delete',
                 targetTokenId: 't4',
                 resultText: 'write emails',
-                explanation: 'Gọt bỏ can để động từ ở dạng nguyên mẫu bare infinitive (help sb do sth).'
+                explanation: 'Bỏ "can" để dùng cấu trúc chuẩn: help someone do something (giúp ai làm gì).'
               }
             ]
           }

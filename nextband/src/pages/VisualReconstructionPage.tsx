@@ -371,8 +371,8 @@ export default function VisualReconstructionPage() {
                       TRỌNG TÂM TUẦN 0{currentWeekMeta.week}
                     </span>
                     <span className="text-slate-300">/</span>
-                    <span className="text-xs font-mono font-semibold tracking-wider text-slate-500">
-                      MỤC TIÊU ĐẦU RA 4.0 · COGNITIVE RECONSTRUCTION
+                    <span className="text-xs font-semibold tracking-wide text-slate-500">
+                      Mục tiêu đầu ra Band 4.0
                     </span>
                   </div>
 
@@ -386,7 +386,7 @@ export default function VisualReconstructionPage() {
                   </div>
 
                   <p className="text-sm text-slate-600 leading-relaxed font-normal">
-                    Trọng tâm khảo cứu: <span className={`${currentTheme.accentText} font-semibold`}>{currentWeekMeta.theme}</span>. Bóc tách cơ chế ngữ pháp cốt lõi, loại trừ bẫy nhận định bằng chứng và tự động hoá tư duy phản xạ giao tiếp.
+                    Trọng tâm tuần này: <span className={`${currentTheme.accentText} font-semibold`}>{currentWeekMeta.theme}</span>. Nắm vững ngữ pháp nền tảng, tránh bẫy đọc hiểu và luyện phản xạ nói tự tin.
                   </p>
                 </div>
               </section>
@@ -424,12 +424,10 @@ export default function VisualReconstructionPage() {
                               <Cpu className="w-3.5 h-3.5" />
                               Writing · Buổi 1
                             </span>
-                            {isWritingDone ? (
+                            {isWritingDone && (
                               <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-xs">
                                 <Sparkles className="w-3 h-3 text-emerald-600" /> Đã hoàn thành
                               </span>
-                            ) : (
-                              <span className="text-xs font-mono font-semibold text-slate-400">01/03</span>
                             )}
                           </div>
 
@@ -444,17 +442,17 @@ export default function VisualReconstructionPage() {
                           <div className={`py-4 px-3.5 rounded-2xl border mb-6 transition-colors ${
                             isWritingDone ? 'bg-emerald-50/40 border-emerald-200/70' : 'bg-slate-50/80 border-slate-200/80'
                           }`}>
-                            <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 mb-2.5 flex items-center gap-1">
-                              <Layers className="w-3 h-3 text-indigo-600" />
-                              Mô hình câu
+                            <div className="text-[11px] font-bold text-slate-600 mb-2.5 flex items-center gap-1.5">
+                              <Layers className="w-3.5 h-3.5 text-indigo-600" />
+                              Cấu trúc câu cơ bản
                             </div>
                             {/* Tactile Connectors */}
-                            <div className="flex items-center justify-center gap-1.5 font-mono text-xs font-bold py-2.5 bg-white rounded-xl border border-slate-200 shadow-xs text-slate-700">
-                              <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-xs">[ S ]</span>
+                            <div className="flex items-center justify-center gap-2 text-xs font-bold py-2.5 bg-white rounded-xl border border-slate-200 shadow-xs text-slate-700">
+                              <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200/80 font-medium">Chủ ngữ (S)</span>
                               <span className="text-slate-300 font-bold">+</span>
-                              <span className="px-2 py-0.5 rounded-md bg-orange-50 text-orange-700 border border-orange-200 shadow-xs">[ FV ]</span>
+                              <span className="px-2.5 py-1 rounded-lg bg-orange-50 text-orange-700 border border-orange-200/80 font-medium">Động từ (V)</span>
                               <span className="text-slate-300 font-bold">+</span>
-                              <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 shadow-xs">[ O ]</span>
+                              <span className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/80 font-medium">Tân ngữ (O)</span>
                             </div>
                           </div>
                         </div>
@@ -513,12 +511,10 @@ export default function VisualReconstructionPage() {
                               <Scale className="w-3.5 h-3.5" />
                               Reading · Buổi 2
                             </span>
-                            {isReadingDone ? (
+                            {isReadingDone && (
                               <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 shadow-xs">
                                 <Sparkles className="w-3 h-3 text-amber-600" /> Đã hoàn thành
                               </span>
-                            ) : (
-                              <span className="text-xs font-mono font-semibold text-slate-400">02/03</span>
                             )}
                           </div>
 
@@ -533,15 +529,15 @@ export default function VisualReconstructionPage() {
                           <div className={`py-4 px-3.5 rounded-2xl border mb-6 transition-colors ${
                             isReadingDone ? 'bg-amber-50/40 border-amber-200/70' : 'bg-slate-50/80 border-slate-200/80'
                           }`}>
-                            <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 mb-2.5 flex items-center gap-1">
-                              <Scale className="w-3 h-3 text-amber-600" />
-                              Bàn cân đối chiếu
+                            <div className="text-[11px] font-bold text-slate-600 mb-2.5 flex items-center gap-1.5">
+                              <Scale className="w-3.5 h-3.5 text-amber-600" />
+                              Đối chiếu thông tin
                             </div>
                             {/* Scale Balance Tactile */}
-                            <div className="flex items-center justify-between font-mono text-xs font-bold py-2.5 px-3 bg-white rounded-xl border border-slate-200 shadow-xs text-slate-700">
-                              <span className="px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 border border-blue-200 shadow-xs">NHẬN ĐỊNH</span>
+                            <div className="flex items-center justify-center gap-3 text-xs font-bold py-2.5 px-3 bg-white rounded-xl border border-slate-200 shadow-xs text-slate-700">
+                              <span className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/80 font-semibold">Nhận định</span>
                               <span className="text-amber-600 font-bold text-base">⚖</span>
-                              <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-xs">BẰNG CHỨNG</span>
+                              <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200/80 font-semibold">Bằng chứng</span>
                             </div>
                           </div>
                         </div>
@@ -590,12 +586,10 @@ export default function VisualReconstructionPage() {
                               <Layers className="w-3.5 h-3.5" />
                               Speaking · Buổi 3
                             </span>
-                            {isSpeakingDone ? (
+                            {isSpeakingDone && (
                               <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-xs">
                                 <Sparkles className="w-3 h-3 text-emerald-600" /> Đã hoàn thành
                               </span>
-                            ) : (
-                              <span className="text-xs font-mono font-semibold text-slate-400">03/03</span>
                             )}
                           </div>
 
@@ -610,23 +604,23 @@ export default function VisualReconstructionPage() {
                           <div className={`py-4 px-3.5 rounded-2xl border mb-6 transition-colors ${
                             isSpeakingDone ? 'bg-emerald-50/40 border-emerald-200/70' : 'bg-slate-50/80 border-slate-200/80'
                           }`}>
-                            <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500 mb-2 flex items-center gap-1">
-                              <Layers className="w-3 h-3 text-emerald-600" />
-                              Bậc thang phản xạ nói
+                            <div className="text-[11px] font-bold text-slate-600 mb-2 flex items-center gap-1.5">
+                              <Layers className="w-3.5 h-3.5 text-emerald-600" />
+                              3 bước trả lời lưu loát
                             </div>
                             {/* Cascade Steps */}
-                            <div className="space-y-1 font-mono text-[10px] font-bold py-1.5 px-2 bg-white rounded-xl border border-slate-200 shadow-xs text-slate-600">
-                              <div className="flex items-center justify-between bg-emerald-50/80 px-2 py-1 rounded-md text-emerald-800">
-                                <span>1. STANCE</span>
-                                <span className="text-[9px] font-normal text-emerald-600">Trực diện</span>
+                            <div className="space-y-1.5 text-xs py-2 px-2.5 bg-white rounded-xl border border-slate-200 shadow-xs text-slate-700">
+                              <div className="flex items-center justify-between bg-emerald-50/80 px-2.5 py-1.5 rounded-lg text-emerald-900 font-medium">
+                                <span>1. Trả lời trực diện</span>
+                                <span className="text-[10px] text-emerald-700 font-semibold">Ý chính</span>
                               </div>
-                              <div className="flex items-center justify-between bg-slate-50 px-2 py-1 rounded-md text-slate-700">
-                                <span>2. WHY?</span>
-                                <span className="text-[9px] font-normal text-slate-400">Lý giải</span>
+                              <div className="flex items-center justify-between bg-slate-50 px-2.5 py-1.5 rounded-lg text-slate-700 font-medium">
+                                <span>2. Giải thích lý do</span>
+                                <span className="text-[10px] text-slate-500 font-semibold">Tại sao</span>
                               </div>
-                              <div className="flex items-center justify-between bg-slate-50 px-2 py-1 rounded-md text-slate-700">
-                                <span>3. DEVELOP</span>
-                                <span className="text-[9px] font-normal text-indigo-500">Phát triển ý</span>
+                              <div className="flex items-center justify-between bg-slate-50 px-2.5 py-1.5 rounded-lg text-slate-700 font-medium">
+                                <span>3. Mở rộng câu trả lời</span>
+                                <span className="text-[10px] text-indigo-600 font-semibold">Ví dụ thêm</span>
                               </div>
                             </div>
                           </div>

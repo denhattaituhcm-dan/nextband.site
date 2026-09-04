@@ -43,6 +43,28 @@ export default function VRSSlotSnapInteractive({ model }: Props) {
     }
   };
 
+  const getRoleLabel = (role: string) => {
+    switch (role.toLowerCase()) {
+      case 'subject':
+        return 'Chủ ngữ (S)';
+      case 'fv_core':
+      case 'verb':
+        return 'Động từ (V)';
+      case 'object':
+        return 'Tân ngữ (O)';
+      case 'predicate':
+        return 'Vị ngữ';
+      case 'modifier':
+        return 'Bổ ngữ';
+      case 'relative_clause':
+        return 'Mệnh đề QH';
+      case 'connector':
+        return 'Liên từ';
+      default:
+        return role.replace('_', ' ');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
@@ -57,15 +79,15 @@ export default function VRSSlotSnapInteractive({ model }: Props) {
             onClick={() => setIsScanned(!isScanned)}
             className="text-xs px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-xs hover:shadow-md transition-all shrink-0 cursor-pointer"
           >
-            {isScanned ? 'Thu Gọn Phân Tích' : '✦ Quét Giải Phẫu Cú Pháp'}
+            {isScanned ? 'Thu gọn' : '✦ Tách thành phần câu'}
           </button>
         )}
       </div>
 
       {/* Syntax Blocks Canvas - Tactile Academic Surface */}
       <div className="py-10 px-6 sm:px-10 rounded-2xl bg-slate-50/50 border border-slate-200 flex flex-wrap items-center justify-center gap-4 min-h-[150px] relative">
-        <div className="absolute top-3 left-4 text-[10px] font-mono tracking-widest uppercase text-slate-400 font-bold select-none">
-          KHÔNG GIAN LẮP GHÉP CÚ PHÁP
+        <div className="absolute top-3 left-4 text-[10px] font-mono tracking-wider uppercase text-slate-400 font-bold select-none">
+          CÁC THÀNH PHẦN TRONG CÂU
         </div>
 
         {model.tokens.map((token) => {
@@ -92,10 +114,10 @@ export default function VRSSlotSnapInteractive({ model }: Props) {
             >
               <span className="text-base tracking-tight">{displayText}</span>
               {!isBreakMode && isScanned && (
-                <span className={`text-[10px] font-mono font-bold uppercase tracking-wider mt-1.5 px-2 py-0.5 rounded-md ${
+                <span className={`text-[10px] font-bold tracking-wide mt-1.5 px-2 py-0.5 rounded-md ${
                   isSelected ? 'bg-indigo-700 text-indigo-100' : 'bg-slate-100 text-indigo-800 border border-slate-200'
                 }`}>
-                  {token.role.replace('_', ' ')}
+                  {getRoleLabel(token.role)}
                 </span>
               )}
             </button>
@@ -103,7 +125,7 @@ export default function VRSSlotSnapInteractive({ model }: Props) {
         })}
       </div>
 
-      {/* Collision Alert & Surgery Drawer: Academic Diagnosis */}
+      {/* Collision Alert & Surgery Drawer */}
       {hasCollision && model.collisionTarget && (
         <div className="p-5 rounded-2xl bg-rose-50/70 border border-rose-200/80 shadow-xs">
           <div className="flex items-start gap-3.5">
@@ -111,14 +133,14 @@ export default function VRSSlotSnapInteractive({ model }: Props) {
               !
             </span>
             <div className="flex-1">
-              <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-rose-700">
-                LỖI XUNG ĐỘT CÚ PHÁP PHÁT HIỆN
+              <div className="text-[11px] font-bold uppercase tracking-wider text-rose-700">
+                PHÁT HIỆN LỖI SAI TRONG CÂU
               </div>
               <h5 className="font-semibold text-slate-900 text-sm mt-0.5 leading-snug">
                 {model.collisionTarget.errorMessage}
               </h5>
               <p className="text-xs text-slate-600 mt-1">
-                Chọn phương án chuẩn hóa giải phẫu cấu trúc để phục hồi tính toàn vẹn:
+                Chọn cách sửa đúng:
               </p>
               <div className="flex flex-wrap items-center gap-2.5 mt-3.5">
                 {model.collisionTarget.repairOptions.map((opt) => (
@@ -138,17 +160,17 @@ export default function VRSSlotSnapInteractive({ model }: Props) {
         </div>
       )}
 
-      {/* Academic Verification Annotation (Thay cho Alert box xanh) */}
+      {/* Verification Annotation */}
       {repairedText && (
         <div className="p-4 rounded-2xl bg-emerald-50/60 border-l-4 border-emerald-500 border-y border-r border-slate-200/60 transition-all">
           <div className="flex items-start gap-3">
             <span className="text-emerald-700 font-bold text-sm">✓</span>
             <div>
-              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-emerald-800">
-                STRUCTURE VERIFIED · CÚ PHÁP ĐÃ KHỚP CHUẨN
+              <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">
+                CHÚC MỪNG! CÂU ĐÃ ĐƯỢC SỬA ĐÚNG
               </span>
               <p className="text-xs text-slate-700 mt-0.5 leading-relaxed font-medium">
-                Quan hệ ngữ pháp được tái lập bền vững. Tân ngữ trực tiếp kết hợp trơn tru với động từ bare infinitive không gây xung đột kép.
+                Cấu trúc câu hiện tại đã chuẩn ngữ pháp, các từ kết hợp hài hòa và không còn lỗi thừa động từ.
               </p>
             </div>
           </div>

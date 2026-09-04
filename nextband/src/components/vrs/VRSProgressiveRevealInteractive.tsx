@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { VRSRevealInteraction } from '@/types/vrs';
+import VRSLexicalFlipCard from './VRSLexicalFlipCard';
 
 interface Props {
   model: VRSRevealInteraction;
@@ -60,19 +61,19 @@ export default function VRSProgressiveRevealInteractive({ model }: Props) {
               {/* Card Header */}
               <div className="p-4 flex items-center justify-between border-b bg-muted/20">
                 <div className="flex items-center gap-3">
-                  <span className={'w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ' + (isOpen ? 'bg-primary text-primary-foreground' : 'bg-muted/60')}>
+                  <span className={'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ' + (isOpen ? 'bg-primary text-primary-foreground' : 'bg-muted/60')}>
                     {card.step}
                   </span>
-                  <span className="text-xs font-bold uppercase tracking-wider text-primary">
+                  <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-primary">
                     {card.label}
                   </span>
                   {card.bandLevel && (
-                    <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                    <span className="text-xs font-black uppercase px-2.5 py-0.5 rounded bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20">
                       {card.bandLevel}
                     </span>
                   )}
                 </div>
-                <span className="text-xs font-medium text-muted-foreground">
+                <span className="text-xs sm:text-sm font-medium text-muted-foreground">
                   {card.cognitiveFunction}
                 </span>
               </div>
@@ -80,49 +81,29 @@ export default function VRSProgressiveRevealInteractive({ model }: Props) {
               {/* Card Body */}
               {isOpen ? (
                 <div className="p-5 space-y-4">
-                  <div className="p-4 rounded-lg bg-background border shadow-xs">
-                    <p className="text-base font-semibold leading-relaxed text-foreground">
+                  <div className="p-4 sm:p-5 rounded-xl bg-background border shadow-xs">
+                    <p className="text-base sm:text-lg font-semibold leading-relaxed text-foreground">
                       "{cardContent}"
                     </p>
                   </div>
 
-                  {/* Flip-Card Lexical Upgrade Tool */}
+                  {/* 3D Flip-Card Lexical Upgrade Tool */}
                   {card.flipCard && (
-                    <div className="p-3.5 rounded-lg bg-amber-50/50 dark:bg-amber-950/20 border border-amber-300/40 dark:border-amber-800/30">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-bold uppercase text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
-                          🔄 Thẻ Lật Nâng Cấp Diễn Đạt (Lexical Flip):
-                        </span>
-                        <span className="text-[11px] text-muted-foreground">Click để lật thẻ</span>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-                        <div className="p-2.5 rounded bg-background/80 border">
-                          <span className="text-[10px] font-bold text-muted-foreground uppercase block mb-1">Mặt trước (Base · Band 4.0):</span>
-                          <span className="font-medium text-destructive">{card.flipCard.frontText}</span>
-                        </div>
-                        <div className="p-2.5 rounded bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-300/40 dark:border-emerald-800/40">
-                          <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase block mb-1">Mặt sau (Advanced · Band 6.0+):</span>
-                          <span className="font-bold text-emerald-700 dark:text-emerald-300">{card.flipCard.backText}</span>
-                        </div>
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-2 italic">
-                        💡 {card.flipCard.explanation}
-                      </p>
-                    </div>
+                    <VRSLexicalFlipCard flipCard={card.flipCard} bandLevel={card.bandLevel} />
                   )}
 
                   {/* Vowel Pronunciation Highlights (Bám sát phần 1 Pronunciation của Coursebook) */}
                   {card.vowelHighlight && card.vowelHighlight.length > 0 && (
-                    <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-                      <p className="text-xs font-bold uppercase text-primary mb-2 flex items-center gap-1">
+                    <div className="p-3.5 sm:p-4 rounded-xl bg-primary/5 border border-primary/20">
+                      <p className="text-xs sm:text-sm font-bold uppercase text-primary mb-2.5 flex items-center gap-1.5">
                         🎙️ Điểm Huyệt Phát Âm Nguyên Âm (Coursebook Focus):
                       </p>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-2.5">
                         {card.vowelHighlight.map((vh, i) => (
-                          <div key={i} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-background border text-xs">
-                            <span className="font-bold text-foreground">{vh.word}</span>
-                            <span className="text-[11px] text-muted-foreground">{vh.phonetic}</span>
-                            <span className="px-1.5 py-0.2 rounded bg-primary/10 text-primary font-mono text-[10px] font-bold">
+                          <div key={i} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background border text-xs sm:text-sm shadow-2xs">
+                            <span className="font-bold text-foreground text-sm">{vh.word}</span>
+                            <span className="text-xs text-muted-foreground font-mono">{vh.phonetic}</span>
+                            <span className="px-2 py-0.5 rounded bg-primary/10 text-primary font-mono text-xs font-bold">
                               {vh.vowelSound}
                             </span>
                           </div>
@@ -133,18 +114,18 @@ export default function VRSProgressiveRevealInteractive({ model }: Props) {
 
                   {/* Branch Options */}
                   {card.branchOptions && (
-                    <div className="p-3.5 rounded-lg bg-muted/30 border">
-                      <p className="text-xs font-bold uppercase text-muted-foreground mb-2">
+                    <div className="p-3.5 sm:p-4 rounded-xl bg-muted/30 border">
+                      <p className="text-xs sm:text-sm font-bold uppercase text-muted-foreground mb-2.5">
                         💡 Rẽ Nhánh Lập Luận (Branching Stance):
                       </p>
-                      <div className="flex flex-wrap items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2.5">
                         {card.branchOptions.map((bo) => {
                           const isActive = selectedBranches[card.step] === bo.branchName || (!selectedBranches[card.step] && bo.branchName === 'CONTRAST');
                           return (
                             <button
                               key={bo.branchName}
                               onClick={() => chooseBranch(card.step, bo.branchName)}
-                              className={'text-xs px-3.5 py-1.5 rounded-md font-semibold transition-all ' + (isActive ? 'bg-primary text-primary-foreground shadow-xs' : 'bg-muted hover:bg-muted/80 text-muted-foreground')}
+                              className={'text-xs sm:text-sm px-4 py-2 rounded-xl font-semibold transition-all cursor-pointer ' + (isActive ? 'bg-primary text-primary-foreground shadow-xs' : 'bg-muted hover:bg-muted/80 text-muted-foreground')}
                             >
                               {bo.branchName}
                             </button>
@@ -154,18 +135,18 @@ export default function VRSProgressiveRevealInteractive({ model }: Props) {
                     </div>
                   )}
 
-                  <p className="text-xs text-muted-foreground bg-muted/10 p-3 rounded-md border border-dashed">
+                  <p className="text-xs sm:text-sm text-muted-foreground bg-muted/10 p-3.5 rounded-xl border border-dashed leading-relaxed">
                     📌 <span className="font-semibold text-foreground">Chiến lược sư phạm:</span> {card.pedagogyNote}
                   </p>
                 </div>
               ) : (
-                <div className="p-4 flex items-center justify-center text-muted-foreground">
+                <div className="p-4 sm:p-5 flex items-center justify-center text-muted-foreground">
                   {isNextToOpen ? (
                     <span className="text-sm font-semibold text-primary animate-pulse">
                       👆 Click mở tầng thẻ tiếp theo ({card.label}) →
                     </span>
                   ) : (
-                    <span className="text-xs flex items-center gap-1.5 text-muted-foreground/60">
+                    <span className="text-xs sm:text-sm flex items-center gap-1.5 text-muted-foreground/60">
                       🔒 Mở tầng trên trước để mở khóa
                     </span>
                   )}
@@ -178,17 +159,17 @@ export default function VRSProgressiveRevealInteractive({ model }: Props) {
 
       {/* Full Mosaic Summary */}
       {allRevealed && (
-        <div className="p-6 rounded-xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-2 border-primary/40 shadow-sm space-y-3">
+        <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-2 border-primary/40 shadow-sm space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-black uppercase px-3 py-1 rounded bg-primary text-primary-foreground tracking-wider">
+            <span className="text-xs sm:text-sm font-black uppercase px-3 py-1 rounded-lg bg-primary text-primary-foreground tracking-wider">
               ✨ BÀI NÓI HOÀN CHỈNH ĐÃ HỢP NHẤT
             </span>
-            <span className="text-xs font-semibold text-primary">Band Target: 6.0 - 6.5+</span>
+            <span className="text-xs sm:text-sm font-semibold text-primary">Mục tiêu đầu ra: Band 4.0 (Tối đa 4.5)</span>
           </div>
-          <p className="text-base font-medium leading-relaxed text-foreground">
+          <p className="text-base sm:text-lg font-semibold leading-relaxed text-foreground">
             "{model.fullMosaicSummary}"
           </p>
-          <div className="pt-2 flex items-center justify-between text-xs text-muted-foreground border-t border-primary/20">
+          <div className="pt-2 flex items-center justify-between text-xs sm:text-sm text-muted-foreground border-t border-primary/20">
             <span>💡 Áp dụng nhịp điệu ngắt nghỉ và luyến âm tự nhiên giữa các tầng câu.</span>
           </div>
         </div>

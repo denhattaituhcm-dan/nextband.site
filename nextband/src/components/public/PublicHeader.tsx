@@ -11,34 +11,71 @@ import {
   User,
   Shield,
   GraduationCap,
-  ExternalLink,
+  ChevronDown,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+interface NavSubItem {
+  label: string;
+  href: string;
+  badge?: string;
+  isDivider?: boolean;
+}
 
 interface NavItem {
   label: string;
   href: string;
+  children?: NavSubItem[];
 }
 
 const PUBLIC_NAV_ITEMS: NavItem[] = [
-  { label: "Khảo thí năng lực", href: "/assessment" },
+  {
+    label: "Khóa học",
+    href: "/courses",
+    children: [
+      { label: "Hệ thống học thuật ARIS-7", href: "/academic-system", badge: "Phương pháp" },
+      { label: "Khảo thí năng lực", href: "/assessment", badge: "Test 4 kỹ năng" },
+      { label: "Lộ trình học tổng quan", href: "/courses" },
+      { label: "DIVIDER", href: "", isDivider: true },
+      { label: "Khóa STARTER (Mất gốc → 3.0)", href: "/courses/starter" },
+      { label: "Khóa DREAMER (3.0 → 4.5)", href: "/courses/dreamer" },
+      { label: "Khóa BUILDER (4.5 → 5.5)", href: "/courses/builder" },
+      { label: "Khóa MASTER (5.5 → 6.5)", href: "/courses/master" },
+      { label: "Khóa LEADER (6.5 → 7.5+)", href: "/courses/leader" },
+    ],
+  },
   { label: "Reading", href: "/reading" },
-  { label: "Hệ thống học thuật", href: "/academic-system" },
-  { label: "Khóa học", href: "/courses" },
-  { label: "Tiến bộ", href: "/results" },
   { label: "Speaking Forecast", href: "/ielts-speaking-forecast" },
+  { label: "Tiến bộ", href: "/results" },
   { label: "Giảng viên", href: "/teachers" },
 ];
 
 export function PublicHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileCoursesOpen, setMobileCoursesOpen] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated, isAdmin, isTeacher } = useAuth();
 
-  const isActive = (path: string) => {
-    if (path === "/" && location.pathname === "/") return true;
-    if (path !== "/" && location.pathname.startsWith(path)) return true;
+  const isNavActive = (item: NavItem) => {
+    if (item.href === "/" && location.pathname === "/") return true;
+    if (item.href === "/courses") {
+      if (
+        location.pathname.startsWith("/courses") ||
+        location.pathname.startsWith("/academic-system") ||
+        location.pathname.startsWith("/assessment")
+      ) {
+        return true;
+      }
+    }
+    if (item.href !== "/" && location.pathname.startsWith(item.href)) return true;
+    return false;
+  };
+
+  const isSubActive = (href: string) => {
+    if (href === "/courses" && location.pathname === "/courses") return true;
+    if (href !== "/courses" && location.pathname === href) return true;
     return false;
   };
 
@@ -64,7 +101,66 @@ export function PublicHeader() {
           {/* Desktop Navigation Links */}
           <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
             {PUBLIC_NAV_ITEMS.map((item) => {
-              const active = isActive(item.href);
+              const active = isNavActive(item);
+              const hasChildren = item.children && item.children.length > 0;
+
+              if (hasChildren) {
+                return (
+                  <div key={item.label} className="relative group">
+                    <Link
+                      to={item.href}
+                      className={cn(
+                        "px-2.5 xl:px-3 py-2 rounded-xl text-xs xl:text-[13px] font-bold tracking-wider uppercase whitespace-nowrap text-center transition-all inline-flex items-center gap-1.5",
+                        active
+                          ? "bg-white/15 text-white font-black shadow-xs border border-white/20"
+                          : "text-slate-300 hover:text-white hover:bg-white/10"
+                      )}
+                    >
+                      <span>{item.label}</span>
+                      <ChevronDown className="h-3.5 w-3.5 opacity-70 transition-transform duration-200 group-hover:rotate-180" />
+                    </Link>
+
+                    {/* Dropdown Menu */}
+                    <div className="absolute top-full left-0 pt-2 hidden group-hover:block transition-all z-50 animate-in fade-in-50 slide-in-from-top-1 duration-150">
+                      <div className="w-72 rounded-2xl bg-[#0c1e38]/98 backdrop-blur-md border border-slate-700/80 shadow-2xl p-2 space-y-1">
+                        {item.children!.map((sub, idx) => {
+                          if (sub.isDivider) {
+                            return (
+                              <div
+                                key={`divider-${idx}`}
+                                className="border-t border-slate-700/60 my-1.5 mx-2"
+                              />
+                            );
+                          }
+
+                          const subActive = isSubActive(sub.href);
+
+                          return (
+                            <Link
+                              key={sub.href + sub.label}
+                              to={sub.href}
+                              className={cn(
+                                "group/sub flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold tracking-wide transition-colors",
+                                subActive
+                                  ? "bg-white/15 text-white font-bold border border-white/20"
+                                  : "text-slate-300 hover:text-white hover:bg-white/10"
+                              )}
+                            >
+                              <span className="truncate">{sub.label}</span>
+                              {sub.badge && (
+                                <span className="ml-2 px-1.5 py-0.5 rounded-md text-[10px] font-bold uppercase bg-brand-blue-soft text-brand-blue border border-brand-blue/30 whitespace-nowrap shrink-0">
+                                  {sub.badge}
+                                </span>
+                              )}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
               return (
                 <Link
                   key={item.href}
@@ -179,7 +275,73 @@ export function PublicHeader() {
         <div className="lg:hidden border-t border-slate-800 bg-[#0c1e38] text-white px-4 pt-3 pb-6 space-y-3 shadow-xl animate-in slide-in-from-top-2 duration-200">
           <nav className="flex flex-col space-y-1">
             {PUBLIC_NAV_ITEMS.map((item) => {
-              const active = isActive(item.href);
+              const active = isNavActive(item);
+              const hasChildren = item.children && item.children.length > 0;
+
+              if (hasChildren) {
+                return (
+                  <div key={item.label} className="space-y-1">
+                    <div
+                      onClick={() => setMobileCoursesOpen(!mobileCoursesOpen)}
+                      className={cn(
+                        "px-3 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-between cursor-pointer",
+                        active
+                          ? "bg-white/15 text-white font-black border border-white/20"
+                          : "text-slate-300 hover:text-white hover:bg-white/10"
+                      )}
+                    >
+                      <span>{item.label}</span>
+                      <ChevronDown
+                        className={cn(
+                          "h-4 w-4 opacity-70 transition-transform duration-200",
+                          mobileCoursesOpen && "rotate-180"
+                        )}
+                      />
+                    </div>
+
+                    {mobileCoursesOpen && (
+                      <div className="pl-3 ml-2 border-l border-slate-700/60 space-y-1 py-1">
+                        {item.children!.map((sub, idx) => {
+                          if (sub.isDivider) {
+                            return (
+                              <div
+                                key={`mob-div-${idx}`}
+                                className="border-t border-slate-700/60 my-1 mx-2"
+                              />
+                            );
+                          }
+
+                          const subActive = isSubActive(sub.href);
+
+                          return (
+                            <Link
+                              key={sub.href + sub.label}
+                              to={sub.href}
+                              onClick={() => setMobileMenuOpen(false)}
+                              className={cn(
+                                "px-3 py-2 rounded-md text-xs font-medium tracking-wide transition-colors flex items-center justify-between",
+                                subActive
+                                  ? "bg-white/15 text-white font-bold border border-white/20"
+                                  : "text-slate-400 hover:text-white hover:bg-white/10"
+                              )}
+                            >
+                              <span className="truncate">{sub.label}</span>
+                              {sub.badge ? (
+                                <span className="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold bg-brand-blue-soft text-brand-blue border border-brand-blue/30 whitespace-nowrap shrink-0">
+                                  {sub.badge}
+                                </span>
+                              ) : (
+                                <ArrowRight className="h-3 w-3 opacity-40 shrink-0" />
+                              )}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
               return (
                 <Link
                   key={item.href}
