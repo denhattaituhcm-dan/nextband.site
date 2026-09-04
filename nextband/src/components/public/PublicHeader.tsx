@@ -121,35 +121,47 @@ export function PublicHeader() {
                       <ChevronDown className="h-3.5 w-3.5 opacity-70 transition-transform duration-200 group-hover:rotate-180" />
                     </Link>
 
-                    {/* Dropdown Menu */}
+                    {/* Dropdown Menu - Midnight Luxury High-Contrast */}
                     <div className="absolute top-full left-0 pt-2 hidden group-hover:block transition-all z-50 animate-in fade-in-50 slide-in-from-top-1 duration-150">
-                      <div className="w-72 rounded-2xl bg-[#0c1e38]/98 backdrop-blur-md border border-slate-700/80 shadow-2xl p-2 space-y-1">
+                      <div className="w-80 rounded-2xl bg-[#0c1e38] border border-slate-700/80 shadow-2xl shadow-slate-950/70 p-2 space-y-1 ring-1 ring-white/10">
                         {item.children!.map((sub, idx) => {
                           if (sub.isDivider) {
                             return (
                               <div
                                 key={`divider-${idx}`}
-                                className="border-t border-slate-700/60 my-1.5 mx-2"
+                                className="border-t border-slate-700/80 my-1.5 mx-2"
                               />
                             );
                           }
 
                           const subActive = isSubActive(sub.href);
+                          const match = sub.label.match(/^(.*?)\s*(\(.*?\))$/);
+                          const mainTitle = match ? match[1] : sub.label;
+                          const subTarget = match ? match[2] : null;
 
                           return (
                             <Link
                               key={sub.href + sub.label}
                               to={sub.href}
                               className={cn(
-                                "group/sub flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold tracking-wide transition-colors",
+                                "group/sub flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all",
                                 subActive
-                                  ? "bg-white/15 text-white font-bold border border-white/20"
-                                  : "text-slate-300 hover:text-white hover:bg-white/10"
+                                  ? "bg-white/15 text-white font-bold border border-white/20 shadow-xs"
+                                  : "text-slate-100 hover:text-white hover:bg-white/10"
                               )}
                             >
-                              <span className="truncate">{sub.label}</span>
+                              <div className="flex items-center gap-2 min-w-0">
+                                <span className="font-bold text-white tracking-wide truncate">
+                                  {mainTitle}
+                                </span>
+                                {subTarget && (
+                                  <span className="text-[11px] text-slate-400 group-hover/sub:text-slate-300 font-normal shrink-0">
+                                    {subTarget}
+                                  </span>
+                                )}
+                              </div>
                               {sub.badge && (
-                                <span className="ml-2 px-1.5 py-0.5 rounded-md text-[10px] font-bold uppercase bg-brand-blue-soft text-brand-blue border border-brand-blue/30 whitespace-nowrap shrink-0">
+                                <span className="ml-2 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-sky-500/20 text-sky-300 border border-sky-400/30 whitespace-nowrap shrink-0">
                                   {sub.badge}
                                 </span>
                               )}
@@ -301,18 +313,21 @@ export function PublicHeader() {
                     </div>
 
                     {mobileCoursesOpen && (
-                      <div className="pl-3 ml-2 border-l border-slate-700/60 space-y-1 py-1">
+                      <div className="pl-3 ml-2 border-l border-slate-700/80 space-y-1 py-1">
                         {item.children!.map((sub, idx) => {
                           if (sub.isDivider) {
                             return (
                               <div
                                 key={`mob-div-${idx}`}
-                                className="border-t border-slate-700/60 my-1 mx-2"
+                                className="border-t border-slate-700/80 my-1.5 mx-2"
                               />
                             );
                           }
 
                           const subActive = isSubActive(sub.href);
+                          const match = sub.label.match(/^(.*?)\s*(\(.*?\))$/);
+                          const mainTitle = match ? match[1] : sub.label;
+                          const subTarget = match ? match[2] : null;
 
                           return (
                             <Link
@@ -320,15 +335,24 @@ export function PublicHeader() {
                               to={sub.href}
                               onClick={() => setMobileMenuOpen(false)}
                               className={cn(
-                                "px-3 py-2 rounded-md text-xs font-medium tracking-wide transition-colors flex items-center justify-between",
+                                "px-3 py-2 rounded-lg text-xs font-medium tracking-wide transition-colors flex items-center justify-between",
                                 subActive
                                   ? "bg-white/15 text-white font-bold border border-white/20"
-                                  : "text-slate-400 hover:text-white hover:bg-white/10"
+                                  : "text-slate-200 hover:text-white hover:bg-white/10"
                               )}
                             >
-                              <span className="truncate">{sub.label}</span>
+                              <div className="flex items-center gap-1.5 min-w-0">
+                                <span className="font-semibold text-white truncate">
+                                  {mainTitle}
+                                </span>
+                                {subTarget && (
+                                  <span className="text-[11px] text-slate-400 font-normal shrink-0">
+                                    {subTarget}
+                                  </span>
+                                )}
+                              </div>
                               {sub.badge ? (
-                                <span className="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold bg-brand-blue-soft text-brand-blue border border-brand-blue/30 whitespace-nowrap shrink-0">
+                                <span className="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-500/20 text-sky-300 border border-sky-400/30 whitespace-nowrap shrink-0">
                                   {sub.badge}
                                 </span>
                               ) : (
