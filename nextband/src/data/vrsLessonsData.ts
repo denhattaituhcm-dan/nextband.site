@@ -6463,8 +6463,201 @@ export const vrsMockLessons: VRSVisualLesson[] = [
         }
       }
     ]
+  },
+  {
+    id: 'builder_w4d3',
+    courseId: 'builder',
+    week: 4,
+    day: 3,
+    skill: 'speaking',
+    title: 'SPEAKING · BUỔI 3: CELEBRITIES & TƯ DUY PHẢN BIỆN VỀ SỰ NỔI TIẾNG',
+    subtitle: 'Transformation Ladder (Mô Tả Thần Tượng), Speaking Flow Map (Cân Não) & Cặp Phụ Âm Khó',
+    coreCompetency: 'Luyện chuẩn các phụ âm khó (/θ/, /ð/, /tʃ/, /dʒ/, /ʃ/, /ʒ/), làm chủ thang nâng cấp Transformation Ladder khi nói về thần tượng và ứng dụng Speaking Flow Map để phản xạ câu hỏi hai mặt: "Do you want to be famous?".',
+    bridgeToHomework: {
+      promptText: 'Ghi âm bài nói mô tả người nổi tiếng yêu thích và phân tích mặt lợi/hại của việc nổi tiếng trong Speaking Homework Tuần 4 Day 3.',
+      targetExamId: 'exam_builder_w4d3'
+    },
+    stages: [
+      {
+        stageNumber: 1,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 1: Transformation Ladder — Thang Nâng Cấp Câu Trả Lời Về Thần Tượng (Celebrity)',
+        pedagogicalObjective: 'Quan sát sự chuyển dịch từ câu nói đơn giản Band 4.0 lên câu ghép có mệnh đề quan hệ và từ vựng học thuật Band 5.0 - 5.5.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng nấc thang để xem cách mở rộng câu nói về người nổi tiếng yêu thích:',
+          cards: [
+            {
+              step: 1,
+              label: 'NẤC 1: NÊU TÊN THẦN TƯỢNG VÀ NGHỀ NGHIỆP (POP SINGER)',
+              cognitiveFunction: '1. Giới thiệu nhân vật nổi tiếng bằng danh từ nghề nghiệp chuẩn xác',
+              content: 'My all-time favorite Vietnamese celebrity is Son Tung M-TP, who is a famous pop singer.',
+              bandLevel: 'Band 4.0 → 4.5',
+              pedagogyNote: 'Dùng cụm "My all-time favorite celebrity is..." thay cho cách nói cộc lốc "I like Son Tung".',
+              flipCard: {
+                frontText: 'I like Son Tung M-TP. He is singer. (Band 4.0 nói cộc)',
+                backText: 'My all-time favorite celebrity is Son Tung M-TP, who is a famous pop singer. (Band 4.5)',
+                explanation: 'Sử dụng mệnh đề quan hệ "who is..." để liên kết câu trôi chảy hơn.'
+              },
+              vowelHighlight: [
+                { word: 'thief', phonetic: '/θiːf/', vowelSound: '/θ/ phụ âm thổi hơi không rung' },
+                { word: 'cheerful', phonetic: '/ˈtʃɪə.fəl/', vowelSound: '/tʃ/ phụ âm bật hơi không rung' }
+              ]
+            },
+            {
+              step: 2,
+              label: 'NẤC 2: LÝ DO HÂM MỘ & TÀI NĂNG ÂM NHẠC (MUSICAL TALENT)',
+              cognitiveFunction: '2. Nêu rõ phẩm chất tài năng và sự cống hiến cho từng sản phẩm nghệ thuật',
+              content: 'I really admire him because of his exceptional musical talent and the energetic vibe in his performances.',
+              bandLevel: 'Band 4.5 → 5.0',
+              pedagogyNote: 'Làm chủ cụm collocation: "admire someone because of..." và "energetic vibe in performances".',
+              flipCard: {
+                frontText: 'Because he sings good and dances. (Từ vựng sơ sài)',
+                backText: 'I really admire him because of his musical talent and energetic performances. (Chuẩn Band 5.0)',
+                explanation: 'Thay "sings good" bằng danh từ học thuật "musical talent" và "energetic performances".'
+              },
+              vowelHighlight: [
+                { word: 'mother', phonetic: '/ˈmʌð.ər/', vowelSound: '/ð/ phụ âm rung' },
+                { word: 'joyful', phonetic: '/ˈdʒɔɪ.fəl/', vowelSound: '/dʒ/ phụ âm rung bật' }
+              ]
+            },
+            {
+              step: 3,
+              label: 'NẤC 3: MỞ RỘNG TẦM ẢNH HƯỞNG & THÀNH TỰU (MILLIONS OF FANS)',
+              cognitiveFunction: '3. Khẳng định tầm ảnh hưởng lớn của thần tượng đối với giới trẻ',
+              content: 'He has released numerous hit songs and attracted millions of young followers across Southeast Asia.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Dùng thì hiện tại hoàn thành "has released numerous hit songs" để nói về thành tựu bền vững.',
+              flipCard: {
+                frontText: 'He has many songs and many people like him. (Band 4.0)',
+                backText: 'He has released numerous hit songs and inspired millions of young fans. (Band 5.5)',
+                explanation: 'Nâng cấp từ "many songs" thành "released numerous hit songs" và "inspired millions of young fans".'
+              }
+            }
+          ],
+          fullMosaicSummary: 'My all-time favorite celebrity is Son Tung M-TP, who is a famous pop singer in Vietnam. I really admire him because of his outstanding musical talent and energetic performances. Over the years, he has released numerous hit songs and inspired millions of young fans.'
+        }
+      },
+      {
+        stageNumber: 2,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 2: Speaking Flow Map — Bản Đồ Cân Não: "Do You Want To Be Famous?"',
+        pedagogicalObjective: 'Kích hoạt tư duy phản biện 2 mặt (Nhượng bộ về tiền tài $\rightarrow$ Nhấn mạnh cái giá mất tự do riêng tư $\rightarrow$ Kết luận lập trường cá nhân).',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng pha để theo dõi dòng chảy suy luận khi trả lời câu hỏi nhượng bộ phức tạp:',
+          cards: [
+            {
+              step: 1,
+              label: 'PHA 1: NHƯỢNG BỘ VỀ DANH VỌNG & THU NHẬP (LUCRATIVE INCOME)',
+              cognitiveFunction: '1. Thừa nhận việc nổi tiếng mang lại thu nhập khủng và sự ngưỡng mộ',
+              content: 'Although becoming famous can bring lucrative contracts and huge public admiration,',
+              bandLevel: 'Band 4.5 → 5.0',
+              pedagogyNote: 'Mở đầu câu nhượng bộ bằng liên từ "Although" kết hợp cụm từ đắt giá: "lucrative contracts" và "public admiration".',
+              flipCard: {
+                frontText: 'Famous people have lots of money. (Nói thô)',
+                backText: 'Although becoming famous can bring lucrative income and public admiration... (Band 5.0)',
+                explanation: 'Dùng mệnh đề phụ trạng ngữ "Although..." để tạo đà cho lập trường chính ở vế sau.'
+              }
+            },
+            {
+              step: 2,
+              label: 'PHA 2: MẶT TRÁI - ĐÁNH ĐỔI SỰ RIÊNG TƯ (LOSS OF PRIVACY)',
+              cognitiveFunction: '2. Nêu lý do từ chối vì không muốn bị truyền thông soi mói đời tư',
+              content: 'I would definitely say no, because you completely lose your personal privacy and are constantly judged by the media.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Dùng cụm collocation bài thi: "lose personal privacy" (mất quyền riêng tư) và "constantly judged by the media".',
+              flipCard: {
+                frontText: 'No, because paparazzi follow everywhere. (Cộc)',
+                backText: 'I would say no, because you lose your privacy and are constantly judged by the public. (Band 5.5)',
+                explanation: 'Nêu bật rào cản tâm lý cốt lõi của người nổi tiếng theo đúng chủ đề bài học mục 2.3.'
+              },
+              branchOptions: [
+                {
+                  branchName: 'TỪ CHỐI VÌ ÁP LỰC RIÊNG TƯ (PRIVACY CONCERNS)',
+                  content: 'I prefer living a normal life without paparazzi following my every move.',
+                  note: 'Phương án chọn cuộc sống bình yên.'
+                },
+                {
+                  branchName: 'CHẤP NHẬN NỔI TIẾNG VÌ ĐAM MÊ (CAREER AMBITION)',
+                  content: 'Yes, because I want to use my influence to inspire others and support charity projects.',
+                  note: 'Phương án muốn nổi tiếng để tạo ảnh hưởng tích cực.'
+                }
+              ]
+            },
+            {
+              step: 3,
+              label: 'PHA 3: KHẲNG ĐỊNH LỰA CHỌN CÁ NHÂN (PEACEFUL LIFESTYLE)',
+              cognitiveFunction: '3. Khép lại bằng mong muốn một cuộc sống bình yên, tự do làm điều mình thích',
+              content: 'Therefore, I prefer living a peaceful and private life where I can freely enjoy time with my family and friends.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Khép lại bằng trạng từ kết luận "Therefore" và cụm "prefer living a peaceful and private life".',
+              flipCard: {
+                frontText: 'So I want normal life with family. (Band 4.0)',
+                backText: 'Therefore, I prefer living a peaceful life where I can freely enjoy my personal freedom. (Band 5.5)',
+                explanation: 'Dùng mệnh đề quan hệ nơi chốn "where I can freely..." giúp bài nói tròn trịa và sâu sắc.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'Although becoming famous can bring lucrative contracts and huge public admiration, I would definitely say no, because you completely lose your personal privacy and are constantly under pressure. Therefore, I prefer living a peaceful life where I can freely spend time with my loved ones.'
+        }
+      },
+      {
+        stageNumber: 3,
+        stageType: 'progressive_reveal',
+        title: 'Chặng 3: Lexical Flip Cards — Bộ Thẻ Lật Collocation Về Người Nổi Tiếng (Mục 2.2 & 2.3)',
+        pedagogicalObjective: 'Nạp nhanh 3 cặp từ vựng đắt giá về người nổi tiếng: Public figure, Lucrative contracts và Media scrutiny.',
+        interactionModel: {
+          type: 'progressive_reveal',
+          prompt: 'Click từng thẻ để biến cách nói bình dân thành cụm từ học thuật chuẩn Band 5.0 - 5.5:',
+          cards: [
+            {
+              step: 1,
+              label: 'THẺ 1: NHÂN VẬT CỦA CÔNG CHÚNG (A PUBLIC FIGURE)',
+              cognitiveFunction: '1. Gọi tên người nổi tiếng bằng danh từ trung tính, học thuật',
+              content: 'Once you become a public figure, every single action you take is watched closely by millions of people.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Thuật ngữ "public figure" (/ˈpʌb.lɪk ˈfɪɡ.ər/) nâng tầm đáng kể so với việc lặp đi lặp lại từ "famous person".',
+              flipCard: {
+                frontText: 'Famous people are watched by many people. (Nói thô)',
+                backText: 'As a public figure, every action you take is scrutinized by the community. (Chuẩn Band 5.5)',
+                explanation: 'Dùng cụm "public figure" kết hợp động từ "scrutinized" hoặc "watched closely".'
+              }
+            },
+            {
+              step: 2,
+              label: 'THẺ 2: HỢP ĐỒNG QUẢNG CÁO BÉO BỞ (LUCRATIVE SPONSORSHIPS)',
+              cognitiveFunction: '2. Nói về nguồn thu nhập chính của thần tượng bằng thuật ngữ kinh tế',
+              content: 'Top celebrities often earn lucrative sponsorship contracts from international luxury brands.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Tính từ "lucrative" (/ˈluː.krə.tɪv/ - sinh lợi lớn) là collocation cực mạnh khi đi kèm "contracts" hoặc "deals".',
+              flipCard: {
+                frontText: 'They make a lot of money from advertising brands. (Band 4.0)',
+                backText: 'They sign lucrative sponsorship deals with global brands. (Band 5.5)',
+                explanation: 'Thay "make a lot of money from advertising" bằng "lucrative sponsorship deals".'
+              }
+            },
+            {
+              step: 3,
+              label: 'THẺ 3: SỰ SOI MÓI CỦA TRUYỀN THÔNG (CONSTANT MEDIA SCRUTINY)',
+              cognitiveFunction: '3. Mô tả áp lực từ cánh phóng viên và mạng xã hội',
+              content: 'The hardest part of fame is coping with constant media scrutiny and rumors from the Internet.',
+              bandLevel: 'Band 5.0 → 5.5',
+              pedagogyNote: 'Cụm từ "media scrutiny" (/ˈmiː.di.ə ˈskruː.tɪ.ni/ - sự săm soi của truyền thông) giúp diễn đạt trôi chảy áp lực nổi tiếng.',
+              flipCard: {
+                frontText: 'Reporters always follow and write bad rumors. (Tiếng Anh giao tiếp đơn giản)',
+                backText: 'Celebrities have to deal with intense media scrutiny every single day. (Band 5.5 học thuật)',
+                explanation: 'Sử dụng cụm "deal with intense media scrutiny" để giải thích áp lực của người nổi tiếng.'
+              }
+            }
+          ],
+          fullMosaicSummary: 'Being a public figure allows celebrities to sign lucrative sponsorship contracts, but they also have to endure intense media scrutiny and the total loss of personal freedom.'
+        }
+      }
+    ]
   }
 ];
+
 
 
 
