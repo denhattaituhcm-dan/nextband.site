@@ -620,7 +620,22 @@ export class ExamSubmissionService {
           },
         });
 
-        const answerText = typeof ans.answerText === "object" ? JSON.stringify(ans.answerText) : ans.answerText;
+        let answerText = typeof ans.answerText === "object" ? JSON.stringify(ans.answerText) : ans.answerText;
+        let incomingAudioUrl = typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "" ? ans.audioUrl.trim() : null;
+
+        // Auto-detect: if answerText is an audio path, promote it to audioUrl
+        const isAudioText = typeof answerText === "string" && (
+          answerText.startsWith("speaking-recordings/") ||
+          answerText.startsWith("/speaking-recordings/") ||
+          answerText.startsWith("exam-assets/") ||
+          answerText.startsWith("/exam-assets/") ||
+          answerText.includes("speaking-recordings/") ||
+          /\.(webm|mp3|wav|ogg|m4a)$/i.test(answerText.trim())
+        );
+        if (isAudioText && !incomingAudioUrl) {
+          incomingAudioUrl = answerText.trim();
+          answerText = "";
+        }
 
         if (existingAns) {
           const updateData: any = {};
@@ -628,8 +643,8 @@ export class ExamSubmissionService {
             updateData.answerText = answerText;
           }
           // 1. Chuỗi audioUrl hợp lệ -> cập nhật mới
-          if (typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "") {
-            updateData.audioUrl = ans.audioUrl.trim();
+          if (incomingAudioUrl) {
+            updateData.audioUrl = incomingAudioUrl;
           }
           // 2. Yêu cầu xóa rõ ràng (explicit clear) -> gán null
           else if (ans.clearAudio === true || ans.audioUrl === null) {
@@ -647,7 +662,7 @@ export class ExamSubmissionService {
               submissionId: id,
               questionId: ans.questionId,
               answerText: answerText ?? null,
-              audioUrl: typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "" ? ans.audioUrl.trim() : null,
+              audioUrl: incomingAudioUrl,
             },
           });
         }
@@ -809,8 +824,22 @@ export class ExamSubmissionService {
     const fullResult = await this.repo.transaction(async (tx) => {
       const createdOrUpdatedAnswers = [];
       for (const ans of answersToEvaluate) {
-        const evalResult = gradingSummary.evaluatedAnswers.find((g) => g.questionId === ans.questionId);
-        const answerText = typeof ans.answerText === "object" ? JSON.stringify(ans.answerText) : ans.answerText;
+        let answerText = typeof ans.answerText === "object" ? JSON.stringify(ans.answerText) : ans.answerText;
+        let incomingAudioUrl = typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "" ? ans.audioUrl.trim() : null;
+
+        // Auto-detect: if answerText is an audio path, promote it to audioUrl
+        const isAudioText = typeof answerText === "string" && (
+          answerText.startsWith("speaking-recordings/") ||
+          answerText.startsWith("/speaking-recordings/") ||
+          answerText.startsWith("exam-assets/") ||
+          answerText.startsWith("/exam-assets/") ||
+          answerText.includes("speaking-recordings/") ||
+          /\.(webm|mp3|wav|ogg|m4a)$/i.test(answerText.trim())
+        );
+        if (isAudioText && !incomingAudioUrl) {
+          incomingAudioUrl = answerText.trim();
+          answerText = "";
+        }
 
         const existingAns = await tx.answer.findFirst({
           where: { submissionId: id, questionId: ans.questionId },
@@ -824,8 +853,8 @@ export class ExamSubmissionService {
           if (answerText !== undefined) {
             updateData.answerText = answerText;
           }
-          if (typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "") {
-            updateData.audioUrl = ans.audioUrl.trim();
+          if (incomingAudioUrl) {
+            updateData.audioUrl = incomingAudioUrl;
           } else if (ans.clearAudio === true || ans.audioUrl === null) {
             updateData.audioUrl = null;
           }
@@ -840,7 +869,7 @@ export class ExamSubmissionService {
               submissionId: id,
               questionId: ans.questionId,
               answerText: answerText ?? null,
-              audioUrl: typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "" ? ans.audioUrl.trim() : null,
+              audioUrl: incomingAudioUrl,
               score: evalResult ? evalResult.score : null,
             },
           });

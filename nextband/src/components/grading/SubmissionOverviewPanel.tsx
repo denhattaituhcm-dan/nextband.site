@@ -246,6 +246,8 @@ export function SubmissionOverviewPanel({
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
                 <audio
                   controls
+                  preload="metadata"
+                  crossOrigin="anonymous"
                   src={formatStorageUrl(rawAudioUrl)}
                   className="w-full h-10 rounded"
                 />

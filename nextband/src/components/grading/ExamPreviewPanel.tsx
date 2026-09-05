@@ -163,7 +163,7 @@ export function ExamPreviewPanel({
                           <Volume2 className="h-3 w-3 text-slate-400" />
                           Audio Đề bài:
                         </span>
-                        <audio controls src={formatStorageUrl(grp.audioUrl)} className="w-full h-8" />
+                        <audio controls preload="metadata" crossOrigin="anonymous" src={formatStorageUrl(grp.audioUrl)} className="w-full h-8" />
                       </div>
                     )}
 

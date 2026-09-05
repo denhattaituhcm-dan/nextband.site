@@ -21,6 +21,8 @@ import { convertOptionValToIndex } from "@/components/exam/MatchingRenderer";
 import { SentenceLevelGrader } from "@/components/grading/SentenceLevelGrader";
 import { parseStructuredFeedback } from "@/lib/sentenceFeedback";
 import { SpeakingEvidenceResultView } from "@/components/submission/SpeakingEvidenceResultView";
+import { AudioStorageService } from "@/lib/audioStorageService";
+import { formatStorageUrl } from "@/lib/api";
 
 import {
   compareCanonicalOrder,
@@ -666,13 +668,19 @@ export function AnswerResultCard({
               {(() => {
                 let trimmedAnswer = (answerText || "").trim();
                 if (trimmedAnswer.startsWith('"') && trimmedAnswer.endsWith('"')) {
-                  trimmedAnswer = trimmedAnswer.slice(1, -1);
+                  trimmedAnswer = trimmedAnswer.slice(1, -1).trim();
                 }
-                const isUrl = trimmedAnswer.startsWith("http") ||
-                              trimmedAnswer.startsWith("blob:") ||
-                              trimmedAnswer.startsWith("/") ||
-                              (trimmedAnswer.includes(".") && !trimmedAnswer.includes(" ") && !trimmedAnswer.includes("<"));
-                if (isUrl) return <ReviewAudioPlayer src={trimmedAnswer} />;
+                const isAudioAnswer = AudioStorageService.isAudio(trimmedAnswer);
+                const resolvedAudio = (audioUrl && audioUrl.trim().length > 0)
+                  ? audioUrl.trim()
+                  : isAudioAnswer
+                  ? trimmedAnswer
+                  : "";
+
+                if (resolvedAudio) {
+                  return <ReviewAudioPlayer src={formatStorageUrl(resolvedAudio) || resolvedAudio} />;
+                }
+
                 if (questionType === "essay" && trimmedAnswer) {
                   const parsedFeedback = parseStructuredFeedback(feedback);
                   return (
@@ -684,7 +692,6 @@ export function AnswerResultCard({
                   );
                 }
                 if (trimmedAnswer) return <p className="text-sm font-medium whitespace-pre-wrap text-foreground">{trimmedAnswer}</p>;
-                if (audioUrl) return <ReviewAudioPlayer src={audioUrl} />;
                 return <p className="text-sm text-muted-foreground italic">Chưa trả lời</p>;
               })()}
             </div>

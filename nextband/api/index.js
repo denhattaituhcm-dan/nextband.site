@@ -16469,9 +16469,9 @@ var require_validate = __commonJS({
       }
     }
     function returnResults(it) {
-      const { gen, schemaEnv, validateName, ValidationError: ValidationError2, opts } = it;
+      const { gen, schemaEnv, validateName, ValidationError: ValidationError3, opts } = it;
       if (schemaEnv.$async) {
-        gen.if((0, codegen_1._)`${names_1.default.errors} === 0`, () => gen.return(names_1.default.data), () => gen.throw((0, codegen_1._)`new ${ValidationError2}(${names_1.default.vErrors})`));
+        gen.if((0, codegen_1._)`${names_1.default.errors} === 0`, () => gen.return(names_1.default.data), () => gen.throw((0, codegen_1._)`new ${ValidationError3}(${names_1.default.vErrors})`));
       } else {
         gen.assign((0, codegen_1._)`${validateName}.errors`, names_1.default.vErrors);
         if (opts.unevaluated)
@@ -16823,14 +16823,14 @@ var require_validation_error = __commonJS({
   "node_modules/ajv/dist/runtime/validation_error.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var ValidationError2 = class extends Error {
+    var ValidationError3 = class extends Error {
       constructor(errors) {
         super("validation failed");
         this.errors = errors;
         this.ajv = this.validation = true;
       }
     };
-    exports.default = ValidationError2;
+    exports.default = ValidationError3;
   }
 });
 
@@ -81761,7 +81761,14 @@ var init_speakingStorage_service = __esm({
         if (clean.startsWith("http://") || clean.startsWith("https://") || clean.startsWith("blob:") || clean.startsWith("data:")) {
           return clean;
         }
-        const cleanPath = clean.replace(/^\/+/, "");
+        let cleanPath = clean.replace(/^\/+/, "");
+        if (!cleanPath.includes("/")) {
+          if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(webm|mp3|wav|ogg|m4a)$/i.test(cleanPath)) {
+            cleanPath = `speaking-recordings/${cleanPath}`;
+          } else if (/\.(mp3|wav|ogg|webm|m4a|aac)$/i.test(cleanPath)) {
+            cleanPath = `uploads/audio/${cleanPath}`;
+          }
+        }
         const assetSubPath = cleanPath.replace(/^exam-assets\//, "");
         const { data: pubData } = this.supabase.storage.from("exam-assets").getPublicUrl(assetSubPath);
         if (pubData?.publicUrl) return pubData.publicUrl;
@@ -81793,7 +81800,14 @@ var init_speakingStorage_service = __esm({
             return { buffer, mimeType, fileName };
           }
         }
-        const cleanPath = clean.replace(/^\/+/, "");
+        let cleanPath = clean.replace(/^\/+/, "");
+        if (!cleanPath.includes("/")) {
+          if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(webm|mp3|wav|ogg|m4a)$/i.test(cleanPath)) {
+            cleanPath = `speaking-recordings/${cleanPath}`;
+          } else if (/\.(mp3|wav|ogg|webm|m4a|aac)$/i.test(cleanPath)) {
+            cleanPath = `uploads/audio/${cleanPath}`;
+          }
+        }
         const examSubPath = cleanPath.replace(/^exam-assets\//, "");
         const examDownload = await this.supabase.storage.from("exam-assets").download(examSubPath);
         if (!examDownload.error && examDownload.data) {
@@ -98834,6 +98848,14 @@ var NotFoundError = class extends Error {
     this.statusCode = 404;
   }
 };
+var ValidationError = class extends Error {
+  statusCode;
+  constructor(message2 = "D\u1EEF li\u1EC7u kh\xF4ng h\u1EE3p l\u1EC7") {
+    super(message2);
+    this.name = "ValidationError";
+    this.statusCode = 400;
+  }
+};
 var AuthorizationService = class {
   constructor(prisma) {
     this.prisma = prisma;
@@ -100736,10 +100758,25 @@ var AnswerResolver = class {
           const isMultiChoice = q.questionType === "multiple_choice_multi" || q.selectionMode === "multiple" || Boolean(q.isMultiChoice) || q.questionType === "multiple_choice" && correctCount > 1;
           const selectionMode = isMultiChoice ? "multiple" : "single";
           const maxSelections = isMultiChoice ? correctCount > 1 ? correctCount : 2 : 1;
-          const sectionType = section.sectionType || section.section_type || null;
+          const sectionType = String(section.sectionType || section.section_type || "").toLowerCase();
+          const qType = String(q.questionType || q.question_type || "").toLowerCase();
+          const isSubjectiveType = [
+            "essay",
+            "writing",
+            "speaking",
+            "ielts_writing_task1",
+            "ielts_writing_task2",
+            "ielts_speaking_part1",
+            "ielts_speaking_part2",
+            "ielts_speaking_part3",
+            "manual_grade",
+            "open_question"
+          ].includes(qType);
           const isExplicitHolistic = q.assessmentMode === "HOLISTIC" || q.scoreScope === "HOLISTIC";
-          const isImplicitHolistic = !q.assessmentMode && (q.questionType === "essay" || sectionType === "writing" && !["multiple_choice", "fill_blank", "matching"].includes(q.questionType));
-          const resolvedMode = q.assessmentMode || (isExplicitHolistic || isImplicitHolistic ? "HOLISTIC" : q.questionType === "speaking" ? "MANUAL_ITEM" : "OBJECTIVE");
+          const isImplicitHolistic = !q.assessmentMode && (qType === "essay" || qType === "writing" || qType === "ielts_writing_task1" || qType === "ielts_writing_task2" || sectionType === "writing" && !["multiple_choice", "multiple_choice_multi", "fill_blank", "matching", "true_false_not_given", "yes_no_not_given"].includes(qType));
+          const isSpeakingType = qType === "speaking" || qType.startsWith("ielts_speaking") || sectionType === "speaking" && !["multiple_choice", "multiple_choice_multi", "fill_blank", "matching"].includes(qType);
+          const isManualItem = !q.assessmentMode && (isSpeakingType || isSubjectiveType);
+          const resolvedMode = q.assessmentMode || (isExplicitHolistic || isImplicitHolistic ? "HOLISTIC" : isManualItem ? "MANUAL_ITEM" : "OBJECTIVE");
           const resolvedScope = q.scoreScope || (resolvedMode === "HOLISTIC" ? "HOLISTIC" : "ITEM");
           flattenedQuestions.push({
             id: q.id,
@@ -101289,6 +101326,9 @@ function getEvaluatorForType(questionType) {
     if (evaluator.canEvaluate(normalizedType)) {
       return evaluator;
     }
+  }
+  if (normalizedType.includes("speak") || normalizedType.includes("write") || normalizedType.includes("essay") || normalizedType.includes("audio") || normalizedType.includes("record")) {
+    return new ManualEvaluator();
   }
   return fallbackEvaluator;
 }
@@ -102165,14 +102205,20 @@ var ExamSubmissionService = class {
             questionId: ans.questionId
           }
         });
-        const answerText = typeof ans.answerText === "object" ? JSON.stringify(ans.answerText) : ans.answerText;
+        let answerText = typeof ans.answerText === "object" ? JSON.stringify(ans.answerText) : ans.answerText;
+        let incomingAudioUrl = typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "" ? ans.audioUrl.trim() : null;
+        const isAudioText = typeof answerText === "string" && (answerText.startsWith("speaking-recordings/") || answerText.startsWith("/speaking-recordings/") || answerText.startsWith("exam-assets/") || answerText.startsWith("/exam-assets/") || answerText.includes("speaking-recordings/") || /\.(webm|mp3|wav|ogg|m4a)$/i.test(answerText.trim()));
+        if (isAudioText && !incomingAudioUrl) {
+          incomingAudioUrl = answerText.trim();
+          answerText = "";
+        }
         if (existingAns) {
           const updateData = {};
           if (answerText !== void 0) {
             updateData.answerText = answerText;
           }
-          if (typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "") {
-            updateData.audioUrl = ans.audioUrl.trim();
+          if (incomingAudioUrl) {
+            updateData.audioUrl = incomingAudioUrl;
           } else if (ans.clearAudio === true || ans.audioUrl === null) {
             updateData.audioUrl = null;
           }
@@ -102186,7 +102232,7 @@ var ExamSubmissionService = class {
               submissionId: id,
               questionId: ans.questionId,
               answerText: answerText ?? null,
-              audioUrl: typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "" ? ans.audioUrl.trim() : null
+              audioUrl: incomingAudioUrl
             }
           });
         }
@@ -102307,8 +102353,13 @@ var ExamSubmissionService = class {
     const fullResult = await this.repo.transaction(async (tx) => {
       const createdOrUpdatedAnswers = [];
       for (const ans of answersToEvaluate) {
-        const evalResult = gradingSummary.evaluatedAnswers.find((g) => g.questionId === ans.questionId);
-        const answerText = typeof ans.answerText === "object" ? JSON.stringify(ans.answerText) : ans.answerText;
+        let answerText = typeof ans.answerText === "object" ? JSON.stringify(ans.answerText) : ans.answerText;
+        let incomingAudioUrl = typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "" ? ans.audioUrl.trim() : null;
+        const isAudioText = typeof answerText === "string" && (answerText.startsWith("speaking-recordings/") || answerText.startsWith("/speaking-recordings/") || answerText.startsWith("exam-assets/") || answerText.startsWith("/exam-assets/") || answerText.includes("speaking-recordings/") || /\.(webm|mp3|wav|ogg|m4a)$/i.test(answerText.trim()));
+        if (isAudioText && !incomingAudioUrl) {
+          incomingAudioUrl = answerText.trim();
+          answerText = "";
+        }
         const existingAns = await tx.answer.findFirst({
           where: { submissionId: id, questionId: ans.questionId }
         });
@@ -102320,8 +102371,8 @@ var ExamSubmissionService = class {
           if (answerText !== void 0) {
             updateData.answerText = answerText;
           }
-          if (typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "") {
-            updateData.audioUrl = ans.audioUrl.trim();
+          if (incomingAudioUrl) {
+            updateData.audioUrl = incomingAudioUrl;
           } else if (ans.clearAudio === true || ans.audioUrl === null) {
             updateData.audioUrl = null;
           }
@@ -102335,7 +102386,7 @@ var ExamSubmissionService = class {
               submissionId: id,
               questionId: ans.questionId,
               answerText: answerText ?? null,
-              audioUrl: typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "" ? ans.audioUrl.trim() : null,
+              audioUrl: incomingAudioUrl,
               score: evalResult ? evalResult.score : null
             }
           });
@@ -102804,11 +102855,11 @@ var ExamSubmissionService = class {
           rawAnswers
         );
         for (const ans of rawAnswers) {
-          const evalResult = gradingSummary.evaluatedAnswers.find((g) => g.questionId === ans.questionId);
-          if (evalResult) {
+          const evalResult2 = gradingSummary.evaluatedAnswers.find((g) => g.questionId === ans.questionId);
+          if (evalResult2) {
             await tx.answer.updateMany({
               where: { submissionId: id, questionId: ans.questionId },
-              data: { score: evalResult.score }
+              data: { score: evalResult2.score }
             });
           }
         }
@@ -109731,7 +109782,7 @@ var speakingForecastRoutes = async (fastify) => {
 var speaking_forecast_routes_default = speakingForecastRoutes;
 
 // server/services/branch.service.ts
-var ValidationError = class extends Error {
+var ValidationError2 = class extends Error {
   constructor(message2) {
     super(message2);
     this.name = "ValidationError";
@@ -109882,7 +109933,7 @@ var BranchService = class {
       throw new NotFoundError("Chi nh\xE1nh kh\xF4ng t\u1ED3n t\u1EA1i.");
     }
     if (!branch.isActive) {
-      throw new ValidationError("Kh\xF4ng th\u1EC3 \u0111\u1EB7t chi nh\xE1nh \u0111ang ng\u1EEBng ho\u1EA1t \u0111\u1ED9ng l\xE0m C\u01A1 s\u1EDF ch\xEDnh.");
+      throw new ValidationError2("Kh\xF4ng th\u1EC3 \u0111\u1EB7t chi nh\xE1nh \u0111ang ng\u1EEBng ho\u1EA1t \u0111\u1ED9ng l\xE0m C\u01A1 s\u1EDF ch\xEDnh.");
     }
     return this.prisma.$transaction(async (tx) => {
       await tx.branch.updateMany({
@@ -109905,7 +109956,7 @@ var BranchService = class {
       throw new NotFoundError("Chi nh\xE1nh kh\xF4ng t\u1ED3n t\u1EA1i.");
     }
     if (branch.isPrimary) {
-      throw new ValidationError(
+      throw new ValidationError2(
         "Kh\xF4ng th\u1EC3 ng\u1EEBng ho\u1EA1t \u0111\u1ED9ng C\u01A1 s\u1EDF ch\xEDnh. Vui l\xF2ng \u0111\u1EB7t c\u01A1 s\u1EDF kh\xE1c l\xE0m C\u01A1 s\u1EDF ch\xEDnh tr\u01B0\u1EDBc."
       );
     }
@@ -111116,6 +111167,12 @@ async function adminDashboardRoutes(fastify) {
 }
 
 // server/services/intervention.service.ts
+var VALID_TRANSITIONS = {
+  DETECTED: ["CONTACTED", "FAILED"],
+  CONTACTED: ["RESPONDED", "FAILED"],
+  RESPONDED: ["RESOLVED", "FAILED"],
+  OPEN: ["CONTACTED", "RESOLVED", "FAILED"]
+};
 var InterventionService = class {
   constructor(prisma) {
     this.prisma = prisma;
@@ -111225,7 +111282,9 @@ var InterventionService = class {
         actionTaken: input.actionTaken || null,
         agreedPlan: input.agreedPlan || null,
         followUpDate: followUpDateObj,
-        status: input.status || "OPEN",
+        status: input.status || "DETECTED",
+        outcome: input.outcome || null,
+        metadata: input.metadata ? input.metadata : void 0,
         resolvedAt: resolvedAtObj
       },
       include: {
@@ -111236,7 +111295,68 @@ var InterventionService = class {
     return log;
   }
   /**
-   * Cập nhật tiến độ / trạng thái can thiệp học vụ (ví dụ chuyển thành RESOLVED)
+   * Chuyển trạng thái can thiệp theo state machine hợp lệ:
+   * DETECTED -> CONTACTED / FAILED
+   * CONTACTED -> RESPONDED / FAILED
+   * RESPONDED -> RESOLVED / FAILED
+   * CẤM nhảy cóc (vd: DETECTED -> RESOLVED)
+   */
+  async transitionStatus(id, input, user) {
+    const isAdmin = user.roles.includes("admin");
+    const isTeacher = user.roles.includes("teacher");
+    if (!isAdmin && !isTeacher) {
+      throw new AuthorizationError("T\u1EEB ch\u1ED1i quy\u1EC1n chuy\u1EC3n tr\u1EA1ng th\xE1i can thi\u1EC7p.", 403);
+    }
+    const existing = await this.prisma.studentInterventionLog.findUnique({
+      where: { id }
+    });
+    if (!existing) {
+      throw new NotFoundError("B\u1EA3n ghi can thi\u1EC7p kh\xF4ng t\u1ED3n t\u1EA1i.");
+    }
+    const currentStatus = existing.status;
+    const targetStatus = input.status;
+    const allowed = VALID_TRANSITIONS[currentStatus] || [];
+    if (!allowed.includes(targetStatus)) {
+      throw new ValidationError(
+        `Kh\xF4ng th\u1EC3 chuy\u1EC3n tr\u1EA1ng th\xE1i t\u1EEB '${currentStatus}' sang '${targetStatus}'. Ch\u1EC9 cho ph\xE9p chuy\u1EC3n sang: ${allowed.join(", ") || "kh\xF4ng c\xF3"}`
+      );
+    }
+    const isTerminal = targetStatus === "RESOLVED" || targetStatus === "FAILED";
+    const outcome = input.outcome || existing.outcome || (isTerminal ? targetStatus === "RESOLVED" ? "SCHOLARSHIP_SAVED" : "SCHOLARSHIP_LOST" : null);
+    const updateData = {
+      status: targetStatus,
+      outcome
+    };
+    if (input.notes) {
+      updateData.notes = `${existing.notes}
+[${(/* @__PURE__ */ new Date()).toISOString()}] ${input.notes}`;
+    }
+    if (input.actionTaken) {
+      updateData.actionTaken = input.actionTaken;
+    }
+    if (input.metadata) {
+      updateData.metadata = {
+        ...existing.metadata || {},
+        ...input.metadata
+      };
+    }
+    if (targetStatus === "RESOLVED") {
+      updateData.resolvedAt = /* @__PURE__ */ new Date();
+    } else if (currentStatus === "RESOLVED" && targetStatus !== "RESOLVED") {
+      updateData.resolvedAt = null;
+    }
+    const updated = await this.prisma.studentInterventionLog.update({
+      where: { id },
+      data: updateData,
+      include: {
+        author: { select: { fullName: true, email: true } },
+        class: { select: { name: true } }
+      }
+    });
+    return updated;
+  }
+  /**
+   * Cập nhật tiến độ / trạng thái can thiệp học vụ
    */
   async update(id, input, user) {
     const isAdmin = user.roles.includes("admin");
@@ -111256,6 +111376,8 @@ var InterventionService = class {
     if (input.notes !== void 0) updateData.notes = input.notes;
     if (input.actionTaken !== void 0) updateData.actionTaken = input.actionTaken;
     if (input.agreedPlan !== void 0) updateData.agreedPlan = input.agreedPlan;
+    if (input.outcome !== void 0) updateData.outcome = input.outcome;
+    if (input.metadata !== void 0) updateData.metadata = input.metadata;
     if (input.followUpDate !== void 0) {
       updateData.followUpDate = input.followUpDate ? /* @__PURE__ */ new Date(`${input.followUpDate}T00:00:00.000Z`) : null;
     }
@@ -111305,8 +111427,16 @@ var InterventionCategoryEnum = external_exports.enum([
 ]);
 var InterventionStatusEnum = external_exports.enum([
   "OPEN",
-  "IN_PROGRESS",
-  "RESOLVED"
+  "DETECTED",
+  "CONTACTED",
+  "RESPONDED",
+  "RESOLVED",
+  "FAILED"
+]);
+var InterventionOutcomeEnum = external_exports.enum([
+  "SCHOLARSHIP_SAVED",
+  "SCHOLARSHIP_LOST",
+  "NO_CHANGE"
 ]);
 var createInterventionSchema = external_exports.object({
   studentId: external_exports.string().min(1, "studentId l\xE0 b\u1EAFt bu\u1ED9c"),
@@ -111318,7 +111448,9 @@ var createInterventionSchema = external_exports.object({
   agreedPlan: external_exports.string().optional().nullable(),
   followUpDate: external_exports.string().optional().nullable(),
   // YYYY-MM-DD
-  status: InterventionStatusEnum.default("OPEN")
+  status: InterventionStatusEnum.default("DETECTED"),
+  outcome: InterventionOutcomeEnum.optional().nullable(),
+  metadata: external_exports.record(external_exports.any()).optional().nullable()
 });
 var updateInterventionSchema = external_exports.object({
   category: InterventionCategoryEnum.optional(),
@@ -111327,7 +111459,16 @@ var updateInterventionSchema = external_exports.object({
   actionTaken: external_exports.string().optional().nullable(),
   agreedPlan: external_exports.string().optional().nullable(),
   followUpDate: external_exports.string().optional().nullable(),
-  status: InterventionStatusEnum.optional()
+  status: InterventionStatusEnum.optional(),
+  outcome: InterventionOutcomeEnum.optional().nullable(),
+  metadata: external_exports.record(external_exports.any()).optional().nullable()
+});
+var transitionInterventionSchema = external_exports.object({
+  status: InterventionStatusEnum,
+  outcome: InterventionOutcomeEnum.optional().nullable(),
+  notes: external_exports.string().optional(),
+  actionTaken: external_exports.string().optional().nullable(),
+  metadata: external_exports.record(external_exports.any()).optional().nullable()
 });
 
 // server/routes/intervention.routes.ts
@@ -111384,6 +111525,28 @@ async function interventionRoutes(fastify) {
       }
       try {
         const data = await service.update(id, parsed.data, user);
+        return reply.send({ success: true, data });
+      } catch (err) {
+        const status = err.statusCode || 500;
+        return reply.status(status).send({ error: err.message });
+      }
+    }
+  );
+  fastify.post(
+    "/:id/transition",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const user = request.user;
+      const { id } = request.params;
+      const parsed = transitionInterventionSchema.safeParse(request.body);
+      if (!parsed.success) {
+        return reply.status(400).send({
+          error: "D\u1EEF li\u1EC7u chuy\u1EC3n tr\u1EA1ng th\xE1i kh\xF4ng h\u1EE3p l\u1EC7",
+          details: parsed.error.flatten()
+        });
+      }
+      try {
+        const data = await service.transitionStatus(id, parsed.data, user);
         return reply.send({ success: true, data });
       } catch (err) {
         const status = err.statusCode || 500;
@@ -112502,6 +112665,79 @@ var teacher_profile_routes_default = teacherProfileRoutes;
 
 // server/services/snapshot.service.ts
 import { randomBytes } from "crypto";
+
+// server/services/risk-engine.service.ts
+function isEligibleForScholarship(task, context) {
+  if (!task.deadline) return false;
+  return task.deadline > context.windowStart && task.deadline <= context.windowEnd;
+}
+var TIER_THRESHOLDS = {
+  TIER_4: 90,
+  TIER_3: 80,
+  TIER_2: 70,
+  TIER_1: 50,
+  NONE: 0
+};
+function evaluateStudentRisk(input) {
+  const { eligibleTasks, completedTaskExamIds, currentTierThreshold, now, weekDeadline } = input;
+  const totalEligible = eligibleTasks.length;
+  if (totalEligible === 0) {
+    return noRisk(0, 100);
+  }
+  const openTasks = eligibleTasks.filter((t) => !completedTaskExamIds.has(t.examId));
+  const completedCount = totalEligible - openTasks.length;
+  if (openTasks.length === 0) {
+    const currentRate = completedCount / totalEligible * 100;
+    return noRisk(openTasks.length, currentRate);
+  }
+  const worstCaseRate = completedCount / totalEligible * 100;
+  if (worstCaseRate >= currentTierThreshold) {
+    return noRisk(openTasks.length, worstCaseRate);
+  }
+  const requiredCompletions = Math.ceil(currentTierThreshold / 100 * totalEligible);
+  const requiredAdditionalTasks = Math.max(0, requiredCompletions - completedCount);
+  const soonestOpenDeadline = openTasks.filter((t) => t.deadline !== null).map((t) => t.deadline).sort((a, b) => a.getTime() - b.getTime())[0];
+  const referenceDeadline = soonestOpenDeadline ?? weekDeadline;
+  const hoursUntilDeadline = (referenceDeadline.getTime() - now.getTime()) / (1e3 * 60 * 60);
+  const riskLevel = classifyRiskByTime(hoursUntilDeadline);
+  const missingCount = openTasks.length;
+  const riskReason = `Thi\u1EBFu ${missingCount} b\xE0i \u0111\u1EE7 \u0111i\u1EC1u ki\u1EC7n. Worst-case: ${Math.round(worstCaseRate)}% \u2014 d\u01B0\u1EDBi ng\u01B0\u1EE1ng ${currentTierThreshold}% c\u1EA7n thi\u1EBFt. C\u1EA7n n\u1ED9p th\xEAm ${requiredAdditionalTasks} b\xE0i \u0111\u1EC3 gi\u1EEF tier.`;
+  return {
+    riskLevel,
+    openTasks,
+    requiredAdditionalTasks,
+    riskReason,
+    worstCaseRate
+  };
+}
+function classifyPerformanceLevel(hwRate) {
+  if (hwRate >= 90) return "STRONG";
+  if (hwRate >= 60) return "ON_TRACK";
+  return "LOW";
+}
+function classifyTrajectory(currentHwRate, previousHwRate) {
+  if (previousHwRate === null) return "STABLE";
+  const delta = currentHwRate - previousHwRate;
+  if (delta >= 10) return "RISING";
+  if (delta <= -10) return "DECLINING";
+  return "STABLE";
+}
+function noRisk(openCount, worstCaseRate) {
+  return {
+    riskLevel: "NONE",
+    openTasks: [],
+    requiredAdditionalTasks: 0,
+    riskReason: null,
+    worstCaseRate
+  };
+}
+function classifyRiskByTime(hoursUntilDeadline) {
+  if (hoursUntilDeadline > 36) return "WATCH";
+  if (hoursUntilDeadline > 6) return "AT_RISK";
+  return "CRITICAL";
+}
+
+// server/services/snapshot.service.ts
 var SnapshotService = class {
   constructor(prisma) {
     this.prisma = prisma;
@@ -112661,6 +112897,46 @@ var SnapshotService = class {
           orderBy: { createdAt: "desc" }
         });
         const teacherNote = latestReport?.recommendations || latestReport?.strengths || "Em h\u1ECDc t\u1EADp ch\u0103m ch\u1EC9 v\xE0 c\xF3 tinh th\u1EA7n t\u1EF1 gi\xE1c cao trong tu\u1EA7n.";
+        const performanceLevel = classifyPerformanceLevel(hwRate);
+        const prevSnapshot = weekNumber > 1 ? await this.prisma.weeklySnapshot.findUnique({
+          where: {
+            classId_studentId_weekNumber: {
+              classId: cls.id,
+              studentId: enrollment.studentId,
+              weekNumber: weekNumber - 1
+            }
+          },
+          select: { hwRate: true }
+        }) : null;
+        const trajectory = classifyTrajectory(hwRate, prevSnapshot?.hwRate ?? null);
+        const windowContext = {
+          windowStart: cls.startDate ?? /* @__PURE__ */ new Date(0),
+          windowEnd: cutoffTime
+        };
+        const eligibleTasks = assignedExams.filter((a) => isEligibleForScholarship(a, windowContext)).map((a) => ({
+          assignmentId: a.id,
+          examId: a.examId,
+          deadline: a.deadline
+        }));
+        const completedTaskExamIds = new Set(
+          (await this.prisma.examSubmission.findMany({
+            where: {
+              studentId: enrollment.studentId,
+              examId: { in: eligibleTasks.map((t) => t.examId) },
+              submittedAt: { lte: cutoffTime },
+              status: { in: ["SUBMITTED", "GRADED"] }
+            },
+            select: { examId: true }
+          })).map((s) => s.examId)
+        );
+        const currentTierThreshold = TIER_THRESHOLDS[scholarship.tier] ?? 0;
+        const riskResult = evaluateStudentRisk({
+          eligibleTasks,
+          completedTaskExamIds,
+          currentTierThreshold,
+          now: cutoffTime,
+          weekDeadline: cutoffTime
+        });
         await this.prisma.weeklySnapshot.upsert({
           where: {
             classId_studentId_weekNumber: {
@@ -112679,6 +112955,10 @@ var SnapshotService = class {
             scholarshipTier: scholarship.tier,
             scholarshipAmount: scholarship.amount,
             lossAversionNote: scholarship.lossAversionNote,
+            performanceLevel,
+            trajectory,
+            riskLevel: riskResult.riskLevel,
+            riskReason: riskResult.riskReason,
             teacherNote
           },
           create: {
@@ -112694,6 +112974,10 @@ var SnapshotService = class {
             scholarshipTier: scholarship.tier,
             scholarshipAmount: scholarship.amount,
             lossAversionNote: scholarship.lossAversionNote,
+            performanceLevel,
+            trajectory,
+            riskLevel: riskResult.riskLevel,
+            riskReason: riskResult.riskReason,
             teacherNote
           }
         });
@@ -112890,6 +113174,41 @@ var parentReportsRoutes = async (fastify) => {
           weaknesses: latestReport?.weaknesses || "C\u1EA7n ch\xFA \xFD ki\u1EC3m tra l\u1EA1i l\u1ED7i ch\xEDnh t\u1EA3 tr\u01B0\u1EDBc khi n\u1ED9p b\xE0i.",
           recommendations: latestReport?.recommendations || snapshotData.teacherNote
         },
+        // Evidence Provenance Layer — Audit trail for learning facts
+        evidenceProvenance: {
+          snapshotId: latestSnapshot?.id || null,
+          evaluatedCutoff: latestSnapshot?.cutoffAt || now,
+          reportId: latestReport?.id || null,
+          facts: [
+            {
+              type: "HOMEWORK_COMPLETION",
+              value: `${snapshotData.hwCompleted}/${snapshotData.hwTotal} b\xE0i (${snapshotData.hwRate}%)`,
+              source: latestSnapshot ? `WeeklySnapshot#${latestSnapshot.id}` : "LiveExecutionProjection"
+            },
+            {
+              type: "ATTENDANCE_RATE",
+              value: `${snapshotData.attendanceRate}%`,
+              source: `ClassAttendanceRecords[classId=${cls.id},studentId=${student.userId}]`
+            },
+            {
+              type: "SCHOLARSHIP_TIER",
+              value: snapshotData.scholarshipTier,
+              amount: snapshotData.scholarshipAmount,
+              source: "ARIS_DISCIPLINE_FRAMEWORK"
+            }
+          ],
+          academicEvidence: [
+            ...latestReport?.strengths ? [{ type: "STRENGTH", content: latestReport.strengths, author: cls.teacher?.fullName || "Gi\xE1o vi\xEAn" }] : [],
+            ...latestReport?.weaknesses ? [{ type: "AREA_FOR_IMPROVEMENT", content: latestReport.weaknesses, author: cls.teacher?.fullName || "Gi\xE1o vi\xEAn" }] : []
+          ],
+          teacherCommentary: [
+            {
+              type: "RECOMMENDATION",
+              content: latestReport?.recommendations || snapshotData.teacherNote,
+              author: cls.teacher?.fullName || "Gi\xE1o vi\xEAn"
+            }
+          ]
+        },
         canReEnroll,
         hotlinePhone: process.env.VITE_HOTLINE_ZALO_PHONE || "0901234567"
       };
@@ -113064,6 +113383,188 @@ var reEnrollmentRoutes = async (fastify) => {
 };
 var re_enrollment_routes_default = reEnrollmentRoutes;
 
+// server/services/radar.service.ts
+var RadarService = class {
+  constructor(prisma) {
+    this.prisma = prisma;
+  }
+  /**
+   * Đánh giá tất cả học sinh đang ACTIVE trong class và trả về danh sách có rủi ro.
+   * Chỉ trả về học sinh có riskLevel WATCH / AT_RISK / CRITICAL.
+   */
+  async getAtRiskStudents(classId) {
+    const cls = await this.prisma.class.findUnique({
+      where: { id: classId },
+      select: {
+        id: true,
+        name: true,
+        startDate: true,
+        totalWeeks: true,
+        status: true
+      }
+    });
+    if (!cls) throw new NotFoundError("L\u1EDBp h\u1ECDc kh\xF4ng t\u1ED3n t\u1EA1i.");
+    const now = /* @__PURE__ */ new Date();
+    const weekDeadline = calculateCurrentCutoff(now);
+    const windowStart = cls.startDate ?? /* @__PURE__ */ new Date(0);
+    const windowContext = { windowStart, windowEnd: weekDeadline };
+    const enrollments = await this.prisma.classStudent.findMany({
+      where: { classId, status: "ACTIVE" },
+      include: {
+        student: {
+          select: {
+            userId: true,
+            fullName: true,
+            avatarUrl: true
+          }
+        }
+      }
+    });
+    if (enrollments.length === 0) {
+      return emptyResult(classId);
+    }
+    const allAssignments = await this.prisma.classExamAssignment.findMany({
+      where: { classId, status: "PUBLISHED" },
+      select: { id: true, examId: true, deadline: true }
+    });
+    const eligibleTasks = allAssignments.filter((a) => isEligibleForScholarship(a, windowContext)).map((a) => ({
+      assignmentId: a.id,
+      examId: a.examId,
+      deadline: a.deadline
+    }));
+    const eligibleExamIds = eligibleTasks.map((t) => t.examId);
+    const allSubmissions = eligibleExamIds.length > 0 ? await this.prisma.examSubmission.findMany({
+      where: {
+        examId: { in: eligibleExamIds },
+        studentId: { in: enrollments.map((e) => e.studentId) },
+        status: { in: ["SUBMITTED", "GRADED"] },
+        submittedAt: { lte: weekDeadline }
+      },
+      select: { studentId: true, examId: true }
+    }) : [];
+    const latestSnapshots = await this.prisma.weeklySnapshot.findMany({
+      where: {
+        classId,
+        studentId: { in: enrollments.map((e) => e.studentId) }
+      },
+      orderBy: { weekNumber: "desc" },
+      distinct: ["studentId"],
+      select: {
+        studentId: true,
+        hwRate: true,
+        weekNumber: true,
+        scholarshipTier: true
+      }
+    });
+    const prevWeekNumbers = latestSnapshots.map((s) => s.weekNumber - 1).filter((w) => w > 0);
+    const prevSnapshots = prevWeekNumbers.length > 0 ? await this.prisma.weeklySnapshot.findMany({
+      where: {
+        classId,
+        studentId: { in: enrollments.map((e) => e.studentId) },
+        weekNumber: { in: prevWeekNumbers }
+      },
+      select: { studentId: true, hwRate: true, weekNumber: true }
+    }) : [];
+    const submissionsByStudent = /* @__PURE__ */ new Map();
+    for (const sub of allSubmissions) {
+      if (!submissionsByStudent.has(sub.studentId)) {
+        submissionsByStudent.set(sub.studentId, /* @__PURE__ */ new Set());
+      }
+      submissionsByStudent.get(sub.studentId).add(sub.examId);
+    }
+    const latestSnapshotByStudent = new Map(latestSnapshots.map((s) => [s.studentId, s]));
+    const prevSnapshotByStudent = new Map(
+      prevSnapshots.map((s) => [`${s.studentId}-${s.weekNumber}`, s])
+    );
+    const atRiskStudents = [];
+    for (const enrollment of enrollments) {
+      const studentId = enrollment.studentId;
+      const completedExamIds = submissionsByStudent.get(studentId) ?? /* @__PURE__ */ new Set();
+      const latestSnap = latestSnapshotByStudent.get(studentId);
+      const currentTier = latestSnap?.scholarshipTier ?? "NONE";
+      const currentTierThreshold = TIER_THRESHOLDS[currentTier] ?? 0;
+      const completedCount = eligibleTasks.filter((t) => completedExamIds.has(t.examId)).length;
+      const currentHwRate = eligibleTasks.length > 0 ? completedCount / eligibleTasks.length * 100 : 100;
+      const prevSnapKey = latestSnap ? `${studentId}-${latestSnap.weekNumber - 1}` : null;
+      const prevSnap = prevSnapKey ? prevSnapshotByStudent.get(prevSnapKey) : null;
+      const trajectory = classifyTrajectory(currentHwRate, prevSnap?.hwRate ?? null);
+      const performanceLevel = classifyPerformanceLevel(currentHwRate);
+      const riskResult = evaluateStudentRisk({
+        eligibleTasks,
+        completedTaskExamIds: completedExamIds,
+        currentTierThreshold,
+        now,
+        weekDeadline
+      });
+      if (riskResult.riskLevel === "NONE") continue;
+      atRiskStudents.push({
+        studentId,
+        studentName: enrollment.student.fullName ?? "H\u1ECDc vi\xEAn",
+        studentAvatarUrl: enrollment.student.avatarUrl ?? null,
+        riskLevel: riskResult.riskLevel,
+        performanceLevel,
+        trajectory,
+        openTaskCount: riskResult.openTasks.length,
+        requiredAdditionalTasks: riskResult.requiredAdditionalTasks,
+        currentHwRate: Math.round(currentHwRate),
+        worstCaseRate: Math.round(riskResult.worstCaseRate),
+        currentScholarshipTier: currentTier,
+        riskReason: riskResult.riskReason,
+        parentToken: enrollment.parentToken ?? null
+      });
+    }
+    const RISK_ORDER = { CRITICAL: 0, AT_RISK: 1, WATCH: 2 };
+    atRiskStudents.sort(
+      (a, b) => (RISK_ORDER[a.riskLevel] ?? 3) - (RISK_ORDER[b.riskLevel] ?? 3)
+    );
+    return {
+      classId,
+      evaluatedAt: now.toISOString(),
+      watchCount: atRiskStudents.filter((s) => s.riskLevel === "WATCH").length,
+      atRiskCount: atRiskStudents.filter((s) => s.riskLevel === "AT_RISK").length,
+      criticalCount: atRiskStudents.filter((s) => s.riskLevel === "CRITICAL").length,
+      students: atRiskStudents
+    };
+  }
+};
+function emptyResult(classId) {
+  return {
+    classId,
+    evaluatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+    watchCount: 0,
+    atRiskCount: 0,
+    criticalCount: 0,
+    students: []
+  };
+}
+function calculateCurrentCutoff(now) {
+  const d = new Date(now);
+  const day = d.getDay();
+  const cutoff = new Date(d);
+  cutoff.setDate(d.getDate() - (day === 0 ? 0 : day));
+  cutoff.setHours(18, 15, 0, 0);
+  return cutoff;
+}
+
+// server/routes/radar.routes.ts
+async function radarRoutes(fastify) {
+  const service = new RadarService(fastify.prisma);
+  fastify.get(
+    "/:id/radar/at-risk",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { id: classId } = request.params;
+      try {
+        const data = await service.getAtRiskStudents(classId);
+        return reply.send({ success: true, data });
+      } catch (err) {
+        const status = err.statusCode || 500;
+        return reply.status(status).send({ error: err.message });
+      }
+    }
+  );
+}
+
 // server/routes/index.ts
 var routes = async (fastify) => {
   fastify.get("/health", async () => {
@@ -113108,6 +113609,7 @@ var routes = async (fastify) => {
   await fastify.register(cron_routes_default, { prefix: "/cron" });
   await fastify.register(parent_reports_routes_default);
   await fastify.register(re_enrollment_routes_default);
+  await fastify.register(radarRoutes, { prefix: "/classes" });
 };
 var routes_default = routes;
 

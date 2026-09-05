@@ -146,7 +146,15 @@ export class SpeakingStorageService {
       return clean;
     }
 
-    const cleanPath = clean.replace(/^\/+/, "");
+    let cleanPath = clean.replace(/^\/+/, "");
+    // If it's a bare UUID or speaking audio filename without path
+    if (!cleanPath.includes("/")) {
+      if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(webm|mp3|wav|ogg|m4a)$/i.test(cleanPath)) {
+        cleanPath = `speaking-recordings/${cleanPath}`;
+      } else if (/\.(mp3|wav|ogg|webm|m4a|aac)$/i.test(cleanPath)) {
+        cleanPath = `uploads/audio/${cleanPath}`;
+      }
+    }
     // Toàn bộ audio ghi âm và đề thi đều được lưu trữ trong bucket exam-assets
     const assetSubPath = cleanPath.replace(/^exam-assets\//, "");
     const { data: pubData } = this.supabase.storage.from("exam-assets").getPublicUrl(assetSubPath);
@@ -184,7 +192,14 @@ export class SpeakingStorageService {
       }
     }
 
-    const cleanPath = clean.replace(/^\/+/, "");
+    let cleanPath = clean.replace(/^\/+/, "");
+    if (!cleanPath.includes("/")) {
+      if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(webm|mp3|wav|ogg|m4a)$/i.test(cleanPath)) {
+        cleanPath = `speaking-recordings/${cleanPath}`;
+      } else if (/\.(mp3|wav|ogg|webm|m4a|aac)$/i.test(cleanPath)) {
+        cleanPath = `uploads/audio/${cleanPath}`;
+      }
+    }
 
     // 2. Thử tải từ exam-assets (Bucket lưu trữ chính)
     const examSubPath = cleanPath.replace(/^exam-assets\//, "");

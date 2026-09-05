@@ -11,6 +11,7 @@ import { adaptExam } from "../adapters/exam.adapter";
 import { adaptSession } from "../adapters/session.adapter";
 import { normalizeSubmissionStatus } from "./submissionStatus";
 import { toCanonicalClass, toCanonicalStudent } from "./classDataMapper";
+import { AudioStorageService } from "./audioStorageService";
 
 export const resolveApiBaseUrl = (): string => {
   const envUrl =
@@ -1029,12 +1030,14 @@ export function normalizeSubmissionData(data: any, examData?: any): any {
       overallFeedback = parsedFeedback;
     }
 
+    const rawAudio = a.audio_url || a.audioUrl || (AudioStorageService.isAudio(a.answer_text || a.answerText) ? (a.answer_text || a.answerText) : "");
+
     return {
       id: a.id,
       submissionId: a.submission_id || a.submissionId,
       questionId: a.question_id || a.questionId,
-      answerText: a.answer_text || a.answerText || "",
-      audioUrl: formatStorageUrl(a.audio_url || a.audioUrl),
+      answerText: AudioStorageService.isAudio(a.answer_text || a.answerText) ? "" : (a.answer_text || a.answerText || ""),
+      audioUrl: rawAudio ? formatStorageUrl(rawAudio) : "",
       score: a.score != null ? Number(a.score) : null,
       feedback: a.feedback || "",
       parsedText: parsedFeedback,

@@ -690,6 +690,8 @@ export function ReadingSection({
                   <audio
                     src={formatStorageUrl(group.audioUrl || group.audio_url)}
                     controls
+                    preload="metadata"
+                    crossOrigin="anonymous"
                     className="h-10 w-full"
                   />
                 </div>

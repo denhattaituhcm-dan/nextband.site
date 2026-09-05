@@ -56,6 +56,7 @@ export interface SpeakingAnswerItem {
   questionText?: string;
   instructions?: string;
   passage?: string;
+  imageUrl?: string | null;
   audioUrl?: string | null;
   answerText?: string;
   score?: number | null;
@@ -513,6 +514,17 @@ export function SpeakingGrader({
             {currentAnswer?.questionText && (
               <div className="text-sm text-slate-900 leading-relaxed font-normal bg-white/60 p-3.5 rounded-xl border border-amber-100/70">
                 <RichContent html={currentAnswer.questionText} />
+              </div>
+            )}
+
+            {/* Prompt image if present */}
+            {currentAnswer?.imageUrl && (
+              <div className="pt-2 border-t border-amber-100 flex justify-center bg-white/90 p-3 rounded-xl border border-amber-100">
+                <img
+                  src={formatStorageUrl(currentAnswer.imageUrl)}
+                  alt="Speaking Cue Card Diagram / Image"
+                  className="max-h-96 w-auto object-contain rounded-lg border shadow-2xs"
+                />
               </div>
             )}
 

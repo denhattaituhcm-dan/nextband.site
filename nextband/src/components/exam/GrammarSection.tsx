@@ -205,6 +205,8 @@ export function GrammarSection({
                                         <audio
                                           src={formatStorageUrl(question.question_audio_url)}
                                           controls
+                                          preload="metadata"
+                                          crossOrigin="anonymous"
                                           className="h-8 w-full"
                                         />
                                       </div>

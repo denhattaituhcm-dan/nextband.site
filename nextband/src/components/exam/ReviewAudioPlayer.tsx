@@ -55,8 +55,18 @@ export function ReviewAudioPlayer({ src, className }: ReviewAudioPlayerProps) {
     if (!audio) return;
 
     if (audio.paused) {
-      await audio.play();
-      setIsPlaying(true);
+      try {
+        if (audio.error || audio.readyState === 0) {
+          audio.load();
+        }
+        await audio.play();
+        setIsPlaying(true);
+      } catch (err: any) {
+        if (err.name !== "AbortError") {
+          console.warn("[ReviewAudioPlayer] Play failed:", err);
+        }
+        setIsPlaying(false);
+      }
       return;
     }
 
@@ -86,6 +96,7 @@ export function ReviewAudioPlayer({ src, className }: ReviewAudioPlayerProps) {
         ref={audioRef}
         src={formatStorageUrl(src)}
         preload="metadata"
+        crossOrigin="anonymous"
         onTimeUpdate={(e) => {
           const audio = e.currentTarget;
           setCurrentTime(audio.currentTime || 0);

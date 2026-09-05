@@ -60,7 +60,7 @@ export function QuestionGroupHeader({
         {/* Audio Player if present in group */}
         {audioUrl && (
           <div className="bg-muted/40 p-2.5 rounded-xl border border-border/60 flex items-center gap-3 max-w-md">
-            <audio src={formatStorageUrl(audioUrl)} controls className="h-8 w-full" />
+            <audio src={formatStorageUrl(audioUrl)} controls preload="metadata" crossOrigin="anonymous" className="h-8 w-full" />
           </div>
         )}
       </div>

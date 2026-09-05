@@ -22,6 +22,16 @@ export function getEvaluatorForType(questionType: string): IQuestionEvaluator {
       return evaluator;
     }
   }
+  // If the question type sounds like speaking or writing, evaluate manually
+  if (
+    normalizedType.includes("speak") ||
+    normalizedType.includes("write") ||
+    normalizedType.includes("essay") ||
+    normalizedType.includes("audio") ||
+    normalizedType.includes("record")
+  ) {
+    return new ManualEvaluator();
+  }
   return fallbackEvaluator;
 }
 

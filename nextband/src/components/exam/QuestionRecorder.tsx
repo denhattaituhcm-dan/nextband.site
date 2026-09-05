@@ -24,19 +24,33 @@ function CustomAudioPlayer({ src }: { src: string }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [resolvedSrc, setResolvedSrc] = useState<string>(src);
+  const [resolvedSrc, setResolvedSrc] = useState<string>(() => {
+    return (src ? formatStorageUrl(src) : "") || src || "";
+  });
 
   useEffect(() => {
     if (!src) return;
-    setResolvedSrc(formatStorageUrl(src));
+    const formatted = formatStorageUrl(src);
+    setResolvedSrc(formatted || src);
   }, [src]);
+
+  useEffect(() => {
+    if (resolvedSrc && audioRef.current) {
+      audioRef.current.load();
+      setIsPlaying(false);
+    }
+  }, [resolvedSrc]);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
     const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
-    const handleLoadedMetadata = () => setDuration(audio.duration);
+    const handleLoadedMetadata = () => {
+      if (Number.isFinite(audio.duration) && audio.duration > 0) {
+        setDuration(audio.duration);
+      }
+    };
     const handleEnded = () => setIsPlaying(false);
 
     audio.addEventListener("timeupdate", handleTimeUpdate);
@@ -56,8 +70,18 @@ function CustomAudioPlayer({ src }: { src: string }) {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
-      audioRef.current.play().catch(console.error);
-      setIsPlaying(true);
+      if (audioRef.current.error || audioRef.current.readyState === 0) {
+        audioRef.current.load();
+      }
+      audioRef.current
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch((err) => {
+          if (err.name !== "AbortError") {
+            console.warn("CustomAudioPlayer play error:", err);
+          }
+          setIsPlaying(false);
+        });
     }
   };
 
@@ -78,7 +102,7 @@ function CustomAudioPlayer({ src }: { src: string }) {
 
   return (
     <div className="flex items-center gap-3 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-neutral-900 dark:to-neutral-800 border border-orange-200/80 dark:border-orange-900/40 p-2 px-3.5 rounded-2xl shadow-xs max-w-xs w-full">
-      <audio ref={audioRef} src={resolvedSrc} preload="metadata" />
+      <audio ref={audioRef} src={resolvedSrc} preload="metadata" crossOrigin="anonymous" />
       <button
         type="button"
         onClick={togglePlay}

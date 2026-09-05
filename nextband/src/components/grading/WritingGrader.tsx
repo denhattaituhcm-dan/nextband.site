@@ -42,6 +42,7 @@ import {
 import { calculateGradingSla } from "@/lib/gradingSla";
 import { compareCanonicalOrder } from "@/lib/questionOrder";
 import { getFillBlankBlankCount } from "@/lib/fillBlank";
+import { formatStorageUrl } from "@/lib/api";
 import {
   detectExamSkill,
   isAutoGradedExam,
@@ -609,6 +610,17 @@ export function WritingGrader({
                 {currentAnswer?.questionText && (
                   <div className="text-sm text-slate-900 leading-relaxed font-normal bg-white/60 p-3.5 rounded-xl border border-blue-100/70">
                     <RichContent html={currentAnswer.questionText} />
+                  </div>
+                )}
+
+                {/* Task 1 Chart / Map / Diagram Image if present */}
+                {currentAnswer?.imageUrl && (
+                  <div className="pt-2 border-t border-blue-100 flex justify-center bg-white/90 p-3 rounded-xl border border-blue-100">
+                    <img
+                      src={formatStorageUrl(currentAnswer.imageUrl)}
+                      alt="Writing Task Prompt Diagram / Chart"
+                      className="max-h-96 w-auto object-contain rounded-lg border shadow-2xs"
+                    />
                   </div>
                 )}
 

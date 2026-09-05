@@ -542,7 +542,7 @@ export default function TeacherWorkspace() {
               instructions: grp.instructions || sec.instructions || "",
               passage: grp.passage || "",
               questionText: q.questionText || q.question_text || "",
-              imageUrl: q.imageUrl || q.image_url || null,
+              imageUrl: q.imageUrl || q.image_url || grp.imageUrl || grp.image_url || null,
             });
           });
         });
@@ -560,8 +560,8 @@ export default function TeacherWorkspace() {
             (currentHomework?.answers || [])[idx];
           const rawAns = a?.answerText || a?.answer_text || a?.studentAnswer || "";
           const rawAudio = a?.audioUrl || a?.audio_url || "";
-          const isAudio = AudioStorageService.isAudio(rawAudio) || AudioStorageService.isAudio(rawAns);
-          const resolvedAudioUrl = (rawAudio && rawAudio.trim().length > 0) ? rawAudio.trim() : (AudioStorageService.isAudio(rawAns) ? rawAns.trim() : "");
+          const rawAudioCandidate = (rawAudio && rawAudio.trim().length > 0) ? rawAudio.trim() : (AudioStorageService.isAudio(rawAns) ? rawAns.trim() : "");
+          const resolvedAudioUrl = rawAudioCandidate ? (formatStorageUrl(rawAudioCandidate) || rawAudioCandidate) : "";
           const resolvedAnswerText = AudioStorageService.isAudio(rawAns) ? "" : rawAns;
 
           return {
@@ -583,7 +583,8 @@ export default function TeacherWorkspace() {
       return currentSubmissionDetail.answers.map((a: any) => {
         const rawAns = a.answerText || a.answer_text || a.studentAnswer || "";
         const rawAudio = a.audioUrl || a.audio_url || "";
-        const resolvedAudioUrl = (rawAudio && rawAudio.trim().length > 0) ? rawAudio.trim() : (AudioStorageService.isAudio(rawAns) ? rawAns.trim() : "");
+        const rawAudioCandidate = (rawAudio && rawAudio.trim().length > 0) ? rawAudio.trim() : (AudioStorageService.isAudio(rawAns) ? rawAns.trim() : "");
+        const resolvedAudioUrl = rawAudioCandidate ? (formatStorageUrl(rawAudioCandidate) || rawAudioCandidate) : "";
         const resolvedAnswerText = AudioStorageService.isAudio(rawAns) ? "" : rawAns;
 
         return {

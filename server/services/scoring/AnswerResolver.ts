@@ -44,10 +44,33 @@ export class AnswerResolver {
           const selectionMode: "single" | "multiple" = isMultiChoice ? "multiple" : "single";
           const maxSelections = isMultiChoice ? (correctCount > 1 ? correctCount : 2) : 1;
 
-          const sectionType = section.sectionType || section.section_type || null;
+          const sectionType = String(section.sectionType || section.section_type || "").toLowerCase();
+          const qType = String(q.questionType || q.question_type || "").toLowerCase();
+          const isSubjectiveType = [
+            "essay",
+            "writing",
+            "speaking",
+            "ielts_writing_task1",
+            "ielts_writing_task2",
+            "ielts_speaking_part1",
+            "ielts_speaking_part2",
+            "ielts_speaking_part3",
+            "manual_grade",
+            "open_question",
+          ].includes(qType);
+
           const isExplicitHolistic = q.assessmentMode === "HOLISTIC" || q.scoreScope === "HOLISTIC";
-          const isImplicitHolistic = !q.assessmentMode && (q.questionType === "essay" || (sectionType === "writing" && !["multiple_choice", "fill_blank", "matching"].includes(q.questionType)));
-          const resolvedMode = q.assessmentMode || (isExplicitHolistic || isImplicitHolistic ? "HOLISTIC" : (q.questionType === "speaking" ? "MANUAL_ITEM" : "OBJECTIVE"));
+          const isImplicitHolistic = !q.assessmentMode && (
+            qType === "essay" ||
+            qType === "writing" ||
+            qType === "ielts_writing_task1" ||
+            qType === "ielts_writing_task2" ||
+            (sectionType === "writing" && !["multiple_choice", "multiple_choice_multi", "fill_blank", "matching", "true_false_not_given", "yes_no_not_given"].includes(qType))
+          );
+          const isSpeakingType = qType === "speaking" || qType.startsWith("ielts_speaking") || (sectionType === "speaking" && !["multiple_choice", "multiple_choice_multi", "fill_blank", "matching"].includes(qType));
+          const isManualItem = !q.assessmentMode && (isSpeakingType || isSubjectiveType);
+
+          const resolvedMode = q.assessmentMode || (isExplicitHolistic || isImplicitHolistic ? "HOLISTIC" : isManualItem ? "MANUAL_ITEM" : "OBJECTIVE");
           const resolvedScope = q.scoreScope || (resolvedMode === "HOLISTIC" ? "HOLISTIC" : "ITEM");
 
           flattenedQuestions.push({

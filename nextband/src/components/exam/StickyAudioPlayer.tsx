@@ -26,6 +26,7 @@ export function StickyAudioPlayer({ audioUrl, strictMode = false }: StickyAudioP
     const audio = audioRef.current;
     if (audio) {
       audio.currentTime = 0;
+      audio.load();
     }
   }, [audioUrl]);
 
@@ -34,7 +35,11 @@ export function StickyAudioPlayer({ audioUrl, strictMode = false }: StickyAudioP
     if (!audio) return;
 
     const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
-    const handleLoadedMetadata = () => setDuration(audio.duration || 0);
+    const handleLoadedMetadata = () => {
+      if (Number.isFinite(audio.duration) && audio.duration > 0) {
+        setDuration(audio.duration);
+      }
+    };
     const handleEnded = () => setIsPlaying(false);
 
     audio.addEventListener('timeupdate', handleTimeUpdate);
@@ -56,9 +61,17 @@ export function StickyAudioPlayer({ audioUrl, strictMode = false }: StickyAudioP
       audio.pause();
       setIsPlaying(false);
     } else {
+      if (audio.error || audio.readyState === 0) {
+        audio.load();
+      }
       audio.play()
         .then(() => setIsPlaying(true))
-        .catch(() => setIsPlaying(false));
+        .catch((err) => {
+          if (err?.name !== 'AbortError') {
+            console.warn('[StickyAudioPlayer] Play failed:', err);
+          }
+          setIsPlaying(false);
+        });
     }
   };
 
@@ -98,7 +111,7 @@ export function StickyAudioPlayer({ audioUrl, strictMode = false }: StickyAudioP
       "sticky top-0 z-40 bg-card/95 backdrop-blur-md border-b transition-all duration-180 shadow-xs",
       isCollapsed ? "py-2 px-4" : "py-3 px-4 md:py-4"
     )}>
-      <audio ref={audioRef} src={audioUrl} preload="metadata" />
+      <audio ref={audioRef} src={audioUrl} preload="metadata" crossOrigin="anonymous" />
       
       <div className="max-w-4xl mx-auto flex items-center justify-between gap-3 md:gap-4">
         {/* Play / Pause Primary CTA */}
