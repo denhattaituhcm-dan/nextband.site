@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { classesApi, usersApi, coursesApi, sessionsApi, generateSessionDates, roomsApi } from "@/lib/api";
+import { classesApi, usersApi, coursesApi, sessionsApi, generateSessionDates, roomsApi, ApiError } from "@/lib/api";
 import { normalizeTimeToHHmm } from "@/adapters/session.adapter";
 import { useBranch } from "@/contexts/BranchContext";
 import { Button } from "@/components/ui/button";
@@ -209,7 +209,7 @@ const emptyForm = {
 };
 
 export default function AdminClasses() {
-  const { user, isAdmin, isTeacher } = useAuth();
+  const { user, isAdmin, isTeacher, isLoading: isAuthLoading } = useAuth();
   const { selectedBranch, branches, primaryBranch } = useBranch();
   const [searchParams] = useSearchParams();
   const initialFilter = searchParams.get("filter") || "all";
@@ -253,7 +253,7 @@ export default function AdminClasses() {
   const teacherIdParam = searchParams.get("teacherId");
   const courseIdParam = searchParams.get("courseId");
 
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: [
       "admin-classes",
       selectedBranch,
@@ -283,6 +283,7 @@ export default function AdminClasses() {
         limit: pageSize,
       });
     },
+    enabled: !isAuthLoading && !!user,
   });
 
   const { data: coursesData } = useQuery({
@@ -1107,28 +1108,71 @@ export default function AdminClasses() {
         </div>
       )}
 
-      {isLoading ? (
+      {isAuthLoading || isLoading ? (
         <div className="border rounded-xl bg-card p-12 text-center text-muted-foreground shadow-xs">
           <div className="flex items-center justify-center gap-2">
             <Loader2 className="h-5 w-5 animate-spin text-emerald-600" />
-            Đang tải danh sách lớp học...
+            {isAuthLoading ? "Đang xác thực thông tin tài khoản..." : "Đang tải danh sách lớp học..."}
           </div>
         </div>
-      ) : isError ? (
-        <div className="border rounded-xl bg-card p-12 text-center text-destructive shadow-xs">
-          <div className="flex flex-col items-center justify-center gap-2">
-            <AlertCircle className="h-5 w-5" />
-            <span>Không thể tải danh sách lớp học</span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => refetch()}
-              className="mt-2 text-foreground"
-            >
-              Thử lại
+      ) : !user ? (
+        <div className="border rounded-xl bg-amber-500/10 border-amber-500/20 p-12 text-center shadow-xs">
+          <div className="flex flex-col items-center justify-center gap-3">
+            <AlertCircle className="h-8 w-8 text-amber-600" />
+            <span className="text-base font-medium text-foreground">Bạn cần đăng nhập để truy cập quản lý lớp học</span>
+            <Button onClick={() => navigate("/login")} className="mt-2">
+              Đăng nhập ngay
             </Button>
           </div>
         </div>
+      ) : isError ? (
+        (() => {
+          const apiErr = error as ApiError | null;
+          const isAuthErr = apiErr?.code === "AUTH_ERROR" || apiErr?.status === 401;
+          const isPermErr = apiErr?.code === "PERMISSION_ERROR" || apiErr?.status === 403;
+          const isNetErr = apiErr?.code === "NETWORK_ERROR";
+          const isServerErr = apiErr?.code === "SERVER_ERROR" || (apiErr?.status && apiErr.status >= 500);
+
+          return (
+            <div className={`border rounded-xl p-12 text-center shadow-xs ${
+              isPermErr ? "bg-destructive/5 border-destructive/20 text-destructive" :
+              isAuthErr ? "bg-amber-500/5 border-amber-500/20 text-amber-700" :
+              "bg-destructive/5 border-destructive/20 text-destructive"
+            }`}>
+              <div className="flex flex-col items-center justify-center gap-2 max-w-md mx-auto">
+                <AlertCircle className="h-8 w-8 mb-1" />
+                <h3 className="text-base font-semibold text-foreground">
+                  {isPermErr ? "Không có quyền truy cập" :
+                   isAuthErr ? "Phiên đăng nhập hết hạn" :
+                   isNetErr ? "Lỗi kết nối mạng" :
+                   isServerErr ? "Máy chủ gặp sự cố" :
+                   "Không thể tải danh sách lớp học"}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {apiErr?.message || (isPermErr
+                    ? "Tài khoản của bạn không có vai trò Quản trị viên (Admin) hoặc Giảng viên (Teacher) để xem dữ liệu này."
+                    : "Hệ thống không thể tải dữ liệu lớp học lúc này. Vui lòng thử lại sau.")}
+                </p>
+                <div className="flex gap-2 mt-4">
+                  {isAuthErr ? (
+                    <Button onClick={() => navigate("/login")}>
+                      Đăng nhập lại
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => refetch()}
+                      className="text-foreground"
+                    >
+                      Thử lại
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })()
       ) : (
         <div className="space-y-6">
           {roadmapLevels
