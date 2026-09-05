@@ -18,7 +18,8 @@ slides/
 lessons/
 engine/
 scratch/
-scripts/
+!scripts/
+scripts/archive/
 LESSON_DESIGN_GUIDELINES.md
 # Manuals & Documents
 *.docx
