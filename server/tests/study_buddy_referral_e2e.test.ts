@@ -13,7 +13,10 @@ describe("🎁 STUDY BUDDY / REFERRAL ENGINE E2E VERIFICATION SUITE", () => {
   let inviterReferralCode: string;
   let targetClassId: string;
   let targetCourseId: string;
+  let adminUserId: string;
   let adminToken: string;
+  const createdLeadIds: string[] = [];
+  const createdUserIds: string[] = [];
 
   beforeAll(async () => {
     prisma = new PrismaClient();
@@ -22,6 +25,7 @@ describe("🎁 STUDY BUDDY / REFERRAL ENGINE E2E VERIFICATION SUITE", () => {
 
     // 1. Seed or get Inviter User (User A)
     inviterUserId = randomUUID();
+    createdUserIds.push(inviterUserId);
     const inviterEmail = `inviter_${Date.now()}@example.com`;
     const inviterAuth = await prisma.user.create({
       data: {
@@ -47,7 +51,8 @@ describe("🎁 STUDY BUDDY / REFERRAL ENGINE E2E VERIFICATION SUITE", () => {
     });
 
     // 2. Admin Token
-    const adminUserId = randomUUID();
+    adminUserId = randomUUID();
+    createdUserIds.push(adminUserId);
     const adminUser = await prisma.user.create({
       data: {
         userId: adminUserId,
@@ -91,17 +96,59 @@ describe("🎁 STUDY BUDDY / REFERRAL ENGINE E2E VERIFICATION SUITE", () => {
 
   afterAll(async () => {
     try {
+      // 1. Delete notifications triggered by the test
+      await prisma.notification.deleteMany({
+        where: {
+          OR: [
+            ...(createdLeadIds.length > 0 ? [{ entityType: "LEAD", entityId: { in: createdLeadIds } }] : []),
+            ...(createdUserIds.length > 0 ? [
+              { entityType: "STUDENT", entityId: { in: createdUserIds } },
+              { userId: { in: createdUserIds } },
+            ] : []),
+            { message: { contains: "Tran Van Referee" } },
+            { message: { contains: "Le Thi Friend" } },
+            { message: { contains: "web_study_buddy" } },
+            { title: { contains: "Bộ Quà Tặng ARIS!" } },
+            { title: { contains: "Bạn đồng hành đã hoàn tất đăng ký!" } },
+          ],
+        },
+      }).catch(() => {});
+
+      // 2. Delete rewards & attributions
       if (inviterUserId) {
         await prisma.referralReward.deleteMany({ where: { inviterUserId } }).catch(() => {});
         await prisma.referralAttribution.deleteMany({ where: { inviterUserId } }).catch(() => {});
-        await prisma.contactLead.deleteMany({ where: { inviterUserId } }).catch(() => {});
       }
+      if (createdUserIds.length > 0) {
+        await prisma.referralAttribution.deleteMany({ where: { refereeUserId: { in: createdUserIds } } }).catch(() => {});
+      }
+
+      // 3. Delete leads
+      if (createdLeadIds.length > 0 || inviterUserId) {
+        await prisma.contactLead.deleteMany({
+          where: {
+            OR: [
+              ...(createdLeadIds.length > 0 ? [{ id: { in: createdLeadIds } }] : []),
+              ...(inviterUserId ? [{ inviterUserId }] : []),
+              ...(createdUserIds.length > 0 ? [{ convertedUserId: { in: createdUserIds } }] : []),
+            ],
+          },
+        }).catch(() => {});
+      }
+
+      // 4. Delete class student, class, course
       if (targetClassId) {
         await prisma.classStudent.deleteMany({ where: { classId: targetClassId } }).catch(() => {});
         await prisma.class.delete({ where: { id: targetClassId } }).catch(() => {});
       }
       if (targetCourseId) {
         await prisma.course.delete({ where: { id: targetCourseId } }).catch(() => {});
+      }
+
+      // 5. Delete test users and roles
+      if (createdUserIds.length > 0) {
+        await prisma.userRole.deleteMany({ where: { userId: { in: createdUserIds } } }).catch(() => {});
+        await prisma.user.deleteMany({ where: { userId: { in: createdUserIds } } }).catch(() => {});
       }
     } finally {
       await app.close();
@@ -161,6 +208,7 @@ describe("🎁 STUDY BUDDY / REFERRAL ENGINE E2E VERIFICATION SUITE", () => {
     const body = JSON.parse(res.body);
     const leadId = body.data?.id || body.id;
     expect(leadId).toBeDefined();
+    createdLeadIds.push(leadId);
 
     // Verify DB integrity
     const savedLead = await prisma.contactLead.findUnique({
@@ -190,6 +238,7 @@ describe("🎁 STUDY BUDDY / REFERRAL ENGINE E2E VERIFICATION SUITE", () => {
         status: "NEW",
       },
     });
+    createdLeadIds.push(lead.id);
 
     // 2. Admin converts lead to student with placement into targetClass ($2,000,000 price)
     const convertRes = await app.inject({
@@ -211,6 +260,7 @@ describe("🎁 STUDY BUDDY / REFERRAL ENGINE E2E VERIFICATION SUITE", () => {
     const convertBody = JSON.parse(convertRes.body);
     const studentUserId = convertBody.data?.user?.userId || convertBody.data?.lead?.convertedUserId;
     expect(studentUserId).toBeDefined();
+    createdUserIds.push(studentUserId);
 
     // 3. Verify ClassStudent tuition fee is automatically discounted by 200,000đ (2,000,000 -> 1,800,000)
     const classStudent = await prisma.classStudent.findUnique({

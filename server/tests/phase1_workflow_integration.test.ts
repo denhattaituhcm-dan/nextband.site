@@ -110,26 +110,47 @@ describe("🌊 PHASE 1 WORKFLOW & SYSTEM PIPELINE INTEGRATION E2E TEST", () => {
   afterAll(async () => {
     try {
       if (studentUserId) {
-        await prisma.studentMilestoneClaim.deleteMany({ where: { studentId: studentUserId } });
-        await prisma.examSubmission.deleteMany({ where: { studentId: studentUserId } });
+        await prisma.studentMilestoneClaim.deleteMany({ where: { studentId: studentUserId } }).catch(() => {});
+        const userSubs = await prisma.examSubmission.findMany({ where: { studentId: studentUserId }, select: { id: true } });
+        const userSubIds = userSubs.map(s => s.id);
+        if (userSubIds.length > 0) {
+          await prisma.speakingAssessmentEvidence.deleteMany({ where: { assessmentId: { in: userSubIds } } }).catch(() => {});
+          await prisma.answer.deleteMany({ where: { submissionId: { in: userSubIds } } }).catch(() => {});
+          await prisma.examSubmission.deleteMany({ where: { id: { in: userSubIds } } }).catch(() => {});
+        }
       }
       if (testClassId) {
-        await prisma.enrollmentAuditLog.deleteMany({ where: { classId: testClassId } });
-        await prisma.classStudent.deleteMany({ where: { classId: testClassId } });
-        await prisma.class.deleteMany({ where: { id: testClassId } });
+        await prisma.enrollmentAuditLog.deleteMany({ where: { classId: testClassId } }).catch(() => {});
+        await prisma.classStudent.deleteMany({ where: { classId: testClassId } }).catch(() => {});
+        await prisma.classExamAssignment.deleteMany({ where: { classId: testClassId } }).catch(() => {});
+        await prisma.classAttendance.deleteMany({ where: { classId: testClassId } }).catch(() => {});
+        await prisma.classSession.deleteMany({ where: { classId: testClassId } }).catch(() => {});
+        await prisma.class.deleteMany({ where: { id: testClassId } }).catch(() => {});
       }
       if (testCourseId) {
-        await prisma.exam.deleteMany({ where: { courseId: testCourseId } });
-        await prisma.enrollment.deleteMany({ where: { courseId: testCourseId } });
-        await prisma.course.deleteMany({ where: { id: testCourseId } });
+        const exams = await prisma.exam.findMany({ where: { courseId: testCourseId }, select: { id: true } });
+        const examIds = exams.map(e => e.id);
+        if (examIds.length > 0) {
+          const subs = await prisma.examSubmission.findMany({ where: { examId: { in: examIds } }, select: { id: true } });
+          const subIds = subs.map(s => s.id);
+          if (subIds.length > 0) {
+            await prisma.speakingAssessmentEvidence.deleteMany({ where: { assessmentId: { in: subIds } } }).catch(() => {});
+            await prisma.answer.deleteMany({ where: { submissionId: { in: subIds } } }).catch(() => {});
+            await prisma.examSubmission.deleteMany({ where: { id: { in: subIds } } }).catch(() => {});
+          }
+          await prisma.examSection.deleteMany({ where: { examId: { in: examIds } } }).catch(() => {});
+          await prisma.examPolicy.deleteMany({ where: { examId: { in: examIds } } }).catch(() => {});
+          await prisma.examVersion.deleteMany({ where: { examId: { in: examIds } } }).catch(() => {});
+          await prisma.exam.deleteMany({ where: { id: { in: examIds } } }).catch(() => {});
+        }
+        await prisma.enrollment.deleteMany({ where: { courseId: testCourseId } }).catch(() => {});
+        await prisma.course.deleteMany({ where: { id: testCourseId } }).catch(() => {});
       }
-      if (studentUserId) {
-        await prisma.userRole.deleteMany({ where: { userId: studentUserId } });
-        await prisma.user.deleteMany({ where: { userId: studentUserId } });
-      }
-      if (adminUserId) {
-        await prisma.userRole.deleteMany({ where: { userId: adminUserId } });
-        await prisma.user.deleteMany({ where: { userId: adminUserId } });
+      const testUids = [studentUserId, adminUserId].filter(Boolean);
+      if (testUids.length > 0) {
+        await prisma.notification.deleteMany({ where: { userId: { in: testUids } } }).catch(() => {});
+        await prisma.userRole.deleteMany({ where: { userId: { in: testUids } } }).catch(() => {});
+        await prisma.user.deleteMany({ where: { userId: { in: testUids } } }).catch(() => {});
       }
     } catch (e) {
       console.warn("Cleanup warning:", e);

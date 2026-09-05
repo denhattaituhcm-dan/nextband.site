@@ -5,93 +5,121 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("=== SCANNING FOR ALL TEST LEFTOVERS ===");
 
-  // 1. Exams
-  const exams = await prisma.exam.findMany({
+  // 1. Leads
+  const leads = await prisma.contactLead.findMany({
+    select: { id: true, fullName: true, phone: true, email: true, source: true, referralCode: true, createdAt: true },
+    orderBy: { createdAt: "desc" }
+  });
+  console.log(`\n1. Leads in system: ${leads.length}`);
+  leads.forEach(l => console.log(`   - [${l.id}] ${l.fullName} | ${l.phone} | ${l.email} | source: ${l.source} | ${l.createdAt}`));
+
+  // 2. Notifications breakdown
+  const allNotifs = await prisma.notification.findMany({
+    select: { id: true, title: true, message: true, type: true, isRead: true, entityType: true, createdAt: true },
+  });
+  console.log(`\n2. Total Notifications in system: ${allNotifs.length}`);
+  
+  const notifSummary = {};
+  for (const n of allNotifs) {
+    const key = `${n.type} | ${n.title}`;
+    notifSummary[key] = (notifSummary[key] || 0) + 1;
+  }
+  console.log("Notifications breakdown by Title:");
+  console.table(notifSummary);
+
+  // Detailed check of items to delete
+  console.log("\n=== DETAILED CLEANUP CANDIDATES ===");
+  
+  // 1. Notifications to delete
+  const testNotifs = await prisma.notification.findMany({
     where: {
       OR: [
-        { title: { contains: "INTEGRITY", mode: "insensitive" } },
-        { title: { contains: "Test Course", mode: "insensitive" } },
-        { course: { title: { contains: "Test Course", mode: "insensitive" } } },
-        { course: { title: { contains: "INTEGRITY", mode: "insensitive" } } },
-      ],
+        { title: "Có Lead mới đăng ký tư vấn", message: { contains: "Tran Van Referee" } },
+        { title: "Có Lead mới đăng ký tư vấn", message: { contains: "web_study_buddy" } },
+        { title: "Khách tư vấn đã chuyển thành Học viên", message: { contains: "Le Thi Friend" } },
+        { title: "Khách tư vấn đã chuyển thành Học viên", message: { contains: "example.com" } },
+        { title: "🎁 Bạn đã mở khóa Bộ Quà Tặng ARIS!" },
+        { title: "🎉 Bạn đồng hành đã hoàn tất đăng ký!" },
+        { title: "Kết quả bài thi", message: { contains: "WRITING TEST INTEGRITY" } },
+        { title: "Kết quả bài thi", message: { contains: "INTEGRITY" } },
+        { message: { contains: "example.com" } },
+      ]
     },
-    include: {
-      course: true,
-      submissions: true,
-      sections: true,
-    },
+    select: { id: true }
   });
-  console.log(`\n1. Leftover Exams found: ${exams.length}`);
-  exams.forEach((e) => {
-    console.log(`   - Exam ID: ${e.id}, Title: "${e.title}", Course: "${e.course?.title}", Submissions: ${e.submissions.length}`);
+  console.log(`Test Notifications to delete: ${testNotifs.length}`);
+
+  // 2. Test Users to delete
+  const allSystemUsers = await prisma.user.findMany({
+    select: { userId: true, email: true, fullName: true, roles: { select: { role: true } } }
   });
 
-  // 2. Courses
-  const courses = await prisma.course.findMany({
+  const testUsersToDelete = allSystemUsers.filter((u) => {
+    const email = (u.email || "").toLowerCase();
+    return (
+      email.endsWith("@example.com") ||
+      email.endsWith("@test.com") ||
+      email.startsWith("test-") ||
+      email.startsWith("test_") ||
+      email.startsWith("admin_p1_") ||
+      email.startsWith("student_p1_") ||
+      email.startsWith("inviter_") ||
+      email.startsWith("admin_") ||
+      email.startsWith("referee_convert_")
+    );
+  });
+  console.log(`Test Users to delete: ${testUsersToDelete.length}`);
+  testUsersToDelete.forEach(u => console.log(`   - [${u.userId}] ${u.fullName} (${u.email})`));
+
+  // Real users to KEEP (sanity check)
+  const realUsers = allSystemUsers.filter((u) => !testUsersToDelete.some((t) => t.userId === u.userId));
+  console.log(`Real Users preserved (${realUsers.length}):`);
+  realUsers.forEach(u => console.log(`   + [${u.userId}] ${u.fullName} (${u.email}) [${u.roles.map(r=>r.role).join(',')}]`));
+
+  // 3. Test Courses & Classes
+  const testCoursesToDelete = await prisma.course.findMany({
     where: {
       OR: [
-        { title: { contains: "Test Course", mode: "insensitive" } },
-        { title: { contains: "INTEGRITY", mode: "insensitive" } },
-        { title: { contains: "Shadow Course", mode: "insensitive" } },
-        { title: { contains: "Gate1 Course", mode: "insensitive" } },
-        { title: { contains: "Resilience Course", mode: "insensitive" } },
-      ],
+        { title: { contains: "P1 IELTS Intensive" } },
+        { title: { contains: "IELTS Intensive Master Course" } },
+      ]
     },
-    include: {
-      exams: true,
-      classes: true,
-      enrollments: true,
-    },
+    select: { id: true, title: true }
   });
-  console.log(`\n2. Leftover Courses found: ${courses.length}`);
-  courses.forEach((c) => {
-    console.log(`   - Course ID: ${c.id}, Title: "${c.title}", Exams: ${c.exams.length}, Classes: ${c.classes.length}, Enrollments: ${c.enrollments.length}`);
-  });
+  console.log(`Test Courses to delete: ${testCoursesToDelete.length}`);
 
-  // 3. Classes
-  const classes = await prisma.class.findMany({
+  // 4. Dummy test leads from initial bubble tests
+  const dummyLeads = await prisma.contactLead.findMany({
     where: {
       OR: [
-        { name: { contains: "Test Class", mode: "insensitive" } },
-        { name: { contains: "Shadow Class", mode: "insensitive" } },
-        { name: { contains: "F1 Test", mode: "insensitive" } },
-      ],
+        { fullName: { in: ["h", "n", "f", "d", "fđ"] } },
+        { phone: { in: ["h", "n", "f", "d"] } },
+        { fullName: "Tran Van Referee" },
+        { fullName: "Le Thi Friend" },
+        { email: { contains: "example.com" } }
+      ]
     },
+    select: { id: true, fullName: true, phone: true, source: true }
   });
-  console.log(`\n3. Leftover Classes found: ${classes.length}`);
-  classes.forEach((cl) => {
-    console.log(`   - Class ID: ${cl.id}, Name: "${cl.name}"`);
-  });
+  console.log(`Dummy Leads to delete (${dummyLeads.length}):`);
+  dummyLeads.forEach(l => console.log(`   - [${l.id}] ${l.fullName} (${l.phone}) source: ${l.source}`));
 
-  // 4. Users
-  const users = await prisma.user.findMany({
+  const realLeads = await prisma.contactLead.findMany({
     where: {
-      OR: [
-        { email: { contains: "test-student-", mode: "insensitive" } },
-        { email: { contains: "test-user-", mode: "insensitive" } },
-        { email: { contains: "shadow-student-", mode: "insensitive" } },
-        { email: { contains: "referee_lead_", mode: "insensitive" } },
-      ],
+      NOT: {
+        OR: [
+          { fullName: { in: ["h", "n", "f", "d", "fđ"] } },
+          { phone: { in: ["h", "n", "f", "d"] } },
+          { fullName: "Tran Van Referee" },
+          { fullName: "Le Thi Friend" },
+          { email: { contains: "example.com" } }
+        ]
+      }
     },
+    select: { id: true, fullName: true, phone: true, source: true }
   });
-  console.log(`\n4. Leftover Users found: ${users.length}`);
-  users.forEach((u) => {
-    console.log(`   - User ID: ${u.id} (${u.userId}), Email: "${u.email}", Name: "${u.fullName}"`);
-  });
-
-  // Print all courses to verify
-  const allCourses = await prisma.course.findMany({
-    select: { id: true, title: true, _count: { select: { exams: true, classes: true, enrollments: true } } },
-  });
-  console.log("\n=== ALL COURSES IN SYSTEM ===");
-  allCourses.forEach(c => console.log(`[${c.id}] "${c.title}" -> exams: ${c._count.exams}, classes: ${c._count.classes}, enrollments: ${c._count.enrollments}`));
-
-  // Print all classes
-  const allClasses = await prisma.class.findMany({
-    select: { id: true, name: true, course: { select: { title: true } }, _count: { select: { students: true, sessions: true } } },
-  });
-  console.log("\n=== ALL CLASSES IN SYSTEM ===");
-  allClasses.forEach(cl => console.log(`[${cl.id}] "${cl.name}" (Course: ${cl.course?.title}) -> students: ${cl._count.students}, sessions: ${cl._count.sessions}`));
+  console.log(`Real Leads preserved (${realLeads.length}):`);
+  realLeads.forEach(l => console.log(`   + [${l.id}] ${l.fullName} (${l.phone}) source: ${l.source}`));
 }
 
 main()
