@@ -91,15 +91,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         ? (rolesData.map((r) => r.role as AppRole))
         : [];
 
-      if (
-        authUser.email?.toLowerCase() === "admin@ielts.com" ||
-        authUser.email?.toLowerCase() === "admin@nextband.site"
-      ) {
-        if (!userRoles.includes("admin")) {
-          userRoles.push("admin");
-        }
-      }
-
       setUser({
         id: authUser.id,
         email: authUser.email || "",

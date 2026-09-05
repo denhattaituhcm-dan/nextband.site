@@ -36,6 +36,101 @@ export const resolveApiBaseUrl = (): string => {
 
 export const API_BASE_URL = resolveApiBaseUrl();
 
+export type ApiErrorCode =
+  | "AUTH_ERROR"
+  | "PERMISSION_ERROR"
+  | "SERVER_ERROR"
+  | "NETWORK_ERROR"
+  | "NOT_FOUND"
+  | "VALIDATION_ERROR"
+  | "UNKNOWN";
+
+export class ApiError extends Error {
+  public status: number;
+  public code: ApiErrorCode;
+  public details?: any;
+
+  constructor(
+    message: string,
+    status: number = 500,
+    code: ApiErrorCode = "UNKNOWN",
+    details?: any
+  ) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.code = code;
+    this.details = details;
+  }
+}
+
+export async function handleApiResponse<T = any>(
+  res: Response,
+  fallbackErrorMsg: string = "Yêu cầu thất bại"
+): Promise<T> {
+  if (res.ok) {
+    return (await res.json()) as T;
+  }
+
+  let errorDetails: any = null;
+  let errorMessage = fallbackErrorMsg;
+  try {
+    errorDetails = await res.json();
+    if (errorDetails?.error || errorDetails?.message) {
+      errorMessage = errorDetails.error || errorDetails.message;
+    }
+  } catch {
+    // Non-JSON response body
+  }
+
+  if (res.status === 401) {
+    throw new ApiError(
+      "Phiên đăng nhập đã hết hạn hoặc không hợp lệ. Vui lòng đăng nhập lại.",
+      401,
+      "AUTH_ERROR",
+      errorDetails
+    );
+  }
+
+  if (res.status === 403) {
+    throw new ApiError(
+      "Bạn không có quyền thực hiện thao tác này.",
+      403,
+      "PERMISSION_ERROR",
+      errorDetails
+    );
+  }
+
+  if (res.status === 404) {
+    throw new ApiError(
+      errorMessage || "Không tìm thấy tài nguyên được yêu cầu.",
+      404,
+      "NOT_FOUND",
+      errorDetails
+    );
+  }
+
+  if (res.status === 400 || res.status === 422) {
+    throw new ApiError(
+      errorMessage,
+      res.status,
+      "VALIDATION_ERROR",
+      errorDetails
+    );
+  }
+
+  if (res.status >= 500) {
+    throw new ApiError(
+      errorMessage || "Máy chủ gặp sự cố khi xử lý yêu cầu.",
+      res.status,
+      "SERVER_ERROR",
+      errorDetails
+    );
+  }
+
+  throw new ApiError(errorMessage, res.status, "UNKNOWN", errorDetails);
+}
+
 export const getAuthToken = async (): Promise<string | null> => {
   try {
     const { data: { session } } = await supabase.auth.getSession();
@@ -2738,318 +2833,104 @@ export const classesApi = {
     sortBy?: string;
     sortOrder?: "asc" | "desc";
   }) => {
-    // 1. Try Fastify backend with full relation embedding and authorization boundary
-    try {
-      const token = await getAuthToken();
-      const queryParams = new URLSearchParams();
-      if (params?.page) queryParams.set("page", String(params.page));
-      if (params?.limit) queryParams.set("limit", String(params.limit));
-      if (params?.search) queryParams.set("search", params.search);
-      if (params?.branchId && params.branchId !== "ALL") queryParams.set("branchId", params.branchId);
-      if (params?.isActive !== undefined) queryParams.set("isActive", String(params.isActive));
-      if (params?.teacherId) queryParams.set("teacherId", params.teacherId);
-      if (params?.courseId) queryParams.set("courseId", params.courseId);
+    const token = await getAuthToken();
+    const queryParams = new URLSearchParams();
+    if (params?.page) queryParams.set("page", String(params.page));
+    if (params?.limit) queryParams.set("limit", String(params.limit));
+    if (params?.search) queryParams.set("search", params.search);
+    if (params?.branchId && params.branchId !== "ALL") queryParams.set("branchId", params.branchId);
+    if (params?.isActive !== undefined) queryParams.set("isActive", String(params.isActive));
+    if (params?.teacherId) queryParams.set("teacherId", params.teacherId);
+    if (params?.courseId) queryParams.set("courseId", params.courseId);
 
-      const res = await fetch(`${API_BASE_URL}/classes?${queryParams.toString()}`, {
+    let res: Response;
+    try {
+      res = await fetch(`${API_BASE_URL}/classes?${queryParams.toString()}`, {
         headers: {
           "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
       });
-
-      if (res.ok) {
-        const json = await res.json();
-        if (json?.data) {
-          const formatted = json.data.map((c: any) => ({
-            id: c.id,
-            name: c.name,
-            description: c.description || "",
-            courseId: c.courseId || c.course_id,
-            branchId: c.branchId || c.branch_id,
-            roomId: c.roomId || c.room_id,
-            branch: c.branch || null,
-            room: c.room || null,
-            course: c.course || null,
-            teacherId: c.teacherId || c.teacher_id,
-            teacher: c.teacher || null,
-            startDate: c.startDate || c.start_date,
-            endDate: c.endDate || c.end_date,
-            isActive: c.isActive ?? c.is_active ?? true,
-            createdAt: c.createdAt || c.created_at,
-            _count: { students: c._count?.students || 0 },
-            studentCount: c._count?.students || 0,
-          }));
-
-          return {
-            data: formatted,
-            meta: json.meta || {
-              total: formatted.length,
-              page: params?.page || 1,
-              limit: params?.limit || 10,
-              totalPages: 1,
-            },
-          };
-        }
-      }
-    } catch (apiErr) {
-      console.warn("[classesApi] Fastify fetch failed, falling back to Supabase:", apiErr);
+    } catch (networkErr: any) {
+      throw new ApiError(
+        "Không thể kết nối đến máy chủ. Vui lòng kiểm tra lại đường truyền mạng.",
+        0,
+        "NETWORK_ERROR",
+        networkErr
+      );
     }
 
-    // 2. Fallback to Supabase direct query
-    let query = supabase
-      .from("classes")
-      .select("*", { count: "exact" });
-
-    if (params?.branchId && params.branchId !== "ALL") {
-      query = query.eq("branch_id", params.branchId);
-    }
-
-    if (params?.search) {
-      query = query.ilike("name", `%${params.search}%`);
-    }
-
-    let sortField = params?.sortBy || "created_at";
-    if (sortField === "createdAt") sortField = "created_at";
-    const ascending = params?.sortOrder === "asc";
-    query = query.order(sortField, { ascending });
-
-    if (params?.page && params?.limit) {
-      const from = (params.page - 1) * params.limit;
-      const to = from + params.limit - 1;
-      query = query.range(from, to);
-    }
-
-    const { data, count, error } = await query;
-    if (error) throw error;
-
-    // Fetch related teacher profiles separately to prevent PostgREST relation embed errors
-    const teacherIds = Array.from(
-      new Set((data || []).map((c: any) => c.teacher_id).filter(Boolean))
+    const json = await handleApiResponse<{ data: any[]; meta: any }>(
+      res,
+      "Không thể tải danh sách lớp học"
     );
 
-    let teacherMap: Record<string, { fullName: string; avatarUrl?: string }> = {};
-    if (teacherIds.length > 0) {
-      const { data: profs } = await supabase
-        .from("profiles")
-        .select("user_id, full_name, avatar_url")
-        .in("user_id", teacherIds);
-
-      (profs || []).forEach((p: any) => {
-        if (p.user_id) {
-          teacherMap[p.user_id] = {
-            fullName: p.full_name,
-            avatarUrl: p.avatar_url,
-          };
-        }
-      });
-    }
-
-    // Fetch student counts for each class
-    const classIds = (data || []).map((c: any) => c.id);
-    let studentCountsMap: Record<string, number> = {};
-    if (classIds.length > 0) {
-      const { data: studentCounts } = await supabase
-        .from("class_students")
-        .select("class_id")
-        .in("class_id", classIds);
-
-      if (studentCounts) {
-        studentCounts.forEach((cs: any) => {
-          if (cs.class_id) {
-            studentCountsMap[cs.class_id] = (studentCountsMap[cs.class_id] || 0) + 1;
-          }
-        });
-      }
-    }
-
-    const branchIds = Array.from(new Set((data || []).map((c: any) => c.branch_id).filter(Boolean)));
-    const roomIds = Array.from(new Set((data || []).map((c: any) => c.room_id).filter(Boolean)));
-    const courseIds = Array.from(new Set((data || []).map((c: any) => c.course_id).filter(Boolean)));
-
-    let branchMap: Record<string, any> = {};
-    if (branchIds.length > 0) {
-      const { data: bList } = await supabase.from("branches").select("id, name, code").in("id", branchIds);
-      (bList || []).forEach((b: any) => {
-        branchMap[b.id] = b;
-      });
-    }
-
-    let roomMap: Record<string, any> = {};
-    if (roomIds.length > 0) {
-      const { data: rList } = await supabase.from("rooms").select("id, name, capacity").in("id", roomIds);
-      (rList || []).forEach((r: any) => {
-        roomMap[r.id] = r;
-      });
-    }
-
-    let courseMap: Record<string, any> = {};
-    if (courseIds.length > 0) {
-      const { data: cList } = await supabase.from("courses").select("id, title").in("id", courseIds);
-      (cList || []).forEach((c: any) => {
-        courseMap[c.id] = c;
-      });
-    }
-
-    const formatted = (data || []).map((c: any) => ({
+    const formatted = (json.data || []).map((c: any) => ({
+      ...c,
       id: c.id,
       name: c.name,
       description: c.description || "",
-      courseId: c.course_id,
-      course: courseMap[c.course_id] || null,
-      branchId: c.branch_id || null,
-      branch: branchMap[c.branch_id] || null,
-      roomId: c.room_id || null,
-      room: roomMap[c.room_id] || null,
-      teacherId: c.teacher_id,
-      teacher: {
-        id: c.teacher_id,
-        fullName: teacherMap[c.teacher_id]?.fullName || null,
-        avatarUrl: teacherMap[c.teacher_id]?.avatarUrl || null,
-      },
-      startDate: c.start_date,
-      endDate: c.end_date,
-      isActive: c.is_active ?? true,
-      createdAt: c.created_at,
-      _count: {
-        students: studentCountsMap[c.id] || 0,
-      },
-      studentCount: studentCountsMap[c.id] || 0,
+      courseId: c.courseId || c.course_id,
+      branchId: c.branchId || c.branch_id,
+      roomId: c.roomId || c.room_id,
+      branch: c.branch || null,
+      room: c.room || null,
+      course: c.course || null,
+      teacherId: c.teacherId || c.teacher_id,
+      teacher: c.teacher || null,
+      startDate: c.startDate || c.start_date,
+      start_date: c.startDate || c.start_date,
+      endDate: c.endDate || c.end_date,
+      end_date: c.endDate || c.end_date,
+      totalWeeks: c.totalWeeks || c.total_weeks || 10,
+      total_weeks: c.total_weeks || c.totalWeeks || 10,
+      targetBand: c.targetBand || c.target_band || null,
+      target_band: c.target_band || c.targetBand || null,
+      isActive: c.isActive ?? c.is_active ?? true,
+      createdAt: c.createdAt || c.created_at,
+      _count: { students: c._count?.students || 0 },
+      studentCount: c._count?.students || 0,
     }));
-
-    const totalCount = count !== null && count !== undefined ? count : formatted.length;
 
     return {
       data: formatted,
-      meta: {
-        total: totalCount,
+      meta: json.meta || {
+        total: formatted.length,
         page: params?.page || 1,
         limit: params?.limit || 10,
-        totalPages: Math.ceil(totalCount / (params?.limit || 10)) || 1,
+        totalPages: 1,
       },
     };
   },
 
   getById: async (id: string) => {
-    // 1. Try Fastify backend with relation embeds
+    const token = await getAuthToken();
+    let res: Response;
     try {
-      const token = await getAuthToken();
-      const res = await fetch(`${API_BASE_URL}/classes/${id}`, {
+      res = await fetch(`${API_BASE_URL}/classes/${id}`, {
         headers: {
           "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
       });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data) {
-          return toCanonicalClass(data);
-        }
-      }
-    } catch {
-      // Backend REST offline -> Fallback to Supabase
+    } catch (networkErr: any) {
+      throw new ApiError(
+        "Không thể kết nối đến máy chủ. Vui lòng kiểm tra lại đường truyền mạng.",
+        0,
+        "NETWORK_ERROR",
+        networkErr
+      );
     }
 
-    const { data, error } = await supabase
-      .from("classes")
-      .select("*, class_students(*)")
-      .eq("id", id)
-      .single();
-
-    if (error) throw error;
-
-    // Data enrichment for student profiles matching DB FK (profiles.user_id)
-    const studentIds = (data.class_students || []).map((cs: any) => cs.student_id).filter(Boolean);
-    let students: any[] = [];
-    if (studentIds.length > 0) {
-      const { data: profs } = await supabase
-        .from("profiles")
-        .select("*")
-        .in("user_id", studentIds);
-      students = profs || [];
-    }
-
-    // Fetch teacher profile if teacher_id exists
-    let teacherProfile = null;
-    if (data.teacher_id) {
-      const { data: prof } = await supabase
-        .from("profiles")
-        .select("user_id, full_name, avatar_url")
-        .eq("user_id", data.teacher_id)
-        .maybeSingle();
-
-      if (prof) {
-        teacherProfile = {
-          id: prof.user_id,
-          fullName: prof.full_name,
-          avatarUrl: prof.avatar_url,
-        };
-      }
-    }
-
-    // Map raw class_students with attached profiles before canonical normalization
-    const mergedClassStudents = (data.class_students || []).map((cs: any) => {
-      const matchedProfile = students.find((p: any) => (p.user_id || p.id) === cs.student_id);
-      return {
-        ...cs,
-        student: matchedProfile || null,
-      };
-    });
-
-    // Fetch course information if course_id exists
-    let courseProfile = null;
-    if (data.course_id) {
-      const { data: courseRow } = await supabase
-        .from("courses")
-        .select("id, title, description")
-        .eq("id", data.course_id)
-        .maybeSingle();
-
-      if (courseRow) {
-        courseProfile = {
-          id: courseRow.id,
-          title: courseRow.title,
-          description: courseRow.description || "",
-        };
-      }
-    }
-
-    let branchProfile = null;
-    if (data.branch_id) {
-      const { data: bRow } = await supabase
-        .from("branches")
-        .select("id, name, code")
-        .eq("id", data.branch_id)
-        .maybeSingle();
-      if (bRow) branchProfile = bRow;
-    }
-
-    let roomProfile = null;
-    if (data.room_id) {
-      const { data: rRow } = await supabase
-        .from("rooms")
-        .select("id, name, capacity")
-        .eq("id", data.room_id)
-        .maybeSingle();
-      if (rRow) roomProfile = rRow;
-    }
-
-    const mergedPayload = {
-      ...data,
-      students: mergedClassStudents,
-      teacher: teacherProfile,
-      course: courseProfile,
-      branch: branchProfile,
-      room: roomProfile,
-    };
-
-    return toCanonicalClass(mergedPayload);
+    const data = await handleApiResponse<any>(res, "Không thể tải thông tin lớp học");
+    return toCanonicalClass(data);
   },
 
   create: async (body: any) => {
     const token = await getAuthToken();
+    let res: Response;
     try {
-      const res = await fetch(`${API_BASE_URL}/classes`, {
+      res = await fetch(`${API_BASE_URL}/classes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -3057,58 +2938,33 @@ export const classesApi = {
         },
         body: JSON.stringify(body),
       });
-
-      if (res.ok) {
-        const data = await res.json();
-        return {
-          ...data,
-          courseId: data.courseId || data.course_id,
-          branchId: data.branchId || data.branch_id,
-          roomId: data.roomId || data.room_id,
-          teacherId: data.teacherId || data.teacher_id,
-          startDate: data.startDate || data.start_date,
-          endDate: data.endDate || data.end_date,
-          isActive: data.isActive ?? data.is_active ?? true,
-        };
-      }
-    } catch {
-      // Backend REST offline -> Fallback to Supabase
+    } catch (networkErr: any) {
+      throw new ApiError(
+        "Không thể kết nối đến máy chủ. Vui lòng kiểm tra lại đường truyền mạng.",
+        0,
+        "NETWORK_ERROR",
+        networkErr
+      );
     }
 
-    const { data, error } = await supabase
-      .from("classes")
-      .insert({
-        name: body.name,
-        description: body.description ?? "",
-        course_id: body.courseId || null,
-        branch_id: body.branchId || null,
-        room_id: body.roomId || null,
-        teacher_id: body.teacherId || null,
-        start_date: body.startDate || null,
-        end_date: body.endDate || null,
-        is_active: body.isActive !== undefined ? body.isActive : true,
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-
+    const data = await handleApiResponse<any>(res, "Không thể tạo lớp học");
     return {
       ...data,
-      courseId: data.course_id,
-      branchId: data.branch_id,
-      roomId: data.room_id,
-      teacherId: data.teacher_id,
-      startDate: data.start_date,
-      endDate: data.end_date,
-      isActive: data.is_active ?? true,
+      courseId: data.courseId || data.course_id,
+      branchId: data.branchId || data.branch_id,
+      roomId: data.roomId || data.room_id,
+      teacherId: data.teacherId || data.teacher_id,
+      startDate: data.startDate || data.start_date,
+      endDate: data.endDate || data.end_date,
+      isActive: data.isActive ?? data.is_active ?? true,
     };
   },
 
   update: async (id: string, body: any) => {
     const token = await getAuthToken();
+    let res: Response;
     try {
-      const res = await fetch(`${API_BASE_URL}/classes/${id}`, {
+      res = await fetch(`${API_BASE_URL}/classes/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -3116,52 +2972,25 @@ export const classesApi = {
         },
         body: JSON.stringify(body),
       });
-
-      if (res.ok) {
-        const data = await res.json();
-        return {
-          ...data,
-          courseId: data.courseId || data.course_id,
-          branchId: data.branchId || data.branch_id,
-          roomId: data.roomId || data.room_id,
-          teacherId: data.teacherId || data.teacher_id,
-          startDate: data.startDate || data.start_date,
-          endDate: data.endDate || data.end_date,
-          isActive: data.isActive ?? data.is_active ?? true,
-        };
-      }
-    } catch {
-      // Backend REST offline -> Fallback to Supabase
+    } catch (networkErr: any) {
+      throw new ApiError(
+        "Không thể kết nối đến máy chủ. Vui lòng kiểm tra lại đường truyền mạng.",
+        0,
+        "NETWORK_ERROR",
+        networkErr
+      );
     }
 
-    const { data, error } = await supabase
-      .from("classes")
-      .update({
-        name: body.name,
-        description: body.description ?? "",
-        course_id: body.courseId || null,
-        branch_id: body.branchId || null,
-        room_id: body.roomId || null,
-        teacher_id: body.teacherId || null,
-        start_date: body.startDate || null,
-        end_date: body.endDate || null,
-        is_active: body.isActive !== undefined ? body.isActive : true,
-      })
-      .eq("id", id)
-      .select()
-      .single();
-
-    if (error) throw error;
-
+    const data = await handleApiResponse<any>(res, "Không thể cập nhật lớp học");
     return {
       ...data,
-      courseId: data.course_id,
-      branchId: data.branch_id,
-      roomId: data.room_id,
-      teacherId: data.teacher_id,
-      startDate: data.start_date,
-      endDate: data.end_date,
-      isActive: data.is_active ?? true,
+      courseId: data.courseId || data.course_id,
+      branchId: data.branchId || data.branch_id,
+      roomId: data.roomId || data.room_id,
+      teacherId: data.teacherId || data.teacher_id,
+      startDate: data.startDate || data.start_date,
+      endDate: data.endDate || data.end_date,
+      isActive: data.isActive ?? data.is_active ?? true,
     };
   },
 
