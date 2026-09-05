@@ -407,6 +407,7 @@ export default function AdminClasses() {
       const courseMatch = courses.find(
         (crs: any) => crs.id === (c.courseId || c.course_id || c.course?.id)
       );
+      // Prioritize the actual course assigned to the class; only fallback to class name if course is truly absent
       const brand = getCourseBrand(courseMatch || c.course || c.name);
       return brand.key === levelKey;
     });
