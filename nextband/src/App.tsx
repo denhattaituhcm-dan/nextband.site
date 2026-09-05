@@ -98,6 +98,7 @@ const SpeakingForecastTopicPage = lazyWithRetry(() => import("@/pages/public/spe
 const ReadingUniversePage = lazyWithRetry(() => import("@/pages/public/reading/ReadingUniversePage"));
 const ReadingCasePage = lazyWithRetry(() => import("@/pages/public/reading/ReadingCasePage"));
 const BuddyLandingPage = lazyWithRetry(() => import("@/pages/public/BuddyLandingPage"));
+const ParentHubPage = lazyWithRetry(() => import("@/pages/public/ParentHubPage"));
 
 
 // Lazy-loaded Auth Pages
@@ -322,6 +323,11 @@ const App = () => (
               <Route path="/reading/:caseId" element={<ReadingCasePage />} />
               <Route path="/assessment/take/:sessionId" element={<PlacementExamInterface />} />
               <Route path="/assessment/take" element={<Navigate to="/assessment" replace />} />
+
+              {/* ============================================================ */}
+              {/* 1.2 PARENT PROGRESS HUB (Zero-Login Magic Link View)         */}
+              {/* ============================================================ */}
+              <Route path="/p/:token" element={<ParentHubPage />} />
 
               {/* ============================================================ */}
               {/* 2. AUTH WORLD (Auth Pages)                                  */}

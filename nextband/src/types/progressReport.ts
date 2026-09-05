@@ -7,6 +7,9 @@
 export interface ProgressReportData {
   classId?: string;
   studentId?: string;
+  parentToken?: string;
+  totalWeeks?: number;
+  currentWeek?: number;
 
   student: {
     name: string;

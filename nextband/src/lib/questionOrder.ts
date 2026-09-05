@@ -44,14 +44,26 @@ export function getAssessmentMode(question: any, sectionType?: string): Assessme
   const qType = String(question?.questionType || question?.question_type || "").toLowerCase();
   const secType = String(sectionType || question?.sectionType || "").toLowerCase();
 
+  const subjectiveTypes = [
+    "essay",
+    "writing",
+    "speaking",
+    "ielts_writing_task1",
+    "ielts_writing_task2",
+    "ielts_speaking_part1",
+    "ielts_speaking_part2",
+    "ielts_speaking_part3",
+    "manual_grade",
+    "open_question",
+  ];
+
   const isSubjective =
-    qType === "essay" ||
-    qType === "speaking" ||
+    subjectiveTypes.includes(qType) ||
     secType === "speaking" ||
     (secType === "writing" && !["multiple_choice", "fill_blank", "matching"].includes(qType));
 
   if (!isSubjective) return "OBJECTIVE";
-  if (secType === "writing" || qType === "essay") return "HOLISTIC";
+  if (secType === "writing" || qType === "essay" || qType.startsWith("ielts_writing")) return "HOLISTIC";
   return "MANUAL_ITEM";
 }
 

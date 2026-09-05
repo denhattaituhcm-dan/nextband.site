@@ -233,4 +233,25 @@ export default async function classesRoutes(fastify: FastifyInstance) {
       return controller.triggerMaintenance(request, reply);
     }
   );
+
+  // POST /classes/:id/students/:studentId/parent-token/regenerate - Cấp lại Magic Link phụ huynh
+  fastify.post<{ Params: { id: string; studentId: string } }>(
+    "/:id/students/:studentId/parent-token/regenerate",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { id: classId, studentId } = request.params;
+      const { randomBytes } = await import("crypto");
+      const newToken = `nb_p_${randomBytes(8).toString("hex")}`;
+
+      const updated = await fastify.prisma.classStudent.update({
+        where: { classId_studentId: { classId, studentId } },
+        data: { parentToken: newToken },
+      });
+
+      return reply.send({
+        success: true,
+        data: { parentToken: updated.parentToken },
+      });
+    }
+  );
 }

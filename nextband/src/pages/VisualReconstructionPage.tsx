@@ -1,4 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useStudentLifecycle } from '@/hooks/useStudentLifecycle';
+import { useAuth } from '@/hooks/useAuth';
 import { vrsMockLessons } from '@/data/vrsLessonsData';
 import { VRSVisualLesson, VRSCourse } from '@/types/vrs';
 import VRSSlotSnapInteractive from '@/components/vrs/VRSSlotSnapInteractive';
@@ -217,8 +219,90 @@ const BUILDER_WEEKS_META: WeekMeta[] = [
   { week: 9, title: 'Mở Bài, Overview WT1 & So Sánh Đối Chiếu', theme: 'WT1 Intro / Overview & Compare and Contrast', progressPercent: 0, status: 'available', homeworkPendingCount: 3 }
 ];
 
+/**
+ * Detects the corresponding VRSCourse from student's class enrollment metadata.
+ */
+export function detectVRSCourse(enrollment?: {
+  className?: string;
+  courseTitle?: string;
+  courseSlug?: string | null;
+  courseId?: string;
+} | null): VRSCourse | null {
+  if (!enrollment) return null;
+
+  const rawTitle = (enrollment.courseTitle || '').toLowerCase();
+  const rawSlug = (enrollment.courseSlug || '').toLowerCase();
+  const rawName = (enrollment.className || '').trim().toUpperCase();
+
+  // 1. Explicit slug or title checks
+  if (rawSlug === 'dreamer' || rawTitle.includes('dreamer') || rawTitle.includes('học sĩ')) {
+    return 'dreamer';
+  }
+  if (rawSlug === 'builder' || rawTitle.includes('builder') || rawTitle.includes('học sư')) {
+    return 'builder';
+  }
+  if (rawSlug === 'master' || rawTitle.includes('master') || rawTitle.includes('học vương')) {
+    return 'master';
+  }
+  if (rawSlug === 'leader' || rawTitle.includes('leader') || rawTitle.includes('học đế')) {
+    return 'leader';
+  }
+
+  // 2. Class code prefix check (e.g. "D01 07.2026", "D01", "DREAMER-01")
+  if (/^D(\d+|REAMER)/i.test(rawName)) {
+    return 'dreamer';
+  }
+  if (/^B(\d+|UILDER)/i.test(rawName)) {
+    return 'builder';
+  }
+  if (/^M(\d+|ASTER)/i.test(rawName)) {
+    return 'master';
+  }
+  if (/^L(\d+|EADER)/i.test(rawName)) {
+    return 'leader';
+  }
+
+  return null;
+}
+
 export default function VisualReconstructionPage() {
-  const [selectedCourse, setSelectedCourse] = useState<VRSCourse>('builder');
+  const { state: lifecycleState, enrollments, isLoading, lifecycleError, retry } = useStudentLifecycle();
+  const { isAdmin, isTeacher } = useAuth();
+
+  // Active enrolled classes with detected VRS courses
+  const userEnrolledClasses = useMemo(() => {
+    if (!enrollments) return [];
+    return enrollments.map((enr) => ({
+      ...enr,
+      vrsCourse: detectVRSCourse(enr),
+    }));
+  }, [enrollments]);
+
+  // Authorized courses for this user
+  const availableCourses = useMemo<VRSCourse[]>(() => {
+    // Admins and teachers can inspect all available courses
+    if (isAdmin || isTeacher) {
+      return ['dreamer', 'builder'];
+    }
+    // Students can ONLY access courses matching their active enrollments
+    const enrolled = userEnrolledClasses
+      .map((c) => c.vrsCourse)
+      .filter((c): c is VRSCourse => c !== null);
+    const unique = Array.from(new Set(enrolled));
+    return unique.length > 0 ? unique : ['dreamer'];
+  }, [isAdmin, isTeacher, userEnrolledClasses]);
+
+  const [selectedCourse, setSelectedCourse] = useState<VRSCourse>(() => {
+    return availableCourses[0] || 'dreamer';
+  });
+
+  // Keep selectedCourse in sync and strictly constrained to authorized courses
+  useEffect(() => {
+    if (availableCourses.length > 0 && !availableCourses.includes(selectedCourse)) {
+      setSelectedCourse(availableCourses[0]);
+    }
+  }, [availableCourses, selectedCourse]);
+
   const [selectedWeek, setSelectedWeek] = useState<number>(1);
   const [activeLesson, setActiveLesson] = useState<VRSVisualLesson | null>(null);
   // Track lessons marked completed; default W2D2 reading is completed in mock
@@ -242,6 +326,70 @@ export default function VisualReconstructionPage() {
   const day2Lesson = weekLessons.find((l) => l.day === 2);
   const day3Lesson = weekLessons.find((l) => l.day === 3);
 
+  // Active enrolled class corresponding to selectedCourse
+  const activeClassForCourse = useMemo(() => {
+    return userEnrolledClasses.find((c) => c.vrsCourse === selectedCourse) || userEnrolledClasses[0];
+  }, [userEnrolledClasses, selectedCourse]);
+
+  if (isLoading && !isAdmin && !isTeacher) {
+    return (
+      <div className="min-h-screen bg-slate-50/50 p-6">
+        <div className="max-w-7xl mx-auto space-y-6 animate-pulse">
+          <div className="h-14 bg-white rounded-2xl border border-slate-200/80" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="lg:col-span-3 h-96 bg-white rounded-2xl border border-slate-200/80" />
+            <div className="lg:col-span-9 space-y-6">
+              <div className="h-48 bg-white rounded-3xl border border-slate-200/80" />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="h-64 bg-white rounded-3xl border border-slate-200/80" />
+                <div className="h-64 bg-white rounded-3xl border border-slate-200/80" />
+                <div className="h-64 bg-white rounded-3xl border border-slate-200/80" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (lifecycleState === 'PRE_ENROLLMENT' && !isAdmin && !isTeacher) {
+    return (
+      <div className="min-h-screen bg-slate-50/50 text-slate-900 flex items-center justify-center p-6">
+        <div className="max-w-md w-full bg-white rounded-3xl p-8 border border-slate-200/90 shadow-lg text-center space-y-4">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
+            <BookOpen className="w-7 h-7" />
+          </div>
+          <h2 className="text-xl font-bold text-slate-900">Chưa có lớp học được kích hoạt</h2>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            Tài khoản của bạn hiện chưa được xếp vào lớp học nào. Vui lòng liên hệ bộ phận học vụ để được phân bổ lớp học và mở quyền truy cập Bài Học Trực Quan.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if ((lifecycleState === 'API_ERROR' || lifecycleState === 'NETWORK_ERROR') && !isAdmin && !isTeacher) {
+    return (
+      <div className="min-h-screen bg-slate-50/50 text-slate-900 flex items-center justify-center p-6">
+        <div className="max-w-md w-full bg-white rounded-3xl p-8 border border-slate-200/90 shadow-lg text-center space-y-4">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600">
+            <Scale className="w-7 h-7" />
+          </div>
+          <h2 className="text-xl font-bold text-slate-900">Không thể tải thông tin lớp học</h2>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            {lifecycleError?.message || 'Đã xảy ra lỗi kết nối khi xác thực quyền truy cập lớp học.'}
+          </p>
+          <button
+            onClick={() => retry()}
+            className="px-5 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition shadow-sm cursor-pointer"
+          >
+            Thử lại
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-50/50 text-slate-900">
       {/* Top Breadcrumb & Target Banner */}
@@ -250,43 +398,53 @@ export default function VisualReconstructionPage() {
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200/70">
               <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-              Tái Dựng Bài Học
+              Bài Học Trực Quan
               <span className="ml-1 px-1.5 py-0.2 rounded-full text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-500 via-amber-600 to-orange-500 text-white shadow-[0_2px_6px_rgba(245,158,11,0.35)] ring-1 ring-amber-400/40">
                 NEW
               </span>
             </span>
             <span className="text-slate-300">/</span>
-            {/* Course Selector Tabs */}
-            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200/80">
-              <button
-                onClick={() => {
-                  setSelectedCourse('builder');
-                  setSelectedWeek(1);
-                  setActiveLesson(null);
-                }}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  selectedCourse === 'builder'
-                    ? 'bg-white text-indigo-700 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                Khóa Builder (4.0 - 5.5)
-              </button>
-              <button
-                onClick={() => {
-                  setSelectedCourse('dreamer');
-                  setSelectedWeek(2);
-                  setActiveLesson(null);
-                }}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  selectedCourse === 'dreamer'
-                    ? 'bg-white text-indigo-700 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                Khóa Dreamer (3.0 - 4.5)
-              </button>
-            </div>
+            {/* Course / Class Badge or Selector */}
+            {isAdmin || isTeacher || availableCourses.length > 1 ? (
+              <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200/80">
+                {availableCourses.map((course) => (
+                  <button
+                    key={course}
+                    onClick={() => {
+                      setSelectedCourse(course);
+                      setSelectedWeek(1);
+                      setActiveLesson(null);
+                    }}
+                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      selectedCourse === course
+                        ? 'bg-white text-indigo-700 shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    {course === 'builder'
+                      ? 'Khóa Builder (4.0 - 5.5)'
+                      : course === 'dreamer'
+                      ? 'Khóa Dreamer (3.0 - 4.5)'
+                      : course}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-xl border border-slate-200/80 text-xs font-semibold text-slate-700">
+                <BookOpen className="w-3.5 h-3.5 text-indigo-600" />
+                <span>
+                  Lớp: <strong className="text-slate-900">{activeClassForCourse?.className || 'Lớp của tôi'}</strong>
+                </span>
+                <span className="text-slate-300">·</span>
+                <span className="text-indigo-700 font-bold">
+                  {selectedCourse === 'dreamer'
+                    ? 'Khóa Dreamer (3.0 - 4.5)'
+                    : selectedCourse === 'builder'
+                    ? 'Khóa Builder (4.0 - 5.5)'
+                    : selectedCourse}
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-4 text-xs font-medium text-slate-500">
@@ -310,7 +468,7 @@ export default function VisualReconstructionPage() {
             <aside className="lg:col-span-3 bg-white/80 backdrop-blur-xs border border-slate-200/80 rounded-2xl p-5 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.04)]">
               <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-100">
                 <h3 className="text-sm font-bold text-slate-900">
-                  Lộ Trình Tái Dựng
+                  Lộ Trình Trực Quan
                 </h3>
                 <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
                   9 Tuần

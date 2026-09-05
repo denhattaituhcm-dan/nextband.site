@@ -195,8 +195,7 @@ export const formatStorageUrl = (path: string | null | undefined) => {
   if (path.startsWith("http://") || path.startsWith("https://") || path.startsWith("blob:") || path.startsWith("data:")) return path;
   let cleanPath = path.startsWith("/") ? path.slice(1) : path;
   if (cleanPath.startsWith("speaking-recordings/")) {
-    const subClean = cleanPath.replace(/^speaking-recordings\//, "");
-    const { data } = supabase.storage.from("speaking-recordings").getPublicUrl(subClean);
+    const { data } = supabase.storage.from("exam-assets").getPublicUrl(cleanPath);
     return data.publicUrl;
   }
   if (cleanPath.startsWith("exam-assets/")) {
@@ -205,7 +204,9 @@ export const formatStorageUrl = (path: string | null | undefined) => {
     return data.publicUrl;
   }
   if (!cleanPath.includes("/")) {
-    if (/\.(mp3|wav|ogg|webm|m4a|aac)$/i.test(cleanPath)) {
+    if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.(webm|mp3|wav|ogg|m4a)$/i.test(cleanPath)) {
+      cleanPath = `speaking-recordings/${cleanPath}`;
+    } else if (/\.(mp3|wav|ogg|webm|m4a|aac)$/i.test(cleanPath)) {
       cleanPath = `uploads/audio/${cleanPath}`;
     } else if (/\.(jpg|jpeg|png|webp|gif|svg)$/i.test(cleanPath)) {
       cleanPath = `uploads/images/${cleanPath}`;
@@ -1688,6 +1689,7 @@ export interface MyClassEnrollment {
   className: string;
   courseId: string;
   courseTitle: string;
+  courseSlug?: string | null;
   teacherName: string | null;
   isActive: boolean;
   membershipStatus: string;
@@ -5412,3 +5414,216 @@ export interface TeacherClassItem {
   endDate: string | null;
   studentCount: number;
 }
+
+// Parent Progress Hub types & API Client
+export interface ParentReportData {
+  student: {
+    id: string;
+    name: string;
+    avatarUrl?: string | null;
+    targetBand?: string | null;
+    className: string;
+    teacherName: string;
+    parentName?: string | null;
+    parentPhone?: string | null;
+  };
+  classInfo: {
+    id: string;
+    name: string;
+    currentWeek: number;
+    totalWeeks: number;
+    startDate?: string | null;
+    endDate?: string | null;
+  };
+  snapshot: {
+    weekNumber: number;
+    hwCompleted: number;
+    hwTotal: number;
+    hwRate: number;
+    streakDays: number;
+    attendanceRate: number;
+    scholarshipTier: string;
+    scholarshipAmount: number;
+    lossAversionNote?: string | null;
+    teacherNote?: string | null;
+    parentEncouraged: boolean;
+    cutoffAt: string;
+  };
+  teacherEvaluation: {
+    strengths: string;
+    weaknesses: string;
+    recommendations: string;
+  };
+  canReEnroll: boolean;
+  hotlinePhone: string;
+}
+
+export const parentHubApi = {
+  async getParentReport(token: string): Promise<ParentReportData> {
+    const res = await fetch(`${API_BASE_URL}/public/parent-reports/${token}`, {
+      headers: {
+        "Cache-Control": "no-cache",
+      },
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || "Không thể tải báo cáo phụ huynh");
+    }
+    const json = await res.json();
+    return json.data;
+  },
+
+  async cheerStudent(token: string): Promise<{ success: boolean; message: string }> {
+    const res = await fetch(`${API_BASE_URL}/public/parent-reports/${token}/cheer`, {
+      method: "POST",
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || "Không thể gửi lời động viên");
+    }
+    return res.json();
+  },
+
+  async requestReEnrollment(payload: {
+    token?: string;
+    classId?: string;
+    studentId?: string;
+    parentPhone?: string;
+    scholarshipAmount?: number;
+  }): Promise<{
+    leadId: string;
+    hotlinePhone: string;
+    zaloDeepLink: string;
+    prefilledText: string;
+  }> {
+    const res = await fetch(`${API_BASE_URL}/public/re-enrollment/request`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || "Không thể gửi yêu cầu tái tục");
+    }
+    const json = await res.json();
+    return json.data;
+  },
+
+  async regenerateParentToken(classId: string, studentId: string): Promise<string> {
+    const token = await getAuthToken();
+    const res = await fetch(
+      `${API_BASE_URL}/classes/${classId}/students/${studentId}/parent-token/regenerate`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      }
+    );
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || "Không thể cấp lại token");
+    }
+    const json = await res.json();
+    return json.data.parentToken;
+  },
+};
+
+// Early-Warning Radar Types & API
+export interface AtRiskStudent {
+  studentId: string;
+  studentName: string;
+  studentAvatarUrl: string | null;
+  riskLevel: 'NONE' | 'WATCH' | 'AT_RISK' | 'CRITICAL';
+  performanceLevel: 'LOW' | 'ON_TRACK' | 'STRONG';
+  trajectory: 'RISING' | 'STABLE' | 'DECLINING';
+  openTaskCount: number;
+  requiredAdditionalTasks: number;
+  currentHwRate: number;
+  worstCaseRate: number;
+  currentScholarshipTier: string;
+  riskReason: string | null;
+  parentToken: string | null;
+}
+
+export interface RadarData {
+  classId: string;
+  evaluatedAt: string;
+  watchCount: number;
+  atRiskCount: number;
+  criticalCount: number;
+  students: AtRiskStudent[];
+}
+
+export const radarApi = {
+  async getAtRiskStudents(classId: string): Promise<RadarData> {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/classes/${classId}/radar/at-risk`, {
+      headers: {
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || "Không thể tải danh sách cảnh báo");
+    }
+    const json = await res.json();
+    return json.data;
+  },
+};
+
+export const interventionApi = {
+  async create(data: {
+    studentId: string;
+    classId?: string | null;
+    category?: string;
+    title?: string | null;
+    notes: string;
+    actionTaken?: string | null;
+    status?: string;
+    outcome?: string | null;
+  }) {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/interventions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || "Không thể tạo ghi chú can thiệp");
+    }
+    const json = await res.json();
+    return json.data;
+  },
+
+  async transition(
+    id: string,
+    data: {
+      status: string;
+      outcome?: string | null;
+      notes?: string;
+      actionTaken?: string | null;
+    }
+  ) {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/interventions/${id}/transition`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || err.message || "Không thể chuyển trạng thái can thiệp");
+    }
+    const json = await res.json();
+    return json.data;
+  },
+};
+

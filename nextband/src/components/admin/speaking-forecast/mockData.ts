@@ -2,24 +2,24 @@ import { Season, ForecastTopic } from './types';
 
 export const initialSeasons: Season[] = [
   {
+    id: 'season-2026-q3',
+    name: 'Q3 / 2026',
+    year: 2026,
+    quarter: 3,
+    isCurrent: true,
+  },
+  {
     id: 'season-2026-q2',
     name: 'Q2 / 2026',
     year: 2026,
     quarter: 2,
-    isCurrent: true,
+    isCurrent: false,
   },
   {
     id: 'season-2026-q1',
     name: 'Q1 / 2026',
     year: 2026,
     quarter: 1,
-    isCurrent: false,
-  },
-  {
-    id: 'season-2026-q3',
-    name: 'Q3 / 2026',
-    year: 2026,
-    quarter: 3,
     isCurrent: false,
   },
 ];

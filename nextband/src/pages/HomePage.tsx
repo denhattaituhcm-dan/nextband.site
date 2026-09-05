@@ -37,12 +37,17 @@ import {
   inferLessonSemanticType,
 } from "@/lib/milestoneEngine";
 import { CelebrationModal } from "@/components/celebration/CelebrationModal";
-import { milestonesApi } from "@/lib/api";
+import { milestonesApi, attendanceApi } from "@/lib/api";
 import {
   Layers,
   WifiOff,
   AlertCircle,
   RefreshCw,
+  Calendar,
+  Clock,
+  CheckCircle2,
+  ArrowRight,
+  BookOpen,
 } from "lucide-react";
 
 // ─── Lifecycle-derived sub-views ─────────────────────────────────────────────
@@ -253,6 +258,25 @@ export default function HomePage() {
     });
   }, [user?.id, rawLessons, userSubmissions, enrolledClassId, recoveryMilestone]);
 
+  // Attendance & Schedule Matrix query
+  const { data: attendanceData } = useQuery({
+    queryKey: ["class-attendance-home", enrolledClassId],
+    queryFn: () => attendanceApi.getAttendanceMatrix(enrolledClassId || ""),
+    enabled: !!enrolledClassId && state === "ENROLLED",
+    staleTime: 1000 * 60 * 2,
+  });
+
+  const studentAttendanceRecord = attendanceData?.success && attendanceData?.data?.students?.[0] ? attendanceData.data.students[0] : null;
+  const attendanceRate = studentAttendanceRecord?.attendanceRate ?? 100;
+  const nextSession = useMemo(() => {
+    if (!attendanceData?.data?.sessions) return null;
+    const now = new Date();
+    return attendanceData.data.sessions.find((s: any) => {
+      const d = s.sessionDate ? new Date(s.sessionDate) : null;
+      return s.status !== "COMPLETED" && (!d || d >= now);
+    }) || attendanceData.data.sessions.find((s: any) => s.status !== "COMPLETED") || attendanceData.data.sessions[0];
+  }, [attendanceData]);
+
   // Leaderboard data for class & motivation context
   const { data: leaderboardData } = useQuery({
     queryKey: ["class-leaderboard-home", enrolledClassId],
@@ -386,12 +410,103 @@ export default function HomePage() {
               streak={streak}
             />
 
+            {/* 1.2 NEXT SESSION & ATTENDANCE QUICK SPOTLIGHT */}
+            {enrolledClassId && (
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                {/* Next Class Session Spotlight */}
+                <Card className="md:col-span-7 p-4 sm:p-5 rounded-2xl border bg-card shadow-xs flex flex-col justify-between">
+                  <div className="flex items-center justify-between pb-3 border-b">
+                    <div className="flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="text-xs font-bold text-foreground uppercase tracking-wider">
+                        Buổi Học Tiếp Theo · Lớp {activeClassName}
+                      </span>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => navigate(`/app/class/${enrolledClassId}/lessons`)}
+                      className="h-7 text-xs font-bold text-primary gap-1 px-2.5 rounded-lg hover:bg-primary/5"
+                    >
+                      <span>Vào Lớp Học</span>
+                      <ArrowRight className="h-3 w-3" />
+                    </Button>
+                  </div>
+
+                  <div className="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="space-y-1">
+                      <h4 className="font-extrabold text-base text-foreground flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-primary shrink-0" />
+                        <span>
+                          {nextSession?.lessonTitle || `Buổi số ${nextSession?.sessionNumber || 1} / 27`}
+                        </span>
+                      </h4>
+                      <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                        <Clock className="h-3.5 w-3.5 text-muted-foreground/70" />
+                        <span>
+                          {nextSession?.sessionDate
+                            ? `Ngày ${new Date(nextSession.sessionDate).toLocaleDateString("vi-VN", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" })}`
+                            : "Theo lịch xếp của lớp học"}
+                        </span>
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-muted-foreground font-medium">Chuyên cần:</span>
+                      <span className={`text-sm font-black tabular-nums ${attendanceRate >= 85 ? "text-emerald-600" : "text-amber-600"}`}>
+                        {attendanceRate}%
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {attendanceRate >= 85 ? "✓ Đạt chuẩn đầu ra" : "⚠ Cần lưu ý"}
+                      </span>
+                    </div>
+                  </div>
+                </Card>
+
+                {/* Quick 5-Skill Homework Hub Link */}
+                <Card className="md:col-span-5 p-4 sm:p-5 rounded-2xl border bg-gradient-to-br from-indigo-50/50 via-card to-card border-indigo-100 dark:border-indigo-900/40 shadow-xs flex flex-col justify-between">
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800">
+                        Bảng Khái Quát Bài Tập
+                      </span>
+                      <span className="text-xs font-bold text-foreground tabular-nums">
+                        {submittedCount} / {rawLessons?.length || 27} bài
+                      </span>
+                    </div>
+                    <h4 className="font-bold text-sm text-foreground pt-1">
+                      5 Kỹ năng: Grammar, Listening, Reading, Writing, Speaking
+                    </h4>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">
+                      Phân bổ rõ ràng giữa điểm trắc nghiệm (1đ/câu) và Band điểm IELTS tự luận do giáo viên chấm.
+                    </p>
+                  </div>
+
+                  <div className="pt-3 border-t border-indigo-100/60 dark:border-indigo-900/30 flex items-center justify-end">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => navigate(`/app/class/${enrolledClassId}/lessons`)}
+                      className="h-7 text-xs font-bold border-indigo-200 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 rounded-lg gap-1"
+                    >
+                      <span>Tra cứu tiến độ 5 kỹ năng</span>
+                      <ArrowRight className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </Card>
+              </div>
+            )}
+
             {/* 1.5 DISCIPLINE SCHOLARSHIP TRACKER: Bảng Cam Kết & Thanh Động Lực Học Bổng Kỷ Luật */}
             <DisciplineScholarshipTracker
               submittedCount={submittedCount}
               totalHomeworks={rawLessons?.length || Math.max(submittedCount, 1)}
               studentId={user?.id}
+              studentName={user?.fullName || "Học viên"}
+              studentPhone={user?.phone || ""}
               classId={enrolledClassId}
+              className={activeClassName}
+              courseTitle={courseTitle}
             />
 
             {/* 2. ACADEMIC ASCENT WORLD (Signature Spatial Environment: One Action · One Journey · One Goal) */}

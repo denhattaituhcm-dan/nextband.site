@@ -1000,6 +1000,42 @@ export class ExamSubmissionService {
         }
       }
 
+      // Promote speaking recordings to EXAM retention class (90 days)
+      try {
+        const audioUrls = (answersToEvaluate || [])
+          .map((a: any) => a.audioUrl)
+          .filter((url: any) => typeof url === "string" && url.trim().length > 0);
+
+        if (audioUrls.length > 0) {
+          const recordingIds: string[] = [];
+          for (const url of audioUrls) {
+            const match = url.match(/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i);
+            if (match) recordingIds.push(match[1]);
+          }
+
+          if (recordingIds.length > 0) {
+            const expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000); // 90 days
+            await this.prisma.speakingRecordingAsset.updateMany({
+              where: {
+                OR: [
+                  { id: { in: recordingIds } },
+                  { referenceId: id },
+                ],
+                status: "ACTIVE",
+              },
+              data: {
+                referenceType: "EXAM_SUBMISSION",
+                referenceId: id,
+                retentionType: "EXAM",
+                expiresAt,
+              },
+            });
+          }
+        }
+      } catch (speakingPromoErr) {
+        console.warn("[submitExam] Speaking recordings promotion notice:", speakingPromoErr);
+      }
+
       // Sync Course Progress & Milestones (if graded)
       if (targetStatus === "GRADED") {
         await this.syncStudentCourseProgressAndMilestones(this.prisma, user.id, submission.exam?.courseId);

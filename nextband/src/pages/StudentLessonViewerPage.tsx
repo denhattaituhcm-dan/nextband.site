@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { lessonsApi, submissionsApi, examsApi } from "@/lib/api";
@@ -10,11 +10,20 @@ import {
   selectCanonicalSubmission,
   CanonicalVisualStatus,
 } from "@/lib/homeworkStatusHelper";
+import {
+  detectExamSkill,
+  getSkillBadgeConfig,
+  formatSkillScoreDisplay,
+  isObjectiveSkill,
+} from "@/lib/examSkillHelper";
 import { routes } from "@/lib/routes";
 import { submissionKeys } from "@/lib/queryKeys";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { StudentAttendanceTimeline } from "@/components/student/StudentAttendanceTimeline";
+import { HomeworkSkillMatrixCard } from "@/components/student/HomeworkSkillMatrixCard";
 import { useAuth } from "@/hooks/useAuth";
 import { useStudentLifecycle } from "@/hooks/useStudentLifecycle";
 import { useGatewayHealth } from "@/hooks/useGatewayHealth";
@@ -36,7 +45,10 @@ import {
   Sparkles,
   WifiOff,
   Calendar,
+  LayoutGrid,
+  Award,
 } from "lucide-react";
+import { StudentReEnrollmentModal } from "@/components/student/StudentReEnrollmentModal";
 
 export default function StudentLessonViewerPage() {
   const { classId } = useParams<{ classId: string }>();
@@ -46,6 +58,7 @@ export default function StudentLessonViewerPage() {
   const { user } = useAuth();
   const { state: lifecycleState, resolveClass } = useStudentLifecycle();
   const { isHealthy: isGatewayHealthy, isWarmingUp: isGatewayWarmingUp, checkHealthNow } = useGatewayHealth();
+  const [isReEnrollModalOpen, setIsReEnrollModalOpen] = useState(false);
 
   const handlePrefetchExam = (targetExamId?: string) => {
     if (!targetExamId) return;
@@ -187,6 +200,16 @@ export default function StudentLessonViewerPage() {
     const countdown = formatDeadlineCountdown(deadline);
     const submissionTiming = deriveSubmissionTiming(sub?.submittedAt || sub?.createdAt, deadline);
 
+    const skill = detectExamSkill({
+      title: item.title,
+      sections: item.sections,
+      answers: sub?.answers,
+      submission: sub,
+    });
+    const badge = getSkillBadgeConfig(skill);
+    const scoreDisplay = formatSkillScoreDisplay(skill, sub);
+    const isObjective = isObjectiveSkill(skill);
+
     return {
       id: item.id,
       examId: item.id,
@@ -200,6 +223,13 @@ export default function StudentLessonViewerPage() {
       submissionTiming,
       resources: item.resources || [],
       submission: sub,
+      sections: item.sections || [],
+      skill,
+      badge,
+      scoreDisplay,
+      isObjective,
+      week: item.week || Math.ceil((idx + 1) / 3),
+      lessonOrder: idx + 1,
     };
   });
 
@@ -308,9 +338,20 @@ export default function StudentLessonViewerPage() {
             </div>
           </div>
 
-          <Button variant="outline" size="sm" onClick={() => navigate("/app")} className="text-xs font-semibold rounded-xl">
-            Về Sảnh Chính
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsReEnrollModalOpen(true)}
+              className="text-xs font-bold rounded-xl gap-1.5 border-amber-300 bg-amber-50/50 text-amber-900 hover:bg-amber-100/80 shadow-2xs cursor-pointer"
+            >
+              <Award className="w-3.5 h-3.5 text-amber-600" />
+              <span>Tái Đăng Ký Khóa Kế Tiếp</span>
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => navigate("/app")} className="text-xs font-semibold rounded-xl">
+              Về Sảnh Chính
+            </Button>
+          </div>
         </div>
 
         {/* CIRCUIT BREAKER / GATEWAY STATUS BANNER */}
@@ -416,122 +457,210 @@ export default function StudentLessonViewerPage() {
           </div>
         </div>
 
-        {/* MAIN PRACTICE LIST SECTION (L2 Section Layer) */}
-        <div className="space-y-4 pt-2">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-                <Edit3 className="w-5 h-5 text-primary" />
-                Danh sách Bài tập Luyện tập ({homeworkList.length} Bài)
-              </h2>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Chọn bài tập bất kỳ để vào màn hình thực hành kỹ năng.
-              </p>
+        {/* TABS CONTAINER: 1. Practice List | 2. 5-Skill Overview Matrix | 3. Class Schedule & Attendance */}
+        <Tabs defaultValue="practice-list" className="w-full space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-3">
+            <TabsList className="bg-muted/60 p-1 rounded-xl h-auto">
+              <TabsTrigger
+                value="practice-list"
+                className="rounded-lg py-2 px-4 text-xs font-bold gap-2 data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-xs transition-all"
+              >
+                <Edit3 className="w-4 h-4 text-primary" />
+                <span>Danh sách Bài tập ({homeworkList.length})</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="skill-matrix"
+                className="rounded-lg py-2 px-4 text-xs font-bold gap-2 data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-xs transition-all"
+              >
+                <LayoutGrid className="w-4 h-4 text-indigo-600" />
+                <span>Khái Quát 5 Kỹ Năng</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="attendance-schedule"
+                className="rounded-lg py-2 px-4 text-xs font-bold gap-2 data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-xs transition-all"
+              >
+                <Calendar className="w-4 h-4 text-emerald-600" />
+                <span>Lịch Học & Điểm Danh</span>
+              </TabsTrigger>
+            </TabsList>
+
+            <div className="text-xs text-muted-foreground hidden sm:block">
+              Khóa học: <strong className="text-foreground">{classData.courseTitle || "IELTS"}</strong> · Lớp <strong className="text-foreground">{classData.className}</strong>
             </div>
           </div>
 
-          {homeworkList.length === 0 ? (
-            <Card className="p-10 text-center space-y-4 border-dashed rounded-2xl bg-muted/20">
-              <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto">
-                <Sparkles className="w-6 h-6" />
-              </div>
-              <div className="space-y-1 max-w-md mx-auto">
-                <h3 className="font-bold text-base text-foreground">Lớp học chưa có bài tập nào được giao</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Toàn bộ danh sách bài tập của khóa học sẽ hiển thị tại đây ngay khi giáo viên cập nhật bài tập mới.
+          {/* TAB 1: MAIN PRACTICE LIST SECTION */}
+          <TabsContent value="practice-list" className="space-y-4 pt-1 outline-hidden">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                  <Edit3 className="w-5 h-5 text-primary" />
+                  Danh sách Bài tập Luyện tập ({homeworkList.length} Bài)
+                </h2>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Chọn bài tập bất kỳ để vào màn hình thực hành kỹ năng. Điểm số trắc nghiệm 1đ/câu, tự luận chấm theo Band IELTS.
                 </p>
               </div>
-              <Button variant="outline" size="sm" onClick={() => navigate("/app")} className="rounded-xl font-bold">
-                Quay lại Bàn làm việc
-              </Button>
-            </Card>
-          ) : (
-            <div className="grid gap-3">
-              {homeworkList.map((hw) => {
-                const isOverdue = hw.status === "OVERDUE";
-                const isRevision = hw.status === "REVISION_REQUIRED";
+            </div>
 
-                return (
-                  <Card
-                    key={hw.id}
-                    onMouseEnter={() => handlePrefetchExam(hw.examId || hw.id)}
-                    className={`p-4 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
-                      isOverdue
-                        ? "border-rose-300 dark:border-rose-800 bg-rose-500/5 hover:border-rose-500 shadow-xs"
-                        : isRevision
-                        ? "border-amber-300 dark:border-amber-800 bg-amber-500/5 hover:border-amber-500"
-                        : "border-border bg-card hover:border-primary/40 hover:shadow-xs"
-                    }`}
-                  >
-                    <div className="space-y-1.5 flex-1">
-                      <div className="flex flex-wrap items-center gap-2.5">
-                        <h3 className={`font-bold text-sm ${isOverdue ? "text-rose-900 dark:text-rose-200" : "text-foreground"}`}>
-                          {hw.title}
-                        </h3>
-                        {getStatusBadge(hw.status, hw.countdown, hw.submissionTiming)}
+            {homeworkList.length === 0 ? (
+              <Card className="p-10 text-center space-y-4 border-dashed rounded-2xl bg-muted/20">
+                <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto">
+                  <Sparkles className="w-6 h-6" />
+                </div>
+                <div className="space-y-1 max-w-md mx-auto">
+                  <h3 className="font-bold text-base text-foreground">Lớp học chưa có bài tập nào được giao</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Toàn bộ danh sách bài tập của khóa học sẽ hiển thị tại đây ngay khi giáo viên cập nhật bài tập mới.
+                  </p>
+                </div>
+                <Button variant="outline" size="sm" onClick={() => navigate("/app")} className="rounded-xl font-bold">
+                  Quay lại Bàn làm việc
+                </Button>
+              </Card>
+            ) : (
+              <div className="grid gap-3">
+                {homeworkList.map((hw) => {
+                  const isOverdue = hw.status === "OVERDUE";
+                  const isRevision = hw.status === "REVISION_REQUIRED";
+
+                  return (
+                    <Card
+                      key={hw.id}
+                      onMouseEnter={() => handlePrefetchExam(hw.examId || hw.id)}
+                      className={`p-4 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+                        isOverdue
+                          ? "border-rose-300 dark:border-rose-800 bg-rose-500/5 hover:border-rose-500 shadow-xs"
+                          : isRevision
+                          ? "border-amber-300 dark:border-amber-800 bg-amber-500/5 hover:border-amber-500"
+                          : "border-border bg-card hover:border-primary/40 hover:shadow-xs"
+                      }`}
+                    >
+                      <div className="space-y-1.5 flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2.5">
+                          <Badge variant="outline" className={`text-[10px] font-bold px-2 py-0.5 ${hw.badge.badgeClass}`}>
+                            {hw.badge.shortLabel}
+                          </Badge>
+                          <h3 className={`font-bold text-sm truncate ${isOverdue ? "text-rose-900 dark:text-rose-200" : "text-foreground"}`}>
+                            {hw.title}
+                          </h3>
+                          {getStatusBadge(hw.status, hw.countdown, hw.submissionTiming)}
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground pt-0.5">
+                          <span>
+                            {hw.isObjective ? "Trắc nghiệm (1đ/câu)" : "Tự luận (IELTS Band)"}
+                          </span>
+                          {hw.scoreDisplay.isGraded && (
+                            <span className="font-semibold text-primary">
+                              Kết quả: {hw.scoreDisplay.scoreText} ({hw.scoreDisplay.subText})
+                            </span>
+                          )}
+                          {hw.resources && hw.resources.length > 0 ? (
+                            <div className="flex items-center gap-1.5">
+                              {hw.resources.map((res: any, idx: number) => (
+                                <span
+                                  key={idx}
+                                  className="inline-flex items-center gap-1 text-[11px] font-semibold bg-muted text-foreground px-2 py-0.5 rounded-md"
+                                >
+                                  {getSkillIcon(res.type)}
+                                  {res.type?.toUpperCase()}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            hw.description && <span className="truncate max-w-sm">{hw.description}</span>
+                          )}
+                        </div>
                       </div>
 
-                      {hw.resources && hw.resources.length > 0 ? (
-                        <div className="flex flex-wrap items-center gap-2 pt-1">
-                          <span className="text-[11px] font-medium text-muted-foreground">Hoạt động:</span>
-                          {hw.resources.map((res: any, idx: number) => (
-                            <span
-                              key={idx}
-                              className="inline-flex items-center gap-1 text-[11px] font-semibold bg-muted text-foreground px-2 py-0.5 rounded-md"
-                            >
-                              {getSkillIcon(res.type)}
-                              {res.type?.toUpperCase()}
-                            </span>
-                          ))}
+                      <div className="flex items-center gap-3 shrink-0">
+                        {/* Score Preview */}
+                        <div className="text-right hidden sm:block">
+                          <div className={`text-xs font-black tabular-nums ${hw.scoreDisplay.isGraded ? "text-primary" : "text-muted-foreground"}`}>
+                            {hw.scoreDisplay.scoreText}
+                          </div>
+                          <div className="text-[10px] text-muted-foreground">
+                            {hw.scoreDisplay.subText}
+                          </div>
                         </div>
-                      ) : (
-                        <p className="text-xs text-muted-foreground">{hw.description}</p>
-                      )}
-                    </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
-                      <Button
-                        size="sm"
-                        variant={hw.status === "GRADED" ? "outline" : "default"}
-                        className={`font-bold text-xs gap-1.5 rounded-xl ${
-                          isOverdue
-                            ? "bg-rose-600 hover:bg-rose-700 text-white shadow-xs"
+                        <Button
+                          size="sm"
+                          variant={hw.status === "GRADED" ? "outline" : "default"}
+                          className={`font-bold text-xs gap-1.5 rounded-xl ${
+                            isOverdue
+                              ? "bg-rose-600 hover:bg-rose-700 text-white shadow-xs"
+                              : isRevision
+                              ? "bg-amber-600 hover:bg-amber-700 text-white shadow-xs"
+                              : ""
+                          }`}
+                          onMouseEnter={() => handlePrefetchExam(hw.examId || hw.id)}
+                          onFocus={() => handlePrefetchExam(hw.examId || hw.id)}
+                          onClick={() => {
+                            if (
+                              hw.submission?.id &&
+                              (hw.status === "GRADED" ||
+                                hw.status === "REVISION_REQUIRED" ||
+                                hw.status === "SUBMITTED")
+                            ) {
+                              navigate(routes.student.submission(hw.submission.id));
+                            } else {
+                              handleOpenExam(hw.examId || hw.id);
+                            }
+                          }}
+                        >
+                          {isOverdue
+                            ? "🚨 Làm bù ngay"
                             : isRevision
-                            ? "bg-amber-600 hover:bg-amber-700 text-white shadow-xs"
-                            : ""
-                        }`}
-                        onMouseEnter={() => handlePrefetchExam(hw.examId || hw.id)}
-                        onFocus={() => handlePrefetchExam(hw.examId || hw.id)}
-                        onClick={() => {
-                          if (
-                            hw.submission?.id &&
-                            (hw.status === "GRADED" ||
-                              hw.status === "REVISION_REQUIRED" ||
-                              hw.status === "SUBMITTED")
-                          ) {
-                            navigate(routes.student.submission(hw.submission.id));
-                          } else {
-                            handleOpenExam(hw.examId || hw.id);
-                          }
-                        }}
-                      >
-                        {isOverdue
-                          ? "🚨 Làm bù ngay"
-                          : isRevision
-                          ? "Làm bài sửa (Attempt 2)"
-                          : hw.status === "GRADED"
-                          ? "Xem phản hồi"
-                          : hw.status === "SUBMITTED"
-                          ? "Xem bài làm"
-                          : "Làm bài ngay"}
-                      </Button>
-                    </div>
-                  </Card>
-                );
-              })}
-            </div>
-          )}
-        </div>
+                            ? "Làm bài sửa (Attempt 2)"
+                            : hw.status === "GRADED"
+                            ? "Xem phản hồi"
+                            : hw.status === "SUBMITTED"
+                            ? "Xem bài làm"
+                            : "Làm bài ngay"}
+                        </Button>
+                      </div>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+          </TabsContent>
+
+          {/* TAB 2: 5-SKILL OVERVIEW MATRIX */}
+          <TabsContent value="skill-matrix" className="pt-1 outline-hidden">
+            <HomeworkSkillMatrixCard
+              homeworkList={homeworkList}
+              onOpenExam={handleOpenExam}
+              onViewSubmission={(submissionId) => navigate(routes.student.submission(submissionId))}
+              className={classData.className}
+              courseTitle={classData.courseTitle}
+            />
+          </TabsContent>
+
+          {/* TAB 3: CLASS SCHEDULE & ATTENDANCE TIMELINE */}
+          <TabsContent value="attendance-schedule" className="pt-1 outline-hidden">
+            <StudentAttendanceTimeline
+              classId={classId}
+              className={classData.className}
+              studentId={user?.id}
+            />
+          </TabsContent>
+        </Tabs>
+
+        {/* Student Re-Enrollment Modal */}
+        <StudentReEnrollmentModal
+          isOpen={isReEnrollModalOpen}
+          onClose={() => setIsReEnrollModalOpen(false)}
+          classId={classId}
+          className={classData.className}
+          courseTitle={classData.courseTitle}
+          studentId={user?.id}
+          studentName={user?.fullName || "Học viên"}
+          studentPhone={user?.phone || ""}
+          scholarshipAmount={500000}
+        />
       </div>
     </div>
   );

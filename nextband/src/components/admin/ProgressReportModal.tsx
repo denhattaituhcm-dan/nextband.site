@@ -30,8 +30,11 @@ import {
   MapPin,
   Globe,
   BarChart3,
+  Link as LinkIcon,
+  MessageSquare,
 } from "lucide-react";
 import { toast } from "sonner";
+import QRCode from "qrcode";
 import { ProgressReportData } from "@/types/progressReport";
 import { SiteLogo } from "@/components/common/SiteLogo";
 
@@ -635,6 +638,41 @@ export function ProgressReportModal({
 
     // 7. Footer & Brand Identity
     const footY = height - 42;
+
+    // QR Code for Magic Link
+    const magicLink = data.parentToken
+      ? `${window.location.origin}/p/${data.parentToken}`
+      : "https://nextband.site";
+
+    try {
+      const qrDataUrl = await QRCode.toDataURL(magicLink, {
+        width: 100,
+        margin: 1,
+        color: { dark: "#0f172a", light: "#ffffff" },
+      });
+      const qrImg = new Image();
+      qrImg.src = qrDataUrl;
+      await new Promise((resolve) => {
+        qrImg.onload = resolve;
+        qrImg.onerror = resolve;
+      });
+      const qrSize = 52;
+      const qrX = width - 36 - qrSize;
+      const qrY = footY - qrSize - 12;
+      
+      // Draw border box for QR
+      drawRoundedRect(ctx, qrX - 4, qrY - 4, qrSize + 8, qrSize + 8, 6, "#ffffff", "#e2e8f0", 1);
+      ctx.drawImage(qrImg, qrX, qrY, qrSize, qrSize);
+      
+      ctx.fillStyle = "#64748b";
+      ctx.font = `600 9.5px ${FONT_FAMILY}`;
+      ctx.textAlign = "right";
+      ctx.fillText("Quét mã xem trực tuyến", qrX - 8, qrY + qrSize / 2 + 3);
+      ctx.textAlign = "start";
+    } catch (qrErr) {
+      console.warn("QR code render skip:", qrErr);
+    }
+
     ctx.strokeStyle = "#e2e8f0";
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -722,6 +760,31 @@ export function ProgressReportModal({
       toast.success("Đã tải tệp ảnh báo cáo PNG về máy.");
     } catch (err: any) {
       toast.error("Không thể tải ảnh: " + err.message);
+    }
+  };
+
+  const magicLink = data.parentToken
+    ? `${window.location.origin}/p/${data.parentToken}`
+    : "https://nextband.site";
+
+  const handleCopyMagicLink = async () => {
+    try {
+      await navigator.clipboard.writeText(magicLink);
+      toast.success("Đã sao chép Magic Link phụ huynh vào bộ nhớ tạm!");
+    } catch {
+      toast.error("Không thể sao chép liên kết");
+    }
+  };
+
+  const handleCopyZaloTemplate = async () => {
+    const currentW = data.currentWeek || 1;
+    const totalW = data.totalWeeks || 10;
+    const template = `Dạ NextBand xin gửi quý anh/chị báo cáo tiến độ Tuần ${currentW}/${totalW} của em ${studentName}.\n- Tỷ lệ BTVN: ${hwCompletionPct}% (${hwCompleted}/${hwTotal} bài)\n- Chuyên cần: ${attendanceRate}%\n- Đang bảo lưu Học bổng Kỷ luật ARIS.\n\nAnh/chị xem chi tiết nhật ký bài tập của con bằng 1 chạm tại:\n👉 ${magicLink}`;
+    try {
+      await navigator.clipboard.writeText(template);
+      toast.success("Đã sao chép tin nhắn Zalo mẫu kèm Magic Link!");
+    } catch {
+      toast.error("Không thể sao chép");
     }
   };
 
@@ -1130,6 +1193,26 @@ export function ProgressReportModal({
                 Lưu nhận xét
               </Button>
             )}
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCopyMagicLink}
+              className="rounded-xl font-bold gap-1.5 border-amber-300 text-amber-800 bg-amber-50 hover:bg-amber-100"
+            >
+              <LinkIcon className="w-3.5 h-3.5 text-amber-600" />
+              Copy Link Phụ Huynh
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCopyZaloTemplate}
+              className="rounded-xl font-bold gap-1.5 border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100"
+            >
+              <MessageSquare className="w-3.5 h-3.5 text-blue-600" />
+              Copy Tin Zalo
+            </Button>
 
             <Button
               variant="secondary"

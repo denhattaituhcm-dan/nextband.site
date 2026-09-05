@@ -23,6 +23,7 @@ export class ClassService {
       className: m.class.name,
       courseId: m.class.courseId,
       courseTitle: m.class.course?.title ?? m.class.name,
+      courseSlug: m.class.course?.slug ?? null,
       teacherName: m.class.teacher?.fullName ?? null,
       isActive: m.class.isActive,
       membershipStatus: "ACTIVE",
@@ -239,6 +240,21 @@ export class ClassService {
     if (!classData) {
       throw new NotFoundError("Không tìm thấy lớp học");
     }
+
+    const isAdmin = user.roles.includes("admin");
+    const isTeacher = user.roles.includes("teacher");
+
+    if (isTeacher && !isAdmin && classData.teacherId !== user.id) {
+      throw new AuthorizationError("Từ chối truy cập - lớp không thuộc quyền quản lý của bạn", 403);
+    }
+
+    if (!isAdmin && !isTeacher) {
+      const isEnrolled = classData.students.some((s: any) => s.studentId === user.id);
+      if (!isEnrolled) {
+        throw new AuthorizationError("Từ chối truy cập - bạn không phải thành viên của lớp này", 403);
+      }
+    }
+
     const sessions = await this.prisma.classSession.findMany({
       where: { classId },
       orderBy: { sessionNumber: "asc" },

@@ -19,6 +19,15 @@ export class NotFoundError extends Error {
   }
 }
 
+export class ValidationError extends Error {
+  statusCode: number;
+  constructor(message: string = "Dữ liệu không hợp lệ") {
+    super(message);
+    this.name = "ValidationError";
+    this.statusCode = 400;
+  }
+}
+
 export class AuthorizationService {
   constructor(private prisma: PrismaClient) {}
 

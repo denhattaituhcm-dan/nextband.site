@@ -1,7 +1,17 @@
 import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { classesApi, examsApi, submissionsApi, attendanceApi, periodicReportsApi, formatStorageUrl } from "@/lib/api";
+import {
+  classesApi,
+  examsApi,
+  submissionsApi,
+  attendanceApi,
+  periodicReportsApi,
+  formatStorageUrl,
+  radarApi,
+  interventionApi,
+  type AtRiskStudent,
+} from "@/lib/api";
 import { AudioStorageService } from "@/lib/audioStorageService";
 import { deriveHomeworkStatus, HomeworkStatus } from "@/types/homework";
 import { Card } from "@/components/ui/card";
@@ -35,6 +45,11 @@ import {
   AlertTriangle,
   FileText,
   ExternalLink,
+  ShieldAlert,
+  MessageSquare,
+  TrendingDown,
+  TrendingUp,
+  Clock,
 } from "lucide-react";
 import { ProgressReportModal } from "@/components/admin/ProgressReportModal";
 import {
@@ -591,6 +606,9 @@ export default function TeacherWorkspace() {
 
   const isSpeaking = useMemo(() => {
     if (!currentHomework) return false;
+    const detectedSkill = currentHomework.skill || detectExamSkill(currentHomework) || detectExamSkill(currentSubmissionDetail?.exam);
+    if (detectedSkill === "speaking") return true;
+
     const hwType = String(currentHomework.type || "").toLowerCase();
     const hwTitle = String(currentHomework.title || "").toLowerCase();
     const secType = String(currentSubmissionDetail?.exam?.sections?.[0]?.sectionType || "").toLowerCase();
@@ -600,7 +618,7 @@ export default function TeacherWorkspace() {
       hwType === "speaking" ||
       secType === "speaking" ||
       examType === "speaking" ||
-      hwTitle.includes("speaking") ||
+      /\b(spk|speaking)\b/i.test(hwTitle) ||
       hasAudio
     );
   }, [currentHomework, currentSubmissionDetail, resolvedAnswers]);
@@ -637,6 +655,60 @@ export default function TeacherWorkspace() {
     enabled: !!selectedClassId && !!currentStudent?.id,
   });
 
+  // 5. Early-Warning Radar Query (On-demand per class)
+  const { data: radarData, refetch: refetchRadar, isLoading: isLoadingRadar } = useQuery({
+    queryKey: ["class-radar", selectedClassId],
+    queryFn: async () => {
+      if (!selectedClassId) return null;
+      return await radarApi.getAtRiskStudents(selectedClassId);
+    },
+    enabled: !!selectedClassId,
+    staleTime: 60 * 1000,
+  });
+
+  const [interveningStudentId, setInterveningStudentId] = useState<string | null>(null);
+
+  const handleCreateIntervention = async (student: AtRiskStudent) => {
+    if (!selectedClassId) return;
+    setInterveningStudentId(student.studentId);
+    try {
+      await interventionApi.create({
+        studentId: student.studentId,
+        classId: selectedClassId,
+        category: "ACADEMIC_RISK",
+        title: `Cảnh báo rủi ro học bổng: ${student.riskLevel}`,
+        notes: student.riskReason || `Học viên có ${student.openTaskCount} bài tập chưa nộp, tỷ lệ worst-case ${student.worstCaseRate}%.`,
+        status: "CONTACTED",
+        actionTaken: "Đã mở kênh liên hệ Zalo phụ huynh để nhắc nhở hoàn thành BTVN",
+      });
+
+      toast({
+        title: "Đã ghi nhận can thiệp",
+        description: `Đã tạo nhật ký can thiệp cho học viên ${student.studentName}.`,
+      });
+
+      // Mở Zalo channel nếu có phone/token
+      if (student.parentToken) {
+        const link = `https://nextband.site/p/${student.parentToken}`;
+        navigator.clipboard.writeText(link);
+        toast({
+          title: "Đã copy link Báo cáo Phụ huynh",
+          description: "Đã copy magic link gửi Zalo cho phụ huynh.",
+        });
+      }
+
+      refetchRadar();
+    } catch (err: any) {
+      toast({
+        title: "Lỗi tạo can thiệp",
+        description: err.message || "Không thể lưu bản ghi can thiệp.",
+        variant: "destructive",
+      });
+    } finally {
+      setInterveningStudentId(null);
+    }
+  };
+
   // Data Map cho Báo Cáo Tiến Độ Phụ Huynh
   const reportData = useMemo(() => {
     const studentMatrix = attendanceData?.students?.find(
@@ -663,6 +735,8 @@ export default function TeacherWorkspace() {
     return mapToProgressReportData({
       classId: selectedClassId,
       studentId: currentStudent?.id,
+      parentToken: currentStudent?.parentToken || currentStudent?.parent_token,
+      totalWeeks: currentClass?.totalWeeks || currentClass?.total_weeks || 10,
       studentName: currentStudent?.fullName || "Học viên",
       className: currentClass?.name || "Lớp học",
       teacherName: currentClass?.teacher?.fullName || null,
@@ -1017,6 +1091,100 @@ export default function TeacherWorkspace() {
               </div>
             </div>
 
+            {/* 🔴 EARLY-WARNING RADAR (Alert fatigue prevention: 'X học sinh cần chú ý') */}
+            {radarData && (radarData.watchCount + radarData.atRiskCount + radarData.criticalCount > 0) && (
+              <div className="p-2.5 bg-amber-50/70 border-b border-amber-200/60 shrink-0">
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center gap-1.5">
+                    <ShieldAlert className="h-3.5 w-3.5 text-amber-700" />
+                    <span className="text-[11px] font-bold text-amber-900 tracking-tight">
+                      {radarData.criticalCount + radarData.atRiskCount + radarData.watchCount} học sinh cần chú ý
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1 text-[9px] font-semibold">
+                    {radarData.criticalCount > 0 && (
+                      <span className="px-1.5 py-0.2 rounded bg-rose-100 text-rose-800 border border-rose-200">
+                        {radarData.criticalCount} Nguy cấp
+                      </span>
+                    )}
+                    {radarData.atRiskCount > 0 && (
+                      <span className="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 border border-amber-200">
+                        {radarData.atRiskCount} Rủi ro
+                      </span>
+                    )}
+                    {radarData.watchCount > 0 && (
+                      <span className="px-1.5 py-0.2 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                        {radarData.watchCount} Theo dõi
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-1 max-h-[140px] overflow-y-auto pr-1">
+                  {radarData.students.map((st) => {
+                    const isCritical = st.riskLevel === "CRITICAL";
+                    const isAtRisk = st.riskLevel === "AT_RISK";
+                    const isWatch = st.riskLevel === "WATCH";
+
+                    return (
+                      <div
+                        key={st.studentId}
+                        className={`p-1.5 rounded-lg border text-[11px] flex items-center justify-between transition-all ${
+                          isCritical
+                            ? "bg-rose-50/80 border-rose-200 text-rose-900"
+                            : isAtRisk
+                            ? "bg-amber-50/80 border-amber-200 text-amber-900"
+                            : "bg-slate-50 border-slate-200 text-slate-800"
+                        }`}
+                      >
+                        <div className="min-w-0 flex-1 mr-2">
+                          <div className="flex items-center gap-1 font-semibold truncate">
+                            <span className="truncate">{st.studentName}</span>
+                            {st.trajectory === "DECLINING" && (
+                              <TrendingDown className="h-3 w-3 text-rose-600 shrink-0" title="Xu hướng giảm >=10pp" />
+                            )}
+                            {st.trajectory === "RISING" && (
+                              <TrendingUp className="h-3 w-3 text-emerald-600 shrink-0" title="Xu hướng tăng >=10pp" />
+                            )}
+                          </div>
+                          <div className="text-[9.5px] text-slate-500 truncate flex items-center gap-1">
+                            <span>Thiếu {st.openTaskCount} bài</span>
+                            <span>•</span>
+                            <span>Cần +{st.requiredAdditionalTasks} bài</span>
+                            <span>•</span>
+                            <span>Học bổng: {st.currentScholarshipTier}</span>
+                          </div>
+                        </div>
+
+                        {/* Can thiệp chỉ nhắc khi CRITICAL hoặc AT_RISK; WATCH chỉ awareness */}
+                        {(isCritical || isAtRisk) && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleCreateIntervention(st)}
+                            disabled={interveningStudentId === st.studentId}
+                            className={`h-6 text-[10px] px-2 shrink-0 font-medium ${
+                              isCritical
+                                ? "bg-rose-600 hover:bg-rose-700 text-white border-rose-600"
+                                : "bg-amber-600 hover:bg-amber-700 text-white border-amber-600"
+                            }`}
+                          >
+                            <MessageSquare className="h-3 w-3 mr-1" />
+                            Nhắc Zalo
+                          </Button>
+                        )}
+                        {isWatch && (
+                          <span className="text-[9px] text-slate-400 font-medium px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200">
+                            Theo dõi
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* List Học viên */}
             <div className="flex-1 overflow-y-auto p-2 space-y-1">
               {filteredStudents.length === 0 ? (
@@ -1135,33 +1303,49 @@ export default function TeacherWorkspace() {
                   Không có bài tập nào được giao cho học viên này.
                 </div>
               ) : (
-                groupedWorkbook.map((group) => (
-                  <div key={group.lessonNumber} className="space-y-1.5">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-200/60 px-2.5 py-1 rounded-md">
-                      📖 BUỔI {group.lessonNumber}: KỸ NĂNG {getSkillBadgeConfig(group.items[0]?.skill || "objective").shortLabel}
-                    </div>
+                groupedWorkbook.map((group) => {
+                  const firstSkill = group.items[0]?.skill;
+                  const allSameSkill = group.items.length > 0 && group.items.every((it) => it.skill === firstSkill);
+                  const groupLabel = allSameSkill
+                    ? `BUỔI ${group.lessonNumber}: KỸ NĂNG ${getSkillBadgeConfig(firstSkill || "objective").shortLabel}`
+                    : `BUỔI ${group.lessonNumber}: TỔNG HỢP (${group.items.length} BÀI TẬP)`;
 
-                    <div className="space-y-1">
-                      {group.items.map((item) => {
-                        const isSelected = item.id === selectedHomeworkId;
-                        const isReopenOpen = reopenTargetId === item.id;
+                  return (
+                    <div key={group.lessonNumber} className="space-y-1.5">
+                      <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-200/60 px-2.5 py-1 rounded-md">
+                        📖 {groupLabel}
+                      </div>
 
-                        return (
-                          <div
-                            key={item.id}
-                            onClick={() => setSelectedHomeworkId(item.id)}
-                            className={`p-2.5 rounded-xl border transition-all cursor-pointer space-y-1.5 ${
-                              isSelected
-                                ? "bg-white border-blue-500 shadow-sm ring-1 ring-blue-500/20"
-                                : "bg-white/80 border-slate-200/80 hover:bg-white hover:border-slate-300"
-                            }`}
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs font-semibold text-slate-800 truncate max-w-[200px]">
-                                {item.title}
-                              </span>
-                              {renderStatusBadge(item)}
-                            </div>
+                      <div className="space-y-1">
+                        {group.items.map((item) => {
+                          const isSelected = item.id === selectedHomeworkId;
+                          const isReopenOpen = reopenTargetId === item.id;
+                          const itemSkillConfig = getSkillBadgeConfig(item.skill || "objective");
+
+                          return (
+                            <div
+                              key={item.id}
+                              onClick={() => setSelectedHomeworkId(item.id)}
+                              className={`p-2.5 rounded-xl border transition-all cursor-pointer space-y-1.5 ${
+                                isSelected
+                                  ? "bg-white border-blue-500 shadow-sm ring-1 ring-blue-500/20"
+                                  : "bg-white/80 border-slate-200/80 hover:bg-white hover:border-slate-300"
+                              }`}
+                            >
+                              <div className="flex items-center justify-between gap-1.5">
+                                <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                                  <Badge
+                                    variant="outline"
+                                    className={`text-[9px] px-1.5 py-0 h-4 font-bold shrink-0 ${itemSkillConfig.badgeClass}`}
+                                  >
+                                    {itemSkillConfig.shortLabel}
+                                  </Badge>
+                                  <span className="text-xs font-semibold text-slate-800 truncate">
+                                    {item.title}
+                                  </span>
+                                </div>
+                                {renderStatusBadge(item)}
+                              </div>
 
                             {/* Dòng Quá hạn -> nút Gia hạn mở Inline */}
                             {item.isOverdue && item.status !== "graded" && item.status !== "submitted" && (
@@ -1194,7 +1378,8 @@ export default function TeacherWorkspace() {
                       })}
                     </div>
                   </div>
-                ))
+                );
+              })
               )}
             </div>
           </div>

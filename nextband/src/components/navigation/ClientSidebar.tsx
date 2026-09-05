@@ -58,10 +58,10 @@ const fullNavigationGroups: NavGroup[] = [
         description: "Lớp học và lộ trình",
       },
       {
-        title: "Tái Dựng Bài Học",
+        title: "Bài Học Trực Quan",
         url: "/app/reconstruction",
         icon: Workflow,
-        description: "Tái hiện cơ chế tư duy & biến đổi kiến thức",
+        description: "Bài học tương tác & trực quan hóa tư duy",
         badge: "New",
       },
       {

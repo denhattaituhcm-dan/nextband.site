@@ -3,6 +3,9 @@ import { ProgressReportData } from "@/types/progressReport";
 export interface ProgressReportInput {
   classId?: string;
   studentId?: string;
+  parentToken?: string;
+  totalWeeks?: number;
+  currentWeek?: number;
   studentName: string;
   className: string;
   teacherName?: string | null;
@@ -366,6 +369,9 @@ export function mapToProgressReportData(input: ProgressReportInput): ProgressRep
   return {
     classId: input.classId,
     studentId: input.studentId,
+    parentToken: input.parentToken,
+    totalWeeks: input.totalWeeks || 10,
+    currentWeek: input.currentWeek,
     student: {
       name: input.studentName || "Học viên",
       className: input.className || "Lớp học",

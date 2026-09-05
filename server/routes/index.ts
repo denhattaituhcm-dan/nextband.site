@@ -32,6 +32,10 @@ import milestoneRoutes from "./milestone.routes.js";
 import referralsRoutes from "./referrals.routes.js";
 import lexiconRoutes from "./lexicon.routes.js";
 import teacherProfileRoutes from "./teacher-profile.routes.js";
+import cronRoutes from "./cron.routes.js";
+import parentReportsRoutes from "./parent-reports.routes.js";
+import reEnrollmentRoutes from "./re-enrollment.routes.js";
+import radarRoutes from "./radar.routes.js";
 
 const routes: FastifyPluginAsync = async (fastify) => {
   // Health check
@@ -76,6 +80,10 @@ const routes: FastifyPluginAsync = async (fastify) => {
   await fastify.register(milestoneRoutes, { prefix: "/milestones" });
   await fastify.register(lexiconRoutes, { prefix: "/lexicon" });
   await fastify.register(teacherProfileRoutes, { prefix: "/teacher-profile" });
+  await fastify.register(cronRoutes, { prefix: "/cron" });
+  await fastify.register(parentReportsRoutes);
+  await fastify.register(reEnrollmentRoutes);
+  await fastify.register(radarRoutes, { prefix: "/classes" });
 };
 
 export default routes;

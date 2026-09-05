@@ -7,6 +7,12 @@
       "includeFiles": "{node_modules/.prisma/client/**,prisma/**}"
     }
   },
+  "crons": [
+    {
+      "path": "/api/v1/cron/weekly-snapshot",
+      "schedule": "15 11 * * 0"
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/v1/health",

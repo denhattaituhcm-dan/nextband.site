@@ -35937,7 +35937,7 @@ var require_helmet = __commonJS({
 var require_helmet2 = __commonJS({
   "node_modules/@fastify/helmet/index.js"(exports, module) {
     "use strict";
-    var { randomBytes } = __require("node:crypto");
+    var { randomBytes: randomBytes2 } = __require("node:crypto");
     var fp3 = require_plugin2();
     var helmet2 = require_helmet();
     async function fastifyHelmet(fastify, options) {
@@ -35990,8 +35990,8 @@ var require_helmet2 = __commonJS({
     async function replyDecorators(request, reply, configuration, enableCSP) {
       if (enableCSP) {
         reply.cspNonce = {
-          script: randomBytes(16).toString("hex"),
-          style: randomBytes(16).toString("hex")
+          script: randomBytes2(16).toString("hex"),
+          style: randomBytes2(16).toString("hex")
         };
       }
       reply.helmet = function(opts) {
@@ -81753,31 +81753,19 @@ var init_speakingStorage_service = __esm({
         if (supabaseUrlMatch) {
           const bucket = supabaseUrlMatch[1];
           const subPath = decodeURIComponent(supabaseUrlMatch[2]);
-          const { data: data2 } = this.supabase.storage.from(bucket).getPublicUrl(subPath);
-          if (data2?.publicUrl) return data2.publicUrl;
+          const targetBucket = bucket === "speaking-recordings" ? "exam-assets" : bucket;
+          const targetPath = bucket === "speaking-recordings" ? `speaking-recordings/${subPath}` : subPath;
+          const { data } = this.supabase.storage.from(targetBucket).getPublicUrl(targetPath);
+          if (data?.publicUrl) return data.publicUrl;
         }
         if (clean.startsWith("http://") || clean.startsWith("https://") || clean.startsWith("blob:") || clean.startsWith("data:")) {
           return clean;
         }
         const cleanPath = clean.replace(/^\/+/, "");
-        const isExamAsset = cleanPath.startsWith("exam-assets/") || cleanPath.startsWith("uploads/");
-        if (isExamAsset) {
-          const assetSubPath = cleanPath.replace(/^exam-assets\//, "");
-          const { data: pubData } = this.supabase.storage.from("exam-assets").getPublicUrl(assetSubPath);
-          if (pubData?.publicUrl) return pubData.publicUrl;
-        }
-        const subCleanPath = cleanPath.replace(/^speaking-recordings\//, "");
-        const { data: pubSpeaking } = this.supabase.storage.from(SPEAKING_BUCKET).getPublicUrl(subCleanPath);
-        if (pubSpeaking?.publicUrl) {
-          return pubSpeaking.publicUrl;
-        }
-        const { data, error } = await this.supabase.storage.from(SPEAKING_BUCKET).createSignedUrl(subCleanPath, expiresInSeconds);
-        if (error || !data?.signedUrl) {
-          const { data: fallbackPub } = this.supabase.storage.from("exam-assets").getPublicUrl(cleanPath);
-          if (fallbackPub?.publicUrl) return fallbackPub.publicUrl;
-          throw new Error(error?.message || "Kh\xF4ng th\u1EC3 t\u1EA1o li\xEAn k\u1EBFt ph\xE1t \xE2m thanh");
-        }
-        return data.signedUrl;
+        const assetSubPath = cleanPath.replace(/^exam-assets\//, "");
+        const { data: pubData } = this.supabase.storage.from("exam-assets").getPublicUrl(assetSubPath);
+        if (pubData?.publicUrl) return pubData.publicUrl;
+        return null;
       }
       /**
        * Tải buffer tệp âm thanh từ Storage phục vụ STT
@@ -81793,30 +81781,19 @@ var init_speakingStorage_service = __esm({
         if (supabaseUrlMatch) {
           const bucket = supabaseUrlMatch[1];
           const subPath = decodeURIComponent(supabaseUrlMatch[2]);
-          const downloadRes = await this.supabase.storage.from(bucket).download(subPath);
-          if (!downloadRes.error && downloadRes.data) {
-            const blob = downloadRes.data;
+          const targetBucket = bucket === "speaking-recordings" ? "exam-assets" : bucket;
+          const targetPath = bucket === "speaking-recordings" ? `speaking-recordings/${subPath}` : subPath;
+          const downloadRes2 = await this.supabase.storage.from(targetBucket).download(targetPath);
+          if (!downloadRes2.error && downloadRes2.data) {
+            const blob = downloadRes2.data;
             const arrayBuf = await blob.arrayBuffer();
             const buffer = Buffer.from(arrayBuf);
             const mimeType = blob.type || "audio/webm";
-            const fileName = subPath.split("/").pop() || "recording.webm";
+            const fileName = targetPath.split("/").pop() || "recording.webm";
             return { buffer, mimeType, fileName };
           }
         }
         const cleanPath = clean.replace(/^\/+/, "");
-        const isExamAsset = cleanPath.startsWith("exam-assets/") || cleanPath.startsWith("uploads/");
-        if (!isExamAsset) {
-          const subCleanPath = cleanPath.replace(/^speaking-recordings\//, "");
-          const downloadRes = await this.supabase.storage.from(SPEAKING_BUCKET).download(subCleanPath);
-          if (!downloadRes.error && downloadRes.data) {
-            const blob = downloadRes.data;
-            const arrayBuf = await blob.arrayBuffer();
-            const buffer = Buffer.from(arrayBuf);
-            const mimeType = blob.type || "audio/webm";
-            const fileName = subCleanPath.split("/").pop() || "recording.webm";
-            return { buffer, mimeType, fileName };
-          }
-        }
         const examSubPath = cleanPath.replace(/^exam-assets\//, "");
         const examDownload = await this.supabase.storage.from("exam-assets").download(examSubPath);
         if (!examDownload.error && examDownload.data) {
@@ -81825,6 +81802,16 @@ var init_speakingStorage_service = __esm({
           const buffer = Buffer.from(arrayBuf);
           const mimeType = blob.type || "audio/webm";
           const fileName = examSubPath.split("/").pop() || "recording.webm";
+          return { buffer, mimeType, fileName };
+        }
+        const subCleanPath = cleanPath.replace(/^speaking-recordings\//, "");
+        const downloadRes = await this.supabase.storage.from(SPEAKING_BUCKET).download(subCleanPath);
+        if (!downloadRes.error && downloadRes.data) {
+          const blob = downloadRes.data;
+          const arrayBuf = await blob.arrayBuffer();
+          const buffer = Buffer.from(arrayBuf);
+          const mimeType = blob.type || "audio/webm";
+          const fileName = subCleanPath.split("/").pop() || "recording.webm";
           return { buffer, mimeType, fileName };
         }
         if (clean.startsWith("http://") || clean.startsWith("https://")) {
@@ -98668,6 +98655,17 @@ var coursesRoutes = async (fastify) => {
       if (!existing) {
         return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y kh\xF3a h\u1ECDc" });
       }
+      const user = request.user;
+      const isAdmin = user.roles.includes("admin");
+      const isTeacher = user.roles.includes("teacher");
+      if (isTeacher && !isAdmin) {
+        const isOwner = existing.teacherId === user.id;
+        if (!isOwner) {
+          return reply.status(403).send({
+            error: "T\u1EEB ch\u1ED1i truy c\u1EADp - B\u1EA1n kh\xF4ng ph\u1EE5 tr\xE1ch kh\xF3a h\u1ECDc n\xE0y"
+          });
+        }
+      }
       if (data.slug) {
         const existingSlug = await fastify.prisma.course.findFirst({
           where: {
@@ -100612,8 +100610,11 @@ var SubmissionRepository = class {
       data
     });
   }
-  async transaction(fn) {
-    return this.prisma.$transaction(fn);
+  async transaction(fn, options) {
+    return this.prisma.$transaction(fn, {
+      maxWait: options?.maxWait ?? 1e4,
+      timeout: options?.timeout ?? 2e4
+    });
   }
 };
 
@@ -102303,7 +102304,7 @@ var ExamSubmissionService = class {
     const hasManualQuestions = gradingSummary.hasManualQuestions;
     const targetStatus = hasManualQuestions ? "SUBMITTED" : "GRADED";
     SubmissionStateMachine.assertTransition(currentStatus, targetStatus);
-    return this.repo.transaction(async (tx) => {
+    const fullResult = await this.repo.transaction(async (tx) => {
       const createdOrUpdatedAnswers = [];
       for (const ans of answersToEvaluate) {
         const evalResult = gradingSummary.evaluatedAnswers.find((g) => g.questionId === ans.questionId);
@@ -102380,7 +102381,7 @@ var ExamSubmissionService = class {
           version: (submission.version || 1) + 1
         }
       });
-      const fullResult = {
+      const txResult = {
         ...updated,
         answers: createdOrUpdatedAnswers,
         bandScore: gradingSummary.bandScore
@@ -102406,7 +102407,7 @@ var ExamSubmissionService = class {
               key: payload.idempotencyKey,
               submissionId: id,
               payloadHash: "sha256-payload",
-              responsePayload: JSON.stringify(fullResult),
+              responsePayload: JSON.stringify(txResult),
               status: "COMMITTED"
             }
           });
@@ -102423,40 +102424,43 @@ var ExamSubmissionService = class {
           throw idemErr;
         }
       }
-      if (tx.notification) {
-        const examTitle = submission.exam?.title || "IELTS Exam";
-        if (targetStatus === "SUBMITTED") {
-          let teacherId = null;
-          if (submission.exam?.courseId && tx.classStudent) {
-            const classStudent = await tx.classStudent.findFirst({
-              where: {
-                studentId: user.id,
-                class: { courseId: submission.exam.courseId, isActive: true }
-              },
-              include: { class: true }
-            });
-            teacherId = classStudent?.class?.teacherId || null;
-          }
-          if (!teacherId && tx.userRole) {
-            const firstTeacher = await tx.userRole.findFirst({
-              where: { role: "teacher" }
-            });
-            teacherId = firstTeacher?.userId || null;
-          }
-          if (teacherId) {
-            await this.notificationService.createNotification(tx, {
-              userId: teacherId,
-              type: "NEW_SUBMISSION",
-              title: "B\xE0i n\u1ED9p m\u1EDBi c\u1EA7n ch\u1EA5m",
-              message: `H\u1ECDc vi\xEAn \u0111\xE3 n\u1ED9p b\xE0i thi "${examTitle}". Vui l\xF2ng ch\u1EA5m \u0111i\u1EC3m v\xE0 g\u1EEDi feedback.`,
-              link: `/admin/submissions/${id}`,
-              entityType: "SUBMISSION",
-              entityId: id
-            });
-          }
-        } else if (targetStatus === "GRADED") {
-          const bandText = gradingSummary.bandScore !== null && gradingSummary.bandScore !== void 0 ? ` K\u1EBFt qu\u1EA3: Band ${gradingSummary.bandScore}.` : "";
-          await this.notificationService.createNotification(tx, {
+      return txResult;
+    });
+    try {
+      const examTitle = submission.exam?.title || "IELTS Exam";
+      if (targetStatus === "SUBMITTED") {
+        let teacherId = null;
+        if (submission.exam?.courseId && this.prisma.classStudent) {
+          const classStudent = await this.prisma.classStudent.findFirst({
+            where: {
+              studentId: user.id,
+              class: { courseId: submission.exam.courseId, isActive: true }
+            },
+            include: { class: true }
+          });
+          teacherId = classStudent?.class?.teacherId || null;
+        }
+        if (!teacherId && this.prisma.userRole) {
+          const firstTeacher = await this.prisma.userRole.findFirst({
+            where: { role: "teacher" }
+          });
+          teacherId = firstTeacher?.userId || null;
+        }
+        if (teacherId && this.notificationService) {
+          await this.notificationService.createNotification(this.prisma, {
+            userId: teacherId,
+            type: "NEW_SUBMISSION",
+            title: "B\xE0i n\u1ED9p m\u1EDBi c\u1EA7n ch\u1EA5m",
+            message: `H\u1ECDc vi\xEAn \u0111\xE3 n\u1ED9p b\xE0i thi "${examTitle}". Vui l\xF2ng ch\u1EA5m \u0111i\u1EC3m v\xE0 g\u1EEDi feedback.`,
+            link: `/admin/submissions/${id}`,
+            entityType: "SUBMISSION",
+            entityId: id
+          });
+        }
+      } else if (targetStatus === "GRADED") {
+        const bandText = gradingSummary.bandScore !== null && gradingSummary.bandScore !== void 0 ? ` K\u1EBFt qu\u1EA3: Band ${gradingSummary.bandScore}.` : "";
+        if (this.notificationService) {
+          await this.notificationService.createNotification(this.prisma, {
             userId: user.id,
             type: "SUBMISSION_GRADED",
             title: "K\u1EBFt qu\u1EA3 b\xE0i thi",
@@ -102467,11 +102471,43 @@ var ExamSubmissionService = class {
           });
         }
       }
-      if (targetStatus === "GRADED") {
-        await this.syncStudentCourseProgressAndMilestones(tx, user.id, submission.exam?.courseId);
+      try {
+        const audioUrls = (answersToEvaluate || []).map((a) => a.audioUrl).filter((url) => typeof url === "string" && url.trim().length > 0);
+        if (audioUrls.length > 0) {
+          const recordingIds = [];
+          for (const url of audioUrls) {
+            const match = url.match(/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i);
+            if (match) recordingIds.push(match[1]);
+          }
+          if (recordingIds.length > 0) {
+            const expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1e3);
+            await this.prisma.speakingRecordingAsset.updateMany({
+              where: {
+                OR: [
+                  { id: { in: recordingIds } },
+                  { referenceId: id }
+                ],
+                status: "ACTIVE"
+              },
+              data: {
+                referenceType: "EXAM_SUBMISSION",
+                referenceId: id,
+                retentionType: "EXAM",
+                expiresAt
+              }
+            });
+          }
+        }
+      } catch (speakingPromoErr) {
+        console.warn("[submitExam] Speaking recordings promotion notice:", speakingPromoErr);
       }
-      return fullResult;
-    });
+      if (targetStatus === "GRADED") {
+        await this.syncStudentCourseProgressAndMilestones(this.prisma, user.id, submission.exam?.courseId);
+      }
+    } catch (postCommitErr) {
+      console.warn("[submitExam] Post-commit background tasks notice:", postCommitErr);
+    }
+    return fullResult;
   }
   // Use Case: Start Revision Attempt (P1 Canonical Learning Loop)
   async startRevision(user, examId, options) {
@@ -102643,21 +102679,31 @@ var ExamSubmissionService = class {
         where: { submissionId: id }
       });
       let finalTotalScore;
+      const examType = (submission.exam?.examType || "").toLowerCase();
+      const isPureSubjective = examType === "writing" || examType === "speaking";
       if (typeof totalScore === "number" && totalScore > 0) {
         finalTotalScore = totalScore;
+      } else if (!isPureSubjective && allAnswers.length > answerScores.length) {
+        finalTotalScore = allAnswers.reduce((sum, a) => sum + (Number(a.score) || 0), 0);
       } else if (answerScores.length > 0) {
-        if (answerScores.length === 2) {
+        if (answerScores.length === 2 && isPureSubjective) {
           const weightedAvg = (answerScores[0] + 2 * answerScores[1]) / 3;
           finalTotalScore = Math.round(weightedAvg * 2) / 2;
-        } else {
+        } else if (isPureSubjective) {
           const avg = answerScores.reduce((a, b) => a + b, 0) / answerScores.length;
           finalTotalScore = Math.round(avg * 2) / 2;
+        } else {
+          finalTotalScore = allAnswers.reduce((sum, a) => sum + (Number(a.score) || 0), 0);
         }
       } else {
         const dbScores = allAnswers.map((a) => Number(a.score)).filter((s) => !isNaN(s) && s > 0);
         if (dbScores.length > 0) {
-          const avg = dbScores.reduce((a, b) => a + b, 0) / dbScores.length;
-          finalTotalScore = Math.round(avg * 2) / 2;
+          if (isPureSubjective) {
+            const avg = dbScores.reduce((a, b) => a + b, 0) / dbScores.length;
+            finalTotalScore = Math.round(avg * 2) / 2;
+          } else {
+            finalTotalScore = dbScores.reduce((a, b) => a + b, 0);
+          }
         } else {
           finalTotalScore = 0;
         }
@@ -104530,7 +104576,7 @@ var ClassRepository = class {
         class: {
           include: {
             course: {
-              select: { id: true, title: true, description: true }
+              select: { id: true, title: true, description: true, slug: true }
             },
             teacher: {
               select: { id: true, fullName: true }
@@ -104772,6 +104818,7 @@ var ClassService = class {
       className: m.class.name,
       courseId: m.class.courseId,
       courseTitle: m.class.course?.title ?? m.class.name,
+      courseSlug: m.class.course?.slug ?? null,
       teacherName: m.class.teacher?.fullName ?? null,
       isActive: m.class.isActive,
       membershipStatus: "ACTIVE",
@@ -104946,6 +104993,17 @@ var ClassService = class {
     const classData = await this.repo.findById(classId);
     if (!classData) {
       throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+    }
+    const isAdmin = user.roles.includes("admin");
+    const isTeacher = user.roles.includes("teacher");
+    if (isTeacher && !isAdmin && classData.teacherId !== user.id) {
+      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - l\u1EDBp kh\xF4ng thu\u1ED9c quy\u1EC1n qu\u1EA3n l\xFD c\u1EE7a b\u1EA1n", 403);
+    }
+    if (!isAdmin && !isTeacher) {
+      const isEnrolled = classData.students.some((s) => s.studentId === user.id);
+      if (!isEnrolled) {
+        throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng ph\u1EA3i th\xE0nh vi\xEAn c\u1EE7a l\u1EDBp n\xE0y", 403);
+      }
     }
     const sessions = await this.prisma.classSession.findMany({
       where: { classId },
@@ -105946,6 +106004,104 @@ var ClassService = class {
       return { success: true };
     });
   }
+  // Use Case: Update student status in class (ACTIVE, SUSPENDED, RESERVED, COMPLETED, DROPPED)
+  async updateStudentStatus(user, classId, studentId, options) {
+    const classData = await this.repo.findById(classId);
+    if (!classData) {
+      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+    }
+    const isAdmin = user.roles.includes("admin");
+    if (!isAdmin && classData.teacherId !== user.id) {
+      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n c\u1EADp nh\u1EADt tr\u1EA1ng th\xE1i h\u1ECDc vi\xEAn c\u1EE7a l\u1EDBp n\xE0y", 403);
+    }
+    const validStatuses = ["ACTIVE", "SUSPENDED", "RESERVED", "COMPLETED", "DROPPED"];
+    const targetStatus = (options.status || "").toUpperCase();
+    if (!validStatuses.includes(targetStatus)) {
+      throw new AuthorizationError(`Tr\u1EA1ng th\xE1i kh\xF4ng h\u1EE3p l\u1EC7: ${options.status}. C\xE1c tr\u1EA1ng th\xE1i h\u1EE3p l\u1EC7: ${validStatuses.join(", ")}`, 400);
+    }
+    return this.prisma.$transaction(async (tx) => {
+      const existing = await tx.classStudent.findFirst({
+        where: { classId, studentId, deletedAt: null }
+      });
+      if (!existing) {
+        throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y h\u1ECDc vi\xEAn trong l\u1EDBp h\u1ECDc n\xE0y");
+      }
+      const fromStatus = existing.status;
+      const updated = await tx.classStudent.update({
+        where: { id: existing.id },
+        data: {
+          status: targetStatus,
+          completedAt: targetStatus === "COMPLETED" ? /* @__PURE__ */ new Date() : targetStatus === "ACTIVE" ? null : existing.completedAt
+        }
+      });
+      await tx.enrollmentAuditLog.create({
+        data: {
+          operatorId: user.id,
+          studentId,
+          classId,
+          fromStatus,
+          toStatus: targetStatus,
+          action: "STUDENT_STATUS_UPDATE",
+          reason: options.reason || `C\u1EADp nh\u1EADt tr\u1EA1ng th\xE1i h\u1ECDc vi\xEAn t\u1EEB ${fromStatus} sang ${targetStatus}`
+        }
+      });
+      return { success: true, data: updated };
+    }, { maxWait: 1e4, timeout: 2e4 });
+  }
+  // Use Case: Reschedule a single session
+  async rescheduleSingleSession(user, sessionId, plannedDate, reason) {
+    const session = await this.prisma.classSession.findUnique({
+      where: { id: sessionId },
+      include: { class: true }
+    });
+    if (!session) {
+      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y bu\u1ED5i h\u1ECDc");
+    }
+    const isAdmin = user.roles.includes("admin");
+    if (!isAdmin && session.class?.teacherId !== user.id) {
+      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n d\u1EDDi l\u1ECBch bu\u1ED5i h\u1ECDc n\xE0y", 403);
+    }
+    if (session.status === "COMPLETED") {
+      throw new AuthorizationError("Kh\xF4ng th\u1EC3 d\u1EDDi l\u1ECBch bu\u1ED5i h\u1ECDc \u0111\xE3 ho\xE0n t\u1EA5t", 400);
+    }
+    const newPlannedDate = new Date(plannedDate);
+    const updated = await this.prisma.classSession.update({
+      where: { id: sessionId },
+      data: {
+        plannedDate: newPlannedDate,
+        rescheduleReason: reason || null,
+        status: "SCHEDULED"
+      }
+    });
+    return updated;
+  }
+  // Use Case: Update session status
+  async updateSessionStatus(user, sessionId, status, note) {
+    const session = await this.prisma.classSession.findUnique({
+      where: { id: sessionId },
+      include: { class: true }
+    });
+    if (!session) {
+      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y bu\u1ED5i h\u1ECDc");
+    }
+    const isAdmin = user.roles.includes("admin");
+    if (!isAdmin && session.class?.teacherId !== user.id) {
+      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n c\u1EADp nh\u1EADt tr\u1EA1ng th\xE1i bu\u1ED5i h\u1ECDc n\xE0y", 403);
+    }
+    const normalizedStatus = (status || "").toUpperCase();
+    const validStatuses = ["SCHEDULED", "COMPLETED", "CANCELLED", "PLANNED"];
+    if (!validStatuses.includes(normalizedStatus)) {
+      throw new AuthorizationError(`Tr\u1EA1ng th\xE1i kh\xF4ng h\u1EE3p l\u1EC7: ${status}`, 400);
+    }
+    const updated = await this.prisma.classSession.update({
+      where: { id: sessionId },
+      data: {
+        status: normalizedStatus,
+        rescheduleReason: note !== void 0 ? note : session.rescheduleReason
+      }
+    });
+    return updated;
+  }
   // Use Case: Record Attendance
   async recordAttendance(user, classId, records) {
     const classData = await this.repo.findById(classId);
@@ -106269,6 +106425,59 @@ var ClassController = class {
       return reply.status(status).send({ error: err.message });
     }
   }
+  async updateStudentStatus(request, reply) {
+    try {
+      const user = request.user;
+      const result = await this.service.updateStudentStatus(
+        user,
+        request.params.id,
+        request.params.studentId,
+        request.body || { status: "" }
+      );
+      return reply.send(result);
+    } catch (err) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
+  async rescheduleSession(request, reply) {
+    try {
+      const user = request.user;
+      const { plannedDate, reason } = request.body || {};
+      if (!plannedDate) {
+        return reply.status(400).send({ error: "plannedDate l\xE0 b\u1EAFt bu\u1ED9c" });
+      }
+      const result = await this.service.rescheduleSingleSession(
+        user,
+        request.params.sessionId,
+        plannedDate,
+        reason
+      );
+      return reply.send(result);
+    } catch (err) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
+  async updateSessionStatus(request, reply) {
+    try {
+      const user = request.user;
+      const { status: sessionStatus, note } = request.body || {};
+      if (!sessionStatus) {
+        return reply.status(400).send({ error: "status l\xE0 b\u1EAFt bu\u1ED9c" });
+      }
+      const result = await this.service.updateSessionStatus(
+        user,
+        request.params.sessionId,
+        sessionStatus,
+        note
+      );
+      return reply.send(result);
+    } catch (err) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
 };
 
 // server/routes/classes.routes.ts
@@ -106307,6 +106516,20 @@ async function classesRoutes(fastify) {
       return controller.postponeSession(request, reply);
     }
   );
+  fastify.put(
+    "/sessions/:sessionId/reschedule",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      return controller.rescheduleSession(request, reply);
+    }
+  );
+  fastify.put(
+    "/sessions/:sessionId/status",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      return controller.updateSessionStatus(request, reply);
+    }
+  );
   fastify.post(
     "/",
     { preHandler: [authenticate, requireRoles("admin")] },
@@ -106333,6 +106556,13 @@ async function classesRoutes(fastify) {
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       return controller.removeStudent(request, reply);
+    }
+  );
+  fastify.patch(
+    "/:id/students/:studentId/status",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      return controller.updateStudentStatus(request, reply);
     }
   );
   fastify.delete(
@@ -106410,6 +106640,23 @@ async function classesRoutes(fastify) {
     { preHandler: [authenticate, requireRoles("admin")] },
     async (request, reply) => {
       return controller.triggerMaintenance(request, reply);
+    }
+  );
+  fastify.post(
+    "/:id/students/:studentId/parent-token/regenerate",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { id: classId, studentId } = request.params;
+      const { randomBytes: randomBytes2 } = await import("crypto");
+      const newToken = `nb_p_${randomBytes2(8).toString("hex")}`;
+      const updated = await fastify.prisma.classStudent.update({
+        where: { classId_studentId: { classId, studentId } },
+        data: { parentToken: newToken }
+      });
+      return reply.send({
+        success: true,
+        data: { parentToken: updated.parentToken }
+      });
     }
   );
 }
@@ -108514,6 +108761,9 @@ var LeadService = class {
           }
         });
         return { user: newUser, lead: updatedLead, placedClass: placedClassInfo };
+      }, {
+        maxWait: 1e4,
+        timeout: 2e4
       });
       (async () => {
         try {
@@ -108618,7 +108868,7 @@ var leadRoutes = async (fastify) => {
   );
   fastify.get(
     "/check-phone",
-    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
+    { preHandler: [authenticate, requireRoles("admin", "staff")] },
     async (request, reply) => {
       const { phone } = request.query;
       if (!phone || typeof phone !== "string") {
@@ -108633,7 +108883,7 @@ var leadRoutes = async (fastify) => {
   );
   fastify.post(
     "/manual",
-    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
+    { preHandler: [authenticate, requireRoles("admin", "staff")] },
     async (request, reply) => {
       const validatedData = handleValidation(
         createLeadSchema.safeParse(request.body),
@@ -108663,7 +108913,7 @@ var leadRoutes = async (fastify) => {
   );
   fastify.post(
     "/:id/convert",
-    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
+    { preHandler: [authenticate, requireRoles("admin", "staff")] },
     async (request, reply) => {
       const { id } = request.params;
       const { convertLeadSchema: convertLeadSchema2 } = await Promise.resolve().then(() => (init_lead_schema(), lead_schema_exports));
@@ -108691,7 +108941,7 @@ var leadRoutes = async (fastify) => {
   );
   fastify.get(
     "/assignable-staff",
-    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
+    { preHandler: [authenticate, requireRoles("admin", "staff")] },
     async (request, reply) => {
       const { branchId } = request.query || {};
       const staffWithLeads = await fastify.prisma.user.findMany({
@@ -108759,7 +109009,7 @@ var leadRoutes = async (fastify) => {
   );
   fastify.get(
     "/",
-    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
+    { preHandler: [authenticate, requireRoles("admin", "staff")] },
     async (request, reply) => {
       const validatedQuery = handleValidation(
         listLeadsQuerySchema.safeParse(request.query),
@@ -108785,7 +109035,7 @@ var leadRoutes = async (fastify) => {
   );
   fastify.get(
     "/:id",
-    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
+    { preHandler: [authenticate, requireRoles("admin", "staff")] },
     async (request, reply) => {
       const { id } = request.params;
       const lead = await leadService.getLeadById(id);
@@ -108812,7 +109062,7 @@ var leadRoutes = async (fastify) => {
   );
   fastify.patch(
     "/:id",
-    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
+    { preHandler: [authenticate, requireRoles("admin", "staff")] },
     async (request, reply) => {
       const { id } = request.params;
       const validatedData = handleValidation(
@@ -112250,6 +112500,570 @@ var teacherProfileRoutes = async (fastify) => {
 };
 var teacher_profile_routes_default = teacherProfileRoutes;
 
+// server/services/snapshot.service.ts
+import { randomBytes } from "crypto";
+var SnapshotService = class {
+  constructor(prisma) {
+    this.prisma = prisma;
+  }
+  /**
+   * Generates a random unique parent access token
+   */
+  generateParentToken() {
+    return `nb_p_${randomBytes(8).toString("hex")}`;
+  }
+  /**
+   * Calculates the weekly snapshot cut-off point.
+   * Default: Current or most recent Sunday at 18:00 (with 15-min grace period -> 18:15).
+   */
+  calculateCutoffTime(targetDate = /* @__PURE__ */ new Date()) {
+    const d = new Date(targetDate);
+    const day = d.getDay();
+    const cutoff = new Date(d);
+    cutoff.setDate(d.getDate() - (day === 0 ? 0 : day));
+    cutoff.setHours(18, 15, 0, 0);
+    return cutoff;
+  }
+  /**
+   * Determines current week number for a cohort/class
+   */
+  calculateWeekNumber(startDate, cutoffDate, totalWeeks = 10) {
+    if (!startDate) return 1;
+    const diffMs = cutoffDate.getTime() - startDate.getTime();
+    if (diffMs <= 0) return 1;
+    const week = Math.ceil(diffMs / (7 * 24 * 60 * 60 * 1e3));
+    return Math.max(1, Math.min(totalWeeks, week));
+  }
+  /**
+   * Calculates ARIS scholarship tier & loss aversion note
+   */
+  calculateScholarshipStanding(hwCompleted, hwTotal, attendanceRate = 100) {
+    const rate = hwTotal > 0 ? hwCompleted / hwTotal * 100 : 100;
+    const missed = Math.max(0, hwTotal - hwCompleted);
+    if (attendanceRate >= 90) {
+      if (rate >= 90) {
+        const maxMissesTier4 = Math.floor(hwTotal * 0.1);
+        const remaining = Math.max(0, maxMissesTier4 - missed);
+        const note = remaining > 0 ? `Phong \u0111\u1ED9 xu\u1EA5t s\u1EAFc! C\xF2n \u0111\u01B0\u1EE3c ph\xE9p tr\u1EC5 t\u1ED1i \u0111a ${remaining} b\xE0i \u0111\u1EC3 b\u1EA3o to\xE0n m\u1ED1c 500.000\u0111.` : `\u0110ang gi\u1EEF m\u1ED1c 500.000\u0111 \u1EDF ng\u01B0\u1EE1ng gi\u1EDBi h\u1EA1n. Kh\xF4ng \u0111\u01B0\u1EE3c tr\u1EC5 th\xEAm b\xE0i n\xE0o!`;
+        return { tier: "TIER_4", amount: 5e5, lossAversionNote: note };
+      }
+      if (rate >= 80) {
+        const maxMissesTier3 = Math.floor(hwTotal * 0.2);
+        const remaining = Math.max(0, maxMissesTier3 - missed);
+        const note = remaining > 0 ? `\u0110ang gi\u1EEF 400.000\u0111. C\xF2n \u0111\u01B0\u1EE3c ph\xE9p thi\u1EBFu ${remaining} b\xE0i n\u1EEFa tr\u01B0\u1EDBc khi t\u1EE5t xu\u1ED1ng C\u1EA5p 2 (300k).` : `Nguy c\u01A1 t\u1EE5t h\u1ECDc b\u1ED5ng xu\u1ED1ng 300k n\u1EBFu kh\xF4ng n\u1ED9p \u0111\u1EE7 b\xE0i ti\u1EBFp theo!`;
+        return { tier: "TIER_3", amount: 4e5, lossAversionNote: note };
+      }
+      if (rate >= 70) {
+        return {
+          tier: "TIER_2",
+          amount: 3e5,
+          lossAversionNote: `\u0110ang gi\u1EEF 300.000\u0111. N\u1ED7 l\u1EF1c n\u1ED9p \u0111\u1EE7 c\xE1c b\xE0i t\u1EDBi \u0111\u1EC3 n\xE2ng h\u1EA1ng l\xEAn C\u1EA5p 3 (400.000\u0111)!`
+        };
+      }
+      if (rate >= 50) {
+        return {
+          tier: "TIER_1",
+          amount: 2e5,
+          lossAversionNote: `\u0110ang gi\u1EEF 200.000\u0111. C\u1EA7n n\u1ED9p th\xEAm b\xE0i \u0111\xFAng h\u1EA1n \u0111\u1EC3 v\u01B0\u01A1n l\xEAn m\u1ED1c 300k - 500k.`
+        };
+      }
+    }
+    return {
+      tier: "NONE",
+      amount: 0,
+      lossAversionNote: `Hi\u1EC7n \u0111\u1EA1t ${Math.round(rate)}% BTVN. C\u1EA7n \u0111\u1EA1t t\u1ED1i thi\u1EC3u 50% \u0111\u1EC3 m\u1EDF kh\xF3a H\u1ECDc b\u1ED5ng K\u1EF7 lu\u1EADt 200k.`
+    };
+  }
+  /**
+   * Executes weekly snapshot freezing for all active classes
+   */
+  async executeWeeklySnapshot(options) {
+    const cutoffTime = options?.targetDate ? new Date(options.targetDate) : this.calculateCutoffTime();
+    const classes = await this.prisma.class.findMany({
+      where: {
+        status: "ACTIVE",
+        ...options?.classId ? { id: options.classId } : {}
+      },
+      include: {
+        assignments: {
+          where: {
+            status: "PUBLISHED",
+            createdAt: { lte: cutoffTime }
+          },
+          include: {
+            exam: true
+          }
+        },
+        students: {
+          where: {
+            status: "ACTIVE"
+          },
+          include: {
+            student: true
+          }
+        }
+      }
+    });
+    let studentsProcessed = 0;
+    let snapshotsCreated = 0;
+    for (const cls of classes) {
+      const totalWeeks = cls.totalWeeks || 10;
+      const weekNumber = this.calculateWeekNumber(cls.startDate, cutoffTime, totalWeeks);
+      const assignedExams = cls.assignments;
+      const assignedExamIds = assignedExams.map((a) => a.examId);
+      const hwTotal = assignedExams.length;
+      for (const enrollment of cls.students) {
+        studentsProcessed++;
+        let parentToken = enrollment.parentToken;
+        if (!parentToken) {
+          parentToken = this.generateParentToken();
+          await this.prisma.classStudent.update({
+            where: { id: enrollment.id },
+            data: { parentToken }
+          });
+        }
+        let hwCompleted = 0;
+        let streakDays = 0;
+        if (assignedExamIds.length > 0) {
+          const submissions = await this.prisma.examSubmission.findMany({
+            where: {
+              studentId: enrollment.studentId,
+              examId: { in: assignedExamIds },
+              submittedAt: { lte: cutoffTime },
+              status: { in: ["SUBMITTED", "GRADED"] }
+            },
+            orderBy: { submittedAt: "desc" }
+          });
+          hwCompleted = submissions.length;
+          streakDays = submissions.length;
+        }
+        const hwRate = hwTotal > 0 ? Math.min(100, Math.round(hwCompleted / hwTotal * 100)) : 100;
+        const attendanceRecords = await this.prisma.classAttendance.findMany({
+          where: {
+            classId: cls.id,
+            studentId: enrollment.studentId,
+            sessionDate: { lte: cutoffTime }
+          }
+        });
+        let attendanceRate = 100;
+        if (attendanceRecords.length > 0) {
+          const presentOrLate = attendanceRecords.filter(
+            (a) => a.status === "PRESENT" || a.status === "LATE"
+          ).length;
+          attendanceRate = Math.round(presentOrLate / attendanceRecords.length * 100);
+        }
+        const scholarship = this.calculateScholarshipStanding(hwCompleted, hwTotal, attendanceRate);
+        const latestReport = await this.prisma.studentPeriodicReport.findFirst({
+          where: {
+            classId: cls.id,
+            studentId: enrollment.studentId
+          },
+          orderBy: { createdAt: "desc" }
+        });
+        const teacherNote = latestReport?.recommendations || latestReport?.strengths || "Em h\u1ECDc t\u1EADp ch\u0103m ch\u1EC9 v\xE0 c\xF3 tinh th\u1EA7n t\u1EF1 gi\xE1c cao trong tu\u1EA7n.";
+        await this.prisma.weeklySnapshot.upsert({
+          where: {
+            classId_studentId_weekNumber: {
+              classId: cls.id,
+              studentId: enrollment.studentId,
+              weekNumber
+            }
+          },
+          update: {
+            cutoffAt: cutoffTime,
+            hwCompleted,
+            hwTotal,
+            hwRate,
+            streakDays,
+            attendanceRate,
+            scholarshipTier: scholarship.tier,
+            scholarshipAmount: scholarship.amount,
+            lossAversionNote: scholarship.lossAversionNote,
+            teacherNote
+          },
+          create: {
+            classId: cls.id,
+            studentId: enrollment.studentId,
+            weekNumber,
+            cutoffAt: cutoffTime,
+            hwCompleted,
+            hwTotal,
+            hwRate,
+            streakDays,
+            attendanceRate,
+            scholarshipTier: scholarship.tier,
+            scholarshipAmount: scholarship.amount,
+            lossAversionNote: scholarship.lossAversionNote,
+            teacherNote
+          }
+        });
+        snapshotsCreated++;
+      }
+    }
+    return {
+      classesProcessed: classes.length,
+      studentsProcessed,
+      snapshotsCreated,
+      cutoffTime
+    };
+  }
+};
+
+// server/routes/cron.routes.ts
+var cronRoutes = async (fastify) => {
+  const snapshotService = new SnapshotService(fastify.prisma);
+  const handleWeeklySnapshot = async (request, reply) => {
+    const cronSecret = process.env.CRON_SECRET;
+    const authHeader = request.headers["authorization"];
+    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+      return reply.status(401).send({
+        success: false,
+        error: "Unauthorized: Invalid CRON_SECRET token"
+      });
+    }
+    try {
+      fastify.log.info("Triggering Weekly Snapshot calculation job...");
+      const result = await snapshotService.executeWeeklySnapshot();
+      fastify.log.info(result, "Weekly Snapshot calculation completed successfully.");
+      return reply.send({
+        success: true,
+        data: result
+      });
+    } catch (err) {
+      fastify.log.error(err, "Weekly Snapshot job failed");
+      return reply.status(500).send({
+        success: false,
+        error: "Weekly snapshot calculation failed: " + err.message
+      });
+    }
+  };
+  fastify.get("/weekly-snapshot", handleWeeklySnapshot);
+  fastify.post("/weekly-snapshot", handleWeeklySnapshot);
+};
+var cron_routes_default = cronRoutes;
+
+// server/routes/parent-reports.routes.ts
+init_notification_service();
+var parentReportsRoutes = async (fastify) => {
+  const prisma = fastify.prisma;
+  const snapshotService = new SnapshotService(prisma);
+  const notificationService = new NotificationService(prisma);
+  fastify.get("/public/parent-reports/:token", async (request, reply) => {
+    const { token } = request.params;
+    if (!token) {
+      return reply.status(400).send({ success: false, error: "Token is required" });
+    }
+    reply.header("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    reply.header("Pragma", "no-cache");
+    reply.header("Expires", "0");
+    try {
+      const enrollment = await prisma.classStudent.findUnique({
+        where: { parentToken: token },
+        include: {
+          student: {
+            select: {
+              userId: true,
+              fullName: true,
+              avatarUrl: true,
+              parentName: true,
+              parentPhone: true,
+              phone: true
+            }
+          },
+          class: {
+            select: {
+              id: true,
+              name: true,
+              totalWeeks: true,
+              startDate: true,
+              endDate: true,
+              teacher: {
+                select: {
+                  fullName: true
+                }
+              }
+            }
+          }
+        }
+      });
+      if (!enrollment || !enrollment.class || !enrollment.student) {
+        return reply.status(404).send({
+          success: false,
+          error: "Kh\xF4ng t\xECm th\u1EA5y b\xE1o c\xE1o h\u1ECDc t\u1EADp ho\u1EB7c li\xEAn k\u1EBFt \u0111\xE3 h\u1EBFt hi\u1EC7u l\u1EF1c."
+        });
+      }
+      const cls = enrollment.class;
+      const student = enrollment.student;
+      const totalWeeks = cls.totalWeeks || 10;
+      const now = /* @__PURE__ */ new Date();
+      const currentWeek = snapshotService.calculateWeekNumber(cls.startDate, now, totalWeeks);
+      const latestSnapshot = await prisma.weeklySnapshot.findFirst({
+        where: {
+          classId: cls.id,
+          studentId: student.userId
+        },
+        orderBy: { weekNumber: "desc" }
+      });
+      const latestAssessment = await prisma.assessmentSession.findFirst({
+        where: { userId: student.userId },
+        orderBy: { createdAt: "desc" },
+        select: { targetBand: true }
+      });
+      const targetBand = latestAssessment?.targetBand || "IELTS 6.0+";
+      const latestReport = await prisma.studentPeriodicReport.findFirst({
+        where: {
+          classId: cls.id,
+          studentId: student.userId
+        },
+        orderBy: { createdAt: "desc" }
+      });
+      let snapshotData;
+      if (latestSnapshot) {
+        snapshotData = {
+          weekNumber: latestSnapshot.weekNumber,
+          hwCompleted: latestSnapshot.hwCompleted,
+          hwTotal: latestSnapshot.hwTotal,
+          hwRate: latestSnapshot.hwRate,
+          streakDays: latestSnapshot.streakDays,
+          attendanceRate: latestSnapshot.attendanceRate,
+          scholarshipTier: latestSnapshot.scholarshipTier,
+          scholarshipAmount: Number(latestSnapshot.scholarshipAmount),
+          lossAversionNote: latestSnapshot.lossAversionNote,
+          teacherNote: latestSnapshot.teacherNote,
+          parentEncouraged: latestSnapshot.parentEncouraged,
+          cutoffAt: latestSnapshot.cutoffAt
+        };
+      } else {
+        const assignments = await prisma.classExamAssignment.findMany({
+          where: { classId: cls.id, status: "PUBLISHED" }
+        });
+        const assignedExamIds = assignments.map((a) => a.examId);
+        const submissions = await prisma.examSubmission.findMany({
+          where: {
+            studentId: student.userId,
+            examId: { in: assignedExamIds },
+            status: { in: ["SUBMITTED", "GRADED"] }
+          }
+        });
+        const hwTotal = assignments.length;
+        const hwCompleted = submissions.length;
+        const hwRate = hwTotal > 0 ? Math.round(hwCompleted / hwTotal * 100) : 100;
+        const standing = snapshotService.calculateScholarshipStanding(hwCompleted, hwTotal, 100);
+        snapshotData = {
+          weekNumber: currentWeek,
+          hwCompleted,
+          hwTotal,
+          hwRate,
+          streakDays: submissions.length,
+          attendanceRate: 100,
+          scholarshipTier: standing.tier,
+          scholarshipAmount: standing.amount,
+          lossAversionNote: standing.lossAversionNote,
+          teacherNote: latestReport?.recommendations || "Em duy tr\xEC th\xE1i \u0111\u1ED9 h\u1ECDc t\u1EADp r\u1EA5t nghi\xEAm t\xFAc.",
+          parentEncouraged: false,
+          cutoffAt: now
+        };
+      }
+      const canReEnroll = currentWeek >= Math.max(1, totalWeeks - 2);
+      const responsePayload = {
+        student: {
+          id: student.userId,
+          name: student.fullName || "H\u1ECDc vi\xEAn NextBand",
+          avatarUrl: student.avatarUrl,
+          targetBand,
+          className: cls.name,
+          teacherName: cls.teacher?.fullName || "Gi\u1EA3ng vi\xEAn ph\u1EE5 tr\xE1ch",
+          parentName: student.parentName,
+          parentPhone: student.parentPhone || student.phone
+        },
+        classInfo: {
+          id: cls.id,
+          name: cls.name,
+          currentWeek,
+          totalWeeks,
+          startDate: cls.startDate,
+          endDate: cls.endDate
+        },
+        snapshot: snapshotData,
+        teacherEvaluation: {
+          strengths: latestReport?.strengths || "N\u1EAFm v\u1EEFng ki\u1EBFn th\u1EE9c tr\u1ECDng t\xE2m b\xE0i h\u1ECDc.",
+          weaknesses: latestReport?.weaknesses || "C\u1EA7n ch\xFA \xFD ki\u1EC3m tra l\u1EA1i l\u1ED7i ch\xEDnh t\u1EA3 tr\u01B0\u1EDBc khi n\u1ED9p b\xE0i.",
+          recommendations: latestReport?.recommendations || snapshotData.teacherNote
+        },
+        canReEnroll,
+        hotlinePhone: process.env.VITE_HOTLINE_ZALO_PHONE || "0901234567"
+      };
+      return reply.send({
+        success: true,
+        data: responsePayload
+      });
+    } catch (err) {
+      fastify.log.error(err, "Failed to fetch parent report");
+      return reply.status(500).send({
+        success: false,
+        error: "L\u1ED7i m\xE1y ch\u1EE7 khi t\u1EA3i b\xE1o c\xE1o h\u1ECDc t\u1EADp: " + err.message
+      });
+    }
+  });
+  fastify.post("/public/parent-reports/:token/cheer", async (request, reply) => {
+    const { token } = request.params;
+    try {
+      const enrollment = await prisma.classStudent.findUnique({
+        where: { parentToken: token },
+        select: {
+          classId: true,
+          studentId: true
+        }
+      });
+      if (!enrollment) {
+        return reply.status(404).send({ success: false, error: "Token kh\xF4ng h\u1EE3p l\u1EC7" });
+      }
+      const latestSnapshot = await prisma.weeklySnapshot.findFirst({
+        where: {
+          classId: enrollment.classId,
+          studentId: enrollment.studentId
+        },
+        orderBy: { weekNumber: "desc" }
+      });
+      if (latestSnapshot) {
+        await prisma.weeklySnapshot.update({
+          where: { id: latestSnapshot.id },
+          data: { parentEncouraged: true }
+        });
+      }
+      await notificationService.createNotification(prisma, {
+        userId: enrollment.studentId,
+        type: "SYSTEM",
+        title: "\u2764\uFE0F Ba M\u1EB9 v\u1EEBa th\u1EA3 tim b\xE1o c\xE1o c\u1EE7a b\u1EA1n!",
+        message: "Ba M\u1EB9 v\u1EEBa xem ti\u1EBFn \u0111\u1ED9 tu\u1EA7n n\xE0y v\xE0 g\u1EEDi l\u1EDDi \u0111\u1ED9ng vi\xEAn t\u1EDBi b\u1EA1n. Gi\u1EEF v\u1EEFng phong \u0111\u1ED9 nh\xE9!",
+        link: "/profile",
+        entityType: "PARENT_CHEER",
+        entityId: latestSnapshot?.id || enrollment.classId
+      });
+      return reply.send({
+        success: true,
+        message: "\u0110\xE3 g\u1EEDi l\u1EDDi khen th\xE0nh c\xF4ng \u0111\u1EBFn em!"
+      });
+    } catch (err) {
+      fastify.log.error(err, "Failed to process parent cheer");
+      return reply.status(500).send({
+        success: false,
+        error: "Kh\xF4ng th\u1EC3 g\u1EEDi l\u1EDDi \u0111\u1ED9ng vi\xEAn: " + err.message
+      });
+    }
+  });
+};
+var parent_reports_routes_default = parentReportsRoutes;
+
+// server/routes/re-enrollment.routes.ts
+init_zod();
+init_notification_service();
+var reEnrollmentRequestSchema = external_exports.object({
+  token: external_exports.string().optional(),
+  classId: external_exports.string().optional(),
+  studentId: external_exports.string().optional(),
+  parentPhone: external_exports.string().optional(),
+  scholarshipAmount: external_exports.number().optional().default(5e5)
+});
+var reEnrollmentRoutes = async (fastify) => {
+  const prisma = fastify.prisma;
+  const notificationService = new NotificationService(prisma);
+  fastify.post("/public/re-enrollment/request", async (request, reply) => {
+    const parseResult = reEnrollmentRequestSchema.safeParse(request.body);
+    if (!parseResult.success) {
+      return reply.status(400).send({
+        success: false,
+        error: "D\u1EEF li\u1EC7u y\xEAu c\u1EA7u kh\xF4ng h\u1EE3p l\u1EC7"
+      });
+    }
+    const { token, classId, studentId, parentPhone, scholarshipAmount } = parseResult.data;
+    try {
+      let enrollment;
+      if (token) {
+        enrollment = await prisma.classStudent.findUnique({
+          where: { parentToken: token },
+          include: {
+            class: true,
+            student: true
+          }
+        });
+      } else if (classId && studentId) {
+        enrollment = await prisma.classStudent.findUnique({
+          where: {
+            classId_studentId: { classId, studentId }
+          },
+          include: {
+            class: true,
+            student: true
+          }
+        });
+      }
+      if (!enrollment) {
+        return reply.status(404).send({
+          success: false,
+          error: "Kh\xF4ng t\xECm th\u1EA5y th\xF4ng tin h\u1ECDc vi\xEAn \u0111\u1EC3 t\xE1i t\u1EE5c."
+        });
+      }
+      const student = enrollment.student;
+      const cls = enrollment.class;
+      const phoneToContact = parentPhone || student.parentPhone || student.phone || "0900000000";
+      const formattedAmount = `${scholarshipAmount.toLocaleString("vi-VN")}\u0111`;
+      const lead = await prisma.contactLead.create({
+        data: {
+          fullName: student.fullName || "H\u1ECDc vi\xEAn NextBand",
+          phone: phoneToContact,
+          source: "RE_ENROLLMENT_HUB",
+          status: "NEW",
+          notes: `[T\xC1I T\u1EE4C PARENT HUB] Y\xEAu c\u1EA7u b\u1EA3o l\u01B0u H\u1ECDc b\u1ED5ng K\u1EF7 lu\u1EADt ${formattedAmount} c\u1EE7a em ${student.fullName} (L\u1EDBp ${cls.name}) \u0111\u1EC3 \u0111\u0103ng k\xFD kh\xF3a h\u1ECDc k\u1EBF ti\u1EBFp.`
+        }
+      });
+      const admins = await prisma.userRole.findMany({
+        where: { role: "admin" },
+        select: { userId: true }
+      });
+      const recipientUserIds = /* @__PURE__ */ new Set();
+      admins.forEach((a) => recipientUserIds.add(a.userId));
+      if (cls.teacherId) {
+        recipientUserIds.add(cls.teacherId);
+      }
+      if (recipientUserIds.size > 0) {
+        await notificationService.createBatchNotifications(
+          prisma,
+          Array.from(recipientUserIds).map((userId) => ({
+            userId,
+            type: "RE_ENROLLMENT_INTENT",
+            title: "\u{1F3AF} Y\xEAu c\u1EA7u T\xE1i t\u1EE5c Kh\xF3a h\u1ECDc m\u1EDBi!",
+            message: `Ph\u1EE5 huynh em ${student.fullName} (L\u1EDBp ${cls.name}) v\u1EEBa b\u1EA5m b\u1EA3o l\u01B0u H\u1ECDc b\u1ED5ng ${formattedAmount} \u0111\u1EC3 \u0111\u0103ng k\xFD kh\xF3a m\u1EDBi.`,
+            link: "/admin/leads",
+            entityType: "RE_ENROLLMENT_LEAD",
+            entityId: lead.id
+          }))
+        );
+      }
+      const hotlinePhone = process.env.VITE_HOTLINE_ZALO_PHONE || "0981977797";
+      const prefilledText = `Ch\xE0o Th\u1EA7y/C\xF4 NextBand, t\xF4i l\xE0 ph\u1EE5 huynh em ${student.fullName} (L\u1EDBp ${cls.name}). T\xF4i mu\u1ED1n \u0111\u0103ng k\xFD gi\u1EEF ch\u1ED7 kh\xF3a ti\u1EBFp theo v\xE0 \xE1p d\u1EE5ng H\u1ECDc b\u1ED5ng K\u1EF7 lu\u1EADt ${formattedAmount} c\u1EE7a con \u1EA1.`;
+      const zaloDeepLink = `https://zalo.me/${hotlinePhone}?text=${encodeURIComponent(prefilledText)}`;
+      return reply.send({
+        success: true,
+        message: "\u0110\xE3 ti\u1EBFp nh\u1EADn y\xEAu c\u1EA7u t\xE1i t\u1EE5c th\xE0nh c\xF4ng!",
+        data: {
+          leadId: lead.id,
+          hotlinePhone,
+          zaloDeepLink,
+          prefilledText
+        }
+      });
+    } catch (err) {
+      fastify.log.error(err, "Failed to process re-enrollment request");
+      return reply.status(500).send({
+        success: false,
+        error: "L\u1ED7i h\u1EC7 th\u1ED1ng khi g\u1EEDi y\xEAu c\u1EA7u t\xE1i t\u1EE5c: " + err.message
+      });
+    }
+  });
+};
+var re_enrollment_routes_default = reEnrollmentRoutes;
+
 // server/routes/index.ts
 var routes = async (fastify) => {
   fastify.get("/health", async () => {
@@ -112291,6 +113105,9 @@ var routes = async (fastify) => {
   await fastify.register(milestoneRoutes, { prefix: "/milestones" });
   await fastify.register(lexicon_routes_default, { prefix: "/lexicon" });
   await fastify.register(teacher_profile_routes_default, { prefix: "/teacher-profile" });
+  await fastify.register(cron_routes_default, { prefix: "/cron" });
+  await fastify.register(parent_reports_routes_default);
+  await fastify.register(re_enrollment_routes_default);
 };
 var routes_default = routes;
 
@@ -112322,7 +113139,9 @@ var ClassSchedulerService = class {
       this.timer = setInterval(() => {
         this.runMaintenance();
       }, this.INTERVAL_MS);
+      this.timer.unref?.();
     }, this.INITIAL_DELAY_MS);
+    this.initialTimeout.unref?.();
   }
   /**
    * Dừng tác vụ (phục vụ graceful shutdown)

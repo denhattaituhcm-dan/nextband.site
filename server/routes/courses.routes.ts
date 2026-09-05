@@ -453,6 +453,20 @@ const coursesRoutes: FastifyPluginAsync = async (fastify) => {
         return reply.status(404).send({ error: "Không tìm thấy khóa học" });
       }
 
+      // Ownership check: If teacher and not admin, course must belong to the teacher
+      const user = request.user;
+      const isAdmin = user.roles.includes("admin");
+      const isTeacher = user.roles.includes("teacher");
+
+      if (isTeacher && !isAdmin) {
+        const isOwner = existing.teacherId === user.id;
+        if (!isOwner) {
+          return reply.status(403).send({
+            error: "Từ chối truy cập - Bạn không phụ trách khóa học này",
+          });
+        }
+      }
+
       if (data.slug) {
         const existingSlug = await fastify.prisma.course.findFirst({
           where: {

@@ -132,38 +132,40 @@ export function SpeakingGrader({
 
   // Robust audio resolution with multiple fallbacks
   const resolvedAudioUrl = useMemo(() => {
+    let raw = "";
     if (currentAnswer?.audioUrl && currentAnswer.audioUrl.trim().length > 0) {
-      return currentAnswer.audioUrl.trim();
+      raw = currentAnswer.audioUrl.trim();
+    } else if (AudioStorageService.isAudio(currentAnswer?.answerText)) {
+      raw = (currentAnswer?.answerText || "").trim();
+    } else {
+      // Fallback: look in other answers of the submission
+      const otherWithAudio = answers.find(
+        (a) => (a.audioUrl && a.audioUrl.trim().length > 0) || AudioStorageService.isAudio(a.answerText)
+      );
+      if (otherWithAudio) {
+        raw = (otherWithAudio.audioUrl || otherWithAudio.answerText || "").trim();
+      } else {
+        // Fallback: look in submissionDetail raw answers if available
+        const rawDetailAnswers = submissionDetail?.answers || [];
+        const matchedRaw = rawDetailAnswers.find(
+          (a: any) =>
+            (a.audioUrl && a.audioUrl.trim().length > 0) ||
+            (a.audio_url && a.audio_url.trim().length > 0) ||
+            AudioStorageService.isAudio(a.answerText || a.answer_text || a.studentAnswer)
+        );
+        if (matchedRaw) {
+          raw = (
+            matchedRaw.audioUrl ||
+            matchedRaw.audio_url ||
+            matchedRaw.answerText ||
+            matchedRaw.answer_text ||
+            matchedRaw.studentAnswer ||
+            ""
+          ).trim();
+        }
+      }
     }
-    if (AudioStorageService.isAudio(currentAnswer?.answerText)) {
-      return (currentAnswer?.answerText || "").trim();
-    }
-    // Fallback: look in other answers of the submission
-    const otherWithAudio = answers.find(
-      (a) => (a.audioUrl && a.audioUrl.trim().length > 0) || AudioStorageService.isAudio(a.answerText)
-    );
-    if (otherWithAudio) {
-      return (otherWithAudio.audioUrl || otherWithAudio.answerText || "").trim();
-    }
-    // Fallback: look in submissionDetail raw answers if available
-    const rawDetailAnswers = submissionDetail?.answers || [];
-    const matchedRaw = rawDetailAnswers.find(
-      (a: any) =>
-        (a.audioUrl && a.audioUrl.trim().length > 0) ||
-        (a.audio_url && a.audio_url.trim().length > 0) ||
-        AudioStorageService.isAudio(a.answerText || a.answer_text || a.studentAnswer)
-    );
-    if (matchedRaw) {
-      return (
-        matchedRaw.audioUrl ||
-        matchedRaw.audio_url ||
-        matchedRaw.answerText ||
-        matchedRaw.answer_text ||
-        matchedRaw.studentAnswer ||
-        ""
-      ).trim();
-    }
-    return "";
+    return raw ? (formatStorageUrl(raw) || raw) : "";
   }, [currentAnswer, answers, submissionDetail]);
 
   const [criteriaScores, setCriteriaScores] = useState<CriteriaScores>({

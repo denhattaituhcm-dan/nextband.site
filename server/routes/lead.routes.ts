@@ -56,7 +56,7 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
   // GET /leads/check-phone - Check duplicate leads by phone number (for UI warnings)
   fastify.get(
     "/check-phone",
-    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
+    { preHandler: [authenticate, requireRoles("admin", "staff")] },
     async (request, reply) => {
       const { phone } = request.query as any;
       if (!phone || typeof phone !== "string") {
@@ -74,7 +74,7 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
   // POST /leads/manual - Authenticated endpoint for Admin/Teacher/Staff to record offline/hotline leads
   fastify.post(
     "/manual",
-    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
+    { preHandler: [authenticate, requireRoles("admin", "staff")] },
     async (request, reply) => {
       const validatedData = handleValidation(
         createLeadSchema.safeParse(request.body),
@@ -108,7 +108,7 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
   // POST /leads/:id/convert - Atomic Conversion: Lead -> Student User + UserBranch + Link Lead
   fastify.post<{ Params: { id: string } }>(
     "/:id/convert",
-    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
+    { preHandler: [authenticate, requireRoles("admin", "staff")] },
     async (request, reply) => {
       const { id } = request.params;
       const { convertLeadSchema } = await import("../schemas/lead.schema.js");
@@ -139,7 +139,7 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
   // GET /leads/assignable-staff - Fetch all staff/admin users usable as lead owners
   fastify.get(
     "/assignable-staff",
-    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
+    { preHandler: [authenticate, requireRoles("admin", "staff")] },
     async (request, reply) => {
       const { branchId } = (request.query || {}) as { branchId?: string };
 
@@ -216,7 +216,7 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
   // GET /leads - Admin/Staff list leads with pagination & RBAC
   fastify.get(
     "/",
-    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
+    { preHandler: [authenticate, requireRoles("admin", "staff")] },
     async (request, reply) => {
       const validatedQuery = handleValidation(
         listLeadsQuerySchema.safeParse(request.query),
@@ -248,7 +248,7 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
   // GET /leads/:id - Admin/Staff get single lead details
   fastify.get<{ Params: { id: string } }>(
     "/:id",
-    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
+    { preHandler: [authenticate, requireRoles("admin", "staff")] },
     async (request, reply) => {
       const { id } = request.params;
       const lead = await leadService.getLeadById(id);
@@ -280,7 +280,7 @@ const leadRoutes: FastifyPluginAsync = async (fastify) => {
   // PATCH /leads/:id - Admin/Staff update status or notes
   fastify.patch<{ Params: { id: string } }>(
     "/:id",
-    { preHandler: [authenticate, requireRoles("admin", "teacher", "staff")] },
+    { preHandler: [authenticate, requireRoles("admin", "staff")] },
     async (request, reply) => {
       const { id } = request.params;
       const validatedData = handleValidation(

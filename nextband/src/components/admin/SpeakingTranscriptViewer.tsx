@@ -125,7 +125,9 @@ export function SpeakingTranscriptViewer({
 
   const [editingSegmentId, setEditingSegmentId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
-  const [resolvedAudioSrc, setResolvedAudioSrc] = useState<string>(audioUrl);
+  const [resolvedAudioSrc, setResolvedAudioSrc] = useState<string>(() => {
+    return (audioUrl ? formatStorageUrl(audioUrl) : "") || audioUrl || "";
+  });
 
   const resolveAudio = useCallback(async (forceRefresh = false) => {
     if (!audioUrl) {
@@ -136,7 +138,7 @@ export function SpeakingTranscriptViewer({
     setAudioError(null);
     try {
       const src = await AudioStorageService.resolvePlayableUrl(audioUrl, forceRefresh);
-      setResolvedAudioSrc(src || formatStorageUrl(audioUrl));
+      setResolvedAudioSrc(src || formatStorageUrl(audioUrl) || audioUrl);
     } catch (err: any) {
       console.warn("[SpeakingTranscriptViewer] Audio resolution error:", err);
       setResolvedAudioSrc(formatStorageUrl(audioUrl) || audioUrl);
@@ -148,6 +150,14 @@ export function SpeakingTranscriptViewer({
   useEffect(() => {
     resolveAudio(false);
   }, [resolveAudio]);
+
+  // Reload audio element whenever resolvedAudioSrc changes
+  useEffect(() => {
+    if (resolvedAudioSrc && audioRef.current) {
+      audioRef.current.load();
+      setAudioError(null);
+    }
+  }, [resolvedAudioSrc]);
 
   // Sync state if initialTranscript changes externally
   useEffect(() => {
@@ -214,6 +224,11 @@ export function SpeakingTranscriptViewer({
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
+      setAudioError(null);
+      // If the audio element was in an error or unloaded state, re-trigger load first
+      if (audioRef.current.error || audioRef.current.readyState === 0) {
+        audioRef.current.load();
+      }
       audioRef.current
         .play()
         .then(() => {
@@ -223,7 +238,10 @@ export function SpeakingTranscriptViewer({
         .catch((err) => {
           console.warn("Audio play failed:", err);
           setIsPlaying(false);
-          setAudioError("Không thể phát âm thanh. Vui lòng bấm 'Tải lại' hoặc kiểm tra kết nối mạng.");
+          // Only show error message if it is not an abort caused by pausing
+          if (err.name !== "AbortError") {
+            setAudioError("Không thể phát âm thanh. Vui lòng bấm 'Tải lại' hoặc kiểm tra kết nối mạng.");
+          }
         });
     }
   };
@@ -340,7 +358,9 @@ export function SpeakingTranscriptViewer({
       {/* Audio element */}
       <audio
         ref={audioRef}
-        src={resolvedAudioSrc || audioUrl}
+        src={resolvedAudioSrc || formatStorageUrl(audioUrl) || audioUrl}
+        preload="metadata"
+        crossOrigin="anonymous"
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onDurationChange={handleLoadedMetadata}

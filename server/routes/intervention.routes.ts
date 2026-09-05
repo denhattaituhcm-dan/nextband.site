@@ -1,7 +1,11 @@
 import { FastifyInstance } from "fastify";
 import { authenticate, requireRoles } from "../middlewares/auth.middleware.js";
 import { InterventionService } from "../services/intervention.service.js";
-import { createInterventionSchema, updateInterventionSchema } from "../schemas/intervention.schema.js";
+import {
+  createInterventionSchema,
+  updateInterventionSchema,
+  transitionInterventionSchema,
+} from "../schemas/intervention.schema.js";
 
 export default async function interventionRoutes(fastify: FastifyInstance) {
   const service = new InterventionService(fastify.prisma);
@@ -72,7 +76,32 @@ export default async function interventionRoutes(fastify: FastifyInstance) {
     }
   );
 
-  // 4. DELETE /interventions/:id - Xóa bản ghi can thiệp (Chỉ Admin)
+  // 4. POST /interventions/:id/transition - Chuyển trạng thái theo quy tắc State Machine
+  fastify.post<{ Params: { id: string } }>(
+    "/:id/transition",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const user = (request as any).user;
+      const { id } = request.params;
+      const parsed = transitionInterventionSchema.safeParse(request.body);
+      if (!parsed.success) {
+        return reply.status(400).send({
+          error: "Dữ liệu chuyển trạng thái không hợp lệ",
+          details: parsed.error.flatten(),
+        });
+      }
+
+      try {
+        const data = await service.transitionStatus(id, parsed.data, user);
+        return reply.send({ success: true, data });
+      } catch (err: any) {
+        const status = err.statusCode || 500;
+        return reply.status(status).send({ error: err.message });
+      }
+    }
+  );
+
+  // 5. DELETE /interventions/:id - Xóa bản ghi can thiệp (Chỉ Admin)
   fastify.delete<{ Params: { id: string } }>(
     "/:id",
     { preHandler: [authenticate, requireRoles("admin")] },

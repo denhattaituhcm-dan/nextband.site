@@ -73,11 +73,11 @@ export class AudioStorageService {
     if (supabaseUrlMatch) {
       const matchedBucket = supabaseUrlMatch[1];
       const matchedPath = decodeURIComponent(supabaseUrlMatch[2]);
-      if (matchedBucket === "speaking-recordings" || matchedBucket === "exam-assets") {
+      if (matchedBucket === "exam-assets" || matchedBucket === "speaking-recordings") {
         return {
           isAudio: true,
-          bucket: matchedBucket,
-          storagePath: matchedPath,
+          bucket: "exam-assets",
+          storagePath: matchedBucket === "speaking-recordings" ? `speaking-recordings/${matchedPath}` : matchedPath,
           rawUrl: clean,
         };
       }
@@ -89,8 +89,8 @@ export class AudioStorageService {
     if (normalizedPath.startsWith("speaking-recordings/")) {
       return {
         isAudio: true,
-        bucket: "speaking-recordings",
-        storagePath: normalizedPath.replace(/^speaking-recordings\//, ""),
+        bucket: "exam-assets",
+        storagePath: normalizedPath,
         rawUrl: clean,
       };
     }
@@ -115,10 +115,11 @@ export class AudioStorageService {
 
     // 3. Nếu là file đơn lẻ có đuôi âm thanh không chứa slash
     if (!normalizedPath.includes("/") && !normalizedPath.startsWith("http")) {
+      const isSpeakingUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\./i.test(normalizedPath);
       return {
         isAudio: true,
-        bucket: "speaking-recordings",
-        storagePath: normalizedPath,
+        bucket: "exam-assets",
+        storagePath: isSpeakingUuid ? `speaking-recordings/${normalizedPath}` : normalizedPath,
         rawUrl: clean,
       };
     }

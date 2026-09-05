@@ -136,7 +136,9 @@ export class SpeakingStorageService {
     if (supabaseUrlMatch) {
       const bucket = supabaseUrlMatch[1];
       const subPath = decodeURIComponent(supabaseUrlMatch[2]);
-      const { data } = this.supabase.storage.from(bucket).getPublicUrl(subPath);
+      const targetBucket = bucket === "speaking-recordings" ? "exam-assets" : bucket;
+      const targetPath = bucket === "speaking-recordings" ? `speaking-recordings/${subPath}` : subPath;
+      const { data } = this.supabase.storage.from(targetBucket).getPublicUrl(targetPath);
       if (data?.publicUrl) return data.publicUrl;
     }
 
@@ -145,33 +147,12 @@ export class SpeakingStorageService {
     }
 
     const cleanPath = clean.replace(/^\/+/, "");
-    const isExamAsset = cleanPath.startsWith("exam-assets/") || cleanPath.startsWith("uploads/");
+    // Toàn bộ audio ghi âm và đề thi đều được lưu trữ trong bucket exam-assets
+    const assetSubPath = cleanPath.replace(/^exam-assets\//, "");
+    const { data: pubData } = this.supabase.storage.from("exam-assets").getPublicUrl(assetSubPath);
+    if (pubData?.publicUrl) return pubData.publicUrl;
 
-    if (isExamAsset) {
-      const assetSubPath = cleanPath.replace(/^exam-assets\//, "");
-      const { data: pubData } = this.supabase.storage.from("exam-assets").getPublicUrl(assetSubPath);
-      if (pubData?.publicUrl) return pubData.publicUrl;
-    }
-
-    // Bucket speaking-recordings (Public)
-    const subCleanPath = cleanPath.replace(/^speaking-recordings\//, "");
-    const { data: pubSpeaking } = this.supabase.storage.from(SPEAKING_BUCKET).getPublicUrl(subCleanPath);
-    if (pubSpeaking?.publicUrl) {
-      return pubSpeaking.publicUrl;
-    }
-
-    // Fallback sang createSignedUrl nếu cần
-    const { data, error } = await this.supabase.storage
-      .from(SPEAKING_BUCKET)
-      .createSignedUrl(subCleanPath, expiresInSeconds);
-
-    if (error || !data?.signedUrl) {
-      const { data: fallbackPub } = this.supabase.storage.from("exam-assets").getPublicUrl(cleanPath);
-      if (fallbackPub?.publicUrl) return fallbackPub.publicUrl;
-      throw new Error(error?.message || "Không thể tạo liên kết phát âm thanh");
-    }
-
-    return data.signedUrl;
+    return null;
   }
 
   /**
@@ -190,35 +171,22 @@ export class SpeakingStorageService {
     if (supabaseUrlMatch) {
       const bucket = supabaseUrlMatch[1];
       const subPath = decodeURIComponent(supabaseUrlMatch[2]);
-      const downloadRes = await this.supabase.storage.from(bucket).download(subPath);
+      const targetBucket = bucket === "speaking-recordings" ? "exam-assets" : bucket;
+      const targetPath = bucket === "speaking-recordings" ? `speaking-recordings/${subPath}` : subPath;
+      const downloadRes = await this.supabase.storage.from(targetBucket).download(targetPath);
       if (!downloadRes.error && downloadRes.data) {
         const blob = downloadRes.data;
         const arrayBuf = await blob.arrayBuffer();
         const buffer = Buffer.from(arrayBuf);
         const mimeType = blob.type || "audio/webm";
-        const fileName = subPath.split("/").pop() || "recording.webm";
+        const fileName = targetPath.split("/").pop() || "recording.webm";
         return { buffer, mimeType, fileName };
       }
     }
 
     const cleanPath = clean.replace(/^\/+/, "");
-    const isExamAsset = cleanPath.startsWith("exam-assets/") || cleanPath.startsWith("uploads/");
 
-    if (!isExamAsset) {
-      // 2. Thử tải từ speaking-recordings trước cho các file ghi âm
-      const subCleanPath = cleanPath.replace(/^speaking-recordings\//, "");
-      const downloadRes = await this.supabase.storage.from(SPEAKING_BUCKET).download(subCleanPath);
-      if (!downloadRes.error && downloadRes.data) {
-        const blob = downloadRes.data;
-        const arrayBuf = await blob.arrayBuffer();
-        const buffer = Buffer.from(arrayBuf);
-        const mimeType = blob.type || "audio/webm";
-        const fileName = subCleanPath.split("/").pop() || "recording.webm";
-        return { buffer, mimeType, fileName };
-      }
-    }
-
-    // 3. Thử tải từ exam-assets
+    // 2. Thử tải từ exam-assets (Bucket lưu trữ chính)
     const examSubPath = cleanPath.replace(/^exam-assets\//, "");
     const examDownload = await this.supabase.storage.from("exam-assets").download(examSubPath);
     if (!examDownload.error && examDownload.data) {
@@ -227,6 +195,18 @@ export class SpeakingStorageService {
       const buffer = Buffer.from(arrayBuf);
       const mimeType = blob.type || "audio/webm";
       const fileName = examSubPath.split("/").pop() || "recording.webm";
+      return { buffer, mimeType, fileName };
+    }
+
+    // 3. Dự phòng: Thử tải từ speaking-recordings nếu có
+    const subCleanPath = cleanPath.replace(/^speaking-recordings\//, "");
+    const downloadRes = await this.supabase.storage.from(SPEAKING_BUCKET).download(subCleanPath);
+    if (!downloadRes.error && downloadRes.data) {
+      const blob = downloadRes.data;
+      const arrayBuf = await blob.arrayBuffer();
+      const buffer = Buffer.from(arrayBuf);
+      const mimeType = blob.type || "audio/webm";
+      const fileName = subCleanPath.split("/").pop() || "recording.webm";
       return { buffer, mimeType, fileName };
     }
 

@@ -1,12 +1,15 @@
+import { useState } from "react";
 import { useStudentLifecycle } from "@/hooks/useStudentLifecycle";
+import { MyClassEnrollment } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, GraduationCap, Play, UserCheck, RefreshCw, Crown, ArrowRight } from "lucide-react";
+import { BookOpen, GraduationCap, Play, UserCheck, RefreshCw, Crown, ArrowRight, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { ClassLeaderboardWidget } from "@/components/student/ClassLeaderboardWidget";
+import { StudentReEnrollmentModal } from "@/components/student/StudentReEnrollmentModal";
 import { getCourseBrand } from "@/lib/courseBrand";
 
 function getStudentClassTheme(brandKey: string) {
@@ -90,6 +93,7 @@ export default function MyCourses() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { state, enrollments, isLoading, retry } = useStudentLifecycle();
+  const [reEnrollTargetClass, setReEnrollTargetClass] = useState<MyClassEnrollment | null>(null);
 
   return (
     <div className="space-y-8 animate-fade-in pb-12">
@@ -197,7 +201,17 @@ export default function MyCourses() {
                         </div>
                       </div>
 
-                      <div className="pt-3 border-t flex items-center justify-end" onClick={(e) => e.stopPropagation()}>
+                      <div className="pt-3 border-t flex items-center justify-between gap-2" onClick={(e) => e.stopPropagation()}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setReEnrollTargetClass(item)}
+                          className="font-bold text-xs gap-1.5 rounded-xl px-3.5 h-9 border-amber-300 bg-amber-50/50 text-amber-900 hover:bg-amber-100/80 shadow-2xs cursor-pointer"
+                        >
+                          <Award className="h-3.5 w-3.5 text-amber-600" />
+                          <span>Tái đăng ký</span>
+                        </Button>
+
                         <Button
                           size="sm"
                           asChild
@@ -245,6 +259,19 @@ export default function MyCourses() {
           </Button>
         </div>
       )}
+
+      {/* Re-Enrollment Modal for Selected Course */}
+      <StudentReEnrollmentModal
+        isOpen={!!reEnrollTargetClass}
+        onClose={() => setReEnrollTargetClass(null)}
+        classId={reEnrollTargetClass?.classId}
+        className={reEnrollTargetClass?.className}
+        courseTitle={reEnrollTargetClass?.courseTitle}
+        studentId={user?.id}
+        studentName={user?.fullName || "Học viên"}
+        studentPhone={user?.phone || ""}
+        scholarshipAmount={500000}
+      />
     </div>
   );
 }

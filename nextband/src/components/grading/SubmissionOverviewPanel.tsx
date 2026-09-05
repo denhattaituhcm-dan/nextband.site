@@ -88,7 +88,10 @@ export function SubmissionOverviewPanel({
 
   const hasStudentActivity = answeredQuestions > 0 || homework.status === "submitted" || homework.status === "graded" || (homework.score != null && Number(homework.score) > 0);
 
-  const isGraded = homework.status === "graded" || isAutoGraded || (homework.score != null && Number(homework.score) > 0);
+  const isManual = detectedSkill === "speaking" || detectedSkill === "writing";
+  const isGraded = isManual
+    ? homework.status === "graded" || (homework.bandScore != null && Number(homework.bandScore) > 0)
+    : homework.status === "graded" || isAutoGraded || (homework.score != null && Number(homework.score) > 0);
   const bandScore = homework.score ?? homework.bandScore ?? homework.objectiveScore ?? null;
 
   const criteria = currentAnswer?.feedback
@@ -323,10 +326,10 @@ export function SubmissionOverviewPanel({
                 <span className="text-lg font-black text-blue-700 font-mono">
                   {isAutoGraded || (!isSpeaking && detectedSkill !== "writing") ? (
                     `${correctScore}/${totalQuestions} câu`
-                  ) : bandScore != null && !isNaN(Number(bandScore)) ? (
+                  ) : bandScore != null && !isNaN(Number(bandScore)) && Number(bandScore) > 0 ? (
                     `Band ${Number(bandScore).toFixed(1)}`
                   ) : (
-                    "Đã chấm chính thức"
+                    "Chờ giáo viên chấm"
                   )}
                 </span>
               </div>

@@ -141,6 +141,8 @@ export const StudentsTab: React.FC = () => {
     const mapped = mapToProgressReportData({
       classId,
       studentId,
+      parentToken: student.parentToken || student.parent_token,
+      totalWeeks: classData?.totalWeeks || classData?.total_weeks || 10,
       studentName: student.fullName,
       className: classData?.name || "Lớp học",
       teacherName: classData?.teacher?.fullName || classData?.teacher_name || null,

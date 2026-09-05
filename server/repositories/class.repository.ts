@@ -146,7 +146,7 @@ export class ClassRepository {
         class: {
           include: {
             course: {
-              select: { id: true, title: true, description: true },
+              select: { id: true, title: true, description: true, slug: true },
             },
             teacher: {
               select: { id: true, fullName: true },

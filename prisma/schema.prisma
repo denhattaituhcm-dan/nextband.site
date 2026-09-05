@@ -59,6 +59,7 @@ model User {
   refereeAttribution    ReferralAttribution?     @relation("RefereeAttribution")
   userVocabularies      UserVocabulary[]
   teacherProfile        TeacherProfile?
+  weeklySnapshots       WeeklySnapshot[]
 
   @@map("profiles")
 }
@@ -144,6 +145,7 @@ model Class {
   closedAt    DateTime?       @map("closed_at")
   archivedAt  DateTime?       @map("archived_at")
   isActive    Boolean         @default(true) @map("is_active")
+  totalWeeks  Int             @default(10) @map("total_weeks")
   createdAt   DateTime        @default(now()) @map("created_at")
   updatedAt   DateTime        @default(now()) @updatedAt @map("updated_at")
 
@@ -159,6 +161,7 @@ model Class {
   assignments ClassExamAssignment[]
   periodicReports StudentPeriodicReport[]
   interventions   StudentInterventionLog[]
+  weeklySnapshots WeeklySnapshot[]
 
   @@index([branchId])
   @@map("classes")
@@ -249,6 +252,7 @@ model ClassStudent {
   suspensionReason   String?          @map("suspension_reason")
   joinedAt           DateTime         @default(now()) @map("joined_at")
   completedAt        DateTime?        @map("completed_at")
+  parentToken        String?          @unique @map("parent_token")
   createdAt          DateTime         @default(now()) @map("created_at")
   deletedAt          DateTime?        @map("deleted_at")
 
@@ -258,6 +262,7 @@ model ClassStudent {
   @@unique([classId, studentId])
   @@index([studentId])
   @@index([classId])
+  @@index([parentToken])
   @@index([status, expectedReturnDate])
   @@map("class_students")
 }
@@ -847,6 +852,7 @@ enum NotificationType {
   DEADLINE_APPROACHING
   ANNOUNCEMENT
   SYSTEM
+  RE_ENROLLMENT_INTENT
 }
 
 enum LeadStatus {
@@ -1002,6 +1008,37 @@ model StudentPeriodicReport {
   @@map("student_periodic_reports")
 }
 
+model WeeklySnapshot {
+  id                String   @id @default(uuid())
+  classId           String   @map("class_id")
+  studentId         String   @map("student_id")
+  weekNumber        Int      @map("week_number")
+  cutoffAt          DateTime @map("cutoff_at")
+  hwCompleted       Int      @map("hw_completed")
+  hwTotal           Int      @map("hw_total")
+  hwRate            Float    @map("hw_rate")
+  streakDays        Int      @default(0) @map("streak_days")
+  attendanceRate    Float    @default(100.0) @map("attendance_rate")
+  scholarshipTier   String   @map("scholarship_tier")
+  scholarshipAmount Decimal  @default(0) @map("scholarship_amount") @db.Decimal(10, 2)
+  lossAversionNote  String?  @map("loss_aversion_note")
+  performanceLevel  String   @default("ON_TRACK") @map("performance_level") // LOW, ON_TRACK, STRONG
+  trajectory        String   @default("STABLE") @map("trajectory")          // RISING, STABLE, DECLINING
+  riskLevel         String   @default("NONE") @map("risk_level")            // NONE, WATCH, AT_RISK, CRITICAL
+  riskReason        String?  @map("risk_reason")
+  teacherNote       String?  @map("teacher_note")
+  parentEncouraged  Boolean  @default(false) @map("parent_encouraged")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  class   Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+  student User  @relation(fields: [studentId], references: [userId], onDelete: Cascade)
+
+  @@unique([classId, studentId, weekNumber])
+  @@index([classId, weekNumber])
+  @@index([studentId])
+  @@map("weekly_snapshots")
+}
+
 model StudentInterventionLog {
   id           String    @id @default(uuid())
   studentId    String    @map("student_id")
@@ -1013,7 +1050,9 @@ model StudentInterventionLog {
   actionTaken  String?   @map("action_taken")
   agreedPlan   String?   @map("agreed_plan")
   followUpDate DateTime? @map("follow_up_date") @db.Date
-  status       String    @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED
+  status       String    @default("OPEN") // DETECTED, CONTACTED, RESPONDED, RESOLVED, FAILED
+  outcome      String?   @map("outcome")  // SCHOLARSHIP_SAVED, SCHOLARSHIP_LOST, NO_CHANGE
+  metadata     Json?     @map("metadata")
   resolvedAt   DateTime? @map("resolved_at")
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @default(now()) @updatedAt @map("updated_at")
@@ -1024,6 +1063,7 @@ model StudentInterventionLog {
 
   @@index([studentId, createdAt])
   @@index([followUpDate, status])
+  @@index([classId, status])
   @@map("student_intervention_logs")
 }
 

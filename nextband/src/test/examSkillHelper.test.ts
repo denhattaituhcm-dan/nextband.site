@@ -15,7 +15,7 @@ describe("examSkillHelper", () => {
     expect(isAutoGradedExam(exam)).toBe(true);
 
     const badge = getSkillBadgeConfig("reading_listening");
-    expect(badge.label).toBe("📖 Reading & Listening");
+    expect(badge.label).toBe("📖 Trắc nghiệm Reading & Listening");
     expect(badge.shortLabel).toBe("READING & LISTENING");
   });
 
@@ -28,7 +28,7 @@ describe("examSkillHelper", () => {
     expect(isAutoGradedExam(exam)).toBe(true);
 
     const badge = getSkillBadgeConfig("reading");
-    expect(badge.label).toBe("📖 Reading");
+    expect(badge.label).toBe("📖 Trắc nghiệm Reading");
   });
 
   it("correctly identifies pure Listening exams", () => {
@@ -40,7 +40,7 @@ describe("examSkillHelper", () => {
     expect(isAutoGradedExam(exam)).toBe(true);
 
     const badge = getSkillBadgeConfig("listening");
-    expect(badge.label).toBe("🎧 Listening");
+    expect(badge.label).toBe("🎧 Trắc nghiệm Listening");
   });
 
   it("correctly identifies Writing exams and marks as manual grading", () => {
@@ -68,7 +68,7 @@ describe("examSkillHelper", () => {
     expect(isAutoGradedExam(exam)).toBe(false);
 
     const badge = getSkillBadgeConfig("writing");
-    expect(badge.label).toBe("✍️ Writing");
+    expect(badge.label).toBe("✍️ Tự luận Writing");
   });
 
   it("correctly identifies Speaking exams and marks as manual grading", () => {
@@ -96,7 +96,7 @@ describe("examSkillHelper", () => {
     expect(isAutoGradedExam(exam)).toBe(false);
 
     const badge = getSkillBadgeConfig("speaking");
-    expect(badge.label).toBe("🎙️ Speaking");
+    expect(badge.label).toBe("🎙️ Tự luận Speaking");
   });
 
   it("marks exams with objective question types as auto-graded", () => {
@@ -120,5 +120,37 @@ describe("examSkillHelper", () => {
       ],
     };
     expect(isAutoGradedExam(exam)).toBe(true);
+  });
+
+  it("correctly identifies standard course abbreviation titles (W1-D3-SPK, W1-D1-WRI, etc.)", () => {
+    // W1 - D3 - SPK (Speaking: Tự luận)
+    const spkExam = { title: "W1 - D3 - SPK", examType: "ielts" };
+    expect(detectExamSkill(spkExam)).toBe("speaking");
+    expect(isAutoGradedExam(spkExam)).toBe(false);
+    expect(getSkillBadgeConfig("speaking").label).toContain("Tự luận Speaking");
+
+    // W1 - D1 - WRI (Writing: Tự luận)
+    const wriExam = { title: "W1 - D1 - WRI", examType: "ielts" };
+    expect(detectExamSkill(wriExam)).toBe("writing");
+    expect(isAutoGradedExam(wriExam)).toBe(false);
+    expect(getSkillBadgeConfig("writing").label).toContain("Tự luận Writing");
+
+    // W1 - D2 - LIS (Listening: Trắc nghiệm)
+    const lisExam = { title: "W1 - D2 - LIS", examType: "ielts" };
+    expect(detectExamSkill(lisExam)).toBe("listening");
+    expect(isAutoGradedExam(lisExam)).toBe(true);
+    expect(getSkillBadgeConfig("listening").label).toContain("Trắc nghiệm Listening");
+
+    // W4 - D3 - REA (Reading: Trắc nghiệm)
+    const reaExam = { title: "W4 - D3 - REA", examType: "ielts" };
+    expect(detectExamSkill(reaExam)).toBe("reading");
+    expect(isAutoGradedExam(reaExam)).toBe(true);
+    expect(getSkillBadgeConfig("reading").label).toContain("Trắc nghiệm Reading");
+
+    // W1 - D3 - VOCAB (Grammar/Vocab: Trắc nghiệm)
+    const vocabExam = { title: "W1 - D3 - VOCAB", examType: "ielts" };
+    expect(detectExamSkill(vocabExam)).toBe("grammar");
+    expect(isAutoGradedExam(vocabExam)).toBe(true);
+    expect(getSkillBadgeConfig("grammar").label).toContain("Trắc nghiệm Grammar");
   });
 });

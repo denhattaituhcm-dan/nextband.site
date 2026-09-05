@@ -21,13 +21,18 @@ import {
   getSavedDisciplineGoal,
 } from "@/lib/disciplineScholarshipHelper";
 import { DisciplineGoalModal } from "./DisciplineGoalModal";
+import { StudentReEnrollmentModal } from "./StudentReEnrollmentModal";
 
 interface DisciplineScholarshipTrackerProps {
   submittedCount: number;
   totalHomeworks: number;
   attendanceRate?: number;
   studentId?: string;
+  studentName?: string;
+  studentPhone?: string;
   classId?: string;
+  className?: string;
+  courseTitle?: string;
 }
 
 export function DisciplineScholarshipTracker({
@@ -35,9 +40,14 @@ export function DisciplineScholarshipTracker({
   totalHomeworks,
   attendanceRate = 1.0,
   studentId,
+  studentName,
+  studentPhone,
   classId,
+  className,
+  courseTitle,
 }: DisciplineScholarshipTrackerProps) {
   const [goalModalOpen, setGoalModalOpen] = useState(false);
+  const [reEnrollModalOpen, setReEnrollModalOpen] = useState(false);
   const [targetGoal, setTargetGoal] = useState<DisciplineTierKey>(() =>
     getSavedDisciplineGoal(studentId, classId)
   );
@@ -227,19 +237,31 @@ export function DisciplineScholarshipTracker({
         </div>
 
         {/* Motivational Callout & Missable Tolerance Indicator */}
-        <div className="rounded-2xl bg-slate-50 border border-slate-200/80 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div className="rounded-2xl bg-slate-50 border border-slate-200/80 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
           <div className="flex items-center gap-2 text-slate-700 font-medium">
             <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
             <span>{motivationalQuote}</span>
           </div>
 
-          <div className="text-right shrink-0">
-            <span className="text-[11px] text-slate-500 block">
-              Dự toán học bổng khóa tiếp theo:
-            </span>
-            <span className="text-base font-black text-rose-600 font-mono">
-              +{rewardFormatted}
-            </span>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 shrink-0">
+            <div className="text-left sm:text-right">
+              <span className="text-[11px] text-slate-500 block">
+                Dự toán học bổng khóa tiếp theo:
+              </span>
+              <span className="text-base font-black text-rose-600 font-mono">
+                +{rewardFormatted}
+              </span>
+            </div>
+
+            <Button
+              size="sm"
+              onClick={() => setReEnrollModalOpen(true)}
+              className="h-9 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs gap-1.5 shadow-sm cursor-pointer"
+            >
+              <Award className="w-3.5 h-3.5 text-amber-400" />
+              <span>Tái Đăng Ký Khóa Tiếp Theo</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Button>
           </div>
         </div>
       </div>
@@ -252,6 +274,19 @@ export function DisciplineScholarshipTracker({
         onGoalChange={setTargetGoal}
         studentId={studentId}
         classId={classId}
+      />
+
+      {/* Re-Enrollment & Scholarship Retention Modal */}
+      <StudentReEnrollmentModal
+        isOpen={reEnrollModalOpen}
+        onClose={() => setReEnrollModalOpen(false)}
+        classId={classId}
+        className={className}
+        courseTitle={courseTitle}
+        studentId={studentId}
+        studentName={studentName}
+        studentPhone={studentPhone}
+        scholarshipAmount={rewardAmount > 0 ? rewardAmount : 500000}
       />
     </Card>
   );
