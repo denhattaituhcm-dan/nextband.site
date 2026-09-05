@@ -33,7 +33,9 @@ export class ClassService {
 
   // Use Case: List Classes with Role & Teacher filtering & Branch scoping
   async listClasses(user: { id: string; roles: string[] }, query: any) {
-    const { page = 1, limit = 10, search, isActive, branchId, scope } = query;
+    const page = Math.max(1, Number(query.page) || 1);
+    const limit = Math.max(1, Number(query.limit) || 10);
+    const { search, isActive, branchId, scope } = query;
     const skip = (page - 1) * limit;
 
     const where: any = {};

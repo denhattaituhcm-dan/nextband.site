@@ -53308,11 +53308,6 @@ var init_config = __esm({
 });
 
 // server/config/env.ts
-function getRootAdminEmails() {
-  const raw = env.ROOT_ADMIN_EMAILS || "";
-  const emails = raw.split(",").map((e) => e.trim().toLowerCase()).filter(Boolean);
-  return new Set(emails);
-}
 var WEAK_SECRETS, envSchema, envData, env;
 var init_env = __esm({
   "server/config/env.ts"() {
@@ -94634,6 +94629,7 @@ var prisma_default = (0, import_fastify_plugin.default)(prismaPlugin, {
 // server/plugins/auth.ts
 var import_fastify_plugin2 = __toESM(require_plugin2(), 1);
 var import_jwt = __toESM(require_jwt(), 1);
+init_env();
 
 // node_modules/jose/dist/webapi/lib/buffer_utils.js
 var encoder = new TextEncoder();
@@ -95648,8 +95644,13 @@ function createRemoteJWKSet(url, options) {
   return remoteJWKSet;
 }
 
-// server/plugins/auth.ts
+// server/config/jwks.ts
 init_env();
+var getJwksUrl = () => {
+  const base = env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co";
+  return env.SUPABASE_JWKS_URL || `${base.replace(/\/$/, "")}/auth/v1/.well-known/jwks.json`;
+};
+var supabaseJWKS = createRemoteJWKSet(new URL(getJwksUrl()));
 
 // server/middlewares/auth.middleware.ts
 init_env();
@@ -95790,11 +95791,6 @@ async function verifyAndResolveUser(request) {
     return null;
   }
   const finalRoles = authoritativeRoles.length > 0 ? [...authoritativeRoles] : [...fallbackRoles];
-  const rootAdminEmails = getRootAdminEmails();
-  const isRootAdmin = email ? rootAdminEmails.has(email.toLowerCase().trim()) : false;
-  if (isRootAdmin && !finalRoles.includes("admin")) {
-    finalRoles.push("admin");
-  }
   const userContext = {
     id: canonicalUserId,
     email,
@@ -95863,11 +95859,6 @@ function requireRoles(...roles) {
 }
 
 // server/plugins/auth.ts
-var getJwksUrl = () => {
-  const base = env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co";
-  return env.SUPABASE_JWKS_URL || `${base.replace(/\/$/, "")}/auth/v1/.well-known/jwks.json`;
-};
-var supabaseJWKS = createRemoteJWKSet(new URL(getJwksUrl()));
 var authPlugin = async (fastify) => {
   await fastify.register(import_jwt.default, {
     secret: env.JWT_SECRET,
@@ -104929,7 +104920,9 @@ var ClassService = class {
   }
   // Use Case: List Classes with Role & Teacher filtering & Branch scoping
   async listClasses(user, query) {
-    const { page = 1, limit = 10, search, isActive, branchId, scope } = query;
+    const page = Math.max(1, Number(query.page) || 1);
+    const limit = Math.max(1, Number(query.limit) || 10);
+    const { search, isActive, branchId, scope } = query;
     const skip = (page - 1) * limit;
     const where = {};
     const isAdmin = user.roles.includes("admin");
