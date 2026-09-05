@@ -18,7 +18,8 @@
     "db:studio": "prisma studio --schema=prisma/schema.prisma",
     "typecheck": "node --max-old-space-size=4096 ./node_modules/typescript/bin/tsc -p tsconfig.json --noEmit && node --max-old-space-size=4096 ./node_modules/typescript/bin/tsc -p nextband/tsconfig.app.json --noEmit",
     "test": "node --max-old-space-size=4096 ./node_modules/vitest/vitest.mjs run",
-    "verify": "npm run typecheck && npm run verify:runtime && npm run test && npm run build"
+    "sanity": "node scripts/sanity_check.mjs",
+    "verify": "npm run sanity && npm run typecheck && npm run verify:runtime && npm run test && npm run build"
   },
   "dependencies": {
     "@fastify/cors": "^9.0.1",

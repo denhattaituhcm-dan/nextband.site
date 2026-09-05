@@ -12,6 +12,7 @@ import { adaptSession } from "../adapters/session.adapter";
 import { normalizeSubmissionStatus } from "./submissionStatus";
 import { toCanonicalClass, toCanonicalStudent } from "./classDataMapper";
 import { AudioStorageService } from "./audioStorageService";
+import type { ClassPeerRank } from "../types/domain.types";
 
 export const resolveApiBaseUrl = (): string => {
   const envUrl =
@@ -1528,34 +1529,6 @@ export const milestonesApi = {
 };
 
 // =============================================
-// In-memory store for newly created users in session
-const localUsersStore: any[] = [
-  {
-    id: "00000000-0000-0000-0000-000000000001",
-    user_id: "00000000-0000-0000-0000-000000000001",
-    email: "admin@ielts.com",
-    fullName: "Admin ARIS IELTS",
-    phone: "0901234567",
-    gender: "male",
-    roles: ["admin"],
-    role: "admin",
-    isActive: true,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "00000000-0000-0000-0000-000000000002",
-    user_id: "00000000-0000-0000-0000-000000000002",
-    email: "teacher@ielts.com",
-    fullName: "CÃ´ HoÃ ng Anh (IELTS 8.5)",
-    phone: "0909876543",
-    gender: "female",
-    roles: ["teacher"],
-    role: "teacher",
-    isActive: true,
-    createdAt: new Date().toISOString(),
-  },
-];
-
 // USERS API (Cleaned Production Store - No Silent RAM Fallbacks)
 // =============================================
 export const usersApi = {
@@ -1564,116 +1537,50 @@ export const usersApi = {
     limit?: number;
     search?: string;
     role?: string;
+    sortBy?: string;
+    sortOrder?: "asc" | "desc";
   }) => {
-    const page = params?.page || 1;
-    const limit = params?.limit || 10;
-    const from = (page - 1) * limit;
-    const to = from + limit - 1;
-    const hasRoleFilter = params?.role && params.role !== "all";
+    const token = await getAuthToken();
+    const searchParams = new URLSearchParams();
+    if (params?.page) searchParams.set("page", String(params.page));
+    if (params?.limit) searchParams.set("limit", String(params.limit));
+    if (params?.search) searchParams.set("search", params.search);
+    if (params?.role && params.role !== "all") searchParams.set("role", params.role);
+    if (params?.sortBy) searchParams.set("sortBy", params.sortBy);
+    if (params?.sortOrder) searchParams.set("sortOrder", params.sortOrder);
 
-    // BÆ¯á»šC 1: Náº¿u lá»c theo role -> láº¥y danh sÃ¡ch user_id tá»« user_roles trÆ°á»›c
-    let allowedUserIds: string[] | null = null;
-    if (hasRoleFilter) {
-      const { data: roleRows, error: roleError } = await supabase
-        .from("user_roles")
-        .select("user_id")
-        .eq("role", params.role);
-
-      if (roleError) throw roleError;
-      allowedUserIds = (roleRows || []).map((r: any) => r.user_id);
-
-      // Náº¿u khÃ´ng cÃ³ ai cÃ³ role nÃ y -> tráº£ vá» rá»—ng ngay
-      if (allowedUserIds.length === 0) {
-        return { data: [], meta: { total: 0, page, limit, totalPages: 1 } };
-      }
-    }
-
-    // BƯỚC 2: Query profiles
-    let query = supabase
-      .from("profiles")
-      .select("*", { count: "exact" });
-
-    if (allowedUserIds !== null) {
-      query = query.in("user_id", allowedUserIds);
-    }
-
-    if (params?.search) {
-      query = query.or(
-        `full_name.ilike.%${params.search}%,email.ilike.%${params.search}%`
-      );
-    }
-
-    const { data, count, error } = await query
-      .order("created_at", { ascending: false })
-      .range(from, to);
-
-    if (error) throw error;
-
-    const targetUserIds = (data || []).map((p: any) => p.user_id || p.id).filter(Boolean);
-
-    // Fetch batch activeClassesCount in parallel
-    let classCountsMap: Record<string, number> = {};
-    let pendingSubmissionsMap: Record<string, number> = {};
-
-    if (targetUserIds.length > 0) {
-      const { data: classesData } = await supabase
-        .from("classes")
-        .select("teacher_id")
-        .in("teacher_id", targetUserIds)
-        .eq("is_active", true);
-
-      (classesData || []).forEach((c: any) => {
-        if (c.teacher_id) {
-          classCountsMap[c.teacher_id] = (classCountsMap[c.teacher_id] || 0) + 1;
-        }
-      });
-    }
-
-    const formattedData = (data || []).map((p: any) => {
-      const extractedRoles =
-        p.user_roles && Array.isArray(p.user_roles) && p.user_roles.length > 0
-          ? p.user_roles.map((r: any) => r.role)
-          : [params?.role || "student"];
-
-      // Option 1 Invariant: Primary ID for DB foreign key class_students_student_id_fkey is ALWAYS user_id (Auth User ID)
-      const authUserId = p.user_id || p.id;
-
-      return {
-        id: authUserId,
-        profile_id: p.id,
-        user_id: authUserId,
-        email: p.email,
-        fullName: p.full_name || p.fullName || p.email?.split("@")[0],
-        avatarUrl: p.avatar_url || p.avatarUrl || null,
-        phone: p.phone,
-        gender: p.gender,
-        roles: extractedRoles,
-        role: extractedRoles[0] || "student",
-        isActive: p.is_active ?? true,
-        activeClassesCount: classCountsMap[authUserId] || 0,
-        pendingSubmissionsCount: pendingSubmissionsMap[authUserId] || 0,
-        lastLoginAt: p.last_login_at || null,
-        createdAt: p.created_at,
-      };
+    const res = await fetch(`${API_BASE_URL}/users?${searchParams.toString()}`, {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
     });
 
-    const totalCount = count !== null && count !== undefined ? count : formattedData.length;
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.message || errData.error || "Không thể tải danh sách người dùng.");
+    }
 
-    return {
-      data: formattedData,
-      meta: { total: totalCount, page, limit, totalPages: Math.ceil(totalCount / limit) || 1 },
+    return (await res.json()) as {
+      data: any[];
+      meta: { total: number; page: number; limit: number; totalPages: number };
     };
   },
 
   getById: async (id: string) => {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("*, user_roles(role)")
-      .eq("user_id", id)
-      .single();
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/users/${encodeURIComponent(id)}`, {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
 
-    if (error) throw error;
-    return data;
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.message || errData.error || "Không tìm thấy thông tin người dùng.");
+    }
+
+    const json = await res.json();
+    return json.data || json;
   },
 
   getStudentManagement: async (params?: {
@@ -2763,16 +2670,7 @@ export interface ClassGraduationSummary {
   students: ClassGraduationStudent[];
 }
 
-export interface ClassPeerRank {
-  studentId: string;
-  fullName: string;
-  avatarUrl?: string | null;
-  completedCount: number;
-  totalHomeworks: number;
-  completionRate: number;
-  rank: number;
-  isMe: boolean;
-}
+export type { ClassPeerRank } from "../types/domain.types";
 
 export interface ClassLeaderboardData {
   classId: string;

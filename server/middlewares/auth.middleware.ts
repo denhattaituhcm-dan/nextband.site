@@ -1,7 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { jwtVerify } from "jose";
-import { supabaseJWKS } from "../plugins/auth.js";
-import { env, getRootAdminEmails } from "../config/env.js";
+import { supabaseJWKS } from "../config/jwks.js";
+import { env } from "../config/env.js";
 
 interface DecodedTokenData {
   id: string;
@@ -182,13 +182,6 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
   const finalRoles = authoritativeRoles.length > 0
     ? [...authoritativeRoles]
     : [...fallbackRoles];
-
-  const rootAdminEmails = getRootAdminEmails();
-  const isRootAdmin = email ? rootAdminEmails.has(email.toLowerCase().trim()) : false;
-
-  if (isRootAdmin && !finalRoles.includes("admin")) {
-    finalRoles.push("admin");
-  }
 
   const userContext = {
     id: canonicalUserId,

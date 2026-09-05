@@ -28,12 +28,7 @@ declare module "fastify" {
   }
 }
 
-const getJwksUrl = () => {
-  const base = env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co";
-  return env.SUPABASE_JWKS_URL || `${base.replace(/\/$/, "")}/auth/v1/.well-known/jwks.json`;
-};
-
-export const supabaseJWKS = createRemoteJWKSet(new URL(getJwksUrl()));
+export { supabaseJWKS } from "../config/jwks.js";
 
 const authPlugin: FastifyPluginAsync = async (fastify) => {
   await fastify.register(jwt, {

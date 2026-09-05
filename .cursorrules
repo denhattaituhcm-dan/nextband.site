@@ -1,0 +1,22 @@
+﻿# NEXTBAND ARCHITECTURE & ENGINEERING GUARDRAILS
+
+## 1. NGUYÊN TẮC CỐT LÕI (CORE INVARIANTS)
+1. Single Source of Truth (SSOT): Bảng user_roles trong PostgreSQL là thẩm quyền phân quyền duy nhất. Nghiêm cấm tự động cấp quyền dựa trên email (hardcoded email check).
+2. Zero Direct PostgREST from UI: Tuyệt đối CẤM gọi supabase.from() trong frontend components hoặc API client. Mọi giao tiếp dữ liệu nghiệp vụ bắt buộc phải thông qua Fastify Gateway (/api/v1/*).
+3. Fail-Fast Discipline: Sai quyền ném 403 Forbidden, không xác thực ném 401 Unauthorized, không tìm thấy ném 404 Not Found, tham số sai ném 400 Bad Request. CẤM nuốt lỗi trong block catch hoặc trả về mảng rỗng giả dạng thành công.
+4. Server-Side Aggregation: CẤM tải toàn bộ bản ghi về client rồi dùng Javascript .reduce() hoặc .filter() để tính toán KPI. Toàn bộ KPI phải được tổng hợp bằng SQL ở Backend.
+5. Zero Circular Dependencies: Mọi module phải tuân thủ luồng phụ thuộc đơn hướng (DAG). Tự động chặn build nếu npx madge phát hiện circular dependencies.
+
+## 2. QUY ƯỚC KIẾN TRÚC & TỔ CHỨC THƯ MỤC
+- server/routes/: Chỉ phân tích request, validate schema, gọi service và trả response. Không viết logic nghiệp vụ phức tạp.
+- server/services/: Nơi chứa Domain Business Logic, tính toán và orchestration.
+- server/config/: Nơi chứa cấu hình môi trường và SDK instances độc lập (như JWKS).
+- nextband/src/types/domain.types.ts: DTOs và shared interfaces giữa các tầng để chống circular dependency.
+- nextband/src/lib/api.ts: API Client duy nhất gửi HTTP request có Bearer Token lên Fastify Gateway.
+
+## 3. DANH SÁCH ANTI-PATTERNS CẤM TIỆT
+- CẤM: supabase.from('profiles').select(...) trong frontend code.
+- CẤM: Chuỗi fallback chắp vá nhiều tầng che giấu lỗi schema (a || b || c || d || '').
+- CẤM: Sử dụng kiểu any tùy tiện che giấu contract type của TypeScript.
+- CẤM: Tạo tài khoản admin hoặc bypass xác thực bằng email hardcode.
+- CẤM: Tạo mock in-memory store trong production bundle.
