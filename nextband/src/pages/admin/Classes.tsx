@@ -279,6 +279,7 @@ export default function AdminClasses() {
         branchId: selectedBranch !== "ALL" ? selectedBranch : undefined,
         teacherId: teacherIdParam || undefined,
         courseId: courseIdParam || undefined,
+        scope: "all",
         page,
         limit: pageSize,
       });
@@ -306,16 +307,23 @@ export default function AdminClasses() {
 
   const totalPages = data?.meta?.totalPages || 1;
 
+  // Server-Aggregated KPI Counters (FE-01): Prioritize authoritative backend totals over client-side pagination slice
   const activeClassesCount = useMemo(() => {
+    if (typeof data?.meta?.activeClassesCount === "number") {
+      return data.meta.activeClassesCount;
+    }
     return (rawClasses || []).filter((c: any) => c.isActive !== false).length;
-  }, [rawClasses]);
+  }, [data?.meta?.activeClassesCount, rawClasses]);
 
   const totalStudentsCount = useMemo(() => {
+    if (typeof data?.meta?.totalStudentsCount === "number") {
+      return data.meta.totalStudentsCount;
+    }
     return (rawClasses || []).reduce((acc: number, c: any) => {
       const studentCount = c.studentsCount || c.student_count || c._count?.students || (c.students ? c.students.length : 0);
       return acc + (typeof studentCount === "number" ? studentCount : 0);
     }, 0);
-  }, [rawClasses]);
+  }, [data?.meta?.totalStudentsCount, rawClasses]);
 
   const filteredClasses = useMemo(() => {
     let result = [...(rawClasses || [])];

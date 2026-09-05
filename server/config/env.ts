@@ -48,6 +48,9 @@ const envSchema = z
     SUPABASE_JWKS_URL: z.string().optional(),
     SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
     NOTIFICATION_EMAIL_TO: z.string().default("arisieltsdeeplearning@gmail.com"),
+    ROOT_ADMIN_EMAILS: z
+      .string()
+      .default("admin@ielts.com,admin@nextband.site,bestcanthocity@gmail.com"),
     SMTP_HOST: z.string().optional(),
     SMTP_PORT: z.string().optional(),
     SMTP_SECURE: z.string().optional(),
@@ -116,3 +119,12 @@ try {
 }
 
 export const env = envData;
+
+export function getRootAdminEmails(): Set<string> {
+  const raw = env.ROOT_ADMIN_EMAILS || "";
+  const emails = raw
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  return new Set(emails);
+}

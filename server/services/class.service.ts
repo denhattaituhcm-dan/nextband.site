@@ -33,12 +33,20 @@ export class ClassService {
 
   // Use Case: List Classes with Role & Teacher filtering & Branch scoping
   async listClasses(user: { id: string; roles: string[] }, query: any) {
-    const { page = 1, limit = 10, search, isActive, branchId } = query;
+    const { page = 1, limit = 10, search, isActive, branchId, scope } = query;
     const skip = (page - 1) * limit;
 
     const where: any = {};
     const isAdmin = user.roles.includes("admin");
     const isTeacher = user.roles.includes("teacher");
+
+    // Fail-Fast & Explicit Boundaries (API-01): Chấm dứt silent scoping khi gọi scope=all
+    if (scope === "all" && !isAdmin) {
+      throw new AuthorizationError(
+        "Từ chối truy cập: Bạn cần vai trò Quản trị viên (Admin) để xem toàn bộ danh sách lớp học hệ thống.",
+        403
+      );
+    }
 
     if (isTeacher && !isAdmin) {
       where.teacherId = user.id;
@@ -77,9 +85,19 @@ export class ClassService {
       ];
     }
 
-    const [rawData, total] = await Promise.all([
+    const [rawData, total, activeClassesTotal, totalStudentsAcrossClasses] = await Promise.all([
       this.repo.findMany(where, skip, limit),
       this.repo.count(where),
+      this.prisma.class.count({
+        where: { ...where, isActive: true },
+      }),
+      this.prisma.classStudent.count({
+        where: {
+          status: "ACTIVE",
+          deletedAt: null,
+          class: where,
+        },
+      }),
     ]);
 
     // Canonical Enrichment: Aggregate real-time exam and submission metrics for classes
@@ -206,6 +224,8 @@ export class ClassService {
         limit,
         total,
         totalPages: Math.ceil(total / limit),
+        activeClassesCount: activeClassesTotal,
+        totalStudentsCount: totalStudentsAcrossClasses,
       },
     };
   }

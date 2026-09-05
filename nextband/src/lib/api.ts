@@ -2830,6 +2830,7 @@ export const classesApi = {
     isActive?: boolean;
     teacherId?: string;
     courseId?: string;
+    scope?: string;
     sortBy?: string;
     sortOrder?: "asc" | "desc";
   }) => {
@@ -2842,6 +2843,7 @@ export const classesApi = {
     if (params?.isActive !== undefined) queryParams.set("isActive", String(params.isActive));
     if (params?.teacherId) queryParams.set("teacherId", params.teacherId);
     if (params?.courseId) queryParams.set("courseId", params.courseId);
+    if (params?.scope) queryParams.set("scope", params.scope);
 
     let res: Response;
     try {

@@ -960,14 +960,55 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         include: { roles: true },
       });
 
-      // Update role if provided
-      if (role) {
-        await fastify.prisma.userRole.deleteMany({
-          where: { userId: user.userId },
-        });
-        await fastify.prisma.userRole.create({
-          data: { userId: user.userId, role },
-        });
+      // Multi-Role Safe Diffing (SEC-02): Never wipe unrelated roles with deleteMany
+      const rawRoles = (request.body as any).roles !== undefined
+        ? (request.body as any).roles
+        : role !== undefined
+        ? [role]
+        : undefined;
+
+      if (rawRoles !== undefined) {
+        const targetRoles = Array.from(
+          new Set(
+            (Array.isArray(rawRoles) ? rawRoles : [rawRoles])
+              .map((r: any) => String(r).trim().toLowerCase())
+              .filter(Boolean)
+          )
+        );
+
+        if (targetRoles.length > 0) {
+          const currentRoleRecords = await fastify.prisma.userRole.findMany({
+            where: { userId: user.userId },
+            select: { role: true },
+          });
+          const currentRoles = currentRoleRecords.map((r: any) => r.role);
+
+          const rolesToAdd = targetRoles.filter((r) => !currentRoles.includes(r as any));
+          const rolesToRemove = currentRoles.filter((r: any) => !targetRoles.includes(r));
+
+          if (rolesToAdd.length > 0 || rolesToRemove.length > 0) {
+            await fastify.prisma.$transaction(async (tx: any) => {
+              if (rolesToRemove.length > 0) {
+                await tx.userRole.deleteMany({
+                  where: {
+                    userId: user.userId,
+                    role: { in: rolesToRemove as any },
+                  },
+                });
+              }
+              for (const rToAdd of rolesToAdd) {
+                await tx.userRole.create({
+                  data: {
+                    userId: user.userId,
+                    role: rToAdd as any,
+                  },
+                });
+              }
+            });
+            invalidateUserAuthCache(user.userId);
+            invalidateUserAuthCache(user.id);
+          }
+        }
       }
 
       // Update branches if provided

@@ -46,15 +46,6 @@ export function BranchProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(true);
       const data = await branchesApi.list();
       setBranches(data);
-
-      // Non-admin không được dùng "ALL" — tự động chọn branch đầu tiên nếu cần.
-      // Lưu ý: đây chỉ là UX convenience, không phải security enforcement.
-      if (!isAdmin && selectedBranch === "ALL" && data.length > 0) {
-        setSelectedBranchState(data[0].id);
-        if (typeof window !== "undefined") {
-          localStorage.setItem(STORAGE_KEY, data[0].id);
-        }
-      }
     } catch (err) {
       console.warn("[BranchContext] Failed to load branches:", err);
     } finally {
@@ -67,12 +58,6 @@ export function BranchProvider({ children }: { children: React.ReactNode }) {
   }, [isAuthenticated, user?.id]);
 
   const setSelectedBranch = (branchId: string) => {
-    // Non-admin không được chọn ALL (UX convenience, không phải security)
-    if (!isAdmin && branchId === "ALL") {
-      if (branches.length > 0) {
-        branchId = branches[0].id;
-      }
-    }
     setSelectedBranchState(branchId);
     if (typeof window !== "undefined") {
       localStorage.setItem(STORAGE_KEY, branchId);

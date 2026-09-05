@@ -53308,6 +53308,11 @@ var init_config = __esm({
 });
 
 // server/config/env.ts
+function getRootAdminEmails() {
+  const raw = env.ROOT_ADMIN_EMAILS || "";
+  const emails = raw.split(",").map((e) => e.trim().toLowerCase()).filter(Boolean);
+  return new Set(emails);
+}
 var WEAK_SECRETS, envSchema, envData, env;
 var init_env = __esm({
   "server/config/env.ts"() {
@@ -53357,6 +53362,7 @@ var init_env = __esm({
       SUPABASE_JWKS_URL: external_exports.string().optional(),
       SUPABASE_SERVICE_ROLE_KEY: external_exports.string().optional(),
       NOTIFICATION_EMAIL_TO: external_exports.string().default("arisieltsdeeplearning@gmail.com"),
+      ROOT_ADMIN_EMAILS: external_exports.string().default("admin@ielts.com,admin@nextband.site,bestcanthocity@gmail.com"),
       SMTP_HOST: external_exports.string().optional(),
       SMTP_PORT: external_exports.string().optional(),
       SMTP_SECURE: external_exports.string().optional(),
@@ -95784,7 +95790,8 @@ async function verifyAndResolveUser(request) {
     return null;
   }
   const finalRoles = authoritativeRoles.length > 0 ? [...authoritativeRoles] : [...fallbackRoles];
-  const isRootAdmin = email?.toLowerCase() === "admin@ielts.com" || email?.toLowerCase() === "admin@nextband.site";
+  const rootAdminEmails = getRootAdminEmails();
+  const isRootAdmin = email ? rootAdminEmails.has(email.toLowerCase().trim()) : false;
   if (isRootAdmin && !finalRoles.includes("admin")) {
     finalRoles.push("admin");
   }
@@ -104017,13 +104024,44 @@ var usersRoutes = async (fastify) => {
         },
         include: { roles: true }
       });
-      if (role) {
-        await fastify.prisma.userRole.deleteMany({
-          where: { userId: user.userId }
-        });
-        await fastify.prisma.userRole.create({
-          data: { userId: user.userId, role }
-        });
+      const rawRoles = request.body.roles !== void 0 ? request.body.roles : role !== void 0 ? [role] : void 0;
+      if (rawRoles !== void 0) {
+        const targetRoles = Array.from(
+          new Set(
+            (Array.isArray(rawRoles) ? rawRoles : [rawRoles]).map((r) => String(r).trim().toLowerCase()).filter(Boolean)
+          )
+        );
+        if (targetRoles.length > 0) {
+          const currentRoleRecords = await fastify.prisma.userRole.findMany({
+            where: { userId: user.userId },
+            select: { role: true }
+          });
+          const currentRoles = currentRoleRecords.map((r) => r.role);
+          const rolesToAdd = targetRoles.filter((r) => !currentRoles.includes(r));
+          const rolesToRemove = currentRoles.filter((r) => !targetRoles.includes(r));
+          if (rolesToAdd.length > 0 || rolesToRemove.length > 0) {
+            await fastify.prisma.$transaction(async (tx) => {
+              if (rolesToRemove.length > 0) {
+                await tx.userRole.deleteMany({
+                  where: {
+                    userId: user.userId,
+                    role: { in: rolesToRemove }
+                  }
+                });
+              }
+              for (const rToAdd of rolesToAdd) {
+                await tx.userRole.create({
+                  data: {
+                    userId: user.userId,
+                    role: rToAdd
+                  }
+                });
+              }
+            });
+            invalidateUserAuthCache(user.userId);
+            invalidateUserAuthCache(user.id);
+          }
+        }
       }
       const { branchId, branchIds } = request.body;
       if (branchIds !== void 0) {
@@ -104891,11 +104929,17 @@ var ClassService = class {
   }
   // Use Case: List Classes with Role & Teacher filtering & Branch scoping
   async listClasses(user, query) {
-    const { page = 1, limit = 10, search, isActive, branchId } = query;
+    const { page = 1, limit = 10, search, isActive, branchId, scope } = query;
     const skip = (page - 1) * limit;
     const where = {};
     const isAdmin = user.roles.includes("admin");
     const isTeacher = user.roles.includes("teacher");
+    if (scope === "all" && !isAdmin) {
+      throw new AuthorizationError(
+        "T\u1EEB ch\u1ED1i truy c\u1EADp: B\u1EA1n c\u1EA7n vai tr\xF2 Qu\u1EA3n tr\u1ECB vi\xEAn (Admin) \u0111\u1EC3 xem to\xE0n b\u1ED9 danh s\xE1ch l\u1EDBp h\u1ECDc h\u1EC7 th\u1ED1ng.",
+        403
+      );
+    }
     if (isTeacher && !isAdmin) {
       where.teacherId = user.id;
     } else if (!isAdmin && !isTeacher) {
@@ -104926,9 +104970,19 @@ var ClassService = class {
         { description: { contains: search, mode: "insensitive" } }
       ];
     }
-    const [rawData, total] = await Promise.all([
+    const [rawData, total, activeClassesTotal, totalStudentsAcrossClasses] = await Promise.all([
       this.repo.findMany(where, skip, limit),
-      this.repo.count(where)
+      this.repo.count(where),
+      this.prisma.class.count({
+        where: { ...where, isActive: true }
+      }),
+      this.prisma.classStudent.count({
+        where: {
+          status: "ACTIVE",
+          deletedAt: null,
+          class: where
+        }
+      })
     ]);
     const classIds = rawData.map((c) => c.id);
     const courseIds = Array.from(new Set(rawData.map((c) => c.courseId).filter(Boolean)));
@@ -105029,7 +105083,9 @@ var ClassService = class {
         page,
         limit,
         total,
-        totalPages: Math.ceil(total / limit)
+        totalPages: Math.ceil(total / limit),
+        activeClassesCount: activeClassesTotal,
+        totalStudentsCount: totalStudentsAcrossClasses
       }
     };
   }
