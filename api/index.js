@@ -102678,8 +102678,13 @@ var ExamSubmissionService = class {
         const effectiveCriteriaScores = g.criteriaScores || (i === 0 ? options?.criteriaScores : null) || null;
         const effectiveSentenceFeedbacks = g.sentenceFeedbacks || (i === 0 ? options?.sentenceFeedbacks : []) || [];
         const effectiveTabSwitchCount = g.tabSwitchCount || (i === 0 ? options?.tabSwitchCount : 0) || 0;
-        if (effectiveFeedbackText || effectivePrimaryCategory !== null || effectiveRevisionRequired || effectiveCriteriaScores !== null || effectiveSentenceFeedbacks.length > 0) {
-          if (typeof effectiveFeedbackText === "string" && effectiveFeedbackText.trim().startsWith("{") && !effectiveCriteriaScores) {
+        const effectiveSpeakingCorrections = g.speakingCorrections || (i === 0 ? options?.speakingCorrections : void 0);
+        const effectiveSpeakingStrengths = g.speakingStrengths || (i === 0 ? options?.speakingStrengths : void 0);
+        const effectiveSpeakingSummary = g.speakingSummary || (i === 0 ? options?.speakingSummary : void 0);
+        const effectiveSpeakingRetryMission = g.speakingRetryMission || (i === 0 ? options?.speakingRetryMission : void 0);
+        const hasSpeak = !!(effectiveSpeakingCorrections || effectiveSpeakingStrengths || effectiveSpeakingSummary || effectiveSpeakingRetryMission);
+        if (effectiveFeedbackText || effectivePrimaryCategory !== null || effectiveRevisionRequired || effectiveCriteriaScores !== null || effectiveSentenceFeedbacks.length > 0 || hasSpeak) {
+          if (typeof effectiveFeedbackText === "string" && effectiveFeedbackText.trim().startsWith("{") && !effectiveCriteriaScores && !hasSpeak) {
             answerFeedback = effectiveFeedbackText;
           } else {
             const structuredPayload = {
@@ -102688,13 +102693,21 @@ var ExamSubmissionService = class {
               revisionRequired: effectiveRevisionRequired,
               criteriaScores: effectiveCriteriaScores,
               sentenceFeedbacks: effectiveSentenceFeedbacks,
-              tabSwitchCount: effectiveTabSwitchCount
+              tabSwitchCount: effectiveTabSwitchCount,
+              // Speaking 4–3–1 fields (omit undefined to keep JSON clean)
+              ...effectiveSpeakingCorrections && { speakingCorrections: effectiveSpeakingCorrections },
+              ...effectiveSpeakingStrengths && { speakingStrengths: effectiveSpeakingStrengths },
+              ...effectiveSpeakingSummary && { speakingSummary: effectiveSpeakingSummary },
+              ...effectiveSpeakingRetryMission && { speakingRetryMission: effectiveSpeakingRetryMission }
             };
             answerFeedback = JSON.stringify(structuredPayload);
           }
         } else if (typeof g.feedback === "string") {
           answerFeedback = g.feedback;
         }
+        const skillBandRound = (avg) => {
+          return Math.floor(avg * 2) / 2;
+        };
         let answerScore = typeof g.score === "number" ? g.score : null;
         if (effectiveCriteriaScores) {
           const { taskResponse, coherence, fluencyAndCoherence, lexical, grammar, pronunciation } = effectiveCriteriaScores;
@@ -102702,13 +102715,13 @@ var ExamSubmissionService = class {
             const scores = [taskResponse, coherence, lexical, grammar].filter((v) => typeof v === "number" && !isNaN(v));
             if (scores.length > 0) {
               const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-              answerScore = Math.floor(avg * 2) / 2;
+              answerScore = skillBandRound(avg);
             }
           } else if (fluencyAndCoherence != null || pronunciation != null) {
             const scores = [fluencyAndCoherence, lexical, grammar, pronunciation].filter((v) => typeof v === "number" && !isNaN(v));
             if (scores.length > 0) {
               const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-              answerScore = Math.floor(avg * 2) / 2;
+              answerScore = skillBandRound(avg);
             }
           }
         }
