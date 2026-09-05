@@ -50,6 +50,7 @@ import {
   Eye,
   EyeOff,
   AlertTriangle,
+  RefreshCw,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -96,7 +97,7 @@ export default function AdminAdmins() {
     return () => clearTimeout(timer);
   }, [search]);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: [
       "admin-admins",
       debouncedSearch,
@@ -305,6 +306,19 @@ export default function AdminAdmins() {
                   <div className="flex items-center justify-center gap-2">
                     <Loader2 className="h-4 w-4 animate-spin text-amber-600" />
                     Đang tải...
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : isError ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
+                  <div className="flex flex-col items-center gap-3">
+                    <AlertTriangle className="h-8 w-8 text-destructive" />
+                    <p className="text-sm font-medium">Không thể tải danh sách quản trị viên</p>
+                    <Button variant="outline" size="sm" onClick={() => refetch()}>
+                      <RefreshCw className="mr-2 h-3.5 w-3.5" />
+                      Thử lại
+                    </Button>
                   </div>
                 </TableCell>
               </TableRow>
