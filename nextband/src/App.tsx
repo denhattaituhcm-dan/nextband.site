@@ -15,7 +15,6 @@ import MinimalLayout from "@/layouts/MinimalLayout";
 // Eagerly loaded core initial routes
 import HomePage from "@/pages/HomePage";
 import NotFound from "@/pages/NotFound";
-import { CognitiveWordPopover } from "@/components/lexicon/CognitiveWordPopover";
 
 /**
  * Detects stale Vite chunk errors (happen after a new deployment or network hiccup).
@@ -115,7 +114,6 @@ const SubmissionDetail = lazyWithRetry(() => import("@/pages/SubmissionDetail"))
 const ExamInterface = lazyWithRetry(() => import("@/pages/ExamInterface"));
 const Profile = lazyWithRetry(() => import("@/pages/Profile"));
 const StudentAnalyticsPage = lazyWithRetry(() => import("@/pages/StudentAnalyticsPage"));
-const MyLexiconPage = lazyWithRetry(() => import("@/pages/MyLexiconPage"));
 const VisualReconstructionPage = lazyWithRetry(() => import("@/pages/VisualReconstructionPage"));
 
 // Lazy-loaded Admin Pages
@@ -351,7 +349,7 @@ const App = () => (
                 <Route path="/app/submissions/:id" element={<SubmissionDetail />} />
                 <Route path="/app/analytics" element={<StudentAnalyticsPage />} />
                 <Route path="/app/profile" element={<Profile />} />
-                <Route path="/app/my-lexicon" element={<MyLexiconPage />} />
+                <Route path="/app/my-lexicon" element={<Navigate to="/app" replace />} />
                 <Route path="/app/reconstruction" element={<VisualReconstructionPage />} />
               </Route>
 
@@ -635,7 +633,6 @@ const App = () => (
               {/* Catch-all */}
               <Route path="*" element={<NotFound />} />
             </Routes>
-            <CognitiveWordPopover />
           </Suspense>
         </BrowserRouter>
       </TooltipProvider>
