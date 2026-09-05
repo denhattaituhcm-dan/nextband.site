@@ -1142,10 +1142,14 @@ export default function TeacherWorkspace() {
                           <div className="flex items-center gap-1 font-semibold truncate">
                             <span className="truncate">{st.studentName}</span>
                             {st.trajectory === "DECLINING" && (
-                              <TrendingDown className="h-3 w-3 text-rose-600 shrink-0" title="Xu hướng giảm >=10pp" />
+                              <span title="Xu hướng giảm >=10pp" className="inline-flex items-center shrink-0">
+                                <TrendingDown className="h-3 w-3 text-rose-600" />
+                              </span>
                             )}
                             {st.trajectory === "RISING" && (
-                              <TrendingUp className="h-3 w-3 text-emerald-600 shrink-0" title="Xu hướng tăng >=10pp" />
+                              <span title="Xu hướng tăng >=10pp" className="inline-flex items-center shrink-0">
+                                <TrendingUp className="h-3 w-3 text-emerald-600" />
+                              </span>
                             )}
                           </div>
                           <div className="text-[9.5px] text-slate-500 truncate flex items-center gap-1">
