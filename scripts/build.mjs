@@ -45,7 +45,16 @@ const verifyScript = existsSync(resolve(rootDir, "scripts/verify-api-runtime.mjs
   : resolve(rootDir, "nextband/scripts/verify-api-runtime.mjs");
 
 if (existsSync(verifyScript)) {
-  execSync(`npx tsx "${verifyScript}"`, { stdio: "inherit" });
+  if (!process.env.DATABASE_URL) {
+    console.log("ℹ️  DATABASE_URL not set in build environment. Skipping DB-dependent runtime smoke gates.");
+  } else {
+    try {
+      execSync(`npx tsx "${verifyScript}"`, { stdio: "inherit" });
+    } catch (err) {
+      console.error("❌ Runtime Verification failed:", err?.message);
+      throw err;
+    }
+  }
 }
 
 // 3. Ensure frontend dependencies are installed before typecheck

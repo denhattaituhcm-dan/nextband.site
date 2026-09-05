@@ -109199,9 +109199,9 @@ var WhisperSttService = class {
    * Transcribes an audio buffer into normalized NextBand SpeakingTranscript contract
    */
   async transcribeAudio(audioBuffer, fileName = "audio.webm", mimeType = "audio/webm", totalDurationMs) {
-    const apiKey = this.apiKey;
-    const apiUrl = this.apiUrl;
-    const model = this.model;
+    const apiKey = this.apiKey || process.env.GROQ_API_KEY || process.env.STT_API_KEY || process.env.OPENAI_API_KEY || process.env.WHISPER_API_KEY;
+    const apiUrl = process.env.GROQ_WHISPER_API_URL || process.env.STT_API_URL || this.apiUrl || (apiKey?.startsWith("gsk_") ? "https://api.groq.com/openai/v1/audio/transcriptions" : "https://api.openai.com/v1/audio/transcriptions");
+    const model = process.env.GROQ_WHISPER_MODEL || process.env.STT_MODEL || this.model || (apiKey?.startsWith("gsk_") ? "whisper-large-v3-turbo" : "whisper-1");
     if (!apiKey) {
       return {
         rawText: "",
