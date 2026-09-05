@@ -856,11 +856,17 @@ export function AnswerResultCard({
                 {hasSpeakingReport && (
                   <SpeakingEvidenceResultView
                     criteriaScores={parsed?.criteriaScores as any}
+                    speakingAnnotations={parsed?.speakingAnnotations}
+                    speakingCorrections={parsed?.speakingCorrections}
+                    speakingStrengths={parsed?.speakingStrengths}
+                    speakingSummary={parsed?.speakingSummary}
+                    speakingRetryMission={parsed?.speakingRetryMission}
                   />
                 )}
               </div>
             );
           })()}
+
         </div>
       </CardContent>
     </Card>

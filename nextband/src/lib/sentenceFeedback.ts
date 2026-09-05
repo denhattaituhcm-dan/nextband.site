@@ -23,6 +23,333 @@ export interface CriteriaScores {
   grammar?: number | null;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// SPEAKING 4–3–1 DIAGNOSTIC SYSTEM TYPES
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** 4 IELTS Speaking Criteria */
+export type SpeakingCriterion = "FC" | "LR" | "GRA" | "PR";
+
+/**
+ * Specific diagnostic error categories per criterion.
+ * MUST keep criterion ≠ category — criterion is the IELTS dimension,
+ * category is the specific error type within that dimension.
+ *
+ * Mapping:
+ *   FC  → HESITATION | REPETITION | SELF_CORRECTION | FILLER_WORD |
+ *          TOPIC_DEVELOPMENT | LINKING_IDEAS | PACING
+ *   LR  → WORD_CHOICE | COLLOCATION | PARAPHRASE | TOPIC_VOCABULARY |
+ *          IDIOM_MISUSE | REPETITION_VOCAB | WORD_FORM
+ *   GRA → TENSE | SUBJECT_VERB_AGREEMENT | ARTICLE | PREPOSITION |
+ *          SENTENCE_STRUCTURE | WORD_ORDER | CONDITIONAL |
+ *          RELATIVE_CLAUSE | PLURAL_FORM
+ *   PR  → WORD_STRESS | SENTENCE_STRESS | ENDING_SOUND |
+ *          CONNECTED_SPEECH | INDIVIDUAL_SOUNDS | INTONATION | SYLLABLE_COUNT
+ */
+export type SpeakingDiagnosticCategory =
+  // FC — Fluency & Coherence
+  | "HESITATION"
+  | "REPETITION"
+  | "SELF_CORRECTION"
+  | "FILLER_WORD"
+  | "TOPIC_DEVELOPMENT"
+  | "LINKING_IDEAS"
+  | "PACING"
+  // LR — Lexical Resource
+  | "WORD_CHOICE"
+  | "COLLOCATION"
+  | "PARAPHRASE"
+  | "TOPIC_VOCABULARY"
+  | "IDIOM_MISUSE"
+  | "REPETITION_VOCAB"
+  | "WORD_FORM"
+  // GRA — Grammatical Range & Accuracy
+  | "TENSE"
+  | "SUBJECT_VERB_AGREEMENT"
+  | "ARTICLE"
+  | "PREPOSITION"
+  | "SENTENCE_STRUCTURE"
+  | "WORD_ORDER"
+  | "CONDITIONAL"
+  | "RELATIVE_CLAUSE"
+  | "PLURAL_FORM"
+  // PR — Pronunciation
+  | "WORD_STRESS"
+  | "SENTENCE_STRESS"
+  | "ENDING_SOUND"
+  | "CONNECTED_SPEECH"
+  | "INDIVIDUAL_SOUNDS"
+  | "INTONATION"
+  | "SYLLABLE_COUNT";
+
+/** Maps each category to its parent criterion */
+export const CATEGORY_CRITERION_MAP: Record<SpeakingDiagnosticCategory, SpeakingCriterion> = {
+  // FC
+  HESITATION: "FC",
+  REPETITION: "FC",
+  SELF_CORRECTION: "FC",
+  FILLER_WORD: "FC",
+  TOPIC_DEVELOPMENT: "FC",
+  LINKING_IDEAS: "FC",
+  PACING: "FC",
+  // LR
+  WORD_CHOICE: "LR",
+  COLLOCATION: "LR",
+  PARAPHRASE: "LR",
+  TOPIC_VOCABULARY: "LR",
+  IDIOM_MISUSE: "LR",
+  REPETITION_VOCAB: "LR",
+  WORD_FORM: "LR",
+  // GRA
+  TENSE: "GRA",
+  SUBJECT_VERB_AGREEMENT: "GRA",
+  ARTICLE: "GRA",
+  PREPOSITION: "GRA",
+  SENTENCE_STRUCTURE: "GRA",
+  WORD_ORDER: "GRA",
+  CONDITIONAL: "GRA",
+  RELATIVE_CLAUSE: "GRA",
+  PLURAL_FORM: "GRA",
+  // PR
+  WORD_STRESS: "PR",
+  SENTENCE_STRESS: "PR",
+  ENDING_SOUND: "PR",
+  CONNECTED_SPEECH: "PR",
+  INDIVIDUAL_SOUNDS: "PR",
+  INTONATION: "PR",
+  SYLLABLE_COUNT: "PR",
+};
+
+/** Categories available per criterion (for UI dropdowns) */
+export const CATEGORIES_BY_CRITERION: Record<SpeakingCriterion, SpeakingDiagnosticCategory[]> = {
+  FC: ["HESITATION", "REPETITION", "SELF_CORRECTION", "FILLER_WORD", "TOPIC_DEVELOPMENT", "LINKING_IDEAS", "PACING"],
+  LR: ["WORD_CHOICE", "COLLOCATION", "PARAPHRASE", "TOPIC_VOCABULARY", "IDIOM_MISUSE", "REPETITION_VOCAB", "WORD_FORM"],
+  GRA: ["TENSE", "SUBJECT_VERB_AGREEMENT", "ARTICLE", "PREPOSITION", "SENTENCE_STRUCTURE", "WORD_ORDER", "CONDITIONAL", "RELATIVE_CLAUSE", "PLURAL_FORM"],
+  PR: ["WORD_STRESS", "SENTENCE_STRESS", "ENDING_SOUND", "CONNECTED_SPEECH", "INDIVIDUAL_SOUNDS", "INTONATION", "SYLLABLE_COUNT"],
+};
+
+/** Vietnamese display labels for each diagnostic category */
+export const CATEGORY_LABEL_VI: Record<SpeakingDiagnosticCategory, string> = {
+  // FC
+  HESITATION: "Ngập ngừng / Dừng lâu",
+  REPETITION: "Lặp lại từ / cụm từ",
+  SELF_CORRECTION: "Tự sửa giữa chừng",
+  FILLER_WORD: "Dùng filler (uh, um, like...)",
+  TOPIC_DEVELOPMENT: "Phát triển ý chưa đủ",
+  LINKING_IDEAS: "Liên kết ý còn yếu",
+  PACING: "Nhịp nói bất thường",
+  // LR
+  WORD_CHOICE: "Chọn từ chưa phù hợp",
+  COLLOCATION: "Kết hợp từ sai (collocation)",
+  PARAPHRASE: "Diễn đạt lại kém",
+  TOPIC_VOCABULARY: "Thiếu từ vựng chủ đề",
+  IDIOM_MISUSE: "Dùng thành ngữ sai",
+  REPETITION_VOCAB: "Lặp từ vựng quá nhiều",
+  WORD_FORM: "Sai dạng từ (word form)",
+  // GRA
+  TENSE: "Sai thì / thể",
+  SUBJECT_VERB_AGREEMENT: "Chủ vị không nhất quán",
+  ARTICLE: "Sai mạo từ (a/an/the)",
+  PREPOSITION: "Sai giới từ",
+  SENTENCE_STRUCTURE: "Cấu trúc câu chưa đúng",
+  WORD_ORDER: "Trật tự từ sai",
+  CONDITIONAL: "Sai câu điều kiện",
+  RELATIVE_CLAUSE: "Sai mệnh đề quan hệ",
+  PLURAL_FORM: "Sai số nhiều / số ít",
+  // PR
+  WORD_STRESS: "Sai trọng âm từ",
+  SENTENCE_STRESS: "Sai trọng âm câu",
+  ENDING_SOUND: "Nuốt âm cuối",
+  CONNECTED_SPEECH: "Nối âm chưa tự nhiên",
+  INDIVIDUAL_SOUNDS: "Phát âm âm đơn sai",
+  INTONATION: "Ngữ điệu chưa phù hợp",
+  SYLLABLE_COUNT: "Sai số âm tiết",
+};
+
+/** Priority levels for 4–3–1 system */
+export type SpeakingPriority = "P1" | "P2" | "P3";
+
+/** Display config for each priority */
+export const PRIORITY_CONFIG: Record<SpeakingPriority, { labelVi: string; color: string; description: string }> = {
+  P1: {
+    labelVi: "Fix First — Cần sửa ngay",
+    color: "rose",
+    description: "Lỗi quan trọng nhất, ảnh hưởng trực tiếp đến band score",
+  },
+  P2: {
+    labelVi: "Improve — Cần cải thiện",
+    color: "amber",
+    description: "Lỗi cần cải thiện để nâng band score tiếp theo",
+  },
+  P3: {
+    labelVi: "Refine — Cần tinh chỉnh",
+    color: "sky",
+    description: "Lỗi nhỏ, tinh chỉnh để nói tự nhiên hơn",
+  },
+};
+
+/**
+ * A single priority error diagnosed by the teacher.
+ * criterion + category are SEPARATE — criterion is the IELTS dimension,
+ * category is the specific error type within that dimension.
+ */
+export interface SpeakingCorrectionItem {
+  id: string;
+  priority: SpeakingPriority;
+  criterion: SpeakingCriterion;
+  category: SpeakingDiagnosticCategory;
+  timestamp?: { start: number; end: number };
+  segmentId?: string;
+  studentSaid: string;
+  correction: string;
+  note?: string;
+}
+
+/**
+ * Competency Strength Tag — must map to an IELTS criterion for analytics.
+ * These are ISSUE/STRENGTH evidence, not free text.
+ */
+export interface SpeakingStrengthTag {
+  id: string;
+  criterion: SpeakingCriterion;
+  labelVi: string;
+}
+
+/** Preset strength tags available for teacher quick-select */
+export const PRESET_STRENGTH_TAGS: SpeakingStrengthTag[] = [
+  // PR strengths
+  { id: "pr_ending_sound", criterion: "PR", labelVi: "Phát âm âm cuối rõ" },
+  { id: "pr_connected_speech", criterion: "PR", labelVi: "Nối âm tự nhiên" },
+  { id: "pr_word_stress", criterion: "PR", labelVi: "Nhấn trọng âm đúng" },
+  { id: "pr_intonation", criterion: "PR", labelVi: "Ngữ điệu phong phú" },
+  // FC strengths
+  { id: "fc_fluent", criterion: "FC", labelVi: "Duy trì nhịp nói tốt" },
+  { id: "fc_linking", criterion: "FC", labelVi: "Liên kết ý mạch lạc" },
+  { id: "fc_development", criterion: "FC", labelVi: "Phát triển ý đầy đủ" },
+  // LR strengths
+  { id: "lr_diverse_vocab", criterion: "LR", labelVi: "Dùng từ đa dạng" },
+  { id: "lr_collocation", criterion: "LR", labelVi: "Collocation tự nhiên" },
+  { id: "lr_topic_vocab", criterion: "LR", labelVi: "Vốn từ chủ đề phong phú" },
+  { id: "lr_paraphrase", criterion: "LR", labelVi: "Diễn đạt lại linh hoạt" },
+  // GRA strengths
+  { id: "gra_complex_sent", criterion: "GRA", labelVi: "Câu phức đa dạng" },
+  { id: "gra_accurate", criterion: "GRA", labelVi: "Ít lỗi ngữ pháp" },
+  { id: "gra_tense", criterion: "GRA", labelVi: "Dùng thì chính xác" },
+];
+
+/** Teacher-guided summary (replaces free textarea) */
+export interface SpeakingTeacherSummary {
+  strongestPoint?: string;
+  mainArea?: string;
+  nextTarget?: string;
+  teacherNote?: string; // Optional free text ≤ 300 chars
+}
+
+/** Retry mission — auto-populated from P1 correction */
+export interface SpeakingRetryMission {
+  originalSentence: string;
+  targetSentence: string;
+  missionPrompt?: string;
+  /** Track if student fixed this in their next attempt */
+  fixedInRetry?: boolean;
+  relatedAttemptAnswerId?: string;
+}
+
+// ── Sentence-Level Diagnostic Annotation ───────────────────────────────────────
+export interface SpeakingSentenceAnnotation {
+  id: string;
+  segmentId: string;
+  startMs: number;
+  endMs: number;
+  text: string;
+  kind: "STRENGTH" | "ISSUE";
+  criterion: SpeakingCriterion;
+  category: string; // Diagnostic category or strength tag
+  correction?: string;
+  note?: string;
+}
+
+/**
+ * Diagnostic Aggregator Engine:
+ * Aggregates fine-grained sentence annotations into the 4–3–1 diagnostic summary.
+ */
+export function aggregateSpeakingAnnotations(annotations: SpeakingSentenceAnnotation[]): {
+  speakingCorrections: SpeakingCorrectionItem[];
+  speakingStrengths: string[];
+  speakingSummary: SpeakingTeacherSummary;
+  speakingRetryMission?: SpeakingRetryMission;
+} {
+  const issues = annotations.filter((a) => a.kind === "ISSUE");
+  const strengths = annotations.filter((a) => a.kind === "STRENGTH");
+
+  // Map strengths to unique tag IDs
+  const speakingStrengths = Array.from(new Set(strengths.map((s) => s.category)));
+
+  // Top 3 issues become P1, P2, P3
+  // Prioritize issues that have a concrete correction
+  const sortedIssues = [...issues].sort((a, b) => {
+    if (a.correction && !b.correction) return -1;
+    if (!a.correction && b.correction) return 1;
+    return 0;
+  });
+
+  const priorities: SpeakingPriority[] = ["P1", "P2", "P3"];
+  const speakingCorrections: SpeakingCorrectionItem[] = sortedIssues.slice(0, 3).map((iss, idx) => ({
+    id: iss.id,
+    priority: priorities[idx],
+    criterion: iss.criterion,
+    category: iss.category as SpeakingDiagnosticCategory,
+    timestamp: { start: iss.startMs, end: iss.endMs },
+    segmentId: iss.segmentId,
+    studentSaid: iss.text,
+    correction: iss.correction || "",
+    note: iss.note,
+  }));
+
+  // Auto-generate Retry Mission from P1 (if P1 has correction or text)
+  let speakingRetryMission: SpeakingRetryMission | undefined = undefined;
+  const p1 = speakingCorrections[0];
+  if (p1 && p1.studentSaid) {
+    speakingRetryMission = {
+      originalSentence: p1.studentSaid,
+      targetSentence: p1.correction || p1.studentSaid,
+      missionPrompt: `Nói lại câu này chuẩn xác (${CATEGORY_LABEL_VI[p1.category] || p1.category})`,
+    };
+  }
+
+  // Auto-generate summary
+  const strengthLabels = strengths.map((s) => {
+    const preset = PRESET_STRENGTH_TAGS.find((t) => t.id === s.category);
+    return preset ? preset.labelVi : s.category;
+  });
+  const strongestPoint = strengthLabels.length > 0
+    ? `Học viên thể hiện tốt ở: ${Array.from(new Set(strengthLabels)).slice(0, 2).join(", ")}.`
+    : undefined;
+
+  const mainArea = p1
+    ? `Trọng tâm cần khắc phục ngay (${p1.criterion}): ${CATEGORY_LABEL_VI[p1.category] || p1.category}.`
+    : undefined;
+
+  const nextTarget = p1 && p1.correction
+    ? `Luyện phát âm/nói lại cấu trúc: "${p1.correction}".`
+    : p1
+    ? `Chú ý kiểm soát lỗi ${CATEGORY_LABEL_VI[p1.category] || p1.category} khi triển khai ý.`
+    : undefined;
+
+  const speakingSummary: SpeakingTeacherSummary = {
+    strongestPoint,
+    mainArea,
+    nextTarget,
+  };
+
+  return {
+    speakingCorrections,
+    speakingStrengths,
+    speakingSummary,
+    speakingRetryMission,
+  };
+}
+
 export interface StructuredFeedbackPayload {
   text?: string;
   primaryErrorCategory?: ErrorCategory | null;
@@ -30,6 +357,35 @@ export interface StructuredFeedbackPayload {
   criteriaScores?: CriteriaScores | null;
   sentenceFeedbacks?: SentenceFeedbackItem[];
   tabSwitchCount?: number;
+  // ── Speaking 4–3–1 Diagnostic Fields ──────────────────────────────────────
+  speakingAnnotations?: SpeakingSentenceAnnotation[];
+  speakingCorrections?: SpeakingCorrectionItem[];
+  speakingStrengths?: string[]; // Array of SpeakingStrengthTag.id
+  speakingSummary?: SpeakingTeacherSummary;
+  speakingRetryMission?: SpeakingRetryMission;
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// IELTS BAND SCORE CALCULATORS
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Calculates a single skill band (Speaking / Writing) from its 4 component criteria.
+ * RULE: When averaging the 4 criteria of a single skill, the score is ROUNDED DOWN
+ * (truncated to nearest 0.5): Math.floor(avg * 2) / 2.
+ * E.g.: avg = 6.25 -> 6.0, avg = 6.75 -> 6.5.
+ */
+export function calculateSkillBand(avgOrScores: number | number[]): number {
+  let avg: number;
+  if (Array.isArray(avgOrScores)) {
+    const valid = avgOrScores.filter((s): s is number => typeof s === "number" && !isNaN(s));
+    if (valid.length === 0) return 0;
+    avg = valid.reduce((a, b) => a + b, 0) / valid.length;
+  } else {
+    avg = avgOrScores;
+  }
+  return Math.floor(avg * 2) / 2;
 }
 
 export function calculateWritingBand(scores?: CriteriaScores | null): string {
@@ -40,9 +396,7 @@ export function calculateWritingBand(scores?: CriteriaScores | null): string {
   const gr = scores.grammar;
   const valid = [tr, cc, lr, gr].filter((s): s is number => typeof s === "number" && !isNaN(s));
   if (valid.length === 0) return "—";
-  const sum = valid.reduce((a, b) => a + b, 0);
-  const avg = sum / valid.length;
-  return (Math.floor(avg * 2) / 2).toFixed(1);
+  return calculateSkillBand(valid).toFixed(1);
 }
 
 export function calculateSpeakingBand(scores?: CriteriaScores | null): string {
@@ -53,10 +407,46 @@ export function calculateSpeakingBand(scores?: CriteriaScores | null): string {
   const pr = scores.pronunciation;
   const valid = [fc, lr, gr, pr].filter((s): s is number => typeof s === "number" && !isNaN(s));
   if (valid.length === 0) return "—";
-  const sum = valid.reduce((a, b) => a + b, 0);
-  const avg = sum / valid.length;
-  return (Math.floor(avg * 2) / 2).toFixed(1);
+  return calculateSkillBand(valid).toFixed(1);
 }
+
+/**
+ * Calculates IELTS OVERALL Band from the 4 distinct skills (Listening, Reading, Writing, Speaking).
+ * RULE: The official IELTS overall exam score rounds UP at the .25 and .75 boundaries:
+ *   fraction < 0.25  → round down to nearest whole
+ *   0.25 ≤ fraction < 0.75 → round to .5
+ *   fraction ≥ 0.75 → round up to nearest whole
+ *
+ * NOTE: This applies ONLY to the overall average of the 4 test skills, NOT within a single skill!
+ *
+ * @example
+ *   calculateIELTSOverall([6, 6, 6, 6])   → 6.0  (avg=6.0)
+ *   calculateIELTSOverall([6, 6, 6.5, 6]) → 6.0  (avg=6.125, fraction=0.125 < 0.25)
+ *   calculateIELTSOverall([6, 6.5, 6.5, 6.5]) → 6.5 (avg=6.375, fraction=0.375)
+ *   calculateIELTSOverall([7, 7, 6.5, 7]) → 7.0  (avg=6.875, fraction=0.875 ≥ 0.75)
+ */
+export function calculateIELTSOverall(avgOrScores: number | number[]): number {
+  let avg: number;
+  if (Array.isArray(avgOrScores)) {
+    const valid = avgOrScores.filter((s): s is number => typeof s === "number" && !isNaN(s));
+    if (valid.length === 0) return 0;
+    avg = valid.reduce((a, b) => a + b, 0) / valid.length;
+  } else {
+    avg = avgOrScores;
+  }
+
+  const whole = Math.floor(avg);
+  const fraction = avg - whole;
+
+  if (fraction < 0.25) return whole;
+  if (fraction < 0.75) return whole + 0.5;
+  return whole + 1;
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// WRITING PRESET ERROR TAGS (unchanged)
+// ─────────────────────────────────────────────────────────────────────────────
 
 export const PRESET_ERROR_TAGS: Record<ErrorCategory, string[]> = {
   GRAMMAR: [
@@ -202,6 +592,12 @@ export function parseStructuredFeedback(rawFeedback: string | null | undefined):
         criteriaScores: parsed.criteriaScores || null,
         sentenceFeedbacks: Array.isArray(parsed.sentenceFeedbacks) ? parsed.sentenceFeedbacks : [],
         tabSwitchCount: typeof parsed.tabSwitchCount === "number" ? parsed.tabSwitchCount : 0,
+        // Speaking 4–3–1 fields
+        speakingAnnotations: Array.isArray(parsed.speakingAnnotations) ? parsed.speakingAnnotations : undefined,
+        speakingCorrections: Array.isArray(parsed.speakingCorrections) ? parsed.speakingCorrections : undefined,
+        speakingStrengths: Array.isArray(parsed.speakingStrengths) ? parsed.speakingStrengths : undefined,
+        speakingSummary: parsed.speakingSummary && typeof parsed.speakingSummary === "object" ? parsed.speakingSummary : undefined,
+        speakingRetryMission: parsed.speakingRetryMission && typeof parsed.speakingRetryMission === "object" ? parsed.speakingRetryMission : undefined,
       };
     }
   } catch {
@@ -225,5 +621,12 @@ export function serializeStructuredFeedback(payload: StructuredFeedbackPayload):
     criteriaScores: payload.criteriaScores || null,
     sentenceFeedbacks: payload.sentenceFeedbacks || [],
     tabSwitchCount: payload.tabSwitchCount || 0,
+    // Speaking 4–3–1 fields (omit undefined to keep JSON clean)
+    ...(payload.speakingAnnotations !== undefined && { speakingAnnotations: payload.speakingAnnotations }),
+    ...(payload.speakingCorrections !== undefined && { speakingCorrections: payload.speakingCorrections }),
+    ...(payload.speakingStrengths !== undefined && { speakingStrengths: payload.speakingStrengths }),
+    ...(payload.speakingSummary !== undefined && { speakingSummary: payload.speakingSummary }),
+    ...(payload.speakingRetryMission !== undefined && { speakingRetryMission: payload.speakingRetryMission }),
   });
 }
+

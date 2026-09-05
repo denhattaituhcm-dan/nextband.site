@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Play, Pause, RotateCcw, Volume2, Edit2, Check, AlertCircle, Sparkles, Wand2, FileText, Loader2, AlertTriangle, RefreshCw } from "lucide-react";
+import { Play, Pause, RotateCcw, Volume2, Edit2, Check, AlertCircle, Sparkles, Wand2, FileText, Loader2, AlertTriangle, RefreshCw, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,6 +17,22 @@ export interface TranscriptSegment {
   editedText?: string;
 }
 
+/** Payload passed to onAnnotateSegment when teacher clicks a segment in annotation mode */
+export interface AnnotateSegmentPayload {
+  segmentId: string;
+  startMs: number;
+  endMs: number;
+  text: string;
+}
+
+/** Badge label shown on an annotated segment (e.g. "P1 · GRA · TENSE") */
+export interface SegmentAnnotationBadge {
+  segmentId: string;
+  label: string;
+  /** tailwind color variant: 'rose' | 'amber' | 'sky' */
+  color?: "rose" | "amber" | "sky";
+}
+
 interface SpeakingTranscriptViewerProps {
   audioUrl: string;
   initialTranscript?: string | null;
@@ -26,7 +42,14 @@ interface SpeakingTranscriptViewerProps {
   questionId?: string;
   onTranscriptEdited?: (updatedTranscript: string, updatedSegments: TranscriptSegment[]) => void;
   readOnly?: boolean;
+  /** When true, segments show an "Annotate error" button instead of edit button */
+  annotationMode?: boolean;
+  /** Called when teacher clicks a segment to annotate an error */
+  onAnnotateSegment?: (payload: AnnotateSegmentPayload) => void;
+  /** Badges to display on annotated segments (updated by parent after each annotation) */
+  annotationBadges?: SegmentAnnotationBadge[];
 }
+
 
 /**
  * Format milliseconds into MM:SS format safely
@@ -105,6 +128,9 @@ export function SpeakingTranscriptViewer({
   questionId,
   onTranscriptEdited,
   readOnly = false,
+  annotationMode = false,
+  onAnnotateSegment,
+  annotationBadges = [],
 }: SpeakingTranscriptViewerProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -578,15 +604,27 @@ export function SpeakingTranscriptViewer({
               const isEdited = !!seg.editedText;
               const displayText = seg.editedText || seg.text;
               const isEditingThis = editingSegmentId === seg.id;
+              // Annotation badges for this segment
+              const badges = annotationBadges.filter((b) => b.segmentId === seg.id);
+              const isAnnotated = badges.length > 0;
+
+              const badgeColorClass: Record<string, string> = {
+                rose: "bg-rose-100 text-rose-700 border-rose-300",
+                amber: "bg-amber-100 text-amber-700 border-amber-300",
+                sky: "bg-sky-100 text-sky-700 border-sky-300",
+              };
 
               return (
                 <div
                   key={seg.id}
-                  className={`p-2.5 rounded-lg border text-xs transition-all duration-200 ${
+                  className={cn(
+                    "p-2.5 rounded-lg border text-xs transition-all duration-200",
                     isActive
                       ? "bg-blue-50 border-blue-400 text-blue-950 shadow-2xs font-medium"
+                      : isAnnotated
+                      ? "bg-rose-50/40 border-rose-300 text-slate-800"
                       : "bg-slate-50/50 border-slate-200 hover:bg-slate-100 text-slate-800"
-                  }`}
+                  )}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <button
@@ -639,7 +677,23 @@ export function SpeakingTranscriptViewer({
                       </p>
                     )}
 
-                    {!readOnly && !isEditingThis && (
+                    {/* Annotation mode: show "Gắn lỗi" button */}
+                    {annotationMode && !isEditingThis && onAnnotateSegment && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => onAnnotateSegment({ segmentId: seg.id, startMs: seg.startMs, endMs: seg.endMs, text: seg.editedText || seg.text })}
+                        className="h-6 px-2 text-[10px] font-semibold gap-1 text-rose-600 border-rose-300 hover:bg-rose-50 shrink-0"
+                        title="Gắn lỗi ưu tiên vào câu này"
+                      >
+                        <Tag className="h-3 w-3" />
+                        Gắn lỗi
+                      </Button>
+                    )}
+
+                    {/* Normal edit mode (not annotation mode) */}
+                    {!annotationMode && !readOnly && !isEditingThis && (
                       <Button
                         size="sm"
                         variant="ghost"
@@ -651,10 +705,28 @@ export function SpeakingTranscriptViewer({
                       </Button>
                     )}
                   </div>
+
+                  {/* Annotation badges row — shown below segment text */}
+                  {badges.length > 0 && (
+                    <div className="mt-1.5 flex flex-wrap gap-1">
+                      {badges.map((badge, bi) => (
+                        <span
+                          key={bi}
+                          className={cn(
+                            "inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded border text-[10px] font-bold",
+                            badgeColorClass[badge.color || "rose"] || badgeColorClass.rose
+                          )}
+                        >
+                          {badge.label}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
+
         )}
 
         {/* DISCLAIMER INVARIANT */}

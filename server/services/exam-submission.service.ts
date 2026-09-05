@@ -27,6 +27,47 @@ export interface CriteriaScores {
   grammar?: number | null;
 }
 
+// ── Speaking 4–3–1 Diagnostic Types (server-side mirror of sentenceFeedback.ts) ──
+
+export type SpeakingCriterion = "FC" | "LR" | "GRA" | "PR";
+export type SpeakingPriority = "P1" | "P2" | "P3";
+export type SpeakingDiagnosticCategory =
+  | "HESITATION" | "REPETITION" | "SELF_CORRECTION" | "FILLER_WORD"
+  | "TOPIC_DEVELOPMENT" | "LINKING_IDEAS" | "PACING"
+  | "WORD_CHOICE" | "COLLOCATION" | "PARAPHRASE" | "TOPIC_VOCABULARY"
+  | "IDIOM_MISUSE" | "REPETITION_VOCAB" | "WORD_FORM"
+  | "TENSE" | "SUBJECT_VERB_AGREEMENT" | "ARTICLE" | "PREPOSITION"
+  | "SENTENCE_STRUCTURE" | "WORD_ORDER" | "CONDITIONAL" | "RELATIVE_CLAUSE" | "PLURAL_FORM"
+  | "WORD_STRESS" | "SENTENCE_STRESS" | "ENDING_SOUND" | "CONNECTED_SPEECH"
+  | "INDIVIDUAL_SOUNDS" | "INTONATION" | "SYLLABLE_COUNT";
+
+export interface SpeakingCorrectionItem {
+  id: string;
+  priority: SpeakingPriority;
+  criterion: SpeakingCriterion;
+  category: SpeakingDiagnosticCategory;
+  timestamp?: { start: number; end: number };
+  segmentId?: string;
+  studentSaid: string;
+  correction: string;
+  note?: string;
+}
+
+export interface SpeakingTeacherSummary {
+  strongestPoint?: string;
+  mainArea?: string;
+  nextTarget?: string;
+  teacherNote?: string;
+}
+
+export interface SpeakingRetryMission {
+  originalSentence: string;
+  targetSentence: string;
+  missionPrompt?: string;
+  fixedInRetry?: boolean;
+  relatedAttemptAnswerId?: string;
+}
+
 export interface TeacherFeedbackPayload {
   text: string;
   primaryErrorCategory: "CONCEPT" | "STRUCTURE" | "EXPRESSION" | "GRAMMAR" | null;
@@ -41,7 +82,13 @@ export interface TeacherFeedbackPayload {
     suggestedSentence?: string;
   }>;
   tabSwitchCount?: number;
+  // ── Speaking 4–3–1 Diagnostic Fields ──────────────────────────────────────
+  speakingCorrections?: SpeakingCorrectionItem[];
+  speakingStrengths?: string[];
+  speakingSummary?: SpeakingTeacherSummary;
+  speakingRetryMission?: SpeakingRetryMission;
 }
+
 
 export function getRemainingSeconds(startedAt: Date | null, durationMinutes: number | null) {
   const safeDuration = Math.max(1, durationMinutes || 60);
@@ -1197,6 +1244,11 @@ export class ExamSubmissionService {
       criteriaScores?: CriteriaScores | null;
       sentenceFeedbacks?: any[];
       tabSwitchCount?: number;
+      // Speaking 4–3–1 fields
+      speakingCorrections?: SpeakingCorrectionItem[];
+      speakingStrengths?: string[];
+      speakingSummary?: SpeakingTeacherSummary;
+      speakingRetryMission?: SpeakingRetryMission;
     }>,
     totalScore?: number,
     options?: {
@@ -1214,7 +1266,13 @@ export class ExamSubmissionService {
       }>;
       tabSwitchCount?: number;
       finalize?: boolean;
+      // Speaking 4–3–1 fields
+      speakingCorrections?: SpeakingCorrectionItem[];
+      speakingStrengths?: string[];
+      speakingSummary?: SpeakingTeacherSummary;
+      speakingRetryMission?: SpeakingRetryMission;
     }
+
   ) {
     const isAdmin = user.roles.includes("admin");
     const isTeacher = user.roles.includes("teacher");
@@ -1257,15 +1315,22 @@ export class ExamSubmissionService {
         const effectiveCriteriaScores = g.criteriaScores || (i === 0 ? options?.criteriaScores : null) || null;
         const effectiveSentenceFeedbacks = g.sentenceFeedbacks || (i === 0 ? options?.sentenceFeedbacks : []) || [];
         const effectiveTabSwitchCount = g.tabSwitchCount || (i === 0 ? options?.tabSwitchCount : 0) || 0;
+        // Speaking 4–3–1 fields
+        const effectiveSpeakingCorrections = g.speakingCorrections || (i === 0 ? options?.speakingCorrections : undefined);
+        const effectiveSpeakingStrengths = g.speakingStrengths || (i === 0 ? options?.speakingStrengths : undefined);
+        const effectiveSpeakingSummary = g.speakingSummary || (i === 0 ? options?.speakingSummary : undefined);
+        const effectiveSpeakingRetryMission = g.speakingRetryMission || (i === 0 ? options?.speakingRetryMission : undefined);
+        const hasSpeak = !!(effectiveSpeakingCorrections || effectiveSpeakingStrengths || effectiveSpeakingSummary || effectiveSpeakingRetryMission);
 
         if (
           effectiveFeedbackText ||
           effectivePrimaryCategory !== null ||
           effectiveRevisionRequired ||
           effectiveCriteriaScores !== null ||
-          effectiveSentenceFeedbacks.length > 0
+          effectiveSentenceFeedbacks.length > 0 ||
+          hasSpeak
         ) {
-          if (typeof effectiveFeedbackText === "string" && effectiveFeedbackText.trim().startsWith("{") && !effectiveCriteriaScores) {
+          if (typeof effectiveFeedbackText === "string" && effectiveFeedbackText.trim().startsWith("{") && !effectiveCriteriaScores && !hasSpeak) {
             answerFeedback = effectiveFeedbackText;
           } else {
             const structuredPayload: TeacherFeedbackPayload = {
@@ -1275,6 +1340,11 @@ export class ExamSubmissionService {
               criteriaScores: effectiveCriteriaScores,
               sentenceFeedbacks: effectiveSentenceFeedbacks,
               tabSwitchCount: effectiveTabSwitchCount,
+              // Speaking 4–3–1 fields (omit undefined to keep JSON clean)
+              ...(effectiveSpeakingCorrections && { speakingCorrections: effectiveSpeakingCorrections }),
+              ...(effectiveSpeakingStrengths && { speakingStrengths: effectiveSpeakingStrengths }),
+              ...(effectiveSpeakingSummary && { speakingSummary: effectiveSpeakingSummary }),
+              ...(effectiveSpeakingRetryMission && { speakingRetryMission: effectiveSpeakingRetryMission }),
             };
             answerFeedback = JSON.stringify(structuredPayload);
           }
@@ -1282,26 +1352,33 @@ export class ExamSubmissionService {
           answerFeedback = g.feedback;
         }
 
-        // Authoritative score for this answer from criteria if available
+        // Authoritative score for this answer from 4 component criteria.
+        // Single skill band (Speaking / Writing) from 4 criteria is ROUNDED DOWN: Math.floor(avg * 2) / 2.
+        const skillBandRound = (avg: number): number => {
+          return Math.floor(avg * 2) / 2;
+        };
+
         let answerScore = typeof g.score === "number" ? g.score : null;
         if (effectiveCriteriaScores) {
           const { taskResponse, coherence, fluencyAndCoherence, lexical, grammar, pronunciation } = effectiveCriteriaScores;
           if (taskResponse != null || coherence != null) {
-            // Writing rubric
+            // Writing rubric — round down
             const scores = [taskResponse, coherence, lexical, grammar].filter((v): v is number => typeof v === "number" && !isNaN(v));
             if (scores.length > 0) {
               const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-              answerScore = Math.floor(avg * 2) / 2;
+              answerScore = skillBandRound(avg);
             }
           } else if (fluencyAndCoherence != null || pronunciation != null) {
-            // Speaking rubric
+            // Speaking rubric — round down
             const scores = [fluencyAndCoherence, lexical, grammar, pronunciation].filter((v): v is number => typeof v === "number" && !isNaN(v));
             if (scores.length > 0) {
               const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-              answerScore = Math.floor(avg * 2) / 2;
+              answerScore = skillBandRound(avg);
             }
           }
         }
+
+
 
         if (answerScore != null) {
           answerScores.push(answerScore);

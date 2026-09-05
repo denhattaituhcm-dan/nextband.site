@@ -3,28 +3,18 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  const m01 = await prisma.class.findFirst({
-    where: { name: { contains: "M01" } },
-    include: {
-      course: true,
-      teacher: true,
-      students: {
-        include: {
-          student: true,
-        },
-      },
-      assignments: {
-        include: {
-          exam: true,
-        },
-      },
-    },
-  });
+  const rlsInfo = await prisma.$queryRawUnsafe(`
+    SELECT schemaname, tablename, rowsecurity
+    FROM pg_tables
+    WHERE schemaname = 'public' AND tablename IN ('classes', 'profiles', 'class_students', 'courses', 'users');
+  `);
+  console.log('RLS Info:', rlsInfo);
 
-  if (!m01) {
-    console.log("Class M01 not found!");
-    return;
-  }
+  const nextbandAdmin = await prisma.user.findFirst({
+    where: { email: { contains: "nextband.site" } }
+  });
+  console.log('NEXTBAND ADMIN:', nextbandAdmin);
+  return;
 
   console.log("CLASS ID:", m01.id);
   console.log("CLASS NAME:", m01.name);
