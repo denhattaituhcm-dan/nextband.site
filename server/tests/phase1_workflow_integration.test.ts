@@ -1,12 +1,14 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { buildApp } from "../app.js";
-import { PrismaClient } from "@prisma/client";
+import { isTestDatabaseConfigured, createSafeTestPrismaClient } from "./testDbGuard.js";
 import { FastifyInstance } from "fastify";
 import { randomUUID } from "crypto";
 
-describe("🌊 PHASE 1 WORKFLOW & SYSTEM PIPELINE INTEGRATION E2E TEST", () => {
+const isDbReady = isTestDatabaseConfigured();
+
+describe.skipIf(!isDbReady)("🌊 PHASE 1 WORKFLOW & SYSTEM PIPELINE INTEGRATION E2E TEST", () => {
   let app: FastifyInstance;
-  let prisma: PrismaClient;
+  let prisma: any;
 
   let adminUserId: string;
   let adminToken: string;
@@ -16,8 +18,9 @@ describe("🌊 PHASE 1 WORKFLOW & SYSTEM PIPELINE INTEGRATION E2E TEST", () => {
   let testClassId: string;
 
   beforeAll(async () => {
-    prisma = new PrismaClient();
+    prisma = createSafeTestPrismaClient();
     app = await buildApp({ testing: true });
+
     await app.ready();
 
     // 1. Create Admin User via Postgres function

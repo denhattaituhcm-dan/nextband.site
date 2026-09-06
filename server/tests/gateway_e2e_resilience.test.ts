@@ -1,12 +1,13 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { PrismaClient } from "@prisma/client";
 import { buildApp } from "../app.js";
 import { FastifyInstance } from "fastify";
+import { isTestDatabaseConfigured, createSafeTestPrismaClient } from "./testDbGuard.js";
 
-const prisma = new PrismaClient();
+const isDbReady = isTestDatabaseConfigured();
 
-describe("🚀 PHASE 2: GATEWAY E2E BUSINESS FLOW & FAILURE ISOLATION TESTS", () => {
+describe.skipIf(!isDbReady)("🚀 PHASE 2: GATEWAY E2E BUSINESS FLOW & FAILURE ISOLATION TESTS", () => {
   let app: FastifyInstance;
+  let prisma: any;
   let studentToken: string;
   let teacherToken: string;
   let studentId: string;
@@ -16,8 +17,10 @@ describe("🚀 PHASE 2: GATEWAY E2E BUSINESS FLOW & FAILURE ISOLATION TESTS", ()
   let questionId: string;
 
   beforeAll(async () => {
+    prisma = createSafeTestPrismaClient();
     app = await buildApp();
     await app.ready();
+
 
     // 1. Setup Student & Teacher in DB
     const student = await prisma.user.findFirst({

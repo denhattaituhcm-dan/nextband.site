@@ -1,16 +1,19 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { PrismaClient } from "@prisma/client";
 import { SpeakingEvidenceRepository } from "../repositories/speaking-evidence.repository.js";
 import { CANDIDATE_SPEAKING_TAGS } from "../../prisma/seed_speaking_evidence_tags.js";
+import { isTestDatabaseConfigured, createSafeTestPrismaClient } from "./testDbGuard.js";
 
-describe("ARIS Speaking Evidence Engine — Candidate Taxonomy v1.0 Tests", () => {
-  let prisma: PrismaClient;
+const isDbReady = isTestDatabaseConfigured();
+
+describe.skipIf(!isDbReady)("ARIS Speaking Evidence Engine — Candidate Taxonomy v1.0 Tests", () => {
+  let prisma: any;
   let repository: SpeakingEvidenceRepository;
 
   beforeAll(() => {
-    prisma = new PrismaClient();
+    prisma = createSafeTestPrismaClient();
     repository = new SpeakingEvidenceRepository(prisma);
   });
+
 
   afterAll(async () => {
     await prisma.$disconnect();

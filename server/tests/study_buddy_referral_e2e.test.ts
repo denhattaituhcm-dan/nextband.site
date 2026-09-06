@@ -1,12 +1,14 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { buildApp } from "../app.js";
-import { PrismaClient } from "@prisma/client";
 import { FastifyInstance } from "fastify";
 import { randomUUID } from "crypto";
+import { isTestDatabaseConfigured, createSafeTestPrismaClient } from "./testDbGuard.js";
 
-describe("🎁 STUDY BUDDY / REFERRAL ENGINE E2E VERIFICATION SUITE", () => {
+const isDbReady = isTestDatabaseConfigured();
+
+describe.skipIf(!isDbReady)("🎁 STUDY BUDDY / REFERRAL ENGINE E2E VERIFICATION SUITE", () => {
   let app: FastifyInstance;
-  let prisma: PrismaClient;
+  let prisma: any;
 
   let inviterUserId: string;
   let inviterToken: string;
@@ -19,9 +21,10 @@ describe("🎁 STUDY BUDDY / REFERRAL ENGINE E2E VERIFICATION SUITE", () => {
   const createdUserIds: string[] = [];
 
   beforeAll(async () => {
-    prisma = new PrismaClient();
+    prisma = createSafeTestPrismaClient();
     app = await buildApp({ testing: true });
     await app.ready();
+
 
     // 1. Seed or get Inviter User (User A)
     inviterUserId = randomUUID();

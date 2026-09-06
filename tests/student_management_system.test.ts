@@ -1,12 +1,16 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { PrismaClient } from "@prisma/client";
+import { isTestDatabaseConfigured, createSafeTestPrismaClient } from "../server/tests/testDbGuard.js";
 
-describe("Student Management & Creation System Verification", () => {
-  const prisma = new PrismaClient();
+const isDbReady = isTestDatabaseConfigured();
+
+describe.skipIf(!isDbReady)("Student Management & Creation System Verification", () => {
+  let prisma: any;
   const testEmail = `test_auto_student_${Date.now()}@nextband.test`;
   let createdUserId: string;
 
   beforeAll(async () => {
+    prisma = createSafeTestPrismaClient();
+
     // Cleanup any prior test debris
     await prisma.userRole.deleteMany({ where: { user: { email: testEmail } } });
     await prisma.user.deleteMany({ where: { email: testEmail } });

@@ -172,9 +172,14 @@ describe("PeriodicReportService - Date Range & Calculations", () => {
   });
 
   it("successfully generates report on actual PostgreSQL database without throwing", async () => {
-    const { PrismaClient } = await import("@prisma/client");
-    const prisma = new PrismaClient();
+    const { isTestDatabaseConfigured, createSafeTestPrismaClient } = await import("./testDbGuard.js");
+    if (!isTestDatabaseConfigured()) {
+      console.warn("ℹ️  [SRE P0] Skipping real DB test in periodic_reports.test.ts (no dedicated test DB configured).");
+      return;
+    }
+    const prisma = createSafeTestPrismaClient();
     const service = new PeriodicReportService(prisma);
+
 
     try {
       const realReport = await service.generateReport({

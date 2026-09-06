@@ -1,25 +1,49 @@
 import { defineConfig } from "vitest/config";
 import path from "path";
-import "dotenv/config";
+import fs from "fs";
+import dotenv from "dotenv";
 
-// ── SRE SAFETY GUARD (SEC-01): Prevent tests from connecting to Production Database ──
-const rawDbUrl = process.env.DATABASE_URL || "";
-const rawDirectUrl = process.env.DIRECT_URL || "";
-const isProdDb =
-  rawDbUrl.includes("aws-0-ap-southeast-2.pooler.supabase.com") ||
-  rawDbUrl.includes("gzpdlqxjggyxlkeatvvf") ||
-  rawDirectUrl.includes("aws-0-ap-southeast-2.pooler.supabase.com") ||
-  rawDirectUrl.includes("gzpdlqxjggyxlkeatvvf");
+// ── SRE ISOLATION: Prioritize .env.test.local -> .env.test. NEVER load production .env in test ──
+const rootDir = __dirname;
+const testEnvLocal = path.resolve(rootDir, ".env.test.local");
+const testEnv = path.resolve(rootDir, ".env.test");
 
-if (isProdDb) {
-  if (process.env.ALLOW_PROD_DB_IN_TEST === "true") {
-    console.warn("⚠️ [DANGER] ALLOW_PROD_DB_IN_TEST is enabled. Tests will connect to Production Database!");
-  } else {
-    console.warn("🛡️ [SRE SAFETY GUARD] Detected Production Database credentials. Stripping DATABASE_URL & DIRECT_URL from test environment to prevent data contamination/loss.");
-    delete process.env.DATABASE_URL;
-    delete process.env.DIRECT_URL;
+if (fs.existsSync(testEnvLocal)) {
+  dotenv.config({ path: testEnvLocal, override: true });
+} else if (fs.existsSync(testEnv)) {
+  dotenv.config({ path: testEnv, override: true });
+} else {
+  // If no test env file exists, wipe any inherited production database URLs immediately
+  delete process.env.DATABASE_URL;
+  delete process.env.DIRECT_URL;
+}
+
+// ── SRE SAFETY GUARD (SEC-01 / P0): Fail-Closed Check ──
+const checkUrls = [
+  process.env.DATABASE_URL,
+  process.env.DIRECT_URL,
+  process.env.DATABASE_URL_TEST,
+  process.env.TEST_DATABASE_URL,
+].filter(Boolean) as string[];
+
+const PROD_DENYLIST = [
+  "gzpdlqxjggyxlkeatvvf",
+  "aws-0-ap-southeast-2.pooler.supabase.com",
+  "nextband.site",
+  "api.nextband.site",
+];
+
+for (const url of checkUrls) {
+  const isProd = PROD_DENYLIST.some((blocked) => url.toLowerCase().includes(blocked));
+  if (isProd) {
+    console.error("\n🚨🚨🚨 [CRITICAL SRE SAFETY VIOLATION - P0 BLOCKED] 🚨🚨🚨");
+    console.error("Test runner detected Production Database connection string!");
+    console.error("Target URL:", url.replace(/:[^:@]+@/, ":***@"));
+    console.error("Execution terminated with status code 1 to protect Production Data.\n");
+    throw new Error("CRITICAL_SRE_SAFETY_VIOLATION: Production database access strictly forbidden in tests!");
   }
 }
+
 
 export default defineConfig({
   test: {
@@ -34,15 +58,8 @@ export default defineConfig({
       "**/e2e/**",
       "**/*.spec.ts",
       "server/tests/deadline_and_status.test.mjs",
-      "server/tests/phase1_workflow_integration.test.ts",
-      "tests/student_management_system.test.ts",
-      "server/tests/rls_adversarial_pentest.test.ts",
-      "server/tests/cross_assessment_attempt_integrity.test.ts",
-      "server/tests/gateway_e2e_resilience.test.ts",
-      "server/tests/periodic_reports.test.ts",
-      "server/tests/speaking_evidence_engine.test.ts",
-      "server/tests/study_buddy_referral_e2e.test.ts",
     ],
+
   },
   resolve: {
     alias: {

@@ -4609,166 +4609,21 @@ export const assessmentAdminApi = {
   },
 
   getById: async (sessionId: string) => {
-    try {
-      const token = await getAuthToken();
-      const res = await fetch(`${API_BASE_URL}/assessment/admin/sessions/${sessionId}`, {
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      });
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/assessment/admin/sessions/${sessionId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
 
-      if (res.ok) {
-        const json = await res.json();
-        return json.data;
-      }
-    } catch (err) {
-      console.warn("[assessmentAdminApi.getById] Server fetch error, trying direct fallback:", err);
+    if (!res.ok) {
+      const errJson = await res.json().catch(() => ({}));
+      throw new Error(errJson.message || errJson.error || `HTTP ${res.status}: Không thể tải chi tiết bài khảo thí`);
     }
 
-    // Direct Supabase fallback
-    try {
-      const { data: d, error } = await supabase
-        .from("assessment_sessions")
-        .select("*")
-        .eq("id", sessionId)
-        .single();
-
-      if (!error && d) {
-        const { canonicalPlacementTestPayload } = await import("../../../server/data/placement-test/questions");
-        const { authoritativePlacementAnswerKeys } = await import("../../../server/data/placement-test/answerKeys");
-        const answers = d.answers || {};
-        const res = d.result || {};
-        const teacherReview = res.teacherReview || {};
-
-        const normalizeText = (s: any) =>
-          String(s || "")
-            .trim()
-            .toLowerCase()
-            .replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "")
-            .replace(/\s+/g, " ");
-
-        const questionBreakdown: any[] = [];
-        const allObjectiveQuestions = [
-          ...canonicalPlacementTestPayload.skills.listening.questions.map((q) => ({ ...q, skill: "listening" })),
-          ...canonicalPlacementTestPayload.skills.reading.questions.map((q) => ({ ...q, skill: "reading" })),
-          ...canonicalPlacementTestPayload.skills.grammar.questions.map((q) => ({ ...q, skill: "grammar" })),
-        ];
-
-        allObjectiveQuestions.forEach((q) => {
-          const studentAns = answers[q.id];
-          const key = (authoritativePlacementAnswerKeys as any)[q.id];
-          const rawCorrectAnswer = key?.correctAnswer || "Chưa có đáp án mẫu";
-
-          let parsedKeys: string[] | null = null;
-          try {
-            if (typeof rawCorrectAnswer === "string" && rawCorrectAnswer.trim().startsWith("[")) {
-              const arr = JSON.parse(rawCorrectAnswer);
-              if (Array.isArray(arr) && arr.length > 0) parsedKeys = arr;
-            }
-          } catch {}
-
-          if (parsedKeys && parsedKeys.length > 0) {
-            parsedKeys.forEach((keyVal, bIdx) => {
-              let sVal: any = undefined;
-              if (studentAns && typeof studentAns === "object") {
-                sVal = studentAns[bIdx] ?? studentAns[String(bIdx)];
-              } else if (Array.isArray(studentAns)) {
-                sVal = studentAns[bIdx];
-              } else if (typeof studentAns === "string" && bIdx === 0) {
-                sVal = studentAns;
-              }
-
-              let isCorrect = false;
-              if (sVal != null && String(sVal).trim() !== "") {
-                const normStudent = normalizeText(sVal);
-                const alternatives = String(keyVal)
-                  .split("|")
-                  .map((s) => normalizeText(s));
-                isCorrect = alternatives.some((alt) => alt === normStudent);
-              }
-
-              questionBreakdown.push({
-                id: `${q.id}_blank_${bIdx}`,
-                parentQuestionId: q.id,
-                blankIndex: bIdx,
-                skill: q.skill,
-                sectionTitle: q.sectionTitle,
-                questionType: "fill_blank",
-                prompt: q.prompt,
-                blankLabel: `Chỗ trống (${bIdx + 1})`,
-                studentAnswer: sVal != null && String(sVal).trim() !== "" ? String(sVal).trim() : null,
-                correctAnswer: String(keyVal),
-                isCorrect,
-              });
-            });
-          } else {
-            let formattedStudentAns: string | null = null;
-            if (studentAns != null && typeof studentAns === "object" && !Array.isArray(studentAns)) {
-              const vals = Object.values(studentAns).filter(Boolean);
-              formattedStudentAns = vals.length > 0 ? vals.join(" ") : null;
-            } else if (studentAns != null) {
-              formattedStudentAns = String(studentAns).trim();
-            }
-
-            let isCorrect = false;
-            if (formattedStudentAns != null && formattedStudentAns !== "" && key) {
-              const normStudent = normalizeText(formattedStudentAns);
-              const alternatives = String(key.correctAnswer)
-                .split("|")
-                .map((s) => normalizeText(s));
-              isCorrect = alternatives.some((alt) => alt === normStudent);
-              if (!isCorrect && key.acceptedAnswers) {
-                isCorrect = key.acceptedAnswers.some((acc: any) => normalizeText(acc) === normStudent);
-              }
-            }
-
-            questionBreakdown.push({
-              id: q.id,
-              skill: q.skill,
-              sectionTitle: q.sectionTitle,
-              questionType: q.questionType,
-              prompt: q.prompt,
-              options: q.options,
-              studentAnswer: formattedStudentAns && formattedStudentAns.length > 0 ? formattedStudentAns : null,
-              correctAnswer: rawCorrectAnswer,
-              isCorrect,
-            });
-          }
-        });
-
-        return {
-          session: {
-            id: d.id,
-            examId: d.exam_id,
-            candidateName: d.full_name || d.candidate_name,
-            phone: d.phone,
-            targetBand: d.target_band,
-            status: d.status,
-            startedAt: d.started_at,
-            submittedAt: d.submitted_at,
-            expiresAt: d.expires_at,
-            createdAt: d.created_at,
-            updatedAt: d.updated_at,
-          },
-          answers,
-          result: res,
-          testPayload: canonicalPlacementTestPayload,
-          questionBreakdown,
-          teacherReview: {
-            gradingStatus: teacherReview.gradingStatus || (d.status === "SUBMITTED" ? "PENDING" : "IN_PROGRESS"),
-            assignedTeacher: teacherReview.assignedTeacher || "",
-            teacherNotes: teacherReview.teacherNotes || "",
-            zaloDraftFeedback: teacherReview.zaloDraftFeedback || "",
-            reviewedAt: teacherReview.reviewedAt || null,
-          },
-        };
-      }
-    } catch (supaErr) {
-      console.warn("[assessmentAdminApi.getById] Supabase fallback error:", supaErr);
-    }
-
-    throw new Error("Không thể tải chi tiết bài khảo thí");
+    const json = await res.json();
+    return json.data;
   },
 
   update: async (

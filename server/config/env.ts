@@ -1,5 +1,31 @@
 import { z } from "zod";
-import "dotenv/config";
+import dotenv from "dotenv";
+import path from "path";
+import fs from "fs";
+
+// ── SRE ISOLATION (SEC-01 / P0): In test mode, NEVER load production .env ──
+const isTestEnv = process.env.NODE_ENV === "test" || Boolean(process.env.VITEST);
+if (isTestEnv) {
+  const testEnvLocal = path.resolve(process.cwd(), ".env.test.local");
+  const testEnv = path.resolve(process.cwd(), ".env.test");
+  if (fs.existsSync(testEnvLocal)) {
+    dotenv.config({ path: testEnvLocal, override: true });
+  } else if (fs.existsSync(testEnv)) {
+    dotenv.config({ path: testEnv, override: true });
+  }
+  // In test environment, immediately purge any inherited production database URLs
+  const PROD_DENYLIST = [
+    "gzpdlqxjggyxlkeatvvf",
+    "aws-0-ap-southeast-2.pooler.supabase.com",
+    "nextband.site",
+    "api.nextband.site",
+  ];
+  if (process.env.DATABASE_URL && PROD_DENYLIST.some(d => process.env.DATABASE_URL?.toLowerCase().includes(d))) {
+    delete process.env.DATABASE_URL;
+  }
+} else {
+  dotenv.config();
+}
 
 // Direct Supabase database host (port 5432) requires IPv6 which is unavailable in serverless runtimes.
 // Automatically map to the official IPv4 connection pooler (port 6543) using runtime environment credentials.

@@ -1,10 +1,12 @@
 import { describe, it, expect, beforeEach, afterEach, beforeAll, afterAll } from "vitest";
-import { PrismaClient } from "@prisma/client";
 import { ExamSubmissionService } from "../services/exam-submission.service.js";
+import { isTestDatabaseConfigured, createSafeTestPrismaClient } from "./testDbGuard.js";
 
-describe("Cross-Assessment Attempt & Submission Integrity Invariants", () => {
-  const prisma = new PrismaClient();
-  const service = new ExamSubmissionService(prisma);
+const isDbReady = isTestDatabaseConfigured();
+
+describe.skipIf(!isDbReady)("Cross-Assessment Attempt & Submission Integrity Invariants", () => {
+  let prisma: any;
+  let service: ExamSubmissionService;
 
   let testStudent: { id: string; roles: string[] };
   let testCourseId: string;
@@ -12,6 +14,9 @@ describe("Cross-Assessment Attempt & Submission Integrity Invariants", () => {
   let createdSubmissionIds: string[] = [];
 
   beforeAll(async () => {
+    prisma = createSafeTestPrismaClient();
+    service = new ExamSubmissionService(prisma);
+
     const existingUser = await prisma.user.findFirst({
       where: {
         roles: { some: { role: "student" } },
