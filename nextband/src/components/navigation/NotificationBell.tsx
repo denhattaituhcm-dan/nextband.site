@@ -68,65 +68,83 @@ export function NotificationBell({ scope: _scope }: NotificationBellProps) {
   const { user } = useAuth();
   const [selectedNotification, setSelectedNotification] = useState<NotificationItem | null>(null);
 
-  // 0. Supabase Realtime Push Listener
+  // 0. Supabase Realtime Push Listener (Opt-in via VITE_ENABLE_REALTIME with graceful fallback)
   useEffect(() => {
-    if (!user?.id) return;
+    const isRealtimeEnabled =
+      (typeof import.meta !== "undefined" && import.meta.env?.VITE_ENABLE_REALTIME === "true");
 
-    const channel = supabase
-      .channel(`user-notifications-${user.id}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "notifications",
-          filter: `user_id=eq.${user.id}`,
-        },
-        (payload) => {
-          const newNotif = payload.new as NotificationItem;
-          queryClient.invalidateQueries({ queryKey: ["notifications-unread-count"] });
-          queryClient.invalidateQueries({ queryKey: ["notifications-list"] });
+    if (!isRealtimeEnabled || !user?.id) return;
 
-          // If student scope, ignore admin/CRM events
-          if (_scope === "student") {
-            const text = `${newNotif.title || ""} ${newNotif.message || ""}`.toLowerCase();
-            if (
-              newNotif.entityType === "USER" ||
-              newNotif.entityType === "LEAD" ||
-              newNotif.entityType === "LEAD_INTAKE" ||
-              text.includes("đăng ký tài khoản") ||
-              text.includes("được thêm vào hệ thống") ||
-              text.includes("lead mới")
-            ) {
-              return;
+    let channelRef: ReturnType<typeof supabase.channel> | null = null;
+    try {
+      channelRef = supabase
+        .channel(`user-notifications-${user.id}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "notifications",
+            filter: `user_id=eq.${user.id}`,
+          },
+          (payload) => {
+            const newNotif = payload.new as NotificationItem;
+            queryClient.invalidateQueries({ queryKey: ["notifications-unread-count"] });
+            queryClient.invalidateQueries({ queryKey: ["notifications-list"] });
+
+            // If student scope, ignore admin/CRM events
+            if (_scope === "student") {
+              const text = `${newNotif.title || ""} ${newNotif.message || ""}`.toLowerCase();
+              if (
+                newNotif.entityType === "USER" ||
+                newNotif.entityType === "LEAD" ||
+                newNotif.entityType === "LEAD_INTAKE" ||
+                text.includes("đăng ký tài khoản") ||
+                text.includes("được thêm vào hệ thống") ||
+                text.includes("lead mới")
+              ) {
+                return;
+              }
+            }
+
+            const resolvedLink = resolveNotificationLink(newNotif, _scope);
+            if (newNotif?.title) {
+              toast.info(newNotif.title, {
+                description: newNotif.message,
+                action: resolvedLink
+                  ? {
+                      label: "Xem ngay",
+                      onClick: () => {
+                        if (resolvedLink.startsWith("http://") || resolvedLink.startsWith("https://")) {
+                          window.open(resolvedLink, "_blank", "noopener,noreferrer");
+                        } else {
+                          navigate(resolvedLink);
+                        }
+                      },
+                    }
+                  : undefined,
+                duration: 6000,
+              });
             }
           }
-
-          const resolvedLink = resolveNotificationLink(newNotif, _scope);
-          if (newNotif?.title) {
-            toast.info(newNotif.title, {
-              description: newNotif.message,
-              action: resolvedLink
-                ? {
-                    label: "Xem ngay",
-                    onClick: () => {
-                      if (resolvedLink.startsWith("http://") || resolvedLink.startsWith("https://")) {
-                        window.open(resolvedLink, "_blank", "noopener,noreferrer");
-                      } else {
-                        navigate(resolvedLink);
-                      }
-                    },
-                  }
-                : undefined,
-              duration: 6000,
-            });
+        )
+        .subscribe((status) => {
+          if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+            // Gracefully unsubscribe on network / gateway error without unhandled console floods
+            if (channelRef) {
+              supabase.removeChannel(channelRef);
+              channelRef = null;
+            }
           }
-        }
-      )
-      .subscribe();
+        });
+    } catch {
+      // Ignore realtime connection failure, REST polling handles notifications reliably
+    }
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channelRef) {
+        supabase.removeChannel(channelRef);
+      }
     };
   }, [user?.id, queryClient, navigate, _scope]);
 
