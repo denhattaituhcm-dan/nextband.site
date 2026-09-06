@@ -425,7 +425,7 @@ export default function HomePage() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => navigate(`/app/class/${enrolledClassId}/lessons?tab=attendance-schedule`)}
+                      onClick={() => navigate(`/app/class/${enrolledClassId}/lessons`)}
                       className="h-7 text-xs font-bold text-primary gap-1 px-2.5 rounded-lg hover:bg-primary/5"
                     >
                       <span>Vào Lớp Học</span>
@@ -453,7 +453,7 @@ export default function HomePage() {
 
                     <button
                       type="button"
-                      onClick={() => navigate(`/app/class/${enrolledClassId}/lessons?tab=attendance-schedule`)}
+                      onClick={() => navigate(`/app/attendance?classId=${enrolledClassId}`)}
                       className="flex items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity p-1 -m-1 rounded-lg"
                       title="Xem chi tiết lịch học & điểm danh chuyên cần"
                     >

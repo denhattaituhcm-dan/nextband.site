@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { lessonsApi, submissionsApi, examsApi } from "@/lib/api";
@@ -22,7 +22,6 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { StudentAttendanceTimeline } from "@/components/student/StudentAttendanceTimeline";
 import { HomeworkSkillMatrixCard } from "@/components/student/HomeworkSkillMatrixCard";
 import { useAuth } from "@/hooks/useAuth";
 import { useStudentLifecycle } from "@/hooks/useStudentLifecycle";
@@ -62,6 +61,13 @@ export default function StudentLessonViewerPage() {
   const [isReEnrollModalOpen, setIsReEnrollModalOpen] = useState(false);
 
   const activeTab = searchParams.get("tab") || "practice-list";
+
+  useEffect(() => {
+    if (searchParams.get("tab") === "attendance-schedule") {
+      navigate(`/app/attendance?classId=${classId}`, { replace: true });
+    }
+  }, [searchParams, classId, navigate]);
+
   const handleTabChange = (val: string) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
@@ -489,13 +495,6 @@ export default function StudentLessonViewerPage() {
                 <LayoutGrid className="w-4 h-4 text-indigo-600" />
                 <span>Khái Quát 5 Kỹ Năng</span>
               </TabsTrigger>
-              <TabsTrigger
-                value="attendance-schedule"
-                className="rounded-lg py-2 px-4 text-xs font-bold gap-2 data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-xs transition-all"
-              >
-                <Calendar className="w-4 h-4 text-emerald-600" />
-                <span>Lịch Học & Điểm Danh</span>
-              </TabsTrigger>
             </TabsList>
 
             <div className="text-xs text-muted-foreground hidden sm:block">
@@ -650,15 +649,6 @@ export default function StudentLessonViewerPage() {
               onViewSubmission={(submissionId) => navigate(routes.student.submission(submissionId))}
               className={classData.className}
               courseTitle={classData.courseTitle}
-            />
-          </TabsContent>
-
-          {/* TAB 3: CLASS SCHEDULE & ATTENDANCE TIMELINE */}
-          <TabsContent value="attendance-schedule" className="pt-1 outline-hidden">
-            <StudentAttendanceTimeline
-              classId={classId}
-              className={classData.className}
-              studentId={user?.id}
             />
           </TabsContent>
         </Tabs>

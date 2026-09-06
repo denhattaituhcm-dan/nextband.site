@@ -209,7 +209,7 @@ export default function MyCourses() {
                             asChild
                             className="font-bold text-xs gap-1.5 rounded-xl px-3 h-9 border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-slate-900 shadow-2xs"
                           >
-                            <Link to={`/app/class/${item.classId}/lessons?tab=attendance-schedule`}>
+                            <Link to={`/app/attendance?classId=${item.classId}`}>
                               <Calendar className="h-3.5 w-3.5 text-emerald-600" />
                               <span>Chuyên cần</span>
                             </Link>

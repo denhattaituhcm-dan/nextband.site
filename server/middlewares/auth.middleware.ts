@@ -1,7 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { jwtVerify } from "jose";
 import { supabaseJWKS } from "../config/jwks.js";
-import { env } from "../config/env.js";
+import { env, getRootAdminEmails } from "../config/env.js";
 
 interface DecodedTokenData {
   id: string;
@@ -69,13 +69,8 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
       if (Array.isArray(appMeta?.roles)) {
         fallbackRoles.push(...appMeta.roles);
       }
-      const userMeta = (payload as any).user_metadata;
-      if (userMeta?.role && typeof userMeta.role === "string") {
-        fallbackRoles.push(userMeta.role);
-      }
-      if (Array.isArray(userMeta?.roles)) {
-        fallbackRoles.push(...userMeta.roles);
-      }
+      // SECURITY (SEC-02 / P0): user_metadata is mutable by client via supabase.auth.updateUser()
+      // NEVER extract or trust roles from user_metadata!
     }
   } catch (jwksErr) {
     // In test environment only: allow Fastify local JWT verification fallback
@@ -161,14 +156,17 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
         directRoles = userRoles.map((r: any) => r.role);
       }
 
-      const combinedRoles = Array.from(new Set([
+      const dbFoundRoles = [
         ...(dbUser?.roles ? dbUser.roles.map((r: any) => r.role) : []),
         ...directRoles,
-        ...fallbackRoles,
-      ]));
+      ];
 
-      if (combinedRoles.length > 0) {
-        authoritativeRoles = combinedRoles;
+      // If user exists in DB, database is the exclusive single source of truth
+      if (dbFoundRoles.length > 0) {
+        authoritativeRoles = Array.from(new Set(dbFoundRoles));
+      } else if (dbUser) {
+        // User is registered in DB but has 0 roles assigned -> do NOT escalate via token
+        authoritativeRoles = [];
       }
     }
   } catch (dbErr) {
@@ -179,9 +177,25 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
     return null;
   }
 
-  const finalRoles = authoritativeRoles.length > 0
-    ? [...authoritativeRoles]
-    : [...fallbackRoles];
+  // Fallback resolution: only used if database query was unavailable/errored or in isolated test mode
+  let finalRoles: string[] = [];
+  if (authoritativeRoles.length > 0) {
+    finalRoles = [...authoritativeRoles];
+  } else {
+    // SECURITY (SEC-02): If falling back to token claims, filter any unverified 'admin' claims
+    // unless the email matches trusted ROOT_ADMIN_EMAILS or we are in local test environment
+    const isTestMode = process.env.NODE_ENV === "test" || Boolean(process.env.VITEST);
+    const rootAdminEmails = getRootAdminEmails();
+    const isRootAdmin = email && rootAdminEmails.has(email.toLowerCase());
+
+    finalRoles = fallbackRoles.filter((r) => {
+      if (r === "admin" && !isRootAdmin && !isTestMode) {
+        request.log.warn({ userId, email }, "🚨 [SECURITY] Rejected unverified 'admin' role claim from token fallback");
+        return false;
+      }
+      return true;
+    });
+  }
 
   const userContext = {
     id: canonicalUserId,

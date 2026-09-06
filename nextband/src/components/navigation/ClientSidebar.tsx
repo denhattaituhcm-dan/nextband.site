@@ -9,6 +9,7 @@ import {
   Home,
   Sparkles,
   Workflow,
+  CalendarCheck,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -56,6 +57,12 @@ const fullNavigationGroups: NavGroup[] = [
         url: "/app/my-courses",
         icon: BookOpen,
         description: "Lớp học và lộ trình",
+      },
+      {
+        title: "Chuyên cần & Tiến độ",
+        url: "/app/attendance",
+        icon: CalendarCheck,
+        description: "Điểm danh chuyên cần & tổng quan BTVN",
       },
       {
         title: "Bài Học Trực Quan",
