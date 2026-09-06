@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env node
+#!/usr/bin/env node
 import { execSync } from "child_process";
 import { readFileSync, existsSync } from "fs";
 import { join } from "path";
@@ -59,6 +59,85 @@ try {
   console.log("✅ PASSED: Frontend TypeScript compilation successful.\n");
 } catch (err) {
   console.error("❌ FAILED: Frontend TypeScript compilation errors detected.");
+  hasErrors = true;
+}
+
+// Gate 5: Prohibit Direct Supabase DB Queries & Prisma Imports from Frontend (Single Channel API Rule)
+console.log("👉 [Gate 5] Enforcing Single Channel API Rule (No direct DB / Prisma queries in Frontend)...");
+try {
+  let criticalForbidden = "";
+  try {
+    criticalForbidden = execSync("git grep -n -E \"supabase\\.(from|rpc)\\(\" nextband/src/pages/ nextband/src/components/ nextband/src/hooks/", { encoding: "utf8" }).trim();
+  } catch (grepErr) {
+    criticalForbidden = "";
+  }
+
+  // Also check for forbidden @prisma/client in frontend production source (excluding unit tests)
+  let prismaInFrontend = "";
+  try {
+    prismaInFrontend = execSync('git grep -n "from [\'\\"]@prisma/client" -- nextband/src/ ":!nextband/src/test/" ":!nextband/src/tests/"', { encoding: "utf8" }).trim();
+  } catch {
+    prismaInFrontend = "";
+  }
+
+  if (criticalForbidden.length > 0) {
+    console.error("❌ FAILED: Detected forbidden direct Supabase DB calls in UI Components/Pages/Hooks:\n", criticalForbidden);
+    console.error("👉 Rule: Frontend must ONLY communicate via Backend REST API (@/lib/api.ts)!\n");
+    hasErrors = true;
+  } else {
+    console.log("✅ PASSED: 0 forbidden direct DB calls in Pages, Components & Hooks.");
+  }
+
+  if (prismaInFrontend.length > 0) {
+    console.error("❌ FAILED: Detected forbidden @prisma/client import in Frontend:\n", prismaInFrontend);
+    console.error("👉 Rule: Prisma is a backend-only ORM. Frontend must never import Prisma!\n");
+    hasErrors = true;
+  } else {
+    console.log("✅ PASSED: 0 Prisma imports in Frontend source.\n");
+  }
+} catch (err) {
+  console.error("❌ FAILED to check direct DB / Prisma calls:\n", err.message);
+  hasErrors = true;
+}
+
+// Gate 6: Secret Protection Guard (No committed .env or credentials in repo)
+console.log("👉 [Gate 6] Scanning for Accidental Committed Secrets / Dangerous Files...");
+try {
+  let committedSecrets = false;
+  // Check tracked files for forbidden .env or private key files
+  try {
+    const trackedFiles = execSync("git ls-files", { encoding: "utf8" }).split("\n");
+    const dangerousPatterns = [
+      /^\.env$/,
+      /^\.env\.local$/,
+      /^\.env\.production$/,
+      /\.pem$/,
+      /\.key$/,
+      /id_rsa/,
+    ];
+    
+    for (const file of trackedFiles) {
+      const trimmed = file.trim();
+      if (!trimmed) continue;
+      for (const pattern of dangerousPatterns) {
+        if (pattern.test(trimmed)) {
+          console.error(`❌ FAILED: Dangerous/Secret file tracked in git: ${trimmed}`);
+          committedSecrets = true;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("⚠️ Warning checking tracked files:", err.message);
+  }
+
+  if (committedSecrets) {
+    console.error("👉 Rule: Never commit real credentials, private keys, or root .env files to git!\n");
+    hasErrors = true;
+  } else {
+    console.log("✅ PASSED: No tracked .env, private keys, or credentials files detected.\n");
+  }
+} catch (err) {
+  console.error("❌ FAILED secret check:\n", err.message);
   hasErrors = true;
 }
 

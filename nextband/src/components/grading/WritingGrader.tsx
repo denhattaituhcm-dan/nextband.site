@@ -189,24 +189,36 @@ export function WritingGrader({
     return qCount > 1 || isAutoGraded || detectedSkill === "reading" || detectedSkill === "listening" || detectedSkill === "reading_listening";
   }, [sections, isAutoGraded, detectedSkill]);
 
-  const [activeAnswerIndex, setActiveAnswerIndex] = useState<number>(0);
+  // All resolved writing questions/tasks to display vertically
+  const writingQuestions = useMemo(() => {
+    if (answers && answers.length > 0) return answers;
+    if (rawAnswers && rawAnswers.length > 0) {
+      return rawAnswers.map((a: any, idx: number) => ({
+        id: a.id,
+        questionId: a.questionId || a.question_id || `q_${idx}`,
+        questionTitle: a.questionTitle || homeworkTitle || `Câu ${idx + 1}`,
+        instructions: a.instructions || "",
+        passage: a.passage || "",
+        imageUrl: a.imageUrl || null,
+        questionText: a.questionText || a.question_text || "",
+        answerText: a.answerText || a.answer_text || a.studentAnswer || "",
+        score: a.score != null ? Number(a.score) : null,
+        feedback: a.feedback || "",
+      }));
+    }
+    return [];
+  }, [answers, rawAnswers, homeworkTitle]);
 
-  // Primary single answer for subjective/writing mode
-  const currentAnswer = answers[activeAnswerIndex] || rawAnswers[activeAnswerIndex] || answers[0] || rawAnswers[0];
-  const questionId = currentAnswer?.questionId || currentAnswer?.question_id || "";
-  const answerId = currentAnswer?.id;
-
-  // Chấm duy nhất theo chuẩn 4 tiêu chí IELTS (TR, CC, LR, GRA)
-  const useRubric = true;
-
-  // Local grading state
+  // Submission-level 4-criteria rubric scores
   const [criteriaScores, setCriteriaScores] = useState<CriteriaScores>({
     taskResponse: null,
     coherence: null,
     lexical: null,
     grammar: null,
   });
-  const [sentenceFeedbacks, setSentenceFeedbacks] = useState<SentenceFeedbackItem[]>([]);
+
+  // Map of questionId -> SentenceFeedbackItem[]
+  const [sentenceFeedbacksMap, setSentenceFeedbacksMap] = useState<Record<string, SentenceFeedbackItem[]>>({});
   const [discourseFeedbacks, setDiscourseFeedbacks] = useState<DiscourseFeedbackItem[]>([]);
   const [essayDiagnostic, setEssayDiagnostic] = useState<EssayDiagnosticPayload | null>(null);
   const [feedbackText, setFeedbackText] = useState<string>("");
@@ -215,31 +227,82 @@ export function WritingGrader({
   const [isDiagnosing, setIsDiagnosing] = useState<boolean>(false);
   const [aiDiagnosticNotice, setAiDiagnosticNotice] = useState<string | null>(null);
 
-  // Hydrate from existing draft or prefill scores
+  // Total word count across all student answers
+  const totalWordCount = useMemo(() => {
+    return writingQuestions.reduce((sum, q) => {
+      const text = q.answerText || "";
+      const count = text.trim() ? text.trim().split(/\s+/).filter(Boolean).length : 0;
+      return sum + count;
+    }, 0);
+  }, [writingQuestions]);
+
+  // Hydrate from existing draft or prefill scores (at submission level)
   useEffect(() => {
-    if (!currentAnswer) return;
-    const rawFb = currentAnswer.feedback || submissionDetail?.feedback || "";
-    const structured = parseStructuredFeedback(rawFb);
+    // Check submissionDetail feedback first, then first answer with structured feedback
+    const subFb = submissionDetail?.feedback;
+    let structured = subFb ? parseStructuredFeedback(subFb) : null;
+
+    if (!structured?.criteriaScores) {
+      for (const ans of writingQuestions) {
+        if (ans.feedback) {
+          const parsed = parseStructuredFeedback(ans.feedback);
+          if (parsed.criteriaScores && (parsed.criteriaScores.taskResponse || parsed.criteriaScores.coherence || parsed.criteriaScores.lexical || parsed.criteriaScores.grammar)) {
+            structured = parsed;
+            break;
+          }
+        }
+      }
+    }
+
+    if (!structured) {
+      const firstFb = writingQuestions[0]?.feedback || "";
+      structured = parseStructuredFeedback(firstFb);
+    }
 
     setCriteriaScores(
-      structured.criteriaScores || {
+      structured?.criteriaScores || {
         taskResponse: null,
         coherence: null,
         lexical: null,
         grammar: null,
       }
     );
-    setSentenceFeedbacks(structured.sentenceFeedbacks || []);
-    setDiscourseFeedbacks(structured.discourseFeedbacks || []);
-    setEssayDiagnostic(structured.essayDiagnostic || null);
-    setFeedbackText(structured.text || (typeof rawFb === "string" && !rawFb.startsWith("{") ? rawFb : ""));
-    setPrimaryErrorCategory(structured.primaryErrorCategory || submissionDetail?.primaryErrorCategory || "STRUCTURE");
-    setRevisionRequired(!!(structured.revisionRequired || submissionDetail?.revisionRequired));
+
+    // Hydrate sentence feedbacks per question
+    const fbMap: Record<string, SentenceFeedbackItem[]> = {};
+    writingQuestions.forEach((q) => {
+      const qFb = q.feedback ? parseStructuredFeedback(q.feedback) : null;
+      if (qFb?.sentenceFeedbacks && qFb.sentenceFeedbacks.length > 0) {
+        fbMap[q.questionId] = qFb.sentenceFeedbacks;
+      }
+    });
+    // Fallback: if only 1 question and structured has sentence feedbacks
+    if (Object.keys(fbMap).length === 0 && structured?.sentenceFeedbacks && structured.sentenceFeedbacks.length > 0) {
+      const firstQId = writingQuestions[0]?.questionId || "default";
+      fbMap[firstQId] = structured.sentenceFeedbacks;
+    }
+    setSentenceFeedbacksMap(fbMap);
+
+    setDiscourseFeedbacks(structured?.discourseFeedbacks || []);
+    setEssayDiagnostic(structured?.essayDiagnostic || null);
+    setFeedbackText(structured?.text || (typeof subFb === "string" && !subFb.startsWith("{") ? subFb : ""));
+    setPrimaryErrorCategory(structured?.primaryErrorCategory || submissionDetail?.primaryErrorCategory || "STRUCTURE");
+    setRevisionRequired(!!(structured?.revisionRequired || submissionDetail?.revisionRequired));
     setIsDirty(false);
-  }, [currentAnswer, submissionDetail]);
+  }, [submissionDetail, writingQuestions]);
 
   const handleAiDiagnose = async () => {
-    if (!rawAnswerText || rawAnswerText.trim().length === 0) {
+    // Combine text from all writing questions for holistic diagnosis
+    const combinedTexts = writingQuestions
+      .map((q, idx) => {
+        const title = q.questionTitle || `Câu ${idx + 1}`;
+        const ans = (q.answerText || "").trim();
+        return ans ? `[${title}]\n${ans}` : null;
+      })
+      .filter(Boolean)
+      .join("\n\n");
+
+    if (!combinedTexts || combinedTexts.trim().length === 0) {
       alert("Học sinh chưa có bài viết để chấm.");
       return;
     }
@@ -248,19 +311,46 @@ export function WritingGrader({
       setIsDiagnosing(true);
       setAiDiagnosticNotice(null);
 
+      // Extract prompts
+      const combinedPrompts = writingQuestions
+        .map((q, idx) => {
+          const p = [q.instructions, q.questionText].filter(Boolean).join(" - ");
+          return p ? `Yêu cầu ${idx + 1}: ${p}` : null;
+        })
+        .filter(Boolean)
+        .join("\n");
+
+      // For primary question or single task, run diagnosis
+      const primaryQ = writingQuestions[0];
       const result = await diagnoseWritingEssay({
-        essayText: rawAnswerText,
-        promptText: (currentAnswer?.instructions ? currentAnswer.instructions + "\n" : "") + (currentAnswer?.questionText || ""),
+        essayText: writingQuestions.length === 1 ? (primaryQ?.answerText || "") : combinedTexts,
+        promptText: combinedPrompts || (primaryQ?.questionText || ""),
         taskType: homeworkTitle.toLowerCase().includes("task 1") ? "task1" : "task2",
       });
 
       if (result.success) {
         if (result.sentenceFeedbacks && Array.isArray(result.sentenceFeedbacks)) {
-          setSentenceFeedbacks(result.sentenceFeedbacks);
+          // If single question, assign directly
+          if (writingQuestions.length <= 1 && primaryQ) {
+            setSentenceFeedbacksMap({
+              [primaryQ.questionId]: result.sentenceFeedbacks,
+            });
+          } else {
+            // Distribute or assign to the first question that has text
+            const firstWithText = writingQuestions.find(q => (q.answerText || "").trim().length > 0);
+            if (firstWithText) {
+              setSentenceFeedbacksMap(prev => ({
+                ...prev,
+                [firstWithText.questionId]: result.sentenceFeedbacks!,
+              }));
+            }
+          }
         }
+
         if (result.discourseFeedbacks && Array.isArray(result.discourseFeedbacks)) {
           setDiscourseFeedbacks(result.discourseFeedbacks);
         }
+
         if (result.essayDiagnostic) {
           setEssayDiagnostic(result.essayDiagnostic);
           if (result.essayDiagnostic.bandScores) {
@@ -279,7 +369,7 @@ export function WritingGrader({
             if (result.essayDiagnostic.summary.actionableAdvice) {
               summaryParts.push(`🎯 Lời khuyên: ${result.essayDiagnostic.summary.actionableAdvice}`);
             }
-            if (result.essayDiagnostic.summary.strengths?.length > 0) {
+            if (result.essayDiagnostic.summary.strengths && result.essayDiagnostic.summary.strengths.length > 0) {
               summaryParts.push(`✨ Điểm sáng: ${result.essayDiagnostic.summary.strengths.join("; ")}`);
             }
             if (summaryParts.length > 0 && !feedbackText.trim()) {
@@ -288,7 +378,7 @@ export function WritingGrader({
           }
         }
         setIsDirty(true);
-        setAiDiagnosticNotice("AI Gemini đã hoàn tất chấm sơ bộ 3 tầng! Thầy/Cô vui lòng kiểm tra và duyệt lại.");
+        setAiDiagnosticNotice("AI Gemini đã hoàn tất chấm sơ bộ tổng thể bài viết! Thầy/Cô vui lòng duyệt lại điểm 4 tiêu chí.");
       } else {
         alert(result.error || "Không thể thực hiện chấm AI sơ bộ.");
       }
@@ -299,7 +389,6 @@ export function WritingGrader({
     }
   };
 
-  // Live Overall Band calculation preview
   // Live Overall Band calculation preview from 4 criteria
   const overallBandPreview = useMemo(() => {
     return calculateWritingBand(criteriaScores);
@@ -312,40 +401,26 @@ export function WritingGrader({
     const score = parseFloat(bandStr) || 0;
     const finalCriteriaScores = criteriaScores;
 
-    // Build grades payload for all answers or target answer
-    const gradesPayload = rawAnswers.length > 0
-      ? rawAnswers.map((a: any, idx: number) => {
-          if (idx === activeAnswerIndex || rawAnswers.length === 1) {
-            return {
-              answerId: a.id,
-              questionId: a.questionId || a.question_id,
-              score,
-              feedback: feedbackText,
-              criteriaScores: finalCriteriaScores || undefined,
-              sentenceFeedbacks,
-              primaryErrorCategory: revisionRequired ? primaryErrorCategory : null,
-              revisionRequired,
-            };
-          }
-          return {
-            answerId: a.id,
-            questionId: a.questionId || a.question_id,
-            score: a.score != null ? Number(a.score) : 0,
-            feedback: a.feedback || undefined,
-          };
-        })
-      : [
-          {
-            answerId,
-            questionId,
-            score,
-            feedback: feedbackText,
-            criteriaScores: finalCriteriaScores || undefined,
-            sentenceFeedbacks,
-            primaryErrorCategory: revisionRequired ? primaryErrorCategory : null,
-            revisionRequired,
-          },
-        ];
+    // Collect all sentence feedbacks combined for the submission options
+    const allSentenceFeedbacks = Object.values(sentenceFeedbacksMap).flat();
+
+    // Build grades payload for all answers: every question gets the submission overall score and question-specific feedbacks
+    const targetAnswers = rawAnswers.length > 0 ? rawAnswers : writingQuestions;
+    const gradesPayload = targetAnswers.map((a: any, idx: number) => {
+      const qId = a.questionId || a.question_id || writingQuestions[idx]?.questionId || `q_${idx}`;
+      const qSentenceFbs = sentenceFeedbacksMap[qId] || [];
+
+      return {
+        answerId: a.id,
+        questionId: qId,
+        score,
+        feedback: feedbackText,
+        criteriaScores: finalCriteriaScores || undefined,
+        sentenceFeedbacks: qSentenceFbs,
+        primaryErrorCategory: revisionRequired ? primaryErrorCategory : null,
+        revisionRequired,
+      };
+    });
 
     await onGradeSubmit({
       grades: gradesPayload,
@@ -355,7 +430,7 @@ export function WritingGrader({
         primaryErrorCategory: revisionRequired ? primaryErrorCategory : null,
         revisionRequired,
         criteriaScores: finalCriteriaScores,
-        sentenceFeedbacks,
+        sentenceFeedbacks: allSentenceFeedbacks,
         finalize,
       },
     });
@@ -363,10 +438,6 @@ export function WritingGrader({
     setIsDirty(false);
     setLastSavedTime(new Date());
   };
-
-  const rawAnswerText = currentAnswer?.answerText || "";
-  const wordCount = rawAnswerText.trim() ? rawAnswerText.trim().split(/\s+/).filter(Boolean).length : 0;
-  const promptTitle = (currentAnswer?.questionTitle ? currentAnswer.questionTitle.replace(/<[^>]*>/g, " ").trim() : "") || "Yêu cầu Đề bài (Prompt)";
 
   let questionCounter = 0;
 
@@ -617,172 +688,173 @@ export function WritingGrader({
                 })}
             </div>
           ) : (
-            /* CASE 2: ESSAY / WRITING TASK (Document View) */
-            <>
-              {/* MULTI-TASK SELECTOR PILLS (If exam has Task 1 + Task 2 or multiple writing items) */}
-              {(answers.length > 1 || rawAnswers.length > 1) && (
-                <div className="flex items-center gap-2 overflow-x-auto pb-1">
-                  <span className="text-xs font-bold text-slate-500 mr-1 shrink-0">Chọn phần thi:</span>
-                  {(answers.length > 0 ? answers : rawAnswers).map((ans: any, idx: number) => {
-                    const isSelected = idx === activeAnswerIndex;
-                    const taskLabel = ans.questionTitle
-                      ? ans.questionTitle.replace(/<[^>]*>/g, " ").trim()
-                      : `Writing Task ${idx + 1}`;
-                    const hasAnswer = !!(ans.answerText && ans.answerText.trim().length > 0);
-                    return (
-                      <button
-                        key={ans.questionId || ans.id || idx}
-                        type="button"
-                        onClick={() => {
-                          setActiveAnswerIndex(idx);
-                          setIsDirty(false);
-                        }}
-                        className={cn(
-                          "px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border shadow-2xs shrink-0 cursor-pointer",
-                          isSelected
-                            ? "bg-blue-600 text-white border-blue-600 shadow-blue-500/20"
-                            : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300"
-                        )}
-                      >
-                        <span>{taskLabel}</span>
-                        <span
-                          className={cn("w-2 h-2 rounded-full", hasAnswer ? (isSelected ? "bg-white" : "bg-emerald-500") : "bg-slate-300")}
-                          title={hasAnswer ? "Đã nộp bài viết" : "Chưa có bài viết"}
-                        />
-                      </button>
-                    );
-                  })}
+            /* CASE 2: ESSAY / WRITING TASK (Continuous Vertical Stream matching Student Homework Flow) */
+            <div className="space-y-6 font-sans">
+              {/* Top Action & Overview Bar for Writing Submission */}
+              <div className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-2xl shadow-2xs">
+                <div className="flex items-center gap-3">
+                  <span className="p-2 rounded-xl bg-blue-50 text-blue-700">
+                    <FileText className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-900 flex items-center gap-2">
+                      <span>Bài Làm Writing Của Học Viên</span>
+                      <Badge variant="outline" className="text-[10px] bg-blue-50 text-blue-700 border-blue-200">
+                        {writingQuestions.length} phần bài tập
+                      </Badge>
+                    </h4>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      Đang chấm theo 4 tiêu chí IELTS tổng thể bài nộp • Tổng số từ: <strong className="text-slate-800 font-bold">{totalWordCount} từ</strong>
+                    </p>
+                  </div>
+                </div>
+
+                {!isAutoGraded && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleAiDiagnose}
+                    disabled={isDiagnosing || totalWordCount === 0}
+                    className="h-8.5 text-xs font-bold bg-gradient-to-r from-purple-50 via-indigo-50 to-blue-50 border-purple-200 text-purple-700 hover:bg-purple-100 shadow-2xs gap-1.5 cursor-pointer"
+                  >
+                    <Sparkles className={`h-3.5 w-3.5 text-purple-600 ${isDiagnosing ? "animate-spin" : ""}`} />
+                    {isDiagnosing ? "AI Đang Chẩn Đoán..." : "AI Chấm Sơ Bộ Toàn Bài"}
+                  </Button>
+                )}
+              </div>
+
+              {aiDiagnosticNotice && (
+                <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-xl flex items-center gap-2 shadow-2xs">
+                  <Sparkles className="h-4 w-4 text-emerald-600 shrink-0" />
+                  <span>{aiDiagnosticNotice}</span>
                 </div>
               )}
 
-              {/* ĐỀ BÀI (Question & Task Specification) */}
-              <Card className="border border-blue-200 shadow-xs rounded-2xl p-5 bg-blue-50/60 space-y-3 font-sans">
-                <div className="flex items-center justify-between border-b border-blue-100/80 pb-2.5">
-                  <span className="text-xs font-extrabold text-blue-900 flex items-center gap-1.5 uppercase tracking-wider">
-                    <BookOpen className="h-4 w-4 text-blue-600" />
-                    {promptTitle}
-                  </span>
-                  <Badge variant="outline" className="bg-blue-100/70 text-blue-800 border-blue-200 text-[11px] font-bold">
-                    Đề bài
-                  </Badge>
-                </div>
+              {/* Continuous Stream of All Writing Questions / Exercises */}
+              {writingQuestions.map((qItem, idx) => {
+                questionCounter++;
+                const itemAnswerText = (qItem.answerText || "").trim();
+                const itemWordCount = itemAnswerText ? itemAnswerText.split(/\s+/).filter(Boolean).length : 0;
+                const itemTitle = (qItem.questionTitle ? qItem.questionTitle.replace(/<[^>]*>/g, " ").trim() : "") || `Phần ${idx + 1}`;
+                const qSentenceFeedbacks = sentenceFeedbacksMap[qItem.questionId] || [];
 
-                {/* Question instructions if available */}
-                {currentAnswer?.instructions && (
-                  <div className="text-xs text-slate-700 font-normal bg-white/90 p-3 rounded-xl border border-blue-100 leading-relaxed shadow-2xs">
-                    <RichContent html={currentAnswer.instructions} />
-                  </div>
-                )}
-
-                {/* Question prompt text */}
-                {currentAnswer?.questionText && (
-                  <div className="text-sm text-slate-900 leading-relaxed font-normal bg-white/60 p-3.5 rounded-xl border border-blue-100/70">
-                    <RichContent html={currentAnswer.questionText} />
-                  </div>
-                )}
-
-                {/* Task 1 Chart / Map / Diagram Image if present */}
-                {currentAnswer?.imageUrl && (
-                  <div className="pt-2 border-t border-blue-100 flex justify-center bg-white/90 p-3 rounded-xl border border-blue-100">
-                    <img
-                      src={formatStorageUrl(currentAnswer.imageUrl)}
-                      alt="Writing Task Prompt Diagram / Chart"
-                      className="max-h-96 w-auto object-contain rounded-lg border shadow-2xs"
-                    />
-                  </div>
-                )}
-
-                {/* Task Passage / Image / Chart if present */}
-                {currentAnswer?.passage && (
-                  <div className="pt-2 border-t border-blue-100">
-                    <div className="text-sm text-slate-800 leading-relaxed max-h-96 overflow-y-auto bg-white/90 p-3.5 rounded-xl border border-blue-100">
-                      <RichContent html={currentAnswer.passage} variant="passage" />
-                    </div>
-                  </div>
-                )}
-              </Card>
-
-              {/* BÀI LÀM CỦA HỌC VIÊN (Student Essay - Document Style) */}
-              <Card className="border border-slate-200 shadow-xs rounded-2xl p-6 bg-white space-y-4 font-sans">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                  <div className="flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-slate-700" />
-                    <h3 className="text-sm font-extrabold text-slate-900 tracking-tight">
-                      Bài Làm Của Học Viên
-                    </h3>
-                  </div>
-                  <div className="flex items-center gap-2.5">
-                    <span className="text-xs font-mono font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200">
-                      {wordCount} từ
-                    </span>
-                    {!isAutoGraded && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={handleAiDiagnose}
-                        disabled={isDiagnosing || !rawAnswerText.trim()}
-                        className="h-8 text-xs font-bold bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200 text-purple-700 hover:bg-purple-100 shadow-2xs gap-1.5"
-                      >
-                        <Sparkles className={`h-3.5 w-3.5 text-purple-600 ${isDiagnosing ? "animate-spin" : ""}`} />
-                        {isDiagnosing ? "AI Đang Chẩn Đoán..." : "AI Chấm Sơ Bộ"}
-                      </Button>
-                    )}
-                  </div>
-                </div>
-
-                {aiDiagnosticNotice && (
-                  <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-xl flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-emerald-600 shrink-0" />
-                    <span>{aiDiagnosticNotice}</span>
-                  </div>
-                )}
-
-                {rawAnswerText.trim() ? (
-                  <div className="text-sm font-sans leading-relaxed text-slate-900 select-text space-y-4">
-                    <SentenceLevelGrader
-                      essayText={rawAnswerText}
-                      sentenceFeedbacks={sentenceFeedbacks}
-                      onChange={(feedbacks) => {
-                        setSentenceFeedbacks(feedbacks);
-                        setIsDirty(true);
-                      }}
-                    />
-
-                    {/* TẦNG 2: DISCOURSE / PARAGRAPH DIAGNOSIS CARDS */}
-                    {discourseFeedbacks.length > 0 && (
-                      <div className="mt-4 pt-4 border-t border-slate-200 space-y-2">
-                        <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-                          <MessageSquare className="h-3.5 w-3.5 text-indigo-600" />
-                          <span>Chẩn đoán Cấp Đoạn Văn / Luận Điểm (Tầng 2 - Discourse):</span>
-                        </div>
-                        <div className="grid gap-2">
-                          {discourseFeedbacks.map((item, idx) => (
-                            <div
-                              key={idx}
-                              className="p-3 bg-indigo-50/70 border border-indigo-200 rounded-xl text-xs space-y-1"
-                            >
-                              <div className="flex items-center justify-between">
-                                <span className="font-bold text-indigo-950">
-                                  Đoạn {item.paragraphIndex + 1}: {item.tag}
-                                </span>
-                                <Badge variant="outline" className="bg-white text-indigo-700 border-indigo-300 text-[10px]">
-                                  {item.category} • {item.severity}
-                                </Badge>
-                              </div>
-                              <p className="text-slate-700 leading-relaxed">{item.note}</p>
-                            </div>
-                          ))}
-                        </div>
+                return (
+                  <div key={qItem.questionId || qItem.id || idx} className="space-y-3">
+                    {/* ĐỀ BÀI (Question & Task Specification) */}
+                    <Card className="border border-blue-200 shadow-xs rounded-2xl p-5 bg-blue-50/50 space-y-3 font-sans">
+                      <div className="flex items-center justify-between border-b border-blue-100/80 pb-2.5">
+                        <span className="text-xs font-extrabold text-blue-900 flex items-center gap-2 uppercase tracking-wider">
+                          <span className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[11px] font-bold">
+                            {idx + 1}
+                          </span>
+                          <span>{itemTitle}</span>
+                        </span>
+                        <Badge variant="outline" className="bg-blue-100/70 text-blue-800 border-blue-200 text-[11px] font-bold">
+                          Đề bài
+                        </Badge>
                       </div>
-                    )}
+
+                      {/* Question instructions if available */}
+                      {qItem.instructions && (
+                        <div className="text-xs text-slate-700 font-normal bg-white/90 p-3 rounded-xl border border-blue-100 leading-relaxed shadow-2xs">
+                          <RichContent html={qItem.instructions} />
+                        </div>
+                      )}
+
+                      {/* Question prompt text */}
+                      {qItem.questionText && (
+                        <div className="text-sm text-slate-900 leading-relaxed font-normal bg-white/60 p-3.5 rounded-xl border border-blue-100/70">
+                          <RichContent html={qItem.questionText} />
+                        </div>
+                      )}
+
+                      {/* Task 1 Chart / Map / Diagram Image if present */}
+                      {qItem.imageUrl && (
+                        <div className="pt-2 border-t border-blue-100 flex justify-center bg-white/90 p-3 rounded-xl border border-blue-100">
+                          <img
+                            src={formatStorageUrl(qItem.imageUrl)}
+                            alt="Writing Task Prompt Diagram / Chart"
+                            className="max-h-96 w-auto object-contain rounded-lg border shadow-2xs"
+                          />
+                        </div>
+                      )}
+
+                      {/* Task Passage if present */}
+                      {qItem.passage && (
+                        <div className="pt-2 border-t border-blue-100">
+                          <div className="text-sm text-slate-800 leading-relaxed max-h-96 overflow-y-auto bg-white/90 p-3.5 rounded-xl border border-blue-100">
+                            <RichContent html={qItem.passage} variant="passage" />
+                          </div>
+                        </div>
+                      )}
+                    </Card>
+
+                    {/* BÀI LÀM CỦA HỌC VIÊN CHO CÂU NÀY */}
+                    <Card className="border border-slate-200 shadow-xs rounded-2xl p-6 bg-white space-y-4 font-sans">
+                      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <div className="flex items-center gap-2">
+                          <FileText className="h-4 w-4 text-slate-700" />
+                          <h3 className="text-xs font-extrabold text-slate-900 uppercase tracking-tight">
+                            Bài làm của học viên • Câu {idx + 1}
+                          </h3>
+                        </div>
+                        <span className="text-xs font-mono font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200">
+                          {itemWordCount} từ
+                        </span>
+                      </div>
+
+                      {itemAnswerText ? (
+                        <div className="text-sm font-sans leading-relaxed text-slate-900 select-text space-y-4">
+                          <SentenceLevelGrader
+                            essayText={itemAnswerText}
+                            sentenceFeedbacks={qSentenceFeedbacks}
+                            onChange={(feedbacks) => {
+                              setSentenceFeedbacksMap(prev => ({
+                                ...prev,
+                                [qItem.questionId]: feedbacks,
+                              }));
+                              setIsDirty(true);
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="p-6 text-center text-xs text-slate-400 italic bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
+                          Học viên chưa nhập câu trả lời cho phần này.
+                        </div>
+                      )}
+                    </Card>
                   </div>
-                ) : (
-                  <div className="p-8 text-center text-xs text-slate-400 italic">
-                    Học viên nộp bài nhưng chưa có nội dung văn bản.
+                );
+              })}
+
+              {/* TẦNG 2: DISCOURSE / PARAGRAPH DIAGNOSIS CARDS (If diagnosed) */}
+              {discourseFeedbacks.length > 0 && (
+                <Card className="p-4 bg-indigo-50/50 border border-indigo-200 rounded-2xl space-y-3 font-sans">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+                    <MessageSquare className="h-4 w-4 text-indigo-600" />
+                    <span>Chẩn đoán Cấp Đoạn Văn / Luận Điểm (Tầng 2 - Discourse):</span>
                   </div>
-                )}
-              </Card>
-            </>
+                  <div className="grid gap-2">
+                    {discourseFeedbacks.map((item, dIdx) => (
+                      <div
+                        key={dIdx}
+                        className="p-3 bg-white/90 border border-indigo-200/80 rounded-xl text-xs space-y-1 shadow-2xs"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-indigo-950">
+                            Đoạn {item.paragraphIndex + 1}: {item.tag}
+                          </span>
+                          <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200 text-[10px]">
+                            {item.category} • {item.severity}
+                          </Badge>
+                        </div>
+                        <p className="text-slate-700 leading-relaxed">{item.note}</p>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              )}
+            </div>
           )}
         </div>
 

@@ -100,28 +100,34 @@ export function ProgressReportModal({
     }
   }, [data]);
 
-  const studentName = data.student?.name || "Nguyễn Minh Anh";
-  const className = data.student?.className || "M01 07.2026";
-  const teacherName = data.student?.teacherName || "Admin NextBand";
-  const periodStr = `${data.period?.from || "01/07/2026"} — ${data.period?.to || "29/08/2026"}`;
+  const studentName = data.student?.name || "Học viên";
+  const className = data.student?.className || "Lớp học";
+  const teacherName = data.student?.teacherName || "Chưa phân công";
+  const periodStr =
+    data.period?.from && data.period?.to
+      ? `${data.period.from} — ${data.period.to}`
+      : data.period?.to
+      ? `Đến ${data.period.to}`
+      : data.period?.from
+      ? `Từ ${data.period.from}`
+      : "Kỳ học hiện tại";
   const exportDateStr = data.generatedAt || new Date().toLocaleDateString("vi-VN");
 
-  // KPI Calculations
+  // KPI Calculations (100% Real Data - Zero Fallback Phantoms)
   const courseProgressPct = data.courseProgress?.percent ?? 0;
   const courseCompletedSessions = data.courseProgress?.completedSessions ?? 0;
-  const courseTotalSessions = data.courseProgress?.totalSessions ?? 27;
-  const attendanceRate = data.attendance ? data.attendance.rate : 100;
-  const hwCompleted = data.homework?.completed ?? 3;
-  const hwTotal = data.homework?.totalAssigned ?? 29;
-  const hwCompletionPct = data.homework?.completionRate ?? (hwTotal > 0 ? Math.round((hwCompleted / hwTotal) * 100) : 10);
+  const courseTotalSessions = data.courseProgress?.totalSessions ?? 0;
+  const hwCompleted = data.homework?.completed ?? 0;
+  const hwTotal = data.homework?.totalAssigned ?? 0;
+  const hwCompletionPct = data.homework?.completionRate ?? (hwTotal > 0 ? Math.round((hwCompleted / hwTotal) * 100) : 0);
 
-  // Time metrics
-  const totalMinutes = data.homework?.totalTimeSpentMinutes || 60;
+  // Time metrics (Calculated honestly from student submissions)
+  const totalMinutes = data.homework?.totalTimeSpentMinutes ?? 0;
   const hoursFormatted = (totalMinutes / 60).toFixed(1);
-  const avgMinutes = data.homework?.avgTimeSpentMinutes || (hwCompleted > 0 ? Math.round(totalMinutes / hwCompleted) : 20);
+  const avgMinutes = data.homework?.avgTimeSpentMinutes ?? (hwCompleted > 0 ? Math.round(totalMinutes / hwCompleted) : 0);
 
-  const classCurrent = data.classInfo?.currentStudents || 4;
-  const classMax = data.classInfo?.maxStudents || 10;
+  const classCurrent = data.classInfo?.currentStudents ?? 0;
+  const classMax = data.classInfo?.maxStudents ?? 10;
 
   const FONT_FAMILY = "'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
 
@@ -350,10 +356,10 @@ export function ProgressReportModal({
 
     currY += studentCardH + 18;
 
-    // 4. 3 Core HUD Stat Pods (Tối ưu font số 32px và nhãn 13px cho mobile)
-    const cardGap = 14;
+    // 4. 2 Core HUD Stat Pods (Tối ưu bố cục 2 cột sang trọng, trực quan, loại bỏ ô Chuyên Cần ảo)
+    const cardGap = 16;
     const totalW = width - 72;
-    const cardW = (totalW - cardGap * 2) / 3;
+    const cardW = (totalW - cardGap) / 2;
     const cardH = 132;
 
     const kpis = [
@@ -369,19 +375,8 @@ export function ProgressReportModal({
         sub: `Đã hoàn thành ${courseCompletedSessions}/${courseTotalSessions} buổi`,
       },
       {
-        label: "CHUYÊN CẦN",
-        val: `${attendanceRate}%`,
-        color: "#16a34a",
-        bgColor: "#ffffff",
-        borderColor: "#e2e8f0",
-        iconBg: "#f0fdf4",
-        iconSymbol: "✓",
-        percent: attendanceRate,
-        sub: "Tham gia đầy đủ",
-      },
-      {
         label: "BÀI TẬP VỀ NHÀ",
-        val: `${hwCompleted}/${hwTotal}`,
+        val: `${hwCompleted}/${hwTotal} bài`,
         color: "#ea580c",
         bgColor: "#ffffff",
         borderColor: "#e2e8f0",
@@ -397,15 +392,15 @@ export function ProgressReportModal({
       drawRoundedRect(ctx, kX, currY, cardW, cardH, 12, kpi.bgColor, kpi.borderColor, 1.2);
 
       // Icon circle
-      const icX = kX + 32;
-      const icY = currY + 36;
+      const icX = kX + 36;
+      const icY = currY + 40;
       ctx.beginPath();
-      ctx.arc(icX, icY, 20, 0, Math.PI * 2);
+      ctx.arc(icX, icY, 22, 0, Math.PI * 2);
       ctx.fillStyle = kpi.iconBg;
       ctx.fill();
 
       ctx.fillStyle = kpi.color;
-      ctx.font = `bold 16px ${FONT_FAMILY}`;
+      ctx.font = `bold 18px ${FONT_FAMILY}`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(kpi.iconSymbol, icX, icY);
@@ -414,21 +409,21 @@ export function ProgressReportModal({
 
       // Label & Value
       ctx.fillStyle = kpi.color;
-      ctx.font = `800 12.5px ${FONT_FAMILY}`;
-      ctx.fillText(kpi.label, kX + 60, currY + 28);
+      ctx.font = `800 13px ${FONT_FAMILY}`;
+      ctx.fillText(kpi.label, kX + 70, currY + 32);
 
       ctx.font = `800 32px ${FONT_FAMILY}`;
-      ctx.fillText(kpi.val, kX + 60, currY + 62);
+      ctx.fillText(kpi.val, kX + 70, currY + 68);
 
       // Subtitle
       ctx.fillStyle = "#475569";
-      ctx.font = `600 12.5px ${FONT_FAMILY}`;
-      ctx.fillText(kpi.sub, kX + 16, currY + 90);
+      ctx.font = `600 13px ${FONT_FAMILY}`;
+      ctx.fillText(kpi.sub, kX + 20, currY + 98);
 
       // Progress bar
-      const pBarX = kX + 16;
-      const pBarY = currY + 104;
-      const pBarW = cardW - 32;
+      const pBarX = kX + 20;
+      const pBarY = currY + 108;
+      const pBarW = cardW - 40;
       const pBarH = 8;
       drawRoundedRect(ctx, pBarX, pBarY, pBarW, pBarH, 4, "#f1f5f9");
       const pBarFill = Math.min(pBarW, Math.max(0, (pBarW * kpi.percent) / 100));
@@ -497,7 +492,7 @@ export function ProgressReportModal({
     ctx.fillStyle = "#475569";
     ctx.fillText(`•  Chưa nộp: ${hw.unsubmitted} bài`, b1X + 180, b1Y + 76);
 
-    // Ô NHỎ 2 (Top-Right): Thời lượng rèn luyện
+    // Ô NHỎ 2 (Top-Right): Thời lượng rèn luyện (Dữ liệu thực tế, không bịa đặt)
     const b2X = 36 + subBoxW + subBoxGap;
     const b2Y = currY;
     drawRoundedRect(ctx, b2X, b2Y, subBoxW, subBoxH, 12, "#f0f9ff", "#bae6fd", 1.2);
@@ -507,11 +502,17 @@ export function ProgressReportModal({
 
     ctx.fillStyle = "#0369a1";
     ctx.font = `800 18px ${FONT_FAMILY}`;
-    ctx.fillText(`${totalMinutes} phút (~${hoursFormatted} giờ)`, b2X + 16, b2Y + 58);
-
-    ctx.fillStyle = "#d97706";
-    ctx.font = `700 13px ${FONT_FAMILY}`;
-    ctx.fillText(`• Trung bình: ${avgMinutes} phút/bài`, b2X + 16, b2Y + 84);
+    if (totalMinutes > 0) {
+      ctx.fillText(`${totalMinutes} phút (~${hoursFormatted} giờ)`, b2X + 16, b2Y + 58);
+      ctx.fillStyle = "#d97706";
+      ctx.font = `700 13px ${FONT_FAMILY}`;
+      ctx.fillText(`• Trung bình: ${avgMinutes} phút/bài`, b2X + 16, b2Y + 84);
+    } else {
+      ctx.fillText("0 phút (0.0 giờ)", b2X + 16, b2Y + 58);
+      ctx.fillStyle = "#64748b";
+      ctx.font = `600 13px ${FONT_FAMILY}`;
+      ctx.fillText("• Chưa ghi nhận thời gian làm bài", b2X + 16, b2Y + 84);
+    }
 
     // Ô NHỎ 3 (Bottom-Left): Kết quả & nguồn chấm (Chính xác, không bịa dữ liệu)
     const b3X = 36;
@@ -788,7 +789,7 @@ export function ProgressReportModal({
   const handleCopyZaloTemplate = async () => {
     const currentW = data.currentWeek || 1;
     const totalW = data.totalWeeks || 10;
-    const template = `Dạ NextBand xin gửi quý anh/chị báo cáo tiến độ Tuần ${currentW}/${totalW} của em ${studentName}.\n- Tỷ lệ BTVN: ${hwCompletionPct}% (${hwCompleted}/${hwTotal} bài)\n- Chuyên cần: ${attendanceRate}%\n- Đang bảo lưu Học bổng Kỷ luật ARIS.\n\nAnh/chị xem chi tiết nhật ký bài tập của con bằng 1 chạm tại:\n👉 ${magicLink}`;
+    const template = `Dạ NextBand xin gửi quý anh/chị báo cáo tiến độ Tuần ${currentW}/${totalW} của em ${studentName}.\n- Tiến độ khóa học: ${courseProgressPct}% (${courseCompletedSessions}/${courseTotalSessions} buổi)\n- Tỷ lệ BTVN: ${hwCompletionPct}% (${hwCompleted}/${hwTotal} bài)\n- Đang bảo lưu Học bổng Kỷ luật ARIS.\n\nAnh/chị xem chi tiết nhật ký bài tập của con bằng 1 chạm tại:\n👉 ${magicLink}`;
     try {
       await navigator.clipboard.writeText(template);
       toast.success("Đã sao chép tin nhắn Zalo mẫu kèm Magic Link!");
@@ -953,21 +954,21 @@ export function ProgressReportModal({
               </div>
             </div>
 
-            {/* 3 Core Stats Cards */}
-            <div className="grid grid-cols-3 gap-3">
+            {/* 2 Core Stats Cards (Bố cục 2 thẻ cân đối, loại bỏ ô Chuyên Cần ảo) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               {/* Card 1: Tiến độ khóa học */}
-              <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-sm space-y-1">
+              <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-sm space-y-1">
                 <div className="flex items-center gap-2">
                   <div className="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
                     <PieChart className="w-4 h-4 text-blue-600" />
                   </div>
-                  <div className="text-[10px] text-blue-600 font-extrabold uppercase truncate">
+                  <div className="text-xs text-blue-600 font-extrabold uppercase truncate">
                     TIẾN ĐỘ KHÓA HỌC
                   </div>
                 </div>
-                <div className="text-xl font-extrabold text-blue-600 pl-1">{courseProgressPct}%</div>
+                <div className="text-2xl font-extrabold text-blue-600 pl-1">{courseProgressPct}%</div>
                 <div className="text-xs text-slate-500 pl-1 truncate">
-                  Đã hoàn thành {courseCompletedSessions}/${courseTotalSessions} buổi
+                  Đã hoàn thành {courseCompletedSessions}/{courseTotalSessions} buổi
                 </div>
                 <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden mt-1.5">
                   <div
@@ -977,42 +978,18 @@ export function ProgressReportModal({
                 </div>
               </div>
 
-              {/* Card 2: Chuyên cần */}
-              <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-sm space-y-1">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  </div>
-                  <div className="text-[10px] text-emerald-600 font-extrabold uppercase truncate">
-                    CHUYÊN CẦN
-                  </div>
-                </div>
-                <div className="text-xl font-extrabold text-emerald-600 pl-1">
-                  {attendanceRate}%
-                </div>
-                <div className="text-xs text-slate-500 pl-1 truncate">
-                  Tham gia đầy đủ
-                </div>
-                <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden mt-1.5">
-                  <div
-                    style={{ width: `${attendanceRate}%` }}
-                    className="h-full bg-emerald-500 rounded-full"
-                  />
-                </div>
-              </div>
-
-              {/* Card 3: Bài tập về nhà */}
-              <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-sm space-y-1">
+              {/* Card 2: Bài tập về nhà */}
+              <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-sm space-y-1">
                 <div className="flex items-center gap-2">
                   <div className="w-7 h-7 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 shrink-0">
                     <Home className="w-4 h-4 text-orange-600" />
                   </div>
-                  <div className="text-[10px] text-orange-600 font-extrabold uppercase truncate">
+                  <div className="text-xs text-orange-600 font-extrabold uppercase truncate">
                     BÀI TẬP VỀ NHÀ
                   </div>
                 </div>
-                <div className="text-xl font-extrabold text-orange-600 pl-1">
-                  {hwCompleted}/{hwTotal}
+                <div className="text-2xl font-extrabold text-orange-600 pl-1">
+                  {hwCompleted}/{hwTotal} bài
                 </div>
                 <div className="text-xs text-slate-500 pl-1 truncate">
                   Đạt {hwCompletionPct}% hoàn thành
@@ -1072,10 +1049,16 @@ export function ProgressReportModal({
                     THỜI LƯỢNG RÈN LUYỆN
                   </div>
                   <div className="text-base font-extrabold text-sky-950 py-1">
-                    {totalMinutes} phút <span className="text-xs font-semibold text-slate-600">(~{hoursFormatted} giờ)</span>
+                    {totalMinutes > 0 ? (
+                      <>
+                        {totalMinutes} phút <span className="text-xs font-semibold text-slate-600">(~{hoursFormatted} giờ)</span>
+                      </>
+                    ) : (
+                      <>0 phút <span className="text-xs font-semibold text-slate-600">(0.0 giờ)</span></>
+                    )}
                   </div>
-                  <div className="text-xs font-bold text-amber-700">
-                    • Trung bình: {avgMinutes} phút/bài
+                  <div className={`text-xs font-bold ${totalMinutes > 0 ? "text-amber-700" : "text-slate-500"}`}>
+                    {totalMinutes > 0 ? `• Trung bình: ${avgMinutes} phút/bài` : "• Chưa ghi nhận thời gian làm bài"}
                   </div>
                 </div>
 

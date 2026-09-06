@@ -753,8 +753,13 @@ export default function TeacherWorkspace() {
       periodFrom: classStartDate,
       periodTo: new Date(),
       courseProgress: {
-        completedSessions: attendanceData?.completedSessions,
-        totalSessions: attendanceData?.totalSessions,
+        completedSessions:
+          attendanceData?.completedSessions ??
+          (attendanceData?.sessions?.filter((s: any) => s.status === "COMPLETED").length || 0),
+        totalSessions:
+          attendanceData?.totalSessions ??
+          attendanceData?.sessions?.length ??
+          (currentClass?.sessions?.length || 27),
       },
       attendanceSummary: studentMatrix
         ? {
@@ -771,9 +776,9 @@ export default function TeacherWorkspace() {
           }
         : null,
       classInfo: {
-        currentStudents: students.length || 6,
+        currentStudents: students.length,
         maxStudents: currentClass?.room?.capacity || 10,
-        classModel: (students.length || 6) <= 10 ? "Nhóm nhỏ tương tác cao" : "Lớp tiêu chuẩn",
+        classModel: (students.length || 0) <= 10 ? "Nhóm nhỏ tương tác cao" : "Lớp tiêu chuẩn",
       },
       homeworks: currentStudent?.homeworks || [],
       teacherEvaluation: latestPeriodicReport

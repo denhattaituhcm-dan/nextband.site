@@ -162,9 +162,9 @@ export const StudentsTab: React.FC = () => {
         totalSessions: sessions.length,
       },
       classInfo: {
-        currentStudents: students.length || 6,
+        currentStudents: students.length,
         maxStudents: classData?.room?.capacity || 10,
-        classModel: (students.length || 6) <= 10 ? "Nhóm nhỏ tương tác cao" : "Lớp tiêu chuẩn",
+        classModel: students.length <= 10 ? "Nhóm nhỏ tương tác cao" : "Lớp tiêu chuẩn",
       },
       homeworks: studentHomeworks,
       attendanceRecords: studentAttendanceRecords,

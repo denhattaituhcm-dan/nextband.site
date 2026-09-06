@@ -1,6 +1,10 @@
 # NEXTBAND ARCHITECTURE CONSTITUTION (HIẾN PHÁP KIẾN TRÚC HỆ THỐNG NEXTBAND)
 
-> [!IMPORTANT]
+> [!NOTE]
+> **TÀI LIỆU THAM CHIẾU LỊCH SỬ KIẾN TRÚC & NGHIỆM THU (HISTORICAL REFERENCE ONLY)**  
+> Bản Hiến pháp này được giữ nguyên để phục vụ công tác kiểm toán lịch sử (Forensic Audit) của các cổng G0 - G7.  
+> **Dành cho kỹ sư phát triển hàng ngày:** Vui lòng xem tài liệu tinh gọn tại 👉 **[`DEVELOPER_GUIDE.md`](./DEVELOPER_GUIDE.md)** (Quy tụ 4 Quy tắc Vàng và hướng dẫn thực hành trong 3 phút).
+>
 > **STABILIZATION NOTICE — NON-NORMATIVE**  
 > Trong đợt Release Stabilization hiện tại, các điều khoản liên quan đến Dual-Tier Fallback (Điều XIV), 12-Point Edge Protocol (Điều VII), Forensic Protocol 9 bước (Điều XVI/X), UI/Visual Realm & Design Tokens Blocker (Điều XX, XXI, XXV) và Enterprise Event/Outbox requirements đang ở trạng thái **SUSPENDED FOR STABILIZATION**.  
 > 

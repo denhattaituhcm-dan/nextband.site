@@ -86,8 +86,8 @@ export function mapToProgressReportData(input: ProgressReportInput): ProgressRep
     const late = s.late || 0;
     const absent = s.absent || 0;
     const excused = s.excused || 0;
-    const eligible = Math.max(1, total - excused);
-    const rate = s.rate != null ? Math.round(s.rate) : Math.min(100, Math.round(((present + late) / eligible) * 100));
+    const eligible = Math.max(0, total - excused);
+    const rate = s.rate != null ? Math.round(s.rate) : (eligible > 0 ? Math.min(100, Math.round(((present + late) / eligible) * 100)) : 0);
 
     if (total > 0) {
       attendance = {
@@ -96,7 +96,7 @@ export function mapToProgressReportData(input: ProgressReportInput): ProgressRep
         late,
         excused,
         total,
-        rate: total > 0 ? rate : 100,
+        rate,
       };
     }
   } else if (input.attendanceRecords && input.attendanceRecords.length > 0) {
@@ -114,8 +114,8 @@ export function mapToProgressReportData(input: ProgressReportInput): ProgressRep
     });
 
     const total = input.attendanceRecords.length;
-    const eligible = Math.max(1, total - excusedCount);
-    const rate = Math.min(100, Math.round(((presentCount + lateCount) / eligible) * 100));
+    const eligible = Math.max(0, total - excusedCount);
+    const rate = eligible > 0 ? Math.min(100, Math.round(((presentCount + lateCount) / eligible) * 100)) : 0;
 
     attendance = {
       present: presentCount,
