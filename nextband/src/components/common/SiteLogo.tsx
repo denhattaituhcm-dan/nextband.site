@@ -43,7 +43,7 @@ export const getFullLogoUrl = (url: unknown): string => {
 };
 
 const DEFAULT_FALLBACKS = [
-  "/Logo.png",
+  "/logo.png",
   "/favicon.png",
   "/favicon-96x96.png",
   "/favicon.svg",
@@ -52,7 +52,7 @@ const DEFAULT_FALLBACKS = [
 export function SiteLogo({
   className,
   alt,
-  fallbackSrc = "/Logo.png",
+  fallbackSrc = "/logo.png",
 }: SiteLogoProps) {
   const { settings } = useSiteSettings();
   const [displayedSrc, setDisplayedSrc] = useState<string>(fallbackSrc);

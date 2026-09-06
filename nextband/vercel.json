@@ -21,7 +21,7 @@
       "destination": "/api/index.js"
     },
     {
-      "source": "/((?!api|assets|favicon|Logo).*)",
+      "source": "/((?!api|assets|favicon|logo|Logo).*)",
       "destination": "/index.html"
     }
   ],

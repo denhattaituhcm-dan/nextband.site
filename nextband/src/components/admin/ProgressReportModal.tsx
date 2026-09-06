@@ -225,7 +225,7 @@ export function ProgressReportModal({
     const fav = await tryLoad("/favicon.png");
     if (fav && fav.naturalWidth > 0) return fav;
 
-    const direct = await tryLoad("/Logo.png");
+    const direct = await tryLoad("/logo.png");
     if (direct && direct.naturalWidth > 0) return direct;
 
     const fav96 = await tryLoad("/favicon-96x96.png");
