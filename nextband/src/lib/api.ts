@@ -2110,191 +2110,23 @@ export const statsApi = {
     if (params?.month) query.set("month", String(params.month));
     if (params?.classId) query.set("classId", params.classId);
 
-    try {
-      const res = await fetch(
-        `${API_BASE_URL}/classes/attendance/monthly-summary?${query.toString()}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-        }
-      );
-
-      if (res.ok) {
-        const json = await res.json();
-        if (json?.data) {
-          return json.data;
-        }
+    const res = await fetch(
+      `${API_BASE_URL}/classes/attendance/monthly-summary?${query.toString()}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       }
-    } catch (err) {
-      console.warn(
-        "[statsApi] Failed to fetch monthly attendance from API, attempting fallback:",
-        err
-      );
+    );
+
+    if (!res.ok) {
+      const errJson = await res.json().catch(() => ({}));
+      throw new Error(errJson.message || errJson.error || `HTTP ${res.status}: Không thể tải báo cáo chuyên cần`);
     }
 
-    // Direct Supabase Fallback for client resilience
-    try {
-      const year = params?.year || new Date().getFullYear();
-      const monthParam = params?.month || "all";
-      const isFullYear = monthParam === "year" || monthParam === "all";
-      const specificMonth = !isFullYear ? Number(monthParam) : null;
-
-      let startIso: string;
-      let endIso: string;
-      if (isFullYear || !specificMonth) {
-        startIso = `${year}-01-01T00:00:00.000Z`;
-        endIso = `${year}-12-31T23:59:59.999Z`;
-      } else {
-        const mm = String(specificMonth).padStart(2, "0");
-        const lastDay = new Date(year, specificMonth, 0).getDate();
-        startIso = `${year}-${mm}-01T00:00:00.000Z`;
-        endIso = `${year}-${mm}-${String(lastDay).padStart(2, "0")}T23:59:59.999Z`;
-      }
-
-      let sessionsQuery = supabase
-        .from("class_sessions")
-        .select("id, class_id, session_number, planned_date, status");
-      sessionsQuery = sessionsQuery
-        .gte("planned_date", startIso)
-        .lte("planned_date", endIso);
-
-      let attendanceQuery = supabase
-        .from("class_attendance")
-        .select("id, class_id, student_id, session_date, status");
-      attendanceQuery = attendanceQuery
-        .gte("session_date", startIso)
-        .lte("session_date", endIso);
-
-      if (params?.classId) {
-        sessionsQuery = sessionsQuery.eq("class_id", params.classId);
-        attendanceQuery = attendanceQuery.eq("class_id", params.classId);
-      }
-
-      const [{ data: sessions }, { data: attendance }, { data: classesData }] =
-        await Promise.all([
-          sessionsQuery,
-          attendanceQuery,
-          supabase.from("classes").select("id, name, is_active").eq("is_active", true),
-        ]);
-
-      const sessList = sessions || [];
-      const attList = attendance || [];
-      const classList = classesData || [];
-
-      let presentCount = 0;
-      let lateCount = 0;
-      let absentCount = 0;
-      let excusedCount = 0;
-      let unmarkedCount = 0;
-
-      attList.forEach((a: any) => {
-        if (a.status === "PRESENT") presentCount++;
-        else if (a.status === "LATE") lateCount++;
-        else if (a.status === "ABSENT") absentCount++;
-        else if (a.status === "EXCUSED") excusedCount++;
-        else unmarkedCount++;
-      });
-
-      const totalPresent = presentCount + lateCount;
-      const totalAbsent = absentCount;
-      const totalExcused = excusedCount;
-      const totalMarked = presentCount + lateCount + absentCount + excusedCount;
-      const validCount = totalPresent + totalAbsent;
-      const attendanceRate =
-        validCount > 0 ? Math.round((totalPresent / validCount) * 1000) / 1000 : 1.0;
-
-      const activeClassIds = new Set([
-        ...sessList.map((s: any) => s.class_id),
-        ...attList.map((a: any) => a.class_id),
-      ]);
-
-      const byClass = classList
-        .map((c: any) => {
-          const clsSess = sessList.filter((s: any) => s.class_id === c.id);
-          const clsAtt = attList.filter((a: any) => a.class_id === c.id);
-
-          let p = 0;
-          let l = 0;
-          let ab = 0;
-          let ex = 0;
-          clsAtt.forEach((a: any) => {
-            if (a.status === "PRESENT") p++;
-            else if (a.status === "LATE") l++;
-            else if (a.status === "ABSENT") ab++;
-            else if (a.status === "EXCUSED") ex++;
-          });
-          const totP = p + l;
-          const val = totP + ab;
-          return {
-            classId: c.id,
-            className: c.name,
-            teacherName: "Giáo viên",
-            totalStudents: 0,
-            totalSessions: clsSess.length,
-            completedSessions: clsSess.filter((s: any) => s.status === "COMPLETED").length,
-            presentCount: p,
-            lateCount: l,
-            absentCount: ab,
-            excusedCount: ex,
-            totalPresent: totP,
-            totalAbsent: ab,
-            totalExcused: ex,
-            attendanceRate: val > 0 ? Math.round((totP / val) * 1000) / 1000 : 1.0,
-          };
-        })
-        .filter(
-          (c: any) =>
-            isFullYear || c.totalSessions > 0 || c.totalPresent > 0 || c.totalAbsent > 0
-        );
-
-      return {
-        year,
-        period: isFullYear ? "year" : String(specificMonth).padStart(2, "0"),
-        periodLabel: isFullYear ? `Cả năm ${year}` : `Tháng ${specificMonth}/${year}`,
-        totalSessions: sessList.length,
-        completedSessions: sessList.filter((s: any) => s.status === "COMPLETED").length,
-        activeClassesCount: activeClassIds.size > 0 ? activeClassIds.size : byClass.length,
-        presentCount,
-        lateCount,
-        absentCount,
-        excusedCount,
-        unmarkedCount,
-        totalPresent,
-        totalAbsent,
-        totalExcused,
-        totalMarked,
-        attendanceRate,
-        byClass,
-        monthsSummary: [],
-      };
-    } catch (fallbackErr) {
-      console.error(
-        "[statsApi] Both API and Supabase fallback failed:",
-        fallbackErr
-      );
-      return {
-        year: params?.year || new Date().getFullYear(),
-        period: params?.month || "all",
-        periodLabel: "Tháng",
-        totalSessions: 0,
-        completedSessions: 0,
-        activeClassesCount: 0,
-        presentCount: 0,
-        lateCount: 0,
-        absentCount: 0,
-        excusedCount: 0,
-        unmarkedCount: 0,
-        totalPresent: 0,
-        totalAbsent: 0,
-        totalExcused: 0,
-        totalMarked: 0,
-        attendanceRate: 1.0,
-        byClass: [],
-        monthsSummary: [],
-      };
-    }
+    const json = await res.json();
+    return json.data;
   },
 };
 
@@ -4324,52 +4156,29 @@ export const assessmentApi = {
       headers["x-assessment-token"] = token;
     }
 
-    try {
-      const res = await fetch(`${API_BASE_URL}/assessment/sessions/${sessionId}/test`, {
-        headers,
-        credentials: "include",
-      });
+    const res = await fetch(`${API_BASE_URL}/assessment/sessions/${sessionId}/test`, {
+      headers,
+      credentials: "include",
+    });
 
-      if (res.ok) {
-        return await res.json();
-      }
-
-      if (res.status === 401 || res.status === 403 || res.status === 404 || res.status === 409) {
-        const err = await res.json().catch(() => ({}));
-        const message =
-          err.message ||
-          err.error ||
-          (res.status === 401
-            ? "Phiên khảo thí không hợp lệ hoặc đã hết hạn"
-            : res.status === 403
-            ? "Từ chối truy cập bài khảo thí"
-            : res.status === 409
-            ? "Bài khảo thí này đã được nộp trước đó"
-            : "Không tìm thấy bài khảo thí");
-        const errorObj = new Error(message);
-        (errorObj as any).httpStatus = res.status;
-        throw errorObj;
-      }
-    } catch (networkErr: any) {
-      if (networkErr?.httpStatus === 401 || networkErr?.httpStatus === 403 || networkErr?.httpStatus === 404 || networkErr?.httpStatus === 409) {
-        throw networkErr;
-      }
+    if (res.ok) {
+      return await res.json();
     }
 
-    // Resilient local test bank fallback
-    const { canonicalPlacementTestPayload } = await import("../../../server/data/placement-test/questions");
-    return {
-      session: {
-        sessionId,
-        candidateName: "Thí Sinh Khảo Thí",
-        phone: "0900000000",
-        targetBand: "IELTS 6.5",
-        status: "ACTIVE",
-        remainingSeconds: 3600,
-        answers: {},
-      },
-      test: canonicalPlacementTestPayload,
-    };
+    const err = await res.json().catch(() => ({}));
+    const message =
+      err.message ||
+      err.error ||
+      (res.status === 401
+        ? "Phiên khảo thí không hợp lệ hoặc đã hết hạn"
+        : res.status === 403
+        ? "Từ chối truy cập bài khảo thí"
+        : res.status === 409
+        ? "Bài khảo thí này đã được nộp trước đó"
+        : "Không thể tải nội dung bài khảo thí từ máy chủ");
+    const errorObj = new Error(message);
+    (errorObj as any).httpStatus = res.status;
+    throw errorObj;
   },
 
   autosave: async (sessionId: string, answers: any, customToken?: string) => {
@@ -4380,19 +4189,19 @@ export const assessmentApi = {
       headers["x-assessment-token"] = token;
     }
 
-    try {
-      const res = await fetch(`${API_BASE_URL}/assessment/sessions/${sessionId}/answers`, {
-        method: "PATCH",
-        headers,
-        credentials: "include",
-        body: JSON.stringify({ answers }),
-      });
+    const res = await fetch(`${API_BASE_URL}/assessment/sessions/${sessionId}/answers`, {
+      method: "PATCH",
+      headers,
+      credentials: "include",
+      body: JSON.stringify({ answers }),
+    });
 
-      if (res.ok) {
-        return res.json();
-      }
-    } catch {}
-    return { success: true, savedAt: new Date().toISOString() };
+    if (res.ok) {
+      return res.json();
+    }
+
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || err.error || "Không thể tự động lưu bài làm");
   },
 
   submit: async (sessionId: string, answers: any, customToken?: string) => {
@@ -4496,8 +4305,7 @@ export const assessmentAdminApi = {
     status?: string;
     gradingStatus?: string;
   }) => {
-    try {
-      const token = await getAuthToken();
+    const token = await getAuthToken();
       const queryParams = new URLSearchParams();
       if (params?.page) queryParams.set("page", String(params.page));
       if (params?.limit) queryParams.set("limit", String(params.limit));
@@ -4513,99 +4321,17 @@ export const assessmentAdminApi = {
         },
       });
 
-      if (res.ok) {
-        const json = await res.json();
-        return json as {
-          success: boolean;
-          data: AdminAssessmentItem[];
-          pagination: { total: number; page: number; limit: number; totalPages: number };
-        };
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.message || errJson.error || `HTTP ${res.status}: Không thể tải danh sách bài khảo thí`);
       }
-    } catch (err) {
-      console.warn("[assessmentAdminApi.list] Server fetch error, trying direct fallback:", err);
-    }
 
-    // Direct Supabase fallback
-    try {
-      const { data: dbData, error } = await supabase
-        .from("assessment_sessions")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (!error && Array.isArray(dbData)) {
-        let items: AdminAssessmentItem[] = dbData.map((d: any) => {
-          const res = d.result || {};
-          const answers = d.answers || {};
-          const teacherReview = res.teacherReview || {};
-
-          const hasWriting =
-            typeof answers["writing_response"] === "string" &&
-            answers["writing_response"].trim().length >= 10;
-          const writingLength = typeof answers["writing_response"] === "string" ? answers["writing_response"].trim().length : 0;
-          const hasSpeaking = !!answers["speaking_audio_url"] || !!answers["speaking_completed"];
-
-          let gradingStatus = d.grading_status || teacherReview.gradingStatus;
-          if (!gradingStatus) {
-            gradingStatus = d.status === "SUBMITTED" ? "PENDING" : "IN_PROGRESS";
-          }
-
-          return {
-            id: d.id,
-            examId: d.exam_id,
-            candidateName: d.full_name || d.candidate_name || "Thí sinh",
-            phone: d.phone || "",
-            targetBand: d.target_band || "Chưa xác định",
-            status: d.status || "ACTIVE",
-            objectiveScore: res.objectiveBreakdown || null,
-            arisLevel: res.arisLevel || null,
-            hasWriting,
-            writingLength,
-            hasSpeaking,
-            gradingStatus,
-            assignedTeacher: teacherReview.assignedTeacher || null,
-            teacherNotes: d.teacher_notes || teacherReview.teacherNotes || null,
-            zaloDraftFeedback: teacherReview.zaloDraftFeedback || null,
-            startedAt: d.started_at || d.created_at,
-            submittedAt: d.submitted_at || null,
-            createdAt: d.created_at,
-            updatedAt: d.updated_at,
-          };
-        });
-
-        if (params?.search && params.search.trim()) {
-          const q = params.search.trim().toLowerCase();
-          items = items.filter(
-            (i) =>
-              i.candidateName.toLowerCase().includes(q) ||
-              i.phone.toLowerCase().includes(q) ||
-              i.id.toLowerCase().includes(q)
-          );
-        }
-
-        if (params?.gradingStatus && params.gradingStatus !== "ALL") {
-          items = items.filter((i) => i.gradingStatus === params.gradingStatus);
-        }
-
-        return {
-          success: true,
-          data: items,
-          pagination: {
-            total: items.length,
-            page: 1,
-            limit: items.length || 20,
-            totalPages: 1,
-          },
-        };
-      }
-    } catch (supaErr) {
-      console.warn("[assessmentAdminApi.list] Supabase error:", supaErr);
-    }
-
-    return {
-      success: true,
-      data: [],
-      pagination: { total: 0, page: 1, limit: 20, totalPages: 1 },
-    };
+      const json = await res.json();
+      return json as {
+        success: boolean;
+        data: AdminAssessmentItem[];
+        pagination: { total: number; page: number; limit: number; totalPages: number };
+      };
   },
 
   getById: async (sessionId: string) => {
@@ -4635,54 +4361,23 @@ export const assessmentAdminApi = {
       zaloDraftFeedback?: string;
     }
   ) => {
-    try {
-      const token = await getAuthToken();
-      const res = await fetch(`${API_BASE_URL}/assessment/admin/sessions/${sessionId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify(payload),
-      });
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/assessment/admin/sessions/${sessionId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(payload),
+    });
 
-      if (res.ok) {
-        const json = await res.json();
-        return json;
-      }
-    } catch (err) {
-      console.warn("[assessmentAdminApi.update] Server fetch error, trying direct fallback:", err);
+    if (!res.ok) {
+      const errJson = await res.json().catch(() => ({}));
+      throw new Error(errJson.message || errJson.error || `HTTP ${res.status}: Không thể cập nhật bài khảo thí`);
     }
 
-    // Direct Supabase fallback
-    const { data: current } = await supabase
-      .from("assessment_sessions")
-      .select("result")
-      .eq("id", sessionId)
-      .single();
-
-    const currentResult = current?.result || {};
-    const updatedReview = {
-      ...(currentResult.teacherReview || {}),
-      ...payload,
-      reviewedAt: new Date().toISOString(),
-    };
-
-    const newResult = {
-      ...currentResult,
-      teacherReview: updatedReview,
-    };
-
-    const { error } = await supabase
-      .from("assessment_sessions")
-      .update({
-        result: newResult,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", sessionId);
-
-    if (error) throw error;
-    return { success: true, teacherReview: updatedReview };
+    const json = await res.json();
+    return json;
   },
 };
 
