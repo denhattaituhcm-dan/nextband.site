@@ -191,11 +191,11 @@ export function QuickTrialModal({
                       <SelectValue placeholder="Chọn khóa học" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
-                      <SelectItem value="starter">Khóa STARTER (Mất gốc → 3.0) — 4.900.000đ</SelectItem>
-                      <SelectItem value="dreamer">Khóa DREAMER (3.0 → 4.0) — 5.400.000đ</SelectItem>
-                      <SelectItem value="builder">Khóa BUILDER (4.0 → 5.0) — 5.900.000đ</SelectItem>
-                      <SelectItem value="master">Khóa MASTER (5.0 → 6.0) — 6.400.000đ</SelectItem>
-                      <SelectItem value="leader">Khóa LEADER (6.0 → 6.5+) — 6.900.000đ</SelectItem>
+                      <SelectItem value="starter">Khóa STARTER (Mất gốc → 3.0) — 4.500.000đ</SelectItem>
+                      <SelectItem value="dreamer">Khóa DREAMER (3.0 → 4.0) — 5.000.000đ</SelectItem>
+                      <SelectItem value="builder">Khóa BUILDER (4.0 → 5.0) — 5.500.000đ</SelectItem>
+                      <SelectItem value="master">Khóa MASTER (5.0 → 6.0) — 6.000.000đ</SelectItem>
+                      <SelectItem value="leader">Khóa LEADER (6.0 → 6.5+) — 7.000.000đ</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
