@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { CharacterContract } from "./CharacterContract";
 import { StaticFallback, WebMRenderer, GLBRenderer } from "./renderers";
 
@@ -13,7 +13,7 @@ export const HuyenCoRenderer: React.FC<CharacterContract> = ({
   // Cascading fallback state: glb -> webm -> static
   const [activeTier, setActiveTier] = useState<"glb" | "webm" | "static">(() => {
     if (renderTier === "glb") return "glb";
-    if (renderTier === "webm" || renderTier === "auto") return "webm";
+    if (renderTier === "webm") return "webm";
     return "static";
   });
 
