@@ -306,6 +306,50 @@ describe("Academic Progress Report Mapper - Unit Tests", () => {
     expect(result.homework.totalTimeSpentMinutes).toBe(75);
     expect(result.homework.avgTimeSpentMinutes).toBe(25);
   });
+
+  it("Scenario 10: Zero completed homework & zero time spent - Honest mapping without phantom fallbacks", () => {
+    const homeworks = Array.from({ length: 29 }, (_, i) => ({
+      id: `hw-${i + 1}`,
+      title: `Homework ${i + 1}`,
+      status: "unsubmitted",
+    }));
+
+    const result = mapToProgressReportData({
+      studentName: "Vinh Huy Han",
+      className: "D01 07.2026",
+      homeworks,
+      attendanceRecords: [],
+      courseProgress: {
+        completedSessions: 0,
+        totalSessions: 27,
+      },
+    });
+
+    // Course progress
+    expect(result.courseProgress?.percent).toBe(0);
+    expect(result.courseProgress?.completedSessions).toBe(0);
+    expect(result.courseProgress?.totalSessions).toBe(27);
+
+    // Homework taxonomy
+    expect(result.homework.totalAssigned).toBe(29);
+    expect(result.homework.completed).toBe(0);
+    expect(result.homework.unsubmitted).toBe(29);
+    expect(result.homework.inProgress).toBe(0);
+    expect(result.homework.overdue).toBe(0);
+    expect(result.homework.completionRate).toBe(0);
+
+    // Honest time spent: must be 0, not fake 60 or 20
+    expect(result.homework.totalTimeSpentMinutes).toBe(0);
+    expect(result.homework.avgTimeSpentMinutes).toBe(0);
+
+    // Grading & Skill averages: must be 0 and null
+    expect(result.homework.gradedCount).toBe(0);
+    expect(result.homework.passedCount).toBe(0);
+    expect(result.homework.needsImprovementCount).toBe(0);
+    expect(result.homework.averageScore).toBeNull();
+    expect(result.homework.skillAverages?.speaking).toBeNull();
+    expect(result.homework.skillAverages?.writing).toBeNull();
+  });
 });
 
 
