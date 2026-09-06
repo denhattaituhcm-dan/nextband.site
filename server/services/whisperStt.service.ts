@@ -70,11 +70,12 @@ export class WhisperSttService {
     totalDurationMs?: number,
   ): Promise<SpeakingTranscript> {
     const apiKey =
-      this.apiKey ||
-      process.env.GROQ_API_KEY ||
-      process.env.STT_API_KEY ||
-      process.env.OPENAI_API_KEY ||
-      process.env.WHISPER_API_KEY;
+      this.apiKey !== undefined
+        ? this.apiKey
+        : process.env.GROQ_API_KEY ||
+          process.env.STT_API_KEY ||
+          process.env.OPENAI_API_KEY ||
+          process.env.WHISPER_API_KEY;
     const apiUrl =
       process.env.GROQ_WHISPER_API_URL ||
       process.env.STT_API_URL ||

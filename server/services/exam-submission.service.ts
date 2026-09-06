@@ -871,6 +871,7 @@ export class ExamSubmissionService {
     const fullResult = await this.repo.transaction(async (tx) => {
       const createdOrUpdatedAnswers = [];
       for (const ans of answersToEvaluate) {
+        const evalResult = gradingSummary.evaluatedAnswers.find((g) => g.questionId === ans.questionId);
         let answerText = typeof ans.answerText === "object" ? JSON.stringify(ans.answerText) : ans.answerText;
         let incomingAudioUrl = typeof ans.audioUrl === "string" && ans.audioUrl.trim() !== "" ? ans.audioUrl.trim() : null;
 
