@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const SessionStatusEnum = z.enum([
   "SCHEDULED",
+  "PLANNED",
   "IN_PROGRESS",
   "COMPLETED",
   "CANCELLED",

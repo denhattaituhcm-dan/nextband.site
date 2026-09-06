@@ -42,6 +42,20 @@ export function adaptSession(raw: any): SessionDTO {
     ? (rawDate instanceof Date ? rawDate.toISOString().split("T")[0] : String(rawDate).split("T")[0])
     : new Date().toISOString().split("T")[0];
 
+  const rawStatus = String(raw.status || "").trim().toUpperCase();
+  const canonicalStatus: SessionStatus =
+    rawStatus === "PLANNED" || rawStatus === "SCHEDULED"
+      ? "SCHEDULED"
+      : rawStatus === "IN_PROGRESS"
+        ? "IN_PROGRESS"
+        : rawStatus === "COMPLETED"
+          ? "COMPLETED"
+          : rawStatus === "CANCELLED"
+            ? "CANCELLED"
+            : rawStatus === "RESCHEDULED"
+              ? "RESCHEDULED"
+              : "SCHEDULED";
+
   const candidate = {
     id: String(raw.id || `sess-${Date.now()}`),
     classId: String(raw.classId || raw.class_id || ""),
@@ -50,7 +64,7 @@ export function adaptSession(raw: any): SessionDTO {
     actualDate: raw.actualDate || raw.actual_date || null,
     startTime: normalizeTimeToHHmm(raw.startTime || raw.start_time),
     endTime: normalizeTimeToHHmm(raw.endTime || raw.end_time),
-    status: (raw.status as SessionStatus) || "SCHEDULED",
+    status: canonicalStatus,
     rescheduleReason: raw.rescheduleReason || raw.reschedule_reason || null,
     note: raw.note ?? null,
     teacherId: raw.teacherId || raw.teacher_id || null,
