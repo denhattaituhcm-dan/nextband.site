@@ -26,7 +26,7 @@ export class ClassService {
       courseSlug: m.class.course?.slug ?? null,
       teacherName: m.class.teacher?.fullName ?? null,
       isActive: m.class.isActive,
-      membershipStatus: "ACTIVE",
+      membershipStatus: m.status || "ACTIVE",
       joinedAt: m.createdAt,
     }));
   }
@@ -1381,7 +1381,7 @@ export class ClassService {
       orConditions.push({ userId: cleanInput }, { id: cleanInput });
     }
     if (isEmail) {
-      orConditions.push({ email: cleanInput.toLowerCase() });
+      orConditions.push({ email: { equals: cleanInput, mode: "insensitive" } });
     }
 
     if (orConditions.length === 0) {
@@ -1445,9 +1445,9 @@ export class ClassService {
       );
 
       for (const email of cleanEmails) {
-        // Find existing user by email
+        // Find existing user by email (case-insensitive)
         let existingUser = await this.prisma.user.findFirst({
-          where: { email },
+          where: { email: { equals: email, mode: "insensitive" } },
           select: { userId: true },
         });
 
@@ -1479,7 +1479,17 @@ export class ClassService {
           );
 
           const profileData = dbResult?.[0]?.result;
-          const createdAuthUid = profileData?.user_id || profileData?.id;
+          let createdAuthUid = profileData?.user_id || profileData?.id;
+
+          // Resilience Fallback: verify created user directly from DB if stored proc result format differs
+          if (!createdAuthUid) {
+            const fallbackUser = await this.prisma.user.findFirst({
+              where: { email: { equals: email, mode: "insensitive" } },
+              select: { userId: true },
+            });
+            createdAuthUid = fallbackUser?.userId;
+          }
+
           if (createdAuthUid) {
             resolvedStudentIds.add(createdAuthUid);
           } else {

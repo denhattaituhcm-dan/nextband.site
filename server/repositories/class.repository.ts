@@ -141,6 +141,8 @@ export class ClassRepository {
     return this.prisma.classStudent.findMany({
       where: {
         studentId,
+        deletedAt: null,
+        status: { not: "DROPPED" },
       },
       include: {
         class: {

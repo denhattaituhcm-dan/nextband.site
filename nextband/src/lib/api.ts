@@ -3178,6 +3178,9 @@ export const invalidateClassWorkspace = (queryClient: any, classId: string) => {
   queryClient.invalidateQueries({ queryKey: ["class-sessions", classId] });
   queryClient.invalidateQueries({ queryKey: ["class-attendance-matrix", classId] });
   queryClient.invalidateQueries({ queryKey: ["class-attendance", classId] });
+  // Ensure student dashboard and center roster reflect class enrollment changes immediately
+  queryClient.invalidateQueries({ queryKey: ["my-class-memberships"] });
+  queryClient.invalidateQueries({ queryKey: ["center-students"] });
 };
 
 // Backward compatibility alias
