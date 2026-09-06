@@ -233,7 +233,7 @@ describe("serializeStructuredFeedback / parseStructuredFeedback â€” Speaking 4â€
     expect(parsed.speakingCorrections).toBeUndefined();
   });
 
-  it("parses legacy JSON without speaking fields gracefully", () => {
+  it("parses legacy JSON without speaking or writing 3-tier fields gracefully", () => {
     const legacyJson = JSON.stringify({
       text: "Old feedback",
       criteriaScores: { fluencyAndCoherence: 6, grammar: 6 },
@@ -241,8 +241,73 @@ describe("serializeStructuredFeedback / parseStructuredFeedback â€” Speaking 4â€
     });
     const parsed = parseStructuredFeedback(legacyJson);
     expect(parsed.text).toBe("Old feedback");
+    expect(parsed.discourseFeedbacks).toBeUndefined();
+    expect(parsed.essayDiagnostic).toBeUndefined();
     expect(parsed.speakingCorrections).toBeUndefined();
     expect(parsed.speakingRetryMission).toBeUndefined();
+  });
+
+  it("round-trips Writing 3-Tier diagnostic payload cleanly", () => {
+    const payload: StructuredFeedbackPayload = {
+      text: "Overall essay evaluation",
+      criteriaScores: {
+        taskResponse: 6.5,
+        coherence: 6.0,
+        lexical: 6.5,
+        grammar: 6.0,
+      },
+      sentenceFeedbacks: [
+        {
+          scope: "SENTENCE",
+          sentenceIndex: 0,
+          originalSentence: "The government have to invest more money.",
+          category: "GRAMMAR",
+          tag: "SUBJECT_VERB_AGREEMENT",
+          severity: "CRITICAL",
+          note: "Subject 'government' is singular.",
+          suggestedSentence: "The government has to invest more money.",
+        },
+      ],
+      discourseFeedbacks: [
+        {
+          scope: "PARAGRAPH",
+          paragraphIndex: 1,
+          category: "ARGUMENTATION_TASK",
+          tag: "UNDERDEVELOPED_ARGUMENT",
+          severity: "MAJOR",
+          note: "Argument is stated but lacks deeper supporting rationale.",
+        },
+      ],
+      essayDiagnostic: {
+        bandScores: {
+          taskResponse: 6.5,
+          coherence: 6.0,
+          lexical: 6.5,
+          grammar: 6.0,
+          overall: 6.0,
+        },
+        summary: {
+          strengths: ["Clear paragraph structure", "Good range of linking devices"],
+          primaryWeakness: "Ideas in Body 1 require more substantiation",
+          actionableAdvice: "Provide concrete examples rather than generic claims.",
+        },
+      },
+    };
+
+    const serialized = serializeStructuredFeedback(payload);
+    const parsed = parseStructuredFeedback(serialized);
+
+    expect(parsed.sentenceFeedbacks).toHaveLength(1);
+    expect(parsed.sentenceFeedbacks[0].tag).toBe("SUBJECT_VERB_AGREEMENT");
+    expect(parsed.sentenceFeedbacks[0].severity).toBe("CRITICAL");
+
+    expect(parsed.discourseFeedbacks).toHaveLength(1);
+    expect(parsed.discourseFeedbacks![0].tag).toBe("UNDERDEVELOPED_ARGUMENT");
+    expect(parsed.discourseFeedbacks![0].paragraphIndex).toBe(1);
+
+    expect(parsed.essayDiagnostic).toBeDefined();
+    expect(parsed.essayDiagnostic?.bandScores.overall).toBe(6.0);
+    expect(parsed.essayDiagnostic?.summary.primaryWeakness).toBe("Ideas in Body 1 require more substantiation");
   });
 });
 

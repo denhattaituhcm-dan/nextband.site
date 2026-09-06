@@ -1,7 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { jwtVerify } from "jose";
 import { supabaseJWKS } from "../config/jwks.js";
-import { env, getRootAdminEmails } from "../config/env.js";
+import { env } from "../config/env.js";
 
 interface DecodedTokenData {
   id: string;
@@ -177,19 +177,17 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
     return null;
   }
 
-  // Fallback resolution: only used if database query was unavailable/errored or in isolated test mode
+  // Role resolution:
+  // If database found roles, database is the exclusive single source of truth.
+  // Otherwise, only use token fallback if in test mode or database was unavailable.
   let finalRoles: string[] = [];
   if (authoritativeRoles.length > 0) {
     finalRoles = [...authoritativeRoles];
   } else {
-    // SECURITY (SEC-02): If falling back to token claims, filter any unverified 'admin' claims
-    // unless the email matches trusted ROOT_ADMIN_EMAILS or we are in local test environment
+    // Fallback to token claims
     const isTestMode = process.env.NODE_ENV === "test" || Boolean(process.env.VITEST);
-    const rootAdminEmails = getRootAdminEmails();
-    const isRootAdmin = email && rootAdminEmails.has(email.toLowerCase());
-
     finalRoles = fallbackRoles.filter((r) => {
-      if (r === "admin" && !isRootAdmin && !isTestMode) {
+      if (r === "admin" && !isTestMode) {
         request.log.warn({ userId, email }, "🚨 [SECURITY] Rejected unverified 'admin' role claim from token fallback");
         return false;
       }

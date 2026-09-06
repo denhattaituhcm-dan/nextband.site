@@ -2,12 +2,15 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { ExamSubmissionService } from "../services/exam-submission.service.js";
 import { handleValidation } from "../utils/validation.js";
 import { paginationSchema } from "../schemas/common.schema.js";
+import { GeminiWritingDiagnosticService } from "../services/geminiWritingDiagnostic.service.js";
 
 export class SubmissionController {
   private service: ExamSubmissionService;
+  private aiDiagnosticService: GeminiWritingDiagnosticService;
 
   constructor(fastify: any) {
     this.service = new ExamSubmissionService(fastify.prisma);
+    this.aiDiagnosticService = new GeminiWritingDiagnosticService();
   }
 
   async list(request: FastifyRequest, reply: FastifyReply) {
@@ -159,6 +162,37 @@ export class SubmissionController {
     } catch (err: any) {
       const status = err.statusCode || 500;
       return reply.status(status).send({ error: err.message });
+    }
+  }
+
+  async diagnoseWriting(
+    request: FastifyRequest<{
+      Body: {
+        essayText: string;
+        promptText?: string;
+        taskType?: "task1" | "task2" | "general";
+      };
+    }>,
+    reply: FastifyReply
+  ) {
+    try {
+      const body = request.body || ({} as any);
+      const result = await this.aiDiagnosticService.diagnoseEssay({
+        essayText: body.essayText,
+        promptText: body.promptText,
+        taskType: body.taskType,
+      });
+
+      if (!result.success) {
+        return reply.status(502).send(result);
+      }
+
+      return reply.send(result);
+    } catch (err: any) {
+      return reply.status(500).send({
+        success: false,
+        error: err.message || "Failed to diagnose writing essay",
+      });
     }
   }
 }

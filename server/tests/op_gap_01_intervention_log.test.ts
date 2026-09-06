@@ -56,7 +56,7 @@ describe("🎯 OP-GAP-01: STUDENT CARE & INTERVENTION LOG SUITE", () => {
           actionTaken: "Gọi Zalo phụ huynh lúc 09:30, gửi tài liệu buổi học qua email",
           agreedPlan: "Học bù vào Thứ Bảy và nộp bù bài Writing Task 1",
           followUpDate: "2026-09-02",
-          status: "IN_PROGRESS",
+          status: "CONTACTED",
         },
         { id: "teacher-user-id", roles: ["teacher"] }
       );
@@ -64,7 +64,7 @@ describe("🎯 OP-GAP-01: STUDENT CARE & INTERVENTION LOG SUITE", () => {
       expect(result.id).toBe("int-001");
       expect(result.studentId).toBe("student-user-id");
       expect(result.category).toBe("ATTENDANCE");
-      expect(result.status).toBe("IN_PROGRESS");
+      expect(result.status).toBe("CONTACTED");
       expect(result.followUpDate).toEqual(new Date("2026-09-02T00:00:00.000Z"));
     });
   });
@@ -116,11 +116,11 @@ describe("🎯 OP-GAP-01: STUDENT CARE & INTERVENTION LOG SUITE", () => {
       const service = new InterventionService(mockPrisma);
       const updated = await service.update(
         "int-001",
-        { status: "IN_PROGRESS" },
+        { status: "CONTACTED" },
         { id: "teacher-user-id", roles: ["teacher"] }
       );
 
-      expect(updated.status).toBe("IN_PROGRESS");
+      expect(updated.status).toBe("CONTACTED");
       expect(updated.resolvedAt).toBeNull();
     });
   });

@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   segmentEssayIntoSentences,
+  segmentEssayIntoParagraphs,
   parseStructuredFeedback,
   serializeStructuredFeedback,
   PRESET_ERROR_TAGS,
@@ -163,5 +164,39 @@ describe("🎯 Sentence-Level Grading & Feedback Serialization Test Suite", () =
         grammar: 7,
       })
     ).toBe("7.0");
+  });
+
+  it("1.8 should correctly preserve numbered list sentences on separate lines without isolating numbers", () => {
+    const studentAnswer = `1. Playing video games can cause harm to childrens health.
+2. My group will carry out a survey about reading habits of young people.
+3. Parents should encourage children to play sports to maitain mental health.
+4. Serious air polution in big city cause harm to people's heanth.`;
+
+    const sentences = segmentEssayIntoSentences(studentAnswer);
+    expect(sentences).toEqual([
+      "1. Playing video games can cause harm to childrens health.",
+      "2. My group will carry out a survey about reading habits of young people.",
+      "3. Parents should encourage children to play sports to maitain mental health.",
+      "4. Serious air polution in big city cause harm to people's heanth.",
+    ]);
+
+    const { paragraphs } = segmentEssayIntoParagraphs(studentAnswer);
+    expect(paragraphs.length).toBe(4);
+    expect(paragraphs[0][0].text).toBe("1. Playing video games can cause harm to childrens health.");
+    expect(paragraphs[0][0].globalIndex).toBe(0);
+    expect(paragraphs[1][0].text).toBe("2. My group will carry out a survey about reading habits of young people.");
+    expect(paragraphs[1][0].globalIndex).toBe(1);
+    expect(paragraphs[2][0].text).toBe("3. Parents should encourage children to play sports to maitain mental health.");
+    expect(paragraphs[2][0].globalIndex).toBe(2);
+    expect(paragraphs[3][0].text).toBe("4. Serious air polution in big city cause harm to people's heanth.");
+    expect(paragraphs[3][0].globalIndex).toBe(3);
+  });
+
+  it("1.9 should not split on abbreviations or decimal numbers", () => {
+    const textWithAbbr = "Dr. Smith met Mr. Brown at 3.50 pm. They discussed IELTS preparation.";
+    const sentences = segmentEssayIntoSentences(textWithAbbr);
+    expect(sentences.length).toBe(2);
+    expect(sentences[0]).toBe("Dr. Smith met Mr. Brown at 3.50 pm.");
+    expect(sentences[1]).toBe("They discussed IELTS preparation.");
   });
 });

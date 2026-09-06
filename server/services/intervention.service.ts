@@ -220,8 +220,6 @@ export class InterventionService {
 
     if (targetStatus === "RESOLVED") {
       updateData.resolvedAt = new Date();
-    } else if (currentStatus === "RESOLVED" && targetStatus !== "RESOLVED") {
-      updateData.resolvedAt = null;
     }
 
     const updated = await this.prisma.studentInterventionLog.update({

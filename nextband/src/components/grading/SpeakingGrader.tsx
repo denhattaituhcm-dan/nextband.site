@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import {
   Send,
   Save,
@@ -248,6 +249,10 @@ export function SpeakingGrader({
 
   // Track which priority slot or accordion is expanded
   const [summaryExpanded, setSummaryExpanded] = useState<boolean>(false);
+
+  // Attempt 2 / Revision State
+  const [revisionRequired, setRevisionRequired] = useState<boolean>(false);
+  const [primaryErrorCategory, setPrimaryErrorCategory] = useState<ErrorCategory>("STRUCTURE");
   // ────────────────────────────────────────────────────────────────────────────
 
   // ARIS Speaking Evidence State (Dynamic Candidate Taxonomy v1.0)
@@ -337,9 +342,13 @@ export function SpeakingGrader({
     if (Array.isArray((structured.criteriaScores as any)?.speakingTags)) {
       setSelectedEvidenceTagIds(new Set((structured.criteriaScores as any).speakingTags));
     }
+
+    setPrimaryErrorCategory(structured.primaryErrorCategory || submissionDetail?.primaryErrorCategory || "STRUCTURE");
+    setRevisionRequired(!!(structured.revisionRequired || submissionDetail?.revisionRequired));
+
     setSelectedSegment(null);
     setIsDirty(false);
-  }, [currentAnswer]);
+  }, [currentAnswer, submissionDetail]);
 
   const overallBandPreview = useMemo(() => {
     return calculateSpeakingBand(criteriaScores);
@@ -456,6 +465,8 @@ export function SpeakingGrader({
     // Build the speaking 4–3–1 JSON payload
     const feedbackJson = serializeStructuredFeedback({
       criteriaScores: enrichedCriteriaScores,
+      revisionRequired,
+      primaryErrorCategory: revisionRequired ? primaryErrorCategory : null,
       speakingAnnotations: speakingAnnotations.length > 0 ? speakingAnnotations : undefined,
       speakingCorrections: speakingCorrections.length > 0 ? speakingCorrections : undefined,
       speakingStrengths: speakingStrengths.length > 0 ? speakingStrengths : undefined,
@@ -475,6 +486,8 @@ export function SpeakingGrader({
               score,
               feedback: feedbackJson,
               criteriaScores: enrichedCriteriaScores,
+              primaryErrorCategory: revisionRequired ? primaryErrorCategory : null,
+              revisionRequired,
               speakingCorrections: speakingCorrections.length > 0 ? speakingCorrections : undefined,
               speakingStrengths: speakingStrengths.length > 0 ? speakingStrengths : undefined,
               speakingSummary: speakingSummary,
@@ -495,6 +508,8 @@ export function SpeakingGrader({
             score,
             feedback: feedbackJson,
             criteriaScores: enrichedCriteriaScores,
+            primaryErrorCategory: revisionRequired ? primaryErrorCategory : null,
+            revisionRequired,
             speakingCorrections: speakingCorrections.length > 0 ? speakingCorrections : undefined,
             speakingStrengths: speakingStrengths.length > 0 ? speakingStrengths : undefined,
             speakingSummary: speakingSummary,
@@ -506,6 +521,9 @@ export function SpeakingGrader({
       grades: gradesPayload as any,
       totalScore: score > 0 ? score : undefined,
       options: {
+        feedback: feedbackJson,
+        primaryErrorCategory: revisionRequired ? primaryErrorCategory : null,
+        revisionRequired,
         criteriaScores: enrichedCriteriaScores,
         finalize,
       } as any,
@@ -1097,6 +1115,61 @@ export function SpeakingGrader({
                     className="min-h-[50px] text-xs"
                     maxLength={300}
                   />
+                </div>
+              </div>
+            )}
+          </Card>
+
+          {/* YÊU CẦU LÀM LẠI BÀI (ATTEMPT 2) */}
+          <Card className="border border-amber-200/80 rounded-2xl p-4 bg-amber-50/40 space-y-3 font-sans shadow-2xs">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label className="text-xs font-bold text-amber-950 flex items-center gap-1.5">
+                  <AlertTriangle className="h-3.5 w-3.5 text-amber-600 shrink-0" />
+                  Yêu cầu học viên thu âm lại (Attempt 2)
+                </Label>
+                <p className="text-[11px] text-amber-800/80">
+                  Bật nếu học viên cần nộp bản thu âm mới trước khi tính hoàn thành.
+                </p>
+              </div>
+              <Switch
+                checked={revisionRequired}
+                onCheckedChange={(checked) => {
+                  setRevisionRequired(checked);
+                  setIsDirty(true);
+                }}
+                disabled={isSubmitting}
+              />
+            </div>
+
+            {revisionRequired && (
+              <div className="space-y-2 pt-2 border-t border-amber-200/60">
+                <Label className="text-[11px] font-bold text-amber-900">
+                  Nhóm lỗi chính cần khắc phục (Primary Error):
+                </Label>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {[
+                    { key: "STRUCTURE", label: "Cấu trúc & Trôi chảy (FC)" },
+                    { key: "CONCEPT", label: "Ý tưởng & Logic (Idea)" },
+                    { key: "EXPRESSION", label: "Từ vựng (Lexical)" },
+                    { key: "GRAMMAR", label: "Phát âm & Ngữ pháp (PR/GRA)" },
+                  ].map((cat) => (
+                    <button
+                      key={cat.key}
+                      type="button"
+                      onClick={() => {
+                        setPrimaryErrorCategory(cat.key as ErrorCategory);
+                        setIsDirty(true);
+                      }}
+                      className={`p-2 rounded-lg text-[10px] font-bold text-left transition-all border ${
+                        primaryErrorCategory === cat.key
+                          ? "bg-amber-600 text-white border-amber-600 shadow-2xs"
+                          : "bg-white text-slate-700 border-amber-200/80 hover:bg-amber-100/50"
+                      }`}
+                    >
+                      {cat.label}
+                    </button>
+                  ))}
                 </div>
               </div>
             )}

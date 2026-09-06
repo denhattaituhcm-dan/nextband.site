@@ -276,7 +276,7 @@ export const StudentsTab: React.FC = () => {
               <TableHeader className="bg-muted/40">
                 <TableRow>
                   <TableHead>Học viên</TableHead>
-                  <TableHead>Homework hiện tại</TableHead>
+                  <TableHead>Tiến độ</TableHead>
                   <TableHead>Chuyên cần</TableHead>
                   <TableHead>Trạng thái</TableHead>
                   <TableHead className="text-right">Thao tác</TableHead>
@@ -338,7 +338,7 @@ export const StudentsTab: React.FC = () => {
                             onClick={() => handleOpenReport(student)}
                           >
                             <FileText className="h-3.5 w-3.5" />
-                            <span>Đánh giá & Báo cáo</span>
+                            <span>Báo cáo</span>
                           </Button>
                           <Button
                             variant="ghost"

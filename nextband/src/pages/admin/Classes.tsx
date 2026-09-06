@@ -767,16 +767,6 @@ export default function AdminClasses() {
                   </Badge>
                 )}
               </div>
-              <div className="flex items-center gap-1.5 mt-0.5 text-xs">
-                <span className={`font-semibold text-[11px] ${brand.textClass}`}>
-                  {brand.name}
-                </span>
-                {brand.band && (
-                  <span className="text-[10px] text-muted-foreground font-mono">
-                    • {brand.band}
-                  </span>
-                )}
-              </div>
             </div>
           </div>
         </TableCell>
@@ -818,14 +808,6 @@ export default function AdminClasses() {
           <Badge variant="outline" className="gap-1.5 font-normal">
             <Users className="h-3 w-3 text-muted-foreground" />
             {cls._count?.students || 0} HV
-          </Badge>
-        </TableCell>
-        <TableCell>
-          <Badge
-            variant="secondary"
-            className="font-medium text-emerald-700 bg-emerald-50 dark:bg-emerald-950 dark:text-emerald-300"
-          >
-            HW {currentHw} / {totalSessions}
           </Badge>
         </TableCell>
         <TableCell className="w-36">
@@ -1284,7 +1266,6 @@ export default function AdminClasses() {
                             <TableHead>Cơ sở / Phòng</TableHead>
                             <TableHead>Giáo viên</TableHead>
                             <TableHead>Học viên</TableHead>
-                            <TableHead>Homework</TableHead>
                             <TableHead>Tiến độ</TableHead>
                             <TableHead>Cần chấm</TableHead>
                             <TableHead className="w-[140px] text-right">Thao tác</TableHead>
@@ -1356,7 +1337,6 @@ export default function AdminClasses() {
                       <TableHead>Cơ sở / Phòng</TableHead>
                       <TableHead>Giáo viên</TableHead>
                       <TableHead>Học viên</TableHead>
-                      <TableHead>Homework</TableHead>
                       <TableHead>Tiến độ</TableHead>
                       <TableHead>Cần chấm</TableHead>
                       <TableHead className="w-[140px] text-right">Thao tác</TableHead>

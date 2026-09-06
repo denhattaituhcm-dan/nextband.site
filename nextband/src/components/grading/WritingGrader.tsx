@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { cn } from "@/lib/utils";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +28,8 @@ import {
   Eye,
   EyeOff,
   Headphones,
+  Sparkles,
+  MessageSquare,
 } from "lucide-react";
 import { SentenceLevelGrader } from "@/components/grading/SentenceLevelGrader";
 import { WritingRubricCard } from "@/components/grading/WritingRubricCard";
@@ -35,6 +38,8 @@ import { AnswerResultCard } from "@/components/submission/AnswerResultCard";
 import {
   CriteriaScores,
   SentenceFeedbackItem,
+  DiscourseFeedbackItem,
+  EssayDiagnosticPayload,
   ErrorCategory,
   parseStructuredFeedback,
   calculateWritingBand,
@@ -42,7 +47,7 @@ import {
 import { calculateGradingSla } from "@/lib/gradingSla";
 import { compareCanonicalOrder } from "@/lib/questionOrder";
 import { getFillBlankBlankCount } from "@/lib/fillBlank";
-import { formatStorageUrl } from "@/lib/api";
+import { formatStorageUrl, diagnoseWritingEssay } from "@/lib/api";
 import {
   detectExamSkill,
   isAutoGradedExam,
@@ -172,6 +177,9 @@ export function WritingGrader({
   }, [rawAnswers]);
 
   const hasMultipleQuestions = useMemo(() => {
+    // For Writing skill, ALWAYS use the dedicated Writing grading view with 4-criteria rubric and AI assistance
+    if (detectedSkill === "writing") return false;
+
     let qCount = 0;
     sections.forEach((sec: any) => {
       (sec.questionGroups || []).forEach((grp: any) => {
@@ -188,9 +196,8 @@ export function WritingGrader({
   const questionId = currentAnswer?.questionId || currentAnswer?.question_id || "";
   const answerId = currentAnswer?.id;
 
-  // Toggle mode: Bật chấm 4 tiêu chí IELTS vs Tắt (Chấm điểm trực tiếp cho viết câu)
-  const [useRubric, setUseRubric] = useState<boolean>(!isAutoGraded);
-  const [directScore, setDirectScore] = useState<string>("");
+  // Chấm duy nhất theo chuẩn 4 tiêu chí IELTS (TR, CC, LR, GRA)
+  const useRubric = true;
 
   // Local grading state
   const [criteriaScores, setCriteriaScores] = useState<CriteriaScores>({
@@ -200,46 +207,19 @@ export function WritingGrader({
     grammar: null,
   });
   const [sentenceFeedbacks, setSentenceFeedbacks] = useState<SentenceFeedbackItem[]>([]);
+  const [discourseFeedbacks, setDiscourseFeedbacks] = useState<DiscourseFeedbackItem[]>([]);
+  const [essayDiagnostic, setEssayDiagnostic] = useState<EssayDiagnosticPayload | null>(null);
   const [feedbackText, setFeedbackText] = useState<string>("");
   const [primaryErrorCategory, setPrimaryErrorCategory] = useState<ErrorCategory>("STRUCTURE");
   const [revisionRequired, setRevisionRequired] = useState<boolean>(false);
+  const [isDiagnosing, setIsDiagnosing] = useState<boolean>(false);
+  const [aiDiagnosticNotice, setAiDiagnosticNotice] = useState<string | null>(null);
 
-  // Hydrate from existing draft or prefill auto-graded score
+  // Hydrate from existing draft or prefill scores
   useEffect(() => {
-    if (isAutoGraded) {
-      setUseRubric(false);
-      const autoScore =
-        submissionDetail?.bandScore ??
-        submissionDetail?.band_score ??
-        submissionDetail?.totalScore ??
-        submissionDetail?.total_score ??
-        currentAnswer?.score;
-      if (autoScore != null && Number(autoScore) > 0) {
-        setDirectScore(String(autoScore));
-      }
-    }
-
     if (!currentAnswer) return;
     const rawFb = currentAnswer.feedback || submissionDetail?.feedback || "";
     const structured = parseStructuredFeedback(rawFb);
-
-    const hasCriteria = !!structured.criteriaScores && (
-      structured.criteriaScores.taskResponse != null ||
-      structured.criteriaScores.coherence != null ||
-      structured.criteriaScores.lexical != null ||
-      structured.criteriaScores.grammar != null
-    );
-
-    if (hasCriteria && !isAutoGraded) {
-      setUseRubric(true);
-      setDirectScore("");
-    } else if (currentAnswer.score != null && Number(currentAnswer.score) > 0 && !isAutoGraded) {
-      setUseRubric(false);
-      setDirectScore(String(currentAnswer.score));
-    } else if (!isAutoGraded) {
-      const wordCount = (currentAnswer.answerText || "").trim().split(/\s+/).filter(Boolean).length;
-      setUseRubric(wordCount >= 60);
-    }
 
     setCriteriaScores(
       structured.criteriaScores || {
@@ -250,35 +230,87 @@ export function WritingGrader({
       }
     );
     setSentenceFeedbacks(structured.sentenceFeedbacks || []);
+    setDiscourseFeedbacks(structured.discourseFeedbacks || []);
+    setEssayDiagnostic(structured.essayDiagnostic || null);
     setFeedbackText(structured.text || (typeof rawFb === "string" && !rawFb.startsWith("{") ? rawFb : ""));
     setPrimaryErrorCategory(structured.primaryErrorCategory || submissionDetail?.primaryErrorCategory || "STRUCTURE");
     setRevisionRequired(!!(structured.revisionRequired || submissionDetail?.revisionRequired));
     setIsDirty(false);
-  }, [currentAnswer, isAutoGraded, submissionDetail]);
+  }, [currentAnswer, submissionDetail]);
+
+  const handleAiDiagnose = async () => {
+    if (!rawAnswerText || rawAnswerText.trim().length === 0) {
+      alert("Học sinh chưa có bài viết để chấm.");
+      return;
+    }
+
+    try {
+      setIsDiagnosing(true);
+      setAiDiagnosticNotice(null);
+
+      const result = await diagnoseWritingEssay({
+        essayText: rawAnswerText,
+        promptText: (currentAnswer?.instructions ? currentAnswer.instructions + "\n" : "") + (currentAnswer?.questionText || ""),
+        taskType: homeworkTitle.toLowerCase().includes("task 1") ? "task1" : "task2",
+      });
+
+      if (result.success) {
+        if (result.sentenceFeedbacks && Array.isArray(result.sentenceFeedbacks)) {
+          setSentenceFeedbacks(result.sentenceFeedbacks);
+        }
+        if (result.discourseFeedbacks && Array.isArray(result.discourseFeedbacks)) {
+          setDiscourseFeedbacks(result.discourseFeedbacks);
+        }
+        if (result.essayDiagnostic) {
+          setEssayDiagnostic(result.essayDiagnostic);
+          if (result.essayDiagnostic.bandScores) {
+            setCriteriaScores({
+              taskResponse: result.essayDiagnostic.bandScores.taskResponse ?? criteriaScores.taskResponse,
+              coherence: result.essayDiagnostic.bandScores.coherence ?? criteriaScores.coherence,
+              lexical: result.essayDiagnostic.bandScores.lexical ?? criteriaScores.lexical,
+              grammar: result.essayDiagnostic.bandScores.grammar ?? criteriaScores.grammar,
+            });
+          }
+          if (result.essayDiagnostic.summary) {
+            const summaryParts: string[] = [];
+            if (result.essayDiagnostic.summary.primaryWeakness) {
+              summaryParts.push(`⚠️ Điểm cần khắc phục: ${result.essayDiagnostic.summary.primaryWeakness}`);
+            }
+            if (result.essayDiagnostic.summary.actionableAdvice) {
+              summaryParts.push(`🎯 Lời khuyên: ${result.essayDiagnostic.summary.actionableAdvice}`);
+            }
+            if (result.essayDiagnostic.summary.strengths?.length > 0) {
+              summaryParts.push(`✨ Điểm sáng: ${result.essayDiagnostic.summary.strengths.join("; ")}`);
+            }
+            if (summaryParts.length > 0 && !feedbackText.trim()) {
+              setFeedbackText(summaryParts.join("\n\n"));
+            }
+          }
+        }
+        setIsDirty(true);
+        setAiDiagnosticNotice("AI Gemini đã hoàn tất chấm sơ bộ 3 tầng! Thầy/Cô vui lòng kiểm tra và duyệt lại.");
+      } else {
+        alert(result.error || "Không thể thực hiện chấm AI sơ bộ.");
+      }
+    } catch (err: any) {
+      alert(err.message || "Lỗi khi gọi AI Gemini chẩn đoán.");
+    } finally {
+      setIsDiagnosing(false);
+    }
+  };
 
   // Live Overall Band calculation preview
+  // Live Overall Band calculation preview from 4 criteria
   const overallBandPreview = useMemo(() => {
     return calculateWritingBand(criteriaScores);
   }, [criteriaScores]);
 
-  const displayScore = useRubric
-    ? overallBandPreview
-    : directScore.trim()
-    ? `Band ${parseFloat(directScore).toFixed(1)}`
-    : "—";
+  const displayScore = overallBandPreview !== "—" ? `Band ${overallBandPreview}` : "—";
 
   const handleSave = async (finalize: boolean) => {
-    let score: number = 0;
-    let finalCriteriaScores: CriteriaScores | null = null;
-
-    if (useRubric) {
-      const bandStr = calculateWritingBand(criteriaScores);
-      score = parseFloat(bandStr) || 0;
-      finalCriteriaScores = criteriaScores;
-    } else {
-      score = parseFloat(directScore) || 0;
-      finalCriteriaScores = null;
-    }
+    const bandStr = calculateWritingBand(criteriaScores);
+    const score = parseFloat(bandStr) || 0;
+    const finalCriteriaScores = criteriaScores;
 
     // Build grades payload for all answers or target answer
     const gradesPayload = rawAnswers.length > 0
@@ -403,7 +435,7 @@ export function WritingGrader({
               <span className="font-bold text-blue-700">{studentName}</span>
               <span>•</span>
               <span className="text-slate-700 font-bold">
-                {useRubric ? "Overall Band" : "Điểm trực tiếp"}: {displayScore}
+                Overall Band: {displayScore}
               </span>
             </div>
           </div>
@@ -585,8 +617,44 @@ export function WritingGrader({
                 })}
             </div>
           ) : (
-            /* CASE 2: SINGLE ESSAY / WRITING TASK (Document View) */
+            /* CASE 2: ESSAY / WRITING TASK (Document View) */
             <>
+              {/* MULTI-TASK SELECTOR PILLS (If exam has Task 1 + Task 2 or multiple writing items) */}
+              {(answers.length > 1 || rawAnswers.length > 1) && (
+                <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                  <span className="text-xs font-bold text-slate-500 mr-1 shrink-0">Chọn phần thi:</span>
+                  {(answers.length > 0 ? answers : rawAnswers).map((ans: any, idx: number) => {
+                    const isSelected = idx === activeAnswerIndex;
+                    const taskLabel = ans.questionTitle
+                      ? ans.questionTitle.replace(/<[^>]*>/g, " ").trim()
+                      : `Writing Task ${idx + 1}`;
+                    const hasAnswer = !!(ans.answerText && ans.answerText.trim().length > 0);
+                    return (
+                      <button
+                        key={ans.questionId || ans.id || idx}
+                        type="button"
+                        onClick={() => {
+                          setActiveAnswerIndex(idx);
+                          setIsDirty(false);
+                        }}
+                        className={cn(
+                          "px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border shadow-2xs shrink-0 cursor-pointer",
+                          isSelected
+                            ? "bg-blue-600 text-white border-blue-600 shadow-blue-500/20"
+                            : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300"
+                        )}
+                      >
+                        <span>{taskLabel}</span>
+                        <span
+                          className={cn("w-2 h-2 rounded-full", hasAnswer ? (isSelected ? "bg-white" : "bg-emerald-500") : "bg-slate-300")}
+                          title={hasAnswer ? "Đã nộp bài viết" : "Chưa có bài viết"}
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
               {/* ĐỀ BÀI (Question & Task Specification) */}
               <Card className="border border-blue-200 shadow-xs rounded-2xl p-5 bg-blue-50/60 space-y-3 font-sans">
                 <div className="flex items-center justify-between border-b border-blue-100/80 pb-2.5">
@@ -643,13 +711,34 @@ export function WritingGrader({
                       Bài Làm Của Học Viên
                     </h3>
                   </div>
-                  <span className="text-xs font-mono font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200">
-                    {wordCount} từ
-                  </span>
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-xs font-mono font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200">
+                      {wordCount} từ
+                    </span>
+                    {!isAutoGraded && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handleAiDiagnose}
+                        disabled={isDiagnosing || !rawAnswerText.trim()}
+                        className="h-8 text-xs font-bold bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200 text-purple-700 hover:bg-purple-100 shadow-2xs gap-1.5"
+                      >
+                        <Sparkles className={`h-3.5 w-3.5 text-purple-600 ${isDiagnosing ? "animate-spin" : ""}`} />
+                        {isDiagnosing ? "AI Đang Chẩn Đoán..." : "AI Chấm Sơ Bộ"}
+                      </Button>
+                    )}
+                  </div>
                 </div>
 
+                {aiDiagnosticNotice && (
+                  <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-xl flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-emerald-600 shrink-0" />
+                    <span>{aiDiagnosticNotice}</span>
+                  </div>
+                )}
+
                 {rawAnswerText.trim() ? (
-                  <div className="text-sm font-sans leading-relaxed text-slate-900 select-text">
+                  <div className="text-sm font-sans leading-relaxed text-slate-900 select-text space-y-4">
                     <SentenceLevelGrader
                       essayText={rawAnswerText}
                       sentenceFeedbacks={sentenceFeedbacks}
@@ -658,6 +747,34 @@ export function WritingGrader({
                         setIsDirty(true);
                       }}
                     />
+
+                    {/* TẦNG 2: DISCOURSE / PARAGRAPH DIAGNOSIS CARDS */}
+                    {discourseFeedbacks.length > 0 && (
+                      <div className="mt-4 pt-4 border-t border-slate-200 space-y-2">
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+                          <MessageSquare className="h-3.5 w-3.5 text-indigo-600" />
+                          <span>Chẩn đoán Cấp Đoạn Văn / Luận Điểm (Tầng 2 - Discourse):</span>
+                        </div>
+                        <div className="grid gap-2">
+                          {discourseFeedbacks.map((item, idx) => (
+                            <div
+                              key={idx}
+                              className="p-3 bg-indigo-50/70 border border-indigo-200 rounded-xl text-xs space-y-1"
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="font-bold text-indigo-950">
+                                  Đoạn {item.paragraphIndex + 1}: {item.tag}
+                                </span>
+                                <Badge variant="outline" className="bg-white text-indigo-700 border-indigo-300 text-[10px]">
+                                  {item.category} • {item.severity}
+                                </Badge>
+                              </div>
+                              <p className="text-slate-700 leading-relaxed">{item.note}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="p-8 text-center text-xs text-slate-400 italic">
@@ -671,103 +788,15 @@ export function WritingGrader({
 
         {/* RIGHT COLUMN (32%): GRADING CONTROLS (STICKY) */}
         <aside className="lg:col-span-4 h-full overflow-y-auto p-5 border-l border-slate-200 bg-white space-y-4 shadow-xs">
-          {/* PHƯƠNG THỨC CHẤM BÀI (Quick Band vs Chi Tiết 4 Tiêu Chí) */}
-          <div className="space-y-1.5 font-sans">
-            <Label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-              <Award className="h-3.5 w-3.5 text-blue-600" />
-              Phương thức chấm bài:
-            </Label>
-            <div className="grid grid-cols-2 p-1 bg-slate-100 rounded-xl border border-slate-200 gap-1">
-              <button
-                type="button"
-                onClick={() => {
-                  setUseRubric(false);
-                  setIsDirty(true);
-                }}
-                className={`py-1.5 px-2 text-xs font-extrabold rounded-lg transition-all text-center ${
-                  !useRubric
-                    ? "bg-white text-blue-700 shadow-xs border border-slate-200"
-                    : "text-slate-600 hover:text-slate-900 font-semibold"
-                }`}
-              >
-                Band Tổng Hợp (Quick Band)
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setUseRubric(true);
-                  setIsDirty(true);
-                }}
-                className={`py-1.5 px-2 text-xs font-extrabold rounded-lg transition-all text-center ${
-                  useRubric
-                    ? "bg-white text-blue-700 shadow-xs border border-slate-200"
-                    : "text-slate-600 hover:text-slate-900 font-semibold"
-                }`}
-              >
-                Chi Tiết 4 Tiêu Chí
-              </button>
-            </div>
-          </div>
-
-          {/* NẾU CHỌN CHI TIẾT 4 TIÊU CHÍ: HIỆN RUBRIC CARD (TR, CC, LR, GRA) */}
-          {useRubric ? (
-            <WritingRubricCard
-              scores={criteriaScores}
-              onChange={(updated) => {
-                setCriteriaScores(updated);
-                setIsDirty(true);
-              }}
-              disabled={isSubmitting}
-            />
-          ) : (
-            /* NẾU CHỌN BAND TỔNG HỢP: HIỆN CHỌN BAND NHANH (4.0 - 9.0) DÀNH CHO BÀI VIẾT CÂU */
-            <Card className="border border-slate-200 rounded-2xl p-4 bg-slate-50/50 space-y-3 font-sans">
-              <div className="flex items-center justify-between">
-                <Label className="text-xs font-bold text-slate-800 flex items-center gap-1">
-                  <Award className="h-3.5 w-3.5 text-blue-600" />
-                  Band Score bài làm (Thang 4.0 – 8.0)
-                </Label>
-                {directScore && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setDirectScore("");
-                      setIsDirty(true);
-                    }}
-                    className="h-5 px-1.5 text-[10px] text-slate-400 hover:text-slate-600"
-                  >
-                    Xóa
-                  </Button>
-                )}
-              </div>
-              <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
-                Đánh giá chất lượng tổng thể bài làm / điểm số theo chuẩn IELTS Band.
-              </p>
-              <div className="grid grid-cols-5 gap-1.5">
-                {["4.0", "4.5", "5.0", "5.5", "6.0", "6.5", "7.0", "7.5", "8.0"].map((b) => (
-                  <Button
-                    key={b}
-                    type="button"
-                    variant={directScore === b ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => {
-                      setDirectScore(b);
-                      setIsDirty(true);
-                    }}
-                    className={`h-8 text-xs font-bold ${
-                      directScore === b
-                        ? "bg-blue-600 text-white hover:bg-blue-700 shadow-xs"
-                        : "bg-white text-slate-700 border-slate-200 hover:bg-slate-100"
-                    }`}
-                  >
-                    Band {b}
-                  </Button>
-                ))}
-              </div>
-            </Card>
-          )}
+          {/* CHẤM BÀI THEO 4 TIÊU CHÍ IELTS (TR, CC, LR, GRA) */}
+          <WritingRubricCard
+            scores={criteriaScores}
+            onChange={(updated) => {
+              setCriteriaScores(updated);
+              setIsDirty(true);
+            }}
+            disabled={isSubmitting}
+          />
 
           {/* NHẬN XÉT & GÓP Ý CỦA GIÁO VIÊN */}
           <div className="space-y-2 font-sans">

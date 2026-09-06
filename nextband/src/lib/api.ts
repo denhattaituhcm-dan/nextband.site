@@ -4907,3 +4907,31 @@ export const interventionApi = {
   },
 };
 
+export async function diagnoseWritingEssay(payload: {
+  essayText: string;
+  promptText?: string;
+  taskType?: "task1" | "task2" | "general";
+}): Promise<{
+  success: boolean;
+  essayDiagnostic: any;
+  discourseFeedbacks: any[];
+  sentenceFeedbacks: any[];
+  error?: string;
+}> {
+  const token = await getAuthToken();
+  const res = await fetch(`${API_BASE_URL}/submissions/diagnose-writing`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.error || `Lỗi chẩn đoán AI (Mã ${res.status})`);
+  }
+  return data;
+}
+

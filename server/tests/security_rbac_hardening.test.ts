@@ -13,7 +13,7 @@ describe("🛡️ SEC-02 RBAC Hardening: user_metadata Privilege Escalation Prev
     });
 
     // Mock Prisma on fastify instance for unit test
-    app.decorate("prisma", {
+    (app as any).decorate("prisma", {
       user: {
         findFirst: async ({ where }: any) => {
           // If query is for legitimate student registered in DB

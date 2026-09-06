@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   classesApi,
   examsApi,
@@ -121,6 +121,7 @@ interface WorkbookItem {
 
 export default function TeacherWorkspace() {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
   const urlClassId = searchParams.get("classId");
   const urlTeacherId = searchParams.get("id") || searchParams.get("teacherId");
@@ -517,7 +518,7 @@ export default function TeacherWorkspace() {
   }, [workbookItems, selectedHomeworkId]);
 
   // 4. Fetch detailed submission (with exam sections, question prompts, passages)
-  const { data: currentSubmissionDetail } = useQuery({
+  const { data: currentSubmissionDetail, refetch: refetchSubmissionDetail } = useQuery({
     queryKey: ["submission-detail-for-grading", currentHomework?.submissionId],
     queryFn: async () => {
       if (!currentHomework?.submissionId) return null;
@@ -844,19 +845,24 @@ export default function TeacherWorkspace() {
           payload.options
         );
 
+        // Invalidate cache and refetch fresh data
+        queryClient.invalidateQueries({ queryKey: ["submission-detail-for-grading", currentHomework.submissionId] });
+        queryClient.invalidateQueries({ queryKey: ["teacher-workspace-data", selectedClassId] });
+        await Promise.allSettled([
+          refetchWorkspace(),
+          refetchSubmissionDetail(),
+        ]);
+
         if (payload.options.finalize) {
           toast({
             title: "Đã trả bài thành công 🎉",
             description: `Đã lưu điểm cho học viên ${currentStudent.fullName}.${payload.options.revisionRequired ? " (Đã gửi yêu cầu sửa bài Attempt 2)" : ""}`,
           });
-
-          await refetchWorkspace();
         } else {
           toast({
             title: "Đã lưu nháp thành công 💾",
             description: "Điểm và nhận xét đã được lưu. Học viên chưa thấy kết quả cho đến khi Trả bài.",
           });
-          await refetchWorkspace();
         }
       }
     } catch (err: any) {

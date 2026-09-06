@@ -160,7 +160,7 @@ export const StudentDrawer: React.FC<StudentDrawerProps> = ({
                     title="Đánh giá cuối khóa & Xuất thẻ báo cáo học tập"
                   >
                     <FileText className="h-4 w-4" />
-                    Đánh Giá & Báo Cáo
+                    Báo cáo
                   </Button>
                 )}
               </div>

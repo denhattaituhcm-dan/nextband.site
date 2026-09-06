@@ -1,5 +1,8 @@
+import path from "path";
 import fs from "fs";
 import dotenv from "dotenv";
+import { defineConfig } from "vitest/config";
+import react from "@vitejs/plugin-react-swc";
 
 // ── SRE ISOLATION: Prioritize .env.test.local -> .env.test. NEVER load production .env in test ──
 const rootDir = path.resolve(__dirname, "..");

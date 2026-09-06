@@ -50,6 +50,13 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: [path.resolve(__dirname, "./nextband/src/test/setup.ts")],
+    pool: "forks",
+    poolOptions: {
+      forks: {
+        execArgv: ["--max-old-space-size=4096"],
+        singleFork: true,
+      },
+    },
     fileParallelism: false,
     testTimeout: 45000,
     hookTimeout: 45000,

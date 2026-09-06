@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import {
   ErrorCategory,
   SentenceFeedbackItem,
-  segmentEssayIntoSentences,
+  segmentEssayIntoParagraphs,
   PRESET_ERROR_TAGS,
   CATEGORY_COLORS,
 } from "@/lib/sentenceFeedback";
@@ -45,7 +45,10 @@ export function SentenceLevelGrader({
   onChange,
   readOnly = false,
 }: SentenceLevelGraderProps) {
-  const sentences = useMemo(() => segmentEssayIntoSentences(essayText), [essayText]);
+  const { paragraphs, sentences } = useMemo(
+    () => segmentEssayIntoParagraphs(essayText),
+    [essayText]
+  );
 
   const feedbackMap = useMemo(() => {
     const map = new Map<number, SentenceFeedbackItem>();
@@ -175,53 +178,55 @@ export function SentenceLevelGrader({
       </div>
 
       {/* Interactive Sentence-by-Sentence Reader */}
-      <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-neutral-950 text-sm leading-relaxed space-y-2">
-        <div className="flex flex-wrap gap-x-1.5 gap-y-2 select-text">
-          {sentences.map((sentence, idx) => {
-            const feedback = feedbackMap.get(idx);
-            const isFlagged = !!feedback;
-            const categoryStyle = feedback ? CATEGORY_COLORS[feedback.category] : null;
+      <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-neutral-950 text-sm leading-relaxed space-y-2.5">
+        {paragraphs.map((para, pIdx) => (
+          <div key={pIdx} className="flex flex-wrap gap-x-1.5 gap-y-1.5 items-baseline select-text">
+            {para.map(({ text: sentence, globalIndex: idx }) => {
+              const feedback = feedbackMap.get(idx);
+              const isFlagged = !!feedback;
+              const categoryStyle = feedback ? CATEGORY_COLORS[feedback.category] : null;
 
-            return (
-              <span
-                key={idx}
-                onClick={() => handleOpenDialog(idx)}
-                className={cn(
-                  "inline-block rounded-md px-1.5 py-0.5 transition-all cursor-pointer relative group",
-                  isFlagged
-                    ? cn(
-                        "font-medium border shadow-2xs",
-                        categoryStyle?.highlightBg,
-                        categoryStyle?.border,
-                        categoryStyle?.text
-                      )
-                    : "hover:bg-slate-100 dark:hover:bg-slate-800/80 text-foreground border border-transparent"
-                )}
-                title={
-                  feedback
-                    ? `[${feedback.category}] ${feedback.tag}: ${feedback.note}`
-                    : readOnly
-                    ? ""
-                    : "Click để chỉnh sửa / khen ngợi câu này"
-                }
-              >
-                <span className="inline-block">{sentence}</span>
+              return (
+                <span
+                  key={idx}
+                  onClick={() => handleOpenDialog(idx)}
+                  className={cn(
+                    "inline-block rounded-md px-1.5 py-0.5 transition-all cursor-pointer relative group",
+                    isFlagged
+                      ? cn(
+                          "font-medium border shadow-2xs",
+                          categoryStyle?.highlightBg,
+                          categoryStyle?.border,
+                          categoryStyle?.text
+                        )
+                      : "hover:bg-slate-100 dark:hover:bg-slate-800/80 text-foreground border border-transparent"
+                  )}
+                  title={
+                    feedback
+                      ? `[${feedback.category}] ${feedback.tag}: ${feedback.note}`
+                      : readOnly
+                      ? ""
+                      : "Click để chỉnh sửa / khen ngợi câu này"
+                  }
+                >
+                  <span className="inline-block">{sentence}</span>
 
-                {/* Number tag for flagged sentences */}
-                {isFlagged && (
-                  <span
-                    className={cn(
-                      "ml-1 text-[10px] font-bold px-1 py-0.2 rounded uppercase inline-flex items-center align-baseline",
-                      categoryStyle?.badgeBg
-                    )}
-                  >
-                    {feedback.category === "PRAISE" ? "⭐ " : ""}{feedback.tag}
-                  </span>
-                )}
-              </span>
-            );
-          })}
-        </div>
+                  {/* Number tag for flagged sentences */}
+                  {isFlagged && (
+                    <span
+                      className={cn(
+                        "ml-1 text-[10px] font-bold px-1 py-0.2 rounded uppercase inline-flex items-center align-baseline",
+                        categoryStyle?.badgeBg
+                      )}
+                    >
+                      {feedback.category === "PRAISE" ? "⭐ " : ""}{feedback.tag}
+                    </span>
+                  )}
+                </span>
+              );
+            })}
+          </div>
+        ))}
       </div>
 
       {/* Render feedback card list if in readOnly mode or for easy review */}

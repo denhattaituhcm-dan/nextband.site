@@ -77,4 +77,19 @@ export default async function submissionsRoutes(fastify: FastifyInstance) {
       return controller.regrade(request, reply);
     }
   );
+
+  // POST /submissions/diagnose-writing - AI 3-Tier Pre-grading Diagnostic for Teachers
+  fastify.post<{
+    Body: {
+      essayText: string;
+      promptText?: string;
+      taskType?: "task1" | "task2" | "general";
+    };
+  }>(
+    "/diagnose-writing",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      return controller.diagnoseWriting(request, reply);
+    }
+  );
 }

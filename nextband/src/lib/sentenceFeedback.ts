@@ -1,12 +1,81 @@
 export type ErrorCategory = "CONCEPT" | "STRUCTURE" | "EXPRESSION" | "GRAMMAR" | "OTHER" | "PRAISE";
 
+export type DiagnosticScope = "SENTENCE" | "PARAGRAPH" | "ESSAY";
+export type DiagnosticSeverity = "CRITICAL" | "MAJOR" | "MODERATE" | "MINOR" | "PRAISE";
+
+// ── TIER 1: SENTENCE LEVEL DIAGNOSIS ──────────────────────────────────────────
+export type SentenceDiagnosticTag =
+  // Grammar & Syntax (GRA)
+  | "SUBJECT_VERB_AGREEMENT"
+  | "TENSE_ASPECT"
+  | "ARTICLE_DETERMINER"
+  | "PREPOSITION"
+  | "WORD_FORM"
+  | "PRONOUN_REFERENCE"
+  | "SENTENCE_FRAGMENT"
+  | "RUN_ON_PUNCTUATION"
+  | "PASSIVE_VOICE"
+  | "RELATIVE_CLAUSE"
+  // Lexical & Expression (LR)
+  | "SPELLING_TYPO"
+  | "WORD_CHOICE"
+  | "COLLOCATION"
+  | "REPETITION"
+  | "AWKWARD_PHRASING"
+  | "INFORMAL_REGISTER"
+  // Praise & Strength
+  | "GOOD_COLLOCATION_VOCAB"
+  | "COMPLEX_ACCURATE_STRUCTURE";
+
 export interface SentenceFeedbackItem {
   sentenceIndex: number;
   originalSentence: string;
   category: ErrorCategory;
-  tag: string;
+  tag: string | SentenceDiagnosticTag;
   note: string;
   suggestedSentence?: string;
+  scope?: "SENTENCE";
+  severity?: DiagnosticSeverity;
+}
+
+// ── TIER 2: DISCOURSE / PARAGRAPH LEVEL DIAGNOSIS ────────────────────────────
+export type DiscourseDiagnosticCategory = "COHERENCE_COHESION" | "ARGUMENTATION_TASK";
+
+export type DiscourseDiagnosticTag =
+  // Coherence & Cohesion (CC)
+  | "MISSING_TRANSITION"
+  | "OVERUSED_MECHANICAL_LINKERS"
+  | "COHESION_BREAK"
+  | "TOPIC_SENTENCE_UNCLEAR"
+  | "PARAGRAPH_UNITY"
+  // Argumentation & Task (TR)
+  | "WEAK_EXPLANATION"
+  | "WEAK_SUPPORTING_EXAMPLE"
+  | "UNDERDEVELOPED_ARGUMENT"
+  | "LOGICAL_CONTRADICTION";
+
+export interface DiscourseFeedbackItem {
+  id?: string;
+  scope: "PARAGRAPH";
+  paragraphIndex: number;
+  category: DiscourseDiagnosticCategory;
+  tag: DiscourseDiagnosticTag;
+  severity: DiagnosticSeverity;
+  note: string;
+  quoteOrContext?: string;
+}
+
+// ── TIER 3: ESSAY LEVEL DIAGNOSIS ────────────────────────────────────────────
+export interface EssayEvaluationSummary {
+  strengths: string[];
+  primaryWeakness: string;
+  actionableAdvice: string;
+  examinerNotes?: string;
+}
+
+export interface EssayDiagnosticPayload {
+  bandScores: CriteriaScores & { overall?: number | null };
+  summary: EssayEvaluationSummary;
 }
 
 export interface CriteriaScores {
@@ -357,6 +426,9 @@ export interface StructuredFeedbackPayload {
   criteriaScores?: CriteriaScores | null;
   sentenceFeedbacks?: SentenceFeedbackItem[];
   tabSwitchCount?: number;
+  // ── Writing 3-Tier Diagnostic Fields ───────────────────────────────────────
+  discourseFeedbacks?: DiscourseFeedbackItem[];
+  essayDiagnostic?: EssayDiagnosticPayload;
   // ── Speaking 4–3–1 Diagnostic Fields ──────────────────────────────────────
   speakingAnnotations?: SpeakingSentenceAnnotation[];
   speakingCorrections?: SpeakingCorrectionItem[];
@@ -553,25 +625,100 @@ export const CATEGORY_COLORS: Record<
   },
 };
 
+export interface ParagraphSentenceGroup {
+  text: string;
+  globalIndex: number;
+}
+
+export interface SegmentedParagraphsResult {
+  paragraphs: ParagraphSentenceGroup[][];
+  sentences: string[];
+}
+
 /**
- * Splits essay raw text into distinct sentence units using punctuation delimiters
- * (. ? ! or multiple newlines) while preserving complete readability.
+ * Splits essay raw text into paragraph blocks and distinct sentence units,
+ * preventing list index markers (e.g., "1.", "2)", "a.") and abbreviations
+ * from being isolated or breaking onto wrong lines.
  */
-export function segmentEssayIntoSentences(text: string): string[] {
-  if (!text || typeof text !== "string") return [];
-
-  // Match sentences ending with . ! ? followed by space/newline or end of text
-  // Also preserve paragraph breaks as separate sentences if non-empty
-  const rawSegments = text
-    .split(/(?<=[.?!])\s+|\n{2,}/)
-    .map((s) => s.trim())
-    .filter((s) => s.length > 0);
-
-  if (rawSegments.length === 0 && text.trim().length > 0) {
-    return [text.trim()];
+export function segmentEssayIntoParagraphs(text: string): SegmentedParagraphsResult {
+  if (!text || typeof text !== "string") {
+    return { paragraphs: [], sentences: [] };
   }
 
-  return rawSegments;
+  const normalized = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n").trim();
+  if (!normalized) {
+    return { paragraphs: [], sentences: [] };
+  }
+
+  const rawLines = normalized.split(/\n+/).map((l) => l.trim()).filter(Boolean);
+  const paragraphs: ParagraphSentenceGroup[][] = [];
+  const sentences: string[] = [];
+  let globalIndex = 0;
+
+  const isListMarkerOrIncomplete = (str: string) => {
+    const s = str.trim();
+    if (!s) return true;
+    if (/^\(?\d+[\.\)]?$/.test(s)) return true;
+    if (/^\(?[a-zA-Z][\.\)]$/.test(s)) return true;
+    if (/^[-*•]+$/.test(s)) return true;
+    if (/\b(mr|mrs|ms|dr|prof|sr|jr|vs|etc|e\.g|i\.e|no|approx)\.$/i.test(s)) return true;
+    if (!/[a-zA-Z\u00C0-\u024F\u1EA0-\u1EF9]/.test(s)) return true;
+    return false;
+  };
+
+  for (const line of rawLines) {
+    const rawSegments = line
+      .split(/(?<=[.?!])\s+/)
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+
+    const merged: string[] = [];
+    for (let i = 0; i < rawSegments.length; i++) {
+      const seg = rawSegments[i];
+      if (merged.length > 0 && isListMarkerOrIncomplete(merged[merged.length - 1])) {
+        merged[merged.length - 1] = merged[merged.length - 1] + " " + seg;
+      } else {
+        merged.push(seg);
+      }
+    }
+
+    if (merged.length > 1 && isListMarkerOrIncomplete(merged[merged.length - 1])) {
+      const last = merged.pop()!;
+      merged[merged.length - 1] = merged[merged.length - 1] + " " + last;
+    }
+
+    const paraSentences: ParagraphSentenceGroup[] = [];
+    for (const s of merged) {
+      const trimmed = s.trim();
+      if (trimmed.length > 0) {
+        paraSentences.push({
+          text: trimmed,
+          globalIndex: globalIndex++,
+        });
+        sentences.push(trimmed);
+      }
+    }
+
+    if (paraSentences.length > 0) {
+      paragraphs.push(paraSentences);
+    }
+  }
+
+  if (sentences.length === 0 && text.trim().length > 0) {
+    const single = text.trim();
+    sentences.push(single);
+    paragraphs.push([{ text: single, globalIndex: 0 }]);
+  }
+
+  return { paragraphs, sentences };
+}
+
+/**
+ * Splits essay raw text into distinct sentence units using punctuation delimiters
+ * while preserving list markers, abbreviations, and sentence readability.
+ */
+export function segmentEssayIntoSentences(text: string): string[] {
+  return segmentEssayIntoParagraphs(text).sentences;
 }
 
 /**
@@ -592,6 +739,9 @@ export function parseStructuredFeedback(rawFeedback: string | null | undefined):
         criteriaScores: parsed.criteriaScores || null,
         sentenceFeedbacks: Array.isArray(parsed.sentenceFeedbacks) ? parsed.sentenceFeedbacks : [],
         tabSwitchCount: typeof parsed.tabSwitchCount === "number" ? parsed.tabSwitchCount : 0,
+        // Writing 3-Tier diagnostic fields
+        discourseFeedbacks: Array.isArray(parsed.discourseFeedbacks) ? parsed.discourseFeedbacks : undefined,
+        essayDiagnostic: parsed.essayDiagnostic && typeof parsed.essayDiagnostic === "object" ? parsed.essayDiagnostic : undefined,
         // Speaking 4–3–1 fields
         speakingAnnotations: Array.isArray(parsed.speakingAnnotations) ? parsed.speakingAnnotations : undefined,
         speakingCorrections: Array.isArray(parsed.speakingCorrections) ? parsed.speakingCorrections : undefined,
@@ -621,6 +771,9 @@ export function serializeStructuredFeedback(payload: StructuredFeedbackPayload):
     criteriaScores: payload.criteriaScores || null,
     sentenceFeedbacks: payload.sentenceFeedbacks || [],
     tabSwitchCount: payload.tabSwitchCount || 0,
+    // Writing 3-Tier fields (omit undefined to keep JSON clean)
+    ...(payload.discourseFeedbacks !== undefined && { discourseFeedbacks: payload.discourseFeedbacks }),
+    ...(payload.essayDiagnostic !== undefined && { essayDiagnostic: payload.essayDiagnostic }),
     // Speaking 4–3–1 fields (omit undefined to keep JSON clean)
     ...(payload.speakingAnnotations !== undefined && { speakingAnnotations: payload.speakingAnnotations }),
     ...(payload.speakingCorrections !== undefined && { speakingCorrections: payload.speakingCorrections }),
