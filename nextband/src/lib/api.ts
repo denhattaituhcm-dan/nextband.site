@@ -3091,80 +3091,63 @@ export const classesApi = {
   },
 
   addStudents: async (classId: string, studentIds: string[]) => {
-    const records = studentIds.map((sid) => ({
-      class_id: classId,
-      student_id: sid,
-    }));
-    const { data, error } = await supabase
-      .from("class_students")
-      .upsert(records, { onConflict: "class_id,student_id" });
+    const token = await getAuthToken();
+    let res: Response;
+    try {
+      res = await fetch(`${API_BASE_URL}/classes/${classId}/students`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ studentIds }),
+      });
+    } catch (networkErr: any) {
+      throw new ApiError(
+        "Không thể kết nối đến máy chủ. Vui lòng kiểm tra lại đường truyền mạng.",
+        0,
+        "NETWORK_ERROR",
+        networkErr
+      );
+    }
 
-    if (error) throw error;
-    return data;
+    return await handleApiResponse<any>(res, "Không thể thêm học viên vào lớp");
   },
 
   addStudentsByEmails: async (classId: string, emails: string[]) => {
     const cleanEmails = Array.from(
       new Set(
         emails
-          .map((e) => e.trim().toLowerCase())
+          .map((e) => (typeof e === "string" ? e.trim().toLowerCase() : ""))
           .filter((e) => e && e.includes("@"))
       )
     );
 
     if (cleanEmails.length === 0) {
-      return { added: 0, profiles: [] };
+      return { success: true, addedCount: 0, students: [] };
     }
 
-    const addedProfiles: Array<{ id: string; email: string; isNew: boolean }> = [];
-
-    for (const email of cleanEmails) {
-      // 1. Check if profile with email exists
-      let { data: profile } = await supabase
-        .from("profiles")
-        .select("id, user_id, email")
-        .eq("email", email)
-        .maybeSingle();
-
-      let studentAuthUserId = profile?.user_id || profile?.id;
-
-      // 2. Pre-provision profile if not found
-      if (!profile) {
-        const newId = crypto.randomUUID();
-        const { data: createdProfile, error: createErr } = await supabase
-          .from("profiles")
-          .insert({
-            id: newId,
-            user_id: newId,
-            email: email,
-            full_name: email.split("@")[0],
-          })
-          .select("id, user_id, email")
-          .single();
-
-        if (createErr) {
-          console.warn(`Failed to pre-provision profile for ${email}:`, createErr.message);
-          continue;
-        }
-
-        studentAuthUserId = createdProfile.user_id || createdProfile.id;
-        addedProfiles.push({ id: studentAuthUserId, email, isNew: true });
-      } else {
-        addedProfiles.push({ id: studentAuthUserId, email, isNew: false });
-      }
-
-      // 3. Link studentAuthUserId to class_students
-      if (studentAuthUserId) {
-        await supabase
-          .from("class_students")
-          .upsert(
-            { class_id: classId, student_id: studentAuthUserId },
-            { onConflict: "class_id,student_id" }
-          );
-      }
+    const token = await getAuthToken();
+    let res: Response;
+    try {
+      res = await fetch(`${API_BASE_URL}/classes/${classId}/students`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ emails: cleanEmails }),
+      });
+    } catch (networkErr: any) {
+      throw new ApiError(
+        "Không thể kết nối đến máy chủ. Vui lòng kiểm tra lại đường truyền mạng.",
+        0,
+        "NETWORK_ERROR",
+        networkErr
+      );
     }
 
-    return { added: addedProfiles.length, profiles: addedProfiles };
+    return await handleApiResponse<any>(res, "Không thể thêm học viên qua email");
   },
 
   claimProfileOnLogin: async (authUser: { id: string; email?: string | null; user_metadata?: any }) => {
@@ -3229,14 +3212,26 @@ export const classesApi = {
   },
 
   removeStudent: async (classId: string, studentId: string) => {
-    const { error } = await supabase
-      .from("class_students")
-      .delete()
-      .eq("class_id", classId)
-      .eq("student_id", studentId);
+    const token = await getAuthToken();
+    let res: Response;
+    try {
+      res = await fetch(`${API_BASE_URL}/classes/${classId}/students/${studentId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+    } catch (networkErr: any) {
+      throw new ApiError(
+        "Không thể kết nối đến máy chủ. Vui lòng kiểm tra lại đường truyền mạng.",
+        0,
+        "NETWORK_ERROR",
+        networkErr
+      );
+    }
 
-    if (error) throw error;
-    return { success: true };
+    return await handleApiResponse<{ success: boolean }>(res, "Không thể rút học viên khỏi lớp");
   },
 
   updateStudentStatus: async (classId: string, studentId: string, status: string, reason?: string) => {

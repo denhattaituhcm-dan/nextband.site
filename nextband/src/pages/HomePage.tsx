@@ -425,7 +425,7 @@ export default function HomePage() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => navigate(`/app/class/${enrolledClassId}/lessons`)}
+                      onClick={() => navigate(`/app/class/${enrolledClassId}/lessons?tab=attendance-schedule`)}
                       className="h-7 text-xs font-bold text-primary gap-1 px-2.5 rounded-lg hover:bg-primary/5"
                     >
                       <span>Vào Lớp Học</span>
@@ -451,7 +451,12 @@ export default function HomePage() {
                       </p>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/app/class/${enrolledClassId}/lessons?tab=attendance-schedule`)}
+                      className="flex items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity p-1 -m-1 rounded-lg"
+                      title="Xem chi tiết lịch học & điểm danh chuyên cần"
+                    >
                       <span className="text-xs text-muted-foreground font-medium">Chuyên cần:</span>
                       <span className={`text-sm font-black tabular-nums ${attendanceRate >= 85 ? "text-emerald-600" : "text-amber-600"}`}>
                         {attendanceRate}%
@@ -459,7 +464,7 @@ export default function HomePage() {
                       <span className="text-[10px] text-muted-foreground">
                         {attendanceRate >= 85 ? "✓ Đạt chuẩn đầu ra" : "⚠ Cần lưu ý"}
                       </span>
-                    </div>
+                    </button>
                   </div>
                 </Card>
 
@@ -486,7 +491,7 @@ export default function HomePage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => navigate(`/app/class/${enrolledClassId}/lessons`)}
+                      onClick={() => navigate(`/app/class/${enrolledClassId}/lessons?tab=skill-matrix`)}
                       className="h-7 text-xs font-bold border-indigo-200 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 rounded-lg gap-1"
                     >
                       <span>Tra cứu tiến độ 5 kỹ năng</span>

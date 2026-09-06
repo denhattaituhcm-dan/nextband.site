@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, GraduationCap, Play, UserCheck, RefreshCw, Crown, ArrowRight, Award } from "lucide-react";
+import { BookOpen, GraduationCap, Play, UserCheck, RefreshCw, Crown, ArrowRight, Award, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { ClassLeaderboardWidget } from "@/components/student/ClassLeaderboardWidget";
@@ -201,16 +201,29 @@ export default function MyCourses() {
                         </div>
                       </div>
 
-                      <div className="pt-3 border-t flex items-center justify-between gap-2" onClick={(e) => e.stopPropagation()}>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setReEnrollTargetClass(item)}
-                          className="font-bold text-xs gap-1.5 rounded-xl px-3.5 h-9 border-amber-300 bg-amber-50/50 text-amber-900 hover:bg-amber-100/80 shadow-2xs cursor-pointer"
-                        >
-                          <Award className="h-3.5 w-3.5 text-amber-600" />
-                          <span>Tái đăng ký</span>
-                        </Button>
+                      <div className="pt-3 border-t flex flex-wrap items-center justify-between gap-2" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            asChild
+                            className="font-bold text-xs gap-1.5 rounded-xl px-3 h-9 border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-slate-900 shadow-2xs"
+                          >
+                            <Link to={`/app/class/${item.classId}/lessons?tab=attendance-schedule`}>
+                              <Calendar className="h-3.5 w-3.5 text-emerald-600" />
+                              <span>Chuyên cần</span>
+                            </Link>
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setReEnrollTargetClass(item)}
+                            className="font-bold text-xs gap-1.5 rounded-xl px-3 h-9 border-amber-300 bg-amber-50/50 text-amber-900 hover:bg-amber-100/80 shadow-2xs cursor-pointer"
+                          >
+                            <Award className="h-3.5 w-3.5 text-amber-600" />
+                            <span>Tái đăng ký</span>
+                          </Button>
+                        </div>
 
                         <Button
                           size="sm"

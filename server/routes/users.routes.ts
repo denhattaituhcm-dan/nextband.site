@@ -140,6 +140,8 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         const { classesAsTeacher, userBranches, ...rest } = u;
         return {
           ...rest,
+          id: u.userId, // ADR-007: Canonical User Identity (auth.users.id)
+          profileId: u.id, // Internal database record ID
           roles: u.roles.map((r: any) => r.role),
           branches,
           activeLeadCount,
@@ -527,7 +529,8 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
         }
 
         return {
-          id: st.id,
+          id: st.userId, // ADR-007: Canonical User Identity (auth.users.id)
+          profileId: st.id,
           userId: st.userId,
           fullName: st.fullName || st.email?.split("@")[0] || "Học viên",
           email: st.email,

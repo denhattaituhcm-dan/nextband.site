@@ -92,14 +92,32 @@ export class ClassController {
     }
   }
 
-  async addStudent(request: FastifyRequest<{ Params: { id: string }; Body: { studentId: string } }>, reply: FastifyReply) {
+  async addStudent(
+    request: FastifyRequest<{
+      Params: { id: string };
+      Body: { studentId?: string; studentIds?: string[]; emails?: string[] };
+    }>,
+    reply: FastifyReply
+  ) {
     try {
       const user = (request as any).user;
-      const { studentId } = request.body || {};
-      if (!studentId) {
-        return reply.status(400).send({ error: "studentId là bắt buộc" });
+      const { studentId, studentIds, emails } = request.body || {};
+
+      if (!studentId && (!studentIds || studentIds.length === 0) && (!emails || emails.length === 0)) {
+        return reply.status(400).send({ error: "Vui lòng cung cấp studentId, studentIds hoặc emails" });
       }
-      const result = await this.service.addStudent(user, request.params.id, studentId);
+
+      // If batch studentIds or emails provided, use batch service
+      if ((studentIds && studentIds.length > 0) || (emails && emails.length > 0)) {
+        const result = await this.service.addStudentsBatch(user, request.params.id, {
+          studentIds: studentIds || (studentId ? [studentId] : undefined),
+          emails,
+        });
+        return reply.status(201).send(result);
+      }
+
+      // Single studentId fallback
+      const result = await this.service.addStudent(user, request.params.id, studentId!);
       return reply.status(201).send(result);
     } catch (err: any) {
       const status = err.statusCode || 500;

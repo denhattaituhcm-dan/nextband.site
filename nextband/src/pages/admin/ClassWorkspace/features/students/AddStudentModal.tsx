@@ -112,7 +112,8 @@ export const AddStudentModal: React.FC<AddStudentModalProps> = ({
       return await classesApi.addStudentsByEmails(classId, emailList);
     },
     onSuccess: (res: any) => {
-      toast.success(`Đã xử lý thêm ${res.added || 0} học viên theo Email!`);
+      const count = res?.addedCount ?? res?.added ?? 0;
+      toast.success(`Đã xử lý thêm ${count} học viên theo Email!`);
       setEmailsText("");
       invalidateClassQueries(queryClient, classId);
       refetchClass();

@@ -174,8 +174,9 @@ export function ClientSidebar() {
                         <item.icon className="h-4 w-4 shrink-0 text-slate-500 group-data-[active=true]:text-indigo-600" />
                         <span className="truncate">{item.title}</span>
                         {!collapsed && item.badge && (
-                          <span className="ml-auto shrink-0 inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-500 via-amber-600 to-orange-500 text-white shadow-[0_2px_6px_rgba(245,158,11,0.35)] ring-1 ring-amber-400/40">
-                            {item.badge}
+                          <span className="ml-auto shrink-0 relative inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest text-white bg-gradient-to-r from-violet-600 via-fuchsia-500 to-amber-500 shadow-[0_2px_10px_rgba(217,70,239,0.35)] ring-1 ring-white/30 backdrop-blur-xs">
+                            <span className="absolute inset-0 rounded-full bg-gradient-to-r from-white/25 via-transparent to-transparent opacity-60 pointer-events-none" />
+                            <span className="relative drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]">{item.badge}</span>
                           </span>
                         )}
                       </NavLink>

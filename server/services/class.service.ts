@@ -1368,8 +1368,47 @@ export class ClassService {
     };
   }
 
-  // Use Case: Add Student to Class (Bi-directional Cascade to Course Enrollment)
+  // Helper: Resolve Canonical User Identity (auth.users.id) from studentId, email, or surrogate profile id
+  private async resolveCanonicalUserId(inputStudentId: string): Promise<string> {
+    if (!inputStudentId || typeof inputStudentId !== "string") return inputStudentId;
+    const cleanInput = inputStudentId.trim();
+
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanInput);
+    const isEmail = cleanInput.includes("@");
+
+    const orConditions: any[] = [];
+    if (isUUID) {
+      orConditions.push({ userId: cleanInput }, { id: cleanInput });
+    }
+    if (isEmail) {
+      orConditions.push({ email: cleanInput.toLowerCase() });
+    }
+
+    if (orConditions.length === 0) {
+      return cleanInput;
+    }
+
+    const user = await this.prisma.user.findFirst({
+      where: {
+        OR: orConditions,
+      },
+      select: { userId: true },
+    });
+    return user ? user.userId : cleanInput;
+  }
+
+  // Use Case: Add Single Student to Class (Bi-directional Cascade to Course Enrollment)
   async addStudent(user: { id: string; roles: string[] }, classId: string, studentId: string) {
+    const batchResult = await this.addStudentsBatch(user, classId, { studentIds: [studentId] });
+    return batchResult.students[0];
+  }
+
+  // Use Case: Batch Add Students to Class by studentIds or emails (ADR-007 Canonical Identity + Cascade)
+  async addStudentsBatch(
+    user: { id: string; roles: string[] },
+    classId: string,
+    payload: { studentIds?: string[]; emails?: string[] }
+  ) {
     const classData = await this.repo.findById(classId);
     if (!classData) {
       throw new NotFoundError("Không tìm thấy lớp học");
@@ -1384,67 +1423,154 @@ export class ClassService {
       throw new AuthorizationError("Từ chối truy cập - bạn không có quyền thêm học viên vào lớp này", 403);
     }
 
-    const alreadyIn = await this.repo.isStudentInClass(classId, studentId);
-    if (alreadyIn) {
-      throw new AuthorizationError("Học viên đã có trong lớp học này", 409);
+    const resolvedStudentIds = new Set<string>();
+
+    // 1. Process studentIds
+    if (Array.isArray(payload.studentIds) && payload.studentIds.length > 0) {
+      for (const sid of payload.studentIds) {
+        if (!sid || typeof sid !== "string") continue;
+        const canonicalId = await this.resolveCanonicalUserId(sid.trim());
+        resolvedStudentIds.add(canonicalId);
+      }
     }
 
-    return this.prisma.$transaction(async (tx) => {
-      const classStudent = await tx.classStudent.upsert({
-        where: { classId_studentId: { classId, studentId } },
-        update: {
-          status: "ACTIVE",
-          deletedAt: null,
-          joinedAt: new Date(),
-        },
-        create: {
-          classId,
-          studentId,
-          status: "ACTIVE",
-          joinedAt: new Date(),
-        },
-      });
+    // 2. Process emails: find existing user or pre-provision via public.admin_create_user
+    if (Array.isArray(payload.emails) && payload.emails.length > 0) {
+      const cleanEmails = Array.from(
+        new Set(
+          payload.emails
+            .map((e) => (typeof e === "string" ? e.trim().toLowerCase() : ""))
+            .filter((e) => e && e.includes("@"))
+        )
+      );
 
-      // Bi-directional Cascade: Ensure Course Enrollment exists
-      if (classData.courseId) {
-        const existingEnrollment = await tx.enrollment.findUnique({
-          where: {
-            courseId_studentId: {
-              courseId: classData.courseId,
-              studentId,
-            },
+      for (const email of cleanEmails) {
+        // Find existing user by email
+        let existingUser = await this.prisma.user.findFirst({
+          where: { email },
+          select: { userId: true },
+        });
+
+        if (existingUser) {
+          resolvedStudentIds.add(existingUser.userId);
+        } else {
+          // Pre-provision via atomic DB function
+          const autoPassword =
+            Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+          const fullName = email.split("@")[0];
+
+          const dbResult: any = await this.prisma.$queryRawUnsafe(
+            `
+            SELECT public.admin_create_user(
+              $1::text,
+              $2::text,
+              NULL::text,
+              NULL::text,
+              'student'::text,
+              $3::text,
+              NULL::text,
+              NULL::text,
+              NULL::date
+            ) as result;
+          `,
+            email,
+            fullName,
+            autoPassword
+          );
+
+          const profileData = dbResult?.[0]?.result;
+          const createdAuthUid = profileData?.user_id || profileData?.id;
+          if (createdAuthUid) {
+            resolvedStudentIds.add(createdAuthUid);
+          } else {
+            throw new Error(`Không thể khởi tạo tài khoản học viên cho email: ${email}`);
+          }
+        }
+      }
+    }
+
+    const targetStudentIds = Array.from(resolvedStudentIds);
+    if (targetStudentIds.length === 0) {
+      throw new AuthorizationError("Không có học viên hợp lệ nào để thêm", 400);
+    }
+
+    // Execute atomic transaction for all students
+    return this.prisma.$transaction(async (tx) => {
+      const classStudents: any[] = [];
+
+      for (const studentId of targetStudentIds) {
+        // Check if student exists in users table to guarantee FK safety
+        const userExists = await tx.user.findUnique({
+          where: { userId: studentId },
+          select: { userId: true },
+        });
+
+        if (!userExists) {
+          throw new NotFoundError(`Không tìm thấy hồ sơ người dùng của học viên (UID: ${studentId})`);
+        }
+
+        const classStudent = await tx.classStudent.upsert({
+          where: { classId_studentId: { classId, studentId } },
+          update: {
+            status: "ACTIVE",
+            deletedAt: null,
+            joinedAt: new Date(),
+          },
+          create: {
+            classId,
+            studentId,
+            status: "ACTIVE",
+            joinedAt: new Date(),
           },
         });
 
-        if (!existingEnrollment) {
-          await tx.enrollment.create({
-            data: {
-              courseId: classData.courseId,
-              studentId,
-              enrolledAt: new Date(),
+        // Bi-directional Cascade: Ensure Course Enrollment exists
+        if (classData.courseId) {
+          const existingEnrollment = await tx.enrollment.findUnique({
+            where: {
+              courseId_studentId: {
+                courseId: classData.courseId,
+                studentId,
+              },
             },
           });
+
+          if (!existingEnrollment) {
+            await tx.enrollment.create({
+              data: {
+                courseId: classData.courseId,
+                studentId,
+                enrolledAt: new Date(),
+              },
+            });
+          }
         }
+
+        // Audit Log
+        await tx.enrollmentAuditLog.create({
+          data: {
+            operatorId: user.id,
+            studentId,
+            classId,
+            action: "CLASS_PLACEMENT_CASCADE",
+            reason: `Xếp học viên vào lớp ${classData.name} (Tự động kích hoạt quyền khóa học)`,
+            toStatus: "ACTIVE",
+          },
+        });
+
+        classStudents.push(classStudent);
       }
 
-      // Audit Log
-      await tx.enrollmentAuditLog.create({
-        data: {
-          operatorId: user.id,
-          studentId,
-          classId,
-          action: "CLASS_PLACEMENT_CASCADE",
-          reason: `Xếp học viên vào lớp ${classData.name} (Tự động kích hoạt quyền khóa học)`,
-          toStatus: "ACTIVE",
-        },
-      });
-
-      return classStudent;
+      return {
+        success: true,
+        addedCount: classStudents.length,
+        students: classStudents,
+      };
     });
   }
 
   // Use Case: Remove Student from Class (Cascade check to revoke Course Enrollment if no other active classes)
-  async removeStudent(user: { id: string; roles: string[] }, classId: string, studentId: string) {
+  async removeStudent(user: { id: string; roles: string[] }, classId: string, inputStudentId: string) {
     const classData = await this.repo.findById(classId);
     if (!classData) {
       throw new NotFoundError("Không tìm thấy lớp học");
@@ -1458,6 +1584,8 @@ export class ClassService {
     if (!isAdmin && classData.teacherId !== user.id) {
       throw new AuthorizationError("Từ chối truy cập - bạn không có quyền xóa học viên khỏi lớp này", 403);
     }
+
+    const studentId = await this.resolveCanonicalUserId(inputStudentId);
 
     return this.prisma.$transaction(async (tx) => {
       await tx.classStudent.updateMany({

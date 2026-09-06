@@ -107,8 +107,11 @@ export default async function classesRoutes(fastify: FastifyInstance) {
     }
   );
 
-  // POST /classes/:id/students - Thêm học viên vào lớp
-  fastify.post<{ Params: { id: string }; Body: { studentId: string } }>(
+  // POST /classes/:id/students - Thêm học viên vào lớp (Đơn lẻ hoặc Hàng loạt theo studentIds / emails)
+  fastify.post<{
+    Params: { id: string };
+    Body: { studentId?: string; studentIds?: string[]; emails?: string[] };
+  }>(
     "/:id/students",
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {

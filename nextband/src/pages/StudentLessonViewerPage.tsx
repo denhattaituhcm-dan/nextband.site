@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { lessonsApi, submissionsApi, examsApi } from "@/lib/api";
 import {
@@ -54,11 +54,25 @@ export default function StudentLessonViewerPage() {
   const { classId } = useParams<{ classId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const { state: lifecycleState, resolveClass } = useStudentLifecycle();
   const { isHealthy: isGatewayHealthy, isWarmingUp: isGatewayWarmingUp, checkHealthNow } = useGatewayHealth();
   const [isReEnrollModalOpen, setIsReEnrollModalOpen] = useState(false);
+
+  const activeTab = searchParams.get("tab") || "practice-list";
+  const handleTabChange = (val: string) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (val === "practice-list") {
+        next.delete("tab");
+      } else {
+        next.set("tab", val);
+      }
+      return next;
+    }, { replace: true });
+  };
 
   const handlePrefetchExam = (targetExamId?: string) => {
     if (!targetExamId) return;
@@ -458,7 +472,7 @@ export default function StudentLessonViewerPage() {
         </div>
 
         {/* TABS CONTAINER: 1. Practice List | 2. 5-Skill Overview Matrix | 3. Class Schedule & Attendance */}
-        <Tabs defaultValue="practice-list" className="w-full space-y-6">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-3">
             <TabsList className="bg-muted/60 p-1 rounded-xl h-auto">
               <TabsTrigger
