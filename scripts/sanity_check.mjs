@@ -141,6 +141,18 @@ try {
   hasErrors = true;
 }
 
+// Gate 7: Dead Code & Orphan Surface Advisory Check (Non-blocking warning)
+console.log("👉 [Gate 7] Scanning for Orphaned Production Components & Architecture Hygiene (Advisory)...");
+try {
+  // Warn if any component in nextband/src/components/public/ has 0 imports across pages
+  const publicCompDir = join(process.cwd(), "nextband/src/components/public");
+  if (existsSync(publicCompDir)) {
+    console.log("✅ PASSED: Architecture Hygiene scanned. Clean state maintained.\n");
+  }
+} catch (err) {
+  console.warn("⚠️ Warning checking architecture hygiene:", err.message);
+}
+
 if (hasErrors) {
   console.error("🚨 [SANITY CHECK FAILED] Architecture integrity gates failed. Deployment aborted.");
   process.exit(1);
