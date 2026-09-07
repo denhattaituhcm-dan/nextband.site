@@ -680,6 +680,85 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
       throw lastError;
     },
   );
+
+  // POST /questions/reorder - Reorder questions in a group
+  fastify.post(
+    "/reorder",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const reorderSchema = z.object({
+        groupId: z.string({ required_error: "ID nhóm câu hỏi là bắt buộc" }),
+        questionIds: z.array(z.string()).min(1, "Danh sách câu hỏi không được rỗng"),
+      });
+
+      const data = handleValidation(
+        reorderSchema.safeParse(request.body),
+        request,
+        reply,
+      );
+      if (!data) return;
+
+      const authService = new AuthorizationService(fastify.prisma);
+      try {
+        await authService.requireQuestionGroupAuthoringAccess(
+          data.groupId,
+          request.user.id,
+          request.user.roles,
+        );
+      } catch (err: any) {
+        if (err.statusCode) {
+          return reply.status(err.statusCode).send({ error: err.message });
+        }
+        throw err;
+      }
+
+      const isAdmin = request.user.roles.includes("admin");
+      if (await isExamArchivedByGroupId(data.groupId, isAdmin)) {
+        return reply.status(409).send({
+          error: "EXAM_ARCHIVED_IMMUTABLE",
+          message: "Đề thi đã lưu trữ hoặc bị khóa, không thể thay đổi thứ tự câu hỏi.",
+        });
+      }
+
+      const { groupId, questionIds } = data;
+
+      // Update orderIndex sequentially using negative offset first to avoid unique constraint collisions
+      await fastify.prisma.$transaction(
+        async (tx) => {
+          // Verify all questions belong to this group
+          const count = await tx.question.count({
+            where: {
+              groupId,
+              id: { in: questionIds },
+            },
+          });
+
+          if (count !== questionIds.length) {
+            throw new Error("INVALID_QUESTIONS");
+          }
+
+          // Step 1: Assign temporary negative orders
+          for (let i = 0; i < questionIds.length; i++) {
+            await tx.question.update({
+              where: { id: questionIds[i] },
+              data: { orderIndex: -(i + 1) },
+            });
+          }
+
+          // Step 2: Assign desired 0-based orders
+          for (let i = 0; i < questionIds.length; i++) {
+            await tx.question.update({
+              where: { id: questionIds[i] },
+              data: { orderIndex: i },
+            });
+          }
+        },
+        { isolationLevel: "Serializable" },
+      );
+
+      return { success: true };
+    },
+  );
 };
 
 export default questionsRoutes;

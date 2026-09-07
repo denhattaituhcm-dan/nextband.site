@@ -1069,6 +1069,22 @@ export const questionsApi = {
     const errData = await res.json().catch(() => ({}));
     throw new Error(errData.error || errData.message || "Có lỗi xảy ra khi tạo câu hỏi hàng loạt");
   },
+
+  reorder: async (groupId: string, questionIds: string[]) => {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/questions/reorder`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ groupId, questionIds }),
+    });
+
+    if (res.ok) return await res.json();
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || errData.message || "Không thể sắp xếp lại câu hỏi");
+  },
 };
 
 // =============================================

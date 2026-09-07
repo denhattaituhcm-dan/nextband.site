@@ -224,6 +224,10 @@ export default function AdminSectionEdit() {
     text: string;
   } | null>(null);
 
+  // Drag and Drop questions state
+  const [draggedQuestion, setDraggedQuestion] = useState<{ groupId: string; questionId: string } | null>(null);
+  const [dragOverQuestionId, setDragOverQuestionId] = useState<string | null>(null);
+
   // Form states
   const [groupForm, setGroupForm] = useState({
     title: "",
@@ -388,6 +392,23 @@ export default function AdminSectionEdit() {
       toast({
         title: "Lỗi",
         description: getErrorMessage(error, "Không thể xóa câu hỏi"),
+        variant: "destructive",
+      });
+    },
+  });
+
+  const reorderQuestionsMutation = useMutation({
+    mutationFn: ({ groupId, questionIds }: { groupId: string; questionIds: string[] }) =>
+      questionsApi.reorder(groupId, questionIds),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["section-detail", id] });
+      toast({ title: "Đã lưu thứ tự câu hỏi" });
+    },
+    onError: (error: any) => {
+      queryClient.invalidateQueries({ queryKey: ["section-detail", id] });
+      toast({
+        title: "Lỗi sắp xếp",
+        description: getErrorMessage(error, "Không thể thay đổi thứ tự câu hỏi"),
         variant: "destructive",
       });
     },
@@ -829,6 +850,38 @@ export default function AdminSectionEdit() {
     }
   };
 
+  const handleQuestionReorderDrop = (targetGroupId: string, targetQuestionId: string) => {
+    if (!draggedQuestion) return;
+    const { groupId: sourceGroupId, questionId: sourceQuestionId } = draggedQuestion;
+    setDraggedQuestion(null);
+    setDragOverQuestionId(null);
+
+    // Only allow reordering within the same group
+    if (sourceGroupId !== targetGroupId || sourceQuestionId === targetQuestionId) {
+      return;
+    }
+
+    const group = questionGroups.find((g: any) => g.id === targetGroupId);
+    if (!group || !Array.isArray(group.questions)) return;
+
+    const sortedQuestions = [...group.questions].sort(
+      (a: any, b: any) => (a.orderIndex || 0) - (b.orderIndex || 0)
+    );
+
+    const fromIndex = sortedQuestions.findIndex((q: any) => q.id === sourceQuestionId);
+    const toIndex = sortedQuestions.findIndex((q: any) => q.id === targetQuestionId);
+
+    if (fromIndex === -1 || toIndex === -1) return;
+
+    // Rearrange array
+    const updated = [...sortedQuestions];
+    const [moved] = updated.splice(fromIndex, 1);
+    updated.splice(toIndex, 0, moved);
+
+    const newQuestionIds = updated.map((q: any) => q.id);
+    reorderQuestionsMutation.mutate({ groupId: targetGroupId, questionIds: newQuestionIds });
+  };
+
   if (sectionLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -1117,166 +1170,204 @@ export default function AdminSectionEdit() {
                             (a: any, b: any) =>
                               (a.orderIndex || 0) - (b.orderIndex || 0),
                           )
-                          .map((q: any, qIndex: number) => (
-                            <div
-                              key={q.id}
-                              className="flex items-start gap-3 p-3 border rounded-lg hover:bg-muted/30 transition-colors bg-card"
-                            >
-                              <div className="flex-shrink-0 flex flex-col items-center gap-1 mt-1">
-                                <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">
-                                  {qIndex + 1}
-                                </span>
-                                <span className="text-[8px] font-mono text-muted-foreground">
-                                  #{q.orderIndex}
-                                </span>
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="font-medium text-sm line-clamp-2 prose prose-sm max-w-none">
-                                  <RichContent html={q.question_text || q.questionText || "Nội dung câu hỏi"} />
+                          .map((q: any, qIndex: number) => {
+                            const isBeingDragged = draggedQuestion?.questionId === q.id;
+                            const isDragOver = dragOverQuestionId === q.id;
+
+                            return (
+                              <div
+                                key={q.id}
+                                draggable
+                                onDragStart={(e) => {
+                                  e.dataTransfer.setData("text/plain", q.id);
+                                  e.dataTransfer.effectAllowed = "move";
+                                  setDraggedQuestion({ groupId: group.id, questionId: q.id });
+                                }}
+                                onDragEnd={() => {
+                                  setDraggedQuestion(null);
+                                  setDragOverQuestionId(null);
+                                }}
+                                onDragOver={(e) => {
+                                  e.preventDefault();
+                                  e.dataTransfer.dropEffect = "move";
+                                  if (draggedQuestion && draggedQuestion.groupId === group.id && draggedQuestion.questionId !== q.id) {
+                                    setDragOverQuestionId(q.id);
+                                  }
+                                }}
+                                onDragLeave={() => {
+                                  if (dragOverQuestionId === q.id) {
+                                    setDragOverQuestionId(null);
+                                  }
+                                }}
+                                onDrop={(e) => {
+                                  e.preventDefault();
+                                  handleQuestionReorderDrop(group.id, q.id);
+                                }}
+                                className={`flex items-start gap-3 p-3 border rounded-lg transition-all bg-card ${
+                                  isBeingDragged
+                                    ? "opacity-40 border-dashed border-primary/50 bg-primary/5 scale-[0.99]"
+                                    : isDragOver
+                                      ? "border-2 border-primary bg-primary/10 shadow-md ring-2 ring-primary/20"
+                                      : "hover:bg-muted/30"
+                                }`}
+                              >
+                                <div
+                                  className="flex-shrink-0 flex flex-col items-center gap-1.5 mt-0.5 cursor-grab active:cursor-grabbing text-muted-foreground hover:text-primary transition-colors"
+                                  title="Kéo thả để đổi thứ tự câu hỏi"
+                                >
+                                  <GripVertical className="h-4 w-4" />
+                                  <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold shadow-xs">
+                                    {qIndex + 1}
+                                  </span>
                                 </div>
-                                {/* Display Options / Matching items / Fill-in-the-blank answers */}
-                                {(() => {
-                                  const qType = q.question_type || q.questionType;
-                                  if (qType === "matching") {
-                                    const { items, options, pairs } = parseMatchingData(q);
-                                    if (items.length > 0 || options.length > 0) {
-                                      return (
-                                        <div className="mt-2 space-y-2 text-xs text-muted-foreground bg-teal-50/40 dark:bg-teal-950/20 p-2.5 rounded border border-teal-200/50">
-                                          {items.length > 0 && (
-                                            <div>
-                                              <span className="font-semibold text-teal-800 dark:text-teal-300 block mb-1.5">
-                                                Danh sách câu hỏi (vế trái) & Đáp án nối:
-                                              </span>
-                                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pl-1">
-                                                {items.map((item, i) => {
-                                                  const optIdx = pairs[String(i)];
-                                                  const matchedOpt = optIdx !== undefined ? options[optIdx] : null;
-                                                  return (
+                                <div className="flex-1 min-w-0">
+                                  <div className="font-medium text-sm line-clamp-2 prose prose-sm max-w-none">
+                                    <RichContent html={q.question_text || q.questionText || "Nội dung câu hỏi"} />
+                                  </div>
+                                  {/* Display Options / Matching items / Fill-in-the-blank answers */}
+                                  {(() => {
+                                    const qType = q.question_type || q.questionType;
+                                    if (qType === "matching") {
+                                      const { items, options, pairs } = parseMatchingData(q);
+                                      if (items.length > 0 || options.length > 0) {
+                                        return (
+                                          <div className="mt-2 space-y-2 text-xs text-muted-foreground bg-teal-50/40 dark:bg-teal-950/20 p-2.5 rounded border border-teal-200/50">
+                                            {items.length > 0 && (
+                                              <div>
+                                                <span className="font-semibold text-teal-800 dark:text-teal-300 block mb-1.5">
+                                                  Danh sách câu hỏi (vế trái) & Đáp án nối:
+                                                </span>
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pl-1">
+                                                  {items.map((item, i) => {
+                                                    const optIdx = pairs[String(i)];
+                                                    const matchedOpt = optIdx !== undefined ? options[optIdx] : null;
+                                                    return (
+                                                      <div
+                                                        key={i}
+                                                        className="flex items-center gap-1.5 text-foreground bg-white dark:bg-neutral-900 px-2 py-1 rounded border border-teal-100 dark:border-teal-900"
+                                                      >
+                                                        <span className="font-bold text-teal-600 dark:text-teal-400 shrink-0">
+                                                          {i + 1}.
+                                                        </span>
+                                                        <span className="truncate flex-1 font-medium">
+                                                          {item.text || `(Câu ${i + 1})`}
+                                                        </span>
+                                                        <span className="font-bold text-teal-700 dark:text-teal-300 shrink-0 bg-teal-100 dark:bg-teal-900/60 px-1.5 py-0.5 rounded text-[11px]">
+                                                          {matchedOpt ? `→ ${matchedOpt.label}` : "Chưa nối"}
+                                                        </span>
+                                                      </div>
+                                                    );
+                                                  })}
+                                                </div>
+                                              </div>
+                                            )}
+                                            {options.length > 0 && (
+                                              <div className="pt-2 border-t border-teal-200/40 dark:border-teal-900/40">
+                                                <span className="font-semibold text-teal-800 dark:text-teal-300 block mb-1.5">
+                                                  Các lựa chọn (vế phải):
+                                                </span>
+                                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 pl-1">
+                                                  {options.map((opt) => (
                                                     <div
-                                                      key={i}
-                                                      className="flex items-center gap-1.5 text-foreground bg-white dark:bg-neutral-900 px-2 py-1 rounded border border-teal-100 dark:border-teal-900"
+                                                      key={opt.index}
+                                                      className="flex items-center gap-1.5 text-muted-foreground bg-white dark:bg-neutral-900 px-2 py-1 rounded border border-teal-100/60 dark:border-teal-900/40"
                                                     >
                                                       <span className="font-bold text-teal-600 dark:text-teal-400 shrink-0">
-                                                        {i + 1}.
+                                                        {opt.label}.
                                                       </span>
-                                                      <span className="truncate flex-1 font-medium">
-                                                        {item.text || `(Câu ${i + 1})`}
-                                                      </span>
-                                                      <span className="font-bold text-teal-700 dark:text-teal-300 shrink-0 bg-teal-100 dark:bg-teal-900/60 px-1.5 py-0.5 rounded text-[11px]">
-                                                        {matchedOpt ? `→ ${matchedOpt.label}` : "Chưa nối"}
-                                                      </span>
+                                                      <span className="truncate flex-1">{opt.text}</span>
                                                     </div>
-                                                  );
-                                                })}
+                                                  ))}
+                                                </div>
                                               </div>
-                                            </div>
-                                          )}
-                                          {options.length > 0 && (
-                                            <div className="pt-2 border-t border-teal-200/40 dark:border-teal-900/40">
-                                              <span className="font-semibold text-teal-800 dark:text-teal-300 block mb-1.5">
-                                                Các lựa chọn (vế phải):
-                                              </span>
-                                              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 pl-1">
-                                                {options.map((opt) => (
-                                                  <div
-                                                    key={opt.index}
-                                                    className="flex items-center gap-1.5 text-muted-foreground bg-white dark:bg-neutral-900 px-2 py-1 rounded border border-teal-100/60 dark:border-teal-900/40"
-                                                  >
-                                                    <span className="font-bold text-teal-600 dark:text-teal-400 shrink-0">
-                                                      {opt.label}.
-                                                    </span>
-                                                    <span className="truncate flex-1">{opt.text}</span>
-                                                  </div>
-                                                ))}
-                                              </div>
-                                            </div>
-                                          )}
-                                        </div>
-                                      );
-                                    }
-                                  }
-
-                                  if (qType === "fill_blank") {
-                                    const fbAnswers = parseFillBlankAnswers(q.correctAnswer || q.correct_answer);
-                                    if (fbAnswers.length > 0) {
-                                      return (
-                                        <div className="mt-2 text-xs bg-amber-50/50 dark:bg-amber-950/20 text-amber-900 dark:text-amber-300 p-2 rounded border border-amber-200/50 flex items-center gap-2">
-                                          <span className="font-semibold shrink-0">Đáp án điền:</span>
-                                          <span className="font-mono bg-white dark:bg-neutral-900 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-800">
-                                            {fbAnswers.join(" | ")}
-                                          </span>
-                                        </div>
-                                      );
-                                    }
-                                  }
-
-                                  if (Array.isArray(q.options) && q.options.length > 0) {
-                                    return (
-                                      <div className="mt-2 space-y-1 text-xs text-muted-foreground bg-muted/20 p-2 rounded border">
-                                        {q.options.map((opt: string, optIdx: number) => (
-                                          <div key={optIdx} className="flex items-center gap-1.5">
-                                            <span className="font-semibold text-primary">
-                                              {String.fromCharCode(65 + optIdx)}.
-                                            </span>
-                                            <span>{opt}</span>
+                                            )}
                                           </div>
-                                        ))}
-                                      </div>
-                                    );
-                                  }
+                                        );
+                                      }
+                                    }
 
-                                  return null;
-                                })()}
-                                <div className="flex items-center gap-2 mt-2">
-                                  <Badge
-                                    variant="secondary"
-                                    className="text-[10px] px-1.5 h-4"
-                                  >
-                                    {ALL_QUESTION_TYPES.find(
-                                      (t) => t.value === (q.question_type || q.questionType),
-                                    )?.label || q.question_type || q.questionType}
-                                  </Badge>
-                                  <span className="text-[10px] text-muted-foreground">
-                                    {q.points} điểm
-                                  </span>
-                                  {q.audioUrl && (
-                                    <Badge className="bg-blue-500 h-4 px-1.5">
-                                      <Headphones className="h-2 w-2 mr-1" />{" "}
-                                      Audio
+                                    if (qType === "fill_blank") {
+                                      const fbAnswers = parseFillBlankAnswers(q.correctAnswer || q.correct_answer);
+                                      if (fbAnswers.length > 0) {
+                                        return (
+                                          <div className="mt-2 text-xs bg-amber-50/50 dark:bg-amber-950/20 text-amber-900 dark:text-amber-300 p-2 rounded border border-amber-200/50 flex items-center gap-2">
+                                            <span className="font-semibold shrink-0">Đáp án điền:</span>
+                                            <span className="font-mono bg-white dark:bg-neutral-900 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-800">
+                                              {fbAnswers.join(" | ")}
+                                            </span>
+                                          </div>
+                                        );
+                                      }
+                                    }
+
+                                    if (Array.isArray(q.options) && q.options.length > 0) {
+                                      return (
+                                        <div className="mt-2 space-y-1 text-xs text-muted-foreground bg-muted/20 p-2 rounded border">
+                                          {q.options.map((opt: string, optIdx: number) => (
+                                            <div key={optIdx} className="flex items-center gap-1.5">
+                                              <span className="font-semibold text-primary">
+                                                {String.fromCharCode(65 + optIdx)}.
+                                              </span>
+                                              <span>{opt}</span>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      );
+                                    }
+
+                                    return null;
+                                  })()}
+                                  <div className="flex items-center gap-2 mt-2">
+                                    <Badge
+                                      variant="secondary"
+                                      className="text-[10px] px-1.5 h-4"
+                                    >
+                                      {ALL_QUESTION_TYPES.find(
+                                        (t) => t.value === (q.question_type || q.questionType),
+                                      )?.label || q.question_type || q.questionType}
                                     </Badge>
-                                  )}
+                                    <span className="text-[10px] text-muted-foreground">
+                                      {q.points} điểm
+                                    </span>
+                                    {q.audioUrl && (
+                                      <Badge className="bg-blue-500 h-4 px-1.5">
+                                        <Headphones className="h-2 w-2 mr-1" />{" "}
+                                        Audio
+                                      </Badge>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 w-8 p-0"
+                                    onClick={() =>
+                                      handleOpenQuestionDialog(group.id, q)
+                                    }
+                                  >
+                                    <Edit className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                                    onClick={() =>
+                                      setDeleteQuestion({
+                                        id: q.id,
+                                        text: (q.questionText || q.question_text || "").replace(
+                                          /<[^>]*>/g,
+                                          "",
+                                        ),
+                                      })
+                                    }
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
                                 </div>
                               </div>
-                              <div className="flex items-center gap-1">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-8 w-8 p-0"
-                                  onClick={() =>
-                                    handleOpenQuestionDialog(group.id, q)
-                                  }
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                                  onClick={() =>
-                                    setDeleteQuestion({
-                                      id: q.id,
-                                      text: (q.questionText || q.question_text || "").replace(
-                                        /<[^>]*>/g,
-                                        "",
-                                      ),
-                                    })
-                                  }
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </div>
-                          ))}
+                            );
+                          })}
 
                         {/* Question Action buttons */}
                         <div className="flex gap-2 pt-2">
@@ -1568,40 +1659,25 @@ export default function AdminSectionEdit() {
           </DialogHeader>
           <div className="flex-1 min-h-0 overflow-y-auto px-6 py-4">
             <div className="space-y-4">
-            <div className="grid grid-cols-3 gap-4">
-              <div className="col-span-2 space-y-2">
-                <Label>Dạng câu hỏi</Label>
-                <Select
-                  value={questionForm.questionType}
-                  onValueChange={handleQuestionTypeChange}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {getQuestionTypesForSection(section.sectionType).map(
-                      (t) => (
-                        <SelectItem key={t.value} value={t.value}>
-                          {t.label}
-                        </SelectItem>
-                      ),
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Thứ tự</Label>
-                <Input
-                  type="number"
-                  value={questionForm.orderIndex}
-                  onChange={(e) =>
-                    setQuestionForm((f) => ({
-                      ...f,
-                      orderIndex: parseInt(e.target.value) || 0,
-                    }))
-                  }
-                />
-              </div>
+            <div className="space-y-2">
+              <Label>Dạng câu hỏi</Label>
+              <Select
+                value={questionForm.questionType}
+                onValueChange={handleQuestionTypeChange}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {getQuestionTypesForSection(section.sectionType).map(
+                    (t) => (
+                      <SelectItem key={t.value} value={t.value}>
+                        {t.label}
+                      </SelectItem>
+                    ),
+                  )}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="mx-auto w-full max-w-2xl">

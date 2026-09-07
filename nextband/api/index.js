@@ -100805,6 +100805,70 @@ var questionsRoutes = async (fastify) => {
       throw lastError;
     }
   );
+  fastify.post(
+    "/reorder",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const reorderSchema = external_exports.object({
+        groupId: external_exports.string({ required_error: "ID nh\xF3m c\xE2u h\u1ECFi l\xE0 b\u1EAFt bu\u1ED9c" }),
+        questionIds: external_exports.array(external_exports.string()).min(1, "Danh s\xE1ch c\xE2u h\u1ECFi kh\xF4ng \u0111\u01B0\u1EE3c r\u1ED7ng")
+      });
+      const data = handleValidation(
+        reorderSchema.safeParse(request.body),
+        request,
+        reply
+      );
+      if (!data) return;
+      const authService = new AuthorizationService(fastify.prisma);
+      try {
+        await authService.requireQuestionGroupAuthoringAccess(
+          data.groupId,
+          request.user.id,
+          request.user.roles
+        );
+      } catch (err) {
+        if (err.statusCode) {
+          return reply.status(err.statusCode).send({ error: err.message });
+        }
+        throw err;
+      }
+      const isAdmin = request.user.roles.includes("admin");
+      if (await isExamArchivedByGroupId(data.groupId, isAdmin)) {
+        return reply.status(409).send({
+          error: "EXAM_ARCHIVED_IMMUTABLE",
+          message: "\u0110\u1EC1 thi \u0111\xE3 l\u01B0u tr\u1EEF ho\u1EB7c b\u1ECB kh\xF3a, kh\xF4ng th\u1EC3 thay \u0111\u1ED5i th\u1EE9 t\u1EF1 c\xE2u h\u1ECFi."
+        });
+      }
+      const { groupId, questionIds } = data;
+      await fastify.prisma.$transaction(
+        async (tx) => {
+          const count = await tx.question.count({
+            where: {
+              groupId,
+              id: { in: questionIds }
+            }
+          });
+          if (count !== questionIds.length) {
+            throw new Error("INVALID_QUESTIONS");
+          }
+          for (let i = 0; i < questionIds.length; i++) {
+            await tx.question.update({
+              where: { id: questionIds[i] },
+              data: { orderIndex: -(i + 1) }
+            });
+          }
+          for (let i = 0; i < questionIds.length; i++) {
+            await tx.question.update({
+              where: { id: questionIds[i] },
+              data: { orderIndex: i }
+            });
+          }
+        },
+        { isolationLevel: "Serializable" }
+      );
+      return { success: true };
+    }
+  );
 };
 var questions_routes_default = questionsRoutes;
 
@@ -101983,6 +102047,72 @@ function sanitizeQuestionForStudent(q, showAnswerKey) {
   }
   return cleaned;
 }
+function validateSubmissionTechnicalPayload(exam, answersToEvaluate) {
+  if (!exam) return;
+  const examType = String(exam.examType || exam.type || "").toLowerCase();
+  const allQuestions = [];
+  (exam.sections || []).forEach((sec) => {
+    const sType = String(sec.sectionType || sec.section_type || "").toLowerCase();
+    (sec.questionGroups || []).forEach((g) => {
+      (g.questions || []).forEach((q) => {
+        allQuestions.push({ ...q, _sectionType: sType });
+      });
+    });
+  });
+  if (allQuestions.length === 0) return;
+  const isWritingExam = examType === "writing" || allQuestions.some((q) => q._sectionType === "writing" || q.questionType === "essay");
+  const isSpeakingExam = examType === "speaking" || allQuestions.some((q) => q._sectionType === "speaking" || q.questionType === "speaking");
+  if (isWritingExam) {
+    const writingQuestions = allQuestions.filter(
+      (q) => q._sectionType === "writing" || q.questionType === "essay"
+    );
+    let hasSubstantialWriting = false;
+    for (const wq of writingQuestions) {
+      const ans = answersToEvaluate.find((a) => a.questionId === wq.id);
+      const rawText = typeof ans?.answerText === "string" ? ans.answerText.replace(/<[^>]*>/g, " ").replace(/&nbsp;/gi, " ").trim() : "";
+      const wordCount = rawText.split(/\s+/).filter(Boolean).length;
+      if (rawText.length >= 30 || wordCount >= 10) {
+        hasSubstantialWriting = true;
+        break;
+      }
+    }
+    if (!hasSubstantialWriting) {
+      throw new ValidationError(
+        "B\xC0I N\u1ED8P KH\xD4NG H\u1EE2P L\u1EC6: B\xE0i vi\u1EBFt ch\u01B0a c\xF3 n\u1ED9i dung ho\u1EB7c qu\xE1 ng\u1EAFn \u0111\u1EC3 n\u1ED9p (t\u1ED1i thi\u1EC3u 10 t\u1EEB)."
+      );
+    }
+  }
+  if (isSpeakingExam) {
+    const speakingQuestions = allQuestions.filter(
+      (q) => q._sectionType === "speaking" || q.questionType === "speaking"
+    );
+    let hasValidAudio = false;
+    for (const sq of speakingQuestions) {
+      const ans = answersToEvaluate.find((a) => a.questionId === sq.id);
+      const audio = ans?.audioUrl && String(ans.audioUrl).trim() || typeof ans?.answerText === "string" && ans.answerText.startsWith("speaking-recordings/");
+      if (audio) {
+        hasValidAudio = true;
+        break;
+      }
+    }
+    if (!hasValidAudio) {
+      throw new ValidationError(
+        "B\xC0I N\u1ED8P KH\xD4NG H\u1EE2P L\u1EC6: Ch\u01B0a t\xECm th\u1EA5y file ghi \xE2m h\u1EE3p l\u1EC7 cho b\xE0i Speaking."
+      );
+    }
+  }
+  const answeredCount = answersToEvaluate.filter((a) => {
+    if (a.audioUrl && String(a.audioUrl).trim()) return true;
+    if (typeof a.answerText === "string" && a.answerText.trim()) return true;
+    if (typeof a.answerText === "object" && a.answerText !== null && Object.keys(a.answerText).length > 0) return true;
+    return false;
+  }).length;
+  if (answeredCount === 0) {
+    throw new ValidationError(
+      "B\xC0I N\u1ED8P KH\xD4NG H\u1EE2P L\u1EC6: B\xE0i l\xE0m ho\xE0n to\xE0n \u0111\u1EC3 tr\u1ED1ng. Vui l\xF2ng ho\xE0n th\xE0nh b\xE0i tr\u01B0\u1EDBc khi n\u1ED9p."
+    );
+  }
+}
 var ExamSubmissionService = class {
   constructor(prisma) {
     this.prisma = prisma;
@@ -102588,6 +102718,7 @@ var ExamSubmissionService = class {
         audioUrl: a.audioUrl
       }));
     }
+    validateSubmissionTechnicalPayload(submission.exam, answersToEvaluate);
     const examStructure = submission.exam;
     const gradingSummary = canonicalScoringService.evaluateExamAttempt(
       examStructure,
@@ -113395,6 +113526,64 @@ function classifyRiskByTime(hoursUntilDeadline) {
   return "CRITICAL";
 }
 
+// server/services/scholarship-eligibility.engine.ts
+function extractRevisionRequired(submission) {
+  if (!submission) return false;
+  if (submission.revisionRequired === true || submission.revision_required === true) {
+    return true;
+  }
+  for (const ans of submission.answers || []) {
+    if (ans.feedback && typeof ans.feedback === "string") {
+      try {
+        const parsed = JSON.parse(ans.feedback);
+        if (parsed && typeof parsed === "object" && parsed.revisionRequired === true) {
+          return true;
+        }
+      } catch {
+      }
+    }
+  }
+  return false;
+}
+function isScholarshipEligible(submission, options = {}) {
+  const { allowPendingTeacherReview = true } = options;
+  if (!submission) {
+    return { isEligible: false, reasonCode: "NO_SUBMISSION", isRevisionRequired: false };
+  }
+  const status = String(submission.status || "").toUpperCase();
+  if (status !== "SUBMITTED" && status !== "GRADED") {
+    return { isEligible: false, reasonCode: "INVALID_STATUS", isRevisionRequired: false };
+  }
+  const isRevision = extractRevisionRequired(submission);
+  if (isRevision) {
+    return { isEligible: false, reasonCode: "REVISION_REQUIRED", isRevisionRequired: true };
+  }
+  const examType = String(
+    submission.exam?.examType || submission.exam?.type || submission.examType || submission.type || ""
+  ).toLowerCase();
+  const isSubjective = examType === "writing" || examType === "speaking" || examType.includes("essay");
+  if (isSubjective) {
+    if (status === "GRADED") {
+      const totalScore = Number(submission.totalScore ?? submission.total_score ?? 0);
+      if (totalScore <= 0) {
+        return { isEligible: false, reasonCode: "ZERO_SCORE", isRevisionRequired: false };
+      }
+      return { isEligible: true, reasonCode: "TEACHER_GRADED_QUALIFIED", isRevisionRequired: false };
+    }
+    if (status === "SUBMITTED") {
+      if (allowPendingTeacherReview) {
+        return { isEligible: true, reasonCode: "PENDING_TEACHER_REVIEW", isRevisionRequired: false };
+      }
+      return { isEligible: false, reasonCode: "AWAITING_TEACHER_GRADE", isRevisionRequired: false };
+    }
+  }
+  const isObjective = examType === "reading" || examType === "listening" || examType === "quiz";
+  if (isObjective) {
+    return { isEligible: true, reasonCode: "ELIGIBLE_OBJECTIVE", isRevisionRequired: false };
+  }
+  return { isEligible: true, reasonCode: "DRILL_COMPLETED", isRevisionRequired: false };
+}
+
 // server/services/snapshot.service.ts
 var SnapshotService = class {
   constructor(prisma) {
@@ -113526,10 +113715,17 @@ var SnapshotService = class {
               submittedAt: { lte: cutoffTime },
               status: { in: ["SUBMITTED", "GRADED"] }
             },
+            include: {
+              answers: true,
+              exam: { select: { examType: true, title: true } }
+            },
             orderBy: { submittedAt: "desc" }
           });
-          hwCompleted = submissions.length;
-          streakDays = submissions.length;
+          const eligibleSubmissions = submissions.filter(
+            (s) => isScholarshipEligible(s).isEligible
+          );
+          hwCompleted = eligibleSubmissions.length;
+          streakDays = eligibleSubmissions.length;
         }
         const hwRate = hwTotal > 0 ? Math.min(100, Math.round(hwCompleted / hwTotal * 100)) : 100;
         const attendanceRecords = await this.prisma.classAttendance.findMany({
@@ -114104,7 +114300,10 @@ var RadarService = class {
         status: { in: ["SUBMITTED", "GRADED"] },
         submittedAt: { lte: weekDeadline }
       },
-      select: { studentId: true, examId: true }
+      include: {
+        answers: true,
+        exam: { select: { examType: true, title: true } }
+      }
     }) : [];
     const latestSnapshots = await this.prisma.weeklySnapshot.findMany({
       where: {
@@ -114131,10 +114330,12 @@ var RadarService = class {
     }) : [];
     const submissionsByStudent = /* @__PURE__ */ new Map();
     for (const sub of allSubmissions) {
-      if (!submissionsByStudent.has(sub.studentId)) {
-        submissionsByStudent.set(sub.studentId, /* @__PURE__ */ new Set());
+      if (isScholarshipEligible(sub).isEligible) {
+        if (!submissionsByStudent.has(sub.studentId)) {
+          submissionsByStudent.set(sub.studentId, /* @__PURE__ */ new Set());
+        }
+        submissionsByStudent.get(sub.studentId).add(sub.examId);
       }
-      submissionsByStudent.get(sub.studentId).add(sub.examId);
     }
     const latestSnapshotByStudent = new Map(latestSnapshots.map((s) => [s.studentId, s]));
     const prevSnapshotByStudent = new Map(

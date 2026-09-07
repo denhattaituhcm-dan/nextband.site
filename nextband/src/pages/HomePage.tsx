@@ -469,13 +469,13 @@ export default function HomePage() {
                 </Card>
 
                 {/* Quick 5-Skill Homework Hub Link */}
-                <Card className="md:col-span-5 p-4 sm:p-5 rounded-2xl border bg-gradient-to-br from-indigo-50/50 via-card to-card border-indigo-100 dark:border-indigo-900/40 shadow-xs flex flex-col justify-between">
+                <Card className="md:col-span-5 p-4 sm:p-5 rounded-2xl border border-slate-200/80 bg-card shadow-xs flex flex-col justify-between">
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-brand-blue bg-brand-blue-soft px-2 py-0.5 rounded-md border border-brand-blue/20">
                         Bảng Khái Quát Bài Tập
                       </span>
-                      <span className="text-xs font-bold text-foreground tabular-nums">
+                      <span className="text-xs font-mono font-bold text-foreground tabular-nums">
                         {submittedCount} / {rawLessons?.length || 27} bài
                       </span>
                     </div>
@@ -487,12 +487,12 @@ export default function HomePage() {
                     </p>
                   </div>
 
-                  <div className="pt-3 border-t border-indigo-100/60 dark:border-indigo-900/30 flex items-center justify-end">
+                  <div className="pt-3 border-t border-slate-100 flex items-center justify-end">
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => navigate(`/app/class/${enrolledClassId}/lessons?tab=skill-matrix`)}
-                      className="h-7 text-xs font-bold border-indigo-200 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 rounded-lg gap-1"
+                      className="h-7 text-xs font-bold border-slate-200 text-[#002147] hover:bg-slate-50 rounded-lg gap-1"
                     >
                       <span>Tra cứu tiến độ 5 kỹ năng</span>
                       <ArrowRight className="h-3 w-3" />
