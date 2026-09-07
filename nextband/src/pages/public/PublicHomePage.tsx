@@ -14,7 +14,7 @@ import {
   CheckCircle2,
   FileCheck,
   RefreshCw,
-  Clock,
+  TrendingUp,
   ShieldCheck,
   UserCheck,
   Users,
@@ -22,6 +22,7 @@ import {
   Flame,
   FileText,
   Sparkles,
+  Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -38,7 +39,7 @@ export default function PublicHomePage() {
       {/* ========================================================================= */}
       {/* SECTION 1: HERO SECTION                                                   */}
       {/* ========================================================================= */}
-      <section className="relative overflow-hidden pt-14 pb-20 sm:pt-24 sm:pb-32 border-b border-border/80 bg-background">
+      <section className="relative overflow-hidden pt-14 pb-20 sm:pt-24 sm:pb-32 border-b border-border/80 bg-gradient-to-br from-background via-background to-[#002147]/[0.03]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
             {/* Left: Headline, Subheadline & Primary Action */}
@@ -55,7 +56,7 @@ export default function PublicHomePage() {
                 </span>
                 .
                 <br />
-                <span className="text-brand-blue block mt-2">
+                <span className="text-[#002147] block mt-2">
                   Không học mẹo. Không học thuộc bài mẫu.
                 </span>
               </h1>
@@ -79,7 +80,7 @@ export default function PublicHomePage() {
                   size="lg"
                   variant="outline"
                   onClick={() => navigate("/academic-system")}
-                  className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3 sm:py-0 font-bold text-base sm:text-lg border-2 border-border/80 hover:bg-muted text-foreground whitespace-normal text-center"
+                  className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3 sm:py-0 font-bold text-base sm:text-lg border-2 border-[#002147]/20 hover:bg-[#002147]/5 text-foreground whitespace-normal text-center"
                 >
                   Khám phá hệ thống học thuật
                 </Button>
@@ -104,7 +105,7 @@ export default function PublicHomePage() {
 
             {/* Right: 3-Question Framework Card */}
             <div className="lg:col-span-5">
-              <div className="relative mx-auto max-w-md lg:max-w-none rounded-3xl border border-border/90 bg-card p-7 sm:p-9 shadow-sm space-y-6">
+              <div className="relative mx-auto max-w-md lg:max-w-none rounded-3xl border-2 border-[#002147]/15 bg-card p-7 sm:p-9 shadow-md space-y-6">
                 <div className="space-y-1.5 border-b border-border/70 pb-4">
                   <span className="text-xs font-mono uppercase tracking-widest text-brand-blue font-extrabold">
                     Khung Đào Tạo ARIS
@@ -115,9 +116,9 @@ export default function PublicHomePage() {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="p-4 rounded-2xl border border-border/70 bg-muted/20 space-y-1.5 text-left">
+                  <div className="p-4 rounded-2xl border border-[#002147]/15 bg-[#002147]/[0.03] space-y-1.5 text-left">
                     <div className="flex items-center gap-2.5 text-base font-extrabold text-foreground">
-                      <span className="h-7 w-7 rounded-xl bg-brand-blue-soft text-brand-blue font-mono text-xs flex items-center justify-center font-black">
+                      <span className="h-7 w-7 rounded-xl bg-[#002147] text-white font-mono text-xs flex items-center justify-center font-black">
                         1
                       </span>
                       <span>Bạn đang ở đâu?</span>
@@ -127,9 +128,9 @@ export default function PublicHomePage() {
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-2xl border border-border/70 bg-muted/20 space-y-1.5 text-left">
+                  <div className="p-4 rounded-2xl border border-[#002147]/15 bg-[#002147]/[0.03] space-y-1.5 text-left">
                     <div className="flex items-center gap-2.5 text-base font-extrabold text-foreground">
-                      <span className="h-7 w-7 rounded-xl bg-brand-blue-soft text-brand-blue font-mono text-xs flex items-center justify-center font-black">
+                      <span className="h-7 w-7 rounded-xl bg-[#002147] text-white font-mono text-xs flex items-center justify-center font-black">
                         2
                       </span>
                       <span>Điều gì cản trở bạn?</span>
@@ -139,9 +140,9 @@ export default function PublicHomePage() {
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-2xl border border-border/70 bg-muted/20 space-y-1.5 text-left">
+                  <div className="p-4 rounded-2xl border border-[#002147]/15 bg-[#002147]/[0.03] space-y-1.5 text-left">
                     <div className="flex items-center gap-2.5 text-base font-extrabold text-foreground">
-                      <span className="h-7 w-7 rounded-xl bg-brand-blue-soft text-brand-blue font-mono text-xs flex items-center justify-center font-black">
+                      <span className="h-7 w-7 rounded-xl bg-[#002147] text-white font-mono text-xs flex items-center justify-center font-black">
                         3
                       </span>
                       <span>Bước tiếp theo là gì?</span>
@@ -152,7 +153,7 @@ export default function PublicHomePage() {
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-brand-blue text-white text-left space-y-2 shadow-2xs">
+                <div className="p-5 rounded-2xl bg-[#002147] text-white text-left space-y-2 shadow-2xs">
                   <div className="text-base font-bold flex items-center gap-2">
                     <ShieldCheck className="h-5 w-5 text-brand-cyan" />
                     <span>Học có kỷ luật &amp; đo lường minh bạch</span>
@@ -182,8 +183,8 @@ export default function PublicHomePage() {
         background="muted"
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-          <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-3.5 shadow-2xs">
-            <div className="p-3 rounded-2xl bg-primary-soft text-primary w-fit">
+          <div className="p-7 rounded-3xl bg-card border border-border/80 border-l-4 border-l-[#002147] space-y-3.5 shadow-2xs">
+            <div className="p-3 rounded-2xl bg-[#002147]/10 text-[#002147] w-fit">
               <BookOpen className="h-6 w-6" />
             </div>
             <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Chẩn đoán chính xác</h3>
@@ -192,8 +193,8 @@ export default function PublicHomePage() {
             </p>
           </div>
 
-          <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-3.5 shadow-2xs">
-            <div className="p-3 rounded-2xl bg-primary-soft text-primary w-fit">
+          <div className="p-7 rounded-3xl bg-card border border-border/80 border-l-4 border-l-brand-red space-y-3.5 shadow-2xs">
+            <div className="p-3 rounded-2xl bg-brand-red/10 text-brand-red w-fit">
               <Target className="h-6 w-6" />
             </div>
             <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Can thiệp đúng chỗ</h3>
@@ -202,11 +203,11 @@ export default function PublicHomePage() {
             </p>
           </div>
 
-          <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-3.5 shadow-2xs">
-            <div className="p-3 rounded-2xl bg-primary-soft text-primary w-fit">
+          <div className="p-7 rounded-3xl bg-card border border-border/80 border-l-4 border-l-brand-blue space-y-3.5 shadow-2xs">
+            <div className="p-3 rounded-2xl bg-brand-blue/10 text-brand-blue w-fit">
               <Clock className="h-6 w-6" />
             </div>
-            <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Thăng cấp minh bạch</h3>
+            <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Theo dõi tiến bộ</h3>
             <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
               Mỗi lỗ hổng được khắc phục là một bước tiến trên thang đo ARIS-7. Toàn bộ tiến trình được lưu vết trên Academic Record™ để phụ huynh và học sinh đo lường qua từng tuần.
             </p>
@@ -477,7 +478,7 @@ export default function PublicHomePage() {
           {/* Card 1 */}
           <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-4 shadow-2xs flex flex-col justify-between">
             <div className="space-y-3">
-              <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 w-fit">
+              <div className="p-3 rounded-2xl bg-[#002147]/10 text-[#002147] w-fit">
                 <Compass className="h-6 w-6" />
               </div>
               <h3 className="font-extrabold text-foreground text-lg sm:text-xl">
@@ -487,7 +488,7 @@ export default function PublicHomePage() {
                 Không dùng AI đoán mò. Dữ liệu lỗi ngữ pháp, phát âm và dạng bài yếu nhất được thẩm định trực tiếp bởi giáo viên chuyên môn và thuật toán so khớp khách quan.
               </p>
             </div>
-            <div className="pt-3 border-t border-border/60 text-xs font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
+            <div className="pt-3 border-t border-border/60 text-xs font-bold text-[#002147] flex items-center gap-1.5">
               <CheckCircle2 className="h-4 w-4" />
               <span>Chẩn đoán chính xác 100% sự thật</span>
             </div>
@@ -496,7 +497,7 @@ export default function PublicHomePage() {
           {/* Card 2 */}
           <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-4 shadow-2xs flex flex-col justify-between">
             <div className="space-y-3">
-              <div className="p-3 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 w-fit">
+              <div className="p-3 rounded-2xl bg-brand-red/10 text-brand-red w-fit">
                 <Flame className="h-6 w-6" />
               </div>
               <h3 className="font-extrabold text-foreground text-lg sm:text-xl">
@@ -506,7 +507,7 @@ export default function PublicHomePage() {
                 Chỉ đích danh đúng 2 thói quen vô thức đang cản trở bạn bứt phá lên Band 6.5 - 7.0+, kèm chiến lược giải thoát cụ thể để bạn thấy rõ lộ trình tăng điểm.
               </p>
             </div>
-            <div className="pt-3 border-t border-border/60 text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+            <div className="pt-3 border-t border-border/60 text-xs font-bold text-brand-red flex items-center gap-1.5">
               <CheckCircle2 className="h-4 w-4" />
               <span>Tập trung gỡ đúng nút thắt</span>
             </div>
@@ -515,7 +516,7 @@ export default function PublicHomePage() {
           {/* Card 3 */}
           <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-4 shadow-2xs flex flex-col justify-between">
             <div className="space-y-3">
-              <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 w-fit">
+              <div className="p-3 rounded-2xl bg-brand-blue/10 text-brand-blue w-fit">
                 <FileText className="h-6 w-6" />
               </div>
               <h3 className="font-extrabold text-foreground text-lg sm:text-xl">
@@ -525,7 +526,7 @@ export default function PublicHomePage() {
                 Mỗi học viên sở hữu cuốn cẩm nang bỏ túi độc bản — tổng hợp chính xác những câu mình từng viết sai và lời chữa của thầy cô để tự tin đọc ôn tập 15 phút trước giờ thi thật.
               </p>
             </div>
-            <div className="pt-3 border-t border-border/60 text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+            <div className="pt-3 border-t border-border/60 text-xs font-bold text-brand-blue flex items-center gap-1.5">
               <CheckCircle2 className="h-4 w-4" />
               <span>Bảo bối độc bản mang vào phòng thi</span>
             </div>
