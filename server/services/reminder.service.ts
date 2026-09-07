@@ -1,42 +1,35 @@
 /**
- * Communication Service — NextBand LBOS
+ * Communication & Reminder Service — NextBand LBOS
  *
- * Abstraction layer for communication channels.
- * Prevents the Risk Engine / Intervention workflow from coupling tightly to Zalo.
- * Currently uses ZaloAdapter as the default implementation.
+ * Abstraction layer for communication channels and parent message dispatch.
+ * Separates Message Generation (Pure Content SSOT) from Channel Transport (Zalo, Webhook, SMS).
  */
+
+import {
+  ParentProgressMessageContext,
+  TaskReminderMessageContext,
+  generateParentProgressMessage,
+  generateTaskReminderMessage,
+} from '../../nextband/src/lib/reminderMessageHelper.js';
+
+export {
+  ParentProgressMessageContext,
+  TaskReminderMessageContext,
+  generateParentProgressMessage,
+  generateTaskReminderMessage,
+};
 
 export interface CommunicationChannelAdapter {
   name: string;
-  generateReminderLink(context: {
-    recipientPhone: string;
-    studentName: string;
-    riskReason?: string | null;
-    openTaskCount: number;
-    parentToken?: string | null;
-  }): string;
+  generateReminderLink(context: TaskReminderMessageContext): string;
 }
 
 export class ZaloChannelAdapter implements CommunicationChannelAdapter {
   name = 'ZALO';
 
-  generateReminderLink(context: {
-    recipientPhone: string;
-    studentName: string;
-    riskReason?: string | null;
-    openTaskCount: number;
-    parentToken?: string | null;
-  }): string {
-    const cleanPhone = context.recipientPhone.replace(/\D/g, '');
-    const parentHubUrl = context.parentToken
-      ? `${process.env.APP_BASE_URL || 'https://nextband.site'}/p/${context.parentToken}`
-      : '';
-
-    const message = `Dạ NextBand xin chào Phụ huynh em ${context.studentName},\n` +
-      `Thầy cô gửi thông tin theo dõi tiến độ tuần này của con. Hiện tại con còn ${context.openTaskCount} bài tập cần hoàn thành để bảo toàn mục tiêu học bổng và lộ trình học.\n` +
-      (parentHubUrl ? `👉 Ba Mẹ xem chi tiết báo cáo và động viên con tại: ${parentHubUrl}\n` : '') +
-      `Cần hỗ trợ thêm, Ba Mẹ nhắn lại giúp thầy cô nhé!`;
-
+  generateReminderLink(context: TaskReminderMessageContext): string {
+    const cleanPhone = (context.recipientPhone || '').replace(/\D/g, '');
+    const message = generateTaskReminderMessage(context);
     const encoded = encodeURIComponent(message);
     return `https://zalo.me/${cleanPhone}?text=${encoded}`;
   }
@@ -49,13 +42,11 @@ export class CommunicationService {
     this.defaultAdapter = adapter || new ZaloChannelAdapter();
   }
 
-  getReminderLink(context: {
-    recipientPhone: string;
-    studentName: string;
-    riskReason?: string | null;
-    openTaskCount: number;
-    parentToken?: string | null;
-  }): string {
+  getReminderLink(context: TaskReminderMessageContext): string {
     return this.defaultAdapter.generateReminderLink(context);
+  }
+
+  getProgressMessage(context: ParentProgressMessageContext): string {
+    return generateParentProgressMessage(context);
   }
 }
