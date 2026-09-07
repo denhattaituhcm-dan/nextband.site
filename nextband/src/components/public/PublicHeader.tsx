@@ -243,14 +243,14 @@ export function PublicHeader() {
                   Đánh giá năng lực
                 </Link>
 
-                {/* Primary CTA for Guests: Homework / Student Login */}
+                {/* Primary CTA for Guests: Homework */}
                 <Button
                   size="sm"
                   asChild
                   className="h-10 px-5 rounded-xl text-xs sm:text-[13px] font-black uppercase tracking-wider bg-gradient-to-r from-rose-600 via-red-500 to-amber-500 hover:from-rose-500 hover:via-red-400 hover:to-amber-400 text-white shadow-lg shadow-rose-600/25 border border-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all gap-2"
                 >
                   <Link to="/login?next=/app">
-                    <span>Học viên / BTVN</span>
+                    <span>Homework</span>
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
@@ -274,7 +274,7 @@ export function PublicHeader() {
                 asChild
                 className="h-8 px-3 text-xs font-black uppercase tracking-wider bg-gradient-to-r from-rose-600 to-amber-500 text-white shadow-sm"
               >
-                <Link to="/login?next=/app">Học viên / BTVN →</Link>
+                <Link to="/login?next=/app">Homework →</Link>
               </Button>
             )}
 
@@ -417,7 +417,7 @@ export function PublicHeader() {
                   className="w-full h-10 font-black uppercase tracking-wider text-xs bg-gradient-to-r from-rose-600 via-red-500 to-amber-500 hover:from-rose-500 hover:via-red-400 hover:to-amber-400 text-white justify-center gap-2 shadow-md shadow-rose-950/40"
                 >
                   <GraduationCap className="h-4 w-4" />
-                  <span>Học Viên / Làm BTVN</span>
+                  <span>Homework</span>
                   <ArrowRight className="h-4 w-4" />
                 </Button>
                 <Button
