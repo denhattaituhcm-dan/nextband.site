@@ -385,7 +385,7 @@ describe("🔁 P1-B: CANONICAL REVISION WORKFLOW & ATTEMPT ISOLATION TEST", () =
 
       const idemKey = "idem-p1-test-key-999";
       const submitPayload = {
-        answers: [{ questionId, answerText: "Student B essay content" }],
+        answers: [{ questionId, answerText: "Student B comprehensive essay content explaining IELTS writing task two in detail today." }],
         idempotencyKey: idemKey,
       };
 

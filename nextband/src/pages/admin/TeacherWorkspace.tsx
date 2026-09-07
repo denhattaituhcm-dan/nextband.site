@@ -1072,11 +1072,11 @@ export default function TeacherWorkspace() {
       </header>
 
       {/* 📐 BỐ CỤC 3 CỘT SINGLE-SCREEN WORKBOOK VIEWER */}
-      <div className="flex-1 flex min-h-0 overflow-hidden">
+      <div className="flex-1 flex min-h-0 overflow-hidden overflow-x-auto">
         {/* ========================================================================= */}
         {/* CỘT 1: DANH SÁCH HỌC VIÊN TRONG LỚP (KÈM CHỈ SỐ TIẾN ĐỘ 12/27)            */}
         {/* ========================================================================= */}
-          <div className="w-1/4 min-w-[260px] max-w-[320px] bg-white border-r border-slate-200 flex flex-col justify-between overflow-hidden">
+          <div className="w-1/4 min-w-[260px] max-w-[320px] shrink-0 bg-white border-r border-slate-200 flex flex-col justify-between overflow-hidden">
             <div className="p-3.5 border-b border-slate-100 space-y-2.5 shrink-0 bg-slate-50/50">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-slate-800 tracking-tight flex items-center gap-1.5">
@@ -1257,7 +1257,7 @@ export default function TeacherWorkspace() {
           {/* ========================================================================= */}
           {/* CỘT 2: SỔ BÀI TẬP WORKBOOK (BUỔI HỌC & TRẠNG THÁI NỘP BÀI)                 */}
           {/* ========================================================================= */}
-          <div className="w-1/3 min-w-[320px] max-w-[420px] bg-slate-50/30 border-r border-slate-200 flex flex-col justify-between overflow-hidden">
+          <div className="w-1/3 min-w-[320px] max-w-[420px] shrink-0 bg-slate-50/30 border-r border-slate-200 flex flex-col justify-between overflow-hidden">
             <div className="p-3.5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between shrink-0">
               <div>
                 <span className="text-xs font-bold text-slate-800 tracking-tight flex items-center gap-1.5">
@@ -1452,7 +1452,7 @@ export default function TeacherWorkspace() {
           {/* ========================================================================= */}
           {/* CỘT 3: PREVIEW & XEM KHÁI QUÁT BÀI NỘP / KẾT QUẢ ĐÃ CHẤM                  */}
           {/* ========================================================================= */}
-          <div className="flex-1 bg-white flex flex-col justify-between overflow-hidden">
+          <div className="flex-1 min-w-[360px] bg-white flex flex-col justify-between overflow-hidden">
             {!currentStudent ? (
               <div className="h-full flex items-center justify-center p-8 text-center text-xs text-slate-400">
                 Chọn một học viên từ danh sách để xem bài làm và chấm điểm.

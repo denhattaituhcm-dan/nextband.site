@@ -335,7 +335,7 @@ export default function AdminSectionEdit() {
 
   const createQuestionMutation = useMutation({
     mutationFn: async (data: any) => {
-      let finalData = { ...data };
+      const finalData = { ...data };
       if (data.questionType === "fill_blank" && Array.isArray(data.fillBlankAnswers)) {
         finalData.correctAnswer = stringifyFillBlankAnswers(
           data.fillBlankAnswers,
@@ -359,7 +359,7 @@ export default function AdminSectionEdit() {
 
   const updateQuestionMutation = useMutation({
     mutationFn: async ({ id: questionId, ...data }: any) => {
-      let finalData = { ...data };
+      const finalData = { ...data };
       if (data.questionType === "fill_blank" && Array.isArray(data.fillBlankAnswers)) {
         finalData.correctAnswer = stringifyFillBlankAnswers(
           data.fillBlankAnswers,

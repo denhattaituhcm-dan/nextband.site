@@ -10,9 +10,9 @@ export default function AdminLayout() {
       <SidebarProvider>
         <div className="min-h-screen flex w-full">
           <AdminSidebar />
-          <div className="flex-1 flex flex-col">
+          <div className="flex-1 min-w-0 flex flex-col">
             <AdminHeader />
-            <main className="flex-1 overflow-auto p-6 bg-muted/30">
+            <main className="flex-1 overflow-auto p-3 sm:p-4 md:p-6 bg-muted/30">
               <Outlet />
             </main>
           </div>

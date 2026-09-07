@@ -67,9 +67,9 @@ export default function AdminContentQADashboard() {
       for (const e of (exams || [])) {
         const sections = e.sections || e.exam_sections || [];
 
-        let criticalErrors: string[] = [];
-        let warnings: string[] = [];
-        let remedies: ActionableRemedy[] = [];
+        const criticalErrors: string[] = [];
+        const warnings: string[] = [];
+        const remedies: ActionableRemedy[] = [];
 
         let score = 100;
 

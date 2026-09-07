@@ -286,6 +286,31 @@ export async function fetchWithResilience(
   throw new GatewayUnavailableError();
 }
 
+/**
+ * Robust wrapper over fetchWithResilience with automatic Bearer token injection,
+ * JSON content-type default, and standardized handling of network errors.
+ */
+export async function authenticatedFetch(
+  url: string,
+  options: FetchWithResilienceOptions = {}
+): Promise<Response> {
+  const token = await getAuthToken();
+  const headers = new Headers(options.headers || {});
+
+  if (token && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  if (options.body && typeof options.body === "string" && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+
+  return fetchWithResilience(url, {
+    ...options,
+    headers,
+  });
+}
+
 // Helper to format URLs
 export const formatStorageUrl = (path: string | null | undefined) => {
   if (!path) return "";
@@ -2360,13 +2385,8 @@ export const branchesApi = {
   },
 
   create: async (data: { code: string; name: string; address: string; phone?: string }): Promise<Branch> => {
-    const token = await getAuthToken();
-    const res = await fetch(`${API_BASE_URL}/branches`, {
+    const res = await authenticatedFetch(`${API_BASE_URL}/branches`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
       body: JSON.stringify(data),
     });
     if (!res.ok) {
@@ -2378,13 +2398,8 @@ export const branchesApi = {
   },
 
   update: async (id: string, data: { name?: string; address?: string; phone?: string }): Promise<Branch> => {
-    const token = await getAuthToken();
-    const res = await fetch(`${API_BASE_URL}/branches/${id}`, {
+    const res = await authenticatedFetch(`${API_BASE_URL}/branches/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
       body: JSON.stringify(data),
     });
     if (!res.ok) {
@@ -2397,13 +2412,8 @@ export const branchesApi = {
 
   /** Đặt chi nhánh này làm Cơ sở chính. Admin only. Transaction đảm bảo chỉ 1 primary. */
   setPrimary: async (id: string): Promise<Branch> => {
-    const token = await getAuthToken();
-    const res = await fetch(`${API_BASE_URL}/branches/${id}/set-primary`, {
+    const res = await authenticatedFetch(`${API_BASE_URL}/branches/${id}/set-primary`, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
@@ -2415,13 +2425,8 @@ export const branchesApi = {
 
   /** Ngừng hoạt động chi nhánh (soft-delete). Không được áp dụng cho Cơ sở chính. Admin only. */
   deactivate: async (id: string): Promise<Branch> => {
-    const token = await getAuthToken();
-    const res = await fetch(`${API_BASE_URL}/branches/${id}/deactivate`, {
+    const res = await authenticatedFetch(`${API_BASE_URL}/branches/${id}/deactivate`, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
@@ -2433,13 +2438,8 @@ export const branchesApi = {
 
   /** Kích hoạt lại chi nhánh đang inactive. Admin only. */
   activate: async (id: string): Promise<Branch> => {
-    const token = await getAuthToken();
-    const res = await fetch(`${API_BASE_URL}/branches/${id}/activate`, {
+    const res = await authenticatedFetch(`${API_BASE_URL}/branches/${id}/activate`, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
@@ -2453,27 +2453,16 @@ export const branchesApi = {
 
 export const roomsApi = {
   list: async (branchId?: string): Promise<Room[]> => {
-    const token = await getAuthToken();
     const query = branchId && branchId !== "ALL" ? `?branchId=${branchId}` : "";
-    const res = await fetch(`${API_BASE_URL}/rooms${query}`, {
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
+    const res = await authenticatedFetch(`${API_BASE_URL}/rooms${query}`);
     if (!res.ok) throw new Error("Không thể tải danh sách phòng học");
     const json = await res.json();
     return json.data || [];
   },
 
   create: async (data: { branchId: string; name: string; capacity?: number }): Promise<Room> => {
-    const token = await getAuthToken();
-    const res = await fetch(`${API_BASE_URL}/rooms`, {
+    const res = await authenticatedFetch(`${API_BASE_URL}/rooms`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
       body: JSON.stringify(data),
     });
     if (!res.ok) {
@@ -2485,13 +2474,8 @@ export const roomsApi = {
   },
 
   update: async (id: string, data: { name?: string; capacity?: number; isActive?: boolean }): Promise<Room> => {
-    const token = await getAuthToken();
-    const res = await fetch(`${API_BASE_URL}/rooms/${id}`, {
+    const res = await authenticatedFetch(`${API_BASE_URL}/rooms/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
       body: JSON.stringify(data),
     });
     if (!res.ok) {
@@ -3457,16 +3441,11 @@ export const sessionsApi = {
 // =============================================
 export const siteSettingsApi = {
   get: async (options?: { bypassCache?: boolean }) => {
-    const token = await getAuthToken();
-    const headers: Record<string, string> = {
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    };
     const url = options?.bypassCache
       ? `${API_BASE_URL}/site-settings?_t=${Date.now()}`
       : `${API_BASE_URL}/site-settings`;
-    const res = await fetch(url, {
-      headers,
-      cache: options?.bypassCache || token ? "no-store" : "default",
+    const res = await authenticatedFetch(url, {
+      cache: options?.bypassCache ? "no-store" : "default",
     });
     if (!res.ok) {
       throw new Error("Không thể tải cài đặt hệ thống");
@@ -3476,13 +3455,8 @@ export const siteSettingsApi = {
   },
 
   update: async (payload: Record<string, unknown>) => {
-    const token = await getAuthToken();
-    const res = await fetch(`${API_BASE_URL}/site-settings`, {
+    const res = await authenticatedFetch(`${API_BASE_URL}/site-settings`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
       body: JSON.stringify(payload),
     });
 
@@ -3499,7 +3473,9 @@ export const siteSettingsApi = {
             .map((d: any) => `${d.path?.join(".") || "Dữ liệu"}: ${d.message}`)
             .join("; ");
         }
-      } catch {}
+      } catch {
+        // Non-JSON error body fallback
+      }
       throw new Error(errorMessage);
     }
 
@@ -3652,8 +3628,8 @@ export const lessonsApi = {
     }
 
     const examIds = exams.map((e) => e.id);
-    let submissionsMap: Record<string, any> = {};
-    let homeworksMap: Record<string, any> = {};
+    const submissionsMap: Record<string, any> = {};
+    const homeworksMap: Record<string, any> = {};
 
     if (examIds.length > 0) {
       const [subsRes, hwRes] = await Promise.all([
@@ -4848,7 +4824,7 @@ export interface ParentReportData {
 
 export const parentHubApi = {
   async getParentReport(token: string): Promise<ParentReportData> {
-    const res = await fetch(`${API_BASE_URL}/public/parent-reports/${token}`, {
+    const res = await fetchWithResilience(`${API_BASE_URL}/public/parent-reports/${token}`, {
       headers: {
         "Cache-Control": "no-cache",
       },
@@ -4862,7 +4838,7 @@ export const parentHubApi = {
   },
 
   async cheerStudent(token: string): Promise<{ success: boolean; message: string }> {
-    const res = await fetch(`${API_BASE_URL}/public/parent-reports/${token}/cheer`, {
+    const res = await fetchWithResilience(`${API_BASE_URL}/public/parent-reports/${token}/cheer`, {
       method: "POST",
     });
     if (!res.ok) {
@@ -4884,7 +4860,7 @@ export const parentHubApi = {
     zaloDeepLink: string;
     prefilledText: string;
   }> {
-    const res = await fetch(`${API_BASE_URL}/public/re-enrollment/request`, {
+    const res = await fetchWithResilience(`${API_BASE_URL}/public/re-enrollment/request`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -4898,14 +4874,10 @@ export const parentHubApi = {
   },
 
   async regenerateParentToken(classId: string, studentId: string): Promise<string> {
-    const token = await getAuthToken();
-    const res = await fetch(
+    const res = await authenticatedFetch(
       `${API_BASE_URL}/classes/${classId}/students/${studentId}/parent-token/regenerate`,
       {
         method: "POST",
-        headers: {
-          Authorization: token ? `Bearer ${token}` : "",
-        },
       }
     );
     if (!res.ok) {

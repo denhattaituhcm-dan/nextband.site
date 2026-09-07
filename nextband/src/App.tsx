@@ -12,9 +12,6 @@ import ClientLayout from "@/layouts/ClientLayout";
 import AdminLayout from "@/layouts/AdminLayout";
 import MinimalLayout from "@/layouts/MinimalLayout";
 
-// Eagerly loaded core initial routes
-import HomePage from "@/pages/HomePage";
-import NotFound from "@/pages/NotFound";
 
 /**
  * Detects stale Vite chunk errors (happen after a new deployment or network hiccup).
@@ -72,6 +69,10 @@ function lazyWithRetry<T extends React.ComponentType<any>>(
     })
   );
 }
+
+// Lazy-loaded Core Pages
+const HomePage = lazyWithRetry(() => import("@/pages/HomePage"));
+const NotFound = lazyWithRetry(() => import("@/pages/NotFound"));
 
 // Lazy-loaded Public Pages
 const PublicHomePage = lazyWithRetry(() => import("@/pages/public/PublicHomePage"));

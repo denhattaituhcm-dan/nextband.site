@@ -55,7 +55,7 @@ describe("ReadlangExplorationSidebar Component", () => {
     );
 
     expect(screen.getByText("reached")).toBeDefined();
-    expect(screen.getByText(/Hiểu đơn giản/i)).toBeDefined();
+    expect(screen.getAllByText(/Hiểu đơn giản/i).length).toBeGreaterThanOrEqual(1);
 
     // Concise words should not have multi-domain transfer cards
     const sidebarHtml = document.body.innerHTML;

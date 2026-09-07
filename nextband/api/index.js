@@ -101942,6 +101942,244 @@ var SubmissionStateMachine = class {
 // server/services/exam-submission.service.ts
 init_notification_service();
 
+// server/services/error-episode.service.ts
+var RETENTION_STREAK_THRESHOLD = 2;
+var ErrorEpisodeService = class {
+  constructor(prisma) {
+    this.prisma = prisma;
+  }
+  /**
+   * Main lifecycle transition hook invoked within gradeSubmission transaction
+   */
+  async processSubmissionGrading(tx, params) {
+    const prisma = tx || this.prisma;
+    if (!prisma.studentErrorEpisode) {
+      return [];
+    }
+    const { submissionId, studentId, examId, examType = "WRITING", grades = [], options } = params;
+    const skill = (examType || "WRITING").toUpperCase() === "SPEAKING" ? "SPEAKING" : "WRITING";
+    const isRevisionRequired = grades.some((g) => g.revisionRequired) || !!options?.revisionRequired;
+    const rawEarlierGraded = await prisma.examSubmission.findMany({
+      where: {
+        examId,
+        studentId,
+        id: { not: submissionId },
+        status: "GRADED"
+      },
+      orderBy: { createdAt: "asc" }
+    });
+    const earlierGradedSubmissions = rawEarlierGraded.filter((s) => s.id !== submissionId);
+    const isRevisionSubmission = earlierGradedSubmissions.length > 0;
+    const errorItems = [];
+    grades.forEach((g) => {
+      const fbs = g.sentenceFeedbacks || [];
+      fbs.forEach((fb) => {
+        if (fb && fb.category && fb.category !== "PRAISE") {
+          errorItems.push({
+            tag: fb.tag || fb.category,
+            category: fb.category,
+            sentence: fb.originalSentence || fb.sentence,
+            note: fb.note || fb.suggestedSentence,
+            answerId: g.answerId
+          });
+        }
+      });
+    });
+    if (options?.sentenceFeedbacks) {
+      options.sentenceFeedbacks.forEach((fb) => {
+        if (fb && fb.category && fb.category !== "PRAISE") {
+          const alreadyExists = errorItems.some((e) => e.tag === fb.tag && e.sentence === (fb.originalSentence || fb.sentence));
+          if (!alreadyExists) {
+            errorItems.push({
+              tag: fb.tag || fb.category,
+              category: fb.category,
+              sentence: fb.originalSentence || fb.sentence,
+              note: fb.note || fb.suggestedSentence
+            });
+          }
+        }
+      });
+    }
+    const primaryCat = options?.primaryErrorCategory || grades[0]?.primaryErrorCategory;
+    if (errorItems.length === 0 && primaryCat) {
+      errorItems.push({
+        tag: primaryCat,
+        category: primaryCat,
+        note: options?.feedback || grades[0]?.feedback,
+        answerId: grades[0]?.answerId
+      });
+    }
+    const currentErrorTags = new Set(errorItems.map((e) => e.tag));
+    if (isRevisionSubmission) {
+      const earlierSubIds = earlierGradedSubmissions.map((s) => s.id);
+      const targetEpisodes = await prisma.studentErrorEpisode.findMany({
+        where: {
+          studentId,
+          sourceSubmissionId: { in: earlierSubIds },
+          status: { in: ["REVISION_REQUESTED", "OBSERVED"] }
+        }
+      });
+      if (!isRevisionRequired) {
+        for (const ep of targetEpisodes) {
+          await prisma.studentErrorEpisode.update({
+            where: { id: ep.id },
+            data: {
+              status: "CORRECTED",
+              revisionSubmissionId: submissionId,
+              correctedAt: /* @__PURE__ */ new Date(),
+              lastObservedAt: /* @__PURE__ */ new Date()
+            }
+          });
+        }
+      } else {
+        for (const ep of targetEpisodes) {
+          await prisma.studentErrorEpisode.update({
+            where: { id: ep.id },
+            data: {
+              status: "REVISION_REQUESTED",
+              revisionSubmissionId: submissionId,
+              lastObservedAt: /* @__PURE__ */ new Date()
+            }
+          });
+        }
+      }
+    } else {
+      const priorEpisodes = (await prisma.studentErrorEpisode.findMany({
+        where: {
+          studentId,
+          skill,
+          status: { in: ["CORRECTED", "MONITORING", "RETAINED", "RECURRED"] }
+        }
+      })).filter((ep) => ep.sourceSubmissionId !== submissionId);
+      const evaluatedTagSet = /* @__PURE__ */ new Set();
+      for (const ep of priorEpisodes) {
+        evaluatedTagSet.add(ep.errorTag);
+        if (currentErrorTags.has(ep.errorTag)) {
+          await prisma.studentErrorEpisode.update({
+            where: { id: ep.id },
+            data: {
+              status: isRevisionRequired ? "REVISION_REQUESTED" : "RECURRED",
+              recurrenceCount: (ep.recurrenceCount || 0) + 1,
+              cleanStreakCount: 0,
+              lastObservedAt: /* @__PURE__ */ new Date()
+            }
+          });
+        } else {
+          const newStreak = (ep.cleanStreakCount || 0) + 1;
+          const isRetained = newStreak >= RETENTION_STREAK_THRESHOLD;
+          await prisma.studentErrorEpisode.update({
+            where: { id: ep.id },
+            data: {
+              status: isRetained ? "RETAINED" : "MONITORING",
+              cleanStreakCount: newStreak,
+              ...isRetained && !ep.retainedAt ? { retainedAt: /* @__PURE__ */ new Date() } : {}
+            }
+          });
+        }
+      }
+      const initialStatus = isRevisionRequired ? "REVISION_REQUESTED" : "OBSERVED";
+      for (const item of errorItems) {
+        if (evaluatedTagSet.has(item.tag)) {
+          continue;
+        }
+        const existing = await prisma.studentErrorEpisode.findFirst({
+          where: {
+            studentId,
+            sourceSubmissionId: submissionId,
+            errorTag: item.tag
+          }
+        });
+        if (existing) {
+          await prisma.studentErrorEpisode.update({
+            where: { id: existing.id },
+            data: {
+              status: initialStatus,
+              teacherFeedback: item.note || existing.teacherFeedback,
+              lastObservedAt: /* @__PURE__ */ new Date()
+            }
+          });
+        } else {
+          await prisma.studentErrorEpisode.create({
+            data: {
+              studentId,
+              skill,
+              category: item.category,
+              errorTag: item.tag,
+              status: initialStatus,
+              sourceSubmissionId: submissionId,
+              sourceAnswerId: item.answerId || null,
+              revisionSubmissionId: null,
+              correctedAt: null,
+              initialSentence: item.sentence || null,
+              teacherFeedback: item.note || null,
+              firstObservedAt: /* @__PURE__ */ new Date(),
+              lastObservedAt: /* @__PURE__ */ new Date()
+            }
+          });
+        }
+      }
+    }
+    return await prisma.studentErrorEpisode.findMany({
+      where: { studentId },
+      orderBy: { createdAt: "desc" }
+    });
+  }
+  /**
+   * Compute comprehensive Academic Evidence Stats (Recovery Rate + Retention Rate)
+   */
+  async getStudentAcademicEvidenceStats(studentId) {
+    const episodes = await this.prisma.studentErrorEpisode.findMany({
+      where: { studentId },
+      orderBy: { createdAt: "desc" }
+    });
+    const totalDetected = episodes.length;
+    const totalRevisionRequested = episodes.filter(
+      (e) => e.status === "REVISION_REQUESTED" || e.status === "CORRECTED" || e.status === "MONITORING" || e.status === "RETAINED" || e.correctedAt !== null
+    ).length;
+    const totalCorrected = episodes.filter(
+      (e) => e.status === "CORRECTED" || e.status === "MONITORING" || e.status === "RETAINED" || e.correctedAt !== null
+    ).length;
+    const totalRetained = episodes.filter((e) => e.status === "RETAINED").length;
+    const totalRecurred = episodes.filter((e) => e.status === "RECURRED" || e.recurrenceCount && e.recurrenceCount > 0).length;
+    const recoveryRate = totalRevisionRequested > 0 ? Math.round(totalCorrected / totalRevisionRequested * 100) : 100;
+    const retentionRate = totalCorrected > 0 ? Math.round(totalRetained / totalCorrected * 100) : 100;
+    return {
+      studentId,
+      totalDetected,
+      totalRevisionRequested,
+      totalCorrected,
+      totalRetained,
+      totalRecurred,
+      recoveryRate,
+      retentionRate,
+      episodes: {
+        retained: episodes.filter((e) => e.status === "RETAINED"),
+        monitoring: episodes.filter((e) => e.status === "MONITORING" || e.status === "CORRECTED"),
+        recurred: episodes.filter((e) => e.status === "RECURRED"),
+        pendingRevision: episodes.filter((e) => e.status === "REVISION_REQUESTED"),
+        observed: episodes.filter((e) => e.status === "OBSERVED")
+      }
+    };
+  }
+  /**
+   * Backwards-compatible recovery stats
+   */
+  async getStudentRecoveryStats(studentId) {
+    const stats = await this.getStudentAcademicEvidenceStats(studentId);
+    return {
+      studentId: stats.studentId,
+      totalDetected: stats.totalDetected,
+      totalRevisionRequested: stats.totalRevisionRequested,
+      totalCorrected: stats.totalCorrected,
+      recoveryRate: stats.recoveryRate,
+      episodes: await this.prisma.studentErrorEpisode.findMany({
+        where: { studentId },
+        orderBy: { createdAt: "desc" }
+      })
+    };
+  }
+};
+
 // server/utils/teacherScope.ts
 async function getTeacherStudentIds(prisma, teacherId) {
   const classStudents = await prisma.classStudent.findMany({
@@ -102118,9 +102356,11 @@ var ExamSubmissionService = class {
     this.prisma = prisma;
     this.repo = new SubmissionRepository(prisma);
     this.notificationService = new NotificationService(prisma);
+    this.errorEpisodeService = new ErrorEpisodeService(prisma);
   }
   repo;
   notificationService;
+  errorEpisodeService;
   // Use Case: List Submissions with Role-based filtering
   async listSubmissions(user, query) {
     const { examId, studentId, status, classId, needGrading, sortBy = "createdAt", sortOrder = "desc" } = query;
@@ -103190,9 +103430,31 @@ var ExamSubmissionService = class {
           });
         }
         await this.syncStudentCourseProgressAndMilestones(tx, submission.studentId, submission.exam?.courseId);
+        if (submission.studentId && submission.examId) {
+          try {
+            await this.errorEpisodeService.processSubmissionGrading(tx, {
+              submissionId: id,
+              studentId: submission.studentId,
+              examId: submission.examId,
+              examType,
+              grades,
+              options
+            });
+          } catch (err) {
+            console.error("Failed to process error episode lifecycle:", err);
+          }
+        }
       }
       return updated;
     });
+  }
+  // Academic Evidence System: Get Student Recovery Stats
+  async getStudentRecoveryStats(studentId) {
+    return this.errorEpisodeService.getStudentRecoveryStats(studentId);
+  }
+  // Academic Evidence System: Get Complete Evidence Stats (Recovery + Retention Rate)
+  async getStudentAcademicEvidenceStats(studentId) {
+    return this.errorEpisodeService.getStudentAcademicEvidenceStats(studentId);
   }
   // Use Case: Authorized Regrade Workflow (G4 Core)
   async regradeSubmission(user, id, data) {
@@ -103723,6 +103985,22 @@ var SubmissionController = class {
       });
     }
   }
+  async getAcademicEvidence(request, reply) {
+    try {
+      const user = request.user;
+      const targetStudentId = request.params.studentId;
+      const isAdmin = user?.roles?.includes("admin");
+      const isTeacher = user?.roles?.includes("teacher");
+      if (!isAdmin && !isTeacher && user?.id !== targetStudentId) {
+        return reply.status(403).send({ error: "B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n xem h\u1ED3 s\u01A1 b\u1EB1ng ch\u1EE9ng c\u1EE7a h\u1ECDc vi\xEAn kh\xE1c" });
+      }
+      const stats = await this.service.getStudentAcademicEvidenceStats(targetStudentId);
+      return reply.send({ success: true, data: stats });
+    } catch (err) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
 };
 
 // server/routes/submissions.routes.ts
@@ -103777,6 +104055,13 @@ async function submissionsRoutes(fastify) {
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       return controller.diagnoseWriting(request, reply);
+    }
+  );
+  fastify.get(
+    "/academic-evidence/:studentId",
+    { preHandler: authenticate },
+    async (request, reply) => {
+      return controller.getAcademicEvidence(request, reply);
     }
   );
 }

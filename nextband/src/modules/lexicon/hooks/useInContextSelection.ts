@@ -119,22 +119,26 @@ export function useInContextSelection(enabled: boolean = true) {
       });
     };
 
-    const handleMouseUp = (e: MouseEvent) => {
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+    const handleMouseUp = (e: MouseEvent | TouchEvent) => {
       // Ignore click if clicking inside an existing pill or popover
       const target = e.target as HTMLElement;
       if (target?.closest("[data-lexicon-ui]")) {
         return;
       }
 
-      setTimeout(handleSelectionChange, 10);
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(handleSelectionChange, 10);
     };
 
-    document.addEventListener("mouseup", handleMouseUp);
-    document.addEventListener("touchend", handleMouseUp);
+    document.addEventListener("mouseup", handleMouseUp as EventListener);
+    document.addEventListener("touchend", handleMouseUp as EventListener);
 
     return () => {
-      document.removeEventListener("mouseup", handleMouseUp);
-      document.removeEventListener("touchend", handleMouseUp);
+      if (timeoutId) clearTimeout(timeoutId);
+      document.removeEventListener("mouseup", handleMouseUp as EventListener);
+      document.removeEventListener("touchend", handleMouseUp as EventListener);
     };
   }, [enabled, clearSelection]);
 

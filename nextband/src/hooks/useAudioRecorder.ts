@@ -51,12 +51,22 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
   const animationRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
   const durationIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const permissionResultRef = useRef<PermissionStatus | null>(null);
+  const audioUrlRef = useRef<string | null>(null);
 
   // Check permission on mount
   useEffect(() => {
     checkPermission();
     return () => {
       cleanup();
+      if (permissionResultRef.current) {
+        permissionResultRef.current.onchange = null;
+        permissionResultRef.current = null;
+      }
+      if (audioUrlRef.current) {
+        try { URL.revokeObjectURL(audioUrlRef.current); } catch {}
+        audioUrlRef.current = null;
+      }
     };
   }, []);
 
@@ -67,6 +77,7 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
     }
     try {
       const result = await navigator.permissions.query({ name: 'microphone' as PermissionName });
+      permissionResultRef.current = result;
       setPermissionStatus(result.state as 'prompt' | 'granted' | 'denied');
       result.onchange = () => {
         setPermissionStatus(result.state as 'prompt' | 'granted' | 'denied');
@@ -166,6 +177,7 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
         const actualMime = mediaRecorder.mimeType || mimeType || 'audio/webm';
         const blob = new Blob(chunksRef.current, { type: actualMime });
         const url = URL.createObjectURL(blob);
+        audioUrlRef.current = url;
         setAudioBlob(blob);
         setAudioUrl(url);
         cleanup();
@@ -249,6 +261,7 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
     if (audioUrl) {
       try { URL.revokeObjectURL(audioUrl); } catch {}
     }
+    audioUrlRef.current = null;
     setAudioUrl(null);
     setAudioBlob(null);
     setDuration(0);

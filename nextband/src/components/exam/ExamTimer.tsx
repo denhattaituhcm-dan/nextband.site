@@ -31,22 +31,18 @@ export function ExamTimer({
     timeUpTriggeredRef.current = false;
   }, [safeDuration, initialSeconds]);
 
+  const onTimeUpRef = useRef(onTimeUp);
   useEffect(() => {
-    if (timeLeft <= 0) {
-      if (!timeUpTriggeredRef.current) {
-        timeUpTriggeredRef.current = true;
-        onTimeUp?.();
-      }
-      return;
-    }
+    onTimeUpRef.current = onTimeUp;
+  }, [onTimeUp]);
 
+  useEffect(() => {
     const interval = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
-          clearInterval(interval);
           if (!timeUpTriggeredRef.current) {
             timeUpTriggeredRef.current = true;
-            onTimeUp?.();
+            onTimeUpRef.current?.();
           }
           return 0;
         }
@@ -55,7 +51,7 @@ export function ExamTimer({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [onTimeUp, timeLeft]);
+  }, []);
 
   const hours = Math.floor(timeLeft / 3600);
   const minutes = Math.floor((timeLeft % 3600) / 60);

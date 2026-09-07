@@ -55,7 +55,9 @@ export default function VRSProgressiveRevealInteractive({ model }: Props) {
                   ? 'bg-muted/20 border-dashed border-primary/50 cursor-pointer'
                   : 'bg-muted/10 border-border/40 cursor-not-allowed opacity-60')}
               onClick={() => {
-                isNextToOpen && toggleStep(card.step);
+                if (isNextToOpen) {
+                  toggleStep(card.step);
+                }
               }}
             >
               {/* Card Header */}

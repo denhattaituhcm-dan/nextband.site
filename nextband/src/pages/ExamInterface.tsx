@@ -349,12 +349,29 @@ export default function ExamInterface() {
     };
     window.addEventListener("blur", handleWindowBlur);
 
+    // 5. Anti-paste guard (Anti-cheat & exam integrity)
+    const handlePaste = (e: ClipboardEvent) => {
+      if (isSubmissionCompletedRef.current) return;
+      const target = e.target as HTMLElement | null;
+      // If user is pasting into an input or textarea during exam
+      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable)) {
+        e.preventDefault();
+        toast({
+          title: "Không thể dán nội dung",
+          description: "Hành vi sao chép / dán (Paste) bị vô hiệu hóa trong phòng thi để đảm bảo tính trung thực. Vui lòng tự gõ câu trả lời.",
+          variant: "destructive",
+        });
+      }
+    };
+    window.addEventListener("paste", handlePaste);
+
     return () => {
       unsubLease();
       leaseMgr.destroy();
       syncEngine.destroy();
       window.removeEventListener("beforeunload", handleBeforeUnload);
       window.removeEventListener("blur", handleWindowBlur);
+      window.removeEventListener("paste", handlePaste);
     };
   }, [submission?.id, user?.id, examId]);
 
@@ -822,18 +839,18 @@ export default function ExamInterface() {
       const hasSpeaking = examType === "speaking" || sections.some((s: any) => String(s.sectionType || "").toLowerCase() === "speaking");
 
       if (hasWriting) {
-        let hasSubstantialWriting = false;
+        let hasValidWriting = false;
         for (const ans of answerEntries) {
           const raw = typeof ans.answerText === "string" ? ans.answerText.replace(/<[^>]*>/g, " ").replace(/&nbsp;/gi, " ").trim() : "";
-          if (raw.length >= 30 || raw.split(/\s+/).filter(Boolean).length >= 10) {
-            hasSubstantialWriting = true;
+          if (raw.length > 0) {
+            hasValidWriting = true;
             break;
           }
         }
-        if (!hasSubstantialWriting) {
+        if (!hasValidWriting) {
           toast({
             title: "Bài viết chưa hoàn thành",
-            description: "Nội dung bài viết chưa đủ dung lượng tối thiểu (tối thiểu 10 từ). Vui lòng hoàn tất trước khi nộp.",
+            description: "Nội dung bài viết không được để trống. Vui lòng hoàn tất trước khi nộp.",
             variant: "destructive",
           });
           setIsSubmitting(false);

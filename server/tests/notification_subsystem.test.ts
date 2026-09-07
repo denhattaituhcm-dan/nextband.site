@@ -365,7 +365,7 @@ describe('Notification Subsystem End-to-End Test Suite', () => {
         { id: student1Id, roles: ['student'] },
         subId,
         {
-          answers: [{ questionId: 'q-w1', answerText: 'This is my essay submission.' }],
+          answers: [{ questionId: 'q-w1', answerText: 'This is my comprehensive essay submission explaining IELTS writing task two in detail today.' }],
         }
       );
 

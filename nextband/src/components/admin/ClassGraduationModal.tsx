@@ -126,6 +126,7 @@ export const ClassGraduationModal: React.FC<ClassGraduationModalProps> = ({
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 
     toast({
       title: "Đã xuất báo cáo tốt nghiệp!",

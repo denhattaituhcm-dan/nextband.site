@@ -254,8 +254,9 @@ export default function Auth() {
       </div>
 
       {/* Right side - Unified Single Sign-On Portal */}
-      <div className="flex-1 flex items-center justify-center px-6 lg:px-12 py-6 lg:py-8 z-10">
-        <Card className="w-full max-w-[520px] border border-border shadow-lg rounded-2xl bg-card p-7 sm:p-8">
+      <div className="flex-1 flex flex-col justify-between lg:justify-center items-center px-6 lg:px-12 py-6 lg:py-8 z-10 min-h-screen lg:min-h-0">
+        <div className="hidden lg:block" aria-hidden="true" />
+        <Card className="w-full max-w-[520px] border border-border shadow-lg rounded-2xl bg-card p-7 sm:p-8 my-auto lg:my-0">
           <CardHeader className="space-y-1.5 text-center p-0 pb-5">
             <div className="lg:hidden flex items-center justify-center gap-2 mb-3">
               <Link
@@ -404,12 +405,12 @@ export default function Auth() {
         </Card>
 
         {settings.zaloLink && (
-          <div className="lg:hidden text-center mt-4">
+          <div className="lg:hidden w-full text-center mt-auto pt-6 pb-2">
             <a
               href={settings.zaloLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors py-1 px-3 rounded-full hover:bg-muted/50"
+              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors py-1.5 px-3 rounded-full hover:bg-muted/50"
             >
               <div className="w-3.5 h-3.5 shrink-0 text-[#0068FF]">
                 <ZaloIcon className="w-full h-full" />

@@ -32,10 +32,9 @@ export function HuanCoMascot({ state, className = "" }: HuanCoMascotProps) {
       window.location.pathname.includes("/simulation") ||
       window.location.pathname.includes("/real-test"));
 
-  if (isExamMode) return null;
-
   // 1. One-shot Spring Bounce: Triggered subtly once when advice/trigger changes
   useEffect(() => {
+    if (isExamMode) return;
     if (state.advice && state.advice !== prevAdviceRef.current) {
       prevAdviceRef.current = state.advice;
       setIsBouncing(true);
@@ -49,6 +48,7 @@ export function HuanCoMascot({ state, className = "" }: HuanCoMascotProps) {
   // the mascot softly fades and shifts to yield focus to the student,
   // unless hovered directly or the dialog is open.
   useEffect(() => {
+    if (isExamMode) return;
     if (isOpen) {
       setIsDodging(false);
       return;
@@ -101,6 +101,8 @@ export function HuanCoMascot({ state, className = "" }: HuanCoMascotProps) {
     : state.urgency === "GREEN"
     ? "bg-emerald-500/20"
     : "bg-primary/20";
+
+  if (isExamMode) return null;
 
   return (
     <div

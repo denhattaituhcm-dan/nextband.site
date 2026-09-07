@@ -693,14 +693,16 @@ export default function AdminDashboard() {
               </div>
             ) : (
               <div className="border rounded-xl overflow-hidden bg-card">
-                <div className="grid grid-cols-12 bg-muted/40 p-2.5 px-3.5 text-xs font-semibold text-muted-foreground border-b">
-                  <span className="col-span-4">Lớp học</span>
-                  <span className="col-span-2 text-center">Số buổi</span>
-                  <span className="col-span-2 text-center text-emerald-700">Có mặt</span>
-                  <span className="col-span-2 text-center text-rose-700">Vắng</span>
-                  <span className="col-span-2 text-right">Chuyên cần</span>
-                </div>
-                <div className="divide-y text-xs">
+                <div className="overflow-x-auto">
+                  <div className="min-w-[540px]">
+                    <div className="grid grid-cols-12 bg-muted/40 p-2.5 px-3.5 text-xs font-semibold text-muted-foreground border-b">
+                      <span className="col-span-4">Lớp học</span>
+                      <span className="col-span-2 text-center">Số buổi</span>
+                      <span className="col-span-2 text-center text-emerald-700">Có mặt</span>
+                      <span className="col-span-2 text-center text-rose-700">Vắng</span>
+                      <span className="col-span-2 text-right">Chuyên cần</span>
+                    </div>
+                    <div className="divide-y text-xs">
                   {attendanceSummary.byClass.map((cls) => (
                     <div
                       key={cls.classId}
@@ -759,6 +761,8 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                   ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}

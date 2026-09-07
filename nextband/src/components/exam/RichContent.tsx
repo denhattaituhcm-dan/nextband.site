@@ -25,7 +25,7 @@ export function RichContent({ html, className = "", variant = "default" }: RichC
   if (!html) return null;
 
   // Sanitize raw escaped quotes & broken trailing tags
-  let cleanHtml = html
+  const cleanHtml = html
     .replace(/\\"/g, '"')
     .replace(/\\'/g, "'")
     .replace(/<\/$/g, "")

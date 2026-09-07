@@ -16,7 +16,9 @@ export default function VRSVerificationScaleInteractive({ model }: Props) {
 
   const handleSelect = (v: 'true' | 'false' | 'not_given') => {
     const upper = v === 'true' ? 'TRUE' : v === 'false' ? 'FALSE' : 'NOT GIVEN';
-    selectedVerdict !== upper && setSelectedVerdict(upper);
+    if (selectedVerdict !== upper) {
+      setSelectedVerdict(upper);
+    }
     setShowInsight(true);
   };
 

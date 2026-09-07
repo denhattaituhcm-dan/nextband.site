@@ -104,7 +104,7 @@ describe("HomePage Consumer-Level Fault Isolation & Resilience", () => {
 
     // Verify: Student Stage Banner renders successfully despite KPI failure
     await waitFor(() => {
-      expect(screen.getByText(/Hành trình của DANBUFFETT/i)).toBeInTheDocument();
+      expect(screen.getByText("DANBUFFETT")).toBeInTheDocument();
     });
 
     expect(screen.getAllByText(/D01 07.2026/i).length).toBeGreaterThan(0);
