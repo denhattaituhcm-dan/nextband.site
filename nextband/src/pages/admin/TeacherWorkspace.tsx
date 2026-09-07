@@ -1005,6 +1005,7 @@ export default function TeacherWorkspace() {
         ) : (
           <WritingGrader
             submissionId={currentHomework.submissionId}
+            studentId={currentStudent.id}
             studentName={currentStudent.fullName}
             className={currentClass?.name || "Lớp IELTS"}
             homeworkTitle={currentHomework.title}

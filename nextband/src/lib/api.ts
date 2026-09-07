@@ -1508,6 +1508,25 @@ export const submissionsApi = {
     const errMsg = errData.error || errData.message || "Chấm điểm thất bại";
     throw new Error(errMsg);
   },
+
+  getStudentAcademicEvidence: async (studentId: string) => {
+    const token = await getAuthToken();
+    if (!token) return null;
+    try {
+      const response = await fetchWithResilience(`${API_BASE_URL}/submissions/academic-evidence/${studentId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        const result = await response.json();
+        return result.data;
+      }
+    } catch {
+      // Fallback gracefully if endpoint is unreachable or network issues
+    }
+    return null;
+  },
 };
 
 export const milestonesApi = {

@@ -42,9 +42,9 @@ export default function PublicLayout() {
   }, [user, isLoading, navigate]);
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col bg-background text-foreground selection:bg-primary-soft selection:text-primary">
+    <div className="min-h-screen w-full max-w-full overflow-x-clip flex flex-col bg-background text-foreground selection:bg-primary-soft selection:text-primary">
       <PublicHeader />
-      <main className="flex-1 w-full max-w-full overflow-x-hidden">
+      <main className="flex-1 w-full max-w-full overflow-x-clip">
         <Outlet />
       </main>
       <PublicFooter />

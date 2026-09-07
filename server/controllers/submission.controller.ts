@@ -195,4 +195,23 @@ export class SubmissionController {
       });
     }
   }
+
+  async getAcademicEvidence(request: FastifyRequest<{ Params: { studentId: string } }>, reply: FastifyReply) {
+    try {
+      const user = (request as any).user;
+      const targetStudentId = request.params.studentId;
+
+      const isAdmin = user?.roles?.includes("admin");
+      const isTeacher = user?.roles?.includes("teacher");
+      if (!isAdmin && !isTeacher && user?.id !== targetStudentId) {
+        return reply.status(403).send({ error: "Bạn không có quyền xem hồ sơ bằng chứng của học viên khác" });
+      }
+
+      const stats = await this.service.getStudentAcademicEvidenceStats(targetStudentId);
+      return reply.send({ success: true, data: stats });
+    } catch (err: any) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
 }

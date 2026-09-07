@@ -20,6 +20,7 @@ export function createMockPrisma() {
   const notifications: any[] = [];
   const siteSettingsList: any[] = [];
   const answersEvidence: any[] = [];
+  const studentErrorEpisodes: any[] = [];
 
   const mock = {
     $connect: async () => {},
@@ -708,6 +709,8 @@ export function createMockPrisma() {
       },
       findMany: async ({ where, select, include }: any = {}) => {
         let list = [...examSubmissions];
+        if (where?.id?.not) list = list.filter((s) => s.id !== where.id.not);
+        if (where?.id && typeof where.id === "string") list = list.filter((s) => s.id === where.id);
         if (where?.examId) list = list.filter((s) => s.examId === where.examId);
         if (where?.studentId?.in) list = list.filter((s) => where.studentId.in.includes(s.studentId));
         else if (where?.studentId && typeof where.studentId === "string") list = list.filter((s) => s.studentId === where.studentId);
@@ -1018,6 +1021,74 @@ export function createMockPrisma() {
       },
     },
 
+    studentErrorEpisode: {
+      findMany: async (args: any = {}) => {
+        const { where, orderBy } = args;
+        let res = studentErrorEpisodes.filter((ep) => {
+          if (where?.studentId && ep.studentId !== where.studentId) return false;
+          if (where?.status?.in && !where.status.in.includes(ep.status)) return false;
+          if (where?.status && typeof where.status === "string" && ep.status !== where.status) return false;
+          if (where?.skill && ep.skill !== where.skill) return false;
+          if (where?.sourceSubmissionId?.in) {
+            if (!where.sourceSubmissionId.in.includes(ep.sourceSubmissionId)) return false;
+          } else if (where?.sourceSubmissionId?.not) {
+            if (ep.sourceSubmissionId === where.sourceSubmissionId.not) return false;
+          } else if (where?.sourceSubmissionId && typeof where.sourceSubmissionId === "string") {
+            if (ep.sourceSubmissionId !== where.sourceSubmissionId) return false;
+          }
+          if (where?.errorTag && ep.errorTag !== where.errorTag) return false;
+          return true;
+        });
+        if (orderBy?.createdAt === "desc") {
+          res.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+        }
+        return res;
+      },
+      findFirst: async ({ where }: any) => {
+        return (
+          studentErrorEpisodes.find((ep) => {
+            if (where?.studentId && ep.studentId !== where.studentId) return false;
+            if (where?.sourceSubmissionId && ep.sourceSubmissionId !== where.sourceSubmissionId) return false;
+            if (where?.errorTag && ep.errorTag !== where.errorTag) return false;
+            if (where?.status && ep.status !== where.status) return false;
+            return true;
+          }) || null
+        );
+      },
+      create: async ({ data }: any) => {
+        const row = {
+          id: data.id || randomUUID(),
+          ...data,
+          firstObservedAt: data.firstObservedAt || new Date(),
+          lastObservedAt: data.lastObservedAt || new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+        studentErrorEpisodes.push(row);
+        return row;
+      },
+      update: async ({ where, data }: any) => {
+        const row = studentErrorEpisodes.find((ep) => ep.id === where.id);
+        if (!row) throw new Error("StudentErrorEpisode not found");
+        Object.assign(row, data, { updatedAt: new Date() });
+        return row;
+      },
+      updateMany: async ({ where, data }: any) => {
+        let count = 0;
+        for (const ep of studentErrorEpisodes) {
+          if (!where?.id || ep.id === where.id) {
+            Object.assign(ep, data, { updatedAt: new Date() });
+            count++;
+          }
+        }
+        return { count };
+      },
+      deleteMany: async () => {
+        studentErrorEpisodes.length = 0;
+        return { count: 0 };
+      },
+    },
+
     users,
     userRoles,
     courses,
@@ -1036,8 +1107,10 @@ export function createMockPrisma() {
     auditOutboxList: auditOutboxEvents,
     notifications,
     siteSettingsList,
+    studentErrorEpisodes,
   };
 
   return mock;
 }
+
 

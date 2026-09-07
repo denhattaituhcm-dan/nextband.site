@@ -46,6 +46,7 @@ import {
   QuestionTypeStat,
 } from "@/lib/objectiveEvidenceAggregator";
 import { QuestionTypeRevengeModal } from "@/components/submission/QuestionTypeRevengeModal";
+import { AcademicEvidenceCard } from "@/components/evidence/AcademicEvidenceCard";
 import { cn } from "@/lib/utils";
 
 export default function StudentAnalyticsPage() {
@@ -511,6 +512,14 @@ export default function StudentAnalyticsPage() {
 
         {/* TAB 1: OVERVIEW */}
         <TabsContent value="overview" className="space-y-4 m-0 focus-visible:outline-hidden">
+          {/* ACADEMIC EVIDENCE SYSTEM: ERROR RETENTION & RECOVERY CARD */}
+          {targetStudentId && (
+            <AcademicEvidenceCard
+              studentId={targetStudentId}
+              variant="student-dashboard"
+            />
+          )}
+
           {/* RECOVERY TRAJECTORY SHOWCASE */}
           {writingProfile.recoveringErrors.length > 0 && (
             <Card className="border border-emerald-300 bg-emerald-50/40 dark:bg-emerald-950/20 shadow-2xs rounded-2xl p-5 space-y-3">

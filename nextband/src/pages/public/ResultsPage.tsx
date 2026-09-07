@@ -20,6 +20,7 @@ import {
   getPublishedEvidence,
   fetchEvidenceListAsync,
   getAcademicRankHonor,
+  getKimKhoaHonors,
   EvidenceItem,
 } from "@/lib/evidenceStore";
 import {
@@ -349,18 +350,43 @@ export default function ResultsPage() {
       <section id="bento-cases" className="py-16 sm:py-24 border-b border-border/80 bg-background">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
           {/* Header & Filter Segment */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200 pb-6">
-            <div className="space-y-2">
-              <span className="text-xs font-sans font-extrabold tracking-wider text-brand-red uppercase">
-                02 // BẰNG CHỨNG TIẾN BỘ HỌC VIÊN
-              </span>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900">
-                Hồ Sơ Tiến Bộ Được Kiểm Chứng
-              </h2>
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-slate-200 pb-8">
+            <div className="space-y-4 max-w-3xl">
+              <div className="flex items-center gap-2">
+                <span className="inline-block w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
+                <span className="text-xs font-sans font-extrabold tracking-wider text-amber-700 dark:text-amber-400 uppercase">
+                  02 // BẢNG VÀNG KHẢO THÍ HỌC THUẬT ARIS
+                </span>
+              </div>
+
+              <div className="flex flex-wrap items-baseline gap-3">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 font-serif sm:font-sans">
+                  Kim Khoa Bảng
+                </h2>
+                <span className="px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/40 text-amber-850 dark:text-amber-300 border border-amber-300/60 text-xs font-bold font-serif tracking-wide uppercase">
+                  Bảng Vàng Đề Danh
+                </span>
+              </div>
+
+              {/* Tôn chỉ đề từ & Ý nghĩa phụ huynh */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/80 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-800/40 space-y-2.5 shadow-2xs">
+                <div className="flex items-start gap-2.5">
+                  <Sparkles className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                  <div className="space-y-1.5">
+                    <p className="text-sm sm:text-base font-bold text-amber-950 dark:text-amber-100 font-serif italic tracking-wide">
+                      Tôn chỉ đề từ: "Trăm ngày mài giũa thành cốt cách — Vạn dặm tu luyện đắc Kim Khoa."
+                    </p>
+                    <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-normal">
+                      <strong className="font-semibold text-slate-900 dark:text-slate-100">Ý nghĩa đối với phụ huynh: </strong>
+                      "Kim Khoa" là kỳ thi đại khoa chọn trạng nguyên, tiến sĩ thời xưa. Đọc vào, phụ huynh thấy ngay sự trang trọng, uy tín học thuật và giá trị vượt bậc của điểm số con họ đạt được.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Tactile Filter Segment Selector */}
-            <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-slate-100 border border-slate-200">
+            <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-slate-100 border border-slate-200 shrink-0">
               {[
                 { key: "all", label: "Tất cả hồ sơ" },
                 { key: "7.5+", label: "Band 7.5+" },
@@ -371,7 +397,7 @@ export default function ResultsPage() {
                   key={filter.key}
                   onClick={() => setActiveBandFilter(filter.key)}
                   className={cn(
-                    "px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer",
+                    "px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer",
                     activeBandFilter === filter.key
                       ? "bg-brand-blue text-white shadow-sm"
                       : "text-slate-600 hover:text-slate-900 hover:bg-white/80"
@@ -383,7 +409,7 @@ export default function ResultsPage() {
             </div>
           </div>
 
-          {/* Bento Case Grid */}
+          {/* Bento Case Grid — Kim Khoa Bảng */}
           {filteredList.length === 0 ? (
             <div className="py-16 text-center text-slate-500 border-2 border-dashed border-slate-200 rounded-3xl font-sans text-sm">
               Không tìm thấy hồ sơ nào trong nhóm điểm này.
@@ -391,6 +417,7 @@ export default function ResultsPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
               {filteredList.map((item) => {
+                const kimKhoa = getKimKhoaHonors(item);
                 const honor = getAcademicRankHonor(
                   item.academicRankTitle || item.overallScore,
                   {
@@ -401,123 +428,146 @@ export default function ResultsPage() {
                   }
                 );
 
-                const startingBand = item.scoreBefore || (parseFloat(item.overallScore) >= 7.5 ? "6.0" : "5.5");
-                const deltaScore = (parseFloat(item.overallScore) - parseFloat(startingBand)).toFixed(1);
-
                 return (
                   <div
                     key={item.id}
-                    className="rounded-3xl border border-border/80 bg-card p-6 sm:p-8 flex flex-col justify-between transition-all duration-200 hover:border-brand-blue/40 hover:shadow-lg space-y-6"
+                    className="rounded-3xl border border-border/80 bg-card p-6 sm:p-8 flex flex-col justify-between transition-all duration-200 hover:border-amber-500/50 hover:shadow-xl space-y-6 relative overflow-hidden group"
                   >
-                    {/* Top Identity & Rank Header */}
+                    {/* Golden subtle corner watermark / seal accent */}
+                    <div className="absolute -top-12 -right-12 w-28 h-28 rounded-full bg-amber-500/5 pointer-events-none group-hover:bg-amber-500/10 transition-colors" />
+
+                    {/* Top Identity & Profile Badge Header */}
                     <div className="space-y-4">
                       <div className="flex items-center justify-between gap-3 border-b border-border/70 pb-4">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span
-                            className={cn(
-                              "inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold border tracking-tight",
-                              honor.badgeBg,
-                              honor.badgeText,
-                              honor.badgeBorder
-                            )}
-                          >
-                            <Award className="h-3.5 w-3.5 shrink-0" />
-                            <span>{honor.fullTitle}</span>
+                          {/* Profile Badge Title: KIM KHOA ĐỀ DANH */}
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-black tracking-wider uppercase bg-amber-500/15 text-amber-850 dark:text-amber-300 border border-amber-500/30 shadow-2xs font-serif">
+                            <Award className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                            <span>KIM KHOA ĐỀ DANH</span>
                           </span>
 
+                          {/* Danh xưng đặc biệt (Bậc Đỉnh Phong / Phá Cảnh Tân Khoa / Kim Khoa Đề Danh Giả) */}
+                          {kimKhoa.specialDesignation ? (
+                            <span
+                              className={cn(
+                                "inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-extrabold border",
+                                kimKhoa.specialBadgeColor.bg,
+                                kimKhoa.specialBadgeColor.text,
+                                kimKhoa.specialBadgeColor.border
+                              )}
+                            >
+                              <Sparkles className="h-3 w-3 shrink-0" />
+                              <span>{kimKhoa.specialDesignation}</span>
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                              <span>Kim Khoa Đề Danh Giả</span>
+                            </span>
+                          )}
+
+                          {/* Cảnh giới phân kỳ */}
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-muted text-foreground border border-border/70">
                             {honor.stage.stageName} {honor.stage.starCount}★
                           </span>
                         </div>
 
-                        <span className="text-xs font-mono font-semibold text-muted-foreground">
+                        <span className="text-xs font-mono font-semibold text-muted-foreground shrink-0">
                           {item.studyDuration || "Chính quy"}
                         </span>
                       </div>
 
-                      {/* Middle: Student Avatar + Score Trajectory Bar */}
+                      {/* Middle: Student Avatar + Details & Cảnh Giới Xác Lập */}
                       <div className="flex gap-5 items-start">
-                        {/* Student Image */}
+                        {/* Student Image with Academic Golden Border Accent */}
                         <div className="relative shrink-0 w-28 h-28 sm:w-36 sm:h-36">
                           <img
                             src={item.imageUrl}
                             alt={item.studentName}
-                            className="w-full h-full rounded-2xl object-cover border border-border/80 shadow-2xs"
+                            className="w-full h-full rounded-2xl object-cover border-2 border-amber-400/30 shadow-xs"
                           />
+                          <div className="absolute bottom-1 right-1 px-2 py-0.5 rounded-md bg-[#002147]/90 text-white font-mono font-black text-[10px] shadow-xs backdrop-blur-xs">
+                            {item.overallScore} IELTS
+                          </div>
                         </div>
 
-                        {/* Student Trajectory & Details */}
-                        <div className="flex-1 min-w-0 space-y-3">
+                        {/* Student Trajectory & Cảnh Giới Xác Lập */}
+                        <div className="flex-1 min-w-0 space-y-2.5">
                           <div>
-                            <h3 className="font-bold text-foreground text-lg sm:text-xl leading-tight truncate">
+                            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-muted-foreground block">
+                              Học viên Kim Khoa
+                            </span>
+                            <h3 className="font-black text-foreground text-lg sm:text-xl leading-tight truncate">
                               {item.studentName}
                             </h3>
                             <p className="text-xs sm:text-sm text-muted-foreground font-normal truncate mt-0.5">
-                              {item.studentSchool || item.courseName || "Học viên ARIS"}
+                              {item.studentSchool || item.courseName || "Học viện ARIS"}
                             </p>
                           </div>
 
-                          {/* Visual Progress Trajectory: Before -> Target */}
-                          <div className="p-3 rounded-2xl bg-muted/40 border border-border/70 flex items-center justify-between text-xs sm:text-sm">
-                            <div className="space-y-0.5">
-                              <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider block">
-                                Đầu vào
+                          {/* Cảnh giới xác lập */}
+                          <div className="p-2.5 sm:p-3 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-border/80 space-y-1">
+                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
+                              Cảnh giới xác lập
+                            </span>
+                            <div className="flex items-center gap-2">
+                              <span className={cn(
+                                "text-xs sm:text-sm font-black tracking-tight",
+                                honor.accentColor
+                              )}>
+                                {kimKhoa.realmWithBand}
                               </span>
-                              <span className="font-mono font-bold text-foreground text-sm">
-                                {startingBand}
+                              <span className="text-[11px] font-semibold text-muted-foreground">
+                                ({honor.subtitle})
                               </span>
-                            </div>
-
-                            <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-brand-red-soft text-brand-red font-mono font-bold text-xs">
-                              <span>+{deltaScore}</span>
-                              <TrendingUp className="h-3 w-3" />
-                            </div>
-
-                            <div className="space-y-0.5 text-right">
-                              <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider block">
-                                Đạt được
-                              </span>
-                              <div className="flex items-baseline justify-end gap-1">
-                                <span className="font-mono font-bold text-brand-blue text-sm sm:text-base">
-                                  {item.overallScore}
-                                </span>
-                                <span className="font-semibold text-xs text-brand-blue">
-                                  IELTS
-                                </span>
-                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
 
+                      {/* Lộ trình tu luyện: Tích lũy từ bậc [...] → Đột phá cảnh giới [...] */}
+                      <div className="p-3 sm:p-3.5 rounded-2xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 space-y-1.5">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300">
+                            Lộ trình tu luyện
+                          </span>
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-brand-red-soft text-brand-red font-mono font-bold text-xs">
+                            <span>+{kimKhoa.deltaScore}</span>
+                            <TrendingUp className="h-3 w-3" />
+                          </span>
+                        </div>
+                        <p className="text-xs sm:text-[13px] font-bold text-slate-800 dark:text-slate-200 leading-snug">
+                          {kimKhoa.cultivationJourney}
+                        </p>
+                      </div>
+
                       {/* 4 Skill Scores Matrix (Mono Data Grid) */}
-                      <div className="grid grid-cols-4 gap-2.5 text-center">
-                        <div className="p-2.5 rounded-xl bg-muted/30 border border-border/70">
-                          <span className="text-[10px] text-muted-foreground block font-mono font-semibold tracking-wider">
+                      <div className="grid grid-cols-4 gap-2 text-center">
+                        <div className="p-2 sm:p-2.5 rounded-xl bg-muted/30 border border-border/70">
+                          <span className="text-[9px] sm:text-[10px] text-muted-foreground block font-mono font-semibold tracking-wider">
                             LISTENING
                           </span>
                           <span className="text-sm sm:text-base font-mono font-bold text-foreground">
                             {item.listeningScore || "—"}
                           </span>
                         </div>
-                        <div className="p-2.5 rounded-xl bg-muted/30 border border-border/70">
-                          <span className="text-[10px] text-muted-foreground block font-mono font-semibold tracking-wider">
+                        <div className="p-2 sm:p-2.5 rounded-xl bg-muted/30 border border-border/70">
+                          <span className="text-[9px] sm:text-[10px] text-muted-foreground block font-mono font-semibold tracking-wider">
                             READING
                           </span>
                           <span className="text-sm sm:text-base font-mono font-bold text-foreground">
                             {item.readingScore || "—"}
                           </span>
                         </div>
-                        <div className="p-2.5 rounded-xl bg-muted/30 border border-border/70">
-                          <span className="text-[10px] text-muted-foreground block font-mono font-semibold tracking-wider">
+                        <div className="p-2 sm:p-2.5 rounded-xl bg-muted/30 border border-border/70">
+                          <span className="text-[9px] sm:text-[10px] text-muted-foreground block font-mono font-semibold tracking-wider">
                             WRITING
                           </span>
                           <span className="text-sm sm:text-base font-mono font-bold text-brand-red">
                             {item.writingScore || "—"}
                           </span>
                         </div>
-                        <div className="p-2.5 rounded-xl bg-muted/30 border border-border/70">
-                          <span className="text-[10px] text-muted-foreground block font-mono font-semibold tracking-wider">
+                        <div className="p-2 sm:p-2.5 rounded-xl bg-muted/30 border border-border/70">
+                          <span className="text-[9px] sm:text-[10px] text-muted-foreground block font-mono font-semibold tracking-wider">
                             SPEAKING
                           </span>
                           <span className="text-sm sm:text-base font-mono font-bold text-brand-blue">
@@ -526,7 +576,20 @@ export default function ResultsPage() {
                         </div>
                       </div>
 
-                      {/* Diagnosed Insight Snippet */}
+                      {/* Thủ bút ấn chứng của Bác sĩ thuật */}
+                      <div className="p-3 rounded-xl bg-blue-50/70 dark:bg-blue-950/20 border border-blue-200/70 dark:border-blue-900/40 flex items-start gap-2.5">
+                        <CheckCircle2 className="h-4 w-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
+                        <div className="space-y-0.5">
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-blue-800 dark:text-blue-300 block">
+                            Thủ bút ấn chứng
+                          </span>
+                          <p className="text-xs text-blue-950 dark:text-blue-200 font-semibold italic">
+                            "{kimKhoa.mentorSignature}"
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Trải nghiệm tu luyện */}
                       <div className="text-xs sm:text-sm text-foreground/80 leading-relaxed bg-muted/30 p-3.5 rounded-2xl border border-border/70 line-clamp-2 font-normal">
                         <strong className="font-semibold text-foreground">Trải nghiệm: </strong>
                         "{item.story}"
@@ -707,8 +770,9 @@ export default function ResultsPage() {
                 </div>
               </div>
 
-              {/* Honorary Academic Rank Award Banner */}
+              {/* Honorary Academic Rank Award Banner - Kim Khoa Đề Danh */}
               {(() => {
+                const kimKhoa = getKimKhoaHonors(selectedStory);
                 const honor = getAcademicRankHonor(
                   selectedStory.academicRankTitle || selectedStory.overallScore,
                   {
@@ -719,37 +783,65 @@ export default function ResultsPage() {
                   }
                 );
                 return (
-                  <div
-                    className={cn(
-                      "p-4 sm:p-5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4",
-                      honor.badgeBg,
-                      honor.badgeBorder
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={cn("p-2.5 rounded-xl bg-card border shadow-2xs shrink-0", honor.badgeBorder)}>
-                        <Award className={cn("h-6 w-6", honor.accentColor)} />
-                      </div>
-                      <div>
-                        <span className="text-[11px] uppercase font-mono font-semibold tracking-wider text-muted-foreground block">
-                          Danh Hiệu Học Thuật Chính Thức
-                        </span>
-                        <div className="text-base sm:text-lg font-bold text-foreground flex flex-wrap items-center gap-2">
-                          <span>{honor.fullTitle}</span>
-                          <span className={cn("text-xs font-semibold", honor.accentColor)}>({honor.subtitle})</span>
+                  <div className="space-y-3">
+                    <div
+                      className={cn(
+                        "p-4 sm:p-5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-amber-500/10 border-amber-500/30"
+                      )}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2.5 rounded-xl bg-card border border-amber-500/30 shadow-2xs shrink-0">
+                          <Award className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[11px] uppercase font-serif font-black tracking-wider text-amber-850 dark:text-amber-300 block">
+                              KIM KHOA ĐỀ DANH
+                            </span>
+                            {kimKhoa.specialDesignation && (
+                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-500/40">
+                                {kimKhoa.specialDesignation}
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-base sm:text-lg font-bold text-foreground flex flex-wrap items-center gap-2">
+                            <span>{kimKhoa.realmWithBand}</span>
+                            <span className="text-xs font-semibold text-muted-foreground">({honor.subtitle})</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="inline-flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-xl bg-background border border-border/80 text-foreground shadow-2xs">
-                        <span>{honor.stage.stageName}</span>
-                        <span className="inline-flex items-center gap-0.5 text-brand-red font-mono font-bold">
-                          {honor.stage.starCount}★
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="inline-flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-xl bg-background border border-border/80 text-foreground shadow-2xs">
+                          <span>{honor.stage.stageName}</span>
+                          <span className="inline-flex items-center gap-0.5 text-brand-red font-mono font-bold">
+                            {honor.stage.starCount}★
+                          </span>
                         </span>
-                      </span>
-                      <span className="text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-background border border-border/80 text-foreground shadow-2xs">
-                        IELTS {selectedStory.overallScore}
-                      </span>
+                        <span className="text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-background border border-border/80 text-foreground shadow-2xs">
+                          IELTS {selectedStory.overallScore}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Lộ trình tu luyện & Thủ bút ấn chứng trong Modal */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="p-3.5 rounded-xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 space-y-1">
+                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300 block">
+                          Lộ trình tu luyện
+                        </span>
+                        <p className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 leading-snug">
+                          {kimKhoa.cultivationJourney}
+                        </p>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl bg-blue-50/70 dark:bg-blue-950/20 border border-blue-200/70 dark:border-blue-900/40 space-y-1">
+                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-blue-800 dark:text-blue-300 block">
+                          Thủ bút ấn chứng
+                        </span>
+                        <p className="text-xs sm:text-sm font-semibold italic text-blue-950 dark:text-blue-200 leading-snug">
+                          "{kimKhoa.mentorSignature}"
+                        </p>
+                      </div>
                     </div>
                   </div>
                 );

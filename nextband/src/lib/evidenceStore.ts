@@ -16,6 +16,7 @@ export interface EvidenceItem {
   speakingScore?: string;
   studyDuration?: string;
   courseName?: string;
+  mentorName?: string;
   featured: boolean;
   published: boolean;
   consentConfirmed: boolean;
@@ -278,6 +279,102 @@ export function getAcademicRankHonor(
   };
 }
 
+export interface KimKhoaHonors {
+  rollTitle: string; // "Kim Khoa Đề Danh Giả"
+  badgeTitle: string; // "KIM KHOA ĐỀ DANH"
+  realmName: string; // e.g. "Học Bá", "Học Tôn", "Học Đế"
+  realmWithBand: string; // e.g. "Học Bá (IELTS 7.0)"
+  specialDesignation?: string; // "Đại Khoa Tiến Sĩ" | "Kim Khoa Học Đế" | "Kim Khoa Khắc Tôn" | "Phá Cảnh Tân Khoa"
+  specialBadgeColor: {
+    bg: string;
+    text: string;
+    border: string;
+  };
+  startingRealm: string; // e.g. "Học Sĩ 5.0"
+  breakthroughRealm: string; // e.g. "Học Giả 6.5"
+  cultivationJourney: string; // "Tích lũy từ bậc [Học Sĩ 5.0] → Đột phá cảnh giới [Học Giả 6.5]"
+  mentorName: string; // "Lưu Văn Đang"
+  mentorSignature: string; // "Chẩn đoán phương pháp và trực tiếp rèn giũa bởi Bác sĩ thuật [Tên Thầy]"
+  deltaScore: string;
+  startingBand: string;
+}
+
+export function getKimKhoaHonors(item: EvidenceItem): KimKhoaHonors {
+  const overall = parseFloat(item.overallScore || "6.5");
+  const startingBand = item.scoreBefore || (overall >= 7.5 ? "6.0" : overall >= 6.5 ? "5.0" : "4.0");
+  const startNum = parseFloat(startingBand);
+  const deltaNum = Math.round((overall - startNum) * 10) / 10;
+  const delta = deltaNum > 0 ? deltaNum.toFixed(1) : "0.0";
+
+  const getRealmName = (score: number) => {
+    if (score >= 9.0) return "Học Đế";
+    if (score >= 8.0) return "Học Tôn";
+    if (score >= 7.0) return "Học Bá";
+    if (score >= 6.5) return "Học Giả";
+    if (score >= 5.5) return "Học Sư";
+    if (score >= 4.0) return "Học Sĩ";
+    return "Học Đồ";
+  };
+
+  const startRealm = getRealmName(startNum);
+  const endRealm = getRealmName(overall);
+
+  const startingRealm = `${startRealm} ${startNum.toFixed(1)}`;
+  const breakthroughRealm = `${endRealm} ${overall.toFixed(1)}`;
+  const realmWithBand = `${endRealm} (IELTS ${item.overallScore})`;
+
+  let specialDesignation: string | undefined;
+  let specialBadgeColor = {
+    bg: "bg-amber-500/10",
+    text: "text-amber-700 dark:text-amber-400",
+    border: "border-amber-500/30",
+  };
+
+  // 1. Bậc Đỉnh Phong (Học Tôn 8.0 - 8.5 & Học Đế 9.0)
+  if (overall >= 9.0) {
+    specialDesignation = "Đại Khoa Tiến Sĩ — Kim Khoa Học Đế";
+    specialBadgeColor = {
+      bg: "bg-purple-500/15",
+      text: "text-purple-700 dark:text-purple-300",
+      border: "border-purple-500/40",
+    };
+  } else if (overall >= 8.0) {
+    specialDesignation = "Kim Khoa Khắc Tôn / Đại Khoa Tiến Sĩ";
+    specialBadgeColor = {
+      bg: "bg-blue-600/15",
+      text: "text-blue-700 dark:text-blue-300",
+      border: "border-blue-600/40",
+    };
+  } else if (deltaNum >= 1.5) {
+    // 2. Bậc Bứt phá ngoạn mục (Nhảy từ Học Đồ/Học Giả lên thẳng tầng cao)
+    specialDesignation = "Phá Cảnh Tân Khoa";
+    specialBadgeColor = {
+      bg: "bg-emerald-600/15",
+      text: "text-emerald-700 dark:text-emerald-400",
+      border: "border-emerald-600/40",
+    };
+  }
+
+  const mentor = item.mentorName || "Lưu Văn Đang";
+  const mentorSignature = `Chẩn đoán phương pháp và trực tiếp rèn giũa bởi Bác sĩ thuật ${mentor}`;
+
+  return {
+    rollTitle: "Kim Khoa Đề Danh Giả",
+    badgeTitle: "KIM KHOA ĐỀ DANH",
+    realmName: endRealm,
+    realmWithBand,
+    specialDesignation,
+    specialBadgeColor,
+    startingRealm,
+    breakthroughRealm,
+    cultivationJourney: `Tích lũy từ bậc [${startingRealm}] → Đột phá cảnh giới [${breakthroughRealm}]`,
+    mentorName: mentor,
+    mentorSignature,
+    deltaScore: delta,
+    startingBand,
+  };
+}
+
 const STORAGE_KEY = "aris_evidence_records_v1";
 
 const INITIAL_EVIDENCE_DATA: EvidenceItem[] = [
@@ -298,6 +395,7 @@ const INITIAL_EVIDENCE_DATA: EvidenceItem[] = [
     speakingScore: "6.5",
     studyDuration: "14 tuần",
     courseName: "Khóa BUILDER & MASTER",
+    mentorName: "Lưu Văn Đang",
     featured: true,
     published: true,
     consentConfirmed: true,
@@ -322,6 +420,7 @@ const INITIAL_EVIDENCE_DATA: EvidenceItem[] = [
     speakingScore: "6.5",
     studyDuration: "16 tuần",
     courseName: "Khóa MASTER & LEADER",
+    mentorName: "Lưu Văn Đang",
     featured: true,
     published: true,
     consentConfirmed: true,
@@ -346,6 +445,7 @@ const INITIAL_EVIDENCE_DATA: EvidenceItem[] = [
     speakingScore: "7.0",
     studyDuration: "18 tuần",
     courseName: "Khóa LEADER",
+    mentorName: "Lưu Văn Đang",
     featured: true,
     published: true,
     consentConfirmed: true,
@@ -370,6 +470,7 @@ const INITIAL_EVIDENCE_DATA: EvidenceItem[] = [
     speakingScore: "7.5",
     studyDuration: "20 tuần",
     courseName: "Khóa LEADER",
+    mentorName: "Lưu Văn Đang",
     featured: false,
     published: true,
     consentConfirmed: true,
@@ -399,6 +500,7 @@ function mapSupabaseToEvidence(row: any): EvidenceItem {
     speakingScore: row.speaking_score || row.speakingScore || "",
     studyDuration: row.study_duration || row.studyDuration || "",
     courseName: row.course_name || row.courseName || "",
+    mentorName: row.mentor_name || row.mentorName || "Lưu Văn Đang",
     featured: Boolean(row.featured),
     published: Boolean(row.published),
     consentConfirmed: Boolean(row.consent_confirmed ?? row.consentConfirmed),

@@ -68,8 +68,11 @@ export interface WritingAnswerItem {
   feedback?: string | null;
 }
 
+import { AcademicEvidenceCard } from "@/components/evidence/AcademicEvidenceCard";
+
 interface WritingGraderProps {
   submissionId: string;
+  studentId?: string;
   studentName: string;
   className?: string;
   homeworkTitle: string;
@@ -133,6 +136,7 @@ const getQuestionAssessmentWeight = (question: any) => {
 
 export function WritingGrader({
   submissionId,
+  studentId,
   studentName,
   className = "Lớp IELTS",
   homeworkTitle,
@@ -146,6 +150,7 @@ export function WritingGrader({
   onBack,
   onGradeSubmit,
 }: WritingGraderProps) {
+  const effectiveStudentId = studentId || submissionDetail?.studentId || submissionDetail?.student_id;
   const [isDirty, setIsDirty] = useState<boolean>(false);
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
   const [showCorrectAnswers, setShowCorrectAnswers] = useState<boolean>(true);
@@ -541,6 +546,14 @@ export function WritingGrader({
       <div className="flex-1 overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-0">
         {/* LEFT/MIDDLE COLUMN (68%): STUDENT SUBMISSION & ANSWERS SURFACE */}
         <div className="lg:col-span-8 h-full overflow-y-auto p-6 space-y-6 bg-slate-50/50">
+          {effectiveStudentId && (
+            <AcademicEvidenceCard
+              studentId={effectiveStudentId}
+              studentName={studentName}
+              variant="teacher-compact"
+            />
+          )}
+
           {hasMultipleQuestions && sections.length > 0 ? (
             /* CASE 1: OBJECTIVE / READING / LISTENING / MULTI-QUESTION EXAM REVIEW */
             <div className="space-y-6">

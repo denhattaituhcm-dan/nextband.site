@@ -92,4 +92,13 @@ export default async function submissionsRoutes(fastify: FastifyInstance) {
       return controller.diagnoseWriting(request, reply);
     }
   );
+
+  // GET /submissions/academic-evidence/:studentId - Academic Evidence & Retention Stats
+  fastify.get<{ Params: { studentId: string } }>(
+    "/academic-evidence/:studentId",
+    { preHandler: authenticate },
+    async (request, reply) => {
+      return controller.getAcademicEvidence(request, reply);
+    }
+  );
 }

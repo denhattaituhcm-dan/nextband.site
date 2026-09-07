@@ -5,6 +5,7 @@ import { auditOutboxService } from "./audit/AuditOutboxService.js";
 import { AuthorizationError, NotFoundError, ValidationError } from "./authorization.service.js";
 import { SubmissionStateMachine, SubmissionState, StateTransitionError } from "./submission-state-machine.js";
 import { NotificationService } from "./notification.service.js";
+import { ErrorEpisodeService } from "./error-episode.service.js";
 import {
   getClassStudentIds,
   getTeacherStudentIds,
@@ -220,10 +221,12 @@ export function validateSubmissionTechnicalPayload(exam: any, answersToEvaluate:
 export class ExamSubmissionService {
   private repo: SubmissionRepository;
   private notificationService: NotificationService;
+  private errorEpisodeService: ErrorEpisodeService;
 
   constructor(private prisma: PrismaClient) {
     this.repo = new SubmissionRepository(prisma);
     this.notificationService = new NotificationService(prisma);
+    this.errorEpisodeService = new ErrorEpisodeService(prisma);
   }
 
   // Use Case: List Submissions with Role-based filtering
@@ -1582,10 +1585,36 @@ export class ExamSubmissionService {
 
         // Sync Course Progress & Milestones
         await this.syncStudentCourseProgressAndMilestones(tx, submission.studentId, submission.exam?.courseId);
+
+        // Track Student Error Episode Lifecycle (Academic Evidence System)
+        if (submission.studentId && submission.examId) {
+          try {
+            await this.errorEpisodeService.processSubmissionGrading(tx, {
+              submissionId: id,
+              studentId: submission.studentId,
+              examId: submission.examId as string,
+              examType,
+              grades,
+              options,
+            });
+          } catch (err: any) {
+            console.error("Failed to process error episode lifecycle:", err);
+          }
+        }
       }
 
       return updated;
     });
+  }
+
+  // Academic Evidence System: Get Student Recovery Stats
+  async getStudentRecoveryStats(studentId: string) {
+    return this.errorEpisodeService.getStudentRecoveryStats(studentId);
+  }
+
+  // Academic Evidence System: Get Complete Evidence Stats (Recovery + Retention Rate)
+  async getStudentAcademicEvidenceStats(studentId: string) {
+    return this.errorEpisodeService.getStudentAcademicEvidenceStats(studentId);
   }
 
   // Use Case: Authorized Regrade Workflow (G4 Core)

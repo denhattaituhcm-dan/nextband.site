@@ -60,6 +60,7 @@ model User {
   userVocabularies      UserVocabulary[]
   teacherProfile        TeacherProfile?
   weeklySnapshots       WeeklySnapshot[]
+  errorEpisodes         StudentErrorEpisode[]    @relation("StudentErrorEpisodes")
 
   @@map("profiles")
 }
@@ -424,6 +425,7 @@ model ExamSubmission {
 
   answers        Answer[]
   speakingEvidence SpeakingAssessmentEvidence[]
+  sourceEpisodes   StudentErrorEpisode[]    @relation("SourceEpisodes")
   exam           Exam             @relation(fields: [examId], references: [id], onDelete: Cascade)
   examVersion    ExamVersion?     @relation(fields: [examVersionId], references: [id])
   grader         User?            @relation("GraderSubmissions", fields: [gradedBy], references: [userId])
@@ -1197,3 +1199,51 @@ model TeacherProfile {
   @@map("teacher_profiles")
 }
 
+enum EpisodeStatus {
+  OBSERVED
+  REVISION_REQUESTED
+  CORRECTED
+  MONITORING
+  RETAINED
+  RECURRED
+
+  @@map("episode_status")
+}
+
+model StudentErrorEpisode {
+  id                   String        @id @default(uuid())
+  studentId            String        @map("student_id")
+  skill                String        @default("WRITING") // "WRITING" | "SPEAKING"
+  category             String        // "GRAMMAR" | "STRUCTURE" | "EXPRESSION" | "CONCEPT"
+  errorTag             String        @map("error_tag")   // e.g., "Subject-Verb Agreement"
+
+  status               EpisodeStatus @default(OBSERVED)
+
+  sourceSubmissionId   String        @map("source_submission_id")
+  sourceAnswerId       String?       @map("source_answer_id")
+  revisionSubmissionId String?       @map("revision_submission_id")
+  revisionAnswerId     String?       @map("revision_answer_id")
+
+  initialSentence      String?       @map("initial_sentence")
+  revisedSentence      String?       @map("revised_sentence")
+  teacherFeedback      String?       @map("teacher_feedback")
+
+  firstObservedAt      DateTime      @default(now()) @map("first_observed_at")
+  lastObservedAt       DateTime      @default(now()) @map("last_observed_at")
+  correctedAt          DateTime?     @map("corrected_at")
+  retainedAt           DateTime?     @map("retained_at")
+
+  cleanStreakCount     Int           @default(0) @map("clean_streak_count")
+  recurrenceCount      Int           @default(0) @map("recurrence_count")
+
+  student              User          @relation("StudentErrorEpisodes", fields: [studentId], references: [userId], onDelete: Cascade)
+  sourceSubmission     ExamSubmission @relation("SourceEpisodes", fields: [sourceSubmissionId], references: [id], onDelete: Cascade)
+
+  createdAt            DateTime      @default(now()) @map("created_at")
+  updatedAt            DateTime      @default(now()) @updatedAt @map("updated_at")
+
+  @@index([studentId, errorTag, status])
+  @@index([studentId, status])
+  @@index([sourceSubmissionId])
+  @@map("student_error_episodes")
+}
