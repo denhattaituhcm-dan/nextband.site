@@ -301,7 +301,7 @@ export default function AcademicSystemPage() {
       {/* 01. HERO SECTION: ACADEMIC THESIS                                         */}
       {/* ========================================================================= */}
       <section className="relative overflow-hidden pt-16 pb-20 sm:pt-24 sm:pb-32 border-b border-border/80 bg-background">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center space-y-7">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center space-y-7">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-blue-soft text-brand-blue border border-brand-blue/20 text-xs sm:text-sm font-black uppercase tracking-wider">
             <Layers className="h-4 w-4" />
             <span>Hệ Thống Học Thuật ARIS</span>
@@ -314,7 +314,7 @@ export default function AcademicSystemPage() {
             </span>
           </h1>
 
-          <p className="text-base sm:text-lg lg:text-xl text-foreground/85 font-medium leading-relaxed max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg lg:text-xl text-foreground/85 font-medium leading-relaxed max-w-4xl mx-auto">
             Không học mẹo, không học thuộc bài mẫu. ARIS kết hợp phương pháp luận tri nhận bản chất (The ARIS Way) và khung chuẩn năng lực học thuật (ARIS-7) để bạn thấu hiểu điểm nghẽn và đo lường sự tiến bộ thực chất.
           </p>
 
@@ -517,7 +517,7 @@ export default function AcademicSystemPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
               {/* CASE 1: PULL ONE'S WEIGHT */}
               <div className="p-6 sm:p-8 rounded-3xl bg-card border-2 border-brand-blue/30 space-y-5 shadow-2xs flex flex-col justify-between">
                 <div className="space-y-4">
@@ -634,7 +634,7 @@ export default function AcademicSystemPage() {
           description="Thay vì chỉ nhìn vào điểm số bề mặt, ARIS đo lường sự tiến bộ dựa trên 4 trụ cột năng lực biểu đạt và lập luận cốt lõi."
           background="default"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 text-left max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 text-left w-full">
             {/* C1: Meaning Precision */}
             <div className="p-7 sm:p-8 rounded-3xl bg-card border border-border/80 space-y-4 shadow-2xs hover:border-brand-blue/40 transition-colors">
               <div className="flex items-center justify-between">
@@ -795,7 +795,7 @@ export default function AcademicSystemPage() {
           background="default"
         >
           {/* 3 Steps: Practice -> Teacher Feedback -> NextBand Record */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 text-left max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 text-left w-full">
             <div className="p-6 sm:p-8 rounded-3xl bg-card border border-border/80 space-y-4 shadow-2xs">
               <div className="p-3 rounded-2xl bg-brand-blue-soft text-brand-blue w-fit">
                 <PenTool className="h-5 w-5" />

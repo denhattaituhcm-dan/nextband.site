@@ -36,7 +36,7 @@ export default function MethodPage() {
       {/* 01. HERO SECTION                                                          */}
       {/* ========================================================================= */}
       <section className="relative overflow-hidden pt-16 pb-20 sm:pt-24 sm:pb-32 border-b border-border/80 bg-background">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center space-y-7">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center space-y-7">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-blue-soft text-brand-blue border border-brand-blue/20 text-xs sm:text-sm font-black uppercase tracking-wider">
             <Brain className="h-4 w-4" />
             <span>Phương Pháp Đào Tạo The ARIS Way</span>
@@ -49,7 +49,7 @@ export default function MethodPage() {
             </span>
           </h1>
 
-          <p className="text-lg sm:text-xl lg:text-2xl text-foreground/85 font-medium leading-relaxed max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl lg:text-2xl text-foreground/85 font-medium leading-relaxed max-w-4xl mx-auto">
             Từ ý niệm → góc nhìn → cấu trúc → câu chữ. Khi năng lực ngôn ngữ thực sự thay đổi, điểm số mới có lý do để thay đổi.
           </p>
 
@@ -250,7 +250,7 @@ export default function MethodPage() {
         description="Thay vì dịch thô từng chữ hay học vẹt nghĩa tiếng Việt, phương pháp The ARIS Way giúp người học bóc tách ý niệm hình tượng (Conceptual Metaphor) và cảm giác trực quan."
         background="muted"
       >
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-5xl mx-auto text-left">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full text-left">
           {/* CASE 1: PULL ONE'S WEIGHT */}
           <div className="p-6 sm:p-8 rounded-3xl bg-card border-2 border-brand-blue/30 space-y-5 shadow-2xs flex flex-col justify-between">
             <div className="space-y-4">

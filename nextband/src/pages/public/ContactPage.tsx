@@ -82,7 +82,7 @@ export default function ContactPage() {
 
       {/* Hero Header */}
       <section className="relative overflow-hidden pt-14 pb-20 sm:pt-20 sm:pb-28 border-b border-border/80 bg-background">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-blue-soft text-brand-blue border border-brand-blue/20 text-xs sm:text-sm font-extrabold uppercase tracking-wider">
             <MessageSquare className="h-4 w-4" />
             <span>Kết Nối &amp; Hỗ Trợ</span>
@@ -95,7 +95,7 @@ export default function ContactPage() {
             </span>
           </h1>
 
-          <p className="text-lg sm:text-xl lg:text-2xl text-foreground/85 font-normal leading-relaxed max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl lg:text-2xl text-foreground/85 font-normal leading-relaxed max-w-4xl mx-auto">
             Chúng tôi luôn sẵn sàng lắng nghe, giải đáp thắc mắc về các khóa học và hỗ trợ bạn xác định lộ trình học tập phù hợp nhất.
           </p>
         </div>

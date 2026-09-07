@@ -405,7 +405,7 @@ export function TuitionCalculator() {
   return (
     <div id="tuition-calculator" className="space-y-16 pt-8 pb-16 sm:pt-12 sm:pb-20 bg-slate-50/70 dark:bg-slate-900/30">
       {/* SECTION 1: INTERACTIVE CALCULATOR */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Header */}
         <div className="text-center space-y-3 max-w-3xl mx-auto">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-foreground tracking-tight">
@@ -751,7 +751,7 @@ export function TuitionCalculator() {
       </div>
 
       {/* SECTION 2: CHÍNH SÁCH HỌC BỔNG CHI TIẾT (THE 3 PILLARS ON PAGE) */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="text-center space-y-3 max-w-3xl mx-auto pt-6 border-t border-border/70">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-blue-soft text-brand-blue font-bold text-xs sm:text-sm tracking-wide uppercase">
             <ShieldCheck className="w-4 h-4" />

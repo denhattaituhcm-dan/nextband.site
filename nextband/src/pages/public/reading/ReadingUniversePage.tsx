@@ -21,21 +21,21 @@ export default function ReadingUniversePage() {
 
       {/* Hero Header Section */}
       <section className="relative overflow-hidden border-b border-stone-200/80 bg-gradient-to-b from-[#F7F3EB] to-[#FDFBF7] py-14 sm:py-20">
-        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
           
           <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300 bg-emerald-50 px-4 py-1.5 text-xs font-bold text-emerald-800 tracking-wide mb-6">
             <Sparkles className="h-4 w-4 text-emerald-600" />
             Luyện Đọc Hiểu Tiếng Anh Tự Nhiên & Thư Giãn
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-stone-900 leading-tight">
-            Đọc Tiếng Anh Nhẹ Nhàng. <br />
-            <span className="text-emerald-700">
-              Hiểu Sâu & Mở Rộng Tư Duy.
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-stone-900 leading-tight">
+            Thư Viện Bài Đọc Tương Tác
+            <span className="block text-emerald-700 font-extrabold text-2xl sm:text-3xl md:text-4xl mt-2">
+              Chạm từ vựng để mở rộng kiến thức
             </span>
           </h1>
 
-          <p className="mt-5 text-base sm:text-lg text-stone-600 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-5 text-base sm:text-lg text-stone-600 max-w-3xl mx-auto leading-relaxed">
             Không cần tra từ điển phức tạp. Đọc các bài viết chọn lọc về cuộc sống, kỹ năng và khoa học — nhấp vào bất kỳ từ nào để hiểu ngay nghĩa tiếng Việt sát ngữ cảnh.
           </p>
 
@@ -67,7 +67,7 @@ export default function ReadingUniversePage() {
       </section>
 
       {/* Reading Feature Highlights */}
-      <section className="py-8 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+      <section className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="rounded-2xl border border-stone-200 bg-white p-4.5 flex items-start gap-3.5 shadow-xs">
             <div className="h-10 w-10 rounded-xl bg-emerald-100/80 text-emerald-800 flex items-center justify-center shrink-0 font-bold">
@@ -108,7 +108,7 @@ export default function ReadingUniversePage() {
       </section>
 
       {/* Featured Articles Section */}
-      <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto space-y-6">
+      <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6">
         <div className="flex items-center justify-between border-b border-stone-200 pb-3">
           <div className="flex items-center gap-2">
             <BookOpen className="h-5 w-5 text-emerald-600" />
@@ -224,7 +224,7 @@ export default function ReadingUniversePage() {
       </section>
 
       {/* Helpful Reading Tip */}
-      <section className="py-8 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto mb-12">
+      <section className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-12">
         <div className="rounded-2xl bg-[#F7F3EB] border border-stone-200/90 p-5 sm:p-6 flex items-center gap-4">
           <div className="h-10 w-10 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 font-bold">
             🌱

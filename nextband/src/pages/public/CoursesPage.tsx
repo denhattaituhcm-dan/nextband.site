@@ -36,7 +36,7 @@ export default function CoursesPage() {
 
       {/* Hero Header */}
       <section className="relative overflow-hidden pt-10 pb-10 sm:pt-14 sm:pb-12 border-b border-border/60 bg-background">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-blue-soft text-brand-blue border border-brand-blue/20 text-xs sm:text-sm font-extrabold uppercase tracking-wider">
             <BookOpen className="h-4 w-4" />
             <span>Lộ Trình 5 Chặng Đào Tạo</span>
@@ -49,7 +49,7 @@ export default function CoursesPage() {
             </span>
           </h1>
 
-          <p className="text-lg sm:text-xl lg:text-2xl text-foreground/85 font-normal leading-relaxed max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl lg:text-2xl text-foreground/85 font-normal leading-relaxed max-w-4xl mx-auto">
             Lớp học siêu nhỏ tối đa 08 học viên, 100% giáo viên IELTS 8.0+ trực tiếp đứng lớp, học phí minh bạch và trải nghiệm 02 buổi học thử trước khi quyết định.
           </p>
 
@@ -113,7 +113,7 @@ export default function CoursesPage() {
         </div>
 
         {/* Linear Roadmap Rows from Starter to Leader */}
-        <div className="space-y-6 sm:space-y-7 max-w-5xl mx-auto">
+        <div className="space-y-6 sm:space-y-7 w-full">
           <CourseRoadmapRow
             course={COURSE_CATALOG.starter}
             onTrialClick={handleOpenTrial}
@@ -151,7 +151,7 @@ export default function CoursesPage() {
 
       {/* Final Action CTA */}
       <section className="py-20 sm:py-24 bg-brand-blue text-white">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 text-white border border-white/20 text-xs sm:text-sm font-extrabold uppercase tracking-wider">
             <Target className="h-4 w-4 text-brand-cyan" />
             <span>Xác Định Chặng Học</span>

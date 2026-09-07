@@ -21,7 +21,7 @@ export default function TeachersPage() {
 
       {/* Hero Header */}
       <section className="relative overflow-hidden pt-14 pb-20 sm:pt-20 sm:pb-28 border-b border-border/80 bg-background">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-blue-soft text-brand-blue border border-brand-blue/20 text-xs sm:text-sm font-extrabold uppercase tracking-wider">
             <Award className="h-4 w-4" />
             <span>Ban Chuyên Môn ARIS</span>
@@ -34,7 +34,7 @@ export default function TeachersPage() {
             </span>
           </h1>
 
-          <p className="text-lg sm:text-xl lg:text-2xl text-foreground/85 font-normal leading-relaxed max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl lg:text-2xl text-foreground/85 font-normal leading-relaxed max-w-4xl mx-auto">
             Không giao bài cho trợ giảng chấm đại trà. Mọi bài viết và bài nói của bạn đều được theo sát và phản hồi chi tiết bởi các giảng viên có chuyên môn học thuật vững vàng.
           </p>
 

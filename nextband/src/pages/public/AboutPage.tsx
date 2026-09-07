@@ -37,7 +37,7 @@ export default function AboutPage() {
       {/* HERO SECTION — INSTITUTIONAL PURPOSE                                      */}
       {/* ========================================================================= */}
       <section className="relative overflow-hidden pt-14 pb-20 sm:pt-20 sm:pb-28 border-b border-border/80 bg-background">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-red-soft text-brand-red border border-brand-red/20 text-xs sm:text-sm font-extrabold uppercase tracking-wider">
             <Compass className="h-4 w-4" />
             <span>Bản Sắc &amp; Tuyên Ngôn Học Thuật</span>
@@ -50,7 +50,7 @@ export default function AboutPage() {
             </span>
           </h1>
 
-          <p className="text-lg sm:text-xl lg:text-2xl text-foreground/85 font-normal leading-relaxed max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl lg:text-2xl text-foreground/85 font-normal leading-relaxed max-w-4xl mx-auto">
             Một lời tuyên ngôn về sự trung thực trong học thuật, kỷ luật rèn luyện có bằng chứng và giá trị thực chất của năng lực ngôn ngữ.
           </p>
 

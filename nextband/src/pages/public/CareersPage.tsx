@@ -35,48 +35,134 @@ export default function CareersPage() {
       {/* ========================================================================= */}
       {/* 01. HERO & MANIFESTO                                                      */}
       {/* ========================================================================= */}
-      <section className="relative overflow-hidden pt-16 pb-20 sm:pt-24 sm:pb-32 border-b border-border/80 bg-background">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center space-y-7">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-red-soft text-brand-red border border-brand-red/30 text-xs sm:text-sm font-black uppercase tracking-wider">
-            <Flame className="h-4 w-4" />
-            <span>Bản Sắc Đội Ngũ ARIS</span>
-          </div>
+      {/* ========================================================================= */}
+      {/* 01. HERO & MANIFESTO                                                      */}
+      {/* ========================================================================= */}
+      <section className="relative overflow-hidden pt-14 pb-16 sm:pt-20 sm:pb-24 border-b border-border/80 bg-background">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+            {/* Left: Headline, Manifesto & Actions */}
+            <div className="lg:col-span-7 space-y-6 text-left">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-red-soft text-brand-red border border-brand-red/30 text-xs sm:text-sm font-black uppercase tracking-wider">
+                <Flame className="h-4 w-4" />
+                <span>Bản Sắc Đội Ngũ ARIS</span>
+              </div>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-foreground tracking-tight leading-[1.12]">
-            <span className="block">Nơi tôi luyện những</span>
-            <span className="text-brand-red inline-block whitespace-nowrap">
-              Bác sĩ học thuật.
-            </span>
-          </h1>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-foreground tracking-tight leading-[1.14]">
+                Nơi tôi luyện những{" "}
+                <span className="text-brand-red block sm:inline">
+                  Bác sĩ học thuật.
+                </span>
+              </h1>
 
-          <p className="text-lg sm:text-xl lg:text-2xl text-foreground/85 font-medium leading-relaxed max-w-3xl mx-auto">
-            Trong y khoa, những bác sĩ giỏi nhất đều trưởng thành từ môi trường nội trú — nơi đòi hỏi sự toàn tâm toàn ý, kỷ luật nghiêm cẩn và áp lực lâm sàng liên tục. Tại ARIS, một "Bác sĩ học thuật" không thể làm việc hời hợt hay chạy sô bán thời gian. Chúng tôi xây dựng môi trường Full-time chuyên trách: ăn ngủ cùng dữ liệu bài làm, trực tiếp giải phẫu từng điểm nghẽn tư duy và chịu trách nhiệm đến cùng với sự tiến bộ của người học.
-          </p>
+              <p className="text-base sm:text-lg lg:text-xl text-foreground/85 font-medium leading-relaxed max-w-2xl">
+                Trong y khoa, những bác sĩ giỏi nhất đều trưởng thành từ môi trường nội trú — nơi đòi hỏi sự toàn tâm toàn ý, kỷ luật nghiêm cẩn và áp lực lâm sàng liên tục. Tại ARIS, một "Bác sĩ học thuật" không làm việc hời hợt hay chạy sô bán thời gian. Chúng tôi xây dựng môi trường Full-time chuyên trách: ăn ngủ cùng dữ liệu bài làm, trực tiếp giải phẫu từng điểm nghẽn tư duy và chịu trách nhiệm đến cùng với sự tiến bộ của người học.
+              </p>
 
-          <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
-            <Button
-              size="lg"
-              onClick={() => {
-                const el = document.getElementById("open-positions");
-                el?.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="rounded-2xl px-8 h-14 font-extrabold text-base sm:text-lg bg-brand-red hover:bg-brand-red-hover text-white shadow-md gap-2"
-            >
-              <span>Xem vị trí đang tuyển</span>
-              <ArrowRight className="h-5 w-5" />
-            </Button>
+              <div className="pt-2 flex flex-wrap items-center gap-4">
+                <Button
+                  size="lg"
+                  onClick={() => {
+                    const el = document.getElementById("open-positions");
+                    el?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="rounded-2xl px-8 h-14 font-extrabold text-base sm:text-lg bg-brand-red hover:bg-brand-red-hover text-white shadow-md gap-2"
+                >
+                  <span>Xem vị trí đang tuyển</span>
+                  <ArrowRight className="h-5 w-5" />
+                </Button>
 
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={() => {
-                const el = document.getElementById("core-beliefs");
-                el?.scrollIntoView({ behavior: "smooth" });
-              }}
-              className="rounded-2xl px-8 h-14 font-bold text-base sm:text-lg border-2 border-border/80 hover:bg-muted text-foreground"
-            >
-              Đọc triết lý đội ngũ
-            </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={() => {
+                    const el = document.getElementById("core-beliefs");
+                    el?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="rounded-2xl px-8 h-14 font-bold text-base sm:text-lg border-2 border-border/80 hover:bg-muted text-foreground"
+                >
+                  Đọc triết lý đội ngũ
+                </Button>
+              </div>
+
+              {/* Trust indicators */}
+              <div className="pt-6 border-t border-border/80 flex flex-wrap items-center gap-5 sm:gap-7 text-xs sm:text-sm text-foreground/80 font-bold">
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4.5 w-4.5 text-success" />
+                  100% Full-time chuyên trách
+                </span>
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4.5 w-4.5 text-success" />
+                  Ăn ngủ cùng dữ liệu học thuật
+                </span>
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4.5 w-4.5 text-success" />
+                  Chịu trách nhiệm đến cùng
+                </span>
+              </div>
+            </div>
+
+            {/* Right: Academic Doctor Standards Card */}
+            <div className="lg:col-span-5">
+              <div className="relative mx-auto max-w-md lg:max-w-none rounded-3xl border-2 border-brand-red/20 bg-card p-6 sm:p-8 shadow-md space-y-5">
+                <div className="space-y-1.5 border-b border-border/70 pb-3.5">
+                  <span className="text-xs font-mono uppercase tracking-widest text-brand-red font-extrabold">
+                    Quy Chuẩn Chuyên Môn
+                  </span>
+                  <h4 className="font-black text-foreground text-lg sm:text-xl">
+                    3 Cam Kết Của "Bác Sĩ Học Thuật"
+                  </h4>
+                </div>
+
+                <div className="space-y-3.5 text-left">
+                  <div className="p-3.5 rounded-2xl border border-brand-red/15 bg-brand-red-soft/30 space-y-1">
+                    <div className="flex items-center gap-2.5 text-sm font-extrabold text-foreground">
+                      <span className="h-6 w-6 rounded-lg bg-brand-red text-white font-mono text-xs flex items-center justify-center font-black">
+                        1
+                      </span>
+                      <span>Chẩn đoán tận gốc rễ</span>
+                    </div>
+                    <p className="text-xs sm:text-[13px] text-foreground/75 leading-relaxed pl-8.5">
+                      Không dạy mẹo vặt qua loa. Bóc tách chính xác vì sao học viên chọn sai và nghẽn tư duy ở đâu.
+                    </p>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl border border-border/70 bg-muted/40 space-y-1">
+                    <div className="flex items-center gap-2.5 text-sm font-extrabold text-foreground">
+                      <span className="h-6 w-6 rounded-lg bg-[#002147] text-white font-mono text-xs flex items-center justify-center font-black">
+                        2
+                      </span>
+                      <span>Kỷ luật lâm sàng liên tục</span>
+                    </div>
+                    <p className="text-xs sm:text-[13px] text-foreground/75 leading-relaxed pl-8.5">
+                      Chấm chữa bài chi tiết từng câu, bám sát tiến độ nộp bài và bài sửa của từng học viên mỗi ngày.
+                    </p>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl border border-border/70 bg-muted/40 space-y-1">
+                    <div className="flex items-center gap-2.5 text-sm font-extrabold text-foreground">
+                      <span className="h-6 w-6 rounded-lg bg-[#002147] text-white font-mono text-xs flex items-center justify-center font-black">
+                        3
+                      </span>
+                      <span>Đồng hành đến kết quả cuối</span>
+                    </div>
+                    <p className="text-xs sm:text-[13px] text-foreground/75 leading-relaxed pl-8.5">
+                      Không đổ lỗi cho học viên khi gặp bế tắc; chủ động tìm giải pháp triệt để giúp học viên bứt phá.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-[#002147] text-white text-left space-y-1.5 shadow-2xs">
+                  <div className="text-sm font-bold flex items-center gap-2 text-white">
+                    <ShieldCheck className="h-4.5 w-4.5 text-brand-cyan" />
+                    <span>Văn hóa thẳng thắn — Cùng tiến bộ</span>
+                  </div>
+                  <p className="text-xs text-white/85 leading-relaxed">
+                    Môi trường tôn trọng thực chất, không thảo mai, sẵn sàng phản biện sắc bén để nâng chuẩn học thuật.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

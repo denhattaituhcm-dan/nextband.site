@@ -179,7 +179,6 @@ export default function PublicHomePage() {
         badge="Phương pháp ARIS"
         title="Đừng học thêm. Hãy học đúng chỗ."
         description="Nhiều học viên giải hàng trăm bộ đề nhưng điểm số vẫn đứng yên, không phải vì chưa chăm chỉ — mà vì đang học những thứ mình đã biết, và bỏ quên những lỗ hổng chưa từng được gọi tên. ARIS lấy chẩn đoán học thuật làm điểm khởi đầu: Bóc tách chính xác vì sao bạn sai trước khi dạy bạn cách làm đúng."
-        containerSize="md"
         background="muted"
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
@@ -224,7 +223,7 @@ export default function PublicHomePage() {
         description="Thay vì dịch ghép từng từ từ tiếng Việt, The ARIS Way dẫn dắt bạn bóc tách ý niệm, xác định góc nhìn và định hình cấu trúc trước khi tạo lập câu văn hoàn chỉnh."
         background="default"
       >
-        <div className="space-y-8 text-left max-w-5xl mx-auto">
+        <div className="space-y-8 text-left w-full">
           {/* Input Thought / Điểm xuất phát ý niệm */}
           <div className="p-5 sm:p-6 rounded-3xl bg-muted/40 border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
             <div className="space-y-1.5">
@@ -697,7 +696,7 @@ export default function PublicHomePage() {
       {/* SECTION 7: FINAL CONVERSION BANNER (HÀNH ĐỘNG NGAY)                       */}
       {/* ========================================================================= */}
       <section className="py-20 sm:py-24 bg-brand-blue text-white">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center space-y-7">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center space-y-7">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 text-white border border-white/20 text-xs sm:text-sm font-extrabold uppercase tracking-wider">
             <Target className="h-4 w-4 text-brand-cyan" />
             <span>Bắt Đầu Đúng Cách</span>

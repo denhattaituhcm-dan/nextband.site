@@ -181,7 +181,7 @@ export default function AssessmentPage() {
       {/* 01. HERO HEADER                                                           */}
       {/* ========================================================================= */}
       <section className="relative overflow-hidden pt-16 pb-16 sm:pt-24 sm:pb-20 border-b border-border/80 bg-background">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-red-soft text-brand-red border border-brand-red/20 text-xs sm:text-sm font-black uppercase tracking-wider">
             <FileCheck className="h-4 w-4" />
             <span>Cổng Khảo Thí Chuẩn Quốc Tế ARIS</span>
@@ -194,7 +194,7 @@ export default function AssessmentPage() {
             </span>
           </h1>
 
-          <p className="text-lg sm:text-xl lg:text-2xl text-foreground/85 font-normal leading-relaxed max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl lg:text-2xl text-foreground/85 font-normal leading-relaxed max-w-4xl mx-auto">
             Làm bài thi thử chuẩn Cambridge trực tiếp trên hạ tầng phòng thi số NextBand. Tính toán chính xác Band điểm theo thang 9.0 và bóc tách điểm nghẽn học thuật chuyên sâu.
           </p>
 
