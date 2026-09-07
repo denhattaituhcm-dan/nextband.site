@@ -235,14 +235,22 @@ export function PublicHeader() {
               </>
             ) : (
               <>
-                {/* Guest State - Direct Homework CTA */}
+                {/* Guest State - Direct link to Student Portal */}
+                <Link
+                  to="/login?next=/app"
+                  className="text-xs font-bold uppercase tracking-wider text-slate-300 hover:text-white px-3 py-2 rounded-xl transition-colors whitespace-nowrap"
+                >
+                  Học viên
+                </Link>
+
+                {/* Primary CTA for Guests: Assessment / Diagnostic */}
                 <Button
                   size="sm"
                   asChild
                   className="h-10 px-5 rounded-xl text-xs sm:text-[13px] font-black uppercase tracking-wider bg-gradient-to-r from-rose-600 via-red-500 to-amber-500 hover:from-rose-500 hover:via-red-400 hover:to-amber-400 text-white shadow-lg shadow-rose-600/25 border border-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all gap-2"
                 >
-                  <Link to="/login?next=/app">
-                    <span>Homework</span>
+                  <Link to="/assessment">
+                    <span>Đánh giá năng lực</span>
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
@@ -266,7 +274,7 @@ export function PublicHeader() {
                 asChild
                 className="h-8 px-3 text-xs font-black uppercase tracking-wider bg-gradient-to-r from-rose-600 to-amber-500 text-white shadow-sm"
               >
-                <Link to="/login?next=/app">Homework →</Link>
+                <Link to="/assessment">Test 4 kỹ năng →</Link>
               </Button>
             )}
 
@@ -400,17 +408,30 @@ export function PublicHeader() {
                 <ArrowRight className="h-4 w-4" />
               </Button>
             ) : (
-              <Button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  navigate("/login?next=/app");
-                }}
-                className="w-full h-10 font-black uppercase tracking-wider text-xs bg-gradient-to-r from-rose-600 via-red-500 to-amber-500 hover:from-rose-500 hover:via-red-400 hover:to-amber-400 text-white justify-center gap-2 shadow-md shadow-rose-950/40"
-              >
-                <GraduationCap className="h-4 w-4" />
-                <span>Homework</span>
-                <ArrowRight className="h-4 w-4" />
-              </Button>
+              <div className="space-y-2">
+                <Button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    navigate("/assessment");
+                  }}
+                  className="w-full h-10 font-black uppercase tracking-wider text-xs bg-gradient-to-r from-rose-600 via-red-500 to-amber-500 hover:from-rose-500 hover:via-red-400 hover:to-amber-400 text-white justify-center gap-2 shadow-md shadow-rose-950/40"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  <span>Đánh Giá Năng Lực Miễn Phí</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    navigate("/login?next=/app");
+                  }}
+                  className="w-full h-9 font-bold uppercase tracking-wider text-xs border-white/20 text-slate-200 hover:text-white hover:bg-white/10 justify-center gap-2"
+                >
+                  <GraduationCap className="h-4 w-4" />
+                  <span>Cổng Học Viên (Homework)</span>
+                </Button>
+              </div>
             )}
           </div>
         </div>

@@ -196,23 +196,26 @@ ARIS thuộc category: **Academic Language & Critical Thinking Institution** k�
 - **IELTS 1984**: *"Hãy nhìn đội ngũ của chúng tôi."* — Nhấn mạnh dàn giáo viên "khủng long", quái kiệt, chấm thi.
 - **ARIS**: **"Hãy để chúng tôi tìm ra chính xác điều đang cản bạn."** — Độc quyền định vị **Diagnostic Intelligence (Trí tuệ Chẩn đoán)**. Không cạnh tranh bằng dạy mẹo, mà cạnh tranh bằng năng lực bóc tách căn nguyên lỗi sai và can thiệp trúng đích.
 
-### 9.2. Tam Giác Hình Mẫu Thương Hiệu (The Trinity Archetype)
-ARIS không triệt tiêu các hình mẫu mà gắn kết chúng thành một chuỗi nhân quả hoàn chỉnh:
-- **Hệ thống & Giảng viên — Academic Clinician (Bác sĩ học thuật)**: Người quan sát, chẩn đoán, can thiệp và kiểm chứng bằng chứng thực nghiệm.
-- **Học viên — Academic Fighter (Chiến binh học thuật)**: Người trực tiếp chiến đấu và rèn luyện có kỷ luật để nâng cấp năng lực.
-- **Mục tiêu tối thượng — Academic Monster ("Quái vật" học thuật)**: Kết quả đỉnh cao — một cá nhân sở hữu năng lực học thuật vượt trội, tư duy sắc bén và bản lĩnh kiệt xuất.
+### 9.2. Chuỗi Tiến Trình Hình Mẫu Thương Hiệu (The Progression Flow)
+ARIS định hình chuỗi nhân quả hoàn chỉnh giữa người dạy, người học và kết quả:
+- **Hệ thống & Giảng viên — Academic Clinician (Bác sĩ học thuật nội trú - Full-time Residency)**: 
+  - Trong y khoa, những bác sĩ giỏi nhất đều trưởng thành từ môi trường nội trú — nơi đòi hỏi sự toàn tâm toàn ý, kỷ luật nghiêm cẩn và áp lực lâm sàng liên tục.
+  - Tại ARIS, người thầy không làm việc hời hợt hay chạy sô bán thời gian. Họ là đội ngũ Full-time chuyên trách: ăn ngủ cùng dữ liệu bài làm, trực tiếp giải phẫu từng điểm nghẽn tư duy và chịu trách nhiệm đến cùng với sự tiến bộ của người học.
+- **Học viên — Academic Fighter (Chiến binh học thuật)**: Người trực tiếp chiến đấu, bền bỉ rèn luyện dưới phác đồ can thiệp chuẩn xác.
+- **Mục tiêu tối thượng — Academic Mastery (Làm chủ học thuật đỉnh cao)**: Năng lực ngôn ngữ học thuật thực chất, tư duy phản biện sắc bén và điểm số IELTS vượt trội như một kết quả tự nhiên.
+*(Lưu ý: Loại bỏ cụm từ "Quái vật học thuật" trong toàn bộ truyền thông công chúng vì kén người tiếp nhận, dễ bị hiểu nhầm sang hình tượng tiêu cực hoặc bạo lực hóa; chuẩn hóa thành "Bác sĩ học thuật").*
 
 ```text
 ┌────────────────────────────────────────────────────────────────────────┐
-│                      THE TRINITY ARCHETYPE FLOW                        │
+│                      THE ARIS PROGRESSION FLOW                         │
 │                                                                        │
-│   Academic Clinician (Chữa đúng)                                       │
+│   Academic Clinician (Bác sĩ nội trú Full-time — Chữa đúng)            │
 │          │                                                             │
 │          ▼                                                             │
-│   Academic Fighter (Chiến đấu đúng)                                    │
+│   Academic Fighter (Chiến binh học thuật — Chiến đấu đúng)             │
 │          │                                                             │
 │          ▼                                                             │
-│   "Academic Monster" (Năng lực vượt trội đỉnh cao)                     │
+│   Academic Mastery (Làm chủ học thuật thực chất đỉnh cao)              │
 │                                                                        │
 │   "Chiến binh cần sức mạnh. Học thuật cần bác sĩ."                     │
 └────────────────────────────────────────────────────────────────────────┘
@@ -222,7 +225,7 @@ ARIS không triệt tiêu các hình mẫu mà gắn kết chúng thành một c
 Tuyệt đối tránh "Medical Cosplay" (không ép gượng gạo thuật ngữ y khoa biến website thành bệnh viện). Ngôn ngữ được phân hóa thành 3 tầng rõ ràng:
 1. **Tầng 1 — Ngôn ngữ Sản phẩm (Product UI)**: Cực kỳ rõ ràng, chuẩn mực thông dụng, người dùng hiểu trong 0.5 giây (`Assessment`, `Courses`, `Homework`, `Reading`, `Speaking`, `Results`, `Teachers`, `Careers`, `Progress`).
 2. **Tầng 2 — Ngôn ngữ Triết lý (System & Pedagogy)**: Đưa tư duy chẩn đoán và tính khoa học vào chiều sâu (`Diagnostic Assessment`, `Evidence-based Practice`, `Academic Clinician`, `Academic Progress Record`).
-3. **Tầng 3 — Ngôn ngữ Thương hiệu (Brand Narrative & Copy)**: Đanh thép, giàu hình tượng, truyền cảm hứng mạnh mẽ (Dùng tại Hero, Manifesto, Careers, Banner: *"Nơi tôi luyện những 'quái vật' học thuật"*, *"Chiến binh cần sức mạnh. Học thuật cần bác sĩ"*).
+3. **Tầng 3 — Ngôn ngữ Thương hiệu (Brand Narrative & Copy)**: Đanh thép, tôn nghiêm, truyền cảm hứng mạnh mẽ (Dùng tại Hero, Manifesto, Careers, Banner: *"Nơi tôi luyện những Bác sĩ học thuật"*, *"Chiến binh cần sức mạnh. Học thuật cần bác sĩ"*).
 
 ### 9.4. NextBand Clinical Loop (Bằng Chứng Cốt Lõi Của Lời Hứa)
 NextBand không phải là LMS thông thường (`Nộp bài → Chấm điểm → Xong`), mà là cỗ máy số hóa chu trình can thiệp học thuật khép kín:

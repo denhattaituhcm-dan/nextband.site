@@ -816,6 +816,70 @@ export default function ExamInterface() {
       // 3. Tổng hợp toàn bộ câu trả lời từ tất cả các Section/Part của bài thi
       const answerEntries = buildPayloadAnswers();
 
+      // 3.5. Kiểm tra payload kỹ thuật trước khi nộp (Tránh nộp bài trắng / audio rỗng)
+      const examType = String(exam?.examType || exam?.type || "").toLowerCase();
+      const hasWriting = examType === "writing" || sections.some((s: any) => String(s.sectionType || "").toLowerCase() === "writing");
+      const hasSpeaking = examType === "speaking" || sections.some((s: any) => String(s.sectionType || "").toLowerCase() === "speaking");
+
+      if (hasWriting) {
+        let hasSubstantialWriting = false;
+        for (const ans of answerEntries) {
+          const raw = typeof ans.answerText === "string" ? ans.answerText.replace(/<[^>]*>/g, " ").replace(/&nbsp;/gi, " ").trim() : "";
+          if (raw.length >= 30 || raw.split(/\s+/).filter(Boolean).length >= 10) {
+            hasSubstantialWriting = true;
+            break;
+          }
+        }
+        if (!hasSubstantialWriting) {
+          toast({
+            title: "Bài viết chưa hoàn thành",
+            description: "Nội dung bài viết chưa đủ dung lượng tối thiểu (tối thiểu 10 từ). Vui lòng hoàn tất trước khi nộp.",
+            variant: "destructive",
+          });
+          setIsSubmitting(false);
+          setShowReviewDialog(false);
+          return;
+        }
+      }
+
+      if (hasSpeaking) {
+        let hasValidAudio = false;
+        for (const ans of answerEntries) {
+          if ((ans.audioUrl && String(ans.audioUrl).trim()) || (typeof ans.answerText === "string" && ans.answerText.startsWith("speaking-recordings/"))) {
+            hasValidAudio = true;
+            break;
+          }
+        }
+        if (!hasValidAudio) {
+          toast({
+            title: "Chưa có file ghi âm",
+            description: "Bạn chưa thu âm câu trả lời cho bài Speaking. Vui lòng ghi âm trước khi nộp.",
+            variant: "destructive",
+          });
+          setIsSubmitting(false);
+          setShowReviewDialog(false);
+          return;
+        }
+      }
+
+      const answeredCount = answerEntries.filter((a) => {
+        if (a.audioUrl && String(a.audioUrl).trim()) return true;
+        if (typeof a.answerText === "string" && a.answerText.trim()) return true;
+        if (typeof a.answerText === "object" && a.answerText !== null && Object.keys(a.answerText).length > 0) return true;
+        return false;
+      }).length;
+
+      if (answeredCount === 0) {
+        toast({
+          title: "Bài làm hoàn toàn để trống",
+          description: "Vui lòng trả lời ít nhất một câu hỏi trước khi nộp bài.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        setShowReviewDialog(false);
+        return;
+      }
+
       // 4. Submit atomically qua Sync Engine
       const res = await syncEngineRef.current.submitExam(answerEntries);
 

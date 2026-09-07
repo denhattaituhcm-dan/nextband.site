@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { SubmissionRepository } from "../repositories/submission.repository.js";
 import { canonicalScoringService } from "./scoring/CanonicalScoringService.js";
 import { auditOutboxService } from "./audit/AuditOutboxService.js";
-import { AuthorizationError, NotFoundError } from "./authorization.service.js";
+import { AuthorizationError, NotFoundError, ValidationError } from "./authorization.service.js";
 import { SubmissionStateMachine, SubmissionState, StateTransitionError } from "./submission-state-machine.js";
 import { NotificationService } from "./notification.service.js";
 import {
@@ -126,6 +126,95 @@ function sanitizeQuestionForStudent(q: any, showAnswerKey: boolean) {
     delete cleaned.answer_key;
   }
   return cleaned;
+}
+
+/**
+ * TẦNG 1: TECHNICAL PAYLOAD VALIDATION
+ * Chặn học sinh nộp bài rác / bài trắng / audio rỗng trước khi chuyển trạng thái sang SUBMITTED.
+ * Đảm bảo SUBMITTED luôn đồng nghĩa với việc có dữ liệu nộp thực chất.
+ */
+export function validateSubmissionTechnicalPayload(exam: any, answersToEvaluate: any[]): void {
+  if (!exam) return;
+  const examType = String(exam.examType || exam.type || "").toLowerCase();
+
+  const allQuestions: any[] = [];
+  (exam.sections || []).forEach((sec: any) => {
+    const sType = String(sec.sectionType || sec.section_type || "").toLowerCase();
+    (sec.questionGroups || []).forEach((g: any) => {
+      (g.questions || []).forEach((q: any) => {
+        allQuestions.push({ ...q, _sectionType: sType });
+      });
+    });
+  });
+
+  if (allQuestions.length === 0) return;
+
+  const isWritingExam =
+    examType === "writing" ||
+    allQuestions.some((q) => q._sectionType === "writing" || q.questionType === "essay");
+  const isSpeakingExam =
+    examType === "speaking" ||
+    allQuestions.some((q) => q._sectionType === "speaking" || q.questionType === "speaking");
+
+  if (isWritingExam) {
+    const writingQuestions = allQuestions.filter(
+      (q) => q._sectionType === "writing" || q.questionType === "essay"
+    );
+    let hasSubstantialWriting = false;
+    for (const wq of writingQuestions) {
+      const ans = answersToEvaluate.find((a) => a.questionId === wq.id);
+      const rawText =
+        typeof ans?.answerText === "string"
+          ? ans.answerText.replace(/<[^>]*>/g, " ").replace(/&nbsp;/gi, " ").trim()
+          : "";
+      const wordCount = rawText.split(/\s+/).filter(Boolean).length;
+      if (rawText.length >= 30 || wordCount >= 10) {
+        hasSubstantialWriting = true;
+        break;
+      }
+    }
+    if (!hasSubstantialWriting) {
+      throw new ValidationError(
+        "BÀI NỘP KHÔNG HỢP LỆ: Bài viết chưa có nội dung hoặc quá ngắn để nộp (tối thiểu 10 từ)."
+      );
+    }
+  }
+
+  if (isSpeakingExam) {
+    const speakingQuestions = allQuestions.filter(
+      (q) => q._sectionType === "speaking" || q.questionType === "speaking"
+    );
+    let hasValidAudio = false;
+    for (const sq of speakingQuestions) {
+      const ans = answersToEvaluate.find((a) => a.questionId === sq.id);
+      const audio =
+        (ans?.audioUrl && String(ans.audioUrl).trim()) ||
+        (typeof ans?.answerText === "string" && ans.answerText.startsWith("speaking-recordings/"));
+      if (audio) {
+        hasValidAudio = true;
+        break;
+      }
+    }
+    if (!hasValidAudio) {
+      throw new ValidationError(
+        "BÀI NỘP KHÔNG HỢP LỆ: Chưa tìm thấy file ghi âm hợp lệ cho bài Speaking."
+      );
+    }
+  }
+
+  // General check: If exam has questions, must not be completely blank
+  const answeredCount = answersToEvaluate.filter((a) => {
+    if (a.audioUrl && String(a.audioUrl).trim()) return true;
+    if (typeof a.answerText === "string" && a.answerText.trim()) return true;
+    if (typeof a.answerText === "object" && a.answerText !== null && Object.keys(a.answerText).length > 0) return true;
+    return false;
+  }).length;
+
+  if (answeredCount === 0) {
+    throw new ValidationError(
+      "BÀI NỘP KHÔNG HỢP LỆ: Bài làm hoàn toàn để trống. Vui lòng hoàn thành bài trước khi nộp."
+    );
+  }
 }
 
 export class ExamSubmissionService {
@@ -854,6 +943,10 @@ export class ExamSubmissionService {
         audioUrl: a.audioUrl,
       }));
     }
+
+    // TẦNG 1: TECHNICAL PAYLOAD VALIDATION
+    // Chặn payload rác / bài trắng / audio rỗng trước khi chuyển trạng thái sang SUBMITTED
+    validateSubmissionTechnicalPayload(submission.exam, answersToEvaluate);
 
     // SERVER IS SOLE AUTHORITY: Pure Canonical Scoring from answers & exam structure
     const examStructure = submission.exam;

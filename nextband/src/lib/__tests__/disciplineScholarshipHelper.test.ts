@@ -4,6 +4,7 @@ import {
   calculateDisciplineStanding,
   getSavedDisciplineGoal,
   saveDisciplineGoal,
+  isScholarshipEligible,
 } from "../disciplineScholarshipHelper";
 
 describe("Discipline Scholarship Helper & Calculator Suite", () => {
@@ -93,4 +94,48 @@ describe("Discipline Scholarship Helper & Calculator Suite", () => {
     expect(result.effectiveTier).toBeNull();
     expect(result.rewardAmount).toBe(0);
   });
+
+  describe("isScholarshipEligible & extractRevisionRequired", () => {
+    it("returns false for submissions with revisionRequired: true", () => {
+      expect(isScholarshipEligible({
+        status: "GRADED",
+        totalScore: 7.0,
+        exam: { examType: "writing" },
+        revisionRequired: true,
+      })).toBe(false);
+
+      expect(isScholarshipEligible({
+        status: "SUBMITTED",
+        exam: { examType: "writing" },
+        answers: [{ feedback: JSON.stringify({ revisionRequired: true }) }],
+      })).toBe(false);
+    });
+
+    it("returns true for valid graded writing without revisionRequired", () => {
+      expect(isScholarshipEligible({
+        status: "GRADED",
+        totalScore: 6.5,
+        exam: { examType: "writing" },
+        revisionRequired: false,
+      })).toBe(true);
+    });
+
+    it("returns false for graded writing with score 0", () => {
+      expect(isScholarshipEligible({
+        status: "GRADED",
+        totalScore: 0,
+        exam: { examType: "writing" },
+        revisionRequired: false,
+      })).toBe(false);
+    });
+
+    it("returns true for objective submissions (reading/listening)", () => {
+      expect(isScholarshipEligible({
+        status: "GRADED",
+        totalScore: 8.0,
+        exam: { examType: "reading" },
+      })).toBe(true);
+    });
+  });
 });
+

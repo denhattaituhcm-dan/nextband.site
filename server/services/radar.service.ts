@@ -21,6 +21,7 @@ import {
   type EligibleTask,
 } from './risk-engine.service.js';
 import { NotFoundError } from './authorization.service.js';
+import { isScholarshipEligible as isSubmissionEligibleForScholarship } from './scholarship-eligibility.engine.js';
 
 export interface AtRiskStudentDTO {
   studentId: string;
@@ -125,7 +126,10 @@ export class RadarService {
               status: { in: ['SUBMITTED', 'GRADED'] },
               submittedAt: { lte: weekDeadline },
             },
-            select: { studentId: true, examId: true },
+            include: {
+              answers: true,
+              exam: { select: { examType: true, title: true } },
+            },
           })
         : [];
 
@@ -159,13 +163,15 @@ export class RadarService {
           })
         : [];
 
-    // Build lookup maps
+    // Build lookup maps: Lọc qua Scholarship Eligibility Engine để loại trừ bài revisionRequired / 0 điểm
     const submissionsByStudent = new Map<string, Set<string>>();
     for (const sub of allSubmissions) {
-      if (!submissionsByStudent.has(sub.studentId)) {
-        submissionsByStudent.set(sub.studentId, new Set());
+      if (isSubmissionEligibleForScholarship(sub).isEligible) {
+        if (!submissionsByStudent.has(sub.studentId)) {
+          submissionsByStudent.set(sub.studentId, new Set());
+        }
+        submissionsByStudent.get(sub.studentId)!.add(sub.examId);
       }
-      submissionsByStudent.get(sub.studentId)!.add(sub.examId);
     }
 
     const latestSnapshotByStudent = new Map(latestSnapshots.map((s) => [s.studentId, s]));

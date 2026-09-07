@@ -28,8 +28,8 @@ export default function CareersPage() {
   return (
     <div className="flex flex-col">
       <SEO
-        title="Gia Nhập Đội Ngũ — Nơi Tôi Luyện Những 'Quái Vật' Học Thuật | ARIS"
-        description="ARIS chiêu mộ những giảng viên và chuyên viên học thuật đam mê bản chất ngôn ngữ, dám phá vỡ giới hạn bản thân để cùng kiến tạo một học viện chuẩn mực."
+        title="Gia Nhập Đội Ngũ — Nơi Tôi Luyện Những Bác Sĩ Học Thuật | ARIS"
+        description="ARIS chiêu mộ những giảng viên và chuyên viên học thuật toàn thời gian, đam mê nghiên cứu bản chất ngôn ngữ và khao khát đồng hành giải phẫu điểm nghẽn cho người học."
       />
 
       {/* ========================================================================= */}
@@ -39,18 +39,18 @@ export default function CareersPage() {
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center space-y-7">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-red-soft text-brand-red border border-brand-red/30 text-xs sm:text-sm font-black uppercase tracking-wider">
             <Flame className="h-4 w-4" />
-            <span>Bản Sắc Đội Ngũ Sáng Lập</span>
+            <span>Bản Sắc Đội Ngũ ARIS</span>
           </div>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-foreground tracking-tight leading-[1.08]">
-            Nơi tôi luyện những{" "}
-            <span className="text-brand-red block sm:inline">
-              "quái vật" học thuật.
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-foreground tracking-tight leading-[1.12]">
+            <span className="block">Nơi tôi luyện những</span>
+            <span className="text-brand-red inline-block whitespace-nowrap">
+              Bác sĩ học thuật.
             </span>
           </h1>
 
           <p className="text-lg sm:text-xl lg:text-2xl text-foreground/85 font-medium leading-relaxed max-w-3xl mx-auto">
-            Chúng tôi không tìm kiếm những cá nhân thích an phận, tự mãn hay chọn lối đi đơn độc, dễ dãi. ARIS tin rằng sự vượt trội chỉ được sinh ra từ kỷ luật nghiêm cẩn, quá trình tích lũy sâu sắc và việc đặt tư duy dưới áp lực đủ lớn để phá vỡ mọi giới hạn cũ.
+            Trong y khoa, những bác sĩ giỏi nhất đều trưởng thành từ môi trường nội trú — nơi đòi hỏi sự toàn tâm toàn ý, kỷ luật nghiêm cẩn và áp lực lâm sàng liên tục. Tại ARIS, một "Bác sĩ học thuật" không thể làm việc hời hợt hay chạy sô bán thời gian. Chúng tôi xây dựng môi trường Full-time chuyên trách: ăn ngủ cùng dữ liệu bài làm, trực tiếp giải phẫu từng điểm nghẽn tư duy và chịu trách nhiệm đến cùng với sự tiến bộ của người học.
           </p>
 
           <div className="pt-4 flex flex-wrap items-center justify-center gap-4">

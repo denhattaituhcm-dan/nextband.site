@@ -8,6 +8,7 @@ import {
   TIER_THRESHOLDS,
   type EligibleTask,
 } from './risk-engine.service.js';
+import { isScholarshipEligible as isSubmissionEligibleForScholarship } from './scholarship-eligibility.engine.js';
 
 export interface SnapshotExecutionResult {
   classesProcessed: number;
@@ -183,11 +184,19 @@ export class SnapshotService {
               submittedAt: { lte: cutoffTime },
               status: { in: ['SUBMITTED', 'GRADED'] },
             },
+            include: {
+              answers: true,
+              exam: { select: { examType: true, title: true } },
+            },
             orderBy: { submittedAt: 'desc' },
           });
 
-          hwCompleted = submissions.length;
-          streakDays = submissions.length; // Consecutive valid completed submissions
+          // Lọc qua Scholarship Eligibility Engine để loại bỏ bài nộp có cờ revisionRequired hoặc điểm 0
+          const eligibleSubmissions = submissions.filter(
+            (s) => isSubmissionEligibleForScholarship(s).isEligible
+          );
+          hwCompleted = eligibleSubmissions.length;
+          streakDays = eligibleSubmissions.length; // Consecutive valid completed submissions
         }
 
         const hwRate = hwTotal > 0 ? Math.min(100, Math.round((hwCompleted / hwTotal) * 100)) : 100;

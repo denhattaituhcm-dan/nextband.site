@@ -23,8 +23,8 @@ import { HuanCoMascot } from "@/components/mascot/HuanCoMascot";
 import { StudentStageBanner } from "@/components/student/StudentStageBanner";
 import { StudentMissionQueue } from "@/components/student/StudentMissionQueue";
 import { StudentSkillMatrix } from "@/components/student/StudentSkillMatrix";
-import { ClassLeaderboardWidget } from "@/components/student/ClassLeaderboardWidget";
 import { DisciplineScholarshipTracker } from "@/components/student/DisciplineScholarshipTracker";
+import { isScholarshipEligible } from "@/lib/disciplineScholarshipHelper";
 import { AcademicAscentWorld, AscentLessonNode } from "@/components/student/AcademicAscentWorld";
 import { calculateStudentJourney, resolveCourseBands } from "@/lib/studentJourney";
 import { getStudentMotivationCopy } from "@/lib/studentMotivationCopy";
@@ -122,7 +122,7 @@ export default function HomePage() {
 
   const userSubmissions = Array.isArray(submissionsData?.data) ? submissionsData.data : [];
   const submittedCount = userSubmissions.filter((s: any) =>
-    ["submitted", "SUBMITTED", "graded", "GRADED"].includes(s.status)
+    isScholarshipEligible(s)
   ).length;
   const gradedCount = userSubmissions.filter((s: any) =>
     ["graded", "GRADED"].includes(s.status)

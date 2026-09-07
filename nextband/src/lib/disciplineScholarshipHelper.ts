@@ -230,3 +230,72 @@ export function calculateDisciplineStanding(
     attendanceRate: Math.round(attendanceRate * 100),
   };
 }
+
+/**
+ * Checks if a submission is marked with revisionRequired by teacher across any answer payload.
+ */
+export function extractRevisionRequired(submission: any): boolean {
+  if (!submission) return false;
+  if (submission.revisionRequired === true || submission.revision_required === true) {
+    return true;
+  }
+  for (const ans of submission.answers || []) {
+    if (ans.feedback && typeof ans.feedback === "string") {
+      try {
+        const parsed = JSON.parse(ans.feedback);
+        if (parsed && typeof parsed === "object" && parsed.revisionRequired === true) {
+          return true;
+        }
+      } catch {
+        // ignore non-json feedback
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * Pure domain evaluator for scholarship eligibility (Client-side mirror of server engine)
+ */
+export function isScholarshipEligible(
+  submission: any,
+  options: { allowPendingTeacherReview?: boolean } = {}
+): boolean {
+  const { allowPendingTeacherReview = true } = options;
+  if (!submission) return false;
+
+  const status = String(submission.status || "").toUpperCase();
+  if (status !== "SUBMITTED" && status !== "GRADED") {
+    return false;
+  }
+
+  // If teacher flagged revisionRequired (AI abuse / off-topic / rewrite needed) -> NOT ELIGIBLE
+  if (extractRevisionRequired(submission)) {
+    return false;
+  }
+
+  const examType = String(
+    submission.exam?.examType ||
+    submission.exam?.type ||
+    submission.examType ||
+    submission.type ||
+    ""
+  ).toLowerCase();
+
+  const isSubjective =
+    examType === "writing" ||
+    examType === "speaking" ||
+    examType.includes("essay");
+
+  if (isSubjective) {
+    if (status === "GRADED") {
+      const totalScore = Number(submission.totalScore ?? submission.total_score ?? 0);
+      return totalScore > 0;
+    }
+    if (status === "SUBMITTED") {
+      return allowPendingTeacherReview;
+    }
+  }
+
+  return true;
+}
