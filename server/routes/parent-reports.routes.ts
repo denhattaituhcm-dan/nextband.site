@@ -1,11 +1,13 @@
 import { FastifyPluginAsync } from 'fastify';
 import { SnapshotService } from '../services/snapshot.service.js';
 import { NotificationService } from '../services/notification.service.js';
+import { DiagnosticService } from '../services/diagnostic.service.js';
 
 const parentReportsRoutes: FastifyPluginAsync = async (fastify) => {
   const prisma = fastify.prisma;
   const snapshotService = new SnapshotService(prisma);
   const notificationService = new NotificationService(prisma);
+  const diagnosticService = new DiagnosticService(prisma);
 
   /**
    * GET /public/parent-reports/:token
@@ -206,6 +208,10 @@ const parentReportsRoutes: FastifyPluginAsync = async (fastify) => {
             }
           ],
         },
+        academicDiagnostic: await diagnosticService.getStudentDiagnostic(student.userId, cls.id).catch((e) => {
+          fastify.log.warn({ err: e }, 'Could not calculate student diagnostic');
+          return null;
+        }),
         canReEnroll,
         hotlinePhone: process.env.VITE_HOTLINE_ZALO_PHONE || '0901234567',
       };

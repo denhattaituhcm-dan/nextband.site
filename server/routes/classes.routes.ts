@@ -257,4 +257,22 @@ export default async function classesRoutes(fastify: FastifyInstance) {
       });
     }
   );
+
+  // GET /classes/:id/students/:studentId/diagnostic - Academic Diagnostic Engine DTO
+  fastify.get<{ Params: { id: string; studentId: string } }>(
+    "/:id/students/:studentId/diagnostic",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { id: classId, studentId } = request.params;
+      const { DiagnosticService } = await import("../services/diagnostic.service.js");
+      const diagnosticService = new DiagnosticService(fastify.prisma);
+      const diagnostic = await diagnosticService.getStudentDiagnostic(studentId, classId);
+
+      return reply.send({
+        success: true,
+        data: diagnostic,
+      });
+    }
+  );
 }
+

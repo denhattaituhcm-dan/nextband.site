@@ -273,7 +273,7 @@ export function AcademicRankSystem({
       {/* Detailed Active Rank Card (Color-Themed) */}
       <div
         className={cn(
-          "rounded-3xl border-2 bg-card p-6 sm:p-8 lg:p-10 shadow-sm transition-all text-left",
+          "rounded-3xl border-2 bg-card p-4 sm:p-8 lg:p-10 shadow-sm transition-all text-left",
           activeRankData.theme.inactiveBorder
         )}
       >
@@ -317,7 +317,7 @@ export function AcademicRankSystem({
             {activeRankData.rankNumber === 9 ? (
               /* Cấp Bậc Đặc Biệt Rank 9 - Học Đế (Không phân kỳ 4 tầng) */
               <div className="space-y-3 pt-3 border-t border-border/60">
-                <div className="text-xs font-black text-muted-foreground uppercase tracking-wider flex items-center justify-between">
+                <div className="text-xs font-black text-muted-foreground uppercase tracking-wider flex flex-wrap items-center justify-between gap-2">
                   <span className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400 font-extrabold">
                     <Sparkles className="h-4 w-4" />
                     <span>Cấp Bậc Tối Thượng — Độc Bản Học Thuật</span>
@@ -367,7 +367,7 @@ export function AcademicRankSystem({
             ) : (
               /* 4 Progression Stages Visualizer (Sơ kỳ -> Đỉnh phong với ảnh ngôi sao & quy tắc gốc cho Rank 3 đến 8) */
               <div className="space-y-3 pt-3 border-t border-border/60">
-                <div className="text-xs font-black text-muted-foreground uppercase tracking-wider flex items-center justify-between">
+                <div className="text-xs font-black text-muted-foreground uppercase tracking-wider flex flex-wrap items-center justify-between gap-2">
                   <span>4 Tầng Tiến Trình Năng Lực</span>
                   <span className="font-mono text-xs text-foreground/75 inline-flex items-center gap-1">
                     <span className="inline-flex items-center gap-0.5 font-bold">

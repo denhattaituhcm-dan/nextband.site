@@ -4736,7 +4736,80 @@ export interface ParentReportData {
   };
   canReEnroll: boolean;
   hotlinePhone: string;
+  academicDiagnostic?: {
+    overall: {
+      evidenceCount: number;
+      confidence: string;
+      primaryVulnerability?: string;
+      primaryStrength?: string;
+    };
+    listening: {
+      skill: string;
+      overallAccuracy: number;
+      totalQuestions: number;
+      confidence: string;
+      vulnerabilities: Array<{
+        questionType: string;
+        label: string;
+        accuracy: number;
+        evidenceCount: number;
+        severity: string;
+        diagnosisVi: string;
+        trend?: {
+          previousAccuracy: number;
+          currentAccuracy: number;
+          delta: number;
+          direction: string;
+        };
+      }>;
+      strengths: Array<{
+        questionType: string;
+        label: string;
+        accuracy: number;
+        evidenceCount: number;
+        severity: string;
+      }>;
+    };
+    reading: {
+      skill: string;
+      overallAccuracy: number;
+      totalQuestions: number;
+      confidence: string;
+      vulnerabilities: Array<{
+        questionType: string;
+        label: string;
+        accuracy: number;
+        evidenceCount: number;
+        severity: string;
+        diagnosisVi: string;
+        trend?: {
+          previousAccuracy: number;
+          currentAccuracy: number;
+          delta: number;
+          direction: string;
+        };
+      }>;
+      strengths: Array<{
+        questionType: string;
+        label: string;
+        accuracy: number;
+        evidenceCount: number;
+        severity: string;
+      }>;
+    };
+    language?: {
+      vocabulary: Array<{
+        word: string;
+        coreIdea: string;
+        failedReviews: number;
+        masteryScore: number;
+        severity: string;
+      }>;
+      grammarNotes: string[];
+    };
+  } | null;
 }
+
 
 export const parentHubApi = {
   async getParentReport(token: string): Promise<ParentReportData> {

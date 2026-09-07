@@ -150,7 +150,9 @@ export default function ParentHubPage() {
                   Parent View
                 </Badge>
               </div>
-              <div className="text-[10px] text-slate-400 font-medium">Báo cáo minh bạch & Kỷ luật học tập</div>
+              <div className="text-[10px] text-slate-400 font-medium">
+                ARIS Academic Record™ • <span className="text-amber-400 font-semibold">Đừng học thêm. Hãy học đúng chỗ.</span>
+              </div>
             </div>
           </div>
 
@@ -295,6 +297,126 @@ export default function ParentHubPage() {
             </div>
           </div>
         </div>
+
+        {/* 4.5. ACADEMIC DIAGNOSTIC & PROGRESSION (BÁC SĨ CHẨN ĐOÁN HỌC THUẬT) */}
+        {report.academicDiagnostic && (
+          <div className="px-4 mt-5 space-y-3">
+            <div className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+              <span className="flex items-center gap-1.5 text-blue-400">
+                <Sparkles className="w-3.5 h-3.5" />
+                Chẩn Đoán Năng Lực & Tiến Độ
+              </span>
+              <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 border-slate-700 text-slate-400 font-semibold">
+                Độ tin cậy: {report.academicDiagnostic.overall.confidence}
+              </Badge>
+            </div>
+
+            {/* TẦNG 1: CON ĐANG Ở ĐÂU? (ACCURACY SCORECARD) */}
+            <div className="bg-slate-850 rounded-xl p-3.5 border border-slate-800 space-y-2">
+              <div className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                <span>🩺</span> 01. Tỷ lệ chính xác các kỹ năng
+              </div>
+              <div className="grid grid-cols-2 gap-2 pt-1">
+                <div className="bg-slate-900 rounded-lg p-2.5 border border-slate-800">
+                  <div className="text-[10px] text-slate-400 font-medium">Reading Accuracy</div>
+                  <div className="text-lg font-black text-blue-400 mt-0.5">
+                    {report.academicDiagnostic.reading.overallAccuracy}%
+                    <span className="text-[10px] font-normal text-slate-500 ml-1">
+                      ({report.academicDiagnostic.reading.totalQuestions} câu)
+                    </span>
+                  </div>
+                </div>
+                <div className="bg-slate-900 rounded-lg p-2.5 border border-slate-800">
+                  <div className="text-[10px] text-slate-400 font-medium">Listening Accuracy</div>
+                  <div className="text-lg font-black text-emerald-400 mt-0.5">
+                    {report.academicDiagnostic.listening.overallAccuracy}%
+                    <span className="text-[10px] font-normal text-slate-500 ml-1">
+                      ({report.academicDiagnostic.listening.totalQuestions} câu)
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* TẦNG 2: CON ĐANG VƯỚNG Ở ĐÂU? (DIAGNOSTIC RANKING) */}
+            <div className="bg-slate-850 rounded-xl p-3.5 border border-slate-800 space-y-2.5">
+              <div className="text-[11px] font-bold text-slate-300 flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <span>🔎</span> 02. Dạng bài cần tập trung xử lý
+                </span>
+                <span className="text-[10px] text-amber-400 font-semibold">Theo dữ liệu làm bài</span>
+              </div>
+
+              {report.academicDiagnostic.reading.vulnerabilities.length === 0 &&
+              report.academicDiagnostic.listening.vulnerabilities.length === 0 ? (
+                <div className="text-xs text-slate-400 py-1">Con đang làm chủ rất tốt các dạng bài đã học!</div>
+              ) : (
+                <div className="space-y-2">
+                  {[
+                    ...report.academicDiagnostic.reading.vulnerabilities,
+                    ...report.academicDiagnostic.listening.vulnerabilities,
+                  ]
+                    .slice(0, 3)
+                    .map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-slate-900/90 rounded-xl p-2.5 border border-slate-800 space-y-1"
+                      >
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-bold text-slate-200">{item.label}</span>
+                          <Badge
+                            className={`text-[9.5px] px-1.5 py-0 h-4 font-extrabold ${
+                              item.severity === "CRITICAL"
+                                ? "bg-red-500/15 text-red-400 border border-red-500/30"
+                                : "bg-amber-500/15 text-amber-400 border border-amber-500/30"
+                            }`}
+                          >
+                            {item.severity === "CRITICAL" ? "🔴 Cần khắc phục" : "🟠 Cần rèn thêm"} ({item.accuracy}%)
+                          </Badge>
+                        </div>
+                        <p className="text-[11px] text-slate-400 leading-snug">
+                          {item.diagnosisVi}
+                        </p>
+                        {item.trend && (
+                          <div className="text-[10px] pt-1 flex items-center gap-1 font-semibold text-emerald-400">
+                            <span>📈 Tiến trình: {item.trend.previousAccuracy}% ➔ {item.trend.currentAccuracy}%</span>
+                            <span className="ml-1 px-1 rounded bg-emerald-500/20 text-emerald-300">
+                              +{item.trend.delta}%
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              )}
+            </div>
+
+            {/* TẦNG 3: TỪ VỰNG HAY QUÊN */}
+            {report.academicDiagnostic.language &&
+              report.academicDiagnostic.language.vocabulary.length > 0 && (
+                <div className="bg-slate-850 rounded-xl p-3 border border-slate-800 space-y-2">
+                  <div className="text-[11px] font-bold text-slate-300 flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <span>📚</span> 03. Từ vựng con cần ôn lại
+                    </span>
+                    <span className="text-[10px] text-slate-500">Thuật toán ghi nhớ lặp lại</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {report.academicDiagnostic.language.vocabulary.slice(0, 5).map((v, i) => (
+                      <span
+                        key={i}
+                        className="inline-flex items-center px-2 py-1 rounded-md text-[10.5px] bg-slate-900 border border-slate-800 text-slate-300 font-medium"
+                        title={v.coreIdea}
+                      >
+                        <span className="text-amber-400 font-bold mr-1">{v.word}</span>
+                        <span className="text-slate-500 text-[9.5px]">({v.coreIdea})</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+          </div>
+        )}
 
         {/* 5. TEACHER STRUCTURED EVALUATION */}
         <div className="px-4 mt-5 space-y-2.5">

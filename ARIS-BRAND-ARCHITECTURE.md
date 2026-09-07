@@ -12,8 +12,12 @@ ARIS không được định vị như một trung tâm luyện thi IELTS thông
 
 ARIS tồn tại như một **Học viện Ngôn ngữ Học thuật & Tư duy Phản biện (Academic Language & Critical Thinking Institution)**, nơi năng lực ngôn ngữ được kiến tạo dựa trên các nguyên lý ngôn ngữ học nhận thức, phương pháp biện luận logic và được định lượng hóa minh bạch thông qua nền tảng công nghệ học tập **NextBand**.
 
-> **Mệnh đề cốt lõi (Core Thesis)**:  
-> *Điểm số IELTS cao là kết quả tất yếu (lagging indicator) của một năng lực tư duy học thuật thực chất và thói quen rèn luyện có kỷ luật. Mọi nỗ lực tối ưu điểm số mà không nâng cao năng lực ngôn ngữ cốt lõi đều tạo ra sự tiến bộ ảo.*
+> **Khẩu hiệu chủ đạo (Brand Hook)**:  
+> **"Đừng học thêm. Hãy học đúng chỗ."**  
+> *(The Academic Diagnosis System — Chẩn đoán chính xác trước khi bắt đầu học)*
+
+> **Tôn chỉ sư phạm trong giáo trình (Coursebook Philosophy)**:  
+> *"Hiểu sâu, học bản chất"*
 
 ---
 
@@ -22,15 +26,15 @@ ARIS tồn tại như một **Học viện Ngôn ngữ Học thuật & Tư duy P
 ### 2.1. ARIS Không Phải Là:
 - Một trung tâm bán mẹo thi cấp tốc hoặc phát tán các bộ đề dự đoán (forecast).
 - Một cơ sở đào tạo theo phương pháp học thuộc bài mẫu (template-memorization).
-- Một thương hiệu sử dụng chiêu trò giảm giá, cam kết điểm số viển vông hay phô trương cơ sở vật chất hào nhoáng.
+- Một thương hiệu "chữa bệnh / bệnh viện" áp lực tiêu cực hay phán xét học sinh.
 - Một website game hóa hay thế giới tu tiên/fantasy.
 
 ### 2.2. ARIS Thực Chất Là:
-- Một **Học viện Đào tạo & Khảo thí Ngôn ngữ Chuẩn Học thuật**, xây dựng năng lực tư duy bằng tiếng Anh thông qua hệ thống đo lường 7 cấp bậc định lượng (**ARIS-7**) và phương pháp giải phẫu ngôn ngữ (**The ARIS Way**).
-- Một hệ thống học tập có trách nhiệm giải trình cao (High-Accountability Learning Ecosystem), nơi mọi lỗi sai được định danh, mọi bài nộp được lưu vết và mọi nhận xét của giảng viên đều mang tính xây dựng logic.
+- Một **Hệ thống Đào tạo IELTS lấy Chẩn đoán Học thuật làm điểm khởi đầu (The Academic Diagnosis System)**: Đo lường $\rightarrow$ Chẩn đoán $\rightarrow$ Can thiệp đúng chỗ $\rightarrow$ Đo lường tiến bộ.
+- Một hệ sinh thái học tập dựa trên bằng chứng (Evidence-Based Learning), sử dụng **Thang đo năng lực ARIS-7** để định vị trình độ và nền tảng công nghệ **NextBand** để minh bạch hóa toàn bộ hồ sơ học thuật (`Academic Record™`) cho phụ huynh và học sinh.
 
 ### 2.3. Cách ARIS Muốn Được Nhớ Đến:
-> *"Nơi người học xây dựng nền tảng tư duy và ngôn ngữ học thuật thực chất — nơi mọi bước tiến bộ đều có bằng chứng đo lường được."*
+> *"Nơi người học không phải giải đề đại trà — nơi mọi lỗ hổng tư duy được chẩn đoán chính xác và can thiệp trúng đích để thăng cấp trên thang đo ARIS-7."*
 
 ---
 

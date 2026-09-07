@@ -65,21 +65,21 @@ export default function PublicHomePage() {
               </p>
 
               {/* Action Buttons */}
-              <div className="pt-2 flex flex-wrap items-center gap-4">
+              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4 w-full sm:w-auto">
                 <Button
                   size="lg"
                   onClick={() => navigate("/assessment")}
-                  className="rounded-2xl px-8 h-14 font-extrabold text-base sm:text-lg bg-brand-red hover:bg-brand-red-hover text-brand-red-foreground shadow-sm gap-2.5"
+                  className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3 sm:py-0 font-extrabold text-base sm:text-lg bg-brand-red hover:bg-brand-red-hover text-brand-red-foreground shadow-sm gap-2.5 whitespace-normal text-center"
                 >
                   <span>Đánh giá năng lực miễn phí</span>
-                  <ArrowRight className="h-5 w-5" />
+                  <ArrowRight className="h-5 w-5 shrink-0" />
                 </Button>
 
                 <Button
                   size="lg"
                   variant="outline"
                   onClick={() => navigate("/academic-system")}
-                  className="rounded-2xl px-8 h-14 font-bold text-base sm:text-lg border-2 border-border/80 hover:bg-muted text-foreground"
+                  className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3 sm:py-0 font-bold text-base sm:text-lg border-2 border-border/80 hover:bg-muted text-foreground whitespace-normal text-center"
                 >
                   Khám phá hệ thống học thuật
                 </Button>
@@ -123,7 +123,7 @@ export default function PublicHomePage() {
                       <span>Bạn đang ở đâu?</span>
                     </div>
                     <p className="text-sm sm:text-[15px] text-foreground/75 leading-relaxed pl-9">
-                      Định vị chính xác trình độ hiện tại theo khung 7 cấp bậc.
+                      Định vị chính xác trình độ học thuật hiện tại trên thang đo 7 cấp bậc ARIS-7.
                     </p>
                   </div>
 
@@ -135,7 +135,7 @@ export default function PublicHomePage() {
                       <span>Điều gì cản trở bạn?</span>
                     </div>
                     <p className="text-sm sm:text-[15px] text-foreground/75 leading-relaxed pl-9">
-                      Bóc tách chi tiết từng lỗi sai về ngữ pháp, từ vựng và lập luận.
+                      Hệ thống Academic Diagnosis bóc tách chính xác từng lỗ hổng tư duy và dạng bài hay mắc lỗi.
                     </p>
                   </div>
 
@@ -147,7 +147,7 @@ export default function PublicHomePage() {
                       <span>Bước tiếp theo là gì?</span>
                     </div>
                     <p className="text-sm sm:text-[15px] text-foreground/75 leading-relaxed pl-9">
-                      Lộ trình rèn luyện rõ ràng và bài tập sửa lỗi có người theo sát.
+                      Can thiệp trúng đích để thăng cấp trên thang đo ARIS-7, theo sát bởi giảng viên chuyên môn.
                     </p>
                   </div>
                 </div>
@@ -172,23 +172,23 @@ export default function PublicHomePage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 2: THE REAL PROBLEM (VẤN ĐỀ THẬT SỰ)                             */}
+      {/* SECTION 2: THE ACADEMIC DIAGNOSIS SYSTEM (ĐỊNH VỊ THƯƠNG HIỆU ARIS)       */}
       {/* ========================================================================= */}
       <SectionContainer
-        badge="Thực Tế Người Học"
-        title="Vì sao bạn giải nhiều đề nhưng điểm số vẫn đứng yên?"
-        description="Làm 100 bài tập mà không được chỉ rõ lỗi sai thì bạn chỉ đang lặp lại lỗi cũ 100 lần. Điểm số chỉ thay đổi khi bạn biết chính xác vì sao câu văn của mình chưa đạt."
+        badge="Phương pháp ARIS"
+        title="Đừng học thêm. Hãy học đúng chỗ."
+        description="Nhiều học viên giải hàng trăm bộ đề nhưng điểm số vẫn đứng yên, không phải vì chưa chăm chỉ — mà vì đang học những thứ mình đã biết, và bỏ quên những lỗ hổng chưa từng được gọi tên. ARIS lấy chẩn đoán học thuật làm điểm khởi đầu: Bóc tách chính xác vì sao bạn sai trước khi dạy bạn cách làm đúng."
         containerSize="md"
         background="muted"
       >
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 text-left">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
           <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-3.5 shadow-2xs">
             <div className="p-3 rounded-2xl bg-primary-soft text-primary w-fit">
-              <Brain className="h-6 w-6" />
+              <BookOpen className="h-6 w-6" />
             </div>
-            <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Học vẹt bài mẫu</h3>
+            <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Chẩn đoán chính xác</h3>
             <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-              Điểm thi có thể tạm tăng trong ngắn hạn, nhưng bạn mất hoàn toàn khả năng tự diễn giải ý tưởng khi gặp đề lạ.
+              Không chỉ dừng lại ở con số điểm. Hệ thống bóc tách 4 tầng năng lực: Bạn đang yếu ở đâu, bẫy tư duy nào khiến bạn chọn sai đáp án (Matching Headings, Paraphrase hay Distractor).
             </p>
           </div>
 
@@ -196,9 +196,9 @@ export default function PublicHomePage() {
             <div className="p-3 rounded-2xl bg-primary-soft text-primary w-fit">
               <Target className="h-6 w-6" />
             </div>
-            <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Nhận xét chung chung</h3>
+            <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Can thiệp đúng chỗ</h3>
             <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-              Những lời phê như "cần viết tự nhiên hơn" không giúp bạn biết phải sửa từ nào hay cấu trúc ngữ pháp nào.
+              Dành 100% thời lượng bài giảng và bài tập để lấp đúng khoảng trống tư duy. Không lãng phí thời gian và sức lực của học viên vào những phần đại trà đã làm chủ.
             </p>
           </div>
 
@@ -206,9 +206,9 @@ export default function PublicHomePage() {
             <div className="p-3 rounded-2xl bg-primary-soft text-primary w-fit">
               <Clock className="h-6 w-6" />
             </div>
-            <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Thiếu lộ trình đo lường</h3>
+            <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Thăng cấp minh bạch</h3>
             <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-              Học theo cảm tính mà không biết mình đang ở chặng nào và cần hoàn thiện điều gì để bứt phá lên band tiếp theo.
+              Mỗi lỗ hổng được khắc phục là một bước tiến trên thang đo ARIS-7. Toàn bộ tiến trình được lưu vết trên Academic Record™ để phụ huynh và học sinh đo lường qua từng tuần.
             </p>
           </div>
         </div>
@@ -406,24 +406,24 @@ export default function PublicHomePage() {
       >
         <AcademicRankSystem initialRank={5} />
 
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-4 text-center">
+        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4 text-center w-full max-w-full">
           <Button
             size="lg"
             onClick={() => navigate("/assessment")}
-            className="rounded-2xl px-8 h-14 text-sm sm:text-base font-extrabold bg-brand-red hover:bg-brand-red-hover text-white shadow-md gap-2.5"
+            className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3.5 sm:py-0 text-sm sm:text-base font-extrabold bg-brand-red hover:bg-brand-red-hover text-white shadow-md gap-2.5 whitespace-normal text-center"
           >
             <span>Khảo thí kiểm tra Rank hiện tại của bạn ngay (60 Phút)</span>
-            <ArrowRight className="h-5 w-5" />
+            <ArrowRight className="h-5 w-5 shrink-0" />
           </Button>
 
           <Button
             size="lg"
             variant="outline"
             onClick={() => navigate("/academic-system")}
-            className="rounded-2xl px-8 h-14 text-sm sm:text-base font-bold border-2 border-border/80 hover:bg-muted text-foreground gap-2"
+            className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3.5 sm:py-0 text-sm sm:text-base font-bold border-2 border-border/80 hover:bg-muted text-foreground gap-2 whitespace-normal text-center"
           >
             <span>Xem chi tiết 7 cấp bậc &amp; 4 giai đoạn</span>
-            <ArrowRight className="h-5 w-5" />
+            <ArrowRight className="h-5 w-5 shrink-0" />
           </Button>
         </div>
       </SectionContainer>
@@ -533,14 +533,14 @@ export default function PublicHomePage() {
         </div>
 
         {/* Action Button */}
-        <div className="mt-10 text-center">
+        <div className="mt-10 flex justify-center text-center w-full max-w-full">
           <Button
             size="lg"
             onClick={() => navigate("/assessment")}
-            className="rounded-2xl px-8 h-14 font-extrabold text-base bg-brand-red hover:bg-brand-red-hover text-white shadow-md gap-2.5"
+            className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3.5 sm:py-0 font-extrabold text-sm sm:text-base bg-brand-red hover:bg-brand-red-hover text-white shadow-md gap-2.5 whitespace-normal text-center"
           >
             <span>Trải nghiệm Chẩn đoán Năng lực ARIS Miễn Phí</span>
-            <ArrowRight className="h-5 w-5" />
+            <ArrowRight className="h-5 w-5 shrink-0" />
           </Button>
         </div>
       </SectionContainer>
@@ -680,14 +680,14 @@ export default function PublicHomePage() {
           </div>
         </div>
 
-        <div className="mt-10 text-center">
+        <div className="mt-10 flex justify-center text-center w-full max-w-full">
           <Button
             variant="outline"
             onClick={() => navigate("/courses")}
-            className="rounded-2xl px-8 h-14 font-extrabold text-base sm:text-lg border-2 border-border/80 hover:bg-muted"
+            className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3.5 sm:py-0 font-extrabold text-sm sm:text-base border-2 border-border/80 hover:bg-muted whitespace-normal text-center"
           >
             <span>Xem chi tiết toàn bộ 5 chương trình đào tạo</span>
-            <ArrowRight className="h-5 w-5 ml-2" />
+            <ArrowRight className="h-5 w-5 ml-2 shrink-0" />
           </Button>
         </div>
       </SectionContainer>
@@ -716,21 +716,21 @@ export default function PublicHomePage() {
             <span>Tham gia cùng hàng trăm học viên đang thi đua và cùng nhau chinh phục mục tiêu IELTS.</span>
           </div>
 
-          <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
+          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4 w-full max-w-full">
             <Button
               size="lg"
               onClick={() => navigate("/assessment")}
-              className="rounded-2xl px-8 h-14 font-extrabold text-base sm:text-lg bg-brand-red text-white hover:bg-brand-red-hover shadow-md border-0 gap-2.5"
+              className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3.5 sm:py-0 font-extrabold text-base sm:text-lg bg-brand-red text-white hover:bg-brand-red-hover shadow-md border-0 gap-2.5 whitespace-normal text-center"
             >
               <span>Làm bài kiểm tra năng lực ngay</span>
-              <ArrowRight className="h-5 w-5 text-white" />
+              <ArrowRight className="h-5 w-5 text-white shrink-0" />
             </Button>
 
             <Button
               size="lg"
               variant="outline"
               onClick={() => navigate("/contact")}
-              className="rounded-2xl px-8 h-14 font-bold text-base sm:text-lg border-2 border-white/40 text-white bg-transparent hover:bg-white/10 hover:text-white"
+              className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3.5 sm:py-0 font-bold text-base sm:text-lg border-2 border-white/40 text-white bg-transparent hover:bg-white/10 hover:text-white whitespace-normal text-center"
             >
               Liên hệ nhận tư vấn trực tiếp
             </Button>

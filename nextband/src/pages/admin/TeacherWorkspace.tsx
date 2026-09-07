@@ -50,6 +50,7 @@ import {
   TrendingDown,
   TrendingUp,
   Clock,
+  Share2,
 } from "lucide-react";
 import { ProgressReportModal } from "@/components/admin/ProgressReportModal";
 import {
@@ -634,12 +635,14 @@ export default function TeacherWorkspace() {
   }, [currentStudent]);
 
   const workbookSummary = useMemo(() => {
-    if (!currentStudent) return { graded: 0, pending: 0, inProgress: 0, overdue: 0 };
+    if (!currentStudent) return { graded: 0, pending: 0, inProgress: 0, overdue: 0, completed: 0, totalAssigned: 0 };
     return {
       graded: currentStudent.gradedCount || 0,
       pending: currentStudent.pendingCount || 0,
       inProgress: currentStudent.unsubmittedCount || 0,
       overdue: slaStats.overdueCount,
+      completed: (currentStudent.gradedCount || 0) + (currentStudent.pendingCount || 0),
+      totalAssigned: currentStudent.totalAssignedCount || 0,
     };
   }, [currentStudent, slaStats]);
 
@@ -1295,15 +1298,57 @@ export default function TeacherWorkspace() {
                   </>
                 )}
                 {currentStudent && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsReportModalOpen(true)}
-                    className="h-6 text-[10px] font-bold px-2 ml-1 text-blue-700 border-blue-200 hover:bg-blue-50 gap-1 shadow-2xs"
-                  >
-                    <Award className="h-3 w-3" />
-                    Báo cáo
-                  </Button>
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsReportModalOpen(true)}
+                      className="h-6 text-[10px] font-bold px-2 ml-1 text-blue-700 border-blue-200 hover:bg-blue-50 gap-1 shadow-2xs"
+                    >
+                      <Award className="h-3 w-3" />
+                      Báo cáo
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const parentPhone = currentStudent?.parentPhone || currentStudent?.parent_phone || currentStudent?.phone;
+                        const parentName = currentStudent?.parentName || currentStudent?.parent_name || "Phụ huynh";
+                        const studentName = currentStudent?.fullName || currentStudent?.name || "em";
+                        const parentToken = currentStudent?.parentToken || currentStudent?.parent_token;
+                        const reportUrl = parentToken ? `https://nextband.site/p/${parentToken}` : window.location.origin;
+
+                        const hwRate = workbookSummary.totalAssigned > 0
+                          ? Math.round((workbookSummary.completed / workbookSummary.totalAssigned) * 100)
+                          : 100;
+
+                        const messageText = `Dạ kính chào ${parentName},\nEm là giáo viên phụ trách cháu ${studentName} tại NextBand.\nEm gửi báo cáo tiến độ học tập và rèn luyện của con tuần này:\n• Hoàn thành BTVN: ${workbookSummary.completed}/${workbookSummary.totalAssigned} bài (${hwRate}%)\n• Đã chấm chi tiết: ${workbookSummary.graded} bài\n\nBa mẹ xem toàn bộ phân tích lỗi sai và tiến độ học tập trực tuyến của con tại đây nhé:\n👉 ${reportUrl}\n\n(Hệ thống tự động cập nhật không cần mật khẩu)`;
+
+                        navigator.clipboard.writeText(messageText);
+                        toast({
+                          title: "📋 Đã sao chép tin nhắn Báo cáo!",
+                          description: "Đang mở Zalo... Thầy/Cô chỉ cần bấm Ctrl+V để gửi cho Phụ huynh.",
+                        });
+
+                        if (parentPhone) {
+                          const cleanPhone = String(parentPhone).replace(/[^0-9]/g, "");
+                          window.open(`https://zalo.me/${cleanPhone}`, "_blank");
+                        } else {
+                          toast({
+                            title: "⚠️ Chưa có SĐT Phụ huynh",
+                            description: "Đã copy nội dung vào Clipboard. Thầy/Cô vui lòng paste vào Zalo học viên.",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
+                      className="h-6 text-[10px] font-bold px-2 text-emerald-700 border-emerald-200 hover:bg-emerald-50 gap-1 shadow-2xs"
+                      title="Tự động tạo tin nhắn, sao chép vào Clipboard và mở Zalo Phụ huynh"
+                    >
+                      <Share2 className="h-3 w-3 text-emerald-600" />
+                      Gửi Zalo
+                    </Button>
+                  </>
                 )}
               </div>
             </div>

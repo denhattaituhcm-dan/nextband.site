@@ -135,7 +135,7 @@ export function ConsultationBubble() {
       <div
         ref={containerRef}
         className={cn(
-          "fixed z-50 font-sans select-none",
+          "fixed z-50 font-sans select-none max-w-[calc(100vw-1.5rem)]",
           // On mobile: if open, center as bottom sheet / drawer; if closed, stick to bottom right
           isOpen
             ? "inset-x-3 bottom-3 sm:inset-x-auto sm:bottom-6 sm:right-6 flex flex-col items-center sm:items-end"
