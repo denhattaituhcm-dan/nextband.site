@@ -58,6 +58,7 @@ import {
   selectCanonicalSubmission,
   compareHomeworkOrder,
 } from "@/lib/homeworkStatusHelper";
+import { generateParentProgressMessage } from "@/lib/reminderMessageHelper";
 import {
   SentenceFeedbackItem,
   parseStructuredFeedback,
@@ -1317,13 +1318,15 @@ export default function TeacherWorkspace() {
                         const parentName = currentStudent?.parentName || currentStudent?.parent_name || "Phụ huynh";
                         const studentName = currentStudent?.fullName || currentStudent?.name || "em";
                         const parentToken = currentStudent?.parentToken || currentStudent?.parent_token;
-                        const reportUrl = parentToken ? `https://nextband.site/p/${parentToken}` : window.location.origin;
 
-                        const hwRate = workbookSummary.totalAssigned > 0
-                          ? Math.round((workbookSummary.completed / workbookSummary.totalAssigned) * 100)
-                          : 100;
-
-                        const messageText = `Dạ kính chào ${parentName},\nEm là giáo viên phụ trách cháu ${studentName} tại NextBand.\nEm gửi báo cáo tiến độ học tập và rèn luyện của con tuần này:\n• Hoàn thành BTVN: ${workbookSummary.completed}/${workbookSummary.totalAssigned} bài (${hwRate}%)\n• Đã chấm chi tiết: ${workbookSummary.graded} bài\n\nBa mẹ xem toàn bộ phân tích lỗi sai và tiến độ học tập trực tuyến của con tại đây nhé:\n👉 ${reportUrl}\n\n(Hệ thống tự động cập nhật không cần mật khẩu)`;
+                        const messageText = generateParentProgressMessage({
+                          parentName,
+                          studentName,
+                          completedCount: workbookSummary.completed,
+                          totalAssigned: workbookSummary.totalAssigned,
+                          gradedCount: workbookSummary.graded,
+                          parentToken,
+                        });
 
                         navigator.clipboard.writeText(messageText);
                         toast({

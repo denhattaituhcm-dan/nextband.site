@@ -94470,6 +94470,286 @@ M\xE3 H\u1ECDc Vi\xEAn: ${student.id}
   }
 });
 
+// server/services/diagnostic.service.ts
+var diagnostic_service_exports = {};
+__export(diagnostic_service_exports, {
+  DiagnosticService: () => DiagnosticService,
+  calculateConfidence: () => calculateConfidence,
+  calculateTrend: () => calculateTrend,
+  calculateVulnerabilityScore: () => calculateVulnerabilityScore,
+  classifySeverity: () => classifySeverity
+});
+function calculateConfidence(evidenceCount) {
+  if (evidenceCount < 5) return "INSUFFICIENT";
+  if (evidenceCount < 12) return "LOW";
+  if (evidenceCount < 25) return "MEDIUM";
+  return "HIGH";
+}
+function classifySeverity(accuracy, evidenceCount) {
+  const confidence = calculateConfidence(evidenceCount);
+  if (confidence === "INSUFFICIENT") {
+    return accuracy >= 80 ? "STRENGTH" : "STABLE";
+  }
+  if (accuracy >= 80) return "STRENGTH";
+  if (accuracy >= 70) return "STABLE";
+  if (accuracy >= 55) return "WEAK";
+  return evidenceCount >= 12 ? "CRITICAL" : "WEAK";
+}
+function calculateVulnerabilityScore(accuracy, evidenceCount) {
+  if (evidenceCount <= 0) return 0;
+  const errorRate = Math.max(0, 100 - accuracy);
+  const logWeight = Math.log2(evidenceCount + 1);
+  return Math.round(errorRate * logWeight * 10) / 10;
+}
+function calculateTrend(prevAccuracy, currAccuracy) {
+  if (prevAccuracy === null || isNaN(prevAccuracy)) {
+    return void 0;
+  }
+  const delta = Math.round((currAccuracy - prevAccuracy) * 10) / 10;
+  let direction = "STABLE";
+  if (delta >= 8) direction = "IMPROVING";
+  else if (delta <= -8) direction = "DECLINING";
+  return {
+    previousAccuracy: Math.round(prevAccuracy * 10) / 10,
+    currentAccuracy: Math.round(currAccuracy * 10) / 10,
+    delta,
+    direction
+  };
+}
+var QUESTION_METADATA_MAP, DiagnosticService;
+var init_diagnostic_service = __esm({
+  "server/services/diagnostic.service.ts"() {
+    QUESTION_METADATA_MAP = {
+      matching: {
+        label: "Matching Information / Headings",
+        diagnosis: "H\u1ECDc vi\xEAn g\u1EB7p kh\xF3 kh\u0103n khi t\u1ED5ng h\u1EE3p \xFD ch\xEDnh \u0111o\u1EA1n v\u0103n v\xE0 nh\u1EADn di\u1EC7n b\u1EABy paraphrase ti\xEAu \u0111\u1EC1.",
+        skill: "READING"
+      },
+      true_false_not_given: {
+        label: "True / False / Not Given",
+        diagnosis: "H\u1ECDc vi\xEAn hay suy di\u1EC5n c\u1EA3m t\xEDnh, ch\u01B0a ph\xE2n bi\u1EC7t r\xF5 r\xE0ng gi\u1EEFa False (m\xE2u thu\u1EABn th\xF4ng tin) v\xE0 Not Given (kh\xF4ng \u0111\u1EC1 c\u1EADp).",
+        skill: "READING"
+      },
+      yes_no_not_given: {
+        label: "Yes / No / Not Given",
+        diagnosis: "H\u1ECDc vi\xEAn g\u1EB7p tr\u1EDF ng\u1EA1i khi nh\u1EADn \u0111\u1ECBnh quan \u0111i\u1EC3m/th\xE1i \u0111\u1ED9 c\u1EE7a t\xE1c gi\u1EA3 so v\u1EDBi s\u1EF1 th\u1EADt kh\xE1ch quan.",
+        skill: "READING"
+      },
+      multiple_choice: {
+        label: "Multiple Choice (Tr\u1EAFc nghi\u1EC7m)",
+        diagnosis: "H\u1ECDc vi\xEAn d\u1EC5 b\u1ECB ph\xE2n t\xE2m b\u1EDFi c\xE1c ph\u01B0\u01A1ng \xE1n b\u1EABy (distractors) ch\u1EE9a t\u1EEB kh\xF3a gi\u1ED1ng b\xE0i \u0111\u1ECDc/nghe nh\u01B0ng sai ng\u1EEF c\u1EA3nh.",
+        skill: "READING"
+      },
+      fill_blank: {
+        label: "Completion / \u0110i\u1EC1n t\u1EEB",
+        diagnosis: "H\u1ECDc vi\xEAn ch\u01B0a ch\xFA \xFD ng\u1EEF ph\xE1p c\xE2u ch\u1EE9a ch\u1ED7 tr\u1ED1ng (t\u1EEB lo\u1EA1i, s\u1ED1 \xEDt/s\u1ED1 nhi\u1EC1u) ho\u1EB7c l\u1ED7i ch\xEDnh t\u1EA3 (spelling).",
+        skill: "READING"
+      },
+      short_answer: {
+        label: "Short Answer Questions",
+        diagnosis: "H\u1ECDc vi\xEAn x\xE1c \u0111\u1ECBnh gi\u1EDBi h\u1EA1n t\u1EEB (Word limit) ch\u01B0a chu\u1EA9n ho\u1EB7c ch\u01B0a \u0111\u1ECBnh v\u1ECB \u0111\xFAng c\xE2u tr\u1EA3 l\u1EDDi trong b\xE0i \u0111\u1ECDc.",
+        skill: "READING"
+      },
+      listening: {
+        label: "Listening Comprehension",
+        diagnosis: "H\u1ECDc vi\xEAn g\u1EB7p kh\xF3 kh\u0103n v\u1EDBi t\u1ED1c \u0111\u1ED9 n\xF3i t\u1EF1 nhi\xEAn, hi\u1EC7n t\u01B0\u1EE3ng nu\u1ED1t \xE2m/n\u1ED1i \xE2m ho\u1EB7c b\u1EABy s\u1EEDa th\xF4ng tin (correction).",
+        skill: "LISTENING"
+      }
+    };
+    DiagnosticService = class {
+      constructor(prisma) {
+        this.prisma = prisma;
+      }
+      /**
+       * Truy xuất toàn bộ bài nộp hợp lệ của học viên, deduplicate và aggregate
+       */
+      async getStudentDiagnostic(studentId, classId) {
+        let targetExamIds = null;
+        if (classId) {
+          const assignments = await this.prisma.classExamAssignment.findMany({
+            where: { classId, status: "PUBLISHED" },
+            select: { examId: true }
+          });
+          targetExamIds = assignments.map((a) => a.examId);
+        }
+        const submissions = await this.prisma.examSubmission.findMany({
+          where: {
+            studentId,
+            status: { in: ["SUBMITTED", "GRADED", "submitted", "graded"] },
+            ...targetExamIds ? { examId: { in: targetExamIds } } : {}
+          },
+          orderBy: { submittedAt: "desc" },
+          include: {
+            answers: {
+              include: {
+                evidence: true,
+                question: {
+                  include: {
+                    group: {
+                      include: {
+                        section: true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        });
+        const latestSubmissionByExam = /* @__PURE__ */ new Map();
+        const allFinalSubmissions = [];
+        for (const sub of submissions) {
+          if (!latestSubmissionByExam.has(sub.examId)) {
+            latestSubmissionByExam.set(sub.examId, sub);
+            allFinalSubmissions.push(sub);
+          }
+        }
+        const sortedSubmissions = [...allFinalSubmissions].sort((a, b) => {
+          const tA = (a.submittedAt || a.createdAt).getTime();
+          const tB = (b.submittedAt || b.createdAt).getTime();
+          return tA - tB;
+        });
+        const midIndex = Math.floor(sortedSubmissions.length / 2);
+        const baselineSubmissions = sortedSubmissions.length >= 2 ? sortedSubmissions.slice(0, midIndex) : [];
+        const recentSubmissions = sortedSubmissions.length >= 2 ? sortedSubmissions.slice(midIndex) : sortedSubmissions;
+        const collectStats = (subs) => {
+          const statsMap = /* @__PURE__ */ new Map();
+          for (const sub of subs) {
+            for (const ans of sub.answers) {
+              const q = ans.question;
+              if (!q) continue;
+              const qType = String(q.questionType || "unknown").toLowerCase();
+              const sectionType = String(q.group?.section?.sectionType || "reading").toLowerCase();
+              let skill = "READING";
+              if (sectionType === "listening" || qType === "listening") {
+                skill = "LISTENING";
+              }
+              const key = `${skill}:${qType}`;
+              const current = statsMap.get(key) || {
+                questionType: qType,
+                skill,
+                total: 0,
+                correct: 0
+              };
+              current.total += 1;
+              const isCorrect = ans.evidence?.isCorrect ?? Number(ans.score) > 0;
+              if (isCorrect) {
+                current.correct += 1;
+              }
+              statsMap.set(key, current);
+            }
+          }
+          return statsMap;
+        };
+        const overallStatsMap = collectStats(sortedSubmissions);
+        const baselineStatsMap = collectStats(baselineSubmissions);
+        const recentStatsMap = collectStats(recentSubmissions);
+        const diagnosticItems = [];
+        for (const [key, stat] of overallStatsMap.entries()) {
+          const accuracy = stat.total > 0 ? Math.round(stat.correct / stat.total * 1e3) / 10 : 0;
+          const confidence = calculateConfidence(stat.total);
+          const severity = classifySeverity(accuracy, stat.total);
+          const vulnerabilityScore = calculateVulnerabilityScore(accuracy, stat.total);
+          const meta = QUESTION_METADATA_MAP[stat.questionType] || {
+            label: stat.questionType.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+            diagnosis: `H\u1ECDc vi\xEAn c\u1EA7n c\u1EA3i thi\u1EC7n \u0111\u1ED9 ch\xEDnh x\xE1c \u1EDF d\u1EA1ng b\xE0i ${stat.questionType}.`,
+            skill: stat.skill
+          };
+          let trendData = void 0;
+          const baseStat = baselineStatsMap.get(key);
+          const recStat = recentStatsMap.get(key);
+          if (baseStat && recStat && baseStat.total >= 3 && recStat.total >= 3) {
+            const baseAcc = Math.round(baseStat.correct / baseStat.total * 100);
+            const recAcc = Math.round(recStat.correct / recStat.total * 100);
+            trendData = calculateTrend(baseAcc, recAcc);
+          }
+          diagnosticItems.push({
+            questionType: stat.questionType,
+            skill: stat.skill,
+            label: meta.label,
+            total: stat.total,
+            correct: stat.correct,
+            accuracy,
+            evidenceCount: stat.total,
+            confidence,
+            severity,
+            vulnerabilityScore,
+            diagnosisVi: meta.diagnosis,
+            trend: trendData
+          });
+        }
+        const buildSkillDiagnostic = (targetSkill) => {
+          const skillItems = diagnosticItems.filter((item) => item.skill === targetSkill);
+          const totalQ = skillItems.reduce((acc, cur) => acc + cur.total, 0);
+          const correctQ = skillItems.reduce((acc, cur) => acc + cur.correct, 0);
+          const overallAccuracy = totalQ > 0 ? Math.round(correctQ / totalQ * 1e3) / 10 : 0;
+          const vulnerabilities = skillItems.filter((item) => item.severity === "CRITICAL" || item.severity === "WEAK").sort((a, b) => b.vulnerabilityScore - a.vulnerabilityScore);
+          const strengths = skillItems.filter((item) => item.severity === "STRENGTH" || item.severity === "STABLE").sort((a, b) => b.accuracy - a.accuracy);
+          return {
+            skill: targetSkill,
+            overallAccuracy,
+            totalQuestions: totalQ,
+            confidence: calculateConfidence(totalQ),
+            vulnerabilities,
+            strengths
+          };
+        };
+        const readingDiag = buildSkillDiagnostic("READING");
+        const listeningDiag = buildSkillDiagnostic("LISTENING");
+        const vocabRecords = await this.prisma.userVocabulary.findMany({
+          where: {
+            userId: studentId,
+            OR: [{ failedReviews: { gte: 2 } }, { masteryScore: { lt: 0.6 } }]
+          },
+          take: 10,
+          orderBy: { failedReviews: "desc" },
+          include: {
+            word: true
+          }
+        });
+        const vocabularyDiagnostics = vocabRecords.map((vr) => ({
+          wordId: vr.wordId,
+          word: vr.word.word,
+          cefrLevel: vr.word.cefrLevel,
+          coreIdea: vr.word.coreIdea,
+          failedReviews: vr.failedReviews,
+          totalReviews: vr.totalReviews,
+          masteryScore: Math.round(vr.masteryScore * 100),
+          severity: vr.failedReviews >= 4 ? "CRITICAL" : "WEAK"
+        }));
+        const totalEvidenceCount = readingDiag.totalQuestions + listeningDiag.totalQuestions;
+        const overallConfidence = calculateConfidence(totalEvidenceCount);
+        const allVulnerabilities = [...readingDiag.vulnerabilities, ...listeningDiag.vulnerabilities].sort(
+          (a, b) => b.vulnerabilityScore - a.vulnerabilityScore
+        );
+        const allStrengths = [...readingDiag.strengths, ...listeningDiag.strengths].sort(
+          (a, b) => b.accuracy - a.accuracy
+        );
+        return {
+          studentId,
+          classId,
+          generatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+          overall: {
+            evidenceCount: totalEvidenceCount,
+            confidence: overallConfidence,
+            primaryVulnerability: allVulnerabilities[0]?.label,
+            primaryStrength: allStrengths[0]?.label
+          },
+          listening: listeningDiag,
+          reading: readingDiag,
+          language: {
+            vocabulary: vocabularyDiagnostics,
+            grammarNotes: [
+              "Ch\xFA \xFD m\u1EA1o t\u1EEB (a/an/the) v\xE0 c\u1EA5u tr\xFAc danh t\u1EEB gh\xE9p trong b\xE0i \u0111i\u1EC1n t\u1EEB.",
+              "R\xE8n luy\u1EC7n chuy\u1EC3n \u0111\u1ED5i m\u1EC7nh \u0111\u1EC1 quan h\u1EC7 r\xFAt g\u1ECDn \u0111\u1EC3 t\u0103ng t\u1ED1c \u0111\u1ED9 \u0111\u1ECDc hi\u1EC3u."
+            ]
+          }
+        };
+      }
+    };
+  }
+});
+
 // server/schemas/lead.schema.ts
 var lead_schema_exports = {};
 __export(lead_schema_exports, {
@@ -107076,6 +107356,20 @@ async function classesRoutes(fastify) {
       });
     }
   );
+  fastify.get(
+    "/:id/students/:studentId/diagnostic",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { id: classId, studentId } = request.params;
+      const { DiagnosticService: DiagnosticService2 } = await Promise.resolve().then(() => (init_diagnostic_service(), diagnostic_service_exports));
+      const diagnosticService = new DiagnosticService2(fastify.prisma);
+      const diagnostic = await diagnosticService.getStudentDiagnostic(studentId, classId);
+      return reply.send({
+        success: true,
+        data: diagnostic
+      });
+    }
+  );
 }
 
 // server/routes/highlights.routes.ts
@@ -113392,10 +113686,12 @@ var cron_routes_default = cronRoutes;
 
 // server/routes/parent-reports.routes.ts
 init_notification_service();
+init_diagnostic_service();
 var parentReportsRoutes = async (fastify) => {
   const prisma = fastify.prisma;
   const snapshotService = new SnapshotService(prisma);
   const notificationService = new NotificationService(prisma);
+  const diagnosticService = new DiagnosticService(prisma);
   fastify.get("/public/parent-reports/:token", async (request, reply) => {
     const { token } = request.params;
     if (!token) {
@@ -113573,6 +113869,10 @@ var parentReportsRoutes = async (fastify) => {
             }
           ]
         },
+        academicDiagnostic: await diagnosticService.getStudentDiagnostic(student.userId, cls.id).catch((e) => {
+          fastify.log.warn({ err: e }, "Could not calculate student diagnostic");
+          return null;
+        }),
         canReEnroll,
         hotlinePhone: process.env.VITE_HOTLINE_ZALO_PHONE || "0901234567"
       };
