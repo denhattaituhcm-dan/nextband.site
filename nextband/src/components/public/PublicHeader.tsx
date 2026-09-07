@@ -235,22 +235,22 @@ export function PublicHeader() {
               </>
             ) : (
               <>
-                {/* Guest State - Direct link to Student Portal */}
+                {/* Guest State: Primary CTA is Student Login / Homework */}
                 <Link
-                  to="/login?next=/app"
+                  to="/assessment"
                   className="text-xs font-bold uppercase tracking-wider text-slate-300 hover:text-white px-3 py-2 rounded-xl transition-colors whitespace-nowrap"
                 >
-                  Học viên
+                  Đánh giá năng lực
                 </Link>
 
-                {/* Primary CTA for Guests: Assessment / Diagnostic */}
+                {/* Primary CTA for Guests: Homework / Student Login */}
                 <Button
                   size="sm"
                   asChild
                   className="h-10 px-5 rounded-xl text-xs sm:text-[13px] font-black uppercase tracking-wider bg-gradient-to-r from-rose-600 via-red-500 to-amber-500 hover:from-rose-500 hover:via-red-400 hover:to-amber-400 text-white shadow-lg shadow-rose-600/25 border border-white/20 hover:scale-[1.02] active:scale-[0.98] transition-all gap-2"
                 >
-                  <Link to="/assessment">
-                    <span>Đánh giá năng lực</span>
+                  <Link to="/login?next=/app">
+                    <span>Học viên / BTVN</span>
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
@@ -274,7 +274,7 @@ export function PublicHeader() {
                 asChild
                 className="h-8 px-3 text-xs font-black uppercase tracking-wider bg-gradient-to-r from-rose-600 to-amber-500 text-white shadow-sm"
               >
-                <Link to="/assessment">Test 4 kỹ năng →</Link>
+                <Link to="/login?next=/app">Học viên / BTVN →</Link>
               </Button>
             )}
 
@@ -412,24 +412,24 @@ export function PublicHeader() {
                 <Button
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    navigate("/assessment");
+                    navigate("/login?next=/app");
                   }}
                   className="w-full h-10 font-black uppercase tracking-wider text-xs bg-gradient-to-r from-rose-600 via-red-500 to-amber-500 hover:from-rose-500 hover:via-red-400 hover:to-amber-400 text-white justify-center gap-2 shadow-md shadow-rose-950/40"
                 >
-                  <Sparkles className="h-4 w-4" />
-                  <span>Đánh Giá Năng Lực Miễn Phí</span>
+                  <GraduationCap className="h-4 w-4" />
+                  <span>Học Viên / Làm BTVN</span>
                   <ArrowRight className="h-4 w-4" />
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    navigate("/login?next=/app");
+                    navigate("/assessment");
                   }}
                   className="w-full h-9 font-bold uppercase tracking-wider text-xs border-white/20 text-slate-200 hover:text-white hover:bg-white/10 justify-center gap-2"
                 >
-                  <GraduationCap className="h-4 w-4" />
-                  <span>Cổng Học Viên (Homework)</span>
+                  <Sparkles className="h-4 w-4" />
+                  <span>Đánh Giá Năng Lực Miễn Phí</span>
                 </Button>
               </div>
             )}
