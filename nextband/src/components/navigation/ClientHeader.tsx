@@ -12,12 +12,17 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useParams, useNavigate } from "react-router-dom";
 import { useStudentLifecycle } from "@/hooks/useStudentLifecycle";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { ZaloIcon } from "@/components/common/ZaloIcon";
 import { NotificationBell } from "./NotificationBell";
 
 export function ClientHeader() {
   const { user, signOut, isAdmin, isAuthenticated, isTeacher } = useAuth();
+  const { settings } = useSiteSettings();
   const navigate = useNavigate();
   const { classId: urlClassId } = useParams<{ classId?: string }>();
+
+  const zaloUrl = settings?.zaloLink || "https://zalo.me";
 
   const { state, resolveClass } = useStudentLifecycle();
 
@@ -55,7 +60,22 @@ export function ClientHeader() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Quick Contact / Feedback via Zalo */}
+            <a
+              href={zaloUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Liên hệ / Góp ý qua Zalo"
+              title="Liên hệ / Góp ý qua Zalo"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs font-medium bg-blue-50/80 hover:bg-blue-100 text-[#0068FF] border border-blue-200/80 hover:border-blue-300 transition-all duration-150 shadow-2xs hover:shadow-xs active:scale-95 group"
+            >
+              <div className="w-3.5 h-3.5 shrink-0 transition-transform group-hover:scale-110">
+                <ZaloIcon className="w-full h-full text-[#0068FF]" />
+              </div>
+              <span className="hidden sm:inline font-semibold">Liên hệ / Góp ý</span>
+            </a>
+
             <NotificationBell scope={isTeacher ? "teacher" : "student"} />
             {isAdmin && (
               <Button
@@ -91,6 +111,19 @@ export function ClientHeader() {
                 <DropdownMenuItem onClick={() => navigate("/profile")} className="cursor-pointer">
                   <User className="mr-2 h-4 w-4" />
                   Hồ sơ cá nhân
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a
+                    href={zaloUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center cursor-pointer text-[#0068FF] font-medium"
+                  >
+                    <div className="mr-2 h-4 w-4 shrink-0">
+                      <ZaloIcon className="w-full h-full text-[#0068FF]" />
+                    </div>
+                    Liên hệ / Góp ý (Zalo)
+                  </a>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem

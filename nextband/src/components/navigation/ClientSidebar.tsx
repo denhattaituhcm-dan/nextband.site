@@ -27,6 +27,8 @@ import {
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
 import { useStudentLifecycle } from "@/hooks/useStudentLifecycle";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { ZaloIcon } from "@/components/common/ZaloIcon";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SiteLogo } from "@/components/common/SiteLogo";
 
@@ -124,6 +126,8 @@ export function ClientSidebar() {
   const collapsed = state === "collapsed";
   const { user } = useAuth();
   const { state: lifecycleState } = useStudentLifecycle();
+  const { settings } = useSiteSettings();
+  const zaloUrl = settings?.zaloLink || "https://zalo.me";
 
   const isTeacher = user?.roles?.includes("teacher");
   const isAdmin = user?.roles?.includes("admin");
@@ -197,7 +201,7 @@ export function ClientSidebar() {
 
         {/* Workspace Switcher for Teachers & Admins */}
         {(isTeacher || isAdmin) && (
-          <SidebarGroup className="mt-auto border-t border-slate-100 pt-2">
+          <SidebarGroup className="border-t border-slate-100 pt-2">
             <SidebarGroupLabel className="text-[10px] font-bold tracking-wider text-slate-400 px-2.5 uppercase font-mono">
               KHÔNG GIAN LÀM VIỆC
             </SidebarGroupLabel>
@@ -233,6 +237,31 @@ export function ClientSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
         )}
+
+        {/* Support & Feedback via Zalo */}
+        <SidebarGroup className="mt-auto border-t border-slate-100 pt-2">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                tooltip="Liên hệ / Góp ý qua Zalo"
+                className="rounded-lg text-slate-600 hover:text-[#0068FF] hover:bg-blue-50/80"
+              >
+                <a
+                  href={zaloUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 text-xs py-2 w-full text-slate-600 hover:text-[#0068FF] group"
+                >
+                  <div className="h-4 w-4 shrink-0 text-[#0068FF] transition-transform group-hover:scale-110">
+                    <ZaloIcon className="w-full h-full" />
+                  </div>
+                  <span className="truncate font-medium">Liên hệ / Góp ý</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter className="border-t border-slate-100 p-3.5">

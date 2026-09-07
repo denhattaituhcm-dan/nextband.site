@@ -31,6 +31,7 @@ import { authApi } from "@/lib/api";
 import { z } from "zod";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SiteLogo } from "@/components/common/SiteLogo";
+import { ZaloIcon } from "@/components/common/ZaloIcon";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const emailSchema = z.string().email("Email không hợp lệ");
@@ -243,8 +244,10 @@ export default function Auth() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-card hover:bg-muted text-primary border border-border text-[11px] font-medium transition-colors shadow-2xs"
             >
-              <MessageCircle className="h-3 w-3 text-primary" />
-              <span>Support</span>
+              <div className="w-3 h-3 shrink-0 text-primary">
+                <ZaloIcon className="w-full h-full" />
+              </div>
+              <span>Liên hệ / Góp ý</span>
             </a>
           )}
         </div>
@@ -399,6 +402,22 @@ export default function Auth() {
             </form>
           </CardContent>
         </Card>
+
+        {settings.zaloLink && (
+          <div className="lg:hidden text-center mt-4">
+            <a
+              href={settings.zaloLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors py-1 px-3 rounded-full hover:bg-muted/50"
+            >
+              <div className="w-3.5 h-3.5 shrink-0 text-[#0068FF]">
+                <ZaloIcon className="w-full h-full" />
+              </div>
+              <span>Liên hệ / Góp ý qua Zalo</span>
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );

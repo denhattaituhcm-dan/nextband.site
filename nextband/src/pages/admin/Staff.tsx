@@ -63,6 +63,8 @@ import {
   EyeOff,
   Calendar,
   Layers,
+  Trash2,
+  AlertTriangle,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -102,6 +104,10 @@ export default function AdminStaff() {
 
   // Safety Confirmation for deactivating Staff
   const [confirmUser, setConfirmUser] = useState<any>(null);
+
+  // Safety Hard Delete Confirmation for Staff
+  const [deleteUser, setDeleteUser] = useState<any>(null);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -208,6 +214,27 @@ export default function AdminStaff() {
         description: err?.message || "Không thể cập nhật thông tin",
         variant: "destructive",
       });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => usersApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-staff"] });
+      queryClient.invalidateQueries({ queryKey: ["assignable-staff"] });
+      toast({ title: "Đã xóa vĩnh viễn nhân viên khỏi hệ thống" });
+      setDeleteUser(null);
+      setDeleteConfirmText("");
+    },
+    onError: (err: any) => {
+      const msg =
+        err?.message ||
+        err?.response?.data?.error ||
+        err?.response?.data?.message ||
+        "Không thể xóa nhân viên";
+      toast({ title: "Lỗi", description: msg, variant: "destructive" });
+      setDeleteUser(null);
+      setDeleteConfirmText("");
     },
   });
 
@@ -439,7 +466,7 @@ export default function AdminStaff() {
                   <TableHead className="font-bold text-xs uppercase tracking-wider whitespace-nowrap min-w-[130px]">
                     Ngày tham gia
                   </TableHead>
-                  <TableHead className="text-right font-bold text-xs uppercase tracking-wider whitespace-nowrap min-w-[100px]">
+                  <TableHead className="text-right font-bold text-xs uppercase tracking-wider whitespace-nowrap min-w-[130px]">
                     Thao tác
                   </TableHead>
                 </TableRow>
