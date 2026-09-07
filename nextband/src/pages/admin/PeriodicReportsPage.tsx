@@ -126,6 +126,92 @@ export default function PeriodicReportsPage() {
     window.print();
   };
 
+  const handleExportCSV = () => {
+    if (!report) return;
+
+    const lines: string[] = [];
+    // Helper to escape CSV cell
+    const escape = (val: any) => `"${String(val ?? "").replace(/"/g, '""')}"`;
+
+    // 1. Header Information
+    lines.push([escape("BÁO CÁO HOẠT ĐỘNG ĐỊNH KỲ — NEXTBAND IELTS")].join(","));
+    lines.push([escape("Kỳ báo cáo:"), escape(report.period.periodLabel)].join(","));
+    lines.push([escape("Phạm vi:"), escape(report.period.branchName)].join(","));
+    lines.push([escape("Thời gian bắt đầu:"), escape(new Date(report.period.startDate).toLocaleDateString("vi-VN"))].join(","));
+    lines.push([escape("Thời gian kết thúc:"), escape(new Date(report.period.endDate).toLocaleDateString("vi-VN"))].join(","));
+    lines.push([escape("Ngày xuất báo cáo:"), escape(new Date().toLocaleDateString("vi-VN"))].join(","));
+    lines.push("");
+
+    // 2. Executive Summary Metrics
+    lines.push([escape("=== BẢNG CHỈ SỐ TỔNG HỢP ĐIỀU HÀNH ===")].join(","));
+    lines.push([escape("Hạng mục"), escape("Chỉ số"), escape("Đơn vị / Chi tiết")].join(","));
+    lines.push([escape("Khách hàng tiềm năng (Leads)"), escape(report.admissions.newLeads), escape("leads mới")].join(","));
+    lines.push([escape("Khảo thí chẩn đoán đầu vào"), escape(report.admissions.placementTests), escape("lượt thi")].join(","));
+    lines.push([escape("Học viên chốt nhập học"), escape(report.admissions.enrolled), escape("học viên")].join(","));
+    lines.push([escape("Tỷ lệ chuyển đổi tuyển sinh"), escape(`${report.admissions.conversionRate}%`), escape("chốt / leads")].join(","));
+    lines.push([escape("Lớp học mở mới"), escape(report.classes.opened), escape("lớp")].join(","));
+    lines.push([escape("Lớp học hoàn thành"), escape(report.classes.completed), escape("lớp")].join(","));
+    lines.push([escape("Lớp đang vận hành cuối kỳ"), escape(report.classes.runningAtEnd), escape("lớp")].join(","));
+    lines.push([escape("Sĩ số lớp trung bình"), escape(report.classes.avgClassSize), escape("học viên / lớp")].join(","));
+    lines.push([escape("Học viên đăng ký mới"), escape(report.students.newEnrollments), escape("lượt")].join(","));
+    lines.push([escape("Học viên đang học cuối kỳ"), escape(report.students.activeAtEnd), escape("học viên")].join(","));
+    lines.push([escape("Học viên tốt nghiệp / hoàn thành"), escape(report.students.graduated), escape("học viên")].join(","));
+    lines.push([escape("Học viên bảo lưu"), escape(report.students.reserved), escape("học viên")].join(","));
+    lines.push([escape("Giáo viên đầu kỳ"), escape(report.teachers.startOfPeriod), escape("giáo viên")].join(","));
+    lines.push([escape("Giáo viên tuyển mới"), escape(report.teachers.newlyRecruited), escape("giáo viên")].join(","));
+    lines.push([escape("Giáo viên nghỉ"), escape(report.teachers.resigned), escape("giáo viên")].join(","));
+    lines.push([escape("Giáo viên cuối kỳ"), escape(report.teachers.endOfPeriod), escape("giáo viên")].join(","));
+    lines.push([escape("Buổi học tổ chức"), escape(report.academic.totalSessions), escape("buổi")].join(","));
+    lines.push([escape("Lượt điểm danh"), escape(report.academic.totalAttendances), escape("lượt")].join(","));
+    lines.push([escape("Tỷ lệ chuyên cần bình quân"), escape(`${report.academic.attendanceRate}%`), escape("có mặt / tổng")].join(","));
+    lines.push([escape("Bài tập đã giao"), escape(report.academic.homeworkAssigned), escape("bài")].join(","));
+    lines.push([escape("Bài tập đã nộp"), escape(report.academic.homeworkSubmitted), escape("bài")].join(","));
+    lines.push([escape("Tỷ lệ nộp bài"), escape(`${report.academic.submissionRate}%`), escape("hoàn thành / giao")].join(","));
+    lines.push("");
+
+    // 3. Admission By Source
+    lines.push([escape("=== HIỆU QUẢ THEO NGUỒN TUYỂN SINH ===")].join(","));
+    lines.push([escape("Nguồn tiếp cận"), escape("Số Leads"), escape("Đã nhập học"), escape("Tỷ lệ chuyển đổi")].join(","));
+    (report.admissions.bySource || []).forEach((s) => {
+      lines.push([escape(s.source), escape(s.leads), escape(s.enrolled), escape(`${s.conversionRate}%`)].join(","));
+    });
+    lines.push("");
+
+    // 4. Admission By Staff
+    if (report.admissions.byStaff && report.admissions.byStaff.length > 0) {
+      lines.push([escape("=== HIỆU QUẢ TƯ VẤN THEO NHÂN VIÊN ===")].join(","));
+      lines.push([escape("Nhân viên phụ trách"), escape("Email"), escape("Leads tiếp nhận"), escape("Chốt nhập học"), escape("Tỷ lệ chốt")].join(","));
+      report.admissions.byStaff.forEach((staff) => {
+        lines.push([escape(staff.staffName), escape(staff.email || ""), escape(staff.leads), escape(staff.enrolled), escape(`${staff.conversionRate}%`)].join(","));
+      });
+      lines.push("");
+    }
+
+    // 5. Branches Breakdown
+    lines.push([escape("=== BÓC TÁCH THEO CƠ SỞ ===")].join(","));
+    lines.push([escape("Tên cơ sở"), escape("Mã cơ sở"), escape("Số phòng học"), escape("Số lớp tổ chức"), escape("Số học viên"), escape("Tỷ lệ lấp đầy")].join(","));
+    (report.branches || []).forEach((b) => {
+      lines.push([escape(b.name), escape(b.code), escape(b.roomsCount), escape(b.classesCount), escape(b.studentsCount), escape(`${b.fillRate}%`)].join(","));
+    });
+
+    const csvContent = "\uFEFF" + lines.join("\r\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    const cleanLabel = report.period.periodLabel.replace(/[\/\s:]+/g, "_");
+    link.download = `Bao_Cao_Dinh_Ky_${cleanLabel}_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    toast({
+      title: "Đã xuất file Excel / CSV!",
+      description: "Tải về thành công bảng dữ liệu đầy đủ, hỗ trợ chuẩn Unicode tiếng Việt.",
+    });
+  };
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto print:p-0 print:space-y-4 pb-12">
       {/* Top Header */}
@@ -151,7 +237,17 @@ export default function PeriodicReportsPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5 self-start sm:self-auto">
+        <div className="flex items-center gap-2.5 self-start sm:self-auto flex-wrap">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportCSV}
+            disabled={!report || isLoading}
+            className="text-xs h-9 gap-1.5 bg-background shadow-xs hover:bg-muted font-medium text-foreground"
+          >
+            <FileSpreadsheet className="h-4 w-4 text-emerald-600" />
+            Xuất Excel / CSV
+          </Button>
           <Button
             variant="outline"
             size="sm"

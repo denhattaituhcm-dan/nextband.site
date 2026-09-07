@@ -22,7 +22,9 @@ import {
   MessageSquare,
   Edit3,
   Sparkles,
+  Award,
 } from "lucide-react";
+import { HonorReportCardModal } from "@/components/student/HonorReportCardModal";
 import { toast } from "sonner";
 import { AnswerResultCard } from "@/components/submission/AnswerResultCard";
 import { VisualDiffViewer } from "@/components/submission/VisualDiffViewer";
@@ -125,6 +127,7 @@ export default function SubmissionDetail() {
   const [showCorrectAnswers, setShowCorrectAnswers] = useState(false);
   const [showVisualDiff, setShowVisualDiff] = useState(true);
   const [isStartingRevision, setIsStartingRevision] = useState(false);
+  const [isHonorCardOpen, setIsHonorCardOpen] = useState(false);
 
   const handleStartRevision = async () => {
     const targetExamId = submission?.examId || submission?.exam_id || exam?.id;
@@ -528,6 +531,13 @@ export default function SubmissionDetail() {
   const status = statusConfig[canonicalStatus] || statusConfig.IN_PROGRESS;
   const StatusIcon = status.icon;
 
+  const finalOverallScore =
+    typeof submission?.totalScore === "number"
+      ? submission.totalScore
+      : typeof (submission as any)?.score === "number"
+      ? (submission as any).score
+      : null;
+
   let questionCounter = 0;
 
   return (
@@ -540,6 +550,25 @@ export default function SubmissionDetail() {
           onClose={() => setActiveMilestone(null)}
         />
       )}
+
+      {/* Clinical Honor Report Card Modal */}
+      <HonorReportCardModal
+        open={isHonorCardOpen}
+        onOpenChange={setIsHonorCardOpen}
+        studentName={user?.fullName || user?.email?.split("@")[0] || "Học viên"}
+        examTitle={exam?.title || "Bài tập rèn luyện IELTS"}
+        courseTitle={exam?.course?.title || "Hệ thống Bác sĩ học thuật ARIS"}
+        metricDiscipline="100% Hoàn thành"
+        metricScore={
+          isGraded && typeof finalOverallScore === "number"
+            ? `Band ${finalOverallScore} IELTS`
+            : isGraded
+            ? "Đã phẫu thuật & chữa lành"
+            : objPercentage > 0
+            ? `${objPercentage}% Đúng trắc nghiệm`
+            : "Đã hoàn thành nộp bài"
+        }
+      />
 
       {/* Back */}
       <Button
@@ -574,13 +603,23 @@ export default function SubmissionDetail() {
                 </Badge>
               </div>
             </div>
-            <Badge
-              variant={status.variant}
-              className="gap-1.5 px-3 py-1.5 text-sm"
-            >
-              <StatusIcon className="h-4 w-4" />
-              {status.label}
-            </Badge>
+            <div className="flex items-center gap-2 flex-wrap">
+              <Button
+                size="sm"
+                onClick={() => setIsHonorCardOpen(true)}
+                className="h-8 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black rounded-xl text-xs gap-1.5 shadow-xs cursor-pointer"
+              >
+                <Award className="w-3.5 h-3.5 text-slate-950" />
+                <span>🎖️ Báo Cáo Gửi Ba Mẹ</span>
+              </Button>
+              <Badge
+                variant={status.variant}
+                className="gap-1.5 px-3 py-1.5 text-sm"
+              >
+                <StatusIcon className="h-4 w-4" />
+                {status.label}
+              </Badge>
+            </div>
           </div>
 
           <Separator />

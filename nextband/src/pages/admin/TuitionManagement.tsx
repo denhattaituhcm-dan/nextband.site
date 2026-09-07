@@ -169,6 +169,74 @@ export default function TuitionManagement() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              if (!receivables || receivables.length === 0) {
+                toast({
+                  title: "Chưa có dữ liệu",
+                  description: "Hiện tại danh sách công nợ đang trống.",
+                });
+                return;
+              }
+              const escape = (val: any) => `"${String(val ?? "").replace(/"/g, '""')}"`;
+              const lines: string[] = [];
+              lines.push([escape("BÁO CÁO CÔNG NỢ & TIẾN ĐỘ THU HỌC PHÍ — ARIS IELTS")].join(","));
+              lines.push([escape("Ngày xuất:"), escape(new Date().toLocaleDateString("vi-VN"))].join(","));
+              lines.push([escape("Tổng học phí dự kiến:"), escape(kpis.totalExpectedTuition)].join(","));
+              lines.push([escape("Đã thu:"), escape(kpis.totalCollectedTuition)].join(","));
+              lines.push([escape("Còn tồn:"), escape(kpis.totalOutstandingTuition)].join(","));
+              lines.push([escape("Tỷ lệ thu:"), escape(`${kpis.collectionRate}%`)].join(","));
+              lines.push("");
+
+              lines.push([
+                escape("Họ và tên"),
+                escape("Số điện thoại"),
+                escape("Email"),
+                escape("Lớp học"),
+                escape("Học phí (VND)"),
+                escape("Đã nộp (VND)"),
+                escape("Còn nợ (VND)"),
+                escape("Trạng thái"),
+                escape("Ghi chú / Hẹn ngày"),
+              ].join(","));
+
+              receivables.forEach((r: any) => {
+                lines.push([
+                  escape(r.studentName),
+                  escape(r.studentPhone || ""),
+                  escape(r.studentEmail || ""),
+                  escape(r.className),
+                  escape(r.tuitionFee),
+                  escape(r.paidAmount),
+                  escape(r.outstandingAmount),
+                  escape(r.paymentStatus === "PAID" ? "Đã nộp đủ" : r.paymentStatus === "PARTIAL" ? "Đóng một phần" : "Chưa đóng"),
+                  escape(r.paymentNote || ""),
+                ].join(","));
+              });
+
+              const csvContent = "\uFEFF" + lines.join("\r\n");
+              const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement("a");
+              link.href = url;
+              link.download = `Bao_Cao_Hoc_Phi_${new Date().toISOString().slice(0, 10)}.csv`;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              URL.revokeObjectURL(url);
+
+              toast({
+                title: "Đã xuất file Excel / CSV!",
+                description: `Đã xuất ${receivables.length} hồ sơ công nợ học viên ra file Excel thành công.`,
+              });
+            }}
+            className="gap-1.5 font-medium"
+          >
+            <FileSpreadsheet className="h-4 w-4 text-emerald-600" />
+            Xuất Excel / CSV
+          </Button>
           <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-1.5">
             <RefreshCw className="h-4 w-4" />
             Làm mới

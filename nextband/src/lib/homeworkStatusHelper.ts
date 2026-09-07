@@ -209,13 +209,24 @@ export function deriveSubmissionTiming(
   };
 }
 
+export type DeadlineUrgencyLevel = "NORMAL" | "WARNING" | "CRITICAL" | "OVERDUE";
+
+export interface DeadlineCountdownResult {
+  text: string;
+  isOverdue: boolean;
+  urgencyLevel: DeadlineUrgencyLevel;
+  badgeClass: string;
+  iconName: "clock" | "alert-triangle" | "alert-circle" | "flame";
+}
+
 /**
- * Formats a deadline countdown or overdue duration into human-readable Vietnamese.
+ * Formats a deadline countdown or overdue duration into human-readable Vietnamese,
+ * with 3 visual urgency levels: Normal (>12h), Warning (2h-12h), Critical (<2h), Overdue (<0h).
  */
 export function formatDeadlineCountdown(
   deadline: string | Date | null | undefined,
   now = Date.now()
-): { text: string; isOverdue: boolean } | null {
+): DeadlineCountdownResult | null {
   if (!deadline) return null;
   const targetMs = new Date(deadline).getTime();
   if (isNaN(targetMs)) return null;
@@ -229,23 +240,59 @@ export function formatDeadlineCountdown(
   const diffDays = Math.floor(absDiff / (1000 * 60 * 60 * 24));
 
   if (isOverdue) {
+    let text = `Quá hạn ${Math.max(1, diffMinutes)} phút`;
     if (diffDays >= 1) {
-      return { text: `Quá hạn ${diffDays} ngày`, isOverdue: true };
+      text = `Quá hạn ${diffDays} ngày`;
+    } else if (diffHours >= 1) {
+      text = `Quá hạn ${diffHours} giờ`;
     }
-    if (diffHours >= 1) {
-      return { text: `Quá hạn ${diffHours} giờ`, isOverdue: true };
-    }
-    return { text: `Quá hạn ${Math.max(1, diffMinutes)} phút`, isOverdue: true };
+    return {
+      text,
+      isOverdue: true,
+      urgencyLevel: "OVERDUE",
+      badgeClass: "bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-300 dark:border-rose-800 font-bold",
+      iconName: "alert-circle",
+    };
   }
 
-  // Remaining time
-  if (diffDays >= 1) {
-    return { text: `Còn ${diffDays} ngày`, isOverdue: false };
+  // Level 3: CRITICAL (< 2 hours)
+  if (diffHours < 2) {
+    const minRemaining = Math.max(1, diffMinutes);
+    return {
+      text: `🚨 Hạn chót: Còn ${minRemaining} phút!`,
+      isOverdue: false,
+      urgencyLevel: "CRITICAL",
+      badgeClass: "bg-rose-600 text-white border-rose-700 animate-pulse font-extrabold shadow-xs",
+      iconName: "flame",
+    };
   }
-  if (diffHours >= 1) {
-    return { text: `Còn ${diffHours} giờ`, isOverdue: false };
+
+  // Level 2: WARNING (2 to 12 hours)
+  if (diffHours <= 12) {
+    const hours = diffHours;
+    const mins = diffMinutes % 60;
+    const text = mins > 0 ? `⚡ Hạn bảo toàn: ${hours}h ${mins}p` : `⚡ Hạn bảo toàn: ${hours}h`;
+    return {
+      text,
+      isOverdue: false,
+      urgencyLevel: "WARNING",
+      badgeClass: "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700 font-bold",
+      iconName: "alert-triangle",
+    };
   }
-  return { text: `Còn ${Math.max(1, diffMinutes)} phút`, isOverdue: false };
+
+  // Level 1: NORMAL (> 12 hours)
+  let text = `Còn ${diffDays} ngày`;
+  if (diffDays < 1) {
+    text = `Còn ${diffHours} giờ`;
+  }
+  return {
+    text,
+    isOverdue: false,
+    urgencyLevel: "NORMAL",
+    badgeClass: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700",
+    iconName: "clock",
+  };
 }
 
 /**

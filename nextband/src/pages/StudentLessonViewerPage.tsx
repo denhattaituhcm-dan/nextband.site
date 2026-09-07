@@ -46,8 +46,10 @@ import {
   Calendar,
   LayoutGrid,
   Award,
+  Flame,
 } from "lucide-react";
 import { StudentReEnrollmentModal } from "@/components/student/StudentReEnrollmentModal";
+import { HonorReportCardModal } from "@/components/student/HonorReportCardModal";
 
 export default function StudentLessonViewerPage() {
   const { classId } = useParams<{ classId: string }>();
@@ -59,6 +61,7 @@ export default function StudentLessonViewerPage() {
   const { state: lifecycleState, resolveClass } = useStudentLifecycle();
   const { isHealthy: isGatewayHealthy, isWarmingUp: isGatewayWarmingUp, checkHealthNow } = useGatewayHealth();
   const [isReEnrollModalOpen, setIsReEnrollModalOpen] = useState(false);
+  const [isHonorCardOpen, setIsHonorCardOpen] = useState(false);
 
   const activeTab = searchParams.get("tab") || "practice-list";
 
@@ -262,7 +265,7 @@ export default function StudentLessonViewerPage() {
 
   const getStatusBadge = (
     status: CanonicalVisualStatus,
-    countdown?: { text: string; isOverdue: boolean } | null,
+    countdown?: { text: string; isOverdue: boolean; urgencyLevel?: string; badgeClass?: string } | null,
     timing?: { isLate: boolean; lateDays: number }
   ) => {
     switch (status) {
@@ -302,17 +305,34 @@ export default function StudentLessonViewerPage() {
           </Badge>
         );
       case "UPCOMING":
-      default:
-        return countdown ? (
-          <Badge variant="outline" className="font-mono text-muted-foreground gap-1">
-            <Calendar className="h-3 w-3" />
+      default: {
+        if (!countdown) {
+          return (
+            <Badge variant="outline" className="text-muted-foreground">
+              Chưa làm
+            </Badge>
+          );
+        }
+        const isCritical = countdown.urgencyLevel === "CRITICAL";
+        const isWarning = countdown.urgencyLevel === "WARNING";
+        return (
+          <Badge
+            variant="outline"
+            className={`font-mono gap-1 text-[11px] ${
+              countdown.badgeClass || (isCritical ? "bg-rose-600 text-white animate-pulse" : isWarning ? "bg-amber-500/15 text-amber-800 border-amber-300 font-bold" : "text-muted-foreground")
+            }`}
+          >
+            {isCritical ? (
+              <Flame className="h-3 w-3 text-white" />
+            ) : isWarning ? (
+              <AlertTriangle className="h-3 w-3 text-amber-600" />
+            ) : (
+              <Calendar className="h-3 w-3" />
+            )}
             {countdown.text}
           </Badge>
-        ) : (
-          <Badge variant="outline" className="text-muted-foreground">
-            Chưa làm
-          </Badge>
         );
+      }
     }
   };
 
@@ -358,7 +378,15 @@ export default function StudentLessonViewerPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <Button
+              size="sm"
+              onClick={() => setIsHonorCardOpen(true)}
+              className="text-xs font-black rounded-xl gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 shadow-xs cursor-pointer"
+            >
+              <Award className="w-3.5 h-3.5 text-slate-950" />
+              <span>🎖️ Báo Cáo Gửi Ba Mẹ</span>
+            </Button>
             <Button
               variant="outline"
               size="sm"
@@ -373,6 +401,17 @@ export default function StudentLessonViewerPage() {
             </Button>
           </div>
         </div>
+
+        {/* Clinical Honor Report Card Modal */}
+        <HonorReportCardModal
+          open={isHonorCardOpen}
+          onOpenChange={setIsHonorCardOpen}
+          studentName={user?.fullName || user?.email?.split("@")[0] || "Học viên"}
+          examTitle={classData.courseTitle || `Lớp ${classData.className || "IELTS"}`}
+          courseTitle={classData.courseTitle || "Hệ thống Bác sĩ học thuật ARIS"}
+          metricDiscipline={`${submittedCount}/${homeworkList.length} Bài đã nộp (${Math.round((submittedCount / (homeworkList.length || 1)) * 100)}%)`}
+          metricScore={`${reviewedCount} Bài đã được phẫu thuật & chữa lành`}
+        />
 
         {/* CIRCUIT BREAKER / GATEWAY STATUS BANNER */}
         {isGatewayWarmingUp && (
