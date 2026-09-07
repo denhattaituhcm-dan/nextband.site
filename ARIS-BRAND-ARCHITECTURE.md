@@ -26,7 +26,7 @@ ARIS tồn tại như một **Học viện Ngôn ngữ Học thuật & Tư duy P
 ### 2.1. ARIS Không Phải Là:
 - Một trung tâm bán mẹo thi cấp tốc hoặc phát tán các bộ đề dự đoán (forecast).
 - Một cơ sở đào tạo theo phương pháp học thuộc bài mẫu (template-memorization).
-- Một thương hiệu "chữa bệnh / bệnh viện" áp lực tiêu cực hay phán xét học sinh.
+- Một thương hiệu "chữa bệnh / bệnh viện cosplay" ép gượng gạo thuật ngữ y khoa vào UI sản phẩm (nội soi, bệnh án, tái khám).
 - Một website game hóa hay thế giới tu tiên/fantasy.
 
 ### 2.2. ARIS Thực Chất Là:
@@ -34,7 +34,8 @@ ARIS tồn tại như một **Học viện Ngôn ngữ Học thuật & Tư duy P
 - Một hệ sinh thái học tập dựa trên bằng chứng (Evidence-Based Learning), sử dụng **Thang đo năng lực ARIS-7** để định vị trình độ và nền tảng công nghệ **NextBand** để minh bạch hóa toàn bộ hồ sơ học thuật (`Academic Record™`) cho phụ huynh và học sinh.
 
 ### 2.3. Cách ARIS Muốn Được Nhớ Đến:
-> *"Nơi người học không phải giải đề đại trà — nơi mọi lỗ hổng tư duy được chẩn đoán chính xác và can thiệp trúng đích để thăng cấp trên thang đo ARIS-7."*
+> *"Hãy để chúng tôi tìm ra chính xác điều đang cản bạn."*  
+> *(Nơi người học không phải giải đề đại trà — nơi mọi điểm nghẽn tư duy được chẩn đoán chính xác và can thiệp trúng đích để thăng cấp trên thang đo ARIS-7).*
 
 ---
 
@@ -185,11 +186,53 @@ ARIS không đưa ra những lời hứa nằm ngoài tầm kiểm soát (như c
 
 ## 9. ARIS DIFFERENTIATION (ĐIỂM KHÁC BIỆT CỐT LÕI)
 
-### 9.1. Category Definition
+### 9.1. Category Definition & Bản Đồ 4 Cực Định Vị
 ARIS không thuộc category "IELTS Test Prep Center".  
-ARIS thuộc category: **Academic Language & Critical Thinking Institution** (Học viện Ngôn ngữ Học thuật & Tư duy Phản biện) kết hợp với **NextBand Learning System**.
+ARIS thuộc category: **Academic Language & Critical Thinking Institution** kết hợp với **NextBand Learning System (Diagnostic Engine)**.
 
-### 9.2. Ma Trận Khác Biệt Hóa 4 Trụ Cột (Khó Bị Sao Chép)
+#### Bản Đồ 4 Cực Định Vị Trên Thị Trường IELTS:
+- **IELTS Fighter**: *"Chiến đấu đi!"* — Định vị vào tâm thế người học là chiến binh, tinh thần thi đấu, năng lượng cao, đại chúng.
+- **DOL English**: *"Hãy tư duy theo cách này."* — Định vị vào phương pháp tư duy độc quyền (Linear Thinking).
+- **IELTS 1984**: *"Hãy nhìn đội ngũ của chúng tôi."* — Nhấn mạnh dàn giáo viên "khủng long", quái kiệt, chấm thi.
+- **ARIS**: **"Hãy để chúng tôi tìm ra chính xác điều đang cản bạn."** — Độc quyền định vị **Diagnostic Intelligence (Trí tuệ Chẩn đoán)**. Không cạnh tranh bằng dạy mẹo, mà cạnh tranh bằng năng lực bóc tách căn nguyên lỗi sai và can thiệp trúng đích.
+
+### 9.2. Tam Giác Hình Mẫu Thương Hiệu (The Trinity Archetype)
+ARIS không triệt tiêu các hình mẫu mà gắn kết chúng thành một chuỗi nhân quả hoàn chỉnh:
+- **Hệ thống & Giảng viên — Academic Clinician (Bác sĩ học thuật)**: Người quan sát, chẩn đoán, can thiệp và kiểm chứng bằng chứng thực nghiệm.
+- **Học viên — Academic Fighter (Chiến binh học thuật)**: Người trực tiếp chiến đấu và rèn luyện có kỷ luật để nâng cấp năng lực.
+- **Mục tiêu tối thượng — Academic Monster ("Quái vật" học thuật)**: Kết quả đỉnh cao — một cá nhân sở hữu năng lực học thuật vượt trội, tư duy sắc bén và bản lĩnh kiệt xuất.
+
+```text
+┌────────────────────────────────────────────────────────────────────────┐
+│                      THE TRINITY ARCHETYPE FLOW                        │
+│                                                                        │
+│   Academic Clinician (Chữa đúng)                                       │
+│          │                                                             │
+│          ▼                                                             │
+│   Academic Fighter (Chiến đấu đúng)                                    │
+│          │                                                             │
+│          ▼                                                             │
+│   "Academic Monster" (Năng lực vượt trội đỉnh cao)                     │
+│                                                                        │
+│   "Chiến binh cần sức mạnh. Học thuật cần bác sĩ."                     │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+### 9.3. Khung 3 Tầng Ngôn Ngữ (The 3-Layer Language Architecture)
+Tuyệt đối tránh "Medical Cosplay" (không ép gượng gạo thuật ngữ y khoa biến website thành bệnh viện). Ngôn ngữ được phân hóa thành 3 tầng rõ ràng:
+1. **Tầng 1 — Ngôn ngữ Sản phẩm (Product UI)**: Cực kỳ rõ ràng, chuẩn mực thông dụng, người dùng hiểu trong 0.5 giây (`Assessment`, `Courses`, `Homework`, `Reading`, `Speaking`, `Results`, `Teachers`, `Careers`, `Progress`).
+2. **Tầng 2 — Ngôn ngữ Triết lý (System & Pedagogy)**: Đưa tư duy chẩn đoán và tính khoa học vào chiều sâu (`Diagnostic Assessment`, `Evidence-based Practice`, `Academic Clinician`, `Academic Progress Record`).
+3. **Tầng 3 — Ngôn ngữ Thương hiệu (Brand Narrative & Copy)**: Đanh thép, giàu hình tượng, truyền cảm hứng mạnh mẽ (Dùng tại Hero, Manifesto, Careers, Banner: *"Nơi tôi luyện những 'quái vật' học thuật"*, *"Chiến binh cần sức mạnh. Học thuật cần bác sĩ"*).
+
+### 9.4. NextBand Clinical Loop (Bằng Chứng Cốt Lõi Của Lời Hứa)
+NextBand không phải là LMS thông thường (`Nộp bài → Chấm điểm → Xong`), mà là cỗ máy số hóa chu trình can thiệp học thuật khép kín:
+```text
+Assessment (Khảo thí) ──► Diagnosis (Chẩn đoán) ──► Learning (Tiếp thu) 
+  ──► Homework (Thực hành) ──► Evidence (Lưu vết) ──► Analysis (Phân tích lỗi) 
+  ──► Intervention (Can thiệp 1:1) ──► Re-attempt (Sửa triệt để) ──► Progress (Thăng cấp)
+```
+
+### 9.5. Ma Trận Khác Biệt Hóa 4 Trụ Cột (Khó Bị Sao Chép)
 
 | Trụ cột | Trung tâm IELTS thông thường | ARIS IELTS |
 |---|---|---|

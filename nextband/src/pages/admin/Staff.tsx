@@ -599,16 +599,49 @@ export default function AdminStaff() {
                         </TableCell>
 
                         {/* Actions */}
-                        <TableCell className="text-right min-w-[100px] whitespace-nowrap">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => openEditDialog(user)}
-                            className="h-8 px-2.5 text-xs gap-1 hover:bg-muted rounded-lg"
-                          >
-                            <Edit className="w-3.5 h-3.5" />
-                            <span>Sửa</span>
-                          </Button>
+                        <TableCell className="text-right min-w-[130px] whitespace-nowrap">
+                          <div className="flex items-center justify-end gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => openEditDialog(user)}
+                              className="h-8 px-2.5 text-xs gap-1 hover:bg-muted rounded-lg"
+                              title="Chỉnh sửa thông tin"
+                            >
+                              <Edit className="w-3.5 h-3.5" />
+                              <span>Sửa</span>
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setDeleteUser(user);
+                                setDeleteConfirmText("");
+                              }}
+                              disabled={
+                                Boolean(
+                                  currentUser &&
+                                    (user.id === currentUser.id ||
+                                      user.userId === currentUser.id ||
+                                      (currentUser as any).userId === user.id ||
+                                      (currentUser as any).userId === user.userId)
+                                )
+                              }
+                              className="h-8 px-2.5 text-xs gap-1 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-lg disabled:opacity-30 disabled:pointer-events-none"
+                              title={
+                                currentUser &&
+                                (user.id === currentUser.id ||
+                                  user.userId === currentUser.id ||
+                                  (currentUser as any).userId === user.id ||
+                                  (currentUser as any).userId === user.userId)
+                                  ? "Không thể tự xóa tài khoản của chính bạn"
+                                  : "Xóa vĩnh viễn nhân viên"
+                              }
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                              <span>Xóa</span>
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     );
@@ -807,6 +840,95 @@ export default function AdminStaff() {
                 className="bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold"
               >
                 Tạm khóa ngay
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Safety Delete Staff Confirm Dialog */}
+        <AlertDialog
+          open={!!deleteUser}
+          onOpenChange={(open) => {
+            if (!open) {
+              setDeleteUser(null);
+              setDeleteConfirmText("");
+            }
+          }}
+        >
+          <AlertDialogContent className="rounded-2xl max-w-md">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="flex items-center gap-2 text-destructive text-base font-bold">
+                <Trash2 className="h-5 w-5" />
+                Xóa vĩnh viễn nhân viên khỏi hệ thống?
+              </AlertDialogTitle>
+              <AlertDialogDescription asChild>
+                <div className="space-y-3 text-xs text-muted-foreground pt-2">
+                  <p>
+                    Bạn có chắc chắn muốn xóa vĩnh viễn nhân viên{" "}
+                    <strong className="text-foreground">{deleteUser?.fullName || deleteUser?.email}</strong>?
+                  </p>
+                  {deleteUser && (
+                    <div className="rounded-xl bg-destructive/10 border border-destructive/20 p-3 space-y-1 text-destructive">
+                      <p className="font-bold flex items-center gap-1.5">
+                        <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                        Cảnh báo quan trọng:
+                      </p>
+                      <p>• Hành động này không thể hoàn tác.</p>
+                      <p>• Toàn bộ tài khoản và dữ liệu cá nhân của nhân viên sẽ bị xóa hoàn toàn khỏi cơ sở dữ liệu.</p>
+                      {(deleteUser.activeLeadCount > 0 || (deleteUser.leads && deleteUser.leads.length > 0)) && (
+                        <p className="font-medium text-amber-700 dark:text-amber-400 mt-1 pt-1 border-t border-destructive/20">
+                          ⚠️ Nhân viên hiện đang phụ trách {deleteUser.activeLeadCount || deleteUser.leads?.length || 0} leads tư vấn.
+                        </p>
+                      )}
+                    </div>
+                  )}
+                  <div className="space-y-1.5 pt-1">
+                    <Label className="text-xs text-foreground font-semibold">
+                      Gõ chữ <strong className="text-destructive font-bold">DELETE</strong> hoặc <strong className="text-destructive font-bold">XÓA</strong> để xác nhận:
+                    </Label>
+                    <Input
+                      placeholder="Nhập DELETE hoặc XÓA"
+                      value={deleteConfirmText}
+                      onChange={(e) => setDeleteConfirmText(e.target.value)}
+                      disabled={deleteMutation.isPending}
+                      className="h-9 text-xs border-destructive/40 focus-visible:ring-destructive font-mono"
+                      autoFocus
+                    />
+                  </div>
+                </div>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="gap-2 pt-2">
+              <AlertDialogCancel
+                disabled={deleteMutation.isPending}
+                className="rounded-xl text-xs"
+                onClick={() => {
+                  setDeleteUser(null);
+                  setDeleteConfirmText("");
+                }}
+              >
+                Hủy
+              </AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl text-xs font-bold"
+                disabled={
+                  deleteMutation.isPending ||
+                  !["DELETE", "XÓA", "XOA"].includes(deleteConfirmText.trim().toUpperCase())
+                }
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (
+                    deleteUser &&
+                    ["DELETE", "XÓA", "XOA"].includes(deleteConfirmText.trim().toUpperCase())
+                  ) {
+                    deleteMutation.mutate(deleteUser.id);
+                  }
+                }}
+              >
+                {deleteMutation.isPending && (
+                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                )}
+                Xác nhận xóa vĩnh viễn
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
