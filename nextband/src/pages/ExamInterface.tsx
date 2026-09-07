@@ -1428,7 +1428,7 @@ export default function ExamInterface() {
       </main>
 
       {/* Footer with Question Pagination */}
-      <footer className="border-t bg-background p-4">
+      <footer className="sticky bottom-0 z-40 border-t bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 p-3 sm:p-4 shadow-lg">
         <div className="max-w-6xl mx-auto">
           {/* Pagination Bubbles */}
           {paginationQuestions.length > 0 && (
