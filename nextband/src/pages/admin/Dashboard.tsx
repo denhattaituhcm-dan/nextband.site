@@ -218,15 +218,15 @@ export default function AdminDashboard() {
                   <div className="grid grid-cols-3 gap-1.5 pt-2 border-t text-center">
                     <div className="bg-muted/40 p-1.5 rounded-lg">
                       <p className="text-[9px] text-muted-foreground font-medium">Lớp học</p>
-                      <p className="text-xs font-bold text-foreground mt-0.5">{b._count?.classes || 0}</p>
+                      <p className="text-xs font-bold text-foreground mt-0.5">{b?._count?.classes ?? 0}</p>
                     </div>
                     <div className="bg-muted/40 p-1.5 rounded-lg">
                       <p className="text-[9px] text-muted-foreground font-medium">Phòng</p>
-                      <p className="text-xs font-bold text-foreground mt-0.5">{b._count?.rooms || 0}</p>
+                      <p className="text-xs font-bold text-foreground mt-0.5">{b?._count?.rooms ?? 0}</p>
                     </div>
                     <div className="bg-muted/40 p-1.5 rounded-lg">
                       <p className="text-[9px] text-muted-foreground font-medium">Leads</p>
-                      <p className="text-xs font-bold text-primary mt-0.5">{b._count?.leads || 0}</p>
+                      <p className="text-xs font-bold text-primary mt-0.5">{b?._count?.leads ?? 0}</p>
                     </div>
                   </div>
 
@@ -509,23 +509,23 @@ export default function AdminDashboard() {
                     <tr key={t.id} className="hover:bg-muted/30 transition-colors">
                       <td className="p-3 pl-4 font-semibold text-foreground flex items-center gap-2.5">
                         <Avatar className="h-7 w-7">
-                          <AvatarImage src={t.avatarUrl} />
+                          <AvatarImage src={t?.avatarUrl} />
                           <AvatarFallback className="bg-amber-100 text-amber-700 text-[10px] font-bold">
-                            {t.name.charAt(0)}
+                            {t?.name ? t.name.charAt(0) : "T"}
                           </AvatarFallback>
                         </Avatar>
                         <div>
-                          <span>{t.name}</span>
-                          <span className="text-[10px] text-muted-foreground block">{t.email}</span>
+                          <span>{t?.name || "Giáo viên"}</span>
+                          <span className="text-[10px] text-muted-foreground block">{t?.email || ""}</span>
                         </div>
                       </td>
-                      <td className="p-3 text-center font-semibold">{t.activeClassesCount} lớp</td>
-                      <td className="p-3 text-center">{t.totalStudents} HV</td>
-                      <td className="p-3 text-center font-bold text-foreground">{t.pendingGrading} bài</td>
+                      <td className="p-3 text-center font-semibold">{t?.activeClassesCount ?? 0} lớp</td>
+                      <td className="p-3 text-center">{t?.totalStudents ?? 0} HV</td>
+                      <td className="p-3 text-center font-bold text-foreground">{t?.pendingGrading ?? 0} bài</td>
                       <td className="p-3 text-center">
-                        {t.overdueGrading > 0 ? (
+                        {(t?.overdueGrading ?? 0) > 0 ? (
                           <Badge variant="destructive" className="text-[10px] font-bold px-1.5 py-0">
-                            🚨 {t.overdueGrading} bài trễ
+                            🚨 {t?.overdueGrading} bài trễ
                           </Badge>
                         ) : (
                           <span className="text-emerald-600 font-semibold flex items-center justify-center gap-1">
@@ -712,33 +712,33 @@ export default function AdminDashboard() {
                         <Link
                           to={`/admin/classes/${cls.classId}`}
                           className="font-semibold text-foreground hover:text-emerald-600 hover:underline truncate block"
-                          title={cls.className}
+                          title={cls?.className}
                         >
-                          {cls.className}
+                          {cls?.className || "Lớp học"}
                         </Link>
                         <div className="text-[10px] text-muted-foreground truncate">
-                          GV: {cls.teacherName} · {cls.totalStudents} học viên
+                          GV: {cls?.teacherName || "Chưa phân công"} · {cls?.totalStudents ?? 0} học viên
                         </div>
                       </div>
                       <div className="col-span-2 text-center">
-                        <span className="font-semibold text-foreground">{cls.totalSessions}</span>
+                        <span className="font-semibold text-foreground">{cls?.totalSessions ?? 0}</span>
                         <span className="text-[10px] text-muted-foreground block">
-                          ({cls.completedSessions} đã chốt)
+                          ({cls?.completedSessions ?? 0} đã chốt)
                         </span>
                       </div>
                       <div className="col-span-2 text-center font-semibold text-emerald-600">
-                        {cls.totalPresent}
-                        {cls.lateCount > 0 && (
+                        {cls?.totalPresent ?? 0}
+                        {(cls?.lateCount ?? 0) > 0 && (
                           <span className="text-[10px] text-amber-600 block">
                             ({cls.lateCount} muộn)
                           </span>
                         )}
                       </div>
                       <div className="col-span-2 text-center">
-                        <span className={cls.totalAbsent > 0 ? "font-semibold text-rose-600" : "text-muted-foreground"}>
-                          {cls.totalAbsent}
+                        <span className={(cls?.totalAbsent ?? 0) > 0 ? "font-semibold text-rose-600" : "text-muted-foreground"}>
+                          {cls?.totalAbsent ?? 0}
                         </span>
-                        {cls.totalExcused > 0 && (
+                        {(cls?.totalExcused ?? 0) > 0 && (
                           <span className="text-[10px] text-purple-600 block">
                             ({cls.totalExcused} phép)
                           </span>
@@ -749,14 +749,14 @@ export default function AdminDashboard() {
                           variant="outline"
                           className={cn(
                             "text-[10px] font-bold",
-                            cls.attendanceRate >= 0.9
+                            (cls.attendanceRate ?? 1) >= 0.9
                               ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                              : cls.attendanceRate >= 0.75
+                              : (cls.attendanceRate ?? 1) >= 0.75
                               ? "bg-amber-50 text-amber-700 border-amber-200"
                               : "bg-rose-50 text-rose-700 border-rose-200"
                           )}
                         >
-                          {Math.round(cls.attendanceRate * 100)}%
+                          {Math.round((cls.attendanceRate ?? 1) * 100)}%
                         </Badge>
                       </div>
                     </div>

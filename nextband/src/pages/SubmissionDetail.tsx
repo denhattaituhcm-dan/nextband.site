@@ -23,6 +23,11 @@ import {
   Edit3,
   Sparkles,
   Award,
+  RotateCcw,
+  CheckCircle,
+  Tag,
+  TrendingUp,
+  GitCompare,
 } from "lucide-react";
 import { HonorReportCardModal } from "@/components/student/HonorReportCardModal";
 import { toast } from "sonner";
@@ -622,6 +627,48 @@ export default function SubmissionDetail() {
             </div>
           </div>
 
+          {/* ATTEMPT SWITCHER (Attempt 1 vs Attempt 2 selector) */}
+          {sortedAttempts.length > 1 && (
+            <div className="pt-2 pb-1 border-t flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-semibold">
+                <RotateCcw className="h-3.5 w-3.5 text-primary" />
+                <span>Các phiên làm bài (Attempts):</span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {sortedAttempts.map((att: any, idx: number) => {
+                  const isCurrent = att.id === submission.id;
+                  const attNumber = att.attemptNumber || idx + 1;
+                  const isGraded = normalizeSubmissionStatus(att.status) === "GRADED";
+                  return (
+                    <Button
+                      key={att.id}
+                      type="button"
+                      size="sm"
+                      variant={isCurrent ? "default" : "outline"}
+                      className={`h-7 text-xs font-semibold px-2.5 rounded-lg transition-all ${
+                        isCurrent
+                          ? "shadow-2xs"
+                          : "hover:bg-muted"
+                      }`}
+                      onClick={() => {
+                        if (!isCurrent) {
+                          navigate(routes.student.submission(att.id));
+                        }
+                      }}
+                    >
+                      <span>{attNumber === 1 ? "Attempt 1 (Bản gốc)" : `Attempt ${attNumber} (Bản sửa)`}</span>
+                      {isGraded && att.totalScore != null && (
+                        <span className="ml-1.5 px-1.5 py-0.2 rounded bg-primary-foreground/20 text-[10px]">
+                          Band {att.totalScore}
+                        </span>
+                      )}
+                    </Button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           <Separator />
 
           {/* DEDICATED RESULT STAT CARDS BY EXAM NATURE */}
@@ -926,6 +973,76 @@ export default function SubmissionDetail() {
                     </Button>
                   </div>
                 )}
+              </Card>
+            );
+          })()}
+
+          {/* ATTEMPT 2 RESOLUTION STATUS CARD */}
+          {(() => {
+            const isAttempt2 = (submission.attemptNumber && submission.attemptNumber >= 2) ||
+              (sortedAttempts.length >= 2 && sortedAttempts[sortedAttempts.length - 1]?.id === submission.id);
+            if (!isAttempt2 || sortedAttempts.length < 2) return null;
+
+            const attempt1 = sortedAttempts[0];
+            const att1Score = attempt1?.totalScore != null ? Number(attempt1.totalScore) : null;
+            const att2Score = submission?.totalScore != null ? Number(submission.totalScore) : null;
+            const scoreDelta = (att1Score !== null && att2Score !== null)
+              ? Math.round((att2Score - att1Score) * 10) / 10
+              : null;
+            const isGraded = normalizeSubmissionStatus(submission.status) === "GRADED";
+            const isResolved = isGraded && !submission.revisionRequired;
+            const primaryCat = attempt1?.primaryErrorCategory || submission.primaryErrorCategory;
+
+            return (
+              <Card className={`mt-3 p-4 rounded-xl border space-y-2 ${
+                isResolved
+                  ? "bg-emerald-50/70 border-emerald-200 dark:bg-emerald-950/20 dark:border-emerald-800"
+                  : isGraded && submission.revisionRequired
+                  ? "bg-amber-50/70 border-amber-200 dark:bg-amber-950/20 dark:border-amber-800"
+                  : "bg-blue-50/70 border-blue-200 dark:bg-blue-950/20 dark:border-blue-800"
+              }`}>
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div className="flex items-center gap-2">
+                    {isResolved ? (
+                      <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    ) : isGraded ? (
+                      <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0" />
+                    ) : (
+                      <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400 shrink-0" />
+                    )}
+                    <span className="font-bold text-sm text-foreground">
+                      {isResolved
+                        ? "Nghiệm Thu Khắc Phục Lỗi (Attempt 2 Đạt Chuẩn)"
+                        : isGraded
+                        ? "Đánh Giá Bài Sửa (Attempt 2)"
+                        : "Bản Sửa (Attempt 2) - Đang Chờ Giáo Viên Chấm"}
+                    </span>
+                  </div>
+
+                  {scoreDelta !== null && scoreDelta !== 0 && (
+                    <Badge variant={scoreDelta > 0 ? "default" : "secondary"} className="text-xs font-bold gap-1">
+                      <TrendingUp className="h-3.5 w-3.5" />
+                      Tiến bộ: {scoreDelta > 0 ? `+${scoreDelta}` : scoreDelta} Band
+                    </Badge>
+                  )}
+                </div>
+
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {isResolved ? (
+                    <span>
+                      🎉 Tuyệt vời! Bạn đã tiếp thu phản hồi của giáo viên và sửa thành công lỗi 
+                      {primaryCat ? <strong className="text-foreground ml-1">[{primaryCat}]</strong> : ""} ở lần làm bài này. Bài sửa đã được giáo viên duyệt hoàn thành.
+                    </span>
+                  ) : isGraded && submission.revisionRequired ? (
+                    <span>
+                      Giáo viên đánh giá bài sửa vẫn còn một số điểm chưa tối ưu và cần bạn tiếp tục lưu ý rèn luyện thêm.
+                    </span>
+                  ) : (
+                    <span>
+                      Đây là phiên bản làm bài sửa (Attempt 2) của bạn dựa trên phản hồi của bài làm trước. Sau khi giáo viên hoàn tất chấm bài, bạn sẽ thấy kết quả nghiệm thu tại đây.
+                    </span>
+                  )}
+                </p>
               </Card>
             );
           })()}

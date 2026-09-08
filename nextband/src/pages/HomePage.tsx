@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { classesApi, submissionsApi, lessonsApi } from "@/lib/api";
@@ -221,7 +221,7 @@ export default function HomePage() {
   // Offline Recovery Milestone Trigger
   const [recoveryMilestone, setRecoveryMilestone] = useState<DecisionMilestone | null>(null);
 
-  useMemo(() => {
+  useEffect(() => {
     if (!user?.id || !rawLessons || rawLessons.length === 0 || recoveryMilestone) return;
 
     const lessons: CourseLessonItem[] = rawLessons.map((item: any, idx: number) => {
@@ -255,6 +255,8 @@ export default function HomePage() {
           }
         });
       }
+    }).catch(() => {
+      // Safe fallback for milestone errors
     });
   }, [user?.id, rawLessons, userSubmissions, enrolledClassId, recoveryMilestone]);
 

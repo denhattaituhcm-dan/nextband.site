@@ -31,6 +31,17 @@ export const isChunkLoadError = (error: unknown): boolean => {
   );
 };
 
+export const isTransientEvaluationError = (error: unknown): boolean => {
+  if (!error) return false;
+  const msg = error instanceof Error ? error.message : String(error);
+  return (
+    isChunkLoadError(error) ||
+    msg.includes("Cannot read properties of undefined") ||
+    msg.includes("undefined is not an object") ||
+    msg.includes("null is not an object")
+  );
+};
+
 const CHUNK_RELOAD_KEY = "__nb_chunk_reloaded__";
 
 /**
@@ -198,9 +209,9 @@ class AppErrorBoundary extends React.Component<{ children: React.ReactNode }, { 
   }
 
   componentDidCatch(error: any, errorInfo: any) {
-    // If this is a stale-chunk error that slipped past lazyWithRetry,
+    // If this is a stale-chunk or transient chunk evaluation error that slipped past lazyWithRetry,
     // silently reload the page once rather than showing the error UI.
-    if (isChunkLoadError(error)) {
+    if (isTransientEvaluationError(error)) {
       const alreadyReloaded = sessionStorage.getItem(CHUNK_RELOAD_KEY);
       if (!alreadyReloaded) {
         sessionStorage.setItem(CHUNK_RELOAD_KEY, "1");
@@ -213,7 +224,7 @@ class AppErrorBoundary extends React.Component<{ children: React.ReactNode }, { 
 
   render() {
     if (this.state.hasError) {
-      if (isChunkLoadError(this.state.error)) {
+      if (isTransientEvaluationError(this.state.error)) {
         return <PageLoader />;
       }
 
