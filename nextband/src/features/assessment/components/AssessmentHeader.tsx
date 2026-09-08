@@ -93,10 +93,10 @@ export function AssessmentHeader({
           <Button
             onClick={onOpenSubmitDialog}
             disabled={isSubmitting}
-            className="h-10 px-4 rounded-xl font-black text-xs bg-brand-red hover:bg-brand-red-hover text-white shadow-md gap-2 cursor-pointer"
+            className="h-9 px-4 rounded-full font-black text-xs bg-gradient-to-r from-red-600 to-rose-500 hover:from-red-700 hover:to-rose-600 text-white shadow-md shadow-red-500/20 gap-2 cursor-pointer transition-all duration-200 active:scale-95"
           >
             <Send className="w-3.5 h-3.5" />
-            <span>Nộp Bài & Xem Kết Quả</span>
+            <span>Nộp Bài &amp; Xem Kết Quả</span>
           </Button>
         </div>
       </div>

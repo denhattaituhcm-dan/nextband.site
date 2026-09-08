@@ -51,11 +51,11 @@ export function ListeningPanel({
   return (
     <div className="w-full space-y-6">
       {/* Audio Player Card with Academic Waveform */}
-      <Card className="rounded-3xl border-border bg-gradient-to-br from-brand-blue-soft/30 to-background shadow-xs overflow-hidden">
+      <Card className="rounded-3xl border border-border/80 bg-gradient-to-b from-card via-card to-muted/20 shadow-sm shadow-black/5 overflow-hidden">
         <CardContent className="p-5 sm:p-6 space-y-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-2xl bg-brand-blue text-white flex items-center justify-center shadow-xs">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-blue to-blue-700 text-white flex items-center justify-center shadow-md shadow-brand-blue/20">
                 <Headphones className="w-5 h-5" />
               </div>
               <div>
