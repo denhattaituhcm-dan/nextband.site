@@ -46,6 +46,7 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
   },
   { label: "Reading", href: "/reading" },
   { label: "Speaking Forecast", href: "/ielts-speaking-forecast" },
+  { label: "Tự học", href: "https://tuhoc.nextband.vn" },
   { label: "Tiến bộ", href: "/results" },
   { label: "Giảng viên", href: "/teachers" },
   { label: "Tuyển dụng", href: "/careers" },
@@ -170,6 +171,21 @@ export function PublicHeader() {
                       </div>
                     </div>
                   </div>
+                );
+              }
+
+              if (item.href.startsWith("http")) {
+                return (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "px-2.5 xl:px-3 py-2 rounded-xl text-xs xl:text-[13px] font-bold tracking-wider uppercase whitespace-nowrap text-center transition-all",
+                      "text-slate-300 hover:text-white hover:bg-white/10"
+                    )}
+                  >
+                    {item.label}
+                  </a>
                 );
               }
 
@@ -361,6 +377,23 @@ export function PublicHeader() {
                       </div>
                     )}
                   </div>
+                );
+              }
+
+              if (item.href.startsWith("http")) {
+                return (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={cn(
+                      "px-3 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-between",
+                      "text-slate-300 hover:text-white hover:bg-white/10"
+                    )}
+                  >
+                    <span>{item.label}</span>
+                    <ArrowRight className="h-3.5 w-3.5 opacity-60" />
+                  </a>
                 );
               }
 

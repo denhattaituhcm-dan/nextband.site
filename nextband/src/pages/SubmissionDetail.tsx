@@ -61,7 +61,15 @@ import {
   CourseLessonItem,
 } from "@/lib/milestoneEngine";
 import { CelebrationModal } from "@/components/celebration/CelebrationModal";
-import { milestonesApi, coursesApi } from "@/lib/api";
+import { milestonesApi, coursesApi, lessonsApi } from "@/lib/api";
+import { Flame, Target, CalendarDays, ArrowRight as ArrowRightIcon } from "lucide-react";
+import { useStudentLifecycle } from "@/hooks/useStudentLifecycle";
+import {
+  calculateDisciplineStanding,
+  getSavedDisciplineGoal,
+  isScholarshipEligible,
+} from "@/lib/disciplineScholarshipHelper";
+import { calculateStudentStreak } from "@/lib/studentStreakHelper";
 
 const statusConfig: Record<
   CanonicalSubmissionStatus,
@@ -241,6 +249,57 @@ export default function SubmissionDetail() {
         new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime()
     );
   }, [siblingSubmissions]);
+
+  // Student Lifecycle & Class Enrollment (for Schedule, Streak & Discipline Scholarship)
+  const { enrollments } = useStudentLifecycle();
+  const enrolledClass = enrollments?.[0];
+  const enrolledClassId = enrolledClass?.classId;
+
+  // Class Lessons for Curriculum & Upcoming Homework
+  const { data: classLessonData } = useQuery({
+    queryKey: ["class-lessons-detail-context", enrolledClassId],
+    queryFn: () => lessonsApi.getClassLessons(enrolledClassId || ""),
+    enabled: !!enrolledClassId && isAuthenticated,
+    staleTime: 1000 * 60 * 2,
+  });
+
+  const allSubmissionsList = allStudentSubmissionsData?.data || [];
+  const rawClassLessons = classLessonData?.data?.lessons || [];
+
+  // Streak: Tính theo số bài tập nộp đúng hạn theo lịch học của lớp
+  const streakData = useMemo(() => {
+    return calculateStudentStreak(allSubmissionsList, targetStudentId);
+  }, [allSubmissionsList, targetStudentId]);
+
+  // Discipline Scholarship: Tính dựa trên mốc học bổng học sinh đã chọn (hoặc mặc định)
+  const scholarshipStanding = useMemo(() => {
+    const validSubsCount = allSubmissionsList.filter((s: any) => isScholarshipEligible(s)).length;
+    const totalAssignedCount = rawClassLessons.length > 0 ? rawClassLessons.length : 27;
+    const savedGoal = getSavedDisciplineGoal(targetStudentId, enrolledClassId);
+    return calculateDisciplineStanding({
+      submittedCount: validSubsCount,
+      totalHomeworks: totalAssignedCount,
+      attendanceRate: 1.0,
+      targetTier: savedGoal,
+    });
+  }, [allSubmissionsList, rawClassLessons, targetStudentId, enrolledClassId]);
+
+  // Upcoming homework according to class schedule
+  const upcomingHomeworkInfo = useMemo(() => {
+    if (!rawClassLessons.length) return null;
+    // Find lessons without a completed submission
+    const uncompleted = rawClassLessons.filter((item: any) => {
+      const sub = allSubmissionsList.find((s: any) => (s.examId || s.exam_id) === item.id);
+      return !sub || !isSubmissionCompleted(sub.status);
+    });
+    const nextLesson = uncompleted[0];
+    if (!nextLesson) return null;
+    return {
+      id: nextLesson.id,
+      title: nextLesson.title || "Bài tập buổi tiếp theo",
+      deadline: nextLesson.homework?.deadline,
+    };
+  }, [rawClassLessons, allSubmissionsList]);
 
   // Attempt 1 vs Attempt 2 texts for diff comparison
   const diffComparisonData = useMemo(() => {
@@ -576,13 +635,162 @@ export default function SubmissionDetail() {
       />
 
       {/* Back */}
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={handleBack}
-      >
-        <ArrowLeft className="h-4 w-4 mr-1" /> Quay lại
-      </Button>
+      <div className="flex items-center justify-between">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleBack}
+        >
+          <ArrowLeft className="h-4 w-4 mr-1" /> Quay lại
+        </Button>
+        <span className="text-xs text-muted-foreground font-medium">
+          {enrolledClass?.className || "Lớp học cá nhân"}
+        </span>
+      </div>
+
+      {/* 1. EMOTIONAL BUFFER: CELEBRATION BANNER (Ghi nhận nỗ lực & hoàn thành) */}
+      <div className="rounded-2xl border border-amber-200/80 bg-gradient-to-r from-amber-50/80 via-amber-100/40 to-orange-50/80 dark:from-amber-950/30 dark:to-orange-950/20 dark:border-amber-800/60 p-5 sm:p-6 relative overflow-hidden shadow-xs">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 shadow-xs flex items-center justify-center text-2xl shrink-0 border border-amber-200/60">
+              🎉
+            </div>
+            <div className="space-y-0.5">
+              <h2 className="text-lg font-black text-amber-950 dark:text-amber-100 tracking-tight">
+                Hoàn thành bài tập rồi!
+              </h2>
+              <p className="text-xs text-amber-800/90 dark:text-amber-300 font-medium">
+                Bạn đã nỗ lực làm đủ {answeredCount}/{totalQuestionsCount} câu. Nghỉ ngơi một chút và xem lại các điểm cần lưu ý nhé!
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 self-stretch sm:self-auto justify-end">
+            <span className="px-3 py-1 rounded-full bg-amber-200/60 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 text-xs font-bold flex items-center gap-1.5 border border-amber-300/60">
+              <span>🏅</span> Huy hiệu Kiên Trì
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. STREAK THEO LỊCH HỌC LỚP: Đếm chuỗi bài tập nộp đúng hạn */}
+      <div className="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-lg shrink-0 ${
+            streakData.streakCount > 0
+              ? "bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-xs"
+              : "bg-slate-100 text-slate-500 dark:bg-slate-800"
+          }`}>
+            <Flame className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                Chuỗi bài tập theo lịch học
+              </span>
+              <Badge variant="outline" className="text-[10px] font-bold bg-amber-50 dark:bg-amber-950 text-amber-800 dark:text-amber-300 border-amber-200">
+                {enrolledClass?.className ? `${enrolledClass.className}` : "Lớp học"}
+              </Badge>
+            </div>
+            <p className="text-sm font-black text-foreground">
+              {streakData.streakCount > 0 ? (
+                <>Chuỗi <span className="text-orange-600 dark:text-orange-400">{streakData.streakCount} bài</span> nộp đúng hạn liên tiếp 🔥</>
+              ) : (
+                "Bắt đầu tích lũy chuỗi bài tập đúng hạn từ buổi này!"
+              )}
+            </p>
+          </div>
+        </div>
+
+        <div className="text-xs text-muted-foreground self-start sm:self-auto bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 rounded-lg border border-slate-100 dark:border-slate-800">
+          <span>Lịch lớp: Hoàn thành đúng hạn mỗi bài = Giữ vững chuỗi</span>
+        </div>
+      </div>
+
+      {/* 3. WIDGET MỤC TIÊU HỌC BỔNG KỶ LUẬT (Lấy từ mục tiêu học sinh đã chọn) */}
+      <div className="rounded-2xl border border-purple-200/90 bg-gradient-to-br from-purple-50/60 via-indigo-50/40 to-white dark:from-purple-950/20 dark:to-slate-900 p-5 shadow-xs space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="p-1.5 rounded-lg bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 text-xs">
+              <Target className="w-4 h-4" />
+            </span>
+            <div>
+              <span className="text-xs font-black text-purple-950 dark:text-purple-200 uppercase tracking-wider">
+                Mục Tiêu Học Bổng Kỷ Luật
+              </span>
+              <p className="text-xs text-muted-foreground">
+                Mục tiêu của bạn: <strong className="text-purple-700 dark:text-purple-400">{scholarshipStanding.targetTierConfig.subTitle}</strong> ({scholarshipStanding.targetTierConfig.rewardFormatted})
+              </p>
+            </div>
+          </div>
+
+          <div className="text-right self-start sm:self-auto">
+            <Badge className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs">
+              {scholarshipStanding.effectiveTier
+                ? `Đang giữ: ${scholarshipStanding.effectiveTier.rewardFormatted}`
+                : "Chưa đạt mốc 50%"}
+            </Badge>
+          </div>
+        </div>
+
+        {/* Progress bar to target */}
+        <div className="space-y-1.5">
+          <div className="flex justify-between text-xs font-bold">
+            <span className="text-muted-foreground">
+              Đã nộp: <strong className="text-purple-700 dark:text-purple-300">{allSubmissionsList.filter((s: any) => isScholarshipEligible(s)).length}</strong>/{rawClassLessons.length || 27} bài ({scholarshipStanding.currentHomeworkRate}%)
+            </span>
+            <span className="text-purple-900 dark:text-purple-200">
+              Mục tiêu: {Math.round(scholarshipStanding.targetTierConfig.minHomeworkRate * 100)}% BTVN
+            </span>
+          </div>
+
+          <div className="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-200/80">
+            <div
+              className="h-full bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full transition-all duration-500"
+              style={{ width: `${Math.min(100, Math.max(5, scholarshipStanding.currentHomeworkRate))}%` }}
+            />
+          </div>
+
+          <p className="text-[11px] text-purple-800/80 dark:text-purple-300 leading-relaxed font-medium">
+            💡 {scholarshipStanding.motivationalQuote}
+          </p>
+        </div>
+      </div>
+
+      {/* 4. UPCOMING HOMEWORK CARD: Countdown deadline theo lịch lớp thực tế */}
+      {upcomingHomeworkInfo && (
+        <div className="rounded-2xl border border-blue-200/80 bg-gradient-to-r from-blue-50/50 via-slate-50 to-white dark:from-blue-950/20 dark:to-slate-900 p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 flex items-center justify-center shrink-0">
+              <CalendarDays className="w-5 h-5" />
+            </div>
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-blue-700 dark:text-blue-400">
+                  Bài tập kế tiếp theo lịch
+                </span>
+                {upcomingHomeworkInfo.deadline && (
+                  <Badge variant="outline" className="text-[10px] text-slate-500 border-slate-200">
+                    Hạn: {format(new Date(upcomingHomeworkInfo.deadline), "HH:mm · dd/MM", { locale: vi })}
+                  </Badge>
+                )}
+              </div>
+              <h4 className="text-sm font-bold text-foreground">
+                {upcomingHomeworkInfo.title}
+              </h4>
+            </div>
+          </div>
+
+          <Button
+            size="sm"
+            onClick={() => navigate(routes.student.lesson(upcomingHomeworkInfo.id))}
+            className="gap-1.5 rounded-xl font-bold text-xs bg-blue-600 hover:bg-blue-700 text-white shadow-xs self-start sm:self-auto shrink-0"
+          >
+            <span>Xem bài tập tới</span>
+            <ArrowRightIcon className="w-3.5 h-3.5" />
+          </Button>
+        </div>
+      )}
 
       {/* Header card */}
       <Card>
@@ -835,27 +1043,40 @@ export default function SubmissionDetail() {
                 </p>
               </div>
 
-              {/* Wrong Answers Card */}
-              <div className="rounded-xl border border-rose-200 bg-rose-50/60 dark:bg-rose-950/20 dark:border-rose-800/60 p-4 flex flex-col items-center justify-center text-center">
-                <div className="flex items-center gap-1.5 text-rose-700 dark:text-rose-400 font-bold text-xs uppercase tracking-wider mb-1">
-                  <AlertCircle className="h-4 w-4" />
-                  <span>Câu Sai</span>
+              {/* Wrong Answers Card - Dùng Slate trung tính thay vì Rose giật gân */}
+              <div className="rounded-xl border border-slate-200 bg-slate-50/70 dark:bg-slate-900/40 dark:border-slate-800 p-4 flex flex-col items-center justify-center text-center">
+                <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 font-bold text-xs uppercase tracking-wider mb-1">
+                  <AlertCircle className="h-4 w-4 text-slate-500" />
+                  <span>Cần Xem Lại</span>
                 </div>
-                <p className="text-2xl sm:text-3xl font-extrabold text-rose-700 dark:text-rose-400 tabular-nums">
+                <p className="text-2xl sm:text-3xl font-extrabold text-slate-700 dark:text-slate-300 tabular-nums">
                   {Math.max(0, objTotal - objCorrect)}
-                  <span className="text-xs font-medium text-rose-600/70 ml-1">câu</span>
+                  <span className="text-xs font-medium text-slate-500 ml-1">câu</span>
                 </p>
               </div>
 
-              {/* Accuracy Percentage Card */}
-              <div className="rounded-xl border border-blue-200 bg-blue-50/60 dark:bg-blue-950/20 dark:border-blue-800/60 p-4 flex flex-col items-center justify-center text-center">
-                <div className="flex items-center gap-1.5 text-blue-700 dark:text-blue-400 font-bold text-xs uppercase tracking-wider mb-1">
+              {/* Accuracy Percentage Card - Dùng Amber/Blue khích lệ tích lũy */}
+              <div className={`rounded-xl border p-4 flex flex-col items-center justify-center text-center ${
+                objPercentage === 0
+                  ? "border-amber-200 bg-amber-50/60 dark:bg-amber-950/20 dark:border-amber-800/60"
+                  : "border-blue-200 bg-blue-50/60 dark:bg-blue-950/20 dark:border-blue-800/60"
+              }`}>
+                <div className={`flex items-center gap-1.5 font-bold text-xs uppercase tracking-wider mb-1 ${
+                  objPercentage === 0 ? "text-amber-700 dark:text-amber-400" : "text-blue-700 dark:text-blue-400"
+                }`}>
                   <Trophy className="h-4 w-4" />
                   <span>Độ Chính Xác</span>
                 </div>
-                <p className="text-2xl sm:text-3xl font-extrabold text-blue-700 dark:text-blue-400 tabular-nums">
+                <p className={`text-2xl sm:text-3xl font-extrabold tabular-nums ${
+                  objPercentage === 0 ? "text-amber-700 dark:text-amber-400" : "text-blue-700 dark:text-blue-400"
+                }`}>
                   {objPercentage}%
                 </p>
+                {objPercentage === 0 && (
+                  <span className="text-[10px] font-semibold text-amber-700/90 dark:text-amber-400 mt-0.5">
+                    ✦ Đang tích lũy kỹ năng
+                  </span>
+                )}
               </div>
 
               {/* Total Score / Completion Card */}

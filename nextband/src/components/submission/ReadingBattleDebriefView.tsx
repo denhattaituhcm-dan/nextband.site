@@ -181,11 +181,11 @@ export function ReadingBattleDebriefView({
           <div className="space-y-1 text-center sm:text-left">
             <div className="flex items-center justify-center sm:justify-start gap-1.5 font-black text-sm">
               <Swords className="h-4 w-4 text-amber-200" />
-              <span>Phục Thù Kỹ Năng — Master Dạng Bài!</span>
+              <span>Rèn Luyện Bứt Phá — Master Dạng Bài!</span>
             </div>
             <p className="text-xs text-orange-100">
-              Bạn đang gặp khó khăn ở dạng <strong>{weakestType.labelVi}</strong> (chưa đúng {weakestType.incorrect} câu).
-              Luyện ngay 4 câu tương tự để lấy lại phong độ!
+              Bạn cần làm quen thêm với dạng <strong>{weakestType.labelVi}</strong> (chưa đúng {weakestType.incorrect} câu).
+              Luyện ngay 4 câu tương tự để lấy lại phong độ và nắm chắc kỹ năng!
             </p>
           </div>
 
@@ -194,7 +194,7 @@ export function ReadingBattleDebriefView({
             onClick={() => onOpenRevenge(weakestType)}
             className="bg-white text-orange-700 hover:bg-orange-50 font-extrabold text-xs h-9 px-4 rounded-xl shadow-xs shrink-0 cursor-pointer gap-1.5"
           >
-            <span>Phục Thù Dạng Bài Ngay</span>
+            <span>Luyện Ngay 4 Câu Tương Tự</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Button>
         </div>
