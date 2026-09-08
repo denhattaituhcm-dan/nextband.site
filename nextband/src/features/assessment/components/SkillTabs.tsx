@@ -39,22 +39,10 @@ export function SkillTabs({ activeSkill, onSelectSkill, skillCounts, className }
             )}
           >
             <Icon className={cn("w-3.5 h-3.5", isActive ? "text-brand-blue" : "text-muted-foreground")} />
-            <span>{tab.baseLabel}{stat && stat.total > 0 ? ` (${stat.total})` : ""}</span>
+            <span>{tab.baseLabel}</span>
             <span className={cn("text-[10px] font-semibold opacity-75", isActive ? "text-brand-blue" : "text-muted-foreground")}>
               {tab.duration}
             </span>
-            {stat && stat.total > 0 && (
-              <span
-                className={cn(
-                  "px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ml-0.5",
-                  isComplete
-                    ? "bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400"
-                    : "bg-muted text-muted-foreground",
-                )}
-              >
-                {stat.answered}/{stat.total}
-              </span>
-            )}
           </button>
         );
       })}

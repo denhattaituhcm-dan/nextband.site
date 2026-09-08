@@ -129,9 +129,6 @@ export function AcademicAudioPlayer({ audioUrl, className }: AcademicAudioPlayer
                 </span>
               )}
             </div>
-            <p className="text-xs text-muted-foreground truncate">
-              Chỉ phát một lần liên tục • Nghiêm cấm tua nhanh bài nghe
-            </p>
           </div>
         </div>
 
