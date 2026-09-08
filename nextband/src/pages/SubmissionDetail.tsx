@@ -1106,10 +1106,8 @@ export default function SubmissionDetail() {
             <div className="mt-4">
               <ReadingBattleDebriefView
                 debrief={objectiveBattleDebrief}
-                onOpenRevenge={(typeStat) => {
-                  setRevengeTargetType(typeStat);
-                  setIsRevengeModalOpen(true);
-                }}
+                onRetryExam={handleStartRevision}
+                isRetrying={isStartingRevision}
               />
             </div>
           )}

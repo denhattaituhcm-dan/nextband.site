@@ -23,11 +23,15 @@ import { cn } from "@/lib/utils";
 interface ReadingBattleDebriefViewProps {
   debrief: ObjectiveBattleDebrief;
   onOpenRevenge?: (typeStat: QuestionTypeStat) => void;
+  onRetryExam?: () => void;
+  isRetrying?: boolean;
 }
 
 export function ReadingBattleDebriefView({
   debrief,
   onOpenRevenge,
+  onRetryExam,
+  isRetrying = false,
 }: ReadingBattleDebriefViewProps) {
   if (!debrief || debrief.totalQuestions === 0) {
     return null;
@@ -175,26 +179,26 @@ export function ReadingBattleDebriefView({
         </div>
       )}
 
-      {/* 1-CLICK REVENGE LOOP ACTION CALLOUT */}
-      {weakestType && weakestType.incorrect > 0 && onOpenRevenge && (
+      {/* ACTION CALLOUT: CHO PHÉP LÀM LẠI BÀI TRẮC NGHIỆM ĐỂ CẢI THIỆN ĐIỂM */}
+      {weakestType && weakestType.incorrect > 0 && (onRetryExam || onOpenRevenge) && (
         <div className="p-4 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 text-white flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
           <div className="space-y-1 text-center sm:text-left">
             <div className="flex items-center justify-center sm:justify-start gap-1.5 font-black text-sm">
               <Swords className="h-4 w-4 text-amber-200" />
-              <span>Rèn Luyện Bứt Phá — Master Dạng Bài!</span>
+              <span>Rèn Luyện Cải Thiện — Làm Lại Bài Này</span>
             </div>
             <p className="text-xs text-orange-100">
-              Bạn cần làm quen thêm với dạng <strong>{weakestType.labelVi}</strong> (chưa đúng {weakestType.incorrect} câu).
-              Luyện ngay 4 câu tương tự để lấy lại phong độ và nắm chắc kỹ năng!
+              Bạn có thể làm lại để khắc phục các lỗi ở dạng <strong>{weakestType.labelVi}</strong> (chưa đúng {weakestType.incorrect} câu). Hệ thống chấm máy tự động và luôn bảo lưu bài làm gốc của bạn!
             </p>
           </div>
 
           <Button
             type="button"
-            onClick={() => onOpenRevenge(weakestType)}
+            onClick={onRetryExam || (() => onOpenRevenge?.(weakestType))}
+            disabled={isRetrying}
             className="bg-white text-orange-700 hover:bg-orange-50 font-extrabold text-xs h-9 px-4 rounded-xl shadow-xs shrink-0 cursor-pointer gap-1.5"
           >
-            <span>Luyện Ngay 4 Câu Tương Tự</span>
+            <span>{isRetrying ? "Đang tạo bài làm..." : "Làm Lại Bài Này (Attempt 2)"}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Button>
         </div>
