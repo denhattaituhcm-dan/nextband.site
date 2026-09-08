@@ -50,9 +50,9 @@ export function WritingPanel({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-3xl mx-auto space-y-5">
       {/* Section Header Card */}
-      <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-brand-blue-soft/30 to-background border border-border shadow-xs flex items-center justify-between">
+      <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-brand-blue-soft/30 to-background border border-border shadow-xs flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-brand-blue text-white flex items-center justify-center shadow-xs">
             <PenTool className="w-5 h-5" />
@@ -97,50 +97,43 @@ export function WritingPanel({
         </div>
       </div>
 
-      {/* Writing Prompt Card */}
-      <div className="p-5 sm:p-6 rounded-3xl bg-card border border-border space-y-4 shadow-xs">
-        <div className="space-y-2">
-          <span className="text-xs font-bold text-brand-blue uppercase tracking-wide">
-            Kỹ Năng Viết (Writing Task 2)
+      {/* Writing Prompt Card - Visually Separated */}
+      <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-card via-card to-brand-blue-soft/20 border-2 border-brand-blue/20 space-y-3 shadow-sm">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-bold text-brand-blue uppercase tracking-wider">
+            Đề bài Kỹ Năng Viết (Writing Task 2)
           </span>
-          {hasHtml ? (
-            <div
-              className="text-sm sm:text-base font-bold text-foreground leading-relaxed prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: sanitizeHtml(prompt) }}
-            />
-          ) : (
-            <p className="text-sm sm:text-base font-bold text-foreground leading-relaxed">
-              {prompt}
-            </p>
-          )}
+          <span className="text-xs font-semibold text-muted-foreground">
+            Khuyến nghị: 100 – 150 từ
+          </span>
         </div>
+        {hasHtml ? (
+          <div
+            className="text-sm sm:text-base font-medium text-foreground leading-relaxed prose prose-sm max-w-none"
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(prompt) }}
+          />
+        ) : (
+          <p className="text-sm sm:text-base font-semibold text-foreground leading-relaxed">
+            {prompt}
+          </p>
+        )}
+      </div>
 
-        {/* Guidelines */}
-        <div className="p-4 rounded-2xl bg-muted/50 border border-border/80 space-y-2">
-          <h5 className="text-xs font-extrabold text-foreground">Gợi ý phát triển ý tưởng & Quy định độ dài:</h5>
-          <ul className="text-xs text-muted-foreground space-y-1.5 list-disc pl-4">
-            {guidelines.map((g, i) => (
-              <li key={i}>{g}</li>
-            ))}
-            <li className="font-semibold text-foreground/80">
-              Độ dài khuyến nghị: <strong>100 – 150 từ</strong> (Không bắt buộc số từ tối thiểu, giới hạn tối đa {maxWords} từ để tránh spam).
-            </li>
-          </ul>
-        </div>
-
+      {/* Writing Input Card */}
+      <div className="p-5 sm:p-6 rounded-3xl bg-card border border-border space-y-4 shadow-xs">
         {/* Writing Textarea with Anti-spam Length Limit */}
-        <div className="space-y-2 pt-2">
+        <div className="space-y-2">
           <Textarea
             value={value || ""}
             onChange={(e) => onChange(e.target.value)}
             onPaste={handlePaste}
             placeholder="Type your essay / paragraph response here in English (Hoặc để trống nếu chưa làm)..."
-            rows={10}
+            rows={12}
             maxLength={3500}
-            className={`w-full rounded-2xl border text-sm leading-relaxed p-4 font-sans transition-all ${
+            className={`w-full rounded-2xl border text-sm sm:text-base leading-relaxed p-4 sm:p-5 font-sans transition-all ${
               isOverLimit
                 ? "border-red-400 focus:border-red-500 ring-1 ring-red-400/30 bg-red-50/10"
-                : "border-border focus:border-brand-blue"
+                : "border-border focus:border-brand-blue shadow-inner"
             }`}
           />
 

@@ -50,8 +50,8 @@ export function ListeningPanel({
 
   return (
     <div className="w-full space-y-6">
-      {/* Audio Player Card with Academic Waveform */}
-      <Card className="rounded-3xl border border-border/80 bg-gradient-to-b from-card via-card to-muted/20 shadow-sm shadow-black/5 overflow-hidden">
+      {/* Audio Player Card with Distinct Visual Separation */}
+      <Card className="rounded-3xl border-2 border-brand-blue/25 bg-gradient-to-b from-brand-blue-soft/30 via-card to-card shadow-md shadow-brand-blue/5 overflow-hidden">
         <CardContent className="p-5 sm:p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">

@@ -32,9 +32,12 @@ export default function PublicLayout() {
       const destination = savedTarget || "/app";
       const target = destination === "/" ? "/app" : destination;
 
-      if (user.roles?.includes("teacher") || user.roles?.includes("admin")) {
-        const adminTarget = target.startsWith("/admin") ? target : "/admin/teacher-workspace";
+      if (user.roles?.includes("admin")) {
+        const adminTarget = target.startsWith("/admin") ? target : "/admin";
         navigate(adminTarget, { replace: true });
+      } else if (user.roles?.includes("teacher")) {
+        const teacherTarget = target.startsWith("/admin") && target !== "/admin" ? target : "/admin/teacher-workspace";
+        navigate(teacherTarget, { replace: true });
       } else {
         navigate(target, { replace: true });
       }

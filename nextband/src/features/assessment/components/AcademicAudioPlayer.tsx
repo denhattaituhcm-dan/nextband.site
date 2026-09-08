@@ -89,7 +89,7 @@ export function AcademicAudioPlayer({ audioUrl, className }: AcademicAudioPlayer
   return (
     <div
       className={cn(
-        "p-4 sm:p-5 rounded-2xl bg-card border border-border shadow-xs space-y-3.5",
+        "p-4 sm:p-5 rounded-2xl bg-card border border-brand-blue/25 shadow-sm space-y-3.5",
         className,
       )}
     >
@@ -123,8 +123,8 @@ export function AcademicAudioPlayer({ audioUrl, className }: AcademicAudioPlayer
             <div className="flex items-center gap-2">
               <span className="font-extrabold text-sm text-foreground">Audio Khảo Thí</span>
               {isPlaying && (
-                <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                   Đang phát
                 </span>
               )}
@@ -132,39 +132,28 @@ export function AcademicAudioPlayer({ audioUrl, className }: AcademicAudioPlayer
           </div>
         </div>
 
-        {/* Soundwave Animation & Timers */}
-        <div className="flex-1 max-w-md flex flex-col justify-center gap-1.5">
-          {/* Waveform Visualization Bars */}
-          <div className="flex items-center justify-between gap-0.5 h-6 px-1">
-            {[40, 65, 85, 30, 75, 100, 50, 80, 95, 45, 60, 90, 70, 85, 55, 100, 75, 60, 90, 40, 70, 85, 95, 60, 45, 80].map(
-              (heightPercent, idx) => {
-                const barPercent = (idx / 26) * 100;
-                const isPassed = barPercent <= progressPercent;
-                return (
-                  <span
-                    key={idx}
-                    style={{ height: `${heightPercent}%` }}
-                    className={cn(
-                      "w-1 sm:w-1.5 rounded-full transition-all duration-150",
-                      isPassed ? "bg-brand-blue" : "bg-muted-foreground/20",
-                      isPlaying && isPassed && "opacity-90 animate-pulse",
-                    )}
-                  />
-                );
-              },
-            )}
-          </div>
-
-          {/* Progress Bar Container */}
-          <div className="relative w-full h-2 bg-muted rounded-full overflow-hidden">
+        {/* Progress & Timers */}
+        <div className="flex-1 max-w-md flex flex-col justify-center gap-2">
+          {/* Progress Bar Container with seek capability */}
+          <div
+            onClick={(e) => {
+              if (!audioRef.current || duration <= 0) return;
+              const rect = e.currentTarget.getBoundingClientRect();
+              const clickPos = (e.clientX - rect.left) / rect.width;
+              const newTime = Math.min(clickPos * duration, maxTimeRef.current);
+              audioRef.current.currentTime = newTime;
+              setCurrentTime(newTime);
+            }}
+            className="relative w-full h-2.5 bg-muted-foreground/15 rounded-full overflow-hidden cursor-pointer group"
+          >
             <div
-              className="absolute left-0 top-0 bottom-0 bg-brand-blue transition-all duration-100 rounded-full"
+              className="absolute left-0 top-0 bottom-0 bg-brand-blue transition-all duration-100 rounded-full group-hover:bg-brand-blue-hover"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
 
           {/* Timers */}
-          <div className="flex items-center justify-between text-[11px] font-mono font-bold text-muted-foreground">
+          <div className="flex items-center justify-between text-xs font-mono font-bold text-muted-foreground">
             <span>{formatTime(currentTime)}</span>
             <span>{formatTime(duration)}</span>
           </div>

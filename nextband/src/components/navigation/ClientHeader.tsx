@@ -86,6 +86,15 @@ export function ClientHeader() {
                 Quản trị
               </Button>
             )}
+            {!isAdmin && isTeacher && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/admin/teacher-workspace")}
+              >
+                Bàn làm việc Giáo viên
+              </Button>
+            )}
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

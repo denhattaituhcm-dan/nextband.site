@@ -47,14 +47,14 @@ export function AssessmentHeader({
         {/* Center: Countdown Timer */}
         <div
           className={cn(
-            "flex items-center gap-1.5 px-3 py-1 rounded-full border transition-all shadow-xs",
+            "flex items-center gap-2 px-4 py-1.5 rounded-full border-2 transition-all shadow-sm",
             isUrgent
-              ? "bg-red-50 dark:bg-red-950/40 border-red-300 text-red-600 animate-pulse font-black"
-              : "bg-muted/80 border-border text-foreground font-extrabold",
+              ? "bg-red-500/15 border-red-500 text-red-600 dark:text-red-400 animate-pulse font-black shadow-red-500/20"
+              : "bg-brand-blue/10 border-brand-blue/35 text-brand-blue dark:bg-brand-blue/20 dark:border-brand-blue/50 dark:text-blue-300 font-black ring-2 ring-brand-blue/10",
           )}
         >
-          <Clock className={cn("w-3.5 h-3.5", isUrgent ? "text-red-600" : "text-brand-blue")} />
-          <span className="text-xs sm:text-sm font-mono tracking-wider">{formattedTime}</span>
+          <Clock className={cn("w-4 h-4 shrink-0", isUrgent ? "text-red-600 animate-bounce" : "text-brand-blue animate-none")} />
+          <span className="text-sm sm:text-base font-mono font-black tracking-widest">{formattedTime}</span>
         </div>
 
         {/* Right: Autosave Status, Exit & Submit Button */}

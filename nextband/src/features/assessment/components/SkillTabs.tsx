@@ -20,7 +20,7 @@ export function SkillTabs({ activeSkill, onSelectSkill, skillCounts, className }
   ];
 
   return (
-    <div className={cn("flex items-center gap-1.5 p-1 bg-muted/70 backdrop-blur-sm rounded-full border border-border/80 overflow-x-auto no-scrollbar", className)}>
+    <div className={cn("w-full grid grid-cols-5 gap-1.5 sm:gap-2 p-1.5 bg-muted/70 backdrop-blur-sm rounded-2xl border border-border/80 shadow-xs", className)}>
       {tabs.map((tab) => {
         const Icon = tab.icon;
         const isActive = activeSkill === tab.id;
@@ -32,15 +32,15 @@ export function SkillTabs({ activeSkill, onSelectSkill, skillCounts, className }
             key={tab.id}
             onClick={() => onSelectSkill(tab.id)}
             className={cn(
-              "flex items-center gap-2 px-3.5 py-1.5 rounded-full font-bold text-xs transition-all duration-200 whitespace-nowrap cursor-pointer",
+              "w-full flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-2 rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 cursor-pointer text-center",
               isActive
-                ? "bg-card text-brand-blue shadow-sm shadow-brand-blue/10 border border-brand-blue/20 font-black"
+                ? "bg-card text-brand-blue shadow-sm shadow-brand-blue/15 border border-brand-blue/30 font-black ring-1 ring-brand-blue/20"
                 : "text-muted-foreground hover:text-foreground hover:bg-card/60",
             )}
           >
-            <Icon className={cn("w-3.5 h-3.5", isActive ? "text-brand-blue" : "text-muted-foreground")} />
-            <span>{tab.baseLabel}</span>
-            <span className={cn("text-[10px] font-semibold opacity-75", isActive ? "text-brand-blue" : "text-muted-foreground")}>
+            <Icon className={cn("w-4 h-4 shrink-0", isActive ? "text-brand-blue" : "text-muted-foreground")} />
+            <span className="truncate">{tab.baseLabel}</span>
+            <span className={cn("hidden sm:inline-block text-[11px] font-semibold opacity-80 shrink-0", isActive ? "text-brand-blue" : "text-muted-foreground")}>
               {tab.duration}
             </span>
           </button>

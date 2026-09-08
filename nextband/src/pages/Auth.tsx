@@ -71,7 +71,7 @@ export default function Auth() {
         const adminTarget = studentTarget.startsWith("/admin") ? studentTarget : "/admin";
         navigate(adminTarget, { replace: true });
       } else if (user.roles?.includes("teacher")) {
-        const teacherTarget = studentTarget.startsWith("/admin") ? studentTarget : "/admin/teacher-workspace";
+        const teacherTarget = studentTarget.startsWith("/admin") && studentTarget !== "/admin" ? studentTarget : "/admin/teacher-workspace";
         navigate(teacherTarget, { replace: true });
       } else {
         // Students redirect to Student Workspace /app (or next destination)
