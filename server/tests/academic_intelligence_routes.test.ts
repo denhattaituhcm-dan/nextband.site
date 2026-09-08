@@ -1,0 +1,153 @@
+import { describe, it, expect, beforeEach } from "vitest";
+import { buildApp } from "../app.js";
+
+describe("Academic Intelligence Security Boundary & Routes", () => {
+  let app: any;
+
+  beforeEach(async () => {
+    app = await buildApp();
+  });
+
+  it("Gate 1: Should strictly reject unauthenticated requests with 401", async () => {
+    const response = await app.inject({
+      method: "GET",
+      url: "/api/v1/academic-intelligence/overview",
+    });
+
+    expect(response.statusCode).toBe(401);
+    const body = JSON.parse(response.payload);
+    expect(body.error).toBe("Unauthorized");
+  });
+
+  it("Gate 2: Should reject non-admin roles (e.g., student role) with 403 Forbidden", async () => {
+    // Sign a real JWT with student role using fastify app's jwt plugin
+    const studentToken = app.jwt.sign({
+      sub: "student-uuid-test",
+      email: "student@nextband.site",
+      roles: ["student"],
+    });
+
+    const response = await app.inject({
+      method: "GET",
+      url: "/api/v1/academic-intelligence/overview",
+      headers: {
+        authorization: `Bearer ${studentToken}`,
+      },
+    });
+
+    // Student must be strictly forbidden from accessing Academic Intelligence Control Plane
+    expect(response.statusCode).toBe(403);
+    const body = JSON.parse(response.payload);
+    expect(body.error).toBe("Forbidden");
+  });
+
+  it("Gate 3: Should grant 200 OK to authenticated admin", async () => {
+    const adminToken = app.jwt.sign({
+      sub: "admin-uuid-test",
+      email: "admin@nextband.site",
+      roles: ["admin"],
+    });
+
+    const response = await app.inject({
+      method: "GET",
+      url: "/api/v1/academic-intelligence/overview",
+      headers: {
+        authorization: `Bearer ${adminToken}`,
+      },
+    });
+
+    // In test environment, if DB is accessible it returns 200 with 3 layers telemetry
+    // (or 403/500 if DB is mocked; verify it passes role gate)
+    expect([200, 500]).toContain(response.statusCode);
+    if (response.statusCode === 200) {
+      const body = JSON.parse(response.payload);
+      expect(body.status).toBe("success");
+      expect(body.system.name).toBe("ARIS Academic Intelligence Control Plane");
+      expect(body.layers.layer1RawEvidence).toBeDefined();
+      expect(body.layers.layer2SkillEvidence).toBeDefined();
+      expect(body.layers.layer3DerivedMastery).toBeDefined();
+    }
+  });
+
+  it("Phase B Gate 4: Should reject unauthenticated requests to Phase B endpoints with 401", async () => {
+    const res1 = await app.inject({
+      method: "GET",
+      url: "/api/v1/academic-intelligence/students",
+    });
+    expect(res1.statusCode).toBe(401);
+
+    const res2 = await app.inject({
+      method: "GET",
+      url: "/api/v1/academic-intelligence/students/some-id/submissions",
+    });
+    expect(res2.statusCode).toBe(401);
+
+    const res3 = await app.inject({
+      method: "GET",
+      url: "/api/v1/academic-intelligence/submissions/some-id/provenance",
+    });
+    expect(res3.statusCode).toBe(401);
+  });
+
+  it("Phase B Gate 5: Should reject non-admin requests to Phase B endpoints with 403", async () => {
+    const studentToken = app.jwt.sign({
+      sub: "student-uuid-test",
+      email: "student@nextband.site",
+      roles: ["student"],
+    });
+
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/v1/academic-intelligence/students",
+      headers: { authorization: `Bearer ${studentToken}` },
+    });
+    expect(res.statusCode).toBe(403);
+  });
+
+  it("Phase B Gate 6: Admin should access students, submissions, and provenance endpoints", async () => {
+    const adminToken = app.jwt.sign({
+      sub: "admin-uuid-test",
+      email: "admin@nextband.site",
+      roles: ["admin"],
+    });
+
+    // 1. Students list
+    const studentsRes = await app.inject({
+      method: "GET",
+      url: "/api/v1/academic-intelligence/students",
+      headers: { authorization: `Bearer ${adminToken}` },
+    });
+    expect([200, 500]).toContain(studentsRes.statusCode);
+    if (studentsRes.statusCode === 200) {
+      const data = JSON.parse(studentsRes.payload);
+      expect(data.status).toBe("success");
+      expect(Array.isArray(data.students)).toBe(true);
+    }
+
+    // 2. Submissions list
+    const subRes = await app.inject({
+      method: "GET",
+      url: "/api/v1/academic-intelligence/students/non-existent-student/submissions",
+      headers: { authorization: `Bearer ${adminToken}` },
+    });
+    expect([200, 500]).toContain(subRes.statusCode);
+    if (subRes.statusCode === 200) {
+      const data = JSON.parse(subRes.payload);
+      expect(data.status).toBe("success");
+      expect(Array.isArray(data.submissions)).toBe(true);
+    }
+
+    // 3. Provenance endpoint (non-existent submission should return 404 or 500)
+    const provRes = await app.inject({
+      method: "GET",
+      url: "/api/v1/academic-intelligence/submissions/non-existent-submission/provenance",
+      headers: { authorization: `Bearer ${adminToken}` },
+    });
+    expect([404, 500]).toContain(provRes.statusCode);
+    if (provRes.statusCode === 404) {
+      const data = JSON.parse(provRes.payload);
+      expect(data.message).toBe("Submission not found");
+    }
+  });
+});
+

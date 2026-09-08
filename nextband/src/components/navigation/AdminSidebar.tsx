@@ -148,6 +148,12 @@ const adminItems = [
     icon: Settings,
     adminOnly: true,
   },
+  {
+    title: "Academic Intelligence",
+    url: "/academic-intelligence",
+    icon: ShieldCheck,
+    adminOnly: true,
+  },
 ];
 
 export function AdminSidebar() {

@@ -61,6 +61,8 @@ model User {
   teacherProfile        TeacherProfile?
   weeklySnapshots       WeeklySnapshot[]
   errorEpisodes         StudentErrorEpisode[]    @relation("StudentErrorEpisodes")
+  skillEvidences        StudentSkillEvidence[]
+  skillMasteries        StudentSkillMastery[]
 
   @@map("profiles")
 }
@@ -402,6 +404,8 @@ model Question {
   group               QuestionGroup   @relation(fields: [groupId], references: [id], onDelete: Cascade)
   answers             Answer[]
   versions            QuestionVersion[]
+  skillTags           QuestionSkillTag[]
+  diagnosticEvidences DiagnosticEvidence[]
 
   @@index([groupId, orderIndex])
   @@map("questions")
@@ -426,6 +430,7 @@ model ExamSubmission {
   answers        Answer[]
   speakingEvidence SpeakingAssessmentEvidence[]
   sourceEpisodes   StudentErrorEpisode[]    @relation("SourceEpisodes")
+  diagnosticEvidences DiagnosticEvidence[]
   exam           Exam             @relation(fields: [examId], references: [id], onDelete: Cascade)
   examVersion    ExamVersion?     @relation(fields: [examVersionId], references: [id])
   grader         User?            @relation("GraderSubmissions", fields: [gradedBy], references: [userId])
@@ -1247,3 +1252,121 @@ model StudentErrorEpisode {
   @@index([sourceSubmissionId])
   @@map("student_error_episodes")
 }
+
+// =========================================================================
+// EVIDENCE OS CORE (Phase 0: Minimum & Recomputable Evidence Ledger)
+// =========================================================================
+
+model SkillNode {
+  id               String   @id @default(uuid())
+  code             String   @unique // e.g. "R_MS_QUALIFIER_SENSITIVITY"
+  name             String
+  description      String?
+  macroSkill       String   @map("macro_skill") // "READING" | "LISTENING" | "WRITING" | "SPEAKING"
+  realmTier        String   @map("realm_tier")  // "FOUNDATION" | "INTERMEDIATE" | "ADVANCED" | "MASTERY"
+  taxonomyVersion  String   @default("1.0.0")   @map("taxonomy_version")
+
+  questionTags     QuestionSkillTag[]
+  evidenceEntries  StudentSkillEvidence[]
+  masterySnapshots StudentSkillMastery[]
+
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("skill_nodes")
+}
+
+model QuestionSkillTag {
+  id               String    @id @default(uuid())
+  questionId       String    @map("question_id")
+  skillCode        String    @map("skill_code")
+  weight           Float     @default(1.0)
+  taxonomyVersion  String    @default("1.0.0") @map("taxonomy_version")
+
+  question         Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  skillNode        SkillNode @relation(fields: [skillCode], references: [code], onDelete: Cascade)
+
+  @@unique([questionId, skillCode])
+  @@map("question_skill_tags")
+}
+
+model ErrorDefinition {
+  id          String   @id @default(uuid())
+  code        String   @unique // e.g. "ERR_WORD_MATCHING_TRAP"
+  name        String
+  description String?
+  severity    String?  @default("MEDIUM") // "LOW" | "MEDIUM" | "HIGH" | "FATAL"
+  
+  diagnostics DiagnosticEvidence[]
+
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("error_definitions")
+}
+
+model DiagnosticEvidence {
+  id               String          @id @default(uuid())
+  submissionId     String          @map("submission_id")
+  questionId       String          @map("question_id")
+  studentId        String          @map("student_id")
+  
+  errorCode        String          @map("error_code")
+  confidence       Float           @default(0.8)
+  evidenceSnippet  String?         @map("evidence_snippet")
+  evaluatorType    String          @default("RULE_BASED") @map("evaluator_type")
+  ruleCode         String          @default("GENERIC") @map("rule_code")
+  taxonomyVersion  String          @default("1.0.0") @map("taxonomy_version")
+
+  observedAt       DateTime        @default(now()) @map("observed_at")
+
+  errorDef         ErrorDefinition @relation(fields: [errorCode], references: [code], onDelete: Cascade)
+  submission       ExamSubmission  @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  question         Question        @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([submissionId, questionId, ruleCode, taxonomyVersion])
+  @@index([studentId, errorCode, observedAt])
+  @@map("diagnostic_evidences")
+}
+
+model StudentSkillEvidence {
+  id             String    @id @default(uuid())
+  studentId      String    @map("student_id")
+  skillCode      String    @map("skill_code")
+
+  sourceType     String    @map("source_type") // "SUBMISSION" | "DIAGNOSTIC" | "MANUAL_OVERRIDE"
+  sourceId       String    @map("source_id")   // ID của Answer hoặc ExamSubmission
+
+  outcome        Float     // 1.0 = Success, 0.0 = Failure, fractional = partial
+  evidenceWeight Float     @default(1.0) @map("evidence_weight")
+
+  observedAt     DateTime  @default(now()) @map("observed_at")
+
+  student        User      @relation(fields: [studentId], references: [userId], onDelete: Cascade)
+  skillNode      SkillNode @relation(fields: [skillCode], references: [code], onDelete: Cascade)
+
+  @@index([studentId, skillCode, observedAt])
+  @@map("student_skill_evidences")
+}
+
+model StudentSkillMastery {
+  id             String    @id @default(uuid())
+  studentId      String    @map("student_id")
+  skillCode      String    @map("skill_code")
+
+  // Bayesian raw accumulation (parameters only)
+  alphaSuccess   Float     @default(1.0) @map("alpha_success")
+  betaFailure    Float     @default(1.0) @map("beta_failure")
+  totalEvidence  Int       @default(0)   @map("total_evidence")
+
+  lastObservedAt DateTime? @map("last_observed_at")
+  recomputedAt   DateTime  @default(now()) @map("recomputed_at")
+
+  student        User      @relation(fields: [studentId], references: [userId], onDelete: Cascade)
+  skillNode      SkillNode @relation(fields: [skillCode], references: [code], onDelete: Cascade)
+
+  @@unique([studentId, skillCode])
+  @@index([studentId])
+  @@map("student_skill_masteries")
+}
+

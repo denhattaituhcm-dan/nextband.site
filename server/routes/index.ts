@@ -36,6 +36,7 @@ import cronRoutes from "./cron.routes.js";
 import parentReportsRoutes from "./parent-reports.routes.js";
 import reEnrollmentRoutes from "./re-enrollment.routes.js";
 import radarRoutes from "./radar.routes.js";
+import academicIntelligenceRoutes from "./academic-intelligence.routes.js";
 
 const routes: FastifyPluginAsync = async (fastify) => {
   // Health check
@@ -84,6 +85,7 @@ const routes: FastifyPluginAsync = async (fastify) => {
   await fastify.register(parentReportsRoutes);
   await fastify.register(reEnrollmentRoutes);
   await fastify.register(radarRoutes, { prefix: "/classes" });
+  await fastify.register(academicIntelligenceRoutes, { prefix: "/academic-intelligence" });
 };
 
 export default routes;

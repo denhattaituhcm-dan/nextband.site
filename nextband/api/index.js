@@ -114735,6 +114735,85 @@ async function radarRoutes(fastify) {
   );
 }
 
+// server/controllers/academic-intelligence.controller.ts
+import { PrismaClient as PrismaClient7 } from "@prisma/client";
+var AcademicIntelligenceController = class {
+  prisma;
+  constructor(fastify) {
+    this.prisma = fastify.prisma || new PrismaClient7();
+  }
+  /**
+   * GET /api/v1/academic-intelligence/overview
+   * Returns executive counts & telemetry of the 3 evidence layers
+   */
+  async getOverview(request, reply) {
+    try {
+      const rawSubmissionsCount = await this.prisma.examSubmission.count();
+      const rawQuestionsCount = await this.prisma.question.count();
+      const studentSkillEvidenceCount = await this.prisma.studentSkillEvidence.count();
+      const diagnosticEvidenceCount = await this.prisma.diagnosticEvidence.count();
+      const studentMasteryCount = await this.prisma.studentSkillMastery.count();
+      const skillNodesCount = await this.prisma.skillNode.count();
+      const errorDefinitionsCount = await this.prisma.errorDefinition.count();
+      const questionSkillTagsCount = await this.prisma.questionSkillTag.count();
+      const studentsWithEvidence = await this.prisma.studentSkillEvidence.findMany({
+        select: { studentId: true },
+        distinct: ["studentId"]
+      });
+      return reply.status(200).send({
+        status: "success",
+        timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+        system: {
+          name: "ARIS Academic Intelligence Control Plane",
+          framework: "ARIS-7 Academic Framework",
+          version: "1.0.0",
+          recomputabilityGuarantee: "100% Deterministic Bayesian Recompute"
+        },
+        layers: {
+          layer1RawEvidence: {
+            name: "Raw Academic Evidence",
+            description: "Immutable student submissions, raw answers and evaluation scores",
+            totalSubmissions: rawSubmissionsCount,
+            totalQuestions: rawQuestionsCount
+          },
+          layer2SkillEvidence: {
+            name: "Student Skill Evidence & Diagnostics",
+            description: "Normalized learning observations and rule-based diagnostic hypotheses",
+            totalObservations: studentSkillEvidenceCount,
+            totalDiagnosticHypotheses: diagnosticEvidenceCount,
+            activeTrackedStudents: studentsWithEvidence.length
+          },
+          layer3DerivedMastery: {
+            name: "Student Skill Mastery (Derived State)",
+            description: "Recomputable derived snapshots caching Beta distribution parameters",
+            totalMasterySnapshots: studentMasteryCount
+          }
+        },
+        ontology: {
+          totalSkills: skillNodesCount,
+          totalErrorDefinitions: errorDefinitionsCount,
+          totalQuestionTags: questionSkillTagsCount
+        }
+      });
+    } catch (error) {
+      request.log.error(error, "[AcademicIntelligenceController] getOverview error");
+      return reply.status(500).send({
+        error: "InternalServerError",
+        message: "Failed to fetch Academic Intelligence overview telemetry."
+      });
+    }
+  }
+};
+
+// server/routes/academic-intelligence.routes.ts
+var academicIntelligenceRoutes = async (fastify) => {
+  const controller = new AcademicIntelligenceController(fastify);
+  fastify.addHook("preHandler", authenticate);
+  fastify.addHook("preHandler", requireRoles("admin"));
+  fastify.get("/overview", controller.getOverview.bind(controller));
+};
+var academic_intelligence_routes_default = academicIntelligenceRoutes;
+
 // server/routes/index.ts
 var routes = async (fastify) => {
   fastify.get("/health", async () => {
@@ -114780,6 +114859,7 @@ var routes = async (fastify) => {
   await fastify.register(parent_reports_routes_default);
   await fastify.register(re_enrollment_routes_default);
   await fastify.register(radarRoutes, { prefix: "/classes" });
+  await fastify.register(academic_intelligence_routes_default, { prefix: "/academic-intelligence" });
 };
 var routes_default = routes;
 

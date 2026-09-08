@@ -162,6 +162,15 @@ const AdminAssessments = lazyWithRetry(() => import("@/pages/admin/Assessments")
 const AdminPeriodicReports = lazyWithRetry(() => import("@/pages/admin/PeriodicReportsPage"));
 const AdminTuitionManagement = lazyWithRetry(() => import("@/pages/admin/TuitionManagement"));
 
+// Lazy-loaded Academic Intelligence Pages
+const AcademicIntelligenceLayout = lazyWithRetry(() => import("@/layouts/AcademicIntelligenceLayout"));
+const AcademicIntelligenceDashboard = lazyWithRetry(() => import("@/pages/academic-intelligence/AcademicIntelligenceDashboard"));
+const EvidenceExplorerPage = lazyWithRetry(() => import("@/pages/academic-intelligence/EvidenceExplorerPage"));
+const DiagnosticExplorerPage = lazyWithRetry(() => import("@/pages/academic-intelligence/DiagnosticExplorerPage"));
+const OntologyMatrixPage = lazyWithRetry(() => import("@/pages/academic-intelligence/OntologyMatrixPage"));
+const StudentModelPage = lazyWithRetry(() => import("@/pages/academic-intelligence/StudentModelPage"));
+const AuditIntegrityPage = lazyWithRetry(() => import("@/pages/academic-intelligence/AuditIntegrityPage"));
+
 const PageLoader = () => (
   <div className="min-h-[400px] w-full flex flex-col items-center justify-center space-y-3 p-12">
     <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
@@ -649,6 +658,24 @@ const App = () => (
                     </ProtectedRoute>
                   }
                 />
+              </Route>
+
+              {/* ============================================================ */}
+              {/* 6. ACADEMIC INTELLIGENCE CONTROL PLANE (/academic-intelligence) */}
+              {/* ============================================================ */}
+              <Route
+                element={
+                  <ProtectedRoute requiredRoles={["admin"]}>
+                    <AcademicIntelligenceLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route path="/academic-intelligence" element={<AcademicIntelligenceDashboard />} />
+                <Route path="/academic-intelligence/evidence" element={<EvidenceExplorerPage />} />
+                <Route path="/academic-intelligence/diagnostic" element={<DiagnosticExplorerPage />} />
+                <Route path="/academic-intelligence/ontology" element={<OntologyMatrixPage />} />
+                <Route path="/academic-intelligence/student-model" element={<StudentModelPage />} />
+                <Route path="/academic-intelligence/audit" element={<AuditIntegrityPage />} />
               </Route>
 
               {/* Catch-all */}

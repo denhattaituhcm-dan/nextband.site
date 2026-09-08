@@ -70,9 +70,9 @@ export default function AssessmentPage() {
     sessionId?: string;
   } | null>(null);
 
-  // Quick Clean-Room Assessment Launch Modal State
+  // Quick Assessment Launch Modal State
   const [isStartModalOpen, setIsStartModalOpen] = useState(false);
-  const [startExamTitle, setStartExamTitle] = useState("IELTS Clean-Room Assessment");
+  const [startExamTitle, setStartExamTitle] = useState("IELTS Placement Test (4 Kỹ Năng)");
   const [startCandidateName, setStartCandidateName] = useState("");
   const [startCandidatePhone, setStartCandidatePhone] = useState("");
   const [startTargetBand, setStartTargetBand] = useState("IELTS 6.5");
@@ -184,7 +184,7 @@ export default function AssessmentPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-red-soft text-brand-red border border-brand-red/20 text-xs sm:text-sm font-black uppercase tracking-wider">
             <FileCheck className="h-4 w-4" />
-            <span>Cổng Khảo Thí Chuẩn Quốc Tế ARIS</span>
+            <span>Kiểm Tra Trình Độ IELTS</span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-foreground tracking-tight leading-[1.12]">
@@ -195,7 +195,7 @@ export default function AssessmentPage() {
           </h1>
 
           <p className="text-lg sm:text-xl lg:text-2xl text-foreground/85 font-normal leading-relaxed max-w-4xl mx-auto">
-            Làm bài thi thử chuẩn Cambridge trực tiếp trên hạ tầng phòng thi số NextBand. Tính toán chính xác Band điểm theo thang 9.0 và bóc tách điểm nghẽn học thuật chuyên sâu.
+            Làm bài test nhanh để xác định trình độ hiện tại và nhận gợi ý lộ trình học phù hợp.
           </p>
 
           <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
@@ -208,7 +208,7 @@ export default function AssessmentPage() {
               className="rounded-2xl px-8 h-14 font-extrabold text-base sm:text-lg bg-brand-red hover:bg-brand-red-hover text-white shadow-sm gap-2.5"
             >
               <Play className="h-5 w-5 fill-current" />
-              <span>Vào Làm Bài Khảo Thí Online Ngay</span>
+              <span>Làm Bài Test Online Ngay</span>
               <ArrowRight className="h-5 w-5" />
             </Button>
 
@@ -229,9 +229,8 @@ export default function AssessmentPage() {
       {/* ========================================================================= */}
       <SectionContainer
         id="online-tests-section"
-        badge="Khảo Thí Trực Tuyến Chuẩn Cambridge"
-        title="Bài Khảo Thí Năng Lực IELTS Toàn Diện (4 Kỹ Năng + Grammar)"
-        description="Đề thi chẩn đoán chuẩn hóa được thiết kế trên phòng thi số Clean-Room NextBand, tích hợp đồng hồ kiểm soát, âm thanh bản ngữ và hệ thống định vị Rank ARIS-7 tự động."
+        title="Bài Test Nhanh Trình Độ IELTS"
+        description="Đánh giá nhanh trình độ đầu vào qua 4 kỹ năng để chọn lộ trình học phù hợp."
         background="default"
       >
         <div className="max-w-4xl mx-auto">
@@ -242,68 +241,47 @@ export default function AssessmentPage() {
                   <div className="p-3 rounded-2xl bg-brand-blue-soft text-brand-blue">
                     <Award className="h-7 w-7" />
                   </div>
-                  <div>
-                    <h3 className="text-2xl sm:text-3xl font-black text-foreground">
-                      IELTS Clean-Room Placement Test
-                    </h3>
-                    <p className="text-xs sm:text-sm text-foreground/75 mt-0.5">
-                      Khảo thí chuẩn đoán đa tầng: Đo lường chính xác từ nền tảng phản xạ đến tư duy học thuật.
-                    </p>
-                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-black text-foreground">
+                    IELTS Placement Test
+                  </h3>
                 </div>
                 <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-300 font-extrabold text-xs px-3 py-1">
-                  Full 4 Kỹ Năng + Ngữ Pháp
+                  Full 4 Kỹ Năng
                 </Badge>
               </div>
 
               {/* 4 Skills Breakdown in 1 test */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3.5">
-                <div className="p-4 rounded-2xl bg-muted/40 border border-border/60 space-y-1 text-left">
-                  <div className="flex items-center gap-2 text-brand-red font-bold text-xs">
-                    <Headphones className="h-4 w-4" />
-                    <span>01. Listening</span>
-                  </div>
-                  <div className="text-xs text-foreground/80">Audio bản ngữ, bẫy phát âm &amp; từ khóa</div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+                <div className="p-4 rounded-2xl bg-muted/40 border border-border/60 flex items-center gap-2.5">
+                  <Headphones className="h-5 w-5 text-brand-red shrink-0" />
+                  <span className="font-bold text-sm text-foreground">Listening</span>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-muted/40 border border-border/60 space-y-1 text-left">
-                  <div className="flex items-center gap-2 text-brand-blue font-bold text-xs">
-                    <BookOpen className="h-4 w-4" />
-                    <span>02. Reading</span>
-                  </div>
-                  <div className="text-xs text-foreground/80">Đo Skimming, Scanning &amp; Logic T/F/NG</div>
+                <div className="p-4 rounded-2xl bg-muted/40 border border-border/60 flex items-center gap-2.5">
+                  <BookOpen className="h-5 w-5 text-brand-blue shrink-0" />
+                  <span className="font-bold text-sm text-foreground">Reading</span>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-muted/40 border border-border/60 space-y-1 text-left">
-                  <div className="flex items-center gap-2 text-amber-600 font-bold text-xs">
-                    <PenTool className="h-4 w-4" />
-                    <span>03. Grammar &amp; W</span>
-                  </div>
-                  <div className="text-xs text-foreground/80">Cấu trúc câu &amp; triển khai lập luận Task 2</div>
+                <div className="p-4 rounded-2xl bg-muted/40 border border-border/60 flex items-center gap-2.5">
+                  <PenTool className="h-5 w-5 text-amber-600 shrink-0" />
+                  <span className="font-bold text-sm text-foreground">Grammar</span>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-muted/40 border border-border/60 space-y-1 text-left">
-                  <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs">
-                    <Brain className="h-4 w-4" />
-                    <span>04. Speaking</span>
-                  </div>
-                  <div className="text-xs text-foreground/80">Ghi âm phản xạ Part 1 &amp; Part 2 trực tiếp</div>
+                <div className="p-4 rounded-2xl bg-muted/40 border border-border/60 flex items-center gap-2.5">
+                  <Brain className="h-5 w-5 text-emerald-600 shrink-0" />
+                  <span className="font-bold text-sm text-foreground">Speaking</span>
                 </div>
               </div>
 
               {/* Key Specs */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-border/60 text-xs sm:text-sm font-semibold">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-border/60 text-xs sm:text-sm font-semibold">
                 <div className="flex items-center gap-2.5">
                   <Clock className="h-4 w-4 text-primary shrink-0" />
-                  <span>Thời lượng: <strong className="text-foreground">60 Phút (Bấm giờ tự động)</strong></span>
+                  <span>Thời lượng: <strong className="text-foreground">60 phút</strong></span>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <Target className="h-4 w-4 text-primary shrink-0" />
-                  <span>Định lượng: <strong className="text-foreground">Band 3.0 – 7.0+</strong></span>
-                </div>
-                <div className="flex items-center gap-2.5">
-                  <ShieldCheck className="h-4 w-4 text-primary shrink-0" />
-                  <span>Chuẩn đầu ra: <strong className="text-brand-blue font-bold">Khung ARIS-7 Cấp Bậc</strong></span>
+                  <span>Hình thức: <strong className="text-foreground">Làm bài trực tuyến</strong></span>
                 </div>
               </div>
 
@@ -311,11 +289,11 @@ export default function AssessmentPage() {
               <div className="pt-2">
                 <Button
                   size="lg"
-                  onClick={() => handleOpenStartModal("IELTS Clean-Room Placement Test (Full 4 Kỹ Năng)")}
+                  onClick={() => handleOpenStartModal("IELTS Placement Test")}
                   className="w-full h-14 rounded-2xl font-black text-base sm:text-lg bg-brand-red hover:bg-brand-red-hover text-white gap-3 shadow-md transition-all cursor-pointer"
                 >
                   <Play className="h-5 w-5 fill-current" />
-                  <span>Bắt đầu bài khảo thí trực tuyến ngay (60 Phút)</span>
+                  <span>Bắt đầu làm bài test (60 phút)</span>
                   <ArrowRight className="h-5 w-5" />
                 </Button>
               </div>
@@ -592,7 +570,7 @@ export default function AssessmentPage() {
           <div className="relative p-5 sm:p-6 bg-gradient-to-br from-amber-100/70 via-orange-50/50 to-amber-50/30 border-b border-amber-200/50 text-left">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/15 text-amber-800 border border-amber-500/30 text-[11px] font-extrabold uppercase tracking-wider mb-2.5">
               <ShieldCheck className="w-3.5 h-3.5 text-amber-700" />
-              <span>Clean-Room IELTS Assessment</span>
+              <span>Test IELTS Trực Tuyến</span>
             </div>
             <h3 className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
               {startExamTitle}
@@ -602,7 +580,7 @@ export default function AssessmentPage() {
               <span>•</span>
               <span>Miễn phí 100%</span>
               <span>•</span>
-              <span>Phân tích lỗi sai qua Zalo</span>
+              <span>Phân tích kết quả qua Zalo</span>
             </div>
           </div>
 
@@ -674,7 +652,7 @@ export default function AssessmentPage() {
                   ) : (
                     <>
                       <Play className="w-4 h-4 fill-current text-blue-600" />
-                      <span>Vào phòng thi khảo thí ngay</span>
+                      <span>Bắt đầu làm bài ngay</span>
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}
