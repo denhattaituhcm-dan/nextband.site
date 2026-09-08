@@ -495,15 +495,15 @@ export class AcademicIntelligenceController {
 
       const recentHypotheses = await this.prisma.diagnosticEvidence.findMany({
         take: 25,
-        orderBy: { createdAt: "desc" },
+        orderBy: { observedAt: "desc" },
         include: {
           errorDef: true,
-          student: {
-            select: { userId: true, email: true, fullName: true },
-          },
           submission: {
             select: {
               id: true,
+              student: {
+                select: { userId: true, email: true, fullName: true },
+              },
               exam: { select: { title: true, examType: true } },
             },
           },
@@ -553,11 +553,11 @@ export class AcademicIntelligenceController {
             ruleCode: h.ruleCode,
             confidence: h.confidence,
             evidenceSnippet: h.evidenceSnippet,
-            studentName: h.student?.fullName || h.student?.email || "Unknown Student",
-            studentEmail: h.student?.email,
+            studentName: h.submission?.student?.fullName || h.submission?.student?.email || "Unknown Student",
+            studentEmail: h.submission?.student?.email,
             examTitle: h.submission?.exam?.title || "Exam",
             questionText: h.question?.questionText,
-            createdAt: h.createdAt,
+            observedAt: h.observedAt,
           })),
         },
       });
@@ -594,7 +594,7 @@ export class AcademicIntelligenceController {
         include: {
           _count: {
             select: {
-              diagnosticEvidences: true,
+              diagnostics: true,
             },
           },
         },
@@ -621,10 +621,9 @@ export class AcademicIntelligenceController {
             code: e.code,
             name: e.name,
             description: e.description,
-            category: e.category,
-            severity: e.severity,
-            taxonomyVersion: e.taxonomyVersion,
-            hypothesisCount: e._count.diagnosticEvidences,
+            category: "ACADEMIC_ERROR",
+            severity: e.severity || "MEDIUM",
+            hypothesisCount: e._count.diagnostics,
           })),
         },
       });

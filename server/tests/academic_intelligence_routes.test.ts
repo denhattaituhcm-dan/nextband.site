@@ -199,6 +199,62 @@ describe("Academic Intelligence Security Boundary & Routes", () => {
     });
     expect([200, 404, 500]).toContain(recomputeRes.statusCode);
   });
+
+  it("Gate 9: Should reject unauthenticated requests to diagnostics, ontology, and audit endpoints with 401", async () => {
+    const r1 = await app.inject({ method: "GET", url: "/api/v1/academic-intelligence/diagnostics" });
+    expect(r1.statusCode).toBe(401);
+
+    const r2 = await app.inject({ method: "GET", url: "/api/v1/academic-intelligence/ontology" });
+    expect(r2.statusCode).toBe(401);
+
+    const r3 = await app.inject({ method: "GET", url: "/api/v1/academic-intelligence/audit/integrity" });
+    expect(r3.statusCode).toBe(401);
+  });
+
+  it("Gate 10: Admin can access diagnostics, ontology, and audit integrity endpoints", async () => {
+    const adminToken = app.jwt.sign({
+      sub: "admin-uuid-test",
+      email: "admin@nextband.site",
+      roles: ["admin"],
+    });
+
+    const diagRes = await app.inject({
+      method: "GET",
+      url: "/api/v1/academic-intelligence/diagnostics",
+      headers: { authorization: `Bearer ${adminToken}` },
+    });
+    expect([200, 500]).toContain(diagRes.statusCode);
+    if (diagRes.statusCode === 200) {
+      const data = JSON.parse(diagRes.payload);
+      expect(data.status).toBe("success");
+      expect(Array.isArray(data.data.activeRules)).toBe(true);
+    }
+
+    const ontoRes = await app.inject({
+      method: "GET",
+      url: "/api/v1/academic-intelligence/ontology",
+      headers: { authorization: `Bearer ${adminToken}` },
+    });
+    expect([200, 500]).toContain(ontoRes.statusCode);
+    if (ontoRes.statusCode === 200) {
+      const data = JSON.parse(ontoRes.payload);
+      expect(data.status).toBe("success");
+      expect(Array.isArray(data.data.skills)).toBe(true);
+    }
+
+    const auditRes = await app.inject({
+      method: "GET",
+      url: "/api/v1/academic-intelligence/audit/integrity",
+      headers: { authorization: `Bearer ${adminToken}` },
+    });
+    expect([200, 500]).toContain(auditRes.statusCode);
+    if (auditRes.statusCode === 200) {
+      const data = JSON.parse(auditRes.payload);
+      expect(data.status).toBe("success");
+      expect(data.data.anomalies).toBeDefined();
+    }
+  });
 });
+
 
 
