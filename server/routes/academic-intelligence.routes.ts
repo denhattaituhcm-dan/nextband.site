@@ -13,6 +13,11 @@ const academicIntelligenceRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.get("/students", controller.getStudents.bind(controller));
   fastify.get("/students/:studentId/submissions", controller.getStudentSubmissions.bind(controller));
   fastify.get("/submissions/:submissionId/provenance", controller.getSubmissionProvenance.bind(controller));
+  fastify.get("/students/:studentId/mastery", controller.getStudentMastery.bind(controller));
+  fastify.post("/students/:studentId/recompute", controller.recomputeStudentMastery.bind(controller));
+  fastify.get("/diagnostics", controller.getDiagnosticsOverview.bind(controller));
+  fastify.get("/ontology", controller.getOntologyOverview.bind(controller));
+  fastify.get("/audit/integrity", controller.runIntegrityAudit.bind(controller));
 };
 
 export default academicIntelligenceRoutes;

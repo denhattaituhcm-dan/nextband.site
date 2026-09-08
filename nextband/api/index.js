@@ -114737,6 +114737,251 @@ async function radarRoutes(fastify) {
 
 // server/controllers/academic-intelligence.controller.ts
 import { PrismaClient as PrismaClient7 } from "@prisma/client";
+
+// server/domain/student-model/bayesian.ts
+var DEFAULT_PRIOR_ALPHA = 1;
+var DEFAULT_PRIOR_BETA = 1;
+function validateObservation(obs) {
+  if (typeof obs.outcome !== "number" || Number.isNaN(obs.outcome)) {
+    throw new Error(`[StudentModelDomain] Invalid outcome: ${obs.outcome}. Must be a valid number.`);
+  }
+  if (obs.outcome < 0 || obs.outcome > 1) {
+    throw new Error(
+      `[StudentModelDomain] Outcome out of range [0.0, 1.0]: ${obs.outcome}. Strict integrity check failed.`
+    );
+  }
+  const weight = obs.evidenceWeight ?? 1;
+  if (typeof weight !== "number" || Number.isNaN(weight) || weight <= 0) {
+    throw new Error(
+      `[StudentModelDomain] Invalid evidenceWeight: ${weight}. Must be a finite number > 0.`
+    );
+  }
+}
+function calculateAlphaBeta(observations, priorAlpha = DEFAULT_PRIOR_ALPHA, priorBeta = DEFAULT_PRIOR_BETA) {
+  if (priorAlpha <= 0 || priorBeta <= 0 || Number.isNaN(priorAlpha) || Number.isNaN(priorBeta)) {
+    throw new Error(`[StudentModelDomain] Priors must be positive numbers. Got alpha=${priorAlpha}, beta=${priorBeta}`);
+  }
+  let alpha = priorAlpha;
+  let beta = priorBeta;
+  let totalEvidence = 0;
+  for (const obs of observations) {
+    validateObservation(obs);
+    const weight = obs.evidenceWeight ?? 1;
+    alpha += obs.outcome * weight;
+    beta += (1 - obs.outcome) * weight;
+    totalEvidence += 1;
+  }
+  return {
+    alpha,
+    beta,
+    totalEvidence
+  };
+}
+function calculatePosteriorMean(alpha, beta) {
+  if (alpha <= 0 || beta <= 0) {
+    throw new Error(`[StudentModelDomain] Parameters must be > 0. Got alpha=${alpha}, beta=${beta}`);
+  }
+  return alpha / (alpha + beta);
+}
+function calculateUncertainty(alpha, beta) {
+  if (alpha <= 0 || beta <= 0) {
+    throw new Error(`[StudentModelDomain] Parameters must be > 0. Got alpha=${alpha}, beta=${beta}`);
+  }
+  const sum = alpha + beta;
+  return alpha * beta / (sum * sum * (sum + 1));
+}
+function computePosteriorMetrics(alpha, beta, totalEvidence) {
+  const mean = calculatePosteriorMean(alpha, beta);
+  const variance = calculateUncertainty(alpha, beta);
+  return {
+    alpha,
+    beta,
+    totalEvidence,
+    posteriorMean: mean,
+    uncertaintyVariance: variance,
+    sampleSize: alpha + beta
+  };
+}
+
+// server/services/student-model.service.ts
+var StudentModelService = class {
+  constructor(prisma) {
+    this.prisma = prisma;
+  }
+  /**
+   * Evidence Mapping Policy:
+   * Maps an evaluated answer to StudentSkillEvidence rows based on QuestionSkillTag.
+   *
+   * Explicit Rules:
+   * 1. Reads authoritative question -> skill mapping from QuestionSkillTag.
+   * 2. If a question has NO tags, NO evidence is created (never invent phantom evidence).
+   * 3. Outcome is derived strictly from answer correctness: isCorrect ? 1.0 : 0.0
+   *    (or scoreAwarded / maxScore if partial credit enabled).
+   * 4. Evidence weight is taken directly from QuestionSkillTag.weight (never altered by diagnostic confidence).
+   * 5. Persists immutable StudentSkillEvidence rows.
+   */
+  async recordAnswerToSkillEvidence(inputs) {
+    if (!inputs.length) return [];
+    const createdRecords = [];
+    for (const item of inputs) {
+      const tags = await this.prisma.questionSkillTag.findMany({
+        where: { questionId: item.questionId }
+      });
+      if (!tags.length) {
+        continue;
+      }
+      let outcome = item.isCorrect ? 1 : 0;
+      if (item.scoreAwarded !== void 0 && item.maxScore !== void 0 && item.maxScore > 0) {
+        outcome = Math.max(0, Math.min(1, item.scoreAwarded / item.maxScore));
+      }
+      for (const tag2 of tags) {
+        const record = await this.prisma.studentSkillEvidence.create({
+          data: {
+            studentId: item.studentId,
+            skillCode: tag2.skillCode,
+            sourceType: "SUBMISSION",
+            sourceId: item.answerId,
+            outcome,
+            evidenceWeight: tag2.weight,
+            observedAt: item.observedAt || /* @__PURE__ */ new Date()
+          }
+        });
+        createdRecords.push({
+          id: record.id,
+          studentId: record.studentId,
+          skillCode: record.skillCode,
+          sourceType: record.sourceType,
+          sourceId: record.sourceId,
+          outcome: record.outcome,
+          evidenceWeight: record.evidenceWeight,
+          observedAt: record.observedAt
+        });
+      }
+    }
+    return createdRecords;
+  }
+  /**
+   * Full Recompute Contract:
+   * Recomputes student mastery exclusively from the immutable StudentSkillEvidence ledger.
+   *
+   * Invariant:
+   * - NEVER reads existing StudentSkillMastery.
+   * - Deterministic sorting by `observedAt ASC, id ASC`.
+   * - Uses pure domain Bayesian mathematics.
+   * - Upserts the derived snapshot into StudentSkillMastery.
+   * - Returns explainable and auditable results with contributing evidence IDs.
+   */
+  async recomputeStudentMastery(studentId, priorAlpha = DEFAULT_PRIOR_ALPHA, priorBeta = DEFAULT_PRIOR_BETA) {
+    if (!studentId) {
+      throw new Error("[StudentModelService] studentId is required for recomputation.");
+    }
+    const rawEvidences = await this.prisma.studentSkillEvidence.findMany({
+      where: { studentId },
+      orderBy: [
+        { observedAt: "asc" },
+        { id: "asc" }
+      ]
+    });
+    const evidenceBySkill = /* @__PURE__ */ new Map();
+    for (const ev of rawEvidences) {
+      const list = evidenceBySkill.get(ev.skillCode) || [];
+      list.push(ev);
+      evidenceBySkill.set(ev.skillCode, list);
+    }
+    const recomputedResults = [];
+    for (const [skillCode, evidences] of evidenceBySkill.entries()) {
+      const domainObservations = evidences.map((e) => ({
+        outcome: e.outcome,
+        evidenceWeight: e.evidenceWeight,
+        observedAt: e.observedAt
+      }));
+      const accumulated = calculateAlphaBeta(domainObservations, priorAlpha, priorBeta);
+      const metrics = computePosteriorMetrics(
+        accumulated.alpha,
+        accumulated.beta,
+        accumulated.totalEvidence
+      );
+      const lastObservedAt = evidences.length > 0 ? evidences[evidences.length - 1].observedAt : null;
+      const evidenceIds = evidences.map((e) => e.id);
+      await this.prisma.studentSkillMastery.upsert({
+        where: {
+          studentId_skillCode: {
+            studentId,
+            skillCode
+          }
+        },
+        create: {
+          studentId,
+          skillCode,
+          alphaSuccess: accumulated.alpha,
+          betaFailure: accumulated.beta,
+          totalEvidence: accumulated.totalEvidence,
+          lastObservedAt,
+          recomputedAt: /* @__PURE__ */ new Date()
+        },
+        update: {
+          alphaSuccess: accumulated.alpha,
+          betaFailure: accumulated.beta,
+          totalEvidence: accumulated.totalEvidence,
+          lastObservedAt,
+          recomputedAt: /* @__PURE__ */ new Date()
+        }
+      });
+      recomputedResults.push({
+        studentId,
+        skillCode,
+        ...metrics,
+        lastObservedAt,
+        contributingEvidenceCount: accumulated.totalEvidence,
+        evidenceIds
+      });
+    }
+    return recomputedResults.sort((a, b) => a.skillCode.localeCompare(b.skillCode));
+  }
+  /**
+   * Audit / Provenance Helper:
+   * Returns complete contributing evidence chain explaining why a student has their current parameters.
+   */
+  async getSkillMasteryProvenance(studentId, skillCode) {
+    const masterySnapshot = await this.prisma.studentSkillMastery.findUnique({
+      where: {
+        studentId_skillCode: {
+          studentId,
+          skillCode
+        }
+      }
+    });
+    const contributingEvidence = await this.prisma.studentSkillEvidence.findMany({
+      where: { studentId, skillCode },
+      orderBy: [{ observedAt: "asc" }, { id: "asc" }]
+    });
+    const domainObservations = contributingEvidence.map((e) => ({
+      outcome: e.outcome,
+      evidenceWeight: e.evidenceWeight
+    }));
+    const calculated = calculateAlphaBeta(domainObservations);
+    return {
+      studentId,
+      skillCode,
+      snapshot: masterySnapshot,
+      provenance: {
+        totalEvidenceRows: contributingEvidence.length,
+        calculatedAlpha: calculated.alpha,
+        calculatedBeta: calculated.beta,
+        contributions: contributingEvidence.map((e) => ({
+          evidenceId: e.id,
+          sourceType: e.sourceType,
+          sourceId: e.sourceId,
+          outcome: e.outcome,
+          weight: e.evidenceWeight,
+          observedAt: e.observedAt
+        }))
+      }
+    };
+  }
+};
+
+// server/controllers/academic-intelligence.controller.ts
 var AcademicIntelligenceController = class {
   prisma;
   constructor(fastify) {
@@ -115076,6 +115321,104 @@ var AcademicIntelligenceController = class {
       });
     }
   }
+  /**
+   * GET /api/v1/academic-intelligence/students/:studentId/mastery
+   * Reads the current StudentSkillMastery derived snapshots for a student.
+   * Derived State Invariant: purely reads derived cache; does NOT recalculate.
+   */
+  async getStudentMastery(request, reply) {
+    const { studentId } = request.params;
+    try {
+      const student = await this.prisma.user.findUnique({
+        where: { userId: studentId },
+        select: { userId: true, email: true, fullName: true, avatarUrl: true }
+      });
+      if (!student) {
+        return reply.status(404).send({
+          error: "NotFound",
+          message: `Student ${studentId} not found.`
+        });
+      }
+      const masteries = await this.prisma.studentSkillMastery.findMany({
+        where: { studentId },
+        include: { skillNode: true },
+        orderBy: { skillCode: "asc" }
+      });
+      const totalEvidenceCount = await this.prisma.studentSkillEvidence.count({
+        where: { studentId }
+      });
+      const formatted = masteries.map((m) => {
+        const total = m.alphaSuccess + m.betaFailure;
+        const mean = total > 0 ? m.alphaSuccess / total : 0.5;
+        const variance = total > 0 ? m.alphaSuccess * m.betaFailure / (total * total * (total + 1)) : 0.0833;
+        return {
+          skillCode: m.skillCode,
+          skillName: m.skillNode?.name || m.skillCode,
+          category: m.skillNode?.macroSkill || "GENERAL",
+          alphaSuccess: m.alphaSuccess,
+          betaFailure: m.betaFailure,
+          totalEvidence: m.totalEvidence,
+          posteriorMean: mean,
+          uncertainty: variance,
+          lastObservedAt: m.lastObservedAt,
+          recomputedAt: m.recomputedAt
+        };
+      });
+      return reply.status(200).send({
+        status: "success",
+        data: {
+          student,
+          totalEvidences: totalEvidenceCount,
+          masteryCount: formatted.length,
+          masteries: formatted
+        }
+      });
+    } catch (error) {
+      request.log.error(error, "[AcademicIntelligenceController] getStudentMastery error");
+      return reply.status(500).send({
+        error: "InternalServerError",
+        message: "Failed to fetch student mastery."
+      });
+    }
+  }
+  /**
+   * POST /api/v1/academic-intelligence/students/:studentId/recompute
+   * Deterministic Recomputation Invariant:
+   * Wipes or overrides StudentSkillMastery cache by recalculating directly from StudentSkillEvidence.
+   * StudentSkillEvidence is 100% immutable and never modified.
+   */
+  async recomputeStudentMastery(request, reply) {
+    const { studentId } = request.params;
+    try {
+      const student = await this.prisma.user.findUnique({
+        where: { userId: studentId },
+        select: { userId: true, email: true, fullName: true }
+      });
+      if (!student) {
+        return reply.status(404).send({
+          error: "NotFound",
+          message: `Student ${studentId} not found.`
+        });
+      }
+      const service = new StudentModelService(this.prisma);
+      const recomputed = await service.recomputeStudentMastery(studentId);
+      return reply.status(200).send({
+        status: "success",
+        message: `Successfully recomputed mastery for student ${studentId}.`,
+        data: {
+          studentId,
+          skillsRecomputed: recomputed.length,
+          results: recomputed
+        }
+      });
+    } catch (error) {
+      request.log.error(error, "[AcademicIntelligenceController] recomputeStudentMastery error");
+      return reply.status(500).send({
+        error: "InternalServerError",
+        message: "Failed to recompute student mastery."
+      });
+    }
+  }
 };
 
 // server/routes/academic-intelligence.routes.ts
@@ -115087,6 +115430,8 @@ var academicIntelligenceRoutes = async (fastify) => {
   fastify.get("/students", controller.getStudents.bind(controller));
   fastify.get("/students/:studentId/submissions", controller.getStudentSubmissions.bind(controller));
   fastify.get("/submissions/:submissionId/provenance", controller.getSubmissionProvenance.bind(controller));
+  fastify.get("/students/:studentId/mastery", controller.getStudentMastery.bind(controller));
+  fastify.post("/students/:studentId/recompute", controller.recomputeStudentMastery.bind(controller));
 };
 var academic_intelligence_routes_default = academicIntelligenceRoutes;
 
