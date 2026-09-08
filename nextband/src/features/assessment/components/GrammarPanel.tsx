@@ -1,5 +1,5 @@
 import React from "react";
-import { Sparkles, Clock } from "lucide-react";
+import { Sparkles, Clock, Bookmark } from "lucide-react";
 import { AssessmentQuestion } from "../domain/assessment.types";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,8 @@ interface GrammarPanelProps {
   questions: AssessmentQuestion[];
   answers: Record<string, any>;
   onAnswerChange: (questionId: string, value: any) => void;
+  flaggedQuestions?: Set<string>;
+  onToggleFlag?: (questionId: string) => void;
 }
 
 const cleanSectionTag = (title?: string) => {
@@ -32,6 +34,8 @@ export function GrammarPanel({
   questions,
   answers,
   onAnswerChange,
+  flaggedQuestions,
+  onToggleFlag,
 }: GrammarPanelProps) {
   return (
     <div className="space-y-6">
@@ -64,6 +68,7 @@ export function GrammarPanel({
           const promptText = q?.prompt || "";
           const hasHtml = promptText.includes("<") && promptText.includes(">");
           const subTag = cleanSectionTag(q.sectionTitle);
+          const isFlagged = flaggedQuestions?.has(q.id);
 
           return (
             <div
@@ -79,9 +84,26 @@ export function GrammarPanel({
                 ) : (
                   <span />
                 )}
-                <span className="text-xs font-extrabold text-muted-foreground">
-                  Câu {q.orderIndex || 1}
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-extrabold text-muted-foreground">
+                    Câu {q.orderIndex || 1}
+                  </span>
+                  {onToggleFlag && (
+                    <button
+                      type="button"
+                      onClick={() => onToggleFlag(q.id)}
+                      className={`flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+                        isFlagged
+                          ? "bg-amber-500/15 text-amber-600 border border-amber-500/30"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      }`}
+                      title={isFlagged ? "Bỏ cờ đánh dấu xem lại" : "Đánh dấu xem lại câu này (Flag)"}
+                    >
+                      <Bookmark className={`w-3.5 h-3.5 ${isFlagged ? "fill-amber-500 text-amber-500" : ""}`} />
+                      <span className="text-[11px]">{isFlagged ? "Đã gắn cờ" : "Cờ"}</span>
+                    </button>
+                  )}
+                </div>
               </div>
 
               {hasHtml ? (

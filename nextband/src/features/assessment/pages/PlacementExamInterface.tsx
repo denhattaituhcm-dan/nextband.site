@@ -32,9 +32,22 @@ export default function PlacementExamInterface() {
 
   const [activeSkill, setActiveSkill] = useState<AssessmentSkill>("listening");
   const [currentQuestionId, setCurrentQuestionId] = useState<string | undefined>();
+  const [flaggedQuestions, setFlaggedQuestions] = useState<Set<string>>(new Set());
   const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false);
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleToggleFlag = useCallback((questionId: string) => {
+    setFlaggedQuestions((prev) => {
+      const next = new Set(prev);
+      if (next.has(questionId)) {
+        next.delete(questionId);
+      } else {
+        next.add(questionId);
+      }
+      return next;
+    });
+  }, []);
 
   const {
     session,
@@ -193,7 +206,7 @@ export default function PlacementExamInterface() {
           isSubmitting={isSubmitting}
         />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-3 pt-1">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-2 pt-0.5">
           <SkillTabs
             activeSkill={activeSkill}
             onSelectSkill={(skill) => {
@@ -217,6 +230,8 @@ export default function PlacementExamInterface() {
               questions={testPayload.skills.listening.questions}
               answers={answers}
               onAnswerChange={setAnswer}
+              flaggedQuestions={flaggedQuestions}
+              onToggleFlag={handleToggleFlag}
             />
           )}
 
@@ -227,6 +242,8 @@ export default function PlacementExamInterface() {
               questions={testPayload.skills.reading.questions}
               answers={answers}
               onAnswerChange={setAnswer}
+              flaggedQuestions={flaggedQuestions}
+              onToggleFlag={handleToggleFlag}
             />
           )}
 
@@ -236,6 +253,8 @@ export default function PlacementExamInterface() {
               questions={testPayload.skills.grammar.questions}
               answers={answers}
               onAnswerChange={setAnswer}
+              flaggedQuestions={flaggedQuestions}
+              onToggleFlag={handleToggleFlag}
             />
           )}
 
@@ -287,6 +306,7 @@ export default function PlacementExamInterface() {
           questions={currentSkillQuestions}
           answers={answers}
           currentQuestionId={currentQuestionId}
+          flaggedQuestions={flaggedQuestions}
           onSelectQuestion={handleSelectQuestion}
         />
       )}

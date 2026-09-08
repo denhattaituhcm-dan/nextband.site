@@ -27,10 +27,10 @@ export function AssessmentHeader({
 }: AssessmentHeaderProps) {
   return (
     <header className="w-full bg-transparent">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-13 flex items-center justify-between gap-3">
         {/* Left: Branding & Candidate Badge */}
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="w-9 h-9 rounded-xl bg-brand-red flex items-center justify-center text-white font-black text-lg shadow-sm shrink-0">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-8 h-8 rounded-xl bg-brand-red flex items-center justify-center text-white font-black text-base shadow-sm shrink-0">
             N
           </div>
           <div className="hidden sm:block min-w-0">
@@ -40,21 +40,21 @@ export function AssessmentHeader({
                 Mục tiêu: {targetBand}
               </Badge>
             </div>
-            <p className="text-[11px] text-muted-foreground">ARIS Diagnostic Assessment</p>
+            <p className="text-[10px] text-muted-foreground leading-tight">ARIS Diagnostic Assessment</p>
           </div>
         </div>
 
         {/* Center: Countdown Timer */}
         <div
           className={cn(
-            "flex items-center gap-2 px-3.5 py-1.5 rounded-full border transition-all shadow-xs",
+            "flex items-center gap-1.5 px-3 py-1 rounded-full border transition-all shadow-xs",
             isUrgent
               ? "bg-red-50 dark:bg-red-950/40 border-red-300 text-red-600 animate-pulse font-black"
               : "bg-muted/80 border-border text-foreground font-extrabold",
           )}
         >
-          <Clock className={cn("w-4 h-4", isUrgent ? "text-red-600" : "text-brand-blue")} />
-          <span className="text-sm font-mono tracking-wider">{formattedTime}</span>
+          <Clock className={cn("w-3.5 h-3.5", isUrgent ? "text-red-600" : "text-brand-blue")} />
+          <span className="text-xs sm:text-sm font-mono tracking-wider">{formattedTime}</span>
         </div>
 
         {/* Right: Autosave Status, Exit & Submit Button */}

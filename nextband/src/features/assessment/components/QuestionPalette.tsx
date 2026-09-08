@@ -2,11 +2,13 @@ import React, { useMemo } from "react";
 import { AssessmentQuestion } from "../domain/assessment.types";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { Bookmark } from "lucide-react";
 
 interface QuestionPaletteProps {
   questions: AssessmentQuestion[];
   answers: Record<string, any>;
   currentQuestionId?: string;
+  flaggedQuestions?: Set<string>;
   onSelectQuestion: (questionId: string) => void;
 }
 
@@ -14,6 +16,7 @@ export function QuestionPalette({
   questions,
   answers,
   currentQuestionId,
+  flaggedQuestions,
   onSelectQuestion,
 }: QuestionPaletteProps) {
   // Expand questions (including multi-blank questions) into palette items
@@ -75,13 +78,14 @@ export function QuestionPalette({
           {paletteItems.map((item) => {
             const isCurrent =
               currentQuestionId === item.focusId || currentQuestionId === item.targetId;
+            const isFlagged = flaggedQuestions?.has(item.targetId);
 
             return (
               <button
                 key={`${item.targetId}-${item.label}`}
                 onClick={() => onSelectQuestion(item.targetId)}
                 className={cn(
-                  "min-w-[34px] h-8 px-2 rounded-xl font-bold text-xs transition-all flex items-center justify-center shrink-0 cursor-pointer border",
+                  "relative min-w-[34px] h-8 px-2 rounded-xl font-bold text-xs transition-all flex items-center justify-center shrink-0 cursor-pointer border",
                   isCurrent
                     ? "ring-2 ring-brand-blue ring-offset-1 border-brand-blue font-black"
                     : "",
@@ -90,7 +94,15 @@ export function QuestionPalette({
                     : "bg-muted/50 text-foreground border-border/80 hover:bg-muted",
                 )}
               >
-                {item.label}
+                <span>{item.label}</span>
+                {isFlagged && (
+                  <span
+                    className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-500 flex items-center justify-center shadow-xs"
+                    title="Câu đã đánh dấu xem lại"
+                  >
+                    <Bookmark className="w-2 h-2 text-white fill-white" />
+                  </span>
+                )}
               </button>
             );
           })}
@@ -105,6 +117,10 @@ export function QuestionPalette({
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-muted border border-border" />
             <span>Chưa làm</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+            <span>Gắn cờ</span>
           </div>
         </div>
       </div>
