@@ -263,6 +263,21 @@ export default function StudentLessonViewerPage() {
   const submittedCount = homeworkList.filter((hw) => hw.status === "SUBMITTED").length;
   const reviewedCount = homeworkList.filter((hw) => hw.status === "GRADED").length;
 
+  // Recent completed homework (prioritize graded, then submitted)
+  const recentCompletedHomework = useMemo(() => {
+    return (
+      homeworkList.find((hw) => hw.status === "GRADED") ||
+      homeworkList.find((hw) => hw.status === "SUBMITTED") ||
+      homeworkList.find((hw) => hw.status === "REVISION_REQUIRED") ||
+      null
+    );
+  }, [homeworkList]);
+
+  // Milestone eligibility: milestone achieved (>= 25%, >= 50%, >= 75%, 100%) or high reviewed score
+  const totalHomeworksCount = homeworkList.length || 1;
+  const completionRate = Math.round((submittedCount / totalHomeworksCount) * 100);
+  const isEligibleForMilestone = completionRate >= 25 || reviewedCount >= 5;
+
   const getStatusBadge = (
     status: CanonicalVisualStatus,
     countdown?: { text: string; isOverdue: boolean; urgencyLevel?: string; badgeClass?: string } | null,
@@ -382,10 +397,14 @@ export default function StudentLessonViewerPage() {
             <Button
               size="sm"
               onClick={() => setIsHonorCardOpen(true)}
-              className="text-xs font-black rounded-xl gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 shadow-xs cursor-pointer"
+              className={`text-xs font-black rounded-xl gap-1.5 shadow-xs cursor-pointer ${
+                isEligibleForMilestone
+                  ? "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950"
+                  : "bg-slate-900 hover:bg-slate-800 text-white border border-slate-700"
+              }`}
             >
-              <Award className="w-3.5 h-3.5 text-slate-950" />
-              <span>🎖️ Báo Cáo Gửi Ba Mẹ</span>
+              {isEligibleForMilestone ? <Award className="w-3.5 h-3.5 text-slate-950" /> : <FileText className="w-3.5 h-3.5 text-sky-400" />}
+              <span>{isEligibleForMilestone ? "🎖️ Báo Cáo Vinh Danh Cột Mốc" : "📄 Phiếu Báo Cáo Gửi Ba Mẹ"}</span>
             </Button>
             <Button
               variant="outline"
@@ -402,15 +421,34 @@ export default function StudentLessonViewerPage() {
           </div>
         </div>
 
-        {/* Clinical Honor Report Card Modal */}
+        {/* Clinical Honor / Daily Report Card Modal */}
         <HonorReportCardModal
           open={isHonorCardOpen}
           onOpenChange={setIsHonorCardOpen}
           studentName={user?.fullName || user?.email?.split("@")[0] || "Học viên"}
-          examTitle={classData.courseTitle || `Lớp ${classData.className || "IELTS"}`}
+          reportType={isEligibleForMilestone ? "MILESTONE_HONOR" : "DAILY_LOG"}
+          examTitle={
+            recentCompletedHomework?.title ||
+            classData.courseTitle ||
+            `Lớp ${classData.className || "IELTS"}`
+          }
           courseTitle={classData.courseTitle || "Hệ thống Bác sĩ học thuật ARIS"}
-          metricDiscipline={`${submittedCount}/${homeworkList.length} Bài đã nộp (${Math.round((submittedCount / (homeworkList.length || 1)) * 100)}%)`}
-          metricScore={`${reviewedCount} Bài đã được phẫu thuật & chữa lành`}
+          metricDiscipline={
+            isEligibleForMilestone
+              ? `${submittedCount}/${homeworkList.length} Bài đã nộp (${completionRate}%)`
+              : recentCompletedHomework
+              ? "Hoàn thành 100% bài nộp"
+              : `${submittedCount}/${homeworkList.length} Bài đã nộp`
+          }
+          metricScore={
+            recentCompletedHomework?.scoreDisplay?.isGraded
+              ? recentCompletedHomework.scoreDisplay.scoreText
+              : reviewedCount > 0
+              ? `${reviewedCount} bài đã có điểm & nhận xét`
+              : recentCompletedHomework
+              ? "Đã nộp bài đầy đủ"
+              : `${submittedCount} bài đã hoàn thành`
+          }
         />
 
         {/* CIRCUIT BREAKER / GATEWAY STATUS BANNER */}

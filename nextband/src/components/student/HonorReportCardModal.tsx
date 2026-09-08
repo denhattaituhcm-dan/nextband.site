@@ -7,14 +7,17 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Check, Sparkles, Shield, Heart } from "lucide-react";
+import { Download, Check, Sparkles, Shield, Heart, FileCheck, Award } from "lucide-react";
 import { toast } from "sonner";
 import { SiteLogo } from "@/components/common/SiteLogo";
 
-interface HonorReportCardModalProps {
+export type HonorCardReportType = "DAILY_LOG" | "MILESTONE_HONOR";
+
+export interface HonorReportCardModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   studentName: string;
+  reportType?: HonorCardReportType;
   metricDiscipline?: string;
   metricScore?: string;
   examTitle?: string;
@@ -26,8 +29,9 @@ export function HonorReportCardModal({
   open,
   onOpenChange,
   studentName,
-  metricDiscipline = "100% Hoàn thành đúng hạn",
-  metricScore = "Đạt chuẩn học thuật",
+  reportType = "DAILY_LOG",
+  metricDiscipline = "100% Hoàn thành",
+  metricScore = "Đã nộp bài đầy đủ",
   examTitle = "Bài tập rèn luyện",
   courseTitle = "Hệ thống Bác sĩ học thuật ARIS",
   dateStr = new Date().toLocaleDateString("vi-VN", {
@@ -39,6 +43,26 @@ export function HonorReportCardModal({
   const [isDownloading, setIsDownloading] = useState(false);
   const [hasCopied, setHasCopied] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+
+  const isHonor = reportType === "MILESTONE_HONOR";
+
+  // Configuration based on mode
+  const badgeTitle = isHonor ? "CHỨNG NHẬN VINH DANH" : "PHIẾU GHI NHẬN HỌC TẬP";
+  const mainCardTitle = isHonor ? "BÁO CÁO PHẪU THUẬT NĂNG LỰC" : "PHIẾU GHI NHẬN RÈN LUYỆN";
+  const studentHonorRole = isHonor ? "HỌC VIÊN VINH DANH" : "HỌC VIÊN NỖ LỰC";
+  const quoteLine1 = isHonor
+    ? "“Mọi điểm nghẽn tư duy đều được phẫu thuật và chữa lành."
+    : "“Mỗi bài tập hoàn thành là một bước tiến vững chắc trên hành trình làm chủ IELTS.";
+  const quoteLine2 = isHonor
+    ? "Nỗ lực bền bỉ hôm nay là sự đền đáp xứng đáng nhất"
+    : "Nỗ lực rèn luyện hôm nay là lời khẳng định ý chí vươn lên,";
+  const quoteLine3 = isHonor
+    ? "cho niềm tin và sự đầu tư của Gia đình.”"
+    : "đền đáp xứng đáng niềm tin và sự đồng hành của Gia đình.”";
+
+  const sealTitle = isHonor ? "XÁC THỰC BỞI HỘI ĐỒNG BÁC SĨ HỌC THUẬT ARIS" : "CHỨNG THỰC BỞI HỆ THỐNG ĐÀO TẠO ARIS";
+  const sealText = isHonor ? "★ 100% ★" : "✓ VERIFIED";
+  const sealSub = isHonor ? "VERIFIED" : "OFFICIAL";
 
   // Generate crisp high-resolution PNG using native HTML5 Canvas
   const handleDownloadImage = useCallback(async () => {
@@ -63,7 +87,7 @@ export function HonorReportCardModal({
       ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, width, height);
 
-      // 2. Telemetry precision grid lines (Clinical Academic Doctor aesthetic)
+      // 2. Precision grid lines
       ctx.strokeStyle = "rgba(56, 189, 248, 0.04)";
       ctx.lineWidth = 1;
       const gridSize = 60;
@@ -80,8 +104,8 @@ export function HonorReportCardModal({
         ctx.stroke();
       }
 
-      // ECG Pulse telemetry wave in background
-      ctx.strokeStyle = "rgba(234, 179, 8, 0.08)";
+      // Telemetry wave in background
+      ctx.strokeStyle = isHonor ? "rgba(234, 179, 8, 0.08)" : "rgba(56, 189, 248, 0.08)";
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(60, 580);
@@ -95,20 +119,23 @@ export function HonorReportCardModal({
       ctx.stroke();
 
       // 3. Luxurious outer double border
-      ctx.strokeStyle = "rgba(212, 175, 55, 0.4)";
+      const primaryBorderColor = isHonor ? "rgba(212, 175, 55, 0.4)" : "rgba(56, 189, 248, 0.35)";
+      const secondaryBorderColor = isHonor ? "rgba(212, 175, 55, 0.15)" : "rgba(56, 189, 248, 0.12)";
+      ctx.strokeStyle = primaryBorderColor;
       ctx.lineWidth = 4;
       ctx.strokeRect(40, 40, width - 80, height - 80);
 
-      ctx.strokeStyle = "rgba(212, 175, 55, 0.15)";
+      ctx.strokeStyle = secondaryBorderColor;
       ctx.lineWidth = 1.5;
       ctx.strokeRect(55, 55, width - 110, height - 110);
 
       // Corner ornaments
+      const cornerColor = isHonor ? "#eab308" : "#38bdf8";
       const drawCorner = (cx: number, cy: number, rot: number) => {
         ctx.save();
         ctx.translate(cx, cy);
         ctx.rotate(rot);
-        ctx.strokeStyle = "#eab308";
+        ctx.strokeStyle = cornerColor;
         ctx.lineWidth = 4;
         ctx.beginPath();
         ctx.moveTo(0, 30);
@@ -145,7 +172,7 @@ export function HonorReportCardModal({
                 break;
               }
             } catch {
-              // try next candidate
+              // try next
             }
           }
         }
@@ -154,28 +181,27 @@ export function HonorReportCardModal({
           const logoSize = 140;
           ctx.drawImage(loadedImg, width / 2 - logoSize / 2, 120, logoSize, logoSize);
         } else {
-          // Subtle clinical crest placeholder if completely offline
-          ctx.fillStyle = "#eab308";
+          ctx.fillStyle = cornerColor;
           ctx.beginPath();
           ctx.arc(width / 2, 190, 50, 0, Math.PI * 2);
           ctx.fill();
           ctx.fillStyle = "#0a0f1d";
-          ctx.font = "900 36px 'Plus Jakarta Sans', sans-serif";
+          ctx.font = "900 36px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
           ctx.textAlign = "center";
           ctx.fillText("ARIS", width / 2, 202);
         }
       } catch {
-        ctx.fillStyle = "#eab308";
+        ctx.fillStyle = cornerColor;
         ctx.beginPath();
         ctx.arc(width / 2, 190, 50, 0, Math.PI * 2);
         ctx.fill();
         ctx.fillStyle = "#0a0f1d";
-        ctx.font = "900 36px 'Plus Jakarta Sans', sans-serif";
+        ctx.font = "900 36px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
         ctx.textAlign = "center";
         ctx.fillText("ARIS", width / 2, 202);
       }
 
-      // Wait for fonts to be ready before drawing text
+      // Wait for fonts to be ready
       if (typeof document !== "undefined" && document.fonts) {
         try {
           await document.fonts.ready;
@@ -186,16 +212,16 @@ export function HonorReportCardModal({
 
       // 5. System Header Text
       ctx.fillStyle = "#e2e8f0";
-      ctx.font = "bold 32px 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+      ctx.font = "bold 32px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
       ctx.textAlign = "center";
       ctx.fillText("ARIS CLINICAL ACADEMIC SYSTEM", width / 2, 310);
 
       ctx.fillStyle = "rgba(148, 163, 184, 0.8)";
-      ctx.font = "500 22px 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
-      ctx.fillText("HỆ THỐNG PHẪU THUẬT NĂNG LỰC & CHẨN ĐOÁN HỌC THUẬT", width / 2, 350);
+      ctx.font = "500 22px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+      ctx.fillText(badgeTitle, width / 2, 350);
 
       // Decorative divider
-      ctx.strokeStyle = "rgba(212, 175, 55, 0.5)";
+      ctx.strokeStyle = isHonor ? "rgba(212, 175, 55, 0.5)" : "rgba(56, 189, 248, 0.4)";
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.moveTo(width / 2 - 250, 390);
@@ -203,28 +229,28 @@ export function HonorReportCardModal({
       ctx.stroke();
 
       // Diamond ornament
-      ctx.fillStyle = "#eab308";
+      ctx.fillStyle = cornerColor;
       ctx.fillRect(width / 2 - 5, 385, 10, 10);
 
       // 6. Certificate Title
       ctx.fillStyle = "#f8fafc";
-      ctx.font = "900 52px 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
-      ctx.fillText("BÁO CÁO PHẪU THUẬT NĂNG LỰC", width / 2, 470);
+      ctx.font = "900 50px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+      ctx.fillText(mainCardTitle, width / 2, 470);
 
       ctx.fillStyle = "#38bdf8";
-      ctx.font = "bold 22px monospace";
+      ctx.font = "bold 22px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
       ctx.fillText(`HỌC PHẦN: ${examTitle.toUpperCase()}`, width / 2, 520);
 
-      // 7. Student Name (Hero focus)
+      // 7. Student Name
       ctx.fillStyle = "rgba(148, 163, 184, 0.7)";
-      ctx.font = "600 20px 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
-      ctx.fillText("HỌC VIÊN VINH DANH", width / 2, 600);
+      ctx.font = "600 20px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+      ctx.fillText(studentHonorRole, width / 2, 600);
 
-      ctx.fillStyle = "#fef08a";
-      ctx.font = "900 76px 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+      ctx.fillStyle = isHonor ? "#fef08a" : "#ffffff";
+      ctx.font = "900 72px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
       ctx.fillText(studentName.toUpperCase(), width / 2, 680);
 
-      // 8. Metric Cards (2 Sleek clinical badges)
+      // 8. Metric Cards (Clean, modern proportional typography - NO MONOSPACE)
       const boxW = 860;
       const boxH = 110;
       const boxX = (width - boxW) / 2;
@@ -239,56 +265,52 @@ export function HonorReportCardModal({
       ctx.stroke();
 
       ctx.fillStyle = "#38bdf8";
-      ctx.font = "bold 26px 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+      ctx.font = "bold 26px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
       ctx.textAlign = "left";
-      ctx.fillText("⚡ CHỈ SỐ SINH TỒN KỶ LUẬT:", boxX + 40, 805);
+      ctx.fillText("⚡ KỶ LUẬT HỌC TẬP:", boxX + 40, 805);
 
       ctx.fillStyle = "#ffffff";
-      ctx.font = "900 32px monospace";
+      ctx.font = "bold 30px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
       ctx.textAlign = "right";
       ctx.fillText(metricDiscipline, boxX + boxW - 40, 805);
 
       // Card 2: Competence Metric
       ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
-      ctx.strokeStyle = "rgba(234, 179, 8, 0.4)";
+      ctx.strokeStyle = isHonor ? "rgba(234, 179, 8, 0.4)" : "rgba(56, 189, 248, 0.4)";
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.roundRect(boxX, 880, boxW, boxH, 20);
       ctx.fill();
       ctx.stroke();
 
-      ctx.fillStyle = "#facc15";
-      ctx.font = "bold 26px 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+      ctx.fillStyle = isHonor ? "#facc15" : "#38bdf8";
+      ctx.font = "bold 26px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
       ctx.textAlign = "left";
       ctx.fillText("🩺 CHẨN ĐOÁN NĂNG LỰC:", boxX + 40, 945);
 
       ctx.fillStyle = "#ffffff";
-      ctx.font = "900 32px monospace";
+      ctx.font = "bold 30px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
       ctx.textAlign = "right";
       ctx.fillText(metricScore, boxX + boxW - 40, 945);
 
-      // 9. Emotional Message (Touching parents & honoring sacrifice)
+      // 9. Emotional Message
       ctx.textAlign = "center";
       ctx.fillStyle = "#f1f5f9";
-      ctx.font = "italic 30px 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+      ctx.font = "italic 28px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
 
-      const line1 = "“Mọi điểm nghẽn tư duy đều đã được phẫu thuật và chữa lành.";
-      const line2 = "Nỗ lực bền bỉ hôm nay là sự đền đáp xứng đáng nhất";
-      const line3 = "cho niềm tin và khoản đầu tư của Gia đình.”";
-
-      ctx.fillText(line1, width / 2, 1070);
-      ctx.fillText(line2, width / 2, 1120);
-      ctx.fillText(line3, width / 2, 1170);
+      ctx.fillText(quoteLine1, width / 2, 1070);
+      ctx.fillText(quoteLine2, width / 2, 1120);
+      ctx.fillText(quoteLine3, width / 2, 1170);
 
       // 10. Official Stamp & Seal Area
       const sealY = 1360;
-      ctx.fillStyle = "#eab308";
+      ctx.fillStyle = isHonor ? "#eab308" : "#0284c7";
       ctx.beginPath();
       ctx.arc(width / 2, sealY, 90, 0, Math.PI * 2);
       ctx.fill();
 
       // Ribbon details below seal
-      ctx.fillStyle = "#ca8a04";
+      ctx.fillStyle = isHonor ? "#ca8a04" : "#0369a1";
       ctx.beginPath();
       ctx.moveTo(width / 2 - 60, sealY + 60);
       ctx.lineTo(width / 2 - 80, sealY + 180);
@@ -311,34 +333,35 @@ export function HonorReportCardModal({
       ctx.arc(width / 2, sealY, 78, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.fillStyle = "#fef08a";
-      ctx.font = "bold 20px sans-serif";
+      ctx.fillStyle = isHonor ? "#fef08a" : "#7dd3fc";
+      ctx.font = "bold 20px 'Plus Jakarta Sans', system-ui, sans-serif";
       ctx.fillText("ARIS CLINICAL", width / 2, sealY - 20);
-      ctx.font = "bold 36px serif";
-      ctx.fillText("★ 100% ★", width / 2, sealY + 15);
-      ctx.font = "bold 18px sans-serif";
-      ctx.fillText("VERIFIED", width / 2, sealY + 45);
+      ctx.font = "bold 32px 'Plus Jakarta Sans', system-ui, sans-serif";
+      ctx.fillText(sealText, width / 2, sealY + 15);
+      ctx.font = "bold 18px 'Plus Jakarta Sans', system-ui, sans-serif";
+      ctx.fillText(sealSub, width / 2, sealY + 45);
 
       ctx.fillStyle = "#e2e8f0";
-      ctx.font = "bold 24px 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
-      ctx.fillText("XÁC THỰC BỞI HỘI ĐỒNG BÁC SĨ HỌC THUẬT ARIS", width / 2, 1630);
+      ctx.font = "bold 24px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+      ctx.fillText(sealTitle, width / 2, 1630);
 
       ctx.fillStyle = "rgba(148, 163, 184, 0.8)";
-      ctx.font = "18px 'JetBrains Mono', monospace";
+      ctx.font = "18px 'Plus Jakarta Sans', system-ui, sans-serif";
       const certCode = `#ARIS-MED-${Date.now().toString(36).toUpperCase()}`;
-      ctx.fillText(`MÃ CHỨNG THỰC LÂM SÀNG: ${certCode} · NGÀY: ${dateStr}`, width / 2, 1670);
+      ctx.fillText(`MÃ XÁC THỰC: ${certCode} · NGÀY: ${dateStr}`, width / 2, 1670);
 
       // Download trigger
       const dataUrl = canvas.toDataURL("image/png");
       const a = document.createElement("a");
       a.href = dataUrl;
-      a.download = `Bao_Cao_Hoc_Thuat_ARIS_${studentName.replace(/\s+/g, "_")}.png`;
+      const filePrefix = isHonor ? "Bao_Cao_Vinh_Danh_ARIS" : "Phieu_Ghi_Nhan_Hoc_Tap_ARIS";
+      a.download = `${filePrefix}_${studentName.replace(/\s+/g, "_")}.png`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
 
-      toast.success("Đã tải thẻ vinh danh thành công!", {
-        description: "Bạn có thể gửi ngay qua Zalo để chia sẻ niềm tự hào cùng Ba Mẹ.",
+      toast.success(isHonor ? "Đã tải thẻ vinh danh thành công!" : "Đã tải phiếu ghi nhận thành công!", {
+        description: "Bạn có thể gửi ngay qua Zalo để chia sẻ cùng Ba Mẹ.",
       });
     } catch (err) {
       console.error(err);
@@ -346,10 +369,12 @@ export function HonorReportCardModal({
     } finally {
       setIsDownloading(false);
     }
-  }, [studentName, metricDiscipline, metricScore, examTitle, dateStr]);
+  }, [studentName, isHonor, badgeTitle, mainCardTitle, studentHonorRole, quoteLine1, quoteLine2, quoteLine3, sealTitle, sealText, sealSub, metricDiscipline, metricScore, examTitle, dateStr]);
 
   const handleCopyText = () => {
-    const text = `Kính gửi Ba Mẹ, hôm nay con đã hoàn thành xuất sắc thử thách học tập tại ARIS với kết quả: ${metricScore}, kỷ luật: ${metricDiscipline}. Cảm ơn Ba Mẹ đã luôn tin tưởng và đồng hành cùng con! ❤️`;
+    const text = isHonor
+      ? `Kính gửi Ba Mẹ, con vừa đạt cột mốc học tập vinh danh tại ARIS với kết quả: ${metricScore}, kỷ luật: ${metricDiscipline}. Cảm ơn Ba Mẹ đã luôn tin tưởng và đồng hành cùng con! ❤️`
+      : `Kính gửi Ba Mẹ, hôm nay con đã hoàn thành bài tập [${examTitle}] tại ARIS với kết quả: ${metricScore}, kỷ luật: ${metricDiscipline}. Con đang nỗ lực từng ngày để tiến bộ hơn nữa! ❤️`;
     navigator.clipboard.writeText(text);
     setHasCopied(true);
     toast.success("Đã sao chép lời nhắn gửi Ba Mẹ!");
@@ -358,14 +383,14 @@ export function HonorReportCardModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md sm:max-w-lg p-0 overflow-hidden bg-slate-950 border-amber-500/30 text-white shadow-2xl rounded-3xl">
-        <DialogHeader className="p-4 sm:p-5 bg-gradient-to-b from-slate-900 to-slate-950 border-b border-slate-800">
+      <DialogContent className="max-w-md sm:max-w-lg p-0 bg-slate-950 border-amber-500/30 text-white shadow-2xl rounded-3xl max-h-[90vh] flex flex-col overflow-hidden">
+        <DialogHeader className="p-4 sm:p-5 bg-gradient-to-b from-slate-900 to-slate-950 border-b border-slate-800 shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping" />
-              <DialogTitle className="text-sm sm:text-base font-extrabold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-amber-400" />
-                Thẻ Báo Cáo Bác Sĩ Học Thuật
+              <span className={`w-2.5 h-2.5 rounded-full ${isHonor ? "bg-amber-400" : "bg-sky-400"} animate-ping`} />
+              <DialogTitle className={`text-sm sm:text-base font-extrabold ${isHonor ? "text-amber-400" : "text-sky-400"} uppercase tracking-wider flex items-center gap-1.5`}>
+                {isHonor ? <Award className="w-4 h-4 text-amber-400" /> : <FileCheck className="w-4 h-4 text-sky-400" />}
+                {badgeTitle}
               </DialogTitle>
             </div>
             <Badge variant="outline" className="text-[10px] text-slate-400 border-slate-700">
@@ -373,18 +398,20 @@ export function HonorReportCardModal({
             </Badge>
           </div>
           <p className="text-xs text-slate-400 mt-1">
-            Chủ động xuất chứng nhận nỗ lực để chia sẻ niềm tự hào và tri ân những người bảo trợ bạn.
+            {isHonor
+              ? "Xuất chứng nhận vinh danh cột mốc để ghi nhận nỗ lực xuất sắc của bạn."
+              : "Phiếu ghi nhận kết quả và kỷ luật làm bài hôm nay để gửi thông tin cho phụ huynh."}
           </p>
         </DialogHeader>
 
         {/* Live Visual Card Preview */}
-        <div className="p-4 sm:p-6 bg-slate-950 flex flex-col items-center">
+        <div className="p-4 sm:p-6 bg-slate-950 flex flex-col items-center flex-1 overflow-y-auto">
           <div
             ref={cardRef}
-            className="w-full max-w-sm rounded-2xl p-5 border-2 border-amber-500/40 bg-gradient-to-b from-[#0B132B] via-[#0D1B2A] to-[#080C16] shadow-xl space-y-4 relative overflow-hidden"
+            className={`w-full max-w-sm rounded-2xl p-5 border-2 ${isHonor ? "border-amber-500/40" : "border-sky-500/40"} bg-gradient-to-b from-[#0B132B] via-[#0D1B2A] to-[#080C16] shadow-xl space-y-4 relative overflow-hidden`}
           >
             {/* Top Accent Lines */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 via-sky-400 to-amber-400" />
+            <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${isHonor ? "from-amber-400 via-sky-400 to-amber-400" : "from-sky-400 via-indigo-400 to-sky-400"}`} />
 
             {/* Header: Logo & Title */}
             <div className="text-center space-y-1.5">
@@ -395,52 +422,59 @@ export function HonorReportCardModal({
                   fallbackSrc="/Logo.png"
                 />
               </div>
-              <div className="text-[10px] font-black tracking-widest text-slate-300 font-mono">
+              <div className="text-[10px] font-bold tracking-widest text-slate-300 font-sans">
                 ARIS CLINICAL ACADEMIC SYSTEM
               </div>
-              <div className="text-xs font-black text-amber-300 uppercase tracking-wide">
-                Báo Cáo Phẫu Thuật Năng Lực
+              <div className={`text-xs font-black uppercase tracking-wide ${isHonor ? "text-amber-300" : "text-sky-300"}`}>
+                {mainCardTitle}
+              </div>
+              <div className="text-[11px] font-semibold text-slate-400 truncate max-w-[280px] mx-auto">
+                {examTitle}
               </div>
             </div>
 
             {/* Student Name */}
-            <div className="text-center py-1.5 border-y border-amber-500/20">
+            <div className="text-center py-1.5 border-y border-slate-700/60">
               <span className="text-[9px] uppercase tracking-widest text-slate-400 block font-sans font-semibold">
-                Học Viên Vinh Danh
+                {studentHonorRole}
               </span>
-              <h3 className="text-xl font-black text-amber-100 uppercase tracking-tight">
+              <h3 className={`text-xl font-black uppercase tracking-tight ${isHonor ? "text-amber-100" : "text-white"}`}>
                 {studentName}
               </h3>
             </div>
 
-            {/* Metrics */}
+            {/* Metrics: Clean, balanced tabular font - NO MONOSPACE */}
             <div className="space-y-2">
-              <div className="p-2.5 rounded-xl bg-slate-900/90 border border-sky-500/30 flex items-center justify-between text-xs">
-                <span className="text-sky-300 font-bold flex items-center gap-1">
-                  ⚡ Kỷ luật sinh tồn:
+              <div className="p-3 rounded-xl bg-slate-900/90 border border-sky-500/30 flex items-center justify-between text-xs gap-2">
+                <span className="text-sky-300 font-bold flex items-center gap-1.5 shrink-0">
+                  ⚡ Kỷ luật học tập:
                 </span>
-                <span className="font-mono font-black text-white">{metricDiscipline}</span>
+                <span className="font-sans font-bold text-white text-right truncate tabular-nums tracking-normal">
+                  {metricDiscipline}
+                </span>
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-900/90 border border-amber-500/30 flex items-center justify-between text-xs">
-                <span className="text-amber-300 font-bold flex items-center gap-1">
+              <div className={`p-3 rounded-xl bg-slate-900/90 border ${isHonor ? "border-amber-500/30" : "border-sky-500/30"} flex items-center justify-between text-xs gap-2`}>
+                <span className={`${isHonor ? "text-amber-300" : "text-sky-300"} font-bold flex items-center gap-1.5 shrink-0`}>
                   🩺 Chẩn đoán năng lực:
                 </span>
-                <span className="font-mono font-black text-white">{metricScore}</span>
+                <span className="font-sans font-bold text-white text-right truncate tabular-nums tracking-normal">
+                  {metricScore}
+                </span>
               </div>
             </div>
 
             {/* Emotional Quote */}
             <div className="text-center px-2 py-1">
               <p className="text-[11.5px] italic text-slate-200 leading-relaxed font-sans font-normal antialiased">
-                “Mọi điểm nghẽn tư duy đều được phẫu thuật và chữa lành. Nỗ lực hôm nay là lời khẳng định: Niềm tin và khoản đầu tư của Gia đình đang tạo ra kết quả.”
+                {quoteLine1} {quoteLine2} {quoteLine3}
               </p>
             </div>
 
             {/* Stamp & Footer */}
-            <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[10px] text-slate-400 font-mono">
-              <div className="flex items-center gap-1 text-amber-400">
+            <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[10px] text-slate-400 font-sans">
+              <div className={`flex items-center gap-1 ${isHonor ? "text-amber-400" : "text-sky-400"}`}>
                 <Shield className="w-3.5 h-3.5" />
-                <span className="font-bold">ARIS VERIFIED</span>
+                <span className="font-bold">{isHonor ? "ARIS HONOR VERIFIED" : "ARIS ACADEMIC VERIFIED"}</span>
               </div>
               <span>{dateStr}</span>
             </div>
@@ -448,7 +482,7 @@ export function HonorReportCardModal({
         </div>
 
         {/* Modal Actions */}
-        <div className="p-4 sm:p-5 bg-slate-900 border-t border-slate-800 flex flex-col sm:flex-row items-center gap-2.5 justify-between">
+        <div className="p-4 sm:p-5 bg-slate-900 border-t border-slate-800 flex flex-col sm:flex-row items-center gap-2.5 justify-between shrink-0">
           <Button
             variant="outline"
             size="sm"
@@ -472,14 +506,19 @@ export function HonorReportCardModal({
             size="sm"
             onClick={handleDownloadImage}
             disabled={isDownloading}
-            className="w-full sm:w-auto h-9 text-xs bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black rounded-xl gap-1.5 shadow-md cursor-pointer"
+            className={`w-full sm:w-auto h-9 text-xs font-black rounded-xl gap-1.5 shadow-md cursor-pointer ${
+              isHonor
+                ? "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950"
+                : "bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white"
+            }`}
           >
             <Download className="w-3.5 h-3.5" />
-            <span>{isDownloading ? "Đang xuất ảnh..." : "Tải ảnh khoe Ba Mẹ"}</span>
+            <span>{isDownloading ? "Đang xuất ảnh..." : "Tải ảnh gửi Ba Mẹ"}</span>
           </Button>
         </div>
       </DialogContent>
     </Dialog>
   );
 }
+
 

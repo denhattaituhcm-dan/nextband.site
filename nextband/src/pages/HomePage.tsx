@@ -319,7 +319,7 @@ export default function HomePage() {
 
   // ── State machine render ─────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-slate-50/60 pb-16">
+    <div className="min-h-screen bg-[#FAF8F4] text-[#1E293B] pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 space-y-6">
         <AnnouncementBanner scopeRole="student" />
 

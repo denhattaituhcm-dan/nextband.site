@@ -615,22 +615,29 @@ export default function SubmissionDetail() {
         />
       )}
 
-      {/* Clinical Honor Report Card Modal */}
+      {/* Clinical Honor / Daily Report Card Modal */}
       <HonorReportCardModal
         open={isHonorCardOpen}
         onOpenChange={setIsHonorCardOpen}
         studentName={user?.fullName || user?.email?.split("@")[0] || "Học viên"}
-        examTitle={exam?.title || "Bài tập rèn luyện IELTS"}
+        reportType={
+          isGraded && typeof finalOverallScore === "number" && finalOverallScore >= 7.0
+            ? "MILESTONE_HONOR"
+            : objPercentage >= 85
+            ? "MILESTONE_HONOR"
+            : "DAILY_LOG"
+        }
+        examTitle={exam?.title || "Bài tập rèn luyện"}
         courseTitle={exam?.course?.title || "Hệ thống Bác sĩ học thuật ARIS"}
-        metricDiscipline="100% Hoàn thành"
+        metricDiscipline="100% Hoàn thành bài làm"
         metricScore={
           isGraded && typeof finalOverallScore === "number"
             ? `Band ${finalOverallScore} IELTS`
+            : objTotal > 0
+            ? `${objPercentage}% (${objCorrect}/${objTotal} câu đúng)`
             : isGraded
-            ? "Đã phẫu thuật & chữa lành"
-            : objPercentage > 0
-            ? `${objPercentage}% Đúng trắc nghiệm`
-            : "Đã hoàn thành nộp bài"
+            ? "Đã có nhận xét chi tiết"
+            : "Đã nộp bài đầy đủ"
         }
       />
 
