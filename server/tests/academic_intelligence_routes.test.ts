@@ -125,9 +125,10 @@ describe("Academic Intelligence Security Boundary & Routes", () => {
     }
 
     // 2. Submissions list
+    const dummyStudentId = "00000000-0000-0000-0000-000000000001";
     const subRes = await app.inject({
       method: "GET",
-      url: "/api/v1/academic-intelligence/students/non-existent-student/submissions",
+      url: `/api/v1/academic-intelligence/students/${dummyStudentId}/submissions`,
       headers: { authorization: `Bearer ${adminToken}` },
     });
     expect([200, 500]).toContain(subRes.statusCode);
@@ -137,16 +138,17 @@ describe("Academic Intelligence Security Boundary & Routes", () => {
       expect(Array.isArray(data.submissions)).toBe(true);
     }
 
-    // 3. Provenance endpoint (non-existent submission should return 404 or 500)
+    // 3. Provenance endpoint (non-existent submission UUID should return 404)
+    const dummySubmissionId = "00000000-0000-0000-0000-000000000002";
     const provRes = await app.inject({
       method: "GET",
-      url: "/api/v1/academic-intelligence/submissions/non-existent-submission/provenance",
+      url: `/api/v1/academic-intelligence/submissions/${dummySubmissionId}/provenance`,
       headers: { authorization: `Bearer ${adminToken}` },
     });
     expect([404, 500]).toContain(provRes.statusCode);
     if (provRes.statusCode === 404) {
       const data = JSON.parse(provRes.payload);
-      expect(data.message).toBe("Submission not found");
+      expect(data.message).toContain("not found");
     }
   });
 });

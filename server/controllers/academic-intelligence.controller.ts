@@ -81,7 +81,7 @@ export class AcademicIntelligenceController {
       const users = await this.prisma.user.findMany({
         where: {
           OR: [
-            { studentSkillEvidences: { some: {} } },
+            { skillEvidences: { some: {} } },
             { submissions: { some: {} } },
           ],
         },
@@ -93,10 +93,10 @@ export class AcademicIntelligenceController {
           submissions: {
             select: { id: true },
           },
-          studentSkillEvidences: {
+          skillEvidences: {
             select: { id: true },
           },
-          studentMasteries: {
+          skillMasteries: {
             select: { id: true },
           },
         },
@@ -110,13 +110,14 @@ export class AcademicIntelligenceController {
         fullName: u.fullName || u.email,
         avatarUrl: u.avatarUrl,
         submissionCount: u.submissions.length,
-        evidenceCount: u.studentSkillEvidences.length,
-        masteryCount: u.studentMasteries.length,
+        evidenceCount: u.skillEvidences.length,
+        masteryCount: u.skillMasteries.length,
       }));
 
       return reply.status(200).send({
         status: "success",
         data: formatted,
+        students: formatted,
       });
     } catch (error: any) {
       request.log.error(error, "[AcademicIntelligenceController] getStudents error");
@@ -148,26 +149,29 @@ export class AcademicIntelligenceController {
             },
           },
           answers: {
-            select: { id: true, isCorrect: true, score: true },
+            select: { id: true, score: true },
           },
         },
         orderBy: { createdAt: "desc" },
       });
 
+      const mapped = submissions.map((s) => ({
+        id: s.id,
+        examId: s.examId,
+        examTitle: s.exam?.title || "Exam",
+        examType: s.exam?.examType || "UNKNOWN",
+        status: s.status,
+        score: s.totalScore ? Number(s.totalScore) : null,
+        correctAnswers: s.correctAnswers || 0,
+        totalQuestions: s.totalQuestions || s.answers.length,
+        submittedAt: s.submittedAt,
+        createdAt: s.createdAt,
+      }));
+
       return reply.status(200).send({
         status: "success",
-        data: submissions.map((s) => ({
-          id: s.id,
-          examId: s.examId,
-          examTitle: s.exam?.title || "Exam",
-          examType: s.exam?.examType || "UNKNOWN",
-          status: s.status,
-          score: s.totalScore ? Number(s.totalScore) : null,
-          correctAnswers: s.correctAnswers || 0,
-          totalQuestions: s.totalQuestions || s.answers.length,
-          submittedAt: s.submittedAt,
-          createdAt: s.createdAt,
-        })),
+        data: mapped,
+        submissions: mapped,
       });
     } catch (error: any) {
       request.log.error(error, "[AcademicIntelligenceController] getStudentSubmissions error");
@@ -208,6 +212,7 @@ export class AcademicIntelligenceController {
           },
           answers: {
             include: {
+              evidence: true,
               question: {
                 include: {
                   skillTags: {
@@ -293,9 +298,11 @@ export class AcademicIntelligenceController {
             createdAt: ans.createdAt,
           },
           evaluation: {
-            isCorrect: (ans.score && Number(ans.score) > 0) || false,
-            scoreAwarded: ans.score ? Number(ans.score) : 0,
-            maxScore: ans.question.points || 1,
+            isCorrect: ans.evidence ? ans.evidence.isCorrect : (ans.score && Number(ans.score) > 0) || false,
+            scoreAwarded: ans.evidence ? ans.evidence.scoreAwarded : (ans.score ? Number(ans.score) : 0),
+            maxScore: ans.evidence ? ans.evidence.maxScore : (ans.question.points || 1),
+            matchedRule: ans.evidence?.matchedRule || null,
+            normalizedInput: ans.evidence?.normalizedInput || null,
           },
           skillEvidences: matchingEvidences.map((se) => ({
             id: se.id,
@@ -327,7 +334,7 @@ export class AcademicIntelligenceController {
             id: submission.id,
             examId: submission.examId,
             examTitle: submission.exam.title,
-            examType: submission.exam.type,
+            examType: submission.exam.examType,
             status: submission.status,
             totalScore: submission.totalScore ? Number(submission.totalScore) : null,
             correctAnswers: submission.correctAnswers,
