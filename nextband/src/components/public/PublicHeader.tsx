@@ -25,6 +25,7 @@ interface NavSubItem {
 interface NavItem {
   label: string;
   href: string;
+  badge?: string;
   children?: NavSubItem[];
 }
 
@@ -46,7 +47,7 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
   },
   { label: "Reading", href: "/reading" },
   { label: "Speaking Forecast", href: "/ielts-speaking-forecast" },
-  { label: "Tự học", href: "https://tuhoc.nextband.vn" },
+  { label: "Tự học", href: "https://tuhoc.nextband.vn", badge: "HOT" },
   { label: "Tiến bộ", href: "/results" },
   { label: "Giảng viên", href: "/teachers" },
   { label: "Tuyển dụng", href: "/careers" },
@@ -180,11 +181,18 @@ export function PublicHeader() {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      "px-2.5 xl:px-3 py-2 rounded-xl text-xs xl:text-[13px] font-bold tracking-wider uppercase whitespace-nowrap text-center transition-all",
-                      "text-slate-300 hover:text-white hover:bg-white/10"
+                      "relative px-2.5 xl:px-3 py-2 rounded-xl text-xs xl:text-[13px] font-bold tracking-wider uppercase whitespace-nowrap text-center transition-all inline-flex items-center gap-1.5",
+                      item.badge
+                        ? "text-amber-300 hover:text-white bg-amber-500/15 border border-amber-400/30 hover:bg-amber-500/25 shadow-xs shadow-amber-500/20"
+                        : "text-slate-300 hover:text-white hover:bg-white/10"
                     )}
                   >
-                    {item.label}
+                    <span>{item.label}</span>
+                    {item.badge && (
+                      <span className="px-1.5 py-0.2 rounded-full text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-red-500 to-amber-500 text-white shadow-xs animate-pulse">
+                        {item.badge}
+                      </span>
+                    )}
                   </a>
                 );
               }
@@ -388,10 +396,19 @@ export function PublicHeader() {
                     onClick={() => setMobileMenuOpen(false)}
                     className={cn(
                       "px-3 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-between",
-                      "text-slate-300 hover:text-white hover:bg-white/10"
+                      item.badge
+                        ? "text-amber-300 bg-amber-500/15 border border-amber-400/30"
+                        : "text-slate-300 hover:text-white hover:bg-white/10"
                     )}
                   >
-                    <span>{item.label}</span>
+                    <div className="flex items-center gap-2">
+                      <span>{item.label}</span>
+                      {item.badge && (
+                        <span className="px-1.5 py-0.2 rounded-full text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-red-500 to-amber-500 text-white shadow-xs animate-pulse">
+                          {item.badge}
+                        </span>
+                      )}
+                    </div>
                     <ArrowRight className="h-3.5 w-3.5 opacity-60" />
                   </a>
                 );
