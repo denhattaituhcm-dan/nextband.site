@@ -294,8 +294,13 @@ export default function EvidenceExplorerPage() {
                           </div>
 
                           <div className="border-t md:border-t-0 md:border-l border-slate-800/80 pt-2 md:pt-0 md:pl-3">
-                            <div className="text-[10px] uppercase font-mono text-slate-500 font-semibold">
-                              Bài Làm Học Sinh (Raw Answer)
+                            <div className="flex items-center gap-1.5">
+                              <Badge variant="outline" className="text-[9px] uppercase font-mono border-slate-700 bg-slate-800/60 text-slate-300">
+                                SOURCE
+                              </Badge>
+                              <span className="text-[10px] uppercase font-mono text-slate-400 font-semibold">
+                                Bài Làm Học Sinh (Raw Answer)
+                              </span>
                             </div>
                             <div className="text-slate-200 mt-1 font-mono font-medium">
                               {item.answer.answerText ? (
@@ -316,9 +321,13 @@ export default function EvidenceExplorerPage() {
 
                         {/* Skill Evidence & Question Tags */}
                         <div className="space-y-1.5">
-                          <div className="flex items-center gap-1.5 text-[10px] uppercase font-mono text-slate-400 font-semibold">
-                            <Network className="h-3 w-3 text-emerald-400" />
-                            <span>Vi Kỹ Năng Liên Đới (Question Tags & Normalized Evidences)</span>
+                          <div className="flex items-center gap-1.5">
+                            <Badge variant="outline" className="text-[9px] uppercase font-mono border-emerald-800/80 bg-emerald-950/40 text-emerald-400">
+                              EVIDENCE
+                            </Badge>
+                            <span className="text-[10px] uppercase font-mono text-slate-300 font-semibold">
+                              StudentSkillEvidence (Chuẩn Hóa Học Thuật)
+                            </span>
                           </div>
 
                           {item.skillEvidences.length === 0 ? (
@@ -353,9 +362,11 @@ export default function EvidenceExplorerPage() {
                           <div className="p-2.5 rounded bg-teal-950/30 border border-teal-800/60 text-xs space-y-1">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-1.5">
-                                <Stethoscope className="h-3.5 w-3.5 text-teal-400" />
+                                <Badge variant="outline" className="text-[9px] uppercase font-mono border-teal-700 bg-teal-950/60 text-teal-300">
+                                  DIAGNOSTIC
+                                </Badge>
                                 <span className="font-bold text-teal-300 font-mono text-[11px]">
-                                  {item.diagnostic.errorCode} ({item.diagnostic.errorName || "Bẫy lỗi học thuật"})
+                                  {item.diagnostic.errorCode} ({item.diagnostic.errorName || "Giả thuyết bẫy lỗi"})
                                 </span>
                               </div>
                               <Badge variant="outline" className="text-[9px] border-teal-700 text-teal-300 font-mono">
@@ -377,14 +388,19 @@ export default function EvidenceExplorerPage() {
 
               {/* Related Student Model Mastery Snapshots */}
               {provenance.masterySnapshots.length > 0 && (
-                <Card className="border-slate-800 bg-slate-900/80 mt-6">
+                <Card className="border-purple-900/50 bg-slate-900/90 mt-6">
                   <CardHeader className="py-3 px-4">
-                    <CardTitle className="text-sm font-bold text-white flex items-center gap-2">
-                      <Cpu className="h-4 w-4 text-purple-400" />
-                      Vector Năng Lực Học Sinh Liên Đới (Student Skill Mastery Snapshots)
-                    </CardTitle>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-sm font-bold text-white flex items-center gap-2">
+                        <Cpu className="h-4 w-4 text-purple-400" />
+                        <span>StudentSkillMastery (Vector Năng Lực Liên Đới)</span>
+                      </CardTitle>
+                      <Badge variant="outline" className="text-[10px] border-purple-700/80 bg-purple-950/60 text-purple-300 font-mono">
+                        DERIVED STATE — KHÔNG PHẢI EVIDENCE GỐC
+                      </Badge>
+                    </div>
                     <CardDescription className="text-xs text-slate-400">
-                      Tham số phân phối Bayesian Beta tương ứng của học sinh này trên các vi kỹ năng vừa kiểm tra.
+                      Giá trị cache suy diễn từ toàn bộ chuỗi StudentSkillEvidence thông qua phân phối Bayesian Beta (α, β). Kết quả này có thể recompute hoàn toàn về 0.
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-4 pt-0">
@@ -394,10 +410,10 @@ export default function EvidenceExplorerPage() {
                           <div className="text-purple-300 font-bold truncate">{m.skillCode}</div>
                           <div className="text-[10px] text-slate-400 truncate font-sans">{m.skillName}</div>
                           <div className="grid grid-cols-2 gap-1 text-[10px] pt-1 border-t border-slate-900 text-slate-400">
-                            <div>α: <span className="text-white font-bold">{m.alphaSuccess.toFixed(1)}</span></div>
-                            <div>β: <span className="text-white font-bold">{m.betaFailure.toFixed(1)}</span></div>
-                            <div>Mean: <span className="text-emerald-400 font-bold">{m.posteriorMean.toFixed(3)}</span></div>
-                            <div>N: <span className="text-cyan-400 font-bold">{m.totalEvidence}</span></div>
+                            <div>α (Success): <span className="text-white font-bold">{m.alphaSuccess.toFixed(1)}</span></div>
+                            <div>β (Failure): <span className="text-white font-bold">{m.betaFailure.toFixed(1)}</span></div>
+                            <div>Posterior Mean: <span className="text-emerald-400 font-bold">{m.posteriorMean.toFixed(3)}</span></div>
+                            <div>Observations (N): <span className="text-cyan-400 font-bold">{m.totalEvidence}</span></div>
                           </div>
                         </div>
                       ))}
