@@ -26,7 +26,7 @@ export function AssessmentHeader({
   isSubmitting,
 }: AssessmentHeaderProps) {
   return (
-    <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-xs">
+    <header className="w-full bg-transparent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
         {/* Left: Branding & Candidate Badge */}
         <div className="flex items-center gap-3 min-w-0">

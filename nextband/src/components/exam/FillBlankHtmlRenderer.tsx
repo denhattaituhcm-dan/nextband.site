@@ -100,12 +100,12 @@ export function FillBlankHtmlRenderer({
       if (!input) {
         input = document.createElement("input");
         input.type = "text";
-        input.placeholder = slotNumber;
+        input.placeholder = `(${slotNumber})`;
         input.className =
-          "inline-flex items-center min-w-[100px] max-w-[180px] h-8 sm:h-9 px-3 mx-1.5 my-0.5 rounded-xl border border-brand-blue/50 bg-background text-foreground text-center text-sm sm:text-base font-bold shadow-2xs focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/25 placeholder:text-muted-foreground/35 placeholder:font-bold focus:placeholder:text-transparent transition-all";
+          "inline-flex items-center min-w-[110px] max-w-[200px] h-9 px-3 mx-1.5 my-1 rounded-xl border-2 border-brand-blue/30 bg-background text-foreground text-center text-sm font-extrabold shadow-xs focus:outline-none focus:border-brand-blue focus:ring-3 focus:ring-brand-blue/20 placeholder:text-muted-foreground/45 placeholder:font-bold focus:placeholder:text-transparent transition-all";
         slot.appendChild(input);
       } else {
-        input.placeholder = slotNumber;
+        input.placeholder = `(${slotNumber})`;
       }
 
       // Crucial: Set a unique identifier for this input instance to prevent cross-contamination
@@ -142,9 +142,26 @@ export function FillBlankHtmlRenderer({
       }
     };
 
+    // Keyboard Navigation: Enter or Tab moves to the next slot seamlessly
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLInputElement;
+      if (target.tagName === "INPUT" && (e.key === "Enter" || e.key === "Tab") && !e.shiftKey) {
+        const allInputs = Array.from(document.querySelectorAll(".fill-blank-slot input")) as HTMLInputElement[];
+        const currentIndex = allInputs.indexOf(target);
+        if (currentIndex !== -1 && currentIndex < allInputs.length - 1) {
+          e.preventDefault();
+          const nextInput = allInputs[currentIndex + 1];
+          nextInput.focus();
+          nextInput.select();
+        }
+      }
+    };
+
     container.addEventListener("input", handleInput);
+    container.addEventListener("keydown", handleKeyDown);
     return () => {
       container.removeEventListener("input", handleInput);
+      container.removeEventListener("keydown", handleKeyDown);
       if (questionRefs?.current && registeredFocusIds.length > 0) {
         registeredFocusIds.forEach((focusId) => {
           questionRefs.current.delete(focusId);

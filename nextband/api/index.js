@@ -102577,23 +102577,25 @@ var ExamSubmissionService = class {
       }
     }
     const isGraded = String(submission.status).toUpperCase() === "GRADED";
+    const isSubmitted = isGraded || String(submission.status).toUpperCase() === "SUBMITTED";
     const canSeeSecrets = isGraded || isAdmin || isTeacher;
     if (submission.exam?.sections) {
       submission.exam = {
         ...submission.exam,
         sections: submission.exam.sections.map((sec) => {
           const sanitizedSec = { ...sec };
-          if (!canSeeSecrets) {
+          if (!canSeeSecrets && !isSubmitted) {
             delete sanitizedSec.audioScript;
             delete sanitizedSec.audio_script;
           }
           sanitizedSec.questionGroups = sec.questionGroups?.map((g) => ({
             ...g,
             questions: g.questions?.map((q) => {
-              const cleaned = sanitizeQuestionForStudent(q, canSeeSecrets);
               const qType = String(q.questionType || q.question_type || "").toLowerCase();
               const sType = String(sec.sectionType || sec.section_type || "").toLowerCase();
               const isSubjective = qType === "essay" || qType === "speaking" || sType === "speaking" || sType === "writing" && !["multiple_choice", "fill_blank", "matching"].includes(qType);
+              const showQuestionKey = canSeeSecrets || isSubmitted && !isSubjective;
+              const cleaned = sanitizeQuestionForStudent(q, showQuestionKey);
               const isHolistic = q.assessmentMode === "HOLISTIC" || q.scoreScope === "HOLISTIC" || isSubjective && sType === "writing";
               cleaned.assessmentMode = q.assessmentMode || (isHolistic ? "HOLISTIC" : isSubjective ? "MANUAL_ITEM" : "OBJECTIVE");
               cleaned.scoreScope = q.scoreScope || (cleaned.assessmentMode === "HOLISTIC" ? "HOLISTIC" : "ITEM");
@@ -102610,11 +102612,29 @@ var ExamSubmissionService = class {
         const sanitizedAns = { ...a };
         if (!isGraded) {
           sanitizedAns.feedback = null;
-          sanitizedAns.score = null;
+          const qId = a.questionId || a.question_id;
+          let isAnsSubjective = false;
+          if (submission.exam?.sections) {
+            for (const sec of submission.exam.sections) {
+              for (const g of sec.questionGroups || []) {
+                const foundQ = (g.questions || []).find((q) => q.id === qId);
+                if (foundQ) {
+                  const qType = String(foundQ.questionType || foundQ.question_type || "").toLowerCase();
+                  const sType = String(sec.sectionType || sec.section_type || "").toLowerCase();
+                  isAnsSubjective = qType === "essay" || qType === "speaking" || sType === "speaking" || sType === "writing" && !["multiple_choice", "fill_blank", "matching"].includes(qType);
+                  break;
+                }
+              }
+              if (isAnsSubjective) break;
+            }
+          }
+          if (isAnsSubjective || !isSubmitted) {
+            sanitizedAns.score = null;
+          }
         }
         return sanitizedAns;
       });
-      if (!isGraded) {
+      if (!isGraded && !isSubmitted) {
         submission.totalScore = null;
         submission.total_score = null;
       }

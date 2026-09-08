@@ -1,13 +1,13 @@
-import React, { useRef, useCallback } from "react";
-import { Headphones, Volume2, Clock } from "lucide-react";
+import React from "react";
+import { Headphones, Clock, Bookmark } from "lucide-react";
 import { AssessmentQuestion } from "../domain/assessment.types";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { FillBlankHtmlRenderer, hasFillBlankPlaceholders } from "@/components/exam/FillBlankHtmlRenderer";
+import { AcademicAudioPlayer } from "./AcademicAudioPlayer";
 import { sanitizeHtml } from "@/lib/sanitize";
-import { formatStorageUrl } from "@/lib/api";
 
 interface ListeningPanelProps {
   title: string;
@@ -15,6 +15,8 @@ interface ListeningPanelProps {
   questions: AssessmentQuestion[];
   answers: Record<string, any>;
   onAnswerChange: (questionId: string, value: any) => void;
+  flaggedQuestions?: Set<string>;
+  onToggleFlag?: (questionId: string) => void;
 }
 
 const cleanSectionTag = (title?: string) => {
@@ -38,33 +40,17 @@ export function ListeningPanel({
   questions,
   answers,
   onAnswerChange,
+  flaggedQuestions,
+  onToggleFlag,
 }: ListeningPanelProps) {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const maxTimeRef = useRef<number>(0);
-
-  // Prevent seeking forward beyond listened threshold
-  const handleSeeking = useCallback(() => {
-    if (!audioRef.current) return;
-    if (audioRef.current.currentTime > maxTimeRef.current + 1) {
-      audioRef.current.currentTime = maxTimeRef.current;
-    }
-  }, []);
-
-  const handleTimeUpdate = useCallback(() => {
-    if (!audioRef.current) return;
-    if (audioRef.current.currentTime > maxTimeRef.current) {
-      maxTimeRef.current = audioRef.current.currentTime;
-    }
-  }, []);
-
   const totalItemCount = questions.reduce(
     (acc, q) => acc + (q.blankCount && q.blankCount > 1 ? q.blankCount : 1),
     0,
   );
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Audio Player Card */}
+    <div className="w-full space-y-6">
+      {/* Audio Player Card with Academic Waveform */}
       <Card className="rounded-3xl border-border bg-gradient-to-br from-brand-blue-soft/30 to-background shadow-xs overflow-hidden">
         <CardContent className="p-5 sm:p-6 space-y-4">
           <div className="flex items-center justify-between">
@@ -93,22 +79,8 @@ export function ListeningPanel({
             </div>
           </div>
 
-          {/* HTML5 Audio Player with Seek Prevention */}
-          <div className="p-3.5 rounded-2xl bg-card border border-border/80 shadow-inner flex items-center gap-3">
-            <Volume2 className="w-5 h-5 text-brand-blue shrink-0" />
-            <audio
-              ref={audioRef}
-              controls
-              controlsList="nodownload noplaybackrate"
-              onTimeUpdate={handleTimeUpdate}
-              onSeeking={handleSeeking}
-              src={formatStorageUrl(audioUrl)}
-              className="w-full h-10 outline-hidden"
-              preload="auto"
-            >
-              Trình duyệt của bạn không hỗ trợ phát âm thanh HTML5.
-            </audio>
-          </div>
+          {/* High Fidelity Academic Audio Player */}
+          <AcademicAudioPlayer audioUrl={audioUrl} />
         </CardContent>
       </Card>
 
@@ -119,6 +91,7 @@ export function ListeningPanel({
           const isFillBlankWithSlots = q?.questionType === "fill_blank" && hasFillBlankPlaceholders(promptText);
           const hasHtml = promptText.includes("<") && promptText.includes(">");
           const subTag = cleanSectionTag(q.sectionTitle);
+          const isFlagged = flaggedQuestions?.has(q.id);
 
           return (
             <div
@@ -134,9 +107,26 @@ export function ListeningPanel({
                 ) : (
                   <span />
                 )}
-                <span className="text-xs font-extrabold text-muted-foreground">
-                  {q.blankCount && q.blankCount > 1 ? `${q.blankCount} chỗ trống • ` : ""}Câu {q.orderIndex || 1}
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-extrabold text-muted-foreground">
+                    {q.blankCount && q.blankCount > 1 ? `${q.blankCount} chỗ trống • ` : ""}Câu {q.orderIndex || 1}
+                  </span>
+                  {onToggleFlag && (
+                    <button
+                      type="button"
+                      onClick={() => onToggleFlag(q.id)}
+                      className={`flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+                        isFlagged
+                          ? "bg-amber-500/15 text-amber-600 border border-amber-500/30"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      }`}
+                      title={isFlagged ? "Bỏ cờ đánh dấu xem lại" : "Đánh dấu xem lại câu này (Flag)"}
+                    >
+                      <Bookmark className={`w-3.5 h-3.5 ${isFlagged ? "fill-amber-500 text-amber-500" : ""}`} />
+                      <span className="text-[11px]">{isFlagged ? "Đã gắn cờ" : "Cờ"}</span>
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Rich FillBlank HTML Slot Renderer */}

@@ -180,29 +180,33 @@ export default function PlacementExamInterface() {
         description="Làm bài khảo thí chẩn đoán 4 kỹ năng Listening, Reading, Grammar, Writing, Speaking để định vị Rank ARIS-7."
       />
 
-      {/* Focus Mode Header */}
-      <AssessmentHeader
-        candidateName={session.candidateName}
-        targetBand={session.targetBand}
-        formattedTime={formattedTime}
-        isUrgent={isUrgent}
-        saveStatus={saveStatus}
-        onOpenSubmitDialog={() => setIsSubmitDialogOpen(true)}
-        onOpenExitDialog={() => setIsExitDialogOpen(true)}
-        isSubmitting={isSubmitting}
-      />
+      {/* Sticky Top Navigation Bar (Header + Skill Tabs) */}
+      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-xs">
+        <AssessmentHeader
+          candidateName={session.candidateName}
+          targetBand={session.targetBand}
+          formattedTime={formattedTime}
+          isUrgent={isUrgent}
+          saveStatus={saveStatus}
+          onOpenSubmitDialog={() => setIsSubmitDialogOpen(true)}
+          onOpenExitDialog={() => setIsExitDialogOpen(true)}
+          isSubmitting={isSubmitting}
+        />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-3 pt-1">
+          <SkillTabs
+            activeSkill={activeSkill}
+            onSelectSkill={(skill) => {
+              setActiveSkill(skill);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            skillCounts={skillCounts}
+          />
+        </div>
+      </div>
 
       {/* Main Assessment Body */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
-        {/* Skill Tabs */}
-        <SkillTabs
-          activeSkill={activeSkill}
-          onSelectSkill={(skill) => {
-            setActiveSkill(skill);
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          }}
-          skillCounts={skillCounts}
-        />
 
         {/* Content Layout - Full Width for Maximum Reading & Question Comfort */}
         <div className="w-full space-y-6 pb-24">
@@ -243,6 +247,23 @@ export default function PlacementExamInterface() {
               maxWords={testPayload.skills.writing.maxWords || 350}
               value={answers["writing_response"] || ""}
               onChange={(val) => setAnswer("writing_response", val)}
+              pasteCount={Number(answers["writing_paste_count"] || 0)}
+              onPasteDetected={(pastedLength) => {
+                const prevCount = Number(answers["writing_paste_count"] || 0);
+                const nextCount = prevCount + 1;
+                setAnswer("writing_paste_count", nextCount);
+                const prevLogs = Array.isArray(answers["writing_paste_logs"])
+                  ? answers["writing_paste_logs"]
+                  : [];
+                setAnswer("writing_paste_logs", [
+                  ...prevLogs,
+                  {
+                    count: nextCount,
+                    length: pastedLength,
+                    timestamp: new Date().toISOString(),
+                  },
+                ]);
+              }}
             />
           )}
 

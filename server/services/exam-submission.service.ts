@@ -463,20 +463,20 @@ export class ExamSubmissionService {
 
     // Sanitize question data for student (Immutable copy without mutating database object)
     const isGraded = String(submission.status).toUpperCase() === "GRADED";
+    const isSubmitted = isGraded || String(submission.status).toUpperCase() === "SUBMITTED";
     const canSeeSecrets = isGraded || isAdmin || isTeacher;
     if (submission.exam?.sections) {
       submission.exam = {
         ...submission.exam,
         sections: submission.exam.sections.map((sec: any) => {
           const sanitizedSec = { ...sec };
-          if (!canSeeSecrets) {
+          if (!canSeeSecrets && !isSubmitted) {
             delete sanitizedSec.audioScript;
             delete sanitizedSec.audio_script;
           }
           sanitizedSec.questionGroups = sec.questionGroups?.map((g: any) => ({
             ...g,
             questions: g.questions?.map((q: any) => {
-              const cleaned = sanitizeQuestionForStudent(q, canSeeSecrets);
               const qType = String(q.questionType || q.question_type || "").toLowerCase();
               const sType = String(sec.sectionType || sec.section_type || "").toLowerCase();
 
@@ -485,6 +485,10 @@ export class ExamSubmissionService {
                 qType === "speaking" ||
                 sType === "speaking" ||
                 (sType === "writing" && !["multiple_choice", "fill_blank", "matching"].includes(qType));
+
+              // For objective questions, once the test is submitted, allow student to see answer keys/explanations
+              const showQuestionKey = canSeeSecrets || (isSubmitted && !isSubjective);
+              const cleaned = sanitizeQuestionForStudent(q, showQuestionKey);
 
               const isHolistic =
                 q.assessmentMode === "HOLISTIC" ||
@@ -502,17 +506,40 @@ export class ExamSubmissionService {
       };
     }
 
-    // Hide unpublished draft teacher feedback and draft score from student
+    // Hide unpublished draft teacher feedback and subjective score from student if not yet graded
     if (!canSeeSecrets && submission.answers) {
       submission.answers = submission.answers.map((a: any) => {
         const sanitizedAns = { ...a };
         if (!isGraded) {
           sanitizedAns.feedback = null;
-          sanitizedAns.score = null;
+          // Keep auto-graded score for objective answers if already submitted
+          const qId = a.questionId || a.question_id;
+          let isAnsSubjective = false;
+          if (submission.exam?.sections) {
+            for (const sec of submission.exam.sections) {
+              for (const g of sec.questionGroups || []) {
+                const foundQ = (g.questions || []).find((q: any) => q.id === qId);
+                if (foundQ) {
+                  const qType = String(foundQ.questionType || foundQ.question_type || "").toLowerCase();
+                  const sType = String(sec.sectionType || sec.section_type || "").toLowerCase();
+                  isAnsSubjective =
+                    qType === "essay" ||
+                    qType === "speaking" ||
+                    sType === "speaking" ||
+                    (sType === "writing" && !["multiple_choice", "fill_blank", "matching"].includes(qType));
+                  break;
+                }
+              }
+              if (isAnsSubjective) break;
+            }
+          }
+          if (isAnsSubjective || !isSubmitted) {
+            sanitizedAns.score = null;
+          }
         }
         return sanitizedAns;
       });
-      if (!isGraded) {
+      if (!isGraded && !isSubmitted) {
         submission.totalScore = null;
         submission.total_score = null;
       }

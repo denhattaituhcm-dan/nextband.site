@@ -179,7 +179,18 @@ export default function SpeakingForecastHub() {
                 <div className="p-3.5 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2 text-slate-200">
                     <Clock className="h-4 w-4 text-primary" />
-                    <span>Chu kỳ áp dụng: <strong>Tháng 5 – Tháng 8</strong></span>
+                    <span>
+                      Chu kỳ áp dụng:{' '}
+                      <strong>
+                        {latestSeason?.quarter === 1
+                          ? 'Tháng 1 – Tháng 4'
+                          : latestSeason?.quarter === 2
+                          ? 'Tháng 5 – Tháng 8'
+                          : latestSeason?.quarter === 3
+                          ? 'Tháng 9 – Tháng 12'
+                          : 'Tháng 9 – Tháng 12'}
+                      </strong>
+                    </span>
                   </div>
                   <Link
                     to={`/ielts-speaking-forecast/${latestSeasonSlug}`}
@@ -291,32 +302,69 @@ export default function SpeakingForecastHub() {
           {/* 3 Seasons Timeline Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Season 1 */}
-            <div className="p-6 sm:p-7 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 hover:border-slate-700 transition-all">
+            <div
+              className={cn(
+                "p-6 sm:p-7 rounded-2xl bg-slate-900/90 border space-y-4 transition-all",
+                (latestSeason?.quarter ?? 3) === 1
+                  ? "border-primary/40 shadow-lg shadow-primary/5"
+                  : "border-slate-800 hover:border-slate-700"
+              )}
+            >
               <div className="flex items-center justify-between">
                 <span className="text-2xl font-black text-primary">01</span>
-                <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 border border-slate-700">
+                <span
+                  className={cn(
+                    "text-xs font-bold px-2.5 py-1 rounded-md border",
+                    (latestSeason?.quarter ?? 3) === 1
+                      ? "bg-primary/20 text-primary border-primary/30"
+                      : "bg-slate-800 text-slate-300 border-slate-700"
+                  )}
+                >
                   Tháng 1 – Tháng 4
                 </span>
               </div>
-              <h3 className="text-lg font-bold text-white">Quý 1 (Season 1)</h3>
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <span>Quý 1 (Season 1)</span>
+                {(latestSeason?.quarter ?? 3) === 1 && (
+                  <span className="text-[10px] font-extrabold uppercase bg-emerald-500 text-white px-2 py-0.5 rounded">
+                    Đang diễn ra
+                  </span>
+                )}
+              </h3>
               <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                 Đỉnh sóng đầu năm. Giữ lại 50% các chủ đề từ Quý 3 năm trước, đồng thời bổ sung 50% chủ đề hoàn toàn mới bắt đầu từ đầu tháng 1.
               </p>
             </div>
 
-            {/* Season 2 (Active) */}
-            <div className="p-6 sm:p-7 rounded-2xl bg-slate-900/90 border border-primary/40 space-y-4 shadow-lg shadow-primary/5">
+            {/* Season 2 */}
+            <div
+              className={cn(
+                "p-6 sm:p-7 rounded-2xl bg-slate-900/90 border space-y-4 transition-all",
+                (latestSeason?.quarter ?? 3) === 2
+                  ? "border-primary/40 shadow-lg shadow-primary/5"
+                  : "border-slate-800 hover:border-slate-700"
+              )}
+            >
               <div className="flex items-center justify-between">
                 <span className="text-2xl font-black text-primary">02</span>
-                <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-primary/20 text-primary border border-primary/30">
+                <span
+                  className={cn(
+                    "text-xs font-bold px-2.5 py-1 rounded-md border",
+                    (latestSeason?.quarter ?? 3) === 2
+                      ? "bg-primary/20 text-primary border-primary/30"
+                      : "bg-slate-800 text-slate-300 border-slate-700"
+                  )}
+                >
                   Tháng 5 – Tháng 8
                 </span>
               </div>
               <h3 className="text-lg font-bold text-white flex items-center gap-2">
                 <span>Quý 2 (Season 2)</span>
-                <span className="text-[10px] font-extrabold uppercase bg-emerald-500 text-white px-2 py-0.5 rounded">
-                  Đang diễn ra
-                </span>
+                {(latestSeason?.quarter ?? 3) === 2 && (
+                  <span className="text-[10px] font-extrabold uppercase bg-emerald-500 text-white px-2 py-0.5 rounded">
+                    Đang diễn ra
+                  </span>
+                )}
               </h3>
               <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                 Đỉnh sóng giữa năm. Giữ lại 50% chủ đề của Quý 1 và cập nhật 50% bộ đề mới từ đầu tháng 5, phục vụ giai đoạn thi mùa hè.
@@ -324,14 +372,35 @@ export default function SpeakingForecastHub() {
             </div>
 
             {/* Season 3 */}
-            <div className="p-6 sm:p-7 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 hover:border-slate-700 transition-all">
+            <div
+              className={cn(
+                "p-6 sm:p-7 rounded-2xl bg-slate-900/90 border space-y-4 transition-all",
+                (latestSeason?.quarter ?? 3) === 3
+                  ? "border-primary/40 shadow-lg shadow-primary/5"
+                  : "border-slate-800 hover:border-slate-700"
+              )}
+            >
               <div className="flex items-center justify-between">
                 <span className="text-2xl font-black text-primary">03</span>
-                <span className="text-xs font-bold px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 border border-slate-700">
+                <span
+                  className={cn(
+                    "text-xs font-bold px-2.5 py-1 rounded-md border",
+                    (latestSeason?.quarter ?? 3) === 3
+                      ? "bg-primary/20 text-primary border-primary/30"
+                      : "bg-slate-800 text-slate-300 border-slate-700"
+                  )}
+                >
                   Tháng 9 – Tháng 12
                 </span>
               </div>
-              <h3 className="text-lg font-bold text-white">Quý 3 (Season 3)</h3>
+              <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                <span>Quý 3 (Season 3)</span>
+                {(latestSeason?.quarter ?? 3) === 3 && (
+                  <span className="text-[10px] font-extrabold uppercase bg-emerald-500 text-white px-2 py-0.5 rounded">
+                    Đang diễn ra
+                  </span>
+                )}
+              </h3>
               <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                 Mùa cao điểm nộp hồ sơ du học và xét tuyển đại học. Giữ lại 50% chủ đề từ Quý 2 và xuất hiện 50% đề mới từ tháng 9.
               </p>

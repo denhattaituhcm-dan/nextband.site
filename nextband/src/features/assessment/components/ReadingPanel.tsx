@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useMemo } from "react";
-import { BookOpen, Highlighter, RotateCcw, Clock } from "lucide-react";
+import { BookOpen, Highlighter, RotateCcw, Clock, Bookmark, ZoomIn, ZoomOut } from "lucide-react";
 import { AssessmentQuestion } from "../domain/assessment.types";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -20,6 +20,8 @@ interface ReadingPanelProps {
   questions: AssessmentQuestion[];
   answers: Record<string, any>;
   onAnswerChange: (questionId: string, value: any) => void;
+  flaggedQuestions?: Set<string>;
+  onToggleFlag?: (questionId: string) => void;
 }
 
 const cleanSectionTag = (title?: string) => {
@@ -43,8 +45,11 @@ export function ReadingPanel({
   questions,
   answers,
   onAnswerChange,
+  flaggedQuestions,
+  onToggleFlag,
 }: ReadingPanelProps) {
   const hasPassage = passage && passage.trim().length > 20;
+  const [fontSize, setFontSize] = useState<"sm" | "base" | "lg">("base");
 
   // Ensure questions are strictly sorted by orderIndex
   const sortedQuestions = useMemo(() => {
@@ -136,7 +141,7 @@ export function ReadingPanel({
       `}</style>
       {/* Left Column: Academic Reading Passage */}
       {hasPassage && (
-        <div className="lg:col-span-6 lg:sticky lg:top-20 space-y-4">
+        <div className="lg:col-span-6 lg:sticky lg:top-36 space-y-4">
           <div className="p-5 sm:p-6 rounded-3xl bg-card border border-border space-y-4 shadow-xs">
             <div className="flex items-center justify-between pb-3 border-b border-border gap-2">
               <div className="flex items-center gap-2.5">
@@ -181,6 +186,26 @@ export function ReadingPanel({
                   )}
                 </div>
 
+                {/* Font Size Adjusters */}
+                <div className="flex items-center bg-muted/60 p-0.5 rounded-xl border border-border">
+                  <button
+                    type="button"
+                    onClick={() => setFontSize((prev) => (prev === "lg" ? "base" : "sm"))}
+                    className="h-6 px-2 text-[11px] font-bold text-muted-foreground hover:text-foreground rounded-lg transition-colors cursor-pointer"
+                    title="Thu nhỏ chữ"
+                  >
+                    A-
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFontSize((prev) => (prev === "sm" ? "base" : "lg"))}
+                    className="h-6 px-2 text-[11px] font-bold text-muted-foreground hover:text-foreground rounded-lg transition-colors cursor-pointer"
+                    title="Phóng to chữ"
+                  >
+                    A+
+                  </button>
+                </div>
+
                 <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-brand-blue/10 text-brand-blue border border-brand-blue/20">
                   <Clock className="w-3 h-3" />
                   Gợi ý: ~15 phút
@@ -192,12 +217,18 @@ export function ReadingPanel({
               </div>
             </div>
 
-            {/* Passage Text Container with Justified alignment */}
+            {/* Passage Text Container with Justified alignment and Dynamic Font Size */}
             <div
               ref={passageContentRef}
               onMouseUp={handleTextSelection}
               onKeyUp={handleTextSelection}
-              className="text-xs sm:text-sm text-foreground/90 leading-relaxed space-y-4 max-h-[68vh] overflow-y-auto pr-2 text-justify select-text"
+              className={`leading-relaxed space-y-4 max-h-[68vh] overflow-y-auto pr-2 text-justify select-text ${
+                fontSize === "sm"
+                  ? "text-xs"
+                  : fontSize === "lg"
+                  ? "text-base sm:text-lg"
+                  : "text-xs sm:text-sm"
+              } text-foreground/90`}
               dangerouslySetInnerHTML={{ __html: sanitizeHtml(formattedPassageHtml) }}
             />
           </div>
@@ -211,6 +242,8 @@ export function ReadingPanel({
           const isFillBlankWithSlots = q?.questionType === "fill_blank" && hasFillBlankPlaceholders(promptText);
           const hasHtml = promptText.includes("<") && promptText.includes(">");
           const subTag = cleanSectionTag(q.sectionTitle);
+
+          const isFlagged = flaggedQuestions?.has(q.id);
 
           return (
             <div
@@ -226,9 +259,26 @@ export function ReadingPanel({
                 ) : (
                   <span />
                 )}
-                <span className="text-xs font-extrabold text-muted-foreground">
-                  {q.blankCount && q.blankCount > 1 ? `${q.blankCount} chỗ trống • ` : ""}Câu {q.orderIndex || 1}
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-extrabold text-muted-foreground">
+                    {q.blankCount && q.blankCount > 1 ? `${q.blankCount} chỗ trống • ` : ""}Câu {q.orderIndex || 1}
+                  </span>
+                  {onToggleFlag && (
+                    <button
+                      type="button"
+                      onClick={() => onToggleFlag(q.id)}
+                      className={`flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+                        isFlagged
+                          ? "bg-amber-500/15 text-amber-600 border border-amber-500/30"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      }`}
+                      title={isFlagged ? "Bỏ cờ đánh dấu xem lại" : "Đánh dấu xem lại câu này (Flag)"}
+                    >
+                      <Bookmark className={`w-3.5 h-3.5 ${isFlagged ? "fill-amber-500 text-amber-500" : ""}`} />
+                      <span className="text-[11px]">{isFlagged ? "Đã gắn cờ" : "Cờ"}</span>
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Rich FillBlank HTML Slot Renderer */}

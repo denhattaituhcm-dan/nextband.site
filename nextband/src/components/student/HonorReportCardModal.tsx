@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Download, Check, Sparkles, Shield, Heart } from "lucide-react";
 import { toast } from "sonner";
+import { SiteLogo } from "@/components/common/SiteLogo";
 
 interface HonorReportCardModalProps {
   open: boolean;
@@ -121,36 +122,76 @@ export function HonorReportCardModal({
       drawCorner(width - 40, height - 40, Math.PI);
       drawCorner(40, height - 40, (Math.PI * 3) / 2);
 
-      // 4. Logo drawing
+      // 4. Logo drawing with robust fallback chain
       try {
-        const logoImg = new Image();
-        logoImg.crossOrigin = "anonymous";
-        await new Promise((resolve, reject) => {
-          logoImg.onload = resolve;
-          logoImg.onerror = reject;
-          logoImg.src = "/Logo.png";
-        });
-        const logoSize = 140;
-        ctx.drawImage(logoImg, width / 2 - logoSize / 2, 120, logoSize, logoSize);
+        const previewImg = cardRef.current?.querySelector("img") as HTMLImageElement | null;
+        let loadedImg: HTMLImageElement | null = null;
+
+        if (previewImg && previewImg.complete && previewImg.naturalWidth > 0) {
+          loadedImg = previewImg;
+        } else {
+          const candidates = ["/Logo.png", "/logo.png", "/favicon.png", "/favicon-96x96.png"];
+          for (const src of candidates) {
+            try {
+              const img = new Image();
+              img.crossOrigin = "anonymous";
+              await new Promise((res, rej) => {
+                img.onload = () => res(img);
+                img.onerror = rej;
+                img.src = src;
+              });
+              if (img.naturalWidth > 0) {
+                loadedImg = img;
+                break;
+              }
+            } catch {
+              // try next candidate
+            }
+          }
+        }
+
+        if (loadedImg) {
+          const logoSize = 140;
+          ctx.drawImage(loadedImg, width / 2 - logoSize / 2, 120, logoSize, logoSize);
+        } else {
+          // Subtle clinical crest placeholder if completely offline
+          ctx.fillStyle = "#eab308";
+          ctx.beginPath();
+          ctx.arc(width / 2, 190, 50, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "#0a0f1d";
+          ctx.font = "900 36px 'Plus Jakarta Sans', sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText("ARIS", width / 2, 202);
+        }
       } catch {
         ctx.fillStyle = "#eab308";
         ctx.beginPath();
         ctx.arc(width / 2, 190, 50, 0, Math.PI * 2);
         ctx.fill();
         ctx.fillStyle = "#0a0f1d";
-        ctx.font = "bold 50px sans-serif";
+        ctx.font = "900 36px 'Plus Jakarta Sans', sans-serif";
         ctx.textAlign = "center";
-        ctx.fillText("A", width / 2, 208);
+        ctx.fillText("ARIS", width / 2, 202);
+      }
+
+      // Wait for fonts to be ready before drawing text
+      if (typeof document !== "undefined" && document.fonts) {
+        try {
+          await document.fonts.ready;
+        } catch {
+          // continue
+        }
       }
 
       // 5. System Header Text
       ctx.fillStyle = "#e2e8f0";
-      ctx.font = "bold 32px serif, sans-serif";
+      ctx.font = "bold 32px 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
       ctx.textAlign = "center";
       ctx.fillText("ARIS CLINICAL ACADEMIC SYSTEM", width / 2, 310);
 
       ctx.fillStyle = "rgba(148, 163, 184, 0.8)";
-      ctx.font = "500 22px sans-serif";
+      ctx.font = "500 22px 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
       ctx.fillText("HỆ THỐNG PHẪU THUẬT NĂNG LỰC & CHẨN ĐOÁN HỌC THUẬT", width / 2, 350);
 
       // Decorative divider
@@ -167,7 +208,7 @@ export function HonorReportCardModal({
 
       // 6. Certificate Title
       ctx.fillStyle = "#f8fafc";
-      ctx.font = "900 52px serif, sans-serif";
+      ctx.font = "900 52px 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
       ctx.fillText("BÁO CÁO PHẪU THUẬT NĂNG LỰC", width / 2, 470);
 
       ctx.fillStyle = "#38bdf8";
@@ -176,11 +217,11 @@ export function HonorReportCardModal({
 
       // 7. Student Name (Hero focus)
       ctx.fillStyle = "rgba(148, 163, 184, 0.7)";
-      ctx.font = "600 20px sans-serif";
+      ctx.font = "600 20px 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
       ctx.fillText("HỌC VIÊN VINH DANH", width / 2, 600);
 
       ctx.fillStyle = "#fef08a";
-      ctx.font = "900 76px serif, sans-serif";
+      ctx.font = "900 76px 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
       ctx.fillText(studentName.toUpperCase(), width / 2, 680);
 
       // 8. Metric Cards (2 Sleek clinical badges)
@@ -198,7 +239,7 @@ export function HonorReportCardModal({
       ctx.stroke();
 
       ctx.fillStyle = "#38bdf8";
-      ctx.font = "bold 26px sans-serif";
+      ctx.font = "bold 26px 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
       ctx.textAlign = "left";
       ctx.fillText("⚡ CHỈ SỐ SINH TỒN KỶ LUẬT:", boxX + 40, 805);
 
@@ -217,7 +258,7 @@ export function HonorReportCardModal({
       ctx.stroke();
 
       ctx.fillStyle = "#facc15";
-      ctx.font = "bold 26px sans-serif";
+      ctx.font = "bold 26px 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
       ctx.textAlign = "left";
       ctx.fillText("🩺 CHẨN ĐOÁN NĂNG LỰC:", boxX + 40, 945);
 
@@ -229,7 +270,7 @@ export function HonorReportCardModal({
       // 9. Emotional Message (Touching parents & honoring sacrifice)
       ctx.textAlign = "center";
       ctx.fillStyle = "#f1f5f9";
-      ctx.font = "italic 32px Georgia, serif";
+      ctx.font = "italic 30px 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
 
       const line1 = "“Mọi điểm nghẽn tư duy đều đã được phẫu thuật và chữa lành.";
       const line2 = "Nỗ lực bền bỉ hôm nay là sự đền đáp xứng đáng nhất";
@@ -278,13 +319,12 @@ export function HonorReportCardModal({
       ctx.font = "bold 18px sans-serif";
       ctx.fillText("VERIFIED", width / 2, sealY + 45);
 
-      // Verification code & authority footer
       ctx.fillStyle = "#e2e8f0";
-      ctx.font = "bold 24px sans-serif";
+      ctx.font = "bold 24px 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
       ctx.fillText("XÁC THỰC BỞI HỘI ĐỒNG BÁC SĨ HỌC THUẬT ARIS", width / 2, 1630);
 
       ctx.fillStyle = "rgba(148, 163, 184, 0.8)";
-      ctx.font = "18px monospace";
+      ctx.font = "18px 'JetBrains Mono', monospace";
       const certCode = `#ARIS-MED-${Date.now().toString(36).toUpperCase()}`;
       ctx.fillText(`MÃ CHỨNG THỰC LÂM SÀNG: ${certCode} · NGÀY: ${dateStr}`, width / 2, 1670);
 
@@ -347,31 +387,28 @@ export function HonorReportCardModal({
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 via-sky-400 to-amber-400" />
 
             {/* Header: Logo & Title */}
-            <div className="text-center space-y-1">
-              <div className="inline-flex items-center justify-center p-1 rounded-xl bg-white/5 border border-white/10 mb-1">
-                <img
-                  src="/Logo.png"
+            <div className="text-center space-y-1.5">
+              <div className="inline-flex items-center justify-center p-1.5 rounded-xl bg-white/10 border border-white/15 shadow-inner mb-0.5">
+                <SiteLogo
+                  className="w-9 h-9 object-contain"
                   alt="ARIS Logo"
-                  className="w-8 h-8 object-contain"
-                  onError={(e) => {
-                    (e.target as HTMLElement).style.display = "none";
-                  }}
+                  fallbackSrc="/Logo.png"
                 />
               </div>
               <div className="text-[10px] font-black tracking-widest text-slate-300 font-mono">
                 ARIS CLINICAL ACADEMIC SYSTEM
               </div>
-              <div className="text-xs font-serif font-black text-amber-300 uppercase tracking-wide">
+              <div className="text-xs font-black text-amber-300 uppercase tracking-wide">
                 Báo Cáo Phẫu Thuật Năng Lực
               </div>
             </div>
 
             {/* Student Name */}
-            <div className="text-center py-1 border-y border-amber-500/20">
-              <span className="text-[9px] uppercase tracking-widest text-slate-400 block font-sans">
+            <div className="text-center py-1.5 border-y border-amber-500/20">
+              <span className="text-[9px] uppercase tracking-widest text-slate-400 block font-sans font-semibold">
                 Học Viên Vinh Danh
               </span>
-              <h3 className="text-lg font-black text-amber-100 font-serif uppercase tracking-tight">
+              <h3 className="text-xl font-black text-amber-100 uppercase tracking-tight">
                 {studentName}
               </h3>
             </div>
@@ -393,8 +430,8 @@ export function HonorReportCardModal({
             </div>
 
             {/* Emotional Quote */}
-            <div className="text-center px-1">
-              <p className="text-[11px] italic font-serif text-slate-300 leading-relaxed">
+            <div className="text-center px-2 py-1">
+              <p className="text-[11.5px] italic text-slate-200 leading-relaxed font-sans font-normal antialiased">
                 “Mọi điểm nghẽn tư duy đều được phẫu thuật và chữa lành. Nỗ lực hôm nay là lời khẳng định: Niềm tin và khoản đầu tư của Gia đình đang tạo ra kết quả.”
               </p>
             </div>

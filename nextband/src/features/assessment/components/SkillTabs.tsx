@@ -7,9 +7,10 @@ interface SkillTabsProps {
   activeSkill: AssessmentSkill;
   onSelectSkill: (skill: AssessmentSkill) => void;
   skillCounts: Record<AssessmentSkill, { answered: number; total: number }>;
+  className?: string;
 }
 
-export function SkillTabs({ activeSkill, onSelectSkill, skillCounts }: SkillTabsProps) {
+export function SkillTabs({ activeSkill, onSelectSkill, skillCounts, className }: SkillTabsProps) {
   const tabs: Array<{ id: AssessmentSkill; baseLabel: string; duration: string; icon: any }> = [
     { id: "listening", baseLabel: "Listening", duration: "~10p", icon: Headphones },
     { id: "reading", baseLabel: "Reading", duration: "~15p", icon: BookOpen },
@@ -19,7 +20,7 @@ export function SkillTabs({ activeSkill, onSelectSkill, skillCounts }: SkillTabs
   ];
 
   return (
-    <div className="flex items-center gap-1.5 p-1.5 bg-muted/60 rounded-2xl border border-border overflow-x-auto no-scrollbar">
+    <div className={cn("flex items-center gap-1.5 p-1.5 bg-muted/60 rounded-2xl border border-border overflow-x-auto no-scrollbar", className)}>
       {tabs.map((tab) => {
         const Icon = tab.icon;
         const isActive = activeSkill === tab.id;

@@ -51,6 +51,7 @@ import {
   Award,
   Play,
   Pause,
+  ShieldAlert,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
@@ -1058,15 +1059,41 @@ Nếu bạn cần tư vấn chi tiết hơn về bài sửa hoặc lộ trình h
                   </div>
 
                   <div className="p-5 rounded-2xl bg-card border-2 border-border/80 space-y-3">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
                       <h4 className="text-sm font-bold text-foreground flex items-center gap-1.5">
                         <FileText className="w-4 h-4 text-primary" />
                         <span>Bài Làm Của Học Viên</span>
                       </h4>
-                      <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 text-xs font-mono font-bold">
-                        {String(detailData.answers?.["writing_response"] || "").trim().split(/\s+/).filter(Boolean).length} Từ
-                      </Badge>
+                      <div className="flex items-center gap-2">
+                        {Number(detailData.answers?.["writing_paste_count"] || 0) > 0 && (
+                          <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800 gap-1 text-xs font-bold">
+                            <ShieldAlert className="w-3.5 h-3.5 text-amber-600" />
+                            Phát hiện dán {detailData.answers["writing_paste_count"]} lần
+                          </Badge>
+                        )}
+                        <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 text-xs font-mono font-bold">
+                          {String(detailData.answers?.["writing_response"] || "").trim().split(/\s+/).filter(Boolean).length} Từ
+                        </Badge>
+                      </div>
                     </div>
+
+                    {Number(detailData.answers?.["writing_paste_count"] || 0) > 0 && (
+                      <div className="p-3 rounded-xl bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200 text-xs text-amber-800 dark:text-amber-300 space-y-1">
+                        <div className="font-semibold flex items-center gap-1.5">
+                          <ShieldAlert className="w-4 h-4 text-amber-600" />
+                          <span>Cảnh báo chống gian lận: Thí sinh đã dán (paste) nội dung {detailData.answers["writing_paste_count"]} lần vào khung làm bài.</span>
+                        </div>
+                        {Array.isArray(detailData.answers?.["writing_paste_logs"]) && detailData.answers["writing_paste_logs"].length > 0 && (
+                          <div className="pt-1 text-[11px] text-muted-foreground">
+                            {detailData.answers["writing_paste_logs"].map((log: any, idx: number) => (
+                              <div key={idx} className="font-mono">
+                                • Lần {log.count ?? (idx + 1)}: dán ~{log.length} ký tự lúc {log.timestamp ? new Date(log.timestamp).toLocaleTimeString() : "N/A"}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                     {detailData.answers?.["writing_response"] ? (
                       <div className="p-4 rounded-xl bg-muted/40 font-mono text-sm leading-relaxed text-foreground whitespace-pre-wrap select-text border border-border/60">

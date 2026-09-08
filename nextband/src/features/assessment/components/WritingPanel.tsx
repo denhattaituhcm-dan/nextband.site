@@ -1,8 +1,9 @@
 import React from "react";
-import { PenTool, AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import { PenTool, AlertCircle, CheckCircle2, Clock, ShieldAlert } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { toast } from "sonner";
 
 interface WritingPanelProps {
   title: string;
@@ -11,6 +12,8 @@ interface WritingPanelProps {
   maxWords?: number;
   value: string;
   onChange: (text: string) => void;
+  pasteCount?: number;
+  onPasteDetected?: (pastedLength: number) => void;
 }
 
 export function WritingPanel({
@@ -20,6 +23,8 @@ export function WritingPanel({
   maxWords = 350,
   value,
   onChange,
+  pasteCount = 0,
+  onPasteDetected,
 }: WritingPanelProps) {
   const wordsCount = value
     ? value
@@ -30,6 +35,19 @@ export function WritingPanel({
 
   const isOverLimit = wordsCount > maxWords;
   const hasHtml = prompt && prompt.includes("<") && prompt.includes(">");
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    // Cho phép paste bình thường (không e.preventDefault)
+    const text = e.clipboardData?.getData("text") || "";
+    const nextCount = (pasteCount || 0) + 1;
+    if (onPasteDetected) {
+      onPasteDetected(text.length);
+    }
+    toast.warning(`Hệ thống ghi nhận thao tác dán văn bản (${nextCount} lần).`, {
+      description: "Để kết quả đánh giá năng lực ARIS chính xác nhất, bạn nên tự gõ nội dung bài viết trực tiếp.",
+      duration: 4500,
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -47,6 +65,15 @@ export function WritingPanel({
           </div>
         </div>
         <div className="flex items-center gap-2">
+          {pasteCount > 0 && (
+            <Badge
+              variant="outline"
+              className="text-amber-700 bg-amber-50 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800 gap-1 text-[11px] font-semibold"
+            >
+              <ShieldAlert className="w-3 h-3 text-amber-600" />
+              Dán {pasteCount} lần
+            </Badge>
+          )}
           <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-brand-blue/10 text-brand-blue border border-brand-blue/20">
             <Clock className="w-3 h-3" />
             Gợi ý: ~20 phút
@@ -106,6 +133,7 @@ export function WritingPanel({
           <Textarea
             value={value || ""}
             onChange={(e) => onChange(e.target.value)}
+            onPaste={handlePaste}
             placeholder="Type your essay / paragraph response here in English (Hoặc để trống nếu chưa làm)..."
             rows={10}
             maxLength={3500}
@@ -122,6 +150,15 @@ export function WritingPanel({
               <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
               <span>
                 Bài viết đang vượt quá {wordsCount - maxWords} từ so với giới hạn tối đa ({maxWords} từ). Vui lòng cô đọng lại để bài viết hợp lệ.
+              </span>
+            </div>
+          )}
+
+          {pasteCount > 0 && (
+            <div className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 text-amber-800 dark:text-amber-300 text-xs font-medium">
+              <ShieldAlert className="w-4 h-4 shrink-0 text-amber-600" />
+              <span>
+                <strong>Lưu ý chống gian lận:</strong> Hệ thống đã ghi nhận {pasteCount} lần dán nội dung từ bên ngoài. Dữ liệu này được lưu kèm bài thi để Hội đồng khảo thí đối soát độ trung thực.
               </span>
             </div>
           )}
