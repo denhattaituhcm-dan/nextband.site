@@ -574,7 +574,11 @@ export default function HomePage() {
 
                 {/* IELTS Exam Goal Card */}
                 <div className="md:col-span-5">
-                  <ExamGoalCard userId={user?.id} classId={enrolledClassId} />
+                  <ExamGoalCard
+                    userId={user?.id}
+                    classId={enrolledClassId}
+                    initialCurrentBand={journey.currentBand ?? courseBands.entryBand}
+                  />
                 </div>
               </div>
             )}

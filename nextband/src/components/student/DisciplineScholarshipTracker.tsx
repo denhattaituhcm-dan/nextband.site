@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
-  Flame,
   Award,
   Sparkles,
   CheckCircle2,
@@ -9,11 +8,8 @@ import {
   Target,
   ArrowRight,
   TrendingUp,
-  ShieldCheck,
-  Zap,
 } from "lucide-react";
 import {
-  DISCIPLINE_TIERS,
   DisciplineTierKey,
   calculateDisciplineStanding,
   getSavedDisciplineGoal,
@@ -32,6 +28,46 @@ interface DisciplineScholarshipTrackerProps {
   className?: string;
   courseTitle?: string;
 }
+
+const TIERS_DISPLAY = [
+  {
+    key: "TIER_1" as DisciplineTierKey,
+    label: "Cấp 1 · 50–69%",
+    minRate: 50,
+    maxRate: 70,
+    threshold: 0.5,
+    reward: "200.000đ",
+    desc: "Khấu trừ học phí",
+  },
+  {
+    key: "TIER_2" as DisciplineTierKey,
+    label: "Cấp 2 · 70–79%",
+    minRate: 70,
+    maxRate: 80,
+    threshold: 0.7,
+    reward: "300.000đ",
+    desc: "Khấu trừ học phí",
+  },
+  {
+    key: "TIER_3" as DisciplineTierKey,
+    label: "Cấp 3 · 80–89%",
+    minRate: 80,
+    maxRate: 90,
+    threshold: 0.8,
+    reward: "400.000đ",
+    desc: "Khấu trừ học phí",
+  },
+  {
+    key: "TIER_4" as DisciplineTierKey,
+    label: "Cấp 4 · Từ 90%",
+    minRate: 90,
+    maxRate: 101,
+    threshold: 0.9,
+    reward: "500.000đ",
+    desc: "Mức Danh Dự Tối Đa",
+    isHonors: true,
+  },
+];
 
 export function DisciplineScholarshipTracker({
   submittedCount,
@@ -63,460 +99,210 @@ export function DisciplineScholarshipTracker({
     targetTierConfig,
     rewardAmount,
     rewardFormatted,
-    isMeetingTarget,
-    remainingAllowedMisses,
-    statusMessage,
     motivationalQuote,
   } = standing;
 
-  const isFlawless = effectiveTier?.key === "TIER_4";
-
   return (
-    // Outer wrapper: ivory parchment nền, double-border vàng học thuật
-    <div className="relative rounded-2xl overflow-hidden shadow-md"
-      style={{
-        background: "linear-gradient(135deg, #F7F3ED 0%, #F0EBE0 100%)",
-        border: "1px solid #C9A84C",
-        boxShadow: "0 0 0 4px #F7F3ED, 0 0 0 5px #C9A84C, 0 4px 24px rgba(121,74,28,0.10)",
-      }}
-    >
-      {/* Ornamental corner accents (CSS pseudo-borders via inset div) */}
-      <div className="absolute inset-[6px] rounded-xl pointer-events-none"
-        style={{ border: "1px solid rgba(201,168,76,0.35)" }}
-      />
+    <div className="relative rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden transition-all">
+      {/* Top accent gradient bar */}
+      <div className="h-1 w-full bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600" />
 
-      {/* Top ribbon: crimson học thuật */}
-      <div className="relative flex items-center justify-center py-2.5 px-6"
-        style={{ background: "linear-gradient(90deg, #6B1414 0%, #8B1A1A 50%, #6B1414 100%)" }}
-      >
-        {/* Side decorative lines */}
-        <div className="absolute left-5 right-5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#C9A84C] to-transparent opacity-60" />
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#C9A84C] to-transparent opacity-60" />
+      {/* Header */}
+      <div className="p-5 sm:p-6 pb-4 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-start gap-3.5">
+          <div className="w-10 h-10 rounded-xl bg-amber-500/10 dark:bg-amber-400/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-500/20">
+            <Award className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-slate-100 tracking-tight">
+                Học Bổng Kỷ Luật ARIS
+              </h3>
+              <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                Discipline &amp; Excellence
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Quy chế cam kết danh dự · Khấu trừ học phí khóa kế tiếp khi hoàn thành tối thiểu 50% bài tập quy định.
+            </p>
+          </div>
         </div>
 
-        <div className="relative flex items-center gap-3">
-          {/* Shield icon */}
-          <div className="w-8 h-8 rounded-full flex items-center justify-center"
-            style={{ background: "linear-gradient(135deg, #C9A84C, #8B6914)", border: "1.5px solid #F5DFA0" }}
-          >
-            <Award className="w-4 h-4 text-white" />
-          </div>
+        <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+          {effectiveTier ? (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+              Đã kích hoạt: {effectiveTier.rewardFormatted}
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
+              <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+              Chưa đạt mốc sàn 50%
+            </span>
+          )}
 
-          <div className="text-center">
-            <div className="text-[9px] tracking-[0.25em] font-bold uppercase text-[#C9A84C] opacity-90">
-              ACADEMIC SCHOLARSHIP SYSTEM
-            </div>
-            <div className="text-[14px] tracking-[0.18em] font-black uppercase text-white leading-none mt-0.5"
-              style={{ fontFamily: "Georgia, serif", letterSpacing: "0.15em" }}
-            >
-              HỌC BỔNG KỶ LUẬT ARIS
-            </div>
-            <div className="flex items-center justify-center gap-2 mt-0.5">
-              <div className="h-px w-10 bg-[#C9A84C] opacity-70" />
-              <span className="text-[8px] text-[#F5DFA0] tracking-widest uppercase opacity-80">— Discipline &amp; Excellence —</span>
-              <div className="h-px w-10 bg-[#C9A84C] opacity-70" />
-            </div>
-          </div>
-
-          <div className="w-8 h-8 rounded-full flex items-center justify-center"
-            style={{ background: "linear-gradient(135deg, #C9A84C, #8B6914)", border: "1.5px solid #F5DFA0" }}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setGoalModalOpen(true)}
+            className="h-8 px-3 rounded-lg border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 gap-1.5 cursor-pointer"
           >
-            <ShieldCheck className="w-4 h-4 text-white" />
-          </div>
+            <Target className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+            <span>Mục tiêu: {targetTierConfig.subTitle}</span>
+          </Button>
         </div>
       </div>
 
       {/* Body */}
-      <div className="p-5 sm:p-6 space-y-5">
-
-        {/* Subtitle row: Quy chế + trạng thái + nút mục tiêu */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[10px] tracking-[0.18em] font-bold uppercase text-[#7B1A1A]"
-              style={{ fontFamily: "Georgia, serif" }}
-            >
-              QUY CHẾ KHẾ ƯỚC DANH DỰ
-            </span>
-            {effectiveTier ? (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-sm text-[10px] font-bold text-[#166534] border border-[#166534]"
-                style={{ background: "rgba(22,101,52,0.07)", letterSpacing: "0.05em" }}
-              >
-                ✓ ĐÃ KÍCH HOẠT: {effectiveTier.rewardFormatted}
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-sm text-[10px] font-semibold text-[#92400E] border border-dashed border-[#C9A84C]"
-                style={{ background: "rgba(201,168,76,0.08)" }}
-              >
-                [Chưa đạt mốc sàn 50%]
-              </span>
-            )}
-          </div>
-          <p className="text-[11px] text-[#6B5A43] leading-relaxed max-w-xs"
-            style={{ fontFamily: "Georgia, serif", fontStyle: "italic" }}
-          >
-            Kích hoạt quỹ khấu trừ học phí khóa kế tiếp khi hoàn thành tối thiểu 50% bài tập quy định.
-          </p>
-        </div>
-
-        {/* Ornamental divider */}
-        <div className="flex items-center gap-3">
-          <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, transparent, #C9A84C 40%, #C9A84C 60%, transparent)" }} />
-          <span className="text-[#C9A84C] text-[10px]">◆</span>
-          <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, transparent, #C9A84C 40%, #C9A84C 60%, transparent)" }} />
-        </div>
-
-        {/* Progress + Mục tiêu block */}
-        <div className="rounded-lg p-4 sm:p-5 space-y-3"
-          style={{ background: "rgba(201,168,76,0.07)", border: "1px solid rgba(201,168,76,0.3)" }}
-        >
-          <div className="flex items-center justify-between flex-wrap gap-2">
-            <span className="text-[10px] tracking-[0.15em] font-bold uppercase text-[#7B1A1A]"
-              style={{ fontFamily: "Georgia, serif" }}
-            >
-              CHỈ SỐ HOÀN THÀNH BTVN
+      <div className="p-5 sm:p-6 space-y-6">
+        {/* Progress & Target section */}
+        <div className="space-y-2.5">
+          <div className="flex items-center justify-between text-xs flex-wrap gap-2">
+            <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+              <TrendingUp className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+              Tiến độ hoàn thành BTVN
             </span>
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-mono tabular-nums text-[#3D2B0E]">
-                Đã nộp: <strong className="text-[#7B1A1A]">{submittedCount}</strong> / {totalHomeworks} bài
-                (<strong className="text-[#7B1A1A]">{currentHomeworkRate}%</strong>)
+              <span className="tabular-nums text-slate-600 dark:text-slate-400">
+                Đã nộp: <strong className="text-slate-900 dark:text-slate-100 font-bold">{submittedCount}</strong> / {totalHomeworks} bài
               </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setGoalModalOpen(true)}
-                className="h-7 px-2.5 rounded border text-[#7B1A1A] font-bold text-[10px] gap-1 cursor-pointer"
-                style={{ borderColor: "rgba(123,26,26,0.35)", background: "rgba(123,26,26,0.05)", letterSpacing: "0.05em" }}
-              >
-                <Target className="w-3 h-3" />
-                <span>Mục tiêu: {targetTierConfig.subTitle}</span>
-              </Button>
+              <span className="font-bold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 tabular-nums text-xs">
+                {currentHomeworkRate}%
+              </span>
             </div>
           </div>
 
           {/* Progress bar */}
-          <div className="relative pt-1 pb-6">
-            <div className="relative w-full h-2.5 rounded-full overflow-hidden"
-              style={{ background: "rgba(201,168,76,0.15)", border: "1px solid rgba(201,168,76,0.3)" }}
-            >
+          <div className="relative pt-1 pb-5">
+            <div className="relative w-full h-3 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
               <div
                 className="h-full transition-all duration-500 rounded-full"
                 style={{
                   width: `${Math.min(100, Math.max(0, currentHomeworkRate))}%`,
                   background: currentHomeworkRate >= 50
-                    ? "linear-gradient(90deg, #C9A84C, #8B1A1A)"
-                    : "linear-gradient(90deg, #94A3B8, #64748B)",
+                    ? "linear-gradient(90deg, #10b981, #059669)"
+                    : "linear-gradient(90deg, #f59e0b, #d97706)",
                 }}
               />
             </div>
-            {/* 50% threshold marker */}
-            <div className="absolute top-0 flex flex-col items-center pointer-events-none" style={{ left: "50%" }}>
-              <div className="w-[1.5px] h-7 bg-[#8B1A1A] opacity-70" />
-              <div className="absolute top-5 -translate-x-1/2 whitespace-nowrap text-[9px] font-bold tracking-wider uppercase text-[#7B1A1A] px-1.5 py-0.5 rounded-sm"
-                style={{ background: "rgba(201,168,76,0.15)", border: "1px solid rgba(201,168,76,0.4)" }}
-              >
+            {/* 50% activation milestone marker */}
+            <div className="absolute top-0 flex flex-col items-center pointer-events-none -translate-x-1/2" style={{ left: "50%" }}>
+              <div className="w-0.5 h-3.5 bg-slate-400 dark:bg-slate-500 z-10" />
+              <div className="mt-1 text-[10px] font-medium text-slate-600 dark:text-slate-400 whitespace-nowrap bg-white dark:bg-slate-850 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 shadow-xs">
                 Mốc kích hoạt (50%)
               </div>
             </div>
           </div>
 
           {/* Status notice */}
-          <div className="flex items-center justify-between text-[10px] tracking-wide">
-            <span className={`font-semibold flex items-center gap-1 ${currentHomeworkRate < 50 ? "text-[#92400E]" : "text-[#166534]"}`}>
-              {currentHomeworkRate < 50
-                ? "⚠ Chưa đạt điều kiện kích hoạt quỹ học bổng"
-                : "✓ Đã vượt ngưỡng an toàn học bổng ARIS"}
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-0.5">
+            <span className={currentHomeworkRate >= 50 ? "text-emerald-600 dark:text-emerald-400 font-medium" : "text-amber-600 dark:text-amber-400 font-medium"}>
+              {currentHomeworkRate >= 50
+                ? "✓ Đã vượt ngưỡng an toàn học bổng ARIS"
+                : "⚠ Chưa đạt điều kiện kích hoạt quỹ học bổng"}
             </span>
-            <span className="text-[#8C7A6B]" style={{ fontFamily: "Georgia, serif", fontStyle: "italic" }}>
+            <span className="text-[11px] text-slate-400">
               Tiêu chuẩn chuyên cần: ≥ 90%
             </span>
           </div>
         </div>
 
-        {/* Ornamental divider */}
-        <div className="flex items-center gap-3">
-          <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, transparent, #C9A84C 40%, #C9A84C 60%, transparent)" }} />
-          <span className="text-[#C9A84C] text-[10px]">◆</span>
-          <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, transparent, #C9A84C 40%, #C9A84C 60%, transparent)" }} />
-        </div>
+        {/* 4 Tier Columns */}
+        <div>
+          <div className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3">
+            Bảng Phân Cấp Học Bổng
+          </div>
 
-        {/* Tier header */}
-        <div className="text-center">
-          <span className="text-[10px] tracking-[0.22em] uppercase font-bold text-[#7B1A1A]"
-            style={{ fontFamily: "Georgia, serif" }}
-          >
-            BẢNG PHÂN CẤP HỌC BỔNG
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {TIERS_DISPLAY.map((tier) => {
+              const isAchieved = currentHomeworkRate >= tier.minRate;
+              const isCurrentActive = currentHomeworkRate >= tier.minRate && currentHomeworkRate < tier.maxRate;
+              const isTarget = targetGoal === tier.key;
+              const neededToReach = Math.max(0, Math.ceil(totalHomeworks * tier.threshold) - submittedCount);
+
+              return (
+                <div
+                  key={tier.key}
+                  className={`rounded-xl p-3.5 flex flex-col justify-between space-y-3 transition-all relative overflow-hidden border ${
+                    isCurrentActive
+                      ? "border-amber-400 dark:border-amber-500 bg-amber-50/50 dark:bg-amber-950/20 shadow-xs ring-1 ring-amber-400/30"
+                      : isTarget
+                      ? "border-dashed border-indigo-400 dark:border-indigo-600 bg-indigo-50/30 dark:bg-indigo-950/20"
+                      : "border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40"
+                  } ${(!isAchieved && !isTarget) ? "opacity-80" : "opacity-100"}`}
+                >
+                  {tier.isHonors && (
+                    <div className="absolute top-0 right-0 text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-bl-md bg-gradient-to-r from-amber-500 to-amber-600 text-white">
+                      HONORS TIER
+                    </div>
+                  )}
+
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        {tier.label}
+                      </span>
+                      {isCurrentActive && (
+                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200 uppercase tracking-wider">
+                          Hiện tại
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="text-xl font-black tabular-nums text-slate-900 dark:text-slate-100 leading-none">
+                      {tier.reward}
+                    </div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                      {tier.desc}
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-slate-700/60 text-xs">
+                    {isAchieved ? (
+                      <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> {tier.isHonors ? "Đạt mức tối đa" : "Đã đạt chỉ tiêu"}
+                      </span>
+                    ) : (
+                      <span className="text-slate-600 dark:text-slate-400 font-medium">
+                        Cần thêm <strong className="text-slate-900 dark:text-slate-200 font-bold">{neededToReach}</strong> bài
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Footer CTA */}
+      <div className="px-5 sm:px-6 py-4 bg-slate-50/80 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+          <Sparkles className="w-4 h-4 shrink-0 text-amber-500" />
+          <span className="text-xs leading-relaxed">
+            {motivationalQuote}
           </span>
         </div>
 
-        {/* 4 Tier columns */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {/* Cột 1: Cấp 1 | 50–69% */}
-          {(() => {
-            const isAchieved = currentHomeworkRate >= 50;
-            const isCurrentActive = currentHomeworkRate >= 50 && currentHomeworkRate < 70;
-            const isTarget = targetGoal === "TIER_1";
-            const neededToReach = Math.max(0, Math.ceil(totalHomeworks * 0.5) - submittedCount);
-
-            return (
-              <div
-                className="rounded-lg p-3.5 flex flex-col justify-between space-y-2 transition-all"
-                style={{
-                  background: isCurrentActive
-                    ? "linear-gradient(135deg, #FFF8ED, #F7EFD8)"
-                    : isAchieved
-                    ? "rgba(201,168,76,0.06)"
-                    : "rgba(201,168,76,0.03)",
-                  border: isCurrentActive
-                    ? "1.5px solid #C9A84C"
-                    : isTarget
-                    ? "1.5px dashed #C9A84C"
-                    : "1px solid rgba(201,168,76,0.25)",
-                  boxShadow: isCurrentActive ? "0 2px 12px rgba(201,168,76,0.18)" : "none",
-                  opacity: (!isAchieved && !isTarget) ? 0.7 : 1,
-                }}
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[9px] tracking-[0.16em] font-bold uppercase text-[#8C7A6B]">CẤP 1 · 50–69%</span>
-                    {isCurrentActive && (
-                      <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-sm text-[#7B1A1A] uppercase tracking-wider"
-                        style={{ background: "rgba(201,168,76,0.25)", border: "1px solid #C9A84C" }}
-                      >HIỆN TẠI</span>
-                    )}
-                  </div>
-                  <div className="text-xl font-black tabular-nums text-[#3D2B0E] leading-none"
-                    style={{ fontFamily: "Georgia, serif" }}
-                  >200.000đ</div>
-                  <div className="text-[10px] text-[#8C7A6B] mt-0.5 italic" style={{ fontFamily: "Georgia, serif" }}>Khấu trừ học phí</div>
-                </div>
-                <div className="pt-2 text-[10px]" style={{ borderTop: "1px solid rgba(201,168,76,0.25)" }}>
-                  {isAchieved ? (
-                    <span className="text-[#166534] font-semibold flex items-center gap-1">
-                      <CheckCircle2 className="w-3 h-3" /> Đã đạt chỉ tiêu
-                    </span>
-                  ) : (
-                    <span className="text-[#7B1A1A] font-medium">Cần thêm {neededToReach} bài</span>
-                  )}
-                </div>
-              </div>
-            );
-          })()}
-
-          {/* Cột 2: Cấp 2 | 70–79% */}
-          {(() => {
-            const isAchieved = currentHomeworkRate >= 70;
-            const isCurrentActive = currentHomeworkRate >= 70 && currentHomeworkRate < 80;
-            const isTarget = targetGoal === "TIER_2";
-            const neededToReach = Math.max(0, Math.ceil(totalHomeworks * 0.7) - submittedCount);
-
-            return (
-              <div
-                className="rounded-lg p-3.5 flex flex-col justify-between space-y-2 transition-all"
-                style={{
-                  background: isCurrentActive
-                    ? "linear-gradient(135deg, #FFF8ED, #F7EFD8)"
-                    : isAchieved
-                    ? "rgba(201,168,76,0.06)"
-                    : "rgba(201,168,76,0.03)",
-                  border: isCurrentActive
-                    ? "1.5px solid #C9A84C"
-                    : isTarget
-                    ? "1.5px dashed #C9A84C"
-                    : "1px solid rgba(201,168,76,0.25)",
-                  boxShadow: isCurrentActive ? "0 2px 12px rgba(201,168,76,0.18)" : "none",
-                  opacity: (!isAchieved && !isTarget) ? 0.7 : 1,
-                }}
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[9px] tracking-[0.16em] font-bold uppercase text-[#8C7A6B]">CẤP 2 · 70–79%</span>
-                    {isCurrentActive && (
-                      <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-sm text-[#7B1A1A] uppercase tracking-wider"
-                        style={{ background: "rgba(201,168,76,0.25)", border: "1px solid #C9A84C" }}
-                      >HIỆN TẠI</span>
-                    )}
-                  </div>
-                  <div className="text-xl font-black tabular-nums text-[#3D2B0E] leading-none"
-                    style={{ fontFamily: "Georgia, serif" }}
-                  >300.000đ</div>
-                  <div className="text-[10px] text-[#8C7A6B] mt-0.5 italic" style={{ fontFamily: "Georgia, serif" }}>Khấu trừ học phí</div>
-                </div>
-                <div className="pt-2 text-[10px]" style={{ borderTop: "1px solid rgba(201,168,76,0.25)" }}>
-                  {isAchieved ? (
-                    <span className="text-[#166534] font-semibold flex items-center gap-1">
-                      <CheckCircle2 className="w-3 h-3" /> Đã đạt chỉ tiêu
-                    </span>
-                  ) : (
-                    <span className="text-[#7B1A1A] font-medium">Cần thêm {neededToReach} bài</span>
-                  )}
-                </div>
-              </div>
-            );
-          })()}
-
-          {/* Cột 3: Cấp 3 | 80–89% */}
-          {(() => {
-            const isAchieved = currentHomeworkRate >= 80;
-            const isCurrentActive = currentHomeworkRate >= 80 && currentHomeworkRate < 90;
-            const isTarget = targetGoal === "TIER_3";
-            const neededToReach = Math.max(0, Math.ceil(totalHomeworks * 0.8) - submittedCount);
-
-            return (
-              <div
-                className="rounded-lg p-3.5 flex flex-col justify-between space-y-2 transition-all"
-                style={{
-                  background: isCurrentActive
-                    ? "linear-gradient(135deg, #FFF8ED, #F7EFD8)"
-                    : isAchieved
-                    ? "rgba(201,168,76,0.06)"
-                    : "rgba(201,168,76,0.03)",
-                  border: isCurrentActive
-                    ? "1.5px solid #C9A84C"
-                    : isTarget
-                    ? "1.5px dashed #C9A84C"
-                    : "1px solid rgba(201,168,76,0.25)",
-                  boxShadow: isCurrentActive ? "0 2px 12px rgba(201,168,76,0.18)" : "none",
-                  opacity: (!isAchieved && !isTarget) ? 0.7 : 1,
-                }}
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-[9px] tracking-[0.16em] font-bold uppercase text-[#8C7A6B]">CẤP 3 · 80–89%</span>
-                    {isCurrentActive && (
-                      <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-sm text-[#7B1A1A] uppercase tracking-wider"
-                        style={{ background: "rgba(201,168,76,0.25)", border: "1px solid #C9A84C" }}
-                      >HIỆN TẠI</span>
-                    )}
-                  </div>
-                  <div className="text-xl font-black tabular-nums text-[#3D2B0E] leading-none"
-                    style={{ fontFamily: "Georgia, serif" }}
-                  >400.000đ</div>
-                  <div className="text-[10px] text-[#8C7A6B] mt-0.5 italic" style={{ fontFamily: "Georgia, serif" }}>Khấu trừ học phí</div>
-                </div>
-                <div className="pt-2 text-[10px]" style={{ borderTop: "1px solid rgba(201,168,76,0.25)" }}>
-                  {isAchieved ? (
-                    <span className="text-[#166534] font-semibold flex items-center gap-1">
-                      <CheckCircle2 className="w-3 h-3" /> Đã đạt chỉ tiêu
-                    </span>
-                  ) : (
-                    <span className="text-[#7B1A1A] font-medium">Cần thêm {neededToReach} bài</span>
-                  )}
-                </div>
-              </div>
-            );
-          })()}
-
-          {/* Cột 4: Cấp 4 | Từ 90% — HONORS TIER (nổi bật nhất) */}
-          {(() => {
-            const isAchieved = currentHomeworkRate >= 90;
-            const isCurrentActive = isAchieved;
-            const isTarget = targetGoal === "TIER_4";
-            const neededToReach = Math.max(0, Math.ceil(totalHomeworks * 0.9) - submittedCount);
-
-            return (
-              <div
-                className="rounded-lg p-3.5 flex flex-col justify-between space-y-2 transition-all relative overflow-hidden"
-                style={{
-                  background: isCurrentActive
-                    ? "linear-gradient(135deg, #7B1A1A 0%, #5A1010 100%)"
-                    : isTarget
-                    ? "linear-gradient(135deg, #FFF8ED, #F7EFD8)"
-                    : "rgba(201,168,76,0.05)",
-                  border: isCurrentActive
-                    ? "1.5px solid #C9A84C"
-                    : isTarget
-                    ? "1.5px dashed #C9A84C"
-                    : "1px solid rgba(201,168,76,0.25)",
-                  boxShadow: isCurrentActive
-                    ? "0 4px 20px rgba(123,26,26,0.3)"
-                    : "none",
-                }}
-              >
-                {/* Gold corner ribbon */}
-                <div className="absolute top-0 right-0 text-[7px] font-black uppercase tracking-widest px-2 py-0.5 rounded-bl-md"
-                  style={{
-                    background: "linear-gradient(90deg, #C9A84C, #8B6914)",
-                    color: "white",
-                  }}
-                >
-                  HONORS TIER
-                </div>
-
-                <div>
-                  <div className="flex items-center gap-1 mb-1">
-                    <span className={`text-[9px] tracking-[0.16em] font-bold uppercase ${isCurrentActive ? "text-[#F5DFA0]" : "text-[#8C6D3B]"}`}>
-                      CẤP 4 · TỪ 90%
-                    </span>
-                  </div>
-                  <div className={`text-xl font-black tabular-nums leading-none ${isCurrentActive ? "text-[#F5DFA0]" : "text-[#5A3E1B]"}`}
-                    style={{ fontFamily: "Georgia, serif" }}
-                  >500.000đ</div>
-                  <div className={`text-[10px] mt-0.5 italic font-semibold ${isCurrentActive ? "text-[#C9A84C]" : "text-[#8C6D3B]"}`}
-                    style={{ fontFamily: "Georgia, serif" }}
-                  >Mức Danh Dự Tối Đa</div>
-                </div>
-
-                <div className="pt-2 text-[10px]" style={{ borderTop: `1px solid ${isCurrentActive ? "rgba(201,168,76,0.4)" : "rgba(201,168,76,0.25)"}` }}>
-                  {isAchieved ? (
-                    <span className={`font-bold flex items-center gap-1 ${isCurrentActive ? "text-[#C9A84C]" : "text-[#166534]"}`}>
-                      <CheckCircle2 className="w-3 h-3" /> Đạt danh hiệu tối cao
-                    </span>
-                  ) : (
-                    <span className="text-[#7B1A1A] font-medium">Cần thêm {neededToReach} bài</span>
-                  )}
-                </div>
-              </div>
-            );
-          })()}
-        </div>
-
-        {/* Ornamental divider */}
-        <div className="flex items-center gap-3">
-          <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, transparent, #C9A84C 40%, #C9A84C 60%, transparent)" }} />
-          <span className="text-[#C9A84C] text-[10px]">◆</span>
-          <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, transparent, #C9A84C 40%, #C9A84C 60%, transparent)" }} />
-        </div>
-
-        {/* Footer CTA */}
-        <div className="rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-          style={{ background: "rgba(123,26,26,0.05)", border: "1px solid rgba(123,26,26,0.15)" }}
-        >
-          <div className="flex items-center gap-2 text-[#5A3825]">
-            <Sparkles className="w-4 h-4 shrink-0 text-[#C9A84C]" />
-            <span className="text-[12px] leading-relaxed italic" style={{ fontFamily: "Georgia, serif" }}>
-              {motivationalQuote}
+        <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0">
+          <div className="text-left sm:text-right">
+            <span className="text-[10px] text-slate-400 dark:text-slate-500 block uppercase tracking-wider">
+              Dự toán học bổng
+            </span>
+            <span className="text-xl font-black tabular-nums text-emerald-600 dark:text-emerald-400">
+              +{rewardFormatted}
             </span>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3.5 shrink-0">
-            <div className="text-left sm:text-right">
-              <span className="text-[10px] text-[#8C7A6B] block tracking-wider uppercase" style={{ fontFamily: "Georgia, serif" }}>
-                Dự toán học bổng
-              </span>
-              <span className="text-xl font-black tabular-nums"
-                style={{ fontFamily: "Georgia, serif", color: "#7B1A1A" }}
-              >
-                +{rewardFormatted}
-              </span>
-            </div>
-
-            <Button
-              size="sm"
-              onClick={() => setReEnrollModalOpen(true)}
-              className="h-9 px-4 rounded-md font-bold text-xs gap-2 shadow-sm cursor-pointer transition-all text-white"
-              style={{
-                background: "linear-gradient(135deg, #7B1A1A, #5A1010)",
-                border: "1px solid #C9A84C",
-                letterSpacing: "0.05em",
-                fontFamily: "Georgia, serif",
-              }}
-            >
-              <Award className="w-3.5 h-3.5 text-[#C9A84C]" />
-              <span>Tái Đăng Ký Khóa Tiếp Theo</span>
-              <ArrowRight className="w-3.5 h-3.5 text-[#C9A84C]" />
-            </Button>
-          </div>
+          <Button
+            size="sm"
+            onClick={() => setReEnrollModalOpen(true)}
+            className="h-9 px-4 rounded-xl font-bold text-xs gap-2 shadow-xs bg-slate-900 hover:bg-slate-800 text-white dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white cursor-pointer transition-all"
+          >
+            <Award className="w-3.5 h-3.5 text-amber-400 dark:text-amber-600" />
+            <span>Tái Đăng Ký Khóa Tiếp Theo</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Button>
         </div>
       </div>
 
