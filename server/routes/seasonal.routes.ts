@@ -83,6 +83,7 @@ export default async function seasonalRoutes(fastify: FastifyInstance) {
       budgetCap?: number;
       totalSlots?: number;
       uiConfig?: any;
+      pools?: Array<{ id?: string; tier?: string; amount: number; totalSlots: number; order?: number }>;
     };
   }>(
     "/admin/events/:id",
@@ -97,6 +98,64 @@ export default async function seasonalRoutes(fastify: FastifyInstance) {
         });
       } catch (err: any) {
         return reply.status(400).send({ error: err.message });
+      }
+    }
+  );
+
+  // 6. GET /api/v1/seasonal/admin/events/:id/payouts - Admin: get student payout list
+  fastify.get<{ Params: { id: string } }>(
+    "/admin/events/:id/payouts",
+    { preHandler: [authenticate, requireRoles("admin", "superadmin")] },
+    async (request, reply) => {
+      try {
+        const { id } = request.params;
+        const payouts = await service.getPayoutList(id);
+        return reply.send({
+          success: true,
+          payouts,
+        });
+      } catch (err: any) {
+        return reply.status(500).send({ error: err.message });
+      }
+    }
+  );
+
+  // 7. PUT /api/v1/seasonal/admin/events/:id/payouts/:studentId/disburse - Admin: toggle student disbursed state
+  fastify.put<{
+    Params: { id: string; studentId: string };
+    Body: { isDisbursed: boolean };
+  }>(
+    "/admin/events/:id/payouts/:studentId/disburse",
+    { preHandler: [authenticate, requireRoles("admin", "superadmin")] },
+    async (request, reply) => {
+      try {
+        const { id, studentId } = request.params;
+        const { isDisbursed } = request.body;
+        const result = await service.togglePayoutDisbursed(id, studentId, isDisbursed);
+        return reply.send({
+          success: true,
+          ...result,
+        });
+      } catch (err: any) {
+        return reply.status(400).send({ error: err.message });
+      }
+    }
+  );
+
+  // 8. DELETE /api/v1/seasonal/admin/events/:id/payouts - Admin: clear/reset payout list
+  fastify.delete<{ Params: { id: string } }>(
+    "/admin/events/:id/payouts",
+    { preHandler: [authenticate, requireRoles("admin", "superadmin")] },
+    async (request, reply) => {
+      try {
+        const { id } = request.params;
+        const result = await service.clearPayoutList(id);
+        return reply.send({
+          success: true,
+          ...result,
+        });
+      } catch (err: any) {
+        return reply.status(500).send({ error: err.message });
       }
     }
   );

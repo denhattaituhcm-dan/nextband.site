@@ -65,3 +65,18 @@ export interface SeasonalClaimResult {
   isPoolExhausted: boolean;
   message?: string;
 }
+
+export interface SeasonalPayoutItem {
+  studentId: string;
+  studentName: string;
+  email: string;
+  phone: string;
+  className: string;
+  totalCash: number;
+  totalHonorXp: number;
+  claimsCount: number;
+  isDisbursed: boolean;
+  disbursedAt: string | null;
+  lastClaimedAt: string;
+}
+

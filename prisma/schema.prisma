@@ -1414,6 +1414,8 @@ model SeasonalRewardClaim {
   rewardType   String        @default("CASH") @map("reward_type") // "CASH", "VOUCHER", "HONOR_XP"
   amount       Int           @default(0) // in VND or XP
   milestoneKey String?       @map("milestone_key")
+  isDisbursed  Boolean       @default(false) @map("is_disbursed")
+  disbursedAt  DateTime?     @map("disbursed_at")
   claimedAt    DateTime      @default(now()) @map("claimed_at")
 
   event        SeasonalEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)

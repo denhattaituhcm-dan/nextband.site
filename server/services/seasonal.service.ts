@@ -418,10 +418,18 @@ export class SeasonalService {
       budgetCap?: number;
       totalSlots?: number;
       uiConfig?: Partial<SeasonalUIConfig>;
+      pools?: Array<{
+        id?: string;
+        tier?: string;
+        amount: number;
+        totalSlots: number;
+        order?: number;
+      }>;
     }
   ) {
     const existing = await this.prisma.seasonalEvent.findUnique({
       where: { id },
+      include: { rewardPool: true },
     });
     if (!existing) {
       throw new Error("Không tìm thấy sự kiện");
@@ -440,6 +448,25 @@ export class SeasonalService {
       ...(data.uiConfig || {}),
     };
 
+    // If pools are provided, update them
+    if (data.pools && Array.isArray(data.pools) && data.pools.length > 0) {
+      await this.prisma.$transaction(async (tx) => {
+        await tx.seasonalRewardPool.deleteMany({
+          where: { eventId: id },
+        });
+
+        await tx.seasonalRewardPool.createMany({
+          data: data.pools!.map((p, idx) => ({
+            eventId: id,
+            tier: p.tier || (idx === 0 ? "SMALL" : idx === 1 ? "MEDIUM" : idx === 2 ? "LARGE" : "SPECIAL"),
+            amount: Math.max(1000, Number(p.amount) || 5000),
+            totalSlots: Math.max(1, Number(p.totalSlots) || 10),
+            order: p.order !== undefined ? p.order : idx + 1,
+          })),
+        });
+      });
+    }
+
     return await this.prisma.seasonalEvent.update({
       where: { id },
       data: {
@@ -453,6 +480,122 @@ export class SeasonalService {
       include: {
         rewardPool: { orderBy: { order: "asc" } },
       },
+    });
+  }
+
+  /**
+   * Admin: Get aggregated payout list of students for an event
+   */
+  async getPayoutList(eventId: string) {
+    const claims = await this.prisma.seasonalRewardClaim.findMany({
+      where: { eventId },
+      include: {
+        student: {
+          select: {
+            id: true,
+            userId: true,
+            fullName: true,
+            email: true,
+            phone: true,
+            classesAsStudent: {
+              select: {
+                class: {
+                  select: { name: true },
+                },
+              },
+              take: 1,
+            },
+          },
+        },
+      },
+      orderBy: { claimedAt: "desc" },
+    });
+
+    const studentMap = new Map<string, {
+      studentId: string;
+      studentName: string;
+      phone: string;
+      email: string;
+      className: string;
+      claimsCount: number;
+      totalCash: number;
+      totalXp: number;
+      isDisbursed: boolean;
+      disbursedAt: Date | null;
+      latestClaimAt: Date;
+    }>();
+
+    for (const claim of claims) {
+      const sId = claim.studentId;
+      if (!studentMap.has(sId)) {
+        const studentInfo = claim.student;
+        const className = studentInfo?.classesAsStudent?.[0]?.class?.name || "Khóa tự do";
+        studentMap.set(sId, {
+          studentId: sId,
+          studentName: studentInfo?.fullName || "Học viên",
+          phone: studentInfo?.phone || "Chưa cập nhật",
+          email: studentInfo?.email || "",
+          className,
+          claimsCount: 0,
+          totalCash: 0,
+          totalXp: 0,
+          isDisbursed: true,
+          disbursedAt: claim.disbursedAt,
+          latestClaimAt: claim.claimedAt,
+        });
+      }
+
+      const item = studentMap.get(sId)!;
+      item.claimsCount += 1;
+      if (claim.rewardType === "CASH") {
+        item.totalCash += claim.amount;
+      } else if (claim.rewardType === "HONOR_XP") {
+        item.totalXp += claim.amount;
+      }
+      if (!claim.isDisbursed) {
+        item.isDisbursed = false;
+      }
+      if (claim.claimedAt > item.latestClaimAt) {
+        item.latestClaimAt = claim.claimedAt;
+      }
+    }
+
+    return Array.from(studentMap.values()).sort((a, b) => b.totalCash - a.totalCash);
+  }
+
+  /**
+   * Admin: Toggle disbursed state for a student
+   */
+  async togglePayoutDisbursed(eventId: string, studentId: string, isDisbursed: boolean) {
+    return await this.prisma.seasonalRewardClaim.updateMany({
+      where: { eventId, studentId },
+      data: {
+        isDisbursed,
+        disbursedAt: isDisbursed ? new Date() : null,
+      },
+    });
+  }
+
+  /**
+   * Admin: Clear/Reset entire payout list for an event
+   */
+  async clearPayoutList(eventId: string) {
+    return await this.prisma.$transaction(async (tx) => {
+      // 1. Delete all claims for this event
+      const deleteResult = await tx.seasonalRewardClaim.deleteMany({
+        where: { eventId },
+      });
+
+      // 2. Reset claimed slots on all pools back to 0
+      await tx.seasonalRewardPool.updateMany({
+        where: { eventId },
+        data: { claimedSlots: 0 },
+      });
+
+      return {
+        success: true,
+        deletedCount: deleteResult.count,
+      };
     });
   }
 }
