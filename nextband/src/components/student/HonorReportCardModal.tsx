@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Check, Sparkles, Shield, Heart, FileCheck, Award } from "lucide-react";
+import { Download, Check, Shield, Heart, FileCheck, Award } from "lucide-react";
 import { toast } from "sonner";
 import { SiteLogo } from "@/components/common/SiteLogo";
 
@@ -23,6 +23,34 @@ export interface HonorReportCardModalProps {
   examTitle?: string;
   courseTitle?: string;
   dateStr?: string;
+}
+
+/**
+ * Helper to wrap text into multiple lines fitting maxWidth on canvas
+ */
+function wrapCanvasText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number
+): string[] {
+  const words = text.split(" ");
+  const lines: string[] = [];
+  let currentLine = "";
+
+  for (const word of words) {
+    const testLine = currentLine ? `${currentLine} ${word}` : word;
+    const testWidth = ctx.measureText(testLine).width;
+    if (testWidth > maxWidth && currentLine) {
+      lines.push(currentLine);
+      currentLine = word;
+    } else {
+      currentLine = testLine;
+    }
+  }
+  if (currentLine) {
+    lines.push(currentLine);
+  }
+  return lines;
 }
 
 export function HonorReportCardModal({
@@ -50,26 +78,21 @@ export function HonorReportCardModal({
   const badgeTitle = isHonor ? "CHỨNG NHẬN VINH DANH" : "PHIẾU GHI NHẬN HỌC TẬP";
   const mainCardTitle = isHonor ? "BÁO CÁO PHẪU THUẬT NĂNG LỰC" : "PHIẾU GHI NHẬN RÈN LUYỆN";
   const studentHonorRole = isHonor ? "HỌC VIÊN VINH DANH" : "HỌC VIÊN NỖ LỰC";
-  const quoteLine1 = isHonor
-    ? "“Mọi điểm nghẽn tư duy đều được phẫu thuật và chữa lành."
-    : "“Mỗi bài tập hoàn thành là một bước tiến vững chắc trên hành trình làm chủ IELTS.";
-  const quoteLine2 = isHonor
-    ? "Nỗ lực bền bỉ hôm nay là sự đền đáp xứng đáng nhất"
-    : "Nỗ lực rèn luyện hôm nay là lời khẳng định ý chí vươn lên,";
-  const quoteLine3 = isHonor
-    ? "cho niềm tin và sự đầu tư của Gia đình.”"
-    : "đền đáp xứng đáng niềm tin và sự đồng hành của Gia đình.”";
+  const quoteText = isHonor
+    ? "“Mọi điểm nghẽn tư duy đều được phẫu thuật và chữa lành. Nỗ lực bền bỉ hôm nay là sự đền đáp xứng đáng nhất cho niềm tin và sự đầu tư của Gia đình.”"
+    : "“Mỗi bài tập hoàn thành là một bước tiến vững chắc trên hành trình làm chủ IELTS. Nỗ lực rèn luyện hôm nay là lời khẳng định ý chí vươn lên, đền đáp xứng đáng niềm tin và sự đồng hành của Gia đình.”";
 
   const sealTitle = isHonor ? "XÁC THỰC BỞI HỘI ĐỒNG BÁC SĨ HỌC THUẬT ARIS" : "CHỨNG THỰC BỞI HỆ THỐNG ĐÀO TẠO ARIS";
   const sealText = isHonor ? "★ 100% ★" : "✓ VERIFIED";
   const sealSub = isHonor ? "VERIFIED" : "OFFICIAL";
 
-  // Generate crisp high-resolution PNG using native HTML5 Canvas
+  // Generate crisp high-resolution PNG with bright, balanced academic certificate layout
   const handleDownloadImage = useCallback(async () => {
     setIsDownloading(true);
     try {
+      // Golden ratio certificate dimension (1080 x 1260) - balanced, no awkward stretching
       const width = 1080;
-      const height = 1920;
+      const height = 1260;
       const canvas = document.createElement("canvas");
       canvas.width = width;
       canvas.height = height;
@@ -79,75 +102,96 @@ export function HonorReportCardModal({
         throw new Error("Cannot get canvas context");
       }
 
-      // 1. Background (Midnight obsidian with gradient)
+      // 1. Premium bright background (Warm white / pearl ivory with soft gradient)
       const bgGrad = ctx.createLinearGradient(0, 0, width, height);
-      bgGrad.addColorStop(0, "#080c16");
-      bgGrad.addColorStop(0.5, "#0d1424");
-      bgGrad.addColorStop(1, "#070b14");
+      if (isHonor) {
+        bgGrad.addColorStop(0, "#ffffff");
+        bgGrad.addColorStop(0.5, "#fffdf5");
+        bgGrad.addColorStop(1, "#fefce8");
+      } else {
+        bgGrad.addColorStop(0, "#ffffff");
+        bgGrad.addColorStop(0.5, "#f8fafc");
+        bgGrad.addColorStop(1, "#f0f7ff");
+      }
       ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, width, height);
 
-      // 2. Precision grid lines
-      ctx.strokeStyle = "rgba(56, 189, 248, 0.04)";
+      // Subtle radial warmth in center
+      const centerGlow = ctx.createRadialGradient(width / 2, height / 2, 60, width / 2, height / 2, 580);
+      centerGlow.addColorStop(0, isHonor ? "rgba(254, 240, 138, 0.2)" : "rgba(224, 242, 254, 0.35)");
+      centerGlow.addColorStop(1, "rgba(255, 255, 255, 0)");
+      ctx.fillStyle = centerGlow;
+      ctx.fillRect(0, 0, width, height);
+
+      // 2. Subtle luxury academic guilloche / grid lines
+      ctx.strokeStyle = isHonor ? "rgba(217, 119, 6, 0.035)" : "rgba(2, 132, 199, 0.035)";
       ctx.lineWidth = 1;
-      const gridSize = 60;
-      for (let x = 0; x < width; x += gridSize) {
+      const gridSize = 45;
+      for (let x = 46; x <= width - 46; x += gridSize) {
         ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, height);
+        ctx.moveTo(x, 46);
+        ctx.lineTo(x, height - 46);
         ctx.stroke();
       }
-      for (let y = 0; y < height; y += gridSize) {
+      for (let y = 46; y <= height - 46; y += gridSize) {
         ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(width, y);
+        ctx.moveTo(46, y);
+        ctx.lineTo(width - 46, y);
         ctx.stroke();
       }
 
-      // Telemetry wave in background
-      ctx.strokeStyle = isHonor ? "rgba(234, 179, 8, 0.08)" : "rgba(56, 189, 248, 0.08)";
-      ctx.lineWidth = 2;
+      // Subtle telemetry wave in background
+      ctx.strokeStyle = isHonor ? "rgba(217, 119, 6, 0.07)" : "rgba(2, 132, 199, 0.07)";
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.moveTo(60, 580);
-      ctx.lineTo(300, 580);
-      ctx.lineTo(360, 520);
-      ctx.lineTo(410, 640);
-      ctx.lineTo(470, 480);
-      ctx.lineTo(530, 610);
-      ctx.lineTo(580, 580);
-      ctx.lineTo(width - 60, 580);
+      ctx.moveTo(60, 480);
+      ctx.lineTo(320, 480);
+      ctx.lineTo(360, 440);
+      ctx.lineTo(400, 520);
+      ctx.lineTo(440, 420);
+      ctx.lineTo(480, 500);
+      ctx.lineTo(520, 480);
+      ctx.lineTo(width - 60, 480);
       ctx.stroke();
 
       // 3. Luxurious outer double border
-      const primaryBorderColor = isHonor ? "rgba(212, 175, 55, 0.4)" : "rgba(56, 189, 248, 0.35)";
-      const secondaryBorderColor = isHonor ? "rgba(212, 175, 55, 0.15)" : "rgba(56, 189, 248, 0.12)";
-      ctx.strokeStyle = primaryBorderColor;
-      ctx.lineWidth = 4;
-      ctx.strokeRect(40, 40, width - 80, height - 80);
+      const primaryBorderColor = isHonor ? "#b45309" : "#0284c7";
+      const secondaryBorderColor = isHonor ? "rgba(217, 119, 6, 0.28)" : "rgba(2, 132, 199, 0.28)";
 
+      // Outer border
+      ctx.strokeStyle = primaryBorderColor;
+      ctx.lineWidth = 3.5;
+      ctx.strokeRect(32, 32, width - 64, height - 64);
+
+      // Inner border
       ctx.strokeStyle = secondaryBorderColor;
       ctx.lineWidth = 1.5;
-      ctx.strokeRect(55, 55, width - 110, height - 110);
+      ctx.strokeRect(46, 46, width - 92, height - 92);
 
       // Corner ornaments
-      const cornerColor = isHonor ? "#eab308" : "#38bdf8";
+      const cornerColor = isHonor ? "#d97706" : "#0284c7";
       const drawCorner = (cx: number, cy: number, rot: number) => {
         ctx.save();
         ctx.translate(cx, cy);
         ctx.rotate(rot);
         ctx.strokeStyle = cornerColor;
-        ctx.lineWidth = 4;
+        ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(0, 30);
+        ctx.moveTo(0, 24);
         ctx.lineTo(0, 0);
-        ctx.lineTo(30, 0);
+        ctx.lineTo(24, 0);
         ctx.stroke();
+        // Dot at corner
+        ctx.fillStyle = cornerColor;
+        ctx.beginPath();
+        ctx.arc(6, 6, 2.5, 0, Math.PI * 2);
+        ctx.fill();
         ctx.restore();
       };
-      drawCorner(40, 40, 0);
-      drawCorner(width - 40, 40, Math.PI / 2);
-      drawCorner(width - 40, height - 40, Math.PI);
-      drawCorner(40, height - 40, (Math.PI * 3) / 2);
+      drawCorner(46, 46, 0);
+      drawCorner(width - 46, 46, Math.PI / 2);
+      drawCorner(width - 46, height - 46, Math.PI);
+      drawCorner(46, height - 46, (Math.PI * 3) / 2);
 
       // 4. Logo drawing with robust fallback chain
       try {
@@ -178,27 +222,27 @@ export function HonorReportCardModal({
         }
 
         if (loadedImg) {
-          const logoSize = 140;
-          ctx.drawImage(loadedImg, width / 2 - logoSize / 2, 120, logoSize, logoSize);
+          const logoSize = 96;
+          ctx.drawImage(loadedImg, width / 2 - logoSize / 2, 86, logoSize, logoSize);
         } else {
           ctx.fillStyle = cornerColor;
           ctx.beginPath();
-          ctx.arc(width / 2, 190, 50, 0, Math.PI * 2);
+          ctx.arc(width / 2, 134, 42, 0, Math.PI * 2);
           ctx.fill();
-          ctx.fillStyle = "#0a0f1d";
-          ctx.font = "900 36px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+          ctx.fillStyle = "#ffffff";
+          ctx.font = "900 28px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
           ctx.textAlign = "center";
-          ctx.fillText("ARIS", width / 2, 202);
+          ctx.fillText("ARIS", width / 2, 144);
         }
       } catch {
         ctx.fillStyle = cornerColor;
         ctx.beginPath();
-        ctx.arc(width / 2, 190, 50, 0, Math.PI * 2);
+        ctx.arc(width / 2, 134, 42, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = "#0a0f1d";
-        ctx.font = "900 36px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "900 28px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
         ctx.textAlign = "center";
-        ctx.fillText("ARIS", width / 2, 202);
+        ctx.fillText("ARIS", width / 2, 144);
       }
 
       // Wait for fonts to be ready
@@ -211,144 +255,236 @@ export function HonorReportCardModal({
       }
 
       // 5. System Header Text
-      ctx.fillStyle = "#e2e8f0";
-      ctx.font = "bold 32px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+      ctx.fillStyle = "#334155";
+      ctx.font = "bold 20px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("ARIS CLINICAL ACADEMIC SYSTEM", width / 2, 310);
+      ctx.fillText("ARIS CLINICAL ACADEMIC SYSTEM", width / 2, 218);
 
-      ctx.fillStyle = "rgba(148, 163, 184, 0.8)";
-      ctx.font = "500 22px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
-      ctx.fillText(badgeTitle, width / 2, 350);
+      ctx.fillStyle = isHonor ? "#b45309" : "#0284c7";
+      ctx.font = "bold 16px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+      ctx.fillText(badgeTitle, width / 2, 246);
 
       // Decorative divider
-      ctx.strokeStyle = isHonor ? "rgba(212, 175, 55, 0.5)" : "rgba(56, 189, 248, 0.4)";
+      ctx.strokeStyle = isHonor ? "rgba(217, 119, 6, 0.35)" : "rgba(2, 132, 199, 0.35)";
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(width / 2 - 250, 390);
-      ctx.lineTo(width / 2 + 250, 390);
+      ctx.moveTo(width / 2 - 200, 274);
+      ctx.lineTo(width / 2 + 200, 274);
       ctx.stroke();
 
       // Diamond ornament
       ctx.fillStyle = cornerColor;
-      ctx.fillRect(width / 2 - 5, 385, 10, 10);
+      ctx.save();
+      ctx.translate(width / 2, 274);
+      ctx.rotate(Math.PI / 4);
+      ctx.fillRect(-4, -4, 8, 8);
+      ctx.restore();
 
       // 6. Certificate Title
-      ctx.fillStyle = "#f8fafc";
-      ctx.font = "900 50px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
-      ctx.fillText(mainCardTitle, width / 2, 470);
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "900 38px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+      ctx.fillText(mainCardTitle, width / 2, 326);
 
-      ctx.fillStyle = "#38bdf8";
-      ctx.font = "bold 22px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
-      ctx.fillText(`HỌC PHẦN: ${examTitle.toUpperCase()}`, width / 2, 520);
+      // Exam Pill badge (auto-adjusts font size and pill width to prevent overflow)
+      const examTitleFormatted = `HỌC PHẦN: ${examTitle.toUpperCase()}`;
+      let examFontSize = 16;
+      ctx.font = `bold ${examFontSize}px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif`;
+      let examTextWidth = ctx.measureText(examTitleFormatted).width;
+      while (examTextWidth > 760 && examFontSize > 12) {
+        examFontSize -= 1;
+        ctx.font = `bold ${examFontSize}px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif`;
+        examTextWidth = ctx.measureText(examTitleFormatted).width;
+      }
+
+      const pillPaddingX = 22;
+      const pillW = Math.min(840, examTextWidth + pillPaddingX * 2);
+      const pillH = 32;
+      const pillX = (width - pillW) / 2;
+      const pillY = 344;
+
+      ctx.fillStyle = isHonor ? "#fef3c7" : "#f0f9ff";
+      ctx.strokeStyle = isHonor ? "rgba(217, 119, 6, 0.3)" : "rgba(2, 132, 199, 0.3)";
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.roundRect(pillX, pillY, pillW, pillH, 16);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = isHonor ? "#92400e" : "#0369a1";
+      ctx.textAlign = "center";
+      ctx.fillText(examTitleFormatted, width / 2, pillY + 22);
 
       // 7. Student Name
-      ctx.fillStyle = "rgba(148, 163, 184, 0.7)";
-      ctx.font = "600 20px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
-      ctx.fillText(studentHonorRole, width / 2, 600);
+      ctx.fillStyle = "#64748b";
+      ctx.font = "700 15px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+      ctx.fillText(studentHonorRole, width / 2, 418);
 
-      ctx.fillStyle = isHonor ? "#fef08a" : "#ffffff";
-      ctx.font = "900 72px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
-      ctx.fillText(studentName.toUpperCase(), width / 2, 680);
+      let nameFontSize = 52;
+      const studentNameUpper = studentName.toUpperCase();
+      ctx.font = `900 ${nameFontSize}px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif`;
+      while (ctx.measureText(studentNameUpper).width > 840 && nameFontSize > 26) {
+        nameFontSize -= 2;
+        ctx.font = `900 ${nameFontSize}px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif`;
+      }
+      ctx.fillStyle = isHonor ? "#78350f" : "#0f172a";
+      ctx.fillText(studentNameUpper, width / 2, 472);
 
-      // 8. Metric Cards (Clean, modern proportional typography - NO MONOSPACE)
+      // Subtle decorative underline below name
+      ctx.strokeStyle = isHonor ? "rgba(217, 119, 6, 0.3)" : "rgba(2, 132, 199, 0.3)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(width / 2 - 120, 492);
+      ctx.lineTo(width / 2 + 120, 492);
+      ctx.stroke();
+
+      // 8. Metric Cards (Clean, bright, elegant boxes with left accent bar)
       const boxW = 860;
-      const boxH = 110;
+      const boxH = 76;
       const boxX = (width - boxW) / 2;
 
       // Card 1: Discipline Metric
-      ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
-      ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
-      ctx.lineWidth = 2;
+      ctx.fillStyle = "#ffffff";
+      ctx.strokeStyle = isHonor ? "rgba(217, 119, 6, 0.35)" : "rgba(2, 132, 199, 0.3)";
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.roundRect(boxX, 740, boxW, boxH, 20);
+      ctx.roundRect(boxX, 522, boxW, boxH, 16);
       ctx.fill();
       ctx.stroke();
 
-      ctx.fillStyle = "#38bdf8";
-      ctx.font = "bold 26px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
-      ctx.textAlign = "left";
-      ctx.fillText("⚡ KỶ LUẬT HỌC TẬP:", boxX + 40, 805);
+      // Left accent strip
+      ctx.fillStyle = isHonor ? "#d97706" : "#0284c7";
+      ctx.beginPath();
+      ctx.roundRect(boxX, 522, 6, boxH, [16, 0, 0, 16]);
+      ctx.fill();
 
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 30px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+      ctx.fillStyle = isHonor ? "#b45309" : "#0284c7";
+      ctx.font = "bold 20px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText("⚡ KỶ LUẬT HỌC TẬP:", boxX + 28, 569);
+
+      let discFontSize = 22;
+      ctx.font = `bold ${discFontSize}px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif`;
+      while (ctx.measureText(metricDiscipline).width > 480 && discFontSize > 14) {
+        discFontSize -= 1;
+        ctx.font = `bold ${discFontSize}px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif`;
+      }
+      ctx.fillStyle = "#0f172a";
       ctx.textAlign = "right";
-      ctx.fillText(metricDiscipline, boxX + boxW - 40, 805);
+      ctx.fillText(metricDiscipline, boxX + boxW - 28, 569);
 
       // Card 2: Competence Metric
-      ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
-      ctx.strokeStyle = isHonor ? "rgba(234, 179, 8, 0.4)" : "rgba(56, 189, 248, 0.4)";
-      ctx.lineWidth = 2;
+      ctx.fillStyle = "#ffffff";
+      ctx.strokeStyle = isHonor ? "rgba(217, 119, 6, 0.35)" : "rgba(2, 132, 199, 0.3)";
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.roundRect(boxX, 880, boxW, boxH, 20);
+      ctx.roundRect(boxX, 614, boxW, boxH, 16);
       ctx.fill();
       ctx.stroke();
 
-      ctx.fillStyle = isHonor ? "#facc15" : "#38bdf8";
-      ctx.font = "bold 26px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+      // Left accent strip
+      ctx.fillStyle = isHonor ? "#b45309" : "#0369a1";
+      ctx.beginPath();
+      ctx.roundRect(boxX, 614, 6, boxH, [16, 0, 0, 16]);
+      ctx.fill();
+
+      ctx.fillStyle = isHonor ? "#b45309" : "#0284c7";
+      ctx.font = "bold 20px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
       ctx.textAlign = "left";
-      ctx.fillText("🩺 CHẨN ĐOÁN NĂNG LỰC:", boxX + 40, 945);
+      ctx.fillText("🩺 CHẨN ĐOÁN NĂNG LỰC:", boxX + 28, 661);
 
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 30px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+      let scoreFontSize = 22;
+      ctx.font = `bold ${scoreFontSize}px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif`;
+      while (ctx.measureText(metricScore).width > 480 && scoreFontSize > 14) {
+        scoreFontSize -= 1;
+        ctx.font = `bold ${scoreFontSize}px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif`;
+      }
+      ctx.fillStyle = "#0f172a";
       ctx.textAlign = "right";
-      ctx.fillText(metricScore, boxX + boxW - 40, 945);
+      ctx.fillText(metricScore, boxX + boxW - 28, 661);
 
-      // 9. Emotional Message
+      // 9. Emotional Message (Dynamically wrapped, safe margins, never overflows)
       ctx.textAlign = "center";
-      ctx.fillStyle = "#f1f5f9";
-      ctx.font = "italic 28px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+      ctx.fillStyle = "#334155";
+      ctx.font = "italic 20px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
 
-      ctx.fillText(quoteLine1, width / 2, 1070);
-      ctx.fillText(quoteLine2, width / 2, 1120);
-      ctx.fillText(quoteLine3, width / 2, 1170);
+      const quoteLines = wrapCanvasText(ctx, quoteText, 820);
+      const quoteStartY = 738;
+      const quoteLineHeight = 32;
+      quoteLines.forEach((line, idx) => {
+        ctx.fillText(line, width / 2, quoteStartY + idx * quoteLineHeight);
+      });
 
       // 10. Official Stamp & Seal Area
-      const sealY = 1360;
-      ctx.fillStyle = isHonor ? "#eab308" : "#0284c7";
-      ctx.beginPath();
-      ctx.arc(width / 2, sealY, 90, 0, Math.PI * 2);
-      ctx.fill();
+      const sealY = 938;
+      const sealColor = isHonor ? "#d97706" : "#0284c7";
+      const ribbonColor = isHonor ? "#b45309" : "#0369a1";
 
       // Ribbon details below seal
-      ctx.fillStyle = isHonor ? "#ca8a04" : "#0369a1";
+      ctx.fillStyle = ribbonColor;
       ctx.beginPath();
-      ctx.moveTo(width / 2 - 60, sealY + 60);
-      ctx.lineTo(width / 2 - 80, sealY + 180);
-      ctx.lineTo(width / 2 - 40, sealY + 160);
-      ctx.lineTo(width / 2 - 10, sealY + 190);
-      ctx.lineTo(width / 2 - 20, sealY + 60);
+      ctx.moveTo(width / 2 - 40, sealY + 35);
+      ctx.lineTo(width / 2 - 58, sealY + 115);
+      ctx.lineTo(width / 2 - 32, sealY + 100);
+      ctx.lineTo(width / 2 - 8, sealY + 120);
+      ctx.lineTo(width / 2 - 14, sealY + 35);
       ctx.fill();
 
       ctx.beginPath();
-      ctx.moveTo(width / 2 + 60, sealY + 60);
-      ctx.lineTo(width / 2 + 80, sealY + 180);
-      ctx.lineTo(width / 2 + 40, sealY + 160);
-      ctx.lineTo(width / 2 + 10, sealY + 190);
-      ctx.lineTo(width / 2 + 20, sealY + 60);
+      ctx.moveTo(width / 2 + 40, sealY + 35);
+      ctx.lineTo(width / 2 + 58, sealY + 115);
+      ctx.lineTo(width / 2 + 32, sealY + 100);
+      ctx.lineTo(width / 2 + 8, sealY + 120);
+      ctx.lineTo(width / 2 + 14, sealY + 35);
       ctx.fill();
 
-      // Inner seal circle
-      ctx.fillStyle = "#0a0f1d";
+      // Outer seal circle
+      ctx.fillStyle = sealColor;
       ctx.beginPath();
-      ctx.arc(width / 2, sealY, 78, 0, Math.PI * 2);
+      ctx.arc(width / 2, sealY, 68, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.fillStyle = isHonor ? "#fef08a" : "#7dd3fc";
-      ctx.font = "bold 20px 'Plus Jakarta Sans', system-ui, sans-serif";
-      ctx.fillText("ARIS CLINICAL", width / 2, sealY - 20);
-      ctx.font = "bold 32px 'Plus Jakarta Sans', system-ui, sans-serif";
-      ctx.fillText(sealText, width / 2, sealY + 15);
-      ctx.font = "bold 18px 'Plus Jakarta Sans', system-ui, sans-serif";
-      ctx.fillText(sealSub, width / 2, sealY + 45);
+      // Inner white seal circle
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.arc(width / 2, sealY, 60, 0, Math.PI * 2);
+      ctx.fill();
 
-      ctx.fillStyle = "#e2e8f0";
-      ctx.font = "bold 24px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
-      ctx.fillText(sealTitle, width / 2, 1630);
+      // Decorative dashed ring
+      ctx.strokeStyle = isHonor ? "#d97706" : "#0284c7";
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath();
+      ctx.arc(width / 2, sealY, 54, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
 
-      ctx.fillStyle = "rgba(148, 163, 184, 0.8)";
-      ctx.font = "18px 'Plus Jakarta Sans', system-ui, sans-serif";
+      ctx.fillStyle = isHonor ? "#b45309" : "#0369a1";
+      ctx.font = "bold 13px 'Plus Jakarta Sans', system-ui, sans-serif";
+      ctx.fillText("ARIS CLINICAL", width / 2, sealY - 18);
+
+      ctx.fillStyle = isHonor ? "#d97706" : "#0284c7";
+      ctx.font = "900 22px 'Plus Jakarta Sans', system-ui, sans-serif";
+      ctx.fillText(sealText, width / 2, sealY + 10);
+
+      ctx.fillStyle = isHonor ? "#92400e" : "#0369a1";
+      ctx.font = "bold 12px 'Plus Jakarta Sans', system-ui, sans-serif";
+      ctx.fillText(sealSub, width / 2, sealY + 30);
+
+      // Certification title below seal
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "bold 19px 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+      ctx.fillText(sealTitle, width / 2, 1082);
+
+      // Verification Code & Date
+      ctx.fillStyle = "#64748b";
+      ctx.font = "500 14px 'Plus Jakarta Sans', system-ui, sans-serif";
       const certCode = `#ARIS-MED-${Date.now().toString(36).toUpperCase()}`;
-      ctx.fillText(`MÃ XÁC THỰC: ${certCode} · NGÀY: ${dateStr}`, width / 2, 1670);
+      ctx.fillText(`MÃ XÁC THỰC: ${certCode}  ·  NGÀY: ${dateStr}`, width / 2, 1115);
+
+      // Footer branding
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "600 12px 'Plus Jakarta Sans', system-ui, sans-serif";
+      ctx.fillText("HỆ THỐNG ĐÀO TẠO BÁC SĨ HỌC THUẬT ARIS · NEXTBAND.SITE", width / 2, 1145);
 
       // Download trigger
       const dataUrl = canvas.toDataURL("image/png");
@@ -369,7 +505,7 @@ export function HonorReportCardModal({
     } finally {
       setIsDownloading(false);
     }
-  }, [studentName, isHonor, badgeTitle, mainCardTitle, studentHonorRole, quoteLine1, quoteLine2, quoteLine3, sealTitle, sealText, sealSub, metricDiscipline, metricScore, examTitle, dateStr]);
+  }, [studentName, isHonor, badgeTitle, mainCardTitle, studentHonorRole, quoteText, sealTitle, sealText, sealSub, metricDiscipline, metricScore, examTitle, dateStr]);
 
   const handleCopyText = () => {
     const text = isHonor
@@ -383,7 +519,7 @@ export function HonorReportCardModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md sm:max-w-lg p-0 bg-slate-950 border-amber-500/30 text-white shadow-2xl rounded-3xl max-h-[90vh] flex flex-col overflow-hidden">
+      <DialogContent className="max-w-md sm:max-w-lg p-0 bg-slate-950 border-slate-800 text-white shadow-2xl rounded-3xl max-h-[90vh] flex flex-col overflow-hidden">
         <DialogHeader className="p-4 sm:p-5 bg-gradient-to-b from-slate-900 to-slate-950 border-b border-slate-800 shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -393,7 +529,7 @@ export function HonorReportCardModal({
                 {badgeTitle}
               </DialogTitle>
             </div>
-            <Badge variant="outline" className="text-[10px] text-slate-400 border-slate-700">
+            <Badge variant="outline" className="text-[10px] text-slate-300 border-slate-700 bg-slate-800/60">
               Chính Thức
             </Badge>
           </div>
@@ -404,60 +540,80 @@ export function HonorReportCardModal({
           </p>
         </DialogHeader>
 
-        {/* Live Visual Card Preview */}
-        <div className="p-4 sm:p-6 bg-slate-950 flex flex-col items-center flex-1 overflow-y-auto">
+        {/* Live Visual Card Preview - Bright, prestigious certificate styling */}
+        <div className="p-4 sm:p-6 bg-slate-900/80 flex flex-col items-center flex-1 overflow-y-auto">
           <div
             ref={cardRef}
-            className={`w-full max-w-sm rounded-2xl p-5 border-2 ${isHonor ? "border-amber-500/40" : "border-sky-500/40"} bg-gradient-to-b from-[#0B132B] via-[#0D1B2A] to-[#080C16] shadow-xl space-y-4 relative overflow-hidden`}
+            className={`w-full max-w-sm rounded-2xl p-5 border-2 ${
+              isHonor
+                ? "border-amber-400/80 bg-gradient-to-b from-white via-amber-50/40 to-yellow-50/20 shadow-amber-500/10"
+                : "border-sky-400/80 bg-gradient-to-b from-white via-sky-50/40 to-blue-50/20 shadow-sky-500/10"
+            } shadow-2xl space-y-3.5 relative overflow-hidden text-slate-900`}
           >
-            {/* Top Accent Lines */}
-            <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${isHonor ? "from-amber-400 via-sky-400 to-amber-400" : "from-sky-400 via-indigo-400 to-sky-400"}`} />
+            {/* Top Accent Line */}
+            <div
+              className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${
+                isHonor ? "from-amber-400 via-yellow-300 to-amber-500" : "from-sky-400 via-blue-500 to-sky-400"
+              }`}
+            />
 
             {/* Header: Logo & Title */}
-            <div className="text-center space-y-1.5">
-              <div className="inline-flex items-center justify-center p-1.5 rounded-xl bg-white/10 border border-white/15 shadow-inner mb-0.5">
+            <div className="text-center space-y-1.5 pt-1">
+              <div className="inline-flex items-center justify-center p-2 rounded-2xl bg-white border border-slate-200/80 shadow-sm mb-0.5">
                 <SiteLogo
-                  className="w-9 h-9 object-contain"
+                  className="w-10 h-10 object-contain"
                   alt="ARIS Logo"
                   fallbackSrc="/Logo.png"
                 />
               </div>
-              <div className="text-[10px] font-bold tracking-widest text-slate-300 font-sans">
+              <div className="text-[10px] font-extrabold tracking-widest text-slate-500 font-sans">
                 ARIS CLINICAL ACADEMIC SYSTEM
               </div>
-              <div className={`text-xs font-black uppercase tracking-wide ${isHonor ? "text-amber-300" : "text-sky-300"}`}>
+              <div
+                className={`text-xs font-black uppercase tracking-wider ${
+                  isHonor ? "text-amber-700" : "text-sky-700"
+                }`}
+              >
                 {mainCardTitle}
               </div>
-              <div className="text-[11px] font-semibold text-slate-400 truncate max-w-[280px] mx-auto">
-                {examTitle}
+              <div className="inline-block px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-600 truncate max-w-[280px] mx-auto">
+                Học phần: {examTitle}
               </div>
             </div>
 
             {/* Student Name */}
-            <div className="text-center py-1.5 border-y border-slate-700/60">
-              <span className="text-[9px] uppercase tracking-widest text-slate-400 block font-sans font-semibold">
+            <div className="text-center py-2 border-y border-slate-200/80">
+              <span className="text-[10px] uppercase tracking-widest text-slate-500 block font-sans font-bold">
                 {studentHonorRole}
               </span>
-              <h3 className={`text-xl font-black uppercase tracking-tight ${isHonor ? "text-amber-100" : "text-white"}`}>
+              <h3 className={`text-xl font-black uppercase tracking-tight ${isHonor ? "text-amber-950" : "text-slate-900"}`}>
                 {studentName}
               </h3>
             </div>
 
-            {/* Metrics: Clean, balanced tabular font - NO MONOSPACE */}
+            {/* Metrics: Clean, bright, elegant boxes */}
             <div className="space-y-2">
-              <div className="p-3 rounded-xl bg-slate-900/90 border border-sky-500/30 flex items-center justify-between text-xs gap-2">
-                <span className="text-sky-300 font-bold flex items-center gap-1.5 shrink-0">
+              <div className="p-3 rounded-xl bg-white border border-sky-200 shadow-sm flex items-center justify-between text-xs gap-2">
+                <span className="text-sky-700 font-bold flex items-center gap-1.5 shrink-0">
                   ⚡ Kỷ luật học tập:
                 </span>
-                <span className="font-sans font-bold text-white text-right truncate tabular-nums tracking-normal">
+                <span className="font-sans font-extrabold text-slate-900 text-right truncate tabular-nums">
                   {metricDiscipline}
                 </span>
               </div>
-              <div className={`p-3 rounded-xl bg-slate-900/90 border ${isHonor ? "border-amber-500/30" : "border-sky-500/30"} flex items-center justify-between text-xs gap-2`}>
-                <span className={`${isHonor ? "text-amber-300" : "text-sky-300"} font-bold flex items-center gap-1.5 shrink-0`}>
+              <div
+                className={`p-3 rounded-xl bg-white border ${
+                  isHonor ? "border-amber-200" : "border-sky-200"
+                } shadow-sm flex items-center justify-between text-xs gap-2`}
+              >
+                <span
+                  className={`${
+                    isHonor ? "text-amber-700" : "text-sky-700"
+                  } font-bold flex items-center gap-1.5 shrink-0`}
+                >
                   🩺 Chẩn đoán năng lực:
                 </span>
-                <span className="font-sans font-bold text-white text-right truncate tabular-nums tracking-normal">
+                <span className="font-sans font-extrabold text-slate-900 text-right truncate tabular-nums">
                   {metricScore}
                 </span>
               </div>
@@ -465,16 +621,16 @@ export function HonorReportCardModal({
 
             {/* Emotional Quote */}
             <div className="text-center px-2 py-1">
-              <p className="text-[11.5px] italic text-slate-200 leading-relaxed font-sans font-normal antialiased">
-                {quoteLine1} {quoteLine2} {quoteLine3}
+              <p className="text-[11.5px] italic text-slate-600 leading-relaxed font-sans font-medium">
+                {quoteText}
               </p>
             </div>
 
             {/* Stamp & Footer */}
-            <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[10px] text-slate-400 font-sans">
-              <div className={`flex items-center gap-1 ${isHonor ? "text-amber-400" : "text-sky-400"}`}>
+            <div className="pt-2.5 border-t border-slate-200 flex items-center justify-between text-[10px] text-slate-500 font-sans">
+              <div className={`flex items-center gap-1 font-bold ${isHonor ? "text-amber-700" : "text-sky-700"}`}>
                 <Shield className="w-3.5 h-3.5" />
-                <span className="font-bold">{isHonor ? "ARIS HONOR VERIFIED" : "ARIS ACADEMIC VERIFIED"}</span>
+                <span>{isHonor ? "ARIS HONOR VERIFIED" : "ARIS ACADEMIC VERIFIED"}</span>
               </div>
               <span>{dateStr}</span>
             </div>
