@@ -223,7 +223,7 @@ export default function LoginPage() {
               />
             </div>
             <p className="text-center text-xs sm:text-sm text-muted-foreground font-medium">
-              Mß╗ùi b├ái ho├án th├ánh ─æ╞░a bß║ín tiß║┐n gß║ºn h╞ín tß╗¢i cß║Ñp ─æß╗Ö tiß║┐p theo.
+              Mỗi bài hoàn thành là một bước gần hơn tới band mục tiêu.
             </p>
           </div>
         </div>
@@ -273,7 +273,7 @@ export default function LoginPage() {
               Tiß║┐p tß╗Ñc h├ánh tr├¼nh
             </CardTitle>
             <p className="text-xs sm:text-sm text-muted-foreground">
-              ─É─âng nhß║¡p ─æß╗â trß╗ƒ lß║íi lß╗¢p hß╗ìc v├á tiß║┐p tß╗Ñc chinh phß╗Ñc mß╗Ñc ti├¬u IELTS.
+              Đăng nhập để tiếp tục chinh phục mục tiêu IELTS.
             </p>
           </CardHeader>
           <CardContent className="space-y-6 p-0">
@@ -328,7 +328,7 @@ export default function LoginPage() {
               </div>
               <div className="relative flex justify-center text-xs uppercase tracking-wider">
                 <span className="bg-card px-3 text-muted-foreground font-semibold">
-                  hoß║╖c ─æ─âng nhß║¡p bß║▒ng email
+                  hoặc dùng email
                 </span>
               </div>
             </div>

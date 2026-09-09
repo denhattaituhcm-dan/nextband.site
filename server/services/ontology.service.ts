@@ -1,6 +1,15 @@
 /**
+ * HOLD — Academic Intelligence Foundation.
+ *
+ * Currently test-covered but NOT wired into any production request flow.
+ * No route, controller, or production service imports this class.
+ *
+ * Do not treat this service as an active production capability.
+ * Deletion decision belongs to product/roadmap, not dead-code cleanup.
+ *
+ * ---
  * Ontology Service — Phase 1: Minimum Ontology & Transparent Question Skill Tagging
- * 
+ *
  * Invariant 1: Question-to-Skill mappings must be auditable and deterministic.
  * Invariant 2: Versioning is strictly tracked via taxonomyVersion.
  */

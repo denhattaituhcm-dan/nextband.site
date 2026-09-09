@@ -1,6 +1,15 @@
 /**
+ * HOLD — Academic Intelligence Foundation.
+ *
+ * Currently test-covered but NOT wired into any production request flow.
+ * No route, controller, or production service imports this class.
+ *
+ * Do not treat this service as an active production capability.
+ * Deletion decision belongs to product/roadmap, not dead-code cleanup.
+ *
+ * ---
  * Evidence Ledger Service — Phase 0: Immutable Academic Evidence Contract
- * 
+ *
  * Invariant 1: Never overwrite academic evidence.
  * Invariant 2: Derived state (Mastery) can be 100% recomputed from raw evidence ledger.
  * Invariant 3: Clean separation — DB stores raw accumulation parameters (alpha, beta, count),
