@@ -282,7 +282,7 @@ export default function StudentLessonViewerPage() {
   // 1. Must NOT be overdue (or if already claimed, remains visible to show reward badge)
   // 2. Capped at maxEligibleHomeworks (default 5 from seasonalUiConfig)
   const maxSeasonalHomeworks = seasonalUiConfig?.maxEligibleHomeworks || 5;
-  const eligibleHomeworkIdsForSeasonal = useMemo(() => {
+  const eligibleHomeworkIdsForSeasonal = (() => {
     if (!isSeasonalActive || !isTet) return new Set<string>();
 
     const set = new Set<string>();
@@ -303,7 +303,7 @@ export default function StudentLessonViewerPage() {
       }
     }
     return set;
-  }, [homeworkList, isSeasonalActive, isTet, maxSeasonalHomeworks, isHomeworkClaimed]);
+  })();
 
   const nextHomework = homeworkList.find((hw) => hw.status === "REVISION_REQUIRED" || hw.status === "OVERDUE" || hw.status === "UPCOMING" || hw.status === "IN_PROGRESS") || homeworkList[0];
 
