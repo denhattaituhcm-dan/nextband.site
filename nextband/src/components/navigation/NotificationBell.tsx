@@ -171,8 +171,8 @@ export function NotificationBell({ scope: _scope }: NotificationBellProps) {
     refetchInterval: 30000,
   });
 
-  const rawNotifications: NotificationItem[] = listData?.data || [];
   const notifications = React.useMemo(() => {
+    const rawNotifications: NotificationItem[] = listData?.data || [];
     if (_scope === "student") {
       return rawNotifications.filter((n) => {
         if (
@@ -198,7 +198,7 @@ export function NotificationBell({ scope: _scope }: NotificationBellProps) {
       });
     }
     return rawNotifications;
-  }, [rawNotifications, _scope]);
+  }, [listData?.data, _scope]);
 
   const unreadCount = React.useMemo(() => {
     if (_scope === "student") {

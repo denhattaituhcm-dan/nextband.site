@@ -158,7 +158,7 @@ export default function AdminLeads() {
     if (isStaffOnly && ownerFilter !== "ME") {
       setOwnerFilter("ME");
     }
-  }, [isStaffOnly]);
+  }, [isStaffOnly, ownerFilter]);
 
   useEffect(() => {
     const urlStatus = searchParams.get("status");

@@ -64,10 +64,9 @@ export function SpeakingSection({
   const isRecorderType = (type: string) =>
     type === "speaking" || type === "essay";
 
-  const rawGroups = section.question_groups || section.questionGroups || [];
-
   // Normalize question fields
   const questionGroups = useMemo(() => {
+    const rawGroups = section.question_groups || section.questionGroups || [];
     return rawGroups
       .map((g: any) => ({
         ...g,
@@ -97,7 +96,7 @@ export function SpeakingSection({
           ? orderDiff
           : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       });
-  }, [rawGroups]);
+  }, [section.question_groups, section.questionGroups]);
 
   // Flatten for calculations
   const allQuestions = useMemo(() => {

@@ -76,13 +76,13 @@ export default function SubmissionGrade() {
     }
   }, [submission]);
 
-  const sections = submission?.exam?.sections || [];
-  const answers = submission?.answers || [];
+  const sections = useMemo(() => submission?.exam?.sections || [], [submission?.exam?.sections]);
+  const answers = useMemo(() => submission?.answers || [], [submission?.answers]);
 
   // Build answer map for quick lookup
   const answerMap = useMemo(() => {
     const map: Record<string, any> = {};
-    answers?.forEach((a: any) => {
+    answers.forEach((a: any) => {
       map[a.questionId] = a;
     });
     return map;

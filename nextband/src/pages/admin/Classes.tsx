@@ -297,8 +297,8 @@ export default function AdminClasses() {
     queryFn: () => usersApi.list({ role: "teacher", limit: 100 }),
   });
 
-  const courses = coursesData?.data || [];
-  const teachers = teachersData?.data || [];
+  const courses = useMemo(() => coursesData?.data || [], [coursesData?.data]);
+  const teachers = useMemo(() => teachersData?.data || [], [teachersData?.data]);
 
   const rawClasses = data?.data;
   const classes = useMemo(() => rawClasses || [], [rawClasses]);

@@ -25,6 +25,7 @@ import { Loader2, AlertCircle, RefreshCw, ArrowLeft, FileQuestion, AlertTriangle
 import { assessmentApi } from "@/lib/api";
 import { routes } from "@/lib/routes";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export default function PlacementExamInterface() {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -187,14 +188,19 @@ export default function PlacementExamInterface() {
       : [];
 
   return (
-    <div className="min-h-screen bg-muted/20 flex flex-col">
+    <div
+      className={cn(
+        "min-h-screen bg-muted/20 flex flex-col",
+        activeSkill === "reading" && "lg:h-screen lg:overflow-hidden"
+      )}
+    >
       <SEO
         title={`Phòng Khảo Thí ARIS — ${session.candidateName}`}
         description="Làm bài khảo thí chẩn đoán 4 kỹ năng Listening, Reading, Grammar, Writing, Speaking để định vị Rank ARIS-7."
       />
 
       {/* Sticky Top Navigation Bar (Header + Skill Tabs) */}
-      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-xs">
+      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur-md border-b border-border shadow-xs shrink-0">
         <AssessmentHeader
           candidateName={session.candidateName}
           targetBand={session.targetBand}
@@ -219,10 +225,24 @@ export default function PlacementExamInterface() {
       </div>
 
       {/* Main Assessment Body */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+      <main
+        className={cn(
+          "flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6",
+          activeSkill === "reading"
+            ? "py-3 lg:overflow-hidden flex flex-col min-h-0"
+            : "py-6 space-y-6"
+        )}
+      >
 
         {/* Content Layout - Full Width for Maximum Reading & Question Comfort */}
-        <div className="w-full space-y-6 pb-24">
+        <div
+          className={cn(
+            "w-full",
+            activeSkill === "reading"
+              ? "flex-1 min-h-0 flex flex-col lg:pb-14"
+              : "space-y-6 pb-24"
+          )}
+        >
           {activeSkill === "listening" && (
             <ListeningPanel
               title={testPayload.skills.listening.title}

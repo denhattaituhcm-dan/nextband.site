@@ -222,10 +222,9 @@ export default function MySubmissions() {
     };
   }, [allSubmissions]);
 
-  const rawSubmissions = data?.data || [];
-
   // Client-side search & category & revisionRequired filters
   const filteredSubmissions = useMemo(() => {
+    const rawSubmissions = data?.data || [];
     return rawSubmissions.filter((s: any) => {
       if (debouncedSearch) {
         const term = debouncedSearch.toLowerCase();
@@ -247,7 +246,7 @@ export default function MySubmissions() {
 
       return true;
     });
-  }, [rawSubmissions, debouncedSearch, statusFilter, errorFilter]);
+  }, [data?.data, debouncedSearch, statusFilter, errorFilter]);
 
   const totalItems = data?.meta?.total || 0;
   const totalPages = data?.meta?.totalPages || Math.ceil(totalItems / pageSize);

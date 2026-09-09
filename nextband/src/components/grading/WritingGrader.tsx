@@ -170,8 +170,8 @@ export function WritingGrader({
     return isAutoGradedExam({ title: homeworkTitle, type: detectedSkill });
   }, [propIsAutoGraded, submissionDetail, homeworkTitle, detectedSkill]);
 
-  const sections = submissionDetail?.exam?.sections || [];
-  const rawAnswers = submissionDetail?.answers || [];
+  const sections = useMemo(() => submissionDetail?.exam?.sections || [], [submissionDetail?.exam?.sections]);
+  const rawAnswers = useMemo(() => submissionDetail?.answers || [], [submissionDetail?.answers]);
 
   const answerMap = useMemo(() => {
     const map: Record<string, any> = {};

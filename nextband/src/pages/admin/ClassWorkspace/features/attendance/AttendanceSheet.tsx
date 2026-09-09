@@ -104,17 +104,7 @@ export const AttendanceSheet: React.FC<AttendanceSheetProps> = ({ classId, sessi
     }
   }, [sessions, selectedSessionId]);
 
-  // Load session attendance
-  useEffect(() => {
-    if (!selectedSessionId) {
-      setItems([]);
-      setSessionData(null);
-      return;
-    }
-    fetchSessionAttendance(selectedSessionId);
-  }, [selectedSessionId, activeStudents]);
-
-  const fetchSessionAttendance = async (sessionId: string) => {
+  const fetchSessionAttendance = React.useCallback(async (sessionId: string) => {
     setLoading(true);
     try {
       const res = await attendanceApi.getSessionAttendance(classId, sessionId);
@@ -173,7 +163,17 @@ export const AttendanceSheet: React.FC<AttendanceSheetProps> = ({ classId, sessi
     } finally {
       setLoading(false);
     }
-  };
+  }, [classId, activeStudents]);
+
+  // Load session attendance
+  useEffect(() => {
+    if (!selectedSessionId) {
+      setItems([]);
+      setSessionData(null);
+      return;
+    }
+    fetchSessionAttendance(selectedSessionId);
+  }, [selectedSessionId, fetchSessionAttendance]);
 
   const handleStatusChange = (studentId: string, newStatus: AttendanceStatus) => {
     setItems((prev) =>

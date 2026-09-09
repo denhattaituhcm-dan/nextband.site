@@ -278,16 +278,19 @@ export default function ExamInterface() {
   }, [submissionData]);
 
   // Invariant Guard: If user lands on /exam/:id with a completed submission, redirect to submission review
+  const submissionId = submission?.id;
+  const submissionStatus = submission?.status;
+  const submissionAlreadyFinalized = (submission as any)?.alreadyFinalized;
   useEffect(() => {
     if (
-      submission &&
-      (String(submission.status).toUpperCase() === "SUBMITTED" ||
-        String(submission.status).toUpperCase() === "GRADED" ||
-        submission.alreadyFinalized)
+      submissionId &&
+      (String(submissionStatus).toUpperCase() === "SUBMITTED" ||
+        String(submissionStatus).toUpperCase() === "GRADED" ||
+        submissionAlreadyFinalized)
     ) {
-      navigate(routes.student.submission(submission.id), { replace: true });
+      navigate(routes.student.submission(submissionId), { replace: true });
     }
-  }, [submission?.id, submission?.status, (submission as any)?.alreadyFinalized, navigate]);
+  }, [submissionId, submissionStatus, submissionAlreadyFinalized, navigate]);
 
   useEffect(() => {
     if (examData && submissionData && !perfMetricsRef.current.logged) {
@@ -373,16 +376,16 @@ export default function ExamInterface() {
       window.removeEventListener("blur", handleWindowBlur);
       window.removeEventListener("paste", handlePaste);
     };
-  }, [submission?.id, user?.id, examId]);
+  }, [submission?.id, user?.id, examId, toast]);
 
   // Trusted Clock Timer Calculation
+  const submissionStartedAt = submission?.startedAt;
+  const submissionDurationMinutes = submission?.durationMinutes;
   useEffect(() => {
-    if (!exam || !submission) return;
+    if (!exam || !submissionStartedAt) return;
 
     const durationMinutes = Math.max(60, exam.durationMinutes || 60);
-    const startedAt = submission.startedAt
-      ? new Date(submission.startedAt).getTime()
-      : Date.now();
+    const startedAt = new Date(submissionStartedAt).getTime();
     const expiresAt = calculateExpiresAt(startedAt, durationMinutes);
     let trustedRemaining = getTrustedRemainingSeconds(expiresAt);
 
@@ -393,7 +396,7 @@ export default function ExamInterface() {
     }
 
     setInitialTimeLeft(trustedRemaining);
-  }, [exam, submission?.startedAt, submission?.durationMinutes]);
+  }, [exam, submissionStartedAt, submissionDurationMinutes]);
 
   useEffect(() => {
     autoSubmitTriggeredRef.current = false;
@@ -988,6 +991,7 @@ export default function ExamInterface() {
     navigate,
     queryClient,
     searchParams,
+    sections,
     submission,
     toast,
     user,

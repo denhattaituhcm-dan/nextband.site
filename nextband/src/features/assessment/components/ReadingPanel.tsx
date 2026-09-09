@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useMemo } from "react";
+import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { BookOpen, Highlighter, RotateCcw, Clock, Bookmark, ZoomIn, ZoomOut } from "lucide-react";
 import { AssessmentQuestion } from "../domain/assessment.types";
 import { Input } from "@/components/ui/input";
@@ -51,6 +51,55 @@ export function ReadingPanel({
   const hasPassage = passage && passage.trim().length > 20;
   const [fontSize, setFontSize] = useState<"sm" | "base" | "lg">("base");
 
+  // Two-column scroll containment and focus tracking
+  const leftBoxRef = useRef<HTMLDivElement>(null);
+  const rightBoxRef = useRef<HTMLDivElement>(null);
+  const [activePane, setActivePane] = useState<"left" | "right" | null>(null);
+  const activePaneRef = useRef<"left" | "right" | null>(null);
+
+  useEffect(() => {
+    activePaneRef.current = activePane;
+  }, [activePane]);
+
+  // Track click & focus interactions across reading panels and palette
+  useEffect(() => {
+    const handlePointerDown = (e: MouseEvent | PointerEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
+      if (rightBoxRef.current?.contains(target)) {
+        setActivePane("right");
+      } else if (leftBoxRef.current?.contains(target)) {
+        setActivePane("left");
+      } else {
+        // If clicking question palette at the bottom, mark questions pane as active
+        if (target.closest?.("[data-question-palette]")) {
+          setActivePane("right");
+        } else {
+          setActivePane(null);
+        }
+      }
+    };
+
+    const handleFocusIn = (e: FocusEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
+      if (rightBoxRef.current?.contains(target)) {
+        setActivePane("right");
+      } else if (leftBoxRef.current?.contains(target)) {
+        setActivePane("left");
+      }
+    };
+
+    window.addEventListener("pointerdown", handlePointerDown, { capture: true });
+    window.addEventListener("focusin", handleFocusIn, { capture: true });
+    return () => {
+      window.removeEventListener("pointerdown", handlePointerDown, { capture: true });
+      window.removeEventListener("focusin", handleFocusIn, { capture: true });
+    };
+  }, []);
+
   // Ensure questions are strictly sorted by orderIndex
   const sortedQuestions = useMemo(() => {
     return [...questions].sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
@@ -73,6 +122,53 @@ export function ReadingPanel({
   const [highlightCount, setHighlightCount] = useState(0);
   const passageContentRef = useRef<HTMLDivElement>(null);
   const activeRangesRef = useRef<Range[]>([]);
+
+  // Controlled wheel routing when mouse cursor is outside both boxes on desktop
+  useEffect(() => {
+    const handleGlobalWheel = (e: WheelEvent) => {
+      // Only active on desktop (>= 1024px) when 2-column split reading is present
+      if (window.innerWidth < 1024 || !hasPassage) return;
+
+      const target = e.target as Node | null;
+      if (!target) return;
+
+      // When cursor is inside left passage box, native wheel scrolling handles it smoothly
+      if (leftBoxRef.current?.contains(target)) {
+        return;
+      }
+
+      // When cursor is inside right questions box, native wheel scrolling handles it smoothly
+      if (rightBoxRef.current?.contains(target)) {
+        return;
+      }
+
+      // When cursor is OUTSIDE both boxes:
+      const delta =
+        e.deltaMode === 1
+          ? e.deltaY * 33
+          : e.deltaMode === 2
+          ? e.deltaY * window.innerHeight
+          : e.deltaY;
+
+      if (activePaneRef.current === "right" && rightBoxRef.current) {
+        // Only scroll right column if right text box was clicked / active
+        e.preventDefault();
+        rightBoxRef.current.scrollBy({ top: delta, behavior: "auto" });
+      } else if (activePaneRef.current === "left" && passageContentRef.current) {
+        // Only scroll left column if left text box was clicked / active
+        e.preventDefault();
+        passageContentRef.current.scrollBy({ top: delta, behavior: "auto" });
+      } else {
+        // Neither box is active: prevent scrolling outside from moving any column
+        e.preventDefault();
+      }
+    };
+
+    window.addEventListener("wheel", handleGlobalWheel, { passive: false });
+    return () => {
+      window.removeEventListener("wheel", handleGlobalWheel);
+    };
+  }, [hasPassage]);
 
   // Clear all highlights
   const handleClearHighlights = useCallback(() => {
@@ -132,7 +228,7 @@ export function ReadingPanel({
   }, [isHighlightActive]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start lg:h-full lg:min-h-0">
       <style>{`
         ::highlight(aris-reading-highlight) {
           background-color: #fef08a;
@@ -141,9 +237,12 @@ export function ReadingPanel({
       `}</style>
       {/* Left Column: Academic Reading Passage */}
       {hasPassage && (
-        <div className="lg:col-span-6 lg:sticky lg:top-36 space-y-4">
-          <div className="p-5 sm:p-6 rounded-3xl bg-card border border-border space-y-4 shadow-xs">
-            <div className="flex items-center justify-between pb-3 border-b border-border gap-2">
+        <div
+          ref={leftBoxRef}
+          className="lg:col-span-6 lg:h-full lg:min-h-0 flex flex-col space-y-4"
+        >
+          <div className="p-5 sm:p-6 rounded-3xl bg-card border border-border flex flex-col lg:h-full lg:min-h-0 shadow-xs">
+            <div className="flex items-center justify-between pb-3 border-b border-border gap-2 shrink-0">
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded-2xl bg-brand-blue text-white flex items-center justify-center shadow-xs">
                   <BookOpen className="w-4 h-4" />
@@ -222,7 +321,7 @@ export function ReadingPanel({
               ref={passageContentRef}
               onMouseUp={handleTextSelection}
               onKeyUp={handleTextSelection}
-              className={`leading-relaxed space-y-4 max-h-[68vh] overflow-y-auto pr-2 text-justify select-text ${
+              className={`leading-relaxed space-y-4 max-h-[68vh] lg:max-h-none lg:flex-1 lg:min-h-0 overflow-y-auto pr-2 text-justify select-text overscroll-contain ${
                 fontSize === "sm"
                   ? "text-xs"
                   : fontSize === "lg"
@@ -236,7 +335,15 @@ export function ReadingPanel({
       )}
 
       {/* Right Column: Reading Questions (Strictly sorted by orderIndex) */}
-      <div className={hasPassage ? "lg:col-span-6 space-y-4" : "lg:col-span-12 space-y-4"}>
+      <div
+        ref={rightBoxRef}
+        tabIndex={-1}
+        className={
+          hasPassage
+            ? "lg:col-span-6 space-y-4 lg:h-full lg:min-h-0 lg:overflow-y-auto lg:pr-2 overscroll-contain focus:outline-none"
+            : "lg:col-span-12 space-y-4"
+        }
+      >
         {sortedQuestions.map((q) => {
           const promptText = q?.prompt || "";
           const isFillBlankWithSlots = q?.questionType === "fill_blank" && hasFillBlankPlaceholders(promptText);

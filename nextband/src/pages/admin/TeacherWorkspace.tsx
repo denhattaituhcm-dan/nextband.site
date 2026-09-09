@@ -203,13 +203,13 @@ export default function TeacherWorkspace() {
         setSelectedClassId(classesData[0].id);
       }
     }
-  }, [classesData, urlClassId, urlTeacherId]);
+  }, [classesData, urlClassId, urlTeacherId, selectedClassId]);
 
   useEffect(() => {
     if (urlStudentId && !selectedStudentId) {
       setSelectedStudentId(urlStudentId);
     }
-  }, [urlStudentId]);
+  }, [urlStudentId, selectedStudentId]);
 
   const currentClass = useMemo(() => {
     return classes.find((c: any) => c.id === selectedClassId) || classes[0];

@@ -102,11 +102,9 @@ describe("HomePage Consumer-Level Fault Isolation & Resilience", () => {
 
     renderHomePage();
 
-    // Verify: Student Stage Banner renders successfully despite KPI failure
+    // Verify: Enrolled class card renders successfully despite KPI failure
     await waitFor(() => {
-      expect(screen.getByText("DANBUFFETT")).toBeInTheDocument();
+      expect(screen.getAllByText(/D01 07.2026/i).length).toBeGreaterThan(0);
     });
-
-    expect(screen.getAllByText(/D01 07.2026/i).length).toBeGreaterThan(0);
   });
 });

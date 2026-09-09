@@ -61,7 +61,7 @@ export default function ReadingCasePage() {
       setActiveExplainTerm(null);
       setRightPanelTab("tasks");
     }
-  }, [caseId]);
+  }, [caseId, selectedCaseId]);
 
   const readingCase = ALL_CASES[selectedCaseId] || CASE_001;
 

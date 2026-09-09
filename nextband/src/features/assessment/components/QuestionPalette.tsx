@@ -61,7 +61,10 @@ export function QuestionPalette({
   const answeredCount = paletteItems.filter((i) => i.isAnswered).length;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-md border-t border-border shadow-[0_-4px_25px_rgba(0,0,0,0.08)]">
+    <div
+      data-question-palette="true"
+      className="fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-md border-t border-border shadow-[0_-4px_25px_rgba(0,0,0,0.08)]"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3 sm:gap-6">
         {/* Left Side: Summary Badge */}
         <div className="flex items-center gap-2 shrink-0">

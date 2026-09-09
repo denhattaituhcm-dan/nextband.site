@@ -259,7 +259,9 @@ export default function AdminSectionEdit() {
   });
 
   const section = sectionData;
-  const questionGroups = section?.question_groups || section?.questionGroups || [];
+  const questionGroups = useMemo(() => {
+    return section?.question_groups || section?.questionGroups || [];
+  }, [section]);
 
   const totalQuestionsCount = useMemo(() => {
     return questionGroups.reduce((acc: number, g: any) => acc + (g.questions?.length || 0), 0);

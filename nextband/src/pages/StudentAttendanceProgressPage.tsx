@@ -90,7 +90,9 @@ export default function StudentAttendanceProgressPage() {
     return [...rawLessons].sort(compareHomeworkOrder);
   }, [rawLessons]);
 
-  const userSubmissions = Array.isArray(submissionsData?.data) ? submissionsData.data : [];
+  const userSubmissions = useMemo(() => {
+    return Array.isArray(submissionsData?.data) ? submissionsData.data : [];
+  }, [submissionsData?.data]);
 
   const homeworkStats = useMemo(() => {
     const homeworkList = lessons.map((item: any) => {
