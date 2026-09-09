@@ -346,6 +346,7 @@ const App = () => (
               {/* ============================================================ */}
               <Route path="/diagnostic" element={<DiagnosticLandingPage />} />
               <Route path="/kiem-tra" element={<DiagnosticLandingPage />} />
+              <Route path="/test20" element={<DiagnosticLandingPage />} />
               <Route path="/reading/case-001" element={<ReadingCasePage />} />
               <Route path="/reading/:caseId" element={<ReadingCasePage />} />
               <Route path="/assessment/take/:sessionId" element={<PlacementExamInterface />} />
