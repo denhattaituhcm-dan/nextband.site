@@ -20,15 +20,12 @@ import { getHuanCoState } from "@/lib/huanCoState";
 import { routes } from "@/lib/routes";
 import { submissionKeys } from "@/lib/queryKeys";
 import { HuanCoMascot } from "@/components/mascot/HuanCoMascot";
-import { StudentStageBanner } from "@/components/student/StudentStageBanner";
-import { StudentMissionQueue } from "@/components/student/StudentMissionQueue";
-import { StudentSkillMatrix } from "@/components/student/StudentSkillMatrix";
 import { DisciplineScholarshipTracker } from "@/components/student/DisciplineScholarshipTracker";
 import { isScholarshipEligible } from "@/lib/disciplineScholarshipHelper";
 import { AcademicAscentWorld, AscentLessonNode } from "@/components/student/AcademicAscentWorld";
 import { calculateStudentJourney, resolveCourseBands } from "@/lib/studentJourney";
-import { getStudentMotivationCopy } from "@/lib/studentMotivationCopy";
 import { calculateStudentStreak } from "@/lib/studentStreakHelper";
+import { getCourseBrand } from "@/lib/courseBrand";
 import {
   evaluateAllAchievedMilestones,
   selectHighestPriorityPendingMilestone,
@@ -279,29 +276,10 @@ export default function HomePage() {
     }) || attendanceData.data.sessions.find((s: any) => s.status !== "COMPLETED") || attendanceData.data.sessions[0];
   }, [attendanceData]);
 
-  // Leaderboard data for class & motivation context
-  const { data: leaderboardData } = useQuery({
-    queryKey: ["class-leaderboard-home", enrolledClassId],
-    queryFn: () => classesApi.getLeaderboard(enrolledClassId || ""),
-    enabled: !!enrolledClassId && state === "ENROLLED",
-    staleTime: 1000 * 60 * 2,
-  });
-
   // Daily Streak Engine
   const streak = useMemo(() => {
     return calculateStudentStreak(userSubmissions, user?.id);
   }, [userSubmissions, user?.id]);
-
-  // Motivational Micro-Copy Engine
-  const motivation = useMemo(() => {
-    return getStudentMotivationCopy({
-      actionQueue,
-      leaderboardData: leaderboardData || null,
-      submittedCount,
-      gradedCount,
-      pendingCount,
-    });
-  }, [actionQueue, leaderboardData, submittedCount, gradedCount, pendingCount]);
 
   // Trạng thái sư phạm của Huyền Cơ Lão Nhân
   const huanCoState = useMemo(() => {
@@ -401,16 +379,6 @@ export default function HomePage() {
                 </div>
               </div>
             )}
-
-            {/* 1. STAGE BANNER: Cảnh Giới & Điểm Neo Chặng Đường (20% Progression) */}
-            <StudentStageBanner
-              studentName={user?.fullName || "Học viên"}
-              className={activeClassName}
-              courseTitle={courseTitle}
-              journey={journey}
-              motivation={motivation}
-              streak={streak}
-            />
 
             {/* 1.2 NEXT SESSION & ATTENDANCE QUICK SPOTLIGHT */}
             {enrolledClassId && (
