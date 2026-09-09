@@ -132,7 +132,7 @@ export default function SpeakingForecastSeason() {
     [filteredTopics]
   );
   const part2List = useMemo(
-    () => filteredTopics.filter((t) => t.part === 'Part 2'),
+    () => filteredTopics.filter((t) => t.part === 'Part 2' || t.part === 'Part 3'),
     [filteredTopics]
   );
 

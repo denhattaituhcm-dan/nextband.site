@@ -39,7 +39,7 @@ export const SpeakingForecastTOC: React.FC<SpeakingForecastTOCProps> = ({
     [topics]
   );
   const part2Topics = useMemo(
-    () => topics.filter((t) => t.part === 'Part 2'),
+    () => topics.filter((t) => t.part === 'Part 2' || t.part === 'Part 3'),
     [topics]
   );
 

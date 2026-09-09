@@ -268,15 +268,27 @@ export default function SpeakingForecastHub() {
           </div>
 
           {/* Topics Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTopics.map((topic) => (
-              <SeasonTopicCard
-                key={topic.id}
-                topic={topic}
-                seasonSlug={latestSeasonSlug}
-              />
-            ))}
-          </div>
+          {filteredTopics.length === 0 ? (
+            <div className="p-12 border border-dashed rounded-2xl text-center space-y-3 bg-muted/20">
+              <Mic className="h-8 w-8 text-muted-foreground/50 mx-auto" />
+              <p className="text-sm font-semibold text-foreground">
+                Chưa có chủ đề nào cho phần này trong {latestSeason?.name || 'mùa hiện tại'}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Đội ngũ chuyên môn đang tiếp tục tổng hợp đề thi mới nhất từ phòng thi thực tế.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredTopics.map((topic) => (
+                <SeasonTopicCard
+                  key={topic.id}
+                  topic={topic}
+                  seasonSlug={latestSeasonSlug}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

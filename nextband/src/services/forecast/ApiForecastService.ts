@@ -60,6 +60,8 @@ export class ApiForecastService implements ForecastService {
 
   async getSeason(slug: string): Promise<Season | null> {
     const { seasons } = await this.fetchForecastData();
+    const matchById = seasons.find((s) => s.id === slug);
+    if (matchById) return matchById;
     const parsed = parseSeasonSlug(slug);
     if (parsed) {
       const match = seasons.find(
@@ -121,7 +123,7 @@ export class ApiForecastService implements ForecastService {
 
   async getTopic(seasonSlug: string, topicSlug: string): Promise<ForecastTopic | null> {
     const topics = await this.getTopics(seasonSlug);
-    return topics.find((t) => t.slug === topicSlug) || null;
+    return topics.find((t) => t.slug === topicSlug || t.id === topicSlug) || null;
   }
 
   async getRelatedTopics(topic: ForecastTopic, limit: number = 3): Promise<ForecastTopic[]> {
