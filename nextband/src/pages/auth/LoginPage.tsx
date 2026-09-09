@@ -34,8 +34,8 @@ import { SiteLogo } from "@/components/common/SiteLogo";
 import { ZaloIcon } from "@/components/common/ZaloIcon";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
-const emailSchema = z.string().email("Email kh├┤ng hß╗úp lß╗ç");
-const passwordSchema = z.string().min(6, "Mß║¡t khß║⌐u phß║úi c├│ ├¡t nhß║Ñt 6 k├╜ tß╗▒");
+const emailSchema = z.string().email("Email không hợp lệ");
+const passwordSchema = z.string().min(6, "Mật khẩu tối thiểu 6 ký tự");
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -121,17 +121,17 @@ export default function LoginPage() {
       const description =
         typeof rawMsg === "string" && rawMsg.trim() && rawMsg.trim() !== "{}"
           ? rawMsg
-          : "Email hoß║╖c mß║¡t khß║⌐u kh├┤ng ch├¡nh x├íc.";
+          : "Email hoặc mật khẩu không chính xác.";
 
       toast({
         variant: "destructive",
-        title: "─É─âng nhß║¡p thß║Ñt bß║íi",
+        title: "Đăng nhập thất bại",
         description,
       });
     } else {
       toast({
-        title: "─É─âng nhß║¡p th├ánh c├┤ng",
-        description: "Ch├áo mß╗½ng bß║ín quay trß╗ƒ lß║íi!",
+        title: "Đăng nhập thành công",
+        description: "Chào mừng bạn quay trở lại!",
       });
     }
   };
@@ -152,7 +152,7 @@ export default function LoginPage() {
           <Link
             to="/"
             className="inline-flex items-center gap-3 group transition-opacity hover:opacity-90 cursor-pointer"
-            title={`Quay vß╗ü trang chß╗º ${settings.siteName || "ARIS IELTS"}`}
+            title={`Về trang chủ ${settings.siteName || "ARIS IELTS"}`}
           >
             <SiteLogo
               alt={settings.siteName || "ARIS IELTS"}
@@ -170,17 +170,17 @@ export default function LoginPage() {
           </Link>
           <div className="space-y-1">
             <h1 className="text-[30px] font-semibold tracking-tight text-primary uppercase">
-              {settings.authTitle || "T╞» DUY Bß║óN Xß╗¿ Tß╗¬ Gß╗ÉC Rß╗ä"}
+              {settings.authTitle || "TƯ DUY BẢN XỨ TỪ GỐC RỄ"}
             </h1>
             <p className="text-[14px] text-slate-500 font-normal">
-              {settings.authTagline || "Hiß╗âu ─æ├║ng c╞í chß║┐ ng├┤n ngß╗» ΓÇö Hß╗ìc tß╗½ bß║ún chß║Ñt, d├╣ng trß╗ìn ─æß╗¥i."}
+              {settings.authTagline || "Hiểu đúng cơ chế ngôn ngữ — Học từ bản chất, dùng trọn đời."}
             </p>
           </div>
         </div>
 
         {/* Left side Primary Content */}
         <div className="relative z-10 w-full max-w-3xl my-auto py-4 space-y-5">
-          {/* Feature Pillars: Giß╗» nguy├¬n 2 ├┤ v├á Viß╗çt h├│a chuß║⌐n h├ánh tr├¼nh hß╗ìc thuß║¡t */}
+          {/* Feature Pillars: Feature Pillars */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center gap-3.5 p-3.5 rounded-xl bg-card border border-border/60 shadow-xs">
               <div className="rounded-lg bg-primary-soft p-2.5 shrink-0">
@@ -188,10 +188,10 @@ export default function LoginPage() {
               </div>
               <div className="min-w-0">
                 <h3 className="font-semibold text-foreground text-sm sm:text-base tracking-tight truncate">
-                  {settings.authFeatureOneTitle || "H├ánh tr├¼nh hß╗ìc tß║¡p"}
+                  {settings.authFeatureOneTitle || "Hành trình học tập"}
                 </h3>
                 <p className="text-xs text-muted-foreground truncate">
-                  {settings.authFeatureOneDescription || "Lß╗Ö tr├¼nh IELTS cß╗ºa bß║ín"}
+                  {settings.authFeatureOneDescription || "Lộ trình IELTS của bạn"}
                 </p>
               </div>
             </div>
@@ -202,10 +202,10 @@ export default function LoginPage() {
               </div>
               <div className="min-w-0">
                 <h3 className="font-semibold text-foreground text-sm sm:text-base tracking-tight truncate">
-                  {settings.authFeatureTwoTitle || "Tiß║┐n ─æß╗Ö chinh phß╗Ñc"}
+                  {settings.authFeatureTwoTitle || "Tiến độ chinh phục"}
                 </h3>
                 <p className="text-xs text-muted-foreground truncate">
-                  {settings.authFeatureTwoDescription || "Theo d├╡i tß╗½ng b╞░ß╗¢c tiß║┐n bß╗Ö"}
+                  {settings.authFeatureTwoDescription || "Theo dõi từng bước tiến bộ"}
                 </p>
               </div>
             </div>
@@ -235,7 +235,7 @@ export default function LoginPage() {
               {settings.siteName || "ARIS IELTS"}
             </div>
             <div className="text-muted-foreground font-normal text-[10px]">
-              ┬⌐ 2026 <span className="mx-1">ΓÇó</span> D─⌐ An, TP.HCM
+              © 2026 <span className="mx-1">•</span> Dĩ An, TP.HCM
             </div>
           </div>
 
@@ -249,7 +249,7 @@ export default function LoginPage() {
               <div className="w-3 h-3 shrink-0 text-primary">
                 <ZaloIcon className="w-full h-full" />
               </div>
-              <span>Li├¬n hß╗ç / G├│p ├╜</span>
+              <span>Liên hệ hỗ trợ</span>
             </a>
           )}
         </div>
@@ -264,13 +264,13 @@ export default function LoginPage() {
               <Link
                 to="/"
                 className="inline-flex items-center justify-center group transition-opacity hover:opacity-90 cursor-pointer"
-                title="Quay vß╗ü trang chß╗º ARIS IELTS"
+                title="Về trang chủ ARIS IELTS"
               >
                 <SiteLogo alt="ARIS IELTS Logo" className="max-h-9 w-auto object-contain transition-transform duration-200 group-hover:scale-105" />
               </Link>
             </div>
             <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
-              Tiß║┐p tß╗Ñc h├ánh tr├¼nh
+              Đăng nhập
             </CardTitle>
             <p className="text-xs sm:text-sm text-muted-foreground">
               Đăng nhập để tiếp tục chinh phục mục tiêu IELTS.
@@ -291,8 +291,8 @@ export default function LoginPage() {
                   } catch (error: any) {
                     toast({
                       variant: "destructive",
-                      title: "─É─âng nhß║¡p thß║Ñt bß║íi",
-                      description: error?.message || "Kh├┤ng thß╗â khß╗ƒi chß║íy ─æ─âng nhß║¡p Google.",
+                      title: "Đăng nhập thất bại",
+                      description: error?.message || "Không thể đăng nhập bằng Google.",
                     });
                   } finally {
                     setIsLoading(false);
@@ -317,7 +317,7 @@ export default function LoginPage() {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
                   />
                 </svg>
-                <span className="tracking-tight">Tiß║┐p tß╗Ñc vß╗¢i Google</span>
+                <span className="tracking-tight">Đăng nhập bằng Google</span>
               </Button>
             </div>
 
@@ -356,13 +356,13 @@ export default function LoginPage() {
               <div className="space-y-1.5">
                 <Label htmlFor="login-password" className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                   <Lock className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                  <span>Mß║¡t khß║⌐u</span>
+                  <span>Mật khẩu</span>
                 </Label>
                 <div className="relative">
                   <Input
                     id="login-password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="ΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇóΓÇó"
+                    placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={isLoading}
@@ -396,10 +396,10 @@ export default function LoginPage() {
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ─Éang xß╗¡ l├╜...
+                    Đang xử lý...
                   </>
                 ) : (
-                  "─É─âng nhß║¡p"
+                  "Đăng nhập"
                 )}
               </Button>
             </form>
@@ -417,7 +417,7 @@ export default function LoginPage() {
               <div className="w-3.5 h-3.5 shrink-0 text-[#0068FF]">
                 <ZaloIcon className="w-full h-full" />
               </div>
-              <span>Li├¬n hß╗ç / G├│p ├╜ qua Zalo</span>
+              <span>Liên hệ hỗ trợ qua Zalo</span>
             </a>
           </div>
         )}

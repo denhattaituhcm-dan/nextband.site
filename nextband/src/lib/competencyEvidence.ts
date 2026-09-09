@@ -1,4 +1,11 @@
 /**
+ * HOLD — UNWIRED ACADEMIC INTELLIGENCE FOUNDATION.
+ *
+ * Currently test-covered but NOT wired into any production request flow or UI component.
+ * Do not treat this module as an active production capability.
+ * Deletion / activation decision belongs to product/roadmap, not dead-code cleanup.
+ *
+ * ---
  * ARIS ACADEMIC OS — P2-A: COMPETENCY EVIDENCE COLLECTION
  * 
  * Module trích xuất và cấu trúc hóa bằng chứng thực nghiệm học tập từ Lean Learning Loop v1.0.
