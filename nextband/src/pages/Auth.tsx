@@ -152,15 +152,15 @@ export default function Auth() {
           <Link
             to="/"
             className="inline-flex items-center gap-3 group transition-opacity hover:opacity-90 cursor-pointer"
-            title="Quay về trang chủ ARIS IELTS"
+            title={`Quay về trang chủ ${settings.siteName || "ARIS IELTS"}`}
           >
             <SiteLogo
-              alt="ARIS IELTS"
+              alt={settings.siteName || "ARIS IELTS"}
               className="max-h-12 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
             />
             <div className="border-l border-border pl-3 text-left">
               <div className="font-bold text-foreground text-lg leading-tight tracking-tight group-hover:text-primary transition-colors">
-                ARIS IELTS
+                {settings.siteName || "ARIS IELTS"}
               </div>
               <span className="inline-flex items-center gap-1 text-xs font-semibold text-warning mt-0.5">
                 <Award className="h-3.5 w-3.5" />
@@ -170,10 +170,10 @@ export default function Auth() {
           </Link>
           <div className="space-y-1">
             <h1 className="text-[30px] font-semibold tracking-tight text-primary uppercase">
-              TƯ DUY BẢN XỨ TỪ GỐC RỄ
+              {settings.authTitle || "TƯ DUY BẢN XỨ TỪ GỐC RỄ"}
             </h1>
             <p className="text-[14px] text-slate-500 font-normal">
-              Hiểu đúng cơ chế ngôn ngữ — Học từ bản chất, dùng trọn đời.
+              {settings.authTagline || "Hiểu đúng cơ chế ngôn ngữ — Học từ bản chất, dùng trọn đời."}
             </p>
           </div>
         </div>
@@ -188,10 +188,10 @@ export default function Auth() {
               </div>
               <div className="min-w-0">
                 <h3 className="font-semibold text-foreground text-sm sm:text-base tracking-tight truncate">
-                  Hành trình học tập
+                  {settings.authFeatureOneTitle || "Hành trình học tập"}
                 </h3>
                 <p className="text-xs text-muted-foreground truncate">
-                  Lộ trình IELTS của bạn
+                  {settings.authFeatureOneDescription || "Lộ trình IELTS của bạn"}
                 </p>
               </div>
             </div>
@@ -202,10 +202,10 @@ export default function Auth() {
               </div>
               <div className="min-w-0">
                 <h3 className="font-semibold text-foreground text-sm sm:text-base tracking-tight truncate">
-                  Tiến độ chinh phục
+                  {settings.authFeatureTwoTitle || "Tiến độ chinh phục"}
                 </h3>
                 <p className="text-xs text-muted-foreground truncate">
-                  Theo dõi từng bước tiến bộ
+                  {settings.authFeatureTwoDescription || "Theo dõi từng bước tiến bộ"}
                 </p>
               </div>
             </div>
@@ -231,7 +231,9 @@ export default function Auth() {
         {/* Subtler Footer */}
         <div className="relative z-10 flex items-center justify-between gap-3 pt-3 border-t border-border/60 text-[11px]">
           <div className="space-y-0.5">
-            <div className="font-medium text-foreground tracking-tight">ARIS IELTS</div>
+            <div className="font-medium text-foreground tracking-tight">
+              {settings.siteName || "ARIS IELTS"}
+            </div>
             <div className="text-muted-foreground font-normal text-[10px]">
               © 2026 <span className="mx-1">•</span> Dĩ An, TP.HCM
             </div>

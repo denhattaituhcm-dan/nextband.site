@@ -30,7 +30,7 @@ export function AdminHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 shrink-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="flex h-14 items-center justify-between px-4">
           <div className="flex items-center gap-4">
             <SidebarTrigger className="-ml-1" />
@@ -44,7 +44,7 @@ export function AdminHeader() {
 
           <div className="flex items-center gap-3">
             <NotificationBell scope="admin" />
-            <DropdownMenu>
+            <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                   <Avatar className="h-9 w-9">

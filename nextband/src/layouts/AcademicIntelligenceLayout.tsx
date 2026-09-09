@@ -6,12 +6,12 @@ import { ShieldCheck, Cpu } from "lucide-react";
 
 export default function AcademicIntelligenceLayout() {
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-slate-950 text-slate-100 selection:bg-emerald-500 selection:text-slate-950 font-sans">
+    <SidebarProvider className="h-svh max-h-svh overflow-hidden">
+      <div className="h-full flex w-full bg-slate-950 text-slate-100 selection:bg-emerald-500 selection:text-slate-950 font-sans overflow-hidden">
         <AcademicIntelligenceSidebar />
-        <div className="flex-1 min-w-0 flex flex-col">
+        <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
           {/* Top Bar */}
-          <header className="sticky top-0 z-30 flex h-13 items-center justify-between border-b border-slate-800 bg-slate-950/80 px-4 backdrop-blur">
+          <header className="sticky top-0 shrink-0 z-30 flex h-13 items-center justify-between border-b border-slate-800 bg-slate-950/80 px-4 backdrop-blur">
             <div className="flex items-center gap-3">
               <SidebarTrigger className="text-slate-400 hover:text-white" />
               <div className="h-4 w-px bg-slate-800" />
@@ -37,7 +37,7 @@ export default function AcademicIntelligenceLayout() {
           </header>
 
           {/* Main Body */}
-          <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8 bg-slate-950 text-slate-200">
+          <main className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-slate-950 text-slate-200">
             <Outlet />
           </main>
         </div>

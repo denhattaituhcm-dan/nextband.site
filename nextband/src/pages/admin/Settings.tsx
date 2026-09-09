@@ -22,7 +22,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, Users, Building2, MapPin, Plus, Phone, School, Star, Power, PowerOff, KeyRound, ShieldCheck } from "lucide-react";
+import { BookOpen, Users, Building2, MapPin, Plus, Phone, School, Star, Power, PowerOff, KeyRound, ShieldCheck, GraduationCap, TrendingUp, Award } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { ChangePasswordDialog } from "@/components/auth/ChangePasswordDialog";
 
@@ -244,31 +244,52 @@ export default function AdminSettings() {
         <CardHeader>
           <CardTitle>Nội dung màn đăng nhập</CardTitle>
           <CardDescription>
-            Quản lý phần giới thiệu và 2 khối nội dung bên trái của trang đăng nhập.
+            Quản lý tiêu đề giới thiệu và 2 khối nội dung (Hành trình học tập & Tiến độ chinh phục) trên trang đăng nhập.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <Label>Dòng mô tả đầu trang</Label>
-            <Textarea
-              value={data.authTagline}
-              rows={2}
-              maxLength={120}
-              onChange={(e) =>
-                updateSettings((prev) => ({
-                  ...prev,
-                  authTagline: e.target.value.slice(0, 120),
-                }))
-              }
-              placeholder="Nhập mô tả ngắn cho màn đăng nhập"
-            />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label>Tiêu đề chính đầu trang</Label>
+              <Input
+                value={data.authTitle || ""}
+                maxLength={120}
+                onChange={(e) =>
+                  updateSettings((prev) => ({
+                    ...prev,
+                    authTitle: e.target.value.slice(0, 120),
+                  }))
+                }
+                placeholder="Ví dụ: TƯ DUY BẢN XỨ TỪ GỐC RỄ"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Dòng mô tả đầu trang</Label>
+              <Input
+                value={data.authTagline || ""}
+                maxLength={160}
+                onChange={(e) =>
+                  updateSettings((prev) => ({
+                    ...prev,
+                    authTagline: e.target.value.slice(0, 160),
+                  }))
+                }
+                placeholder="Ví dụ: Hiểu đúng cơ chế ngôn ngữ — Học từ bản chất, dùng trọn đời."
+              />
+            </div>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <div className="space-y-4 rounded-lg border p-4">
-              <p className="text-sm font-medium">Khối nội dung 1</p>
+            <div className="space-y-4 rounded-xl border border-border/80 p-4 bg-muted/10">
+              <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                <div className="rounded-lg bg-primary-soft p-1.5 shrink-0">
+                  <GraduationCap className="h-4 w-4 text-primary" />
+                </div>
+                <span>Khối nội dung 1 (Hành trình học tập)</span>
+              </div>
               <div className="space-y-2">
-                <Label>Tiêu đề</Label>
+                <Label>Tiêu đề khối 1</Label>
                 <Input
                   value={data.authFeatureOneTitle}
                   onChange={(e) =>
@@ -277,11 +298,11 @@ export default function AdminSettings() {
                       authFeatureOneTitle: e.target.value,
                     }))
                   }
-                  placeholder="Ví dụ: Khóa học chất lượng"
+                  placeholder="Ví dụ: Hành trình học tập"
                 />
               </div>
               <div className="space-y-2">
-                <Label>Mô tả</Label>
+                <Label>Mô tả khối 1</Label>
                 <Textarea
                   value={data.authFeatureOneDescription}
                   rows={3}
@@ -292,15 +313,20 @@ export default function AdminSettings() {
                       authFeatureOneDescription: e.target.value.slice(0, 160),
                     }))
                   }
-                  placeholder="Nhập mô tả khối nội dung 1"
+                  placeholder="Ví dụ: Lộ trình IELTS của bạn"
                 />
               </div>
             </div>
 
-            <div className="space-y-4 rounded-lg border p-4">
-              <p className="text-sm font-medium">Khối nội dung 2</p>
+            <div className="space-y-4 rounded-xl border border-border/80 p-4 bg-muted/10">
+              <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                <div className="rounded-lg bg-info/10 p-1.5 shrink-0">
+                  <TrendingUp className="h-4 w-4 text-info" />
+                </div>
+                <span>Khối nội dung 2 (Tiến độ chinh phục)</span>
+              </div>
               <div className="space-y-2">
-                <Label>Tiêu đề</Label>
+                <Label>Tiêu đề khối 2</Label>
                 <Input
                   value={data.authFeatureTwoTitle}
                   onChange={(e) =>
@@ -309,11 +335,11 @@ export default function AdminSettings() {
                       authFeatureTwoTitle: e.target.value,
                     }))
                   }
-                  placeholder="Ví dụ: Giáo viên uy tín"
+                  placeholder="Ví dụ: Tiến độ chinh phục"
                 />
               </div>
               <div className="space-y-2">
-                <Label>Mô tả</Label>
+                <Label>Mô tả khối 2</Label>
                 <Textarea
                   value={data.authFeatureTwoDescription}
                   rows={3}
@@ -324,57 +350,109 @@ export default function AdminSettings() {
                       authFeatureTwoDescription: e.target.value.slice(0, 160),
                     }))
                   }
-                  placeholder="Nhập mô tả khối nội dung 2"
+                  placeholder="Ví dụ: Theo dõi từng bước tiến bộ"
                 />
               </div>
             </div>
           </div>
 
-          <div className="rounded-xl border bg-gradient-to-br from-primary/10 via-secondary to-primary/5 p-6">
-            <p className="mb-4 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Preview màn đăng nhập
-            </p>
-            <div className="space-y-8">
-              <div>
-                <img
-                  src={getPreviewLogoUrl(data.logoUrl)}
-                  alt={`${data.siteName} Logo`}
-                  className="max-h-12 w-auto object-contain"
-                />
-                <p className="mt-2 text-muted-foreground">
-                  {data.authTagline || "Nhập mô tả đầu trang"}
+          {/* Preview thực tế màn đăng nhập */}
+          <div className="rounded-2xl border border-border bg-gradient-to-b from-muted/30 to-muted/10 p-6 space-y-6">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                <span className="inline-block w-2 h-2 rounded-full bg-primary animate-pulse" />
+                Preview thực tế màn đăng nhập (Phần bên trái)
+              </p>
+              <Badge variant="outline" className="text-[11px] font-normal">
+                Xem trước thời gian thực
+              </Badge>
+            </div>
+
+            <div className="rounded-xl border border-border bg-card/90 p-5 space-y-5 shadow-xs">
+              {/* Brand Header */}
+              <div className="space-y-3">
+                <div className="inline-flex items-center gap-3">
+                  <img
+                    src={getPreviewLogoUrl(data.logoUrl)}
+                    alt={`${data.siteName} Logo`}
+                    className="max-h-11 w-auto object-contain"
+                  />
+                  <div className="border-l border-border pl-3 text-left">
+                    <div className="font-bold text-foreground text-base leading-tight tracking-tight">
+                      {data.siteName || "ARIS IELTS"}
+                    </div>
+                    <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-500 mt-0.5">
+                      <Award className="h-3 w-3" />
+                      Cambridge Standard
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-1 pt-1">
+                  <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-primary uppercase">
+                    {data.authTitle || "TƯ DUY BẢN XỨ TỪ GỐC RỄ"}
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-500 font-normal">
+                    {data.authTagline || "Hiểu đúng cơ chế ngôn ngữ — Học từ bản chất, dùng trọn đời."}
+                  </p>
+                </div>
+              </div>
+
+              {/* 2 Feature Pillars Layout */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-background border border-border/80 shadow-2xs">
+                  <div className="rounded-lg bg-primary-soft p-2 shrink-0">
+                    <GraduationCap className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-semibold text-foreground text-sm tracking-tight truncate">
+                      {data.authFeatureOneTitle || "Hành trình học tập"}
+                    </h3>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {data.authFeatureOneDescription || "Lộ trình IELTS của bạn"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-background border border-border/80 shadow-2xs">
+                  <div className="rounded-lg bg-info/10 p-2 shrink-0">
+                    <TrendingUp className="h-5 w-5 text-info" />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-semibold text-foreground text-sm tracking-tight truncate">
+                      {data.authFeatureTwoTitle || "Tiến độ chinh phục"}
+                    </h3>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {data.authFeatureTwoDescription || "Theo dõi từng bước tiến bộ"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Journey Illustration Preview */}
+              <div className="space-y-2 pt-2 border-t border-border/40">
+                <div className="w-full rounded-xl overflow-hidden border border-border/60 bg-muted/20">
+                  <img
+                    src="/your-journey.webp"
+                    alt="ARIS IELTS Learning Journey"
+                    className="w-full h-auto object-cover max-h-40 sm:max-h-48"
+                  />
+                </div>
+                <p className="text-center text-xs text-muted-foreground font-medium">
+                  Mỗi bài hoàn thành đưa bạn tiến gần hơn tới cấp độ tiếp theo.
                 </p>
               </div>
+            </div>
 
-              <div className="space-y-8">
-                <div className="flex items-start gap-4">
-                  <div className="rounded-lg bg-primary/10 p-3">
-                    <BookOpen className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">
-                      {data.authFeatureOneTitle || "Tiêu đề khối 1"}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {data.authFeatureOneDescription || "Mô tả khối 1"}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="rounded-lg bg-primary/10 p-3">
-                    <Users className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">
-                      {data.authFeatureTwoTitle || "Tiêu đề khối 2"}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {data.authFeatureTwoDescription || "Mô tả khối 2"}
-                    </p>
-                  </div>
-                </div>
-              </div>
+            <div className="flex justify-end pt-1">
+              <Button
+                type="button"
+                onClick={handleSave}
+                disabled={isLoading || saveMutation.isPending}
+                className="gap-2 text-xs font-semibold shadow-xs"
+              >
+                {saveMutation.isPending ? "Đang lưu..." : "Lưu nội dung màn đăng nhập"}
+              </Button>
             </div>
           </div>
         </CardContent>

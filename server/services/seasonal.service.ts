@@ -24,49 +24,131 @@ export class SeasonalService {
   constructor(private prisma: PrismaClient) {}
 
   /**
-   * Seed default Tet Event if none exists
+   * Seed default Vietnamese Seasonal Events if none exist
    */
-  async ensureDefaultTetEvent() {
-    const existing = await this.prisma.seasonalEvent.findUnique({
-      where: { code: "TET_2027" },
-      include: { rewardPool: true },
-    });
-
-    if (existing) return existing;
-
-    // Create Tet 2027 with pre-configured pool (Total: 800,000 VND, 60 slots)
-    // 40x 5.000đ = 200k
-    // 15x 10.000đ = 150k
-    // 4x 25.000đ = 100k
-    // 1x 100.000đ = 100k
-    // Total cash: 550.000đ + buffer for vouchers/milestones
-    return await this.prisma.seasonalEvent.create({
-      data: {
+  async ensureDefaultEvents() {
+    const defaultEvents = [
+      {
         code: "TET_2027",
         name: "Tết Nguyên Đán 2027",
         type: "TET",
-        isActive: false, // Default off, admin toggles on
+        isActive: false,
+        startAt: new Date("2027-01-25"),
+        endAt: new Date("2027-02-15"),
         budgetCap: 800000,
         totalSlots: 60,
         uiConfig: DEFAULT_TET_UI_CONFIG as any,
-        rewardPool: {
-          create: [
-            { tier: "SMALL", amount: 5000, totalSlots: 40, order: 1 },
-            { tier: "MEDIUM", amount: 10000, totalSlots: 15, order: 2 },
-            { tier: "LARGE", amount: 25000, totalSlots: 4, order: 3 },
-            { tier: "SPECIAL", amount: 100000, totalSlots: 1, order: 4 },
-          ],
-        },
+        pools: [
+          { tier: "SMALL", amount: 5000, totalSlots: 40, order: 1 },
+          { tier: "MEDIUM", amount: 10000, totalSlots: 15, order: 2 },
+          { tier: "LARGE", amount: 25000, totalSlots: 4, order: 3 },
+          { tier: "SPECIAL", amount: 100000, totalSlots: 1, order: 4 },
+        ],
       },
-      include: { rewardPool: true },
-    });
+      {
+        code: "BACK_TO_SCHOOL",
+        name: "Khai Giảng — Khởi Hành Năm Học",
+        type: "BACK_TO_SCHOOL",
+        isActive: false,
+        startAt: new Date("2026-08-15"),
+        endAt: new Date("2026-09-15"),
+        budgetCap: 500000,
+        totalSlots: 50,
+        uiConfig: {
+          showBlossom: false,
+          showEnvelopes: true,
+          showModal: true,
+          showPetals: false,
+          playChime: true,
+          bannerTitle: "Khởi Hành Năm Học — Bứt Phá Band",
+          bannerSubtitle: "Thiết lập kỷ luật ngay từ ngày đầu tựu trường để bứt phá band điểm IELTS!",
+        } as any,
+        pools: [
+          { tier: "SMALL", amount: 5000, totalSlots: 30, order: 1 },
+          { tier: "MEDIUM", amount: 10000, totalSlots: 15, order: 2 },
+          { tier: "LARGE", amount: 20000, totalSlots: 5, order: 3 },
+        ],
+      },
+      {
+        code: "TEACHERS_DAY",
+        name: "20/11 — Một Lời Tri Ân",
+        type: "TEACHERS_DAY",
+        isActive: false,
+        startAt: new Date("2026-11-01"),
+        endAt: new Date("2026-11-25"),
+        budgetCap: 500000,
+        totalSlots: 50,
+        uiConfig: {
+          showBlossom: false,
+          showEnvelopes: true,
+          showModal: true,
+          showPetals: false,
+          playChime: true,
+          bannerTitle: "Một Lời Tri Ân — Một Bước Trưởng Thành",
+          bannerSubtitle: "Điều em học được hôm nay sẽ trở thành điều em có thể dạy lại ngày mai.",
+        } as any,
+        pools: [
+          { tier: "SMALL", amount: 5000, totalSlots: 35, order: 1 },
+          { tier: "MEDIUM", amount: 10000, totalSlots: 12, order: 2 },
+          { tier: "LARGE", amount: 25000, totalSlots: 3, order: 3 },
+        ],
+      },
+      {
+        code: "MID_AUTUMN",
+        name: "Tết Trung Thu — Đêm Trăng Học Tập",
+        type: "MID_AUTUMN",
+        isActive: false,
+        startAt: new Date("2026-09-20"),
+        endAt: new Date("2026-10-05"),
+        budgetCap: 400000,
+        totalSlots: 40,
+        uiConfig: {
+          showBlossom: false,
+          showEnvelopes: true,
+          showModal: true,
+          showPetals: false,
+          playChime: true,
+          bannerTitle: "Đêm Trăng Học Tập — Vượt Chặng Đèn Lồng",
+          bannerSubtitle: "Cùng ARIS thắp sáng ước mơ IELTS dưới ánh trăng rằm tháng 8.",
+        } as any,
+        pools: [
+          { tier: "SMALL", amount: 5000, totalSlots: 25, order: 1 },
+          { tier: "MEDIUM", amount: 10000, totalSlots: 12, order: 2 },
+          { tier: "LARGE", amount: 20000, totalSlots: 3, order: 3 },
+        ],
+      },
+    ];
+
+    for (const evt of defaultEvents) {
+      const existing = await this.prisma.seasonalEvent.findUnique({
+        where: { code: evt.code },
+      });
+      if (!existing) {
+        await this.prisma.seasonalEvent.create({
+          data: {
+            code: evt.code,
+            name: evt.name,
+            type: evt.type,
+            isActive: evt.isActive,
+            startAt: evt.startAt,
+            endAt: evt.endAt,
+            budgetCap: evt.budgetCap,
+            totalSlots: evt.totalSlots,
+            uiConfig: evt.uiConfig,
+            rewardPool: {
+              create: evt.pools,
+            },
+          },
+        });
+      }
+    }
   }
 
   /**
    * Get the current active seasonal event
    */
   async getActiveEvent() {
-    await this.ensureDefaultTetEvent();
+    await this.ensureDefaultEvents();
 
     const event = await this.prisma.seasonalEvent.findFirst({
       where: { isActive: true },
@@ -280,7 +362,7 @@ export class SeasonalService {
    * Admin: Get all seasonal events with their management status
    */
   async getAdminEvents() {
-    await this.ensureDefaultTetEvent();
+    await this.ensureDefaultEvents();
 
     const events = await this.prisma.seasonalEvent.findMany({
       include: {

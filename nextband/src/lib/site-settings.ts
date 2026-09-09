@@ -1,6 +1,7 @@
 export type SiteSettings = {
   siteName: string;
   logoUrl: string;
+  authTitle: string;
   authTagline: string;
   authFeatureOneTitle: string;
   authFeatureOneDescription: string;
@@ -30,13 +31,14 @@ export type SiteSettings = {
 };
 
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
-  siteName: "NextBand",
+  siteName: "ARIS IELTS Academy",
   logoUrl: "",
-  authTagline: "Nền tảng học IELTS hiện đại",
-  authFeatureOneTitle: "Khóa học chất lượng",
-  authFeatureOneDescription: "Hàng trăm bài học từ cơ bản đến nâng cao",
-  authFeatureTwoTitle: "Giáo viên uy tín",
-  authFeatureTwoDescription: "Đội ngũ giáo viên giàu kinh nghiệm",
+  authTitle: "TƯ DUY BẢN XỨ TỪ GỐC RỄ",
+  authTagline: "Hiểu đúng cơ chế ngôn ngữ — Học từ bản chất, dùng trọn đời.",
+  authFeatureOneTitle: "Hành trình học tập",
+  authFeatureOneDescription: "Lộ trình IELTS của bạn",
+  authFeatureTwoTitle: "Tiến độ chinh phục",
+  authFeatureTwoDescription: "Theo dõi từng bước tiến bộ",
   zaloLink: "https://zalo.me",
   completedLessonsStat: "5,000+",
   highlightPresent: "#fff7a5",
@@ -66,6 +68,7 @@ export function normalizeSiteSettings(raw: any): SiteSettings {
     ...DEFAULT_SITE_SETTINGS,
     ...raw,
     logoUrl: raw?.logoUrl || "",
+    authTitle: raw?.authTitle ?? DEFAULT_SITE_SETTINGS.authTitle,
     authTagline: raw?.authTagline ?? DEFAULT_SITE_SETTINGS.authTagline,
     authFeatureOneTitle:
       raw?.authFeatureOneTitle ?? DEFAULT_SITE_SETTINGS.authFeatureOneTitle,

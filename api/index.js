@@ -108904,7 +108904,8 @@ var updateSiteSettingsSchema = external_exports.object({
   logoUrl: external_exports.string().max(5e3).nullable().optional(),
   zaloLink: external_exports.string().max(500).nullable().optional(),
   completedLessonsStat: external_exports.string().max(50).nullable().optional(),
-  authTagline: external_exports.string().max(120).nullable().optional(),
+  authTitle: external_exports.string().max(120).nullable().optional(),
+  authTagline: external_exports.string().max(160).nullable().optional(),
   authFeatureOneTitle: external_exports.string().max(120).nullable().optional(),
   authFeatureOneDescription: external_exports.string().max(160).nullable().optional(),
   authFeatureTwoTitle: external_exports.string().max(120).nullable().optional(),
@@ -108938,15 +108939,16 @@ function normalizeSettings(record) {
   const val = record && typeof record.value === "object" && record.value !== null ? record.value : record || {};
   return {
     id: record?.id || "global",
-    siteName: val.siteName || "NextBand",
+    siteName: val.siteName || "ARIS IELTS Academy",
     logoUrl: val.logoUrl || "",
     zaloLink: val.zaloLink || "https://zalo.me",
     completedLessonsStat: val.completedLessonsStat || "5,000+",
-    authTagline: val.authTagline || "N\u1EC1n t\u1EA3ng h\u1ECDc IELTS hi\u1EC7n \u0111\u1EA1i",
-    authFeatureOneTitle: val.authFeatureOneTitle || "Kh\xF3a h\u1ECDc ch\u1EA5t l\u01B0\u1EE3ng",
-    authFeatureOneDescription: val.authFeatureOneDescription || "H\xE0ng tr\u0103m b\xE0i h\u1ECDc t\u1EEB c\u01A1 b\u1EA3n \u0111\u1EBFn n\xE2ng cao",
-    authFeatureTwoTitle: val.authFeatureTwoTitle || "Gi\xE1o vi\xEAn uy t\xEDn",
-    authFeatureTwoDescription: val.authFeatureTwoDescription || "\u0110\u1ED9i ng\u0169 gi\xE1o vi\xEAn gi\xE0u kinh nghi\u1EC7m",
+    authTitle: val.authTitle || "T\u01AF DUY B\u1EA2N X\u1EE8 T\u1EEA G\u1ED0C R\u1EC4",
+    authTagline: val.authTagline || "Hi\u1EC3u \u0111\xFAng c\u01A1 ch\u1EBF ng\xF4n ng\u1EEF \u2014 H\u1ECDc t\u1EEB b\u1EA3n ch\u1EA5t, d\xF9ng tr\u1ECDn \u0111\u1EDDi.",
+    authFeatureOneTitle: val.authFeatureOneTitle || "H\xE0nh tr\xECnh h\u1ECDc t\u1EADp",
+    authFeatureOneDescription: val.authFeatureOneDescription || "L\u1ED9 tr\xECnh IELTS c\u1EE7a b\u1EA1n",
+    authFeatureTwoTitle: val.authFeatureTwoTitle || "Ti\u1EBFn \u0111\u1ED9 chinh ph\u1EE5c",
+    authFeatureTwoDescription: val.authFeatureTwoDescription || "Theo d\xF5i t\u1EEBng b\u01B0\u1EDBc ti\u1EBFn b\u1ED9",
     highlightPresent: val.highlightPresent || "#fff7a5",
     highlightAbsent: val.highlightAbsent || "#ffd7d7",
     highlightInactive: val.highlightInactive || "#e5e7eb",
@@ -115977,41 +115979,129 @@ var SeasonalService = class {
     this.prisma = prisma;
   }
   /**
-   * Seed default Tet Event if none exists
+   * Seed default Vietnamese Seasonal Events if none exist
    */
-  async ensureDefaultTetEvent() {
-    const existing = await this.prisma.seasonalEvent.findUnique({
-      where: { code: "TET_2027" },
-      include: { rewardPool: true }
-    });
-    if (existing) return existing;
-    return await this.prisma.seasonalEvent.create({
-      data: {
+  async ensureDefaultEvents() {
+    const defaultEvents = [
+      {
         code: "TET_2027",
         name: "T\u1EBFt Nguy\xEAn \u0110\xE1n 2027",
         type: "TET",
         isActive: false,
-        // Default off, admin toggles on
+        startAt: /* @__PURE__ */ new Date("2027-01-25"),
+        endAt: /* @__PURE__ */ new Date("2027-02-15"),
         budgetCap: 8e5,
         totalSlots: 60,
         uiConfig: DEFAULT_TET_UI_CONFIG,
-        rewardPool: {
-          create: [
-            { tier: "SMALL", amount: 5e3, totalSlots: 40, order: 1 },
-            { tier: "MEDIUM", amount: 1e4, totalSlots: 15, order: 2 },
-            { tier: "LARGE", amount: 25e3, totalSlots: 4, order: 3 },
-            { tier: "SPECIAL", amount: 1e5, totalSlots: 1, order: 4 }
-          ]
-        }
+        pools: [
+          { tier: "SMALL", amount: 5e3, totalSlots: 40, order: 1 },
+          { tier: "MEDIUM", amount: 1e4, totalSlots: 15, order: 2 },
+          { tier: "LARGE", amount: 25e3, totalSlots: 4, order: 3 },
+          { tier: "SPECIAL", amount: 1e5, totalSlots: 1, order: 4 }
+        ]
       },
-      include: { rewardPool: true }
-    });
+      {
+        code: "BACK_TO_SCHOOL",
+        name: "Khai Gi\u1EA3ng \u2014 Kh\u1EDFi H\xE0nh N\u0103m H\u1ECDc",
+        type: "BACK_TO_SCHOOL",
+        isActive: false,
+        startAt: /* @__PURE__ */ new Date("2026-08-15"),
+        endAt: /* @__PURE__ */ new Date("2026-09-15"),
+        budgetCap: 5e5,
+        totalSlots: 50,
+        uiConfig: {
+          showBlossom: false,
+          showEnvelopes: true,
+          showModal: true,
+          showPetals: false,
+          playChime: true,
+          bannerTitle: "Kh\u1EDFi H\xE0nh N\u0103m H\u1ECDc \u2014 B\u1EE9t Ph\xE1 Band",
+          bannerSubtitle: "Thi\u1EBFt l\u1EADp k\u1EF7 lu\u1EADt ngay t\u1EEB ng\xE0y \u0111\u1EA7u t\u1EF1u tr\u01B0\u1EDDng \u0111\u1EC3 b\u1EE9t ph\xE1 band \u0111i\u1EC3m IELTS!"
+        },
+        pools: [
+          { tier: "SMALL", amount: 5e3, totalSlots: 30, order: 1 },
+          { tier: "MEDIUM", amount: 1e4, totalSlots: 15, order: 2 },
+          { tier: "LARGE", amount: 2e4, totalSlots: 5, order: 3 }
+        ]
+      },
+      {
+        code: "TEACHERS_DAY",
+        name: "20/11 \u2014 M\u1ED9t L\u1EDDi Tri \xC2n",
+        type: "TEACHERS_DAY",
+        isActive: false,
+        startAt: /* @__PURE__ */ new Date("2026-11-01"),
+        endAt: /* @__PURE__ */ new Date("2026-11-25"),
+        budgetCap: 5e5,
+        totalSlots: 50,
+        uiConfig: {
+          showBlossom: false,
+          showEnvelopes: true,
+          showModal: true,
+          showPetals: false,
+          playChime: true,
+          bannerTitle: "M\u1ED9t L\u1EDDi Tri \xC2n \u2014 M\u1ED9t B\u01B0\u1EDBc Tr\u01B0\u1EDFng Th\xE0nh",
+          bannerSubtitle: "\u0110i\u1EC1u em h\u1ECDc \u0111\u01B0\u1EE3c h\xF4m nay s\u1EBD tr\u1EDF th\xE0nh \u0111i\u1EC1u em c\xF3 th\u1EC3 d\u1EA1y l\u1EA1i ng\xE0y mai."
+        },
+        pools: [
+          { tier: "SMALL", amount: 5e3, totalSlots: 35, order: 1 },
+          { tier: "MEDIUM", amount: 1e4, totalSlots: 12, order: 2 },
+          { tier: "LARGE", amount: 25e3, totalSlots: 3, order: 3 }
+        ]
+      },
+      {
+        code: "MID_AUTUMN",
+        name: "T\u1EBFt Trung Thu \u2014 \u0110\xEAm Tr\u0103ng H\u1ECDc T\u1EADp",
+        type: "MID_AUTUMN",
+        isActive: false,
+        startAt: /* @__PURE__ */ new Date("2026-09-20"),
+        endAt: /* @__PURE__ */ new Date("2026-10-05"),
+        budgetCap: 4e5,
+        totalSlots: 40,
+        uiConfig: {
+          showBlossom: false,
+          showEnvelopes: true,
+          showModal: true,
+          showPetals: false,
+          playChime: true,
+          bannerTitle: "\u0110\xEAm Tr\u0103ng H\u1ECDc T\u1EADp \u2014 V\u01B0\u1EE3t Ch\u1EB7ng \u0110\xE8n L\u1ED3ng",
+          bannerSubtitle: "C\xF9ng ARIS th\u1EAFp s\xE1ng \u01B0\u1EDBc m\u01A1 IELTS d\u01B0\u1EDBi \xE1nh tr\u0103ng r\u1EB1m th\xE1ng 8."
+        },
+        pools: [
+          { tier: "SMALL", amount: 5e3, totalSlots: 25, order: 1 },
+          { tier: "MEDIUM", amount: 1e4, totalSlots: 12, order: 2 },
+          { tier: "LARGE", amount: 2e4, totalSlots: 3, order: 3 }
+        ]
+      }
+    ];
+    for (const evt of defaultEvents) {
+      const existing = await this.prisma.seasonalEvent.findUnique({
+        where: { code: evt.code }
+      });
+      if (!existing) {
+        await this.prisma.seasonalEvent.create({
+          data: {
+            code: evt.code,
+            name: evt.name,
+            type: evt.type,
+            isActive: evt.isActive,
+            startAt: evt.startAt,
+            endAt: evt.endAt,
+            budgetCap: evt.budgetCap,
+            totalSlots: evt.totalSlots,
+            uiConfig: evt.uiConfig,
+            rewardPool: {
+              create: evt.pools
+            }
+          }
+        });
+      }
+    }
   }
   /**
    * Get the current active seasonal event
    */
   async getActiveEvent() {
-    await this.ensureDefaultTetEvent();
+    await this.ensureDefaultEvents();
     const event = await this.prisma.seasonalEvent.findFirst({
       where: { isActive: true },
       include: {
@@ -116187,7 +116277,7 @@ var SeasonalService = class {
    * Admin: Get all seasonal events with their management status
    */
   async getAdminEvents() {
-    await this.ensureDefaultTetEvent();
+    await this.ensureDefaultEvents();
     const events = await this.prisma.seasonalEvent.findMany({
       include: {
         rewardPool: { orderBy: { order: "asc" } },

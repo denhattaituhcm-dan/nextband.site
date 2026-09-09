@@ -7,12 +7,12 @@ import { BranchProvider } from '@/contexts/BranchContext';
 export default function AdminLayout() {
   return (
     <BranchProvider>
-      <SidebarProvider>
-        <div className="min-h-screen flex w-full">
+      <SidebarProvider className="h-svh max-h-svh overflow-hidden">
+        <div className="h-full flex w-full overflow-hidden">
           <AdminSidebar />
-          <div className="flex-1 min-w-0 flex flex-col">
+          <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
             <AdminHeader />
-            <main className="flex-1 overflow-auto p-3 sm:p-4 md:p-6 bg-muted/30">
+            <main className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-4 md:p-6 bg-muted/30">
               <Outlet />
             </main>
           </div>

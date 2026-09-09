@@ -36,7 +36,8 @@ const updateSiteSettingsSchema = z
     logoUrl: z.string().max(5000).nullable().optional(),
     zaloLink: z.string().max(500).nullable().optional(),
     completedLessonsStat: z.string().max(50).nullable().optional(),
-    authTagline: z.string().max(120).nullable().optional(),
+    authTitle: z.string().max(120).nullable().optional(),
+    authTagline: z.string().max(160).nullable().optional(),
     authFeatureOneTitle: z.string().max(120).nullable().optional(),
     authFeatureOneDescription: z.string().max(160).nullable().optional(),
     authFeatureTwoTitle: z.string().max(120).nullable().optional(),
@@ -75,18 +76,20 @@ function normalizeSettings(record: any) {
       : record || {};
   return {
     id: record?.id || "global",
-    siteName: val.siteName || "NextBand",
+    siteName: val.siteName || "ARIS IELTS Academy",
     logoUrl: val.logoUrl || "",
     zaloLink: val.zaloLink || "https://zalo.me",
     completedLessonsStat: val.completedLessonsStat || "5,000+",
-    authTagline: val.authTagline || "Nền tảng học IELTS hiện đại",
-    authFeatureOneTitle: val.authFeatureOneTitle || "Khóa học chất lượng",
+    authTitle: val.authTitle || "TƯ DUY BẢN XỨ TỪ GỐC RỄ",
+    authTagline:
+      val.authTagline ||
+      "Hiểu đúng cơ chế ngôn ngữ — Học từ bản chất, dùng trọn đời.",
+    authFeatureOneTitle: val.authFeatureOneTitle || "Hành trình học tập",
     authFeatureOneDescription:
-      val.authFeatureOneDescription ||
-      "Hàng trăm bài học từ cơ bản đến nâng cao",
-    authFeatureTwoTitle: val.authFeatureTwoTitle || "Giáo viên uy tín",
+      val.authFeatureOneDescription || "Lộ trình IELTS của bạn",
+    authFeatureTwoTitle: val.authFeatureTwoTitle || "Tiến độ chinh phục",
     authFeatureTwoDescription:
-      val.authFeatureTwoDescription || "Đội ngũ giáo viên giàu kinh nghiệm",
+      val.authFeatureTwoDescription || "Theo dõi từng bước tiến bộ",
     highlightPresent: val.highlightPresent || "#fff7a5",
     highlightAbsent: val.highlightAbsent || "#ffd7d7",
     highlightInactive: val.highlightInactive || "#e5e7eb",

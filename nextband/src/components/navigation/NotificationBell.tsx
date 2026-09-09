@@ -292,7 +292,7 @@ export function NotificationBell({ scope: _scope }: NotificationBellProps) {
 
   return (
     <>
-      <Popover>
+      <Popover modal={false}>
         <PopoverTrigger asChild>
           <Button
             variant="ghost"

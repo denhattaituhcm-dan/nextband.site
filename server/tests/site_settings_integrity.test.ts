@@ -238,6 +238,7 @@ describe("SITE SETTINGS PERSISTENCE & RELIABILITY INTEGRITY TEST SUITE", () => {
         logoUrl: "/uploads/logo.png",
         zaloLink: "https://zalo.me/0909123456",
         completedLessonsStat: "10,000+",
+        authTitle: "TƯ DUY BẢN XỨ TỪ GỐC RỄ",
         authTagline: "Chuyên sâu IELTS từ cơ bản đến 8.0+",
         authFeatureOneTitle: "Lộ trình tinh gọn",
         authFeatureOneDescription: "Học đúng trọng tâm, tiết kiệm thời gian",

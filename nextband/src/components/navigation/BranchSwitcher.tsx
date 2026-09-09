@@ -37,7 +37,7 @@ export function BranchSwitcher() {
     : currentBranch?.name || "Chọn chi nhánh";
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
