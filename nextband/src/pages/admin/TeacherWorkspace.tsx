@@ -10,6 +10,7 @@ import {
   formatStorageUrl,
   radarApi,
   interventionApi,
+  teachersApi,
   type AtRiskStudent,
 } from "@/lib/api";
 import { AudioStorageService } from "@/lib/audioStorageService";
@@ -51,6 +52,9 @@ import {
   TrendingUp,
   Clock,
   Share2,
+  Lightbulb,
+  CheckCircle2,
+  HelpCircle,
 } from "lucide-react";
 import { ProgressReportModal } from "@/components/admin/ProgressReportModal";
 import {
@@ -453,6 +457,23 @@ export default function TeacherWorkspace() {
   const currentStudent = useMemo(() => {
     return students.find((s: any) => s.id === selectedStudentId) || null;
   }, [students, selectedStudentId]);
+
+  // 2.5 Query Pedagogical Profile (Chẩn đoán Học thuật dựa trên Evidence & Bayesian)
+  const { data: pedagogicalData, isLoading: isPedagogicalLoading } = useQuery({
+    queryKey: ["student-pedagogical-profile", currentStudent?.id],
+    queryFn: async () => {
+      if (!currentStudent?.id) return null;
+      try {
+        return await teachersApi.getStudentPedagogicalProfile(currentStudent.id);
+      } catch (e) {
+        console.warn("[TeacherWorkspace] Could not load pedagogical profile:", e);
+        return null;
+      }
+    },
+    enabled: !!currentStudent?.id,
+  });
+
+  const pedagogicalProfile = pedagogicalData?.profile || null;
 
   // 3. SỔ WORKBOOK DỮ LIỆU THẬT NHÓM THEO BUỔI HỌC (REAL WORKBOOK ITEMS)
   const workbookItems: WorkbookItem[] = useMemo(() => {
@@ -1359,6 +1380,121 @@ export default function TeacherWorkspace() {
 
             {/* List Buổi học & Bài tập trong Sổ */}
             <div className="flex-1 overflow-y-auto p-3 space-y-3">
+              {/* 💡 ACADEMIC INSIGHT (PHASE 4: DỮ LIỆU SƯ PHẠM THUẦN TÚY) */}
+              {currentStudent && pedagogicalProfile && (
+                <div className="p-3 bg-gradient-to-br from-indigo-50/70 via-blue-50/50 to-white rounded-xl border border-indigo-100/90 shadow-2xs space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-950">
+                      <Lightbulb className="h-4 w-4 text-amber-500 fill-amber-400" />
+                      <span>Academic Insight</span>
+                      <Badge
+                        variant="outline"
+                        className={`text-[9px] px-1.5 py-0 h-4 font-semibold ${
+                          pedagogicalProfile.overallStatus === "NEEDS_ATTENTION"
+                            ? "bg-rose-50 text-rose-700 border-rose-200"
+                            : pedagogicalProfile.overallStatus === "INSUFFICIENT_DATA"
+                            ? "bg-slate-100 text-slate-600 border-slate-200"
+                            : "bg-emerald-50 text-emerald-700 border-emerald-200"
+                        }`}
+                      >
+                        {pedagogicalProfile.overallStatus === "NEEDS_ATTENTION"
+                          ? "Cần can thiệp"
+                          : pedagogicalProfile.overallStatus === "INSUFFICIENT_DATA"
+                          ? "Chưa đủ dữ liệu"
+                          : "Đang tiến bộ"}
+                      </Badge>
+                    </div>
+
+                    <a
+                      href={`/academic-intelligence/evidence`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-[10px] text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-0.5"
+                      title="Mở Evidence Explorer để xem chi tiết từng câu trả lời"
+                    >
+                      Xem bằng chứng
+                      <ChevronRight className="h-3 w-3" />
+                    </a>
+                  </div>
+
+                  <p className="text-[11px] text-slate-600 leading-snug">
+                    {pedagogicalProfile.overallSummary}
+                  </p>
+
+                  {/* Kỹ năng cần chú ý */}
+                  {pedagogicalProfile.skillsRequiringAttention.length > 0 && (
+                    <div className="space-y-1.5 pt-1 border-t border-indigo-100/70">
+                      <span className="text-[10px] font-bold text-rose-800 uppercase tracking-wider block">
+                        ⚠️ Điểm cần chú ý:
+                      </span>
+                      <div className="space-y-1.5">
+                        {pedagogicalProfile.skillsRequiringAttention.map((sk) => (
+                          <div
+                            key={sk.skillId}
+                            className="bg-white/90 p-2 rounded-lg border border-rose-100 text-[11px] space-y-1"
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="font-semibold text-slate-800">
+                                {sk.skillName}
+                              </span>
+                              <Badge
+                                variant="outline"
+                                className="text-[9px] bg-rose-50 text-rose-700 border-rose-200 h-4"
+                              >
+                                {sk.statusLabel}
+                              </Badge>
+                            </div>
+                            <div className="text-[10px] text-slate-500">{sk.accuracyText}</div>
+                            {sk.frequentMistake && (
+                              <div className="text-[10px] text-amber-900 bg-amber-50/80 p-1.5 rounded">
+                                <span className="font-bold">Thói quen sai: </span>
+                                {sk.frequentMistake}
+                              </div>
+                            )}
+                            {sk.actionTip && (
+                              <div className="text-[10px] text-blue-900 bg-blue-50/80 p-1.5 rounded">
+                                <span className="font-bold">Gợi ý cho giáo viên: </span>
+                                {sk.actionTip}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Kỹ năng đang tiến bộ */}
+                  {pedagogicalProfile.progressingSkills.length > 0 && (
+                    <div className="pt-1 border-t border-indigo-100/70 space-y-1">
+                      <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider block">
+                        ✨ Kỹ năng vững / đang tiến bộ:
+                      </span>
+                      <div className="flex flex-wrap gap-1">
+                        {pedagogicalProfile.progressingSkills.map((sk) => (
+                          <span
+                            key={sk.skillId}
+                            className="inline-flex items-center gap-1 text-[10px] bg-emerald-50 text-emerald-800 border border-emerald-200 px-1.5 py-0.5 rounded"
+                          >
+                            <CheckCircle2 className="h-2.5 w-2.5 text-emerald-600" />
+                            {sk.skillName} ({sk.statusLabel})
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Chưa đủ dữ liệu */}
+                  {pedagogicalProfile.insufficientDataSkills.length > 0 && (
+                    <div className="pt-1 text-[10px] text-slate-500 italic flex items-center gap-1">
+                      <HelpCircle className="h-3 w-3 text-slate-400 shrink-0" />
+                      <span>
+                        {pedagogicalProfile.insufficientDataSkills.length} kỹ năng khác chưa đủ dữ liệu quan sát (&lt; 3 câu).
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {!currentStudent ? (
                 <div className="p-8 text-center text-xs text-slate-400">
                   Chọn học viên bên trái để xem sổ bài tập.

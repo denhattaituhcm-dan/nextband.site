@@ -115648,6 +115648,219 @@ var academicIntelligenceRoutes = async (fastify) => {
 };
 var academic_intelligence_routes_default = academicIntelligenceRoutes;
 
+// server/domain/student-model/pedagogical-interpreter.ts
+var MIN_EVIDENCE_FOR_CONCLUSION = 3;
+var PEDAGOGICAL_ACTION_TIPS = {
+  ERR_OVERMATCH_KEYWORD: {
+    mistake: "Ch\u1ECDn \u0111\xE1p \xE1n d\u1EF1a v\xE0o t\u1EEB kh\xF3a tr\xF9ng l\u1EB7p v\u1EDBi b\xE0i \u0111\u1ECDc thay v\xEC \u0111\u1ED1i chi\u1EBFu ngh\u0129a t\u1ED5ng th\u1EC3.",
+    tip: "D\xE0nh 5\u201310 ph\xFAt luy\u1EC7n nh\u1EADn di\u1EC7n paraphrase v\xE0 b\u1EABy t\u1EEB \u0111\u1ED3ng ngh\u0129a tr\u01B0\u1EDBc khi l\xE0m b\xE0i full test."
+  },
+  ERR_GRAMMAR_AGREEMENT: {
+    mistake: "Th\u01B0\u1EDDng xuy\xEAn nh\u1EA7m l\u1EABn gi\u1EEFa danh t\u1EEB s\u1ED1 \xEDt/s\u1ED1 nhi\u1EC1u v\xE0 chia \u0111\u1ED9ng t\u1EEB t\u01B0\u01A1ng \u1EE9ng.",
+    tip: "Nh\u1EAFc nh\u1EDF h\u1ECDc sinh g\u1EA1ch ch\xE2n ch\u1EE7 ng\u1EEF ch\xEDnh tr\u01B0\u1EDBc khi ch\u1ECDn ho\u1EB7c \u0111i\u1EC1n d\u1EA1ng \u0111\u1ED9ng t\u1EEB."
+  },
+  ERR_TASK_RESPONSE_OFFTOPIC: {
+    mistake: "Ph\xE2n t\xEDch \u0111\u1EC1 ch\u01B0a k\u1EF9, tr\u1EA3 l\u1EDDi lan man ho\u1EB7c l\u1EA1c \u0111\u1EC1 so v\u1EDBi tr\u1ECDng t\xE2m c\xE2u h\u1ECFi.",
+    tip: "Y\xEAu c\u1EA7u h\u1ECDc sinh l\u1EADp d\xE0n \xFD 3 ph\xFAt (brainstorm ideas) v\xE0 \u0111\u1ED1i chi\u1EBFu v\u1EDBi \u0111\u1EC1 b\xE0i tr\u01B0\u1EDBc khi vi\u1EBFt."
+  },
+  ERR_PRON_FINAL_CONSONANT: {
+    mistake: "Nu\u1ED1t \xE2m ho\u1EB7c b\u1ECF qu\xEAn c\xE1c ph\u1EE5 \xE2m cu\u1ED1i (ending sounds: /s/, /t/, /d/, /ed/).",
+    tip: "Cho h\u1ECDc sinh \u0111\u1ECDc ch\u1EADm v\xE0 nh\u1EA5n r\xF5 ph\u1EE5 \xE2m \u0111u\xF4i trong c\xE1c b\xE0i shadow reading ng\u1EAFn."
+  }
+};
+function interpretStudentMastery(input) {
+  const sortedSkills = [...input.skills].sort((a, b) => a.skillId.localeCompare(b.skillId));
+  const skillsRequiringAttention = [];
+  const progressingSkills = [];
+  const insufficientDataSkills = [];
+  for (const skill of sortedSkills) {
+    const isStable = skill.totalEvidence >= MIN_EVIDENCE_FOR_CONCLUSION;
+    const roundedCorrect = Math.round(skill.correctCount);
+    const roundedTotal = Math.round(skill.totalEvidence);
+    const matchedDiag = input.diagnostics.find(
+      (d) => d.skillId === skill.skillId || d.ruleCode && d.ruleCode.includes(skill.skillId)
+    ) || input.diagnostics[0];
+    const actionAdvice = matchedDiag ? PEDAGOGICAL_ACTION_TIPS[matchedDiag.errorCode] : void 0;
+    if (!isStable) {
+      insufficientDataSkills.push({
+        skillId: skill.skillId,
+        skillName: skill.skillName,
+        macroSkill: skill.macroSkill,
+        status: "INSUFFICIENT_DATA",
+        statusLabel: "Ch\u01B0a \u0111\u1EE7 d\u1EEF li\u1EC7u",
+        accuracyText: `M\u1EDBi c\xF3 ${roundedTotal} l\u1EA7n quan s\xE1t. C\u1EA7n th\xEAm d\u1EEF li\u1EC7u tr\u01B0\u1EDBc khi k\u1EBFt lu\u1EADn.`,
+        evidenceCount: roundedTotal,
+        isStableObservation: false
+      });
+      continue;
+    }
+    const successRatio = roundedTotal > 0 ? roundedCorrect / roundedTotal : 0;
+    if (successRatio < 0.5) {
+      skillsRequiringAttention.push({
+        skillId: skill.skillId,
+        skillName: skill.skillName,
+        macroSkill: skill.macroSkill,
+        status: "NEEDS_REINFORCEMENT",
+        statusLabel: "C\u1EA7n c\u1EE7ng c\u1ED1",
+        accuracyText: `\u0110\xFAng ${roundedCorrect}/${roundedTotal} l\u1EA7n quan s\xE1t.`,
+        evidenceCount: roundedTotal,
+        isStableObservation: true,
+        frequentMistake: actionAdvice?.mistake || matchedDiag?.errorDescription,
+        actionTip: actionAdvice?.tip
+      });
+    } else if (successRatio < 0.75) {
+      progressingSkills.push({
+        skillId: skill.skillId,
+        skillName: skill.skillName,
+        macroSkill: skill.macroSkill,
+        status: "PROGRESSING",
+        statusLabel: "\u0110ang ti\u1EBFn b\u1ED9",
+        accuracyText: `\u0110\xFAng ${roundedCorrect}/${roundedTotal} l\u1EA7n quan s\xE1t.`,
+        evidenceCount: roundedTotal,
+        isStableObservation: true,
+        frequentMistake: actionAdvice?.mistake,
+        actionTip: actionAdvice?.tip
+      });
+    } else {
+      progressingSkills.push({
+        skillId: skill.skillId,
+        skillName: skill.skillName,
+        macroSkill: skill.macroSkill,
+        status: "STRONG",
+        statusLabel: "V\u1EEFng v\xE0ng",
+        accuracyText: `\u0110\xFAng ${roundedCorrect}/${roundedTotal} l\u1EA7n quan s\xE1t.`,
+        evidenceCount: roundedTotal,
+        isStableObservation: true
+      });
+    }
+  }
+  const recentMistakesMap = /* @__PURE__ */ new Map();
+  for (const diag of input.diagnostics) {
+    if (!recentMistakesMap.has(diag.errorCode)) {
+      recentMistakesMap.set(diag.errorCode, {
+        errorCode: diag.errorCode,
+        errorName: diag.errorName,
+        description: PEDAGOGICAL_ACTION_TIPS[diag.errorCode]?.mistake || diag.errorDescription,
+        evidenceSnippet: diag.snippet
+      });
+    }
+  }
+  let overallStatus = "ON_TRACK";
+  let overallSummary = "H\u1ECDc vi\xEAn \u0111ang ti\u1EBFn b\u1ED9 t\u1ED1t \u1EDF c\xE1c k\u1EF9 n\u0103ng \u0111\xE3 \u0111\u01B0\u1EE3c \u0111\xE1nh gi\xE1.";
+  if (skillsRequiringAttention.length > 0) {
+    overallStatus = "NEEDS_ATTENTION";
+    overallSummary = `Ph\xE1t hi\u1EC7n ${skillsRequiringAttention.length} k\u1EF9 n\u0103ng tr\u1ECDng t\xE2m c\u1EA7n c\u1EE7ng c\u1ED1 tr\u01B0\u1EDBc bu\u1ED5i h\u1ECDc ti\u1EBFp theo.`;
+  } else if (progressingSkills.length === 0 && insufficientDataSkills.length > 0) {
+    overallStatus = "INSUFFICIENT_DATA";
+    overallSummary = "Ch\u01B0a \u0111\u1EE7 d\u1EEF li\u1EC7u quan s\xE1t \u0111\u1EC3 \u0111\u01B0a ra ch\u1EA9n \u0111o\xE1n h\u1ECDc thu\u1EADt to\xE0n di\u1EC7n.";
+  }
+  return {
+    studentId: input.studentId,
+    overallStatus,
+    overallSummary,
+    skillsRequiringAttention,
+    progressingSkills,
+    insufficientDataSkills,
+    recentMistakes: Array.from(recentMistakesMap.values()),
+    generatedAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+}
+
+// server/routes/teachers.routes.ts
+var teachersRoutes = async (fastify) => {
+  fastify.get(
+    "/students/:studentId/pedagogical-profile",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      const { studentId } = request.params;
+      try {
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(studentId);
+        const student = await fastify.prisma.user.findFirst({
+          where: isUuid ? { OR: [{ userId: studentId }, { id: studentId }] } : { userId: studentId },
+          select: {
+            id: true,
+            userId: true,
+            fullName: true,
+            email: true
+          }
+        });
+        if (!student) {
+          return reply.status(404).send({
+            error: "NotFound",
+            message: `H\u1ECDc sinh v\u1EDBi m\xE3 ${studentId} kh\xF4ng t\u1ED3n t\u1EA1i.`
+          });
+        }
+        const canonicalStudentId = student.userId || student.id;
+        const masteries = await fastify.prisma.studentSkillMastery.findMany({
+          where: { studentId: canonicalStudentId },
+          include: {
+            skillNode: true
+          },
+          orderBy: { skillCode: "asc" }
+        });
+        const rawDiagnostics = await fastify.prisma.diagnosticEvidence.findMany({
+          where: {
+            submission: {
+              studentId: canonicalStudentId
+            }
+          },
+          include: {
+            errorDef: true
+          },
+          orderBy: { observedAt: "desc" },
+          take: 10
+        });
+        const skillsInput = masteries.map((m) => {
+          const totalEvidence = m.totalEvidence;
+          const correctCount = Math.max(0, m.alphaSuccess - 1);
+          const total = m.alphaSuccess + m.betaFailure;
+          const posteriorMean = total > 0 ? m.alphaSuccess / total : 0.5;
+          return {
+            skillId: m.skillCode,
+            skillName: m.skillNode?.name || m.skillCode,
+            macroSkill: m.skillNode?.macroSkill || "GENERAL",
+            totalEvidence,
+            correctCount,
+            posteriorMean
+          };
+        });
+        const diagnosticsInput = rawDiagnostics.map((d) => ({
+          errorCode: d.errorCode,
+          errorName: d.errorDef?.name || d.errorCode,
+          errorDescription: d.errorDef?.description || "Ph\xE1t hi\u1EC7n th\xF3i quen l\xE0m b\xE0i c\u1EA7n ch\xFA \xFD.",
+          hypothesisConfidence: d.confidence,
+          snippet: d.evidenceSnippet,
+          ruleCode: d.ruleCode
+        }));
+        const profile = interpretStudentMastery({
+          studentId: canonicalStudentId,
+          skills: skillsInput,
+          diagnostics: diagnosticsInput
+        });
+        return reply.status(200).send({
+          status: "success",
+          data: {
+            student: {
+              id: student.id,
+              userId: canonicalStudentId,
+              fullName: student.fullName,
+              email: student.email
+            },
+            profile
+          }
+        });
+      } catch (error) {
+        request.log.error(error, "[teachersRoutes] getPedagogicalProfile error");
+        return reply.status(500).send({
+          error: "InternalServerError",
+          message: "L\u1ED7i h\u1EC7 th\u1ED1ng khi t\u1EA1o h\u1ED3 s\u01A1 s\u01B0 ph\u1EA1m c\u1EE7a h\u1ECDc sinh."
+        });
+      }
+    }
+  );
+};
+var teachers_routes_default = teachersRoutes;
+
 // server/routes/index.ts
 var routes = async (fastify) => {
   fastify.get("/health", async () => {
@@ -115694,6 +115907,7 @@ var routes = async (fastify) => {
   await fastify.register(re_enrollment_routes_default);
   await fastify.register(radarRoutes, { prefix: "/classes" });
   await fastify.register(academic_intelligence_routes_default, { prefix: "/academic-intelligence" });
+  await fastify.register(teachers_routes_default, { prefix: "/teachers" });
 };
 var routes_default = routes;
 
