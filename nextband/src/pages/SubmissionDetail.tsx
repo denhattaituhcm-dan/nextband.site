@@ -1,7 +1,7 @@
-import { detectExamSkill } from "@/lib/examSkillHelper";
+import { detectExamSkill, isObjectiveSkill } from "@/lib/examSkillHelper";
 import { useMemo, useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams, useLocation } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { submissionsApi } from "@/lib/api";
 import { resolveExitDestination } from "@/lib/exitContext";
 import { useAuth } from "@/hooks/useAuth";
@@ -142,9 +142,37 @@ export default function SubmissionDetail() {
   const [isStartingRevision, setIsStartingRevision] = useState(false);
   const [isHonorCardOpen, setIsHonorCardOpen] = useState(false);
 
+  const queryClient = useQueryClient();
+
+  const handleRetakeObjectiveExam = async () => {
+    const targetExamId = submission?.examId || submission?.exam_id || exam?.id;
+    if (!targetExamId) return;
+    setIsStartingRevision(true);
+    try {
+      const res = await submissionsApi.start(targetExamId, { allowRetake: true });
+      queryClient.invalidateQueries({ queryKey: ["exam-submission"] });
+      queryClient.invalidateQueries({ queryKey: ["my-submissions"] });
+      queryClient.invalidateQueries({ queryKey: ["all-student-submissions"] });
+      queryClient.invalidateQueries({ queryKey: submissionKeys.detail(submissionId || "") });
+      toast.success("Đã làm mới bài làm. Kết quả cũ đã được huỷ bỏ.");
+      navigate(routes.exam.take(targetExamId, { submissionId: res.id }));
+    } catch (err: any) {
+      toast.error(err.message || "Không thể làm lại bài thi.");
+    } finally {
+      setIsStartingRevision(false);
+    }
+  };
+
   const handleStartRevision = async () => {
     const targetExamId = submission?.examId || submission?.exam_id || exam?.id;
     if (!targetExamId) return;
+
+    // Check if this is an objective exam (trắc nghiệm)
+    const skill = detectExamSkill(submission?.exam || { title: submission?.examTitle || "" });
+    if (isObjectiveSkill(skill)) {
+      return handleRetakeObjectiveExam();
+    }
+
     setIsStartingRevision(true);
     try {
       const revisionSub = await submissionsApi.startRevision({
@@ -547,6 +575,7 @@ export default function SubmissionDetail() {
   const hasSubjectiveOnly = subjectiveQuestions.length > 0 && objectiveQuestions.length === 0;
   const isMixedExam = subjectiveQuestions.length > 0 && objectiveQuestions.length > 0;
   const isObjectiveOnly = objectiveQuestions.length > 0 && subjectiveQuestions.length === 0;
+  const isObjectiveExam = isObjectiveOnly || isObjectiveSkill(detectExamSkill(submission?.exam || { title: submission?.examTitle || "" }));
 
   // Objective stats to display
   const objCorrect = objectiveGradedResults?.correctAnswers ?? 0;
@@ -833,6 +862,22 @@ export default function SubmissionDetail() {
               </div>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
+              {isObjectiveExam && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleRetakeObjectiveExam}
+                  disabled={isStartingRevision}
+                  className="h-8 border-orange-300 bg-orange-50/70 hover:bg-orange-100 text-orange-800 dark:border-orange-800 dark:bg-orange-950/40 dark:text-orange-300 font-bold rounded-xl text-xs gap-1.5 shadow-2xs cursor-pointer"
+                >
+                  {isStartingRevision ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <RotateCcw className="w-3.5 h-3.5" />
+                  )}
+                  <span>Làm Lại Bài Này</span>
+                </Button>
+              )}
               <Button
                 size="sm"
                 onClick={() => setIsHonorCardOpen(true)}
@@ -852,7 +897,7 @@ export default function SubmissionDetail() {
           </div>
 
           {/* ATTEMPT SWITCHER (Attempt 1 vs Attempt 2 selector) */}
-          {sortedAttempts.length > 1 && (
+          {!isObjectiveExam && sortedAttempts.length > 1 && (
             <div className="pt-2 pb-1 border-t flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-semibold">
                 <RotateCcw className="h-3.5 w-3.5 text-primary" />
@@ -1122,7 +1167,7 @@ export default function SubmissionDetail() {
             <div className="mt-4">
               <ReadingBattleDebriefView
                 debrief={objectiveBattleDebrief}
-                onRetryExam={handleStartRevision}
+                onRetryExam={handleRetakeObjectiveExam}
                 isRetrying={isStartingRevision}
               />
             </div>
@@ -1214,6 +1259,7 @@ export default function SubmissionDetail() {
 
           {/* ATTEMPT 2 RESOLUTION STATUS CARD */}
           {(() => {
+            if (isObjectiveExam) return null;
             const isAttempt2 = (submission.attemptNumber && submission.attemptNumber >= 2) ||
               (sortedAttempts.length >= 2 && sortedAttempts[sortedAttempts.length - 1]?.id === submission.id);
             if (!isAttempt2 || sortedAttempts.length < 2) return null;

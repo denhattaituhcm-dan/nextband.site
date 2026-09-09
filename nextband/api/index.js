@@ -102285,6 +102285,34 @@ function sanitizeQuestionForStudent(q, showAnswerKey) {
   }
   return cleaned;
 }
+function isObjectiveExam(exam) {
+  if (!exam) return false;
+  const examType = String(exam.examType || exam.type || "").toLowerCase();
+  if (["reading", "listening", "quiz", "grammar", "vocabulary", "reading_listening", "objective"].includes(examType)) {
+    return true;
+  }
+  if (examType === "writing" || examType === "speaking") {
+    return false;
+  }
+  const allQuestions = [];
+  (exam.sections || []).forEach((sec) => {
+    const sType = String(sec.sectionType || sec.section_type || "").toLowerCase();
+    (sec.questionGroups || []).forEach((g) => {
+      (g.questions || []).forEach((q) => {
+        allQuestions.push({ ...q, _sectionType: sType });
+      });
+    });
+  });
+  if (allQuestions.length > 0) {
+    const hasSubjective = allQuestions.some((q) => {
+      const qType = String(q.questionType || q.question_type || "").toLowerCase();
+      const sType = String(q._sectionType || "").toLowerCase();
+      return qType === "essay" || qType === "writing" || qType === "speaking" || qType.startsWith("ielts_speaking") || sType === "writing" || sType === "speaking";
+    });
+    return !hasSubjective;
+  }
+  return false;
+}
 function validateSubmissionTechnicalPayload(exam, answersToEvaluate) {
   if (!exam) return;
   const examType = String(exam.examType || exam.type || "").toLowerCase();
@@ -102642,7 +102670,18 @@ var ExamSubmissionService = class {
   // Use Case: Start Exam Attempt (with Open Exam & Dual-Channel Authorization)
   async startAttempt(user, examId, options) {
     const exam = await this.prisma.exam.findUnique({
-      where: { id: examId }
+      where: { id: examId },
+      include: {
+        sections: {
+          include: {
+            questionGroups: {
+              include: {
+                questions: true
+              }
+            }
+          }
+        }
+      }
     });
     if (!exam) {
       throw new NotFoundError("B\xE0i thi kh\xF4ng t\u1ED3n t\u1EA1i");
@@ -102668,11 +102707,39 @@ var ExamSubmissionService = class {
         throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp: H\u1ECDc vi\xEAn ch\u01B0a \u0111\u0103ng k\xFD kh\xF3a h\u1ECDc ho\u1EB7c l\u1EDBp h\u1ECDc c\u1EE7a b\xE0i thi n\xE0y", 403);
       }
     }
+    const isObjective = isObjectiveExam(exam);
     const attemptCount = await this.repo.countAttempts(user.id, examId);
-    if (!isPrivileged && attemptCount >= MAX_EXAM_ATTEMPTS) {
+    if (!isPrivileged && !isObjective && attemptCount >= MAX_EXAM_ATTEMPTS) {
       throw new AuthorizationError(`B\u1EA1n \u0111\xE3 s\u1EED d\u1EE5ng h\u1EBFt ${MAX_EXAM_ATTEMPTS} l\u01B0\u1EE3t l\xE0m b\xE0i cho b\xE0i thi n\xE0y`, 409);
     }
     return this.repo.transaction(async (tx) => {
+      if (options?.allowRetake && isObjective) {
+        await tx.examSubmission.deleteMany({
+          where: {
+            examId,
+            studentId: user.id
+          }
+        });
+        const newSubmission2 = await tx.examSubmission.create({
+          data: {
+            examId,
+            studentId: user.id,
+            status: "IN_PROGRESS",
+            startedAt: /* @__PURE__ */ new Date(),
+            version: 1
+          }
+        });
+        return {
+          submission: {
+            ...newSubmission2,
+            answers: [],
+            remainingSeconds: (exam.durationMinutes || 60) * 60,
+            serverTime: (/* @__PURE__ */ new Date()).toISOString(),
+            isResumed: false
+          },
+          isNew: true
+        };
+      }
       const inProgress = await tx.examSubmission.findFirst({
         where: {
           examId,
@@ -103199,10 +103266,45 @@ var ExamSubmissionService = class {
   // Use Case: Start Revision Attempt (P1 Canonical Learning Loop)
   async startRevision(user, examId, options) {
     const exam = await this.prisma.exam.findUnique({
-      where: { id: examId }
+      where: { id: examId },
+      include: {
+        sections: {
+          include: {
+            questionGroups: {
+              include: {
+                questions: true
+              }
+            }
+          }
+        }
+      }
     });
     if (!exam) {
       throw new NotFoundError("B\xE0i thi kh\xF4ng t\u1ED3n t\u1EA1i");
+    }
+    const isObjective = isObjectiveExam(exam);
+    if (isObjective) {
+      return this.repo.transaction(async (tx) => {
+        await tx.examSubmission.deleteMany({
+          where: {
+            examId,
+            studentId: user.id
+          }
+        });
+        const newSubmission = await tx.examSubmission.create({
+          data: {
+            examId,
+            studentId: user.id,
+            status: "IN_PROGRESS",
+            startedAt: /* @__PURE__ */ new Date(),
+            version: 1
+          }
+        });
+        return {
+          submission: newSubmission,
+          isNew: true
+        };
+      });
     }
     const existingInProgress = await this.prisma.examSubmission.findFirst({
       where: {
@@ -115859,6 +115961,388 @@ var teachersRoutes = async (fastify) => {
 };
 var teachers_routes_default = teachersRoutes;
 
+// server/services/seasonal.service.ts
+var DEFAULT_TET_UI_CONFIG = {
+  showBlossom: true,
+  showEnvelopes: true,
+  showModal: true,
+  showPetals: false,
+  // Default off for smooth performance
+  playChime: true,
+  bannerTitle: "Khai B\xFAt \u0110\u1EA7u Xu\xE2n \u2014 M\u1EDF L\u1ED9c Tri Th\u1EE9c",
+  bannerSubtitle: "Ho\xE0n th\xE0nh b\xE0i t\u1EADp \u0111\u1EA1t chu\u1EA9n \u0111\u1EC3 khai b\xFAt \u0111\u1EA7u n\u0103m v\xE0 h\xE1i l\u1ED9c may m\u1EAFn!"
+};
+var SeasonalService = class {
+  constructor(prisma) {
+    this.prisma = prisma;
+  }
+  /**
+   * Seed default Tet Event if none exists
+   */
+  async ensureDefaultTetEvent() {
+    const existing = await this.prisma.seasonalEvent.findUnique({
+      where: { code: "TET_2027" },
+      include: { rewardPool: true }
+    });
+    if (existing) return existing;
+    return await this.prisma.seasonalEvent.create({
+      data: {
+        code: "TET_2027",
+        name: "T\u1EBFt Nguy\xEAn \u0110\xE1n 2027",
+        type: "TET",
+        isActive: false,
+        // Default off, admin toggles on
+        budgetCap: 8e5,
+        totalSlots: 60,
+        uiConfig: DEFAULT_TET_UI_CONFIG,
+        rewardPool: {
+          create: [
+            { tier: "SMALL", amount: 5e3, totalSlots: 40, order: 1 },
+            { tier: "MEDIUM", amount: 1e4, totalSlots: 15, order: 2 },
+            { tier: "LARGE", amount: 25e3, totalSlots: 4, order: 3 },
+            { tier: "SPECIAL", amount: 1e5, totalSlots: 1, order: 4 }
+          ]
+        }
+      },
+      include: { rewardPool: true }
+    });
+  }
+  /**
+   * Get the current active seasonal event
+   */
+  async getActiveEvent() {
+    await this.ensureDefaultTetEvent();
+    const event = await this.prisma.seasonalEvent.findFirst({
+      where: { isActive: true },
+      include: {
+        rewardPool: {
+          orderBy: { order: "asc" }
+        },
+        _count: {
+          select: { claims: true }
+        }
+      }
+    });
+    if (!event) return null;
+    let totalSlots = 0;
+    let claimedSlots = 0;
+    let totalCashBudget = 0;
+    let spentCashBudget = 0;
+    for (const pool of event.rewardPool) {
+      totalSlots += pool.totalSlots;
+      claimedSlots += pool.claimedSlots;
+      totalCashBudget += pool.amount * pool.totalSlots;
+      spentCashBudget += pool.amount * pool.claimedSlots;
+    }
+    return {
+      id: event.id,
+      code: event.code,
+      name: event.name,
+      type: event.type,
+      isActive: event.isActive,
+      startAt: event.startAt,
+      endAt: event.endAt,
+      budgetCap: event.budgetCap,
+      totalSlots,
+      claimedSlots,
+      remainingSlots: Math.max(0, totalSlots - claimedSlots),
+      totalCashBudget,
+      spentCashBudget,
+      remainingCashBudget: Math.max(0, totalCashBudget - spentCashBudget),
+      uiConfig: event.uiConfig || DEFAULT_TET_UI_CONFIG
+    };
+  }
+  /**
+   * Get student's progress for the active seasonal event
+   */
+  async getStudentProgress(studentId, eventId) {
+    let targetEventId = eventId;
+    if (!targetEventId) {
+      const active = await this.getActiveEvent();
+      if (!active) {
+        return {
+          claimedExamIds: [],
+          totalCashEarned: 0,
+          totalHonorXp: 0,
+          claimsCount: 0,
+          history: []
+        };
+      }
+      targetEventId = active.id;
+    }
+    const claims = await this.prisma.seasonalRewardClaim.findMany({
+      where: {
+        eventId: targetEventId,
+        studentId
+      },
+      orderBy: { claimedAt: "asc" }
+    });
+    let totalCashEarned = 0;
+    let totalHonorXp = 0;
+    const claimedExamIds = [];
+    claims.forEach((claim) => {
+      claimedExamIds.push(claim.homeworkId);
+      if (claim.rewardType === "CASH") {
+        totalCashEarned += claim.amount;
+      } else if (claim.rewardType === "HONOR_XP") {
+        totalHonorXp += claim.amount;
+      }
+    });
+    return {
+      claimedExamIds,
+      totalCashEarned,
+      totalHonorXp,
+      claimsCount: claims.length,
+      history: claims.map((c) => ({
+        id: c.id,
+        homeworkId: c.homeworkId,
+        rewardType: c.rewardType,
+        amount: c.amount,
+        claimedAt: c.claimedAt
+      }))
+    };
+  }
+  /**
+   * Atomically claim a seasonal reward for a completed homework
+   */
+  async claimReward(studentId, homeworkId) {
+    const activeEvent = await this.getActiveEvent();
+    if (!activeEvent) {
+      throw new Error("Kh\xF4ng c\xF3 s\u1EF1 ki\u1EC7n l\u1EC5/T\u1EBFt n\xE0o \u0111ang k\xEDch ho\u1EA1t");
+    }
+    return await this.prisma.$transaction(async (tx) => {
+      const existingClaim = await tx.seasonalRewardClaim.findUnique({
+        where: {
+          eventId_studentId_homeworkId: {
+            eventId: activeEvent.id,
+            studentId,
+            homeworkId
+          }
+        }
+      });
+      if (existingClaim) {
+        return {
+          isFirstClaim: false,
+          claim: existingClaim,
+          message: "B\xE0i t\u1EADp n\xE0y \u0111\xE3 \u0111\u01B0\u1EE3c nh\u1EADn l\u1ED9c tr\u01B0\u1EDBc \u0111\xF3"
+        };
+      }
+      const submission = await tx.examSubmission.findFirst({
+        where: {
+          examId: homeworkId,
+          studentId,
+          status: { in: ["SUBMITTED", "GRADED"] }
+        }
+      });
+      if (!submission) {
+        throw new Error("Ch\u01B0a ho\xE0n th\xE0nh b\xE0i t\u1EADp ho\u1EB7c b\xE0i n\u1ED9p ch\u01B0a \u0111\u1EA1t chu\u1EA9n \u0111\u1EC3 m\u1EDF l\u1ED9c");
+      }
+      const availablePools = await tx.seasonalRewardPool.findMany({
+        where: {
+          eventId: activeEvent.id,
+          claimedSlots: { lt: tx.seasonalRewardPool.fields.totalSlots }
+        },
+        orderBy: { order: "asc" }
+      });
+      let chosenPool = null;
+      let rewardType = "CASH";
+      let rewardAmount = 8888;
+      if (availablePools.length > 0) {
+        chosenPool = availablePools[0];
+        rewardAmount = chosenPool.amount;
+        await tx.seasonalRewardPool.update({
+          where: { id: chosenPool.id },
+          data: { claimedSlots: { increment: 1 } }
+        });
+      } else {
+        rewardType = "HONOR_XP";
+        rewardAmount = 200;
+      }
+      const newClaim = await tx.seasonalRewardClaim.create({
+        data: {
+          eventId: activeEvent.id,
+          studentId,
+          homeworkId,
+          rewardType,
+          amount: rewardAmount
+        }
+      });
+      const allStudentClaims = await tx.seasonalRewardClaim.findMany({
+        where: { eventId: activeEvent.id, studentId }
+      });
+      const totalCash = allStudentClaims.filter((c) => c.rewardType === "CASH").reduce((sum, c) => sum + c.amount, 0);
+      const totalXp = allStudentClaims.filter((c) => c.rewardType === "HONOR_XP").reduce((sum, c) => sum + c.amount, 0);
+      return {
+        isFirstClaim: true,
+        claim: newClaim,
+        rewardType,
+        amount: rewardAmount,
+        totalCashEarned: totalCash,
+        totalHonorXp: totalXp,
+        isPoolExhausted: availablePools.length === 0
+      };
+    });
+  }
+  /**
+   * Admin: Get all seasonal events with their management status
+   */
+  async getAdminEvents() {
+    await this.ensureDefaultTetEvent();
+    const events = await this.prisma.seasonalEvent.findMany({
+      include: {
+        rewardPool: { orderBy: { order: "asc" } },
+        _count: { select: { claims: true } }
+      },
+      orderBy: { createdAt: "desc" }
+    });
+    return events.map((event) => {
+      let totalSlots = 0;
+      let claimedSlots = 0;
+      let totalCashBudget = 0;
+      let spentCashBudget = 0;
+      for (const pool of event.rewardPool) {
+        totalSlots += pool.totalSlots;
+        claimedSlots += pool.claimedSlots;
+        totalCashBudget += pool.amount * pool.totalSlots;
+        spentCashBudget += pool.amount * pool.claimedSlots;
+      }
+      return {
+        id: event.id,
+        code: event.code,
+        name: event.name,
+        type: event.type,
+        isActive: event.isActive,
+        startAt: event.startAt,
+        endAt: event.endAt,
+        budgetCap: event.budgetCap,
+        totalSlots,
+        claimedSlots,
+        remainingSlots: Math.max(0, totalSlots - claimedSlots),
+        totalCashBudget,
+        spentCashBudget,
+        remainingCashBudget: Math.max(0, totalCashBudget - spentCashBudget),
+        uiConfig: event.uiConfig || DEFAULT_TET_UI_CONFIG,
+        pools: event.rewardPool
+      };
+    });
+  }
+  /**
+   * Admin: Update seasonal event settings (toggle, dates, UI checkboxes, budget)
+   */
+  async updateEvent(id, data) {
+    const existing = await this.prisma.seasonalEvent.findUnique({
+      where: { id }
+    });
+    if (!existing) {
+      throw new Error("Kh\xF4ng t\xECm th\u1EA5y s\u1EF1 ki\u1EC7n");
+    }
+    if (data.isActive) {
+      await this.prisma.seasonalEvent.updateMany({
+        where: { id: { not: id } },
+        data: { isActive: false }
+      });
+    }
+    const mergedUIConfig = {
+      ...existing.uiConfig || DEFAULT_TET_UI_CONFIG,
+      ...data.uiConfig || {}
+    };
+    return await this.prisma.seasonalEvent.update({
+      where: { id },
+      data: {
+        ...data.isActive !== void 0 ? { isActive: data.isActive } : {},
+        ...data.startAt !== void 0 ? { startAt: data.startAt ? new Date(data.startAt) : null } : {},
+        ...data.endAt !== void 0 ? { endAt: data.endAt ? new Date(data.endAt) : null } : {},
+        ...data.budgetCap !== void 0 ? { budgetCap: data.budgetCap } : {},
+        ...data.totalSlots !== void 0 ? { totalSlots: data.totalSlots } : {},
+        uiConfig: mergedUIConfig
+      },
+      include: {
+        rewardPool: { orderBy: { order: "asc" } }
+      }
+    });
+  }
+};
+
+// server/routes/seasonal.routes.ts
+async function seasonalRoutes(fastify) {
+  const service = new SeasonalService(fastify.prisma);
+  fastify.get("/active", async (request, reply) => {
+    try {
+      const activeEvent = await service.getActiveEvent();
+      return reply.send({
+        success: true,
+        isActive: !!activeEvent,
+        event: activeEvent
+      });
+    } catch (err) {
+      return reply.status(500).send({ error: err.message });
+    }
+  });
+  fastify.get("/my-progress", { preHandler: authenticate }, async (request, reply) => {
+    try {
+      const studentId = request.user.id;
+      const progress = await service.getStudentProgress(studentId);
+      return reply.send({
+        success: true,
+        progress
+      });
+    } catch (err) {
+      return reply.status(500).send({ error: err.message });
+    }
+  });
+  fastify.post(
+    "/claim",
+    { preHandler: authenticate },
+    async (request, reply) => {
+      try {
+        const studentId = request.user.id;
+        const { homeworkId } = request.body || {};
+        if (!homeworkId) {
+          return reply.status(400).send({ error: "homeworkId l\xE0 b\u1EAFt bu\u1ED9c" });
+        }
+        const result = await service.claimReward(studentId, homeworkId);
+        return reply.status(result.isFirstClaim ? 201 : 200).send({
+          success: true,
+          ...result
+        });
+      } catch (err) {
+        return reply.status(400).send({ error: err.message });
+      }
+    }
+  );
+  fastify.get(
+    "/admin/events",
+    { preHandler: [authenticate, requireRoles("admin", "superadmin")] },
+    async (request, reply) => {
+      try {
+        const events = await service.getAdminEvents();
+        return reply.send({
+          success: true,
+          events
+        });
+      } catch (err) {
+        return reply.status(500).send({ error: err.message });
+      }
+    }
+  );
+  fastify.put(
+    "/admin/events/:id",
+    { preHandler: [authenticate, requireRoles("admin", "superadmin")] },
+    async (request, reply) => {
+      try {
+        const { id } = request.params;
+        const updated = await service.updateEvent(id, request.body);
+        return reply.send({
+          success: true,
+          event: updated
+        });
+      } catch (err) {
+        return reply.status(400).send({ error: err.message });
+      }
+    }
+  );
+}
+
 // server/routes/index.ts
 var routes = async (fastify) => {
   fastify.get("/health", async () => {
@@ -115906,6 +116390,7 @@ var routes = async (fastify) => {
   await fastify.register(radarRoutes, { prefix: "/classes" });
   await fastify.register(academic_intelligence_routes_default, { prefix: "/academic-intelligence" });
   await fastify.register(teachers_routes_default, { prefix: "/teachers" });
+  await fastify.register(seasonalRoutes, { prefix: "/seasonal" });
 };
 var routes_default = routes;
 
