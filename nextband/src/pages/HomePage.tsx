@@ -36,6 +36,7 @@ import {
 import { CelebrationModal } from "@/components/celebration/CelebrationModal";
 import { milestonesApi, attendanceApi } from "@/lib/api";
 import { ExamGoalCard } from "@/components/student/ExamGoalCard";
+import { Badge } from "@/components/ui/badge";
 import {
   Layers,
   WifiOff,
@@ -401,6 +402,9 @@ export default function HomePage() {
 
   const studentAttendanceRecord = attendanceData?.success && attendanceData?.data?.students?.[0] ? attendanceData.data.students[0] : null;
   const attendanceRate = studentAttendanceRecord?.attendanceRate ?? 100;
+  const totalSessions = attendanceData?.data?.totalSessions || attendanceData?.data?.sessions?.length || 27;
+  const completedSessions = attendanceData?.data?.completedSessions ?? (attendanceData?.data?.sessions?.filter((s: any) => s.status === "COMPLETED").length || 0);
+  const courseProgressPercent = Math.min(100, Math.round((completedSessions / Math.max(totalSessions, 1)) * 100));
   const nextSession = useMemo(() => {
     if (!attendanceData?.data?.sessions) return null;
     const now = new Date();
@@ -516,10 +520,12 @@ export default function HomePage() {
 
             {/* 1.2 NEXT SESSION & ATTENDANCE QUICK SPOTLIGHT */}
             {enrolledClassId && (
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
                 {/* Next Class Session Spotlight */}
-                <Card className={`relative overflow-hidden md:col-span-7 p-4 sm:p-5 rounded-2xl border transition-all duration-300 flex flex-col justify-between ${cardTheme.cardBorder} ${cardTheme.cardBg}`}>
+                <Card className={`relative overflow-hidden lg:col-span-6 p-4 sm:p-5 rounded-2xl border transition-all duration-300 flex flex-col justify-between h-full shadow-xs ${cardTheme.cardBorder} ${cardTheme.cardBg}`}>
                   <div className={`absolute top-0 left-0 right-0 h-1.5 ${cardTheme.topLine}`} />
+                  
+                  {/* Card Header */}
                   <div className={`flex items-center justify-between pb-3 border-b ${cardTheme.headerBorder}`}>
                     <div className="flex items-center gap-2">
                       <span className={`h-2.5 w-2.5 rounded-full ${cardTheme.pulseDot} animate-pulse`} />
@@ -537,43 +543,93 @@ export default function HomePage() {
                     </Button>
                   </div>
 
-                  <div className="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="space-y-1">
-                      <h4 className="font-extrabold text-base text-foreground flex items-center gap-2">
-                        <Calendar className={`h-4 w-4 ${cardTheme.icon} shrink-0`} />
-                        <span>
-                          {nextSession?.lessonTitle || `Buổi số ${nextSession?.sessionNumber || 1} / 27`}
-                        </span>
-                      </h4>
-                      <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                        <Clock className="h-3.5 w-3.5 text-muted-foreground/70" />
+                  {/* Main Session Spotlight Info */}
+                  <div className="py-3 space-y-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge variant="outline" className={`font-black text-[11px] px-2.5 py-0.5 ${cardTheme.badge}`}>
+                        Buổi {nextSession?.sessionNumber || (completedSessions + 1)} / {totalSessions}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground font-medium flex items-center gap-1.5">
+                        <Calendar className="h-3.5 w-3.5 text-indigo-500" />
                         <span>
                           {nextSession?.sessionDate
                             ? `Ngày ${new Date(nextSession.sessionDate).toLocaleDateString("vi-VN", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" })}`
                             : "Theo lịch xếp của lớp học"}
                         </span>
-                      </p>
+                      </span>
                     </div>
 
+                    <h3 className="font-extrabold text-base sm:text-lg text-foreground leading-snug tracking-tight">
+                      {nextSession?.lessonTitle || `Bài giảng buổi số ${nextSession?.sessionNumber || 1}: Củng cố và nâng cấp năng lực IELTS`}
+                    </h3>
+
+                    <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                      <Clock className="h-3.5 w-3.5 text-muted-foreground/70 shrink-0" />
+                      <span>{nextSession?.notes || "Chuẩn bị bài tập và tài liệu học tập trước khi vào lớp."}</span>
+                    </p>
+                  </div>
+
+                  {/* Dual Telemetry Cards: Lộ trình hoàn thành & Tỷ lệ chuyên cần */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/80">
+                    {/* Course Progress Card */}
+                    <div className="p-3 rounded-xl bg-white/80 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-700/60 shadow-2xs space-y-2">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                          <BookOpen className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+                          Tiến độ lộ trình
+                        </span>
+                        <span className="font-black text-xs text-indigo-600 dark:text-indigo-400 tabular-nums">
+                          {courseProgressPercent}%
+                        </span>
+                      </div>
+                      <div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-indigo-600 rounded-full transition-all duration-300"
+                          style={{ width: `${courseProgressPercent}%` }}
+                        />
+                      </div>
+                      <div className="text-[10px] text-muted-foreground font-medium flex items-center justify-between">
+                        <span>Đã hoàn thành</span>
+                        <span className="font-bold text-slate-700 dark:text-slate-200">{completedSessions} / {totalSessions} buổi</span>
+                      </div>
+                    </div>
+
+                    {/* Attendance Card */}
                     <button
                       type="button"
                       onClick={() => navigate(`/app/attendance?classId=${enrolledClassId}`)}
-                      className="flex items-center gap-2 group cursor-pointer hover:opacity-85 transition-opacity p-1.5 -m-1 rounded-xl bg-white/80 dark:bg-slate-800/80 border border-slate-200/70 shadow-2xs"
-                      title="Xem chi tiết lịch học & điểm danh chuyên cần"
+                      className="p-3 rounded-xl bg-white/80 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-700/60 shadow-2xs text-left group hover:border-indigo-400 hover:shadow-xs transition-all space-y-2 cursor-pointer"
+                      title="Xem chi tiết sổ điểm danh & lịch 27 buổi học"
                     >
-                      <span className="text-xs text-muted-foreground font-medium">Chuyên cần:</span>
-                      <span className={`text-sm font-black tabular-nums ${attendanceRate >= 85 ? "text-emerald-600" : "text-amber-600"}`}>
-                        {attendanceRate}%
-                      </span>
-                      <span className="text-[10px] text-muted-foreground">
-                        {attendanceRate >= 85 ? "✓ Đạt chuẩn đầu ra" : "⚠ Cần lưu ý"}
-                      </span>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                          Chuyên cần
+                        </span>
+                        <span className={`font-black text-xs tabular-nums ${attendanceRate >= 85 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}`}>
+                          {attendanceRate}%
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between pt-0.5">
+                        <span
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                            attendanceRate >= 85
+                              ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800"
+                              : "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800"
+                          }`}
+                        >
+                          {attendanceRate >= 85 ? "✓ Đạt chuẩn đầu ra" : "⚠ Cần lưu ý"}
+                        </span>
+                        <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold group-hover:underline">
+                          Chi tiết →
+                        </span>
+                      </div>
                     </button>
                   </div>
                 </Card>
 
                 {/* IELTS Exam Goal Card */}
-                <div className="md:col-span-5">
+                <div className="lg:col-span-6 h-full">
                   <ExamGoalCard
                     userId={user?.id}
                     classId={enrolledClassId}

@@ -232,3 +232,14 @@ Object.defineProperty(window, "BroadcastChannel", {
   writable: true,
   configurable: true,
 });
+
+// Mock ResizeObserver for Radix UI components (Slider, Dialog, etc.)
+if (typeof global.ResizeObserver === "undefined") {
+  class MockResizeObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  }
+  global.ResizeObserver = MockResizeObserver as any;
+  window.ResizeObserver = MockResizeObserver as any;
+}

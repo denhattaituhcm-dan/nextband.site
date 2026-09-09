@@ -40,66 +40,66 @@ interface AcademicTitle {
 }
 
 function getAcademicTitle(band: number): AcademicTitle {
-  if (band >= 8.5) {
+  if (band >= 9.0) {
+    return {
+      title: "Học Đế · Academic Sovereign",
+      badge: "Học Đế (9.0)",
+      color: "text-purple-300",
+      border: "border-purple-400/40",
+      bg: "bg-purple-500/20",
+    };
+  }
+  if (band >= 8.0) {
     return {
       title: "Học Tôn · Academic Grandmaster",
-      badge: "Học Tôn (8.5 - 9.0)",
+      badge: "Học Tôn (8.0 - 8.5)",
       color: "text-amber-300",
       border: "border-amber-400/40",
       bg: "bg-amber-400/15",
     };
   }
-  if (band >= 7.5) {
+  if (band >= 7.0) {
     return {
       title: "Học Bá · Academic Elite",
-      badge: "Học Bá (7.5 - 8.0)",
+      badge: "Học Bá (7.0 - 7.5)",
       color: "text-rose-300",
       border: "border-rose-400/40",
       bg: "bg-rose-400/15",
     };
   }
-  if (band >= 6.5) {
+  if (band >= 6.0) {
     return {
       title: "Học Giả · Academic Scholar",
-      badge: "Học Giả (6.5 - 7.0)",
+      badge: "Học Giả (6.0 - 6.5)",
       color: "text-indigo-200",
       border: "border-indigo-400/40",
       bg: "bg-indigo-400/15",
     };
   }
-  if (band >= 5.5) {
+  if (band >= 5.0) {
     return {
       title: "Học Sư · Academic Master",
-      badge: "Học Sư (5.5 - 6.0)",
+      badge: "Học Sư (5.0 - 5.5)",
       color: "text-teal-300",
       border: "border-teal-400/40",
       bg: "bg-teal-400/15",
     };
   }
-  if (band >= 4.5) {
+  if (band >= 4.0) {
     return {
       title: "Học Sĩ · Academic Specialist",
-      badge: "Học Sĩ (4.5 - 5.0)",
+      badge: "Học Sĩ (4.0 - 4.5)",
       color: "text-orange-300",
       border: "border-orange-400/40",
       bg: "bg-orange-400/15",
     };
   }
-  if (band >= 3.5) {
-    return {
-      title: "Học Đồ · Academic Apprentice",
-      badge: "Học Đồ (3.5 - 4.0)",
-      color: "text-sky-300",
-      border: "border-sky-400/40",
-      bg: "bg-sky-400/15",
-    };
-  }
   return {
-    title: "Tân Binh · Academic Novice",
-    badge: "Nền tảng (1.0 - 3.0)",
-    color: "text-emerald-300",
-    border: "border-emerald-400/40",
-    bg: "bg-emerald-400/15",
+    title: "Học Đồ · Academic Apprentice",
+    badge: "Học Đồ (3.0 - 3.5)",
+    color: "text-sky-300",
+    border: "border-sky-400/40",
+    bg: "bg-sky-400/15",
   };
 }
 
@@ -107,7 +107,7 @@ const STORAGE_KEY = (userId?: string, classId?: string): string =>
   `exam_goal_${userId || "anon"}_${classId || "default"}`;
 
 export interface GoalData {
-  currentBand: number; // Điểm hiện tại (Baseline: 1.0 - 9.0)
+  currentBand: number; // Điểm hiện tại (Baseline: 3.0 - 9.0)
   listening: number;
   reading: number;
   writing: number;
@@ -120,10 +120,14 @@ function loadGoal(userId?: string, classId?: string): GoalData | null {
     const raw = localStorage.getItem(STORAGE_KEY(userId, classId));
     if (!raw) return null;
     const data = JSON.parse(raw) as GoalData;
-    // Migrations nếu dữ liệu cũ chưa có currentBand
-    if (!data.currentBand) {
+    // Migrations nếu dữ liệu cũ chưa có currentBand hoặc nhỏ hơn 3.0
+    if (!data.currentBand || data.currentBand < 3.0) {
       data.currentBand = 5.0;
     }
+    data.listening = Math.max(3.0, data.listening || 3.0);
+    data.reading = Math.max(3.0, data.reading || 3.0);
+    data.writing = Math.max(3.0, data.writing || 3.0);
+    data.speaking = Math.max(3.0, data.speaking || 3.0);
     return data;
   } catch {
     return null;
@@ -161,13 +165,13 @@ interface ExamGoalCardProps {
 export function ExamGoalCard({ userId, classId, initialCurrentBand }: ExamGoalCardProps) {
   const saved = useMemo(() => loadGoal(userId, classId), [userId, classId]);
 
-  const defaultBaseline = initialCurrentBand || 5.0;
+  const defaultBaseline = Math.max(3.0, initialCurrentBand || 5.0);
   const DEFAULT_GOAL: GoalData = {
     currentBand: defaultBaseline,
-    listening: Math.min(9.0, defaultBaseline + 1.5),
-    reading: Math.min(9.0, defaultBaseline + 1.5),
-    writing: Math.min(9.0, defaultBaseline + 1.0),
-    speaking: Math.min(9.0, defaultBaseline + 1.0),
+    listening: Math.max(3.0, Math.min(9.0, defaultBaseline + 1.5)),
+    reading: Math.max(3.0, Math.min(9.0, defaultBaseline + 1.5)),
+    writing: Math.max(3.0, Math.min(9.0, defaultBaseline + 1.0)),
+    speaking: Math.max(3.0, Math.min(9.0, defaultBaseline + 1.0)),
     examDate: "",
   };
 
@@ -191,14 +195,14 @@ export function ExamGoalCard({ userId, classId, initialCurrentBand }: ExamGoalCa
 
   function updateSkillBand(skill: "listening" | "reading" | "writing" | "speaking", delta: number) {
     setDraft((d) => {
-      const next = Math.max(1.0, Math.min(9.0, parseFloat((d[skill] + delta).toFixed(1))));
+      const next = Math.max(3.0, Math.min(9.0, parseFloat((d[skill] + delta).toFixed(1))));
       return { ...d, [skill]: next };
     });
   }
 
   function updateCurrentBand(delta: number) {
     setDraft((d) => {
-      const next = Math.max(1.0, Math.min(9.0, parseFloat((d.currentBand + delta).toFixed(1))));
+      const next = Math.max(3.0, Math.min(9.0, parseFloat((d.currentBand + delta).toFixed(1))));
       return { ...d, currentBand: next };
     });
   }
@@ -226,7 +230,7 @@ export function ExamGoalCard({ userId, classId, initialCurrentBand }: ExamGoalCa
 
     return (
       <div
-        className="relative overflow-hidden rounded-2xl border border-transparent"
+        className="relative overflow-hidden rounded-2xl border border-transparent h-full flex flex-col justify-between"
         style={{
           background: "linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4338ca 100%)",
           boxShadow: "0 8px 32px rgba(67,56,202,0.35)",
@@ -245,7 +249,7 @@ export function ExamGoalCard({ userId, classId, initialCurrentBand }: ExamGoalCa
         {/* Shimmer top strip */}
         <div className="h-1 w-full" style={{ background: "linear-gradient(90deg, #f59e0b, #ef4444, #f59e0b)" }} />
 
-        <div className="p-4 space-y-3.5">
+        <div className="p-4 sm:p-5 space-y-3.5 flex-1 flex flex-col justify-between">
           {/* Header row */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -399,7 +403,7 @@ export function ExamGoalCard({ userId, classId, initialCurrentBand }: ExamGoalCa
   /* ── EDIT MODE ──────────────────────────────────────────────────────────── */
   return (
     <div
-      className="relative overflow-hidden rounded-2xl"
+      className="relative overflow-hidden rounded-2xl h-full flex flex-col justify-between"
       style={{
         background: "linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #1e1b4b 100%)",
         boxShadow: "0 8px 32px rgba(67,56,202,0.35)",
@@ -407,7 +411,7 @@ export function ExamGoalCard({ userId, classId, initialCurrentBand }: ExamGoalCa
     >
       <div className="h-1 w-full" style={{ background: "linear-gradient(90deg, #f59e0b, #ef4444, #f59e0b)" }} />
 
-      <div className="p-4 space-y-4">
+      <div className="p-4 sm:p-5 space-y-3.5 flex-1 flex flex-col justify-between">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -440,7 +444,7 @@ export function ExamGoalCard({ userId, classId, initialCurrentBand }: ExamGoalCa
                 Overall dự kiến
               </div>
               <div
-                className={`inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded text-[10px] font-bold border ${draftRank.border} ${draftRank.bg} ${draftRank.color}`}
+                className={`inline-flex items-center gap-1 mt-1 px-2.5 py-0.5 rounded text-[10px] font-bold border ${draftRank.border} ${draftRank.bg} ${draftRank.color}`}
               >
                 <Award className="w-3 h-3" />
                 {draftRank.badge}
@@ -479,115 +483,114 @@ export function ExamGoalCard({ userId, classId, initialCurrentBand }: ExamGoalCa
           </div>
         </div>
 
-        {/* Khối 2: 4 Kỹ năng (Sliders mượt mà với bước 0.5 từ 1.0 - 9.0) */}
-        <div className="space-y-3.5">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-indigo-300">
-            Mục tiêu 4 kỹ năng (1.0 - 9.0)
+        {/* Khối 2: 4 Kỹ năng (Sliders mượt mà với bước 0.5 từ 3.0 - 9.0) arranged in 2x2 grid */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-indigo-300">
+            <span>Mục tiêu 4 kỹ năng (3.0 - 9.0)</span>
+            <span className="text-amber-300/70 font-normal">Bước nhảy 0.5 band</span>
           </div>
 
-          {SKILLS.map((sk) => {
-            const val = draft[sk.key];
-            return (
-              <div
-                key={sk.key}
-                className="p-2.5 rounded-xl bg-white/[0.05] border border-white/10 space-y-2"
-              >
-                {/* Header row for skill */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-base">{sk.emoji}</span>
-                    <span className="text-xs font-bold text-white">{sk.label}</span>
-                  </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {SKILLS.map((sk) => {
+              const val = draft[sk.key];
+              return (
+                <div
+                  key={sk.key}
+                  className="p-2.5 rounded-xl bg-white/[0.05] border border-white/10 space-y-1.5"
+                >
+                  {/* Header row for skill */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm">{sk.emoji}</span>
+                      <span className="text-xs font-bold text-white">{sk.label}</span>
+                    </div>
 
-                  <div className="flex items-center gap-2">
-                    {/* Stepper buttons for high precision on mobile */}
-                    <div className="flex items-center gap-1 bg-black/20 rounded-lg p-0.5 border border-white/10">
+                    <div className="flex items-center gap-1 bg-black/25 rounded-lg p-0.5 border border-white/10">
                       <button
                         type="button"
                         onClick={() => updateSkillBand(sk.key, -0.5)}
-                        disabled={val <= 1.0}
-                        className="w-6 h-6 rounded flex items-center justify-center text-indigo-200 hover:text-white hover:bg-white/15 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                        disabled={val <= 3.0}
+                        className="w-5 h-5 rounded flex items-center justify-center text-indigo-200 hover:text-white hover:bg-white/15 disabled:opacity-30 disabled:pointer-events-none transition-colors"
                       >
-                        <Minus className="w-3 h-3" />
+                        <Minus className="w-2.5 h-2.5" />
                       </button>
-                      <span className="w-9 text-center text-xs font-black text-amber-300 tabular-nums">
+                      <span className="w-8 text-center text-xs font-black text-amber-300 tabular-nums">
                         {formatBand(val)}
                       </span>
                       <button
                         type="button"
                         onClick={() => updateSkillBand(sk.key, 0.5)}
                         disabled={val >= 9.0}
-                        className="w-6 h-6 rounded flex items-center justify-center text-indigo-200 hover:text-white hover:bg-white/15 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                        className="w-5 h-5 rounded flex items-center justify-center text-indigo-200 hover:text-white hover:bg-white/15 disabled:opacity-30 disabled:pointer-events-none transition-colors"
                       >
-                        <Plus className="w-3 h-3" />
+                        <Plus className="w-2.5 h-2.5" />
                       </button>
                     </div>
                   </div>
-                </div>
 
-                {/* Smooth Slider */}
-                <div className="px-1 py-1">
-                  <Slider
-                    value={[val]}
-                    min={1.0}
-                    max={9.0}
-                    step={0.5}
-                    onValueChange={(v) => {
-                      if (v && v[0] !== undefined) {
-                        setDraft((d) => ({ ...d, [sk.key]: v[0] }));
-                      }
-                    }}
-                    className="cursor-pointer"
-                  />
-                  <div className="flex justify-between text-[9px] font-semibold text-indigo-300/60 mt-1 px-0.5">
-                    <span>1.0</span>
-                    <span>3.0</span>
-                    <span>5.0</span>
-                    <span>7.0</span>
-                    <span>9.0</span>
+                  {/* Smooth Slider */}
+                  <div className="px-0.5 pt-0.5">
+                    <Slider
+                      value={[val]}
+                      min={3.0}
+                      max={9.0}
+                      step={0.5}
+                      onValueChange={(v) => {
+                        if (v && v[0] !== undefined) {
+                          setDraft((d) => ({ ...d, [sk.key]: v[0] }));
+                        }
+                      }}
+                      className="cursor-pointer"
+                    />
+                    <div className="flex justify-between text-[8px] font-semibold text-indigo-300/60 mt-0.5 px-0.5">
+                      <span>3.0</span>
+                      <span>5.0</span>
+                      <span>7.0</span>
+                      <span>9.0</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
 
-        {/* Khối 3: Vạch xuất phát & Mốc thời gian (SMART: Time-bound) */}
-        <div className="space-y-3 pt-2 border-t border-white/10">
+        {/* Khối 3: Vạch xuất phát & Mốc thời gian (SMART: Time-bound) in 2 columns */}
+        <div className="pt-2 border-t border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-3">
           {/* Baseline level */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 p-2.5 rounded-xl bg-white/[0.04] border border-white/10">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-indigo-200 flex items-center gap-1.5">
-                <Target className="w-3.5 h-3.5 text-indigo-400" />
-                Điểm xuất phát hiện tại (Baseline):
+              <label className="text-[11px] font-bold text-indigo-200 flex items-center gap-1.5">
+                <Target className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                <span>Xuất phát (Baseline):</span>
               </label>
-              <div className="flex items-center gap-1 bg-black/20 rounded-lg p-0.5 border border-white/10">
+              <div className="flex items-center gap-1 bg-black/25 rounded-lg p-0.5 border border-white/10">
                 <button
                   type="button"
                   onClick={() => updateCurrentBand(-0.5)}
-                  disabled={draft.currentBand <= 1.0}
-                  className="w-6 h-6 rounded flex items-center justify-center text-indigo-200 hover:text-white hover:bg-white/15 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                  disabled={draft.currentBand <= 3.0}
+                  className="w-5 h-5 rounded flex items-center justify-center text-indigo-200 hover:text-white hover:bg-white/15 disabled:opacity-30 disabled:pointer-events-none transition-colors"
                 >
-                  <Minus className="w-3 h-3" />
+                  <Minus className="w-2.5 h-2.5" />
                 </button>
-                <span className="w-9 text-center text-xs font-black text-indigo-200 tabular-nums">
+                <span className="w-8 text-center text-xs font-black text-indigo-200 tabular-nums">
                   {formatBand(draft.currentBand)}
                 </span>
                 <button
                   type="button"
                   onClick={() => updateCurrentBand(0.5)}
                   disabled={draft.currentBand >= 9.0}
-                  className="w-6 h-6 rounded flex items-center justify-center text-indigo-200 hover:text-white hover:bg-white/15 disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                  className="w-5 h-5 rounded flex items-center justify-center text-indigo-200 hover:text-white hover:bg-white/15 disabled:opacity-30 disabled:pointer-events-none transition-colors"
                 >
-                  <Plus className="w-3 h-3" />
+                  <Plus className="w-2.5 h-2.5" />
                 </button>
               </div>
             </div>
 
-            <div className="px-1 py-1">
+            <div className="px-0.5 pt-0.5">
               <Slider
                 value={[draft.currentBand]}
-                min={1.0}
+                min={3.0}
                 max={9.0}
                 step={0.5}
                 onValueChange={(v) => {
@@ -597,20 +600,23 @@ export function ExamGoalCard({ userId, classId, initialCurrentBand }: ExamGoalCa
                 }}
                 className="cursor-pointer"
               />
+              <div className="flex justify-between text-[8px] font-semibold text-indigo-300/60 mt-0.5 px-0.5">
+                <span>3.0</span>
+                <span>5.0</span>
+                <span>7.0</span>
+                <span>9.0</span>
+              </div>
             </div>
-            <p className="text-[10px] text-indigo-300/80">
-              Định vị điểm xuất phát giúp hệ thống đo lường chính xác khoảng cách năng lực cần chinh phục.
-            </p>
           </div>
 
           {/* Exam date picker (MANDATORY) */}
-          <div className="space-y-1.5">
-            <label className="flex items-center justify-between text-xs font-bold text-indigo-200">
+          <div className="space-y-1.5 p-2.5 rounded-xl bg-white/[0.04] border border-white/10 flex flex-col justify-between">
+            <label className="flex items-center justify-between text-[11px] font-bold text-indigo-200">
               <span className="flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-amber-400" />
-                Ngày thi dự kiến / Deadline <span className="text-red-400">*</span>
+                <Calendar className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                <span>Ngày thi / Deadline <span className="text-red-400">*</span></span>
               </span>
-              <span className="text-[10px] text-amber-300 font-semibold">(Bắt buộc)</span>
+              <span className="text-[9px] text-amber-300 font-semibold">(Bắt buộc)</span>
             </label>
             <input
               type="date"
@@ -621,34 +627,34 @@ export function ExamGoalCard({ userId, classId, initialCurrentBand }: ExamGoalCa
                 setErrorMsg("");
                 setDraft((d) => ({ ...d, examDate: e.target.value }));
               }}
-              className="w-full h-10 rounded-xl px-3 text-sm font-semibold text-white bg-white/10 border border-white/20 focus:outline-none focus:border-amber-400 focus:bg-white/15 transition-all cursor-pointer"
+              className="w-full h-8 rounded-lg px-2.5 text-xs font-semibold text-white bg-white/10 border border-white/20 focus:outline-none focus:border-amber-400 focus:bg-white/15 transition-all cursor-pointer"
               style={{ colorScheme: "dark" }}
             />
             {draft.examDate && (
-              <div className="flex items-center gap-1.5 text-[10px] text-amber-300 font-medium">
-                <Clock className="w-3 h-3" />
-                <span>
+              <div className="flex items-center gap-1 text-[10px] text-amber-300 font-medium">
+                <Clock className="w-3 h-3 shrink-0" />
+                <span className="truncate">
                   {daysUntil(draft.examDate) > 0
-                    ? `Thời gian rèn luyện còn lại: ${daysUntil(draft.examDate)} ngày`
+                    ? `Còn lại: ${daysUntil(draft.examDate)} ngày rèn luyện`
                     : "Hạn chót là hôm nay"}
                 </span>
               </div>
             )}
           </div>
-
-          {/* Validation error message */}
-          {errorMsg && (
-            <div className="flex items-center gap-2 p-2.5 rounded-lg bg-red-500/20 border border-red-500/40 text-red-200 text-xs font-medium">
-              <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
-              <span>{errorMsg}</span>
-            </div>
-          )}
         </div>
+
+        {/* Validation error message */}
+        {errorMsg && (
+          <div className="flex items-center gap-2 p-2 rounded-lg bg-red-500/20 border border-red-500/40 text-red-200 text-xs font-medium">
+            <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
+            <span>{errorMsg}</span>
+          </div>
+        )}
 
         {/* Save button */}
         <Button
           onClick={handleSave}
-          className="w-full h-11 font-black text-sm rounded-xl gap-2 border-none shadow-lg shadow-amber-500/20 transition-all hover:brightness-110 active:scale-[0.99]"
+          className="w-full h-10 font-black text-sm rounded-xl gap-2 border-none shadow-lg shadow-amber-500/20 transition-all hover:brightness-110 active:scale-[0.99]"
           style={{ background: "linear-gradient(135deg, #fbbf24, #f97316)", color: "#1e1b4b" }}
         >
           <CheckCircle2 className="w-4 h-4" />
