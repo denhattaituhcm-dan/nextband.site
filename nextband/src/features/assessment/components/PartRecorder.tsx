@@ -61,7 +61,7 @@ export function PartRecorder({
     },
   });
 
-  const handleUploadRecording = async (blob: Blob) => {
+  const handleUploadRecording = React.useCallback(async (blob: Blob) => {
     setUploadState("uploading");
     setUploadError(null);
 
@@ -161,7 +161,7 @@ export function PartRecorder({
       setUploadError(err?.message || "Tải lên bản ghi âm thất bại. Vui lòng nhấn Thử lại.");
       setUploadState("failed");
     }
-  };
+  }, [recordedPath, sessionId, questionId, recordSeconds, onUploaded]);
 
   // Auto-retry when device comes back online after a failed upload
   React.useEffect(() => {
@@ -172,7 +172,7 @@ export function PartRecorder({
     };
     window.addEventListener("online", handleOnline);
     return () => window.removeEventListener("online", handleOnline);
-  }, [uploadState, audioBlob]);
+  }, [uploadState, audioBlob, handleUploadRecording]);
 
   const handleRetryUpload = () => {
     if (audioBlob) handleUploadRecording(audioBlob);

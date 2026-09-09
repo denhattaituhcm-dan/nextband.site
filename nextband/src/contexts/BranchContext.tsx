@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useMemo } from "react";
+import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from "react";
 import { branchesApi, Branch } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -40,7 +40,7 @@ export function BranchProvider({ children }: { children: React.ReactNode }) {
     return "ALL";
   });
 
-  const loadBranches = async () => {
+  const loadBranches = useCallback(async () => {
     if (!isAuthenticated) return;
     try {
       setIsLoading(true);
@@ -51,11 +51,11 @@ export function BranchProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [isAuthenticated]);
 
   useEffect(() => {
     loadBranches();
-  }, [isAuthenticated, user?.id]);
+  }, [loadBranches, user?.id]);
 
   const setSelectedBranch = (branchId: string) => {
     setSelectedBranchState(branchId);

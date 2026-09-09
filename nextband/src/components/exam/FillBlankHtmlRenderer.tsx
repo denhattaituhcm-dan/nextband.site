@@ -157,14 +157,15 @@ export function FillBlankHtmlRenderer({
       }
     };
 
+    const currentRefs = questionRefs?.current;
     container.addEventListener("input", handleInput);
     container.addEventListener("keydown", handleKeyDown);
     return () => {
       container.removeEventListener("input", handleInput);
       container.removeEventListener("keydown", handleKeyDown);
-      if (questionRefs?.current && registeredFocusIds.length > 0) {
+      if (currentRefs && registeredFocusIds.length > 0) {
         registeredFocusIds.forEach((focusId) => {
-          questionRefs.current.delete(focusId);
+          currentRefs.delete(focusId);
         });
       }
     };

@@ -302,7 +302,7 @@ export function SpeakingGrader({
     return () => {
       isMounted = false;
     };
-  }, [submissionId]);
+  }, [submissionId, currentAnswer?.feedback]);
 
   const handleToggleEvidenceTag = (tagId: string, _criterion: SpeakingCriterion) => {
     setSelectedEvidenceTagIds((prev) => {

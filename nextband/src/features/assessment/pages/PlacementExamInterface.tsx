@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { SEO } from "@/components/common/SEO";
 import { useAssessmentSession } from "../hooks/useAssessmentSession";
@@ -61,10 +61,12 @@ export default function PlacementExamInterface() {
     saveStatus,
   } = useAssessmentSession(sessionId);
 
+  const handleFinalSubmitRef = useRef<() => Promise<void>>(async () => {});
+
   const handleTimeUp = useCallback(async () => {
     toast.error("Hết thời gian làm bài! Hệ thống đang tự động nộp bài cho bạn.");
-    handleFinalSubmit();
-  }, [sessionId, answers]);
+    handleFinalSubmitRef.current();
+  }, []);
 
   const { formattedTime, isUrgent } = useAssessmentTimer(
     session?.remainingSeconds || 3600,
@@ -143,6 +145,7 @@ export default function PlacementExamInterface() {
       setIsSubmitDialogOpen(false);
     }
   };
+  handleFinalSubmitRef.current = handleFinalSubmit;
 
   if (isLoading) {
     return (

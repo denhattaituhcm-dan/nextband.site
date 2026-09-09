@@ -369,6 +369,14 @@ export default function ExamInterface() {
     window.addEventListener("paste", handlePaste);
 
     return () => {
+      if (autosaveTimerRef.current) {
+        clearTimeout(autosaveTimerRef.current);
+        autosaveTimerRef.current = null;
+      }
+      if (localDraftTimerRef.current) {
+        clearTimeout(localDraftTimerRef.current);
+        localDraftTimerRef.current = null;
+      }
       unsubLease();
       leaseMgr.destroy();
       syncEngine.destroy();

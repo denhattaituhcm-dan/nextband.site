@@ -41,7 +41,7 @@ export function HuanCoMascot({ state, className = "" }: HuanCoMascotProps) {
       const timer = setTimeout(() => setIsBouncing(false), 650);
       return () => clearTimeout(timer);
     }
-  }, [state.advice]);
+  }, [state.advice, isExamMode]);
 
   // 2. Spatial Smart Evasion (Contextual Dodge):
   // When the cursor is working in the nearby bottom-right quadrant,
@@ -82,7 +82,7 @@ export function HuanCoMascot({ state, className = "" }: HuanCoMascotProps) {
       window.removeEventListener("mousemove", handleMouseMove);
       cancelAnimationFrame(rafId);
     };
-  }, [isOpen, isHovered]);
+  }, [isOpen, isHovered, isExamMode]);
 
   const handleCtaClick = () => {
     if (state.ctaPath) {

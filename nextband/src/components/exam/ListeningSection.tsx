@@ -75,10 +75,9 @@ export function ListeningSection({
   onQuestionFocus,
 }: ListeningSectionProps) {
   const [currentPart, setCurrentPart] = useState(0);
-  const rawGroups = section.question_groups || section.questionGroups || [];
-
   // Normalize question fields from camelCase to snake_case
   const questionGroups = useMemo(() => {
+    const rawGroups = section.question_groups || section.questionGroups || [];
     return rawGroups
       .map((g: any) => ({
         ...g,
@@ -108,7 +107,7 @@ export function ListeningSection({
           ? orderDiff
           : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       });
-  }, [rawGroups]);
+  }, [section.question_groups, section.questionGroups]);
 
   // Flatten questions for global index calculation
   const allQuestions = useMemo(() => {

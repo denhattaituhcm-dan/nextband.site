@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Mic, Square, CheckCircle2, Play, Pause, RotateCcw, Loader2, AlertCircle, RefreshCw, Clock } from "lucide-react";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
@@ -180,13 +180,25 @@ export function QuestionRecorder({
     }
   }, [answer, phase]);
 
-  const handleStopRecording = () => {
+  // Clean up recording & speech recognition if component unmounts while recording
+  useEffect(() => {
+    return () => {
+      try {
+        stopRecording();
+      } catch {}
+      try {
+        stopListening();
+      } catch {}
+    };
+  }, [stopRecording, stopListening]);
+
+  const handleStopRecording = useCallback(() => {
     setPhase("processing");
     stopRecording();
     try {
       stopListening();
     } catch {}
-  };
+  }, [stopRecording, stopListening]);
 
   // Recording countdown timer with auto-stop at maxDurationSeconds (120s = 2 minutes)
   useEffect(() => {
@@ -202,10 +214,10 @@ export function QuestionRecorder({
       }, 1000);
       return () => clearInterval(timer);
     }
-  }, [isRecording, phase, maxDurationSeconds]);
+  }, [isRecording, phase, maxDurationSeconds, handleStopRecording]);
 
   // Direct Supabase Storage Upload
-  const handleUploadAudio = async (blob: Blob) => {
+  const handleUploadAudio = useCallback(async (blob: Blob) => {
     setPhase("processing");
     setUploadError(null);
 
@@ -268,12 +280,12 @@ export function QuestionRecorder({
             id: recordingId,
             storagePath,
             sizeBytes: blob.size,
-            durationMs: recordTime * 1000,
-            mimeType: blob.type || "audio/webm",
+            durationSeconds: recordTime,
+            status: "UPLOADED",
           }),
         });
       } catch (confErr) {
-        console.warn("[Speaking] Confirm upload notice:", confErr);
+        console.warn("[Speaking] Confirm notice:", confErr);
       }
 
       // 4. Save canonical storagePath (Never blob: URL!)
@@ -284,13 +296,13 @@ export function QuestionRecorder({
       setUploadError(err?.message || "Tải lên bài nói thất bại. Vui lòng bấm Thử lại.");
       setPhase("failed");
     }
-  };
+  }, [submissionId, questionId, recordTime, onAnswerChange]);
 
   useEffect(() => {
     if (audioBlob && phase === "processing") {
       handleUploadAudio(audioBlob);
     }
-  }, [audioBlob, phase]);
+  }, [audioBlob, phase, handleUploadAudio]);
 
   const handleStartRecording = async () => {
     if (permissionStatus === "denied") {
