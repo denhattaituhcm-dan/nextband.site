@@ -19,14 +19,6 @@ export interface ParentProgressMessageContext {
   appBaseUrl?: string;
 }
 
-export interface TaskReminderMessageContext {
-  recipientPhone?: string | null;
-  studentName: string;
-  riskReason?: string | null;
-  openTaskCount: number;
-  parentToken?: string | null;
-  appBaseUrl?: string;
-}
 
 /**
  * Generates the canonical teacher-to-parent weekly homework and progress update message.
@@ -53,26 +45,4 @@ export function generateParentProgressMessage(context: ParentProgressMessageCont
     "",
     `(Hệ thống tự động cập nhật không cần mật khẩu)`
   ].join("\n");
-}
-
-/**
- * Generates task reminder message for pending assignments / scholarship preservation.
- */
-export function generateTaskReminderMessage(context: TaskReminderMessageContext): string {
-  const student = context.studentName || "em";
-  const baseUrl = context.appBaseUrl || "https://nextband.site";
-  const parentHubUrl = context.parentToken ? `${baseUrl}/p/${context.parentToken}` : "";
-
-  const lines = [
-    `Dạ NextBand xin chào Phụ huynh em ${student},`,
-    `Thầy cô gửi thông tin theo dõi tiến độ tuần này của con. Hiện tại con còn ${context.openTaskCount} bài tập cần hoàn thành để bảo toàn mục tiêu học bổng và lộ trình học.`
-  ];
-
-  if (parentHubUrl) {
-    lines.push(`👉 Ba Mẹ xem chi tiết báo cáo và động viên con tại: ${parentHubUrl}`);
-  }
-
-  lines.push(`Cần hỗ trợ thêm, Ba Mẹ nhắn lại giúp thầy cô nhé!`);
-
-  return lines.join("\n");
 }

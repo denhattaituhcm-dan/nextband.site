@@ -7,7 +7,6 @@ import { vi } from "date-fns/locale";
  */
 
 export const GRADING_SLA_DAYS = 7;
-export const GRADING_SLA_MS = GRADING_SLA_DAYS * 24 * 60 * 60 * 1000;
 
 export type GradingSlaTier = "ON_TRACK" | "APPROACHING" | "OVERDUE" | "GRADED" | "NOT_SUBMITTED";
 
