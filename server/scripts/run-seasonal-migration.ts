@@ -36,7 +36,7 @@ async function runMigration() {
     `CREATE TABLE IF NOT EXISTS "seasonal_reward_claims" (
       "id" TEXT NOT NULL PRIMARY KEY,
       "event_id" TEXT NOT NULL REFERENCES "seasonal_events"("id") ON DELETE CASCADE,
-      "student_id" TEXT NOT NULL REFERENCES "profiles"("user_id") ON DELETE CASCADE,
+      "student_id" UUID NOT NULL REFERENCES "profiles"("user_id") ON DELETE CASCADE,
       "homework_id" TEXT NOT NULL,
       "reward_type" TEXT NOT NULL DEFAULT 'CASH',
       "amount" INTEGER NOT NULL DEFAULT 0,
