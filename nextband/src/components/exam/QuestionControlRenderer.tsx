@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { CheckSquare, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { isValidMCQOptions } from "@/lib/questionNormalizer";
+import { handleShortAnswerKeyDown } from "@/lib/shortAnswerNavigation";
 
 export interface QuestionControlRendererProps {
   question: any;
@@ -24,6 +25,7 @@ export interface QuestionControlRendererProps {
   questionRefs?: React.MutableRefObject<Map<string, HTMLElement>>;
   currentQuestionId?: string;
   themeColorClass?: string;
+  onQuestionFocus?: (questionId: string) => void;
 }
 
 export function QuestionControlRenderer({
@@ -37,6 +39,7 @@ export function QuestionControlRenderer({
   questionRefs,
   currentQuestionId,
   themeColorClass = "reading",
+  onQuestionFocus,
 }: QuestionControlRendererProps) {
   if (!question) return null;
 
@@ -161,6 +164,7 @@ export function QuestionControlRenderer({
                       Blank {idx + 1}
                     </Label>
                     <Input
+                      data-short-answer-input="true"
                       placeholder={`Đáp án #${idx + 1}`}
                       disabled={disabled}
                       value={(answer || {})[blankKey] || ""}
@@ -170,6 +174,8 @@ export function QuestionControlRenderer({
                           [blankKey]: e.target.value,
                         })
                       }
+                      onKeyDown={handleShortAnswerKeyDown}
+                      onFocus={() => onQuestionFocus?.(question.id)}
                       className="h-10"
                     />
                   </div>
@@ -184,15 +190,19 @@ export function QuestionControlRenderer({
               onAnswerChange={onAnswerChange as any}
               questionRefs={questionRefs}
               currentQuestionId={currentQuestionId}
+              onQuestionFocus={onQuestionFocus}
             />
           )
         ) : (
           <div className="space-y-2">
             <Input
+              data-short-answer-input="true"
               placeholder="Nhập câu trả lời..."
               value={typeof answer === "string" ? answer : ""}
               disabled={disabled}
               onChange={(e) => onAnswerChange(question.id, e.target.value)}
+              onKeyDown={handleShortAnswerKeyDown}
+              onFocus={() => onQuestionFocus?.(question.id)}
               className="max-w-md h-11"
             />
             {(question.instruction || question.hint) && (

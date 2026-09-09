@@ -1,4 +1,4 @@
-import { useState, useMemo, MutableRefObject } from "react";
+import { useState, useEffect, useMemo, MutableRefObject } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,7 @@ import {
 import { DropdownSelect } from "./DropdownSelect";
 import { MatchingRenderer } from "./MatchingRenderer";
 import { formatStorageUrl } from "@/lib/api";
+import { handleShortAnswerKeyDown } from "@/lib/shortAnswerNavigation";
 
 function safeParseOptions(opts: any): any {
   if (!opts) return [];
@@ -108,6 +109,18 @@ export function ListeningSection({
           : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       });
   }, [section.question_groups, section.questionGroups]);
+
+  // Sync currentPart if currentQuestionId belongs to another group (e.g. from footer pagination)
+  useEffect(() => {
+    if (!currentQuestionId) return;
+    const baseId = currentQuestionId.split("::blank:")[0];
+    const groupIndex = questionGroups.findIndex((g: any) =>
+      (g.questions || []).some((q: any) => q.id === baseId)
+    );
+    if (groupIndex !== -1 && groupIndex !== currentPart) {
+      setCurrentPart(groupIndex);
+    }
+  }, [currentQuestionId, questionGroups, currentPart]);
 
   // Flatten questions for global index calculation
   const allQuestions = useMemo(() => {
@@ -455,9 +468,11 @@ export function ListeningSection({
                                           onAnswerChange={onAnswerChange}
                                           questionRefs={questionRefs}
                                           currentQuestionId={currentQuestionId}
+                                          onQuestionFocus={onQuestionFocus}
                                         />
                                       ) : (
                                         <Input
+                                          data-short-answer-input="true"
                                           placeholder="Nhập đáp án của bạn..."
                                           value={answers[question.id] || ""}
                                           onChange={(e) =>
@@ -466,6 +481,8 @@ export function ListeningSection({
                                               e.target.value,
                                             )
                                           }
+                                          onKeyDown={handleShortAnswerKeyDown}
+                                          onFocus={() => onQuestionFocus?.(focusQuestionId)}
                                           className="max-w-md h-12 rounded-2xl text-base border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 shadow-xs font-medium"
                                         />
                                       )}
@@ -475,6 +492,7 @@ export function ListeningSection({
                                   {/* Short Answer */}
                                   {question.question_type === "short_answer" && (
                                     <Input
+                                      data-short-answer-input="true"
                                       placeholder="Nhập câu trả lời..."
                                       value={answers[question.id] || ""}
                                       onChange={(e) =>
@@ -483,6 +501,8 @@ export function ListeningSection({
                                           e.target.value,
                                         )
                                       }
+                                      onKeyDown={handleShortAnswerKeyDown}
+                                      onFocus={() => onQuestionFocus?.(focusQuestionId)}
                                       className="max-w-md h-12 rounded-2xl text-base border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 shadow-xs font-medium"
                                     />
                                   )}

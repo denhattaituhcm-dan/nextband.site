@@ -6,6 +6,7 @@ import React, {
   MutableRefObject,
 } from "react";
 import { sanitizeHtml } from "../../lib/sanitize";
+import { handleShortAnswerKeyDown } from "@/lib/shortAnswerNavigation";
 
 const FILL_BLANK_PLACEHOLDER_REGEX = /(?:\[BLANK(?:_(\d+))?\]|\[(\d+)\])/gi;
 
@@ -17,6 +18,7 @@ interface FillBlankHtmlRendererProps {
   onAnswerChange: (questionId: string, answer: any) => void;
   questionRefs?: MutableRefObject<Map<string, HTMLElement>>;
   currentQuestionId?: string;
+  onQuestionFocus?: (questionId: string) => void;
 }
 
 export function FillBlankHtmlRenderer({
@@ -27,6 +29,7 @@ export function FillBlankHtmlRenderer({
   onAnswerChange,
   questionRefs,
   currentQuestionId,
+  onQuestionFocus,
 }: FillBlankHtmlRendererProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -35,13 +38,15 @@ export function FillBlankHtmlRenderer({
   const questionIdRef = useRef(questionId);
   const onAnswerChangeRef = useRef(onAnswerChange);
   const startNumberRef = useRef(startNumber);
+  const onQuestionFocusRef = useRef(onQuestionFocus);
 
   useEffect(() => {
     answersRef.current = answers;
     questionIdRef.current = questionId;
     onAnswerChangeRef.current = onAnswerChange;
     startNumberRef.current = startNumber;
-  }, [answers, questionId, onAnswerChange, startNumber]);
+    onQuestionFocusRef.current = onQuestionFocus;
+  }, [answers, questionId, onAnswerChange, startNumber, onQuestionFocus]);
 
   // Memoize and sanitize processed HTML to avoid unnecessary re-renders
   const processedHtml = useMemo(() => {
@@ -112,6 +117,7 @@ export function FillBlankHtmlRenderer({
       input.setAttribute("data-blank-key", blankKey);
       input.setAttribute("data-owner-id", questionIdRef.current);
       input.setAttribute("data-focus-id", focusId);
+      input.setAttribute("data-short-answer-input", "true");
 
       if (questionRefs?.current) {
         questionRefs.current.set(focusId, slot as HTMLElement);
@@ -142,26 +148,50 @@ export function FillBlankHtmlRenderer({
       }
     };
 
-    // Keyboard Navigation: Enter or Tab moves to the next slot seamlessly
+    const handleFocusIn = (e: FocusEvent) => {
+      const target = e.target as HTMLInputElement;
+      if (target.tagName === "INPUT") {
+        const focusId = target.getAttribute("data-focus-id");
+        if (focusId && onQuestionFocusRef.current) {
+          onQuestionFocusRef.current(focusId);
+        }
+      }
+    };
+
+    // Keyboard Navigation: Enter moves to next short answer input; Tab moves to next slot
     const handleKeyDown = (e: KeyboardEvent) => {
       const target = e.target as HTMLInputElement;
-      if (target.tagName === "INPUT" && (e.key === "Enter" || e.key === "Tab") && !e.shiftKey) {
-        const allInputs = Array.from(document.querySelectorAll(".fill-blank-slot input")) as HTMLInputElement[];
+      if (target.tagName !== "INPUT") return;
+
+      if (e.key === "Enter") {
+        handleShortAnswerKeyDown(e);
+        return;
+      }
+
+      if (e.key === "Tab" && !e.shiftKey) {
+        const allInputs = Array.from(
+          document.querySelectorAll<HTMLInputElement>(
+            'input[data-short-answer-input="true"]:not([disabled])'
+          )
+        );
         const currentIndex = allInputs.indexOf(target);
         if (currentIndex !== -1 && currentIndex < allInputs.length - 1) {
           e.preventDefault();
           const nextInput = allInputs[currentIndex + 1];
           nextInput.focus();
           nextInput.select();
+          nextInput.scrollIntoView({ behavior: "smooth", block: "center" });
         }
       }
     };
 
     const currentRefs = questionRefs?.current;
     container.addEventListener("input", handleInput);
+    container.addEventListener("focusin", handleFocusIn);
     container.addEventListener("keydown", handleKeyDown);
     return () => {
       container.removeEventListener("input", handleInput);
+      container.removeEventListener("focusin", handleFocusIn);
       container.removeEventListener("keydown", handleKeyDown);
       if (currentRefs && registeredFocusIds.length > 0) {
         registeredFocusIds.forEach((focusId) => {

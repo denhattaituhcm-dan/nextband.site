@@ -102298,14 +102298,42 @@ function validateSubmissionTechnicalPayload(exam, answersToEvaluate) {
     });
   });
   if (allQuestions.length === 0) return;
-  const isWritingExam = examType === "writing" || allQuestions.some((q) => q._sectionType === "writing" || q.questionType === "essay");
-  const isSpeakingExam = examType === "speaking" || allQuestions.some((q) => q._sectionType === "speaking" || q.questionType === "speaking");
-  if (isWritingExam) {
-    const writingQuestions = allQuestions.filter(
-      (q) => q._sectionType === "writing" || q.questionType === "essay"
+  const answeredCount = answersToEvaluate.filter((a) => {
+    if (a.audioUrl && String(a.audioUrl).trim()) return true;
+    if (typeof a.answerText === "string" && a.answerText.trim()) return true;
+    if (typeof a.answerText === "object" && a.answerText !== null && Object.keys(a.answerText).length > 0) return true;
+    return false;
+  }).length;
+  if (answeredCount === 0) {
+    throw new ValidationError(
+      "B\xC0I N\u1ED8P KH\xD4NG H\u1EE2P L\u1EC6: B\xE0i l\xE0m ho\xE0n to\xE0n \u0111\u1EC3 tr\u1ED1ng. Vui l\xF2ng ho\xE0n th\xE0nh b\xE0i tr\u01B0\u1EDBc khi n\u1ED9p."
     );
+  }
+  const isPureSpeakingExam = examType === "speaking" || allQuestions.length > 0 && allQuestions.every(
+    (q) => q._sectionType === "speaking" || q.questionType === "speaking" || String(q.questionType || "").startsWith("ielts_speaking")
+  );
+  if (isPureSpeakingExam) {
+    let hasValidAudio = false;
+    for (const sq of allQuestions) {
+      const ans = answersToEvaluate.find((a) => a.questionId === sq.id);
+      const audio = ans?.audioUrl && String(ans.audioUrl).trim() || typeof ans?.answerText === "string" && (ans.answerText.startsWith("speaking-recordings/") || ans.answerText.startsWith("/speaking-recordings/") || ans.answerText.includes("speaking-recordings/"));
+      if (audio) {
+        hasValidAudio = true;
+        break;
+      }
+    }
+    if (!hasValidAudio) {
+      throw new ValidationError(
+        "B\xC0I N\u1ED8P KH\xD4NG H\u1EE2P L\u1EC6: Ch\u01B0a t\xECm th\u1EA5y file ghi \xE2m h\u1EE3p l\u1EC7 cho b\xE0i Speaking."
+      );
+    }
+  }
+  const isPureWritingExam = examType === "writing" || allQuestions.length > 0 && allQuestions.every(
+    (q) => q._sectionType === "writing" && (q.questionType === "essay" || q.questionType === "writing")
+  );
+  if (isPureWritingExam) {
     let hasSubstantialWriting = false;
-    for (const wq of writingQuestions) {
+    for (const wq of allQuestions) {
       const ans = answersToEvaluate.find((a) => a.questionId === wq.id);
       const rawText = typeof ans?.answerText === "string" ? ans.answerText.replace(/<[^>]*>/g, " ").replace(/&nbsp;/gi, " ").trim() : "";
       const wordCount = rawText.split(/\s+/).filter(Boolean).length;
@@ -102319,36 +102347,6 @@ function validateSubmissionTechnicalPayload(exam, answersToEvaluate) {
         "B\xC0I N\u1ED8P KH\xD4NG H\u1EE2P L\u1EC6: B\xE0i vi\u1EBFt ch\u01B0a c\xF3 n\u1ED9i dung ho\u1EB7c qu\xE1 ng\u1EAFn \u0111\u1EC3 n\u1ED9p (t\u1ED1i thi\u1EC3u 10 t\u1EEB)."
       );
     }
-  }
-  if (isSpeakingExam) {
-    const speakingQuestions = allQuestions.filter(
-      (q) => q._sectionType === "speaking" || q.questionType === "speaking"
-    );
-    let hasValidAudio = false;
-    for (const sq of speakingQuestions) {
-      const ans = answersToEvaluate.find((a) => a.questionId === sq.id);
-      const audio = ans?.audioUrl && String(ans.audioUrl).trim() || typeof ans?.answerText === "string" && ans.answerText.startsWith("speaking-recordings/");
-      if (audio) {
-        hasValidAudio = true;
-        break;
-      }
-    }
-    if (!hasValidAudio) {
-      throw new ValidationError(
-        "B\xC0I N\u1ED8P KH\xD4NG H\u1EE2P L\u1EC6: Ch\u01B0a t\xECm th\u1EA5y file ghi \xE2m h\u1EE3p l\u1EC7 cho b\xE0i Speaking."
-      );
-    }
-  }
-  const answeredCount = answersToEvaluate.filter((a) => {
-    if (a.audioUrl && String(a.audioUrl).trim()) return true;
-    if (typeof a.answerText === "string" && a.answerText.trim()) return true;
-    if (typeof a.answerText === "object" && a.answerText !== null && Object.keys(a.answerText).length > 0) return true;
-    return false;
-  }).length;
-  if (answeredCount === 0) {
-    throw new ValidationError(
-      "B\xC0I N\u1ED8P KH\xD4NG H\u1EE2P L\u1EC6: B\xE0i l\xE0m ho\xE0n to\xE0n \u0111\u1EC3 tr\u1ED1ng. Vui l\xF2ng ho\xE0n th\xE0nh b\xE0i tr\u01B0\u1EDBc khi n\u1ED9p."
-    );
   }
 }
 var ExamSubmissionService = class {

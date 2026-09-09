@@ -20,6 +20,7 @@ import { DropdownSelect } from "./DropdownSelect";
 import { MatchingRenderer } from "./MatchingRenderer";
 import { RichContent } from "./RichContent";
 import { formatStorageUrl } from "@/lib/api";
+import { handleShortAnswerKeyDown } from "@/lib/shortAnswerNavigation";
 
 import { compareCanonicalOrder } from "@/lib/questionOrder";
 
@@ -393,9 +394,11 @@ export function GrammarSection({
                                               currentQuestionId={
                                                 currentQuestionId
                                               }
+                                              onQuestionFocus={onQuestionFocus}
                                             />
                                           ) : (
                                             <Input
+                                              data-short-answer-input="true"
                                               placeholder="Viết câu trả lời của bạn..."
                                               value={answers[question.id] || ""}
                                               onChange={(e) =>
@@ -404,15 +407,34 @@ export function GrammarSection({
                                                   e.target.value,
                                                 )
                                               }
+                                              onKeyDown={handleShortAnswerKeyDown}
+                                              onFocus={() => onQuestionFocus?.(focusQuestionId)}
                                               className="max-w-md h-12 rounded-2xl text-base border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 shadow-xs font-medium"
                                             />
                                           )}
                                         </div>
                                       )}
 
-                                      {/* Short Answer & Essay (Unified Writing Answer Box) */}
-                                      {(question.question_type === "short_answer" ||
-                                        question.question_type === "essay") && (
+                                      {/* Short Answer */}
+                                      {question.question_type === "short_answer" && (
+                                        <Input
+                                          data-short-answer-input="true"
+                                          placeholder="Nhập câu trả lời..."
+                                          value={answers[question.id] || ""}
+                                          onChange={(e) =>
+                                            onAnswerChange(
+                                              question.id,
+                                              e.target.value,
+                                            )
+                                          }
+                                          onKeyDown={handleShortAnswerKeyDown}
+                                          onFocus={() => onQuestionFocus?.(focusQuestionId)}
+                                          className="max-w-md h-12 rounded-2xl text-base border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 shadow-xs font-medium"
+                                        />
+                                      )}
+
+                                      {/* Essay (Writing Answer Box for multi-line essays) */}
+                                      {question.question_type === "essay" && (
                                         <WritingAnswerBox
                                           questionId={question.id}
                                           value={answers[question.id] || ""}

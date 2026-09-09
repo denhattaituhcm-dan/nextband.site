@@ -784,6 +784,7 @@ export function ReadingSection({
                           questionRefs={questionRefs}
                           currentQuestionId={currentQuestionId}
                           themeColorClass="reading"
+                          onQuestionFocus={onQuestionFocus}
                         />
                       </div>
                     </CardContent>

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { FillBlankHtmlRenderer, hasFillBlankPlaceholders } from "@/components/exam/FillBlankHtmlRenderer";
 import { AcademicAudioPlayer } from "./AcademicAudioPlayer";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { handleShortAnswerKeyDown } from "@/lib/shortAnswerNavigation";
 
 interface ListeningPanelProps {
   title: string;
@@ -177,8 +178,10 @@ export function ListeningPanel({
                   {q.questionType === "fill_blank" && (
                     <div className="pt-1">
                       <Input
+                        data-short-answer-input="true"
                         value={typeof answers?.[q.id] === "string" ? answers[q.id] : ""}
                         onChange={(e) => onAnswerChange(q.id, e.target.value)}
+                        onKeyDown={handleShortAnswerKeyDown}
                         placeholder={q.placeholder || "Nhập câu trả lời của bạn..."}
                         className="h-11 rounded-2xl border-border font-medium text-sm focus:border-brand-blue"
                       />

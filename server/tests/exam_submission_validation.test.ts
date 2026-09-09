@@ -116,4 +116,61 @@ describe('validateSubmissionTechnicalPayload Unit Tests', () => {
       ])
     ).not.toThrow();
   });
+
+  it('accepts listening exam having dummy empty speaking/writing sections without requiring audio', () => {
+    const listeningExamWithEmptyShells = {
+      id: 'exam-w2-d2-lis',
+      examType: 'ielts',
+      sections: [
+        { sectionType: 'writing', questionGroups: [] },
+        { sectionType: 'speaking', questionGroups: [] },
+        { sectionType: 'reading', questionGroups: [] },
+        {
+          sectionType: 'listening',
+          questionGroups: [
+            {
+              questions: [
+                { id: 'l1', questionType: 'fill_blank' },
+                { id: 'l2', questionType: 'multiple_choice' },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(() =>
+      validateSubmissionTechnicalPayload(listeningExamWithEmptyShells, [
+        { questionId: 'l1', answerText: 'library' },
+      ])
+    ).not.toThrow();
+  });
+
+  it('accepts grammar exam having short translation answers without requiring audio or 10 words', () => {
+    const grammarExamWithEmptyShells = {
+      id: 'exam-w5-d1-wri',
+      examType: 'ielts',
+      sections: [
+        { sectionType: 'writing', questionGroups: [] },
+        { sectionType: 'speaking', questionGroups: [] },
+        {
+          sectionType: 'general',
+          questionGroups: [
+            {
+              questions: [
+                { id: 'g1', questionType: 'essay' },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    // Short sentence: 5 words / 26 chars
+    expect(() =>
+      validateSubmissionTechnicalPayload(grammarExamWithEmptyShells, [
+        { questionId: 'g1', answerText: 'She lives near the school.' },
+      ])
+    ).not.toThrow();
+  });
 });

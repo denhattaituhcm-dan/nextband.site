@@ -845,11 +845,82 @@ export default function ExamInterface() {
       const answerEntries = buildPayloadAnswers();
 
       // 3.5. Kiểm tra payload kỹ thuật trước khi nộp (Tránh nộp bài trắng / audio rỗng)
-      const examType = String(exam?.examType || exam?.type || "").toLowerCase();
-      const hasWriting = examType === "writing" || sections.some((s: any) => String(s.sectionType || "").toLowerCase() === "writing");
-      const hasSpeaking = examType === "speaking" || sections.some((s: any) => String(s.sectionType || "").toLowerCase() === "speaking");
+      // Lấy danh sách câu hỏi thực tế trong các section khả dụng (loại trừ section rỗng 0 câu hỏi)
+      const activeQuestions = availableSections.flatMap((s: any) =>
+        (s.questionGroups || s.question_groups || []).flatMap((g: any) =>
+          (g.questions || []).map((q: any) => ({
+            ...q,
+            _sectionType: String(s.sectionType || s.section_type || "").toLowerCase(),
+          }))
+        )
+      );
 
-      if (hasWriting) {
+      // 1. Kiểm tra bài làm hoàn toàn để trống (áp dụng chung cho mọi bài thi)
+      const answeredCount = answerEntries.filter((a) => {
+        if (a.audioUrl && String(a.audioUrl).trim()) return true;
+        if (typeof a.answerText === "string" && a.answerText.trim()) return true;
+        if (typeof a.answerText === "object" && a.answerText !== null && Object.keys(a.answerText).length > 0) return true;
+        return false;
+      }).length;
+
+      if (answeredCount === 0) {
+        toast({
+          title: "Bài làm hoàn toàn để trống",
+          description: "Vui lòng trả lời ít nhất một câu hỏi trước khi nộp bài.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        setShowReviewDialog(false);
+        return;
+      }
+
+      // 2. Chỉ kiểm tra file ghi âm nếu bài thi THỰC SỰ là bài chuyên Speaking
+      // (Tất cả câu hỏi trong bài đều là câu hỏi Speaking)
+      const examType = String(exam?.examType || exam?.type || "").toLowerCase();
+      const isPureSpeakingExam =
+        examType === "speaking" ||
+        (activeQuestions.length > 0 &&
+          activeQuestions.every((q: any) => {
+            const qt = String(q.questionType || q.question_type || "").toLowerCase();
+            return qt === "speaking" || qt.startsWith("ielts_speaking") || q._sectionType === "speaking";
+          }));
+
+      if (isPureSpeakingExam) {
+        let hasValidAudio = false;
+        for (const ans of answerEntries) {
+          if (
+            (ans.audioUrl && String(ans.audioUrl).trim()) ||
+            (typeof ans.answerText === "string" &&
+              (ans.answerText.startsWith("speaking-recordings/") ||
+               ans.answerText.startsWith("/speaking-recordings/") ||
+               ans.answerText.includes("speaking-recordings/")))
+          ) {
+            hasValidAudio = true;
+            break;
+          }
+        }
+        if (!hasValidAudio) {
+          toast({
+            title: "Chưa có file ghi âm",
+            description: "Bạn chưa thu âm câu trả lời cho bài Speaking. Vui lòng ghi âm trước khi nộp.",
+            variant: "destructive",
+          });
+          setIsSubmitting(false);
+          setShowReviewDialog(false);
+          return;
+        }
+      }
+
+      // 3. Chỉ kiểm tra nội dung bài viết nếu bài thi THỰC SỰ là bài chuyên Writing
+      const isPureWritingExam =
+        examType === "writing" ||
+        (activeQuestions.length > 0 &&
+          activeQuestions.every((q: any) => {
+            const qt = String(q.questionType || q.question_type || "").toLowerCase();
+            return (qt === "writing" || qt === "essay") && q._sectionType === "writing";
+          }));
+
+      if (isPureWritingExam) {
         let hasValidWriting = false;
         for (const ans of answerEntries) {
           const raw = typeof ans.answerText === "string" ? ans.answerText.replace(/<[^>]*>/g, " ").replace(/&nbsp;/gi, " ").trim() : "";
@@ -868,44 +939,6 @@ export default function ExamInterface() {
           setShowReviewDialog(false);
           return;
         }
-      }
-
-      if (hasSpeaking) {
-        let hasValidAudio = false;
-        for (const ans of answerEntries) {
-          if ((ans.audioUrl && String(ans.audioUrl).trim()) || (typeof ans.answerText === "string" && ans.answerText.startsWith("speaking-recordings/"))) {
-            hasValidAudio = true;
-            break;
-          }
-        }
-        if (!hasValidAudio) {
-          toast({
-            title: "Chưa có file ghi âm",
-            description: "Bạn chưa thu âm câu trả lời cho bài Speaking. Vui lòng ghi âm trước khi nộp.",
-            variant: "destructive",
-          });
-          setIsSubmitting(false);
-          setShowReviewDialog(false);
-          return;
-        }
-      }
-
-      const answeredCount = answerEntries.filter((a) => {
-        if (a.audioUrl && String(a.audioUrl).trim()) return true;
-        if (typeof a.answerText === "string" && a.answerText.trim()) return true;
-        if (typeof a.answerText === "object" && a.answerText !== null && Object.keys(a.answerText).length > 0) return true;
-        return false;
-      }).length;
-
-      if (answeredCount === 0) {
-        toast({
-          title: "Bài làm hoàn toàn để trống",
-          description: "Vui lòng trả lời ít nhất một câu hỏi trước khi nộp bài.",
-          variant: "destructive",
-        });
-        setIsSubmitting(false);
-        setShowReviewDialog(false);
-        return;
       }
 
       // 4. Submit atomically qua Sync Engine
@@ -1000,6 +1033,7 @@ export default function ExamInterface() {
     queryClient,
     searchParams,
     sections,
+    availableSections,
     submission,
     toast,
     user,

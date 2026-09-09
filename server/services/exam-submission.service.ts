@@ -150,19 +150,65 @@ export function validateSubmissionTechnicalPayload(exam: any, answersToEvaluate:
 
   if (allQuestions.length === 0) return;
 
-  const isWritingExam =
-    examType === "writing" ||
-    allQuestions.some((q) => q._sectionType === "writing" || q.questionType === "essay");
-  const isSpeakingExam =
-    examType === "speaking" ||
-    allQuestions.some((q) => q._sectionType === "speaking" || q.questionType === "speaking");
+  // 1. Kiểm tra bài làm hoàn toàn để trống (áp dụng chung cho mọi bài thi)
+  const answeredCount = answersToEvaluate.filter((a) => {
+    if (a.audioUrl && String(a.audioUrl).trim()) return true;
+    if (typeof a.answerText === "string" && a.answerText.trim()) return true;
+    if (typeof a.answerText === "object" && a.answerText !== null && Object.keys(a.answerText).length > 0) return true;
+    return false;
+  }).length;
 
-  if (isWritingExam) {
-    const writingQuestions = allQuestions.filter(
-      (q) => q._sectionType === "writing" || q.questionType === "essay"
+  if (answeredCount === 0) {
+    throw new ValidationError(
+      "BÀI NỘP KHÔNG HỢP LỆ: Bài làm hoàn toàn để trống. Vui lòng hoàn thành bài trước khi nộp."
     );
+  }
+
+  // 2. Chỉ kiểm tra audio ghi âm nếu bài thi THỰC SỰ là bài chuyên Speaking
+  // (Toàn bộ câu hỏi trong bài đều là câu hỏi Speaking)
+  const isPureSpeakingExam =
+    examType === "speaking" ||
+    (allQuestions.length > 0 &&
+      allQuestions.every(
+        (q) =>
+          q._sectionType === "speaking" ||
+          q.questionType === "speaking" ||
+          String(q.questionType || "").startsWith("ielts_speaking")
+      ));
+
+  if (isPureSpeakingExam) {
+    let hasValidAudio = false;
+    for (const sq of allQuestions) {
+      const ans = answersToEvaluate.find((a) => a.questionId === sq.id);
+      const audio =
+        (ans?.audioUrl && String(ans.audioUrl).trim()) ||
+        (typeof ans?.answerText === "string" &&
+          (ans.answerText.startsWith("speaking-recordings/") ||
+           ans.answerText.startsWith("/speaking-recordings/") ||
+           ans.answerText.includes("speaking-recordings/")));
+      if (audio) {
+        hasValidAudio = true;
+        break;
+      }
+    }
+    if (!hasValidAudio) {
+      throw new ValidationError(
+        "BÀI NỘP KHÔNG HỢP LỆ: Chưa tìm thấy file ghi âm hợp lệ cho bài Speaking."
+      );
+    }
+  }
+
+  // 3. Chỉ kiểm tra độ dài bài viết nếu bài thi THỰC SỰ là bài chuyên Writing Task
+  const isPureWritingExam =
+    examType === "writing" ||
+    (allQuestions.length > 0 &&
+      allQuestions.every(
+        (q) => q._sectionType === "writing" && (q.questionType === "essay" || q.questionType === "writing")
+      ));
+
+  if (isPureWritingExam) {
     let hasSubstantialWriting = false;
-    for (const wq of writingQuestions) {
+    for (const wq of allQuestions) {
       const ans = answersToEvaluate.find((a) => a.questionId === wq.id);
       const rawText =
         typeof ans?.answerText === "string"
@@ -179,42 +225,6 @@ export function validateSubmissionTechnicalPayload(exam: any, answersToEvaluate:
         "BÀI NỘP KHÔNG HỢP LỆ: Bài viết chưa có nội dung hoặc quá ngắn để nộp (tối thiểu 10 từ)."
       );
     }
-  }
-
-  if (isSpeakingExam) {
-    const speakingQuestions = allQuestions.filter(
-      (q) => q._sectionType === "speaking" || q.questionType === "speaking"
-    );
-    let hasValidAudio = false;
-    for (const sq of speakingQuestions) {
-      const ans = answersToEvaluate.find((a) => a.questionId === sq.id);
-      const audio =
-        (ans?.audioUrl && String(ans.audioUrl).trim()) ||
-        (typeof ans?.answerText === "string" && ans.answerText.startsWith("speaking-recordings/"));
-      if (audio) {
-        hasValidAudio = true;
-        break;
-      }
-    }
-    if (!hasValidAudio) {
-      throw new ValidationError(
-        "BÀI NỘP KHÔNG HỢP LỆ: Chưa tìm thấy file ghi âm hợp lệ cho bài Speaking."
-      );
-    }
-  }
-
-  // General check: If exam has questions, must not be completely blank
-  const answeredCount = answersToEvaluate.filter((a) => {
-    if (a.audioUrl && String(a.audioUrl).trim()) return true;
-    if (typeof a.answerText === "string" && a.answerText.trim()) return true;
-    if (typeof a.answerText === "object" && a.answerText !== null && Object.keys(a.answerText).length > 0) return true;
-    return false;
-  }).length;
-
-  if (answeredCount === 0) {
-    throw new ValidationError(
-      "BÀI NỘP KHÔNG HỢP LỆ: Bài làm hoàn toàn để trống. Vui lòng hoàn thành bài trước khi nộp."
-    );
   }
 }
 
