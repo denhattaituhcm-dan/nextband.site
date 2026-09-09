@@ -37,6 +37,7 @@ import { CelebrationModal } from "@/components/celebration/CelebrationModal";
 import { milestonesApi, attendanceApi } from "@/lib/api";
 import { ExamGoalCard } from "@/components/student/ExamGoalCard";
 import { Badge } from "@/components/ui/badge";
+import { useSeasonalEvent } from "@/features/seasonal";
 import {
   Layers,
   WifiOff,
@@ -227,6 +228,8 @@ export default function HomePage() {
   const enrolledClassId = enrolledClass?.classId;
   const activeClassName = enrolledClass?.className ?? "Lớp học cá nhân";
   const courseTitle = enrolledClass?.courseTitle ?? "IELTS";
+
+  const { isEventActive: isSeasonalActive, isTet, activeEvent: seasonalActiveEvent, uiConfig: seasonalUiConfig } = useSeasonalEvent();
 
   // KPI submissions — only load when ENROLLED
   const { data: submissionsData } = useQuery({
@@ -480,6 +483,42 @@ export default function HomePage() {
         {/* ENROLLED — Full ARIS IELTS Command Center */}
         {state === "ENROLLED" && (
           <div className="space-y-6">
+            {/* Seasonal Festive Welcome Banner (Tết / Lễ Hội) */}
+            {isSeasonalActive && isTet && (
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-700 via-rose-700 to-amber-700 text-white p-4 sm:p-5 shadow-sm border-2 border-amber-300/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="space-y-1 relative z-10">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-400/25 border border-amber-300/40 text-[11px] font-black text-amber-200 uppercase tracking-wider">
+                    <span>🌸</span>
+                    <span>{seasonalActiveEvent?.name || "Tết Nguyên Đán 2027"}</span>
+                  </div>
+                  <h2 className="text-lg sm:text-xl font-extrabold text-amber-100 tracking-tight">
+                    {seasonalUiConfig.bannerTitle || "Khai Bút Đầu Xuân — Mở Lộc Tri Thức"}
+                  </h2>
+                  <p className="text-xs text-white/90 max-w-xl leading-relaxed">
+                    {seasonalUiConfig.bannerSubtitle || "Hoàn thành và nộp bài tập về nhà đúng hạn để nhận lì xì khai bút may mắn đầu năm!"}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3 shrink-0 relative z-10">
+                  {enrolledClassId && (
+                    <Button
+                      size="sm"
+                      onClick={() => navigate(`/app/class/${enrolledClassId}/lessons`)}
+                      className="bg-amber-400 hover:bg-amber-300 text-red-950 font-black text-xs px-4 h-9 rounded-xl shadow-xs gap-1.5 cursor-pointer"
+                    >
+                      <span>🧧 Làm Bài Nhận Lộc</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Button>
+                  )}
+                </div>
+
+                {/* Decorative background ambient accents */}
+                <div className="absolute right-0 top-0 bottom-0 opacity-15 pointer-events-none text-9xl font-black select-none flex items-center pr-4">
+                  🧧
+                </div>
+              </div>
+            )}
+
             {/* Offline Recovery Milestone Celebration Modal */}
             {recoveryMilestone && user?.id && (
               <CelebrationModal

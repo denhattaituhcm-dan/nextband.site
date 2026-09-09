@@ -15,6 +15,7 @@ import { useStudentLifecycle } from "@/hooks/useStudentLifecycle";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { ZaloIcon } from "@/components/common/ZaloIcon";
 import { NotificationBell } from "./NotificationBell";
+import { useSeasonalEvent, TetWalletHeaderBadge } from "@/features/seasonal";
 
 export function ClientHeader() {
   const { user, signOut, isAdmin, isAuthenticated, isTeacher } = useAuth();
@@ -25,6 +26,7 @@ export function ClientHeader() {
   const zaloUrl = settings?.zaloLink || "https://zalo.me";
 
   const { state, resolveClass } = useStudentLifecycle();
+  const { isEventActive, isTet, studentProgress, activeEvent } = useSeasonalEvent();
 
   const resolved = resolveClass(urlClassId);
   const activeClassName =
@@ -61,6 +63,14 @@ export function ClientHeader() {
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Lì Xì Khai Bút Header Wallet Badge */}
+            {isEventActive && isTet && (
+              <TetWalletHeaderBadge
+                totalCash={studentProgress.totalCashEarned}
+                totalXp={studentProgress.totalHonorXp}
+                remainingSlots={activeEvent?.remainingSlots}
+              />
+            )}
             {/* Quick Contact / Feedback via Zalo */}
             <a
               href={zaloUrl}
