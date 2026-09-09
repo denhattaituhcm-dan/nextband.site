@@ -677,6 +677,47 @@ export default function SeasonalEventsPage() {
                       {preset.subtitle}
                     </p>
                   </div>
+                  <div className="pt-1 flex items-center justify-between border-t border-slate-100 dark:border-slate-800">
+                    <span className="text-[10px] text-slate-400">
+                      {isCurrentlyActive ? "Đang chạy trên client" : "Bấm để cấu hình"}
+                    </span>
+                    {!isCurrentlyActive ? (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedType(preset.type);
+                          updateMutation.mutate({
+                            isActive: true,
+                            code: preset.code,
+                            name: preset.name,
+                            type: preset.type,
+                            startAt: dbEvt?.startAt || preset.defaultStart,
+                            endAt: dbEvt?.endAt || preset.defaultEnd,
+                            budgetCap: dbEvt?.budgetCap || preset.defaultBudget,
+                            totalSlots: dbEvt?.totalSlots || preset.defaultSlots,
+                            uiConfig: {
+                              showBlossom: true,
+                              showEnvelopes: true,
+                              showModal: true,
+                              showPetals: false,
+                              playChime: true,
+                              maxEligibleHomeworks: 5,
+                              bannerTitle: preset.subtitle,
+                            },
+                          });
+                        }}
+                        className="h-6 text-[10px] font-bold px-2 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800 cursor-pointer"
+                      >
+                        Kích hoạt ngay
+                      </Button>
+                    ) : (
+                      <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400">
+                        ✓ Hoạt động
+                      </span>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             );

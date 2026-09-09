@@ -50,14 +50,11 @@ import {
 } from "lucide-react";
 import { StudentReEnrollmentModal } from "@/components/student/StudentReEnrollmentModal";
 import { HonorReportCardModal } from "@/components/student/HonorReportCardModal";
-import {
-  useSeasonalEvent,
-  TetBlossomBranch,
-  TetFallingPetals,
-  TetEnvelopeBadge,
-  TetWalletHeaderBadge,
-  TetOpeningModal,
-} from "@/features/seasonal";
+import { useSeasonalEvent } from "@/features/seasonal/hooks/useSeasonalEvent";
+import { SeasonalCornerDecoration } from "@/features/seasonal/presets/SeasonalCornerDecoration";
+import { TetFallingPetals } from "@/features/seasonal/presets/tet/TetFallingPetals";
+import { SeasonalEnvelopeBadge } from "@/features/seasonal/presets/SeasonalEnvelopeBadge";
+import { SeasonalOpeningModal } from "@/features/seasonal/presets/SeasonalOpeningModal";
 
 export default function StudentLessonViewerPage() {
   const { classId } = useParams<{ classId: string }>();
@@ -73,6 +70,7 @@ export default function StudentLessonViewerPage() {
 
   const {
     isEventActive: isSeasonalActive,
+    eventType: seasonalEventType,
     isTet,
     uiConfig: seasonalUiConfig,
     studentProgress: seasonalProgress,
@@ -278,12 +276,12 @@ export default function StudentLessonViewerPage() {
     };
   });
 
-  // Calculate list of eligible homeworks that carry lucky envelopes:
+  // Calculate list of eligible homeworks that carry lucky envelopes / reward badges:
   // 1. Must NOT be overdue (or if already claimed, remains visible to show reward badge)
   // 2. Capped at maxEligibleHomeworks (default 5 from seasonalUiConfig)
   const maxSeasonalHomeworks = seasonalUiConfig?.maxEligibleHomeworks || 5;
   const eligibleHomeworkIdsForSeasonal = (() => {
-    if (!isSeasonalActive || !isTet) return new Set<string>();
+    if (!isSeasonalActive) return new Set<string>();
 
     const set = new Set<string>();
     for (const hw of homeworkList) {
@@ -440,13 +438,7 @@ export default function StudentLessonViewerPage() {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            {isSeasonalActive && isTet && (
-              <TetWalletHeaderBadge
-                totalCash={seasonalProgress.totalCashEarned}
-                totalXp={seasonalProgress.totalHonorXp}
-                remainingSlots={seasonalActiveEvent?.remainingSlots}
-              />
-            )}
+
             <Button
               size="sm"
               onClick={() => setIsHonorCardOpen(true)}
@@ -688,8 +680,11 @@ export default function StudentLessonViewerPage() {
                             {hw.title}
                           </h3>
                           {getStatusBadge(hw.status, hw.countdown, hw.submissionTiming)}
-                          {isSeasonalActive && isTet && seasonalUiConfig.showEnvelopes && eligibleHomeworkIdsForSeasonal.has(hw.examId || hw.id) && (
-                            <TetEnvelopeBadge
+                          {isSeasonalActive && seasonalUiConfig.showEnvelopes && eligibleHomeworkIdsForSeasonal.has(hw.examId || hw.id) &&
+                            // Chỉ gắn lộc vào bài CHƯA NỘP. Bài đã nộp (SUBMITTED/GRADED) chỉ hiện nếu đã claimed ("Đã Khai Lộc").
+                            (!(hw.status === "GRADED" || hw.status === "SUBMITTED") || isHomeworkClaimed(hw.examId || hw.id)) && (
+                            <SeasonalEnvelopeBadge
+                              type={seasonalEventType}
                               isCompleted={hw.status === "GRADED" || hw.status === "SUBMITTED"}
                               isClaimed={isHomeworkClaimed(hw.examId || hw.id)}
                               claimedAmount={getClaimedAmount(hw.examId || hw.id)}
@@ -806,13 +801,16 @@ export default function StudentLessonViewerPage() {
           scholarshipAmount={500000}
         />
 
-        {/* ARIS Seasonal Layer (Tết Preset) */}
-        {isSeasonalActive && isTet && seasonalUiConfig.showBlossom && <TetBlossomBranch />}
+        {/* ARIS Seasonal Layer */}
+        {isSeasonalActive && seasonalUiConfig.showBlossom && (
+          <SeasonalCornerDecoration type={seasonalEventType} />
+        )}
         {isSeasonalActive && isTet && seasonalUiConfig.showPetals && <TetFallingPetals />}
-        {isSeasonalActive && isTet && activeClaimModal && (
-          <TetOpeningModal
+        {isSeasonalActive && activeClaimModal && (
+          <SeasonalOpeningModal
             isOpen={activeClaimModal.isOpen}
             onClose={closeClaimModal}
+            type={seasonalEventType}
             rewardType={activeClaimModal.rewardType}
             amount={activeClaimModal.amount}
             totalAccumulated={activeClaimModal.totalAccumulated}

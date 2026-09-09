@@ -115971,6 +115971,7 @@ var DEFAULT_TET_UI_CONFIG = {
   showPetals: false,
   // Default off for smooth performance
   playChime: true,
+  maxEligibleHomeworks: 5,
   bannerTitle: "Khai B\xFAt \u0110\u1EA7u Xu\xE2n \u2014 M\u1EDF L\u1ED9c Tri Th\u1EE9c",
   bannerSubtitle: "Ho\xE0n th\xE0nh b\xE0i t\u1EADp \u0111\u1EA1t chu\u1EA9n \u0111\u1EC3 khai b\xFAt \u0111\u1EA7u n\u0103m v\xE0 h\xE1i l\u1ED9c may m\u1EAFn!"
 };

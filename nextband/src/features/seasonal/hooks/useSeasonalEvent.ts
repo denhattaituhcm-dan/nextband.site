@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { seasonalApi } from "../core/seasonalApi";
 import { useAuth } from "@/hooks/useAuth";
+import { getSeasonalTheme } from "../core/seasonalThemeAdapter";
 
 export function useSeasonalEvent() {
   const queryClient = useQueryClient();
@@ -91,9 +92,14 @@ export function useSeasonalEvent() {
     setActiveClaimModal(null);
   };
 
+  const eventType = activeEvent?.type || "TET";
+  const theme = getSeasonalTheme(eventType);
+
   return {
     isEventActive,
     activeEvent,
+    eventType,
+    theme,
     isTet,
     uiConfig,
     studentProgress: progress,

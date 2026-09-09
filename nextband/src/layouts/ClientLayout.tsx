@@ -2,16 +2,15 @@ import { Outlet } from 'react-router-dom';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { ClientSidebar } from '@/components/navigation/ClientSidebar';
 import { ClientHeader } from '@/components/navigation/ClientHeader';
-import {
-  useSeasonalEvent,
-  TetBlossomBranch,
-  TetFallingPetals,
-  TetOpeningModal,
-} from '@/features/seasonal';
+import { useSeasonalEvent } from '@/features/seasonal/hooks/useSeasonalEvent';
+import { SeasonalCornerDecoration } from '@/features/seasonal/presets/SeasonalCornerDecoration';
+import { TetFallingPetals } from '@/features/seasonal/presets/tet/TetFallingPetals';
+import { SeasonalOpeningModal } from '@/features/seasonal/presets/SeasonalOpeningModal';
 
 export default function ClientLayout() {
   const {
     isEventActive,
+    eventType,
     isTet,
     uiConfig,
     activeClaimModal,
@@ -29,15 +28,18 @@ export default function ClientLayout() {
           </main>
         </div>
 
-        {/* Global Seasonal Layer (Cành Mai Vàng & Cánh Hoa Rơi trên toàn hệ thống khi Bật) */}
-        {isEventActive && isTet && uiConfig.showBlossom && <TetBlossomBranch />}
+        {/* Global Seasonal Layer (Nhành hoa tri ân / Cành Mai Vàng trên toàn hệ thống khi Bật) */}
+        {isEventActive && uiConfig.showBlossom && (
+          <SeasonalCornerDecoration type={eventType} />
+        )}
         {isEventActive && isTet && uiConfig.showPetals && <TetFallingPetals />}
 
-        {/* Modal Mở Lì Xì Khai Bút */}
-        {isEventActive && isTet && activeClaimModal && (
-          <TetOpeningModal
+        {/* Modal Mở Lì Xì / Thư Tri Ân */}
+        {isEventActive && activeClaimModal && (
+          <SeasonalOpeningModal
             isOpen={activeClaimModal.isOpen}
             onClose={closeClaimModal}
+            type={eventType}
             rewardType={activeClaimModal.rewardType}
             amount={activeClaimModal.amount}
             totalAccumulated={activeClaimModal.totalAccumulated}

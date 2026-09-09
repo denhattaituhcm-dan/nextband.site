@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { TET_THEME } from "@/features/seasonal/presets/tet/theme";
+import { SEASONAL_THEMES } from "@/features/seasonal/core/seasonalThemeAdapter";
 import { DEFAULT_TET_UI_CONFIG } from "../../../server/services/seasonal.service";
 
 describe("ARIS Seasonal Layer - Vietnamese Tet Architecture Invariants", () => {
@@ -56,5 +57,27 @@ describe("ARIS Seasonal Layer - Vietnamese Tet Architecture Invariants", () => {
     const exhaustedClaim = simulateRewardClaim(60, 60);
     expect(exhaustedClaim.rewardType).toBe("HONOR_XP");
     expect(exhaustedClaim.amount).toBe(200);
+  });
+
+  it("should provide distinctive theme configurations for all 4 Vietnamese Holidays", () => {
+    const holidays = ["TEACHERS_DAY", "BACK_TO_SCHOOL", "MID_AUTUMN", "TET"] as const;
+    for (const h of holidays) {
+      const theme = SEASONAL_THEMES[h];
+      expect(theme).toBeDefined();
+      expect(theme.type).toBe(h);
+      expect(theme.name).toBeTruthy();
+      expect(theme.bannerGradient).toBeTruthy();
+      expect(theme.icon).toBeTruthy();
+      expect(theme.envelopeReadyLabel).toBeTruthy();
+      expect(theme.proverbs.length).toBeGreaterThanOrEqual(3);
+    }
+
+    // 20/11 specifically
+    const teachersDay = SEASONAL_THEMES.TEACHERS_DAY;
+    expect(teachersDay.icon).toBe("📜");
+    expect(teachersDay.name).toContain("20/11");
+    expect(teachersDay.envelopeReadyLabel).toBe("Mở Thư Tri Ân");
+    expect(teachersDay.headerWalletLabel).toBe("Quỹ Tri Ân");
+    expect(teachersDay.cornerBranchType).toBe("TEACHER_FLOWERS");
   });
 });
