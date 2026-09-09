@@ -31,43 +31,37 @@ const intelligenceNavItems = [
     title: "Command Center",
     url: "/academic-intelligence",
     icon: Activity,
-    badge: "Control",
-    description: "Tổng quan 3 tầng bằng chứng & trạng thái",
+    description: "Tổng quan các tầng bằng chứng",
   },
   {
     title: "Evidence Explorer",
     url: "/academic-intelligence/evidence",
     icon: Database,
-    badge: "Layer 1 & 2",
-    description: "Sổ cái bằng chứng học thuật bất biến",
+    description: "Truy vết chuỗi bằng chứng học tập",
   },
   {
     title: "Diagnostic Engine",
     url: "/academic-intelligence/diagnostic",
     icon: Stethoscope,
-    badge: "Hypotheses",
-    description: "Telemetry bẫy lỗi & các deterministic rules",
+    description: "Bộ quy tắc chẩn đoán & bẫy lỗi",
   },
   {
     title: "IELTS Ontology",
     url: "/academic-intelligence/ontology",
     icon: Network,
-    badge: "Taxonomy",
-    description: "Bản đồ vi kỹ năng, lỗi & question tags",
+    description: "Danh mục vi kỹ năng & lỗi",
   },
   {
     title: "Student Model",
     url: "/academic-intelligence/student-model",
     icon: Cpu,
-    badge: "Bayesian",
-    description: "Vector năng lực Beta & Full Recompute",
+    description: "Năng lực học sinh & tái tính toán",
   },
   {
     title: "Audit & Integrity",
     url: "/academic-intelligence/audit",
     icon: ShieldAlert,
-    badge: "Proof",
-    description: "Kiểm định tái lập 1:1 & Anomaly scanner",
+    description: "Kiểm toán toàn vẹn dữ liệu",
   },
 ];
 
@@ -77,23 +71,20 @@ export function AcademicIntelligenceSidebar() {
   return (
     <Sidebar className="border-r border-slate-800 bg-slate-950 text-slate-100 dark:bg-slate-950">
       {/* Header */}
-      <SidebarHeader className="p-4 border-b border-slate-800/80 bg-slate-900/50">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-              <Terminal className="h-4 w-4" />
+      <SidebarHeader className="p-4 border-b border-slate-800/80 bg-slate-900/40">
+        <div className="flex items-center gap-2.5">
+          <div className="h-8 w-8 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200">
+            <Activity className="h-4 w-4 text-emerald-400" />
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5">
+              <span className="font-semibold text-sm tracking-tight text-slate-100">
+                ARIS Academic
+              </span>
             </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-bold text-sm tracking-tight text-slate-100">
-                  ARIS Academic OS
-                </span>
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              </div>
-              <p className="text-[10px] text-slate-400 font-mono">
-                Control Plane & Observability
-              </p>
-            </div>
+            <p className="text-[11px] text-slate-400">
+              Intelligence & Analysis
+            </p>
           </div>
         </div>
       </SidebarHeader>
@@ -101,10 +92,10 @@ export function AcademicIntelligenceSidebar() {
       {/* Navigation Modules */}
       <SidebarContent className="px-2 py-3">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider px-2">
-            Hệ Thống 5 Phân Hệ Bằng Chứng
+          <SidebarGroupLabel className="text-[11px] font-medium text-slate-400 uppercase tracking-wider px-2">
+            Phân hệ học thuật
           </SidebarGroupLabel>
-          <SidebarGroupContent className="mt-1 space-y-1">
+          <SidebarGroupContent className="mt-1.5 space-y-0.5">
             <SidebarMenu>
               {intelligenceNavItems.map((item) => {
                 const isActive =
@@ -117,9 +108,9 @@ export function AcademicIntelligenceSidebar() {
                     <SidebarMenuButton
                       asChild
                       isActive={isActive}
-                      className={`w-full justify-start gap-3 px-3 py-2.5 rounded-md transition-all ${
+                      className={`w-full justify-start gap-3 px-3 py-2 rounded transition-colors ${
                         isActive
-                          ? "bg-slate-800 text-white font-medium shadow-sm border border-slate-700"
+                          ? "bg-slate-800 text-white font-semibold border border-slate-700 shadow-xs"
                           : "text-slate-300 hover:bg-slate-900 hover:text-white"
                       }`}
                     >
@@ -129,15 +120,7 @@ export function AcademicIntelligenceSidebar() {
                             isActive ? "text-emerald-400" : "text-slate-400"
                           }`}
                         />
-                        <span className="truncate text-xs">{item.title}</span>
-                        {item.badge && (
-                          <Badge
-                            variant="outline"
-                            className="ml-auto text-[9px] px-1.5 py-0 h-4 border-slate-700 bg-slate-900 text-slate-300 font-mono"
-                          >
-                            {item.badge}
-                          </Badge>
-                        )}
+                        <span className="text-sm">{item.title}</span>
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

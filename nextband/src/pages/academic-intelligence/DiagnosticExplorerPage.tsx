@@ -32,28 +32,19 @@ export default function DiagnosticExplorerPage() {
       {/* Header */}
       <div className="border-b border-slate-800 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="border-teal-500/40 text-teal-400 bg-teal-500/10 font-mono text-[10px]">
-              MODULE 2 • DIAGNOSTIC ENGINE
-            </Badge>
-            <Badge variant="outline" className="border-slate-700 bg-slate-900 text-slate-400 font-mono text-[10px]">
-              DETERMINISTIC RULES • HYPOTHESIS ONLY
-            </Badge>
-          </div>
-          <h1 className="text-2xl font-bold text-white mt-1.5 font-mono">Diagnostic Engine Telemetry</h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Giám sát các bộ quy tắc phát hiện bẫy lỗi học thuật. Giả thuyết chẩn đoán hoàn toàn độc lập và không sửa đổi bài nộp gốc.
+          <h1 className="text-2xl font-bold text-white tracking-tight">Diagnostic Explorer</h1>
+          <p className="text-sm text-slate-300 mt-1">
+            Quy tắc phát hiện bẫy lỗi và các giả thuyết chẩn đoán học thuật ghi nhận từ bài làm.
           </p>
         </div>
 
         <Button
           onClick={loadData}
           disabled={isLoading}
-          variant="outline"
-          className="border-teal-500/40 bg-teal-950/40 hover:bg-teal-900/60 text-teal-300 text-xs gap-2 font-mono"
+          className="border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs gap-2 shadow-xs"
         >
-          <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin text-teal-400" : ""}`} />
-          <span>Làm Mới</span>
+          <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin text-sky-400" : "text-slate-300"}`} />
+          <span>Làm mới chẩn đoán</span>
         </Button>
       </div>
 

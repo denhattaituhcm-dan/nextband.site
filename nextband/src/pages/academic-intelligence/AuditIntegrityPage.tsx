@@ -32,28 +32,19 @@ export default function AuditIntegrityPage() {
       {/* Header */}
       <div className="border-b border-slate-800 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="border-rose-500/40 text-rose-400 bg-rose-500/10 font-mono text-[10px]">
-              MODULE 5 • AUDIT & INTEGRITY
-            </Badge>
-            <Badge variant="outline" className="border-slate-700 bg-slate-900 text-slate-400 font-mono text-[10px]">
-              PROVENANCE & INTEGRITY AUDITOR
-            </Badge>
-          </div>
-          <h1 className="text-2xl font-bold text-white mt-1.5 font-mono">Audit & Data Integrity</h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Kiểm toán tính toàn vẹn của Sổ cái bằng chứng học thuật, quét phát hiện bản ghi mồ côi (phantom evidence) và xác nhận tính bất biến.
+          <h1 className="text-2xl font-bold text-white tracking-tight">Audit & Integrity</h1>
+          <p className="text-sm text-slate-300 mt-1">
+            Kiểm toán tính toàn vẹn của sổ cái bằng chứng và xác nhận 4 định đề học thuật (Invariants).
           </p>
         </div>
 
         <Button
           onClick={runAudit}
           disabled={isLoading}
-          variant="outline"
-          className="border-rose-500/40 bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 text-xs gap-2 font-mono"
+          className="border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs gap-2 shadow-xs"
         >
-          <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin text-rose-400" : ""}`} />
-          <span>{isLoading ? "Đang Quét..." : "Quét Toàn Vẹn Ngay"}</span>
+          <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin text-sky-400" : "text-slate-300"}`} />
+          <span>{isLoading ? "Đang quét..." : "Quét toàn vẹn dữ liệu"}</span>
         </Button>
       </div>
 

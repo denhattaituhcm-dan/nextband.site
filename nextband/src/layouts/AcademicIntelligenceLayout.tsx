@@ -16,25 +16,21 @@ export default function AcademicIntelligenceLayout() {
               <SidebarTrigger className="text-slate-400 hover:text-white" />
               <div className="h-4 w-px bg-slate-800" />
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold text-slate-200">
+                <span className="text-sm font-semibold text-slate-100">
                   ARIS Academic Intelligence
                 </span>
-                <Badge
-                  variant="outline"
-                  className="text-[10px] border-emerald-500/30 text-emerald-400 bg-emerald-500/10 font-mono"
-                >
-                  CONTROL PLANE
-                </Badge>
+                <span className="text-xs text-slate-500">|</span>
+                <span className="text-xs text-slate-400">Control Plane</span>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="hidden sm:flex items-center gap-1.5 text-xs text-slate-400 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-full font-mono">
+            <div className="flex items-center gap-3 text-xs text-slate-400">
+              <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-slate-300">
                 <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
-                <span>Ledger Invariant: Immutable</span>
+                <span>Ledger: Immutable</span>
               </div>
-              <div className="flex items-center gap-1.5 text-xs text-slate-400 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-full font-mono">
-                <Cpu className="h-3.5 w-3.5 text-cyan-400" />
+              <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-slate-300">
+                <Cpu className="h-3.5 w-3.5 text-sky-400" />
                 <span>Recompute: 100% Deterministic</span>
               </div>
             </div>

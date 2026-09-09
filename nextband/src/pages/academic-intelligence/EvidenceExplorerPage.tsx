@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   RefreshCw,
   Search,
+  Database,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -62,52 +63,45 @@ export default function EvidenceExplorerPage() {
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
       <div className="border-b border-slate-800 pb-5">
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="border-blue-500/40 text-blue-400 bg-blue-500/10 font-mono text-[10px]">
-            PHASE B • EVIDENCE EXPLORER
-          </Badge>
-          <span className="text-xs text-slate-500 font-mono">Chain of Provenance Inspector</span>
-        </div>
-        <h1 className="text-2xl font-bold text-white mt-1.5 font-mono">Evidence Explorer</h1>
-        <p className="text-sm text-slate-400 mt-1">
-          Drill-down trực tiếp theo chuỗi:{" "}
-          <span className="text-slate-200 font-mono">
-            Học sinh → Bài nộp → Câu hỏi → Câu trả lời → Chấm điểm → Bằng chứng vi kỹ năng → Chẩn đoán lỗi
-          </span>
+        <h1 className="text-2xl font-bold text-white tracking-tight">Evidence Explorer</h1>
+        <p className="text-sm text-slate-300 mt-1">
+          Theo dõi nguồn gốc của bằng chứng học tập từ bài làm đến chẩn đoán lỗi.
         </p>
       </div>
 
       {/* Step 1 & Step 2 Selectors */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Step 1: Chọn Học Sinh */}
-        <Card className="border-slate-800 bg-slate-900/60">
+        <Card className="border-slate-800 bg-slate-900/80 shadow-xs">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-bold text-white flex items-center gap-2">
-                <User className="h-4 w-4 text-blue-400" />
-                <span>1. Chọn Học Sinh ({students.length})</span>
-              </CardTitle>
-              <Badge variant="outline" className="text-[10px] border-slate-700 bg-slate-900 text-slate-400 font-mono">
-                Student Directory
-              </Badge>
+              <div>
+                <CardTitle className="text-base font-bold text-white flex items-center gap-2">
+                  <User className="h-4 w-4 text-sky-400" />
+                  <span>1. Chọn học sinh</span>
+                </CardTitle>
+                <CardDescription className="text-xs text-slate-400 mt-0.5">
+                  {students.length} học sinh trong hệ thống
+                </CardDescription>
+              </div>
             </div>
-            <div className="relative mt-2">
-              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-500" />
+            <div className="relative mt-2.5">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
               <Input
                 placeholder="Tìm theo tên hoặc email..."
                 value={studentSearch}
                 onChange={(e) => setStudentSearch(e.target.value)}
-                className="pl-8 bg-slate-950 border-slate-800 text-xs h-8 text-slate-200 placeholder:text-slate-600"
+                className="pl-8 bg-slate-950 border-slate-700 text-sm h-9 text-slate-100 placeholder:text-slate-500 focus:border-sky-500"
               />
             </div>
           </CardHeader>
           <CardContent>
             {isLoadingStudents ? (
-              <div className="text-xs text-slate-500 py-6 text-center">Đang tải danh sách học sinh...</div>
+              <div className="text-sm text-slate-400 py-8 text-center">Đang tải danh sách học sinh...</div>
             ) : filteredStudents.length === 0 ? (
-              <div className="text-xs text-slate-500 py-6 text-center">Không có học sinh nào.</div>
+              <div className="text-sm text-slate-400 py-8 text-center">Không tìm thấy học sinh nào.</div>
             ) : (
-              <div className="max-h-56 overflow-y-auto space-y-1.5 pr-1">
+              <div className="max-h-64 overflow-y-auto space-y-1.5 pr-1">
                 {filteredStudents.map((stu) => {
                   const isSelected = selectedStudentId === stu.id;
                   return (
@@ -118,19 +112,19 @@ export default function EvidenceExplorerPage() {
                         setSelectedStudentId(stu.id);
                         setSelectedSubmissionId(null);
                       }}
-                      className={`w-full text-left p-2.5 rounded-md border transition-all flex items-center justify-between text-xs ${
+                      className={`w-full text-left p-3 rounded-lg border transition-colors flex items-center justify-between text-sm ${
                         isSelected
-                          ? "bg-blue-950/50 border-blue-600 text-white"
-                          : "bg-slate-950/60 border-slate-800/80 text-slate-300 hover:bg-slate-900 hover:text-white"
+                          ? "bg-slate-800 border-sky-500 text-white shadow-xs"
+                          : "bg-slate-950/70 border-slate-800 text-slate-200 hover:bg-slate-800/80 hover:text-white"
                       }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className="font-medium truncate">{stu.fullName}</div>
-                        <div className="text-[10px] text-slate-500 truncate font-mono">{stu.email}</div>
+                        <div className="font-semibold text-slate-100 truncate">{stu.fullName}</div>
+                        <div className="text-xs text-slate-400 truncate">{stu.email}</div>
                       </div>
-                      <div className="text-right shrink-0 font-mono text-[10px] text-slate-400 space-y-0.5">
-                        <div>Submissions: <span className="text-white">{stu.submissionCount}</span></div>
-                        <div>Evidence: <span className="text-emerald-400">{stu.evidenceCount}</span></div>
+                      <div className="text-right shrink-0 text-xs text-slate-300 space-y-0.5 font-medium">
+                        <div>Bài nộp: <span className="text-white font-bold">{stu.submissionCount}</span></div>
+                        <div>Bằng chứng: <span className="text-emerald-400 font-bold">{stu.evidenceCount}</span></div>
                       </div>
                     </button>
                   );
@@ -141,32 +135,33 @@ export default function EvidenceExplorerPage() {
         </Card>
 
         {/* Step 2: Chọn Bài Nộp (Submission) */}
-        <Card className="border-slate-800 bg-slate-900/60">
+        <Card className="border-slate-800 bg-slate-900/80 shadow-xs">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-bold text-white flex items-center gap-2">
-                <FileText className="h-4 w-4 text-cyan-400" />
-                <span>2. Chọn Bài Nộp ({submissions.length})</span>
-              </CardTitle>
-              <Badge variant="outline" className="text-[10px] border-slate-700 bg-slate-900 text-slate-400 font-mono">
-                Exam Submissions
-              </Badge>
+              <div>
+                <CardTitle className="text-base font-bold text-white flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-sky-400" />
+                  <span>2. Chọn bài nộp</span>
+                </CardTitle>
+                <CardDescription className="text-xs text-slate-400 mt-0.5">
+                  {selectedStudentId
+                    ? `${submissions.length} bài nộp của học sinh`
+                    : "Chọn học sinh ở bước 1 để hiển thị"}
+                </CardDescription>
+              </div>
             </div>
-            <CardDescription className="text-xs text-slate-400">
-              {selectedStudentId ? "Chọn bài nộp để inspect chuỗi mắt xích" : "Hãy chọn học sinh ở bước 1 trước"}
-            </CardDescription>
           </CardHeader>
           <CardContent>
             {!selectedStudentId ? (
-              <div className="text-xs text-slate-600 py-10 text-center italic">
-                Chưa chọn học sinh
+              <div className="text-sm text-slate-400 py-12 text-center">
+                Vui lòng chọn học sinh ở cột bên trái để xem danh sách bài nộp.
               </div>
             ) : isLoadingSubmissions ? (
-              <div className="text-xs text-slate-500 py-6 text-center">Đang tải danh sách bài nộp...</div>
+              <div className="text-sm text-slate-400 py-8 text-center">Đang tải danh sách bài nộp...</div>
             ) : submissions.length === 0 ? (
-              <div className="text-xs text-slate-500 py-6 text-center">Học sinh chưa có bài nộp nào.</div>
+              <div className="text-sm text-slate-400 py-8 text-center">Học sinh này chưa có bài nộp nào.</div>
             ) : (
-              <div className="max-h-56 overflow-y-auto space-y-1.5 pr-1">
+              <div className="max-h-64 overflow-y-auto space-y-1.5 pr-1">
                 {submissions.map((sub) => {
                   const isSelected = selectedSubmissionId === sub.id;
                   return (
@@ -174,23 +169,23 @@ export default function EvidenceExplorerPage() {
                       key={sub.id}
                       type="button"
                       onClick={() => setSelectedSubmissionId(sub.id)}
-                      className={`w-full text-left p-2.5 rounded-md border transition-all flex items-center justify-between text-xs ${
+                      className={`w-full text-left p-3 rounded-lg border transition-colors flex items-center justify-between text-sm ${
                         isSelected
-                          ? "bg-cyan-950/50 border-cyan-600 text-white"
-                          : "bg-slate-950/60 border-slate-800/80 text-slate-300 hover:bg-slate-900 hover:text-white"
+                          ? "bg-slate-800 border-sky-500 text-white shadow-xs"
+                          : "bg-slate-950/70 border-slate-800 text-slate-200 hover:bg-slate-800/80 hover:text-white"
                       }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className="font-medium truncate">{sub.examTitle}</div>
-                        <div className="text-[10px] text-slate-500 truncate font-mono">
-                          ID: {sub.id.substring(0, 13)}... • {sub.examType}
+                        <div className="font-semibold text-slate-100 truncate">{sub.examTitle}</div>
+                        <div className="text-xs text-slate-400 truncate">
+                          Mã: {sub.id.substring(0, 8)} • Kỹ năng: {sub.examType}
                         </div>
                       </div>
-                      <div className="text-right shrink-0 font-mono text-[10px] space-y-0.5">
+                      <div className="text-right shrink-0 text-xs space-y-0.5">
                         <div className="text-white font-bold">
-                          {sub.score !== null ? `${sub.score} pts` : "Chưa chấm"}
+                          {sub.score !== null ? `${sub.score} điểm` : "Chưa chấm"}
                         </div>
-                        <div className="text-slate-400">
+                        <div className="text-slate-300 font-medium">
                           {sub.correctAnswers}/{sub.totalQuestions} đúng
                         </div>
                       </div>
@@ -202,6 +197,21 @@ export default function EvidenceExplorerPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Empty State khi chưa chọn bài nộp */}
+      {!selectedSubmissionId && (
+        <div className="p-10 rounded-xl border border-slate-800 bg-slate-900/40 text-center space-y-3">
+          <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 text-slate-400">
+            <Database className="h-5 w-5 text-sky-400" />
+          </div>
+          <div>
+            <h3 className="text-base font-semibold text-slate-100">Chưa có bài nộp nào được chọn</h3>
+            <p className="text-sm text-slate-400 max-w-md mx-auto mt-1">
+              Chọn học sinh và bài nộp cụ thể ở các bước phía trên để xem toàn bộ chuỗi mắt xích bằng chứng từ bài làm gốc đến chẩn đoán lỗi.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Step 3: Provenance Chain Viewer */}
       {selectedSubmissionId && (

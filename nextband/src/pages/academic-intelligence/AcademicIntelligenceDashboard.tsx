@@ -29,30 +29,23 @@ export default function AcademicIntelligenceDashboard() {
       {/* Header Banner */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight text-white font-mono">
-              Academic Intelligence Control Plane
-            </h1>
-            <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/40 text-[10px] uppercase font-mono">
-              Online
-            </Badge>
-          </div>
-          <p className="text-sm text-slate-400 mt-1 max-w-2xl">
-            Trung tâm điều khiển và giám sát 3 tầng bằng chứng học thuật bất biến của hệ thống ARIS.
-            Phân định tuyệt đối giữa Bằng Chứng Gốc, Quan Sát Kỹ Năng và Vector Năng Lực Bayesian.
+          <h1 className="text-2xl font-bold tracking-tight text-white">
+            Academic Intelligence Command Center
+          </h1>
+          <p className="text-sm text-slate-300 mt-1 max-w-2xl">
+            Tổng quan và giám sát các tầng bằng chứng học thuật, quan sát năng lực vi mô và phân bổ xác suất.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <Button
-            variant="outline"
             size="sm"
             onClick={() => refetch()}
             disabled={isFetching}
-            className="border-slate-800 bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs gap-1.5"
+            className="border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs gap-1.5 shadow-xs"
           >
-            <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin text-emerald-400" : ""}`} />
-            <span>Làm mới Telemetry</span>
+            <RefreshCw className={`h-3.5 w-3.5 ${isFetching ? "animate-spin text-sky-400" : "text-slate-300"}`} />
+            <span>Làm mới dữ liệu</span>
           </Button>
         </div>
       </div>

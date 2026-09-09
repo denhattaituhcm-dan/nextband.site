@@ -32,28 +32,19 @@ export default function OntologyMatrixPage() {
       {/* Header */}
       <div className="border-b border-slate-800 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="border-amber-500/40 text-amber-400 bg-amber-500/10 font-mono text-[10px]">
-              MODULE 3 • ONTOLOGY & TAXONOMY
-            </Badge>
-            <Badge variant="outline" className="border-slate-700 bg-slate-900 text-slate-400 font-mono text-[10px]">
-              IELTS KNOWLEDGE GRAPH v1.0.0
-            </Badge>
-          </div>
-          <h1 className="text-2xl font-bold text-white mt-1.5 font-mono">IELTS Ontology & Taxonomy Matrix</h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Bản đồ danh mục chuẩn 22 vi kỹ năng và 12 định nghĩa bẫy lỗi học thuật được chuẩn hóa cho toàn hệ thống.
+          <h1 className="text-2xl font-bold text-white tracking-tight">IELTS Ontology</h1>
+          <p className="text-sm text-slate-300 mt-1">
+            Danh mục chuẩn hóa 22 vi kỹ năng và 12 định nghĩa bẫy lỗi IELTS dùng trong toàn hệ thống.
           </p>
         </div>
 
         <Button
           onClick={loadData}
           disabled={isLoading}
-          variant="outline"
-          className="border-amber-500/40 bg-amber-950/40 hover:bg-amber-900/60 text-amber-300 text-xs gap-2 font-mono"
+          className="border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs gap-2 shadow-xs"
         >
-          <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin text-amber-400" : ""}`} />
-          <span>Làm Mới</span>
+          <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin text-sky-400" : "text-slate-300"}`} />
+          <span>Làm mới danh mục</span>
         </Button>
       </div>
 

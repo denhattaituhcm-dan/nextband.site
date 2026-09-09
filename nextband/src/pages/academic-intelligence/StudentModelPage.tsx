@@ -120,28 +120,19 @@ export default function StudentModelPage() {
       {/* Header */}
       <div className="border-b border-slate-800 pb-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="border-purple-500/40 text-purple-400 bg-purple-500/10 font-mono text-[10px]">
-              PHASE 3 • BAYESIAN STUDENT MODEL
-            </Badge>
-            <Badge variant="outline" className="border-amber-500/40 text-amber-300 bg-amber-500/10 font-mono text-[10px]">
-              DERIVED STATE — KHÔNG PHẢI EVIDENCE GỐC
-            </Badge>
-          </div>
-          <h1 className="text-2xl font-bold text-white mt-1.5 font-mono">Student Model & Deterministic Recompute</h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Mô hình năng lực Bayesian Beta-Binomial: Đọc StudentSkillEvidence $\to$ Tính $\alpha, \beta$ $\to$ Cập nhật StudentSkillMastery.
+          <h1 className="text-2xl font-bold text-white tracking-tight">Student Model & Recompute</h1>
+          <p className="text-sm text-slate-300 mt-1">
+            Mô hình năng lực học sinh: Tính toán trạng thái thành thạo vi kỹ năng từ sổ cái bằng chứng.
           </p>
         </div>
 
         <Button
           onClick={handleRecompute}
           disabled={!selectedStudentId || isRecomputing || isLoadingMastery}
-          variant="outline"
-          className="border-purple-500/50 bg-purple-950/50 hover:bg-purple-900/60 text-purple-200 text-xs gap-2 font-mono"
+          className="bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 text-sm gap-2 shadow-xs"
         >
-          <RefreshCw className={`h-3.5 w-3.5 ${isRecomputing ? "animate-spin text-purple-400" : ""}`} />
-          <span>{isRecomputing ? "Đang Tái Tính Toán..." : "Tái Tính Toán Tất Định (Recompute)"}</span>
+          <RefreshCw className={`h-4 w-4 ${isRecomputing ? "animate-spin text-sky-400" : "text-slate-300"}`} />
+          <span>{isRecomputing ? "Đang tính toán lại..." : "Tính toán lại năng lực (Recompute)"}</span>
         </Button>
       </div>
 
@@ -195,31 +186,29 @@ export default function StudentModelPage() {
       {/* Main Grid: Student Selector + Mastery Inspector */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* Step 1: Chọn Học Sinh */}
-        <Card className="border-slate-800 bg-slate-900/60 lg:col-span-1">
+        <Card className="border-slate-800 bg-slate-900/80 shadow-xs lg:col-span-1">
           <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-bold text-white flex items-center gap-2">
-                <Users className="h-4 w-4 text-purple-400" />
-                <span>Chọn Học Sinh ({students.length})</span>
-              </CardTitle>
-            </div>
-            <CardDescription className="text-xs text-slate-400">
-              Tra cứu hồ sơ năng lực Bayesian của học viên
+            <CardTitle className="text-base font-bold text-white flex items-center gap-2">
+              <Users className="h-4 w-4 text-sky-400" />
+              <span>Chọn học sinh</span>
+            </CardTitle>
+            <CardDescription className="text-xs text-slate-400 mt-0.5">
+              {students.length} học sinh trong danh mục
             </CardDescription>
             <div className="pt-2">
               <Input
-                placeholder="Tìm học sinh theo tên/email..."
+                placeholder="Tìm theo tên hoặc email..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-8 text-xs bg-slate-950 border-slate-800 text-slate-200 placeholder:text-slate-600"
+                className="h-9 text-sm bg-slate-950 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-sky-500"
               />
             </div>
           </CardHeader>
           <CardContent>
             {isLoadingStudents ? (
-              <div className="text-xs text-slate-500 py-8 text-center">Đang tải danh sách học sinh...</div>
+              <div className="text-sm text-slate-400 py-6 text-center">Đang tải danh sách học sinh...</div>
             ) : filteredStudents.length === 0 ? (
-              <div className="text-xs text-slate-500 py-8 text-center">Không tìm thấy học sinh phù hợp.</div>
+              <div className="text-sm text-slate-400 py-6 text-center">Không tìm thấy học sinh nào.</div>
             ) : (
               <div className="max-h-96 overflow-y-auto space-y-1.5 pr-1">
                 {filteredStudents.map((stu) => {
@@ -229,20 +218,18 @@ export default function StudentModelPage() {
                       key={stu.id}
                       type="button"
                       onClick={() => setSelectedStudentId(stu.id)}
-                      className={`w-full text-left p-2.5 rounded-md border transition-all flex items-center justify-between text-xs ${
+                      className={`w-full text-left p-3 rounded-lg border transition-colors flex items-center justify-between text-sm ${
                         isSelected
-                          ? "bg-purple-950/50 border-purple-600 text-white shadow-sm"
-                          : "bg-slate-950/60 border-slate-800/80 text-slate-300 hover:bg-slate-900 hover:text-white"
+                          ? "bg-slate-800 border-sky-500 text-white shadow-xs"
+                          : "bg-slate-950/70 border-slate-800 text-slate-200 hover:bg-slate-800/80 hover:text-white"
                       }`}
                     >
                       <div className="min-w-0 pr-2">
-                        <div className="font-semibold truncate">{stu.fullName || stu.email}</div>
-                        <div className="text-[11px] text-slate-500 truncate font-mono">{stu.email}</div>
+                        <div className="font-semibold text-slate-100 truncate">{stu.fullName || stu.email}</div>
+                        <div className="text-xs text-slate-400 truncate">{stu.email}</div>
                       </div>
-                      <div className="text-right shrink-0 text-[10px] font-mono space-y-0.5">
-                        <Badge variant="outline" className="border-slate-800 bg-slate-900 text-slate-400 text-[9px]">
-                          {stu.evidenceCount} evidences
-                        </Badge>
+                      <div className="text-right shrink-0 text-xs font-medium text-slate-300">
+                        <span>{stu.evidenceCount} bằng chứng</span>
                       </div>
                     </button>
                   );
@@ -253,20 +240,20 @@ export default function StudentModelPage() {
         </Card>
 
         {/* Step 2: Bảng Vector Năng Lực (StudentSkillMastery) */}
-        <Card className="border-slate-800 bg-slate-900/60 lg:col-span-2">
+        <Card className="border-slate-800 bg-slate-900/80 shadow-xs lg:col-span-2">
           <CardHeader className="pb-3 border-b border-slate-800/80">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <CardTitle className="text-sm font-bold text-white flex items-center gap-2">
-                  <Cpu className="h-4 w-4 text-purple-400" />
-                  <span>Vector Năng Lực (StudentSkillMastery)</span>
+                <CardTitle className="text-base font-bold text-white flex items-center gap-2">
+                  <Cpu className="h-4 w-4 text-sky-400" />
+                  <span>Mức độ thành thạo các vi kỹ năng</span>
                 </CardTitle>
-                <CardDescription className="text-xs text-slate-400 mt-0.5">
+                <CardDescription className="text-xs text-slate-300 mt-1">
                   {masteryData?.student ? (
                     <span>
-                      Học sinh: <strong className="text-slate-200">{masteryData.student.fullName || masteryData.student.email}</strong> •{" "}
+                      Học sinh: <strong className="text-white">{masteryData.student.fullName || masteryData.student.email}</strong> •{" "}
                       Tổng bằng chứng: <strong className="text-emerald-400">{masteryData.totalEvidences}</strong> •{" "}
-                      Vi kỹ năng: <strong className="text-purple-400">{masteryData.masteryCount}</strong>
+                      Số vi kỹ năng ghi nhận: <strong className="text-sky-400">{masteryData.masteryCount}</strong>
                     </span>
                   ) : (
                     "Hãy chọn một học sinh từ danh sách bên trái"
