@@ -95,6 +95,123 @@ function LifecycleErrorBanner({
   );
 }
 
+function getCourseCardTheme(brandKey: string) {
+  switch (brandKey) {
+    case "starter":
+      return {
+        cardBorder: "border-2 border-fuchsia-200/90 hover:border-fuchsia-300 dark:border-fuchsia-800/80 shadow-sm shadow-fuchsia-500/5",
+        cardBg: "bg-gradient-to-br from-white via-white to-fuchsia-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-fuchsia-950/20",
+        topLine: "bg-gradient-to-r from-fuchsia-500 to-pink-400",
+        headerBorder: "border-fuchsia-100 dark:border-fuchsia-900/40",
+        badge: "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200/80 dark:bg-fuchsia-950/60 dark:text-fuchsia-300 dark:border-fuchsia-800",
+        badgePill: "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200/80 dark:bg-fuchsia-950/60 dark:text-fuchsia-300 dark:border-fuchsia-800",
+        pulseDot: "bg-fuchsia-500",
+        icon: "text-fuchsia-600 dark:text-fuchsia-400",
+        primaryButton: "bg-fuchsia-600 hover:bg-fuchsia-700 text-white shadow-xs shadow-fuchsia-600/20",
+        secondaryButton: "border-fuchsia-200 text-fuchsia-700 hover:bg-fuchsia-50 hover:border-fuchsia-300 dark:border-fuchsia-800 dark:text-fuchsia-300 dark:hover:bg-fuchsia-950/40",
+        accentText: "text-fuchsia-700 dark:text-fuchsia-300",
+      };
+    case "dreamer":
+      return {
+        cardBorder: "border-2 border-blue-200/90 hover:border-blue-300 dark:border-blue-800/80 shadow-sm shadow-blue-500/5",
+        cardBg: "bg-gradient-to-br from-white via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-blue-950/20",
+        topLine: "bg-gradient-to-r from-blue-500 to-sky-400",
+        headerBorder: "border-blue-100 dark:border-blue-900/40",
+        badge: "bg-blue-50 text-blue-700 border-blue-200/80 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800",
+        badgePill: "bg-blue-50 text-blue-700 border-blue-200/80 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800",
+        pulseDot: "bg-blue-500",
+        icon: "text-blue-600 dark:text-blue-400",
+        primaryButton: "bg-blue-600 hover:bg-blue-700 text-white shadow-xs shadow-blue-600/20",
+        secondaryButton: "border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-950/40",
+        accentText: "text-blue-700 dark:text-blue-300",
+      };
+    case "builder":
+      return {
+        cardBorder: "border-2 border-orange-200/90 hover:border-orange-300 dark:border-orange-800/80 shadow-sm shadow-orange-500/5",
+        cardBg: "bg-gradient-to-br from-white via-white to-orange-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-orange-950/20",
+        topLine: "bg-gradient-to-r from-orange-500 to-amber-400",
+        headerBorder: "border-orange-100 dark:border-orange-900/40",
+        badge: "bg-orange-50 text-orange-700 border-orange-200/80 dark:bg-orange-950/60 dark:text-orange-300 dark:border-orange-800",
+        badgePill: "bg-orange-50 text-orange-700 border-orange-200/80 dark:bg-orange-950/60 dark:text-orange-300 dark:border-orange-800",
+        pulseDot: "bg-orange-500",
+        icon: "text-orange-600 dark:text-orange-400",
+        primaryButton: "bg-orange-600 hover:bg-orange-700 text-white shadow-xs shadow-orange-600/20",
+        secondaryButton: "border-orange-200 text-orange-700 hover:bg-orange-50 hover:border-orange-300 dark:border-orange-800 dark:text-orange-300 dark:hover:bg-orange-950/40",
+        accentText: "text-orange-700 dark:text-orange-300",
+      };
+    case "master":
+      return {
+        cardBorder: "border-2 border-emerald-200/90 hover:border-emerald-300 dark:border-emerald-800/80 shadow-sm shadow-emerald-500/5",
+        cardBg: "bg-gradient-to-br from-white via-white to-emerald-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-emerald-950/20",
+        topLine: "bg-gradient-to-r from-emerald-500 to-teal-400",
+        headerBorder: "border-emerald-100 dark:border-emerald-900/40",
+        badge: "bg-emerald-50 text-emerald-700 border-emerald-200/80 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800",
+        badgePill: "bg-emerald-50 text-emerald-700 border-emerald-200/80 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800",
+        pulseDot: "bg-emerald-500",
+        icon: "text-emerald-600 dark:text-emerald-400",
+        primaryButton: "bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs shadow-emerald-600/20",
+        secondaryButton: "border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300 dark:border-emerald-800 dark:text-emerald-300 dark:hover:bg-emerald-950/40",
+        accentText: "text-emerald-700 dark:text-emerald-300",
+      };
+    case "leader":
+      return {
+        cardBorder: "border-2 border-rose-200/90 hover:border-rose-300 dark:border-rose-800/80 shadow-sm shadow-rose-500/5",
+        cardBg: "bg-gradient-to-br from-white via-white to-rose-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-rose-950/20",
+        topLine: "bg-gradient-to-r from-rose-500 to-red-400",
+        headerBorder: "border-rose-100 dark:border-rose-900/40",
+        badge: "bg-rose-50 text-rose-700 border-rose-200/80 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800",
+        badgePill: "bg-rose-50 text-rose-700 border-rose-200/80 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800",
+        pulseDot: "bg-rose-500",
+        icon: "text-rose-600 dark:text-rose-400",
+        primaryButton: "bg-rose-600 hover:bg-rose-700 text-white shadow-xs shadow-rose-600/20",
+        secondaryButton: "border-rose-200 text-rose-700 hover:bg-rose-50 hover:border-rose-300 dark:border-rose-800 dark:text-rose-300 dark:hover:bg-rose-950/40",
+        accentText: "text-rose-700 dark:text-rose-300",
+      };
+    case "entrance_thpt":
+      return {
+        cardBorder: "border-2 border-amber-200/90 hover:border-amber-300 dark:border-amber-800/80 shadow-sm shadow-amber-500/5",
+        cardBg: "bg-gradient-to-br from-white via-white to-amber-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-amber-950/20",
+        topLine: "bg-gradient-to-r from-amber-500 to-yellow-400",
+        headerBorder: "border-amber-100 dark:border-amber-900/40",
+        badge: "bg-amber-50 text-amber-700 border-amber-200/80 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800",
+        badgePill: "bg-amber-50 text-amber-700 border-amber-200/80 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800",
+        pulseDot: "bg-amber-500",
+        icon: "text-amber-600 dark:text-amber-400",
+        primaryButton: "bg-amber-600 hover:bg-amber-700 text-white shadow-xs shadow-amber-600/20",
+        secondaryButton: "border-amber-200 text-amber-700 hover:bg-amber-50 hover:border-amber-300 dark:border-amber-800 dark:text-amber-300 dark:hover:bg-amber-950/40",
+        accentText: "text-amber-700 dark:text-amber-300",
+      };
+    case "luyen_thi_thpt":
+      return {
+        cardBorder: "border-2 border-teal-200/90 hover:border-teal-300 dark:border-teal-800/80 shadow-sm shadow-teal-500/5",
+        cardBg: "bg-gradient-to-br from-white via-white to-teal-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-teal-950/20",
+        topLine: "bg-gradient-to-r from-teal-500 to-emerald-400",
+        headerBorder: "border-teal-100 dark:border-teal-900/40",
+        badge: "bg-teal-50 text-teal-700 border-teal-200/80 dark:bg-teal-950/60 dark:text-teal-300 dark:border-teal-800",
+        badgePill: "bg-teal-50 text-teal-700 border-teal-200/80 dark:bg-teal-950/60 dark:text-teal-300 dark:border-teal-800",
+        pulseDot: "bg-teal-500",
+        icon: "text-teal-600 dark:text-teal-400",
+        primaryButton: "bg-teal-600 hover:bg-teal-700 text-white shadow-xs shadow-teal-600/20",
+        secondaryButton: "border-teal-200 text-teal-700 hover:bg-teal-50 hover:border-teal-300 dark:border-teal-800 dark:text-teal-300 dark:hover:bg-teal-950/40",
+        accentText: "text-teal-700 dark:text-teal-300",
+      };
+    default:
+      return {
+        cardBorder: "border-2 border-indigo-200/90 hover:border-indigo-300 dark:border-indigo-800/80 shadow-sm shadow-indigo-500/5",
+        cardBg: "bg-gradient-to-br from-white via-white to-indigo-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950/20",
+        topLine: "bg-gradient-to-r from-indigo-500 to-blue-400",
+        headerBorder: "border-indigo-100 dark:border-indigo-900/40",
+        badge: "bg-indigo-50 text-indigo-700 border-indigo-200/80 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-800",
+        badgePill: "bg-indigo-50 text-indigo-700 border-indigo-200/80 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-800",
+        pulseDot: "bg-indigo-500",
+        icon: "text-indigo-600 dark:text-indigo-400",
+        primaryButton: "bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs shadow-indigo-600/20",
+        secondaryButton: "border-indigo-200 text-indigo-700 hover:bg-indigo-50 hover:border-indigo-300 dark:border-indigo-800 dark:text-indigo-300 dark:hover:bg-indigo-950/40",
+        accentText: "text-indigo-700 dark:text-indigo-300",
+      };
+  }
+}
+
 // ─── Main Student Command Center ──────────────────────────────────────────────
 
 export default function HomePage() {
@@ -204,6 +321,19 @@ export default function HomePage() {
   const courseBands = useMemo(() => {
     return resolveCourseBands(courseTitle, activeClassName, enrolledClass?.courseId);
   }, [courseTitle, activeClassName, enrolledClass?.courseId]);
+
+  // Course Brand & Card Visual Theme
+  const courseBrand = useMemo(() => {
+    return getCourseBrand({
+      title: courseTitle,
+      name: activeClassName,
+      courseId: enrolledClass?.courseId,
+    });
+  }, [courseTitle, activeClassName, enrolledClass?.courseId]);
+
+  const cardTheme = useMemo(() => {
+    return getCourseCardTheme(courseBrand.key);
+  }, [courseBrand.key]);
 
   // ARIS Student Journey calculations
   const journey = useMemo(() => {
@@ -384,19 +514,19 @@ export default function HomePage() {
             {enrolledClassId && (
               <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                 {/* Next Class Session Spotlight */}
-                <Card className="md:col-span-7 p-4 sm:p-5 rounded-2xl border bg-card shadow-xs flex flex-col justify-between">
-                  <div className="flex items-center justify-between pb-3 border-b">
+                <Card className={`relative overflow-hidden md:col-span-7 p-4 sm:p-5 rounded-2xl border transition-all duration-300 flex flex-col justify-between ${cardTheme.cardBorder} ${cardTheme.cardBg}`}>
+                  <div className={`absolute top-0 left-0 right-0 h-1.5 ${cardTheme.topLine}`} />
+                  <div className={`flex items-center justify-between pb-3 border-b ${cardTheme.headerBorder}`}>
                     <div className="flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="text-xs font-bold text-foreground uppercase tracking-wider">
+                      <span className={`h-2.5 w-2.5 rounded-full ${cardTheme.pulseDot} animate-pulse`} />
+                      <span className={`text-xs font-bold uppercase tracking-wider ${cardTheme.accentText}`}>
                         Buổi Học Tiếp Theo · Lớp {activeClassName}
                       </span>
                     </div>
                     <Button
-                      variant="ghost"
                       size="sm"
                       onClick={() => navigate(`/app/class/${enrolledClassId}/lessons`)}
-                      className="h-7 text-xs font-bold text-primary gap-1 px-2.5 rounded-lg hover:bg-primary/5"
+                      className={`h-7 text-xs font-bold gap-1 px-3 rounded-lg ${cardTheme.primaryButton}`}
                     >
                       <span>Vào Lớp Học</span>
                       <ArrowRight className="h-3 w-3" />
@@ -406,7 +536,7 @@ export default function HomePage() {
                   <div className="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="space-y-1">
                       <h4 className="font-extrabold text-base text-foreground flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-primary shrink-0" />
+                        <Calendar className={`h-4 w-4 ${cardTheme.icon} shrink-0`} />
                         <span>
                           {nextSession?.lessonTitle || `Buổi số ${nextSession?.sessionNumber || 1} / 27`}
                         </span>
@@ -424,7 +554,7 @@ export default function HomePage() {
                     <button
                       type="button"
                       onClick={() => navigate(`/app/attendance?classId=${enrolledClassId}`)}
-                      className="flex items-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity p-1 -m-1 rounded-lg"
+                      className="flex items-center gap-2 group cursor-pointer hover:opacity-85 transition-opacity p-1.5 -m-1 rounded-xl bg-white/80 dark:bg-slate-800/80 border border-slate-200/70 shadow-2xs"
                       title="Xem chi tiết lịch học & điểm danh chuyên cần"
                     >
                       <span className="text-xs text-muted-foreground font-medium">Chuyên cần:</span>
@@ -439,17 +569,18 @@ export default function HomePage() {
                 </Card>
 
                 {/* Quick 5-Skill Homework Hub Link */}
-                <Card className="md:col-span-5 p-4 sm:p-5 rounded-2xl border border-slate-200/80 bg-card shadow-xs flex flex-col justify-between">
-                  <div className="space-y-1">
+                <Card className={`relative overflow-hidden md:col-span-5 p-4 sm:p-5 rounded-2xl border transition-all duration-300 flex flex-col justify-between ${cardTheme.cardBorder} ${cardTheme.cardBg}`}>
+                  <div className={`absolute top-0 left-0 right-0 h-1.5 ${cardTheme.topLine}`} />
+                  <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-brand-blue bg-brand-blue-soft px-2 py-0.5 rounded-md border border-brand-blue/20">
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md border ${cardTheme.badge}`}>
                         Bảng Khái Quát Bài Tập
                       </span>
-                      <span className="text-xs font-mono font-bold text-foreground tabular-nums">
+                      <span className={`text-xs font-mono font-bold tabular-nums px-2.5 py-0.5 rounded-md border ${cardTheme.badgePill}`}>
                         {submittedCount} / {rawLessons?.length || 27} bài
                       </span>
                     </div>
-                    <h4 className="font-bold text-sm text-foreground pt-1">
+                    <h4 className="font-bold text-sm text-foreground pt-0.5">
                       5 Kỹ năng: Grammar, Listening, Reading, Writing, Speaking
                     </h4>
                     <p className="text-[11px] text-muted-foreground leading-relaxed">
@@ -457,12 +588,12 @@ export default function HomePage() {
                     </p>
                   </div>
 
-                  <div className="pt-3 border-t border-slate-100 flex items-center justify-end">
+                  <div className={`pt-3 border-t ${cardTheme.headerBorder} flex items-center justify-end`}>
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => navigate(`/app/class/${enrolledClassId}/lessons?tab=skill-matrix`)}
-                      className="h-7 text-xs font-bold border-slate-200 text-[#002147] hover:bg-slate-50 rounded-lg gap-1"
+                      className={`h-7 text-xs font-bold rounded-lg gap-1 ${cardTheme.secondaryButton}`}
                     >
                       <span>Tra cứu tiến độ 5 kỹ năng</span>
                       <ArrowRight className="h-3 w-3" />

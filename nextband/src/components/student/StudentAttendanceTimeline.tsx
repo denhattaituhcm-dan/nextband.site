@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { attendanceApi } from '@/lib/api';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -120,15 +120,9 @@ export const StudentAttendanceTimeline: React.FC<StudentAttendanceTimelineProps>
         {/* Left Card: Attendance rate & Commitment Check */}
         <Card className='md:col-span-8 p-5 sm:p-6 rounded-2xl border bg-card shadow-xs flex flex-col justify-between'>
           <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b'>
-            <div>
-              <div className='flex items-center gap-2 mb-1'>
-                <Calendar className='h-5 w-5 text-primary' />
-                <h3 className='font-bold text-base text-foreground'>Quá Trình Điểm Danh & Chuyên Cần</h3>
-              </div>
-              <p className='text-xs text-muted-foreground'>
-                Lớp học: <strong className='text-foreground'>{className || matrixData.className}</strong> · Lộ trình chuẩn 27 buổi
-              </p>
-            </div>
+            <p className='text-sm font-semibold text-foreground'>
+              {className || matrixData.className} · 27 buổi
+            </p>
 
             <div className='flex items-center gap-2'>
               <span className='text-xs font-semibold text-muted-foreground'>Chuẩn cam kết đầu ra:</span>
@@ -177,7 +171,7 @@ export const StudentAttendanceTimeline: React.FC<StudentAttendanceTimelineProps>
               {completedSessions} <span className='text-sm font-normal text-muted-foreground'>/ {totalSessions} buổi</span>
             </h4>
             <p className='text-xs text-muted-foreground leading-relaxed'>
-              Các buổi học được thiết kế theo cấu trúc bài giảng thực chiến, gắn liền với bài tập thực hành trên hệ thống.
+              Cam kết đầu ra: chuyên cần ≥ 85%
             </p>
           </div>
 
@@ -193,17 +187,9 @@ export const StudentAttendanceTimeline: React.FC<StudentAttendanceTimelineProps>
       {/* 2. 27-SESSION TIMELINE LIST */}
       <Card className='rounded-2xl border bg-card shadow-xs overflow-hidden'>
         <CardHeader className='p-5 border-b bg-muted/20'>
-          <div className='flex items-center justify-between'>
-            <div>
-              <CardTitle className='text-base font-bold text-foreground'>
-                Lịch Chi Tiết 27 Buổi Học & Điểm Danh Cá Nhân
-              </CardTitle>
-              <CardDescription className='text-xs text-muted-foreground mt-0.5'>
-                Theo dõi ngày học, khung giờ và xác nhận điểm danh từng buổi từ giáo viên
-              </CardDescription>
-            </div>
-            <span className='text-xs font-bold text-muted-foreground'>27 Buổi học</span>
-          </div>
+          <CardTitle className='text-base font-bold text-foreground'>
+            Lịch 27 Buổi Học
+          </CardTitle>
         </CardHeader>
 
         <CardContent className='p-0 divide-y divide-border'>

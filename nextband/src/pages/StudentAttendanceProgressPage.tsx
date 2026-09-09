@@ -194,18 +194,9 @@ export default function StudentAttendanceProgressPage() {
       {/* 1. TOP HEADER & CLASS SELECTOR */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-5">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
-              <CalendarCheck className="w-3.5 h-3.5 text-emerald-600" />
-              Theo dõi Chuyên Cần & Tiến Độ BTVN
-            </span>
-          </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-            Chuyên Cần & Tổng Quan BTVN
+            Chuyên Cần
           </h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Theo dõi chi tiết lịch 27 buổi học, tỷ lệ điểm danh chuyên cần và tổng quan tiến độ làm bài tập
-          </p>
         </div>
 
         {/* Action to switch directly into Doing Homework */}
@@ -261,11 +252,8 @@ export default function StudentAttendanceProgressPage() {
             </div>
             <div>
               <h2 className="text-lg font-bold text-foreground">
-                Tổng Quan Bài Tập Về Nhà (BTVN)
+                Bài Tập Về Nhà
               </h2>
-              <p className="text-xs text-muted-foreground">
-                Tiến độ nộp bài của bạn và bảng xếp hạng thi đua bài tập cùng các bạn trong lớp {selectedClass?.className}
-              </p>
             </div>
           </div>
 
@@ -391,11 +379,8 @@ export default function StudentAttendanceProgressPage() {
           </div>
           <div>
             <h2 className="text-lg font-bold text-foreground">
-              Quá Trình Điểm Danh & Lịch Học Chi Tiết
+              Điểm Danh & Lịch Học
             </h2>
-            <p className="text-xs text-muted-foreground">
-              Theo dõi chỉ số chuyên cần học tập (chuẩn cam kết đầu ra ≥ 85%) và trạng thái điểm danh từng buổi từ giáo viên
-            </p>
           </div>
         </div>
 
