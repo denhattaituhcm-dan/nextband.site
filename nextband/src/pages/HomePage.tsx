@@ -236,7 +236,9 @@ export default function HomePage() {
     refetchOnWindowFocus: true,
   });
 
-  const userSubmissions = Array.isArray(submissionsData?.data) ? submissionsData.data : [];
+  const userSubmissions = useMemo(() => {
+    return Array.isArray(submissionsData?.data) ? submissionsData.data : [];
+  }, [submissionsData?.data]);
   const submittedCount = userSubmissions.filter((s: any) =>
     isScholarshipEligible(s)
   ).length;

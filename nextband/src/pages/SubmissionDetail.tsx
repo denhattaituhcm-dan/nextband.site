@@ -242,7 +242,9 @@ export default function SubmissionDetail() {
     });
   }, [submission, allStudentSubmissionsData, user?.id, location.state, targetExamId, activeMilestone]);
 
-  const siblingSubmissions = siblingSubmissionsData?.data || [];
+  const siblingSubmissions = useMemo(() => {
+    return siblingSubmissionsData?.data || [];
+  }, [siblingSubmissionsData?.data]);
   const sortedAttempts = useMemo(() => {
     return [...siblingSubmissions].sort(
       (a: any, b: any) =>
@@ -263,8 +265,13 @@ export default function SubmissionDetail() {
     staleTime: 1000 * 60 * 2,
   });
 
-  const allSubmissionsList = allStudentSubmissionsData?.data || [];
-  const rawClassLessons = classLessonData?.data?.lessons || [];
+  const allSubmissionsList = useMemo(() => {
+    return allStudentSubmissionsData?.data || [];
+  }, [allStudentSubmissionsData?.data]);
+
+  const rawClassLessons = useMemo(() => {
+    return classLessonData?.data?.lessons || [];
+  }, [classLessonData?.data?.lessons]);
 
   // Streak: Tính theo số bài tập nộp đúng hạn theo lịch học của lớp
   const streakData = useMemo(() => {
@@ -340,7 +347,9 @@ export default function SubmissionDetail() {
       .sort(compareCanonicalOrder);
   }, [exam]);
 
-  const answers = submission?.answers || [];
+  const answers = useMemo(() => {
+    return submission?.answers || [];
+  }, [submission?.answers]);
 
   const answerMap = useMemo(() => {
     const map: Record<string, any> = {};
