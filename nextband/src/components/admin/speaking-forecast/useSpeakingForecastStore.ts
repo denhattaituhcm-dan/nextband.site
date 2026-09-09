@@ -87,7 +87,15 @@ export function useSpeakingForecastStore() {
 
   // Server sync on mount
   useEffect(() => {
-    speakingForecastApi.getPublicData().then((serverData) => {
+    const fetchForecastData = async () => {
+      try {
+        return await speakingForecastApi.getAdminData();
+      } catch {
+        return await speakingForecastApi.getPublicData();
+      }
+    };
+
+    fetchForecastData().then((serverData) => {
       if (serverData && serverData.seasons && Array.isArray(serverData.seasons) && serverData.seasons.length > 0) {
         setSeasons(serverData.seasons);
         localStorage.setItem(SEASONS_STORAGE_KEY, JSON.stringify(serverData.seasons));
@@ -142,7 +150,6 @@ export function useSpeakingForecastStore() {
     setSelectedSeasonIdState(id);
     localStorage.setItem(SELECTED_SEASON_STORAGE_KEY, id);
     emitStoreUpdate();
-    syncToServer(seasons, topics, id);
   };
 
   // Derived metrics calculation - never stored as raw attributes

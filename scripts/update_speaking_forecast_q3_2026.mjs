@@ -908,16 +908,33 @@ async function run() {
     }
   }
 
+  // Load baseline Q2 topics from crawler JSON if not already present
+  const q2JsonPath = path.join(__dirname, 'archive/speaking_forecast_crawler/forecast_2026_q2_full.json');
+  let q2Topics = [];
+  if (fs.existsSync(q2JsonPath)) {
+    try {
+      q2Topics = JSON.parse(fs.readFileSync(q2JsonPath, 'utf8'));
+    } catch (e) {
+      console.warn('Could not read forecast_2026_q2_full.json', e);
+    }
+  }
+
   // Filter out any test topics or duplicate IDs/slugs
   const newTopicIds = new Set(newQ3Topics.map((t) => t.id));
   const newTopicSlugs = new Set(newQ3Topics.map((t) => t.slug));
+  const seenIds = new Set(newTopicIds);
 
-  const preservedTopics = existingTopics.filter(
+  const candidatePool = [...existingTopics, ...q2Topics];
+  const preservedTopics = candidatePool.filter(
     (t) =>
+      t &&
+      t.id &&
       !newTopicIds.has(t.id) &&
       !newTopicSlugs.has(t.slug) &&
       t.id !== 'topic-draft-secret' &&
-      t.id !== 'topic-ai-technology'
+      t.id !== 'topic-ai-technology' &&
+      !seenIds.has(t.id) &&
+      (seenIds.add(t.id), true)
   );
 
   const finalTopics = [...newQ3Topics, ...preservedTopics];

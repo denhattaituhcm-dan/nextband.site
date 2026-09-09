@@ -167,6 +167,23 @@ describe.skipIf(!isDbReady)("🌊 PHASE 1 WORKFLOW & SYSTEM PIPELINE INTEGRATION
   // SUITE 1: SPEAKING FORECAST PIPELINE
   // =========================================================================
   describe("🎙️ P1.1: Speaking Forecast End-to-End Pipeline", () => {
+    let originalForecastRecord: any = null;
+
+    beforeAll(async () => {
+      originalForecastRecord = await prisma.siteSettings.findFirst({
+        where: { key: "speaking_forecast" },
+      });
+    });
+
+    afterAll(async () => {
+      if (originalForecastRecord) {
+        await prisma.siteSettings.update({
+          where: { id: originalForecastRecord.id },
+          data: { value: originalForecastRecord.value },
+        });
+      }
+    });
+
     it("Admin can update forecast topics and seasons", async () => {
       const forecastPayload = {
         seasons: [

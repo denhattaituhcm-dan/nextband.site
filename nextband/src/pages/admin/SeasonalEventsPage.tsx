@@ -830,9 +830,21 @@ export default function SeasonalEventsPage() {
                       onChange={(e) => setBudgetCap(Number(e.target.value))}
                       className="bg-white dark:bg-slate-900 font-black text-base h-9 rounded-xl border-amber-300"
                     />
-                    <p className="text-[11px] text-amber-800 dark:text-amber-300 font-bold pt-0.5">
-                      = {Number(budgetCap).toLocaleString("vi-VN")} VNĐ
-                    </p>
+                    <div className="flex items-center justify-between text-[11px] pt-0.5">
+                      <span className="text-amber-800 dark:text-amber-300 font-bold">
+                        = {Number(budgetCap).toLocaleString("vi-VN")} VNĐ
+                      </span>
+                      {calculatedTotalCash !== Number(budgetCap) && (
+                        <button
+                          type="button"
+                          onClick={handleSyncCalculatedTotals}
+                          className="text-[10px] text-primary hover:underline font-bold"
+                          title="Lấy tổng tiền các tầng bên dưới"
+                        >
+                          (Lấy {calculatedTotalCash.toLocaleString("vi-VN")}đ bên dưới)
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   {/* EDITABLE TOTAL SLOTS */}
@@ -850,9 +862,21 @@ export default function SeasonalEventsPage() {
                       onChange={(e) => setTotalSlots(Number(e.target.value))}
                       className="bg-white dark:bg-slate-900 font-black text-base h-9 rounded-xl border-slate-300"
                     />
-                    <p className="text-[11px] text-slate-600 dark:text-slate-400 font-semibold pt-0.5">
-                      = {totalSlots} suất nhận thưởng
-                    </p>
+                    <div className="flex items-center justify-between text-[11px] pt-0.5">
+                      <span className="text-slate-600 dark:text-slate-400 font-semibold">
+                        = {totalSlots} suất nhận thưởng
+                      </span>
+                      {calculatedTotalSlots !== Number(totalSlots) && (
+                        <button
+                          type="button"
+                          onClick={handleSyncCalculatedTotals}
+                          className="text-[10px] text-primary hover:underline font-bold"
+                          title="Lấy tổng số suất các tầng bên dưới"
+                        >
+                          (Lấy {calculatedTotalSlots} suất bên dưới)
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   {/* CLAIMED STATS */}

@@ -116319,13 +116319,35 @@ var SeasonalService = class {
   /**
    * Admin: Update seasonal event settings (toggle, dates, UI checkboxes, budget)
    */
-  async updateEvent(id, data) {
-    const existing = await this.prisma.seasonalEvent.findUnique({
-      where: { id }
+  async updateEvent(identifier, data) {
+    await this.ensureDefaultEvents();
+    let existing = await this.prisma.seasonalEvent.findFirst({
+      where: {
+        OR: [
+          { id: identifier },
+          { code: identifier },
+          ...data.code ? [{ code: data.code }] : []
+        ]
+      },
+      include: { rewardPool: true }
     });
     if (!existing) {
-      throw new Error("Kh\xF4ng t\xECm th\u1EA5y s\u1EF1 ki\u1EC7n");
+      existing = await this.prisma.seasonalEvent.create({
+        data: {
+          code: data.code || identifier,
+          name: data.name || identifier,
+          type: data.type || "TET",
+          isActive: data.isActive || false,
+          startAt: data.startAt ? new Date(data.startAt) : null,
+          endAt: data.endAt ? new Date(data.endAt) : null,
+          budgetCap: data.budgetCap || 8e5,
+          totalSlots: data.totalSlots || 60,
+          uiConfig: data.uiConfig || DEFAULT_TET_UI_CONFIG
+        },
+        include: { rewardPool: true }
+      });
     }
+    const id = existing.id;
     if (data.isActive) {
       await this.prisma.seasonalEvent.updateMany({
         where: { id: { not: id } },
@@ -116336,6 +116358,22 @@ var SeasonalService = class {
       ...existing.uiConfig || DEFAULT_TET_UI_CONFIG,
       ...data.uiConfig || {}
     };
+    if (data.pools && Array.isArray(data.pools) && data.pools.length > 0) {
+      await this.prisma.$transaction(async (tx) => {
+        await tx.seasonalRewardPool.deleteMany({
+          where: { eventId: id }
+        });
+        await tx.seasonalRewardPool.createMany({
+          data: data.pools.map((p, idx) => ({
+            eventId: id,
+            tier: p.tier || (idx === 0 ? "SMALL" : idx === 1 ? "MEDIUM" : idx === 2 ? "LARGE" : "SPECIAL"),
+            amount: Math.max(1e3, Number(p.amount) || 5e3),
+            totalSlots: Math.max(1, Number(p.totalSlots) || 10),
+            order: p.order !== void 0 ? p.order : idx + 1
+          }))
+        });
+      });
+    }
     return await this.prisma.seasonalEvent.update({
       where: { id },
       data: {
@@ -116349,6 +116387,120 @@ var SeasonalService = class {
       include: {
         rewardPool: { orderBy: { order: "asc" } }
       }
+    });
+  }
+  /**
+   * Admin: Get aggregated payout list of students for an event
+   */
+  async getPayoutList(eventIdentifier) {
+    const event = await this.prisma.seasonalEvent.findFirst({
+      where: {
+        OR: [{ id: eventIdentifier }, { code: eventIdentifier }]
+      }
+    });
+    if (!event) return [];
+    const eventId = event.id;
+    const claims = await this.prisma.seasonalRewardClaim.findMany({
+      where: { eventId },
+      include: {
+        student: {
+          select: {
+            id: true,
+            userId: true,
+            fullName: true,
+            email: true,
+            phone: true,
+            classesAsStudent: {
+              select: {
+                class: {
+                  select: { name: true }
+                }
+              },
+              take: 1
+            }
+          }
+        }
+      },
+      orderBy: { claimedAt: "desc" }
+    });
+    const studentMap = /* @__PURE__ */ new Map();
+    for (const claim of claims) {
+      const sId = claim.studentId;
+      if (!studentMap.has(sId)) {
+        const studentInfo = claim.student;
+        const className = studentInfo?.classesAsStudent?.[0]?.class?.name || "Kh\xF3a t\u1EF1 do";
+        studentMap.set(sId, {
+          studentId: sId,
+          studentName: studentInfo?.fullName || "H\u1ECDc vi\xEAn",
+          phone: studentInfo?.phone || "Ch\u01B0a c\u1EADp nh\u1EADt",
+          email: studentInfo?.email || "",
+          className,
+          claimsCount: 0,
+          totalCash: 0,
+          totalXp: 0,
+          isDisbursed: true,
+          disbursedAt: claim.disbursedAt,
+          latestClaimAt: claim.claimedAt
+        });
+      }
+      const item = studentMap.get(sId);
+      item.claimsCount += 1;
+      if (claim.rewardType === "CASH") {
+        item.totalCash += claim.amount;
+      } else if (claim.rewardType === "HONOR_XP") {
+        item.totalXp += claim.amount;
+      }
+      if (!claim.isDisbursed) {
+        item.isDisbursed = false;
+      }
+      if (claim.claimedAt > item.latestClaimAt) {
+        item.latestClaimAt = claim.claimedAt;
+      }
+    }
+    return Array.from(studentMap.values()).sort((a, b) => b.totalCash - a.totalCash);
+  }
+  /**
+   * Admin: Toggle disbursed state for a student
+   */
+  async togglePayoutDisbursed(eventIdentifier, studentId, isDisbursed) {
+    const event = await this.prisma.seasonalEvent.findFirst({
+      where: {
+        OR: [{ id: eventIdentifier }, { code: eventIdentifier }]
+      }
+    });
+    if (!event) throw new Error("Kh\xF4ng t\xECm th\u1EA5y s\u1EF1 ki\u1EC7n");
+    const eventId = event.id;
+    return await this.prisma.seasonalRewardClaim.updateMany({
+      where: { eventId, studentId },
+      data: {
+        isDisbursed,
+        disbursedAt: isDisbursed ? /* @__PURE__ */ new Date() : null
+      }
+    });
+  }
+  /**
+   * Admin: Clear/Reset entire payout list for an event
+   */
+  async clearPayoutList(eventIdentifier) {
+    const event = await this.prisma.seasonalEvent.findFirst({
+      where: {
+        OR: [{ id: eventIdentifier }, { code: eventIdentifier }]
+      }
+    });
+    if (!event) throw new Error("Kh\xF4ng t\xECm th\u1EA5y s\u1EF1 ki\u1EC7n");
+    const eventId = event.id;
+    return await this.prisma.$transaction(async (tx) => {
+      const deleteResult = await tx.seasonalRewardClaim.deleteMany({
+        where: { eventId }
+      });
+      await tx.seasonalRewardPool.updateMany({
+        where: { eventId },
+        data: { claimedSlots: 0 }
+      });
+      return {
+        success: true,
+        deletedCount: deleteResult.count
+      };
     });
   }
 };
@@ -116428,6 +116580,55 @@ async function seasonalRoutes(fastify) {
         });
       } catch (err) {
         return reply.status(400).send({ error: err.message });
+      }
+    }
+  );
+  fastify.get(
+    "/admin/events/:id/payouts",
+    { preHandler: [authenticate, requireRoles("admin", "superadmin")] },
+    async (request, reply) => {
+      try {
+        const { id } = request.params;
+        const payouts = await service.getPayoutList(id);
+        return reply.send({
+          success: true,
+          payouts
+        });
+      } catch (err) {
+        return reply.status(500).send({ error: err.message });
+      }
+    }
+  );
+  fastify.put(
+    "/admin/events/:id/payouts/:studentId/disburse",
+    { preHandler: [authenticate, requireRoles("admin", "superadmin")] },
+    async (request, reply) => {
+      try {
+        const { id, studentId } = request.params;
+        const { isDisbursed } = request.body;
+        const result = await service.togglePayoutDisbursed(id, studentId, isDisbursed);
+        return reply.send({
+          success: true,
+          ...result
+        });
+      } catch (err) {
+        return reply.status(400).send({ error: err.message });
+      }
+    }
+  );
+  fastify.delete(
+    "/admin/events/:id/payouts",
+    { preHandler: [authenticate, requireRoles("admin", "superadmin")] },
+    async (request, reply) => {
+      try {
+        const { id } = request.params;
+        const result = await service.clearPayoutList(id);
+        return reply.send({
+          success: true,
+          ...result
+        });
+      } catch (err) {
+        return reply.status(500).send({ error: err.message });
       }
     }
   );
