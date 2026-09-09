@@ -41,6 +41,21 @@ export function useStudentLifecycle() {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const queryClient = useQueryClient();
 
+  const cacheKey = user?.id ? `nb_cached_enrollments_${user.id}` : null;
+
+  const cachedData = useMemo<MyClassEnrollment[] | undefined>(() => {
+    if (!cacheKey || typeof window === "undefined") return undefined;
+    try {
+      const raw = localStorage.getItem(cacheKey);
+      if (!raw) return undefined;
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    } catch {}
+    return undefined;
+  }, [cacheKey]);
+
   // ─── Primary: fetch class memberships from Backend ──────────────────────────
   const {
     data: classesResult,
@@ -50,7 +65,26 @@ export function useStudentLifecycle() {
     status: queryStatus,
   } = useQuery({
     queryKey: [MY_CLASSES_QUERY_KEY, user?.id],
-    queryFn: () => classStudentsApi.getMyClasses(),
+    queryFn: async () => {
+      const res = await classStudentsApi.getMyClasses();
+      if (res?.status === "ok" && cacheKey && typeof window !== "undefined") {
+        try {
+          if (Array.isArray(res.data) && res.data.length > 0) {
+            localStorage.setItem(cacheKey, JSON.stringify(res.data));
+          } else if (Array.isArray(res.data) && res.data.length === 0) {
+            localStorage.removeItem(cacheKey);
+          }
+        } catch {}
+      }
+      return res;
+    },
+    initialData: cachedData
+      ? {
+          status: "ok" as const,
+          data: cachedData,
+        }
+      : undefined,
+    initialDataUpdatedAt: 0, // Stale on mount so it instantly background-revalidates
     enabled: !!isAuthenticated && !!user?.id,
     staleTime: 1000 * 60 * 2,
     retry: false,

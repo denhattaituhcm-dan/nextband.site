@@ -28,7 +28,18 @@ export function ProtectedRoute({
   }
 
   if (!user || user.isActive === false) {
-    return <Navigate to={redirectTo} state={{ from: location }} replace />;
+    const targetUrl = location.pathname + location.search;
+    if (typeof window !== "undefined" && targetUrl && targetUrl !== "/login") {
+      try {
+        sessionStorage.setItem("auth_redirect_target", targetUrl);
+      } catch {}
+    }
+    const redirectTarget =
+      targetUrl && targetUrl !== "/login" && targetUrl !== "/"
+        ? `${redirectTo}?next=${encodeURIComponent(targetUrl)}`
+        : redirectTo;
+
+    return <Navigate to={redirectTarget} state={{ from: location }} replace />;
   }
 
   // Check role requirements

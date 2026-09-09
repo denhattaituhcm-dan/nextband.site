@@ -202,5 +202,38 @@ describe("useStudentLifecycle - Pure Enrollment Lifecycle & Terminal-State Harde
       expect(res.status).toBe("AUTHORIZED");
       expect((res as any).activeClass?.className).toBe("D01 07.2026");
     });
+
+    it("Warms up instantly from localStorage cached enrollment without stuck in LOADING", async () => {
+      const cached = [
+        {
+          id: "cls-cached",
+          classId: "0defcb78-0eca-490e-8e41-476eedffe353",
+          className: "D01 07.2026 (Cached)",
+          courseId: "course-123",
+          courseTitle: "DREAMER",
+          teacherName: "Teacher Dan",
+          isActive: true,
+          membershipStatus: "ACTIVE",
+          joinedAt: "2026-08-14T06:10:48.248Z",
+        },
+      ];
+      localStorage.setItem(`nb_cached_enrollments_${mockUser.id}`, JSON.stringify(cached));
+
+      // Keep network unresolved initially
+      vi.spyOn(classStudentsApi, "getMyClasses").mockImplementation(
+        () => new Promise(() => {}) // never resolves
+      );
+
+      const { result } = renderHook(() => useStudentLifecycle(), {
+        wrapper: createWrapper(),
+      });
+
+      // Synchronously starts in ENROLLED due to initialData
+      expect(result.current.state).toBe("ENROLLED");
+      expect(result.current.hasEnrollments).toBe(true);
+      expect(result.current.enrollments[0].className).toBe("D01 07.2026 (Cached)");
+
+      localStorage.removeItem(`nb_cached_enrollments_${mockUser.id}`);
+    });
   });
 });

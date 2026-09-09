@@ -52,24 +52,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchUserProfile = async (authUser: SupabaseAuthUser) => {
     try {
-      // 0. Auto-claim pre-provisioned profile by email (safe failover)
+      // 0. Auto-claim pre-provisioned profile by email non-blocking in background
       if (authUser.email) {
-        try {
-          await classesApi.claimProfileOnLogin(authUser);
-        } catch (claimErr) {
+        classesApi.claimProfileOnLogin(authUser).catch((claimErr) => {
           console.warn("Auto-claim profile warning:", claimErr);
-        }
+        });
       }
 
-      // 1. Fetch Profile
-      const { data: profile, error: profileErr } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("user_id", authUser.id)
-        .maybeSingle();
+      // 1 & 2. Parallel Fetch: Profile and User Roles simultaneously
+      const [profileResult, rolesResult] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("*")
+          .eq("user_id", authUser.id)
+          .maybeSingle(),
+        supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", authUser.id),
+      ]);
 
-      if (profileErr) {
-        console.error("Failed to query profile:", profileErr);
+      const profile = profileResult.data;
+      if (profileResult.error) {
+        console.error("Failed to query profile:", profileResult.error);
       }
 
       // If user profile is marked inactive (disabled by admin), force sign out immediately
@@ -81,11 +86,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error("Tài khoản của bạn đã bị vô hiệu hóa hoặc tắt kích hoạt. Vui lòng liên hệ ban quản trị.");
       }
 
-      // 2. Fetch User Roles directly from source of truth
-      const { data: rolesData } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", authUser.id);
+      const rolesData = rolesResult.data;
+      if (rolesResult.error) {
+        console.error("Failed to query user roles:", rolesResult.error);
+      }
 
       const userRoles: AppRole[] = rolesData
         ? (rolesData.map((r) => r.role as AppRole))

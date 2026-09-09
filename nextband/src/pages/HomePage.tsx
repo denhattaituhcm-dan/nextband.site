@@ -239,10 +239,10 @@ export default function HomePage() {
   // KPI submissions — only load when ENROLLED
   const { data: submissionsData } = useQuery({
     queryKey: submissionKeys.kpis(user?.id),
-    queryFn: () => submissionsApi.list({ studentId: user?.id, limit: 100 }).catch(() => ({ data: [] })),
+    queryFn: () => submissionsApi.list({ studentId: user?.id, limit: 50 }).catch(() => ({ data: [] })),
     enabled: !!user?.id && state === "ENROLLED",
-    staleTime: 1000 * 60 * 2,
-    refetchOnWindowFocus: true,
+    staleTime: 1000 * 60 * 3,
+    refetchOnWindowFocus: false,
   });
 
   const userSubmissions = useMemo(() => {
@@ -263,7 +263,8 @@ export default function HomePage() {
     queryKey: ["class-lessons-action-queue", enrolledClassId],
     queryFn: () => lessonsApi.getClassLessons(enrolledClassId || ""),
     enabled: !!enrolledClassId && state === "ENROLLED",
-    staleTime: 1000 * 60 * 2,
+    staleTime: 1000 * 60 * 3,
+    refetchOnWindowFocus: false,
   });
 
   const rawLessons = classLessonData?.data?.lessons;
@@ -405,7 +406,8 @@ export default function HomePage() {
     queryKey: ["class-attendance-home", enrolledClassId],
     queryFn: () => attendanceApi.getAttendanceMatrix(enrolledClassId || ""),
     enabled: !!enrolledClassId && state === "ENROLLED",
-    staleTime: 1000 * 60 * 2,
+    staleTime: 1000 * 60 * 3,
+    refetchOnWindowFocus: false,
   });
 
   const studentAttendanceRecord = attendanceData?.success && attendanceData?.data?.students?.[0] ? attendanceData.data.students[0] : null;
