@@ -208,7 +208,7 @@ export default function SeasonalEventsPage() {
     return events.find((e) => e.type === selectedType);
   }, [events, selectedType]);
 
-  const targetEventId = currentDbEvent?.id || events[0]?.id;
+  const targetEventIdentifier = currentDbEvent?.id || currentPreset.code;
 
   // Query payouts for the selected event
   const {
@@ -216,9 +216,9 @@ export default function SeasonalEventsPage() {
     isLoading: isPayoutsLoading,
     refetch: refetchPayouts,
   } = useQuery({
-    queryKey: ["admin-seasonal-payouts", targetEventId],
-    queryFn: () => (targetEventId ? seasonalApi.getPayoutList(targetEventId) : { payouts: [] }),
-    enabled: !!targetEventId,
+    queryKey: ["admin-seasonal-payouts", targetEventIdentifier],
+    queryFn: () => (targetEventIdentifier ? seasonalApi.getPayoutList(targetEventIdentifier) : { payouts: [] }),
+    enabled: !!targetEventIdentifier,
   });
 
   const payouts = payoutsData?.payouts || [];
@@ -226,11 +226,11 @@ export default function SeasonalEventsPage() {
   // Toggle Disbursed Mutation
   const toggleDisbursedMutation = useMutation({
     mutationFn: ({ studentId, isDisbursed }: { studentId: string; isDisbursed: boolean }) => {
-      if (!targetEventId) throw new Error("Chưa chọn sự kiện");
-      return seasonalApi.togglePayoutDisbursed(targetEventId, studentId, isDisbursed);
+      if (!targetEventIdentifier) throw new Error("Chưa chọn sự kiện");
+      return seasonalApi.togglePayoutDisbursed(targetEventIdentifier, studentId, isDisbursed);
     },
     onSuccess: (_, vars) => {
-      queryClient.invalidateQueries({ queryKey: ["admin-seasonal-payouts", targetEventId] });
+      queryClient.invalidateQueries({ queryKey: ["admin-seasonal-payouts", targetEventIdentifier] });
       toast({
         title: vars.isDisbursed ? "Đã ghi nhận lì xì ✓" : "Đã hoàn tác trạng thái",
         description: vars.isDisbursed
@@ -250,11 +250,11 @@ export default function SeasonalEventsPage() {
   // Clear Payout List Mutation
   const clearPayoutsMutation = useMutation({
     mutationFn: () => {
-      if (!targetEventId) throw new Error("Chưa chọn sự kiện");
-      return seasonalApi.clearPayoutList(targetEventId);
+      if (!targetEventIdentifier) throw new Error("Chưa chọn sự kiện");
+      return seasonalApi.clearPayoutList(targetEventIdentifier);
     },
     onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["admin-seasonal-payouts", targetEventId] });
+      queryClient.invalidateQueries({ queryKey: ["admin-seasonal-payouts", targetEventIdentifier] });
       queryClient.invalidateQueries({ queryKey: ["admin-seasonal-events"] });
       queryClient.invalidateQueries({ queryKey: ["seasonal-active-event"] });
       setIsClearDialogOpen(false);
@@ -506,16 +506,20 @@ export default function SeasonalEventsPage() {
   // Save mutation
   const updateMutation = useMutation({
     mutationFn: (payload: any) => {
-      const targetId = currentDbEvent?.id || events[0]?.id;
-      if (!targetId) throw new Error("Chưa tìm thấy ID sự kiện");
-      return seasonalApi.updateAdminEvent(targetId, payload);
+      const targetIdentifier = currentDbEvent?.id || currentPreset.code;
+      return seasonalApi.updateAdminEvent(targetIdentifier, {
+        ...payload,
+        code: currentPreset.code,
+        name: currentPreset.name,
+        type: currentPreset.type,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-seasonal-events"] });
       queryClient.invalidateQueries({ queryKey: ["seasonal-active-event"] });
       toast({
         title: "Cập nhật thành công!",
-        description: `Đã lưu cấu hình và cơ cấu phần thưởng cho sự kiện ${currentPreset.name}`,
+        description: `Đã lưu cấu hình và kích hoạt sự kiện ${currentPreset.name}`,
       });
     },
     onError: (err: any) => {

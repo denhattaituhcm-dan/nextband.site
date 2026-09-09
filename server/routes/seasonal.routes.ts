@@ -77,6 +77,9 @@ export default async function seasonalRoutes(fastify: FastifyInstance) {
   fastify.put<{
     Params: { id: string };
     Body: {
+      code?: string;
+      name?: string;
+      type?: string;
       isActive?: boolean;
       startAt?: string | null;
       endAt?: string | null;

@@ -410,8 +410,11 @@ export class SeasonalService {
    * Admin: Update seasonal event settings (toggle, dates, UI checkboxes, budget)
    */
   async updateEvent(
-    id: string,
+    identifier: string,
     data: {
+      code?: string;
+      name?: string;
+      type?: string;
       isActive?: boolean;
       startAt?: Date | string | null;
       endAt?: Date | string | null;
@@ -427,13 +430,39 @@ export class SeasonalService {
       }>;
     }
   ) {
-    const existing = await this.prisma.seasonalEvent.findUnique({
-      where: { id },
+    // Ensure default seeded events exist first
+    await this.ensureDefaultEvents();
+
+    let existing = await this.prisma.seasonalEvent.findFirst({
+      where: {
+        OR: [
+          { id: identifier },
+          { code: identifier },
+          ...(data.code ? [{ code: data.code }] : []),
+        ],
+      },
       include: { rewardPool: true },
     });
+
     if (!existing) {
-      throw new Error("Không tìm thấy sự kiện");
+      // If still not found, create new event dynamically
+      existing = await this.prisma.seasonalEvent.create({
+        data: {
+          code: data.code || identifier,
+          name: data.name || identifier,
+          type: (data.type as any) || "TET",
+          isActive: data.isActive || false,
+          startAt: data.startAt ? new Date(data.startAt) : null,
+          endAt: data.endAt ? new Date(data.endAt) : null,
+          budgetCap: data.budgetCap || 800000,
+          totalSlots: data.totalSlots || 60,
+          uiConfig: (data.uiConfig as any) || DEFAULT_TET_UI_CONFIG,
+        },
+        include: { rewardPool: true },
+      });
     }
+
+    const id = existing.id;
 
     // If activating this event, deactivate other events so only one is active at a time
     if (data.isActive) {
@@ -486,7 +515,15 @@ export class SeasonalService {
   /**
    * Admin: Get aggregated payout list of students for an event
    */
-  async getPayoutList(eventId: string) {
+  async getPayoutList(eventIdentifier: string) {
+    const event = await this.prisma.seasonalEvent.findFirst({
+      where: {
+        OR: [{ id: eventIdentifier }, { code: eventIdentifier }],
+      },
+    });
+    if (!event) return [];
+
+    const eventId = event.id;
     const claims = await this.prisma.seasonalRewardClaim.findMany({
       where: { eventId },
       include: {
@@ -566,7 +603,15 @@ export class SeasonalService {
   /**
    * Admin: Toggle disbursed state for a student
    */
-  async togglePayoutDisbursed(eventId: string, studentId: string, isDisbursed: boolean) {
+  async togglePayoutDisbursed(eventIdentifier: string, studentId: string, isDisbursed: boolean) {
+    const event = await this.prisma.seasonalEvent.findFirst({
+      where: {
+        OR: [{ id: eventIdentifier }, { code: eventIdentifier }],
+      },
+    });
+    if (!event) throw new Error("Không tìm thấy sự kiện");
+
+    const eventId = event.id;
     return await this.prisma.seasonalRewardClaim.updateMany({
       where: { eventId, studentId },
       data: {
@@ -579,7 +624,15 @@ export class SeasonalService {
   /**
    * Admin: Clear/Reset entire payout list for an event
    */
-  async clearPayoutList(eventId: string) {
+  async clearPayoutList(eventIdentifier: string) {
+    const event = await this.prisma.seasonalEvent.findFirst({
+      where: {
+        OR: [{ id: eventIdentifier }, { code: eventIdentifier }],
+      },
+    });
+    if (!event) throw new Error("Không tìm thấy sự kiện");
+
+    const eventId = event.id;
     return await this.prisma.$transaction(async (tx) => {
       // 1. Delete all claims for this event
       const deleteResult = await tx.seasonalRewardClaim.deleteMany({

@@ -64,8 +64,11 @@ export const seasonalApi = {
    * Admin: Update an event's toggles, dates, budget or UI config
    */
   updateAdminEvent: async (
-    id: string,
+    idOrCode: string,
     data: {
+      code?: string;
+      name?: string;
+      type?: string;
       isActive?: boolean;
       startAt?: string | null;
       endAt?: string | null;
@@ -76,7 +79,7 @@ export const seasonalApi = {
     }
   ): Promise<{ event: SeasonalEventSummary }> => {
     const token = await getAuthToken();
-    const res = await fetch(`${API_BASE_URL}/seasonal/admin/events/${id}`, {
+    const res = await fetch(`${API_BASE_URL}/seasonal/admin/events/${idOrCode}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
