@@ -281,7 +281,7 @@ export default function Profile() {
 
           {/* Study Buddy Pass Card */}
           {(() => {
-            const activeRefCode = referralsData?.referralCode || (user as any)?.referralCode || generateReferralCode(user?.fullName, user?.id);
+            const activeRefCode = referralsData?.referralCode || (user as any)?.referralCode || generateReferralCode(user?.fullName || undefined, user?.id || undefined);
             const totalInvited = referralsData?.stats?.totalInvited ?? 0;
             const totalEligible = referralsData?.stats?.totalEligible ?? 0;
             const rewardsList = referralsData?.rewards ?? [];

@@ -267,7 +267,7 @@ export default function AdminLeads() {
     }: {
       id: string;
       status?: any;
-      notes?: string;
+      notes?: string | null;
       assignedToUserId?: string | null;
     }) => {
       return updateContactLead(id, { status, notes, assignedToUserId });

@@ -56,8 +56,8 @@ export default function StudentModelPage() {
       try {
         const list = await academicIntelligenceApi.getStudents();
         setStudents(list);
-        if (list.length > 0 && !selectedStudentId) {
-          setSelectedStudentId(list[0].id);
+        if (list.length > 0) {
+          setSelectedStudentId((prev) => prev || list[0].id);
         }
       } catch (err: any) {
         setErrorMessage(err.message || "Không thể tải danh mục học sinh.");
@@ -71,13 +71,14 @@ export default function StudentModelPage() {
   // 2. Tải vector năng lực của học sinh được chọn
   useEffect(() => {
     if (!selectedStudentId) return;
+    const studentId = selectedStudentId;
 
     async function loadMastery() {
       setIsLoadingMastery(true);
       setStatusMessage(null);
       setErrorMessage(null);
       try {
-        const data = await academicIntelligenceApi.getStudentMastery(selectedStudentId);
+        const data = await academicIntelligenceApi.getStudentMastery(studentId);
         setMasteryData(data);
       } catch (err: any) {
         setErrorMessage(err.message || "Không thể tải vector năng lực học sinh.");

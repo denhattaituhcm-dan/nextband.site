@@ -276,7 +276,7 @@ export const HomeworkTab: React.FC = () => {
           className={classData?.name}
           lessonId={selectedHw.id}
           lessonTitle={selectedHw.title}
-          currentDeadline={selectedHw.deadline}
+          currentDeadline={selectedHw.deadline ?? null}
           deadlineSource={selectedHw.deadlineSource || "AUTO"}
           onSuccess={() => refetchClass()}
         />

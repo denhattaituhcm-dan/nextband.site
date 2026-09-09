@@ -1154,7 +1154,7 @@ export default function SubmissionDetail() {
           {(() => {
             const parsed = parseStructuredFeedback(submission.feedback);
             const feedbackText = parsed.text || (typeof submission.feedback === "string" && !submission.feedback.startsWith("{") ? submission.feedback : "");
-            const hasFeedback = !!feedbackText || !!submission.revisionRequired || parsed.sentenceFeedbacks?.length > 0;
+            const hasFeedback = !!feedbackText || !!submission.revisionRequired || (parsed.sentenceFeedbacks?.length ?? 0) > 0;
             if (!hasFeedback) return null;
 
             return (

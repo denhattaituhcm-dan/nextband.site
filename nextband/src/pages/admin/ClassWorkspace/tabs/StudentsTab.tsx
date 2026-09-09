@@ -114,7 +114,7 @@ export const StudentsTab: React.FC = () => {
 
     const completedSessionsCount = sessions.filter((s: any) => s.status === "COMPLETED").length;
 
-    let savedReport = null;
+    let savedReport: any = null;
     try {
       savedReport = await periodicReportsApi.getLatest(classId, studentId);
     } catch (e) {
@@ -188,7 +188,8 @@ export const StudentsTab: React.FC = () => {
     strengths: string;
     weaknesses: string;
     recommendations: string;
-    nextGoals: string[];
+    nextGoals?: string[];
+    targetBand?: string;
   }) => {
     if (!classId || !reportData?.studentId) return;
     try {
@@ -196,7 +197,7 @@ export const StudentsTab: React.FC = () => {
         strengths: evalData.strengths,
         weaknesses: evalData.weaknesses,
         recommendations: evalData.recommendations,
-        nextGoals: evalData.nextGoals,
+        nextGoals: evalData.nextGoals || [],
       });
     } catch (e: any) {
       console.warn("[StudentsTab] Could not persist periodic report:", e);

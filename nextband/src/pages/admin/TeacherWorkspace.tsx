@@ -125,6 +125,25 @@ interface WorkbookItem {
   }>;
 }
 
+export interface WorkspaceStudent {
+  id: string;
+  fullName: string;
+  email: string;
+  avatarUrl?: string;
+  phone?: string;
+  parentName?: string;
+  parentPhone?: string;
+  parentToken?: string;
+  targetBand?: string | number;
+  totalAssignedCount: number;
+  submittedCount: number;
+  gradedCount: number;
+  pendingCount: number;
+  unsubmittedCount: number;
+  hasPending: boolean;
+  homeworks: any[];
+}
+
 export default function TeacherWorkspace() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -391,6 +410,11 @@ export default function TeacherWorkspace() {
           fullName: studentName,
           email: st.email || "",
           avatarUrl,
+          phone: st.student?.phone || st.phone,
+          parentName: st.student?.parentName || st.student?.parent_name || st.parentName || st.parent_name,
+          parentPhone: st.student?.parentPhone || st.student?.parent_phone || st.parentPhone || st.parent_phone,
+          parentToken: st.student?.parentToken || st.student?.parent_token || st.parentToken || st.parent_token,
+          targetBand: st.student?.targetBand || st.student?.target_band || st.student?.targetScore || st.targetBand || st.target_band || st.targetScore,
           totalAssignedCount: exams.length,
           submittedCount,
           gradedCount,
@@ -424,13 +448,18 @@ export default function TeacherWorkspace() {
   });
 
   // Normalize Danh sách Học viên thật từ CSDL
-  const students = useMemo(() => {
+  const students = useMemo<WorkspaceStudent[]>(() => {
     if (!workspaceData?.students) return [];
     return workspaceData.students.map((s: any) => ({
       id: s.id,
       fullName: s.fullName,
       email: s.email,
       avatarUrl: s.avatarUrl,
+      phone: s.phone,
+      parentName: s.parentName,
+      parentPhone: s.parentPhone,
+      parentToken: s.parentToken,
+      targetBand: s.targetBand,
       totalAssignedCount: s.totalAssignedCount || 0,
       submittedCount: s.submittedCount || 0,
       gradedCount: s.gradedCount || 0,
@@ -649,10 +678,10 @@ export default function TeacherWorkspace() {
   }, [currentHomework, currentSubmissionDetail, resolvedAnswers]);
 
   const slaStats = useMemo(() => {
-    if (!currentStudent?.homeworkItems) {
+    if (!currentStudent?.homeworks) {
       return { overdueCount: 0, approachingCount: 0, onTrackCount: 0, totalPending: 0, gradedCount: 0 };
     }
-    const pendingItems = currentStudent.homeworkItems.filter((i: any) => i.status === "submitted");
+    const pendingItems = currentStudent.homeworks.filter((i: any) => i.status === "submitted");
     return summarizeSlaStats(pendingItems);
   }, [currentStudent]);
 
@@ -762,15 +791,13 @@ export default function TeacherWorkspace() {
     return mapToProgressReportData({
       classId: selectedClassId,
       studentId: currentStudent?.id,
-      parentToken: currentStudent?.parentToken || currentStudent?.parent_token,
+      parentToken: currentStudent?.parentToken,
       totalWeeks: currentClass?.totalWeeks || currentClass?.total_weeks || 10,
       studentName: currentStudent?.fullName || "Học viên",
       className: currentClass?.name || "Lớp học",
       teacherName: currentClass?.teacher?.fullName || null,
       targetBand:
         currentStudent?.targetBand ||
-        currentStudent?.target_band ||
-        currentStudent?.targetScore ||
         currentClass?.target_band ||
         currentClass?.targetBand ||
         (currentClass?.course?.level ? `IELTS ${currentClass.course.level}` : null),
@@ -823,7 +850,8 @@ export default function TeacherWorkspace() {
     strengths: string;
     weaknesses: string;
     recommendations: string;
-    nextGoals: string[];
+    nextGoals?: string[];
+    targetBand?: string;
   }) => {
     if (!selectedClassId || !currentStudent?.id) return;
     try {
@@ -831,7 +859,7 @@ export default function TeacherWorkspace() {
         strengths: evalData.strengths,
         weaknesses: evalData.weaknesses,
         recommendations: evalData.recommendations,
-        nextGoals: evalData.nextGoals,
+        nextGoals: evalData.nextGoals || [],
       });
       refetchPeriodicReport();
     } catch (e: any) {
@@ -1336,10 +1364,10 @@ export default function TeacherWorkspace() {
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        const parentPhone = currentStudent?.parentPhone || currentStudent?.parent_phone || currentStudent?.phone;
-                        const parentName = currentStudent?.parentName || currentStudent?.parent_name || "Phụ huynh";
-                        const studentName = currentStudent?.fullName || currentStudent?.name || "em";
-                        const parentToken = currentStudent?.parentToken || currentStudent?.parent_token;
+                        const parentPhone = currentStudent?.parentPhone || currentStudent?.phone;
+                        const parentName = currentStudent?.parentName || "Phụ huynh";
+                        const studentName = currentStudent?.fullName || "em";
+                        const parentToken = currentStudent?.parentToken;
 
                         const messageText = generateParentProgressMessage({
                           parentName,

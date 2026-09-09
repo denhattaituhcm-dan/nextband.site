@@ -68,8 +68,9 @@ export default function VRSVerificationScaleInteractive({ model }: Props) {
           {/* Passage Paragraphs Showcase */}
           <div className="space-y-3">
             {model.passageContext.paragraphs.map((p) => {
-              const isTarget = p.id === model.passageContext?.targetParagraphId;
-              const isHighlighted = isTarget && isLocated;
+              const passage = model.passageContext;
+              const isTarget = passage && p.id === passage.targetParagraphId;
+              const isHighlighted = isTarget && isLocated && !!passage?.targetSnippet;
 
               return (
                 <div
@@ -89,13 +90,13 @@ export default function VRSVerificationScaleInteractive({ model }: Props) {
                     )}
                   </div>
                   <p>
-                    {isHighlighted ? (
+                    {isHighlighted && passage?.targetSnippet ? (
                       <span>
-                        {p.text.split(model.passageContext.targetSnippet)[0]}
+                        {p.text.split(passage.targetSnippet)[0]}
                         <mark className="bg-amber-300 text-amber-950 font-bold px-1.5 py-0.5 rounded border-b-2 border-amber-600">
-                          {model.passageContext.targetSnippet}
+                          {passage.targetSnippet}
                         </mark>
-                        {p.text.split(model.passageContext.targetSnippet)[1]}
+                        {p.text.split(passage.targetSnippet)[1]}
                       </span>
                     ) : (
                       p.text

@@ -9,13 +9,13 @@ export interface ContactLead {
   goal?: string;
   source?: string;
   status: "NEW" | "CONTACTED" | "ENROLLED" | "CANCELLED" | "ARCHIVED" | "new" | "contacted" | "enrolled" | "archived";
-  assignedTo?: string;
+  assignedTo?: string | null;
   assignedToUserId?: string | null;
   assignedToUser?: { id: string; userId: string; fullName?: string; avatarUrl?: string | null } | null;
   assignedAt?: string | null;
   preferredBranchId?: string | null;
   preferredBranch?: { id: string; name: string; code: string } | null;
-  notes?: string;
+  notes?: string | null;
   createdByUserId?: string | null;
   createdByUser?: { id: string; userId: string; fullName?: string } | null;
   convertedUserId?: string | null;

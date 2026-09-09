@@ -16,7 +16,7 @@ export class ApiForecastService implements ForecastService {
 
   private CACHE_TTL_MS = 60 * 1000; // 1 minute in-memory cache
 
-  private async fetchForecastData() {
+  private async fetchForecastData(): Promise<{ seasons: Season[]; topics: ForecastTopic[]; selectedSeasonId?: string }> {
     const now = Date.now();
     if (this.cache.data && now - this.cache.timestamp < this.CACHE_TTL_MS) {
       return this.cache.data;
@@ -28,12 +28,13 @@ export class ApiForecastService implements ForecastService {
       const topics: ForecastTopic[] = res?.topics || [];
       const selectedSeasonId = res?.selectedSeasonId;
 
+      const data = { seasons, topics, selectedSeasonId };
       this.cache = {
-        data: { seasons, topics, selectedSeasonId },
+        data,
         timestamp: now,
       };
 
-      return this.cache.data;
+      return data;
     } catch (err) {
       console.error('[ApiForecastService] Failed to fetch speaking forecast:', err);
       // Return empty dataset truthfully if network/server is down

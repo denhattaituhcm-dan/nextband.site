@@ -203,7 +203,7 @@ export function toCanonicalClass(raw: any, extras?: {
 
   // Normalize Teacher Profile
   const rawTeacher = raw.teacher || extras?.teacher;
-  let teacher = null;
+  let teacher: { id: string; fullName: string; avatarUrl?: string; email?: string } | null = null;
   if (rawTeacher) {
     const teacherName =
       rawTeacher.fullName ||
@@ -221,7 +221,7 @@ export function toCanonicalClass(raw: any, extras?: {
 
   // Normalize Course
   const rawCourse = raw.course || extras?.course;
-  let course = null;
+  let course: { id: string; title: string; description?: string; level?: string } | null = null;
   if (rawCourse) {
     course = {
       id: String(rawCourse.id || raw.courseId || raw.course_id || ""),
@@ -233,7 +233,7 @@ export function toCanonicalClass(raw: any, extras?: {
 
   // Normalize Branch
   const rawBranch = raw.branch || extras?.branch;
-  let branch = null;
+  let branch: { id: string; name: string; code?: string } | null = null;
   if (rawBranch) {
     branch = {
       id: String(rawBranch.id || raw.branchId || raw.branch_id || ""),
@@ -244,7 +244,7 @@ export function toCanonicalClass(raw: any, extras?: {
 
   // Normalize Room
   const rawRoom = raw.room || extras?.room;
-  let room = null;
+  let room: { id: string; name: string; capacity?: number } | null = null;
   if (rawRoom) {
     room = {
       id: String(rawRoom.id || raw.roomId || raw.room_id || ""),

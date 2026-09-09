@@ -213,13 +213,16 @@ export function QuestionRecorder({
       const recordingId = crypto.randomUUID();
       const storagePath = `speaking-recordings/${recordingId}.webm`;
       const token = await getAuthToken();
-      const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
 
       // 1. Register Draft Asset in Backend
       try {
         await fetch(`${API_BASE_URL}/speaking/register-draft`, {
           method: "POST",
-          headers: { "Content-Type": "application/json", ...authHeaders },
+          headers,
           body: JSON.stringify({
             id: recordingId,
             referenceType: "EXAM_SUBMISSION",
@@ -260,7 +263,7 @@ export function QuestionRecorder({
       try {
         await fetch(`${API_BASE_URL}/speaking/confirm-upload`, {
           method: "POST",
-          headers: { "Content-Type": "application/json", ...authHeaders },
+          headers,
           body: JSON.stringify({
             id: recordingId,
             storagePath,
