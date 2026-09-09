@@ -130,6 +130,49 @@ function sanitizeQuestionForStudent(q: any, showAnswerKey: boolean) {
 }
 
 /**
+ * Nhận diện bài thi trắc nghiệm (Objective Exam):
+ * Reading, Listening, Quiz, Grammar, Vocabulary hoặc đề thi không chứa câu hỏi tự luận (Writing, Speaking).
+ */
+export function isObjectiveExam(exam: any): boolean {
+  if (!exam) return false;
+  const examType = String(exam.examType || exam.type || "").toLowerCase();
+  if (["reading", "listening", "quiz", "grammar", "vocabulary", "reading_listening", "objective"].includes(examType)) {
+    return true;
+  }
+  if (examType === "writing" || examType === "speaking") {
+    return false;
+  }
+
+  const allQuestions: any[] = [];
+  (exam.sections || []).forEach((sec: any) => {
+    const sType = String(sec.sectionType || sec.section_type || "").toLowerCase();
+    (sec.questionGroups || []).forEach((g: any) => {
+      (g.questions || []).forEach((q: any) => {
+        allQuestions.push({ ...q, _sectionType: sType });
+      });
+    });
+  });
+
+  if (allQuestions.length > 0) {
+    const hasSubjective = allQuestions.some((q) => {
+      const qType = String(q.questionType || q.question_type || "").toLowerCase();
+      const sType = String(q._sectionType || "").toLowerCase();
+      return (
+        qType === "essay" ||
+        qType === "writing" ||
+        qType === "speaking" ||
+        qType.startsWith("ielts_speaking") ||
+        sType === "writing" ||
+        sType === "speaking"
+      );
+    });
+    return !hasSubjective;
+  }
+
+  return false;
+}
+
+/**
  * TẦNG 1: TECHNICAL PAYLOAD VALIDATION
  * Chặn học sinh nộp bài rác / bài trắng / audio rỗng trước khi chuyển trạng thái sang SUBMITTED.
  * Đảm bảo SUBMITTED luôn đồng nghĩa với việc có dữ liệu nộp thực chất.
@@ -566,6 +609,17 @@ export class ExamSubmissionService {
   ): Promise<{ submission: any; isNew: boolean }> {
     const exam = await this.prisma.exam.findUnique({
       where: { id: examId },
+      include: {
+        sections: {
+          include: {
+            questionGroups: {
+              include: {
+                questions: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!exam) {
@@ -599,12 +653,44 @@ export class ExamSubmissionService {
       }
     }
 
+    const isObjective = isObjectiveExam(exam);
     const attemptCount = await this.repo.countAttempts(user.id, examId);
-    if (!isPrivileged && attemptCount >= MAX_EXAM_ATTEMPTS) {
+    if (!isPrivileged && !isObjective && attemptCount >= MAX_EXAM_ATTEMPTS) {
       throw new AuthorizationError(`Bạn đã sử dụng hết ${MAX_EXAM_ATTEMPTS} lượt làm bài cho bài thi này`, 409);
     }
 
     return this.repo.transaction(async (tx) => {
+      // Retake for objective exam: cancel/discard all old submissions and start a clean attempt
+      if (options?.allowRetake && isObjective) {
+        await tx.examSubmission.deleteMany({
+          where: {
+            examId,
+            studentId: user.id,
+          },
+        });
+
+        const newSubmission = await tx.examSubmission.create({
+          data: {
+            examId,
+            studentId: user.id,
+            status: "IN_PROGRESS",
+            startedAt: new Date(),
+            version: 1,
+          },
+        });
+
+        return {
+          submission: {
+            ...newSubmission,
+            answers: [],
+            remainingSeconds: (exam.durationMinutes || 60) * 60,
+            serverTime: new Date().toISOString(),
+            isResumed: false,
+          },
+          isNew: true,
+        };
+      }
+
       const inProgress = await tx.examSubmission.findFirst({
         where: {
           examId,
@@ -1265,10 +1351,50 @@ export class ExamSubmissionService {
   ): Promise<{ submission: any; isNew: boolean }> {
     const exam = await this.prisma.exam.findUnique({
       where: { id: examId },
+      include: {
+        sections: {
+          include: {
+            questionGroups: {
+              include: {
+                questions: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!exam) {
       throw new NotFoundError("Bài thi không tồn tại");
+    }
+
+    const isObjective = isObjectiveExam(exam);
+
+    // Đối với bài thi trắc nghiệm (Objective Exam): Cho phép làm lại tự do, huỷ bỏ kết quả bài cũ
+    if (isObjective) {
+      return this.repo.transaction(async (tx) => {
+        await tx.examSubmission.deleteMany({
+          where: {
+            examId,
+            studentId: user.id,
+          },
+        });
+
+        const newSubmission = await tx.examSubmission.create({
+          data: {
+            examId,
+            studentId: user.id,
+            status: "IN_PROGRESS",
+            startedAt: new Date(),
+            version: 1,
+          },
+        });
+
+        return {
+          submission: newSubmission,
+          isNew: true,
+        };
+      });
     }
 
     // 1. Idempotency Check: Return existing active IN_PROGRESS session if present

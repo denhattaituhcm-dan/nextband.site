@@ -50,6 +50,14 @@ import {
 } from "lucide-react";
 import { StudentReEnrollmentModal } from "@/components/student/StudentReEnrollmentModal";
 import { HonorReportCardModal } from "@/components/student/HonorReportCardModal";
+import {
+  useSeasonalEvent,
+  TetBlossomBranch,
+  TetFallingPetals,
+  TetEnvelopeBadge,
+  TetWalletHeaderBadge,
+  TetOpeningModal,
+} from "@/features/seasonal";
 
 export default function StudentLessonViewerPage() {
   const { classId } = useParams<{ classId: string }>();
@@ -62,6 +70,20 @@ export default function StudentLessonViewerPage() {
   const { isHealthy: isGatewayHealthy, isWarmingUp: isGatewayWarmingUp, checkHealthNow } = useGatewayHealth();
   const [isReEnrollModalOpen, setIsReEnrollModalOpen] = useState(false);
   const [isHonorCardOpen, setIsHonorCardOpen] = useState(false);
+
+  const {
+    isEventActive: isSeasonalActive,
+    isTet,
+    uiConfig: seasonalUiConfig,
+    studentProgress: seasonalProgress,
+    activeEvent: seasonalActiveEvent,
+    isHomeworkClaimed,
+    getClaimedAmount,
+    handleClaim: handleSeasonalClaim,
+    isClaiming: isSeasonalClaiming,
+    activeClaimModal,
+    closeClaimModal,
+  } = useSeasonalEvent();
 
   const activeTab = searchParams.get("tab") || "practice-list";
 
@@ -391,6 +413,13 @@ export default function StudentLessonViewerPage() {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
+            {isSeasonalActive && isTet && (
+              <TetWalletHeaderBadge
+                totalCash={seasonalProgress.totalCashEarned}
+                totalXp={seasonalProgress.totalHonorXp}
+                remainingSlots={seasonalActiveEvent?.remainingSlots}
+              />
+            )}
             <Button
               size="sm"
               onClick={() => setIsHonorCardOpen(true)}
@@ -632,6 +661,15 @@ export default function StudentLessonViewerPage() {
                             {hw.title}
                           </h3>
                           {getStatusBadge(hw.status, hw.countdown, hw.submissionTiming)}
+                          {isSeasonalActive && isTet && seasonalUiConfig.showEnvelopes && (
+                            <TetEnvelopeBadge
+                              isCompleted={hw.status === "GRADED" || hw.status === "SUBMITTED"}
+                              isClaimed={isHomeworkClaimed(hw.examId || hw.id)}
+                              claimedAmount={getClaimedAmount(hw.examId || hw.id)}
+                              onClaim={() => handleSeasonalClaim(hw.examId || hw.id, hw.title)}
+                              isClaiming={isSeasonalClaiming}
+                            />
+                          )}
                         </div>
 
                         <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground pt-0.5">
@@ -739,6 +777,21 @@ export default function StudentLessonViewerPage() {
           studentPhone={user?.phone || ""}
           scholarshipAmount={500000}
         />
+
+        {/* ARIS Seasonal Layer (Tết Preset) */}
+        {isSeasonalActive && isTet && seasonalUiConfig.showBlossom && <TetBlossomBranch />}
+        {isSeasonalActive && isTet && seasonalUiConfig.showPetals && <TetFallingPetals />}
+        {isSeasonalActive && isTet && activeClaimModal && (
+          <TetOpeningModal
+            isOpen={activeClaimModal.isOpen}
+            onClose={closeClaimModal}
+            rewardType={activeClaimModal.rewardType}
+            amount={activeClaimModal.amount}
+            totalAccumulated={activeClaimModal.totalAccumulated}
+            examTitle={activeClaimModal.examTitle}
+            isPoolExhausted={activeClaimModal.isPoolExhausted}
+          />
+        )}
       </div>
     </div>
   );

@@ -4,171 +4,27 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { sectionsApi, questionsApi, uploadsApi, formatStorageUrl } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import {
-  ArrowLeft,
-  Plus,
-  Trash2,
-  GripVertical,
-  Loader2,
-  Save,
-  Headphones,
-  BookOpen,
-  PenTool,
-  Mic,
-  FileText,
-  Zap,
-  Edit,
-  Sparkles,
-} from "lucide-react";
-import FileUpload from "@/components/admin/FileUpload";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
-import { RichTextEditor } from "@/components/ui/rich-text-editor";
-import { RichContent } from "@/components/exam/RichContent";
-import { parseMatchingData } from "@/components/exam/MatchingRenderer";
 import {
-  QuestionFormRenderer,
-  stringifyFillBlankAnswers,
   parseFillBlankAnswers,
+  stringifyFillBlankAnswers,
 } from "@/components/admin/question-forms";
 import { sanitizeQuestionPayload } from "@/lib/questionNormalizer";
 import { parseSmartBulkQuestions } from "@/lib/smartQuestionParser";
 import { normalizeQuestionHtml } from "@/lib/htmlNormalizer";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+  QuestionGroup,
+  Question,
+  getErrorMessage,
+  getQuestionTypesForSection,
+  SectionHeaderEditor,
+  QuestionGroupList,
+  BatchNormalizeModal,
+  GroupFormDialog,
+  QuestionFormDialog,
+} from "./SectionEdit/index";
 
-const sectionIcons = {
-  listening: Headphones,
-  reading: BookOpen,
-  writing: PenTool,
-  speaking: Mic,
-  general: FileText,
-};
-
-const sectionColors = {
-  listening: "bg-listening text-white",
-  reading: "bg-reading text-white",
-  writing: "bg-writing text-white",
-  speaking: "bg-speaking text-white",
-  general: "bg-primary text-primary-foreground",
-};
-
-const ALL_QUESTION_TYPES = [
-  { value: "multiple_choice", label: "Trắc nghiệm" },
-  { value: "fill_blank", label: "Điền vào chỗ trống" },
-  { value: "short_answer", label: "Trả lời ngắn" },
-  { value: "true_false_not_given", label: "TRUE/FALSE/NOT GIVEN" },
-  { value: "yes_no_not_given", label: "YES/NO/NOT GIVEN" },
-  { value: "matching", label: "Nối đáp án" },
-  { value: "essay", label: "Bài luận / Viết dài" },
-  { value: "speaking", label: "Ghi âm (Speaking)" },
-  { value: "listening", label: "Nghe hiểu (Listening)" },
-];
-
-const SECTION_QUESTION_TYPES: Record<string, string[]> = {
-  listening: [
-    "multiple_choice",
-    "fill_blank",
-    "short_answer",
-    "true_false_not_given",
-    "yes_no_not_given",
-    "matching",
-  ],
-  reading: [
-    "multiple_choice",
-    "fill_blank",
-    "short_answer",
-    "true_false_not_given",
-    "yes_no_not_given",
-    "matching",
-    "essay",
-  ],
-  writing: [
-    "essay",
-    "fill_blank",
-    "short_answer",
-    "multiple_choice",
-    "matching",
-    "true_false_not_given",
-    "yes_no_not_given",
-  ],
-  speaking: ["speaking"],
-  general: ALL_QUESTION_TYPES.map((t) => t.value),
-};
-
-function getQuestionTypesForSection(sectionType: string) {
-  const allowed =
-    SECTION_QUESTION_TYPES[sectionType] || SECTION_QUESTION_TYPES.general;
-  return ALL_QUESTION_TYPES.filter((t) => allowed.includes(t.value));
-}
-
-interface QuestionGroup {
-  id: string;
-  title: string | null;
-  passage: string | null;
-  instructions: string | null;
-  audioUrl: string | null;
-  orderIndex: number;
-  questions: Question[];
-}
-
-interface Question {
-  id: string;
-  questionText: string;
-  questionType: string;
-  options: string[] | null;
-  correctAnswer: string | null;
-  points: number;
-  orderIndex?: number;
-  order_index?: number;
-}
-
-// Helper to extract detailed validation error messages from API response
-function getErrorMessage(error: any, defaultMsg: string) {
-  const data = error?.response?.data;
-  if (!data) return error?.message || defaultMsg;
-  if (data.details) {
-    const messages: string[] = [];
-    for (const key in data.details) {
-      if (Array.isArray(data.details[key])) {
-        messages.push(...data.details[key]);
-      } else if (typeof data.details[key] === "string") {
-        messages.push(data.details[key]);
-      }
-    }
-    if (messages.length > 0) return messages.join(", ");
-  }
-  return data.error || data.message || defaultMsg;
-}
 
 export default function AdminSectionEdit() {
   const { id } = useParams<{ id: string }>();
@@ -236,7 +92,16 @@ export default function AdminSectionEdit() {
     audioUrl: "",
     orderIndex: 0,
   });
-  const [questionForm, setQuestionForm] = useState({
+  const [questionForm, setQuestionForm] = useState<{
+    questionText: string;
+    questionType: string;
+    options: string[] | null;
+    correctAnswer: string;
+    fillBlankAnswers: string[];
+    points: number;
+    audioUrl: string;
+    orderIndex: number;
+  }>({
     questionText: "",
     questionType: "multiple_choice",
     options: ["", "", "", ""],
@@ -903,819 +768,77 @@ export default function AdminSectionEdit() {
     );
   }
 
-  const Icon =
-    sectionIcons[section.sectionType as keyof typeof sectionIcons] || FileText;
-  const colorClass =
-    sectionColors[section.sectionType as keyof typeof sectionColors] ||
-    sectionColors.general;
-
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              if (section.examId) {
-                navigate(`/admin/exams/${section.examId}?tab=sections`);
-              } else {
-                navigate(-1);
-              }
-            }}
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <Badge className={colorClass}>
-                <Icon className="mr-1 h-3 w-3" />
-                {(section.sectionType || "").toUpperCase()}
-              </Badge>
-              {section.examTitle && (
-                <span className="text-sm text-muted-foreground italic">
-                  / {section.examTitle}
-                </span>
-              )}
-            </div>
-            <h1 className="text-2xl font-bold">{section.title}</h1>
-          </div>
-        </div>
-
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            setTargetNormalizeGroupId(null);
-            setNormalizeConfirmOpen(true);
-          }}
-          disabled={normalizing || totalQuestionsCount === 0}
-          className="gap-2 border-amber-500/40 text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 font-semibold shadow-xs"
-        >
-          {normalizing ? (
-            <Loader2 className="h-4 w-4 animate-spin text-amber-600" />
-          ) : (
-            <Sparkles className="h-4 w-4 text-amber-500" />
-          )}
-          <span>Chuẩn hóa toàn bộ ({totalQuestionsCount})</span>
-        </Button>
-      </div>
-
-      {/* Section Settings */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Cài đặt Section</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {section.sectionType === "listening" && (
-            <div className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label>File Audio chính (Listening)</Label>
-                  <FileUpload
-                    accept="audio/*"
-                    currentUrl={section.audioUrl || undefined}
-                    onUploadComplete={(url) =>
-                      updateSectionMutation.mutate({ audioUrl: url })
-                    }
-                    onRemove={() =>
-                      updateSectionMutation.mutate({ audioUrl: "" })
-                    }
-                    maxSizeMB={20}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Thời gian (phút)</Label>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="number"
-                      value={section.durationMinutes || ""}
-                      onChange={(e) => {
-                        const val = parseInt(e.target.value);
-                        updateSectionMutation.mutate({
-                          durationMinutes: isNaN(val) ? 0 : val,
-                        });
-                      }}
-                    />
-                    <span className="text-sm text-muted-foreground whitespace-nowrap">
-                      phút
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Transcript audio (chỉ hiển thị sau khi nộp)</Label>
-                <RichTextEditor
-                  placeholder="Nhập toàn bộ script khớp với audio..."
-                  value={
-                    localAudioScript !== null
-                      ? localAudioScript
-                      : section.audioScript || ""
-                  }
-                  onChange={(html) => setLocalAudioScript(html)}
-                  minHeight={140}
-                />
-                <p className="text-xs text-muted-foreground">
-                  Script chỉ được gửi xuống client sau khi thí sinh nộp bài để xem lại.
-                </p>
-              </div>
-            </div>
-          )}
-          <div className="space-y-2">
-            <Label>Hướng dẫn chung cho Section</Label>
-            <RichTextEditor
-              placeholder="Nhập hướng dẫn cho toàn bộ section..."
-              value={
-                localInstructions !== null
-                  ? localInstructions
-                  : section.instructions || ""
-              }
-              onChange={(html) => setLocalInstructions(html)}
-              minHeight={100}
-            />
-          </div>
-        </CardContent>
-      </Card>
+      {/* Header & Settings */}
+      <SectionHeaderEditor
+        section={section}
+        totalQuestionsCount={totalQuestionsCount}
+        normalizing={normalizing}
+        onOpenNormalizeModal={() => {
+          setTargetNormalizeGroupId(null);
+          setNormalizeConfirmOpen(true);
+        }}
+        onUpdateSection={(data) => updateSectionMutation.mutate(data)}
+        localInstructions={localInstructions}
+        setLocalInstructions={setLocalInstructions}
+        localAudioScript={localAudioScript}
+        setLocalAudioScript={setLocalAudioScript}
+      />
 
       {/* Question Groups */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-lg">Nhóm câu hỏi</CardTitle>
-              <CardDescription>
-                Tạo các nhóm câu hỏi (Passage, Section con...)
-              </CardDescription>
-            </div>
-            <Button
-              onClick={() => handleOpenGroupDialog()}
-              size="sm"
-              className="gap-2"
-            >
-              <Plus className="h-4 w-4" /> Thêm nhóm
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {questionGroups && questionGroups.length > 0 ? (
-            <div className="space-y-4">
-              <Accordion
-                type="multiple"
-                defaultValue={questionGroups.map((g: any) => g.id)}
-                className="space-y-4"
-              >
-                {questionGroups.map((group: any) => (
-                  <AccordionItem
-                    key={group.id}
-                    value={group.id}
-                    className="border rounded-lg px-4"
-                  >
-                    <AccordionTrigger className="hover:no-underline py-4">
-                      <div className="flex items-center justify-between w-full pr-4 text-left">
-                        <div className="flex items-center gap-3">
-                          <GripVertical className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                          <div>
-                            <span className="font-bold text-sm">
-                              {group.title || "Nhóm câu hỏi (không tiêu đề)"}
-                            </span>
-                            <div className="flex items-center gap-2 mt-1">
-                              <Badge variant="outline" className="text-[10px]">
-                                {group.questions?.length || 0} câu hỏi
-                              </Badge>
-                              <span className="text-[10px] text-muted-foreground font-mono">
-                                #{group.orderIndex}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setTargetNormalizeGroupId(group.id);
-                              setNormalizeConfirmOpen(true);
-                            }}
-                            className="text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/40 text-xs font-medium"
-                            title="Chuẩn hóa định dạng nhóm câu hỏi này"
-                          >
-                            <Sparkles className="h-3.5 w-3.5 mr-1 text-amber-500" /> Chuẩn hóa nhóm
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleOpenGroupDialog(group);
-                            }}
-                          >
-                            <Edit className="h-4 w-4 mr-1" /> Sửa
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-destructive hover:text-destructive"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setDeleteGroup({
-                                id: group.id,
-                                title: group.title || "Nhóm này",
-                              });
-                            }}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="pt-4 pb-6 border-t mt-2">
-                      {/* Group Audio (For Listening sections) */}
-                      {(group.audioUrl || group.audio_url) && (
-                        <div className="mb-4 p-3 bg-primary/5 rounded-lg border border-primary/20 flex items-center gap-3">
-                          <Headphones className="h-5 w-5 text-primary" />
-                          <div className="flex-1">
-                            <audio
-                              src={formatStorageUrl(group.audioUrl || group.audio_url)}
-                              controls
-                              className="h-8 w-full outline-none"
-                            />
-                          </div>
-                        </div>
-                      )}
+      <QuestionGroupList
+        questionGroups={questionGroups || []}
+        section={section}
+        draggedQuestion={draggedQuestion}
+        dragOverQuestionId={dragOverQuestionId}
+        setDraggedQuestion={setDraggedQuestion}
+        setDragOverQuestionId={setDragOverQuestionId}
+        onQuestionReorderDrop={handleQuestionReorderDrop}
+        onOpenGroupDialog={handleOpenGroupDialog}
+        onDeleteGroupPrompt={(grp) => setDeleteGroup(grp)}
+        onOpenQuestionDialog={handleOpenQuestionDialog}
+        onDeleteQuestionPrompt={(q) => setDeleteQuestion(q)}
+        onOpenNormalizeGroupModal={(groupId) => {
+          setTargetNormalizeGroupId(groupId);
+          setNormalizeConfirmOpen(true);
+        }}
+        bulkImportGroupId={bulkImportGroupId}
+        setBulkImportGroupId={setBulkImportGroupId}
+        bulkImportText={bulkImportText}
+        setBulkImportText={setBulkImportText}
+        bulkImportType={bulkImportType}
+        setBulkImportType={setBulkImportType}
+        showBulkPreview={showBulkPreview}
+        setShowBulkPreview={setShowBulkPreview}
+        parsedBulkQuestions={parsedBulkQuestions}
+        onBulkImport={handleBulkImport}
+        isBulkImportPending={bulkImportMutation.isPending}
+      />
 
-                      {/* Group Content (Passage or Instructions) */}
-                      {group.passage && (
-                        <div className="mb-4 p-4 bg-muted/50 rounded-lg prose prose-sm max-w-none">
-                          <div className="text-[10px] uppercase text-muted-foreground font-bold mb-2">
-                            Passage / Nội dung:
-                          </div>
-                          <RichContent html={group.passage} variant="passage" />
-                        </div>
-                      )}
+      {/* Group Form Dialog */}
+      <GroupFormDialog
+        open={groupDialogOpen}
+        onClose={closeGroupDialog}
+        editingGroup={editingGroup}
+        groupForm={groupForm}
+        setGroupForm={setGroupForm}
+        onSave={handleSaveGroup}
+        isPending={createGroupMutation.isPending || updateGroupMutation.isPending}
+      />
 
-                      {group.instructions && (
-                        <div className="mb-4 p-3 bg-white border-orange-500/50 border rounded-lg text-sm text-black font-semibold shadow-sm">
-                          <div className="text-[10px] uppercase text-orange-600 font-bold mb-1 opacity-70">
-                            Hướng dẫn:
-                          </div>
-                          <RichContent html={group.instructions} />
-                        </div>
-                      )}
-
-                      {/* Questions List */}
-                      <div className="space-y-3 pl-4 border-l-2 border-primary/10 ml-2">
-                        {(group.questions || [])
-                          .sort(
-                            (a: any, b: any) =>
-                              (a.orderIndex || 0) - (b.orderIndex || 0),
-                          )
-                          .map((q: any, qIndex: number) => {
-                            const isBeingDragged = draggedQuestion?.questionId === q.id;
-                            const isDragOver = dragOverQuestionId === q.id;
-
-                            return (
-                              <div
-                                key={q.id}
-                                draggable
-                                onDragStart={(e) => {
-                                  e.dataTransfer.setData("text/plain", q.id);
-                                  e.dataTransfer.effectAllowed = "move";
-                                  setDraggedQuestion({ groupId: group.id, questionId: q.id });
-                                }}
-                                onDragEnd={() => {
-                                  setDraggedQuestion(null);
-                                  setDragOverQuestionId(null);
-                                }}
-                                onDragOver={(e) => {
-                                  e.preventDefault();
-                                  e.dataTransfer.dropEffect = "move";
-                                  if (draggedQuestion && draggedQuestion.groupId === group.id && draggedQuestion.questionId !== q.id) {
-                                    setDragOverQuestionId(q.id);
-                                  }
-                                }}
-                                onDragLeave={() => {
-                                  if (dragOverQuestionId === q.id) {
-                                    setDragOverQuestionId(null);
-                                  }
-                                }}
-                                onDrop={(e) => {
-                                  e.preventDefault();
-                                  handleQuestionReorderDrop(group.id, q.id);
-                                }}
-                                className={`flex items-start gap-3 p-3 border rounded-lg transition-all bg-card ${
-                                  isBeingDragged
-                                    ? "opacity-40 border-dashed border-primary/50 bg-primary/5 scale-[0.99]"
-                                    : isDragOver
-                                      ? "border-2 border-primary bg-primary/10 shadow-md ring-2 ring-primary/20"
-                                      : "hover:bg-muted/30"
-                                }`}
-                              >
-                                <div
-                                  className="flex-shrink-0 flex flex-col items-center gap-1.5 mt-0.5 cursor-grab active:cursor-grabbing text-muted-foreground hover:text-primary transition-colors"
-                                  title="Kéo thả để đổi thứ tự câu hỏi"
-                                >
-                                  <GripVertical className="h-4 w-4" />
-                                  <span className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold shadow-xs">
-                                    {qIndex + 1}
-                                  </span>
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="font-medium text-sm line-clamp-2 prose prose-sm max-w-none">
-                                    <RichContent html={q.question_text || q.questionText || "Nội dung câu hỏi"} />
-                                  </div>
-                                  {/* Display Options / Matching items / Fill-in-the-blank answers */}
-                                  {(() => {
-                                    const qType = q.question_type || q.questionType;
-                                    if (qType === "matching") {
-                                      const { items, options, pairs } = parseMatchingData(q);
-                                      if (items.length > 0 || options.length > 0) {
-                                        return (
-                                          <div className="mt-2 space-y-2 text-xs text-muted-foreground bg-teal-50/40 dark:bg-teal-950/20 p-2.5 rounded border border-teal-200/50">
-                                            {items.length > 0 && (
-                                              <div>
-                                                <span className="font-semibold text-teal-800 dark:text-teal-300 block mb-1.5">
-                                                  Danh sách câu hỏi (vế trái) & Đáp án nối:
-                                                </span>
-                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pl-1">
-                                                  {items.map((item, i) => {
-                                                    const optIdx = pairs[String(i)];
-                                                    const matchedOpt = optIdx !== undefined ? options[optIdx] : null;
-                                                    return (
-                                                      <div
-                                                        key={i}
-                                                        className="flex items-center gap-1.5 text-foreground bg-white dark:bg-neutral-900 px-2 py-1 rounded border border-teal-100 dark:border-teal-900"
-                                                      >
-                                                        <span className="font-bold text-teal-600 dark:text-teal-400 shrink-0">
-                                                          {i + 1}.
-                                                        </span>
-                                                        <span className="truncate flex-1 font-medium">
-                                                          {item.text || `(Câu ${i + 1})`}
-                                                        </span>
-                                                        <span className="font-bold text-teal-700 dark:text-teal-300 shrink-0 bg-teal-100 dark:bg-teal-900/60 px-1.5 py-0.5 rounded text-[11px]">
-                                                          {matchedOpt ? `→ ${matchedOpt.label}` : "Chưa nối"}
-                                                        </span>
-                                                      </div>
-                                                    );
-                                                  })}
-                                                </div>
-                                              </div>
-                                            )}
-                                            {options.length > 0 && (
-                                              <div className="pt-2 border-t border-teal-200/40 dark:border-teal-900/40">
-                                                <span className="font-semibold text-teal-800 dark:text-teal-300 block mb-1.5">
-                                                  Các lựa chọn (vế phải):
-                                                </span>
-                                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 pl-1">
-                                                  {options.map((opt) => (
-                                                    <div
-                                                      key={opt.index}
-                                                      className="flex items-center gap-1.5 text-muted-foreground bg-white dark:bg-neutral-900 px-2 py-1 rounded border border-teal-100/60 dark:border-teal-900/40"
-                                                    >
-                                                      <span className="font-bold text-teal-600 dark:text-teal-400 shrink-0">
-                                                        {opt.label}.
-                                                      </span>
-                                                      <span className="truncate flex-1">{opt.text}</span>
-                                                    </div>
-                                                  ))}
-                                                </div>
-                                              </div>
-                                            )}
-                                          </div>
-                                        );
-                                      }
-                                    }
-
-                                    if (qType === "fill_blank") {
-                                      const fbAnswers = parseFillBlankAnswers(q.correctAnswer || q.correct_answer);
-                                      if (fbAnswers.length > 0) {
-                                        return (
-                                          <div className="mt-2 text-xs bg-amber-50/50 dark:bg-amber-950/20 text-amber-900 dark:text-amber-300 p-2 rounded border border-amber-200/50 flex items-center gap-2">
-                                            <span className="font-semibold shrink-0">Đáp án điền:</span>
-                                            <span className="font-mono bg-white dark:bg-neutral-900 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-800">
-                                              {fbAnswers.join(" | ")}
-                                            </span>
-                                          </div>
-                                        );
-                                      }
-                                    }
-
-                                    if (Array.isArray(q.options) && q.options.length > 0) {
-                                      return (
-                                        <div className="mt-2 space-y-1 text-xs text-muted-foreground bg-muted/20 p-2 rounded border">
-                                          {q.options.map((opt: string, optIdx: number) => (
-                                            <div key={optIdx} className="flex items-center gap-1.5">
-                                              <span className="font-semibold text-primary">
-                                                {String.fromCharCode(65 + optIdx)}.
-                                              </span>
-                                              <span>{opt}</span>
-                                            </div>
-                                          ))}
-                                        </div>
-                                      );
-                                    }
-
-                                    return null;
-                                  })()}
-                                  <div className="flex items-center gap-2 mt-2">
-                                    <Badge
-                                      variant="secondary"
-                                      className="text-[10px] px-1.5 h-4"
-                                    >
-                                      {ALL_QUESTION_TYPES.find(
-                                        (t) => t.value === (q.question_type || q.questionType),
-                                      )?.label || q.question_type || q.questionType}
-                                    </Badge>
-                                    <span className="text-[10px] text-muted-foreground">
-                                      {q.points} điểm
-                                    </span>
-                                    {q.audioUrl && (
-                                      <Badge className="bg-blue-500 h-4 px-1.5">
-                                        <Headphones className="h-2 w-2 mr-1" />{" "}
-                                        Audio
-                                      </Badge>
-                                    )}
-                                  </div>
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-8 w-8 p-0"
-                                    onClick={() =>
-                                      handleOpenQuestionDialog(group.id, q)
-                                    }
-                                  >
-                                    <Edit className="h-4 w-4" />
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                                    onClick={() =>
-                                      setDeleteQuestion({
-                                        id: q.id,
-                                        text: (q.questionText || q.question_text || "").replace(
-                                          /<[^>]*>/g,
-                                          "",
-                                        ),
-                                      })
-                                    }
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                              </div>
-                            );
-                          })}
-
-                        {/* Question Action buttons */}
-                        <div className="flex gap-2 pt-2">
-                          <Button
-                            variant="outline"
-                            className="flex-1 border-dashed h-9"
-                            onClick={() => handleOpenQuestionDialog(group.id)}
-                          >
-                            <Plus className="mr-2 h-4 w-4" /> Thêm câu hỏi
-                          </Button>
-                          <Button
-                            variant="outline"
-                            className="flex-1 border-dashed h-9"
-                            onClick={() => {
-                              setBulkImportGroupId(group.id);
-                              setBulkImportText("");
-                              setBulkImportType("auto");
-                              setShowBulkPreview(true);
-                            }}
-                          >
-                            <Zap className="mr-2 h-4 w-4" /> Nhập nhanh
-                          </Button>
-                        </div>
-
-                        {/* Bulk import inline panel */}
-                        {bulkImportGroupId === group.id && (
-                          <Card className="border-2 border-primary/30 bg-primary/5 mt-3 shadow-xs">
-                            <CardContent className="p-4 space-y-4">
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                  <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                                    <Zap className="h-4 w-4" />
-                                  </div>
-                                  <div>
-                                    <h4 className="font-bold text-sm text-foreground flex items-center gap-1.5">
-                                      Nhập nhanh câu hỏi thông minh
-                                      <Badge variant="secondary" className="text-[10px] bg-primary/10 text-primary border-0">
-                                        Tự động nhận diện
-                                      </Badge>
-                                    </h4>
-                                    <p className="text-[11px] text-muted-foreground">
-                                      Hỗ trợ nhận diện số câu (1., 2.), các lựa chọn (a., b., c., d. hoặc A, B, C, D) và đáp án đúng.
-                                    </p>
-                                  </div>
-                                </div>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-7 w-7 p-0 rounded-full hover:bg-muted"
-                                  onClick={() => setBulkImportGroupId(null)}
-                                >
-                                  ✕
-                                </Button>
-                              </div>
-
-                              <Textarea
-                                placeholder={`Ví dụ dán vào đây:\n2. I ___ this book three times, but I still find it interesting.\na. read\nb. am reading\n*c. have read\nd. had read\n\n3. She hasn't seen her cousin ___ last year.\nA. since\nB. for\nC. in\nD. from\nĐáp án: A`}
-                                value={bulkImportText}
-                                onChange={(e) => setBulkImportText(e.target.value)}
-                                rows={8}
-                                className="font-mono text-xs bg-white resize-y"
-                              />
-
-                              {/* Live Parser Statistics & Preview */}
-                              {bulkImportText.trim() && (
-                                <div className="bg-white rounded-lg p-3 border text-xs space-y-2">
-                                  <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                      <span className="font-semibold text-foreground">
-                                        Đã nhận diện: {parsedBulkQuestions.length} câu hỏi
-                                      </span>
-                                      {parsedBulkQuestions.length > 0 && (
-                                        <span className="text-muted-foreground text-[11px]">
-                                          ({parsedBulkQuestions.filter((q) => q.questionType === "multiple_choice").length} trắc nghiệm,{" "}
-                                          {parsedBulkQuestions.filter((q) => q.questionType !== "multiple_choice").length} tự luận/khác)
-                                        </span>
-                                      )}
-                                    </div>
-                                    {parsedBulkQuestions.length > 0 && (
-                                      <Button
-                                        type="button"
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-6 text-[11px] px-2 text-primary hover:bg-primary/5"
-                                        onClick={() => setShowBulkPreview(!showBulkPreview)}
-                                      >
-                                        {showBulkPreview ? "Ẩn xem trước" : "Xem trước chi tiết"}
-                                      </Button>
-                                    )}
-                                  </div>
-
-                                  {showBulkPreview && parsedBulkQuestions.length > 0 && (
-                                    <div className="max-h-48 overflow-y-auto space-y-2 pt-2 border-t border-border/50">
-                                      {parsedBulkQuestions.map((pq, idx) => (
-                                        <div key={idx} className="bg-muted/30 p-2 rounded border text-[11px] space-y-1">
-                                          <div className="flex items-center justify-between gap-2">
-                                            <span className="font-bold text-foreground">
-                                              Câu {pq.questionNumber || idx + 1}: {pq.questionText}
-                                            </span>
-                                            <Badge variant="outline" className="text-[9px] shrink-0 bg-background">
-                                              {ALL_QUESTION_TYPES.find((t) => t.value === pq.questionType)?.label || pq.questionType}
-                                            </Badge>
-                                          </div>
-                                          {pq.options && pq.options.length > 0 && (
-                                            <div className="grid grid-cols-2 gap-1 text-muted-foreground pl-2 text-[10px]">
-                                              {pq.options.map((opt, oIdx) => (
-                                                <div
-                                                  key={oIdx}
-                                                  className={`flex items-center gap-1 ${
-                                                    pq.correctAnswer === opt ? "text-emerald-600 font-semibold" : ""
-                                                  }`}
-                                                >
-                                                  <span>{String.fromCharCode(65 + oIdx)}. {opt}</span>
-                                                  {pq.correctAnswer === opt && (
-                                                    <span className="text-[9px] bg-emerald-100 text-emerald-700 px-1 rounded">✓ Đáp án</span>
-                                                  )}
-                                                </div>
-                                              ))}
-                                            </div>
-                                          )}
-                                        </div>
-                                      ))}
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-
-                              <div className="flex items-center gap-3">
-                                <div className="flex items-center gap-2 flex-1">
-                                  <Label className="text-xs whitespace-nowrap font-medium">
-                                    Dạng:
-                                  </Label>
-                                  <Select
-                                    value={bulkImportType}
-                                    onValueChange={setBulkImportType}
-                                  >
-                                    <SelectTrigger className="h-8 text-xs bg-white">
-                                      <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="auto">
-                                        ✨ Tự động nhận diện (Khuyên dùng)
-                                      </SelectItem>
-                                      {getQuestionTypesForSection(
-                                        section.sectionType,
-                                      ).map((t) => (
-                                        <SelectItem
-                                          key={t.value}
-                                          value={t.value}
-                                        >
-                                          {t.label}
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-                                <Button
-                                  size="sm"
-                                  onClick={handleBulkImport}
-                                  disabled={
-                                    parsedBulkQuestions.length === 0 ||
-                                    bulkImportMutation.isPending
-                                  }
-                                  className="font-bold gap-1.5 shadow-xs"
-                                >
-                                  {bulkImportMutation.isPending && (
-                                    <Loader2 className="mr-2 h-3 w-3 animate-spin" />
-                                  )}
-                                  Tạo {parsedBulkQuestions.length} câu
-                                </Button>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        )}
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </div>
-          ) : (
-            <div className="text-center py-12 border-2 border-dashed rounded-lg bg-muted/20">
-              <p className="text-muted-foreground mb-4">
-                Chưa có nội dung nào trong section này.
-              </p>
-              <Button onClick={() => handleOpenGroupDialog()} className="gap-2">
-                <Plus className="h-4 w-4" /> Thêm nhóm câu hỏi đầu tiên
-              </Button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Group Dialog */}
-      <Dialog open={groupDialogOpen} onOpenChange={(open) => !open && closeGroupDialog(false)}>
-        <DialogContent className="max-w-[96vw] sm:max-w-[980px]">
-          <DialogHeader>
-            <DialogTitle>
-              {editingGroup ? "Cập nhật nhóm" : "Thêm nhóm mới"}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-5 py-4">
-            <div className="grid grid-cols-4 gap-4">
-              <div className="col-span-3 space-y-2">
-                <Label>Tiêu đề nhóm (Passage title, Section header...)</Label>
-                <Input
-                  value={groupForm.title}
-                  onChange={(e) =>
-                    setGroupForm((f) => ({ ...f, title: e.target.value }))
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Thứ tự</Label>
-                <Input
-                  type="number"
-                  value={groupForm.orderIndex}
-                  onChange={(e) =>
-                    setGroupForm((f) => ({
-                      ...f,
-                      orderIndex: parseInt(e.target.value) || 0,
-                    }))
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Hướng dẫn nhóm (Instructions)</Label>
-              <RichTextEditor
-                value={groupForm.instructions}
-                onChange={(html) =>
-                  setGroupForm((f) => ({ ...f, instructions: html }))
-                }
-                minHeight={100}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Audio nhóm (Không bắt buộc)</Label>
-              <FileUpload
-                accept="audio/*"
-                currentUrl={groupForm.audioUrl}
-                onUploadComplete={(url) =>
-                  setGroupForm((f) => ({ ...f, audioUrl: url }))
-                }
-                onRemove={() => setGroupForm((f) => ({ ...f, audioUrl: "" }))}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Nội dung chính / Đoạn văn (Passage)</Label>
-              <RichTextEditor
-                value={groupForm.passage}
-                onChange={(html) =>
-                  setGroupForm((f) => ({ ...f, passage: html }))
-                }
-                minHeight={250}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => closeGroupDialog(false)}>
-              Hủy
-            </Button>
-            <Button
-              onClick={handleSaveGroup}
-              disabled={
-                createGroupMutation.isPending || updateGroupMutation.isPending
-              }
-            >
-              {(createGroupMutation.isPending ||
-                updateGroupMutation.isPending) && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
-              Lưu nhóm
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Question Dialog */}
-      <Dialog open={questionDialogOpen} onOpenChange={(open) => !open && closeQuestionDialog(false)}>
-        <DialogContent className="max-w-[96vw] sm:max-w-[980px] h-[90vh] overflow-hidden p-0 flex flex-col">
-          <DialogHeader className="px-6 pt-6 pb-2">
-            <DialogTitle>
-              {editingQuestion ? "Chỉnh sửa câu hỏi" : "Thêm câu hỏi mới"}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="flex-1 min-h-0 overflow-y-auto px-6 py-4">
-            <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>Dạng câu hỏi</Label>
-              <Select
-                value={questionForm.questionType}
-                onValueChange={handleQuestionTypeChange}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {getQuestionTypesForSection(section.sectionType).map(
-                    (t) => (
-                      <SelectItem key={t.value} value={t.value}>
-                        {t.label}
-                      </SelectItem>
-                    ),
-                  )}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="mx-auto w-full max-w-2xl">
-              <QuestionFormRenderer
-                questionType={questionForm.questionType}
-                form={questionForm as any}
-                onChange={(updates) =>
-                  setQuestionForm((f) => ({ ...f, ...updates }))
-                }
-              />
-            </div>
-            </div>
-          </div>
-          <DialogFooter className="px-6 py-4 border-t">
-            <Button
-              variant="outline"
-              onClick={() => closeQuestionDialog(false)}
-            >
-              Hủy
-            </Button>
-            <Button
-              onClick={handleSaveQuestion}
-              disabled={
-                createQuestionMutation.isPending ||
-                updateQuestionMutation.isPending
-              }
-            >
-              {(createQuestionMutation.isPending ||
-                updateQuestionMutation.isPending) && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
-              Lưu câu hỏi
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Question Form Dialog */}
+      <QuestionFormDialog
+        open={questionDialogOpen}
+        onClose={closeQuestionDialog}
+        editingQuestion={editingQuestion}
+        sectionType={section.sectionType}
+        questionForm={questionForm}
+        setQuestionForm={setQuestionForm}
+        onQuestionTypeChange={handleQuestionTypeChange}
+        onSave={handleSaveQuestion}
+        isPending={createQuestionMutation.isPending || updateQuestionMutation.isPending}
+      />
 
       <DeleteConfirmDialog
         open={!!deleteGroup}
@@ -1740,53 +863,14 @@ export default function AdminSectionEdit() {
       />
 
       {/* Batch Normalize Confirmation Dialog */}
-      <Dialog open={normalizeConfirmOpen} onOpenChange={setNormalizeConfirmOpen}>
-        <DialogContent className="sm:max-w-[480px]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-amber-600">
-              <Sparkles className="h-5 w-5 text-amber-500" />
-              Xác nhận chuẩn hóa định dạng tự động
-            </DialogTitle>
-            <DialogDescription className="space-y-2 pt-2 text-sm text-foreground/80">
-              <p>
-                Hệ thống sẽ tự động quét qua{" "}
-                <strong>
-                  {targetNormalizeGroupId
-                    ? `các câu hỏi và đoạn văn trong nhóm này`
-                    : `toàn bộ ${totalQuestionsCount} câu hỏi, đoạn văn và hướng dẫn`}
-                </strong>{" "}
-                để:
-              </p>
-              <ul className="list-disc pl-5 space-y-1 text-xs text-muted-foreground">
-                <li>Loại bỏ thẻ cỡ chữ rác, cỡ chữ to nhỏ thất thường copy từ Word/Google Docs.</li>
-                <li>Đưa kích thước chữ về chuẩn hệ thống giúp học viên làm bài rõ ràng, đồng nhất.</li>
-                <li>Bảo toàn nguyên vẹn chữ in đậm, in nghiêng, gạch chân, danh sách, bảng biểu và từ khóa điền khuyết.</li>
-              </ul>
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0 pt-3">
-            <Button
-              variant="outline"
-              onClick={() => setNormalizeConfirmOpen(false)}
-              disabled={normalizing}
-            >
-              Hủy
-            </Button>
-            <Button
-              onClick={() => handleBatchNormalize(targetNormalizeGroupId)}
-              disabled={normalizing}
-              className="bg-amber-600 hover:bg-amber-700 text-white font-bold gap-2"
-            >
-              {normalizing ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Sparkles className="h-4 w-4" />
-              )}
-              Bắt đầu chuẩn hóa
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <BatchNormalizeModal
+        open={normalizeConfirmOpen}
+        onOpenChange={setNormalizeConfirmOpen}
+        targetNormalizeGroupId={targetNormalizeGroupId}
+        totalQuestionsCount={totalQuestionsCount}
+        normalizing={normalizing}
+        onConfirm={handleBatchNormalize}
+      />
     </div>
   );
 }

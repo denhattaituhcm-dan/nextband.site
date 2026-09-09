@@ -63,6 +63,7 @@ model User {
   errorEpisodes         StudentErrorEpisode[]    @relation("StudentErrorEpisodes")
   skillEvidences        StudentSkillEvidence[]
   skillMasteries        StudentSkillMastery[]
+  seasonalClaims        SeasonalRewardClaim[]
 
   @@map("profiles")
 }
@@ -1369,4 +1370,58 @@ model StudentSkillMastery {
   @@index([studentId])
   @@map("student_skill_masteries")
 }
+
+model SeasonalEvent {
+  id           String                @id @default(uuid())
+  code         String                @unique // e.g. "TET_2027", "TEACHERS_DAY_2026"
+  name         String                // "Tết Nguyên Đán 2027"
+  type         String                @default("TET") // "TET", "TEACHERS_DAY", "BACK_TO_SCHOOL", "MID_AUTUMN"
+  isActive     Boolean               @default(false) @map("is_active")
+  startAt      DateTime?             @map("start_at")
+  endAt        DateTime?             @map("end_at")
+  budgetCap    Int                   @default(800000) @map("budget_cap")
+  totalSlots   Int                   @default(60) @map("total_slots")
+  uiConfig     Json?                 @map("ui_config")
+  createdAt    DateTime              @default(now()) @map("created_at")
+  updatedAt    DateTime              @default(now()) @updatedAt @map("updated_at")
+
+  rewardPool   SeasonalRewardPool[]
+  claims       SeasonalRewardClaim[]
+
+  @@map("seasonal_events")
+}
+
+model SeasonalRewardPool {
+  id           String        @id @default(uuid())
+  eventId      String        @map("event_id")
+  tier         String        // "SMALL", "MEDIUM", "LARGE", "SPECIAL"
+  amount       Int           // in VND: 5000, 10000, 25000, 100000
+  totalSlots   Int           @map("total_slots") // e.g. 40, 15, 4, 1
+  claimedSlots Int           @default(0) @map("claimed_slots")
+  order        Int           @default(0)
+
+  event        SeasonalEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@map("seasonal_reward_pools")
+}
+
+model SeasonalRewardClaim {
+  id           String        @id @default(uuid())
+  eventId      String        @map("event_id")
+  studentId    String        @map("student_id")
+  homeworkId   String        @map("homework_id")
+  rewardType   String        @default("CASH") @map("reward_type") // "CASH", "VOUCHER", "HONOR_XP"
+  amount       Int           @default(0) // in VND or XP
+  milestoneKey String?       @map("milestone_key")
+  claimedAt    DateTime      @default(now()) @map("claimed_at")
+
+  event        SeasonalEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  student      User          @relation(fields: [studentId], references: [userId], onDelete: Cascade)
+
+  @@unique([eventId, studentId, homeworkId])
+  @@index([eventId, studentId])
+  @@map("seasonal_reward_claims")
+}
+
 

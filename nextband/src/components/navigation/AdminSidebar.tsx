@@ -20,6 +20,7 @@ import {
   Trophy,
   CreditCard,
   BookMarked,
+  Sparkles,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -148,6 +149,12 @@ const adminItems = [
     url: "/admin/notifications",
     icon: Bell,
     adminOnly: false,
+  },
+  {
+    title: "Lễ / Tết",
+    url: "/admin/seasonal",
+    icon: Sparkles,
+    adminOnly: true,
   },
   {
     title: "Cài đặt",

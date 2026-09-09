@@ -188,7 +188,7 @@ export function ReadingBattleDebriefView({
               <span>Rèn Luyện Cải Thiện — Làm Lại Bài Này</span>
             </div>
             <p className="text-xs text-orange-100">
-              Bạn có thể làm lại để khắc phục các lỗi ở dạng <strong>{weakestType.labelVi}</strong> (chưa đúng {weakestType.incorrect} câu). Hệ thống chấm máy tự động và luôn bảo lưu bài làm gốc của bạn!
+              Bạn có thể làm lại để khắc phục các lỗi ở dạng <strong>{weakestType.labelVi}</strong> (chưa đúng {weakestType.incorrect} câu). Hệ thống sẽ chấm máy tự động và huỷ bỏ kết quả bài cũ để ghi nhận bài làm mới của bạn!
             </p>
           </div>
 
@@ -198,7 +198,7 @@ export function ReadingBattleDebriefView({
             disabled={isRetrying}
             className="bg-white text-orange-700 hover:bg-orange-50 font-extrabold text-xs h-9 px-4 rounded-xl shadow-xs shrink-0 cursor-pointer gap-1.5"
           >
-            <span>{isRetrying ? "Đang tạo bài làm..." : "Làm Lại Bài Này (Attempt 2)"}</span>
+            <span>{isRetrying ? "Đang tạo bài làm..." : "Làm Lại Bài Này"}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Button>
         </div>

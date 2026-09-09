@@ -1347,7 +1347,7 @@ export const submissionsApi = {
     throw new Error(errData.error || "Phúc khảo bài làm thất bại");
   },
 
-  start: async (examId: string) => {
+  start: async (examId: string, options?: { allowRetake?: boolean }) => {
     const token = await getAuthToken();
     if (!token) {
       throw new Error("Vui lòng đăng nhập để bắt đầu làm bài.");
@@ -1359,7 +1359,7 @@ export const submissionsApi = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ examId }),
+      body: JSON.stringify({ examId, allowRetake: options?.allowRetake }),
     });
 
     if (response.ok) {
@@ -1370,6 +1370,10 @@ export const submissionsApi = {
     const errData = await response.json().catch(() => ({}));
     const errMsg = errData.error || errData.message || "Không thể bắt đầu bài làm";
     throw new Error(errMsg);
+  },
+
+  retake: async (examId: string) => {
+    return submissionsApi.start(examId, { allowRetake: true });
   },
 
   saveAnswers: async (
