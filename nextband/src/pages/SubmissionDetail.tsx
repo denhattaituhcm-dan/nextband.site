@@ -1473,6 +1473,42 @@ export default function SubmissionDetail() {
           </div>
         );
         })}
+
+      {/* Bottom Navigation: Back to Dashboard/List & Next Homework */}
+      <div className="pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pb-12">
+        <Button
+          variant="outline"
+          onClick={handleBack}
+          className="w-full sm:w-auto text-xs font-semibold gap-1.5"
+        >
+          <ArrowLeft className="h-4 w-4" /> Quay lại danh sách bài tập
+        </Button>
+
+        {upcomingHomeworkInfo && (
+          <div className="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <div className="text-left sm:text-right">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground block">
+                Bài tập kế tiếp theo lộ trình
+              </span>
+              <span className="text-xs font-bold text-foreground">
+                {upcomingHomeworkInfo.title}
+                {upcomingHomeworkInfo.deadline && (
+                  <span className="text-muted-foreground font-normal ml-1.5">
+                    (Hạn: {format(new Date(upcomingHomeworkInfo.deadline), "HH:mm · dd/MM", { locale: vi })})
+                  </span>
+                )}
+              </span>
+            </div>
+            <Button
+              onClick={() => navigate(routes.student.lesson(upcomingHomeworkInfo.id))}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs gap-1.5 rounded-xl shadow-xs"
+            >
+              <span>Làm bài tiếp theo</span>
+              <ArrowRightIcon className="w-3.5 h-3.5" />
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
