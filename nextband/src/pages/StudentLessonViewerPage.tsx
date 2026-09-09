@@ -264,14 +264,11 @@ export default function StudentLessonViewerPage() {
   const reviewedCount = homeworkList.filter((hw) => hw.status === "GRADED").length;
 
   // Recent completed homework (prioritize graded, then submitted)
-  const recentCompletedHomework = useMemo(() => {
-    return (
-      homeworkList.find((hw) => hw.status === "GRADED") ||
-      homeworkList.find((hw) => hw.status === "SUBMITTED") ||
-      homeworkList.find((hw) => hw.status === "REVISION_REQUIRED") ||
-      null
-    );
-  }, [homeworkList]);
+  const recentCompletedHomework =
+    homeworkList.find((hw) => hw.status === "GRADED") ||
+    homeworkList.find((hw) => hw.status === "SUBMITTED") ||
+    homeworkList.find((hw) => hw.status === "REVISION_REQUIRED") ||
+    null;
 
   // Milestone eligibility: milestone achieved (>= 25%, >= 50%, >= 75%, 100%) or high reviewed score
   const totalHomeworksCount = homeworkList.length || 1;

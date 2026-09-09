@@ -19,6 +19,7 @@ import {
   TrendingUp,
   Trophy,
   CreditCard,
+  BookMarked,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -113,7 +114,13 @@ const adminItems = [
     adminOnly: true,
   },
   {
-    title: "Học viên",
+    title: "Hồ sơ học viên",
+    url: "/admin/students",
+    icon: BookMarked,
+    adminOnly: false,
+  },
+  {
+    title: "Học viên (QL Tài khoản)",
     url: "/admin/users?role=student",
     icon: Users,
     adminOnly: true,

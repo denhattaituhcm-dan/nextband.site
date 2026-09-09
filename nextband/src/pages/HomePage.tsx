@@ -35,6 +35,7 @@ import {
 } from "@/lib/milestoneEngine";
 import { CelebrationModal } from "@/components/celebration/CelebrationModal";
 import { milestonesApi, attendanceApi } from "@/lib/api";
+import { ExamGoalCard } from "@/components/student/ExamGoalCard";
 import {
   Layers,
   WifiOff,
@@ -46,6 +47,7 @@ import {
   ArrowRight,
   BookOpen,
 } from "lucide-react";
+
 
 // ─── Lifecycle-derived sub-views ─────────────────────────────────────────────
 
@@ -568,38 +570,10 @@ export default function HomePage() {
                   </div>
                 </Card>
 
-                {/* Quick 5-Skill Homework Hub Link */}
-                <Card className={`relative overflow-hidden md:col-span-5 p-4 sm:p-5 rounded-2xl border transition-all duration-300 flex flex-col justify-between ${cardTheme.cardBorder} ${cardTheme.cardBg}`}>
-                  <div className={`absolute top-0 left-0 right-0 h-1.5 ${cardTheme.topLine}`} />
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md border ${cardTheme.badge}`}>
-                        Bảng Khái Quát Bài Tập
-                      </span>
-                      <span className={`text-xs font-mono font-bold tabular-nums px-2.5 py-0.5 rounded-md border ${cardTheme.badgePill}`}>
-                        {submittedCount} / {rawLessons?.length || 27} bài
-                      </span>
-                    </div>
-                    <h4 className="font-bold text-sm text-foreground pt-0.5">
-                      5 Kỹ năng: Grammar, Listening, Reading, Writing, Speaking
-                    </h4>
-                    <p className="text-[11px] text-muted-foreground leading-relaxed">
-                      Phân bổ rõ ràng giữa điểm trắc nghiệm (1đ/câu) và Band điểm IELTS tự luận do giáo viên chấm.
-                    </p>
-                  </div>
-
-                  <div className={`pt-3 border-t ${cardTheme.headerBorder} flex items-center justify-end`}>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => navigate(`/app/class/${enrolledClassId}/lessons?tab=skill-matrix`)}
-                      className={`h-7 text-xs font-bold rounded-lg gap-1 ${cardTheme.secondaryButton}`}
-                    >
-                      <span>Tra cứu tiến độ 5 kỹ năng</span>
-                      <ArrowRight className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </Card>
+                {/* IELTS Exam Goal Card */}
+                <div className="md:col-span-5">
+                  <ExamGoalCard userId={user?.id} classId={enrolledClassId} />
+                </div>
               </div>
             )}
 

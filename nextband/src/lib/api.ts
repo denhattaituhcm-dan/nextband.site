@@ -1674,6 +1674,20 @@ export const usersApi = {
     };
   },
 
+  getStudentDossier: async (studentId: string) => {
+    const token = await getAuthToken();
+    const searchParams = new URLSearchParams({ search: studentId, limit: "1" });
+    const response = await fetch(`${API_BASE_URL}/users/students-management?${searchParams.toString()}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Không thể tải hồ sơ học viên");
+    const student = (result.data || []).find((s: any) => s.id === studentId || s.userId === studentId || s.profileId === studentId) || result.data?.[0] || null;
+    return student;
+  },
+
   create: async (user: any) => {
     const token = await getAuthToken();
     const res = await fetch(`${API_BASE_URL}/users`, {

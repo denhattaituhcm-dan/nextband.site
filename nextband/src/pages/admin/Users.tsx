@@ -743,7 +743,11 @@ export default function AdminUsers() {
                         <DropdownMenuContent align="end" className="w-48 text-xs">
                           <DropdownMenuItem onClick={() => { setSelectedStudent(user); setDrawerOpen(true); }}>
                             <User className="h-3.5 w-3.5 mr-2 text-blue-500" />
-                            Xem hồ sơ (Workspace)
+                            Xem hồ sơ nhanh (Drawer)
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => navigate(`/admin/students/${user.id || user.userId}`)}>
+                            <BookOpen className="h-3.5 w-3.5 mr-2 text-emerald-600" />
+                            Hồ sơ Chiến lược 360°
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => openEdit(user)}>
                             <Edit className="h-3.5 w-3.5 mr-2 text-slate-500" />

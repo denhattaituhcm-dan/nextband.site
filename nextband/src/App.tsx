@@ -111,6 +111,7 @@ const ReadingUniversePage = lazyWithRetry(() => import("@/pages/public/reading/R
 const ReadingCasePage = lazyWithRetry(() => import("@/pages/public/reading/ReadingCasePage"));
 const BuddyLandingPage = lazyWithRetry(() => import("@/pages/public/BuddyLandingPage"));
 const ParentHubPage = lazyWithRetry(() => import("@/pages/public/ParentHubPage"));
+const DiagnosticLandingPage = lazyWithRetry(() => import("@/pages/public/DiagnosticLandingPage"));
 
 
 // Lazy-loaded Auth Pages
@@ -140,6 +141,8 @@ const AdminExamCreate = lazyWithRetry(() => import("@/pages/admin/ExamCreate"));
 const AdminExamEdit = lazyWithRetry(() => import("@/pages/admin/ExamEdit"));
 const AdminSectionEdit = lazyWithRetry(() => import("@/pages/admin/SectionEdit"));
 const AdminUsers = lazyWithRetry(() => import("@/pages/admin/Users"));
+const AdminStudentsList = lazyWithRetry(() => import("@/pages/admin/StudentsListPage"));
+const AdminStudentDossier = lazyWithRetry(() => import("@/pages/admin/StudentStrategicDossierPage"));
 const AdminTeachers = lazyWithRetry(() => import("@/pages/admin/Teachers"));
 const AdminStaff = lazyWithRetry(() => import("@/pages/admin/Staff"));
 const AdminAdmins = lazyWithRetry(() => import("@/pages/admin/Admins"));
@@ -341,6 +344,8 @@ const App = () => (
               {/* ============================================================ */}
               {/* 1.1 CLEAN-ROOM ASSESSMENT & READING INTERFACE (Focus Mode)   */}
               {/* ============================================================ */}
+              <Route path="/diagnostic" element={<DiagnosticLandingPage />} />
+              <Route path="/kiem-tra" element={<DiagnosticLandingPage />} />
               <Route path="/reading/case-001" element={<ReadingCasePage />} />
               <Route path="/reading/:caseId" element={<ReadingCasePage />} />
               <Route path="/assessment/take/:sessionId" element={<PlacementExamInterface />} />
@@ -511,6 +516,22 @@ const App = () => (
                   element={
                     <ProtectedRoute requiredRoles={["admin"]}>
                       <AdminEvidence />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/students"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <AdminStudentsList />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/students/:id"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <AdminStudentDossier />
                     </ProtectedRoute>
                   }
                 />

@@ -230,7 +230,12 @@ export function StudentWorkspaceDrawer({
 
   const handleOpenFullPage = () => {
     onOpenChange(false);
-    navigate(`/admin/users?search=${encodeURIComponent(student?.email || student?.fullName || student?.id || "")}`);
+    const sid = student?.id || student?.userId;
+    if (sid) {
+      navigate(`/admin/students/${sid}`);
+    } else {
+      navigate(`/admin/students?search=${encodeURIComponent(student?.email || student?.fullName || "")}`);
+    }
   };
 
   const handleChangeClass = async () => {
