@@ -6,6 +6,7 @@ export interface SeasonalUIConfig {
   showModal: boolean;
   showPetals: boolean;
   playChime: boolean;
+  maxEligibleHomeworks?: number; // Maximum eligible active homeworks that carry lucky envelopes (default 5)
   bannerTitle?: string;
   bannerSubtitle?: string;
 }
@@ -16,6 +17,7 @@ export const DEFAULT_TET_UI_CONFIG: SeasonalUIConfig = {
   showModal: true,
   showPetals: false, // Default off for smooth performance
   playChime: true,
+  maxEligibleHomeworks: 5,
   bannerTitle: "Khai Bút Đầu Xuân — Mở Lộc Tri Thức",
   bannerSubtitle: "Hoàn thành bài tập đạt chuẩn để khai bút đầu năm và hái lộc may mắn!",
 };

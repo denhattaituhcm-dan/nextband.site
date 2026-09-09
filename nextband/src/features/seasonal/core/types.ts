@@ -10,6 +10,7 @@ export interface SeasonalUIConfig {
   showModal: boolean;
   showPetals: boolean;
   playChime: boolean;
+  maxEligibleHomeworks?: number;
   bannerTitle?: string;
   bannerSubtitle?: string;
 }

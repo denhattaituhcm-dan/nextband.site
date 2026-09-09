@@ -372,6 +372,7 @@ export default function SeasonalEventsPage() {
   const [showModal, setShowModal] = useState(true);
   const [showPetals, setShowPetals] = useState(false);
   const [playChime, setPlayChime] = useState(true);
+  const [maxEligibleHomeworks, setMaxEligibleHomeworks] = useState(5);
 
   // Sync state when selectedType or DB event changes
   useEffect(() => {
@@ -403,6 +404,7 @@ export default function SeasonalEventsPage() {
       setShowModal(ui.showModal !== false);
       setShowPetals(ui.showPetals === true);
       setPlayChime(ui.playChime !== false);
+      setMaxEligibleHomeworks(ui.maxEligibleHomeworks !== undefined ? Number(ui.maxEligibleHomeworks) : 5);
     } else {
       // Fallback to preset defaults
       setIsActive(false);
@@ -415,6 +417,7 @@ export default function SeasonalEventsPage() {
       setShowModal(true);
       setShowPetals(false);
       setPlayChime(true);
+      setMaxEligibleHomeworks(5);
       setDefaultPoolsForType(selectedType);
     }
   }, [selectedType, currentDbEvent, currentPreset]);
@@ -546,6 +549,7 @@ export default function SeasonalEventsPage() {
         showModal,
         showPetals,
         playChime,
+        maxEligibleHomeworks: Number(maxEligibleHomeworks) || 5,
         bannerTitle: currentPreset.subtitle,
       },
       pools: rewardPools.map((p, idx) => ({
@@ -1089,6 +1093,30 @@ export default function SeasonalEventsPage() {
                       <p className="text-[11px] text-slate-500">{currentPreset.feature5Desc}</p>
                     </div>
                     <Switch checked={showPetals} onCheckedChange={setShowPetals} />
+                  </div>
+
+                  {/* CẤU HÌNH SỐ LƯỢNG BÀI TẬP ĐƯỢC GẮN LÌ XÌ */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border-2 border-red-200 dark:border-red-900/50 bg-red-50/40 dark:bg-red-950/20 sm:col-span-2">
+                    <div className="space-y-0.5">
+                      <Label className="text-xs font-black text-red-900 dark:text-red-200 flex items-center gap-1.5">
+                        <span>🧧 Số lượng bài tập tối đa được gắn bao lì xì</span>
+                        <Badge className="bg-red-500 text-white text-[10px] font-bold">Chống nản học</Badge>
+                      </Label>
+                      <p className="text-[11px] text-slate-600 dark:text-slate-400">
+                        Chỉ áp dụng cho các bài tập <strong>còn hạn nộp</strong> (bài nộp muộn / quá hạn sẽ không có lì xì). Học viên hoàn thành đủ số bài này sẽ nhận tối đa số bao lì xì.
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Input
+                        type="number"
+                        min="1"
+                        max="50"
+                        value={maxEligibleHomeworks}
+                        onChange={(e) => setMaxEligibleHomeworks(Math.max(1, Number(e.target.value) || 1))}
+                        className="w-20 h-9 font-black text-sm text-center rounded-xl bg-white dark:bg-slate-900 border-red-300 dark:border-red-800"
+                      />
+                      <span className="text-xs font-bold text-slate-600 dark:text-slate-400">bài tập</span>
+                    </div>
                   </div>
                 </div>
               </div>

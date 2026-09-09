@@ -278,6 +278,33 @@ export default function StudentLessonViewerPage() {
     };
   });
 
+  // Calculate list of eligible homeworks that carry lucky envelopes:
+  // 1. Must NOT be overdue (or if already claimed, remains visible to show reward badge)
+  // 2. Capped at maxEligibleHomeworks (default 5 from seasonalUiConfig)
+  const maxSeasonalHomeworks = seasonalUiConfig?.maxEligibleHomeworks || 5;
+  const eligibleHomeworkIdsForSeasonal = useMemo(() => {
+    if (!isSeasonalActive || !isTet) return new Set<string>();
+
+    const set = new Set<string>();
+    for (const hw of homeworkList) {
+      const hwId = hw.examId || hw.id;
+      const isClaimed = isHomeworkClaimed(hwId);
+      const isOverdue = hw.status === "OVERDUE";
+
+      // If already claimed, student keeps the earned badge
+      if (isClaimed) {
+        set.add(hwId);
+        continue;
+      }
+
+      // If not overdue, eligible for envelope up to max quota
+      if (!isOverdue && set.size < maxSeasonalHomeworks) {
+        set.add(hwId);
+      }
+    }
+    return set;
+  }, [homeworkList, isSeasonalActive, isTet, maxSeasonalHomeworks, isHomeworkClaimed]);
+
   const nextHomework = homeworkList.find((hw) => hw.status === "REVISION_REQUIRED" || hw.status === "OVERDUE" || hw.status === "UPCOMING" || hw.status === "IN_PROGRESS") || homeworkList[0];
 
   const overdueCount = homeworkList.filter((hw) => hw.status === "OVERDUE").length;
@@ -661,13 +688,14 @@ export default function StudentLessonViewerPage() {
                             {hw.title}
                           </h3>
                           {getStatusBadge(hw.status, hw.countdown, hw.submissionTiming)}
-                          {isSeasonalActive && isTet && seasonalUiConfig.showEnvelopes && (
+                          {isSeasonalActive && isTet && seasonalUiConfig.showEnvelopes && eligibleHomeworkIdsForSeasonal.has(hw.examId || hw.id) && (
                             <TetEnvelopeBadge
                               isCompleted={hw.status === "GRADED" || hw.status === "SUBMITTED"}
                               isClaimed={isHomeworkClaimed(hw.examId || hw.id)}
                               claimedAmount={getClaimedAmount(hw.examId || hw.id)}
                               onClaim={() => handleSeasonalClaim(hw.examId || hw.id, hw.title)}
                               isClaiming={isSeasonalClaiming}
+                              isOverdue={isOverdue}
                             />
                           )}
                         </div>

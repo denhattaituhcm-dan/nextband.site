@@ -8,6 +8,7 @@ interface TetEnvelopeBadgeProps {
   rewardType?: "CASH" | "VOUCHER" | "HONOR_XP";
   onClaim?: () => void;
   isClaiming?: boolean;
+  isOverdue?: boolean;
 }
 
 export function TetEnvelopeBadge({
@@ -17,8 +18,14 @@ export function TetEnvelopeBadge({
   rewardType = "CASH",
   onClaim,
   isClaiming = false,
+  isOverdue = false,
 }: TetEnvelopeBadgeProps) {
-  // Case 1: Already claimed for this homework
+  // Case 1: Overdue homeworks lose lucky money privilege
+  if (isOverdue && !isClaimed) {
+    return null;
+  }
+
+  // Case 2: Already claimed for this homework
   if (isClaimed) {
     const displayText =
       rewardType === "CASH" && claimedAmount
@@ -35,7 +42,7 @@ export function TetEnvelopeBadge({
     );
   }
 
-  // Case 2: Homework completed, ready to claim/open envelope!
+  // Case 3: Homework completed on time, ready to claim/open envelope!
   if (isCompleted) {
     return (
       <button
@@ -54,14 +61,14 @@ export function TetEnvelopeBadge({
     );
   }
 
-  // Case 3: Homework not yet completed (teaser / motivation)
+  // Case 4: Homework not yet completed (teaser / motivation: strictly informational, cannot open until completed)
   return (
     <div
-      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200/70 dark:border-red-900/50 text-red-700 dark:text-red-400 text-[11px] font-semibold opacity-85"
-      title="Hoàn thành bài tập để nhận lượt khai lộc đầu xuân"
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-500/10 dark:bg-red-950/30 border border-red-300/60 dark:border-red-900/60 text-red-700 dark:text-red-300 text-[11px] font-bold"
+      title="Hoàn thành & nộp bài đúng hạn để mở bao lì xì này"
     >
       <span className="text-xs">🧧</span>
-      <span>Khai Bút Nhận Lộc</span>
+      <span>Nộp bài để mở lộc</span>
     </div>
   );
 }
