@@ -23,11 +23,11 @@ export function SeasonalWalletHeaderBadge({
   return (
     <div
       onClick={onClick}
-      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl ${theme.headerWalletGradient} text-white shadow-xs border ${theme.headerWalletBorder} select-none cursor-default transition-all hover:shadow-md`}
+      className={`inline-flex items-center gap-1.5 sm:gap-2 px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl ${theme.headerWalletGradient} text-white shadow-xs border ${theme.headerWalletBorder} select-none cursor-pointer transition-all hover:shadow-md shrink-0 max-h-9`}
     >
-      <span className="text-base leading-none">{theme.headerWalletIcon}</span>
+      <span className="text-sm sm:text-base leading-none shrink-0">{theme.headerWalletIcon}</span>
       <div className="flex flex-col text-left">
-        <div className="flex items-center gap-1.5">
+        <div className="hidden sm:flex items-center gap-1.5 whitespace-nowrap">
           <span className={`text-[10px] font-semibold ${theme.headerWalletSubColor} uppercase tracking-wider`}>
             {theme.headerWalletLabel}
           </span>
@@ -37,7 +37,7 @@ export function SeasonalWalletHeaderBadge({
             </span>
           )}
         </div>
-        <div className="flex items-center gap-1 font-black text-xs leading-none mt-0.5">
+        <div className="flex items-center gap-1 font-black text-xs leading-none sm:mt-0.5 whitespace-nowrap">
           {totalCash > 0 ? (
             <span className={`${theme.headerWalletAmountColor} tracking-tight`}>
               {totalCash.toLocaleString("vi-VN")}đ
@@ -52,7 +52,7 @@ export function SeasonalWalletHeaderBadge({
           )}
         </div>
       </div>
-      <Sparkles className="w-3.5 h-3.5 text-amber-200 fill-amber-200 shrink-0 ml-0.5" />
+      <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-200 fill-amber-200 shrink-0 ml-0.5" />
     </div>
   );
 }

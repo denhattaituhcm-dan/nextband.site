@@ -234,7 +234,7 @@ export default function PublicHomePage() {
             onClick={() => navigate("/assessment")}
             className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3.5 sm:py-0 text-sm sm:text-base font-extrabold bg-brand-red hover:bg-brand-red-hover text-white shadow-md gap-2.5 whitespace-normal text-center"
           >
-            <span>Khảo thí kiểm tra Rank hiện tại của bạn ngay (60 Phút)</span>
+            <span>Kiểm tra Rank hiện tại của bạn ngay (60 Phút)</span>
             <ArrowRight className="h-5 w-5 shrink-0" />
           </Button>
 
@@ -311,7 +311,7 @@ export default function PublicHomePage() {
             </div>
             <div className="pt-3 border-t border-border/60 text-xs font-bold text-[#002147] flex items-center gap-1.5">
               <CheckCircle2 className="h-4 w-4" />
-              <span>Chẩn đoán chính xác 100% sự thật</span>
+              <span>Chẩn đoán chính xác và khách quan</span>
             </div>
           </div>
 
@@ -325,7 +325,7 @@ export default function PublicHomePage() {
                 Nút Thắt Quyết Định (+0.5 Band ROI)
               </h3>
               <p className="text-sm text-foreground/75 leading-relaxed">
-                Chỉ đích danh đúng 2 thói quen vô thức đang cản trở bạn bứt phá lên Band 6.5 - 7.0+, kèm chiến lược giải thoát cụ thể để bạn thấy rõ lộ trình tăng điểm.
+                Chỉ rõ 2 thói quen vô thức đang cản trở bạn bứt phá lên Band 6.5 - 7.0+, kèm chiến lược cụ thể để bạn thấy rõ lộ trình tăng điểm.
               </p>
             </div>
             <div className="pt-3 border-t border-border/60 text-xs font-bold text-brand-red flex items-center gap-1.5">
@@ -349,7 +349,7 @@ export default function PublicHomePage() {
             </div>
             <div className="pt-3 border-t border-border/60 text-xs font-bold text-brand-blue flex items-center gap-1.5">
               <CheckCircle2 className="h-4 w-4" />
-              <span>Bảo bối độc bản mang vào phòng thi</span>
+              <span>Sổ tay ôn tập trước giờ thi thật</span>
             </div>
           </div>
         </div>

@@ -56,7 +56,7 @@ export default function CareersPage() {
               </h1>
 
               <p className="text-base sm:text-lg lg:text-xl text-foreground/85 font-medium leading-relaxed max-w-2xl">
-                Trong y khoa, những bác sĩ giỏi nhất đều trưởng thành từ môi trường nội trú — nơi đòi hỏi sự toàn tâm toàn ý, kỷ luật nghiêm cẩn và áp lực lâm sàng liên tục. Tại ARIS, một "Bác sĩ học thuật" không làm việc hời hợt hay chạy sô bán thời gian. Chúng tôi xây dựng môi trường Full-time chuyên trách: ăn ngủ cùng dữ liệu bài làm, trực tiếp giải phẫu từng điểm nghẽn tư duy và chịu trách nhiệm đến cùng với sự tiến bộ của người học.
+                Tương tự môi trường y khoa nội trú đòi hỏi tính kỷ luật cao, tại ARIS, một "Bác sĩ học thuật" làm việc Full-time chuyên trách: trực tiếp giải phẫu từng điểm nghẽn tư duy và đồng hành sát sao vì sự tiến bộ của người học.
               </p>
 
               <div className="pt-2 flex flex-wrap items-center gap-4">
@@ -93,11 +93,7 @@ export default function CareersPage() {
                 </span>
                 <span className="flex items-center gap-2">
                   <CheckCircle2 className="h-4.5 w-4.5 text-success" />
-                  Ăn ngủ cùng dữ liệu học thuật
-                </span>
-                <span className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4.5 w-4.5 text-success" />
-                  Chịu trách nhiệm đến cùng
+                  Trực tiếp giải phẫu điểm nghẽn tư duy
                 </span>
               </div>
             </div>
@@ -123,7 +119,7 @@ export default function CareersPage() {
                       <span>Chẩn đoán tận gốc rễ</span>
                     </div>
                     <p className="text-xs sm:text-[13px] text-foreground/75 leading-relaxed pl-8.5">
-                      Không dạy mẹo vặt qua loa. Bóc tách chính xác vì sao học viên chọn sai và nghẽn tư duy ở đâu.
+                      Không dạy mẹo vặt. Bóc tách chính xác nguyên nhân chọn sai và điểm nghẽn tư duy của người học.
                     </p>
                   </div>
 
@@ -135,7 +131,7 @@ export default function CareersPage() {
                       <span>Kỷ luật lâm sàng liên tục</span>
                     </div>
                     <p className="text-xs sm:text-[13px] text-foreground/75 leading-relaxed pl-8.5">
-                      Chấm chữa bài chi tiết từng câu, bám sát tiến độ nộp bài và bài sửa của từng học viên mỗi ngày.
+                      Chấm chữa chi tiết từng câu, theo sát tiến độ nộp và sửa bài của từng học viên mỗi ngày.
                     </p>
                   </div>
 
@@ -147,7 +143,7 @@ export default function CareersPage() {
                       <span>Đồng hành đến kết quả cuối</span>
                     </div>
                     <p className="text-xs sm:text-[13px] text-foreground/75 leading-relaxed pl-8.5">
-                      Không đổ lỗi cho học viên khi gặp bế tắc; chủ động tìm giải pháp triệt để giúp học viên bứt phá.
+                      Chủ động tìm giải pháp triệt để giúp học viên bứt phá khi gặp điểm nghẽn hay bế tắc.
                     </p>
                   </div>
                 </div>
@@ -158,7 +154,7 @@ export default function CareersPage() {
                     <span>Văn hóa thẳng thắn — Cùng tiến bộ</span>
                   </div>
                   <p className="text-xs text-white/85 leading-relaxed">
-                    Môi trường tôn trọng thực chất, không thảo mai, sẵn sàng phản biện sắc bén để nâng chuẩn học thuật.
+                    Tôn trọng thực chất, phản biện thẳng thắn để liên tục nâng cao chuẩn mực học thuật.
                   </p>
                 </div>
               </div>
@@ -190,7 +186,7 @@ export default function CareersPage() {
             </div>
 
             <p className="text-base sm:text-lg text-foreground/80 leading-relaxed">
-              Dạy học không phải là làm công ăn lương hay diễn trò hoa mỹ bề mặt. Dạy học là <strong>thấu hiểu tận gốc rễ cơ chế ngôn ngữ và tư duy bản xứ</strong>, từ đó trang bị phương pháp chuẩn xác để học viên thăng cấp thực chất.
+              Dạy học không phải là hình thức bề mặt. Dạy học là <strong>thấu hiểu cơ chế ngôn ngữ và tư duy bản xứ</strong>, trang bị phương pháp chuẩn xác giúp học viên tiến bộ thực chất.
             </p>
 
             <div className="p-5 rounded-2xl bg-muted/40 border border-border/60 text-sm text-foreground/85 leading-relaxed font-medium space-y-2">
@@ -199,7 +195,7 @@ export default function CareersPage() {
                 <span>Trách nhiệm của một người thầy đích thực:</span>
               </div>
               <p>
-                Khi thấy học viên bế tắc, chúng tôi không viện cớ đổ lỗi cho ngoại cảnh mà tự thân tìm mọi giải pháp triệt để, rèn giũa phương pháp và theo sát cho đến khi học viên bứt phá.
+                Khi học viên bế tắc, chúng tôi chủ động tìm giải pháp triệt để, rèn giũa phương pháp và theo sát cho đến khi học viên bứt phá.
               </p>
             </div>
           </div>
@@ -216,7 +212,7 @@ export default function CareersPage() {
             </div>
 
             <p className="text-base sm:text-lg text-foreground/80 leading-relaxed">
-              Không một cá nhân nào có thể xây dựng điều vĩ đại bằng lối làm việc solo. Muốn đi xa và tái thiết chuẩn mực giáo dục, chúng ta cần một <strong>tập thể tinh hoa, sẵn sàng phản biện sắc bén và đối diện với sự thật</strong> để cùng nhau tiến bộ.
+              Để tạo nên chuẩn mực giáo dục vượt trội, chúng ta cần một <strong>tập thể tinh hoa, sẵn sàng phản biện thẳng thắn</strong> để cùng nhau tiến bộ.
             </p>
 
             <div className="p-5 rounded-2xl bg-brand-blue-soft/40 border border-brand-blue/30 text-sm text-foreground/85 leading-relaxed font-medium space-y-2">
@@ -225,7 +221,7 @@ export default function CareersPage() {
                 <span>Nguyên lý phát triển qua va đập:</span>
               </div>
               <p>
-                Người giỏi không lớn lên trong môi trường chỉ biết vuốt ve nhau, mà phát triển từ sự va đập tư duy đến tận cùng để liên tục tự nâng cấp năng lực.
+                Đội ngũ phát triển từ sự va đập tư duy và phản biện thực chất để liên tục tự nâng cấp năng lực.
               </p>
             </div>
           </div>
@@ -251,7 +247,7 @@ export default function CareersPage() {
               1. Giảng dạy thực chiến &amp; Chuyển giao tư duy
             </h3>
             <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-              Truyền tải phương pháp học sâu theo góc độ ngôn ngữ học tri nhận, phá vỡ lối mòn học vẹt. Trực tiếp theo dõi, kỷ luật hóa quá trình luyện tập và chịu trách nhiệm với sự tiến bộ của từng học viên theo từng cấp độ rõ ràng.
+              Truyền tải phương pháp học sâu theo bản chất ngôn ngữ, phá vỡ lối mòn học vẹt. Trực tiếp theo dõi, kỷ luật hóa quá trình luyện tập và đồng hành cùng sự tiến bộ của từng học viên theo từng cấp độ rõ ràng.
             </p>
           </div>
 
@@ -311,7 +307,7 @@ export default function CareersPage() {
               </h3>
             </div>
             <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-              Tuyệt đối nói không với thảo mai, xu nịnh hay giấu nghề. Môi trường chỉ tập trung vào hiệu suất, sự minh bạch và tinh thần hỗ trợ thực chất để cả đội ngũ cùng chiến thắng.
+              Môi trường minh bạch, tập trung vào hiệu quả và tinh thần hỗ trợ thực chất, nói không với bệnh hình thức hay giấu nghề.
             </p>
           </div>
 
@@ -434,7 +430,7 @@ export default function CareersPage() {
                 badge="Toàn thời gian / Bán thời gian"
                 title="Giảng Viên IELTS Writing &amp; Speaking"
                 subtitle="Ban Chuyên Môn"
-                description="Trực tiếp giảng dạy và chấm chữa bài viết, bài nói cho học viên theo phương pháp The ARIS Way; chịu trách nhiệm với sự tiến bộ của từng học viên."
+                description="Trực tiếp giảng dạy và chấm chữa bài viết, bài nói theo phương pháp The ARIS Way; đồng hành cùng sự tiến bộ của từng học viên."
                 metadata={["TP. Dĩ An, Tỉnh Bình Dương", "Lớp tối đa 8 học viên", "IELTS 7.5+"]}
                 ctaLabel="Xem chi tiết &amp; Ứng tuyển"
                 onCtaClick={() => navigate("/careers/ielts-teacher")}

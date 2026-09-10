@@ -37,7 +37,7 @@ export default function JobDetailPage() {
       location: "68B Phan Bội Châu, P. Dĩ An, TP. Dĩ An, Tỉnh Bình Dương",
       type: "Toàn thời gian / Bán thời gian",
       description:
-        "Trực tiếp giảng dạy và chấm chữa bài viết, bài nói cho học viên theo phương pháp The ARIS Way; chịu trách nhiệm theo sát sự tiến bộ và việc làm lại bài sửa của từng học viên.",
+        "Trực tiếp giảng dạy và chấm chữa bài viết, bài nói theo phương pháp The ARIS Way; đồng hành theo sát sự tiến bộ và bài sửa của từng học viên.",
       responsibilities: [
         "Đứng lớp giảng dạy các khóa học theo khung 7 cấp bậc ARIS-7 (sĩ số tối đa 08 học viên/lớp)",
         "Chấm chữa chi tiết từng câu cho bài nộp Writing và Speaking của học viên trên NextBand",
