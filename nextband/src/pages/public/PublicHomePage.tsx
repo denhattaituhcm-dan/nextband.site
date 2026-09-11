@@ -30,7 +30,7 @@ export default function PublicHomePage() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col bg-[#FBF9F5]">
       <SEO
         title="ARIS — Học Tiếng Anh Từ Bản Chất"
         description="ARIS — Học tiếng Anh từ bản chất. Không học mẹo. Không học thuộc bài mẫu. Định vị chính xác năng lực và bóc tách từng lỗi sai để đạt điểm IELTS mong muốn."
@@ -39,20 +39,25 @@ export default function PublicHomePage() {
       {/* ========================================================================= */}
       {/* SECTION 1: HERO SECTION                                                   */}
       {/* ========================================================================= */}
-      <section className="relative overflow-hidden pt-14 pb-20 sm:pt-24 sm:pb-32 border-b border-border/80 bg-gradient-to-br from-background via-background to-[#002147]/[0.03]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden pt-14 pb-20 sm:pt-20 sm:pb-28 border-b border-border/80 bg-[radial-gradient(ellipse_at_top_right,rgba(0,33,71,0.07)_0%,transparent_50%),radial-gradient(ellipse_at_bottom_left,rgba(220,38,38,0.05)_0%,transparent_45%)]">
+        {/* Soft Ambient Blur Spots */}
+        <div className="absolute top-10 right-10 w-96 h-96 bg-brand-blue/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-10 left-10 w-80 h-80 bg-brand-red/5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
             {/* Left: Headline, Subheadline & Primary Action */}
             <div className="lg:col-span-7 space-y-7 text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-red-soft text-brand-red border border-brand-red/20 text-xs sm:text-sm font-extrabold uppercase tracking-wider">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-red-soft text-brand-red border border-brand-red/20 text-xs sm:text-sm font-extrabold uppercase tracking-wider shadow-xs">
                 <GraduationCap className="h-4 w-4" />
                 <span>Học Viện ARIS</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-[62px] font-black text-foreground tracking-tight leading-[1.12]">
                 Học tiếng Anh{" "}
-                <span className="text-brand-red underline decoration-brand-red/30 underline-offset-8">
-                  từ bản chất
+                <span className="relative inline-block text-brand-red font-black">
+                  <span className="relative z-10">từ bản chất</span>
+                  <span className="absolute left-0 right-0 bottom-2 h-3.5 bg-brand-red/15 -rotate-1 rounded-sm -z-0" />
                 </span>
                 .
                 <br />
@@ -70,7 +75,7 @@ export default function PublicHomePage() {
                 <Button
                   size="lg"
                   onClick={() => navigate("/assessment")}
-                  className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3 sm:py-0 font-extrabold text-base sm:text-lg bg-brand-red hover:bg-brand-red-hover text-brand-red-foreground shadow-sm gap-2.5 whitespace-normal text-center"
+                  className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3 sm:py-0 font-extrabold text-base sm:text-lg bg-brand-red hover:bg-brand-red-hover text-brand-red-foreground shadow-lg shadow-brand-red/20 gap-2.5 whitespace-normal text-center transition-all"
                 >
                   <span>Đánh giá năng lực miễn phí</span>
                   <ArrowRight className="h-5 w-5 shrink-0" />
@@ -80,7 +85,7 @@ export default function PublicHomePage() {
                   size="lg"
                   variant="outline"
                   onClick={() => navigate("/academic-system")}
-                  className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3 sm:py-0 font-bold text-base sm:text-lg border-2 border-[#002147]/20 hover:bg-[#002147]/5 text-foreground whitespace-normal text-center"
+                  className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3 sm:py-0 font-bold text-base sm:text-lg border-2 border-[#002147]/20 bg-background/80 hover:bg-[#002147]/5 text-foreground whitespace-normal text-center shadow-xs"
                 >
                   Khám phá hệ thống học thuật
                 </Button>
@@ -104,67 +109,100 @@ export default function PublicHomePage() {
             </div>
 
             {/* Right: 3-Question Framework Card */}
-            <div className="lg:col-span-5">
-              <div className="relative mx-auto max-w-md lg:max-w-none rounded-3xl border-2 border-[#002147]/15 bg-card p-7 sm:p-9 shadow-md space-y-6">
-                <div className="space-y-1.5 border-b border-border/70 pb-4">
-                  <span className="text-xs font-mono uppercase tracking-widest text-brand-blue font-extrabold">
-                    Khung Đào Tạo ARIS
+            <div className="lg:col-span-5 relative">
+              <div className="relative mx-auto max-w-md lg:max-w-none rounded-3xl border-2 border-white/80 bg-card/90 backdrop-blur-md p-7 sm:p-8 shadow-xl shadow-blue-950/5 space-y-5">
+                <div className="flex items-center justify-between border-b border-border/70 pb-4">
+                  <div className="space-y-1">
+                    <span className="text-xs font-mono uppercase tracking-widest text-brand-blue font-extrabold">
+                      Khung Đào Tạo ARIS
+                    </span>
+                    <h4 className="font-black text-foreground text-lg sm:text-xl">
+                      3 Trụ Cột Định Hình Tiến Bộ
+                    </h4>
+                  </div>
+                  <span className="px-3 py-1 rounded-xl bg-blue-50 text-brand-blue border border-blue-200/80 text-xs font-black">
+                    ARIS-7™
                   </span>
-                  <h4 className="font-black text-foreground text-lg sm:text-xl">
-                    3 Câu Hỏi Định Hình Sự Tiến Bộ
-                  </h4>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="p-4 rounded-2xl border border-[#002147]/15 bg-[#002147]/[0.03] space-y-1.5 text-left">
-                    <div className="flex items-center gap-2.5 text-base font-extrabold text-foreground">
-                      <span className="h-7 w-7 rounded-xl bg-[#002147] text-white font-mono text-xs flex items-center justify-center font-black">
-                        1
-                      </span>
-                      <span>Bạn đang ở đâu?</span>
+                <div className="space-y-3.5">
+                  <div className="p-4 rounded-2xl border border-slate-200/80 bg-background/60 shadow-2xs space-y-1.5 text-left transition-all hover:border-brand-blue/30">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5 text-base font-extrabold text-foreground">
+                        <span className="h-7 w-7 rounded-xl bg-[#002147] text-white font-mono text-xs flex items-center justify-center font-black">
+                          1
+                        </span>
+                        <span>Bạn đang ở đâu?</span>
+                      </div>
+                      <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">Vị trí hiện tại</span>
                     </div>
-                    <p className="text-sm sm:text-[15px] text-foreground/75 leading-relaxed pl-9">
+                    <p className="text-sm text-foreground/75 leading-relaxed pl-9.5">
                       Định vị chính xác trình độ học thuật hiện tại trên thang đo 7 cấp bậc ARIS-7.
                     </p>
+                    <div className="pl-9.5 pt-1">
+                      <div className="w-full bg-slate-200/70 h-1.5 rounded-full overflow-hidden">
+                        <div className="bg-brand-blue h-full rounded-full" style={{ width: "45%" }} />
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="p-4 rounded-2xl border border-[#002147]/15 bg-[#002147]/[0.03] space-y-1.5 text-left">
-                    <div className="flex items-center gap-2.5 text-base font-extrabold text-foreground">
-                      <span className="h-7 w-7 rounded-xl bg-[#002147] text-white font-mono text-xs flex items-center justify-center font-black">
-                        2
-                      </span>
-                      <span>Điều gì cản trở bạn?</span>
+                  <div className="p-4 rounded-2xl border border-brand-red/20 bg-brand-red-soft/40 shadow-2xs space-y-1.5 text-left">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5 text-base font-extrabold text-brand-red">
+                        <span className="h-7 w-7 rounded-xl bg-brand-red text-white font-mono text-xs flex items-center justify-center font-black">
+                          2
+                        </span>
+                        <span>Điều gì cản trở bạn?</span>
+                      </div>
+                      <span className="text-[10px] font-extrabold text-brand-red bg-brand-red/10 px-2 py-0.5 rounded-full">Điểm nghẽn tư duy</span>
                     </div>
-                    <p className="text-sm sm:text-[15px] text-foreground/75 leading-relaxed pl-9">
+                    <p className="text-sm text-foreground/80 leading-relaxed pl-9.5">
                       Hệ thống Academic Diagnosis bóc tách chính xác từng lỗ hổng tư duy và dạng bài hay mắc lỗi.
                     </p>
+                    <div className="pl-9.5 pt-0.5 flex items-center gap-1.5 text-xs font-semibold text-brand-red">
+                      <span className="w-1.5 h-1.5 rounded-full bg-brand-red" />
+                      <span>Chỉ rõ cơ chế lỗi — Không nhận xét cảm tính</span>
+                    </div>
                   </div>
 
-                  <div className="p-4 rounded-2xl border border-[#002147]/15 bg-[#002147]/[0.03] space-y-1.5 text-left">
-                    <div className="flex items-center gap-2.5 text-base font-extrabold text-foreground">
-                      <span className="h-7 w-7 rounded-xl bg-[#002147] text-white font-mono text-xs flex items-center justify-center font-black">
-                        3
-                      </span>
-                      <span>Bước tiếp theo là gì?</span>
+                  <div className="p-4 rounded-2xl border border-slate-200/80 bg-background/60 shadow-2xs space-y-1.5 text-left transition-all hover:border-emerald-300">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5 text-base font-extrabold text-foreground">
+                        <span className="h-7 w-7 rounded-xl bg-[#002147] text-white font-mono text-xs flex items-center justify-center font-black">
+                          3
+                        </span>
+                        <span>Bước tiếp theo là gì?</span>
+                      </div>
+                      <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">Can thiệp trúng đích</span>
                     </div>
-                    <p className="text-sm sm:text-[15px] text-foreground/75 leading-relaxed pl-9">
+                    <p className="text-sm text-foreground/75 leading-relaxed pl-9.5">
                       Can thiệp trúng đích để thăng cấp trên thang đo ARIS-7, theo sát bởi giảng viên chuyên môn.
                     </p>
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-[#002147] text-white text-left space-y-2 shadow-2xs">
-                  <div className="text-base font-bold flex items-center gap-2">
-                    <ShieldCheck className="h-5 w-5 text-brand-cyan" />
-                    <span>Học có kỷ luật &amp; đo lường minh bạch</span>
+                <div className="p-4.5 rounded-2xl bg-[#001E3D] text-white text-left space-y-2 shadow-md">
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm font-bold flex items-center gap-2">
+                      <ShieldCheck className="h-4.5 w-4.5 text-amber-300" />
+                      <span>Học có kỷ luật &amp; đo lường minh bạch</span>
+                    </div>
+                    <span className="text-[10px] font-black uppercase text-amber-300 bg-amber-400/20 px-2 py-0.5 rounded border border-amber-300/30">
+                      Live Sync
+                    </span>
                   </div>
-                  <p className="text-sm text-white/90 leading-relaxed">
-                    Mọi bài nộp được lưu trữ và chấm chữa chi tiết trên hệ thống để bạn thấy rõ sự tiến bộ qua từng ngày.
+                  <p className="text-xs text-white/85 leading-relaxed">
+                    Mọi bài nộp được lưu trữ và chấm chữa chi tiết trên hệ thống NextBand để bạn thấy rõ sự tiến bộ từng ngày.
                   </p>
-                  <div className="flex items-center gap-2 pt-1 text-white/75 text-xs font-semibold border-t border-white/15 mt-1">
-                    <Users className="h-3.5 w-3.5 text-brand-cyan shrink-0" />
-                    Tiến độ của bạn hiển thị cùng cả lớp — mỗi bài nộp là một bước leo hạng.
-                  </div>
+                </div>
+              </div>
+
+              {/* Floating Bottom Badge */}
+              <div className="hidden sm:flex absolute -bottom-4 -left-5 bg-card/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-xl border border-border items-center gap-2.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-success animate-pulse" />
+                <div className="text-xs">
+                  <span className="font-extrabold text-foreground">NextBand Academic Record™</span>
+                  <span className="text-muted-foreground block text-[10px]">Minh bạch 100% hồ sơ học thuật</span>
                 </div>
               </div>
             </div>

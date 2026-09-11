@@ -489,7 +489,7 @@ export function TrialClassModal({ isOpen, onOpenChange }: ModalBaseProps) {
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [learningMode, setLearningMode] = useState<"offline" | "online">("offline");
-  const [course, setCourse] = useState("STARTER (Mất gốc → 3.0)");
+  const [course, setCourse] = useState("DREAMER (Mất gốc → 3.0)");
   const [schedule, setSchedule] = useState("Tối Thứ 2 - 4 - 6 (Ca 1: 17:30 - 19:30)");
   const [loading, setLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -696,8 +696,8 @@ export function TrialClassModal({ isOpen, onOpenChange }: ModalBaseProps) {
                       <SelectValue placeholder="Chọn khóa học" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
-                      <SelectItem value="STARTER (Mất gốc → 3.0)">STARTER (Mất gốc → 3.0)</SelectItem>
-                      <SelectItem value="DREAMER (3.0 → 4.0)">DREAMER (3.0 → 4.0)</SelectItem>
+                      <SelectItem value="DREAMER (Mất gốc → 3.0)">DREAMER (Mất gốc → 3.0)</SelectItem>
+                      <SelectItem value="DOER (3.0 → 4.0)">DOER (3.0 → 4.0)</SelectItem>
                       <SelectItem value="BUILDER (4.0 → 5.0)">BUILDER (4.0 → 5.0)</SelectItem>
                       <SelectItem value="MASTER (5.0 → 6.0)">MASTER (5.0 → 6.0)</SelectItem>
                       <SelectItem value="LEADER (6.0 → 6.5+)">LEADER (6.0 → 6.5+)</SelectItem>

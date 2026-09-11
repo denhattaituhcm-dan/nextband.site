@@ -32,8 +32,8 @@ const COURSES_SEQUENCE = ["starter", "dreamer", "builder", "master", "leader"] a
 type CourseKey = (typeof COURSES_SEQUENCE)[number];
 
 const COURSE_NAMES: Record<CourseKey, string> = {
-  starter: "STARTER",
-  dreamer: "DREAMER",
+  starter: "DREAMER",
+  dreamer: "DOER",
   builder: "BUILDER",
   master: "MASTER",
   leader: "LEADER",

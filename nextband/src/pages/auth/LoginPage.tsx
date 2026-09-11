@@ -216,7 +216,7 @@ export default function LoginPage() {
             <div className="w-full rounded-[24px] overflow-hidden shadow-xs border border-border/40">
               <img
                 src="/your-journey.webp"
-                alt="ARIS IELTS Learning Journey: Starter -> Dreamer -> Builder -> Master -> Leader"
+                alt="ARIS IELTS Learning Journey: Dreamer -> Doer -> Builder -> Master -> Leader"
                 className="w-full h-auto object-cover rounded-[24px] scale-100 hover:scale-[1.01] transition-transform duration-300"
                 loading="eager"
                 decoding="async"
@@ -344,10 +344,6 @@ export default function LoginPage() {
 
             {/* Password Login Form for Admin */}
             <div className="rounded-2xl bg-slate-50/70 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800/60 p-5">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-3.5">
-                <Lock className="h-3.5 w-3.5 text-amber-500" />
-                <span>DÀNH CHO ADMIN</span>
-              </div>
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-1.5">
                   <Label htmlFor="login-email" className="text-xs font-semibold text-foreground flex items-center gap-1.5">

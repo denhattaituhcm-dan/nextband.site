@@ -31,7 +31,7 @@ export default function CoursesPage() {
     <div className="flex flex-col">
       <SEO
         title="5 Chương Trình Đào Tạo IELTS — Học Viện ARIS"
-        description="Lộ trình 5 khóa học IELTS từ mất gốc đến 6.5+ tại ARIS: Starter, Dreamer, Builder, Master và Leader, kết nối trực tiếp với hệ thống 7 cấp bậc ARIS-7."
+        description="Lộ trình 5 khóa học IELTS từ mất gốc đến 6.5+ tại ARIS: Dreamer, Doer, Builder, Master và Leader, kết nối trực tiếp với hệ thống 7 cấp bậc ARIS-7."
       />
 
       {/* Hero Header */}
