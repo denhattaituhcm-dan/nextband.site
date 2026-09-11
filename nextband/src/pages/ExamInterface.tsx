@@ -1265,12 +1265,13 @@ export default function ExamInterface() {
           <div className="flex items-center gap-3 shrink-0">
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onClick={() => setShowExitDialog(true)}
-              className="text-muted-foreground hover:text-foreground font-medium text-xs hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="h-8 w-8 sm:h-9 sm:w-9 rounded-full text-muted-foreground hover:text-foreground hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0"
+              title="Rời bài tập"
             >
-              <ArrowLeft className="mr-1.5 h-4 w-4" />
-              Rời bài tập
+              <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+              <span className="sr-only">Rời bài tập</span>
             </Button>
             <div className="h-4 w-[1px] bg-border hidden sm:block" />
             <div className="flex items-center gap-2">
@@ -1474,22 +1475,23 @@ export default function ExamInterface() {
       </main>
 
       {/* Footer with Question Pagination */}
-      <footer className="sticky bottom-0 z-40 border-t bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 p-3 sm:p-4 shadow-lg">
+      <footer className="sticky bottom-0 z-40 border-t bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80 p-2.5 sm:p-4 shadow-lg">
         <div className="max-w-6xl mx-auto">
           {/* Pagination Bubbles */}
           {paginationQuestions.length > 0 && (
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center justify-between gap-2 sm:gap-4">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handlePrevQuestion}
                 disabled={currentQuestionIndex <= 0}
+                className="h-8 sm:h-9 px-2.5 sm:px-3 text-xs font-semibold rounded-lg shrink-0"
               >
-                <ChevronLeft className="mr-1 h-4 w-4" />
-                Câu trước
+                <ChevronLeft className="mr-0.5 sm:mr-1 h-4 w-4" />
+                <span>Câu trước</span>
               </Button>
 
-              <div className="flex-1 flex justify-center overflow-x-auto py-2">
+              <div className="flex-1 flex justify-center overflow-x-auto py-1 sm:py-2">
                 <QuestionPagination
                   questions={paginationQuestions}
                   answers={answers}
@@ -1500,17 +1502,26 @@ export default function ExamInterface() {
                 />
               </div>
 
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleNextQuestion}
-                disabled={
-                  currentQuestionIndex >= paginationQuestions.length - 1
-                }
-              >
-                Câu sau
-                <ChevronRight className="ml-1 h-4 w-4" />
-              </Button>
+              {currentQuestionIndex >= paginationQuestions.length - 1 ? (
+                <Button
+                  size="sm"
+                  onClick={() => setShowReviewDialog(true)}
+                  className="h-8 sm:h-9 px-3 sm:px-4 bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-xs rounded-lg shrink-0 gap-1.5"
+                >
+                  <Send className="h-3.5 w-3.5" />
+                  <span>Nộp bài</span>
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleNextQuestion}
+                  className="h-8 sm:h-9 px-2.5 sm:px-3 text-xs font-semibold rounded-lg shrink-0"
+                >
+                  <span>Câu sau</span>
+                  <ChevronRight className="ml-0.5 sm:ml-1 h-4 w-4" />
+                </Button>
+              )}
             </div>
           )}
         </div>

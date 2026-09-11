@@ -106,8 +106,12 @@ export function FillBlankHtmlRenderer({
         input = document.createElement("input");
         input.type = "text";
         input.placeholder = `(${slotNumber})`;
+        input.setAttribute("autocomplete", "off");
+        input.setAttribute("autocorrect", "off");
+        input.setAttribute("autocapitalize", "none");
+        input.setAttribute("spellcheck", "false");
         input.className =
-          "inline-flex items-center min-w-[110px] max-w-[200px] h-9 px-3 mx-1.5 my-1 rounded-xl border-2 border-brand-blue/30 bg-background text-foreground text-center text-sm font-extrabold shadow-xs focus:outline-none focus:border-brand-blue focus:ring-3 focus:ring-brand-blue/20 placeholder:text-muted-foreground/45 placeholder:font-bold focus:placeholder:text-transparent transition-all";
+          "inline-flex items-center min-w-[110px] max-w-[200px] h-9 px-3 mx-1.5 my-1 rounded-xl border-2 border-brand-blue/30 bg-background text-foreground text-center text-base sm:text-sm font-extrabold shadow-xs focus:outline-none focus:border-brand-blue focus:ring-3 focus:ring-brand-blue/20 placeholder:text-muted-foreground/45 placeholder:font-bold focus:placeholder:text-transparent transition-all";
         slot.appendChild(input);
       } else {
         input.placeholder = `(${slotNumber})`;

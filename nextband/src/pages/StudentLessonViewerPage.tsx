@@ -48,7 +48,6 @@ import {
   Award,
   Flame,
 } from "lucide-react";
-import { StudentReEnrollmentModal } from "@/components/student/StudentReEnrollmentModal";
 import { HonorReportCardModal } from "@/components/student/HonorReportCardModal";
 import { useSeasonalEvent } from "@/features/seasonal/hooks/useSeasonalEvent";
 import { SeasonalCornerDecoration } from "@/features/seasonal/presets/SeasonalCornerDecoration";
@@ -65,7 +64,6 @@ export default function StudentLessonViewerPage() {
   const { user } = useAuth();
   const { state: lifecycleState, resolveClass } = useStudentLifecycle();
   const { isHealthy: isGatewayHealthy, isWarmingUp: isGatewayWarmingUp, checkHealthNow } = useGatewayHealth();
-  const [isReEnrollModalOpen, setIsReEnrollModalOpen] = useState(false);
   const [isHonorCardOpen, setIsHonorCardOpen] = useState(false);
 
   const {
@@ -414,53 +412,42 @@ export default function StudentLessonViewerPage() {
     <div className="min-h-screen bg-background pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-5 space-y-6">
         {/* HEADER & BACK TO WELCOME */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/app")} className="rounded-full">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <Button variant="ghost" size="icon" onClick={() => navigate("/app")} className="rounded-full shrink-0">
               <ArrowLeft className="w-5 h-5 text-muted-foreground" />
             </Button>
-            <div>
-              <div className="flex items-center gap-2 mb-0.5">
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-primary-soft text-primary border border-primary/20 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block" />
-                  Không Gian Lớp Học
-                </span>
-                {classData.courseTitle && (
-                  <span className="text-[11px] font-medium text-muted-foreground">
-                    Khóa {classData.courseTitle}
-                  </span>
-                )}
-              </div>
-              <h1 className="text-xl md:text-2xl font-bold text-foreground tracking-tight flex flex-wrap items-center gap-2">
-                <span>Lớp {classData.className}</span>
+            <div className="min-w-0">
+              {classData.courseTitle && (
+                <p className="text-[11px] font-semibold text-muted-foreground truncate">
+                  Khóa {classData.courseTitle}
+                </p>
+              )}
+              <h1 className="text-lg sm:text-2xl font-bold text-foreground tracking-tight truncate">
+                Lớp {classData.className}
               </h1>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 flex-wrap">
-
+          <div className="flex items-center gap-2 shrink-0">
             <Button
               size="sm"
               onClick={() => setIsHonorCardOpen(true)}
-              className={`text-xs font-black rounded-xl gap-1.5 shadow-xs cursor-pointer ${
+              className={`text-xs font-bold rounded-xl gap-1.5 shadow-xs cursor-pointer ${
                 isEligibleForMilestone
                   ? "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950"
                   : "bg-slate-900 hover:bg-slate-800 text-white border border-slate-700"
               }`}
             >
               {isEligibleForMilestone ? <Award className="w-3.5 h-3.5 text-slate-950" /> : <FileText className="w-3.5 h-3.5 text-sky-400" />}
-              <span>{isEligibleForMilestone ? "🎖️ Báo Cáo Vinh Danh Cột Mốc" : "📄 Phiếu Báo Cáo Gửi Ba Mẹ"}</span>
+              <span className="hidden sm:inline">
+                {isEligibleForMilestone ? "🎖️ Báo Cáo Vinh Danh Cột Mốc" : "📄 Phiếu Báo Cáo Gửi Ba Mẹ"}
+              </span>
+              <span className="sm:hidden">
+                {isEligibleForMilestone ? "Báo Cáo Cột Mốc" : "Phiếu Báo Cáo"}
+              </span>
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsReEnrollModalOpen(true)}
-              className="text-xs font-bold rounded-xl gap-1.5 border-amber-300 bg-amber-50/50 text-amber-900 hover:bg-amber-100/80 shadow-2xs cursor-pointer"
-            >
-              <Award className="w-3.5 h-3.5 text-amber-600" />
-              <span>Tái Đăng Ký Khóa Kế Tiếp</span>
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => navigate("/app")} className="text-xs font-semibold rounded-xl">
+            <Button variant="outline" size="sm" onClick={() => navigate("/app")} className="hidden sm:inline-flex text-xs font-semibold rounded-xl">
               Về Sảnh Chính
             </Button>
           </div>
@@ -627,15 +614,10 @@ export default function StudentLessonViewerPage() {
           {/* TAB 1: MAIN PRACTICE LIST SECTION */}
           <TabsContent value="practice-list" className="space-y-4 pt-1 outline-hidden">
             <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-                  <Edit3 className="w-5 h-5 text-primary" />
-                  Danh sách Bài tập Luyện tập ({homeworkList.length} Bài)
-                </h2>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Chọn bài tập bất kỳ để vào màn hình thực hành kỹ năng. Điểm số trắc nghiệm 1đ/câu, tự luận chấm theo Band IELTS.
-                </p>
-              </div>
+              <h2 className="text-base sm:text-lg font-bold text-foreground flex items-center gap-2">
+                <Edit3 className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                Danh sách Bài tập ({homeworkList.length})
+              </h2>
             </div>
 
             {homeworkList.length === 0 ? (
@@ -663,7 +645,7 @@ export default function StudentLessonViewerPage() {
                     <Card
                       key={hw.id}
                       onMouseEnter={() => handlePrefetchExam(hw.examId || hw.id)}
-                      className={`p-4 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+                      className={`p-3.5 sm:p-4 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 ${
                         isOverdue
                           ? "border-rose-300 dark:border-rose-800 bg-rose-500/5 hover:border-rose-500 shadow-xs"
                           : isRevision
@@ -671,12 +653,12 @@ export default function StudentLessonViewerPage() {
                           : "border-border bg-card hover:border-primary/40 hover:shadow-xs"
                       }`}
                     >
-                      <div className="space-y-1.5 flex-1 min-w-0">
-                        <div className="flex flex-wrap items-center gap-2.5">
-                          <Badge variant="outline" className={`text-[10px] font-bold px-2 py-0.5 ${hw.badge.badgeClass}`}>
+                      <div className="space-y-2 flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Badge variant="outline" className={`text-[10px] font-bold px-2 py-0.5 shrink-0 ${hw.badge.badgeClass}`}>
                             {hw.badge.shortLabel}
                           </Badge>
-                          <h3 className={`font-bold text-sm truncate ${isOverdue ? "text-rose-900 dark:text-rose-200" : "text-foreground"}`}>
+                          <h3 className={`font-bold text-sm leading-snug break-words ${isOverdue ? "text-rose-900 dark:text-rose-200" : "text-foreground"}`}>
                             {hw.title}
                           </h3>
                           {getStatusBadge(hw.status, hw.countdown, hw.submissionTiming)}
@@ -695,35 +677,45 @@ export default function StudentLessonViewerPage() {
                           )}
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground pt-0.5">
-                          <span>
-                            {hw.isObjective ? "Trắc nghiệm (1đ/câu)" : "Tự luận (IELTS Band)"}
+                        {hw.description && (
+                          <p className="text-xs text-foreground/80 leading-relaxed line-clamp-2">
+                            {hw.description}
+                          </p>
+                        )}
+
+                        <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground pt-0.5">
+                          <span className="font-medium text-muted-foreground">
+                            {hw.isObjective ? "Trắc nghiệm" : "Tự luận"}
                           </span>
                           {hw.scoreDisplay.isGraded && (
-                            <span className="font-semibold text-primary">
-                              Kết quả: {hw.scoreDisplay.scoreText} ({hw.scoreDisplay.subText})
-                            </span>
+                            <>
+                              <span className="text-muted-foreground/40">·</span>
+                              <span className="font-semibold text-primary">
+                                {hw.scoreDisplay.scoreText}
+                                {hw.scoreDisplay.subText && (
+                                  <span className="text-muted-foreground font-normal ml-1">({hw.scoreDisplay.subText})</span>
+                                )}
+                              </span>
+                            </>
                           )}
-                          {hw.resources && hw.resources.length > 0 ? (
-                            <div className="flex items-center gap-1.5">
+                          {hw.resources && hw.resources.length > 0 && (
+                            <div className="flex items-center gap-1.5 ml-auto sm:ml-0">
                               {hw.resources.map((res: any, idx: number) => (
                                 <span
                                   key={idx}
-                                  className="inline-flex items-center gap-1 text-[11px] font-semibold bg-muted text-foreground px-2 py-0.5 rounded-md"
+                                  className="inline-flex items-center gap-1 text-[10px] font-semibold bg-muted text-foreground px-1.5 py-0.5 rounded-md"
                                 >
                                   {getSkillIcon(res.type)}
                                   {res.type?.toUpperCase()}
                                 </span>
                               ))}
                             </div>
-                          ) : (
-                            hw.description && <span className="truncate max-w-sm">{hw.description}</span>
                           )}
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-3 shrink-0">
-                        {/* Score Preview */}
+                      <div className="flex items-center gap-3 shrink-0 pt-1 sm:pt-0 w-full sm:w-auto">
+                        {/* Score Preview on desktop */}
                         <div className="text-right hidden sm:block">
                           <div className={`text-xs font-black tabular-nums ${hw.scoreDisplay.isGraded ? "text-primary" : "text-muted-foreground"}`}>
                             {hw.scoreDisplay.scoreText}
@@ -736,7 +728,7 @@ export default function StudentLessonViewerPage() {
                         <Button
                           size="sm"
                           variant={hw.status === "GRADED" ? "outline" : "default"}
-                          className={`font-bold text-xs gap-1.5 rounded-xl ${
+                          className={`w-full sm:w-auto font-bold text-xs gap-1.5 rounded-xl ${
                             isOverdue
                               ? "bg-rose-600 hover:bg-rose-700 text-white shadow-xs"
                               : isRevision
@@ -787,19 +779,6 @@ export default function StudentLessonViewerPage() {
             />
           </TabsContent>
         </Tabs>
-
-        {/* Student Re-Enrollment Modal */}
-        <StudentReEnrollmentModal
-          isOpen={isReEnrollModalOpen}
-          onClose={() => setIsReEnrollModalOpen(false)}
-          classId={classId}
-          className={classData.className}
-          courseTitle={classData.courseTitle}
-          studentId={user?.id}
-          studentName={user?.fullName || "Học viên"}
-          studentPhone={user?.phone || ""}
-          scholarshipAmount={500000}
-        />
 
         {/* ARIS Seasonal Layer */}
         {isSeasonalActive && seasonalUiConfig.showBlossom && (

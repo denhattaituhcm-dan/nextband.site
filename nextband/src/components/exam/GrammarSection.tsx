@@ -93,9 +93,9 @@ export function GrammarSection({
   return (
     <div className="h-full overflow-hidden flex flex-col bg-slate-50/50 dark:bg-neutral-950/50">
       <ScrollArea className="flex-1">
-        <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8 pb-32">
+        <div className="max-w-4xl mx-auto p-3 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 pb-32">
           {/* Header */}
-          <div className="bg-gradient-to-r from-teal-500/10 via-emerald-500/5 to-transparent p-6 rounded-3xl border border-teal-200/60 dark:border-teal-900/30 shadow-xs">
+          <div className="bg-gradient-to-r from-teal-500/10 via-emerald-500/5 to-transparent p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-teal-200/60 dark:border-teal-900/30 shadow-xs">
             <div className="flex items-center gap-3 text-teal-700 dark:text-teal-400 mb-2">
               <div className="p-3 rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-md shadow-teal-500/20">
                 <FileText className="h-6 w-6" />
@@ -173,16 +173,16 @@ export function GrammarSection({
                                 }
                               }}
                               className={cn(
-                                "transition-all duration-300 rounded-3xl overflow-hidden border border-gray-200/80 dark:border-gray-800 shadow-xs hover:shadow-md",
+                                "transition-all duration-300 rounded-2xl sm:rounded-3xl overflow-hidden border border-gray-200/80 dark:border-gray-800 shadow-xs hover:shadow-md",
                                 isCurrent
                                   ? "ring-2 ring-teal-500 border-transparent bg-gradient-to-b from-white to-teal-50/30 dark:from-gray-900 dark:to-teal-950/10 shadow-lg shadow-teal-500/10"
                                   : "bg-white dark:bg-gray-900 hover:border-teal-300/50",
                               )}
                               onClick={() => onQuestionFocus?.(focusQuestionId)}
                             >
-                              <CardContent className="p-6">
-                                <div className="flex items-start gap-4">
-                                  <span className="shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-2xl text-sm font-extrabold bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-teal-500/20 shadow-xs">
+                              <CardContent className="p-3.5 sm:p-6">
+                                <div className="flex items-start gap-3 sm:gap-4">
+                                  <span className="shrink-0 inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-extrabold bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-teal-500/20 shadow-xs">
                                      {question.displayNumber ?? question.displayLabel ?? question.order_index ?? questionCounter}
                                   </span>
 
@@ -400,6 +400,10 @@ export function GrammarSection({
                                             <Input
                                               data-short-answer-input="true"
                                               placeholder="Viết câu trả lời của bạn..."
+                                              autoComplete="off"
+                                              autoCorrect="off"
+                                              autoCapitalize="none"
+                                              spellCheck="false"
                                               value={answers[question.id] || ""}
                                               onChange={(e) =>
                                                 onAnswerChange(
@@ -409,7 +413,7 @@ export function GrammarSection({
                                               }
                                               onKeyDown={handleShortAnswerKeyDown}
                                               onFocus={() => onQuestionFocus?.(focusQuestionId)}
-                                              className="max-w-md h-12 rounded-2xl text-base border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 shadow-xs font-medium"
+                                              className="w-full max-w-md h-11 sm:h-12 rounded-xl sm:rounded-2xl text-base border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 shadow-xs font-medium"
                                             />
                                           )}
                                         </div>
@@ -420,6 +424,10 @@ export function GrammarSection({
                                         <Input
                                           data-short-answer-input="true"
                                           placeholder="Nhập câu trả lời..."
+                                          autoComplete="off"
+                                          autoCorrect="off"
+                                          autoCapitalize="none"
+                                          spellCheck="false"
                                           value={answers[question.id] || ""}
                                           onChange={(e) =>
                                             onAnswerChange(
@@ -429,7 +437,7 @@ export function GrammarSection({
                                           }
                                           onKeyDown={handleShortAnswerKeyDown}
                                           onFocus={() => onQuestionFocus?.(focusQuestionId)}
-                                          className="max-w-md h-12 rounded-2xl text-base border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 shadow-xs font-medium"
+                                          className="w-full max-w-md h-11 sm:h-12 rounded-xl sm:rounded-2xl text-base border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 shadow-xs font-medium"
                                         />
                                       )}
 

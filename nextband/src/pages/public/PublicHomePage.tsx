@@ -23,6 +23,7 @@ import {
   FileText,
   Sparkles,
   Clock,
+  BookmarkCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -180,30 +181,6 @@ export default function PublicHomePage() {
                     </p>
                   </div>
                 </div>
-
-                <div className="p-4.5 rounded-2xl bg-[#001E3D] text-white text-left space-y-2 shadow-md">
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm font-bold flex items-center gap-2">
-                      <ShieldCheck className="h-4.5 w-4.5 text-amber-300" />
-                      <span>Học có kỷ luật &amp; đo lường minh bạch</span>
-                    </div>
-                    <span className="text-[10px] font-black uppercase text-amber-300 bg-amber-400/20 px-2 py-0.5 rounded border border-amber-300/30">
-                      Live Sync
-                    </span>
-                  </div>
-                  <p className="text-xs text-white/85 leading-relaxed">
-                    Mọi bài nộp được lưu trữ và chấm chữa chi tiết trên hệ thống NextBand để bạn thấy rõ sự tiến bộ từng ngày.
-                  </p>
-                </div>
-              </div>
-
-              {/* Floating Bottom Badge */}
-              <div className="hidden sm:flex absolute -bottom-4 -left-5 bg-card/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-xl border border-border items-center gap-2.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-success animate-pulse" />
-                <div className="text-xs">
-                  <span className="font-extrabold text-foreground">NextBand Academic Record™</span>
-                  <span className="text-muted-foreground block text-[10px]">Minh bạch 100% hồ sơ học thuật</span>
-                </div>
               </div>
             </div>
           </div>
@@ -220,34 +197,96 @@ export default function PublicHomePage() {
         background="muted"
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-          <div className="p-7 rounded-3xl bg-card border border-border/80 border-l-4 border-l-[#002147] space-y-3.5 shadow-2xs">
-            <div className="p-3 rounded-2xl bg-[#002147]/10 text-[#002147] w-fit">
-              <BookOpen className="h-6 w-6" />
+          <div className="p-7 rounded-3xl bg-card border border-border/80 border-l-4 border-l-[#002147] space-y-4 shadow-2xs flex flex-col justify-between">
+            <div className="space-y-3.5">
+              <div className="p-3 rounded-2xl bg-[#002147]/10 text-[#002147] w-fit">
+                <BookOpen className="h-6 w-6" />
+              </div>
+              <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Chẩn đoán chính xác</h3>
+              <p className="text-sm text-foreground/75 leading-relaxed">
+                Không chỉ dừng lại ở con số điểm. Hệ thống bóc tách 4 tầng năng lực: Bạn đang yếu ở đâu, bẫy tư duy nào khiến bạn chọn sai đáp án.
+              </p>
             </div>
-            <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Chẩn đoán chính xác</h3>
-            <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-              Không chỉ dừng lại ở con số điểm. Hệ thống bóc tách 4 tầng năng lực: Bạn đang yếu ở đâu, bẫy tư duy nào khiến bạn chọn sai đáp án (Matching Headings, Paraphrase hay Distractor).
-            </p>
+
+            {/* Visual Graphic: 4-Layer Diagnostic Breakdown */}
+            <div className="pt-2 space-y-1.5 font-mono text-[11px]">
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200/80">
+                <span className="font-semibold text-slate-700">Tầng 4: Bẫy suy diễn (Distractor)</span>
+                <span className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 font-bold text-[10px]">Cần gỡ</span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200/80">
+                <span className="font-semibold text-slate-700">Tầng 3: Ngữ pháp câu phức</span>
+                <span className="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Vững</span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200/80">
+                <span className="font-semibold text-slate-700">Tầng 2: Từ vựng học thuật C1</span>
+                <span className="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Vững</span>
+              </div>
+            </div>
           </div>
 
-          <div className="p-7 rounded-3xl bg-card border border-border/80 border-l-4 border-l-brand-red space-y-3.5 shadow-2xs">
-            <div className="p-3 rounded-2xl bg-brand-red/10 text-brand-red w-fit">
-              <Target className="h-6 w-6" />
+          <div className="p-7 rounded-3xl bg-card border border-border/80 border-l-4 border-l-brand-red space-y-4 shadow-2xs flex flex-col justify-between">
+            <div className="space-y-3.5">
+              <div className="p-3 rounded-2xl bg-brand-red/10 text-brand-red w-fit">
+                <Target className="h-6 w-6" />
+              </div>
+              <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Can thiệp đúng chỗ</h3>
+              <p className="text-sm text-foreground/75 leading-relaxed">
+                Dành 100% thời lượng bài giảng và bài tập để lấp đúng khoảng trống tư duy. Không lãng phí thời gian và sức lực vào những phần đã làm chủ.
+              </p>
             </div>
-            <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Can thiệp đúng chỗ</h3>
-            <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-              Dành 100% thời lượng bài giảng và bài tập để lấp đúng khoảng trống tư duy. Không lãng phí thời gian và sức lực của học viên vào những phần đại trà đã làm chủ.
-            </p>
+
+            {/* Visual Graphic: Effort vs ROI Comparison */}
+            <div className="pt-2 space-y-2 text-[11px]">
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+                <div className="flex justify-between font-bold text-slate-600">
+                  <span>Học đề ngẫu nhiên</span>
+                  <span className="text-slate-400">Lãng phí 70% sức</span>
+                </div>
+                <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                  <div className="bg-slate-400 h-full w-[35%]" />
+                </div>
+              </div>
+              <div className="p-2.5 rounded-xl bg-rose-50/70 border border-rose-200/80 space-y-1">
+                <div className="flex justify-between font-bold text-brand-red">
+                  <span>Trúng điểm nghẽn ARIS</span>
+                  <span className="font-black">+0.5 Band</span>
+                </div>
+                <div className="w-full bg-rose-100 h-1.5 rounded-full overflow-hidden">
+                  <div className="bg-brand-red h-full w-[85%]" />
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="p-7 rounded-3xl bg-card border border-border/80 border-l-4 border-l-brand-blue space-y-3.5 shadow-2xs">
-            <div className="p-3 rounded-2xl bg-brand-blue/10 text-brand-blue w-fit">
-              <Clock className="h-6 w-6" />
+          <div className="p-7 rounded-3xl bg-card border border-border/80 border-l-4 border-l-brand-blue space-y-4 shadow-2xs flex flex-col justify-between">
+            <div className="space-y-3.5">
+              <div className="p-3 rounded-2xl bg-brand-blue/10 text-brand-blue w-fit">
+                <Clock className="h-6 w-6" />
+              </div>
+              <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Theo dõi tiến bộ</h3>
+              <p className="text-sm text-foreground/75 leading-relaxed">
+                Mỗi lỗ hổng được khắc phục là một bước tiến trên thang đo ARIS-7. Toàn bộ tiến trình được lưu vết minh bạch để đo lường qua từng tuần.
+              </p>
             </div>
-            <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Theo dõi tiến bộ</h3>
-            <p className="text-sm sm:text-base text-foreground/75 leading-relaxed">
-              Mỗi lỗ hổng được khắc phục là một bước tiến trên thang đo ARIS-7. Toàn bộ tiến trình được lưu vết trên Academic Record™ để phụ huynh và học sinh đo lường qua từng tuần.
-            </p>
+
+            {/* Visual Graphic: Progression Stepper */}
+            <div className="pt-2 flex items-center justify-between p-3 rounded-xl bg-blue-50/60 border border-blue-200/70 text-xs">
+              <div className="text-center">
+                <span className="text-[10px] text-slate-500 font-bold block">Tuần 1</span>
+                <span className="font-mono font-black text-slate-700">Band 5.0</span>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-brand-blue shrink-0" />
+              <div className="text-center">
+                <span className="text-[10px] text-slate-500 font-bold block">Tuần 4</span>
+                <span className="font-mono font-black text-brand-blue">Band 6.0</span>
+              </div>
+              <ArrowRight className="w-3.5 h-3.5 text-brand-blue shrink-0" />
+              <div className="text-center">
+                <span className="text-[10px] text-emerald-600 font-bold block">Mục tiêu</span>
+                <span className="font-mono font-black text-emerald-700">Band 7.0+</span>
+              </div>
+            </div>
           </div>
         </div>
       </SectionContainer>
@@ -298,29 +337,116 @@ export default function PublicHomePage() {
         background="default"
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 text-left">
-          <PlaceholderCard
-            variant="feature"
-            badge="Chấm chữa chi tiết"
-            title="Sửa lỗi từng câu"
-            description="Giáo viên chỉ rõ từng lỗi sai ngữ pháp, từ vựng và cách dùng từ để bạn hiểu rõ nguyên nhân câu văn chưa chuẩn."
-            metadata={["Phân tích ngữ pháp", "Gợi ý viết lại"]}
-          />
+          {/* Card 1: Sửa lỗi từng câu */}
+          <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-4 shadow-2xs flex flex-col justify-between hover:border-brand-blue/40 transition-all">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-brand-blue border border-blue-200/80">
+                  Chấm chữa chi tiết
+                </span>
+                <FileCheck className="w-5 h-5 text-brand-blue" />
+              </div>
+              <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Sửa lỗi từng câu</h3>
+              <p className="text-sm text-foreground/75 leading-relaxed">
+                Giáo viên chỉ rõ từng lỗi sai ngữ pháp, từ vựng và cách dùng từ để bạn hiểu rõ nguyên nhân câu văn chưa chuẩn.
+              </p>
+            </div>
 
-          <PlaceholderCard
-            variant="feature"
-            badge="Kỷ luật luyện tập"
-            title="Làm bài sửa (Re-attempt)"
-            description="Sau khi nhận phản hồi, học viên tự tay viết lại bài sửa để khắc phục triệt để lỗ hổng trước khi chuyển sang bài mới."
-            metadata={["Khắc phục lỗi cũ", "Đo lường tiến bộ"]}
-          />
+            {/* Visual UI Mockup: Sentence Annotation */}
+            <div className="p-3.5 rounded-2xl bg-[#001E3D]/5 border border-slate-200/80 space-y-2.5">
+              <div className="text-xs leading-relaxed font-serif text-slate-800 bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
+                <span>The chart illustrates how energy consumption </span>
+                <span className="line-through text-rose-600 bg-rose-100/70 px-1 rounded">grow rapid</span>{" "}
+                <span className="font-sans font-bold text-emerald-700 bg-emerald-100/80 px-1 rounded">grew rapidly</span>
+                <span> over the decade.</span>
+              </div>
+              <div className="flex items-start gap-2 text-[11px] text-slate-600 bg-amber-50/80 p-2.5 rounded-xl border border-amber-200/70">
+                <span className="font-bold text-amber-800 shrink-0">Giảng viên:</span>
+                <span>Chia quá khứ đơn (grew) kèm phó từ (rapidly) để bổ nghĩa động từ chuẩn C1.</span>
+              </div>
+            </div>
 
-          <PlaceholderCard
-            variant="feature"
-            badge="Minh bạch tiến trình"
-            title="Nhật ký bài nộp"
-            description="Dễ dàng xem lại toàn bộ lịch sử bài nộp, so sánh bài làm đầu khóa và hiện tại để thấy rõ sự tiến bộ thực tế."
-            metadata={["Lưu trữ bài nộp", "Biểu đồ kỹ năng"]}
-          />
+            <div className="pt-2 border-t border-border/60 flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+              <span className="px-2 py-0.5 rounded bg-slate-100">Phân tích ngữ pháp</span>
+              <span className="px-2 py-0.5 rounded bg-slate-100">Gợi ý viết lại</span>
+            </div>
+          </div>
+
+          {/* Card 2: Làm bài sửa Re-attempt */}
+          <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-4 shadow-2xs flex flex-col justify-between hover:border-amber-500/40 transition-all">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200/80">
+                  Kỷ luật luyện tập
+                </span>
+                <RefreshCw className="w-5 h-5 text-amber-600" />
+              </div>
+              <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Làm bài sửa (Re-attempt)</h3>
+              <p className="text-sm text-foreground/75 leading-relaxed">
+                Sau khi nhận phản hồi, học viên tự tay viết lại bài sửa để khắc phục triệt để lỗ hổng trước khi chuyển sang bài mới.
+              </p>
+            </div>
+
+            {/* Visual UI Mockup: Before & After Version Compare */}
+            <div className="p-3.5 rounded-2xl bg-[#001E3D]/5 border border-slate-200/80 space-y-2">
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-slate-200 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center font-mono text-[10px] font-bold">1</span>
+                  <span className="text-slate-600">Bản nháp 1</span>
+                </div>
+                <span className="font-mono font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-200 text-[11px]">Band 5.5 (3 lỗi)</span>
+              </div>
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center font-mono text-[10px] font-bold">2</span>
+                  <span className="font-bold text-emerald-900">Bài sửa Re-attempt</span>
+                </div>
+                <span className="font-mono font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300 text-[11px]">Band 6.5 (Đã gỡ)</span>
+              </div>
+            </div>
+
+            <div className="pt-2 border-t border-border/60 flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+              <span className="px-2 py-0.5 rounded bg-slate-100">Khắc phục lỗi cũ</span>
+              <span className="px-2 py-0.5 rounded bg-slate-100">Đo lường tiến bộ</span>
+            </div>
+          </div>
+
+          {/* Card 3: Nhật ký bài nộp */}
+          <div className="p-7 rounded-3xl bg-card border border-border/80 space-y-4 shadow-2xs flex flex-col justify-between hover:border-emerald-500/40 transition-all">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                  Minh bạch tiến trình
+                </span>
+                <TrendingUp className="w-5 h-5 text-emerald-600" />
+              </div>
+              <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Nhật ký bài nộp</h3>
+              <p className="text-sm text-foreground/75 leading-relaxed">
+                Dễ dàng xem lại toàn bộ lịch sử bài nộp, so sánh bài làm đầu khóa và hiện tại để thấy rõ sự tiến bộ thực tế.
+              </p>
+            </div>
+
+            {/* Visual UI Mockup: Submissions Timeline */}
+            <div className="p-3.5 rounded-2xl bg-[#001E3D]/5 border border-slate-200/80 space-y-2">
+              <div className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 text-[11px]">
+                <span className="font-medium text-slate-700 truncate max-w-[150px]">Task 2 • Education</span>
+                <span className="font-mono font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">Band 7.0</span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 text-[11px]">
+                <span className="font-medium text-slate-700 truncate max-w-[150px]">Speaking Part 2</span>
+                <span className="font-mono font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">Band 7.5</span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-200 text-[11px]">
+                <span className="font-medium text-slate-700 truncate max-w-[150px]">Reading Full Test 02</span>
+                <span className="font-mono font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">34/40 (7.5)</span>
+              </div>
+            </div>
+
+            <div className="pt-2 border-t border-border/60 flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+              <span className="px-2 py-0.5 rounded bg-slate-100">Lưu trữ bài nộp</span>
+              <span className="px-2 py-0.5 rounded bg-slate-100">Biểu đồ kỹ năng</span>
+            </div>
+          </div>
         </div>
       </SectionContainer>
 
@@ -347,6 +473,29 @@ export default function PublicHomePage() {
                 Không dùng AI đoán mò. Dữ liệu lỗi ngữ pháp, phát âm và dạng bài yếu nhất được thẩm định trực tiếp bởi giáo viên chuyên môn và thuật toán so khớp khách quan.
               </p>
             </div>
+
+            {/* Visual Error Frequency Graph */}
+            <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+              <div className="space-y-1">
+                <div className="flex justify-between text-[11px] font-semibold text-slate-600">
+                  <span>Matching Headings (Overthinking)</span>
+                  <span className="font-mono font-bold text-rose-600">55%</span>
+                </div>
+                <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                  <div className="bg-rose-500 h-full w-[55%]" />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <div className="flex justify-between text-[11px] font-semibold text-slate-600">
+                  <span>Distractor Trap (Paraphrase lệch)</span>
+                  <span className="font-mono font-bold text-amber-600">35%</span>
+                </div>
+                <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                  <div className="bg-amber-500 h-full w-[35%]" />
+                </div>
+              </div>
+            </div>
+
             <div className="pt-3 border-t border-border/60 text-xs font-bold text-[#002147] flex items-center gap-1.5">
               <CheckCircle2 className="h-4 w-4" />
               <span>Chẩn đoán chính xác và khách quan</span>
@@ -366,6 +515,23 @@ export default function PublicHomePage() {
                 Chỉ rõ 2 thói quen vô thức đang cản trở bạn bứt phá lên Band 6.5 - 7.0+, kèm chiến lược cụ thể để bạn thấy rõ lộ trình tăng điểm.
               </p>
             </div>
+
+            {/* Visual ROI Unlocking */}
+            <div className="p-3 rounded-2xl bg-rose-50/60 border border-rose-200/80 space-y-2 text-xs">
+              <div className="flex items-center justify-between font-bold">
+                <span className="text-slate-700">Điểm hiện tại:</span>
+                <span className="font-mono text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-200">Band 6.0</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] text-brand-red font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-red shrink-0" />
+                <span>Gỡ 2 bẫy tư duy thường gặp</span>
+              </div>
+              <div className="flex items-center justify-between font-bold pt-1 border-t border-rose-200/60 text-brand-red">
+                <span>Tiềm năng bứt phá:</span>
+                <span className="font-mono font-black text-sm bg-brand-red text-white px-2 py-0.5 rounded shadow-2xs">Band 7.0+</span>
+              </div>
+            </div>
+
             <div className="pt-3 border-t border-border/60 text-xs font-bold text-brand-red flex items-center gap-1.5">
               <CheckCircle2 className="h-4 w-4" />
               <span>Tập trung gỡ đúng nút thắt</span>
@@ -385,6 +551,28 @@ export default function PublicHomePage() {
                 Mỗi học viên sở hữu cuốn cẩm nang bỏ túi độc bản — tổng hợp chính xác những câu mình từng viết sai và lời chữa của thầy cô để tự tin đọc ôn tập 15 phút trước giờ thi thật.
               </p>
             </div>
+
+            {/* Visual Mini Pocket Cheat Sheet */}
+            <div className="p-3 rounded-2xl bg-amber-50/50 border border-amber-200/80 space-y-2 font-mono text-[11px]">
+              <div className="flex items-center justify-between text-amber-900 font-bold border-b border-amber-200/60 pb-1.5">
+                <span className="flex items-center gap-1.5">
+                  <BookmarkCheck className="w-3.5 h-3.5 text-amber-700" />
+                  <span>Sổ tay bẫy lỗi cá nhân</span>
+                </span>
+                <span className="text-[10px] text-amber-700 font-normal">Chỉ riêng bạn</span>
+              </div>
+              <div className="space-y-1 text-slate-700 font-sans text-xs">
+                <div className="flex items-start gap-1.5">
+                  <span className="text-rose-500 font-bold">✕</span>
+                  <span>Đọc lướt bỏ qua từ phủ định (barely, seldom)</span>
+                </div>
+                <div className="flex items-start gap-1.5">
+                  <span className="text-emerald-600 font-bold">✓</span>
+                  <span>Kiểm tra danh từ số ít/nhiều trước khi chốt</span>
+                </div>
+              </div>
+            </div>
+
             <div className="pt-3 border-t border-border/60 text-xs font-bold text-brand-blue flex items-center gap-1.5">
               <CheckCircle2 className="h-4 w-4" />
               <span>Sổ tay ôn tập trước giờ thi thật</span>

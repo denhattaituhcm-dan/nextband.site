@@ -124,36 +124,36 @@ export function ExamReviewDialog({
         </DialogHeader>
 
         {/* Summary Stats */}
-        <div className="grid grid-cols-3 gap-3 p-4 mx-5 my-3 bg-muted/40 rounded-xl border border-border/60">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3 p-3 sm:p-4 mx-3 sm:mx-5 my-2 sm:my-3 bg-muted/40 rounded-xl border border-border/60">
           <div className="text-center">
-            <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
+            <div className="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400">
               {answeredCount}
             </div>
-            <div className="text-xs font-semibold text-muted-foreground mt-0.5">Đã trả lời</div>
+            <div className="text-[11px] sm:text-xs font-semibold text-muted-foreground mt-0.5">Đã trả lời</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-black text-muted-foreground">
+            <div className="text-xl sm:text-2xl font-black text-muted-foreground">
               {unansweredCount}
             </div>
-            <div className="text-xs font-semibold text-muted-foreground mt-0.5">Chưa trả lời</div>
+            <div className="text-[11px] sm:text-xs font-semibold text-muted-foreground mt-0.5">Chưa trả lời</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-black text-amber-500">
+            <div className="text-xl sm:text-2xl font-black text-amber-500">
               {flaggedCount}
             </div>
-            <div className="text-xs font-semibold text-muted-foreground mt-0.5">Đã đánh dấu</div>
+            <div className="text-[11px] sm:text-xs font-semibold text-muted-foreground mt-0.5">Đã đánh dấu</div>
           </div>
         </div>
 
         {/* Group-by-Group Question Breakdown */}
-        <ScrollArea className="flex-1 px-5 py-2 max-h-[45vh]">
-          <div className="space-y-4 pb-2">
+        <ScrollArea className="flex-1 px-3 sm:px-5 py-2 max-h-[45vh]">
+          <div className="space-y-3 sm:space-y-4 pb-2">
             {allGroups.map((grp, idx) => (
-              <div key={idx} className="space-y-2 rounded-xl bg-card border p-3.5 shadow-2xs">
+              <div key={idx} className="space-y-2 rounded-xl bg-card border p-3 sm:p-3.5 shadow-2xs">
                 <div className="text-xs font-bold text-foreground/80 uppercase tracking-wide">
                   {grp.groupTitle}
                 </div>
-                <div className="grid grid-cols-6 sm:grid-cols-8 gap-2">
+                <div className="grid grid-cols-5 sm:grid-cols-8 gap-2">
                   {grp.questions.map(({ question, displayNumber }) => {
                     const isAnswered = isAnsweredValue(answers[question.id]);
                     const isFlagged = flaggedQuestions.has(question.id);
@@ -208,11 +208,11 @@ export function ExamReviewDialog({
           </div>
         )}
 
-        <DialogFooter className="p-4 border-t gap-2 bg-muted/20">
-          <Button variant="outline" size="sm" onClick={() => onOpenChange(false)} className="font-semibold rounded-xl">
+        <DialogFooter className="p-3.5 sm:p-4 border-t flex flex-col-reverse sm:flex-row gap-2 bg-muted/20">
+          <Button variant="outline" size="sm" onClick={() => onOpenChange(false)} className="w-full sm:w-auto font-semibold rounded-xl">
             Tiếp tục làm bài
           </Button>
-          <Button size="sm" onClick={onSubmit} disabled={isSubmitting} className="font-bold rounded-xl bg-primary text-primary-foreground shadow-xs">
+          <Button size="sm" onClick={onSubmit} disabled={isSubmitting} className="w-full sm:w-auto font-bold rounded-xl bg-primary text-primary-foreground shadow-xs">
             {isSubmitting ? (
               <>Đang nộp...</>
             ) : (

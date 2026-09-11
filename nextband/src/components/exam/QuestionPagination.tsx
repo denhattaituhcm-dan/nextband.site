@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Flag, Check, LayoutGrid, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Flag, Check, LayoutGrid } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import {
@@ -88,35 +88,10 @@ export function QuestionPagination({
       ? formatQuestionLabel(questions[currentIndex], currentIndex)
       : '1';
 
-  const handlePrev = () => {
-    if (currentIndex > 0) {
-      const prevQ = questions[currentIndex - 1];
-      onQuestionClick(prevQ.focusId || prevQ.id);
-    }
-  };
-
-  const handleNext = () => {
-    if (currentIndex < questions.length - 1) {
-      const nextQ = questions[currentIndex + 1];
-      onQuestionClick(nextQ.focusId || nextQ.id);
-    }
-  };
-
   return (
-    <div className={cn('flex items-center justify-between gap-2 w-full', className)}>
-      {/* Mobile Compact Navigator */}
-      <div className="flex sm:hidden items-center justify-between w-full px-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handlePrev}
-          disabled={currentIndex <= 0}
-          className="h-8 px-2.5 text-xs font-semibold rounded-lg"
-        >
-          <ChevronLeft className="h-4 w-4 mr-0.5" />
-          Trước
-        </Button>
-
+    <div className={cn('flex items-center justify-center gap-2 w-full', className)}>
+      {/* Mobile Compact Navigator: Central Palette Trigger */}
+      <div className="flex sm:hidden items-center justify-center">
         <Dialog open={mobilePaletteOpen} onOpenChange={setMobilePaletteOpen}>
           <DialogTrigger asChild>
             <Button
@@ -167,17 +142,6 @@ export function QuestionPagination({
             </div>
           </DialogContent>
         </Dialog>
-
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleNext}
-          disabled={currentIndex >= questions.length - 1}
-          className="h-8 px-2.5 text-xs font-semibold rounded-lg"
-        >
-          Sau
-          <ChevronRight className="h-4 w-4 ml-0.5" />
-        </Button>
       </div>
 
       {/* Desktop/Tablet Full Navigator */}

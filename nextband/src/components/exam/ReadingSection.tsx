@@ -19,6 +19,7 @@ import {
   Pencil,
   Trash2,
   CheckSquare,
+  ArrowRight,
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useTextHighlight, Highlight } from "@/hooks/useTextHighlight";
@@ -140,6 +141,8 @@ export function ReadingSection({
   );
   const [passageSourceText, setPassageSourceText] = useState("");
   const [leftTab, setLeftTab] = useState<"passage" | "highlights">("passage");
+  const [mobilePane, setMobilePane] = useState<"passage" | "questions">("passage");
+  const isInitialMount = useRef(true);
   const markRefs = useRef<Map<string, HTMLElement>>(new Map());
   const {
     highlights,
@@ -148,6 +151,16 @@ export function ReadingSection({
     updateHighlightColor,
     loadHighlights,
   } = useTextHighlight(section.id);
+
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    if (currentQuestionId) {
+      setMobilePane("questions");
+    }
+  }, [currentQuestionId]);
 
   // Normalize question groups and their fields from camelCase to snake_case
   const questionGroups = (
@@ -184,6 +197,13 @@ export function ReadingSection({
       if (orderDiff !== 0) return orderDiff;
       return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
     });
+
+  const totalQuestionsCount = useMemo(() => {
+    return questionGroups.reduce(
+      (sum: number, g: any) => sum + (g.questions?.length || 0),
+      0,
+    );
+  }, [questionGroups]);
 
   // Get passage text from first question group or section
   const passageText = questionGroups[0]?.passage || section.passage_text || "";
@@ -453,82 +473,109 @@ export function ReadingSection({
   ]);
 
   return (
-    <div className="h-full grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x relative">
-      {showHighlightMenu && pendingHighlight && (
-        <div
-          className="fixed z-50 bg-card border rounded-lg shadow-lg p-3 w-[280px] space-y-2"
-          style={{
-            left: menuPosition.x,
-            top: menuPosition.y,
-            transform: "translate(-50%, -100%)",
-          }}
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
-              <Pencil className="h-3.5 w-3.5" />
-              Chọn màu highlight
-            </span>
-            <div className="flex items-center gap-1">
+    <div className="h-full flex flex-col relative">
+      {/* Mobile Top Segmented Switcher (Visible on small screens only) */}
+      <div className="lg:hidden sticky top-0 z-30 p-2 bg-background/95 backdrop-blur-md border-b">
+        <div className="flex items-center gap-1 bg-muted p-1 rounded-xl w-full">
+          <Button
+            type="button"
+            size="sm"
+            variant={mobilePane === "passage" ? "default" : "ghost"}
+            onClick={() => setMobilePane("passage")}
+            className="flex-1 text-xs font-bold rounded-lg h-8 gap-1.5"
+          >
+            <BookOpen className="h-3.5 w-3.5" />
+            <span>Bài đọc</span>
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant={mobilePane === "questions" ? "default" : "ghost"}
+            onClick={() => setMobilePane("questions")}
+            className="flex-1 text-xs font-bold rounded-lg h-8 gap-1.5"
+          >
+            <CheckSquare className="h-3.5 w-3.5" />
+            <span>Câu hỏi {totalQuestionsCount > 0 ? `(${totalQuestionsCount})` : ""}</span>
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x relative">
+        {showHighlightMenu && pendingHighlight && (
+          <div
+            className="fixed z-50 bg-card border rounded-lg shadow-lg p-3 w-[280px] space-y-2"
+            style={{
+              left: menuPosition.x,
+              top: menuPosition.y,
+              transform: "translate(-50%, -100%)",
+            }}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
+                <Pencil className="h-3.5 w-3.5" />
+                Chọn màu highlight
+              </span>
+              <div className="flex items-center gap-1">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className={cn(
+                    "h-7 w-7 p-0",
+                    newHighlightColor === "yellow"
+                      ? "bg-yellow-200"
+                      : "bg-yellow-100/60",
+                  )}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => setNewHighlightColor("yellow")}
+                >
+                  <Highlighter className="h-3.5 w-3.5" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className={cn(
+                    "h-7 w-7 p-0",
+                    newHighlightColor === "green"
+                      ? "bg-green-200"
+                      : "bg-green-100/60",
+                  )}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => setNewHighlightColor("green")}
+                >
+                  <Highlighter className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            </div>
+            <p className="text-xs rounded-md border bg-muted/30 px-2 py-1.5">
+              {normalizeText(pendingHighlight.text)}
+            </p>
+            <div className="flex justify-end gap-2">
               <Button
                 size="sm"
                 variant="ghost"
-                className={cn(
-                  "h-7 w-7 p-0",
-                  newHighlightColor === "yellow"
-                    ? "bg-yellow-200"
-                    : "bg-yellow-100/60",
-                )}
                 onMouseDown={(e) => e.preventDefault()}
-                onClick={() => setNewHighlightColor("yellow")}
+                onClick={() => {
+                  setPendingHighlight(null);
+                  setShowHighlightMenu(false);
+                  window.getSelection()?.removeAllRanges();
+                }}
               >
-                <Highlighter className="h-3.5 w-3.5" />
+                Hủy
               </Button>
               <Button
                 size="sm"
-                variant="ghost"
-                className={cn(
-                  "h-7 w-7 p-0",
-                  newHighlightColor === "green"
-                    ? "bg-green-200"
-                    : "bg-green-100/60",
-                )}
                 onMouseDown={(e) => e.preventDefault()}
-                onClick={() => setNewHighlightColor("green")}
+                onClick={handleSaveHighlight}
               >
-                <Highlighter className="h-3.5 w-3.5" />
+                Lưu
               </Button>
             </div>
           </div>
-          <p className="text-xs rounded-md border bg-muted/30 px-2 py-1.5">
-            {normalizeText(pendingHighlight.text)}
-          </p>
-          <div className="flex justify-end gap-2">
-            <Button
-              size="sm"
-              variant="ghost"
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => {
-                setPendingHighlight(null);
-                setShowHighlightMenu(false);
-                window.getSelection()?.removeAllRanges();
-              }}
-            >
-              Hủy
-            </Button>
-            <Button
-              size="sm"
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={handleSaveHighlight}
-            >
-              Lưu
-            </Button>
-          </div>
-        </div>
-      )}
+        )}
 
-      {/* Left - Passage */}
-      <ScrollArea className="h-[calc(100vh-200px)]">
-        <div ref={passageRef} className="p-6" onMouseUp={handleTextSelection}>
+        {/* Left - Passage */}
+        <ScrollArea className={cn("h-[calc(100vh-220px)] lg:h-[calc(100vh-200px)]", mobilePane !== "passage" && "hidden lg:block")}>
+          <div ref={passageRef} className="p-4 sm:p-6" onMouseUp={handleTextSelection}>
             <div className="flex items-center justify-between gap-2 mb-4">
             <div className="flex items-center gap-2 text-[hsl(var(--reading))]">
               <BookOpen className="h-5 w-5" />
@@ -658,12 +705,38 @@ export function ReadingSection({
               })}
             </div>
           )}
+
+          {/* Quick jump to questions button at bottom of passage on mobile */}
+          <div className="lg:hidden pt-6 pb-8 text-center border-t mt-8">
+            <Button
+              type="button"
+              onClick={() => setMobilePane("questions")}
+              className="rounded-xl font-bold gap-1.5 shadow-xs text-xs"
+            >
+              <span>Xem câu hỏi {totalQuestionsCount > 0 ? `(${totalQuestionsCount} câu)` : ""}</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Button>
+          </div>
         </div>
-    </ScrollArea>
+      </ScrollArea>
 
       {/* Right - Questions */}
-      <ScrollArea className="flex-1 h-full">
+      <ScrollArea className={cn("flex-1 h-full", mobilePane !== "questions" && "hidden lg:block")}>
         <div className="p-4 md:p-6 space-y-6">
+          {/* Mobile Back to Passage helper button */}
+          <div className="lg:hidden">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setMobilePane("passage")}
+              className="w-full text-xs font-bold rounded-xl gap-1.5 border-primary/30 bg-primary/5 text-primary"
+            >
+              <BookOpen className="h-3.5 w-3.5" />
+              <span>Xem lại bài đọc (Passage)</span>
+            </Button>
+          </div>
+
           {section.instructions && (
             <Card className="bg-amber-500/10 border-amber-500/30 border shadow-xs">
               <CardContent className="p-4 text-sm text-foreground font-medium">
@@ -796,5 +869,6 @@ export function ReadingSection({
         </div>
       </ScrollArea>
     </div>
-  );
+  </div>
+);
 }
