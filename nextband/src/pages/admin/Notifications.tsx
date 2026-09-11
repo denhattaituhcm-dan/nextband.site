@@ -24,6 +24,8 @@ import {
   GraduationCap,
   School,
   FileText,
+  Briefcase,
+  UserCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -84,7 +86,7 @@ export default function AdminNotificationsPage() {
   const [formTitle, setFormTitle] = useState("");
   const [formMessage, setFormMessage] = useState("");
   const [formType, setFormType] = useState<"ANNOUNCEMENT" | "SYSTEM" | "DEADLINE_APPROACHING">("ANNOUNCEMENT");
-  const [formTargetType, setFormTargetType] = useState<"ALL" | "STUDENTS" | "TEACHERS" | "CLASS">("ALL");
+  const [formTargetType, setFormTargetType] = useState<"ALL" | "STUDENTS" | "TEACHERS" | "STAFF" | "TEACHERS_AND_STAFF" | "CLASS">("ALL");
   const [formClassId, setFormClassId] = useState("");
   const [formLink, setFormLink] = useState("/app");
   const [formDurationDays, setFormDurationDays] = useState<string>("7");
@@ -293,6 +295,20 @@ export default function AdminNotificationsPage() {
           <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200 gap-1">
             <ShieldCheck className="h-3 w-3 text-purple-600" />
             Giáo viên
+          </Badge>
+        );
+      case "STAFF":
+        return (
+          <Badge variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200 gap-1">
+            <Briefcase className="h-3 w-3 text-amber-600" />
+            Nhân viên
+          </Badge>
+        );
+      case "TEACHERS_AND_STAFF":
+        return (
+          <Badge variant="outline" className="text-xs bg-indigo-50 text-indigo-700 border-indigo-200 gap-1">
+            <Users className="h-3 w-3 text-indigo-600" />
+            Giáo viên & Nhân viên
           </Badge>
         );
       case "CLASS":
@@ -697,6 +713,8 @@ export default function AdminNotificationsPage() {
                         <SelectItem value="ALL">🌐 Toàn hệ thống (Tất cả)</SelectItem>
                         <SelectItem value="STUDENTS">🎓 Tất cả Học viên</SelectItem>
                         <SelectItem value="TEACHERS">👨‍🏫 Tất cả Giáo viên</SelectItem>
+                        <SelectItem value="STAFF">💼 Tất cả Nhân viên</SelectItem>
+                        <SelectItem value="TEACHERS_AND_STAFF">👥 Giáo viên & Nhân viên</SelectItem>
                         <SelectItem value="CLASS">🏫 Theo Lớp học cụ thể</SelectItem>
                       </SelectContent>
                     </Select>
@@ -781,7 +799,7 @@ export default function AdminNotificationsPage() {
                     Xem Trước Giao Diện Thực Tế
                   </div>
                   <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    Mô phỏng hiển thị như học viên/giáo viên sẽ thấy trên màn hình:
+                    Mô phỏng hiển thị như người nhận (học viên, giáo viên, nhân viên) sẽ thấy trên màn hình:
                   </p>
 
                   {/* 1. Preview Banner */}
@@ -982,6 +1000,10 @@ export default function AdminNotificationsPage() {
                           {rc.userRoles?.includes("teacher") ? (
                             <Badge variant="outline" className="text-[10px] text-purple-700 bg-purple-50 border-purple-200">
                               Giáo viên
+                            </Badge>
+                          ) : rc.userRoles?.includes("staff") ? (
+                            <Badge variant="outline" className="text-[10px] text-amber-700 bg-amber-50 border-amber-200">
+                              Nhân viên
                             </Badge>
                           ) : (
                             <Badge variant="outline" className="text-[10px] text-slate-700 bg-slate-50">

@@ -203,7 +203,7 @@ export function QuestionControlRenderer({
               onChange={(e) => onAnswerChange(question.id, e.target.value)}
               onKeyDown={handleShortAnswerKeyDown}
               onFocus={() => onQuestionFocus?.(question.id)}
-              className="max-w-md h-11"
+              className="w-full sm:max-w-xl h-11"
             />
             {(question.instruction || question.hint) && (
               <p className="text-[11px] text-muted-foreground font-medium italic">

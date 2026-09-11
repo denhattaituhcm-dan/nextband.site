@@ -181,40 +181,43 @@ export function GrammarSection({
                               onClick={() => onQuestionFocus?.(focusQuestionId)}
                             >
                               <CardContent className="p-3.5 sm:p-6">
-                                <div className="flex items-start gap-3 sm:gap-4">
-                                  <span className="shrink-0 inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-extrabold bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-teal-500/20 shadow-xs">
-                                     {question.displayNumber ?? question.displayLabel ?? question.order_index ?? questionCounter}
-                                  </span>
+                                <div className="space-y-3.5 sm:space-y-4">
+                                  <div className="flex items-start gap-3 sm:gap-4">
+                                    <span className="shrink-0 inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-extrabold bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-teal-500/20 shadow-xs">
+                                       {question.displayNumber ?? question.displayLabel ?? question.order_index ?? questionCounter}
+                                    </span>
 
-                                  <div className="flex-1 space-y-4 pt-0.5">
-                                    {cleanHtmlText(question.question_text) &&
-                                      !(
-                                        question.question_type ===
-                                          "fill_blank" &&
-                                        hasFillBlankPlaceholders(
-                                          question.question_text,
-                                        )
-                                      ) && (
-                                        <RichContent
-                                          html={question.question_text}
-                                          className="text-gray-900 dark:text-gray-100 text-base leading-relaxed font-medium"
-                                        />
+                                    <div className="flex-1 space-y-3 pt-0.5 min-w-0">
+                                      {cleanHtmlText(question.question_text) &&
+                                        !(
+                                          question.question_type ===
+                                            "fill_blank" &&
+                                          hasFillBlankPlaceholders(
+                                            question.question_text,
+                                          )
+                                        ) && (
+                                          <RichContent
+                                            html={question.question_text}
+                                            className="text-gray-900 dark:text-gray-100 text-base leading-relaxed font-medium"
+                                          />
+                                        )}
+
+                                      {question.question_audio_url && (
+                                        <div className="bg-teal-50/80 dark:bg-gray-800/80 p-3 rounded-2xl border border-teal-200/60 dark:border-gray-700 flex items-center gap-3 max-w-md">
+                                          <audio
+                                            src={formatStorageUrl(question.question_audio_url)}
+                                            controls
+                                            preload="metadata"
+                                            crossOrigin="anonymous"
+                                            className="h-8 w-full"
+                                          />
+                                        </div>
                                       )}
+                                    </div>
+                                  </div>
 
-                                    {question.question_audio_url && (
-                                      <div className="bg-teal-50/80 dark:bg-gray-800/80 p-3 rounded-2xl border border-teal-200/60 dark:border-gray-700 flex items-center gap-3 max-w-md">
-                                        <audio
-                                          src={formatStorageUrl(question.question_audio_url)}
-                                          controls
-                                          preload="metadata"
-                                          crossOrigin="anonymous"
-                                          className="h-8 w-full"
-                                        />
-                                      </div>
-                                    )}
-
-                                    {/* Interaction types */}
-                                    <div className="pt-1">
+                                  {/* Interaction types */}
+                                  <div className="pt-0.5 sm:pl-[44px]">
                                       {/* Multiple Choice */}
                                       {question.question_type === "multiple_choice" && !isValidMCQOptions(question.options) && (
                                          <div className="p-4 rounded-2xl border border-destructive/30 bg-destructive/5 text-destructive text-sm flex items-center gap-2.5">
@@ -413,7 +416,7 @@ export function GrammarSection({
                                               }
                                               onKeyDown={handleShortAnswerKeyDown}
                                               onFocus={() => onQuestionFocus?.(focusQuestionId)}
-                                              className="w-full max-w-md h-11 sm:h-12 rounded-xl sm:rounded-2xl text-base border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 shadow-xs font-medium"
+                                              className="w-full sm:max-w-xl h-11 sm:h-12 rounded-xl sm:rounded-2xl text-base border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 shadow-xs font-medium"
                                             />
                                           )}
                                         </div>
@@ -437,7 +440,7 @@ export function GrammarSection({
                                           }
                                           onKeyDown={handleShortAnswerKeyDown}
                                           onFocus={() => onQuestionFocus?.(focusQuestionId)}
-                                          className="w-full max-w-md h-11 sm:h-12 rounded-xl sm:rounded-2xl text-base border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 shadow-xs font-medium"
+                                          className="w-full sm:max-w-xl h-11 sm:h-12 rounded-xl sm:rounded-2xl text-base border-gray-200 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 shadow-xs font-medium"
                                         />
                                       )}
 
@@ -495,12 +498,11 @@ export function GrammarSection({
                                           onAnswerChange={onAnswerChange}
                                         />
                                       )}
-                                    </div>
+                                      </div>
                                   </div>
-                                </div>
-                              </CardContent>
-                            </Card>
-                          );
+                                </CardContent>
+                              </Card>
+                            );
                         },
                       )}
                     </div>

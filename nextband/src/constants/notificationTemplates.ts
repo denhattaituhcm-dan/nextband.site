@@ -4,7 +4,7 @@ export interface NotificationTemplate {
   name: string;
   icon: string;
   type: "ANNOUNCEMENT" | "SYSTEM" | "DEADLINE_APPROACHING";
-  targetType: "ALL" | "STUDENTS" | "TEACHERS" | "CLASS";
+  targetType: "ALL" | "STUDENTS" | "TEACHERS" | "STAFF" | "TEACHERS_AND_STAFF" | "CLASS";
   title: string;
   message: string;
   link?: string;

@@ -156,7 +156,7 @@ export class NotificationService {
     title: string;
     message: string;
     type?: NotificationType;
-    targetType: 'ALL' | 'STUDENTS' | 'TEACHERS' | 'CLASS';
+    targetType: 'ALL' | 'STUDENTS' | 'TEACHERS' | 'STAFF' | 'TEACHERS_AND_STAFF' | 'CLASS';
     targetClassId?: string;
     link?: string | null;
     createdBy?: string | null;
@@ -183,6 +183,18 @@ export class NotificationService {
         select: { userId: true },
       });
       targetIds = teacherRoles.map((r) => r.userId);
+    } else if (data.targetType === 'STAFF') {
+      const staffRoles = await this.prisma.userRole.findMany({
+        where: { role: 'staff', user: { isActive: true } },
+        select: { userId: true },
+      });
+      targetIds = staffRoles.map((r) => r.userId);
+    } else if (data.targetType === 'TEACHERS_AND_STAFF') {
+      const staffAndTeacherRoles = await this.prisma.userRole.findMany({
+        where: { role: { in: ['teacher', 'staff'] }, user: { isActive: true } },
+        select: { userId: true },
+      });
+      targetIds = staffAndTeacherRoles.map((r) => r.userId);
     } else if (data.targetType === 'CLASS') {
       if (!data.targetClassId) {
         throw new Error('targetClassId is required for class broadcast');
@@ -463,7 +475,7 @@ export class NotificationService {
    * Thiết kế an toàn, không block luồng gọi chính.
    */
   async notifyUsersByRole(
-    roles: ('admin' | 'teacher' | 'student')[],
+    roles: ('admin' | 'teacher' | 'student' | 'staff')[],
     payload: {
       type: NotificationType;
       title: string;

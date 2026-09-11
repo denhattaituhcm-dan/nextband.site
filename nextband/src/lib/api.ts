@@ -3844,7 +3844,7 @@ export interface BroadcastPayload {
   title: string;
   message: string;
   type?: "ANNOUNCEMENT" | "SYSTEM" | "DEADLINE_APPROACHING" | "TEACHER_FEEDBACK";
-  targetType: "ALL" | "STUDENTS" | "TEACHERS" | "CLASS";
+  targetType: "ALL" | "STUDENTS" | "TEACHERS" | "STAFF" | "TEACHERS_AND_STAFF" | "CLASS";
   targetClassId?: string;
   link?: string;
   expiresAt?: string;
@@ -3856,7 +3856,7 @@ export interface AdminAnnouncementItem {
   title: string;
   message: string;
   type: string;
-  targetType: "ALL" | "STUDENTS" | "TEACHERS" | "CLASS";
+  targetType: "ALL" | "STUDENTS" | "TEACHERS" | "STAFF" | "TEACHERS_AND_STAFF" | "CLASS";
   targetClassId?: string | null;
   link?: string | null;
   createdBy?: string | null;

@@ -82009,6 +82009,18 @@ var init_notification_service = __esm({
             select: { userId: true }
           });
           targetIds = teacherRoles.map((r) => r.userId);
+        } else if (data.targetType === "STAFF") {
+          const staffRoles = await this.prisma.userRole.findMany({
+            where: { role: "staff", user: { isActive: true } },
+            select: { userId: true }
+          });
+          targetIds = staffRoles.map((r) => r.userId);
+        } else if (data.targetType === "TEACHERS_AND_STAFF") {
+          const staffAndTeacherRoles = await this.prisma.userRole.findMany({
+            where: { role: { in: ["teacher", "staff"] }, user: { isActive: true } },
+            select: { userId: true }
+          });
+          targetIds = staffAndTeacherRoles.map((r) => r.userId);
         } else if (data.targetType === "CLASS") {
           if (!data.targetClassId) {
             throw new Error("targetClassId is required for class broadcast");
@@ -109526,8 +109538,8 @@ var notificationsRoutes = async (fastify) => {
       if (!message2 || !message2.trim()) {
         return reply.status(400).send({ success: false, error: "N\u1ED9i dung th\xF4ng b\xE1o kh\xF4ng \u0111\u01B0\u1EE3c \u0111\u1EC3 tr\u1ED1ng." });
       }
-      if (!targetType || !["ALL", "STUDENTS", "TEACHERS", "CLASS"].includes(targetType)) {
-        return reply.status(400).send({ success: false, error: "Vui l\xF2ng ch\u1ECDn \u0111\u1ED1i t\u01B0\u1EE3ng nh\u1EADn th\xF4ng b\xE1o h\u1EE3p l\u1EC7 (ALL, STUDENTS, TEACHERS, CLASS)." });
+      if (!targetType || !["ALL", "STUDENTS", "TEACHERS", "STAFF", "TEACHERS_AND_STAFF", "CLASS"].includes(targetType)) {
+        return reply.status(400).send({ success: false, error: "Vui l\xF2ng ch\u1ECDn \u0111\u1ED1i t\u01B0\u1EE3ng nh\u1EADn th\xF4ng b\xE1o h\u1EE3p l\u1EC7 (ALL, STUDENTS, TEACHERS, STAFF, TEACHERS_AND_STAFF, CLASS)." });
       }
       if (targetType === "CLASS" && !targetClassId) {
         return reply.status(400).send({ success: false, error: "Vui l\xF2ng ch\u1ECDn l\u1EDBp h\u1ECDc nh\u1EADn th\xF4ng b\xE1o." });

@@ -364,20 +364,24 @@ export function WritingSection({
                             key={question.id}
                             className="rounded-3xl overflow-hidden border border-gray-200/80 dark:border-gray-800 shadow-xs hover:shadow-md transition-all bg-white dark:bg-gray-900"
                           >
-                            <CardContent className="p-6">
-                              <div className="flex items-start gap-4">
-                                <span className="shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-2xl text-sm font-extrabold bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-teal-500/20 shadow-xs">
-                                  {question.displayNumber ?? question.displayLabel ?? question.order_index ?? (qIndex + 1)}
-                                </span>
+                            <CardContent className="p-4 sm:p-6">
+                              <div className="space-y-4">
+                                <div className="flex items-start gap-3 sm:gap-4">
+                                  <span className="shrink-0 inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-extrabold bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-teal-500/20 shadow-xs">
+                                    {question.displayNumber ?? question.displayLabel ?? question.order_index ?? (qIndex + 1)}
+                                  </span>
 
-                                <div className="flex-1 space-y-4 pt-0.5">
-                                  {cleanHtmlText(question.question_text) && (
-                                    <RichContent
-                                      html={question.question_text}
-                                      className="text-gray-900 dark:text-gray-100 text-base leading-relaxed font-normal"
-                                    />
-                                  )}
+                                  <div className="flex-1 space-y-3 pt-0.5 min-w-0">
+                                    {cleanHtmlText(question.question_text) && (
+                                      <RichContent
+                                        html={question.question_text}
+                                        className="text-gray-900 dark:text-gray-100 text-base leading-relaxed font-normal"
+                                      />
+                                    )}
+                                  </div>
+                                </div>
 
+                                <div className="pt-0.5 sm:pl-[44px]">
                                   {renderAnswerField(question)}
                                 </div>
                               </div>

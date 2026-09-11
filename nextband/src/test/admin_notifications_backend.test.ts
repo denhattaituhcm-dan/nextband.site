@@ -91,6 +91,58 @@ describe("🔔 Admin Notifications & Broadcast Architecture Tests", () => {
       });
     });
 
+    it("Target STAFF: Resolves only staff members", async () => {
+      prismaMock.userRole.findMany.mockResolvedValue([
+        { userId: "staff-1" },
+        { userId: "staff-2" },
+      ]);
+      prismaMock.notificationBroadcast.create.mockResolvedValue({ id: "bc-staff" });
+      prismaMock.notification.createMany.mockResolvedValue({ count: 2 });
+
+      const res = await service.broadcastAnnouncement({
+        title: "Thông báo họp nội bộ nhân viên",
+        message: "Họp giao ban lúc 9h sáng",
+        targetType: "STAFF",
+      });
+
+      expect(res.recipientCount).toBe(2);
+      expect(prismaMock.userRole.findMany).toHaveBeenCalledWith({
+        where: { role: "staff", user: { isActive: true } },
+        select: { userId: true },
+      });
+    });
+
+    it("Target TEACHERS_AND_STAFF: Resolves teachers and staff without duplicate", async () => {
+      // User with both roles returned by query
+      prismaMock.userRole.findMany.mockResolvedValue([
+        { userId: "teacher-1" },
+        { userId: "staff-1" },
+        { userId: "staff-1" }, // Duplicate if user holds multiple records
+      ]);
+      prismaMock.notificationBroadcast.create.mockResolvedValue({ id: "bc-teachers-staff" });
+      prismaMock.notification.createMany.mockResolvedValue({ count: 2 });
+
+      const res = await service.broadcastAnnouncement({
+        title: "Thông báo lịch nghỉ Lễ toàn thể cán bộ - giáo viên - nhân viên",
+        message: "Nghỉ lễ theo lịch nhà nước",
+        targetType: "TEACHERS_AND_STAFF",
+      });
+
+      // Deduplicated: 2 unique recipients
+      expect(res.recipientCount).toBe(2);
+      expect(prismaMock.userRole.findMany).toHaveBeenCalledWith({
+        where: { role: { in: ["teacher", "staff"] }, user: { isActive: true } },
+        select: { userId: true },
+      });
+      expect(prismaMock.notification.createMany).toHaveBeenCalledWith({
+        data: expect.arrayContaining([
+          expect.objectContaining({ userId: "teacher-1" }),
+          expect.objectContaining({ userId: "staff-1" }),
+        ]),
+        skipDuplicates: true,
+      });
+    });
+
     it("Target CLASS: Resolves class students + assigned teacher without duplicate", async () => {
       // User 'u-dual' is both enrolled student and teacher in edge case
       prismaMock.classStudent.findMany.mockResolvedValue([

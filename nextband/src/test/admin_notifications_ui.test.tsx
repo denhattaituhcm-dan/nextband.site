@@ -114,4 +114,49 @@ describe("🔔 Admin Notifications UI Tests", () => {
       );
     });
   });
+
+  it("Renders STAFF and TEACHERS_AND_STAFF target badges properly in history table", async () => {
+    (notificationsApi.listAdminBroadcasts as any).mockResolvedValue({
+      success: true,
+      data: [
+        {
+          id: "bc-staff",
+          broadcastId: "bc-staff",
+          title: "Họp chuyên môn phòng ban",
+          message: "Triển khai kế hoạch tháng mới",
+          type: "ANNOUNCEMENT",
+          targetType: "STAFF",
+          totalRecipients: 10,
+          readCount: 9,
+          readRate: 90,
+          publishedAt: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+        },
+        {
+          id: "bc-both",
+          broadcastId: "bc-both",
+          title: "Thông báo lịch nghỉ Lễ",
+          message: "Áp dụng cho toàn thể giáo viên và nhân viên",
+          type: "ANNOUNCEMENT",
+          targetType: "TEACHERS_AND_STAFF",
+          totalRecipients: 30,
+          readCount: 25,
+          readRate: 83.3,
+          publishedAt: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+        },
+      ],
+      pagination: { total: 2, page: 1, limit: 10 },
+    });
+
+    renderComponent();
+
+    // Verify STAFF badge text
+    expect(await screen.findByText("Họp chuyên môn phòng ban")).toBeInTheDocument();
+    expect(screen.getByText("Nhân viên")).toBeInTheDocument();
+
+    // Verify TEACHERS_AND_STAFF badge text
+    expect(await screen.findByText("Thông báo lịch nghỉ Lễ")).toBeInTheDocument();
+    expect(screen.getByText("Giáo viên & Nhân viên")).toBeInTheDocument();
+  });
 });

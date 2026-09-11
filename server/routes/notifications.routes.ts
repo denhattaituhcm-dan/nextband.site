@@ -131,7 +131,7 @@ const notificationsRoutes: FastifyPluginAsync = async (fastify) => {
       title: string;
       message: string;
       type?: NotificationType;
-      targetType: 'ALL' | 'STUDENTS' | 'TEACHERS' | 'CLASS';
+      targetType: 'ALL' | 'STUDENTS' | 'TEACHERS' | 'STAFF' | 'TEACHERS_AND_STAFF' | 'CLASS';
       targetClassId?: string;
       link?: string;
       expiresAt?: string;
@@ -149,8 +149,8 @@ const notificationsRoutes: FastifyPluginAsync = async (fastify) => {
       if (!message || !message.trim()) {
         return reply.status(400).send({ success: false, error: 'Nội dung thông báo không được để trống.' });
       }
-      if (!targetType || !['ALL', 'STUDENTS', 'TEACHERS', 'CLASS'].includes(targetType)) {
-        return reply.status(400).send({ success: false, error: 'Vui lòng chọn đối tượng nhận thông báo hợp lệ (ALL, STUDENTS, TEACHERS, CLASS).' });
+      if (!targetType || !['ALL', 'STUDENTS', 'TEACHERS', 'STAFF', 'TEACHERS_AND_STAFF', 'CLASS'].includes(targetType)) {
+        return reply.status(400).send({ success: false, error: 'Vui lòng chọn đối tượng nhận thông báo hợp lệ (ALL, STUDENTS, TEACHERS, STAFF, TEACHERS_AND_STAFF, CLASS).' });
       }
       if (targetType === 'CLASS' && !targetClassId) {
         return reply.status(400).send({ success: false, error: 'Vui lòng chọn lớp học nhận thông báo.' });

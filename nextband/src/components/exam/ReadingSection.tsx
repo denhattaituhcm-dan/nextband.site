@@ -846,7 +846,7 @@ export function ReadingSection({
                         </div>
                       </div>
 
-                      <div className="ml-12 space-y-4">
+                      <div className="ml-0 sm:ml-12 space-y-4">
                         <QuestionControlRenderer
                           question={question}
                           answer={answers[question.id]}
