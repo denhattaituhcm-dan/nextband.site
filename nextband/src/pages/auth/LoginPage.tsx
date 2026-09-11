@@ -277,12 +277,18 @@ export default function LoginPage() {
             </p>
           </CardHeader>
           <CardContent className="space-y-6 p-0">
-            {/* Google Single Sign-On Button */}
-            <div className="space-y-2">
+            {/* Phần DÀNH CHO HỌC VIÊN với màng xanh bao quanh */}
+            <div className="rounded-2xl bg-blue-50/60 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/40 p-5 space-y-3">
+              <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wide">
+                <GraduationCap className="h-4 w-4" />
+                <span>DÀNH CHO HỌC VIÊN</span>
+              </div>
+
+              {/* Google Single Sign-On Button */}
               <Button
                 type="button"
                 variant="outline"
-                className="w-full flex items-center justify-center gap-3 border-border bg-card h-11 rounded-xl px-4 text-sm font-semibold hover:bg-muted text-foreground shadow-xs transition-all duration-150 active:scale-[0.99]"
+                className="w-full flex items-center justify-center gap-3 border-blue-200/80 hover:border-blue-300 dark:border-blue-800 bg-card h-11 rounded-xl px-4 text-sm font-semibold hover:bg-blue-50/50 dark:hover:bg-blue-900/30 text-foreground shadow-xs transition-all duration-150 active:scale-[0.99]"
                 onClick={async () => {
                   try {
                     setIsLoading(true);
@@ -319,6 +325,9 @@ export default function LoginPage() {
                 </svg>
                 <span className="tracking-tight">Đăng nhập bằng Google</span>
               </Button>
+              <p className="text-center text-[11px] text-muted-foreground">
+                Cách đăng nhập nhanh chóng nhất
+              </p>
             </div>
 
             {/* Divider */}
@@ -328,81 +337,87 @@ export default function LoginPage() {
               </div>
               <div className="relative flex justify-center text-xs uppercase tracking-wider">
                 <span className="bg-card px-3 text-muted-foreground font-semibold">
-                  hoặc dùng email
+                  HOẶC DÀNH CHO ADMIN
                 </span>
               </div>
             </div>
 
-            {/* Password Login Form */}
-            <form onSubmit={handleSignIn} className="space-y-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="login-email" className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                  <Mail className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                  <span>Email</span>
-                </Label>
-                <Input
-                  id="login-email"
-                  type="email"
-                  placeholder="email@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={isLoading}
-                  className="h-10 text-sm border-border focus-visible:ring-1 focus-visible:ring-primary/40"
-                />
-                {errors.email && (
-                  <p className="text-xs text-destructive mt-1">{errors.email}</p>
-                )}
+            {/* Password Login Form for Admin */}
+            <div className="rounded-2xl bg-slate-50/70 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800/60 p-5">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-3.5">
+                <Lock className="h-3.5 w-3.5 text-amber-500" />
+                <span>DÀNH CHO ADMIN</span>
               </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="login-password" className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                  <Lock className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                  <span>Mật khẩu</span>
-                </Label>
-                <div className="relative">
+              <form onSubmit={handleSignIn} className="space-y-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="login-email" className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                    <Mail className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                    <span>Email</span>
+                  </Label>
                   <Input
-                    id="login-password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    id="login-email"
+                    type="email"
+                    placeholder="email@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     disabled={isLoading}
-                    className="h-10 text-sm pr-9 border-border focus-visible:ring-1 focus-visible:ring-primary/40"
+                    className="h-10 text-sm bg-card border-border focus-visible:ring-1 focus-visible:ring-primary/40"
                   />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-2.5 py-2 hover:bg-transparent text-muted-foreground hover:text-foreground"
-                    onClick={() => setShowPassword(!showPassword)}
-                    disabled={isLoading}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
+                  {errors.email && (
+                    <p className="text-xs text-destructive mt-1">{errors.email}</p>
+                  )}
                 </div>
-                {errors.password && (
-                  <p className="text-xs text-destructive mt-1">{errors.password}</p>
-                )}
-              </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="login-password" className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                    <Lock className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                    <span>Mật khẩu</span>
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="login-password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      disabled={isLoading}
+                      className="h-10 text-sm pr-9 bg-card border-border focus-visible:ring-1 focus-visible:ring-primary/40"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-2.5 py-2 hover:bg-transparent text-muted-foreground hover:text-foreground"
+                      onClick={() => setShowPassword(!showPassword)}
+                      disabled={isLoading}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                  {errors.password && (
+                    <p className="text-xs text-destructive mt-1">{errors.password}</p>
+                  )}
+                </div>
 
-              <Button
-                type="submit"
-                className="w-full h-10 text-sm font-semibold tracking-tight mt-1.5 bg-primary hover:bg-primary-hover text-primary-foreground shadow-xs transition-all duration-150"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Đang xử lý...
-                  </>
-                ) : (
-                  "Đăng nhập"
-                )}
-              </Button>
-            </form>
+                <Button
+                  type="submit"
+                  className="w-full h-10 text-sm font-semibold tracking-tight mt-1.5 bg-[#0d1527] hover:bg-[#1a233a] text-white shadow-xs transition-all duration-150"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Đang xử lý...
+                    </>
+                  ) : (
+                    "Đăng nhập"
+                  )}
+                </Button>
+              </form>
+            </div>
           </CardContent>
         </Card>
 
