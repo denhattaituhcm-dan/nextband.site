@@ -795,10 +795,6 @@ export default function SubmissionDetail() {
               style={{ width: `${Math.min(100, Math.max(5, scholarshipStanding.currentHomeworkRate))}%` }}
             />
           </div>
-
-          <p className="text-[11px] text-purple-800/80 dark:text-purple-300 leading-relaxed font-medium">
-            💡 {scholarshipStanding.motivationalQuote}
-          </p>
         </div>
       </div>
 

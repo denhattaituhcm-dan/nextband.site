@@ -59,9 +59,6 @@ export function ReadingBattleDebriefView({
           <div>
             <h3 className="text-sm font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-2">
               <span>Báo Cáo Hiệu Suất Theo Dạng Bài</span>
-              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-[10px] font-bold">
-                Tự động gom bằng chứng
-              </Badge>
             </h3>
             <p className="text-xs text-slate-500">
               Phân tích độ chính xác dựa trên từng dạng câu hỏi chuẩn IELTS trong bài thi này
@@ -80,67 +77,7 @@ export function ReadingBattleDebriefView({
         </div>
       </div>
 
-      {/* QUESTION TYPE BREAKDOWN GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
-        {typeStats.map((item) => {
-          const isCritical = item.status === "CRITICAL_WEAKNESS";
-          const isMastered = item.status === "STRONG_MASTERY";
 
-          return (
-            <div
-              key={item.questionType}
-              className={cn(
-                "p-3.5 rounded-xl border transition-all flex flex-col justify-between space-y-2.5",
-                isCritical
-                  ? "bg-rose-50/60 border-rose-200 dark:bg-rose-950/20 dark:border-rose-900"
-                  : isMastered
-                  ? "bg-emerald-50/60 border-emerald-200 dark:bg-emerald-950/20 dark:border-emerald-900"
-                  : "bg-slate-50/70 border-slate-200 dark:bg-slate-800/40 dark:border-slate-700"
-              )}
-            >
-              <div className="space-y-1">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
-                    {isCritical && <AlertTriangle className="h-3.5 w-3.5 text-rose-600 shrink-0" />}
-                    {isMastered && <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />}
-                    <span>{item.labelVi}</span>
-                  </span>
-                  <Badge
-                    variant="outline"
-                    className={cn(
-                      "text-[10px] font-extrabold tabular-nums",
-                      isCritical
-                        ? "bg-rose-100 text-rose-800 border-rose-300"
-                        : isMastered
-                        ? "bg-emerald-100 text-emerald-800 border-emerald-300"
-                        : "bg-slate-200 text-slate-700 border-slate-300"
-                    )}
-                  >
-                    {item.correct}/{item.total} ({item.accuracyPercent}%)
-                  </Badge>
-                </div>
-
-                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
-                  {item.descriptionVi}
-                </p>
-              </div>
-
-              {/* Action / Remediation Tip if incorrect */}
-              {item.incorrect > 0 ? (
-                <div className="text-[11px] text-rose-900 dark:text-rose-300 bg-white/80 dark:bg-slate-900/80 p-2 rounded-lg border border-rose-200/70 flex items-start gap-1.5">
-                  <span className="font-bold text-rose-700 shrink-0">💡 Lời khuyên:</span>
-                  <span>{item.remediationAdvice}</span>
-                </div>
-              ) : (
-                <div className="text-[11px] text-emerald-900 dark:text-emerald-300 bg-white/80 dark:bg-slate-900/80 p-2 rounded-lg border border-emerald-200/70 flex items-center gap-1.5">
-                  <Sparkles className="h-3 w-3 text-emerald-600" />
-                  <span className="font-semibold">Bạn đã xử lý tuyệt đối chính xác 100% dạng câu hỏi này!</span>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
 
       {/* DETERMINISTIC FILL-IN-THE-BLANK ERRORS (IF ANY) */}
       {deterministicErrors.length > 0 && (
