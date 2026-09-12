@@ -625,7 +625,7 @@ export default function PublicHomePage() {
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-mono font-black text-xs px-2.5 py-0.5 rounded-md bg-[#EE6873]/15 text-[#EE6873] border border-[#EE6873]/30">
-                      STARTER
+                      DREAMER
                     </span>
                     <span className="text-sm font-extrabold text-foreground">Đầu ra 3.0</span>
                   </div>
@@ -641,7 +641,7 @@ export default function PublicHomePage() {
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="font-mono font-black text-xs px-2.5 py-0.5 rounded-md bg-[#294398]/15 text-[#294398] border border-[#294398]/30">
-                      DREAMER
+                      DOER
                     </span>
                     <span className="text-sm font-extrabold text-foreground">3.0 → 4.0</span>
                   </div>

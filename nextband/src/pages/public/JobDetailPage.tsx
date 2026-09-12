@@ -118,7 +118,7 @@ export default function JobDetailPage() {
         "Đồng hành hỗ trợ học viên luyện tập phát âm IPA, giải đáp thắc mắc bài tập cơ bản và hỗ trợ giảng viên trong các buổi học trực tiếp và thi thử.",
       responsibilities: [
         "Hỗ trợ học viên luyện tập phát âm IPA và từ vựng trong các giờ tự học",
-        "Giải đáp các thắc mắc về ngữ pháp cơ bản cho học viên khóa Starter và Dreamer",
+        "Giải đáp các thắc mắc về ngữ pháp cơ bản cho học viên khóa Dreamer và Doer",
         "Hỗ trợ giảng viên kiểm tra việc chuẩn bị bài và ghi nhận tình hình học tập trên lớp",
         "Tham gia coi thi và chấm điểm các bài thi thử trắc nghiệm Listening & Reading",
       ],
