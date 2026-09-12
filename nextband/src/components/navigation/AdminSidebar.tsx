@@ -22,6 +22,7 @@ import {
   BookMarked,
   Sparkles,
   Bot,
+  Gamepad2,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -103,6 +104,13 @@ const navigationCategories: SidebarCategory[] = [
         icon: Trophy,
         iconColor: "text-yellow-600",
         iconBg: "bg-yellow-50",
+      },
+      {
+        title: "Game",
+        url: "/admin/game-arena",
+        icon: Gamepad2,
+        iconColor: "text-orange-600",
+        iconBg: "bg-orange-50",
       },
     ],
   },

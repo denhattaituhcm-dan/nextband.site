@@ -151,6 +151,7 @@ const AdminSubmissionGrade = lazyWithRetry(() => import("@/pages/admin/Submissio
 const AdminClasses = lazyWithRetry(() => import("@/pages/admin/Classes"));
 const AdminClassEdit = lazyWithRetry(() => import("@/pages/admin/ClassWorkspace"));
 const AdminClassLeague = lazyWithRetry(() => import("@/pages/admin/ClassLeague"));
+const AdminGameArena = lazyWithRetry(() => import("@/pages/admin/Arena/AdminGameArenaPage"));
 const AdminSettings = lazyWithRetry(() => import("@/pages/admin/Settings"));
 const AdminSeasonalEvents = lazyWithRetry(() => import("@/pages/admin/SeasonalEventsPage"));
 const TeacherWorkspace = lazyWithRetry(() => import("@/pages/admin/TeacherWorkspace"));
@@ -622,6 +623,14 @@ const App = () => (
                   element={
                     <ProtectedRoute requiredRoles={["admin", "teacher"]}>
                       <AdminClassLeague />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/game-arena"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <AdminGameArena />
                     </ProtectedRoute>
                   }
                 />
