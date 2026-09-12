@@ -3,6 +3,7 @@
  * Màn hình trình chiếu của Giáo viên cho phòng học 10-20 học viên.
  * Thiết kế Kahoot Top Banner kèm Mã Vạch QR Code và Mã PIN đơn giản 111999 (hoặc tự do tùy biến).
  * Nhận học viên thật 100% qua Supabase Realtime Channel.
+ * Tích hợp Modal Cài đặt cấu hình: Nếu giáo viên không chỉnh, bộ thông số mặc định (15s, Standard, 12 slot) được áp dụng.
  */
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
@@ -12,8 +13,9 @@ import { useArenaAudio } from '@/hooks/arena/useArenaAudio';
 import { ArenaLobbyKahoot, LobbyPlayer } from '@/components/arena/ArenaLobbyKahoot';
 import { ArenaIncenseTimer } from '@/components/arena/ArenaIncenseTimer';
 import { TeacherContextualButton } from '@/components/arena/TeacherContextualButton';
+import { HostSettingsModal, RoomSettings, DEFAULT_ROOM_SETTINGS } from '@/components/arena/HostSettingsModal';
 import { ArenaState, HostCommandType, PlayerPublicRank } from '@/lib/arena/types';
-import { Volume2, VolumeX, CheckCircle2, Sparkles } from 'lucide-react';
+import { Volume2, VolumeX, CheckCircle2, Sparkles, Settings } from 'lucide-react';
 
 interface PlayerAnswerRecord {
   playerId: string;
@@ -25,7 +27,7 @@ interface PlayerAnswerRecord {
 
 export default function ArenaHostPage() {
   const [searchParams] = useSearchParams();
-  // Ưu tiên mã PIN đơn giản theo yêu cầu: 111999 (hoặc từ URL nếu có truyền ?pin=...)
+  // Ưu tiên mã PIN đơn giản: 111999 (hoặc từ URL nếu có truyền ?pin=...)
   const [pinCode] = useState<string>(() => {
     const urlPin = searchParams.get('pin');
     if (urlPin && urlPin.trim().length === 6) return urlPin.trim();
@@ -33,10 +35,15 @@ export default function ArenaHostPage() {
   });
 
   const [state, setState] = useState<ArenaState>('LOBBY');
+  
+  // Cài đặt thông số phòng (Mặc định chuẩn nếu giáo viên không chỉnh gì)
+  const [roomSettings, setRoomSettings] = useState<RoomSettings>(DEFAULT_ROOM_SETTINGS);
+  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+
   // Phòng rỗng 100%, chỉ có học sinh thật tham gia qua Broadcast
   const [players, setPlayers] = useState<LobbyPlayer[]>([]);
   const [answers, setAnswers] = useState<Record<string, PlayerAnswerRecord>>({});
-  const [timeLeft, setTimeLeft] = useState<number>(15);
+  const [timeLeft, setTimeLeft] = useState<number>(DEFAULT_ROOM_SETTINGS.timeLimit);
 
   const {
     isBgmEnabled,
@@ -86,8 +93,18 @@ export default function ArenaHostPage() {
         if (!payload || !payload.nickname) return;
         const optionId = payload.optionId;
         const isCorrect = optionId === 'opt_A';
-        const speedBonus = (payload.timeLeft || 1) * 10;
-        const score = isCorrect ? 100 + speedBonus : 0;
+        
+        let score = 0;
+        if (isCorrect) {
+          if (roomSettings.scoringMode === 'double') {
+            score = (100 + (payload.timeLeft || 1) * 10) * 2;
+          } else if (roomSettings.scoringMode === 'no_points') {
+            score = 0;
+          } else {
+            // standard
+            score = 100 + (payload.timeLeft || 1) * 10;
+          }
+        }
 
         setAnswers((prev) => ({
           ...prev,
@@ -107,7 +124,7 @@ export default function ArenaHostPage() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [pinCode, playClickSound]);
+  }, [pinCode, playClickSound, roomSettings.scoringMode]);
 
   // Tính toán tỷ lệ phần trăm phân bố đáp án thực tế từ học sinh thật
   const distribution = useMemo(() => {
@@ -153,7 +170,7 @@ export default function ArenaHostPage() {
     }
   }, [state, playLobbyBgm, stopLobbyBgm]);
 
-  // Bộ đếm lùi thời gian khi câu hỏi đang LIVE
+  // Bộ đếm lùi thời gian khi câu hỏi đang LIVE theo timeLimit đã cấu hình
   useEffect(() => {
     if (state !== 'QUESTION_LIVE') return;
     const interval = setInterval(() => {
@@ -181,12 +198,12 @@ export default function ArenaHostPage() {
       switch (command) {
         case 'START_ARENA':
           setState('QUESTION_LIVE');
-          setTimeLeft(15);
+          setTimeLeft(roomSettings.timeLimit);
           if (channelRef.current) {
             channelRef.current.send({
               type: 'broadcast',
               event: 'arena-started',
-              payload: { pin: pinCode },
+              payload: { pin: pinCode, timeLimit: roomSettings.timeLimit },
             });
           }
           break;
@@ -225,7 +242,7 @@ export default function ArenaHostPage() {
           break;
       }
     },
-    [pinCode, playCorrectSound, playClimberSound, playPodiumSound]
+    [pinCode, playCorrectSound, playClimberSound, playPodiumSound, roomSettings.timeLimit]
   );
 
   const joinUrl = typeof window !== 'undefined' ? `${window.location.origin}/arena/join` : '/arena/join';
@@ -233,30 +250,41 @@ export default function ArenaHostPage() {
   return (
     <div className="min-h-screen bg-[#150a33] text-white flex flex-col justify-between p-6 select-none font-sans bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#2a135e] via-[#150a33] to-[#0a051b]">
       {/* Top Header Bar */}
-      <header className="flex items-center justify-between border-b border-slate-800 pb-4">
+      <header className="flex items-center justify-between border-b border-purple-900/40 pb-4">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-orange-500/20 border border-orange-500/40 flex items-center justify-center text-orange-400 font-black text-sm">
             NA
           </div>
           <div>
             <h1 className="text-base font-black tracking-wide text-slate-200">CLASS ARENA</h1>
-            <span className="text-xs text-slate-500 font-medium">NextBand Classroom Engine</span>
+            <span className="text-xs text-purple-300/70 font-medium">NextBand Classroom Engine</span>
           </div>
         </div>
 
-        {/* Music Toggle */}
-        <div className="flex items-center gap-4">
+        {/* Nút Cài đặt & Music Toggle */}
+        <div className="flex items-center gap-3">
+          {state === 'LOBBY' && (
+            <button
+              onClick={() => setIsSettingsOpen(true)}
+              className="flex items-center gap-2 px-3.5 py-1.5 bg-purple-900/40 hover:bg-purple-800/60 border border-purple-500/30 text-xs font-bold rounded-full transition-all cursor-pointer text-purple-200 hover:text-white"
+              title="Cài đặt thông số trận đấu"
+            >
+              <Settings className="w-4 h-4 text-purple-300" />
+              <span>Cài đặt ({roomSettings.timeLimit}s)</span>
+            </button>
+          )}
+
           <button
             onClick={toggleBgm}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold rounded-full transition-all cursor-pointer text-slate-300"
+            className="flex items-center gap-2 px-3.5 py-1.5 bg-purple-950/60 hover:bg-purple-900/60 border border-purple-800/60 text-xs font-bold rounded-full transition-all cursor-pointer text-slate-300"
           >
             {isBgmEnabled ? (
               <>
-                <Volume2 className="w-4 h-4 text-emerald-400" /> Nhạc đang bật
+                <Volume2 className="w-4 h-4 text-emerald-400" /> Nhạc bật
               </>
             ) : (
               <>
-                <VolumeX className="w-4 h-4 text-slate-500" /> Đã tắt nhạc
+                <VolumeX className="w-4 h-4 text-slate-500" /> Nhạc tắt
               </>
             )}
           </button>
@@ -268,7 +296,7 @@ export default function ArenaHostPage() {
         {state === 'LOBBY' && (
           <ArenaLobbyKahoot
             players={players}
-            maxSlots={10}
+            maxSlots={roomSettings.maxSlots}
             pinCode={pinCode}
             joinUrl={joinUrl}
           />
@@ -276,8 +304,8 @@ export default function ArenaHostPage() {
 
         {state === 'QUESTION_LIVE' && (
           <div className="w-full space-y-6">
-            <div className="text-slate-400 text-xs font-mono font-bold tracking-widest uppercase">
-              CÂU HỎI 1 / 1 · IELTS COLLOCATION
+            <div className="text-purple-300 text-xs font-mono font-bold tracking-widest uppercase">
+              CÂU HỎI 1 / 1 · IELTS COLLOCATION ({roomSettings.timeLimit} GIÂY)
             </div>
 
             {/* Prompt */}
@@ -286,9 +314,9 @@ export default function ArenaHostPage() {
             </h2>
 
             {/* Incense Timer */}
-            <ArenaIncenseTimer timeLeftSeconds={timeLeft} totalTimeSeconds={15} />
+            <ArenaIncenseTimer timeLeftSeconds={timeLeft} totalTimeSeconds={roomSettings.timeLimit} />
 
-            <div className="text-xs text-slate-400">
+            <div className="text-xs text-purple-200/80">
               Đã nhận câu trả lời: <span className="text-orange-400 font-bold">{Object.keys(answers).length}</span> / {players.length} học viên
             </div>
           </div>
@@ -300,7 +328,7 @@ export default function ArenaHostPage() {
               <CheckCircle2 className="w-8 h-8" />
             </div>
             <h2 className="text-3xl font-black text-white">ĐÃ KHÓA CÂU TRẢ LỜI</h2>
-            <p className="text-slate-400 text-sm">
+            <p className="text-purple-200/80 text-sm">
               Đã nhận {Object.keys(answers).length} câu trả lời. Chuẩn bị xem phổ đáp án.
             </p>
           </div>
@@ -308,7 +336,7 @@ export default function ArenaHostPage() {
 
         {(state === 'REVEAL_DISTRIBUTION' || state === 'REVEAL_PERSONAL' || state === 'TEACHER_DEBRIEF') && (
           <div className="w-full space-y-6">
-            <div className="text-slate-400 text-xs font-mono font-bold tracking-widest uppercase">
+            <div className="text-purple-300 text-xs font-mono font-bold tracking-widest uppercase">
               PHÂN PHỐI ĐÁP ÁN CỦA LỚP
             </div>
 
@@ -326,7 +354,7 @@ export default function ArenaHostPage() {
                     className={`w-full rounded-xl transition-all duration-700 ${
                       state !== 'REVEAL_DISTRIBUTION' && item.isCorrect
                         ? 'bg-emerald-500 shadow-lg shadow-emerald-500/30'
-                        : 'bg-slate-800'
+                        : 'bg-purple-950/60 border border-purple-800/40'
                     }`}
                     style={{ height: `${Math.max(15, item.pct * 1.8)}px` }}
                   />
@@ -334,7 +362,7 @@ export default function ArenaHostPage() {
                     className={`text-xs font-bold ${
                       state !== 'REVEAL_DISTRIBUTION' && item.isCorrect
                         ? 'text-emerald-400 font-black'
-                        : 'text-slate-400'
+                        : 'text-purple-300'
                     }`}
                   >
                     {item.label}
@@ -344,7 +372,7 @@ export default function ArenaHostPage() {
             </div>
 
             {/* Misconception Academic Diagnostic */}
-            {state === 'TEACHER_DEBRIEF' && (
+            {state === 'TEACHER_DEBRIEF' && roomSettings.showDebrief && (
               <div className="max-w-xl mx-auto p-4 bg-red-950/40 border border-red-500/30 rounded-2xl text-left animate-fadeIn">
                 <span className="text-xs font-bold text-red-400 uppercase tracking-wider block mb-1">
                   💡 Chẩn đoán Bẫy Misconception ({distribution.B}% học sinh mắc phải):
@@ -359,16 +387,16 @@ export default function ArenaHostPage() {
 
         {state === 'LEADERBOARD' && (
           <div className="w-full max-w-md mx-auto space-y-4 animate-fadeIn">
-            <div className="text-slate-400 text-xs font-mono font-bold tracking-widest uppercase mb-4">
+            <div className="text-purple-300 text-xs font-mono font-bold tracking-widest uppercase mb-4">
               BẢNG XẾP HẠNG TOP 5 CỦA LỚP
             </div>
             {topFive.length === 0 ? (
-              <p className="text-sm text-slate-500">Chưa có học sinh nào nộp câu trả lời</p>
+              <p className="text-sm text-purple-300/70">Chưa có học sinh nào nộp câu trả lời</p>
             ) : (
               topFive.map((p) => (
                 <div
                   key={p.playerId}
-                  className="flex items-center justify-between p-3.5 bg-slate-900 border border-slate-800 rounded-2xl shadow-md"
+                  className="flex items-center justify-between p-3.5 bg-purple-950/50 border border-purple-800/50 rounded-2xl shadow-md"
                 >
                   <div className="flex items-center gap-3">
                     <div
@@ -379,7 +407,7 @@ export default function ArenaHostPage() {
                           ? 'bg-slate-300 text-slate-950'
                           : p.rank === 3
                           ? 'bg-amber-700 text-white'
-                          : 'bg-slate-800 text-slate-400'
+                          : 'bg-purple-900 text-purple-300'
                       }`}
                     >
                       {p.rank}
@@ -403,7 +431,7 @@ export default function ArenaHostPage() {
             <h2 className="text-4xl font-black text-amber-400">
               {topFive.length > 0 ? `CHÚC MỪNG ${topFive[0].nickname}!` : 'HOÀN THÀNH VÒNG ĐẤU!'}
             </h2>
-            <p className="text-slate-400 text-sm">
+            <p className="text-purple-200/80 text-sm">
               {topFive.length > 0 ? `Đạt ${topFive[0].totalScore} điểm với tốc độ chính xác tuyệt đối.` : 'Không có người trả lời chính xác.'}
             </p>
           </div>
@@ -411,10 +439,17 @@ export default function ArenaHostPage() {
       </main>
 
       {/* Bottom Contextual Control Footer */}
-      <footer className="flex justify-center border-t border-slate-800 pt-4">
+      <footer className="flex justify-center border-t border-purple-900/40 pt-4">
         <TeacherContextualButton state={state} onExecuteCommand={handleExecuteCommand} />
       </footer>
+
+      {/* Modal Cài đặt thông số trận đấu */}
+      <HostSettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        settings={roomSettings}
+        onSaveSettings={(newSet) => setRoomSettings(newSet)}
+      />
     </div>
   );
 }
-
