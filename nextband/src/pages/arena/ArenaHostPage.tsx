@@ -1,9 +1,10 @@
 /**
  * TEACHER HOST VIEW (/arena/host)
  * Màn hình trình chiếu của Giáo viên cho phòng học 10-20 học viên.
- * Thiết kế Kahoot Top Banner kèm Mã Vạch QR Code và Mã PIN đơn giản 111999 (hoặc tự do tùy biến).
- * Nhận học viên thật 100% qua Supabase Realtime Channel.
- * Tích hợp Modal Cài đặt cấu hình: Nếu giáo viên không chỉnh, bộ thông số mặc định (15s, Standard, 12 slot) được áp dụng.
+ * Hỗ trợ 2 chế độ:
+ * 1. 'CLASSIC': Kahoot Cổ Điển (Đua điểm trắc nghiệm)
+ * 2. 'GOLD_QUEST': Cướp Vàng (Mở rương, Live Gold Leaderboard, Cướp vàng trực tiếp giữa học sinh)
+ * Mặc định: Giữ nguyên chế độ Cổ điển nếu giáo viên không chỉnh gì trong Cài đặt.
  */
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
@@ -15,7 +16,7 @@ import { ArenaIncenseTimer } from '@/components/arena/ArenaIncenseTimer';
 import { TeacherContextualButton } from '@/components/arena/TeacherContextualButton';
 import { HostSettingsModal, RoomSettings, DEFAULT_ROOM_SETTINGS } from '@/components/arena/HostSettingsModal';
 import { ArenaState, HostCommandType, PlayerPublicRank } from '@/lib/arena/types';
-import { Volume2, VolumeX, CheckCircle2, Sparkles, Settings } from 'lucide-react';
+import { Volume2, VolumeX, CheckCircle2, Sparkles, Settings, Trophy } from 'lucide-react';
 
 interface PlayerAnswerRecord {
   playerId: string;
@@ -23,11 +24,11 @@ interface PlayerAnswerRecord {
   optionId: string;
   timeLeft: number;
   score: number;
+  gold?: number;
 }
 
 export default function ArenaHostPage() {
   const [searchParams] = useSearchParams();
-  // Ưu tiên mã PIN đơn giản: 111999 (hoặc từ URL nếu có truyền ?pin=...)
   const [pinCode] = useState<string>(() => {
     const urlPin = searchParams.get('pin');
     if (urlPin && urlPin.trim().length === 6) return urlPin.trim();
@@ -43,6 +44,8 @@ export default function ArenaHostPage() {
   // Phòng rỗng 100%, chỉ có học sinh thật tham gia qua Broadcast
   const [players, setPlayers] = useState<LobbyPlayer[]>([]);
   const [answers, setAnswers] = useState<Record<string, PlayerAnswerRecord>>({});
+  const [playerGoldMap, setPlayerGoldMap] = useState<Record<string, number>>({});
+  const [liveLogs, setLiveLogs] = useState<string[]>([]);
   const [timeLeft, setTimeLeft] = useState<number>(DEFAULT_ROOM_SETTINGS.timeLimit);
 
   const {
@@ -58,7 +61,7 @@ export default function ArenaHostPage() {
 
   const channelRef = useRef<any>(null);
 
-  // Lắng nghe học sinh tham gia realtime và gửi đáp án qua Supabase Broadcast Channel
+  // Lắng nghe học sinh tham gia realtime và các sự kiện cướp vàng qua Supabase Broadcast Channel
   useEffect(() => {
     if (!pinCode) return;
 
@@ -76,17 +79,16 @@ export default function ArenaHostPage() {
           if (prev.some((p) => p.name.trim().toLowerCase() === payload.name.trim().toLowerCase())) {
             return prev;
           }
-          return [
-            ...prev,
-            {
-              id: payload.id || `p_${Date.now()}`,
-              name: payload.name.trim(),
-              avatarSeed: payload.avatarSeed || payload.name,
-              rank: payload.rank || 'Học viên',
-              joinedAt: payload.joinedAt || new Date().toISOString(),
-            },
-          ];
+          const newPlayer = {
+            id: payload.id || `p_${Date.now()}`,
+            name: payload.name.trim(),
+            avatarSeed: payload.avatarSeed || payload.name,
+            rank: payload.rank || 'Học viên',
+            joinedAt: payload.joinedAt || new Date().toISOString(),
+          };
+          return [...prev, newPlayer];
         });
+        setPlayerGoldMap((prev) => ({ ...prev, [payload.name.trim()]: 0 }));
         playClickSound();
       })
       .on('broadcast', { event: 'player-answered' }, ({ payload }) => {
@@ -101,7 +103,6 @@ export default function ArenaHostPage() {
           } else if (roomSettings.scoringMode === 'no_points') {
             score = 0;
           } else {
-            // standard
             score = 100 + (payload.timeLeft || 1) * 10;
           }
         }
@@ -114,8 +115,40 @@ export default function ArenaHostPage() {
             optionId,
             timeLeft: payload.timeLeft || 0,
             score,
+            gold: payload.gold || 0,
           },
         }));
+      })
+      .on('broadcast', { event: 'gold-updated' }, ({ payload }) => {
+        if (payload?.nickname && typeof payload.gold === 'number') {
+          setPlayerGoldMap((prev) => ({ ...prev, [payload.nickname]: payload.gold }));
+        }
+      })
+      .on('broadcast', { event: 'gold-steal-event' }, ({ payload }) => {
+        const { thiefName, victimName, amount } = payload;
+        if (thiefName && victimName && amount) {
+          setPlayerGoldMap((prev) => {
+            const victimCurrent = prev[victimName] || 0;
+            const thiefCurrent = prev[thiefName] || 0;
+            return {
+              ...prev,
+              [victimName]: Math.max(0, victimCurrent - amount),
+              [thiefName]: thiefCurrent + amount,
+            };
+          });
+
+          // Gửi thông báo cho nạn nhân biết vừa bị cướp
+          channel.send({
+            type: 'broadcast',
+            event: 'gold-stolen-from-you',
+            payload: { victimName, amount },
+          });
+
+          // Thêm thông báo vào Live feed trên máy chiếu
+          const logMsg = `🚨 [${thiefName}] vừa cướp ${amount} vàng từ [${victimName}]!`;
+          setLiveLogs((prev) => [logMsg, ...prev.slice(0, 4)]);
+          playClimberSound();
+        }
       })
       .subscribe();
 
@@ -124,7 +157,21 @@ export default function ArenaHostPage() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [pinCode, playClickSound, roomSettings.scoringMode]);
+  }, [pinCode, playClickSound, playClimberSound, roomSettings.scoringMode]);
+
+  // Định kỳ gửi danh sách người chơi và số vàng sang các học sinh để làm mục tiêu cướp vàng
+  useEffect(() => {
+    if (!channelRef.current || players.length === 0) return;
+    const candidates = players.map((p) => ({
+      name: p.name,
+      gold: playerGoldMap[p.name] || 0,
+    }));
+    channelRef.current.send({
+      type: 'broadcast',
+      event: 'players-sync',
+      payload: { players: candidates },
+    });
+  }, [players, playerGoldMap]);
 
   // Tính toán tỷ lệ phần trăm phân bố đáp án thực tế từ học sinh thật
   const distribution = useMemo(() => {
@@ -148,8 +195,20 @@ export default function ArenaHostPage() {
     };
   }, [answers]);
 
-  // Bảng xếp hạng điểm thật
+  // Bảng xếp hạng: Nếu là Gold Quest thì xếp theo VÀNG, nếu Classic thì xếp theo ĐIỂM
   const topFive: PlayerPublicRank[] = useMemo(() => {
+    if (roomSettings.gameMode === 'GOLD_QUEST') {
+      return Object.entries(playerGoldMap)
+        .sort(([, gA], [, gB]) => gB - gA)
+        .slice(0, 5)
+        .map(([name, gold], idx) => ({
+          rank: idx + 1,
+          playerId: name,
+          nickname: name,
+          totalScore: gold,
+        }));
+    }
+
     return Object.values(answers)
       .sort((a, b) => b.score - a.score)
       .slice(0, 5)
@@ -159,7 +218,7 @@ export default function ArenaHostPage() {
         nickname: item.nickname,
         totalScore: item.score,
       }));
-  }, [answers]);
+  }, [answers, playerGoldMap, roomSettings.gameMode]);
 
   // Phát BGM ở Lobby
   useEffect(() => {
@@ -170,7 +229,7 @@ export default function ArenaHostPage() {
     }
   }, [state, playLobbyBgm, stopLobbyBgm]);
 
-  // Bộ đếm lùi thời gian khi câu hỏi đang LIVE theo timeLimit đã cấu hình
+  // Bộ đếm lùi thời gian khi câu hỏi đang LIVE
   useEffect(() => {
     if (state !== 'QUESTION_LIVE') return;
     const interval = setInterval(() => {
@@ -203,7 +262,11 @@ export default function ArenaHostPage() {
             channelRef.current.send({
               type: 'broadcast',
               event: 'arena-started',
-              payload: { pin: pinCode, timeLimit: roomSettings.timeLimit },
+              payload: {
+                pin: pinCode,
+                timeLimit: roomSettings.timeLimit,
+                gameMode: roomSettings.gameMode,
+              },
             });
           }
           break;
@@ -242,7 +305,7 @@ export default function ArenaHostPage() {
           break;
       }
     },
-    [pinCode, playCorrectSound, playClimberSound, playPodiumSound, roomSettings.timeLimit]
+    [pinCode, playCorrectSound, playClimberSound, playPodiumSound, roomSettings.timeLimit, roomSettings.gameMode]
   );
 
   const joinUrl = typeof window !== 'undefined' ? `${window.location.origin}/arena/join` : '/arena/join';
@@ -257,7 +320,9 @@ export default function ArenaHostPage() {
           </div>
           <div>
             <h1 className="text-base font-black tracking-wide text-slate-200">CLASS ARENA</h1>
-            <span className="text-xs text-purple-300/70 font-medium">NextBand Classroom Engine</span>
+            <span className="text-xs text-purple-300/70 font-medium">
+              NextBand Classroom Engine · {roomSettings.gameMode === 'GOLD_QUEST' ? 'Chế độ Cướp Vàng 💰' : 'Chế độ Cổ điển 🎯'}
+            </span>
           </div>
         </div>
 
@@ -267,10 +332,9 @@ export default function ArenaHostPage() {
             <button
               onClick={() => setIsSettingsOpen(true)}
               className="flex items-center gap-2 px-3.5 py-1.5 bg-purple-900/40 hover:bg-purple-800/60 border border-purple-500/30 text-xs font-bold rounded-full transition-all cursor-pointer text-purple-200 hover:text-white"
-              title="Cài đặt thông số trận đấu"
             >
               <Settings className="w-4 h-4 text-purple-300" />
-              <span>Cài đặt ({roomSettings.timeLimit}s)</span>
+              <span>Cài đặt ({roomSettings.gameMode === 'GOLD_QUEST' ? 'Cướp Vàng' : 'Cổ Điển'})</span>
             </button>
           )}
 
@@ -304,8 +368,13 @@ export default function ArenaHostPage() {
 
         {state === 'QUESTION_LIVE' && (
           <div className="w-full space-y-6">
-            <div className="text-purple-300 text-xs font-mono font-bold tracking-widest uppercase">
-              CÂU HỎI 1 / 1 · IELTS COLLOCATION ({roomSettings.timeLimit} GIÂY)
+            <div className="text-purple-300 text-xs font-mono font-bold tracking-widest uppercase flex items-center justify-center gap-2">
+              <span>CÂU HỎI 1 / 1 · IELTS COLLOCATION ({roomSettings.timeLimit} GIÂY)</span>
+              {roomSettings.gameMode === 'GOLD_QUEST' && (
+                <span className="px-2 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-400/40 rounded-full text-[10px]">
+                  💰 CƯỚP VÀNG LIVE
+                </span>
+              )}
             </div>
 
             {/* Prompt */}
@@ -319,6 +388,20 @@ export default function ArenaHostPage() {
             <div className="text-xs text-purple-200/80">
               Đã nhận câu trả lời: <span className="text-orange-400 font-bold">{Object.keys(answers).length}</span> / {players.length} học viên
             </div>
+
+            {/* Live Feed cảnh báo cướp vàng nếu ở chế độ GOLD_QUEST */}
+            {roomSettings.gameMode === 'GOLD_QUEST' && liveLogs.length > 0 && (
+              <div className="max-w-md mx-auto p-3 bg-black/40 border border-amber-500/30 rounded-2xl text-left space-y-1 animate-fadeIn">
+                <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider block">
+                  ⚡ Nhật ký cướp vàng trực tiếp:
+                </span>
+                {liveLogs.map((log, i) => (
+                  <div key={i} className="text-xs text-amber-200 font-semibold truncate">
+                    {log}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
@@ -387,8 +470,12 @@ export default function ArenaHostPage() {
 
         {state === 'LEADERBOARD' && (
           <div className="w-full max-w-md mx-auto space-y-4 animate-fadeIn">
-            <div className="text-purple-300 text-xs font-mono font-bold tracking-widest uppercase mb-4">
-              BẢNG XẾP HẠNG TOP 5 CỦA LỚP
+            <div className="text-purple-300 text-xs font-mono font-bold tracking-widest uppercase mb-4 flex items-center justify-center gap-1.5">
+              {roomSettings.gameMode === 'GOLD_QUEST' ? (
+                <>💰 BẢNG VÀNG ĐẠI GIA LỚP HỌC</>
+              ) : (
+                <>🎯 BẢNG XẾP HẠNG TOP 5 CỦA LỚP</>
+              )}
             </div>
             {topFive.length === 0 ? (
               <p className="text-sm text-purple-300/70">Chưa có học sinh nào nộp câu trả lời</p>
@@ -414,8 +501,8 @@ export default function ArenaHostPage() {
                     </div>
                     <span className="font-extrabold text-white text-sm">{p.nickname}</span>
                   </div>
-                  <span className="text-sm font-black text-amber-400 font-mono">
-                    {p.totalScore} pts
+                  <span className="text-sm font-black text-amber-400 font-mono flex items-center gap-1">
+                    {p.totalScore} {roomSettings.gameMode === 'GOLD_QUEST' ? '🪙' : 'pts'}
                   </span>
                 </div>
               ))
@@ -432,7 +519,11 @@ export default function ArenaHostPage() {
               {topFive.length > 0 ? `CHÚC MỪNG ${topFive[0].nickname}!` : 'HOÀN THÀNH VÒNG ĐẤU!'}
             </h2>
             <p className="text-purple-200/80 text-sm">
-              {topFive.length > 0 ? `Đạt ${topFive[0].totalScore} điểm với tốc độ chính xác tuyệt đối.` : 'Không có người trả lời chính xác.'}
+              {topFive.length > 0
+                ? (roomSettings.gameMode === 'GOLD_QUEST'
+                    ? `Vua Đào Vàng với tổng tài sản tích lũy ${topFive[0].totalScore} vàng!`
+                    : `Đạt ${topFive[0].totalScore} điểm với tốc độ chính xác tuyệt đối.`)
+                : 'Không có người trả lời chính xác.'}
             </p>
           </div>
         )}
