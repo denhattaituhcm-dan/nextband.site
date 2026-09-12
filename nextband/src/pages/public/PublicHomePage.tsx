@@ -56,11 +56,9 @@ export default function PublicHomePage() {
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-[62px] font-black text-foreground tracking-tight leading-[1.12]">
                 Học tiếng Anh{" "}
-                <span className="relative inline-block text-brand-red font-black">
-                  <span className="relative z-10">từ bản chất</span>
-                  <span className="absolute left-0 right-0 bottom-2 h-3.5 bg-brand-red/15 -rotate-1 rounded-sm -z-0" />
+                <span className="hero-gradient font-montserrat font-black tracking-normal inline-block">
+                  từ bản chất!
                 </span>
-                .
                 <br />
                 <span className="text-[#002147] block mt-2">
                   Không học mẹo. Không học thuộc bài mẫu.
