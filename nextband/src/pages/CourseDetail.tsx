@@ -126,28 +126,32 @@ export default function CourseDetail() {
             </div>
           </div>
 
-          {/* 27 JOURNEY DOTS */}
-          <div className="space-y-1.5 pt-2 border-t border-slate-100">
-            <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
-              <span>Hành trình học tập (Lesson Journey)</span>
-              <span>Buổi học tiếp theo: Lesson {completedCount + 1}</span>
+          {/* LESSON JOURNEY DOTS */}
+          {totalExams > 0 && (
+            <div className="space-y-1.5 pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
+                <span>Hành trình học tập (Lesson Journey)</span>
+                <span>
+                  {currentExam ? `Bài tập tiếp theo: ${currentExam.title}` : `Tiến độ: ${completedCount}/${totalExams}`}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap pt-1">
+                {Array.from({ length: totalExams }).map((_, idx) => (
+                  <span
+                    key={idx}
+                    className={`h-3 rounded-full transition-all ${
+                      idx < completedCount
+                        ? "w-3 bg-emerald-500 shadow-sm shadow-emerald-500/50"
+                        : idx === completedCount
+                        ? "w-6 bg-emerald-600 ring-4 ring-emerald-100 animate-pulse"
+                        : "w-3 bg-slate-200"
+                    }`}
+                    title={`Bài tập ${idx + 1}`}
+                  />
+                ))}
+              </div>
             </div>
-            <div className="flex items-center gap-2 flex-wrap pt-1">
-              {Array.from({ length: totalExams }).map((_, idx) => (
-                <span
-                  key={idx}
-                  className={`h-3 rounded-full transition-all ${
-                    idx < completedCount
-                      ? "w-3 bg-emerald-500 shadow-sm shadow-emerald-500/50"
-                      : idx === completedCount
-                      ? "w-6 bg-emerald-600 ring-4 ring-emerald-100 animate-pulse"
-                      : "w-3 bg-slate-200"
-                  }`}
-                  title={`Lesson ${idx + 1}`}
-                />
-              ))}
-            </div>
-          </div>
+          )}
         </div>
 
         {/* SECTION 1: CURRENT LESSON HERO (LESSON-CENTRIC ARCHITECTURE) */}
@@ -207,10 +211,15 @@ export default function CourseDetail() {
               </CardContent>
             </Card>
           </div>
-        ) : (
+        ) : exams.length > 0 && completedCount === exams.length ? (
           <Card className="bg-emerald-50 border-emerald-200 rounded-2xl p-6 text-center space-y-2">
             <h3 className="font-bold text-emerald-900 text-lg">Bạn đã hoàn thành tất cả bài tập trong khóa học này! 🎉</h3>
             <p className="text-xs text-emerald-700">Hãy xem lại lịch sử các bài đã làm bên dưới để tiếp tục ôn luyện.</p>
+          </Card>
+        ) : (
+          <Card className="bg-slate-50 border-slate-200 rounded-2xl p-6 text-center space-y-2">
+            <h3 className="font-bold text-slate-800 text-base">Khóa học đang được cập nhật danh sách bài tập</h3>
+            <p className="text-xs text-slate-500">Giáo viên sẽ sớm bổ sung các bài tập phù hợp với tiến trình lớp học của bạn.</p>
           </Card>
         )}
 

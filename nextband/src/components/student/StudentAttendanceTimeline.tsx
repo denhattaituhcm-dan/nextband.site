@@ -26,6 +26,7 @@ interface StudentAttendanceTimelineProps {
 export const StudentAttendanceTimeline: React.FC<StudentAttendanceTimelineProps> = ({
   classId,
   className,
+  studentId,
 }) => {
   const { data: matrixRes, isLoading, isError } = useQuery({
     queryKey: ['class-attendance-matrix-student', classId],
@@ -35,14 +36,15 @@ export const StudentAttendanceTimeline: React.FC<StudentAttendanceTimelineProps>
   });
 
   const matrixData = matrixRes?.success && matrixRes?.data ? matrixRes.data : null;
-  const myRecord = matrixData?.students?.[0] || null;
+  const myRecord = (studentId && matrixData?.students?.find((s: any) => s.studentId === studentId)) || matrixData?.students?.[0] || null;
   const sessions = matrixData?.sessions || [];
   const mySessions = myRecord?.sessions || [];
 
   const totalSessions = matrixData?.totalSessions || sessions.length || 27;
   const completedSessions = matrixData?.completedSessions || 0;
-  const attendanceRate = myRecord?.attendanceRate ?? 100;
-  const isTargetMet = attendanceRate >= 85;
+  const hasStarted = completedSessions > 0;
+  const attendanceRate = hasStarted ? (myRecord?.attendanceRate ?? 100) : null;
+  const isTargetMet = attendanceRate !== null ? attendanceRate >= 85 : null;
 
   const getAttendanceBadge = (
     status?: 'UNMARKED' | 'PRESENT' | 'ABSENT' | 'LATE' | 'EXCUSED',
@@ -126,18 +128,26 @@ export const StudentAttendanceTimeline: React.FC<StudentAttendanceTimelineProps>
 
             <div className='flex items-center gap-2'>
               <span className='text-xs font-semibold text-muted-foreground'>Chuẩn cam kết đầu ra:</span>
-              <Badge variant='outline' className={isTargetMet ? 'bg-emerald-50 text-emerald-700 border-emerald-300 font-bold' : 'bg-amber-50 text-amber-800 border-amber-300 font-bold'}>
-                {isTargetMet ? '✓ Đạt chuẩn (≥ 85%)' : '⚠ Cần cải thiện (< 85%)'}
-              </Badge>
+              {hasStarted ? (
+                <Badge variant='outline' className={isTargetMet ? 'bg-emerald-50 text-emerald-700 border-emerald-300 font-bold' : 'bg-amber-50 text-amber-800 border-amber-300 font-bold'}>
+                  {isTargetMet ? '✓ Đạt chuẩn (≥ 85%)' : '⚠ Cần cải thiện (< 85%)'}
+                </Badge>
+              ) : (
+                <Badge variant='outline' className='bg-slate-50 text-slate-600 border-slate-200 font-semibold'>
+                  Chờ buổi học đầu tiên
+                </Badge>
+              )}
             </div>
           </div>
 
           <div className='pt-4 space-y-3'>
             <div className='flex items-center justify-between'>
               <span className='text-xs font-medium text-muted-foreground'>Tỉ lệ tham gia học tập:</span>
-              <span className='text-xl font-extrabold text-primary tabular-nums'>{attendanceRate}%</span>
+              <span className='text-xl font-extrabold text-primary tabular-nums'>
+                {hasStarted ? `${attendanceRate}%` : 'Chưa có dữ liệu'}
+              </span>
             </div>
-            <Progress value={attendanceRate} className='h-2.5 bg-muted' />
+            <Progress value={attendanceRate ?? 0} className='h-2.5 bg-muted' />
 
             <div className='grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2 text-center text-xs'>
               <div className='p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-200 dark:border-emerald-800'>
@@ -212,7 +222,7 @@ export const StudentAttendanceTimeline: React.FC<StudentAttendanceTimelineProps>
                   <div className='space-y-0.5'>
                     <div className='flex items-center gap-2 flex-wrap'>
                       <h4 className='font-bold text-sm text-foreground'>
-                        {sess.lessonTitle || ('Buổi học số ' + sess.sessionNumber)}
+                        {sess.title || sess.lessonTitle || sess.note || ('Buổi học số ' + sess.sessionNumber)}
                       </h4>
                       {isCompleted && (
                         <span className='text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.2 rounded'>

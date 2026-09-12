@@ -410,10 +410,13 @@ export default function HomePage() {
     refetchOnWindowFocus: false,
   });
 
-  const studentAttendanceRecord = attendanceData?.success && attendanceData?.data?.students?.[0] ? attendanceData.data.students[0] : null;
-  const attendanceRate = studentAttendanceRecord?.attendanceRate ?? 100;
-  const totalSessions = attendanceData?.data?.totalSessions || attendanceData?.data?.sessions?.length || 27;
+  const studentAttendanceRecord = attendanceData?.success
+    ? (attendanceData?.data?.students?.find((s: any) => s.studentId === user?.id) || attendanceData?.data?.students?.[0] || null)
+    : null;
   const completedSessions = attendanceData?.data?.completedSessions ?? (attendanceData?.data?.sessions?.filter((s: any) => s.status === "COMPLETED").length || 0);
+  const hasAttendanceStarted = completedSessions > 0;
+  const attendanceRate = hasAttendanceStarted ? (studentAttendanceRecord?.attendanceRate ?? 100) : null;
+  const totalSessions = attendanceData?.data?.totalSessions || attendanceData?.data?.sessions?.length || 27;
   const courseProgressPercent = Math.min(100, Math.round((completedSessions / Math.max(totalSessions, 1)) * 100));
   const nextSession = useMemo(() => {
     if (!attendanceData?.data?.sessions) return null;
@@ -652,19 +655,31 @@ export default function HomePage() {
                           <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                           Chuyên cần
                         </span>
-                        <span className={`font-black text-xs tabular-nums ${attendanceRate >= 85 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}`}>
-                          {attendanceRate}%
+                        <span className={`font-black text-xs tabular-nums ${
+                          attendanceRate === null
+                            ? "text-slate-500"
+                            : attendanceRate >= 85
+                            ? "text-emerald-600 dark:text-emerald-400"
+                            : "text-amber-600 dark:text-amber-400"
+                        }`}>
+                          {attendanceRate !== null ? `${attendanceRate}%` : "Chưa có"}
                         </span>
                       </div>
                       <div className="flex items-center justify-between pt-0.5">
                         <span
                           className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                            attendanceRate >= 85
+                            attendanceRate === null
+                              ? "bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700"
+                              : attendanceRate >= 85
                               ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800"
                               : "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800"
                           }`}
                         >
-                          {attendanceRate >= 85 ? "✓ Đạt chuẩn đầu ra" : "⚠ Cần lưu ý"}
+                          {attendanceRate === null
+                            ? "Chờ bắt đầu"
+                            : attendanceRate >= 85
+                            ? "✓ Đạt chuẩn đầu ra"
+                            : "⚠ Cần lưu ý"}
                         </span>
                         <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold group-hover:underline">
                           Chi tiết →
