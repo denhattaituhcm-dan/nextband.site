@@ -152,6 +152,9 @@ const AdminClasses = lazyWithRetry(() => import("@/pages/admin/Classes"));
 const AdminClassEdit = lazyWithRetry(() => import("@/pages/admin/ClassWorkspace"));
 const AdminClassLeague = lazyWithRetry(() => import("@/pages/admin/ClassLeague"));
 const AdminGameArena = lazyWithRetry(() => import("@/pages/admin/Arena/AdminGameArenaPage"));
+const ArenaHostPage = lazyWithRetry(() => import("@/pages/arena/ArenaHostPage"));
+const ArenaJoinPage = lazyWithRetry(() => import("@/pages/arena/ArenaJoinPage"));
+const ArenaPlayPage = lazyWithRetry(() => import("@/pages/arena/ArenaPlayPage"));
 const AdminSettings = lazyWithRetry(() => import("@/pages/admin/Settings"));
 const AdminSeasonalEvents = lazyWithRetry(() => import("@/pages/admin/SeasonalEventsPage"));
 const TeacherWorkspace = lazyWithRetry(() => import("@/pages/admin/TeacherWorkspace"));
@@ -353,6 +356,11 @@ const App = () => (
               <Route path="/reading/:caseId" element={<ReadingCasePage />} />
               <Route path="/assessment/take/:sessionId" element={<PlacementExamInterface />} />
               <Route path="/assessment/take" element={<Navigate to="/assessment" replace />} />
+              
+              {/* Class Arena Live Routes */}
+              <Route path="/arena/host" element={<ArenaHostPage />} />
+              <Route path="/arena/join" element={<ArenaJoinPage />} />
+              <Route path="/arena/play" element={<ArenaPlayPage />} />
 
               {/* ============================================================ */}
               {/* 1.2 PARENT PROGRESS HUB (Zero-Login Magic Link View)         */}
