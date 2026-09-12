@@ -1,21 +1,32 @@
 /**
  * STUDENT JOIN PAGE (/arena/join)
  * Màn hình nhập mã PIN và Nickname cho học viên trên điện thoại.
- * Tối giản tối đa (Zero-Fluff), tham gia < 10 giây.
- * Khi tham gia: Gửi broadcast Supabase 'player-joined' để xuất hiện trên màn hình Host.
+ * Tự động điền mã PIN từ URL khi học viên quét mã QR (ví dụ: /arena/join?pin=111999).
  */
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
 export default function ArenaJoinPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [pin, setPin] = useState('');
   const [nickname, setNickname] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Tự động nhận mã PIN nếu học viên quét mã QR
+  useEffect(() => {
+    const urlPin = searchParams.get('pin');
+    if (urlPin && urlPin.trim().length === 6) {
+      setPin(urlPin.trim());
+    } else {
+      // Gợi ý mã PIN mặc định 111999
+      setPin('111999');
+    }
+  }, [searchParams]);
 
   const handleJoin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,7 +94,7 @@ export default function ArenaJoinPage() {
             <Sparkles className="w-3.5 h-3.5" /> NextBand Arena
           </div>
           <h1 className="text-3xl font-black text-white tracking-tight">VÀO PHÒNG ĐẤU</h1>
-          <p className="text-xs text-slate-400">Nhập mã PIN hiển thị trên màn chiếu của Giáo viên</p>
+          <p className="text-xs text-slate-400">Nhập mã PIN hiển thị trên màn chiếu hoặc quét mã QR</p>
         </div>
 
         {/* Input Form */}
@@ -97,7 +108,7 @@ export default function ArenaJoinPage() {
               maxLength={6}
               value={pin}
               onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
-              placeholder="VD: 839210"
+              placeholder="VD: 111999"
               className="w-full px-4 py-3.5 bg-slate-900 border border-slate-800 focus:border-orange-500 rounded-xl text-center text-2xl font-black tracking-widest text-orange-400 font-mono outline-none transition-all placeholder:text-slate-600 placeholder:text-base placeholder:tracking-normal placeholder:font-sans"
             />
           </div>

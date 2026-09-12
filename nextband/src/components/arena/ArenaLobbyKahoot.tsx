@@ -1,13 +1,11 @@
 /**
  * ARENA LOBBY KAHOOT COMPONENT
- * Tái sử dụng phong cách hiển thị Lobby Kahoot từ tab Đấu trường cũ:
- * - Vòng tròn SVG đếm số học viên tham gia / đồng môn
- * - Grid các ô slot học viên:
- *   + Khi có học viên: Avatar Dicebear + tên + Sẵn sàng
- *   + Khi chưa có: Ô dashed "Đang đợi..."
- * Tuân thủ Hiến pháp:
- * - Điều 12 (Component chỉ render)
- * - Điều 41 (Zero-Fluff UI & Web Standards thuần túy)
+ * Thiết kế chuẩn phong cách Kahoot:
+ * - Top Banner trắng nổi bật chứa:
+ *   + Hướng dẫn: "Tham gia tại nextband.vn/arena/join hoặc quét mã QR"
+ *   + Game PIN siêu lớn: 111999
+ *   + Mã vạch QR Code để học viên quét camera điện thoại là vào thẳng phòng
+ * - Khu vực bên dưới: Vòng tròn đếm sĩ số và danh sách ô thẻ học viên nảy ra ngay khi join
  */
 
 import React from 'react';
@@ -38,57 +36,103 @@ export const ArenaLobbyKahoot: React.FC<ArenaLobbyKahootProps> = React.memo(({
   const circumference = 440;
   const strokeDashoffset = Math.max(0, circumference - (circumference * Math.min(currentCount, maxSlots)) / maxSlots);
 
+  // Link đầy đủ kèm mã PIN để khi quét QR học viên không cần gõ lại PIN
+  const fullJoinUrlWithPin = `${joinUrl}?pin=${pinCode}`;
+  
+  // Tạo mã QR vector chất lượng cao thông qua Google Chart API / QR Server
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(fullJoinUrlWithPin)}&margin=4`;
+
   const getAvatarUrl = (seed?: number | string, name?: string) => {
     const avatarKey = seed || name || 'student';
     return `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(String(avatarKey))}`;
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto flex flex-col items-center space-y-6 animate-fadeIn">
-      {/* Header Info */}
-      <div className="text-center space-y-2">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-orange-500/10 border border-orange-500/30 rounded-full text-orange-400 text-xs font-black tracking-wider uppercase">
-          <Users className="w-4 h-4" /> Sảnh chờ thi đấu · {currentCount}/{maxSlots}
+    <div className="w-full max-w-5xl mx-auto flex flex-col items-center space-y-8 animate-fadeIn">
+      {/* KAHOOT TOP BANNER: Trắng tương phản cực mạnh, chuẩn xác như màn chiếu Kahoot */}
+      <div className="w-full bg-white text-slate-900 rounded-3xl shadow-2xl p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-6 border-4 border-slate-200">
+        {/* Cột trái: Hướng dẫn truy cập */}
+        <div className="text-center md:text-left space-y-1">
+          <span className="text-xs md:text-sm font-extrabold text-slate-500 uppercase tracking-wider block">
+            Tham gia tại
+          </span>
+          <p className="text-xl md:text-2xl font-black text-indigo-950 font-mono tracking-tight underline">
+            {typeof window !== 'undefined' ? `${window.location.host}/arena/join` : 'nextband.vn/arena/join'}
+          </p>
+          <span className="text-xs text-slate-400 font-semibold block">
+            hoặc dùng camera điện thoại quét mã QR bên cạnh
+          </span>
         </div>
-        
-        <p className="text-sm md:text-base font-semibold text-slate-400">
-          Học viên truy cập <span className="text-white underline font-mono font-bold">{joinUrl}</span>
-        </p>
 
-        <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight">
-          Nhập mã PIN <span className="text-orange-400 font-mono tracking-widest">{pinCode}</span> để tham gia
-        </h2>
-      </div>
+        {/* Cột giữa: GAME PIN cỡ lớn */}
+        <div className="text-center px-6 py-2 bg-slate-100/80 rounded-2xl border border-slate-200">
+          <span className="text-xs font-black text-slate-500 uppercase tracking-widest block">
+            MÃ PIN PHÒNG
+          </span>
+          <span className="text-4xl md:text-6xl font-black text-slate-950 tracking-widest font-mono">
+            {pinCode.length === 6 ? `${pinCode.slice(0, 3)} ${pinCode.slice(3)}` : pinCode}
+          </span>
+        </div>
 
-      {/* Central Ring Progress */}
-      <div className="relative w-36 h-36 md:w-40 md:h-40 mx-auto flex items-center justify-center">
-        <svg className="w-full h-full transform -rotate-90">
-          <circle
-            cx="80"
-            cy="80"
-            r="70"
-            className="stroke-slate-900 fill-none"
-            strokeWidth="10"
-          />
-          <circle
-            cx="80"
-            cy="80"
-            r="70"
-            className="stroke-orange-500 fill-none transition-all duration-500 ease-out"
-            strokeWidth="10"
-            strokeDasharray={circumference}
-            strokeDashoffset={strokeDashoffset}
-            strokeLinecap="round"
-          />
-        </svg>
-
-        <div className="absolute inset-0 flex flex-col items-center justify-center space-y-0.5">
-          <span className="text-3xl md:text-4xl font-extrabold text-white">{currentCount}</span>
-          <span className="text-[11px] font-bold text-orange-300 uppercase tracking-wider">Học viên</span>
+        {/* Cột phải: Mã vạch QR Code quét vào ngay */}
+        <div className="flex flex-col items-center gap-1.5">
+          <div className="p-2 bg-white rounded-2xl border-2 border-slate-300 shadow-md">
+            <img
+              src={qrCodeUrl}
+              alt={`QR Code PIN ${pinCode}`}
+              className="w-24 h-24 md:w-28 md:h-28 rounded-lg object-contain"
+              loading="eager"
+            />
+          </div>
+          <span className="text-[11px] font-black text-indigo-900 uppercase tracking-wider">
+            Quét mã vào ngay
+          </span>
         </div>
       </div>
 
-      {/* Grid of Slots */}
+      {/* Thông số phòng & Vòng tròn tiến trình đếm số học viên */}
+      <div className="flex flex-col md:flex-row items-center justify-center gap-8 w-full">
+        <div className="relative w-32 h-32 md:w-36 md:h-36 flex items-center justify-center">
+          <svg className="w-full h-full transform -rotate-90">
+            <circle
+              cx="70"
+              cy="70"
+              r="58"
+              className="stroke-slate-900 fill-none"
+              strokeWidth="9"
+            />
+            <circle
+              cx="70"
+              cy="70"
+              r="58"
+              className="stroke-orange-500 fill-none transition-all duration-500 ease-out"
+              strokeWidth="9"
+              strokeDasharray={364}
+              strokeDashoffset={Math.max(0, 364 - (364 * Math.min(currentCount, maxSlots)) / maxSlots)}
+              strokeLinecap="round"
+            />
+          </svg>
+
+          <div className="absolute inset-0 flex flex-col items-center justify-center space-y-0.5">
+            <span className="text-3xl md:text-4xl font-black text-white">{currentCount}</span>
+            <span className="text-[10px] font-bold text-orange-400 uppercase tracking-wider">Học viên</span>
+          </div>
+        </div>
+
+        <div className="text-center md:text-left space-y-1.5">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-orange-500/10 border border-orange-500/30 rounded-full text-orange-400 text-xs font-bold uppercase tracking-wider">
+            <Users className="w-4 h-4" /> Sảnh chờ thi đấu · {currentCount}/{maxSlots}
+          </div>
+          <h3 className="text-xl md:text-2xl font-black text-white">
+            {currentCount === 0 ? 'Đang đợi học viên tham gia...' : `${currentCount} học viên đã sẵn sàng!`}
+          </h3>
+          <p className="text-xs text-slate-400">
+            Màn hình sẽ tự động cập nhật ngay khi học sinh tham gia bằng điện thoại
+          </p>
+        </div>
+      </div>
+
+      {/* Grid of Slots (10 ô học viên phong cách Kahoot) */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3.5 w-full">
         {Array.from({ length: maxSlots }).map((_, idx) => {
           const p = players[idx];

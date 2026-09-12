@@ -1,10 +1,8 @@
 /**
  * TEACHER HOST VIEW (/arena/host)
  * Màn hình trình chiếu của Giáo viên cho phòng học 10-20 học viên.
- * Tái sử dụng sảnh chờ Kahoot từ tab Đấu trường cũ: Vòng tròn SVG đếm số học viên + Grid 10 slot.
- * Tự động tạo mã PIN ngẫu nhiên, kết nối Supabase Realtime Channel để nhận học viên thật.
- * Phân bổ đáp án tính 100% dựa trên câu trả lời thật từ học viên qua Realtime.
- * Tuyệt đối không mock học sinh giả.
+ * Thiết kế Kahoot Top Banner kèm Mã Vạch QR Code và Mã PIN đơn giản 111999 (hoặc tự do tùy biến).
+ * Nhận học viên thật 100% qua Supabase Realtime Channel.
  */
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
@@ -27,11 +25,11 @@ interface PlayerAnswerRecord {
 
 export default function ArenaHostPage() {
   const [searchParams] = useSearchParams();
-  // Khởi tạo mã PIN ngẫu nhiên 6 chữ số nếu không có trong URL
+  // Ưu tiên mã PIN đơn giản theo yêu cầu: 111999 (hoặc từ URL nếu có truyền ?pin=...)
   const [pinCode] = useState<string>(() => {
     const urlPin = searchParams.get('pin');
     if (urlPin && urlPin.trim().length === 6) return urlPin.trim();
-    return Math.floor(100000 + Math.random() * 900000).toString();
+    return '111999';
   });
 
   const [state, setState] = useState<ArenaState>('LOBBY');
@@ -246,18 +244,11 @@ export default function ArenaHostPage() {
           </div>
         </div>
 
-        {/* PIN Code & Music Toggle */}
+        {/* Music Toggle */}
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 px-4 py-1.5 bg-slate-900 border border-slate-800 rounded-full">
-            <span className="text-xs text-slate-400 font-bold uppercase">Mã PIN:</span>
-            <span className="text-xl font-black text-orange-400 tracking-widest font-mono">
-              {pinCode}
-            </span>
-          </div>
-
           <button
             onClick={toggleBgm}
-            className="flex items-center gap-2 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold rounded-full transition-all cursor-pointer text-slate-300"
+            className="flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold rounded-full transition-all cursor-pointer text-slate-300"
           >
             {isBgmEnabled ? (
               <>
@@ -273,7 +264,7 @@ export default function ArenaHostPage() {
       </header>
 
       {/* Main Classroom Projection Display */}
-      <main className="flex-1 flex flex-col items-center justify-center my-6 text-center max-w-4xl mx-auto w-full">
+      <main className="flex-1 flex flex-col items-center justify-center my-6 text-center max-w-5xl mx-auto w-full">
         {state === 'LOBBY' && (
           <ArenaLobbyKahoot
             players={players}
