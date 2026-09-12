@@ -19,7 +19,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2, User, Camera, Save, Trophy, Flame, Star, CheckCircle2, Zap, Users, Medal, Gift, Copy, Check, Sparkles, Award, Target } from "lucide-react";
-import { StudentEvidenceProfileCard } from "@/components/profile/StudentEvidenceProfileCard";
 import { useStudentLifecycle } from "@/hooks/useStudentLifecycle";
 import { StudyBuddyModal } from "@/components/student/StudyBuddyModal";
 import { generateReferralCode, getBuddyShareText } from "@/lib/studyBuddyHelper";
@@ -74,7 +73,7 @@ export default function Profile() {
 
   const { data: submissionsData } = useQuery({
     queryKey: submissionKeys.profileSubmissions(user?.id),
-    queryFn: () => submissionsApi.list({ studentId: user?.id, limit: 200 }).catch(() => ({ data: [] })),
+    queryFn: () => submissionsApi.list({ studentId: user?.id, limit: 300 }).catch(() => ({ data: [] })),
     enabled: !!user?.id,
     staleTime: 1000 * 60 * 2,
     refetchOnWindowFocus: true,
@@ -539,9 +538,6 @@ export default function Profile() {
               </CardFooter>
             </form>
           </Card>
-
-          {/* Hồ sơ Năng lực Dọc (Longitudinal Evidence Profile) */}
-          <StudentEvidenceProfileCard submissions={userSubmissions} />
 
           {/* Thành tích & Danh hiệu */}
           <Card>

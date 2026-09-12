@@ -174,5 +174,89 @@ describe("HUYEN CO LAO NHAN V2: Lean Companion Architecture Tests", () => {
     expect(getRealmFromBand(8.5)).toEqual({ academicRank: "Học Tôn", realmName: "Đỉnh phong (Apex)" });
     expect(getRealmFromBand(9.0)).toEqual({ academicRank: "Học Đế", realmName: "Đỉnh cao Học thuật" });
   });
+
+  it("V2 Invariant 7: OVERLOAD - Triggers intervention when >= 5 overdue tasks pile up", () => {
+    const actionQueue: ActionQueueItem[] = Array.from({ length: 5 }, (_, i) => ({
+      id: `hw-${i}`,
+      title: `Task ${i + 1}`,
+      status: "OVERDUE",
+      priority: 2,
+    }));
+
+    const result = getHuanCoState({ actionQueue });
+    expect(result.domainState).toBe("OVERLOAD");
+    expect(result.badgeText).toBe("Cần Cắt Tỉa");
+    expect(result.quote).toContain("Đừng cố giải quyết tất cả");
+    expect(result.ctaLabel).toBe("Ưu tiên làm: Task 1");
+  });
+
+  it("V2 Invariant 8: FINISHING_STRETCH - Contextual momentum when only 1-2 items remain after clearing majority", () => {
+    const actionQueue: ActionQueueItem[] = [
+      { id: "hw-final", title: "Final Dictation", status: "UPCOMING", priority: 1 },
+    ];
+
+    const result = getHuanCoState({
+      actionQueue,
+      submittedCount: 4,
+      totalAssignedCount: 5,
+    });
+
+    expect(result.domainState).toBe("FINISHING_STRETCH");
+    expect(result.badgeText).toBe("Chặng Cuối");
+    expect(result.quote).toContain("Chỉ còn 1 bài nữa");
+    expect(result.ctaLabel).toBe("Hoàn tất: Final Dictation");
+  });
+
+  it("V2 Invariant 9: RETURN_AFTER_ABSENCE - Empathetic return after threshold days without shaming", () => {
+    const actionQueue: ActionQueueItem[] = [
+      { id: "hw-1", title: "Listening Unit 2", status: "UPCOMING", priority: 1 },
+    ];
+
+    const result = getHuanCoState({
+      actionQueue,
+      daysSinceLastActivity: 5,
+    });
+
+    expect(result.domainState).toBe("RETURN_AFTER_ABSENCE");
+    expect(result.badgeText).toBe("Tái Khởi Nhịp");
+    expect(result.quote).toContain("Đường học vẫn ở đây");
+    expect(result.quote).not.toContain("bỏ học");
+  });
+
+  it("V2 Invariant 10: STAGNATION & REPEATED_ERROR - Diagnostic interventions", () => {
+    const stagResult = getHuanCoState({
+      actionQueue: [{ id: "hw-1", title: "Listening Practice", status: "UPCOMING", priority: 1 }],
+      stagnationSignal: { skill: "Listening Connected Speech", practiceCount: 10, accuracy: 62 },
+    });
+
+    expect(stagResult.domainState).toBe("STAGNATION");
+    expect(stagResult.badgeText).toBe("Xem Lại Lối Đi");
+    expect(stagResult.quote).toContain("Vấn đề không nằm ở số lượng");
+
+    const errorResult = getHuanCoState({
+      actionQueue: [{ id: "hw-2", title: "Writing Practice", status: "UPCOMING", priority: 1 }],
+      repeatedErrorSignal: {
+        tag: "Clause Boundary / Run-on",
+        count: 4,
+        recommendation: "Ôn lại kỹ thuật ngắt câu đơn - câu ghép.",
+      },
+    });
+
+    expect(errorResult.domainState).toBe("REPEATED_ERROR");
+    expect(errorResult.badgeText).toBe("Điểm Nghẽn Lặp Lại");
+    expect(errorResult.advice).toBe("Ôn lại kỹ thuật ngắt câu đơn - câu ghép.");
+  });
+
+  it("V2 Invariant 11: REVISION_SUCCESS - Acknowledges hard work after teacher approval", () => {
+    const result = getHuanCoState({
+      actionQueue: [],
+      recentTrigger: { type: "REVISION_SUCCESS" },
+    });
+
+    expect(result.domainState).toBe("REVISION_SUCCESS");
+    expect(result.badgeText).toBe("Vượt Chướng Ngại");
+    expect(result.reward?.xp).toBe(80);
+  });
 });
+
 
