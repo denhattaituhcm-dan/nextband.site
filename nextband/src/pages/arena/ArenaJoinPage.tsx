@@ -86,7 +86,7 @@ export default function ArenaJoinPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-4 font-sans select-none">
+    <div className="min-h-screen bg-[#150a33] text-white flex flex-col items-center justify-center p-4 font-sans select-none bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#2a135e] via-[#150a33] to-[#0a051b]">
       <div className="w-full max-w-sm space-y-6">
         {/* Title & Brand */}
         <div className="text-center space-y-2">
@@ -109,7 +109,7 @@ export default function ArenaJoinPage() {
               value={pin}
               onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
               placeholder="VD: 111999"
-              className="w-full px-4 py-3.5 bg-slate-900 border border-slate-800 focus:border-orange-500 rounded-xl text-center text-2xl font-black tracking-widest text-orange-400 font-mono outline-none transition-all placeholder:text-slate-600 placeholder:text-base placeholder:tracking-normal placeholder:font-sans"
+              className="w-full px-4 py-3.5 bg-white/10 border border-white/20 backdrop-blur-md focus:border-orange-500 rounded-xl text-center text-2xl font-black tracking-widest text-orange-400 font-mono outline-none transition-all placeholder:text-slate-600 placeholder:text-base placeholder:tracking-normal placeholder:font-sans"
             />
           </div>
 
@@ -123,7 +123,7 @@ export default function ArenaJoinPage() {
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               placeholder="VD: Bảo Nam"
-              className="w-full px-4 py-3.5 bg-slate-900 border border-slate-800 focus:border-orange-500 rounded-xl text-white font-bold outline-none transition-all placeholder:text-slate-600"
+              className="w-full px-4 py-3.5 bg-white/10 border border-white/20 backdrop-blur-md focus:border-orange-500 rounded-xl text-white font-bold outline-none transition-all placeholder:text-slate-600"
             />
           </div>
 
@@ -149,3 +149,4 @@ export default function ArenaJoinPage() {
     </div>
   );
 }
+

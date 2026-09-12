@@ -231,7 +231,7 @@ export default function ArenaHostPage() {
   const joinUrl = typeof window !== 'undefined' ? `${window.location.origin}/arena/join` : '/arena/join';
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex flex-col justify-between p-6 select-none font-sans">
+    <div className="min-h-screen bg-[#150a33] text-white flex flex-col justify-between p-6 select-none font-sans bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#2a135e] via-[#150a33] to-[#0a051b]">
       {/* Top Header Bar */}
       <header className="flex items-center justify-between border-b border-slate-800 pb-4">
         <div className="flex items-center gap-3">
@@ -264,7 +264,7 @@ export default function ArenaHostPage() {
       </header>
 
       {/* Main Classroom Projection Display */}
-      <main className="flex-1 flex flex-col items-center justify-center my-6 text-center max-w-5xl mx-auto w-full">
+      <main className="flex-1 flex flex-col items-center justify-center my-6 text-center max-w-6xl mx-auto w-full">
         {state === 'LOBBY' && (
           <ArenaLobbyKahoot
             players={players}
@@ -417,3 +417,4 @@ export default function ArenaHostPage() {
     </div>
   );
 }
+
