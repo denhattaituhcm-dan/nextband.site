@@ -88,67 +88,110 @@ export default function CoursesPage() {
         background="default"
         className="pt-8 pb-8 sm:pt-10 sm:pb-10 lg:pt-12 lg:pb-12"
       >
-        {/* Quick jump navigation pills */}
-        <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
-          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground mr-1 hidden sm:inline">
-            Chọn band mục tiêu:
-          </span>
-          {[
-            { label: "Tất cả", targetId: "course-starter" },
-            { label: "Mất gốc → 3.0", targetId: "course-starter" },
-            { label: "3.0 → 4.0", targetId: "course-dreamer" },
-            { label: "4.0 → 5.0", targetId: "course-builder" },
-            { label: "5.0 → 6.0", targetId: "course-master" },
-            { label: "6.0 → 6.5+", targetId: "course-leader" },
-          ].map((item) => (
+        {/* Apple-style View Mode Switcher */}
+        <div className="flex justify-center mb-8">
+          <div className="inline-flex p-1 rounded-2xl bg-[#F5F5F7] border border-black/[0.06] shadow-xs">
             <button
-              key={item.label}
               type="button"
-              onClick={() => {
-                const el = document.getElementById(item.targetId);
-                if (el) {
-                  el.scrollIntoView({ behavior: "smooth", block: "center" });
-                }
-              }}
-              className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-muted/80 hover:bg-brand-blue hover:text-white text-foreground/80 border border-border/70 transition-all duration-200"
+              onClick={() => setViewMode("roadmap")}
+              className={cn(
+                "flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all",
+                viewMode === "roadmap"
+                  ? "bg-white text-[#1d1d1f] shadow-xs"
+                  : "text-[#86868b] hover:text-[#1d1d1f]"
+              )}
             >
-              {item.label}
+              <ListOrdered className="h-4 w-4" />
+              <span>Lộ trình chi tiết</span>
             </button>
-          ))}
+            <button
+              type="button"
+              onClick={() => setViewMode("matrix")}
+              className={cn(
+                "flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all",
+                viewMode === "matrix"
+                  ? "bg-white text-[#1d1d1f] shadow-xs"
+                  : "text-[#86868b] hover:text-[#1d1d1f]"
+              )}
+            >
+              <Columns3 className="h-4 w-4 text-brand-blue" />
+              <span>Bảng so sánh 5 chặng (Chuẩn Apple)</span>
+            </button>
+          </div>
         </div>
 
-        {/* Linear Roadmap Rows from Starter to Leader */}
-        <div className="space-y-6 sm:space-y-7 w-full">
-          <CourseRoadmapRow
-            course={COURSE_CATALOG.starter}
+        {viewMode === "matrix" ? (
+          /* Apple Compare Matrix View */
+          <CourseComparisonMatrix
             onTrialClick={handleOpenTrial}
             onDetailClick={handleOpenDetail}
           />
+        ) : (
+          /* Linear Roadmap View */
+          <>
+            {/* Quick jump navigation pills */}
+            <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground mr-1 hidden sm:inline">
+                Chọn band mục tiêu:
+              </span>
+              {[
+                { label: "Tất cả", targetId: "course-starter" },
+                { label: "Mất gốc → 3.0", targetId: "course-starter" },
+                { label: "3.0 → 4.0", targetId: "course-dreamer" },
+                { label: "4.0 → 5.0", targetId: "course-builder" },
+                { label: "5.0 → 6.0", targetId: "course-master" },
+                { label: "6.0 → 6.5+", targetId: "course-leader" },
+              ].map((item) => (
+                <button
+                  key={item.label}
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById(item.targetId);
+                    if (el) {
+                      el.scrollIntoView({ behavior: "smooth", block: "center" });
+                    }
+                  }}
+                  className="px-3.5 py-1.5 rounded-full text-xs font-bold bg-muted/80 hover:bg-brand-blue hover:text-white text-foreground/80 border border-border/70 transition-all duration-200"
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
 
-          <CourseRoadmapRow
-            course={COURSE_CATALOG.dreamer}
-            onTrialClick={handleOpenTrial}
-            onDetailClick={handleOpenDetail}
-          />
+            {/* Linear Roadmap Rows from Starter to Leader */}
+            <div className="space-y-6 sm:space-y-7 w-full">
+              <CourseRoadmapRow
+                course={COURSE_CATALOG.starter}
+                onTrialClick={handleOpenTrial}
+                onDetailClick={handleOpenDetail}
+              />
 
-          <CourseRoadmapRow
-            course={COURSE_CATALOG.builder}
-            onTrialClick={handleOpenTrial}
-            onDetailClick={handleOpenDetail}
-          />
+              <CourseRoadmapRow
+                course={COURSE_CATALOG.dreamer}
+                onTrialClick={handleOpenTrial}
+                onDetailClick={handleOpenDetail}
+              />
 
-          <CourseRoadmapRow
-            course={COURSE_CATALOG.master}
-            onTrialClick={handleOpenTrial}
-            onDetailClick={handleOpenDetail}
-          />
+              <CourseRoadmapRow
+                course={COURSE_CATALOG.builder}
+                onTrialClick={handleOpenTrial}
+                onDetailClick={handleOpenDetail}
+              />
 
-          <CourseRoadmapRow
-            course={COURSE_CATALOG.leader}
-            onTrialClick={handleOpenTrial}
-            onDetailClick={handleOpenDetail}
-          />
-        </div>
+              <CourseRoadmapRow
+                course={COURSE_CATALOG.master}
+                onTrialClick={handleOpenTrial}
+                onDetailClick={handleOpenDetail}
+              />
+
+              <CourseRoadmapRow
+                course={COURSE_CATALOG.leader}
+                onTrialClick={handleOpenTrial}
+                onDetailClick={handleOpenDetail}
+              />
+            </div>
+          </>
+        )}
       </SectionContainer>
 
       {/* Tuition Calculator Section */}

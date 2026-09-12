@@ -285,232 +285,290 @@ export default function AssessmentResultPage() {
         ) : (
           <div className="max-w-4xl mx-auto space-y-8 text-left">
             {/* ========================================================================= */}
-            {/* PHẦN A. KẾT QUẢ SƠ BỘ                                                     */}
+            {/* PHẦN A. KẾT QUẢ SƠ BỘ — APPLE HEALTH BIG NUMBER & METRICS                 */}
             {/* ========================================================================= */}
-            <div className="p-8 sm:p-10 rounded-3xl bg-card border border-border/80 space-y-6 shadow-2xs">
-              <div className="space-y-3 border-b border-border/60 pb-6">
-                <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="p-8 sm:p-10 rounded-3xl bg-white border border-black/[0.06] shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-8">
+              <div className="space-y-4 border-b border-black/[0.06] pb-8">
+                <div className="flex flex-wrap items-baseline justify-between gap-4">
                   <div className="space-y-1">
-                    <span className="text-xs font-mono uppercase tracking-widest text-brand-blue font-extrabold">
-                      KẾT QUẢ KHẢO HẠCH ĐẦU VÀO
+                    <span className="text-[11px] font-mono uppercase tracking-widest text-[#86868b] font-black">
+                      CHẨN ĐOÁN HỌC THUẬT ARIS-7
                     </span>
-                    <h2 className="text-2xl sm:text-3xl font-black text-foreground">
-                      Kết quả sơ bộ
+                    <h2 className="text-2xl sm:text-3xl font-black text-[#1d1d1f] tracking-tight">
+                      Kết quả khảo hạch sơ bộ
                     </h2>
                   </div>
 
-                  <div className="p-3.5 px-6 rounded-2xl bg-brand-blue/10 border border-brand-blue/30 text-brand-blue font-black text-lg flex items-center gap-2">
-                    <span>Khoảng năng lực: {preliminaryRange}</span>
-                  </div>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-mono text-xs font-bold">
+                    Độ chính xác: {accuracyPercent}% ({rawScore}/{totalQuestions} câu)
+                  </span>
                 </div>
 
-                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                  Ước tính từ các phần Listening, Reading và Grammar. Đây không phải điểm Overall IELTS và chưa bao gồm Speaking &amp; Writing.
-                </p>
+                {/* Apple Health Big Metric Hero */}
+                <div className="pt-2 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                  <div>
+                    <span className="text-xs font-bold text-[#86868b] uppercase tracking-wider block mb-1">
+                      Khoảng Band Dự Phóng
+                    </span>
+                    <div className="text-5xl sm:text-6xl font-black text-[#1d1d1f] tracking-tight font-sans">
+                      {preliminaryRange}
+                    </div>
+                  </div>
+                  <p className="text-xs sm:text-sm text-[#86868b] max-w-md leading-relaxed">
+                    Ước tính từ các phần Listening, Reading và Grammar. Đây là cơ sở định vị chặng đào tạo khởi điểm chuẩn xác trước khi nhận điểm Speaking &amp; Writing.
+                  </p>
+                </div>
               </div>
 
-              {/* 3 Receptive Metric Stats */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
-                <div className="p-4 rounded-2xl bg-muted/40 border border-border/60 space-y-1">
-                  <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">
-                    Listening (10 câu)
-                  </span>
-                  <div className="text-2xl font-black text-brand-blue">
+              {/* 3 Skill Capsule Bars (Apple Activity/Health Style) */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                {/* Listening Capsule */}
+                <div className="p-5 rounded-2xl bg-[#FBFBFD] border border-black/[0.04] space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-[#86868b] uppercase tracking-wider">
+                      Listening
+                    </span>
+                    <span className="text-xs font-black px-2 py-0.5 rounded-md bg-blue-50 text-blue-700">
+                      {listeningInfo?.estimatedBand || "≈ 3.0"}
+                    </span>
+                  </div>
+                  <div className="text-2xl font-black text-[#1d1d1f]">
                     {listeningInfo ? `${listeningInfo.correct ?? 0} / ${listeningInfo.total ?? 10}` : "0 / 10"}
+                    <span className="text-xs font-medium text-[#86868b] ml-1.5">câu đúng</span>
                   </div>
-                  <span className="text-xs font-bold text-brand-blue/80 block">
-                    {listeningInfo?.estimatedBand || "≈ 3.0"}
-                  </span>
+                  {/* Smooth Progress Capsule */}
+                  <div className="w-full bg-slate-200/70 h-2.5 rounded-full overflow-hidden">
+                    <div
+                      className="bg-gradient-to-r from-blue-500 to-indigo-600 h-full rounded-full transition-all duration-500"
+                      style={{ width: `${listeningInfo ? (listeningInfo.correct / (listeningInfo.total || 10)) * 100 : 30}%` }}
+                    />
+                  </div>
+                  <div className="text-[11px] font-medium text-slate-500">
+                    {listeningInfo?.level || "Cơ bản"}
+                  </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-muted/40 border border-border/60 space-y-1">
-                  <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">
-                    Reading (10 câu)
-                  </span>
-                  <div className="text-2xl font-black text-brand-blue">
+                {/* Reading Capsule */}
+                <div className="p-5 rounded-2xl bg-[#FBFBFD] border border-black/[0.04] space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-[#86868b] uppercase tracking-wider">
+                      Reading
+                    </span>
+                    <span className="text-xs font-black px-2 py-0.5 rounded-md bg-teal-50 text-teal-700">
+                      {readingInfo?.estimatedBand || "≈ 3.0"}
+                    </span>
+                  </div>
+                  <div className="text-2xl font-black text-[#1d1d1f]">
                     {readingInfo ? `${readingInfo.correct ?? 0} / ${readingInfo.total ?? 10}` : "0 / 10"}
+                    <span className="text-xs font-medium text-[#86868b] ml-1.5">câu đúng</span>
                   </div>
-                  <span className="text-xs font-bold text-brand-blue/80 block">
-                    {readingInfo?.estimatedBand || "≈ 3.0"}
-                  </span>
+                  {/* Smooth Progress Capsule */}
+                  <div className="w-full bg-slate-200/70 h-2.5 rounded-full overflow-hidden">
+                    <div
+                      className="bg-gradient-to-r from-teal-500 to-emerald-600 h-full rounded-full transition-all duration-500"
+                      style={{ width: `${readingInfo ? (readingInfo.correct / (readingInfo.total || 10)) * 100 : 30}%` }}
+                    />
+                  </div>
+                  <div className="text-[11px] font-medium text-slate-500">
+                    {readingInfo?.level || "Cơ bản"}
+                  </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-muted/40 border border-border/60 space-y-1">
-                  <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block">
-                    Grammar &amp; Vocabulary (15 câu)
-                  </span>
-                  <div className="text-2xl font-black text-purple-600 dark:text-purple-400">
-                    {grammarInfo ? `${grammarInfo.correct ?? 0} / ${grammarInfo.total ?? 15}` : "0 / 15"}
+                {/* Grammar Capsule */}
+                <div className="p-5 rounded-2xl bg-[#FBFBFD] border border-black/[0.04] space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-[#86868b] uppercase tracking-wider">
+                      Grammar &amp; Vocab
+                    </span>
+                    <span className="text-xs font-black px-2 py-0.5 rounded-md bg-purple-50 text-purple-700">
+                      {grammarInfo?.level || "Intermediate"}
+                    </span>
                   </div>
-                  <span className="text-xs font-bold text-purple-600/80 dark:text-purple-300 block">
-                    {grammarInfo?.level || "Intermediate"}
-                  </span>
+                  <div className="text-2xl font-black text-[#1d1d1f]">
+                    {grammarInfo ? `${grammarInfo.correct ?? 0} / ${grammarInfo.total ?? 15}` : "0 / 15"}
+                    <span className="text-xs font-medium text-[#86868b] ml-1.5">câu đúng</span>
+                  </div>
+                  {/* Smooth Progress Capsule */}
+                  <div className="w-full bg-slate-200/70 h-2.5 rounded-full overflow-hidden">
+                    <div
+                      className="bg-gradient-to-r from-purple-500 to-indigo-600 h-full rounded-full transition-all duration-500"
+                      style={{ width: `${grammarInfo ? (grammarInfo.correct / (grammarInfo.total || 15)) * 100 : 50}%` }}
+                    />
+                  </div>
+                  <div className="text-[11px] font-medium text-slate-500">
+                    {grammarInfo?.level || "Trung cấp"}
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* ========================================================================= */}
-            {/* PHẦN B. HỒ SƠ NĂNG LỰC (DIAGNOSTIC PROFILE)                                */}
+            {/* PHẦN B. HỒ SƠ NĂNG LỰC (DIAGNOSTIC PROFILE & PILL TAGS)                    */}
             {/* ========================================================================= */}
-            <div className="p-8 sm:p-10 rounded-3xl bg-card border border-border/80 space-y-6 shadow-2xs">
-              <div className="border-b border-border/60 pb-4">
-                <h3 className="font-black text-xl text-foreground">
-                  Hồ Sơ Năng Lực (Diagnostic Profile)
+            <div className="p-8 sm:p-10 rounded-3xl bg-white border border-black/[0.06] shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-6">
+              <div className="border-b border-black/[0.06] pb-4">
+                <span className="text-[11px] font-mono uppercase tracking-widest text-[#86868b] font-black block">
+                  BÓC TÁCH CHI TIẾT
+                </span>
+                <h3 className="font-black text-xl text-[#1d1d1f] tracking-tight">
+                  Hồ Sơ Năng Lực Ngôn Ngữ
                 </h3>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Bóc tách chi tiết từng cấu phần năng lực ngôn ngữ dựa trên dữ liệu bài làm thực tế.
+                <p className="text-xs text-[#86868b] mt-1">
+                  Đánh giá toàn diện 4 kỹ năng dựa trên dữ liệu bài làm thực tế và chuẩn khảo thí ARIS-7.
                 </p>
               </div>
 
               <div className="space-y-3.5">
                 {/* Listening */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-muted/30 border border-border/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#FBFBFD] border border-black/[0.04] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-brand-blue-soft text-brand-blue flex items-center justify-center font-bold shrink-0 mt-0.5">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold shrink-0 mt-0.5">
                       <Headphones className="w-5 h-5" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h4 className="font-bold text-sm text-foreground">Listening</h4>
-                        <Badge className="bg-brand-blue text-white font-extrabold text-xs px-2.5 py-0.5">
+                        <h4 className="font-bold text-sm text-[#1d1d1f]">Listening</h4>
+                        <span className="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 font-mono font-bold text-xs">
                           {listeningInfo?.estimatedBand || "≈ 3.0"}
-                        </Badge>
+                        </span>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                      <p className="text-xs text-[#86868b] mt-0.5 leading-relaxed">
                         {listeningInfo?.feedback || "Phản xạ nghe hiểu hội thoại và thông tin chi tiết."}
                       </p>
                     </div>
                   </div>
                   <div className="text-right shrink-0 pl-13 sm:pl-0">
-                    <span className="text-xs font-mono font-bold text-foreground bg-card px-3 py-1.5 rounded-xl border border-border">
+                    <span className="text-xs font-mono font-bold text-[#1d1d1f] bg-white px-3 py-1.5 rounded-xl border border-black/[0.06] shadow-2xs">
                       {listeningInfo?.correct ?? 0} / {listeningInfo?.total ?? 10} câu
                     </span>
                   </div>
                 </div>
 
                 {/* Reading */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-muted/30 border border-border/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#FBFBFD] border border-black/[0.04] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-brand-blue-soft text-brand-blue flex items-center justify-center font-bold shrink-0 mt-0.5">
+                    <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center font-bold shrink-0 mt-0.5">
                       <BookOpen className="w-5 h-5" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h4 className="font-bold text-sm text-foreground">Reading</h4>
-                        <Badge className="bg-brand-blue text-white font-extrabold text-xs px-2.5 py-0.5">
+                        <h4 className="font-bold text-sm text-[#1d1d1f]">Reading</h4>
+                        <span className="px-2.5 py-0.5 rounded-full bg-teal-100 text-teal-800 font-mono font-bold text-xs">
                           {readingInfo?.estimatedBand || "≈ 3.0"}
-                        </Badge>
+                        </span>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                      <p className="text-xs text-[#86868b] mt-0.5 leading-relaxed">
                         {readingInfo?.feedback || "Kỹ năng định vị thông tin, đọc quét và suy luận logic."}
                       </p>
                     </div>
                   </div>
                   <div className="text-right shrink-0 pl-13 sm:pl-0">
-                    <span className="text-xs font-mono font-bold text-foreground bg-card px-3 py-1.5 rounded-xl border border-border">
+                    <span className="text-xs font-mono font-bold text-[#1d1d1f] bg-white px-3 py-1.5 rounded-xl border border-black/[0.06] shadow-2xs">
                       {readingInfo?.correct ?? 0} / {readingInfo?.total ?? 10} câu
                     </span>
                   </div>
                 </div>
 
                 {/* Grammar & Vocabulary */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-muted/30 border border-border/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#FBFBFD] border border-black/[0.04] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center font-bold shrink-0 mt-0.5">
+                    <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold shrink-0 mt-0.5">
                       <Brain className="w-5 h-5" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h4 className="font-bold text-sm text-foreground">Grammar &amp; Vocabulary</h4>
-                        <Badge variant="outline" className="border-purple-300 text-purple-700 dark:text-purple-300 bg-purple-500/10 font-bold text-xs px-2.5 py-0.5">
+                        <h4 className="font-bold text-sm text-[#1d1d1f]">Grammar &amp; Vocabulary</h4>
+                        <span className="px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 font-bold text-xs">
                           {grammarInfo?.level || "Intermediate"}
-                        </Badge>
+                        </span>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                      <p className="text-xs text-[#86868b] mt-0.5 leading-relaxed">
                         {grammarInfo?.feedback || "Làm chủ cấu trúc câu phức, thì và collocations học thuật."}
                       </p>
                     </div>
                   </div>
                   <div className="text-right shrink-0 pl-13 sm:pl-0">
-                    <span className="text-xs font-mono font-bold text-foreground bg-card px-3 py-1.5 rounded-xl border border-border">
+                    <span className="text-xs font-mono font-bold text-[#1d1d1f] bg-white px-3 py-1.5 rounded-xl border border-black/[0.06] shadow-2xs">
                       {grammarInfo?.correct ?? 0} / {grammarInfo?.total ?? 15} câu
                     </span>
                   </div>
                 </div>
 
                 {/* Writing */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-amber-500/5 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/60 border border-amber-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-600 flex items-center justify-center font-bold shrink-0 mt-0.5">
+                    <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold shrink-0 mt-0.5">
                       <FileText className="w-5 h-5" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h4 className="font-bold text-sm text-foreground">Writing (Task 2)</h4>
-                        <Badge variant="outline" className="border-amber-400/60 bg-amber-500/10 text-amber-700 dark:text-amber-300 font-bold text-xs px-2.5 py-0.5 flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          <span>Đang được giáo viên chấm</span>
-                        </Badge>
+                        <h4 className="font-bold text-sm text-[#1d1d1f]">Writing (Task 2)</h4>
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold text-xs">
+                          <Clock className="w-3 h-3" /> Đang chấm
+                        </span>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        {activeReport?.subjectiveEvaluation?.writing?.message || "Bài viết đã được ghi nhận. Giáo viên sẽ chấm chi tiết theo 4 tiêu chuẩn IELTS (TR, CC, LR, GRA)."}
+                      <p className="text-xs text-[#86868b] mt-0.5 leading-relaxed">
+                        {activeReport?.subjectiveEvaluation?.writing?.message || "Bài viết đã được niêm phong an toàn. Giáo viên sẽ chấm line-by-line theo 4 tiêu chí IELTS."}
                       </p>
                     </div>
                   </div>
                 </div>
 
                 {/* Speaking */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-amber-500/5 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/60 border border-amber-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-600 flex items-center justify-center font-bold shrink-0 mt-0.5">
+                    <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold shrink-0 mt-0.5">
                       <Mic className="w-5 h-5" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h4 className="font-bold text-sm text-foreground">Speaking (Part 1 &amp; 2)</h4>
-                        <Badge variant="outline" className="border-amber-400/60 bg-amber-500/10 text-amber-700 dark:text-amber-300 font-bold text-xs px-2.5 py-0.5 flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          <span>Đang được giáo viên chấm</span>
-                        </Badge>
+                        <h4 className="font-bold text-sm text-[#1d1d1f]">Speaking (Part 1 &amp; 2)</h4>
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold text-xs">
+                          <Clock className="w-3 h-3" /> Đang chấm
+                        </span>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        {activeReport?.subjectiveEvaluation?.speaking?.message || "2 bản ghi âm đã được niêm phong an toàn. Giáo viên sẽ thẩm định phát âm, độ trôi chảy & từ vựng."}
+                      <p className="text-xs text-[#86868b] mt-0.5 leading-relaxed">
+                        {activeReport?.subjectiveEvaluation?.speaking?.message || "Bản ghi âm đã được lưu trữ an toàn. Giáo viên sẽ thẩm định phát âm, độ trôi chảy & từ vựng."}
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Strengths and Weaknesses */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-border/60">
+              {/* Apple-style Smart Insights & Pill Tags */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-6 border-t border-black/[0.06]">
                 <div className="space-y-3">
-                  <h4 className="font-extrabold text-foreground text-sm flex items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-                    <span>Điểm mạnh đã xác nhận</span>
-                  </h4>
-                  <ul className="space-y-1.5 text-xs text-foreground/80 leading-relaxed pl-1">
+                    <h4 className="font-black text-[#1d1d1f] text-sm">Điểm Mạnh Đã Xác Nhận</h4>
+                  </div>
+                  <div className="space-y-2">
                     {(activeReport?.strengths || []).map((s: string, idx: number) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <span className="text-emerald-600 font-bold">•</span>
-                        <span>{s}</span>
-                      </li>
+                      <div
+                        key={idx}
+                        className="p-3 rounded-2xl bg-emerald-50/50 border border-emerald-200/50 text-xs text-emerald-950 leading-relaxed font-medium"
+                      >
+                        ✓ {s}
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
 
                 <div className="space-y-3">
-                  <h4 className="font-extrabold text-foreground text-sm flex items-center gap-2 text-brand-red">
+                  <div className="flex items-center gap-2">
                     <Target className="h-4 w-4 text-brand-red shrink-0" />
-                    <span>Điểm nghẽn cần tháo gỡ</span>
-                  </h4>
-                  <ul className="space-y-1.5 text-xs text-foreground/80 leading-relaxed pl-1">
+                    <h4 className="font-black text-brand-red text-sm">Điểm Nghẽn Cần Can Thiệp</h4>
+                  </div>
+                  <div className="space-y-2">
                     {(activeReport?.weaknesses || []).map((w: string, idx: number) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <span className="text-brand-red font-bold">•</span>
-                        <span>{w}</span>
-                      </li>
+                      <div
+                        key={idx}
+                        className="p-3 rounded-2xl bg-rose-50/50 border border-rose-200/50 text-xs text-brand-red leading-relaxed font-medium"
+                      >
+                        ● {w}
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               </div>
             </div>

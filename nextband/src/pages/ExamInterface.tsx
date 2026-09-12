@@ -1248,63 +1248,60 @@ export default function ExamInterface() {
   const isGrammarExam = exam.examType === "grammar";
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-[#FBFBFD] dark:bg-background">
       {/* SEO */}
       <SEO
         title={exam?.title || "Đang tải bài thi..."}
         description={`Luyện thi IELTS: ${exam?.title}. Nâng band điểm IELTS cùng NextBand.`}
       />
 
-      {/* Exam Focus Mode Header */}
-      <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur-md supports-[backdrop-filter]:bg-card/75 shadow-xs">
-        {/* Muted Spatial Anchor Strip - Training/Exam Realm */}
-        <div className="h-1 w-full bg-indigo-600/80" />
-
-        <div className="flex h-14 md:h-16 items-center justify-between px-3 md:px-6 gap-2">
+      {/* Exam Focus Mode Header - Apple Minimalist Distraction-Free */}
+      <header className="sticky top-0 z-50 border-b border-black/[0.06] dark:border-white/[0.08] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md transition-colors">
+        <div className="flex h-13 md:h-14 items-center justify-between px-3 md:px-6 gap-2">
           {/* Left: Exit + Space Tag + Title */}
           <div className="flex items-center gap-3 shrink-0">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setShowExitDialog(true)}
-              className="h-8 w-8 sm:h-9 sm:w-9 rounded-full text-muted-foreground hover:text-foreground hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0"
+              className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground hover:bg-black/[0.04] dark:hover:bg-white/[0.06] shrink-0"
               title="Rời bài tập"
             >
-              <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+              <ArrowLeft className="h-4 w-4" />
               <span className="sr-only">Rời bài tập</span>
             </Button>
-            <div className="h-4 w-[1px] bg-border hidden sm:block" />
+            <div className="h-4 w-[1px] bg-black/[0.08] dark:bg-white/[0.1] hidden sm:block" />
             <div className="flex items-center gap-2">
               {searchParams.get("isRevision") === "true" && (
-                <span className="inline-flex px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-700 items-center gap-1">
+                <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-700 items-center gap-1">
                   <AlertTriangle className="w-3 h-3 text-amber-600" />
                   Bài Sửa (Attempt 2)
                 </span>
               )}
               {tabSwitchCount > 0 && (
-                <span className="inline-flex px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800 items-center gap-1" title={`Đã rời khỏi tab ${tabSwitchCount} lần trong buổi làm bài`}>
+                <span className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800 items-center gap-1" title={`Đã rời khỏi tab ${tabSwitchCount} lần trong buổi làm bài`}>
                   <ShieldAlert className="w-3 h-3 text-amber-600" />
                   Rời tab: {tabSwitchCount}
                 </span>
               )}
-              <h1 className="font-bold text-sm md:text-base tracking-tight truncate max-w-[160px] sm:max-w-[220px] md:max-w-none">
+              <h1 className="font-bold text-sm md:text-base tracking-tight truncate max-w-[160px] sm:max-w-[240px] md:max-w-none text-[#1d1d1f] dark:text-slate-100">
                 {exam.title}
               </h1>
             </div>
           </div>
 
-          {/* Center: Real-time Context State */}
-          <div className="hidden lg:flex items-center gap-2.5 px-3.5 py-1 rounded-full bg-muted/50 border border-border/80 text-xs font-medium">
-            <span className="font-bold uppercase tracking-wider text-primary">
+          {/* Center: Real-time Context State (Minimalist Pill Capsule) */}
+          <div className="hidden lg:flex items-center gap-2 px-3.5 py-1 rounded-full bg-black/[0.03] dark:bg-white/[0.05] border border-black/[0.06] dark:border-white/[0.08] text-xs font-medium">
+            <span className="font-bold uppercase tracking-wider text-brand-blue dark:text-blue-400">
               {currentSection?.title && currentSection.title.toLowerCase() !== "general"
                 ? currentSection.title
                 : sectionLabels[activeSection as SectionType] || activeSection || "EXAM"}
             </span>
-            <span className="text-muted-foreground/60">•</span>
-            <span className="font-semibold text-foreground/90">
+            <span className="text-muted-foreground/50">•</span>
+            <span className="font-semibold text-[#1d1d1f] dark:text-slate-200">
               Câu {currentQuestionIndex >= 0 ? currentQuestionIndex + 1 : 1}/{paginationQuestions.length}
             </span>
-            <span className="text-muted-foreground/60">•</span>
+            <span className="text-muted-foreground/50">•</span>
             {syncVisualState === "SERVER_SYNC_PENDING" && (
               <span className="text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1 animate-pulse">
                 ● Đang đồng bộ...
@@ -1312,7 +1309,7 @@ export default function ExamInterface() {
             )}
             {syncVisualState === "SERVER_SYNCED" && (
               <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
-                ✓ Đã đồng bộ máy chủ
+                ✓ Đã lưu an toàn
               </span>
             )}
             {syncVisualState === "LOCAL_SAVED" && (
@@ -1323,17 +1320,17 @@ export default function ExamInterface() {
             {syncVisualState === "SERVER_UNREACHABLE" && (
               <span className="text-rose-600 dark:text-rose-400 font-bold flex items-center gap-1">
                 <WifiOff className="w-3.5 h-3.5" />
-                ⚠️ Ngắt kết nối (Đã lưu an toàn)
+                ⚠️ Đã lưu an toàn (Offline)
               </span>
             )}
-            <span className="text-muted-foreground/40">|</span>
+            <span className="text-muted-foreground/30">|</span>
             <span className="text-muted-foreground font-medium">
               Đã làm {answeredCount}/{paginationQuestions.length}
             </span>
           </div>
 
           {/* Right: Timer & Action CTAs */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 shrink-0">
             <ExamTimer
               duration={exam.durationMinutes || 60}
               initialSeconds={
@@ -1342,22 +1339,22 @@ export default function ExamInterface() {
               onTimeUp={handleTimeUp}
               size="small"
             />
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 onClick={() => setShowReviewDialog(true)}
-                className="hidden sm:inline-flex"
+                className="hidden sm:inline-flex rounded-full px-3 h-8 text-xs font-semibold hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
               >
-                <Eye className="mr-1.5 h-3.5 w-3.5" />
+                <Eye className="mr-1 h-3.5 w-3.5" />
                 Xem lại
               </Button>
               <Button
                 size="sm"
                 onClick={() => setShowReviewDialog(true)}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-xs"
+                className="rounded-full px-4 h-8 text-xs font-bold bg-[#002147] hover:bg-[#001733] text-white shadow-2xs"
               >
-                <Send className="mr-1.5 h-3.5 w-3.5" />
+                <Send className="mr-1 h-3.5 w-3.5" />
                 Nộp bài
               </Button>
             </div>
