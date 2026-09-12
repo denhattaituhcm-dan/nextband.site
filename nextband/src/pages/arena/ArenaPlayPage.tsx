@@ -3,10 +3,14 @@
  * Giao diện tương tác trực tiếp của học sinh trên Mobile.
  * Tích hợp: 4 Thẻ đáp án rõ chữ, Click sound + Tactile vibration,
  * và Màn hình Micro-feedback cá nhân sau khi giáo viên công bố kết quả.
+ * Kết nối Realtime Broadcast với Host:
+ * - Khi chọn đáp án: gửi broadcast 'player-answered' kèm optionId
+ * - Đồng bộ theo lệnh của Host.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { supabase } from '@/lib/supabase';
 import { useArenaAudio } from '@/hooks/arena/useArenaAudio';
 import { StudentAnswerCard } from '@/components/arena/StudentAnswerCard';
 import { ArenaIncenseTimer } from '@/components/arena/ArenaIncenseTimer';
@@ -32,6 +36,36 @@ export default function ArenaPlayPage() {
   const [showResult, setShowResult] = useState<boolean>(false);
 
   const { playClickSound, playCorrectSound, playWrongSound } = useArenaAudio();
+  const channelRef = useRef<any>(null);
+
+  // Lắng nghe broadcast từ Host
+  useEffect(() => {
+    if (!pin) return;
+    const channelName = `arena-room-${pin}`;
+    const channel = supabase.channel(channelName);
+
+    channel
+      .on('broadcast', { event: 'arena-started' }, () => {
+        setTimeLeft(15);
+        setIsLocked(false);
+        setHasSubmitted(false);
+        setSelectedOptionId(null);
+        setShowResult(false);
+      })
+      .on('broadcast', { event: 'round-locked' }, () => {
+        setIsLocked(true);
+      })
+      .on('broadcast', { event: 'round-reveal' }, () => {
+        setShowResult(true);
+      })
+      .subscribe();
+
+    channelRef.current = channel;
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [pin]);
 
   // Đếm lùi thời gian vòng
   useEffect(() => {
@@ -40,7 +74,6 @@ export default function ArenaPlayPage() {
         if (prev <= 1) {
           clearInterval(timer);
           setIsLocked(true);
-          // Tự động reveal kết quả sau khi hết giờ một nhịp (giả lập delay của Host)
           setTimeout(() => setShowResult(true), 2500);
           return 0;
         }
@@ -52,14 +85,27 @@ export default function ArenaPlayPage() {
 
   // Xử lý khi học sinh chọn đáp án
   const handleSelectOption = useCallback(
-    (optionId: string) => {
+    async (optionId: string) => {
       if (isLocked || hasSubmitted) return;
 
       playClickSound();
       setSelectedOptionId(optionId);
       setHasSubmitted(true);
+
+      // Gửi broadcast đáp án của học sinh lên Host
+      if (channelRef.current) {
+        channelRef.current.send({
+          type: 'broadcast',
+          event: 'player-answered',
+          payload: {
+            nickname,
+            optionId,
+            timeLeft,
+          },
+        });
+      }
     },
-    [isLocked, hasSubmitted, playClickSound]
+    [isLocked, hasSubmitted, playClickSound, nickname, timeLeft]
   );
 
   const isCorrect = selectedOptionId === 'opt_A';
@@ -138,64 +184,50 @@ export default function ArenaPlayPage() {
         ) : (
           /* Personal Micro-feedback Screen */
           <div className="space-y-6 text-center animate-fadeIn py-4">
-            <div
-              className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto ${
-                isCorrect
-                  ? 'bg-emerald-500/20 border-2 border-emerald-500 text-emerald-400'
-                  : 'bg-red-500/20 border-2 border-red-500 text-red-400'
-              }`}
-            >
+            <div className="flex justify-center">
               {isCorrect ? (
-                <CheckCircle2 className="w-10 h-10" />
+                <div className="w-20 h-20 rounded-full bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center text-emerald-400 animate-bounce">
+                  <CheckCircle2 className="w-10 h-10" />
+                </div>
               ) : (
-                <XCircle className="w-10 h-10" />
+                <div className="w-20 h-20 rounded-full bg-rose-500/20 border-2 border-rose-500 flex items-center justify-center text-rose-400">
+                  <XCircle className="w-10 h-10" />
+                </div>
               )}
             </div>
 
             <div className="space-y-1">
-              <h3 className="text-2xl font-black text-white">
-                {isCorrect ? 'CHÍNH XÁC TUYỆT ĐỐI!' : 'CHƯA CHÍNH XÁC!'}
-              </h3>
-              <p className="text-xs text-slate-400">
-                {isCorrect
-                  ? 'Bạn đã chọn đúng Collocation chuẩn xác.'
-                  : 'Rất tiếc! "make an investment" mới là Collocation đúng.'}
+              <h2 className="text-3xl font-black text-white">
+                {isCorrect ? 'CHÍNH XÁC!' : 'CHƯA CHÍNH XÁC'}
+              </h2>
+              <p className="text-sm font-semibold text-slate-400">
+                {isCorrect ? '+100 Điểm Tốc Độ' : 'Đừng nản lòng, chú ý collocation tiếp theo'}
               </p>
             </div>
 
-            {/* Score & Rank Card */}
-            <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl max-w-xs mx-auto space-y-3 shadow-lg">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                <span className="text-xs text-slate-400 font-medium">Điểm câu này</span>
-                <span className="text-base font-black text-amber-400 font-mono">
-                  {isCorrect ? '+115 pts' : '+0 pts'}
-                </span>
+            {/* Individual Diagnostic Card */}
+            <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-left space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-bold text-slate-400 uppercase">Đáp án chuẩn:</span>
+                <span className="font-black text-emerald-400">A. make an investment</span>
               </div>
-              <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                <span className="text-xs text-slate-400 font-medium">Hạng hiện tại</span>
-                <div className="flex items-center gap-1.5 font-bold text-white text-sm">
-                  <Trophy className="w-4 h-4 text-amber-400" /> #{isCorrect ? '1' : '8'}
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-slate-400 font-medium">Khoảng cách Top 5</span>
-                <span className="text-xs font-bold text-emerald-400">
-                  {isCorrect ? 'Đang trong Top 5' : 'Cách 15 pts'}
-                </span>
-              </div>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Động từ chuẩn đi với "investment" trong học thuật IELTS là <strong>make</strong> (không dùng do/take/create).
+              </p>
             </div>
 
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-900 border border-slate-800 rounded-full text-xs text-slate-400">
-              <Sparkles className="w-3.5 h-3.5 text-orange-400" />
-              Chuẩn bị cho câu tiếp theo
+            <div className="pt-2">
+              <span className="text-xs text-slate-500 font-medium">
+                Nhìn lên màn hình của Thầy/Cô để xem phân tích chi tiết.
+              </span>
             </div>
           </div>
         )}
       </main>
 
       {/* Footer */}
-      <footer className="text-center text-[10px] text-slate-600 border-t border-slate-800 pt-2 font-mono">
-        NEXTBAND ARENA ENGINE · REALTIME
+      <footer className="text-center py-2 border-t border-slate-900 text-[11px] text-slate-600 font-medium">
+        NextBand Arena · Hệ thống tương tác lớp học
       </footer>
     </div>
   );
