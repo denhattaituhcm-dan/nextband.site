@@ -184,44 +184,36 @@ export function PublicHeader() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className={cn(
-                      "relative inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs xl:text-[13px] font-black tracking-wider uppercase whitespace-nowrap transition-all duration-300 group/tuhoc overflow-hidden p-[1px]",
+                      "relative inline-flex items-center gap-1.5 px-3.5 xl:px-4 py-1.5 rounded-full text-xs xl:text-[13px] font-black tracking-wider uppercase whitespace-nowrap transition-all duration-300 group/tuhoc overflow-hidden shadow-md",
                       item.badge
                         ? [
-                            // YouPass multi-stop gradient border
+                            // Nền solid gradient rực rỡ đặc trưng của YouPass PRO
                             "bg-gradient-to-r from-[#ff8541] via-[#ff5b75] via-[#b054ed] to-[#5197f8]",
-                            "shadow-[0_0_12px_rgba(255,100,150,0.25)] hover:shadow-[0_0_20px_rgba(255,100,150,0.55)]",
-                            "hover:scale-[1.03] active:scale-[0.98]",
+                            "text-white",
+                            "shadow-[0_0_16px_rgba(255,133,65,0.4)] hover:shadow-[0_0_24px_rgba(255,91,117,0.7)]",
+                            "hover:brightness-110 hover:scale-[1.04] active:scale-[0.98]",
+                            "border border-white/25",
                           ].join(" ")
                         : "text-slate-300 hover:text-white hover:bg-white/10"
                     )}
                   >
-                    {/* Inner container: default is dark navy bg, fills to gradient on hover */}
-                    <span
-                      className={cn(
-                        "relative w-full h-full flex items-center gap-1.5 px-3 py-1 rounded-full transition-colors duration-300",
-                        item.badge
-                          ? "bg-[#002147] text-slate-100 group-hover/tuhoc:bg-transparent group-hover/tuhoc:text-white"
-                          : ""
-                      )}
-                    >
-                      {/* Shimmer sweep on hover */}
-                      {item.badge && (
-                        <span
-                          aria-hidden
-                          className="pointer-events-none absolute inset-0 -translate-x-full group-hover/tuhoc:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                        />
-                      )}
+                    {/* Shimmer sweep effect */}
+                    {item.badge && (
+                      <span
+                        aria-hidden
+                        className="pointer-events-none absolute inset-0 -translate-x-full group-hover/tuhoc:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                      />
+                    )}
 
-                      {item.badge && (
-                        <Sparkles className="h-3.5 w-3.5 text-[#ff8541] group-hover/tuhoc:text-white shrink-0 transition-colors" />
-                      )}
-                      <span>{item.label}</span>
-                      {item.badge && (
-                        <span className="relative px-1.5 py-[1px] rounded-full text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-[#ff8541] via-[#ff5b75] to-[#b054ed] text-white shadow-sm border border-white/20">
-                          {item.badge}
-                        </span>
-                      )}
-                    </span>
+                    {item.badge && (
+                      <Sparkles className="h-3.5 w-3.5 text-white drop-shadow-sm shrink-0" />
+                    )}
+                    <span className="drop-shadow-sm font-black">{item.label}</span>
+                    {item.badge && (
+                      <span className="relative px-1.5 py-[0.5px] rounded-full text-[9px] font-black uppercase tracking-wider bg-white/25 text-white backdrop-blur-xs border border-white/30 shadow-xs">
+                        {item.badge}
+                      </span>
+                    )}
                   </a>
                 );
               }
@@ -426,33 +418,24 @@ export function PublicHeader() {
                     rel="noopener noreferrer"
                     onClick={() => setMobileMenuOpen(false)}
                     className={cn(
-                      "rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-between group/mob overflow-hidden relative p-[1px]",
+                      "px-3 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-between group/mob overflow-hidden relative shadow-md",
                       item.badge
-                        ? "bg-gradient-to-r from-[#ff8541] via-[#ff5b75] via-[#b054ed] to-[#5197f8] shadow-[0_0_12px_rgba(255,100,150,0.25)]"
+                        ? "bg-gradient-to-r from-[#ff8541] via-[#ff5b75] via-[#b054ed] to-[#5197f8] text-white shadow-[0_0_16px_rgba(255,133,65,0.4)] border border-white/25"
                         : "text-slate-300 hover:text-white hover:bg-white/10"
                     )}
                   >
-                    <div
-                      className={cn(
-                        "w-full h-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors duration-200",
-                        item.badge
-                          ? "bg-[#002147] text-slate-100 group-hover/mob:bg-transparent group-hover/mob:text-white"
-                          : ""
+                    <div className="flex items-center gap-2">
+                      {item.badge && (
+                        <Sparkles className="h-3.5 w-3.5 text-white shrink-0" />
                       )}
-                    >
-                      <div className="flex items-center gap-2">
-                        {item.badge && (
-                          <Sparkles className="h-3.5 w-3.5 text-[#ff8541] group-hover/mob:text-white shrink-0 transition-colors" />
-                        )}
-                        <span>{item.label}</span>
-                        {item.badge && (
-                          <span className="px-1.5 py-[1px] rounded-full text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-[#ff8541] via-[#ff5b75] to-[#b054ed] text-white shadow-sm border border-white/20">
-                            {item.badge}
-                          </span>
-                        )}
-                      </div>
-                      <ArrowRight className="h-3.5 w-3.5 opacity-80 text-white/80" />
+                      <span className="drop-shadow-sm">{item.label}</span>
+                      {item.badge && (
+                        <span className="px-1.5 py-[1px] rounded-full text-[9px] font-black uppercase tracking-wider bg-white/25 text-white border border-white/30 shadow-sm">
+                          {item.badge}
+                        </span>
+                      )}
                     </div>
+                    <ArrowRight className="h-3.5 w-3.5 opacity-90 text-white" />
                   </a>
                 );
               }
