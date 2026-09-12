@@ -1,16 +1,14 @@
 /**
- * ARENA LOBBY KAHOOT COMPONENT - AESTHETIC UPGRADE (CANVA & KAHOOT PALETTE)
- * Áp dụng triết lý thiết kế đồ họa từ Canva Quiz/Kahoot:
- * - Màu chủ đạo: Nền tím hoàng gia sâu thẳm (#160d38 -> #281559 -> #0d0624)
- * - Top Banner trắng bo góc lớn (pill-card), bóng đổ đa lớp sang trọng (luxury glassmorphism & soft drop shadow)
- * - Logo "Kahoot của Aris" / "NextBand Arena" typography tròn trịa, vui nhộn, tràn đầy năng lượng
- * - Thẻ học viên: Phối màu Candy Pop đa sắc kiểu Kahoot (Tím, Xanh ngọc, Cam đào, Hồng sen, Vàng chanh)
- *   Mỗi thẻ có Avatar nhân vật đáng yêu, tên học sinh rõ nét, trạng thái Ready phát sáng
- * - Hiệu ứng nảy (pop-in bounce) mượt mà khi học viên vào phòng
+ * ARENA LOBBY KAHOOT COMPONENT - ULTRA-VISIBILITY UPGRADE
+ * Tối ưu tầm nhìn máy chiếu xa 4m - 10m:
+ * - Mã vạch QR Code SIÊU LỚN (kích thước ~200px - 260px) chiếm vị trí trang trọng, camera điện thoại ngồi xa quét bắt nét tức thì
+ * - Tương tác click phóng to Modal Full màn hình nếu cần quét ở cự ly cực xa
+ * - Mã PIN 111 999 siêu to khổng lồ
+ * - Phối màu chuẩn Canva & Kahoot Candy Pop
  */
 
-import React from 'react';
-import { Users, UserCheck, Sparkles, QrCode } from 'lucide-react';
+import React, { useState } from 'react';
+import { Users, UserCheck, Sparkles, QrCode, Maximize2, X } from 'lucide-react';
 
 export interface LobbyPlayer {
   id: string;
@@ -27,7 +25,6 @@ interface ArenaLobbyKahootProps {
   joinUrl?: string;
 }
 
-// Bảng phối màu Candy Pop vui tươi lấy cảm hứng từ các mẫu Canva Quiz & Kahoot
 const CARD_PALETTES = [
   { bg: 'bg-[#46178f]', border: 'border-[#8e44ad]', badge: 'bg-[#6c3483]', text: 'text-purple-100', glow: 'shadow-purple-900/40' },
   { bg: 'bg-[#1368ce]', border: 'border-[#3498db]', badge: 'bg-[#1b4f72]', text: 'text-blue-100', glow: 'shadow-blue-900/40' },
@@ -43,63 +40,110 @@ export const ArenaLobbyKahoot: React.FC<ArenaLobbyKahootProps> = React.memo(({
   pinCode,
   joinUrl = '/arena/join',
 }) => {
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const currentCount = players.length;
   const fullJoinUrlWithPin = `${joinUrl}?pin=${pinCode}`;
   
-  // Mã QR độ nét cao với viền trắng tối ưu quét camera
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(fullJoinUrlWithPin)}&margin=4&format=svg`;
+  // Tạo mã QR vector siêu nét, kích thước phân giải gốc 500x500
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(fullJoinUrlWithPin)}&margin=2&format=svg`;
 
-  // Avatar phong cách Bottts đáng yêu của Dicebear (chuẩn avatar hoạt hình như Kahoot trong ảnh)
   const getAvatarUrl = (seed?: number | string, name?: string) => {
     const avatarKey = seed || name || 'student';
     return `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(String(avatarKey))}`;
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto flex flex-col items-center space-y-7 animate-fadeIn select-none">
-      {/* KAHOOT TOP BANNER: Phong cách Canva Pill Card siêu mịn & tương phản tối thượng */}
-      <div className="w-full bg-white text-slate-900 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.4)] p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-6 border-4 border-purple-100">
-        {/* Cột 1: Hướng dẫn tham gia */}
-        <div className="text-center md:text-left space-y-1">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-black uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5 text-purple-600" /> Tham gia tại
+    <div className="w-full max-w-6xl mx-auto flex flex-col items-center space-y-7 animate-fadeIn select-none">
+      {/* KAHOOT ULTRA-BANNER: Mã vạch QR phóng to gấp 3 lần để ngồi xa 4m-6m vẫn quét cực nhạy */}
+      <div className="w-full bg-white text-slate-900 rounded-[2.5rem] shadow-[0_25px_60px_rgba(0,0,0,0.5)] p-5 md:p-8 flex flex-col lg:flex-row items-center justify-between gap-6 md:gap-8 border-4 border-purple-200">
+        
+        {/* CỘT 1: Hướng dẫn tham gia & Link web */}
+        <div className="text-center lg:text-left space-y-2 flex-1">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-purple-100 text-purple-900 rounded-full text-xs md:text-sm font-black uppercase tracking-wider">
+            <Sparkles className="w-4 h-4 text-purple-600 animate-spin" /> Tham gia trận đấu
           </div>
-          <p className="text-xl md:text-2xl font-black text-[#46178f] font-mono tracking-tight underline cursor-pointer hover:text-purple-600 transition-colors">
+          <p className="text-2xl md:text-3xl lg:text-4xl font-black text-[#46178f] font-mono tracking-tight underline cursor-pointer hover:text-purple-600 transition-colors">
             {typeof window !== 'undefined' ? `${window.location.host}/arena/join` : 'nextband.vn/arena/join'}
           </p>
-          <span className="text-xs text-slate-500 font-semibold block">
-            hoặc mở Camera điện thoại quét mã QR bên phải
-          </span>
+          <p className="text-sm md:text-base text-slate-600 font-bold">
+            📱 Dùng Camera điện thoại quét mã vạch bên cạnh để vào ngay!
+          </p>
         </div>
 
-        {/* Cột 2: GAME PIN Cực Lớn */}
-        <div className="text-center px-8 py-3 bg-gradient-to-b from-slate-50 to-purple-50/50 rounded-2xl border-2 border-purple-200/80 shadow-inner">
-          <span className="text-[11px] font-black text-purple-600 uppercase tracking-widest block">
+        {/* CỘT 2: GAME PIN SIÊU TO KHỔNG LỒ */}
+        <div className="text-center px-8 md:px-10 py-4 bg-gradient-to-b from-slate-50 to-purple-50 rounded-3xl border-2 border-purple-200 shadow-inner">
+          <span className="text-xs md:text-sm font-black text-purple-600 uppercase tracking-widest block mb-1">
             MÃ PIN TRẬN ĐẤU
           </span>
-          <span className="text-5xl md:text-6xl font-black text-slate-950 tracking-widest font-mono drop-shadow-sm">
+          <span className="text-5xl md:text-7xl lg:text-8xl font-black text-slate-950 tracking-widest font-mono drop-shadow-md">
             {pinCode.length === 6 ? `${pinCode.slice(0, 3)} ${pinCode.slice(3)}` : pinCode}
           </span>
         </div>
 
-        {/* Cột 3: Mã QR Barcode cao cấp */}
-        <div className="flex flex-col items-center gap-1.5">
-          <div className="p-2 bg-white rounded-2xl border-2 border-purple-200 shadow-md transform hover:scale-105 transition-transform">
+        {/* CỘT 3: MÃ VẠCH QR CODE SIÊU LỚN (ĐƯỢC NÂNG CẤP KÍCH THƯỚC ĐỂ NGỒI XA QUÉT DỄ DÀNG) */}
+        <div className="flex flex-col items-center gap-2 relative group">
+          <div 
+            onClick={() => setIsQrModalOpen(true)}
+            className="p-3 bg-white rounded-3xl border-4 border-purple-300 shadow-2xl cursor-pointer transform hover:scale-105 transition-all duration-300 relative"
+            title="Bấm để phóng to mã QR toàn màn hình"
+          >
             <img
               src={qrCodeUrl}
               alt={`Mã QR PIN ${pinCode}`}
-              className="w-24 h-24 md:w-28 md:h-28 rounded-xl object-contain"
+              className="w-44 h-44 sm:w-52 sm:h-52 md:w-56 md:h-56 rounded-2xl object-contain"
               loading="eager"
             />
+            <div className="absolute inset-0 bg-purple-900/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <span className="px-3 py-1 bg-slate-950/80 text-white rounded-full text-xs font-bold flex items-center gap-1">
+                <Maximize2 className="w-3.5 h-3.5" /> Bấm để phóng to
+              </span>
+            </div>
           </div>
-          <span className="text-[11px] font-black text-purple-900 uppercase tracking-wider flex items-center gap-1">
-            <QrCode className="w-3.5 h-3.5 text-purple-700" /> Quét vào ngay
+          <span className="text-xs md:text-sm font-black text-purple-950 uppercase tracking-wider flex items-center gap-1.5 animate-pulse">
+            <QrCode className="w-4 h-4 text-purple-700" /> Quét mã vào ngay
           </span>
         </div>
       </div>
 
-      {/* BRANDING HEADER: "Kahoot của Aris" & Sĩ số phòng */}
-      <div className="flex flex-col md:flex-row items-center justify-between w-full px-4 pt-2">
+      {/* POPUP PHÓNG TO MÃ QR KHỔNG LỒ (NẾU PHÒNG HỌC QUÁ RỘNG) */}
+      {isQrModalOpen && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col items-center justify-center p-6 animate-in fade-in zoom-in-95 duration-200"
+          onClick={() => setIsQrModalOpen(false)}
+        >
+          <div 
+            className="bg-white p-8 md:p-12 rounded-[3rem] shadow-2xl flex flex-col items-center space-y-6 max-w-lg w-full text-center relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setIsQrModalOpen(false)}
+              className="absolute top-5 right-5 w-12 h-12 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition-all cursor-pointer"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            <div className="space-y-1">
+              <h3 className="text-2xl md:text-3xl font-black text-slate-900">QUÉT MÃ VÀO PHÒNG</h3>
+              <p className="text-base font-bold text-purple-700">Mã PIN: {pinCode}</p>
+            </div>
+
+            <div className="p-4 bg-white rounded-3xl border-4 border-purple-400 shadow-inner">
+              <img
+                src={qrCodeUrl}
+                alt={`Mã QR Full ${pinCode}`}
+                className="w-72 h-72 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-2xl object-contain"
+              />
+            </div>
+
+            <p className="text-xs text-slate-500 font-semibold">
+              Học viên giơ điện thoại từ bất cứ vị trí nào trong phòng để quét mã
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* BRANDING HEADER: "Đấu trường Aris" & Sĩ số phòng */}
+      <div className="flex flex-col md:flex-row items-center justify-between w-full px-4 pt-1">
         <div className="flex items-center gap-3 mb-2 md:mb-0">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500 flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-orange-500/30">
             🔥
@@ -132,7 +176,6 @@ export const ArenaLobbyKahoot: React.FC<ArenaLobbyKahootProps> = React.memo(({
           const palette = CARD_PALETTES[idx % CARD_PALETTES.length];
 
           return p ? (
-            /* Thẻ học viên đã vào phòng: Màu sắc rực rỡ, Avatar hoạt họa, chữ trắng cực nổi */
             <div
               key={p.id || idx}
               className={`p-4 ${palette.bg} border-2 ${palette.border} rounded-2xl flex flex-col items-center text-center space-y-2.5 shadow-xl ${palette.glow} animate-in fade-in zoom-in-75 duration-300 transform hover:-translate-y-1 transition-all min-h-[155px] justify-between cursor-default`}
@@ -164,7 +207,6 @@ export const ArenaLobbyKahoot: React.FC<ArenaLobbyKahootProps> = React.memo(({
               </div>
             </div>
           ) : (
-            /* Ô chờ trống: Nền mờ sang trọng, đường viền nét đứt tinh tế */
             <div
               key={`empty_${idx}`}
               className="p-4 bg-white/5 border-2 border-dashed border-white/15 rounded-2xl flex flex-col items-center justify-center text-center text-white/30 min-h-[155px] space-y-2 backdrop-blur-xs hover:border-white/25 transition-all"
