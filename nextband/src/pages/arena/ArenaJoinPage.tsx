@@ -2,10 +2,12 @@
  * STUDENT JOIN PAGE (/arena/join)
  * Màn hình nhập mã PIN và Nickname cho học viên trên điện thoại.
  * Tối giản tối đa (Zero-Fluff), tham gia < 10 giây.
+ * Khi tham gia: Gửi broadcast Supabase 'player-joined' để xuất hiện trên màn hình Host.
  */
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/lib/supabase';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
 export default function ArenaJoinPage() {
@@ -19,8 +21,16 @@ export default function ArenaJoinPage() {
     e.preventDefault();
     setError('');
 
-    if (!pin.trim() || !nickname.trim()) {
-      setError('Vui lòng nhập đầy đủ mã PIN và Tên');
+    const cleanPin = pin.trim();
+    const cleanNick = nickname.trim();
+
+    if (!cleanPin || cleanPin.length !== 6) {
+      setError('Mã PIN phải gồm 6 chữ số');
+      return;
+    }
+
+    if (!cleanNick) {
+      setError('Vui lòng nhập tên của bạn');
       return;
     }
 
@@ -28,12 +38,36 @@ export default function ArenaJoinPage() {
 
     try {
       if (typeof window !== 'undefined') {
-        sessionStorage.setItem('arena_pin', pin.trim());
-        sessionStorage.setItem('arena_nickname', nickname.trim());
+        sessionStorage.setItem('arena_pin', cleanPin);
+        sessionStorage.setItem('arena_nickname', cleanNick);
       }
 
+      // Phát broadcast tới Host phòng
+      const channel = supabase.channel(`arena-room-${cleanPin}`);
+      
+      await new Promise<void>((resolve) => {
+        channel.subscribe(async (status) => {
+          if (status === 'SUBSCRIBED') {
+            await channel.send({
+              type: 'broadcast',
+              event: 'player-joined',
+              payload: {
+                id: `p_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+                name: cleanNick,
+                avatarSeed: cleanNick,
+                rank: 'Học viên',
+                joinedAt: new Date().toISOString(),
+              },
+            });
+            resolve();
+          }
+        });
+        // Timeout an toàn 1.5s nếu mạng chậm
+        setTimeout(resolve, 1500);
+      });
+
       // Chuyển hướng sang màn hình thi đấu
-      navigate(`/arena/play?pin=${pin.trim()}&name=${encodeURIComponent(nickname.trim())}`);
+      navigate(`/arena/play?pin=${cleanPin}&name=${encodeURIComponent(cleanNick)}`);
     } catch (err: any) {
       setError(err.message || 'Lỗi tham gia phòng');
       setIsLoading(false);

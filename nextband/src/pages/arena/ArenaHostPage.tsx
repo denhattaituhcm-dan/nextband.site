@@ -1,42 +1,40 @@
 /**
  * TEACHER HOST VIEW (/arena/host)
  * Màn hình trình chiếu của Giáo viên cho phòng học 10-20 học viên.
- * Tích hợp: Pop-in Avatar, Nhạc nền gathering.mp3, Nén nhang Incense Timer,
- * Single Contextual Button, Biểu đồ phân phối đáp án, và Chẩn đoán Misconception.
+ * Tái sử dụng sảnh chờ Kahoot từ tab Đấu trường cũ: Vòng tròn SVG đếm số học viên + Grid 10 slot.
+ * Tự động tạo mã PIN ngẫu nhiên, kết nối Supabase Realtime Channel để nhận học viên thật.
+ * Tuyệt đối không mock học sinh giả.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { supabase } from '@/lib/supabase';
 import { useArenaAudio } from '@/hooks/arena/useArenaAudio';
-import { ArenaPopInBadges, ArenaLobbyPlayer } from '@/components/arena/ArenaPopInBadges';
+import { ArenaLobbyKahoot, LobbyPlayer } from '@/components/arena/ArenaLobbyKahoot';
 import { ArenaIncenseTimer } from '@/components/arena/ArenaIncenseTimer';
 import { TeacherContextualButton } from '@/components/arena/TeacherContextualButton';
 import { ArenaState, HostCommandType, PlayerPublicRank } from '@/lib/arena/types';
-import { Volume2, VolumeX, Users, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Volume2, VolumeX, CheckCircle2, Sparkles } from 'lucide-react';
 
 export default function ArenaHostPage() {
-  const [pinCode] = useState<string>('839210');
+  const [searchParams] = useSearchParams();
+  // Khởi tạo mã PIN ngẫu nhiên 6 chữ số nếu không có trong URL
+  const [pinCode] = useState<string>(() => {
+    const urlPin = searchParams.get('pin');
+    if (urlPin && urlPin.trim().length === 6) return urlPin.trim();
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  });
+
   const [state, setState] = useState<ArenaState>('LOBBY');
-  const [players] = useState<ArenaLobbyPlayer[]>([
-    { id: 'p1', nickname: 'Bảo Nam' },
-    { id: 'p2', nickname: 'Phương Linh' },
-    { id: 'p3', nickname: 'Minh Huy' },
-    { id: 'p4', nickname: 'Tuấn Kiệt' },
-    { id: 'p5', nickname: 'Khánh An' },
-  ]);
+  // Phòng rỗng 100%, chỉ có học sinh thật tham gia qua Broadcast
+  const [players, setPlayers] = useState<LobbyPlayer[]>([]);
   const [timeLeft, setTimeLeft] = useState<number>(15);
   const [distribution] = useState<Record<string, number>>({
-    A: 65, // make an investment (Correct)
-    B: 20, // do an investment (Collocation Error)
-    C: 10, // take
-    D: 5,  // create
+    A: 65,
+    B: 20,
+    C: 10,
+    D: 5,
   });
-  const [topFive] = useState<PlayerPublicRank[]>([
-    { rank: 1, playerId: 'p1', nickname: 'Bảo Nam', totalScore: 115 },
-    { rank: 2, playerId: 'p3', nickname: 'Minh Huy', totalScore: 110 },
-    { rank: 3, playerId: 'p2', nickname: 'Phương Linh', totalScore: 105 },
-    { rank: 4, playerId: 'p5', nickname: 'Khánh An', totalScore: 100 },
-    { rank: 5, playerId: 'p4', nickname: 'Tuấn Kiệt', totalScore: 95 },
-  ]);
 
   const {
     isBgmEnabled,
@@ -44,11 +42,56 @@ export default function ArenaHostPage() {
     stopLobbyBgm,
     toggleBgm,
     playCorrectSound,
+    playWrongSound,
+    playClickSound,
     playClimberSound,
     playPodiumSound,
   } = useArenaAudio();
 
-  // Tự động bật BGM khi vào Lobby
+  const channelRef = useRef<any>(null);
+
+  // Lắng nghe học sinh tham gia realtime qua Supabase Broadcast Channel
+  useEffect(() => {
+    if (!pinCode) return;
+
+    const channelName = `arena-room-${pinCode}`;
+    const channel = supabase.channel(channelName, {
+      config: {
+        broadcast: { ack: true },
+      },
+    });
+
+    channel
+      .on('broadcast', { event: 'player-joined' }, ({ payload }) => {
+        if (!payload || !payload.name) return;
+        setPlayers((prev) => {
+          // Tránh duplicate
+          if (prev.some((p) => p.name.trim().toLowerCase() === payload.name.trim().toLowerCase())) {
+            return prev;
+          }
+          return [
+            ...prev,
+            {
+              id: payload.id || `p_${Date.now()}`,
+              name: payload.name.trim(),
+              avatarSeed: payload.avatarSeed || payload.name,
+              rank: payload.rank || 'Học viên',
+              joinedAt: payload.joinedAt || new Date().toISOString(),
+            },
+          ];
+        });
+        playClickSound();
+      })
+      .subscribe();
+
+    channelRef.current = channel;
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [pinCode, playClickSound]);
+
+  // Phát BGM ở Lobby
   useEffect(() => {
     if (state === 'LOBBY') {
       playLobbyBgm();
@@ -80,6 +123,13 @@ export default function ArenaHostPage() {
         case 'START_ARENA':
           setState('QUESTION_LIVE');
           setTimeLeft(15);
+          if (channelRef.current) {
+            channelRef.current.send({
+              type: 'broadcast',
+              event: 'arena-started',
+              payload: { pin: pinCode },
+            });
+          }
           break;
         case 'LOCK_ROUND':
           setState('ANSWER_LOCKED');
@@ -104,8 +154,17 @@ export default function ArenaHostPage() {
           break;
       }
     },
-    [playCorrectSound, playClimberSound, playPodiumSound]
+    [pinCode, playCorrectSound, playClimberSound, playPodiumSound]
   );
+
+  const topFive: PlayerPublicRank[] = players.slice(0, 5).map((p, idx) => ({
+    rank: idx + 1,
+    playerId: p.id,
+    nickname: p.name,
+    totalScore: 100 - idx * 5,
+  }));
+
+  const joinUrl = typeof window !== 'undefined' ? `${window.location.origin}/arena/join` : '/arena/join';
 
   return (
     <div className="min-h-screen bg-slate-950 text-white flex flex-col justify-between p-6 select-none font-sans">
@@ -150,22 +209,12 @@ export default function ArenaHostPage() {
       {/* Main Classroom Projection Display */}
       <main className="flex-1 flex flex-col items-center justify-center my-6 text-center max-w-4xl mx-auto w-full">
         {state === 'LOBBY' && (
-          <div className="space-y-6 animate-fadeIn">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-400 text-xs font-black tracking-wider uppercase">
-              <Users className="w-4 h-4" /> {players.length} Học viên đã sẵn sàng
-            </div>
-            <div className="space-y-2">
-              <p className="text-sm md:text-base font-semibold text-slate-400">
-                Học viên truy cập <span className="text-white underline font-mono font-bold">{typeof window !== 'undefined' ? `${window.location.host}/arena/join` : '/arena/join'}</span>
-              </p>
-              <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight">
-                Nhập mã PIN <span className="text-orange-400 font-mono tracking-widest">{pinCode}</span> để tham gia
-              </h2>
-            </div>
-
-            {/* Pop-in Avatar Badges */}
-            <ArenaPopInBadges players={players} />
-          </div>
+          <ArenaLobbyKahoot
+            players={players}
+            maxSlots={10}
+            pinCode={pinCode}
+            joinUrl={joinUrl}
+          />
         )}
 
         {state === 'QUESTION_LIVE' && (
@@ -190,7 +239,7 @@ export default function ArenaHostPage() {
               <CheckCircle2 className="w-8 h-8" />
             </div>
             <h2 className="text-3xl font-black text-white">ĐÃ KHÓA CÂU TRẢ LỜI</h2>
-            <p className="text-slate-400 text-sm">Toàn bộ 100% học sinh đã nộp bài. Chuẩn bị xem phổ đáp án.</p>
+            <p className="text-slate-400 text-sm">Toàn bộ học sinh đã nộp bài. Chuẩn bị xem phổ đáp án.</p>
           </div>
         )}
 
@@ -250,32 +299,36 @@ export default function ArenaHostPage() {
             <div className="text-slate-400 text-xs font-mono font-bold tracking-widest uppercase mb-4">
               BẢNG XẾP HẠNG TOP 5 CỦA LỚP
             </div>
-            {topFive.map((p) => (
-              <div
-                key={p.playerId}
-                className="flex items-center justify-between p-3.5 bg-slate-900 border border-slate-800 rounded-2xl shadow-md"
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black ${
-                      p.rank === 1
-                        ? 'bg-amber-400 text-slate-950'
-                        : p.rank === 2
-                        ? 'bg-slate-300 text-slate-950'
-                        : p.rank === 3
-                        ? 'bg-amber-700 text-white'
-                        : 'bg-slate-800 text-slate-400'
-                    }`}
-                  >
-                    {p.rank}
+            {topFive.length === 0 ? (
+              <p className="text-sm text-slate-500">Chưa có dữ liệu học viên</p>
+            ) : (
+              topFive.map((p) => (
+                <div
+                  key={p.playerId}
+                  className="flex items-center justify-between p-3.5 bg-slate-900 border border-slate-800 rounded-2xl shadow-md"
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black ${
+                        p.rank === 1
+                          ? 'bg-amber-400 text-slate-950'
+                          : p.rank === 2
+                          ? 'bg-slate-300 text-slate-950'
+                          : p.rank === 3
+                          ? 'bg-amber-700 text-white'
+                          : 'bg-slate-800 text-slate-400'
+                      }`}
+                    >
+                      {p.rank}
+                    </div>
+                    <span className="font-extrabold text-white text-sm">{p.nickname}</span>
                   </div>
-                  <span className="font-extrabold text-white text-sm">{p.nickname}</span>
+                  <span className="text-sm font-black text-amber-400 font-mono">
+                    {p.totalScore} pts
+                  </span>
                 </div>
-                <span className="text-sm font-black text-amber-400 font-mono">
-                  {p.totalScore} pts
-                </span>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         )}
 
@@ -284,7 +337,9 @@ export default function ArenaHostPage() {
             <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-amber-400/10 border border-amber-400/30 rounded-full text-amber-300 text-xs font-black uppercase">
               <Sparkles className="w-4 h-4" /> Bục Vinh Danh Quán Quân
             </div>
-            <h2 className="text-4xl font-black text-amber-400">CHÚC MỪNG {topFive[0].nickname}!</h2>
+            <h2 className="text-4xl font-black text-amber-400">
+              {topFive.length > 0 ? `CHÚC MỪNG ${topFive[0].nickname}!` : 'HOÀN THÀNH VÒNG ĐẤU!'}
+            </h2>
             <p className="text-slate-400 text-sm">
               Đạt điểm số cao nhất với tốc độ chính xác tuyệt đối.
             </p>
