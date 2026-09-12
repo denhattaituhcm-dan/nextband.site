@@ -12,6 +12,7 @@ import {
   Shield,
   GraduationCap,
   ChevronDown,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -180,16 +181,39 @@ export function PublicHeader() {
                   <a
                     key={item.href}
                     href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className={cn(
-                      "relative px-2.5 xl:px-3 py-2 rounded-xl text-xs xl:text-[13px] font-bold tracking-wider uppercase whitespace-nowrap text-center transition-all inline-flex items-center gap-1.5",
+                      "relative inline-flex items-center gap-1.5 px-3 xl:px-3.5 py-1.5 rounded-xl text-xs xl:text-[13px] font-black tracking-wider uppercase whitespace-nowrap transition-all duration-200 group/tuhoc overflow-hidden",
                       item.badge
-                        ? "text-amber-300 hover:text-white bg-amber-500/15 border border-amber-400/30 hover:bg-amber-500/25 shadow-xs shadow-amber-500/20"
+                        ? [
+                            // Base: dark navy với shimmer gradient overlay
+                            "bg-gradient-to-r from-[#0a1628] via-[#0d1f3c] to-[#0a1628]",
+                            // Border glow — violet → cyan
+                            "border border-violet-500/60 hover:border-violet-400/80",
+                            // Text
+                            "text-violet-200 hover:text-white",
+                            // Outer glow
+                            "shadow-[0_0_14px_rgba(139,92,246,0.35)] hover:shadow-[0_0_22px_rgba(139,92,246,0.55)]",
+                            "hover:scale-[1.03] active:scale-[0.98]",
+                          ].join(" ")
                         : "text-slate-300 hover:text-white hover:bg-white/10"
                     )}
                   >
+                    {/* Shimmer sweep on hover */}
+                    {item.badge && (
+                      <span
+                        aria-hidden
+                        className="pointer-events-none absolute inset-0 -translate-x-full group-hover/tuhoc:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                      />
+                    )}
+
+                    {item.badge && (
+                      <Sparkles className="h-3 w-3 text-violet-400 group-hover/tuhoc:text-violet-300 shrink-0 transition-colors" />
+                    )}
                     <span>{item.label}</span>
                     {item.badge && (
-                      <span className="px-1.5 py-0.2 rounded-full text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-red-500 to-amber-500 text-white shadow-xs animate-pulse">
+                      <span className="relative px-1.5 py-[1px] rounded-md text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-violet-600 to-cyan-500 text-white shadow-sm">
                         {item.badge}
                       </span>
                     )}
@@ -393,23 +417,28 @@ export function PublicHeader() {
                   <a
                     key={item.href}
                     href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     onClick={() => setMobileMenuOpen(false)}
                     className={cn(
-                      "px-3 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-between",
+                      "px-3 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-between group/mob overflow-hidden relative",
                       item.badge
-                        ? "text-amber-300 bg-amber-500/15 border border-amber-400/30"
+                        ? "bg-gradient-to-r from-[#0a1628] via-[#0d1f3c] to-[#0a1628] border border-violet-500/50 text-violet-200 shadow-[0_0_12px_rgba(139,92,246,0.3)]"
                         : "text-slate-300 hover:text-white hover:bg-white/10"
                     )}
                   >
                     <div className="flex items-center gap-2">
+                      {item.badge && (
+                        <Sparkles className="h-3.5 w-3.5 text-violet-400 shrink-0" />
+                      )}
                       <span>{item.label}</span>
                       {item.badge && (
-                        <span className="px-1.5 py-0.2 rounded-full text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-red-500 to-amber-500 text-white shadow-xs animate-pulse">
+                        <span className="px-1.5 py-[1px] rounded-md text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-violet-600 to-cyan-500 text-white shadow-sm">
                           {item.badge}
                         </span>
                       )}
                     </div>
-                    <ArrowRight className="h-3.5 w-3.5 opacity-60" />
+                    <ArrowRight className="h-3.5 w-3.5 opacity-60 text-violet-300" />
                   </a>
                 );
               }

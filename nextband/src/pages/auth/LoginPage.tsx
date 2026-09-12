@@ -57,8 +57,14 @@ export default function LoginPage() {
   const queryParams = new URLSearchParams(location.search);
   const nextParam = queryParams.get("next");
   const rawFrom = (location.state as { from?: { pathname?: string } })?.from?.pathname;
+  // Chỉ dùng rawFrom nếu là protected route — tránh redirect về trang công khai sau login
+  const validFrom =
+    rawFrom &&
+    (rawFrom.startsWith("/app") || rawFrom.startsWith("/admin"))
+      ? rawFrom
+      : null;
   const savedTarget = sessionStorage.getItem("auth_redirect_target");
-  const targetDestination = nextParam || rawFrom || savedTarget || "/app";
+  const targetDestination = nextParam || validFrom || savedTarget || "/app";
   const studentTarget = targetDestination === "/" ? "/app" : targetDestination;
 
   useEffect(() => {
