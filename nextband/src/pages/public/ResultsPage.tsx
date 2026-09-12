@@ -14,6 +14,10 @@ import {
   ChevronRight,
   ShieldAlert,
   Compass,
+  Activity,
+  Zap,
+  ShieldCheck,
+  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -77,43 +81,68 @@ export default function ResultsPage() {
       />
 
       {/* ========================================================================= */}
-      {/* 1. HERO SECTION: Editorial Minimalism + High-Impact Typography & HUD      */}
+      {/* 1. HERO SECTION: Stripe-Inspired Living Mesh Aurora & Telemetry Engine     */}
       {/* ========================================================================= */}
-      <section className="relative pt-12 pb-16 sm:pt-16 sm:pb-24 border-b border-border/80 overflow-hidden">
-        {/* Soft Ambient Depth Light */}
-        <div 
-          className="absolute inset-0 pointer-events-none opacity-40"
-          style={{
-            backgroundImage: `radial-gradient(ellipse 60% 40% at 50% 0%, rgba(28,68,122,0.12) 0%, rgba(223,24,67,0.03) 60%, transparent 100%)`
-          }}
-        />
+      <section className="relative pt-12 pb-16 sm:pt-16 sm:pb-24 border-b border-border/80 overflow-hidden bg-white">
+        {/* Stripe-inspired Living Mesh Aurora Gradient & Diagonal Light Architecture */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {/* Top Right Iris-Cyan Aurora Orb */}
+          <div className="absolute -top-40 -right-32 w-[650px] h-[650px] bg-gradient-to-br from-[#635bff]/12 via-[#00d4ff]/10 to-transparent rounded-full blur-3xl opacity-85 transform rotate-12" />
+          {/* Left Academic Crimson Ambient Flare */}
+          <div className="absolute top-1/4 -left-32 w-[520px] h-[520px] bg-gradient-to-tr from-[#df1843]/08 via-[#635bff]/06 to-transparent rounded-full blur-3xl opacity-70" />
+          {/* Bottom Emerald-Cyan Radar Bloom */}
+          <div className="absolute -bottom-32 right-1/4 w-[460px] h-[460px] bg-gradient-to-tl from-[#00f5a0]/08 via-[#00d4ff]/08 to-transparent rounded-full blur-3xl opacity-70" />
+          {/* Micro dot-grid matrix texture (Stripe aesthetic) */}
+          <div 
+            className="absolute inset-0 opacity-[0.35]"
+            style={{
+              backgroundImage: `radial-gradient(#94a3b8 0.8px, transparent 0.8px)`,
+              backgroundSize: "24px 24px"
+            }}
+          />
+          {/* Diagonal luminous accent beam (Signature Stripe 3D Slant) */}
+          <div 
+            className="absolute -top-24 right-0 w-3/4 h-96 opacity-20 pointer-events-none transform -skew-y-6"
+            style={{
+              background: "linear-gradient(90deg, transparent 0%, rgba(99,91,255,0.25) 50%, rgba(0,212,255,0.35) 100%)",
+              filter: "blur(45px)"
+            }}
+          />
+        </div>
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Top System Sub-header: Crisp Sans Typography */}
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4 mb-8 text-xs sm:text-sm font-sans font-extrabold text-slate-700">
+          {/* Top System Sub-header: Crisp Telemetry Status Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/80 pb-4 mb-8 text-xs sm:text-sm font-sans font-extrabold text-slate-700">
             <div className="flex items-center gap-2.5">
-              <span className="inline-block w-2.5 h-2.5 rounded-full bg-brand-red animate-pulse" />
-              <span className="text-slate-900 tracking-wide">HỌC VIỆN ARIS</span>
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-red opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-red" />
+              </span>
+              <span className="text-slate-900 tracking-wide font-black">HỌC VIỆN ARIS</span>
               <span className="text-slate-300 font-normal">•</span>
               <span className="text-slate-600 font-semibold tracking-normal">Báo Cáo Tiến Bộ & Khảo Thí Thực Tế</span>
             </div>
             <div className="hidden sm:flex items-center gap-2 text-xs font-mono font-bold text-slate-500">
-              <span className="px-2 py-0.5 rounded bg-slate-100 border border-slate-200">DỮ LIỆU ĐÃ XÁC THỰC</span>
-              <span>2026</span>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                DỮ LIỆU ĐÃ XÁC THỰC
+              </span>
+              <span className="text-slate-300">|</span>
+              <span>ARIS VERIFIED 2026</span>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
             {/* Left Headline: High Authority & Typographic Balance */}
             <div className="lg:col-span-7 space-y-6 text-left">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-blue-soft text-brand-blue border border-brand-blue/20 text-xs sm:text-sm font-extrabold">
-                <TrendingUp className="h-4 w-4" />
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-brand-blue-soft via-indigo-50 to-brand-blue-soft text-brand-blue border border-brand-blue/20 text-xs sm:text-sm font-extrabold shadow-2xs">
+                <TrendingUp className="h-4 w-4 text-brand-blue" />
                 <span>Minh Chứng Năng Lực Học Viên</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-[58px] font-black tracking-tight text-slate-900 leading-[1.12]">
                 Tiến bộ phải{" "}
-                <span className="text-brand-blue underline decoration-brand-red/60 decoration-wavy decoration-2 underline-offset-8 inline-block">
+                <span className="bg-gradient-to-r from-brand-blue via-indigo-600 to-brand-red bg-clip-text text-transparent underline decoration-brand-red/40 decoration-wavy decoration-2 underline-offset-8 inline-block">
                   đo đếm được
                 </span>{" "}
                 bằng dữ liệu thực.
@@ -127,7 +156,7 @@ export default function ResultsPage() {
                 <Button
                   size="lg"
                   onClick={() => navigate("/assessment")}
-                  className="rounded-2xl px-8 h-14 font-extrabold text-base bg-brand-red hover:bg-brand-red-hover text-white shadow-md hover:shadow-lg transition-all gap-2.5"
+                  className="rounded-2xl px-8 h-14 font-extrabold text-base bg-brand-red hover:bg-brand-red-hover text-white shadow-[0_10px_25px_-5px_rgba(223,24,67,0.35)] hover:shadow-[0_15px_30px_-5px_rgba(223,24,67,0.45)] transition-all gap-2.5 hover:-translate-y-0.5 cursor-pointer"
                 >
                   <span>Đánh giá năng lực miễn phí</span>
                   <ArrowRight className="h-5 w-5" />
@@ -140,61 +169,158 @@ export default function ResultsPage() {
                     const el = document.getElementById("bento-cases");
                     el?.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className="rounded-2xl px-7 h-14 font-bold text-base border-2 border-slate-300 hover:bg-slate-100 text-slate-800"
+                  className="rounded-2xl px-7 h-14 font-bold text-base border-2 border-slate-200 bg-white/80 backdrop-blur-xs hover:bg-slate-50 hover:border-slate-300 text-slate-800 transition-all hover:-translate-y-0.5 shadow-2xs cursor-pointer"
                 >
                   Xem kết quả học viên
                 </Button>
               </div>
             </div>
 
-            {/* Right Focal Element: [SIGNATURE LIQUID GLASS PROGRESS INDEX] */}
+            {/* Right Focal Element: [STRIPE-STYLE LIVING PROGRESS TELEMETRY CARD] */}
             <div className="lg:col-span-5">
-              <div className="relative rounded-3xl p-7 sm:p-8 backdrop-blur-2xl bg-white/90 border border-slate-200/90 shadow-[0_20px_50px_rgba(28,68,122,0.12)] ring-1 ring-slate-900/5 transition-all hover:shadow-[0_25px_60px_rgba(28,68,122,0.16)]">
-                {/* Specular Edge Refraction Accent */}
-                <div className="absolute inset-x-8 top-0 h-[2px] bg-gradient-to-r from-transparent via-brand-cyan to-transparent" />
-                
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between border-b border-slate-200 pb-4">
-                    <span className="text-xs sm:text-sm font-sans font-extrabold uppercase tracking-wider text-brand-blue flex items-center gap-2">
-                      <Sparkles className="h-4 w-4 text-brand-cyan" />
-                      Chỉ Số Tiến Bộ ARIS
-                    </span>
-                    <span className="px-3 py-1 rounded-full text-xs font-sans font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                      ĐÃ KIỂM CHỨNG
+              <div className="relative group">
+                {/* Multi-layered Chromatic Ambient Glow (Stripe signature aura) */}
+                <div className="absolute -inset-1.5 bg-gradient-to-tr from-[#00d4ff]/25 via-[#635bff]/20 to-[#df1843]/15 rounded-[2.5rem] blur-xl opacity-80 group-hover:opacity-100 transition-all duration-500 -z-10" />
+
+                {/* Main Glassmorphism Card */}
+                <div className="relative rounded-3xl p-6 sm:p-7 backdrop-blur-2xl bg-white/95 border border-slate-200/90 shadow-[0_20px_60px_-15px_rgba(15,23,42,0.12),0_0_0_1px_rgba(255,255,255,0.9)_inset] space-y-6">
+                  {/* Specular Edge Refraction Accent (Top Prism Line) */}
+                  <div className="absolute inset-x-8 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#00d4ff] to-transparent opacity-80" />
+
+                  {/* Card Header: Live Telemetry Indicator */}
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                    <div className="flex items-center gap-2">
+                      <span className="relative flex h-2.5 w-2.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                      </span>
+                      <span className="text-[11px] sm:text-xs font-mono font-black tracking-wider text-slate-800 uppercase flex items-center gap-1.5">
+                        <span>ARIS BAND ENGINE</span>
+                        <span className="text-slate-300">•</span>
+                        <span className="text-emerald-600 font-bold">TELEMETRY</span>
+                      </span>
+                    </div>
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                      AUTO-AUDITED
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-5">
-                    <div className="space-y-1">
-                      <span className="text-xs sm:text-sm font-bold text-slate-600 block">
-                        Tỉ lệ đạt mục tiêu
-                      </span>
-                      <p className="text-4xl sm:text-5xl font-black text-brand-blue tracking-tight font-mono">
-                        94.8<span className="text-2xl text-brand-red">%</span>
+                  {/* Key Metrics Split Display */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/70 space-y-1 relative overflow-hidden">
+                      <div className="flex items-center justify-between text-slate-500">
+                        <span className="text-[11px] sm:text-xs font-bold">Tỉ lệ đạt mục tiêu</span>
+                        <Activity className="h-3.5 w-3.5 text-brand-blue opacity-70" />
+                      </div>
+                      <p className="text-3xl sm:text-4xl font-black text-brand-blue tracking-tight font-mono">
+                        94.8<span className="text-xl text-brand-red font-bold">%</span>
                       </p>
-                      <span className="text-xs text-slate-500 font-medium">Theo cam kết đầu vào</span>
+                      <span className="text-[11px] text-slate-500 font-medium block">Theo cam kết đầu vào</span>
                     </div>
 
-                    <div className="space-y-1 border-l border-slate-200 pl-5">
-                      <span className="text-xs sm:text-sm font-bold text-slate-600 block">
-                        Tăng band trung bình
-                      </span>
-                      <p className="text-4xl sm:text-5xl font-black text-brand-red tracking-tight font-mono">
+                    <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/70 space-y-1 relative overflow-hidden">
+                      <div className="flex items-center justify-between text-slate-500">
+                        <span className="text-[11px] sm:text-xs font-bold">Tăng band trung bình</span>
+                        <Zap className="h-3.5 w-3.5 text-brand-red opacity-70" />
+                      </div>
+                      <p className="text-3xl sm:text-4xl font-black text-brand-red tracking-tight font-mono">
                         +1.0
                       </p>
-                      <span className="text-xs text-slate-500 font-medium">Sau 1 lộ trình học</span>
+                      <span className="text-[11px] text-slate-500 font-medium block">Sau 1 lộ trình chuẩn</span>
                     </div>
                   </div>
 
-                  {/* Micro Trajectory Snapshot */}
-                  <div className="pt-4 border-t border-slate-200 space-y-3 text-xs sm:text-sm">
+                  {/* Stripe-style Trajectory Curve (SVG Sparkline showing Band Evolution) */}
+                  <div className="p-4 rounded-2xl bg-gradient-to-b from-slate-900 to-[#0a2540] text-white space-y-3 shadow-inner relative overflow-hidden">
+                    {/* Subtle grid pattern inside */}
+                    <div 
+                      className="absolute inset-0 opacity-15 pointer-events-none"
+                      style={{
+                        backgroundImage: `linear-gradient(to right, #38bdf8 1px, transparent 1px), linear-gradient(to bottom, #38bdf8 1px, transparent 1px)`,
+                        backgroundSize: "20px 20px"
+                      }}
+                    />
+
+                    <div className="flex items-center justify-between relative z-10">
+                      <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-cyan-300 flex items-center gap-1.5">
+                        <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
+                        QUỸ ĐẠO TIẾN BỘ CHUẨN HOÁ
+                      </span>
+                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-white/10 text-cyan-200 border border-white/15">
+                        12 TUẦN
+                      </span>
+                    </div>
+
+                    {/* SVG Trajectory Chart */}
+                    <div className="relative z-10 pt-1 pb-1">
+                      <svg viewBox="0 0 320 85" className="w-full h-20 overflow-visible">
+                        <defs>
+                          <linearGradient id="stripeCurveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#00d4ff" />
+                            <stop offset="50%" stopColor="#635bff" />
+                            <stop offset="100%" stopColor="#df1843" />
+                          </linearGradient>
+                          <linearGradient id="stripeFillGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stopColor="#00d4ff" stopOpacity="0.28" />
+                            <stop offset="100%" stopColor="#00d4ff" stopOpacity="0.0" />
+                          </linearGradient>
+                        </defs>
+
+                        {/* Area Fill */}
+                        <path
+                          d="M 10 70 C 70 65, 120 48, 170 38 C 220 28, 270 16, 310 12 L 310 80 L 10 80 Z"
+                          fill="url(#stripeFillGradient)"
+                        />
+
+                        {/* Trajectory Stroke */}
+                        <path
+                          d="M 10 70 C 70 65, 120 48, 170 38 C 220 28, 270 16, 310 12"
+                          fill="none"
+                          stroke="url(#stripeCurveGradient)"
+                          strokeWidth="3.5"
+                          strokeLinecap="round"
+                        />
+
+                        {/* Node 1: Entry */}
+                        <circle cx="10" cy="70" r="4" fill="#00d4ff" stroke="#0a2540" strokeWidth="2" />
+                        <text x="10" y="82" fill="#94a3b8" fontSize="8" fontFamily="monospace" fontWeight="bold">Band 5.5</text>
+
+                        {/* Node 2: Mid-term */}
+                        <circle cx="170" cy="38" r="4" fill="#635bff" stroke="#0a2540" strokeWidth="2" />
+                        <text x="140" y="52" fill="#cbd5e1" fontSize="8" fontFamily="monospace" fontWeight="bold">Tuần 6: 6.5</text>
+
+                        {/* Node 3: Target Peak */}
+                        <circle cx="310" cy="12" r="5" fill="#df1843" stroke="#ffffff" strokeWidth="2" />
+                        <circle cx="310" cy="12" r="9" fill="none" stroke="#df1843" strokeWidth="1.5" opacity="0.6" className="animate-ping origin-center" />
+                        <text x="255" y="8" fill="#f87171" fontSize="9" fontFamily="monospace" fontWeight="bold">Đích: 7.5+</text>
+                      </svg>
+                    </div>
+
+                    {/* Micro Telemetry Metric row: Error Reduction */}
+                    <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs relative z-10">
+                      <span className="text-slate-300 text-[11px] font-medium">Tỷ lệ triệt tiêu lỗi lập luận:</span>
+                      <span className="font-mono font-black text-emerald-400 text-xs flex items-center gap-1">
+                        <span>-78.4%</span>
+                        <span className="text-[10px] text-slate-400">(Sau 8 tuần)</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Micro Snapshot Counts */}
+                  <div className="pt-1 border-t border-slate-100 space-y-2.5 text-xs sm:text-sm">
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-slate-700">Học viên công khai bảng điểm:</span>
-                      <span className="font-mono font-black text-slate-900 text-sm">{totalCount}+ Học viên</span>
+                      <span className="font-semibold text-slate-600 flex items-center gap-1.5">
+                        <ShieldCheck className="h-4 w-4 text-brand-blue" />
+                        Học viên công khai bảng điểm:
+                      </span>
+                      <span className="font-mono font-black text-slate-900">{totalCount}+ Học viên</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-slate-700">Tỷ lệ học viên đạt Band 7.0+:</span>
-                      <span className="font-mono font-black text-brand-blue text-sm">
+                      <span className="font-semibold text-slate-600 flex items-center gap-1.5">
+                        <Award className="h-4 w-4 text-amber-500" />
+                        Tỷ lệ học viên đạt Band 7.0+:
+                      </span>
+                      <span className="font-mono font-black text-brand-blue">
                         {totalCount > 0 ? Math.round((highBandCount / totalCount) * 100) : 85}%
                       </span>
                     </div>
@@ -209,11 +335,15 @@ export default function ResultsPage() {
       {/* ========================================================================= */}
       {/* 2. COGNITIVE RECONSTRUCTION BENTO: Quá trình chuyển hóa năng lực          */}
       {/* ========================================================================= */}
-      <section className="py-16 sm:py-24 border-b border-border/80 bg-slate-50/50">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section className="py-16 sm:py-24 border-b border-border/80 bg-slate-50/60 relative overflow-hidden">
+        {/* Subtle background ambient mesh */}
+        <div className="absolute -top-40 left-1/3 w-[500px] h-[500px] bg-gradient-to-b from-[#635bff]/06 to-transparent rounded-full blur-3xl pointer-events-none" />
+
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
             <div className="space-y-2">
-              <span className="text-xs font-sans font-extrabold tracking-wider text-brand-blue uppercase">
+              <span className="text-xs font-sans font-extrabold tracking-wider text-brand-blue uppercase flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-brand-blue" />
                 01 // QUÁ TRÌNH CHUYỂN HÓA NĂNG LỰC
               </span>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900">
@@ -221,26 +351,28 @@ export default function ResultsPage() {
               </h2>
             </div>
             <p className="text-base text-slate-600 max-w-md font-normal leading-relaxed">
-              Sự thay đổi không đến từ việc làm đề ồ ạt, mà từ việc triệt tiêu từng lỗ hổng tư duy theo 3 giai đoạn rõ ràng.
+              Sự thay đổi không đến từ việc làm đề ồ ạt, mà từ việc triệt tiêu từng lỗ hổng tư duy theo 3 giai đoạn rõ ràng và kiểm chứng được.
             </p>
           </div>
 
-          {/* Tri-Phase Bento Cards */}
+          {/* Tri-Phase Bento Cards (Stripe Feature Grid Style) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 items-stretch">
             {/* Phase 1: Điểm Nghẽn Ban Đầu */}
-            <div className="rounded-3xl bg-card border border-border/80 p-7 sm:p-8 flex flex-col justify-between space-y-6 hover:border-slate-400 transition-colors shadow-2xs">
+            <div className="rounded-3xl bg-white/95 backdrop-blur-md border border-slate-200/90 p-7 sm:p-8 flex flex-col justify-between space-y-6 hover:border-rose-300 hover:shadow-[0_20px_45px_-12px_rgba(244,63,94,0.12)] transition-all duration-300 group shadow-2xs">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-sans font-extrabold px-3 py-1 rounded-lg bg-slate-100 text-slate-700 border border-slate-200">
+                  <span className="text-xs font-mono font-extrabold px-3 py-1 rounded-lg bg-rose-50 text-rose-700 border border-rose-200/80">
                     GIAI ĐOẠN 1
                   </span>
-                  <ShieldAlert className="h-5 w-5 text-rose-500" />
+                  <div className="p-2 rounded-xl bg-rose-50 text-rose-600 group-hover:scale-110 transition-transform">
+                    <ShieldAlert className="h-5 w-5" />
+                  </div>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-black text-slate-900">
+                  <h3 className="text-2xl font-black text-slate-900 group-hover:text-rose-950 transition-colors">
                     Điểm Nghẽn Ban Đầu
                   </h3>
-                  <p className="text-xs font-sans font-bold text-slate-500 uppercase mt-1">
+                  <p className="text-xs font-mono font-bold text-slate-500 uppercase mt-1">
                     Thói quen học máy móc
                   </p>
                 </div>
@@ -249,36 +381,49 @@ export default function ResultsPage() {
                 </p>
               </div>
 
-              <div className="space-y-2.5 pt-4 border-t border-slate-200 text-xs sm:text-sm font-bold text-slate-600">
+              <div className="space-y-2.5 pt-4 border-t border-slate-100 text-xs sm:text-sm font-bold text-slate-600">
                 <div className="flex items-center gap-2 text-rose-600">
-                  <span>✕</span>
+                  <span className="w-4 h-4 rounded-full bg-rose-100 flex items-center justify-center text-[10px] font-black shrink-0">✕</span>
                   <span>Dịch thô Word-by-Word</span>
                 </div>
                 <div className="flex items-center gap-2 text-rose-600">
-                  <span>✕</span>
+                  <span className="w-4 h-4 rounded-full bg-rose-100 flex items-center justify-center text-[10px] font-black shrink-0">✕</span>
                   <span>Đoạn văn rời rạc, thiếu logic</span>
                 </div>
                 <div className="flex items-center gap-2 text-rose-600">
-                  <span>✕</span>
+                  <span className="w-4 h-4 rounded-full bg-rose-100 flex items-center justify-center text-[10px] font-black shrink-0">✕</span>
                   <span>Lúng túng khi gặp dạng đề mới</span>
                 </div>
               </div>
             </div>
 
-            {/* Phase 2: Rèn Luyện Lõi (ARIS High-Authority Dark Card) */}
-            <div className="rounded-3xl bg-[#081B33] text-white p-7 sm:p-8 flex flex-col justify-between space-y-6 shadow-xl border border-slate-800">
-              <div className="space-y-4">
+            {/* Phase 2: Rèn Luyện Lõi (Stripe Deep Navy Centerpiece Card) */}
+            <div className="rounded-3xl bg-gradient-to-b from-[#081B33] to-[#0a2540] text-white p-7 sm:p-8 flex flex-col justify-between space-y-6 shadow-[0_25px_50px_-12px_rgba(8,27,51,0.45)] border border-cyan-500/30 relative overflow-hidden group hover:border-cyan-400/60 hover:shadow-[0_25px_60px_-10px_rgba(0,212,255,0.22)] transition-all duration-300">
+              {/* Specular top prism line */}
+              <div className="absolute inset-x-8 top-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent" />
+              {/* Subtle matrix grid */}
+              <div 
+                className="absolute inset-0 opacity-10 pointer-events-none" 
+                style={{ 
+                  backgroundImage: "linear-gradient(to right, #00d4ff 1px, transparent 1px), linear-gradient(to bottom, #00d4ff 1px, transparent 1px)", 
+                  backgroundSize: "24px 24px" 
+                }} 
+              />
+
+              <div className="space-y-4 relative z-10">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-sans font-extrabold px-3 py-1 rounded-lg bg-white/10 text-white border border-white/20">
+                  <span className="text-xs font-mono font-extrabold px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-400/40">
                     GIAI ĐOẠN 2 • TRỌNG TÂM
                   </span>
-                  <BrainCircuit className="h-5 w-5 text-brand-cyan" />
+                  <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-300 shadow-[0_0_15px_rgba(0,212,255,0.3)] group-hover:scale-110 transition-transform">
+                    <BrainCircuit className="h-5 w-5" />
+                  </div>
                 </div>
                 <div>
                   <h3 className="text-2xl font-black text-white">
                     Kỷ Luật Giải Phẫu
                   </h3>
-                  <p className="text-xs font-sans font-bold text-cyan-300 uppercase mt-1">
+                  <p className="text-xs font-mono font-bold text-cyan-300 uppercase mt-1">
                     Phương pháp ARIS Way
                   </p>
                 </div>
@@ -287,36 +432,38 @@ export default function ResultsPage() {
                 </p>
               </div>
 
-              <div className="space-y-2.5 pt-4 border-t border-white/15 text-xs sm:text-sm font-bold">
+              <div className="space-y-2.5 pt-4 border-t border-white/15 text-xs sm:text-sm font-bold relative z-10">
                 <div className="flex items-center gap-2 text-cyan-300">
-                  <CheckCircle2 className="h-4 w-4 shrink-0" />
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-cyan-400" />
                   <span>Sửa chi tiết cấu trúc câu & luận điểm</span>
                 </div>
                 <div className="flex items-center gap-2 text-cyan-300">
-                  <CheckCircle2 className="h-4 w-4 shrink-0" />
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-cyan-400" />
                   <span>Bắt buộc hoàn thành bài sửa Re-attempt</span>
                 </div>
                 <div className="flex items-center gap-2 text-cyan-300">
-                  <CheckCircle2 className="h-4 w-4 shrink-0" />
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-cyan-400" />
                   <span>Theo dõi tỷ lệ giảm lỗi sai theo tuần</span>
                 </div>
               </div>
             </div>
 
             {/* Phase 3: Năng Lực Chuẩn Hóa */}
-            <div className="rounded-3xl bg-card border border-border/80 p-7 sm:p-8 flex flex-col justify-between space-y-6 hover:border-slate-400 transition-colors shadow-2xs">
+            <div className="rounded-3xl bg-white/95 backdrop-blur-md border border-slate-200/90 p-7 sm:p-8 flex flex-col justify-between space-y-6 hover:border-emerald-300 hover:shadow-[0_20px_45px_-12px_rgba(16,185,129,0.12)] transition-all duration-300 group shadow-2xs">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-sans font-extrabold px-3 py-1 rounded-lg bg-brand-red-soft text-brand-red border border-brand-red/20">
+                  <span className="text-xs font-mono font-extrabold px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200/80">
                     GIAI ĐOẠN 3
                   </span>
-                  <Award className="h-5 w-5 text-brand-red" />
+                  <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600 group-hover:scale-110 transition-transform">
+                    <Award className="h-5 w-5" />
+                  </div>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-black text-slate-900">
+                  <h3 className="text-2xl font-black text-slate-900 group-hover:text-emerald-950 transition-colors">
                     Tư Duy Trực Diện
                   </h3>
-                  <p className="text-xs font-sans font-bold text-slate-500 uppercase mt-1">
+                  <p className="text-xs font-mono font-bold text-slate-500 uppercase mt-1">
                     Chuẩn hóa Cambridge
                   </p>
                 </div>
@@ -325,17 +472,17 @@ export default function ResultsPage() {
                 </p>
               </div>
 
-              <div className="space-y-2.5 pt-4 border-t border-slate-200 text-xs sm:text-sm font-bold">
+              <div className="space-y-2.5 pt-4 border-t border-slate-100 text-xs sm:text-sm font-bold">
                 <div className="flex items-center gap-2 text-emerald-600">
-                  <span>✓</span>
+                  <span className="w-4 h-4 rounded-full bg-emerald-100 flex items-center justify-center text-[10px] font-black shrink-0">✓</span>
                   <span>Văn phong học thuật chuẩn xác, tự nhiên</span>
                 </div>
                 <div className="flex items-center gap-2 text-emerald-600">
-                  <span>✓</span>
+                  <span className="w-4 h-4 rounded-full bg-emerald-100 flex items-center justify-center text-[10px] font-black shrink-0">✓</span>
                   <span>Ý tưởng mạch lạc, dẫn chứng thuyết phục</span>
                 </div>
                 <div className="flex items-center gap-2 text-emerald-600">
-                  <span>✓</span>
+                  <span className="w-4 h-4 rounded-full bg-emerald-100 flex items-center justify-center text-[10px] font-black shrink-0">✓</span>
                   <span>Đạt band điểm thật, không phụ thuộc đề tủ</span>
                 </div>
               </div>
@@ -376,8 +523,8 @@ export default function ResultsPage() {
               </div>
             </div>
 
-            {/* Tactile Filter Segment Selector */}
-            <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-slate-100 border border-slate-200 shrink-0">
+            {/* Tactile Filter Segment Selector (Stripe Sleek Segmented Pill Control) */}
+            <div className="flex flex-wrap items-center gap-1.5 p-1.5 rounded-2xl bg-slate-100/90 border border-slate-200/80 shadow-2xs backdrop-blur-xs shrink-0">
               {[
                 { key: "all", label: "Tất cả hồ sơ" },
                 { key: "7.5+", label: "Band 7.5+" },
@@ -388,10 +535,10 @@ export default function ResultsPage() {
                   key={filter.key}
                   onClick={() => setActiveBandFilter(filter.key)}
                   className={cn(
-                    "px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer",
+                    "px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all duration-200 cursor-pointer",
                     activeBandFilter === filter.key
-                      ? "bg-brand-blue text-white shadow-sm"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-white/80"
+                      ? "bg-slate-900 text-white shadow-[0_4px_14px_rgba(15,23,42,0.18)] ring-1 ring-slate-800"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-white/70"
                   )}
                 >
                   {filter.label}
@@ -602,28 +749,37 @@ export default function ResultsPage() {
       {/* ========================================================================= */}
       {/* 4. AUDITABLE DATA LAYERS: 3 Lớp Minh Bạch Dữ Liệu Học Tập                 */}
       {/* ========================================================================= */}
-      <section className="py-16 sm:py-24 border-b border-border/80 bg-slate-50/70">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
+      <section className="py-16 sm:py-24 border-b border-border/80 bg-slate-50/70 relative overflow-hidden">
+        {/* Soft background ambient gradient flare */}
+        <div className="absolute top-1/2 -right-32 w-[450px] h-[450px] bg-gradient-to-l from-[#00d4ff]/06 to-transparent rounded-full blur-3xl pointer-events-none" />
+
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12 relative z-10">
           <div className="max-w-3xl space-y-2">
-            <span className="text-xs font-sans font-extrabold tracking-wider text-brand-blue uppercase">
+            <span className="text-xs font-sans font-extrabold tracking-wider text-brand-blue uppercase flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-brand-blue" />
               03 // 3 LỚP MINH BẠCH DỮ LIỆU HỌC TẬP
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900">
-              Lưu Vết & Kiểm Chứng Quá Trình Rèn Luyện
+              Lưu Vết &amp; Kiểm Chứng Quá Trình Rèn Luyện
             </h2>
             <p className="text-base text-slate-600 font-normal leading-relaxed">
-              Mọi bài tập và tương tác sửa bài đều được số hóa, đảm bảo sự minh bạch và đối chiếu được sự tiến bộ theo từng tuần.
+              Mọi bài tập và tương tác sửa bài đều được số hóa theo tiêu chuẩn lưu vết chuẩn mực, đảm bảo tính minh bạch và đối chiếu được sự tiến bộ theo từng tuần.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {/* Layer 1: Raw Submission Logs */}
-            <div className="rounded-3xl bg-card border border-slate-200 p-7 sm:p-8 space-y-4 shadow-2xs">
-              <div className="p-3.5 rounded-2xl bg-brand-blue-soft text-brand-blue w-fit">
-                <FileCode2 className="h-6 w-6" />
+            <div className="rounded-3xl bg-white/95 backdrop-blur-md border border-slate-200/90 p-7 sm:p-8 space-y-5 shadow-2xs hover:border-slate-300 hover:shadow-[0_20px_40px_-15px_rgba(28,68,122,0.12)] transition-all duration-300 group">
+              <div className="flex items-center justify-between">
+                <div className="p-3.5 rounded-2xl bg-brand-blue-soft text-brand-blue shadow-[0_4px_16px_rgba(28,68,122,0.15)] group-hover:scale-105 transition-transform w-fit">
+                  <FileCode2 className="h-6 w-6" />
+                </div>
+                <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                  TIME-LOCKED
+                </span>
               </div>
               <div className="space-y-1">
-                <span className="text-xs font-sans font-extrabold text-slate-500 uppercase">
+                <span className="text-xs font-mono font-extrabold text-brand-blue uppercase tracking-wider">
                   LỚP 1
                 </span>
                 <h3 className="text-xl font-black text-slate-900">
@@ -631,17 +787,22 @@ export default function ResultsPage() {
                 </h3>
               </div>
               <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-                Toàn bộ bài viết Task 1, Task 2 và tệp ghi âm Speaking được lưu trữ theo mốc thời gian, giúp học viên đối chiếu bài làm đầu tiên và bài làm hiện tại.
+                Toàn bộ bài viết Task 1, Task 2 và tệp ghi âm Speaking được lưu trữ theo mốc thời gian nguyên bản, giúp học viên đối chiếu bài làm đầu tiên và bài làm hiện tại.
               </p>
             </div>
 
             {/* Layer 2: Error Anatomy */}
-            <div className="rounded-3xl bg-card border border-slate-200 p-7 sm:p-8 space-y-4 shadow-2xs">
-              <div className="p-3.5 rounded-2xl bg-brand-red-soft text-brand-red w-fit">
-                <BrainCircuit className="h-6 w-6" />
+            <div className="rounded-3xl bg-white/95 backdrop-blur-md border border-slate-200/90 p-7 sm:p-8 space-y-5 shadow-2xs hover:border-slate-300 hover:shadow-[0_20px_40px_-15px_rgba(223,24,67,0.12)] transition-all duration-300 group">
+              <div className="flex items-center justify-between">
+                <div className="p-3.5 rounded-2xl bg-brand-red-soft text-brand-red shadow-[0_4px_16px_rgba(223,24,67,0.15)] group-hover:scale-105 transition-transform w-fit">
+                  <BrainCircuit className="h-6 w-6" />
+                </div>
+                <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
+                  DEEP ANATOMY
+                </span>
               </div>
               <div className="space-y-1">
-                <span className="text-xs font-sans font-extrabold text-slate-500 uppercase">
+                <span className="text-xs font-mono font-extrabold text-brand-red uppercase tracking-wider">
                   LỚP 2
                 </span>
                 <h3 className="text-xl font-black text-slate-900">
@@ -654,12 +815,17 @@ export default function ResultsPage() {
             </div>
 
             {/* Layer 3: Re-attempt Protocol */}
-            <div className="rounded-3xl bg-card border border-slate-200 p-7 sm:p-8 space-y-4 shadow-2xs">
-              <div className="p-3.5 rounded-2xl bg-emerald-50 text-emerald-600 w-fit">
-                <History className="h-6 w-6" />
+            <div className="rounded-3xl bg-white/95 backdrop-blur-md border border-slate-200/90 p-7 sm:p-8 space-y-5 shadow-2xs hover:border-slate-300 hover:shadow-[0_20px_40px_-15px_rgba(16,185,129,0.12)] transition-all duration-300 group">
+              <div className="flex items-center justify-between">
+                <div className="p-3.5 rounded-2xl bg-emerald-50 text-emerald-600 shadow-[0_4px_16px_rgba(16,185,129,0.15)] group-hover:scale-105 transition-transform w-fit">
+                  <History className="h-6 w-6" />
+                </div>
+                <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  AUDITED RE-ATTEMPT
+                </span>
               </div>
               <div className="space-y-1">
-                <span className="text-xs font-sans font-extrabold text-slate-500 uppercase">
+                <span className="text-xs font-mono font-extrabold text-emerald-700 uppercase tracking-wider">
                   LỚP 3
                 </span>
                 <h3 className="text-xl font-black text-slate-900">
@@ -675,9 +841,19 @@ export default function ResultsPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 5. EDITORIAL BOTTOM CONVERSION SECTION                                    */}
-      {/* ============================================================ */}
+      {/* 5. EDITORIAL BOTTOM CONVERSION SECTION (Stripe Slanted Dark Aura)          */}
+      {/* ========================================================================= */}
       <section className="py-20 sm:py-28 bg-[#081B33] text-white relative overflow-hidden">
+        {/* Stripe-style Radiant Mesh Flare */}
+        <div 
+          className="absolute inset-0 pointer-events-none opacity-25"
+          style={{
+            backgroundImage: `radial-gradient(ellipse 60% 50% at 50% 50%, #00d4ff 0%, #635bff 45%, transparent 80%)`,
+            filter: "blur(60px)"
+          }}
+        />
+
+        {/* Matrix Grid Lines */}
         <div 
           className="absolute inset-0 opacity-10 pointer-events-none"
           style={{
@@ -687,7 +863,7 @@ export default function ResultsPage() {
         />
 
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center space-y-8 relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-white border border-white/20 text-xs sm:text-sm font-sans font-extrabold uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-white border border-white/20 text-xs sm:text-sm font-sans font-extrabold uppercase tracking-wider shadow-xs backdrop-blur-xs">
             <Compass className="h-4 w-4 text-brand-cyan" />
             <span>KHẢO THÍ CHUẨN HÓA ARIS</span>
           </div>
@@ -704,7 +880,7 @@ export default function ResultsPage() {
             <Button
               size="lg"
               onClick={() => navigate("/assessment")}
-              className="rounded-2xl px-9 h-14 font-extrabold text-base bg-brand-red hover:bg-brand-red-hover text-white shadow-xl shadow-rose-950/50 gap-2.5"
+              className="rounded-2xl px-9 h-14 font-extrabold text-base bg-brand-red hover:bg-brand-red-hover text-white shadow-[0_12px_30px_rgba(223,24,67,0.45)] hover:shadow-[0_16px_36px_rgba(223,24,67,0.55)] transition-all gap-2.5 hover:-translate-y-0.5 cursor-pointer"
             >
               <span>Bắt đầu bài kiểm tra năng lực</span>
               <ArrowRight className="h-5 w-5" />

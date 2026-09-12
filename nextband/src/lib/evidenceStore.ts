@@ -229,11 +229,11 @@ export function getAcademicRankHonor(
       title: "Học Giả",
       subtitle: "Academic Scholar",
       fullTitle: "Rank 6 — Học Giả",
-      badgeBg: "bg-[#d97706]/15",
-      badgeText: "text-[#b45309] dark:text-[#fcd34d]",
-      badgeBorder: "border-[#d97706]/30",
-      accentColor: "text-[#b45309]",
-      iconColor: "#d97706",
+      badgeBg: "bg-[#f59e0b]/15",
+      badgeText: "text-[#b45309] dark:text-[#fde047]",
+      badgeBorder: "border-[#f59e0b]/40",
+      accentColor: "text-[#d97706] dark:text-[#fbbf24]",
+      iconColor: "#f59e0b",
       stage,
     };
   }

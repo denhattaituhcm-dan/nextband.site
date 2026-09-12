@@ -14,6 +14,10 @@ export interface AcademicRank {
     activeBg: string;
     activeBorder: string;
     activeGlow: string;
+    activeTextColor?: string;
+    activeSubtextColor?: string;
+    activeBadgeClass?: string;
+    activeDotClass?: string;
     badgeBg: string;
     badgeText: string;
     badgeBorder: string;
@@ -100,18 +104,22 @@ export const ACADEMIC_RANKS: AcademicRank[] = [
     description: "Kiểm soát vững vàng các dạng đề nâng cao, tư duy phân tích sắc bén và khả năng xử lý bài thi dưới áp lực thời gian.",
     competencyPillars: ["Phân tích văn bản học thuật khó", "Lập luận chiều sâu Task 2", "Nghe hiểu tốc độ tự nhiên", "Xử lý câu hỏi trừu tượng Part 3"],
     theme: {
-      name: "Gold Amber",
-      activeBg: "bg-gradient-to-br from-[#92400e] to-[#632a04] text-white",
-      activeBorder: "border-[#d97706]",
-      activeGlow: "ring-2 ring-[#d97706]/30 shadow-lg shadow-[#d97706]/20",
-      badgeBg: "bg-[#d97706]/15",
-      badgeText: "text-[#b45309] dark:text-[#fcd34d]",
-      badgeBorder: "border-[#d97706]/30",
-      inactiveBorder: "border-[#d97706]/25 hover:border-[#d97706]/60",
-      inactiveHoverBg: "hover:bg-[#d97706]/5",
-      accentColor: "text-[#b45309]",
-      iconColor: "#d97706",
-      progressBar: "bg-[#d97706]",
+      name: "Imperial Gold",
+      activeBg: "bg-gradient-to-br from-[#fde68a] via-[#f59e0b] to-[#d97706]",
+      activeBorder: "border-[#f59e0b]",
+      activeGlow: "ring-2 ring-[#f59e0b]/50 shadow-lg shadow-[#f59e0b]/30",
+      activeTextColor: "text-amber-950",
+      activeSubtextColor: "text-amber-950/85",
+      activeBadgeClass: "bg-amber-950/15 text-amber-950 border-amber-950/25",
+      activeDotClass: "bg-amber-950",
+      badgeBg: "bg-[#f59e0b]/15",
+      badgeText: "text-[#b45309] dark:text-[#fde047]",
+      badgeBorder: "border-[#f59e0b]/40",
+      inactiveBorder: "border-[#f59e0b]/30 hover:border-[#f59e0b]/70",
+      inactiveHoverBg: "hover:bg-[#f59e0b]/10",
+      accentColor: "text-[#d97706] dark:text-[#fbbf24]",
+      iconColor: "#f59e0b",
+      progressBar: "bg-gradient-to-r from-[#facc15] to-[#d97706]",
     },
   },
   {
@@ -231,14 +239,19 @@ export function AcademicRankSystem({
                   className={cn(
                     "text-[10px] sm:text-xs font-mono font-black uppercase tracking-wider px-2 py-0.5 rounded-lg border",
                     isSelected
-                      ? "bg-white/20 text-white border-white/30"
+                      ? (rank.theme.activeBadgeClass || "bg-white/20 text-white border-white/30")
                       : cn(rank.theme.badgeBg, rank.theme.badgeText, rank.theme.badgeBorder)
                   )}
                 >
                   Rank {rank.rankNumber}
                 </span>
                 {isSelected ? (
-                  <span className="w-2.5 h-2.5 rounded-full bg-white shrink-0 shadow-xs" />
+                  <span
+                    className={cn(
+                      "w-2.5 h-2.5 rounded-full shrink-0 shadow-xs",
+                      rank.theme.activeDotClass || "bg-white"
+                    )}
+                  />
                 ) : (
                   <div
                     className="w-2 h-2 rounded-full opacity-60 group-hover:opacity-100 transition-opacity"
@@ -251,7 +264,7 @@ export function AcademicRankSystem({
                 <div
                   className={cn(
                     "font-black text-base sm:text-lg tracking-tight leading-tight",
-                    isSelected ? "text-white" : "text-foreground"
+                    isSelected ? (rank.theme.activeTextColor || "text-white") : "text-foreground"
                   )}
                 >
                   {rank.title}
@@ -259,7 +272,7 @@ export function AcademicRankSystem({
                 <div
                   className={cn(
                     "text-[11px] truncate font-medium",
-                    isSelected ? "text-white/85" : "text-muted-foreground"
+                    isSelected ? (rank.theme.activeSubtextColor || "text-white/85") : "text-muted-foreground"
                   )}
                 >
                   {rank.subtitle}
