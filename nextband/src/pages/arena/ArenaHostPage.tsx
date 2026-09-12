@@ -1,4 +1,4 @@
-/**
+﻿/**
  * TEACHER HOST VIEW (/arena/host)
  * Màn hình trình chiếu của Giáo viên cho phòng học 10-20 học viên.
  * Hỗ trợ 2 chế độ:
@@ -52,6 +52,8 @@ export default function ArenaHostPage() {
     isBgmEnabled,
     playLobbyBgm,
     stopLobbyBgm,
+    startQuestionSuspense,
+    stopQuestionSuspense,
     toggleBgm,
     playCorrectSound,
     playClimberSound,
@@ -236,6 +238,7 @@ export default function ArenaHostPage() {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
+          stopQuestionSuspense();
           setState('ANSWER_LOCKED');
           if (channelRef.current) {
             channelRef.current.send({
@@ -258,6 +261,7 @@ export default function ArenaHostPage() {
         case 'START_ARENA':
           setState('QUESTION_LIVE');
           setTimeLeft(roomSettings.timeLimit);
+          startQuestionSuspense(roomSettings.timeLimit);
           if (channelRef.current) {
             channelRef.current.send({
               type: 'broadcast',
@@ -271,6 +275,7 @@ export default function ArenaHostPage() {
           }
           break;
         case 'LOCK_ROUND':
+          stopQuestionSuspense();
           setState('ANSWER_LOCKED');
           if (channelRef.current) {
             channelRef.current.send({
@@ -544,3 +549,5 @@ export default function ArenaHostPage() {
     </div>
   );
 }
+
+
