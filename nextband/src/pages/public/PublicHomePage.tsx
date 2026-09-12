@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SectionContainer } from "@/components/public/SectionContainer";
 import { AcademicRankSystem } from "@/components/public/AcademicRankSystem";
+import { ArisBentoGrid } from "@/components/public/ArisBentoGrid";
 import { PlaceholderCard } from "@/components/public/PlaceholderCard";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/common/SEO";
@@ -189,104 +190,12 @@ export default function PublicHomePage() {
       {/* SECTION 2: THE ACADEMIC DIAGNOSIS SYSTEM (ĐỊNH VỊ THƯƠNG HIỆU ARIS)       */}
       {/* ========================================================================= */}
       <SectionContainer
-        badge="Phương pháp ARIS"
+        badge="Phương pháp & Nền tảng ARIS"
         title="Đừng học thêm. Hãy học đúng chỗ."
         description="Nhiều học viên giải hàng trăm bộ đề nhưng điểm số vẫn đứng yên, không phải vì chưa chăm chỉ — mà vì đang học những thứ mình đã biết, và bỏ quên những lỗ hổng chưa từng được gọi tên. ARIS lấy chẩn đoán học thuật làm điểm khởi đầu: Bóc tách chính xác vì sao bạn sai trước khi dạy bạn cách làm đúng."
         background="muted"
       >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-          <div className="p-7 rounded-3xl bg-card border border-border/80 border-l-4 border-l-[#002147] space-y-4 shadow-2xs flex flex-col justify-between">
-            <div className="space-y-3.5">
-              <div className="p-3 rounded-2xl bg-[#002147]/10 text-[#002147] w-fit">
-                <BookOpen className="h-6 w-6" />
-              </div>
-              <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Chẩn đoán chính xác</h3>
-              <p className="text-sm text-foreground/75 leading-relaxed">
-                Không chỉ dừng lại ở con số điểm. Hệ thống bóc tách 4 tầng năng lực: Bạn đang yếu ở đâu, bẫy tư duy nào khiến bạn chọn sai đáp án.
-              </p>
-            </div>
-
-            {/* Visual Graphic: 4-Layer Diagnostic Breakdown */}
-            <div className="pt-2 space-y-1.5 font-mono text-[11px]">
-              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200/80">
-                <span className="font-semibold text-slate-700">Tầng 4: Bẫy suy diễn (Distractor)</span>
-                <span className="px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 font-bold text-[10px]">Cần gỡ</span>
-              </div>
-              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200/80">
-                <span className="font-semibold text-slate-700">Tầng 3: Ngữ pháp câu phức</span>
-                <span className="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Vững</span>
-              </div>
-              <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200/80">
-                <span className="font-semibold text-slate-700">Tầng 2: Từ vựng học thuật C1</span>
-                <span className="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Vững</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-7 rounded-3xl bg-card border border-border/80 border-l-4 border-l-brand-red space-y-4 shadow-2xs flex flex-col justify-between">
-            <div className="space-y-3.5">
-              <div className="p-3 rounded-2xl bg-brand-red/10 text-brand-red w-fit">
-                <Target className="h-6 w-6" />
-              </div>
-              <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Can thiệp đúng chỗ</h3>
-              <p className="text-sm text-foreground/75 leading-relaxed">
-                Dành 100% thời lượng bài giảng và bài tập để lấp đúng khoảng trống tư duy. Không lãng phí thời gian và sức lực vào những phần đã làm chủ.
-              </p>
-            </div>
-
-            {/* Visual Graphic: Effort vs ROI Comparison */}
-            <div className="pt-2 space-y-2 text-[11px]">
-              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
-                <div className="flex justify-between font-bold text-slate-600">
-                  <span>Học đề ngẫu nhiên</span>
-                  <span className="text-slate-400">Lãng phí 70% sức</span>
-                </div>
-                <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-slate-400 h-full w-[35%]" />
-                </div>
-              </div>
-              <div className="p-2.5 rounded-xl bg-rose-50/70 border border-rose-200/80 space-y-1">
-                <div className="flex justify-between font-bold text-brand-red">
-                  <span>Trúng điểm nghẽn ARIS</span>
-                  <span className="font-black">+0.5 Band</span>
-                </div>
-                <div className="w-full bg-rose-100 h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-brand-red h-full w-[85%]" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="p-7 rounded-3xl bg-card border border-border/80 border-l-4 border-l-brand-blue space-y-4 shadow-2xs flex flex-col justify-between">
-            <div className="space-y-3.5">
-              <div className="p-3 rounded-2xl bg-brand-blue/10 text-brand-blue w-fit">
-                <Clock className="h-6 w-6" />
-              </div>
-              <h3 className="font-extrabold text-foreground text-lg sm:text-xl">Theo dõi tiến bộ</h3>
-              <p className="text-sm text-foreground/75 leading-relaxed">
-                Mỗi lỗ hổng được khắc phục là một bước tiến trên thang đo ARIS-7. Toàn bộ tiến trình được lưu vết minh bạch để đo lường qua từng tuần.
-              </p>
-            </div>
-
-            {/* Visual Graphic: Progression Stepper */}
-            <div className="pt-2 flex items-center justify-between p-3 rounded-xl bg-blue-50/60 border border-blue-200/70 text-xs">
-              <div className="text-center">
-                <span className="text-[10px] text-slate-500 font-bold block">Tuần 1</span>
-                <span className="font-mono font-black text-slate-700">Band 5.0</span>
-              </div>
-              <ArrowRight className="w-3.5 h-3.5 text-brand-blue shrink-0" />
-              <div className="text-center">
-                <span className="text-[10px] text-slate-500 font-bold block">Tuần 4</span>
-                <span className="font-mono font-black text-brand-blue">Band 6.0</span>
-              </div>
-              <ArrowRight className="w-3.5 h-3.5 text-brand-blue shrink-0" />
-              <div className="text-center">
-                <span className="text-[10px] text-emerald-600 font-bold block">Mục tiêu</span>
-                <span className="font-mono font-black text-emerald-700">Band 7.0+</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ArisBentoGrid />
       </SectionContainer>
 
 

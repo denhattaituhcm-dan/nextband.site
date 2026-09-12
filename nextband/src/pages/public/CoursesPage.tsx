@@ -2,21 +2,26 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SectionContainer } from "@/components/public/SectionContainer";
 import { CourseRoadmapRow } from "@/components/public/CourseRoadmapRow";
+import { CourseComparisonMatrix } from "@/components/public/CourseComparisonMatrix";
 import { QuickTrialModal } from "@/components/public/QuickTrialModal";
 import { TuitionCalculator } from "@/components/public/TuitionCalculator";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/common/SEO";
 import { COURSE_CATALOG } from "@/constants/courses";
+import { cn } from "@/lib/utils";
 import {
   BookOpen,
   Target,
   ArrowRight,
+  Columns3,
+  ListOrdered,
 } from "lucide-react";
 
 export default function CoursesPage() {
   const navigate = useNavigate();
   const [trialModalOpen, setTrialModalOpen] = useState(false);
   const [selectedCourseSlug, setSelectedCourseSlug] = useState("starter");
+  const [viewMode, setViewMode] = useState<"roadmap" | "matrix">("roadmap");
 
   const handleOpenTrial = (slug: string) => {
     setSelectedCourseSlug(slug);
