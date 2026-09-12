@@ -184,39 +184,44 @@ export function PublicHeader() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className={cn(
-                      "relative inline-flex items-center gap-1.5 px-3 xl:px-3.5 py-1.5 rounded-xl text-xs xl:text-[13px] font-black tracking-wider uppercase whitespace-nowrap transition-all duration-200 group/tuhoc overflow-hidden",
+                      "relative inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs xl:text-[13px] font-black tracking-wider uppercase whitespace-nowrap transition-all duration-300 group/tuhoc overflow-hidden p-[1px]",
                       item.badge
                         ? [
-                            // Base: dark navy với shimmer gradient overlay
-                            "bg-gradient-to-r from-[#0a1628] via-[#0d1f3c] to-[#0a1628]",
-                            // Border glow — violet → cyan
-                            "border border-violet-500/60 hover:border-violet-400/80",
-                            // Text
-                            "text-violet-200 hover:text-white",
-                            // Outer glow
-                            "shadow-[0_0_14px_rgba(139,92,246,0.35)] hover:shadow-[0_0_22px_rgba(139,92,246,0.55)]",
+                            // YouPass multi-stop gradient border
+                            "bg-gradient-to-r from-[#ff8541] via-[#ff5b75] via-[#b054ed] to-[#5197f8]",
+                            "shadow-[0_0_12px_rgba(255,100,150,0.25)] hover:shadow-[0_0_20px_rgba(255,100,150,0.55)]",
                             "hover:scale-[1.03] active:scale-[0.98]",
                           ].join(" ")
                         : "text-slate-300 hover:text-white hover:bg-white/10"
                     )}
                   >
-                    {/* Shimmer sweep on hover */}
-                    {item.badge && (
-                      <span
-                        aria-hidden
-                        className="pointer-events-none absolute inset-0 -translate-x-full group-hover/tuhoc:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/10 to-transparent"
-                      />
-                    )}
+                    {/* Inner container: default is dark navy bg, fills to gradient on hover */}
+                    <span
+                      className={cn(
+                        "relative w-full h-full flex items-center gap-1.5 px-3 py-1 rounded-full transition-colors duration-300",
+                        item.badge
+                          ? "bg-[#002147] text-slate-100 group-hover/tuhoc:bg-transparent group-hover/tuhoc:text-white"
+                          : ""
+                      )}
+                    >
+                      {/* Shimmer sweep on hover */}
+                      {item.badge && (
+                        <span
+                          aria-hidden
+                          className="pointer-events-none absolute inset-0 -translate-x-full group-hover/tuhoc:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                        />
+                      )}
 
-                    {item.badge && (
-                      <Sparkles className="h-3 w-3 text-violet-400 group-hover/tuhoc:text-violet-300 shrink-0 transition-colors" />
-                    )}
-                    <span>{item.label}</span>
-                    {item.badge && (
-                      <span className="relative px-1.5 py-[1px] rounded-md text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-violet-600 to-cyan-500 text-white shadow-sm">
-                        {item.badge}
-                      </span>
-                    )}
+                      {item.badge && (
+                        <Sparkles className="h-3.5 w-3.5 text-[#ff8541] group-hover/tuhoc:text-white shrink-0 transition-colors" />
+                      )}
+                      <span>{item.label}</span>
+                      {item.badge && (
+                        <span className="relative px-1.5 py-[1px] rounded-full text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-[#ff8541] via-[#ff5b75] to-[#b054ed] text-white shadow-sm border border-white/20">
+                          {item.badge}
+                        </span>
+                      )}
+                    </span>
                   </a>
                 );
               }
@@ -421,24 +426,33 @@ export function PublicHeader() {
                     rel="noopener noreferrer"
                     onClick={() => setMobileMenuOpen(false)}
                     className={cn(
-                      "px-3 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-between group/mob overflow-hidden relative",
+                      "rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-between group/mob overflow-hidden relative p-[1px]",
                       item.badge
-                        ? "bg-gradient-to-r from-[#0a1628] via-[#0d1f3c] to-[#0a1628] border border-violet-500/50 text-violet-200 shadow-[0_0_12px_rgba(139,92,246,0.3)]"
+                        ? "bg-gradient-to-r from-[#ff8541] via-[#ff5b75] via-[#b054ed] to-[#5197f8] shadow-[0_0_12px_rgba(255,100,150,0.25)]"
                         : "text-slate-300 hover:text-white hover:bg-white/10"
                     )}
                   >
-                    <div className="flex items-center gap-2">
-                      {item.badge && (
-                        <Sparkles className="h-3.5 w-3.5 text-violet-400 shrink-0" />
+                    <div
+                      className={cn(
+                        "w-full h-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors duration-200",
+                        item.badge
+                          ? "bg-[#002147] text-slate-100 group-hover/mob:bg-transparent group-hover/mob:text-white"
+                          : ""
                       )}
-                      <span>{item.label}</span>
-                      {item.badge && (
-                        <span className="px-1.5 py-[1px] rounded-md text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-violet-600 to-cyan-500 text-white shadow-sm">
-                          {item.badge}
-                        </span>
-                      )}
+                    >
+                      <div className="flex items-center gap-2">
+                        {item.badge && (
+                          <Sparkles className="h-3.5 w-3.5 text-[#ff8541] group-hover/mob:text-white shrink-0 transition-colors" />
+                        )}
+                        <span>{item.label}</span>
+                        {item.badge && (
+                          <span className="px-1.5 py-[1px] rounded-full text-[9px] font-black uppercase tracking-wider bg-gradient-to-r from-[#ff8541] via-[#ff5b75] to-[#b054ed] text-white shadow-sm border border-white/20">
+                            {item.badge}
+                          </span>
+                        )}
+                      </div>
+                      <ArrowRight className="h-3.5 w-3.5 opacity-80 text-white/80" />
                     </div>
-                    <ArrowRight className="h-3.5 w-3.5 opacity-60 text-violet-300" />
                   </a>
                 );
               }
