@@ -679,7 +679,7 @@ export default function SelfStudyPage() {
       {/* Modal đăng ký gói */}
       <QuickTrialModal
         isOpen={trialModalOpen}
-        onClose={() => setTrialModalOpen(false)}
+        onOpenChange={setTrialModalOpen}
         initialCourseSlug={activePackage.slug}
       />
     </div>
