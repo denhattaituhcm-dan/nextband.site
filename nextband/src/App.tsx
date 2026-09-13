@@ -344,8 +344,9 @@ const App = () => (
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/reading" element={<ReadingUniversePage />} />
-                <Route path="/tu-hoc" element={<SelfStudyPage />} />
-                <Route path="/self-study" element={<Navigate to="/tu-hoc" replace />} />
+                <Route path="/self-study-courses" element={<SelfStudyPage />} />
+                <Route path="/tu-hoc" element={<Navigate to="/self-study-courses" replace />} />
+                <Route path="/self-study" element={<Navigate to="/self-study-courses" replace />} />
                 <Route path="/buddy" element={<BuddyLandingPage />} />
               </Route>
 
