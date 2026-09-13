@@ -1,0 +1,300 @@
+<!-- START: YouPass-style Self-Study Upgrade Banner -->
+<!-- 
+  HƯỚNG DẪN TÍCH HỢP VÀO TUHOC.NEXTBAND.VN:
+  Dán toàn bộ khối mã này vào ngay trước thẻ </body> trong file HTML chính của tuhoc.nextband.vn
+-->
+<div id="yp-banner-wrapper">
+  <!-- 1. FULL EXPANDED BANNER -->
+  <div id="yp-promo-banner">
+    <!-- Shimmer Sweep Effect -->
+    <div class="yp-shimmer-sweep"></div>
+
+    <!-- Left: Badge & Content -->
+    <div class="yp-content">
+      <div class="yp-badge-pro">
+        <span class="yp-sparkle">✦</span>
+        <span>NEXTBAND PRO</span>
+      </div>
+      <div class="yp-text-group">
+        <div class="yp-headline">
+          Gói Tự Học 120 Ngày <span class="yp-dot">·</span> <span class="yp-highlight">GV 8.0+ Chữa Writing & Speaking 1:1</span>
+        </div>
+        <div class="yp-subline">
+          Chỉ từ <span class="yp-price">1.490.000đ</span> <span class="yp-discount">-67%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: CTA & Controls -->
+    <div class="yp-actions">
+      <a href="https://nextband.vn/self-study-courses" target="_blank" rel="noopener noreferrer" class="yp-cta-btn">
+        <span>Nâng cấp ngay</span>
+        <svg class="yp-arrow" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </a>
+      <button onclick="minimizeYpBanner()" class="yp-close-btn" title="Thu nhỏ banner">✕</button>
+    </div>
+  </div>
+
+  <!-- 2. MINIMIZED FLOATING BUBBLE (Thu nhỏ góc phải khi đóng) -->
+  <button id="yp-minimized-bubble" onclick="expandYpBanner()" title="Xem ưu đãi gói Tự học có chấm chữa">
+    <span class="yp-bubble-icon">👑</span>
+    <span class="yp-bubble-text">Gói Tự Học</span>
+    <span class="yp-bubble-tag">PRO</span>
+  </button>
+</div>
+
+<style>
+  #yp-banner-wrapper {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99999;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    pointer-events: none;
+    width: auto;
+    max-width: calc(100vw - 32px);
+  }
+
+  /* Full Banner Box */
+  #yp-promo-banner {
+    pointer-events: auto;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 10px 14px 10px 16px;
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.45), 0 0 20px rgba(255, 91, 117, 0.2);
+    animation: ypEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Shimmer animation sweep */
+  .yp-shimmer-sweep {
+    position: absolute;
+    top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    animation: ypShimmer 4s infinite ease-in-out;
+    pointer-events: none;
+  }
+  @keyframes ypShimmer {
+    0% { left: -100%; }
+    30%, 100% { left: 200%; }
+  }
+
+  /* Content Group */
+  .yp-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .yp-badge-pro {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #ff8541, #ff5b75, #b054ed);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(255, 91, 117, 0.4);
+    white-space: nowrap;
+  }
+  .yp-sparkle { font-size: 11px; }
+
+  .yp-text-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .yp-headline {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+  }
+  .yp-dot { opacity: 0.4; margin: 0 2px; }
+  .yp-highlight { color: #f8fafc; font-weight: 600; }
+  
+  .yp-subline {
+    color: #94a3b8;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .yp-price {
+    color: #4ade80;
+    font-weight: 800;
+    font-size: 12px;
+  }
+  .yp-discount {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 9.5px;
+    font-weight: 800;
+    margin-left: 4px;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+
+  /* Actions */
+  .yp-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .yp-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #ffffff, #f1f5f9);
+    color: #0f172a;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .yp-cta-btn:hover {
+    transform: scale(1.05);
+    background: #ffffff;
+    box-shadow: 0 6px 18px rgba(255, 255, 255, 0.4);
+  }
+  .yp-arrow {
+    transition: transform 0.2s ease;
+  }
+  .yp-cta-btn:hover .yp-arrow {
+    transform: translateX(2px);
+  }
+
+  .yp-close-btn {
+    pointer-events: auto;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+  .yp-close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+  }
+
+  /* 2. Minimized Floating Bubble */
+  #yp-minimized-bubble {
+    pointer-events: auto;
+    display: none;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 9999px;
+    background: rgba(15, 23, 42, 0.94);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    animation: ypPopIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  #yp-minimized-bubble:hover {
+    transform: scale(1.06);
+  }
+  .yp-bubble-tag {
+    background: linear-gradient(135deg, #ff8541, #ff5b75);
+    font-size: 9px;
+    font-weight: 900;
+    padding: 1px 6px;
+    border-radius: 6px;
+  }
+
+  @keyframes ypEntrance {
+    from { opacity: 0; transform: translateY(24px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes ypPopIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* Responsive Mobile */
+  @media (max-width: 640px) {
+    #yp-promo-banner {
+      border-radius: 20px;
+      padding: 14px;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+    }
+    .yp-actions {
+      justify-content: space-between;
+    }
+    .yp-cta-btn {
+      flex: 1;
+      justify-content: center;
+    }
+  }
+</style>
+
+<script>
+  function minimizeYpBanner() {
+    var banner = document.getElementById('yp-promo-banner');
+    var bubble = document.getElementById('yp-minimized-bubble');
+    if (banner && bubble) {
+      banner.style.opacity = '0';
+      banner.style.transform = 'translateY(16px) scale(0.95)';
+      setTimeout(function() {
+        banner.style.display = 'none';
+        bubble.style.display = 'flex';
+        localStorage.setItem('nb_yp_banner_state', 'minimized');
+      }, 250);
+    }
+  }
+
+  function expandYpBanner() {
+    var banner = document.getElementById('yp-promo-banner');
+    var bubble = document.getElementById('yp-minimized-bubble');
+    if (banner && bubble) {
+      bubble.style.display = 'none';
+      banner.style.display = 'flex';
+      banner.style.opacity = '1';
+      banner.style.transform = 'translateY(0) scale(1)';
+      localStorage.setItem('nb_yp_banner_state', 'expanded');
+    }
+  }
+
+  // Tự động kiểm tra trạng thái lưu
+  (function() {
+    var state = localStorage.getItem('nb_yp_banner_state');
+    if (state === 'minimized') {
+      var banner = document.getElementById('yp-promo-banner');
+      var bubble = document.getElementById('yp-minimized-bubble');
+      if (banner) banner.style.display = 'none';
+      if (bubble) bubble.style.display = 'flex';
+    }
+  })();
+</script>
+<!-- END: YouPass-style Self-Study Upgrade Banner -->
