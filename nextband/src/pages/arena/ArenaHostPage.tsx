@@ -15,7 +15,9 @@ import { ArenaLobbyKahoot, LobbyPlayer } from '@/components/arena/ArenaLobbyKaho
 import { ArenaIncenseTimer } from '@/components/arena/ArenaIncenseTimer';
 import { TeacherContextualButton } from '@/components/arena/TeacherContextualButton';
 import { HostSettingsModal, RoomSettings, DEFAULT_ROOM_SETTINGS } from '@/components/arena/HostSettingsModal';
+import { ArenaPodiumView } from '@/components/arena/ArenaPodiumView';
 import { ArenaState, HostCommandType, PlayerPublicRank } from '@/lib/arena/types';
+import { ARENA_COLLOCATION_QUESTIONS, ArenaQuestion } from '@/lib/arena/questions';
 import { Volume2, VolumeX, CheckCircle2, Sparkles, Settings, Trophy } from 'lucide-react';
 
 interface PlayerAnswerRecord {
@@ -40,6 +42,14 @@ export default function ArenaHostPage() {
   // Cài đặt thông số phòng (Mặc định chuẩn nếu giáo viên không chỉnh gì)
   const [roomSettings, setRoomSettings] = useState<RoomSettings>(DEFAULT_ROOM_SETTINGS);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+
+  // Quản lý câu hỏi đa vòng & Tổng điểm tích lũy qua các vòng
+  const [questionIndex, setQuestionIndex] = useState<number>(0);
+  const [cumulativeScores, setCumulativeScores] = useState<Record<string, number>>({});
+
+  const currentQuestion = ARENA_COLLOCATION_QUESTIONS[questionIndex] || ARENA_COLLOCATION_QUESTIONS[0];
+  const totalQuestions = ARENA_COLLOCATION_QUESTIONS.length;
+  const isLastRound = questionIndex >= totalQuestions - 1;
 
   // Phòng rỗng 100%, chỉ có học sinh thật tham gia qua Broadcast
   const [players, setPlayers] = useState<LobbyPlayer[]>([]);
@@ -122,7 +132,7 @@ export default function ArenaHostPage() {
       .on('broadcast', { event: 'player-answered' }, ({ payload }) => {
         if (!payload || !payload.nickname) return;
         const optionId = payload.optionId;
-        const isCorrect = optionId === 'opt_A';
+        const isCorrect = optionId === currentQuestion.correctOptionId;
         
         let score = 0;
         if (isCorrect) {
@@ -146,6 +156,13 @@ export default function ArenaHostPage() {
             gold: payload.gold || 0,
           },
         }));
+
+        if (score > 0) {
+          setCumulativeScores((prev) => ({
+            ...prev,
+            [payload.nickname]: (prev[payload.nickname] || 0) + score,
+          }));
+        }
       })
       .on('broadcast', { event: 'gold-updated' }, ({ payload }) => {
         if (payload?.nickname && typeof payload.gold === 'number') {
@@ -235,30 +252,35 @@ export default function ArenaHostPage() {
     };
   }, [answers]);
 
-  // Bảng xếp hạng: Nếu là Gold Quest thì xếp theo VÀNG, nếu Classic thì xếp theo ĐIỂM
-  const topFive: PlayerPublicRank[] = useMemo(() => {
+  // Bảng xếp hạng toàn diện tất cả người chơi
+  const allRankings: PlayerPublicRank[] = useMemo(() => {
     if (roomSettings.gameMode === 'GOLD_QUEST') {
-      return Object.entries(playerGoldMap)
-        .sort(([, gA], [, gB]) => gB - gA)
-        .slice(0, 5)
-        .map(([name, gold], idx) => ({
-          rank: idx + 1,
-          playerId: name,
-          nickname: name,
-          totalScore: gold,
-        }));
+      const sorted = Object.entries(playerGoldMap).sort(([, a], [, b]) => b - a);
+      return sorted.map(([name, gold], idx) => ({
+        rank: idx + 1,
+        playerId: name,
+        nickname: name,
+        totalScore: gold,
+      }));
     }
 
-    return Object.values(answers)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 5)
-      .map((item, idx) => ({
-        rank: idx + 1,
-        playerId: item.playerId,
-        nickname: item.nickname,
-        totalScore: item.score,
-      }));
-  }, [answers, playerGoldMap, roomSettings.gameMode]);
+    const scoreMap: Record<string, number> = { ...cumulativeScores };
+    players.forEach((p) => {
+      if (scoreMap[p.name] === undefined) {
+        scoreMap[p.name] = 0;
+      }
+    });
+
+    const sorted = Object.entries(scoreMap).sort(([, a], [, b]) => b - a);
+    return sorted.map(([name, score], idx) => ({
+      rank: idx + 1,
+      playerId: name,
+      nickname: name,
+      totalScore: score,
+    }));
+  }, [cumulativeScores, playerGoldMap, players, roomSettings.gameMode]);
+
+  const topFive: PlayerPublicRank[] = useMemo(() => allRankings.slice(0, 5), [allRankings]);
 
   // Phát BGM ở Lobby
   useEffect(() => {
@@ -290,25 +312,38 @@ export default function ArenaHostPage() {
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [state]);
+  }, [state, stopQuestionSuspense]);
 
   // Điều phối chuyển trạng thái bằng Single Button
   const handleExecuteCommand = useCallback(
     (command: HostCommandType) => {
       switch (command) {
         case 'START_ARENA':
+          setQuestionIndex(0);
+          setAnswers({});
+          setCumulativeScores({});
           setState('QUESTION_LIVE');
           setTimeLeft(roomSettings.timeLimit);
           startQuestionSuspense(roomSettings.timeLimit);
           if (channelRef.current) {
+            const firstQ = ARENA_COLLOCATION_QUESTIONS[0];
+            const payload = {
+              pin: pinCode,
+              timeLimit: roomSettings.timeLimit,
+              gameMode: roomSettings.gameMode,
+              questionIndex: 0,
+              totalQuestions: ARENA_COLLOCATION_QUESTIONS.length,
+              question: firstQ,
+            };
+            channelRef.current.send({
+              type: 'broadcast',
+              event: 'question-live',
+              payload,
+            });
             channelRef.current.send({
               type: 'broadcast',
               event: 'arena-started',
-              payload: {
-                pin: pinCode,
-                timeLimit: roomSettings.timeLimit,
-                gameMode: roomSettings.gameMode,
-              },
+              payload,
             });
           }
           break;
@@ -324,6 +359,13 @@ export default function ArenaHostPage() {
           break;
         case 'REVEAL_DISTRIBUTION':
           setState('REVEAL_DISTRIBUTION');
+          if (channelRef.current) {
+            channelRef.current.send({
+              type: 'broadcast',
+              event: 'show-distribution',
+              payload: { distribution },
+            });
+          }
           break;
         case 'REVEAL_PERSONAL':
           playCorrectSound();
@@ -332,6 +374,10 @@ export default function ArenaHostPage() {
             channelRef.current.send({
               type: 'broadcast',
               event: 'round-reveal',
+              payload: {
+                correctOptionId: currentQuestion.correctOptionId,
+                explanation: currentQuestion.correctExplanation,
+              },
             });
           }
           break;
@@ -341,14 +387,85 @@ export default function ArenaHostPage() {
         case 'SHOW_LEADERBOARD':
           playClimberSound();
           setState('LEADERBOARD');
+          if (channelRef.current) {
+            channelRef.current.send({
+              type: 'broadcast',
+              event: 'show-leaderboard',
+              payload: {
+                rankings: allRankings,
+              },
+            });
+          }
           break;
         case 'NEXT_ROUND':
-          playPodiumSound();
-          setState('PODIUM');
+          if (isLastRound) {
+            stopQuestionSuspense();
+            playPodiumSound();
+            setState('PODIUM');
+            if (channelRef.current) {
+              channelRef.current.send({
+                type: 'broadcast',
+                event: 'arena-finished',
+                payload: {
+                  podium: allRankings.slice(0, 3),
+                  rankings: allRankings,
+                },
+              });
+            }
+          } else {
+            const nextIdx = questionIndex + 1;
+            setQuestionIndex(nextIdx);
+            setAnswers({});
+            setTimeLeft(roomSettings.timeLimit);
+            setState('QUESTION_LIVE');
+            startQuestionSuspense(roomSettings.timeLimit);
+            if (channelRef.current) {
+              const nextQ = ARENA_COLLOCATION_QUESTIONS[nextIdx];
+              channelRef.current.send({
+                type: 'broadcast',
+                event: 'question-live',
+                payload: {
+                  pin: pinCode,
+                  timeLimit: roomSettings.timeLimit,
+                  gameMode: roomSettings.gameMode,
+                  questionIndex: nextIdx,
+                  totalQuestions: ARENA_COLLOCATION_QUESTIONS.length,
+                  question: nextQ,
+                },
+              });
+            }
+          }
+          break;
+        case 'RESTART_ARENA':
+          stopQuestionSuspense();
+          setQuestionIndex(0);
+          setAnswers({});
+          setCumulativeScores({});
+          setState('LOBBY');
+          if (channelRef.current) {
+            channelRef.current.send({
+              type: 'broadcast',
+              event: 'arena-reset',
+            });
+          }
           break;
       }
     },
-    [pinCode, playCorrectSound, playClimberSound, playPodiumSound, roomSettings.timeLimit, roomSettings.gameMode]
+    [
+      pinCode,
+      playCorrectSound,
+      playClimberSound,
+      playPodiumSound,
+      startQuestionSuspense,
+      stopQuestionSuspense,
+      roomSettings.timeLimit,
+      roomSettings.gameMode,
+      distribution,
+      currentQuestion,
+      isLastRound,
+      questionIndex,
+      allRankings,
+    ]
   );
 
   const joinUrl = typeof window !== 'undefined' ? `${window.location.origin}/arena/join` : '/arena/join';
@@ -412,7 +529,7 @@ export default function ArenaHostPage() {
         {state === 'QUESTION_LIVE' && (
           <div className="w-full space-y-6">
             <div className="text-purple-300 text-xs font-mono font-bold tracking-widest uppercase flex items-center justify-center gap-2">
-              <span>CÂU HỎI 1 / 1 · IELTS COLLOCATION ({roomSettings.timeLimit} GIÂY)</span>
+              <span>CÂU HỎI {questionIndex + 1} / {totalQuestions} · IELTS COLLOCATION ({roomSettings.timeLimit} GIÂY)</span>
               {roomSettings.gameMode === 'GOLD_QUEST' && (
                 <span className="px-2 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-400/40 rounded-full text-[10px]">
                   💰 CƯỚP VÀNG LIVE
@@ -421,12 +538,27 @@ export default function ArenaHostPage() {
             </div>
 
             {/* Prompt */}
-            <h2 className="text-2xl md:text-4xl font-extrabold text-white max-w-2xl mx-auto leading-relaxed">
-              "The enterprise decided to <span className="text-orange-400 border-b-2 border-orange-400">______</span> an investment in clean technology."
+            <h2 className="text-2xl md:text-4xl font-extrabold text-white max-w-3xl mx-auto leading-relaxed">
+              "{currentQuestion.prompt}"
             </h2>
 
             {/* Incense Timer */}
             <ArenaIncenseTimer timeLeftSeconds={timeLeft} totalTimeSeconds={roomSettings.timeLimit} />
+
+            {/* 4 Cards Hiển thị trên máy chiếu */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 max-w-2xl mx-auto pt-2">
+              {currentQuestion.options.map((opt) => (
+                <div
+                  key={opt.id}
+                  className="p-3.5 rounded-xl bg-purple-950/50 border border-purple-800/60 flex items-center gap-3 text-left shadow-md"
+                >
+                  <span className="w-8 h-8 rounded-lg bg-orange-500/20 border border-orange-500/40 flex items-center justify-center font-black text-xs text-orange-400">
+                    {opt.label}
+                  </span>
+                  <span className="font-bold text-sm text-slate-200">{opt.text}</span>
+                </div>
+              ))}
+            </div>
 
             <div className="text-xs text-purple-200/80">
               Đã nhận câu trả lời: <span className="text-orange-400 font-bold">{Object.keys(answers).length}</span> / {players.length} học viên
@@ -455,7 +587,7 @@ export default function ArenaHostPage() {
             </div>
             <h2 className="text-3xl font-black text-white">ĐÃ KHÓA CÂU TRẢ LỜI</h2>
             <p className="text-purple-200/80 text-sm">
-              Đã nhận {Object.keys(answers).length} câu trả lời. Chuẩn bị xem phổ đáp án.
+              Đã nhận {Object.keys(answers).length} câu trả lời. Chuẩn bị xem phổ đáp án của lớp.
             </p>
           </div>
         )}
@@ -463,48 +595,47 @@ export default function ArenaHostPage() {
         {(state === 'REVEAL_DISTRIBUTION' || state === 'REVEAL_PERSONAL' || state === 'TEACHER_DEBRIEF') && (
           <div className="w-full space-y-6">
             <div className="text-purple-300 text-xs font-mono font-bold tracking-widest uppercase">
-              PHÂN PHỐI ĐÁP ÁN CỦA LỚP
+              PHÂN PHỐI ĐÁP ÁN CỦA LỚP (CÂU {questionIndex + 1}/{totalQuestions})
             </div>
 
             {/* Distribution Bar Chart */}
             <div className="grid grid-cols-4 gap-4 max-w-xl mx-auto items-end h-48 pt-6">
-              {[
-                { label: 'A. make', pct: distribution.A, isCorrect: true },
-                { label: 'B. do', pct: distribution.B, isCorrect: false },
-                { label: 'C. take', pct: distribution.C, isCorrect: false },
-                { label: 'D. create', pct: distribution.D, isCorrect: false },
-              ].map((item, idx) => (
-                <div key={idx} className="flex flex-col items-center gap-2 h-full justify-end">
-                  <span className="text-sm font-black text-white">{item.pct}%</span>
-                  <div
-                    className={`w-full rounded-xl transition-all duration-700 ${
-                      state !== 'REVEAL_DISTRIBUTION' && item.isCorrect
-                        ? 'bg-emerald-500 shadow-lg shadow-emerald-500/30'
-                        : 'bg-purple-950/60 border border-purple-800/40'
-                    }`}
-                    style={{ height: `${Math.max(15, item.pct * 1.8)}px` }}
-                  />
-                  <span
-                    className={`text-xs font-bold ${
-                      state !== 'REVEAL_DISTRIBUTION' && item.isCorrect
-                        ? 'text-emerald-400 font-black'
-                        : 'text-purple-300'
-                    }`}
-                  >
-                    {item.label}
-                  </span>
-                </div>
-              ))}
+              {currentQuestion.options.map((opt) => {
+                const pct = distribution[opt.label] || 0;
+                const isCorrect = opt.id === currentQuestion.correctOptionId;
+                return (
+                  <div key={opt.id} className="flex flex-col items-center gap-2 h-full justify-end">
+                    <span className="text-sm font-black text-white">{pct}%</span>
+                    <div
+                      className={`w-full rounded-xl transition-all duration-700 ${
+                        state !== 'REVEAL_DISTRIBUTION' && isCorrect
+                          ? 'bg-emerald-500 shadow-lg shadow-emerald-500/30'
+                          : 'bg-purple-950/60 border border-purple-800/40'
+                      }`}
+                      style={{ height: `${Math.max(15, pct * 1.8)}px` }}
+                    />
+                    <span
+                      className={`text-xs font-bold truncate max-w-full px-1 ${
+                        state !== 'REVEAL_DISTRIBUTION' && isCorrect
+                          ? 'text-emerald-400 font-black'
+                          : 'text-purple-300'
+                      }`}
+                    >
+                      {opt.label}. {opt.text}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
 
             {/* Misconception Academic Diagnostic */}
-            {state === 'TEACHER_DEBRIEF' && roomSettings.showDebrief && (
-              <div className="max-w-xl mx-auto p-4 bg-red-950/40 border border-red-500/30 rounded-2xl text-left animate-fadeIn">
+            {state === 'TEACHER_DEBRIEF' && roomSettings.showDebrief && currentQuestion.misconception && (
+              <div className="max-w-xl mx-auto p-4 bg-red-950/40 border border-red-500/30 rounded-2xl text-left animate-fadeIn space-y-1">
                 <span className="text-xs font-bold text-red-400 uppercase tracking-wider block mb-1">
-                  💡 Chẩn đoán Bẫy Misconception ({distribution.B}% học sinh mắc phải):
+                  💡 Chẩn đoán Bẫy Misconception: {currentQuestion.misconception.diagnosticTitle}
                 </span>
                 <p className="text-sm text-slate-300 leading-relaxed font-medium">
-                  Học sinh nhầm lẫn giữa <strong className="text-white">"make an investment"</strong> (Collocation chuẩn) với <strong className="text-red-300">"do an investment"</strong> (Lỗi dịch theo tư duy tiếng Việt: làm/thực hiện đầu tư).
+                  {currentQuestion.misconception.explanation}
                 </p>
               </div>
             )}
@@ -554,27 +685,21 @@ export default function ArenaHostPage() {
         )}
 
         {state === 'PODIUM' && (
-          <div className="space-y-6 animate-fadeIn">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-amber-400/10 border border-amber-400/30 rounded-full text-amber-300 text-xs font-black uppercase">
-              <Sparkles className="w-4 h-4" /> Bục Vinh Danh Quán Quân
-            </div>
-            <h2 className="text-4xl font-black text-amber-400">
-              {topFive.length > 0 ? `CHÚC MỪNG ${topFive[0].nickname}!` : 'HOÀN THÀNH VÒNG ĐẤU!'}
-            </h2>
-            <p className="text-purple-200/80 text-sm">
-              {topFive.length > 0
-                ? (roomSettings.gameMode === 'GOLD_QUEST'
-                    ? `Vua Đào Vàng với tổng tài sản tích lũy ${topFive[0].totalScore} vàng!`
-                    : `Đạt ${topFive[0].totalScore} điểm với tốc độ chính xác tuyệt đối.`)
-                : 'Không có người trả lời chính xác.'}
-            </p>
-          </div>
+          <ArenaPodiumView
+            rankings={allRankings}
+            gameMode={roomSettings.gameMode}
+            onRestart={() => handleExecuteCommand('RESTART_ARENA')}
+          />
         )}
       </main>
 
       {/* Bottom Contextual Control Footer */}
       <footer className="flex justify-center border-t border-purple-900/40 pt-4">
-        <TeacherContextualButton state={state} onExecuteCommand={handleExecuteCommand} />
+        <TeacherContextualButton
+          state={state}
+          onExecuteCommand={handleExecuteCommand}
+          isLastRound={isLastRound}
+        />
       </footer>
 
       {/* Modal Cài đặt thông số trận đấu */}

@@ -12,10 +12,11 @@ interface TeacherContextualButtonProps {
   state: ArenaState;
   onExecuteCommand: (command: HostCommandType) => void;
   isLoading?: boolean;
+  isLastRound?: boolean;
 }
 
 export const TeacherContextualButton: React.FC<TeacherContextualButtonProps> = React.memo(
-  ({ state, onExecuteCommand, isLoading = false }) => {
+  ({ state, onExecuteCommand, isLoading = false, isLastRound = false }) => {
     switch (state) {
       case 'LOBBY':
         return (
@@ -90,7 +91,26 @@ export const TeacherContextualButton: React.FC<TeacherContextualButtonProps> = R
             disabled={isLoading}
             className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black text-lg rounded-2xl shadow-xl shadow-emerald-500/20 transition-all cursor-pointer transform hover:scale-105 active:scale-95"
           >
-            <ArrowRight className="w-6 h-6" /> CÂU HỎI TIẾP THEO
+            {isLastRound ? (
+              <>
+                <Trophy className="w-6 h-6 text-amber-300" /> XEM BỤC VINH DANH 🏆
+              </>
+            ) : (
+              <>
+                <ArrowRight className="w-6 h-6" /> CÂU HỎI TIẾP THEO
+              </>
+            )}
+          </button>
+        );
+
+      case 'PODIUM':
+        return (
+          <button
+            onClick={() => onExecuteCommand('RESTART_ARENA')}
+            disabled={isLoading}
+            className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-lg rounded-2xl shadow-xl shadow-orange-500/20 transition-all cursor-pointer transform hover:scale-105 active:scale-95"
+          >
+            <Play className="w-6 h-6 fill-white" /> BẮT ĐẦU TRẬN MỚI (VỀ SẢNH)
           </button>
         );
 

@@ -48,7 +48,7 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
   },
   { label: "Reading", href: "/reading" },
   { label: "Speaking Forecast", href: "/ielts-speaking-forecast" },
-  { label: "Tự học", href: "https://tuhoc.nextband.vn", badge: "HOT" },
+  { label: "Tự học", href: "/tu-hoc", badge: "HOT" },
   { label: "Tiến bộ", href: "/results" },
   { label: "Giảng viên", href: "/teachers" },
   { label: "Tuyển dụng", href: "/careers" },
@@ -176,27 +176,10 @@ export function PublicHeader() {
                 );
               }
 
-              if (item.href.startsWith("http")) {
-                return (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={cn(
-                      "relative inline-flex items-center gap-1.5 px-3.5 xl:px-4 py-1.5 rounded-full text-xs xl:text-[13px] font-black tracking-wider uppercase whitespace-nowrap transition-all duration-300 group/tuhoc overflow-hidden shadow-md",
-                      item.badge
-                        ? [
-                            // Nền solid gradient rực rỡ đặc trưng của YouPass PRO
-                            "bg-gradient-to-r from-[#ff8541] via-[#ff5b75] via-[#b054ed] to-[#5197f8]",
-                            "text-white",
-                            "shadow-[0_0_16px_rgba(255,133,65,0.4)] hover:shadow-[0_0_24px_rgba(255,91,117,0.7)]",
-                            "hover:brightness-110 hover:scale-[1.04] active:scale-[0.98]",
-                            "border border-white/25",
-                          ].join(" ")
-                        : "text-slate-300 hover:text-white hover:bg-white/10"
-                    )}
-                  >
+              if (item.href === "/tu-hoc" || item.href.startsWith("http")) {
+                const isExternal = item.href.startsWith("http");
+                const buttonContent = (
+                  <>
                     {/* Shimmer sweep effect */}
                     {item.badge && (
                       <span
@@ -214,7 +197,44 @@ export function PublicHeader() {
                         {item.badge}
                       </span>
                     )}
-                  </a>
+                  </>
+                );
+
+                const buttonClasses = cn(
+                  "relative inline-flex items-center gap-1.5 px-3.5 xl:px-4 py-1.5 rounded-full text-xs xl:text-[13px] font-black tracking-wider uppercase whitespace-nowrap transition-all duration-300 group/tuhoc overflow-hidden shadow-md",
+                  item.badge
+                    ? [
+                        "bg-gradient-to-r from-[#ff8541] via-[#ff5b75] via-[#b054ed] to-[#5197f8]",
+                        "text-white",
+                        "shadow-[0_0_16px_rgba(255,133,65,0.4)] hover:shadow-[0_0_24px_rgba(255,91,117,0.7)]",
+                        "hover:brightness-110 hover:scale-[1.04] active:scale-[0.98]",
+                        "border border-white/25",
+                      ].join(" ")
+                    : "text-slate-300 hover:text-white hover:bg-white/10"
+                );
+
+                if (isExternal) {
+                  return (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={buttonClasses}
+                    >
+                      {buttonContent}
+                    </a>
+                  );
+                }
+
+                return (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    className={buttonClasses}
+                  >
+                    {buttonContent}
+                  </Link>
                 );
               }
 

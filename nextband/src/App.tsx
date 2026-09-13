@@ -109,6 +109,7 @@ const SpeakingForecastSeasonPage = lazyWithRetry(() => import("@/pages/public/sp
 const SpeakingForecastTopicPage = lazyWithRetry(() => import("@/pages/public/speaking-forecast/SpeakingForecastTopic"));
 const ReadingUniversePage = lazyWithRetry(() => import("@/pages/public/reading/ReadingUniversePage"));
 const ReadingCasePage = lazyWithRetry(() => import("@/pages/public/reading/ReadingCasePage"));
+const SelfStudyPage = lazyWithRetry(() => import("@/pages/public/SelfStudyPage"));
 const BuddyLandingPage = lazyWithRetry(() => import("@/pages/public/BuddyLandingPage"));
 const ParentHubPage = lazyWithRetry(() => import("@/pages/public/ParentHubPage"));
 const DiagnosticLandingPage = lazyWithRetry(() => import("@/pages/public/DiagnosticLandingPage"));
@@ -343,6 +344,8 @@ const App = () => (
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/reading" element={<ReadingUniversePage />} />
+                <Route path="/tu-hoc" element={<SelfStudyPage />} />
+                <Route path="/self-study" element={<Navigate to="/tu-hoc" replace />} />
                 <Route path="/buddy" element={<BuddyLandingPage />} />
               </Route>
 

@@ -13,22 +13,22 @@ import { useArenaAudio } from '@/hooks/arena/useArenaAudio';
 import { StudentAnswerCard } from '@/components/arena/StudentAnswerCard';
 import { ArenaIncenseTimer } from '@/components/arena/ArenaIncenseTimer';
 import { GoldQuestChestModal } from '@/components/arena/GoldQuestChestModal';
-import { ArenaQuestionOption } from '@/lib/arena/types';
-import { CheckCircle2, XCircle, Trophy, Sparkles } from 'lucide-react';
-
-const DEMO_OPTIONS: ArenaQuestionOption[] = [
-  { id: 'opt_A', label: 'A', text: 'make an investment' },
-  { id: 'opt_B', label: 'B', text: 'do an investment' },
-  { id: 'opt_C', label: 'C', text: 'take an investment' },
-  { id: 'opt_D', label: 'D', text: 'create an investment' },
-];
+import { ArenaQuestionOption, PlayerPublicRank } from '@/lib/arena/types';
+import { ARENA_COLLOCATION_QUESTIONS, ArenaQuestion } from '@/lib/arena/questions';
+import { CheckCircle2, XCircle, Trophy, Sparkles, Medal, Crown } from 'lucide-react';
 
 interface PlayerCandidate {
   name: string;
   gold: number;
 }
 
-type StudentGameState = 'LOBBY_WAITING' | 'QUESTION_LIVE' | 'ROUND_LOCKED' | 'ROUND_REVEAL';
+type StudentGameState =
+  | 'LOBBY_WAITING'
+  | 'QUESTION_LIVE'
+  | 'ROUND_LOCKED'
+  | 'ROUND_REVEAL'
+  | 'LEADERBOARD'
+  | 'PODIUM';
 
 export default function ArenaPlayPage() {
   const [searchParams] = useSearchParams();
@@ -41,6 +41,13 @@ export default function ArenaPlayPage() {
   const [gold, setGold] = useState<number>(0);
   const [playersList, setPlayersList] = useState<PlayerCandidate[]>([]);
   const [isChestModalOpen, setIsChestModalOpen] = useState<boolean>(false);
+
+  // Câu hỏi động nhận từ Host
+  const [questionIndex, setQuestionIndex] = useState<number>(0);
+  const [totalQuestions, setTotalQuestions] = useState<number>(ARENA_COLLOCATION_QUESTIONS.length);
+  const [currentQuestion, setCurrentQuestion] = useState<ArenaQuestion>(ARENA_COLLOCATION_QUESTIONS[0]);
+  const [myRanking, setMyRanking] = useState<{ rank: number; totalScore: number } | null>(null);
+  const [topRankings, setTopRankings] = useState<PlayerPublicRank[]>([]);
 
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
@@ -91,10 +98,31 @@ export default function ArenaPlayPage() {
       .on('broadcast', { event: 'lobby-ping' }, () => {
         announcePresence();
       })
+      .on('broadcast', { event: 'question-live' }, ({ payload }) => {
+        if (payload?.gameMode) setGameMode(payload.gameMode);
+        if (payload?.timeLimit) setTimeLeft(payload.timeLimit);
+        else setTimeLeft(15);
+
+        if (payload?.question) setCurrentQuestion(payload.question);
+        if (typeof payload?.questionIndex === 'number') setQuestionIndex(payload.questionIndex);
+        if (typeof payload?.totalQuestions === 'number') setTotalQuestions(payload.totalQuestions);
+
+        setGameState('QUESTION_LIVE');
+        setIsLocked(false);
+        setHasSubmitted(false);
+        setSelectedOptionId(null);
+        setShowResult(false);
+        setIsChestModalOpen(false);
+        playClickSound();
+      })
       .on('broadcast', { event: 'arena-started' }, ({ payload }) => {
         if (payload?.gameMode) setGameMode(payload.gameMode);
         if (payload?.timeLimit) setTimeLeft(payload.timeLimit);
         else setTimeLeft(15);
+
+        if (payload?.question) setCurrentQuestion(payload.question);
+        if (typeof payload?.questionIndex === 'number') setQuestionIndex(payload.questionIndex);
+        if (typeof payload?.totalQuestions === 'number') setTotalQuestions(payload.totalQuestions);
 
         setGameState('QUESTION_LIVE');
         setIsLocked(false);
@@ -111,6 +139,42 @@ export default function ArenaPlayPage() {
       .on('broadcast', { event: 'round-reveal' }, () => {
         setShowResult(true);
         setGameState('ROUND_REVEAL');
+      })
+      .on('broadcast', { event: 'show-leaderboard' }, ({ payload }) => {
+        setGameState('LEADERBOARD');
+        if (payload?.rankings && Array.isArray(payload.rankings)) {
+          setTopRankings(payload.rankings.slice(0, 5));
+          const me = payload.rankings.find(
+            (r: PlayerPublicRank) => r.nickname?.trim().toLowerCase() === nickname.trim().toLowerCase()
+          );
+          if (me) {
+            setMyRanking({ rank: me.rank, totalScore: me.totalScore });
+          }
+        }
+      })
+      .on('broadcast', { event: 'arena-finished' }, ({ payload }) => {
+        setGameState('PODIUM');
+        if (payload?.rankings && Array.isArray(payload.rankings)) {
+          setTopRankings(payload.rankings.slice(0, 3));
+          const me = payload.rankings.find(
+            (r: PlayerPublicRank) => r.nickname?.trim().toLowerCase() === nickname.trim().toLowerCase()
+          );
+          if (me) {
+            setMyRanking({ rank: me.rank, totalScore: me.totalScore });
+          }
+        }
+      })
+      .on('broadcast', { event: 'arena-reset' }, () => {
+        setGameState('LOBBY_WAITING');
+        setIsLocked(false);
+        setHasSubmitted(false);
+        setSelectedOptionId(null);
+        setShowResult(false);
+        setIsChestModalOpen(false);
+        setGold(0);
+        setMyRanking(null);
+        setQuestionIndex(0);
+        setCurrentQuestion(ARENA_COLLOCATION_QUESTIONS[0]);
       })
       .on('broadcast', { event: 'players-sync' }, ({ payload }) => {
         if (payload?.players) {
@@ -167,7 +231,7 @@ export default function ArenaPlayPage() {
     return () => clearInterval(timer);
   }, [gameState, isLocked]);
 
-  const isCorrect = selectedOptionId === 'opt_A';
+  const isCorrect = selectedOptionId === currentQuestion.correctOptionId;
 
   // Xử lý khi học sinh chọn đáp án
   const handleSelectOption = useCallback(
@@ -311,15 +375,57 @@ export default function ArenaPlayPage() {
               </div>
             </div>
           </div>
+        ) : gameState === 'LEADERBOARD' ? (
+          /* MÀN HÌNH BẢNG XẾP HẠNG TRÊN ĐIỆN THOẠI */
+          <div className="flex-1 flex flex-col items-center justify-center text-center space-y-6 py-6 animate-fadeIn">
+            <div className="p-6 bg-gradient-to-br from-purple-900/60 to-purple-950/80 border border-purple-700/50 rounded-3xl w-full max-w-xs space-y-4 shadow-2xl">
+              <span className="text-xs uppercase font-black text-purple-300 tracking-wider flex items-center justify-center gap-1.5">
+                <Trophy className="w-4 h-4 text-amber-400" /> VỊ TRÍ CỦA BẠN
+              </span>
+              <div className="w-20 h-20 rounded-2xl bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center mx-auto text-3xl font-black text-amber-300 shadow-lg shadow-amber-500/20">
+                #{myRanking?.rank ?? 1}
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-2xl font-black text-white">{nickname}</h3>
+                <p className="text-amber-400 font-mono font-black text-base">
+                  {myRanking?.totalScore ?? (gameMode === 'GOLD_QUEST' ? gold : 0)}{' '}
+                  {gameMode === 'GOLD_QUEST' ? '🪙 Vàng' : 'Điểm'}
+                </p>
+              </div>
+            </div>
+
+            <div className="text-xs text-purple-300/80 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+              Đang đợi giáo viên chuyển sang câu hỏi tiếp theo...
+            </div>
+          </div>
+        ) : gameState === 'PODIUM' ? (
+          /* MÀN HÌNH KẾT THÚC / PODIUM TRÊN ĐIỆN THOẠI */
+          <div className="flex-1 flex flex-col items-center justify-center text-center space-y-6 py-6 animate-fadeIn">
+            <div className="w-20 h-20 rounded-full bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center mx-auto text-4xl text-amber-300 animate-bounce">
+              👑
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-3xl font-black text-white">TRẬN ĐẤU HOÀN TẤT!</h2>
+              <p className="text-amber-300 font-bold text-lg">
+                Thứ hạng chung cuộc: #{myRanking?.rank ?? 1}
+              </p>
+              <p className="text-xs text-purple-200/80 max-w-xs mx-auto">
+                Chúc mừng bạn đã hoàn thành xuất sắc tất cả các vòng đấu IELTS Collocation hôm nay!
+              </p>
+            </div>
+          </div>
         ) : !showResult ? (
           <>
             {/* Round info & prompt */}
             <div className="text-center space-y-1">
               <span className="text-[11px] font-mono font-bold text-purple-300 uppercase tracking-widest flex items-center justify-center gap-1">
-                {gameMode === 'GOLD_QUEST' ? '💰 CƯỚP VÀNG · TRẢ LỜI ĐỂ MỞ RƯƠNG' : '🎯 CÂU HỎI 1 · 15 GIÂY'}
+                {gameMode === 'GOLD_QUEST'
+                  ? `💰 CƯỚP VÀNG · CÂU ${questionIndex + 1}/${totalQuestions}`
+                  : `🎯 CÂU HỎI ${questionIndex + 1}/${totalQuestions} · 15 GIÂY`}
               </span>
-              <h2 className="text-lg font-bold text-white leading-snug">
-                "The enterprise decided to ______ an investment in clean technology."
+              <h2 className="text-lg md:text-xl font-bold text-white leading-snug">
+                "{currentQuestion.prompt}"
               </h2>
             </div>
 
@@ -328,7 +434,7 @@ export default function ArenaPlayPage() {
 
             {/* 4 Interactive Answer Cards */}
             <div className="grid grid-cols-1 gap-2.5 pt-2">
-              {DEMO_OPTIONS.map((opt) => (
+              {currentQuestion.options.map((opt) => (
                 <StudentAnswerCard
                   key={opt.id}
                   option={opt}
@@ -382,10 +488,10 @@ export default function ArenaPlayPage() {
             <div className="p-4 bg-purple-950/40 border border-purple-800/60 rounded-2xl text-left space-y-2">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-bold text-purple-300 uppercase">Đáp án chuẩn:</span>
-                <span className="font-black text-emerald-400">A. make an investment</span>
+                <span className="font-black text-emerald-400">{currentQuestion.correctAnswerText}</span>
               </div>
               <p className="text-xs text-purple-200/80 leading-relaxed">
-                Động từ chuẩn đi với "investment" trong học thuật IELTS là <strong>make</strong> (không dùng do/take/create).
+                {currentQuestion.correctExplanation}
               </p>
             </div>
 
