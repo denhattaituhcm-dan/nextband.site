@@ -71,10 +71,36 @@ export default function ArenaHostPage() {
     const channel = supabase.channel(channelName, {
       config: {
         broadcast: { ack: true },
+        presence: { key: 'host' },
       },
     });
 
     channel
+      .on('presence', { event: 'sync' }, () => {
+        const presenceState = channel.presenceState();
+        Object.values(presenceState).forEach((presences: any) => {
+          presences.forEach((p: any) => {
+            if (p.name && p.name !== 'host') {
+              setPlayers((prev) => {
+                if (prev.some((existing) => existing.name.trim().toLowerCase() === p.name.trim().toLowerCase())) {
+                  return prev;
+                }
+                return [
+                  ...prev,
+                  {
+                    id: p.id || `p_${Date.now()}`,
+                    name: p.name.trim(),
+                    avatarSeed: p.avatarSeed || p.name,
+                    rank: p.rank || 'Học viên',
+                    joinedAt: p.joinedAt || new Date().toISOString(),
+                  },
+                ];
+              });
+              setPlayerGoldMap((prev) => ({ ...prev, [p.name.trim()]: prev[p.name.trim()] ?? 0 }));
+            }
+          });
+        });
+      })
       .on('broadcast', { event: 'player-joined' }, ({ payload }) => {
         if (!payload || !payload.name) return;
         setPlayers((prev) => {
@@ -160,6 +186,18 @@ export default function ArenaHostPage() {
       supabase.removeChannel(channel);
     };
   }, [pinCode, playClickSound, playClimberSound, roomSettings.scoringMode]);
+
+  // Ping định kỳ học sinh đang chờ trong Lobby để sync danh sách
+  useEffect(() => {
+    if (state !== 'LOBBY' || !channelRef.current) return;
+    const interval = setInterval(() => {
+      channelRef.current?.send({
+        type: 'broadcast',
+        event: 'lobby-ping',
+      });
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [state]);
 
   // Định kỳ gửi danh sách người chơi và số vàng sang các học sinh để làm mục tiêu cướp vàng
   useEffect(() => {

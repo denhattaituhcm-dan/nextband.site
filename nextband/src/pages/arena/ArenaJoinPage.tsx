@@ -48,37 +48,44 @@ export default function ArenaJoinPage() {
     setIsLoading(true);
 
     try {
+      const existingId = typeof window !== 'undefined' ? sessionStorage.getItem('arena_player_id') : null;
+      const playerId = existingId || `p_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('arena_pin', cleanPin);
         sessionStorage.setItem('arena_nickname', cleanNick);
+        sessionStorage.setItem('arena_player_id', playerId);
       }
 
-      // Phát broadcast tới Host phòng
-      const channel = supabase.channel(`arena-room-${cleanPin}`);
+      // Phát broadcast tới Host phòng (kèm timeout nhanh 400ms)
+      const channel = supabase.channel(`arena-room-${cleanPin}`, {
+        config: { broadcast: { ack: true } },
+      });
       
       await new Promise<void>((resolve) => {
+        const timeout = setTimeout(resolve, 400);
         channel.subscribe(async (status) => {
           if (status === 'SUBSCRIBED') {
             await channel.send({
               type: 'broadcast',
               event: 'player-joined',
               payload: {
-                id: `p_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+                id: playerId,
                 name: cleanNick,
                 avatarSeed: cleanNick,
                 rank: 'Học viên',
                 joinedAt: new Date().toISOString(),
               },
             });
+            clearTimeout(timeout);
+            supabase.removeChannel(channel);
             resolve();
           }
         });
-        // Timeout an toàn 1.5s nếu mạng chậm
-        setTimeout(resolve, 1500);
       });
 
-      // Chuyển hướng sang màn hình thi đấu
-      navigate(`/arena/play?pin=${cleanPin}&name=${encodeURIComponent(cleanNick)}`);
+      // Chuyển hướng sang màn hình thi đấu (ở trạng thái Sảnh chờ)
+      navigate(`/arena/play?pin=${cleanPin}&name=${encodeURIComponent(cleanNick)}&playerId=${encodeURIComponent(playerId)}`);
     } catch (err: any) {
       setError(err.message || 'Lỗi tham gia phòng');
       setIsLoading(false);

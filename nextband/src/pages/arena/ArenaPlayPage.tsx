@@ -28,11 +28,15 @@ interface PlayerCandidate {
   gold: number;
 }
 
+type StudentGameState = 'LOBBY_WAITING' | 'QUESTION_LIVE' | 'ROUND_LOCKED' | 'ROUND_REVEAL';
+
 export default function ArenaPlayPage() {
   const [searchParams] = useSearchParams();
   const pin = searchParams.get('pin') || '111999';
   const nickname = searchParams.get('name') || 'Học viên';
+  const playerId = searchParams.get('playerId') || `p_${Date.now()}`;
 
+  const [gameState, setGameState] = useState<StudentGameState>('LOBBY_WAITING');
   const [gameMode, setGameMode] = useState<'CLASSIC' | 'GOLD_QUEST'>('CLASSIC');
   const [gold, setGold] = useState<number>(0);
   const [playersList, setPlayersList] = useState<PlayerCandidate[]>([]);
@@ -47,29 +51,66 @@ export default function ArenaPlayPage() {
   const { playClickSound, playCorrectSound, playWrongSound } = useArenaAudio();
   const channelRef = useRef<any>(null);
 
-  // Lắng nghe broadcast từ Host
+  // Lắng nghe broadcast và Presence từ Host
   useEffect(() => {
     if (!pin) return;
     const channelName = `arena-room-${pin}`;
-    const channel = supabase.channel(channelName);
+    const channel = supabase.channel(channelName, {
+      config: {
+        broadcast: { ack: true },
+        presence: { key: nickname },
+      },
+    });
+
+    const announcePresence = async () => {
+      try {
+        await channel.track({
+          id: playerId,
+          name: nickname,
+          avatarSeed: nickname,
+          rank: 'Học viên',
+          joinedAt: new Date().toISOString(),
+        });
+        await channel.send({
+          type: 'broadcast',
+          event: 'player-joined',
+          payload: {
+            id: playerId,
+            name: nickname,
+            avatarSeed: nickname,
+            rank: 'Học viên',
+            joinedAt: new Date().toISOString(),
+          },
+        });
+      } catch (e) {
+        console.error('[NextQuiz] Error announcing presence:', e);
+      }
+    };
 
     channel
+      .on('broadcast', { event: 'lobby-ping' }, () => {
+        announcePresence();
+      })
       .on('broadcast', { event: 'arena-started' }, ({ payload }) => {
         if (payload?.gameMode) setGameMode(payload.gameMode);
         if (payload?.timeLimit) setTimeLeft(payload.timeLimit);
         else setTimeLeft(15);
 
+        setGameState('QUESTION_LIVE');
         setIsLocked(false);
         setHasSubmitted(false);
         setSelectedOptionId(null);
         setShowResult(false);
         setIsChestModalOpen(false);
+        playClickSound();
       })
       .on('broadcast', { event: 'round-locked' }, () => {
         setIsLocked(true);
+        setGameState('ROUND_LOCKED');
       })
       .on('broadcast', { event: 'round-reveal' }, () => {
         setShowResult(true);
+        setGameState('ROUND_REVEAL');
       })
       .on('broadcast', { event: 'players-sync' }, ({ payload }) => {
         if (payload?.players) {
@@ -81,31 +122,50 @@ export default function ArenaPlayPage() {
           setGold((prev) => Math.max(0, prev - (payload.amount || 0)));
           playWrongSound();
         }
-      })
-      .subscribe();
+      });
+
+    channel.subscribe(async (status) => {
+      if (status === 'SUBSCRIBED') {
+        announcePresence();
+      }
+    });
 
     channelRef.current = channel;
 
+    // Heartbeat định kỳ re-announce khi đang ở sảnh chờ để Host không bao giờ miss
+    const heartbeatTimer = setInterval(() => {
+      if (gameState === 'LOBBY_WAITING') {
+        announcePresence();
+      }
+    }, 2000);
+
     return () => {
+      clearInterval(heartbeatTimer);
       supabase.removeChannel(channel);
     };
-  }, [pin, nickname, playWrongSound]);
+  }, [pin, nickname, playerId, gameState, playClickSound, playWrongSound]);
 
-  // Đếm lùi thời gian vòng
+  // Đếm lùi thời gian vòng: CHỈ chạy khi trận đấu ĐÃ BẮT ĐẦU (QUESTION_LIVE) và chưa bị khóa
   useEffect(() => {
+    if (gameState !== 'QUESTION_LIVE' || isLocked) return;
+
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
           setIsLocked(true);
-          setTimeout(() => setShowResult(true), 2500);
+          setGameState('ROUND_LOCKED');
+          setTimeout(() => {
+            setShowResult(true);
+            setGameState('ROUND_REVEAL');
+          }, 2500);
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [gameState, isLocked]);
 
   const isCorrect = selectedOptionId === 'opt_A';
 
@@ -216,7 +276,42 @@ export default function ArenaPlayPage() {
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col justify-center my-4 space-y-4">
-        {!showResult ? (
+        {gameState === 'LOBBY_WAITING' ? (
+          /* SẢNH CHỜ HỌC VIÊN - CHUẨN KAHOOT ZERO-FLUFF */
+          <div className="flex-1 flex flex-col items-center justify-center text-center space-y-6 py-6 animate-fadeIn">
+            <div className="relative">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center text-4xl font-black text-white shadow-xl shadow-orange-500/30 border-4 border-white/20 animate-pulse">
+                {nickname.charAt(0).toUpperCase()}
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-emerald-500 border-3 border-[#150a33] flex items-center justify-center shadow-lg">
+                <span className="w-3 h-3 rounded-full bg-white animate-ping" />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-emerald-500/15 border border-emerald-500/30 rounded-full text-emerald-400 text-xs font-bold">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> ĐÃ VÀO PHÒNG
+              </div>
+              <h2 className="text-3xl font-black text-white tracking-tight">{nickname}</h2>
+              <p className="text-sm text-slate-300 max-w-xs mx-auto">
+                Nhìn lên màn chiếu của giáo viên. Trận đấu sẽ bắt đầu ngay khi giáo viên bấm Bắt đầu!
+              </p>
+            </div>
+
+            <div className="p-4 bg-white/5 border border-white/10 rounded-2xl w-full max-w-xs space-y-2.5 text-xs text-slate-300 backdrop-blur-sm">
+              <div className="flex justify-between items-center text-slate-400">
+                <span>Phòng đấu PIN:</span>
+                <span className="font-mono font-black text-orange-400 text-sm tracking-wider">{pin}</span>
+              </div>
+              <div className="flex justify-between items-center text-slate-400">
+                <span>Trạng thái:</span>
+                <span className="font-bold text-amber-300 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" /> Đang đợi Host...
+                </span>
+              </div>
+            </div>
+          </div>
+        ) : !showResult ? (
           <>
             {/* Round info & prompt */}
             <div className="text-center space-y-1">
