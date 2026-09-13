@@ -90,6 +90,7 @@ export type HostCommandType =
   | 'START_DEBRIEF'
   | 'SHOW_LEADERBOARD'
   | 'NEXT_ROUND'
+  | 'RESTART_ARENA'
   | 'FINISH_ARENA';
 
 export interface HostCommand {
