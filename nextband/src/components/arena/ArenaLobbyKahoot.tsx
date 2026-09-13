@@ -153,7 +153,7 @@ export const ArenaLobbyKahoot: React.FC<ArenaLobbyKahootProps> = React.memo(({
               ĐẤU TRƯỜNG ARIS
             </h2>
             <span className="text-xs text-purple-200/80 font-bold uppercase tracking-wider">
-              Realtime Classroom Arena
+              NextQuiz Classroom
             </span>
           </div>
         </div>

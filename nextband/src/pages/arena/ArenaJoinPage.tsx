@@ -91,7 +91,7 @@ export default function ArenaJoinPage() {
         {/* Title & Brand */}
         <div className="text-center space-y-2">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-orange-500/10 border border-orange-500/30 rounded-full text-orange-400 text-xs font-bold">
-            <Sparkles className="w-3.5 h-3.5" /> NextBand Arena
+            <Sparkles className="w-3.5 h-3.5" /> NextQuiz
           </div>
           <h1 className="text-3xl font-black text-white tracking-tight">VÀO PHÒNG ĐẤU</h1>
           <p className="text-xs text-slate-400">Nhập mã PIN hiển thị trên màn chiếu hoặc quét mã QR</p>

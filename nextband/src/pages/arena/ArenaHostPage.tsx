@@ -1,4 +1,4 @@
-﻿/**
+/**
  * TEACHER HOST VIEW (/arena/host)
  * Màn hình trình chiếu của Giáo viên cho phòng học 10-20 học viên.
  * Hỗ trợ 2 chế độ:
@@ -321,12 +321,12 @@ export default function ArenaHostPage() {
       <header className="flex items-center justify-between border-b border-purple-900/40 pb-4">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-orange-500/20 border border-orange-500/40 flex items-center justify-center text-orange-400 font-black text-sm">
-            NA
+            NQ
           </div>
           <div>
-            <h1 className="text-base font-black tracking-wide text-slate-200">CLASS ARENA</h1>
+            <h1 className="text-base font-black tracking-wide text-slate-200">NEXTQUIZ</h1>
             <span className="text-xs text-purple-300/70 font-medium">
-              NextBand Classroom Engine · {roomSettings.gameMode === 'GOLD_QUEST' ? 'Chế độ Cướp Vàng 💰' : 'Chế độ Cổ điển 🎯'}
+              NextQuiz Classroom Engine · {roomSettings.gameMode === 'GOLD_QUEST' ? 'Chế độ Cướp Vàng 💰' : 'Chế độ Cổ điển 🎯'}
             </span>
           </div>
         </div>

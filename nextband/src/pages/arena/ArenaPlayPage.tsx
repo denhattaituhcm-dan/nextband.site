@@ -305,7 +305,7 @@ export default function ArenaPlayPage() {
 
       {/* Footer */}
       <footer className="text-center py-2 border-t border-purple-900/40 text-[11px] text-purple-300/60 font-medium">
-        NextBand Arena · Đấu trường Aris
+        NextQuiz
       </footer>
 
       {/* Modal Mở Rương Kho Báu & Cướp Vàng */}
