@@ -315,15 +315,6 @@ export default function ResultsPage() {
                       </span>
                       <span className="font-mono font-black text-slate-900">{totalCount}+ Học viên</span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold text-slate-600 flex items-center gap-1.5">
-                        <Award className="h-4 w-4 text-amber-500" />
-                        Tỷ lệ học viên đạt Band 7.0+:
-                      </span>
-                      <span className="font-mono font-black text-brand-blue">
-                        {totalCount > 0 ? Math.round((highBandCount / totalCount) * 100) : 85}%
-                      </span>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -507,7 +498,7 @@ export default function ResultsPage() {
               </div>
 
               <div className="flex flex-wrap items-baseline gap-3">
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 font-serif sm:font-sans">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 font-sans">
                   Kim Khoa Bảng
                 </h2>
               </div>
@@ -516,7 +507,7 @@ export default function ResultsPage() {
               <div className="p-3.5 sm:p-4 rounded-2xl bg-amber-50/80 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-800/40 shadow-2xs">
                 <div className="flex items-center gap-2.5">
                   <Sparkles className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />
-                  <p className="text-sm sm:text-base font-semibold text-amber-950 dark:text-amber-100 font-serif italic tracking-wide">
+                  <p className="text-sm sm:text-base font-medium text-amber-950 dark:text-amber-100 italic tracking-normal">
                     "Trăm ngày mài giũa thành cốt cách — Vạn dặm tu luyện đắc Kim Khoa."
                   </p>
                 </div>
