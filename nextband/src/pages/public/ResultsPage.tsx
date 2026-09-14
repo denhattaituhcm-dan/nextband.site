@@ -71,7 +71,6 @@ export default function ResultsPage() {
   });
 
   const totalCount = evidenceList.length;
-  const highBandCount = evidenceList.filter((item) => parseFloat(item.overallScore) >= 7.0).length;
 
   return (
     <div className="flex flex-col bg-background font-sans text-foreground selection:bg-brand-blue selection:text-white">
