@@ -11,6 +11,10 @@
     {
       "path": "/api/v1/cron/weekly-snapshot",
       "schedule": "15 11 * * 0"
+    },
+    {
+      "path": "/api/v1/cron/class-maintenance",
+      "schedule": "0 17 * * *"
     }
   ],
   "rewrites": [

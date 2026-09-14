@@ -17,8 +17,11 @@ export class SpeakingStorageService {
 
   constructor(private prisma: PrismaClient) {
     const supabaseUrl = env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co";
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGRscXhqZ2d5eGxrZWF0dnZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyOTc3NjMsImV4cCI6MjEwMDg3Mzc2M30.M7uMAo2qJCDQtxQMP-_58VKF1LfSBdwR31gpvqcCN6I";
-    this.supabase = createClient(supabaseUrl, supabaseKey);
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || "";
+    if (!supabaseKey) {
+      console.warn("[SpeakingStorageService] ⚠️ SUPABASE_SERVICE_ROLE_KEY is not configured in environment.");
+    }
+    this.supabase = createClient(supabaseUrl, supabaseKey || "dummy_key_for_unconfigured_storage");
   }
 
   /**

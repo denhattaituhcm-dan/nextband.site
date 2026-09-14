@@ -362,9 +362,23 @@ const App = () => (
               <Route path="/assessment/take" element={<Navigate to="/assessment" replace />} />
               
               {/* Class Arena Live Routes */}
-              <Route path="/arena/host" element={<ArenaHostPage />} />
+              <Route
+                path="/arena/host"
+                element={
+                  <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                    <ArenaHostPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/arena/join" element={<ArenaJoinPage />} />
-              <Route path="/arena/play" element={<ArenaPlayPage />} />
+              <Route
+                path="/arena/play"
+                element={
+                  <ProtectedRoute>
+                    <ArenaPlayPage />
+                  </ProtectedRoute>
+                }
+              />
 
               {/* ============================================================ */}
               {/* 1.2 PARENT PROGRESS HUB (Zero-Login Magic Link View)         */}
