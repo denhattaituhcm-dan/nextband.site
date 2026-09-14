@@ -563,6 +563,90 @@ export default function AssessmentPage() {
         </div>
       </SectionContainer>
 
+      {/* ========================================================================= */}
+      {/* 04. ENROLLMENT & LEARNING PROCEDURE (QUY TRÌNH TIẾP THEO SAU KHẢO THÍ)     */}
+      {/* ========================================================================= */}
+      <SectionContainer
+        id="procedure-section"
+        badge="Các Bước Tiếp Theo"
+        title="Quy trình sau khi đăng ký khảo thí"
+        description="Từ khi hoàn thành khảo thí đến khi bắt đầu học tập và bứt phá điểm số tại ARIS."
+        background="default"
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center text-left">
+          {/* Cột trái: Tóm tắt 4 bước rõ ràng */}
+          <div className="lg:col-span-6 space-y-4">
+            <div className="flex gap-4 items-start p-4 rounded-2xl bg-card border border-border/80 shadow-2xs">
+              <div className="w-8 h-8 rounded-xl bg-brand-blue-soft text-brand-blue flex items-center justify-center font-black text-sm shrink-0 mt-0.5">
+                1
+              </div>
+              <div className="space-y-1">
+                <h4 className="font-black text-foreground text-base">
+                  Đánh Giá Năng Lực Đầu Vào
+                </h4>
+                <p className="text-sm text-foreground/75 leading-relaxed">
+                  Làm bài test chuẩn hóa 4 kỹ năng (online hoặc trực tiếp) để bóc tách chính xác điểm mạnh, điểm nghẽn và định vị Rank ARIS ban đầu.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4 items-start p-4 rounded-2xl bg-card border border-border/80 shadow-2xs">
+              <div className="w-8 h-8 rounded-xl bg-brand-blue-soft text-brand-blue flex items-center justify-center font-black text-sm shrink-0 mt-0.5">
+                2
+              </div>
+              <div className="space-y-1">
+                <h4 className="font-black text-foreground text-base">
+                  Tư Vấn &amp; Xếp Lộ Trình Mục Tiêu
+                </h4>
+                <p className="text-sm text-foreground/75 leading-relaxed">
+                  Giảng viên chuyên môn gửi báo cáo phân tích chi tiết kết quả test qua Zalo/gặp 1:1, tư vấn lộ trình học phù hợp nhất với mục tiêu điểm số.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4 items-start p-4 rounded-2xl bg-card border border-border/80 shadow-2xs">
+              <div className="w-8 h-8 rounded-xl bg-brand-blue-soft text-brand-blue flex items-center justify-center font-black text-sm shrink-0 mt-0.5">
+                3
+              </div>
+              <div className="space-y-1">
+                <h4 className="font-black text-foreground text-base">
+                  Kích Hoạt Tài Khoản NextBand
+                </h4>
+                <p className="text-sm text-foreground/75 leading-relaxed">
+                  Học viên nhận tài khoản học tập trên hệ thống NextBand, nhận giáo trình chuyên sâu và làm quen với không gian nộp bài số chuẩn Cambridge.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4 items-start p-4 rounded-2xl bg-card border border-border/80 shadow-2xs">
+              <div className="w-8 h-8 rounded-xl bg-brand-blue-soft text-brand-blue flex items-center justify-center font-black text-sm shrink-0 mt-0.5">
+                4
+              </div>
+              <div className="space-y-1">
+                <h4 className="font-black text-foreground text-base">
+                  Rèn Luyện &amp; Sửa Bài 1:1 Có Bằng Chứng
+                </h4>
+                <p className="text-sm text-foreground/75 leading-relaxed">
+                  Học tập theo phương pháp The ARIS Way, giảng viên chấm chữa chi tiết từng câu và hoàn thành bài sửa bắt buộc (Re-Attempt) để tiến bộ vượt bậc.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Cột phải: Ảnh sơ đồ quy trình */}
+          <div className="lg:col-span-6 flex items-center justify-center">
+            <div className="w-full rounded-3xl border border-border/80 bg-card p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow overflow-hidden group">
+              <img
+                src="/assets/procedure/procedure.png"
+                alt="Sơ đồ quy trình nhập học & rèn luyện tại ARIS"
+                className="w-full h-auto object-contain rounded-2xl transition-transform duration-300 group-hover:scale-[1.01]"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </div>
+      </SectionContainer>
+
       {/* Quick Clean-Room Assessment Start Dialog Modal (Zalo-inspired 2-tier Card & Pill CTA) */}
       <Dialog open={isStartModalOpen} onOpenChange={setIsStartModalOpen}>
         <DialogContent className="sm:max-w-[480px] p-0 rounded-3xl bg-card border border-border overflow-hidden shadow-2xl">
