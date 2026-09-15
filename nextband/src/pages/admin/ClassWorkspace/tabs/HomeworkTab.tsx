@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HomeworkSidebar, HomeworkItemData } from "../components/HomeworkSidebar";
-// import { ActivityChecklist } from "../components/ActivityChecklist";
+
 import { PendingSubmissionsList } from "../components/PendingSubmissionsList";
 import { SetHomeworkDeadlineModal } from "../components/SetHomeworkDeadlineModal";
 import {
