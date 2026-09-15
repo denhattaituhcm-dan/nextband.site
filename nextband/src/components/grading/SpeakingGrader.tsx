@@ -65,6 +65,7 @@ import {
 
 import { formatStorageUrl } from "@/lib/api";
 import { calculateGradingSla } from "@/lib/gradingSla";
+import { isSubmissionGraded } from "@/lib/homeworkStatusHelper";
 
 import { cn } from "@/lib/utils";
 import { AudioStorageService } from "@/lib/audioStorageService";

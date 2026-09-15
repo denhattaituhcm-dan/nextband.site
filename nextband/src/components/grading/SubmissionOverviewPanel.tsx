@@ -24,6 +24,7 @@ import {
   getSkillBadgeConfig,
   ExamSkillType,
 } from "@/lib/examSkillHelper";
+import { isSubmissionGraded, isSubmissionPending } from "@/lib/homeworkStatusHelper";
 
 interface SubmissionOverviewPanelProps {
   homework: {
@@ -86,12 +87,12 @@ export function SubmissionOverviewPanel({
   const correctQuestions = resolvedAnswers.filter((a) => a.score != null && Number(a.score) > 0).length;
   const correctScore = homework.objectiveScore ?? homework.score ?? (correctQuestions > 0 ? correctQuestions : answeredQuestions);
 
-  const hasStudentActivity = answeredQuestions > 0 || homework.status === "submitted" || homework.status === "graded" || (homework.score != null && Number(homework.score) > 0);
+  const hasStudentActivity = answeredQuestions > 0 || isSubmissionPending(homework.status) || isSubmissionGraded(homework.status) || (homework.score != null && Number(homework.score) > 0);
 
   const isManual = detectedSkill === "speaking" || detectedSkill === "writing";
   const isGraded = isManual
-    ? homework.status === "graded" || (homework.bandScore != null && Number(homework.bandScore) > 0)
-    : homework.status === "graded" || isAutoGraded || (homework.score != null && Number(homework.score) > 0);
+    ? isSubmissionGraded(homework.status) || (homework.bandScore != null && Number(homework.bandScore) > 0)
+    : isSubmissionGraded(homework.status) || isAutoGraded || (homework.score != null && Number(homework.score) > 0);
   const bandScore = homework.score ?? homework.bandScore ?? homework.objectiveScore ?? null;
 
   const criteria = currentAnswer?.feedback

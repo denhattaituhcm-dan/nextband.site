@@ -54,6 +54,7 @@ import {
   getSkillBadgeConfig,
   ExamSkillType,
 } from "@/lib/examSkillHelper";
+import { isSubmissionGraded } from "@/lib/homeworkStatusHelper";
 
 export interface WritingAnswerItem {
   id?: string;
@@ -475,14 +476,14 @@ export function WritingGrader({
               <Badge
                 variant="outline"
                 className={
-                  String(submissionStatus || "").toUpperCase() === "GRADED" || isAutoGraded
+                  isSubmissionGraded(submissionStatus) || isAutoGraded
                     ? "bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]"
                     : "bg-blue-50 text-blue-700 border-blue-200 text-[11px]"
                 }
               >
-                {String(submissionStatus || "").toUpperCase() === "GRADED" || isAutoGraded ? "Đã chấm điểm" : "Chờ chấm"}
+                {isSubmissionGraded(submissionStatus) || isAutoGraded ? "Đã chấm điểm" : "Chờ chấm"}
               </Badge>
-              {String(submissionStatus || "").toUpperCase() !== "GRADED" && !isAutoGraded && submittedAt && (() => {
+              {!isSubmissionGraded(submissionStatus) && !isAutoGraded && submittedAt && (() => {
                 const sla = calculateGradingSla(submittedAt, null, submissionStatus);
                 const badgeClass = sla.status === "OVERDUE"
                   ? "bg-rose-50 text-rose-700 border-rose-200 text-[11px] font-bold"

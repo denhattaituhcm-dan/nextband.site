@@ -371,14 +371,7 @@ const App = () => (
                 }
               />
               <Route path="/arena/join" element={<ArenaJoinPage />} />
-              <Route
-                path="/arena/play"
-                element={
-                  <ProtectedRoute>
-                    <ArenaPlayPage />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/arena/play" element={<ArenaPlayPage />} />
 
               {/* ============================================================ */}
               {/* 1.2 PARENT PROGRESS HUB (Zero-Login Magic Link View)         */}

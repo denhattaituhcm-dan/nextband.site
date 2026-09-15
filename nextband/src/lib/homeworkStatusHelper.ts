@@ -14,6 +14,27 @@ export type CanonicalVisualStatus =
   | "IN_PROGRESS"       // Đang làm trong hạn
   | "UPCOMING";         // Chưa làm và còn trong hạn
 
+/**
+ * Robust status predicate helpers that safely handle both uppercase & lowercase representations
+ */
+export function isSubmissionGraded(status?: string | null): boolean {
+  if (!status) return false;
+  const s = String(status).toUpperCase().trim();
+  return s === "GRADED";
+}
+
+export function isSubmissionPending(status?: string | null): boolean {
+  if (!status) return false;
+  const s = String(status).toUpperCase().trim();
+  return s === "SUBMITTED" || s === "GRADING";
+}
+
+export function isSubmissionRevision(status?: string | null): boolean {
+  if (!status) return false;
+  const s = String(status).toUpperCase().trim();
+  return s === "REVISION_REQUIRED" || s === "NEEDS_REVISION";
+}
+
 export interface VisualStatusParams {
   submissionStatus?: string | null;
   revisionRequired?: boolean;
