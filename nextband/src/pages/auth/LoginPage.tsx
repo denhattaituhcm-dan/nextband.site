@@ -60,7 +60,7 @@ export default function LoginPage() {
   // Chỉ dùng rawFrom nếu là protected route — tránh redirect về trang công khai sau login
   const validFrom =
     rawFrom &&
-    (rawFrom.startsWith("/app") || rawFrom.startsWith("/admin"))
+    (rawFrom.startsWith("/app") || rawFrom.startsWith("/admin") || rawFrom.startsWith("/exam"))
       ? rawFrom
       : null;
   const savedTarget = sessionStorage.getItem("auth_redirect_target");

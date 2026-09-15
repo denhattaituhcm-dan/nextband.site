@@ -579,14 +579,14 @@ export function SpeakingGrader({
               <Badge
                 variant="outline"
                 className={
-                  submissionStatus === "GRADED"
+                  String(submissionStatus || "").toUpperCase() === "GRADED"
                     ? "bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]"
                     : "bg-blue-50 text-blue-700 border-blue-200 text-[11px]"
                 }
               >
-                {submissionStatus === "GRADED" ? "Đã chấm điểm" : "Chờ chấm"}
+                {String(submissionStatus || "").toUpperCase() === "GRADED" ? "Đã chấm điểm" : "Chờ chấm"}
               </Badge>
-              {submissionStatus !== "GRADED" && submittedAt && (() => {
+              {String(submissionStatus || "").toUpperCase() !== "GRADED" && submittedAt && (() => {
                 const sla = calculateGradingSla(submittedAt, null, submissionStatus);
                 const badgeClass = sla.status === "OVERDUE"
                   ? "bg-rose-50 text-rose-700 border-rose-200 text-[11px] font-bold"
