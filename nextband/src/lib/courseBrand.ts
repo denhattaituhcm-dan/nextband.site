@@ -15,8 +15,8 @@ export interface CourseBrandInfo {
 const COURSE_BRANDS: Record<string, CourseBrandInfo> = {
   starter: {
     key: 'starter',
-    code: 'ST',
-    name: 'Starter',
+    code: 'DR',
+    name: 'Dreamer',
     band: 'Band 3.0',
     hex: '#D83A94',
     avatarClass: 'bg-fuchsia-100 text-fuchsia-700 border-fuchsia-200 dark:bg-fuchsia-950/60 dark:text-fuchsia-300 dark:border-fuchsia-800',
@@ -28,8 +28,8 @@ const COURSE_BRANDS: Record<string, CourseBrandInfo> = {
   },
   dreamer: {
     key: 'dreamer',
-    code: 'DR',
-    name: 'Dreamer',
+    code: 'DO',
+    name: 'Doer',
     band: 'Band 4.0',
     hex: '#2582D7',
     avatarClass: 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800',
@@ -174,16 +174,27 @@ export function getCourseBrand(
 
   const primaryText = `${slugStr} ${titleStr}`.toLowerCase();
 
-  // 1. Check Starter (ST - Pink/Fuchsia)
+  // 1. Check Doer (DO / D\d+ - Blue, Band 3.0 -> 4.0)
+  if (
+    primaryText.includes('doer') ||
+    /\b(do)\b/i.test(titleStr) ||
+    /\b(dr|d\d+)\b/i.test(titleStr) ||
+    /^d\d+/i.test(titleStr)
+  ) {
+    return COURSE_BRANDS.dreamer;
+  }
+
+  // 2. Check Dreamer / Starter (ST / DR - Pink/Fuchsia, Band Đầu ra 3.0)
   if (
     primaryText.includes('starter') ||
+    primaryText.includes('dreamer') ||
     /\b(st|s\d+)\b/i.test(titleStr) ||
     /^s\d+/i.test(titleStr)
   ) {
     return COURSE_BRANDS.starter;
   }
 
-  // 2. Check Leader (LE - Rose/Red)
+  // 3. Check Leader (LE - Rose/Red)
   if (
     primaryText.includes('leader') ||
     /\b(le|l\d+)\b/i.test(titleStr) ||
@@ -192,7 +203,7 @@ export function getCourseBrand(
     return COURSE_BRANDS.leader;
   }
 
-  // 3. Check Master (MA - Green)
+  // 4. Check Master (MA - Green)
   if (
     primaryText.includes('master') ||
     /\b(ma|m\d+)\b/i.test(titleStr) ||
@@ -201,22 +212,13 @@ export function getCourseBrand(
     return COURSE_BRANDS.master;
   }
 
-  // 4. Check Builder (BU - Orange)
+  // 5. Check Builder (BU - Orange)
   if (
     primaryText.includes('builder') ||
     /\b(bu|b\d+)\b/i.test(titleStr) ||
     /^b\d+/i.test(titleStr)
   ) {
     return COURSE_BRANDS.builder;
-  }
-
-  // 5. Check Dreamer (DR - Blue)
-  if (
-    primaryText.includes('dreamer') ||
-    /\b(dr|d\d+)\b/i.test(titleStr) ||
-    /^d\d+/i.test(titleStr)
-  ) {
-    return COURSE_BRANDS.dreamer;
   }
 
   // 6. Check Placement Test (PL - Indigo)

@@ -145,7 +145,7 @@ export const IELTS_LEVEL_ROADMAP: LevelRoadmapConfig[] = [
   },
   {
     key: "dreamer",
-    name: "KHÓA DREAMER",
+    name: "KHÓA DOER",
     band: "3.0 → 4.0",
     duration: "09 TUẦN",
     entry: "IELTS 3.0",
@@ -162,7 +162,7 @@ export const IELTS_LEVEL_ROADMAP: LevelRoadmapConfig[] = [
   },
   {
     key: "starter",
-    name: "KHÓA STARTER",
+    name: "KHÓA DREAMER",
     band: "ĐẦU RA 3.0",
     duration: "09 TUẦN",
     entry: "Các bạn mất gốc tiếng Anh",
@@ -1017,13 +1017,13 @@ export default function AdminClasses() {
               <SelectItem value="course_dreamer">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-blue-500 shrink-0" />
-                  <span className="font-medium text-blue-700 dark:text-blue-300">Khóa DREAMER (3.0 → 4.0)</span>
+                  <span className="font-medium text-blue-700 dark:text-blue-300">Khóa DOER (3.0 → 4.0)</span>
                 </div>
               </SelectItem>
               <SelectItem value="course_starter">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-fuchsia-500 shrink-0" />
-                  <span className="font-medium text-fuchsia-700 dark:text-fuchsia-300">Khóa STARTER (Đầu ra 3.0)</span>
+                  <span className="font-medium text-fuchsia-700 dark:text-fuchsia-300">Khóa DREAMER (Đầu ra 3.0)</span>
                 </div>
               </SelectItem>
 
