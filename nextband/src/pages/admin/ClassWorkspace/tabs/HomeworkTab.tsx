@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HomeworkSidebar, HomeworkItemData } from "../components/HomeworkSidebar";
-import { ActivityChecklist } from "../components/ActivityChecklist";
+// import { ActivityChecklist } from "../components/ActivityChecklist";
 import { PendingSubmissionsList } from "../components/PendingSubmissionsList";
 import { SetHomeworkDeadlineModal } from "../components/SetHomeworkDeadlineModal";
 import {
@@ -170,9 +170,6 @@ export const HomeworkTab: React.FC = () => {
                     <CardTitle className="text-lg font-bold flex items-center gap-2 text-slate-900 dark:text-slate-100">
                       {selectedHw.title}
                     </CardTitle>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Checklist {selectedHw.skills.length} hoạt động thực tế thuộc bài học này
-                    </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="text-xs font-semibold text-emerald-700 border-emerald-300">
@@ -248,8 +245,7 @@ export const HomeworkTab: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Modular ActivityChecklist Component */}
-                <ActivityChecklist skills={selectedHw.skills} />
+
 
                 {/* Modular PendingSubmissionsList Component */}
                 <PendingSubmissionsList

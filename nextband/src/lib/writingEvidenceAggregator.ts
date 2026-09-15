@@ -37,6 +37,10 @@ export const WRITING_TAG_METADATA: Record<string, { labelVi: string; tip: string
     labelVi: "Hòa hợp Chủ ngữ - Động từ",
     tip: "Chú ý chia động từ số ít (thêm -s/-es) với chủ ngữ ngôi thứ ba số ít ở thì Hiện tại đơn.",
   },
+  "Article & Noun Number": {
+    labelVi: "Mạo từ & Số ít / Số nhiều của danh từ",
+    tip: "Danh từ đếm được không thể đứng trơ trọi: phải có mạo từ (a/an/the), từ hạn định hoặc ở dạng số nhiều (thêm -s/-es).",
+  },
   "Tense / Aspect": {
     labelVi: "Chia thì & Thể của động từ",
     tip: "Xác định rõ mốc thời gian của ngữ cảnh trước khi chọn thì quá khứ, hiện tại hay hoàn thành.",

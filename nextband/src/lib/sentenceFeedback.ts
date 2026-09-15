@@ -523,6 +523,7 @@ export function calculateIELTSOverall(avgOrScores: number | number[]): number {
 export const PRESET_ERROR_TAGS: Record<ErrorCategory, string[]> = {
   GRAMMAR: [
     "Subject-Verb Agreement",
+    "Article & Noun Number",
     "Tense / Aspect",
     "Preposition / Article",
     "Word Form",
