@@ -24,7 +24,7 @@ export const DEFAULT_ROOM_SETTINGS: RoomSettings = {
   gameMode: 'CLASSIC',
   timeLimit: 15,
   scoringMode: 'standard',
-  maxSlots: 12,
+  maxSlots: 24,
   showDebrief: true,
   autoLockOnAllAnswered: true,
 };
@@ -172,7 +172,7 @@ export const HostSettingsModal: React.FC<HostSettingsModalProps> = ({
             <span className="text-blue-400 font-mono text-sm">{localSettings.maxSlots} Slots</span>
           </div>
           <div className="grid grid-cols-4 gap-2">
-            {[10, 12, 16, 20].map((s) => (
+            {[12, 16, 20, 24].map((s) => (
               <button
                 key={s}
                 type="button"
@@ -183,7 +183,7 @@ export const HostSettingsModal: React.FC<HostSettingsModalProps> = ({
                     : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10'
                 }`}
               >
-                {s} chỗ {s === 12 && <span className="text-[10px] opacity-75">(Chuẩn)</span>}
+                {s} chỗ {s === 24 && <span className="text-[10px] opacity-75">(Chuẩn)</span>}
               </button>
             ))}
           </div>

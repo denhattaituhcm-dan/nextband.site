@@ -72,6 +72,14 @@ export default function ArenaHostPage() {
   } = useArenaAudio();
 
   const channelRef = useRef<any>(null);
+  const stateRef = useRef<ArenaState>(state);
+  stateRef.current = state;
+  const currentQuestionRef = useRef<ArenaQuestion>(currentQuestion);
+  currentQuestionRef.current = currentQuestion;
+  const roomSettingsRef = useRef<RoomSettings>(roomSettings);
+  roomSettingsRef.current = roomSettings;
+  const pinCodeRef = useRef<string>(pinCode);
+  pinCodeRef.current = pinCode;
 
   // Lắng nghe học sinh tham gia realtime và các sự kiện cướp vàng qua Supabase Broadcast Channel
   useEffect(() => {
@@ -112,33 +120,62 @@ export default function ArenaHostPage() {
         });
       })
       .on('broadcast', { event: 'player-joined' }, ({ payload }) => {
-        if (!payload || !payload.name) return;
+        if (!payload || !payload.id || !payload.name) return;
         setPlayers((prev) => {
-          if (prev.some((p) => p.name.trim().toLowerCase() === payload.name.trim().toLowerCase())) {
+          if (prev.some((p) => p.id === payload.id)) {
             return prev;
           }
           const newPlayer = {
-            id: payload.id || `p_${Date.now()}`,
+            id: payload.id,
             name: payload.name.trim(),
-            avatarSeed: payload.avatarSeed || payload.name,
+            avatarSeed: payload.avatarSeed ?? payload.name,
             rank: payload.rank || 'Học viên',
             joinedAt: payload.joinedAt || new Date().toISOString(),
           };
           return [...prev, newPlayer];
         });
-        setPlayerGoldMap((prev) => ({ ...prev, [payload.name.trim()]: 0 }));
+        setPlayerGoldMap((prev) => ({ ...prev, [payload.name.trim()]: prev[payload.name.trim()] ?? 0 }));
         playClickSound();
+
+        // Gửi ngay ACK xác nhận danh tính học sinh đã được Host ghi nhận
+        channel.send({
+          type: 'broadcast',
+          event: 'player-joined-ack',
+          payload: {
+            playerId: payload.id,
+            pin: pinCode,
+            accepted: true,
+          },
+        });
+      })
+      .on('broadcast', { event: 'player-sync-request' }, ({ payload }) => {
+        if (!payload || !payload.playerId) return;
+        // Phản hồi trạng thái hiện tại của phòng cho học sinh
+        channel.send({
+          type: 'broadcast',
+          event: 'player-sync-response',
+          payload: {
+            targetPlayerId: payload.playerId,
+            pin: pinCodeRef.current,
+            state: stateRef.current,
+            questionIndex,
+            totalQuestions,
+            question: currentQuestionRef.current,
+            timeLeft,
+            gameMode: roomSettingsRef.current.gameMode,
+          },
+        });
       })
       .on('broadcast', { event: 'player-answered' }, ({ payload }) => {
         if (!payload || !payload.nickname) return;
         const optionId = payload.optionId;
-        const isCorrect = optionId === currentQuestion.correctOptionId;
+        const isCorrect = optionId === currentQuestionRef.current.correctOptionId;
         
         let score = 0;
         if (isCorrect) {
-          if (roomSettings.scoringMode === 'double') {
+          if (roomSettingsRef.current.scoringMode === 'double') {
             score = (100 + (payload.timeLeft || 1) * 10) * 2;
-          } else if (roomSettings.scoringMode === 'no_points') {
+          } else if (roomSettingsRef.current.scoringMode === 'no_points') {
             score = 0;
           } else {
             score = 100 + (payload.timeLeft || 1) * 10;
@@ -204,7 +241,7 @@ export default function ArenaHostPage() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [pinCode, playClickSound, playClimberSound, roomSettings.scoringMode]);
+  }, [pinCode]);
 
   // Ping định kỳ học sinh đang chờ trong Lobby để sync danh sách
   useEffect(() => {

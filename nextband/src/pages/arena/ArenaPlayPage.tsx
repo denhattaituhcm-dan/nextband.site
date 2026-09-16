@@ -65,9 +65,21 @@ export default function ArenaPlayPage() {
   const [timeLeft, setTimeLeft] = useState<number>(15);
   const [isLocked, setIsLocked] = useState<boolean>(false);
   const [showResult, setShowResult] = useState<boolean>(false);
+  const [isJoinedAcknowledged, setIsJoinedAcknowledged] = useState<boolean>(false);
 
   const { playClickSound, playCorrectSound, playWrongSound } = useArenaAudio();
   const channelRef = useRef<any>(null);
+
+  const nicknameRef = useRef<string>(nickname);
+  nicknameRef.current = nickname;
+  const avatarIdRef = useRef<number>(avatarId);
+  avatarIdRef.current = avatarId;
+  const gameStateRef = useRef<StudentGameState>(gameState);
+  gameStateRef.current = gameState;
+  const playClickSoundRef = useRef(playClickSound);
+  playClickSoundRef.current = playClickSound;
+  const playWrongSoundRef = useRef(playWrongSound);
+  playWrongSoundRef.current = playWrongSound;
 
   // Self-Healing Watchdog: Tự động khôi phục nếu mất đồng bộ hoặc drop kết nối
   const handleResyncRequired = useCallback(() => {
@@ -101,20 +113,13 @@ export default function ArenaPlayPage() {
 
     const announcePresence = async () => {
       try {
-        await channel.track({
-          id: playerId,
-          name: nickname,
-          avatarSeed: avatarId,
-          rank: 'Học viên',
-          joinedAt: new Date().toISOString(),
-        });
         await channel.send({
           type: 'broadcast',
           event: 'player-joined',
           payload: {
             id: playerId,
-            name: nickname,
-            avatarSeed: avatarId,
+            name: nicknameRef.current,
+            avatarSeed: avatarIdRef.current,
             rank: 'Học viên',
             joinedAt: new Date().toISOString(),
           },
@@ -125,6 +130,28 @@ export default function ArenaPlayPage() {
     };
 
     channel
+      .on('broadcast', { event: 'player-joined-ack' }, ({ payload }) => {
+        if (payload?.playerId === playerId) {
+          setIsJoinedAcknowledged(true);
+        }
+      })
+      .on('broadcast', { event: 'player-sync-response' }, ({ payload }) => {
+        if (payload?.targetPlayerId === playerId) {
+          setIsJoinedAcknowledged(true);
+          if (payload?.gameMode) setGameMode(payload.gameMode);
+          if (payload?.state) {
+            if (payload.state === 'QUESTION_LIVE') setGameState('QUESTION_LIVE');
+            else if (payload.state === 'ANSWER_LOCKED') setGameState('ROUND_LOCKED');
+            else if (payload.state === 'REVEAL_DISTRIBUTION' || payload.state === 'REVEAL_PERSONAL') setGameState('ROUND_REVEAL');
+            else if (payload.state === 'LEADERBOARD') setGameState('LEADERBOARD');
+            else if (payload.state === 'PODIUM') setGameState('PODIUM');
+          }
+          if (typeof payload?.timeLeft === 'number') setTimeLeft(payload.timeLeft);
+          if (payload?.question) setCurrentQuestion(payload.question);
+          if (typeof payload?.questionIndex === 'number') setQuestionIndex(payload.questionIndex);
+          if (typeof payload?.totalQuestions === 'number') setTotalQuestions(payload.totalQuestions);
+        }
+      })
       .on('broadcast', { event: 'lobby-ping' }, () => {
         recordHeartbeat('lobby-ping');
         announcePresence();
@@ -145,7 +172,7 @@ export default function ArenaPlayPage() {
         setSelectedOptionId(null);
         setShowResult(false);
         setIsChestModalOpen(false);
-        playClickSound();
+        playClickSoundRef.current();
       })
       .on('broadcast', { event: 'arena-started' }, ({ payload }) => {
         if (payload?.gameMode) setGameMode(payload.gameMode);
@@ -162,7 +189,7 @@ export default function ArenaPlayPage() {
         setSelectedOptionId(null);
         setShowResult(false);
         setIsChestModalOpen(false);
-        playClickSound();
+        playClickSoundRef.current();
       })
       .on('broadcast', { event: 'round-locked' }, () => {
         setIsLocked(true);
@@ -177,7 +204,7 @@ export default function ArenaPlayPage() {
         if (payload?.rankings && Array.isArray(payload.rankings)) {
           setTopRankings(payload.rankings.slice(0, 5));
           const me = payload.rankings.find(
-            (r: PlayerPublicRank) => r.nickname?.trim().toLowerCase() === nickname.trim().toLowerCase()
+            (r: PlayerPublicRank) => r.playerId === playerId || r.nickname?.trim().toLowerCase() === nicknameRef.current.trim().toLowerCase()
           );
           if (me) {
             setMyRanking({ rank: me.rank, totalScore: me.totalScore });
@@ -189,7 +216,7 @@ export default function ArenaPlayPage() {
         if (payload?.rankings && Array.isArray(payload.rankings)) {
           setTopRankings(payload.rankings.slice(0, 3));
           const me = payload.rankings.find(
-            (r: PlayerPublicRank) => r.nickname?.trim().toLowerCase() === nickname.trim().toLowerCase()
+            (r: PlayerPublicRank) => r.playerId === playerId || r.nickname?.trim().toLowerCase() === nicknameRef.current.trim().toLowerCase()
           );
           if (me) {
             setMyRanking({ rank: me.rank, totalScore: me.totalScore });
@@ -214,9 +241,9 @@ export default function ArenaPlayPage() {
         }
       })
       .on('broadcast', { event: 'gold-stolen-from-you' }, ({ payload }) => {
-        if (payload?.victimName?.trim().toLowerCase() === nickname.trim().toLowerCase()) {
+        if (payload?.victimName?.trim().toLowerCase() === nicknameRef.current.trim().toLowerCase()) {
           setGold((prev) => Math.max(0, prev - (payload.amount || 0)));
-          playWrongSound();
+          playWrongSoundRef.current();
         }
       });
 
@@ -228,18 +255,18 @@ export default function ArenaPlayPage() {
 
     channelRef.current = channel;
 
-    // Heartbeat định kỳ re-announce khi đang ở sảnh chờ để Host không bao giờ miss
-    const heartbeatTimer = setInterval(() => {
-      if (gameState === 'LOBBY_WAITING') {
+    // Định kỳ gửi lại join request khi chưa được ACK ở sảnh chờ
+    const handshakeTimer = setInterval(() => {
+      if (gameStateRef.current === 'LOBBY_WAITING' && !isJoinedAcknowledged) {
         announcePresence();
       }
     }, 2000);
 
     return () => {
-      clearInterval(heartbeatTimer);
+      clearInterval(handshakeTimer);
       supabase.removeChannel(channel);
     };
-  }, [pin, nickname, playerId, gameState, playClickSound, playWrongSound]);
+  }, [pin, playerId, isJoinedAcknowledged]);
 
   // Đếm lùi thời gian vòng: CHỈ chạy khi trận đấu ĐÃ BẮT ĐẦU (QUESTION_LIVE) và chưa bị khóa
   useEffect(() => {
@@ -274,7 +301,7 @@ export default function ArenaPlayPage() {
       setSelectedOptionId(optionId);
       setHasSubmitted(true);
 
-      const isAnsCorrect = optionId === 'opt_A';
+      const isAnsCorrect = optionId === currentQuestion.correctOptionId;
 
       // Gửi broadcast đáp án của học sinh lên Host
       if (channelRef.current) {
@@ -386,15 +413,23 @@ export default function ArenaPlayPage() {
             </div>
 
             <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-emerald-500/15 border border-emerald-500/30 rounded-full text-emerald-400 text-xs font-bold">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> ĐÃ VÀO PHÒNG
-              </div>
+              {isJoinedAcknowledged ? (
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-emerald-500/15 border border-emerald-500/30 rounded-full text-emerald-400 text-xs font-bold">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> ĐÃ VÀO PHÒNG
+                </div>
+              ) : (
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-amber-500/15 border border-amber-500/30 rounded-full text-amber-400 text-xs font-bold">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" /> ĐANG KẾT NỐI VỚI HOST...
+                </div>
+              )}
               <h2 className="text-2xl font-black text-white tracking-tight">{nickname}</h2>
               <p className="text-sm font-bold text-amber-300">
                 ⭐ Linh vật: {currentCharacter.name}
               </p>
               <p className="text-xs text-slate-300 max-w-xs mx-auto pt-1">
-                Nhìn lên màn chiếu của giáo viên. Trận đấu sẽ bắt đầu ngay khi giáo viên bấm Bắt đầu!
+                {isJoinedAcknowledged
+                  ? 'Nhìn lên màn chiếu của giáo viên. Trận đấu sẽ bắt đầu ngay khi giáo viên bấm Bắt đầu!'
+                  : 'Đang gửi thông tin đăng ký vào máy chiếu của giáo viên...'}
               </p>
             </div>
 
@@ -406,7 +441,7 @@ export default function ArenaPlayPage() {
               <div className="flex justify-between items-center text-slate-400">
                 <span>Trạng thái:</span>
                 <span className="font-bold text-amber-300 flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" /> Đang đợi Host...
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" /> {isJoinedAcknowledged ? 'Đã sẵn sàng' : 'Đang đợi Host xác nhận...'}
                 </span>
               </div>
             </div>

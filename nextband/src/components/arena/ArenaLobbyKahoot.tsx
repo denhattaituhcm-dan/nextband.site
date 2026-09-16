@@ -38,7 +38,7 @@ const CARD_PALETTES = [
 
 export const ArenaLobbyKahoot: React.FC<ArenaLobbyKahootProps> = React.memo(({
   players,
-  maxSlots = 12,
+  maxSlots = 24,
   pinCode,
   joinUrl = '/arena/join',
 }) => {

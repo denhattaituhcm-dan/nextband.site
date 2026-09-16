@@ -79,34 +79,7 @@ export default function ArenaJoinPage() {
         sessionStorage.setItem('arena_plant_id', String(avatarId));
       }
 
-      // Phát broadcast tới Host phòng
-      const channel = supabase.channel(`arena-room-${cleanPin}`);
-      
-      await new Promise<void>((resolve) => {
-        channel.subscribe(async (status) => {
-          if (status === 'SUBSCRIBED') {
-            await channel.send({
-              type: 'broadcast',
-              event: 'player-joined',
-              payload: {
-                id: playerId,
-                name: cleanNick,
-                avatarSeed: avatarId,
-                rank: 'Học viên',
-                joinedAt: new Date().toISOString(),
-              },
-            });
-            supabase.removeChannel(channel);
-            resolve();
-          }
-        });
-        setTimeout(() => {
-          supabase.removeChannel(channel);
-          resolve();
-        }, 1500);
-      });
-
-      // Chuyển hướng sang màn hình thi đấu
+      // Điều hướng ngay sang màn hình thi đấu, ArenaPlayPage sẽ là nơi duy nhất giữ kết nối và gửi player-joined
       navigate(`/arena/play?pin=${cleanPin}&name=${encodeURIComponent(cleanNick)}&playerId=${encodeURIComponent(playerId)}&plantId=${avatarId}`);
     } catch (err: any) {
       const message = err instanceof Error ? err.message : 'Lỗi tham gia phòng';
