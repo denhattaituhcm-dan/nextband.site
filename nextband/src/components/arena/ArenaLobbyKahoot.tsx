@@ -9,6 +9,8 @@
 
 import React, { useState } from 'react';
 import { Users, UserCheck, Sparkles, QrCode, Maximize2, X } from 'lucide-react';
+import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
+import { getCharacterBySeed } from '@/lib/arena/characterCatalog';
 
 export interface LobbyPlayer {
   id: string;
@@ -178,30 +180,27 @@ export const ArenaLobbyKahoot: React.FC<ArenaLobbyKahootProps> = React.memo(({
           return p ? (
             <div
               key={p.id || idx}
-              className={`p-4 ${palette.bg} border-2 ${palette.border} rounded-2xl flex flex-col items-center text-center space-y-2.5 shadow-xl ${palette.glow} animate-in fade-in zoom-in-75 duration-300 transform hover:-translate-y-1 transition-all min-h-[155px] justify-between cursor-default`}
+              className={`p-3.5 ${palette.bg} border-2 ${palette.border} rounded-2xl flex flex-col items-center text-center space-y-2 shadow-xl ${palette.glow} animate-in fade-in zoom-in-75 duration-300 transform hover:-translate-y-1 transition-all min-h-[180px] justify-between cursor-default relative`}
             >
-              <div className="relative">
-                <img
-                  src={getAvatarUrl(p.avatarSeed, p.name)}
-                  alt={p.name}
-                  className="w-14 h-14 rounded-2xl bg-white/15 p-1 border-2 border-white/40 shadow-md object-contain"
-                  loading="lazy"
-                />
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-400 border-2 border-white rounded-full flex items-center justify-center">
+              {/* Thẻ bài Avatar Sprite */}
+              <div className="relative pt-0.5">
+                <PvZCardAvatar seed={p.avatarSeed !== undefined ? p.avatarSeed : p.name} size="md" />
+                <span className="absolute -top-1 -right-2 w-5 h-5 bg-emerald-400 border-2 border-white rounded-full flex items-center justify-center shadow-md">
                   <UserCheck className="w-3 h-3 text-slate-900" />
                 </span>
               </div>
 
+              {/* Tên học sinh & Tên nhân vật */}
               <div className="w-full">
-                <p className="text-sm font-black text-white truncate max-w-[110px] mx-auto tracking-wide drop-shadow-sm">
+                <p className="text-sm font-black text-white truncate max-w-[120px] mx-auto tracking-wide drop-shadow-sm">
                   {p.name}
                 </p>
-                <span className={`text-[10px] font-bold px-2 py-0.5 ${palette.badge} text-white/90 rounded-full inline-block mt-1 border border-white/20`}>
-                  {p.rank || 'Học viên'}
+                <span className="text-[10px] font-bold text-amber-300 block truncate max-w-[120px] mx-auto mt-0.5">
+                  {getCharacterBySeed(p.avatarSeed !== undefined ? p.avatarSeed : p.name).name}
                 </span>
               </div>
 
-              <div className="w-full py-1 bg-black/20 rounded-lg text-[10px] font-black text-emerald-300 uppercase tracking-wider flex items-center justify-center gap-1">
+              <div className="w-full py-1 bg-black/25 rounded-lg text-[10px] font-black text-emerald-300 uppercase tracking-wider flex items-center justify-center gap-1 border border-white/10">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
                 Sẵn sàng
               </div>

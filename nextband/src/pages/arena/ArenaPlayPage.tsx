@@ -6,7 +6,7 @@
  * - 'GOLD_QUEST': Trả lời đúng -> Hiện 3 Rương Kho Báu -> Mở rương / Cướp vàng bạn cùng lớp!
  */
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useArenaAudio } from '@/hooks/arena/useArenaAudio';
@@ -16,6 +16,11 @@ import { GoldQuestChestModal } from '@/components/arena/GoldQuestChestModal';
 import { ArenaQuestionOption, PlayerPublicRank } from '@/lib/arena/types';
 import { ARENA_COLLOCATION_QUESTIONS, ArenaQuestion } from '@/lib/arena/questions';
 import { CheckCircle2, XCircle, Trophy, Sparkles, Medal, Crown } from 'lucide-react';
+import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
+import { CHARACTER_AVATARS, getCharacterBySeed } from '@/lib/arena/characterCatalog';
+import { ArenaErrorBoundary } from '@/components/arena/ArenaErrorBoundary';
+import { useArenaSelfHealing } from '@/hooks/arena/useArenaSelfHealing';
+import { arenaTelemetry } from '@/lib/arena/arenaTelemetry';
 
 interface PlayerCandidate {
   name: string;
@@ -35,6 +40,12 @@ export default function ArenaPlayPage() {
   const pin = searchParams.get('pin') || '111999';
   const nickname = searchParams.get('name') || 'Học viên';
   const playerId = searchParams.get('playerId') || `p_${Date.now()}`;
+  const paramAvatarId = searchParams.get('plantId');
+  const storedAvatarId = typeof window !== 'undefined' ? sessionStorage.getItem('arena_plant_id') : null;
+  const avatarId = paramAvatarId !== null && paramAvatarId !== undefined 
+    ? Number(paramAvatarId) 
+    : (storedAvatarId ? Number(storedAvatarId) : getCharacterBySeed(nickname).id);
+  const currentCharacter = CHARACTER_AVATARS[avatarId] || getCharacterBySeed(nickname);
 
   const [gameState, setGameState] = useState<StudentGameState>('LOBBY_WAITING');
   const [gameMode, setGameMode] = useState<'CLASSIC' | 'GOLD_QUEST'>('CLASSIC');
@@ -58,6 +69,25 @@ export default function ArenaPlayPage() {
   const { playClickSound, playCorrectSound, playWrongSound } = useArenaAudio();
   const channelRef = useRef<any>(null);
 
+  // Self-Healing Watchdog: Tự động khôi phục nếu mất đồng bộ hoặc drop kết nối
+  const handleResyncRequired = useCallback(() => {
+    if (channelRef.current) {
+      channelRef.current.send({
+        type: 'broadcast',
+        event: 'player-sync-request',
+        payload: { playerId, nickname },
+      });
+    }
+  }, [playerId, nickname]);
+
+  const { recordHeartbeat } = useArenaSelfHealing({
+    pin,
+    playerId,
+    gameState,
+    onResyncRequired: handleResyncRequired,
+    isLocked,
+  });
+
   // Lắng nghe broadcast và Presence từ Host
   useEffect(() => {
     if (!pin) return;
@@ -74,7 +104,7 @@ export default function ArenaPlayPage() {
         await channel.track({
           id: playerId,
           name: nickname,
-          avatarSeed: nickname,
+          avatarSeed: avatarId,
           rank: 'Học viên',
           joinedAt: new Date().toISOString(),
         });
@@ -84,7 +114,7 @@ export default function ArenaPlayPage() {
           payload: {
             id: playerId,
             name: nickname,
-            avatarSeed: nickname,
+            avatarSeed: avatarId,
             rank: 'Học viên',
             joinedAt: new Date().toISOString(),
           },
@@ -96,9 +126,11 @@ export default function ArenaPlayPage() {
 
     channel
       .on('broadcast', { event: 'lobby-ping' }, () => {
+        recordHeartbeat('lobby-ping');
         announcePresence();
       })
       .on('broadcast', { event: 'question-live' }, ({ payload }) => {
+        recordHeartbeat('question-live');
         if (payload?.gameMode) setGameMode(payload.gameMode);
         if (payload?.timeLimit) setTimeLeft(payload.timeLimit);
         else setTimeLeft(15);
@@ -317,13 +349,16 @@ export default function ArenaPlayPage() {
     <div className="min-h-screen bg-[#150a33] text-white flex flex-col justify-between p-4 font-sans select-none max-w-lg mx-auto w-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#2a135e] via-[#150a33] to-[#0a051b]">
       {/* Top Header */}
       <header className="flex items-center justify-between border-b border-purple-900/40 pb-3">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-orange-500/20 border border-orange-500/40 flex items-center justify-center text-orange-400 font-black text-xs">
-            {nickname.charAt(0).toUpperCase()}
+        <div className="flex items-center gap-2.5">
+          <PvZCardAvatar avatarId={avatarId} seed={avatarId} size="sm" />
+          <div>
+            <span className="font-black text-sm text-slate-200 truncate max-w-[120px] block">
+              {nickname}
+            </span>
+            <span className="text-[10px] font-bold text-amber-300 block">
+              {currentCharacter.name}
+            </span>
           </div>
-          <span className="font-black text-sm text-slate-200 truncate max-w-[120px]">
-            {nickname}
-          </span>
         </div>
 
         <div className="flex items-center gap-2">
@@ -341,23 +376,24 @@ export default function ArenaPlayPage() {
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col justify-center my-4 space-y-4">
         {gameState === 'LOBBY_WAITING' ? (
-          /* SẢNH CHỜ HỌC VIÊN - CHUẨN KAHOOT ZERO-FLUFF */
-          <div className="flex-1 flex flex-col items-center justify-center text-center space-y-6 py-6 animate-fadeIn">
+          /* SẢNH CHỜ HỌC VIÊN - CHUẨN KAHOOT ZERO-FLUFF & PVZ AVATAR */
+          <div className="flex-1 flex flex-col items-center justify-center text-center space-y-5 py-4 animate-fadeIn">
             <div className="relative">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center text-4xl font-black text-white shadow-xl shadow-orange-500/30 border-4 border-white/20 animate-pulse">
-                {nickname.charAt(0).toUpperCase()}
-              </div>
-              <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-emerald-500 border-3 border-[#150a33] flex items-center justify-center shadow-lg">
+              <PvZCardAvatar avatarId={avatarId} seed={avatarId} size="xl" />
+              <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-emerald-500 border-3 border-[#150a33] flex items-center justify-center shadow-lg">
                 <span className="w-3 h-3 rounded-full bg-white animate-ping" />
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-emerald-500/15 border border-emerald-500/30 rounded-full text-emerald-400 text-xs font-bold">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> ĐÃ VÀO PHÒNG
               </div>
-              <h2 className="text-3xl font-black text-white tracking-tight">{nickname}</h2>
-              <p className="text-sm text-slate-300 max-w-xs mx-auto">
+              <h2 className="text-2xl font-black text-white tracking-tight">{nickname}</h2>
+              <p className="text-sm font-bold text-amber-300">
+                ⭐ Linh vật: {currentCharacter.name}
+              </p>
+              <p className="text-xs text-slate-300 max-w-xs mx-auto pt-1">
                 Nhìn lên màn chiếu của giáo viên. Trận đấu sẽ bắt đầu ngay khi giáo viên bấm Bắt đầu!
               </p>
             </div>

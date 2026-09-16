@@ -7,15 +7,37 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, Dices } from 'lucide-react';
+import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
+import { CHARACTER_AVATARS, getCharacterBySeed } from '@/lib/arena/characterCatalog';
 
 export default function ArenaJoinPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [pin, setPin] = useState('');
   const [nickname, setNickname] = useState('');
+  const [avatarId, setAvatarId] = useState<number>(() => Math.floor(Math.random() * CHARACTER_AVATARS.length));
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Khi học sinh gõ tên, tự bốc nhân vật phù hợp
+  useEffect(() => {
+    if (nickname.trim()) {
+      const char = getCharacterBySeed(nickname.trim());
+      setAvatarId(char.id);
+    }
+  }, [nickname]);
+
+  // Nút đổi nhân vật ngẫu nhiên
+  const handleRerollAvatar = () => {
+    setAvatarId((prev) => {
+      let next = Math.floor(Math.random() * CHARACTER_AVATARS.length);
+      while (next === prev && CHARACTER_AVATARS.length > 1) {
+        next = Math.floor(Math.random() * CHARACTER_AVATARS.length);
+      }
+      return next;
+    });
+  };
 
   // Tự động nhận mã PIN nếu học viên quét mã QR
   useEffect(() => {
@@ -23,7 +45,6 @@ export default function ArenaJoinPage() {
     if (urlPin && urlPin.trim().length === 6) {
       setPin(urlPin.trim());
     } else {
-      // Gợi ý mã PIN mặc định 111999
       setPin('111999');
     }
   }, [searchParams]);
@@ -55,15 +76,13 @@ export default function ArenaJoinPage() {
         sessionStorage.setItem('arena_pin', cleanPin);
         sessionStorage.setItem('arena_nickname', cleanNick);
         sessionStorage.setItem('arena_player_id', playerId);
+        sessionStorage.setItem('arena_plant_id', String(avatarId));
       }
 
-      // Phát broadcast tới Host phòng (kèm timeout nhanh 400ms)
-      const channel = supabase.channel(`arena-room-${cleanPin}`, {
-        config: { broadcast: { ack: true } },
-      });
+      // Phát broadcast tới Host phòng
+      const channel = supabase.channel(`arena-room-${cleanPin}`);
       
       await new Promise<void>((resolve) => {
-        const timeout = setTimeout(resolve, 400);
         channel.subscribe(async (status) => {
           if (status === 'SUBSCRIBED') {
             await channel.send({
@@ -72,22 +91,26 @@ export default function ArenaJoinPage() {
               payload: {
                 id: playerId,
                 name: cleanNick,
-                avatarSeed: cleanNick,
+                avatarSeed: avatarId,
                 rank: 'Học viên',
                 joinedAt: new Date().toISOString(),
               },
             });
-            clearTimeout(timeout);
             supabase.removeChannel(channel);
             resolve();
           }
         });
+        setTimeout(() => {
+          supabase.removeChannel(channel);
+          resolve();
+        }, 1500);
       });
 
-      // Chuyển hướng sang màn hình thi đấu (ở trạng thái Sảnh chờ)
-      navigate(`/arena/play?pin=${cleanPin}&name=${encodeURIComponent(cleanNick)}&playerId=${encodeURIComponent(playerId)}`);
+      // Chuyển hướng sang màn hình thi đấu
+      navigate(`/arena/play?pin=${cleanPin}&name=${encodeURIComponent(cleanNick)}&playerId=${encodeURIComponent(playerId)}&plantId=${avatarId}`);
     } catch (err: any) {
-      setError(err.message || 'Lỗi tham gia phòng');
+      const message = err instanceof Error ? err.message : 'Lỗi tham gia phòng';
+      setError(message);
       setIsLoading(false);
     }
   };
@@ -134,6 +157,33 @@ export default function ArenaJoinPage() {
             />
           </div>
 
+          {/* Avatar Preview & Reroll Button */}
+          <div className="p-3.5 bg-purple-950/40 border border-purple-800/60 rounded-2xl flex items-center justify-between gap-3 shadow-inner">
+            <div className="flex items-center gap-3">
+              <PvZCardAvatar avatarId={avatarId} seed={avatarId} size="md" />
+              <div>
+                <span className="text-[10px] font-bold text-purple-300 uppercase tracking-wider block">
+                  Linh vật của bạn
+                </span>
+                <span className="text-sm font-black text-amber-300">
+                  {CHARACTER_AVATARS[avatarId]?.name}
+                </span>
+                <span className="text-[10px] text-slate-400 block capitalize">
+                  Bộ sưu tập: {CHARACTER_AVATARS[avatarId]?.type}
+                </span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleRerollAvatar}
+              className="px-3 py-2 bg-purple-900/60 hover:bg-purple-800 border border-purple-700/60 text-purple-200 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 shadow-md"
+              title="Đổi sang nhân vật khác ngẫu nhiên"
+            >
+              <Dices className="w-4 h-4 text-amber-400 animate-spin-once" /> Đổi avatar
+            </button>
+          </div>
+
           {error && (
             <div className="p-3 bg-red-950/40 border border-red-500/30 rounded-xl text-xs text-red-400 text-center font-semibold">
               {error}
@@ -156,4 +206,3 @@ export default function ArenaJoinPage() {
     </div>
   );
 }
-
