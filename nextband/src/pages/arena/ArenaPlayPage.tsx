@@ -346,7 +346,7 @@ export default function ArenaPlayPage() {
   }, [showResult, isCorrect, playCorrectSound, playWrongSound, gameMode]);
 
   return (
-    <div className="min-h-screen bg-[#150a33] text-white flex flex-col justify-between p-4 font-sans select-none max-w-lg mx-auto w-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#2a135e] via-[#150a33] to-[#0a051b]">
+    <div className="min-h-screen min-h-[100dvh] bg-[#150a33] text-white flex flex-col justify-between p-4 font-sans select-none max-w-lg mx-auto w-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#2a135e] via-[#150a33] to-[#0a051b]">
       {/* Top Header */}
       <header className="flex items-center justify-between border-b border-purple-900/40 pb-3">
         <div className="flex items-center gap-2.5">

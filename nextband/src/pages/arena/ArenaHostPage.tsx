@@ -195,7 +195,9 @@ export default function ArenaHostPage() {
           playClimberSound();
         }
       })
-      .subscribe();
+      .subscribe((status) => {
+        console.log(`[ArenaHost] Channel arena-room-${pinCode} status:`, status);
+      });
 
     channelRef.current = channel;
 
@@ -522,7 +524,7 @@ export default function ArenaHostPage() {
             players={players}
             maxSlots={roomSettings.maxSlots}
             pinCode={pinCode}
-            joinUrl={joinUrl}
+            joinUrl={typeof window !== 'undefined' ? `${window.location.origin}/arena/join` : 'https://nextband.site/arena/join'}
           />
         )}
 
