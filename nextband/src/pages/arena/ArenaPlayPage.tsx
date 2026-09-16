@@ -113,6 +113,13 @@ export default function ArenaPlayPage() {
 
     const announcePresence = async () => {
       try {
+        await channel.track({
+          id: playerId,
+          name: nicknameRef.current,
+          avatarSeed: avatarIdRef.current,
+          rank: 'Học viên',
+          joinedAt: new Date().toISOString(),
+        });
         await channel.send({
           type: 'broadcast',
           event: 'player-joined',
