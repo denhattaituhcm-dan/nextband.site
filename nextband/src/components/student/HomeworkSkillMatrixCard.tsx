@@ -25,6 +25,7 @@ import {
   isObjectiveSkill,
 } from '@/lib/examSkillHelper';
 import { CanonicalVisualStatus } from '@/lib/homeworkStatusHelper';
+import { YourWeakZoneCard } from './YourWeakZoneCard';
 
 export interface HomeworkSkillMatrixItem {
   id: string;
@@ -156,6 +157,9 @@ export const HomeworkSkillMatrixCard: React.FC<HomeworkSkillMatrixCardProps> = (
 
   return (
     <div className='space-y-6'>
+      {/* ERROR INTELLIGENCE: YOUR WEAK ZONE & ERROR BANK */}
+      <YourWeakZoneCard />
+
       {/* 1. TOP CARDS: 5-SKILL OVERVIEW SUMMARY & SCORING MODES */}
       <div className='space-y-3'>
         <div className='flex items-center justify-between'>

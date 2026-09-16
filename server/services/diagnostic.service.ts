@@ -443,4 +443,123 @@ export class DiagnosticService {
       },
     };
   }
+
+  /**
+   * Lấy danh sách câu hỏi làm sai (Error Bank) của học sinh từ các lần nộp bài gần nhất
+   */
+  async getStudentErrorBank(studentId: string, limit = 50) {
+    const submissions = await this.prisma.examSubmission.findMany({
+      where: {
+        studentId,
+        status: { in: ['SUBMITTED', 'GRADED', 'submitted', 'graded'] as any },
+      },
+      orderBy: { submittedAt: 'desc' },
+      take: 15,
+      include: {
+        exam: {
+          select: { id: true, title: true },
+        },
+        answers: {
+          include: {
+            evidence: true,
+            question: {
+              include: {
+                group: {
+                  include: {
+                    section: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const errorBankItems: any[] = [];
+    const seenQuestions = new Set<string>();
+
+    for (const sub of submissions) {
+      for (const ans of sub.answers) {
+        const q = ans.question;
+        if (!q) continue;
+        if (seenQuestions.has(q.id)) continue;
+
+        const isCorrect = ans.evidence?.isCorrect ?? Number(ans.score) > 0;
+        if (!isCorrect) {
+          seenQuestions.add(q.id);
+          const qType = String(q.questionType || 'unknown').toLowerCase();
+          const meta = QUESTION_METADATA_MAP[qType] || {
+            label: qType.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+            diagnosis: `Học viên cần cải thiện ở dạng bài ${qType}.`,
+            skill: 'READING',
+          };
+
+          errorBankItems.push({
+            id: ans.id,
+            questionId: q.id,
+            submissionId: sub.id,
+            examTitle: sub.exam?.title || 'Bài tập IELTS',
+            questionType: qType,
+            skill: meta.skill,
+            label: meta.label,
+            diagnosis: meta.diagnosis,
+            prompt: q.prompt,
+            options: q.options,
+            passage: q.group?.passageText || null,
+            studentAnswer: ans.value,
+            explanation: q.explanation || null,
+            submittedAt: sub.submittedAt,
+          });
+
+          if (errorBankItems.length >= limit) break;
+        }
+      }
+      if (errorBankItems.length >= limit) break;
+    }
+
+    return errorBankItems;
+  }
+
+  /**
+   * Sinh bài luyện tập nhanh theo dạng bài yếu nhất (Weak Zone Drill)
+   */
+  async generateWeakZoneDrill(questionType: string, count = 6) {
+    const questions = await this.prisma.question.findMany({
+      where: {
+        questionType: { equals: questionType, mode: 'insensitive' },
+      },
+      take: count * 2,
+      include: {
+        group: {
+          include: {
+            section: true,
+          },
+        },
+      },
+    });
+
+    // Trộn ngẫu nhiên và bốc đủ số lượng count
+    const shuffled = questions.sort(() => 0.5 - Math.random()).slice(0, count);
+    const meta = QUESTION_METADATA_MAP[questionType.toLowerCase()] || {
+      label: questionType,
+      diagnosis: '',
+      skill: 'READING',
+    };
+
+    return {
+      questionType,
+      label: meta.label,
+      targetCount: shuffled.length,
+      questions: shuffled.map((q) => ({
+        id: q.id,
+        prompt: q.prompt,
+        options: q.options,
+        questionType: q.questionType,
+        orderIndex: q.orderIndex,
+        passage: q.group?.passageText || null,
+      })),
+    };
+  }
 }
+

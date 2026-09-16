@@ -1082,6 +1082,82 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
       return { success: true };
     },
   );
+
+  // GET /users/me/error-bank - Personal Error Bank for authenticated student
+  fastify.get(
+    "/me/error-bank",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      const studentId = request.user.id;
+      const { DiagnosticService } = await import("../services/diagnostic.service.js");
+      const diagnosticService = new DiagnosticService(fastify.prisma);
+      const errors = await diagnosticService.getStudentErrorBank(studentId);
+      return reply.send({
+        success: true,
+        data: errors,
+      });
+    },
+  );
+
+  // GET /users/me/weak-zone - Current student primary weak zone & suggested drill
+  fastify.get(
+    "/me/weak-zone",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      const studentId = request.user.id;
+      const { DiagnosticService } = await import("../services/diagnostic.service.js");
+      const diagnosticService = new DiagnosticService(fastify.prisma);
+      const diagnostic = await diagnosticService.getStudentDiagnostic(studentId);
+
+      const readingVulnerabilities = diagnostic.reading?.vulnerabilities || [];
+      const listeningVulnerabilities = diagnostic.listening?.vulnerabilities || [];
+      const allVulnerabilities = [...readingVulnerabilities, ...listeningVulnerabilities].sort(
+        (a, b) => b.vulnerabilityScore - a.vulnerabilityScore,
+      );
+
+      const topWeakness = allVulnerabilities[0] || null;
+
+      return reply.send({
+        success: true,
+        data: {
+          topWeakness,
+          reading: diagnostic.reading,
+          listening: diagnostic.listening,
+          overall: diagnostic.overall,
+        },
+      });
+    },
+  );
+
+  // POST /users/me/weak-zone/drill - Generate rapid drill for top weakness
+  fastify.post<{ Body: { questionType?: string; count?: number } }>(
+    "/me/weak-zone/drill",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      const studentId = request.user.id;
+      let targetType = request.body?.questionType;
+      const count = request.body?.count || 6;
+
+      const { DiagnosticService } = await import("../services/diagnostic.service.js");
+      const diagnosticService = new DiagnosticService(fastify.prisma);
+
+      if (!targetType) {
+        const diagnostic = await diagnosticService.getStudentDiagnostic(studentId);
+        const readingVulnerabilities = diagnostic.reading?.vulnerabilities || [];
+        const listeningVulnerabilities = diagnostic.listening?.vulnerabilities || [];
+        const allVulnerabilities = [...readingVulnerabilities, ...listeningVulnerabilities].sort(
+          (a, b) => b.vulnerabilityScore - a.vulnerabilityScore,
+        );
+        targetType = allVulnerabilities[0]?.questionType || "matching";
+      }
+
+      const drill = await diagnosticService.generateWeakZoneDrill(targetType, count);
+      return reply.send({
+        success: true,
+        data: drill,
+      });
+    },
+  );
 };
 
 export default usersRoutes;
