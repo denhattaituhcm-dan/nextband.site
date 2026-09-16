@@ -99,16 +99,17 @@ export default function ArenaHostPage() {
         Object.values(presenceState).forEach((presences: any) => {
           presences.forEach((p: any) => {
             if (p.name && p.name !== 'host') {
+              const playerId = p.id || `p_${Date.now()}`;
               setPlayers((prev) => {
-                if (prev.some((existing) => existing.name.trim().toLowerCase() === p.name.trim().toLowerCase())) {
+                if (prev.some((existing) => existing.id === playerId)) {
                   return prev;
                 }
                 return [
                   ...prev,
                   {
-                    id: p.id || `p_${Date.now()}`,
+                    id: playerId,
                     name: p.name.trim(),
-                    avatarSeed: p.avatarSeed || p.name,
+                    avatarSeed: p.avatarSeed ?? p.name,
                     rank: p.rank || 'Học viên',
                     joinedAt: p.joinedAt || new Date().toISOString(),
                   },

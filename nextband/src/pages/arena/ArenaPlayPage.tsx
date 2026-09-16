@@ -255,18 +255,18 @@ export default function ArenaPlayPage() {
 
     channelRef.current = channel;
 
-    // Định kỳ gửi lại join request khi chưa được ACK ở sảnh chờ
-    const handshakeTimer = setInterval(() => {
-      if (gameStateRef.current === 'LOBBY_WAITING' && !isJoinedAcknowledged) {
+    // Định kỳ gửi thông báo hiện diện lên Host khi đang ở sảnh chờ để chắc chắn Host không bỏ sót
+    const heartbeatTimer = setInterval(() => {
+      if (gameStateRef.current === 'LOBBY_WAITING') {
         announcePresence();
       }
     }, 2000);
 
     return () => {
-      clearInterval(handshakeTimer);
+      clearInterval(heartbeatTimer);
       supabase.removeChannel(channel);
     };
-  }, [pin, playerId, isJoinedAcknowledged]);
+  }, [pin, playerId]);
 
   // Đếm lùi thời gian vòng: CHỈ chạy khi trận đấu ĐÃ BẮT ĐẦU (QUESTION_LIVE) và chưa bị khóa
   useEffect(() => {
@@ -413,23 +413,15 @@ export default function ArenaPlayPage() {
             </div>
 
             <div className="space-y-1.5">
-              {isJoinedAcknowledged ? (
-                <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-emerald-500/15 border border-emerald-500/30 rounded-full text-emerald-400 text-xs font-bold">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> ĐÃ VÀO PHÒNG
-                </div>
-              ) : (
-                <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-amber-500/15 border border-amber-500/30 rounded-full text-amber-400 text-xs font-bold">
-                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" /> ĐANG KẾT NỐI VỚI HOST...
-                </div>
-              )}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-emerald-500/15 border border-emerald-500/30 rounded-full text-emerald-400 text-xs font-bold shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> ĐÃ VÀO PHÒNG
+              </div>
               <h2 className="text-2xl font-black text-white tracking-tight">{nickname}</h2>
               <p className="text-sm font-bold text-amber-300">
                 ⭐ Linh vật: {currentCharacter.name}
               </p>
               <p className="text-xs text-slate-300 max-w-xs mx-auto pt-1">
-                {isJoinedAcknowledged
-                  ? 'Nhìn lên màn chiếu của giáo viên. Trận đấu sẽ bắt đầu ngay khi giáo viên bấm Bắt đầu!'
-                  : 'Đang gửi thông tin đăng ký vào máy chiếu của giáo viên...'}
+                Nhìn lên màn chiếu của giáo viên. Trận đấu sẽ bắt đầu ngay khi giáo viên bấm Bắt đầu!
               </p>
             </div>
 
@@ -440,8 +432,8 @@ export default function ArenaPlayPage() {
               </div>
               <div className="flex justify-between items-center text-slate-400">
                 <span>Trạng thái:</span>
-                <span className="font-bold text-amber-300 flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" /> {isJoinedAcknowledged ? 'Đã sẵn sàng' : 'Đang đợi Host xác nhận...'}
+                <span className="font-bold text-emerald-400 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" /> Sẵn sàng thi đấu
                 </span>
               </div>
             </div>
