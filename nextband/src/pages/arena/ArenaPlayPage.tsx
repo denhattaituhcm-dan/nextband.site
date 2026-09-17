@@ -104,9 +104,17 @@ export default function ArenaPlayPage() {
   useEffect(() => {
     if (!pin) return;
     const channelName = `arena-room-${pin}`;
+    const topic = `realtime:${channelName}`;
+
+    // Dọn dẹp channel cũ nếu còn tồn tại
+    const existing = supabase.getChannels().find((c) => c.topic === topic);
+    if (existing) {
+      supabase.removeChannel(existing);
+    }
+
     const channel = supabase.channel(channelName, {
       config: {
-        broadcast: { ack: true },
+        broadcast: { ack: true, self: false },
         presence: { key: nickname },
       },
     });
@@ -125,7 +133,20 @@ export default function ArenaPlayPage() {
           },
         });
       } catch (e) {
-        console.error('[NextQuiz] Error sending player-joined:', e);
+        console.warn('[NextQuiz] Error sending player-joined:', e);
+      }
+
+      try {
+        await channel.send({
+          type: 'broadcast',
+          event: 'player-sync-request',
+          payload: {
+            playerId,
+            nickname: nicknameRef.current,
+          },
+        });
+      } catch (e) {
+        console.warn('[NextQuiz] Error sending player-sync-request:', e);
       }
 
       try {
@@ -143,12 +164,12 @@ export default function ArenaPlayPage() {
 
     channel
       .on('broadcast', { event: 'player-joined-ack' }, ({ payload }) => {
-        if (payload?.playerId === playerId) {
+        if (!payload || payload.playerId === playerId || payload.accepted) {
           setIsJoinedAcknowledged(true);
         }
       })
       .on('broadcast', { event: 'player-sync-response' }, ({ payload }) => {
-        if (payload?.targetPlayerId === playerId) {
+        if (payload?.targetPlayerId === playerId || !payload?.targetPlayerId) {
           setIsJoinedAcknowledged(true);
           if (payload?.gameMode) setGameMode(payload.gameMode);
           if (payload?.state) {
@@ -166,10 +187,12 @@ export default function ArenaPlayPage() {
       })
       .on('broadcast', { event: 'lobby-ping' }, () => {
         recordHeartbeat('lobby-ping');
+        setIsJoinedAcknowledged(true);
         announcePresence();
       })
       .on('broadcast', { event: 'question-live' }, ({ payload }) => {
         recordHeartbeat('question-live');
+        setIsJoinedAcknowledged(true);
         if (payload?.gameMode) setGameMode(payload.gameMode);
         if (payload?.timeLimit) setTimeLeft(payload.timeLimit);
         else setTimeLeft(15);
@@ -187,6 +210,7 @@ export default function ArenaPlayPage() {
         playClickSoundRef.current();
       })
       .on('broadcast', { event: 'arena-started' }, ({ payload }) => {
+        setIsJoinedAcknowledged(true);
         if (payload?.gameMode) setGameMode(payload.gameMode);
         if (payload?.timeLimit) setTimeLeft(payload.timeLimit);
         else setTimeLeft(15);
@@ -250,6 +274,9 @@ export default function ArenaPlayPage() {
       .on('broadcast', { event: 'players-sync' }, ({ payload }) => {
         if (payload?.players) {
           setPlayersList(payload.players);
+          if (payload.players.some((item: any) => item.name?.trim().toLowerCase() === nicknameRef.current.trim().toLowerCase())) {
+            setIsJoinedAcknowledged(true);
+          }
         }
       })
       .on('broadcast', { event: 'gold-stolen-from-you' }, ({ payload }) => {
@@ -425,8 +452,13 @@ export default function ArenaPlayPage() {
             </div>
 
             <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-emerald-500/15 border border-emerald-500/30 rounded-full text-emerald-400 text-xs font-bold shadow-sm">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> ĐÃ VÀO PHÒNG
+              <div className={`inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold shadow-sm ${
+                isJoinedAcknowledged 
+                  ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-400' 
+                  : 'bg-amber-500/15 border border-amber-500/30 text-amber-300'
+              }`}>
+                <span className={`w-2 h-2 rounded-full ${isJoinedAcknowledged ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400 animate-ping'}`} /> 
+                {isJoinedAcknowledged ? 'ĐÃ VÀO PHÒNG (ĐÃ KẾT NỐI MÀN CHIẾU)' : 'ĐANG KẾT NỐI MÀN CHIẾU...'}
               </div>
               <h2 className="text-2xl font-black text-white tracking-tight">{nickname}</h2>
               <p className="text-sm font-bold text-amber-300">
@@ -444,8 +476,9 @@ export default function ArenaPlayPage() {
               </div>
               <div className="flex justify-between items-center text-slate-400">
                 <span>Trạng thái:</span>
-                <span className="font-bold text-emerald-400 flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" /> Sẵn sàng thi đấu
+                <span className={`font-bold flex items-center gap-1.5 ${isJoinedAcknowledged ? 'text-emerald-400' : 'text-amber-400'}`}>
+                  <span className={`w-2 h-2 rounded-full ${isJoinedAcknowledged ? 'bg-emerald-400 animate-ping' : 'bg-amber-400 animate-pulse'}`} /> 
+                  {isJoinedAcknowledged ? 'Sẵn sàng thi đấu' : 'Đang đồng bộ với Host...'}
                 </span>
               </div>
             </div>

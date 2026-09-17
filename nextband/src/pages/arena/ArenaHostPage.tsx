@@ -86,88 +86,112 @@ export default function ArenaHostPage() {
     if (!pinCode) return;
 
     const channelName = `arena-room-${pinCode}`;
+    const topic = `realtime:${channelName}`;
+    
+    // Dọn dẹp channel cũ nếu còn tồn tại trong bộ nhớ Supabase client
+    const existing = supabase.getChannels().find((c) => c.topic === topic);
+    if (existing) {
+      supabase.removeChannel(existing);
+    }
+
     const channel = supabase.channel(channelName, {
       config: {
-        broadcast: { ack: true },
+        broadcast: { ack: true, self: false },
         presence: { key: 'host' },
       },
     });
+
+    const registerPlayer = (p: {
+      id?: string;
+      name?: string;
+      nickname?: string;
+      avatarSeed?: any;
+      avatarId?: any;
+      rank?: string;
+      joinedAt?: string;
+    }) => {
+      const playerName = (p.name || p.nickname || '').trim();
+      if (!playerName || playerName === 'host') return;
+      const playerId = p.id || `p_${playerName}`;
+
+      setPlayers((prev) => {
+        const existingIdx = prev.findIndex((item) => item.id === playerId || item.name.toLowerCase() === playerName.toLowerCase());
+        if (existingIdx >= 0) {
+          return prev;
+        }
+        return [
+          ...prev,
+          {
+            id: playerId,
+            name: playerName,
+            avatarSeed: p.avatarSeed ?? p.avatarId ?? playerName,
+            rank: p.rank || 'Học viên',
+            joinedAt: p.joinedAt || new Date().toISOString(),
+          },
+        ];
+      });
+
+      setPlayerGoldMap((prev) => ({ ...prev, [playerName]: prev[playerName] ?? 0 }));
+
+      // Phản hồi ACK xác nhận cho học sinh
+      try {
+        channel.send({
+          type: 'broadcast',
+          event: 'player-joined-ack',
+          payload: {
+            playerId: playerId,
+            pin: pinCode,
+            accepted: true,
+          },
+        });
+      } catch (err) {
+        console.warn('[ArenaHost] Error sending player-joined-ack:', err);
+      }
+    };
 
     channel
       .on('presence', { event: 'sync' }, () => {
         const presenceState = channel.presenceState();
         Object.values(presenceState).forEach((presences: any) => {
-          presences.forEach((p: any) => {
-            if (p.name && p.name !== 'host') {
-              const playerId = p.id || `p_${Date.now()}`;
-              setPlayers((prev) => {
-                if (prev.some((existing) => existing.id === playerId)) {
-                  return prev;
-                }
-                return [
-                  ...prev,
-                  {
-                    id: playerId,
-                    name: p.name.trim(),
-                    avatarSeed: p.avatarSeed ?? p.name,
-                    rank: p.rank || 'Học viên',
-                    joinedAt: p.joinedAt || new Date().toISOString(),
-                  },
-                ];
-              });
-              setPlayerGoldMap((prev) => ({ ...prev, [p.name.trim()]: prev[p.name.trim()] ?? 0 }));
-            }
-          });
+          if (Array.isArray(presences)) {
+            presences.forEach((p: any) => registerPlayer(p));
+          }
         });
       })
+      .on('presence', { event: 'join' }, ({ key, newPresences }) => {
+        if (Array.isArray(newPresences)) {
+          newPresences.forEach((p: any) => registerPlayer(p));
+        }
+      })
       .on('broadcast', { event: 'player-joined' }, ({ payload }) => {
-        if (!payload || !payload.id) return;
-        const playerName = (payload.name || payload.nickname || '').trim();
-        if (!playerName) return;
-        setPlayers((prev) => {
-          if (prev.some((p) => p.id === payload.id)) {
-            return prev;
-          }
-          const newPlayer = {
-            id: payload.id,
-            name: playerName,
-            avatarSeed: payload.avatarSeed ?? payload.avatarId ?? playerName,
-            rank: payload.rank || 'Học viên',
-            joinedAt: payload.joinedAt || new Date().toISOString(),
-          };
-          return [...prev, newPlayer];
-        });
-        setPlayerGoldMap((prev) => ({ ...prev, [playerName]: prev[playerName] ?? 0 }));
+        if (!payload) return;
+        registerPlayer(payload);
         playClickSound();
-
-        // Gửi ngay ACK xác nhận danh tính học sinh đã được Host ghi nhận
-        channel.send({
-          type: 'broadcast',
-          event: 'player-joined-ack',
-          payload: {
-            playerId: payload.id,
-            pin: pinCode,
-            accepted: true,
-          },
-        });
       })
       .on('broadcast', { event: 'player-sync-request' }, ({ payload }) => {
         if (!payload || !payload.playerId) return;
+        if (payload.nickname || payload.name) {
+          registerPlayer({ id: payload.playerId, name: payload.nickname || payload.name });
+        }
         // Phản hồi trạng thái hiện tại của phòng cho học sinh
-        channel.send({
-          type: 'broadcast',
-          event: 'player-sync-response',
-          payload: {
-            targetPlayerId: payload.playerId,
-            pin: pinCodeRef.current,
-            state: stateRef.current,
-            questionIndex,
-            totalQuestions,
-            question: currentQuestionRef.current,
-            timeLeft,
-            gameMode: roomSettingsRef.current.gameMode,
-          },
-        });
+        try {
+          channel.send({
+            type: 'broadcast',
+            event: 'player-sync-response',
+            payload: {
+              targetPlayerId: payload.playerId,
+              pin: pinCodeRef.current,
+              state: stateRef.current,
+              questionIndex,
+              totalQuestions,
+              question: currentQuestionRef.current,
+              timeLeft,
+              gameMode: roomSettingsRef.current.gameMode,
+            },
+          });
+        } catch (err) {
+          console.warn('[ArenaHost] Error sending player-sync-response:', err);
+        }
       })
       .on('broadcast', { event: 'player-answered' }, ({ payload }) => {
         if (!payload || !payload.nickname) return;
@@ -223,11 +247,13 @@ export default function ArenaHostPage() {
           });
 
           // Gửi thông báo cho nạn nhân biết vừa bị cướp
-          channel.send({
-            type: 'broadcast',
-            event: 'gold-stolen-from-you',
-            payload: { victimName, amount },
-          });
+          try {
+            channel.send({
+              type: 'broadcast',
+              event: 'gold-stolen-from-you',
+              payload: { victimName, amount },
+            });
+          } catch (e) {}
 
           // Thêm thông báo vào Live feed trên máy chiếu
           const logMsg = `🚨 [${thiefName}] vừa cướp ${amount} vàng từ [${victimName}]!`;
