@@ -35,6 +35,7 @@ import {
 
 interface AnswerResultCardProps {
   questionIndex: number;
+  displayLabel?: string;
   questionText: string;
   questionType: string;
   correctAnswer: string | null;
@@ -81,6 +82,7 @@ const questionTypeLabels: Record<string, string> = {
 
 export function AnswerResultCard({
   questionIndex,
+  displayLabel,
   questionText,
   questionType,
   correctAnswer,
@@ -481,7 +483,9 @@ export function AnswerResultCard({
           <div className="flex-1 space-y-1">
             <div className="flex items-center gap-2 flex-wrap">
               {getStatusIcon()}
-              <span className="font-bold text-sm text-foreground">Câu {questionIndex}</span>
+              <span className="font-bold text-sm text-foreground">
+                Câu {displayLabel ? displayLabel : questionIndex}
+              </span>
               <Badge variant="outline" className="text-xs text-muted-foreground">
                 {questionTypeLabels[questionType] || questionType}
               </Badge>

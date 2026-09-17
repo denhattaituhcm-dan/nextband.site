@@ -1437,16 +1437,49 @@ export default function SubmissionDetail() {
                 {(group.questions || [])
                   .sort(compareByDisplayOrder)
                   .map((question: any) => {
-                    questionCounter++;
+                    const qType = getQuestionType(question);
+                    const qAns = getCorrectAnswer(question);
+                    const isMultiMCQ = Boolean(
+                      question.selectionMode === "multiple" ||
+                      qType === "multiple_choice_multi" ||
+                      question.question_type === "multiple_choice_multi" ||
+                      question.isMultiChoice ||
+                      (typeof question.maxSelections === "number" && question.maxSelections > 1) ||
+                      (qType === "multiple_choice" &&
+                        typeof qAns === "string" &&
+                        qAns.split("|").filter((s: string) => s.trim()).length > 1)
+                    );
+
+                    let expectedCount = 1;
+                    let displayLabel: string | undefined = undefined;
+
+                    if (isMultiMCQ) {
+                      expectedCount =
+                        typeof question.maxSelections === "number" && question.maxSelections > 1
+                          ? question.maxSelections
+                          : (typeof qAns === "string" && qAns.includes("|")
+                              ? qAns.split("|").filter((s: string) => s.trim()).length
+                              : 2);
+                      if (expectedCount <= 1) expectedCount = 2;
+
+                      const startNum = questionCounter + 1;
+                      const endNum = questionCounter + expectedCount;
+                      displayLabel = `${startNum} - ${endNum}`;
+                      questionCounter += expectedCount;
+                    } else {
+                      questionCounter++;
+                    }
+
                     const answer = answerMap[question.id];
 
                     return (
                       <AnswerResultCard
                         key={question.id}
                         questionIndex={questionCounter}
+                        displayLabel={displayLabel}
                         questionText={getQuestionText(question)}
-                        questionType={getQuestionType(question)}
-                        correctAnswer={getCorrectAnswer(question)}
+                        questionType={qType}
+                        correctAnswer={qAns}
                         points={getQuestionAssessmentWeight(question)}
                         options={getQuestionOptions(question)}
                         showCorrectAnswers={showCorrectAnswers}

@@ -15,6 +15,7 @@ interface Question {
   id: string;
   order_index?: number;
   isSubQuestion?: boolean;
+  isMultiSelectSub?: boolean;
   subIndex?: string;
   displayNumber?: number;
   focusId?: string;
@@ -45,7 +46,25 @@ export function QuestionPagination({
     const value = answers[q.id];
     let isAnswered = false;
 
-    if (q.isSubQuestion && q.subIndex !== undefined) {
+    if (q.isMultiSelectSub && q.subIndex !== undefined) {
+      const subIdx = Number(q.subIndex);
+      if (Array.isArray(value)) {
+        isAnswered = value.length > subIdx;
+      } else if (typeof value === 'string' && value.trim()) {
+        try {
+          const parsed = JSON.parse(value);
+          if (Array.isArray(parsed)) {
+            isAnswered = parsed.length > subIdx;
+          } else {
+            const arr = value.split(/[|,]/).map((s) => s.trim()).filter(Boolean);
+            isAnswered = arr.length > subIdx;
+          }
+        } catch {
+          const arr = value.split(/[|,]/).map((s) => s.trim()).filter(Boolean);
+          isAnswered = arr.length > subIdx;
+        }
+      }
+    } else if (q.isSubQuestion && q.subIndex !== undefined) {
       if (value && typeof value === 'object') {
         const subVal = value[q.subIndex];
         isAnswered = typeof subVal === 'string' && subVal.trim().length > 0;

@@ -575,6 +575,51 @@ export default function ExamInterface() {
         }
       }
 
+      // Split multi-selection multiple_choice into sub-questions based on expectedCount
+      const isMultiMCQ = Boolean(
+        q.selectionMode === "multiple" ||
+        q.questionType === "multiple_choice_multi" ||
+        q.question_type === "multiple_choice_multi" ||
+        q.isMultiChoice ||
+        (typeof q.maxSelections === "number" && q.maxSelections > 1) ||
+        (q.questionType === "multiple_choice" &&
+          typeof (q.correctAnswer || q.correct_answer) === "string" &&
+          (q.correctAnswer || q.correct_answer).split("|").filter((s: string) => s.trim()).length > 1)
+      );
+
+      if (isMultiMCQ) {
+        let expectedCount =
+          typeof q.maxSelections === "number" && q.maxSelections > 1 ? q.maxSelections : 0;
+        if (!expectedCount) {
+          const rawAns = q.correctAnswer || q.correct_answer;
+          if (typeof rawAns === "string" && rawAns.includes("|")) {
+            expectedCount = rawAns.split("|").filter((s: string) => s.trim()).length;
+          }
+        }
+        if (!expectedCount || expectedCount <= 1) {
+          expectedCount = 2; // IELTS default for multi-select MCQ
+        }
+
+        const startNumber = displayCursor + 1;
+        const endNumber = displayCursor + expectedCount;
+        const rangeLabel = `${startNumber} - ${endNumber}`;
+
+        for (let idx = 0; idx < expectedCount; idx++) {
+          displayCursor += 1;
+          list.push({
+            ...q,
+            isSubQuestion: true,
+            isMultiSelectSub: true,
+            subIndex: String(idx),
+            focusId: `${q.id}::multi:${idx}`,
+            displayNumber: displayCursor,
+            displayLabel: String(displayCursor),
+            rangeLabel,
+          });
+        }
+        return;
+      }
+
       displayCursor += 1;
       list.push({
         ...q,
@@ -588,6 +633,19 @@ export default function ExamInterface() {
   const answeredCount = useMemo(() => {
     return paginationQuestions.filter((q: any) => {
       const val = answers[q.id];
+      if (q.isMultiSelectSub && q.subIndex !== undefined) {
+        const subIdx = Number(q.subIndex);
+        if (Array.isArray(val)) return val.length > subIdx;
+        if (typeof val === "string" && val.trim()) {
+          try {
+            const parsed = JSON.parse(val);
+            if (Array.isArray(parsed)) return parsed.length > subIdx;
+          } catch {}
+          const arr = val.split(/[|,]/).map((s: string) => s.trim()).filter(Boolean);
+          return arr.length > subIdx;
+        }
+        return false;
+      }
       if (q.isSubQuestion && q.subIndex !== undefined) {
         if (val && typeof val === "object") {
           const subVal = val[q.subIndex];
@@ -599,7 +657,7 @@ export default function ExamInterface() {
       if (typeof val === "string") return val.trim().length > 0;
       if (val && typeof val === "object") {
         return Object.values(val).some(
-          (item) => typeof item === "string" && item.trim().length > 0,
+          (item) => typeof item === "string" && (item as string).trim().length > 0,
         );
       }
       return false;
@@ -766,11 +824,14 @@ export default function ExamInterface() {
   const handleQuestionClick = useCallback((questionId: string) => {
     setCurrentQuestionId(questionId);
     isProgrammaticScrollRef.current = true;
+    const baseId = questionId.includes("::multi:")
+      ? questionId.split("::multi:")[0]
+      : questionId.includes("::blank:")
+      ? questionId.split("::blank:")[0]
+      : questionId;
     const element =
       questionRefs.current.get(questionId) ||
-      (questionId.includes("::blank:")
-        ? questionRefs.current.get(questionId.split("::blank:")[0])
-        : undefined);
+      questionRefs.current.get(baseId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "center" });
     }
