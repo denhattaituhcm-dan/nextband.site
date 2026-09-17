@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { useParams, Link, useLocation } from "react-router-dom";
+import { useParams, Link, useLocation, Navigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { coursesApi, examsApi, submissionsApi } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
+import { useStudentLifecycle } from "@/hooks/useStudentLifecycle";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -29,6 +30,7 @@ import { compareHomeworkOrder } from "@/lib/homeworkStatusHelper";
 export default function CourseDetail() {
   const { slug } = useParams<{ slug: string }>();
   const { user } = useAuth();
+  const { enrollments, isLoading: lifecycleLoading, hasEnrollments } = useStudentLifecycle();
 
   // 1. Fetch Course Detail
   const { data: course, isLoading: courseLoading } = useQuery({
@@ -37,6 +39,20 @@ export default function CourseDetail() {
     enabled: !!slug,
     staleTime: 60 * 1000,
   });
+
+  // If the user is a student, automatically route them to their modern active class workspace
+  // instead of the obsolete, empty legacy course view.
+  if (!lifecycleLoading && hasEnrollments && enrollments.length > 0) {
+    // Check if student is enrolled in a class matching this course (by courseId or slug)
+    const matchedClass = enrollments.find(
+      (e) => e.courseId === slug || e.courseId === course?.id
+    );
+    if (matchedClass) {
+      return <Navigate to={`/app/class/${matchedClass.classId}/lessons`} replace />;
+    }
+    // Otherwise route to the first active class lessons or my-courses
+    return <Navigate to={`/app/class/${enrollments[0].classId}/lessons`} replace />;
+  }
 
   // 2. Fetch Exams in Course
   const { data: examsData, isLoading: examsLoading } = useQuery({

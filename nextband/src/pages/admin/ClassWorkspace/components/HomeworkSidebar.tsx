@@ -13,6 +13,9 @@ export interface HomeworkItemData {
   progressPercent: number;
   deadline?: string | Date | null;
   deadlineSource?: "MANUAL" | "AUTO";
+  sessionDate?: string | Date | null;
+  sessionNumber?: number;
+  sessionStatus?: string;
   skills: any[];
   pendingSubmissions: any[];
 }
@@ -64,6 +67,11 @@ export const HomeworkSidebar: React.FC<HomeworkSidebarProps> = ({
                 <span className="font-mono text-xs text-slate-900 dark:text-slate-100 truncate max-w-[130px]">
                   {hw.title}
                 </span>
+                {isSelected && (
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-medium shrink-0">
+                    Đang chọn
+                  </span>
+                )}
                 {isLowProgress && (
                   <span title="Tỷ lệ nộp bài thấp">
                     <AlertTriangle className="h-3.5 w-3.5 text-rose-500" />

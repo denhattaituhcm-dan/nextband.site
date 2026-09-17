@@ -62,9 +62,9 @@ export function resolveExitDestination(
     return `/app/class/${exam.classId}/lessons`;
   }
   if (exam?.courseId) {
-    return `/app/course/${exam.courseId}`;
+    return "/app/my-courses";
   }
 
   // 4. Global Fallback
-  return "/app";
+  return "/app/my-courses";
 }

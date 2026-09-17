@@ -896,12 +896,59 @@ export default function TeacherWorkspace() {
           payload.totalScore ??
           (payload.grades && payload.grades.length > 0 ? payload.grades[0].score : undefined);
 
-        await submissionsApi.grade(
+        const gradeResult = await submissionsApi.grade(
           currentHomework.submissionId,
           payload.grades,
           computedTotalScore,
           payload.options
         );
+
+        // Optimistically update React Query cache for immediate UI responsiveness
+        if (gradeResult) {
+          queryClient.setQueryData(
+            ["submission-detail-for-grading", currentHomework.submissionId],
+            gradeResult
+          );
+        }
+
+        if (selectedClassId) {
+          queryClient.setQueryData(
+            ["teacher-workspace-data", selectedClassId],
+            (oldData: any) => {
+              if (!oldData?.students) return oldData;
+              const nextStatus = payload.options.finalize
+                ? (payload.options.revisionRequired ? "needs_revision" : "graded")
+                : undefined;
+              return {
+                ...oldData,
+                students: oldData.students.map((st: any) => {
+                  if (st.id !== currentStudent.id) return st;
+                  const updatedHws = (st.homeworks || []).map((hw: any) => {
+                    if (hw.id !== currentHomework.id && hw.submissionId !== currentHomework.submissionId) return hw;
+                    return {
+                      ...hw,
+                      ...(nextStatus ? { status: nextStatus } : {}),
+                      score: computedTotalScore ?? hw.score,
+                      bandScore: (currentHomework.skill === "writing" || currentHomework.skill === "speaking") ? (computedTotalScore ?? hw.bandScore) : hw.bandScore,
+                      objectiveScore: (currentHomework.skill !== "writing" && currentHomework.skill !== "speaking") ? (computedTotalScore ?? hw.objectiveScore) : hw.objectiveScore,
+                      revisionRequired: payload.options.revisionRequired ?? hw.revisionRequired,
+                      feedback: payload.options.feedback ?? hw.feedback,
+                    };
+                  });
+                  const pendingCount = updatedHws.filter((h: any) => h.status === "submitted" && !h.isAutoGraded).length;
+                  const gradedCount = updatedHws.filter((h: any) => h.status === "graded" || h.status === "needs_revision").length;
+                  return {
+                    ...st,
+                    homeworks: updatedHws,
+                    pendingCount,
+                    gradedCount,
+                    hasPending: pendingCount > 0,
+                  };
+                }),
+              };
+            }
+          );
+        }
 
         // Invalidate cache and refetch fresh data
         queryClient.invalidateQueries({ queryKey: ["submission-detail-for-grading", currentHomework.submissionId] });

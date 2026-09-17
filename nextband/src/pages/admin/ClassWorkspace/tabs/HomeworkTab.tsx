@@ -86,6 +86,11 @@ export const HomeworkTab: React.FC = () => {
       ];
     }
 
+    // Session metadata
+    const sessionDate = lesson.sessionDate || lesson.homework?.sessionDate || null;
+    const sessionNumber = lesson.sessionNumber ?? lesson.homework?.sessionNumber ?? (i + 1);
+    const sessionStatus = lesson.sessionStatus || lesson.homework?.sessionStatus;
+
     return {
       id: lesson.id || `hw-${i + 1}`,
       hwNum,
@@ -96,12 +101,60 @@ export const HomeworkTab: React.FC = () => {
       progressPercent,
       deadline,
       deadlineSource,
+      sessionDate,
+      sessionNumber,
+      sessionStatus,
       skills,
       pendingSubmissions,
     };
   });
 
-  const [selectedHwId, setSelectedHwId] = useState<string>(homeworkList[0]?.id || "");
+  // Determine the most recent passed homework that students should do
+  // (e.g. Session date <= now or completed session, falling back to nearest deadline or first item)
+  const defaultHwId = React.useMemo(() => {
+    if (homeworkList.length === 0) return "";
+    const now = Date.now();
+
+    // 1. First priority: Check homeworks whose linked session has already passed (sessionDate <= now)
+    const passedSessionHomeworks = homeworkList.filter((hw) => {
+      if (!hw.sessionDate) return false;
+      const t = new Date(hw.sessionDate).getTime();
+      return !isNaN(t) && t <= now;
+    });
+
+    if (passedSessionHomeworks.length > 0) {
+      // Pick the latest passed session (closest to now)
+      passedSessionHomeworks.sort((a, b) => {
+        const timeA = new Date(a.sessionDate!).getTime();
+        const timeB = new Date(b.sessionDate!).getTime();
+        return timeB - timeA;
+      });
+      return passedSessionHomeworks[0].id;
+    }
+
+    // 2. Second priority: Check if any session is marked as COMPLETED
+    const completedSessionHw = homeworkList.filter((hw) => hw.sessionStatus === "COMPLETED");
+    if (completedSessionHw.length > 0) {
+      return completedSessionHw[completedSessionHw.length - 1].id;
+    }
+
+    // 3. Third priority: Check deadline passed or upcoming
+    const pastDeadlineHws = homeworkList.filter((hw) => {
+      if (!hw.deadline) return false;
+      const t = new Date(hw.deadline).getTime();
+      return !isNaN(t) && t <= now;
+    });
+    if (pastDeadlineHws.length > 0) {
+      pastDeadlineHws.sort((a, b) => new Date(b.deadline!).getTime() - new Date(a.deadline!).getTime());
+      return pastDeadlineHws[0].id;
+    }
+
+    // Default to the first homework
+    return homeworkList[0]?.id || "";
+  }, [homeworkList]);
+
+  const [userSelectedHwId, setUserSelectedHwId] = useState<string | null>(null);
+  const selectedHwId = userSelectedHwId || defaultHwId;
   const selectedHw = homeworkList.find((hw) => hw.id === selectedHwId) || homeworkList[0] || null;
   const selectedCountdown = selectedHw?.deadline ? formatDeadlineCountdown(selectedHw.deadline) : null;
   
@@ -191,7 +244,7 @@ Chúc các bạn hoàn thành bài tập thật tốt! 💪`;
           <HomeworkSidebar
             homeworkList={homeworkList}
             selectedHwId={selectedHw?.id || ""}
-            onSelectHw={setSelectedHwId}
+            onSelectHw={setUserSelectedHwId}
             totalStudents={totalStudents}
           />
         </div>

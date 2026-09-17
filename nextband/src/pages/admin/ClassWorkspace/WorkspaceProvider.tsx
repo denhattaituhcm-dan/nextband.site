@@ -113,11 +113,16 @@ export const WorkspaceProvider: React.FC<{
                 lessonOrder,
                 deadline: effectiveDeadline,
                 deadlineSource,
+                sessionDate,
+                sessionNumber: matchingSession?.sessionNumber ?? lessonOrder,
+                sessionStatus: (matchingSession as any)?.status,
                 homework: {
                   id: exam.id,
                   title: exam.title,
                   deadline: effectiveDeadline,
                   deadlineSource,
+                  sessionDate,
+                  sessionNumber: matchingSession?.sessionNumber ?? lessonOrder,
                 },
                 exam_sections: exam.exam_sections || matchedProj?.exam_sections || matchedProj?.sections || [],
               };

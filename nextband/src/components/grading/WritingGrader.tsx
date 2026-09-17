@@ -54,7 +54,7 @@ import {
   getSkillBadgeConfig,
   ExamSkillType,
 } from "@/lib/examSkillHelper";
-import { isSubmissionGraded } from "@/lib/homeworkStatusHelper";
+import { isSubmissionGraded, isSubmissionRevision } from "@/lib/homeworkStatusHelper";
 
 export interface WritingAnswerItem {
   id?: string;
@@ -152,9 +152,19 @@ export function WritingGrader({
   onGradeSubmit,
 }: WritingGraderProps) {
   const effectiveStudentId = studentId || submissionDetail?.studentId || submissionDetail?.student_id;
+  const [currentStatus, setCurrentStatus] = useState<string>(
+    submissionDetail?.status || submissionStatus || "SUBMITTED"
+  );
   const [isDirty, setIsDirty] = useState<boolean>(false);
   const [lastSavedTime, setLastSavedTime] = useState<Date | null>(null);
   const [showCorrectAnswers, setShowCorrectAnswers] = useState<boolean>(true);
+
+  useEffect(() => {
+    const nextStatus = submissionDetail?.status || submissionStatus;
+    if (nextStatus) {
+      setCurrentStatus(nextStatus);
+    }
+  }, [submissionDetail?.status, submissionStatus]);
 
   // Skill detection
   const detectedSkill: ExamSkillType = useMemo(() => {
@@ -443,7 +453,14 @@ export function WritingGrader({
 
     setIsDirty(false);
     setLastSavedTime(new Date());
+    if (finalize) {
+      setCurrentStatus(revisionRequired ? "REVISION_REQUIRED" : "GRADED");
+    }
   };
+
+  const isRevision = isSubmissionRevision(currentStatus) || currentStatus === "needs_revision" || (currentStatus === "GRADED" && revisionRequired);
+  const isGraded = isSubmissionGraded(currentStatus) || currentStatus === "graded" || isAutoGraded;
+  const isCompleted = isGraded || isRevision;
 
   let questionCounter = 0;
 
@@ -473,18 +490,30 @@ export function WritingGrader({
               <Badge variant="outline" className={`text-[11px] font-semibold ${skillBadge.badgeClass}`}>
                 {skillBadge.label}
               </Badge>
-              <Badge
-                variant="outline"
-                className={
-                  isSubmissionGraded(submissionStatus) || isAutoGraded
-                    ? "bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px]"
-                    : "bg-blue-50 text-blue-700 border-blue-200 text-[11px]"
-                }
-              >
-                {isSubmissionGraded(submissionStatus) || isAutoGraded ? "Đã chấm điểm" : "Chờ chấm"}
-              </Badge>
-              {!isSubmissionGraded(submissionStatus) && !isAutoGraded && submittedAt && (() => {
-                const sla = calculateGradingSla(submittedAt, null, submissionStatus);
+              {isRevision ? (
+                <Badge
+                  variant="outline"
+                  className="bg-amber-50 text-amber-800 border-amber-300 text-[11px] font-semibold"
+                >
+                  Cần sửa bài (Attempt 2)
+                </Badge>
+              ) : isGraded ? (
+                <Badge
+                  variant="outline"
+                  className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[11px] font-semibold"
+                >
+                  Đã chấm điểm
+                </Badge>
+              ) : (
+                <Badge
+                  variant="outline"
+                  className="bg-blue-50 text-blue-700 border-blue-200 text-[11px] font-semibold"
+                >
+                  Chờ chấm
+                </Badge>
+              )}
+              {!isCompleted && submittedAt && (() => {
+                const sla = calculateGradingSla(submittedAt, null, currentStatus);
                 const badgeClass = sla.status === "OVERDUE"
                   ? "bg-rose-50 text-rose-700 border-rose-200 text-[11px] font-bold"
                   : sla.status === "APPROACHING"
@@ -538,7 +567,7 @@ export function WritingGrader({
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold h-8 text-xs px-3.5 shadow-xs gap-1.5"
           >
             {isSubmitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
-            Trả bài 🚀
+            <span>{isCompleted ? "Cập nhật điểm" : "Trả bài 🚀"}</span>
           </Button>
         </div>
       </header>

@@ -66,6 +66,7 @@ export default function StudentLessonViewerPage() {
   const { state: lifecycleState, resolveClass } = useStudentLifecycle();
   const { isHealthy: isGatewayHealthy, isWarmingUp: isGatewayWarmingUp, checkHealthNow } = useGatewayHealth();
   const [isHonorCardOpen, setIsHonorCardOpen] = useState(false);
+  const [selectedHonorHomework, setSelectedHonorHomework] = useState<any | null>(null);
 
   const {
     isEventActive: isSeasonalActive,
@@ -431,56 +432,44 @@ export default function StudentLessonViewerPage() {
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <Button
-              size="sm"
-              onClick={() => setIsHonorCardOpen(true)}
-              className={`text-xs font-bold rounded-xl gap-1.5 shadow-xs cursor-pointer ${
-                isEligibleForMilestone
-                  ? "bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950"
-                  : "bg-slate-900 hover:bg-slate-800 text-white border border-slate-700"
-              }`}
-            >
-              {isEligibleForMilestone ? <Award className="w-3.5 h-3.5 text-slate-950" /> : <FileText className="w-3.5 h-3.5 text-sky-400" />}
-              <span className="hidden sm:inline">
-                {isEligibleForMilestone ? "🎖️ Báo Cáo Vinh Danh Cột Mốc" : "📄 Phiếu Báo Cáo Gửi Ba Mẹ"}
-              </span>
-              <span className="sm:hidden">
-                {isEligibleForMilestone ? "Báo Cáo Cột Mốc" : "Phiếu Báo Cáo"}
-              </span>
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => navigate("/app")} className="hidden sm:inline-flex text-xs font-semibold rounded-xl">
-              Về Sảnh Chính
+            <Button variant="outline" size="sm" onClick={() => navigate("/app")} className="text-xs font-semibold rounded-xl gap-1.5">
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Về Sảnh Chính</span>
             </Button>
           </div>
         </div>
 
-        {/* Clinical Honor / Daily Report Card Modal */}
+        {/* Clinical Honor / Daily Report Card Modal for specific graded homework */}
         <HonorReportCardModal
           open={isHonorCardOpen}
-          onOpenChange={setIsHonorCardOpen}
+          onOpenChange={(open) => {
+            setIsHonorCardOpen(open);
+            if (!open) setSelectedHonorHomework(null);
+          }}
           studentName={user?.fullName || user?.email?.split("@")[0] || "Học viên"}
-          reportType={isEligibleForMilestone ? "MILESTONE_HONOR" : "DAILY_LOG"}
+          reportType={
+            selectedHonorHomework?.scoreDisplay?.isGraded &&
+            (selectedHonorHomework?.scoreDisplay?.scoreText?.includes("Band 7") ||
+             selectedHonorHomework?.scoreDisplay?.scoreText?.includes("Band 8") ||
+             selectedHonorHomework?.scoreDisplay?.scoreText?.includes("Band 9") ||
+             (selectedHonorHomework?.scoreDisplay?.percentage != null && selectedHonorHomework.scoreDisplay.percentage >= 85))
+              ? "MILESTONE_HONOR"
+              : "DAILY_LOG"
+          }
           examTitle={
+            selectedHonorHomework?.title ||
             recentCompletedHomework?.title ||
             classData.courseTitle ||
             `Lớp ${classData.className || "IELTS"}`
           }
           courseTitle={classData.courseTitle || "Hệ thống Bác sĩ học thuật ARIS"}
-          metricDiscipline={
-            isEligibleForMilestone
-              ? `${submittedCount}/${homeworkList.length} Bài đã nộp (${completionRate}%)`
-              : recentCompletedHomework
-              ? "Hoàn thành 100% bài nộp"
-              : `${submittedCount}/${homeworkList.length} Bài đã nộp`
-          }
+          metricDiscipline="100% Hoàn thành bài nộp"
           metricScore={
-            recentCompletedHomework?.scoreDisplay?.isGraded
+            selectedHonorHomework?.scoreDisplay?.isGraded
+              ? selectedHonorHomework.scoreDisplay.scoreText
+              : recentCompletedHomework?.scoreDisplay?.isGraded
               ? recentCompletedHomework.scoreDisplay.scoreText
-              : reviewedCount > 0
-              ? `${reviewedCount} bài đã có điểm & nhận xét`
-              : recentCompletedHomework
-              ? "Đã nộp bài đầy đủ"
-              : `${submittedCount} bài đã hoàn thành`
+              : "Đã có nhận xét chi tiết"
           }
         />
 
@@ -657,14 +646,30 @@ export default function StudentLessonViewerPage() {
                           : "border-border bg-card hover:border-primary/40 hover:shadow-xs"
                       }`}
                     >
-                      <div className="space-y-2 flex-1 min-w-0">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <Badge variant="outline" className={`text-[10px] font-bold px-2 py-0.5 shrink-0 ${hw.badge.badgeClass}`}>
-                            {hw.badge.shortLabel}
-                          </Badge>
-                          <h3 className={`font-bold text-sm leading-snug break-words ${isOverdue ? "text-rose-900 dark:text-rose-200" : "text-foreground"}`}>
-                            {hw.title}
-                          </h3>
+                      <div className="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
+                        {/* Ô vuông đánh số thứ tự bài tập đồng bộ màu với trạng thái */}
+                        <div className={`h-8 w-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
+                          isOverdue
+                            ? "bg-rose-600 text-white shadow-2xs font-extrabold"
+                            : isRevision
+                            ? "bg-amber-600 text-white shadow-2xs font-extrabold"
+                            : hw.status === "GRADED"
+                            ? "bg-emerald-600 text-white shadow-2xs font-extrabold"
+                            : hw.status === "SUBMITTED"
+                            ? "bg-indigo-600 text-white shadow-2xs font-extrabold"
+                            : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+                        }`}>
+                          {hw.hwNum}
+                        </div>
+
+                        <div className="space-y-2 flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Badge variant="outline" className={`text-[10px] font-bold px-2 py-0.5 shrink-0 ${hw.badge.badgeClass}`}>
+                              {hw.badge.shortLabel}
+                            </Badge>
+                            <h3 className={`font-bold text-sm leading-snug break-words ${isOverdue ? "text-rose-900 dark:text-rose-200" : "text-foreground"}`}>
+                              {hw.title}
+                            </h3>
                           {getStatusBadge(hw.status, hw.countdown, hw.submissionTiming)}
                           {isSeasonalActive && seasonalUiConfig.showEnvelopes && eligibleHomeworkIdsForSeasonal.has(hw.examId || hw.id) &&
                             // Chỉ gắn lộc vào bài CHƯA NỘP. Bài đã nộp (SUBMITTED/GRADED) chỉ hiện nếu đã claimed ("Đã Khai Lộc").
@@ -717,6 +722,7 @@ export default function StudentLessonViewerPage() {
                           )}
                         </div>
                       </div>
+                      </div>
 
                       <div className="flex items-center gap-3 shrink-0 pt-1 sm:pt-0 w-full sm:w-auto">
                         {/* Score Preview on desktop */}
@@ -728,6 +734,23 @@ export default function StudentLessonViewerPage() {
                             {hw.scoreDisplay.subText}
                           </div>
                         </div>
+
+                        {/* Nút Khoe Ba Mẹ cho bài đã có điểm */}
+                        {hw.status === "GRADED" && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => {
+                              setSelectedHonorHomework(hw);
+                              setIsHonorCardOpen(true);
+                            }}
+                            className="w-full sm:w-auto font-bold text-xs gap-1.5 rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-900 dark:bg-amber-950/40 dark:border-amber-800 dark:text-amber-200 shadow-2xs"
+                            title="Tạo phiếu điểm vinh danh để gửi ba mẹ"
+                          >
+                            <Award className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                            <span>Khoe Ba Mẹ</span>
+                          </Button>
+                        )}
 
                         <Button
                           size="sm"

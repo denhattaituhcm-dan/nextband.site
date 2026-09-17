@@ -345,7 +345,17 @@ export const HomeworkSkillMatrixCard: React.FC<HomeworkSkillMatrixCardProps> = (
                   className='p-4 sm:px-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-muted/30 transition-colors'
                 >
                   <div className='flex items-start sm:items-center gap-3.5 flex-1 min-w-0'>
-                    <div className='h-8 w-8 rounded-lg bg-muted flex items-center justify-center text-xs font-bold shrink-0 text-muted-foreground'>
+                    <div className={`h-8 w-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
+                      isOverdue
+                        ? 'bg-rose-600 text-white shadow-2xs font-extrabold'
+                        : isRevision
+                        ? 'bg-amber-600 text-white shadow-2xs font-extrabold'
+                        : isGraded
+                        ? 'bg-emerald-600 text-white shadow-2xs font-extrabold'
+                        : isSubmitted
+                        ? 'bg-indigo-600 text-white shadow-2xs font-extrabold'
+                        : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                    }`}>
                       {String(hw.lessonOrder).padStart(2, '0')}
                     </div>
 

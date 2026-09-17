@@ -48,6 +48,10 @@ import {
   CheckCircle2,
   ArrowRight,
   BookOpen,
+  Trophy,
+  Award,
+  ExternalLink,
+  FileCheck,
 } from "lucide-react";
 
 
@@ -446,6 +450,53 @@ export default function HomePage() {
     });
   }, [actionQueue, submittedCount, gradedCount, pendingCount, activeClassName, courseTitle, streak.streakDays, journey.currentBand]);
 
+  // Bài tập được chấm/trả mới nhất của học viên
+  const latestGradedSubmission = useMemo(() => {
+    const gradedSubs = userSubmissions.filter((s: any) =>
+      ["graded", "GRADED"].includes(s.status)
+    );
+    if (gradedSubs.length === 0) return null;
+
+    // Sắp xếp theo ngày trả điểm / nộp gần nhất
+    const sorted = [...gradedSubs].sort((a: any, b: any) => {
+      const timeA = new Date(a.gradedAt || a.graded_at || a.submittedAt || a.submitted_at || a.updatedAt || 0).getTime();
+      const timeB = new Date(b.gradedAt || b.graded_at || b.submittedAt || b.submitted_at || b.updatedAt || 0).getTime();
+      return timeB - timeA;
+    });
+
+    const latest = sorted[0];
+    const examId = latest.examId || latest.exam_id;
+    const matchedLesson = (rawLessons || []).find((l: any) => l.id === examId);
+
+    const examTitle =
+      latest.exam?.title ||
+      latest.examTitle ||
+      matchedLesson?.title ||
+      "Bài tập vừa chấm";
+
+    const scoreDisplay =
+      latest.totalScore != null
+        ? String(latest.totalScore).startsWith("Band")
+          ? latest.totalScore
+          : Number(latest.totalScore) <= 9 && Number(latest.totalScore) > 0
+          ? `Band ${latest.totalScore}`
+          : `${latest.totalScore} đ`
+        : latest.score != null
+        ? `${latest.score} đ`
+        : "Đã chấm";
+
+    const isTeacherGraded = !!(latest.gradedBy || latest.feedback || latest.criteriaScores);
+
+    return {
+      submissionId: latest.id,
+      examId,
+      examTitle,
+      scoreDisplay,
+      isTeacherGraded,
+      gradedAt: latest.gradedAt || latest.graded_at || latest.submittedAt || latest.submitted_at,
+    };
+  }, [userSubmissions, rawLessons]);
+
   // ── State machine render ─────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-[#FAF8F4] text-[#1E293B] pb-16">
@@ -618,71 +669,82 @@ export default function HomePage() {
                     </p>
                   </div>
 
-                  {/* Dual Telemetry Cards: Lộ trình hoàn thành & Tỷ lệ chuyên cần */}
+                  {/* Dual Telemetry Cards: Điểm số bài vừa chấm & Nút xem bài chấm */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/80">
-                    {/* Course Progress Card */}
-                    <div className="p-3 rounded-xl bg-white/80 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-700/60 shadow-2xs space-y-2">
+                    {/* 1. Điểm số bài vừa chấm */}
+                    <div className="p-3 rounded-xl bg-white/80 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-700/60 shadow-2xs space-y-1.5">
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                          <BookOpen className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
-                          Tiến độ lộ trình
+                          <Trophy className="h-3.5 w-3.5 text-amber-500" />
+                          Kết quả bài gần nhất
                         </span>
-                        <span className="font-black text-xs text-indigo-600 dark:text-indigo-400 tabular-nums">
-                          {courseProgressPercent}%
+                        <span className={`font-black text-sm tabular-nums ${
+                          latestGradedSubmission
+                            ? "text-emerald-600 dark:text-emerald-400"
+                            : "text-slate-400"
+                        }`}>
+                          {latestGradedSubmission ? latestGradedSubmission.scoreDisplay : "Chưa có"}
                         </span>
                       </div>
-                      <div className="h-2 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-indigo-600 rounded-full transition-all duration-300"
-                          style={{ width: `${courseProgressPercent}%` }}
-                        />
+                      <div className="text-[11px] font-semibold text-slate-800 dark:text-slate-200 truncate" title={latestGradedSubmission?.examTitle || "Chưa có bài nào được chấm"}>
+                        {latestGradedSubmission ? latestGradedSubmission.examTitle : "Chưa có bài nộp nào được chấm"}
                       </div>
-                      <div className="text-[10px] text-muted-foreground font-medium flex items-center justify-between">
-                        <span>Đã hoàn thành</span>
-                        <span className="font-bold text-slate-700 dark:text-slate-200">{completedSessions} / {totalSessions} buổi</span>
+                      <div className="text-[10px] text-muted-foreground font-medium flex items-center justify-between pt-0.5">
+                        <span className="flex items-center gap-1">
+                          <span className={`w-1.5 h-1.5 rounded-full ${latestGradedSubmission ? "bg-emerald-500" : "bg-slate-300"}`} />
+                          {latestGradedSubmission
+                            ? latestGradedSubmission.isTeacherGraded
+                              ? "Giáo viên đã trả bài"
+                              : "Hệ thống chấm tự động"
+                            : "Đang chờ nộp & chấm"}
+                        </span>
+                        {latestGradedSubmission?.gradedAt && (
+                          <span>
+                            {new Date(latestGradedSubmission.gradedAt).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" })}
+                          </span>
+                        )}
                       </div>
                     </div>
 
-                    {/* Attendance Card */}
+                    {/* 2. Nút bấm truy cập thẳng vào bài làm vừa được chấm */}
                     <button
                       type="button"
-                      onClick={() => navigate(`/app/attendance?classId=${enrolledClassId}`)}
-                      className="p-3 rounded-xl bg-white/80 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-700/60 shadow-2xs text-left group hover:border-indigo-400 hover:shadow-xs transition-all space-y-2 cursor-pointer"
-                      title="Xem chi tiết sổ điểm danh & lịch 27 buổi học"
+                      disabled={!latestGradedSubmission}
+                      onClick={() => {
+                        if (latestGradedSubmission?.submissionId) {
+                          navigate(`/app/submissions/${latestGradedSubmission.submissionId}`);
+                        } else if (enrolledClassId) {
+                          navigate(`/app/class/${enrolledClassId}/lessons`);
+                        }
+                      }}
+                      className={`p-3 rounded-xl border shadow-2xs text-left transition-all space-y-1.5 ${
+                        latestGradedSubmission
+                          ? "bg-gradient-to-br from-indigo-50/70 via-white to-purple-50/40 dark:from-slate-800 dark:to-indigo-950/30 border-indigo-200 dark:border-indigo-800 hover:border-indigo-400 hover:shadow-xs cursor-pointer group"
+                          : "bg-slate-50/60 dark:bg-slate-800/40 border-slate-200/60 dark:border-slate-700/40 opacity-75 cursor-default"
+                      }`}
+                      title={latestGradedSubmission ? "Bấm để xem chi tiết lời nhận xét & sửa lỗi" : "Chưa có bài tập nào được chấm"}
                     >
                       <div className="flex items-center justify-between text-xs">
-                        <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
-                          Chuyên cần
+                        <span className="font-bold text-indigo-700 dark:text-indigo-300 flex items-center gap-1.5">
+                          <FileCheck className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+                          Xem bài được trả
                         </span>
-                        <span className={`font-black text-xs tabular-nums ${
-                          attendanceRate === null
-                            ? "text-slate-500"
-                            : attendanceRate >= 85
-                            ? "text-emerald-600 dark:text-emerald-400"
-                            : "text-amber-600 dark:text-amber-400"
-                        }`}>
-                          {attendanceRate !== null ? `${attendanceRate}%` : "Chưa có"}
+                        <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
+                          <span>Chi tiết</span>
+                          <ArrowRight className="h-3 w-3" />
                         </span>
                       </div>
+                      <div className="text-[11px] font-medium text-slate-600 dark:text-slate-300 line-clamp-1">
+                        {latestGradedSubmission
+                          ? "Xem nhận xét, lời giải & sửa lỗi chi tiết"
+                          : "Làm bài tập để nhận nhận xét & điểm số"}
+                      </div>
                       <div className="flex items-center justify-between pt-0.5">
-                        <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                            attendanceRate === null
-                              ? "bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700"
-                              : attendanceRate >= 85
-                              ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800"
-                              : "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800"
-                          }`}
-                        >
-                          {attendanceRate === null
-                            ? "Chờ bắt đầu"
-                            : attendanceRate >= 85
-                            ? "✓ Đạt chuẩn đầu ra"
-                            : "⚠ Cần lưu ý"}
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100/70 text-indigo-800 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                          {latestGradedSubmission ? "Nhận xét chi tiết" : "Chờ bài làm"}
                         </span>
-                        <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold group-hover:underline">
-                          Chi tiết →
+                        <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold underline underline-offset-2">
+                          Mở bài →
                         </span>
                       </div>
                     </button>
