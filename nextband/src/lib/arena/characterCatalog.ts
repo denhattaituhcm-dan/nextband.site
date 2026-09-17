@@ -258,6 +258,69 @@ export const CHARACTER_AVATARS: CharacterAvatar[] = [
     "url": "/assets/Arena/avatars/individual/avatar_35.png",
     "type": "cute_chibi",
     "name": "Mặt trăng dịu dàng"
+  },
+  {
+    "id": 36,
+    "fileName": "avatar_36.png",
+    "url": "/assets/Arena/avatars/individual/avatar_36.png",
+    "type": "pop_heroes",
+    "name": "Pikachu Thần Sấm"
+  },
+  {
+    "id": 37,
+    "fileName": "avatar_37.png",
+    "url": "/assets/Arena/avatars/individual/avatar_37.png",
+    "type": "pop_heroes",
+    "name": "Mario Siêu Đẳng"
+  },
+  {
+    "id": 38,
+    "fileName": "avatar_38.png",
+    "url": "/assets/Arena/avatars/individual/avatar_38.png",
+    "type": "pop_heroes",
+    "name": "Nhím Siêu Tốc Sonic"
+  },
+  {
+    "id": 39,
+    "fileName": "avatar_39.png",
+    "url": "/assets/Arena/avatars/individual/avatar_39.png",
+    "type": "pop_heroes",
+    "name": "Siêu Nhân Superman"
+  },
+  {
+    "id": 40,
+    "fileName": "avatar_40.png",
+    "url": "/assets/Arena/avatars/individual/avatar_40.png",
+    "type": "pop_heroes",
+    "name": "Chuột Mickey Vui Vẻ"
+  },
+  {
+    "id": 41,
+    "fileName": "avatar_41.png",
+    "url": "/assets/Arena/avatars/individual/avatar_41.png",
+    "type": "pop_heroes",
+    "name": "Người Nhện Spider-Man"
+  },
+  {
+    "id": 42,
+    "fileName": "avatar_42.png",
+    "url": "/assets/Arena/avatars/individual/avatar_42.png",
+    "type": "pop_heroes",
+    "name": "Mèo Hello Kitty"
+  },
+  {
+    "id": 43,
+    "fileName": "avatar_43.png",
+    "url": "/assets/Arena/avatars/individual/avatar_43.png",
+    "type": "pop_heroes",
+    "name": "Bọt Biển SpongeBob"
+  },
+  {
+    "id": 44,
+    "fileName": "avatar_44.png",
+    "url": "/assets/Arena/avatars/individual/avatar_44.png",
+    "type": "pop_heroes",
+    "name": "Hiệp Sĩ Bóng Đêm Batman"
   }
 ];
 
