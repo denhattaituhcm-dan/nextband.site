@@ -16,32 +16,50 @@ export default function PublicLayout() {
   }, [pathname]);
 
   // Detect if user just landed on a public page from an OAuth redirect or saved redirect target
+  const getSavedTarget = () => {
+    if (typeof window === "undefined") return null;
+    return sessionStorage.getItem("auth_redirect_target") || localStorage.getItem("auth_redirect_target");
+  };
+
+  const hasAuthHash =
+    typeof window !== "undefined" &&
+    (window.location.hash.includes("access_token") ||
+      window.location.hash.includes("refresh_token") ||
+      window.location.search.includes("code=") ||
+      window.location.hash === "#");
+
   const isAuthRedirecting = Boolean(
-    (typeof window !== "undefined" &&
-      (window.location.hash.includes("access_token") ||
-        window.location.hash.includes("refresh_token") ||
-        window.location.search.includes("code="))) ||
-      (typeof sessionStorage !== "undefined" &&
-        sessionStorage.getItem("auth_redirect_target") &&
-        (isLoading || user))
+    hasAuthHash ||
+      (typeof window !== "undefined" && getSavedTarget() && (isLoading || user))
   );
 
   // If user just authenticated via OAuth and landed on a public page, redirect inside
   useEffect(() => {
     if (isLoading || !user) return;
 
-    const savedTarget = sessionStorage.getItem("auth_redirect_target");
-    const hasAuthHash =
+    const savedTarget = getSavedTarget();
+    const hasHashOrCode =
       window.location.hash.includes("access_token") ||
       window.location.hash.includes("refresh_token") ||
-      window.location.search.includes("code=");
+      window.location.search.includes("code=") ||
+      window.location.hash === "#" ||
+      window.location.pathname === "/";
 
-    if (savedTarget || hasAuthHash) {
-      if (savedTarget) {
-        sessionStorage.removeItem("auth_redirect_target");
+    if (savedTarget || hasHashOrCode) {
+      if (typeof window !== "undefined") {
+        try {
+          sessionStorage.removeItem("auth_redirect_target");
+          localStorage.removeItem("auth_redirect_target");
+        } catch {}
       }
+
       const destination = savedTarget || "/app";
       const target = destination === "/" ? "/app" : destination;
+
+      // Clean up the hash '#' from window location if present
+      if (window.location.hash === "#") {
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
 
       if (user.roles?.includes("admin")) {
         const adminTarget = target.startsWith("/admin") ? target : "/admin";

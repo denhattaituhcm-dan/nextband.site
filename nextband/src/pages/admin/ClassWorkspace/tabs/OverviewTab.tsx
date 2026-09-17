@@ -249,54 +249,7 @@ export const OverviewTab: React.FC = () => {
         </div>
       </div>
 
-      {/* ========================================================================= */}
-      {/* 2. PROGRESS BAR SUMMARY (SINGLE, COMPACT INTEGRATED STRIP)                 */}
-      {/* ========================================================================= */}
-      <Card className="p-4 border bg-card rounded-2xl shadow-xs space-y-2.5">
-        <div className="flex items-center justify-between text-xs">
-          <span className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-            <TrendingUp className="h-4 w-4 text-emerald-600" />
-            Tình trạng làm bài toàn lớp
-          </span>
-          <span className="text-muted-foreground font-mono">
-            {submittedCount}/{totalAssignedSlots} lượt nộp ({progressPercent}%)
-          </span>
-        </div>
 
-        {/* Multi-tone bar */}
-        <div className="h-2.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex">
-          {gradedPercent > 0 && (
-            <div
-              style={{ width: `${gradedPercent}%` }}
-              className="bg-emerald-500 h-full transition-all duration-500"
-              title={`Đã chấm: ${gradedCount} bài`}
-            />
-          )}
-          {pendingPercent > 0 && (
-            <div
-              style={{ width: `${pendingPercent}%` }}
-              className="bg-amber-400 h-full transition-all duration-500"
-              title={`Chờ chấm: ${pendingCount} bài`}
-            />
-          )}
-        </div>
-
-        {/* Compact Legend */}
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-muted-foreground pt-0.5">
-          <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
-            Đã chấm: <strong className="text-foreground">{gradedCount}</strong>
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-amber-400" />
-            Chờ chấm: <strong className="text-foreground">{pendingCount}</strong>
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-slate-300 dark:bg-slate-700" />
-            Chưa nộp / Đang làm: <strong className="text-foreground">{unsubmittedCount}</strong>
-          </span>
-        </div>
-      </Card>
 
       {/* ========================================================================= */}
       {/* 3. MAIN TEACHER ACTIONS: 2 COLUMNS (URGENT GRADING + UPCOMING SESSION)    */}

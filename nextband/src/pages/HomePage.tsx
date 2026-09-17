@@ -712,16 +712,6 @@ export default function HomePage() {
               courseTitle={courseTitle}
             />
 
-            {/* 2. ACADEMIC ASCENT WORLD (Signature Spatial Environment: One Action · One Journey · One Goal) */}
-            <AcademicAscentWorld
-              courseTitle={courseTitle}
-              className={activeClassName}
-              currentBand={journey.currentBand ?? courseBands.entryBand}
-              targetBand={journey.targetBand ?? courseBands.targetBand}
-              lessons={ascentLessons}
-              enrolledClassId={enrolledClassId}
-            />
-
             {/* HUYỀN CƠ LÃO NHÂN FLOATING MASCOT */}
             <HuanCoMascot state={huanCoState} />
           </div>

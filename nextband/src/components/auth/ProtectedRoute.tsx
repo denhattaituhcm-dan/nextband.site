@@ -32,6 +32,7 @@ export function ProtectedRoute({
     if (typeof window !== "undefined" && targetUrl && targetUrl !== "/login") {
       try {
         sessionStorage.setItem("auth_redirect_target", targetUrl);
+        localStorage.setItem("auth_redirect_target", targetUrl);
       } catch {}
     }
     const redirectTarget =

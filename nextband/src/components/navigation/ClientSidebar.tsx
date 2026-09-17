@@ -74,12 +74,6 @@ const fullNavigationGroups: NavGroup[] = [
         badge: "New",
       },
       {
-        title: "Reading Universe",
-        url: "/reading",
-        icon: Sparkles,
-        description: "Thư viện đọc hiểu & Phá án",
-      },
-      {
         title: "Kết quả & Nhận xét",
         url: "/app/my-submissions",
         icon: GraduationCap,

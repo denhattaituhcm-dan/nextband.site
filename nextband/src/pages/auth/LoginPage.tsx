@@ -63,15 +63,25 @@ export default function LoginPage() {
     (rawFrom.startsWith("/app") || rawFrom.startsWith("/admin") || rawFrom.startsWith("/exam"))
       ? rawFrom
       : null;
-  const savedTarget = sessionStorage.getItem("auth_redirect_target");
+  const getSavedTarget = () => {
+    if (typeof window === "undefined") return null;
+    return sessionStorage.getItem("auth_redirect_target") || localStorage.getItem("auth_redirect_target");
+  };
+  const clearSavedTarget = () => {
+    if (typeof window === "undefined") return;
+    try {
+      sessionStorage.removeItem("auth_redirect_target");
+      localStorage.removeItem("auth_redirect_target");
+    } catch {}
+  };
+
+  const savedTarget = getSavedTarget();
   const targetDestination = nextParam || validFrom || savedTarget || "/app";
   const studentTarget = targetDestination === "/" ? "/app" : targetDestination;
 
   useEffect(() => {
     if (user) {
-      if (savedTarget) {
-        sessionStorage.removeItem("auth_redirect_target");
-      }
+      clearSavedTarget();
       // Priority-based routing: admin > teacher > student
       if (user.roles?.includes("admin")) {
         const adminTarget = studentTarget.startsWith("/admin") ? studentTarget : "/admin";
@@ -84,7 +94,7 @@ export default function LoginPage() {
         navigate(studentTarget, { replace: true });
       }
     }
-  }, [user, navigate, studentTarget, savedTarget]);
+  }, [user, navigate, studentTarget]);
 
   useEffect(() => {
     const hidden = localStorage.getItem("google_login_hint_hidden") === "1";
@@ -299,7 +309,8 @@ export default function LoginPage() {
                   try {
                     setIsLoading(true);
                     sessionStorage.setItem("auth_redirect_target", studentTarget);
-                    await authApi.loginWithGoogle(`${window.location.origin}/login`);
+                    localStorage.setItem("auth_redirect_target", studentTarget);
+                    await authApi.loginWithGoogle(`${window.location.origin}/login?next=${encodeURIComponent(studentTarget)}`);
                   } catch (error: any) {
                     toast({
                       variant: "destructive",

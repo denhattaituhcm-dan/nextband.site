@@ -196,6 +196,68 @@ export default function PublicHomePage() {
         background="muted"
       >
         <ArisBentoGrid />
+
+        {/* Flat 3-Step Methodology Workflow: Đo lường đầu vào → Học bản chất cấu trúc → Sửa lỗi 1:1 từng câu */}
+        <div className="mt-12 pt-10 border-t border-border/70">
+          <div className="text-center space-y-2 mb-8">
+            <span className="text-xs font-mono uppercase tracking-widest text-brand-blue font-extrabold">
+              Quy Trình Tinh Gọn
+            </span>
+            <h3 className="text-xl sm:text-2xl font-black text-foreground">
+              3 Bước Kiến Tạo Năng Lực Học Thuật Chuẩn Xác
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-left relative">
+            {/* Step 1 */}
+            <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-3 relative group">
+              <div className="flex items-center justify-between">
+                <span className="w-8 h-8 rounded-xl bg-[#002147] text-white flex items-center justify-center font-mono font-black text-xs">
+                  01
+                </span>
+                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Đầu vào</span>
+              </div>
+              <h4 className="font-extrabold text-foreground text-base sm:text-lg">
+                Đo lường đầu vào
+              </h4>
+              <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed">
+                Khảo thí toàn diện 4 kỹ năng theo khung ARIS-7 để định vị chính xác vị trí năng lực và điểm nghẽn nhận thức.
+              </p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-2xs space-y-3 relative group">
+              <div className="flex items-center justify-between">
+                <span className="w-8 h-8 rounded-xl bg-[#002147] text-white flex items-center justify-center font-mono font-black text-xs">
+                  02
+                </span>
+                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Tiếp thu</span>
+              </div>
+              <h4 className="font-extrabold text-foreground text-base sm:text-lg">
+                Học bản chất cấu trúc
+              </h4>
+              <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed">
+                Hiểu sâu bản chất ngữ pháp chức năng và logic lập luận học thuật, triệt tiêu thói quen học vẹt bài mẫu và dịch thô.
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="p-6 rounded-2xl bg-white border border-brand-red/30 bg-gradient-to-br from-white via-white to-brand-red-soft/20 shadow-2xs space-y-3 relative group">
+              <div className="flex items-center justify-between">
+                <span className="w-8 h-8 rounded-xl bg-brand-red text-white flex items-center justify-center font-mono font-black text-xs">
+                  03
+                </span>
+                <span className="text-[11px] font-bold text-brand-red uppercase tracking-wider">Phản hồi</span>
+              </div>
+              <h4 className="font-extrabold text-foreground text-base sm:text-lg text-brand-red">
+                Sửa lỗi 1:1 từng câu
+              </h4>
+              <p className="text-xs sm:text-sm text-foreground/75 leading-relaxed">
+                Chấm chữa chi tiết từng dòng (Line-by-line), bóc tách cơ chế lỗi và bắt buộc hoàn thành bài sửa (Re-attempt) để tiến bộ.
+              </p>
+            </div>
+          </div>
+        </div>
       </SectionContainer>
 
 
