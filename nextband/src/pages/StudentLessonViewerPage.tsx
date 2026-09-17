@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { lessonsApi, submissionsApi, examsApi } from "@/lib/api";
+import { lessonsApi, submissionsApi, examsApi, studentPracticeApi } from "@/lib/api";
 import {
   deriveCanonicalVisualStatus,
   formatDeadlineCountdown,
@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HomeworkSkillMatrixCard } from "@/components/student/HomeworkSkillMatrixCard";
+import { YourWeakZoneCard } from "@/components/student/YourWeakZoneCard";
 import { useAuth } from "@/hooks/useAuth";
 import { useStudentLifecycle } from "@/hooks/useStudentLifecycle";
 import { useGatewayHealth } from "@/hooks/useGatewayHealth";
@@ -613,6 +614,9 @@ export default function StudentLessonViewerPage() {
 
           {/* TAB 1: MAIN PRACTICE LIST SECTION */}
           <TabsContent value="practice-list" className="space-y-4 pt-1 outline-hidden">
+            {/* ERROR INTELLIGENCE: YOUR WEAK ZONE & ERROR BANK */}
+            <YourWeakZoneCard />
+
             <div className="flex items-center justify-between">
               <h2 className="text-base sm:text-lg font-bold text-foreground flex items-center gap-2">
                 <Edit3 className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />

@@ -113,13 +113,6 @@ export default function ArenaPlayPage() {
 
     const announcePresence = async () => {
       try {
-        await channel.track({
-          id: playerId,
-          name: nicknameRef.current,
-          avatarSeed: avatarIdRef.current,
-          rank: 'Học viên',
-          joinedAt: new Date().toISOString(),
-        });
         await channel.send({
           type: 'broadcast',
           event: 'player-joined',
@@ -132,7 +125,19 @@ export default function ArenaPlayPage() {
           },
         });
       } catch (e) {
-        console.error('[NextQuiz] Error announcing presence:', e);
+        console.error('[NextQuiz] Error sending player-joined:', e);
+      }
+
+      try {
+        await channel.track({
+          id: playerId,
+          name: nicknameRef.current,
+          avatarSeed: avatarIdRef.current,
+          rank: 'Học viên',
+          joinedAt: new Date().toISOString(),
+        });
+      } catch (e) {
+        console.warn('[NextQuiz] Error tracking presence:', e);
       }
     };
 

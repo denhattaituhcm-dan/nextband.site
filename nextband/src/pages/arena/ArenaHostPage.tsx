@@ -121,21 +121,23 @@ export default function ArenaHostPage() {
         });
       })
       .on('broadcast', { event: 'player-joined' }, ({ payload }) => {
-        if (!payload || !payload.id || !payload.name) return;
+        if (!payload || !payload.id) return;
+        const playerName = (payload.name || payload.nickname || '').trim();
+        if (!playerName) return;
         setPlayers((prev) => {
           if (prev.some((p) => p.id === payload.id)) {
             return prev;
           }
           const newPlayer = {
             id: payload.id,
-            name: payload.name.trim(),
-            avatarSeed: payload.avatarSeed ?? payload.name,
+            name: playerName,
+            avatarSeed: payload.avatarSeed ?? payload.avatarId ?? playerName,
             rank: payload.rank || 'Học viên',
             joinedAt: payload.joinedAt || new Date().toISOString(),
           };
           return [...prev, newPlayer];
         });
-        setPlayerGoldMap((prev) => ({ ...prev, [payload.name.trim()]: prev[payload.name.trim()] ?? 0 }));
+        setPlayerGoldMap((prev) => ({ ...prev, [playerName]: prev[playerName] ?? 0 }));
         playClickSound();
 
         // Gửi ngay ACK xác nhận danh tính học sinh đã được Host ghi nhận

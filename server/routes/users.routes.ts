@@ -1158,6 +1158,50 @@ const usersRoutes: FastifyPluginAsync = async (fastify) => {
       });
     },
   );
+
+  // POST /users/me/weak-zone/drill/submit - Grade rapid drill & return instant feedback
+  fastify.post<{ Body: { questionType: string; answers: Record<string, string> } }>(
+    "/me/weak-zone/drill/submit",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      const studentId = request.user.id;
+      const { questionType, answers } = request.body || {};
+
+      const { DiagnosticService } = await import("../services/diagnostic.service.js");
+      const diagnosticService = new DiagnosticService(fastify.prisma);
+
+      const graded = await diagnosticService.gradeWeakZoneDrill(studentId, {
+        questionType: questionType || "matching",
+        answers: answers || {},
+      });
+
+      return reply.send({
+        success: true,
+        data: graded,
+      });
+    },
+  );
+
+  // POST /users/me/error-bank/:questionId/retry - Retry a single mistake from Error Bank
+  fastify.post<{ Params: { questionId: string }; Body: { answer: string } }>(
+    "/me/error-bank/:questionId/retry",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      const studentId = request.user.id;
+      const { questionId } = request.params;
+      const { answer } = request.body || {};
+
+      const { DiagnosticService } = await import("../services/diagnostic.service.js");
+      const diagnosticService = new DiagnosticService(fastify.prisma);
+
+      const result = await diagnosticService.retrySingleError(studentId, questionId, answer);
+      return reply.send({
+        success: true,
+        data: result,
+      });
+    },
+  );
 };
 
 export default usersRoutes;
+

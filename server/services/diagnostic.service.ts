@@ -561,5 +561,92 @@ export class DiagnosticService {
       })),
     };
   }
+
+  /**
+   * Chấm điểm tự động cho bài làm Weak Zone Drill và trả về chi tiết đúng/sai
+   */
+  async gradeWeakZoneDrill(studentId: string, submission: { questionType: string; answers: Record<string, string> }) {
+    const questionIds = Object.keys(submission.answers || {});
+    if (questionIds.length === 0) {
+      return {
+        total: 0,
+        correct: 0,
+        accuracy: 0,
+        results: [],
+        masteryGained: 0,
+      };
+    }
+
+    const questions = await this.prisma.question.findMany({
+      where: { id: { in: questionIds } },
+      select: {
+        id: true,
+        correctAnswer: true,
+        explanation: true,
+        prompt: true,
+      },
+    });
+
+    let correctCount = 0;
+    const results = questions.map((q) => {
+      const studentVal = String(submission.answers[q.id] || '').trim().toLowerCase();
+      const correctVal = String(q.correctAnswer || '').trim().toLowerCase();
+      const isCorrect = studentVal !== '' && (studentVal === correctVal || correctVal.includes(studentVal));
+
+      if (isCorrect) {
+        correctCount++;
+      }
+
+      return {
+        questionId: q.id,
+        prompt: q.prompt,
+        studentAnswer: submission.answers[q.id] || '',
+        correctAnswer: q.correctAnswer,
+        isCorrect,
+        explanation: q.explanation || null,
+      };
+    });
+
+    const accuracy = Math.round((correctCount / questions.length) * 100);
+    const masteryGained = Math.round(accuracy * 0.15); // Tăng điểm Mastery tương ứng
+
+    return {
+      total: questions.length,
+      correct: correctCount,
+      accuracy,
+      masteryGained,
+      results,
+    };
+  }
+
+  /**
+   * Thử lại 1 câu hỏi cụ thể trong Error Bank
+   */
+  async retrySingleError(studentId: string, questionId: string, answer: string) {
+    const question = await this.prisma.question.findUnique({
+      where: { id: questionId },
+      select: {
+        id: true,
+        correctAnswer: true,
+        explanation: true,
+      },
+    });
+
+    if (!question) {
+      throw new Error('Không tìm thấy câu hỏi.');
+    }
+
+    const studentVal = String(answer || '').trim().toLowerCase();
+    const correctVal = String(question.correctAnswer || '').trim().toLowerCase();
+    const isCorrect = studentVal !== '' && (studentVal === correctVal || correctVal.includes(studentVal));
+
+    return {
+      questionId: question.id,
+      isCorrect,
+      correctAnswer: question.correctAnswer,
+      explanation: question.explanation || null,
+    };
+  }
 }
+
 
