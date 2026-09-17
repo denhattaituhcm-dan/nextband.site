@@ -60,7 +60,14 @@ export const PvZCardAvatar: React.FC<PvZCardAvatarProps> = ({
           src={character.url}
           alt={character.name}
           className="w-full h-full object-contain rounded-lg"
-          loading="lazy"
+          loading="eager"
+          onError={(e) => {
+            // Fallback an toàn sang Dicebear SVG nếu không tải được file PNG
+            const target = e.target as HTMLImageElement;
+            const fallbackKey = character.name || seed || 'student';
+            target.onerror = null;
+            target.src = `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(String(fallbackKey))}`;
+          }}
         />
       </div>
       {showName && (
