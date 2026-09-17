@@ -85,6 +85,13 @@ const navigationCategories: SidebarCategory[] = [
         iconBg: "bg-emerald-50",
       },
       {
+        title: "Duyệt bài nộp",
+        url: "/admin/check-attempt",
+        icon: FileCheck,
+        iconColor: "text-teal-600",
+        iconBg: "bg-teal-50",
+      },
+      {
         title: "Khảo thí thử",
         url: "/admin/assessments",
         icon: FileCheck,

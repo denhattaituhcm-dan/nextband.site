@@ -81622,8 +81622,11 @@ var init_speakingStorage_service = __esm({
       constructor(prisma) {
         this.prisma = prisma;
         const supabaseUrl = env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co";
-        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6cGRscXhqZ2d5eGxrZWF0dnZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyOTc3NjMsImV4cCI6MjEwMDg3Mzc2M30.M7uMAo2qJCDQtxQMP-_58VKF1LfSBdwR31gpvqcCN6I";
-        this.supabase = createClient(supabaseUrl, supabaseKey);
+        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || "";
+        if (!supabaseKey) {
+          console.warn("[SpeakingStorageService] \u26A0\uFE0F SUPABASE_SERVICE_ROLE_KEY is not configured in environment.");
+        }
+        this.supabase = createClient(supabaseUrl, supabaseKey || "dummy_key_for_unconfigured_storage");
       }
       supabase;
       /**
@@ -82253,6 +82256,308 @@ var init_notification_service = __esm({
           console.error("[NotificationService] notifyUsersByRole error:", err);
           return 0;
         }
+      }
+    };
+  }
+});
+
+// server/services/authorization.service.ts
+import { basename, resolve, sep } from "path";
+var AuthorizationError, NotFoundError, ValidationError, AuthorizationService;
+var init_authorization_service = __esm({
+  "server/services/authorization.service.ts"() {
+    AuthorizationError = class extends Error {
+      statusCode;
+      constructor(message2, statusCode = 403) {
+        super(message2);
+        this.name = "AuthorizationError";
+        this.statusCode = statusCode;
+      }
+    };
+    NotFoundError = class extends Error {
+      statusCode;
+      constructor(message2 = "T\xE0i nguy\xEAn kh\xF4ng t\u1ED3n t\u1EA1i") {
+        super(message2);
+        this.name = "NotFoundError";
+        this.statusCode = 404;
+      }
+    };
+    ValidationError = class extends Error {
+      statusCode;
+      constructor(message2 = "D\u1EEF li\u1EC7u kh\xF4ng h\u1EE3p l\u1EC7") {
+        super(message2);
+        this.name = "ValidationError";
+        this.statusCode = 400;
+      }
+    };
+    AuthorizationService = class {
+      constructor(prisma) {
+        this.prisma = prisma;
+      }
+      /**
+       * Xác thực quyền quản trị hoặc giáo viên phụ trách chính lớp học.
+       * Throws 404 nếu lớp không tồn tại, 403 nếu không có quyền.
+       */
+      async requireClassTeacherOrAdmin(params) {
+        const { userId, userRoles = [], classId } = params;
+        const isAdmin = userRoles.includes("admin");
+        const cls = await this.prisma.class.findUnique({
+          where: { id: classId }
+        });
+        if (!cls) {
+          throw new NotFoundError("L\u1EDBp h\u1ECDc kh\xF4ng t\u1ED3n t\u1EA1i.");
+        }
+        if (isAdmin) {
+          return cls;
+        }
+        const isTeacher = userRoles.includes("teacher");
+        if (isTeacher && cls.teacherId === userId) {
+          return cls;
+        }
+        throw new AuthorizationError(
+          "T\u1EEB ch\u1ED1i truy c\u1EADp: B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n thao t\xE1c tr\xEAn l\u1EDBp h\u1ECDc n\xE0y.",
+          403
+        );
+      }
+      /**
+       * Kiểm tra xem học viên có đang trong lớp học (active) hay không.
+       * Domain Invariant: Chỉ học viên có status = ACTIVE, chưa bị soft-delete (deletedAt = null)
+       * và thuộc lớp đang hoạt động (class.isActive = true) mới được coi là hợp lệ.
+       */
+      async isStudentEnrolledInClass(studentId, classId) {
+        const record = await this.prisma.classStudent.findFirst({
+          where: {
+            classId,
+            studentId,
+            status: "ACTIVE",
+            deletedAt: null,
+            class: {
+              isActive: true
+            }
+          }
+        });
+        return !!record;
+      }
+      /**
+       * Kiểm tra quyền làm/xem bài thi của học viên (hỗ trợ cả Direct Enrollment và Class Membership).
+       * Domain Invariant: Học viên bị đình chỉ (SUSPENDED), đã xóa mềm (deletedAt != null),
+       * hoặc lớp học bị vô hiệu hóa sẽ bị từ chối truy cập (HTTP 403).
+       */
+      async isStudentAuthorizedForExam(params) {
+        const { studentId, examId, courseId, isOpen } = params;
+        if (isOpen) return true;
+        const enrollment = await this.prisma.enrollment.findUnique({
+          where: {
+            courseId_studentId: {
+              courseId,
+              studentId
+            }
+          }
+        });
+        if (enrollment) return true;
+        const classStudent = await this.prisma.classStudent.findFirst({
+          where: {
+            studentId,
+            status: "ACTIVE",
+            deletedAt: null,
+            class: {
+              isActive: true,
+              courseId
+            }
+          }
+        });
+        return !!classStudent;
+      }
+      /**
+       * Chuẩn hóa và kiểm tra ranh giới thư mục tuyệt đối chống Path Traversal.
+       */
+      validateUploadPathBoundary(params) {
+        const { subDir, rawFileName, baseUploadDir } = params;
+        if (subDir !== "images" && subDir !== "audio") {
+          throw new AuthorizationError("Th\u01B0 m\u1EE5c con kh\xF4ng h\u1EE3p l\u1EC7", 400);
+        }
+        const safeFileName = basename(rawFileName.trim());
+        if (!safeFileName || safeFileName === "." || safeFileName === "..") {
+          throw new AuthorizationError("T\xEAn t\u1EC7p kh\xF4ng h\u1EE3p l\u1EC7", 400);
+        }
+        const targetBaseDir = resolve(baseUploadDir, subDir);
+        const targetFilePath = resolve(targetBaseDir, safeFileName);
+        if (!targetFilePath.startsWith(targetBaseDir + sep)) {
+          throw new AuthorizationError("Ph\xE1t hi\u1EC7n h\xE0nh vi \u0111i\u1EC1u h\u01B0\u1EDBng \u0111\u01B0\u1EDDng d\u1EABn kh\xF4ng h\u1EE3p l\u1EC7 (Path Traversal)", 403);
+        }
+        return targetFilePath;
+      }
+      /**
+       * Authoring IDOR Protection: Xác thực quyền tạo Đề thi trong Khóa học (Admin hoặc Giáo viên phụ trách Khóa học).
+       */
+      async requireCourseAuthoringAccess(courseId, userId, userRoles = []) {
+        if (userRoles.includes("admin")) return true;
+        if (!userRoles.includes("teacher")) {
+          throw new AuthorizationError("Ch\u1EC9 gi\xE1o vi\xEAn ho\u1EB7c admin c\xF3 quy\u1EC1n t\u1EA1o \u0111\u1EC1 thi", 403);
+        }
+        const course = await this.prisma.course.findUnique({
+          where: { id: courseId },
+          select: { teacherId: true, isActive: true }
+        });
+        if (!course) {
+          throw new NotFoundError("Kh\xF3a h\u1ECDc kh\xF4ng t\u1ED3n t\u1EA1i.");
+        }
+        if (!course.teacherId || course.teacherId !== userId) {
+          throw new AuthorizationError(
+            "T\u1EEB ch\u1ED1i quy\u1EC1n: B\u1EA1n kh\xF4ng ph\u1EE5 tr\xE1ch kh\xF3a h\u1ECDc n\xE0y.",
+            403
+          );
+        }
+        return course;
+      }
+      /**
+       * Authoring IDOR Protection: Xác thực quyền soạn thảo Đề thi (Admin hoặc Giáo viên phụ trách Khóa học).
+       */
+      async requireExamAuthoringAccess(examId, userId, userRoles = []) {
+        if (userRoles.includes("admin")) return true;
+        if (!userRoles.includes("teacher")) {
+          throw new AuthorizationError("Ch\u1EC9 gi\xE1o vi\xEAn ho\u1EB7c admin c\xF3 quy\u1EC1n ch\u1EC9nh s\u1EEDa", 403);
+        }
+        const exam = await this.prisma.exam.findUnique({
+          where: { id: examId },
+          include: { course: { select: { teacherId: true } } }
+        });
+        if (!exam) {
+          throw new NotFoundError("B\xE0i thi kh\xF4ng t\u1ED3n t\u1EA1i.");
+        }
+        if (!exam.course?.teacherId || exam.course.teacherId !== userId) {
+          throw new AuthorizationError(
+            "T\u1EEB ch\u1ED1i quy\u1EC1n: B\u1EA1n kh\xF4ng ph\u1EE5 tr\xE1ch kh\xF3a h\u1ECDc ch\u1EE9a \u0111\u1EC1 thi n\xE0y.",
+            403
+          );
+        }
+        return exam;
+      }
+      /**
+       * Authoring IDOR Protection: Xác thực quyền soạn thảo Phần thi (Section).
+       */
+      async requireSectionAuthoringAccess(sectionId, userId, userRoles = []) {
+        if (userRoles.includes("admin")) return true;
+        if (!userRoles.includes("teacher")) {
+          throw new AuthorizationError("Ch\u1EC9 gi\xE1o vi\xEAn ho\u1EB7c admin c\xF3 quy\u1EC1n ch\u1EC9nh s\u1EEDa", 403);
+        }
+        const section = await this.prisma.examSection.findUnique({
+          where: { id: sectionId },
+          include: { exam: { include: { course: { select: { teacherId: true } } } } }
+        });
+        if (!section) {
+          throw new NotFoundError("Ph\u1EA7n thi kh\xF4ng t\u1ED3n t\u1EA1i.");
+        }
+        const teacherId = section.exam?.course?.teacherId;
+        if (teacherId && teacherId !== userId) {
+          throw new AuthorizationError(
+            "T\u1EEB ch\u1ED1i quy\u1EC1n: B\u1EA1n kh\xF4ng ph\u1EE5 tr\xE1ch kh\xF3a h\u1ECDc ch\u1EE9a ph\u1EA7n thi n\xE0y.",
+            403
+          );
+        }
+        return section;
+      }
+      /**
+       * Authoring IDOR Protection: Xác thực quyền soạn thảo Nhóm câu hỏi (QuestionGroup).
+       */
+      async requireQuestionGroupAuthoringAccess(groupId, userId, userRoles = []) {
+        if (userRoles.includes("admin")) return true;
+        if (!userRoles.includes("teacher")) {
+          throw new AuthorizationError("Ch\u1EC9 gi\xE1o vi\xEAn ho\u1EB7c admin c\xF3 quy\u1EC1n ch\u1EC9nh s\u1EEDa", 403);
+        }
+        const group = await this.prisma.questionGroup.findUnique({
+          where: { id: groupId },
+          include: {
+            section: {
+              include: { exam: { include: { course: { select: { teacherId: true } } } } }
+            }
+          }
+        });
+        if (!group) {
+          throw new NotFoundError("Nh\xF3m c\xE2u h\u1ECFi kh\xF4ng t\u1ED3n t\u1EA1i.");
+        }
+        const teacherId = group.section?.exam?.course?.teacherId;
+        if (teacherId && teacherId !== userId) {
+          throw new AuthorizationError(
+            "T\u1EEB ch\u1ED1i quy\u1EC1n: B\u1EA1n kh\xF4ng ph\u1EE5 tr\xE1ch kh\xF3a h\u1ECDc ch\u1EE9a nh\xF3m c\xE2u h\u1ECFi n\xE0y.",
+            403
+          );
+        }
+        return group;
+      }
+      /**
+       * Authoring IDOR Protection: Xác thực quyền soạn thảo Câu hỏi (Question).
+       */
+      async requireQuestionAuthoringAccess(questionId, userId, userRoles = []) {
+        if (userRoles.includes("admin")) return true;
+        if (!userRoles.includes("teacher")) {
+          throw new AuthorizationError("Ch\u1EC9 gi\xE1o vi\xEAn ho\u1EB7c admin c\xF3 quy\u1EC1n ch\u1EC9nh s\u1EEDa", 403);
+        }
+        const question = await this.prisma.question.findUnique({
+          where: { id: questionId },
+          include: {
+            group: {
+              include: {
+                section: {
+                  include: { exam: { include: { course: { select: { teacherId: true } } } } }
+                }
+              }
+            }
+          }
+        });
+        if (!question) {
+          throw new NotFoundError("C\xE2u h\u1ECFi kh\xF4ng t\u1ED3n t\u1EA1i.");
+        }
+        const teacherId = question.group?.section?.exam?.course?.teacherId;
+        if (teacherId && teacherId !== userId) {
+          throw new AuthorizationError(
+            "T\u1EEB ch\u1ED1i quy\u1EC1n: B\u1EA1n kh\xF4ng ph\u1EE5 tr\xE1ch kh\xF3a h\u1ECDc ch\u1EE9a c\xE2u h\u1ECFi n\xE0y.",
+            403
+          );
+        }
+        return question;
+      }
+      /**
+       * Phân giải phạm vi chi nhánh được phép truy cập.
+       *
+       * MVP Multi-Location invariant:
+       *   - Admin, Teacher, Student → { type: "all" } — truy cập toàn bộ active branches.
+       *   - Branch không phải là security boundary trong MVP này.
+       *   - selectedBranch ở frontend là UI filter/view state, KHÔNG được dùng để derive authorization scope.
+       *   - UserBranch được giữ nguyên cho các role chuyên biệt trong tương lai (branch_manager, staff).
+       *     Hiện tại chưa có role nào bị giới hạn bởi UserBranch scope trong MVP.
+       *
+       * Nếu sau này cần branch-based access control, chỉ áp dụng cho các role được
+       * liệt kê rõ ràng trong BRANCH_SCOPED_ROLES, không mặc định áp dụng cho tất cả.
+       */
+      async resolveAuthorizedBranchScope(params) {
+        const { userRoles = [], requestedBranchId } = params;
+        const BRANCH_SCOPED_ROLES = [
+          // "branch_manager", "branch_staff"  // ← Uncomment khi có nhu cầu thực tế
+        ];
+        const needsBranchScope = userRoles.some((r) => BRANCH_SCOPED_ROLES.includes(r));
+        if (!needsBranchScope) {
+          if (!requestedBranchId || requestedBranchId === "ALL" || requestedBranchId === "all") {
+            return { type: "all" };
+          }
+          return { type: "branch", branchId: requestedBranchId };
+        }
+        const { userId } = params;
+        const userBranches = await this.prisma.userBranch.findMany({
+          where: { userId },
+          select: { branchId: true }
+        });
+        const allowedBranchIds = userBranches.map((ub) => ub.branchId);
+        if (allowedBranchIds.length === 0) {
+          return { type: "branches", branchIds: [] };
+        }
+        if (!requestedBranchId || requestedBranchId === "ALL" || requestedBranchId === "all") {
+          return { type: "branches", branchIds: allowedBranchIds };
+        }
+        if (!allowedBranchIds.includes(requestedBranchId)) {
+          throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp: B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n qu\u1EA3n l\xFD chi nh\xE1nh n\xE0y.", 403);
+        }
+        return { type: "branch", branchId: requestedBranchId };
       }
     };
   }
@@ -94758,6 +95063,2074 @@ var init_diagnostic_service = __esm({
           }
         };
       }
+      /**
+       * Lấy danh sách câu hỏi làm sai (Error Bank) của học sinh từ các lần nộp bài gần nhất
+       */
+      async getStudentErrorBank(studentId, limit = 50) {
+        const submissions = await this.prisma.examSubmission.findMany({
+          where: {
+            studentId,
+            status: { in: ["SUBMITTED", "GRADED", "submitted", "graded"] }
+          },
+          orderBy: { submittedAt: "desc" },
+          take: 15,
+          include: {
+            exam: {
+              select: { id: true, title: true }
+            },
+            answers: {
+              include: {
+                evidence: true,
+                question: {
+                  include: {
+                    group: {
+                      include: {
+                        section: true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        });
+        const errorBankItems = [];
+        const seenQuestions = /* @__PURE__ */ new Set();
+        for (const sub of submissions) {
+          for (const ans of sub.answers) {
+            const q = ans.question;
+            if (!q) continue;
+            if (seenQuestions.has(q.id)) continue;
+            const isCorrect = ans.evidence?.isCorrect ?? Number(ans.score) > 0;
+            if (!isCorrect) {
+              seenQuestions.add(q.id);
+              const qType = String(q.questionType || "unknown").toLowerCase();
+              const meta = QUESTION_METADATA_MAP[qType] || {
+                label: qType.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+                diagnosis: `H\u1ECDc vi\xEAn c\u1EA7n c\u1EA3i thi\u1EC7n \u1EDF d\u1EA1ng b\xE0i ${qType}.`,
+                skill: "READING"
+              };
+              errorBankItems.push({
+                id: ans.id,
+                questionId: q.id,
+                submissionId: sub.id,
+                examTitle: sub.exam?.title || "B\xE0i t\u1EADp IELTS",
+                questionType: qType,
+                skill: meta.skill,
+                label: meta.label,
+                diagnosis: meta.diagnosis,
+                prompt: q.prompt || q.questionText,
+                options: q.options,
+                passage: q.group?.passageText || q.group?.passage || null,
+                studentAnswer: ans.value || ans.answerText || "",
+                explanation: q.explanation || null,
+                submittedAt: sub.submittedAt
+              });
+              if (errorBankItems.length >= limit) break;
+            }
+          }
+          if (errorBankItems.length >= limit) break;
+        }
+        return errorBankItems;
+      }
+      /**
+       * Sinh bài luyện tập nhanh theo dạng bài yếu nhất (Weak Zone Drill)
+       */
+      async generateWeakZoneDrill(questionType, count = 6) {
+        const questions = await this.prisma.question.findMany({
+          where: {
+            questionType: { equals: questionType }
+          },
+          take: count * 2,
+          include: {
+            group: {
+              include: {
+                section: true
+              }
+            }
+          }
+        });
+        const shuffled = questions.sort(() => 0.5 - Math.random()).slice(0, count);
+        const meta = QUESTION_METADATA_MAP[questionType.toLowerCase()] || {
+          label: questionType,
+          diagnosis: "",
+          skill: "READING"
+        };
+        return {
+          questionType,
+          label: meta.label,
+          targetCount: shuffled.length,
+          questions: shuffled.map((q) => ({
+            id: q.id,
+            prompt: q.prompt || q.questionText,
+            options: q.options,
+            questionType: q.questionType,
+            orderIndex: q.orderIndex,
+            passage: q.group?.passageText || q.group?.passage || null
+          }))
+        };
+      }
+      /**
+       * Chấm điểm tự động cho bài làm Weak Zone Drill và trả về chi tiết đúng/sai
+       */
+      async gradeWeakZoneDrill(studentId, submission) {
+        const questionIds = Object.keys(submission.answers || {});
+        if (questionIds.length === 0) {
+          return {
+            total: 0,
+            correct: 0,
+            accuracy: 0,
+            results: [],
+            masteryGained: 0
+          };
+        }
+        const questions = await this.prisma.question.findMany({
+          where: { id: { in: questionIds } },
+          select: {
+            id: true,
+            correctAnswer: true,
+            questionText: true
+          }
+        });
+        let correctCount = 0;
+        const results = questions.map((q) => {
+          const studentVal = String(submission.answers[q.id] || "").trim().toLowerCase();
+          const correctVal = String(q.correctAnswer || "").trim().toLowerCase();
+          const isCorrect = studentVal !== "" && (studentVal === correctVal || correctVal.includes(studentVal));
+          if (isCorrect) {
+            correctCount++;
+          }
+          return {
+            questionId: q.id,
+            prompt: q.prompt || q.questionText,
+            studentAnswer: submission.answers[q.id] || "",
+            correctAnswer: q.correctAnswer,
+            isCorrect,
+            explanation: q.explanation || null
+          };
+        });
+        const accuracy = Math.round(correctCount / questions.length * 100);
+        const masteryGained = Math.round(accuracy * 0.15);
+        return {
+          total: questions.length,
+          correct: correctCount,
+          accuracy,
+          masteryGained,
+          results
+        };
+      }
+      /**
+       * Thử lại 1 câu hỏi cụ thể trong Error Bank
+       */
+      async retrySingleError(studentId, questionId, answer) {
+        const question = await this.prisma.question.findUnique({
+          where: { id: questionId },
+          select: {
+            id: true,
+            correctAnswer: true
+          }
+        });
+        if (!question) {
+          throw new Error("Kh\xF4ng t\xECm th\u1EA5y c\xE2u h\u1ECFi.");
+        }
+        const studentVal = String(answer || "").trim().toLowerCase();
+        const correctVal = String(question.correctAnswer || "").trim().toLowerCase();
+        const isCorrect = studentVal !== "" && (studentVal === correctVal || correctVal.includes(studentVal));
+        return {
+          questionId: question.id,
+          isCorrect,
+          correctAnswer: question.correctAnswer,
+          explanation: question.explanation || null
+        };
+      }
+    };
+  }
+});
+
+// server/repositories/class.repository.ts
+var ClassRepository;
+var init_class_repository = __esm({
+  "server/repositories/class.repository.ts"() {
+    ClassRepository = class {
+      constructor(prisma) {
+        this.prisma = prisma;
+      }
+      async findById(id, include) {
+        return this.prisma.class.findUnique({
+          where: { id },
+          include: include || {
+            course: true,
+            branch: true,
+            room: true,
+            teacher: {
+              select: { id: true, fullName: true, email: true }
+            },
+            schedules: true,
+            sessions: {
+              orderBy: { sessionNumber: "asc" }
+            },
+            students: {
+              include: {
+                student: {
+                  select: {
+                    id: true,
+                    userId: true,
+                    fullName: true,
+                    email: true,
+                    avatarUrl: true
+                  }
+                }
+              },
+              orderBy: { joinedAt: "desc" }
+            }
+          }
+        });
+      }
+      async findMany(where, skip, take, orderBy) {
+        return this.prisma.class.findMany({
+          where,
+          skip,
+          take,
+          orderBy: orderBy || { createdAt: "desc" },
+          include: {
+            teacher: {
+              select: { id: true, fullName: true, email: true }
+            },
+            branch: {
+              select: { id: true, name: true, code: true }
+            },
+            room: {
+              select: { id: true, name: true, capacity: true }
+            },
+            course: {
+              select: { id: true, title: true }
+            },
+            _count: {
+              select: {
+                students: {
+                  where: { status: "ACTIVE", deletedAt: null }
+                }
+              }
+            }
+          }
+        });
+      }
+      async count(where) {
+        return this.prisma.class.count({ where });
+      }
+      async create(data) {
+        return this.prisma.class.create({ data });
+      }
+      async update(id, data) {
+        return this.prisma.class.update({
+          where: { id },
+          data
+        });
+      }
+      async delete(id) {
+        return this.prisma.class.delete({
+          where: { id }
+        });
+      }
+      async isTeacherOfClass(classId, teacherId) {
+        const cls = await this.prisma.class.findFirst({
+          where: { id: classId, teacherId }
+        });
+        return !!cls;
+      }
+      async isStudentInClass(classId, studentId) {
+        const cs = await this.prisma.classStudent.findFirst({
+          where: { classId, studentId }
+        });
+        return !!cs;
+      }
+      async addStudent(classId, studentId) {
+        const existing = await this.prisma.classStudent.findUnique({
+          where: { classId_studentId: { classId, studentId } }
+        });
+        if (existing) {
+          return this.prisma.classStudent.update({
+            where: { id: existing.id },
+            data: {
+              status: "ACTIVE",
+              deletedAt: null,
+              joinedAt: /* @__PURE__ */ new Date()
+            }
+          });
+        }
+        return this.prisma.classStudent.create({
+          data: { classId, studentId }
+        });
+      }
+      async addStudentToClass(classId, studentId) {
+        return this.addStudent(classId, studentId);
+      }
+      async removeStudent(classId, studentId) {
+        return this.prisma.classStudent.updateMany({
+          where: { classId, studentId, deletedAt: null },
+          data: {
+            status: "DROPPED",
+            deletedAt: /* @__PURE__ */ new Date()
+          }
+        });
+      }
+      async removeStudentFromClass(classId, studentId) {
+        return this.removeStudent(classId, studentId);
+      }
+      async getClassesForStudent(studentId) {
+        return this.prisma.classStudent.findMany({
+          where: {
+            studentId,
+            deletedAt: null,
+            status: { not: "DROPPED" }
+          },
+          include: {
+            class: {
+              include: {
+                course: {
+                  select: { id: true, title: true, description: true, slug: true }
+                },
+                teacher: {
+                  select: { id: true, fullName: true }
+                }
+              }
+            }
+          },
+          orderBy: { createdAt: "desc" }
+        });
+      }
+      async recordAttendance(data) {
+        return this.prisma.classAttendance.upsert({
+          where: {
+            classId_studentId_sessionDate: {
+              classId: data.classId,
+              studentId: data.studentId,
+              sessionDate: data.sessionDate
+            }
+          },
+          update: {
+            status: data.status,
+            markedBy: data.markedBy,
+            note: data.note
+          },
+          create: {
+            classId: data.classId,
+            studentId: data.studentId,
+            sessionDate: data.sessionDate,
+            markedBy: data.markedBy,
+            status: data.status,
+            note: data.note
+          }
+        });
+      }
+    };
+  }
+});
+
+// server/services/room-collision.service.ts
+function timeToMinutes(time) {
+  if (time instanceof Date) {
+    const hours = time.getUTCHours();
+    const minutes = time.getUTCMinutes();
+    return hours * 60 + minutes;
+  }
+  if (typeof time === "string") {
+    if (time.includes("T")) {
+      const d = new Date(time);
+      if (!isNaN(d.getTime())) {
+        return d.getUTCHours() * 60 + d.getUTCMinutes();
+      }
+    }
+    const parts = time.split(":").map(Number);
+    if (parts.length >= 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+      return parts[0] * 60 + parts[1];
+    }
+  }
+  return 0;
+}
+function minutesToTimeString(totalMinutes) {
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+function doTimeIntervalsOverlap(start1, end1, start2, end2) {
+  return start1 < end2 && start2 < end1;
+}
+function formatDateKey(date) {
+  if (date instanceof Date) {
+    const y = date.getUTCFullYear();
+    const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const d = String(date.getUTCDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+  return String(date).split("T")[0];
+}
+var RoomCollisionService;
+var init_room_collision_service = __esm({
+  "server/services/room-collision.service.ts"() {
+    RoomCollisionService = class {
+      /**
+       * Validates whether a set of planned sessions in a specified room collides with any
+       * existing active sessions from other classes.
+       */
+      static async checkRoomConflictForSessions(prisma, params) {
+        const { roomId, sessions, excludeClassId } = params;
+        if (!roomId || !sessions || sessions.length === 0) {
+          return { hasConflict: false, conflicts: [] };
+        }
+        const targetRoom = await prisma.room.findUnique({
+          where: { id: roomId },
+          select: { id: true, name: true, branch: { select: { id: true, name: true } } }
+        });
+        if (!targetRoom) {
+          return { hasConflict: false, conflicts: [] };
+        }
+        const dateKeys = Array.from(
+          new Set(sessions.map((s) => formatDateKey(s.plannedDate)))
+        );
+        const dateObjects = dateKeys.map((k) => /* @__PURE__ */ new Date(`${k}T00:00:00.000Z`));
+        const existingSessions = await prisma.classSession.findMany({
+          where: {
+            class: {
+              roomId,
+              id: excludeClassId ? { not: excludeClassId } : void 0,
+              isActive: true,
+              status: { notIn: ["CLOSED", "ARCHIVED"] }
+            },
+            status: { not: "CANCELLED" },
+            plannedDate: { in: dateObjects }
+          },
+          select: {
+            id: true,
+            plannedDate: true,
+            startTime: true,
+            endTime: true,
+            status: true,
+            class: {
+              select: {
+                id: true,
+                name: true,
+                course: { select: { title: true } }
+              }
+            }
+          }
+        });
+        if (existingSessions.length === 0) {
+          return { hasConflict: false, conflicts: [] };
+        }
+        const existingByDate = /* @__PURE__ */ new Map();
+        for (const s of existingSessions) {
+          const k = formatDateKey(s.plannedDate);
+          if (!existingByDate.has(k)) {
+            existingByDate.set(k, []);
+          }
+          existingByDate.get(k).push(s);
+        }
+        const conflicts = [];
+        for (const req of sessions) {
+          const dateKey = formatDateKey(req.plannedDate);
+          const candidates = existingByDate.get(dateKey);
+          if (!candidates || candidates.length === 0) continue;
+          const reqStartMin = timeToMinutes(req.startTime);
+          const reqEndMin = timeToMinutes(req.endTime);
+          for (const ex of candidates) {
+            const exStartMin = timeToMinutes(ex.startTime);
+            const exEndMin = timeToMinutes(ex.endTime);
+            if (doTimeIntervalsOverlap(reqStartMin, reqEndMin, exStartMin, exEndMin)) {
+              conflicts.push({
+                date: dateKey,
+                requestedTime: `${minutesToTimeString(reqStartMin)} - ${minutesToTimeString(reqEndMin)}`,
+                conflictingClassId: ex.class.id,
+                conflictingClassName: ex.class.name,
+                conflictingTime: `${minutesToTimeString(exStartMin)} - ${minutesToTimeString(exEndMin)}`,
+                roomName: targetRoom.name
+              });
+            }
+          }
+        }
+        if (conflicts.length > 0) {
+          const first = conflicts[0];
+          const summaryMsg = `Xung \u0111\u1ED9t ph\xF2ng h\u1ECDc: Ph\xF2ng "${first.roomName}" \u0111\xE3 c\xF3 l\u1EDBp "${first.conflictingClassName}" h\u1ECDc v\xE0o ng\xE0y ${first.date} (${first.conflictingTime}). Kh\xF4ng th\u1EC3 x\u1EBFp l\u1ECBch tr\xF9ng v\xE0o khung gi\u1EDD ${first.requestedTime}.`;
+          return {
+            hasConflict: true,
+            conflicts,
+            message: summaryMsg
+          };
+        }
+        return { hasConflict: false, conflicts: [] };
+      }
+    };
+  }
+});
+
+// server/utils/holiday.helper.ts
+function formatToDateString(date) {
+  if (typeof date === "string") {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      return date;
+    }
+    const d = new Date(date);
+    const y2 = d.getFullYear();
+    const m2 = String(d.getMonth() + 1).padStart(2, "0");
+    const day2 = String(d.getDate()).padStart(2, "0");
+    return `${y2}-${m2}-${day2}`;
+  }
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+function isHolidayDate(date, customHolidays) {
+  const targetDateStr = formatToDateString(date);
+  const allHolidays = customHolidays && customHolidays.length > 0 ? [...OFFICIAL_VIETNAM_HOLIDAYS, ...customHolidays] : OFFICIAL_VIETNAM_HOLIDAYS;
+  for (const h of allHolidays) {
+    if (targetDateStr >= h.startDate && targetDateStr <= h.endDate) {
+      return true;
+    }
+  }
+  const monthDay = targetDateStr.slice(5);
+  const fixedRecurring = ["01-01", "04-30", "05-01", "09-02"];
+  if (fixedRecurring.includes(monthDay)) {
+    return true;
+  }
+  return false;
+}
+var OFFICIAL_VIETNAM_HOLIDAYS;
+var init_holiday_helper = __esm({
+  "server/utils/holiday.helper.ts"() {
+    OFFICIAL_VIETNAM_HOLIDAYS = [
+      // 2025
+      { name: "T\u1EBFt D\u01B0\u01A1ng L\u1ECBch 2025", startDate: "2025-01-01", endDate: "2025-01-01" },
+      { name: "T\u1EBFt Nguy\xEAn \u0110\xE1n 2025", startDate: "2025-01-25", endDate: "2025-02-02" },
+      { name: "Gi\u1ED7 T\u1ED5 H\xF9ng V\u01B0\u01A1ng 2025", startDate: "2025-04-07", endDate: "2025-04-07" },
+      { name: "Gi\u1EA3i ph\xF3ng 30/4 & Qu\u1ED1c t\u1EBF Lao \u0111\u1ED9ng 1/5 (2025)", startDate: "2025-04-30", endDate: "2025-05-04" },
+      { name: "Qu\u1ED1c Kh\xE1nh 2/9 (2025)", startDate: "2025-08-30", endDate: "2025-09-02" },
+      // 2026
+      { name: "T\u1EBFt D\u01B0\u01A1ng L\u1ECBch 2026", startDate: "2026-01-01", endDate: "2026-01-01" },
+      { name: "T\u1EBFt Nguy\xEAn \u0110\xE1n 2026", startDate: "2026-02-14", endDate: "2026-02-22" },
+      { name: "Gi\u1ED7 T\u1ED5 H\xF9ng V\u01B0\u01A1ng 2026", startDate: "2026-04-26", endDate: "2026-04-27" },
+      { name: "Gi\u1EA3i ph\xF3ng 30/4 & Qu\u1ED1c t\u1EBF Lao \u0111\u1ED9ng 1/5 (2026)", startDate: "2026-04-30", endDate: "2026-05-03" },
+      { name: "Qu\u1ED1c Kh\xE1nh 2/9 (2026)", startDate: "2026-08-30", endDate: "2026-09-03" },
+      // 2027
+      { name: "T\u1EBFt D\u01B0\u01A1ng L\u1ECBch 2027", startDate: "2027-01-01", endDate: "2027-01-01" },
+      { name: "T\u1EBFt Nguy\xEAn \u0110\xE1n 2027", startDate: "2027-02-05", endDate: "2027-02-14" },
+      { name: "Gi\u1ED7 T\u1ED5 H\xF9ng V\u01B0\u01A1ng 2027", startDate: "2027-04-16", endDate: "2027-04-16" },
+      { name: "Gi\u1EA3i ph\xF3ng 30/4 & Qu\u1ED1c t\u1EBF Lao \u0111\u1ED9ng 1/5 (2027)", startDate: "2027-04-30", endDate: "2027-05-03" },
+      { name: "Qu\u1ED1c Kh\xE1nh 2/9 (2027)", startDate: "2027-09-01", endDate: "2027-09-03" }
+    ];
+  }
+});
+
+// server/services/class.service.ts
+import { NotificationType as NotificationType2 } from "@prisma/client";
+var ClassService;
+var init_class_service = __esm({
+  "server/services/class.service.ts"() {
+    init_class_repository();
+    init_authorization_service();
+    init_notification_service();
+    init_room_collision_service();
+    init_holiday_helper();
+    ClassService = class {
+      constructor(prisma) {
+        this.prisma = prisma;
+        this.repo = new ClassRepository(prisma);
+        this.notifService = new NotificationService(prisma);
+      }
+      repo;
+      notifService;
+      // Use Case: Get all active class memberships for the currently authenticated student
+      async getMyClasses(userId) {
+        const memberships = await this.repo.getClassesForStudent(userId);
+        return memberships.map((m) => ({
+          id: m.id,
+          classId: m.class.id,
+          className: m.class.name,
+          courseId: m.class.courseId,
+          courseTitle: m.class.course?.title ?? m.class.name,
+          courseSlug: m.class.course?.slug ?? null,
+          teacherName: m.class.teacher?.fullName ?? null,
+          isActive: m.class.isActive,
+          membershipStatus: m.status || "ACTIVE",
+          joinedAt: m.createdAt
+        }));
+      }
+      // Use Case: List Classes with Role & Teacher filtering & Branch scoping
+      async listClasses(user, query) {
+        const page = Math.max(1, Number(query.page) || 1);
+        const limit = Math.max(1, Number(query.limit) || 10);
+        const { search, isActive, branchId, scope } = query;
+        const skip = (page - 1) * limit;
+        const where = {};
+        const isAdmin = user.roles.includes("admin");
+        const isTeacher = user.roles.includes("teacher");
+        if (scope === "all" && !isAdmin) {
+          throw new AuthorizationError(
+            "T\u1EEB ch\u1ED1i truy c\u1EADp: B\u1EA1n c\u1EA7n vai tr\xF2 Qu\u1EA3n tr\u1ECB vi\xEAn (Admin) \u0111\u1EC3 xem to\xE0n b\u1ED9 danh s\xE1ch l\u1EDBp h\u1ECDc h\u1EC7 th\u1ED1ng.",
+            403
+          );
+        }
+        if (isTeacher && !isAdmin) {
+          where.teacherId = user.id;
+        } else if (!isAdmin && !isTeacher) {
+          where.students = { some: { studentId: user.id } };
+        } else if (isAdmin && query.teacherId) {
+          where.teacherId = query.teacherId;
+        }
+        if (query.courseId) {
+          where.courseId = query.courseId;
+        }
+        const authService = new AuthorizationService(this.prisma);
+        const branchScope = await authService.resolveAuthorizedBranchScope({
+          userId: user.id,
+          userRoles: user.roles,
+          requestedBranchId: branchId
+        });
+        if (branchScope.type === "branch") {
+          where.branchId = branchScope.branchId;
+        } else if (branchScope.type === "branches") {
+          where.branchId = { in: branchScope.branchIds };
+        }
+        if (isActive !== void 0) {
+          where.isActive = isActive === "true" || isActive === true;
+        }
+        if (search) {
+          where.OR = [
+            { name: { contains: search, mode: "insensitive" } },
+            { description: { contains: search, mode: "insensitive" } }
+          ];
+        }
+        const [rawData, total, activeClassesTotal, totalStudentsAcrossClasses] = await Promise.all([
+          this.repo.findMany(where, skip, limit),
+          this.repo.count(where),
+          this.prisma.class.count({
+            where: { ...where, isActive: true }
+          }),
+          this.prisma.classStudent.count({
+            where: {
+              status: "ACTIVE",
+              deletedAt: null,
+              class: where
+            }
+          })
+        ]);
+        const classIds = rawData.map((c) => c.id);
+        const courseIds = Array.from(new Set(rawData.map((c) => c.courseId).filter(Boolean)));
+        const examsCountByCourse = /* @__PURE__ */ new Map();
+        if (courseIds.length > 0) {
+          const courseExams = await this.prisma.exam.groupBy({
+            by: ["courseId"],
+            where: {
+              courseId: { in: courseIds },
+              isPublished: true,
+              isActive: true
+            },
+            _count: { id: true }
+          });
+          courseExams.forEach((ce) => {
+            if (ce.courseId) examsCountByCourse.set(ce.courseId, ce._count.id);
+          });
+        }
+        const classStudents = classIds.length > 0 ? await this.prisma.classStudent.findMany({
+          where: {
+            classId: { in: classIds },
+            status: "ACTIVE",
+            deletedAt: null
+          },
+          select: {
+            classId: true,
+            studentId: true
+          }
+        }) : [];
+        const studentsByClass = /* @__PURE__ */ new Map();
+        classStudents.forEach((cs) => {
+          if (!studentsByClass.has(cs.classId)) studentsByClass.set(cs.classId, []);
+          studentsByClass.get(cs.classId).push(cs.studentId);
+        });
+        const allStudentIds = Array.from(new Set(classStudents.map((cs) => cs.studentId)));
+        const studentUsers = allStudentIds.length > 0 ? await this.prisma.user.findMany({
+          where: {
+            OR: [{ id: { in: allStudentIds } }, { userId: { in: allStudentIds } }]
+          },
+          select: { id: true, userId: true }
+        }) : [];
+        const userToCanonicalId = /* @__PURE__ */ new Map();
+        studentUsers.forEach((u) => {
+          if (u.id) userToCanonicalId.set(u.id, u.userId);
+          if (u.userId) userToCanonicalId.set(u.userId, u.userId);
+        });
+        const canonicalStudentUserIds = Array.from(new Set(studentUsers.map((u) => u.userId).filter(Boolean)));
+        const submissions = canonicalStudentUserIds.length > 0 ? await this.prisma.examSubmission.findMany({
+          where: {
+            studentId: { in: canonicalStudentUserIds }
+          },
+          select: {
+            id: true,
+            studentId: true,
+            examId: true,
+            status: true,
+            submittedAt: true,
+            exam: {
+              select: { courseId: true }
+            }
+          }
+        }) : [];
+        const data = rawData.map((c) => {
+          const courseExamCount = c.courseId ? examsCountByCourse.get(c.courseId) || 0 : 0;
+          const classStudentIds = studentsByClass.get(c.id) || [];
+          const classCanonicalUserIds = new Set(
+            classStudentIds.map((sId) => userToCanonicalId.get(sId) || sId)
+          );
+          const classSubmissions = submissions.filter(
+            (s) => classCanonicalUserIds.has(s.studentId) && (!c.courseId || s.exam?.courseId === c.courseId)
+          );
+          const pendingSubmissionsCount = classSubmissions.filter(
+            (s) => s.status === "SUBMITTED"
+          ).length;
+          const completedSubmissions = classSubmissions.filter(
+            (s) => s.status === "SUBMITTED" || s.status === "GRADED"
+          );
+          const uniqueCompletedExams = new Set(
+            completedSubmissions.map((s) => `${s.studentId}_${s.examId}`)
+          );
+          const completedSubmissionsCount = uniqueCompletedExams.size;
+          const totalStudents = classStudentIds.length;
+          const totalAssigned = courseExamCount * Math.max(1, totalStudents);
+          const progressPercent = totalAssigned > 0 ? Math.min(100, Math.round(completedSubmissionsCount / totalAssigned * 100)) : 0;
+          return {
+            ...c,
+            homeworkCount: courseExamCount,
+            completedSessions: courseExamCount,
+            pendingSubmissionsCount,
+            completedSubmissionsCount,
+            overdueCount: 0,
+            progressPercent
+          };
+        });
+        return {
+          data,
+          meta: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+            activeClassesCount: activeClassesTotal,
+            totalStudentsCount: totalStudentsAcrossClasses
+          }
+        };
+      }
+      // Use Case: Get Class Details with Ownership Check
+      async getClassById(user, id) {
+        const classData = await this.repo.findById(id);
+        if (!classData) {
+          throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+        }
+        const isAdmin = user.roles.includes("admin");
+        const isTeacher = user.roles.includes("teacher");
+        if (isTeacher && !isAdmin && classData.teacherId !== user.id) {
+          throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - l\u1EDBp kh\xF4ng thu\u1ED9c quy\u1EC1n qu\u1EA3n l\xFD c\u1EE7a b\u1EA1n", 403);
+        }
+        if (!isAdmin && !isTeacher) {
+          const isEnrolled = classData.students.some((s) => s.studentId === user.id);
+          if (!isEnrolled) {
+            throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng ph\u1EA3i th\xE0nh vi\xEAn c\u1EE7a l\u1EDBp n\xE0y", 403);
+          }
+        }
+        return classData;
+      }
+      // Use Case: Get Class Sessions
+      async getClassSessions(user, classId) {
+        const classData = await this.repo.findById(classId);
+        if (!classData) {
+          throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+        }
+        const isAdmin = user.roles.includes("admin");
+        const isTeacher = user.roles.includes("teacher");
+        if (isTeacher && !isAdmin && classData.teacherId !== user.id) {
+          throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - l\u1EDBp kh\xF4ng thu\u1ED9c quy\u1EC1n qu\u1EA3n l\xFD c\u1EE7a b\u1EA1n", 403);
+        }
+        if (!isAdmin && !isTeacher) {
+          const isEnrolled = classData.students.some((s) => s.studentId === user.id);
+          if (!isEnrolled) {
+            throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng ph\u1EA3i th\xE0nh vi\xEAn c\u1EE7a l\u1EDBp n\xE0y", 403);
+          }
+        }
+        const sessions = await this.prisma.classSession.findMany({
+          where: { classId },
+          orderBy: { sessionNumber: "asc" }
+        });
+        return sessions.map((s) => ({
+          id: s.id,
+          classId: s.classId,
+          sessionNumber: s.sessionNumber,
+          title: s.note || `Bu\u1ED5i ${s.sessionNumber}`,
+          sessionDate: s.plannedDate,
+          plannedDate: s.plannedDate,
+          startTime: s.startTime || null,
+          endTime: s.endTime || null,
+          status: s.status,
+          note: s.note || null,
+          rescheduleReason: s.rescheduleReason || null,
+          completedAt: null
+        }));
+      }
+      // Use Case: Generate or Update Class Sessions (With Holiday Exclusion)
+      async generateSessionsForClass(user, classId, options) {
+        const classData = await this.repo.findById(classId);
+        if (!classData) {
+          throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+        }
+        const {
+          startDate,
+          weekdays,
+          totalSessions = 27,
+          startTime = "18:00",
+          endTime = "20:00",
+          excludeHolidays = true,
+          customHolidays
+        } = options;
+        if (!startDate || !Array.isArray(weekdays) || weekdays.length === 0) {
+          throw new AuthorizationError("Ng\xE0y b\u1EAFt \u0111\u1EA7u v\xE0 th\u1EE9 trong tu\u1EA7n kh\xF4ng \u0111\u01B0\u1EE3c \u0111\u1EC3 tr\u1ED1ng", 400);
+        }
+        const dates = [];
+        const [y, m, d] = startDate.split("-").map(Number);
+        const cur = new Date(y, m - 1, d);
+        let maxDaysLookahead = totalSessions * 14;
+        while (dates.length < totalSessions && maxDaysLookahead > 0) {
+          maxDaysLookahead--;
+          const dow = cur.getDay();
+          if (weekdays.includes(dow)) {
+            const isHoliday = excludeHolidays && isHolidayDate(cur, customHolidays);
+            if (!isHoliday) {
+              const mm = String(cur.getMonth() + 1).padStart(2, "0");
+              const dd = String(cur.getDate()).padStart(2, "0");
+              dates.push(`${cur.getFullYear()}-${mm}-${dd}`);
+            }
+          }
+          cur.setDate(cur.getDate() + 1);
+        }
+        const startTimeDate = /* @__PURE__ */ new Date(`1970-01-01T${startTime.slice(0, 5)}:00.000Z`);
+        const endTimeDate = /* @__PURE__ */ new Date(`1970-01-01T${endTime.slice(0, 5)}:00.000Z`);
+        const existingSessions = await this.prisma.classSession.findMany({
+          where: { classId }
+        });
+        const result = [];
+        for (let idx = 0; idx < dates.length; idx++) {
+          const sessionNumber = idx + 1;
+          const plannedDate = /* @__PURE__ */ new Date(`${dates[idx]}T00:00:00.000Z`);
+          const existing = existingSessions.find((s) => s.sessionNumber === sessionNumber);
+          if (existing) {
+            const updated = await this.prisma.classSession.update({
+              where: { id: existing.id },
+              data: {
+                plannedDate,
+                startTime: startTimeDate,
+                endTime: endTimeDate
+              }
+            });
+            result.push(updated);
+          } else {
+            const created = await this.prisma.classSession.create({
+              data: {
+                classId,
+                sessionNumber,
+                plannedDate,
+                startTime: startTimeDate,
+                endTime: endTimeDate,
+                status: "PLANNED"
+              }
+            });
+            result.push(created);
+          }
+        }
+        if (existingSessions.length > dates.length) {
+          const extraneousIds = existingSessions.filter((s) => s.sessionNumber > dates.length && s.status === "PLANNED").map((s) => s.id);
+          if (extraneousIds.length > 0) {
+            await this.prisma.classSession.deleteMany({
+              where: { id: { in: extraneousIds } }
+            });
+          }
+        }
+        if (dates.length > 0) {
+          const finalEndDate = /* @__PURE__ */ new Date(`${dates[dates.length - 1]}T23:59:59.999Z`);
+          await this.prisma.class.update({
+            where: { id: classId },
+            data: { endDate: finalEndDate }
+          });
+        }
+        return result;
+      }
+      // Use Case: Postpone a session due to unexpected circumstances and shift all subsequent sessions
+      async postponeSessionAndShift(user, classId, sessionId, options = {}) {
+        const classData = await this.repo.findById(classId);
+        if (!classData) {
+          throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+        }
+        const isAdmin = user.roles.includes("admin");
+        if (!isAdmin && classData.teacherId !== user.id) {
+          throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n d\u1EDDi l\u1ECBch l\u1EDBp h\u1ECDc n\xE0y", 403);
+        }
+        const allSessions = await this.prisma.classSession.findMany({
+          where: { classId },
+          orderBy: { sessionNumber: "asc" }
+        });
+        const targetSession = allSessions.find((s) => s.id === sessionId);
+        if (!targetSession) {
+          throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y bu\u1ED5i h\u1ECDc c\u1EA7n d\u1EDDi");
+        }
+        if (targetSession.status === "COMPLETED") {
+          throw new AuthorizationError("Kh\xF4ng th\u1EC3 d\u1EDDi bu\u1ED5i h\u1ECDc \u0111\xE3 ho\xE0n th\xE0nh \u0111i\u1EC3m danh", 400);
+        }
+        let weekdays = [];
+        const schedules = await this.prisma.classSchedule.findMany({
+          where: { classId }
+        });
+        if (schedules.length > 0) {
+          weekdays = schedules.map((sc) => sc.dayOfWeek);
+        } else {
+          const distinctDows = new Set(
+            allSessions.filter((s) => s.plannedDate).map((s) => new Date(s.plannedDate).getDay())
+          );
+          weekdays = Array.from(distinctDows);
+        }
+        if (weekdays.length === 0) {
+          weekdays = [1, 3, 5];
+        }
+        const sessionsToShift = allSessions.filter(
+          (s) => s.sessionNumber >= targetSession.sessionNumber && s.status !== "COMPLETED"
+        );
+        const origDate = new Date(targetSession.plannedDate);
+        const cur = new Date(origDate);
+        cur.setDate(cur.getDate() + 1);
+        const updatedSessions = [];
+        for (const sess of sessionsToShift) {
+          let foundValidDate = false;
+          let safetyCounter = 60;
+          while (!foundValidDate && safetyCounter > 0) {
+            safetyCounter--;
+            const dow = cur.getDay();
+            const isHoliday = isHolidayDate(cur, options.customHolidays);
+            if (weekdays.includes(dow) && !isHoliday) {
+              foundValidDate = true;
+              const newPlannedDate = new Date(cur);
+              newPlannedDate.setUTCHours(0, 0, 0, 0);
+              const updated = await this.prisma.classSession.update({
+                where: { id: sess.id },
+                data: { plannedDate: newPlannedDate }
+              });
+              updatedSessions.push(updated);
+            }
+            cur.setDate(cur.getDate() + 1);
+          }
+        }
+        if (updatedSessions.length > 0) {
+          const lastSession = updatedSessions[updatedSessions.length - 1];
+          const newEndDate = new Date(lastSession.plannedDate);
+          newEndDate.setUTCHours(23, 59, 59, 999);
+          await this.prisma.class.update({
+            where: { id: classId },
+            data: { endDate: newEndDate }
+          });
+        }
+        const reasonText = options.reason ? ` L\xFD do: ${options.reason}.` : "";
+        const newDateStr = updatedSessions[0] ? new Date(updatedSessions[0].plannedDate).toLocaleDateString("vi-VN") : "";
+        const origDateStr = origDate.toLocaleDateString("vi-VN");
+        const students = await this.prisma.classStudent.findMany({
+          where: { classId, status: "ACTIVE", deletedAt: null },
+          select: { studentId: true }
+        });
+        if (students.length > 0) {
+          const notifs = students.map((st) => ({
+            userId: st.studentId,
+            type: NotificationType2.ANNOUNCEMENT,
+            title: `Th\xF4ng b\xE1o d\u1EDDi l\u1ECBch h\u1ECDc: ${classData.name}`,
+            message: `Bu\u1ED5i h\u1ECDc s\u1ED1 ${targetSession.sessionNumber} (d\u1EF1 ki\u1EBFn ng\xE0y ${origDateStr}) \u0111\xE3 \u0111\u01B0\u1EE3c d\u1EDDi sang ng\xE0y ${newDateStr}.${reasonText} C\xE1c bu\u1ED5i h\u1ECDc ti\u1EBFp theo \u0111\u01B0\u1EE3c t\u1EF1 \u0111\u1ED9ng c\u1EADp nh\u1EADt theo l\u1ECBch m\u1EDBi.`,
+            link: `/classes/${classId}`,
+            entityType: "CLASS",
+            entityId: classId
+          }));
+          await this.notifService.createBatchNotifications(this.prisma, notifs);
+        }
+        return {
+          success: true,
+          message: `\u0110\xE3 d\u1EDDi Bu\u1ED5i ${targetSession.sessionNumber} t\u1EEB ${origDateStr} sang ${newDateStr} v\xE0 c\u1EADp nh\u1EADt l\u1ECBch cho ${updatedSessions.length} bu\u1ED5i h\u1ECDc ti\u1EBFp theo.`,
+          shiftedCount: updatedSessions.length,
+          updatedSessions
+        };
+      }
+      // Use Case: Create Class (Admin Only)
+      async createClass(user, data) {
+        const isAdmin = user.roles.includes("admin");
+        if (!isAdmin) {
+          throw new AuthorizationError("Ch\u1EC9 qu\u1EA3n tr\u1ECB vi\xEAn (Admin) m\u1EDBi c\xF3 quy\u1EC1n t\u1EA1o l\u1EDBp h\u1ECDc", 403);
+        }
+        const teacherId = data.teacherId || null;
+        let courseId = data.courseId;
+        if (!courseId) {
+          const firstCourse = await this.prisma.course.findFirst();
+          courseId = firstCourse?.id || "default";
+        }
+        if (data.roomId && data.branchId) {
+          const room = await this.prisma.room.findUnique({
+            where: { id: data.roomId },
+            select: { branchId: true, name: true }
+          });
+          if (!room) {
+            throw new NotFoundError("Ph\xF2ng h\u1ECDc kh\xF4ng t\u1ED3n t\u1EA1i.");
+          }
+          if (room.branchId !== data.branchId) {
+            throw new AuthorizationError(
+              "Ph\xF2ng h\u1ECDc kh\xF4ng thu\u1ED9c c\u01A1 s\u1EDF \u0111\xE3 ch\u1ECDn. Vui l\xF2ng ch\u1ECDn ph\xF2ng h\u1ECDc thu\u1ED9c \u0111\xFAng c\u01A1 s\u1EDF.",
+              400
+            );
+          }
+        }
+        return this.repo.create({
+          name: data.name,
+          description: data.description,
+          course: { connect: { id: courseId } },
+          branch: data.branchId ? { connect: { id: data.branchId } } : void 0,
+          room: data.roomId ? { connect: { id: data.roomId } } : void 0,
+          teacher: teacherId ? { connect: { id: teacherId } } : void 0,
+          startDate: data.startDate ? new Date(data.startDate) : void 0,
+          endDate: data.endDate ? new Date(data.endDate) : void 0,
+          isActive: data.isActive !== void 0 ? data.isActive : true
+        });
+      }
+      // Use Case: Update Class (Admin Only)
+      async updateClass(user, id, data) {
+        const classData = await this.repo.findById(id);
+        if (!classData) {
+          throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+        }
+        const isAdmin = user.roles.includes("admin");
+        const isTeacher = user.roles.includes("teacher");
+        if (!isAdmin && !isTeacher) {
+          throw new AuthorizationError("B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n ch\u1EC9nh s\u1EEDa th\xF4ng tin l\u1EDBp h\u1ECDc n\xE0y", 403);
+        }
+        if (isTeacher && !isAdmin) {
+          const isOwner = classData.teacherId && classData.teacherId === user.id || classData.teacherId && user.userId === classData.teacherId;
+          if (!isOwner) {
+            throw new AuthorizationError("B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n s\u1EEDa l\u1EDBp n\xE0y", 403);
+          }
+        }
+        const updatePayload = {};
+        if (data.name !== void 0) updatePayload.name = data.name;
+        if (data.description !== void 0) updatePayload.description = data.description;
+        if (data.courseId !== void 0) updatePayload.courseId = data.courseId;
+        if (data.branchId !== void 0) updatePayload.branchId = data.branchId || null;
+        if (data.roomId !== void 0) updatePayload.roomId = data.roomId || null;
+        if (data.startDate !== void 0) updatePayload.startDate = data.startDate ? new Date(data.startDate) : null;
+        if (data.endDate !== void 0) updatePayload.endDate = data.endDate ? new Date(data.endDate) : null;
+        if (data.isActive !== void 0) updatePayload.isActive = data.isActive;
+        if (isAdmin && data.teacherId !== void 0) updatePayload.teacherId = data.teacherId;
+        const effectiveBranchId = updatePayload.branchId ?? classData.branchId;
+        const effectiveRoomId = updatePayload.roomId ?? classData.roomId;
+        if (effectiveRoomId && effectiveBranchId) {
+          const room = await this.prisma.room.findUnique({
+            where: { id: effectiveRoomId },
+            select: { branchId: true }
+          });
+          if (room && room.branchId !== effectiveBranchId) {
+            throw new AuthorizationError(
+              "Ph\xF2ng h\u1ECDc kh\xF4ng thu\u1ED9c c\u01A1 s\u1EDF \u0111\xE3 ch\u1ECDn. Vui l\xF2ng ch\u1ECDn ph\xF2ng h\u1ECDc thu\u1ED9c \u0111\xFAng c\u01A1 s\u1EDF.",
+              400
+            );
+          }
+        }
+        if (data.roomId !== void 0 && effectiveRoomId && effectiveRoomId !== classData.roomId) {
+          const existingClassSessions = await this.prisma.classSession.findMany({
+            where: {
+              classId: id,
+              status: { not: "CANCELLED" }
+            },
+            select: {
+              plannedDate: true,
+              startTime: true,
+              endTime: true
+            }
+          });
+          if (existingClassSessions.length > 0) {
+            const collisionResult = await RoomCollisionService.checkRoomConflictForSessions(
+              this.prisma,
+              {
+                roomId: effectiveRoomId,
+                sessions: existingClassSessions,
+                excludeClassId: id
+              }
+            );
+            if (collisionResult.hasConflict) {
+              throw new AuthorizationError(
+                collisionResult.message || "Xung \u0111\u1ED9t ph\xF2ng h\u1ECDc v\u1EDBi l\u1EDBp kh\xE1c trong c\xF9ng khung gi\u1EDD.",
+                409
+              );
+            }
+          }
+        }
+        return this.repo.update(id, updatePayload);
+      }
+      // Helper: Gửi thông báo đến học sinh và giáo viên khi lớp đóng
+      async sendClassClosedNotifications(classData) {
+        const recipientUserIds = /* @__PURE__ */ new Set();
+        if (classData.teacherId) {
+          recipientUserIds.add(classData.teacherId);
+        }
+        if (classData.students) {
+          for (const s of classData.students) {
+            if (s.studentId) recipientUserIds.add(s.studentId);
+          }
+        }
+        if (recipientUserIds.size === 0) return;
+        const notifPayloads = Array.from(recipientUserIds).map((userId) => ({
+          userId,
+          type: NotificationType2.SYSTEM,
+          title: `L\u1EDBp h\u1ECDc \u0111\xE3 k\u1EBFt th\xFAc: ${classData.name}`,
+          message: `L\u1EDBp h\u1ECDc "${classData.name}" \u0111\xE3 ch\xEDnh th\u1EE9c \u0111\xF3ng. B\u1EA1n c\xF3 3 th\xE1ng \u0111\u1EC3 xem l\u1EA1i b\xE0i n\u1ED9p, \u0111i\u1EC3m s\u1ED1 v\xE0 nh\u1EADn x\xE9t tr\u01B0\u1EDBc khi d\u1EEF li\u1EC7u l\u1EDBp \u0111\u01B0\u1EE3c d\u1ECDn d\u1EB9p.`,
+          link: `/classes/${classData.id}`,
+          entityType: "CLASS",
+          entityId: classData.id
+        }));
+        await this.notifService.createBatchNotifications(this.prisma, notifPayloads);
+      }
+      // Use Case: Get Center-Wide Inter-Class League Standings (Class Competition & Gamification)
+      async getLeagueStandings(branchId) {
+        const where = {
+          status: "ACTIVE"
+        };
+        if (branchId && branchId !== "ALL") {
+          where.branchId = branchId;
+        }
+        const classes = await this.prisma.class.findMany({
+          where,
+          include: {
+            course: {
+              select: {
+                id: true,
+                title: true,
+                exams: {
+                  where: { isPublished: true, isActive: true },
+                  select: { id: true }
+                }
+              }
+            },
+            branch: { select: { id: true, name: true } },
+            teacher: { select: { id: true, fullName: true, avatarUrl: true } },
+            sessions: { select: { id: true } },
+            students: {
+              where: { deletedAt: null, status: "ACTIVE" },
+              include: {
+                student: {
+                  select: {
+                    id: true,
+                    userId: true,
+                    fullName: true
+                  }
+                }
+              }
+            },
+            attendance: {
+              select: {
+                studentId: true,
+                status: true
+              }
+            }
+          }
+        });
+        const allStudentUserIds = Array.from(
+          new Set(
+            classes.flatMap(
+              (c) => c.students.map((cs) => cs.student.userId || cs.student.id).filter(Boolean)
+            )
+          )
+        );
+        const allExamsInCourses = Array.from(
+          new Set(classes.flatMap((c) => (c.course?.exams || []).map((e) => e.id)))
+        );
+        const allSubmissions = allStudentUserIds.length > 0 && allExamsInCourses.length > 0 ? await this.prisma.examSubmission.findMany({
+          where: {
+            studentId: { in: allStudentUserIds },
+            examId: { in: allExamsInCourses },
+            status: { in: ["SUBMITTED", "GRADED"] }
+          },
+          select: {
+            studentId: true,
+            examId: true,
+            status: true
+          }
+        }) : [];
+        const standings = classes.map((c) => {
+          const totalStudents = c.students.length;
+          const totalHomeworks = c.course?.exams?.length || 0;
+          const totalSessions = c.sessions.length;
+          const courseExamIds = new Set((c.course?.exams || []).map((e) => e.id));
+          const classStudentIds = new Set(
+            c.students.map((cs) => cs.student.userId || cs.student.id).filter(Boolean)
+          );
+          const completedSubmissions = allSubmissions.filter(
+            (s) => classStudentIds.has(s.studentId) && courseExamIds.has(s.examId)
+          );
+          const uniqueCompletedSlots = new Set(
+            completedSubmissions.map((s) => `${s.studentId}_${s.examId}`)
+          );
+          const totalCompletedSubmissions = uniqueCompletedSlots.size;
+          const totalAssignedSlots = totalStudents * totalHomeworks;
+          const completionRate = totalAssignedSlots > 0 ? Math.round(totalCompletedSubmissions / totalAssignedSlots * 100) : 0;
+          const totalAttendanceSlots = totalStudents * totalSessions;
+          const attendedCount = c.attendance.filter((a) => a.status === "PRESENT" || a.status === "LATE").length;
+          const attendanceRate = totalAttendanceSlots > 0 ? Math.round(attendedCount / totalAttendanceSlots * 100) : 100;
+          const leagueScore = totalAssignedSlots === 0 && totalAttendanceSlots === 0 ? 0 : Math.round(completionRate * 70 + attendanceRate * 30);
+          return {
+            classId: c.id,
+            className: c.name,
+            courseTitle: c.course?.title || "Kh\xF3a h\u1ECDc",
+            branchName: c.branch?.name || "Ch\u01B0a g\xE1n",
+            branchId: c.branchId,
+            teacherName: c.teacher?.fullName || "Ch\u01B0a ph\xE2n c\xF4ng",
+            teacherAvatar: c.teacher?.avatarUrl || null,
+            totalStudents,
+            totalHomeworks,
+            totalSessions,
+            totalCompletedSubmissions,
+            totalAssignedSlots,
+            completionRate,
+            attendanceRate,
+            leagueScore
+          };
+        });
+        standings.sort((a, b) => {
+          if (b.leagueScore !== a.leagueScore) {
+            return b.leagueScore - a.leagueScore;
+          }
+          return b.completionRate - a.completionRate;
+        });
+        const rankedStandings = standings.map((item, index) => ({
+          ...item,
+          rank: index + 1
+        }));
+        return {
+          totalClasses: rankedStandings.length,
+          standings: rankedStandings
+        };
+      }
+      // Use Case: Get Class Progress Leaderboard for Students & Peers (Gamified Race to 100%)
+      async getClassLeaderboard(user, classId) {
+        const classData = await this.prisma.class.findUnique({
+          where: { id: classId },
+          include: {
+            course: {
+              select: {
+                id: true,
+                title: true,
+                exams: {
+                  where: { isPublished: true, isActive: true },
+                  select: { id: true, title: true, week: true },
+                  orderBy: { week: "asc" }
+                }
+              }
+            },
+            students: {
+              where: { deletedAt: null, status: "ACTIVE" },
+              include: {
+                student: {
+                  select: {
+                    id: true,
+                    userId: true,
+                    fullName: true,
+                    avatarUrl: true
+                  }
+                }
+              }
+            },
+            sessions: {
+              select: {
+                id: true,
+                sessionNumber: true,
+                plannedDate: true
+              },
+              orderBy: { sessionNumber: "asc" }
+            }
+          }
+        });
+        if (!classData) {
+          throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+        }
+        const courseExams = classData.course?.exams || [];
+        const totalHomeworks = courseExams.length;
+        const examIds = courseExams.map((e) => e.id);
+        const studentUserIds = classData.students.map((cs) => cs.student.userId || cs.student.id).filter(Boolean);
+        const submissions = studentUserIds.length > 0 && examIds.length > 0 ? await this.prisma.examSubmission.findMany({
+          where: {
+            studentId: { in: studentUserIds },
+            examId: { in: examIds },
+            status: { in: ["SUBMITTED", "GRADED"] }
+          },
+          select: {
+            studentId: true,
+            examId: true,
+            status: true,
+            submittedAt: true
+          }
+        }) : [];
+        const now = /* @__PURE__ */ new Date();
+        const upcomingSessions = classData.sessions.filter((s) => s.plannedDate && new Date(s.plannedDate) >= now).sort((a, b) => new Date(a.plannedDate).getTime() - new Date(b.plannedDate).getTime());
+        const nextSession = upcomingSessions[0] || null;
+        const nextExam = nextSession ? courseExams[nextSession.sessionNumber - 1] || courseExams[0] : courseExams[0] || null;
+        const nextDeadline = nextSession?.plannedDate ? new Date(new Date(nextSession.plannedDate).getTime() + 7 * 24 * 60 * 60 * 1e3) : null;
+        const nextUpcomingHomework = nextExam ? {
+          title: nextExam.title,
+          deadline: nextDeadline,
+          isUrgent: nextDeadline ? nextDeadline.getTime() - now.getTime() < 48 * 60 * 60 * 1e3 : false
+        } : null;
+        const studentRanks = classData.students.map((cs) => {
+          const student = cs.student;
+          const studentId = student.userId || student.id;
+          const studentSubs = submissions.filter(
+            (s) => s.studentId === student.userId || s.studentId === student.id
+          );
+          const uniqueSubmittedExams = new Set(studentSubs.map((s) => s.examId));
+          const completedCount = uniqueSubmittedExams.size;
+          const completionRate = totalHomeworks > 0 ? Math.round(completedCount / totalHomeworks * 100) : 0;
+          return {
+            studentId,
+            fullName: student.fullName || "H\u1ECDc vi\xEAn",
+            avatarUrl: student.avatarUrl,
+            completedCount,
+            totalHomeworks,
+            completionRate,
+            isMe: studentId === user.id
+          };
+        });
+        const totalStudents = studentRanks.length;
+        const totalAssignedSlots = totalStudents * totalHomeworks;
+        const totalSubmittedSlots = studentRanks.reduce((acc, s) => acc + s.completedCount, 0);
+        const classCompletionRate = totalAssignedSlots > 0 ? Math.round(totalSubmittedSlots / totalAssignedSlots * 100) : 0;
+        const bandMatch = classData.course?.title?.match(/\d+(\.\d+)?/);
+        const targetBand = bandMatch ? `Band ${bandMatch[0]}+` : "Band 6.5+";
+        studentRanks.sort((a, b) => {
+          if (b.completedCount !== a.completedCount) {
+            return b.completedCount - a.completedCount;
+          }
+          return a.fullName.localeCompare(b.fullName);
+        });
+        let currentRank = 1;
+        const rankedStudents = studentRanks.map((s, index) => {
+          if (index > 0 && s.completedCount < studentRanks[index - 1].completedCount) {
+            currentRank = index + 1;
+          }
+          return {
+            ...s,
+            rank: currentRank
+          };
+        });
+        const myRankItem = rankedStudents.find((s) => s.isMe);
+        return {
+          classId: classData.id,
+          className: classData.name,
+          courseTitle: classData.course?.title || "IELTS Course",
+          targetBand,
+          totalStudents,
+          totalHomeworks,
+          classCompletionRate,
+          totalSubmittedSlots,
+          totalAssignedSlots,
+          nextUpcomingHomework,
+          myRank: myRankItem?.rank || null,
+          myCompletedCount: myRankItem?.completedCount || 0,
+          students: rankedStudents
+        };
+      }
+      // Use Case: Get End-of-Course Graduation Summary (Honor Roll, Completion & Overdue Rates)
+      async getGraduationSummary(classId) {
+        const classData = await this.prisma.class.findUnique({
+          where: { id: classId },
+          include: {
+            course: {
+              select: {
+                id: true,
+                title: true,
+                exams: {
+                  where: { isPublished: true, isActive: true },
+                  select: { id: true, title: true, week: true },
+                  orderBy: { week: "asc" }
+                }
+              }
+            },
+            teacher: { select: { id: true, fullName: true, email: true } },
+            sessions: {
+              select: { id: true, sessionNumber: true, plannedDate: true },
+              orderBy: { sessionNumber: "asc" }
+            },
+            students: {
+              where: { deletedAt: null, status: "ACTIVE" },
+              include: {
+                student: {
+                  select: {
+                    id: true,
+                    userId: true,
+                    fullName: true,
+                    email: true,
+                    avatarUrl: true
+                  }
+                }
+              }
+            },
+            attendance: {
+              select: {
+                studentId: true,
+                status: true
+              }
+            }
+          }
+        });
+        if (!classData) {
+          throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+        }
+        const courseExams = classData.course?.exams || [];
+        const totalHomeworks = courseExams.length;
+        const totalSessions = classData.sessions.length;
+        const examIds = courseExams.map((e) => e.id);
+        const studentUserIds = classData.students.map((cs) => cs.student.userId || cs.student.id).filter(Boolean);
+        const submissions = studentUserIds.length > 0 && examIds.length > 0 ? await this.prisma.examSubmission.findMany({
+          where: {
+            studentId: { in: studentUserIds },
+            examId: { in: examIds },
+            status: { in: ["SUBMITTED", "GRADED"] }
+          },
+          select: {
+            studentId: true,
+            examId: true,
+            status: true,
+            submittedAt: true
+          }
+        }) : [];
+        const studentResults = classData.students.map((cs) => {
+          const student = cs.student;
+          const studentId = student.userId || student.id;
+          const studentSubs = submissions.filter(
+            (s) => s.studentId === student.userId || s.studentId === student.id
+          );
+          const uniqueSubmittedExams = new Set(studentSubs.map((s) => s.examId));
+          const submittedCount = uniqueSubmittedExams.size;
+          const onTimeCount = submittedCount;
+          const overdueCount = 0;
+          const completionRate = totalHomeworks > 0 ? Math.round(submittedCount / totalHomeworks * 100) : 100;
+          const overdueRate = submittedCount > 0 ? Math.round(overdueCount / submittedCount * 100) : 0;
+          const studentAttendances = classData.attendance.filter(
+            (a) => a.studentId === student.userId || a.studentId === student.id
+          );
+          const attendedSessions = studentAttendances.filter((a) => a.status === "PRESENT" || a.status === "LATE").length;
+          const attendanceRate = totalSessions > 0 ? Math.round(attendedSessions / totalSessions * 100) : 100;
+          const isHonorRoll = totalHomeworks > 0 && completionRate === 100 && overdueCount === 0;
+          return {
+            studentId,
+            fullName: student.fullName,
+            email: student.email,
+            avatarUrl: student.avatarUrl,
+            classStudentStatus: cs.status,
+            totalHomeworks,
+            submittedCount,
+            completionRate,
+            onTimeCount,
+            overdueCount,
+            overdueRate,
+            totalSessions,
+            attendedSessions,
+            attendanceRate,
+            isHonorRoll
+          };
+        });
+        const honorRollCount = studentResults.filter((s) => s.isHonorRoll).length;
+        return {
+          classId: classData.id,
+          className: classData.name,
+          teacherName: classData.teacher?.fullName || "Ch\u01B0a ph\xE2n c\xF4ng",
+          courseTitle: classData.course?.title || "IELTS Program",
+          startDate: classData.startDate,
+          endDate: classData.endDate,
+          status: classData.status,
+          closedAt: classData.closedAt,
+          totalSessions,
+          totalHomeworks,
+          totalStudents: studentResults.length,
+          honorRollCount,
+          students: studentResults
+        };
+      }
+      // Use Case: Close Class (Teacher or Admin)
+      async closeClass(user, id) {
+        const classData = await this.repo.findById(id);
+        if (!classData) {
+          throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+        }
+        const isAdmin = user.roles.includes("admin");
+        if (!isAdmin && classData.teacherId !== user.id) {
+          throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n \u0111\xF3ng l\u1EDBp n\xE0y", 403);
+        }
+        const graduationSummary = await this.getGraduationSummary(id);
+        if (classData.status === "CLOSED" || !classData.isActive) {
+          return {
+            success: true,
+            message: "L\u1EDBp h\u1ECDc \u0111\xE3 \u1EDF tr\u1EA1ng th\xE1i \u0111\xF3ng.",
+            data: {
+              class: classData,
+              graduationSummary
+            }
+          };
+        }
+        const updatedClass = await this.prisma.class.update({
+          where: { id },
+          data: {
+            status: "CLOSED",
+            isActive: false,
+            closedAt: /* @__PURE__ */ new Date()
+          },
+          select: {
+            id: true,
+            name: true,
+            teacherId: true,
+            status: true,
+            isActive: true,
+            closedAt: true,
+            students: { select: { studentId: true } }
+          }
+        });
+        await this.prisma.classStudent.updateMany({
+          where: {
+            classId: id,
+            status: "ACTIVE",
+            deletedAt: null
+          },
+          data: {
+            status: "COMPLETED",
+            completedAt: /* @__PURE__ */ new Date()
+          }
+        });
+        await this.sendClassClosedNotifications({
+          id: updatedClass.id,
+          name: updatedClass.name,
+          teacherId: updatedClass.teacherId,
+          students: updatedClass.students
+        });
+        return {
+          success: true,
+          message: `\u0110\xE3 \u0111\xF3ng l\u1EDBp "${updatedClass.name}" th\xE0nh c\xF4ng v\xE0 t\u1ED5ng h\u1EE3p k\u1EBFt qu\u1EA3 t\u1ED1t nghi\u1EC7p cho ${graduationSummary.totalStudents} h\u1ECDc vi\xEAn (${graduationSummary.honorRollCount} h\u1ECDc vi\xEAn vinh danh 100%).`,
+          data: {
+            class: updatedClass,
+            graduationSummary
+          }
+        };
+      }
+      // Use Case: Reopen / Extend Class (Teacher or Admin)
+      async reopenClass(user, id) {
+        const classData = await this.repo.findById(id);
+        if (!classData) {
+          throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+        }
+        const isAdmin = user.roles.includes("admin");
+        if (!isAdmin && classData.teacherId !== user.id) {
+          throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n m\u1EDF l\u1EA1i l\u1EDBp n\xE0y", 403);
+        }
+        const updatedClass = await this.prisma.class.update({
+          where: { id },
+          data: {
+            status: "ACTIVE",
+            isActive: true,
+            closedAt: null
+          }
+        });
+        await this.prisma.classStudent.updateMany({
+          where: {
+            classId: id,
+            status: "COMPLETED",
+            deletedAt: null
+          },
+          data: {
+            status: "ACTIVE",
+            completedAt: null
+          }
+        });
+        return {
+          success: true,
+          message: `\u0110\xE3 m\u1EDF l\u1EA1i l\u1EDBp "${updatedClass.name}" th\xE0nh c\xF4ng.`,
+          data: updatedClass
+        };
+      }
+      // Use Case: Run Lifecycle Maintenance (Auto-close strictly after 7 days grace period post last actual session & all sessions complete)
+      async runClassLifecycleMaintenance() {
+        const now = /* @__PURE__ */ new Date();
+        let closedCount = 0;
+        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1e3);
+        const candidateClasses = await this.prisma.class.findMany({
+          where: {
+            status: "ACTIVE"
+          },
+          include: {
+            sessions: {
+              select: { id: true, plannedDate: true, status: true },
+              orderBy: { plannedDate: "desc" }
+            },
+            students: { select: { studentId: true } }
+          }
+        });
+        for (const cls of candidateClasses) {
+          const hasFutureSessions = cls.sessions.some(
+            (s) => s.plannedDate && new Date(s.plannedDate).getTime() > now.getTime()
+          );
+          const hasRecentPendingSessions = cls.sessions.some(
+            (s) => s.status === "PLANNED" && s.plannedDate && new Date(s.plannedDate).getTime() > sevenDaysAgo.getTime()
+          );
+          const lastSessionDate = cls.sessions[0]?.plannedDate || cls.endDate;
+          const isPastGracePeriod = !hasFutureSessions && !hasRecentPendingSessions && lastSessionDate && new Date(lastSessionDate).getTime() <= sevenDaysAgo.getTime();
+          const isSixMonthsOld = !hasFutureSessions && cls.startDate && new Date(cls.startDate).getTime() <= new Date(now.getTime() - 180 * 24 * 60 * 60 * 1e3).getTime();
+          if (isPastGracePeriod || isSixMonthsOld) {
+            await this.prisma.class.update({
+              where: { id: cls.id },
+              data: {
+                status: "CLOSED",
+                isActive: false,
+                closedAt: now
+              }
+            });
+            await this.prisma.classStudent.updateMany({
+              where: { classId: cls.id, status: "ACTIVE", deletedAt: null },
+              data: { status: "COMPLETED", completedAt: now }
+            });
+            await this.sendClassClosedNotifications({
+              id: cls.id,
+              name: cls.name,
+              teacherId: cls.teacherId,
+              students: cls.students
+            });
+            closedCount++;
+          }
+        }
+        const threeMonthsAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1e3);
+        const classesToArchive = await this.prisma.class.findMany({
+          where: {
+            status: "CLOSED",
+            closedAt: {
+              lte: threeMonthsAgo
+            }
+          },
+          select: { id: true, name: true }
+        });
+        let archivedCount = 0;
+        for (const cls of classesToArchive) {
+          await this.prisma.class.update({
+            where: { id: cls.id },
+            data: {
+              status: "ARCHIVED",
+              archivedAt: now,
+              isActive: false
+            }
+          });
+          archivedCount++;
+        }
+        return {
+          success: true,
+          timestamp: now.toISOString(),
+          closedClassesCount: closedCount,
+          archivedClassesCount: archivedCount,
+          deletedClassesCount: 0
+          // Invariant: Hard delete is strictly eliminated (always 0)
+        };
+      }
+      // Helper: Resolve Canonical User Identity (auth.users.id) from studentId, email, or surrogate profile id
+      async resolveCanonicalUserId(inputStudentId) {
+        if (!inputStudentId || typeof inputStudentId !== "string") return inputStudentId;
+        const cleanInput = inputStudentId.trim();
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanInput);
+        const isEmail = cleanInput.includes("@");
+        const orConditions = [];
+        if (isUUID) {
+          orConditions.push({ userId: cleanInput }, { id: cleanInput });
+        }
+        if (isEmail) {
+          orConditions.push({ email: { equals: cleanInput, mode: "insensitive" } });
+        }
+        if (orConditions.length === 0) {
+          return cleanInput;
+        }
+        const user = await this.prisma.user.findFirst({
+          where: {
+            OR: orConditions
+          },
+          select: { userId: true }
+        });
+        return user ? user.userId : cleanInput;
+      }
+      // Use Case: Add Single Student to Class (Bi-directional Cascade to Course Enrollment)
+      async addStudent(user, classId, studentId) {
+        const batchResult = await this.addStudentsBatch(user, classId, { studentIds: [studentId] });
+        return batchResult.students[0];
+      }
+      // Use Case: Batch Add Students to Class by studentIds or emails (ADR-007 Canonical Identity + Cascade)
+      async addStudentsBatch(user, classId, payload) {
+        const classData = await this.repo.findById(classId);
+        if (!classData) {
+          throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+        }
+        if (classData.status === "CLOSED" || !classData.isActive) {
+          throw new AuthorizationError("L\u1EDBp h\u1ECDc \u0111\xE3 k\u1EBFt th\xFAc v\xE0 \u0111\xF3ng, kh\xF4ng th\u1EC3 th\xEAm h\u1ECDc vi\xEAn m\u1EDBi", 400);
+        }
+        const isAdmin = user.roles.includes("admin");
+        if (!isAdmin && classData.teacherId !== user.id) {
+          throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n th\xEAm h\u1ECDc vi\xEAn v\xE0o l\u1EDBp n\xE0y", 403);
+        }
+        const resolvedStudentIds = /* @__PURE__ */ new Set();
+        if (Array.isArray(payload.studentIds) && payload.studentIds.length > 0) {
+          for (const sid of payload.studentIds) {
+            if (!sid || typeof sid !== "string") continue;
+            const canonicalId = await this.resolveCanonicalUserId(sid.trim());
+            resolvedStudentIds.add(canonicalId);
+          }
+        }
+        if (Array.isArray(payload.emails) && payload.emails.length > 0) {
+          const cleanEmails = Array.from(
+            new Set(
+              payload.emails.map((e) => typeof e === "string" ? e.trim().toLowerCase() : "").filter((e) => e && e.includes("@"))
+            )
+          );
+          for (const email of cleanEmails) {
+            let existingUser = await this.prisma.user.findFirst({
+              where: { email: { equals: email, mode: "insensitive" } },
+              select: { userId: true }
+            });
+            if (existingUser) {
+              resolvedStudentIds.add(existingUser.userId);
+            } else {
+              const autoPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+              const fullName = email.split("@")[0];
+              const dbResult = await this.prisma.$queryRawUnsafe(
+                `
+            SELECT public.admin_create_user(
+              $1::text,
+              $2::text,
+              NULL::text,
+              NULL::text,
+              'student'::text,
+              $3::text,
+              NULL::text,
+              NULL::text,
+              NULL::date
+            ) as result;
+          `,
+                email,
+                fullName,
+                autoPassword
+              );
+              const profileData = dbResult?.[0]?.result;
+              let createdAuthUid = profileData?.user_id || profileData?.id;
+              if (!createdAuthUid) {
+                const fallbackUser = await this.prisma.user.findFirst({
+                  where: { email: { equals: email, mode: "insensitive" } },
+                  select: { userId: true }
+                });
+                createdAuthUid = fallbackUser?.userId;
+              }
+              if (createdAuthUid) {
+                resolvedStudentIds.add(createdAuthUid);
+              } else {
+                throw new Error(`Kh\xF4ng th\u1EC3 kh\u1EDFi t\u1EA1o t\xE0i kho\u1EA3n h\u1ECDc vi\xEAn cho email: ${email}`);
+              }
+            }
+          }
+        }
+        const targetStudentIds = Array.from(resolvedStudentIds);
+        if (targetStudentIds.length === 0) {
+          throw new AuthorizationError("Kh\xF4ng c\xF3 h\u1ECDc vi\xEAn h\u1EE3p l\u1EC7 n\xE0o \u0111\u1EC3 th\xEAm", 400);
+        }
+        return this.prisma.$transaction(async (tx) => {
+          const classStudents = [];
+          for (const studentId of targetStudentIds) {
+            const userExists = await tx.user.findUnique({
+              where: { userId: studentId },
+              select: { userId: true }
+            });
+            if (!userExists) {
+              throw new NotFoundError(`Kh\xF4ng t\xECm th\u1EA5y h\u1ED3 s\u01A1 ng\u01B0\u1EDDi d\xF9ng c\u1EE7a h\u1ECDc vi\xEAn (UID: ${studentId})`);
+            }
+            const classStudent = await tx.classStudent.upsert({
+              where: { classId_studentId: { classId, studentId } },
+              update: {
+                status: "ACTIVE",
+                deletedAt: null,
+                joinedAt: /* @__PURE__ */ new Date()
+              },
+              create: {
+                classId,
+                studentId,
+                status: "ACTIVE",
+                joinedAt: /* @__PURE__ */ new Date()
+              }
+            });
+            if (classData.courseId) {
+              const existingEnrollment = await tx.enrollment.findUnique({
+                where: {
+                  courseId_studentId: {
+                    courseId: classData.courseId,
+                    studentId
+                  }
+                }
+              });
+              if (!existingEnrollment) {
+                await tx.enrollment.create({
+                  data: {
+                    courseId: classData.courseId,
+                    studentId,
+                    enrolledAt: /* @__PURE__ */ new Date()
+                  }
+                });
+              }
+            }
+            await tx.enrollmentAuditLog.create({
+              data: {
+                operatorId: user.id,
+                studentId,
+                classId,
+                action: "CLASS_PLACEMENT_CASCADE",
+                reason: `X\u1EBFp h\u1ECDc vi\xEAn v\xE0o l\u1EDBp ${classData.name} (T\u1EF1 \u0111\u1ED9ng k\xEDch ho\u1EA1t quy\u1EC1n kh\xF3a h\u1ECDc)`,
+                toStatus: "ACTIVE"
+              }
+            });
+            classStudents.push(classStudent);
+          }
+          return {
+            success: true,
+            addedCount: classStudents.length,
+            students: classStudents
+          };
+        });
+      }
+      // Use Case: Remove Student from Class (Cascade check to revoke Course Enrollment if no other active classes)
+      async removeStudent(user, classId, inputStudentId) {
+        const classData = await this.repo.findById(classId);
+        if (!classData) {
+          throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+        }
+        if (classData.status === "CLOSED" || !classData.isActive) {
+          throw new AuthorizationError("L\u1EDBp h\u1ECDc \u0111\xE3 k\u1EBFt th\xFAc v\xE0 \u0111\xF3ng, kh\xF4ng th\u1EC3 thay \u0111\u1ED5i danh s\xE1ch h\u1ECDc vi\xEAn", 400);
+        }
+        const isAdmin = user.roles.includes("admin");
+        if (!isAdmin && classData.teacherId !== user.id) {
+          throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n x\xF3a h\u1ECDc vi\xEAn kh\u1ECFi l\u1EDBp n\xE0y", 403);
+        }
+        const studentId = await this.resolveCanonicalUserId(inputStudentId);
+        return this.prisma.$transaction(async (tx) => {
+          await tx.classStudent.updateMany({
+            where: { classId, studentId, deletedAt: null },
+            data: {
+              status: "DROPPED",
+              deletedAt: /* @__PURE__ */ new Date()
+            }
+          });
+          if (classData.courseId) {
+            const remainingActiveClasses = await tx.classStudent.count({
+              where: {
+                studentId,
+                status: "ACTIVE",
+                deletedAt: null,
+                class: {
+                  courseId: classData.courseId,
+                  id: { not: classId }
+                }
+              }
+            });
+            if (remainingActiveClasses === 0) {
+              await tx.enrollment.deleteMany({
+                where: {
+                  courseId: classData.courseId,
+                  studentId
+                }
+              });
+            }
+          }
+          await tx.enrollmentAuditLog.create({
+            data: {
+              operatorId: user.id,
+              studentId,
+              classId,
+              action: "STUDENT_REMOVAL_CASCADE",
+              reason: `X\xF3a h\u1ECDc vi\xEAn kh\u1ECFi l\u1EDBp ${classData.name}`,
+              toStatus: "DROPPED"
+            }
+          });
+          return { success: true };
+        });
+      }
+      // Use Case: Update student status in class (ACTIVE, SUSPENDED, RESERVED, COMPLETED, DROPPED)
+      async updateStudentStatus(user, classId, studentId, options) {
+        const classData = await this.repo.findById(classId);
+        if (!classData) {
+          throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+        }
+        const isAdmin = user.roles.includes("admin");
+        if (!isAdmin && classData.teacherId !== user.id) {
+          throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n c\u1EADp nh\u1EADt tr\u1EA1ng th\xE1i h\u1ECDc vi\xEAn c\u1EE7a l\u1EDBp n\xE0y", 403);
+        }
+        const validStatuses = ["ACTIVE", "SUSPENDED", "RESERVED", "COMPLETED", "DROPPED"];
+        const targetStatus = (options.status || "").toUpperCase();
+        if (!validStatuses.includes(targetStatus)) {
+          throw new AuthorizationError(`Tr\u1EA1ng th\xE1i kh\xF4ng h\u1EE3p l\u1EC7: ${options.status}. C\xE1c tr\u1EA1ng th\xE1i h\u1EE3p l\u1EC7: ${validStatuses.join(", ")}`, 400);
+        }
+        return this.prisma.$transaction(async (tx) => {
+          const existing = await tx.classStudent.findFirst({
+            where: { classId, studentId, deletedAt: null }
+          });
+          if (!existing) {
+            throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y h\u1ECDc vi\xEAn trong l\u1EDBp h\u1ECDc n\xE0y");
+          }
+          const fromStatus = existing.status;
+          const updated = await tx.classStudent.update({
+            where: { id: existing.id },
+            data: {
+              status: targetStatus,
+              completedAt: targetStatus === "COMPLETED" ? /* @__PURE__ */ new Date() : targetStatus === "ACTIVE" ? null : existing.completedAt
+            }
+          });
+          await tx.enrollmentAuditLog.create({
+            data: {
+              operatorId: user.id,
+              studentId,
+              classId,
+              fromStatus,
+              toStatus: targetStatus,
+              action: "STUDENT_STATUS_UPDATE",
+              reason: options.reason || `C\u1EADp nh\u1EADt tr\u1EA1ng th\xE1i h\u1ECDc vi\xEAn t\u1EEB ${fromStatus} sang ${targetStatus}`
+            }
+          });
+          return { success: true, data: updated };
+        }, { maxWait: 1e4, timeout: 2e4 });
+      }
+      // Use Case: Reschedule a single session
+      async rescheduleSingleSession(user, sessionId, plannedDate, reason) {
+        const session = await this.prisma.classSession.findUnique({
+          where: { id: sessionId },
+          include: { class: true }
+        });
+        if (!session) {
+          throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y bu\u1ED5i h\u1ECDc");
+        }
+        const isAdmin = user.roles.includes("admin");
+        if (!isAdmin && session.class?.teacherId !== user.id) {
+          throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n d\u1EDDi l\u1ECBch bu\u1ED5i h\u1ECDc n\xE0y", 403);
+        }
+        if (session.status === "COMPLETED") {
+          throw new AuthorizationError("Kh\xF4ng th\u1EC3 d\u1EDDi l\u1ECBch bu\u1ED5i h\u1ECDc \u0111\xE3 ho\xE0n t\u1EA5t", 400);
+        }
+        const newPlannedDate = new Date(plannedDate);
+        const updated = await this.prisma.classSession.update({
+          where: { id: sessionId },
+          data: {
+            plannedDate: newPlannedDate,
+            rescheduleReason: reason || null,
+            status: "SCHEDULED"
+          }
+        });
+        return updated;
+      }
+      // Use Case: Update session status
+      async updateSessionStatus(user, sessionId, status, note) {
+        const session = await this.prisma.classSession.findUnique({
+          where: { id: sessionId },
+          include: { class: true }
+        });
+        if (!session) {
+          throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y bu\u1ED5i h\u1ECDc");
+        }
+        const isAdmin = user.roles.includes("admin");
+        if (!isAdmin && session.class?.teacherId !== user.id) {
+          throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n c\u1EADp nh\u1EADt tr\u1EA1ng th\xE1i bu\u1ED5i h\u1ECDc n\xE0y", 403);
+        }
+        const normalizedStatus = (status || "").toUpperCase();
+        const validStatuses = ["SCHEDULED", "COMPLETED", "CANCELLED", "PLANNED"];
+        if (!validStatuses.includes(normalizedStatus)) {
+          throw new AuthorizationError(`Tr\u1EA1ng th\xE1i kh\xF4ng h\u1EE3p l\u1EC7: ${status}`, 400);
+        }
+        const updated = await this.prisma.classSession.update({
+          where: { id: sessionId },
+          data: {
+            status: normalizedStatus,
+            rescheduleReason: note !== void 0 ? note : session.rescheduleReason
+          }
+        });
+        return updated;
+      }
+      // Use Case: Record Attendance
+      async recordAttendance(user, classId, records) {
+        const classData = await this.repo.findById(classId);
+        if (!classData) {
+          throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+        }
+        if (classData.status === "CLOSED" || !classData.isActive) {
+          throw new AuthorizationError("L\u1EDBp h\u1ECDc \u0111\xE3 k\u1EBFt th\xFAc v\xE0 \u0111\xF3ng, kh\xF4ng th\u1EC3 \u0111i\u1EC3m danh", 400);
+        }
+        const isAdmin = user.roles.includes("admin");
+        if (!isAdmin && classData.teacherId !== user.id) {
+          throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n \u0111i\u1EC3m danh l\u1EDBp n\xE0y", 403);
+        }
+        const results = [];
+        for (const r of records) {
+          const sDate = r.sessionDate ? new Date(r.sessionDate) : /* @__PURE__ */ new Date();
+          const recorded = await this.repo.recordAttendance({
+            classId,
+            studentId: r.studentId,
+            sessionDate: sDate,
+            markedBy: user.id,
+            status: r.status,
+            note: r.note
+          });
+          results.push(recorded);
+        }
+        return { success: true, count: results.length, data: results };
+      }
+      // Use Case: Set / Update Homework Deadline for a Class (Class-Level Override)
+      async setHomeworkDeadline(user, classId, examId, deadline) {
+        const classData = await this.repo.findById(classId);
+        if (!classData) {
+          throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+        }
+        if (classData.status === "CLOSED" || !classData.isActive) {
+          throw new AuthorizationError("L\u1EDBp h\u1ECDc \u0111\xE3 k\u1EBFt th\xFAc v\xE0 \u0111\xF3ng, kh\xF4ng th\u1EC3 giao b\xE0i t\u1EADp ho\u1EB7c s\u1EEDa h\u1EA1n n\u1ED9p", 400);
+        }
+        const isAdmin = user.roles.includes("admin");
+        if (!isAdmin && classData.teacherId !== user.id) {
+          throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n s\u1EEDa deadline l\u1EDBp n\xE0y", 403);
+        }
+        const exam = await this.prisma.exam.findUnique({
+          where: { id: examId }
+        });
+        if (!exam) {
+          throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y b\xE0i t\u1EADp/b\xE0i thi");
+        }
+        const parsedDeadline = deadline ? new Date(deadline) : null;
+        const assignment = await this.prisma.classExamAssignment.upsert({
+          where: {
+            classId_examId: {
+              classId,
+              examId
+            }
+          },
+          update: {
+            deadline: parsedDeadline,
+            status: "PUBLISHED"
+          },
+          create: {
+            classId,
+            examId,
+            createdBy: user.id,
+            deadline: parsedDeadline,
+            status: "PUBLISHED"
+          }
+        });
+        return {
+          success: true,
+          classId,
+          examId,
+          deadline: assignment.deadline,
+          deadlineSource: assignment.deadline ? "MANUAL" : "AUTO"
+        };
+      }
     };
   }
 });
@@ -94819,6 +97192,87 @@ var init_lead_schema = __esm({
     checkPhoneQuerySchema = external_exports.object({
       phone: external_exports.string({ required_error: "S\u1ED1 \u0111i\u1EC7n tho\u1EA1i l\xE0 b\u1EAFt bu\u1ED9c" }).trim().min(5)
     });
+  }
+});
+
+// server/services/class-scheduler.service.ts
+var class_scheduler_service_exports = {};
+__export(class_scheduler_service_exports, {
+  ClassSchedulerService: () => ClassSchedulerService
+});
+var ClassSchedulerService;
+var init_class_scheduler_service = __esm({
+  "server/services/class-scheduler.service.ts"() {
+    init_class_service();
+    ClassSchedulerService = class {
+      constructor(prisma, log) {
+        this.prisma = prisma;
+        this.log = log;
+        this.classService = new ClassService(prisma);
+      }
+      timer = null;
+      initialTimeout = null;
+      classService;
+      isRunning = false;
+      // Chu kỳ chạy: 24 giờ một lần
+      INTERVAL_MS = 24 * 60 * 60 * 1e3;
+      // Khởi động lần đầu sau khi server bật: 15 giây
+      INITIAL_DELAY_MS = 15 * 1e3;
+      /**
+       * Bắt đầu tác vụ định kỳ quét vòng đời lớp học
+       */
+      start() {
+        if (this.timer || this.initialTimeout) {
+          return;
+        }
+        this.log?.info?.("[ClassScheduler] \u23F1\uFE0F Class Lifecycle Scheduler is enabled (runs every 24h).");
+        this.initialTimeout = setTimeout(() => {
+          this.runMaintenance();
+          this.timer = setInterval(() => {
+            this.runMaintenance();
+          }, this.INTERVAL_MS);
+          this.timer.unref?.();
+        }, this.INITIAL_DELAY_MS);
+        this.initialTimeout.unref?.();
+      }
+      /**
+       * Dừng tác vụ (phục vụ graceful shutdown)
+       */
+      stop() {
+        if (this.initialTimeout) {
+          clearTimeout(this.initialTimeout);
+          this.initialTimeout = null;
+        }
+        if (this.timer) {
+          clearInterval(this.timer);
+          this.timer = null;
+        }
+        this.log?.info?.("[ClassScheduler] \u{1F6D1} Class Lifecycle Scheduler stopped.");
+      }
+      /**
+       * Thực hiện 1 lượt quét bảo trì
+       */
+      async runMaintenance() {
+        if (this.isRunning) {
+          this.log?.warn?.("[ClassScheduler] \u26A0\uFE0F Previous maintenance job is still running, skipping this tick.");
+          return;
+        }
+        this.isRunning = true;
+        try {
+          this.log?.info?.("[ClassScheduler] \u{1F504} Running Class Lifecycle Maintenance...");
+          const result = await this.classService.runClassLifecycleMaintenance();
+          this.log?.info?.(
+            { result },
+            `[ClassScheduler] \u2705 Maintenance finished: Auto-closed ${result.closedClassesCount} classes, Purged ${result.deletedClassesCount} old closed classes.`
+          );
+          return result;
+        } catch (err) {
+          this.log?.error?.({ err }, "[ClassScheduler] \u274C Error running Class Lifecycle Maintenance: " + (err?.message || err));
+        } finally {
+          this.isRunning = false;
+        }
+      }
+    };
   }
 });
 
@@ -99088,304 +101542,8 @@ var createSectionSchema = external_exports.object({
 });
 var updateSectionSchema = createSectionSchema.partial();
 
-// server/services/authorization.service.ts
-import { basename, resolve, sep } from "path";
-var AuthorizationError = class extends Error {
-  statusCode;
-  constructor(message2, statusCode = 403) {
-    super(message2);
-    this.name = "AuthorizationError";
-    this.statusCode = statusCode;
-  }
-};
-var NotFoundError = class extends Error {
-  statusCode;
-  constructor(message2 = "T\xE0i nguy\xEAn kh\xF4ng t\u1ED3n t\u1EA1i") {
-    super(message2);
-    this.name = "NotFoundError";
-    this.statusCode = 404;
-  }
-};
-var ValidationError = class extends Error {
-  statusCode;
-  constructor(message2 = "D\u1EEF li\u1EC7u kh\xF4ng h\u1EE3p l\u1EC7") {
-    super(message2);
-    this.name = "ValidationError";
-    this.statusCode = 400;
-  }
-};
-var AuthorizationService = class {
-  constructor(prisma) {
-    this.prisma = prisma;
-  }
-  /**
-   * Xác thực quyền quản trị hoặc giáo viên phụ trách chính lớp học.
-   * Throws 404 nếu lớp không tồn tại, 403 nếu không có quyền.
-   */
-  async requireClassTeacherOrAdmin(params) {
-    const { userId, userRoles = [], classId } = params;
-    const isAdmin = userRoles.includes("admin");
-    const cls = await this.prisma.class.findUnique({
-      where: { id: classId }
-    });
-    if (!cls) {
-      throw new NotFoundError("L\u1EDBp h\u1ECDc kh\xF4ng t\u1ED3n t\u1EA1i.");
-    }
-    if (isAdmin) {
-      return cls;
-    }
-    const isTeacher = userRoles.includes("teacher");
-    if (isTeacher && cls.teacherId === userId) {
-      return cls;
-    }
-    throw new AuthorizationError(
-      "T\u1EEB ch\u1ED1i truy c\u1EADp: B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n thao t\xE1c tr\xEAn l\u1EDBp h\u1ECDc n\xE0y.",
-      403
-    );
-  }
-  /**
-   * Kiểm tra xem học viên có đang trong lớp học (active) hay không.
-   * Domain Invariant: Chỉ học viên có status = ACTIVE, chưa bị soft-delete (deletedAt = null)
-   * và thuộc lớp đang hoạt động (class.isActive = true) mới được coi là hợp lệ.
-   */
-  async isStudentEnrolledInClass(studentId, classId) {
-    const record = await this.prisma.classStudent.findFirst({
-      where: {
-        classId,
-        studentId,
-        status: "ACTIVE",
-        deletedAt: null,
-        class: {
-          isActive: true
-        }
-      }
-    });
-    return !!record;
-  }
-  /**
-   * Kiểm tra quyền làm/xem bài thi của học viên (hỗ trợ cả Direct Enrollment và Class Membership).
-   * Domain Invariant: Học viên bị đình chỉ (SUSPENDED), đã xóa mềm (deletedAt != null),
-   * hoặc lớp học bị vô hiệu hóa sẽ bị từ chối truy cập (HTTP 403).
-   */
-  async isStudentAuthorizedForExam(params) {
-    const { studentId, examId, courseId, isOpen } = params;
-    if (isOpen) return true;
-    const enrollment = await this.prisma.enrollment.findUnique({
-      where: {
-        courseId_studentId: {
-          courseId,
-          studentId
-        }
-      }
-    });
-    if (enrollment) return true;
-    const classStudent = await this.prisma.classStudent.findFirst({
-      where: {
-        studentId,
-        status: "ACTIVE",
-        deletedAt: null,
-        class: {
-          isActive: true,
-          courseId
-        }
-      }
-    });
-    return !!classStudent;
-  }
-  /**
-   * Chuẩn hóa và kiểm tra ranh giới thư mục tuyệt đối chống Path Traversal.
-   */
-  validateUploadPathBoundary(params) {
-    const { subDir, rawFileName, baseUploadDir } = params;
-    if (subDir !== "images" && subDir !== "audio") {
-      throw new AuthorizationError("Th\u01B0 m\u1EE5c con kh\xF4ng h\u1EE3p l\u1EC7", 400);
-    }
-    const safeFileName = basename(rawFileName.trim());
-    if (!safeFileName || safeFileName === "." || safeFileName === "..") {
-      throw new AuthorizationError("T\xEAn t\u1EC7p kh\xF4ng h\u1EE3p l\u1EC7", 400);
-    }
-    const targetBaseDir = resolve(baseUploadDir, subDir);
-    const targetFilePath = resolve(targetBaseDir, safeFileName);
-    if (!targetFilePath.startsWith(targetBaseDir + sep)) {
-      throw new AuthorizationError("Ph\xE1t hi\u1EC7n h\xE0nh vi \u0111i\u1EC1u h\u01B0\u1EDBng \u0111\u01B0\u1EDDng d\u1EABn kh\xF4ng h\u1EE3p l\u1EC7 (Path Traversal)", 403);
-    }
-    return targetFilePath;
-  }
-  /**
-   * Authoring IDOR Protection: Xác thực quyền tạo Đề thi trong Khóa học (Admin hoặc Giáo viên phụ trách Khóa học).
-   */
-  async requireCourseAuthoringAccess(courseId, userId, userRoles = []) {
-    if (userRoles.includes("admin")) return true;
-    if (!userRoles.includes("teacher")) {
-      throw new AuthorizationError("Ch\u1EC9 gi\xE1o vi\xEAn ho\u1EB7c admin c\xF3 quy\u1EC1n t\u1EA1o \u0111\u1EC1 thi", 403);
-    }
-    const course = await this.prisma.course.findUnique({
-      where: { id: courseId },
-      select: { teacherId: true, isActive: true }
-    });
-    if (!course) {
-      throw new NotFoundError("Kh\xF3a h\u1ECDc kh\xF4ng t\u1ED3n t\u1EA1i.");
-    }
-    if (!course.teacherId || course.teacherId !== userId) {
-      throw new AuthorizationError(
-        "T\u1EEB ch\u1ED1i quy\u1EC1n: B\u1EA1n kh\xF4ng ph\u1EE5 tr\xE1ch kh\xF3a h\u1ECDc n\xE0y.",
-        403
-      );
-    }
-    return course;
-  }
-  /**
-   * Authoring IDOR Protection: Xác thực quyền soạn thảo Đề thi (Admin hoặc Giáo viên phụ trách Khóa học).
-   */
-  async requireExamAuthoringAccess(examId, userId, userRoles = []) {
-    if (userRoles.includes("admin")) return true;
-    if (!userRoles.includes("teacher")) {
-      throw new AuthorizationError("Ch\u1EC9 gi\xE1o vi\xEAn ho\u1EB7c admin c\xF3 quy\u1EC1n ch\u1EC9nh s\u1EEDa", 403);
-    }
-    const exam = await this.prisma.exam.findUnique({
-      where: { id: examId },
-      include: { course: { select: { teacherId: true } } }
-    });
-    if (!exam) {
-      throw new NotFoundError("B\xE0i thi kh\xF4ng t\u1ED3n t\u1EA1i.");
-    }
-    if (!exam.course?.teacherId || exam.course.teacherId !== userId) {
-      throw new AuthorizationError(
-        "T\u1EEB ch\u1ED1i quy\u1EC1n: B\u1EA1n kh\xF4ng ph\u1EE5 tr\xE1ch kh\xF3a h\u1ECDc ch\u1EE9a \u0111\u1EC1 thi n\xE0y.",
-        403
-      );
-    }
-    return exam;
-  }
-  /**
-   * Authoring IDOR Protection: Xác thực quyền soạn thảo Phần thi (Section).
-   */
-  async requireSectionAuthoringAccess(sectionId, userId, userRoles = []) {
-    if (userRoles.includes("admin")) return true;
-    if (!userRoles.includes("teacher")) {
-      throw new AuthorizationError("Ch\u1EC9 gi\xE1o vi\xEAn ho\u1EB7c admin c\xF3 quy\u1EC1n ch\u1EC9nh s\u1EEDa", 403);
-    }
-    const section = await this.prisma.examSection.findUnique({
-      where: { id: sectionId },
-      include: { exam: { include: { course: { select: { teacherId: true } } } } }
-    });
-    if (!section) {
-      throw new NotFoundError("Ph\u1EA7n thi kh\xF4ng t\u1ED3n t\u1EA1i.");
-    }
-    const teacherId = section.exam?.course?.teacherId;
-    if (teacherId && teacherId !== userId) {
-      throw new AuthorizationError(
-        "T\u1EEB ch\u1ED1i quy\u1EC1n: B\u1EA1n kh\xF4ng ph\u1EE5 tr\xE1ch kh\xF3a h\u1ECDc ch\u1EE9a ph\u1EA7n thi n\xE0y.",
-        403
-      );
-    }
-    return section;
-  }
-  /**
-   * Authoring IDOR Protection: Xác thực quyền soạn thảo Nhóm câu hỏi (QuestionGroup).
-   */
-  async requireQuestionGroupAuthoringAccess(groupId, userId, userRoles = []) {
-    if (userRoles.includes("admin")) return true;
-    if (!userRoles.includes("teacher")) {
-      throw new AuthorizationError("Ch\u1EC9 gi\xE1o vi\xEAn ho\u1EB7c admin c\xF3 quy\u1EC1n ch\u1EC9nh s\u1EEDa", 403);
-    }
-    const group = await this.prisma.questionGroup.findUnique({
-      where: { id: groupId },
-      include: {
-        section: {
-          include: { exam: { include: { course: { select: { teacherId: true } } } } }
-        }
-      }
-    });
-    if (!group) {
-      throw new NotFoundError("Nh\xF3m c\xE2u h\u1ECFi kh\xF4ng t\u1ED3n t\u1EA1i.");
-    }
-    const teacherId = group.section?.exam?.course?.teacherId;
-    if (teacherId && teacherId !== userId) {
-      throw new AuthorizationError(
-        "T\u1EEB ch\u1ED1i quy\u1EC1n: B\u1EA1n kh\xF4ng ph\u1EE5 tr\xE1ch kh\xF3a h\u1ECDc ch\u1EE9a nh\xF3m c\xE2u h\u1ECFi n\xE0y.",
-        403
-      );
-    }
-    return group;
-  }
-  /**
-   * Authoring IDOR Protection: Xác thực quyền soạn thảo Câu hỏi (Question).
-   */
-  async requireQuestionAuthoringAccess(questionId, userId, userRoles = []) {
-    if (userRoles.includes("admin")) return true;
-    if (!userRoles.includes("teacher")) {
-      throw new AuthorizationError("Ch\u1EC9 gi\xE1o vi\xEAn ho\u1EB7c admin c\xF3 quy\u1EC1n ch\u1EC9nh s\u1EEDa", 403);
-    }
-    const question = await this.prisma.question.findUnique({
-      where: { id: questionId },
-      include: {
-        group: {
-          include: {
-            section: {
-              include: { exam: { include: { course: { select: { teacherId: true } } } } }
-            }
-          }
-        }
-      }
-    });
-    if (!question) {
-      throw new NotFoundError("C\xE2u h\u1ECFi kh\xF4ng t\u1ED3n t\u1EA1i.");
-    }
-    const teacherId = question.group?.section?.exam?.course?.teacherId;
-    if (teacherId && teacherId !== userId) {
-      throw new AuthorizationError(
-        "T\u1EEB ch\u1ED1i quy\u1EC1n: B\u1EA1n kh\xF4ng ph\u1EE5 tr\xE1ch kh\xF3a h\u1ECDc ch\u1EE9a c\xE2u h\u1ECFi n\xE0y.",
-        403
-      );
-    }
-    return question;
-  }
-  /**
-   * Phân giải phạm vi chi nhánh được phép truy cập.
-   *
-   * MVP Multi-Location invariant:
-   *   - Admin, Teacher, Student → { type: "all" } — truy cập toàn bộ active branches.
-   *   - Branch không phải là security boundary trong MVP này.
-   *   - selectedBranch ở frontend là UI filter/view state, KHÔNG được dùng để derive authorization scope.
-   *   - UserBranch được giữ nguyên cho các role chuyên biệt trong tương lai (branch_manager, staff).
-   *     Hiện tại chưa có role nào bị giới hạn bởi UserBranch scope trong MVP.
-   *
-   * Nếu sau này cần branch-based access control, chỉ áp dụng cho các role được
-   * liệt kê rõ ràng trong BRANCH_SCOPED_ROLES, không mặc định áp dụng cho tất cả.
-   */
-  async resolveAuthorizedBranchScope(params) {
-    const { userRoles = [], requestedBranchId } = params;
-    const BRANCH_SCOPED_ROLES = [
-      // "branch_manager", "branch_staff"  // ← Uncomment khi có nhu cầu thực tế
-    ];
-    const needsBranchScope = userRoles.some((r) => BRANCH_SCOPED_ROLES.includes(r));
-    if (!needsBranchScope) {
-      if (!requestedBranchId || requestedBranchId === "ALL" || requestedBranchId === "all") {
-        return { type: "all" };
-      }
-      return { type: "branch", branchId: requestedBranchId };
-    }
-    const { userId } = params;
-    const userBranches = await this.prisma.userBranch.findMany({
-      where: { userId },
-      select: { branchId: true }
-    });
-    const allowedBranchIds = userBranches.map((ub) => ub.branchId);
-    if (allowedBranchIds.length === 0) {
-      return { type: "branches", branchIds: [] };
-    }
-    if (!requestedBranchId || requestedBranchId === "ALL" || requestedBranchId === "all") {
-      return { type: "branches", branchIds: allowedBranchIds };
-    }
-    if (!allowedBranchIds.includes(requestedBranchId)) {
-      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp: B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n qu\u1EA3n l\xFD chi nh\xE1nh n\xE0y.", 403);
-    }
-    return { type: "branch", branchId: requestedBranchId };
-  }
-};
-
 // server/routes/exams.routes.ts
+init_authorization_service();
 var examsRoutes = async (fastify) => {
   const cleanQuestionData = (q, isAdminOrTeacher) => {
     let selectionMode = "single";
@@ -99919,6 +102077,7 @@ var exams_routes_default = examsRoutes;
 
 // server/routes/sections.routes.ts
 init_zod();
+init_authorization_service();
 var sectionTypeEnum2 = external_exports.enum(
   ["listening", "reading", "writing", "speaking", "general"],
   {
@@ -100201,6 +102360,7 @@ var sections_routes_default = sectionsRoutes;
 
 // server/routes/questions.routes.ts
 init_zod();
+init_authorization_service();
 
 // server/utils/questionNormalizer.ts
 function sanitizeBackendQuestionPayload(input) {
@@ -101903,6 +104063,9 @@ var AuditOutboxService = class {
   }
 };
 var auditOutboxService = new AuditOutboxService();
+
+// server/services/exam-submission.service.ts
+init_authorization_service();
 
 // server/services/submission-state-machine.ts
 var StateTransitionError = class extends Error {
@@ -105135,6 +107298,104 @@ var usersRoutes = async (fastify) => {
       return { success: true };
     }
   );
+  fastify.get(
+    "/me/error-bank",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      const studentId = request.user.id;
+      const { DiagnosticService: DiagnosticService2 } = await Promise.resolve().then(() => (init_diagnostic_service(), diagnostic_service_exports));
+      const diagnosticService = new DiagnosticService2(fastify.prisma);
+      const errors = await diagnosticService.getStudentErrorBank(studentId);
+      return reply.send({
+        success: true,
+        data: errors
+      });
+    }
+  );
+  fastify.get(
+    "/me/weak-zone",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      const studentId = request.user.id;
+      const { DiagnosticService: DiagnosticService2 } = await Promise.resolve().then(() => (init_diagnostic_service(), diagnostic_service_exports));
+      const diagnosticService = new DiagnosticService2(fastify.prisma);
+      const diagnostic = await diagnosticService.getStudentDiagnostic(studentId);
+      const readingVulnerabilities = diagnostic.reading?.vulnerabilities || [];
+      const listeningVulnerabilities = diagnostic.listening?.vulnerabilities || [];
+      const allVulnerabilities = [...readingVulnerabilities, ...listeningVulnerabilities].sort(
+        (a, b) => b.vulnerabilityScore - a.vulnerabilityScore
+      );
+      const topWeakness = allVulnerabilities[0] || null;
+      return reply.send({
+        success: true,
+        data: {
+          topWeakness,
+          reading: diagnostic.reading,
+          listening: diagnostic.listening,
+          overall: diagnostic.overall
+        }
+      });
+    }
+  );
+  fastify.post(
+    "/me/weak-zone/drill",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      const studentId = request.user.id;
+      let targetType = request.body?.questionType;
+      const count = request.body?.count || 6;
+      const { DiagnosticService: DiagnosticService2 } = await Promise.resolve().then(() => (init_diagnostic_service(), diagnostic_service_exports));
+      const diagnosticService = new DiagnosticService2(fastify.prisma);
+      if (!targetType) {
+        const diagnostic = await diagnosticService.getStudentDiagnostic(studentId);
+        const readingVulnerabilities = diagnostic.reading?.vulnerabilities || [];
+        const listeningVulnerabilities = diagnostic.listening?.vulnerabilities || [];
+        const allVulnerabilities = [...readingVulnerabilities, ...listeningVulnerabilities].sort(
+          (a, b) => b.vulnerabilityScore - a.vulnerabilityScore
+        );
+        targetType = allVulnerabilities[0]?.questionType || "matching";
+      }
+      const drill = await diagnosticService.generateWeakZoneDrill(targetType, count);
+      return reply.send({
+        success: true,
+        data: drill
+      });
+    }
+  );
+  fastify.post(
+    "/me/weak-zone/drill/submit",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      const studentId = request.user.id;
+      const { questionType, answers } = request.body || {};
+      const { DiagnosticService: DiagnosticService2 } = await Promise.resolve().then(() => (init_diagnostic_service(), diagnostic_service_exports));
+      const diagnosticService = new DiagnosticService2(fastify.prisma);
+      const graded = await diagnosticService.gradeWeakZoneDrill(studentId, {
+        questionType: questionType || "matching",
+        answers: answers || {}
+      });
+      return reply.send({
+        success: true,
+        data: graded
+      });
+    }
+  );
+  fastify.post(
+    "/me/error-bank/:questionId/retry",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      const studentId = request.user.id;
+      const { questionId } = request.params;
+      const { answer } = request.body || {};
+      const { DiagnosticService: DiagnosticService2 } = await Promise.resolve().then(() => (init_diagnostic_service(), diagnostic_service_exports));
+      const diagnosticService = new DiagnosticService2(fastify.prisma);
+      const result = await diagnosticService.retrySingleError(studentId, questionId, answer);
+      return reply.send({
+        success: true,
+        data: result
+      });
+    }
+  );
 };
 var users_routes_default = usersRoutes;
 
@@ -105549,1873 +107810,8 @@ var uploadsRoutes = async (fastify) => {
 };
 var uploads_routes_default = uploadsRoutes;
 
-// server/services/class.service.ts
-import { NotificationType as NotificationType2 } from "@prisma/client";
-
-// server/repositories/class.repository.ts
-var ClassRepository = class {
-  constructor(prisma) {
-    this.prisma = prisma;
-  }
-  async findById(id, include) {
-    return this.prisma.class.findUnique({
-      where: { id },
-      include: include || {
-        course: true,
-        branch: true,
-        room: true,
-        teacher: {
-          select: { id: true, fullName: true, email: true }
-        },
-        schedules: true,
-        sessions: {
-          orderBy: { sessionNumber: "asc" }
-        },
-        students: {
-          include: {
-            student: {
-              select: {
-                id: true,
-                userId: true,
-                fullName: true,
-                email: true,
-                avatarUrl: true
-              }
-            }
-          },
-          orderBy: { joinedAt: "desc" }
-        }
-      }
-    });
-  }
-  async findMany(where, skip, take, orderBy) {
-    return this.prisma.class.findMany({
-      where,
-      skip,
-      take,
-      orderBy: orderBy || { createdAt: "desc" },
-      include: {
-        teacher: {
-          select: { id: true, fullName: true, email: true }
-        },
-        branch: {
-          select: { id: true, name: true, code: true }
-        },
-        room: {
-          select: { id: true, name: true, capacity: true }
-        },
-        course: {
-          select: { id: true, title: true }
-        },
-        _count: {
-          select: {
-            students: {
-              where: { status: "ACTIVE", deletedAt: null }
-            }
-          }
-        }
-      }
-    });
-  }
-  async count(where) {
-    return this.prisma.class.count({ where });
-  }
-  async create(data) {
-    return this.prisma.class.create({ data });
-  }
-  async update(id, data) {
-    return this.prisma.class.update({
-      where: { id },
-      data
-    });
-  }
-  async delete(id) {
-    return this.prisma.class.delete({
-      where: { id }
-    });
-  }
-  async isTeacherOfClass(classId, teacherId) {
-    const cls = await this.prisma.class.findFirst({
-      where: { id: classId, teacherId }
-    });
-    return !!cls;
-  }
-  async isStudentInClass(classId, studentId) {
-    const cs = await this.prisma.classStudent.findFirst({
-      where: { classId, studentId }
-    });
-    return !!cs;
-  }
-  async addStudent(classId, studentId) {
-    const existing = await this.prisma.classStudent.findUnique({
-      where: { classId_studentId: { classId, studentId } }
-    });
-    if (existing) {
-      return this.prisma.classStudent.update({
-        where: { id: existing.id },
-        data: {
-          status: "ACTIVE",
-          deletedAt: null,
-          joinedAt: /* @__PURE__ */ new Date()
-        }
-      });
-    }
-    return this.prisma.classStudent.create({
-      data: { classId, studentId }
-    });
-  }
-  async addStudentToClass(classId, studentId) {
-    return this.addStudent(classId, studentId);
-  }
-  async removeStudent(classId, studentId) {
-    return this.prisma.classStudent.updateMany({
-      where: { classId, studentId, deletedAt: null },
-      data: {
-        status: "DROPPED",
-        deletedAt: /* @__PURE__ */ new Date()
-      }
-    });
-  }
-  async removeStudentFromClass(classId, studentId) {
-    return this.removeStudent(classId, studentId);
-  }
-  async getClassesForStudent(studentId) {
-    return this.prisma.classStudent.findMany({
-      where: {
-        studentId,
-        deletedAt: null,
-        status: { not: "DROPPED" }
-      },
-      include: {
-        class: {
-          include: {
-            course: {
-              select: { id: true, title: true, description: true, slug: true }
-            },
-            teacher: {
-              select: { id: true, fullName: true }
-            }
-          }
-        }
-      },
-      orderBy: { createdAt: "desc" }
-    });
-  }
-  async recordAttendance(data) {
-    return this.prisma.classAttendance.upsert({
-      where: {
-        classId_studentId_sessionDate: {
-          classId: data.classId,
-          studentId: data.studentId,
-          sessionDate: data.sessionDate
-        }
-      },
-      update: {
-        status: data.status,
-        markedBy: data.markedBy,
-        note: data.note
-      },
-      create: {
-        classId: data.classId,
-        studentId: data.studentId,
-        sessionDate: data.sessionDate,
-        markedBy: data.markedBy,
-        status: data.status,
-        note: data.note
-      }
-    });
-  }
-};
-
-// server/services/class.service.ts
-init_notification_service();
-
-// server/services/room-collision.service.ts
-function timeToMinutes(time) {
-  if (time instanceof Date) {
-    const hours = time.getUTCHours();
-    const minutes = time.getUTCMinutes();
-    return hours * 60 + minutes;
-  }
-  if (typeof time === "string") {
-    if (time.includes("T")) {
-      const d = new Date(time);
-      if (!isNaN(d.getTime())) {
-        return d.getUTCHours() * 60 + d.getUTCMinutes();
-      }
-    }
-    const parts = time.split(":").map(Number);
-    if (parts.length >= 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-      return parts[0] * 60 + parts[1];
-    }
-  }
-  return 0;
-}
-function minutesToTimeString(totalMinutes) {
-  const h = Math.floor(totalMinutes / 60);
-  const m = totalMinutes % 60;
-  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-}
-function doTimeIntervalsOverlap(start1, end1, start2, end2) {
-  return start1 < end2 && start2 < end1;
-}
-function formatDateKey(date) {
-  if (date instanceof Date) {
-    const y = date.getUTCFullYear();
-    const m = String(date.getUTCMonth() + 1).padStart(2, "0");
-    const d = String(date.getUTCDate()).padStart(2, "0");
-    return `${y}-${m}-${d}`;
-  }
-  return String(date).split("T")[0];
-}
-var RoomCollisionService = class {
-  /**
-   * Validates whether a set of planned sessions in a specified room collides with any
-   * existing active sessions from other classes.
-   */
-  static async checkRoomConflictForSessions(prisma, params) {
-    const { roomId, sessions, excludeClassId } = params;
-    if (!roomId || !sessions || sessions.length === 0) {
-      return { hasConflict: false, conflicts: [] };
-    }
-    const targetRoom = await prisma.room.findUnique({
-      where: { id: roomId },
-      select: { id: true, name: true, branch: { select: { id: true, name: true } } }
-    });
-    if (!targetRoom) {
-      return { hasConflict: false, conflicts: [] };
-    }
-    const dateKeys = Array.from(
-      new Set(sessions.map((s) => formatDateKey(s.plannedDate)))
-    );
-    const dateObjects = dateKeys.map((k) => /* @__PURE__ */ new Date(`${k}T00:00:00.000Z`));
-    const existingSessions = await prisma.classSession.findMany({
-      where: {
-        class: {
-          roomId,
-          id: excludeClassId ? { not: excludeClassId } : void 0,
-          isActive: true,
-          status: { notIn: ["CLOSED", "ARCHIVED"] }
-        },
-        status: { not: "CANCELLED" },
-        plannedDate: { in: dateObjects }
-      },
-      select: {
-        id: true,
-        plannedDate: true,
-        startTime: true,
-        endTime: true,
-        status: true,
-        class: {
-          select: {
-            id: true,
-            name: true,
-            course: { select: { title: true } }
-          }
-        }
-      }
-    });
-    if (existingSessions.length === 0) {
-      return { hasConflict: false, conflicts: [] };
-    }
-    const existingByDate = /* @__PURE__ */ new Map();
-    for (const s of existingSessions) {
-      const k = formatDateKey(s.plannedDate);
-      if (!existingByDate.has(k)) {
-        existingByDate.set(k, []);
-      }
-      existingByDate.get(k).push(s);
-    }
-    const conflicts = [];
-    for (const req of sessions) {
-      const dateKey = formatDateKey(req.plannedDate);
-      const candidates = existingByDate.get(dateKey);
-      if (!candidates || candidates.length === 0) continue;
-      const reqStartMin = timeToMinutes(req.startTime);
-      const reqEndMin = timeToMinutes(req.endTime);
-      for (const ex of candidates) {
-        const exStartMin = timeToMinutes(ex.startTime);
-        const exEndMin = timeToMinutes(ex.endTime);
-        if (doTimeIntervalsOverlap(reqStartMin, reqEndMin, exStartMin, exEndMin)) {
-          conflicts.push({
-            date: dateKey,
-            requestedTime: `${minutesToTimeString(reqStartMin)} - ${minutesToTimeString(reqEndMin)}`,
-            conflictingClassId: ex.class.id,
-            conflictingClassName: ex.class.name,
-            conflictingTime: `${minutesToTimeString(exStartMin)} - ${minutesToTimeString(exEndMin)}`,
-            roomName: targetRoom.name
-          });
-        }
-      }
-    }
-    if (conflicts.length > 0) {
-      const first = conflicts[0];
-      const summaryMsg = `Xung \u0111\u1ED9t ph\xF2ng h\u1ECDc: Ph\xF2ng "${first.roomName}" \u0111\xE3 c\xF3 l\u1EDBp "${first.conflictingClassName}" h\u1ECDc v\xE0o ng\xE0y ${first.date} (${first.conflictingTime}). Kh\xF4ng th\u1EC3 x\u1EBFp l\u1ECBch tr\xF9ng v\xE0o khung gi\u1EDD ${first.requestedTime}.`;
-      return {
-        hasConflict: true,
-        conflicts,
-        message: summaryMsg
-      };
-    }
-    return { hasConflict: false, conflicts: [] };
-  }
-};
-
-// server/utils/holiday.helper.ts
-var OFFICIAL_VIETNAM_HOLIDAYS = [
-  // 2025
-  { name: "T\u1EBFt D\u01B0\u01A1ng L\u1ECBch 2025", startDate: "2025-01-01", endDate: "2025-01-01" },
-  { name: "T\u1EBFt Nguy\xEAn \u0110\xE1n 2025", startDate: "2025-01-25", endDate: "2025-02-02" },
-  { name: "Gi\u1ED7 T\u1ED5 H\xF9ng V\u01B0\u01A1ng 2025", startDate: "2025-04-07", endDate: "2025-04-07" },
-  { name: "Gi\u1EA3i ph\xF3ng 30/4 & Qu\u1ED1c t\u1EBF Lao \u0111\u1ED9ng 1/5 (2025)", startDate: "2025-04-30", endDate: "2025-05-04" },
-  { name: "Qu\u1ED1c Kh\xE1nh 2/9 (2025)", startDate: "2025-08-30", endDate: "2025-09-02" },
-  // 2026
-  { name: "T\u1EBFt D\u01B0\u01A1ng L\u1ECBch 2026", startDate: "2026-01-01", endDate: "2026-01-01" },
-  { name: "T\u1EBFt Nguy\xEAn \u0110\xE1n 2026", startDate: "2026-02-14", endDate: "2026-02-22" },
-  { name: "Gi\u1ED7 T\u1ED5 H\xF9ng V\u01B0\u01A1ng 2026", startDate: "2026-04-26", endDate: "2026-04-27" },
-  { name: "Gi\u1EA3i ph\xF3ng 30/4 & Qu\u1ED1c t\u1EBF Lao \u0111\u1ED9ng 1/5 (2026)", startDate: "2026-04-30", endDate: "2026-05-03" },
-  { name: "Qu\u1ED1c Kh\xE1nh 2/9 (2026)", startDate: "2026-08-30", endDate: "2026-09-03" },
-  // 2027
-  { name: "T\u1EBFt D\u01B0\u01A1ng L\u1ECBch 2027", startDate: "2027-01-01", endDate: "2027-01-01" },
-  { name: "T\u1EBFt Nguy\xEAn \u0110\xE1n 2027", startDate: "2027-02-05", endDate: "2027-02-14" },
-  { name: "Gi\u1ED7 T\u1ED5 H\xF9ng V\u01B0\u01A1ng 2027", startDate: "2027-04-16", endDate: "2027-04-16" },
-  { name: "Gi\u1EA3i ph\xF3ng 30/4 & Qu\u1ED1c t\u1EBF Lao \u0111\u1ED9ng 1/5 (2027)", startDate: "2027-04-30", endDate: "2027-05-03" },
-  { name: "Qu\u1ED1c Kh\xE1nh 2/9 (2027)", startDate: "2027-09-01", endDate: "2027-09-03" }
-];
-function formatToDateString(date) {
-  if (typeof date === "string") {
-    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-      return date;
-    }
-    const d = new Date(date);
-    const y2 = d.getFullYear();
-    const m2 = String(d.getMonth() + 1).padStart(2, "0");
-    const day2 = String(d.getDate()).padStart(2, "0");
-    return `${y2}-${m2}-${day2}`;
-  }
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
-function isHolidayDate(date, customHolidays) {
-  const targetDateStr = formatToDateString(date);
-  const allHolidays = customHolidays && customHolidays.length > 0 ? [...OFFICIAL_VIETNAM_HOLIDAYS, ...customHolidays] : OFFICIAL_VIETNAM_HOLIDAYS;
-  for (const h of allHolidays) {
-    if (targetDateStr >= h.startDate && targetDateStr <= h.endDate) {
-      return true;
-    }
-  }
-  const monthDay = targetDateStr.slice(5);
-  const fixedRecurring = ["01-01", "04-30", "05-01", "09-02"];
-  if (fixedRecurring.includes(monthDay)) {
-    return true;
-  }
-  return false;
-}
-
-// server/services/class.service.ts
-var ClassService = class {
-  constructor(prisma) {
-    this.prisma = prisma;
-    this.repo = new ClassRepository(prisma);
-    this.notifService = new NotificationService(prisma);
-  }
-  repo;
-  notifService;
-  // Use Case: Get all active class memberships for the currently authenticated student
-  async getMyClasses(userId) {
-    const memberships = await this.repo.getClassesForStudent(userId);
-    return memberships.map((m) => ({
-      id: m.id,
-      classId: m.class.id,
-      className: m.class.name,
-      courseId: m.class.courseId,
-      courseTitle: m.class.course?.title ?? m.class.name,
-      courseSlug: m.class.course?.slug ?? null,
-      teacherName: m.class.teacher?.fullName ?? null,
-      isActive: m.class.isActive,
-      membershipStatus: m.status || "ACTIVE",
-      joinedAt: m.createdAt
-    }));
-  }
-  // Use Case: List Classes with Role & Teacher filtering & Branch scoping
-  async listClasses(user, query) {
-    const page = Math.max(1, Number(query.page) || 1);
-    const limit = Math.max(1, Number(query.limit) || 10);
-    const { search, isActive, branchId, scope } = query;
-    const skip = (page - 1) * limit;
-    const where = {};
-    const isAdmin = user.roles.includes("admin");
-    const isTeacher = user.roles.includes("teacher");
-    if (scope === "all" && !isAdmin) {
-      throw new AuthorizationError(
-        "T\u1EEB ch\u1ED1i truy c\u1EADp: B\u1EA1n c\u1EA7n vai tr\xF2 Qu\u1EA3n tr\u1ECB vi\xEAn (Admin) \u0111\u1EC3 xem to\xE0n b\u1ED9 danh s\xE1ch l\u1EDBp h\u1ECDc h\u1EC7 th\u1ED1ng.",
-        403
-      );
-    }
-    if (isTeacher && !isAdmin) {
-      where.teacherId = user.id;
-    } else if (!isAdmin && !isTeacher) {
-      where.students = { some: { studentId: user.id } };
-    } else if (isAdmin && query.teacherId) {
-      where.teacherId = query.teacherId;
-    }
-    if (query.courseId) {
-      where.courseId = query.courseId;
-    }
-    const authService = new AuthorizationService(this.prisma);
-    const branchScope = await authService.resolveAuthorizedBranchScope({
-      userId: user.id,
-      userRoles: user.roles,
-      requestedBranchId: branchId
-    });
-    if (branchScope.type === "branch") {
-      where.branchId = branchScope.branchId;
-    } else if (branchScope.type === "branches") {
-      where.branchId = { in: branchScope.branchIds };
-    }
-    if (isActive !== void 0) {
-      where.isActive = isActive === "true" || isActive === true;
-    }
-    if (search) {
-      where.OR = [
-        { name: { contains: search, mode: "insensitive" } },
-        { description: { contains: search, mode: "insensitive" } }
-      ];
-    }
-    const [rawData, total, activeClassesTotal, totalStudentsAcrossClasses] = await Promise.all([
-      this.repo.findMany(where, skip, limit),
-      this.repo.count(where),
-      this.prisma.class.count({
-        where: { ...where, isActive: true }
-      }),
-      this.prisma.classStudent.count({
-        where: {
-          status: "ACTIVE",
-          deletedAt: null,
-          class: where
-        }
-      })
-    ]);
-    const classIds = rawData.map((c) => c.id);
-    const courseIds = Array.from(new Set(rawData.map((c) => c.courseId).filter(Boolean)));
-    const examsCountByCourse = /* @__PURE__ */ new Map();
-    if (courseIds.length > 0) {
-      const courseExams = await this.prisma.exam.groupBy({
-        by: ["courseId"],
-        where: {
-          courseId: { in: courseIds },
-          isPublished: true,
-          isActive: true
-        },
-        _count: { id: true }
-      });
-      courseExams.forEach((ce) => {
-        if (ce.courseId) examsCountByCourse.set(ce.courseId, ce._count.id);
-      });
-    }
-    const classStudents = classIds.length > 0 ? await this.prisma.classStudent.findMany({
-      where: {
-        classId: { in: classIds },
-        status: "ACTIVE",
-        deletedAt: null
-      },
-      select: {
-        classId: true,
-        studentId: true
-      }
-    }) : [];
-    const studentsByClass = /* @__PURE__ */ new Map();
-    classStudents.forEach((cs) => {
-      if (!studentsByClass.has(cs.classId)) studentsByClass.set(cs.classId, []);
-      studentsByClass.get(cs.classId).push(cs.studentId);
-    });
-    const allStudentIds = Array.from(new Set(classStudents.map((cs) => cs.studentId)));
-    const studentUsers = allStudentIds.length > 0 ? await this.prisma.user.findMany({
-      where: {
-        OR: [{ id: { in: allStudentIds } }, { userId: { in: allStudentIds } }]
-      },
-      select: { id: true, userId: true }
-    }) : [];
-    const userToCanonicalId = /* @__PURE__ */ new Map();
-    studentUsers.forEach((u) => {
-      if (u.id) userToCanonicalId.set(u.id, u.userId);
-      if (u.userId) userToCanonicalId.set(u.userId, u.userId);
-    });
-    const canonicalStudentUserIds = Array.from(new Set(studentUsers.map((u) => u.userId).filter(Boolean)));
-    const submissions = canonicalStudentUserIds.length > 0 ? await this.prisma.examSubmission.findMany({
-      where: {
-        studentId: { in: canonicalStudentUserIds }
-      },
-      select: {
-        id: true,
-        studentId: true,
-        examId: true,
-        status: true,
-        submittedAt: true,
-        exam: {
-          select: { courseId: true }
-        }
-      }
-    }) : [];
-    const data = rawData.map((c) => {
-      const courseExamCount = c.courseId ? examsCountByCourse.get(c.courseId) || 0 : 0;
-      const classStudentIds = studentsByClass.get(c.id) || [];
-      const classCanonicalUserIds = new Set(
-        classStudentIds.map((sId) => userToCanonicalId.get(sId) || sId)
-      );
-      const classSubmissions = submissions.filter(
-        (s) => classCanonicalUserIds.has(s.studentId) && (!c.courseId || s.exam?.courseId === c.courseId)
-      );
-      const pendingSubmissionsCount = classSubmissions.filter(
-        (s) => s.status === "SUBMITTED"
-      ).length;
-      const completedSubmissions = classSubmissions.filter(
-        (s) => s.status === "SUBMITTED" || s.status === "GRADED"
-      );
-      const uniqueCompletedExams = new Set(
-        completedSubmissions.map((s) => `${s.studentId}_${s.examId}`)
-      );
-      const completedSubmissionsCount = uniqueCompletedExams.size;
-      const totalStudents = classStudentIds.length;
-      const totalAssigned = courseExamCount * Math.max(1, totalStudents);
-      const progressPercent = totalAssigned > 0 ? Math.min(100, Math.round(completedSubmissionsCount / totalAssigned * 100)) : 0;
-      return {
-        ...c,
-        homeworkCount: courseExamCount,
-        completedSessions: courseExamCount,
-        pendingSubmissionsCount,
-        completedSubmissionsCount,
-        overdueCount: 0,
-        progressPercent
-      };
-    });
-    return {
-      data,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-        activeClassesCount: activeClassesTotal,
-        totalStudentsCount: totalStudentsAcrossClasses
-      }
-    };
-  }
-  // Use Case: Get Class Details with Ownership Check
-  async getClassById(user, id) {
-    const classData = await this.repo.findById(id);
-    if (!classData) {
-      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
-    }
-    const isAdmin = user.roles.includes("admin");
-    const isTeacher = user.roles.includes("teacher");
-    if (isTeacher && !isAdmin && classData.teacherId !== user.id) {
-      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - l\u1EDBp kh\xF4ng thu\u1ED9c quy\u1EC1n qu\u1EA3n l\xFD c\u1EE7a b\u1EA1n", 403);
-    }
-    if (!isAdmin && !isTeacher) {
-      const isEnrolled = classData.students.some((s) => s.studentId === user.id);
-      if (!isEnrolled) {
-        throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng ph\u1EA3i th\xE0nh vi\xEAn c\u1EE7a l\u1EDBp n\xE0y", 403);
-      }
-    }
-    return classData;
-  }
-  // Use Case: Get Class Sessions
-  async getClassSessions(user, classId) {
-    const classData = await this.repo.findById(classId);
-    if (!classData) {
-      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
-    }
-    const isAdmin = user.roles.includes("admin");
-    const isTeacher = user.roles.includes("teacher");
-    if (isTeacher && !isAdmin && classData.teacherId !== user.id) {
-      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - l\u1EDBp kh\xF4ng thu\u1ED9c quy\u1EC1n qu\u1EA3n l\xFD c\u1EE7a b\u1EA1n", 403);
-    }
-    if (!isAdmin && !isTeacher) {
-      const isEnrolled = classData.students.some((s) => s.studentId === user.id);
-      if (!isEnrolled) {
-        throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng ph\u1EA3i th\xE0nh vi\xEAn c\u1EE7a l\u1EDBp n\xE0y", 403);
-      }
-    }
-    const sessions = await this.prisma.classSession.findMany({
-      where: { classId },
-      orderBy: { sessionNumber: "asc" }
-    });
-    return sessions.map((s) => ({
-      id: s.id,
-      classId: s.classId,
-      sessionNumber: s.sessionNumber,
-      title: s.note || `Bu\u1ED5i ${s.sessionNumber}`,
-      sessionDate: s.plannedDate,
-      plannedDate: s.plannedDate,
-      startTime: s.startTime || null,
-      endTime: s.endTime || null,
-      status: s.status,
-      note: s.note || null,
-      rescheduleReason: s.rescheduleReason || null,
-      completedAt: null
-    }));
-  }
-  // Use Case: Generate or Update Class Sessions (With Holiday Exclusion)
-  async generateSessionsForClass(user, classId, options) {
-    const classData = await this.repo.findById(classId);
-    if (!classData) {
-      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
-    }
-    const {
-      startDate,
-      weekdays,
-      totalSessions = 27,
-      startTime = "18:00",
-      endTime = "20:00",
-      excludeHolidays = true,
-      customHolidays
-    } = options;
-    if (!startDate || !Array.isArray(weekdays) || weekdays.length === 0) {
-      throw new AuthorizationError("Ng\xE0y b\u1EAFt \u0111\u1EA7u v\xE0 th\u1EE9 trong tu\u1EA7n kh\xF4ng \u0111\u01B0\u1EE3c \u0111\u1EC3 tr\u1ED1ng", 400);
-    }
-    const dates = [];
-    const [y, m, d] = startDate.split("-").map(Number);
-    const cur = new Date(y, m - 1, d);
-    let maxDaysLookahead = totalSessions * 14;
-    while (dates.length < totalSessions && maxDaysLookahead > 0) {
-      maxDaysLookahead--;
-      const dow = cur.getDay();
-      if (weekdays.includes(dow)) {
-        const isHoliday = excludeHolidays && isHolidayDate(cur, customHolidays);
-        if (!isHoliday) {
-          const mm = String(cur.getMonth() + 1).padStart(2, "0");
-          const dd = String(cur.getDate()).padStart(2, "0");
-          dates.push(`${cur.getFullYear()}-${mm}-${dd}`);
-        }
-      }
-      cur.setDate(cur.getDate() + 1);
-    }
-    const startTimeDate = /* @__PURE__ */ new Date(`1970-01-01T${startTime.slice(0, 5)}:00.000Z`);
-    const endTimeDate = /* @__PURE__ */ new Date(`1970-01-01T${endTime.slice(0, 5)}:00.000Z`);
-    const existingSessions = await this.prisma.classSession.findMany({
-      where: { classId }
-    });
-    const result = [];
-    for (let idx = 0; idx < dates.length; idx++) {
-      const sessionNumber = idx + 1;
-      const plannedDate = /* @__PURE__ */ new Date(`${dates[idx]}T00:00:00.000Z`);
-      const existing = existingSessions.find((s) => s.sessionNumber === sessionNumber);
-      if (existing) {
-        const updated = await this.prisma.classSession.update({
-          where: { id: existing.id },
-          data: {
-            plannedDate,
-            startTime: startTimeDate,
-            endTime: endTimeDate
-          }
-        });
-        result.push(updated);
-      } else {
-        const created = await this.prisma.classSession.create({
-          data: {
-            classId,
-            sessionNumber,
-            plannedDate,
-            startTime: startTimeDate,
-            endTime: endTimeDate,
-            status: "PLANNED"
-          }
-        });
-        result.push(created);
-      }
-    }
-    if (existingSessions.length > dates.length) {
-      const extraneousIds = existingSessions.filter((s) => s.sessionNumber > dates.length && s.status === "PLANNED").map((s) => s.id);
-      if (extraneousIds.length > 0) {
-        await this.prisma.classSession.deleteMany({
-          where: { id: { in: extraneousIds } }
-        });
-      }
-    }
-    if (dates.length > 0) {
-      const finalEndDate = /* @__PURE__ */ new Date(`${dates[dates.length - 1]}T23:59:59.999Z`);
-      await this.prisma.class.update({
-        where: { id: classId },
-        data: { endDate: finalEndDate }
-      });
-    }
-    return result;
-  }
-  // Use Case: Postpone a session due to unexpected circumstances and shift all subsequent sessions
-  async postponeSessionAndShift(user, classId, sessionId, options = {}) {
-    const classData = await this.repo.findById(classId);
-    if (!classData) {
-      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
-    }
-    const isAdmin = user.roles.includes("admin");
-    if (!isAdmin && classData.teacherId !== user.id) {
-      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n d\u1EDDi l\u1ECBch l\u1EDBp h\u1ECDc n\xE0y", 403);
-    }
-    const allSessions = await this.prisma.classSession.findMany({
-      where: { classId },
-      orderBy: { sessionNumber: "asc" }
-    });
-    const targetSession = allSessions.find((s) => s.id === sessionId);
-    if (!targetSession) {
-      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y bu\u1ED5i h\u1ECDc c\u1EA7n d\u1EDDi");
-    }
-    if (targetSession.status === "COMPLETED") {
-      throw new AuthorizationError("Kh\xF4ng th\u1EC3 d\u1EDDi bu\u1ED5i h\u1ECDc \u0111\xE3 ho\xE0n th\xE0nh \u0111i\u1EC3m danh", 400);
-    }
-    let weekdays = [];
-    const schedules = await this.prisma.classSchedule.findMany({
-      where: { classId }
-    });
-    if (schedules.length > 0) {
-      weekdays = schedules.map((sc) => sc.dayOfWeek);
-    } else {
-      const distinctDows = new Set(
-        allSessions.filter((s) => s.plannedDate).map((s) => new Date(s.plannedDate).getDay())
-      );
-      weekdays = Array.from(distinctDows);
-    }
-    if (weekdays.length === 0) {
-      weekdays = [1, 3, 5];
-    }
-    const sessionsToShift = allSessions.filter(
-      (s) => s.sessionNumber >= targetSession.sessionNumber && s.status !== "COMPLETED"
-    );
-    const origDate = new Date(targetSession.plannedDate);
-    const cur = new Date(origDate);
-    cur.setDate(cur.getDate() + 1);
-    const updatedSessions = [];
-    for (const sess of sessionsToShift) {
-      let foundValidDate = false;
-      let safetyCounter = 60;
-      while (!foundValidDate && safetyCounter > 0) {
-        safetyCounter--;
-        const dow = cur.getDay();
-        const isHoliday = isHolidayDate(cur, options.customHolidays);
-        if (weekdays.includes(dow) && !isHoliday) {
-          foundValidDate = true;
-          const newPlannedDate = new Date(cur);
-          newPlannedDate.setUTCHours(0, 0, 0, 0);
-          const updated = await this.prisma.classSession.update({
-            where: { id: sess.id },
-            data: { plannedDate: newPlannedDate }
-          });
-          updatedSessions.push(updated);
-        }
-        cur.setDate(cur.getDate() + 1);
-      }
-    }
-    if (updatedSessions.length > 0) {
-      const lastSession = updatedSessions[updatedSessions.length - 1];
-      const newEndDate = new Date(lastSession.plannedDate);
-      newEndDate.setUTCHours(23, 59, 59, 999);
-      await this.prisma.class.update({
-        where: { id: classId },
-        data: { endDate: newEndDate }
-      });
-    }
-    const reasonText = options.reason ? ` L\xFD do: ${options.reason}.` : "";
-    const newDateStr = updatedSessions[0] ? new Date(updatedSessions[0].plannedDate).toLocaleDateString("vi-VN") : "";
-    const origDateStr = origDate.toLocaleDateString("vi-VN");
-    const students = await this.prisma.classStudent.findMany({
-      where: { classId, status: "ACTIVE", deletedAt: null },
-      select: { studentId: true }
-    });
-    if (students.length > 0) {
-      const notifs = students.map((st) => ({
-        userId: st.studentId,
-        type: NotificationType2.ANNOUNCEMENT,
-        title: `Th\xF4ng b\xE1o d\u1EDDi l\u1ECBch h\u1ECDc: ${classData.name}`,
-        message: `Bu\u1ED5i h\u1ECDc s\u1ED1 ${targetSession.sessionNumber} (d\u1EF1 ki\u1EBFn ng\xE0y ${origDateStr}) \u0111\xE3 \u0111\u01B0\u1EE3c d\u1EDDi sang ng\xE0y ${newDateStr}.${reasonText} C\xE1c bu\u1ED5i h\u1ECDc ti\u1EBFp theo \u0111\u01B0\u1EE3c t\u1EF1 \u0111\u1ED9ng c\u1EADp nh\u1EADt theo l\u1ECBch m\u1EDBi.`,
-        link: `/classes/${classId}`,
-        entityType: "CLASS",
-        entityId: classId
-      }));
-      await this.notifService.createBatchNotifications(this.prisma, notifs);
-    }
-    return {
-      success: true,
-      message: `\u0110\xE3 d\u1EDDi Bu\u1ED5i ${targetSession.sessionNumber} t\u1EEB ${origDateStr} sang ${newDateStr} v\xE0 c\u1EADp nh\u1EADt l\u1ECBch cho ${updatedSessions.length} bu\u1ED5i h\u1ECDc ti\u1EBFp theo.`,
-      shiftedCount: updatedSessions.length,
-      updatedSessions
-    };
-  }
-  // Use Case: Create Class (Admin Only)
-  async createClass(user, data) {
-    const isAdmin = user.roles.includes("admin");
-    if (!isAdmin) {
-      throw new AuthorizationError("Ch\u1EC9 qu\u1EA3n tr\u1ECB vi\xEAn (Admin) m\u1EDBi c\xF3 quy\u1EC1n t\u1EA1o l\u1EDBp h\u1ECDc", 403);
-    }
-    const teacherId = data.teacherId || null;
-    let courseId = data.courseId;
-    if (!courseId) {
-      const firstCourse = await this.prisma.course.findFirst();
-      courseId = firstCourse?.id || "default";
-    }
-    if (data.roomId && data.branchId) {
-      const room = await this.prisma.room.findUnique({
-        where: { id: data.roomId },
-        select: { branchId: true, name: true }
-      });
-      if (!room) {
-        throw new NotFoundError("Ph\xF2ng h\u1ECDc kh\xF4ng t\u1ED3n t\u1EA1i.");
-      }
-      if (room.branchId !== data.branchId) {
-        throw new AuthorizationError(
-          "Ph\xF2ng h\u1ECDc kh\xF4ng thu\u1ED9c c\u01A1 s\u1EDF \u0111\xE3 ch\u1ECDn. Vui l\xF2ng ch\u1ECDn ph\xF2ng h\u1ECDc thu\u1ED9c \u0111\xFAng c\u01A1 s\u1EDF.",
-          400
-        );
-      }
-    }
-    return this.repo.create({
-      name: data.name,
-      description: data.description,
-      course: { connect: { id: courseId } },
-      branch: data.branchId ? { connect: { id: data.branchId } } : void 0,
-      room: data.roomId ? { connect: { id: data.roomId } } : void 0,
-      teacher: teacherId ? { connect: { id: teacherId } } : void 0,
-      startDate: data.startDate ? new Date(data.startDate) : void 0,
-      endDate: data.endDate ? new Date(data.endDate) : void 0,
-      isActive: data.isActive !== void 0 ? data.isActive : true
-    });
-  }
-  // Use Case: Update Class (Admin Only)
-  async updateClass(user, id, data) {
-    const classData = await this.repo.findById(id);
-    if (!classData) {
-      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
-    }
-    const isAdmin = user.roles.includes("admin");
-    const isTeacher = user.roles.includes("teacher");
-    if (!isAdmin && !isTeacher) {
-      throw new AuthorizationError("B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n ch\u1EC9nh s\u1EEDa th\xF4ng tin l\u1EDBp h\u1ECDc n\xE0y", 403);
-    }
-    if (isTeacher && !isAdmin) {
-      const isOwner = classData.teacherId && classData.teacherId === user.id || classData.teacherId && user.userId === classData.teacherId;
-      if (!isOwner) {
-        throw new AuthorizationError("B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n s\u1EEDa l\u1EDBp n\xE0y", 403);
-      }
-    }
-    const updatePayload = {};
-    if (data.name !== void 0) updatePayload.name = data.name;
-    if (data.description !== void 0) updatePayload.description = data.description;
-    if (data.courseId !== void 0) updatePayload.courseId = data.courseId;
-    if (data.branchId !== void 0) updatePayload.branchId = data.branchId || null;
-    if (data.roomId !== void 0) updatePayload.roomId = data.roomId || null;
-    if (data.startDate !== void 0) updatePayload.startDate = data.startDate ? new Date(data.startDate) : null;
-    if (data.endDate !== void 0) updatePayload.endDate = data.endDate ? new Date(data.endDate) : null;
-    if (data.isActive !== void 0) updatePayload.isActive = data.isActive;
-    if (isAdmin && data.teacherId !== void 0) updatePayload.teacherId = data.teacherId;
-    const effectiveBranchId = updatePayload.branchId ?? classData.branchId;
-    const effectiveRoomId = updatePayload.roomId ?? classData.roomId;
-    if (effectiveRoomId && effectiveBranchId) {
-      const room = await this.prisma.room.findUnique({
-        where: { id: effectiveRoomId },
-        select: { branchId: true }
-      });
-      if (room && room.branchId !== effectiveBranchId) {
-        throw new AuthorizationError(
-          "Ph\xF2ng h\u1ECDc kh\xF4ng thu\u1ED9c c\u01A1 s\u1EDF \u0111\xE3 ch\u1ECDn. Vui l\xF2ng ch\u1ECDn ph\xF2ng h\u1ECDc thu\u1ED9c \u0111\xFAng c\u01A1 s\u1EDF.",
-          400
-        );
-      }
-    }
-    if (data.roomId !== void 0 && effectiveRoomId && effectiveRoomId !== classData.roomId) {
-      const existingClassSessions = await this.prisma.classSession.findMany({
-        where: {
-          classId: id,
-          status: { not: "CANCELLED" }
-        },
-        select: {
-          plannedDate: true,
-          startTime: true,
-          endTime: true
-        }
-      });
-      if (existingClassSessions.length > 0) {
-        const collisionResult = await RoomCollisionService.checkRoomConflictForSessions(
-          this.prisma,
-          {
-            roomId: effectiveRoomId,
-            sessions: existingClassSessions,
-            excludeClassId: id
-          }
-        );
-        if (collisionResult.hasConflict) {
-          throw new AuthorizationError(
-            collisionResult.message || "Xung \u0111\u1ED9t ph\xF2ng h\u1ECDc v\u1EDBi l\u1EDBp kh\xE1c trong c\xF9ng khung gi\u1EDD.",
-            409
-          );
-        }
-      }
-    }
-    return this.repo.update(id, updatePayload);
-  }
-  // Helper: Gửi thông báo đến học sinh và giáo viên khi lớp đóng
-  async sendClassClosedNotifications(classData) {
-    const recipientUserIds = /* @__PURE__ */ new Set();
-    if (classData.teacherId) {
-      recipientUserIds.add(classData.teacherId);
-    }
-    if (classData.students) {
-      for (const s of classData.students) {
-        if (s.studentId) recipientUserIds.add(s.studentId);
-      }
-    }
-    if (recipientUserIds.size === 0) return;
-    const notifPayloads = Array.from(recipientUserIds).map((userId) => ({
-      userId,
-      type: NotificationType2.SYSTEM,
-      title: `L\u1EDBp h\u1ECDc \u0111\xE3 k\u1EBFt th\xFAc: ${classData.name}`,
-      message: `L\u1EDBp h\u1ECDc "${classData.name}" \u0111\xE3 ch\xEDnh th\u1EE9c \u0111\xF3ng. B\u1EA1n c\xF3 3 th\xE1ng \u0111\u1EC3 xem l\u1EA1i b\xE0i n\u1ED9p, \u0111i\u1EC3m s\u1ED1 v\xE0 nh\u1EADn x\xE9t tr\u01B0\u1EDBc khi d\u1EEF li\u1EC7u l\u1EDBp \u0111\u01B0\u1EE3c d\u1ECDn d\u1EB9p.`,
-      link: `/classes/${classData.id}`,
-      entityType: "CLASS",
-      entityId: classData.id
-    }));
-    await this.notifService.createBatchNotifications(this.prisma, notifPayloads);
-  }
-  // Use Case: Get Center-Wide Inter-Class League Standings (Class Competition & Gamification)
-  async getLeagueStandings(branchId) {
-    const where = {
-      status: "ACTIVE"
-    };
-    if (branchId && branchId !== "ALL") {
-      where.branchId = branchId;
-    }
-    const classes = await this.prisma.class.findMany({
-      where,
-      include: {
-        course: {
-          select: {
-            id: true,
-            title: true,
-            exams: {
-              where: { isPublished: true, isActive: true },
-              select: { id: true }
-            }
-          }
-        },
-        branch: { select: { id: true, name: true } },
-        teacher: { select: { id: true, fullName: true, avatarUrl: true } },
-        sessions: { select: { id: true } },
-        students: {
-          where: { deletedAt: null, status: "ACTIVE" },
-          include: {
-            student: {
-              select: {
-                id: true,
-                userId: true,
-                fullName: true
-              }
-            }
-          }
-        },
-        attendance: {
-          select: {
-            studentId: true,
-            status: true
-          }
-        }
-      }
-    });
-    const allStudentUserIds = Array.from(
-      new Set(
-        classes.flatMap(
-          (c) => c.students.map((cs) => cs.student.userId || cs.student.id).filter(Boolean)
-        )
-      )
-    );
-    const allExamsInCourses = Array.from(
-      new Set(classes.flatMap((c) => (c.course?.exams || []).map((e) => e.id)))
-    );
-    const allSubmissions = allStudentUserIds.length > 0 && allExamsInCourses.length > 0 ? await this.prisma.examSubmission.findMany({
-      where: {
-        studentId: { in: allStudentUserIds },
-        examId: { in: allExamsInCourses },
-        status: { in: ["SUBMITTED", "GRADED"] }
-      },
-      select: {
-        studentId: true,
-        examId: true,
-        status: true
-      }
-    }) : [];
-    const standings = classes.map((c) => {
-      const totalStudents = c.students.length;
-      const totalHomeworks = c.course?.exams?.length || 0;
-      const totalSessions = c.sessions.length;
-      const courseExamIds = new Set((c.course?.exams || []).map((e) => e.id));
-      const classStudentIds = new Set(
-        c.students.map((cs) => cs.student.userId || cs.student.id).filter(Boolean)
-      );
-      const completedSubmissions = allSubmissions.filter(
-        (s) => classStudentIds.has(s.studentId) && courseExamIds.has(s.examId)
-      );
-      const uniqueCompletedSlots = new Set(
-        completedSubmissions.map((s) => `${s.studentId}_${s.examId}`)
-      );
-      const totalCompletedSubmissions = uniqueCompletedSlots.size;
-      const totalAssignedSlots = totalStudents * totalHomeworks;
-      const completionRate = totalAssignedSlots > 0 ? Math.round(totalCompletedSubmissions / totalAssignedSlots * 100) : 0;
-      const totalAttendanceSlots = totalStudents * totalSessions;
-      const attendedCount = c.attendance.filter((a) => a.status === "PRESENT" || a.status === "LATE").length;
-      const attendanceRate = totalAttendanceSlots > 0 ? Math.round(attendedCount / totalAttendanceSlots * 100) : 100;
-      const leagueScore = totalAssignedSlots === 0 && totalAttendanceSlots === 0 ? 0 : Math.round(completionRate * 70 + attendanceRate * 30);
-      return {
-        classId: c.id,
-        className: c.name,
-        courseTitle: c.course?.title || "Kh\xF3a h\u1ECDc",
-        branchName: c.branch?.name || "Ch\u01B0a g\xE1n",
-        branchId: c.branchId,
-        teacherName: c.teacher?.fullName || "Ch\u01B0a ph\xE2n c\xF4ng",
-        teacherAvatar: c.teacher?.avatarUrl || null,
-        totalStudents,
-        totalHomeworks,
-        totalSessions,
-        totalCompletedSubmissions,
-        totalAssignedSlots,
-        completionRate,
-        attendanceRate,
-        leagueScore
-      };
-    });
-    standings.sort((a, b) => {
-      if (b.leagueScore !== a.leagueScore) {
-        return b.leagueScore - a.leagueScore;
-      }
-      return b.completionRate - a.completionRate;
-    });
-    const rankedStandings = standings.map((item, index) => ({
-      ...item,
-      rank: index + 1
-    }));
-    return {
-      totalClasses: rankedStandings.length,
-      standings: rankedStandings
-    };
-  }
-  // Use Case: Get Class Progress Leaderboard for Students & Peers (Gamified Race to 100%)
-  async getClassLeaderboard(user, classId) {
-    const classData = await this.prisma.class.findUnique({
-      where: { id: classId },
-      include: {
-        course: {
-          select: {
-            id: true,
-            title: true,
-            exams: {
-              where: { isPublished: true, isActive: true },
-              select: { id: true, title: true, week: true },
-              orderBy: { week: "asc" }
-            }
-          }
-        },
-        students: {
-          where: { deletedAt: null, status: "ACTIVE" },
-          include: {
-            student: {
-              select: {
-                id: true,
-                userId: true,
-                fullName: true,
-                avatarUrl: true
-              }
-            }
-          }
-        },
-        sessions: {
-          select: {
-            id: true,
-            sessionNumber: true,
-            plannedDate: true
-          },
-          orderBy: { sessionNumber: "asc" }
-        }
-      }
-    });
-    if (!classData) {
-      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
-    }
-    const courseExams = classData.course?.exams || [];
-    const totalHomeworks = courseExams.length;
-    const examIds = courseExams.map((e) => e.id);
-    const studentUserIds = classData.students.map((cs) => cs.student.userId || cs.student.id).filter(Boolean);
-    const submissions = studentUserIds.length > 0 && examIds.length > 0 ? await this.prisma.examSubmission.findMany({
-      where: {
-        studentId: { in: studentUserIds },
-        examId: { in: examIds },
-        status: { in: ["SUBMITTED", "GRADED"] }
-      },
-      select: {
-        studentId: true,
-        examId: true,
-        status: true,
-        submittedAt: true
-      }
-    }) : [];
-    const now = /* @__PURE__ */ new Date();
-    const upcomingSessions = classData.sessions.filter((s) => s.plannedDate && new Date(s.plannedDate) >= now).sort((a, b) => new Date(a.plannedDate).getTime() - new Date(b.plannedDate).getTime());
-    const nextSession = upcomingSessions[0] || null;
-    const nextExam = nextSession ? courseExams[nextSession.sessionNumber - 1] || courseExams[0] : courseExams[0] || null;
-    const nextDeadline = nextSession?.plannedDate ? new Date(new Date(nextSession.plannedDate).getTime() + 7 * 24 * 60 * 60 * 1e3) : null;
-    const nextUpcomingHomework = nextExam ? {
-      title: nextExam.title,
-      deadline: nextDeadline,
-      isUrgent: nextDeadline ? nextDeadline.getTime() - now.getTime() < 48 * 60 * 60 * 1e3 : false
-    } : null;
-    const studentRanks = classData.students.map((cs) => {
-      const student = cs.student;
-      const studentId = student.userId || student.id;
-      const studentSubs = submissions.filter(
-        (s) => s.studentId === student.userId || s.studentId === student.id
-      );
-      const uniqueSubmittedExams = new Set(studentSubs.map((s) => s.examId));
-      const completedCount = uniqueSubmittedExams.size;
-      const completionRate = totalHomeworks > 0 ? Math.round(completedCount / totalHomeworks * 100) : 0;
-      return {
-        studentId,
-        fullName: student.fullName || "H\u1ECDc vi\xEAn",
-        avatarUrl: student.avatarUrl,
-        completedCount,
-        totalHomeworks,
-        completionRate,
-        isMe: studentId === user.id
-      };
-    });
-    const totalStudents = studentRanks.length;
-    const totalAssignedSlots = totalStudents * totalHomeworks;
-    const totalSubmittedSlots = studentRanks.reduce((acc, s) => acc + s.completedCount, 0);
-    const classCompletionRate = totalAssignedSlots > 0 ? Math.round(totalSubmittedSlots / totalAssignedSlots * 100) : 0;
-    const bandMatch = classData.course?.title?.match(/\d+(\.\d+)?/);
-    const targetBand = bandMatch ? `Band ${bandMatch[0]}+` : "Band 6.5+";
-    studentRanks.sort((a, b) => {
-      if (b.completedCount !== a.completedCount) {
-        return b.completedCount - a.completedCount;
-      }
-      return a.fullName.localeCompare(b.fullName);
-    });
-    let currentRank = 1;
-    const rankedStudents = studentRanks.map((s, index) => {
-      if (index > 0 && s.completedCount < studentRanks[index - 1].completedCount) {
-        currentRank = index + 1;
-      }
-      return {
-        ...s,
-        rank: currentRank
-      };
-    });
-    const myRankItem = rankedStudents.find((s) => s.isMe);
-    return {
-      classId: classData.id,
-      className: classData.name,
-      courseTitle: classData.course?.title || "IELTS Course",
-      targetBand,
-      totalStudents,
-      totalHomeworks,
-      classCompletionRate,
-      totalSubmittedSlots,
-      totalAssignedSlots,
-      nextUpcomingHomework,
-      myRank: myRankItem?.rank || null,
-      myCompletedCount: myRankItem?.completedCount || 0,
-      students: rankedStudents
-    };
-  }
-  // Use Case: Get End-of-Course Graduation Summary (Honor Roll, Completion & Overdue Rates)
-  async getGraduationSummary(classId) {
-    const classData = await this.prisma.class.findUnique({
-      where: { id: classId },
-      include: {
-        course: {
-          select: {
-            id: true,
-            title: true,
-            exams: {
-              where: { isPublished: true, isActive: true },
-              select: { id: true, title: true, week: true },
-              orderBy: { week: "asc" }
-            }
-          }
-        },
-        teacher: { select: { id: true, fullName: true, email: true } },
-        sessions: {
-          select: { id: true, sessionNumber: true, plannedDate: true },
-          orderBy: { sessionNumber: "asc" }
-        },
-        students: {
-          where: { deletedAt: null, status: "ACTIVE" },
-          include: {
-            student: {
-              select: {
-                id: true,
-                userId: true,
-                fullName: true,
-                email: true,
-                avatarUrl: true
-              }
-            }
-          }
-        },
-        attendance: {
-          select: {
-            studentId: true,
-            status: true
-          }
-        }
-      }
-    });
-    if (!classData) {
-      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
-    }
-    const courseExams = classData.course?.exams || [];
-    const totalHomeworks = courseExams.length;
-    const totalSessions = classData.sessions.length;
-    const examIds = courseExams.map((e) => e.id);
-    const studentUserIds = classData.students.map((cs) => cs.student.userId || cs.student.id).filter(Boolean);
-    const submissions = studentUserIds.length > 0 && examIds.length > 0 ? await this.prisma.examSubmission.findMany({
-      where: {
-        studentId: { in: studentUserIds },
-        examId: { in: examIds },
-        status: { in: ["SUBMITTED", "GRADED"] }
-      },
-      select: {
-        studentId: true,
-        examId: true,
-        status: true,
-        submittedAt: true
-      }
-    }) : [];
-    const studentResults = classData.students.map((cs) => {
-      const student = cs.student;
-      const studentId = student.userId || student.id;
-      const studentSubs = submissions.filter(
-        (s) => s.studentId === student.userId || s.studentId === student.id
-      );
-      const uniqueSubmittedExams = new Set(studentSubs.map((s) => s.examId));
-      const submittedCount = uniqueSubmittedExams.size;
-      const onTimeCount = submittedCount;
-      const overdueCount = 0;
-      const completionRate = totalHomeworks > 0 ? Math.round(submittedCount / totalHomeworks * 100) : 100;
-      const overdueRate = submittedCount > 0 ? Math.round(overdueCount / submittedCount * 100) : 0;
-      const studentAttendances = classData.attendance.filter(
-        (a) => a.studentId === student.userId || a.studentId === student.id
-      );
-      const attendedSessions = studentAttendances.filter((a) => a.status === "PRESENT" || a.status === "LATE").length;
-      const attendanceRate = totalSessions > 0 ? Math.round(attendedSessions / totalSessions * 100) : 100;
-      const isHonorRoll = totalHomeworks > 0 && completionRate === 100 && overdueCount === 0;
-      return {
-        studentId,
-        fullName: student.fullName,
-        email: student.email,
-        avatarUrl: student.avatarUrl,
-        classStudentStatus: cs.status,
-        totalHomeworks,
-        submittedCount,
-        completionRate,
-        onTimeCount,
-        overdueCount,
-        overdueRate,
-        totalSessions,
-        attendedSessions,
-        attendanceRate,
-        isHonorRoll
-      };
-    });
-    const honorRollCount = studentResults.filter((s) => s.isHonorRoll).length;
-    return {
-      classId: classData.id,
-      className: classData.name,
-      teacherName: classData.teacher?.fullName || "Ch\u01B0a ph\xE2n c\xF4ng",
-      courseTitle: classData.course?.title || "IELTS Program",
-      startDate: classData.startDate,
-      endDate: classData.endDate,
-      status: classData.status,
-      closedAt: classData.closedAt,
-      totalSessions,
-      totalHomeworks,
-      totalStudents: studentResults.length,
-      honorRollCount,
-      students: studentResults
-    };
-  }
-  // Use Case: Close Class (Teacher or Admin)
-  async closeClass(user, id) {
-    const classData = await this.repo.findById(id);
-    if (!classData) {
-      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
-    }
-    const isAdmin = user.roles.includes("admin");
-    if (!isAdmin && classData.teacherId !== user.id) {
-      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n \u0111\xF3ng l\u1EDBp n\xE0y", 403);
-    }
-    const graduationSummary = await this.getGraduationSummary(id);
-    if (classData.status === "CLOSED" || !classData.isActive) {
-      return {
-        success: true,
-        message: "L\u1EDBp h\u1ECDc \u0111\xE3 \u1EDF tr\u1EA1ng th\xE1i \u0111\xF3ng.",
-        data: {
-          class: classData,
-          graduationSummary
-        }
-      };
-    }
-    const updatedClass = await this.prisma.class.update({
-      where: { id },
-      data: {
-        status: "CLOSED",
-        isActive: false,
-        closedAt: /* @__PURE__ */ new Date()
-      },
-      select: {
-        id: true,
-        name: true,
-        teacherId: true,
-        status: true,
-        isActive: true,
-        closedAt: true,
-        students: { select: { studentId: true } }
-      }
-    });
-    await this.prisma.classStudent.updateMany({
-      where: {
-        classId: id,
-        status: "ACTIVE",
-        deletedAt: null
-      },
-      data: {
-        status: "COMPLETED",
-        completedAt: /* @__PURE__ */ new Date()
-      }
-    });
-    await this.sendClassClosedNotifications({
-      id: updatedClass.id,
-      name: updatedClass.name,
-      teacherId: updatedClass.teacherId,
-      students: updatedClass.students
-    });
-    return {
-      success: true,
-      message: `\u0110\xE3 \u0111\xF3ng l\u1EDBp "${updatedClass.name}" th\xE0nh c\xF4ng v\xE0 t\u1ED5ng h\u1EE3p k\u1EBFt qu\u1EA3 t\u1ED1t nghi\u1EC7p cho ${graduationSummary.totalStudents} h\u1ECDc vi\xEAn (${graduationSummary.honorRollCount} h\u1ECDc vi\xEAn vinh danh 100%).`,
-      data: {
-        class: updatedClass,
-        graduationSummary
-      }
-    };
-  }
-  // Use Case: Reopen / Extend Class (Teacher or Admin)
-  async reopenClass(user, id) {
-    const classData = await this.repo.findById(id);
-    if (!classData) {
-      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
-    }
-    const isAdmin = user.roles.includes("admin");
-    if (!isAdmin && classData.teacherId !== user.id) {
-      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n m\u1EDF l\u1EA1i l\u1EDBp n\xE0y", 403);
-    }
-    const updatedClass = await this.prisma.class.update({
-      where: { id },
-      data: {
-        status: "ACTIVE",
-        isActive: true,
-        closedAt: null
-      }
-    });
-    await this.prisma.classStudent.updateMany({
-      where: {
-        classId: id,
-        status: "COMPLETED",
-        deletedAt: null
-      },
-      data: {
-        status: "ACTIVE",
-        completedAt: null
-      }
-    });
-    return {
-      success: true,
-      message: `\u0110\xE3 m\u1EDF l\u1EA1i l\u1EDBp "${updatedClass.name}" th\xE0nh c\xF4ng.`,
-      data: updatedClass
-    };
-  }
-  // Use Case: Run Lifecycle Maintenance (Auto-close strictly after 7 days grace period post last actual session & all sessions complete)
-  async runClassLifecycleMaintenance() {
-    const now = /* @__PURE__ */ new Date();
-    let closedCount = 0;
-    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1e3);
-    const candidateClasses = await this.prisma.class.findMany({
-      where: {
-        status: "ACTIVE"
-      },
-      include: {
-        sessions: {
-          select: { id: true, plannedDate: true, status: true },
-          orderBy: { plannedDate: "desc" }
-        },
-        students: { select: { studentId: true } }
-      }
-    });
-    for (const cls of candidateClasses) {
-      const hasFutureSessions = cls.sessions.some(
-        (s) => s.plannedDate && new Date(s.plannedDate).getTime() > now.getTime()
-      );
-      const hasRecentPendingSessions = cls.sessions.some(
-        (s) => s.status === "PLANNED" && s.plannedDate && new Date(s.plannedDate).getTime() > sevenDaysAgo.getTime()
-      );
-      const lastSessionDate = cls.sessions[0]?.plannedDate || cls.endDate;
-      const isPastGracePeriod = !hasFutureSessions && !hasRecentPendingSessions && lastSessionDate && new Date(lastSessionDate).getTime() <= sevenDaysAgo.getTime();
-      const isSixMonthsOld = !hasFutureSessions && cls.startDate && new Date(cls.startDate).getTime() <= new Date(now.getTime() - 180 * 24 * 60 * 60 * 1e3).getTime();
-      if (isPastGracePeriod || isSixMonthsOld) {
-        await this.prisma.class.update({
-          where: { id: cls.id },
-          data: {
-            status: "CLOSED",
-            isActive: false,
-            closedAt: now
-          }
-        });
-        await this.prisma.classStudent.updateMany({
-          where: { classId: cls.id, status: "ACTIVE", deletedAt: null },
-          data: { status: "COMPLETED", completedAt: now }
-        });
-        await this.sendClassClosedNotifications({
-          id: cls.id,
-          name: cls.name,
-          teacherId: cls.teacherId,
-          students: cls.students
-        });
-        closedCount++;
-      }
-    }
-    const threeMonthsAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1e3);
-    const classesToArchive = await this.prisma.class.findMany({
-      where: {
-        status: "CLOSED",
-        closedAt: {
-          lte: threeMonthsAgo
-        }
-      },
-      select: { id: true, name: true }
-    });
-    let archivedCount = 0;
-    for (const cls of classesToArchive) {
-      await this.prisma.class.update({
-        where: { id: cls.id },
-        data: {
-          status: "ARCHIVED",
-          archivedAt: now,
-          isActive: false
-        }
-      });
-      archivedCount++;
-    }
-    return {
-      success: true,
-      timestamp: now.toISOString(),
-      closedClassesCount: closedCount,
-      archivedClassesCount: archivedCount,
-      deletedClassesCount: 0
-      // Invariant: Hard delete is strictly eliminated (always 0)
-    };
-  }
-  // Helper: Resolve Canonical User Identity (auth.users.id) from studentId, email, or surrogate profile id
-  async resolveCanonicalUserId(inputStudentId) {
-    if (!inputStudentId || typeof inputStudentId !== "string") return inputStudentId;
-    const cleanInput = inputStudentId.trim();
-    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleanInput);
-    const isEmail = cleanInput.includes("@");
-    const orConditions = [];
-    if (isUUID) {
-      orConditions.push({ userId: cleanInput }, { id: cleanInput });
-    }
-    if (isEmail) {
-      orConditions.push({ email: { equals: cleanInput, mode: "insensitive" } });
-    }
-    if (orConditions.length === 0) {
-      return cleanInput;
-    }
-    const user = await this.prisma.user.findFirst({
-      where: {
-        OR: orConditions
-      },
-      select: { userId: true }
-    });
-    return user ? user.userId : cleanInput;
-  }
-  // Use Case: Add Single Student to Class (Bi-directional Cascade to Course Enrollment)
-  async addStudent(user, classId, studentId) {
-    const batchResult = await this.addStudentsBatch(user, classId, { studentIds: [studentId] });
-    return batchResult.students[0];
-  }
-  // Use Case: Batch Add Students to Class by studentIds or emails (ADR-007 Canonical Identity + Cascade)
-  async addStudentsBatch(user, classId, payload) {
-    const classData = await this.repo.findById(classId);
-    if (!classData) {
-      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
-    }
-    if (classData.status === "CLOSED" || !classData.isActive) {
-      throw new AuthorizationError("L\u1EDBp h\u1ECDc \u0111\xE3 k\u1EBFt th\xFAc v\xE0 \u0111\xF3ng, kh\xF4ng th\u1EC3 th\xEAm h\u1ECDc vi\xEAn m\u1EDBi", 400);
-    }
-    const isAdmin = user.roles.includes("admin");
-    if (!isAdmin && classData.teacherId !== user.id) {
-      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n th\xEAm h\u1ECDc vi\xEAn v\xE0o l\u1EDBp n\xE0y", 403);
-    }
-    const resolvedStudentIds = /* @__PURE__ */ new Set();
-    if (Array.isArray(payload.studentIds) && payload.studentIds.length > 0) {
-      for (const sid of payload.studentIds) {
-        if (!sid || typeof sid !== "string") continue;
-        const canonicalId = await this.resolveCanonicalUserId(sid.trim());
-        resolvedStudentIds.add(canonicalId);
-      }
-    }
-    if (Array.isArray(payload.emails) && payload.emails.length > 0) {
-      const cleanEmails = Array.from(
-        new Set(
-          payload.emails.map((e) => typeof e === "string" ? e.trim().toLowerCase() : "").filter((e) => e && e.includes("@"))
-        )
-      );
-      for (const email of cleanEmails) {
-        let existingUser = await this.prisma.user.findFirst({
-          where: { email: { equals: email, mode: "insensitive" } },
-          select: { userId: true }
-        });
-        if (existingUser) {
-          resolvedStudentIds.add(existingUser.userId);
-        } else {
-          const autoPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
-          const fullName = email.split("@")[0];
-          const dbResult = await this.prisma.$queryRawUnsafe(
-            `
-            SELECT public.admin_create_user(
-              $1::text,
-              $2::text,
-              NULL::text,
-              NULL::text,
-              'student'::text,
-              $3::text,
-              NULL::text,
-              NULL::text,
-              NULL::date
-            ) as result;
-          `,
-            email,
-            fullName,
-            autoPassword
-          );
-          const profileData = dbResult?.[0]?.result;
-          let createdAuthUid = profileData?.user_id || profileData?.id;
-          if (!createdAuthUid) {
-            const fallbackUser = await this.prisma.user.findFirst({
-              where: { email: { equals: email, mode: "insensitive" } },
-              select: { userId: true }
-            });
-            createdAuthUid = fallbackUser?.userId;
-          }
-          if (createdAuthUid) {
-            resolvedStudentIds.add(createdAuthUid);
-          } else {
-            throw new Error(`Kh\xF4ng th\u1EC3 kh\u1EDFi t\u1EA1o t\xE0i kho\u1EA3n h\u1ECDc vi\xEAn cho email: ${email}`);
-          }
-        }
-      }
-    }
-    const targetStudentIds = Array.from(resolvedStudentIds);
-    if (targetStudentIds.length === 0) {
-      throw new AuthorizationError("Kh\xF4ng c\xF3 h\u1ECDc vi\xEAn h\u1EE3p l\u1EC7 n\xE0o \u0111\u1EC3 th\xEAm", 400);
-    }
-    return this.prisma.$transaction(async (tx) => {
-      const classStudents = [];
-      for (const studentId of targetStudentIds) {
-        const userExists = await tx.user.findUnique({
-          where: { userId: studentId },
-          select: { userId: true }
-        });
-        if (!userExists) {
-          throw new NotFoundError(`Kh\xF4ng t\xECm th\u1EA5y h\u1ED3 s\u01A1 ng\u01B0\u1EDDi d\xF9ng c\u1EE7a h\u1ECDc vi\xEAn (UID: ${studentId})`);
-        }
-        const classStudent = await tx.classStudent.upsert({
-          where: { classId_studentId: { classId, studentId } },
-          update: {
-            status: "ACTIVE",
-            deletedAt: null,
-            joinedAt: /* @__PURE__ */ new Date()
-          },
-          create: {
-            classId,
-            studentId,
-            status: "ACTIVE",
-            joinedAt: /* @__PURE__ */ new Date()
-          }
-        });
-        if (classData.courseId) {
-          const existingEnrollment = await tx.enrollment.findUnique({
-            where: {
-              courseId_studentId: {
-                courseId: classData.courseId,
-                studentId
-              }
-            }
-          });
-          if (!existingEnrollment) {
-            await tx.enrollment.create({
-              data: {
-                courseId: classData.courseId,
-                studentId,
-                enrolledAt: /* @__PURE__ */ new Date()
-              }
-            });
-          }
-        }
-        await tx.enrollmentAuditLog.create({
-          data: {
-            operatorId: user.id,
-            studentId,
-            classId,
-            action: "CLASS_PLACEMENT_CASCADE",
-            reason: `X\u1EBFp h\u1ECDc vi\xEAn v\xE0o l\u1EDBp ${classData.name} (T\u1EF1 \u0111\u1ED9ng k\xEDch ho\u1EA1t quy\u1EC1n kh\xF3a h\u1ECDc)`,
-            toStatus: "ACTIVE"
-          }
-        });
-        classStudents.push(classStudent);
-      }
-      return {
-        success: true,
-        addedCount: classStudents.length,
-        students: classStudents
-      };
-    });
-  }
-  // Use Case: Remove Student from Class (Cascade check to revoke Course Enrollment if no other active classes)
-  async removeStudent(user, classId, inputStudentId) {
-    const classData = await this.repo.findById(classId);
-    if (!classData) {
-      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
-    }
-    if (classData.status === "CLOSED" || !classData.isActive) {
-      throw new AuthorizationError("L\u1EDBp h\u1ECDc \u0111\xE3 k\u1EBFt th\xFAc v\xE0 \u0111\xF3ng, kh\xF4ng th\u1EC3 thay \u0111\u1ED5i danh s\xE1ch h\u1ECDc vi\xEAn", 400);
-    }
-    const isAdmin = user.roles.includes("admin");
-    if (!isAdmin && classData.teacherId !== user.id) {
-      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n x\xF3a h\u1ECDc vi\xEAn kh\u1ECFi l\u1EDBp n\xE0y", 403);
-    }
-    const studentId = await this.resolveCanonicalUserId(inputStudentId);
-    return this.prisma.$transaction(async (tx) => {
-      await tx.classStudent.updateMany({
-        where: { classId, studentId, deletedAt: null },
-        data: {
-          status: "DROPPED",
-          deletedAt: /* @__PURE__ */ new Date()
-        }
-      });
-      if (classData.courseId) {
-        const remainingActiveClasses = await tx.classStudent.count({
-          where: {
-            studentId,
-            status: "ACTIVE",
-            deletedAt: null,
-            class: {
-              courseId: classData.courseId,
-              id: { not: classId }
-            }
-          }
-        });
-        if (remainingActiveClasses === 0) {
-          await tx.enrollment.deleteMany({
-            where: {
-              courseId: classData.courseId,
-              studentId
-            }
-          });
-        }
-      }
-      await tx.enrollmentAuditLog.create({
-        data: {
-          operatorId: user.id,
-          studentId,
-          classId,
-          action: "STUDENT_REMOVAL_CASCADE",
-          reason: `X\xF3a h\u1ECDc vi\xEAn kh\u1ECFi l\u1EDBp ${classData.name}`,
-          toStatus: "DROPPED"
-        }
-      });
-      return { success: true };
-    });
-  }
-  // Use Case: Update student status in class (ACTIVE, SUSPENDED, RESERVED, COMPLETED, DROPPED)
-  async updateStudentStatus(user, classId, studentId, options) {
-    const classData = await this.repo.findById(classId);
-    if (!classData) {
-      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
-    }
-    const isAdmin = user.roles.includes("admin");
-    if (!isAdmin && classData.teacherId !== user.id) {
-      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n c\u1EADp nh\u1EADt tr\u1EA1ng th\xE1i h\u1ECDc vi\xEAn c\u1EE7a l\u1EDBp n\xE0y", 403);
-    }
-    const validStatuses = ["ACTIVE", "SUSPENDED", "RESERVED", "COMPLETED", "DROPPED"];
-    const targetStatus = (options.status || "").toUpperCase();
-    if (!validStatuses.includes(targetStatus)) {
-      throw new AuthorizationError(`Tr\u1EA1ng th\xE1i kh\xF4ng h\u1EE3p l\u1EC7: ${options.status}. C\xE1c tr\u1EA1ng th\xE1i h\u1EE3p l\u1EC7: ${validStatuses.join(", ")}`, 400);
-    }
-    return this.prisma.$transaction(async (tx) => {
-      const existing = await tx.classStudent.findFirst({
-        where: { classId, studentId, deletedAt: null }
-      });
-      if (!existing) {
-        throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y h\u1ECDc vi\xEAn trong l\u1EDBp h\u1ECDc n\xE0y");
-      }
-      const fromStatus = existing.status;
-      const updated = await tx.classStudent.update({
-        where: { id: existing.id },
-        data: {
-          status: targetStatus,
-          completedAt: targetStatus === "COMPLETED" ? /* @__PURE__ */ new Date() : targetStatus === "ACTIVE" ? null : existing.completedAt
-        }
-      });
-      await tx.enrollmentAuditLog.create({
-        data: {
-          operatorId: user.id,
-          studentId,
-          classId,
-          fromStatus,
-          toStatus: targetStatus,
-          action: "STUDENT_STATUS_UPDATE",
-          reason: options.reason || `C\u1EADp nh\u1EADt tr\u1EA1ng th\xE1i h\u1ECDc vi\xEAn t\u1EEB ${fromStatus} sang ${targetStatus}`
-        }
-      });
-      return { success: true, data: updated };
-    }, { maxWait: 1e4, timeout: 2e4 });
-  }
-  // Use Case: Reschedule a single session
-  async rescheduleSingleSession(user, sessionId, plannedDate, reason) {
-    const session = await this.prisma.classSession.findUnique({
-      where: { id: sessionId },
-      include: { class: true }
-    });
-    if (!session) {
-      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y bu\u1ED5i h\u1ECDc");
-    }
-    const isAdmin = user.roles.includes("admin");
-    if (!isAdmin && session.class?.teacherId !== user.id) {
-      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n d\u1EDDi l\u1ECBch bu\u1ED5i h\u1ECDc n\xE0y", 403);
-    }
-    if (session.status === "COMPLETED") {
-      throw new AuthorizationError("Kh\xF4ng th\u1EC3 d\u1EDDi l\u1ECBch bu\u1ED5i h\u1ECDc \u0111\xE3 ho\xE0n t\u1EA5t", 400);
-    }
-    const newPlannedDate = new Date(plannedDate);
-    const updated = await this.prisma.classSession.update({
-      where: { id: sessionId },
-      data: {
-        plannedDate: newPlannedDate,
-        rescheduleReason: reason || null,
-        status: "SCHEDULED"
-      }
-    });
-    return updated;
-  }
-  // Use Case: Update session status
-  async updateSessionStatus(user, sessionId, status, note) {
-    const session = await this.prisma.classSession.findUnique({
-      where: { id: sessionId },
-      include: { class: true }
-    });
-    if (!session) {
-      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y bu\u1ED5i h\u1ECDc");
-    }
-    const isAdmin = user.roles.includes("admin");
-    if (!isAdmin && session.class?.teacherId !== user.id) {
-      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n c\u1EADp nh\u1EADt tr\u1EA1ng th\xE1i bu\u1ED5i h\u1ECDc n\xE0y", 403);
-    }
-    const normalizedStatus = (status || "").toUpperCase();
-    const validStatuses = ["SCHEDULED", "COMPLETED", "CANCELLED", "PLANNED"];
-    if (!validStatuses.includes(normalizedStatus)) {
-      throw new AuthorizationError(`Tr\u1EA1ng th\xE1i kh\xF4ng h\u1EE3p l\u1EC7: ${status}`, 400);
-    }
-    const updated = await this.prisma.classSession.update({
-      where: { id: sessionId },
-      data: {
-        status: normalizedStatus,
-        rescheduleReason: note !== void 0 ? note : session.rescheduleReason
-      }
-    });
-    return updated;
-  }
-  // Use Case: Record Attendance
-  async recordAttendance(user, classId, records) {
-    const classData = await this.repo.findById(classId);
-    if (!classData) {
-      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
-    }
-    if (classData.status === "CLOSED" || !classData.isActive) {
-      throw new AuthorizationError("L\u1EDBp h\u1ECDc \u0111\xE3 k\u1EBFt th\xFAc v\xE0 \u0111\xF3ng, kh\xF4ng th\u1EC3 \u0111i\u1EC3m danh", 400);
-    }
-    const isAdmin = user.roles.includes("admin");
-    if (!isAdmin && classData.teacherId !== user.id) {
-      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n \u0111i\u1EC3m danh l\u1EDBp n\xE0y", 403);
-    }
-    const results = [];
-    for (const r of records) {
-      const sDate = r.sessionDate ? new Date(r.sessionDate) : /* @__PURE__ */ new Date();
-      const recorded = await this.repo.recordAttendance({
-        classId,
-        studentId: r.studentId,
-        sessionDate: sDate,
-        markedBy: user.id,
-        status: r.status,
-        note: r.note
-      });
-      results.push(recorded);
-    }
-    return { success: true, count: results.length, data: results };
-  }
-  // Use Case: Set / Update Homework Deadline for a Class (Class-Level Override)
-  async setHomeworkDeadline(user, classId, examId, deadline) {
-    const classData = await this.repo.findById(classId);
-    if (!classData) {
-      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
-    }
-    if (classData.status === "CLOSED" || !classData.isActive) {
-      throw new AuthorizationError("L\u1EDBp h\u1ECDc \u0111\xE3 k\u1EBFt th\xFAc v\xE0 \u0111\xF3ng, kh\xF4ng th\u1EC3 giao b\xE0i t\u1EADp ho\u1EB7c s\u1EEDa h\u1EA1n n\u1ED9p", 400);
-    }
-    const isAdmin = user.roles.includes("admin");
-    if (!isAdmin && classData.teacherId !== user.id) {
-      throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n s\u1EEDa deadline l\u1EDBp n\xE0y", 403);
-    }
-    const exam = await this.prisma.exam.findUnique({
-      where: { id: examId }
-    });
-    if (!exam) {
-      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y b\xE0i t\u1EADp/b\xE0i thi");
-    }
-    const parsedDeadline = deadline ? new Date(deadline) : null;
-    const assignment = await this.prisma.classExamAssignment.upsert({
-      where: {
-        classId_examId: {
-          classId,
-          examId
-        }
-      },
-      update: {
-        deadline: parsedDeadline,
-        status: "PUBLISHED"
-      },
-      create: {
-        classId,
-        examId,
-        createdBy: user.id,
-        deadline: parsedDeadline,
-        status: "PUBLISHED"
-      }
-    });
-    return {
-      success: true,
-      classId,
-      examId,
-      deadline: assignment.deadline,
-      deadlineSource: assignment.deadline ? "MANUAL" : "AUTO"
-    };
-  }
-};
+// server/controllers/class.controller.ts
+init_class_service();
 
 // server/schemas/class.schema.ts
 init_zod();
@@ -108044,6 +108440,8 @@ init_zod();
 import crypto2 from "node:crypto";
 
 // server/services/attendance.service.ts
+init_class_repository();
+init_authorization_service();
 var ClassSessionStatus = {
   SCHEDULED: "SCHEDULED",
   PLANNED: "PLANNED",
@@ -108600,6 +108998,8 @@ var AttendanceService = class {
 };
 
 // server/routes/attendance.routes.ts
+init_authorization_service();
+init_room_collision_service();
 var markAttendanceSchema = external_exports.object({
   items: external_exports.array(
     external_exports.object({
@@ -109059,6 +109459,8 @@ var InvitationRepository = class {
 };
 
 // server/services/invitation.service.ts
+init_class_repository();
+init_authorization_service();
 var InvitationService = class {
   constructor(prisma) {
     this.prisma = prisma;
@@ -109114,6 +109516,9 @@ var InvitationService = class {
   }
 };
 
+// server/routes/invitation.routes.ts
+init_authorization_service();
+
 // server/validations/schemas.ts
 init_zod();
 var joinByCodeSchema = external_exports.object({
@@ -109158,6 +109563,10 @@ var invitationRoutes = async (fastify) => {
   });
 };
 var invitation_routes_default = invitationRoutes;
+
+// server/services/lesson.service.ts
+init_class_repository();
+init_authorization_service();
 
 // server/utils/deadline.util.ts
 function calculateAutomaticDeadline(params) {
@@ -110992,6 +111401,7 @@ var speakingForecastRoutes = async (fastify) => {
 var speaking_forecast_routes_default = speakingForecastRoutes;
 
 // server/services/branch.service.ts
+init_authorization_service();
 var ValidationError2 = class extends Error {
   constructor(message2) {
     super(message2);
@@ -111213,6 +111623,7 @@ var BranchService = class {
 };
 
 // server/routes/branch.routes.ts
+init_authorization_service();
 async function branchRoutes(fastify) {
   const branchService = new BranchService(fastify.prisma);
   const authService = new AuthorizationService(fastify.prisma);
@@ -111277,6 +111688,7 @@ async function branchRoutes(fastify) {
 }
 
 // server/services/room.service.ts
+init_authorization_service();
 var RoomService = class {
   constructor(prisma) {
     this.prisma = prisma;
@@ -112377,6 +112789,7 @@ async function adminDashboardRoutes(fastify) {
 }
 
 // server/services/intervention.service.ts
+init_authorization_service();
 var VALID_TRANSITIONS = {
   DETECTED: ["CONTACTED", "FAILED"],
   CONTACTED: ["RESPONDED", "FAILED"],
@@ -114269,15 +114682,20 @@ var SnapshotService = class {
 // server/routes/cron.routes.ts
 var cronRoutes = async (fastify) => {
   const snapshotService = new SnapshotService(fastify.prisma);
-  const handleWeeklySnapshot = async (request, reply) => {
+  const verifyCronSecret = (request, reply) => {
     const cronSecret = process.env.CRON_SECRET;
     const authHeader = request.headers["authorization"];
-    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-      return reply.status(401).send({
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+      reply.status(401).send({
         success: false,
-        error: "Unauthorized: Invalid CRON_SECRET token"
+        error: "Unauthorized: Missing or invalid CRON_SECRET token"
       });
+      return false;
     }
+    return true;
+  };
+  const handleWeeklySnapshot = async (request, reply) => {
+    if (!verifyCronSecret(request, reply)) return;
     try {
       fastify.log.info("Triggering Weekly Snapshot calculation job...");
       const result = await snapshotService.executeWeeklySnapshot();
@@ -114294,8 +114712,30 @@ var cronRoutes = async (fastify) => {
       });
     }
   };
+  const handleClassMaintenance = async (request, reply) => {
+    if (!verifyCronSecret(request, reply)) return;
+    try {
+      fastify.log.info("Triggering Class Lifecycle Maintenance cron job...");
+      const { ClassSchedulerService: ClassSchedulerService2 } = await Promise.resolve().then(() => (init_class_scheduler_service(), class_scheduler_service_exports));
+      const scheduler = new ClassSchedulerService2(fastify.prisma, fastify.log);
+      const result = await scheduler.runMaintenance();
+      fastify.log.info({ result }, "Class Lifecycle Maintenance cron completed.");
+      return reply.send({
+        success: true,
+        data: result
+      });
+    } catch (err) {
+      fastify.log.error(err, "Class Lifecycle Maintenance cron failed");
+      return reply.status(500).send({
+        success: false,
+        error: "Class lifecycle maintenance failed: " + err.message
+      });
+    }
+  };
   fastify.get("/weekly-snapshot", handleWeeklySnapshot);
   fastify.post("/weekly-snapshot", handleWeeklySnapshot);
+  fastify.get("/class-maintenance", handleClassMaintenance);
+  fastify.post("/class-maintenance", handleClassMaintenance);
 };
 var cron_routes_default = cronRoutes;
 
@@ -114663,6 +115103,7 @@ var reEnrollmentRoutes = async (fastify) => {
 var re_enrollment_routes_default = reEnrollmentRoutes;
 
 // server/services/radar.service.ts
+init_authorization_service();
 var RadarService = class {
   constructor(prisma) {
     this.prisma = prisma;
@@ -116698,78 +117139,8 @@ var routes = async (fastify) => {
 };
 var routes_default = routes;
 
-// server/services/class-scheduler.service.ts
-var ClassSchedulerService = class {
-  constructor(prisma, log) {
-    this.prisma = prisma;
-    this.log = log;
-    this.classService = new ClassService(prisma);
-  }
-  timer = null;
-  initialTimeout = null;
-  classService;
-  isRunning = false;
-  // Chu kỳ chạy: 24 giờ một lần
-  INTERVAL_MS = 24 * 60 * 60 * 1e3;
-  // Khởi động lần đầu sau khi server bật: 15 giây
-  INITIAL_DELAY_MS = 15 * 1e3;
-  /**
-   * Bắt đầu tác vụ định kỳ quét vòng đời lớp học
-   */
-  start() {
-    if (this.timer || this.initialTimeout) {
-      return;
-    }
-    this.log?.info?.("[ClassScheduler] \u23F1\uFE0F Class Lifecycle Scheduler is enabled (runs every 24h).");
-    this.initialTimeout = setTimeout(() => {
-      this.runMaintenance();
-      this.timer = setInterval(() => {
-        this.runMaintenance();
-      }, this.INTERVAL_MS);
-      this.timer.unref?.();
-    }, this.INITIAL_DELAY_MS);
-    this.initialTimeout.unref?.();
-  }
-  /**
-   * Dừng tác vụ (phục vụ graceful shutdown)
-   */
-  stop() {
-    if (this.initialTimeout) {
-      clearTimeout(this.initialTimeout);
-      this.initialTimeout = null;
-    }
-    if (this.timer) {
-      clearInterval(this.timer);
-      this.timer = null;
-    }
-    this.log?.info?.("[ClassScheduler] \u{1F6D1} Class Lifecycle Scheduler stopped.");
-  }
-  /**
-   * Thực hiện 1 lượt quét bảo trì
-   */
-  async runMaintenance() {
-    if (this.isRunning) {
-      this.log?.warn?.("[ClassScheduler] \u26A0\uFE0F Previous maintenance job is still running, skipping this tick.");
-      return;
-    }
-    this.isRunning = true;
-    try {
-      this.log?.info?.("[ClassScheduler] \u{1F504} Running Class Lifecycle Maintenance...");
-      const result = await this.classService.runClassLifecycleMaintenance();
-      this.log?.info?.(
-        { result },
-        `[ClassScheduler] \u2705 Maintenance finished: Auto-closed ${result.closedClassesCount} classes, Purged ${result.deletedClassesCount} old closed classes.`
-      );
-      return result;
-    } catch (err) {
-      this.log?.error?.({ err }, "[ClassScheduler] \u274C Error running Class Lifecycle Maintenance: " + (err?.message || err));
-    } finally {
-      this.isRunning = false;
-    }
-  }
-};
-
 // server/app.ts
+init_class_scheduler_service();
 async function buildApp(_opts) {
   const isServerless = process.env.VERCEL === "1" || Boolean(process.env.AWS_LAMBDA_FUNCTION_NAME) || Boolean(process.env.VERCEL_ENV);
   const isProduction = env.NODE_ENV === "production" || process.env.NODE_ENV === "production";

@@ -504,11 +504,11 @@ export class DiagnosticService {
             skill: meta.skill,
             label: meta.label,
             diagnosis: meta.diagnosis,
-            prompt: q.prompt,
+            prompt: (q as any).prompt || q.questionText,
             options: q.options,
-            passage: q.group?.passageText || null,
-            studentAnswer: ans.value,
-            explanation: q.explanation || null,
+            passage: (q.group as any)?.passageText || q.group?.passage || null,
+            studentAnswer: (ans as any).value || ans.answerText || '',
+            explanation: (q as any).explanation || null,
             submittedAt: sub.submittedAt,
           });
 
@@ -527,7 +527,7 @@ export class DiagnosticService {
   async generateWeakZoneDrill(questionType: string, count = 6) {
     const questions = await this.prisma.question.findMany({
       where: {
-        questionType: { equals: questionType, mode: 'insensitive' },
+        questionType: { equals: questionType as any },
       },
       take: count * 2,
       include: {
@@ -553,11 +553,11 @@ export class DiagnosticService {
       targetCount: shuffled.length,
       questions: shuffled.map((q) => ({
         id: q.id,
-        prompt: q.prompt,
+        prompt: (q as any).prompt || q.questionText,
         options: q.options,
         questionType: q.questionType,
         orderIndex: q.orderIndex,
-        passage: q.group?.passageText || null,
+        passage: (q.group as any)?.passageText || q.group?.passage || null,
       })),
     };
   }
@@ -582,8 +582,7 @@ export class DiagnosticService {
       select: {
         id: true,
         correctAnswer: true,
-        explanation: true,
-        prompt: true,
+        questionText: true,
       },
     });
 
@@ -599,11 +598,11 @@ export class DiagnosticService {
 
       return {
         questionId: q.id,
-        prompt: q.prompt,
+        prompt: (q as any).prompt || q.questionText,
         studentAnswer: submission.answers[q.id] || '',
         correctAnswer: q.correctAnswer,
         isCorrect,
-        explanation: q.explanation || null,
+        explanation: (q as any).explanation || null,
       };
     });
 
@@ -628,7 +627,6 @@ export class DiagnosticService {
       select: {
         id: true,
         correctAnswer: true,
-        explanation: true,
       },
     });
 
@@ -644,9 +642,7 @@ export class DiagnosticService {
       questionId: question.id,
       isCorrect,
       correctAnswer: question.correctAnswer,
-      explanation: question.explanation || null,
+      explanation: (question as any).explanation || null,
     };
   }
 }
-
-
