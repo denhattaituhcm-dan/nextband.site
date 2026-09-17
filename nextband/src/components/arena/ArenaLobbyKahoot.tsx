@@ -44,7 +44,7 @@ export const ArenaLobbyKahoot: React.FC<ArenaLobbyKahootProps> = React.memo(({
 }) => {
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const currentCount = players.length;
-  const fullJoinUrlWithPin = `${joinUrl}?pin=${pinCode}`;
+  const fullJoinUrlWithPin = `${joinUrl}?pin=${pinCode}&v=2`;
   
   // Tạo mã QR vector siêu nét, kích thước phân giải gốc 500x500
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(fullJoinUrlWithPin)}&margin=2&format=svg`;

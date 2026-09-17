@@ -81,73 +81,128 @@ export default function ArenaHostPage() {
   const pinCodeRef = useRef<string>(pinCode);
   pinCodeRef.current = pinCode;
 
+  const MOCK_ARENA_STUDENTS = useMemo(() => [
+    { name: 'Bảo Nam', avatarSeed: 36 },
+    { name: 'Phương Linh', avatarSeed: 42 },
+    { name: 'Minh Huy', avatarSeed: 37 },
+    { name: 'Tuấn Kiệt', avatarSeed: 38 },
+    { name: 'Khánh An', avatarSeed: 39 },
+    { name: 'Quỳnh Nga', avatarSeed: 40 },
+    { name: 'Hải Đăng', avatarSeed: 41 },
+    { name: 'Thu Thảo', avatarSeed: 43 },
+    { name: 'Hoàng Long', avatarSeed: 44 },
+    { name: 'Trọng Nhân', avatarSeed: 20 },
+    { name: 'Gia Hân', avatarSeed: 21 },
+    { name: 'Thanh Trúc', avatarSeed: 22 },
+    { name: 'Đăng Khoa', avatarSeed: 23 },
+    { name: 'Mỹ Duyên', avatarSeed: 24 },
+    { name: 'Việt Anh', avatarSeed: 25 },
+    { name: 'Diệu Linh', avatarSeed: 26 },
+    { name: 'Hoàng Bách', avatarSeed: 27 },
+    { name: 'Ngọc Mai', avatarSeed: 28 },
+  ], []);
+
+  const registerPlayer = useCallback((p: {
+    id?: string;
+    name?: string;
+    nickname?: string;
+    avatarSeed?: any;
+    avatarId?: any;
+    rank?: string;
+    joinedAt?: string;
+  }) => {
+    const playerName = (p.name || p.nickname || '').trim();
+    if (!playerName || playerName === 'host') return;
+    const playerId = p.id || `p_${playerName}`;
+
+    setPlayers((prev) => {
+      const existingIdx = prev.findIndex((item) => item.id === playerId || item.name.toLowerCase() === playerName.toLowerCase());
+      if (existingIdx >= 0) {
+        return prev;
+      }
+      return [
+        ...prev,
+        {
+          id: playerId,
+          name: playerName,
+          avatarSeed: p.avatarSeed ?? p.avatarId ?? playerName,
+          rank: p.rank || 'Học viên',
+          joinedAt: p.joinedAt || new Date().toISOString(),
+        },
+      ];
+    });
+
+    setPlayerGoldMap((prev) => ({ ...prev, [playerName]: prev[playerName] ?? 0 }));
+
+    // Phản hồi ACK xác nhận cho học sinh qua Supabase channel nếu có
+    try {
+      channelRef.current?.send({
+        type: 'broadcast',
+        event: 'player-joined-ack',
+        payload: {
+          playerId: playerId,
+          pin: pinCodeRef.current,
+          accepted: true,
+        },
+      });
+    } catch (err) {
+      console.warn('[ArenaHost] Error sending player-joined-ack:', err);
+    }
+  }, []);
+
+  // Tính năng ĐẤU TRƯỜNG 100: Thêm học viên tự động nảy pặc pặc như Kahoot
+  const handleSpawnMockArena = useCallback((count = 12) => {
+    const pool = [...MOCK_ARENA_STUDENTS];
+    let spawned = 0;
+    const interval = setInterval(() => {
+      if (spawned >= count || pool.length === 0) {
+        clearInterval(interval);
+        return;
+      }
+      const student = pool.shift();
+      if (!student) {
+        clearInterval(interval);
+        return;
+      }
+      registerPlayer({
+        id: `mock_${student.name}`,
+        name: student.name,
+        avatarSeed: student.avatarSeed,
+        rank: 'Học viên',
+        joinedAt: new Date().toISOString(),
+      });
+      playClickSound();
+      spawned++;
+    }, 200);
+  }, [MOCK_ARENA_STUDENTS, registerPlayer, playClickSound]);
+
+  // Hỗ trợ HTML5 BroadcastChannel cho cùng thiết bị/nhiều tab
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('BroadcastChannel' in window) || !pinCode) return;
+    try {
+      const bc = new BroadcastChannel(`arena-local-sync-${pinCode}`);
+      bc.onmessage = (event) => {
+        const { type, payload } = event.data || {};
+        if (type === 'player-joined' && payload) {
+          registerPlayer(payload);
+          playClickSound();
+        }
+      };
+      return () => bc.close();
+    } catch {}
+  }, [pinCode, registerPlayer, playClickSound]);
+
   // Lắng nghe học sinh tham gia realtime và các sự kiện cướp vàng qua Supabase Broadcast Channel
   useEffect(() => {
     if (!pinCode) return;
 
     const channelName = `arena-room-${pinCode}`;
-    const topic = `realtime:${channelName}`;
-    
-    // Dọn dẹp channel cũ nếu còn tồn tại trong bộ nhớ Supabase client
-    const existing = supabase.getChannels().find((c) => c.topic === topic);
-    if (existing) {
-      supabase.removeChannel(existing);
-    }
-
     const channel = supabase.channel(channelName, {
       config: {
-        broadcast: { ack: true, self: false },
+        broadcast: { ack: true, self: true },
         presence: { key: 'host' },
       },
     });
-
-    const registerPlayer = (p: {
-      id?: string;
-      name?: string;
-      nickname?: string;
-      avatarSeed?: any;
-      avatarId?: any;
-      rank?: string;
-      joinedAt?: string;
-    }) => {
-      const playerName = (p.name || p.nickname || '').trim();
-      if (!playerName || playerName === 'host') return;
-      const playerId = p.id || `p_${playerName}`;
-
-      setPlayers((prev) => {
-        const existingIdx = prev.findIndex((item) => item.id === playerId || item.name.toLowerCase() === playerName.toLowerCase());
-        if (existingIdx >= 0) {
-          return prev;
-        }
-        return [
-          ...prev,
-          {
-            id: playerId,
-            name: playerName,
-            avatarSeed: p.avatarSeed ?? p.avatarId ?? playerName,
-            rank: p.rank || 'Học viên',
-            joinedAt: p.joinedAt || new Date().toISOString(),
-          },
-        ];
-      });
-
-      setPlayerGoldMap((prev) => ({ ...prev, [playerName]: prev[playerName] ?? 0 }));
-
-      // Phản hồi ACK xác nhận cho học sinh
-      try {
-        channel.send({
-          type: 'broadcast',
-          event: 'player-joined-ack',
-          payload: {
-            playerId: playerId,
-            pin: pinCode,
-            accepted: true,
-          },
-        });
-      } catch (err) {
-        console.warn('[ArenaHost] Error sending player-joined-ack:', err);
-      }
-    };
 
     channel
       .on('presence', { event: 'sync' }, () => {
@@ -297,6 +352,49 @@ export default function ArenaHostPage() {
       payload: { players: candidates },
     });
   }, [players, playerGoldMap]);
+
+  // Tự động trả lời câu hỏi cho các học viên Đấu trường 100 mô phỏng
+  useEffect(() => {
+    if (state !== 'QUESTION_LIVE') return;
+    const mockPlayers = players.filter((p) => p.id.startsWith('mock_'));
+    if (mockPlayers.length === 0) return;
+
+    const timers: NodeJS.Timeout[] = [];
+    mockPlayers.forEach((p) => {
+      const delay = 1500 + Math.random() * (Math.max(3, roomSettings.timeLimit - 3) * 1000);
+      const timer = setTimeout(() => {
+        const isCorrect = Math.random() > 0.25; // 75% trả lời đúng
+        const correctOpt = currentQuestionRef.current.correctOptionId;
+        const options = currentQuestionRef.current.options.map((o) => o.id);
+        const wrongOptions = options.filter((o) => o !== correctOpt);
+        const chosen = isCorrect ? correctOpt : (wrongOptions[Math.floor(Math.random() * wrongOptions.length)] || options[0]);
+        const answeredTimeLeft = Math.max(1, Math.floor((roomSettings.timeLimit * 1000 - delay) / 1000));
+        const score = isCorrect ? 100 + answeredTimeLeft * 10 : 0;
+
+        setAnswers((prev) => ({
+          ...prev,
+          [p.name]: {
+            playerId: p.id,
+            nickname: p.name,
+            optionId: chosen,
+            timeLeft: answeredTimeLeft,
+            score,
+            gold: Math.floor(Math.random() * 50) * 10,
+          },
+        }));
+
+        if (score > 0) {
+          setCumulativeScores((prev) => ({
+            ...prev,
+            [p.name]: (prev[p.name] || 0) + score,
+          }));
+        }
+      }, delay);
+      timers.push(timer);
+    });
+
+    return () => timers.forEach((t) => clearTimeout(t));
+  }, [state, players, roomSettings.timeLimit]);
 
   // Tính toán tỷ lệ phần trăm phân bố đáp án thực tế từ học sinh thật
   const distribution = useMemo(() => {
@@ -557,13 +655,24 @@ export default function ArenaHostPage() {
         {/* Nút Cài đặt & Music Toggle */}
         <div className="flex items-center gap-3">
           {state === 'LOBBY' && (
-            <button
-              onClick={() => setIsSettingsOpen(true)}
-              className="flex items-center gap-2 px-3.5 py-1.5 bg-purple-900/40 hover:bg-purple-800/60 border border-purple-500/30 text-xs font-bold rounded-full transition-all cursor-pointer text-purple-200 hover:text-white"
-            >
-              <Settings className="w-4 h-4 text-purple-300" />
-              <span>Cài đặt ({roomSettings.gameMode === 'GOLD_QUEST' ? 'Cướp Vàng' : 'Cổ Điển'})</span>
-            </button>
+            <>
+              <button
+                onClick={() => handleSpawnMockArena(12)}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 border border-amber-300/40 text-xs font-black rounded-full transition-all cursor-pointer text-white shadow-md shadow-orange-500/20"
+                title="Bật tính năng Đấu trường 100: Thêm 12 học viên nhảy vào phòng pặc pặc như Kahoot"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-100 animate-spin" />
+                <span>⚡ Đấu trường 100 (Thêm HS)</span>
+              </button>
+
+              <button
+                onClick={() => setIsSettingsOpen(true)}
+                className="flex items-center gap-2 px-3.5 py-1.5 bg-purple-900/40 hover:bg-purple-800/60 border border-purple-500/30 text-xs font-bold rounded-full transition-all cursor-pointer text-purple-200 hover:text-white"
+              >
+                <Settings className="w-4 h-4 text-purple-300" />
+                <span>Cài đặt ({roomSettings.gameMode === 'GOLD_QUEST' ? 'Cướp Vàng' : 'Cổ Điển'})</span>
+              </button>
+            </>
           )}
 
           <button

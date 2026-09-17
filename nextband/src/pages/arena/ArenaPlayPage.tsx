@@ -100,21 +100,33 @@ export default function ArenaPlayPage() {
     isLocked,
   });
 
+  // Hỗ trợ HTML5 BroadcastChannel đồng bộ cục bộ tức thì cho máy cùng tab/cùng trình duyệt
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('BroadcastChannel' in window) || !pin) return;
+    try {
+      const bc = new BroadcastChannel(`arena-local-sync-${pin}`);
+      bc.postMessage({
+        type: 'player-joined',
+        payload: {
+          id: playerId,
+          name: nickname,
+          avatarSeed: avatarId,
+          rank: 'Học viên',
+          joinedAt: new Date().toISOString(),
+        },
+      });
+      return () => bc.close();
+    } catch {}
+  }, [pin, playerId, nickname, avatarId]);
+
   // Lắng nghe broadcast và Presence từ Host
   useEffect(() => {
     if (!pin) return;
     const channelName = `arena-room-${pin}`;
-    const topic = `realtime:${channelName}`;
-
-    // Dọn dẹp channel cũ nếu còn tồn tại
-    const existing = supabase.getChannels().find((c) => c.topic === topic);
-    if (existing) {
-      supabase.removeChannel(existing);
-    }
 
     const channel = supabase.channel(channelName, {
       config: {
-        broadcast: { ack: true, self: false },
+        broadcast: { ack: true, self: true },
         presence: { key: nickname },
       },
     });
