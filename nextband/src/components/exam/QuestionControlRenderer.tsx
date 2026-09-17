@@ -94,16 +94,21 @@ export function QuestionControlRenderer({
                     checked
                       ? `bg-[hsl(var(--${themeColorClass}))]/5 border-[hsl(var(--${themeColorClass}))]/30 ring-1 ring-[hsl(var(--${themeColorClass}))]/20`
                       : "bg-background border-transparent hover:bg-muted/30",
-                    disabled && "opacity-60 cursor-not-allowed"
+                    (disabled || (!checked && selectedValues.length >= expectedCount)) && "opacity-60 cursor-not-allowed"
                   )}
                 >
                   <Checkbox
                     checked={checked}
-                    disabled={disabled}
+                    disabled={disabled || (!checked && selectedValues.length >= expectedCount)}
                     onCheckedChange={(next) => {
                       const nextValues = new Set(selectedValues);
-                      if (next) nextValues.add(option);
-                      else nextValues.delete(option);
+                      if (next) {
+                        if (nextValues.size < expectedCount) {
+                          nextValues.add(option);
+                        }
+                      } else {
+                        nextValues.delete(option);
+                      }
                       onAnswerChange(question.id, Array.from(nextValues));
                     }}
                   />
