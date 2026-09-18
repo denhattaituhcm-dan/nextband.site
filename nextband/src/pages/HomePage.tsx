@@ -25,6 +25,7 @@ import { isScholarshipEligible } from "@/lib/disciplineScholarshipHelper";
 import { AcademicAscentWorld, AscentLessonNode } from "@/components/student/AcademicAscentWorld";
 import { calculateStudentJourney, resolveCourseBands } from "@/lib/studentJourney";
 import { calculateStudentStreak } from "@/lib/studentStreakHelper";
+import { detectExamSkill, isObjectiveSkill } from "@/lib/examSkillHelper";
 import { getCourseBrand } from "@/lib/courseBrand";
 import {
   evaluateAllAchievedMilestones,
@@ -452,13 +453,33 @@ export default function HomePage() {
 
   // Bài tập được chấm/trả mới nhất của học viên
   const latestGradedSubmission = useMemo(() => {
-    const gradedSubs = userSubmissions.filter((s: any) =>
-      ["graded", "GRADED"].includes(s.status)
-    );
-    if (gradedSubs.length === 0) return null;
+    // Chỉ lấy bài nộp thực sự ĐÃ ĐƯỢC CHẤM ĐIỂM:
+    // - Với trắc nghiệm / tự động chấm: status là GRADED và có kết quả câu hỏi
+    // - Với tự luận (Writing, Speaking): bắt buộc giáo viên đã chấm (status là GRADED và có người chấm / nhận xét / criteriaScores)
+    const validGradedSubs = userSubmissions.filter((s: any) => {
+      const status = String(s.status || "").toUpperCase();
+      if (status !== "GRADED") return false;
+
+      const examId = s.examId || s.exam_id;
+      const matchedLesson = (rawLessons || []).find((l: any) => l.id === examId);
+      const examObj = s.exam || matchedLesson || { title: s.examTitle || "" };
+      const skill = detectExamSkill(examObj);
+      const isObjective = isObjectiveSkill(skill);
+
+      if (isObjective) {
+        // Tự động chấm: chỉ cần status GRADED và có số câu đúng hoặc điểm
+        return s.correctAnswers != null || s.totalScore != null || s.score != null;
+      } else {
+        // Tự luận (Writing, Speaking): bắt buộc phải do giáo viên chấm điểm thực tế
+        const hasTeacherGrading = !!(s.gradedBy || s.graded_by || s.feedback || s.criteriaScores);
+        return hasTeacherGrading && (s.totalScore != null || s.score != null);
+      }
+    });
+
+    if (validGradedSubs.length === 0) return null;
 
     // Sắp xếp theo ngày trả điểm / nộp gần nhất
-    const sorted = [...gradedSubs].sort((a: any, b: any) => {
+    const sorted = [...validGradedSubs].sort((a: any, b: any) => {
       const timeA = new Date(a.gradedAt || a.graded_at || a.submittedAt || a.submitted_at || a.updatedAt || 0).getTime();
       const timeB = new Date(b.gradedAt || b.graded_at || b.submittedAt || b.submitted_at || b.updatedAt || 0).getTime();
       return timeB - timeA;
@@ -467,6 +488,10 @@ export default function HomePage() {
     const latest = sorted[0];
     const examId = latest.examId || latest.exam_id;
     const matchedLesson = (rawLessons || []).find((l: any) => l.id === examId);
+    const examObj = latest.exam || matchedLesson || { title: latest.examTitle || "" };
+    const skill = detectExamSkill(examObj);
+    const isObjective = isObjectiveSkill(skill);
+    const isTeacherGraded = !isObjective && !!(latest.gradedBy || latest.graded_by || latest.feedback || latest.criteriaScores);
 
     const examTitle =
       latest.exam?.title ||
@@ -474,25 +499,41 @@ export default function HomePage() {
       matchedLesson?.title ||
       "Bài tập vừa chấm";
 
-    const scoreDisplay =
-      latest.totalScore != null
-        ? String(latest.totalScore).startsWith("Band")
-          ? latest.totalScore
-          : Number(latest.totalScore) <= 9 && Number(latest.totalScore) > 0
-          ? `Band ${latest.totalScore}`
-          : `${latest.totalScore} đ`
-        : latest.score != null
-        ? `${latest.score} đ`
-        : "Đã chấm";
+    let scoreDisplay = "Đã chấm";
+    let scoreSubtext = "";
 
-    const isTeacherGraded = !!(latest.gradedBy || latest.feedback || latest.criteriaScores);
+    if (isObjective) {
+      // Chấm tự động: Công bố số câu đúng / tổng số câu
+      if (latest.correctAnswers != null && latest.totalQuestions != null && Number(latest.totalQuestions) > 0) {
+        const correct = Number(latest.correctAnswers);
+        const total = Number(latest.totalQuestions);
+        scoreDisplay = `${correct}/${total} câu`;
+      } else if (latest.correctAnswers != null) {
+        scoreDisplay = `${latest.correctAnswers} câu đúng`;
+      } else if (latest.totalScore != null || latest.score != null) {
+        const scoreVal = Number(latest.totalScore ?? latest.score);
+        scoreDisplay = `${scoreVal} câu đúng`;
+      }
+      scoreSubtext = "Hệ thống chấm tự động";
+    } else {
+      // Tự luận: Giáo viên chấm theo IELTS Band
+      const bandVal = latest.totalScore != null ? Number(latest.totalScore) : (latest.score != null ? Number(latest.score) : null);
+      if (bandVal != null && !isNaN(bandVal)) {
+        scoreDisplay = `Band ${bandVal % 1 === 0 ? bandVal.toFixed(1) : bandVal}`;
+      } else if (latest.totalScore != null) {
+        scoreDisplay = String(latest.totalScore).startsWith("Band") ? latest.totalScore : `Band ${latest.totalScore}`;
+      }
+      scoreSubtext = "Giáo viên đã trả bài";
+    }
 
     return {
       submissionId: latest.id,
       examId,
       examTitle,
       scoreDisplay,
+      scoreSubtext,
       isTeacherGraded,
+      isObjective,
       gradedAt: latest.gradedAt || latest.graded_at || latest.submittedAt || latest.submitted_at,
     };
   }, [userSubmissions, rawLessons]);
@@ -693,9 +734,7 @@ export default function HomePage() {
                         <span className="flex items-center gap-1">
                           <span className={`w-1.5 h-1.5 rounded-full ${latestGradedSubmission ? "bg-emerald-500" : "bg-slate-300"}`} />
                           {latestGradedSubmission
-                            ? latestGradedSubmission.isTeacherGraded
-                              ? "Giáo viên đã trả bài"
-                              : "Hệ thống chấm tự động"
+                            ? latestGradedSubmission.scoreSubtext || (latestGradedSubmission.isTeacherGraded ? "Giáo viên đã trả bài" : "Hệ thống chấm tự động")
                             : "Đang chờ nộp & chấm"}
                         </span>
                         {latestGradedSubmission?.gradedAt && (
@@ -722,12 +761,12 @@ export default function HomePage() {
                           ? "bg-gradient-to-br from-indigo-50/70 via-white to-purple-50/40 dark:from-slate-800 dark:to-indigo-950/30 border-indigo-200 dark:border-indigo-800 hover:border-indigo-400 hover:shadow-xs cursor-pointer group"
                           : "bg-slate-50/60 dark:bg-slate-800/40 border-slate-200/60 dark:border-slate-700/40 opacity-75 cursor-default"
                       }`}
-                      title={latestGradedSubmission ? "Bấm để xem chi tiết lời nhận xét & sửa lỗi" : "Chưa có bài tập nào được chấm"}
+                      title={latestGradedSubmission ? (latestGradedSubmission.isTeacherGraded ? "Bấm để xem chi tiết lời nhận xét & sửa lỗi" : "Bấm để xem đáp án và giải thích chi tiết") : "Chưa có bài tập nào được chấm"}
                     >
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-bold text-indigo-700 dark:text-indigo-300 flex items-center gap-1.5">
                           <FileCheck className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
-                          Xem bài được trả
+                          {latestGradedSubmission?.isTeacherGraded ? "Xem bài được trả" : "Xem bài đã làm"}
                         </span>
                         <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
                           <span>Chi tiết</span>
@@ -736,12 +775,18 @@ export default function HomePage() {
                       </div>
                       <div className="text-[11px] font-medium text-slate-600 dark:text-slate-300 line-clamp-1">
                         {latestGradedSubmission
-                          ? "Xem nhận xét, lời giải & sửa lỗi chi tiết"
+                          ? latestGradedSubmission.isTeacherGraded
+                            ? "Xem nhận xét, lời giải & sửa lỗi chi tiết"
+                            : "Xem đáp án đúng & giải thích chi tiết từng câu"
                           : "Làm bài tập để nhận nhận xét & điểm số"}
                       </div>
                       <div className="flex items-center justify-between pt-0.5">
                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100/70 text-indigo-800 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
-                          {latestGradedSubmission ? "Nhận xét chi tiết" : "Chờ bài làm"}
+                          {latestGradedSubmission
+                            ? latestGradedSubmission.isTeacherGraded
+                              ? "Nhận xét chi tiết"
+                              : "Xem giải thích"
+                            : "Chờ bài làm"}
                         </span>
                         <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold underline underline-offset-2">
                           Mở bài →
