@@ -314,4 +314,93 @@ export class ArenaEngineService {
       throw dbErr;
     }
   }
+
+  /**
+   * Phase 5: Reclaim Host Ownership and Full State Snapshot after Refresh/Disconnect
+   */
+  public async reclaimHostSnapshot(pin: string, hostToken: string) {
+    if (!pin || !hostToken) {
+      const err: any = new Error("Thiếu mã PIN hoặc Host Token để khôi phục quyền Host.");
+      err.statusCode = 400;
+      err.code = "BAD_REQUEST";
+      throw err;
+    }
+
+    const room = await this.prisma.arenaRoom.findFirst({
+      where: {
+        pin: pin.trim(),
+        status: { not: "ENDED" },
+      },
+      include: {
+        participants: {
+          select: {
+            id: true,
+            nickname: true,
+            avatarId: true,
+            totalScore: true,
+            totalGold: true,
+            joinedAt: true,
+          },
+          orderBy: {
+            totalScore: "desc",
+          },
+        },
+      },
+    });
+
+    if (!room) {
+      const err: any = new Error("Phòng thi đấu không tồn tại hoặc đã kết thúc.");
+      err.statusCode = 404;
+      err.code = "ROOM_NOT_FOUND";
+      throw err;
+    }
+
+    const isValidToken = this.pinService.verifyHostToken(hostToken, room.hostTokenHash);
+    if (!isValidToken) {
+      const err: any = new Error("Host Token không hợp lệ. Bạn không có quyền sở hữu phòng này.");
+      err.statusCode = 403;
+      err.code = "INVALID_HOST_TOKEN";
+      throw err;
+    }
+
+    // Nạp câu trả lời của vòng hiện tại nếu đang trong hoặc sau một câu hỏi
+    const currentRoundAnswers = await this.prisma.arenaAnswer.findMany({
+      where: {
+        roomId: room.id,
+        roundIndex: room.currentRound,
+      },
+      include: {
+        participant: {
+          select: {
+            nickname: true,
+          },
+        },
+      },
+    });
+
+    const answersMap: Record<string, any> = {};
+    for (const ans of currentRoundAnswers) {
+      answersMap[ans.participant.nickname] = {
+        participantId: ans.participantId,
+        nickname: ans.participant.nickname,
+        optionId: ans.selectedOptionId,
+        isCorrect: ans.isCorrect,
+        score: ans.scoreAwarded,
+      };
+    }
+
+    return {
+      roomId: room.id,
+      pin: room.pin,
+      status: room.status,
+      currentRound: room.currentRound,
+      currentQuestionId: room.currentQuestionId,
+      question: ARENA_STANDARD_QUESTIONS[room.currentRound] || null,
+      totalQuestions: ARENA_STANDARD_QUESTIONS.length,
+      roundStartedAt: room.roundStartedAt,
+      roundDeadlineAt: room.roundDeadlineAt,
+      participants: room.participants,
+      currentRoundAnswers: answersMap,
+    };
+  }
 }

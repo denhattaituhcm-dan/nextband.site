@@ -5584,6 +5584,43 @@ export const arenaApi = {
     );
     return json.data;
   },
+
+  async reclaimHostSnapshot(params: {
+    pin: string;
+    hostToken: string;
+  }): Promise<{
+    roomId: string;
+    pin: string;
+    status: string;
+    currentRound: number;
+    currentQuestionId: string | null;
+    question: any;
+    totalQuestions: number;
+    roundStartedAt: string | null;
+    roundDeadlineAt: string | null;
+    participants: Array<{
+      id: string;
+      nickname: string;
+      avatarId: number;
+      totalScore: number;
+      totalGold: number;
+      joinedAt: string;
+    }>;
+    currentRoundAnswers: Record<string, any>;
+  }> {
+    const res = await fetch(`${API_BASE_URL}/arena/rooms/${encodeURIComponent(params.pin)}/reclaim`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ hostToken: params.hostToken }),
+    });
+    const json = await handleApiResponse<{ success: boolean; data: any }>(
+      res,
+      "Không thể khôi phục trạng thái Host"
+    );
+    return json.data;
+  },
 };
 
 

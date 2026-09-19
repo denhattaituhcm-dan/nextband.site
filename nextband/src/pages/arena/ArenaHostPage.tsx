@@ -155,10 +155,51 @@ export default function ArenaHostPage() {
     } catch {}
   }, [pinCode, registerPlayer, playClickSound]);
 
-  // Nạp danh sách người chơi đã đăng ký chính thức từ Database làm Nguồn chân lý (Source of Truth)
-  const fetchRoomParticipants = useCallback(async () => {
+  // Phase 5: Khôi phục toàn bộ Snapshot trạng thái phòng từ Server sau khi F5/Mất kết nối
+  const reclaimRoomSnapshot = useCallback(async () => {
     if (!pinCode) return;
+    const hostToken = typeof window !== 'undefined' ? sessionStorage.getItem(`arena_host_token_${pinCode}`) : null;
+
     try {
+      if (hostToken) {
+        const snapshot = await arenaApi.reclaimHostSnapshot({ pin: pinCode, hostToken });
+        if (snapshot) {
+          // Khôi phục trạng thái State Machine của phòng
+          if (snapshot.status) {
+            const mappedState = snapshot.status === 'ROUND_REVEAL' ? 'REVEAL_PERSONAL' : (snapshot.status as ArenaState);
+            setState(mappedState);
+          }
+          if (typeof snapshot.currentRound === 'number') {
+            setQuestionIndex(snapshot.currentRound);
+          }
+          if (snapshot.participants) {
+            setPlayers(
+              snapshot.participants.map((p: any) => ({
+                id: p.id,
+                name: p.nickname,
+                avatarSeed: p.avatarId,
+                rank: 'Học viên',
+                joinedAt: p.joinedAt,
+                isOnline: true,
+              }))
+            );
+            const scoreObj: Record<string, number> = {};
+            const goldObj: Record<string, number> = {};
+            snapshot.participants.forEach((p: any) => {
+              scoreObj[p.nickname] = p.totalScore || 0;
+              goldObj[p.nickname] = p.totalGold || 0;
+            });
+            setCumulativeScores(scoreObj);
+            setPlayerGoldMap(goldObj);
+          }
+          if (snapshot.currentRoundAnswers) {
+            setAnswers(snapshot.currentRoundAnswers);
+          }
+          return;
+        }
+      }
+
+      // Nếu không có hostToken hoặc fallback cơ bản
       const roomData = await arenaApi.getRoomByPin(pinCode);
       if (roomData && (roomData as any).participants) {
         const dbParticipants = (roomData as any).participants;
@@ -177,14 +218,14 @@ export default function ArenaHostPage() {
         });
       }
     } catch (e) {
-      console.warn('[ArenaHost] Lỗi tải danh sách người chơi từ DB:', e);
+      console.warn('[ArenaHost] Lỗi khôi phục snapshot Host từ DB:', e);
     }
   }, [pinCode]);
 
-  // Load danh sách người chơi ban đầu khi Host mở phòng
+  // Load danh sách người chơi và khôi phục Snapshot ban đầu khi Host mở phòng/F5
   useEffect(() => {
-    fetchRoomParticipants();
-  }, [fetchRoomParticipants]);
+    reclaimRoomSnapshot();
+  }, [reclaimRoomSnapshot]);
 
   // Đồng bộ Presence để xác định ai đang Online / Offline (Không xóa khỏi danh sách khi mất mạng)
   useEffect(() => {
@@ -223,10 +264,10 @@ export default function ArenaHostPage() {
         );
 
         // Fetch lại DB nếu có học sinh mới vừa handshake
-        fetchRoomParticipants();
+        reclaimRoomSnapshot();
       })
       .on('presence', { event: 'join' }, ({ key, newPresences }) => {
-        fetchRoomParticipants();
+        reclaimRoomSnapshot();
         playClickSound();
       })
       .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {

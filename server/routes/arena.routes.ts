@@ -156,5 +156,34 @@ export default async function arenaRoutes(fastify: FastifyInstance) {
       }
     }
   );
+
+  // POST /arena/rooms/:pin/reclaim - Khôi phục quyền Host và Snapshot sau khi F5/disconnect
+  fastify.post<{
+    Params: { pin: string };
+    Body: {
+      hostToken: string;
+    };
+  }>(
+    "/rooms/:pin/reclaim",
+    async (request, reply) => {
+      try {
+        const { pin } = request.params;
+        const { hostToken } = request.body || {};
+        const engineService = new (await import("../services/arena-engine.service.js")).ArenaEngineService(fastify.prisma);
+        const snapshot = await engineService.reclaimHostSnapshot(pin, hostToken);
+        return reply.code(200).send({
+          success: true,
+          data: snapshot,
+        });
+      } catch (err: any) {
+        const statusCode = err?.statusCode || 500;
+        return reply.code(statusCode).send({
+          success: false,
+          error: err?.message || "Lỗi khi khôi phục snapshot Host.",
+          code: err?.code || "INTERNAL_ERROR",
+        });
+      }
+    }
+  );
 }
 
