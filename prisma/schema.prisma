@@ -64,6 +64,7 @@ model User {
   skillEvidences        StudentSkillEvidence[]
   skillMasteries        StudentSkillMastery[]
   seasonalClaims        SeasonalRewardClaim[]
+  hostedArenaRooms      ArenaRoom[]              @relation("HostedArenaRooms")
 
   @@map("profiles")
 }
@@ -345,6 +346,7 @@ model Exam {
   assignments         ClassExamAssignment[]
   policy              ExamPolicy?
   examVersions        ExamVersion[]
+  arenaRooms          ArenaRoom[]
   course              Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@index([courseId])
@@ -1424,6 +1426,81 @@ model SeasonalRewardClaim {
   @@unique([eventId, studentId, homeworkId])
   @@index([eventId, studentId])
   @@map("seasonal_reward_claims")
+}
+
+enum ArenaRoomStatus {
+  LOBBY
+  QUESTION_LIVE
+  ROUND_LOCKED
+  ROUND_REVEAL
+  LEADERBOARD
+  PODIUM
+  ENDED
+}
+
+model ArenaRoom {
+  id                String            @id @default(uuid())
+  pin               String            @db.VarChar(6)
+  hostUserId        String?           @map("host_user_id")
+  hostTokenHash     String            @map("host_token_hash")
+  examId            String?           @map("exam_id")
+  status            ArenaRoomStatus   @default(LOBBY)
+  currentRound      Int               @default(0) @map("current_round")
+  currentQuestionId String?           @map("current_question_id")
+  roundStartedAt    DateTime?         @map("round_started_at")
+  roundDeadlineAt   DateTime?         @map("round_deadline_at")
+  lastCommandId     String?           @map("last_command_id")
+  config            Json?
+  createdAt         DateTime          @default(now()) @map("created_at")
+  expiresAt         DateTime?         @map("expires_at")
+
+  hostUser          User?             @relation("HostedArenaRooms", fields: [hostUserId], references: [userId], onDelete: SetNull)
+  exam              Exam?             @relation(fields: [examId], references: [id], onDelete: SetNull)
+  participants      ArenaParticipant[]
+  answers           ArenaAnswer[]
+
+  @@index([pin])
+  @@index([status])
+  @@map("arena_rooms")
+}
+
+model ArenaParticipant {
+  id                 String        @id @default(uuid())
+  roomId             String        @map("room_id")
+  playerSessionToken String        @unique @map("player_session_token")
+  nickname           String        @db.VarChar(30)
+  normalizedNickname String        @map("normalized_nickname") @db.VarChar(30)
+  avatarId           Int           @default(0) @map("avatar_id")
+  totalScore         Int           @default(0) @map("total_score")
+  totalGold          Int           @default(0) @map("total_gold")
+  joinedAt           DateTime      @default(now()) @map("joined_at")
+
+  room               ArenaRoom     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  answers            ArenaAnswer[]
+
+  @@unique([roomId, normalizedNickname])
+  @@index([roomId])
+  @@map("arena_participants")
+}
+
+model ArenaAnswer {
+  id                  String           @id @default(uuid())
+  roomId              String           @map("room_id")
+  participantId       String           @map("participant_id")
+  questionId          String           @map("question_id")
+  roundIndex          Int              @map("round_index")
+  selectedOptionId    String           @map("selected_option_id")
+  isCorrect           Boolean          @map("is_correct")
+  scoreAwarded        Int              @default(0) @map("score_awarded")
+  submittedAt         DateTime         @default(now()) @map("submitted_at")
+  clientTelemetryTime DateTime?        @map("client_telemetry_time")
+
+  room                ArenaRoom        @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  participant         ArenaParticipant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+
+  @@unique([participantId, questionId])
+  @@index([roomId, roundIndex])
+  @@map("arena_answers")
 }
 
 
