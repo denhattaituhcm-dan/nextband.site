@@ -20,27 +20,12 @@ export async function getTeacherStudentIds(
     },
   });
 
-  const rawIds = [...new Set(classStudents.map((cs) => cs.studentId))];
-  if (rawIds.length === 0) return [];
-
-  const users = await prisma.user.findMany({
-    where: {
-      OR: [{ id: { in: rawIds } }, { userId: { in: rawIds } }],
-    },
-    select: { id: true, userId: true },
-  });
-
-  const allIds = new Set<string>(rawIds);
-  users.forEach((u) => {
-    if (u.id) allIds.add(u.id);
-    if (u.userId) allIds.add(u.userId);
-  });
-
-  return Array.from(allIds);
+  const studentIds = [...new Set(classStudents.map((cs) => cs.studentId))];
+  return studentIds;
 }
 
 /**
- * Lấy danh sách studentId thuộc 1 lớp cụ thể (bao gồm cả id và userId).
+ * Lấy danh sách studentId thuộc 1 lớp cụ thể (canonical studentId SSOT).
  */
 export async function getClassStudentIds(
   prisma: PrismaClient,
@@ -51,23 +36,8 @@ export async function getClassStudentIds(
     select: { studentId: true },
   });
 
-  const rawIds = [...new Set(classStudents.map((cs) => cs.studentId))];
-  if (rawIds.length === 0) return [];
-
-  const users = await prisma.user.findMany({
-    where: {
-      OR: [{ id: { in: rawIds } }, { userId: { in: rawIds } }],
-    },
-    select: { id: true, userId: true },
-  });
-
-  const allIds = new Set<string>(rawIds);
-  users.forEach((u) => {
-    if (u.id) allIds.add(u.id);
-    if (u.userId) allIds.add(u.userId);
-  });
-
-  return Array.from(allIds);
+  const studentIds = [...new Set(classStudents.map((cs) => cs.studentId))];
+  return studentIds;
 }
 
 /**

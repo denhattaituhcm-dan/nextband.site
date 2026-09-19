@@ -118,6 +118,21 @@ describe("Canonical Student & Class Data Mapper Contract Tests", () => {
       expect(droppedStudent.status).toBe("DROPPED");
       expect(droppedStudent.isActive).toBe(false);
     });
+
+    it("Test 5b: Strictly disambiguates studentId as Auth UID without falling back to profile PK or arbitrary payload ids", () => {
+      // Invariant: If only student.id (profile PK) is provided without userId or studentId, studentId must not fall back to it
+      const ambiguousPayload = {
+        id: "cs-999",
+        student: {
+          id: "profile-pk-123", // profile table PK
+          fullName: "Đỗ Minh",
+        },
+      };
+
+      const result = toCanonicalStudent(ambiguousPayload);
+      expect(result.id).toBe("cs-999");
+      expect(result.studentId).toBe(""); // Strict: profile PK is NOT Auth UID
+    });
   });
 
   describe("toCanonicalClass", () => {

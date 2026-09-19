@@ -1259,13 +1259,6 @@ export class ExamSubmissionService {
           teacherId = classStudent?.class?.teacherId || null;
         }
 
-        if (!teacherId && this.prisma.userRole) {
-          const firstTeacher = await this.prisma.userRole.findFirst({
-            where: { role: "teacher" },
-          });
-          teacherId = firstTeacher?.userId || null;
-        }
-
         if (teacherId && this.notificationService) {
           await this.notificationService.createNotification(this.prisma, {
             userId: teacherId,

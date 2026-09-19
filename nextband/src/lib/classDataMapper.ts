@@ -87,16 +87,12 @@ export function toCanonicalStudent(raw: any): CanonicalStudent {
 
   const studentObj = raw.student || {};
 
-  // Extract student ID with deep cascade
+  // Canonical Auth UID resolution: studentId (ClassStudent.studentId) -> student.userId (User.userId)
   const studentId = String(
     raw.studentId ||
     raw.student_id ||
     studentObj.userId ||
     studentObj.user_id ||
-    studentObj.id ||
-    raw.userId ||
-    raw.user_id ||
-    raw.id ||
     ""
   );
 
