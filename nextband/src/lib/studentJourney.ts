@@ -116,24 +116,35 @@ export function resolveCourseBands(
   className?: string | null,
   courseSlug?: string | null
 ): CourseBandTarget {
-  const combined = `${courseTitle || ""} ${className || ""} ${courseSlug || ""}`.toLowerCase();
+  const rawTitle = (courseTitle || "").trim().toLowerCase();
+  const rawClass = (className || "").trim().toLowerCase();
+  const rawSlug = (courseSlug || "").trim().toLowerCase();
+  const combined = `${rawTitle} ${rawClass} ${rawSlug}`.toLowerCase();
 
-  // 1. Starter: 0.0 -> 3.0
+  // 1. Doer (formerly Dreamer 4.0): Entry 3.0 -> Target 4.0
+  // Matches "doer", "d01", "d02", "d...", or courseTitle "dreamer" when class code starts with "d"
   if (
-    combined.includes("starter") ||
-    /\b(st|s\d+)\b/i.test(combined) ||
-    /^s\d+/i.test(className?.trim() || "")
+    combined.includes("doer") ||
+    /\b(do)\b/i.test(rawTitle) ||
+    /\b(do)\b/i.test(rawClass) ||
+    /\b(d\d+)\b/i.test(rawClass) ||
+    /^d\d+/i.test(rawClass) ||
+    /^d\d+/i.test(rawTitle) ||
+    (rawTitle.includes("dreamer") && (/^d/i.test(rawClass) || !rawClass))
   ) {
-    return { entryBand: 0.0, targetBand: 3.0, courseKey: "starter", courseName: "Starter" };
+    return { entryBand: 3.0, targetBand: 4.0, courseKey: "dreamer", courseName: "Doer" };
   }
 
-  // 2. Dreamer: 3.0 -> 4.0
+  // 2. Dreamer (formerly Starter 3.0): Entry 0.0 -> Target 3.0
   if (
+    combined.includes("starter") ||
     combined.includes("dreamer") ||
-    /\b(dr|d\d+)\b/i.test(combined) ||
-    /^d\d+/i.test(className?.trim() || "")
+    /\b(st|s\d+)\b/i.test(rawTitle) ||
+    /\b(st|s\d+)\b/i.test(rawClass) ||
+    /^s\d+/i.test(rawClass) ||
+    /^s\d+/i.test(rawTitle)
   ) {
-    return { entryBand: 3.0, targetBand: 4.0, courseKey: "dreamer", courseName: "Dreamer" };
+    return { entryBand: 0.0, targetBand: 3.0, courseKey: "starter", courseName: "Dreamer" };
   }
 
   // 3. Builder: 4.0 -> 5.0

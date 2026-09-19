@@ -161,34 +161,43 @@ export function getCourseBrand(
   if (!input) return COURSE_BRANDS.fallback;
 
   let titleStr = '';
+  let nameStr = '';
   let slugStr = '';
   let bandStr = '';
 
   if (typeof input === 'string') {
     titleStr = input.trim();
   } else {
-    titleStr = (input.title || input.name || '').trim();
+    titleStr = (input.title || '').trim();
+    nameStr = (input.name || '').trim();
     slugStr = (input.slug || '').trim();
     bandStr = (input.band || '').trim();
   }
 
-  const primaryText = `${slugStr} ${titleStr}`.toLowerCase();
+  // Use combined text for keyword matching, but prioritize class code prefix & title specifically
+  const combined = `${slugStr} ${titleStr} ${nameStr}`.toLowerCase();
 
-  // 1. Check Doer (DO / D\d+ - Blue, Band 3.0 -> 4.0)
+  // 1. Check Doer (DO / D\d+ - Blue, Band 4.0, formerly Dreamer 4.0)
+  // Class code starting with D (e.g. D01 07.2026) is always Doer (Band 4.0)
   if (
-    primaryText.includes('doer') ||
+    combined.includes('doer') ||
     /\b(do)\b/i.test(titleStr) ||
-    /\b(dr|d\d+)\b/i.test(titleStr) ||
-    /^d\d+/i.test(titleStr)
+    /\b(do)\b/i.test(nameStr) ||
+    /\b(d\d+)\b/i.test(nameStr) ||
+    /^d\d+/i.test(nameStr) ||
+    /^d\d+/i.test(titleStr) ||
+    (titleStr.toLowerCase().includes('dreamer') && (/^d/i.test(nameStr) || !nameStr))
   ) {
     return COURSE_BRANDS.dreamer;
   }
 
-  // 2. Check Dreamer / Starter (ST / DR - Pink/Fuchsia, Band Đầu ra 3.0)
+  // 2. Check Dreamer (DR / S\d+ / ST - Pink/Fuchsia, Band Đầu ra 3.0, formerly Starter 3.0)
   if (
-    primaryText.includes('starter') ||
-    primaryText.includes('dreamer') ||
+    combined.includes('starter') ||
+    combined.includes('dreamer') ||
     /\b(st|s\d+)\b/i.test(titleStr) ||
+    /\b(st|s\d+)\b/i.test(nameStr) ||
+    /^s\d+/i.test(nameStr) ||
     /^s\d+/i.test(titleStr)
   ) {
     return COURSE_BRANDS.starter;
@@ -196,8 +205,10 @@ export function getCourseBrand(
 
   // 3. Check Leader (LE - Rose/Red)
   if (
-    primaryText.includes('leader') ||
+    combined.includes('leader') ||
     /\b(le|l\d+)\b/i.test(titleStr) ||
+    /\b(le|l\d+)\b/i.test(nameStr) ||
+    /^l\d+/i.test(nameStr) ||
     /^l\d+/i.test(titleStr)
   ) {
     return COURSE_BRANDS.leader;
@@ -205,8 +216,10 @@ export function getCourseBrand(
 
   // 4. Check Master (MA - Green)
   if (
-    primaryText.includes('master') ||
+    combined.includes('master') ||
     /\b(ma|m\d+)\b/i.test(titleStr) ||
+    /\b(ma|m\d+)\b/i.test(nameStr) ||
+    /^m\d+/i.test(nameStr) ||
     /^m\d+/i.test(titleStr)
   ) {
     return COURSE_BRANDS.master;
@@ -214,8 +227,10 @@ export function getCourseBrand(
 
   // 5. Check Builder (BU - Orange)
   if (
-    primaryText.includes('builder') ||
+    combined.includes('builder') ||
     /\b(bu|b\d+)\b/i.test(titleStr) ||
+    /\b(bu|b\d+)\b/i.test(nameStr) ||
+    /^b\d+/i.test(nameStr) ||
     /^b\d+/i.test(titleStr)
   ) {
     return COURSE_BRANDS.builder;
@@ -223,8 +238,10 @@ export function getCourseBrand(
 
   // 6. Check Placement Test (PL - Indigo)
   if (
-    primaryText.includes('placement') ||
+    combined.includes('placement') ||
     /\b(pl|p\d+)\b/i.test(titleStr) ||
+    /\b(pl|p\d+)\b/i.test(nameStr) ||
+    /^pl/i.test(nameStr) ||
     /^pl/i.test(titleStr)
   ) {
     return COURSE_BRANDS.placement;
@@ -232,9 +249,11 @@ export function getCourseBrand(
 
   // 7. Check Extra Listening (EX - Purple)
   if (
-    primaryText.includes('extra') ||
-    primaryText.includes('listening') ||
+    combined.includes('extra') ||
+    combined.includes('listening') ||
     /\b(ex|e\d+)\b/i.test(titleStr) ||
+    /\b(ex|e\d+)\b/i.test(nameStr) ||
+    /^ex/i.test(nameStr) ||
     /^ex/i.test(titleStr)
   ) {
     return COURSE_BRANDS.extra_listening;
@@ -242,9 +261,11 @@ export function getCourseBrand(
 
   // 8. Check Entrance Test THPTQG (EN - Amber)
   if (
-    primaryText.includes('entrance') ||
-    primaryText.includes('thptqg') ||
+    combined.includes('entrance') ||
+    combined.includes('thptqg') ||
     /\b(en)\b/i.test(titleStr) ||
+    /\b(en)\b/i.test(nameStr) ||
+    /^en/i.test(nameStr) ||
     /^en/i.test(titleStr)
   ) {
     return COURSE_BRANDS.entrance_thpt;
@@ -252,24 +273,26 @@ export function getCourseBrand(
 
   // 9. Check Luyện thi TN THPT (LU - Teal)
   if (
-    primaryText.includes('luyện thi') ||
-    primaryText.includes('luyen thi') ||
-    primaryText.includes('tn thpt') ||
+    combined.includes('luyện thi') ||
+    combined.includes('luyen thi') ||
+    combined.includes('tn thpt') ||
     /\b(lu)\b/i.test(titleStr) ||
+    /\b(lu)\b/i.test(nameStr) ||
+    /^lu/i.test(nameStr) ||
     /^lu/i.test(titleStr)
   ) {
     return COURSE_BRANDS.luyen_thi_thpt;
   }
 
   // Fallback check by specific exact band (if title is generic)
-  const fullText = `${titleStr} ${bandStr}`.toLowerCase();
+  const fullText = `${combined} ${bandStr}`.toLowerCase();
   if (fullText.includes('band 3.0') || fullText.includes('đầu ra 3.0')) return COURSE_BRANDS.starter;
   if (fullText.includes('band 4.0') || fullText.includes('đầu ra 4.0')) return COURSE_BRANDS.dreamer;
   if (fullText.includes('band 5.0') || fullText.includes('đầu ra 5.0')) return COURSE_BRANDS.builder;
   if (fullText.includes('band 6.0') || fullText.includes('đầu ra 6.0')) return COURSE_BRANDS.master;
   if (fullText.includes('band 6.5') || fullText.includes('đầu ra 6.5') || fullText.includes('7.0')) return COURSE_BRANDS.leader;
 
-  const rawForCode = titleStr || slugStr || 'CS';
+  const rawForCode = nameStr || titleStr || slugStr || 'CS';
   const code = rawForCode.length >= 2 ? rawForCode.substring(0, 2).toUpperCase() : 'CS';
   return {
     ...COURSE_BRANDS.fallback,

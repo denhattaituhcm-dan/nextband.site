@@ -55,13 +55,7 @@ const fullNavigationGroups: NavGroup[] = [
         description: "IELTS Command Center",
       },
       {
-        title: "Lớp của tôi",
-        url: "/app/my-courses",
-        icon: BookOpen,
-        description: "Lớp học và lộ trình",
-      },
-      {
-        title: "Chuyên cần & Tiến độ",
+        title: "Chuyên cần và Thi đua",
         url: "/app/attendance",
         icon: CalendarCheck,
         description: "Điểm danh chuyên cần & tổng quan BTVN",
