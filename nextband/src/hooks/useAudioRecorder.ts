@@ -109,7 +109,7 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
     }
   };
 
-  const requestPermission = async (): Promise<boolean> => {
+  const requestPermission = useCallback(async (): Promise<boolean> => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       stream.getTracks().forEach(track => track.stop());
@@ -120,7 +120,7 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
       setPermissionStatus('denied');
       return false;
     }
-  };
+  }, []);
 
   const updateAnalyser = useCallback(() => {
     if (analyserRef.current && isRecordingRef.current) {
@@ -131,7 +131,7 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
     }
   }, []);
 
-  const startRecording = async (): Promise<boolean> => {
+  const startRecording = useCallback(async (): Promise<boolean> => {
     try {
       cleanup();
 
@@ -205,9 +205,9 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
       setIsRecording(false);
       return false;
     }
-  };
+  }, [updateAnalyser]);
 
-  const stopRecording = () => {
+  const stopRecording = useCallback(() => {
     isRecordingRef.current = false;
     if (durationIntervalRef.current) {
       clearInterval(durationIntervalRef.current);
@@ -222,9 +222,9 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
     }
     setIsRecording(false);
     setIsPaused(false);
-  };
+  }, []);
 
-  const pauseRecording = () => {
+  const pauseRecording = useCallback(() => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
       try {
         mediaRecorderRef.current.pause();
@@ -238,9 +238,9 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
         console.warn('[useAudioRecorder] pause error:', err);
       }
     }
-  };
+  }, []);
 
-  const resumeRecording = () => {
+  const resumeRecording = useCallback(() => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'paused') {
       try {
         mediaRecorderRef.current.resume();
@@ -254,14 +254,14 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
         console.warn('[useAudioRecorder] resume error:', err);
       }
     }
-  };
+  }, [updateAnalyser]);
 
-  const resetRecording = () => {
+  const resetRecording = useCallback(() => {
     cleanup();
-    if (audioUrl) {
-      try { URL.revokeObjectURL(audioUrl); } catch {}
+    if (audioUrlRef.current) {
+      try { URL.revokeObjectURL(audioUrlRef.current); } catch {}
+      audioUrlRef.current = null;
     }
-    audioUrlRef.current = null;
     setAudioUrl(null);
     setAudioBlob(null);
     setDuration(0);
@@ -269,7 +269,7 @@ export function useAudioRecorder(): UseAudioRecorderReturn {
     chunksRef.current = [];
     setIsRecording(false);
     setIsPaused(false);
-  };
+  }, []);
 
   return {
     isRecording,

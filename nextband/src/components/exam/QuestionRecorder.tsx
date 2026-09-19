@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Mic, Square, CheckCircle2, Play, Pause, RotateCcw, Loader2, AlertCircle, RefreshCw, Clock } from "lucide-react";
 import { useAudioRecorder } from "@/hooks/useAudioRecorder";
-import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { AudioWaveform } from "./AudioWaveform";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
@@ -160,9 +159,6 @@ export function QuestionRecorder({
     analyserData,
   } = useAudioRecorder();
 
-  const { startListening, stopListening, resetTranscript } =
-    useSpeechRecognition();
-
   // Notify parent of recording state
   useEffect(() => {
     onRecordingStateChange?.(isRecording || phase === "recording");
@@ -180,41 +176,37 @@ export function QuestionRecorder({
     }
   }, [answer, phase]);
 
-  // Clean up recording & speech recognition if component unmounts while recording
+  const handleStopRecording = useCallback(() => {
+    setPhase("processing");
+    stopRecording();
+  }, [stopRecording]);
+
+  const handleStopRecordingRef = useRef(handleStopRecording);
+  handleStopRecordingRef.current = handleStopRecording;
+
+  // Clean up recording if component unmounts while recording
   useEffect(() => {
     return () => {
       try {
         stopRecording();
       } catch {}
-      try {
-        stopListening();
-      } catch {}
     };
-  }, [stopRecording, stopListening]);
-
-  const handleStopRecording = useCallback(() => {
-    setPhase("processing");
-    stopRecording();
-    try {
-      stopListening();
-    } catch {}
-  }, [stopRecording, stopListening]);
+  }, [stopRecording]);
 
   // Recording countdown timer with auto-stop at maxDurationSeconds (120s = 2 minutes)
   useEffect(() => {
     if (isRecording && phase === "recording") {
+      const startTime = Date.now() - recordTime * 1000;
       const timer = setInterval(() => {
-        setRecordTime((prev) => {
-          const next = prev + 1;
-          if (next >= maxDurationSeconds) {
-            handleStopRecording();
-          }
-          return next;
-        });
-      }, 1000);
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        setRecordTime(elapsed);
+        if (elapsed >= maxDurationSeconds) {
+          handleStopRecordingRef.current();
+        }
+      }, 500);
       return () => clearInterval(timer);
     }
-  }, [isRecording, phase, maxDurationSeconds, handleStopRecording]);
+  }, [isRecording, phase, maxDurationSeconds]);
 
   // Direct Supabase Storage Upload
   const handleUploadAudio = useCallback(async (blob: Blob) => {
@@ -311,16 +303,12 @@ export function QuestionRecorder({
     }
 
     resetRecording();
-    resetTranscript();
     setRecordTime(0);
     setUploadError(null);
 
     const started = await startRecording();
     if (started) {
       setPhase("recording");
-      try {
-        startListening();
-      } catch {}
     } else {
       setPhase("idle");
     }
