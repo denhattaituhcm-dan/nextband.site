@@ -27,7 +27,7 @@ import {
   Filter
 } from "lucide-react";
 import { REGISTERED_GAMES, GameEngineId } from "@/lib/arena/gameCatalogue";
-import { coursesApi, examsApi } from "@/lib/api";
+import { coursesApi, examsApi, arenaApi } from "@/lib/api";
 
 export default function AdminGameArenaPage() {
   const [selectedGameId, setSelectedGameId] = useState<GameEngineId>("class_arena");
@@ -80,14 +80,29 @@ export default function AdminGameArenaPage() {
 
   const selectedCourse = courses.find((c: any) => c.id === selectedCourseId);
 
-  const handleLaunchHost = (examId?: string, customPin?: string) => {
+  const handleLaunchHost = async (examId?: string) => {
     setIsCreatingRoom(true);
-    const pinParam = customPin ? `pin=${customPin}` : '';
-    const examParam = examId ? `examId=${examId}` : '';
-    const queryParts = [pinParam, examParam].filter(Boolean).join('&');
-    const targetUrl = queryParts ? `/arena/host?${queryParts}` : `/arena/host`;
-    window.open(targetUrl, "_blank");
-    setTimeout(() => setIsCreatingRoom(false), 800);
+    try {
+      const room = await arenaApi.createRoom({
+        examId: examId || selectedExamId || undefined,
+      });
+
+      // Lưu hostToken an toàn vào sessionStorage cho tab Host
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem(`arena_host_token_${room.pin}`, room.hostToken);
+      }
+
+      const pinParam = `pin=${room.pin}`;
+      const examParam = examId || selectedExamId ? `examId=${examId || selectedExamId}` : '';
+      const queryParts = [pinParam, examParam].filter(Boolean).join('&');
+      const targetUrl = `/arena/host?${queryParts}`;
+      window.open(targetUrl, "_blank");
+    } catch (err: any) {
+      console.error("[AdminArena] Lỗi tạo phòng:", err);
+      alert(err.message || "Không thể khởi tạo phòng đấu. Vui lòng thử lại!");
+    } finally {
+      setIsCreatingRoom(false);
+    }
   };
 
   return (
@@ -370,8 +385,8 @@ export default function AdminGameArenaPage() {
               {selectedGame.status === "ACTIVE" && (
                 <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3">
                   <div className="text-xs text-gray-500">
-                    <span className="font-bold text-gray-700">Mã PIN mặc định:</span>{" "}
-                    <span className="font-mono font-black text-orange-600 text-sm">839210</span>
+                    <span className="font-bold text-gray-700">Mã PIN:</span>{" "}
+                    <span className="font-mono font-black text-orange-600 text-sm">Tự động sinh ngẫu nhiên khi mở phòng</span>
                   </div>
                   <div className="flex items-center gap-2 w-full sm:w-auto">
                     <Button

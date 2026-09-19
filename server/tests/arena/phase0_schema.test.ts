@@ -12,12 +12,12 @@ describe("🔒 PHASE 0: ARENA DATABASE DOMAIN & CONSTRAINTS SPEC SUITE", () => {
   // Dọn dẹp trước và sau khi test
   async function cleanupTestData() {
     try {
-      await prisma.$executeRawUnsafe(`
-        DELETE FROM "arena_answers" WHERE "room_id" IN ('${TEST_ROOM_ID_1}', '${TEST_ROOM_ID_2}', '${TEST_ROOM_ID_3}');
-        DELETE FROM "arena_participants" WHERE "room_id" IN ('${TEST_ROOM_ID_1}', '${TEST_ROOM_ID_2}', '${TEST_ROOM_ID_3}');
-        DELETE FROM "arena_rooms" WHERE "id" IN ('${TEST_ROOM_ID_1}', '${TEST_ROOM_ID_2}', '${TEST_ROOM_ID_3}');
-      `);
-    } catch {}
+      await prisma.$executeRawUnsafe(`DELETE FROM "arena_answers" WHERE "room_id" IN ('${TEST_ROOM_ID_1}', '${TEST_ROOM_ID_2}', '${TEST_ROOM_ID_3}')`);
+      await prisma.$executeRawUnsafe(`DELETE FROM "arena_participants" WHERE "room_id" IN ('${TEST_ROOM_ID_1}', '${TEST_ROOM_ID_2}', '${TEST_ROOM_ID_3}')`);
+      await prisma.$executeRawUnsafe(`DELETE FROM "arena_rooms" WHERE "id" IN ('${TEST_ROOM_ID_1}', '${TEST_ROOM_ID_2}', '${TEST_ROOM_ID_3}')`);
+    } catch (e) {
+      console.warn("Cleanup warning:", e);
+    }
   }
 
   beforeAll(async () => {

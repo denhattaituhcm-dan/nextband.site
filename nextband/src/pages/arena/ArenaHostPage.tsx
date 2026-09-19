@@ -8,7 +8,7 @@
  */
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useArenaAudio } from '@/hooks/arena/useArenaAudio';
 import { ArenaLobbyKahoot, LobbyPlayer } from '@/components/arena/ArenaLobbyKahoot';
@@ -30,12 +30,21 @@ interface PlayerAnswerRecord {
 }
 
 export default function ArenaHostPage() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const rawPin = searchParams.get('pin');
   const [pinCode] = useState<string>(() => {
-    const urlPin = searchParams.get('pin');
-    if (urlPin && urlPin.trim().length === 6) return urlPin.trim();
-    return '111999';
+    if (rawPin && rawPin.trim().length === 6) return rawPin.trim();
+    return '';
   });
+
+  // Chặn truy cập nếu không có mã PIN hợp lệ từ router/admin
+  useEffect(() => {
+    if (!pinCode) {
+      alert('Không tìm thấy mã PIN phòng thi đấu hợp lệ. Vui lòng mở phòng từ trang Quản Trị Trò Chơi!');
+      navigate('/admin/game-arena');
+    }
+  }, [pinCode, navigate]);
 
   const [state, setState] = useState<ArenaState>('LOBBY');
   

@@ -7,7 +7,7 @@
  */
 
 import React, { useState, useEffect, useCallback, useRef, Suspense } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useArenaAudio } from '@/hooks/arena/useArenaAudio';
 import { StudentAnswerCard } from '@/components/arena/StudentAnswerCard';
@@ -36,8 +36,16 @@ type StudentGameState =
   | 'PODIUM';
 
 export default function ArenaPlayPage() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const pin = searchParams.get('pin') || '111999';
+  const rawPin = searchParams.get('pin');
+  const pin = rawPin && rawPin.trim().length === 6 ? rawPin.trim() : '';
+
+  useEffect(() => {
+    if (!pin) {
+      navigate('/arena/join');
+    }
+  }, [pin, navigate]);
   const nickname = searchParams.get('name') || 'Học viên';
   const playerId = searchParams.get('playerId') || `p_${Date.now()}`;
   const paramAvatarId = searchParams.get('plantId');

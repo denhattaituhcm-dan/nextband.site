@@ -5463,6 +5463,48 @@ export const studentPracticeApi = {
   },
 };
 
+export const arenaApi = {
+  async createRoom(params: { examId?: string; config?: any }): Promise<{
+    roomId: string;
+    pin: string;
+    hostToken: string;
+    status: string;
+    createdAt: string;
+  }> {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/arena/rooms`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+      body: JSON.stringify(params),
+    });
+    const json = await handleApiResponse<{ success: boolean; data: any }>(
+      res,
+      "Không thể tạo phòng đấu Arena"
+    );
+    return json.data;
+  },
+
+  async getRoomByPin(pin: string): Promise<{
+    id: string;
+    pin: string;
+    status: string;
+    currentRound: number;
+    examId?: string;
+    createdAt: string;
+    expiresAt?: string;
+  }> {
+    const res = await fetch(`${API_BASE_URL}/arena/rooms/${encodeURIComponent(pin)}`);
+    const json = await handleApiResponse<{ success: boolean; data: any }>(
+      res,
+      "Không thể tìm thấy phòng thi đấu"
+    );
+    return json.data;
+  },
+};
+
 
 
 

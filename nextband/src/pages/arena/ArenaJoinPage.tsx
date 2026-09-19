@@ -1,7 +1,7 @@
 /**
  * STUDENT JOIN PAGE (/arena/join)
  * Màn hình nhập mã PIN và Nickname cho học viên trên điện thoại.
- * Tự động điền mã PIN từ URL khi học viên quét mã QR (ví dụ: /arena/join?pin=111999).
+ * Tự động điền mã PIN từ URL khi học viên quét mã QR (ví dụ: /arena/join?pin=123456).
  */
 
 import React, { useState, useEffect } from 'react';
@@ -45,7 +45,7 @@ export default function ArenaJoinPage() {
     if (urlPin && urlPin.trim().length === 6) {
       setPin(urlPin.trim());
     } else {
-      setPin('111999');
+      setPin('');
     }
   }, [searchParams]);
 
@@ -111,7 +111,7 @@ export default function ArenaJoinPage() {
               maxLength={6}
               value={pin}
               onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
-              placeholder="VD: 111999"
+              placeholder="000000"
               className="w-full px-4 py-4 sm:py-4.5 bg-white/10 border border-white/20 backdrop-blur-md focus:border-orange-500 rounded-2xl text-center text-3xl sm:text-4xl font-black tracking-widest text-orange-400 font-mono outline-none transition-all placeholder:text-slate-500 placeholder:text-base placeholder:tracking-normal placeholder:font-sans shadow-inner"
             />
           </div>
