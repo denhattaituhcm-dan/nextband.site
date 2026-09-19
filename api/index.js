@@ -52962,7 +52962,7 @@ var require_main = __commonJS({
     var fs2 = __require("fs");
     var path2 = __require("path");
     var os = __require("os");
-    var crypto3 = __require("crypto");
+    var crypto4 = __require("crypto");
     var packageJson = require_package2();
     var version3 = packageJson.version;
     var LINE = /(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*'(?:\\'|[^'])*'|\s*"(?:\\"|[^"])*"|\s*`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/mg;
@@ -53181,7 +53181,7 @@ var require_main = __commonJS({
       const authTag = ciphertext.subarray(-16);
       ciphertext = ciphertext.subarray(12, -16);
       try {
-        const aesgcm = crypto3.createDecipheriv("aes-256-gcm", key, nonce);
+        const aesgcm = crypto4.createDecipheriv("aes-256-gcm", key, nonce);
         aesgcm.setAuthTag(authTag);
         return `${aesgcm.update(ciphertext)}${aesgcm.final()}`;
       } catch (error) {
@@ -87289,7 +87289,7 @@ var require_le_unix = __commonJS({
 var require_mime_node = __commonJS({
   "node_modules/nodemailer/lib/mime-node/index.js"(exports, module) {
     "use strict";
-    var crypto3 = __require("crypto");
+    var crypto4 = __require("crypto");
     var fs2 = __require("fs");
     var punycode = require_punycode();
     var { PassThrough } = __require("stream");
@@ -87312,7 +87312,7 @@ var require_mime_node = __commonJS({
       constructor(contentType, options) {
         this.nodeCounter = 0;
         options = options || {};
-        this.baseBoundary = options.baseBoundary || crypto3.randomBytes(8).toString("hex");
+        this.baseBoundary = options.baseBoundary || crypto4.randomBytes(8).toString("hex");
         this.boundaryPrefix = options.boundaryPrefix || "--_NmP";
         this.disableFileAccess = !!options.disableFileAccess;
         this.disableUrlAccess = !!options.disableUrlAccess;
@@ -88341,8 +88341,8 @@ var require_mime_node = __commonJS({
       _generateMessageId() {
         return "<" + [2, 2, 2, 6].reduce(
           // crux to generate UUID-like random strings
-          (prev, len) => prev + "-" + crypto3.randomBytes(len).toString("hex"),
-          crypto3.randomBytes(4).toString("hex")
+          (prev, len) => prev + "-" + crypto4.randomBytes(len).toString("hex"),
+          crypto4.randomBytes(4).toString("hex")
         ) + "@" + // try to use the domain of the FROM address or fallback to server hostname
         (this.getEnvelope().from || this.hostname || "localhost").split("@").pop() + ">";
       }
@@ -88972,14 +88972,14 @@ var require_relaxed_body = __commonJS({
   "node_modules/nodemailer/lib/dkim/relaxed-body.js"(exports, module) {
     "use strict";
     var { Transform } = __require("stream");
-    var crypto3 = __require("crypto");
+    var crypto4 = __require("crypto");
     var RelaxedBody = class extends Transform {
       constructor(options) {
         super();
         options = options || {};
         this.chunkBuffer = [];
         this.chunkBufferLen = 0;
-        this.bodyHash = crypto3.createHash(options.hashAlgo || "sha256");
+        this.bodyHash = crypto4.createHash(options.hashAlgo || "sha256");
         this.remainder = "";
         this.byteLength = 0;
         this.debug = options.debug;
@@ -89082,7 +89082,7 @@ var require_sign = __commonJS({
     "use strict";
     var punycode = require_punycode();
     var mimeFuncs = require_mime_funcs();
-    var crypto3 = __require("crypto");
+    var crypto4 = __require("crypto");
     module.exports = (headers, hashAlgo, bodyHash, options) => {
       options = options || {};
       const defaultFieldNames = "From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive";
@@ -89090,7 +89090,7 @@ var require_sign = __commonJS({
       const canonicalizedHeaderData = relaxedHeaders(headers, fieldNames, options.skipFields);
       const dkimHeader = generateDKIMHeader(options.domainName, options.keySelector, canonicalizedHeaderData.fieldNames, hashAlgo, bodyHash);
       canonicalizedHeaderData.headers += "dkim-signature:" + relaxedHeaderLine(dkimHeader);
-      const signer = crypto3.createSign(("rsa-" + hashAlgo).toUpperCase());
+      const signer = crypto4.createSign(("rsa-" + hashAlgo).toUpperCase());
       signer.update(canonicalizedHeaderData.headers);
       let signature;
       try {
@@ -89160,7 +89160,7 @@ var require_dkim = __commonJS({
     var { PassThrough } = __require("stream");
     var fs2 = __require("fs");
     var path2 = __require("path");
-    var crypto3 = __require("crypto");
+    var crypto4 = __require("crypto");
     var DKIM_ALGO = "sha256";
     var MAX_MESSAGE_SIZE = 2 * 1024 * 1024;
     var DKIMSigner = class {
@@ -89173,7 +89173,7 @@ var require_dkim = __commonJS({
         this.chunks = [];
         this.chunklen = 0;
         this.readPos = 0;
-        this.cachePath = this.cacheDir ? path2.join(this.cacheDir, "message." + Date.now() + "-" + crypto3.randomBytes(14).toString("hex")) : false;
+        this.cachePath = this.cacheDir ? path2.join(this.cacheDir, "message." + Date.now() + "-" + crypto4.randomBytes(14).toString("hex")) : false;
         this.cache = false;
         this.headers = false;
         this.bodyHash = false;
@@ -89736,7 +89736,7 @@ var require_mailer = __commonJS({
     var MailMessage = require_mail_message();
     var net = __require("net");
     var dns = __require("dns");
-    var crypto3 = __require("crypto");
+    var crypto4 = __require("crypto");
     var Mail = class extends EventEmitter {
       constructor(transporter, options, defaults) {
         super();
@@ -90078,7 +90078,7 @@ var require_mailer = __commonJS({
             html = (html || "").toString().replace(
               /(<img\b[^<>]{0,1024} src\s{0,20}=[\s"']{0,20})(data:([^;]+);[^"'>\s]+)/gi,
               (match, prefix, dataUri, mimeType) => {
-                const cid = crypto3.randomBytes(10).toString("hex") + "@localhost";
+                const cid = crypto4.randomBytes(10).toString("hex") + "@localhost";
                 if (!mail.data.attachments) {
                   mail.data.attachments = [];
                 }
@@ -90205,7 +90205,7 @@ var require_smtp_connection = __commonJS({
     var net = __require("net");
     var tls = __require("tls");
     var os = __require("os");
-    var crypto3 = __require("crypto");
+    var crypto4 = __require("crypto");
     var DataStream = require_data_stream();
     var { PassThrough } = __require("stream");
     var shared = require_shared();
@@ -90225,7 +90225,7 @@ var require_smtp_connection = __commonJS({
     var SMTPConnection = class extends EventEmitter {
       constructor(options) {
         super(options);
-        this.id = crypto3.randomBytes(8).toString("base64").replace(/\W/g, "");
+        this.id = crypto4.randomBytes(8).toString("base64").replace(/\W/g, "");
         this.stage = "init";
         this.options = options || {};
         this.secureConnection = !!this.options.secure;
@@ -91410,7 +91410,7 @@ var require_smtp_connection = __commonJS({
           );
         }
         const base64decoded = Buffer.from(challengeMatch[1], "base64").toString("ascii");
-        const hmacMD5 = crypto3.createHmac("md5", this._auth.credentials.pass);
+        const hmacMD5 = crypto4.createHmac("md5", this._auth.credentials.pass);
         hmacMD5.update(base64decoded);
         const prepended = this._auth.credentials.user + " " + hmacMD5.digest("hex");
         this._responseActions.push((str2) => {
@@ -91703,7 +91703,7 @@ var require_xoauth2 = __commonJS({
     "use strict";
     var { Stream } = __require("stream");
     var nmfetch = require_fetch2();
-    var crypto3 = __require("crypto");
+    var crypto4 = __require("crypto");
     var shared = require_shared();
     var errors = require_errors6();
     var XOAuth2 = class extends Stream {
@@ -92049,7 +92049,7 @@ var require_xoauth2 = __commonJS({
        */
       jwtSignRS256(payload) {
         payload = ['{"alg":"RS256","typ":"JWT"}', JSON.stringify(payload)].map((val) => this.toBase64URL(val)).join(".");
-        const signature = crypto3.createSign("RSA-SHA256").update(payload).sign(this.options.privateKey);
+        const signature = crypto4.createSign("RSA-SHA256").update(payload).sign(this.options.privateKey);
         return payload + "." + this.toBase64URL(signature);
       }
     };
@@ -97271,6 +97271,525 @@ var init_class_scheduler_service = __esm({
         } finally {
           this.isRunning = false;
         }
+      }
+    };
+  }
+});
+
+// server/services/arena-pin.service.ts
+import crypto3 from "crypto";
+var ArenaPinService;
+var init_arena_pin_service = __esm({
+  "server/services/arena-pin.service.ts"() {
+    ArenaPinService = class {
+      constructor(prisma) {
+        this.prisma = prisma;
+      }
+      /**
+       * Generates a 6-digit random PIN string ("100000" to "999999")
+       */
+      generateRawPin() {
+        const min = 1e5;
+        const max = 999999;
+        const pinNumber = crypto3.randomInt(min, max + 1);
+        return pinNumber.toString();
+      }
+      /**
+       * Generates a cryptographically random 6-digit PIN that is guaranteed
+       * NOT to collide with any currently ACTIVE arena room (status != 'ENDED').
+       */
+      async generateUniqueActivePin(maxAttempts = 15) {
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+          const candidatePin = this.generateRawPin();
+          const existingActiveRoom = await this.prisma.arenaRoom.findFirst({
+            where: {
+              pin: candidatePin,
+              status: {
+                not: "ENDED"
+              }
+            },
+            select: { id: true }
+          });
+          if (!existingActiveRoom) {
+            return candidatePin;
+          }
+        }
+        throw new Error(
+          "Kh\xF4ng th\u1EC3 sinh m\xE3 PIN ph\xF2ng ng\u1EABu nhi\xEAn duy nh\u1EA5t sau nhi\u1EC1u l\u1EA7n th\u1EED. Vui l\xF2ng th\u1EED l\u1EA1i!"
+        );
+      }
+      /**
+       * Generates a secure random 32-byte hexadecimal host token
+       */
+      generateHostToken() {
+        return crypto3.randomBytes(32).toString("hex");
+      }
+      /**
+       * Creates a SHA-256 hash of a host token for secure database storage
+       */
+      hashHostToken(token) {
+        return crypto3.createHash("sha256").update(token).digest("hex");
+      }
+      /**
+       * Verifies a candidate token against stored hash in constant time
+       */
+      verifyHostToken(candidateToken, storedHash) {
+        const candidateHash = this.hashHostToken(candidateToken);
+        if (candidateHash.length !== storedHash.length) return false;
+        return crypto3.timingSafeEqual(
+          Buffer.from(candidateHash, "utf8"),
+          Buffer.from(storedHash, "utf8")
+        );
+      }
+      /**
+       * Generates a secure random player session token
+       */
+      generatePlayerSessionToken() {
+        return `s_${crypto3.randomBytes(24).toString("hex")}`;
+      }
+    };
+  }
+});
+
+// server/services/arena-questions.data.ts
+var ARENA_STANDARD_QUESTIONS;
+var init_arena_questions_data = __esm({
+  "server/services/arena-questions.data.ts"() {
+    ARENA_STANDARD_QUESTIONS = [
+      {
+        id: "q_colloc_01",
+        roundIndex: 0,
+        prompt: "The enterprise decided to ______ an investment in clean technology.",
+        options: [
+          { id: "opt_A", label: "A", text: "make an investment" },
+          { id: "opt_B", label: "B", text: "do an investment" },
+          { id: "opt_C", label: "C", text: "take an investment" },
+          { id: "opt_D", label: "D", text: "create an investment" }
+        ],
+        correctOptionId: "opt_A",
+        correctAnswerText: "A. make an investment",
+        correctExplanation: '\u0110\u1ED9ng t\u1EEB chu\u1EA9n \u0111i v\u1EDBi "investment" trong h\u1ECDc thu\u1EADt IELTS l\xE0 "make" (kh\xF4ng d\xF9ng do/take/create).',
+        misconception: {
+          baitOptionId: "opt_B",
+          baitOptionText: "B. do an investment",
+          diagnosticTitle: "B\u1EABy d\u1ECBch t\u1EEB t\u01B0 duy ti\u1EBFng Vi\u1EC7t (L\xE0m \u0111\u1EA7u t\u01B0)",
+          explanation: 'H\u1ECDc vi\xEAn c\xF3 th\xF3i quen d\u1ECBch "l\xE0m \u0111\u1EA7u t\u01B0" th\xE0nh "do an investment". Trong ti\u1EBFng Anh h\u1ECDc thu\u1EADt, "make" \u0111i v\u1EDBi quy\u1EBFt \u0111\u1ECBnh/kho\u1EA3n \u0111\u1EA7u t\u01B0 kinh t\u1EBF mang t\xEDnh ch\u1EE7 \u0111\u1ED9ng.'
+        }
+      },
+      {
+        id: "q_colloc_02",
+        roundIndex: 1,
+        prompt: "Students need to ______ into account cultural differences when studying abroad.",
+        options: [
+          { id: "opt_A", label: "A", text: "take" },
+          { id: "opt_B", label: "B", text: "make" },
+          { id: "opt_C", label: "C", text: "keep" },
+          { id: "opt_D", label: "D", text: "bring" }
+        ],
+        correctOptionId: "opt_A",
+        correctAnswerText: "A. take",
+        correctExplanation: 'C\u1EE5m c\u1ED1 \u0111\u1ECBnh "take something into account" mang ngh\u0129a c\xE2n nh\u1EAFc, t\xEDnh \u0111\u1EBFn m\u1ED9t y\u1EBFu t\u1ED1 n\xE0o \u0111\xF3.',
+        misconception: {
+          baitOptionId: "opt_B",
+          baitOptionText: "B. make",
+          diagnosticTitle: 'Nh\u1EA7m l\u1EABn v\u1EDBi "make account of"',
+          explanation: 'H\u1ECDc vi\xEAn hay nh\u1EA7m v\u1EDBi c\u1EA5u tr\xFAc "make account" ho\u1EB7c t\u1EF1 gh\xE9p "make into account". Th\xE0nh ng\u1EEF chu\u1EA9n lu\xF4n l\xE0 "take into account" ho\u1EB7c "take into consideration".'
+        }
+      },
+      {
+        id: "q_colloc_03",
+        roundIndex: 2,
+        prompt: "Recent scientific research has ______ valuable light on how memory functions.",
+        options: [
+          { id: "opt_A", label: "A", text: "shed" },
+          { id: "opt_B", label: "B", text: "dropped" },
+          { id: "opt_C", label: "C", text: "shone" },
+          { id: "opt_D", label: "D", text: "lighted" }
+        ],
+        correctOptionId: "opt_A",
+        correctAnswerText: "A. shed",
+        correctExplanation: 'Collocation band 7.0+: "shed light on something" ngh\u0129a l\xE0 l\xE0m s\xE1ng t\u1ECF, soi r\u1ECDi \u0111i\u1EC1u g\xEC ch\u01B0a r\xF5.',
+        misconception: {
+          baitOptionId: "opt_C",
+          baitOptionText: "C. shone",
+          diagnosticTitle: 'B\u1EABy ngh\u0129a \u0111en "Chi\u1EBFu s\xE1ng (Shine/Shone)"',
+          explanation: 'H\u1ECDc vi\xEAn ngh\u0129 \xE1nh s\xE1ng ph\u1EA3i d\xF9ng \u0111\u1ED9ng t\u1EEB "shine/shone", nh\u01B0ng collocation th\xE0nh ng\u1EEF h\u1ECDc thu\u1EADt ch\u1EC9 ch\u1EA5p nh\u1EADn "shed light on".'
+        }
+      },
+      {
+        id: "q_colloc_04",
+        roundIndex: 3,
+        prompt: "Engaging in regular aerobic workouts helps individuals ______ in good shape.",
+        options: [
+          { id: "opt_A", label: "A", text: "stay" },
+          { id: "opt_B", label: "B", text: "hold" },
+          { id: "opt_C", label: "C", text: "run" },
+          { id: "opt_D", label: "D", text: "stand" }
+        ],
+        correctOptionId: "opt_A",
+        correctAnswerText: "A. stay",
+        correctExplanation: 'C\u1EE5m t\u1EEB "stay in shape" ho\u1EB7c "keep in shape" l\xE0 collocation chu\u1EA9n ch\u1EC9 vi\u1EC7c gi\u1EEF v\xF3c d\xE1ng c\xE2n \u0111\u1ED1i v\xE0 kh\u1ECFe m\u1EA1nh.',
+        misconception: {
+          baitOptionId: "opt_B",
+          baitOptionText: "B. hold",
+          diagnosticTitle: "Nh\u1EA7m l\u1EABn gi\u1EEF h\xECnh d\xE1ng (Hold)",
+          explanation: '"Hold" ch\u1EC9 d\xF9ng cho gi\u1EEF v\u1EADt l\xFD (hold hands). \u0110\u1EC3 di\u1EC5n t\u1EA3 tr\u1EA1ng th\xE1i s\u1EE9c kh\u1ECFe duy tr\xEC \u1ED5n \u0111\u1ECBnh, ta d\xF9ng "stay" ho\u1EB7c "keep".'
+        }
+      },
+      {
+        id: "q_colloc_05",
+        roundIndex: 4,
+        prompt: "The international summit aimed to ______ public awareness of climate change.",
+        options: [
+          { id: "opt_A", label: "A", text: "raise" },
+          { id: "opt_B", label: "B", text: "rise" },
+          { id: "opt_C", label: "C", text: "lift" },
+          { id: "opt_D", label: "D", text: "boost" }
+        ],
+        correctOptionId: "opt_A",
+        correctAnswerText: "A. raise",
+        correctExplanation: 'C\u1EE5m chu\u1EA9n "raise awareness of something" (n\xE2ng cao nh\u1EADn th\u1EE9c). "Raise" l\xE0 ngo\u1EA1i \u0111\u1ED9ng t\u1EEB c\u1EA7n t\xE2n ng\u1EEF "awareness".',
+        misconception: {
+          baitOptionId: "opt_B",
+          baitOptionText: "B. rise",
+          diagnosticTitle: "B\u1EABy kinh \u0111i\u1EC3n: Ngo\u1EA1i \u0111\u1ED9ng t\u1EEB vs N\u1ED9i \u0111\u1ED9ng t\u1EEB (Raise vs Rise)",
+          explanation: '"Rise" l\xE0 n\u1ED9i \u0111\u1ED9ng t\u1EEB (kh\xF4ng bao gi\u1EDD c\xF3 t\xE2n ng\u1EEF ph\xEDa sau, v\xED d\u1EE5: the sun rises). Do \u0111\xF3 kh\xF4ng th\u1EC3 n\xF3i "rise awareness".'
+        }
+      }
+    ];
+  }
+});
+
+// server/services/arena-engine.service.ts
+var arena_engine_service_exports = {};
+__export(arena_engine_service_exports, {
+  ArenaEngineService: () => ArenaEngineService
+});
+var ArenaEngineService;
+var init_arena_engine_service = __esm({
+  "server/services/arena-engine.service.ts"() {
+    init_arena_pin_service();
+    init_arena_questions_data();
+    ArenaEngineService = class {
+      constructor(prisma) {
+        this.prisma = prisma;
+        this.pinService = new ArenaPinService(prisma);
+      }
+      pinService;
+      /**
+       * Authoritative Host Command Dispatcher with Idempotency Guard
+       */
+      async executeHostCommand(input) {
+        const { commandId, action, pin, hostToken } = input;
+        if (!commandId || !action || !pin || !hostToken) {
+          const err = new Error("Thi\u1EBFu tham s\u1ED1 b\u1EAFt bu\u1ED9c \u0111\u1EC3 th\u1EF1c thi l\u1EC7nh.");
+          err.statusCode = 400;
+          err.code = "BAD_REQUEST";
+          throw err;
+        }
+        const room = await this.prisma.arenaRoom.findFirst({
+          where: {
+            pin,
+            status: { not: "ENDED" }
+          }
+        });
+        if (!room) {
+          const err = new Error("Ph\xF2ng thi \u0111\u1EA5u kh\xF4ng t\u1ED3n t\u1EA1i ho\u1EB7c \u0111\xE3 k\u1EBFt th\xFAc.");
+          err.statusCode = 404;
+          err.code = "ROOM_NOT_FOUND";
+          throw err;
+        }
+        const isTokenValid = this.pinService.verifyHostToken(hostToken, room.hostTokenHash);
+        if (!isTokenValid) {
+          const err = new Error("Host Token kh\xF4ng h\u1EE3p l\u1EC7. B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n \u0111i\u1EC1u khi\u1EC3n ph\xF2ng n\xE0y.");
+          err.statusCode = 403;
+          err.code = "INVALID_HOST_TOKEN";
+          throw err;
+        }
+        if (room.lastCommandId === commandId) {
+          return {
+            idempotent: true,
+            roomId: room.id,
+            pin: room.pin,
+            status: room.status,
+            currentRound: room.currentRound,
+            roundDeadlineAt: room.roundDeadlineAt
+          };
+        }
+        const now = /* @__PURE__ */ new Date();
+        let nextStatus = room.status;
+        let nextRound = room.currentRound;
+        let deadlineAt = room.roundDeadlineAt;
+        let activeQuestionId = room.currentQuestionId;
+        switch (action) {
+          case "START_ARENA": {
+            if (room.status !== "LOBBY") {
+              const err = new Error("Ch\u1EC9 c\xF3 th\u1EC3 b\u1EA5m B\u1EAFt \u0111\u1EA7u khi \u0111ang \u1EDF S\u1EA3nh ch\u1EDD (LOBBY).");
+              err.statusCode = 409;
+              err.code = "INVALID_STATE_TRANSITION";
+              throw err;
+            }
+            nextStatus = "QUESTION_LIVE";
+            nextRound = 0;
+            activeQuestionId = ARENA_STANDARD_QUESTIONS[0]?.id || "q_0";
+            deadlineAt = new Date(now.getTime() + 15 * 1e3);
+            break;
+          }
+          case "LOCK_ROUND": {
+            if (room.status !== "QUESTION_LIVE") {
+              const err = new Error("Ch\u1EC9 c\xF3 th\u1EC3 kh\xF3a khi c\xE2u h\u1ECFi \u0111ang LIVE.");
+              err.statusCode = 409;
+              err.code = "INVALID_STATE_TRANSITION";
+              throw err;
+            }
+            nextStatus = "ROUND_LOCKED";
+            break;
+          }
+          case "REVEAL_DISTRIBUTION": {
+            if (room.status !== "ROUND_LOCKED") {
+              const err = new Error("Ch\u1EC9 c\xF3 th\u1EC3 xem ph\xE2n b\u1ED5 khi v\xF2ng \u0111\xE3 kh\xF3a.");
+              err.statusCode = 409;
+              err.code = "INVALID_STATE_TRANSITION";
+              throw err;
+            }
+            nextStatus = "ROUND_REVEAL";
+            break;
+          }
+          case "REVEAL_PERSONAL": {
+            nextStatus = "ROUND_REVEAL";
+            break;
+          }
+          case "SHOW_LEADERBOARD": {
+            nextStatus = "LEADERBOARD";
+            break;
+          }
+          case "NEXT_ROUND": {
+            const total = ARENA_STANDARD_QUESTIONS.length;
+            if (room.currentRound >= total - 1) {
+              nextStatus = "PODIUM";
+            } else {
+              nextStatus = "QUESTION_LIVE";
+              nextRound = room.currentRound + 1;
+              activeQuestionId = ARENA_STANDARD_QUESTIONS[nextRound]?.id || null;
+              deadlineAt = new Date(now.getTime() + 15 * 1e3);
+            }
+            break;
+          }
+          case "FINISH_ARENA": {
+            nextStatus = "PODIUM";
+            break;
+          }
+          case "RESTART_ARENA": {
+            nextStatus = "LOBBY";
+            nextRound = 0;
+            activeQuestionId = null;
+            deadlineAt = null;
+            break;
+          }
+          default: {
+            const err = new Error(`L\u1EC7nh kh\xF4ng h\u1EE3p l\u1EC7: ${action}`);
+            err.statusCode = 400;
+            err.code = "UNKNOWN_COMMAND";
+            throw err;
+          }
+        }
+        const updatedRoom = await this.prisma.arenaRoom.update({
+          where: { id: room.id },
+          data: {
+            status: nextStatus,
+            currentRound: nextRound,
+            currentQuestionId: activeQuestionId,
+            roundStartedAt: nextStatus === "QUESTION_LIVE" ? now : room.roundStartedAt,
+            roundDeadlineAt: deadlineAt,
+            lastCommandId: commandId
+          }
+        });
+        return {
+          idempotent: false,
+          roomId: updatedRoom.id,
+          pin: updatedRoom.pin,
+          status: updatedRoom.status,
+          currentRound: updatedRoom.currentRound,
+          roundDeadlineAt: updatedRoom.roundDeadlineAt,
+          question: ARENA_STANDARD_QUESTIONS[updatedRoom.currentRound] || null,
+          totalQuestions: ARENA_STANDARD_QUESTIONS.length
+        };
+      }
+      /**
+       * Server-Authoritative Answer Submission and Scoring
+       */
+      async submitAnswer(input) {
+        const { roomId, playerSessionToken, questionId, roundIndex, selectedOptionId, clientTelemetryTime } = input;
+        const serverReceivedAt = /* @__PURE__ */ new Date();
+        if (!roomId || !playerSessionToken || !questionId || selectedOptionId === void 0) {
+          const err = new Error("Thi\u1EBFu d\u1EEF li\u1EC7u n\u1ED9p b\xE0i.");
+          err.statusCode = 400;
+          err.code = "BAD_REQUEST";
+          throw err;
+        }
+        const participant = await this.prisma.arenaParticipant.findFirst({
+          where: {
+            roomId,
+            playerSessionToken
+          }
+        });
+        if (!participant) {
+          const err = new Error("Phi\xEAn h\u1ECDc sinh kh\xF4ng h\u1EE3p l\u1EC7 ho\u1EB7c \u0111\xE3 h\u1EBFt h\u1EA1n.");
+          err.statusCode = 403;
+          err.code = "UNAUTHORIZED_PARTICIPANT";
+          throw err;
+        }
+        const room = await this.prisma.arenaRoom.findUnique({
+          where: { id: roomId }
+        });
+        if (!room || room.status !== "QUESTION_LIVE") {
+          const err = new Error("V\xF2ng thi kh\xF4ng m\u1EDF ho\u1EB7c \u0111\xE3 b\u1ECB kh\xF3a.");
+          err.statusCode = 403;
+          err.code = "ROUND_NOT_LIVE";
+          throw err;
+        }
+        if (room.currentRound !== roundIndex) {
+          const err = new Error("C\xE2u h\u1ECFi n\u1ED9p kh\xF4ng kh\u1EDBp v\u1EDBi v\xF2ng hi\u1EC7n t\u1EA1i c\u1EE7a ph\xF2ng.");
+          err.statusCode = 409;
+          err.code = "ROUND_MISMATCH";
+          throw err;
+        }
+        const GRACE_PERIOD_MS = 800;
+        if (room.roundDeadlineAt) {
+          const deadlineWithGrace = room.roundDeadlineAt.getTime() + GRACE_PERIOD_MS;
+          if (serverReceivedAt.getTime() > deadlineWithGrace) {
+            const err = new Error("\u0110\xE3 h\u1EBFt th\u1EDDi gian n\u1ED9p c\xE2u tr\u1EA3 l\u1EDDi.");
+            err.statusCode = 403;
+            err.code = "EXPIRED_SUBMISSION";
+            throw err;
+          }
+        }
+        const question = ARENA_STANDARD_QUESTIONS[roundIndex];
+        const isCorrect = question ? question.correctOptionId === selectedOptionId : false;
+        let scoreAwarded = 0;
+        if (isCorrect) {
+          const timeLeftSeconds = room.roundDeadlineAt ? Math.max(0, Math.ceil((room.roundDeadlineAt.getTime() - serverReceivedAt.getTime()) / 1e3)) : 1;
+          scoreAwarded = 100 + timeLeftSeconds * 10;
+        }
+        try {
+          const [answerRecord, updatedParticipant] = await this.prisma.$transaction([
+            this.prisma.arenaAnswer.create({
+              data: {
+                roomId: room.id,
+                participantId: participant.id,
+                questionId,
+                roundIndex,
+                selectedOptionId,
+                isCorrect,
+                scoreAwarded,
+                submittedAt: serverReceivedAt,
+                clientTelemetryTime: clientTelemetryTime ? new Date(clientTelemetryTime) : null
+              }
+            }),
+            this.prisma.arenaParticipant.update({
+              where: { id: participant.id },
+              data: {
+                totalScore: { increment: scoreAwarded }
+              }
+            })
+          ]);
+          return {
+            answerId: answerRecord.id,
+            isCorrect: answerRecord.isCorrect,
+            scoreAwarded: answerRecord.scoreAwarded,
+            totalScore: updatedParticipant.totalScore,
+            submittedAt: answerRecord.submittedAt
+          };
+        } catch (dbErr) {
+          if (dbErr?.code === "P2002" || dbErr?.message?.includes("participant_id_question_id") || dbErr?.message?.includes("23505")) {
+            const err = new Error("B\u1EA1n \u0111\xE3 n\u1ED9p \u0111\xE1p \xE1n cho c\xE2u h\u1ECFi n\xE0y r\u1ED3i.");
+            err.statusCode = 409;
+            err.code = "ALREADY_SUBMITTED";
+            throw err;
+          }
+          throw dbErr;
+        }
+      }
+      /**
+       * Phase 5: Reclaim Host Ownership and Full State Snapshot after Refresh/Disconnect
+       */
+      async reclaimHostSnapshot(pin, hostToken) {
+        if (!pin || !hostToken) {
+          const err = new Error("Thi\u1EBFu m\xE3 PIN ho\u1EB7c Host Token \u0111\u1EC3 kh\xF4i ph\u1EE5c quy\u1EC1n Host.");
+          err.statusCode = 400;
+          err.code = "BAD_REQUEST";
+          throw err;
+        }
+        const room = await this.prisma.arenaRoom.findFirst({
+          where: {
+            pin: pin.trim(),
+            status: { not: "ENDED" }
+          },
+          include: {
+            participants: {
+              select: {
+                id: true,
+                nickname: true,
+                avatarId: true,
+                totalScore: true,
+                totalGold: true,
+                joinedAt: true
+              },
+              orderBy: {
+                totalScore: "desc"
+              }
+            }
+          }
+        });
+        if (!room) {
+          const err = new Error("Ph\xF2ng thi \u0111\u1EA5u kh\xF4ng t\u1ED3n t\u1EA1i ho\u1EB7c \u0111\xE3 k\u1EBFt th\xFAc.");
+          err.statusCode = 404;
+          err.code = "ROOM_NOT_FOUND";
+          throw err;
+        }
+        const isValidToken = this.pinService.verifyHostToken(hostToken, room.hostTokenHash);
+        if (!isValidToken) {
+          const err = new Error("Host Token kh\xF4ng h\u1EE3p l\u1EC7. B\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n s\u1EDF h\u1EEFu ph\xF2ng n\xE0y.");
+          err.statusCode = 403;
+          err.code = "INVALID_HOST_TOKEN";
+          throw err;
+        }
+        const currentRoundAnswers = await this.prisma.arenaAnswer.findMany({
+          where: {
+            roomId: room.id,
+            roundIndex: room.currentRound
+          },
+          include: {
+            participant: {
+              select: {
+                nickname: true
+              }
+            }
+          }
+        });
+        const answersMap = {};
+        for (const ans of currentRoundAnswers) {
+          answersMap[ans.participant.nickname] = {
+            participantId: ans.participantId,
+            nickname: ans.participant.nickname,
+            optionId: ans.selectedOptionId,
+            isCorrect: ans.isCorrect,
+            score: ans.scoreAwarded
+          };
+        }
+        return {
+          roomId: room.id,
+          pin: room.pin,
+          status: room.status,
+          currentRound: room.currentRound,
+          currentQuestionId: room.currentQuestionId,
+          question: ARENA_STANDARD_QUESTIONS[room.currentRound] || null,
+          totalQuestions: ARENA_STANDARD_QUESTIONS.length,
+          roundStartedAt: room.roundStartedAt,
+          roundDeadlineAt: room.roundDeadlineAt,
+          participants: room.participants,
+          currentRoundAnswers: answersMap
+        };
       }
     };
   }
@@ -104368,40 +104887,16 @@ async function getTeacherStudentIds(prisma, teacherId) {
       studentId: true
     }
   });
-  const rawIds = [...new Set(classStudents.map((cs) => cs.studentId))];
-  if (rawIds.length === 0) return [];
-  const users = await prisma.user.findMany({
-    where: {
-      OR: [{ id: { in: rawIds } }, { userId: { in: rawIds } }]
-    },
-    select: { id: true, userId: true }
-  });
-  const allIds = new Set(rawIds);
-  users.forEach((u) => {
-    if (u.id) allIds.add(u.id);
-    if (u.userId) allIds.add(u.userId);
-  });
-  return Array.from(allIds);
+  const studentIds = [...new Set(classStudents.map((cs) => cs.studentId))];
+  return studentIds;
 }
 async function getClassStudentIds(prisma, classId) {
   const classStudents = await prisma.classStudent.findMany({
     where: { classId, deletedAt: null },
     select: { studentId: true }
   });
-  const rawIds = [...new Set(classStudents.map((cs) => cs.studentId))];
-  if (rawIds.length === 0) return [];
-  const users = await prisma.user.findMany({
-    where: {
-      OR: [{ id: { in: rawIds } }, { userId: { in: rawIds } }]
-    },
-    select: { id: true, userId: true }
-  });
-  const allIds = new Set(rawIds);
-  users.forEach((u) => {
-    if (u.id) allIds.add(u.id);
-    if (u.userId) allIds.add(u.userId);
-  });
-  return Array.from(allIds);
+  const studentIds = [...new Set(classStudents.map((cs) => cs.studentId))];
+  return studentIds;
 }
 async function isStudentInTeacherClasses(prisma, teacherId, studentId) {
   const count = await prisma.classStudent.count({
@@ -104895,7 +105390,7 @@ var ExamSubmissionService = class {
             studentId: user.id
           }
         });
-        const newSubmission2 = await tx.examSubmission.create({
+        const newSubmission = await tx.examSubmission.create({
           data: {
             examId,
             studentId: user.id,
@@ -104906,7 +105401,7 @@ var ExamSubmissionService = class {
         });
         return {
           submission: {
-            ...newSubmission2,
+            ...newSubmission,
             answers: [],
             remainingSeconds: (exam.durationMinutes || 60) * 60,
             serverTime: (/* @__PURE__ */ new Date()).toISOString(),
@@ -105015,25 +105510,52 @@ var ExamSubmissionService = class {
           isNew: false
         };
       }
-      const newSubmission = await tx.examSubmission.create({
-        data: {
-          examId,
-          studentId: user.id,
-          status: "IN_PROGRESS",
-          startedAt: /* @__PURE__ */ new Date(),
-          version: 1
+      try {
+        const newSubmission = await tx.examSubmission.create({
+          data: {
+            examId,
+            studentId: user.id,
+            status: "IN_PROGRESS",
+            startedAt: /* @__PURE__ */ new Date(),
+            version: 1
+          }
+        });
+        return {
+          submission: {
+            ...newSubmission,
+            answers: [],
+            remainingSeconds: (exam.durationMinutes || 60) * 60,
+            serverTime: (/* @__PURE__ */ new Date()).toISOString(),
+            isResumed: false
+          },
+          isNew: true
+        };
+      } catch (err) {
+        if (err?.code === "P2002" || err?.message?.includes("unique constraint") || err?.message?.includes("duplicate key")) {
+          const winningActive = await tx.examSubmission.findFirst({
+            where: {
+              examId,
+              studentId: user.id,
+              status: "IN_PROGRESS"
+            },
+            include: { answers: true }
+          });
+          if (winningActive) {
+            const rem = getRemainingSeconds(winningActive.startedAt, exam.durationMinutes);
+            return {
+              submission: {
+                ...winningActive,
+                answers: winningActive.answers || [],
+                remainingSeconds: Math.max(0, rem),
+                serverTime: (/* @__PURE__ */ new Date()).toISOString(),
+                isResumed: true
+              },
+              isNew: false
+            };
+          }
         }
-      });
-      return {
-        submission: {
-          ...newSubmission,
-          answers: [],
-          remainingSeconds: (exam.durationMinutes || 60) * 60,
-          serverTime: (/* @__PURE__ */ new Date()).toISOString(),
-          isResumed: false
-        },
-        isNew: true
-      };
+        throw err;
+      }
     });
   }
   // Use Case: Save Draft Answers (Autosave - checks version conflict, immutability, and server deadline)
@@ -105368,12 +105890,6 @@ var ExamSubmissionService = class {
             include: { class: true }
           });
           teacherId = classStudent?.class?.teacherId || null;
-        }
-        if (!teacherId && this.prisma.userRole) {
-          const firstTeacher = await this.prisma.userRole.findFirst({
-            where: { role: "teacher" }
-          });
-          teacherId = firstTeacher?.userId || null;
         }
         if (teacherId && this.notificationService) {
           await this.notificationService.createNotification(this.prisma, {
@@ -117088,6 +117604,293 @@ async function seasonalRoutes(fastify) {
   );
 }
 
+// server/services/arena-room.service.ts
+init_arena_pin_service();
+var ArenaRoomService = class {
+  constructor(prisma) {
+    this.prisma = prisma;
+    this.pinService = new ArenaPinService(prisma);
+  }
+  pinService;
+  /**
+   * Creates a new Arena room with a collision-free PIN and securely hashed host token.
+   */
+  async createRoom(input) {
+    const pin = await this.pinService.generateUniqueActivePin();
+    const hostToken = this.pinService.generateHostToken();
+    const hostTokenHash = this.pinService.hashHostToken(hostToken);
+    const expiresAt = new Date(Date.now() + 4 * 60 * 60 * 1e3);
+    const room = await this.prisma.arenaRoom.create({
+      data: {
+        pin,
+        hostUserId: input.hostUserId || null,
+        hostTokenHash,
+        examId: input.examId || null,
+        status: "LOBBY",
+        currentRound: 0,
+        config: input.config || {},
+        expiresAt
+      }
+    });
+    return {
+      roomId: room.id,
+      pin: room.pin,
+      hostToken,
+      // Plaintext returned only once upon creation
+      status: room.status,
+      createdAt: room.createdAt
+    };
+  }
+  /**
+   * Retrieves active room metadata by PIN (without leaking hostTokenHash)
+   */
+  async getRoomByPin(pin) {
+    return this.prisma.arenaRoom.findFirst({
+      where: {
+        pin,
+        status: {
+          not: "ENDED"
+        }
+      },
+      select: {
+        id: true,
+        pin: true,
+        status: true,
+        currentRound: true,
+        examId: true,
+        createdAt: true,
+        expiresAt: true,
+        participants: {
+          select: {
+            id: true,
+            nickname: true,
+            avatarId: true,
+            totalScore: true,
+            totalGold: true,
+            joinedAt: true
+          },
+          orderBy: {
+            joinedAt: "asc"
+          }
+        }
+      }
+    });
+  }
+  /**
+   * Validates room status and registers a participant atomically.
+   */
+  async joinRoom(input) {
+    const cleanPin = input.pin?.trim();
+    const cleanNickname = input.nickname?.trim();
+    const avatarId = Number.isInteger(input.avatarId) ? Number(input.avatarId) : 0;
+    if (!cleanPin || cleanPin.length !== 6) {
+      const err = new Error("M\xE3 PIN ph\u1EA3i g\u1ED3m \u0111\xFAng 6 ch\u1EEF s\u1ED1.");
+      err.statusCode = 400;
+      err.code = "INVALID_PIN";
+      throw err;
+    }
+    if (!cleanNickname) {
+      const err = new Error("Vui l\xF2ng nh\u1EADp t\xEAn / bi\u1EC7t danh c\u1EE7a b\u1EA1n.");
+      err.statusCode = 400;
+      err.code = "INVALID_NICKNAME";
+      throw err;
+    }
+    const normalizedNickname = cleanNickname.toLowerCase().normalize("NFC");
+    const room = await this.prisma.arenaRoom.findFirst({
+      where: {
+        pin: cleanPin,
+        status: {
+          not: "ENDED"
+        }
+      },
+      select: {
+        id: true,
+        pin: true,
+        status: true
+      }
+    });
+    if (!room) {
+      const err = new Error("M\xE3 PIN kh\xF4ng t\u1ED3n t\u1EA1i ho\u1EB7c ph\xF2ng thi \u0111\u1EA5u \u0111\xE3 k\u1EBFt th\xFAc.");
+      err.statusCode = 404;
+      err.code = "ROOM_NOT_FOUND";
+      throw err;
+    }
+    if (room.status !== "LOBBY") {
+      const err = new Error("Tr\u1EADn \u0111\u1EA5u \u0111\xE3 di\u1EC5n ra ho\u1EB7c \u0111\xE3 \u0111\xF3ng s\u1EA3nh ch\u1EDD. Kh\xF4ng th\u1EC3 tham gia l\xFAc n\xE0y.");
+      err.statusCode = 403;
+      err.code = "ROOM_NOT_IN_LOBBY";
+      throw err;
+    }
+    const playerSessionToken = this.pinService.generatePlayerSessionToken();
+    try {
+      const participant = await this.prisma.arenaParticipant.create({
+        data: {
+          roomId: room.id,
+          playerSessionToken,
+          nickname: cleanNickname,
+          normalizedNickname,
+          avatarId,
+          totalScore: 0,
+          totalGold: 0
+        }
+      });
+      return {
+        participantId: participant.id,
+        roomId: room.id,
+        pin: room.pin,
+        playerSessionToken: participant.playerSessionToken,
+        nickname: participant.nickname,
+        avatarId: participant.avatarId,
+        roomStatus: room.status
+      };
+    } catch (dbError) {
+      if (dbError?.code === "P2002" || dbError?.message?.includes("normalized_nickname") || dbError?.message?.includes("23505")) {
+        const err = new Error(`T\xEAn "${cleanNickname}" \u0111\xE3 c\xF3 b\u1EA1n kh\xE1c trong ph\xF2ng s\u1EED d\u1EE5ng. Vui l\xF2ng ch\u1ECDn m\u1ED9t t\xEAn kh\xE1c!`);
+        err.statusCode = 409;
+        err.code = "DUPLICATE_NICKNAME";
+        throw err;
+      }
+      throw dbError;
+    }
+  }
+};
+
+// server/routes/arena.routes.ts
+async function arenaRoutes(fastify) {
+  const roomService = new ArenaRoomService(fastify.prisma);
+  fastify.post(
+    "/rooms",
+    { preHandler: [authenticate] },
+    async (request, reply) => {
+      const user = request.user;
+      const hostUserId = user?.userId || user?.id;
+      const room = await roomService.createRoom({
+        hostUserId,
+        examId: request.body?.examId,
+        config: request.body?.config
+      });
+      return reply.code(201).send({
+        success: true,
+        data: room
+      });
+    }
+  );
+  fastify.get(
+    "/rooms/:pin",
+    async (request, reply) => {
+      const { pin } = request.params;
+      const room = await roomService.getRoomByPin(pin);
+      if (!room) {
+        return reply.code(404).send({
+          success: false,
+          error: "Ph\xF2ng thi \u0111\u1EA5u kh\xF4ng t\u1ED3n t\u1EA1i ho\u1EB7c \u0111\xE3 k\u1EBFt th\xFAc.",
+          code: "ROOM_NOT_FOUND"
+        });
+      }
+      return reply.send({
+        success: true,
+        data: room
+      });
+    }
+  );
+  fastify.post(
+    "/rooms/join",
+    async (request, reply) => {
+      try {
+        const result = await roomService.joinRoom(request.body || {});
+        return reply.code(200).send({
+          success: true,
+          data: result
+        });
+      } catch (err) {
+        const statusCode = err?.statusCode || 500;
+        return reply.code(statusCode).send({
+          success: false,
+          error: err?.message || "L\u1ED7i khi tham gia ph\xF2ng \u0111\u1EA5u.",
+          code: err?.code || "INTERNAL_ERROR"
+        });
+      }
+    }
+  );
+  fastify.post(
+    "/rooms/:id/command",
+    async (request, reply) => {
+      try {
+        const { commandId, action, pin, hostToken } = request.body || {};
+        const engineService = new (await Promise.resolve().then(() => (init_arena_engine_service(), arena_engine_service_exports))).ArenaEngineService(fastify.prisma);
+        const result = await engineService.executeHostCommand({
+          commandId,
+          action,
+          pin,
+          hostToken
+        });
+        return reply.code(200).send({
+          success: true,
+          data: result
+        });
+      } catch (err) {
+        const statusCode = err?.statusCode || 500;
+        return reply.code(statusCode).send({
+          success: false,
+          error: err?.message || "L\u1ED7i khi th\u1EF1c thi l\u1EC7nh Host.",
+          code: err?.code || "INTERNAL_ERROR"
+        });
+      }
+    }
+  );
+  fastify.post(
+    "/rooms/:id/answers",
+    async (request, reply) => {
+      try {
+        const { id: roomId } = request.params;
+        const { playerSessionToken, questionId, roundIndex, selectedOptionId, clientTelemetryTime } = request.body || {};
+        const engineService = new (await Promise.resolve().then(() => (init_arena_engine_service(), arena_engine_service_exports))).ArenaEngineService(fastify.prisma);
+        const result = await engineService.submitAnswer({
+          roomId,
+          playerSessionToken,
+          questionId,
+          roundIndex,
+          selectedOptionId,
+          clientTelemetryTime
+        });
+        return reply.code(200).send({
+          success: true,
+          data: result
+        });
+      } catch (err) {
+        const statusCode = err?.statusCode || 500;
+        return reply.code(statusCode).send({
+          success: false,
+          error: err?.message || "L\u1ED7i khi n\u1ED9p \u0111\xE1p \xE1n.",
+          code: err?.code || "INTERNAL_ERROR"
+        });
+      }
+    }
+  );
+  fastify.post(
+    "/rooms/:pin/reclaim",
+    async (request, reply) => {
+      try {
+        const { pin } = request.params;
+        const { hostToken } = request.body || {};
+        const engineService = new (await Promise.resolve().then(() => (init_arena_engine_service(), arena_engine_service_exports))).ArenaEngineService(fastify.prisma);
+        const snapshot = await engineService.reclaimHostSnapshot(pin, hostToken);
+        return reply.code(200).send({
+          success: true,
+          data: snapshot
+        });
+      } catch (err) {
+        const statusCode = err?.statusCode || 500;
+        return reply.code(statusCode).send({
+          success: false,
+          error: err?.message || "L\u1ED7i khi kh\xF4i ph\u1EE5c snapshot Host.",
+          code: err?.code || "INTERNAL_ERROR"
+        });
+      }
+    }
+  );
+}
+
 // server/routes/index.ts
 var routes = async (fastify) => {
   fastify.get("/health", async () => {
@@ -117136,6 +117939,7 @@ var routes = async (fastify) => {
   await fastify.register(academic_intelligence_routes_default, { prefix: "/academic-intelligence" });
   await fastify.register(teachers_routes_default, { prefix: "/teachers" });
   await fastify.register(seasonalRoutes, { prefix: "/seasonal" });
+  await fastify.register(arenaRoutes, { prefix: "/arena" });
 };
 var routes_default = routes;
 
