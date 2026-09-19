@@ -804,26 +804,56 @@ export class ExamSubmissionService {
         };
       }
 
-      const newSubmission = await tx.examSubmission.create({
-        data: {
-          examId,
-          studentId: user.id,
-          status: "IN_PROGRESS",
-          startedAt: new Date(),
-          version: 1,
-        },
-      });
+      try {
+        const newSubmission = await tx.examSubmission.create({
+          data: {
+            examId,
+            studentId: user.id,
+            status: "IN_PROGRESS",
+            startedAt: new Date(),
+            version: 1,
+          },
+        });
 
-      return {
-        submission: {
-          ...newSubmission,
-          answers: [],
-          remainingSeconds: (exam.durationMinutes || 60) * 60,
-          serverTime: new Date().toISOString(),
-          isResumed: false,
-        },
-        isNew: true,
-      };
+        return {
+          submission: {
+            ...newSubmission,
+            answers: [],
+            remainingSeconds: (exam.durationMinutes || 60) * 60,
+            serverTime: new Date().toISOString(),
+            isResumed: false,
+          },
+          isNew: true,
+        };
+      } catch (err: any) {
+        // Concurrency lock: If unique constraint or duplicate error occurs due to concurrent request winning the race,
+        // recover gracefully by returning the winning active attempt.
+        if (err?.code === "P2002" || err?.message?.includes("unique constraint") || err?.message?.includes("duplicate key")) {
+          const winningActive = await tx.examSubmission.findFirst({
+            where: {
+              examId,
+              studentId: user.id,
+              status: "IN_PROGRESS",
+            },
+            include: { answers: true },
+          });
+
+          if (winningActive) {
+            const rem = getRemainingSeconds(winningActive.startedAt, exam.durationMinutes);
+            return {
+              submission: {
+                ...winningActive,
+                answers: winningActive.answers || [],
+                remainingSeconds: Math.max(0, rem),
+                serverTime: new Date().toISOString(),
+                isResumed: true,
+              },
+              isNew: false,
+            };
+          }
+        }
+        throw err;
+      }
     });
   }
 
