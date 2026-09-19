@@ -77,4 +77,108 @@ export class ArenaRoomService {
       },
     });
   }
+
+  /**
+   * Validates room status and registers a participant atomically.
+   */
+  public async joinRoom(input: { pin: string; nickname: string; avatarId?: number }): Promise<{
+    participantId: string;
+    roomId: string;
+    pin: string;
+    playerSessionToken: string;
+    nickname: string;
+    avatarId: number;
+    roomStatus: ArenaRoomStatus;
+  }> {
+    const cleanPin = input.pin?.trim();
+    const cleanNickname = input.nickname?.trim();
+    const avatarId = Number.isInteger(input.avatarId) ? Number(input.avatarId) : 0;
+
+    if (!cleanPin || cleanPin.length !== 6) {
+      const err: any = new Error("Mã PIN phải gồm đúng 6 chữ số.");
+      err.statusCode = 400;
+      err.code = "INVALID_PIN";
+      throw err;
+    }
+
+    if (!cleanNickname) {
+      const err: any = new Error("Vui lòng nhập tên / biệt danh của bạn.");
+      err.statusCode = 400;
+      err.code = "INVALID_NICKNAME";
+      throw err;
+    }
+
+    const normalizedNickname = cleanNickname.toLowerCase().normalize("NFC");
+
+    // 1. Kiểm tra phòng tồn tại và đang active
+    const room = await this.prisma.arenaRoom.findFirst({
+      where: {
+        pin: cleanPin,
+        status: {
+          not: "ENDED",
+        },
+      },
+      select: {
+        id: true,
+        pin: true,
+        status: true,
+      },
+    });
+
+    if (!room) {
+      const err: any = new Error("Mã PIN không tồn tại hoặc phòng thi đấu đã kết thúc.");
+      err.statusCode = 404;
+      err.code = "ROOM_NOT_FOUND";
+      throw err;
+    }
+
+    // 2. Kiểm tra phòng có đang ở sảnh chờ LOBBY không
+    if (room.status !== "LOBBY") {
+      const err: any = new Error("Trận đấu đã diễn ra hoặc đã đóng sảnh chờ. Không thể tham gia lúc này.");
+      err.statusCode = 403;
+      err.code = "ROOM_NOT_IN_LOBBY";
+      throw err;
+    }
+
+    // 3. Tạo participant và cấp session token
+    const playerSessionToken = this.pinService.generatePlayerSessionToken();
+
+    try {
+      const participant = await this.prisma.arenaParticipant.create({
+        data: {
+          roomId: room.id,
+          playerSessionToken,
+          nickname: cleanNickname,
+          normalizedNickname,
+          avatarId,
+          totalScore: 0,
+          totalGold: 0,
+        },
+      });
+
+      return {
+        participantId: participant.id,
+        roomId: room.id,
+        pin: room.pin,
+        playerSessionToken: participant.playerSessionToken,
+        nickname: participant.nickname,
+        avatarId: participant.avatarId,
+        roomStatus: room.status,
+      };
+    } catch (dbError: any) {
+      // Bắt lỗi Unique Constraint (room_id, normalized_nickname)
+      if (
+        dbError?.code === "P2002" ||
+        dbError?.message?.includes("normalized_nickname") ||
+        dbError?.message?.includes("23505")
+      ) {
+        const err: any = new Error(`Tên "${cleanNickname}" đã có bạn khác trong phòng sử dụng. Vui lòng chọn một tên khác!`);
+        err.statusCode = 409;
+        err.code = "DUPLICATE_NICKNAME";
+        throw err;
+      }
+      throw dbError;
+    }
+  }
 }
+

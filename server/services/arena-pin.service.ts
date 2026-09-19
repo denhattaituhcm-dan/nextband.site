@@ -68,4 +68,11 @@ export class ArenaPinService {
       Buffer.from(storedHash, "utf8")
     );
   }
+
+  /**
+   * Generates a secure random player session token
+   */
+  public generatePlayerSessionToken(): string {
+    return `s_${crypto.randomBytes(24).toString("hex")}`;
+  }
 }

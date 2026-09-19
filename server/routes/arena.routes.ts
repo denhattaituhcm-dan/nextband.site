@@ -54,4 +54,32 @@ export default async function arenaRoutes(fastify: FastifyInstance) {
       });
     }
   );
+
+  // POST /arena/rooms/join - Bắt tay đăng ký học sinh vào phòng đấu (Pre-join Verification)
+  fastify.post<{
+    Body: {
+      pin: string;
+      nickname: string;
+      avatarId?: number;
+    };
+  }>(
+    "/rooms/join",
+    async (request, reply) => {
+      try {
+        const result = await roomService.joinRoom(request.body || ({} as any));
+        return reply.code(200).send({
+          success: true,
+          data: result,
+        });
+      } catch (err: any) {
+        const statusCode = err?.statusCode || 500;
+        return reply.code(statusCode).send({
+          success: false,
+          error: err?.message || "Lỗi khi tham gia phòng đấu.",
+          code: err?.code || "INTERNAL_ERROR",
+        });
+      }
+    }
+  );
 }
+

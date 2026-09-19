@@ -5503,6 +5503,29 @@ export const arenaApi = {
     );
     return json.data;
   },
+
+  async joinRoom(params: { pin: string; nickname: string; avatarId?: number }): Promise<{
+    participantId: string;
+    roomId: string;
+    pin: string;
+    playerSessionToken: string;
+    nickname: string;
+    avatarId: number;
+    roomStatus: string;
+  }> {
+    const res = await fetch(`${API_BASE_URL}/arena/rooms/join`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(params),
+    });
+    const json = await handleApiResponse<{ success: boolean; data: any }>(
+      res,
+      "Không thể tham gia phòng thi đấu"
+    );
+    return json.data;
+  },
 };
 
 

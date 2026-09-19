@@ -10,6 +10,7 @@ import { supabase } from '@/lib/supabase';
 import { ArrowRight, Sparkles, Dices } from 'lucide-react';
 import { PvZCardAvatar } from '@/components/arena/PvZCardAvatar';
 import { CHARACTER_AVATARS, getCharacterBySeed } from '@/lib/arena/characterCatalog';
+import { arenaApi } from '@/lib/api';
 
 export default function ArenaJoinPage() {
   const navigate = useNavigate();
@@ -69,20 +70,27 @@ export default function ArenaJoinPage() {
     setIsLoading(true);
 
     try {
-      const existingId = typeof window !== 'undefined' ? sessionStorage.getItem('arena_player_id') : null;
-      const playerId = existingId || `p_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+      // Bắt tay xác thực phòng và đăng ký học sinh với Server trước khi điều hướng
+      const joinResult = await arenaApi.joinRoom({
+        pin: cleanPin,
+        nickname: cleanNick,
+        avatarId,
+      });
 
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('arena_pin', cleanPin);
-        sessionStorage.setItem('arena_nickname', cleanNick);
-        sessionStorage.setItem('arena_player_id', playerId);
+        sessionStorage.setItem('arena_nickname', joinResult.nickname);
+        sessionStorage.setItem('arena_player_id', joinResult.participantId);
+        sessionStorage.setItem('arena_player_token', joinResult.playerSessionToken);
         sessionStorage.setItem('arena_plant_id', String(avatarId));
       }
 
-      // Điều hướng ngay sang màn hình thi đấu, ArenaPlayPage sẽ là nơi duy nhất giữ kết nối và gửi player-joined
-      navigate(`/arena/play?pin=${cleanPin}&name=${encodeURIComponent(cleanNick)}&playerId=${encodeURIComponent(playerId)}&plantId=${avatarId}`);
+      // Điều hướng an toàn sang màn hình thi đấu sau khi đã được Server xác nhận
+      navigate(
+        `/arena/play?pin=${cleanPin}&name=${encodeURIComponent(joinResult.nickname)}&playerId=${encodeURIComponent(joinResult.participantId)}&plantId=${avatarId}`
+      );
     } catch (err: any) {
-      const message = err instanceof Error ? err.message : 'Lỗi tham gia phòng';
+      const message = err instanceof Error ? err.message : 'Lỗi tham gia phòng thi đấu';
       setError(message);
       setIsLoading(false);
     }
