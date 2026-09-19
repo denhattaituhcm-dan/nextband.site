@@ -139,36 +139,7 @@ export default function ArenaPlayPage() {
       },
     });
 
-    const announcePresence = async () => {
-      try {
-        await channel.send({
-          type: 'broadcast',
-          event: 'player-joined',
-          payload: {
-            id: playerId,
-            name: nicknameRef.current,
-            avatarSeed: avatarIdRef.current,
-            rank: 'Học viên',
-            joinedAt: new Date().toISOString(),
-          },
-        });
-      } catch (e) {
-        console.warn('[NextQuiz] Error sending player-joined:', e);
-      }
-
-      try {
-        await channel.send({
-          type: 'broadcast',
-          event: 'player-sync-request',
-          payload: {
-            playerId,
-            nickname: nicknameRef.current,
-          },
-        });
-      } catch (e) {
-        console.warn('[NextQuiz] Error sending player-sync-request:', e);
-      }
-
+    const trackPresence = async () => {
       try {
         await channel.track({
           id: playerId,
@@ -208,7 +179,6 @@ export default function ArenaPlayPage() {
       .on('broadcast', { event: 'lobby-ping' }, () => {
         recordHeartbeat('lobby-ping');
         setIsJoinedAcknowledged(true);
-        announcePresence();
       })
       .on('broadcast', { event: 'question-live' }, ({ payload }) => {
         recordHeartbeat('question-live');
@@ -308,21 +278,15 @@ export default function ArenaPlayPage() {
 
     channel.subscribe(async (status) => {
       if (status === 'SUBSCRIBED') {
-        announcePresence();
+        await trackPresence();
+        setIsJoinedAcknowledged(true);
       }
     });
 
     channelRef.current = channel;
 
-    // Định kỳ gửi thông báo hiện diện lên Host khi đang ở sảnh chờ để chắc chắn Host không bỏ sót
-    const heartbeatTimer = setInterval(() => {
-      if (gameStateRef.current === 'LOBBY_WAITING') {
-        announcePresence();
-      }
-    }, 2000);
-
     return () => {
-      clearInterval(heartbeatTimer);
+      channel.untrack().catch(() => {});
       supabase.removeChannel(channel);
     };
   }, [pin, playerId]);

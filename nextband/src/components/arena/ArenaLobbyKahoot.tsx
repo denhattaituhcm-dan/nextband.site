@@ -18,6 +18,7 @@ export interface LobbyPlayer {
   avatarSeed?: number | string;
   rank?: string;
   joinedAt?: string;
+  isOnline?: boolean;
 }
 
 interface ArenaLobbyKahootProps {
@@ -200,9 +201,18 @@ export const ArenaLobbyKahoot: React.FC<ArenaLobbyKahootProps> = React.memo(({
                 </span>
               </div>
 
-              <div className="w-full py-1 bg-black/25 rounded-lg text-[10px] font-black text-emerald-300 uppercase tracking-wider flex items-center justify-center gap-1 border border-white/10">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                Sẵn sàng
+              {/* Status indicator: Online vs Offline */}
+              <div className={`w-full py-1 rounded-lg text-[10px] font-black uppercase tracking-wider flex items-center justify-center gap-1 border ${
+                p.isOnline === false
+                  ? 'bg-black/40 text-slate-400 border-white/5 opacity-80'
+                  : 'bg-black/25 text-emerald-300 border-white/10'
+              }`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${
+                  p.isOnline === false
+                    ? 'bg-slate-500'
+                    : 'bg-emerald-400 animate-ping'
+                }`}></span>
+                {p.isOnline === false ? 'Mất kết nối' : 'Sẵn sàng'}
               </div>
             </div>
           ) : (

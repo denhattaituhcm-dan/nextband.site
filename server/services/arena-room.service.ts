@@ -74,6 +74,19 @@ export class ArenaRoomService {
         examId: true,
         createdAt: true,
         expiresAt: true,
+        participants: {
+          select: {
+            id: true,
+            nickname: true,
+            avatarId: true,
+            totalScore: true,
+            totalGold: true,
+            joinedAt: true,
+          },
+          orderBy: {
+            joinedAt: "asc",
+          },
+        },
       },
     });
   }

@@ -12,6 +12,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useArenaAudio } from '@/hooks/arena/useArenaAudio';
 import { ArenaLobbyKahoot, LobbyPlayer } from '@/components/arena/ArenaLobbyKahoot';
+import { arenaApi } from '@/lib/api';
 import { ArenaIncenseTimer } from '@/components/arena/ArenaIncenseTimer';
 import { TeacherContextualButton } from '@/components/arena/TeacherContextualButton';
 import { HostSettingsModal, RoomSettings, DEFAULT_ROOM_SETTINGS } from '@/components/arena/HostSettingsModal';
@@ -154,7 +155,38 @@ export default function ArenaHostPage() {
     } catch {}
   }, [pinCode, registerPlayer, playClickSound]);
 
-  // Lắng nghe học sinh tham gia realtime và các sự kiện cướp vàng qua Supabase Broadcast Channel
+  // Nạp danh sách người chơi đã đăng ký chính thức từ Database làm Nguồn chân lý (Source of Truth)
+  const fetchRoomParticipants = useCallback(async () => {
+    if (!pinCode) return;
+    try {
+      const roomData = await arenaApi.getRoomByPin(pinCode);
+      if (roomData && (roomData as any).participants) {
+        const dbParticipants = (roomData as any).participants;
+        setPlayers((prev) => {
+          return dbParticipants.map((p: any) => {
+            const existing = prev.find((item) => item.id === p.id || item.name.toLowerCase() === p.nickname.toLowerCase());
+            return {
+              id: p.id,
+              name: p.nickname,
+              avatarSeed: p.avatarId,
+              rank: 'Học viên',
+              joinedAt: p.joinedAt,
+              isOnline: existing ? existing.isOnline : true,
+            };
+          });
+        });
+      }
+    } catch (e) {
+      console.warn('[ArenaHost] Lỗi tải danh sách người chơi từ DB:', e);
+    }
+  }, [pinCode]);
+
+  // Load danh sách người chơi ban đầu khi Host mở phòng
+  useEffect(() => {
+    fetchRoomParticipants();
+  }, [fetchRoomParticipants]);
+
+  // Đồng bộ Presence để xác định ai đang Online / Offline (Không xóa khỏi danh sách khi mất mạng)
   useEffect(() => {
     if (!pinCode) return;
 
@@ -169,16 +201,51 @@ export default function ArenaHostPage() {
     channel
       .on('presence', { event: 'sync' }, () => {
         const presenceState = channel.presenceState();
+        const onlineNames = new Set<string>();
+
         Object.values(presenceState).forEach((presences: any) => {
           if (Array.isArray(presences)) {
-            presences.forEach((p: any) => registerPlayer(p));
+            presences.forEach((p: any) => {
+              const name = (p.name || p.nickname || '').trim().toLowerCase();
+              if (name && name !== 'host') {
+                onlineNames.add(name);
+              }
+            });
           }
         });
+
+        // Cập nhật trạng thái isOnline cho danh sách người chơi từ Database
+        setPlayers((prev) =>
+          prev.map((player) => ({
+            ...player,
+            isOnline: onlineNames.has(player.name.toLowerCase()),
+          }))
+        );
+
+        // Fetch lại DB nếu có học sinh mới vừa handshake
+        fetchRoomParticipants();
       })
       .on('presence', { event: 'join' }, ({ key, newPresences }) => {
-        if (Array.isArray(newPresences)) {
-          newPresences.forEach((p: any) => registerPlayer(p));
+        fetchRoomParticipants();
+        playClickSound();
+      })
+      .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
+        // Học sinh rớt mạng -> Chỉ cập nhật isOnline = false, KHÔNG xóa khỏi phòng
+        const leftNames = new Set<string>();
+        if (Array.isArray(leftPresences)) {
+          leftPresences.forEach((p: any) => {
+            const name = (p.name || p.nickname || '').trim().toLowerCase();
+            if (name) leftNames.add(name);
+          });
         }
+
+        setPlayers((prev) =>
+          prev.map((player) =>
+            leftNames.has(player.name.toLowerCase())
+              ? { ...player, isOnline: false }
+              : player
+          )
+        );
       })
       .on('broadcast', { event: 'player-joined' }, ({ payload }) => {
         if (!payload) return;
