@@ -48,6 +48,8 @@ interface GrammarSectionProps {
   section: any;
   answers: Record<string, any>;
   onAnswerChange: (questionId: string, answer: any) => void;
+  onRecordingStateChange?: (isRecording: boolean) => void;
+  onUploadingStateChange?: (isUploading: boolean) => void;
   questionRefs?: MutableRefObject<Map<string, HTMLElement>>;
   currentQuestionId?: string;
   onQuestionFocus?: (questionId: string) => void;
@@ -63,6 +65,8 @@ export function GrammarSection({
   section,
   answers,
   onAnswerChange,
+  onRecordingStateChange,
+  onUploadingStateChange,
   questionRefs,
   currentQuestionId,
   onQuestionFocus,
@@ -462,6 +466,8 @@ export function GrammarSection({
                                           answer={answers[question.id]}
                                           maxDurationSeconds={120}
                                           onAnswerChange={onAnswerChange}
+                                          onRecordingStateChange={onRecordingStateChange}
+                                          onUploadingStateChange={onUploadingStateChange}
                                         />
                                       )}
 

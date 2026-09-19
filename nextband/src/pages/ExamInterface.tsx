@@ -888,7 +888,16 @@ export default function ExamInterface() {
       clearTimeout(autosaveTimerRef.current);
     }
 
-    // 2. Chặn nộp bài nếu file ghi âm đang tải lên ngầm
+    // 2. Chặn nộp bài nếu mic đang ghi âm hoặc file đang tải lên ngầm
+    if (isRecordingActive) {
+      toast({
+        title: "Đang ghi âm",
+        description: "Vui lòng bấm dừng thu âm và chờ file hoàn tất trước khi nộp bài.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (isAudioUploading) {
       toast({
         title: "Tệp ghi âm đang tải lên",
@@ -1525,6 +1534,8 @@ export default function ExamInterface() {
             section={currentSection}
             answers={answers}
             onAnswerChange={handleAnswerChange}
+            onRecordingStateChange={setIsRecordingActive}
+            onUploadingStateChange={setIsAudioUploading}
             questionRefs={questionRefs}
             currentQuestionId={currentQuestionId}
             onQuestionFocus={setCurrentQuestionId}
