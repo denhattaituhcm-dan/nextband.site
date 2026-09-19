@@ -5526,6 +5526,64 @@ export const arenaApi = {
     );
     return json.data;
   },
+
+  async executeHostCommand(params: {
+    roomId: string;
+    commandId: string;
+    action: string;
+    pin: string;
+    hostToken: string;
+  }): Promise<{
+    idempotent: boolean;
+    roomId: string;
+    pin: string;
+    status: string;
+    currentRound: number;
+    roundDeadlineAt: string | null;
+    question?: any;
+    totalQuestions?: number;
+  }> {
+    const res = await fetch(`${API_BASE_URL}/arena/rooms/${encodeURIComponent(params.roomId)}/command`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(params),
+    });
+    const json = await handleApiResponse<{ success: boolean; data: any }>(
+      res,
+      "Không thể thực thi lệnh điều khiển Arena"
+    );
+    return json.data;
+  },
+
+  async submitAnswer(params: {
+    roomId: string;
+    playerSessionToken: string;
+    questionId: string;
+    roundIndex: number;
+    selectedOptionId: string;
+    clientTelemetryTime?: string;
+  }): Promise<{
+    answerId: string;
+    isCorrect: boolean;
+    scoreAwarded: number;
+    totalScore: number;
+    submittedAt: string;
+  }> {
+    const res = await fetch(`${API_BASE_URL}/arena/rooms/${encodeURIComponent(params.roomId)}/answers`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(params),
+    });
+    const json = await handleApiResponse<{ success: boolean; data: any }>(
+      res,
+      "Không thể nộp đáp án"
+    );
+    return json.data;
+  },
 };
 
 

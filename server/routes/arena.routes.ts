@@ -81,5 +81,80 @@ export default async function arenaRoutes(fastify: FastifyInstance) {
       }
     }
   );
+  // POST /arena/rooms/:id/command - Thực thi lệnh Host (Server-Authoritative State Machine)
+  fastify.post<{
+    Params: { id: string };
+    Body: {
+      commandId: string;
+      action: any;
+      pin: string;
+      hostToken: string;
+    };
+  }>(
+    "/rooms/:id/command",
+    async (request, reply) => {
+      try {
+        const { commandId, action, pin, hostToken } = request.body || {};
+        const engineService = new (await import("../services/arena-engine.service.js")).ArenaEngineService(fastify.prisma);
+        const result = await engineService.executeHostCommand({
+          commandId,
+          action,
+          pin,
+          hostToken,
+        });
+        return reply.code(200).send({
+          success: true,
+          data: result,
+        });
+      } catch (err: any) {
+        const statusCode = err?.statusCode || 500;
+        return reply.code(statusCode).send({
+          success: false,
+          error: err?.message || "Lỗi khi thực thi lệnh Host.",
+          code: err?.code || "INTERNAL_ERROR",
+        });
+      }
+    }
+  );
+
+  // POST /arena/rooms/:id/answers - Học sinh nộp đáp án (Server-Side Scoring & Deadline Check)
+  fastify.post<{
+    Params: { id: string };
+    Body: {
+      playerSessionToken: string;
+      questionId: string;
+      roundIndex: number;
+      selectedOptionId: string;
+      clientTelemetryTime?: string;
+    };
+  }>(
+    "/rooms/:id/answers",
+    async (request, reply) => {
+      try {
+        const { id: roomId } = request.params;
+        const { playerSessionToken, questionId, roundIndex, selectedOptionId, clientTelemetryTime } = request.body || {};
+        const engineService = new (await import("../services/arena-engine.service.js")).ArenaEngineService(fastify.prisma);
+        const result = await engineService.submitAnswer({
+          roomId,
+          playerSessionToken,
+          questionId,
+          roundIndex,
+          selectedOptionId,
+          clientTelemetryTime,
+        });
+        return reply.code(200).send({
+          success: true,
+          data: result,
+        });
+      } catch (err: any) {
+        const statusCode = err?.statusCode || 500;
+        return reply.code(statusCode).send({
+          success: false,
+          error: err?.message || "Lỗi khi nộp đáp án.",
+          code: err?.code || "INTERNAL_ERROR",
+        });
+      }
+    }
+  );
 }
 
