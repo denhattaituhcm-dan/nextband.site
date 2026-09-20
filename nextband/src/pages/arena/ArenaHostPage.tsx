@@ -54,11 +54,13 @@ export default function ArenaHostPage() {
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
 
   // Quản lý câu hỏi đa vòng & Tổng điểm tích lũy qua các vòng
+  const [roomId, setRoomId] = useState<string>('');
   const [questionIndex, setQuestionIndex] = useState<number>(0);
   const [cumulativeScores, setCumulativeScores] = useState<Record<string, number>>({});
+  const [activeQuestion, setActiveQuestion] = useState<ArenaQuestion>(ARENA_COLLOCATION_QUESTIONS[0]);
+  const [totalQuestions, setTotalQuestions] = useState<number>(ARENA_COLLOCATION_QUESTIONS.length);
 
-  const currentQuestion = ARENA_COLLOCATION_QUESTIONS[questionIndex] || ARENA_COLLOCATION_QUESTIONS[0];
-  const totalQuestions = ARENA_COLLOCATION_QUESTIONS.length;
+  const currentQuestion = activeQuestion;
   const isLastRound = questionIndex >= totalQuestions - 1;
 
   // Phòng rỗng 100%, chỉ có học sinh thật tham gia qua Broadcast
@@ -192,6 +194,15 @@ export default function ArenaHostPage() {
             setCumulativeScores(scoreObj);
             setPlayerGoldMap(goldObj);
           }
+          if (snapshot.roomId) {
+            setRoomId(snapshot.roomId);
+          }
+          if (snapshot.question) {
+            setActiveQuestion(snapshot.question);
+          }
+          if (typeof snapshot.totalQuestions === 'number') {
+            setTotalQuestions(snapshot.totalQuestions);
+          }
           if (snapshot.currentRoundAnswers) {
             setAnswers(snapshot.currentRoundAnswers);
           }
@@ -201,21 +212,24 @@ export default function ArenaHostPage() {
 
       // Nếu không có hostToken hoặc fallback cơ bản
       const roomData = await arenaApi.getRoomByPin(pinCode);
-      if (roomData && (roomData as any).participants) {
-        const dbParticipants = (roomData as any).participants;
-        setPlayers((prev) => {
-          return dbParticipants.map((p: any) => {
-            const existing = prev.find((item) => item.id === p.id || item.name.toLowerCase() === p.nickname.toLowerCase());
-            return {
-              id: p.id,
-              name: p.nickname,
-              avatarSeed: p.avatarId,
-              rank: 'Học viên',
-              joinedAt: p.joinedAt,
-              isOnline: existing ? existing.isOnline : true,
-            };
+      if (roomData) {
+        if (roomData.id) setRoomId(roomData.id);
+        if ((roomData as any).participants) {
+          const dbParticipants = (roomData as any).participants;
+          setPlayers((prev) => {
+            return dbParticipants.map((p: any) => {
+              const existing = prev.find((item) => item.id === p.id || item.name.toLowerCase() === p.nickname.toLowerCase());
+              return {
+                id: p.id,
+                name: p.nickname,
+                avatarSeed: p.avatarId,
+                rank: 'Học viên',
+                joinedAt: p.joinedAt,
+                isOnline: existing ? existing.isOnline : true,
+              };
+            });
           });
-        });
+        }
       }
     } catch (e) {
       console.warn('[ArenaHost] Lỗi khôi phục snapshot Host từ DB:', e);
@@ -520,26 +534,53 @@ export default function ArenaHostPage() {
     return () => clearInterval(interval);
   }, [state, stopQuestionSuspense]);
 
-  // Điều phối chuyển trạng thái bằng Single Button
+  // Điều phối chuyển trạng thái bằng Single Button (Server-Authoritative)
   const handleExecuteCommand = useCallback(
-    (command: HostCommandType) => {
+    async (command: HostCommandType) => {
+      const hostToken = typeof window !== 'undefined' ? sessionStorage.getItem(`arena_host_token_${pinCode}`) : null;
+      let serverQuestion: any = null;
+      let serverTotal = totalQuestions;
+
+      // Đồng bộ lệnh lên Server Authoritative State Machine trước khi phát Broadcast
+      if (roomId && hostToken) {
+        try {
+          const res = await arenaApi.executeHostCommand({
+            roomId,
+            commandId: crypto.randomUUID ? crypto.randomUUID() : `cmd_${Date.now()}_${Math.random()}`,
+            action: command,
+            pin: pinCode,
+            hostToken,
+          });
+          if (res?.question) {
+            serverQuestion = res.question;
+            setActiveQuestion(res.question);
+          }
+          if (typeof res?.totalQuestions === 'number') {
+            serverTotal = res.totalQuestions;
+            setTotalQuestions(res.totalQuestions);
+          }
+        } catch (e) {
+          console.warn('[ArenaHost] Server command failed, continuing with client broadcast:', e);
+        }
+      }
+
       switch (command) {
-        case 'START_ARENA':
+        case 'START_ARENA': {
           setQuestionIndex(0);
           setAnswers({});
           setCumulativeScores({});
           setState('QUESTION_LIVE');
           setTimeLeft(roomSettings.timeLimit);
           startQuestionSuspense(roomSettings.timeLimit);
+          const qToBroadcast = serverQuestion || currentQuestion;
           if (channelRef.current) {
-            const firstQ = ARENA_COLLOCATION_QUESTIONS[0];
             const payload = {
               pin: pinCode,
               timeLimit: roomSettings.timeLimit,
               gameMode: roomSettings.gameMode,
               questionIndex: 0,
-              totalQuestions: ARENA_COLLOCATION_QUESTIONS.length,
-              question: firstQ,
+              totalQuestions: serverTotal,
+              question: qToBroadcast,
             };
             channelRef.current.send({
               type: 'broadcast',
@@ -553,6 +594,7 @@ export default function ArenaHostPage() {
             });
           }
           break;
+        }
         case 'LOCK_ROUND':
           stopQuestionSuspense();
           setState('ANSWER_LOCKED');
@@ -603,7 +645,7 @@ export default function ArenaHostPage() {
             });
           }
           break;
-        case 'NEXT_ROUND':
+        case 'NEXT_ROUND': {
           if (isLastRound) {
             stopQuestionSuspense();
             playPodiumSound();
@@ -625,8 +667,8 @@ export default function ArenaHostPage() {
             setTimeLeft(roomSettings.timeLimit);
             setState('QUESTION_LIVE');
             startQuestionSuspense(roomSettings.timeLimit);
+            const nextQ = serverQuestion || currentQuestion;
             if (channelRef.current) {
-              const nextQ = ARENA_COLLOCATION_QUESTIONS[nextIdx];
               channelRef.current.send({
                 type: 'broadcast',
                 event: 'question-live',
@@ -635,13 +677,14 @@ export default function ArenaHostPage() {
                   timeLimit: roomSettings.timeLimit,
                   gameMode: roomSettings.gameMode,
                   questionIndex: nextIdx,
-                  totalQuestions: ARENA_COLLOCATION_QUESTIONS.length,
+                  totalQuestions: serverTotal,
                   question: nextQ,
                 },
               });
             }
           }
           break;
+        }
         case 'RESTART_ARENA':
           stopQuestionSuspense();
           setQuestionIndex(0);
@@ -671,6 +714,8 @@ export default function ArenaHostPage() {
       isLastRound,
       questionIndex,
       allRankings,
+      roomId,
+      totalQuestions,
     ]
   );
 

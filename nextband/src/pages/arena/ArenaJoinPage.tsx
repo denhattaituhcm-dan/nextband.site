@@ -79,6 +79,7 @@ export default function ArenaJoinPage() {
 
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('arena_pin', cleanPin);
+        sessionStorage.setItem('arena_room_id', joinResult.roomId);
         sessionStorage.setItem('arena_nickname', joinResult.nickname);
         sessionStorage.setItem('arena_player_id', joinResult.participantId);
         sessionStorage.setItem('arena_player_token', joinResult.playerSessionToken);
@@ -87,7 +88,7 @@ export default function ArenaJoinPage() {
 
       // Điều hướng an toàn sang màn hình thi đấu sau khi đã được Server xác nhận
       navigate(
-        `/arena/play?pin=${cleanPin}&name=${encodeURIComponent(joinResult.nickname)}&playerId=${encodeURIComponent(joinResult.participantId)}&plantId=${avatarId}`
+        `/arena/play?pin=${cleanPin}&roomId=${encodeURIComponent(joinResult.roomId)}&name=${encodeURIComponent(joinResult.nickname)}&playerId=${encodeURIComponent(joinResult.participantId)}&plantId=${avatarId}`
       );
     } catch (err: any) {
       const message = err instanceof Error ? err.message : 'Lỗi tham gia phòng thi đấu';

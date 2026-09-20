@@ -1,5 +1,6 @@
 import { PrismaClient, ArenaRoomStatus } from "@prisma/client";
 import { ArenaPinService } from "./arena-pin.service.js";
+import { ArenaBankService } from "./arena-bank.service.js";
 import { ARENA_STANDARD_QUESTIONS, ArenaQuestion } from "./arena-questions.data.js";
 
 export type HostCommandAction =
@@ -30,9 +31,11 @@ export interface SubmitAnswerInput {
 
 export class ArenaEngineService {
   private pinService: ArenaPinService;
+  private bankService: ArenaBankService;
 
   constructor(private prisma: PrismaClient) {
     this.pinService = new ArenaPinService(prisma);
+    this.bankService = new ArenaBankService(prisma);
   }
 
   /**
@@ -72,6 +75,9 @@ export class ArenaEngineService {
     }
 
     // 2. Idempotency Check: Nếu lệnh này đã được xử lý thành công trước đó (do mạng retry)
+    const questions = await this.bankService.getQuestionsForRoom(room.examId);
+    const totalQuestions = questions.length;
+
     if (room.lastCommandId === commandId) {
       return {
         idempotent: true,
@@ -80,6 +86,8 @@ export class ArenaEngineService {
         status: room.status,
         currentRound: room.currentRound,
         roundDeadlineAt: room.roundDeadlineAt,
+        question: questions[room.currentRound] || null,
+        totalQuestions,
       };
     }
 
@@ -100,7 +108,7 @@ export class ArenaEngineService {
         }
         nextStatus = "QUESTION_LIVE";
         nextRound = 0;
-        activeQuestionId = ARENA_STANDARD_QUESTIONS[0]?.id || "q_0";
+        activeQuestionId = questions[0]?.id || "q_0";
         deadlineAt = new Date(now.getTime() + 15 * 1000); // 15 giây chuẩn
         break;
       }
@@ -138,13 +146,12 @@ export class ArenaEngineService {
       }
 
       case "NEXT_ROUND": {
-        const total = ARENA_STANDARD_QUESTIONS.length;
-        if (room.currentRound >= total - 1) {
+        if (room.currentRound >= totalQuestions - 1) {
           nextStatus = "PODIUM";
         } else {
           nextStatus = "QUESTION_LIVE";
           nextRound = room.currentRound + 1;
-          activeQuestionId = ARENA_STANDARD_QUESTIONS[nextRound]?.id || null;
+          activeQuestionId = questions[nextRound]?.id || null;
           deadlineAt = new Date(now.getTime() + 15 * 1000);
         }
         break;
@@ -191,8 +198,8 @@ export class ArenaEngineService {
       status: updatedRoom.status,
       currentRound: updatedRoom.currentRound,
       roundDeadlineAt: updatedRoom.roundDeadlineAt,
-      question: ARENA_STANDARD_QUESTIONS[updatedRoom.currentRound] || null,
-      totalQuestions: ARENA_STANDARD_QUESTIONS.length,
+      question: questions[updatedRoom.currentRound] || null,
+      totalQuestions,
     };
   }
 
@@ -257,7 +264,8 @@ export class ArenaEngineService {
     }
 
     // 3. Server tính điểm: Tuyệt đối không dùng điểm số do Client gửi lên
-    const question = ARENA_STANDARD_QUESTIONS[roundIndex];
+    const questions = await this.bankService.getQuestionsForRoom(room.examId);
+    const question = questions[roundIndex];
     const isCorrect = question ? question.correctOptionId === selectedOptionId : false;
 
     let scoreAwarded = 0;
@@ -389,14 +397,16 @@ export class ArenaEngineService {
       };
     }
 
+    const questions = await this.bankService.getQuestionsForRoom(room.examId);
+
     return {
       roomId: room.id,
       pin: room.pin,
       status: room.status,
       currentRound: room.currentRound,
       currentQuestionId: room.currentQuestionId,
-      question: ARENA_STANDARD_QUESTIONS[room.currentRound] || null,
-      totalQuestions: ARENA_STANDARD_QUESTIONS.length,
+      question: questions[room.currentRound] || null,
+      totalQuestions: questions.length,
       roundStartedAt: room.roundStartedAt,
       roundDeadlineAt: room.roundDeadlineAt,
       participants: room.participants,

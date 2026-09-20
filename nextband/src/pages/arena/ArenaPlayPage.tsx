@@ -21,6 +21,7 @@ import { CHARACTER_AVATARS, getCharacterBySeed } from '@/lib/arena/characterCata
 import { ArenaErrorBoundary } from '@/components/arena/ArenaErrorBoundary';
 import { useArenaSelfHealing } from '@/hooks/arena/useArenaSelfHealing';
 import { arenaTelemetry } from '@/lib/arena/arenaTelemetry';
+import { arenaApi } from '@/lib/api';
 
 interface PlayerCandidate {
   name: string;
@@ -48,6 +49,9 @@ export default function ArenaPlayPage() {
   }, [pin, navigate]);
   const nickname = searchParams.get('name') || 'Học viên';
   const playerId = searchParams.get('playerId') || `p_${Date.now()}`;
+  const rawRoomId = searchParams.get('roomId') || (typeof window !== 'undefined' ? sessionStorage.getItem('arena_room_id') : '');
+  const [roomId, setRoomId] = useState<string>(rawRoomId || '');
+  const playerToken = typeof window !== 'undefined' ? sessionStorage.getItem('arena_player_token') || '' : '';
   const paramAvatarId = searchParams.get('plantId');
   const storedAvatarId = typeof window !== 'undefined' ? sessionStorage.getItem('arena_plant_id') : null;
   const avatarId = paramAvatarId !== null && paramAvatarId !== undefined 
@@ -326,7 +330,25 @@ export default function ArenaPlayPage() {
 
       const isAnsCorrect = optionId === currentQuestion.correctOptionId;
 
-      // Gửi broadcast đáp án của học sinh lên Host
+      // Gửi nộp bài Authoritative lên Server
+      if (roomId && playerToken) {
+        try {
+          arenaApi.submitAnswer({
+            roomId,
+            playerSessionToken: playerToken,
+            questionId: currentQuestion.id,
+            roundIndex: questionIndex,
+            selectedOptionId: optionId,
+            clientTelemetryTime: new Date().toISOString(),
+          }).catch((err) => {
+            console.warn('[ArenaPlayPage] submitAnswer warning:', err);
+          });
+        } catch (e) {
+          console.warn('[ArenaPlayPage] Error initiating submitAnswer:', e);
+        }
+      }
+
+      // Gửi broadcast đáp án của học sinh lên Host để hiển thị real-time
       if (channelRef.current) {
         channelRef.current.send({
           type: 'broadcast',
@@ -347,7 +369,7 @@ export default function ArenaPlayPage() {
         }, 600);
       }
     },
-    [isLocked, hasSubmitted, playClickSound, nickname, timeLeft, gold, gameMode]
+    [isLocked, hasSubmitted, playClickSound, nickname, timeLeft, gold, gameMode, currentQuestion, questionIndex, roomId, playerToken]
   );
 
   // Xử lý khi mở rương nhận vàng
