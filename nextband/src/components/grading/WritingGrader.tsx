@@ -309,11 +309,22 @@ export function WritingGrader({
     const lr = foundScores?.lexical ?? foundScores?.lexicalResource ?? null;
     const gra = foundScores?.grammar ?? foundScores?.grammaticalRange ?? null;
 
-    setCriteriaScores({
-      taskResponse: tr != null && !isNaN(Number(tr)) ? Number(tr) : null,
-      coherence: cc != null && !isNaN(Number(cc)) ? Number(cc) : null,
-      lexical: lr != null && !isNaN(Number(lr)) ? Number(lr) : null,
-      grammar: gra != null && !isNaN(Number(gra)) ? Number(gra) : null,
+    setCriteriaScores((prev) => {
+      const nextTr = tr != null && !isNaN(Number(tr)) ? Number(tr) : null;
+      const nextCc = cc != null && !isNaN(Number(cc)) ? Number(cc) : null;
+      const nextLr = lr != null && !isNaN(Number(lr)) ? Number(lr) : null;
+      const nextGra = gra != null && !isNaN(Number(gra)) ? Number(gra) : null;
+
+      // If incoming has scores, take them. If not, preserve current active entered scores.
+      if (nextTr != null || nextCc != null || nextLr != null || nextGra != null) {
+        return {
+          taskResponse: nextTr,
+          coherence: nextCc,
+          lexical: nextLr,
+          grammar: nextGra,
+        };
+      }
+      return prev;
     });
 
     // Hydrate sentence feedbacks per question
@@ -329,11 +340,14 @@ export function WritingGrader({
       const firstQId = writingQuestions[0]?.questionId || "default";
       fbMap[firstQId] = structured.sentenceFeedbacks;
     }
-    setSentenceFeedbacksMap(fbMap);
+    setSentenceFeedbacksMap((prev) => (Object.keys(fbMap).length > 0 ? fbMap : prev));
 
     setDiscourseFeedbacks(structured?.discourseFeedbacks || []);
     setEssayDiagnostic(structured?.essayDiagnostic || null);
-    setFeedbackText(structured?.text || (typeof subFb === "string" && !subFb.startsWith("{") ? subFb : ""));
+    const resolvedIncomingText = structured?.text || (typeof subFb === "string" && !subFb.startsWith("{") ? subFb : "");
+    if (resolvedIncomingText) {
+      setFeedbackText(resolvedIncomingText);
+    }
     setPrimaryErrorCategory(structured?.primaryErrorCategory || submissionDetail?.primaryErrorCategory || "STRUCTURE");
     setRevisionRequired(!!(structured?.revisionRequired || submissionDetail?.revisionRequired));
     setIsDirty(false);

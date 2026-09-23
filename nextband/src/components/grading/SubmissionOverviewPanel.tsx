@@ -91,7 +91,7 @@ export function SubmissionOverviewPanel({
 
   const isManual = detectedSkill === "speaking" || detectedSkill === "writing";
   const isGraded = isManual
-    ? isSubmissionGraded(homework.status) || (homework.bandScore != null && Number(homework.bandScore) > 0)
+    ? isSubmissionGraded(homework.status) || homework.status === "graded" || homework.status === "needs_revision"
     : isSubmissionGraded(homework.status) || isAutoGraded || (homework.score != null && Number(homework.score) > 0);
   const bandScore = homework.score ?? homework.bandScore ?? homework.objectiveScore ?? null;
 

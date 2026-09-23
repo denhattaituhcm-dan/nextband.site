@@ -368,11 +368,21 @@ export function SpeakingGrader({
     const gra = foundScores?.grammar ?? foundScores?.grammaticalRange ?? null;
     const pr = foundScores?.pronunciation ?? null;
 
-    setCriteriaScores({
-      fluencyAndCoherence: fc != null && !isNaN(Number(fc)) ? Number(fc) : null,
-      lexical: lr != null && !isNaN(Number(lr)) ? Number(lr) : null,
-      grammar: gra != null && !isNaN(Number(gra)) ? Number(gra) : null,
-      pronunciation: pr != null && !isNaN(Number(pr)) ? Number(pr) : null,
+    setCriteriaScores((prev) => {
+      const nextFc = fc != null && !isNaN(Number(fc)) ? Number(fc) : null;
+      const nextLr = lr != null && !isNaN(Number(lr)) ? Number(lr) : null;
+      const nextGra = gra != null && !isNaN(Number(gra)) ? Number(gra) : null;
+      const nextPr = pr != null && !isNaN(Number(pr)) ? Number(pr) : null;
+
+      if (nextFc != null || nextLr != null || nextGra != null || nextPr != null) {
+        return {
+          fluencyAndCoherence: nextFc,
+          lexical: nextLr,
+          grammar: nextGra,
+          pronunciation: nextPr,
+        };
+      }
+      return prev;
     });
 
     // Load Speaking 4–3–1 fields from existing feedback
