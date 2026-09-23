@@ -15,6 +15,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Send,
   Save,
   Loader2,
@@ -161,10 +172,22 @@ export function WritingGrader({
 
   useEffect(() => {
     const nextStatus = submissionDetail?.status || submissionStatus;
-    if (nextStatus) {
-      setCurrentStatus(nextStatus);
-    }
-  }, [submissionDetail?.status, submissionStatus]);
+    if (!nextStatus) return;
+    // Never downgrade from a finalized state (GRADED / REVISION_REQUIRED / needs_revision)
+    // to a lesser status due to a stale prop arriving after an optimistic update.
+    const isCurrentFinalized =
+      currentStatus === "GRADED" ||
+      currentStatus === "graded" ||
+      currentStatus === "REVISION_REQUIRED" ||
+      currentStatus === "needs_revision";
+    const isNextFinalized =
+      nextStatus === "GRADED" ||
+      nextStatus === "graded" ||
+      nextStatus === "REVISION_REQUIRED" ||
+      nextStatus === "needs_revision";
+    if (isCurrentFinalized && !isNextFinalized) return;
+    setCurrentStatus(nextStatus);
+  }, [submissionDetail?.status, submissionStatus]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Skill detection
   const detectedSkill: ExamSkillType = useMemo(() => {
@@ -275,14 +298,23 @@ export function WritingGrader({
       structured = parseStructuredFeedback(firstFb);
     }
 
-    setCriteriaScores(
-      structured?.criteriaScores || {
-        taskResponse: null,
-        coherence: null,
-        lexical: null,
-        grammar: null,
-      }
-    );
+    const foundScores =
+      structured?.criteriaScores ||
+      (submissionDetail as any)?.criteriaScores ||
+      (writingQuestions[0] as any)?.criteriaScores ||
+      null;
+
+    const tr = foundScores?.taskResponse ?? foundScores?.taskAchievement ?? null;
+    const cc = foundScores?.coherence ?? foundScores?.coherenceAndCohesion ?? null;
+    const lr = foundScores?.lexical ?? foundScores?.lexicalResource ?? null;
+    const gra = foundScores?.grammar ?? foundScores?.grammaticalRange ?? null;
+
+    setCriteriaScores({
+      taskResponse: tr != null && !isNaN(Number(tr)) ? Number(tr) : null,
+      coherence: cc != null && !isNaN(Number(cc)) ? Number(cc) : null,
+      lexical: lr != null && !isNaN(Number(lr)) ? Number(lr) : null,
+      grammar: gra != null && !isNaN(Number(gra)) ? Number(gra) : null,
+    });
 
     // Hydrate sentence feedbacks per question
     const fbMap: Record<string, SentenceFeedbackItem[]> = {};
@@ -560,15 +592,71 @@ export function WritingGrader({
             Lưu nháp
           </Button>
 
-          <Button
-            type="button"
-            onClick={() => handleSave(true)}
-            disabled={isSubmitting}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold h-8 text-xs px-3.5 shadow-xs gap-1.5"
-          >
-            {isSubmitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
-            <span>{isCompleted ? "Cập nhật điểm" : "Trả bài 🚀"}</span>
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                type="button"
+                disabled={isSubmitting}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold h-8 text-xs px-3.5 shadow-xs gap-1.5"
+              >
+                {isSubmitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
+                <span>{isCompleted ? "Cập nhật điểm" : "Trả bài 🚀"}</span>
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="sm:max-w-[440px]">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <Send className="h-4 w-4 text-blue-600" />
+                  {isCompleted ? "Xác nhận cập nhật điểm Writing?" : "Xác nhận trả bài Writing?"}
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-xs text-slate-600 space-y-2 pt-1">
+                  <div>
+                    Bạn đang chuẩn bị {isCompleted ? "cập nhật kết quả chấm điểm" : "trả bài chính thức"} cho học viên{" "}
+                    <span className="font-bold text-slate-900">{studentName}</span>.
+                  </div>
+                  <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <span className="text-slate-500">Overall Band:</span>{" "}
+                      <span className="font-extrabold text-blue-700">{displayScore}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500">Trạng thái:</span>{" "}
+                      <span className="font-semibold text-emerald-700">
+                        {revisionRequired ? "Cần sửa bài (Attempt 2)" : "Đã chấm điểm"}
+                      </span>
+                    </div>
+                    {criteriaScores && (
+                      <div className="col-span-2 flex items-center gap-2 pt-1 border-t border-slate-200/80 text-[11px] text-slate-600">
+                        <span>TR: <b>{criteriaScores.taskResponse ?? "—"}</b></span>
+                        <span>•</span>
+                        <span>CC: <b>{criteriaScores.coherence ?? "—"}</b></span>
+                        <span>•</span>
+                        <span>LR: <b>{criteriaScores.lexical ?? "—"}</b></span>
+                        <span>•</span>
+                        <span>GRA: <b>{criteriaScores.grammar ?? "—"}</b></span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-[11px] text-amber-700 bg-amber-50 p-2 rounded border border-amber-200">
+                    ⚠️ Sau khi xác nhận, điểm số và nhận xét sẽ được gửi chính thức đến học viên và phụ huynh.
+                  </div>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="gap-2 sm:gap-0">
+                <AlertDialogCancel disabled={isSubmitting} className="h-8 text-xs">
+                  Kiểm tra lại
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => handleSave(true)}
+                  disabled={isSubmitting}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold h-8 text-xs"
+                >
+                  {isSubmitting ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" /> : null}
+                  Xác nhận trả bài
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </header>
 

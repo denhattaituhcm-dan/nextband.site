@@ -16,8 +16,9 @@ import typography from "@tailwindcss/typography";
 // ============================================================
 
 export default {
-  // Dark mode is intentionally disabled. ARIS is a light-only product.
-  // Do not re-enable without a full dark-mode token audit first.
+  // Dark mode is class-based (disabled by default unless .dark class is explicitly added).
+  // This prevents OS media queries (prefers-color-scheme: dark) from breaking the ARIS light design contract.
+  darkMode: ["class"],
   content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
   prefix: "",
   theme: {

@@ -629,6 +629,7 @@ export default function TeacherWorkspace() {
             audioUrl: resolvedAudioUrl,
             score: a?.score != null ? Number(a?.score) : null,
             feedback: a?.feedback || "",
+            criteriaScores: a?.criteriaScores || (a?.feedback ? parseStructuredFeedback(a.feedback).criteriaScores : null) || currentSubmissionDetail?.criteriaScores || null,
           };
         });
       }
@@ -652,6 +653,7 @@ export default function TeacherWorkspace() {
           audioUrl: resolvedAudioUrl,
           score: a.score != null ? Number(a.score) : null,
           feedback: a.feedback || "",
+          criteriaScores: a.criteriaScores || (a.feedback ? parseStructuredFeedback(a.feedback).criteriaScores : null) || currentSubmissionDetail?.criteriaScores || null,
         };
       });
     }
@@ -950,9 +952,9 @@ export default function TeacherWorkspace() {
           );
         }
 
-        // Invalidate cache and refetch fresh data
-        queryClient.invalidateQueries({ queryKey: ["submission-detail-for-grading", currentHomework.submissionId] });
-        queryClient.invalidateQueries({ queryKey: ["teacher-workspace-data", selectedClassId] });
+        // Refetch fresh data from server (small delay ensures read-after-write consistency
+        // so the DB transaction is fully visible before we query it again)
+        await new Promise((r) => setTimeout(r, 400));
         await Promise.allSettled([
           refetchWorkspace(),
           refetchSubmissionDetail(),

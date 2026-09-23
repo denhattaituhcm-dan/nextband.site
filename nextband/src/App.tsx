@@ -31,11 +31,23 @@ export const isChunkLoadError = (error: unknown): boolean => {
   );
 };
 
+export const isDomMutationError = (error: unknown): boolean => {
+  if (!error) return false;
+  const msg = error instanceof Error ? error.message : String(error);
+  return (
+    msg.includes("insertBefore") ||
+    msg.includes("removeChild") ||
+    msg.includes("The node before which the new node is to be inserted is not a child of this node") ||
+    msg.includes("The node to be removed is not a child of this node")
+  );
+};
+
 export const isTransientEvaluationError = (error: unknown): boolean => {
   if (!error) return false;
   const msg = error instanceof Error ? error.message : String(error);
   return (
     isChunkLoadError(error) ||
+    isDomMutationError(error) ||
     msg.includes("Cannot read properties of undefined") ||
     msg.includes("undefined is not an object") ||
     msg.includes("null is not an object")
@@ -212,6 +224,9 @@ function formatAppErrorMessage(err: any): string {
   }
   if (msg.includes("invariant=418") || msg.includes("invariant=423")) {
     return "Lỗi đồng bộ cấu trúc dữ liệu giao diện (Hydration mismatch).";
+  }
+  if (msg.includes("insertBefore") || msg.includes("removeChild")) {
+    return "Xung đột DOM do tính năng tự động dịch của trình duyệt (Google Dịch) hoặc tiện ích mở rộng. Vui lòng tắt tự động dịch để hiển thị chuẩn xác.";
   }
   return msg;
 }

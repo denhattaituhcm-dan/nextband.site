@@ -1,5 +1,8 @@
 *.tar.gz
 *.sql
+!nextband/schema.sql
+!prisma/migrations/**/*.sql
+!prisma/migrations/*.sql
 node_modules/
 dist/
 .env

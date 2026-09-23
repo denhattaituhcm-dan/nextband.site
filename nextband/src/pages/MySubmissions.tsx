@@ -152,6 +152,15 @@ export default function MySubmissions() {
     enabled: isAuthenticated,
     staleTime: 1000 * 30,
     refetchOnWindowFocus: true,
+    // Smart polling: re-check every 20s when viewing pending submissions,
+    // so teacher-graded results appear automatically without manual refresh.
+    refetchInterval: (query) => {
+      const items = query.state.data?.data || [];
+      const hasPending = items.some(
+        (s: any) => String(s.status || "").toUpperCase() === "SUBMITTED"
+      );
+      return hasPending ? 20000 : false;
+    },
   });
 
   // Query all recent submissions of student (limit 150) for overall error spotlight & recovery stats

@@ -106,27 +106,27 @@ export function SpeakingSection({
   const cleanSectionInstructions = cleanHtmlText(section.instructions);
 
   return (
-    <div className="h-full overflow-hidden flex flex-col bg-slate-50/50 dark:bg-neutral-950/50">
+    <div className="h-full overflow-hidden flex flex-col bg-slate-50/70">
       <ScrollArea className="flex-1">
         <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8 pb-32">
           {/* Header */}
-          <div className="bg-gradient-to-r from-orange-500/10 via-amber-500/5 to-transparent p-6 rounded-3xl border border-orange-200/60 dark:border-orange-900/30 shadow-xs">
-            <div className="flex items-center gap-3 text-orange-600 dark:text-orange-400 mb-2">
+          <div className="bg-gradient-to-r from-orange-500/10 via-amber-500/5 to-transparent p-6 rounded-3xl border border-orange-200/80 shadow-xs">
+            <div className="flex items-center gap-3 text-orange-600 mb-2">
               <div className="p-3 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md shadow-orange-500/20">
                 <Mic className="h-6 w-6" />
               </div>
               <div>
-                <h2 className="text-2xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">
+                <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
                   {section.title || "IELTS Speaking Test"}
                 </h2>
-                <p className="text-xs font-medium text-muted-foreground mt-0.5">
+                <p className="text-xs font-semibold text-slate-600 mt-0.5">
                   Thực hiện ghi âm trực tiếp bài nói của bạn
                 </p>
               </div>
             </div>
 
             {cleanSectionInstructions && (
-              <div className="mt-4 p-4 bg-white/90 dark:bg-gray-900/90 border border-orange-200/80 dark:border-orange-900/40 rounded-2xl text-sm text-gray-800 dark:text-gray-200 font-medium shadow-xs">
+              <div className="mt-4 p-4 bg-white/95 border border-orange-200/80 rounded-2xl text-sm text-slate-800 font-medium shadow-xs">
                 <RichContent html={cleanSectionInstructions} />
               </div>
             )}
@@ -149,14 +149,14 @@ export function SpeakingSection({
                           Phần {gIndex + 1}
                         </span>
                       )}
-                      <h3 className="text-xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">
+                      <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">
                         {displayTitle}
                       </h3>
                     </div>
 
                     {groupInst && (
-                      <div className="p-4 bg-gradient-to-r from-orange-50/80 to-amber-50/50 dark:from-orange-950/20 dark:to-amber-950/10 border border-orange-200/80 dark:border-orange-900/30 rounded-2xl text-sm text-gray-800 dark:text-gray-200 font-medium shadow-xs">
-                        <RichContent html={groupInst} />
+                      <div className="p-4 bg-amber-50/90 border border-amber-300/80 rounded-2xl text-sm text-slate-900 font-medium shadow-xs">
+                        <RichContent html={groupInst} className="text-slate-900 font-medium leading-relaxed" />
                       </div>
                     )}
                   </div>
@@ -164,15 +164,15 @@ export function SpeakingSection({
 
                 {/* Group Passage / Cue Card */}
                 {group.passage && (
-                  <div className="bg-gradient-to-br from-amber-50/90 via-orange-50/50 to-amber-100/40 dark:from-amber-950/30 dark:via-orange-950/20 dark:to-amber-900/20 border border-amber-300/70 dark:border-amber-700/40 rounded-3xl p-6 shadow-md shadow-amber-500/5 relative overflow-hidden">
-                    <div className="flex items-center gap-2.5 text-amber-800 dark:text-amber-300 font-bold mb-4 uppercase text-xs tracking-widest bg-amber-200/60 dark:bg-amber-900/50 px-3.5 py-1.5 rounded-full w-fit">
-                      <BookOpen className="h-4 w-4" />
+                  <div className="bg-gradient-to-br from-amber-50/90 via-orange-50/50 to-amber-100/40 border border-amber-300/80 rounded-3xl p-6 shadow-md shadow-amber-500/5 relative overflow-hidden">
+                    <div className="flex items-center gap-2.5 text-amber-900 font-bold mb-4 uppercase text-xs tracking-widest bg-amber-200/80 px-3.5 py-1.5 rounded-full w-fit">
+                      <BookOpen className="h-4 w-4 text-amber-800" />
                       <span>IELTS Speaking Cue Card</span>
                     </div>
                     <RichContent
                       html={group.passage}
                       variant="passage"
-                      className="text-gray-900 dark:text-gray-100 text-lg leading-relaxed font-medium"
+                      className="text-slate-900 text-lg leading-relaxed font-semibold"
                     />
                   </div>
                 )}
@@ -194,10 +194,10 @@ export function SpeakingSection({
                           }
                         }}
                         className={cn(
-                          "transition-all duration-300 rounded-3xl overflow-hidden border border-gray-200/80 dark:border-gray-800 shadow-xs hover:shadow-md",
+                          "transition-all duration-300 rounded-3xl overflow-hidden border border-gray-200/90 shadow-xs hover:shadow-md",
                           isCurrent
-                            ? "ring-2 ring-orange-500 border-transparent bg-gradient-to-b from-white to-orange-50/30 dark:from-gray-900 dark:to-orange-950/10 shadow-lg shadow-orange-500/10"
-                            : "bg-white dark:bg-gray-900 hover:border-orange-300/50",
+                            ? "ring-2 ring-orange-500 border-transparent bg-gradient-to-b from-white to-orange-50/40 shadow-lg shadow-orange-500/10"
+                            : "bg-white hover:border-orange-300/60",
                         )}
                         onClick={() => onQuestionFocus?.(question.id)}
                       >
@@ -218,12 +218,12 @@ export function SpeakingSection({
                               {cleanHtmlText(question.question_text) && (
                                 <RichContent
                                   html={question.question_text}
-                                  className="font-bold text-gray-900 dark:text-gray-100 text-lg leading-snug"
+                                  className="font-extrabold text-slate-900 text-lg leading-snug"
                                 />
                               )}
 
                               {question.question_audio_url && (
-                                <div className="bg-orange-50/80 dark:bg-gray-800/80 p-3 rounded-2xl border border-orange-200/60 dark:border-gray-700 flex items-center gap-3 max-w-md">
+                                <div className="bg-orange-50/90 p-3 rounded-2xl border border-orange-200 flex items-center gap-3 max-w-md">
                                   <audio
                                     src={formatStorageUrl(question.question_audio_url)}
                                     controls

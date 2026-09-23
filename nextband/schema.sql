@@ -536,6 +536,25 @@ CREATE TABLE IF NOT EXISTS public.notifications (
   read_at timestamptz
 );
 
+ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "notifications_select_own" ON public.notifications;
+CREATE POLICY "notifications_select_own" ON public.notifications
+  FOR SELECT USING (auth.uid() = recipient_id);
+DROP POLICY IF EXISTS "notifications_update_own" ON public.notifications;
+CREATE POLICY "notifications_update_own" ON public.notifications
+  FOR UPDATE USING (auth.uid() = recipient_id)
+  WITH CHECK (auth.uid() = recipient_id);
+DROP POLICY IF EXISTS "notifications_insert_admin" ON public.notifications;
+CREATE POLICY "notifications_insert_admin" ON public.notifications
+  FOR INSERT WITH CHECK (
+    has_role(auth.uid(), 'admin'::app_role) OR (auth.role() = 'service_role')
+  );
+DROP POLICY IF EXISTS "notifications_delete_admin" ON public.notifications;
+CREATE POLICY "notifications_delete_admin" ON public.notifications
+  FOR DELETE USING (
+    has_role(auth.uid(), 'admin'::app_role) OR (auth.role() = 'service_role')
+  );
+
 -- =============================================
 -- STORAGE BUCKETS
 -- =============================================

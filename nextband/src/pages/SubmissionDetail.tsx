@@ -62,13 +62,8 @@ import {
 } from "@/lib/milestoneEngine";
 import { CelebrationModal } from "@/components/celebration/CelebrationModal";
 import { milestonesApi, coursesApi, lessonsApi } from "@/lib/api";
-import { Flame, Target, CalendarDays, ArrowRight as ArrowRightIcon } from "lucide-react";
+import { Flame, ArrowRight as ArrowRightIcon } from "lucide-react";
 import { useStudentLifecycle } from "@/hooks/useStudentLifecycle";
-import {
-  calculateDisciplineStanding,
-  getSavedDisciplineGoal,
-  isScholarshipEligible,
-} from "@/lib/disciplineScholarshipHelper";
 import { calculateStudentStreak } from "@/lib/studentStreakHelper";
 
 const statusConfig: Record<
@@ -305,19 +300,6 @@ export default function SubmissionDetail() {
   const streakData = useMemo(() => {
     return calculateStudentStreak(allSubmissionsList, targetStudentId);
   }, [allSubmissionsList, targetStudentId]);
-
-  // Discipline Scholarship: Tính dựa trên mốc học bổng học sinh đã chọn (hoặc mặc định)
-  const scholarshipStanding = useMemo(() => {
-    const validSubsCount = allSubmissionsList.filter((s: any) => isScholarshipEligible(s)).length;
-    const totalAssignedCount = rawClassLessons.length > 0 ? rawClassLessons.length : 27;
-    const savedGoal = getSavedDisciplineGoal(targetStudentId, enrolledClassId);
-    return calculateDisciplineStanding({
-      submittedCount: validSubsCount,
-      totalHomeworks: totalAssignedCount,
-      attendanceRate: 1.0,
-      targetTier: savedGoal,
-    });
-  }, [allSubmissionsList, rawClassLessons, targetStudentId, enrolledClassId]);
 
   // Upcoming homework according to class schedule
   const upcomingHomeworkInfo = useMemo(() => {
@@ -752,87 +734,6 @@ export default function SubmissionDetail() {
         </div>
       </div>
 
-      {/* 3. WIDGET MỤC TIÊU HỌC BỔNG KỶ LUẬT (Lấy từ mục tiêu học sinh đã chọn) */}
-      <div className="rounded-2xl border border-purple-200/90 bg-gradient-to-br from-purple-50/60 via-indigo-50/40 to-white dark:from-purple-950/20 dark:to-slate-900 p-5 shadow-xs space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 text-xs">
-              <Target className="w-4 h-4" />
-            </span>
-            <div>
-              <span className="text-xs font-black text-purple-950 dark:text-purple-200 uppercase tracking-wider">
-                Mục Tiêu Học Bổng Kỷ Luật
-              </span>
-              <p className="text-xs text-muted-foreground">
-                Mục tiêu của bạn: <strong className="text-purple-700 dark:text-purple-400">{scholarshipStanding.targetTierConfig.subTitle}</strong> ({scholarshipStanding.targetTierConfig.rewardFormatted})
-              </p>
-            </div>
-          </div>
-
-          <div className="text-right self-start sm:self-auto">
-            <Badge className="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs">
-              {scholarshipStanding.effectiveTier
-                ? `Đang giữ: ${scholarshipStanding.effectiveTier.rewardFormatted}`
-                : "Chưa đạt mốc 50%"}
-            </Badge>
-          </div>
-        </div>
-
-        {/* Progress bar to target */}
-        <div className="space-y-1.5">
-          <div className="flex justify-between text-xs font-bold">
-            <span className="text-muted-foreground">
-              Đã nộp: <strong className="text-purple-700 dark:text-purple-300">{allSubmissionsList.filter((s: any) => isScholarshipEligible(s)).length}</strong>/{rawClassLessons.length || 27} bài ({scholarshipStanding.currentHomeworkRate}%)
-            </span>
-            <span className="text-purple-900 dark:text-purple-200">
-              Mục tiêu: {Math.round(scholarshipStanding.targetTierConfig.minHomeworkRate * 100)}% BTVN
-            </span>
-          </div>
-
-          <div className="w-full h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden border border-slate-200/80">
-            <div
-              className="h-full bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full transition-all duration-500"
-              style={{ width: `${Math.min(100, Math.max(5, scholarshipStanding.currentHomeworkRate))}%` }}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* 4. UPCOMING HOMEWORK CARD: Countdown deadline theo lịch lớp thực tế */}
-      {upcomingHomeworkInfo && (
-        <div className="rounded-2xl border border-blue-200/80 bg-gradient-to-r from-blue-50/50 via-slate-50 to-white dark:from-blue-950/20 dark:to-slate-900 p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 flex items-center justify-center shrink-0">
-              <CalendarDays className="w-5 h-5" />
-            </div>
-            <div className="space-y-0.5">
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-blue-700 dark:text-blue-400">
-                  Bài tập kế tiếp theo lịch
-                </span>
-                {upcomingHomeworkInfo.deadline && (
-                  <Badge variant="outline" className="text-[10px] text-slate-500 border-slate-200">
-                    Hạn: {format(new Date(upcomingHomeworkInfo.deadline), "HH:mm · dd/MM", { locale: vi })}
-                  </Badge>
-                )}
-              </div>
-              <h4 className="text-sm font-bold text-foreground">
-                {upcomingHomeworkInfo.title}
-              </h4>
-            </div>
-          </div>
-
-          <Button
-            size="sm"
-            onClick={() => navigate(routes.student.lesson(upcomingHomeworkInfo.id))}
-            className="gap-1.5 rounded-xl font-bold text-xs bg-blue-600 hover:bg-blue-700 text-white shadow-xs self-start sm:self-auto shrink-0"
-          >
-            <span>Xem bài tập tới</span>
-            <ArrowRightIcon className="w-3.5 h-3.5" />
-          </Button>
-        </div>
-      )}
-
       {/* Header card */}
       <Card>
         <CardContent className="pt-6 space-y-4">
@@ -942,46 +843,46 @@ export default function SubmissionDetail() {
             <div className="space-y-3">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-1">
                 {/* Status Card */}
-                <div className="rounded-xl border border-amber-200 bg-amber-50/60 dark:bg-amber-950/20 dark:border-amber-800/60 p-4 flex flex-col items-center justify-center text-center">
-                  <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 font-bold text-xs uppercase tracking-wider mb-1">
-                    <Clock className="h-4 w-4" />
+                <div className="rounded-xl border border-amber-300/80 bg-amber-50/90 p-4 flex flex-col items-center justify-center text-center shadow-2xs">
+                  <div className="flex items-center gap-1.5 text-amber-900 font-bold text-xs uppercase tracking-wider mb-1">
+                    <Clock className="h-4 w-4 text-amber-700" />
                     <span>Trạng Thái</span>
                   </div>
-                  <p className="text-base sm:text-lg font-bold text-amber-800 dark:text-amber-300">
+                  <p className="text-base sm:text-lg font-extrabold text-amber-950">
                     {isGraded ? "Đã chấm điểm" : "Chờ giáo viên chấm"}
                   </p>
                 </div>
 
                 {/* Answered Questions Card */}
-                <div className="rounded-xl border border-blue-200 bg-blue-50/60 dark:bg-blue-950/20 dark:border-blue-800/60 p-4 flex flex-col items-center justify-center text-center">
-                  <div className="flex items-center gap-1.5 text-blue-700 dark:text-blue-400 font-bold text-xs uppercase tracking-wider mb-1">
-                    <CheckCircle2 className="h-4 w-4" />
+                <div className="rounded-xl border border-blue-300/80 bg-blue-50/90 p-4 flex flex-col items-center justify-center text-center shadow-2xs">
+                  <div className="flex items-center gap-1.5 text-blue-900 font-bold text-xs uppercase tracking-wider mb-1">
+                    <CheckCircle2 className="h-4 w-4 text-blue-700" />
                     <span>Đã Trả Lời</span>
                   </div>
-                  <p className="text-2xl sm:text-3xl font-extrabold text-blue-700 dark:text-blue-400 tabular-nums">
+                  <p className="text-2xl sm:text-3xl font-extrabold text-blue-950 tabular-nums">
                     {answeredCount}
-                    <span className="text-xs font-medium text-blue-600/70 ml-1">/ {totalQuestionsCount} câu</span>
+                    <span className="text-xs font-semibold text-blue-800 ml-1">/ {totalQuestionsCount} câu</span>
                   </p>
                 </div>
 
                 {/* Exam Category Card */}
-                <div className="rounded-xl border border-purple-200 bg-purple-50/60 dark:bg-purple-950/20 dark:border-purple-800/60 p-4 flex flex-col items-center justify-center text-center">
-                  <div className="flex items-center gap-1.5 text-purple-700 dark:text-purple-400 font-bold text-xs uppercase tracking-wider mb-1">
-                    <Sparkles className="h-4 w-4" />
+                <div className="rounded-xl border border-purple-300/80 bg-purple-50/90 p-4 flex flex-col items-center justify-center text-center shadow-2xs">
+                  <div className="flex items-center gap-1.5 text-purple-900 font-bold text-xs uppercase tracking-wider mb-1">
+                    <Sparkles className="h-4 w-4 text-purple-700" />
                     <span>Hình Thức</span>
                   </div>
-                  <p className="text-base sm:text-lg font-bold text-purple-800 dark:text-purple-300">
+                  <p className="text-base sm:text-lg font-extrabold text-purple-950">
                     Bài tập Tự Luận
                   </p>
                 </div>
 
                 {/* Submission Time Card */}
-                <div className="rounded-xl border border-slate-200 bg-slate-50 dark:bg-slate-900/40 dark:border-slate-800 p-4 flex flex-col items-center justify-center text-center">
-                  <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 font-bold text-xs uppercase tracking-wider mb-1">
-                    <Clock className="h-4 w-4" />
+                <div className="rounded-xl border border-slate-300/80 bg-slate-50 p-4 flex flex-col items-center justify-center text-center shadow-2xs">
+                  <div className="flex items-center gap-1.5 text-slate-700 font-bold text-xs uppercase tracking-wider mb-1">
+                    <Clock className="h-4 w-4 text-slate-600" />
                     <span>Thời Gian Nộp</span>
                   </div>
-                  <p className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-200">
+                  <p className="text-sm sm:text-base font-extrabold text-slate-900">
                     {submission?.submittedAt || submission?.submitted_at
                       ? format(
                           new Date(submission.submittedAt || submission.submitted_at),
@@ -994,13 +895,13 @@ export default function SubmissionDetail() {
               </div>
 
               {!isGraded && (
-                <div className="p-3.5 rounded-xl border border-blue-200/90 bg-blue-50/70 dark:bg-blue-950/30 dark:border-blue-800/70 text-xs text-blue-900 dark:text-blue-200 flex items-start gap-2.5">
-                  <Clock className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
-                  <div className="space-y-0.5">
-                    <p className="font-bold">
+                <div className="p-4 rounded-xl border border-blue-200 bg-blue-50/90 text-xs text-blue-950 flex items-start gap-3 shadow-2xs">
+                  <Clock className="h-4 w-4 text-blue-700 shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <p className="font-bold text-blue-950 text-sm">
                       Bài làm đã được ghi nhận và đang chờ giáo viên chấm chữa.
                     </p>
-                    <p className="text-blue-800/90 dark:text-blue-300 leading-relaxed font-medium">
+                    <p className="text-blue-900 leading-relaxed font-medium">
                       Giáo viên phụ trách sẽ chấm chữa chi tiết và gửi phản hồi cho bạn trong vòng <strong>tối đa 7 ngày</strong>
                       {submission?.submittedAt || submission?.submitted_at ? (
                         <> (Dự kiến trước <strong>{calculateGradingSla(submission.submittedAt || submission.submitted_at, null, "SUBMITTED").formattedDeadline}</strong>)</>
@@ -1016,35 +917,35 @@ export default function SubmissionDetail() {
             <div className="space-y-3">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-1">
                 {/* Objective Correct */}
-                <div className="rounded-xl border border-emerald-200 bg-emerald-50/60 dark:bg-emerald-950/20 dark:border-emerald-800/60 p-4 flex flex-col items-center justify-center text-center">
-                  <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-bold text-xs uppercase tracking-wider mb-1">
-                    <CheckCircle2 className="h-4 w-4" />
+                <div className="rounded-xl border border-emerald-300/80 bg-emerald-50/90 p-4 flex flex-col items-center justify-center text-center shadow-2xs">
+                  <div className="flex items-center gap-1.5 text-emerald-900 font-bold text-xs uppercase tracking-wider mb-1">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-700" />
                     <span>Trắc Nghiệm Đúng</span>
                   </div>
-                  <p className="text-2xl sm:text-3xl font-extrabold text-emerald-700 dark:text-emerald-400 tabular-nums">
+                  <p className="text-2xl sm:text-3xl font-extrabold text-emerald-950 tabular-nums">
                     {objCorrect}
-                    <span className="text-xs font-medium text-emerald-600/70 ml-1">/ {objTotal}</span>
+                    <span className="text-xs font-semibold text-emerald-800 ml-1">/ {objTotal}</span>
                   </p>
                 </div>
 
                 {/* Objective Accuracy */}
-                <div className="rounded-xl border border-blue-200 bg-blue-50/60 dark:bg-blue-950/20 dark:border-blue-800/60 p-4 flex flex-col items-center justify-center text-center">
-                  <div className="flex items-center gap-1.5 text-blue-700 dark:text-blue-400 font-bold text-xs uppercase tracking-wider mb-1">
-                    <Trophy className="h-4 w-4" />
+                <div className="rounded-xl border border-blue-300/80 bg-blue-50/90 p-4 flex flex-col items-center justify-center text-center shadow-2xs">
+                  <div className="flex items-center gap-1.5 text-blue-900 font-bold text-xs uppercase tracking-wider mb-1">
+                    <Trophy className="h-4 w-4 text-blue-700" />
                     <span>Độ Chính Xác TN</span>
                   </div>
-                  <p className="text-2xl sm:text-3xl font-extrabold text-blue-700 dark:text-blue-400 tabular-nums">
+                  <p className="text-2xl sm:text-3xl font-extrabold text-blue-950 tabular-nums">
                     {objPercentage}%
                   </p>
                 </div>
 
                 {/* Subjective Pending Count */}
-                <div className="rounded-xl border border-amber-200 bg-amber-50/60 dark:bg-amber-950/20 dark:border-amber-800/60 p-4 flex flex-col items-center justify-center text-center">
-                  <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 font-bold text-xs uppercase tracking-wider mb-1">
-                    <Clock className="h-4 w-4" />
+                <div className="rounded-xl border border-amber-300/80 bg-amber-50/90 p-4 flex flex-col items-center justify-center text-center shadow-2xs">
+                  <div className="flex items-center gap-1.5 text-amber-900 font-bold text-xs uppercase tracking-wider mb-1">
+                    <Clock className="h-4 w-4 text-amber-700" />
                     <span>Phần Tự Luận</span>
                   </div>
-                  <p className="text-lg sm:text-xl font-bold text-amber-800 dark:text-amber-300">
+                  <p className="text-lg sm:text-xl font-extrabold text-amber-950">
                     {isGraded
                       ? "Đã chấm"
                       : answeredSubjectiveCount > 0
@@ -1054,12 +955,12 @@ export default function SubmissionDetail() {
                 </div>
 
                 {/* Total Submission Time */}
-                <div className="rounded-xl border border-slate-200 bg-slate-50 dark:bg-slate-900/40 dark:border-slate-800 p-4 flex flex-col items-center justify-center text-center">
-                  <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 font-bold text-xs uppercase tracking-wider mb-1">
-                    <Clock className="h-4 w-4" />
+                <div className="rounded-xl border border-slate-300/80 bg-slate-50 p-4 flex flex-col items-center justify-center text-center shadow-2xs">
+                  <div className="flex items-center gap-1.5 text-slate-700 font-bold text-xs uppercase tracking-wider mb-1">
+                    <Clock className="h-4 w-4 text-slate-600" />
                     <span>Thời Gian Nộp</span>
                   </div>
-                  <p className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-200">
+                  <p className="text-sm sm:text-base font-extrabold text-slate-900">
                     {submission?.submittedAt || submission?.submitted_at
                       ? format(
                           new Date(submission.submittedAt || submission.submitted_at),
@@ -1068,16 +969,16 @@ export default function SubmissionDetail() {
                         )
                       : "—"}
                   </p>
-                  <span className="text-[11px] text-muted-foreground mt-0.5">
+                  <span className="text-[11px] text-slate-600 font-medium mt-0.5">
                     Đã làm: {answeredCount}/{totalQuestionsCount} câu
                   </span>
                 </div>
               </div>
 
               {!isGraded && (
-                <div className="p-3.5 rounded-xl border border-blue-200/80 bg-blue-50/60 dark:bg-blue-950/20 dark:border-blue-800/60 text-xs text-blue-900 dark:text-blue-200 flex items-center gap-2.5">
-                  <AlertCircle className="h-4 w-4 text-blue-600 shrink-0" />
-                  <span>
+                <div className="p-4 rounded-xl border border-blue-200 bg-blue-50/90 text-xs text-blue-950 flex items-center gap-3 shadow-2xs">
+                  <AlertCircle className="h-4 w-4 text-blue-700 shrink-0" />
+                  <span className="leading-relaxed font-medium">
                     {answeredSubjectiveCount > 0
                       ? `Điểm phần trắc nghiệm đã được chấm tự động. ${answeredSubjectiveCount} câu tự luận có câu trả lời đang chờ giáo viên xem và chấm điểm chi tiết.`
                       : "Học viên không điền câu trả lời cho phần tự luận (tính 0 điểm). Điểm phần trắc nghiệm đã được cập nhật tự động."}
@@ -1089,60 +990,60 @@ export default function SubmissionDetail() {
             /* CASE 3: PURE OBJECTIVE EXAM (e.g. Reading, Listening) */
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-1">
               {/* Correct Answers Card */}
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50/60 dark:bg-emerald-950/20 dark:border-emerald-800/60 p-4 flex flex-col items-center justify-center text-center">
-                <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-bold text-xs uppercase tracking-wider mb-1">
-                  <CheckCircle2 className="h-4 w-4" />
+              <div className="rounded-xl border border-emerald-300/80 bg-emerald-50/90 p-4 flex flex-col items-center justify-center text-center shadow-2xs">
+                <div className="flex items-center gap-1.5 text-emerald-900 font-bold text-xs uppercase tracking-wider mb-1">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-700" />
                   <span>Câu Đúng</span>
                 </div>
-                <p className="text-2xl sm:text-3xl font-extrabold text-emerald-700 dark:text-emerald-400 tabular-nums">
+                <p className="text-2xl sm:text-3xl font-extrabold text-emerald-950 tabular-nums">
                   {objCorrect}
-                  <span className="text-xs font-medium text-emerald-600/70 ml-1">/ {objTotal}</span>
+                  <span className="text-xs font-semibold text-emerald-800 ml-1">/ {objTotal}</span>
                 </p>
               </div>
 
               {/* Wrong Answers Card - Dùng Slate trung tính thay vì Rose giật gân */}
-              <div className="rounded-xl border border-slate-200 bg-slate-50/70 dark:bg-slate-900/40 dark:border-slate-800 p-4 flex flex-col items-center justify-center text-center">
-                <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 font-bold text-xs uppercase tracking-wider mb-1">
-                  <AlertCircle className="h-4 w-4 text-slate-500" />
+              <div className="rounded-xl border border-slate-300/80 bg-slate-50 p-4 flex flex-col items-center justify-center text-center shadow-2xs">
+                <div className="flex items-center gap-1.5 text-slate-700 font-bold text-xs uppercase tracking-wider mb-1">
+                  <AlertCircle className="h-4 w-4 text-slate-600" />
                   <span>Cần Xem Lại</span>
                 </div>
-                <p className="text-2xl sm:text-3xl font-extrabold text-slate-700 dark:text-slate-300 tabular-nums">
+                <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 tabular-nums">
                   {Math.max(0, objTotal - objCorrect)}
-                  <span className="text-xs font-medium text-slate-500 ml-1">câu</span>
+                  <span className="text-xs font-semibold text-slate-600 ml-1">câu</span>
                 </p>
               </div>
 
               {/* Accuracy Percentage Card - Dùng Amber/Blue khích lệ tích lũy */}
-              <div className={`rounded-xl border p-4 flex flex-col items-center justify-center text-center ${
+              <div className={`rounded-xl border p-4 flex flex-col items-center justify-center text-center shadow-2xs ${
                 objPercentage === 0
-                  ? "border-amber-200 bg-amber-50/60 dark:bg-amber-950/20 dark:border-amber-800/60"
-                  : "border-blue-200 bg-blue-50/60 dark:bg-blue-950/20 dark:border-blue-800/60"
+                  ? "border-amber-300/80 bg-amber-50/90"
+                  : "border-blue-300/80 bg-blue-50/90"
               }`}>
                 <div className={`flex items-center gap-1.5 font-bold text-xs uppercase tracking-wider mb-1 ${
-                  objPercentage === 0 ? "text-amber-700 dark:text-amber-400" : "text-blue-700 dark:text-blue-400"
+                  objPercentage === 0 ? "text-amber-900" : "text-blue-900"
                 }`}>
-                  <Trophy className="h-4 w-4" />
+                  <Trophy className={`h-4 w-4 ${objPercentage === 0 ? "text-amber-700" : "text-blue-700"}`} />
                   <span>Độ Chính Xác</span>
                 </div>
                 <p className={`text-2xl sm:text-3xl font-extrabold tabular-nums ${
-                  objPercentage === 0 ? "text-amber-700 dark:text-amber-400" : "text-blue-700 dark:text-blue-400"
+                  objPercentage === 0 ? "text-amber-950" : "text-blue-950"
                 }`}>
                   {objPercentage}%
                 </p>
                 {objPercentage === 0 && (
-                  <span className="text-[10px] font-semibold text-amber-700/90 dark:text-amber-400 mt-0.5">
+                  <span className="text-[10px] font-bold text-amber-800 mt-0.5">
                     ✦ Đang tích lũy kỹ năng
                   </span>
                 )}
               </div>
 
               {/* Total Score / Completion Card */}
-              <div className="rounded-xl border border-slate-200 bg-slate-50 dark:bg-slate-900/40 dark:border-slate-800 p-4 flex flex-col items-center justify-center text-center">
-                <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-400 font-bold text-xs uppercase tracking-wider mb-1">
-                  <Clock className="h-4 w-4" />
+              <div className="rounded-xl border border-slate-300/80 bg-slate-50 p-4 flex flex-col items-center justify-center text-center shadow-2xs">
+                <div className="flex items-center gap-1.5 text-slate-700 font-bold text-xs uppercase tracking-wider mb-1">
+                  <Clock className="h-4 w-4 text-slate-600" />
                   <span>Thời Gian Nộp</span>
                 </div>
-                <p className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-200">
+                <p className="text-sm sm:text-base font-extrabold text-slate-900">
                   {submission?.submittedAt || submission?.submitted_at
                     ? format(
                         new Date(submission.submittedAt || submission.submitted_at),
