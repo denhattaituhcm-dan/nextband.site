@@ -2499,10 +2499,50 @@ export interface ClassLeagueResponse {
   standings: ClassLeagueStanding[];
 }
 
+export interface OperationsKpiSummary {
+  totalClasses: number;
+  activeClasses: number;
+  upcomingClasses: number;
+  completedClasses: number;
+  totalEnrollments: number;
+  totalRoomCapacity: number;
+  occupancyRate: number;
+  averageAttendanceRate: number;
+  alertClassesCount: number;
+}
+
 // =============================================
 // CLASSES API
 // =============================================
 export const classesApi = {
+  getOperationsKpiSummary: async (branchId?: string): Promise<{ data: OperationsKpiSummary }> => {
+    const token = await getAuthToken();
+    const queryParams = new URLSearchParams();
+    if (branchId && branchId !== "ALL") queryParams.set("branchId", branchId);
+
+    let res: Response;
+    try {
+      res = await fetch(`${API_BASE_URL}/classes/operations-summary?${queryParams.toString()}`, {
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+    } catch (networkErr: any) {
+      throw new ApiError(
+        "Không thể kết nối đến máy chủ. Vui lòng kiểm tra lại đường truyền mạng.",
+        0,
+        "NETWORK_ERROR",
+        networkErr
+      );
+    }
+
+    return handleApiResponse<{ data: OperationsKpiSummary }>(
+      res,
+      "Không thể tải số liệu KPI vận hành"
+    );
+  },
+
   list: async (params?: {
     page?: number;
     limit?: number;

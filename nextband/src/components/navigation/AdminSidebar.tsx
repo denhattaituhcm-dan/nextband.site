@@ -137,6 +137,14 @@ const navigationCategories: SidebarCategory[] = [
         adminOnly: true,
       },
       {
+        title: "Thông tin lớp",
+        url: "/admin/class-operations",
+        icon: School,
+        iconColor: "text-indigo-600",
+        iconBg: "bg-indigo-50",
+        adminOnly: false, // Visible to both admin & staff
+      },
+      {
         title: "Báo cáo định kỳ",
         url: "/admin/reports",
         icon: TrendingUp,

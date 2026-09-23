@@ -232,6 +232,146 @@ export class ClassService {
     };
   }
 
+  // Use Case: Aggregated operations KPI summary for Admin & Staff (Executive Overview)
+  async getOperationsKpiSummary(user: { id: string; roles: string[] }, branchId?: string) {
+    const whereClass: any = {};
+
+    // Branch Scoping
+    const authService = new AuthorizationService(this.prisma);
+    const branchScope = await authService.resolveAuthorizedBranchScope({
+      userId: user.id,
+      userRoles: user.roles,
+      requestedBranchId: branchId,
+    });
+
+    if (branchScope.type === "branch") {
+      whereClass.branchId = branchScope.branchId;
+    } else if (branchScope.type === "branches") {
+      whereClass.branchId = { in: branchScope.branchIds };
+    }
+
+    const now = new Date();
+
+    // 1. Class Status Aggregations
+    const [
+      totalClasses,
+      activeClasses,
+      upcomingClasses,
+      completedClasses,
+      classesWithRooms,
+      attendanceStats,
+      activeEnrollments,
+    ] = await Promise.all([
+      this.prisma.class.count({ where: whereClass }),
+      this.prisma.class.count({
+        where: {
+          ...whereClass,
+          isActive: true,
+          status: "ACTIVE",
+        },
+      }),
+      this.prisma.class.count({
+        where: {
+          ...whereClass,
+          isActive: true,
+          OR: [
+            { status: "UPCOMING" },
+            { startDate: { gt: now } },
+          ],
+        },
+      }),
+      this.prisma.class.count({
+        where: {
+          ...whereClass,
+          OR: [
+            { status: "CLOSED" },
+            { isActive: false },
+          ],
+        },
+      }),
+      this.prisma.class.findMany({
+        where: {
+          ...whereClass,
+          isActive: true,
+        },
+        select: {
+          id: true,
+          courseId: true,
+          room: {
+            select: { capacity: true },
+          },
+          _count: {
+            select: {
+              students: {
+                where: { status: "ACTIVE", deletedAt: null },
+              },
+            },
+          },
+        },
+      }),
+      this.prisma.classAttendance.groupBy({
+        by: ["status"],
+        where: {
+          class: whereClass,
+        },
+        _count: { id: true },
+      }),
+      this.prisma.classStudent.count({
+        where: {
+          status: "ACTIVE",
+          deletedAt: null,
+          class: whereClass,
+        },
+      }),
+    ]);
+
+    // 2. Capacity & Occupancy Calculation
+    let totalRoomCapacity = 0;
+    let lowCapacityClassesCount = 0;
+
+    classesWithRooms.forEach((c) => {
+      const roomCap = c.room?.capacity || 15;
+      totalRoomCapacity += roomCap;
+      const studentCount = c._count.students;
+      // Alert threshold: Under 50% capacity or under 6 students
+      if (studentCount < 6 || (roomCap > 0 && studentCount / roomCap < 0.5)) {
+        lowCapacityClassesCount++;
+      }
+    });
+
+    const occupancyRate =
+      totalRoomCapacity > 0
+        ? Math.round((activeEnrollments / totalRoomCapacity) * 1000) / 10
+        : 0;
+
+    // 3. Attendance Rate Calculation
+    let totalAttendanceRecords = 0;
+    let presentAttendanceRecords = 0;
+    attendanceStats.forEach((stat) => {
+      totalAttendanceRecords += stat._count.id;
+      if (stat.status === "PRESENT" || stat.status === "LATE") {
+        presentAttendanceRecords += stat._count.id;
+      }
+    });
+
+    const averageAttendanceRate =
+      totalAttendanceRecords > 0
+        ? Math.round((presentAttendanceRecords / totalAttendanceRecords) * 1000) / 10
+        : 95.0; // Benchmark default if no records yet
+
+    return {
+      totalClasses,
+      activeClasses,
+      upcomingClasses,
+      completedClasses,
+      totalEnrollments: activeEnrollments,
+      totalRoomCapacity,
+      occupancyRate,
+      averageAttendanceRate,
+      alertClassesCount: lowCapacityClassesCount,
+    };
+  }
+
   // Use Case: Get Class Details with Ownership Check
   async getClassById(user: { id: string; roles: string[] }, id: string) {
     const classData = await this.repo.findById(id);

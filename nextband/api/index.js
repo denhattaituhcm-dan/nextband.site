@@ -95819,6 +95819,124 @@ var init_class_service = __esm({
           }
         };
       }
+      // Use Case: Aggregated operations KPI summary for Admin & Staff (Executive Overview)
+      async getOperationsKpiSummary(user, branchId) {
+        const whereClass = {};
+        const authService = new AuthorizationService(this.prisma);
+        const branchScope = await authService.resolveAuthorizedBranchScope({
+          userId: user.id,
+          userRoles: user.roles,
+          requestedBranchId: branchId
+        });
+        if (branchScope.type === "branch") {
+          whereClass.branchId = branchScope.branchId;
+        } else if (branchScope.type === "branches") {
+          whereClass.branchId = { in: branchScope.branchIds };
+        }
+        const now = /* @__PURE__ */ new Date();
+        const [
+          totalClasses,
+          activeClasses,
+          upcomingClasses,
+          completedClasses,
+          classesWithRooms,
+          attendanceStats,
+          activeEnrollments
+        ] = await Promise.all([
+          this.prisma.class.count({ where: whereClass }),
+          this.prisma.class.count({
+            where: {
+              ...whereClass,
+              isActive: true,
+              status: "ACTIVE"
+            }
+          }),
+          this.prisma.class.count({
+            where: {
+              ...whereClass,
+              isActive: true,
+              OR: [
+                { status: "UPCOMING" },
+                { startDate: { gt: now } }
+              ]
+            }
+          }),
+          this.prisma.class.count({
+            where: {
+              ...whereClass,
+              OR: [
+                { status: "CLOSED" },
+                { isActive: false }
+              ]
+            }
+          }),
+          this.prisma.class.findMany({
+            where: {
+              ...whereClass,
+              isActive: true
+            },
+            select: {
+              id: true,
+              courseId: true,
+              room: {
+                select: { capacity: true }
+              },
+              _count: {
+                select: {
+                  students: {
+                    where: { status: "ACTIVE", deletedAt: null }
+                  }
+                }
+              }
+            }
+          }),
+          this.prisma.classAttendance.groupBy({
+            by: ["status"],
+            where: {
+              class: whereClass
+            },
+            _count: { id: true }
+          }),
+          this.prisma.classStudent.count({
+            where: {
+              status: "ACTIVE",
+              deletedAt: null,
+              class: whereClass
+            }
+          })
+        ]);
+        let totalRoomCapacity = 0;
+        let lowCapacityClassesCount = 0;
+        classesWithRooms.forEach((c) => {
+          const roomCap = c.room?.capacity || 15;
+          totalRoomCapacity += roomCap;
+          const studentCount = c._count.students;
+          if (studentCount < 6 || roomCap > 0 && studentCount / roomCap < 0.5) {
+            lowCapacityClassesCount++;
+          }
+        });
+        const occupancyRate = totalRoomCapacity > 0 ? Math.round(activeEnrollments / totalRoomCapacity * 1e3) / 10 : 0;
+        let totalAttendanceRecords = 0;
+        let presentAttendanceRecords = 0;
+        attendanceStats.forEach((stat) => {
+          totalAttendanceRecords += stat._count.id;
+          if (stat.status === "PRESENT" || stat.status === "LATE") {
+            presentAttendanceRecords += stat._count.id;
+          }
+        });
+        const averageAttendanceRate = totalAttendanceRecords > 0 ? Math.round(presentAttendanceRecords / totalAttendanceRecords * 1e3) / 10 : 95;
+        return {
+          totalClasses,
+          activeClasses,
+          upcomingClasses,
+          completedClasses,
+          totalEnrollments: activeEnrollments,
+          totalRoomCapacity,
+          occupancyRate,
+          averageAttendanceRate,
+          alertClassesCount: lowCapacityClassesCount
+        };
+      }
       // Use Case: Get Class Details with Ownership Check
       async getClassById(user, id) {
         const classData = await this.repo.findById(id);
@@ -97460,6 +97578,137 @@ var init_arena_questions_data = __esm({
   }
 });
 
+// server/services/arena-bank.service.ts
+function cleanHtml(raw) {
+  if (!raw) return "";
+  return raw.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/\s+/g, " ").trim();
+}
+var ArenaBankService;
+var init_arena_bank_service = __esm({
+  "server/services/arena-bank.service.ts"() {
+    init_arena_questions_data();
+    ArenaBankService = class {
+      constructor(prisma) {
+        this.prisma = prisma;
+      }
+      /**
+       * Loads and normalizes playable Arena questions from a specific Exam in DB.
+       * If exam has no multiple choice questions or examId is null, fallbacks to ARENA_STANDARD_QUESTIONS.
+       */
+      async getQuestionsForRoom(examId) {
+        if (!examId) {
+          return ARENA_STANDARD_QUESTIONS;
+        }
+        try {
+          const exam = await this.prisma.exam.findUnique({
+            where: { id: examId },
+            include: {
+              sections: {
+                orderBy: { orderIndex: "asc" },
+                include: {
+                  questionGroups: {
+                    orderBy: { orderIndex: "asc" },
+                    include: {
+                      questions: {
+                        orderBy: { orderIndex: "asc" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          });
+          if (!exam || !exam.sections || exam.sections.length === 0) {
+            return ARENA_STANDARD_QUESTIONS;
+          }
+          const allDbQuestions = [];
+          for (const section of exam.sections) {
+            for (const group of section.questionGroups) {
+              for (const q of group.questions) {
+                allDbQuestions.push(q);
+              }
+            }
+          }
+          const playableQuestions = [];
+          let roundIndex = 0;
+          for (const q of allDbQuestions) {
+            const qText = cleanHtml(q.questionText || "");
+            if (!qText) continue;
+            const qType = (q.questionType || "").toLowerCase();
+            let parsedOptions = [];
+            let correctOptId = "opt_A";
+            let correctAnswerDisplay = "";
+            if (qType === "true_false_not_given" || qType === "yes_no_not_given") {
+              const isYesNo = qType === "yes_no_not_given";
+              const labels = ["A", "B", "C"];
+              const texts = isYesNo ? ["YES", "NO", "NOT GIVEN"] : ["TRUE", "FALSE", "NOT GIVEN"];
+              parsedOptions = texts.map((t, idx) => ({
+                id: `opt_${labels[idx]}`,
+                label: labels[idx],
+                text: t
+              }));
+              const cleanCorrect = cleanHtml(q.correctAnswer || "").toUpperCase();
+              const targetIdx = texts.findIndex((t) => cleanCorrect.includes(t));
+              if (targetIdx >= 0) {
+                correctOptId = parsedOptions[targetIdx].id;
+                correctAnswerDisplay = `${parsedOptions[targetIdx].label}. ${texts[targetIdx]}`;
+              } else {
+                correctOptId = parsedOptions[0].id;
+                correctAnswerDisplay = `${parsedOptions[0].label}. ${texts[0]}`;
+              }
+            } else if (qType === "multiple_choice" || Array.isArray(q.options) && q.options.length >= 2) {
+              let rawOptions = [];
+              if (Array.isArray(q.options)) {
+                rawOptions = q.options.map((o) => cleanHtml(typeof o === "string" ? o : o.text || "")).filter((text) => text.length > 0);
+              }
+              if (rawOptions.length >= 2) {
+                const labels = ["A", "B", "C", "D"];
+                parsedOptions = rawOptions.slice(0, 4).map((text, idx) => ({
+                  id: `opt_${labels[idx]}`,
+                  label: labels[idx],
+                  text: text.replace(/^[A-D][.\s\t]+/, "").trim()
+                  // Strip leading 'A. ', 'B. ' if present
+                }));
+                const cleanCorrect = cleanHtml(q.correctAnswer || "");
+                const foundIdx = rawOptions.findIndex((optText, i) => {
+                  const stripped = optText.replace(/^[A-D][.\s\t]+/, "").trim().toLowerCase();
+                  return optText.toLowerCase() === cleanCorrect.toLowerCase() || stripped === cleanCorrect.toLowerCase() || labels[i]?.toLowerCase() === cleanCorrect.toLowerCase();
+                });
+                if (foundIdx >= 0 && foundIdx < parsedOptions.length) {
+                  correctOptId = parsedOptions[foundIdx].id;
+                  correctAnswerDisplay = `${parsedOptions[foundIdx].label}. ${parsedOptions[foundIdx].text}`;
+                } else {
+                  correctOptId = parsedOptions[0].id;
+                  correctAnswerDisplay = `${parsedOptions[0].label}. ${parsedOptions[0].text}`;
+                }
+              }
+            }
+            if (parsedOptions.length >= 2) {
+              playableQuestions.push({
+                id: q.id,
+                roundIndex,
+                prompt: qText,
+                options: parsedOptions,
+                correctOptionId: correctOptId,
+                correctAnswerText: correctAnswerDisplay,
+                correctExplanation: `\u0110\xE1p \xE1n ch\xEDnh x\xE1c: ${correctAnswerDisplay}`
+              });
+              roundIndex++;
+            }
+          }
+          if (playableQuestions.length > 0) {
+            return playableQuestions;
+          }
+          return ARENA_STANDARD_QUESTIONS;
+        } catch (err) {
+          console.warn("[ArenaBankService] L\u1ED7i n\u1EA1p c\xE2u h\u1ECFi t\u1EEB examId:", examId, err);
+          return ARENA_STANDARD_QUESTIONS;
+        }
+      }
+    };
+  }
+});
+
 // server/services/arena-engine.service.ts
 var arena_engine_service_exports = {};
 __export(arena_engine_service_exports, {
@@ -97469,13 +97718,15 @@ var ArenaEngineService;
 var init_arena_engine_service = __esm({
   "server/services/arena-engine.service.ts"() {
     init_arena_pin_service();
-    init_arena_questions_data();
+    init_arena_bank_service();
     ArenaEngineService = class {
       constructor(prisma) {
         this.prisma = prisma;
         this.pinService = new ArenaPinService(prisma);
+        this.bankService = new ArenaBankService(prisma);
       }
       pinService;
+      bankService;
       /**
        * Authoritative Host Command Dispatcher with Idempotency Guard
        */
@@ -97506,6 +97757,8 @@ var init_arena_engine_service = __esm({
           err.code = "INVALID_HOST_TOKEN";
           throw err;
         }
+        const questions = await this.bankService.getQuestionsForRoom(room.examId);
+        const totalQuestions = questions.length;
         if (room.lastCommandId === commandId) {
           return {
             idempotent: true,
@@ -97513,7 +97766,9 @@ var init_arena_engine_service = __esm({
             pin: room.pin,
             status: room.status,
             currentRound: room.currentRound,
-            roundDeadlineAt: room.roundDeadlineAt
+            roundDeadlineAt: room.roundDeadlineAt,
+            question: questions[room.currentRound] || null,
+            totalQuestions
           };
         }
         const now = /* @__PURE__ */ new Date();
@@ -97531,7 +97786,7 @@ var init_arena_engine_service = __esm({
             }
             nextStatus = "QUESTION_LIVE";
             nextRound = 0;
-            activeQuestionId = ARENA_STANDARD_QUESTIONS[0]?.id || "q_0";
+            activeQuestionId = questions[0]?.id || "q_0";
             deadlineAt = new Date(now.getTime() + 15 * 1e3);
             break;
           }
@@ -97564,13 +97819,12 @@ var init_arena_engine_service = __esm({
             break;
           }
           case "NEXT_ROUND": {
-            const total = ARENA_STANDARD_QUESTIONS.length;
-            if (room.currentRound >= total - 1) {
+            if (room.currentRound >= totalQuestions - 1) {
               nextStatus = "PODIUM";
             } else {
               nextStatus = "QUESTION_LIVE";
               nextRound = room.currentRound + 1;
-              activeQuestionId = ARENA_STANDARD_QUESTIONS[nextRound]?.id || null;
+              activeQuestionId = questions[nextRound]?.id || null;
               deadlineAt = new Date(now.getTime() + 15 * 1e3);
             }
             break;
@@ -97611,8 +97865,8 @@ var init_arena_engine_service = __esm({
           status: updatedRoom.status,
           currentRound: updatedRoom.currentRound,
           roundDeadlineAt: updatedRoom.roundDeadlineAt,
-          question: ARENA_STANDARD_QUESTIONS[updatedRoom.currentRound] || null,
-          totalQuestions: ARENA_STANDARD_QUESTIONS.length
+          question: questions[updatedRoom.currentRound] || null,
+          totalQuestions
         };
       }
       /**
@@ -97664,7 +97918,8 @@ var init_arena_engine_service = __esm({
             throw err;
           }
         }
-        const question = ARENA_STANDARD_QUESTIONS[roundIndex];
+        const questions = await this.bankService.getQuestionsForRoom(room.examId);
+        const question = questions[roundIndex];
         const isCorrect = question ? question.correctOptionId === selectedOptionId : false;
         let scoreAwarded = 0;
         if (isCorrect) {
@@ -97777,14 +98032,15 @@ var init_arena_engine_service = __esm({
             score: ans.scoreAwarded
           };
         }
+        const questions = await this.bankService.getQuestionsForRoom(room.examId);
         return {
           roomId: room.id,
           pin: room.pin,
           status: room.status,
           currentRound: room.currentRound,
           currentQuestionId: room.currentQuestionId,
-          question: ARENA_STANDARD_QUESTIONS[room.currentRound] || null,
-          totalQuestions: ARENA_STANDARD_QUESTIONS.length,
+          question: questions[room.currentRound] || null,
+          totalQuestions: questions.length,
           roundStartedAt: room.roundStartedAt,
           roundDeadlineAt: room.roundDeadlineAt,
           participants: room.participants,
@@ -108370,6 +108626,17 @@ var ClassController = class {
       return reply.status(status).send({ error: err.message });
     }
   }
+  async getOperationsKpiSummary(request, reply) {
+    try {
+      const user = request.user;
+      const { branchId } = request.query || {};
+      const result = await this.service.getOperationsKpiSummary(user, branchId);
+      return reply.send({ data: result });
+    } catch (err) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
   async list(request, reply) {
     const dataQuery = handleValidation(
       paginationSchema.safeParse(request.query),
@@ -108648,6 +108915,13 @@ async function classesRoutes(fastify) {
     { preHandler: authenticate },
     async (request, reply) => {
       return controller.getLeagueStandings(request, reply);
+    }
+  );
+  fastify.get(
+    "/operations-summary",
+    { preHandler: [authenticate, requireRoles("admin", "staff")] },
+    async (request, reply) => {
+      return controller.getOperationsKpiSummary(request, reply);
     }
   );
   fastify.get("/", { preHandler: authenticate }, async (request, reply) => {

@@ -20,6 +20,15 @@ export default async function classesRoutes(fastify: FastifyInstance) {
     }
   );
 
+  // GET /classes/operations-summary - Tổng hợp số liệu KPI vận hành cho Admin & Staff
+  fastify.get<{ Querystring: { branchId?: string } }>(
+    "/operations-summary",
+    { preHandler: [authenticate, requireRoles("admin", "staff")] },
+    async (request, reply) => {
+      return controller.getOperationsKpiSummary(request, reply);
+    }
+  );
+
   // GET /classes - Lấy danh sách lớp
   fastify.get("/", { preHandler: authenticate }, async (request, reply) => {
     return controller.list(request, reply);

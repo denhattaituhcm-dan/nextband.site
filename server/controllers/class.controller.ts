@@ -22,6 +22,18 @@ export class ClassController {
     }
   }
 
+  async getOperationsKpiSummary(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const user = (request as any).user;
+      const { branchId } = (request.query as any) || {};
+      const result = await this.service.getOperationsKpiSummary(user, branchId);
+      return reply.send({ data: result });
+    } catch (err: any) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
+
   async list(request: FastifyRequest, reply: FastifyReply) {
     const dataQuery = handleValidation(
       paginationSchema.safeParse(request.query),
