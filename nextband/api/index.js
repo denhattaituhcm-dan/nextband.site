@@ -95908,7 +95908,7 @@ var init_class_service = __esm({
         let totalRoomCapacity = 0;
         let lowCapacityClassesCount = 0;
         classesWithRooms.forEach((c) => {
-          const roomCap = c.room?.capacity || 15;
+          const roomCap = c.room?.capacity || 10;
           totalRoomCapacity += roomCap;
           const studentCount = c._count.students;
           if (studentCount < 6 || roomCap > 0 && studentCount / roomCap < 0.5) {
@@ -113441,7 +113441,7 @@ async function adminDashboardRoutes(fastify) {
         let lowFillClassesCount = 0;
         activeClasses.forEach((cls) => {
           const studentCount = cls._count.students;
-          const capacity = cls.room?.capacity || 15;
+          const capacity = cls.room?.capacity || 10;
           totalStudentsInClasses += studentCount;
           totalRoomCapacity += capacity;
           if (capacity > 0 && studentCount / capacity < 0.5) {

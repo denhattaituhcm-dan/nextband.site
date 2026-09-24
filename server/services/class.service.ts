@@ -330,7 +330,7 @@ export class ClassService {
     let lowCapacityClassesCount = 0;
 
     classesWithRooms.forEach((c) => {
-      const roomCap = c.room?.capacity || 15;
+      const roomCap = c.room?.capacity || 10;
       totalRoomCapacity += roomCap;
       const studentCount = c._count.students;
       // Alert threshold: Under 50% capacity or under 6 students

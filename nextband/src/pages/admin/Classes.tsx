@@ -374,7 +374,7 @@ export default function AdminClasses() {
       result = result.filter((c: any) => {
         const studentCount =
           c.studentsCount || c.student_count || c._count?.students || (c.students ? c.students.length : 0);
-        const capacity = c.room?.capacity || 15;
+        const capacity = c.room?.capacity || 10;
         return capacity > 0 && studentCount / capacity < 0.5;
       });
     } else if (statusFilter === "no_teacher") {

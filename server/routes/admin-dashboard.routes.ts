@@ -272,7 +272,7 @@ export default async function adminDashboardRoutes(fastify: FastifyInstance) {
 
         activeClasses.forEach((cls) => {
           const studentCount = cls._count.students;
-          const capacity = cls.room?.capacity || 15;
+          const capacity = cls.room?.capacity || 10;
           totalStudentsInClasses += studentCount;
           totalRoomCapacity += capacity;
           if (capacity > 0 && studentCount / capacity < 0.5) {

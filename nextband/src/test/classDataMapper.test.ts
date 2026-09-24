@@ -242,4 +242,39 @@ describe("Canonical Student & Class Data Mapper Contract Tests", () => {
       expect(result.activeStudents[1].avatarUrl).toBe("https://example.com/maianh.jpg");
     });
   });
+
+  describe("Business Invariant: Class & Room Capacity Fallback", () => {
+    it("Test 8: Class without assigned room (roomId = null) defaults to maximum capacity of 10 students", () => {
+      const rawClassWithoutRoom = {
+        id: "class-no-room",
+        name: "M01 07.2026",
+        roomId: null,
+        room: null,
+        _count: { students: 3 },
+      };
+
+      const canonical = toCanonicalClass(rawClassWithoutRoom);
+      const roomCapacityFallback = canonical.room?.capacity || 10;
+
+      expect(roomCapacityFallback).toBe(10);
+      expect(canonical.room).toBeNull();
+    });
+
+    it("Test 9: Class with assigned room respects explicit room capacity", () => {
+      const rawClassWithRoom = {
+        id: "class-with-room",
+        name: "D01 07.2026",
+        roomId: "room-uuid",
+        room: { id: "room-uuid", name: "P101", capacity: 8 },
+        _count: { students: 6 },
+      };
+
+      const canonical = toCanonicalClass(rawClassWithRoom);
+      const roomCapacity = canonical.room?.capacity || 10;
+
+      expect(roomCapacity).toBe(8);
+      expect(canonical.room?.name).toBe("P101");
+    });
+  });
 });
+

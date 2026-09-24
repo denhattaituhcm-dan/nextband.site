@@ -493,7 +493,7 @@ export default function ClassOperationsPage() {
               ) : (
                 classes.map((c: any) => {
                   const studentCount = c._count?.students || 0;
-                  const roomCap = c.room?.capacity || 15;
+                  const roomCap = c.room?.capacity || 10;
                   const occupancy = Math.round((studentCount / roomCap) * 100);
 
                   // Financial health evaluation
