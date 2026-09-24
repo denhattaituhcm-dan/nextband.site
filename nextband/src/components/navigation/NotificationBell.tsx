@@ -26,6 +26,7 @@ import {
 import { notificationsApi, NotificationItem } from "@/lib/api";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
+import { submissionKeys } from "@/lib/queryKeys";
 import { toast } from "sonner";
 
 interface NotificationBellProps {
@@ -91,6 +92,16 @@ export function NotificationBell({ scope: _scope }: NotificationBellProps) {
             const newNotif = payload.new as NotificationItem;
             queryClient.invalidateQueries({ queryKey: ["notifications-unread-count"] });
             queryClient.invalidateQueries({ queryKey: ["notifications-list"] });
+
+            // Invalidate Student domain queries when a submission is graded/updated by teacher
+            if (
+              newNotif.entityType === "SUBMISSION" ||
+              newNotif.type === "TEACHER_FEEDBACK"
+            ) {
+              queryClient.invalidateQueries({ queryKey: submissionKeys.all });
+              queryClient.invalidateQueries({ queryKey: ["class-lessons"] });
+              queryClient.invalidateQueries({ queryKey: ["class-lessons-action-queue"] });
+            }
 
             // If student scope, ignore admin/CRM events
             if (_scope === "student") {
