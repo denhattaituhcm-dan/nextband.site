@@ -1,4 +1,4 @@
-﻿# NEXTBAND ARCHITECTURE & ENGINEERING GUARDRAILS
+# NEXTBAND ARCHITECTURE & ENGINEERING GUARDRAILS
 
 ## 1. NGUYÊN TẮC CỐT LÕI (CORE INVARIANTS)
 1. Single Source of Truth (SSOT): Bảng user_roles trong PostgreSQL là thẩm quyền phân quyền duy nhất. Nghiêm cấm tự động cấp quyền dựa trên email (hardcoded email check).
@@ -6,6 +6,7 @@
 3. Fail-Fast Discipline: Sai quyền ném 403 Forbidden, không xác thực ném 401 Unauthorized, không tìm thấy ném 404 Not Found, tham số sai ném 400 Bad Request. CẤM nuốt lỗi trong block catch hoặc trả về mảng rỗng giả dạng thành công.
 4. Server-Side Aggregation: CẤM tải toàn bộ bản ghi về client rồi dùng Javascript .reduce() hoặc .filter() để tính toán KPI. Toàn bộ KPI phải được tổng hợp bằng SQL ở Backend.
 5. Zero Circular Dependencies: Mọi module phải tuân thủ luồng phụ thuộc đơn hướng (DAG). Tự động chặn build nếu npx madge phát hiện circular dependencies.
+6. Cross-Client State Synchronization: Local Cache Invalidation ≠ Cross-Client Sync. Mọi đồng bộ trạng thái giữa các client (ví dụ Giáo viên chấm bài -> Học viên cập nhật điểm) bắt buộc phải thông qua cơ chế Server-Mediated Event (Supabase Realtime / WebSocket) hoặc Refetch rõ ràng. Mutation thành công ở Client A (Teacher API = 200) CHƯA được coi là synchronized cho đến khi Client B (Student) nhận được event và render trạng thái authoritative.
 
 ## 2. QUY ƯỚC KIẾN TRÚC & TỔ CHỨC THƯ MỤC
 - server/routes/: Chỉ phân tích request, validate schema, gọi service và trả response. Không viết logic nghiệp vụ phức tạp.

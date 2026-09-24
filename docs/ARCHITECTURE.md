@@ -94,7 +94,20 @@ Important production operations must produce sufficient logs/errors to diagnose:
 * unexpected 5xx server errors
 Never log secrets, bearer tokens, passwords, or sensitive student PII.
 
-## 12. Simplicity Principle
+## 12. Cross-Client State Synchronization
+1. **Local Cache Invalidation ≠ Cross-Client Sync:**
+   Cross-client state synchronization MUST occur through an explicit server-mediated event (e.g. Supabase Realtime push, Server-Sent Events, WebSockets) or an explicit refetch mechanism. A local `QueryClient` invalidation or mutation in one client's browser runtime MUST NOT be treated as cross-client synchronization.
+2. **Authoritative State Observability:**
+   A successful mutation is not considered synchronized until the affected peer client can obtain and render the authoritative state.
+   ```text
+   Teacher API = 200 (Mutation Success) ≠ Student = Synchronized
+   ```
+   State transitions affecting other actors require a closed loop:
+   ```text
+   Actor A Mutation → Server Commit → Push Event / Event Notification → Actor B Invalidation → Actor B Render
+   ```
+
+## 13. Simplicity Principle
 When in doubt:
 **Prefer the simplest architecture that preserves security, correctness, testability, and maintainability.**
-~10 rules humans remember. Machines enforce the important boundaries. Tests protect critical behavior.
+~10-15 rules humans remember. Machines enforce the important boundaries. Tests protect critical behavior.
