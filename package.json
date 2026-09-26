@@ -54,6 +54,7 @@
     "@types/qrcode": "^1.5.6",
     "concurrently": "^10.0.5",
     "jsdom": "^30.0.1",
+    "pg": "^8.23.0",
     "pino-pretty": "^13.1.3"
   }
 }

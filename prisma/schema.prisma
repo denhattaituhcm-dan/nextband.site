@@ -1171,8 +1171,8 @@ model UserVocabulary {
   @@map("user_vocabularies")
 }
 model TeacherProfile {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId    String   @unique @map("user_id") @db.Uuid
+  id        String   @id @default(uuid())
+  userId    String   @unique @map("user_id")
 
   // === Qualification ===
   ieltsOverall         Float?    @map("ielts_overall")
