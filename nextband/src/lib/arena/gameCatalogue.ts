@@ -5,7 +5,7 @@
  * - Điều 41 (Simplicity & Zero-Fluff): Cấu trúc rõ ràng, hỗ trợ mở rộng các game tương lai của trung tâm.
  */
 
-export type GameEngineId = 'class_arena' | 'word_chain' | 'dictation_sprint';
+export type GameEngineId = 'class_arena' | 'word_chain' | 'dictation_sprint' | 'san_dau_speed_match';
 
 export interface GameMetadata {
   id: GameEngineId;
@@ -66,6 +66,18 @@ export const REGISTERED_GAMES: GameMetadata[] = [
     recommendedPlayers: '5–20 học viên',
     avgDuration: '10–15 phút',
     badgeColor: 'emerald',
+  },
+  {
+    id: 'san_dau_speed_match',
+    name: 'Sàn Đấu Speed Match (Collocation Race)',
+    tagline: 'Team-based Warm-up Collocation Duel',
+    description: 'Game nối cặp IELTS Collocation theo lượt giữa các đội. Có 4 chế độ chiến thuật (Tự Lực / Nhắc Tuồng / Cướp Điểm / Ngôi Sao) và kỹ năng Đóng Băng thời gian. Chiếu màn hình lớp, không cần thiết bị thêm.',
+    status: 'ACTIVE',
+    category: 'Vocabulary',
+    recommendedPlayers: '10–30 học viên',
+    avgDuration: '5–10 phút',
+    badgeColor: 'violet',
+    launchPath: '/games/san-dau-speed-match.html',
   },
 ];
 

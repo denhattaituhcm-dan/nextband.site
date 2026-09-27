@@ -196,10 +196,113 @@ export default function AdminGameArenaPage() {
         </div>
       </div>
 
-      {/* Selected Game Workspace: Chọn Khóa Học & Danh Sách 27 Bộ Câu Hỏi */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left 2 Cols: Course Selector & 27 Lesson Question Sets */}
-        <div className="lg:col-span-2 space-y-6">
+      {/* Selected Game Workspace */}
+      {selectedGame.id === 'san_dau_speed_match' ? (
+        /* Standalone HTML Game — không cần Exam/PIN */
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <Card className="border-violet-200 shadow-sm bg-gradient-to-br from-violet-950 to-indigo-950 text-white">
+              <CardHeader className="border-b border-violet-800/40 pb-4">
+                <CardTitle className="text-base font-black flex items-center gap-2 text-white">
+                  <Sparkles className="w-5 h-5 text-violet-400" />
+                  Sàn Đấu Speed Match — Warm-up 5 phút
+                </CardTitle>
+                <CardDescription className="text-violet-300/80 text-xs mt-1">
+                  Độc lập, không cần server — chiếu thẳng lên màn hình lớp. Chia đội, chọn chế độ, bắt đầu ngay.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6 space-y-5">
+                {/* Game mechanics recap */}
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  {[
+                    { icon: '⚡', label: 'Tự Lực', desc: '+10 EXP / Sai: -4' },
+                    { icon: '🗣️', label: 'Nhắc Tuồng', desc: '+8 EXP / Sai: -4' },
+                    { icon: '💥', label: 'Cướp Điểm', desc: '+10/-4địch · 1 lần/trận · 20s' },
+                    { icon: '⭐', label: 'Ngôi Sao', desc: '+20/-4địch · 1 lần/trận · 20s' },
+                  ].map(({ icon, label, desc }) => (
+                    <div key={label} className="p-3 rounded-xl bg-white/5 border border-white/10 space-y-0.5">
+                      <div className="font-black text-white flex items-center gap-1.5">
+                        <span>{icon}</span> {label}
+                      </div>
+                      <div className="text-violet-300/80">{desc}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center gap-3 pt-2 border-t border-violet-800/40">
+                  <div className="flex-1 text-xs text-violet-300/70 leading-relaxed">
+                    <span className="font-bold text-violet-200">Kỹ năng chủ động:</span> <span className="text-white">⏱️ Đóng Băng (+5s)</span> hoặc <span className="text-white">🎯 50/50</span> — chỉ chọn 1 kỹ năng/lượt.
+                    <br />
+                    Flash Recap cuối trận tổng hợp toàn bộ collocations vừa ôn.
+                  </div>
+                  <a
+                    href={selectedGame.launchPath}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="shrink-0 inline-flex items-center gap-2 bg-gradient-to-r from-violet-500 to-indigo-500 hover:from-violet-600 hover:to-indigo-600 text-white font-black text-sm px-6 py-3 rounded-xl shadow-lg shadow-violet-500/25 transition-all hover:scale-105 active:scale-95"
+                  >
+                    <Play className="w-4 h-4 fill-white" />
+                    Mở Game (Tab Mới)
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right col: hướng dẫn MC */}
+          <div className="space-y-6">
+            <Card className="border-gray-200 shadow-sm bg-gradient-to-br from-slate-900 to-slate-950 text-white">
+              <CardHeader className="border-b border-slate-800 pb-4">
+                <CardTitle className="text-base font-black flex items-center gap-2 text-white">
+                  <Trophy className="w-4 h-4 text-amber-400" />
+                  MC Flow — Warm-up 5–7 phút
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-5 space-y-3.5 text-xs">
+                {[
+                  { n: 1, text: 'Mở Game → Tab Mới, chiếu toàn màn hình lên máy chiếu.' },
+                  { n: 2, text: 'Chia 2–4 đội, đặt tên đội ngay trên màn chiếu.' },
+                  { n: 3, text: 'Mỗi lượt: 1 học sinh lên bảng, đội chọn chế độ, đếm ngược 30s tự lực / 20s cướp-sao.' },
+                  { n: 4, text: 'Cuối trận: Flash Recap → ôn nhanh toàn bộ collocations vừa gặp.' },
+                ].map(({ n, text }) => (
+                  <div key={n} className="flex items-start gap-2.5">
+                    <div className="w-5 h-5 rounded-full bg-violet-500/20 border border-violet-500 text-violet-300 flex items-center justify-center font-black text-[10px] shrink-0 mt-0.5">
+                      {n}
+                    </div>
+                    <p className="text-slate-300 leading-relaxed">{text}</p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            <Card className="border-gray-200 shadow-sm">
+              <CardHeader className="border-b border-gray-100 pb-3">
+                <CardTitle className="text-sm font-black text-gray-800 flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-violet-600" />
+                  Thông số kỹ thuật
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 space-y-2.5 text-xs text-gray-600">
+                {[
+                  ['Kiến trúc:', 'Standalone HTML · 0 server'],
+                  ['Kích thước:', '~60 KB (Web Audio API)'],
+                  ['Collocations:', '30 cặp IELTS Academic'],
+                  ['Âm thanh:', 'Web Audio API tổng hợp'],
+                ].map(([label, val]) => (
+                  <div key={label} className="flex items-center justify-between">
+                    <span>{label}</span>
+                    <span className="font-bold text-gray-900">{val}</span>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left 2 Cols: Course Selector & 27 Lesson Question Sets */}
+          <div className="lg:col-span-2 space-y-6">
           <Card className="border-gray-200 shadow-sm">
             <CardHeader className="border-b border-gray-100 pb-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -477,7 +580,8 @@ export default function AdminGameArenaPage() {
             </CardContent>
           </Card>
         </div>
-      </div>
+        </div>
+      )}
     </div>
   );
 }
