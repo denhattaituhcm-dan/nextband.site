@@ -110,19 +110,10 @@ export default function AdminGameArenaPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-5">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <Badge className="bg-orange-50 text-orange-600 border-orange-200 font-bold">
-              Trung Tâm Quản Trị Trò Chơi
-            </Badge>
-            <span className="text-xs text-gray-400 font-medium">NextBand Interactive Class Hub</span>
-          </div>
           <h1 className="text-2xl font-black text-gray-900 flex items-center gap-2.5">
             <Gamepad2 className="w-7 h-7 text-orange-500" />
             Quản Lý Game Giảng Dạy & Tương Tác
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Kho trò chơi học thuật dành cho Giáo viên & Quản trị viên kích hoạt hoạt động lớp học trực tiếp theo từng khóa & bài học.
-          </p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -143,9 +134,8 @@ export default function AdminGameArenaPage() {
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-black text-gray-800 uppercase tracking-wider flex items-center gap-1.5">
             <Layers className="w-4 h-4 text-orange-500" />
-            Danh Mục Trò Chơi Của Trung Tâm ({REGISTERED_GAMES.length})
+            Danh Mục Trò Chơi ({REGISTERED_GAMES.length})
           </h2>
-          <span className="text-xs text-gray-400">Sẵn sàng mở rộng thêm nhiều định dạng game mới</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -181,9 +171,6 @@ export default function AdminGameArenaPage() {
                   <h3 className="text-base font-black text-gray-900 leading-snug">
                     {game.name}
                   </h3>
-                  <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">
-                    {game.description}
-                  </p>
                 </div>
 
                 <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-400 font-medium">
