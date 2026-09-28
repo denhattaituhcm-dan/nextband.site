@@ -20,7 +20,7 @@ const userAuthCache = new Map<
     cachedAt: number;
   }
 >();
-const USER_CACHE_TTL_MS = 10 * 1000; // 10s transient TTL for tight revocation consistency
+const USER_CACHE_TTL_MS = 60 * 1000; // 60s transient TTL to absorb roundtrips to Mumbai
 
 export function invalidateUserAuthCache(userId?: string) {
   if (userId) {

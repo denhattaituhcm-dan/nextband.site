@@ -609,12 +609,27 @@ export class ExamSubmissionService {
   ): Promise<{ submission: any; isNew: boolean }> {
     const exam = await this.prisma.exam.findUnique({
       where: { id: examId },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        courseId: true,
+        durationMinutes: true,
+        isOpen: true,
+        examType: true,
+        type: true,
         sections: {
-          include: {
+          select: {
+            id: true,
+            sectionType: true,
             questionGroups: {
-              include: {
-                questions: true,
+              select: {
+                id: true,
+                questions: {
+                  select: {
+                    id: true,
+                    questionType: true,
+                  },
+                },
               },
             },
           },
@@ -631,22 +646,24 @@ export class ExamSubmissionService {
     
     // Check enrollment ONLY if exam belongs to a course and is not open
     if (!isPrivileged && !isOpenExam && exam.courseId) {
-      const directEnrollment = await this.prisma.enrollment?.findFirst?.({
-        where: { studentId: user.id, courseId: exam.courseId },
-      });
-
-      let hasClassMembership = false;
-      const classStudents = await this.prisma.classStudent.findMany({
-        where: { studentId: user.id },
-      });
-
-      if (classStudents.length > 0) {
-        const classIds = classStudents.map((cs: any) => cs.classId);
-        const enrolledClasses = await this.prisma.class.findMany({
-          where: { id: { in: classIds } },
-        });
-        hasClassMembership = enrolledClasses.some((c: any) => c.courseId === exam.courseId);
-      }
+      const [directEnrollment, hasClassMembership] = await Promise.all([
+        this.prisma.enrollment?.findFirst?.({
+          where: { studentId: user.id, courseId: exam.courseId },
+          select: { id: true },
+        }),
+        this.prisma.classStudent.findFirst({
+          where: {
+            studentId: user.id,
+            status: "ACTIVE",
+            deletedAt: null,
+            class: {
+              courseId: exam.courseId,
+              isActive: true,
+            },
+          },
+          select: { id: true },
+        }),
+      ]);
 
       if (!directEnrollment && !hasClassMembership) {
         throw new AuthorizationError("Từ chối truy cập: Học viên chưa đăng ký khóa học hoặc lớp học của bài thi này", 403);
