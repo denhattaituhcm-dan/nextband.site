@@ -616,7 +616,6 @@ export class ExamSubmissionService {
         durationMinutes: true,
         isOpen: true,
         examType: true,
-        type: true,
         sections: {
           select: {
             id: true,
