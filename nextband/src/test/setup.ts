@@ -6,19 +6,21 @@ afterEach(() => {
   cleanup();
 });
 
-Object.defineProperty(window, "matchMedia", {
-  writable: true,
-  value: (query: string) => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: () => {},
-    removeListener: () => {},
-    addEventListener: () => {},
-    removeEventListener: () => {},
-    dispatchEvent: () => {},
-  }),
-});
+if (typeof window !== "undefined") {
+  Object.defineProperty(window, "matchMedia", {
+    writable: true,
+    value: (query: string) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => {},
+    }),
+  });
+}
 
 // In-Memory LocalStorage Mock
 const createLocalStorageMock = () => {
@@ -42,10 +44,12 @@ const createLocalStorageMock = () => {
 };
 
 const localStorageMock = createLocalStorageMock();
-Object.defineProperty(window, "localStorage", {
-  value: localStorageMock,
-  writable: true,
-});
+if (typeof window !== "undefined") {
+  Object.defineProperty(window, "localStorage", {
+    value: localStorageMock,
+    writable: true,
+  });
+}
 
 // In-Memory IndexedDB Mock for Unit Tests
 class MockIDBRequest {
@@ -171,11 +175,13 @@ const mockIndexedDB = {
   },
 };
 
-Object.defineProperty(window, "indexedDB", {
-  value: mockIndexedDB,
-  writable: true,
-  configurable: true,
-});
+if (typeof window !== "undefined") {
+  Object.defineProperty(window, "indexedDB", {
+    value: mockIndexedDB,
+    writable: true,
+    configurable: true,
+  });
+}
 
 // In-Memory BroadcastChannel Mock
 const broadcastChannels: Record<string, Set<any>> = {};
@@ -227,11 +233,13 @@ class MockBroadcastChannel {
   }
 }
 
-Object.defineProperty(window, "BroadcastChannel", {
-  value: MockBroadcastChannel,
-  writable: true,
-  configurable: true,
-});
+if (typeof window !== "undefined") {
+  Object.defineProperty(window, "BroadcastChannel", {
+    value: MockBroadcastChannel,
+    writable: true,
+    configurable: true,
+  });
+}
 
 // Mock ResizeObserver for Radix UI components (Slider, Dialog, etc.)
 if (typeof global.ResizeObserver === "undefined") {
@@ -241,5 +249,7 @@ if (typeof global.ResizeObserver === "undefined") {
     disconnect() {}
   }
   global.ResizeObserver = MockResizeObserver as any;
-  window.ResizeObserver = MockResizeObserver as any;
+  if (typeof window !== "undefined") {
+    window.ResizeObserver = MockResizeObserver as any;
+  }
 }

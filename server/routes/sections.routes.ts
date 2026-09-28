@@ -314,14 +314,27 @@ const sectionsRoutes: FastifyPluginAsync = async (fastify) => {
         });
       }
 
-      // Check student submissions protection
-      const submissionCount = await fastify.prisma.examSubmission.count({
-        where: { examId: section.examId },
-      });
-      if (submissionCount > 0) {
+      // Check student submissions protection:
+      // Only block deletion if this specific section contains student answers or highlights
+      const [answerCount, highlightCount] = await Promise.all([
+        fastify.prisma.answer.count({
+          where: {
+            question: {
+              group: {
+                sectionId: id,
+              },
+            },
+          },
+        }),
+        fastify.prisma.highlight.count({
+          where: { sectionId: id },
+        }),
+      ]);
+
+      if (answerCount > 0 || highlightCount > 0) {
         return reply.status(409).send({
-          error: "EXAM_HAS_SUBMISSIONS",
-          message: "Không thể xóa phần thi khi bài thi đã có lượt làm bài của học viên.",
+          error: "SECTION_HAS_SUBMISSIONS",
+          message: "Không thể xóa phần thi khi đã có học viên làm bài hoặc nộp câu trả lời trong phần thi này.",
         });
       }
 

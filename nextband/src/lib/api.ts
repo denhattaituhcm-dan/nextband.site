@@ -927,7 +927,7 @@ export const sectionsApi = {
 
     if (res.ok) return { success: true };
     const errData = await res.json().catch(() => ({}));
-    const err: any = new Error(errData.error || errData.message || "Không thể xóa Section");
+    const err: any = new Error(errData.message || errData.error || "Không thể xóa Section");
     err.response = { status: res.status, data: errData };
     throw err;
   },
@@ -1074,7 +1074,7 @@ export const questionsApi = {
     });
     if (res.ok) return { success: true };
     const errData = await res.json().catch(() => ({}));
-    const err: any = new Error(errData.error || errData.message || "Xóa câu hỏi thất bại");
+    const err: any = new Error(errData.message || errData.error || "Xóa câu hỏi thất bại");
     err.response = { status: res.status, data: errData };
     throw err;
   },
