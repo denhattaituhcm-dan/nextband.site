@@ -1052,8 +1052,7 @@ export default function ExamInterface() {
 
         const isFinalExam =
           String(exam?.examType || "").toLowerCase() === "final" ||
-          /final\s*test/i.test(exam?.title || "") ||
-          availableSections.length >= 3;
+          /\bfinal\s*test\b/i.test(exam?.title || "");
 
         const correctCount = res.result?.correctAnswers;
         const totalCount = res.result?.totalQuestions;

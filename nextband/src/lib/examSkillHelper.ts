@@ -403,7 +403,7 @@ export function formatSkillScoreDisplay(
 } {
   const isFinalExam =
     String(exam?.examType || exam?.exam_type || "").toLowerCase() === "final" ||
-    /final\s*test/i.test(exam?.title || submission?.exam?.title || submission?.examTitle || "");
+    /\bfinal\s*test\b/i.test(exam?.title || submission?.exam?.title || submission?.examTitle || "");
 
   if (!submission) {
     return {

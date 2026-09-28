@@ -61,6 +61,7 @@ const examSchema = z.object({
   isPublished: z.boolean().default(false),
   isActive: z.boolean().default(true),
   isOpen: z.boolean().default(false),
+  isFinalTest: z.boolean().default(false),
   maxParticipants: z.coerce
     .number({
       invalid_type_error: "Số lượng phải là số",
@@ -111,6 +112,7 @@ export default function ExamForm({
       isPublished: false,
       isActive: true,
       isOpen: false,
+      isFinalTest: false,
       maxParticipants: null,
     },
   });
@@ -135,6 +137,7 @@ export default function ExamForm({
           isPublished: data.isPublished || false,
           isActive: data.isActive ?? true,
           isOpen: data.isOpen || false,
+          isFinalTest: String((data as any).examType || "").toLowerCase() === "final",
           maxParticipants: data.maxParticipants ?? null,
         });
       }
@@ -152,6 +155,8 @@ export default function ExamForm({
   const onSubmit = async (values: ExamFormData) => {
     setLoading(true);
     try {
+      const targetExamType = values.isFinalTest ? "final" : "ielts";
+
       if (mode === "create") {
         const newExam = await examsApi.create({
           courseId: values.courseId,
@@ -162,6 +167,7 @@ export default function ExamForm({
           isPublished: values.isPublished,
           isActive: values.isActive,
           isOpen: values.isOpen,
+          examType: targetExamType,
           maxParticipants: values.isOpen
             ? values.maxParticipants ?? null
             : null,
@@ -181,6 +187,7 @@ export default function ExamForm({
           week: values.week,
           durationMinutes: values.durationMinutes,
           isOpen: values.isOpen,
+          examType: targetExamType,
           maxParticipants: values.isOpen
             ? values.maxParticipants ?? null
             : null,
@@ -407,6 +414,30 @@ export default function ExamForm({
                             form.setValue("maxParticipants", null);
                           }
                         }}
+                        disabled={isReadOnly}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="isFinalTest"
+                render={({ field }) => (
+                  <FormItem className="flex items-center justify-between rounded-lg border p-4 bg-slate-50/50 dark:bg-slate-900/50">
+                    <div className="space-y-0.5">
+                      <FormLabel className="font-bold text-foreground flex items-center gap-1.5">
+                        <span>🔒</span> Đề Final Test (Kết khóa)
+                      </FormLabel>
+                      <FormDescription>
+                        Niêm phong bài nộp, bảo mật đáp án và chỉ công bố kết quả 1 lần sau khi GV chấm xong
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
                         disabled={isReadOnly}
                       />
                     </FormControl>
