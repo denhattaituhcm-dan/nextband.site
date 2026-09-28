@@ -155,6 +155,7 @@ export default function ExamInterface() {
     title: string;
     correctCount?: number;
     totalCount?: number;
+    isFinalExam?: boolean;
     onProceed: () => void;
   } | null>(null);
   const [initialTimeLeft, setInitialTimeLeft] = useState<number | null>(null);
@@ -1021,16 +1022,23 @@ export default function ExamInterface() {
         queryClient.invalidateQueries({ queryKey: ["my-submissions"] });
         queryClient.invalidateQueries({ queryKey: ["my-enrollments"] });
 
+        const isFinalExam =
+          String(exam?.examType || "").toLowerCase() === "final" ||
+          /final\s*test/i.test(exam?.title || "") ||
+          availableSections.length >= 3;
+
         const correctCount = res.result?.correctAnswers;
         const totalCount = res.result?.totalQuestions;
         const resultText =
-          correctCount != null && totalCount != null
+          !isFinalExam && correctCount != null && totalCount != null
             ? ` - Kết quả: ${correctCount}/${totalCount} câu đúng`
             : "";
 
         toast({
-          title: "Nộp bài thành công",
-          description: `Bài tập của bạn đã được ghi nhận${resultText}`,
+          title: isFinalExam ? "Đã niêm phong bài thi kết khóa" : "Nộp bài thành công",
+          description: isFinalExam
+            ? "Bài thi của bạn đã được niêm phong an toàn và gửi tới giáo viên chấm thi."
+            : `Bài tập của bạn đã được ghi nhận${resultText}`,
         });
 
         playExamVictoryChime();
@@ -1060,9 +1068,10 @@ export default function ExamInterface() {
 
         setSubmitCelebration({
           isOpen: true,
-          title: exam?.title || "Bài tập",
-          correctCount,
-          totalCount,
+          title: exam?.title || "Bài thi",
+          correctCount: isFinalExam ? undefined : correctCount,
+          totalCount: isFinalExam ? undefined : totalCount,
+          isFinalExam,
           onProceed: () => {
             navigate(targetUrl, { state: targetState });
           },
@@ -1070,7 +1079,7 @@ export default function ExamInterface() {
 
         setTimeout(() => {
           navigate(targetUrl, { state: targetState });
-        }, 2200);
+        }, isFinalExam ? 3000 : 2200);
       } else if (res.status === "UNKNOWN" || res.status === "LOCAL_SEALED") {
         toast({
           title: "Bài làm đã được niêm phong an toàn",
@@ -1647,27 +1656,33 @@ export default function ExamInterface() {
             <div className="space-y-1.5">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold font-mono">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                ĐÃ NIÊM PHONG BÀI THI THÀNH CÔNG
+                {submitCelebration.isFinalExam ? "ĐÃ NIÊM PHONG BÀI THI KẾT KHÓA" : "ĐÃ NIÊM PHONG BÀI THI THÀNH CÔNG"}
               </div>
               <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
                 {submitCelebration.title}
               </h2>
-              {submitCelebration.correctCount != null && submitCelebration.totalCount != null && (
-                <p className="text-sm font-semibold text-indigo-700 bg-indigo-50/80 rounded-xl py-2 px-3 border border-indigo-100">
-                  Kết quả sơ bộ: <strong>{submitCelebration.correctCount}/{submitCelebration.totalCount}</strong> câu đúng
+              {submitCelebration.isFinalExam ? (
+                <p className="text-xs text-slate-600 bg-slate-50 rounded-xl py-2.5 px-3 border border-slate-200 leading-relaxed">
+                  Toàn bộ bài làm đã được bảo lưu an toàn. Điểm tổng và nhận xét chi tiết sẽ được công bố một lần sau khi giáo viên hoàn tất chấm bài.
                 </p>
+              ) : (
+                submitCelebration.correctCount != null && submitCelebration.totalCount != null && (
+                  <p className="text-sm font-semibold text-indigo-700 bg-indigo-50/80 rounded-xl py-2 px-3 border border-indigo-100">
+                    Kết quả sơ bộ: <strong>{submitCelebration.correctCount}/{submitCelebration.totalCount}</strong> câu đúng
+                  </p>
+                )
               )}
             </div>
 
             <p className="text-xs text-slate-500">
-              Đang chuyển hướng tới trang tổng quan chiến báo học thuật...
+              {submitCelebration.isFinalExam ? "Đang chuyển về trang bài tập..." : "Đang chuyển hướng tới trang tổng quan chiến báo học thuật..."}
             </p>
 
             <Button
               onClick={submitCelebration.onProceed}
               className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl h-10 shadow-xs"
             >
-              Xem báo cáo chi tiết ngay
+              {submitCelebration.isFinalExam ? "Xem tình trạng bài thi" : "Xem báo cáo chi tiết ngay"}
               <ArrowRight className="ml-1.5 w-4 h-4" />
             </Button>
           </div>
