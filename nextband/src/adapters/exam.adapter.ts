@@ -26,6 +26,7 @@ export function adaptExam(raw: any): ExamDTO {
     isActive: Boolean(raw.isActive ?? raw.is_active ?? true),
     isLocked: Boolean(raw.isLocked ?? raw.is_locked),
     isOpen: Boolean(raw.isOpen ?? raw.is_open),
+    examType: String(raw.examType ?? raw.exam_type ?? "ielts"),
     maxParticipants:
       typeof (raw.maxParticipants ?? raw.max_participants) === "number"
         ? (raw.maxParticipants ?? raw.max_participants)

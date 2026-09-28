@@ -559,10 +559,9 @@ export default function SubmissionDetail() {
     const type = submission?.exam?.examType || submission?.exam?.exam_type || "";
     return (
       String(type).toLowerCase() === "final" ||
-      /final\s*test/i.test(title) ||
-      (sections.length >= 3)
+      /\bfinal\s*test\b/i.test(title)
     );
-  }, [submission, sections]);
+  }, [submission]);
 
   const hasSubjectiveOnly = subjectiveQuestions.length > 0 && objectiveQuestions.length === 0;
   const isMixedExam = subjectiveQuestions.length > 0 && objectiveQuestions.length > 0;

@@ -728,6 +728,7 @@ export const examsApi = {
     isPublished?: boolean;
     isActive?: boolean;
     isOpen?: boolean;
+    examType?: string;
     maxParticipants?: number | null;
   }) => {
     const token = await getAuthToken();
@@ -756,6 +757,9 @@ export const examsApi = {
       isPublished: boolean;
       isActive: boolean;
       isLocked: boolean;
+      isOpen: boolean;
+      examType: string;
+      maxParticipants: number | null;
       week: number;
       durationMinutes: number;
     }>

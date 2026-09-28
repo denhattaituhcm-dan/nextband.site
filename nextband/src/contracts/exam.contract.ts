@@ -15,6 +15,7 @@ export const CanonicalExamSchema = z.object({
   isActive: z.boolean().default(true),
   isLocked: z.boolean().default(false),
   isOpen: z.boolean().default(false),
+  examType: z.string().default("ielts"),
   maxParticipants: z.number().nullable().default(null),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
