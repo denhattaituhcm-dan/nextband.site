@@ -554,10 +554,20 @@ export default function SubmissionDetail() {
     };
   }, [objectiveQuestions, answerMap]);
 
+  const isFinalExam = useMemo(() => {
+    const title = submission?.exam?.title || submission?.examTitle || "";
+    const type = submission?.exam?.examType || submission?.exam?.exam_type || "";
+    return (
+      String(type).toLowerCase() === "final" ||
+      /final\s*test/i.test(title) ||
+      (sections.length >= 3)
+    );
+  }, [submission, sections]);
+
   const hasSubjectiveOnly = subjectiveQuestions.length > 0 && objectiveQuestions.length === 0;
   const isMixedExam = subjectiveQuestions.length > 0 && objectiveQuestions.length > 0;
   const isObjectiveOnly = objectiveQuestions.length > 0 && subjectiveQuestions.length === 0;
-  const isObjectiveExam = isObjectiveOnly || isObjectiveSkill(detectExamSkill(submission?.exam || { title: submission?.examTitle || "" }));
+  const isObjectiveExam = !isFinalExam && (isObjectiveOnly || isObjectiveSkill(detectExamSkill(submission?.exam || { title: submission?.examTitle || "" })));
 
   // Objective stats to display
   const objCorrect = objectiveGradedResults?.correctAnswers ?? 0;
@@ -675,30 +685,56 @@ export default function SubmissionDetail() {
         </span>
       </div>
 
-      {/* 1. EMOTIONAL BUFFER: CELEBRATION BANNER (Ghi nhận nỗ lực & hoàn thành) */}
-      <div className="rounded-2xl border border-amber-200/80 bg-gradient-to-r from-amber-50/80 via-amber-100/40 to-orange-50/80 dark:from-amber-950/30 dark:to-orange-950/20 dark:border-amber-800/60 p-5 sm:p-6 relative overflow-hidden shadow-xs">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10">
-          <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 shadow-xs flex items-center justify-center text-2xl shrink-0 border border-amber-200/60">
-              🎉
+      {/* 1. EMOTIONAL BUFFER: BANNER */}
+      {isFinalExam && !isGraded ? (
+        <div className="rounded-2xl border border-indigo-200/80 bg-gradient-to-r from-indigo-50/90 via-slate-50 to-blue-50/90 dark:from-indigo-950/40 dark:to-slate-900 dark:border-indigo-800/60 p-5 sm:p-6 relative overflow-hidden shadow-xs">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10">
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 shadow-xs flex items-center justify-center text-2xl shrink-0 border border-indigo-200/60">
+                🔒
+              </div>
+              <div className="space-y-0.5">
+                <h2 className="text-lg font-black text-indigo-950 dark:text-indigo-100 tracking-tight">
+                  Đã niêm phong bài thi kết khóa
+                </h2>
+                <p className="text-xs text-indigo-900/90 dark:text-indigo-300 font-medium">
+                  Bài làm của bạn đang được hội đồng giáo viên chấm điểm toàn diện 4 kỹ năng. Kết quả và nhận xét chính thức sẽ được công bố một lần sau khi hoàn tất.
+                </p>
+              </div>
             </div>
-            <div className="space-y-0.5">
-              <h2 className="text-lg font-black text-amber-950 dark:text-amber-100 tracking-tight">
-                Hoàn thành bài tập rồi!
-              </h2>
-              <p className="text-xs text-amber-800/90 dark:text-amber-300 font-medium">
-                Bạn đã nỗ lực làm đủ {answeredCount}/{totalQuestionsCount} câu. Nghỉ ngơi một chút và xem lại các điểm cần lưu ý nhé!
-              </p>
-            </div>
-          </div>
 
-          <div className="flex items-center gap-2 self-stretch sm:self-auto justify-end">
-            <span className="px-3 py-1 rounded-full bg-amber-200/60 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 text-xs font-bold flex items-center gap-1.5 border border-amber-300/60">
-              <span>🏅</span> Huy hiệu Kiên Trì
-            </span>
+            <div className="flex items-center gap-2 self-stretch sm:self-auto justify-end">
+              <span className="px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-800 dark:text-indigo-200 text-xs font-bold flex items-center gap-1.5 border border-indigo-200 dark:border-indigo-700">
+                <span>⏳</span> Chờ công bố kết quả
+              </span>
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="rounded-2xl border border-amber-200/80 bg-gradient-to-r from-amber-50/80 via-amber-100/40 to-orange-50/80 dark:from-amber-950/30 dark:to-orange-950/20 dark:border-amber-800/60 p-5 sm:p-6 relative overflow-hidden shadow-xs">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10">
+            <div className="flex items-center gap-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 shadow-xs flex items-center justify-center text-2xl shrink-0 border border-amber-200/60">
+                🎉
+              </div>
+              <div className="space-y-0.5">
+                <h2 className="text-lg font-black text-amber-950 dark:text-amber-100 tracking-tight">
+                  Hoàn thành bài tập rồi!
+                </h2>
+                <p className="text-xs text-amber-800/90 dark:text-amber-300 font-medium">
+                  Bạn đã nỗ lực làm đủ {answeredCount}/{totalQuestionsCount} câu. Nghỉ ngơi một chút và xem lại các điểm cần lưu ý nhé!
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 self-stretch sm:self-auto justify-end">
+              <span className="px-3 py-1 rounded-full bg-amber-200/60 dark:bg-amber-900/40 text-amber-900 dark:text-amber-200 text-xs font-bold flex items-center gap-1.5 border border-amber-300/60">
+                <span>🏅</span> Huy hiệu Kiên Trì
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 2. STREAK THEO LỊCH HỌC LỚP: Đếm chuỗi bài tập nộp đúng hạn */}
       <div className="rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -759,7 +795,7 @@ export default function SubmissionDetail() {
               </div>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
-              {isObjectiveExam && (
+              {isObjectiveExam && !isFinalExam && (
                 <Button
                   size="sm"
                   variant="outline"
@@ -775,20 +811,22 @@ export default function SubmissionDetail() {
                   <span>Làm Lại Bài Này</span>
                 </Button>
               )}
-              <Button
-                size="sm"
-                onClick={() => setIsHonorCardOpen(true)}
-                className="h-8 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black rounded-xl text-xs gap-1.5 shadow-xs cursor-pointer"
-              >
-                <Award className="w-3.5 h-3.5 text-slate-950" />
-                <span>🎖️ Báo Cáo Gửi Ba Mẹ</span>
-              </Button>
+              {(!isFinalExam || isGraded) && (
+                <Button
+                  size="sm"
+                  onClick={() => setIsHonorCardOpen(true)}
+                  className="h-8 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black rounded-xl text-xs gap-1.5 shadow-xs cursor-pointer"
+                >
+                  <Award className="w-3.5 h-3.5 text-slate-950" />
+                  <span>🎖️ Báo Cáo Gửi Ba Mẹ</span>
+                </Button>
+              )}
               <Badge
                 variant={status.variant}
                 className="gap-1.5 px-3 py-1.5 text-sm"
               >
                 <StatusIcon className="h-4 w-4" />
-                {status.label}
+                {isFinalExam && !isGraded ? "ĐÃ NIÊM PHONG" : status.label}
               </Badge>
             </div>
           </div>
@@ -838,7 +876,75 @@ export default function SubmissionDetail() {
           <Separator />
 
           {/* DEDICATED RESULT STAT CARDS BY EXAM NATURE */}
-          {hasSubjectiveOnly ? (
+          {isFinalExam && !isGraded ? (
+            /* CASE 0: FINAL EXAM SEALED (Đang chờ chấm toàn diện - Không rò rỉ điểm sơ bộ) */
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-1">
+                {/* Status Card */}
+                <div className="rounded-xl border border-indigo-300/80 bg-indigo-50/90 p-4 flex flex-col items-center justify-center text-center shadow-2xs">
+                  <div className="flex items-center gap-1.5 text-indigo-900 font-bold text-xs uppercase tracking-wider mb-1">
+                    <Clock className="h-4 w-4 text-indigo-700" />
+                    <span>Trạng Thái</span>
+                  </div>
+                  <p className="text-base sm:text-lg font-extrabold text-indigo-950">
+                    Đã niêm phong
+                  </p>
+                </div>
+
+                {/* Answered Questions Card */}
+                <div className="rounded-xl border border-blue-300/80 bg-blue-50/90 p-4 flex flex-col items-center justify-center text-center shadow-2xs">
+                  <div className="flex items-center gap-1.5 text-blue-900 font-bold text-xs uppercase tracking-wider mb-1">
+                    <CheckCircle2 className="h-4 w-4 text-blue-700" />
+                    <span>Đã Hoàn Thành</span>
+                  </div>
+                  <p className="text-2xl sm:text-3xl font-extrabold text-blue-950 tabular-nums">
+                    {answeredCount}
+                    <span className="text-xs font-semibold text-blue-800 ml-1">/ {totalQuestionsCount} câu</span>
+                  </p>
+                </div>
+
+                {/* Exam Category Card */}
+                <div className="rounded-xl border border-purple-300/80 bg-purple-50/90 p-4 flex flex-col items-center justify-center text-center shadow-2xs">
+                  <div className="flex items-center gap-1.5 text-purple-900 font-bold text-xs uppercase tracking-wider mb-1">
+                    <Sparkles className="h-4 w-4 text-purple-700" />
+                    <span>Kỳ Thi</span>
+                  </div>
+                  <p className="text-base sm:text-lg font-extrabold text-purple-950">
+                    Final Test Kết Khóa
+                  </p>
+                </div>
+
+                {/* Submission Time Card */}
+                <div className="rounded-xl border border-slate-300/80 bg-slate-50 p-4 flex flex-col items-center justify-center text-center shadow-2xs">
+                  <div className="flex items-center gap-1.5 text-slate-700 font-bold text-xs uppercase tracking-wider mb-1">
+                    <Clock className="h-4 w-4 text-slate-600" />
+                    <span>Thời Gian Nộp</span>
+                  </div>
+                  <p className="text-sm sm:text-base font-extrabold text-slate-900">
+                    {submission?.submittedAt || submission?.submitted_at
+                      ? format(
+                          new Date(submission.submittedAt || submission.submitted_at),
+                          "HH:mm · dd/MM",
+                          { locale: vi }
+                        )
+                      : "—"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-xl border border-indigo-200 bg-indigo-50/90 text-xs text-indigo-950 flex items-start gap-3 shadow-2xs">
+                <Clock className="h-4 w-4 text-indigo-700 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <p className="font-bold text-indigo-950 text-sm">
+                    Bài thi kết khóa đã được ghi nhận và niêm phong bảo lưu an toàn.
+                  </p>
+                  <p className="text-indigo-900 leading-relaxed font-medium">
+                    Hội đồng chuyên môn sẽ chấm điểm độc lập các phần tự luận và trắc nghiệm. Bảng điểm 4 kỹ năng chính thức và nhận xét chi tiết sẽ được công bố đồng thời sau khi hoàn tất.
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : hasSubjectiveOnly ? (
             /* CASE 1: PURE SUBJECTIVE EXAM (e.g. Writing, Speaking, Essay Translations) */
             <div className="space-y-3">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-1">
@@ -1060,7 +1166,7 @@ export default function SubmissionDetail() {
           )}
 
           {/* AUTOMATED OBJECTIVE QUESTION-TYPE BATTLE DEBRIEF (Reading / Listening) */}
-          {objectiveBattleDebrief && objectiveBattleDebrief.totalQuestions > 0 && (
+          {!isFinalExam && objectiveBattleDebrief && objectiveBattleDebrief.totalQuestions > 0 && (
             <div className="mt-4">
               <ReadingBattleDebriefView
                 debrief={objectiveBattleDebrief}
@@ -1235,36 +1341,40 @@ export default function SubmissionDetail() {
             </div>
           )}
 
-          <Separator />
+          {(!isFinalExam || isGraded) && (
+            <>
+              <Separator />
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="space-y-1">
-              <p className="text-sm font-medium text-foreground">
-                Đáp án đúng
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Bật để hiện toàn bộ đáp án đúng, kể cả các câu học sinh chưa chọn.
-              </p>
-            </div>
-            <Button
-              type="button"
-              variant={showCorrectAnswers ? "default" : "outline"}
-              onClick={() => setShowCorrectAnswers((current) => !current)}
-              className="gap-2 self-start sm:self-auto"
-            >
-              {showCorrectAnswers ? (
-                <>
-                  <EyeOff className="h-4 w-4" />
-                  Ẩn đáp án đúng
-                </>
-              ) : (
-                <>
-                  <Eye className="h-4 w-4" />
-                  Hiện đáp án đúng
-                </>
-              )}
-            </Button>
-          </div>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-foreground">
+                    Đáp án đúng
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Bật để hiện toàn bộ đáp án đúng, kể cả các câu học sinh chưa chọn.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant={showCorrectAnswers ? "default" : "outline"}
+                  onClick={() => setShowCorrectAnswers((current) => !current)}
+                  className="gap-2 self-start sm:self-auto"
+                >
+                  {showCorrectAnswers ? (
+                    <>
+                      <EyeOff className="h-4 w-4" />
+                      Ẩn đáp án đúng
+                    </>
+                  ) : (
+                    <>
+                      <Eye className="h-4 w-4" />
+                      Hiện đáp án đúng
+                    </>
+                  )}
+                </Button>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
 
@@ -1372,6 +1482,8 @@ export default function SubmissionDetail() {
                     }
 
                     const answer = answerMap[question.id];
+                    const effectiveShowCorrectAnswers = isFinalExam && !isGraded ? false : showCorrectAnswers;
+                    const effectiveIsGraded = isFinalExam && !isGraded ? false : isGraded;
 
                     return (
                       <AnswerResultCard
@@ -1380,21 +1492,21 @@ export default function SubmissionDetail() {
                         displayLabel={displayLabel}
                         questionText={getQuestionText(question)}
                         questionType={qType}
-                        correctAnswer={qAns}
+                        correctAnswer={effectiveShowCorrectAnswers ? qAns : null}
                         points={getQuestionAssessmentWeight(question)}
                         options={getQuestionOptions(question)}
-                        showCorrectAnswers={showCorrectAnswers}
+                        showCorrectAnswers={effectiveShowCorrectAnswers}
                         answerText={answer?.answerText || null}
                         audioUrl={answer?.audioUrl || null}
-                        score={answer?.score ?? null}
-                        feedback={answer?.feedback ?? null}
-                        isGraded={isGraded}
+                        score={effectiveIsGraded ? (answer?.score ?? null) : null}
+                        feedback={effectiveIsGraded ? (answer?.feedback ?? null) : null}
+                        isGraded={effectiveIsGraded}
                         isSubmitted={isSubmissionCompleted(submission?.status)}
                         sectionType={section.sectionType}
                         assessmentMode={question.assessmentMode}
                         scoreScope={question.scoreScope}
                         holisticParentId={question.holisticParentId}
-                        holisticParentScore={submission?.totalScore ?? null}
+                        holisticParentScore={effectiveIsGraded ? (submission?.totalScore ?? null) : null}
                       />
                     );
                   })}

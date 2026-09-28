@@ -393,17 +393,22 @@ export function isObjectiveSkill(skill: ExamSkillType): boolean {
  */
 export function formatSkillScoreDisplay(
   skill: ExamSkillType,
-  submission: any
+  submission: any,
+  exam?: any
 ): {
   scoreText: string;
   subText: string;
   isGraded: boolean;
   isPending: boolean;
 } {
+  const isFinalExam =
+    String(exam?.examType || exam?.exam_type || "").toLowerCase() === "final" ||
+    /final\s*test/i.test(exam?.title || submission?.exam?.title || submission?.examTitle || "");
+
   if (!submission) {
     return {
       scoreText: "Chưa làm",
-      subText: isObjectiveSkill(skill) ? "1 câu = 1 điểm" : "Chấm theo Band IELTS",
+      subText: isFinalExam ? "Kỳ thi kết khóa" : isObjectiveSkill(skill) ? "1 câu = 1 điểm" : "Chấm theo Band IELTS",
       isGraded: false,
       isPending: false,
     };
@@ -412,6 +417,16 @@ export function formatSkillScoreDisplay(
   const rawStatus = String(submission.status || "").toUpperCase();
   const isGraded = rawStatus === "GRADED";
   const isSubmitted = rawStatus === "SUBMITTED" || rawStatus === "GRADING";
+
+  // Case 0: Final Test pending grading (Niêm phong toàn diện, không hiện điểm sơ bộ)
+  if (isFinalExam && !isGraded) {
+    return {
+      scoreText: isSubmitted ? "Đã niêm phong" : "Chưa hoàn tất",
+      subText: "Chờ GV công bố bảng điểm",
+      isGraded: false,
+      isPending: isSubmitted,
+    };
+  }
 
   // Case 1: Objective Skills (Grammar, Listening, Reading)
   if (isObjectiveSkill(skill)) {

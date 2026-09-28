@@ -250,7 +250,7 @@ export default function StudentLessonViewerPage() {
       submission: sub,
     });
     const badge = getSkillBadgeConfig(skill);
-    const scoreDisplay = formatSkillScoreDisplay(skill, sub);
+    const scoreDisplay = formatSkillScoreDisplay(skill, sub, item);
     const isObjective = isObjectiveSkill(skill);
 
     return {
