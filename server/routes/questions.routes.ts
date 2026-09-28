@@ -335,6 +335,21 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
         });
       }
 
+      // Check student submissions protection
+      const answerCount = await fastify.prisma.answer.count({
+        where: {
+          question: {
+            groupId: id,
+          },
+        },
+      });
+      if (answerCount > 0) {
+        return reply.status(409).send({
+          error: "GROUP_HAS_SUBMISSIONS",
+          message: "Không thể xóa nhóm câu hỏi khi đã có học viên nộp bài làm.",
+        });
+      }
+
       await fastify.prisma.questionGroup.delete({ where: { id } });
       return { success: true };
     },
@@ -534,6 +549,17 @@ const questionsRoutes: FastifyPluginAsync = async (fastify) => {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",
           message: "Đề thi đã lưu trữ hoặc bị khóa, không thể xóa câu hỏi.",
+        });
+      }
+
+      // Check student submissions protection
+      const answerCount = await fastify.prisma.answer.count({
+        where: { questionId: id },
+      });
+      if (answerCount > 0) {
+        return reply.status(409).send({
+          error: "QUESTION_HAS_SUBMISSIONS",
+          message: "Không thể xóa câu hỏi khi đã có học viên nộp bài làm.",
         });
       }
 

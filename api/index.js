@@ -102755,20 +102755,31 @@ var examsRoutes = async (fastify) => {
           message: "\u0110\u1EC1 thi \u0111ang b\u1ECB kh\xF3a ho\u1EB7c \u0111\xE3 l\u01B0u tr\u1EEF, kh\xF4ng th\u1EC3 x\xF3a ph\u1EA7n thi."
         });
       }
-      const submissionCount = await fastify.prisma.examSubmission.count({
-        where: { examId }
-      });
-      if (submissionCount > 0) {
-        return reply.status(409).send({
-          error: "EXAM_HAS_SUBMISSIONS",
-          message: "Kh\xF4ng th\u1EC3 x\xF3a ph\u1EA7n thi khi b\xE0i thi \u0111\xE3 c\xF3 l\u01B0\u1EE3t l\xE0m b\xE0i c\u1EE7a h\u1ECDc vi\xEAn."
-        });
-      }
       const section = await fastify.prisma.examSection.findFirst({
         where: { id: sectionId, examId }
       });
       if (!section) {
         return reply.status(404).send({ error: "Kh\xF4ng t\xECm th\u1EA5y ph\u1EA7n thi trong b\xE0i thi n\xE0y" });
+      }
+      const [answerCount, highlightCount] = await Promise.all([
+        fastify.prisma.answer.count({
+          where: {
+            question: {
+              group: {
+                sectionId: section.id
+              }
+            }
+          }
+        }),
+        fastify.prisma.highlight.count({
+          where: { sectionId: section.id }
+        })
+      ]);
+      if (answerCount > 0 || highlightCount > 0) {
+        return reply.status(409).send({
+          error: "SECTION_HAS_SUBMISSIONS",
+          message: "Kh\xF4ng th\u1EC3 x\xF3a ph\u1EA7n thi khi \u0111\xE3 c\xF3 h\u1ECDc vi\xEAn l\xE0m b\xE0i ho\u1EB7c n\u1ED9p c\xE2u tr\u1EA3 l\u1EDDi trong ph\u1EA7n thi n\xE0y."
+        });
       }
       await fastify.prisma.examSection.delete({
         where: { id: sectionId }
@@ -103112,13 +103123,24 @@ var sectionsRoutes = async (fastify) => {
           message: "\u0110\u1EC1 thi \u0111ang b\u1ECB kh\xF3a ho\u1EB7c \u0111\xE3 l\u01B0u tr\u1EEF, kh\xF4ng th\u1EC3 x\xF3a ph\u1EA7n thi."
         });
       }
-      const submissionCount = await fastify.prisma.examSubmission.count({
-        where: { examId: section.examId }
-      });
-      if (submissionCount > 0) {
+      const [answerCount, highlightCount] = await Promise.all([
+        fastify.prisma.answer.count({
+          where: {
+            question: {
+              group: {
+                sectionId: id
+              }
+            }
+          }
+        }),
+        fastify.prisma.highlight.count({
+          where: { sectionId: id }
+        })
+      ]);
+      if (answerCount > 0 || highlightCount > 0) {
         return reply.status(409).send({
-          error: "EXAM_HAS_SUBMISSIONS",
-          message: "Kh\xF4ng th\u1EC3 x\xF3a ph\u1EA7n thi khi b\xE0i thi \u0111\xE3 c\xF3 l\u01B0\u1EE3t l\xE0m b\xE0i c\u1EE7a h\u1ECDc vi\xEAn."
+          error: "SECTION_HAS_SUBMISSIONS",
+          message: "Kh\xF4ng th\u1EC3 x\xF3a ph\u1EA7n thi khi \u0111\xE3 c\xF3 h\u1ECDc vi\xEAn l\xE0m b\xE0i ho\u1EB7c n\u1ED9p c\xE2u tr\u1EA3 l\u1EDDi trong ph\u1EA7n thi n\xE0y."
         });
       }
       await fastify.prisma.examSection.delete({
@@ -103472,6 +103494,19 @@ var questionsRoutes = async (fastify) => {
           message: "\u0110\u1EC1 thi \u0111\xE3 l\u01B0u tr\u1EEF ho\u1EB7c b\u1ECB kh\xF3a, kh\xF4ng th\u1EC3 x\xF3a nh\xF3m c\xE2u h\u1ECFi."
         });
       }
+      const answerCount = await fastify.prisma.answer.count({
+        where: {
+          question: {
+            groupId: id
+          }
+        }
+      });
+      if (answerCount > 0) {
+        return reply.status(409).send({
+          error: "GROUP_HAS_SUBMISSIONS",
+          message: "Kh\xF4ng th\u1EC3 x\xF3a nh\xF3m c\xE2u h\u1ECFi khi \u0111\xE3 c\xF3 h\u1ECDc vi\xEAn n\u1ED9p b\xE0i l\xE0m."
+        });
+      }
       await fastify.prisma.questionGroup.delete({ where: { id } });
       return { success: true };
     }
@@ -103633,6 +103668,15 @@ var questionsRoutes = async (fastify) => {
         return reply.status(409).send({
           error: "EXAM_ARCHIVED_IMMUTABLE",
           message: "\u0110\u1EC1 thi \u0111\xE3 l\u01B0u tr\u1EEF ho\u1EB7c b\u1ECB kh\xF3a, kh\xF4ng th\u1EC3 x\xF3a c\xE2u h\u1ECFi."
+        });
+      }
+      const answerCount = await fastify.prisma.answer.count({
+        where: { questionId: id }
+      });
+      if (answerCount > 0) {
+        return reply.status(409).send({
+          error: "QUESTION_HAS_SUBMISSIONS",
+          message: "Kh\xF4ng th\u1EC3 x\xF3a c\xE2u h\u1ECFi khi \u0111\xE3 c\xF3 h\u1ECDc vi\xEAn n\u1ED9p b\xE0i l\xE0m."
         });
       }
       await fastify.prisma.question.delete({ where: { id } });
