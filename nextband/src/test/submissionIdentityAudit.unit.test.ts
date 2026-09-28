@@ -5,6 +5,8 @@ import {
   compareHomeworkOrder,
   parseWeekAndDay,
 } from "@/lib/homeworkStatusHelper";
+import { shouldRetrySubmissionQuery } from "@/pages/ExamInterface";
+import { GatewayUnavailableError, ApiError } from "@/lib/api";
 
 describe("SYSTEM-WIDE AUDIT: Submission Identity & Homework Ordering", () => {
   describe("PHẦN 3 & 9: Submission Identity Matching & Bug Reproduction", () => {
@@ -204,6 +206,59 @@ describe("SYSTEM-WIDE AUDIT: Submission Identity & Homework Ordering", () => {
         "e-w7d2",
         "e-w7d3",
       ]);
+    });
+  });
+
+  describe("EXAM SUBMISSION RETRY & RESUMPTION AUDIT", () => {
+    it("retries exactly once for transient network, gateway, abort, or 502/503 errors", () => {
+      // Failure count 0 (first attempt failed): should retry
+      expect(shouldRetrySubmissionQuery(0, new GatewayUnavailableError())).toBe(true);
+      expect(shouldRetrySubmissionQuery(0, { name: "AbortError", message: "The operation was aborted" })).toBe(true);
+      expect(shouldRetrySubmissionQuery(0, new TypeError("Failed to fetch"))).toBe(true);
+      expect(shouldRetrySubmissionQuery(0, new Error("Không thể kết nối tới máy chủ phòng thi"))).toBe(true);
+      expect(shouldRetrySubmissionQuery(0, new Error("502 Bad Gateway"))).toBe(true);
+      expect(shouldRetrySubmissionQuery(0, new Error("503 Service Unavailable"))).toBe(true);
+
+      // Failure count >= 1 (already retried once): MUST NOT retry again
+      expect(shouldRetrySubmissionQuery(1, new GatewayUnavailableError())).toBe(false);
+      expect(shouldRetrySubmissionQuery(1, new TypeError("Failed to fetch"))).toBe(false);
+      expect(shouldRetrySubmissionQuery(2, new GatewayUnavailableError())).toBe(false);
+    });
+
+    it("does NOT retry ordinary application errors (400, 401, 403, 404, 409)", () => {
+      // ApiError instances
+      expect(shouldRetrySubmissionQuery(0, new ApiError("Validation failed", 400, "VALIDATION_ERROR"))).toBe(false);
+      expect(shouldRetrySubmissionQuery(0, new ApiError("Unauthorized", 401, "AUTH_ERROR"))).toBe(false);
+      expect(shouldRetrySubmissionQuery(0, new ApiError("Forbidden", 403, "PERMISSION_ERROR"))).toBe(false);
+      expect(shouldRetrySubmissionQuery(0, new ApiError("Exam not found", 404, "NOT_FOUND"))).toBe(false);
+      expect(shouldRetrySubmissionQuery(0, new ApiError("Conflict", 409, "UNKNOWN"))).toBe(false);
+
+      // Generic HTTP error wrappers
+      expect(shouldRetrySubmissionQuery(0, { status: 400, message: "examId là bắt buộc" })).toBe(false);
+      expect(shouldRetrySubmissionQuery(0, { status: 403, message: "Từ chối quyền truy cập bài thi" })).toBe(false);
+      expect(shouldRetrySubmissionQuery(0, { status: 404, message: "Bài thi không tồn tại" })).toBe(false);
+      expect(shouldRetrySubmissionQuery(0, { response: { status: 409 }, message: "Bạn đã sử dụng hết lượt làm bài" })).toBe(false);
+    });
+
+    it("verifies canonical submission selector resumes existing IN_PROGRESS submission without creating duplicate", () => {
+      const examId = "f9f1f852-96c6-42af-a067-4be16e912838";
+      const existingInProgress = {
+        id: "25c9d349-4fe0-4dcf-afea-c27a69390013",
+        examId,
+        studentId: "d16e345c-9c14-4b4f-9788-1a255237d678",
+        status: "IN_PROGRESS",
+        startedAt: "2026-09-28T07:44:50.894Z",
+        answers: [],
+      };
+
+      const submissions = [existingInProgress];
+      const matched = filterCanonicalSubmissionsForHomework(submissions, examId);
+      expect(matched).toHaveLength(1);
+      expect(matched[0].id).toBe("25c9d349-4fe0-4dcf-afea-c27a69390013");
+      expect(matched[0].status).toBe("IN_PROGRESS");
+
+      const canonical = selectCanonicalSubmission(submissions, examId);
+      expect(canonical?.id).toBe("25c9d349-4fe0-4dcf-afea-c27a69390013");
     });
   });
 });

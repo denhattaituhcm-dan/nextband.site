@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useParams, useNavigate, Link, useSearchParams, useLocation } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { examsApi, submissionsApi, assessmentApi } from "@/lib/api";
+import { examsApi, submissionsApi, assessmentApi, GatewayUnavailableError, ApiError } from "@/lib/api";
 import { resolveExitDestination } from "@/lib/exitContext";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -130,6 +130,34 @@ function playExamVictoryChime() {
   }
 }
 
+export function shouldRetrySubmissionQuery(failureCount: number, error: any): boolean {
+  if (failureCount >= 1) return false;
+  if (error instanceof ApiError && error.status >= 400 && error.status < 500) {
+    return false;
+  }
+  if (error?.status >= 400 && error?.status < 500) {
+    return false;
+  }
+  if (error?.response?.status >= 400 && error?.response?.status < 500) {
+    return false;
+  }
+  const isGatewayOrNetwork =
+    error instanceof GatewayUnavailableError ||
+    error?.isGatewayError === true ||
+    error?.name === "GatewayUnavailableError" ||
+    error?.name === "AbortError" ||
+    (error?.message && (
+      error.message.toLowerCase().includes("failed to fetch") ||
+      error.message.toLowerCase().includes("network") ||
+      error.message.toLowerCase().includes("máy chủ") ||
+      error.message.toLowerCase().includes("kết nối") ||
+      error.message.toLowerCase().includes("502") ||
+      error.message.toLowerCase().includes("503") ||
+      error.message.toLowerCase().includes("504")
+    ));
+  return Boolean(isGatewayOrNetwork);
+}
+
 export default function ExamInterface() {
   const { examId } = useParams<{ examId: string }>();
   const navigate = useNavigate();
@@ -256,7 +284,7 @@ export default function ExamInterface() {
       return result;
     },
     enabled: !!examId && !!user,
-    retry: false,
+    retry: shouldRetrySubmissionQuery,
   });
 
   const submission = submissionData;
