@@ -159,7 +159,7 @@ export default function StudentLessonViewerPage() {
     return [...rawLessons].sort(compareHomeworkOrder);
   }, [rawLessons]);
 
-  const isLoading = isLessonsLoading || isSubmissionsLoading;
+  const isLoading = isLessonsLoading;
 
   if (!classId || !isValidUUID(classId)) {
     return (
