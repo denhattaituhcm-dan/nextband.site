@@ -118,9 +118,6 @@ export function DisciplineScholarshipTracker({
               <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-slate-100 tracking-tight">
                 Học Bổng Kỷ Luật ARIS
               </h3>
-              <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                Discipline &amp; Excellence
-              </span>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               Quy chế cam kết danh dự · Khấu trừ học phí khóa kế tiếp khi hoàn thành tối thiểu 50% bài tập quy định.

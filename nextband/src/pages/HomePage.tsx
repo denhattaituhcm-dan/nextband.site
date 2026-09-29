@@ -684,114 +684,109 @@ export default function HomePage() {
                     </Button>
                   </div>
 
-                  {/* Main Session Spotlight Info */}
-                  <div className="py-3 space-y-2">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Badge variant="outline" className={`font-black text-[11px] px-2.5 py-0.5 ${cardTheme.badge}`}>
-                        Buổi {nextSession?.sessionNumber || (completedSessions + 1)} / {totalSessions}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground font-medium flex items-center gap-1.5">
-                        <Calendar className="h-3.5 w-3.5 text-indigo-500" />
-                        <span>
-                          {nextSession?.sessionDate
-                            ? `Ngày ${new Date(nextSession.sessionDate).toLocaleDateString("vi-VN", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" })}`
-                            : "Theo lịch xếp của lớp học"}
-                        </span>
-                      </span>
-                    </div>
-
-                    <h3 className="font-extrabold text-base sm:text-lg text-foreground leading-snug tracking-tight">
-                      {nextSession?.lessonTitle || `Bài giảng buổi số ${nextSession?.sessionNumber || 1}: Củng cố và nâng cấp năng lực IELTS`}
-                    </h3>
-
-                    <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                      <Clock className="h-3.5 w-3.5 text-muted-foreground/70 shrink-0" />
-                      <span>{nextSession?.notes || "Chuẩn bị bài tập và tài liệu học tập trước khi vào lớp."}</span>
-                    </p>
-                  </div>
-
-                  {/* Dual Telemetry Cards: Điểm số bài vừa chấm & Nút xem bài chấm */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/80">
-                    {/* 1. Điểm số bài vừa chấm */}
-                    <div className="p-3 rounded-xl bg-white/80 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-700/60 shadow-2xs space-y-1.5">
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
-                          <Trophy className="h-3.5 w-3.5 text-amber-500" />
-                          Kết quả bài gần nhất
-                        </span>
-                        <span className={`font-black text-sm tabular-nums ${
-                          latestGradedSubmission
-                            ? "text-emerald-600 dark:text-emerald-400"
-                            : "text-slate-400"
-                        }`}>
-                          {latestGradedSubmission ? latestGradedSubmission.scoreDisplay : "Chưa có"}
-                        </span>
-                      </div>
-                      <div className="text-[11px] font-semibold text-slate-800 dark:text-slate-200 truncate" title={latestGradedSubmission?.examTitle || "Chưa có bài nào được chấm"}>
-                        {latestGradedSubmission ? latestGradedSubmission.examTitle : "Chưa có bài nộp nào được chấm"}
-                      </div>
-                      <div className="text-[10px] text-muted-foreground font-medium flex items-center justify-between pt-0.5">
-                        <span className="flex items-center gap-1">
-                          <span className={`w-1.5 h-1.5 rounded-full ${latestGradedSubmission ? "bg-emerald-500" : "bg-slate-300"}`} />
-                          {latestGradedSubmission
-                            ? latestGradedSubmission.scoreSubtext || (latestGradedSubmission.isTeacherGraded ? "Giáo viên đã trả bài" : "Hệ thống chấm tự động")
-                            : "Đang chờ nộp & chấm"}
-                        </span>
-                        {latestGradedSubmission?.gradedAt && (
+                    {/* Main Session Spotlight Info */}
+                    <div className="py-3 space-y-2">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant="outline" className={`font-black text-[11px] px-2.5 py-0.5 ${cardTheme.badge}`}>
+                          Buổi {nextSession?.sessionNumber || (completedSessions + 1)} / {totalSessions}
+                        </Badge>
+                        <span className="text-xs text-muted-foreground font-medium flex items-center gap-1.5">
+                          <Calendar className="h-3.5 w-3.5 text-indigo-500" />
                           <span>
-                            {new Date(latestGradedSubmission.gradedAt).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" })}
+                            {nextSession?.sessionDate
+                              ? `Ngày ${new Date(nextSession.sessionDate).toLocaleDateString("vi-VN", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" })}`
+                              : "Theo lịch xếp của lớp học"}
                           </span>
-                        )}
+                        </span>
                       </div>
+
+                      {nextSession?.lessonTitle && !/^Buổi\s+\d+$/i.test(nextSession.lessonTitle.trim()) && (
+                        <h3 className="font-extrabold text-base sm:text-lg text-foreground leading-snug tracking-tight">
+                          {nextSession.lessonTitle}
+                        </h3>
+                      )}
+
+                      <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                        <Clock className="h-3.5 w-3.5 text-muted-foreground/70 shrink-0" />
+                        <span>{nextSession?.notes || "Chuẩn bị bài tập và tài liệu học tập trước khi vào lớp."}</span>
+                      </p>
                     </div>
 
-                    {/* 2. Nút bấm truy cập thẳng vào bài làm vừa được chấm */}
-                    <button
-                      type="button"
-                      disabled={!latestGradedSubmission}
-                      onClick={() => {
-                        if (latestGradedSubmission?.submissionId) {
-                          navigate(`/app/submissions/${latestGradedSubmission.submissionId}`);
-                        } else if (enrolledClassId) {
-                          navigate(`/app/class/${enrolledClassId}/lessons`);
-                        }
-                      }}
-                      className={`p-3 rounded-xl border shadow-2xs text-left transition-all space-y-1.5 ${
-                        latestGradedSubmission
-                          ? "bg-gradient-to-br from-indigo-50/70 via-white to-purple-50/40 dark:from-slate-800 dark:to-indigo-950/30 border-indigo-200 dark:border-indigo-800 hover:border-indigo-400 hover:shadow-xs cursor-pointer group"
-                          : "bg-slate-50/60 dark:bg-slate-800/40 border-slate-200/60 dark:border-slate-700/40 opacity-75 cursor-default"
-                      }`}
-                      title={latestGradedSubmission ? (latestGradedSubmission.isTeacherGraded ? "Bấm để xem chi tiết lời nhận xét & sửa lỗi" : "Bấm để xem đáp án và giải thích chi tiết") : "Chưa có bài tập nào được chấm"}
-                    >
-                      <div className="flex items-center justify-between text-xs">
-                        <span className="font-bold text-indigo-700 dark:text-indigo-300 flex items-center gap-1.5">
-                          <FileCheck className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
-                          {latestGradedSubmission?.isTeacherGraded ? "Xem bài được trả" : "Xem bài đã làm"}
-                        </span>
-                        <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
-                          <span>Chi tiết</span>
-                          <ArrowRight className="h-3 w-3" />
-                        </span>
+                    {/* Dual Telemetry Cards: Điểm số bài vừa chấm & Nút xem bài chấm */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-slate-200/60 dark:border-slate-800/80">
+                      {/* 1. Điểm số bài vừa chấm */}
+                      <div className="p-3 rounded-xl bg-white/80 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-700/60 shadow-2xs space-y-1.5">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                            <Trophy className="h-3.5 w-3.5 text-amber-500" />
+                            Bài gần nhất
+                          </span>
+                          <span className={`font-black text-sm tabular-nums ${
+                            latestGradedSubmission
+                              ? "text-emerald-600 dark:text-emerald-400"
+                              : "text-slate-400"
+                          }`}>
+                            {latestGradedSubmission ? latestGradedSubmission.scoreDisplay : "Chưa có"}
+                          </span>
+                        </div>
+                        <div className="text-[11px] font-semibold text-slate-800 dark:text-slate-200 truncate" title={latestGradedSubmission?.examTitle || "Chưa có bài nào được chấm"}>
+                          {latestGradedSubmission ? latestGradedSubmission.examTitle : "Chưa có bài nộp nào được chấm"}
+                        </div>
+                        <div className="text-[10px] text-muted-foreground font-medium flex items-center justify-between pt-0.5">
+                          <span className="flex items-center gap-1">
+                            <span className={`w-1.5 h-1.5 rounded-full ${latestGradedSubmission ? "bg-emerald-500" : "bg-slate-300"}`} />
+                            {latestGradedSubmission
+                              ? latestGradedSubmission.scoreSubtext || (latestGradedSubmission.isTeacherGraded ? "Giáo viên đã trả bài" : "Hệ thống chấm tự động")
+                              : "Đang chờ nộp & chấm"}
+                          </span>
+                          {latestGradedSubmission?.gradedAt && (
+                            <span>
+                              {new Date(latestGradedSubmission.gradedAt).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit" })}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      <div className="text-[11px] font-medium text-slate-600 dark:text-slate-300 line-clamp-1">
-                        {latestGradedSubmission
-                          ? latestGradedSubmission.isTeacherGraded
-                            ? "Xem nhận xét, lời giải & sửa lỗi chi tiết"
-                            : "Xem đáp án đúng & giải thích chi tiết từng câu"
-                          : "Làm bài tập để nhận nhận xét & điểm số"}
-                      </div>
-                      <div className="flex items-center justify-between pt-0.5">
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100/70 text-indigo-800 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
-                          {latestGradedSubmission
-                            ? latestGradedSubmission.isTeacherGraded
-                              ? "Nhận xét chi tiết"
-                              : "Xem giải thích"
-                            : "Chờ bài làm"}
-                        </span>
-                        <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold underline underline-offset-2">
-                          Mở bài →
-                        </span>
-                      </div>
+
+                      {/* 2. Nút bấm truy cập thẳng vào bài làm vừa được chấm */}
+                      <button
+                        type="button"
+                        disabled={!latestGradedSubmission}
+                        onClick={() => {
+                          if (latestGradedSubmission?.submissionId) {
+                            navigate(`/app/submissions/${latestGradedSubmission.submissionId}`);
+                          } else if (enrolledClassId) {
+                            navigate(`/app/class/${enrolledClassId}/lessons`);
+                          }
+                        }}
+                        className={`p-3 rounded-xl border shadow-2xs text-left transition-all space-y-1.5 ${
+                          latestGradedSubmission
+                            ? "bg-gradient-to-br from-indigo-50/70 via-white to-purple-50/40 dark:from-slate-800 dark:to-indigo-950/30 border-indigo-200 dark:border-indigo-800 hover:border-indigo-400 hover:shadow-xs cursor-pointer group"
+                            : "bg-slate-50/60 dark:bg-slate-800/40 border-slate-200/60 dark:border-slate-700/40 opacity-75 cursor-default"
+                        }`}
+                        title={latestGradedSubmission ? (latestGradedSubmission.isTeacherGraded ? "Bấm để xem chi tiết lời nhận xét & sửa lỗi" : "Bấm để xem đáp án và giải thích chi tiết") : "Chưa có bài tập nào được chấm"}
+                      >
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-bold text-indigo-700 dark:text-indigo-300 flex items-center gap-1.5">
+                            <FileCheck className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+                            {latestGradedSubmission?.isTeacherGraded ? "Xem bài được trả" : "Xem bài đã làm"}
+                          </span>
+                          <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
+                            <span>Chi tiết</span>
+                            <ArrowRight className="h-3 w-3" />
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between pt-0.5">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-100/70 text-indigo-800 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                            {latestGradedSubmission
+                              ? latestGradedSubmission.isTeacherGraded
+                                ? "Nhận xét chi tiết"
+                                : "Xem giải thích"
+                              : "Chờ bài làm"}
+                          </span>
+                          <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold underline underline-offset-2">
+                            Mở bài →
+                          </span>
+                        </div>
                     </button>
                   </div>
                 </Card>
