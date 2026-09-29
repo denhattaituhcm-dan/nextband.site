@@ -56,7 +56,7 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
 
 export function PublicHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mobileCoursesOpen, setMobileCoursesOpen] = useState(true);
+  const [mobileCoursesOpen, setMobileCoursesOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated, isAdmin, isTeacher } = useAuth();
@@ -315,7 +315,10 @@ export function PublicHeader() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={() => {
+                setMobileCoursesOpen(false);
+                setMobileMenuOpen(!mobileMenuOpen);
+              }}
               className="h-9 w-9 rounded-lg text-white hover:bg-white/10"
               aria-label="Toggle menu"
             >
