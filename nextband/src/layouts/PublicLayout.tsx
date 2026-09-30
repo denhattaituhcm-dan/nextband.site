@@ -29,9 +29,24 @@ export default function PublicLayout() {
       window.location.hash === "#");
 
   const isAuthRedirecting = Boolean(
-    hasAuthHash ||
-      (typeof window !== "undefined" && getSavedTarget() && (isLoading || user))
+    (hasAuthHash || (typeof window !== "undefined" && getSavedTarget())) &&
+      (isLoading || user)
   );
+
+  // If auth loading finished without a user despite having auth hash/code, clean up URL to avoid lingering state
+  useEffect(() => {
+    if (!isLoading && !user && hasAuthHash) {
+      if (typeof window !== "undefined") {
+        try {
+          sessionStorage.removeItem("auth_redirect_target");
+          localStorage.removeItem("auth_redirect_target");
+        } catch {}
+        // Remove code or hash params without full reload
+        const cleanUrl = window.location.pathname;
+        window.history.replaceState(null, "", cleanUrl);
+      }
+    }
+  }, [isLoading, user, hasAuthHash]);
 
   // If user just authenticated via OAuth and landed on a public page, redirect inside
   useEffect(() => {

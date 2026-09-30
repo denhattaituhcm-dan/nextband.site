@@ -5,6 +5,7 @@ import { AcademicRankSystem } from "@/components/public/AcademicRankSystem";
 import { ArisBentoGrid } from "@/components/public/ArisBentoGrid";
 import { PlaceholderCard } from "@/components/public/PlaceholderCard";
 import { Button } from "@/components/ui/button";
+import AcademicPhrase from "@/components/common/AcademicPhrase";
 import { SEO } from "@/components/common/SEO";
 import {
   ArrowRight,
@@ -57,9 +58,10 @@ export default function PublicHomePage() {
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-[62px] font-black text-foreground tracking-tight leading-[1.12]">
                 Học tiếng Anh{" "}
-                <span className="hero-gradient font-montserrat font-black tracking-normal inline-block">
-                  từ bản chất!
-                </span>
+                <AcademicPhrase
+                  text="từ bản chất!"
+                  className="font-montserrat font-black tracking-normal inline-block"
+                />
                 <br />
                 <span className="text-[#002147] block mt-2">
                   Không học mẹo. Không học thuộc bài mẫu.
