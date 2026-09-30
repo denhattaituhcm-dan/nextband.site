@@ -152,5 +152,17 @@ describe("examSkillHelper", () => {
     expect(detectExamSkill(vocabExam)).toBe("grammar");
     expect(isAutoGradedExam(vocabExam)).toBe(true);
     expect(getSkillBadgeConfig("grammar").label).toContain("Trắc nghiệm Grammar");
+
+    // W2 - D1 - WRI with empty sections should still strictly resolve to writing
+    const w2d1Exam = {
+      title: "W2 – D1 – WRI",
+      examType: "ielts",
+      sections: [
+        { sectionType: "general", title: "Grammar", questionGroups: [] },
+        { sectionType: "writing", title: "Writing", questionGroups: [{ questions: [{ questionType: "essay" }] }] }
+      ]
+    };
+    expect(detectExamSkill(w2d1Exam)).toBe("writing");
+    expect(isAutoGradedExam(w2d1Exam)).toBe(false);
   });
 });

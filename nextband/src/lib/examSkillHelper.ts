@@ -207,7 +207,13 @@ export function detectExamSkill(examOrItem: any): ExamSkillType {
         if (qt === "speaking" || qt.startsWith("ielts_speaking")) {
           hasSpeakingQuestion = true;
         }
-        if (qt === "writing" || (qt === "essay" && (st === "writing" || title.includes("writing")))) {
+        if (
+          qt === "writing" ||
+          qt === "essay" ||
+          qt.startsWith("ielts_writing") ||
+          st === "writing" ||
+          title.includes("writing")
+        ) {
           hasWritingQuestion = true;
         }
       });
@@ -273,9 +279,12 @@ export function detectExamSkill(examOrItem: any): ExamSkillType {
   const hasWritingTitle = isWritingMatch(rawTitle);
   const hasGrammarTitle = isGrammarMatch(rawTitle);
 
-  // If title is WRI / WR but the section is Grammar with no writing questions, it's grammar!
-  if (sectionTypes.has("grammar") && (hasWritingTitle || hasGrammarTitle)) {
-    return "grammar";
+  // High priority: If title explicitly indicates Writing or Speaking, trust the title over empty/general sections
+  if (hasSpeakingTitle) {
+    return "speaking";
+  }
+  if (hasWritingTitle) {
+    return "writing";
   }
 
   // Combo Reading & Listening
@@ -287,12 +296,12 @@ export function detectExamSkill(examOrItem: any): ExamSkillType {
   }
 
   // Speaking (Tự luận nói)
-  if (hasSpeakingTitle || sectionTypes.has("speaking")) {
+  if (sectionTypes.has("speaking")) {
     return "speaking";
   }
 
   // Writing (Tự luận viết)
-  if (hasWritingTitle || sectionTypes.has("writing")) {
+  if (sectionTypes.has("writing")) {
     return "writing";
   }
 
