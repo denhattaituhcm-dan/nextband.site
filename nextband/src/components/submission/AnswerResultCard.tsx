@@ -406,15 +406,13 @@ export function AnswerResultCard({
     if (!canShowResult) return null;
     
     if (rawScore != null) {
-      const effectiveScore = Number(rawScore);
-      const numPoints = Number(effectivePoints);
       if (isFullCredit) {
         return (
           <Badge
             data-testid="answer-correctness-badge"
             className="text-xs font-bold bg-emerald-100 text-emerald-800 border-emerald-300 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800"
           >
-            ✓ Đúng ({Number(effectiveScore.toFixed(2))}/{numPoints})
+            ✓ Đúng
           </Badge>
         );
       }
@@ -424,7 +422,7 @@ export function AnswerResultCard({
             data-testid="answer-correctness-badge"
             className="text-xs font-bold bg-rose-100 text-rose-800 border-rose-300 hover:bg-rose-100 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800"
           >
-            ✗ Sai (0/{numPoints})
+            ✗ Sai
           </Badge>
         );
       }
@@ -433,7 +431,7 @@ export function AnswerResultCard({
           data-testid="answer-correctness-badge"
           className="text-xs font-bold bg-amber-100 text-amber-800 border-amber-300 hover:bg-amber-100 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800"
         >
-          Đúng 1 phần ({Number(effectiveScore.toFixed(2))}/{numPoints})
+          Đúng 1 phần
         </Badge>
       );
     }
@@ -441,7 +439,7 @@ export function AnswerResultCard({
     if (isUnanswered) {
       return (
         <Badge variant="outline" className="text-xs font-bold bg-slate-100 text-slate-700 border-slate-300">
-          Chưa làm (0/{effectivePoints})
+          Chưa làm
         </Badge>
       );
     }

@@ -50,19 +50,17 @@ export const SECTION_QUESTION_TYPES: Record<string, string[]> = {
     "true_false_not_given",
     "yes_no_not_given",
     "matching",
-    "essay",
   ],
-  writing: [
-    "essay",
+  writing: ["essay"],
+  speaking: ["speaking"],
+  general: [
+    "multiple_choice",
     "fill_blank",
     "short_answer",
-    "multiple_choice",
-    "matching",
     "true_false_not_given",
     "yes_no_not_given",
+    "matching",
   ],
-  speaking: ["speaking"],
-  general: ALL_QUESTION_TYPES.map((t) => t.value),
 };
 
 export function getQuestionTypesForSection(sectionType: string) {

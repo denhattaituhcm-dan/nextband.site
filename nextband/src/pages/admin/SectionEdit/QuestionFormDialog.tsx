@@ -73,7 +73,19 @@ export const QuestionFormDialog: React.FC<QuestionFormDialogProps> = ({
         <div className="flex-1 min-h-0 overflow-y-auto px-6 py-4">
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Dạng câu hỏi</Label>
+              <div className="flex items-center justify-between">
+                <Label>Dạng câu hỏi</Label>
+                {sectionType === "general" && (
+                  <span className="text-[11px] font-semibold text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40 px-2 py-0.5 rounded border border-teal-200 dark:border-teal-800">
+                    ⚡ Phần thi Grammar: Chỉ áp dụng trắc nghiệm tự động chấm
+                  </span>
+                )}
+                {sectionType === "writing" && (
+                  <span className="text-[11px] font-semibold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded border border-amber-300 dark:border-amber-800">
+                    ✍️ Phần thi Writing: Chỉ áp dụng Bài luận / Viết dài (Chấm thủ công theo tiêu chí IELTS)
+                  </span>
+                )}
+              </div>
               <Select
                 value={questionForm.questionType}
                 onValueChange={onQuestionTypeChange}

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Search, ArrowRight, CheckCircle2, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { isAutoGradedExam } from "@/lib/examSkillHelper";
+import { isAutoGradedExam, detectExamSkill, getSkillBadgeConfig } from "@/lib/examSkillHelper";
 
 export const GradingTab: React.FC = () => {
   const { classData } = useWorkspace();
@@ -60,6 +60,7 @@ export const GradingTab: React.FC = () => {
                 minute: "2-digit",
               })
             : "Chưa xác định",
+        skill: detectExamSkill(s.exam || { title: s.exam?.title || s.homework_title || s.title || s.homework?.title, examType: s.examType || s.exam_type || s.type }),
       };
     });
 
@@ -138,9 +139,19 @@ export const GradingTab: React.FC = () => {
                     <Clock className="h-4 w-4" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">
-                      {item.studentName}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">
+                        {item.studentName}
+                      </p>
+                      {(() => {
+                        const badge = getSkillBadgeConfig(item.skill);
+                        return (
+                          <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full border ${badge.badgeClass}`}>
+                            {badge.shortLabel}
+                          </span>
+                        );
+                      })()}
+                    </div>
                     <p className="text-[11px] text-muted-foreground">
                       {item.homeworkTitle}
                     </p>
