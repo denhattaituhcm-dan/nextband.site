@@ -64,8 +64,13 @@ export const SectionHeaderEditor: React.FC<SectionHeaderEditorProps> = ({
             <div className="flex items-center gap-2 mb-1">
               <Badge className={colorClass}>
                 <Icon className="mr-1 h-3 w-3" />
-                {(section.sectionType || "").toUpperCase()}
+                {section.sectionType === "general" ? "GRAMMAR" : (section.sectionType || "").toUpperCase()}
               </Badge>
+              {section.sectionType === "general" && (
+                <Badge variant="outline" className="text-[10px] font-bold text-teal-700 border-teal-300 bg-teal-50">
+                  ⚡ Tự động chấm
+                </Badge>
+              )}
               {section.examTitle && (
                 <span className="text-sm text-muted-foreground italic">
                   / {section.examTitle}

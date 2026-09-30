@@ -268,8 +268,13 @@ export default function AdminExamEdit() {
                               <div className="flex items-center gap-2">
                                 <Badge className={colorClass}>
                                   <Icon className="mr-1 h-3 w-3" />
-                                  {(section.sectionType || "").toUpperCase()}
+                                  {section.sectionType === "general" ? "GRAMMAR" : (section.sectionType || "").toUpperCase()}
                                 </Badge>
+                                {section.sectionType === "general" && (
+                                  <Badge variant="outline" className="text-[10px] font-bold text-teal-700 border-teal-300 bg-teal-50">
+                                    ⚡ Tự động chấm
+                                  </Badge>
+                                )}
                                 {isComplete ? (
                                   <Badge className="bg-emerald-600 hover:bg-emerald-700 text-white border-0 font-medium">
                                     <Check className="h-3 w-3 mr-1" />
@@ -497,9 +502,14 @@ export default function AdminExamEdit() {
                     <SelectItem value="reading">Reading</SelectItem>
                     <SelectItem value="writing">Writing</SelectItem>
                     <SelectItem value="speaking">Speaking</SelectItem>
-                    <SelectItem value="general">General (Grammar / Vocab)</SelectItem>
+                    <SelectItem value="general">Grammar (Tự động chấm)</SelectItem>
                   </SelectContent>
                 </Select>
+                {newSection.sectionType === "general" && (
+                  <p className="text-[11px] text-teal-700 dark:text-teal-400 font-medium">
+                    ⚡ Phần thi Grammar được quy ước 100% trắc nghiệm khách quan và chấm điểm tự động.
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Thứ tự (Index)</Label>

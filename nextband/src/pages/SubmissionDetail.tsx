@@ -1,4 +1,4 @@
-import { detectExamSkill, isObjectiveSkill } from "@/lib/examSkillHelper";
+import { detectExamSkill, isObjectiveSkill, getSkillBadgeConfig } from "@/lib/examSkillHelper";
 import { useMemo, useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -788,9 +788,15 @@ export default function SubmissionDetail() {
               </h1>
               <div className="flex items-center gap-2 flex-wrap text-sm text-muted-foreground">
                 <FileText className="h-4 w-4" />
-                <Badge variant="secondary">
-                  {(exam?.examType || exam?.exam_type || "EXAM")?.toUpperCase()}
-                </Badge>
+                {(() => {
+                  const skill = detectExamSkill(submission?.exam || { title: submission?.examTitle || exam?.title || "" });
+                  const badge = getSkillBadgeConfig(skill);
+                  return (
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold border ${badge.badgeClass}`}>
+                      {badge.label}
+                    </span>
+                  );
+                })()}
               </div>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -1206,11 +1212,75 @@ export default function SubmissionDetail() {
             </div>
           )}
 
+          {/* IELTS 4-CRITERIA BREAKDOWN (Writing & Speaking) */}
+          {isGraded && (() => {
+            const skill = detectExamSkill(submission.exam || { title: submission.examTitle });
+            const parsed = parseStructuredFeedback(submission.feedback);
+            const criteria = parsed.criteriaScores || (submission as any)?.criteriaScores;
+            if (!criteria) return null;
+
+            const isWriting = skill === "writing";
+            const isSpeaking = skill === "speaking";
+            if (!isWriting && !isSpeaking) return null;
+
+            const hasAnyScore = Object.values(criteria).some((v) => v != null);
+            if (!hasAnyScore) return null;
+
+            const criteriaItems = isWriting
+              ? [
+                  { label: "Task Response (TR)", score: criteria.taskResponse },
+                  { label: "Coherence & Cohesion (CC)", score: criteria.coherence },
+                  { label: "Lexical Resource (LR)", score: criteria.lexical },
+                  { label: "Grammar Range (GRA)", score: criteria.grammar },
+                ]
+              : [
+                  { label: "Fluency & Coherence (FC)", score: criteria.fluencyAndCoherence ?? criteria.coherence },
+                  { label: "Lexical Resource (LR)", score: criteria.lexical },
+                  { label: "Grammar Range (GRA)", score: criteria.grammar },
+                  { label: "Pronunciation (PR)", score: criteria.pronunciation },
+                ];
+
+            return (
+              <div className="mt-3 p-4 rounded-xl border border-border bg-card space-y-3 shadow-2xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Điểm Thành Phần Chi Tiết (Chuẩn IELTS)
+                    </span>
+                  </div>
+                  {submission.totalScore != null && (
+                    <Badge variant="outline" className="font-bold text-xs bg-primary/10 text-primary border-primary/20">
+                      Overall: Band {submission.totalScore}
+                    </Badge>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  {criteriaItems.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3 rounded-lg border bg-muted/20 flex flex-col items-center justify-center text-center space-y-1"
+                    >
+                      <span className="text-[11px] font-semibold text-muted-foreground leading-tight">
+                        {item.label}
+                      </span>
+                      <span className="text-lg font-black text-foreground">
+                        {item.score != null ? `Band ${item.score}` : "—"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
+
           {/* TEACHER QUALITATIVE FEEDBACK & REVISION REQUIRED BLOCK (P1 Lean Learning Loop) */}
           {(() => {
             const parsed = parseStructuredFeedback(submission.feedback);
             const feedbackText = parsed.text || (typeof submission.feedback === "string" && !submission.feedback.startsWith("{") ? submission.feedback : "");
-            const hasFeedback = !!feedbackText || !!submission.revisionRequired || (parsed.sentenceFeedbacks?.length ?? 0) > 0;
+            const hasCriteriaScores = !!parsed.criteriaScores && Object.values(parsed.criteriaScores).some((v) => v != null);
+            const hasFeedback = !!feedbackText || !!submission.revisionRequired || (parsed.sentenceFeedbacks?.length ?? 0) > 0 || hasCriteriaScores;
             if (!hasFeedback) return null;
 
             return (
@@ -1229,11 +1299,15 @@ export default function SubmissionDetail() {
                   )}
                 </div>
 
-                {feedbackText && (
+                {feedbackText ? (
                   <p className="text-xs text-amber-900/90 dark:text-amber-200/90 whitespace-pre-wrap leading-relaxed">
                     {feedbackText}
                   </p>
-                )}
+                ) : hasCriteriaScores ? (
+                  <p className="text-xs text-amber-800/80 dark:text-amber-300/80 italic leading-relaxed">
+                    Giáo viên đã chấm và đánh giá chi tiết theo thang điểm tiêu chí chuẩn IELTS ở phần bảng điểm.
+                  </p>
+                ) : null}
 
                 {submission.revisionRequired && (
                   <div className="pt-3 border-t border-amber-200 dark:border-amber-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
