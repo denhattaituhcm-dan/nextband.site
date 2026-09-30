@@ -563,10 +563,14 @@ export default function SubmissionDetail() {
     );
   }, [submission]);
 
+  const resolvedSkill = useMemo(() => {
+    return detectExamSkill(submission?.exam || { title: submission?.examTitle || exam?.title || "" });
+  }, [submission?.exam, submission?.examTitle, exam?.title]);
+
   const hasSubjectiveOnly = subjectiveQuestions.length > 0 && objectiveQuestions.length === 0;
   const isMixedExam = subjectiveQuestions.length > 0 && objectiveQuestions.length > 0;
   const isObjectiveOnly = objectiveQuestions.length > 0 && subjectiveQuestions.length === 0;
-  const isObjectiveExam = !isFinalExam && (isObjectiveOnly || isObjectiveSkill(detectExamSkill(submission?.exam || { title: submission?.examTitle || "" })));
+  const isObjectiveExam = !isFinalExam && !["writing", "speaking"].includes(resolvedSkill) && (isObjectiveOnly || isObjectiveSkill(resolvedSkill));
 
   // Objective stats to display
   const objCorrect = objectiveGradedResults?.correctAnswers ?? 0;
@@ -789,8 +793,7 @@ export default function SubmissionDetail() {
               <div className="flex items-center gap-2 flex-wrap text-sm text-muted-foreground">
                 <FileText className="h-4 w-4" />
                 {(() => {
-                  const skill = detectExamSkill(submission?.exam || { title: submission?.examTitle || exam?.title || "" });
-                  const badge = getSkillBadgeConfig(skill);
+                  const badge = getSkillBadgeConfig(resolvedSkill);
                   return (
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold border ${badge.badgeClass}`}>
                       {badge.label}
@@ -1194,18 +1197,18 @@ export default function SubmissionDetail() {
               <div className="flex items-center gap-2">
                 <Trophy className="h-5 w-5 text-primary" />
                 <span className="font-bold text-sm text-foreground">
-                  {["speaking", "writing"].includes(detectExamSkill(submission.exam || { title: submission.examTitle }))
+                  {["speaking", "writing"].includes(resolvedSkill)
                     ? "Kết Quả Chấm Điểm Giáo Viên:"
                     : "Kết Quả Làm Bài Tự Động:"}
                 </span>
               </div>
               <div className="text-right">
                 <span className="text-2xl font-extrabold text-primary">
-                  {["speaking", "writing"].includes(detectExamSkill(submission.exam || { title: submission.examTitle }))
+                  {["speaking", "writing"].includes(resolvedSkill)
                     ? `Band ${submission.totalScore}`
                     : submission.totalScore}
                 </span>
-                {!["speaking", "writing"].includes(detectExamSkill(submission.exam || { title: submission.examTitle })) && (
+                {!["speaking", "writing"].includes(resolvedSkill) && (
                   <span className="text-sm text-muted-foreground font-semibold"> / {totalPoints} câu</span>
                 )}
               </div>
@@ -1214,7 +1217,7 @@ export default function SubmissionDetail() {
 
           {/* IELTS 4-CRITERIA BREAKDOWN (Writing & Speaking) */}
           {isGraded && (() => {
-            const skill = detectExamSkill(submission.exam || { title: submission.examTitle });
+            const skill = resolvedSkill;
             const parsed = parseStructuredFeedback(submission.feedback);
             const criteria = parsed.criteriaScores || (submission as any)?.criteriaScores;
             if (!criteria) return null;
