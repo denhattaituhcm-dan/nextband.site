@@ -1281,7 +1281,13 @@ export default function SubmissionDetail() {
           {/* TEACHER QUALITATIVE FEEDBACK & REVISION REQUIRED BLOCK (P1 Lean Learning Loop) */}
           {(() => {
             const parsed = parseStructuredFeedback(submission.feedback);
-            const feedbackText = parsed.text || (typeof submission.feedback === "string" && !submission.feedback.startsWith("{") ? submission.feedback : "");
+            const candidateText = (parsed.text || parsed.speakingSummary?.teacherNote || "").trim();
+            const feedbackText =
+              candidateText && !candidateText.startsWith("{") && !candidateText.startsWith("[")
+                ? candidateText
+                : typeof submission.feedback === "string" && !submission.feedback.trim().startsWith("{") && !submission.feedback.trim().startsWith("[")
+                ? submission.feedback.trim()
+                : "";
             const hasCriteriaScores = !!parsed.criteriaScores && Object.values(parsed.criteriaScores).some((v) => v != null);
             const hasFeedback = !!feedbackText || !!submission.revisionRequired || (parsed.sentenceFeedbacks?.length ?? 0) > 0 || hasCriteriaScores;
             if (!hasFeedback) return null;
@@ -1417,7 +1423,7 @@ export default function SubmissionDetail() {
             </div>
           )}
 
-          {(!isFinalExam || isGraded) && (
+          {(!isFinalExam || isGraded) && isObjectiveExam && (
             <>
               <Separator />
 

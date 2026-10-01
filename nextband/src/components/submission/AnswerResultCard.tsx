@@ -324,13 +324,14 @@ export function AnswerResultCard({
     // GATE D1: HOLISTIC Mode Badge
     if (resolvedMode === "HOLISTIC") {
       if (isGraded) {
+        const isSpeaking = sectionType === "speaking" || questionType === "speaking";
         return (
           <Badge
             data-testid="holistic-assessment-badge"
             variant="outline"
             className="text-xs font-bold bg-purple-50 text-purple-800 border-purple-300 dark:bg-purple-950/40 dark:text-purple-300"
           >
-            📝 Đánh giá trong điểm Writing tổng thể
+            {isSpeaking ? "🎙️ Đánh giá trong điểm Speaking tổng thể" : "📝 Đánh giá trong điểm Writing tổng thể"}
           </Badge>
         );
       }
@@ -832,7 +833,14 @@ export function AnswerResultCard({
           {/* Feedback */}
           {isGraded && feedback && (() => {
             const parsed = parseStructuredFeedback(feedback);
-            const displayText = parsed.text || (typeof feedback === "string" && !feedback.startsWith("{") ? feedback : "");
+            const candidateText = (parsed.text || parsed.speakingSummary?.teacherNote || "").trim();
+            const displayText =
+              candidateText && !candidateText.startsWith("{") && !candidateText.startsWith("[")
+                ? candidateText
+                : typeof feedback === "string" && !feedback.trim().startsWith("{") && !feedback.trim().startsWith("[")
+                ? feedback.trim()
+                : "";
+
             const hasSpeakingReport =
               sectionType === "speaking" ||
               questionType === "speaking" ||
