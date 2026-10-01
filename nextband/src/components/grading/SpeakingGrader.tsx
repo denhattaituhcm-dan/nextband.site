@@ -44,6 +44,7 @@ import {
   RefreshCw,
   ChevronDown,
   ChevronUp,
+  MessageSquare,
 } from "lucide-react";
 import { SpeakingRubricCard } from "@/components/grading/SpeakingRubricCard";
 import {
@@ -265,6 +266,7 @@ export function SpeakingGrader({
   const [speakingStrengths, setSpeakingStrengths] = useState<string[]>([]);
   const [speakingSummary, setSpeakingSummary] = useState<SpeakingTeacherSummary>({});
   const [speakingRetryMission, setSpeakingRetryMission] = useState<SpeakingRetryMission | undefined>(undefined);
+  const [feedbackText, setFeedbackText] = useState<string>("");
 
   // Derive annotation badges for SpeakingTranscriptViewer
   const derivedAnnotationBadges: SegmentAnnotationBadge[] = useMemo(() => {
@@ -392,6 +394,7 @@ export function SpeakingGrader({
     setSpeakingStrengths(structured.speakingStrengths || []);
     setSpeakingSummary(structured.speakingSummary || {});
     setSpeakingRetryMission(structured.speakingRetryMission);
+    setFeedbackText(structured.text || structured.speakingSummary?.teacherNote || "");
 
     if (Array.isArray((foundScores as any)?.speakingTags)) {
       setSelectedEvidenceTagIds(new Set((foundScores as any).speakingTags));
@@ -518,14 +521,18 @@ export function SpeakingGrader({
 
     // Build the speaking 4–3–1 JSON payload
     const feedbackJson = serializeStructuredFeedback({
+      text: feedbackText.trim(),
       criteriaScores: enrichedCriteriaScores,
       revisionRequired,
       primaryErrorCategory: revisionRequired ? primaryErrorCategory : null,
       speakingAnnotations: speakingAnnotations.length > 0 ? speakingAnnotations : undefined,
       speakingCorrections: speakingCorrections.length > 0 ? speakingCorrections : undefined,
       speakingStrengths: speakingStrengths.length > 0 ? speakingStrengths : undefined,
-      speakingSummary: (speakingSummary.strongestPoint || speakingSummary.mainArea || speakingSummary.nextTarget || speakingSummary.teacherNote)
-        ? speakingSummary
+      speakingSummary: (speakingSummary.strongestPoint || speakingSummary.mainArea || speakingSummary.nextTarget || speakingSummary.teacherNote || feedbackText.trim())
+        ? {
+            ...speakingSummary,
+            teacherNote: speakingSummary.teacherNote || feedbackText.trim(),
+          }
         : undefined,
       speakingRetryMission: speakingRetryMission?.originalSentence ? speakingRetryMission : undefined,
     });
@@ -917,6 +924,28 @@ export function SpeakingGrader({
             }}
             disabled={isSubmitting}
           />
+
+          {/* NHẬN XÉT & GÓP Ý TỔNG QUAN CỦA GIÁO VIÊN */}
+          <div className="space-y-2 font-sans">
+            <Label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <MessageSquare className="h-3.5 w-3.5 text-blue-600" />
+                Nhận xét / Góp ý tổng quan của Giáo viên
+              </span>
+              <span className="text-[10px] text-slate-400 font-normal">Gửi kèm bài trả</span>
+            </Label>
+            <Textarea
+              placeholder="Gõ nhận xét chung, đánh giá phản xạ, từ vựng hoặc lời dặn dò cho học viên..."
+              value={feedbackText}
+              onChange={(e) => {
+                setFeedbackText(e.target.value);
+                setIsDirty(true);
+              }}
+              rows={4}
+              disabled={isSubmitting}
+              className="text-xs bg-slate-50/50 border-slate-200 focus:bg-white resize-none rounded-xl"
+            />
+          </div>
 
           {/* Step 2: Sentence-Level Diagnosis Panel */}
           <Card className="border border-blue-200 shadow-2xs rounded-xl p-4 space-y-3 bg-white font-sans">
