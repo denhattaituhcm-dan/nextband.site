@@ -3409,6 +3409,102 @@ export const sessionsApi = {
     const errData = await res.json().catch(() => ({}));
     throw new Error(errData.error || errData.message || "Cập nhật trạng thái buổi học thất bại");
   },
+
+  /** Tự động thêm 1 buổi học tiếp theo theo lịch cố định của lớp */
+  appendNextSession: async (
+    classId: string,
+    options?: { reason?: string; title?: string }
+  ): Promise<CanonicalSessionDTO> => {
+    const token = await getAuthToken();
+    if (token) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/classes/${classId}/sessions/append-next`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(options || {}),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          return normalizeSession(data);
+        }
+      } catch {
+        // Backend REST offline -> Fallback to direct Supabase
+      }
+    }
+
+    try {
+      const { data: dbSessions } = await supabase
+        .from("class_sessions")
+        .select("*")
+        .eq("class_id", classId)
+        .order("session_number", { ascending: true });
+
+      const sessions = dbSessions || [];
+      const weekdaysSet = new Set<number>();
+      let maxSessionNumber = 0;
+      let maxDate = new Date();
+      let startTime = "18:00";
+      let endTime = "20:00";
+
+      sessions.forEach((s: any) => {
+        if (s.session_number > maxSessionNumber) maxSessionNumber = s.session_number;
+        const dStr = s.planned_date || s.session_date;
+        if (dStr) {
+          const d = new Date(dStr);
+          if (d > maxDate) maxDate = d;
+          weekdaysSet.add(d.getDay());
+        }
+        if (s.start_time) startTime = s.start_time;
+        if (s.end_time) endTime = s.end_time;
+      });
+
+      const weekdays = weekdaysSet.size > 0 ? Array.from(weekdaysSet) : [1, 3, 5];
+      const cur = new Date(maxDate);
+      cur.setDate(cur.getDate() + 1);
+
+      let nextDateStr = "";
+      let safetyCounter = 60;
+      while (!nextDateStr && safetyCounter > 0) {
+        safetyCounter--;
+        const dow = cur.getDay();
+        if (weekdays.includes(dow)) {
+          const mm = String(cur.getMonth() + 1).padStart(2, "0");
+          const dd = String(cur.getDate()).padStart(2, "0");
+          nextDateStr = `${cur.getFullYear()}-${mm}-${dd}`;
+        } else {
+          cur.setDate(cur.getDate() + 1);
+        }
+      }
+
+      const nextSessionNumber = maxSessionNumber + 1;
+      const newSessionRow = {
+        class_id: classId,
+        session_number: nextSessionNumber,
+        planned_date: nextDateStr,
+        session_date: nextDateStr,
+        start_time: startTime,
+        end_time: endTime,
+        status: "SCHEDULED",
+        title: options?.title || `Buổi ${nextSessionNumber}`,
+        note: options?.reason ? `Buổi học bù (Lý do: ${options.reason})` : `Buổi ${nextSessionNumber}`,
+      };
+
+      const { data, error } = await supabase
+        .from("class_sessions")
+        .insert(newSessionRow)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return normalizeSession(data);
+    } catch (err: any) {
+      throw new Error(err.message || "Không thể tự động thêm buổi học mới");
+    }
+  },
 };
 
 

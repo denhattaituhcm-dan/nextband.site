@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { PrismaClient, NotificationType } from "@prisma/client";
 import { ClassRepository } from "../repositories/class.repository.js";
 import { AuthorizationService, AuthorizationError, NotFoundError } from "./authorization.service.js";
@@ -683,6 +684,133 @@ export class ClassService {
       shiftedCount: updatedSessions.length,
       updatedSessions,
     };
+  }
+
+  // Use Case: Append the next session at the end of schedule (for makeup sessions when marking day off)
+  async appendNextSession(
+    user: { id: string; roles: string[] },
+    classId: string,
+    options: {
+      reason?: string;
+      customHolidays?: HolidayRange[];
+      title?: string;
+    } = {}
+  ) {
+    const classData = await this.repo.findById(classId);
+    if (!classData) {
+      throw new NotFoundError("Không tìm thấy lớp học");
+    }
+
+    const isAdmin = user.roles.includes("admin");
+    if (!isAdmin && classData.teacherId !== user.id) {
+      throw new AuthorizationError("Từ chối truy cập - bạn không có quyền thao tác lịch lớp học này", 403);
+    }
+
+    const allSessions = await this.prisma.classSession.findMany({
+      where: { classId },
+      orderBy: { sessionNumber: "asc" },
+    });
+
+    // 1. Determine weekdays from class schedules or existing sessions
+    let weekdays: number[] = [];
+    const schedules = await this.prisma.classSchedule.findMany({
+      where: { classId },
+    });
+    if (schedules.length > 0) {
+      weekdays = schedules.map((sc) => sc.dayOfWeek);
+    } else {
+      const distinctDows = new Set(
+        allSessions
+          .filter((s) => s.plannedDate)
+          .map((s) => new Date(s.plannedDate).getDay())
+      );
+      weekdays = Array.from(distinctDows);
+    }
+
+    if (weekdays.length === 0) {
+      weekdays = [1, 3, 5];
+    }
+
+    // 2. Find max session number and max planned date
+    let maxSessionNumber = 0;
+    let maxDate: Date = classData.startDate ? new Date(classData.startDate) : new Date();
+    let defaultStartTime = "18:00";
+    let defaultEndTime = "20:00";
+
+    if (allSessions.length > 0) {
+      for (const s of allSessions) {
+        if (s.sessionNumber > maxSessionNumber) {
+          maxSessionNumber = s.sessionNumber;
+        }
+        const sDate = new Date(s.plannedDate);
+        if (sDate > maxDate) {
+          maxDate = sDate;
+        }
+        if (s.startTime) {
+          const hours = String(new Date(s.startTime).getUTCHours()).padStart(2, "0");
+          const mins = String(new Date(s.startTime).getUTCMinutes()).padStart(2, "0");
+          defaultStartTime = `${hours}:${mins}`;
+        }
+        if (s.endTime) {
+          const hours = String(new Date(s.endTime).getUTCHours()).padStart(2, "0");
+          const mins = String(new Date(s.endTime).getUTCMinutes()).padStart(2, "0");
+          defaultEndTime = `${hours}:${mins}`;
+        }
+      }
+    }
+
+    const nextSessionNumber = maxSessionNumber + 1;
+
+    // 3. Find next available date starting from day after maxDate
+    const cur = new Date(maxDate);
+    cur.setDate(cur.getDate() + 1);
+
+    let nextPlannedDate: Date | null = null;
+    let safetyCounter = 60;
+    while (!nextPlannedDate && safetyCounter > 0) {
+      safetyCounter--;
+      const dow = cur.getDay();
+      const isHoliday = isHolidayDate(cur, options.customHolidays);
+      if (weekdays.includes(dow) && !isHoliday) {
+        nextPlannedDate = new Date(cur);
+        nextPlannedDate.setUTCHours(0, 0, 0, 0);
+      } else {
+        cur.setDate(cur.getDate() + 1);
+      }
+    }
+
+    if (!nextPlannedDate) {
+      nextPlannedDate = new Date(cur);
+      nextPlannedDate.setUTCHours(0, 0, 0, 0);
+    }
+
+    const startTimeDate = new Date(`1970-01-01T${defaultStartTime.slice(0, 5)}:00.000Z`);
+    const endTimeDate = new Date(`1970-01-01T${defaultEndTime.slice(0, 5)}:00.000Z`);
+
+    const title = options.title || `Buổi ${nextSessionNumber}`;
+
+    const created = await this.prisma.classSession.create({
+      data: {
+        id: crypto.randomUUID(),
+        classId,
+        sessionNumber: nextSessionNumber,
+        plannedDate: nextPlannedDate,
+        startTime: startTimeDate,
+        endTime: endTimeDate,
+        status: "PLANNED",
+        note: options.reason ? `Buổi học bù (Lý do: ${options.reason})` : title,
+      },
+    });
+
+    // Update Class.endDate
+    const newEndDate = new Date(nextPlannedDate);
+    newEndDate.setUTCHours(23, 59, 59, 999);
+    await this.prisma.class.update({
+      where: { id: classId },
+      data: { endDate: newEndDate },
+    });
+
+    return created;
   }
 
   // Use Case: Create Class (Admin Only)

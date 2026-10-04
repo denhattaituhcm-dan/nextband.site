@@ -18,8 +18,19 @@ import {
   RotateCcw,
   Unlock,
   CalendarPlus,
+  CalendarOff,
   Users,
+  Sparkles,
+  Info,
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -78,9 +89,93 @@ export const AttendanceSheet: React.FC<AttendanceSheetProps> = ({ classId, sessi
   const [saving, setSaving] = useState<boolean>(false);
   const [completing, setCompleting] = useState<boolean>(false);
   const [generatingSessions, setGeneratingSessions] = useState<boolean>(false);
+  const [dayOffModalOpen, setDayOffModalOpen] = useState<boolean>(false);
+  const [dayOffReason, setDayOffReason] = useState<string>("");
+  const [processingDayOff, setProcessingDayOff] = useState<boolean>(false);
   const [sessionData, setSessionData] = useState<SessionData | null>(null);
   const [items, setItems] = useState<StudentAttendanceItem[]>([]);
   const [localSessionStatuses, setLocalSessionStatuses] = useState<Record<string, "SCHEDULED" | "COMPLETED" | "CANCELLED">>({});
+
+  // Tính toán thông tin buổi học bù tiếp theo dựa trên lịch cố định
+  const nextSessionPreview = useMemo(() => {
+    if (!sessions || sessions.length === 0) return null;
+
+    // 1. Xác định thứ trong tuần (weekdays) của lớp (0: CN, 1: T2, ..., 6: T7)
+    const weekdaysSet = new Set<number>();
+    const classSchedules = classData?.schedules || classData?.class_schedules || [];
+    if (Array.isArray(classSchedules) && classSchedules.length > 0) {
+      classSchedules.forEach((sc: any) => {
+        if (typeof sc.dayOfWeek === "number") weekdaysSet.add(sc.dayOfWeek);
+      });
+    }
+
+    sessions.forEach((s) => {
+      const dStr = s.scheduledDate || (s as any).plannedDate || (s as any).sessionDate;
+      if (dStr) {
+        const [y, m, d] = dStr.slice(0, 10).split("-").map(Number);
+        if (y && m && d) {
+          const dt = new Date(y, m - 1, d);
+          weekdaysSet.add(dt.getDay());
+        }
+      }
+    });
+
+    const weekdays = weekdaysSet.size > 0 ? Array.from(weekdaysSet) : [6, 0];
+
+    // 2. Tìm số thứ tự buổi học lớn nhất và ngày cuối cùng
+    let maxSessionNumber = 0;
+    let maxDateStr = "";
+
+    sessions.forEach((s) => {
+      if (s.sessionNumber > maxSessionNumber) {
+        maxSessionNumber = s.sessionNumber;
+      }
+      const dStr = s.scheduledDate || (s as any).plannedDate || (s as any).sessionDate;
+      if (dStr && dStr.slice(0, 10) > maxDateStr) {
+        maxDateStr = dStr.slice(0, 10);
+      }
+    });
+
+    const nextSessionNumber = maxSessionNumber + 1;
+
+    // 3. Tính ngày của buổi tiếp theo (bắt đầu từ ngày sau maxDateStr)
+    const [y, m, d] = (maxDateStr || new Date().toISOString().slice(0, 10)).split("-").map(Number);
+    const cur = new Date(y, m - 1, d);
+    cur.setDate(cur.getDate() + 1);
+
+    let nextDateStr = "";
+    let safety = 60;
+    while (!nextDateStr && safety > 0) {
+      safety--;
+      const dow = cur.getDay();
+      if (weekdays.includes(dow)) {
+        const mm = String(cur.getMonth() + 1).padStart(2, "0");
+        const dd = String(cur.getDate()).padStart(2, "0");
+        nextDateStr = `${cur.getFullYear()}-${mm}-${dd}`;
+      } else {
+        cur.setDate(cur.getDate() + 1);
+      }
+    }
+
+    const dayNames = ["Chủ nhật", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"];
+    const [ny, nm, nd] = (nextDateStr || "").split("-").map(Number);
+    const nextDt = new Date(ny, (nm || 1) - 1, nd || 1);
+    const nextDayName = dayNames[nextDt.getDay()] || "—";
+    const formattedNextDate = nextDateStr ? `${String(nd).padStart(2, "0")}/${String(nm).padStart(2, "0")}/${ny}` : "—";
+
+    const weekdaysLabels = weekdays
+      .sort((a, b) => (a === 0 ? 7 : a) - (b === 0 ? 7 : b))
+      .map((w) => dayNames[w])
+      .join(", ");
+
+    return {
+      nextSessionNumber,
+      nextDateStr,
+      formattedNextDate,
+      nextDayName,
+      weekdaysLabels,
+    };
+  }, [sessions, classData]);
 
   // Synchronize localSessionStatuses and selectedSessionId when sessions prop changes
   useEffect(() => {
@@ -199,6 +294,56 @@ export const AttendanceSheet: React.FC<AttendanceSheetProps> = ({ classId, sessi
       title: "Đã chọn Có mặt",
       description: "Đã đánh dấu tất cả học viên có mặt trong buổi học này.",
     });
+  };
+
+  // Báo nghỉ toàn bộ lớp và tự động đôn thêm 1 buổi bù theo lịch cố định
+  const handleConfirmDayOffAndExtend = async () => {
+    if (!selectedSessionId) return;
+    setProcessingDayOff(true);
+    try {
+      const reasonNote = dayOffReason.trim() || "Nghỉ do sự cố / Lễ Tết";
+
+      // 1. Cập nhật trạng thái cả lớp sang EXCUSED (Có phép)
+      const updatedItems = items.map((item) => ({
+        ...item,
+        status: "EXCUSED" as AttendanceStatus,
+        note: reasonNote,
+      }));
+      setItems(updatedItems);
+
+      // 2. Lưu điểm danh buổi này
+      const payload = updatedItems.map((it) => ({
+        studentId: it.studentId,
+        status: it.status,
+        note: it.note || null,
+      }));
+      await attendanceApi.markAttendance(classId, selectedSessionId, payload);
+
+      // 3. Tự động thêm 1 buổi tiếp theo vào cuối lịch
+      const newSession = await sessionsApi.appendNextSession(classId, {
+        reason: reasonNote,
+        title: nextSessionPreview ? `Buổi ${nextSessionPreview.nextSessionNumber}` : undefined,
+      });
+
+      toast({
+        title: "Đã báo nghỉ & Đôn thêm buổi học bù",
+        description: `Toàn bộ học viên đã được ghi nhận Nghỉ có phép. Đã tự động thêm Buổi ${nextSessionPreview?.nextSessionNumber || newSession.sessionNumber} (${nextSessionPreview?.formattedNextDate || ""}) vào lịch học.`,
+      });
+
+      invalidateClassWorkspace(queryClient, classId);
+      refetchClass();
+      if (onRefreshMatrix) onRefreshMatrix();
+      setDayOffModalOpen(false);
+      setDayOffReason("");
+    } catch (err: any) {
+      toast({
+        title: "Lỗi báo nghỉ",
+        description: err.message || "Không thể báo nghỉ và thêm buổi bù",
+        variant: "destructive",
+      });
+    } finally {
+      setProcessingDayOff(false);
+    }
   };
 
   // Đặt lại điểm danh
@@ -446,6 +591,17 @@ export const AttendanceSheet: React.FC<AttendanceSheetProps> = ({ classId, sessi
               </Button>
 
               <Button
+                variant="outline"
+                size="sm"
+                className="h-8 text-xs gap-1.5 text-purple-700 border-purple-200 bg-purple-50/50 hover:bg-purple-100/70"
+                onClick={() => setDayOffModalOpen(true)}
+                disabled={saving || loading || items.length === 0}
+              >
+                <CalendarOff className="h-3.5 w-3.5 text-purple-600" />
+                Nghỉ (Đôn lịch)
+              </Button>
+
+              <Button
                 variant="ghost"
                 size="sm"
                 className="h-8 text-xs text-muted-foreground hover:text-foreground gap-1"
@@ -629,6 +785,124 @@ export const AttendanceSheet: React.FC<AttendanceSheetProps> = ({ classId, sessi
           </Table>
         </div>
       )}
+
+      {/* Modal xác nhận Báo nghỉ buổi học & Đôn lịch bù */}
+      <Dialog open={dayOffModalOpen} onOpenChange={setDayOffModalOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base font-bold text-foreground">
+              <CalendarOff className="h-5 w-5 text-purple-600" />
+              Báo nghỉ buổi học & Đôn thêm buổi bù
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              Đánh dấu toàn bộ học viên nghỉ có phép do sự cố (cúp điện, thời tiết...) hoặc nghỉ Lễ/Tết và tự động kéo dài lịch học thêm 1 buổi.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            {/* Box thông tin tóm tắt */}
+            <div className="p-3.5 rounded-xl bg-purple-50/60 border border-purple-200/80 space-y-2.5">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-semibold text-purple-950">Buổi học hiện tại:</span>
+                <Badge variant="outline" className="bg-white text-purple-900 border-purple-200 font-bold">
+                  {(() => {
+                    const cur = sessions.find((s) => s.id === selectedSessionId);
+                    const formatted = cur?.scheduledDate ? cur.scheduledDate.slice(0, 10).split("-").reverse().join("/") : "—";
+                    return `Buổi ${cur?.sessionNumber || 1} • ${formatted}`;
+                  })()}
+                </Badge>
+              </div>
+
+              <div className="text-xs text-purple-900 leading-relaxed">
+                👉 Tất cả <strong>{items.length} học viên</strong> trong buổi này sẽ được chuyển sang trạng thái <strong>Có phép (Nghỉ)</strong>.
+              </div>
+
+              {nextSessionPreview && (
+                <div className="pt-2 border-t border-purple-200/60 space-y-1.5 text-xs">
+                  <div className="flex items-center gap-1.5 font-bold text-purple-950">
+                    <Sparkles className="h-3.5 w-3.5 text-purple-600" />
+                    Tự động thêm 1 buổi bù tiếp theo:
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 bg-white/80 p-2.5 rounded-lg border border-purple-100 text-xs">
+                    <div>
+                      <span className="text-muted-foreground text-[11px] block">Buổi học bù:</span>
+                      <span className="font-bold text-foreground">Buổi {nextSessionPreview.nextSessionNumber}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground text-[11px] block">Ngày học ({nextSessionPreview.nextDayName}):</span>
+                      <span className="font-bold text-emerald-700">{nextSessionPreview.formattedNextDate}</span>
+                    </div>
+                    <div className="col-span-2 text-[11px] text-muted-foreground">
+                      Lịch cố định của lớp: <span className="font-medium text-foreground">{nextSessionPreview.weekdaysLabels}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Nhập lý do nghỉ */}
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-foreground flex items-center justify-between">
+                <span>Lý do nghỉ (tuỳ chọn):</span>
+                <span className="text-[11px] text-muted-foreground font-normal">Ghi chú vào điểm danh</span>
+              </label>
+              <Input
+                placeholder="VD: Cúp điện đột xuất, Nghỉ lễ, Giáo viên bận..."
+                value={dayOffReason}
+                onChange={(e) => setDayOffReason(e.target.value)}
+                className="text-xs h-9"
+              />
+
+              {/* Gợi ý lý do nhanh */}
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {[
+                  "Cúp điện đột xuất",
+                  "Nghỉ Lễ / Tết",
+                  "Thời tiết xấu / Mưa bão",
+                  "Sự cố phòng học",
+                  "Giáo viên bận đột xuất",
+                ].map((reason) => (
+                  <button
+                    key={reason}
+                    type="button"
+                    onClick={() => setDayOffReason(reason)}
+                    className="text-[11px] px-2 py-0.5 rounded-md border bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    + {reason}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-8 text-xs"
+              onClick={() => setDayOffModalOpen(false)}
+              disabled={processingDayOff}
+            >
+              Hủy
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              className="h-8 text-xs bg-purple-600 hover:bg-purple-700 text-white gap-1.5 font-semibold"
+              onClick={handleConfirmDayOffAndExtend}
+              disabled={processingDayOff}
+            >
+              {processingDayOff ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <CalendarPlus className="h-3.5 w-3.5" />
+              )}
+              Xác nhận báo nghỉ & Thêm buổi bù
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
