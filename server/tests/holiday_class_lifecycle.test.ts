@@ -69,5 +69,32 @@ describe("Holiday Exclusion & Class Lifecycle Tests", () => {
       // Next MWF dates after Friday 2026-09-04 are: Mon 2026-09-07, Wed 2026-09-09, Fri 2026-09-11
       expect(shiftedDates).toEqual(["2026-09-07", "2026-09-09", "2026-09-11"]);
     });
+
+    it("should correctly append next weekend session when session 27 is on Saturday 2026-10-24", () => {
+      // Schedule: Saturday (6) and Sunday (0)
+      const weekdays = [6, 0];
+      const lastSessionDate = new Date("2026-10-24T00:00:00.000Z"); // Saturday
+      expect(lastSessionDate.getDay()).toBe(6);
+
+      const cur = new Date(lastSessionDate);
+      cur.setDate(cur.getDate() + 1); // Moves to 2026-10-25 (Sunday, day 0)
+
+      let nextDateStr = "";
+      while (!nextDateStr) {
+        const dow = cur.getDay();
+        const isHol = isHolidayDate(cur);
+        if (weekdays.includes(dow) && !isHol) {
+          const mm = String(cur.getMonth() + 1).padStart(2, "0");
+          const dd = String(cur.getDate()).padStart(2, "0");
+          nextDateStr = `${cur.getFullYear()}-${mm}-${dd}`;
+        } else {
+          cur.setDate(cur.getDate() + 1);
+        }
+      }
+
+      // Next session (Session 28) should be Sunday 2026-10-25
+      expect(nextDateStr).toBe("2026-10-25");
+      expect(new Date("2026-10-25T00:00:00.000Z").getDay()).toBe(0); // Sunday
+    });
   });
 });

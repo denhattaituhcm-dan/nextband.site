@@ -298,6 +298,27 @@ export class ClassController {
     }
   }
 
+  async appendNextSession(
+    request: FastifyRequest<{
+      Params: { id: string };
+      Body: { reason?: string; title?: string };
+    }>,
+    reply: FastifyReply
+  ) {
+    try {
+      const user = (request as any).user;
+      const result = await this.service.appendNextSession(
+        user,
+        request.params.id,
+        request.body || {}
+      );
+      return reply.send(result);
+    } catch (err: any) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
+
   async updateStudentStatus(
     request: FastifyRequest<{
       Params: { id: string; studentId: string };

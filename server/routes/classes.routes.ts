@@ -74,6 +74,18 @@ export default async function classesRoutes(fastify: FastifyInstance) {
     }
   );
 
+  // POST /classes/:id/sessions/append-next - Tự động thêm 1 buổi tiếp theo vào cuối lịch cố định
+  fastify.post<{
+    Params: { id: string };
+    Body: { reason?: string; title?: string };
+  }>(
+    "/:id/sessions/append-next",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      return controller.appendNextSession(request, reply);
+    }
+  );
+
   // PUT /classes/sessions/:sessionId/reschedule - Dời lịch 1 buổi học đơn lẻ
   fastify.put<{
     Params: { sessionId: string };
