@@ -128,7 +128,7 @@ export default function ContactPage() {
                         <strong className="text-foreground font-extrabold">Cơ sở 1:</strong> 68B, Phan Bội Châu, P. Dĩ An, TP. HCM
                       </div>
                       <div>
-                        <strong className="text-foreground font-extrabold">Cơ sở 2 (DAN IELTS):</strong> 113b, đường 12, P. Tam Bình, TP. HCM
+                        <strong className="text-foreground font-extrabold">Cơ sở 2 (DAN IELTS):</strong> 103B, đường 12, P. Tam Bình, TP. HCM
                       </div>
                     </div>
                   </div>
