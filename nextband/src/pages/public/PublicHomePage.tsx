@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { SectionContainer } from "@/components/public/SectionContainer";
 import { AcademicRankSystem } from "@/components/public/AcademicRankSystem";
 import { ArisBentoGrid } from "@/components/public/ArisBentoGrid";
+import { HeroDiagnosticHook } from "@/components/public/HeroDiagnosticHook";
+import { StickyMobileActionBar } from "@/components/public/StickyMobileActionBar";
 import { PlaceholderCard } from "@/components/public/PlaceholderCard";
 import { Button } from "@/components/ui/button";
 import AcademicPhrase from "@/components/common/AcademicPhrase";
@@ -53,7 +55,7 @@ export default function PublicHomePage() {
             <div className="lg:col-span-7 space-y-7 text-left">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-red-soft text-brand-red border border-brand-red/20 text-xs sm:text-sm font-extrabold uppercase tracking-wider shadow-xs">
                 <GraduationCap className="h-4 w-4" />
-                <span>Học Viện ARIS</span>
+                <span>NextBand • Nền Tảng Học Thuật ARIS</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-[62px] font-black text-foreground tracking-tight leading-[1.12]">
@@ -69,7 +71,7 @@ export default function PublicHomePage() {
               </h1>
 
               <p className="text-lg sm:text-xl lg:text-[22px] text-foreground/85 font-normal leading-relaxed max-w-2xl">
-                ARIS giúp bạn hiểu rõ năng lực hiện tại, bóc tách từng lỗi sai và xây dựng tư duy ngôn ngữ vững chắc để đạt điểm IELTS mong muốn.
+                Định vị chính xác năng lực, bóc tách từng lỗi sai và xây dựng tư duy ngôn ngữ vững chắc cùng đội ngũ giảng viên ARIS.
               </p>
 
               {/* Action Buttons */}
@@ -110,79 +112,9 @@ export default function PublicHomePage() {
               </div>
             </div>
 
-            {/* Right: 3-Question Framework Card */}
+            {/* Right: Interactive Diagnostic Hook Sandbox */}
             <div className="lg:col-span-5 relative">
-              <div className="relative mx-auto max-w-md lg:max-w-none rounded-3xl border-2 border-white/80 bg-card/90 backdrop-blur-md p-7 sm:p-8 shadow-xl shadow-blue-950/5 space-y-5">
-                <div className="flex items-center justify-between border-b border-border/70 pb-4">
-                  <div className="space-y-1">
-                    <span className="text-xs font-mono uppercase tracking-widest text-brand-blue font-extrabold">
-                      Khung Đào Tạo ARIS
-                    </span>
-                    <h4 className="font-black text-foreground text-lg sm:text-xl">
-                      3 Trụ Cột Định Hình Tiến Bộ
-                    </h4>
-                  </div>
-                  <span className="px-3 py-1 rounded-xl bg-blue-50 text-brand-blue border border-blue-200/80 text-xs font-black">
-                    ARIS-7™
-                  </span>
-                </div>
-
-                <div className="space-y-3.5">
-                  <div className="p-4 rounded-2xl border border-slate-200/80 bg-background/60 shadow-2xs space-y-1.5 text-left transition-all hover:border-brand-blue/30">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5 text-base font-extrabold text-foreground">
-                        <span className="h-7 w-7 rounded-xl bg-[#002147] text-white font-mono text-xs flex items-center justify-center font-black">
-                          1
-                        </span>
-                        <span>Bạn đang ở đâu?</span>
-                      </div>
-                      <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">Vị trí hiện tại</span>
-                    </div>
-                    <p className="text-sm text-foreground/75 leading-relaxed pl-9.5">
-                      Định vị chính xác trình độ học thuật hiện tại trên thang đo 7 cấp bậc ARIS-7.
-                    </p>
-                    <div className="pl-9.5 pt-1">
-                      <div className="w-full bg-slate-200/70 h-1.5 rounded-full overflow-hidden">
-                        <div className="bg-brand-blue h-full rounded-full" style={{ width: "45%" }} />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-4 rounded-2xl border border-brand-red/20 bg-brand-red-soft/40 shadow-2xs space-y-1.5 text-left">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5 text-base font-extrabold text-brand-red">
-                        <span className="h-7 w-7 rounded-xl bg-brand-red text-white font-mono text-xs flex items-center justify-center font-black">
-                          2
-                        </span>
-                        <span>Điều gì cản trở bạn?</span>
-                      </div>
-                      <span className="text-[10px] font-extrabold text-brand-red bg-brand-red/10 px-2 py-0.5 rounded-full">Điểm nghẽn tư duy</span>
-                    </div>
-                    <p className="text-sm text-foreground/80 leading-relaxed pl-9.5">
-                      Hệ thống Academic Diagnosis bóc tách chính xác từng lỗ hổng tư duy và dạng bài hay mắc lỗi.
-                    </p>
-                    <div className="pl-9.5 pt-0.5 flex items-center gap-1.5 text-xs font-semibold text-brand-red">
-                      <span className="w-1.5 h-1.5 rounded-full bg-brand-red" />
-                      <span>Chỉ rõ cơ chế lỗi — Không nhận xét cảm tính</span>
-                    </div>
-                  </div>
-
-                  <div className="p-4 rounded-2xl border border-slate-200/80 bg-background/60 shadow-2xs space-y-1.5 text-left transition-all hover:border-emerald-300">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5 text-base font-extrabold text-foreground">
-                        <span className="h-7 w-7 rounded-xl bg-[#002147] text-white font-mono text-xs flex items-center justify-center font-black">
-                          3
-                        </span>
-                        <span>Bước tiếp theo là gì?</span>
-                      </div>
-                      <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">Can thiệp trúng đích</span>
-                    </div>
-                    <p className="text-sm text-foreground/75 leading-relaxed pl-9.5">
-                      Can thiệp trúng đích để thăng cấp trên thang đo ARIS-7, theo sát bởi giảng viên chuyên môn.
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <HeroDiagnosticHook onStartFullAssessment={() => navigate("/assessment")} />
             </div>
           </div>
         </div>
@@ -194,7 +126,7 @@ export default function PublicHomePage() {
       <SectionContainer
         badge="Phương pháp & Nền tảng ARIS"
         title="Đừng học thêm. Hãy học đúng chỗ."
-        description="Nhiều học viên giải hàng trăm bộ đề nhưng điểm số vẫn đứng yên, không phải vì chưa chăm chỉ — mà vì đang học những thứ mình đã biết, và bỏ quên những lỗ hổng chưa từng được gọi tên. ARIS lấy chẩn đoán học thuật làm điểm khởi đầu: Bóc tách chính xác vì sao bạn sai trước khi dạy bạn cách làm đúng."
+        description="Giải 100 bộ đề không bằng sửa đúng một lỗ hổng tư duy. ARIS bóc tách chính xác vì sao bạn sai trước khi dạy bạn cách làm đúng."
         background="muted"
       >
         <ArisBentoGrid />
@@ -271,7 +203,7 @@ export default function PublicHomePage() {
         id="academic-system"
         badge="Bản Đồ Tiến Độ"
         title="Bạn đang ở đâu trên hành trình học tiếng Anh?"
-        description="ARIS chuẩn hóa lộ trình thành 7 cấp bậc rõ ràng. Mỗi bậc đều có tiêu chuẩn năng lực cụ thể, giúp bạn biết mình đã làm được gì và cần thêm điều gì để nâng band."
+        description="7 cấp bậc chuẩn hóa năng lực. Biết rõ bạn đang ở đâu và chính xác cần làm gì để thăng hạng."
         background="elevated"
       >
         <AcademicRankSystem initialRank={5} />
@@ -282,7 +214,7 @@ export default function PublicHomePage() {
             onClick={() => navigate("/assessment")}
             className="w-full sm:w-auto rounded-2xl px-6 sm:px-8 h-auto min-h-14 py-3.5 sm:py-0 text-sm sm:text-base font-extrabold bg-brand-red hover:bg-brand-red-hover text-white shadow-md gap-2.5 whitespace-normal text-center"
           >
-            <span>Kiểm tra Rank hiện tại của bạn ngay (60 Phút)</span>
+            <span>Kiểm tra Rank &amp; Nhận phân tích năng lực (Miễn phí)</span>
             <ArrowRight className="h-5 w-5 shrink-0" />
           </Button>
 
@@ -304,7 +236,7 @@ export default function PublicHomePage() {
       <SectionContainer
         badge="Lớp Học & Hệ Thống Học Tập"
         title="Học một mình hay học cùng lớp — hành trình của bạn đều được ghi nhận."
-        description="Bài nộp, nhận xét giáo viên và tiến độ của từng học viên được lưu trữ minh bạch. Bảng xếp hạng lớp tạo động lực thi đua — không phải để cạnh tranh, mà để cùng nhau không bỏ cuộc."
+        description="Lưu trữ minh bạch bài nộp và phản hồi của giáo viên. Bảng xếp hạng tạo động lực cùng tiến bộ mỗi ngày."
         background="default"
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 text-left">
@@ -427,7 +359,7 @@ export default function PublicHomePage() {
       <SectionContainer
         badge="Triết Lý Chẩn Đoán Độc Quyền"
         title="Muốn nâng cao Band điểm, trước hết phải hiểu rõ chính mình."
-        description="Luyện 50 bộ đề mà không hiểu bản thân thì bạn chỉ đang lặp lại những thói quen sai lầm trong vô thức. ARIS trang bị cho bạn một Tấm Gương Tự Soi Chiếu (Metacognitive Mirror) — bóc tách từng lỗi sai, vạch rõ nút thắt cản trở và trao cho bạn cuốn Sổ Tay Bẫy Lỗi độc bản trước giờ thi thật."
+        description="Đừng lặp lại lỗi sai trong vô thức. Nhận diện nút thắt cản trở và bỏ túi Sổ Tay Bẫy Lỗi độc bản trước giờ thi thật."
         background="elevated"
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 text-left">
@@ -570,7 +502,7 @@ export default function PublicHomePage() {
       <SectionContainer
         badge="Lộ Trình Đào Tạo"
         title="5 Chặng rèn luyện bám sát từng mốc năng lực."
-        description="Không học lớp quá dễ gây lãng phí thời gian, không học lớp quá khó gây nản lòng. 5 khóa học của ARIS được cấu trúc thành 2 chặng phát triển rõ ràng."
+        description="Đúng trình độ, đúng thời điểm. 5 khóa học được thiết kế chuẩn xác theo 2 chặng phát triển."
         background="muted"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
@@ -726,7 +658,7 @@ export default function PublicHomePage() {
           </h2>
 
           <p className="text-base sm:text-lg lg:text-xl text-white/90 leading-relaxed max-w-2xl mx-auto">
-            Làm bài kiểm tra năng lực đầu vào miễn phí để nhận phân tích chi tiết điểm mạnh, điểm yếu và gợi ý lộ trình học tập phù hợp từ ARIS.
+            Kiểm tra năng lực đầu vào miễn phí để nhận phân tích chi tiết điểm mạnh, điểm yếu và gợi ý lộ trình thăng hạng.
           </p>
 
           {/* Community social proof line */}
@@ -756,6 +688,9 @@ export default function PublicHomePage() {
           </div>
         </div>
       </section>
+
+      {/* Floating Sticky Conversion Bar on Mobile */}
+      <StickyMobileActionBar />
     </div>
   );
 }

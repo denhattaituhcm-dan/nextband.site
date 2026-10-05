@@ -65,6 +65,9 @@ import { milestonesApi, coursesApi, lessonsApi } from "@/lib/api";
 import { Flame, ArrowRight as ArrowRightIcon } from "lucide-react";
 import { useStudentLifecycle } from "@/hooks/useStudentLifecycle";
 import { calculateStudentStreak } from "@/lib/studentStreakHelper";
+import { RefinedFeedbackCard } from "@/components/submission/RefinedFeedbackCard";
+import { RefinedSubmissionBanner } from "@/components/submission/RefinedSubmissionBanner";
+import { useUiFlag } from "@/hooks/useUiFlag";
 
 const statusConfig: Record<
   CanonicalSubmissionStatus,
@@ -136,6 +139,7 @@ export default function SubmissionDetail() {
   const [showVisualDiff, setShowVisualDiff] = useState(true);
   const [isStartingRevision, setIsStartingRevision] = useState(false);
   const [isHonorCardOpen, setIsHonorCardOpen] = useState(false);
+  const isFeedbackV2Enabled = useUiFlag("ui_feedback_v2");
 
   const queryClient = useQueryClient();
 
@@ -689,7 +693,17 @@ export default function SubmissionDetail() {
       </div>
 
       {/* 1. EMOTIONAL BUFFER: BANNER */}
-      {isFinalExam && !isGraded ? (
+      {isFeedbackV2Enabled ? (
+        <RefinedSubmissionBanner
+          isFinalExam={isFinalExam}
+          isGraded={isGraded}
+          score={finalOverallScore}
+          answeredCount={answeredCount}
+          totalQuestionsCount={totalQuestionsCount}
+          isObjectiveExam={isObjectiveExam}
+          objPercentage={objPercentage}
+        />
+      ) : isFinalExam && !isGraded ? (
         <div className="rounded-2xl border border-indigo-200/80 bg-gradient-to-r from-indigo-50/90 via-slate-50 to-blue-50/90 dark:from-indigo-950/40 dark:to-slate-900 dark:border-indigo-800/60 p-5 sm:p-6 relative overflow-hidden shadow-xs">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10">
             <div className="flex items-center gap-3.5">
@@ -1216,7 +1230,7 @@ export default function SubmissionDetail() {
           )}
 
           {/* IELTS 4-CRITERIA BREAKDOWN (Writing & Speaking) */}
-          {isGraded && (() => {
+          {!isFeedbackV2Enabled && isGraded && (() => {
             const skill = resolvedSkill;
             const parsed = parseStructuredFeedback(submission.feedback);
             const criteria = parsed.criteriaScores || (submission as any)?.criteriaScores;
@@ -1279,7 +1293,7 @@ export default function SubmissionDetail() {
           })()}
 
           {/* TEACHER QUALITATIVE FEEDBACK & REVISION REQUIRED BLOCK (P1 Lean Learning Loop) */}
-          {(() => {
+          {!isFeedbackV2Enabled && (() => {
             const parsed = parseStructuredFeedback(submission.feedback);
             const candidateText = (parsed.text || parsed.speakingSummary?.teacherNote || "").trim();
             const feedbackText =
@@ -1459,6 +1473,19 @@ export default function SubmissionDetail() {
           )}
         </CardContent>
       </Card>
+
+      {/* REFINED TEACHER FEEDBACK CARD (V2) */}
+      {isFeedbackV2Enabled && isGraded && (
+        <RefinedFeedbackCard
+          feedback={submission.feedback}
+          resolvedSkill={resolvedSkill}
+          totalScore={submission.totalScore}
+          revisionRequired={submission.revisionRequired}
+          primaryErrorCategory={submission.primaryErrorCategory}
+          isStartingRevision={isStartingRevision}
+          onStartRevision={handleStartRevision}
+        />
+      )}
 
       {/* Sections */}
       {sections

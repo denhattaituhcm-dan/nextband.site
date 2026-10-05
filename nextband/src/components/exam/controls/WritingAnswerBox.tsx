@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { useUiFlag } from "@/hooks/useUiFlag";
 
 interface WritingAnswerBoxProps {
   questionId: string;
@@ -21,6 +22,7 @@ export function WritingAnswerBox({
   isSaving = false,
   className,
 }: WritingAnswerBoxProps) {
+  const isZenMode = useUiFlag("ui_exam_zen");
   const wordCount = useMemo(() => {
     if (!value || typeof value !== "string") return 0;
     const trimmed = value.trim();
@@ -42,7 +44,10 @@ export function WritingAnswerBox({
         onChange={(e) => onChange(questionId, e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        className="w-full min-h-[135px] max-h-[340px] resize-y border-0 bg-transparent p-4 text-base leading-relaxed text-foreground placeholder:text-muted-foreground/60 focus-visible:ring-0 focus-visible:ring-offset-0 font-normal"
+        className={cn(
+          "w-full resize-y border-0 bg-transparent p-4 text-base leading-relaxed text-foreground placeholder:text-muted-foreground/60 focus-visible:ring-0 focus-visible:ring-offset-0 font-normal",
+          isZenMode ? "min-h-[220px]" : "min-h-[135px] max-h-[340px]"
+        )}
       />
 
       {/* Integrated Status Footer */}

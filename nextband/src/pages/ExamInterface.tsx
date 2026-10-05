@@ -63,6 +63,7 @@ import { parseStructuredFeedback } from "@/lib/sentenceFeedback";
 import { ActorAwareUnavailableScreen } from "@/components/exam/ActorAwareUnavailableScreen";
 import { evaluateContentContract } from "@/lib/contentContract";
 import { SEO } from "@/components/common/SEO";
+import { useUiFlag } from "@/hooks/useUiFlag";
 import { getFillBlankBlankCount } from "@/lib/fillBlank";
 import {
   AlertDialog,
@@ -196,6 +197,7 @@ export default function ExamInterface() {
   const [tabSwitchCount, setTabSwitchCount] = useState<number>(0);
 
   const isRevision = searchParams.get("isRevision") === "true";
+  const isZenMode = useUiFlag("ui_exam_zen");
 
   const autoSubmitTriggeredRef = useRef(false);
   const autosaveTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -1363,7 +1365,7 @@ export default function ExamInterface() {
 
       {/* Exam Focus Mode Header - Apple Minimalist Distraction-Free */}
       <header className="sticky top-0 z-50 border-b border-black/[0.06] dark:border-white/[0.08] bg-white/80 dark:bg-slate-900/80 backdrop-blur-md transition-colors">
-        <div className="flex h-13 md:h-14 items-center justify-between px-3 md:px-6 gap-2">
+        <div className={cn("flex items-center justify-between px-3 md:px-6 gap-2", isZenMode ? "h-11 md:h-12" : "h-13 md:h-14")}>
           {/* Left: Exit + Space Tag + Title */}
           <div className="flex items-center gap-3 shrink-0">
             <Button

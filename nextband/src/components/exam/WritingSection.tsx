@@ -21,6 +21,7 @@ import { WritingAnswerBox } from "./controls/WritingAnswerBox";
 import { CorrectionChecklist } from "@/components/exam/CorrectionChecklist";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import { useUiFlag } from "@/hooks/useUiFlag";
 
 interface WritingSectionProps {
   section: any;
@@ -81,6 +82,7 @@ export function WritingSection({
   previousFeedback,
   tabSwitchCount = 0,
 }: WritingSectionProps) {
+  const isZenMode = useUiFlag("ui_exam_zen");
   const rawGroups = section.question_groups || section.questionGroups || [];
 
   // Normalize question fields
@@ -194,15 +196,17 @@ export function WritingSection({
                 <span className="text-xs text-muted-foreground font-normal">/ {minWords} từ tối thiểu</span>
               </div>
 
-              <div className="w-28 sm:w-36 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                <div
-                  className={cn(
-                    "h-full transition-all duration-300 rounded-full",
-                    wordCount >= minWords ? "bg-emerald-500" : "bg-teal-500"
-                  )}
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
+              {!isZenMode && (
+                <div className="w-28 sm:w-36 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                  <div
+                    className={cn(
+                      "h-full transition-all duration-300 rounded-full",
+                      wordCount >= minWords ? "bg-emerald-500" : "bg-teal-500"
+                    )}
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+              )}
 
               {tabSwitchCount > 0 && (
                 <Badge variant="outline" className="text-[11px] text-amber-700 bg-amber-50 border-amber-300 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800 gap-1 font-semibold">

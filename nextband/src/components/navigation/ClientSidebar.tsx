@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import {
   Compass,
@@ -28,6 +29,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { useStudentLifecycle } from "@/hooks/useStudentLifecycle";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useUiFlag } from "@/hooks/useUiFlag";
 import { ZaloIcon } from "@/components/common/ZaloIcon";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SiteLogo } from "@/components/common/SiteLogo";
@@ -45,47 +47,89 @@ interface NavGroup {
   items: NavItem[];
 }
 
-const fullNavigationGroups: NavGroup[] = [
+const baseNavigationItems: NavItem[] = [
   {
-    items: [
-      {
-        title: "Tổng quan",
-        url: "/app",
-        icon: Compass,
-        description: "IELTS Command Center",
-      },
-      {
-        title: "Chuyên cần và Thi đua",
-        url: "/app/attendance",
-        icon: CalendarCheck,
-        description: "Điểm danh chuyên cần & tổng quan BTVN",
-      },
-      {
-        title: "Bài Học Trực Quan",
-        url: "/app/reconstruction",
-        icon: Workflow,
-        description: "Bài học tương tác & trực quan hóa tư duy",
-        badge: "New",
-      },
-      {
-        title: "Kết quả & Nhận xét",
-        url: "/app/my-submissions",
-        icon: GraduationCap,
-        description: "Lịch sử nộp bài & Đánh giá",
-      },
-      {
-        title: "Thống kê năng lực",
-        url: "/app/analytics",
-        icon: ShieldCheck,
-        description: "Phân tích lỗi & Điểm mạnh",
-      },
-      {
-        title: "Cá nhân",
-        url: "/app/profile",
-        icon: User,
-        description: "Thông tin cá nhân",
-      },
-    ],
+    title: "Tổng quan",
+    url: "/app",
+    icon: Compass,
+    description: "IELTS Command Center",
+  },
+  {
+    title: "Lớp học của tôi",
+    url: "/app/my-courses",
+    icon: BookOpen,
+    description: "Khóa học & Danh sách bài học",
+  },
+  {
+    title: "Chuyên cần và Thi đua",
+    url: "/app/attendance",
+    icon: CalendarCheck,
+    description: "Điểm danh chuyên cần & tổng quan BTVN",
+  },
+  {
+    title: "Bài Học Trực Quan",
+    url: "/app/reconstruction",
+    icon: Workflow,
+    description: "Bài học tương tác & trực quan hóa tư duy",
+    badge: "New",
+  },
+  {
+    title: "Kết quả & Nhận xét",
+    url: "/app/my-submissions",
+    icon: GraduationCap,
+    description: "Lịch sử nộp bài & Đánh giá",
+  },
+  {
+    title: "Thống kê năng lực",
+    url: "/app/analytics",
+    icon: ShieldCheck,
+    description: "Phân tích lỗi & Điểm mạnh",
+  },
+  {
+    title: "Cá nhân",
+    url: "/app/profile",
+    icon: User,
+    description: "Thông tin cá nhân",
+  },
+];
+
+const legacyNavigationItems: NavItem[] = [
+  {
+    title: "Tổng quan",
+    url: "/app",
+    icon: Compass,
+    description: "IELTS Command Center",
+  },
+  {
+    title: "Chuyên cần và Thi đua",
+    url: "/app/attendance",
+    icon: CalendarCheck,
+    description: "Điểm danh chuyên cần & tổng quan BTVN",
+  },
+  {
+    title: "Bài Học Trực Quan",
+    url: "/app/reconstruction",
+    icon: Workflow,
+    description: "Bài học tương tác & trực quan hóa tư duy",
+    badge: "New",
+  },
+  {
+    title: "Kết quả & Nhận xét",
+    url: "/app/my-submissions",
+    icon: GraduationCap,
+    description: "Lịch sử nộp bài & Đánh giá",
+  },
+  {
+    title: "Thống kê năng lực",
+    url: "/app/analytics",
+    icon: ShieldCheck,
+    description: "Phân tích lỗi & Điểm mạnh",
+  },
+  {
+    title: "Cá nhân",
+    url: "/app/profile",
+    icon: User,
+    description: "Thông tin cá nhân",
   },
 ];
 
@@ -119,6 +163,13 @@ export function ClientSidebar() {
 
   const isTeacher = user?.roles?.includes("teacher");
   const isAdmin = user?.roles?.includes("admin");
+  const isMyCoursesNavEnabled = useUiFlag("ui_my_courses_nav");
+
+  const fullNavigationGroups = useMemo<NavGroup[]>(() => [
+    {
+      items: isMyCoursesNavEnabled ? baseNavigationItems : legacyNavigationItems,
+    },
+  ], [isMyCoursesNavEnabled]);
 
   /**
    * INVARIANT-01 & INVARIANT-05:

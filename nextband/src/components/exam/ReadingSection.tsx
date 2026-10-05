@@ -20,10 +20,12 @@ import {
   Trash2,
   CheckSquare,
   ArrowRight,
+  Columns,
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useTextHighlight, Highlight } from "@/hooks/useTextHighlight";
 import { cn } from "@/lib/utils";
+import { useUiFlag } from "@/hooks/useUiFlag";
 import { formatStorageUrl } from "@/lib/api";
 import { DropdownSelect } from "./DropdownSelect";
 import { RichContent } from "./RichContent";
@@ -139,6 +141,8 @@ export function ReadingSection({
   const [activeHighlightId, setActiveHighlightId] = useState<string | null>(
     null,
   );
+  const isZenMode = useUiFlag("ui_exam_zen");
+  const [splitRatio, setSplitRatio] = useState<"50-50" | "60-40">("50-50");
   const [passageSourceText, setPassageSourceText] = useState("");
   const [leftTab, setLeftTab] = useState<"passage" | "highlights">("passage");
   const [mobilePane, setMobilePane] = useState<"passage" | "questions">("passage");
@@ -289,9 +293,11 @@ export function ReadingSection({
         startIndex: offsets.startIndex,
         endIndex: offsets.endIndex,
       });
+      // Position above selection if space permits, with safe gap
+      const topPos = Math.max(70, rect.top - 12);
       setMenuPosition({
         x: rect.left + rect.width / 2,
-        y: rect.top - 10,
+        y: topPos,
       });
       setNewHighlightColor("yellow");
       setShowHighlightMenu(true);
@@ -500,7 +506,14 @@ export function ReadingSection({
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x relative">
+      <div
+        className={cn(
+          "flex-1 min-h-0 grid grid-cols-1 divide-y lg:divide-y-0 lg:divide-x relative",
+          isZenMode && splitRatio === "60-40"
+            ? "lg:grid-cols-[1.2fr_0.8fr]"
+            : "lg:grid-cols-2"
+        )}
+      >
         {showHighlightMenu && pendingHighlight && (
           <div
             className="fixed z-50 bg-card border rounded-lg shadow-lg p-3 w-[280px] space-y-2"
@@ -582,9 +595,39 @@ export function ReadingSection({
               <h2 className="text-xl font-semibold">{section.title}</h2>
             </div>
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              {isZenMode && (
+                <div className="hidden lg:inline-flex items-center rounded-lg border border-border/80 bg-muted/40 p-0.5 text-xs font-semibold">
+                  <button
+                    type="button"
+                    onClick={() => setSplitRatio("50-50")}
+                    className={cn(
+                      "px-2 py-1 rounded-md transition-colors",
+                      splitRatio === "50-50"
+                        ? "bg-background text-foreground shadow-2xs"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                    title="Tỷ lệ 50:50 (Cân đối)"
+                  >
+                    50:50
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSplitRatio("60-40")}
+                    className={cn(
+                      "px-2 py-1 rounded-md transition-colors",
+                      splitRatio === "60-40"
+                        ? "bg-background text-foreground shadow-2xs"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                    title="Tỷ lệ 60:40 (Ưu tiên vùng đọc bài)"
+                  >
+                    60:40
+                  </button>
+                </div>
+              )}
+              <div className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground">
                 <Highlighter className="h-3 w-3" />
-                <span>Bôi đen rồi bấm pencil để chọn màu, sau đó lưu</span>
+                <span>Bôi đen để highlight</span>
               </div>
               {sortedHighlights.length > 0 && (
                 <div className="inline-flex items-center rounded-md border bg-background p-0.5">

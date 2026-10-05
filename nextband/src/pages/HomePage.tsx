@@ -20,6 +20,8 @@ import { getHuanCoState } from "@/lib/huanCoState";
 import { routes } from "@/lib/routes";
 import { submissionKeys } from "@/lib/queryKeys";
 import { HuanCoMascot } from "@/components/mascot/HuanCoMascot";
+import { TodayMissionCard } from "@/components/student/TodayMissionCard";
+import { useUiFlag } from "@/hooks/useUiFlag";
 import { DisciplineScholarshipTracker } from "@/components/student/DisciplineScholarshipTracker";
 import { isScholarshipEligible } from "@/lib/disciplineScholarshipHelper";
 import { AcademicAscentWorld, AscentLessonNode } from "@/components/student/AcademicAscentWorld";
@@ -226,6 +228,7 @@ function getCourseCardTheme(brandKey: string) {
 export default function HomePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const isTodayMissionEnabled = useUiFlag("ui_today_mission");
   const { state, enrollments, lifecycleError, retry } = useStudentLifecycle();
 
   const [selectedClassIndex, setSelectedClassIndex] = useState(0);
@@ -657,6 +660,15 @@ export default function HomePage() {
                   })}
                 </div>
               </div>
+            )}
+
+            {/* 1.1 TODAY'S ACTION MISSIONS (Urgent tasks above the fold) */}
+            {isTodayMissionEnabled && enrolledClassId && (
+              <TodayMissionCard
+                actionQueue={actionQueue}
+                classId={enrolledClassId}
+                className={activeClassName}
+              />
             )}
 
             {/* 1.2 NEXT SESSION & ATTENDANCE QUICK SPOTLIGHT */}
