@@ -40,7 +40,7 @@ export function PublicFooter() {
                   <span className="font-semibold text-foreground/90">Cơ sở 1:</span> 68B, Phan Bội Châu, P. Dĩ An, TP. HCM
                 </div>
                 <div>
-                  <span className="font-semibold text-foreground/90">Cơ sở 2 (DAN IELTS):</span> 113b, đường 12, P. Tam Bình, TP. HCM
+                  <span className="font-semibold text-foreground/90">Cơ sở 2 (DAN IELTS):</span> 103B, đường 12, P. Tam Bình, TP. HCM
                 </div>
               </div>
             </div>
