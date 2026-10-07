@@ -1,243 +1,367 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { SEO } from "@/components/common/SEO";
-import { Button } from "@/components/ui/button";
 import {
-  BookOpen,
-  Sparkles,
-  Clock,
+  Volume2,
   ArrowRight,
-  CheckCircle2,
-  Layers,
+  Compass,
 } from "lucide-react";
 
 export default function ReadingUniversePage() {
+  const [popoverOpen, setPopoverOpen] = useState(true);
+  const [selectedTopic, setSelectedTopic] = useState("all");
+
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-stone-900 font-sans selection:bg-amber-200 selection:text-stone-900">
+    <div className="min-h-screen bg-[#FAF7F2] text-[#2D2825] font-sans selection:bg-[#F2DBD3] selection:text-[#2D2825]">
       <SEO
-        title="Thư Viện Bài Đọc Tiếng Anh | ARIS IELTS"
-        description="Đọc tiếng Anh nhẹ nhàng và tự nhiên. Nhấp vào từ bất kỳ để xem ngay nghĩa tiếng Việt và cách dùng."
+        title="ARIS Reading Library — Chạm từng chữ. Thấu hiểu cả thế giới."
+        description="Không gian đọc học thuật và tích lũy vốn từ tự nhiên. Nhấp vào từ bất kỳ để thấu hiểu nghĩa ngữ cảnh và nghe phát âm chuẩn bản ngữ."
       />
 
-      {/* Hero Header Section */}
-      <section className="relative overflow-hidden border-b border-stone-200/80 bg-gradient-to-b from-[#F7F3EB] to-[#FDFBF7] py-14 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-          
-          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300 bg-emerald-50 px-4 py-1.5 text-xs font-bold text-emerald-800 tracking-wide mb-6">
-            <Sparkles className="h-4 w-4 text-emerald-600" />
-            Luyện Đọc Hiểu Tiếng Anh Tự Nhiên & Thư Giãn
+      {/* Academic Sub-nav Header */}
+      <header className="border-b border-[#EAE3D9] bg-[#FAF7F2]/95 sticky top-0 z-40 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-18 flex items-center justify-between">
+          {/* Brand & Reading Atelier Identity */}
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#F6EAE4] border border-[#ECD1C5] text-[#C86D51] flex items-center justify-center font-bold text-xs sm:text-sm shadow-xs select-none">
+              &lt;/&gt;
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="font-extrabold tracking-tight text-[#2D2825] text-sm sm:text-base">
+                ARIS IELTS
+              </span>
+              <span className="text-xs text-[#8C827A] font-normal pl-2 border-l border-[#DDD5CA]">
+                Reading Atelier
+              </span>
+            </div>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-stone-900 leading-tight">
-            Thư Viện Bài Đọc Tương Tác
-            <span className="block text-emerald-700 font-extrabold text-2xl sm:text-3xl md:text-4xl mt-2">
-              Chạm từ vựng để mở rộng kiến thức
+          {/* Navigation Tabs */}
+          <nav className="hidden md:flex items-center gap-8 text-xs font-medium text-[#7A7067]">
+            <a
+              href="#tu-sach"
+              className="text-[#2D2825] font-semibold border-b-2 border-[#2D2825] pb-1 transition-all"
+            >
+              Tủ sách tương tác
+            </a>
+            <a
+              href="#phuong-phap"
+              className="hover:text-[#2D2825] transition-colors pb-1"
+            >
+              Phương pháp đọc sâu
+            </a>
+            <a
+              href="#von-tu"
+              className="hover:text-[#2D2825] transition-colors pb-1"
+            >
+              Vốn từ tích lũy
+            </a>
+          </nav>
+
+          {/* Right Meta Info */}
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] font-mono text-[#9E948A] hidden sm:inline">
+              VOLUME 2026.10
             </span>
+            <Link
+              to="/reading/case-002"
+              className="px-3.5 py-1.5 rounded-full bg-[#EFE9DF] text-[#635951] text-xs font-semibold hover:bg-[#E5DDCF] transition cursor-pointer"
+            >
+              Khám phá ngẫu nhiên 🎲
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16 space-y-16 sm:space-y-20">
+        {/* Hero Section with Interactive Playground */}
+        <section className="max-w-3xl mx-auto text-center space-y-6">
+          <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-[#241F1C] tracking-tight font-normal leading-[1.15]">
+            Chạm từng chữ.
+            <br />
+            <em className="italic text-[#C86D51] font-normal">
+              Thấu hiểu cả thế giới.
+            </em>
           </h1>
 
-          <p className="mt-5 text-base sm:text-lg text-stone-600 max-w-3xl mx-auto leading-relaxed">
-            Không cần tra từ điển phức tạp. Đọc các bài viết chọn lọc về cuộc sống, kỹ năng và khoa học — nhấp vào bất kỳ từ nào để hiểu ngay nghĩa tiếng Việt sát ngữ cảnh.
+          <p className="text-sm sm:text-base text-[#685D55] max-w-xl mx-auto leading-relaxed font-light">
+            Đọc nguyên bản, cảm nhận ngữ cảnh tự nhiên và tích lũy vốn từ học thuật bền vững.
           </p>
 
-          {/* Quick Start Buttons */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3.5">
-            <Button
-              asChild
-              size="lg"
-              className="h-12 px-7 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md shadow-emerald-600/15 transition-all cursor-pointer"
-            >
-              <Link to="/reading/case-002">
-                <BookOpen className="mr-2 h-4 w-4" />
-                Đọc Bài #02: Lời Khuyên Warren Buffett
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="h-12 px-6 rounded-xl border-stone-300 bg-white hover:bg-stone-50 text-stone-700 font-bold text-sm shadow-xs transition-all cursor-pointer"
-            >
-              <Link to="/reading/case-001">
-                ❄️ Đọc Bài #01: Hiện Tượng Hồ Băng
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Reading Feature Highlights */}
-      <section className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="rounded-2xl border border-stone-200 bg-white p-4.5 flex items-start gap-3.5 shadow-xs">
-            <div className="h-10 w-10 rounded-xl bg-emerald-100/80 text-emerald-800 flex items-center justify-center shrink-0 font-bold">
-              💡
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-stone-900">Dịch từ tức thì</h3>
-              <p className="text-xs text-stone-500 mt-1 leading-relaxed">
-                Nhấp chuột vào từ hoặc cụm từ để xem ngay nghĩa tiếng Việt và cách dùng trong câu.
-              </p>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-stone-200 bg-white p-4.5 flex items-start gap-3.5 shadow-xs">
-            <div className="h-10 w-10 rounded-xl bg-sky-100/80 text-sky-800 flex items-center justify-center shrink-0 font-bold">
-              🎧
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-stone-900">Nghe phát âm chuẩn</h3>
-              <p className="text-xs text-stone-500 mt-1 leading-relaxed">
-                Nghe giọng đọc bản xứ để cải thiện phát âm và phản xạ từ vựng tự nhiên.
-              </p>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-stone-200 bg-white p-4.5 flex items-start gap-3.5 shadow-xs">
-            <div className="h-10 w-10 rounded-xl bg-amber-100/80 text-amber-800 flex items-center justify-center shrink-0 font-bold">
-              🌱
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-stone-900">Đọc không áp lực</h3>
-              <p className="text-xs text-stone-500 mt-1 leading-relaxed">
-                Không tính thời gian, không áp lực thi cử — đọc để tích lũy kiến thức và thư giãn.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Articles Section */}
-      <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6">
-        <div className="flex items-center justify-between border-b border-stone-200 pb-3">
-          <div className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-emerald-600" />
-            <h2 className="text-lg sm:text-xl font-bold text-stone-900">
-              Bài Đọc Tuyển Chọn
-            </h2>
-          </div>
-          <span className="text-xs font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-            2 bài đọc sẵn sàng
-          </span>
-        </div>
-
-        {/* ARTICLE #02: WARREN BUFFETT */}
-        <div className="rounded-2xl border border-emerald-200 bg-white p-6 sm:p-7 shadow-sm hover:shadow-md transition-all">
-          <div className="grid md:grid-cols-12 gap-6 items-center">
-            <div className="md:col-span-8 space-y-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                  Phát triển bản thân
-                </span>
-                <span className="text-xs text-stone-500">· Fast Company Strategy</span>
-                <span className="text-xs text-stone-500">· Trình độ: Thân thiện với mọi người</span>
-              </div>
-
-              <h3 className="text-xl sm:text-2xl font-bold text-stone-900 leading-snug">
-                Bài #02: Kỹ Năng Đòn Bẩy Của Warren Buffett
-              </h3>
-
-              <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">
-                Trong thời đại AI có thể viết email và soạn thảo văn bản trong tích tắc, Warren Buffett chia sẻ một lời khuyên đắt giá: Năng lực giao tiếp và thấu cảm giữa người với người chính là kỹ năng đòn bẩy tạo nên thành công bền vững nhất.
-              </p>
-
-              <div className="flex flex-wrap items-center gap-4 text-xs text-stone-500 pt-1">
-                <span className="flex items-center gap-1.5">
-                  <Clock className="h-4 w-4 text-stone-400" /> ~10 phút đọc
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Layers className="h-4 w-4 text-stone-400" /> 3 phần đọc ngắn gọn
-                </span>
-                <span className="flex items-center gap-1.5 text-emerald-700 font-medium">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600" /> Có hỗ trợ dịch từ & phát âm
-                </span>
-              </div>
+          {/* The "Show, Don't Tell" Micro-interactive Box */}
+          <div className="bg-white rounded-3xl border border-[#E8E1D5] p-6 sm:p-9 shadow-sm shadow-[#2D2825]/5 text-left relative max-w-3xl mx-auto mt-8">
+            <div className="flex items-center justify-between text-xs text-[#A1978E] pb-4 border-b border-[#F2ECE2]">
+              <span className="font-mono tracking-wider text-[11px]">
+                ▶ TRẢI NGHIỆM ĐỌC THỬ TẠI CHỖ
+              </span>
+              <span className="text-[#C86D51] bg-[#FBEBE5] px-3 py-1 rounded-full font-medium text-xs">
+                Chạm từ gạch chân ↘
+              </span>
             </div>
 
-            <div className="md:col-span-4 flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-stone-100 pt-4 md:pt-0 md:pl-6">
-              <Button
-                asChild
-                className="w-full h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider shadow-xs cursor-pointer"
+            <p className="text-xl sm:text-2xl text-[#2E2723] leading-relaxed pt-6 pb-2 font-serif font-normal">
+              “Warren Buffett spent eighty percent of his day{" "}
+              <button
+                type="button"
+                onClick={() => setPopoverOpen(!popoverOpen)}
+                className={`relative cursor-pointer inline-block border-b-2 border-dashed border-[#C86D51] pb-0.5 text-[#9C4124] font-semibold transition-all px-1 rounded-sm ${
+                  popoverOpen ? "bg-[#FBEBE5] border-transparent" : "hover:bg-[#FBEBE5]"
+                }`}
               >
-                <Link to="/reading/case-002">
-                  Bắt Đầu Đọc
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <p className="text-[11px] text-stone-400 mt-2 text-center">
-                Đọc thư giãn kèm giải nghĩa từ vựng
-              </p>
-            </div>
+                leveraging
+              </button>{" "}
+              quiet reflection instead of endless meetings.”
+            </p>
+
+            {/* Popover Simulation */}
+            {popoverOpen && (
+              <div className="mt-5 p-5 sm:p-6 rounded-2xl bg-[#28221F] text-white relative shadow-2xl border border-white/5 space-y-3 transition-all animate-in fade-in zoom-in-95 duration-200">
+                <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                  <div className="flex items-baseline gap-3">
+                    <span className="font-serif text-2xl text-amber-200 font-medium tracking-wide">
+                      leveraging
+                    </span>
+                    <span className="text-white/60 text-sm font-mono">
+                      /ˈlev.ɚ.ɪdʒ.ɪŋ/
+                    </span>
+                    <span className="text-[11px] uppercase tracking-wider bg-white/10 px-2 py-0.5 rounded text-white/80 font-mono">
+                      verb · transitive
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if ("speechSynthesis" in window) {
+                        const utterance = new SpeechSynthesisUtterance("leveraging");
+                        utterance.lang = "en-US";
+                        window.speechSynthesis.speak(utterance);
+                      }
+                    }}
+                    className="text-white/90 hover:text-white text-xs flex items-center gap-1.5 bg-white/10 hover:bg-white/15 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+                  >
+                    <Volume2 className="h-3.5 w-3.5 text-amber-300" />
+                    <span>Nghe bản xứ</span>
+                  </button>
+                </div>
+
+                <p className="text-sm sm:text-base text-white/90 leading-relaxed font-light pt-1">
+                  <strong className="text-amber-200 font-medium text-base">
+                    Đòn bẩy / Khai thác tối đa:
+                  </strong>{" "}
+                  Sử dụng một nguồn lực có sẵn (thời gian, kiến thức, sự tập trung) để tạo ra hiệu quả hoặc sức ảnh hưởng vượt trội gấp bội.
+                </p>
+
+                <div className="text-xs text-white/50 pt-2 border-t border-white/5 flex flex-wrap items-center gap-x-4 gap-y-1">
+                  <span className="italic font-serif text-sm text-white/70">
+                    Collocation thường gặp:
+                  </span>
+                  <span>• leverage resources</span>
+                  <span>• leverage technology</span>
+                  <span>• strategic leverage</span>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
+        </section>
 
-        {/* ARTICLE #01: THE VANISHING GLACIAL LAKE */}
-        <div className="rounded-2xl border border-stone-200 bg-white p-6 sm:p-7 shadow-sm hover:shadow-md transition-all">
-          <div className="grid md:grid-cols-12 gap-6 items-center">
-            <div className="md:col-span-8 space-y-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800">
-                  Khám phá khoa học
-                </span>
-                <span className="text-xs text-stone-500">· Địa lý & Khí hậu Greenland</span>
-                <span className="text-xs text-stone-500">· Trình độ: Dễ đọc</span>
-              </div>
-
-              <h3 className="text-xl sm:text-2xl font-bold text-stone-900 leading-snug">
-                Bài #01: Hiện Tượng Hồ Băng Greenland Biến Mất
-              </h3>
-
-              <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">
-                03:15 sáng tại dải băng Greenland, 8 triệu mét khối nước băng bất ngờ biến mất hoàn toàn trong 90 phút mà không hề tràn ra ngoài. Khám phá cách các nhà khoa học tìm ra lời giải thích thú vị về hiện tượng này.
+        {/* Reading Feed Section */}
+        <section id="tu-sach" className="space-y-6 pt-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#EAE3D9] pb-4">
+            <div>
+              <h2 className="font-serif text-2xl sm:text-3xl text-[#241F1C]">
+                Bài đọc tuyển chọn tuần này
+              </h2>
+              <p className="text-xs text-[#8C827A] mt-1 font-light">
+                Không bài tập, không đếm ngược — chỉ có kiến thức và từ vựng tinh chọn.
               </p>
-
-              <div className="flex flex-wrap items-center gap-4 text-xs text-stone-500 pt-1">
-                <span className="flex items-center gap-1.5">
-                  <Clock className="h-4 w-4 text-stone-400" /> ~8 phút đọc
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Layers className="h-4 w-4 text-stone-400" /> 3 nguồn dữ liệu ngắn
-                </span>
-                <span className="flex items-center gap-1.5 text-sky-700 font-medium">
-                  <CheckCircle2 className="h-4 w-4 text-sky-600" /> Có sơ đồ trực quan minh họa
-                </span>
-              </div>
             </div>
-
-            <div className="md:col-span-4 flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-stone-100 pt-4 md:pt-0 md:pl-6">
-              <Button
-                asChild
-                variant="outline"
-                className="w-full h-11 rounded-xl border-stone-300 bg-white hover:bg-stone-50 text-stone-800 font-bold text-xs uppercase tracking-wider cursor-pointer"
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setSelectedTopic("all")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+                  selectedTopic === "all"
+                    ? "bg-[#2D2825] text-white"
+                    : "bg-[#EFE9DF] text-[#635951] hover:bg-[#E5DDCF]"
+                }`}
               >
-                <Link to="/reading/case-001">
-                  Bắt Đầu Đọc
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <p className="text-[11px] text-stone-400 mt-2 text-center">
-                Đọc đối chiếu & xem sơ đồ trực quan
-              </p>
+                Tất cả chủ đề
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedTopic("mindset")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+                  selectedTopic === "mindset"
+                    ? "bg-[#2D2825] text-white"
+                    : "bg-[#EFE9DF] text-[#635951] hover:bg-[#E5DDCF]"
+                }`}
+              >
+                Phát triển bản thân
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedTopic("science")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+                  selectedTopic === "science"
+                    ? "bg-[#2D2825] text-white"
+                    : "bg-[#EFE9DF] text-[#635951] hover:bg-[#E5DDCF]"
+                }`}
+              >
+                Khoa học & Trái đất
+              </button>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Helpful Reading Tip */}
-      <section className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mb-12">
-        <div className="rounded-2xl bg-[#F7F3EB] border border-stone-200/90 p-5 sm:p-6 flex items-center gap-4">
-          <div className="h-10 w-10 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 font-bold">
-            🌱
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Story Card 1: Warren Buffett */}
+            {(selectedTopic === "all" || selectedTopic === "mindset") && (
+              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#C86D51]/50 hover:shadow-xl hover:shadow-[#C86D51]/5 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=1000&auto=format&fit=crop&q=80"
+                      alt="Warren Buffett Strategy"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
+                        Phát triển bản thân
+                      </span>
+                      <span className="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-md text-[#2D2825] text-[11px] font-medium">
+                        Fast Company
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-6 sm:p-7 space-y-3">
+                    {/* Quiet Academic Metadata */}
+                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
+                      <span>Reading #02</span>
+                      <span>·</span>
+                      <span>5 min read</span>
+                      <span>·</span>
+                      <span className="text-[#9C4124] font-normal">
+                        14 từ vựng trọng tâm
+                      </span>
+                      <span>·</span>
+                      <span>Audio available</span>
+                    </div>
+
+                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#C86D51] transition-colors leading-snug">
+                      <Link to="/reading/case-002">
+                        Bài #02: Kỹ Năng Đòn Bẩy Của Warren Buffett Trong Kỷ Nguyên AI
+                      </Link>
+                    </h3>
+                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
+                      Trong thời đại thuật toán có thể soạn văn bản trong tích tắc, Warren Buffett chia sẻ đòn bẩy vĩ đại nhất: Khả năng thấu cảm và thuyết phục giữa con người với con người.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-6 sm:px-7 pb-6 pt-2 border-t border-[#F5EFE7] flex items-center justify-between text-xs text-[#8C827A]">
+                  <span className="text-[11px] font-light italic font-serif text-[#7A6E65]">
+                    Phương pháp: Đọc thấu cảm & tra nghĩa ngữ cảnh
+                  </span>
+                  <Link
+                    to="/reading/case-002"
+                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#C86D51] flex items-center gap-1"
+                  >
+                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </article>
+            )}
+
+            {/* Story Card 2: Greenland Ice Lake */}
+            {(selectedTopic === "all" || selectedTopic === "science") && (
+              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#4B799E]/50 hover:shadow-xl hover:shadow-[#4B799E]/5 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                  <div className="aspect-[16/9] bg-[#E1EAF0] relative overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?w=1000&auto=format&fit=crop&q=80"
+                      alt="Greenland Glacier Lake"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
+                        Khám phá Địa lý
+                      </span>
+                      <span className="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-md text-[#2D2825] text-[11px] font-medium">
+                        Science Alert
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-6 sm:p-7 space-y-3">
+                    {/* Quiet Academic Metadata */}
+                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
+                      <span>Reading #01</span>
+                      <span>·</span>
+                      <span>4 min read</span>
+                      <span>·</span>
+                      <span className="text-[#3E6585] font-normal">
+                        18 thuật ngữ địa lý
+                      </span>
+                      <span>·</span>
+                      <span>Sơ đồ 3D</span>
+                    </div>
+
+                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#4B799E] transition-colors leading-snug">
+                      <Link to="/reading/case-001">
+                        Bài #01: Bí Ẩn 8 Triệu Mét Khối Nước Biến Mất Trong 90 Phút
+                      </Link>
+                    </h3>
+                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
+                      03:15 sáng tại dải băng Greenland, một hồ băng khổng lồ bỗng sụp đổ xuống lòng đại dương mà không để lại một vệt sóng tràn bờ. Khám phá cách các nhà khoa học giải thích hiện tượng này.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-6 sm:px-7 pb-6 pt-2 border-t border-[#F5EFE7] flex items-center justify-between text-xs text-[#8C827A]">
+                  <span className="text-[11px] font-light italic font-serif text-[#7A6E65]">
+                    Phương pháp: Đọc đối chiếu & trực quan hóa dữ liệu
+                  </span>
+                  <Link
+                    to="/reading/case-001"
+                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#4B799E] flex items-center gap-1"
+                  >
+                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </article>
+            )}
           </div>
-          <div className="space-y-0.5">
-            <h4 className="text-sm font-bold text-stone-900">Lời khuyên cho người mới luyện đọc:</h4>
-            <p className="text-xs text-stone-600 leading-relaxed">
-              Bạn không cần phải dịch từng chữ một sang tiếng Việt. Hãy đọc lướt qua cả câu để hiểu ý chính, và nhấp vào từ vựng chỉ khi từ đó cản trở việc hiểu nội dung của bạn.
+        </section>
+
+        {/* Academic Reading Methodology Philosophy Section */}
+        <section id="phuong-phap" className="border-t border-[#ECE5DD] pt-14 pb-4">
+          <div className="max-w-3xl mx-auto text-center space-y-4">
+            <span className="text-[11px] font-mono uppercase tracking-widest text-[#C86D51] font-medium flex items-center justify-center gap-1.5">
+              <Compass className="h-3.5 w-3.5 text-[#C86D51]" />
+              Triết lý học từ bản chất
+            </span>
+            <h4 className="font-serif text-2xl sm:text-3xl text-[#221C18] font-normal">
+              Đọc không phải để đối phó thi cử. Đọc là để mở rộng nhãn quan.
+            </h4>
+            <p className="text-xs sm:text-sm text-[#73685E] leading-relaxed font-light">
+              Khi rũ bỏ đồng hồ đếm ngược và áp lực chọn đáp án trắc nghiệm, bộ não sẽ bước vào trạng thái tiếp nhận ngôn ngữ tự nhiên nhất: quan sát cấu trúc ngữ pháp, chiêm nghiệm ý tưởng và thẩm thấu từ vựng đúng ngữ cảnh sống.
             </p>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
+      {/* Footer */}
+      <footer className="border-t border-[#EAE3D9] py-8 text-center text-xs text-[#A1978E] mt-12 bg-[#FAF7F2]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-[#2D2825]">ARIS IELTS</span>
+            <span>· Academic Reading Atelier</span>
+          </div>
+          <div>
+            Chạm từng chữ · Thấu hiểu cả thế giới
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
