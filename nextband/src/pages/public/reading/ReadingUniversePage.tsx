@@ -19,25 +19,10 @@ export default function ReadingUniversePage() {
       />
 
       {/* Academic Sub-nav Header */}
-      <header className="border-b border-[#EAE3D9] bg-[#FAF7F2]/95 sticky top-0 z-40 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-18 flex items-center justify-between">
-          {/* Brand & Reading Atelier Identity */}
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#F6EAE4] border border-[#ECD1C5] text-[#C86D51] flex items-center justify-center font-bold text-xs sm:text-sm shadow-xs select-none">
-              &lt;/&gt;
-            </div>
-            <div className="flex items-baseline gap-2">
-              <span className="font-extrabold tracking-tight text-[#2D2825] text-sm sm:text-base">
-                ARIS IELTS
-              </span>
-              <span className="text-xs text-[#8C827A] font-normal pl-2 border-l border-[#DDD5CA]">
-                Reading Atelier
-              </span>
-            </div>
-          </div>
-
+      <nav className="border-b border-[#EAE3D9] bg-[#FAF7F2]/95 sticky top-0 z-30 backdrop-blur-md">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           {/* Navigation Tabs */}
-          <nav className="hidden md:flex items-center gap-8 text-xs font-medium text-[#7A7067]">
+          <div className="flex items-center gap-6 sm:gap-8 text-xs font-medium text-[#7A7067]">
             <a
               href="#tu-sach"
               className="text-[#2D2825] font-semibold border-b-2 border-[#2D2825] pb-1 transition-all"
@@ -56,7 +41,7 @@ export default function ReadingUniversePage() {
             >
               Vốn từ tích lũy
             </a>
-          </nav>
+          </div>
 
           {/* Right Meta Info */}
           <div className="flex items-center gap-3">
@@ -71,7 +56,7 @@ export default function ReadingUniversePage() {
             </Link>
           </div>
         </div>
-      </header>
+      </nav>
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-16 space-y-16 sm:space-y-20">
         {/* Hero Section with Interactive Playground */}
@@ -350,12 +335,12 @@ export default function ReadingUniversePage() {
         </section>
       </main>
 
-      {/* Footer */}
+      {/* Footer Note */}
       <footer className="border-t border-[#EAE3D9] py-8 text-center text-xs text-[#A1978E] mt-12 bg-[#FAF7F2]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-[#2D2825]">ARIS IELTS</span>
-            <span>· Academic Reading Atelier</span>
+            <span className="font-semibold text-[#2D2825]">Thư viện đọc hiểu tương tác</span>
+            <span>· Tích lũy vốn từ học thuật tự nhiên</span>
           </div>
           <div>
             Chạm từng chữ · Thấu hiểu cả thế giới

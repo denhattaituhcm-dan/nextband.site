@@ -121,6 +121,11 @@ export default {
         writing: "hsl(var(--writing))",
         speaking: "hsl(var(--speaking))",
       },
+      fontFamily: {
+        serif: ["Newsreader", "Merriweather", "Georgia", "Cambria", "Times New Roman", "serif"],
+        sans: ["Plus Jakarta Sans", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        mono: ["JetBrains Mono", "ui-monospace", "monospace"],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
