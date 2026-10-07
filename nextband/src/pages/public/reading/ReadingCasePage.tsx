@@ -17,6 +17,7 @@ import {
 import { sanitizeLearnerText } from "@/features/reading/services/contentSanitizer";
 import { CrimeSceneBlueprint } from "@/features/reading/components/CrimeSceneBlueprint";
 import { ReadlangExplorationSidebar } from "@/features/reading/components/ReadlangExplorationSidebar";
+import { WritingDebateChamber } from "@/features/reading/components/WritingDebateChamber";
 import { Button } from "@/components/ui/button";
 import {
   ReadingSettingsPopover,
@@ -689,6 +690,9 @@ export default function ReadingCasePage() {
                       </div>
                     );
                   })}
+
+              {/* IELTS Task 2 Writing Debate Chamber (Persistent Community Knowledge Base) */}
+              <WritingDebateChamber caseId={selectedCaseId} />
             </div>
           </section>
 

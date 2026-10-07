@@ -1503,4 +1503,19 @@ model ArenaAnswer {
   @@map("arena_answers")
 }
 
+model ReadingDiscussion {
+  id          String   @id @default(uuid())
+  caseId      String   @map("case_id") @db.VarChar(50)
+  authorName  String   @map("author_name") @db.VarChar(100)
+  authorBadge String?  @map("author_badge") @db.VarChar(50)
+  content     String   @db.Text
+  type        String   @default("THESIS_IDEA") @db.VarChar(30)
+  upvotes     Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([caseId, createdAt])
+  @@map("reading_discussions")
+}
+
 
