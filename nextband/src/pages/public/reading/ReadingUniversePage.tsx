@@ -194,10 +194,43 @@ export default function ReadingUniversePage() {
               >
                 Khoa học & Trái đất
               </button>
+              <button
+                type="button"
+                onClick={() => setSelectedTopic("tech")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+                  selectedTopic === "tech"
+                    ? "bg-[#2D2825] text-white"
+                    : "bg-[#EFE9DF] text-[#635951] hover:bg-[#E5DDCF]"
+                }`}
+              >
+                Công nghệ & AI
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedTopic("education")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+                  selectedTopic === "education"
+                    ? "bg-[#2D2825] text-white"
+                    : "bg-[#EFE9DF] text-[#635951] hover:bg-[#E5DDCF]"
+                }`}
+              >
+                Giáo dục & Đọc sâu
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedTopic("society")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+                  selectedTopic === "society"
+                    ? "bg-[#2D2825] text-white"
+                    : "bg-[#EFE9DF] text-[#635951] hover:bg-[#E5DDCF]"
+                }`}
+              >
+                Xã hội & Tâm lý
+              </button>
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Story Card 1: Warren Buffett */}
             {(selectedTopic === "all" || selectedTopic === "mindset") && (
               <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#C86D51]/50 hover:shadow-xl hover:shadow-[#C86D51]/5 transition-all duration-300 flex flex-col justify-between">
@@ -309,6 +342,238 @@ export default function ReadingUniversePage() {
                   <Link
                     to="/reading/case-001"
                     className="group-hover:translate-x-1 transition-transform font-semibold text-[#4B799E] flex items-center gap-1"
+                  >
+                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </article>
+            )}
+
+            {/* Story Card 3: Generative AI Paradox (The Guardian) */}
+            {(selectedTopic === "all" || selectedTopic === "tech") && (
+              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#6B46C1]/50 hover:shadow-xl hover:shadow-[#6B46C1]/5 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1000&auto=format&fit=crop&q=80"
+                      alt="Generative AI Paradox"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
+                        Công nghệ & Xã hội
+                      </span>
+                      <span className="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-md text-[#2D2825] text-[11px] font-medium">
+                        The Guardian
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-6 sm:p-7 space-y-3">
+                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
+                      <span>Reading #03</span>
+                      <span>·</span>
+                      <span>6 min read</span>
+                      <span>·</span>
+                      <span className="text-[#6B46C1] font-normal">
+                        IELTS Band 7.5+
+                      </span>
+                      <span>·</span>
+                      <span>Tư duy phản biện</span>
+                    </div>
+
+                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#6B46C1] transition-colors leading-snug">
+                      <Link to="/reading/case-003">
+                        Bài #03: Nghịch Lý AI Tạo Sinh: Xáo Trộn Trí Tuệ & Năng Lực Con Người
+                      </Link>
+                    </h3>
+                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
+                      Trí tuệ nhân tạo có thể giải quyết các tác vụ phức tạp chỉ trong vài giây, nhưng liệu việc ủy thác hoàn toàn tư duy phản biện có đẩy con người vào trạng thái "teo mòn nhận thức"? Phân tích học thuật sâu sắc từ chuyên mục bình luận của The Guardian.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-6 sm:px-7 pb-6 pt-2 border-t border-[#F5EFE7] flex items-center justify-between text-xs text-[#8C827A]">
+                  <span className="text-[11px] font-light italic font-serif text-[#7A6E65]">
+                    Phương pháp: Lập luận học thuật & bóc tách bẫy tư duy
+                  </span>
+                  <Link
+                    to="/reading/case-003"
+                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#6B46C1] flex items-center gap-1"
+                  >
+                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </article>
+            )}
+
+            {/* Story Card 4: The EdTech Delusion (The Guardian) */}
+            {(selectedTopic === "all" || selectedTopic === "education") && (
+              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#1E6091]/50 hover:shadow-xl hover:shadow-[#1E6091]/5 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=1000&auto=format&fit=crop&q=80"
+                      alt="The EdTech Delusion & Deep Reading"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
+                        Giáo dục & Đọc sâu
+                      </span>
+                      <span className="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-md text-[#2D2825] text-[11px] font-medium">
+                        The Guardian
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-6 sm:p-7 space-y-3">
+                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
+                      <span>Reading #04</span>
+                      <span>·</span>
+                      <span>5 min read</span>
+                      <span>·</span>
+                      <span className="text-[#1E6091] font-normal">
+                        IELTS Band 7.5+
+                      </span>
+                      <span>·</span>
+                      <span>Phê phán sư phạm</span>
+                    </div>
+
+                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#1E6091] transition-colors leading-snug">
+                      <Link to="/reading/case-004">
+                        Bài #04: Ảo Tưởng EdTech: Lớp Học Màn Hình & Sự Xói Mòn Của Đọc Sâu
+                      </Link>
+                    </h3>
+                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
+                      Sự số hóa ồ ạt lớp học có thực sự nâng cao chất lượng giáo dục, hay chỉ biến học sinh thành người tiêu thụ các mẩu thông tin rời rạc? Khám phá góc nhìn thần kinh học về 'Deep Reading' và làn sóng quay lại với sách giấy tại Bắc Âu.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-6 sm:px-7 pb-6 pt-2 border-t border-[#F5EFE7] flex items-center justify-between text-xs text-[#8C827A]">
+                  <span className="text-[11px] font-light italic font-serif text-[#7A6E65]">
+                    Phương pháp: Đối chiếu khoa học thần kinh & chính sách công
+                  </span>
+                  <Link
+                    to="/reading/case-004"
+                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#1E6091] flex items-center gap-1"
+                  >
+                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </article>
+            )}
+
+            {/* Story Card 5: The Techno-Fix Myth (The Guardian) */}
+            {(selectedTopic === "all" || selectedTopic === "science") && (
+              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#2D6A4F]/50 hover:shadow-xl hover:shadow-[#2D6A4F]/5 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1000&auto=format&fit=crop&q=80"
+                      alt="The Techno-Fix Myth & Planetary Boundaries"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
+                        Môi trường & Sinh thái
+                      </span>
+                      <span className="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-md text-[#2D2825] text-[11px] font-medium">
+                        The Guardian
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-6 sm:p-7 space-y-3">
+                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
+                      <span>Reading #05</span>
+                      <span>·</span>
+                      <span>6 min read</span>
+                      <span>·</span>
+                      <span className="text-[#2D6A4F] font-normal">
+                        IELTS Band 7.5+
+                      </span>
+                      <span>·</span>
+                      <span>Kinh tế sinh thái</span>
+                    </div>
+
+                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#2D6A4F] transition-colors leading-snug">
+                      <Link to="/reading/case-005">
+                        Bài #05: Ảo Tưởng Công Nghệ Xanh: Vì Sao Đổi Mới Kỹ Thuật Không Đủ Cứu Trái Đất
+                      </Link>
+                    </h3>
+                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
+                      Liệu xe điện và năng lượng sạch có thể giải cứu hành tinh nếu chúng ta vẫn duy trì mô hình tăng trưởng tiêu thụ vô hạn? Phân tích sắc sảo từ The Guardian về nghịch lý Jevons và sự va chạm giữa công nghệ với các ranh giới sinh thái hữu hạn.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-6 sm:px-7 pb-6 pt-2 border-t border-[#F5EFE7] flex items-center justify-between text-xs text-[#8C827A]">
+                  <span className="text-[11px] font-light italic font-serif text-[#7A6E65]">
+                    Phương pháp: Phân tích kinh tế chính trị sinh thái & tư duy phản biện
+                  </span>
+                  <Link
+                    to="/reading/case-005"
+                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#2D6A4F] flex items-center gap-1"
+                  >
+                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </article>
+            )}
+
+            {/* Story Card 6: The Hyperconnected Loneliness Epidemic (The Guardian) */}
+            {(selectedTopic === "all" || selectedTopic === "society") && (
+              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#B85A3A]/50 hover:shadow-xl hover:shadow-[#B85A3A]/5 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1000&auto=format&fit=crop&q=80"
+                      alt="The Hyperconnected Loneliness Epidemic"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
+                        Xã hội & Tâm lý
+                      </span>
+                      <span className="px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-md text-[#2D2825] text-[11px] font-medium">
+                        The Guardian
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-6 sm:p-7 space-y-3">
+                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
+                      <span>Reading #06</span>
+                      <span>·</span>
+                      <span>6 min read</span>
+                      <span>·</span>
+                      <span className="text-[#B85A3A] font-normal">
+                        IELTS Band 7.5+
+                      </span>
+                      <span>·</span>
+                      <span>Tâm lý xã hội học</span>
+                    </div>
+
+                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#B85A3A] transition-colors leading-snug">
+                      <Link to="/reading/case-006">
+                        Bài #06: Đại Dịch Cô Đơn Số: Vòng Lặp Dopamine & Sự Tan Rã Của Cộng Đồng
+                      </Link>
+                    </h3>
+                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
+                      Vì sao xã hội siêu kết nối lại chứng kiến kỷ lục về sự cô lập tinh thần? Phân tích sâu sắc về mối quan hệ một chiều parasocial, sự xói mòn khả năng tương tác trực tiếp và tầm quan trọng của những "Không gian thứ ba" (Third Places).
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-6 sm:px-7 pb-6 pt-2 border-t border-[#F5EFE7] flex items-center justify-between text-xs text-[#8C827A]">
+                  <span className="text-[11px] font-light italic font-serif text-[#7A6E65]">
+                    Phương pháp: Bóc tách tâm lý hành vi & cấu trúc xã hội học
+                  </span>
+                  <Link
+                    to="/reading/case-006"
+                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#B85A3A] flex items-center gap-1"
                   >
                     Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
