@@ -2,6 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { CASE_001 } from "@/data/readingCases/case001";
 import { CASE_002 } from "@/data/readingCases/case002";
+import { CASE_003 } from "@/data/readingCases/case003";
+import { CASE_004 } from "@/data/readingCases/case004";
+import { CASE_005 } from "@/data/readingCases/case005";
+import { CASE_006 } from "@/data/readingCases/case006";
 import { VocabularyTerm } from "@/features/reading/types";
 import { ContextualGlossTooltip } from "@/features/reading/components/ContextualGlossTooltip";
 import { CaseAutopsyView } from "@/features/reading/components/CaseAutopsyView";
@@ -38,6 +42,10 @@ import { SEO } from "@/components/common/SEO";
 const ALL_CASES: Record<string, typeof CASE_001> = {
   "case-001": CASE_001,
   "case-002": CASE_002,
+  "case-003": CASE_003,
+  "case-004": CASE_004,
+  "case-005": CASE_005,
+  "case-006": CASE_006,
 };
 
 export default function ReadingCasePage() {
@@ -270,28 +278,22 @@ export default function ReadingCasePage() {
             .replace(/\(.*?\)/g, "")
         ).normalize("NFC");
 
+        const isCuratedChunk = Boolean(termData.collocation_pattern || termData.why_it_matters || termData.learning_value_score);
+
         return (
           <span
             key={`phrase-${segIdx}`}
-            className="relative inline mx-0.5"
+            onClick={(e) => handleWordClick(e, termData, termKey)}
+            className={`cursor-pointer transition-all duration-150 inline mx-0.5 select-none ${
+              isTranslated
+                ? "bg-[#F8EBE5] text-[#9C4124] px-1.5 py-0.5 rounded font-medium border-b-0 shadow-xs"
+                : isCuratedChunk
+                ? "border-b-[1.5px] border-dashed border-[#C86D51] text-[#2C2623] hover:bg-[#F8EBE5] hover:text-[#9C4124] hover:border-transparent px-0.5 rounded"
+                : "border-b border-dotted border-stone-300 text-[#2C2623] hover:text-stone-950 hover:border-stone-500"
+            }`}
+            title={isCuratedChunk ? "High-Value Lexical Chunk · Click để xem cấu trúc & chuyển giao" : "Click để tra cứu nghĩa"}
           >
-            {isTranslated && (
-              <span className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap text-[11px] font-bold text-[#14532d] bg-[#dcfce7] px-2 py-0.5 rounded border border-[#86efac] shadow-xs animate-in fade-in duration-150 pointer-events-none flex items-center justify-center tracking-normal font-sans">
-                {shortVi}
-                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#dcfce7] border-r border-b border-[#86efac] rotate-45" />
-              </span>
-            )}
-            <span
-              onClick={(e) => handleWordClick(e, termData, termKey)}
-              className={`cursor-pointer transition-colors select-none ${
-                isTranslated
-                  ? "font-bold text-emerald-950 underline decoration-emerald-600 decoration-2"
-                  : "text-stone-800 hover:text-stone-950 hover:underline decoration-stone-300"
-              }`}
-              title="Click để tra cứu nghĩa theo ngữ cảnh"
-            >
-              {segment.text}
-            </span>
+            {segment.text}
           </span>
         );
       }
@@ -311,36 +313,19 @@ export default function ReadingCasePage() {
             context_note: "",
           };
           const isTranslated = Boolean(activeTranslatedWords[termKey]);
-          const shortVi = sanitizeLearnerText(
-            (termData.meaning_vi || "")
-              .replace(/^Từ vựng:\s*/i, "")
-              .replace(/^Cụm từ:\s*/i, "")
-              .split("/")[0]
-              .replace(/\(.*?\)/g, "")
-          ).normalize("NFC");
 
           return (
             <span
               key={`tok-${segIdx}-${tokIdx}`}
-              className="relative inline mx-0.5"
+              onClick={(e) => handleWordClick(e, termData, termKey)}
+              className={`cursor-pointer transition-all duration-150 inline mx-0.5 select-none ${
+                isTranslated
+                  ? "bg-[#F8EBE5] text-[#9C4124] px-1 py-0.5 rounded font-medium"
+                  : "text-[#2C2623] hover:text-[#9C4124] hover:bg-stone-100/80 px-0.5 rounded border-b border-transparent hover:border-stone-300"
+              }`}
+              title="Click để tra cứu nghĩa"
             >
-              {isTranslated && (
-                <span className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap text-[11px] font-bold text-[#14532d] bg-[#dcfce7] px-2 py-0.5 rounded border border-[#86efac] shadow-xs animate-in fade-in duration-150 pointer-events-none flex items-center justify-center">
-                  {shortVi}
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#dcfce7] border-r border-b border-[#86efac] rotate-45" />
-                </span>
-              )}
-              <span
-                onClick={(e) => handleWordClick(e, termData, termKey)}
-                className={`cursor-pointer transition-colors select-none ${
-                  isTranslated
-                    ? "font-bold text-emerald-950 underline decoration-emerald-600 decoration-2"
-                    : "text-stone-800 hover:text-stone-950 hover:underline decoration-stone-300"
-                }`}
-                title="Click để tra cứu nghĩa theo ngữ cảnh"
-              >
-                {token}
-              </span>
+              {token}
             </span>
           );
         }

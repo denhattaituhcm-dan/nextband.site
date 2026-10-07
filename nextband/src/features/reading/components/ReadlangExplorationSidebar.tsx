@@ -154,6 +154,11 @@ export const ReadlangExplorationSidebar: React.FC<ReadlangExplorationSidebarProp
                   Khái niệm đòn bẩy
                 </span>
               )}
+              {processedTerm.learning_value_score?.total && (
+                <span className="inline-flex items-center text-[10px] font-mono font-bold tracking-wider text-indigo-900 bg-indigo-100/80 px-2 py-0.5 rounded border border-indigo-300" title="Learning Value Score: Tần suất × Khả năng tái sử dụng × Ngữ cảnh sâu">
+                  ★ Score: {processedTerm.learning_value_score.total}/100
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -195,7 +200,35 @@ export const ReadlangExplorationSidebar: React.FC<ReadlangExplorationSidebarProp
           </div>
         )}
 
-        {/* 2. TRONG CÂU NÀY (In-context Story) */}
+        {/* 2. CẤU TRÚC & TẠI SAO DÙNG CỤM NÀY (Collocation Pattern & Why it matters) */}
+        {(processedTerm.collocation_pattern || processedTerm.why_it_matters) && (
+          <div className="space-y-2 bg-[#FAF8F5] p-3.5 rounded-xl border border-[#EAE3D9]">
+            {processedTerm.collocation_pattern && (
+              <div className="space-y-1">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-amber-800 flex items-center gap-1">
+                  <Tag className="h-3 w-3 text-amber-600" />
+                  Cấu trúc Collocation chuẩn:
+                </span>
+                <p className="font-mono text-xs font-semibold text-stone-900 bg-white px-2.5 py-1.5 rounded-lg border border-stone-200">
+                  {processedTerm.collocation_pattern}
+                </p>
+              </div>
+            )}
+            {processedTerm.why_it_matters && (
+              <div className="space-y-1 pt-1 border-t border-stone-200/60">
+                <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-800 flex items-center gap-1">
+                  <Sparkles className="h-3 w-3 text-emerald-600" />
+                  Tại sao dùng cụm này (Why it matters):
+                </span>
+                <p className="text-xs text-stone-700 leading-relaxed font-normal">
+                  {processedTerm.why_it_matters}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 3. TRONG CÂU NÀY (In-context Story) */}
         {h?.in_context_story && (
           <div className="space-y-1.5">
             <p className="font-bold text-amber-950 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
@@ -204,6 +237,36 @@ export const ReadlangExplorationSidebar: React.FC<ReadlangExplorationSidebarProp
             </p>
             <div className="bg-amber-50/70 p-3 rounded-xl border border-amber-200 text-amber-950 font-medium">
               {h.in_context_story}
+            </div>
+          </div>
+        )}
+
+        {/* 4. TRANSFER CHO SPEAKING & WRITING (Reusable Output Patterns) */}
+        {processedTerm.transfer_templates && processedTerm.transfer_templates.length > 0 && (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <p className="font-bold text-indigo-950 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+                <Repeat className="h-3.5 w-3.5 text-indigo-600" />
+                Mẫu câu chuyển giao (Speaking / Writing)
+              </p>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 font-bold">
+                Output Ready
+              </span>
+            </div>
+            <div className="space-y-2.5">
+              {processedTerm.transfer_templates.map((tpl, tIdx) => (
+                <div key={tIdx} className="bg-white p-3 rounded-xl border border-indigo-150 shadow-xs space-y-1.5">
+                  <span className="text-[10px] font-bold text-indigo-700 uppercase tracking-wide px-1.5 py-0.5 rounded bg-indigo-50 border border-indigo-100 inline-block">
+                    {tpl.scenario}
+                  </span>
+                  <p className="font-serif text-xs text-stone-900 italic font-medium leading-relaxed">
+                    &ldquo;{tpl.example}&rdquo;
+                  </p>
+                  <p className="text-[11px] text-stone-600 font-sans border-t border-stone-100 pt-1">
+                    👉 {tpl.explanation_vi}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         )}

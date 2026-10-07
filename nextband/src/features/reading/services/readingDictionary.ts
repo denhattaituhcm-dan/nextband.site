@@ -1,6 +1,7 @@
 import { VocabularyTerm } from "../types";
 import { determineExplanationDepth } from "./semanticValidator";
 import { humanizeVocabularyTerm } from "./humanizationEngine";
+import { CASE_002_HIGH_VALUE_CHUNKS } from "./case002LexicalChunks";
 
 // Standard English function words / stop words to exclude from click-to-lookup
 export const FUNCTION_WORDS = new Set([
@@ -37,6 +38,37 @@ export function isContentWord(word: string): boolean {
 
 // Multi-word phrases priority list (longest matches first)
 export const MULTI_WORD_PHRASES: string[] = [
+  ...Object.keys(CASE_002_HIGH_VALUE_CHUNKS).sort((a, b) => b.length - a.length),
+  "generative artificial intelligence",
+  "labour market polarisation",
+  "intellectual production",
+  "cognitive atrophy",
+  "critical discernment",
+  "epistemic humility",
+  "ethical reasoning",
+  "tacit knowledge",
+  "systemic reform",
+  "pedagogical efficacy",
+  "deep reading circuits",
+  "cognitive overload",
+  "tactile pedagogy",
+  "educational equity",
+  "screen-based learning",
+  "technological panacea",
+  "biophysical boundaries",
+  "fossil-fuel dependency",
+  "ecological thresholds",
+  "circular economic stewardship",
+  "resource decoupling",
+  "jevons paradox",
+  "hyperconnected loneliness epidemic",
+  "parasocial interactions",
+  "parasocial bonds",
+  "atomisation of community",
+  "third places",
+  "dopamine feedback loops",
+  "interpersonal friction tolerance",
+  "tactile companionship",
   "strategic business skill",
   "competitive advantage",
   "force multiplier",
@@ -82,8 +114,9 @@ export const MULTI_WORD_PHRASES: string[] = [
   "woke us"
 ];
 
-// Rich Contextual Dictionary for Case 001 Scientific Expedition & Climate Anomaly
+// Rich Contextual Dictionary for Cases (Case 001, Case 002 High-Value Chunks, etc.)
 export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
+  ...CASE_002_HIGH_VALUE_CHUNKS,
   "perimeter ice ridges": {
     term: "perimeter ice ridges",
     pronunciation: "/pəˈrɪmɪtər aɪs ˈrɪdʒɪz/",

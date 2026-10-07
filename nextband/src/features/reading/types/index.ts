@@ -72,6 +72,20 @@ export interface VocabularyTerm {
   cognitive?: CognitiveAnalysis;
   humanized?: HumanizedExplanation;
   validation_report?: SemanticValidationReport;
+  collocation_pattern?: string;
+  why_it_matters?: string;
+  transfer_templates?: Array<{
+    scenario: string;
+    example: string;
+    explanation_vi: string;
+  }>;
+  learning_value_score?: {
+    frequency?: number;
+    reusability?: number;
+    richness?: number;
+    difficulty?: number;
+    total?: number;
+  };
 }
 
 export interface Paragraph {
