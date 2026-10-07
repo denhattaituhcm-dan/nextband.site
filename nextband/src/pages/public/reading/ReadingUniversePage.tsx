@@ -261,8 +261,6 @@ export default function ReadingUniversePage() {
                       <span className="text-[#9C4124] font-normal">
                         14 từ vựng trọng tâm
                       </span>
-                      <span>·</span>
-                      <span>Audio available</span>
                     </div>
 
                     <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#C86D51] transition-colors leading-snug">
@@ -270,16 +268,10 @@ export default function ReadingUniversePage() {
                         Bài #02: Kỹ Năng Đòn Bẩy Của Warren Buffett Trong Kỷ Nguyên AI
                       </Link>
                     </h3>
-                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
-                      Trong thời đại thuật toán có thể soạn văn bản trong tích tắc, Warren Buffett chia sẻ đòn bẩy vĩ đại nhất: Khả năng thấu cảm và thuyết phục giữa con người với con người.
-                    </p>
                   </div>
                 </div>
 
-                <div className="px-6 sm:px-7 pb-6 pt-2 border-t border-[#F5EFE7] flex items-center justify-between text-xs text-[#8C827A]">
-                  <span className="text-[11px] font-light italic font-serif text-[#7A6E65]">
-                    Phương pháp: Đọc thấu cảm & tra nghĩa ngữ cảnh
-                  </span>
+                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
                   <Link
                     to="/reading/case-002"
                     className="group-hover:translate-x-1 transition-transform font-semibold text-[#C86D51] flex items-center gap-1"
@@ -320,8 +312,6 @@ export default function ReadingUniversePage() {
                       <span className="text-[#3E6585] font-normal">
                         18 thuật ngữ địa lý
                       </span>
-                      <span>·</span>
-                      <span>Sơ đồ 3D</span>
                     </div>
 
                     <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#4B799E] transition-colors leading-snug">
@@ -329,16 +319,10 @@ export default function ReadingUniversePage() {
                         Bài #01: Bí Ẩn 8 Triệu Mét Khối Nước Biến Mất Trong 90 Phút
                       </Link>
                     </h3>
-                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
-                      03:15 sáng tại dải băng Greenland, một hồ băng khổng lồ bỗng sụp đổ xuống lòng đại dương mà không để lại một vệt sóng tràn bờ. Khám phá cách các nhà khoa học giải thích hiện tượng này.
-                    </p>
                   </div>
                 </div>
 
-                <div className="px-6 sm:px-7 pb-6 pt-2 border-t border-[#F5EFE7] flex items-center justify-between text-xs text-[#8C827A]">
-                  <span className="text-[11px] font-light italic font-serif text-[#7A6E65]">
-                    Phương pháp: Đọc đối chiếu & trực quan hóa dữ liệu
-                  </span>
+                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
                   <Link
                     to="/reading/case-001"
                     className="group-hover:translate-x-1 transition-transform font-semibold text-[#4B799E] flex items-center gap-1"
@@ -378,8 +362,6 @@ export default function ReadingUniversePage() {
                       <span className="text-[#6B46C1] font-normal">
                         IELTS Band 7.5+
                       </span>
-                      <span>·</span>
-                      <span>Tư duy phản biện</span>
                     </div>
 
                     <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#6B46C1] transition-colors leading-snug">
@@ -387,16 +369,10 @@ export default function ReadingUniversePage() {
                         Bài #03: Nghịch Lý AI Tạo Sinh: Xáo Trộn Trí Tuệ & Năng Lực Con Người
                       </Link>
                     </h3>
-                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
-                      Trí tuệ nhân tạo có thể giải quyết các tác vụ phức tạp chỉ trong vài giây, nhưng liệu việc ủy thác hoàn toàn tư duy phản biện có đẩy con người vào trạng thái "teo mòn nhận thức"? Phân tích học thuật sâu sắc từ chuyên mục bình luận của The Guardian.
-                    </p>
                   </div>
                 </div>
 
-                <div className="px-6 sm:px-7 pb-6 pt-2 border-t border-[#F5EFE7] flex items-center justify-between text-xs text-[#8C827A]">
-                  <span className="text-[11px] font-light italic font-serif text-[#7A6E65]">
-                    Phương pháp: Lập luận học thuật & bóc tách bẫy tư duy
-                  </span>
+                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
                   <Link
                     to="/reading/case-003"
                     className="group-hover:translate-x-1 transition-transform font-semibold text-[#6B46C1] flex items-center gap-1"
@@ -445,16 +421,10 @@ export default function ReadingUniversePage() {
                         Bài #04: Ảo Tưởng EdTech: Lớp Học Màn Hình & Sự Xói Mòn Của Đọc Sâu
                       </Link>
                     </h3>
-                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
-                      Sự số hóa ồ ạt lớp học có thực sự nâng cao chất lượng giáo dục, hay chỉ biến học sinh thành người tiêu thụ các mẩu thông tin rời rạc? Khám phá góc nhìn thần kinh học về 'Deep Reading' và làn sóng quay lại với sách giấy tại Bắc Âu.
-                    </p>
                   </div>
                 </div>
 
-                <div className="px-6 sm:px-7 pb-6 pt-2 border-t border-[#F5EFE7] flex items-center justify-between text-xs text-[#8C827A]">
-                  <span className="text-[11px] font-light italic font-serif text-[#7A6E65]">
-                    Phương pháp: Đối chiếu khoa học thần kinh & chính sách công
-                  </span>
+                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
                   <Link
                     to="/reading/case-004"
                     className="group-hover:translate-x-1 transition-transform font-semibold text-[#1E6091] flex items-center gap-1"
@@ -503,16 +473,10 @@ export default function ReadingUniversePage() {
                         Bài #05: Ảo Tưởng Công Nghệ Xanh: Vì Sao Đổi Mới Kỹ Thuật Không Đủ Cứu Trái Đất
                       </Link>
                     </h3>
-                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
-                      Liệu xe điện và năng lượng sạch có thể giải cứu hành tinh nếu chúng ta vẫn duy trì mô hình tăng trưởng tiêu thụ vô hạn? Phân tích sắc sảo từ The Guardian về nghịch lý Jevons và sự va chạm giữa công nghệ với các ranh giới sinh thái hữu hạn.
-                    </p>
                   </div>
                 </div>
 
-                <div className="px-6 sm:px-7 pb-6 pt-2 border-t border-[#F5EFE7] flex items-center justify-between text-xs text-[#8C827A]">
-                  <span className="text-[11px] font-light italic font-serif text-[#7A6E65]">
-                    Phương pháp: Phân tích kinh tế chính trị sinh thái & tư duy phản biện
-                  </span>
+                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
                   <Link
                     to="/reading/case-005"
                     className="group-hover:translate-x-1 transition-transform font-semibold text-[#2D6A4F] flex items-center gap-1"
@@ -561,16 +525,10 @@ export default function ReadingUniversePage() {
                         Bài #06: Đại Dịch Cô Đơn Số: Vòng Lặp Dopamine & Sự Tan Rã Của Cộng Đồng
                       </Link>
                     </h3>
-                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
-                      Vì sao xã hội siêu kết nối lại chứng kiến kỷ lục về sự cô lập tinh thần? Phân tích sâu sắc về mối quan hệ một chiều parasocial, sự xói mòn khả năng tương tác trực tiếp và tầm quan trọng của những "Không gian thứ ba" (Third Places).
-                    </p>
                   </div>
                 </div>
 
-                <div className="px-6 sm:px-7 pb-6 pt-2 border-t border-[#F5EFE7] flex items-center justify-between text-xs text-[#8C827A]">
-                  <span className="text-[11px] font-light italic font-serif text-[#7A6E65]">
-                    Phương pháp: Bóc tách tâm lý hành vi & cấu trúc xã hội học
-                  </span>
+                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
                   <Link
                     to="/reading/case-006"
                     className="group-hover:translate-x-1 transition-transform font-semibold text-[#B85A3A] flex items-center gap-1"
