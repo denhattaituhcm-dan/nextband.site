@@ -1,7 +1,17 @@
 import { VocabularyTerm } from "../types";
 import { determineExplanationDepth } from "./semanticValidator";
 import { humanizeVocabularyTerm } from "./humanizationEngine";
+import { CASE_001_HIGH_VALUE_CHUNKS } from "./case001LexicalChunks";
 import { CASE_002_HIGH_VALUE_CHUNKS } from "./case002LexicalChunks";
+import { CASE_003_HIGH_VALUE_CHUNKS } from "./case003LexicalChunks";
+import { EXTENDED_CASES_HIGH_VALUE_CHUNKS } from "./extendedCasesLexicalChunks";
+
+export const ALL_CURATED_CHUNKS: Record<string, VocabularyTerm> = {
+  ...CASE_001_HIGH_VALUE_CHUNKS,
+  ...CASE_002_HIGH_VALUE_CHUNKS,
+  ...CASE_003_HIGH_VALUE_CHUNKS,
+  ...EXTENDED_CASES_HIGH_VALUE_CHUNKS,
+};
 
 // Standard English function words / stop words to exclude from click-to-lookup
 export const FUNCTION_WORDS = new Set([
@@ -38,7 +48,7 @@ export function isContentWord(word: string): boolean {
 
 // Multi-word phrases priority list (longest matches first)
 export const MULTI_WORD_PHRASES: string[] = [
-  ...Object.keys(CASE_002_HIGH_VALUE_CHUNKS).sort((a, b) => b.length - a.length),
+  ...Object.keys(ALL_CURATED_CHUNKS).sort((a, b) => b.length - a.length),
   "generative artificial intelligence",
   "labour market polarisation",
   "intellectual production",
@@ -114,9 +124,9 @@ export const MULTI_WORD_PHRASES: string[] = [
   "woke us"
 ];
 
-// Rich Contextual Dictionary for Cases (Case 001, Case 002 High-Value Chunks, etc.)
+// Rich Contextual Dictionary for all Cases (Case 001 - Case 006)
 export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
-  ...CASE_002_HIGH_VALUE_CHUNKS,
+  ...ALL_CURATED_CHUNKS,
   "perimeter ice ridges": {
     term: "perimeter ice ridges",
     pronunciation: "/pəˈrɪmɪtər aɪs ˈrɪdʒɪz/",

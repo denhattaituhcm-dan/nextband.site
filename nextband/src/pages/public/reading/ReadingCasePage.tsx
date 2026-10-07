@@ -396,43 +396,26 @@ export default function ReadingCasePage() {
         <div className="w-full flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             {/* Case Switcher Tabs */}
-            <div className="flex items-center bg-stone-200/90 p-1 rounded-xl gap-1 shrink-0 border border-stone-300/80 shadow-xs">
-              <button
-                onClick={() => handleSwitchCase("case-001")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
-                  selectedCaseId === "case-001"
-                    ? "bg-white text-stone-900 shadow-sm border border-stone-200 ring-1 ring-stone-900/5 scale-[1.02]"
-                    : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/60 font-bold"
-                }`}
-                title="Hồ Sơ #01: Vụ Án Biến Mất Hồ Băng Greenland"
-              >
-                <span
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    selectedCaseId === "case-001"
-                      ? "bg-sky-500 shadow-xs"
-                      : "bg-stone-400"
-                  }`}
-                />
-                Case #01
-              </button>
-              <button
-                onClick={() => handleSwitchCase("case-002")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 ${
-                  selectedCaseId === "case-002"
-                    ? "bg-white text-stone-900 shadow-sm border border-stone-200 ring-1 ring-stone-900/5 scale-[1.02]"
-                    : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/60 font-bold"
-                }`}
-                title="Hồ Sơ #02: Warren Buffett - Kỹ Năng Đòn Bẩy Nhân Bản Thành Công"
-              >
-                <span
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    selectedCaseId === "case-002"
-                      ? "bg-emerald-500 shadow-xs"
-                      : "bg-stone-400"
-                  }`}
-                />
-                Case #02
-              </button>
+            <div className="flex items-center bg-stone-200/90 p-1 rounded-xl gap-1 shrink-0 border border-stone-300/80 shadow-xs overflow-x-auto max-w-[320px] sm:max-w-none">
+              {(["case-001", "case-002", "case-003", "case-004", "case-005", "case-006"] as const).map((cId, idx) => {
+                const isActive = selectedCaseId === cId;
+                const dotColor = idx === 0 ? "bg-sky-500" : idx === 1 ? "bg-emerald-500" : idx === 2 ? "bg-indigo-500" : idx === 3 ? "bg-amber-500" : idx === 4 ? "bg-teal-500" : "bg-purple-500";
+                return (
+                  <button
+                    key={cId}
+                    onClick={() => handleSwitchCase(cId)}
+                    className={`px-2.5 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                      isActive
+                        ? "bg-white text-stone-900 shadow-sm border border-stone-200 ring-1 ring-stone-900/5 scale-[1.02]"
+                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/60 font-bold"
+                    }`}
+                    title={`Chuyển sang Bài Đọc Case #${idx + 1}`}
+                  >
+                    <span className={`w-2 h-2 rounded-full transition-colors ${isActive ? `${dotColor} shadow-xs` : "bg-stone-400"}`} />
+                    Case #{idx + 1}
+                  </button>
+                );
+              })}
             </div>
 
             <div>
