@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { CASE_001 } from "@/data/readingCases/case001";
 import { CASE_002 } from "@/data/readingCases/case002";
 import { CASE_003 } from "@/data/readingCases/case003";
@@ -32,6 +32,7 @@ import {
   CheckCircle2,
   ShieldAlert,
   ArrowRight,
+  ArrowLeft,
   Sparkles,
   Info,
   Layers,
@@ -139,17 +140,6 @@ export default function ReadingCasePage() {
   const [rightPanelTab, setRightPanelTab] = useState<"tasks" | "explain">("explain");
   const [activeExplainTerm, setActiveExplainTerm] = useState<VocabularyTerm | null>(null);
 
-  const handleSwitchCase = (caseId: string) => {
-    setSelectedCaseId(caseId);
-    setActiveSourceId("all");
-    setTaskAnswers({});
-    setSelectedEvidenceSentence(null);
-    setFinalHypothesis(null);
-    setSelectedEvidenceIds([]);
-    setViewState("investigating");
-    setActiveExplainTerm(null);
-    setRightPanelTab("tasks");
-  };
 
   const handleWordClick = (e: React.MouseEvent, termObj: VocabularyTerm, wordKey?: string) => {
     e.stopPropagation();
@@ -422,40 +412,27 @@ export default function ReadingCasePage() {
       {/* Top Fixed Case Header Bar */}
       <header className="h-14 border-b border-stone-200/90 bg-[#FAF8F5] z-30 backdrop-blur-md px-4 sm:px-6 shadow-xs flex items-center justify-between shrink-0">
         <div className="w-full flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            {/* Case Switcher Tabs */}
-            <div className="flex items-center bg-stone-200/90 p-1 rounded-xl gap-1 shrink-0 border border-stone-300/80 shadow-xs overflow-x-auto max-w-[320px] sm:max-w-none">
-              {(["case-001", "case-002", "case-003", "case-004", "case-005", "case-006"] as const).map((cId, idx) => {
-                const isActive = selectedCaseId === cId;
-                const dotColor = idx === 0 ? "bg-sky-500" : idx === 1 ? "bg-emerald-500" : idx === 2 ? "bg-indigo-500" : idx === 3 ? "bg-amber-500" : idx === 4 ? "bg-teal-500" : "bg-purple-500";
-                return (
-                  <button
-                    key={cId}
-                    onClick={() => handleSwitchCase(cId)}
-                    className={`px-2.5 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                      isActive
-                        ? "bg-white text-stone-900 shadow-sm border border-stone-200 ring-1 ring-stone-900/5 scale-[1.02]"
-                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/60 font-bold"
-                    }`}
-                    title={`Chuyển sang Bài Đọc Case #${idx + 1}`}
-                  >
-                    <span className={`w-2 h-2 rounded-full transition-colors ${isActive ? `${dotColor} shadow-xs` : "bg-stone-400"}`} />
-                    Case #{idx + 1}
-                  </button>
-                );
-              })}
-            </div>
+          <div className="flex items-center gap-3 min-w-0">
+            {/* Back to Reading Library */}
+            <Link
+              to="/reading"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-stone-100 text-stone-700 hover:text-stone-900 text-xs font-bold transition-all border border-stone-200/90 shrink-0 shadow-xs active:scale-95"
+              title="Quay lại Thư viện bài đọc"
+            >
+              <ArrowLeft className="h-3.5 w-3.5 text-stone-500" />
+              <span className="hidden sm:inline">Thư viện</span>
+            </Link>
 
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h1 className="text-xs sm:text-sm font-black text-stone-900 uppercase tracking-wide truncate max-w-[200px] sm:max-w-none">
+                <h1 className="text-xs sm:text-sm font-black text-stone-900 uppercase tracking-wide truncate max-w-[280px] sm:max-w-md lg:max-w-xl">
                   {readingCase.title}
                 </h1>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-50 border border-sky-200 text-sky-800 shrink-0">
                   {readingCase.level.realm_name_vi} · Band {readingCase.level.ielts_band.toFixed(1)}
                 </span>
               </div>
-              <p className="text-[10px] text-stone-500 hidden md:block">
+              <p className="text-[10px] text-stone-500 hidden md:block truncate">
                 {readingCase.universe.name} · Thời lượng: ~{readingCase.estimated_minutes} phút
               </p>
             </div>
