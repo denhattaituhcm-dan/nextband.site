@@ -283,17 +283,27 @@ export default function ReadingCasePage() {
         return (
           <span
             key={`phrase-${segIdx}`}
-            onClick={(e) => handleWordClick(e, termData, termKey)}
-            className={`cursor-pointer transition-all duration-150 inline mx-0.5 select-none ${
-              isTranslated
-                ? "bg-[#F8EBE5] text-[#9C4124] px-1.5 py-0.5 rounded font-medium border-b-0 shadow-xs"
-                : isCuratedChunk
-                ? "border-b-[1.5px] border-dashed border-[#C86D51] text-[#2C2623] hover:bg-[#F8EBE5] hover:text-[#9C4124] hover:border-transparent px-0.5 rounded"
-                : "border-b border-dotted border-stone-300 text-[#2C2623] hover:text-stone-950 hover:border-stone-500"
-            }`}
-            title={isCuratedChunk ? "High-Value Lexical Chunk · Click để xem cấu trúc & chuyển giao" : "Click để tra cứu nghĩa"}
+            className="relative inline mx-0.5"
           >
-            {segment.text}
+            {isTranslated && (
+              <span className="absolute -top-7 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap text-[11px] font-semibold text-[#8B3A22] bg-[#FAF4ED] px-2.5 py-0.5 rounded-full border border-[#DFCBB9] shadow-sm animate-in fade-in zoom-in-95 duration-150 pointer-events-none flex items-center justify-center font-sans tracking-tight">
+                {shortVi}
+                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#FAF4ED] border-r border-b border-[#DFCBB9] rotate-45" />
+              </span>
+            )}
+            <span
+              onClick={(e) => handleWordClick(e, termData, termKey)}
+              className={`cursor-pointer transition-all duration-150 select-none ${
+                isTranslated
+                  ? "bg-[#F5E6DD] text-[#8B3A22] px-1.5 py-0.5 rounded-md font-semibold shadow-xs"
+                  : isCuratedChunk
+                  ? "border-b-[1.5px] border-dashed border-[#C86D51] text-[#2C2623] hover:bg-[#F8EBE5] hover:text-[#9C4124] hover:border-transparent px-0.5 rounded"
+                  : "border-b border-dotted border-stone-300 text-[#2C2623] hover:text-stone-950 hover:border-stone-500 px-0.5"
+              }`}
+              title={isCuratedChunk ? "High-Value Lexical Chunk · Click để xem cấu trúc & chuyển giao" : "Click để tra cứu nghĩa"}
+            >
+              {segment.text}
+            </span>
           </span>
         );
       }
@@ -313,19 +323,36 @@ export default function ReadingCasePage() {
             context_note: "",
           };
           const isTranslated = Boolean(activeTranslatedWords[termKey]);
+          const shortVi = sanitizeLearnerText(
+            (termData.meaning_vi || "")
+              .replace(/^Từ vựng:\s*/i, "")
+              .replace(/^Cụm từ:\s*/i, "")
+              .split("/")[0]
+              .replace(/\(.*?\)/g, "")
+          ).normalize("NFC");
 
           return (
             <span
               key={`tok-${segIdx}-${tokIdx}`}
-              onClick={(e) => handleWordClick(e, termData, termKey)}
-              className={`cursor-pointer transition-all duration-150 inline mx-0.5 select-none ${
-                isTranslated
-                  ? "bg-[#F8EBE5] text-[#9C4124] px-1 py-0.5 rounded font-medium"
-                  : "text-[#2C2623] hover:text-[#9C4124] hover:bg-stone-100/80 px-0.5 rounded border-b border-transparent hover:border-stone-300"
-              }`}
-              title="Click để tra cứu nghĩa"
+              className="relative inline mx-0.5"
             >
-              {token}
+              {isTranslated && (
+                <span className="absolute -top-7 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap text-[11px] font-semibold text-[#8B3A22] bg-[#FAF4ED] px-2 py-0.5 rounded-full border border-[#DFCBB9] shadow-sm animate-in fade-in zoom-in-95 duration-150 pointer-events-none flex items-center justify-center font-sans tracking-tight">
+                  {shortVi}
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#FAF4ED] border-r border-b border-[#DFCBB9] rotate-45" />
+                </span>
+              )}
+              <span
+                onClick={(e) => handleWordClick(e, termData, termKey)}
+                className={`cursor-pointer transition-all duration-150 select-none ${
+                  isTranslated
+                    ? "bg-[#F5E6DD] text-[#8B3A22] px-1 py-0.5 rounded font-semibold shadow-xs"
+                    : "text-[#2C2623] hover:text-[#9C4124] hover:bg-stone-100/80 px-0.5 rounded border-b border-transparent hover:border-stone-300"
+                }`}
+                title="Click để tra cứu nghĩa"
+              >
+                {token}
+              </span>
             </span>
           );
         }
