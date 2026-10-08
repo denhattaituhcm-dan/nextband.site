@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from "fastify";
-import { prisma } from "../lib/prisma.js";
+import "../plugins/prisma.js";
 
 const readingDiscussionRoutes: FastifyPluginAsync = async (fastify) => {
   // GET /reading-discussions/:caseId - Lấy danh sách bình luận / luận điểm theo caseId
@@ -7,7 +7,7 @@ const readingDiscussionRoutes: FastifyPluginAsync = async (fastify) => {
     const { caseId } = request.params as { caseId: string };
 
     try {
-      const discussions = await prisma.readingDiscussion.findMany({
+      const discussions = await fastify.prisma.readingDiscussion.findMany({
         where: { caseId },
         orderBy: [
           { upvotes: "desc" },
@@ -47,7 +47,7 @@ const readingDiscussionRoutes: FastifyPluginAsync = async (fastify) => {
     }
 
     try {
-      const newDiscussion = await prisma.readingDiscussion.create({
+      const newDiscussion = await fastify.prisma.readingDiscussion.create({
         data: {
           caseId: body.caseId,
           authorName: body.authorName.trim().slice(0, 80),
@@ -76,7 +76,7 @@ const readingDiscussionRoutes: FastifyPluginAsync = async (fastify) => {
     const { id } = request.params as { id: string };
 
     try {
-      const updated = await prisma.readingDiscussion.update({
+      const updated = await fastify.prisma.readingDiscussion.update({
         where: { id },
         data: {
           upvotes: { increment: 1 },

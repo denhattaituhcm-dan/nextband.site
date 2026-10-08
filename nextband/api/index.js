@@ -52962,7 +52962,7 @@ var require_main = __commonJS({
     var fs2 = __require("fs");
     var path2 = __require("path");
     var os = __require("os");
-    var crypto4 = __require("crypto");
+    var crypto5 = __require("crypto");
     var packageJson = require_package2();
     var version3 = packageJson.version;
     var LINE = /(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*'(?:\\'|[^'])*'|\s*"(?:\\"|[^"])*"|\s*`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/mg;
@@ -53181,7 +53181,7 @@ var require_main = __commonJS({
       const authTag = ciphertext.subarray(-16);
       ciphertext = ciphertext.subarray(12, -16);
       try {
-        const aesgcm = crypto4.createDecipheriv("aes-256-gcm", key, nonce);
+        const aesgcm = crypto5.createDecipheriv("aes-256-gcm", key, nonce);
         aesgcm.setAuthTag(authTag);
         return `${aesgcm.update(ciphertext)}${aesgcm.final()}`;
       } catch (error) {
@@ -87289,7 +87289,7 @@ var require_le_unix = __commonJS({
 var require_mime_node = __commonJS({
   "node_modules/nodemailer/lib/mime-node/index.js"(exports, module) {
     "use strict";
-    var crypto4 = __require("crypto");
+    var crypto5 = __require("crypto");
     var fs2 = __require("fs");
     var punycode = require_punycode();
     var { PassThrough } = __require("stream");
@@ -87312,7 +87312,7 @@ var require_mime_node = __commonJS({
       constructor(contentType, options) {
         this.nodeCounter = 0;
         options = options || {};
-        this.baseBoundary = options.baseBoundary || crypto4.randomBytes(8).toString("hex");
+        this.baseBoundary = options.baseBoundary || crypto5.randomBytes(8).toString("hex");
         this.boundaryPrefix = options.boundaryPrefix || "--_NmP";
         this.disableFileAccess = !!options.disableFileAccess;
         this.disableUrlAccess = !!options.disableUrlAccess;
@@ -88341,8 +88341,8 @@ var require_mime_node = __commonJS({
       _generateMessageId() {
         return "<" + [2, 2, 2, 6].reduce(
           // crux to generate UUID-like random strings
-          (prev, len) => prev + "-" + crypto4.randomBytes(len).toString("hex"),
-          crypto4.randomBytes(4).toString("hex")
+          (prev, len) => prev + "-" + crypto5.randomBytes(len).toString("hex"),
+          crypto5.randomBytes(4).toString("hex")
         ) + "@" + // try to use the domain of the FROM address or fallback to server hostname
         (this.getEnvelope().from || this.hostname || "localhost").split("@").pop() + ">";
       }
@@ -88972,14 +88972,14 @@ var require_relaxed_body = __commonJS({
   "node_modules/nodemailer/lib/dkim/relaxed-body.js"(exports, module) {
     "use strict";
     var { Transform } = __require("stream");
-    var crypto4 = __require("crypto");
+    var crypto5 = __require("crypto");
     var RelaxedBody = class extends Transform {
       constructor(options) {
         super();
         options = options || {};
         this.chunkBuffer = [];
         this.chunkBufferLen = 0;
-        this.bodyHash = crypto4.createHash(options.hashAlgo || "sha256");
+        this.bodyHash = crypto5.createHash(options.hashAlgo || "sha256");
         this.remainder = "";
         this.byteLength = 0;
         this.debug = options.debug;
@@ -89082,7 +89082,7 @@ var require_sign = __commonJS({
     "use strict";
     var punycode = require_punycode();
     var mimeFuncs = require_mime_funcs();
-    var crypto4 = __require("crypto");
+    var crypto5 = __require("crypto");
     module.exports = (headers, hashAlgo, bodyHash, options) => {
       options = options || {};
       const defaultFieldNames = "From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive";
@@ -89090,7 +89090,7 @@ var require_sign = __commonJS({
       const canonicalizedHeaderData = relaxedHeaders(headers, fieldNames, options.skipFields);
       const dkimHeader = generateDKIMHeader(options.domainName, options.keySelector, canonicalizedHeaderData.fieldNames, hashAlgo, bodyHash);
       canonicalizedHeaderData.headers += "dkim-signature:" + relaxedHeaderLine(dkimHeader);
-      const signer = crypto4.createSign(("rsa-" + hashAlgo).toUpperCase());
+      const signer = crypto5.createSign(("rsa-" + hashAlgo).toUpperCase());
       signer.update(canonicalizedHeaderData.headers);
       let signature;
       try {
@@ -89160,7 +89160,7 @@ var require_dkim = __commonJS({
     var { PassThrough } = __require("stream");
     var fs2 = __require("fs");
     var path2 = __require("path");
-    var crypto4 = __require("crypto");
+    var crypto5 = __require("crypto");
     var DKIM_ALGO = "sha256";
     var MAX_MESSAGE_SIZE = 2 * 1024 * 1024;
     var DKIMSigner = class {
@@ -89173,7 +89173,7 @@ var require_dkim = __commonJS({
         this.chunks = [];
         this.chunklen = 0;
         this.readPos = 0;
-        this.cachePath = this.cacheDir ? path2.join(this.cacheDir, "message." + Date.now() + "-" + crypto4.randomBytes(14).toString("hex")) : false;
+        this.cachePath = this.cacheDir ? path2.join(this.cacheDir, "message." + Date.now() + "-" + crypto5.randomBytes(14).toString("hex")) : false;
         this.cache = false;
         this.headers = false;
         this.bodyHash = false;
@@ -89736,7 +89736,7 @@ var require_mailer = __commonJS({
     var MailMessage = require_mail_message();
     var net = __require("net");
     var dns = __require("dns");
-    var crypto4 = __require("crypto");
+    var crypto5 = __require("crypto");
     var Mail = class extends EventEmitter {
       constructor(transporter, options, defaults) {
         super();
@@ -90078,7 +90078,7 @@ var require_mailer = __commonJS({
             html = (html || "").toString().replace(
               /(<img\b[^<>]{0,1024} src\s{0,20}=[\s"']{0,20})(data:([^;]+);[^"'>\s]+)/gi,
               (match, prefix, dataUri, mimeType) => {
-                const cid = crypto4.randomBytes(10).toString("hex") + "@localhost";
+                const cid = crypto5.randomBytes(10).toString("hex") + "@localhost";
                 if (!mail.data.attachments) {
                   mail.data.attachments = [];
                 }
@@ -90205,7 +90205,7 @@ var require_smtp_connection = __commonJS({
     var net = __require("net");
     var tls = __require("tls");
     var os = __require("os");
-    var crypto4 = __require("crypto");
+    var crypto5 = __require("crypto");
     var DataStream = require_data_stream();
     var { PassThrough } = __require("stream");
     var shared = require_shared();
@@ -90225,7 +90225,7 @@ var require_smtp_connection = __commonJS({
     var SMTPConnection = class extends EventEmitter {
       constructor(options) {
         super(options);
-        this.id = crypto4.randomBytes(8).toString("base64").replace(/\W/g, "");
+        this.id = crypto5.randomBytes(8).toString("base64").replace(/\W/g, "");
         this.stage = "init";
         this.options = options || {};
         this.secureConnection = !!this.options.secure;
@@ -91410,7 +91410,7 @@ var require_smtp_connection = __commonJS({
           );
         }
         const base64decoded = Buffer.from(challengeMatch[1], "base64").toString("ascii");
-        const hmacMD5 = crypto4.createHmac("md5", this._auth.credentials.pass);
+        const hmacMD5 = crypto5.createHmac("md5", this._auth.credentials.pass);
         hmacMD5.update(base64decoded);
         const prepended = this._auth.credentials.user + " " + hmacMD5.digest("hex");
         this._responseActions.push((str2) => {
@@ -91703,7 +91703,7 @@ var require_xoauth2 = __commonJS({
     "use strict";
     var { Stream } = __require("stream");
     var nmfetch = require_fetch2();
-    var crypto4 = __require("crypto");
+    var crypto5 = __require("crypto");
     var shared = require_shared();
     var errors = require_errors6();
     var XOAuth2 = class extends Stream {
@@ -92049,7 +92049,7 @@ var require_xoauth2 = __commonJS({
        */
       jwtSignRS256(payload) {
         payload = ['{"alg":"RS256","typ":"JWT"}', JSON.stringify(payload)].map((val) => this.toBase64URL(val)).join(".");
-        const signature = crypto4.createSign("RSA-SHA256").update(payload).sign(this.options.privateKey);
+        const signature = crypto5.createSign("RSA-SHA256").update(payload).sign(this.options.privateKey);
         return payload + "." + this.toBase64URL(signature);
       }
     };
@@ -95622,6 +95622,7 @@ var init_holiday_helper = __esm({
 });
 
 // server/services/class.service.ts
+import crypto2 from "node:crypto";
 import { NotificationType as NotificationType2 } from "@prisma/client";
 var ClassService;
 var init_class_service = __esm({
@@ -96175,6 +96176,103 @@ var init_class_service = __esm({
           shiftedCount: updatedSessions.length,
           updatedSessions
         };
+      }
+      // Use Case: Append the next session at the end of schedule (for makeup sessions when marking day off)
+      async appendNextSession(user, classId, options = {}) {
+        const classData = await this.repo.findById(classId);
+        if (!classData) {
+          throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y l\u1EDBp h\u1ECDc");
+        }
+        const isAdmin = user.roles.includes("admin");
+        if (!isAdmin && classData.teacherId !== user.id) {
+          throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp - b\u1EA1n kh\xF4ng c\xF3 quy\u1EC1n thao t\xE1c l\u1ECBch l\u1EDBp h\u1ECDc n\xE0y", 403);
+        }
+        const allSessions = await this.prisma.classSession.findMany({
+          where: { classId },
+          orderBy: { sessionNumber: "asc" }
+        });
+        let weekdays = [];
+        const schedules = await this.prisma.classSchedule.findMany({
+          where: { classId }
+        });
+        if (schedules.length > 0) {
+          weekdays = schedules.map((sc) => sc.dayOfWeek);
+        } else {
+          const distinctDows = new Set(
+            allSessions.filter((s) => s.plannedDate).map((s) => new Date(s.plannedDate).getDay())
+          );
+          weekdays = Array.from(distinctDows);
+        }
+        if (weekdays.length === 0) {
+          weekdays = [1, 3, 5];
+        }
+        let maxSessionNumber = 0;
+        let maxDate = classData.startDate ? new Date(classData.startDate) : /* @__PURE__ */ new Date();
+        let defaultStartTime = "18:00";
+        let defaultEndTime = "20:00";
+        if (allSessions.length > 0) {
+          for (const s of allSessions) {
+            if (s.sessionNumber > maxSessionNumber) {
+              maxSessionNumber = s.sessionNumber;
+            }
+            const sDate = new Date(s.plannedDate);
+            if (sDate > maxDate) {
+              maxDate = sDate;
+            }
+            if (s.startTime) {
+              const hours = String(new Date(s.startTime).getUTCHours()).padStart(2, "0");
+              const mins = String(new Date(s.startTime).getUTCMinutes()).padStart(2, "0");
+              defaultStartTime = `${hours}:${mins}`;
+            }
+            if (s.endTime) {
+              const hours = String(new Date(s.endTime).getUTCHours()).padStart(2, "0");
+              const mins = String(new Date(s.endTime).getUTCMinutes()).padStart(2, "0");
+              defaultEndTime = `${hours}:${mins}`;
+            }
+          }
+        }
+        const nextSessionNumber = maxSessionNumber + 1;
+        const cur = new Date(maxDate);
+        cur.setDate(cur.getDate() + 1);
+        let nextPlannedDate = null;
+        let safetyCounter = 60;
+        while (!nextPlannedDate && safetyCounter > 0) {
+          safetyCounter--;
+          const dow = cur.getDay();
+          const isHoliday = isHolidayDate(cur, options.customHolidays);
+          if (weekdays.includes(dow) && !isHoliday) {
+            nextPlannedDate = new Date(cur);
+            nextPlannedDate.setUTCHours(0, 0, 0, 0);
+          } else {
+            cur.setDate(cur.getDate() + 1);
+          }
+        }
+        if (!nextPlannedDate) {
+          nextPlannedDate = new Date(cur);
+          nextPlannedDate.setUTCHours(0, 0, 0, 0);
+        }
+        const startTimeDate = /* @__PURE__ */ new Date(`1970-01-01T${defaultStartTime.slice(0, 5)}:00.000Z`);
+        const endTimeDate = /* @__PURE__ */ new Date(`1970-01-01T${defaultEndTime.slice(0, 5)}:00.000Z`);
+        const title = options.title || `Bu\u1ED5i ${nextSessionNumber}`;
+        const created = await this.prisma.classSession.create({
+          data: {
+            id: crypto2.randomUUID(),
+            classId,
+            sessionNumber: nextSessionNumber,
+            plannedDate: nextPlannedDate,
+            startTime: startTimeDate,
+            endTime: endTimeDate,
+            status: "PLANNED",
+            note: options.reason ? `Bu\u1ED5i h\u1ECDc b\xF9 (L\xFD do: ${options.reason})` : title
+          }
+        });
+        const newEndDate = new Date(nextPlannedDate);
+        newEndDate.setUTCHours(23, 59, 59, 999);
+        await this.prisma.class.update({
+          where: { id: classId },
+          data: { endDate: newEndDate }
+        });
+        return created;
       }
       // Use Case: Create Class (Admin Only)
       async createClass(user, data) {
@@ -97395,7 +97493,7 @@ var init_class_scheduler_service = __esm({
 });
 
 // server/services/arena-pin.service.ts
-import crypto3 from "crypto";
+import crypto4 from "crypto";
 var ArenaPinService;
 var init_arena_pin_service = __esm({
   "server/services/arena-pin.service.ts"() {
@@ -97409,7 +97507,7 @@ var init_arena_pin_service = __esm({
       generateRawPin() {
         const min = 1e5;
         const max = 999999;
-        const pinNumber = crypto3.randomInt(min, max + 1);
+        const pinNumber = crypto4.randomInt(min, max + 1);
         return pinNumber.toString();
       }
       /**
@@ -97440,13 +97538,13 @@ var init_arena_pin_service = __esm({
        * Generates a secure random 32-byte hexadecimal host token
        */
       generateHostToken() {
-        return crypto3.randomBytes(32).toString("hex");
+        return crypto4.randomBytes(32).toString("hex");
       }
       /**
        * Creates a SHA-256 hash of a host token for secure database storage
        */
       hashHostToken(token) {
-        return crypto3.createHash("sha256").update(token).digest("hex");
+        return crypto4.createHash("sha256").update(token).digest("hex");
       }
       /**
        * Verifies a candidate token against stored hash in constant time
@@ -97454,7 +97552,7 @@ var init_arena_pin_service = __esm({
       verifyHostToken(candidateToken, storedHash) {
         const candidateHash = this.hashHostToken(candidateToken);
         if (candidateHash.length !== storedHash.length) return false;
-        return crypto3.timingSafeEqual(
+        return crypto4.timingSafeEqual(
           Buffer.from(candidateHash, "utf8"),
           Buffer.from(storedHash, "utf8")
         );
@@ -97463,7 +97561,7 @@ var init_arena_pin_service = __esm({
        * Generates a secure random player session token
        */
       generatePlayerSessionToken() {
-        return `s_${crypto3.randomBytes(24).toString("hex")}`;
+        return `s_${crypto4.randomBytes(24).toString("hex")}`;
       }
     };
   }
@@ -99138,7 +99236,7 @@ var supabaseJWKS = createRemoteJWKSet(new URL(getJwksUrl()));
 // server/middlewares/auth.middleware.ts
 init_env();
 var userAuthCache = /* @__PURE__ */ new Map();
-var USER_CACHE_TTL_MS = 10 * 1e3;
+var USER_CACHE_TTL_MS = 60 * 1e3;
 function invalidateUserAuthCache(userId) {
   if (userId) {
     userAuthCache.delete(userId);
@@ -105641,12 +105739,26 @@ var ExamSubmissionService = class {
   async startAttempt(user, examId, options) {
     const exam = await this.prisma.exam.findUnique({
       where: { id: examId },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        courseId: true,
+        durationMinutes: true,
+        isOpen: true,
+        examType: true,
         sections: {
-          include: {
+          select: {
+            id: true,
+            sectionType: true,
             questionGroups: {
-              include: {
-                questions: true
+              select: {
+                id: true,
+                questions: {
+                  select: {
+                    id: true,
+                    questionType: true
+                  }
+                }
               }
             }
           }
@@ -105659,20 +105771,24 @@ var ExamSubmissionService = class {
     const isPrivileged = user.roles.includes("admin") || user.roles.includes("teacher");
     const isOpenExam = exam.isOpen === true || exam.is_open === true || exam.openForAll === true;
     if (!isPrivileged && !isOpenExam && exam.courseId) {
-      const directEnrollment = await this.prisma.enrollment?.findFirst?.({
-        where: { studentId: user.id, courseId: exam.courseId }
-      });
-      let hasClassMembership = false;
-      const classStudents = await this.prisma.classStudent.findMany({
-        where: { studentId: user.id }
-      });
-      if (classStudents.length > 0) {
-        const classIds = classStudents.map((cs) => cs.classId);
-        const enrolledClasses = await this.prisma.class.findMany({
-          where: { id: { in: classIds } }
-        });
-        hasClassMembership = enrolledClasses.some((c) => c.courseId === exam.courseId);
-      }
+      const [directEnrollment, hasClassMembership] = await Promise.all([
+        this.prisma.enrollment?.findFirst?.({
+          where: { studentId: user.id, courseId: exam.courseId },
+          select: { id: true }
+        }),
+        this.prisma.classStudent.findFirst({
+          where: {
+            studentId: user.id,
+            status: "ACTIVE",
+            deletedAt: null,
+            class: {
+              courseId: exam.courseId,
+              isActive: true
+            }
+          },
+          select: { id: true }
+        })
+      ]);
       if (!directEnrollment && !hasClassMembership) {
         throw new AuthorizationError("T\u1EEB ch\u1ED1i truy c\u1EADp: H\u1ECDc vi\xEAn ch\u01B0a \u0111\u0103ng k\xFD kh\xF3a h\u1ECDc ho\u1EB7c l\u1EDBp h\u1ECDc c\u1EE7a b\xE0i thi n\xE0y", 403);
       }
@@ -106413,11 +106529,28 @@ var ExamSubmissionService = class {
         const effectiveSpeakingRetryMission = g.speakingRetryMission || (i === 0 ? options?.speakingRetryMission : void 0);
         const hasSpeak = !!(effectiveSpeakingCorrections || effectiveSpeakingStrengths || effectiveSpeakingSummary || effectiveSpeakingRetryMission);
         if (effectiveFeedbackText || effectivePrimaryCategory !== null || effectiveRevisionRequired || effectiveCriteriaScores !== null || effectiveSentenceFeedbacks.length > 0 || hasSpeak) {
+          let plainFeedbackText = effectiveFeedbackText;
+          if (typeof plainFeedbackText === "string" && plainFeedbackText.trim().startsWith("{") && plainFeedbackText.trim().endsWith("}")) {
+            try {
+              let parsedTextObj = JSON.parse(plainFeedbackText);
+              while (parsedTextObj && typeof parsedTextObj === "object" && typeof parsedTextObj.text === "string" && parsedTextObj.text.trim().startsWith("{")) {
+                try {
+                  parsedTextObj = JSON.parse(parsedTextObj.text);
+                } catch {
+                  break;
+                }
+              }
+              if (parsedTextObj && typeof parsedTextObj === "object" && typeof parsedTextObj.text === "string") {
+                plainFeedbackText = parsedTextObj.text;
+              }
+            } catch {
+            }
+          }
           if (typeof effectiveFeedbackText === "string" && effectiveFeedbackText.trim().startsWith("{") && !effectiveCriteriaScores && !hasSpeak) {
             answerFeedback = effectiveFeedbackText;
           } else {
             const structuredPayload = {
-              text: effectiveFeedbackText,
+              text: plainFeedbackText,
               primaryErrorCategory: effectivePrimaryCategory,
               revisionRequired: effectiveRevisionRequired,
               criteriaScores: effectiveCriteriaScores,
@@ -106759,6 +106892,36 @@ var ExamSubmissionService = class {
     } catch (err) {
       console.error("[ExamSubmissionService] Error syncing student course progress:", err);
     }
+  }
+  // Admin Case: Delete a submission entirely
+  async deleteSubmission(user, submissionId) {
+    if (!user.roles.includes("admin")) {
+      throw new AuthorizationError("Ch\u1EC9 qu\u1EA3n tr\u1ECB vi\xEAn m\u1EDBi c\xF3 quy\u1EC1n x\xF3a b\xE0i n\u1ED9p c\u1EE7a h\u1ECDc vi\xEAn", 403);
+    }
+    const submission = await this.prisma.examSubmission.findUnique({
+      where: { id: submissionId },
+      include: {
+        exam: {
+          select: { courseId: true }
+        }
+      }
+    });
+    if (!submission) {
+      throw new NotFoundError("Kh\xF4ng t\xECm th\u1EA5y b\xE0i n\u1ED9p");
+    }
+    const { studentId, exam } = submission;
+    const courseId = exam?.courseId;
+    await this.prisma.examSubmission.delete({
+      where: { id: submissionId }
+    });
+    if (studentId && courseId) {
+      try {
+        await this.syncStudentCourseProgress(this.prisma, studentId, courseId);
+      } catch (err) {
+        console.warn("[ExamSubmissionService] Failed to sync student course progress after delete:", err);
+      }
+    }
+    return { success: true, message: "\u0110\xE3 x\xF3a b\xE0i n\u1ED9p th\xE0nh c\xF4ng" };
   }
 };
 
@@ -107112,6 +107275,16 @@ var SubmissionController = class {
       return reply.status(status).send({ error: err.message });
     }
   }
+  async delete(request, reply) {
+    try {
+      const user = request.user;
+      const result = await this.service.deleteSubmission(user, request.params.id);
+      return reply.send(result);
+    } catch (err) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
 };
 
 // server/routes/submissions.routes.ts
@@ -107173,6 +107346,13 @@ async function submissionsRoutes(fastify) {
     { preHandler: authenticate },
     async (request, reply) => {
       return controller.getAcademicEvidence(request, reply);
+    }
+  );
+  fastify.delete(
+    "/:id",
+    { preHandler: [authenticate, requireRoles("admin")] },
+    async (request, reply) => {
+      return controller.delete(request, reply);
     }
   );
 }
@@ -108893,6 +109073,20 @@ var ClassController = class {
       return reply.status(status).send({ error: err.message });
     }
   }
+  async appendNextSession(request, reply) {
+    try {
+      const user = request.user;
+      const result = await this.service.appendNextSession(
+        user,
+        request.params.id,
+        request.body || {}
+      );
+      return reply.send(result);
+    } catch (err) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
   async updateStudentStatus(request, reply) {
     try {
       const user = request.user;
@@ -108989,6 +109183,13 @@ async function classesRoutes(fastify) {
     { preHandler: [authenticate, requireRoles("admin", "teacher")] },
     async (request, reply) => {
       return controller.postponeSession(request, reply);
+    }
+  );
+  fastify.post(
+    "/:id/sessions/append-next",
+    { preHandler: [authenticate, requireRoles("admin", "teacher")] },
+    async (request, reply) => {
+      return controller.appendNextSession(request, reply);
     }
   );
   fastify.put(
@@ -109271,7 +109472,7 @@ var highlights_routes_default = highlightsRoutes;
 
 // server/routes/attendance.routes.ts
 init_zod();
-import crypto2 from "node:crypto";
+import crypto3 from "node:crypto";
 
 // server/services/attendance.service.ts
 init_class_repository();
@@ -110062,7 +110263,7 @@ var attendanceRoutes = async (fastify) => {
           const title = exam?.title ? `Bu\u1ED5i ${sessionNum}: ${exam.title}` : `Bu\u1ED5i ${sessionNum}`;
           const sess = await prisma.classSession.create({
             data: {
-              id: crypto2.randomUUID(),
+              id: crypto3.randomUUID(),
               classId,
               sessionNumber: sessionNum,
               plannedDate: sessionDate,
@@ -118209,6 +118410,86 @@ async function arenaRoutes(fastify) {
   );
 }
 
+// server/routes/reading-discussion.routes.ts
+var readingDiscussionRoutes = async (fastify) => {
+  fastify.get("/:caseId", async (request, reply) => {
+    const { caseId } = request.params;
+    try {
+      const discussions = await fastify.prisma.readingDiscussion.findMany({
+        where: { caseId },
+        orderBy: [
+          { upvotes: "desc" },
+          { createdAt: "desc" }
+        ],
+        take: 50
+      });
+      return reply.send({
+        success: true,
+        data: discussions
+      });
+    } catch (error) {
+      request.log.error(error);
+      return reply.status(500).send({
+        success: false,
+        error: "Failed to fetch discussions"
+      });
+    }
+  });
+  fastify.post("/", async (request, reply) => {
+    const body = request.body;
+    if (!body.caseId || !body.content || !body.authorName) {
+      return reply.status(400).send({
+        success: false,
+        error: "Thi\u1EBFu th\xF4ng tin caseId, authorName ho\u1EB7c n\u1ED9i dung lu\u1EADn \u0111i\u1EC3m"
+      });
+    }
+    try {
+      const newDiscussion = await fastify.prisma.readingDiscussion.create({
+        data: {
+          caseId: body.caseId,
+          authorName: body.authorName.trim().slice(0, 80),
+          authorBadge: body.authorBadge?.trim() || "H\u1ECDc Vi\xEAn",
+          content: body.content.trim(),
+          type: body.type || "THESIS_IDEA",
+          upvotes: 0
+        }
+      });
+      return reply.status(201).send({
+        success: true,
+        data: newDiscussion
+      });
+    } catch (error) {
+      request.log.error(error);
+      return reply.status(500).send({
+        success: false,
+        error: "Failed to create discussion"
+      });
+    }
+  });
+  fastify.post("/:id/upvote", async (request, reply) => {
+    const { id } = request.params;
+    try {
+      const updated = await fastify.prisma.readingDiscussion.update({
+        where: { id },
+        data: {
+          upvotes: { increment: 1 }
+        }
+      });
+      return reply.send({
+        success: true,
+        data: updated
+      });
+    } catch (error) {
+      request.log.error(error);
+      return reply.status(500).send({
+        success: false,
+        error: "Failed to upvote discussion"
+      });
+    }
+  });
+};
+var reading_discussion_routes_default = readingDiscussionRoutes;
+
 // server/routes/index.ts
 var routes = async (fastify) => {
   fastify.get("/health", async () => {
@@ -118258,6 +118539,7 @@ var routes = async (fastify) => {
   await fastify.register(teachers_routes_default, { prefix: "/teachers" });
   await fastify.register(seasonalRoutes, { prefix: "/seasonal" });
   await fastify.register(arenaRoutes, { prefix: "/arena" });
+  await fastify.register(reading_discussion_routes_default, { prefix: "/reading-discussions" });
 };
 var routes_default = routes;
 

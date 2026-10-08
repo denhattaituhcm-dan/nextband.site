@@ -5,6 +5,11 @@ import { CASE_001_HIGH_VALUE_CHUNKS } from "./case001LexicalChunks";
 import { CASE_002_HIGH_VALUE_CHUNKS } from "./case002LexicalChunks";
 import { CASE_003_HIGH_VALUE_CHUNKS } from "./case003LexicalChunks";
 import { EXTENDED_CASES_HIGH_VALUE_CHUNKS } from "./extendedCasesLexicalChunks";
+import { CASE_002_DICTIONARY } from "./case002Dictionary";
+import { CASE_003_DICTIONARY } from "./case003Dictionary";
+import { CASE_004_DICTIONARY } from "./case004Dictionary";
+import { CASE_005_DICTIONARY } from "./case005Dictionary";
+import { CASE_006_DICTIONARY } from "./case006Dictionary";
 
 export const ALL_CURATED_CHUNKS: Record<string, VocabularyTerm> = {
   ...CASE_001_HIGH_VALUE_CHUNKS,
@@ -127,6 +132,131 @@ export const MULTI_WORD_PHRASES: string[] = [
 // Rich Contextual Dictionary for all Cases (Case 001 - Case 006)
 export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
   ...ALL_CURATED_CHUNKS,
+  ...CASE_002_DICTIONARY,
+  ...CASE_003_DICTIONARY,
+  ...CASE_004_DICTIONARY,
+  ...CASE_005_DICTIONARY,
+  ...CASE_006_DICTIONARY,
+  "sunrise": {
+    term: "sunrise",
+    pronunciation: "/ˈsʌnraɪz/",
+    pos: "noun",
+    meaning_en: "the time in the morning when the sun appears or full daylight arrives",
+    meaning_vi: "bình minh / lúc mặt trời mọc",
+    context_note: "Nhóm nghiên cứu đến hiện trường ngay khi bình minh lên.",
+  },
+  "dr": {
+    term: "dr",
+    pronunciation: "/ˈdɒktər/",
+    pos: "noun (title)",
+    meaning_en: "title for a doctor or holder of a doctorate degree",
+    meaning_vi: "tiến sĩ (Dr. Vance)",
+    context_note: "Tiến sĩ Vance - trưởng nhóm địa chất thực địa.",
+  },
+  "detected": {
+    term: "detected",
+    pronunciation: "/dɪˈtɛktɪd/",
+    pos: "verb (past)",
+    meaning_en: "discovered or identified the presence or existence of",
+    meaning_vi: "phát hiện / ghi nhận được",
+    context_note: "Cảm biến địa chấn ghi nhận vi chấn ngầm lúc 01:45 AM.",
+  },
+  "stayed": {
+    term: "stayed",
+    pronunciation: "/steɪd/",
+    pos: "verb (past)",
+    meaning_en: "remained in a specified state or position",
+    meaning_vi: "vẫn duy trì / giữ nguyên ở mức",
+    context_note: "Nhiệt độ lớp đá đáy vẫn duy trì ổn định ở mức âm 1.8°C.",
+  },
+  "volcano": {
+    term: "volcano",
+    pronunciation: "/vɒlˈkeɪnəʊ/",
+    pos: "noun",
+    meaning_en: "a mountain or hill having a crater through which lava has erupted",
+    meaning_vi: "núi lửa địa chất",
+    context_note: "Giả thuyết về núi lửa ngầm làm tan chảy đáy băng.",
+  },
+  "erupted": {
+    term: "erupted",
+    pronunciation: "/ɪˈrʌptɪd/",
+    pos: "verb (past)",
+    meaning_en: "became actively erupting or broke out suddenly",
+    meaning_vi: "phun trào (núi lửa)",
+    context_note: "Không có bằng chứng núi lửa phun trào dưới đáy băng.",
+  },
+  "eruption": {
+    term: "eruption",
+    pronunciation: "/ɪˈrʌpʃən/",
+    pos: "noun",
+    meaning_en: "an act or instance of erupting",
+    meaning_vi: "vụ phun trào địa chất",
+    context_note: "Không ghi nhận dấu vết vụ phun trào nhiệt độ cao nào.",
+  },
+  "beneath": {
+    term: "beneath",
+    pronunciation: "/bɪˈniːθ/",
+    pos: "preposition",
+    meaning_en: "extending or directly underneath",
+    meaning_vi: "bên dưới / ẩn sâu dưới tầng băng",
+    context_note: "Lớp đá nền nằm sâu 850m bên dưới dải băng.",
+  },
+  "summit": {
+    term: "summit",
+    pronunciation: "/ˈsʌmɪt/",
+    pos: "noun",
+    meaning_en: "the highest point of a hill or mountain; station name",
+    meaning_vi: "đỉnh dải băng / trạm Summit Alpha-4",
+    context_note: "Trạm nghiên cứu khí hậu Summit Alpha-4.",
+  },
+  "collecting": {
+    term: "collecting",
+    pronunciation: "/kəˈlɛktɪŋ/",
+    pos: "verb (participle)",
+    meaning_en: "gathering together a number of things",
+    meaning_vi: "thu thập / lấy mẫu (lõi băng)",
+    context_note: "Đội nghiên cứu đang lấy mẫu lõi băng gần hồ.",
+  },
+  "cores": {
+    term: "cores",
+    pronunciation: "/kɔːz/",
+    pos: "noun (plural)",
+    meaning_en: "cylindrical samples of ice or sediment drilled out from glacier",
+    meaning_vi: "các mẫu lõi băng khoan sâu",
+    context_note: "Phân tích các mẫu lõi băng để đo nhiệt độ quá khứ.",
+  },
+  "hydro-fracturing": {
+    term: "hydro-fracturing",
+    pronunciation: "/ˌhaɪdrəʊ ˈfræktʃərɪŋ/",
+    pos: "geological noun",
+    meaning_en: "the fracturing of rock or ice by pressurized liquid",
+    meaning_vi: "sự nứt vỡ do áp lực thủy lực",
+    context_note: "Cơ chế nứt vỡ thủy lực khiến nước băng tan đâm xuyên 850m tầng băng.",
+  },
+  "spillover": {
+    term: "spillover",
+    pronunciation: "/ˈspɪlˌəʊvər/",
+    pos: "noun",
+    meaning_en: "an instance of overflowing or spreading into another area",
+    meaning_vi: "sự tràn bờ / nước tràn qua gờ",
+    context_note: "Gờ băng xung quanh nguyên vẹn, chứng minh không có hiện tượng tràn bờ.",
+  },
+  "collapsed": {
+    term: "collapsed",
+    pronunciation: "/kəˈlæpst/",
+    pos: "verb (past)",
+    meaning_en: "suddenly fell down or caved in",
+    meaning_vi: "sụp đổ / vỡ toang",
+    context_note: "Vết nứt không làm sụp đổ các vách băng xung quanh.",
+  },
+  "poured": {
+    term: "poured",
+    pronunciation: "/pɔːd/",
+    pos: "verb (past)",
+    meaning_en: "flowed rapidly in large quantities",
+    meaning_vi: "xả thẳng xuống / đổ dồn vào khe nứt",
+    context_note: "Toàn bộ 8 triệu mét khối nước xả thẳng xuống đáy trong 90 phút.",
+  },
   "perimeter ice ridges": {
     term: "perimeter ice ridges",
     pronunciation: "/pəˈrɪmɪtər aɪs ˈrɪdʒɪz/",
@@ -5214,6 +5344,11 @@ export function lookupWord(rawWord: string): VocabularyTerm | null {
       candidates.push(singleWord.slice(0, -3));
       candidates.push(singleWord.slice(0, -3) + "e");
     }
+    if (singleWord.endsWith("ly")) {
+      candidates.push(singleWord.slice(0, -2));
+      if (singleWord.endsWith("ily")) candidates.push(singleWord.slice(0, -3) + "y");
+      if (singleWord.endsWith("ally")) candidates.push(singleWord.slice(0, -4));
+    }
 
     for (const cand of candidates) {
       if (CONTEXTUAL_DICTIONARY[cand]) {
@@ -5236,10 +5371,10 @@ export function lookupWord(rawWord: string): VocabularyTerm | null {
   const baseFallback: VocabularyTerm = {
     term: rawWord.trim(),
     pronunciation: "",
-    pos: "content word",
+    pos: "thuật ngữ học thuật",
     meaning_en: `the academic concept of ${rawWord.trim()}`,
-    meaning_vi: rawWord.trim(),
-    context_note: `Thuật ngữ học thuật trong văn bản.`,
+    meaning_vi: `khái niệm "${rawWord.trim()}"`,
+    context_note: `Thuật ngữ học thuật trong ngữ cảnh bài đọc.`,
   };
 
   return enrichCognitiveTerm(baseFallback);
