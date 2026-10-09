@@ -337,117 +337,230 @@ export default function CambridgeStudentExam() {
         {/* ======================================================== */}
         {/* SKILL: USE OF ENGLISH & READING                          */}
         {/* ======================================================== */}
-        {(currentSection === "use_of_english" || currentSection === "reading") && (
-          <div className="space-y-6">
-            {/* Nếu có passages liên quan */}
-            {content?.passages && (
-              <div className="space-y-4">
-                {Object.entries(content.passages).map(([pkey, pass]: any) => {
-                  // Chỉ hiển thị passage nếu section hiện tại có câu hỏi thuộc passageKey đó
-                  const hasQuestions = sectionItems.some((it: any) => it.passageKey === pkey || it.task === pkey);
-                  if (!hasQuestions && !pass.text && !pass.paragraphs) return null;
+        {(currentSection === "use_of_english" || currentSection === "reading") && (() => {
+          // 1. Phân nhóm items: Những câu gắn với Passage (theo passageId hoặc passageKey) và những câu đứng độc lập
+          const itemsWithPassage: Record<string, any[]> = {};
+          const standaloneItems: any[] = [];
 
-                  return (
-                    <div key={pkey} className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
-                      <div className="flex items-center gap-2 text-xs font-bold text-purple-400 uppercase tracking-wider">
-                        <BookOpen className="w-4 h-4" /> Bài đọc: {pass.title || pkey}
-                      </div>
-                      {pass.instruction && (
-                        <p className="text-xs text-slate-400 italic">{pass.instruction}</p>
-                      )}
-                      {pass.text && (
-                        <p className="text-sm text-slate-200 leading-relaxed font-serif bg-slate-950 p-4 rounded-xl border border-slate-800/80">
-                          {pass.text}
-                        </p>
-                      )}
-                      {pass.paragraphs && (
-                        <div className="space-y-2 text-sm text-slate-200 leading-relaxed font-serif bg-slate-950 p-4 rounded-xl border border-slate-800/80">
-                          {pass.paragraphs.map((p: string, idx: number) => (
-                            <p key={idx}>{p}</p>
-                          ))}
-                        </div>
-                      )}
-                      {pass.clubs && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                          {pass.clubs.map((c: any) => (
-                            <div key={c.key} className="bg-slate-950 p-3 rounded-lg border border-slate-800 text-xs">
-                              <span className="font-bold text-purple-400 font-mono">[{c.key}] {c.name}: </span>
-                              <span className="text-slate-300">{c.description}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      {pass.sentences && (
-                        <div className="space-y-1 pt-2">
-                          {pass.sentences.map((s: any) => (
-                            <div key={s.key} className="text-xs text-slate-300 bg-slate-950 p-2 rounded border border-slate-800">
-                              <span className="font-bold text-purple-400 font-mono mr-2">[{s.key}]</span> {s.text}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+          sectionItems.forEach((it: any) => {
+            const pKey = it.passageId || it.passageKey;
+            if (pKey && content?.passages?.[pKey]) {
+              if (!itemsWithPassage[pKey]) itemsWithPassage[pKey] = [];
+              itemsWithPassage[pKey].push(it);
+            } else {
+              standaloneItems.push(it);
+            }
+          });
 
-            {/* Danh sách các câu hỏi */}
-            <div className="space-y-4">
-              {sectionItems.map((item: any, idx: number) => {
-                const selectedVal = answers[item.id];
-                return (
-                  <div
-                    key={item.id}
-                    className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3 hover:border-slate-700 transition"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-mono font-bold text-purple-400 bg-purple-950/60 px-2 py-0.5 rounded border border-purple-800/50">
-                        Câu {idx + 1} ({item.id})
-                      </span>
-                      <span className="text-[11px] text-slate-500 uppercase">
-                        Band {item.band} • {item.type}
-                      </span>
-                    </div>
+          // Helper render card câu hỏi
+          const renderQuestionCard = (item: any, customNumber?: number) => {
+            const selectedVal = answers[item.id] ?? "";
+            const isAnswered = selectedVal !== undefined && selectedVal !== null && selectedVal !== "";
 
-                    <p className="text-sm text-slate-100 font-medium leading-relaxed">
-                      {item.prompt}
-                    </p>
-
-                    {/* Options MCQ */}
-                    {item.options && (
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2">
-                        {item.options.map((opt: any) => {
-                          const isChosen = selectedVal === opt.key;
-                          return (
-                            <button
-                              key={opt.key}
-                              onClick={() => setAnswers({ ...answers, [item.id]: opt.key })}
-                              className={`flex items-center gap-3 p-3 rounded-xl border text-left text-xs font-medium transition ${
-                                isChosen
-                                  ? "bg-purple-600/20 border-purple-500 text-white shadow-sm"
-                                  : "bg-slate-950/60 border-slate-800 text-slate-300 hover:bg-slate-800 hover:border-slate-700"
-                              }`}
-                            >
-                              <span
-                                className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs ${
-                                  isChosen ? "bg-purple-600 text-white" : "bg-slate-800 text-slate-400"
-                                }`}
-                              >
-                                {opt.key}
-                              </span>
-                              <span>{opt.text}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
+            return (
+              <div
+                key={item.id}
+                id={`item-${item.id}`}
+                className={`bg-slate-900 border rounded-2xl p-4 sm:p-5 space-y-3 transition shadow-sm ${
+                  isAnswered ? "border-purple-500/50 bg-slate-900/90" : "border-slate-800 hover:border-slate-700"
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono font-bold text-purple-300 bg-purple-950/80 px-2.5 py-1 rounded-lg border border-purple-800/60">
+                      Câu {item.gapNumber ? item.gapNumber : (customNumber !== undefined ? customNumber : item.id)}
+                    </span>
+                    <span className="text-[11px] font-mono text-slate-400">({item.id})</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    {item.band && (
+                      <Badge variant="outline" className="border-slate-800 text-slate-400 text-[10px]">
+                        Band {item.band}
+                      </Badge>
                     )}
+                    {isAnswered && (
+                      <span className="flex items-center gap-1 text-[11px] text-emerald-400 font-semibold bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-800/50">
+                        <CheckCircle2 className="w-3 h-3" /> Đã chọn
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Stimulus biển báo/tin nhắn ngắn (VD: Reading Part 1) */}
+                {item.stimulus && (
+                  <div className="bg-amber-950/20 border border-amber-600/30 rounded-xl p-3.5 space-y-1">
+                    {Array.isArray(item.stimulus) ? (
+                      item.stimulus.map((s: string, sIdx: number) => (
+                        <p key={sIdx} className={sIdx === 0 ? "font-bold text-amber-300 tracking-wide text-xs" : "text-amber-100/90 text-xs italic"}>
+                          {s}
+                        </p>
+                      ))
+                    ) : (
+                      <p className="text-amber-100 text-xs">{item.stimulus}</p>
+                    )}
+                  </div>
+                )}
+
+                {/* Prompt câu hỏi */}
+                {item.prompt && (
+                  <p className="text-sm text-slate-100 font-medium leading-relaxed">
+                    {item.prompt}
+                  </p>
+                )}
+
+                {/* Options trắc nghiệm MCQ / cloze_mcq / matching */}
+                {item.options && item.options.length > 0 && (
+                  <div className={`grid gap-2 pt-1 ${item.options.length > 4 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:grid-cols-3"}`}>
+                    {item.options.map((opt: any) => {
+                      const isChosen = String(selectedVal).trim().toUpperCase() === String(opt.key).trim().toUpperCase();
+                      return (
+                        <button
+                          key={opt.key}
+                          type="button"
+                          onClick={() => setAnswers({ ...answers, [item.id]: opt.key })}
+                          className={`flex items-start gap-3 p-3 rounded-xl border text-left text-xs font-medium transition cursor-pointer ${
+                            isChosen
+                              ? "bg-purple-600/25 border-purple-400 text-white shadow-md ring-1 ring-purple-400"
+                              : "bg-slate-950/70 border-slate-800 text-slate-300 hover:bg-slate-800/80 hover:border-slate-700 hover:text-white"
+                          }`}
+                        >
+                          <span
+                            className={`w-6 h-6 shrink-0 rounded-full flex items-center justify-center font-bold text-xs transition ${
+                              isChosen ? "bg-purple-600 text-white shadow" : "bg-slate-800 text-slate-400"
+                            }`}
+                          >
+                            {opt.key}
+                          </span>
+                          <span className="leading-snug pt-0.5">{opt.text}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Ô điền từ nếu là gap_fill không có options */}
+                {(!item.options || item.options.length === 0) && (
+                  <div className="pt-2">
+                    <Input
+                      placeholder="Nhập từ hoặc cụm từ cần điền..."
+                      value={selectedVal}
+                      onChange={(e) => setAnswers({ ...answers, [item.id]: e.target.value })}
+                      className="bg-slate-950 border-slate-700 text-white max-w-sm text-sm font-medium focus:border-purple-500"
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          };
+
+          return (
+            <div className="space-y-8">
+              {/* PHẦN 1: CÁC NHÓM CÂU HỎI KÈM BÀI ĐỌC (SPLIT PANE 2 CỘT CHUẨN KHẢO THÍ) */}
+              {Object.entries(itemsWithPassage).map(([pkey, pItems]) => {
+                const pass = content?.passages?.[pkey];
+                if (!pass) return null;
+
+                return (
+                  <div key={pkey} className="bg-slate-900/60 border border-slate-800 rounded-3xl p-4 sm:p-6 space-y-4 shadow-xl">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                      <div className="flex items-center gap-2 text-sm font-extrabold text-purple-400 uppercase tracking-wide">
+                        <BookOpen className="w-4 h-4 text-purple-400" />
+                        <span>{pass.title || `Văn bản đọc: ${pkey}`}</span>
+                      </div>
+                      <Badge variant="outline" className="border-purple-500/40 text-purple-300 text-xs font-mono">
+                        {pItems.length} câu hỏi liên kết
+                      </Badge>
+                    </div>
+
+                    {pass.instruction && (
+                      <p className="text-xs text-slate-400 italic font-medium bg-slate-950/60 p-3 rounded-xl border border-slate-800/60">
+                        {pass.instruction}
+                      </p>
+                    )}
+
+                    {/* Lưới 2 cột: Trái là Bài đọc, Phải là Danh sách câu hỏi */}
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                      {/* Cột trái: Nội dung bài đọc (sticky trên màn hình lớn để dễ đối chiếu) */}
+                      <div className="lg:col-span-6 xl:col-span-7 bg-slate-950 border border-slate-800/90 rounded-2xl p-5 space-y-4 lg:sticky lg:top-20 max-h-[80vh] overflow-y-auto">
+                        {pass.text && (
+                          <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-serif tracking-normal whitespace-pre-line">
+                            {pass.text}
+                          </p>
+                        )}
+
+                        {pass.paragraphs && (
+                          <div className="space-y-3 text-sm sm:text-base text-slate-200 leading-relaxed font-serif">
+                            {pass.paragraphs.map((p: string, pIdx: number) => (
+                              <p key={pIdx} className="whitespace-pre-line">{p}</p>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Danh sách Câu lạc bộ A-H nếu có (P-R2) */}
+                        {pass.clubs && (
+                          <div className="space-y-2.5 pt-2">
+                            <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+                              Danh sách Câu lạc bộ (A–H):
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                              {pass.clubs.map((c: any) => (
+                                <div key={c.key} className="bg-slate-900/90 p-3 rounded-xl border border-slate-800 text-xs space-y-1">
+                                  <div className="font-bold text-purple-300 font-mono flex items-center gap-1.5">
+                                    <span className="w-5 h-5 rounded-md bg-purple-950 border border-purple-800 flex items-center justify-center text-[11px]">
+                                      {c.key}
+                                    </span>
+                                    {c.name}
+                                  </div>
+                                  <p className="text-slate-300 leading-snug">{c.description}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Danh sách Sentences A-E nếu có (P-R4 Gapped text) */}
+                        {pass.sentences && (
+                          <div className="space-y-2 pt-2">
+                            <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+                              Các câu lựa chọn (A–E):
+                            </div>
+                            <div className="space-y-2">
+                              {pass.sentences.map((s: any) => (
+                                <div key={s.key} className="text-xs text-slate-200 bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex items-start gap-2.5">
+                                  <span className="w-5 h-5 rounded-md bg-purple-950 border border-purple-800 flex items-center justify-center text-[11px] font-bold text-purple-300 shrink-0 mt-0.5">
+                                    {s.key}
+                                  </span>
+                                  <span className="leading-snug">{s.text}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Cột phải: Các câu hỏi điền từ hoặc trắc nghiệm tương ứng */}
+                      <div className="lg:col-span-6 xl:col-span-5 space-y-4">
+                        {pItems.map((item: any) => renderQuestionCard(item))}
+                      </div>
+                    </div>
                   </div>
                 );
               })}
+
+              {/* PHẦN 2: CÁC CÂU HỎI ĐỘC LẬP (KHÔNG GẮN VỚI PASSAGE) */}
+              {standaloneItems.length > 0 && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-xs font-extrabold text-slate-400 uppercase tracking-wider">
+                    <span>Câu hỏi trắc nghiệm độc lập ({standaloneItems.length} câu)</span>
+                  </div>
+                  <div className="space-y-4">
+                    {standaloneItems.map((item: any, sIdx: number) => renderQuestionCard(item, sIdx + 1))}
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* ======================================================== */}
         {/* SKILL: LISTENING                                         */}
