@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
-import { BookOpen, Highlighter, RotateCcw, Clock, Bookmark, ZoomIn, ZoomOut } from "lucide-react";
+import { Highlighter, RotateCcw, Bookmark, ZoomIn, ZoomOut } from "lucide-react";
 import { AssessmentQuestion } from "../domain/assessment.types";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -243,16 +243,7 @@ export function ReadingPanel({
         >
           <div className="p-5 sm:p-6 rounded-3xl bg-card border border-border flex flex-col lg:h-full lg:min-h-0 shadow-xs">
             <div className="flex items-center justify-between pb-3 border-b border-border gap-2 shrink-0">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-2xl bg-brand-blue text-white flex items-center justify-center shadow-xs">
-                  <BookOpen className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className="font-extrabold text-sm sm:text-base text-foreground">Reading</h3>
-                </div>
-              </div>
-
-              {/* Toolbar */}
+              {/* Toolbar: Highlight tool */}
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1 bg-muted/60 p-1 rounded-xl border border-border">
                   <Button
@@ -284,8 +275,10 @@ export function ReadingPanel({
                     </Button>
                   )}
                 </div>
+              </div>
 
-                {/* Font Size Adjusters */}
+              {/* Toolbar: Font Size Adjusters */}
+              <div className="flex items-center gap-2">
                 <div className="flex items-center bg-muted/60 p-0.5 rounded-xl border border-border">
                   <button
                     type="button"
@@ -304,15 +297,6 @@ export function ReadingPanel({
                     A+
                   </button>
                 </div>
-
-                <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-brand-blue/10 text-brand-blue border border-brand-blue/20">
-                  <Clock className="w-3 h-3" />
-                  Gợi ý: ~15 phút
-                </span>
-
-                <Badge variant="outline" className="text-xs font-bold shrink-0 bg-background">
-                  Passage Text
-                </Badge>
               </div>
             </div>
 

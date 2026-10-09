@@ -1,6 +1,4 @@
 import React from "react";
-import { Mic, Clock } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { PartRecorder } from "./PartRecorder";
 
 interface SpeakingPanelProps {
@@ -15,7 +13,7 @@ interface SpeakingPanelProps {
 
 export function SpeakingPanel({
   sessionId,
-  title,
+  title: _title,
   part1Questions,
   part2Topic,
   part2Cues,
@@ -24,23 +22,6 @@ export function SpeakingPanel({
 }: SpeakingPanelProps) {
   return (
     <div className="space-y-6">
-      {/* Section header */}
-      <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-brand-blue-soft/30 to-background border border-border shadow-xs flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-brand-blue text-white flex items-center justify-center shadow-xs">
-            <Mic className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="font-extrabold text-base text-foreground">Speaking</h3>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-brand-blue/10 text-brand-blue border border-brand-blue/20">
-            <Clock className="w-3 h-3" />
-            ~10 phút
-          </span>
-        </div>
-      </div>
 
       {/* ── Part 1 card ── */}
       <div className="p-5 sm:p-6 rounded-3xl bg-card border border-border space-y-3.5 shadow-xs">

@@ -1,0 +1,248 @@
+{
+ "UE-01": {
+  "correct": "B"
+ },
+ "UE-02": {
+  "correct": "C"
+ },
+ "UE-03": {
+  "correct": "B"
+ },
+ "UE-04": {
+  "correct": "A"
+ },
+ "UE-05": {
+  "correct": "B"
+ },
+ "UE-06": {
+  "correct": "A"
+ },
+ "UE-07": {
+  "correct": "C"
+ },
+ "UE-08": {
+  "correct": "A"
+ },
+ "UE-09": {
+  "correct": "A"
+ },
+ "UE-10": {
+  "correct": "B"
+ },
+ "UE-11": {
+  "correct": "C"
+ },
+ "UE-12": {
+  "correct": "A"
+ },
+ "UE-13": {
+  "correct": "B"
+ },
+ "UE-14": {
+  "correct": "C"
+ },
+ "UE-15": {
+  "correct": "A"
+ },
+ "UE-16": {
+  "correct": "B"
+ },
+ "UE-17": {
+  "correct": "C"
+ },
+ "UE-18": {
+  "correct": "B"
+ },
+ "UE-25": {
+  "correct": "B"
+ },
+ "UE-26": {
+  "correct": "A"
+ },
+ "UE-27": {
+  "correct": "C"
+ },
+ "UE-28": {
+  "correct": "B"
+ },
+ "UE-29": {
+  "correct": "A"
+ },
+ "UE-30": {
+  "correct": "C"
+ },
+ "UE-31": {
+  "correct": "A"
+ },
+ "UE-19": {
+  "correct": "B"
+ },
+ "UE-20": {
+  "correct": "A"
+ },
+ "UE-21": {
+  "correct": "B"
+ },
+ "UE-22": {
+  "correct": "A"
+ },
+ "UE-23": {
+  "correct": "B"
+ },
+ "UE-24": {
+  "correct": "B"
+ },
+ "UE-32": {
+  "correct": "B"
+ },
+ "UE-33": {
+  "correct": "C"
+ },
+ "UE-34": {
+  "correct": "B"
+ },
+ "RD-01": {
+  "correct": "B"
+ },
+ "RD-02": {
+  "correct": "C"
+ },
+ "RD-03": {
+  "correct": "A"
+ },
+ "RD-04": {
+  "correct": "A"
+ },
+ "RD-05": {
+  "correct": "C"
+ },
+ "RD-06": {
+  "correct": "C"
+ },
+ "RD-07": {
+  "correct": "A"
+ },
+ "RD-08": {
+  "correct": "C"
+ },
+ "RD-09": {
+  "correct": "D"
+ },
+ "RD-10": {
+  "correct": "E"
+ },
+ "RD-11": {
+  "correct": "G"
+ },
+ "RD-12": {
+  "correct": "F"
+ },
+ "RD-13": {
+  "correct": "C"
+ },
+ "RD-14": {
+  "correct": "A"
+ },
+ "RD-15": {
+  "correct": "B"
+ },
+ "RD-16": {
+  "correct": "B"
+ },
+ "RD-17": {
+  "correct": "C"
+ },
+ "RD-18": {
+  "correct": "A"
+ },
+ "LS-01": {
+  "correct": "B"
+ },
+ "LS-02": {
+  "correct": "C"
+ },
+ "LS-03": {
+  "correct": "B"
+ },
+ "LS-04": {
+  "correct": "C"
+ },
+ "LS-05": {
+  "correct": "A"
+ },
+ "LS-06": {
+  "correct": "C"
+ },
+ "LS-07": {
+  "correct": "B"
+ },
+ "LS-08": {
+  "correct": "A"
+ },
+ "LS-09": {
+  "correct": "B"
+ },
+ "LS-10": {
+  "correct": "A"
+ },
+ "LS-11": {
+  "accepted": [
+   "tiger"
+  ],
+  "normalise": "lowercase, trim, collapse spaces, remove punctuation except . and :",
+  "fuzzy": false
+ },
+ "LS-12": {
+  "accepted": [
+   "10.45",
+   "10:45",
+   "10 45",
+   "ten forty-five",
+   "quarter to eleven",
+   "a quarter to eleven"
+  ],
+  "normalise": "lowercase, trim, collapse spaces, remove punctuation except . and :",
+  "fuzzy": false
+ },
+ "LS-13": {
+  "accepted": [
+   "sohatu"
+  ],
+  "normalise": "lowercase, trim, collapse spaces, remove punctuation except . and :",
+  "fuzzy": false
+ },
+ "LS-14": {
+  "accepted": [
+   "37",
+   "thirty-seven",
+   "thirty seven"
+  ],
+  "normalise": "lowercase, trim, collapse spaces, remove punctuation except . and :",
+  "fuzzy": false
+ },
+ "LS-15": {
+  "accepted": [
+   "poster"
+  ],
+  "normalise": "lowercase, trim, collapse spaces, remove punctuation except . and :",
+  "fuzzy": false
+ },
+ "LS-16": {
+  "correct": "A"
+ },
+ "LS-17": {
+  "correct": "B"
+ },
+ "LS-18": {
+  "correct": "C"
+ },
+ "LS-19": {
+  "correct": "B"
+ },
+ "LS-20": {
+  "correct": "C"
+ },
+ "LS-21": {
+  "correct": "A"
+ }
+}

@@ -1,0 +1,2062 @@
+{
+ "meta": {
+  "version": "1.0.0",
+  "name": "ARIS Placement Test",
+  "levels": [
+   "Flyers",
+   "KET",
+   "PET"
+  ],
+  "bands": [
+   "F",
+   "K",
+   "K+",
+   "P-",
+   "P"
+  ],
+  "sections": [
+   {
+    "skill": "use_of_english",
+    "core": {
+     "items": 24,
+     "minutes": 15
+    },
+    "extension": {
+     "items": 10,
+     "minutes": 7
+    }
+   },
+   {
+    "skill": "reading",
+    "core": {
+     "items": 12,
+     "minutes": 12
+    },
+    "extension": {
+     "items": 6,
+     "minutes": 8
+    }
+   },
+   {
+    "skill": "listening",
+    "core": {
+     "items": 15,
+     "minutes": 16
+    },
+    "extension": {
+     "items": 6,
+     "minutes": 10
+    },
+    "note": "audio-driven; timer should follow the audio length"
+   },
+   {
+    "skill": "writing",
+    "core": {
+     "tasks": [
+      "W1",
+      "W2"
+     ],
+     "minutes": 9
+    },
+    "extension": {
+     "tasks": [
+      "W3"
+     ],
+     "minutes": 12
+    },
+    "manualGrading": true
+   },
+   {
+    "skill": "speaking",
+    "manualGrading": true,
+    "minutes": "8-10"
+   }
+  ],
+  "listeningGapForm": {
+   "title": "Zoo project day – notes",
+   "rows": [
+    [
+     "First activity:",
+     "Draw a (11) ______________"
+    ],
+    [
+     "Time to give water to the animals:",
+     "(12) ______________"
+    ],
+    [
+     "Name of the baby lion:",
+     "(13) ______________"
+    ],
+    [
+     "Age of the oldest dolphin:",
+     "(14) ______________ years"
+    ],
+    [
+     "Present at the end of the day:",
+     "a (15) ______________"
+    ]
+   ]
+  }
+ },
+ "passages": {
+  "P-UE3": {
+   "text": "Last weekend, my cousin Mai and I (19) ______ to the beach with our grandparents. We left home (20) ______ seven o’clock in the morning, so we arrived early. The weather was sunny, but there (21) ______ a lot of people on the beach. Mai wanted to swim, (22) ______ the sea was too cold for me. Later, we had lunch in a café near the beach. I’ve never (23) ______ such delicious fish before! We are planning to go back next month, if my dad (24) ______ some free time."
+  },
+  "P-UE6": {
+   "text": "My town used (32) ______ be very quiet, but things have changed. A new shopping centre (33) ______ built near the river two years ago, and since then the streets (34) ______ always been crowded at weekends."
+  },
+  "P-R2": {
+   "instruction": "Six students want to join a summer club. Read the descriptions of the clubs (A–H). Which club is the best for each student?",
+   "clubs": [
+    {
+     "key": "A",
+     "name": "Art Club",
+     "description": "Paint pictures and make models from paper. Saturdays, 9–11 a.m. Bring old clothes."
+    },
+    {
+     "key": "B",
+     "name": "Chess Club",
+     "description": "Learn to play chess and take part in a competition at your school in July. Monday and Wednesday after school."
+    },
+    {
+     "key": "C",
+     "name": "Swimming Fun",
+     "description": "Lessons for beginners in the school pool. Tuesday and Thursday, 4–5 p.m. Wear a swimming cap."
+    },
+    {
+     "key": "D",
+     "name": "Cooking Club",
+     "description": "Make simple, healthy meals and eat them together. Friday afternoons. Cost: £5 for food."
+    },
+    {
+     "key": "E",
+     "name": "Drama Club",
+     "description": "Act in a short play for parents. No experience needed. Wednesday evenings."
+    },
+    {
+     "key": "F",
+     "name": "Football for Girls",
+     "description": "Train with a woman coach and play matches against other schools. Saturday mornings."
+    },
+    {
+     "key": "G",
+     "name": "Computer Club",
+     "description": "Learn to make games on a computer. Free. Thursday after school. Not for beginners."
+    },
+    {
+     "key": "H",
+     "name": "Garden Club",
+     "description": "Grow vegetables and flowers and take some home. Sunday afternoons."
+    }
+   ]
+  },
+  "P-R3": {
+   "title": "A Surprise on My First Day",
+   "paragraphs": [
+    "When I moved to Da Nang last summer, I was worried about starting a new school. I didn’t know anyone, and I thought everyone would already have friends. On my first morning, I sat alone at the back of the classroom. Then a girl called Hoa asked if I wanted to join her group for a science project. I was surprised, because I hadn’t said a word to anyone!",
+    "We had to build a small bridge from paper and glue, and it was much harder than I expected. Our bridge broke twice, but we kept trying and finally it held a heavy book. After that, I felt much better. Now Hoa is my best friend, and I’m glad I wasn’t too shy to say yes. My advice to anyone moving to a new school: be brave and accept every invitation in the first week."
+   ]
+  },
+  "P-R4": {
+   "title": "Starting a Small Garden",
+   "instruction": "Three sentences have been removed from the text. Choose the correct sentence (A–E) for each gap. There are two extra sentences that you do not need.",
+   "paragraphs": [
+    "Many people think you need a big garden to grow your own food, but this isn’t true. (16) ______ Tomatoes, herbs and lettuce all grow well in pots on a sunny balcony.",
+    "The first step is to choose a place that gets at least six hours of sun every day. (17) ______ Then you need some pots and a bag of good earth, which you can buy cheaply at a garden shop.",
+    "Water your plants every morning, but don’t give them too much water. (18) ______ Within a few weeks, you will be able to enjoy fresh vegetables that you grew yourself."
+   ],
+   "sentences": [
+    {
+     "key": "A",
+     "text": "If the earth is always wet, the plants can get ill."
+    },
+    {
+     "key": "B",
+     "text": "Even a small space can be enough."
+    },
+    {
+     "key": "C",
+     "text": "Plants that don’t get enough light will grow slowly and look weak."
+    },
+    {
+     "key": "D",
+     "text": "Many shops sell cheap plastic pots."
+    },
+    {
+     "key": "E",
+     "text": "My neighbour grows beans in his garden."
+    }
+   ]
+  }
+ },
+ "audio": [
+  {
+   "id": "AUD-T1",
+   "file": "assets/audio/task1.mp3",
+   "task": "Task 1 (câu 1–5)",
+   "source": "Cambridge Young Learners English Tests – Flyers 1 (Answer Booklet + audio CD/MP3)",
+   "location": "Test 1 – Listening Part 4. Booklet không ghi số track: tìm đoạn Sue nói về công việc của anh trai",
+   "notes": "Transcript: p.8. Đáp án sách (theo tranh A–C): p.6, Part 4: 1 C, 2 A, 3 B, 4 A, 5 C.",
+   "stage": "core",
+   "playsPerStudent": "SET_BY_ARIS (1 if the file already contains the repeat, otherwise 2)"
+  },
+  {
+   "id": "AUD-T2",
+   "file": "assets/audio/task2.mp3",
+   "task": "Task 2 (câu 6–10)",
+   "source": "A2 Key for Schools Trainer (2nd ed., 2020)",
+   "location": "Exam Practice Test 2 – Listening Part 1, Questions 1–5, Track 32",
+   "notes": "Đề: p.64–65. Audioscript: p.149–150. Đáp án sách: Teacher’s Notes Test 2, p.185: 1 C, 2 C, 3 A, 4 A, 5 B (theo tranh).",
+   "stage": "core",
+   "playsPerStudent": "SET_BY_ARIS (1 if the file already contains the repeat, otherwise 2)"
+  },
+  {
+   "id": "AUD-T3",
+   "file": "assets/audio/task3.mp3",
+   "task": "Task 3 (câu 11–15)",
+   "source": "A2 Key for Schools Trainer (2nd ed., 2020)",
+   "location": "Exam Practice Test 2 – Listening Part 2, Questions 6–10, Track 35",
+   "notes": "Đề: p.67. Audioscript: p.150. Đáp án sách: Teacher’s Notes Test 2, p.186: tiger, 10:45, Sohatu, 37/thirty-seven, poster.",
+   "stage": "core",
+   "playsPerStudent": "SET_BY_ARIS (1 if the file already contains the repeat, otherwise 2)"
+  },
+  {
+   "id": "AUD-T4",
+   "file": "assets/audio/task4.mp3",
+   "task": "Task 4 (câu 16–18) – Extension",
+   "source": "Oxford Preparation & Practice for B1 Preliminary for Schools",
+   "location": "Practice Test 1 – Listening Part 2, Track 04: chỉ dùng 3 đoạn số 9, 10, 11",
+   "notes": "Đề: p.43. Audioscript: p.164. Khớp câu 9 (ghế), 10 (bắt đầu sớm), 11 (bài tập cuối tuần) của sách. Cắt 3 đoạn thành 1 file.",
+   "stage": "extension",
+   "playsPerStudent": "SET_BY_ARIS (1 if the file already contains the repeat, otherwise 2)"
+  },
+  {
+   "id": "AUD-T5",
+   "file": "assets/audio/task5.mp3",
+   "task": "Task 5 (câu 19–21) – Extension",
+   "source": "Oxford Preparation & Practice for B1 Preliminary for Schools",
+   "location": "Practice Test 1 – Listening Part 4 (Alice Parker), Track 08",
+   "notes": "Đề: p.50. Audioscript: p.165–166. Câu 19 ≈ sách Q21, câu 21 ≈ sách Q25. Câu 20 do ARIS viết, không có trong sách; căn cứ lời Alice nói chưa có cửa hàng nào giống vậy trong khu vực (p.166).",
+   "stage": "extension",
+   "playsPerStudent": "SET_BY_ARIS (1 if the file already contains the repeat, otherwise 2)"
+  }
+ ],
+ "items": [
+  {
+   "id": "UE-01",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE1",
+   "band": "F",
+   "type": "mcq",
+   "prompt": "You put a letter inside this and write the address on it. It is an ______.",
+   "options": [
+    {
+     "key": "A",
+     "text": "umbrella"
+    },
+    {
+     "key": "B",
+     "text": "envelope"
+    },
+    {
+     "key": "C",
+     "text": "airport"
+    }
+   ]
+  },
+  {
+   "id": "UE-02",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE1",
+   "band": "F",
+   "type": "mcq",
+   "prompt": "It's very ______ today. We can't see the mountains.",
+   "options": [
+    {
+     "key": "A",
+     "text": "noisy"
+    },
+    {
+     "key": "B",
+     "text": "empty"
+    },
+    {
+     "key": "C",
+     "text": "foggy"
+    }
+   ]
+  },
+  {
+   "id": "UE-03",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE1",
+   "band": "F",
+   "type": "mcq",
+   "prompt": "My uncle flies big planes. He is a ______.",
+   "options": [
+    {
+     "key": "A",
+     "text": "mechanic"
+    },
+    {
+     "key": "B",
+     "text": "pilot"
+    },
+    {
+     "key": "C",
+     "text": "dentist"
+    }
+   ]
+  },
+  {
+   "id": "UE-04",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE1",
+   "band": "F",
+   "type": "mcq",
+   "prompt": "We went to the ______ to see old paintings and statues.",
+   "options": [
+    {
+     "key": "A",
+     "text": "museum"
+    },
+    {
+     "key": "B",
+     "text": "factory"
+    },
+    {
+     "key": "C",
+     "text": "station"
+    }
+   ]
+  },
+  {
+   "id": "UE-05",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE1",
+   "band": "K",
+   "type": "mcq",
+   "prompt": "Please ______ your homework before you play games.",
+   "options": [
+    {
+     "key": "A",
+     "text": "make"
+    },
+    {
+     "key": "B",
+     "text": "do"
+    },
+    {
+     "key": "C",
+     "text": "have"
+    }
+   ]
+  },
+  {
+   "id": "UE-06",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE1",
+   "band": "K",
+   "type": "mcq",
+   "prompt": "I can't find my phone. Can you ______ for it with me?",
+   "options": [
+    {
+     "key": "A",
+     "text": "look"
+    },
+    {
+     "key": "B",
+     "text": "see"
+    },
+    {
+     "key": "C",
+     "text": "watch"
+    }
+   ]
+  },
+  {
+   "id": "UE-07",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE1",
+   "band": "K",
+   "type": "mcq",
+   "prompt": "The film starts at 7.30, so we must ______ at the cinema by 7.15.",
+   "options": [
+    {
+     "key": "A",
+     "text": "reach"
+    },
+    {
+     "key": "B",
+     "text": "get"
+    },
+    {
+     "key": "C",
+     "text": "arrive"
+    }
+   ]
+  },
+  {
+   "id": "UE-08",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE1",
+   "band": "K",
+   "type": "mcq",
+   "prompt": "My brother is very good ______ maths. He always gets top marks.",
+   "options": [
+    {
+     "key": "A",
+     "text": "at"
+    },
+    {
+     "key": "B",
+     "text": "in"
+    },
+    {
+     "key": "C",
+     "text": "on"
+    }
+   ]
+  },
+  {
+   "id": "UE-09",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE2",
+   "band": "F",
+   "type": "mcq",
+   "prompt": "Look at those black clouds! It ______ rain.",
+   "options": [
+    {
+     "key": "A",
+     "text": "is going to"
+    },
+    {
+     "key": "B",
+     "text": "will to"
+    },
+    {
+     "key": "C",
+     "text": "goes to"
+    }
+   ]
+  },
+  {
+   "id": "UE-10",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE2",
+   "band": "F",
+   "type": "mcq",
+   "prompt": "______ we have a picnic on Sunday?",
+   "options": [
+    {
+     "key": "A",
+     "text": "Do"
+    },
+    {
+     "key": "B",
+     "text": "Shall"
+    },
+    {
+     "key": "C",
+     "text": "Are"
+    }
+   ]
+  },
+  {
+   "id": "UE-11",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE2",
+   "band": "F",
+   "type": "mcq",
+   "prompt": "I ______ TV when my friend phoned me.",
+   "options": [
+    {
+     "key": "A",
+     "text": "watched"
+    },
+    {
+     "key": "B",
+     "text": "watch"
+    },
+    {
+     "key": "C",
+     "text": "was watching"
+    }
+   ]
+  },
+  {
+   "id": "UE-12",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE2",
+   "band": "F",
+   "type": "mcq",
+   "prompt": "Have you ______ been to the zoo?",
+   "options": [
+    {
+     "key": "A",
+     "text": "ever"
+    },
+    {
+     "key": "B",
+     "text": "yesterday"
+    },
+    {
+     "key": "C",
+     "text": "last"
+    }
+   ]
+  },
+  {
+   "id": "UE-13",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE2",
+   "band": "K",
+   "type": "mcq",
+   "prompt": "My bag is ______ than yours.",
+   "options": [
+    {
+     "key": "A",
+     "text": "heavy"
+    },
+    {
+     "key": "B",
+     "text": "heavier"
+    },
+    {
+     "key": "C",
+     "text": "heaviest"
+    }
+   ]
+  },
+  {
+   "id": "UE-14",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE2",
+   "band": "K",
+   "type": "mcq",
+   "prompt": "You ______ wear a helmet when you ride a bike. It's the rule.",
+   "options": [
+    {
+     "key": "A",
+     "text": "can"
+    },
+    {
+     "key": "B",
+     "text": "might"
+    },
+    {
+     "key": "C",
+     "text": "must"
+    }
+   ]
+  },
+  {
+   "id": "UE-15",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE2",
+   "band": "K",
+   "type": "mcq",
+   "prompt": "What ______ you do last weekend?",
+   "options": [
+    {
+     "key": "A",
+     "text": "did"
+    },
+    {
+     "key": "B",
+     "text": "do"
+    },
+    {
+     "key": "C",
+     "text": "does"
+    }
+   ]
+  },
+  {
+   "id": "UE-16",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE2",
+   "band": "K",
+   "type": "mcq",
+   "prompt": "We ______ to the cinema tomorrow. I've already bought the tickets.",
+   "options": [
+    {
+     "key": "A",
+     "text": "went"
+    },
+    {
+     "key": "B",
+     "text": "are going"
+    },
+    {
+     "key": "C",
+     "text": "go"
+    }
+   ]
+  },
+  {
+   "id": "UE-17",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE2",
+   "band": "K+",
+   "type": "mcq",
+   "prompt": "The boy ______ is playing the drums is my cousin.",
+   "options": [
+    {
+     "key": "A",
+     "text": "which"
+    },
+    {
+     "key": "B",
+     "text": "whose"
+    },
+    {
+     "key": "C",
+     "text": "who"
+    }
+   ]
+  },
+  {
+   "id": "UE-18",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE2",
+   "band": "K+",
+   "type": "mcq",
+   "prompt": "This bag is ______ heavy for me to carry.",
+   "options": [
+    {
+     "key": "A",
+     "text": "enough"
+    },
+    {
+     "key": "B",
+     "text": "too"
+    },
+    {
+     "key": "C",
+     "text": "very"
+    }
+   ]
+  },
+  {
+   "id": "UE-25",
+   "skill": "use_of_english",
+   "stage": "extension",
+   "task": "UE4",
+   "band": "P-",
+   "type": "mcq",
+   "prompt": "The teacher said the school trip would be ______ until next month because of the weather.",
+   "options": [
+    {
+     "key": "A",
+     "text": "put on"
+    },
+    {
+     "key": "B",
+     "text": "put off"
+    },
+    {
+     "key": "C",
+     "text": "put away"
+    }
+   ]
+  },
+  {
+   "id": "UE-26",
+   "skill": "use_of_english",
+   "stage": "extension",
+   "task": "UE4",
+   "band": "P",
+   "type": "mcq",
+   "prompt": "Tom has ______ up playing the guitar because he never has time to practise.",
+   "options": [
+    {
+     "key": "A",
+     "text": "given"
+    },
+    {
+     "key": "B",
+     "text": "taken"
+    },
+    {
+     "key": "C",
+     "text": "put"
+    }
+   ]
+  },
+  {
+   "id": "UE-27",
+   "skill": "use_of_english",
+   "stage": "extension",
+   "task": "UE4",
+   "band": "P",
+   "type": "mcq",
+   "prompt": "Our flat has a lovely ______ of the river.",
+   "options": [
+    {
+     "key": "A",
+     "text": "sight"
+    },
+    {
+     "key": "B",
+     "text": "scene"
+    },
+    {
+     "key": "C",
+     "text": "view"
+    }
+   ]
+  },
+  {
+   "id": "UE-28",
+   "skill": "use_of_english",
+   "stage": "extension",
+   "task": "UE5",
+   "band": "P-",
+   "type": "mcq",
+   "prompt": "If you ______ harder, you'll pass the exam.",
+   "options": [
+    {
+     "key": "A",
+     "text": "will study"
+    },
+    {
+     "key": "B",
+     "text": "study"
+    },
+    {
+     "key": "C",
+     "text": "studied"
+    }
+   ]
+  },
+  {
+   "id": "UE-29",
+   "skill": "use_of_english",
+   "stage": "extension",
+   "task": "UE5",
+   "band": "P-",
+   "type": "mcq",
+   "prompt": "I ______ in this town for five years.",
+   "options": [
+    {
+     "key": "A",
+     "text": "have lived"
+    },
+    {
+     "key": "B",
+     "text": "live"
+    },
+    {
+     "key": "C",
+     "text": "am living"
+    }
+   ]
+  },
+  {
+   "id": "UE-30",
+   "skill": "use_of_english",
+   "stage": "extension",
+   "task": "UE5",
+   "band": "P",
+   "type": "mcq",
+   "prompt": "The window ______ by a football yesterday.",
+   "options": [
+    {
+     "key": "A",
+     "text": "broke"
+    },
+    {
+     "key": "B",
+     "text": "has broken"
+    },
+    {
+     "key": "C",
+     "text": "was broken"
+    }
+   ]
+  },
+  {
+   "id": "UE-31",
+   "skill": "use_of_english",
+   "stage": "extension",
+   "task": "UE5",
+   "band": "P",
+   "type": "mcq",
+   "prompt": "If I ______ a million dollars, I would travel the world.",
+   "options": [
+    {
+     "key": "A",
+     "text": "had"
+    },
+    {
+     "key": "B",
+     "text": "have"
+    },
+    {
+     "key": "C",
+     "text": "will have"
+    }
+   ]
+  },
+  {
+   "id": "UE-19",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE3",
+   "band": "K",
+   "type": "cloze_mcq",
+   "passageId": "P-UE3",
+   "gapNumber": 19,
+   "options": [
+    {
+     "key": "A",
+     "text": "go"
+    },
+    {
+     "key": "B",
+     "text": "went"
+    },
+    {
+     "key": "C",
+     "text": "going"
+    }
+   ]
+  },
+  {
+   "id": "UE-20",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE3",
+   "band": "K",
+   "type": "cloze_mcq",
+   "passageId": "P-UE3",
+   "gapNumber": 20,
+   "options": [
+    {
+     "key": "A",
+     "text": "at"
+    },
+    {
+     "key": "B",
+     "text": "in"
+    },
+    {
+     "key": "C",
+     "text": "on"
+    }
+   ]
+  },
+  {
+   "id": "UE-21",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE3",
+   "band": "K+",
+   "type": "cloze_mcq",
+   "passageId": "P-UE3",
+   "gapNumber": 21,
+   "options": [
+    {
+     "key": "A",
+     "text": "was"
+    },
+    {
+     "key": "B",
+     "text": "were"
+    },
+    {
+     "key": "C",
+     "text": "is"
+    }
+   ]
+  },
+  {
+   "id": "UE-22",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE3",
+   "band": "K+",
+   "type": "cloze_mcq",
+   "passageId": "P-UE3",
+   "gapNumber": 22,
+   "options": [
+    {
+     "key": "A",
+     "text": "but"
+    },
+    {
+     "key": "B",
+     "text": "so"
+    },
+    {
+     "key": "C",
+     "text": "because"
+    }
+   ]
+  },
+  {
+   "id": "UE-23",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE3",
+   "band": "P-",
+   "type": "cloze_mcq",
+   "passageId": "P-UE3",
+   "gapNumber": 23,
+   "options": [
+    {
+     "key": "A",
+     "text": "ate"
+    },
+    {
+     "key": "B",
+     "text": "eaten"
+    },
+    {
+     "key": "C",
+     "text": "eating"
+    }
+   ]
+  },
+  {
+   "id": "UE-24",
+   "skill": "use_of_english",
+   "stage": "core",
+   "task": "UE3",
+   "band": "P-",
+   "type": "cloze_mcq",
+   "passageId": "P-UE3",
+   "gapNumber": 24,
+   "options": [
+    {
+     "key": "A",
+     "text": "will have"
+    },
+    {
+     "key": "B",
+     "text": "has"
+    },
+    {
+     "key": "C",
+     "text": "is having"
+    }
+   ]
+  },
+  {
+   "id": "UE-32",
+   "skill": "use_of_english",
+   "stage": "extension",
+   "task": "UE6",
+   "band": "P-",
+   "type": "cloze_mcq",
+   "passageId": "P-UE6",
+   "gapNumber": 32,
+   "options": [
+    {
+     "key": "A",
+     "text": "for"
+    },
+    {
+     "key": "B",
+     "text": "to"
+    },
+    {
+     "key": "C",
+     "text": "of"
+    }
+   ]
+  },
+  {
+   "id": "UE-33",
+   "skill": "use_of_english",
+   "stage": "extension",
+   "task": "UE6",
+   "band": "P",
+   "type": "cloze_mcq",
+   "passageId": "P-UE6",
+   "gapNumber": 33,
+   "options": [
+    {
+     "key": "A",
+     "text": "is"
+    },
+    {
+     "key": "B",
+     "text": "has"
+    },
+    {
+     "key": "C",
+     "text": "was"
+    }
+   ]
+  },
+  {
+   "id": "UE-34",
+   "skill": "use_of_english",
+   "stage": "extension",
+   "task": "UE6",
+   "band": "P",
+   "type": "cloze_mcq",
+   "passageId": "P-UE6",
+   "gapNumber": 34,
+   "options": [
+    {
+     "key": "A",
+     "text": "were"
+    },
+    {
+     "key": "B",
+     "text": "have"
+    },
+    {
+     "key": "C",
+     "text": "are"
+    }
+   ]
+  },
+  {
+   "id": "RD-01",
+   "skill": "reading",
+   "stage": "core",
+   "task": "R1",
+   "band": "F",
+   "type": "mcq",
+   "stimulus": [
+    "SWIMMING POOL",
+    "Children under 8 must always be with an adult."
+   ],
+   "prompt": "What does the notice say?",
+   "options": [
+    {
+     "key": "A",
+     "text": "Children under 8 can't swim here."
+    },
+    {
+     "key": "B",
+     "text": "Small children need an adult with them."
+    },
+    {
+     "key": "C",
+     "text": "Only adults can use the pool."
+    }
+   ]
+  },
+  {
+   "id": "RD-02",
+   "skill": "reading",
+   "stage": "core",
+   "task": "R1",
+   "band": "F",
+   "type": "mcq",
+   "stimulus": [
+    "Hi Ben! I’m at the bus stop but the bus is late. Can you wait for me at the café? – Sam"
+   ],
+   "prompt": "What does Sam want Ben to do?",
+   "options": [
+    {
+     "key": "A",
+     "text": "take the bus"
+    },
+    {
+     "key": "B",
+     "text": "phone the café"
+    },
+    {
+     "key": "C",
+     "text": "meet him at the café"
+    }
+   ]
+  },
+  {
+   "id": "RD-03",
+   "skill": "reading",
+   "stage": "core",
+   "task": "R1",
+   "band": "F",
+   "type": "mcq",
+   "stimulus": [
+    "LIBRARY",
+    "Closed on Mondays. Open Tuesday to Saturday, 9.00–5.00."
+   ],
+   "prompt": "What does the notice say?",
+   "options": [
+    {
+     "key": "A",
+     "text": "You can't visit the library on Monday."
+    },
+    {
+     "key": "B",
+     "text": "The library is open every day."
+    },
+    {
+     "key": "C",
+     "text": "The library closes at 9 o’clock."
+    }
+   ]
+  },
+  {
+   "id": "RD-04",
+   "skill": "reading",
+   "stage": "core",
+   "task": "R1",
+   "band": "K",
+   "type": "mcq",
+   "stimulus": [
+    "Hi Anna, I can’t come to tennis tomorrow because I have to look after my little brother. Can you tell the teacher? Thanks, Lucy"
+   ],
+   "prompt": "Why can’t Lucy come to tennis?",
+   "options": [
+    {
+     "key": "A",
+     "text": "She must stay with her brother."
+    },
+    {
+     "key": "B",
+     "text": "She is ill."
+    },
+    {
+     "key": "C",
+     "text": "She doesn't like tennis."
+    }
+   ]
+  },
+  {
+   "id": "RD-05",
+   "skill": "reading",
+   "stage": "core",
+   "task": "R1",
+   "band": "K",
+   "type": "mcq",
+   "stimulus": [
+    "LOST",
+    "A blue rucksack with a red bottle inside. If you find it, please give it to Mr Brown in Room 12."
+   ],
+   "prompt": "What should you do if you find the rucksack?",
+   "options": [
+    {
+     "key": "A",
+     "text": "Buy a new bottle."
+    },
+    {
+     "key": "B",
+     "text": "Ask Mr Brown to look for it."
+    },
+    {
+     "key": "C",
+     "text": "Take it to Room 12."
+    }
+   ]
+  },
+  {
+   "id": "RD-06",
+   "skill": "reading",
+   "stage": "core",
+   "task": "R1",
+   "band": "K",
+   "type": "mcq",
+   "stimulus": [
+    "Buy one T-shirt, get the second one for half price! Offer ends Sunday."
+   ],
+   "prompt": "What does the sign say?",
+   "options": [
+    {
+     "key": "A",
+     "text": "All T-shirts are half price."
+    },
+    {
+     "key": "B",
+     "text": "You can use this offer after Sunday."
+    },
+    {
+     "key": "C",
+     "text": "The second T-shirt costs less."
+    }
+   ]
+  },
+  {
+   "id": "RD-07",
+   "skill": "reading",
+   "stage": "core",
+   "task": "R2",
+   "band": "K",
+   "type": "matching",
+   "passageId": "P-R2",
+   "prompt": "Jack loves painting and he is free on Saturday morning.",
+   "options": [
+    {
+     "key": "A",
+     "text": "Art Club – Paint pictures and make models from paper. Saturdays, 9–11 a.m. Bring old clothes."
+    },
+    {
+     "key": "B",
+     "text": "Chess Club – Learn to play chess and take part in a competition at your school in July. Monday and Wednesday after school."
+    },
+    {
+     "key": "C",
+     "text": "Swimming Fun – Lessons for beginners in the school pool. Tuesday and Thursday, 4–5 p.m. Wear a swimming cap."
+    },
+    {
+     "key": "D",
+     "text": "Cooking Club – Make simple, healthy meals and eat them together. Friday afternoons. Cost: £5 for food."
+    },
+    {
+     "key": "E",
+     "text": "Drama Club – Act in a short play for parents. No experience needed. Wednesday evenings."
+    },
+    {
+     "key": "F",
+     "text": "Football for Girls – Train with a woman coach and play matches against other schools. Saturday mornings."
+    },
+    {
+     "key": "G",
+     "text": "Computer Club – Learn to make games on a computer. Free. Thursday after school. Not for beginners."
+    },
+    {
+     "key": "H",
+     "text": "Garden Club – Grow vegetables and flowers and take some home. Sunday afternoons."
+    }
+   ]
+  },
+  {
+   "id": "RD-08",
+   "skill": "reading",
+   "stage": "core",
+   "task": "R2",
+   "band": "K",
+   "type": "matching",
+   "passageId": "P-R2",
+   "prompt": "Mai can't swim. She wants lessons after school on Tuesday.",
+   "options": [
+    {
+     "key": "A",
+     "text": "Art Club – Paint pictures and make models from paper. Saturdays, 9–11 a.m. Bring old clothes."
+    },
+    {
+     "key": "B",
+     "text": "Chess Club – Learn to play chess and take part in a competition at your school in July. Monday and Wednesday after school."
+    },
+    {
+     "key": "C",
+     "text": "Swimming Fun – Lessons for beginners in the school pool. Tuesday and Thursday, 4–5 p.m. Wear a swimming cap."
+    },
+    {
+     "key": "D",
+     "text": "Cooking Club – Make simple, healthy meals and eat them together. Friday afternoons. Cost: £5 for food."
+    },
+    {
+     "key": "E",
+     "text": "Drama Club – Act in a short play for parents. No experience needed. Wednesday evenings."
+    },
+    {
+     "key": "F",
+     "text": "Football for Girls – Train with a woman coach and play matches against other schools. Saturday mornings."
+    },
+    {
+     "key": "G",
+     "text": "Computer Club – Learn to make games on a computer. Free. Thursday after school. Not for beginners."
+    },
+    {
+     "key": "H",
+     "text": "Garden Club – Grow vegetables and flowers and take some home. Sunday afternoons."
+    }
+   ]
+  },
+  {
+   "id": "RD-09",
+   "skill": "reading",
+   "stage": "core",
+   "task": "R2",
+   "band": "K",
+   "type": "matching",
+   "passageId": "P-R2",
+   "prompt": "Tom wants to learn to cook. He is only free on Friday.",
+   "options": [
+    {
+     "key": "A",
+     "text": "Art Club – Paint pictures and make models from paper. Saturdays, 9–11 a.m. Bring old clothes."
+    },
+    {
+     "key": "B",
+     "text": "Chess Club – Learn to play chess and take part in a competition at your school in July. Monday and Wednesday after school."
+    },
+    {
+     "key": "C",
+     "text": "Swimming Fun – Lessons for beginners in the school pool. Tuesday and Thursday, 4–5 p.m. Wear a swimming cap."
+    },
+    {
+     "key": "D",
+     "text": "Cooking Club – Make simple, healthy meals and eat them together. Friday afternoons. Cost: £5 for food."
+    },
+    {
+     "key": "E",
+     "text": "Drama Club – Act in a short play for parents. No experience needed. Wednesday evenings."
+    },
+    {
+     "key": "F",
+     "text": "Football for Girls – Train with a woman coach and play matches against other schools. Saturday mornings."
+    },
+    {
+     "key": "G",
+     "text": "Computer Club – Learn to make games on a computer. Free. Thursday after school. Not for beginners."
+    },
+    {
+     "key": "H",
+     "text": "Garden Club – Grow vegetables and flowers and take some home. Sunday afternoons."
+    }
+   ]
+  },
+  {
+   "id": "RD-10",
+   "skill": "reading",
+   "stage": "core",
+   "task": "R2",
+   "band": "K+",
+   "type": "matching",
+   "passageId": "P-R2",
+   "prompt": "Linh likes acting but she has never been on a stage. She can only go in the evening.",
+   "options": [
+    {
+     "key": "A",
+     "text": "Art Club – Paint pictures and make models from paper. Saturdays, 9–11 a.m. Bring old clothes."
+    },
+    {
+     "key": "B",
+     "text": "Chess Club – Learn to play chess and take part in a competition at your school in July. Monday and Wednesday after school."
+    },
+    {
+     "key": "C",
+     "text": "Swimming Fun – Lessons for beginners in the school pool. Tuesday and Thursday, 4–5 p.m. Wear a swimming cap."
+    },
+    {
+     "key": "D",
+     "text": "Cooking Club – Make simple, healthy meals and eat them together. Friday afternoons. Cost: £5 for food."
+    },
+    {
+     "key": "E",
+     "text": "Drama Club – Act in a short play for parents. No experience needed. Wednesday evenings."
+    },
+    {
+     "key": "F",
+     "text": "Football for Girls – Train with a woman coach and play matches against other schools. Saturday mornings."
+    },
+    {
+     "key": "G",
+     "text": "Computer Club – Learn to make games on a computer. Free. Thursday after school. Not for beginners."
+    },
+    {
+     "key": "H",
+     "text": "Garden Club – Grow vegetables and flowers and take some home. Sunday afternoons."
+    }
+   ]
+  },
+  {
+   "id": "RD-11",
+   "skill": "reading",
+   "stage": "core",
+   "task": "R2",
+   "band": "K+",
+   "type": "matching",
+   "passageId": "P-R2",
+   "prompt": "Nam enjoys computers and already makes simple games. He doesn't want to pay.",
+   "options": [
+    {
+     "key": "A",
+     "text": "Art Club – Paint pictures and make models from paper. Saturdays, 9–11 a.m. Bring old clothes."
+    },
+    {
+     "key": "B",
+     "text": "Chess Club – Learn to play chess and take part in a competition at your school in July. Monday and Wednesday after school."
+    },
+    {
+     "key": "C",
+     "text": "Swimming Fun – Lessons for beginners in the school pool. Tuesday and Thursday, 4–5 p.m. Wear a swimming cap."
+    },
+    {
+     "key": "D",
+     "text": "Cooking Club – Make simple, healthy meals and eat them together. Friday afternoons. Cost: £5 for food."
+    },
+    {
+     "key": "E",
+     "text": "Drama Club – Act in a short play for parents. No experience needed. Wednesday evenings."
+    },
+    {
+     "key": "F",
+     "text": "Football for Girls – Train with a woman coach and play matches against other schools. Saturday mornings."
+    },
+    {
+     "key": "G",
+     "text": "Computer Club – Learn to make games on a computer. Free. Thursday after school. Not for beginners."
+    },
+    {
+     "key": "H",
+     "text": "Garden Club – Grow vegetables and flowers and take some home. Sunday afternoons."
+    }
+   ]
+  },
+  {
+   "id": "RD-12",
+   "skill": "reading",
+   "stage": "core",
+   "task": "R2",
+   "band": "K+",
+   "type": "matching",
+   "passageId": "P-R2",
+   "prompt": "Emma plays football every weekend. She wants to meet teams from different schools.",
+   "options": [
+    {
+     "key": "A",
+     "text": "Art Club – Paint pictures and make models from paper. Saturdays, 9–11 a.m. Bring old clothes."
+    },
+    {
+     "key": "B",
+     "text": "Chess Club – Learn to play chess and take part in a competition at your school in July. Monday and Wednesday after school."
+    },
+    {
+     "key": "C",
+     "text": "Swimming Fun – Lessons for beginners in the school pool. Tuesday and Thursday, 4–5 p.m. Wear a swimming cap."
+    },
+    {
+     "key": "D",
+     "text": "Cooking Club – Make simple, healthy meals and eat them together. Friday afternoons. Cost: £5 for food."
+    },
+    {
+     "key": "E",
+     "text": "Drama Club – Act in a short play for parents. No experience needed. Wednesday evenings."
+    },
+    {
+     "key": "F",
+     "text": "Football for Girls – Train with a woman coach and play matches against other schools. Saturday mornings."
+    },
+    {
+     "key": "G",
+     "text": "Computer Club – Learn to make games on a computer. Free. Thursday after school. Not for beginners."
+    },
+    {
+     "key": "H",
+     "text": "Garden Club – Grow vegetables and flowers and take some home. Sunday afternoons."
+    }
+   ]
+  },
+  {
+   "id": "RD-13",
+   "skill": "reading",
+   "stage": "extension",
+   "task": "R3",
+   "band": "P-",
+   "type": "mcq",
+   "passageId": "P-R3",
+   "prompt": "Why was the writer surprised when Hoa spoke to her?",
+   "options": [
+    {
+     "key": "A",
+     "text": "She thought Hoa was unfriendly."
+    },
+    {
+     "key": "B",
+     "text": "She was already in Hoa’s group."
+    },
+    {
+     "key": "C",
+     "text": "She had not spoken to anyone yet."
+    }
+   ]
+  },
+  {
+   "id": "RD-14",
+   "skill": "reading",
+   "stage": "extension",
+   "task": "R3",
+   "band": "P-",
+   "type": "mcq",
+   "passageId": "P-R3",
+   "prompt": "What was difficult about the project?",
+   "options": [
+    {
+     "key": "A",
+     "text": "Making a bridge that was strong enough."
+    },
+    {
+     "key": "B",
+     "text": "Finding a free place to work."
+    },
+    {
+     "key": "C",
+     "text": "Choosing the right group."
+    }
+   ]
+  },
+  {
+   "id": "RD-15",
+   "skill": "reading",
+   "stage": "extension",
+   "task": "R3",
+   "band": "P-",
+   "type": "mcq",
+   "passageId": "P-R3",
+   "prompt": "How does the writer feel now about saying yes to Hoa?",
+   "options": [
+    {
+     "key": "A",
+     "text": "She wishes she had waited."
+    },
+    {
+     "key": "B",
+     "text": "She is glad she did it."
+    },
+    {
+     "key": "C",
+     "text": "She thinks it was a mistake."
+    }
+   ]
+  },
+  {
+   "id": "RD-16",
+   "skill": "reading",
+   "stage": "extension",
+   "task": "R4",
+   "band": "P",
+   "type": "gapped_sentence",
+   "passageId": "P-R4",
+   "gapNumber": 16,
+   "options": [
+    {
+     "key": "A",
+     "text": "If the earth is always wet, the plants can get ill."
+    },
+    {
+     "key": "B",
+     "text": "Even a small space can be enough."
+    },
+    {
+     "key": "C",
+     "text": "Plants that don’t get enough light will grow slowly and look weak."
+    },
+    {
+     "key": "D",
+     "text": "Many shops sell cheap plastic pots."
+    },
+    {
+     "key": "E",
+     "text": "My neighbour grows beans in his garden."
+    }
+   ]
+  },
+  {
+   "id": "RD-17",
+   "skill": "reading",
+   "stage": "extension",
+   "task": "R4",
+   "band": "P",
+   "type": "gapped_sentence",
+   "passageId": "P-R4",
+   "gapNumber": 17,
+   "options": [
+    {
+     "key": "A",
+     "text": "If the earth is always wet, the plants can get ill."
+    },
+    {
+     "key": "B",
+     "text": "Even a small space can be enough."
+    },
+    {
+     "key": "C",
+     "text": "Plants that don’t get enough light will grow slowly and look weak."
+    },
+    {
+     "key": "D",
+     "text": "Many shops sell cheap plastic pots."
+    },
+    {
+     "key": "E",
+     "text": "My neighbour grows beans in his garden."
+    }
+   ]
+  },
+  {
+   "id": "RD-18",
+   "skill": "reading",
+   "stage": "extension",
+   "task": "R4",
+   "band": "P",
+   "type": "gapped_sentence",
+   "passageId": "P-R4",
+   "gapNumber": 18,
+   "options": [
+    {
+     "key": "A",
+     "text": "If the earth is always wet, the plants can get ill."
+    },
+    {
+     "key": "B",
+     "text": "Even a small space can be enough."
+    },
+    {
+     "key": "C",
+     "text": "Plants that don’t get enough light will grow slowly and look weak."
+    },
+    {
+     "key": "D",
+     "text": "Many shops sell cheap plastic pots."
+    },
+    {
+     "key": "E",
+     "text": "My neighbour grows beans in his garden."
+    }
+   ]
+  },
+  {
+   "id": "LS-01",
+   "skill": "listening",
+   "stage": "core",
+   "task": "L1",
+   "band": "F",
+   "type": "mcq",
+   "audioId": "AUD-T1",
+   "prompt": "Where does Sue’s brother work?",
+   "options": [
+    {
+     "key": "A",
+     "text": "on a farm"
+    },
+    {
+     "key": "B",
+     "text": "in a factory"
+    },
+    {
+     "key": "C",
+     "text": "in an office"
+    }
+   ]
+  },
+  {
+   "id": "LS-02",
+   "skill": "listening",
+   "stage": "core",
+   "task": "L1",
+   "band": "F",
+   "type": "mcq",
+   "audioId": "AUD-T1",
+   "prompt": "How does Sue’s brother go to work?",
+   "options": [
+    {
+     "key": "A",
+     "text": "by bus"
+    },
+    {
+     "key": "B",
+     "text": "on foot"
+    },
+    {
+     "key": "C",
+     "text": "by motorbike"
+    }
+   ]
+  },
+  {
+   "id": "LS-03",
+   "skill": "listening",
+   "stage": "core",
+   "task": "L1",
+   "band": "F",
+   "type": "mcq",
+   "audioId": "AUD-T1",
+   "prompt": "What time does Sue’s brother start work?",
+   "options": [
+    {
+     "key": "A",
+     "text": "6.30"
+    },
+    {
+     "key": "B",
+     "text": "8.00"
+    },
+    {
+     "key": "C",
+     "text": "8.30"
+    }
+   ]
+  },
+  {
+   "id": "LS-04",
+   "skill": "listening",
+   "stage": "core",
+   "task": "L1",
+   "band": "F",
+   "type": "mcq",
+   "audioId": "AUD-T1",
+   "prompt": "What does Sue’s brother have for lunch?",
+   "options": [
+    {
+     "key": "A",
+     "text": "He goes home for lunch."
+    },
+    {
+     "key": "B",
+     "text": "He eats at a restaurant."
+    },
+    {
+     "key": "C",
+     "text": "He eats sandwiches."
+    }
+   ]
+  },
+  {
+   "id": "LS-05",
+   "skill": "listening",
+   "stage": "core",
+   "task": "L1",
+   "band": "F",
+   "type": "mcq",
+   "audioId": "AUD-T1",
+   "prompt": "What did Sue’s brother do before this job?",
+   "options": [
+    {
+     "key": "A",
+     "text": "He went to university."
+    },
+    {
+     "key": "B",
+     "text": "He worked on a farm."
+    },
+    {
+     "key": "C",
+     "text": "He travelled to other countries."
+    }
+   ]
+  },
+  {
+   "id": "LS-06",
+   "skill": "listening",
+   "stage": "core",
+   "task": "L2",
+   "band": "K",
+   "type": "mcq",
+   "audioId": "AUD-T2",
+   "prompt": "What will Pete have for lunch?",
+   "options": [
+    {
+     "key": "A",
+     "text": "pasta"
+    },
+    {
+     "key": "B",
+     "text": "salad"
+    },
+    {
+     "key": "C",
+     "text": "pizza"
+    }
+   ]
+  },
+  {
+   "id": "LS-07",
+   "skill": "listening",
+   "stage": "core",
+   "task": "L2",
+   "band": "K",
+   "type": "mcq",
+   "audioId": "AUD-T2",
+   "prompt": "Which family has moved in next to Emily?",
+   "options": [
+    {
+     "key": "A",
+     "text": "a grandmother and two boys"
+    },
+    {
+     "key": "B",
+     "text": "a grandmother and two girls"
+    },
+    {
+     "key": "C",
+     "text": "a mother, a father and two girls"
+    }
+   ]
+  },
+  {
+   "id": "LS-08",
+   "skill": "listening",
+   "stage": "core",
+   "task": "L2",
+   "band": "K",
+   "type": "mcq",
+   "audioId": "AUD-T2",
+   "prompt": "What was Oscar doing when Isabel phoned him?",
+   "options": [
+    {
+     "key": "A",
+     "text": "moving furniture"
+    },
+    {
+     "key": "B",
+     "text": "having dinner"
+    },
+    {
+     "key": "C",
+     "text": "painting walls"
+    }
+   ]
+  },
+  {
+   "id": "LS-09",
+   "skill": "listening",
+   "stage": "core",
+   "task": "L2",
+   "band": "K+",
+   "type": "mcq",
+   "audioId": "AUD-T2",
+   "prompt": "Why didn’t Niesha go to Jack’s party?",
+   "options": [
+    {
+     "key": "A",
+     "text": "She was ill."
+    },
+    {
+     "key": "B",
+     "text": "She was coming back from holiday."
+    },
+    {
+     "key": "C",
+     "text": "She was visiting her aunt."
+    }
+   ]
+  },
+  {
+   "id": "LS-10",
+   "skill": "listening",
+   "stage": "core",
+   "task": "L2",
+   "band": "K+",
+   "type": "mcq",
+   "audioId": "AUD-T2",
+   "prompt": "Where is Oliver’s phone?",
+   "options": [
+    {
+     "key": "A",
+     "text": "on the desk"
+    },
+    {
+     "key": "B",
+     "text": "on the sofa"
+    },
+    {
+     "key": "C",
+     "text": "on the kitchen table"
+    }
+   ]
+  },
+  {
+   "id": "LS-11",
+   "skill": "listening",
+   "stage": "core",
+   "task": "L3",
+   "band": "K",
+   "type": "gap_fill",
+   "audioId": "AUD-T3",
+   "prompt": "First activity: Draw a ____"
+  },
+  {
+   "id": "LS-12",
+   "skill": "listening",
+   "stage": "core",
+   "task": "L3",
+   "band": "K+",
+   "type": "gap_fill",
+   "audioId": "AUD-T3",
+   "prompt": "Time to give water to the animals: ____"
+  },
+  {
+   "id": "LS-13",
+   "skill": "listening",
+   "stage": "core",
+   "task": "L3",
+   "band": "K",
+   "type": "gap_fill",
+   "audioId": "AUD-T3",
+   "prompt": "Name of the baby lion: ____"
+  },
+  {
+   "id": "LS-14",
+   "skill": "listening",
+   "stage": "core",
+   "task": "L3",
+   "band": "K+",
+   "type": "gap_fill",
+   "audioId": "AUD-T3",
+   "prompt": "Age of the oldest dolphin: ____ years"
+  },
+  {
+   "id": "LS-15",
+   "skill": "listening",
+   "stage": "core",
+   "task": "L3",
+   "band": "K",
+   "type": "gap_fill",
+   "audioId": "AUD-T3",
+   "prompt": "Present at the end of the day: a ____"
+  },
+  {
+   "id": "LS-16",
+   "skill": "listening",
+   "stage": "extension",
+   "task": "L4",
+   "band": "P-",
+   "type": "mcq",
+   "audioId": "AUD-T4",
+   "prompt": "What is the woman unhappy about in the café?",
+   "options": [
+    {
+     "key": "A",
+     "text": "the seats"
+    },
+    {
+     "key": "B",
+     "text": "the staff"
+    },
+    {
+     "key": "C",
+     "text": "the names of the dishes"
+    }
+   ]
+  },
+  {
+   "id": "LS-17",
+   "skill": "listening",
+   "stage": "extension",
+   "task": "L4",
+   "band": "P-",
+   "type": "mcq",
+   "audioId": "AUD-T4",
+   "prompt": "What does the girl find difficult about her art course?",
+   "options": [
+    {
+     "key": "A",
+     "text": "the other students"
+    },
+    {
+     "key": "B",
+     "text": "the early start"
+    },
+    {
+     "key": "C",
+     "text": "the teacher"
+    }
+   ]
+  },
+  {
+   "id": "LS-18",
+   "skill": "listening",
+   "stage": "extension",
+   "task": "L4",
+   "band": "P-",
+   "type": "mcq",
+   "audioId": "AUD-T4",
+   "prompt": "What does the girl complain about in her history lessons?",
+   "options": [
+    {
+     "key": "A",
+     "text": "The lessons are boring."
+    },
+    {
+     "key": "B",
+     "text": "The teacher is unfriendly."
+    },
+    {
+     "key": "C",
+     "text": "There is a lot of homework on Fridays."
+    }
+   ]
+  },
+  {
+   "id": "LS-19",
+   "skill": "listening",
+   "stage": "extension",
+   "task": "L5",
+   "band": "P",
+   "type": "mcq",
+   "audioId": "AUD-T5",
+   "prompt": "Why did Alice start her own business?",
+   "options": [
+    {
+     "key": "A",
+     "text": "A friend asked her to."
+    },
+    {
+     "key": "B",
+     "text": "She wanted to work for herself."
+    },
+    {
+     "key": "C",
+     "text": "She had lost her job."
+    }
+   ]
+  },
+  {
+   "id": "LS-20",
+   "skill": "listening",
+   "stage": "extension",
+   "task": "L5",
+   "band": "P",
+   "type": "mcq",
+   "audioId": "AUD-T5",
+   "prompt": "Why is Alice confident about the shop?",
+   "options": [
+    {
+     "key": "A",
+     "text": "Her prices are lower than other shops."
+    },
+    {
+     "key": "B",
+     "text": "She already has many customers."
+    },
+    {
+     "key": "C",
+     "text": "There is no similar shop in the area."
+    }
+   ]
+  },
+  {
+   "id": "LS-21",
+   "skill": "listening",
+   "stage": "extension",
+   "task": "L5",
+   "band": "P",
+   "type": "mcq",
+   "audioId": "AUD-T5",
+   "prompt": "What does Alice find most difficult about running the shop?",
+   "options": [
+    {
+     "key": "A",
+     "text": "the long hours"
+    },
+    {
+     "key": "B",
+     "text": "the difficult customers"
+    },
+    {
+     "key": "C",
+     "text": "travelling abroad"
+    }
+   ]
+  }
+ ]
+}
