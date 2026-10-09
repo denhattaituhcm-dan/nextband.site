@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zen Reading Atelier — ARIS Reading Case Prototype</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #FAF8F5;
+      color: #2D2825;
+    }
+    .serif-reading {
+      font-family: 'Newsreader', serif;
+    }
+    .mono-meta {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .touch-word {
+      cursor: pointer;
+      border-bottom: 1.5px dashed #C86D51;
+      padding-bottom: 1px;
+      transition: all 0.2s;
+    }
+    .touch-word:hover, .touch-word.active {
+      background-color: #F8EBE5;
+      color: #9C4124;
+      border-radius: 3px;
+      padding: 0 3px;
+      border-bottom-color: transparent;
+    }
+    .reading-content p {
+      margin-bottom: 1.6rem;
+      line-height: 1.85;
+      font-size: 1.18rem;
+      color: #2C2623;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-[#F2DBD3] selection:text-[#2D2825]">
+
+  <!-- Top Minimalist Atelier Header -->
+  <header class="border-b border-[#EAE3D9] bg-[#FAF8F5]/95 sticky top-0 z-40 backdrop-blur-md px-6 h-15 flex items-center justify-between">
+    
+    <!-- Left: Navigation Back & Case Title -->
+    <div class="flex items-center gap-4">
+      <a href="/reading" class="text-xs font-semibold text-[#8C827A] hover:text-[#2D2825] flex items-center gap-1.5 transition-colors">
+        <span>&larr;</span> Tủ bài đọc
+      </a>
+      <span class="w-px h-4 bg-[#E2D8CD]"></span>
+      <div class="flex items-center gap-2">
+        <span class="text-[11px] mono-meta uppercase px-2 py-0.5 rounded bg-[#EFE9DF] text-[#7A6E65]">Reading #02</span>
+        <h1 class="serif-reading text-lg font-medium text-[#221C18] truncate max-w-md">
+          Kỹ Năng Đòn Bẩy Của Warren Buffett
+        </h1>
+      </div>
+    </div>
+
+    <!-- Right Controls: Sources, Font size, and Reflection Mode Toggle -->
+    <div class="flex items-center gap-3">
+      <!-- Source Filter (Clean Minimalist Pills) -->
+      <div class="hidden sm:flex items-center bg-[#EFE9DF] p-1 rounded-xl text-xs gap-1">
+        <button class="px-3 py-1 rounded-lg bg-white text-[#2D2825] font-semibold shadow-xs">Tất cả nguồn (3)</button>
+        <button class="px-3 py-1 rounded-lg text-[#7A7067] hover:text-[#2D2825]">Nguồn 1</button>
+        <button class="px-3 py-1 rounded-lg text-[#7A7067] hover:text-[#2D2825]">Nguồn 2</button>
+        <button class="px-3 py-1 rounded-lg text-[#7A7067] hover:text-[#2D2825]">Nguồn 3</button>
+      </div>
+
+      <!-- Mode Switcher: Zen Reading vs Reflection -->
+      <button id="reflectionToggleBtn" onclick="toggleSidebar()" class="px-4 py-2 rounded-full border border-[#D9CEBF] bg-white hover:bg-[#F7F2EB] text-xs font-semibold text-[#2D2825] flex items-center gap-2 shadow-xs transition cursor-pointer">
+        <span>💡</span>
+        <span id="toggleText">Mở góc chiêm nghiệm (4)</span>
+      </button>
+    </div>
+
+  </header>
+
+  <!-- Reading Atelier Body (Center-stage Reading Canvas) -->
+  <main class="flex-1 w-full max-w-7xl mx-auto px-6 py-10 flex gap-10 relative">
+    
+    <!-- LEFT: Pure Editorial Reading Sanctuary (Medium/Substack width) -->
+    <div id="readingArea" class="flex-1 max-w-3xl mx-auto transition-all duration-300">
+      
+      <!-- Article Context Card (Gentle Editorial Intro) -->
+      <div class="border-b border-[#ECE5DD] pb-8 mb-8 space-y-3">
+        <div class="flex items-center gap-3 text-xs text-[#8A7E75] font-light">
+          <span>Fast Company Executive Archive</span>
+          <span>·</span>
+          <span>5 min read</span>
+          <span>·</span>
+          <span class="text-[#9C4124]">14 từ vựng đắt giá</span>
+          <span>·</span>
+          <span>Audio có sẵn</span>
+        </div>
+        <h2 class="serif-reading text-3xl sm:text-4xl text-[#221C18] leading-snug font-normal">
+          The Stanford Conversation & The 1952 Dale Carnegie Diploma
+        </h2>
+        <p class="text-sm text-[#73685E] leading-relaxed font-light">
+          Trong thời đại thuật toán có thể soạn thảo văn bản trong tích tắc, Warren Buffett chỉ ra kỹ năng đòn bẩy vĩ đại nhất: Khả năng thấu cảm, diễn đạt rành mạch và gây ảnh hưởng bền vững giữa con người với con người.
+        </p>
+      </div>
+
+      <!-- Interactive Reading Body -->
+      <article class="serif-reading reading-content text-[#2C2623] text-lg sm:text-xl">
+        <p>
+          Warren Buffett has spent decades dispensing simple advice that 
+          <span class="touch-word active" onclick="showWordDetails('tends', '/tendz/', 'verb', 'Có xu hướng / Thường hay diễn ra: Biểu thị một bản chất hoặc quy luật diễn ra lặp đi lặp lại một cách tự nhiên.', 'tend to age well · tend to agree')">tends</span> 
+          to age remarkably well.
+        </p>
+
+        <p>
+          In an era where artificial intelligence can draft emails, summarize corporate meetings, generate presentations in seconds, the ability to 
+          <span class="touch-word" onclick="showWordDetails('communicate', '/kəˈmjuː.nə.keɪt/', 'verb', 'Giao tiếp thấu cảm: Không chỉ là truyền đạt thông tin, mà là khả năng kết nối cảm xúc và tạo dựng niềm tin.', 'communicate clearly · effective communication')">communicate</span> 
+          as an authentic human has become a genuine 
+          <span class="touch-word" onclick="showWordDetails('competitive advantage', '/kəmˈpet̬.ə.t̬ɪv ədˈvæn.t̬ɪdʒ/', 'noun phrase', 'Lợi thế cạnh tranh: Điểm mạnh độc tôn giúp một cá nhân hoặc tổ chức vượt trội hơn đối thủ.', 'sustainable competitive advantage')">competitive advantage</span>.
+        </p>
+
+        <p>
+          Speaking to a Stanford graduate many years ago, Buffett offered this advice: 
+          <em class="text-[#241F1C]">“At your age, the best way you can improve yourself is to learn to communicate better. Your results in life will be <span class="touch-word" onclick="showWordDetails('magnified', '/ˈmæɡ.nə.faɪd/', 'adjective', 'Được nhân bản / Khuếch đại: Được gia tăng gấp bội về quy mô hoặc tầm ảnh hưởng nhờ có đòn bẩy.', 'magnify results · greatly magnified')">magnified</span> if you can communicate them better.”</em>
+        </p>
+
+        <p>
+          The only diploma I hang in my office is the communications diploma I got from Dale Carnegie in 1952. That hundred-dollar course was the most valuable investment I ever made.
+        </p>
+      </article>
+
+    </div>
+
+    <!-- RIGHT: Side Drawer (Vocabulary Context OR Reflection Tasks) -->
+    <aside id="sidebar" class="w-96 shrink-0 bg-white rounded-2xl border border-[#E8E1D5] p-6 shadow-sm shadow-[#2D2825]/5 space-y-6 self-start sticky top-24 transition-all duration-300">
+      
+      <!-- Panel Header Tabs -->
+      <div class="flex items-center justify-between border-b border-[#F2ECE2] pb-3">
+        <div class="flex items-center gap-4 text-xs font-semibold">
+          <button id="tabVocab" onclick="switchSidebarTab('vocab')" class="text-[#9C4124] border-b-2 border-[#9C4124] pb-1 cursor-pointer">
+            📖 Tra nghĩa ngữ cảnh
+          </button>
+          <button id="tabTasks" onclick="switchSidebarTab('tasks')" class="text-[#8C827A] hover:text-[#2D2825] pb-1 cursor-pointer">
+            💡 Câu hỏi suy ngẫm
+          </button>
+        </div>
+        <button onclick="toggleSidebar()" class="text-xs text-[#9E9287] hover:text-[#2D2825]">Đóng ✕</button>
+      </div>
+
+      <!-- VOCABULARY DETAIL VIEW (Zen Side Dock) -->
+      <div id="vocabPanel" class="space-y-4">
+        <div class="flex items-start justify-between">
+          <div>
+            <div class="flex items-baseline gap-2">
+              <h3 id="termTitle" class="serif-reading text-2xl font-medium text-[#221C18]">tends</h3>
+              <span id="termPhonetic" class="mono-meta text-xs text-[#8C827A]">/tendz/</span>
+            </div>
+            <span id="termPos" class="inline-block text-[10px] mono-meta uppercase px-2 py-0.5 rounded bg-[#F6EAE4] text-[#9C4124] mt-1 font-semibold">verb</span>
+          </div>
+          <button onclick="alert('Nghe phát âm bản xứ')" class="p-2 rounded-full bg-[#FAF8F5] border border-[#EAE3D9] text-[#7A6E65] hover:text-[#2D2825] text-xs">
+            🔊 Nghe
+          </button>
+        </div>
+
+        <div class="bg-[#FAF8F5] p-4 rounded-xl border border-[#ECE5DD] space-y-2">
+          <span class="text-[11px] mono-meta uppercase text-[#9C4124] font-medium tracking-wide">Nghĩa bản chất trong câu:</span>
+          <p id="termMeaning" class="text-xs sm:text-sm text-[#3D3530] leading-relaxed font-light">
+            Có xu hướng / Thường hay diễn ra: Biểu thị một bản chất hoặc quy luật diễn ra lặp đi lặp lại một cách tự nhiên qua thời gian.
+          </p>
+        </div>
+
+        <div class="space-y-1.5 pt-1">
+          <span class="text-[11px] mono-meta text-[#8C827A]">Collocation cốt lõi:</span>
+          <p id="termCollocation" class="text-xs text-[#6B6158] italic serif-reading">
+            • tend to age remarkably well<br>
+            • tend to agree with someone
+          </p>
+        </div>
+
+        <div class="pt-3 border-t border-[#F2ECE2] flex items-center justify-between">
+          <button class="w-full py-2.5 rounded-xl bg-[#2D2825] hover:bg-[#1E1917] text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition">
+            <span>+</span> Lưu vào Sổ từ vựng cá nhân
+          </button>
+        </div>
+      </div>
+
+      <!-- REFLECTION TASKS VIEW (Deep Reading Questions) -->
+      <div id="tasksPanel" class="space-y-5 hidden">
+        <div class="space-y-1">
+          <span class="text-[10px] mono-meta uppercase text-[#9C4124] font-semibold tracking-wider">Câu hỏi suy ngẫm #01</span>
+          <h4 class="text-sm font-semibold text-[#2D2825] leading-snug">
+            Theo bài đọc, lý do duy nhất khiến tấm bằng Dale Carnegie 1952 là chứng chỉ duy nhất Warren Buffett treo tại văn phòng là gì?
+          </h4>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <label class="flex items-start gap-2.5 p-3 rounded-xl border border-[#ECE5DD] hover:border-[#9C4124] hover:bg-[#FDFBF9] cursor-pointer transition">
+            <input type="radio" name="q1" class="mt-0.5 accent-[#9C4124]">
+            <span class="text-[#524840]">A. Vì nó đại diện cho kỹ năng nhân bản giá trị lớn nhất trong cuộc đời ông.</span>
+          </label>
+          <label class="flex items-start gap-2.5 p-3 rounded-xl border border-[#ECE5DD] hover:border-[#9C4124] hover:bg-[#FDFBF9] cursor-pointer transition">
+            <input type="radio" name="q1" class="mt-0.5 accent-[#9C4124]">
+            <span class="text-[#524840]">B. Vì ông đã đánh mất các chứng chỉ tốt nghiệp đại học khác.</span>
+          </label>
+          <label class="flex items-start gap-2.5 p-3 rounded-xl border border-[#ECE5DD] hover:border-[#9C4124] hover:bg-[#FDFBF9] cursor-pointer transition">
+            <input type="radio" name="q1" class="mt-0.5 accent-[#9C4124]">
+            <span class="text-[#524840]">C. Vì khóa học đó có học phí đắt đỏ nhất thời bấy giờ.</span>
+          </label>
+        </div>
+
+        <button class="w-full py-2.5 rounded-xl bg-[#9C4124] hover:bg-[#85351B] text-white text-xs font-semibold transition">
+          Xác nhận suy ngẫm
+        </button>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <footer class="border-t border-[#EAE3D9] py-6 text-center text-xs text-[#9E9287]">
+    ARIS Reading Case Studio · Đọc hiểu bản chất & Nuôi dưỡng vốn từ
+  </footer>
+
+  <script>
+    let isSidebarOpen = true;
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const toggleText = document.getElementById('toggleText');
+      isSidebarOpen = !isSidebarOpen;
+      if (isSidebarOpen) {
+        sidebar.style.display = 'block';
+        toggleText.innerText = 'Ẩn bảng bổ trợ';
+      } else {
+        sidebar.style.display = 'none';
+        toggleText.innerText = 'Mở góc chiêm nghiệm & Tra từ';
+      }
+    }
+
+    function switchSidebarTab(tab) {
+      const vocabPanel = document.getElementById('vocabPanel');
+      const tasksPanel = document.getElementById('tasksPanel');
+      const tabVocab = document.getElementById('tabVocab');
+      const tabTasks = document.getElementById('tabTasks');
+
+      if (tab === 'vocab') {
+        vocabPanel.classList.remove('hidden');
+        tasksPanel.classList.add('hidden');
+        tabVocab.className = 'text-[#9C4124] border-b-2 border-[#9C4124] pb-1 cursor-pointer';
+        tabTasks.className = 'text-[#8C827A] hover:text-[#2D2825] pb-1 cursor-pointer';
+      } else {
+        vocabPanel.classList.add('hidden');
+        tasksPanel.classList.remove('hidden');
+        tabTasks.className = 'text-[#9C4124] border-b-2 border-[#9C4124] pb-1 cursor-pointer';
+        tabVocab.className = 'text-[#8C827A] hover:text-[#2D2825] pb-1 cursor-pointer';
+      }
+    }
+
+    function showWordDetails(word, ipa, pos, meaning, collocations) {
+      if (!isSidebarOpen) toggleSidebar();
+      switchSidebarTab('vocab');
+      document.getElementById('termTitle').innerText = word;
+      document.getElementById('termPhonetic').innerText = ipa;
+      document.getElementById('termPos').innerText = pos;
+      document.getElementById('termMeaning').innerText = meaning;
+      document.getElementById('termCollocation').innerHTML = collocations.split('·').map(c => `• ${c.trim()}`).join('<br>');
+    }
+  </script>
+</body>
+</html>

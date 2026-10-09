@@ -41,6 +41,7 @@ import teachersRoutes from "./teachers.routes.js";
 import seasonalRoutes from "./seasonal.routes.js";
 import arenaRoutes from "./arena.routes.js";
 import readingDiscussionRoutes from "./reading-discussion.routes.js";
+import cambridgeRoutes from "./cambridge.routes.js";
 
 const routes: FastifyPluginAsync = async (fastify) => {
   // Health check
@@ -94,6 +95,7 @@ const routes: FastifyPluginAsync = async (fastify) => {
   await fastify.register(seasonalRoutes, { prefix: "/seasonal" });
   await fastify.register(arenaRoutes, { prefix: "/arena" });
   await fastify.register(readingDiscussionRoutes, { prefix: "/reading-discussions" });
+  await fastify.register(cambridgeRoutes, { prefix: "/cambridge" });
 };
 
 export default routes;

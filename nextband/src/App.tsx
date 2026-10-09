@@ -183,6 +183,7 @@ const AdminNotifications = lazyWithRetry(() => import("@/pages/admin/Notificatio
 const AdminAssessments = lazyWithRetry(() => import("@/pages/admin/Assessments"));
 const AdminPeriodicReports = lazyWithRetry(() => import("@/pages/admin/PeriodicReportsPage"));
 const AdminTuitionManagement = lazyWithRetry(() => import("@/pages/admin/TuitionManagement"));
+const AdminCambridge = lazyWithRetry(() => import("@/pages/admin/Cambridge"));
 
 // Lazy-loaded Academic Intelligence Pages
 const AcademicIntelligenceLayout = lazyWithRetry(() => import("@/layouts/AcademicIntelligenceLayout"));
@@ -674,6 +675,14 @@ const App = () => (
                   element={
                     <ProtectedRoute requiredRoles={["admin", "teacher"]}>
                       <AdminGameArena />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/cambridge"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <AdminCambridge />
                     </ProtectedRoute>
                   }
                 />

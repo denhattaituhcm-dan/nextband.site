@@ -723,6 +723,27 @@ export function segmentEssayIntoSentences(text: string): string[] {
 }
 
 /**
+ * Recursively unwraps double or multiple JSON-stringified payloads
+ */
+function unwrapJsonPayload(val: any, depth = 0): any {
+  if (depth > 5) return val;
+  if (typeof val === "string") {
+    const trimmed = val.trim();
+    if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (parsed && typeof parsed === "object") {
+          return unwrapJsonPayload(parsed, depth + 1);
+        }
+      } catch {
+        // Not valid JSON, keep as is
+      }
+    }
+  }
+  return val;
+}
+
+/**
  * Safely parses structured feedback from raw string (plain text or JSON string)
  */
 export function parseStructuredFeedback(rawFeedback: string | null | undefined): StructuredFeedbackPayload {
@@ -731,10 +752,20 @@ export function parseStructuredFeedback(rawFeedback: string | null | undefined):
   }
 
   try {
-    const parsed = JSON.parse(rawFeedback);
+    let parsed = JSON.parse(rawFeedback);
     if (parsed && typeof parsed === "object") {
+      let candidateText = typeof parsed.text === "string" ? parsed.text : (typeof parsed.feedback === "string" ? parsed.feedback : "");
+      
+      // If candidateText is itself a JSON string (e.g. from double serialization), unwrap it
+      if (candidateText && candidateText.trim().startsWith("{") && candidateText.trim().endsWith("}")) {
+        const inner = unwrapJsonPayload(candidateText);
+        if (inner && typeof inner === "object" && typeof inner.text === "string") {
+          candidateText = inner.text;
+        }
+      }
+
       return {
-        text: typeof parsed.text === "string" ? parsed.text : (typeof parsed.feedback === "string" ? parsed.feedback : ""),
+        text: candidateText,
         primaryErrorCategory: parsed.primaryErrorCategory || null,
         revisionRequired: !!parsed.revisionRequired,
         criteriaScores: parsed.criteriaScores || null,
@@ -753,6 +784,12 @@ export function parseStructuredFeedback(rawFeedback: string | null | undefined):
     }
   } catch {
     // If not JSON, it is raw string text
+  }
+
+  // Fallback: check if rawFeedback itself has a double-encoded json string
+  const unwrapped = unwrapJsonPayload(rawFeedback);
+  if (unwrapped && typeof unwrapped === "object" && typeof unwrapped.text === "string") {
+    return parseStructuredFeedback(JSON.stringify(unwrapped));
   }
 
   return {

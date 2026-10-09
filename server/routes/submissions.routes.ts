@@ -101,4 +101,14 @@ export default async function submissionsRoutes(fastify: FastifyInstance) {
       return controller.getAcademicEvidence(request, reply);
     }
   );
+
+  // DELETE /submissions/:id - Admin delete submission
+  fastify.delete<{ Params: { id: string } }>(
+    "/:id",
+    { preHandler: [authenticate, requireRoles("admin")] },
+    async (request, reply) => {
+      return controller.delete(request, reply);
+    }
+  );
 }
+

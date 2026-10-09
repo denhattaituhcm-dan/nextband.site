@@ -214,4 +214,16 @@ export class SubmissionController {
       return reply.status(status).send({ error: err.message });
     }
   }
+
+  async delete(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+    try {
+      const user = (request as any).user;
+      const result = await this.service.deleteSubmission(user, request.params.id);
+      return reply.send(result);
+    } catch (err: any) {
+      const status = err.statusCode || 500;
+      return reply.status(status).send({ error: err.message });
+    }
+  }
 }
+
