@@ -67,6 +67,7 @@ model User {
   hostedArenaRooms      ArenaRoom[]              @relation("HostedArenaRooms")
   cambridgeSessionsCreated CambridgeSession[]    @relation("TeacherCambridgeSessions")
   cambridgeSessionsGraded  CambridgeSession[]    @relation("GradedCambridgeSessions")
+  cambridgeRoomsCreated    CambridgeRoom[]       @relation("TeacherCambridgeRooms")
 
   @@map("profiles")
 }
@@ -737,11 +738,37 @@ model CambridgeSession {
   creator            User?     @relation("TeacherCambridgeSessions", fields: [createdById], references: [userId], onDelete: SetNull)
   grader             User?     @relation("GradedCambridgeSessions", fields: [gradedById], references: [userId], onDelete: SetNull)
 
+  roomId             String?   @map("room_id")
+  room               CambridgeRoom? @relation(fields: [roomId], references: [id], onDelete: SetNull)
+
   @@index([testCode])
+  @@index([roomId])
   @@index([status])
   @@index([gradingStatus])
   @@index([createdById])
   @@map("cambridge_sessions")
+}
+
+model CambridgeRoom {
+  id              String             @id @default(uuid())
+  roomCode        String             @unique @map("room_code") // vd: CAM-XYZ123
+  title           String                                      // Tên phòng thi (bắt buộc)
+  groupName       String?            @map("group_name")       // Lớp / Nhóm học sinh (tuỳ chọn)
+  teacherName     String?            @map("teacher_name")     // Tên giáo viên hiển thị
+  createdById     String?            @map("created_by_id")
+  status          String             @default("OPEN")         // OPEN, CLOSED
+  durationMinutes Int?               @map("duration_minutes") // Thời gian cho phép vào phòng (null = Không giới hạn)
+  closedAt        DateTime?          @map("closed_at")
+  createdAt       DateTime           @default(now()) @map("created_at")
+  updatedAt       DateTime           @default(now()) @updatedAt @map("updated_at")
+
+  creator         User?              @relation("TeacherCambridgeRooms", fields: [createdById], references: [userId], onDelete: SetNull)
+  sessions        CambridgeSession[]
+
+  @@index([roomCode])
+  @@index([status])
+  @@index([createdById])
+  @@map("cambridge_rooms")
 }
 
 model Branch {

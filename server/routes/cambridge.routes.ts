@@ -13,8 +13,49 @@ const cambridgeRoutes: FastifyPluginAsync = async (fastify) => {
   const service = new CambridgePlacementService(fastify.prisma);
 
   // ==========================================
-  // 1. PUBLIC / STUDENT ENDPOINTS
+  // 1. PUBLIC / ROOM & STUDENT ENDPOINTS
   // ==========================================
+
+  /**
+   * Lấy thông tin phòng thi (Public - Học sinh mở link tham gia)
+   */
+  fastify.get<{ Params: { roomCode: string } }>(
+    "/rooms/:roomCode",
+    async (request, reply) => {
+      try {
+        const { roomCode } = request.params;
+        const room = await service.getRoomInfo(roomCode);
+        return reply.send({ success: true, data: room });
+      } catch (err: any) {
+        return reply.status(404).send({ error: "NotFound", message: err.message });
+      }
+    }
+  );
+
+  /**
+   * Học sinh nhập họ tên và vào làm bài thi trong phòng
+   */
+  fastify.post<{
+    Params: { roomCode: string };
+    Body: { candidateName: string; candidateGrade?: string; existingTestCode?: string };
+  }>(
+    "/rooms/:roomCode/join",
+    async (request, reply) => {
+      try {
+        const { roomCode } = request.params;
+        const { candidateName, candidateGrade, existingTestCode } = request.body;
+        const session = await service.joinRoom({
+          roomCode,
+          candidateName,
+          candidateGrade,
+          existingTestCode,
+        });
+        return reply.send({ success: true, data: session });
+      } catch (err: any) {
+        return reply.status(400).send({ error: "JoinError", message: err.message });
+      }
+    }
+  );
 
   /**
    * Lấy đề thi cho học sinh theo testCode (Không có đáp án)
@@ -126,7 +167,97 @@ const cambridgeRoutes: FastifyPluginAsync = async (fastify) => {
   );
 
   // ==========================================
-  // 2. TEACHER & ADMIN ENDPOINTS
+  // 2. TEACHER & ADMIN ROOM ENDPOINTS
+  // ==========================================
+
+  /**
+   * Tạo phòng thi mới (Giáo viên)
+   */
+  fastify.post<{
+    Body: {
+      title: string;
+      groupName?: string;
+      teacherName?: string;
+      durationMinutes?: number | null;
+    };
+  }>(
+    "/admin/rooms",
+    {
+      preHandler: [authenticate, requireRoles("admin", "teacher")],
+    },
+    async (request, reply) => {
+      try {
+        const user = (request as any).user;
+        const room = await service.createRoom({
+          ...request.body,
+          createdById: user?.id,
+        });
+        return reply.send({ success: true, data: room });
+      } catch (err: any) {
+        return reply.status(400).send({ error: "CreateRoomError", message: err.message });
+      }
+    }
+  );
+
+  /**
+   * Danh sách phòng thi của giáo viên
+   */
+  fastify.get(
+    "/admin/rooms",
+    {
+      preHandler: [authenticate, requireRoles("admin", "teacher")],
+    },
+    async (request, reply) => {
+      try {
+        const user = (request as any).user;
+        const rooms = await service.listRooms(user?.id);
+        return reply.send({ success: true, data: rooms });
+      } catch (err: any) {
+        return reply.status(500).send({ error: "ServerError", message: err.message });
+      }
+    }
+  );
+
+  /**
+   * Chi tiết phòng thi & danh sách học sinh tham gia
+   */
+  fastify.get<{ Params: { roomId: string } }>(
+    "/admin/rooms/:roomId",
+    {
+      preHandler: [authenticate, requireRoles("admin", "teacher")],
+    },
+    async (request, reply) => {
+      try {
+        const { roomId } = request.params;
+        const room = await service.getRoomDetail(roomId);
+        return reply.send({ success: true, data: room });
+      } catch (err: any) {
+        return reply.status(404).send({ error: "NotFound", message: err.message });
+      }
+    }
+  );
+
+  /**
+   * Đóng phòng thi (Ngừng nhận học sinh mới)
+   */
+  fastify.post<{ Params: { roomId: string } }>(
+    "/admin/rooms/:roomId/close",
+    {
+      preHandler: [authenticate, requireRoles("admin", "teacher")],
+    },
+    async (request, reply) => {
+      try {
+        const { roomId } = request.params;
+        const closed = await service.closeRoom(roomId);
+        return reply.send({ success: true, data: closed });
+      } catch (err: any) {
+        return reply.status(400).send({ error: "CloseRoomError", message: err.message });
+      }
+    }
+  );
+
+  // ==========================================
+  // 3. TEACHER & ADMIN SESSION ENDPOINTS
   // ==========================================
 
   /**

@@ -72,7 +72,211 @@ export class CambridgePlacementService {
   }
 
   /**
-   * Tạo phiên thi mới cho học sinh
+   * Tạo phòng thi mới (Dành cho Giáo viên)
+   */
+  async createRoom(params: {
+    title: string;
+    groupName?: string;
+    teacherName?: string;
+    durationMinutes?: number | null;
+    createdById?: string;
+  }) {
+    if (!params.title || !params.title.trim()) {
+      throw new Error("Vui lòng nhập tên phòng thi.");
+    }
+
+    const randomSuffix = Math.random().toString(36).substring(2, 7).toUpperCase();
+    const roomCode = `ROOM-${randomSuffix}`;
+
+    return await this.prisma.cambridgeRoom.create({
+      data: {
+        roomCode,
+        title: params.title.trim(),
+        groupName: params.groupName?.trim() || null,
+        teacherName: params.teacherName?.trim() || null,
+        durationMinutes: params.durationMinutes || null,
+        createdById: params.createdById || null,
+        status: "OPEN",
+      },
+    });
+  }
+
+  /**
+   * Lấy thông tin phòng thi (Public - Học sinh mở link tham gia)
+   */
+  async getRoomInfo(roomCode: string) {
+    const room = await this.prisma.cambridgeRoom.findUnique({
+      where: { roomCode },
+      select: {
+        id: true,
+        roomCode: true,
+        title: true,
+        groupName: true,
+        teacherName: true,
+        status: true,
+        durationMinutes: true,
+        createdAt: true,
+      },
+    });
+
+    if (!room) {
+      throw new Error("Phòng thi không tồn tại hoặc đường dẫn không đúng.");
+    }
+
+    // Kiểm tra thời hạn vào phòng nếu có cấu hình durationMinutes
+    if (room.status === "OPEN" && room.durationMinutes) {
+      const expirationTime = new Date(room.createdAt.getTime() + room.durationMinutes * 60 * 1000);
+      if (new Date() > expirationTime) {
+        await this.prisma.cambridgeRoom.update({
+          where: { roomCode },
+          data: { status: "CLOSED", closedAt: expirationTime },
+        });
+        room.status = "CLOSED";
+      }
+    }
+
+    return room;
+  }
+
+  /**
+   * Học sinh vào phòng thi và bắt đầu làm bài (Không tạo trùng bài khi F5)
+   */
+  async joinRoom(params: {
+    roomCode: string;
+    candidateName: string;
+    candidateGrade?: string;
+    existingTestCode?: string;
+  }) {
+    const room = await this.getRoomInfo(params.roomCode);
+    if (room.status === "CLOSED") {
+      throw new Error("Phòng thi này đã đóng, không nhận thêm học sinh mới.");
+    }
+
+    const cleanName = params.candidateName.trim();
+    if (!cleanName) {
+      throw new Error("Vui lòng nhập họ và tên của bạn.");
+    }
+
+    // Nếu học sinh đã có testCode đang làm trong localStorage -> khôi phục phiên cũ
+    if (params.existingTestCode) {
+      const existingSession = await this.prisma.cambridgeSession.findFirst({
+        where: {
+          testCode: params.existingTestCode,
+          roomId: room.id,
+        },
+      });
+      if (existingSession && existingSession.status === "ACTIVE") {
+        return existingSession;
+      }
+    }
+
+    // Kiểm tra xem học sinh này đã có bài làm đang ACTIVE trong phòng chưa
+    const activeSession = await this.prisma.cambridgeSession.findFirst({
+      where: {
+        roomId: room.id,
+        candidateName: cleanName,
+        status: "ACTIVE",
+      },
+    });
+
+    if (activeSession) {
+      return activeSession;
+    }
+
+    // Tạo phiên thi gắn liền với phòng
+    const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const testCode = `CAM-${room.roomCode.replace("ROOM-", "")}-${randomSuffix}`;
+    const expiresAt = new Date(Date.now() + 4 * 60 * 60 * 1000); // 4 giờ
+
+    return await this.prisma.cambridgeSession.create({
+      data: {
+        testCode,
+        roomId: room.id,
+        candidateName: cleanName,
+        candidateGrade: params.candidateGrade?.trim() || room.groupName || null,
+        status: "ACTIVE",
+        stage: "core",
+        answers: {},
+        expiresAt,
+      },
+    });
+  }
+
+  /**
+   * Đóng phòng thi (Giáo viên kết thúc nhận bài)
+   */
+  async closeRoom(roomId: string) {
+    return await this.prisma.cambridgeRoom.update({
+      where: { id: roomId },
+      data: {
+        status: "CLOSED",
+        closedAt: new Date(),
+      },
+    });
+  }
+
+  /**
+   * Danh sách phòng thi của giáo viên
+   */
+  async listRooms(createdById?: string) {
+    const where: any = {};
+    if (createdById) where.createdById = createdById;
+
+    return await this.prisma.cambridgeRoom.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      include: {
+        _count: {
+          select: { sessions: true },
+        },
+        sessions: {
+          select: {
+            id: true,
+            status: true,
+            gradingStatus: true,
+          },
+        },
+      },
+    });
+  }
+
+  /**
+   * Chi tiết phòng thi và danh sách học sinh trong phòng
+   */
+  async getRoomDetail(roomId: string) {
+    const room = await this.prisma.cambridgeRoom.findUnique({
+      where: { id: roomId },
+      include: {
+        sessions: {
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true,
+            testCode: true,
+            candidateName: true,
+            candidateGrade: true,
+            status: true,
+            stage: true,
+            gatePassed: true,
+            extensionAllowed: true,
+            gradingStatus: true,
+            finalLevel: true,
+            isAdjusted: true,
+            objectiveScore: true,
+            computedPlacement: true,
+            createdAt: true,
+            submittedAt: true,
+            gradedAt: true,
+          },
+        },
+      },
+    });
+
+    if (!room) throw new Error("Phòng thi không tồn tại.");
+    return room;
+  }
+
+  /**
+   * Tạo phiên thi mới cho học sinh (Trường hợp tạo mã lẻ truyền thống)
    */
   async createSession(params: {
     candidateName: string;
