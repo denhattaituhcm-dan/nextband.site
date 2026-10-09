@@ -85,6 +85,20 @@ export class CambridgePlacementService {
       throw new Error("Vui lòng nhập tên phòng thi.");
     }
 
+    let validUserId: string | null = null;
+    if (params.createdById) {
+      const userExists = await this.prisma.user.findFirst({
+        where: {
+          OR: [
+            { userId: params.createdById },
+            { id: params.createdById },
+          ],
+        },
+        select: { userId: true },
+      });
+      validUserId = userExists?.userId || null;
+    }
+
     const randomSuffix = Math.random().toString(36).substring(2, 7).toUpperCase();
     const roomCode = `ROOM-${randomSuffix}`;
 
@@ -95,7 +109,7 @@ export class CambridgePlacementService {
         groupName: params.groupName?.trim() || null,
         teacherName: params.teacherName?.trim() || null,
         durationMinutes: params.durationMinutes || null,
-        createdById: params.createdById || null,
+        createdById: validUserId,
         status: "OPEN",
       },
     });
