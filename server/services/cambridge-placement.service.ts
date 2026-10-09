@@ -4,9 +4,9 @@ import path from "path";
 import { fileURLToPath } from "url";
 import * as S from "./cambridge-scoring.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const dataDir = path.resolve(__dirname, "../data/cambridge");
+const cambridgeCurrentFile = fileURLToPath(import.meta.url);
+const cambridgeCurrentDir = path.dirname(cambridgeCurrentFile);
+const dataDir = path.resolve(cambridgeCurrentDir, "../data/cambridge");
 
 // In-memory static cache for Cambridge content
 let cachedItems: any = null;

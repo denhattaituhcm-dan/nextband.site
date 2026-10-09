@@ -118644,9 +118644,9 @@ function placement(codes, extra = {}) {
 }
 
 // server/services/cambridge-placement.service.ts
-var __filename = fileURLToPath(import.meta.url);
-var __dirname2 = path2.dirname(__filename);
-var dataDir = path2.resolve(__dirname2, "../data/cambridge");
+var cambridgeCurrentFile = fileURLToPath(import.meta.url);
+var cambridgeCurrentDir = path2.dirname(cambridgeCurrentFile);
+var dataDir = path2.resolve(cambridgeCurrentDir, "../data/cambridge");
 var cachedItems = null;
 var cachedAnswers = null;
 var cachedRules = null;
@@ -119272,9 +119272,9 @@ var CambridgePlacementService = class {
 import path3 from "path";
 import fs3 from "fs";
 import { fileURLToPath as fileURLToPath2 } from "url";
-var __filename2 = fileURLToPath2(import.meta.url);
-var __dirname3 = path3.dirname(__filename2);
-var audioDir = path3.resolve(__dirname3, "../data/cambridge/audio");
+var cambridgeRoutesFile = fileURLToPath2(import.meta.url);
+var cambridgeRoutesDir = path3.dirname(cambridgeRoutesFile);
+var audioDir = path3.resolve(cambridgeRoutesDir, "../data/cambridge/audio");
 var cambridgeRoutes = async (fastify) => {
   const service = new CambridgePlacementService(fastify.prisma);
   fastify.get(

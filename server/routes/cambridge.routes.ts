@@ -5,9 +5,9 @@ import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const audioDir = path.resolve(__dirname, "../data/cambridge/audio");
+const cambridgeRoutesFile = fileURLToPath(import.meta.url);
+const cambridgeRoutesDir = path.dirname(cambridgeRoutesFile);
+const audioDir = path.resolve(cambridgeRoutesDir, "../data/cambridge/audio");
 
 const cambridgeRoutes: FastifyPluginAsync = async (fastify) => {
   const service = new CambridgePlacementService(fastify.prisma);
