@@ -3516,8 +3516,8 @@ var require_req = __commonJS({
       if (req.originalUrl) {
         _req.url = req.originalUrl;
       } else {
-        const path4 = req.path;
-        _req.url = typeof path4 === "string" ? path4 : req.url ? req.url.path || req.url : void 0;
+        const path3 = req.path;
+        _req.url = typeof path3 === "string" ? path3 : req.url ? req.url.path || req.url : void 0;
       }
       if (req.query) {
         _req.query = req.query;
@@ -3682,14 +3682,14 @@ var require_redact = __commonJS({
       }
       return obj;
     }
-    function parsePath(path4) {
+    function parsePath(path3) {
       const parts = [];
       let current = "";
       let inBrackets = false;
       let inQuotes = false;
       let quoteChar = "";
-      for (let i = 0; i < path4.length; i++) {
-        const char = path4[i];
+      for (let i = 0; i < path3.length; i++) {
+        const char = path3[i];
         if (!inBrackets && char === ".") {
           if (current) {
             parts.push(current);
@@ -3820,10 +3820,10 @@ var require_redact = __commonJS({
       return current;
     }
     function redactPaths(obj, paths, censor, remove2 = false) {
-      for (const path4 of paths) {
-        const parts = parsePath(path4);
+      for (const path3 of paths) {
+        const parts = parsePath(path3);
         if (parts.includes("*")) {
-          redactWildcardPath(obj, parts, censor, path4, remove2);
+          redactWildcardPath(obj, parts, censor, path3, remove2);
         } else {
           if (remove2) {
             removeKey(obj, parts);
@@ -3908,8 +3908,8 @@ var require_redact = __commonJS({
           }
         } else {
           if (afterWildcard.includes("*")) {
-            const wrappedCensor = typeof censor === "function" ? (value, path4) => {
-              const fullPath = [...pathArray.slice(0, pathLength), ...path4];
+            const wrappedCensor = typeof censor === "function" ? (value, path3) => {
+              const fullPath = [...pathArray.slice(0, pathLength), ...path3];
               return censor(value, fullPath);
             } : censor;
             redactWildcardPath(current, afterWildcard, wrappedCensor, originalPath, remove2);
@@ -3944,8 +3944,8 @@ var require_redact = __commonJS({
         return null;
       }
       const pathStructure = /* @__PURE__ */ new Map();
-      for (const path4 of pathsToClone) {
-        const parts = parsePath(path4);
+      for (const path3 of pathsToClone) {
+        const parts = parsePath(path3);
         let current = pathStructure;
         for (let i = 0; i < parts.length; i++) {
           const part = parts[i];
@@ -3997,24 +3997,24 @@ var require_redact = __commonJS({
       }
       return cloneSelectively(obj, pathStructure);
     }
-    function validatePath(path4) {
-      if (typeof path4 !== "string") {
+    function validatePath(path3) {
+      if (typeof path3 !== "string") {
         throw new Error("Paths must be (non-empty) strings");
       }
-      if (path4 === "") {
+      if (path3 === "") {
         throw new Error("Invalid redaction path ()");
       }
-      if (path4.includes("..")) {
-        throw new Error(`Invalid redaction path (${path4})`);
+      if (path3.includes("..")) {
+        throw new Error(`Invalid redaction path (${path3})`);
       }
-      if (path4.includes(",")) {
-        throw new Error(`Invalid redaction path (${path4})`);
+      if (path3.includes(",")) {
+        throw new Error(`Invalid redaction path (${path3})`);
       }
       let bracketCount = 0;
       let inQuotes = false;
       let quoteChar = "";
-      for (let i = 0; i < path4.length; i++) {
-        const char = path4[i];
+      for (let i = 0; i < path3.length; i++) {
+        const char = path3[i];
         if ((char === '"' || char === "'") && bracketCount > 0) {
           if (!inQuotes) {
             inQuotes = true;
@@ -4028,20 +4028,20 @@ var require_redact = __commonJS({
         } else if (char === "]" && !inQuotes) {
           bracketCount--;
           if (bracketCount < 0) {
-            throw new Error(`Invalid redaction path (${path4})`);
+            throw new Error(`Invalid redaction path (${path3})`);
           }
         }
       }
       if (bracketCount !== 0) {
-        throw new Error(`Invalid redaction path (${path4})`);
+        throw new Error(`Invalid redaction path (${path3})`);
       }
     }
     function validatePaths(paths) {
       if (!Array.isArray(paths)) {
         throw new TypeError("paths must be an array");
       }
-      for (const path4 of paths) {
-        validatePath(path4);
+      for (const path3 of paths) {
+        validatePath(path3);
       }
     }
     function slowRedact(options = {}) {
@@ -4209,8 +4209,8 @@ var require_redaction = __commonJS({
         if (shape[k] === null) {
           o[k] = (value) => topCensor(value, [k]);
         } else {
-          const wrappedCensor = typeof censor === "function" ? (value, path4) => {
-            return censor(value, [k, ...path4]);
+          const wrappedCensor = typeof censor === "function" ? (value, path3) => {
+            return censor(value, [k, ...path3]);
           } : censor;
           o[k] = Redact({
             paths: shape[k],
@@ -4425,10 +4425,10 @@ var require_atomic_sleep = __commonJS({
 var require_sonic_boom = __commonJS({
   "node_modules/sonic-boom/index.js"(exports, module) {
     "use strict";
-    var fs4 = __require("fs");
+    var fs3 = __require("fs");
     var EventEmitter = __require("events");
     var inherits = __require("util").inherits;
-    var path4 = __require("path");
+    var path3 = __require("path");
     var sleep2 = require_atomic_sleep();
     var assert = __require("assert");
     var BUSY_WRITE_TIMEOUT = 100;
@@ -4482,20 +4482,20 @@ var require_sonic_boom = __commonJS({
       const mode = sonic.mode;
       if (sonic.sync) {
         try {
-          if (sonic.mkdir) fs4.mkdirSync(path4.dirname(file), { recursive: true });
-          const fd = fs4.openSync(file, flags, mode);
+          if (sonic.mkdir) fs3.mkdirSync(path3.dirname(file), { recursive: true });
+          const fd = fs3.openSync(file, flags, mode);
           fileOpened(null, fd);
         } catch (err) {
           fileOpened(err);
           throw err;
         }
       } else if (sonic.mkdir) {
-        fs4.mkdir(path4.dirname(file), { recursive: true }, (err) => {
+        fs3.mkdir(path3.dirname(file), { recursive: true }, (err) => {
           if (err) return fileOpened(err);
-          fs4.open(file, flags, mode, fileOpened);
+          fs3.open(file, flags, mode, fileOpened);
         });
       } else {
-        fs4.open(file, flags, mode, fileOpened);
+        fs3.open(file, flags, mode, fileOpened);
       }
     }
     function SonicBoom(opts) {
@@ -4536,8 +4536,8 @@ var require_sonic_boom = __commonJS({
         this.flush = flushBuffer;
         this.flushSync = flushBufferSync;
         this._actualWrite = actualWriteBuffer;
-        fsWriteSync = () => fs4.writeSync(this.fd, this._writingBuf);
-        fsWrite = () => fs4.write(this.fd, this._writingBuf, this.release);
+        fsWriteSync = () => fs3.writeSync(this.fd, this._writingBuf);
+        fsWrite = () => fs3.write(this.fd, this._writingBuf, this.release);
       } else if (contentMode === void 0 || contentMode === kContentModeUtf8) {
         this._writingBuf = "";
         this.write = write;
@@ -4546,15 +4546,15 @@ var require_sonic_boom = __commonJS({
         this._actualWrite = actualWrite;
         fsWriteSync = () => {
           if (Buffer.isBuffer(this._writingBuf)) {
-            return fs4.writeSync(this.fd, this._writingBuf);
+            return fs3.writeSync(this.fd, this._writingBuf);
           }
-          return fs4.writeSync(this.fd, this._writingBuf, "utf8");
+          return fs3.writeSync(this.fd, this._writingBuf, "utf8");
         };
         fsWrite = () => {
           if (Buffer.isBuffer(this._writingBuf)) {
-            return fs4.write(this.fd, this._writingBuf, this.release);
+            return fs3.write(this.fd, this._writingBuf, this.release);
           }
-          return fs4.write(this.fd, this._writingBuf, "utf8", this.release);
+          return fs3.write(this.fd, this._writingBuf, "utf8", this.release);
         };
       } else {
         throw new Error(`SonicBoom supports "${kContentModeUtf8}" and "${kContentModeBuffer}", but passed ${contentMode}`);
@@ -4611,7 +4611,7 @@ var require_sonic_boom = __commonJS({
           }
         }
         if (this._fsync) {
-          fs4.fsyncSync(this.fd);
+          fs3.fsyncSync(this.fd);
         }
         const len = this._len;
         if (this._reopening) {
@@ -4725,7 +4725,7 @@ var require_sonic_boom = __commonJS({
       const onDrain = () => {
         if (!this._fsync) {
           try {
-            fs4.fsync(this.fd, (err) => {
+            fs3.fsync(this.fd, (err) => {
               this._flushPending = false;
               cb(err);
             });
@@ -4827,7 +4827,7 @@ var require_sonic_boom = __commonJS({
       const fd = this.fd;
       this.once("ready", () => {
         if (fd !== this.fd) {
-          fs4.close(fd, (err) => {
+          fs3.close(fd, (err) => {
             if (err) {
               return this.emit("error", err);
             }
@@ -4876,7 +4876,7 @@ var require_sonic_boom = __commonJS({
           buf = this._bufs[0];
         }
         try {
-          const n = Buffer.isBuffer(buf) ? fs4.writeSync(this.fd, buf) : fs4.writeSync(this.fd, buf, "utf8");
+          const n = Buffer.isBuffer(buf) ? fs3.writeSync(this.fd, buf) : fs3.writeSync(this.fd, buf, "utf8");
           const releasedBufObj = releaseWritingBuf(buf, this._len, n);
           buf = releasedBufObj.writingBuf;
           this._len = releasedBufObj.len;
@@ -4892,7 +4892,7 @@ var require_sonic_boom = __commonJS({
         }
       }
       try {
-        fs4.fsyncSync(this.fd);
+        fs3.fsyncSync(this.fd);
       } catch {
       }
     }
@@ -4913,7 +4913,7 @@ var require_sonic_boom = __commonJS({
           buf = mergeBuf(this._bufs[0], this._lens[0]);
         }
         try {
-          const n = fs4.writeSync(this.fd, buf);
+          const n = fs3.writeSync(this.fd, buf);
           buf = buf.subarray(n);
           this._len = Math.max(this._len - n, 0);
           if (buf.length <= 0) {
@@ -4941,13 +4941,13 @@ var require_sonic_boom = __commonJS({
       this._writingBuf = this._writingBuf.length ? this._writingBuf : this._bufs.shift() || "";
       if (this.sync) {
         try {
-          const written = Buffer.isBuffer(this._writingBuf) ? fs4.writeSync(this.fd, this._writingBuf) : fs4.writeSync(this.fd, this._writingBuf, "utf8");
+          const written = Buffer.isBuffer(this._writingBuf) ? fs3.writeSync(this.fd, this._writingBuf) : fs3.writeSync(this.fd, this._writingBuf, "utf8");
           release(null, written);
         } catch (err) {
           release(err);
         }
       } else {
-        fs4.write(this.fd, this._writingBuf, release);
+        fs3.write(this.fd, this._writingBuf, release);
       }
     }
     function actualWriteBuffer() {
@@ -4956,7 +4956,7 @@ var require_sonic_boom = __commonJS({
       this._writingBuf = this._writingBuf.length ? this._writingBuf : mergeBuf(this._bufs.shift(), this._lens.shift());
       if (this.sync) {
         try {
-          const written = fs4.writeSync(this.fd, this._writingBuf);
+          const written = fs3.writeSync(this.fd, this._writingBuf);
           release(null, written);
         } catch (err) {
           release(err);
@@ -4965,7 +4965,7 @@ var require_sonic_boom = __commonJS({
         if (kCopyBuffer) {
           this._writingBuf = Buffer.from(this._writingBuf);
         }
-        fs4.write(this.fd, this._writingBuf, release);
+        fs3.write(this.fd, this._writingBuf, release);
       }
     }
     function actualClose(sonic) {
@@ -4981,12 +4981,12 @@ var require_sonic_boom = __commonJS({
       sonic._lens = [];
       assert(typeof sonic.fd === "number", `sonic.fd must be a number, got ${typeof sonic.fd}`);
       try {
-        fs4.fsync(sonic.fd, closeWrapped);
+        fs3.fsync(sonic.fd, closeWrapped);
       } catch {
       }
       function closeWrapped() {
         if (sonic.fd !== 1 && sonic.fd !== 2) {
-          fs4.close(sonic.fd, done);
+          fs3.close(sonic.fd, done);
         } else {
           done();
         }
@@ -17220,8 +17220,8 @@ var require_utils = __commonJS({
       }
       return ind;
     }
-    function removeDotSegments(path4) {
-      let input = path4;
+    function removeDotSegments(path3) {
+      let input = path3;
       const output = [];
       let nextSlash = -1;
       let len = 0;
@@ -17473,8 +17473,8 @@ var require_schemes = __commonJS({
         wsComponent.secure = void 0;
       }
       if (wsComponent.resourceName) {
-        const [path4, query] = wsComponent.resourceName.split("?");
-        wsComponent.path = path4 && path4 !== "/" ? path4 : void 0;
+        const [path3, query] = wsComponent.resourceName.split("?");
+        wsComponent.path = path3 && path3 !== "/" ? path3 : void 0;
         wsComponent.query = query;
         wsComponent.resourceName = void 0;
       }
@@ -20950,8 +20950,8 @@ var require_schemes2 = __commonJS({
         wsComponents.secure = void 0;
       }
       if (wsComponents.resourceName) {
-        const [path4, query] = wsComponents.resourceName.split("?");
-        wsComponents.path = path4 && path4 !== "/" ? path4 : void 0;
+        const [path3, query] = wsComponents.resourceName.split("?");
+        wsComponents.path = path3 && path3 !== "/" ? path3 : void 0;
         wsComponents.query = query;
         wsComponents.resourceName = void 0;
       }
@@ -21675,12 +21675,12 @@ var require_dist = __commonJS({
         throw new Error(`Unknown format "${name}"`);
       return f;
     };
-    function addFormats(ajv, list, fs4, exportName) {
+    function addFormats(ajv, list, fs3, exportName) {
       var _a;
       var _b;
       (_a = (_b = ajv.opts.code).formats) !== null && _a !== void 0 ? _a : _b.formats = (0, codegen_1._)`require("ajv-formats/dist/formats").${exportName}`;
       for (const f of list)
-        ajv.addFormat(f, fs4[f]);
+        ajv.addFormat(f, fs3[f]);
     }
     module.exports = exports = formatsPlugin;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -26254,12 +26254,12 @@ var require_dist2 = __commonJS({
         throw new Error(`Unknown format "${name}"`);
       return f;
     };
-    function addFormats(ajv, list, fs4, exportName) {
+    function addFormats(ajv, list, fs3, exportName) {
       var _a;
       var _b;
       (_a = (_b = ajv.opts.code).formats) !== null && _a !== void 0 ? _a : _b.formats = codegen_1._`require("ajv-formats/dist/formats").${exportName}`;
       for (const f of list)
-        ajv.addFormat(f, fs4[f]);
+        ajv.addFormat(f, fs3[f]);
     }
     module.exports = exports = formatsPlugin;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -28674,40 +28674,40 @@ var require_node = __commonJS({
         super();
         this.staticChildren = {};
       }
-      findStaticMatchingChild(path4, pathIndex) {
-        const staticChild = this.staticChildren[path4.charAt(pathIndex)];
-        if (staticChild === void 0 || !staticChild.matchPrefix(path4, pathIndex)) {
+      findStaticMatchingChild(path3, pathIndex) {
+        const staticChild = this.staticChildren[path3.charAt(pathIndex)];
+        if (staticChild === void 0 || !staticChild.matchPrefix(path3, pathIndex)) {
           return null;
         }
         return staticChild;
       }
-      getStaticChild(path4, pathIndex = 0) {
-        if (path4.length === pathIndex) {
+      getStaticChild(path3, pathIndex = 0) {
+        if (path3.length === pathIndex) {
           return this;
         }
-        const staticChild = this.findStaticMatchingChild(path4, pathIndex);
+        const staticChild = this.findStaticMatchingChild(path3, pathIndex);
         if (staticChild) {
-          return staticChild.getStaticChild(path4, pathIndex + staticChild.prefix.length);
+          return staticChild.getStaticChild(path3, pathIndex + staticChild.prefix.length);
         }
         return null;
       }
-      createStaticChild(path4) {
-        if (path4.length === 0) {
+      createStaticChild(path3) {
+        if (path3.length === 0) {
           return this;
         }
-        let staticChild = this.staticChildren[path4.charAt(0)];
+        let staticChild = this.staticChildren[path3.charAt(0)];
         if (staticChild) {
           let i = 1;
           for (; i < staticChild.prefix.length; i++) {
-            if (path4.charCodeAt(i) !== staticChild.prefix.charCodeAt(i)) {
+            if (path3.charCodeAt(i) !== staticChild.prefix.charCodeAt(i)) {
               staticChild = staticChild.split(this, i);
               break;
             }
           }
-          return staticChild.createStaticChild(path4.slice(i));
+          return staticChild.createStaticChild(path3.slice(i));
         }
-        const label = path4.charAt(0);
-        this.staticChildren[label] = new StaticNode(path4);
+        const label = path3.charAt(0);
+        this.staticChildren[label] = new StaticNode(path3);
         return this.staticChildren[label];
       }
     };
@@ -28767,8 +28767,8 @@ var require_node = __commonJS({
         parentNode.staticChildren[parentPrefix.charAt(0)] = staticNode;
         return staticNode;
       }
-      getNextNode(path4, pathIndex, nodeStack, paramsCount) {
-        let node = this.findStaticMatchingChild(path4, pathIndex);
+      getNextNode(path3, pathIndex, nodeStack, paramsCount) {
+        let node = this.findStaticMatchingChild(path3, pathIndex);
         let parametricBrotherNodeIndex = 0;
         if (node === null) {
           if (this.parametricChildren.length === 0) {
@@ -28815,8 +28815,8 @@ var require_node = __commonJS({
         this.kind = NODE_TYPES.PARAMETRIC;
         this.nodePaths = /* @__PURE__ */ new Set([nodePath]);
       }
-      getNextNode(path4, pathIndex) {
-        return this.findStaticMatchingChild(path4, pathIndex);
+      getNextNode(path3, pathIndex) {
+        return this.findStaticMatchingChild(path3, pathIndex);
       }
     };
     var WildcardNode = class extends Node {
@@ -29151,33 +29151,33 @@ var require_url_sanitizer = __commonJS({
       }
       return null;
     }
-    function safeDecodeURI(path4, useSemicolonDelimiter) {
+    function safeDecodeURI(path3, useSemicolonDelimiter) {
       let shouldDecode = false;
       let shouldDecodeParam = false;
       let querystring = "";
-      for (let i = 1; i < path4.length; i++) {
-        const charCode = path4.charCodeAt(i);
+      for (let i = 1; i < path3.length; i++) {
+        const charCode = path3.charCodeAt(i);
         if (charCode === 37) {
-          const highCharCode = path4.charCodeAt(i + 1);
-          const lowCharCode = path4.charCodeAt(i + 2);
+          const highCharCode = path3.charCodeAt(i + 1);
+          const lowCharCode = path3.charCodeAt(i + 2);
           if (decodeComponentChar(highCharCode, lowCharCode) === null) {
             shouldDecode = true;
           } else {
             shouldDecodeParam = true;
             if (highCharCode === 50 && lowCharCode === 53) {
               shouldDecode = true;
-              path4 = path4.slice(0, i + 1) + "25" + path4.slice(i + 1);
+              path3 = path3.slice(0, i + 1) + "25" + path3.slice(i + 1);
               i += 2;
             }
             i += 2;
           }
         } else if (charCode === 63 || charCode === 35 || charCode === 59 && useSemicolonDelimiter) {
-          querystring = path4.slice(i + 1);
-          path4 = path4.slice(0, i);
+          querystring = path3.slice(i + 1);
+          path3 = path3.slice(0, i);
           break;
         }
       }
-      const decodedPath = shouldDecode ? decodeURI(path4) : path4;
+      const decodedPath = shouldDecode ? decodeURI(path3) : path3;
       return { path: decodedPath, querystring, shouldDecodeParam };
     }
     function safeDecodeURIComponent(uriComponent) {
@@ -29262,7 +29262,7 @@ var require_find_my_way = __commonJS({
       this.routes = [];
       this.trees = {};
     }
-    Router.prototype.on = function on(method, path4, opts, handler2, store) {
+    Router.prototype.on = function on(method, path3, opts, handler2, store) {
       if (typeof opts === "function") {
         if (handler2 !== void 0) {
           store = handler2;
@@ -29270,34 +29270,34 @@ var require_find_my_way = __commonJS({
         handler2 = opts;
         opts = {};
       }
-      assert(typeof path4 === "string", "Path should be a string");
-      assert(path4.length > 0, "The path could not be empty");
-      assert(path4[0] === "/" || path4[0] === "*", "The first character of a path should be `/` or `*`");
+      assert(typeof path3 === "string", "Path should be a string");
+      assert(path3.length > 0, "The path could not be empty");
+      assert(path3[0] === "/" || path3[0] === "*", "The first character of a path should be `/` or `*`");
       assert(typeof handler2 === "function", "Handler should be a function");
-      const optionalParamMatch = path4.match(OPTIONAL_PARAM_REGEXP);
+      const optionalParamMatch = path3.match(OPTIONAL_PARAM_REGEXP);
       if (optionalParamMatch) {
-        assert(path4.length === optionalParamMatch.index + optionalParamMatch[0].length, "Optional Parameter needs to be the last parameter of the path");
-        const pathFull = path4.replace(OPTIONAL_PARAM_REGEXP, "$1$2");
-        const pathOptional = path4.replace(OPTIONAL_PARAM_REGEXP, "$2") || "/";
+        assert(path3.length === optionalParamMatch.index + optionalParamMatch[0].length, "Optional Parameter needs to be the last parameter of the path");
+        const pathFull = path3.replace(OPTIONAL_PARAM_REGEXP, "$1$2");
+        const pathOptional = path3.replace(OPTIONAL_PARAM_REGEXP, "$2") || "/";
         this.on(method, pathFull, opts, handler2, store);
         this.on(method, pathOptional, opts, handler2, store);
         return;
       }
-      const route = path4;
+      const route = path3;
       if (this.ignoreDuplicateSlashes) {
-        path4 = removeDuplicateSlashes(path4);
+        path3 = removeDuplicateSlashes(path3);
       }
       if (this.ignoreTrailingSlash) {
-        path4 = trimLastSlash(path4);
+        path3 = trimLastSlash(path3);
       }
       const methods = Array.isArray(method) ? method : [method];
       for (const method2 of methods) {
         assert(typeof method2 === "string", "Method should be a string");
         assert(httpMethods.includes(method2), `Method '${method2}' is not an http method.`);
-        this._on(method2, path4, opts, handler2, store, route);
+        this._on(method2, path3, opts, handler2, store, route);
       }
     };
-    Router.prototype._on = function _on(method, path4, opts, handler2, store) {
+    Router.prototype._on = function _on(method, path3, opts, handler2, store) {
       let constraints = {};
       if (opts.constraints !== void 0) {
         assert(typeof opts.constraints === "object" && opts.constraints !== null, "Constraints should be an object");
@@ -29310,7 +29310,7 @@ var require_find_my_way = __commonJS({
       if (this.trees[method] === void 0) {
         this.trees[method] = new StaticNode("/");
       }
-      let pattern = path4;
+      let pattern = path3;
       if (pattern === "*" && this.trees[method].prefix.length !== 0) {
         const currentRoot = this.trees[method];
         this.trees[method] = new StaticNode("");
@@ -29413,19 +29413,19 @@ var require_find_my_way = __commonJS({
           throw new Error(`Method '${method}' already declared for route '${pattern}' with constraints '${JSON.stringify(constraints)}'`);
         }
       }
-      const route = { method, path: path4, pattern, params, opts, handler: handler2, store };
+      const route = { method, path: path3, pattern, params, opts, handler: handler2, store };
       this.routes.push(route);
       currentNode.addRoute(route, this.constrainer);
     };
-    Router.prototype.hasRoute = function hasRoute(method, path4, constraints) {
-      const route = this.findRoute(method, path4, constraints);
+    Router.prototype.hasRoute = function hasRoute(method, path3, constraints) {
+      const route = this.findRoute(method, path3, constraints);
       return route !== null;
     };
-    Router.prototype.findRoute = function findNode(method, path4, constraints = {}) {
+    Router.prototype.findRoute = function findNode(method, path3, constraints = {}) {
       if (this.trees[method] === void 0) {
         return null;
       }
-      let pattern = path4;
+      let pattern = path3;
       let currentNode = this.trees[method];
       let parentNodePathIndex = currentNode.prefix.length;
       const params = [];
@@ -29543,39 +29543,39 @@ var require_find_my_way = __commonJS({
       this.trees = {};
       this.routes = [];
     };
-    Router.prototype.off = function off(method, path4, constraints) {
-      assert(typeof path4 === "string", "Path should be a string");
-      assert(path4.length > 0, "The path could not be empty");
-      assert(path4[0] === "/" || path4[0] === "*", "The first character of a path should be `/` or `*`");
+    Router.prototype.off = function off(method, path3, constraints) {
+      assert(typeof path3 === "string", "Path should be a string");
+      assert(path3.length > 0, "The path could not be empty");
+      assert(path3[0] === "/" || path3[0] === "*", "The first character of a path should be `/` or `*`");
       assert(
         typeof constraints === "undefined" || typeof constraints === "object" && !Array.isArray(constraints) && constraints !== null,
         "Constraints should be an object or undefined."
       );
-      const optionalParamMatch = path4.match(OPTIONAL_PARAM_REGEXP);
+      const optionalParamMatch = path3.match(OPTIONAL_PARAM_REGEXP);
       if (optionalParamMatch) {
-        assert(path4.length === optionalParamMatch.index + optionalParamMatch[0].length, "Optional Parameter needs to be the last parameter of the path");
-        const pathFull = path4.replace(OPTIONAL_PARAM_REGEXP, "$1$2");
-        const pathOptional = path4.replace(OPTIONAL_PARAM_REGEXP, "$2");
+        assert(path3.length === optionalParamMatch.index + optionalParamMatch[0].length, "Optional Parameter needs to be the last parameter of the path");
+        const pathFull = path3.replace(OPTIONAL_PARAM_REGEXP, "$1$2");
+        const pathOptional = path3.replace(OPTIONAL_PARAM_REGEXP, "$2");
         this.off(method, pathFull, constraints);
         this.off(method, pathOptional, constraints);
         return;
       }
       if (this.ignoreDuplicateSlashes) {
-        path4 = removeDuplicateSlashes(path4);
+        path3 = removeDuplicateSlashes(path3);
       }
       if (this.ignoreTrailingSlash) {
-        path4 = trimLastSlash(path4);
+        path3 = trimLastSlash(path3);
       }
       const methods = Array.isArray(method) ? method : [method];
       for (const method2 of methods) {
-        this._off(method2, path4, constraints);
+        this._off(method2, path3, constraints);
       }
     };
-    Router.prototype._off = function _off(method, path4, constraints) {
+    Router.prototype._off = function _off(method, path3, constraints) {
       assert(typeof method === "string", "Method should be a string");
       assert(httpMethods.includes(method), `Method '${method}' is not an http method.`);
       function matcherWithoutConstraints(route) {
-        return method !== route.method || path4 !== route.path;
+        return method !== route.method || path3 !== route.path;
       }
       function matcherWithConstraints(route) {
         return matcherWithoutConstraints(route) || !deepEqual(constraints, route.opts.constraints || {});
@@ -29612,37 +29612,37 @@ var require_find_my_way = __commonJS({
       if (handle === null) return this._defaultRoute(req, res, ctx);
       return ctx === void 0 ? handle.handler(req, res, handle.params, handle.store, handle.searchParams) : handle.handler.call(ctx, req, res, handle.params, handle.store, handle.searchParams);
     };
-    Router.prototype.find = function find(method, path4, derivedConstraints) {
+    Router.prototype.find = function find(method, path3, derivedConstraints) {
       let currentNode = this.trees[method];
       if (currentNode === void 0) return null;
-      if (path4.charCodeAt(0) !== 47) {
-        path4 = path4.replace(FULL_PATH_REGEXP, "/");
+      if (path3.charCodeAt(0) !== 47) {
+        path3 = path3.replace(FULL_PATH_REGEXP, "/");
       }
       if (this.ignoreDuplicateSlashes) {
-        path4 = removeDuplicateSlashes(path4);
+        path3 = removeDuplicateSlashes(path3);
       }
       let sanitizedUrl;
       let querystring2;
       let shouldDecodeParam;
       try {
-        sanitizedUrl = safeDecodeURI(path4, this.useSemicolonDelimiter);
-        path4 = sanitizedUrl.path;
+        sanitizedUrl = safeDecodeURI(path3, this.useSemicolonDelimiter);
+        path3 = sanitizedUrl.path;
         querystring2 = sanitizedUrl.querystring;
         shouldDecodeParam = sanitizedUrl.shouldDecodeParam;
       } catch (error) {
-        return this._onBadUrl(path4);
+        return this._onBadUrl(path3);
       }
       if (this.ignoreTrailingSlash) {
-        path4 = trimLastSlash(path4);
+        path3 = trimLastSlash(path3);
       }
-      const originPath = path4;
+      const originPath = path3;
       if (this.caseSensitive === false) {
-        path4 = path4.toLowerCase();
+        path3 = path3.toLowerCase();
       }
       const maxParamLength = this.maxParamLength;
       let pathIndex = currentNode.prefix.length;
       const params = [];
-      const pathLen = path4.length;
+      const pathLen = path3.length;
       const brothersNodesStack = [];
       while (true) {
         if (pathIndex === pathLen && currentNode.isLeafNode) {
@@ -29656,7 +29656,7 @@ var require_find_my_way = __commonJS({
             };
           }
         }
-        let node = currentNode.getNextNode(path4, pathIndex, brothersNodesStack, params.length);
+        let node = currentNode.getNextNode(path3, pathIndex, brothersNodesStack, params.length);
         if (node === null) {
           if (brothersNodesStack.length === 0) {
             return null;
@@ -29710,8 +29710,8 @@ var require_find_my_way = __commonJS({
     Router.prototype._rebuild = function(routes2) {
       this.reset();
       for (const route of routes2) {
-        const { method, path: path4, opts, handler: handler2, store } = route;
-        this._on(method, path4, opts, handler2, store);
+        const { method, path: path3, opts, handler: handler2, store } = route;
+        this._on(method, path3, opts, handler2, store);
       }
     };
     Router.prototype._defaultRoute = function(req, res, ctx) {
@@ -29722,13 +29722,13 @@ var require_find_my_way = __commonJS({
         res.end();
       }
     };
-    Router.prototype._onBadUrl = function(path4) {
+    Router.prototype._onBadUrl = function(path3) {
       if (this.onBadUrl === null) {
         return null;
       }
       const onBadUrl = this.onBadUrl;
       return {
-        handler: (req, res, ctx) => onBadUrl(path4, req, res),
+        handler: (req, res, ctx) => onBadUrl(path3, req, res),
         params: {},
         store: null
       };
@@ -29760,25 +29760,25 @@ var require_find_my_way = __commonJS({
       if (!httpMethods.hasOwnProperty(i)) continue;
       const m = httpMethods[i];
       const methodName = m.toLowerCase();
-      Router.prototype[methodName] = function(path4, handler2, store) {
-        return this.on(m, path4, handler2, store);
+      Router.prototype[methodName] = function(path3, handler2, store) {
+        return this.on(m, path3, handler2, store);
       };
     }
-    Router.prototype.all = function(path4, handler2, store) {
-      this.on(httpMethods, path4, handler2, store);
+    Router.prototype.all = function(path3, handler2, store) {
+      this.on(httpMethods, path3, handler2, store);
     };
     module.exports = Router;
     function escapeRegExp(string) {
       return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     }
-    function removeDuplicateSlashes(path4) {
-      return path4.replace(/\/\/+/g, "/");
+    function removeDuplicateSlashes(path3) {
+      return path3.replace(/\/\/+/g, "/");
     }
-    function trimLastSlash(path4) {
-      if (path4.length > 1 && path4.charCodeAt(path4.length - 1) === 47) {
-        return path4.slice(0, -1);
+    function trimLastSlash(path3) {
+      if (path3.length > 1 && path3.charCodeAt(path3.length - 1) === 47) {
+        return path3.slice(0, -1);
       }
-      return path4;
+      return path3;
     }
     function trimRegExpStartAndEnd(regexString) {
       if (regexString.charCodeAt(1) === 94) {
@@ -29789,22 +29789,22 @@ var require_find_my_way = __commonJS({
       }
       return regexString;
     }
-    function getClosingParenthensePosition(path4, idx) {
+    function getClosingParenthensePosition(path3, idx) {
       let parentheses = 1;
-      while (idx < path4.length) {
+      while (idx < path3.length) {
         idx++;
-        if (path4[idx] === "\\") {
+        if (path3[idx] === "\\") {
           idx++;
           continue;
         }
-        if (path4[idx] === ")") {
+        if (path3[idx] === ")") {
           parentheses--;
-        } else if (path4[idx] === "(") {
+        } else if (path3[idx] === "(") {
           parentheses++;
         }
         if (!parentheses) return idx;
       }
-      throw new TypeError('Invalid regexp expression in "' + path4 + '"');
+      throw new TypeError('Invalid regexp expression in "' + path3 + '"');
     }
     function defaultBuildPrettyMeta(route) {
       if (!route) return {};
@@ -30033,28 +30033,28 @@ var require_route = __commonJS({
         const isHeadRoute = opts.method === "HEAD" || Array.isArray(opts.method) && opts.method.includes("HEAD");
         const headOpts = shouldExposeHead && isGetRoute ? { ...options2 } : null;
         throwIfAlreadyStarted("Cannot add route!");
-        const path4 = opts.url || opts.path || "";
+        const path3 = opts.url || opts.path || "";
         if (Array.isArray(opts.method)) {
           for (var i = 0; i < opts.method.length; ++i) {
             opts.method[i] = normalizeAndValidateMethod(opts.method[i]);
-            validateSchemaBodyOption(opts.method[i], path4, opts.schema);
+            validateSchemaBodyOption(opts.method[i], path3, opts.schema);
           }
         } else {
           opts.method = normalizeAndValidateMethod(opts.method);
-          validateSchemaBodyOption(opts.method, path4, opts.schema);
+          validateSchemaBodyOption(opts.method, path3, opts.schema);
         }
         if (!opts.handler) {
-          throw new FST_ERR_ROUTE_MISSING_HANDLER(opts.method, path4);
+          throw new FST_ERR_ROUTE_MISSING_HANDLER(opts.method, path3);
         }
         if (opts.errorHandler !== void 0 && typeof opts.errorHandler !== "function") {
-          throw new FST_ERR_ROUTE_HANDLER_NOT_FN(opts.method, path4);
+          throw new FST_ERR_ROUTE_HANDLER_NOT_FN(opts.method, path3);
         }
         validateBodyLimitOption(opts.bodyLimit);
         const prefix = this[kRoutePrefix];
-        if (path4 === "/" && prefix.length > 0 && opts.method !== "HEAD") {
+        if (path3 === "/" && prefix.length > 0 && opts.method !== "HEAD") {
           switch (opts.prefixTrailingSlash) {
             case "slash":
-              addNewRoute.call(this, { path: path4, isFastify });
+              addNewRoute.call(this, { path: path3, isFastify });
               break;
             case "no-slash":
               addNewRoute.call(this, { path: "", isFastify });
@@ -30063,20 +30063,20 @@ var require_route = __commonJS({
             default:
               addNewRoute.call(this, { path: "", isFastify });
               if (ignoreTrailingSlash !== true && (ignoreDuplicateSlashes !== true || !prefix.endsWith("/"))) {
-                addNewRoute.call(this, { path: path4, prefixing: true, isFastify });
+                addNewRoute.call(this, { path: path3, prefixing: true, isFastify });
               }
           }
-        } else if (path4[0] === "/" && prefix.endsWith("/")) {
-          addNewRoute.call(this, { path: path4.slice(1), isFastify });
+        } else if (path3[0] === "/" && prefix.endsWith("/")) {
+          addNewRoute.call(this, { path: path3.slice(1), isFastify });
         } else {
-          addNewRoute.call(this, { path: path4, isFastify });
+          addNewRoute.call(this, { path: path3, isFastify });
         }
         return this;
-        function addNewRoute({ path: path5, prefixing = false, isFastify: isFastify2 = false }) {
-          const url = prefix + path5;
+        function addNewRoute({ path: path4, prefixing = false, isFastify: isFastify2 = false }) {
+          const url = prefix + path4;
           opts.url = url;
           opts.path = url;
-          opts.routePath = path5;
+          opts.routePath = path4;
           opts.prefix = prefix;
           opts.logLevel = opts.logLevel || this[kLogLevel];
           if (this[kLogSerializers] || opts.logSerializers) {
@@ -30207,7 +30207,7 @@ var require_route = __commonJS({
           });
           if (shouldExposeHead && isGetRoute && !isHeadRoute && !hasHEADHandler) {
             const onSendHandlers = parseHeadOnSendHandlers(headOpts.onSend);
-            prepareRoute.call(this, { method: "HEAD", url: path5, options: { ...headOpts, onSend: onSendHandlers }, isFastify: true });
+            prepareRoute.call(this, { method: "HEAD", url: path4, options: { ...headOpts, onSend: onSendHandlers }, isFastify: true });
           } else if (hasHEADHandler && exposeHeadRoute) {
             FSTDEP007();
           }
@@ -30321,9 +30321,9 @@ var require_route = __commonJS({
       }
       return method;
     }
-    function validateSchemaBodyOption(method, path4, schema) {
+    function validateSchemaBodyOption(method, path3, schema) {
       if ((method === "GET" || method === "HEAD") && schema && schema.body) {
-        throw new FST_ERR_ROUTE_BODY_VALIDATION_SCHEMA_NOT_SUPPORTED(method, path4);
+        throw new FST_ERR_ROUTE_BODY_VALIDATION_SCHEMA_NOT_SUPPORTED(method, path3);
       }
     }
     function validateBodyLimitOption(bodyLimit) {
@@ -30402,7 +30402,7 @@ var require_fourOhFour = __commonJS({
         });
       }
       function createOnBadUrl() {
-        return function onBadUrl(path4, req, res) {
+        return function onBadUrl(path3, req, res) {
           const fourOhFourContext = this[kFourOhFourLevelInstance][kFourOhFourContext];
           const id = getGenReqId(fourOhFourContext.server, req);
           const childLogger = createChildLogger(fourOhFourContext, logger, req, id);
@@ -34011,7 +34011,7 @@ ${body}`);
         }
         fourOhFour.router.lookup(req, res);
       }
-      function onBadUrl(path4, req, res) {
+      function onBadUrl(path3, req, res) {
         if (frameworkErrors) {
           const id = getGenReqId(onBadUrlContext.server, req);
           const childLogger = createChildLogger(onBadUrlContext, logger, req, id);
@@ -34020,9 +34020,9 @@ ${body}`);
           if (disableRequestLogging === false) {
             childLogger.info({ req: request }, "incoming request");
           }
-          return frameworkErrors(new FST_ERR_BAD_URL(path4), request, reply);
+          return frameworkErrors(new FST_ERR_BAD_URL(path3), request, reply);
         }
-        const body = `{"error":"Bad Request","code":"FST_ERR_BAD_URL","message":"'${path4}' is not a valid url component","statusCode":400}`;
+        const body = `{"error":"Bad Request","code":"FST_ERR_BAD_URL","message":"'${path3}' is not a valid url component","statusCode":400}`;
         res.writeHead(400, {
           "Content-Type": "application/json",
           "Content-Length": body.length
@@ -37347,19 +37347,19 @@ var require_parseParams = __commonJS({
 var require_basename = __commonJS({
   "node_modules/@fastify/busboy/lib/utils/basename.js"(exports, module) {
     "use strict";
-    module.exports = function basename2(path4) {
-      if (typeof path4 !== "string") {
+    module.exports = function basename2(path3) {
+      if (typeof path3 !== "string") {
         return "";
       }
-      for (var i = path4.length - 1; i >= 0; --i) {
-        switch (path4.charCodeAt(i)) {
+      for (var i = path3.length - 1; i >= 0; --i) {
+        switch (path3.charCodeAt(i)) {
           case 47:
           case 92:
-            path4 = path4.slice(i + 1);
-            return path4 === ".." || path4 === "." ? "" : path4;
+            path3 = path3.slice(i + 1);
+            return path3 === ".." || path3 === "." ? "" : path3;
         }
       }
-      return path4 === ".." || path4 === "." ? "" : path4;
+      return path3 === ".." || path3 === "." ? "" : path3;
     };
   }
 });
@@ -38672,7 +38672,7 @@ var require_multipart2 = __commonJS({
     var fp3 = require_plugin2();
     var { createWriteStream } = __require("node:fs");
     var { unlink } = __require("node:fs/promises");
-    var path4 = __require("node:path");
+    var path3 = __require("node:path");
     var { generateId } = require_generateId();
     var util2 = __require("node:util");
     var createError = require_error3();
@@ -39022,7 +39022,7 @@ var require_multipart2 = __commonJS({
         this.tmpUploads = [];
         let i = 0;
         for await (const file of files) {
-          const filepath = path4.join(tmpdir, generateId() + path4.extname(file.filename || "file" + i++));
+          const filepath = path3.join(tmpdir, generateId() + path3.extname(file.filename || "file" + i++));
           const target = createWriteStream(filepath);
           try {
             this.tmpUploads.push(filepath);
@@ -40260,11 +40260,11 @@ var require_commonjs = __commonJS({
       return (f) => f.length === len && f !== "." && f !== "..";
     };
     var defaultPlatform = typeof process === "object" && process ? typeof process.env === "object" && process.env && process.env.__MINIMATCH_TESTING_PLATFORM__ || process.platform : "posix";
-    var path4 = {
+    var path3 = {
       win32: { sep: "\\" },
       posix: { sep: "/" }
     };
-    exports.sep = defaultPlatform === "win32" ? path4.win32.sep : path4.posix.sep;
+    exports.sep = defaultPlatform === "win32" ? path3.win32.sep : path3.posix.sep;
     exports.minimatch.sep = exports.sep;
     exports.GLOBSTAR = Symbol("globstar **");
     exports.minimatch.GLOBSTAR = exports.GLOBSTAR;
@@ -43586,12 +43586,12 @@ var require_commonjs4 = __commonJS({
       /**
        * Get the Path object referenced by the string path, resolved from this Path
        */
-      resolve(path4) {
-        if (!path4) {
+      resolve(path3) {
+        if (!path3) {
           return this;
         }
-        const rootPath = this.getRootString(path4);
-        const dir = path4.substring(rootPath.length);
+        const rootPath = this.getRootString(path3);
+        const dir = path3.substring(rootPath.length);
         const dirParts = dir.split(this.splitSep);
         const result = rootPath ? this.getRoot(rootPath).#resolveParts(dirParts) : this.#resolveParts(dirParts);
         return result;
@@ -44344,8 +44344,8 @@ var require_commonjs4 = __commonJS({
       /**
        * @internal
        */
-      getRootString(path4) {
-        return node_path_1.win32.parse(path4).root;
+      getRootString(path3) {
+        return node_path_1.win32.parse(path3).root;
       }
       /**
        * @internal
@@ -44392,8 +44392,8 @@ var require_commonjs4 = __commonJS({
       /**
        * @internal
        */
-      getRootString(path4) {
-        return path4.startsWith("/") ? "/" : "";
+      getRootString(path3) {
+        return path3.startsWith("/") ? "/" : "";
       }
       /**
        * @internal
@@ -44443,8 +44443,8 @@ var require_commonjs4 = __commonJS({
        *
        * @internal
        */
-      constructor(cwd = process.cwd(), pathImpl, sep2, { nocase, childrenCacheSize = 16 * 1024, fs: fs4 = defaultFS } = {}) {
-        this.#fs = fsFromOption(fs4);
+      constructor(cwd = process.cwd(), pathImpl, sep2, { nocase, childrenCacheSize = 16 * 1024, fs: fs3 = defaultFS } = {}) {
+        this.#fs = fsFromOption(fs3);
         if (cwd instanceof URL || cwd.startsWith("file://")) {
           cwd = (0, node_url_1.fileURLToPath)(cwd);
         }
@@ -44483,11 +44483,11 @@ var require_commonjs4 = __commonJS({
       /**
        * Get the depth of a provided path, string, or the cwd
        */
-      depth(path4 = this.cwd) {
-        if (typeof path4 === "string") {
-          path4 = this.cwd.resolve(path4);
+      depth(path3 = this.cwd) {
+        if (typeof path3 === "string") {
+          path3 = this.cwd.resolve(path3);
         }
-        return path4.depth();
+        return path3.depth();
       }
       /**
        * Return the cache of child entries.  Exposed so subclasses can create
@@ -44974,9 +44974,9 @@ var require_commonjs4 = __commonJS({
         process2();
         return results;
       }
-      chdir(path4 = this.cwd) {
+      chdir(path3 = this.cwd) {
         const oldCwd = this.cwd;
-        this.cwd = typeof path4 === "string" ? this.cwd.resolve(path4) : path4;
+        this.cwd = typeof path3 === "string" ? this.cwd.resolve(path3) : path3;
         this.cwd[setAsCwd](oldCwd);
       }
     };
@@ -45003,8 +45003,8 @@ var require_commonjs4 = __commonJS({
       /**
        * @internal
        */
-      newRoot(fs4) {
-        return new PathWin32(this.rootPath, IFDIR, void 0, this.roots, this.nocase, this.childrenCache(), { fs: fs4 });
+      newRoot(fs3) {
+        return new PathWin32(this.rootPath, IFDIR, void 0, this.roots, this.nocase, this.childrenCache(), { fs: fs3 });
       }
       /**
        * Return true if the provided path string is an absolute path
@@ -45033,8 +45033,8 @@ var require_commonjs4 = __commonJS({
       /**
        * @internal
        */
-      newRoot(fs4) {
-        return new PathPosix(this.rootPath, IFDIR, void 0, this.roots, this.nocase, this.childrenCache(), { fs: fs4 });
+      newRoot(fs3) {
+        return new PathPosix(this.rootPath, IFDIR, void 0, this.roots, this.nocase, this.childrenCache(), { fs: fs3 });
       }
       /**
        * Return true if the provided path string is an absolute path
@@ -45364,8 +45364,8 @@ var require_processor = __commonJS({
       }
       // match, absolute, ifdir
       entries() {
-        return [...this.store.entries()].map(([path4, n]) => [
-          path4,
+        return [...this.store.entries()].map(([path3, n]) => [
+          path3,
           !!(n & 2),
           !!(n & 1)
         ]);
@@ -45583,9 +45583,9 @@ var require_walker = __commonJS({
       signal;
       maxDepth;
       includeChildMatches;
-      constructor(patterns, path4, opts) {
+      constructor(patterns, path3, opts) {
         this.patterns = patterns;
-        this.path = path4;
+        this.path = path3;
         this.opts = opts;
         this.#sep = !opts.posix && opts.platform === "win32" ? "\\" : "/";
         this.includeChildMatches = opts.includeChildMatches !== false;
@@ -45604,11 +45604,11 @@ var require_walker = __commonJS({
           });
         }
       }
-      #ignored(path4) {
-        return this.seen.has(path4) || !!this.#ignore?.ignored?.(path4);
+      #ignored(path3) {
+        return this.seen.has(path3) || !!this.#ignore?.ignored?.(path3);
       }
-      #childrenIgnored(path4) {
-        return !!this.#ignore?.childrenIgnored?.(path4);
+      #childrenIgnored(path3) {
+        return !!this.#ignore?.childrenIgnored?.(path3);
       }
       // backpressure mechanism
       pause() {
@@ -45824,8 +45824,8 @@ var require_walker = __commonJS({
     exports.GlobUtil = GlobUtil;
     var GlobWalker = class extends GlobUtil {
       matches = /* @__PURE__ */ new Set();
-      constructor(patterns, path4, opts) {
-        super(patterns, path4, opts);
+      constructor(patterns, path3, opts) {
+        super(patterns, path3, opts);
       }
       matchEmit(e) {
         this.matches.add(e);
@@ -45863,8 +45863,8 @@ var require_walker = __commonJS({
     exports.GlobWalker = GlobWalker;
     var GlobStream = class extends GlobUtil {
       results;
-      constructor(patterns, path4, opts) {
-        super(patterns, path4, opts);
+      constructor(patterns, path3, opts) {
+        super(patterns, path3, opts);
         this.results = new minipass_1.Minipass({
           signal: this.signal,
           objectMode: true
@@ -46266,11 +46266,11 @@ var require_Mime = __commonJS({
         }
       }
     };
-    Mime.prototype.getType = function(path4) {
-      path4 = String(path4);
-      let last = path4.replace(/^.*[/\\]/, "").toLowerCase();
+    Mime.prototype.getType = function(path3) {
+      path3 = String(path3);
+      let last = path3.replace(/^.*[/\\]/, "").toLowerCase();
       let ext = last.replace(/^.*\./, "").toLowerCase();
-      let hasPath = last.length < path4.length;
+      let hasPath = last.length < path3.length;
       let hasDot = ext.length < last.length - 1;
       return (hasDot || !hasPath) && this._types[ext] || null;
     };
@@ -47289,8 +47289,8 @@ var require_setHeaders = __commonJS({
 var require_SendStream = __commonJS({
   "node_modules/@fastify/send/lib/SendStream.js"(exports, module) {
     "use strict";
-    var fs4 = __require("node:fs");
-    var path4 = __require("node:path");
+    var fs3 = __require("node:fs");
+    var path3 = __require("node:path");
     var Stream = __require("node:stream");
     var util2 = __require("node:util");
     var debug = __require("node:util").debuglog("send");
@@ -47309,11 +47309,11 @@ var require_SendStream = __commonJS({
     var { parseBytesRange } = require_parseBytesRange();
     var { parseTokenList } = require_parseTokenList();
     var { setHeaders } = require_setHeaders();
-    var extname2 = path4.extname;
-    var join2 = path4.join;
-    var normalize = path4.normalize;
-    var resolve2 = path4.resolve;
-    var sep2 = path4.sep;
+    var extname2 = path3.extname;
+    var join2 = path3.join;
+    var normalize = path3.normalize;
+    var resolve2 = path3.resolve;
+    var sep2 = path3.sep;
     var BYTES_RANGE_REGEXP = /^ *bytes=/;
     var MAX_MAXAGE = 60 * 60 * 24 * 365 * 1e3;
     var UP_PATH_REGEXP = /(?:^|[\\/])\.\.(?:[\\/]|$)/;
@@ -47330,14 +47330,14 @@ var require_SendStream = __commonJS({
       "ignore",
       "deny"
     ];
-    function SendStream(req, path5, options) {
+    function SendStream(req, path4, options) {
       if (!new.target) {
-        return new SendStream(req, path5, options);
+        return new SendStream(req, path4, options);
       }
       Stream.call(this);
       const opts = options || {};
       this.options = opts;
-      this.path = path5;
+      this.path = path4;
       this.req = req;
       this._acceptRanges = opts.acceptRanges !== void 0 ? Boolean(opts.acceptRanges) : true;
       this._cacheControl = opts.cacheControl !== void 0 ? Boolean(opts.cacheControl) : true;
@@ -47356,8 +47356,8 @@ var require_SendStream = __commonJS({
       this._root = opts.root ? resolve2(opts.root) : null;
     }
     util2.inherits(SendStream, Stream);
-    SendStream.prototype.root = function root(path5) {
-      this._root = resolve2(String(path5));
+    SendStream.prototype.root = function root(path4) {
+      this._root = resolve2(String(path4));
       debug("root %s", this._root);
       return this;
     };
@@ -47509,10 +47509,10 @@ var require_SendStream = __commonJS({
         lastModified <= ifRangeTimestamp
       );
     };
-    SendStream.prototype.redirect = function redirect(path5) {
+    SendStream.prototype.redirect = function redirect(path4) {
       const res = this.res;
       if (this.listenerCount("directory") > 0) {
-        this.emit("directory", res, path5);
+        this.emit("directory", res, path4);
         return;
       }
       if (this.hasTrailingSlash()) {
@@ -47532,61 +47532,61 @@ var require_SendStream = __commonJS({
     SendStream.prototype.pipe = function pipe(res) {
       const root = this._root;
       this.res = res;
-      let path5 = decode2(this.path);
-      if (path5 === null) {
+      let path4 = decode2(this.path);
+      if (path4 === null) {
         this.error(400);
         return res;
       }
-      if (~path5.indexOf("\0")) {
+      if (~path4.indexOf("\0")) {
         this.error(400);
         return res;
       }
       let parts;
       if (root !== null) {
-        if (path5) {
-          path5 = normalize("." + sep2 + path5);
+        if (path4) {
+          path4 = normalize("." + sep2 + path4);
         }
-        if (UP_PATH_REGEXP.test(path5)) {
-          debug('malicious path "%s"', path5);
+        if (UP_PATH_REGEXP.test(path4)) {
+          debug('malicious path "%s"', path4);
           this.error(403);
           return res;
         }
-        parts = path5.split(sep2);
-        path5 = normalize(join2(root, path5));
+        parts = path4.split(sep2);
+        path4 = normalize(join2(root, path4));
       } else {
-        if (UP_PATH_REGEXP.test(path5)) {
-          debug('malicious path "%s"', path5);
+        if (UP_PATH_REGEXP.test(path4)) {
+          debug('malicious path "%s"', path4);
           this.error(403);
           return res;
         }
-        parts = normalize(path5).split(sep2);
-        path5 = resolve2(path5);
+        parts = normalize(path4).split(sep2);
+        path4 = resolve2(path4);
       }
       if ((debug.enabled || // if debugging is enabled, then check for all cases to log allow case
       this._dotfiles !== 0) && containsDotFile(parts)) {
         switch (this._dotfiles) {
           case 0:
-            debug('allow dotfile "%s"', path5);
+            debug('allow dotfile "%s"', path4);
             break;
           case 2:
-            debug('deny dotfile "%s"', path5);
+            debug('deny dotfile "%s"', path4);
             this.error(403);
             return res;
           case 1:
           default:
-            debug('ignore dotfile "%s"', path5);
+            debug('ignore dotfile "%s"', path4);
             this.error(404);
             return res;
         }
       }
       if (this._index.length && this.hasTrailingSlash()) {
-        this.sendIndex(path5);
+        this.sendIndex(path4);
         return res;
       }
-      this.sendFile(path5);
+      this.sendFile(path4);
       return res;
     };
-    SendStream.prototype.send = function send(path5, stat) {
+    SendStream.prototype.send = function send(path4, stat) {
       let len = stat.size;
       const options = this.options;
       const opts = {};
@@ -47597,9 +47597,9 @@ var require_SendStream = __commonJS({
         this.headersAlreadySent();
         return;
       }
-      debug('pipe "%s"', path5);
-      this.setHeader(path5, stat);
-      this.type(path5);
+      debug('pipe "%s"', path4);
+      this.setHeader(path4, stat);
+      this.type(path4);
       if (this.isConditionalGET()) {
         if (this.isPreconditionFailure()) {
           this.error(412);
@@ -47648,28 +47648,28 @@ var require_SendStream = __commonJS({
         res.end();
         return;
       }
-      this.stream(path5, opts);
+      this.stream(path4, opts);
     };
-    SendStream.prototype.sendFile = function sendFile(path5) {
+    SendStream.prototype.sendFile = function sendFile(path4) {
       let i = 0;
       const self2 = this;
-      debug('stat "%s"', path5);
-      fs4.stat(path5, function onstat(err, stat) {
-        if (err && err.code === "ENOENT" && !extname2(path5) && path5[path5.length - 1] !== sep2) {
+      debug('stat "%s"', path4);
+      fs3.stat(path4, function onstat(err, stat) {
+        if (err && err.code === "ENOENT" && !extname2(path4) && path4[path4.length - 1] !== sep2) {
           return next(err);
         }
         if (err) return self2.onStatError(err);
-        if (stat.isDirectory()) return self2.redirect(path5);
-        self2.emit("file", path5, stat);
-        self2.send(path5, stat);
+        if (stat.isDirectory()) return self2.redirect(path4);
+        self2.emit("file", path4, stat);
+        self2.send(path4, stat);
       });
       function next(err) {
         if (self2._extensions.length <= i) {
           return err ? self2.onStatError(err) : self2.error(404);
         }
-        const p = path5 + "." + self2._extensions[i++];
+        const p = path4 + "." + self2._extensions[i++];
         debug('stat "%s"', p);
-        fs4.stat(p, function(err2, stat) {
+        fs3.stat(p, function(err2, stat) {
           if (err2) return next(err2);
           if (stat.isDirectory()) return next();
           self2.emit("file", p, stat);
@@ -47677,7 +47677,7 @@ var require_SendStream = __commonJS({
         });
       }
     };
-    SendStream.prototype.sendIndex = function sendIndex(path5) {
+    SendStream.prototype.sendIndex = function sendIndex(path4) {
       let i = -1;
       const self2 = this;
       function next(err) {
@@ -47685,9 +47685,9 @@ var require_SendStream = __commonJS({
           if (err) return self2.onStatError(err);
           return self2.error(404);
         }
-        const p = join2(path5, self2._index[i]);
+        const p = join2(path4, self2._index[i]);
         debug('stat "%s"', p);
-        fs4.stat(p, function(err2, stat) {
+        fs3.stat(p, function(err2, stat) {
           if (err2) return next(err2);
           if (stat.isDirectory()) return next();
           self2.emit("file", p, stat);
@@ -47696,10 +47696,10 @@ var require_SendStream = __commonJS({
       }
       next();
     };
-    SendStream.prototype.stream = function stream(path5, options) {
+    SendStream.prototype.stream = function stream(path4, options) {
       const self2 = this;
       const res = this.res;
-      const stream2 = fs4.createReadStream(path5, options);
+      const stream2 = fs3.createReadStream(path4, options);
       this.emit("stream", stream2);
       stream2.pipe(res);
       let destroyed = false;
@@ -47719,10 +47719,10 @@ var require_SendStream = __commonJS({
         self2.emit("end");
       });
     };
-    SendStream.prototype.type = function type(path5) {
+    SendStream.prototype.type = function type(path4) {
       const res = this.res;
       if (res.getHeader("Content-Type")) return;
-      const type2 = mime.getType(path5) || mime.default_type;
+      const type2 = mime.getType(path4) || mime.default_type;
       if (!type2) {
         debug("no content-type");
         return;
@@ -47734,9 +47734,9 @@ var require_SendStream = __commonJS({
         res.setHeader("Content-Type", type2);
       }
     };
-    SendStream.prototype.setHeader = function setHeader2(path5, stat) {
+    SendStream.prototype.setHeader = function setHeader2(path4, stat) {
       const res = this.res;
-      this.emit("headers", res, path5, stat);
+      this.emit("headers", res, path4, stat);
       if (this._acceptRanges && !res.getHeader("Accept-Ranges")) {
         debug("accept ranges");
         res.setHeader("Accept-Ranges", "bytes");
@@ -47771,8 +47771,8 @@ var require_send = __commonJS({
     var isUtf8MimeType = require_isUtf8MimeType().isUtf8MimeType;
     var mime = require_mime();
     var SendStream = require_SendStream();
-    function send(req, path4, options) {
-      return new SendStream(req, path4, options);
+    function send(req, path3, options) {
+      return new SendStream(req, path3, options);
     }
     module.exports = send;
     module.exports.default = send;
@@ -48149,30 +48149,30 @@ var require_dirList = __commonJS({
   "node_modules/@fastify/static/lib/dirList.js"(exports, module) {
     "use strict";
     var os = __require("node:os");
-    var path4 = __require("node:path");
-    var fs4 = __require("node:fs/promises");
+    var path3 = __require("node:path");
+    var fs3 = __require("node:fs/promises");
     var fastq = require_queue();
     var fastqConcurrency = Math.max(1, os.cpus().length - 1);
     var dirList = {
       _getExtendedInfo: async function(dir, info) {
-        const depth = dir.split(path4.sep).length;
-        const files = await fs4.readdir(dir);
+        const depth = dir.split(path3.sep).length;
+        const files = await fs3.readdir(dir);
         const worker = async (filename) => {
-          const filePath = path4.join(dir, filename);
+          const filePath = path3.join(dir, filename);
           let stats;
           try {
-            stats = await fs4.stat(filePath);
+            stats = await fs3.stat(filePath);
           } catch {
             return;
           }
           if (stats.isDirectory()) {
             info.totalFolderCount++;
-            filePath.split(path4.sep).length === depth + 1 && info.folderCount++;
+            filePath.split(path3.sep).length === depth + 1 && info.folderCount++;
             await dirList._getExtendedInfo(filePath, info);
           } else {
             info.totalSize += stats.size;
             info.totalFileCount++;
-            filePath.split(path4.sep).length === depth + 1 && info.fileCount++;
+            filePath.split(path3.sep).length === depth + 1 && info.fileCount++;
             info.lastModified = Math.max(info.lastModified, stats.mtimeMs);
           }
         };
@@ -48205,7 +48205,7 @@ var require_dirList = __commonJS({
        */
       list: async function(dir, options, dotfiles) {
         const entries = { dirs: [], files: [] };
-        let files = await fs4.readdir(dir);
+        let files = await fs3.readdir(dir);
         if (dotfiles === "deny" || dotfiles === "ignore") {
           files = files.filter((file) => file.charAt(0) !== ".");
         }
@@ -48215,14 +48215,14 @@ var require_dirList = __commonJS({
         const worker = async (filename) => {
           let stats;
           try {
-            stats = await fs4.stat(path4.join(dir, filename));
+            stats = await fs3.stat(path3.join(dir, filename));
           } catch {
             return;
           }
           const entry = { name: filename, stats };
           if (stats.isDirectory()) {
             if (options.extendedFolderInfo) {
-              entry.extendedInfo = await dirList.getExtendedInfo(path4.join(dir, filename));
+              entry.extendedInfo = await dirList.getExtendedInfo(path3.join(dir, filename));
             }
             entries.dirs.push(entry);
           } else {
@@ -48278,11 +48278,11 @@ var require_dirList = __commonJS({
        * @return {ListFile}
        */
       htmlInfo: function(entry, route, prefix, options) {
-        if (options.names?.includes(path4.basename(route))) {
-          route = path4.normalize(path4.join(route, ".."));
+        if (options.names?.includes(path3.basename(route))) {
+          route = path3.normalize(path3.join(route, ".."));
         }
         return {
-          href: encodeURI(path4.join(prefix, route, entry.name).replace(/\\/gu, "/")),
+          href: encodeURI(path3.join(prefix, route, entry.name).replace(/\\/gu, "/")),
           name: entry.name,
           stats: entry.stats,
           extendedInfo: entry.extendedInfo
@@ -48295,7 +48295,7 @@ var require_dirList = __commonJS({
        * @return {boolean}
        */
       handle: function(route, options) {
-        return options.names?.includes(path4.basename(route)) || // match trailing slash
+        return options.names?.includes(path3.basename(route)) || // match trailing slash
         ((options.names?.includes("/") && route[route.length - 1] === "/") ?? false);
       },
       /**
@@ -48305,7 +48305,7 @@ var require_dirList = __commonJS({
        */
       path: function(root, route) {
         const _route = route[route.length - 1] === "/" ? route + "none" : route;
-        return path4.dirname(path4.join(root, _route));
+        return path3.dirname(path3.join(root, _route));
       },
       /**
        * validate options
@@ -48341,8 +48341,8 @@ var require_static = __commonJS({
   "node_modules/@fastify/static/index.js"(exports, module) {
     "use strict";
     var { PassThrough } = __require("node:stream");
-    var path4 = __require("node:path");
-    var { fileURLToPath: fileURLToPath3 } = __require("node:url");
+    var path3 = __require("node:path");
+    var { fileURLToPath: fileURLToPath2 } = __require("node:url");
     var { statSync } = __require("node:fs");
     var { glob } = require_commonjs5();
     var fp3 = require_plugin2();
@@ -48446,7 +48446,7 @@ var require_static = __commonJS({
           const routes2 = /* @__PURE__ */ new Set();
           const roots = Array.isArray(sendOptions.root) ? sendOptions.root : [sendOptions.root];
           for (let rootPath of roots) {
-            rootPath = rootPath.split(path4.win32.sep).join(path4.posix.sep);
+            rootPath = rootPath.split(path3.win32.sep).join(path3.posix.sep);
             !rootPath.endsWith("/") && (rootPath += "/");
             const files = await glob("**/**", {
               cwd: rootPath,
@@ -48456,16 +48456,16 @@ var require_static = __commonJS({
               dot: opts.serveDotFiles
             });
             for (let file of files) {
-              file = file.split(path4.win32.sep).join(path4.posix.sep);
+              file = file.split(path3.win32.sep).join(path3.posix.sep);
               const route = prefix + file;
               if (routes2.has(route)) {
                 continue;
               }
               routes2.add(route);
               setUpHeadAndGet(routeOpts, route, `/${file}`, rootPath);
-              const key = path4.posix.basename(route);
+              const key = path3.posix.basename(route);
               if (indexes.includes(key) && !indexDirs.has(key)) {
-                indexDirs.set(path4.posix.dirname(route), rootPath);
+                indexDirs.set(path3.posix.dirname(route), rootPath);
               }
             }
           }
@@ -48558,11 +48558,11 @@ var require_static = __commonJS({
         if (setHeaders !== void 0) {
           stream.on("headers", setHeaders);
         }
-        stream.on("directory", function(_, path5) {
+        stream.on("directory", function(_, path4) {
           if (opts.list) {
             dirList.send({
               reply,
-              dir: path5,
+              dir: path4,
               options: opts.list,
               route: pathname,
               prefix,
@@ -48663,13 +48663,13 @@ var require_static = __commonJS({
         return root;
       }
       if (root instanceof URL && root.protocol === "file:") {
-        return fileURLToPath3(root);
+        return fileURLToPath2(root);
       }
       if (Array.isArray(root)) {
         const result = [];
         for (let i = 0, il = root.length; i < il; ++i) {
           if (root[i] instanceof URL && root[i].protocol === "file:") {
-            result.push(fileURLToPath3(root[i]));
+            result.push(fileURLToPath2(root[i]));
           } else {
             result.push(root[i]);
           }
@@ -48691,7 +48691,7 @@ var require_static = __commonJS({
             '"root" option array contains one or more duplicate paths'
           );
         }
-        rootPath.map((path5) => checkPath(fastify, path5));
+        rootPath.map((path4) => checkPath(fastify, path4));
         return;
       }
       if (typeof rootPath === "string") {
@@ -48703,7 +48703,7 @@ var require_static = __commonJS({
       if (typeof rootPath !== "string") {
         throw new Error('"root" option must be a string');
       }
-      if (path4.isAbsolute(rootPath) === false) {
+      if (path3.isAbsolute(rootPath) === false) {
         throw new Error('"root" option must be an absolute path');
       }
       let pathStat;
@@ -48720,8 +48720,8 @@ var require_static = __commonJS({
         throw new Error('"root" option must point to a directory');
       }
     }
-    function getContentType(path5) {
-      const type = send.mime.getType(path5) || send.mime.default_type;
+    function getContentType(path4) {
+      const type = send.mime.getType(path4) || send.mime.default_type;
       if (!send.isUtf8MimeType(type)) {
         return type;
       }
@@ -48730,7 +48730,7 @@ var require_static = __commonJS({
     function findIndexFile(pathname, root, indexFiles = ["index.html"]) {
       if (Array.isArray(indexFiles)) {
         return indexFiles.find((filename) => {
-          const p = path4.join(root, pathname, filename);
+          const p = path3.join(root, pathname, filename);
           try {
             const stats = statSync(p);
             return !stats.isDirectory();
@@ -49194,8 +49194,8 @@ var init_parseUtil = __esm({
     init_errors();
     init_en();
     makeIssue = (params) => {
-      const { data, path: path4, errorMaps, issueData } = params;
-      const fullPath = [...path4, ...issueData.path || []];
+      const { data, path: path3, errorMaps, issueData } = params;
+      const fullPath = [...path3, ...issueData.path || []];
       const fullIssue = {
         ...issueData,
         path: fullPath
@@ -49503,11 +49503,11 @@ var init_types = __esm({
     init_parseUtil();
     init_util();
     ParseInputLazyPath = class {
-      constructor(parent, value, path4, key) {
+      constructor(parent, value, path3, key) {
         this._cachedPath = [];
         this.parent = parent;
         this.data = value;
-        this._path = path4;
+        this._path = path3;
         this._key = key;
       }
       get path() {
@@ -52959,8 +52959,8 @@ var require_package2 = __commonJS({
 // node_modules/dotenv/lib/main.js
 var require_main = __commonJS({
   "node_modules/dotenv/lib/main.js"(exports, module) {
-    var fs4 = __require("fs");
-    var path4 = __require("path");
+    var fs3 = __require("fs");
+    var path3 = __require("path");
     var os = __require("os");
     var crypto5 = __require("crypto");
     var packageJson = require_package2();
@@ -53068,7 +53068,7 @@ var require_main = __commonJS({
       if (options && options.path && options.path.length > 0) {
         if (Array.isArray(options.path)) {
           for (const filepath of options.path) {
-            if (fs4.existsSync(filepath)) {
+            if (fs3.existsSync(filepath)) {
               possibleVaultPath = filepath.endsWith(".vault") ? filepath : `${filepath}.vault`;
             }
           }
@@ -53076,15 +53076,15 @@ var require_main = __commonJS({
           possibleVaultPath = options.path.endsWith(".vault") ? options.path : `${options.path}.vault`;
         }
       } else {
-        possibleVaultPath = path4.resolve(process.cwd(), ".env.vault");
+        possibleVaultPath = path3.resolve(process.cwd(), ".env.vault");
       }
-      if (fs4.existsSync(possibleVaultPath)) {
+      if (fs3.existsSync(possibleVaultPath)) {
         return possibleVaultPath;
       }
       return null;
     }
     function _resolveHome(envPath) {
-      return envPath[0] === "~" ? path4.join(os.homedir(), envPath.slice(1)) : envPath;
+      return envPath[0] === "~" ? path3.join(os.homedir(), envPath.slice(1)) : envPath;
     }
     function _configVault(options) {
       const debug = Boolean(options && options.debug);
@@ -53101,7 +53101,7 @@ var require_main = __commonJS({
       return { parsed };
     }
     function configDotenv(options) {
-      const dotenvPath = path4.resolve(process.cwd(), ".env");
+      const dotenvPath = path3.resolve(process.cwd(), ".env");
       let encoding = "utf8";
       const debug = Boolean(options && options.debug);
       const quiet = options && "quiet" in options ? options.quiet : true;
@@ -53125,13 +53125,13 @@ var require_main = __commonJS({
       }
       let lastError;
       const parsedAll = {};
-      for (const path5 of optionPaths) {
+      for (const path4 of optionPaths) {
         try {
-          const parsed = DotenvModule.parse(fs4.readFileSync(path5, { encoding }));
+          const parsed = DotenvModule.parse(fs3.readFileSync(path4, { encoding }));
           DotenvModule.populate(parsedAll, parsed, options);
         } catch (e) {
           if (debug) {
-            _debug(`Failed to load ${path5} ${e.message}`);
+            _debug(`Failed to load ${path4} ${e.message}`);
           }
           lastError = e;
         }
@@ -53146,7 +53146,7 @@ var require_main = __commonJS({
         const shortPaths = [];
         for (const filePath of optionPaths) {
           try {
-            const relative = path4.relative(process.cwd(), filePath);
+            const relative = path3.relative(process.cwd(), filePath);
             shortPaths.push(relative);
           } catch (e) {
             if (debug) {
@@ -56421,7 +56421,7 @@ var require_reporter = __commonJS({
       if (state.obj !== null)
         state.obj[key] = value;
     };
-    Reporter.prototype.path = function path4() {
+    Reporter.prototype.path = function path3() {
       return this._reporterState.path.join("/");
     };
     Reporter.prototype.enterObject = function enterObject() {
@@ -56462,8 +56462,8 @@ var require_reporter = __commonJS({
         errors: state.errors
       };
     };
-    function ReporterError(path4, msg) {
-      this.path = path4;
+    function ReporterError(path3, msg) {
+      this.path = path3;
       this.rethrow(msg);
     }
     inherits(ReporterError, Error);
@@ -60508,13 +60508,13 @@ function __disposeResources(env2) {
   }
   return next();
 }
-function __rewriteRelativeImportExtension(path4, preserveJsx) {
-  if (typeof path4 === "string" && /^\.\.?\//.test(path4)) {
-    return path4.replace(/\.(tsx)$|((?:\.d)?)((?:\.[^./]+?)?)\.([cm]?)ts$/i, function(m, tsx, d, ext, cm) {
+function __rewriteRelativeImportExtension(path3, preserveJsx) {
+  if (typeof path3 === "string" && /^\.\.?\//.test(path3)) {
+    return path3.replace(/\.(tsx)$|((?:\.d)?)((?:\.[^./]+?)?)\.([cm]?)ts$/i, function(m, tsx, d, ext, cm) {
       return tsx ? preserveJsx ? ".jsx" : ".js" : d && (!ext || !cm) ? m : d + ext + "." + cm.toLowerCase() + "js";
     });
   }
-  return path4;
+  return path3;
 }
 var extendStatics, __assign, __createBinding, __setModuleDefault, ownKeys, _SuppressedError, tslib_es6_default;
 var init_tslib_es6 = __esm({
@@ -69110,8 +69110,8 @@ var require_main3 = __commonJS({
 });
 
 // node_modules/iceberg-js/dist/index.mjs
-function buildUrl(baseUrl, path4, query) {
-  const url = new URL(path4, baseUrl);
+function buildUrl(baseUrl, path3, query) {
+  const url = new URL(path3, baseUrl);
   if (query) {
     for (const [key, value] of Object.entries(query)) {
       if (value !== void 0) {
@@ -69141,12 +69141,12 @@ function createFetchClient(options) {
   return {
     async request({
       method,
-      path: path4,
+      path: path3,
       query,
       body,
       headers
     }) {
-      const url = buildUrl(options.baseUrl, path4, query);
+      const url = buildUrl(options.baseUrl, path3, query);
       const authHeaders = await buildAuthHeaders(options.auth);
       const res = await fetchFn(url, {
         method,
@@ -69814,7 +69814,7 @@ var init_dist3 = __esm({
       if (bucketName.includes("/") || bucketName.includes("\\")) return false;
       return /^[\w!.\*'() &$@=;:+,?-]+$/.test(bucketName);
     };
-    encodeStoragePath = (path4) => path4.split("/").map(encodeURIComponent).join("/");
+    encodeStoragePath = (path3) => path3.split("/").map(encodeURIComponent).join("/");
     _getErrorMessage = (err) => {
       if (typeof err === "object" && err !== null) {
         const e = err;
@@ -70046,7 +70046,7 @@ var init_dist3 = __esm({
       * @param path The relative file path. Should be of the format `folder/subfolder/filename.png`. The bucket must already exist before attempting to upload.
       * @param fileBody The body of the file to be stored in the bucket.
       */
-      async uploadOrUpdate(method, path4, fileBody, fileOptions) {
+      async uploadOrUpdate(method, path3, fileBody, fileOptions) {
         var _this = this;
         return _this.handleOperation(async () => {
           let body;
@@ -70070,7 +70070,7 @@ var init_dist3 = __esm({
             if ((typeof ReadableStream !== "undefined" && body instanceof ReadableStream || body && typeof body === "object" && "pipe" in body && typeof body.pipe === "function") && !options.duplex) options.duplex = "half";
           }
           if (fileOptions === null || fileOptions === void 0 ? void 0 : fileOptions.headers) for (const [key, value] of Object.entries(fileOptions.headers)) headers = setHeader(headers, key, value);
-          const cleanPath = _this._removeEmptyFolders(path4);
+          const cleanPath = _this._removeEmptyFolders(path3);
           const _path = _this._getFinalPath(cleanPath);
           const data = await (method == "PUT" ? put : post)(_this.fetch, `${_this.url}/object/${_path}`, body, _objectSpread22({ headers }, (options === null || options === void 0 ? void 0 : options.duplex) ? { duplex: options.duplex } : {}));
           return {
@@ -70147,8 +70147,8 @@ var init_dist3 = __esm({
       * - Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works
       * - For React Native, using either `Blob`, `File` or `FormData` does not work as intended. Upload file using `ArrayBuffer` from base64 file data instead, see example below.
       */
-      async upload(path4, fileBody, fileOptions) {
-        return this.uploadOrUpdate("POST", path4, fileBody, fileOptions);
+      async upload(path3, fileBody, fileOptions) {
+        return this.uploadOrUpdate("POST", path3, fileBody, fileOptions);
       }
       /**
       * Upload a file with a token generated from `createSignedUploadUrl`.
@@ -70188,9 +70188,9 @@ var init_dist3 = __esm({
       *   - `objects` table permissions: none
       * - Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works
       */
-      async uploadToSignedUrl(path4, token, fileBody, fileOptions) {
+      async uploadToSignedUrl(path3, token, fileBody, fileOptions) {
         var _this3 = this;
-        const cleanPath = _this3._removeEmptyFolders(path4);
+        const cleanPath = _this3._removeEmptyFolders(path3);
         const _path = _this3._getFinalPath(cleanPath);
         const url = new URL(_this3.url + `/object/upload/sign/${_path}`);
         url.searchParams.set("token", token);
@@ -70259,10 +70259,10 @@ var init_dist3 = __esm({
       *   - `objects` table permissions: `insert`
       * - Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works
       */
-      async createSignedUploadUrl(path4, options) {
+      async createSignedUploadUrl(path3, options) {
         var _this4 = this;
         return _this4.handleOperation(async () => {
-          let _path = _this4._getFinalPath(path4);
+          let _path = _this4._getFinalPath(path3);
           const headers = _objectSpread22({}, _this4.headers);
           if (options === null || options === void 0 ? void 0 : options.upsert) headers["x-upsert"] = "true";
           const data = await post(_this4.fetch, `${_this4.url}/object/upload/sign/${_path}`, {}, { headers });
@@ -70271,7 +70271,7 @@ var init_dist3 = __esm({
           if (!token) throw new StorageError("No token returned by API");
           return {
             signedUrl: url.toString(),
-            path: path4,
+            path: path3,
             token
           };
         });
@@ -70331,8 +70331,8 @@ var init_dist3 = __esm({
       * - Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works
       * - For React Native, using either `Blob`, `File` or `FormData` does not work as intended. Update file using `ArrayBuffer` from base64 file data instead, see example below.
       */
-      async update(path4, fileBody, fileOptions) {
-        return this.uploadOrUpdate("PUT", path4, fileBody, fileOptions);
+      async update(path3, fileBody, fileOptions) {
+        return this.uploadOrUpdate("PUT", path3, fileBody, fileOptions);
       }
       /**
       * Moves an existing file to a new path in the same bucket.
@@ -70483,10 +70483,10 @@ var init_dist3 = __esm({
       *   - `objects` table permissions: `select`
       * - Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works
       */
-      async createSignedUrl(path4, expiresIn, options) {
+      async createSignedUrl(path3, expiresIn, options) {
         var _this8 = this;
         return _this8.handleOperation(async () => {
-          let _path = _this8._getFinalPath(path4);
+          let _path = _this8._getFinalPath(path3);
           const hasTransform = typeof (options === null || options === void 0 ? void 0 : options.transform) === "object" && options.transform !== null && Object.keys(options.transform).length > 0;
           let data = await post(_this8.fetch, `${_this8.url}/object/sign/${_path}`, _objectSpread22({ expiresIn }, hasTransform ? { transform: options.transform } : {}), { headers: _this8.headers });
           const query = new URLSearchParams();
@@ -70621,13 +70621,13 @@ var init_dist3 = __esm({
       *   - `objects` table permissions: `select`
       * - Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works
       */
-      download(path4, options, parameters) {
+      download(path3, options, parameters) {
         const renderPath = typeof (options === null || options === void 0 ? void 0 : options.transform) === "object" && options.transform !== null && Object.keys(options.transform).length > 0 ? "render/image/authenticated" : "object";
         const query = new URLSearchParams();
         if (options === null || options === void 0 ? void 0 : options.transform) this.applyTransformOptsToQuery(query, options.transform);
         if ((options === null || options === void 0 ? void 0 : options.cacheNonce) != null) query.set("cacheNonce", String(options.cacheNonce));
         const queryString = query.toString();
-        const _path = this._getFinalPath(path4);
+        const _path = this._getFinalPath(path3);
         const downloadFn = () => get(this.fetch, `${this.url}/${renderPath}/${_path}${queryString ? `?${queryString}` : ""}`, {
           headers: this.headers,
           noResolveJson: true
@@ -70658,9 +70658,9 @@ var init_dist3 = __esm({
       * }
       * ```
       */
-      async info(path4) {
+      async info(path3) {
         var _this10 = this;
-        const _path = _this10._getFinalPath(path4);
+        const _path = _this10._getFinalPath(path3);
         return _this10.handleOperation(async () => {
           return recursiveToCamel(await get(_this10.fetch, `${_this10.url}/object/info/${_path}`, { headers: _this10.headers }));
         });
@@ -70681,9 +70681,9 @@ var init_dist3 = __esm({
       *   .exists('folder/avatar1.png')
       * ```
       */
-      async exists(path4) {
+      async exists(path3) {
         var _this11 = this;
-        const _path = _this11._getFinalPath(path4);
+        const _path = _this11._getFinalPath(path3);
         try {
           await head(_this11.fetch, `${_this11.url}/object/${_path}`, { headers: _this11.headers });
           return {
@@ -70762,8 +70762,8 @@ var init_dist3 = __esm({
       *   - `objects` table permissions: none
       * - Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works
       */
-      getPublicUrl(path4, options) {
-        const _path = this._getFinalPath(path4);
+      getPublicUrl(path3, options) {
+        const _path = this._getFinalPath(path3);
         const query = new URLSearchParams();
         if (options === null || options === void 0 ? void 0 : options.download) query.set("download", options.download === true ? "" : options.download);
         if (options === null || options === void 0 ? void 0 : options.transform) this.applyTransformOptsToQuery(query, options.transform);
@@ -70852,10 +70852,10 @@ var init_dist3 = __esm({
       *   .purgeCache('folder/avatar1.png', { transformations: true })
       * ```
       */
-      async purgeCache(path4, options, parameters) {
+      async purgeCache(path3, options, parameters) {
         var _this13 = this;
         return _this13.handleOperation(async () => {
-          const _path = encodeStoragePath(_this13._getFinalPath(path4));
+          const _path = encodeStoragePath(_this13._getFinalPath(path3));
           const query = new URLSearchParams();
           if (options === null || options === void 0 ? void 0 : options.transformations) query.set("transformations", "true");
           const queryString = query.toString();
@@ -70953,13 +70953,13 @@ var init_dist3 = __esm({
       *   - `objects` table permissions: `select`
       * - Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works
       */
-      async list(path4, options, parameters) {
+      async list(path3, options, parameters) {
         var _this14 = this;
         return _this14.handleOperation(async () => {
           const sortBy = (options === null || options === void 0 ? void 0 : options.sortBy) ? _objectSpread22(_objectSpread22({}, DEFAULT_SEARCH_OPTIONS.sortBy), options.sortBy) : DEFAULT_SEARCH_OPTIONS.sortBy;
           const body = _objectSpread22(_objectSpread22(_objectSpread22({}, DEFAULT_SEARCH_OPTIONS), options), {}, {
             sortBy,
-            prefix: path4 || ""
+            prefix: path3 || ""
           });
           return await post(_this14.fetch, `${_this14.url}/object/list/${_this14.bucketId}`, body, { headers: _this14.headers }, parameters);
         });
@@ -71025,11 +71025,11 @@ var init_dist3 = __esm({
         if (typeof Buffer !== "undefined") return Buffer.from(data).toString("base64");
         return btoa(data);
       }
-      _getFinalPath(path4) {
-        return `${this.bucketId}/${path4.replace(/^\/+/, "")}`;
+      _getFinalPath(path3) {
+        return `${this.bucketId}/${path3.replace(/^\/+/, "")}`;
       }
-      _removeEmptyFolders(path4) {
-        return path4.replace(/^\/|\/$/g, "").replace(/\/+/g, "/");
+      _removeEmptyFolders(path3) {
+        return path3.replace(/^\/|\/$/g, "").replace(/\/+/g, "/");
       }
       /** Modifies the `query`, appending values the from `transform` */
       applyTransformOptsToQuery(query, transform) {
@@ -73131,9 +73131,9 @@ var require_helpers = __commonJS({
       const fragment = hashIndex === -1 ? "" : redirectTo.slice(hashIndex);
       const queryIndex = base.indexOf("?");
       if (queryIndex !== -1) {
-        const path4 = base.slice(0, queryIndex);
+        const path3 = base.slice(0, queryIndex);
         const remaining = base.slice(queryIndex + 1).split("&").filter((pair) => pair !== "" && pair !== constants_1.PKCE_FLOW_ID_PARAM && !pair.startsWith(`${constants_1.PKCE_FLOW_ID_PARAM}=`));
-        base = remaining.length > 0 ? `${path4}?${remaining.join("&")}` : path4;
+        base = remaining.length > 0 ? `${path3}?${remaining.join("&")}` : path3;
       }
       const separator = base.includes("?") ? "&" : "?";
       return `${base}${separator}${constants_1.PKCE_FLOW_ID_PARAM}=${encodeURIComponent(flowId)}${fragment}`;
@@ -83027,8 +83027,8 @@ var require_cookies = __commonJS({
         if (urlparts.hostname !== cookie.domain && (cookie.domain.charAt(0) !== "." || ("." + urlparts.hostname).substr(-cookie.domain.length) !== cookie.domain)) {
           return false;
         }
-        const path4 = this.getPath(urlparts.pathname);
-        if (path4.substr(0, cookie.path.length) !== cookie.path) {
+        const path3 = this.getPath(urlparts.pathname);
+        if (path3.substr(0, cookie.path.length) !== cookie.path) {
           return false;
         }
         if (cookie.secure && urlparts.protocol !== "https:") {
@@ -83086,16 +83086,16 @@ var require_cookies = __commonJS({
        * @returns {String} Normalized path
        */
       getPath(pathname) {
-        let path4 = (pathname || "/").split("/");
-        path4.pop();
-        path4 = path4.join("/").trim();
-        if (path4.charAt(0) !== "/") {
-          path4 = "/" + path4;
+        let path3 = (pathname || "/").split("/");
+        path3.pop();
+        path3 = path3.join("/").trim();
+        if (path3.charAt(0) !== "/") {
+          path3 = "/" + path3;
         }
-        if (path4.substr(-1) !== "/") {
-          path4 += "/";
+        if (path3.substr(-1) !== "/") {
+          path3 += "/";
         }
-        return path4;
+        return path3;
       }
     };
     module.exports = Cookies;
@@ -83454,7 +83454,7 @@ var require_shared = __commonJS({
     "use strict";
     var urllib = require_url();
     var util2 = __require("util");
-    var fs4 = __require("fs");
+    var fs3 = __require("fs");
     var nmfetch = require_fetch2();
     var errors = require_errors6();
     var dns = __require("dns");
@@ -83882,7 +83882,7 @@ var require_shared = __commonJS({
               callback(err);
             });
           }
-          return resolveStream(fs4.createReadStream(content.path), callback);
+          return resolveStream(fs3.createReadStream(content.path), callback);
         }
       }
       if (typeof data[key].content === "string" && !["utf8", "usascii", "ascii"].includes(encoding)) {
@@ -83995,7 +83995,7 @@ var require_shared = __commonJS({
 var require_mime_types = __commonJS({
   "node_modules/nodemailer/lib/mime-funcs/mime-types.js"(exports, module) {
     "use strict";
-    var path4 = __require("path");
+    var path3 = __require("path");
     var defaultMimeType = "application/octet-stream";
     var defaultExtension = "bin";
     var mimeTypes = /* @__PURE__ */ new Map([
@@ -86062,7 +86062,7 @@ var require_mime_types = __commonJS({
         if (!filename) {
           return defaultMimeType;
         }
-        const parsed = path4.parse(filename);
+        const parsed = path3.parse(filename);
         const extension = (parsed.ext.substr(1) || parsed.name || "").split("?").shift().trim().toLowerCase();
         const value = extensions.has(extension) ? extensions.get(extension) : defaultMimeType;
         if (Array.isArray(value)) {
@@ -87290,7 +87290,7 @@ var require_mime_node = __commonJS({
   "node_modules/nodemailer/lib/mime-node/index.js"(exports, module) {
     "use strict";
     var crypto5 = __require("crypto");
-    var fs4 = __require("fs");
+    var fs3 = __require("fs");
     var punycode = require_punycode();
     var { PassThrough } = __require("stream");
     var shared = require_shared();
@@ -88018,7 +88018,7 @@ var require_mime_node = __commonJS({
             });
             return contentStream;
           }
-          return fs4.createReadStream(content.path);
+          return fs3.createReadStream(content.path);
         }
         if (content && typeof content.href === "string") {
           if (this.disableUrlAccess) {
@@ -89158,8 +89158,8 @@ var require_dkim = __commonJS({
     var RelaxedBody = require_relaxed_body();
     var sign = require_sign();
     var { PassThrough } = __require("stream");
-    var fs4 = __require("fs");
-    var path4 = __require("path");
+    var fs3 = __require("fs");
+    var path3 = __require("path");
     var crypto5 = __require("crypto");
     var DKIM_ALGO = "sha256";
     var MAX_MESSAGE_SIZE = 2 * 1024 * 1024;
@@ -89173,7 +89173,7 @@ var require_dkim = __commonJS({
         this.chunks = [];
         this.chunklen = 0;
         this.readPos = 0;
-        this.cachePath = this.cacheDir ? path4.join(this.cacheDir, "message." + Date.now() + "-" + crypto5.randomBytes(14).toString("hex")) : false;
+        this.cachePath = this.cacheDir ? path3.join(this.cacheDir, "message." + Date.now() + "-" + crypto5.randomBytes(14).toString("hex")) : false;
         this.cache = false;
         this.headers = false;
         this.bodyHash = false;
@@ -89193,10 +89193,10 @@ var require_dkim = __commonJS({
         if (!this.cache || !this.cachePath) {
           return;
         }
-        fs4.unlink(this.cachePath, () => false);
+        fs3.unlink(this.cachePath, () => false);
       }
       createReadCache() {
-        this.cache = fs4.createReadStream(this.cachePath);
+        this.cache = fs3.createReadStream(this.cachePath);
         this.cache.once("error", (err) => {
           this.cleanup();
           this.output.emit("error", err);
@@ -89252,7 +89252,7 @@ var require_dkim = __commonJS({
       }
       createWriteCache() {
         this.output.usingCache = true;
-        this.cache = fs4.createWriteStream(this.cachePath);
+        this.cache = fs3.createWriteStream(this.cachePath);
         this.cache.once("error", (err) => {
           this.cleanup();
           this.relaxedBody.unpipe(this.cache);
@@ -99467,21 +99467,21 @@ function getBaseUrl() {
   const port = env.PORT ?? "3000";
   return `http://localhost:${port}`;
 }
-function toFileUrl(path4) {
-  if (!path4) return null;
-  if (/^(https?:\/\/|data:)/i.test(path4)) return path4;
-  if (path4.startsWith("/storage/v1/")) {
+function toFileUrl(path3) {
+  if (!path3) return null;
+  if (/^(https?:\/\/|data:)/i.test(path3)) return path3;
+  if (path3.startsWith("/storage/v1/")) {
     const supabaseBase = (env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co").replace(/\/$/, "");
-    return `${supabaseBase}${path4}`;
+    return `${supabaseBase}${path3}`;
   }
-  const audioMatch = path4.match(/^(?:\/)?uploads\/audio\/(.+)$/);
+  const audioMatch = path3.match(/^(?:\/)?uploads\/audio\/(.+)$/);
   if (audioMatch && audioMatch[1]) {
     const filename = audioMatch[1].replace(/^\/+/, "");
     const supabaseBase = (env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co").replace(/\/$/, "");
     return `${supabaseBase}/storage/v1/object/public/exam-assets/audio/${filename}`;
   }
   const base = getBaseUrl().replace(/\/$/, "");
-  const relative = path4.startsWith("/") ? path4 : `/${path4}`;
+  const relative = path3.startsWith("/") ? path3 : `/${path3}`;
   return `${base}${relative}`;
 }
 function withFileUrls(obj, keys) {
@@ -106073,15 +106073,15 @@ var ExamSubmissionService = class {
       });
       if (existingIdem) {
         const cached2 = typeof existingIdem.responsePayload === "string" ? JSON.parse(existingIdem.responsePayload) : existingIdem.responsePayload;
-        const cachedAnswers2 = cached2.answers || [];
+        const cachedAnswers = cached2.answers || [];
         const incomingAnswers = payload.answers || [];
         let isDifferent = false;
-        if (incomingAnswers.length !== cachedAnswers2.length) {
+        if (incomingAnswers.length !== cachedAnswers.length) {
           isDifferent = true;
         } else {
           for (let i = 0; i < incomingAnswers.length; i++) {
             const incAns = incomingAnswers[i];
-            const cachedAns = cachedAnswers2.find((ca) => ca.questionId === incAns.questionId);
+            const cachedAns = cachedAnswers.find((ca) => ca.questionId === incAns.questionId);
             const incText = typeof incAns.answerText === "object" ? JSON.stringify(incAns.answerText) : incAns.answerText;
             const caText = typeof cachedAns?.answerText === "object" ? JSON.stringify(cachedAns?.answerText) : cachedAns?.answerText;
             if (!cachedAns || incText !== caText) {
@@ -118490,11 +118490,6 @@ var readingDiscussionRoutes = async (fastify) => {
 };
 var reading_discussion_routes_default = readingDiscussionRoutes;
 
-// server/services/cambridge-placement.service.ts
-import fs2 from "fs";
-import path2 from "path";
-import { fileURLToPath } from "url";
-
 // server/services/cambridge-scoring.ts
 var BANDS = ["F", "K", "K+", "P-", "P"];
 var SKILLS = ["use_of_english", "reading", "listening", "writing", "speaking"];
@@ -118643,26 +118638,2646 @@ function placement(codes, extra = {}) {
   };
 }
 
-// server/services/cambridge-placement.service.ts
-var cambridgeCurrentFile = fileURLToPath(import.meta.url);
-var cambridgeCurrentDir = path2.dirname(cambridgeCurrentFile);
-var dataDir = path2.resolve(cambridgeCurrentDir, "../data/cambridge");
-var cachedItems = null;
-var cachedAnswers = null;
-var cachedRules = null;
-var cachedWritingSpeaking = null;
-function loadCambridgeData() {
-  if (!cachedItems) {
-    cachedItems = JSON.parse(fs2.readFileSync(path2.join(dataDir, "items.json"), "utf8"));
-    cachedAnswers = JSON.parse(fs2.readFileSync(path2.join(dataDir, "answers.json"), "utf8"));
-    cachedRules = JSON.parse(fs2.readFileSync(path2.join(dataDir, "rules.json"), "utf8"));
-    cachedWritingSpeaking = JSON.parse(fs2.readFileSync(path2.join(dataDir, "writing_speaking.json"), "utf8"));
+// server/data/cambridge/items.json
+var items_default = {
+  meta: {
+    version: "1.0.0",
+    name: "ARIS Placement Test",
+    levels: [
+      "Flyers",
+      "KET",
+      "PET"
+    ],
+    bands: [
+      "F",
+      "K",
+      "K+",
+      "P-",
+      "P"
+    ],
+    sections: [
+      {
+        skill: "use_of_english",
+        core: {
+          items: 24,
+          minutes: 15
+        },
+        extension: {
+          items: 10,
+          minutes: 7
+        }
+      },
+      {
+        skill: "reading",
+        core: {
+          items: 12,
+          minutes: 12
+        },
+        extension: {
+          items: 6,
+          minutes: 8
+        }
+      },
+      {
+        skill: "listening",
+        core: {
+          items: 15,
+          minutes: 16
+        },
+        extension: {
+          items: 6,
+          minutes: 10
+        },
+        note: "audio-driven; timer should follow the audio length"
+      },
+      {
+        skill: "writing",
+        core: {
+          tasks: [
+            "W1",
+            "W2"
+          ],
+          minutes: 9
+        },
+        extension: {
+          tasks: [
+            "W3"
+          ],
+          minutes: 12
+        },
+        manualGrading: true
+      },
+      {
+        skill: "speaking",
+        manualGrading: true,
+        minutes: "8-10"
+      }
+    ],
+    listeningGapForm: {
+      title: "Zoo project day \u2013 notes",
+      rows: [
+        [
+          "First activity:",
+          "Draw a (11) ______________"
+        ],
+        [
+          "Time to give water to the animals:",
+          "(12) ______________"
+        ],
+        [
+          "Name of the baby lion:",
+          "(13) ______________"
+        ],
+        [
+          "Age of the oldest dolphin:",
+          "(14) ______________ years"
+        ],
+        [
+          "Present at the end of the day:",
+          "a (15) ______________"
+        ]
+      ]
+    }
+  },
+  passages: {
+    "P-UE3": {
+      text: "Last weekend, my cousin Mai and I (19) ______ to the beach with our grandparents. We left home (20) ______ seven o\u2019clock in the morning, so we arrived early. The weather was sunny, but there (21) ______ a lot of people on the beach. Mai wanted to swim, (22) ______ the sea was too cold for me. Later, we had lunch in a caf\xE9 near the beach. I\u2019ve never (23) ______ such delicious fish before! We are planning to go back next month, if my dad (24) ______ some free time."
+    },
+    "P-UE6": {
+      text: "My town used (32) ______ be very quiet, but things have changed. A new shopping centre (33) ______ built near the river two years ago, and since then the streets (34) ______ always been crowded at weekends."
+    },
+    "P-R2": {
+      instruction: "Six students want to join a summer club. Read the descriptions of the clubs (A\u2013H). Which club is the best for each student?",
+      clubs: [
+        {
+          key: "A",
+          name: "Art Club",
+          description: "Paint pictures and make models from paper. Saturdays, 9\u201311 a.m. Bring old clothes."
+        },
+        {
+          key: "B",
+          name: "Chess Club",
+          description: "Learn to play chess and take part in a competition at your school in July. Monday and Wednesday after school."
+        },
+        {
+          key: "C",
+          name: "Swimming Fun",
+          description: "Lessons for beginners in the school pool. Tuesday and Thursday, 4\u20135 p.m. Wear a swimming cap."
+        },
+        {
+          key: "D",
+          name: "Cooking Club",
+          description: "Make simple, healthy meals and eat them together. Friday afternoons. Cost: \xA35 for food."
+        },
+        {
+          key: "E",
+          name: "Drama Club",
+          description: "Act in a short play for parents. No experience needed. Wednesday evenings."
+        },
+        {
+          key: "F",
+          name: "Football for Girls",
+          description: "Train with a woman coach and play matches against other schools. Saturday mornings."
+        },
+        {
+          key: "G",
+          name: "Computer Club",
+          description: "Learn to make games on a computer. Free. Thursday after school. Not for beginners."
+        },
+        {
+          key: "H",
+          name: "Garden Club",
+          description: "Grow vegetables and flowers and take some home. Sunday afternoons."
+        }
+      ]
+    },
+    "P-R3": {
+      title: "A Surprise on My First Day",
+      paragraphs: [
+        "When I moved to Da Nang last summer, I was worried about starting a new school. I didn\u2019t know anyone, and I thought everyone would already have friends. On my first morning, I sat alone at the back of the classroom. Then a girl called Hoa asked if I wanted to join her group for a science project. I was surprised, because I hadn\u2019t said a word to anyone!",
+        "We had to build a small bridge from paper and glue, and it was much harder than I expected. Our bridge broke twice, but we kept trying and finally it held a heavy book. After that, I felt much better. Now Hoa is my best friend, and I\u2019m glad I wasn\u2019t too shy to say yes. My advice to anyone moving to a new school: be brave and accept every invitation in the first week."
+      ]
+    },
+    "P-R4": {
+      title: "Starting a Small Garden",
+      instruction: "Three sentences have been removed from the text. Choose the correct sentence (A\u2013E) for each gap. There are two extra sentences that you do not need.",
+      paragraphs: [
+        "Many people think you need a big garden to grow your own food, but this isn\u2019t true. (16) ______ Tomatoes, herbs and lettuce all grow well in pots on a sunny balcony.",
+        "The first step is to choose a place that gets at least six hours of sun every day. (17) ______ Then you need some pots and a bag of good earth, which you can buy cheaply at a garden shop.",
+        "Water your plants every morning, but don\u2019t give them too much water. (18) ______ Within a few weeks, you will be able to enjoy fresh vegetables that you grew yourself."
+      ],
+      sentences: [
+        {
+          key: "A",
+          text: "If the earth is always wet, the plants can get ill."
+        },
+        {
+          key: "B",
+          text: "Even a small space can be enough."
+        },
+        {
+          key: "C",
+          text: "Plants that don\u2019t get enough light will grow slowly and look weak."
+        },
+        {
+          key: "D",
+          text: "Many shops sell cheap plastic pots."
+        },
+        {
+          key: "E",
+          text: "My neighbour grows beans in his garden."
+        }
+      ]
+    }
+  },
+  audio: [
+    {
+      id: "AUD-T1",
+      file: "assets/audio/task1.mp3",
+      task: "Task 1 (c\xE2u 1\u20135)",
+      source: "Cambridge Young Learners English Tests \u2013 Flyers 1 (Answer Booklet + audio CD/MP3)",
+      location: "Test 1 \u2013 Listening Part 4. Booklet kh\xF4ng ghi s\u1ED1 track: t\xECm \u0111o\u1EA1n Sue n\xF3i v\u1EC1 c\xF4ng vi\u1EC7c c\u1EE7a anh trai",
+      notes: "Transcript: p.8. \u0110\xE1p \xE1n s\xE1ch (theo tranh A\u2013C): p.6, Part 4: 1 C, 2 A, 3 B, 4 A, 5 C.",
+      stage: "core",
+      playsPerStudent: "SET_BY_ARIS (1 if the file already contains the repeat, otherwise 2)"
+    },
+    {
+      id: "AUD-T2",
+      file: "assets/audio/task2.mp3",
+      task: "Task 2 (c\xE2u 6\u201310)",
+      source: "A2 Key for Schools Trainer (2nd ed., 2020)",
+      location: "Exam Practice Test 2 \u2013 Listening Part 1, Questions 1\u20135, Track 32",
+      notes: "\u0110\u1EC1: p.64\u201365. Audioscript: p.149\u2013150. \u0110\xE1p \xE1n s\xE1ch: Teacher\u2019s Notes Test 2, p.185: 1 C, 2 C, 3 A, 4 A, 5 B (theo tranh).",
+      stage: "core",
+      playsPerStudent: "SET_BY_ARIS (1 if the file already contains the repeat, otherwise 2)"
+    },
+    {
+      id: "AUD-T3",
+      file: "assets/audio/task3.mp3",
+      task: "Task 3 (c\xE2u 11\u201315)",
+      source: "A2 Key for Schools Trainer (2nd ed., 2020)",
+      location: "Exam Practice Test 2 \u2013 Listening Part 2, Questions 6\u201310, Track 35",
+      notes: "\u0110\u1EC1: p.67. Audioscript: p.150. \u0110\xE1p \xE1n s\xE1ch: Teacher\u2019s Notes Test 2, p.186: tiger, 10:45, Sohatu, 37/thirty-seven, poster.",
+      stage: "core",
+      playsPerStudent: "SET_BY_ARIS (1 if the file already contains the repeat, otherwise 2)"
+    },
+    {
+      id: "AUD-T4",
+      file: "assets/audio/task4.mp3",
+      task: "Task 4 (c\xE2u 16\u201318) \u2013 Extension",
+      source: "Oxford Preparation & Practice for B1 Preliminary for Schools",
+      location: "Practice Test 1 \u2013 Listening Part 2, Track 04: ch\u1EC9 d\xF9ng 3 \u0111o\u1EA1n s\u1ED1 9, 10, 11",
+      notes: "\u0110\u1EC1: p.43. Audioscript: p.164. Kh\u1EDBp c\xE2u 9 (gh\u1EBF), 10 (b\u1EAFt \u0111\u1EA7u s\u1EDBm), 11 (b\xE0i t\u1EADp cu\u1ED1i tu\u1EA7n) c\u1EE7a s\xE1ch. C\u1EAFt 3 \u0111o\u1EA1n th\xE0nh 1 file.",
+      stage: "extension",
+      playsPerStudent: "SET_BY_ARIS (1 if the file already contains the repeat, otherwise 2)"
+    },
+    {
+      id: "AUD-T5",
+      file: "assets/audio/task5.mp3",
+      task: "Task 5 (c\xE2u 19\u201321) \u2013 Extension",
+      source: "Oxford Preparation & Practice for B1 Preliminary for Schools",
+      location: "Practice Test 1 \u2013 Listening Part 4 (Alice Parker), Track 08",
+      notes: "\u0110\u1EC1: p.50. Audioscript: p.165\u2013166. C\xE2u 19 \u2248 s\xE1ch Q21, c\xE2u 21 \u2248 s\xE1ch Q25. C\xE2u 20 do ARIS vi\u1EBFt, kh\xF4ng c\xF3 trong s\xE1ch; c\u0103n c\u1EE9 l\u1EDDi Alice n\xF3i ch\u01B0a c\xF3 c\u1EEDa h\xE0ng n\xE0o gi\u1ED1ng v\u1EADy trong khu v\u1EF1c (p.166).",
+      stage: "extension",
+      playsPerStudent: "SET_BY_ARIS (1 if the file already contains the repeat, otherwise 2)"
+    }
+  ],
+  items: [
+    {
+      id: "UE-01",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE1",
+      band: "F",
+      type: "mcq",
+      prompt: "You put a letter inside this and write the address on it. It is an ______.",
+      options: [
+        {
+          key: "A",
+          text: "umbrella"
+        },
+        {
+          key: "B",
+          text: "envelope"
+        },
+        {
+          key: "C",
+          text: "airport"
+        }
+      ]
+    },
+    {
+      id: "UE-02",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE1",
+      band: "F",
+      type: "mcq",
+      prompt: "It's very ______ today. We can't see the mountains.",
+      options: [
+        {
+          key: "A",
+          text: "noisy"
+        },
+        {
+          key: "B",
+          text: "empty"
+        },
+        {
+          key: "C",
+          text: "foggy"
+        }
+      ]
+    },
+    {
+      id: "UE-03",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE1",
+      band: "F",
+      type: "mcq",
+      prompt: "My uncle flies big planes. He is a ______.",
+      options: [
+        {
+          key: "A",
+          text: "mechanic"
+        },
+        {
+          key: "B",
+          text: "pilot"
+        },
+        {
+          key: "C",
+          text: "dentist"
+        }
+      ]
+    },
+    {
+      id: "UE-04",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE1",
+      band: "F",
+      type: "mcq",
+      prompt: "We went to the ______ to see old paintings and statues.",
+      options: [
+        {
+          key: "A",
+          text: "museum"
+        },
+        {
+          key: "B",
+          text: "factory"
+        },
+        {
+          key: "C",
+          text: "station"
+        }
+      ]
+    },
+    {
+      id: "UE-05",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE1",
+      band: "K",
+      type: "mcq",
+      prompt: "Please ______ your homework before you play games.",
+      options: [
+        {
+          key: "A",
+          text: "make"
+        },
+        {
+          key: "B",
+          text: "do"
+        },
+        {
+          key: "C",
+          text: "have"
+        }
+      ]
+    },
+    {
+      id: "UE-06",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE1",
+      band: "K",
+      type: "mcq",
+      prompt: "I can't find my phone. Can you ______ for it with me?",
+      options: [
+        {
+          key: "A",
+          text: "look"
+        },
+        {
+          key: "B",
+          text: "see"
+        },
+        {
+          key: "C",
+          text: "watch"
+        }
+      ]
+    },
+    {
+      id: "UE-07",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE1",
+      band: "K",
+      type: "mcq",
+      prompt: "The film starts at 7.30, so we must ______ at the cinema by 7.15.",
+      options: [
+        {
+          key: "A",
+          text: "reach"
+        },
+        {
+          key: "B",
+          text: "get"
+        },
+        {
+          key: "C",
+          text: "arrive"
+        }
+      ]
+    },
+    {
+      id: "UE-08",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE1",
+      band: "K",
+      type: "mcq",
+      prompt: "My brother is very good ______ maths. He always gets top marks.",
+      options: [
+        {
+          key: "A",
+          text: "at"
+        },
+        {
+          key: "B",
+          text: "in"
+        },
+        {
+          key: "C",
+          text: "on"
+        }
+      ]
+    },
+    {
+      id: "UE-09",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE2",
+      band: "F",
+      type: "mcq",
+      prompt: "Look at those black clouds! It ______ rain.",
+      options: [
+        {
+          key: "A",
+          text: "is going to"
+        },
+        {
+          key: "B",
+          text: "will to"
+        },
+        {
+          key: "C",
+          text: "goes to"
+        }
+      ]
+    },
+    {
+      id: "UE-10",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE2",
+      band: "F",
+      type: "mcq",
+      prompt: "______ we have a picnic on Sunday?",
+      options: [
+        {
+          key: "A",
+          text: "Do"
+        },
+        {
+          key: "B",
+          text: "Shall"
+        },
+        {
+          key: "C",
+          text: "Are"
+        }
+      ]
+    },
+    {
+      id: "UE-11",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE2",
+      band: "F",
+      type: "mcq",
+      prompt: "I ______ TV when my friend phoned me.",
+      options: [
+        {
+          key: "A",
+          text: "watched"
+        },
+        {
+          key: "B",
+          text: "watch"
+        },
+        {
+          key: "C",
+          text: "was watching"
+        }
+      ]
+    },
+    {
+      id: "UE-12",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE2",
+      band: "F",
+      type: "mcq",
+      prompt: "Have you ______ been to the zoo?",
+      options: [
+        {
+          key: "A",
+          text: "ever"
+        },
+        {
+          key: "B",
+          text: "yesterday"
+        },
+        {
+          key: "C",
+          text: "last"
+        }
+      ]
+    },
+    {
+      id: "UE-13",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE2",
+      band: "K",
+      type: "mcq",
+      prompt: "My bag is ______ than yours.",
+      options: [
+        {
+          key: "A",
+          text: "heavy"
+        },
+        {
+          key: "B",
+          text: "heavier"
+        },
+        {
+          key: "C",
+          text: "heaviest"
+        }
+      ]
+    },
+    {
+      id: "UE-14",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE2",
+      band: "K",
+      type: "mcq",
+      prompt: "You ______ wear a helmet when you ride a bike. It's the rule.",
+      options: [
+        {
+          key: "A",
+          text: "can"
+        },
+        {
+          key: "B",
+          text: "might"
+        },
+        {
+          key: "C",
+          text: "must"
+        }
+      ]
+    },
+    {
+      id: "UE-15",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE2",
+      band: "K",
+      type: "mcq",
+      prompt: "What ______ you do last weekend?",
+      options: [
+        {
+          key: "A",
+          text: "did"
+        },
+        {
+          key: "B",
+          text: "do"
+        },
+        {
+          key: "C",
+          text: "does"
+        }
+      ]
+    },
+    {
+      id: "UE-16",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE2",
+      band: "K",
+      type: "mcq",
+      prompt: "We ______ to the cinema tomorrow. I've already bought the tickets.",
+      options: [
+        {
+          key: "A",
+          text: "went"
+        },
+        {
+          key: "B",
+          text: "are going"
+        },
+        {
+          key: "C",
+          text: "go"
+        }
+      ]
+    },
+    {
+      id: "UE-17",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE2",
+      band: "K+",
+      type: "mcq",
+      prompt: "The boy ______ is playing the drums is my cousin.",
+      options: [
+        {
+          key: "A",
+          text: "which"
+        },
+        {
+          key: "B",
+          text: "whose"
+        },
+        {
+          key: "C",
+          text: "who"
+        }
+      ]
+    },
+    {
+      id: "UE-18",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE2",
+      band: "K+",
+      type: "mcq",
+      prompt: "This bag is ______ heavy for me to carry.",
+      options: [
+        {
+          key: "A",
+          text: "enough"
+        },
+        {
+          key: "B",
+          text: "too"
+        },
+        {
+          key: "C",
+          text: "very"
+        }
+      ]
+    },
+    {
+      id: "UE-25",
+      skill: "use_of_english",
+      stage: "extension",
+      task: "UE4",
+      band: "P-",
+      type: "mcq",
+      prompt: "The teacher said the school trip would be ______ until next month because of the weather.",
+      options: [
+        {
+          key: "A",
+          text: "put on"
+        },
+        {
+          key: "B",
+          text: "put off"
+        },
+        {
+          key: "C",
+          text: "put away"
+        }
+      ]
+    },
+    {
+      id: "UE-26",
+      skill: "use_of_english",
+      stage: "extension",
+      task: "UE4",
+      band: "P",
+      type: "mcq",
+      prompt: "Tom has ______ up playing the guitar because he never has time to practise.",
+      options: [
+        {
+          key: "A",
+          text: "given"
+        },
+        {
+          key: "B",
+          text: "taken"
+        },
+        {
+          key: "C",
+          text: "put"
+        }
+      ]
+    },
+    {
+      id: "UE-27",
+      skill: "use_of_english",
+      stage: "extension",
+      task: "UE4",
+      band: "P",
+      type: "mcq",
+      prompt: "Our flat has a lovely ______ of the river.",
+      options: [
+        {
+          key: "A",
+          text: "sight"
+        },
+        {
+          key: "B",
+          text: "scene"
+        },
+        {
+          key: "C",
+          text: "view"
+        }
+      ]
+    },
+    {
+      id: "UE-28",
+      skill: "use_of_english",
+      stage: "extension",
+      task: "UE5",
+      band: "P-",
+      type: "mcq",
+      prompt: "If you ______ harder, you'll pass the exam.",
+      options: [
+        {
+          key: "A",
+          text: "will study"
+        },
+        {
+          key: "B",
+          text: "study"
+        },
+        {
+          key: "C",
+          text: "studied"
+        }
+      ]
+    },
+    {
+      id: "UE-29",
+      skill: "use_of_english",
+      stage: "extension",
+      task: "UE5",
+      band: "P-",
+      type: "mcq",
+      prompt: "I ______ in this town for five years.",
+      options: [
+        {
+          key: "A",
+          text: "have lived"
+        },
+        {
+          key: "B",
+          text: "live"
+        },
+        {
+          key: "C",
+          text: "am living"
+        }
+      ]
+    },
+    {
+      id: "UE-30",
+      skill: "use_of_english",
+      stage: "extension",
+      task: "UE5",
+      band: "P",
+      type: "mcq",
+      prompt: "The window ______ by a football yesterday.",
+      options: [
+        {
+          key: "A",
+          text: "broke"
+        },
+        {
+          key: "B",
+          text: "has broken"
+        },
+        {
+          key: "C",
+          text: "was broken"
+        }
+      ]
+    },
+    {
+      id: "UE-31",
+      skill: "use_of_english",
+      stage: "extension",
+      task: "UE5",
+      band: "P",
+      type: "mcq",
+      prompt: "If I ______ a million dollars, I would travel the world.",
+      options: [
+        {
+          key: "A",
+          text: "had"
+        },
+        {
+          key: "B",
+          text: "have"
+        },
+        {
+          key: "C",
+          text: "will have"
+        }
+      ]
+    },
+    {
+      id: "UE-19",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE3",
+      band: "K",
+      type: "cloze_mcq",
+      passageId: "P-UE3",
+      gapNumber: 19,
+      options: [
+        {
+          key: "A",
+          text: "go"
+        },
+        {
+          key: "B",
+          text: "went"
+        },
+        {
+          key: "C",
+          text: "going"
+        }
+      ]
+    },
+    {
+      id: "UE-20",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE3",
+      band: "K",
+      type: "cloze_mcq",
+      passageId: "P-UE3",
+      gapNumber: 20,
+      options: [
+        {
+          key: "A",
+          text: "at"
+        },
+        {
+          key: "B",
+          text: "in"
+        },
+        {
+          key: "C",
+          text: "on"
+        }
+      ]
+    },
+    {
+      id: "UE-21",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE3",
+      band: "K+",
+      type: "cloze_mcq",
+      passageId: "P-UE3",
+      gapNumber: 21,
+      options: [
+        {
+          key: "A",
+          text: "was"
+        },
+        {
+          key: "B",
+          text: "were"
+        },
+        {
+          key: "C",
+          text: "is"
+        }
+      ]
+    },
+    {
+      id: "UE-22",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE3",
+      band: "K+",
+      type: "cloze_mcq",
+      passageId: "P-UE3",
+      gapNumber: 22,
+      options: [
+        {
+          key: "A",
+          text: "but"
+        },
+        {
+          key: "B",
+          text: "so"
+        },
+        {
+          key: "C",
+          text: "because"
+        }
+      ]
+    },
+    {
+      id: "UE-23",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE3",
+      band: "P-",
+      type: "cloze_mcq",
+      passageId: "P-UE3",
+      gapNumber: 23,
+      options: [
+        {
+          key: "A",
+          text: "ate"
+        },
+        {
+          key: "B",
+          text: "eaten"
+        },
+        {
+          key: "C",
+          text: "eating"
+        }
+      ]
+    },
+    {
+      id: "UE-24",
+      skill: "use_of_english",
+      stage: "core",
+      task: "UE3",
+      band: "P-",
+      type: "cloze_mcq",
+      passageId: "P-UE3",
+      gapNumber: 24,
+      options: [
+        {
+          key: "A",
+          text: "will have"
+        },
+        {
+          key: "B",
+          text: "has"
+        },
+        {
+          key: "C",
+          text: "is having"
+        }
+      ]
+    },
+    {
+      id: "UE-32",
+      skill: "use_of_english",
+      stage: "extension",
+      task: "UE6",
+      band: "P-",
+      type: "cloze_mcq",
+      passageId: "P-UE6",
+      gapNumber: 32,
+      options: [
+        {
+          key: "A",
+          text: "for"
+        },
+        {
+          key: "B",
+          text: "to"
+        },
+        {
+          key: "C",
+          text: "of"
+        }
+      ]
+    },
+    {
+      id: "UE-33",
+      skill: "use_of_english",
+      stage: "extension",
+      task: "UE6",
+      band: "P",
+      type: "cloze_mcq",
+      passageId: "P-UE6",
+      gapNumber: 33,
+      options: [
+        {
+          key: "A",
+          text: "is"
+        },
+        {
+          key: "B",
+          text: "has"
+        },
+        {
+          key: "C",
+          text: "was"
+        }
+      ]
+    },
+    {
+      id: "UE-34",
+      skill: "use_of_english",
+      stage: "extension",
+      task: "UE6",
+      band: "P",
+      type: "cloze_mcq",
+      passageId: "P-UE6",
+      gapNumber: 34,
+      options: [
+        {
+          key: "A",
+          text: "were"
+        },
+        {
+          key: "B",
+          text: "have"
+        },
+        {
+          key: "C",
+          text: "are"
+        }
+      ]
+    },
+    {
+      id: "RD-01",
+      skill: "reading",
+      stage: "core",
+      task: "R1",
+      band: "F",
+      type: "mcq",
+      stimulus: [
+        "SWIMMING POOL",
+        "Children under 8 must always be with an adult."
+      ],
+      prompt: "What does the notice say?",
+      options: [
+        {
+          key: "A",
+          text: "Children under 8 can't swim here."
+        },
+        {
+          key: "B",
+          text: "Small children need an adult with them."
+        },
+        {
+          key: "C",
+          text: "Only adults can use the pool."
+        }
+      ]
+    },
+    {
+      id: "RD-02",
+      skill: "reading",
+      stage: "core",
+      task: "R1",
+      band: "F",
+      type: "mcq",
+      stimulus: [
+        "Hi Ben! I\u2019m at the bus stop but the bus is late. Can you wait for me at the caf\xE9? \u2013 Sam"
+      ],
+      prompt: "What does Sam want Ben to do?",
+      options: [
+        {
+          key: "A",
+          text: "take the bus"
+        },
+        {
+          key: "B",
+          text: "phone the caf\xE9"
+        },
+        {
+          key: "C",
+          text: "meet him at the caf\xE9"
+        }
+      ]
+    },
+    {
+      id: "RD-03",
+      skill: "reading",
+      stage: "core",
+      task: "R1",
+      band: "F",
+      type: "mcq",
+      stimulus: [
+        "LIBRARY",
+        "Closed on Mondays. Open Tuesday to Saturday, 9.00\u20135.00."
+      ],
+      prompt: "What does the notice say?",
+      options: [
+        {
+          key: "A",
+          text: "You can't visit the library on Monday."
+        },
+        {
+          key: "B",
+          text: "The library is open every day."
+        },
+        {
+          key: "C",
+          text: "The library closes at 9 o\u2019clock."
+        }
+      ]
+    },
+    {
+      id: "RD-04",
+      skill: "reading",
+      stage: "core",
+      task: "R1",
+      band: "K",
+      type: "mcq",
+      stimulus: [
+        "Hi Anna, I can\u2019t come to tennis tomorrow because I have to look after my little brother. Can you tell the teacher? Thanks, Lucy"
+      ],
+      prompt: "Why can\u2019t Lucy come to tennis?",
+      options: [
+        {
+          key: "A",
+          text: "She must stay with her brother."
+        },
+        {
+          key: "B",
+          text: "She is ill."
+        },
+        {
+          key: "C",
+          text: "She doesn't like tennis."
+        }
+      ]
+    },
+    {
+      id: "RD-05",
+      skill: "reading",
+      stage: "core",
+      task: "R1",
+      band: "K",
+      type: "mcq",
+      stimulus: [
+        "LOST",
+        "A blue rucksack with a red bottle inside. If you find it, please give it to Mr Brown in Room 12."
+      ],
+      prompt: "What should you do if you find the rucksack?",
+      options: [
+        {
+          key: "A",
+          text: "Buy a new bottle."
+        },
+        {
+          key: "B",
+          text: "Ask Mr Brown to look for it."
+        },
+        {
+          key: "C",
+          text: "Take it to Room 12."
+        }
+      ]
+    },
+    {
+      id: "RD-06",
+      skill: "reading",
+      stage: "core",
+      task: "R1",
+      band: "K",
+      type: "mcq",
+      stimulus: [
+        "Buy one T-shirt, get the second one for half price! Offer ends Sunday."
+      ],
+      prompt: "What does the sign say?",
+      options: [
+        {
+          key: "A",
+          text: "All T-shirts are half price."
+        },
+        {
+          key: "B",
+          text: "You can use this offer after Sunday."
+        },
+        {
+          key: "C",
+          text: "The second T-shirt costs less."
+        }
+      ]
+    },
+    {
+      id: "RD-07",
+      skill: "reading",
+      stage: "core",
+      task: "R2",
+      band: "K",
+      type: "matching",
+      passageId: "P-R2",
+      prompt: "Jack loves painting and he is free on Saturday morning.",
+      options: [
+        {
+          key: "A",
+          text: "Art Club \u2013 Paint pictures and make models from paper. Saturdays, 9\u201311 a.m. Bring old clothes."
+        },
+        {
+          key: "B",
+          text: "Chess Club \u2013 Learn to play chess and take part in a competition at your school in July. Monday and Wednesday after school."
+        },
+        {
+          key: "C",
+          text: "Swimming Fun \u2013 Lessons for beginners in the school pool. Tuesday and Thursday, 4\u20135 p.m. Wear a swimming cap."
+        },
+        {
+          key: "D",
+          text: "Cooking Club \u2013 Make simple, healthy meals and eat them together. Friday afternoons. Cost: \xA35 for food."
+        },
+        {
+          key: "E",
+          text: "Drama Club \u2013 Act in a short play for parents. No experience needed. Wednesday evenings."
+        },
+        {
+          key: "F",
+          text: "Football for Girls \u2013 Train with a woman coach and play matches against other schools. Saturday mornings."
+        },
+        {
+          key: "G",
+          text: "Computer Club \u2013 Learn to make games on a computer. Free. Thursday after school. Not for beginners."
+        },
+        {
+          key: "H",
+          text: "Garden Club \u2013 Grow vegetables and flowers and take some home. Sunday afternoons."
+        }
+      ]
+    },
+    {
+      id: "RD-08",
+      skill: "reading",
+      stage: "core",
+      task: "R2",
+      band: "K",
+      type: "matching",
+      passageId: "P-R2",
+      prompt: "Mai can't swim. She wants lessons after school on Tuesday.",
+      options: [
+        {
+          key: "A",
+          text: "Art Club \u2013 Paint pictures and make models from paper. Saturdays, 9\u201311 a.m. Bring old clothes."
+        },
+        {
+          key: "B",
+          text: "Chess Club \u2013 Learn to play chess and take part in a competition at your school in July. Monday and Wednesday after school."
+        },
+        {
+          key: "C",
+          text: "Swimming Fun \u2013 Lessons for beginners in the school pool. Tuesday and Thursday, 4\u20135 p.m. Wear a swimming cap."
+        },
+        {
+          key: "D",
+          text: "Cooking Club \u2013 Make simple, healthy meals and eat them together. Friday afternoons. Cost: \xA35 for food."
+        },
+        {
+          key: "E",
+          text: "Drama Club \u2013 Act in a short play for parents. No experience needed. Wednesday evenings."
+        },
+        {
+          key: "F",
+          text: "Football for Girls \u2013 Train with a woman coach and play matches against other schools. Saturday mornings."
+        },
+        {
+          key: "G",
+          text: "Computer Club \u2013 Learn to make games on a computer. Free. Thursday after school. Not for beginners."
+        },
+        {
+          key: "H",
+          text: "Garden Club \u2013 Grow vegetables and flowers and take some home. Sunday afternoons."
+        }
+      ]
+    },
+    {
+      id: "RD-09",
+      skill: "reading",
+      stage: "core",
+      task: "R2",
+      band: "K",
+      type: "matching",
+      passageId: "P-R2",
+      prompt: "Tom wants to learn to cook. He is only free on Friday.",
+      options: [
+        {
+          key: "A",
+          text: "Art Club \u2013 Paint pictures and make models from paper. Saturdays, 9\u201311 a.m. Bring old clothes."
+        },
+        {
+          key: "B",
+          text: "Chess Club \u2013 Learn to play chess and take part in a competition at your school in July. Monday and Wednesday after school."
+        },
+        {
+          key: "C",
+          text: "Swimming Fun \u2013 Lessons for beginners in the school pool. Tuesday and Thursday, 4\u20135 p.m. Wear a swimming cap."
+        },
+        {
+          key: "D",
+          text: "Cooking Club \u2013 Make simple, healthy meals and eat them together. Friday afternoons. Cost: \xA35 for food."
+        },
+        {
+          key: "E",
+          text: "Drama Club \u2013 Act in a short play for parents. No experience needed. Wednesday evenings."
+        },
+        {
+          key: "F",
+          text: "Football for Girls \u2013 Train with a woman coach and play matches against other schools. Saturday mornings."
+        },
+        {
+          key: "G",
+          text: "Computer Club \u2013 Learn to make games on a computer. Free. Thursday after school. Not for beginners."
+        },
+        {
+          key: "H",
+          text: "Garden Club \u2013 Grow vegetables and flowers and take some home. Sunday afternoons."
+        }
+      ]
+    },
+    {
+      id: "RD-10",
+      skill: "reading",
+      stage: "core",
+      task: "R2",
+      band: "K+",
+      type: "matching",
+      passageId: "P-R2",
+      prompt: "Linh likes acting but she has never been on a stage. She can only go in the evening.",
+      options: [
+        {
+          key: "A",
+          text: "Art Club \u2013 Paint pictures and make models from paper. Saturdays, 9\u201311 a.m. Bring old clothes."
+        },
+        {
+          key: "B",
+          text: "Chess Club \u2013 Learn to play chess and take part in a competition at your school in July. Monday and Wednesday after school."
+        },
+        {
+          key: "C",
+          text: "Swimming Fun \u2013 Lessons for beginners in the school pool. Tuesday and Thursday, 4\u20135 p.m. Wear a swimming cap."
+        },
+        {
+          key: "D",
+          text: "Cooking Club \u2013 Make simple, healthy meals and eat them together. Friday afternoons. Cost: \xA35 for food."
+        },
+        {
+          key: "E",
+          text: "Drama Club \u2013 Act in a short play for parents. No experience needed. Wednesday evenings."
+        },
+        {
+          key: "F",
+          text: "Football for Girls \u2013 Train with a woman coach and play matches against other schools. Saturday mornings."
+        },
+        {
+          key: "G",
+          text: "Computer Club \u2013 Learn to make games on a computer. Free. Thursday after school. Not for beginners."
+        },
+        {
+          key: "H",
+          text: "Garden Club \u2013 Grow vegetables and flowers and take some home. Sunday afternoons."
+        }
+      ]
+    },
+    {
+      id: "RD-11",
+      skill: "reading",
+      stage: "core",
+      task: "R2",
+      band: "K+",
+      type: "matching",
+      passageId: "P-R2",
+      prompt: "Nam enjoys computers and already makes simple games. He doesn't want to pay.",
+      options: [
+        {
+          key: "A",
+          text: "Art Club \u2013 Paint pictures and make models from paper. Saturdays, 9\u201311 a.m. Bring old clothes."
+        },
+        {
+          key: "B",
+          text: "Chess Club \u2013 Learn to play chess and take part in a competition at your school in July. Monday and Wednesday after school."
+        },
+        {
+          key: "C",
+          text: "Swimming Fun \u2013 Lessons for beginners in the school pool. Tuesday and Thursday, 4\u20135 p.m. Wear a swimming cap."
+        },
+        {
+          key: "D",
+          text: "Cooking Club \u2013 Make simple, healthy meals and eat them together. Friday afternoons. Cost: \xA35 for food."
+        },
+        {
+          key: "E",
+          text: "Drama Club \u2013 Act in a short play for parents. No experience needed. Wednesday evenings."
+        },
+        {
+          key: "F",
+          text: "Football for Girls \u2013 Train with a woman coach and play matches against other schools. Saturday mornings."
+        },
+        {
+          key: "G",
+          text: "Computer Club \u2013 Learn to make games on a computer. Free. Thursday after school. Not for beginners."
+        },
+        {
+          key: "H",
+          text: "Garden Club \u2013 Grow vegetables and flowers and take some home. Sunday afternoons."
+        }
+      ]
+    },
+    {
+      id: "RD-12",
+      skill: "reading",
+      stage: "core",
+      task: "R2",
+      band: "K+",
+      type: "matching",
+      passageId: "P-R2",
+      prompt: "Emma plays football every weekend. She wants to meet teams from different schools.",
+      options: [
+        {
+          key: "A",
+          text: "Art Club \u2013 Paint pictures and make models from paper. Saturdays, 9\u201311 a.m. Bring old clothes."
+        },
+        {
+          key: "B",
+          text: "Chess Club \u2013 Learn to play chess and take part in a competition at your school in July. Monday and Wednesday after school."
+        },
+        {
+          key: "C",
+          text: "Swimming Fun \u2013 Lessons for beginners in the school pool. Tuesday and Thursday, 4\u20135 p.m. Wear a swimming cap."
+        },
+        {
+          key: "D",
+          text: "Cooking Club \u2013 Make simple, healthy meals and eat them together. Friday afternoons. Cost: \xA35 for food."
+        },
+        {
+          key: "E",
+          text: "Drama Club \u2013 Act in a short play for parents. No experience needed. Wednesday evenings."
+        },
+        {
+          key: "F",
+          text: "Football for Girls \u2013 Train with a woman coach and play matches against other schools. Saturday mornings."
+        },
+        {
+          key: "G",
+          text: "Computer Club \u2013 Learn to make games on a computer. Free. Thursday after school. Not for beginners."
+        },
+        {
+          key: "H",
+          text: "Garden Club \u2013 Grow vegetables and flowers and take some home. Sunday afternoons."
+        }
+      ]
+    },
+    {
+      id: "RD-13",
+      skill: "reading",
+      stage: "extension",
+      task: "R3",
+      band: "P-",
+      type: "mcq",
+      passageId: "P-R3",
+      prompt: "Why was the writer surprised when Hoa spoke to her?",
+      options: [
+        {
+          key: "A",
+          text: "She thought Hoa was unfriendly."
+        },
+        {
+          key: "B",
+          text: "She was already in Hoa\u2019s group."
+        },
+        {
+          key: "C",
+          text: "She had not spoken to anyone yet."
+        }
+      ]
+    },
+    {
+      id: "RD-14",
+      skill: "reading",
+      stage: "extension",
+      task: "R3",
+      band: "P-",
+      type: "mcq",
+      passageId: "P-R3",
+      prompt: "What was difficult about the project?",
+      options: [
+        {
+          key: "A",
+          text: "Making a bridge that was strong enough."
+        },
+        {
+          key: "B",
+          text: "Finding a free place to work."
+        },
+        {
+          key: "C",
+          text: "Choosing the right group."
+        }
+      ]
+    },
+    {
+      id: "RD-15",
+      skill: "reading",
+      stage: "extension",
+      task: "R3",
+      band: "P-",
+      type: "mcq",
+      passageId: "P-R3",
+      prompt: "How does the writer feel now about saying yes to Hoa?",
+      options: [
+        {
+          key: "A",
+          text: "She wishes she had waited."
+        },
+        {
+          key: "B",
+          text: "She is glad she did it."
+        },
+        {
+          key: "C",
+          text: "She thinks it was a mistake."
+        }
+      ]
+    },
+    {
+      id: "RD-16",
+      skill: "reading",
+      stage: "extension",
+      task: "R4",
+      band: "P",
+      type: "gapped_sentence",
+      passageId: "P-R4",
+      gapNumber: 16,
+      options: [
+        {
+          key: "A",
+          text: "If the earth is always wet, the plants can get ill."
+        },
+        {
+          key: "B",
+          text: "Even a small space can be enough."
+        },
+        {
+          key: "C",
+          text: "Plants that don\u2019t get enough light will grow slowly and look weak."
+        },
+        {
+          key: "D",
+          text: "Many shops sell cheap plastic pots."
+        },
+        {
+          key: "E",
+          text: "My neighbour grows beans in his garden."
+        }
+      ]
+    },
+    {
+      id: "RD-17",
+      skill: "reading",
+      stage: "extension",
+      task: "R4",
+      band: "P",
+      type: "gapped_sentence",
+      passageId: "P-R4",
+      gapNumber: 17,
+      options: [
+        {
+          key: "A",
+          text: "If the earth is always wet, the plants can get ill."
+        },
+        {
+          key: "B",
+          text: "Even a small space can be enough."
+        },
+        {
+          key: "C",
+          text: "Plants that don\u2019t get enough light will grow slowly and look weak."
+        },
+        {
+          key: "D",
+          text: "Many shops sell cheap plastic pots."
+        },
+        {
+          key: "E",
+          text: "My neighbour grows beans in his garden."
+        }
+      ]
+    },
+    {
+      id: "RD-18",
+      skill: "reading",
+      stage: "extension",
+      task: "R4",
+      band: "P",
+      type: "gapped_sentence",
+      passageId: "P-R4",
+      gapNumber: 18,
+      options: [
+        {
+          key: "A",
+          text: "If the earth is always wet, the plants can get ill."
+        },
+        {
+          key: "B",
+          text: "Even a small space can be enough."
+        },
+        {
+          key: "C",
+          text: "Plants that don\u2019t get enough light will grow slowly and look weak."
+        },
+        {
+          key: "D",
+          text: "Many shops sell cheap plastic pots."
+        },
+        {
+          key: "E",
+          text: "My neighbour grows beans in his garden."
+        }
+      ]
+    },
+    {
+      id: "LS-01",
+      skill: "listening",
+      stage: "core",
+      task: "L1",
+      band: "F",
+      type: "mcq",
+      audioId: "AUD-T1",
+      prompt: "Where does Sue\u2019s brother work?",
+      options: [
+        {
+          key: "A",
+          text: "on a farm"
+        },
+        {
+          key: "B",
+          text: "in a factory"
+        },
+        {
+          key: "C",
+          text: "in an office"
+        }
+      ]
+    },
+    {
+      id: "LS-02",
+      skill: "listening",
+      stage: "core",
+      task: "L1",
+      band: "F",
+      type: "mcq",
+      audioId: "AUD-T1",
+      prompt: "How does Sue\u2019s brother go to work?",
+      options: [
+        {
+          key: "A",
+          text: "by bus"
+        },
+        {
+          key: "B",
+          text: "on foot"
+        },
+        {
+          key: "C",
+          text: "by motorbike"
+        }
+      ]
+    },
+    {
+      id: "LS-03",
+      skill: "listening",
+      stage: "core",
+      task: "L1",
+      band: "F",
+      type: "mcq",
+      audioId: "AUD-T1",
+      prompt: "What time does Sue\u2019s brother start work?",
+      options: [
+        {
+          key: "A",
+          text: "6.30"
+        },
+        {
+          key: "B",
+          text: "8.00"
+        },
+        {
+          key: "C",
+          text: "8.30"
+        }
+      ]
+    },
+    {
+      id: "LS-04",
+      skill: "listening",
+      stage: "core",
+      task: "L1",
+      band: "F",
+      type: "mcq",
+      audioId: "AUD-T1",
+      prompt: "What does Sue\u2019s brother have for lunch?",
+      options: [
+        {
+          key: "A",
+          text: "He goes home for lunch."
+        },
+        {
+          key: "B",
+          text: "He eats at a restaurant."
+        },
+        {
+          key: "C",
+          text: "He eats sandwiches."
+        }
+      ]
+    },
+    {
+      id: "LS-05",
+      skill: "listening",
+      stage: "core",
+      task: "L1",
+      band: "F",
+      type: "mcq",
+      audioId: "AUD-T1",
+      prompt: "What did Sue\u2019s brother do before this job?",
+      options: [
+        {
+          key: "A",
+          text: "He went to university."
+        },
+        {
+          key: "B",
+          text: "He worked on a farm."
+        },
+        {
+          key: "C",
+          text: "He travelled to other countries."
+        }
+      ]
+    },
+    {
+      id: "LS-06",
+      skill: "listening",
+      stage: "core",
+      task: "L2",
+      band: "K",
+      type: "mcq",
+      audioId: "AUD-T2",
+      prompt: "What will Pete have for lunch?",
+      options: [
+        {
+          key: "A",
+          text: "pasta"
+        },
+        {
+          key: "B",
+          text: "salad"
+        },
+        {
+          key: "C",
+          text: "pizza"
+        }
+      ]
+    },
+    {
+      id: "LS-07",
+      skill: "listening",
+      stage: "core",
+      task: "L2",
+      band: "K",
+      type: "mcq",
+      audioId: "AUD-T2",
+      prompt: "Which family has moved in next to Emily?",
+      options: [
+        {
+          key: "A",
+          text: "a grandmother and two boys"
+        },
+        {
+          key: "B",
+          text: "a grandmother and two girls"
+        },
+        {
+          key: "C",
+          text: "a mother, a father and two girls"
+        }
+      ]
+    },
+    {
+      id: "LS-08",
+      skill: "listening",
+      stage: "core",
+      task: "L2",
+      band: "K",
+      type: "mcq",
+      audioId: "AUD-T2",
+      prompt: "What was Oscar doing when Isabel phoned him?",
+      options: [
+        {
+          key: "A",
+          text: "moving furniture"
+        },
+        {
+          key: "B",
+          text: "having dinner"
+        },
+        {
+          key: "C",
+          text: "painting walls"
+        }
+      ]
+    },
+    {
+      id: "LS-09",
+      skill: "listening",
+      stage: "core",
+      task: "L2",
+      band: "K+",
+      type: "mcq",
+      audioId: "AUD-T2",
+      prompt: "Why didn\u2019t Niesha go to Jack\u2019s party?",
+      options: [
+        {
+          key: "A",
+          text: "She was ill."
+        },
+        {
+          key: "B",
+          text: "She was coming back from holiday."
+        },
+        {
+          key: "C",
+          text: "She was visiting her aunt."
+        }
+      ]
+    },
+    {
+      id: "LS-10",
+      skill: "listening",
+      stage: "core",
+      task: "L2",
+      band: "K+",
+      type: "mcq",
+      audioId: "AUD-T2",
+      prompt: "Where is Oliver\u2019s phone?",
+      options: [
+        {
+          key: "A",
+          text: "on the desk"
+        },
+        {
+          key: "B",
+          text: "on the sofa"
+        },
+        {
+          key: "C",
+          text: "on the kitchen table"
+        }
+      ]
+    },
+    {
+      id: "LS-11",
+      skill: "listening",
+      stage: "core",
+      task: "L3",
+      band: "K",
+      type: "gap_fill",
+      audioId: "AUD-T3",
+      prompt: "First activity: Draw a ____"
+    },
+    {
+      id: "LS-12",
+      skill: "listening",
+      stage: "core",
+      task: "L3",
+      band: "K+",
+      type: "gap_fill",
+      audioId: "AUD-T3",
+      prompt: "Time to give water to the animals: ____"
+    },
+    {
+      id: "LS-13",
+      skill: "listening",
+      stage: "core",
+      task: "L3",
+      band: "K",
+      type: "gap_fill",
+      audioId: "AUD-T3",
+      prompt: "Name of the baby lion: ____"
+    },
+    {
+      id: "LS-14",
+      skill: "listening",
+      stage: "core",
+      task: "L3",
+      band: "K+",
+      type: "gap_fill",
+      audioId: "AUD-T3",
+      prompt: "Age of the oldest dolphin: ____ years"
+    },
+    {
+      id: "LS-15",
+      skill: "listening",
+      stage: "core",
+      task: "L3",
+      band: "K",
+      type: "gap_fill",
+      audioId: "AUD-T3",
+      prompt: "Present at the end of the day: a ____"
+    },
+    {
+      id: "LS-16",
+      skill: "listening",
+      stage: "extension",
+      task: "L4",
+      band: "P-",
+      type: "mcq",
+      audioId: "AUD-T4",
+      prompt: "What is the woman unhappy about in the caf\xE9?",
+      options: [
+        {
+          key: "A",
+          text: "the seats"
+        },
+        {
+          key: "B",
+          text: "the staff"
+        },
+        {
+          key: "C",
+          text: "the names of the dishes"
+        }
+      ]
+    },
+    {
+      id: "LS-17",
+      skill: "listening",
+      stage: "extension",
+      task: "L4",
+      band: "P-",
+      type: "mcq",
+      audioId: "AUD-T4",
+      prompt: "What does the girl find difficult about her art course?",
+      options: [
+        {
+          key: "A",
+          text: "the other students"
+        },
+        {
+          key: "B",
+          text: "the early start"
+        },
+        {
+          key: "C",
+          text: "the teacher"
+        }
+      ]
+    },
+    {
+      id: "LS-18",
+      skill: "listening",
+      stage: "extension",
+      task: "L4",
+      band: "P-",
+      type: "mcq",
+      audioId: "AUD-T4",
+      prompt: "What does the girl complain about in her history lessons?",
+      options: [
+        {
+          key: "A",
+          text: "The lessons are boring."
+        },
+        {
+          key: "B",
+          text: "The teacher is unfriendly."
+        },
+        {
+          key: "C",
+          text: "There is a lot of homework on Fridays."
+        }
+      ]
+    },
+    {
+      id: "LS-19",
+      skill: "listening",
+      stage: "extension",
+      task: "L5",
+      band: "P",
+      type: "mcq",
+      audioId: "AUD-T5",
+      prompt: "Why did Alice start her own business?",
+      options: [
+        {
+          key: "A",
+          text: "A friend asked her to."
+        },
+        {
+          key: "B",
+          text: "She wanted to work for herself."
+        },
+        {
+          key: "C",
+          text: "She had lost her job."
+        }
+      ]
+    },
+    {
+      id: "LS-20",
+      skill: "listening",
+      stage: "extension",
+      task: "L5",
+      band: "P",
+      type: "mcq",
+      audioId: "AUD-T5",
+      prompt: "Why is Alice confident about the shop?",
+      options: [
+        {
+          key: "A",
+          text: "Her prices are lower than other shops."
+        },
+        {
+          key: "B",
+          text: "She already has many customers."
+        },
+        {
+          key: "C",
+          text: "There is no similar shop in the area."
+        }
+      ]
+    },
+    {
+      id: "LS-21",
+      skill: "listening",
+      stage: "extension",
+      task: "L5",
+      band: "P",
+      type: "mcq",
+      audioId: "AUD-T5",
+      prompt: "What does Alice find most difficult about running the shop?",
+      options: [
+        {
+          key: "A",
+          text: "the long hours"
+        },
+        {
+          key: "B",
+          text: "the difficult customers"
+        },
+        {
+          key: "C",
+          text: "travelling abroad"
+        }
+      ]
+    }
+  ]
+};
+
+// server/data/cambridge/answers.json
+var answers_default = {
+  "UE-01": {
+    correct: "B"
+  },
+  "UE-02": {
+    correct: "C"
+  },
+  "UE-03": {
+    correct: "B"
+  },
+  "UE-04": {
+    correct: "A"
+  },
+  "UE-05": {
+    correct: "B"
+  },
+  "UE-06": {
+    correct: "A"
+  },
+  "UE-07": {
+    correct: "C"
+  },
+  "UE-08": {
+    correct: "A"
+  },
+  "UE-09": {
+    correct: "A"
+  },
+  "UE-10": {
+    correct: "B"
+  },
+  "UE-11": {
+    correct: "C"
+  },
+  "UE-12": {
+    correct: "A"
+  },
+  "UE-13": {
+    correct: "B"
+  },
+  "UE-14": {
+    correct: "C"
+  },
+  "UE-15": {
+    correct: "A"
+  },
+  "UE-16": {
+    correct: "B"
+  },
+  "UE-17": {
+    correct: "C"
+  },
+  "UE-18": {
+    correct: "B"
+  },
+  "UE-25": {
+    correct: "B"
+  },
+  "UE-26": {
+    correct: "A"
+  },
+  "UE-27": {
+    correct: "C"
+  },
+  "UE-28": {
+    correct: "B"
+  },
+  "UE-29": {
+    correct: "A"
+  },
+  "UE-30": {
+    correct: "C"
+  },
+  "UE-31": {
+    correct: "A"
+  },
+  "UE-19": {
+    correct: "B"
+  },
+  "UE-20": {
+    correct: "A"
+  },
+  "UE-21": {
+    correct: "B"
+  },
+  "UE-22": {
+    correct: "A"
+  },
+  "UE-23": {
+    correct: "B"
+  },
+  "UE-24": {
+    correct: "B"
+  },
+  "UE-32": {
+    correct: "B"
+  },
+  "UE-33": {
+    correct: "C"
+  },
+  "UE-34": {
+    correct: "B"
+  },
+  "RD-01": {
+    correct: "B"
+  },
+  "RD-02": {
+    correct: "C"
+  },
+  "RD-03": {
+    correct: "A"
+  },
+  "RD-04": {
+    correct: "A"
+  },
+  "RD-05": {
+    correct: "C"
+  },
+  "RD-06": {
+    correct: "C"
+  },
+  "RD-07": {
+    correct: "A"
+  },
+  "RD-08": {
+    correct: "C"
+  },
+  "RD-09": {
+    correct: "D"
+  },
+  "RD-10": {
+    correct: "E"
+  },
+  "RD-11": {
+    correct: "G"
+  },
+  "RD-12": {
+    correct: "F"
+  },
+  "RD-13": {
+    correct: "C"
+  },
+  "RD-14": {
+    correct: "A"
+  },
+  "RD-15": {
+    correct: "B"
+  },
+  "RD-16": {
+    correct: "B"
+  },
+  "RD-17": {
+    correct: "C"
+  },
+  "RD-18": {
+    correct: "A"
+  },
+  "LS-01": {
+    correct: "B"
+  },
+  "LS-02": {
+    correct: "C"
+  },
+  "LS-03": {
+    correct: "B"
+  },
+  "LS-04": {
+    correct: "C"
+  },
+  "LS-05": {
+    correct: "A"
+  },
+  "LS-06": {
+    correct: "C"
+  },
+  "LS-07": {
+    correct: "B"
+  },
+  "LS-08": {
+    correct: "A"
+  },
+  "LS-09": {
+    correct: "B"
+  },
+  "LS-10": {
+    correct: "A"
+  },
+  "LS-11": {
+    accepted: [
+      "tiger"
+    ],
+    normalise: "lowercase, trim, collapse spaces, remove punctuation except . and :",
+    fuzzy: false
+  },
+  "LS-12": {
+    accepted: [
+      "10.45",
+      "10:45",
+      "10 45",
+      "ten forty-five",
+      "quarter to eleven",
+      "a quarter to eleven"
+    ],
+    normalise: "lowercase, trim, collapse spaces, remove punctuation except . and :",
+    fuzzy: false
+  },
+  "LS-13": {
+    accepted: [
+      "sohatu"
+    ],
+    normalise: "lowercase, trim, collapse spaces, remove punctuation except . and :",
+    fuzzy: false
+  },
+  "LS-14": {
+    accepted: [
+      "37",
+      "thirty-seven",
+      "thirty seven"
+    ],
+    normalise: "lowercase, trim, collapse spaces, remove punctuation except . and :",
+    fuzzy: false
+  },
+  "LS-15": {
+    accepted: [
+      "poster"
+    ],
+    normalise: "lowercase, trim, collapse spaces, remove punctuation except . and :",
+    fuzzy: false
+  },
+  "LS-16": {
+    correct: "A"
+  },
+  "LS-17": {
+    correct: "B"
+  },
+  "LS-18": {
+    correct: "C"
+  },
+  "LS-19": {
+    correct: "B"
+  },
+  "LS-20": {
+    correct: "C"
+  },
+  "LS-21": {
+    correct: "A"
   }
+};
+
+// server/data/cambridge/rules.json
+var rules_default = {
+  thresholds: {
+    use_of_english: {
+      F: {
+        items: 8,
+        pass: 6,
+        partial: 5
+      },
+      K: {
+        items: 10,
+        pass: 7,
+        partial: 6
+      },
+      "K+": {
+        items: 4,
+        pass: 3,
+        partial: 2
+      },
+      "P-": {
+        items: 6,
+        pass: 4,
+        partial: 3
+      },
+      P: {
+        items: 6,
+        pass: 4,
+        partial: 3
+      }
+    },
+    reading: {
+      F: {
+        items: 3,
+        pass: 2,
+        partial: 1
+      },
+      K: {
+        items: 6,
+        pass: 4,
+        partial: 3
+      },
+      "K+": {
+        items: 3,
+        pass: 2,
+        partial: 1
+      },
+      "P-": {
+        items: 3,
+        pass: 2,
+        partial: 1
+      },
+      P: {
+        items: 3,
+        pass: 2,
+        partial: 1
+      }
+    },
+    listening: {
+      F: {
+        items: 5,
+        pass: 4,
+        partial: 3
+      },
+      K: {
+        items: 6,
+        pass: 4,
+        partial: 3
+      },
+      "K+": {
+        items: 4,
+        pass: 3,
+        partial: 2
+      },
+      "P-": {
+        items: 3,
+        pass: 2,
+        partial: 1
+      },
+      P: {
+        items: 3,
+        pass: 2,
+        partial: 1
+      }
+    }
+  },
+  gate: {
+    coreK: 22,
+    coreKplus: 11,
+    minK: 15,
+    minKplus: 6,
+    teacherOverride: true
+  },
+  note: "All numbers are provisional hypotheses. Keep them configurable and calibrate after the pilot."
+};
+
+// server/data/cambridge/writing_speaking.json
+var writing_speaking_default = {
+  writing: {
+    W1: {
+      stage: "core",
+      band: "F",
+      targetWords: "20-30",
+      prompt: "Write about your best friend. Use these words to help you. Write 3\u20134 sentences (20\u201330 words).",
+      wordBox: [
+        "name",
+        "tall",
+        "likes",
+        "plays",
+        "at the weekend"
+      ],
+      criteria: [
+        {
+          id: "content",
+          max: 3
+        },
+        {
+          id: "language",
+          max: 3
+        }
+      ],
+      pass: {
+        total: 4,
+        content: 2
+      }
+    },
+    W2: {
+      stage: "core",
+      band: "K",
+      targetWords: "30-40",
+      prompt: "Read the message from your English friend Sam. Write an email to Sam and answer the three questions. Write 30\u201340 words.",
+      stimulus: [
+        "Hi!",
+        "I\u2019m coming to visit your city next month. Which places should I visit? What food should I try? When can we meet?",
+        "Sam"
+      ],
+      criteria: [
+        {
+          id: "content",
+          max: 3
+        },
+        {
+          id: "organisation",
+          max: 3
+        },
+        {
+          id: "language",
+          max: 3
+        }
+      ],
+      pass: {
+        total: 6,
+        content: 2
+      },
+      plus: {
+        total: 8,
+        content: 2
+      }
+    },
+    W3: {
+      stage: "extension",
+      band: "P",
+      targetWords: "~100",
+      prompt: "Read the email from your English friend Alex. Write an email to Alex. Write about 100 words.",
+      stimulus: [
+        "Hi,",
+        "Our school is planning a day trip next month. We can go to the mountains, the beach or the zoo. Which place do you think is best? Why? What food should we take for lunch? And can you come early on Saturday to help me get ready?",
+        "Write soon,",
+        "Alex"
+      ],
+      mustInclude: [
+        "which place you choose and why",
+        "what food to take",
+        "whether you can come early on Saturday, and why / why not"
+      ],
+      criteria: [
+        {
+          id: "content",
+          max: 3
+        },
+        {
+          id: "register",
+          max: 3
+        },
+        {
+          id: "organisation",
+          max: 3
+        },
+        {
+          id: "language",
+          max: 3
+        }
+      ],
+      pass: {
+        total: 7,
+        content: 2,
+        language: 2
+      },
+      secure: {
+        total: 9,
+        content: 2,
+        language: 2
+      },
+      partial: {
+        min: 5,
+        max: 6
+      }
+    }
+  },
+  speaking: {
+    parts: [
+      {
+        id: "S1",
+        band: "F"
+      },
+      {
+        id: "S2",
+        band: "F/K"
+      },
+      {
+        id: "S3",
+        band: "K+"
+      },
+      {
+        id: "S4",
+        band: "P-"
+      },
+      {
+        id: "S5",
+        band: "P"
+      }
+    ],
+    results: [
+      "pass",
+      "partial",
+      "fail",
+      "not_asked"
+    ],
+    criteria: [
+      {
+        id: "grammar_vocabulary",
+        max: 5
+      },
+      {
+        id: "pronunciation",
+        max: 5
+      },
+      {
+        id: "interaction",
+        max: 5
+      },
+      {
+        id: "fluency_discourse",
+        max: 5
+      }
+    ],
+    cards: {
+      A: {
+        name: "LILY",
+        cues: [
+          "how old?",
+          "where / live?",
+          "favourite sport?",
+          "brothers or sisters? (how many)",
+          "what / eat for breakfast?"
+        ],
+        examinerAnswers: [
+          "She\u2019s ten.",
+          "She lives in Hue.",
+          "Swimming.",
+          "She\u2019s got two brothers.",
+          "Bread and milk."
+        ]
+      },
+      B: {
+        name: "PETER",
+        facts: [
+          [
+            "Age",
+            "12"
+          ],
+          [
+            "Lives in",
+            "Da Lat"
+          ],
+          [
+            "Likes",
+            "playing the guitar"
+          ],
+          [
+            "Brothers / sisters",
+            "one sister"
+          ],
+          [
+            "Favourite food",
+            "pizza"
+          ]
+        ]
+      },
+      C: {
+        images: [
+          "assets/images/book.png",
+          "assets/images/tshirt.png",
+          "assets/images/ticket.png",
+          "assets/images/cake.png"
+        ],
+        labels: [
+          "a book",
+          "a T-shirt",
+          "a cinema ticket",
+          "a small cake"
+        ]
+      },
+      D: {
+        image: "assets/images/story.png"
+      }
+    }
+  }
+};
+
+// server/services/cambridge-placement.service.ts
+function loadCambridgeData() {
   return {
-    itemsData: cachedItems,
-    answers: cachedAnswers,
-    rules: cachedRules,
-    writingSpeaking: cachedWritingSpeaking
+    itemsData: items_default,
+    answers: answers_default,
+    rules: rules_default,
+    writingSpeaking: writing_speaking_default
   };
 }
 var CambridgePlacementService = class {
@@ -119269,12 +121884,12 @@ var CambridgePlacementService = class {
 };
 
 // server/routes/cambridge.routes.ts
-import path3 from "path";
-import fs3 from "fs";
-import { fileURLToPath as fileURLToPath2 } from "url";
-var cambridgeRoutesFile = fileURLToPath2(import.meta.url);
-var cambridgeRoutesDir = path3.dirname(cambridgeRoutesFile);
-var audioDir = path3.resolve(cambridgeRoutesDir, "../data/cambridge/audio");
+import path2 from "path";
+import fs2 from "fs";
+import { fileURLToPath } from "url";
+var cambridgeRoutesFile = fileURLToPath(import.meta.url);
+var cambridgeRoutesDir = path2.dirname(cambridgeRoutesFile);
+var audioDir = path2.resolve(cambridgeRoutesDir, "../data/cambridge/audio");
 var cambridgeRoutes = async (fastify) => {
   const service = new CambridgePlacementService(fastify.prisma);
   fastify.get(
@@ -119379,16 +121994,16 @@ var cambridgeRoutes = async (fastify) => {
         "task5.mp3": "Task 5.mp3"
       };
       const actualFilename = audioMap[filename] || filename;
-      const safeFilename = path3.basename(actualFilename);
-      const filePath = path3.join(audioDir, safeFilename);
-      if (!fs3.existsSync(filePath)) {
+      const safeFilename = path2.basename(actualFilename);
+      const filePath = path2.join(audioDir, safeFilename);
+      if (!fs2.existsSync(filePath)) {
         return reply.status(404).send({ error: "NotFound", message: "Audio file not found: " + safeFilename });
       }
-      const stat = fs3.statSync(filePath);
+      const stat = fs2.statSync(filePath);
       reply.header("Content-Type", "audio/mpeg");
       reply.header("Content-Length", stat.size);
       reply.header("Accept-Ranges", "bytes");
-      const stream = fs3.createReadStream(filePath);
+      const stream = fs2.createReadStream(filePath);
       return reply.send(stream);
     }
   );
