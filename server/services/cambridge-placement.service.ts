@@ -1,31 +1,16 @@
 import { PrismaClient } from "@prisma/client";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
 import * as S from "./cambridge-scoring.js";
-
-const cambridgeCurrentFile = fileURLToPath(import.meta.url);
-const cambridgeCurrentDir = path.dirname(cambridgeCurrentFile);
-const dataDir = path.resolve(cambridgeCurrentDir, "../data/cambridge");
-
-// In-memory static cache for Cambridge content
-let cachedItems: any = null;
-let cachedAnswers: any = null;
-let cachedRules: any = null;
-let cachedWritingSpeaking: any = null;
+import itemsJson from "../data/cambridge/items.json" assert { type: "json" };
+import answersJson from "../data/cambridge/answers.json" assert { type: "json" };
+import rulesJson from "../data/cambridge/rules.json" assert { type: "json" };
+import writingSpeakingJson from "../data/cambridge/writing_speaking.json" assert { type: "json" };
 
 function loadCambridgeData() {
-  if (!cachedItems) {
-    cachedItems = JSON.parse(fs.readFileSync(path.join(dataDir, "items.json"), "utf8"));
-    cachedAnswers = JSON.parse(fs.readFileSync(path.join(dataDir, "answers.json"), "utf8"));
-    cachedRules = JSON.parse(fs.readFileSync(path.join(dataDir, "rules.json"), "utf8"));
-    cachedWritingSpeaking = JSON.parse(fs.readFileSync(path.join(dataDir, "writing_speaking.json"), "utf8"));
-  }
   return {
-    itemsData: cachedItems,
-    answers: cachedAnswers,
-    rules: cachedRules,
-    writingSpeaking: cachedWritingSpeaking,
+    itemsData: itemsJson,
+    answers: answersJson,
+    rules: rulesJson,
+    writingSpeaking: writingSpeakingJson,
   };
 }
 
