@@ -1,0 +1,93 @@
+{
+ "thresholds": {
+  "use_of_english": {
+   "F": {
+    "items": 8,
+    "pass": 6,
+    "partial": 5
+   },
+   "K": {
+    "items": 10,
+    "pass": 7,
+    "partial": 6
+   },
+   "K+": {
+    "items": 4,
+    "pass": 3,
+    "partial": 2
+   },
+   "P-": {
+    "items": 6,
+    "pass": 4,
+    "partial": 3
+   },
+   "P": {
+    "items": 6,
+    "pass": 4,
+    "partial": 3
+   }
+  },
+  "reading": {
+   "F": {
+    "items": 3,
+    "pass": 2,
+    "partial": 1
+   },
+   "K": {
+    "items": 6,
+    "pass": 4,
+    "partial": 3
+   },
+   "K+": {
+    "items": 3,
+    "pass": 2,
+    "partial": 1
+   },
+   "P-": {
+    "items": 3,
+    "pass": 2,
+    "partial": 1
+   },
+   "P": {
+    "items": 3,
+    "pass": 2,
+    "partial": 1
+   }
+  },
+  "listening": {
+   "F": {
+    "items": 5,
+    "pass": 4,
+    "partial": 3
+   },
+   "K": {
+    "items": 6,
+    "pass": 4,
+    "partial": 3
+   },
+   "K+": {
+    "items": 4,
+    "pass": 3,
+    "partial": 2
+   },
+   "P-": {
+    "items": 3,
+    "pass": 2,
+    "partial": 1
+   },
+   "P": {
+    "items": 3,
+    "pass": 2,
+    "partial": 1
+   }
+  }
+ },
+ "gate": {
+  "coreK": 22,
+  "coreKplus": 11,
+  "minK": 15,
+  "minKplus": 6,
+  "teacherOverride": true
+ },
+ "note": "All numbers are provisional hypotheses. Keep them configurable and calibrate after the pilot."
+}

@@ -1,0 +1,222 @@
+{
+ "writing": {
+  "W1": {
+   "stage": "core",
+   "band": "F",
+   "targetWords": "20-30",
+   "prompt": "Write about your best friend. Use these words to help you. Write 3–4 sentences (20–30 words).",
+   "wordBox": [
+    "name",
+    "tall",
+    "likes",
+    "plays",
+    "at the weekend"
+   ],
+   "criteria": [
+    {
+     "id": "content",
+     "max": 3
+    },
+    {
+     "id": "language",
+     "max": 3
+    }
+   ],
+   "pass": {
+    "total": 4,
+    "content": 2
+   }
+  },
+  "W2": {
+   "stage": "core",
+   "band": "K",
+   "targetWords": "30-40",
+   "prompt": "Read the message from your English friend Sam. Write an email to Sam and answer the three questions. Write 30–40 words.",
+   "stimulus": [
+    "Hi!",
+    "I’m coming to visit your city next month. Which places should I visit? What food should I try? When can we meet?",
+    "Sam"
+   ],
+   "criteria": [
+    {
+     "id": "content",
+     "max": 3
+    },
+    {
+     "id": "organisation",
+     "max": 3
+    },
+    {
+     "id": "language",
+     "max": 3
+    }
+   ],
+   "pass": {
+    "total": 6,
+    "content": 2
+   },
+   "plus": {
+    "total": 8,
+    "content": 2
+   }
+  },
+  "W3": {
+   "stage": "extension",
+   "band": "P",
+   "targetWords": "~100",
+   "prompt": "Read the email from your English friend Alex. Write an email to Alex. Write about 100 words.",
+   "stimulus": [
+    "Hi,",
+    "Our school is planning a day trip next month. We can go to the mountains, the beach or the zoo. Which place do you think is best? Why? What food should we take for lunch? And can you come early on Saturday to help me get ready?",
+    "Write soon,",
+    "Alex"
+   ],
+   "mustInclude": [
+    "which place you choose and why",
+    "what food to take",
+    "whether you can come early on Saturday, and why / why not"
+   ],
+   "criteria": [
+    {
+     "id": "content",
+     "max": 3
+    },
+    {
+     "id": "register",
+     "max": 3
+    },
+    {
+     "id": "organisation",
+     "max": 3
+    },
+    {
+     "id": "language",
+     "max": 3
+    }
+   ],
+   "pass": {
+    "total": 7,
+    "content": 2,
+    "language": 2
+   },
+   "secure": {
+    "total": 9,
+    "content": 2,
+    "language": 2
+   },
+   "partial": {
+    "min": 5,
+    "max": 6
+   }
+  }
+ },
+ "speaking": {
+  "parts": [
+   {
+    "id": "S1",
+    "band": "F"
+   },
+   {
+    "id": "S2",
+    "band": "F/K"
+   },
+   {
+    "id": "S3",
+    "band": "K+"
+   },
+   {
+    "id": "S4",
+    "band": "P-"
+   },
+   {
+    "id": "S5",
+    "band": "P"
+   }
+  ],
+  "results": [
+   "pass",
+   "partial",
+   "fail",
+   "not_asked"
+  ],
+  "criteria": [
+   {
+    "id": "grammar_vocabulary",
+    "max": 5
+   },
+   {
+    "id": "pronunciation",
+    "max": 5
+   },
+   {
+    "id": "interaction",
+    "max": 5
+   },
+   {
+    "id": "fluency_discourse",
+    "max": 5
+   }
+  ],
+  "cards": {
+   "A": {
+    "name": "LILY",
+    "cues": [
+     "how old?",
+     "where / live?",
+     "favourite sport?",
+     "brothers or sisters? (how many)",
+     "what / eat for breakfast?"
+    ],
+    "examinerAnswers": [
+     "She’s ten.",
+     "She lives in Hue.",
+     "Swimming.",
+     "She’s got two brothers.",
+     "Bread and milk."
+    ]
+   },
+   "B": {
+    "name": "PETER",
+    "facts": [
+     [
+      "Age",
+      "12"
+     ],
+     [
+      "Lives in",
+      "Da Lat"
+     ],
+     [
+      "Likes",
+      "playing the guitar"
+     ],
+     [
+      "Brothers / sisters",
+      "one sister"
+     ],
+     [
+      "Favourite food",
+      "pizza"
+     ]
+    ]
+   },
+   "C": {
+    "images": [
+     "assets/images/book.png",
+     "assets/images/tshirt.png",
+     "assets/images/ticket.png",
+     "assets/images/cake.png"
+    ],
+    "labels": [
+     "a book",
+     "a T-shirt",
+     "a cinema ticket",
+     "a small cake"
+    ]
+   },
+   "D": {
+    "image": "assets/images/story.png"
+   }
+  }
+ }
+}
