@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -156,58 +157,84 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent className="max-w-5xl max-h-[92vh] overflow-y-auto p-0 rounded-2xl">
-        {/* Header Modal */}
-        <div className="bg-slate-900 text-white p-6 sticky top-0 z-20 shadow-md">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-purple-600 flex items-center justify-center font-bold">
+        {/* Header Modal - Refined Academic Visual Hierarchy */}
+        <div className="bg-slate-900 border-b border-slate-800 text-white p-6 sticky top-0 z-20 shadow-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-blue to-indigo-600 flex items-center justify-center font-black text-white text-base shadow-md shadow-brand-blue/30 shrink-0">
                 CPT
               </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-xl font-black">{session.candidateName}</h2>
-                  <Badge variant="outline" className="text-slate-300 border-slate-700 font-mono">
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white">{session.candidateName}</h2>
+                  <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700">
                     {session.testCode}
-                  </Badge>
+                  </span>
                   {session.candidateGrade && (
-                    <Badge className="bg-purple-900/80 text-purple-200 border border-purple-700">
+                    <Badge className="bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 text-xs font-bold">
                       Khối: {session.candidateGrade}
                     </Badge>
                   )}
+                  {session.finalLevel && (
+                    <Badge className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-black">
+                      Xếp lớp: {session.finalLevel}
+                    </Badge>
+                  )}
                 </div>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Mục tiêu: {session.targetLevel || "Flyers"} • Trạng thái: {session.status} • Trắc nghiệm:{" "}
-                  {session.objectiveScore?.totalCorrect || 0}/{session.objectiveScore?.totalItems || 0} câu đúng
-                </p>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400 font-medium">
+                  <span>Mục tiêu: <strong className="text-slate-200">{session.targetLevel || "Flyers"}</strong></span>
+                  <span>•</span>
+                  <span>Trạng thái: <strong className="text-slate-200">{session.status}</strong></span>
+                  <span>•</span>
+                  <span>Trắc nghiệm: <strong className="text-emerald-400 font-bold">{session.objectiveScore?.totalCorrect || 0}/{session.objectiveScore?.totalItems || 0}</strong> câu đúng</span>
+                </div>
               </div>
             </div>
 
             <Button
               onClick={() => gradeMutation.mutate()}
               disabled={gradeMutation.isPending}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-sm"
+              size="lg"
+              className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold shadow-lg shadow-emerald-950/40 px-5 rounded-xl cursor-pointer active:scale-95 transition-all"
             >
-              <Save className="w-4 h-4 mr-1.5" />
+              <Save className="w-4 h-4 mr-2" />
               {gradeMutation.isPending ? "Đang lưu..." : "Lưu & Tính xếp lớp"}
             </Button>
           </div>
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-6 bg-slate-50/50">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid grid-cols-4 bg-slate-100 p-1 rounded-xl">
-              <TabsTrigger value="speaking" className="font-bold">
-                <Mic className="w-4 h-4 mr-1.5" /> 1. Chấm Speaking
+            <TabsList className="grid grid-cols-4 bg-slate-200/80 p-1.5 rounded-2xl border border-slate-300/60 shadow-inner">
+              <TabsTrigger
+                value="speaking"
+                className="font-extrabold text-xs sm:text-sm py-2.5 rounded-xl data-[state=active]:bg-white data-[state=active]:text-brand-blue data-[state=active]:shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <Mic className="w-4 h-4 shrink-0" />
+                <span>1. Chấm Speaking</span>
               </TabsTrigger>
-              <TabsTrigger value="writing" className="font-bold">
-                <PenTool className="w-4 h-4 mr-1.5" /> 2. Chấm Writing
+              <TabsTrigger
+                value="writing"
+                className="font-extrabold text-xs sm:text-sm py-2.5 rounded-xl data-[state=active]:bg-white data-[state=active]:text-brand-blue data-[state=active]:shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <PenTool className="w-4 h-4 shrink-0" />
+                <span>2. Chấm Writing</span>
               </TabsTrigger>
-              <TabsTrigger value="receptive" className="font-bold">
-                <BookOpen className="w-4 h-4 mr-1.5" /> 3. Điểm Đọc - Nghe (Receptive)
+              <TabsTrigger
+                value="receptive"
+                className="font-extrabold text-xs sm:text-sm py-2.5 rounded-xl data-[state=active]:bg-white data-[state=active]:text-brand-blue data-[state=active]:shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <BookOpen className="w-4 h-4 shrink-0" />
+                <span>3. Điểm Đọc - Nghe</span>
               </TabsTrigger>
-              <TabsTrigger value="placement" className="font-bold">
-                <Award className="w-4 h-4 mr-1.5" /> 4. Placement Sheet
+              <TabsTrigger
+                value="placement"
+                className="font-extrabold text-xs sm:text-sm py-2.5 rounded-xl data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer relative"
+              >
+                <Award className="w-4 h-4 shrink-0" />
+                <span>4. Placement Sheet</span>
+                <span className="w-2 h-2 rounded-full bg-emerald-400 absolute top-2 right-2 animate-pulse" />
               </TabsTrigger>
             </TabsList>
 
@@ -218,47 +245,78 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
               </div>
 
               {/* Bảng checklist S1-S5 */}
-              <div className="bg-white rounded-xl border border-slate-200 p-4 space-y-4">
-                <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2">
-                  <Mic className="w-4 h-4 text-purple-600" /> Checklist Đánh giá các Part (S1 – S5)
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+              <div className="bg-white rounded-2xl border border-slate-200/90 p-5 space-y-4 shadow-xs">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <h3 className="font-extrabold text-slate-900 text-sm flex items-center gap-2">
+                    <Mic className="w-4 h-4 text-brand-blue" />
+                    <span>Checklist Đánh giá các Part Vấn đáp (S1 – S5)</span>
+                  </h3>
+                  <span className="text-xs text-slate-500 font-medium">Bắt buộc đánh giá từ S1 để xác định thang trình độ</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3.5">
                   {[
-                    { id: "s1", label: "Part S1 (Band F)", desc: "Hỏi đáp thông tin Lily (Card A)" },
-                    { id: "s2", label: "Part S2 (Band F/K)", desc: "Hỏi đáp thông tin Peter (Card B)" },
-                    { id: "s3", label: "Part S3 (Band K+)", desc: "Chọn đồ vật thích hợp (Card C)" },
-                    { id: "s4", label: "Part S4 (Band P-)", desc: "Kể chuyện qua tranh (Card D)" },
-                    { id: "s5", label: "Part S5 (Band P)", desc: "Thảo luận mở rộng / Quan điểm" },
-                  ].map((part) => (
-                    <div key={part.id} className="border border-slate-200 rounded-lg p-3 bg-slate-50/50 flex flex-col justify-between">
-                      <div>
-                        <div className="font-bold text-xs text-slate-800">{part.label}</div>
-                        <div className="text-[11px] text-slate-500 mt-0.5">{part.desc}</div>
-                      </div>
-                      <Select
-                        value={speakingParts[part.id]}
-                        onValueChange={(val) => setSpeakingParts({ ...speakingParts, [part.id]: val })}
+                    { id: "s1", label: "Part S1 (Band F)", badge: "Flyers", desc: "Hỏi đáp thông tin Lily (Card A)" },
+                    { id: "s2", label: "Part S2 (Band F/K)", badge: "A2 Core", desc: "Hỏi đáp thông tin Peter (Card B)" },
+                    { id: "s3", label: "Part S3 (Band K+)", badge: "A2 Plus", desc: "Chọn đồ vật thích hợp (Card C)" },
+                    { id: "s4", label: "Part S4 (Band P-)", badge: "B1 Core", desc: "Kể chuyện qua tranh (Card D)" },
+                    { id: "s5", label: "Part S5 (Band P)", badge: "B1 Plus", desc: "Thảo luận mở rộng / Quan điểm" },
+                  ].map((part) => {
+                    const status = speakingParts[part.id];
+                    const isPass = status === "pass";
+                    const isPartial = status === "partial";
+                    const isFail = status === "fail";
+
+                    return (
+                      <div
+                        key={part.id}
+                        className={cn(
+                          "border rounded-xl p-3.5 flex flex-col justify-between transition-all shadow-2xs space-y-3",
+                          isPass
+                            ? "bg-emerald-50/60 border-emerald-300 ring-1 ring-emerald-200"
+                            : isPartial
+                            ? "bg-amber-50/60 border-amber-300 ring-1 ring-amber-200"
+                            : isFail
+                            ? "bg-red-50/60 border-red-300"
+                            : "bg-white border-slate-200 hover:border-slate-300",
+                        )}
                       >
-                        <SelectTrigger className="mt-3 bg-white text-xs h-8">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="pass">Pass (Đạt)</SelectItem>
-                          <SelectItem value="partial">Partial (Một phần)</SelectItem>
-                          <SelectItem value="fail">Fail (Chưa đạt)</SelectItem>
-                          <SelectItem value="not_asked">Not asked (Chưa hỏi)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  ))}
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between">
+                            <span className="font-black text-xs text-slate-900">{part.label}</span>
+                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
+                              {part.badge}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 font-medium leading-snug">{part.desc}</p>
+                        </div>
+                        <Select
+                          value={speakingParts[part.id]}
+                          onValueChange={(val) => setSpeakingParts({ ...speakingParts, [part.id]: val })}
+                        >
+                          <SelectTrigger className="bg-white text-xs font-bold h-8.5 rounded-lg border-slate-300 shadow-2xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pass" className="text-emerald-700 font-bold">✓ Pass (Đạt)</SelectItem>
+                            <SelectItem value="partial" className="text-amber-700 font-bold">~ Partial (Một phần)</SelectItem>
+                            <SelectItem value="fail" className="text-red-700 font-bold">✗ Fail (Chưa đạt)</SelectItem>
+                            <SelectItem value="not_asked" className="text-slate-500">○ Not asked (Chưa hỏi)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
               {/* 4 Tiêu chí tham chiếu */}
-              <div className="bg-white rounded-xl border border-slate-200 p-4 space-y-3">
-                <h3 className="font-bold text-slate-800 text-sm">
-                  Điểm 4 Tiêu chí Tham chiếu (Thang điểm 0 – 5)
-                </h3>
+              <div className="bg-white rounded-2xl border border-slate-200/90 p-5 space-y-3.5 shadow-xs">
+                <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                  <h3 className="font-extrabold text-slate-900 text-sm">
+                    Điểm 4 Tiêu chí Tham chiếu (Thang điểm 0 – 5)
+                  </h3>
+                  <span className="text-xs text-slate-500">Dùng hỗ trợ đánh giá chi tiết báo cáo phụ huynh</span>
+                </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   {[
                     { key: "grammar_vocabulary", label: "Ngữ pháp & Từ vựng" },
@@ -266,12 +324,13 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
                     { key: "interaction", label: "Tương tác (Interaction)" },
                     { key: "fluency_discourse", label: "Độ trôi chảy (Fluency)" },
                   ].map((c) => (
-                    <div key={c.key} className="space-y-1">
-                      <Label className="text-xs font-semibold text-slate-700">{c.label}</Label>
+                    <div key={c.key} className="space-y-1.5 p-3 rounded-xl bg-slate-50/70 border border-slate-200">
+                      <Label className="text-xs font-bold text-slate-700 block">{c.label}</Label>
                       <Input
                         type="number"
                         min={0}
                         max={5}
+                        className="bg-white font-mono font-bold text-sm text-center h-9"
                         value={speakingCriteria[c.key] ?? 3}
                         onChange={(e) =>
                           setSpeakingCriteria({
@@ -339,34 +398,50 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
               </div>
 
               {/* Task W1 */}
-              <div className="bg-white rounded-xl border border-slate-200 p-4 space-y-3">
-                <div className="flex items-center justify-between">
+              <div className="bg-white rounded-2xl border border-slate-200/90 p-5 space-y-4 shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
                   <div>
-                    <div className="font-bold text-slate-800 text-sm">
-                      Task W1 (Band F - Core) • Đề tài: Best Friend (20–30 words)
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-xs font-black text-brand-blue bg-brand-blue/10 px-2 py-0.5 rounded border border-brand-blue/20">
+                        TASK W1
+                      </span>
+                      <span className="font-extrabold text-slate-900 text-sm">
+                        Best Friend (Band F – Flyers Core)
+                      </span>
                     </div>
-                    <p className="text-[11px] text-slate-500">
-                      Từ gợi ý: <em>name, tall, likes, plays, at the weekend</em>
+                    <p className="text-xs text-slate-500 mt-1 font-medium">
+                      Yêu cầu: Viết 20–30 từ. Từ gợi ý: <em>name, tall, likes, plays, at the weekend</em>
                     </p>
                   </div>
-                  <Badge variant="outline" className="text-xs">
-                    Pass: Tổng &ge; 4 & Nội dung &ge; 2
+                  <Badge variant="outline" className="text-xs font-bold bg-slate-50 text-slate-700 border-slate-300 self-start sm:self-auto">
+                    Tiêu chuẩn Pass: Tổng &ge; 4 &amp; Nội dung &ge; 2
                   </Badge>
                 </div>
-                <div className="bg-slate-50 p-3 rounded-lg text-xs font-mono text-slate-800 border">
-                  {studentAnswers["W1"] || <span className="text-slate-400 italic">Học sinh chưa nộp bài W1</span>}
+
+                {/* Bài làm của học sinh */}
+                <div className="space-y-1.5">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                    Bài làm của học sinh:
+                  </span>
+                  <div className="bg-slate-50 p-4 rounded-xl text-xs sm:text-sm font-sans text-slate-800 border border-slate-200 leading-relaxed min-h-[56px]">
+                    {studentAnswers["W1"] ? (
+                      <span className="font-medium text-slate-900">{studentAnswers["W1"]}</span>
+                    ) : (
+                      <span className="text-slate-400 italic font-normal">Học sinh chưa nộp bài W1</span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Rubric tham chiếu W1 */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                  <div className="bg-slate-50/60 p-3 rounded-lg border border-slate-200 space-y-1.5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                  <div className="bg-slate-50/70 p-3.5 rounded-xl border border-slate-200 space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label className="text-xs font-bold text-slate-700">Nội dung (Content: 0–3)</Label>
+                      <Label className="text-xs font-black text-slate-800">Nội dung (Content: 0–3)</Label>
                       <Select
                         value={String(w1.content)}
                         onValueChange={(val) => setW1({ ...w1, content: Number(val) })}
                       >
-                        <SelectTrigger className="w-24 h-7 text-xs bg-white font-bold">
+                        <SelectTrigger className="w-32 h-8 text-xs bg-white font-extrabold shadow-2xs">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -377,7 +452,7 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
                         </SelectContent>
                       </Select>
                     </div>
-                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                    <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
                       {w1.content === 3 && "✓ Trả lời đủ các ý gợi ý (tên, ngoại hình, sở thích, cuối tuần), thông tin rõ ràng."}
                       {w1.content === 2 && "✓ Nêu được 2-3 ý chính, người đọc hiểu được dù có ý còn thiếu sót."}
                       {w1.content === 1 && "⚠️ Chỉ viết được 1 ý rất ngắn hoặc không dùng các từ gợi ý."}
@@ -385,14 +460,14 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
                     </p>
                   </div>
 
-                  <div className="bg-slate-50/60 p-3 rounded-lg border border-slate-200 space-y-1.5">
+                  <div className="bg-slate-50/70 p-3.5 rounded-xl border border-slate-200 space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label className="text-xs font-bold text-slate-700">Ngôn ngữ (Language: 0–3)</Label>
+                      <Label className="text-xs font-black text-slate-800">Ngôn ngữ (Language: 0–3)</Label>
                       <Select
                         value={String(w1.language)}
                         onValueChange={(val) => setW1({ ...w1, language: Number(val) })}
                       >
-                        <SelectTrigger className="w-24 h-7 text-xs bg-white font-bold">
+                        <SelectTrigger className="w-32 h-8 text-xs bg-white font-extrabold shadow-2xs">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -403,7 +478,7 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
                         </SelectContent>
                       </Select>
                     </div>
-                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                    <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
                       {w1.language === 3 && "✓ Câu đúng cấu trúc thì hiện tại đơn, từ vựng cơ bản viết đúng chính tả."}
                       {w1.language === 2 && "✓ Có vài lỗi ngữ pháp hoặc chính tả nhỏ nhưng không cản trở việc hiểu."}
                       {w1.language === 1 && "⚠️ Nhiều lỗi ngữ pháp cơ bản (is/are, ngôi thứ 3 số ít), từ vựng vụn vặt."}
@@ -412,39 +487,55 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
                   </div>
                 </div>
 
-                <div className="text-[11px] text-slate-500 font-semibold text-right">
-                  Tổng điểm W1: <span className="text-indigo-600 font-bold">{w1.content + w1.language} / 6</span>
+                <div className="text-xs text-slate-500 font-bold text-right pt-1 border-t border-slate-100">
+                  Tổng điểm W1: <span className="text-brand-blue font-black text-sm">{w1.content + w1.language} / 6</span>
                 </div>
               </div>
 
               {/* Task W2 */}
-              <div className="bg-white rounded-xl border border-slate-200 p-4 space-y-3">
-                <div className="flex items-center justify-between">
+              <div className="bg-white rounded-2xl border border-slate-200/90 p-5 space-y-4 shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
                   <div>
-                    <div className="font-bold text-slate-800 text-sm">
-                      Task W2 (Band K - Core) • Đề tài: Email to Sam (30–40 words)
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-xs font-black text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">
+                        TASK W2
+                      </span>
+                      <span className="font-extrabold text-slate-900 text-sm">
+                        Email to Sam (Band K – Key / A2 Core)
+                      </span>
                     </div>
-                    <p className="text-[11px] text-slate-500">
-                      Hỏi: (1) Nơi nên đến? (2) Món ăn nên thử? (3) Khi nào gặp nhau?
+                    <p className="text-xs text-slate-500 mt-1 font-medium">
+                      Yêu cầu: Viết 30–40 từ trả lời: (1) Nơi nên đến? (2) Món ăn nên thử? (3) Khi nào gặp nhau?
                     </p>
                   </div>
-                  <Badge variant="outline" className="text-xs">
-                    Pass: Tổng &ge; 6 & Nội dung &ge; 2 | Plus: &ge; 8
+                  <Badge variant="outline" className="text-xs font-bold bg-slate-50 text-slate-700 border-slate-300 self-start sm:self-auto">
+                    Tiêu chuẩn Pass: Tổng &ge; 6 &amp; Nội dung &ge; 2 | Plus: &ge; 8
                   </Badge>
                 </div>
-                <div className="bg-slate-50 p-3 rounded-lg text-xs font-mono text-slate-800 border">
-                  {studentAnswers["W2"] || <span className="text-slate-400 italic">Học sinh chưa nộp bài W2</span>}
+
+                {/* Bài làm của học sinh */}
+                <div className="space-y-1.5">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                    Bài làm của học sinh:
+                  </span>
+                  <div className="bg-slate-50 p-4 rounded-xl text-xs sm:text-sm font-sans text-slate-800 border border-slate-200 leading-relaxed min-h-[56px]">
+                    {studentAnswers["W2"] ? (
+                      <span className="font-medium text-slate-900">{studentAnswers["W2"]}</span>
+                    ) : (
+                      <span className="text-slate-400 italic font-normal">Học sinh chưa nộp bài W2</span>
+                    )}
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
-                  <div className="bg-slate-50/60 p-3 rounded-lg border border-slate-200 space-y-1.5">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 pt-1">
+                  <div className="bg-slate-50/70 p-3.5 rounded-xl border border-slate-200 space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label className="text-xs font-bold text-slate-700">Nội dung (Content: 0–3)</Label>
+                      <Label className="text-xs font-black text-slate-800">Nội dung (0–3)</Label>
                       <Select
                         value={String(w2.content)}
                         onValueChange={(val) => setW2({ ...w2, content: Number(val) })}
                       >
-                        <SelectTrigger className="w-20 h-7 text-xs bg-white font-bold">
+                        <SelectTrigger className="w-28 h-8 text-xs bg-white font-extrabold shadow-2xs">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -455,7 +546,7 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
                         </SelectContent>
                       </Select>
                     </div>
-                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                    <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
                       {w2.content === 3 && "✓ Trả lời trọn vẹn cả 3 câu hỏi của Sam."}
                       {w2.content === 2 && "✓ Trả lời được 2 trong 3 câu hỏi của Sam."}
                       {w2.content === 1 && "⚠️ Chỉ trả lời được 1 câu hỏi, bỏ qua 2 câu còn lại."}
@@ -463,14 +554,14 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
                     </p>
                   </div>
 
-                  <div className="bg-slate-50/60 p-3 rounded-lg border border-slate-200 space-y-1.5">
+                  <div className="bg-slate-50/70 p-3.5 rounded-xl border border-slate-200 space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label className="text-xs font-bold text-slate-700">Bố cục (Org: 0–3)</Label>
+                      <Label className="text-xs font-black text-slate-800">Bố cục (0–3)</Label>
                       <Select
                         value={String(w2.organisation)}
                         onValueChange={(val) => setW2({ ...w2, organisation: Number(val) })}
                       >
-                        <SelectTrigger className="w-20 h-7 text-xs bg-white font-bold">
+                        <SelectTrigger className="w-28 h-8 text-xs bg-white font-extrabold shadow-2xs">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -481,7 +572,7 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
                         </SelectContent>
                       </Select>
                     </div>
-                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                    <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
                       {w2.organisation === 3 && "✓ Có chào hỏi, câu nối liên kết mạch lạc (and, but, because)."}
                       {w2.organisation === 2 && "✓ Bố cục rõ ràng, câu viết nối tiếp tương đối mạch lạc."}
                       {w2.organisation === 1 && "⚠️ Các câu rời rạc, chưa có từ nối email cơ bản."}
@@ -489,14 +580,14 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
                     </p>
                   </div>
 
-                  <div className="bg-slate-50/60 p-3 rounded-lg border border-slate-200 space-y-1.5">
+                  <div className="bg-slate-50/70 p-3.5 rounded-xl border border-slate-200 space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label className="text-xs font-bold text-slate-700">Ngôn ngữ (Lang: 0–3)</Label>
+                      <Label className="text-xs font-black text-slate-800">Ngôn ngữ (0–3)</Label>
                       <Select
                         value={String(w2.language)}
                         onValueChange={(val) => setW2({ ...w2, language: Number(val) })}
                       >
-                        <SelectTrigger className="w-20 h-7 text-xs bg-white font-bold">
+                        <SelectTrigger className="w-28 h-8 text-xs bg-white font-extrabold shadow-2xs">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -507,7 +598,7 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
                         </SelectContent>
                       </Select>
                     </div>
-                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                    <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
                       {w2.language === 3 && "✓ Từ vựng phù hợp, cấu trúc câu tự nhiên, rất ít lỗi."}
                       {w2.language === 2 && "✓ Sử dụng từ ngữ thường gặp, ngữ pháp cơ bản kiểm soát tốt."}
                       {w2.language === 1 && "⚠️ Lặp từ, nhiều lỗi chính tả và chia động từ cơ bản."}
@@ -516,8 +607,8 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
                   </div>
                 </div>
 
-                <div className="text-[11px] text-slate-500 font-semibold text-right">
-                  Tổng điểm W2: <span className="text-indigo-600 font-bold">{w2.content + w2.organisation + w2.language} / 9</span>
+                <div className="text-xs text-slate-500 font-bold text-right pt-1 border-t border-slate-100">
+                  Tổng điểm W2: <span className="text-indigo-600 font-black text-sm">{w2.content + w2.organisation + w2.language} / 9</span>
                 </div>
               </div>
 
