@@ -566,6 +566,18 @@ export default function CambridgeStudentExam() {
                   </div>
                 </div>
 
+                {/* Illustration Picture for Reading Task 1 (RD-01 to RD-06) */}
+                {item.id && /^RD-0[1-6]$/i.test(item.id) && (
+                  <div className="flex justify-center bg-muted/20 border border-border/80 rounded-2xl p-2 sm:p-3 overflow-hidden">
+                    <img
+                      src={`/cambridge/images/reading/${item.id.toUpperCase()}.png`}
+                      alt={`Notice ${item.id}`}
+                      className="max-h-72 w-auto object-contain rounded-xl shadow-xs"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+
                 {/* Stimulus notice/message if present */}
                 {item.stimulus && (
                   <div className="bg-amber-500/10 border border-amber-500/25 rounded-2xl p-4 space-y-1">
