@@ -247,6 +247,23 @@ describe("serializeStructuredFeedback / parseStructuredFeedback — Speaking 4�
     expect(parsed.speakingRetryMission).toBeUndefined();
   });
 
+  it("safely extracts plain text when text is double-encoded or contains nested JSON string", () => {
+    const innerJson = JSON.stringify({
+      text: "Đề bài: Talk about your English learning journey.\\n=> em hãy nói trong vòng 1-2 phút...",
+      primaryErrorCategory: "STRUCTURE",
+      revisionRequired: true,
+      criteriaScores: { fluencyAndCoherence: 2.0, lexical: 2.0, grammar: 2.0, pronunciation: 2.0 }
+    });
+    const outerJson = JSON.stringify({
+      text: innerJson,
+      primaryErrorCategory: "STRUCTURE",
+      revisionRequired: true,
+      criteriaScores: { fluencyAndCoherence: 2.0, lexical: 2.0, grammar: 2.0, pronunciation: 2.0 }
+    });
+    const parsed = parseStructuredFeedback(outerJson);
+    expect(parsed.text).toBe("Đề bài: Talk about your English learning journey.\\n=> em hãy nói trong vòng 1-2 phút...");
+  });
+
   it("round-trips Writing 3-Tier diagnostic payload cleanly", () => {
     const payload: StructuredFeedbackPayload = {
       text: "Overall essay evaluation",

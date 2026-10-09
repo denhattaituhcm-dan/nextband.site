@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { submissionsApi, examsApi, classesApi } from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -15,17 +15,24 @@ import {
 } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ArrowUpDown, Eye, User, Filter, ClipboardCheck } from "lucide-react";
+import { ArrowUpDown, Eye, User, Filter, ClipboardCheck, Trash2 } from "lucide-react";
 import { isSubmissionSubmitted, normalizeSubmissionStatus } from "@/lib/submissionStatus";
+import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 type SortField = "submittedAt" | "status";
 type SortOrder = "asc" | "desc";
 
 export default function AdminCheckAttempt() {
+  const queryClient = useQueryClient();
+  const { isAdmin } = useAuth();
   const [sortField, setSortField] = useState<SortField>("submittedAt");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   const [examFilter, setExamFilter] = useState<string>("all");
   const [classFilter, setClassFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("submitted");
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; studentName: string; examTitle: string } | null>(null);
 
   const { data: examsData } = useQuery({
     queryKey: ["admin-exams-filter"],
@@ -46,11 +53,13 @@ export default function AdminCheckAttempt() {
       sortOrder,
       examFilter,
       classFilter,
+      statusFilter,
     ],
     queryFn: () =>
       submissionsApi.list({
         limit: 100,
-        needGrading: true,
+        needGrading: statusFilter === "submitted",
+        status: statusFilter !== "all" && statusFilter !== "submitted" ? statusFilter : undefined,
         examId: examFilter !== "all" ? examFilter : undefined,
         classId: classFilter !== "all" ? classFilter : undefined,
         sortBy: "submittedAt",
@@ -60,9 +69,24 @@ export default function AdminCheckAttempt() {
     refetchOnWindowFocus: true,
   });
 
-  const submissions = (submissionsData?.data || []).filter(
-    (submission: any) => isSubmissionSubmitted(submission?.status),
-  );
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return submissionsApi.delete(id);
+    },
+    onSuccess: () => {
+      toast.success("Đã xóa bài nộp học viên thành công!");
+      queryClient.invalidateQueries({ queryKey: ["admin-submissions"] });
+      setDeleteTarget(null);
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Lỗi khi xóa bài nộp");
+    },
+  });
+
+  const submissions = (submissionsData?.data || []).filter((submission: any) => {
+    if (statusFilter === "all") return true;
+    return isSubmissionSubmitted(submission?.status);
+  });
 
   // Client-side sorting
   const sortedSubmissions = [...submissions].sort((a: any, b: any) => {
@@ -171,6 +195,18 @@ export default function AdminCheckAttempt() {
                 ))}
               </SelectContent>
             </Select>
+
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Trạng thái" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="submitted">Chờ chấm (Cần duyệt)</SelectItem>
+                <SelectItem value="all">Tất cả trạng thái</SelectItem>
+                <SelectItem value="GRADED">Đã chấm</SelectItem>
+                <SelectItem value="IN_PROGRESS">Đang làm</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </CardContent>
       </Card>
@@ -185,7 +221,7 @@ export default function AdminCheckAttempt() {
               <SortHeader field="submittedAt">Ngày nộp</SortHeader>
               <SortHeader field="status">Trạng thái</SortHeader>
               <TableHead>KQ</TableHead>
-              <TableHead className="w-[100px]">Hành động</TableHead>
+              <TableHead className="w-[140px] text-right">Hành động</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -233,13 +269,32 @@ export default function AdminCheckAttempt() {
                         ? submission.totalScore
                         : "-"}
                   </TableCell>
-                  <TableCell>
-                    <Button variant="ghost" size="sm" asChild>
-                      <Link to={`/admin/submissions/${submission.id}`}>
-                        <Eye className="h-4 w-4 mr-1" />
-                        Xem
-                      </Link>
-                    </Button>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-1">
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link to={`/admin/submissions/${submission.id}`}>
+                          <Eye className="h-4 w-4 mr-1" />
+                          Xem
+                        </Link>
+                      </Button>
+                      {isAdmin && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={() =>
+                            setDeleteTarget({
+                              id: submission.id,
+                              studentName: submission.student?.fullName || submission.student?.email || "Học viên",
+                              examTitle: submission.exam?.title || "Bài thi",
+                            })
+                          }
+                          title="Xóa bài nộp"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -256,6 +311,28 @@ export default function AdminCheckAttempt() {
           </TableBody>
         </Table>
       </div>
+
+      {/* Delete Confirmation Modal for Admin */}
+      <DeleteConfirmDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        title="Xóa vĩnh viễn bài nộp của học viên?"
+        description={
+          deleteTarget ? (
+            <span>
+              Bạn đang chuẩn bị xóa bài nộp của <strong>{deleteTarget.studentName}</strong> cho đề thi <strong>{deleteTarget.examTitle}</strong>. Mọi câu trả lời, bản ghi âm và điểm số sẽ bị xóa vĩnh viễn khỏi hệ thống.
+            </span>
+          ) : undefined
+        }
+        loading={deleteMutation.isPending}
+        confirmText="Xác nhận xóa"
+        onConfirm={() => {
+          if (deleteTarget) {
+            deleteMutation.mutate(deleteTarget.id);
+          }
+        }}
+      />
     </div>
   );
 }
+

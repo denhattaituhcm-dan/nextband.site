@@ -119,6 +119,13 @@ const navigationCategories: SidebarCategory[] = [
         iconColor: "text-orange-600",
         iconBg: "bg-orange-50",
       },
+      {
+        title: "Cambridge",
+        url: "/admin/cambridge",
+        icon: BookOpen,
+        iconColor: "text-purple-600",
+        iconBg: "bg-purple-50",
+      },
     ],
   },
   {

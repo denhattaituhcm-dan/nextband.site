@@ -7,16 +7,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { ArrowLeft, Save, CheckCheck, Loader2, MessageSquare } from "lucide-react";
+import { ArrowLeft, Save, CheckCheck, Loader2, MessageSquare, Trash2 } from "lucide-react";
 import { SubmissionHeader } from "@/components/grading/SubmissionHeader";
 import { AnswerGradingCard } from "@/components/grading/AnswerGradingCard";
 import { useAuth } from "@/hooks/useAuth";
 import { RichContent } from "@/components/exam/RichContent";
 import { getFillBlankBlankCount } from "@/lib/fillBlank";
+import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
 
 import { compareCanonicalOrder } from "@/lib/questionOrder";
 import { routes } from "@/lib/routes";
 import { submissionKeys } from "@/lib/queryKeys";
+
 
 interface GradeUpdate {
   answerId: string;
@@ -209,7 +211,24 @@ export default function SubmissionGrade() {
     },
   });
 
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      return submissionsApi.delete(id!);
+    },
+    onSuccess: () => {
+      toast.success("Đã xóa vĩnh viễn bài nộp của học viên!");
+      queryClient.invalidateQueries({ queryKey: submissionKeys.all });
+      queryClient.invalidateQueries({ queryKey: ["admin-submissions"] });
+      navigate(routes.admin.checkAttempt());
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Lỗi khi xóa bài nộp");
+    },
+  });
+
   // Stats
+
   const gradedCount = allQuestions.reduce((sum: number, q: any) => {
     const grade = grades[q.id];
     const answer = answerMap[q.id];
@@ -258,19 +277,35 @@ export default function SubmissionGrade() {
 
   let questionCounter = 0;
   const canGrade = submission.status !== "in_progress";
+  const isAdmin = user?.roles?.includes("admin");
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
-      {/* Back button */}
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => navigate(routes.admin.checkAttempt())}
-      >
-        <ArrowLeft className="h-4 w-4 mr-1" /> Danh sách bài nộp
-      </Button>
+      {/* Top bar with Back and Admin Delete */}
+      <div className="flex items-center justify-between">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate(routes.admin.checkAttempt())}
+        >
+          <ArrowLeft className="h-4 w-4 mr-1" /> Danh sách bài nộp
+        </Button>
+
+        {isAdmin && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive gap-1.5"
+            onClick={() => setDeleteConfirmOpen(true)}
+          >
+            <Trash2 className="h-4 w-4" />
+            <span>Xóa bài nộp này</span>
+          </Button>
+        )}
+      </div>
 
       {/* Header */}
+
       <SubmissionHeader
         student={submission.student}
         exam={submission.exam}
@@ -568,6 +603,24 @@ export default function SubmissionGrade() {
           Trả bài
         </Button>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        title="Xóa vĩnh viễn bài nộp này?"
+        description={
+          <span>
+            Hành động này sẽ xóa vĩnh viễn bài làm của học viên{" "}
+            <strong>{submission.student?.fullName || submission.student?.email || "Học viên"}</strong> cho đề{" "}
+            <strong>{submission.exam?.title || "Bài thi"}</strong> cùng toàn bộ điểm số, câu trả lời và file ghi âm.
+          </span>
+        }
+        loading={deleteMutation.isPending}
+        confirmText="Xác nhận xóa"
+        onConfirm={() => deleteMutation.mutate()}
+      />
     </div>
   );
 }
+

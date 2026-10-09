@@ -1311,7 +1311,26 @@ export const submissionsApi = {
     throw new Error(errData.error || "Không tìm thấy bài nộp");
   },
 
+  delete: async (id: string) => {
+    const token = await getAuthToken();
+    const res = await fetchWithResilience(`${API_BASE_URL}/submissions/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+
+    if (res.ok) {
+      return await res.json();
+    }
+
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || "Không thể xóa bài nộp");
+  },
+
   getLatestByExam: async (examId: string) => {
+
     try {
       const res = await submissionsApi.list({ examId, limit: 10 });
       return selectCanonicalSubmission(res.data, examId) || res.data?.[0] || null;
@@ -4465,6 +4484,174 @@ export const assessmentAdminApi = {
     const json = await res.json();
     return json;
   },
+};
+
+export interface CambridgeSessionSummary {
+  id: string;
+  testCode: string;
+  candidateName: string;
+  candidateGrade?: string | null;
+  candidatePhone?: string | null;
+  targetLevel?: string | null;
+  status: "ACTIVE" | "SUBMITTED" | "EXPIRED";
+  stage: "core" | "extension" | "completed";
+  gatePassed: boolean;
+  extensionAllowed: boolean;
+  extensionOverrideReason?: string | null;
+  gradingStatus: "PENDING" | "PARTIAL" | "GRADED";
+  finalLevel?: "Flyers" | "KET" | "PET" | null;
+  isAdjusted: boolean;
+  adjustmentReason?: string | null;
+  teacherNotes?: string | null;
+  createdAt: string;
+  submittedAt?: string | null;
+  gradedAt?: string | null;
+  creator?: { fullName?: string; email?: string } | null;
+  grader?: { fullName?: string; email?: string } | null;
+  objectiveScore?: {
+    totalCorrect: number;
+    totalItems: number;
+    skillCounts?: any;
+    coreK?: number;
+    coreKplus?: number;
+    gatePassed?: boolean;
+    itemMarks?: Record<string, number>;
+  } | null;
+  computedPlacement?: any;
+}
+
+export const cambridgeApi = {
+  // --- Admin & Teacher ---
+  listSessions: async (params?: { search?: string; gradingStatus?: string; status?: string }) => {
+    const token = await getAuthToken();
+    const q = new URLSearchParams();
+    if (params?.search) q.set("search", params.search);
+    if (params?.gradingStatus) q.set("gradingStatus", params.gradingStatus);
+    if (params?.status) q.set("status", params.status);
+
+    const res = await fetch(`${API_BASE_URL}/cambridge/admin/sessions?${q.toString()}`, {
+      headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    });
+    if (!res.ok) throw new Error("Không thể tải danh sách phiên thi Cambridge");
+    return (await res.json()) as { success: boolean; data: CambridgeSessionSummary[]; total: number };
+  },
+
+  createSession: async (payload: {
+    candidateName: string;
+    candidateGrade?: string;
+    candidatePhone?: string;
+    targetLevel?: string;
+  }) => {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/cambridge/admin/sessions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error("Không thể tạo phiên thi Cambridge");
+    return (await res.json()) as { success: boolean; data: CambridgeSessionSummary };
+  },
+
+  getSessionDetail: async (sessionId: string) => {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/cambridge/admin/sessions/${sessionId}`, {
+      headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    });
+    if (!res.ok) throw new Error("Không thể lấy chi tiết phiên thi");
+    return (await res.json()) as {
+      success: boolean;
+      data: {
+        session: CambridgeSessionSummary & { answers?: any; writingScores?: any; speakingScores?: any };
+        calculation: any;
+        contentRef: any;
+      };
+    };
+  },
+
+  gradeSession: async (
+    sessionId: string,
+    payload: {
+      writingScores?: any;
+      speakingScores?: any;
+      teacherNotes?: string;
+      finalLevel?: "Flyers" | "KET" | "PET";
+      adjustmentReason?: string;
+    }
+  ) => {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/cambridge/admin/sessions/${sessionId}/grade`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || "Lỗi khi lưu điểm chấm");
+    }
+    return await res.json();
+  },
+
+  overrideGate: async (sessionId: string, reason: string) => {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/cambridge/admin/sessions/${sessionId}/override-gate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ reason }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || "Không thể cấp quyền Extension");
+    }
+    return await res.json();
+  },
+
+  // --- Student Test ---
+  getStudentSession: async (testCode: string) => {
+    const res = await fetch(`${API_BASE_URL}/cambridge/student/${testCode}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || "Không tìm thấy phiên làm bài");
+    }
+    return await res.json();
+  },
+
+  saveAnswers: async (testCode: string, answers: Record<string, any>) => {
+    const res = await fetch(`${API_BASE_URL}/cambridge/student/${testCode}/answers`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ answers }),
+    });
+    return await res.json();
+  },
+
+  evaluateGate: async (testCode: string) => {
+    const res = await fetch(`${API_BASE_URL}/cambridge/student/${testCode}/evaluate-gate`, {
+      method: "POST",
+    });
+    if (!res.ok) throw new Error("Lỗi khi kiểm tra Gate");
+    return await res.json();
+  },
+
+  submitTest: async (testCode: string, answers?: Record<string, any>) => {
+    const res = await fetch(`${API_BASE_URL}/cambridge/student/${testCode}/submit`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ answers }),
+    });
+    if (!res.ok) throw new Error("Lỗi khi nộp bài");
+    return await res.json();
+  },
+
+  getAudioUrl: (filename: string) => `${API_BASE_URL}/cambridge/audio/${encodeURIComponent(filename)}`,
 };
 
 export const speakingForecastApi = {

@@ -1629,11 +1629,30 @@ export class ExamSubmissionService {
           effectiveSentenceFeedbacks.length > 0 ||
           hasSpeak
         ) {
+          let plainFeedbackText = effectiveFeedbackText;
+          if (typeof plainFeedbackText === "string" && plainFeedbackText.trim().startsWith("{") && plainFeedbackText.trim().endsWith("}")) {
+            try {
+              let parsedTextObj = JSON.parse(plainFeedbackText);
+              while (parsedTextObj && typeof parsedTextObj === "object" && typeof parsedTextObj.text === "string" && parsedTextObj.text.trim().startsWith("{")) {
+                try {
+                  parsedTextObj = JSON.parse(parsedTextObj.text);
+                } catch {
+                  break;
+                }
+              }
+              if (parsedTextObj && typeof parsedTextObj === "object" && typeof parsedTextObj.text === "string") {
+                plainFeedbackText = parsedTextObj.text;
+              }
+            } catch {
+              // Not JSON, keep original
+            }
+          }
+
           if (typeof effectiveFeedbackText === "string" && effectiveFeedbackText.trim().startsWith("{") && !effectiveCriteriaScores && !hasSpeak) {
             answerFeedback = effectiveFeedbackText;
           } else {
             const structuredPayload: TeacherFeedbackPayload = {
-              text: effectiveFeedbackText,
+              text: plainFeedbackText,
               primaryErrorCategory: effectivePrimaryCategory,
               revisionRequired: effectiveRevisionRequired,
               criteriaScores: effectiveCriteriaScores,
@@ -2061,4 +2080,44 @@ export class ExamSubmissionService {
       console.error("[ExamSubmissionService] Error syncing student course progress:", err);
     }
   }
+
+  // Admin Case: Delete a submission entirely
+  async deleteSubmission(user: { id: string; roles: string[] }, submissionId: string) {
+    if (!user.roles.includes("admin")) {
+      throw new AuthorizationError("Chỉ quản trị viên mới có quyền xóa bài nộp của học viên", 403);
+    }
+
+    const submission = await this.prisma.examSubmission.findUnique({
+      where: { id: submissionId },
+      include: {
+        exam: {
+          select: { courseId: true },
+        },
+      },
+    });
+
+    if (!submission) {
+      throw new NotFoundError("Không tìm thấy bài nộp");
+    }
+
+    const { studentId, exam } = submission;
+    const courseId = exam?.courseId;
+
+    // Delete submission (Prisma Cascade will handle answers, evidences, episodes, diagnostics)
+    await this.prisma.examSubmission.delete({
+      where: { id: submissionId },
+    });
+
+    // Recalculate student course progress if course exists
+    if (studentId && courseId) {
+      try {
+        await this.syncStudentCourseProgressAndMilestones(this.prisma, studentId, courseId);
+      } catch (err) {
+        console.warn("[ExamSubmissionService] Failed to sync student course progress after delete:", err);
+      }
+    }
+
+    return { success: true, message: "Đã xóa bài nộp thành công" };
+  }
 }
+
