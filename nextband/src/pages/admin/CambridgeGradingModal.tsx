@@ -334,11 +334,20 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
 
             {/* TAB 2: WRITING */}
             <TabsContent value="writing" className="space-y-6 pt-4">
+              <div className="bg-blue-50/70 border border-blue-100 rounded-xl p-4 text-xs text-blue-900">
+                📖 <strong>Chuẩn hóa khảo thí Writing:</strong> Giáo viên chấm dựa trên các tiêu chí mô tả hành vi quan sát được (Descriptive Rubric). Điểm số 0 - 3 tương ứng với mức độ đáp ứng yêu cầu đề bài và độ chính xác ngôn ngữ thực tế.
+              </div>
+
               {/* Task W1 */}
               <div className="bg-white rounded-xl border border-slate-200 p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="font-bold text-slate-800 text-sm">
-                    Task W1 (Band F - Core) • Đề tài: Best Friend (20–30 words)
+                  <div>
+                    <div className="font-bold text-slate-800 text-sm">
+                      Task W1 (Band F - Core) • Đề tài: Best Friend (20–30 words)
+                    </div>
+                    <p className="text-[11px] text-slate-500">
+                      Từ gợi ý: <em>name, tall, likes, plays, at the weekend</em>
+                    </p>
                   </div>
                   <Badge variant="outline" className="text-xs">
                     Pass: Tổng &ge; 4 & Nội dung &ge; 2
@@ -347,77 +356,168 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
                 <div className="bg-slate-50 p-3 rounded-lg text-xs font-mono text-slate-800 border">
                   {studentAnswers["W1"] || <span className="text-slate-400 italic">Học sinh chưa nộp bài W1</span>}
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-                  <div>
-                    <Label className="text-xs">Nội dung (Content: 0-3)</Label>
-                    <Input
-                      type="number"
-                      min={0}
-                      max={3}
-                      value={w1.content}
-                      onChange={(e) => setW1({ ...w1, content: Number(e.target.value) })}
-                    />
+
+                {/* Rubric tham chiếu W1 */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                  <div className="bg-slate-50/60 p-3 rounded-lg border border-slate-200 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-xs font-bold text-slate-700">Nội dung (Content: 0–3)</Label>
+                      <Select
+                        value={String(w1.content)}
+                        onValueChange={(val) => setW1({ ...w1, content: Number(val) })}
+                      >
+                        <SelectTrigger className="w-24 h-7 text-xs bg-white font-bold">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="3">3 - Đầy đủ (Full)</SelectItem>
+                          <SelectItem value="2">2 - Khá (Good)</SelectItem>
+                          <SelectItem value="1">1 - Sơ sài (Basic)</SelectItem>
+                          <SelectItem value="0">0 - Lạc đề / Rỗng</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                      {w1.content === 3 && "✓ Trả lời đủ các ý gợi ý (tên, ngoại hình, sở thích, cuối tuần), thông tin rõ ràng."}
+                      {w1.content === 2 && "✓ Nêu được 2-3 ý chính, người đọc hiểu được dù có ý còn thiếu sót."}
+                      {w1.content === 1 && "⚠️ Chỉ viết được 1 ý rất ngắn hoặc không dùng các từ gợi ý."}
+                      {w1.content === 0 && "❌ Hoàn toàn không liên quan đến đề bài hoặc bỏ trống."}
+                    </p>
                   </div>
-                  <div>
-                    <Label className="text-xs">Ngôn ngữ (Language: 0-3)</Label>
-                    <Input
-                      type="number"
-                      min={0}
-                      max={3}
-                      value={w1.language}
-                      onChange={(e) => setW1({ ...w1, language: Number(e.target.value) })}
-                    />
+
+                  <div className="bg-slate-50/60 p-3 rounded-lg border border-slate-200 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-xs font-bold text-slate-700">Ngôn ngữ (Language: 0–3)</Label>
+                      <Select
+                        value={String(w1.language)}
+                        onValueChange={(val) => setW1({ ...w1, language: Number(val) })}
+                      >
+                        <SelectTrigger className="w-24 h-7 text-xs bg-white font-bold">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="3">3 - Chuẩn (Accurate)</SelectItem>
+                          <SelectItem value="2">2 - Đạt (Understandable)</SelectItem>
+                          <SelectItem value="1">1 - Yếu (Errors)</SelectItem>
+                          <SelectItem value="0">0 - Sai hoàn toàn</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                      {w1.language === 3 && "✓ Câu đúng cấu trúc thì hiện tại đơn, từ vựng cơ bản viết đúng chính tả."}
+                      {w1.language === 2 && "✓ Có vài lỗi ngữ pháp hoặc chính tả nhỏ nhưng không cản trở việc hiểu."}
+                      {w1.language === 1 && "⚠️ Nhiều lỗi ngữ pháp cơ bản (is/are, ngôi thứ 3 số ít), từ vựng vụn vặt."}
+                      {w1.language === 0 && "❌ Ngữ pháp sai nghiêm trọng, không thể hiểu nội dung."}
+                    </p>
                   </div>
-                  <div className="col-span-2 flex items-center pt-5 text-xs text-slate-500 font-semibold">
-                    Tổng điểm W1: {w1.content + w1.language} / 6
-                  </div>
+                </div>
+
+                <div className="text-[11px] text-slate-500 font-semibold text-right">
+                  Tổng điểm W1: <span className="text-indigo-600 font-bold">{w1.content + w1.language} / 6</span>
                 </div>
               </div>
 
               {/* Task W2 */}
               <div className="bg-white rounded-xl border border-slate-200 p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="font-bold text-slate-800 text-sm">
-                    Task W2 (Band K - Core) • Đề tài: Email to Sam (30–40 words)
+                  <div>
+                    <div className="font-bold text-slate-800 text-sm">
+                      Task W2 (Band K - Core) • Đề tài: Email to Sam (30–40 words)
+                    </div>
+                    <p className="text-[11px] text-slate-500">
+                      Hỏi: (1) Nơi nên đến? (2) Món ăn nên thử? (3) Khi nào gặp nhau?
+                    </p>
                   </div>
                   <Badge variant="outline" className="text-xs">
-                    Pass: Tổng &ge; 6 & Nội dung &ge; 2
+                    Pass: Tổng &ge; 6 & Nội dung &ge; 2 | Plus: &ge; 8
                   </Badge>
                 </div>
                 <div className="bg-slate-50 p-3 rounded-lg text-xs font-mono text-slate-800 border">
                   {studentAnswers["W2"] || <span className="text-slate-400 italic">Học sinh chưa nộp bài W2</span>}
                 </div>
-                <div className="grid grid-cols-3 gap-3 pt-2">
-                  <div>
-                    <Label className="text-xs">Nội dung (0-3)</Label>
-                    <Input
-                      type="number"
-                      min={0}
-                      max={3}
-                      value={w2.content}
-                      onChange={(e) => setW2({ ...w2, content: Number(e.target.value) })}
-                    />
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+                  <div className="bg-slate-50/60 p-3 rounded-lg border border-slate-200 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-xs font-bold text-slate-700">Nội dung (Content: 0–3)</Label>
+                      <Select
+                        value={String(w2.content)}
+                        onValueChange={(val) => setW2({ ...w2, content: Number(val) })}
+                      >
+                        <SelectTrigger className="w-20 h-7 text-xs bg-white font-bold">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="3">3 - Đủ 3 câu</SelectItem>
+                          <SelectItem value="2">2 - Trả lời 2 câu</SelectItem>
+                          <SelectItem value="1">1 - Trả lời 1 câu</SelectItem>
+                          <SelectItem value="0">0 - Lạc đề</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                      {w2.content === 3 && "✓ Trả lời trọn vẹn cả 3 câu hỏi của Sam."}
+                      {w2.content === 2 && "✓ Trả lời được 2 trong 3 câu hỏi của Sam."}
+                      {w2.content === 1 && "⚠️ Chỉ trả lời được 1 câu hỏi, bỏ qua 2 câu còn lại."}
+                      {w2.content === 0 && "❌ Không trả lời câu hỏi nào."}
+                    </p>
                   </div>
-                  <div>
-                    <Label className="text-xs">Bố cục (0-3)</Label>
-                    <Input
-                      type="number"
-                      min={0}
-                      max={3}
-                      value={w2.organisation}
-                      onChange={(e) => setW2({ ...w2, organisation: Number(e.target.value) })}
-                    />
+
+                  <div className="bg-slate-50/60 p-3 rounded-lg border border-slate-200 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-xs font-bold text-slate-700">Bố cục (Org: 0–3)</Label>
+                      <Select
+                        value={String(w2.organisation)}
+                        onValueChange={(val) => setW2({ ...w2, organisation: Number(val) })}
+                      >
+                        <SelectTrigger className="w-20 h-7 text-xs bg-white font-bold">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="3">3 - Email chuẩn</SelectItem>
+                          <SelectItem value="2">2 - Có kết nối</SelectItem>
+                          <SelectItem value="1">1 - Rời rạc</SelectItem>
+                          <SelectItem value="0">0 - Không bố cục</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                      {w2.organisation === 3 && "✓ Có chào hỏi, câu nối liên kết mạch lạc (and, but, because)."}
+                      {w2.organisation === 2 && "✓ Bố cục rõ ràng, câu viết nối tiếp tương đối mạch lạc."}
+                      {w2.organisation === 1 && "⚠️ Các câu rời rạc, chưa có từ nối email cơ bản."}
+                      {w2.organisation === 0 && "❌ Viết không thành câu, từ ngữ lộn xộn."}
+                    </p>
                   </div>
-                  <div>
-                    <Label className="text-xs">Ngôn ngữ (0-3)</Label>
-                    <Input
-                      type="number"
-                      min={0}
-                      max={3}
-                      value={w2.language}
-                      onChange={(e) => setW2({ ...w2, language: Number(e.target.value) })}
-                    />
+
+                  <div className="bg-slate-50/60 p-3 rounded-lg border border-slate-200 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-xs font-bold text-slate-700">Ngôn ngữ (Lang: 0–3)</Label>
+                      <Select
+                        value={String(w2.language)}
+                        onValueChange={(val) => setW2({ ...w2, language: Number(val) })}
+                      >
+                        <SelectTrigger className="w-20 h-7 text-xs bg-white font-bold">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="3">3 - Đa dạng</SelectItem>
+                          <SelectItem value="2">2 - Đủ ý</SelectItem>
+                          <SelectItem value="1">1 - Hạn chế</SelectItem>
+                          <SelectItem value="0">0 - Quá yếu</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                      {w2.language === 3 && "✓ Từ vựng phù hợp, cấu trúc câu tự nhiên, rất ít lỗi."}
+                      {w2.language === 2 && "✓ Sử dụng từ ngữ thường gặp, ngữ pháp cơ bản kiểm soát tốt."}
+                      {w2.language === 1 && "⚠️ Lặp từ, nhiều lỗi chính tả và chia động từ cơ bản."}
+                      {w2.language === 0 && "❌ Quá nhiều lỗi khiến không thể hiểu ý."}
+                    </p>
                   </div>
+                </div>
+
+                <div className="text-[11px] text-slate-500 font-semibold text-right">
+                  Tổng điểm W2: <span className="text-indigo-600 font-bold">{w2.content + w2.organisation + w2.language} / 9</span>
                 </div>
               </div>
 
@@ -662,7 +762,7 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
                       </div>
 
                       {overrideLevel !== "AUTO" && overrideLevel !== calculation.placement.level && (
-                        <div>
+                        <div className="space-y-2">
                           <Label className="text-xs font-semibold text-amber-700">Lý do điều chỉnh (Bắt buộc) *</Label>
                           <Input
                             placeholder="Ghi rõ lý do điều chỉnh cấp độ..."
@@ -673,6 +773,33 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
                         </div>
                       )}
                     </div>
+
+                    {/* Cảnh báo Sư phạm Chuyên sâu (Veto Warning) */}
+                    {overrideLevel !== "AUTO" && overrideLevel !== calculation.placement.level && (
+                      <div className="p-3 rounded-lg border border-amber-200 bg-amber-50/80 space-y-1.5 text-xs text-amber-900">
+                        <div className="font-bold flex items-center gap-1.5 text-amber-800">
+                          <AlertTriangle className="w-4 h-4 text-amber-600" /> Cảnh báo Khảo thí & Rủi ro Sư phạm:
+                        </div>
+                        {calculation.placement.vetoes.includes("V1_foundation") && (
+                          <p>
+                            ⚠️ <strong>V1 Foundation Veto:</strong> Học sinh bị hổng nền tảng Ngữ pháp/Đọc hiểu so với trung vị. Việc nâng cấp độ có nguy cơ khiến học sinh bị quá tải bài giảng trên lớp.
+                          </p>
+                        )}
+                        {calculation.placement.vetoes.includes("V2_productive") && (
+                          <p>
+                            ⚠️ <strong>V2 Productive Veto:</strong> Kỹ năng Viết hoặc Nói của học sinh còn yếu so với mức yêu cầu của lớp trên.
+                          </p>
+                        )}
+                        {calculation.placement.vetoes.includes("V3_ceiling") && (
+                          <p>
+                            ⚠️ <strong>V3 Ceiling Veto:</strong> Điểm năng lực trần chưa đạt chuẩn.
+                          </p>
+                        )}
+                        <p className="text-[11px] text-amber-700 italic">
+                          Hệ thống sẽ lưu lại lý do và danh tính giáo viên điều chỉnh vào lịch sử kiểm toán (Audit Trail).
+                        </p>
+                      </div>
+                    )}
 
                     <div>
                       <Label className="text-xs font-semibold">Ghi chú nhận xét của giáo viên</Label>
