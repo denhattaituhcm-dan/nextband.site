@@ -115,6 +115,84 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
     }
   }, [session]);
 
+  // Realtime Live Preview Calculation
+  const livePreview = React.useMemo(() => {
+    if (!calculation?.receptive) return null;
+    const { receptive } = calculation;
+    const uoeCode = receptive.use_of_english?.code ?? 0;
+    const readCode = receptive.reading?.code ?? 0;
+    const lisCode = receptive.listening?.code ?? 0;
+
+    // Calculate Writing code
+    const t1 = w1.content + w1.language;
+    const t2 = w2.content + w2.organisation + w2.language;
+    let wCode = 0;
+    if (t1 >= 4 && w1.content >= 2) {
+      if (t2 <= 3) wCode = 1;
+      else if (t2 < 6 || w2.content < 2) wCode = 1.5;
+      else if (t2 < 8) wCode = 2;
+      else if (!session?.extensionAllowed) wCode = 3;
+      else {
+        const t3 = w3.content + w3.register + w3.organisation + w3.language;
+        if (t3 >= 9 && w3.content >= 2 && w3.language >= 2) wCode = 5;
+        else if (t3 >= 7 && w3.content >= 2 && w3.language >= 2) wCode = 4;
+        else if (t3 >= 5) wCode = 3.5;
+        else wCode = 3;
+      }
+    }
+
+    // Calculate Speaking code
+    let sCode = 0;
+    if (speakingParts.s1 === "pass") {
+      if (speakingParts.s2 !== "pass") sCode = speakingParts.s2 === "partial" ? 1.5 : 1;
+      else if (speakingParts.s3 !== "pass") sCode = 2;
+      else if (speakingParts.s4 !== "pass") sCode = speakingParts.s4 === "partial" ? 3.5 : 3;
+      else sCode = speakingParts.s5 === "pass" ? 5 : 4;
+    }
+
+    const codes = {
+      use_of_english: uoeCode,
+      reading: readCode,
+      listening: lisCode,
+      writing: wCode,
+      speaking: sCode,
+    };
+
+    const sorted = [uoeCode, readCode, lisCode, wCode, sCode].sort((a, b) => a - b);
+    const median = sorted[2];
+
+    let level = "Flyers";
+    if (median <= 1) {
+      level = "Flyers";
+    } else if (median === 1.5) {
+      level = (uoeCode >= 2 || readCode >= 2) && (wCode >= 2 || sCode >= 2) ? "KET" : "Flyers";
+    } else if (median <= 3) {
+      level = "KET";
+    } else if (median === 3.5) {
+      level = uoeCode >= 3.5 && readCode >= 3.5 && (wCode >= 3 || sCode >= 3.5) ? "PET" : "KET";
+    } else {
+      level = "PET";
+    }
+
+    // Foundation Veto
+    if (Math.min(uoeCode, readCode) <= median - 1.5) {
+      if (level === "PET") level = "KET";
+      else if (level === "KET") level = "Flyers";
+    }
+    // Productive Veto
+    if (wCode <= median - 1.5 && sCode <= median - 1.5 && level === "PET") {
+      level = "KET";
+    }
+
+    return {
+      codes,
+      median,
+      level,
+      wCode,
+      sCode,
+    };
+  }, [calculation, w1, w2, w3, speakingParts, session]);
+
   const gradeMutation = useMutation({
     mutationFn: () =>
       cambridgeApi.gradeSession(sessionId, {
@@ -134,7 +212,7 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
     onSuccess: () => {
       refetch();
       queryClient.invalidateQueries({ queryKey: ["cambridgeSessions"] });
-      alert("Đã lưu kết quả chấm và tự động tính toán xếp lớp thành công!");
+      setActiveTab("placement");
     },
     onError: (err: any) => {
       alert("Lỗi khi lưu điểm: " + err.message);
@@ -175,10 +253,17 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
                       Khối: {session.candidateGrade}
                     </Badge>
                   )}
-                  {session.finalLevel && (
-                    <Badge className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-black">
-                      Xếp lớp: {session.finalLevel}
-                    </Badge>
+                  {livePreview && (
+                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-500/40 shadow-xs">
+                      <Sparkles className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+                      <span className="text-xs text-slate-300 font-bold">Dự báo:</span>
+                      <span className="text-xs font-black text-emerald-300 tracking-wide uppercase">
+                        {livePreview.level}
+                      </span>
+                      <span className="text-[10px] font-mono text-emerald-400/80 font-bold">
+                        (M: {livePreview.median})
+                      </span>
+                    </div>
                   )}
                 </div>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400 font-medium">
@@ -187,6 +272,14 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
                   <span>Trạng thái: <strong className="text-slate-200">{session.status}</strong></span>
                   <span>•</span>
                   <span>Trắc nghiệm: <strong className="text-emerald-400 font-bold">{session.objectiveScore?.totalCorrect || 0}/{session.objectiveScore?.totalItems || 0}</strong> câu đúng</span>
+                  {livePreview && (
+                    <>
+                      <span>•</span>
+                      <span className="font-mono text-[11px] text-slate-300">
+                        Codes: Đọc {livePreview.codes.reading} | Nghe {livePreview.codes.listening} | Viết {livePreview.codes.writing} | Nói {livePreview.codes.speaking}
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -195,10 +288,10 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
               onClick={() => gradeMutation.mutate()}
               disabled={gradeMutation.isPending}
               size="lg"
-              className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold shadow-lg shadow-emerald-950/40 px-5 rounded-xl cursor-pointer active:scale-95 transition-all"
+              className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold shadow-lg shadow-emerald-950/40 px-5 rounded-xl cursor-pointer active:scale-95 transition-all shrink-0"
             >
               <Save className="w-4 h-4 mr-2" />
-              {gradeMutation.isPending ? "Đang lưu..." : "Lưu & Tính xếp lớp"}
+              {gradeMutation.isPending ? "Đang lưu..." : "Lưu & Xem Xếp Lớp"}
             </Button>
           </div>
         </div>
@@ -388,6 +481,24 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
                     </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Dòng chảy chuyển bước (Next Step Flow) */}
+              <div className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-200 shadow-2xs">
+                <div className="text-xs text-slate-500 font-medium">
+                  Đã đánh giá xong Speaking? Hãy chuyển sang chấm bài viết của thí sinh.
+                </div>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setActiveTab("writing");
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  className="bg-brand-blue hover:bg-brand-blue/90 text-white font-extrabold text-xs gap-2 px-5 py-2 rounded-xl cursor-pointer"
+                >
+                  <span>Tiếp tục: Chấm bài Writing</span>
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
               </div>
             </TabsContent>
 
@@ -681,6 +792,36 @@ export default function CambridgeGradingModal({ sessionId, onClose }: Props) {
                     Học sinh không đủ điều kiện hoặc không tham gia phần Extension, bỏ qua chấm W3.
                   </p>
                 )}
+              </div>
+
+              {/* Dòng chảy chuyển bước sang Placement Sheet */}
+              <div className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-200 shadow-2xs">
+                <div className="text-xs text-slate-500 font-medium">
+                  Đã hoàn tất chấm Writing? Hãy xem Phiếu Xếp Lớp tổng hợp 5 kỹ năng.
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setActiveTab("placement");
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    className="font-extrabold text-xs gap-1.5 px-4 rounded-xl cursor-pointer"
+                  >
+                    <span>Xem Phiếu Xếp Lớp</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => gradeMutation.mutate()}
+                    disabled={gradeMutation.isPending}
+                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs gap-1.5 px-5 rounded-xl cursor-pointer shadow-md shadow-emerald-950/20"
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Lưu & Chốt Xếp Lớp</span>
+                  </Button>
+                </div>
               </div>
             </TabsContent>
 
