@@ -4520,8 +4520,99 @@ export interface CambridgeSessionSummary {
   computedPlacement?: any;
 }
 
+export interface CambridgeRoomSummary {
+  id: string;
+  roomCode: string;
+  title: string;
+  groupName?: string | null;
+  teacherName?: string | null;
+  status: "OPEN" | "CLOSED";
+  durationMinutes?: number | null;
+  createdAt: string;
+  closedAt?: string | null;
+  _count?: { sessions: number };
+  sessions?: CambridgeSessionSummary[];
+}
+
 export const cambridgeApi = {
-  // --- Admin & Teacher ---
+  // --- Phòng thi (Rooms) ---
+  createRoom: async (payload: {
+    title: string;
+    groupName?: string;
+    teacherName?: string;
+    durationMinutes?: number | null;
+  }) => {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/cambridge/admin/rooms`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || "Không thể tạo phòng thi");
+    }
+    return (await res.json()) as { success: boolean; data: CambridgeRoomSummary };
+  },
+
+  listRooms: async () => {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/cambridge/admin/rooms`, {
+      headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    });
+    if (!res.ok) throw new Error("Không thể tải danh sách phòng thi");
+    return (await res.json()) as { success: boolean; data: CambridgeRoomSummary[] };
+  },
+
+  getRoomDetail: async (roomId: string) => {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/cambridge/admin/rooms/${roomId}`, {
+      headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    });
+    if (!res.ok) throw new Error("Không thể tải chi tiết phòng thi");
+    return (await res.json()) as { success: boolean; data: CambridgeRoomSummary };
+  },
+
+  closeRoom: async (roomId: string) => {
+    const token = await getAuthToken();
+    const res = await fetch(`${API_BASE_URL}/cambridge/admin/rooms/${roomId}/close`, {
+      method: "POST",
+      headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    });
+    if (!res.ok) throw new Error("Không thể đóng phòng thi");
+    return await res.json();
+  },
+
+  // --- Public Room Join (Học sinh) ---
+  getPublicRoomInfo: async (roomCode: string) => {
+    const res = await fetch(`${API_BASE_URL}/cambridge/rooms/${roomCode}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || "Phòng thi không tồn tại");
+    }
+    return (await res.json()) as { success: boolean; data: CambridgeRoomSummary };
+  },
+
+  joinRoom: async (
+    roomCode: string,
+    payload: { candidateName: string; candidateGrade?: string; existingTestCode?: string }
+  ) => {
+    const res = await fetch(`${API_BASE_URL}/cambridge/rooms/${roomCode}/join`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || "Không thể vào phòng thi");
+    }
+    return (await res.json()) as { success: boolean; data: CambridgeSessionSummary };
+  },
+
+  // --- Admin & Teacher Sessions ---
   listSessions: async (params?: { search?: string; gradingStatus?: string; status?: string }) => {
     const token = await getAuthToken();
     const q = new URLSearchParams();
