@@ -488,27 +488,27 @@ export default function CambridgeStudentExam() {
       {/* MAIN CONTAINER */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
         {/* Banner trạng thái giai đoạn */}
-        <div className="flex items-center justify-between bg-card border border-border p-4 rounded-2xl shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-brand-blue/10 border border-brand-blue/20 flex items-center justify-center text-brand-blue font-black text-xs">
+        <div className="flex items-center justify-between bg-card border border-border p-5 rounded-3xl shadow-xs">
+          <div className="flex items-center gap-3.5">
+            <div className="w-10 h-10 rounded-2xl bg-brand-blue/10 border border-brand-blue/20 flex items-center justify-center text-brand-blue font-black text-xs tracking-wider">
               {session.extensionAllowed ? "EXT" : "CORE"}
             </div>
             <div>
-              <div className="text-xs sm:text-sm font-extrabold text-foreground">
+              <div className="text-sm font-extrabold text-foreground">
                 {session.extensionAllowed
-                  ? "Phần Mở Rộng Nâng Cao (Extension Stage - PET / B1 Level)"
-                  : "Phần Cơ Bản Khảo Thí (Core Stage - Flyers & KET / A2 Level)"}
+                  ? "Phần Mở Rộng Nâng Cao (Extension Stage – PET / B1 Level)"
+                  : "Phần Cơ Bản Khảo Thí (Core Stage – Flyers & KET / A2 Level)"}
               </div>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-xs text-muted-foreground mt-0.5">
                 Tự động lưu câu trả lời • Không sử dụng từ điển hoặc tài liệu hỗ trợ bên ngoài
               </p>
             </div>
           </div>
 
           <div className="text-right">
-            <span className="text-[11px] text-muted-foreground font-medium">Tiến độ kỹ năng:</span>
-            <div className="font-mono font-black text-sm text-brand-blue">
-              {skillCounts[currentSection].answered} / {skillCounts[currentSection].total} câu
+            <span className="text-xs text-muted-foreground font-semibold">Tiến độ kỹ năng:</span>
+            <div className="font-extrabold text-sm sm:text-base text-foreground mt-0.5">
+              <span className="text-brand-blue font-black">{skillCounts[currentSection].answered}</span> / {skillCounts[currentSection].total} câu
             </div>
           </div>
         </div>
@@ -539,28 +539,28 @@ export default function CambridgeStudentExam() {
                 key={item.id}
                 id={`item-${item.id}`}
                 className={cn(
-                  "bg-card border rounded-2xl p-4 sm:p-5 space-y-3.5 transition-all shadow-xs",
+                  "p-5 sm:p-6 rounded-3xl bg-card border border-border space-y-4 transition-all shadow-xs",
                   isAnswered
                     ? "border-brand-blue/40 ring-1 ring-brand-blue/20 bg-brand-blue/[0.02]"
-                    : "border-border hover:border-border/90",
+                    : "hover:border-border/90 hover:shadow-sm",
                 )}
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono font-black text-brand-blue bg-brand-blue/10 px-2.5 py-1 rounded-lg border border-brand-blue/20">
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-xs font-black text-brand-blue uppercase tracking-wide px-2.5 py-1 rounded-xl bg-brand-blue/10 border border-brand-blue/20">
                       Câu {item.gapNumber ? item.gapNumber : (customNumber !== undefined ? customNumber : item.id)}
                     </span>
-                    <span className="text-[11px] font-mono text-muted-foreground">({item.id})</span>
+                    <span className="text-[11px] font-semibold text-muted-foreground">({item.id})</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     {item.band && (
-                      <Badge variant="outline" className="border-border text-muted-foreground text-[10px] font-semibold">
+                      <Badge variant="outline" className="border-border text-muted-foreground text-[10px] font-bold">
                         Band {item.band}
                       </Badge>
                     )}
                     {isAnswered && (
-                      <span className="flex items-center gap-1 text-[11px] text-emerald-600 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                        <CheckCircle2 className="w-3 h-3" /> Đã chọn
+                      <span className="flex items-center gap-1.5 text-xs text-emerald-600 font-bold bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Đã trả lời
                       </span>
                     )}
                   </div>
@@ -568,7 +568,7 @@ export default function CambridgeStudentExam() {
 
                 {/* Stimulus notice/message if present */}
                 {item.stimulus && (
-                  <div className="bg-amber-500/10 border border-amber-500/25 rounded-xl p-3.5 space-y-1">
+                  <div className="bg-amber-500/10 border border-amber-500/25 rounded-2xl p-4 space-y-1">
                     {Array.isArray(item.stimulus) ? (
                       item.stimulus.map((s: string, sIdx: number) => (
                         <p key={sIdx} className={sIdx === 0 ? "font-bold text-amber-900 dark:text-amber-300 tracking-wide text-xs" : "text-amber-800 dark:text-amber-100 text-xs italic"}>
@@ -581,16 +581,16 @@ export default function CambridgeStudentExam() {
                   </div>
                 )}
 
-                {/* Question Prompt */}
+                {/* Question Prompt - Upgraded to IELTS standard font-size & font-weight */}
                 {item.prompt && (
-                  <p className="text-sm text-foreground font-semibold leading-relaxed">
+                  <p className="text-sm sm:text-base font-bold text-foreground leading-relaxed">
                     {item.prompt}
                   </p>
                 )}
 
                 {/* Options MCQ / cloze_mcq / matching */}
                 {item.options && item.options.length > 0 && (
-                  <div className={cn("grid gap-2 pt-1", item.options.length > 4 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:grid-cols-3")}>
+                  <div className={cn("grid gap-2.5 pt-1", item.options.length > 4 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:grid-cols-3")}>
                     {item.options.map((opt: any) => {
                       const isChosen = String(selectedVal).trim().toUpperCase() === String(opt.key).trim().toUpperCase();
                       return (
@@ -599,21 +599,23 @@ export default function CambridgeStudentExam() {
                           type="button"
                           onClick={() => setAnswers({ ...answers, [item.id]: opt.key })}
                           className={cn(
-                            "flex items-start gap-2.5 p-3 rounded-xl border text-left text-xs font-semibold transition cursor-pointer",
+                            "flex items-center gap-3 p-3.5 rounded-2xl border transition-all cursor-pointer text-xs sm:text-sm font-medium text-left",
                             isChosen
-                              ? "bg-brand-blue text-white border-brand-blue shadow-sm shadow-brand-blue/20"
-                              : "bg-muted/40 border-border text-foreground hover:bg-muted/80 hover:border-border",
+                              ? "bg-brand-blue-soft border-brand-blue/60 text-brand-blue font-bold shadow-xs"
+                              : "bg-muted/40 border-border hover:bg-muted/70 text-foreground",
                           )}
                         >
                           <span
                             className={cn(
-                              "w-6 h-6 shrink-0 rounded-full flex items-center justify-center font-black text-xs transition",
-                              isChosen ? "bg-white text-brand-blue" : "bg-card text-muted-foreground border border-border",
+                              "w-7 h-7 shrink-0 rounded-xl flex items-center justify-center font-black text-xs transition",
+                              isChosen
+                                ? "bg-brand-blue text-white shadow-xs"
+                                : "bg-card text-muted-foreground border border-border",
                             )}
                           >
                             {opt.key}
                           </span>
-                          <span className="leading-snug pt-0.5">{opt.text}</span>
+                          <span className="leading-snug">{opt.text}</span>
                         </button>
                       );
                     })}
@@ -627,7 +629,7 @@ export default function CambridgeStudentExam() {
                       placeholder="Nhập từ hoặc cụm từ cần điền..."
                       value={selectedVal}
                       onChange={(e) => setAnswers({ ...answers, [item.id]: e.target.value })}
-                      className="bg-card border-border text-foreground max-w-sm text-sm font-semibold focus:border-brand-blue focus:ring-1 focus:ring-brand-blue"
+                      className="bg-background border-2 border-brand-blue/30 text-foreground max-w-sm h-11 px-3.5 rounded-xl text-base sm:text-sm font-bold shadow-xs focus:border-brand-blue focus:ring-3 focus:ring-brand-blue/20"
                     />
                   </div>
                 )}
@@ -731,9 +733,14 @@ export default function CambridgeStudentExam() {
 
               {/* PHẦN 2: CÁC CÂU HỎI ĐỘC LẬP */}
               {standaloneItems.length > 0 && (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-xs font-black text-muted-foreground uppercase tracking-wider">
-                    <span>Câu hỏi trắc nghiệm độc lập ({standaloneItems.length} câu)</span>
+                <div className="space-y-4 pt-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-black text-brand-blue uppercase tracking-wider">
+                      CÂU HỎI TRẮC NGHIỆM ĐỘC LẬP
+                    </span>
+                    <span className="text-xs font-bold text-muted-foreground">
+                      ({standaloneItems.length} câu)
+                    </span>
                   </div>
                   <div className="space-y-4">
                     {standaloneItems.map((item: any, sIdx: number) => renderQuestionCard(item, sIdx + 1))}
@@ -787,35 +794,39 @@ export default function CambridgeStudentExam() {
                     key={audioId}
                     className="bg-card border border-border rounded-3xl p-5 sm:p-6 space-y-6 shadow-sm"
                   >
-                    {/* Bảng điều khiển Player chuẩn Academic Audio Player */}
-                    <div className="bg-muted/30 border border-brand-blue/20 rounded-2xl p-4 sm:p-5 space-y-4">
-                      <div className="flex flex-wrap items-center justify-between gap-3">
-                        <div className="flex items-center gap-3">
+                    {/* Bảng điều khiển Player chuẩn Academic Audio Player (Ảnh 2) */}
+                    <div className="bg-card border border-brand-blue/25 rounded-2xl p-4 sm:p-5 shadow-xs space-y-3.5">
+                      <div className="flex flex-wrap items-center justify-between gap-4">
+                        <div className="flex items-center gap-3.5">
                           <button
                             type="button"
                             disabled={!canPlay && !isCurrent}
                             onClick={() => handlePlayAudio(audioId)}
                             className={cn(
-                              "w-12 h-12 rounded-full flex items-center justify-center text-white shadow-md transition-all active:scale-95 cursor-pointer shrink-0",
+                              "w-11 h-11 rounded-2xl flex items-center justify-center text-white shadow-md transition-transform active:scale-95 cursor-pointer shrink-0",
                               isCurrent
                                 ? "bg-amber-500 hover:bg-amber-600 animate-pulse"
                                 : canPlay
-                                ? "bg-brand-blue hover:bg-brand-blue/90"
+                                ? "bg-brand-blue hover:bg-brand-blue-hover"
                                 : "bg-muted text-muted-foreground cursor-not-allowed",
                             )}
+                            title={isCurrent ? "Tạm dừng" : "Phát audio"}
                           >
                             {isCurrent ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current ml-0.5" />}
                           </button>
                           <div>
                             <div className="flex items-center gap-2">
-                              <h3 className="font-extrabold text-sm sm:text-base text-foreground">
-                                {track.task}
-                              </h3>
-                              <Badge variant="outline" className="text-[10px] bg-brand-blue/10 text-brand-blue border-brand-blue/20 font-bold">
-                                {items.length} câu hỏi
-                              </Badge>
+                              <span className="font-extrabold text-sm sm:text-base text-foreground">
+                                {track.task || "Audio Khảo Thí"}
+                              </span>
+                              {isCurrent && (
+                                <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                  Đang phát
+                                </span>
+                              )}
                             </div>
-                            <p className="text-xs text-muted-foreground mt-0.5">
+                            <p className="text-xs text-muted-foreground mt-0.5 font-medium">
                               Mã track: <span className="font-mono font-bold text-foreground">{audioId}</span> • Đã nghe: <span className={plays >= 2 ? "text-amber-600 font-bold" : "font-bold text-brand-blue"}>{plays}/2 lần</span>
                             </p>
                           </div>
