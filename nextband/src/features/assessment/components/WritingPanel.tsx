@@ -51,20 +51,14 @@ export function WritingPanel({
 
   return (
     <div className="max-w-3xl mx-auto space-y-5">
-      {/* Section Header Card */}
-      <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-brand-blue-soft/30 to-background border border-border shadow-xs flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-brand-blue text-white flex items-center justify-center shadow-xs">
-            <PenTool className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="font-extrabold text-base text-foreground">{title}</h3>
-            <p className="text-xs text-muted-foreground">
-              Viết đoạn văn ngắn (khuyến nghị 100–150 từ, tối đa {maxWords} từ). Thí sinh có thể làm bài hoặc bỏ qua nếu chưa tự tin.
-            </p>
-          </div>
+      {/* Writing Instructions & Live Status Header */}
+      <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-brand-blue-soft/30 to-background border border-border shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <p className="text-xs sm:text-sm text-foreground/90 font-medium leading-relaxed">
+            Viết đoạn văn ngắn (khuyến nghị 100–150 từ, tối đa {maxWords} từ). Thí sinh có thể làm bài hoặc bỏ qua nếu chưa tự tin.
+          </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           {pasteCount > 0 && (
             <Badge
               variant="outline"
@@ -74,10 +68,6 @@ export function WritingPanel({
               Dán {pasteCount} lần
             </Badge>
           )}
-          <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-brand-blue/10 text-brand-blue border border-brand-blue/20">
-            <Clock className="w-3 h-3" />
-            Gợi ý: ~20 phút
-          </span>
           <Badge
             variant="outline"
             className={`text-xs font-bold ${

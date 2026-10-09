@@ -3,6 +3,7 @@
 !nextband/schema.sql
 !prisma/migrations/**/*.sql
 !prisma/migrations/*.sql
+!server/data/cambridge/*.json
 node_modules/
 dist/
 .env

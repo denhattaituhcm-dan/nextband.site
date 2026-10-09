@@ -1,10 +1,8 @@
 import React from "react";
-import { Headphones, Clock, Bookmark } from "lucide-react";
+import { Bookmark } from "lucide-react";
 import { AssessmentQuestion } from "../domain/assessment.types";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { FillBlankHtmlRenderer, hasFillBlankPlaceholders } from "@/components/exam/FillBlankHtmlRenderer";
 import { AcademicAudioPlayer } from "./AcademicAudioPlayer";
 import { sanitizeHtml } from "@/lib/sanitize";
@@ -51,33 +49,8 @@ export function ListeningPanel({
 
   return (
     <div className="w-full space-y-6">
-      {/* Audio Player Card with Distinct Visual Separation */}
-      <Card className="rounded-3xl border-2 border-brand-blue/25 bg-gradient-to-b from-brand-blue-soft/30 via-card to-card shadow-md shadow-brand-blue/5 overflow-hidden">
-        <CardContent className="p-5 sm:p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-blue to-blue-700 text-white flex items-center justify-center shadow-md shadow-brand-blue/20">
-                <Headphones className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="font-extrabold text-base text-foreground">Listening</h3>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-brand-blue/10 text-brand-blue border border-brand-blue/20">
-                <Clock className="w-3 h-3" />
-                ~10 phút
-              </span>
-              <span className="hidden sm:inline-block px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/10 text-amber-600 border border-amber-500/20">
-                Phát 1 lần
-              </span>
-            </div>
-          </div>
-
-          {/* High Fidelity Academic Audio Player */}
-          <AcademicAudioPlayer audioUrl={audioUrl} />
-        </CardContent>
-      </Card>
+      {/* High Fidelity Academic Audio Player */}
+      <AcademicAudioPlayer audioUrl={audioUrl} />
 
       {/* Questions List */}
       <div className="space-y-4">
