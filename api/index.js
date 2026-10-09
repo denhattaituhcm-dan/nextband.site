@@ -99318,8 +99318,7 @@ async function verifyAndResolveUser(request) {
           where: {
             OR: [
               { userId },
-              { id: userId },
-              ...email ? [{ email: email.toLowerCase() }] : []
+              { id: userId }
             ]
           },
           include: { roles: true }

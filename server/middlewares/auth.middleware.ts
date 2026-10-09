@@ -123,7 +123,6 @@ async function verifyAndResolveUser(request: FastifyRequest): Promise<DecodedTok
             OR: [
               { userId: userId },
               { id: userId },
-              ...(email ? [{ email: email.toLowerCase() }] : []),
             ],
           },
           include: { roles: true },
