@@ -48,6 +48,10 @@ export default function CambridgeStudentExam() {
   const [audioPlays, setAudioPlays] = useState<Record<string, number>>({});
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [currentAudioUrl, setCurrentAudioUrl] = useState<string | null>(null);
+  const [currentAudioId, setCurrentAudioId] = useState<string | null>(null);
+  const [audioProgress, setAudioProgress] = useState(0); // 0 to 100
+  const [audioDuration, setAudioDuration] = useState(0);
+  const [audioCurrentTime, setAudioCurrentTime] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Modals & States
@@ -85,16 +89,17 @@ export default function CambridgeStudentExam() {
   const handlePlayAudio = (audioId: string) => {
     const plays = audioPlays[audioId] || 0;
     if (plays >= 2) {
-      alert("Bạn đã nghe tối đa 2 lần cho phần này.");
+      alert("Con đã nghe tối đa 2 lần cho phần này rồi nhé.");
       return;
     }
 
     const audioUrl = cambridgeApi.getAudioUrl(audioId);
     if (currentAudioUrl !== audioUrl) {
       setCurrentAudioUrl(audioUrl);
+      setCurrentAudioId(audioId);
       if (audioRef.current) {
         audioRef.current.src = audioUrl;
-        audioRef.current.play();
+        audioRef.current.play().catch((e) => console.warn("Audio play error:", e));
         setIsPlayingAudio(true);
         setAudioPlays({ ...audioPlays, [audioId]: plays + 1 });
       }
@@ -104,11 +109,28 @@ export default function CambridgeStudentExam() {
           audioRef.current.pause();
           setIsPlayingAudio(false);
         } else {
-          audioRef.current.play();
+          audioRef.current.play().catch((e) => console.warn("Audio play error:", e));
           setIsPlayingAudio(true);
         }
       }
     }
+  };
+
+  const handleAudioTimeUpdate = () => {
+    if (audioRef.current) {
+      const cur = audioRef.current.currentTime || 0;
+      const dur = audioRef.current.duration || 1;
+      setAudioCurrentTime(cur);
+      setAudioDuration(dur);
+      setAudioProgress(Math.min(100, Math.round((cur / dur) * 100)));
+    }
+  };
+
+  const formatAudioTime = (sec: number) => {
+    if (!sec || isNaN(sec)) return "00:00";
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m < 10 ? "0" : ""}${m}:${s < 10 ? "0" : ""}${s}`;
   };
 
   // Submit Core -> Check Gate (Seamless & Neutral Transition)
@@ -204,10 +226,15 @@ export default function CambridgeStudentExam() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col select-none">
-      {/* Hidden audio element */}
+      {/* Hidden audio element with reactive progress tracking */}
       <audio
         ref={audioRef}
-        onEnded={() => setIsPlayingAudio(false)}
+        onEnded={() => {
+          setIsPlayingAudio(false);
+          setAudioProgress(100);
+        }}
+        onTimeUpdate={handleAudioTimeUpdate}
+        onLoadedMetadata={handleAudioTimeUpdate}
         className="hidden"
       />
 
@@ -565,138 +592,228 @@ export default function CambridgeStudentExam() {
         {/* ======================================================== */}
         {/* SKILL: LISTENING                                         */}
         {/* ======================================================== */}
-        {currentSection === "listening" && (
-          <div className="space-y-6">
-            {/* Audio controllers for Listening */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4">
-              <h3 className="font-bold text-sm text-purple-300 flex items-center gap-2">
-                <Volume2 className="w-4 h-4" /> Băng ghi âm bài Nghe (Listening Tracks)
-              </h3>
-              <p className="text-xs text-slate-400">
-                Nhấn "Phát âm thanh" để nghe bài thi. Mỗi bài nghe được phép phát tối đa 2 lần. Không thể tua nhanh/tua chậm.
-              </p>
+        {currentSection === "listening" && (() => {
+          // 1. Phân nhóm items bài Nghe theo audioId hoặc Task
+          const taskMap: Record<string, { track: any; items: any[] }> = {};
+          
+          (content?.audio || []).forEach((tr: any) => {
+            // Lọc các item thuộc track này
+            const itemsForTrack = sectionItems.filter((it: any) => it.audioId === tr.id);
+            // Chỉ hiển thị task nếu thuộc stage hiện tại của thí sinh (Extension hay Core)
+            const isTrackAllowed = tr.stage === "core" || session.extensionAllowed;
+            if (isTrackAllowed && itemsForTrack.length > 0) {
+              taskMap[tr.id] = {
+                track: tr,
+                items: itemsForTrack,
+              };
+            }
+          });
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 pt-2">
-                {(content?.audio || []).map((track: any) => {
-                  const plays = audioPlays[track.id] || 0;
-                  const isCurrent = currentAudioUrl === cambridgeApi.getAudioUrl(track.id) && isPlayingAudio;
-                  const canPlay = plays < 2;
+          return (
+            <div className="space-y-8">
+              {/* Lời dặn khảo thí tổng quan */}
+              <div className="bg-purple-950/30 border border-purple-500/30 rounded-2xl p-4 flex items-start gap-3.5">
+                <div className="w-8 h-8 rounded-xl bg-purple-600/30 border border-purple-500/50 flex items-center justify-center text-purple-300 shrink-0 mt-0.5">
+                  <Volume2 className="w-4 h-4" />
+                </div>
+                <div className="text-xs space-y-1">
+                  <div className="font-bold text-purple-200">Hướng dẫn làm bài thi Nghe (Cambridge Listening Exam)</div>
+                  <p className="text-slate-300 leading-relaxed">
+                    Bài thi gồm các phần (Task) riêng biệt. Con hãy nhấn nút <strong className="text-white">"Phát âm thanh"</strong> ngay tại phần bài làm tương ứng. Mỗi file nghe con được phép bấm nghe tối đa <strong>2 lần</strong>. Vừa nghe con vừa tích chọn đáp án hoặc gõ câu trả lời vào ô trống bên dưới nhé!
+                  </p>
+                </div>
+              </div>
 
-                  return (
-                    <div key={track.id} className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between space-y-3">
-                      <div>
-                        <div className="font-bold text-xs text-white">{track.task}</div>
-                        <div className="text-[11px] text-slate-500 mt-0.5">
-                          Đã nghe: <span className="font-mono text-purple-400 font-bold">{plays}/2 lần</span>
+              {/* Danh sách từng Task nghe kèm Audio Player & câu hỏi của Task đó */}
+              {Object.entries(taskMap).map(([audioId, { track, items }]) => {
+                const plays = audioPlays[audioId] || 0;
+                const isCurrent = currentAudioId === audioId && isPlayingAudio;
+                const canPlay = plays < 2;
+
+                return (
+                  <div
+                    key={audioId}
+                    className="bg-slate-900/80 border border-slate-800 rounded-3xl p-5 sm:p-6 space-y-6 shadow-xl"
+                  >
+                    {/* Header của Task + Bảng điều khiển Player gắn liền */}
+                    <div className="bg-slate-950/90 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-4">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-xl bg-purple-600/20 border border-purple-500/40 flex items-center justify-center font-black text-purple-400 text-xs">
+                            {track.task.split(" ")[0]}
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-sm sm:text-base text-white">
+                              {track.task}
+                            </h3>
+                            <p className="text-xs text-slate-400 mt-0.5">
+                              {items.length} câu hỏi • Mã track: <span className="font-mono text-purple-400">{audioId}</span>
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Nút phát và đếm số lượt nghe */}
+                        <div className="flex items-center gap-3">
+                          <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300">
+                            Đã nghe: <span className={plays >= 2 ? "text-amber-400" : "text-purple-400"}>{plays}/2 lần</span>
+                          </span>
+
+                          <Button
+                            size="sm"
+                            disabled={!canPlay && !isCurrent}
+                            onClick={() => handlePlayAudio(audioId)}
+                            className={`text-xs font-bold px-4 py-2 rounded-xl shadow-md transition ${
+                              isCurrent
+                                ? "bg-amber-600 hover:bg-amber-700 text-white animate-pulse"
+                                : canPlay
+                                ? "bg-purple-600 hover:bg-purple-700 text-white"
+                                : "bg-slate-800 text-slate-500 cursor-not-allowed"
+                            }`}
+                          >
+                            {isCurrent ? (
+                              <>
+                                <Pause className="w-4 h-4 mr-1.5" /> Tạm dừng
+                              </>
+                            ) : (
+                              <>
+                                <Play className="w-4 h-4 mr-1.5" /> {plays > 0 ? "Nghe lại lần 2" : "Phát âm thanh"}
+                              </>
+                            )}
+                          </Button>
                         </div>
                       </div>
 
-                      <Button
-                        size="sm"
-                        disabled={!canPlay && !isCurrent}
-                        onClick={() => handlePlayAudio(track.id)}
-                        className={`text-xs font-bold ${
-                          isCurrent
-                            ? "bg-amber-600 hover:bg-amber-700 text-white"
-                            : canPlay
-                            ? "bg-purple-600 hover:bg-purple-700 text-white"
-                            : "bg-slate-800 text-slate-500 cursor-not-allowed"
-                        }`}
-                      >
-                        {isCurrent ? (
-                          <>
-                            <Pause className="w-3.5 h-3.5 mr-1.5" /> Tạm dừng
-                          </>
-                        ) : (
-                          <>
-                            <Play className="w-3.5 h-3.5 mr-1.5" /> Phát âm thanh ({track.task})
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Form Listening Gap-fill Part 3 nếu có */}
-            {content?.meta?.listeningGapForm && (
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
-                <h4 className="font-bold text-xs text-purple-400 uppercase tracking-wider">
-                  Bảng thông tin điền từ: {content.meta.listeningGapForm.title}
-                </h4>
-                <div className="bg-slate-950 rounded-xl p-4 border border-slate-800 space-y-2 text-xs">
-                  {content.meta.listeningGapForm.rows.map((row: string[], idx: number) => (
-                    <div key={idx} className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800/60 pb-2">
-                      <span className="text-slate-400 font-medium">{row[0]}</span>
-                      <span className="text-purple-300 font-mono mt-1 sm:mt-0">{row[1]}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Listening Items */}
-            <div className="space-y-4">
-              {sectionItems.map((item: any, idx: number) => {
-                const selectedVal = answers[item.id] || "";
-                return (
-                  <div key={item.id} className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-mono font-bold text-purple-400 bg-purple-950/60 px-2 py-0.5 rounded border border-purple-800/50">
-                        Câu {idx + 1} ({item.id}) • {item.task}
-                      </span>
-                      <span className="text-[11px] text-slate-500 uppercase">
-                        Track: {item.audioId} • {item.type}
-                      </span>
+                      {/* Thanh Progress thời gian thực khi đang phát track này */}
+                      {currentAudioId === audioId && (
+                        <div className="space-y-1.5 pt-2 border-t border-slate-800/80">
+                          <div className="flex justify-between text-[11px] font-mono text-slate-400">
+                            <span className="text-purple-300 font-bold">{formatAudioTime(audioCurrentTime)}</span>
+                            <span>{formatAudioTime(audioDuration)}</span>
+                          </div>
+                          <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div
+                              className="bg-purple-500 h-full transition-all duration-300 rounded-full"
+                              style={{ width: `${audioProgress}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
 
-                    <p className="text-sm text-slate-100 font-medium">{item.prompt}</p>
-
-                    {item.type === "mcq" && item.options && (
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2">
-                        {item.options.map((opt: any) => {
-                          const isChosen = selectedVal === opt.key;
-                          return (
-                            <button
-                              key={opt.key}
-                              onClick={() => setAnswers({ ...answers, [item.id]: opt.key })}
-                              className={`flex items-center gap-3 p-3 rounded-xl border text-left text-xs font-medium transition ${
-                                isChosen
-                                  ? "bg-purple-600/20 border-purple-500 text-white shadow-sm"
-                                  : "bg-slate-950/60 border-slate-800 text-slate-300 hover:bg-slate-800"
-                              }`}
-                            >
-                              <span
-                                className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs ${
-                                  isChosen ? "bg-purple-600 text-white" : "bg-slate-800 text-slate-400"
-                                }`}
-                              >
-                                {opt.key}
+                    {/* Trường hợp đặc biệt: Task 3 (AUD-T3) kèm Form tóm tắt ghi chú (Zoo project day - notes) */}
+                    {audioId === "AUD-T3" && content?.meta?.listeningGapForm && (
+                      <div className="bg-slate-950 border border-purple-500/30 rounded-2xl p-5 space-y-3">
+                        <div className="flex items-center gap-2 text-xs font-bold text-purple-400 uppercase tracking-wider">
+                          <BookOpen className="w-4 h-4" /> Bảng tóm tắt nội dung nghe: {content.meta.listeningGapForm.title}
+                        </div>
+                        <p className="text-xs text-slate-400 italic">
+                          Con hãy nghe đoạn hội thoại và điền thông tin vào các chỗ trống (11) đến (15) tương ứng ở bên dưới:
+                        </p>
+                        <div className="bg-slate-900/90 rounded-xl p-4 border border-slate-800 divide-y divide-slate-800/60 text-xs">
+                          {content.meta.listeningGapForm.rows.map((row: string[], rIdx: number) => (
+                            <div key={rIdx} className="py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                              <span className="text-slate-300 font-medium">{row[0]}</span>
+                              <span className="text-purple-300 font-mono font-bold bg-slate-950 px-3 py-1 rounded-lg border border-slate-800">
+                                {row[1]}
                               </span>
-                              <span>{opt.text}</span>
-                            </button>
-                          );
-                        })}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
 
-                    {item.type === "gap_fill" && (
-                      <div className="pt-2">
-                        <Input
-                          placeholder="Nhập từ / số cần điền..."
-                          value={selectedVal}
-                          onChange={(e) => setAnswers({ ...answers, [item.id]: e.target.value })}
-                          className="bg-slate-950 border-slate-800 text-white max-w-sm"
-                        />
-                      </div>
-                    )}
+                    {/* Danh sách các câu hỏi gắn liền với Task nghe này */}
+                    <div className="space-y-4">
+                      {items.map((item: any, itIdx: number) => {
+                        const selectedVal = answers[item.id] || "";
+                        const isAnswered = selectedVal !== undefined && selectedVal !== null && selectedVal !== "";
+
+                        return (
+                          <div
+                            key={item.id}
+                            className={`bg-slate-950/70 border rounded-2xl p-4 sm:p-5 space-y-3 transition shadow-sm ${
+                              isAnswered ? "border-purple-500/50 bg-slate-950/90" : "border-slate-800 hover:border-slate-700"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-mono font-bold text-purple-300 bg-purple-950/80 px-2.5 py-1 rounded-lg border border-purple-800/60">
+                                  {item.id}
+                                </span>
+                                <span className="text-xs font-medium text-slate-400">{item.task}</span>
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                {item.band && (
+                                  <Badge variant="outline" className="border-slate-800 text-slate-400 text-[10px]">
+                                    Band {item.band}
+                                  </Badge>
+                                )}
+                                {isAnswered && (
+                                  <span className="flex items-center gap-1 text-[11px] text-emerald-400 font-semibold bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-800/50">
+                                    <CheckCircle2 className="w-3 h-3" /> Đã trả lời
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            <p className="text-sm text-slate-100 font-medium leading-relaxed">
+                              {item.prompt}
+                            </p>
+
+                            {/* Dạng trắc nghiệm MCQ */}
+                            {item.type === "mcq" && item.options && (
+                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                                {item.options.map((opt: any) => {
+                                  const isChosen = String(selectedVal).trim().toUpperCase() === String(opt.key).trim().toUpperCase();
+                                  return (
+                                    <button
+                                      key={opt.key}
+                                      type="button"
+                                      onClick={() => setAnswers({ ...answers, [item.id]: opt.key })}
+                                      className={`flex items-start gap-3 p-3 rounded-xl border text-left text-xs font-medium transition cursor-pointer ${
+                                        isChosen
+                                          ? "bg-purple-600/25 border-purple-400 text-white shadow-md ring-1 ring-purple-400"
+                                          : "bg-slate-900/80 border-slate-800 text-slate-300 hover:bg-slate-800 hover:border-slate-700"
+                                      }`}
+                                    >
+                                      <span
+                                        className={`w-6 h-6 shrink-0 rounded-full flex items-center justify-center font-bold text-xs ${
+                                          isChosen ? "bg-purple-600 text-white" : "bg-slate-800 text-slate-400"
+                                        }`}
+                                      >
+                                        {opt.key}
+                                      </span>
+                                      <span className="pt-0.5 leading-snug">{opt.text}</span>
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            )}
+
+                            {/* Dạng điền từ Gap fill */}
+                            {item.type === "gap_fill" && (
+                              <div className="pt-1 flex flex-col sm:flex-row sm:items-center gap-3">
+                                <Input
+                                  placeholder="Nhập từ hoặc số con nghe được..."
+                                  value={selectedVal}
+                                  onChange={(e) => setAnswers({ ...answers, [item.id]: e.target.value })}
+                                  className="bg-slate-900 border-slate-700 text-white max-w-sm text-sm font-medium focus:border-purple-500"
+                                />
+                                <span className="text-[11px] text-slate-500 italic">
+                                  (Ví dụ: tên riêng viết hoa, số viết chữ hoặc số)
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 );
               })}
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* ======================================================== */}
         {/* SKILL: WRITING                                           */}
