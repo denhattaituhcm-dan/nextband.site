@@ -4553,7 +4553,7 @@ export const cambridgeApi = {
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || "Không thể tạo phòng thi");
+      throw new Error(err.message || err.error || `HTTP ${res.status}: Không thể tạo phòng thi`);
     }
     return (await res.json()) as { success: boolean; data: CambridgeRoomSummary };
   },
