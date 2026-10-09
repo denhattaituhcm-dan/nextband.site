@@ -341,6 +341,8 @@ export class CambridgePlacementService {
         audioId: i.audioId,
         audioFile: i.audioFile,
         passageKey: i.passageKey,
+        passageId: i.passageId || i.passageKey,
+        gapNumber: i.gapNumber || i.gap,
         gap: i.gap,
       }));
 
