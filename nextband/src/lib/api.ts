@@ -4742,7 +4742,17 @@ export const cambridgeApi = {
     return await res.json();
   },
 
-  getAudioUrl: (filename: string) => `${API_BASE_URL}/cambridge/audio/${encodeURIComponent(filename)}`,
+  getAudioUrl: (filename: string) => {
+    const map: Record<string, string> = {
+      "AUD-T1": "task1.mp3",
+      "AUD-T2": "task2.mp3",
+      "AUD-T3": "task3.mp3",
+      "AUD-T4": "task4.mp3",
+      "AUD-T5": "task5.mp3",
+    };
+    const mapped = map[filename] || filename.toLowerCase().replace(/\s+/g, "");
+    return `/cambridge/audio/${mapped}`;
+  },
 };
 
 export const speakingForecastApi = {

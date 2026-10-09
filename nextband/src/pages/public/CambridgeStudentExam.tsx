@@ -790,7 +790,7 @@ export default function CambridgeStudentExam() {
                 <div className="text-xs space-y-1">
                   <div className="font-extrabold text-brand-blue">Hướng dẫn làm bài thi Nghe (Cambridge Listening Exam)</div>
                   <p className="text-muted-foreground leading-relaxed">
-                    Bài thi gồm các phần (Task) riêng biệt. Con hãy nhấn nút <strong className="text-foreground">"Phát âm thanh"</strong> ngay tại khung điều khiển của từng phần. Mỗi file nghe con được phép bấm nghe tối đa <strong>2 lần</strong>. Vừa nghe con vừa tích chọn đáp án hoặc gõ câu trả lời vào ô trống bên dưới nhé!
+                    Bài thi gồm các phần (Task) riêng biệt. Mỗi file audio đã được biên tập chuẩn Cambridge với <strong className="text-foreground">2 lần phát tự động</strong> (có khoảng nghỉ). Con chỉ cần bấm <strong className="text-foreground">"Phát âm thanh"</strong> một lần, theo dõi bài nghe và tích chọn đáp án hoặc điền từ vào ô trống nhé!
                   </p>
                 </div>
               </div>
@@ -834,12 +834,12 @@ export default function CambridgeStudentExam() {
                               {isCurrent && (
                                 <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                                  Đang phát
+                                  Đang phát (Tự động 2 lần)
                                 </span>
                               )}
                             </div>
                             <p className="text-xs text-muted-foreground mt-0.5 font-medium">
-                              Mã track: <span className="font-mono font-bold text-foreground">{audioId}</span> • Đã nghe: <span className={plays >= 2 ? "text-amber-600 font-bold" : "font-bold text-brand-blue"}>{plays}/2 lần</span>
+                              Tự động phát 2 lần theo chuẩn thi • <span className="font-mono font-bold text-foreground">{audioId}</span>
                             </p>
                           </div>
                         </div>
@@ -911,6 +911,8 @@ export default function CambridgeStudentExam() {
                       {items.map((item: any) => {
                         const selectedVal = answers[item.id] || "";
                         const isAnswered = selectedVal !== undefined && selectedVal !== null && selectedVal !== "";
+                        const itemNumberMatch = item.id.match(/\d+/);
+                        const questionNumber = item.gapNumber || (itemNumberMatch ? parseInt(itemNumberMatch[0], 10) : item.id);
 
                         return (
                           <div
@@ -926,9 +928,8 @@ export default function CambridgeStudentExam() {
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
                                 <span className="text-xs font-mono font-black text-brand-blue bg-brand-blue/10 px-2.5 py-1 rounded-lg border border-brand-blue/20">
-                                  Câu {item.gapNumber || item.id}
+                                  Câu {questionNumber}
                                 </span>
-                                <span className="text-xs font-semibold text-muted-foreground">{item.task}</span>
                               </div>
                               <div className="flex items-center gap-1.5">
                                 {item.band && (
