@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
-const oldDirectUrl = "postgresql://postgres.gzpdlqxjggyxlkeatvvf:anhxtanhmat1@aws-0-ap-southeast-2.pooler.supabase.com:5432/postgres";
-const newDirectUrl = "postgresql://postgres:anhxtanhmat1@db.dmamqxiukfiyhfbbcqsq.supabase.co:5432/postgres";
+const oldDirectUrl = process.env.DIRECT_URL || process.env.DATABASE_URL || "";
+const newDirectUrl = process.env.DIRECT_URL || process.env.DATABASE_URL || "";
 
 const prismaOld = new PrismaClient({ datasources: { db: { url: oldDirectUrl } } });
 const prismaNew = new PrismaClient({ datasources: { db: { url: newDirectUrl } } });

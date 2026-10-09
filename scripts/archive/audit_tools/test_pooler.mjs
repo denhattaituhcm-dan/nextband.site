@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
-const poolerUrl = "postgresql://postgres.gzpdlqxjggyxlkeatvvf:anhxtanhmat1@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=10";
-const directUrl = "postgresql://postgres:anhxtanhmat1@db.gzpdlqxjggyxlkeatvvf.supabase.co:5432/postgres";
+const poolerUrl = process.env.DIRECT_URL || process.env.DATABASE_URL || "";
+const directUrl = process.env.DIRECT_URL || process.env.DATABASE_URL || "";
 
 async function testConnection(name, url) {
   console.log(`\nTesting ${name}...`);
@@ -28,7 +28,7 @@ async function testConnection(name, url) {
 async function main() {
   await testConnection("Direct Port 5432", directUrl);
   // Also test standard db host on 6543
-  await testConnection("Direct Host Port 6543", "postgresql://postgres:anhxtanhmat1@db.gzpdlqxjggyxlkeatvvf.supabase.co:6543/postgres?pgbouncer=true");
+  await testConnection("Direct Host Port 6543", process.env.DIRECT_URL || process.env.DATABASE_URL || "");
   // Test Pooler host on 6543
   await testConnection("Supabase Pooler Port 6543", poolerUrl);
 }

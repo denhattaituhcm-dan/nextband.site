@@ -1,8 +1,8 @@
 import pg from "pg";
 const { Client } = pg;
 
-const OLD_DIRECT = "postgresql://postgres.gzpdlqxjggyxlkeatvvf:anhxtanhmat1@aws-0-ap-southeast-2.pooler.supabase.com:5432/postgres";
-const NEW_DIRECT = "postgresql://postgres:anhxtanhmat1@db.dmamqxiukfiyhfbbcqsq.supabase.co:5432/postgres";
+const OLD_DIRECT = process.env.DIRECT_URL || process.env.DATABASE_URL || "";
+const NEW_DIRECT = process.env.DIRECT_URL || process.env.DATABASE_URL || "";
 
 async function checkAuth() {
   const oldClient = new Client({ connectionString: OLD_DIRECT, ssl: { rejectUnauthorized: false } });

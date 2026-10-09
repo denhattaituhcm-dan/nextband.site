@@ -12,7 +12,7 @@ async function verifyUploadArchitecture() {
 
   // 1. Build and boot Fastify instance
   process.env.JWT_SECRET = "test-secret-1234567890-test-secret-1234567890";
-  process.env.DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/postgres";
+  process.env.DATABASE_URL = process.env.DIRECT_URL || process.env.DATABASE_URL || "";
   const app = await buildApp();
   await app.ready();
 

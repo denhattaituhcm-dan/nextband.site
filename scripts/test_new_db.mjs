@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
-const newDirectUrl = "postgresql://postgres:anhxtanhmat1@db.dmamqxiukfiyhfbbcqsq.supabase.co:5432/postgres";
-const newPoolerUrl = "postgresql://postgres.dmamqxiukfiyhfbbcqsq:anhxtanhmat1@aws-0-ap-south-1.pooler.supabase.com:6543/postgres?pgbouncer=true";
+const newDirectUrl = process.env.DIRECT_URL || process.env.DATABASE_URL || "";
+const newPoolerUrl = process.env.DIRECT_URL || process.env.DATABASE_URL || "";
 
 async function testConnection(name, url) {
   console.log(`Testing ${name}...`);

@@ -1,7 +1,7 @@
 import pg from "pg";
 const { Client } = pg;
 
-const NEW_DIRECT = "postgresql://postgres:anhxtanhmat1@db.dmamqxiukfiyhfbbcqsq.supabase.co:5432/postgres";
+const NEW_DIRECT = process.env.DIRECT_URL || process.env.DATABASE_URL || "";
 
 async function updateUrls() {
   const client = new Client({ connectionString: NEW_DIRECT, ssl: { rejectUnauthorized: false } });
