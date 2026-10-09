@@ -50,10 +50,8 @@ export default function CambridgeStudentExam() {
   const [currentAudioUrl, setCurrentAudioUrl] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Modals
+  // Modals & States
   const [isGateChecking, setIsGateChecking] = useState(false);
-  const [gateResult, setGateResult] = useState<any>(null);
-  const [showGateModal, setShowGateModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 
@@ -113,19 +111,31 @@ export default function CambridgeStudentExam() {
     }
   };
 
-  // Submit Core -> Check Gate
+  // Submit Core -> Check Gate (Seamless & Neutral Transition)
   const handleCompleteCore = async () => {
     if (!testCode) return;
     setIsGateChecking(true);
     try {
-      // Save current answers first
+      // 1. Lưu câu trả lời hiện tại trước
       await cambridgeApi.saveAnswers(testCode, answers);
+      // 2. Server đánh giá Gate
       const res = await cambridgeApi.evaluateGate(testCode);
-      setGateResult(res.data);
-      setShowGateModal(true);
-      refetch();
+      const isPassed = Boolean(res?.data?.gatePassed || res?.data?.extensionAllowed);
+      
+      // 3. Tự động đồng bộ dữ liệu phiên thi
+      await refetch();
+
+      if (isPassed) {
+        // Đủ điều kiện vào Extension: thông báo trung tính, tự động mở phần mở rộng
+        alert("Con hãy tiếp tục với phần thi tiếp theo nhé!");
+        setCurrentSection("use_of_english");
+      } else {
+        // Hoàn thành Core: tự động nộp bài và chuyển màn hình hoàn tất trung tính
+        await cambridgeApi.submitTest(testCode, answers);
+        setIsCompleted(true);
+      }
     } catch (err: any) {
-      alert("Lỗi khi kiểm tra Gate: " + err.message);
+      alert("Đã xảy ra lỗi khi hoàn thành phần thi: " + err.message);
     } finally {
       setIsGateChecking(false);
     }
@@ -181,9 +191,9 @@ export default function CambridgeStudentExam() {
         <div className="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-500 text-emerald-400 flex items-center justify-center mb-4">
           <CheckCircle2 className="w-8 h-8" />
         </div>
-        <h2 className="text-2xl font-black">Nộp bài thành công!</h2>
-        <p className="text-sm text-slate-400 max-w-md mt-2">
-          Cảm ơn bạn <strong>{session.candidateName}</strong> đã hoàn thành bài thi Cambridge Placement Test. Giáo viên sẽ tiến hành chấm điểm Writing, kiểm tra Speaking và xếp lớp cho bạn trong thời gian sớm nhất!
+        <h2 className="text-2xl font-black">Con đã hoàn thành bài kiểm tra!</h2>
+        <p className="text-sm text-slate-300 max-w-md mt-2 leading-relaxed">
+          Cảm ơn <strong>{session.candidateName}</strong> đã cố gắng hoàn thành bài kiểm tra. Giáo viên sẽ gặp con để trao đổi phần Nói (Speaking) và thông báo kết quả xếp lớp nhé!
         </p>
         <div className="mt-6 bg-slate-900 border border-slate-800 p-4 rounded-xl text-xs font-mono text-slate-400">
           Mã bài thi: <span className="text-purple-400 font-bold">{session.testCode}</span>
@@ -665,78 +675,6 @@ export default function CambridgeStudentExam() {
         )}
       </main>
 
-      {/* Modal Thông Báo Đánh Giá Gate */}
-      <Dialog open={showGateModal} onOpenChange={setShowGateModal}>
-        <DialogContent className="sm:max-w-md bg-slate-900 text-white border-slate-800">
-          <DialogHeader>
-            <DialogTitle className="text-lg font-bold flex items-center gap-2">
-              {gateResult?.gatePassed ? (
-                <>
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400" /> Đạt chuẩn Gate vào Extension!
-                </>
-              ) : (
-                <>
-                  <AlertTriangle className="w-5 h-5 text-amber-400" /> Hoàn thành phần Core
-                </>
-              )}
-            </DialogTitle>
-          </DialogHeader>
-
-          <div className="space-y-4 py-2 text-xs">
-            <p className="text-slate-300 leading-relaxed">
-              Hệ thống đã tự động chấm các câu trắc nghiệm phần Core của bạn:
-            </p>
-            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2 font-mono">
-              <div className="flex justify-between">
-                <span>Điểm Band K:</span>
-                <span className="font-bold text-purple-400">
-                  {gateResult?.coreK} câu đúng (Yêu cầu: &ge; {gateResult?.minK})
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span>Điểm Band K+:</span>
-                <span className="font-bold text-purple-400">
-                  {gateResult?.coreKplus} câu đúng (Yêu cầu: &ge; {gateResult?.minKplus})
-                </span>
-              </div>
-            </div>
-
-            {gateResult?.gatePassed ? (
-              <p className="text-emerald-400 font-medium">
-                🎉 Chúc mừng bạn đã đủ điều kiện tiếp tục làm phần Extension (PET Level) để xếp lớp cao hơn!
-              </p>
-            ) : (
-              <p className="text-slate-400">
-                Bạn đã hoàn thành trọn vẹn phần thi Core chuẩn đoán cấp độ Flyers và KET. Giáo viên sẽ xem xét chấm điểm Speaking và Writing để xếp lớp chính xác cho bạn.
-              </p>
-            )}
-          </div>
-
-          <DialogFooter>
-            {gateResult?.gatePassed ? (
-              <Button
-                onClick={() => {
-                  setShowGateModal(false);
-                  refetch();
-                }}
-                className="bg-purple-600 hover:bg-purple-700 text-white font-bold"
-              >
-                Tiếp tục làm bài Extension <ChevronRight className="w-4 h-4 ml-1" />
-              </Button>
-            ) : (
-              <Button
-                onClick={() => {
-                  setShowGateModal(false);
-                  handleFinalSubmit();
-                }}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
-              >
-                Hoàn tất & Nộp bài
-              </Button>
-            )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
