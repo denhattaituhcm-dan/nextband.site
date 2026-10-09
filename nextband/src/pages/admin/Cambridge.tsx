@@ -295,13 +295,24 @@ export default function AdminCambridge() {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <Button
-                        size="sm"
-                        onClick={() => setSelectedSessionId(s.id)}
-                        className="bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 font-semibold"
-                      >
-                        <FileEdit className="w-3.5 h-3.5 mr-1" /> Chấm & Xếp lớp
-                      </Button>
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => window.open(`/cambridge/test/${s.testCode}`, "_blank")}
+                          className="text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 text-xs"
+                          title="Mở giao diện làm bài của học sinh"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5 mr-1" /> Làm bài
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => setSelectedSessionId(s.id)}
+                          className="bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 font-semibold"
+                        >
+                          <FileEdit className="w-3.5 h-3.5 mr-1" /> Chấm & Xếp lớp
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))

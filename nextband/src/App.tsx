@@ -125,6 +125,7 @@ const SelfStudyPage = lazyWithRetry(() => import("@/pages/public/SelfStudyPage")
 const BuddyLandingPage = lazyWithRetry(() => import("@/pages/public/BuddyLandingPage"));
 const ParentHubPage = lazyWithRetry(() => import("@/pages/public/ParentHubPage"));
 const DiagnosticLandingPage = lazyWithRetry(() => import("@/pages/public/DiagnosticLandingPage"));
+const CambridgeStudentExam = lazyWithRetry(() => import("@/pages/public/CambridgeStudentExam"));
 
 
 // Lazy-loaded Auth Pages
@@ -377,6 +378,7 @@ const App = () => (
               <Route path="/reading/:caseId" element={<ReadingCasePage />} />
               <Route path="/assessment/take/:sessionId" element={<PlacementExamInterface />} />
               <Route path="/assessment/take" element={<Navigate to="/assessment" replace />} />
+              <Route path="/cambridge/test/:testCode" element={<CambridgeStudentExam />} />
               
               {/* Class Arena Live Routes */}
               <Route

@@ -135,7 +135,10 @@ export class CambridgePlacementService {
         prompt: i.prompt,
         options: i.options,
         matchingKey: i.matchingKey,
+        audioId: i.audioId,
         audioFile: i.audioFile,
+        passageKey: i.passageKey,
+        gap: i.gap,
       }));
 
     return {

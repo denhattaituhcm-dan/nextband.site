@@ -95,11 +95,24 @@ const cambridgeRoutes: FastifyPluginAsync = async (fastify) => {
     "/audio/:filename",
     async (request, reply) => {
       const { filename } = request.params;
-      const safeFilename = path.basename(filename);
+      const audioMap: Record<string, string> = {
+        "AUD-T1": "Task 1.mp3",
+        "AUD-T2": "Task 2.mp3",
+        "AUD-T3": "Task 3.mp3",
+        "AUD-T4": "Task 4.mp3",
+        "AUD-T5": "Task 5.mp3",
+        "task1.mp3": "Task 1.mp3",
+        "task2.mp3": "Task 2.mp3",
+        "task3.mp3": "Task 3.mp3",
+        "task4.mp3": "Task 4.mp3",
+        "task5.mp3": "Task 5.mp3",
+      };
+      const actualFilename = audioMap[filename] || filename;
+      const safeFilename = path.basename(actualFilename);
       const filePath = path.join(audioDir, safeFilename);
 
       if (!fs.existsSync(filePath)) {
-        return reply.status(404).send({ error: "NotFound", message: "Audio file not found" });
+        return reply.status(404).send({ error: "NotFound", message: "Audio file not found: " + safeFilename });
       }
 
       const stat = fs.statSync(filePath);
