@@ -70,7 +70,7 @@ const envSchema = z
     FRONTEND_URL: z.string().default("http://localhost:5173"),
     PREVIEW_ALLOWED_ORIGINS: z.string().optional(),
     TRUST_PROXY_IPS: z.string().optional(), // Comma-separated list of trusted proxy IPs/CIDRs
-    SUPABASE_URL: z.string().default("https://gzpdlqxjggyxlkeatvvf.supabase.co"),
+    SUPABASE_URL: z.string().default("https://qxtpbonwjmxmogriyfox.supabase.co"),
     SUPABASE_JWKS_URL: z.string().optional(),
     SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
     NOTIFICATION_EMAIL_TO: z.string().default("arisieltsdeeplearning@gmail.com"),
@@ -139,7 +139,7 @@ try {
     UPLOAD_DIR: "uploads",
     MAX_FILE_SIZE: "52428800",
     FRONTEND_URL: "http://localhost:5173",
-    SUPABASE_URL: "https://gzpdlqxjggyxlkeatvvf.supabase.co",
+    SUPABASE_URL: "https://qxtpbonwjmxmogriyfox.supabase.co",
     NOTIFICATION_EMAIL_TO: "arisieltsdeeplearning@gmail.com",
   };
 }

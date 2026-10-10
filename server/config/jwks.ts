@@ -2,7 +2,7 @@ import { createRemoteJWKSet } from "jose";
 import { env } from "./env.js";
 
 const getJwksUrl = () => {
-  const base = env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co";
+  const base = env.SUPABASE_URL || "https://qxtpbonwjmxmogriyfox.supabase.co";
   return env.SUPABASE_JWKS_URL || `${base.replace(/\/$/, "")}/auth/v1/.well-known/jwks.json`;
 };
 

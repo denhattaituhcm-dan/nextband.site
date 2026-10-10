@@ -53315,7 +53315,7 @@ var init_env = __esm({
       PREVIEW_ALLOWED_ORIGINS: external_exports.string().optional(),
       TRUST_PROXY_IPS: external_exports.string().optional(),
       // Comma-separated list of trusted proxy IPs/CIDRs
-      SUPABASE_URL: external_exports.string().default("https://gzpdlqxjggyxlkeatvvf.supabase.co"),
+      SUPABASE_URL: external_exports.string().default("https://qxtpbonwjmxmogriyfox.supabase.co"),
       SUPABASE_JWKS_URL: external_exports.string().optional(),
       SUPABASE_SERVICE_ROLE_KEY: external_exports.string().optional(),
       NOTIFICATION_EMAIL_TO: external_exports.string().default("arisieltsdeeplearning@gmail.com"),
@@ -53375,7 +53375,7 @@ var init_env = __esm({
         UPLOAD_DIR: "uploads",
         MAX_FILE_SIZE: "52428800",
         FRONTEND_URL: "http://localhost:5173",
-        SUPABASE_URL: "https://gzpdlqxjggyxlkeatvvf.supabase.co",
+        SUPABASE_URL: "https://qxtpbonwjmxmogriyfox.supabase.co",
         NOTIFICATION_EMAIL_TO: "arisieltsdeeplearning@gmail.com"
       };
     }
@@ -99228,7 +99228,7 @@ function createRemoteJWKSet(url, options) {
 // server/config/jwks.ts
 init_env();
 var getJwksUrl = () => {
-  const base = env.SUPABASE_URL || "https://gzpdlqxjggyxlkeatvvf.supabase.co";
+  const base = env.SUPABASE_URL || "https://qxtpbonwjmxmogriyfox.supabase.co";
   return env.SUPABASE_JWKS_URL || `${base.replace(/\/$/, "")}/auth/v1/.well-known/jwks.json`;
 };
 var supabaseJWKS = createRemoteJWKSet(new URL(getJwksUrl()));
