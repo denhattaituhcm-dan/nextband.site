@@ -29,34 +29,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import {
-  School,
-  User,
   BookOpen,
   Calendar,
   Send,
   Loader2,
-  RefreshCw,
-  GraduationCap,
   Award,
-  ChevronRight,
   FolderOpen,
   AlertTriangle,
   FileText,
   ExternalLink,
-  ShieldAlert,
-  MessageSquare,
-  TrendingDown,
-  TrendingUp,
   Clock,
   Share2,
-  Lightbulb,
-  CheckCircle2,
-  HelpCircle,
 } from "lucide-react";
 import { ProgressReportModal } from "@/components/admin/ProgressReportModal";
+import { WorkbookStatusBadge } from "@/components/admin/WorkbookStatusBadge";
+import { TeacherHeader } from "@/components/admin/TeacherHeader";
+import { TeacherStudentsColumn } from "@/components/admin/TeacherStudentsColumn";
+import { TeacherWorkbookColumn } from "@/components/admin/TeacherWorkbookColumn";
 import {
   deriveSubmissionTiming,
   selectCanonicalSubmission,
@@ -72,10 +63,8 @@ import {
 } from "@/lib/sentenceFeedback";
 import { calculateGradingSla, summarizeSlaStats } from "@/lib/gradingSla";
 import { mapToProgressReportData } from "@/lib/progressReportMapper";
-import { WritingGrader } from "@/components/grading/WritingGrader";
-import { SpeakingGrader } from "@/components/grading/SpeakingGrader";
-import { ExamPreviewPanel } from "@/components/grading/ExamPreviewPanel";
-import { SubmissionOverviewPanel } from "@/components/grading/SubmissionOverviewPanel";
+import { FocusGradingView } from "@/components/admin/FocusGradingView";
+import { TeacherPreviewColumn } from "@/components/admin/TeacherPreviewColumn";
 import {
   detectExamSkill,
   isAutoGradedExam,
@@ -83,8 +72,10 @@ import {
   ExamSkillType,
 } from "@/lib/examSkillHelper";
 
+export type { SentenceFeedbackItem };
+
 // Model Workbook Homework Item (Gắn với Buổi học / Lesson)
-interface WorkbookItem {
+export interface WorkbookItem {
   id: string;
   submissionId?: string;
   answerId?: string;
@@ -1012,689 +1003,121 @@ export default function TeacherWorkspace() {
     }
   };
 
-  // Render Status Badge
-  const renderStatusBadge = (item: WorkbookItem) => {
-    if (item.isOverdue && item.status !== "graded" && item.status !== "submitted") {
-      return (
-        <Badge variant="outline" className="bg-slate-900 text-white border-slate-900 text-[10px]">
-          ⚫ Quá hạn
-        </Badge>
-      );
-    }
 
-    const isManual = item.skill === "speaking" || item.skill === "writing";
-    const totalQ = item.answers?.length || 0;
-    const correctQ = item.objectiveScore ?? item.score ?? item.answers?.filter((a) => a.score && a.score > 0).length ?? 0;
-
-    switch (item.status) {
-      case "graded":
-        if (!isManual || item.isAutoGraded) {
-          return (
-            <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]">
-              🟢 {totalQ > 0 ? `${correctQ}/${totalQ} câu` : "Đã chấm"} {item.submissionTiming?.isLate ? `(Trễ ${item.submissionTiming.lateDays}d)` : ""}
-            </Badge>
-          );
-        }
-        return (
-          <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]">
-            🟢 {item.bandScore != null || item.score != null ? `Band ${item.bandScore ?? item.score}` : "Đã chấm"} {item.submissionTiming?.isLate ? `(Trễ ${item.submissionTiming.lateDays}d)` : ""}
-          </Badge>
-        );
-      case "submitted": {
-        if (!isManual || item.isAutoGraded) {
-          return (
-            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-[10px]">
-              🔵 {totalQ > 0 ? `${correctQ}/${totalQ} câu` : "Đã nộp"}
-            </Badge>
-          );
-        }
-        const sla = calculateGradingSla(item.submittedAt, null, "submitted");
-        let badgeStyle = "bg-blue-50 text-blue-700 border-blue-200";
-        if (sla.status === "OVERDUE") {
-          badgeStyle = "bg-rose-50 text-rose-700 border-rose-200 font-bold";
-        } else if (sla.status === "APPROACHING") {
-          badgeStyle = "bg-amber-50 text-amber-800 border-amber-300 font-bold";
-        }
-        return (
-          <Badge variant="outline" className={`text-[10px] ${badgeStyle}`} title={`Nộp: ${sla.formattedSubmitted} • Hạn SLA: ${sla.formattedDeadline}`}>
-            {sla.badgeText}
-          </Badge>
-        );
-      }
-      case "in_progress":
-        return (
-          <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 text-[10px]">
-            🟡 Đang làm
-          </Badge>
-        );
-      case "needs_revision":
-        return (
-          <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200 text-[10px]">
-            🔴 Cần sửa
-          </Badge>
-        );
-      default:
-        return (
-          <Badge variant="outline" className="bg-slate-50 text-slate-600 border-slate-200 text-[10px]">
-            ⚪ Chưa làm
-          </Badge>
-        );
-    }
-  };
 
   // 🌟 FOCUS GRADING MODE: DÀNH 100% DIỆN TÍCH CHO VIỆC ĐỌC BÀI VÀ CHẤM BÀI (ẨN HOÀN TOÀN HEADER CỦA WORKSPACE) 🌟
   if (isFocusMode && currentStudent && currentHomework && currentHomework.submissionId && currentHomework.status !== "unsubmitted") {
     return (
-      <div className="h-[calc(100vh-4rem)] flex flex-col bg-white font-sans text-slate-900 overflow-hidden">
-        {isSpeaking ? (
-          <SpeakingGrader
-            submissionId={currentHomework.submissionId}
-            studentName={currentStudent.fullName}
-            className={currentClass?.name || "Lớp IELTS"}
-            homeworkTitle={currentHomework.title}
-            submissionStatus={currentHomework.status}
-            submittedAt={currentHomework.submittedAt}
-            answers={resolvedAnswers}
-            submissionDetail={currentSubmissionDetail}
-            isSubmitting={isSubmitting}
-            onBack={() => setIsFocusMode(false)}
-            onGradeSubmit={handleGradeSubmit}
-          />
-        ) : (
-          <WritingGrader
-            submissionId={currentHomework.submissionId}
-            studentId={currentStudent.id}
-            studentName={currentStudent.fullName}
-            className={currentClass?.name || "Lớp IELTS"}
-            homeworkTitle={currentHomework.title}
-            submissionStatus={currentHomework.status}
-            submittedAt={currentHomework.submittedAt}
-            answers={resolvedAnswers}
-            submissionDetail={currentSubmissionDetail}
-            skill={currentHomework.skill}
-            isAutoGraded={currentHomework.isAutoGraded}
-            isSubmitting={isSubmitting}
-            onBack={() => setIsFocusMode(false)}
-            onGradeSubmit={handleGradeSubmit}
-          />
-        )}
-      </div>
+      <FocusGradingView
+        currentStudent={currentStudent}
+        currentHomework={currentHomework}
+        currentClass={currentClass}
+        resolvedAnswers={resolvedAnswers}
+        currentSubmissionDetail={currentSubmissionDetail}
+        isSpeaking={isSpeaking}
+        isSubmitting={isSubmitting}
+        onBack={() => setIsFocusMode(false)}
+        onGradeSubmit={handleGradeSubmit}
+      />
     );
   }
 
   return (
     <div className="h-[calc(100vh-4rem)] flex flex-col bg-slate-50 font-sans text-slate-900 overflow-hidden">
       {/* 🟢 HEADER TIÊU CHUẨN (CHỈ HIỆN TRONG CHẾ ĐỘ 3 CỘT) */}
-      <header className="bg-white border-b border-slate-200 px-6 py-3 shrink-0 flex items-center justify-between shadow-2xs z-10">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-blue-50 border border-blue-100 text-blue-600">
-              <GraduationCap className="h-5 w-5" />
-            </div>
-            <div>
-              <h1 className="text-sm font-bold text-slate-900 tracking-tight">Teacher Workspace</h1>
-              <p className="text-[11px] text-slate-500">Sổ bài tập & Chấm bài Học viên</p>
-            </div>
-          </div>
-
-          <div className="h-6 w-[1px] bg-slate-200 mx-1" />
-
-          {/* Bộ chọn Lớp học */}
-          <div className="flex items-center gap-2">
-            <School className="h-4 w-4 text-slate-400" />
-            <Select value={selectedClassId} onValueChange={(val) => {
-              setSelectedClassId(val);
-              setSelectedStudentId("");
-              setSelectedHomeworkId("");
-            }}>
-              <SelectTrigger className="w-[260px] h-9 text-xs font-semibold bg-slate-50 border-slate-200">
-                <SelectValue placeholder="Chọn Lớp học phụ trách..." />
-              </SelectTrigger>
-              <SelectContent>
-                {classes.map((c: any) => (
-                  <SelectItem key={c.id} value={c.id} className="text-xs">
-                    {c.name} {c.target_band ? `(Target Band ${c.target_band})` : ""}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={() => refetchWorkspace()} className="h-8 text-xs text-slate-500 hover:text-slate-900">
-            <RefreshCw className="h-3.5 w-3.5 mr-1" />
-            Làm mới
-          </Button>
-        </div>
-      </header>
+      <TeacherHeader
+        classes={classes}
+        selectedClassId={selectedClassId}
+        onSelectClass={(val) => {
+          setSelectedClassId(val);
+          setSelectedStudentId("");
+          setSelectedHomeworkId("");
+        }}
+        onRefresh={() => refetchWorkspace()}
+      />
 
       {/* 📐 BỐ CỤC 3 CỘT SINGLE-SCREEN WORKBOOK VIEWER */}
       <div className="flex-1 flex min-h-0 overflow-hidden overflow-x-auto">
         {/* ========================================================================= */}
         {/* CỘT 1: DANH SÁCH HỌC VIÊN TRONG LỚP (KÈM CHỈ SỐ TIẾN ĐỘ 12/27)            */}
         {/* ========================================================================= */}
-          <div className="w-1/4 min-w-[260px] max-w-[320px] shrink-0 bg-white border-r border-slate-200 flex flex-col justify-between overflow-hidden">
-            <div className="p-3.5 border-b border-slate-100 space-y-2.5 shrink-0 bg-slate-50/50">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-800 tracking-tight flex items-center gap-1.5">
-                  <User className="h-3.5 w-3.5 text-blue-600" />
-                  Học viên ({filteredStudents.length})
-                </span>
-                <div className="flex gap-1">
-                  <button
-                    onClick={() => setStudentFilter("all")}
-                    className={`text-[10px] font-medium px-2 py-0.5 rounded-md border transition-all ${
-                      studentFilter === "all"
-                        ? "bg-slate-800 text-white border-slate-800"
-                        : "bg-white text-slate-600 border-slate-200 hover:bg-slate-100"
-                    }`}
-                  >
-                    Tất cả
-                  </button>
-                  <button
-                    onClick={() => setStudentFilter("pending")}
-                    className={`text-[10px] font-medium px-2 py-0.5 rounded-md border transition-all ${
-                      studentFilter === "pending"
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white text-blue-600 border-blue-200 hover:bg-blue-50"
-                    }`}
-                  >
-                    Bài chờ 🔴
-                  </button>
-                </div>
-              </div>
-            </div>
+        <TeacherStudentsColumn
+          students={filteredStudents}
+          selectedStudentId={selectedStudentId}
+          studentFilter={studentFilter}
+          radarData={radarData}
+          interveningStudentId={interveningStudentId}
+          onSelectStudent={(id) => {
+            setSelectedStudentId(id);
+            setSelectedHomeworkId("");
+          }}
+          onFilterChange={setStudentFilter}
+          onIntervene={handleCreateIntervention}
+        />
 
-            {/* 🔴 EARLY-WARNING RADAR (Alert fatigue prevention: 'X học sinh cần chú ý') */}
-            {radarData && (radarData.watchCount + radarData.atRiskCount + radarData.criticalCount > 0) && (
-              <div className="p-2.5 bg-amber-50/70 border-b border-amber-200/60 shrink-0">
-                <div className="flex items-center justify-between mb-1.5">
-                  <div className="flex items-center gap-1.5">
-                    <ShieldAlert className="h-3.5 w-3.5 text-amber-700" />
-                    <span className="text-[11px] font-bold text-amber-900 tracking-tight">
-                      {radarData.criticalCount + radarData.atRiskCount + radarData.watchCount} học sinh cần chú ý
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1 text-[9px] font-semibold">
-                    {radarData.criticalCount > 0 && (
-                      <span className="px-1.5 py-0.2 rounded bg-rose-100 text-rose-800 border border-rose-200">
-                        {radarData.criticalCount} Nguy cấp
-                      </span>
-                    )}
-                    {radarData.atRiskCount > 0 && (
-                      <span className="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 border border-amber-200">
-                        {radarData.atRiskCount} Rủi ro
-                      </span>
-                    )}
-                    {radarData.watchCount > 0 && (
-                      <span className="px-1.5 py-0.2 rounded bg-slate-100 text-slate-700 border border-slate-200">
-                        {radarData.watchCount} Theo dõi
-                      </span>
-                    )}
-                  </div>
-                </div>
+        {/* ========================================================================= */}
+        {/* CỘT 2: SỔ BÀI TẬP WORKBOOK (BUỔI HỌC & TRẠNG THÁI NỘP BÀI)                 */}
+        {/* ========================================================================= */}
+        <TeacherWorkbookColumn
+          currentStudent={currentStudent}
+          groupedWorkbook={groupedWorkbook}
+          selectedHomeworkId={selectedHomeworkId}
+          slaStats={slaStats}
+          workbookSummary={workbookSummary}
+          pedagogicalProfile={pedagogicalProfile}
+          reopenTargetId={reopenTargetId}
+          reopenDate={reopenDate}
+          onSelectHomework={setSelectedHomeworkId}
+          onOpenReportModal={() => setIsReportModalOpen(true)}
+          onShareParentZalo={() => {
+            const parentPhone = currentStudent?.parentPhone || currentStudent?.phone;
+            const parentName = currentStudent?.parentName || "Phụ huynh";
+            const studentName = currentStudent?.fullName || "em";
+            const parentToken = currentStudent?.parentToken;
 
-                <div className="space-y-1 max-h-[140px] overflow-y-auto pr-1">
-                  {radarData.students.map((st) => {
-                    const isCritical = st.riskLevel === "CRITICAL";
-                    const isAtRisk = st.riskLevel === "AT_RISK";
-                    const isWatch = st.riskLevel === "WATCH";
+            const messageText = generateParentProgressMessage({
+              parentName,
+              studentName,
+              completedCount: workbookSummary.completed,
+              totalAssigned: workbookSummary.totalAssigned,
+              gradedCount: workbookSummary.graded,
+              parentToken,
+            });
 
-                    return (
-                      <div
-                        key={st.studentId}
-                        className={`p-1.5 rounded-lg border text-[11px] flex items-center justify-between transition-all ${
-                          isCritical
-                            ? "bg-rose-50/80 border-rose-200 text-rose-900"
-                            : isAtRisk
-                            ? "bg-amber-50/80 border-amber-200 text-amber-900"
-                            : "bg-slate-50 border-slate-200 text-slate-800"
-                        }`}
-                      >
-                        <div className="min-w-0 flex-1 mr-2">
-                          <div className="flex items-center gap-1 font-semibold truncate">
-                            <span className="truncate">{st.studentName}</span>
-                            {st.trajectory === "DECLINING" && (
-                              <span title="Xu hướng giảm >=10pp" className="inline-flex items-center shrink-0">
-                                <TrendingDown className="h-3 w-3 text-rose-600" />
-                              </span>
-                            )}
-                            {st.trajectory === "RISING" && (
-                              <span title="Xu hướng tăng >=10pp" className="inline-flex items-center shrink-0">
-                                <TrendingUp className="h-3 w-3 text-emerald-600" />
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-[9.5px] text-slate-500 truncate flex items-center gap-1">
-                            <span>Thiếu {st.openTaskCount} bài</span>
-                            <span>•</span>
-                            <span>Cần +{st.requiredAdditionalTasks} bài</span>
-                            <span>•</span>
-                            <span>Học bổng: {st.currentScholarshipTier}</span>
-                          </div>
-                        </div>
+            navigator.clipboard.writeText(messageText);
+            toast({
+              title: "📋 Đã sao chép tin nhắn Báo cáo!",
+              description: "Đang mở Zalo... Thầy/Cô chỉ cần bấm Ctrl+V để gửi cho Phụ huynh.",
+            });
 
-                        {/* Can thiệp chỉ nhắc khi CRITICAL hoặc AT_RISK; WATCH chỉ awareness */}
-                        {(isCritical || isAtRisk) && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleCreateIntervention(st)}
-                            disabled={interveningStudentId === st.studentId}
-                            className={`h-6 text-[10px] px-2 shrink-0 font-medium ${
-                              isCritical
-                                ? "bg-rose-600 hover:bg-rose-700 text-white border-rose-600"
-                                : "bg-amber-600 hover:bg-amber-700 text-white border-amber-600"
-                            }`}
-                          >
-                            <MessageSquare className="h-3 w-3 mr-1" />
-                            Nhắc Zalo
-                          </Button>
-                        )}
-                        {isWatch && (
-                          <span className="text-[9px] text-slate-400 font-medium px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200">
-                            Theo dõi
-                          </span>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* List Học viên */}
-            <div className="flex-1 overflow-y-auto p-2 space-y-1">
-              {filteredStudents.length === 0 ? (
-                <div className="p-6 text-center text-xs text-slate-400">Không có học viên phù hợp</div>
-              ) : (
-                filteredStudents.map((st: any) => {
-                  const isSelected = st.id === selectedStudentId;
-                  return (
-                    <div
-                      key={st.id}
-                      onClick={() => {
-                        setSelectedStudentId(st.id);
-                        setSelectedHomeworkId("");
-                      }}
-                      className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
-                        isSelected
-                          ? "bg-blue-50/70 border-blue-200 shadow-xs"
-                          : "bg-white border-transparent hover:bg-slate-50"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <Avatar className="h-8 w-8 rounded-lg border border-slate-200 shrink-0">
-                          <AvatarImage src={st.avatarUrl} />
-                          <AvatarFallback className="bg-slate-100 text-slate-700 text-xs font-bold">
-                            {st.fullName?.slice(0, 2).toUpperCase() || "HV"}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="min-w-0">
-                          <p className="text-xs font-bold text-slate-900 truncate">{st.fullName}</p>
-                          <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-medium mt-0.5">
-                            <span>{st.gradedCount + st.pendingCount} / {st.totalAssignedCount} bài</span>
-                            {st.pendingCount > 0 && (
-                              <span className="text-blue-600 font-bold">• {st.pendingCount} chờ</span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {st.hasPending && (
-                        <span className="h-2 w-2 rounded-full bg-rose-500 shrink-0 ring-2 ring-rose-100" />
-                      )}
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          </div>
-
-          {/* ========================================================================= */}
-          {/* CỘT 2: SỔ BÀI TẬP WORKBOOK (BUỔI HỌC & TRẠNG THÁI NỘP BÀI)                 */}
-          {/* ========================================================================= */}
-          <div className="w-1/3 min-w-[320px] max-w-[420px] shrink-0 bg-slate-50/30 border-r border-slate-200 flex flex-col justify-between overflow-hidden">
-            <div className="p-3.5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between shrink-0">
-              <div>
-                <span className="text-xs font-bold text-slate-800 tracking-tight flex items-center gap-1.5">
-                  <BookOpen className="h-3.5 w-3.5 text-blue-600" />
-                  Sổ Bài Tập {currentStudent ? `— ${currentStudent.fullName}` : ""}
-                </span>
-                <span className="text-[10px] text-slate-500">
-                  {currentStudent ? "Danh sách bài tập được giao" : "Chọn học viên để xem bài"}
-                </span>
-              </div>
-
-              {/* Status counter indicators */}
-              <div className="flex items-center gap-1.5 text-[10px] font-mono">
-                {slaStats.totalPending > 0 ? (
-                  <>
-                    {slaStats.overdueCount > 0 && (
-                      <span className="px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200 font-bold" title="Quá hạn SLA 7 ngày">
-                        🔴 {slaStats.overdueCount} quá hạn
-                      </span>
-                    )}
-                    {slaStats.approachingCount > 0 && (
-                      <span className="px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-300 font-bold" title="Sắp đến hạn SLA (≤ 2 ngày)">
-                        ⚠️ {slaStats.approachingCount} sắp hạn
-                      </span>
-                    )}
-                    {slaStats.onTrackCount > 0 && (
-                      <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium" title="Trong hạn SLA (> 2 ngày)">
-                        ⏱ {slaStats.onTrackCount} trong hạn
-                      </span>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold" title="Đã chấm">
-                      🟢 {workbookSummary.graded}
-                    </span>
-                    <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200" title="Chưa làm">
-                      ⚪ {workbookSummary.inProgress}
-                    </span>
-                  </>
-                )}
-                {currentStudent && (
-                  <>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setIsReportModalOpen(true)}
-                      className="h-6 text-[10px] font-bold px-2 ml-1 text-blue-700 border-blue-200 hover:bg-blue-50 gap-1 shadow-2xs"
-                    >
-                      <Award className="h-3 w-3" />
-                      Báo cáo
-                    </Button>
-
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        const parentPhone = currentStudent?.parentPhone || currentStudent?.phone;
-                        const parentName = currentStudent?.parentName || "Phụ huynh";
-                        const studentName = currentStudent?.fullName || "em";
-                        const parentToken = currentStudent?.parentToken;
-
-                        const messageText = generateParentProgressMessage({
-                          parentName,
-                          studentName,
-                          completedCount: workbookSummary.completed,
-                          totalAssigned: workbookSummary.totalAssigned,
-                          gradedCount: workbookSummary.graded,
-                          parentToken,
-                        });
-
-                        navigator.clipboard.writeText(messageText);
-                        toast({
-                          title: "📋 Đã sao chép tin nhắn Báo cáo!",
-                          description: "Đang mở Zalo... Thầy/Cô chỉ cần bấm Ctrl+V để gửi cho Phụ huynh.",
-                        });
-
-                        if (parentPhone) {
-                          const cleanPhone = String(parentPhone).replace(/[^0-9]/g, "");
-                          window.open(`https://zalo.me/${cleanPhone}`, "_blank");
-                        } else {
-                          toast({
-                            title: "⚠️ Chưa có SĐT Phụ huynh",
-                            description: "Đã copy nội dung vào Clipboard. Thầy/Cô vui lòng paste vào Zalo học viên.",
-                            variant: "destructive",
-                          });
-                        }
-                      }}
-                      className="h-6 text-[10px] font-bold px-2 text-emerald-700 border-emerald-200 hover:bg-emerald-50 gap-1 shadow-2xs"
-                      title="Tự động tạo tin nhắn, sao chép vào Clipboard và mở Zalo Phụ huynh"
-                    >
-                      <Share2 className="h-3 w-3 text-emerald-600" />
-                      Gửi Zalo
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* List Buổi học & Bài tập trong Sổ */}
-            <div className="flex-1 overflow-y-auto p-3 space-y-3">
-              {/* 💡 ACADEMIC INSIGHT (PHASE 4: DỮ LIỆU SƯ PHẠM THUẦN TÚY) */}
-              {currentStudent && pedagogicalProfile && (
-                <div className="p-3 bg-gradient-to-br from-indigo-50/70 via-blue-50/50 to-white rounded-xl border border-indigo-100/90 shadow-2xs space-y-2.5">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-950">
-                      <Lightbulb className="h-4 w-4 text-amber-500 fill-amber-400" />
-                      <span>Academic Insight</span>
-                      <Badge
-                        variant="outline"
-                        className={`text-[9px] px-1.5 py-0 h-4 font-semibold ${
-                          pedagogicalProfile.overallStatus === "NEEDS_ATTENTION"
-                            ? "bg-rose-50 text-rose-700 border-rose-200"
-                            : pedagogicalProfile.overallStatus === "INSUFFICIENT_DATA"
-                            ? "bg-slate-100 text-slate-600 border-slate-200"
-                            : "bg-emerald-50 text-emerald-700 border-emerald-200"
-                        }`}
-                      >
-                        {pedagogicalProfile.overallStatus === "NEEDS_ATTENTION"
-                          ? "Cần can thiệp"
-                          : pedagogicalProfile.overallStatus === "INSUFFICIENT_DATA"
-                          ? "Chưa đủ dữ liệu"
-                          : "Đang tiến bộ"}
-                      </Badge>
-                    </div>
-
-                    <a
-                      href={`/academic-intelligence/evidence`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-[10px] text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-0.5"
-                      title="Mở Evidence Explorer để xem chi tiết từng câu trả lời"
-                    >
-                      Xem bằng chứng
-                      <ChevronRight className="h-3 w-3" />
-                    </a>
-                  </div>
-
-                  <p className="text-[11px] text-slate-600 leading-snug">
-                    {pedagogicalProfile.overallSummary}
-                  </p>
-
-                  {/* Kỹ năng cần chú ý */}
-                  {pedagogicalProfile.skillsRequiringAttention.length > 0 && (
-                    <div className="space-y-1.5 pt-1 border-t border-indigo-100/70">
-                      <span className="text-[10px] font-bold text-rose-800 uppercase tracking-wider block">
-                        ⚠️ Điểm cần chú ý:
-                      </span>
-                      <div className="space-y-1.5">
-                        {pedagogicalProfile.skillsRequiringAttention.map((sk) => (
-                          <div
-                            key={sk.skillId}
-                            className="bg-white/90 p-2 rounded-lg border border-rose-100 text-[11px] space-y-1"
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="font-semibold text-slate-800">
-                                {sk.skillName}
-                              </span>
-                              <Badge
-                                variant="outline"
-                                className="text-[9px] bg-rose-50 text-rose-700 border-rose-200 h-4"
-                              >
-                                {sk.statusLabel}
-                              </Badge>
-                            </div>
-                            <div className="text-[10px] text-slate-500">{sk.accuracyText}</div>
-                            {sk.frequentMistake && (
-                              <div className="text-[10px] text-amber-900 bg-amber-50/80 p-1.5 rounded">
-                                <span className="font-bold">Thói quen sai: </span>
-                                {sk.frequentMistake}
-                              </div>
-                            )}
-                            {sk.actionTip && (
-                              <div className="text-[10px] text-blue-900 bg-blue-50/80 p-1.5 rounded">
-                                <span className="font-bold">Gợi ý cho giáo viên: </span>
-                                {sk.actionTip}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Kỹ năng đang tiến bộ */}
-                  {pedagogicalProfile.progressingSkills.length > 0 && (
-                    <div className="pt-1 border-t border-indigo-100/70 space-y-1">
-                      <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider block">
-                        ✨ Kỹ năng vững / đang tiến bộ:
-                      </span>
-                      <div className="flex flex-wrap gap-1">
-                        {pedagogicalProfile.progressingSkills.map((sk) => (
-                          <span
-                            key={sk.skillId}
-                            className="inline-flex items-center gap-1 text-[10px] bg-emerald-50 text-emerald-800 border border-emerald-200 px-1.5 py-0.5 rounded"
-                          >
-                            <CheckCircle2 className="h-2.5 w-2.5 text-emerald-600" />
-                            {sk.skillName} ({sk.statusLabel})
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Chưa đủ dữ liệu */}
-                  {pedagogicalProfile.insufficientDataSkills.length > 0 && (
-                    <div className="pt-1 text-[10px] text-slate-500 italic flex items-center gap-1">
-                      <HelpCircle className="h-3 w-3 text-slate-400 shrink-0" />
-                      <span>
-                        {pedagogicalProfile.insufficientDataSkills.length} kỹ năng khác chưa đủ dữ liệu quan sát (&lt; 3 câu).
-                      </span>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {!currentStudent ? (
-                <div className="p-8 text-center text-xs text-slate-400">
-                  Chọn học viên bên trái để xem sổ bài tập.
-                </div>
-              ) : groupedWorkbook.length === 0 ? (
-                <div className="p-8 text-center text-xs text-slate-400">
-                  Không có bài tập nào được giao cho học viên này.
-                </div>
-              ) : (
-                groupedWorkbook.map((group) => {
-                  const firstSkill = group.items[0]?.skill;
-                  const allSameSkill = group.items.length > 0 && group.items.every((it) => it.skill === firstSkill);
-                  const groupLabel = allSameSkill
-                    ? `BUỔI ${group.lessonNumber}: KỸ NĂNG ${getSkillBadgeConfig(firstSkill || "objective").shortLabel}`
-                    : `BUỔI ${group.lessonNumber}: TỔNG HỢP (${group.items.length} BÀI TẬP)`;
-
-                  return (
-                    <div key={group.lessonNumber} className="space-y-1.5">
-                      <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-200/60 px-2.5 py-1 rounded-md">
-                        📖 {groupLabel}
-                      </div>
-
-                      <div className="space-y-1">
-                        {group.items.map((item) => {
-                          const isSelected = item.id === selectedHomeworkId;
-                          const isReopenOpen = reopenTargetId === item.id;
-                          const itemSkillConfig = getSkillBadgeConfig(item.skill || "objective");
-
-                          return (
-                            <div
-                              key={item.id}
-                              onClick={() => setSelectedHomeworkId(item.id)}
-                              className={`p-2.5 rounded-xl border transition-all cursor-pointer space-y-1.5 ${
-                                isSelected
-                                  ? "bg-white border-blue-500 shadow-sm ring-1 ring-blue-500/20"
-                                  : "bg-white/80 border-slate-200/80 hover:bg-white hover:border-slate-300"
-                              }`}
-                            >
-                              <div className="flex items-center justify-between gap-1.5">
-                                <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                                  <Badge
-                                    variant="outline"
-                                    className={`text-[9px] px-1.5 py-0 h-4 font-bold shrink-0 ${itemSkillConfig.badgeClass}`}
-                                  >
-                                    {itemSkillConfig.shortLabel}
-                                  </Badge>
-                                  <span className="text-xs font-semibold text-slate-800 truncate">
-                                    {item.title}
-                                  </span>
-                                </div>
-                                {renderStatusBadge(item)}
-                              </div>
-
-                            {/* Dòng Quá hạn -> nút Gia hạn mở Inline */}
-                            {item.isOverdue && item.status !== "graded" && item.status !== "submitted" && (
-                              <div className="text-[10px] text-slate-500 flex items-center justify-between pt-1 border-t border-slate-100">
-                                <span>Hạn: {item.dueDate}</span>
-                                {!isReopenOpen ? (
-                                  <button
-                                    onClick={() => setReopenTargetId(item.id)}
-                                    className="text-blue-600 font-bold hover:underline"
-                                  >
-                                    [Gia hạn]
-                                  </button>
-                                ) : (
-                                  <div className="flex items-center gap-1 bg-slate-50 p-1 rounded border border-slate-200">
-                                    <Input
-                                      type="date"
-                                      value={reopenDate}
-                                      onChange={(e) => setReopenDate(e.target.value)}
-                                      className="h-6 text-[9px] w-24 bg-white"
-                                    />
-                                    <Button size="sm" onClick={() => handleConfirmReopen(item)} className="h-6 text-[9px] px-2 bg-slate-900 text-white">
-                                      Lưu
-                                    </Button>
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })
-              )}
-            </div>
-          </div>
+            if (parentPhone) {
+              const cleanPhone = String(parentPhone).replace(/[^0-9]/g, "");
+              window.open(`https://zalo.me/${cleanPhone}`, "_blank");
+            } else {
+              toast({
+                title: "⚠️ Chưa có SĐT Phụ huynh",
+                description: "Đã copy nội dung vào Clipboard. Thầy/Cô vui lòng paste vào Zalo học viên.",
+                variant: "destructive",
+              });
+            }
+          }}
+          onSetReopenTarget={setReopenTargetId}
+          onReopenDateChange={setReopenDate}
+          onConfirmReopen={handleConfirmReopen}
+        />
 
           {/* ========================================================================= */}
           {/* CỘT 3: PREVIEW & XEM KHÁI QUÁT BÀI NỘP / KẾT QUẢ ĐÃ CHẤM                  */}
           {/* ========================================================================= */}
-          <div className="flex-1 min-w-[360px] bg-white flex flex-col justify-between overflow-hidden">
-            {!currentStudent ? (
-              <div className="h-full flex items-center justify-center p-8 text-center text-xs text-slate-400">
-                Chọn một học viên từ danh sách để xem bài làm và chấm điểm.
-              </div>
-            ) : !currentHomework ? (
-              <div className="h-full flex items-center justify-center p-8 text-center text-xs text-slate-400">
-                Chọn một bài tập trong sổ bài tập để chấm điểm hoặc xem đề bài.
-              </div>
-            ) : !currentHomework.submissionId || currentHomework.status === "unsubmitted" ? (
-              <ExamPreviewPanel
-                examId={currentHomework.id}
-                homeworkTitle={currentHomework.title}
-                studentName={currentStudent.fullName}
-                className={currentClass?.name || "Lớp IELTS"}
-                status={currentHomework.status}
-                dueDate={currentHomework.dueDate}
-              />
-            ) : (
-              <SubmissionOverviewPanel
-                homework={currentHomework}
-                student={currentStudent}
-                className={currentClass?.name || "Lớp IELTS"}
-                isSpeaking={isSpeaking}
-                resolvedAnswers={resolvedAnswers}
-                submissionDetail={currentSubmissionDetail}
-                onOpenFocusMode={() => setIsFocusMode(true)}
-              />
-            )}
-          </div>
+          <TeacherPreviewColumn
+            currentStudent={currentStudent}
+            currentHomework={currentHomework}
+            currentClass={currentClass}
+            isSpeaking={isSpeaking}
+            resolvedAnswers={resolvedAnswers}
+            currentSubmissionDetail={currentSubmissionDetail}
+            onOpenFocusMode={() => setIsFocusMode(true)}
+          />
         </div>
 
       {/* MODAL BÁO CÁO TIẾN ĐỘ HỌC TẬP (PHỤ HUYNH) */}
