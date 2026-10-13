@@ -1,0 +1,1202 @@
+import React, { useState, useRef, useEffect } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { CASE_001 } from "@/data/readingCases/case001";
+import { CASE_002 } from "@/data/readingCases/case002";
+import { CASE_003 } from "@/data/readingCases/case003";
+import { CASE_004 } from "@/data/readingCases/case004";
+import { CASE_005 } from "@/data/readingCases/case005";
+import { CASE_006 } from "@/data/readingCases/case006";
+import { CASE_007 } from "@/data/readingCases/case007";
+import { CASE_008 } from "@/data/readingCases/case008";
+import { CASE_009 } from "@/data/readingCases/case009";
+import { CASE_010 } from "@/data/readingCases/case010";
+import { CASE_011 } from "@/data/readingCases/case011";
+import { CASE_012 } from "@/data/readingCases/case012";
+import { VocabularyTerm } from "@/features/reading/types";
+import { ContextualGlossTooltip } from "@/features/reading/components/ContextualGlossTooltip";
+import { CaseAutopsyView } from "@/features/reading/components/CaseAutopsyView";
+import {
+  lookupWord,
+  isContentWord,
+  MULTI_WORD_PHRASES,
+} from "@/features/reading/services/readingDictionary";
+import { sanitizeLearnerText } from "@/features/reading/services/contentSanitizer";
+import { CrimeSceneBlueprint } from "@/features/reading/components/CrimeSceneBlueprint";
+import { ReadlangExplorationSidebar } from "@/features/reading/components/ReadlangExplorationSidebar";
+import { WritingDebateChamber } from "@/features/reading/components/WritingDebateChamber";
+import { Button } from "@/components/ui/button";
+import {
+  ReadingSettingsPopover,
+  ReaderSettings,
+} from "@/features/reading/components/ReadingSettingsPopover";
+import {
+  FileText,
+  UserCheck,
+  Cpu,
+  HelpCircle,
+  CheckCircle,
+  CheckCircle2,
+  ShieldAlert,
+  ArrowRight,
+  ArrowLeft,
+  Sparkles,
+  Info,
+  Layers,
+  Map as MapIcon,
+  BookOpen,
+} from "lucide-react";
+import { SEO } from "@/components/common/SEO";
+
+const ALL_CASES: Record<string, typeof CASE_001> = {
+  "case-001": CASE_001,
+  "case-002": CASE_002,
+  "case-003": CASE_003,
+  "case-004": CASE_004,
+  "case-005": CASE_005,
+  "case-006": CASE_006,
+  "case-007": CASE_007,
+  "case-008": CASE_008,
+  "case-009": CASE_009,
+  "case-010": CASE_010,
+  "case-011": CASE_011,
+  "case-012": CASE_012,
+};
+
+export default function ReadingCasePage() {
+  const { caseId } = useParams<{ caseId?: string }>();
+  const navigate = useNavigate();
+
+  const [selectedCaseId, setSelectedCaseId] = useState<string>(() => {
+    if (caseId && ALL_CASES[caseId]) return caseId;
+    return "case-002";
+  });
+
+  useEffect(() => {
+    if (caseId && ALL_CASES[caseId] && caseId !== selectedCaseId) {
+      setSelectedCaseId(caseId);
+      setActiveSourceId("all");
+      setTaskAnswers({});
+      setSelectedEvidenceSentence(null);
+      setFinalHypothesis(null);
+      setSelectedEvidenceIds([]);
+      setViewState("investigating");
+      setActiveExplainTerm(null);
+      setRightPanelTab("tasks");
+    }
+  }, [caseId, selectedCaseId]);
+
+  const readingCase = ALL_CASES[selectedCaseId] || CASE_001;
+
+  // Reader Settings (Font size, line height, font family, theme, alignment)
+  const [readerSettings, setReaderSettings] = useState<ReaderSettings>(() => {
+    try {
+      const saved = localStorage.getItem("nextband_reading_settings");
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return {
+      fontSize: 16,
+      lineHeight: "relaxed",
+      fontFamily: "sans",
+      theme: "light",
+      textAlign: "left",
+    };
+  });
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  const handleUpdateReaderSettings = (updates: Partial<ReaderSettings>) => {
+    setReaderSettings((prev) => {
+      const next = { ...prev, ...updates };
+      try {
+        localStorage.setItem("nextband_reading_settings", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  };
+
+  // Hover Context Teaser State
+  const [isIntroHovered, setIsIntroHovered] = useState(false);
+
+  // Active source filter (or all)
+  const [activeSourceId, setActiveSourceId] = useState<string>("all");
+
+  // Vocabulary Gloss State
+  const [activeGloss, setActiveGloss] = useState<{
+    term: VocabularyTerm;
+    position: { top: number; left: number };
+  } | null>(null);
+  const [savedTerms, setSavedTerms] = useState<string[]>([]);
+  const [hasInteractedGloss, setHasInteractedGloss] = useState(false);
+
+  // Investigation Tasks State
+  const [taskAnswers, setTaskAnswers] = useState<Record<string, string>>({});
+  const [selectedEvidenceSentence, setSelectedEvidenceSentence] = useState<string | null>(null);
+
+  // Final Deduction State
+  const [finalHypothesis, setFinalHypothesis] = useState<string | null>(null);
+  const [selectedEvidenceIds, setSelectedEvidenceIds] = useState<string[]>([]);
+
+  // Page View State: "investigating" | "autopsy"
+  const [viewState, setViewState] = useState<"investigating" | "autopsy">("investigating");
+
+  // Close tooltip when clicking outside
+  useEffect(() => {
+    const handleWindowClick = () => setActiveGloss(null);
+    window.addEventListener("click", handleWindowClick);
+    return () => window.removeEventListener("click", handleWindowClick);
+  }, []);
+
+  // Active translated words map (token key -> translation text)
+  const [activeTranslatedWords, setActiveTranslatedWords] = useState<Record<string, VocabularyTerm>>({});
+
+  // Right Panel Tab State: "tasks" | "explain"
+  const [rightPanelTab, setRightPanelTab] = useState<"tasks" | "explain">("explain");
+  const [activeExplainTerm, setActiveExplainTerm] = useState<VocabularyTerm | null>(null);
+
+
+  const handleWordClick = (e: React.MouseEvent, termObj: VocabularyTerm, wordKey?: string) => {
+    e.stopPropagation();
+    
+    // Auto-pronounce using SpeechSynthesis API (Readlang feature)
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(termObj.term);
+      utterance.lang = "en-US";
+      utterance.rate = 0.95;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // Toggle inline translation tag
+    const key = wordKey || termObj.term.toLowerCase();
+    setActiveTranslatedWords((prev) => {
+      if (prev[key]) {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      }
+      return { ...prev, [key]: termObj };
+    });
+
+    // Automatically set active explain term and switch to Explain sidebar (Readlang style)
+    setActiveExplainTerm(termObj);
+    setRightPanelTab("explain");
+    setHasInteractedGloss(true);
+  };
+
+  const handleSaveTerm = (term: string) => {
+    setSavedTerms((prev) =>
+      prev.includes(term) ? prev.filter((t) => t !== term) : [...prev, term]
+    );
+  };
+
+  const handleSentenceClick = (sentenceText: string) => {
+    setSelectedEvidenceSentence(sentenceText);
+  };
+
+  const toggleEvidenceId = (evId: string) => {
+    setSelectedEvidenceIds((prev) =>
+      prev.includes(evId) ? prev.filter((id) => id !== evId) : [...prev, evId]
+    );
+  };
+
+  // Check if all 4 tasks are completed
+  const isAllTasksCompleted =
+    Boolean(taskAnswers["task-01"]) &&
+    Boolean(taskAnswers["task-02"]) &&
+    Boolean(taskAnswers["task-03"]) &&
+    Boolean(selectedEvidenceSentence);
+
+  const canSubmitAutopsy =
+    isAllTasksCompleted &&
+    Boolean(finalHypothesis) &&
+    selectedEvidenceIds.length > 0;
+
+  const handleReset = () => {
+    setTaskAnswers({});
+    setSelectedEvidenceSentence(null);
+    setFinalHypothesis(null);
+    setSelectedEvidenceIds([]);
+    setActiveTranslatedWords({});
+    setViewState("investigating");
+  };
+
+  // Helper to parse a sentence into tokens where all content words and multi-word idioms are clickable
+  const renderSentenceWords = (sentence: string, sentenceIdx: number, paragraphId: string) => {
+    // 1. Identify multi-word phrases and protect them
+    const phraseMatches: { start: number; end: number; phrase: string }[] = [];
+    
+    for (const phrase of MULTI_WORD_PHRASES) {
+      const regex = new RegExp(`\\b${phrase}\\b`, "gi");
+      let match;
+      while ((match = regex.exec(sentence)) !== null) {
+        phraseMatches.push({
+          start: match.index,
+          end: match.index + match[0].length,
+          phrase: match[0],
+        });
+      }
+    }
+
+    // Sort non-overlapping phrases
+    phraseMatches.sort((a, b) => a.start - b.start);
+    const filteredPhrases: typeof phraseMatches = [];
+    let lastEnd = 0;
+    for (const pm of phraseMatches) {
+      if (pm.start >= lastEnd) {
+        filteredPhrases.push(pm);
+        lastEnd = pm.end;
+      }
+    }
+
+    // Break sentence into segments: either a multi-word phrase or a substring of single words
+    const segments: { isPhrase: boolean; text: string }[] = [];
+    let cursor = 0;
+    for (const pm of filteredPhrases) {
+      if (pm.start > cursor) {
+        segments.push({ isPhrase: false, text: sentence.slice(cursor, pm.start) });
+      }
+      segments.push({ isPhrase: true, text: sentence.slice(pm.start, pm.end) });
+      cursor = pm.end;
+    }
+    if (cursor < sentence.length) {
+      segments.push({ isPhrase: false, text: sentence.slice(cursor) });
+    }
+
+    return segments.map((segment, segIdx) => {
+      if (segment.isPhrase) {
+        const termKey = `${paragraphId}-s${sentenceIdx}-p${segIdx}-${segment.text.toLowerCase()}`;
+        const termData = lookupWord(segment.text) || {
+          term: segment.text,
+          pronunciation: "",
+          pos: "",
+          meaning_en: "",
+          meaning_vi: segment.text,
+          context_note: "",
+        };
+        const isTranslated = Boolean(activeTranslatedWords[termKey]);
+        const shortVi = sanitizeLearnerText(
+          (termData.meaning_vi || "")
+            .replace(/^Từ vựng:\s*/i, "")
+            .replace(/^Cụm từ:\s*/i, "")
+            .split("/")[0]
+            .replace(/\(.*?\)/g, "")
+        ).normalize("NFC");
+
+        const isCuratedChunk = Boolean(termData.collocation_pattern || termData.why_it_matters || termData.learning_value_score);
+
+        return (
+          <span
+            key={`phrase-${segIdx}`}
+            className="relative inline mx-0.5"
+          >
+            {isTranslated && (
+              <span className="absolute -top-7 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap text-[11px] font-semibold text-[#8B3A22] bg-[#FAF4ED] px-2.5 py-0.5 rounded-full border border-[#DFCBB9] shadow-sm animate-in fade-in zoom-in-95 duration-150 pointer-events-none flex items-center justify-center font-sans tracking-tight">
+                {shortVi}
+                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#FAF4ED] border-r border-b border-[#DFCBB9] rotate-45" />
+              </span>
+            )}
+            <span
+              onClick={(e) => handleWordClick(e, termData, termKey)}
+              className={`cursor-pointer transition-all duration-150 select-none ${
+                isTranslated
+                  ? "bg-[#F5E6DD] text-[#8B3A22] px-1.5 py-0.5 rounded-md font-semibold shadow-xs"
+                  : isCuratedChunk
+                  ? "border-b-[1.5px] border-dashed border-[#C86D51] text-[#2C2623] hover:bg-[#F8EBE5] hover:text-[#9C4124] hover:border-transparent px-0.5 rounded"
+                  : "border-b border-dotted border-stone-300 text-[#2C2623] hover:text-stone-950 hover:border-stone-500 px-0.5"
+              }`}
+              title={isCuratedChunk ? "High-Value Lexical Chunk · Click để xem cấu trúc & chuyển giao" : "Click để tra cứu nghĩa"}
+            >
+              {segment.text}
+            </span>
+          </span>
+        );
+      }
+
+      // For non-phrase text, split into words and non-word separators
+      const tokens = segment.text.split(/(\b[\w'-]+\b)/g);
+      return tokens.map((token, tokIdx) => {
+        if (!token) return null;
+        if (isContentWord(token)) {
+          const termKey = `${paragraphId}-s${sentenceIdx}-t${segIdx}-${tokIdx}-${token.toLowerCase()}`;
+          const termData = lookupWord(token) || {
+            term: token,
+            pronunciation: "",
+            pos: "",
+            meaning_en: "",
+            meaning_vi: token,
+            context_note: "",
+          };
+          const isTranslated = Boolean(activeTranslatedWords[termKey]);
+          const shortVi = sanitizeLearnerText(
+            (termData.meaning_vi || "")
+              .replace(/^Từ vựng:\s*/i, "")
+              .replace(/^Cụm từ:\s*/i, "")
+              .split("/")[0]
+              .replace(/\(.*?\)/g, "")
+          ).normalize("NFC");
+
+          return (
+            <span
+              key={`tok-${segIdx}-${tokIdx}`}
+              className="relative inline mx-0.5"
+            >
+              {isTranslated && (
+                <span className="absolute -top-7 left-1/2 -translate-x-1/2 z-20 whitespace-nowrap text-[11px] font-semibold text-[#8B3A22] bg-[#FAF4ED] px-2 py-0.5 rounded-full border border-[#DFCBB9] shadow-sm animate-in fade-in zoom-in-95 duration-150 pointer-events-none flex items-center justify-center font-sans tracking-tight">
+                  {shortVi}
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#FAF4ED] border-r border-b border-[#DFCBB9] rotate-45" />
+                </span>
+              )}
+              <span
+                onClick={(e) => handleWordClick(e, termData, termKey)}
+                className={`cursor-pointer transition-all duration-150 select-none ${
+                  isTranslated
+                    ? "bg-[#F5E6DD] text-[#8B3A22] px-1 py-0.5 rounded font-semibold shadow-xs"
+                    : "text-[#2C2623] hover:text-[#9C4124] hover:bg-stone-100/80 px-0.5 rounded border-b border-transparent hover:border-stone-300"
+                }`}
+                title="Click để tra cứu nghĩa"
+              >
+                {token}
+              </span>
+            </span>
+          );
+        }
+        return <React.Fragment key={`tok-${segIdx}-${tokIdx}`}>{token}</React.Fragment>;
+      });
+    });
+  };
+
+  // Helper to render paragraph with clickable vocabulary words
+  const renderInteractiveText = (text: string, paragraphId: string) => {
+    // Break into sentences cleanly without splitting on decimals or abbreviations
+    const sentences = text
+      .split(/(?<=[.!?])\s+(?=[A-Z“"'])/)
+      .filter((s) => s.trim().length > 0);
+
+    return (
+      <div className="space-y-2">
+        {sentences.map((sentence, sIdx) => {
+          const isSelectedEvidence = selectedEvidenceSentence === sentence;
+
+          return (
+            <p
+              key={sIdx}
+              onClick={() => handleSentenceClick(sentence)}
+              className={`rounded-lg px-3 py-2 transition-all leading-[2.2] cursor-pointer ${
+                isSelectedEvidence
+                  ? "bg-amber-100/80 border-l-4 border-amber-500 text-amber-950 font-medium shadow-xs"
+                  : "hover:bg-stone-100/80 border-l-4 border-transparent"
+              }`}
+            >
+              {renderSentenceWords(sentence, sIdx, paragraphId)}
+            </p>
+          );
+        })}
+      </div>
+    );
+  };
+
+  // Case Autopsy Screen (Post-submission)
+  if (viewState === "autopsy") {
+    return (
+      <div className="min-h-screen bg-[#FAF8F5] text-stone-900 py-10 font-sans">
+        <SEO
+          title={`${readingCase.title} - The Case Autopsy | ARIS IELTS`}
+          description="Báo cáo chẩn đoán năng lực đọc hiểu chuyên sâu"
+        />
+        <CaseAutopsyView
+          readingCase={readingCase}
+          taskAnswers={taskAnswers}
+          selectedEvidenceSentence={selectedEvidenceSentence}
+          finalHypothesis={finalHypothesis}
+          selectedEvidenceIds={selectedEvidenceIds}
+          onRetry={handleReset}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-screen w-full bg-[#FBFBFA] text-stone-900 font-sans flex flex-col overflow-hidden select-text">
+      <SEO
+        title={`${readingCase.title} - IELTS Reading Case Studio`}
+        description="IELTS Academic Case Study Reading Studio - Dual-Panel Independent Investigation System"
+      />
+
+      {/* Top Fixed Case Header Bar */}
+      <header className="h-14 border-b border-stone-200/90 bg-[#FAF8F5] z-30 backdrop-blur-md px-4 sm:px-6 shadow-xs flex items-center justify-between shrink-0">
+        <div className="w-full flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            {/* Back to Reading Library */}
+            <Link
+              to="/reading"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-stone-100 text-stone-700 hover:text-stone-900 text-xs font-bold transition-all border border-stone-200/90 shrink-0 shadow-xs active:scale-95"
+              title="Quay lại Thư viện bài đọc"
+            >
+              <ArrowLeft className="h-3.5 w-3.5 text-stone-500" />
+              <span className="hidden sm:inline">Thư viện</span>
+            </Link>
+
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <h1 className="text-xs sm:text-sm font-black text-stone-900 uppercase tracking-wide truncate max-w-[280px] sm:max-w-md lg:max-w-xl">
+                  {readingCase.title}
+                </h1>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-50 border border-sky-200 text-sky-800 shrink-0">
+                  {readingCase.level.realm_name_vi} · Band {readingCase.level.ielts_band.toFixed(1)}
+                </span>
+              </div>
+              <p className="text-[10px] text-stone-500 hidden md:block truncate">
+                {readingCase.universe.name} · Thời lượng: ~{readingCase.estimated_minutes} phút
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2.5">
+            {/* Reading Typography & Size Settings Popover */}
+            <ReadingSettingsPopover
+              settings={readerSettings}
+              onChange={handleUpdateReaderSettings}
+              isOpen={isSettingsOpen}
+              onToggle={() => setIsSettingsOpen((prev) => !prev)}
+              onClose={() => setIsSettingsOpen(false)}
+            />
+
+            {/* Hover/Click Context Intro Teaser */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setIsIntroHovered(true)}
+              onMouseLeave={() => setIsIntroHovered(false)}
+            >
+              <button
+                onClick={() => setIsIntroHovered((prev) => !prev)}
+                className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-100/90 hover:bg-sky-200 text-sky-950 border border-sky-300 text-xs font-black transition-all shadow-xs cursor-pointer active:scale-95"
+              >
+                <Sparkles className="h-3.5 w-3.5 text-sky-700 animate-pulse" />
+                <span className="hidden sm:inline">💡 Bối cảnh bài viết</span>
+                <span className="sm:hidden">💡 Bối cảnh</span>
+              </button>
+
+              {/* Hover/Click Context Popover */}
+              {isIntroHovered && (
+                <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 rounded-2xl border border-sky-300 bg-[#FFFDF9] p-4 text-stone-900 shadow-2xl z-40 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="flex items-center gap-2 border-b border-sky-200 pb-2 mb-2.5">
+                    <span className="text-base">{selectedCaseId === "case-002" ? "📈" : "❄️"}</span>
+                    <h4 className="text-xs sm:text-sm font-black text-sky-950 uppercase tracking-wide">
+                      {selectedCaseId === "case-002"
+                        ? "Chiến Lược Lãnh Đạo: Đòn Bẩy Warren Buffett"
+                        : "Hồ sơ nghiên cứu: Hồ Băng Greenland"}
+                    </h4>
+                  </div>
+                  {selectedCaseId === "case-002" ? (
+                    <div className="space-y-2 text-xs text-stone-700 leading-relaxed">
+                      <p>
+                        <strong className="text-sky-950 font-bold">Fast Company Analysis (2026):</strong> Trong kỷ nguyên AI tạo sinh có thể viết code và soạn kế hoạch kinh doanh trong vài giây, kỹ năng giao tiếp thấu cảm giữa người với người trở thành lợi thế cạnh tranh sống còn.
+                      </p>
+                      <div className="rounded-xl bg-sky-50 p-2.5 border border-sky-200 space-y-1 text-[11px] text-sky-950 font-medium">
+                        <p>• Bằng chứng duy nhất Warren Buffett treo tại văn phòng: Chứng chỉ Dale Carnegie 1952.</p>
+                        <p>• Khách hàng mua sự tự tin, nhà đầu tư rót vốn cho người sáng lập mà họ tin tưởng.</p>
+                        <p>• 3 thói quen chuyển hóa: Tò mò thay vì định kiến, phản hồi liên tục, lắng nghe để thấu hiểu.</p>
+                      </div>
+                      <p className="font-semibold text-stone-800 pt-1 text-[11px]">
+                        Đối chiếu 3 nguồn tư liệu để phân tích nguyên lý lãi kép của kỹ năng giao tiếp theo Warren Buffett!
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2 text-xs text-stone-700 leading-relaxed">
+                      <p>
+                        <strong className="text-sky-950 font-bold">03:15 AM tại Băng tầng Greenland:</strong> Một hồ nước băng trên mặt (Supraglacial Lake G-4) dung tích 8,000,000 m³ bất ngờ biến mất hoàn toàn trong 90 phút.
+                      </p>
+                      <div className="rounded-xl bg-sky-50 p-2.5 border border-sky-200 space-y-1 text-[11px] text-sky-950 font-medium">
+                        <p>• Gờ băng xung quanh hồ nguyên vẹn — không hề có dòng nước tràn qua bề mặt.</p>
+                        <p>• Xuất hiện khe nứt sâu 850m xuyên thủng toàn bộ dải băng tới lớp đá đáy.</p>
+                        <p>• Cảm biến địa chấn ghi nhận sóng xung kích thẳng đứng lúc 03:12 AM.</p>
+                      </div>
+                      <CrimeSceneBlueprint isCompact className="mt-2" />
+                      <p className="font-semibold text-stone-800 pt-1 text-[11px]">
+                        Nước đã thoát đi theo cơ chế nào? Đối chiếu 3 nguồn tài liệu bên dưới để tìm ra lời giải thích khoa học chuẩn xác nhất!
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-emerald-800 bg-emerald-50/90 px-3 py-1 rounded-full border border-emerald-200/80 shadow-xs">
+              <BookOpen className="h-3.5 w-3.5 text-emerald-600" />
+              <span>Trạm Đọc Thư Giãn</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Dual-Column Split Layout with Independent Scrolling */}
+      <main className="flex-1 w-full overflow-hidden">
+        <div className="h-full grid grid-cols-1 lg:grid-cols-12">
+          
+          {/* ========================================================================= */}
+          {/* LEFT COLUMN: MULTI-SOURCE DOSSIER (Independent Scroll, 7 Cols ~ 58%)      */}
+          {/* ========================================================================= */}
+          <section className="lg:col-span-7 h-full flex flex-col overflow-hidden bg-[#FBFBFA]">
+            
+            {/* Source Tab Filter (Fixed Header of Left Column) */}
+            <div className="border-b border-stone-200/90 bg-[#FAF8F5] px-4 sm:px-6 lg:px-8 py-2.5 shrink-0 z-10">
+              <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar no-scrollbar">
+                <Button
+                  size="sm"
+                  variant={activeSourceId === "all" ? "default" : "ghost"}
+                  onClick={() => setActiveSourceId("all")}
+                  className={`text-xs h-8 rounded-lg ${
+                    activeSourceId === "all"
+                      ? "bg-sky-600 hover:bg-sky-700 text-white font-bold shadow-xs"
+                      : "bg-white border border-stone-200 text-stone-600 hover:text-stone-900 hover:bg-white"
+                  }`}
+                >
+                  <Layers className="h-3.5 w-3.5 mr-1.5" />
+                  Toàn bộ bài đọc (3 Nguồn)
+                </Button>
+                {readingCase.sources.map((src, idx) => (
+                  <Button
+                    key={src.id}
+                    size="sm"
+                    variant={activeSourceId === src.id ? "default" : "ghost"}
+                    onClick={() => setActiveSourceId(src.id)}
+                    className={`text-xs h-8 rounded-lg whitespace-nowrap ${
+                      activeSourceId === src.id
+                        ? "bg-slate-800 text-white font-bold"
+                        : "bg-white/80 border border-stone-200 text-stone-600 hover:text-stone-900 hover:bg-white"
+                    }`}
+                  >
+                    {idx === 0 && <FileText className="h-3.5 w-3.5 mr-1.5 text-sky-400" />}
+                    {idx === 1 && <UserCheck className="h-3.5 w-3.5 mr-1.5 text-emerald-400" />}
+                    {idx === 2 && <Cpu className="h-3.5 w-3.5 mr-1.5 text-purple-400" />}
+                    Nguồn {idx + 1}
+                  </Button>
+                ))}
+                {readingCase.id === "case-001" && (
+                  <Button
+                    size="sm"
+                    variant={activeSourceId === "diagram" ? "default" : "ghost"}
+                    onClick={() => setActiveSourceId("diagram")}
+                    className={`text-xs h-8 rounded-lg whitespace-nowrap ${
+                      activeSourceId === "diagram"
+                        ? "bg-sky-700 text-white font-bold shadow-xs"
+                        : "bg-sky-50 border border-sky-200 text-sky-900 hover:bg-sky-100"
+                    }`}
+                  >
+                    <MapIcon className="h-3.5 w-3.5 mr-1.5 text-sky-600" />
+                    Sơ Đồ Mặt Cắt Địa Chất (Map)
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {/* Dossier Document Cards (Scrollable content area) */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 custom-scrollbar">
+              {/* Standalone Diagram Tab View */}
+              {activeSourceId === "diagram" && readingCase.id === "case-001" && (
+                <div className="animate-in fade-in duration-150 space-y-3">
+                  <div className="rounded-xl bg-sky-50 p-3 border border-sky-200 text-xs text-sky-950 font-medium">
+                    💡 <strong>Sơ đồ địa vật lý:</strong> Mặt cắt dải băng Greenland dày 850m, vị trí hồ băng G-4, khe nứt thủy lực thẳng đứng và lớp đá đáy bedrock.
+                  </div>
+                  <CrimeSceneBlueprint />
+                </div>
+              )}
+
+              {/* Text Sources */}
+              {activeSourceId !== "diagram" &&
+                readingCase.sources
+                  .filter((src) => activeSourceId === "all" || activeSourceId === src.id)
+                  .map((src, idx) => {
+                    const cardThemeClass =
+                      readerSettings.theme === "eink"
+                        ? "bg-[#FAF4E6] text-[#2C2213] border-[#E2D5B8]"
+                        : readerSettings.theme === "dark"
+                        ? "bg-[#1C1917] text-[#E7E5E4] border-[#292524]"
+                        : "bg-white text-stone-900 border-stone-200/90";
+
+                    const fontClass =
+                      readerSettings.fontFamily === "serif"
+                        ? "font-serif"
+                        : readerSettings.fontFamily === "mono"
+                        ? "font-mono"
+                        : "font-sans";
+
+                    const leadingClass =
+                      readerSettings.lineHeight === "loose"
+                        ? "leading-loose"
+                        : readerSettings.lineHeight === "normal"
+                        ? "leading-normal"
+                        : "leading-relaxed";
+
+                    const alignClass =
+                      readerSettings.textAlign === "justify"
+                        ? "text-justify"
+                        : "text-left";
+
+                    return (
+                      <div
+                        key={src.id}
+                        className={`rounded-2xl border p-5 sm:p-7 shadow-xs relative overflow-hidden transition-colors ${cardThemeClass}`}
+                      >
+                        {/* Source Header */}
+                        <div className="flex items-start justify-between gap-2 border-b border-stone-200/60 pb-3 mb-5">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-stone-600 px-2 py-0.5 rounded bg-stone-100/80 border border-stone-200">
+                                SOURCE #{idx + 1}
+                              </span>
+                              <span className="text-xs text-stone-500">{src.subtitle}</span>
+                            </div>
+                            <h2 className="text-base sm:text-lg font-bold text-stone-900 mt-1.5">
+                              {src.title}
+                            </h2>
+                          </div>
+                        </div>
+
+                        {/* Paragraphs with customizable reader typography */}
+                        <div
+                          className={`space-y-4 ${fontClass} ${leadingClass} ${alignClass}`}
+                          style={{ fontSize: `${readerSettings.fontSize}px` }}
+                        >
+                          {src.paragraphs.map((p) => (
+                            <div key={p.id}>
+                              {renderInteractiveText(p.text, p.id)}
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Attached Diagram in Source 1 (Only for Case 001) */}
+                        {readingCase.id === "case-001" && src.id === "source-01" && (
+                          <div className="mt-6 pt-5 border-t border-stone-200/70">
+                            <div className="flex items-center gap-2 mb-3">
+                              <span className="text-xs font-bold text-stone-800 uppercase tracking-wider flex items-center gap-1.5">
+                                <MapIcon className="h-3.5 w-3.5 text-sky-600" />
+                                📎 Phụ lục: Sơ đồ mặt cắt địa chất băng tầng G-4
+                              </span>
+                            </div>
+                            <CrimeSceneBlueprint isCompact />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+
+              {/* IELTS Task 2 Writing Debate Chamber (Persistent Community Knowledge Base) */}
+              <WritingDebateChamber caseId={selectedCaseId} />
+            </div>
+          </section>
+
+          {/* ========================================================================= */}
+          {/* RIGHT COLUMN: INVESTIGATION & REASONING PANEL (Independent Scroll ~ 42%)  */}
+          {/* ========================================================================= */}
+          <section className="lg:col-span-5 h-full flex flex-col overflow-hidden bg-white border-t lg:border-t-0 lg:border-l border-stone-200">
+            {/* Right Panel Tabs: Tasks vs Explain (Flush header aligned with Left Column) */}
+            <div className="border-b border-stone-200/90 bg-[#FAF8F5] px-4 sm:px-6 py-2.5 shrink-0 z-10">
+              <div className="flex items-center gap-1.5 bg-stone-200/60 p-1 rounded-xl">
+                <button
+                  onClick={() => setRightPanelTab("tasks")}
+                  className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    rightPanelTab === "tasks"
+                      ? "bg-white text-stone-900 shadow-xs font-black"
+                      : "text-stone-600 hover:text-stone-900 hover:bg-white/40"
+                  }`}
+                >
+                  <BookOpen className="h-3.5 w-3.5 text-amber-600" />
+                  <span>Góc Chiêm Nghiệm</span>
+                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-stone-100 text-stone-700">
+                    {Object.keys(taskAnswers).length + (selectedEvidenceSentence ? 1 : 0)}/4
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setRightPanelTab("explain")}
+                  className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    rightPanelTab === "explain"
+                      ? "bg-white text-emerald-950 shadow-xs font-black"
+                      : "text-stone-600 hover:text-stone-900 hover:bg-white/40"
+                  }`}
+                >
+                  <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
+                  <span>Giải Nghĩa Sâu</span>
+                  {activeExplainTerm && (
+                    <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Scrollable Content Area */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar">
+              {/* TAB 1: READLANG EXPLAIN SIDEBAR */}
+              {rightPanelTab === "explain" && (
+                <ReadlangExplorationSidebar
+                  activeTerm={activeExplainTerm}
+                  savedTerms={savedTerms}
+                  onToggleSave={handleSaveTerm}
+                  onBackToTasks={() => setRightPanelTab("tasks")}
+                />
+              )}
+
+              {/* TAB 2: TASKS & FINAL DEDUCTION */}
+              {rightPanelTab === "tasks" && (() => {
+                const task1Obj = readingCase.tasks[0] && "options" in readingCase.tasks[0] ? readingCase.tasks[0] : undefined;
+                const task2Obj = readingCase.tasks[1] && "options" in readingCase.tasks[1] ? readingCase.tasks[1] : undefined;
+                const task3Obj = readingCase.tasks[2] && "options" in readingCase.tasks[2] ? readingCase.tasks[2] : undefined;
+                const task4Obj = readingCase.tasks[3] && "target_sentence" in readingCase.tasks[3] ? readingCase.tasks[3] : undefined;
+
+                const isTask1Correct = Boolean(task1Obj && taskAnswers["task-01"] === task1Obj.answer);
+                const isTask2Correct = Boolean(task2Obj && taskAnswers["task-02"] === task2Obj.answer);
+                const isTask3Correct = Boolean(task3Obj && taskAnswers["task-03"] === task3Obj.answer);
+                const isTask4Correct = Boolean(
+                  task4Obj && selectedEvidenceSentence &&
+                  (task4Obj.target_sentence.includes(selectedEvidenceSentence.trim().slice(0, 30)) ||
+                   selectedEvidenceSentence.includes(task4Obj.target_sentence.trim().slice(0, 30)))
+                );
+
+                const correctHyp = readingCase.final_deduction.correct_hypothesis;
+                const isFinalHypCorrect = finalHypothesis === correctHyp;
+
+                return (
+                  <div className="p-4 sm:p-6 divide-y divide-stone-200/80 space-y-6">
+                    {/* Task 1: FIND */}
+                    {task1Obj && (
+                      <div className="space-y-3 pt-0 first:pt-0">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 text-blue-900 border border-blue-200/60">
+                            GỢI Ý 1 · CHI TIẾT BÀI ĐỌC
+                          </span>
+                          {taskAnswers["task-01"] && (
+                            isTask1Correct ? (
+                              <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
+                                <CheckCircle className="h-3.5 w-3.5" /> Đúng
+                              </span>
+                            ) : (
+                              <span className="flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-full">
+                                Sai
+                              </span>
+                            )
+                          )}
+                        </div>
+                        <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
+                          {task1Obj.question}
+                        </p>
+                        <div className="space-y-1.5 pt-1">
+                          {task1Obj.options.map((opt) => {
+                            const userAns = taskAnswers["task-01"];
+                            const isAnswered = Boolean(userAns);
+                            const isThisSelected = userAns === opt.id;
+                            const isCorrectOpt = opt.id === task1Obj.answer;
+
+                            let cardStyle = "border-stone-200/80 bg-stone-50/50 hover:bg-stone-100/70 text-stone-700";
+                            if (isAnswered) {
+                              if (isThisSelected && isCorrectOpt) {
+                                cardStyle = "bg-emerald-50 border-emerald-500 text-emerald-950 font-bold ring-1 ring-emerald-500/40";
+                              } else if (isThisSelected && !isCorrectOpt) {
+                                cardStyle = "bg-rose-50 border-rose-400 text-rose-950 font-bold ring-1 ring-rose-400/40";
+                              } else if (!isThisSelected && isCorrectOpt) {
+                                cardStyle = "bg-emerald-50/60 border-emerald-300 text-emerald-900 font-semibold";
+                              }
+                            }
+
+                            return (
+                              <label
+                                key={opt.id}
+                                className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition-all ${cardStyle}`}
+                              >
+                                <input
+                                  type="radio"
+                                  name="task-01"
+                                  checked={taskAnswers["task-01"] === opt.id}
+                                  onChange={() => setTaskAnswers({ ...taskAnswers, "task-01": opt.id })}
+                                  className="mt-0.5 text-emerald-600 focus:ring-0"
+                                />
+                                <span>
+                                  <strong className="mr-1">{opt.id}.</strong> {opt.text}
+                                </span>
+                              </label>
+                            );
+                          })}
+                        </div>
+
+                        {/* Instant Explanation for Task 1 */}
+                        {taskAnswers["task-01"] && (
+                          <div className={`p-3 rounded-xl border text-xs leading-relaxed animate-in fade-in duration-150 ${
+                            isTask1Correct
+                              ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
+                              : "bg-rose-50/80 border-rose-200 text-rose-950"
+                          }`}>
+                            <p className="font-bold flex items-center gap-1.5 mb-1">
+                              {isTask1Correct ? (
+                                <span className="text-emerald-800">✅ Chính xác!</span>
+                              ) : (
+                                <span className="text-rose-800">❌ Chưa chính xác. Đáp án đúng là {task1Obj.answer}.</span>
+                              )}
+                            </p>
+                            {task1Obj.explanation && (
+                              <p className="text-stone-700">
+                                💡 <strong>Giải thích:</strong> {task1Obj.explanation}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Task 2: MATCH */}
+                    {task2Obj && (
+                      <div className="space-y-3 pt-6">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-900 border border-emerald-200/60">
+                            GỢI Ý 2 · ĐỐI CHIẾU Ý TƯỞNG
+                          </span>
+                          {taskAnswers["task-02"] && (
+                            isTask1Correct ? (
+                              <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
+                                <CheckCircle className="h-3.5 w-3.5" /> Đúng
+                              </span>
+                            ) : (
+                              <span className="flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-full">
+                                Sai
+                              </span>
+                            )
+                          )}
+                        </div>
+                        <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
+                          {task2Obj.question}
+                        </p>
+                        <div className="space-y-1.5 pt-1">
+                          {task2Obj.options.map((opt) => {
+                            const userAns = taskAnswers["task-02"];
+                            const isAnswered = Boolean(userAns);
+                            const isThisSelected = userAns === opt.id;
+                            const isCorrectOpt = opt.id === task2Obj.answer;
+
+                            let cardStyle = "border-stone-200/80 bg-stone-50/50 hover:bg-stone-100/70 text-stone-700";
+                            if (isAnswered) {
+                              if (isThisSelected && isCorrectOpt) {
+                                cardStyle = "bg-emerald-50 border-emerald-500 text-emerald-950 font-bold ring-1 ring-emerald-500/40";
+                              } else if (isThisSelected && !isCorrectOpt) {
+                                cardStyle = "bg-rose-50 border-rose-400 text-rose-950 font-bold ring-1 ring-rose-400/40";
+                              } else if (!isThisSelected && isCorrectOpt) {
+                                cardStyle = "bg-emerald-50/60 border-emerald-300 text-emerald-900 font-semibold";
+                              }
+                            }
+
+                            return (
+                              <label
+                                key={opt.id}
+                                className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition-all ${cardStyle}`}
+                              >
+                                <input
+                                  type="radio"
+                                  name="task-02"
+                                  checked={taskAnswers["task-02"] === opt.id}
+                                  onChange={() => setTaskAnswers({ ...taskAnswers, "task-02": opt.id })}
+                                  className="mt-0.5 text-emerald-600 focus:ring-0"
+                                />
+                                <span>
+                                  <strong className="mr-1">{opt.id}.</strong> {opt.text}
+                                </span>
+                              </label>
+                            );
+                          })}
+                        </div>
+
+                        {/* Instant Explanation for Task 2 */}
+                        {taskAnswers["task-02"] && (
+                          <div className={`p-3 rounded-xl border text-xs leading-relaxed animate-in fade-in duration-150 ${
+                            isTask2Correct
+                              ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
+                              : "bg-rose-50/80 border-rose-200 text-rose-950"
+                          }`}>
+                            <p className="font-bold flex items-center gap-1.5 mb-1">
+                              {isTask2Correct ? (
+                                <span className="text-emerald-800">✅ Chính xác!</span>
+                              ) : (
+                                <span className="text-rose-800">❌ Chưa chính xác. Đáp án đúng là {task2Obj.answer}.</span>
+                              )}
+                            </p>
+                            {task2Obj.explanation && (
+                              <p className="text-stone-700">
+                                💡 <strong>Giải thích:</strong> {task2Obj.explanation}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Task 3: INFER */}
+                    {task3Obj && (
+                      <div className="space-y-3 pt-6">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-50 text-purple-900 border border-purple-200/60">
+                            GỢI Ý 3 · SUY NGẪM & GÓC NHÌN
+                          </span>
+                          {taskAnswers["task-03"] && (
+                            isTask3Correct ? (
+                              <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
+                                <CheckCircle className="h-3.5 w-3.5" /> Đúng
+                              </span>
+                            ) : (
+                              <span className="flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-full">
+                                Sai
+                              </span>
+                            )
+                          )}
+                        </div>
+                        <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
+                          {task3Obj.question}
+                        </p>
+                        <div className="space-y-1.5 pt-1">
+                          {task3Obj.options.map((opt) => {
+                            const userAns = taskAnswers["task-03"];
+                            const isAnswered = Boolean(userAns);
+                            const isThisSelected = userAns === opt.id;
+                            const isCorrectOpt = opt.id === task3Obj.answer;
+
+                            let cardStyle = "border-stone-200/80 bg-stone-50/50 hover:bg-stone-100/70 text-stone-700";
+                            if (isAnswered) {
+                              if (isThisSelected && isCorrectOpt) {
+                                cardStyle = "bg-emerald-50 border-emerald-500 text-emerald-950 font-bold ring-1 ring-emerald-500/40";
+                              } else if (isThisSelected && !isCorrectOpt) {
+                                cardStyle = "bg-rose-50 border-rose-400 text-rose-950 font-bold ring-1 ring-rose-400/40";
+                              } else if (!isThisSelected && isCorrectOpt) {
+                                cardStyle = "bg-emerald-50/60 border-emerald-300 text-emerald-900 font-semibold";
+                              }
+                            }
+
+                            return (
+                              <label
+                                key={opt.id}
+                                className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition-all ${cardStyle}`}
+                              >
+                                <input
+                                  type="radio"
+                                  name="task-03"
+                                  checked={taskAnswers["task-03"] === opt.id}
+                                  onChange={() => setTaskAnswers({ ...taskAnswers, "task-03": opt.id })}
+                                  className="mt-0.5 text-emerald-600 focus:ring-0"
+                                />
+                                <span>
+                                  <strong className="mr-1">{opt.id}.</strong> {opt.text}
+                                </span>
+                              </label>
+                            );
+                          })}
+                        </div>
+
+                        {/* Instant Explanation for Task 3 */}
+                        {taskAnswers["task-03"] && (
+                          <div className={`p-3 rounded-xl border text-xs leading-relaxed animate-in fade-in duration-150 ${
+                            isTask3Correct
+                              ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
+                              : "bg-rose-50/80 border-rose-200 text-rose-950"
+                          }`}>
+                            <p className="font-bold flex items-center gap-1.5 mb-1">
+                              {isTask3Correct ? (
+                                <span className="text-emerald-800">✅ Chính xác!</span>
+                              ) : (
+                                <span className="text-rose-800">❌ Chưa chính xác. Đáp án đúng là {task3Obj.answer}.</span>
+                              )}
+                            </p>
+                            {task3Obj.explanation && (
+                              <p className="text-stone-700">
+                                💡 <strong>Giải thích:</strong> {task3Obj.explanation}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Task 4: PROVE (Click-to-Source) */}
+                    {task4Obj && (
+                      <div className="space-y-3 pt-6">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-50 text-amber-900 border border-amber-200/60">
+                            GỢI Ý 4 · CÂU VĂN TÂM ĐẮC
+                          </span>
+                          {selectedEvidenceSentence && (
+                            isTask4Correct ? (
+                              <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
+                                <CheckCircle className="h-3.5 w-3.5" /> Đúng
+                              </span>
+                            ) : (
+                              <span className="flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-full">
+                                Chưa đúng
+                              </span>
+                            )
+                          )}
+                        </div>
+                        <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
+                          {task4Obj.instruction}
+                        </p>
+                        
+                        {selectedEvidenceSentence ? (
+                          <div className="space-y-2.5">
+                            <div className={`p-3 rounded-xl border leading-relaxed text-xs italic ${
+                              isTask4Correct
+                                ? "bg-emerald-50 border-emerald-300 text-emerald-950 font-medium"
+                                : "bg-rose-50 border-rose-300 text-rose-950"
+                            }`}>
+                              &ldquo;{selectedEvidenceSentence}&rdquo;
+                            </div>
+
+                            {/* Instant Explanation for Task 4 */}
+                            <div className={`p-3 rounded-xl border text-xs leading-relaxed ${
+                              isTask4Correct
+                                ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
+                                : "bg-rose-50/80 border-rose-200 text-rose-950"
+                            }`}>
+                              {isTask4Correct ? (
+                                <p>
+                                  ✅ <strong>Chính xác!</strong> {task4Obj.explanation || "Câu văn đã chọn hoàn toàn chính xác theo yêu cầu chứng minh."}
+                                </p>
+                              ) : (
+                                <p>
+                                  ❌ <strong>Chưa chính xác.</strong> Câu bạn chọn không chứa đúng bằng chứng yêu cầu. Hãy click lại câu văn thích hợp trong các nguồn đọc ở cột bên trái.
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="p-3.5 rounded-xl border border-dashed border-stone-200 bg-stone-50/60 text-xs text-stone-500 text-center">
+                            👉 Nhấp trực tiếp vào câu văn trong bài đọc (cột trái) để ghim làm dẫn chứng.
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Final Deduction Section */}
+                    <div className="pt-6 space-y-4">
+                      <div className="flex items-center gap-2">
+                        <HelpCircle className="h-4 w-4 text-amber-600" />
+                        <h4 className="font-bold text-stone-900 text-xs uppercase tracking-wider">
+                          ĐÚC KẾT & CHIÊM NGHIỆM
+                        </h4>
+                      </div>
+
+                      <p className="text-xs text-stone-700 font-medium leading-relaxed">
+                        {readingCase.final_deduction.question}
+                      </p>
+
+                      <div className="space-y-2">
+                        {readingCase.final_deduction.options.map((opt) => {
+                          const isAnswered = Boolean(finalHypothesis);
+                          const isThisSelected = finalHypothesis === opt.id;
+                          const isCorrectOpt = opt.id === correctHyp;
+
+                          let cardStyle = "border-stone-200/80 bg-stone-50/50 hover:bg-stone-100/70 text-stone-700";
+                          if (isAnswered) {
+                            if (isThisSelected && isCorrectOpt) {
+                              cardStyle = "bg-emerald-50 border-emerald-500 text-emerald-950 font-bold ring-1 ring-emerald-500/40";
+                            } else if (isThisSelected && !isCorrectOpt) {
+                              cardStyle = "bg-rose-50 border-rose-400 text-rose-950 font-bold ring-1 ring-rose-400/40";
+                            } else if (!isThisSelected && isCorrectOpt) {
+                              cardStyle = "bg-emerald-50/60 border-emerald-300 text-emerald-900 font-semibold";
+                            }
+                          }
+
+                          return (
+                            <label
+                              key={opt.id}
+                              className={`flex items-start gap-2.5 p-3 rounded-xl border text-xs cursor-pointer transition-all ${cardStyle}`}
+                            >
+                              <input
+                                type="radio"
+                                name="final_hypothesis"
+                                checked={finalHypothesis === opt.id}
+                                onChange={() => setFinalHypothesis(opt.id)}
+                                className="mt-0.5 text-emerald-600 focus:ring-0"
+                              />
+                              <span>
+                                <strong className="mr-1">{opt.id.replace("hyp-", "Nhận định ")}:</strong> {opt.text}
+                              </span>
+                            </label>
+                          );
+                        })}
+                      </div>
+
+                      {/* Instant Explanation for Final Deduction */}
+                      {finalHypothesis && (
+                        <div className={`p-3 rounded-xl border text-xs leading-relaxed animate-in fade-in duration-150 ${
+                          isFinalHypCorrect
+                            ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
+                            : "bg-rose-50/80 border-rose-200 text-rose-950"
+                        }`}>
+                          <p className="font-bold flex items-center gap-1.5 mb-1">
+                            {isFinalHypCorrect ? (
+                              <span className="text-emerald-800">✅ Đúc Kết Rất Sâu Sắc!</span>
+                            ) : (
+                              <span className="text-rose-800">❌ Chưa chính xác. Đáp án đúng là {correctHyp.replace("hyp-", "Nhận định ")}.</span>
+                            )}
+                          </p>
+                          {readingCase.final_deduction.explanation && (
+                            <p className="text-stone-700">
+                              💡 <strong>Giải thích:</strong> {readingCase.final_deduction.explanation}
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Required Supporting Evidence Selection */}
+                      <div className="space-y-2 pt-2">
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-stone-600">
+                          Gợi ý chọn các nhận định then chốt làm sáng tỏ thông điệp trên:
+                        </p>
+                        <div className="space-y-1.5">
+                          {readingCase.final_deduction.required_evidence_pool.map((ev) => {
+                            const isChecked = selectedEvidenceIds.includes(ev.id);
+                            return (
+                              <label
+                                key={ev.id}
+                                className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition-all ${
+                                  isChecked
+                                    ? "bg-amber-50 border-amber-300 text-amber-950 font-medium"
+                                    : "border-stone-200/80 bg-stone-50/50 text-stone-600 hover:text-stone-900 hover:bg-stone-100/70"
+                                }`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={isChecked}
+                                  onChange={() => toggleEvidenceId(ev.id)}
+                                  className="mt-0.5 rounded text-amber-600 focus:ring-0"
+                                />
+                                <span>{ev.label}</span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Submit Button */}
+                      <Button
+                        disabled={!canSubmitAutopsy}
+                        onClick={() => setViewState("autopsy")}
+                        className={`w-full py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all shadow-md ${
+                          canSubmitAutopsy
+                            ? "bg-amber-500 hover:bg-amber-600 text-slate-950 cursor-pointer shadow-amber-500/20"
+                            : "bg-stone-200 text-stone-400 cursor-not-allowed"
+                        }`}
+                      >
+                        Xem Đúc Kết Bài Đọc (Takeaways & Insights)
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+
+                      {!canSubmitAutopsy && (
+                        <p className="text-[11px] text-center text-stone-500">
+                          Gợi ý: Trả lời các câu hỏi suy ngẫm để mở khóa phần tổng kết chuyên sâu.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          </section>
+
+        </div>
+      </main>
+    </div>
+  );
+}
