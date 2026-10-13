@@ -54,6 +54,17 @@ export function isContentWord(word: string): boolean {
 // Multi-word phrases priority list (longest matches first)
 export const MULTI_WORD_PHRASES: string[] = [
   ...Object.keys(ALL_CURATED_CHUNKS).sort((a, b) => b.length - a.length),
+  "continuous partial attention",
+  "attentional switching penalty",
+  "dopamine micro-bursts",
+  "attentional hygiene",
+  "prefrontal cortex",
+  "starter home",
+  "generation rent",
+  "financialisation of housing",
+  "intergenerational wealth divide",
+  "financial precarity",
+  "social housing infrastructure",
   "demographic winter",
   "pay-as-you-go pension",
   "silver dividend",

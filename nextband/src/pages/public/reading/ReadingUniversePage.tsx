@@ -659,6 +659,116 @@ export default function ReadingUniversePage() {
                 </div>
               </article>
             )}
+
+            {/* Story Card 9: The 60-Second Brain (The Conversation) */}
+            {(selectedTopic === "all" || selectedTopic === "tech" || selectedTopic === "society") && (
+              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#D97706]/50 hover:shadow-xl hover:shadow-[#D97706]/5 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=1000&auto=format&fit=crop&q=80"
+                      alt="The 60-Second Brain & Video Algorithms"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
+                        Khoa học não bộ & MXH
+                      </span>
+                      <span className="px-2.5 py-1 rounded-md bg-[#D97706] backdrop-blur-md text-white text-[11px] font-bold tracking-wider">
+                        The Conversation
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-6 sm:p-7 space-y-3">
+                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
+                      <span>Reading #09</span>
+                      <span>·</span>
+                      <span>5 min read</span>
+                      <span>·</span>
+                      <span className="text-[#D97706] font-bold">
+                        IELTS Band 7.5+
+                      </span>
+                      <span>·</span>
+                      <span>Thần kinh học hành vi</span>
+                    </div>
+
+                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#D97706] transition-colors leading-snug">
+                      <Link to="/reading/case-009">
+                        Bài #09: Não Bộ 60 Giây: Thuật Toán Video Ngắn Đang Tái Lập Trình Sự Tập Trung Như Thế Nào?
+                      </Link>
+                    </h3>
+                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
+                      Lướt TikTok và Reels liên tục tác động ra sao đến vỏ não trước trán đang phát triển của người trẻ? Bóc tách góc nhìn khoa học thần kinh về hội chứng 'Continuous Partial Attention' và cái bẫy đa nhiệm số từ The Conversation.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
+                  <Link
+                    to="/reading/case-009"
+                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#D97706] flex items-center gap-1"
+                  >
+                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </article>
+            )}
+
+            {/* Story Card 10: The Death of the Starter Home (The Conversation) */}
+            {(selectedTopic === "all" || selectedTopic === "economics" || selectedTopic === "society") && (
+              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#0D9488]/50 hover:shadow-xl hover:shadow-[#0D9488]/5 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1000&auto=format&fit=crop&q=80"
+                      alt="The Death of the Starter Home & Generation Rent"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
+                        Quy hoạch đô thị & Bất động sản
+                      </span>
+                      <span className="px-2.5 py-1 rounded-md bg-[#0D9488] backdrop-blur-md text-white text-[11px] font-bold tracking-wider">
+                        The Conversation
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-6 sm:p-7 space-y-3">
+                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
+                      <span>Reading #10</span>
+                      <span>·</span>
+                      <span>6 min read</span>
+                      <span>·</span>
+                      <span className="text-[#0D9488] font-bold">
+                        IELTS Band 7.5+
+                      </span>
+                      <span>·</span>
+                      <span>Xã hội học đô thị</span>
+                    </div>
+
+                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#0D9488] transition-colors leading-snug">
+                      <Link to="/reading/case-010">
+                        Bài #10: Sự Biến Mất Của Ngôi Nhà Đầu Tiên: Thế Hệ Đi Thuê & Cái Bẫy Cấu Trúc Bất Động Sản
+                      </Link>
+                    </h3>
+                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
+                      Vì sao giới trẻ ngày nay không thể mua nhà dù làm việc chăm chỉ hơn các thế hệ trước? Phân tích sắc sảo từ các nhà xã hội học đô thị về hiện tượng 'Tài chính hóa nhà ở' và cuộc khủng hoảng sinh sản lan rộng từ gánh nặng tiền thuê nhà.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
+                  <Link
+                    to="/reading/case-010"
+                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#0D9488] flex items-center gap-1"
+                  >
+                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </article>
+            )}
           </div>
         </section>
 

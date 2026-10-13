@@ -8,6 +8,8 @@ import { CASE_005 } from "@/data/readingCases/case005";
 import { CASE_006 } from "@/data/readingCases/case006";
 import { CASE_007 } from "@/data/readingCases/case007";
 import { CASE_008 } from "@/data/readingCases/case008";
+import { CASE_009 } from "@/data/readingCases/case009";
+import { CASE_010 } from "@/data/readingCases/case010";
 import { VocabularyTerm } from "@/features/reading/types";
 import { ContextualGlossTooltip } from "@/features/reading/components/ContextualGlossTooltip";
 import { CaseAutopsyView } from "@/features/reading/components/CaseAutopsyView";
@@ -52,6 +54,8 @@ const ALL_CASES: Record<string, typeof CASE_001> = {
   "case-006": CASE_006,
   "case-007": CASE_007,
   "case-008": CASE_008,
+  "case-009": CASE_009,
+  "case-010": CASE_010,
 };
 
 export default function ReadingCasePage() {

@@ -65,6 +65,16 @@ const TASK2_WRITING_PROMPTS: Record<string, { topic: string; prompt: string; tip
     prompt: "In recent years, many nations have prioritized domestic self-sufficiency over international trade and globalization. Do the advantages of this protectionist shift outweigh its disadvantages?",
     tips: "Sử dụng các khái niệm kinh tế vĩ mô: 'efficiency penalty' (lạm phát và giảm năng suất), rủi ro 'autarky' và nhu cầu 'diversified redundancy' thay vì cấm vận.",
   },
+  "case-009": {
+    topic: "Short-Form Video Algorithms & Cognitive Attention Span",
+    prompt: "Some people believe that modern technologies and short-form video media are deteriorating young people's attention spans and academic performance. Do the advantages of these digital platforms outweigh the disadvantages?",
+    tips: "Tận dụng các luận điểm từ The Conversation: 'continuous partial attention', 'task-switching penalty' và sự phát triển chưa hoàn thiện của 'prefrontal cortex'.",
+  },
+  "case-010": {
+    topic: "Urban Housing Crisis & Generation Rent",
+    prompt: "In many urban areas, rising property prices have made it impossible for young people to buy their own homes. What problems does this cause, and what solutions can governments introduce?",
+    tips: "Vận dụng khái niệm 'financialisation of housing', sự tan biến của 'starter home' và giải pháp xem nhà ở xã hội phi lợi nhuận như cơ sở hạ tầng thiết yếu.",
+  },
 };
 
 interface WritingDebateChamberProps {
