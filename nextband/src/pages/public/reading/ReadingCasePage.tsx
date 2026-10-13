@@ -6,6 +6,8 @@ import { CASE_003 } from "@/data/readingCases/case003";
 import { CASE_004 } from "@/data/readingCases/case004";
 import { CASE_005 } from "@/data/readingCases/case005";
 import { CASE_006 } from "@/data/readingCases/case006";
+import { CASE_007 } from "@/data/readingCases/case007";
+import { CASE_008 } from "@/data/readingCases/case008";
 import { VocabularyTerm } from "@/features/reading/types";
 import { ContextualGlossTooltip } from "@/features/reading/components/ContextualGlossTooltip";
 import { CaseAutopsyView } from "@/features/reading/components/CaseAutopsyView";
@@ -48,6 +50,8 @@ const ALL_CASES: Record<string, typeof CASE_001> = {
   "case-004": CASE_004,
   "case-005": CASE_005,
   "case-006": CASE_006,
+  "case-007": CASE_007,
+  "case-008": CASE_008,
 };
 
 export default function ReadingCasePage() {
@@ -676,16 +680,16 @@ export default function ReadingCasePage() {
           {/* ========================================================================= */}
           {/* RIGHT COLUMN: INVESTIGATION & REASONING PANEL (Independent Scroll ~ 42%)  */}
           {/* ========================================================================= */}
-          <section className="lg:col-span-5 h-full overflow-y-auto p-4 sm:p-6 space-y-6 border-t lg:border-t-0 lg:border-l border-stone-200 bg-[#FAF9F6]/80 custom-scrollbar">
-            <div className="rounded-2xl border border-stone-200/90 bg-white shadow-xs overflow-hidden">
-              {/* Right Panel Tabs: Tasks vs Explain */}
-              <div className="flex items-center border-b border-stone-200 bg-stone-50/80 p-1.5 gap-1.5">
+          <section className="lg:col-span-5 h-full flex flex-col overflow-hidden bg-white border-t lg:border-t-0 lg:border-l border-stone-200">
+            {/* Right Panel Tabs: Tasks vs Explain (Flush header aligned with Left Column) */}
+            <div className="border-b border-stone-200/90 bg-[#FAF8F5] px-4 sm:px-6 py-2.5 shrink-0 z-10">
+              <div className="flex items-center gap-1.5 bg-stone-200/60 p-1 rounded-xl">
                 <button
                   onClick={() => setRightPanelTab("tasks")}
-                  className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     rightPanelTab === "tasks"
-                      ? "bg-white text-stone-900 shadow-xs border border-stone-200/80 font-black"
-                      : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/60"
+                      ? "bg-white text-stone-900 shadow-xs font-black"
+                      : "text-stone-600 hover:text-stone-900 hover:bg-white/40"
                   }`}
                 >
                   <BookOpen className="h-3.5 w-3.5 text-amber-600" />
@@ -697,10 +701,10 @@ export default function ReadingCasePage() {
 
                 <button
                   onClick={() => setRightPanelTab("explain")}
-                  className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     rightPanelTab === "explain"
-                      ? "bg-white text-emerald-950 shadow-xs border border-stone-200/80 font-black"
-                      : "text-stone-600 hover:text-stone-900 hover:bg-stone-100/60"
+                      ? "bg-white text-emerald-950 shadow-xs font-black"
+                      : "text-stone-600 hover:text-stone-900 hover:bg-white/40"
                   }`}
                 >
                   <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
@@ -710,7 +714,10 @@ export default function ReadingCasePage() {
                   )}
                 </button>
               </div>
+            </div>
 
+            {/* Scrollable Content Area */}
+            <div className="flex-1 overflow-y-auto custom-scrollbar">
               {/* TAB 1: READLANG EXPLAIN SIDEBAR */}
               {rightPanelTab === "explain" && (
                 <ReadlangExplorationSidebar
@@ -728,464 +735,455 @@ export default function ReadingCasePage() {
                 const task3Obj = readingCase.tasks[2] && "options" in readingCase.tasks[2] ? readingCase.tasks[2] : undefined;
                 const task4Obj = readingCase.tasks[3] && "target_sentence" in readingCase.tasks[3] ? readingCase.tasks[3] : undefined;
 
-                    const isTask1Correct = Boolean(task1Obj && taskAnswers["task-01"] === task1Obj.answer);
-                    const isTask2Correct = Boolean(task2Obj && taskAnswers["task-02"] === task2Obj.answer);
-                    const isTask3Correct = Boolean(task3Obj && taskAnswers["task-03"] === task3Obj.answer);
-                    const isTask4Correct = Boolean(
-                      task4Obj && selectedEvidenceSentence &&
-                      (task4Obj.target_sentence.includes(selectedEvidenceSentence.trim().slice(0, 30)) ||
-                       selectedEvidenceSentence.includes(task4Obj.target_sentence.trim().slice(0, 30)))
-                    );
+                const isTask1Correct = Boolean(task1Obj && taskAnswers["task-01"] === task1Obj.answer);
+                const isTask2Correct = Boolean(task2Obj && taskAnswers["task-02"] === task2Obj.answer);
+                const isTask3Correct = Boolean(task3Obj && taskAnswers["task-03"] === task3Obj.answer);
+                const isTask4Correct = Boolean(
+                  task4Obj && selectedEvidenceSentence &&
+                  (task4Obj.target_sentence.includes(selectedEvidenceSentence.trim().slice(0, 30)) ||
+                   selectedEvidenceSentence.includes(task4Obj.target_sentence.trim().slice(0, 30)))
+                );
 
-                    const correctHyp = readingCase.final_deduction.correct_hypothesis;
-                    const isFinalHypCorrect = finalHypothesis === correctHyp;
+                const correctHyp = readingCase.final_deduction.correct_hypothesis;
+                const isFinalHypCorrect = finalHypothesis === correctHyp;
 
-                    return (
-                    <div className="p-5 sm:p-6 space-y-6">
-                      {/* Tasks List */}
-                      <div className="space-y-6">
-                        
-                        {/* Task 1: FIND */}
-                        {task1Obj && (
-                          <div className="rounded-xl border border-stone-200/80 bg-[#FAF9F6] p-4 space-y-3">
-                            <div className="flex items-center justify-between">
-                              <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 text-blue-900 border border-blue-200">
-                                GỢI Ý 1 · CHI TIẾT BÀI ĐỌC
+                return (
+                  <div className="p-4 sm:p-6 divide-y divide-stone-200/80 space-y-6">
+                    {/* Task 1: FIND */}
+                    {task1Obj && (
+                      <div className="space-y-3 pt-0 first:pt-0">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-50 text-blue-900 border border-blue-200/60">
+                            GỢI Ý 1 · CHI TIẾT BÀI ĐỌC
+                          </span>
+                          {taskAnswers["task-01"] && (
+                            isTask1Correct ? (
+                              <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
+                                <CheckCircle className="h-3.5 w-3.5" /> Đúng
                               </span>
-                              {taskAnswers["task-01"] && (
-                                isTask1Correct ? (
-                                  <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
-                                    <CheckCircle className="h-3.5 w-3.5" /> Đúng
-                                  </span>
-                                ) : (
-                                  <span className="flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-full">
-                                    Sai
-                                  </span>
-                                )
-                              )}
-                            </div>
-                            <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
-                              {task1Obj.question}
-                            </p>
-                            <div className="space-y-1.5 pt-1">
-                              {task1Obj.options.map((opt) => {
-                                const userAns = taskAnswers["task-01"];
-                                const isAnswered = Boolean(userAns);
-                                const isThisSelected = userAns === opt.id;
-                                const isCorrectOpt = opt.id === task1Obj.answer;
-
-                                let cardStyle = "border-stone-200/80 bg-white hover:bg-stone-50 text-stone-700";
-                                if (isAnswered) {
-                                  if (isThisSelected && isCorrectOpt) {
-                                    cardStyle = "bg-emerald-50 border-emerald-500 text-emerald-950 font-bold ring-1 ring-emerald-500/40";
-                                  } else if (isThisSelected && !isCorrectOpt) {
-                                    cardStyle = "bg-rose-50 border-rose-400 text-rose-950 font-bold ring-1 ring-rose-400/40";
-                                  } else if (!isThisSelected && isCorrectOpt) {
-                                    cardStyle = "bg-emerald-50/60 border-emerald-300 text-emerald-900 font-semibold";
-                                  }
-                                }
-
-                                return (
-                                  <label
-                                    key={opt.id}
-                                    className={`flex items-start gap-2.5 p-2.5 rounded-lg border text-xs cursor-pointer transition-all ${cardStyle}`}
-                                  >
-                                    <input
-                                      type="radio"
-                                      name="task-01"
-                                      checked={taskAnswers["task-01"] === opt.id}
-                                      onChange={() => setTaskAnswers({ ...taskAnswers, "task-01": opt.id })}
-                                      className="mt-0.5 text-emerald-600 focus:ring-0"
-                                    />
-                                    <span>
-                                      <strong className="mr-1">{opt.id}.</strong> {opt.text}
-                                    </span>
-                                  </label>
-                                );
-                              })}
-                            </div>
-
-                            {/* Instant Explanation for Task 1 */}
-                            {taskAnswers["task-01"] && (
-                              <div className={`p-3 rounded-xl border text-xs leading-relaxed animate-in fade-in duration-150 ${
-                                isTask1Correct
-                                  ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
-                                  : "bg-rose-50/80 border-rose-200 text-rose-950"
-                              }`}>
-                                <p className="font-bold flex items-center gap-1.5 mb-1">
-                                  {isTask1Correct ? (
-                                    <span className="text-emerald-800">✅ Chính xác!</span>
-                                  ) : (
-                                    <span className="text-rose-800">❌ Chưa chính xác. Đáp án đúng là {task1Obj.answer}.</span>
-                                  )}
-                                </p>
-                                {task1Obj.explanation && (
-                                  <p className="text-stone-700">
-                                    💡 <strong>Giải thích:</strong> {task1Obj.explanation}
-                                  </p>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Task 2: MATCH */}
-                        {task2Obj && (
-                          <div className="rounded-xl border border-stone-200/80 bg-[#FAF9F6] p-4 space-y-3">
-                            <div className="flex items-center justify-between">
-                              <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-900 border border-emerald-200">
-                                GỢI Ý 2 · ĐỐI CHIẾU Ý TƯỞNG
+                            ) : (
+                              <span className="flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-full">
+                                Sai
                               </span>
-                              {taskAnswers["task-02"] && (
-                                isTask2Correct ? (
-                                  <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
-                                    <CheckCircle className="h-3.5 w-3.5" /> Đúng
-                                  </span>
-                                ) : (
-                                  <span className="flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-full">
-                                    Sai
-                                  </span>
-                                )
-                              )}
-                            </div>
-                            <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
-                              {task2Obj.question}
-                            </p>
-                            <div className="space-y-1.5 pt-1">
-                              {task2Obj.options.map((opt) => {
-                                const userAns = taskAnswers["task-02"];
-                                const isAnswered = Boolean(userAns);
-                                const isThisSelected = userAns === opt.id;
-                                const isCorrectOpt = opt.id === task2Obj.answer;
+                            )
+                          )}
+                        </div>
+                        <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
+                          {task1Obj.question}
+                        </p>
+                        <div className="space-y-1.5 pt-1">
+                          {task1Obj.options.map((opt) => {
+                            const userAns = taskAnswers["task-01"];
+                            const isAnswered = Boolean(userAns);
+                            const isThisSelected = userAns === opt.id;
+                            const isCorrectOpt = opt.id === task1Obj.answer;
 
-                                let cardStyle = "border-stone-200/80 bg-white hover:bg-stone-50 text-stone-700";
-                                if (isAnswered) {
-                                  if (isThisSelected && isCorrectOpt) {
-                                    cardStyle = "bg-emerald-50 border-emerald-500 text-emerald-950 font-bold ring-1 ring-emerald-500/40";
-                                  } else if (isThisSelected && !isCorrectOpt) {
-                                    cardStyle = "bg-rose-50 border-rose-400 text-rose-950 font-bold ring-1 ring-rose-400/40";
-                                  } else if (!isThisSelected && isCorrectOpt) {
-                                    cardStyle = "bg-emerald-50/60 border-emerald-300 text-emerald-900 font-semibold";
-                                  }
-                                }
-
-                                return (
-                                  <label
-                                    key={opt.id}
-                                    className={`flex items-start gap-2.5 p-2.5 rounded-lg border text-xs cursor-pointer transition-all ${cardStyle}`}
-                                  >
-                                    <input
-                                      type="radio"
-                                      name="task-02"
-                                      checked={taskAnswers["task-02"] === opt.id}
-                                      onChange={() => setTaskAnswers({ ...taskAnswers, "task-02": opt.id })}
-                                      className="mt-0.5 text-emerald-600 focus:ring-0"
-                                    />
-                                    <span>
-                                      <strong className="mr-1">{opt.id}.</strong> {opt.text}
-                                    </span>
-                                  </label>
-                                );
-                              })}
-                            </div>
-
-                            {/* Instant Explanation for Task 2 */}
-                            {taskAnswers["task-02"] && (
-                              <div className={`p-3 rounded-xl border text-xs leading-relaxed animate-in fade-in duration-150 ${
-                                isTask2Correct
-                                  ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
-                                  : "bg-rose-50/80 border-rose-200 text-rose-950"
-                              }`}>
-                                <p className="font-bold flex items-center gap-1.5 mb-1">
-                                  {isTask2Correct ? (
-                                    <span className="text-emerald-800">✅ Chính xác!</span>
-                                  ) : (
-                                    <span className="text-rose-800">❌ Chưa chính xác. Đáp án đúng là {task2Obj.answer}.</span>
-                                  )}
-                                </p>
-                                {task2Obj.explanation && (
-                                  <p className="text-stone-700">
-                                    💡 <strong>Giải thích:</strong> {task2Obj.explanation}
-                                  </p>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Task 3: INFER */}
-                        {task3Obj && (
-                          <div className="rounded-xl border border-stone-200/80 bg-[#FAF9F6] p-4 space-y-3">
-                            <div className="flex items-center justify-between">
-                              <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-50 text-purple-900 border border-purple-200">
-                                GỢI Ý 3 · SUY NGẪM & GÓC NHÌN
-                              </span>
-                              {taskAnswers["task-03"] && (
-                                isTask3Correct ? (
-                                  <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
-                                    <CheckCircle className="h-3.5 w-3.5" /> Đúng
-                                  </span>
-                                ) : (
-                                  <span className="flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-full">
-                                    Sai
-                                  </span>
-                                )
-                              )}
-                            </div>
-                            <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
-                              {task3Obj.question}
-                            </p>
-                            <div className="space-y-1.5 pt-1">
-                              {task3Obj.options.map((opt) => {
-                                const userAns = taskAnswers["task-03"];
-                                const isAnswered = Boolean(userAns);
-                                const isThisSelected = userAns === opt.id;
-                                const isCorrectOpt = opt.id === task3Obj.answer;
-
-                                let cardStyle = "border-stone-200/80 bg-white hover:bg-stone-50 text-stone-700";
-                                if (isAnswered) {
-                                  if (isThisSelected && isCorrectOpt) {
-                                    cardStyle = "bg-emerald-50 border-emerald-500 text-emerald-950 font-bold ring-1 ring-emerald-500/40";
-                                  } else if (isThisSelected && !isCorrectOpt) {
-                                    cardStyle = "bg-rose-50 border-rose-400 text-rose-950 font-bold ring-1 ring-rose-400/40";
-                                  } else if (!isThisSelected && isCorrectOpt) {
-                                    cardStyle = "bg-emerald-50/60 border-emerald-300 text-emerald-900 font-semibold";
-                                  }
-                                }
-
-                                return (
-                                  <label
-                                    key={opt.id}
-                                    className={`flex items-start gap-2.5 p-2.5 rounded-lg border text-xs cursor-pointer transition-all ${cardStyle}`}
-                                  >
-                                    <input
-                                      type="radio"
-                                      name="task-03"
-                                      checked={taskAnswers["task-03"] === opt.id}
-                                      onChange={() => setTaskAnswers({ ...taskAnswers, "task-03": opt.id })}
-                                      className="mt-0.5 text-emerald-600 focus:ring-0"
-                                    />
-                                    <span>
-                                      <strong className="mr-1">{opt.id}.</strong> {opt.text}
-                                    </span>
-                                  </label>
-                                );
-                              })}
-                            </div>
-
-                            {/* Instant Explanation for Task 3 */}
-                            {taskAnswers["task-03"] && (
-                              <div className={`p-3 rounded-xl border text-xs leading-relaxed animate-in fade-in duration-150 ${
-                                isTask3Correct
-                                  ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
-                                  : "bg-rose-50/80 border-rose-200 text-rose-950"
-                              }`}>
-                                <p className="font-bold flex items-center gap-1.5 mb-1">
-                                  {isTask3Correct ? (
-                                    <span className="text-emerald-800">✅ Chính xác!</span>
-                                  ) : (
-                                    <span className="text-rose-800">❌ Chưa chính xác. Đáp án đúng là {task3Obj.answer}.</span>
-                                  )}
-                                </p>
-                                {task3Obj.explanation && (
-                                  <p className="text-stone-700">
-                                    💡 <strong>Giải thích:</strong> {task3Obj.explanation}
-                                  </p>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Task 4: PROVE (Click-to-Source) */}
-                        {task4Obj && (
-                          <div className="rounded-xl border border-stone-200/80 bg-[#FAF9F6] p-4 space-y-3">
-                            <div className="flex items-center justify-between">
-                              <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-50 text-amber-900 border border-amber-200">
-                                GỢI Ý 4 · CÂU VĂN TÂM ĐẮC
-                              </span>
-                              {selectedEvidenceSentence && (
-                                isTask4Correct ? (
-                                  <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
-                                    <CheckCircle className="h-3.5 w-3.5" /> Đúng
-                                  </span>
-                                ) : (
-                                  <span className="flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-full">
-                                    Chưa đúng
-                                  </span>
-                                )
-                              )}
-                            </div>
-                            <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
-                              {task4Obj.instruction}
-                            </p>
-                            
-                            <div className="rounded-lg bg-white p-3 border border-stone-200 text-xs">
-                              {selectedEvidenceSentence ? (
-                                <div className="space-y-2">
-                                  <span className="text-[11px] font-bold text-stone-800 flex items-center gap-1">
-                                    Câu văn đã chọn:
-                                  </span>
-                                  <p className={`p-2.5 rounded border leading-relaxed italic ${
-                                    isTask4Correct
-                                      ? "bg-emerald-50 border-emerald-300 text-emerald-950 font-medium"
-                                      : "bg-rose-50 border-rose-300 text-rose-950"
-                                  }`}>
-                                    &ldquo;{selectedEvidenceSentence}&rdquo;
-                                  </p>
-
-                                  {/* Instant Explanation for Task 4 */}
-                                  <div className={`p-2.5 rounded-lg border text-xs leading-relaxed ${
-                                    isTask4Correct
-                                      ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
-                                      : "bg-rose-50/80 border-rose-200 text-rose-950"
-                                  }`}>
-                                    {isTask4Correct ? (
-                                      <p>
-                                        ✅ <strong>Chính xác!</strong> {task4Obj.explanation || "Câu văn đã chọn hoàn toàn chính xác theo yêu cầu chứng minh."}
-                                      </p>
-                                    ) : (
-                                      <p>
-                                        ❌ <strong>Chưa chính xác.</strong> Câu bạn chọn không chứa đúng bằng chứng yêu cầu. Hãy click lại câu văn thích hợp trong các nguồn đọc ở cột bên trái.
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
-                              ) : (
-                                <p className="text-stone-500 italic">
-                                  👉 Nhấp trực tiếp vào câu văn trong bài đọc (cột trái) để ghim làm dẫn chứng.
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Final Deduction Section */}
-                        <div className="border-t border-stone-200 pt-5 space-y-4">
-                          <div className="flex items-center gap-2">
-                            <HelpCircle className="h-5 w-5 text-amber-600" />
-                            <h4 className="font-bold text-stone-900 text-sm uppercase tracking-wide">
-                              ĐÚC KẾT & CHIÊM NGHIỆM
-                            </h4>
-                          </div>
-
-                          <p className="text-xs text-stone-700 font-medium">
-                            {readingCase.final_deduction.question}
-                          </p>
-
-                          <div className="space-y-2">
-                            {readingCase.final_deduction.options.map((opt) => {
-                              const isAnswered = Boolean(finalHypothesis);
-                              const isThisSelected = finalHypothesis === opt.id;
-                              const isCorrectOpt = opt.id === correctHyp;
-
-                              let cardStyle = "border-stone-200/80 bg-white hover:bg-stone-50 text-stone-700";
-                              if (isAnswered) {
-                                if (isThisSelected && isCorrectOpt) {
-                                  cardStyle = "bg-emerald-50 border-emerald-500 text-emerald-950 font-bold ring-1 ring-emerald-500/40";
-                                } else if (isThisSelected && !isCorrectOpt) {
-                                  cardStyle = "bg-rose-50 border-rose-400 text-rose-950 font-bold ring-1 ring-rose-400/40";
-                                } else if (!isThisSelected && isCorrectOpt) {
-                                  cardStyle = "bg-emerald-50/60 border-emerald-300 text-emerald-900 font-semibold";
-                                }
+                            let cardStyle = "border-stone-200/80 bg-stone-50/50 hover:bg-stone-100/70 text-stone-700";
+                            if (isAnswered) {
+                              if (isThisSelected && isCorrectOpt) {
+                                cardStyle = "bg-emerald-50 border-emerald-500 text-emerald-950 font-bold ring-1 ring-emerald-500/40";
+                              } else if (isThisSelected && !isCorrectOpt) {
+                                cardStyle = "bg-rose-50 border-rose-400 text-rose-950 font-bold ring-1 ring-rose-400/40";
+                              } else if (!isThisSelected && isCorrectOpt) {
+                                cardStyle = "bg-emerald-50/60 border-emerald-300 text-emerald-900 font-semibold";
                               }
+                            }
 
-                              return (
-                                <label
-                                  key={opt.id}
-                                  className={`flex items-start gap-2.5 p-3 rounded-xl border text-xs cursor-pointer transition-all ${cardStyle}`}
-                                >
-                                  <input
-                                    type="radio"
-                                    name="final_hypothesis"
-                                    checked={finalHypothesis === opt.id}
-                                    onChange={() => setFinalHypothesis(opt.id)}
-                                    className="mt-0.5 text-emerald-600 focus:ring-0"
-                                  />
-                                  <span>
-                                    <strong className="mr-1">{opt.id.replace("hyp-", "Nhận định ")}:</strong> {opt.text}
-                                  </span>
-                                </label>
-                              );
-                            })}
+                            return (
+                              <label
+                                key={opt.id}
+                                className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition-all ${cardStyle}`}
+                              >
+                                <input
+                                  type="radio"
+                                  name="task-01"
+                                  checked={taskAnswers["task-01"] === opt.id}
+                                  onChange={() => setTaskAnswers({ ...taskAnswers, "task-01": opt.id })}
+                                  className="mt-0.5 text-emerald-600 focus:ring-0"
+                                />
+                                <span>
+                                  <strong className="mr-1">{opt.id}.</strong> {opt.text}
+                                </span>
+                              </label>
+                            );
+                          })}
+                        </div>
+
+                        {/* Instant Explanation for Task 1 */}
+                        {taskAnswers["task-01"] && (
+                          <div className={`p-3 rounded-xl border text-xs leading-relaxed animate-in fade-in duration-150 ${
+                            isTask1Correct
+                              ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
+                              : "bg-rose-50/80 border-rose-200 text-rose-950"
+                          }`}>
+                            <p className="font-bold flex items-center gap-1.5 mb-1">
+                              {isTask1Correct ? (
+                                <span className="text-emerald-800">✅ Chính xác!</span>
+                              ) : (
+                                <span className="text-rose-800">❌ Chưa chính xác. Đáp án đúng là {task1Obj.answer}.</span>
+                              )}
+                            </p>
+                            {task1Obj.explanation && (
+                              <p className="text-stone-700">
+                                💡 <strong>Giải thích:</strong> {task1Obj.explanation}
+                              </p>
+                            )}
                           </div>
+                        )}
+                      </div>
+                    )}
 
-                          {/* Instant Explanation for Final Deduction */}
-                          {finalHypothesis && (
-                            <div className={`p-3 rounded-xl border text-xs leading-relaxed animate-in fade-in duration-150 ${
-                              isFinalHypCorrect
+                    {/* Task 2: MATCH */}
+                    {task2Obj && (
+                      <div className="space-y-3 pt-6">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-900 border border-emerald-200/60">
+                            GỢI Ý 2 · ĐỐI CHIẾU Ý TƯỞNG
+                          </span>
+                          {taskAnswers["task-02"] && (
+                            isTask1Correct ? (
+                              <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
+                                <CheckCircle className="h-3.5 w-3.5" /> Đúng
+                              </span>
+                            ) : (
+                              <span className="flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-full">
+                                Sai
+                              </span>
+                            )
+                          )}
+                        </div>
+                        <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
+                          {task2Obj.question}
+                        </p>
+                        <div className="space-y-1.5 pt-1">
+                          {task2Obj.options.map((opt) => {
+                            const userAns = taskAnswers["task-02"];
+                            const isAnswered = Boolean(userAns);
+                            const isThisSelected = userAns === opt.id;
+                            const isCorrectOpt = opt.id === task2Obj.answer;
+
+                            let cardStyle = "border-stone-200/80 bg-stone-50/50 hover:bg-stone-100/70 text-stone-700";
+                            if (isAnswered) {
+                              if (isThisSelected && isCorrectOpt) {
+                                cardStyle = "bg-emerald-50 border-emerald-500 text-emerald-950 font-bold ring-1 ring-emerald-500/40";
+                              } else if (isThisSelected && !isCorrectOpt) {
+                                cardStyle = "bg-rose-50 border-rose-400 text-rose-950 font-bold ring-1 ring-rose-400/40";
+                              } else if (!isThisSelected && isCorrectOpt) {
+                                cardStyle = "bg-emerald-50/60 border-emerald-300 text-emerald-900 font-semibold";
+                              }
+                            }
+
+                            return (
+                              <label
+                                key={opt.id}
+                                className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition-all ${cardStyle}`}
+                              >
+                                <input
+                                  type="radio"
+                                  name="task-02"
+                                  checked={taskAnswers["task-02"] === opt.id}
+                                  onChange={() => setTaskAnswers({ ...taskAnswers, "task-02": opt.id })}
+                                  className="mt-0.5 text-emerald-600 focus:ring-0"
+                                />
+                                <span>
+                                  <strong className="mr-1">{opt.id}.</strong> {opt.text}
+                                </span>
+                              </label>
+                            );
+                          })}
+                        </div>
+
+                        {/* Instant Explanation for Task 2 */}
+                        {taskAnswers["task-02"] && (
+                          <div className={`p-3 rounded-xl border text-xs leading-relaxed animate-in fade-in duration-150 ${
+                            isTask2Correct
+                              ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
+                              : "bg-rose-50/80 border-rose-200 text-rose-950"
+                          }`}>
+                            <p className="font-bold flex items-center gap-1.5 mb-1">
+                              {isTask2Correct ? (
+                                <span className="text-emerald-800">✅ Chính xác!</span>
+                              ) : (
+                                <span className="text-rose-800">❌ Chưa chính xác. Đáp án đúng là {task2Obj.answer}.</span>
+                              )}
+                            </p>
+                            {task2Obj.explanation && (
+                              <p className="text-stone-700">
+                                💡 <strong>Giải thích:</strong> {task2Obj.explanation}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Task 3: INFER */}
+                    {task3Obj && (
+                      <div className="space-y-3 pt-6">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-50 text-purple-900 border border-purple-200/60">
+                            GỢI Ý 3 · SUY NGẪM & GÓC NHÌN
+                          </span>
+                          {taskAnswers["task-03"] && (
+                            isTask3Correct ? (
+                              <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
+                                <CheckCircle className="h-3.5 w-3.5" /> Đúng
+                              </span>
+                            ) : (
+                              <span className="flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-full">
+                                Sai
+                              </span>
+                            )
+                          )}
+                        </div>
+                        <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
+                          {task3Obj.question}
+                        </p>
+                        <div className="space-y-1.5 pt-1">
+                          {task3Obj.options.map((opt) => {
+                            const userAns = taskAnswers["task-03"];
+                            const isAnswered = Boolean(userAns);
+                            const isThisSelected = userAns === opt.id;
+                            const isCorrectOpt = opt.id === task3Obj.answer;
+
+                            let cardStyle = "border-stone-200/80 bg-stone-50/50 hover:bg-stone-100/70 text-stone-700";
+                            if (isAnswered) {
+                              if (isThisSelected && isCorrectOpt) {
+                                cardStyle = "bg-emerald-50 border-emerald-500 text-emerald-950 font-bold ring-1 ring-emerald-500/40";
+                              } else if (isThisSelected && !isCorrectOpt) {
+                                cardStyle = "bg-rose-50 border-rose-400 text-rose-950 font-bold ring-1 ring-rose-400/40";
+                              } else if (!isThisSelected && isCorrectOpt) {
+                                cardStyle = "bg-emerald-50/60 border-emerald-300 text-emerald-900 font-semibold";
+                              }
+                            }
+
+                            return (
+                              <label
+                                key={opt.id}
+                                className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition-all ${cardStyle}`}
+                              >
+                                <input
+                                  type="radio"
+                                  name="task-03"
+                                  checked={taskAnswers["task-03"] === opt.id}
+                                  onChange={() => setTaskAnswers({ ...taskAnswers, "task-03": opt.id })}
+                                  className="mt-0.5 text-emerald-600 focus:ring-0"
+                                />
+                                <span>
+                                  <strong className="mr-1">{opt.id}.</strong> {opt.text}
+                                </span>
+                              </label>
+                            );
+                          })}
+                        </div>
+
+                        {/* Instant Explanation for Task 3 */}
+                        {taskAnswers["task-03"] && (
+                          <div className={`p-3 rounded-xl border text-xs leading-relaxed animate-in fade-in duration-150 ${
+                            isTask3Correct
+                              ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
+                              : "bg-rose-50/80 border-rose-200 text-rose-950"
+                          }`}>
+                            <p className="font-bold flex items-center gap-1.5 mb-1">
+                              {isTask3Correct ? (
+                                <span className="text-emerald-800">✅ Chính xác!</span>
+                              ) : (
+                                <span className="text-rose-800">❌ Chưa chính xác. Đáp án đúng là {task3Obj.answer}.</span>
+                              )}
+                            </p>
+                            {task3Obj.explanation && (
+                              <p className="text-stone-700">
+                                💡 <strong>Giải thích:</strong> {task3Obj.explanation}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Task 4: PROVE (Click-to-Source) */}
+                    {task4Obj && (
+                      <div className="space-y-3 pt-6">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-50 text-amber-900 border border-amber-200/60">
+                            GỢI Ý 4 · CÂU VĂN TÂM ĐẮC
+                          </span>
+                          {selectedEvidenceSentence && (
+                            isTask4Correct ? (
+                              <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
+                                <CheckCircle className="h-3.5 w-3.5" /> Đúng
+                              </span>
+                            ) : (
+                              <span className="flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded-full">
+                                Chưa đúng
+                              </span>
+                            )
+                          )}
+                        </div>
+                        <p className="text-xs sm:text-sm font-semibold text-stone-800 leading-snug">
+                          {task4Obj.instruction}
+                        </p>
+                        
+                        {selectedEvidenceSentence ? (
+                          <div className="space-y-2.5">
+                            <div className={`p-3 rounded-xl border leading-relaxed text-xs italic ${
+                              isTask4Correct
+                                ? "bg-emerald-50 border-emerald-300 text-emerald-950 font-medium"
+                                : "bg-rose-50 border-rose-300 text-rose-950"
+                            }`}>
+                              &ldquo;{selectedEvidenceSentence}&rdquo;
+                            </div>
+
+                            {/* Instant Explanation for Task 4 */}
+                            <div className={`p-3 rounded-xl border text-xs leading-relaxed ${
+                              isTask4Correct
                                 ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
                                 : "bg-rose-50/80 border-rose-200 text-rose-950"
                             }`}>
-                              <p className="font-bold flex items-center gap-1.5 mb-1">
-                                {isFinalHypCorrect ? (
-                                  <span className="text-emerald-800">✅ Đúc Kết Rất Sâu Sắc!</span>
-                                ) : (
-                                  <span className="text-rose-800">❌ Chưa chính xác. Đáp án đúng là {correctHyp.replace("hyp-", "Nhận định ")}.</span>
-                                )}
-                              </p>
-                              {readingCase.final_deduction.explanation && (
-                                <p className="text-stone-700">
-                                  💡 <strong>Giải thích:</strong> {readingCase.final_deduction.explanation}
+                              {isTask4Correct ? (
+                                <p>
+                                  ✅ <strong>Chính xác!</strong> {task4Obj.explanation || "Câu văn đã chọn hoàn toàn chính xác theo yêu cầu chứng minh."}
+                                </p>
+                              ) : (
+                                <p>
+                                  ❌ <strong>Chưa chính xác.</strong> Câu bạn chọn không chứa đúng bằng chứng yêu cầu. Hãy click lại câu văn thích hợp trong các nguồn đọc ở cột bên trái.
                                 </p>
                               )}
                             </div>
-                          )}
-
-                          {/* Required Supporting Evidence Selection */}
-                          <div className="space-y-2 pt-2">
-                            <p className="text-[11px] font-bold uppercase tracking-wider text-stone-600">
-                              Gợi ý chọn các nhận định then chốt làm sáng tỏ thông điệp trên:
-                            </p>
-                            <div className="space-y-1.5">
-                              {readingCase.final_deduction.required_evidence_pool.map((ev) => {
-                                const isChecked = selectedEvidenceIds.includes(ev.id);
-                                return (
-                                  <label
-                                    key={ev.id}
-                                    className={`flex items-start gap-2.5 p-2 rounded-lg border text-xs cursor-pointer transition-all ${
-                                      isChecked
-                                        ? "bg-amber-50 border-amber-300 text-amber-950 font-medium"
-                                        : "border-stone-200/80 bg-white text-stone-600 hover:text-stone-900 hover:bg-stone-50"
-                                    }`}
-                                  >
-                                    <input
-                                      type="checkbox"
-                                      checked={isChecked}
-                                      onChange={() => toggleEvidenceId(ev.id)}
-                                      className="mt-0.5 rounded text-amber-600 focus:ring-0"
-                                    />
-                                    <span>{ev.label}</span>
-                                  </label>
-                                );
-                              })}
-                            </div>
                           </div>
+                        ) : (
+                          <div className="p-3.5 rounded-xl border border-dashed border-stone-200 bg-stone-50/60 text-xs text-stone-500 text-center">
+                            👉 Nhấp trực tiếp vào câu văn trong bài đọc (cột trái) để ghim làm dẫn chứng.
+                          </div>
+                        )}
+                      </div>
+                    )}
 
-                          {/* Submit Button */}
-                          <Button
-                            disabled={!canSubmitAutopsy}
-                            onClick={() => setViewState("autopsy")}
-                            className={`w-full py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all shadow-md ${
-                              canSubmitAutopsy
-                                ? "bg-amber-500 hover:bg-amber-600 text-slate-950 cursor-pointer shadow-amber-500/20"
-                                : "bg-stone-200 text-stone-400 cursor-not-allowed"
-                            }`}
-                          >
-                            Xem Đúc Kết Bài Đọc (Takeaways & Insights)
-                            <ArrowRight className="ml-2 h-4 w-4" />
-                          </Button>
+                    {/* Final Deduction Section */}
+                    <div className="pt-6 space-y-4">
+                      <div className="flex items-center gap-2">
+                        <HelpCircle className="h-4 w-4 text-amber-600" />
+                        <h4 className="font-bold text-stone-900 text-xs uppercase tracking-wider">
+                          ĐÚC KẾT & CHIÊM NGHIỆM
+                        </h4>
+                      </div>
 
-                          {!canSubmitAutopsy && (
-                            <p className="text-[11px] text-center text-stone-500">
-                              Gợi ý: Trả lời các câu hỏi suy ngẫm để mở khóa phần tổng kết chuyên sâu.
+                      <p className="text-xs text-stone-700 font-medium leading-relaxed">
+                        {readingCase.final_deduction.question}
+                      </p>
+
+                      <div className="space-y-2">
+                        {readingCase.final_deduction.options.map((opt) => {
+                          const isAnswered = Boolean(finalHypothesis);
+                          const isThisSelected = finalHypothesis === opt.id;
+                          const isCorrectOpt = opt.id === correctHyp;
+
+                          let cardStyle = "border-stone-200/80 bg-stone-50/50 hover:bg-stone-100/70 text-stone-700";
+                          if (isAnswered) {
+                            if (isThisSelected && isCorrectOpt) {
+                              cardStyle = "bg-emerald-50 border-emerald-500 text-emerald-950 font-bold ring-1 ring-emerald-500/40";
+                            } else if (isThisSelected && !isCorrectOpt) {
+                              cardStyle = "bg-rose-50 border-rose-400 text-rose-950 font-bold ring-1 ring-rose-400/40";
+                            } else if (!isThisSelected && isCorrectOpt) {
+                              cardStyle = "bg-emerald-50/60 border-emerald-300 text-emerald-900 font-semibold";
+                            }
+                          }
+
+                          return (
+                            <label
+                              key={opt.id}
+                              className={`flex items-start gap-2.5 p-3 rounded-xl border text-xs cursor-pointer transition-all ${cardStyle}`}
+                            >
+                              <input
+                                type="radio"
+                                name="final_hypothesis"
+                                checked={finalHypothesis === opt.id}
+                                onChange={() => setFinalHypothesis(opt.id)}
+                                className="mt-0.5 text-emerald-600 focus:ring-0"
+                              />
+                              <span>
+                                <strong className="mr-1">{opt.id.replace("hyp-", "Nhận định ")}:</strong> {opt.text}
+                              </span>
+                            </label>
+                          );
+                        })}
+                      </div>
+
+                      {/* Instant Explanation for Final Deduction */}
+                      {finalHypothesis && (
+                        <div className={`p-3 rounded-xl border text-xs leading-relaxed animate-in fade-in duration-150 ${
+                          isFinalHypCorrect
+                            ? "bg-emerald-50/80 border-emerald-200 text-emerald-950"
+                            : "bg-rose-50/80 border-rose-200 text-rose-950"
+                        }`}>
+                          <p className="font-bold flex items-center gap-1.5 mb-1">
+                            {isFinalHypCorrect ? (
+                              <span className="text-emerald-800">✅ Đúc Kết Rất Sâu Sắc!</span>
+                            ) : (
+                              <span className="text-rose-800">❌ Chưa chính xác. Đáp án đúng là {correctHyp.replace("hyp-", "Nhận định ")}.</span>
+                            )}
+                          </p>
+                          {readingCase.final_deduction.explanation && (
+                            <p className="text-stone-700">
+                              💡 <strong>Giải thích:</strong> {readingCase.final_deduction.explanation}
                             </p>
                           )}
                         </div>
+                      )}
+
+                      {/* Required Supporting Evidence Selection */}
+                      <div className="space-y-2 pt-2">
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-stone-600">
+                          Gợi ý chọn các nhận định then chốt làm sáng tỏ thông điệp trên:
+                        </p>
+                        <div className="space-y-1.5">
+                          {readingCase.final_deduction.required_evidence_pool.map((ev) => {
+                            const isChecked = selectedEvidenceIds.includes(ev.id);
+                            return (
+                              <label
+                                key={ev.id}
+                                className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition-all ${
+                                  isChecked
+                                    ? "bg-amber-50 border-amber-300 text-amber-950 font-medium"
+                                    : "border-stone-200/80 bg-stone-50/50 text-stone-600 hover:text-stone-900 hover:bg-stone-100/70"
+                                }`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={isChecked}
+                                  onChange={() => toggleEvidenceId(ev.id)}
+                                  className="mt-0.5 rounded text-amber-600 focus:ring-0"
+                                />
+                                <span>{ev.label}</span>
+                              </label>
+                            );
+                          })}
+                        </div>
                       </div>
+
+                      {/* Submit Button */}
+                      <Button
+                        disabled={!canSubmitAutopsy}
+                        onClick={() => setViewState("autopsy")}
+                        className={`w-full py-3 rounded-xl font-black text-xs uppercase tracking-wider transition-all shadow-md ${
+                          canSubmitAutopsy
+                            ? "bg-amber-500 hover:bg-amber-600 text-slate-950 cursor-pointer shadow-amber-500/20"
+                            : "bg-stone-200 text-stone-400 cursor-not-allowed"
+                        }`}
+                      >
+                        Xem Đúc Kết Bài Đọc (Takeaways & Insights)
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+
+                      {!canSubmitAutopsy && (
+                        <p className="text-[11px] text-center text-stone-500">
+                          Gợi ý: Trả lời các câu hỏi suy ngẫm để mở khóa phần tổng kết chuyên sâu.
+                        </p>
+                      )}
                     </div>
-                    );
-                  })()}
+                  </div>
+                );
+              })()}
             </div>
           </section>
 

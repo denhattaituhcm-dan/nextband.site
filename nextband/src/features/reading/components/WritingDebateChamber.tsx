@@ -55,6 +55,16 @@ const TASK2_WRITING_PROMPTS: Record<string, { topic: string; prompt: string; tip
     prompt: "Despite having access to modern social networking platforms, people today feel more lonely and isolated than ever before. What are the causes of this phenomenon, and what measures can be taken to resolve it?",
     tips: "Sử dụng khái niệm 'parasocial bonds' và sự suy giảm của các 'Third Places' (không gian cộng đồng công cộng) làm nguyên nhân gốc rễ.",
   },
+  "case-007": {
+    topic: "Ageing Population, Pensions & The Silver Dividend",
+    prompt: "In many countries, the proportion of elderly people is increasing rapidly, while birth rates continue to decline. Does this demographic trend have more positive or negative effects on society?",
+    tips: "Tận dụng các luận điểm sắc sảo từ The Economist: 'inverted demographic pyramid', sự quá tải của 'pay-as-you-go pensions' và tiềm năng của 'silver dividend'.",
+  },
+  "case-008": {
+    topic: "Globalization, Deglobalization & Supply Chain Autarky",
+    prompt: "In recent years, many nations have prioritized domestic self-sufficiency over international trade and globalization. Do the advantages of this protectionist shift outweigh its disadvantages?",
+    tips: "Sử dụng các khái niệm kinh tế vĩ mô: 'efficiency penalty' (lạm phát và giảm năng suất), rủi ro 'autarky' và nhu cầu 'diversified redundancy' thay vì cấm vận.",
+  },
 };
 
 interface WritingDebateChamberProps {

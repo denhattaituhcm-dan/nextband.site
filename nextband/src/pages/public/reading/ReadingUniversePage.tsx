@@ -227,6 +227,17 @@ export default function ReadingUniversePage() {
               >
                 Xã hội & Tâm lý
               </button>
+              <button
+                type="button"
+                onClick={() => setSelectedTopic("economics")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+                  selectedTopic === "economics"
+                    ? "bg-[#2D2825] text-white"
+                    : "bg-[#EFE9DF] text-[#635951] hover:bg-[#E5DDCF]"
+                }`}
+              >
+                Kinh tế & Toàn cầu hóa
+              </button>
             </div>
           </div>
 
@@ -532,6 +543,116 @@ export default function ReadingUniversePage() {
                   <Link
                     to="/reading/case-006"
                     className="group-hover:translate-x-1 transition-transform font-semibold text-[#B85A3A] flex items-center gap-1"
+                  >
+                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </article>
+            )}
+
+            {/* Story Card 7: Demographic Winter & Pension Crisis (The Economist) */}
+            {(selectedTopic === "all" || selectedTopic === "economics" || selectedTopic === "society") && (
+              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#C53030]/50 hover:shadow-xl hover:shadow-[#C53030]/5 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1516307365426-bea591f05011?w=1000&auto=format&fit=crop&q=80"
+                      alt="Demographic Winter & Pension Crisis"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
+                        Kinh tế vĩ mô & Dân số
+                      </span>
+                      <span className="px-2.5 py-1 rounded-md bg-[#E53E3E] backdrop-blur-md text-white text-[11px] font-bold tracking-wider">
+                        The Economist
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-6 sm:p-7 space-y-3">
+                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
+                      <span>Reading #07</span>
+                      <span>·</span>
+                      <span>6 min read</span>
+                      <span>·</span>
+                      <span className="text-[#C53030] font-bold">
+                        IELTS Band 8.0
+                      </span>
+                      <span>·</span>
+                      <span>Phân tích tài khóa</span>
+                    </div>
+
+                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#C53030] transition-colors leading-snug">
+                      <Link to="/reading/case-007">
+                        Bài #07: Mùa Đông Nhân Khẩu Học: Lao Động Teo Tóp & Khủng Hoảng Hưu Trí Toàn Cầu
+                      </Link>
+                    </h3>
+                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
+                      Tỷ lệ sinh sụt giảm nghiêm trọng đang làm sụp đổ mô hình lương hưu Pay-As-You-Go của phương Tây. Phân tích kinh tế vĩ mô sắc bén từ The Economist về 'bộ ba bất khả thi' của an sinh xã hội và cách khai phóng 'cổ tức bạc' (Silver Dividend).
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
+                  <Link
+                    to="/reading/case-007"
+                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#C53030] flex items-center gap-1"
+                  >
+                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </article>
+            )}
+
+            {/* Story Card 8: Deglobalisation & Supply Chain Autarky (The Economist) */}
+            {(selectedTopic === "all" || selectedTopic === "economics") && (
+              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#2B6CB0]/50 hover:shadow-xl hover:shadow-[#2B6CB0]/5 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1000&auto=format&fit=crop&q=80"
+                      alt="Deglobalisation & Supply Chains"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
+                        Địa kinh tế & Chuỗi cung ứng
+                      </span>
+                      <span className="px-2.5 py-1 rounded-md bg-[#E53E3E] backdrop-blur-md text-white text-[11px] font-bold tracking-wider">
+                        The Economist
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-6 sm:p-7 space-y-3">
+                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
+                      <span>Reading #08</span>
+                      <span>·</span>
+                      <span>6 min read</span>
+                      <span>·</span>
+                      <span className="text-[#2B6CB0] font-bold">
+                        IELTS Band 8.0
+                      </span>
+                      <span>·</span>
+                      <span>Thương mại quốc tế</span>
+                    </div>
+
+                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#2B6CB0] transition-colors leading-snug">
+                      <Link to="/reading/case-008">
+                        Bài #08: Cái Bẫy Phi Toàn Cầu Hóa: Vũ Khí Hóa Chuỗi Cung Ứng & Cái Giá Của Tự Cung Tự Cấp
+                      </Link>
+                    </h3>
+                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
+                      Làn sóng 'Friend-shoring' và trợ cấp bảo hộ chất bán dẫn có thực sự giúp các cường quốc an toàn, hay chỉ tạo ra lạm phát cấu trúc và làm suy thoái năng suất? Bóc tách góc nhìn kinh tế tự do sắc lẹm từ The Economist.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
+                  <Link
+                    to="/reading/case-008"
+                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#2B6CB0] flex items-center gap-1"
                   >
                     Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
                   </Link>

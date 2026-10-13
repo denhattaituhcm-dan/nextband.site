@@ -54,6 +54,18 @@ export function isContentWord(word: string): boolean {
 // Multi-word phrases priority list (longest matches first)
 export const MULTI_WORD_PHRASES: string[] = [
   ...Object.keys(ALL_CURATED_CHUNKS).sort((a, b) => b.length - a.length),
+  "demographic winter",
+  "pay-as-you-go pension",
+  "silver dividend",
+  "dependency ratio",
+  "geo-economic fragmentation",
+  "comparative advantage",
+  "economic autarky",
+  "rent-seeking",
+  "diversified redundancy",
+  "efficiency penalty",
+  "friend-shoring",
+  "near-shoring",
   "generative artificial intelligence",
   "labour market polarisation",
   "intellectual production",
