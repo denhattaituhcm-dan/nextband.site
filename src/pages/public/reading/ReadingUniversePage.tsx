@@ -886,7 +886,7 @@ export default function ReadingUniversePage() {
                 <div>
                   <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
                     <img
-                      src="https://images.unsplash.com/photo-1564349683136-77e08dba1ef6?w=1000&auto=format&fit=crop&q=80"
+                      src="https://images.unsplash.com/photo-1575550959106-5a7defe28b56?w=1000&auto=format&fit=crop&q=80"
                       alt="The Rewilding Paradox & Apex Predators"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
