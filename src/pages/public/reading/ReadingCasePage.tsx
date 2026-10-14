@@ -12,6 +12,7 @@ import { CASE_009 } from "@/data/readingCases/case009";
 import { CASE_010 } from "@/data/readingCases/case010";
 import { CASE_011 } from "@/data/readingCases/case011";
 import { CASE_012 } from "@/data/readingCases/case012";
+import { CASE_013 } from "@/data/readingCases/case013";
 import { VocabularyTerm } from "@/features/reading/types";
 import { ContextualGlossTooltip } from "@/features/reading/components/ContextualGlossTooltip";
 import { CaseAutopsyView } from "@/features/reading/components/CaseAutopsyView";
@@ -60,6 +61,7 @@ const ALL_CASES: Record<string, typeof CASE_001> = {
   "case-010": CASE_010,
   "case-011": CASE_011,
   "case-012": CASE_012,
+  "case-013": CASE_013,
 };
 
 export default function ReadingCasePage() {
