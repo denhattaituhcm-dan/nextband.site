@@ -10,6 +10,7 @@ import { CASE_003_DICTIONARY } from "./case003Dictionary";
 import { CASE_004_DICTIONARY } from "./case004Dictionary";
 import { CASE_005_DICTIONARY } from "./case005Dictionary";
 import { CASE_006_DICTIONARY } from "./case006Dictionary";
+import { CASE_013_DICTIONARY } from "./case013Dictionary";
 
 export const ALL_CURATED_CHUNKS: Record<string, VocabularyTerm> = {
   ...CASE_001_HIGH_VALUE_CHUNKS,
@@ -183,6 +184,7 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
   ...CASE_004_DICTIONARY,
   ...CASE_005_DICTIONARY,
   ...CASE_006_DICTIONARY,
+  ...CASE_013_DICTIONARY,
   "trophic cascades": {
     term: "trophic cascades",
     pronunciation: "/ˈtrəʊfɪk kæˈskeɪdz/",
