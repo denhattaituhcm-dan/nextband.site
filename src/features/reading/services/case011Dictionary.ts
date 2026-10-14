@@ -540,5 +540,253 @@ export const CASE_011_DICTIONARY: Record<string, VocabularyTerm> = {
     "meaning_en": "barren or desolate areas devoid of flourishing biological life",
     "meaning_vi": "những vùng đất hoang vu cằn cỗi",
     "context_note": "Từng bị ngộ nhận là những vùng sa mạc cằn cỗi không có sự sống."
-  }
+  },
+  "barely": {
+    term: "barely",
+    pronunciation: "/ˈbeəli/",
+    pos: "adverb",
+    meaning_en: "only just; almost not",
+    meaning_vi: "hầu như không / vừa vặn đủ",
+    context_note: "Ánh sáng mặt trời hầu như không thể xuyên thấu qua độ sâu 200 mét dưới mặt nước biển."
+  },
+  "centuries": {
+    term: "centuries",
+    pronunciation: "/ˈsɛnʧəriz/",
+    pos: "noun (plural)",
+    meaning_en: "hundreds of years of oceanographic assumption",
+    meaning_vi: "nhiều thế kỷ",
+    context_note: "Suốt nhiều thế kỷ, các nhà tự nhiên học tin rằng đáy đại dương là sa mạc vô sinh."
+  },
+  "deeper": {
+    term: "deeper",
+    pronunciation: "/ˈdiːpə/",
+    pos: "adjective (comparative)",
+    meaning_en: "extending further down from the surface or water line",
+    meaning_vi: "sâu hơn nữa / lặn sâu vào lòng biển",
+    context_note: "Càng xuống sâu hơn, áp lực thủy tĩnh càng gia tăng khủng khiếp."
+  },
+  "devoid": {
+    term: "devoid",
+    pronunciation: "/dɪˈvɔɪd/",
+    pos: "adjective",
+    meaning_en: "entirely lacking or free from",
+    meaning_vi: "hoàn toàn không có / vắng bóng hoàn toàn",
+    context_note: "Đáy biển sâu từng bị lầm tưởng là hoàn toàn không có sự sống (devoid of life)."
+  },
+  "exploratory": {
+    term: "exploratory",
+    pronunciation: "/ɪkˈsplɒrətəri/",
+    pos: "adjective",
+    meaning_en: "relating to or involving scientific discovery and investigation",
+    meaning_vi: "thám hiểm / thăm dò khảo sát",
+    context_note: "Các tàu ngầm thám hiểm mang lại những phát hiện đột phá về các sinh vật vùng rãnh sâu."
+  },
+  "fauna": {
+    term: "fauna",
+    pronunciation: "/ˈfɔːnə/",
+    pos: "noun",
+    meaning_en: "the animals of a particular region, habitat, or geological period",
+    meaning_vi: "hệ động vật",
+    context_note: "Hệ động vật vùng biển sâu phát triển những cơ chế sinh lý thích nghi dị thường."
+  },
+  "freezing": {
+    term: "freezing",
+    pronunciation: "/ˈfriːzɪŋ/",
+    pos: "adjective",
+    meaning_en: "at or near the freezing point of water; intensely cold",
+    meaning_vi: "giá lạnh băng giá / gần điểm đóng băng",
+    context_note: "Nhiệt độ nước đáy rãnh biển sâu duy trì ở mức giá lạnh cận kề điểm đóng băng (1-4°C)."
+  },
+  "giant": {
+    term: "giant",
+    pronunciation: "/ˈdʒaɪənt/",
+    pos: "adjective / noun",
+    meaning_en: "of very great size, force, or importance; abyssal gigantism",
+    meaning_vi: "khổng lồ / hiện tượng kích thước khổng lồ ở đáy biển sâu",
+    context_note: "Hiện tượng dị thường khiến một số loài giáp xác đạt kích thước khổng lồ dưới rãnh Mariana."
+  },
+  "hover": {
+    term: "hover",
+    pronunciation: "/ˈhɒvə/",
+    pos: "verb",
+    meaning_en: "remain in one place in the water or air",
+    meaning_vi: "lơ lửng / giữ nguyên vị trí giữa làn nước",
+    context_note: "Các sinh vật phát quang sinh học lơ lửng trong bóng tối vĩnh cửu."
+  },
+  "hull": {
+    term: "hull",
+    pronunciation: "/hʌl/",
+    pos: "noun",
+    meaning_en: "the watertight body of a ship or submersible vessel",
+    meaning_vi: "vỏ tàu / khoang chịu áp lực của tàu ngầm",
+    context_note: "Vỏ tàu ngầm bằng titanium dày phải chịu sức ép hàng nghìn tấn nước biển."
+  },
+  "immense": {
+    term: "immense",
+    pronunciation: "/ɪˈmɛns/",
+    pos: "adjective",
+    meaning_en: "extremely large or great, especially in scale or degree",
+    meaning_vi: "bao la / khổng lồ / vô cùng to lớn",
+    context_note: "Áp suất thủy tĩnh khổng lồ có thể nghiền nát kim loại thông thường trong tích tắc."
+  },
+  "marine": {
+    term: "marine",
+    pronunciation: "/məˈriːn/",
+    pos: "adjective",
+    meaning_en: "of, found in, or produced by the sea",
+    meaning_vi: "thuộc về biển / đại dương",
+    context_note: "Hệ sinh thái biển sâu (marine ecosystems) lưu giữ những manh mối về nguồn gốc sự sống."
+  },
+  "metres": {
+    term: "metres",
+    pronunciation: "/ˈmiːtəz/",
+    pos: "noun (plural)",
+    meaning_en: "metric unit of length, measuring depths of oceanic trenches",
+    meaning_vi: "mét (đơn vị đo độ sâu đại dương)",
+    context_note: "Rãnh Mariana chạm tới độ sâu gần 11.000 mét dưới mực nước biển."
+  },
+  "oceanic": {
+    term: "oceanic",
+    pronunciation: "/ˌəʊʃiˈænɪk/",
+    pos: "adjective",
+    meaning_en: "relating to the ocean, oceanic trenches, or abyssal zones",
+    meaning_vi: "thuộc về đại dương / rãnh đại dương",
+    context_note: "Các rãnh đại dương sâu thẳm được hình thành từ sự hút chìm của các mảng kiến tạo."
+  },
+  "one": {
+    term: "one",
+    pronunciation: "/wʌn/",
+    pos: "numeral / pronoun",
+    meaning_en: "a single person, thing, or ecosystem frontier",
+    meaning_vi: "một (một trong những môi trường khắc nghiệt nhất)",
+    context_note: "Vùng Hadal là một trong những ranh giới khám phá cuối cùng của Trái Đất."
+  },
+  "outer": {
+    term: "outer",
+    pronunciation: "/ˈaʊtə/",
+    pos: "adjective",
+    meaning_en: "external, or far from the center; often compared to outer space",
+    meaning_vi: "bên ngoài / ngoài vũ trụ",
+    context_note: "Khám phá đáy đại dương sâu thẳm còn khó khăn hơn việc thám hiểm không gian vũ trụ bên ngoài."
+  },
+  "philosophers": {
+    term: "philosophers",
+    pronunciation: "/fɪˈlɒsəfəz/",
+    pos: "noun (plural)",
+    meaning_en: "thinkers and scholars who historically speculated on nature and ocean depths",
+    meaning_vi: "các triết gia / học giả tự nhiên thời xưa",
+    context_note: "Các triết gia thời cổ đại từng tưởng tượng đáy đại dương là vực thẳm hỗn mang không đáy."
+  },
+  "plains": {
+    term: "plains",
+    pronunciation: "/pleɪnz/",
+    pos: "noun (plural)",
+    meaning_en: "abyssal plains: flat, vast expanses of the ocean floor",
+    meaning_vi: "các bình nguyên đáy biển (abyssal plains)",
+    context_note: "Bình nguyên đáy biển trải rộng mênh mông, phủ đầy trầm tích hạt mịn."
+  },
+  "probability": {
+    term: "probability",
+    pronunciation: "/ˌprɒbəˈbɪlɪti/",
+    pos: "noun",
+    meaning_en: "the extent to which an event or phenomenon is likely to occur",
+    meaning_vi: "xác suất / khả năng tồn tại sự sống",
+    context_note: "Khả năng phát hiện các loài sinh vật mới tại các rãnh sâu là gần như 100%."
+  },
+  "represent": {
+    term: "represent",
+    pronunciation: "/ˌrɛprɪˈzɛnt/",
+    pos: "verb",
+    meaning_en: "to constitute, stand for, or exemplify",
+    meaning_vi: "đại diện cho / cấu thành",
+    context_note: "Vùng Hadal đại diện cho môi trường áp suất cực hạn trên hành tinh."
+  },
+  "revealed": {
+    term: "revealed",
+    pronunciation: "/rɪˈviːld/",
+    pos: "verb (past)",
+    meaning_en: "made known or visible through scientific exploration",
+    meaning_vi: "hé lộ / làm lộ ra",
+    context_note: "Hình ảnh camera thám hiểm đã hé lộ một hệ sinh thái kỳ ảo phát triển mạnh mẽ quanh miệng phun thủy nhiệt."
+  },
+  "shelves": {
+    term: "shelves",
+    pronunciation: "/ʃɛlvz/",
+    pos: "noun (plural)",
+    meaning_en: "continental shelves; shallow submarine borders of continents",
+    meaning_vi: "thềm lục địa (continental shelves)",
+    context_note: "Xa rời thềm lục địa nông, đáy biển dốc đứng đổ thẳng xuống các rãnh vực thẳm."
+  },
+  "six": {
+    term: "six",
+    pronunciation: "/sɪks/",
+    pos: "numeral",
+    meaning_en: "the number 6, representing depth beyond 6,000 meters defining the Hadal zone",
+    meaning_vi: "sáu (mốc 6.000 mét xác định ranh giới vùng Hadal)",
+    context_note: "Vùng Hadal bắt đầu từ độ sâu 6.000 mét trở xuống đến tận đáy rãnh biển."
+  },
+  "snow": {
+    term: "snow",
+    pronunciation: "/snəʊ/",
+    pos: "noun",
+    meaning_en: "marine snow: a continuous shower of organic debris falling from the upper ocean layers",
+    meaning_vi: "tuyết biển (marine snow: bụi hữu cơ rơi từ tầng nước trên nuôi sống sinh vật đáy)",
+    context_note: "Tuyết biển (marine snow) là nguồn dinh dưỡng chính yếu cho các sinh vật tầng đáy sâu."
+  },
+  "steel": {
+    term: "steel",
+    pronunciation: "/stiːl/",
+    pos: "noun",
+    meaning_en: "strong alloy of iron used in submersible exploration gear",
+    meaning_vi: "thép chịu lực",
+    context_note: "Áp lực ở độ sâu 10.000 mét có thể dễ dàng bóp méo cả những khối thép tôi kiên cố."
+  },
+  "sterile": {
+    term: "sterile",
+    pronunciation: "/ˈstɛraɪl/",
+    pos: "adjective",
+    meaning_en: "completely devoid of life or microorganisms",
+    meaning_vi: "vô trùng / hoàn toàn vô sinh (không có sự sống)",
+    context_note: "Giả thuyết vùng biển sâu là sa mạc vô sinh (sterile void) đã bị bác bỏ hoàn toàn."
+  },
+  "submarine": {
+    term: "submarine",
+    pronunciation: "/ˌsʌbməˈriːn/",
+    pos: "adjective / noun",
+    meaning_en: "existing, occurring, or used under the surface of the sea",
+    meaning_vi: "dưới đáy biển / tàu lặn nghiên cứu",
+    context_note: "Các hẻm núi ngầm dưới biển (submarine canyons) dẫn dòng chất dinh dưỡng xuống rãnh sâu."
+  },
+  "thousand": {
+    term: "thousand",
+    pronunciation: "/ˈθaʊzənd/",
+    pos: "numeral / noun",
+    meaning_en: "the number 1,000, measuring thousands of meters of water column or pressure atmospheres",
+    meaning_vi: "nghìn (hàng nghìn mét nước / hàng nghìn atmosphere áp suất)",
+    context_note: "Hàng nghìn mét nước phía trên tạo ra áp suất tương đương một chiếc xe tải đè lên đầu ngón tay."
+  },
+  "tissue": {
+    term: "tissue",
+    pronunciation: "/ˈtɪʃuː/",
+    pos: "noun",
+    meaning_en: "cellular biological material in organisms adapted to extreme hydrostatic pressure",
+    meaning_vi: "mô sinh học / tế bào cơ thể",
+    context_note: "Mô tế bào của cá đáy sâu chứa chất áp giải (piezolytes) để chống bị biến tính protein."
+  },
+  "vast": {
+    term: "vast",
+    pronunciation: "/vɑːst/",
+    pos: "adjective",
+    meaning_en: "of very great extent, quantity, or size",
+    meaning_vi: "mênh mông / bao la / khổng lồ",
+    context_note: "Những vực thẳm mênh mông chiếm phần lớn thể tích sinh quyển của hành tinh chúng ta."
+  },
+  "zone": {
+    term: "zone",
+    pronunciation: "/zəʊn/",
+    pos: "noun",
+    meaning_en: "an area or stretch of water subject to particular ecological and physical conditions",
+    meaning_vi: "vùng / đới biển",
+    context_note: "Đới biển Hadal (Hadal zone) được đặt theo tên của thần Hades cai quản cõi âm."
+  },
 };

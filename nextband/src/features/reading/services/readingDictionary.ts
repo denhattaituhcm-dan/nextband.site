@@ -10,6 +10,10 @@ import { CASE_003_DICTIONARY } from "./case003Dictionary";
 import { CASE_004_DICTIONARY } from "./case004Dictionary";
 import { CASE_005_DICTIONARY } from "./case005Dictionary";
 import { CASE_006_DICTIONARY } from "./case006Dictionary";
+import { CASE_007_DICTIONARY } from "./case007Dictionary";
+import { CASE_008_DICTIONARY } from "./case008Dictionary";
+import { CASE_009_DICTIONARY } from "./case009Dictionary";
+import { CASE_010_DICTIONARY } from "./case010Dictionary";
 import { CASE_011_DICTIONARY } from "./case011Dictionary";
 import { CASE_012_DICTIONARY } from "./case012Dictionary";
 import { CASE_013_DICTIONARY } from "./case013Dictionary";
@@ -50,7 +54,7 @@ export const FUNCTION_WORDS = new Set([
 export function isContentWord(word: string): boolean {
   const clean = word.toLowerCase().replace(/[^a-z0-9-]/g, "").trim();
   if (!clean || clean.length < 2) return false;
-  if (/^\d+$/.test(clean)) return false;
+  if (/^\d+$/.test(clean) || /^p\d+$/i.test(clean)) return false;
   return !FUNCTION_WORDS.has(clean);
 }
 
@@ -186,6 +190,10 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
   ...CASE_004_DICTIONARY,
   ...CASE_005_DICTIONARY,
   ...CASE_006_DICTIONARY,
+  ...CASE_007_DICTIONARY,
+  ...CASE_008_DICTIONARY,
+  ...CASE_009_DICTIONARY,
+  ...CASE_010_DICTIONARY,
   ...CASE_011_DICTIONARY,
   ...CASE_012_DICTIONARY,
   ...CASE_013_DICTIONARY,

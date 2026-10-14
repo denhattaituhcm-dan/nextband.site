@@ -980,5 +980,293 @@ export const CASE_013_DICTIONARY: Record<string, VocabularyTerm> = {
     "meaning_en": "wild carnivorous pack-hunting canines (Canis lupus) acting as apex keystone predators",
     "meaning_vi": "những con sói xám (loài săn mồi chủ chốt)",
     "context_note": "Bầy sói xám quay trở lại làm thay đổi toàn bộ hệ sinh thái."
-  }
+  },
+  "allowing": {
+    term: "allowing",
+    pronunciation: "/əˈlaʊɪŋ/",
+    pos: "verb (participle)",
+    meaning_en: "permitting or making it possible for something to happen",
+    meaning_vi: "cho phép / tạo điều kiện cho",
+    context_note: "Tái lập loài săn mồi đỉnh chuỗi cho phép hệ thực vật ven sông có cơ hội phục hồi."
+  },
+  "along": {
+    term: "along",
+    pronunciation: "/əˈlɒŋ/",
+    pos: "preposition",
+    meaning_en: "moving in a constant direction on or beside a road, river, or corridor",
+    meaning_vi: "dọc theo / men theo",
+    context_note: "Dọc theo bờ các dòng sông và con suối, cây liễu và bạch dương bắt đầu mọc trở lại."
+  },
+  "america": {
+    term: "America",
+    pronunciation: "/əˈmɛrɪkə/",
+    pos: "proper noun",
+    meaning_en: "North America, home to Yellowstone National Park and historic rewilding projects",
+    meaning_vi: "Bắc Mỹ / Hoa Kỳ (nơi triển khai dự án tái hoang dã Vườn quốc gia Yellowstone)",
+    context_note: "Tại Bắc Mỹ, sự vắng bóng của chó sói suốt 70 năm đã làm biến dạng hệ sinh thái."
+  },
+  "banks": {
+    term: "banks",
+    pronunciation: "/bæŋks/",
+    pos: "noun (plural)",
+    meaning_en: "the land alongside or sloping down to a river or lake",
+    meaning_vi: "bờ sông / bờ suối",
+    context_note: "Bờ sông bớt bị sạt lở nhờ rễ cây mọc dày giữ chặt phù sa."
+  },
+  "canadian": {
+    term: "Canadian",
+    pronunciation: "/kəˈneɪdiən/",
+    pos: "adjective",
+    meaning_en: "relating to Canada, where wild wolves were captured to be reintroduced to Yellowstone",
+    meaning_vi: "thuộc Canada (quần thể sói xám Canada được đưa sang Yellowstone năm 1995)",
+    context_note: "14 cá thể sói hoang dã được bắt từ Canada để tái du nhập vào công viên Yellowstone."
+  },
+  "canis": {
+    term: "Canis",
+    pronunciation: "/ˈkeɪnɪs/",
+    pos: "noun (genus)",
+    meaning_en: "the taxonomic genus that includes dogs, wolves, coyotes, and jackals",
+    meaning_vi: "chi Chó (Canis: chi sinh học bao gồm loài sói xám Canis lupus)",
+    context_note: "Canis lupus (chó sói xám) là loài săn mồi đóng vai trò then chốt (keystone species)."
+  },
+  "causing": {
+    term: "causing",
+    pronunciation: "/ˈkɔːzɪŋ/",
+    pos: "verb (participle)",
+    meaning_en: "making an event or reaction happen",
+    meaning_vi: "gây ra / dẫn tới",
+    context_note: "Loài hươu ăn trụi cây non, gây ra hiện tượng xói mòn đất nghiêm trọng bên bờ suối."
+  },
+  "century": {
+    term: "century",
+    pronunciation: "/ˈsɛnʧəri/",
+    pos: "noun",
+    meaning_en: "a period of one hundred years",
+    meaning_vi: "thế kỷ",
+    context_note: "Vào đầu thế kỷ 20, chính quyền đã săn bắn tiêu diệt toàn bộ loài sói ở công viên."
+  },
+  "colonies": {
+    term: "colonies",
+    pronunciation: "/ˈkɒləniz/",
+    pos: "noun (plural)",
+    meaning_en: "groups of animals of one species living closely together (e.g. beaver colonies)",
+    meaning_vi: "bầy đàn / đàn hải ly định cư",
+    context_note: "Các đàn hải ly quay trở lại xây đập ngăn nước khi nguồn gỗ liễu ven bờ dồi dào trở lại."
+  },
+  "cooled": {
+    term: "cooled",
+    pronunciation: "/kuːld/",
+    pos: "verb (past)",
+    meaning_en: "became or made less hot",
+    meaning_vi: "hạ nhiệt / làm mát dòng nước",
+    context_note: "Bóng râm của cây ven bờ đã hạ nhiệt dòng nước, giúp loài cá hồi sinh sản thuận lợi."
+  },
+  "driving": {
+    term: "driving",
+    pronunciation: "/ˈdraɪvɪŋ/",
+    pos: "verb (participle) / adjective",
+    meaning_en: "propelling, motivating, or operating as a primary catalyst",
+    meaning_vi: "thúc đẩy / dẫn dắt chuỗi phản ứng",
+    context_note: "Sự sợ hãi trước kẻ săn mồi thúc đẩy loài hươu phải liên tục di chuyển."
+  },
+  "effect": {
+    term: "effect",
+    pronunciation: "/ɪˈfɛkt/",
+    pos: "noun",
+    meaning_en: "a change that is a result or consequence of an action or other cause",
+    meaning_vi: "hiệu ứng / tác động dây chuyền",
+    context_note: "Hiệu ứng thác dinh dưỡng (trophic cascade effect) làm thay đổi cả dòng chảy địa lý của các con sông."
+  },
+  "enabled": {
+    term: "enabled",
+    pronunciation: "/ɪˈneɪbəld/",
+    pos: "verb (past)",
+    meaning_en: "gave the authority or means to do something; made possible",
+    meaning_vi: "tạo điều kiện cho / giúp làm cho khả thi",
+    context_note: "Việc kiểm soát số lượng hươu nai đã giúp thảm thực vật tái sinh mạnh mẽ."
+  },
+  "exploded": {
+    term: "exploded",
+    pronunciation: "/ɪkˈspləʊdɪd/",
+    pos: "verb (past)",
+    meaning_en: "increased suddenly and dramatically in population size",
+    meaning_vi: "bùng nổ số lượng / tăng vọt mất kiểm soát",
+    context_note: "Quần thể nai sừng tấm bùng nổ mất kiểm soát khi không còn loài săn mồi khống chế."
+  },
+  "fear": {
+    term: "fear",
+    pronunciation: "/fɪə/",
+    pos: "noun",
+    meaning_en: "the unpleasant emotional response to threat, conceptualized in ecology as the 'landscape of fear'",
+    meaning_vi: "nỗi sợ hãi (trong khái niệm 'cảnh quan sợ hãi' - landscape of fear)",
+    context_note: "Cảnh quan sợ hãi (landscape of fear) khiến động vật ăn cỏ không dám nán lại gặm cỏ quá lâu ở một vùng trũng."
+  },
+  "food": {
+    term: "food",
+    pronunciation: "/fuːd/",
+    pos: "noun",
+    meaning_en: "any nutritious substance that animals eat to maintain life; food web dynamics",
+    meaning_vi: "thức ăn / chuỗi dinh dưỡng",
+    context_note: "Mạng lưới thức ăn (food web) trở nên cân bằng và bền vững hơn."
+  },
+  "foster": {
+    term: "foster",
+    pronunciation: "/ˈfɒstə/",
+    pos: "verb",
+    meaning_en: "to encourage or promote the development of something",
+    meaning_vi: "thúc đẩy / nuôi dưỡng sự đa dạng sinh học",
+    context_note: "Tái hoang dã giúp thúc đẩy khả năng phục hồi tự nhiên của các hệ sinh thái bị tổn thương."
+  },
+  "fourteen": {
+    term: "fourteen",
+    pronunciation: "/ˌfɔːˈtiːn/",
+    pos: "numeral",
+    meaning_en: "the number 14, referring to the 14 Canadian wolves released in Yellowstone in 1995",
+    meaning_vi: "mười bốn (14 cá thể sói đầu tiên được thả vào Yellowstone)",
+    context_note: "Chỉ với mười bốn cá thể sói được thả vào năm 1995, cả cảnh quan tự nhiên đã được biến đổi."
+  },
+  "fragile": {
+    term: "fragile",
+    pronunciation: "/ˈfrædʒaɪl/",
+    pos: "adjective",
+    meaning_en: "easily broken, damaged, or disrupted",
+    meaning_vi: "mong manh / dễ bị tổn thương",
+    context_note: "Hệ sinh thái ven sông rất mong manh trước sự tàn phá của việc gặm cỏ quá mức."
+  },
+  "geography": {
+    term: "geography",
+    pronunciation: "/dʒɪˈɒɡrəfi/",
+    pos: "noun",
+    meaning_en: "the physical features of the earth, modified through ecological cascades",
+    meaning_vi: "địa hình địa lý / hình thái cảnh quan dòng chảy",
+    context_note: "Sự hiện diện của loài sói đã làm thay đổi cả hình thái địa lý của các con sông trong công viên."
+  },
+  "gray": {
+    term: "gray",
+    pronunciation: "/ɡreɪ/",
+    pos: "adjective",
+    meaning_en: "the color grey, specifically describing the gray wolf (Canis lupus)",
+    meaning_vi: "xám (loài sói xám)",
+    context_note: "Sói xám (gray wolf) là động vật săn mồi đầu chuỗi biểu tượng của Bắc Mỹ."
+  },
+  "historic": {
+    term: "historic",
+    pronunciation: "/hɪˈstɒrɪk/",
+    pos: "adjective",
+    meaning_en: "famous or important in history; milestone in ecological restoration",
+    meaning_vi: "mang tính lịch sử / có tầm vóc bước ngoặt",
+    context_note: "Dự án tái du nhập loài sói năm 1995 là một quyết định lịch sử của ngành bảo tồn."
+  },
+  "initiated": {
+    term: "initiated",
+    pronunciation: "/ɪˈnɪʃieɪtɪd/",
+    pos: "verb (past)",
+    meaning_en: "caused a process or action to begin",
+    meaning_vi: "khởi xướng / kích hoạt chuỗi tác động",
+    context_note: "Sự xuất hiện trở lại của sói đã kích hoạt một chuỗi hiệu ứng sinh thái lan tỏa sâu rộng."
+  },
+  "local": {
+    term: "local",
+    pronunciation: "/ˈləʊkəl/",
+    pos: "adjective",
+    meaning_en: "belonging or relating to a particular area or neighborhood",
+    meaning_vi: "địa phương / bản địa",
+    context_note: "Các nông dân địa phương từng phản đối kịch liệt vì lo ngại sói tấn công đàn gia súc."
+  },
+  "lupus": {
+    term: "lupus",
+    pronunciation: "/ˈluːpəs/",
+    pos: "noun (species)",
+    meaning_en: "the specific species name for the gray wolf (Canis lupus)",
+    meaning_vi: "loài sói xám (tên danh pháp khoa học: Canis lupus)",
+    context_note: "Canis lupus đóng vai trò điều tiết cấu trúc của cả quần xã sinh vật."
+  },
+  "native": {
+    term: "native",
+    pronunciation: "/ˈneɪtɪv/",
+    pos: "adjective",
+    meaning_en: "originating or occurring naturally in a particular place; indigenous flora and fauna",
+    meaning_vi: "bản địa / tự nhiên của vùng",
+    context_note: "Các loài thực vật bản địa như liễu và bạch dương hồi sinh sau nhiều thập kỷ vắng bóng."
+  },
+  "north": {
+    term: "North",
+    pronunciation: "/nɔːθ/",
+    pos: "adjective / proper noun",
+    meaning_en: "pertaining to North America",
+    meaning_vi: "Bắc (Bắc Mỹ)",
+    context_note: "Hệ sinh thái rừng rậm Bắc Mỹ từng là nơi cư ngụ của hàng vạn cá thể sói."
+  },
+  "populations": {
+    term: "populations",
+    pronunciation: "/ˌpɒpjʊˈleɪʃənz/",
+    pos: "noun (plural)",
+    meaning_en: "groups of individuals of the same species living in a specified ecological area",
+    meaning_vi: "các quần thể sinh vật",
+    context_note: "Kiểm soát số lượng các quần thể động vật ăn cỏ giúp cứu vãn thảm thực vật."
+  },
+  "rebuild": {
+    term: "rebuild",
+    pronunciation: "/ˌriːˈbɪld/",
+    pos: "verb",
+    meaning_en: "to build again after damage; restore ecological resilience",
+    meaning_vi: "tái thiết / phục hồi lại",
+    context_note: "Tự nhiên có khả năng tự tái thiết nếu con người trao trả lại các mắt xích sinh thái chủ chốt."
+  },
+  "river": {
+    term: "river",
+    pronunciation: "/ˈrɪvə/",
+    pos: "noun",
+    meaning_en: "a large natural stream of water flowing in a channel to the sea or a lake",
+    meaning_vi: "dòng sông",
+    context_note: "Các dòng sông trở nên ổn định hơn, ít bị uốn khúc mất kiểm soát nhờ cây cối giữ chặt bờ."
+  },
+  "soil": {
+    term: "soil",
+    pronunciation: "/sɔɪl/",
+    pos: "noun",
+    meaning_en: "the upper layer of earth in which plants grow",
+    meaning_vi: "đất / lớp thổ nhưỡng",
+    context_note: "Xói mòn đất giảm mạnh khi rễ cây rừng ven suối được phục hồi."
+  },
+  "stream": {
+    term: "stream",
+    pronunciation: "/striːm/",
+    pos: "noun",
+    meaning_en: "a small, narrow river",
+    meaning_vi: "con suối / lạch nước nhỏ",
+    context_note: "Những con suối mát lành trở thành môi trường sống lý tưởng cho loài lưỡng cư và cá suối."
+  },
+  "tranquil": {
+    term: "tranquil",
+    pronunciation: "/ˈtræŋkwɪl/",
+    pos: "adjective",
+    meaning_en: "free from disturbance; calm and peaceful",
+    meaning_vi: "thanh bình / yên ả",
+    context_note: "Vẻ thanh bình giả tạo trước đây thực chất là dấu hiệu của một hệ sinh thái đang bị suy thoái thầm lặng."
+  },
+  "twentieth": {
+    term: "twentieth",
+    pronunciation: "/ˈtwɛntiəθ/",
+    pos: "adjective / ordinal",
+    meaning_en: "referring to the 20th century",
+    meaning_vi: "thế kỷ hai mươi",
+    context_note: "Chính sách tiêu diệt động vật săn mồi vào thế kỷ hai mươi đã để lại hậu quả sinh thái nặng nề."
+  },
+  "web": {
+    term: "web",
+    pronunciation: "/wɛb/",
+    pos: "noun",
+    meaning_en: "food web: a complex network of feeding interactions among species",
+    meaning_vi: "mạng lưới thức ăn (food web) / mối liên kết tương hỗ sinh thái",
+    context_note: "Mạng lưới thức ăn phức tạp kết nối từ loài sói đến loài hải ly, chim chóc và cây cỏ."
+  },
+  "yellowstone": {
+    term: "Yellowstone",
+    pronunciation: "/ˈjɛləʊstəʊn/",
+    pos: "proper noun",
+    meaning_en: "the world's first national park (established 1872), site of the famous wolf reintroduction",
+    meaning_vi: "Vườn quốc gia Yellowstone (Hoa Kỳ, địa danh kinh điển của phong trào tái hoang dã)",
+    context_note: "Yellowstone trở thành phòng thí nghiệm sống chứng minh sức mạnh của hiệu ứng thác dinh dưỡng."
+  },
 };

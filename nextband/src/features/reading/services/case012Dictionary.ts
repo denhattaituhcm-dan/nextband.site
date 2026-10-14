@@ -364,5 +364,285 @@ export const CASE_012_DICTIONARY: Record<string, VocabularyTerm> = {
     "meaning_en": "the process of making an area more urban through dense human settlement",
     "meaning_vi": "sự đô thị hóa",
     "context_note": "Quy hoạch đô thị hóa bền vững từ hàng ngàn năm trước thời hiện đại."
-  }
+  },
+  "aircraft": {
+    term: "aircraft",
+    pronunciation: "/ˈeəkrɑːft/",
+    pos: "noun",
+    meaning_en: "an airplane or drone equipped with airborne LiDAR laser scanning pods",
+    meaning_vi: "máy bay chuyên dụng thám sát / máy bay gắn thiết bị cảm biến",
+    context_note: "Máy bay gắn thiết bị LiDAR bay quét qua tầng tán rừng rậm rạp của vùng Petén."
+  },
+  "ancient": {
+    term: "ancient",
+    pronunciation: "/ˈeɪnʃənt/",
+    pos: "adjective",
+    meaning_en: "belonging to the very distant past, especially ancient Maya civilization",
+    meaning_vi: "cổ đại / thời cổ xưa",
+    context_note: "Nền văn minh Maya cổ đại sở hữu mạng lưới đô thị và thủy lợi tinh vi."
+  },
+  "arrival": {
+    term: "arrival",
+    pronunciation: "/əˈraɪvəl/",
+    pos: "noun",
+    meaning_en: "the emergence or introduction of a revolutionary new technology or discovery",
+    meaning_vi: "sự xuất hiện / sự ra đời của công nghệ mới",
+    context_note: "Sự xuất hiện của công nghệ LiDAR đã cách mạng hóa toàn bộ ngành khảo cổ học."
+  },
+  "astonishingly": {
+    term: "astonishingly",
+    pronunciation: "/əˈstɒnɪʃɪŋli/",
+    pos: "adverb",
+    meaning_en: "in a way that causes great surprise or wonder; remarkably",
+    meaning_vi: "đầy kinh ngạc / một cách đáng kinh ngạc",
+    context_note: "Mật độ dân số Maya cao một cách đáng kinh ngạc, vượt xa mọi phỏng đoán trước đây."
+  },
+  "beams": {
+    term: "beams",
+    pronunciation: "/biːmz/",
+    pos: "noun (plural)",
+    meaning_en: "focused streams of light, specifically millions of pulsed laser beams",
+    meaning_vi: "các chùm tia laser / tia quét cảm biến",
+    context_note: "Hàng tỷ chùm tia laser bắn xuyên qua kẽ lá để đo khoảng cách chính xác đến mặt đất."
+  },
+  "blinded": {
+    term: "blinded",
+    pronunciation: "/ˈblaɪndɪd/",
+    pos: "verb (past) / adjective",
+    meaning_en: "prevented from seeing or comprehending by dense vegetation or bias",
+    meaning_vi: "bị che mắt / bị tán rừng rậm che khuất tầm nhìn",
+    context_note: "Các nhà khảo cổ từng bị che mắt bởi tán rừng rậm nhiệt đới dày đặc hàng ngàn năm qua."
+  },
+  "century": {
+    term: "century",
+    pronunciation: "/ˈsɛnʧəri/",
+    pos: "noun",
+    meaning_en: "a period of one hundred years",
+    meaning_vi: "thế kỷ",
+    context_note: "Sau một thế kỷ phát quang rừng bằng dao rựa, khảo cổ học đã bước vào kỷ nguyên số."
+  },
+  "century-old": {
+    term: "century-old",
+    pronunciation: "/ˌsɛnʧəri-ˈəʊld/",
+    pos: "adjective",
+    meaning_en: "having existed for a hundred years",
+    meaning_vi: "kéo dài cả thế kỷ / tồn tại cả trăm năm",
+    context_note: "Những giả thuyết tồn tại cả trăm năm về người Maya nay đã phải viết lại hoàn toàn."
+  },
+  "classical": {
+    term: "classical",
+    pronunciation: "/ˈklæsɪkəl/",
+    pos: "adjective",
+    meaning_en: "referring to the Classic Period of Maya civilization (approx. 250 to 900 AD)",
+    meaning_vi: "thời kỳ Cổ điển (giai đoạn hoàng kim của nền văn minh Maya)",
+    context_note: "Thời kỳ Cổ điển của người Maya ghi nhận sự bùng nổ về đền đài kim tự tháp và nghệ thuật chạm khắc."
+  },
+  "consisted": {
+    term: "consisted",
+    pronunciation: "/kənˈsɪstɪd/",
+    pos: "verb (past)",
+    meaning_en: "was composed or formed of",
+    meaning_vi: "bao gồm / được cấu thành từ",
+    context_note: "Cảnh quan Maya gồm hàng ngàn pháo đài phòng thủ, đường đắp cao và kênh đào."
+  },
+  "dense": {
+    term: "dense",
+    pronunciation: "/dɛns/",
+    pos: "adjective",
+    meaning_en: "closely compacted in substance; having parts crowded together",
+    meaning_vi: "rậm rạp / dày đặc",
+    context_note: "Tán rừng rậm rạp nhiệt đới từng che giấu toàn bộ các siêu đô thị bên dưới."
+  },
+  "detection": {
+    term: "detection",
+    pronunciation: "/dɪˈtɛkʃən/",
+    pos: "noun",
+    meaning_en: "the action of discovering or identifying the presence of something (as in Light Detection and Ranging)",
+    meaning_vi: "sự dò tìm / phát hiện (trong thuật ngữ LiDAR: Light Detection and Ranging)",
+    context_note: "LiDAR là viết tắt của công nghệ phát hiện ánh sáng và đo khoảng cách bằng laser."
+  },
+  "earth": {
+    term: "earth",
+    pronunciation: "/ɜːθ/",
+    pos: "noun",
+    meaning_en: "the ground, soil, or the planet; digital bare-earth elevation models",
+    meaning_vi: "mặt đất trần / bề mặt địa hình",
+    context_note: "Mô hình độ cao mặt đất trần (bare-earth model) loại bỏ ảo ảnh thực vật để hiển thị di tích ngầm."
+  },
+  "guatemala": {
+    term: "Guatemala",
+    pronunciation: "/ˌɡwɑːtɪˈmɑːlə/",
+    pos: "proper noun",
+    meaning_en: "Central American nation where vast Maya archaeological complexes are situated",
+    meaning_vi: "Guatemala (quốc gia Trung Mỹ lưu giữ nhiều thánh địa Maya)",
+    context_note: "Các cuộc quét LiDAR trên vùng rừng Petén thuộc Guatemala làm phát lộ hơn 60.000 công trình cổ."
+  },
+  "hacking": {
+    term: "hacking",
+    pronunciation: "/ˈhækɪŋ/",
+    pos: "verb (participle)",
+    meaning_en: "cutting rough paths through dense vegetation using machetes",
+    meaning_vi: "phát quang / chém vẹt bụi rậm bằng dao rựa",
+    context_note: "Khảo cổ học truyền thống đòi hỏi việc phát quang rừng rậm từng mét vuông vô cùng nhọc nhằn."
+  },
+  "isolated": {
+    term: "isolated",
+    pronunciation: "/ˈaɪsəleɪtɪd/",
+    pos: "adjective",
+    meaning_en: "far away from other places, buildings, or people; remote",
+    meaning_vi: "cô lập / tách biệt",
+    context_note: "Các nhà nghiên cứu từng ngỡ các thành bang Maya là những ốc đảo cô lập giữa rừng sâu."
+  },
+  "jungle": {
+    term: "jungle",
+    pronunciation: "/ˈdʒʌŋɡəl/",
+    pos: "noun",
+    meaning_en: "dense tropical forest and vegetation covering ancient ruins",
+    meaning_vi: "rừng nhiệt đới / rừng già rậm rạp",
+    context_note: "Rừng già Trung Mỹ đã nuốt chửng các thành phố đá vôi sau khi nền văn minh sụp đổ."
+  },
+  "laser": {
+    term: "laser",
+    pronunciation: "/ˈleɪzə/",
+    pos: "noun",
+    meaning_en: "a device generating an intense beam of coherent monochromatic light",
+    meaning_vi: "tia laser / thiết bị phát xung laser",
+    context_note: "Máy quét laser bắn hàng trăm ngàn xung ánh sáng mỗi giây xuống tán rừng."
+  },
+  "light": {
+    term: "light",
+    pronunciation: "/laɪt/",
+    pos: "noun",
+    meaning_en: "electromagnetic radiation visible to the human eye or infrared pulses in LiDAR",
+    meaning_vi: "ánh sáng / chùm sáng hồng ngoại",
+    context_note: "Ánh sáng phản hồi từ mặt đất được cảm biến ghi lại để tính toán cao độ chính xác."
+  },
+  "maya": {
+    term: "Maya",
+    pronunciation: "/ˈmaɪə/",
+    pos: "proper noun / adjective",
+    meaning_en: "an indigenous Mesoamerican civilization known for its advanced architecture, astronomy, and mathematics",
+    meaning_vi: "người Maya / nền văn minh Maya",
+    context_note: "Nền văn minh Maya thể hiện trình độ kỹ thuật thủy lợi và quy hoạch đô thị phi thường."
+  },
+  "mounting": {
+    term: "mounting",
+    pronunciation: "/ˈmaʊntɪŋ/",
+    pos: "verb (participle) / adjective",
+    meaning_en: "attaching or installing equipment onto an aircraft or aerial platform",
+    meaning_vi: "gắn lên / lắp đặt thiết bị",
+    context_note: "Lắp đặt cảm biến LiDAR chuyên dụng vào bụng máy bay khảo sát."
+  },
+  "onto": {
+    term: "onto",
+    pronunciation: "/ˈɒntuː/",
+    pos: "preposition",
+    meaning_en: "moving to a position on or surface of",
+    meaning_vi: "lên trên bề mặt",
+    context_note: "Chiếu các xung laser xuống thẳng mặt đất bên dưới lớp lá rừng."
+  },
+  "overnight": {
+    term: "overnight",
+    pronunciation: "/ˌəʊvəˈnaɪt/",
+    pos: "adverb",
+    meaning_en: "suddenly or very rapidly; during a single night",
+    meaning_vi: "chỉ sau một đêm / nhanh chóng một cách ngoạn mục",
+    context_note: "Quy mô nền văn minh Maya được định nghĩa lại gần như chỉ sau một đêm nhờ LiDAR."
+  },
+  "preserved": {
+    term: "preserved",
+    pronunciation: "/prɪˈzɜːvd/",
+    pos: "verb (past) / adjective",
+    meaning_en: "maintained in its original or existing state",
+    meaning_vi: "được bảo tồn nguyên vẹn / gìn giữ",
+    context_note: "Tán rừng rậm đã vô tình che chắn và bảo tồn nguyên vẹn các di tích đá suốt cả thiên niên kỷ."
+  },
+  "rainforests": {
+    term: "rainforests",
+    pronunciation: "/ˈreɪnˌfɒrɪsts/",
+    pos: "noun (plural)",
+    meaning_en: "luxuriant, dense forests rich in biodiversity found in tropical areas with consistently heavy rainfall",
+    meaning_vi: "các khu rừng mưa nhiệt đới",
+    context_note: "Những cánh rừng mưa nhiệt đới ở Trung Mỹ che giấu bí mật của hàng ngàn phế tích."
+  },
+  "ranging": {
+    term: "ranging",
+    pronunciation: "/ˈreɪndʒɪŋ/",
+    pos: "noun / verb (participle)",
+    meaning_en: "the measurement of distance using optical or laser echo timing",
+    meaning_vi: "đo khoảng cách / định vị tầm xa (trong công nghệ LiDAR)",
+    context_note: "Đo cự ly bằng xung phản xạ (ranging) cho phép tái tạo bản đồ 3D chuẩn xác từng xăng-ti-mét."
+  },
+  "researchers": {
+    term: "researchers",
+    pronunciation: "/rɪˈsɜːʧəz/",
+    pos: "noun (plural)",
+    meaning_en: "archaeologists and scientists investigating ancient civilizations",
+    meaning_vi: "các nhà nghiên cứu / nhà khoa học khảo cổ",
+    context_note: "Các nhà nghiên cứu sử dụng thuật toán máy tính để bóc tách lớp tán lá ảo."
+  },
+  "revealing": {
+    term: "revealing",
+    pronunciation: "/rɪˈviːlɪŋ/",
+    pos: "verb (participle) / adjective",
+    meaning_en: "making interesting or significant information known; exposing",
+    meaning_vi: "hé lộ / làm phát lộ ra",
+    context_note: "Làm phát lộ những tuyến đại lộ đắp cao nối liền các đại đô thị cổ đại."
+  },
+  "ruins": {
+    term: "ruins",
+    pronunciation: "/ˈruːɪnz/",
+    pos: "noun (plural)",
+    meaning_en: "the remains of a building, city, or civilization that has suffered destruction or decay",
+    meaning_vi: "các tàn tích / phế tích cổ xưa",
+    context_note: "Hàng chục ngàn phế tích kim tự tháp và nhà ở Maya chìm sâu dưới thảm rừng xanh."
+  },
+  "scientists": {
+    term: "scientists",
+    pronunciation: "/ˈsaɪəntɪsts/",
+    pos: "noun (plural)",
+    meaning_en: "scholars studying physical and cultural evidence of the past",
+    meaning_vi: "các nhà khoa học",
+    context_note: "Các nhà khoa học kết hợp ảnh viễn thám và khảo sát thực địa để giải mã nền văn minh."
+  },
+  "stripped": {
+    term: "stripped",
+    pronunciation: "/strɪpt/",
+    pos: "verb (past)",
+    meaning_en: "removed leaves and vegetation digitally using software filtering algorithms",
+    meaning_vi: "bóc tách / lột bỏ (bằng thuật toán kỹ thuật số)",
+    context_note: "Phần mềm bóc tách kỹ thuật số lớp cây rừng để làm lộ ra bề mặt đất đai nguyên thủy."
+  },
+  "swamps": {
+    term: "swamps",
+    pronunciation: "/swɒmps/",
+    pos: "noun (plural)",
+    meaning_en: "wetlands and seasonal bogs (bajos) engineered by the Maya for intensive agriculture",
+    meaning_vi: "đầm lầy / vùng ngập nước được cải tạo làm ruộng bậc thang",
+    context_note: "Các vùng đầm lầy được người Maya cải tạo thành hệ thống đồng ruộng tưới tiêu màu mỡ."
+  },
+  "territorial": {
+    term: "territorial",
+    pronunciation: "/ˌtɛrɪˈtɔːriəl/",
+    pos: "adjective",
+    meaning_en: "relating to the ownership or defense of an area of land",
+    meaning_vi: "thuộc lãnh thổ / tranh chấp phòng thủ biên giới",
+    context_note: "Các thành lũy và hào rãnh chứng minh tình trạng xung đột lãnh thổ khốc liệt giữa các lãnh chúa."
+  },
+  "thousands": {
+    term: "thousands",
+    pronunciation: "/ˈθaʊzəndz/",
+    pos: "noun (plural)",
+    meaning_en: "multiples of 1,000, referring to structures or populations",
+    meaning_vi: "hàng nghìn / hàng vạn",
+    context_note: "Hàng nghìn công trình kiến trúc chưa từng được ghi nhận nay hiện rõ trên màn hình máy tính."
+  },
+  "tropical": {
+    term: "tropical",
+    pronunciation: "/ˈtrɒpɪkəl/",
+    pos: "adjective",
+    meaning_en: "characteristic of or situated in the tropics, with warm temperatures and dense canopy",
+    meaning_vi: "nhiệt đới",
+    context_note: "Môi trường nhiệt đới gió mùa khiến việc bảo tồn các phế tích trên mặt đất gặp nhiều khó khăn."
+  },
 };
