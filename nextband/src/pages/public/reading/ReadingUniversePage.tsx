@@ -769,6 +769,171 @@ export default function ReadingUniversePage() {
                 </div>
               </article>
             )}
+
+            {/* Story Card 11: Alien Oceans & Hadal Zone (National Geographic) */}
+            {(selectedTopic === "all" || selectedTopic === "science") && (
+              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#0284C7]/50 hover:shadow-xl hover:shadow-[#0284C7]/5 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1000&auto=format&fit=crop&q=80"
+                      alt="Alien Oceans & Hadal Zone"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
+                        Sinh vật biển & Khám phá
+                      </span>
+                      <span className="px-2.5 py-1 rounded-md bg-[#F59E0B] backdrop-blur-md text-[#2D2825] text-[11px] font-bold tracking-wider">
+                        National Geographic
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-6 sm:p-7 space-y-3">
+                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
+                      <span>Reading #11</span>
+                      <span>·</span>
+                      <span>6 min read</span>
+                      <span>·</span>
+                      <span className="text-[#0284C7] font-bold">
+                        IELTS Band 7.5+
+                      </span>
+                      <span>·</span>
+                      <span>Hải dương học cực hạn</span>
+                    </div>
+
+                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#0284C7] transition-colors leading-snug">
+                      <Link to="/reading/case-011">
+                        Bài #11: Đại Dương Vùng Vô Quang: Sinh Vật Kỳ Dị Vùng Hadal & Tranh Cãi Khai Thác Đáy Biển
+                      </Link>
+                    </h3>
+                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
+                      Xuống độ sâu hơn 6.000 mét nơi bóng tối vĩnh cửu và áp suất nghiền nát tàu ngầm, sự sống vẫn phát triển kỳ diệu nhờ hóa tổng hợp (chemosynthesis). Nhưng liệu cơn khát kim loại cho pin xe điện có hủy diệt thế giới sơ khai này?
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
+                  <Link
+                    to="/reading/case-011"
+                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#0284C7] flex items-center gap-1"
+                  >
+                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </article>
+            )}
+
+            {/* Story Card 12: Lasers Beneath the Canopy (National Geographic) */}
+            {(selectedTopic === "all" || selectedTopic === "science" || selectedTopic === "tech") && (
+              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#15803D]/50 hover:shadow-xl hover:shadow-[#15803D]/5 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1000&auto=format&fit=crop&q=80"
+                      alt="Lasers Beneath the Canopy & Maya Archaeology"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
+                        Khảo cổ học & Viễn thám
+                      </span>
+                      <span className="px-2.5 py-1 rounded-md bg-[#F59E0B] backdrop-blur-md text-[#2D2825] text-[11px] font-bold tracking-wider">
+                        National Geographic
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-6 sm:p-7 space-y-3">
+                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
+                      <span>Reading #12</span>
+                      <span>·</span>
+                      <span>6 min read</span>
+                      <span>·</span>
+                      <span className="text-[#15803D] font-bold">
+                        IELTS Band 7.5+
+                      </span>
+                      <span>·</span>
+                      <span>Khảo cổ học công nghệ cao</span>
+                    </div>
+
+                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#15803D] transition-colors leading-snug">
+                      <Link to="/reading/case-012">
+                        Bài #12: Tia Laser Dưới Tán Rừng Già: Công Nghệ LiDAR Viết Lại Lịch Sử Văn Minh Cổ Đại
+                      </Link>
+                    </h3>
+                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
+                      Bằng cách bắn hàng triệu xung laser xuyên qua rừng rậm Guatemala, công nghệ LiDAR đã bóc tách lớp lá cây để hé lộ hơn 60.000 công trình cổ và mạng lưới cao tốc đá nối liền siêu đô thị Maya, làm đảo lộn hoàn toàn nhận thức lịch sử thế giới.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
+                  <Link
+                    to="/reading/case-012"
+                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#15803D] flex items-center gap-1"
+                  >
+                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </article>
+            )}
+
+            {/* Story Card 13: The Rewilding Paradox (National Geographic & Nature) */}
+            {(selectedTopic === "all" || selectedTopic === "science" || selectedTopic === "society") && (
+              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#16A34A]/50 hover:shadow-xl hover:shadow-[#16A34A]/5 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1564349683136-77e08dba1ef6?w=1000&auto=format&fit=crop&q=80"
+                      alt="The Rewilding Paradox & Apex Predators"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
+                        Động vật học & Bảo tồn
+                      </span>
+                      <span className="px-2.5 py-1 rounded-md bg-[#F59E0B] backdrop-blur-md text-[#2D2825] text-[11px] font-bold tracking-wider">
+                        National Geographic
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-6 sm:p-7 space-y-3">
+                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
+                      <span>Reading #13</span>
+                      <span>·</span>
+                      <span>7 min read</span>
+                      <span>·</span>
+                      <span className="text-[#16A34A] font-bold">
+                        IELTS Band 8.0+
+                      </span>
+                      <span>·</span>
+                      <span>Sinh thái học quần thể</span>
+                    </div>
+
+                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#16A34A] transition-colors leading-snug">
+                      <Link to="/reading/case-013">
+                        Bài #13: Nghịch Lý Dã Hóa: Thú Ăn Thịt Đầu Chuỗi, Dòng Chảy Sinh Thái & Sinh Kế Nông Dân
+                      </Link>
+                    </h3>
+                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
+                      Hồi sinh loài sói và gấu xám giúp phục hồi dòng chảy sông ngòi và thảm thực vật qua hiệu ứng 'Trophic Cascades'. Nhưng làm thế nào để giải quyết xung đột gay gắt khi thú săn mồi đe dọa đàn cừu của người nông dân vùng nông thôn?
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
+                  <Link
+                    to="/reading/case-013"
+                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#16A34A] flex items-center gap-1"
+                  >
+                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </article>
+            )}
           </div>
         </section>
 

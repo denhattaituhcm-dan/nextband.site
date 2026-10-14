@@ -75,6 +75,21 @@ const TASK2_WRITING_PROMPTS: Record<string, { topic: string; prompt: string; tip
     prompt: "In many urban areas, rising property prices have made it impossible for young people to buy their own homes. What problems does this cause, and what solutions can governments introduce?",
     tips: "Vận dụng khái niệm 'financialisation of housing', sự tan biến của 'starter home' và giải pháp xem nhà ở xã hội phi lợi nhuận như cơ sở hạ tầng thiết yếu.",
   },
+  "case-011": {
+    topic: "Deep-Sea Exploration, Extraterrestrial Oceans & Resource Extraction",
+    prompt: "Some people argue that scientific exploration of deep oceans and outer space is a waste of government resources, and that public funds should be spent on solving immediate problems on land. To what extent do you agree or disagree?",
+    tips: "Tận dụng các luận điểm từ National Geographic: 'chemosynthesis biospheres', giá trị nghiên cứu y sinh học từ sinh vật vùng 'hadal zone' và nguy cơ hủy hoại sinh thái do 'deep-sea mining'.",
+  },
+  "case-012": {
+    topic: "Archaeological Preservation vs Modern Infrastructure Development",
+    prompt: "Historical research and archaeological preservation are vital for human society, while others believe that modern infrastructure development should always take priority over preserving ancient ruins. Discuss both views and give your opinion.",
+    tips: "Vận dụng bài học công nghệ LiDAR từ National Geographic: chứng minh văn minh cổ đại (như Maya) đã quy hoạch thủy lợi và kiến trúc đô thị bền vững, mang lại bài học giá trị cho quy hoạch hiện đại.",
+  },
+  "case-013": {
+    topic: "Apex Predators, Rewilding & Rural Livelihoods",
+    prompt: "Some people argue that reintroducing apex predators (such as wolves and bears) to the wild is necessary to restore ecological balance, while others believe that it threatens rural communities and farming livelihoods. Discuss both views and give your opinion.",
+    tips: "Vận dụng luận điểm sinh thái học chuyên sâu: 'trophic cascades' (phục hồi rừng và lòng sông nhờ kiểm soát động vật ăn cỏ) đối trọng với 'livestock depredation' và đề xuất giải pháp dung hòa bằng hàng rào phi sát thương và hỗ trợ kinh tế.",
+  },
 };
 
 interface WritingDebateChamberProps {
