@@ -167,8 +167,8 @@ export const CASE_014: ReadingCase = {
   autopsy: {
     traps: [
       {
-        type: "FALSE_DICHOTOMY",
-        description: "Bẫy phân cực nhị nguyên: Coi nấm hoặc là 'thần dược cứu rỗi môi trường' hoặc là 'mầm bệnh hủy diệt', bỏ qua bản chất trung tính của nấm trong việc thích ứng và tương tác sinh thái phụ thuộc vào trạng thái cân bằng của vật chủ.",
+        type: "EXTREME_GENERALIZATION",
+        description: "Bẫy tuyệt đối hóa nhị nguyên: Coi nấm hoặc là 'thần dược cứu rỗi môi trường' hoặc là 'mầm bệnh hủy diệt', bỏ qua bản chất trung tính của nấm trong việc thích ứng và tương tác sinh thái phụ thuộc vào trạng thái cân bằng của vật chủ.",
       },
     ],
     takeaways: [
