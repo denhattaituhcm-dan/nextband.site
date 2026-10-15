@@ -60,7 +60,7 @@ export function humanizeVocabularyTerm(
 
   const cleanTerm = term.term.trim();
   const cleanVi = (term.meaning_vi || "").replace(/^(Từ vựng|Cụm từ):\s*/i, "").trim();
-  const primaryVi = cleanVi.split("/")[0].trim();
+  const primaryVi = cleanVi.includes(" / ") ? cleanVi.split(" / ")[0].trim() : cleanVi;
 
   // If cognitive data exists, translate structured fields into natural teacher phrasing
   if (term.cognitive) {
@@ -129,20 +129,22 @@ export function humanizeVocabularyTerm(
     };
   }
 
-  // Dynamic pedagogical synthesis for terms without manual cognitive entries
-  const englishClarification = term.meaning_en && term.meaning_en !== term.term
-    ? ` (“${term.meaning_en}”)`
+  // Dynamic pedagogical synthesis for Tier 2 terms without manual cognitive entries
+  const englishClarification = term.meaning_en && term.meaning_en.toLowerCase() !== cleanTerm.toLowerCase()
+    ? ` (${term.meaning_en})`
     : "";
 
-  const simple_intuition = `“${cleanTerm}” mang hàm ý cốt lõi “${primaryVi}”${englishClarification}, phản ánh trực tiếp bản chất ý niệm trong bài đọc.`;
+  // Natural teacher voice: concise, direct, zero robotic jargon
+  const simple_intuition = `Diễn đạt ý nghĩa “${primaryVi}”${englishClarification}.`;
 
   let in_context_story = "";
-  if (isCrossCaseFallback || !term.context_note) {
+  if (isCrossCaseFallback) {
     in_context_story = currentSentence && currentSentence.trim().length > 0
       ? `Trong câu văn bạn đang đọc: “${currentSentence.trim()}” — tác giả sử dụng “${cleanTerm}” để làm nổi bật luận điểm chính.`
-      : `Trong bài đọc hiện tại, tác giả sử dụng “${cleanTerm}” với nghĩa “${primaryVi}”.`;
+      : `Trong bài đọc hiện tại, “${cleanTerm}” mang hàm ý “${primaryVi}”.`;
   } else {
-    in_context_story = `Trong văn cảnh này: ${term.context_note}`;
+    // Directly present the sentence-specific context note naturally
+    in_context_story = term.context_note || (currentSentence ? `Gắn với câu: “${currentSentence.trim()}”` : "");
   }
 
   const nuance_warning: string | undefined = undefined;
