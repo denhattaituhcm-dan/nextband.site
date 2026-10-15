@@ -46,7 +46,16 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
       { label: "Khóa LEADER (6.5 → 7.5+)", href: "/courses/leader" },
     ],
   },
-  { label: "Reading", href: "/reading" },
+  {
+    label: "Reading",
+    href: "/reading",
+    children: [
+      { label: "Tủ sách tương tác (Reading Cases)", href: "/reading#tu-sach", badge: "Articles" },
+      { label: "English Idioms (Unit 1: Age)", href: "/reading/idioms", badge: "Mới" },
+      { label: "DIVIDER", href: "", isDivider: true },
+      { label: "Phương pháp đọc sâu (Philosophy)", href: "/reading#phuong-phap" },
+    ],
+  },
   { label: "Speaking Forecast", href: "/ielts-speaking-forecast" },
   { label: "Tự học", href: "https://tuhoc.nextband.vn", badge: "HOT" },
   { label: "Tiến bộ", href: "/results" },
@@ -56,7 +65,7 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
 
 export function PublicHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mobileCoursesOpen, setMobileCoursesOpen] = useState(false);
+  const [openMobileSubMenu, setOpenMobileSubMenu] = useState<string | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated, isAdmin, isTeacher } = useAuth();
@@ -316,7 +325,7 @@ export function PublicHeader() {
               variant="ghost"
               size="icon"
               onClick={() => {
-                setMobileCoursesOpen(false);
+                setOpenMobileSubMenu(null);
                 setMobileMenuOpen(!mobileMenuOpen);
               }}
               className="h-9 w-9 rounded-lg text-white hover:bg-white/10"
@@ -335,12 +344,13 @@ export function PublicHeader() {
             {PUBLIC_NAV_ITEMS.map((item) => {
               const active = isNavActive(item);
               const hasChildren = item.children && item.children.length > 0;
+              const isSubMenuOpen = openMobileSubMenu === item.label;
 
               if (hasChildren) {
                 return (
                   <div key={item.label} className="space-y-1">
                     <div
-                      onClick={() => setMobileCoursesOpen(!mobileCoursesOpen)}
+                      onClick={() => setOpenMobileSubMenu(isSubMenuOpen ? null : item.label)}
                       className={cn(
                         "px-3 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-between cursor-pointer",
                         active
@@ -352,12 +362,12 @@ export function PublicHeader() {
                       <ChevronDown
                         className={cn(
                           "h-4 w-4 opacity-70 transition-transform duration-200",
-                          mobileCoursesOpen && "rotate-180"
+                          isSubMenuOpen && "rotate-180"
                         )}
                       />
                     </div>
 
-                    {mobileCoursesOpen && (
+                    {isSubMenuOpen && (
                       <div className="pl-3 ml-2 border-l border-white/15 space-y-1 py-1">
                         {item.children!.map((sub, idx) => {
                           if (sub.isDivider) {

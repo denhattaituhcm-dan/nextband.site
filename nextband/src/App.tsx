@@ -121,12 +121,17 @@ const SpeakingForecastSeasonPage = lazyWithRetry(() => import("@/pages/public/sp
 const SpeakingForecastTopicPage = lazyWithRetry(() => import("@/pages/public/speaking-forecast/SpeakingForecastTopic"));
 const ReadingUniversePage = lazyWithRetry(() => import("@/pages/public/reading/ReadingUniversePage"));
 const ReadingCasePage = lazyWithRetry(() => import("@/pages/public/reading/ReadingCasePage"));
+const EnglishIdiomsHubPage = lazyWithRetry(() => import("@/pages/public/reading/EnglishIdiomsHubPage"));
 const SelfStudyPage = lazyWithRetry(() => import("@/pages/public/SelfStudyPage"));
 const BuddyLandingPage = lazyWithRetry(() => import("@/pages/public/BuddyLandingPage"));
 const ParentHubPage = lazyWithRetry(() => import("@/pages/public/ParentHubPage"));
 const DiagnosticLandingPage = lazyWithRetry(() => import("@/pages/public/DiagnosticLandingPage"));
 const CambridgeStudentExam = lazyWithRetry(() => import("@/pages/public/CambridgeStudentExam"));
 const CambridgeStudentRoomJoin = lazyWithRetry(() => import("@/pages/public/CambridgeStudentRoomJoin"));
+
+// Lazy-loaded Reading Challenge 1 Module
+const ChallengeHubPage = lazyWithRetry(() => import("@/features/reading-challenge/pages/ChallengeHubPage").then(m => ({ default: m.ChallengeHubPage })));
+const ChallengeUnitPage = lazyWithRetry(() => import("@/features/reading-challenge/pages/ChallengeUnitPage").then(m => ({ default: m.ChallengeUnitPage })));
 
 
 // Lazy-loaded Auth Pages
@@ -363,6 +368,7 @@ const App = () => (
                 <Route path="/terms" element={<TermsPage />} />
                 <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/reading" element={<ReadingUniversePage />} />
+                <Route path="/reading/idioms" element={<EnglishIdiomsHubPage />} />
                 <Route path="/self-study-courses" element={<SelfStudyPage />} />
                 <Route path="/tu-hoc" element={<Navigate to="/self-study-courses" replace />} />
                 <Route path="/self-study" element={<Navigate to="/self-study-courses" replace />} />
@@ -378,6 +384,10 @@ const App = () => (
               <Route path="/reading/:caseId" element={<ReadingCasePage />} />
               <Route path="/assessment/take/:sessionId" element={<PlacementExamInterface />} />
               <Route path="/assessment/take" element={<Navigate to="/assessment" replace />} />
+
+              {/* Reading Challenge 1 Module Routes */}
+              <Route path="/reading-challenge" element={<ChallengeHubPage />} />
+              <Route path="/reading-challenge/:unitId" element={<ChallengeUnitPage />} />
               <Route path="/cambridge/test/:testCode" element={<CambridgeStudentExam />} />
               <Route path="/cambridge/room/:roomCode" element={<CambridgeStudentRoomJoin />} />
               
