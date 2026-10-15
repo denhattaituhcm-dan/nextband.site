@@ -934,6 +934,61 @@ export default function ReadingUniversePage() {
                 </div>
               </article>
             )}
+
+            {/* Story Card 14: The Wondrous World of Fungi (National Geographic) */}
+            {(selectedTopic === "all" || selectedTopic === "science" || selectedTopic === "tech") && (
+              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#854D0E]/50 hover:shadow-xl hover:shadow-[#854D0E]/5 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1511497584788-87676104235f?w=1000&auto=format&fit=crop&q=80"
+                      alt="The Wondrous World of Fungi & Mycotextiles"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
+                        Công nghệ sinh học & Mycobiome
+                      </span>
+                      <span className="px-2.5 py-1 rounded-md bg-[#F59E0B] backdrop-blur-md text-[#2D2825] text-[11px] font-bold tracking-wider">
+                        National Geographic
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-6 sm:p-7 space-y-3">
+                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
+                      <span>Reading #14</span>
+                      <span>·</span>
+                      <span>8 min read</span>
+                      <span>·</span>
+                      <span className="text-[#854D0E] font-bold">
+                        IELTS Band 8.0+
+                      </span>
+                      <span>·</span>
+                      <span>Khoa học nấm & Vật liệu sống</span>
+                    </div>
+
+                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#854D0E] transition-colors leading-snug">
+                      <Link to="/reading/case-014">
+                        Bài #14: Thế Giới Kỳ Diệu Của Loài Nấm: Sinh Vật Xâm Lấn, Hệ Nấm Mycobiome & Tương Lai Da Sinh Học
+                      </Link>
+                    </h3>
+                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
+                      Từ hiểm họa nấm tử thần xâm thực rừng sồi California đến khám phá chấn động về hệ nấm nội sinh (mycobiome) trong khối u ung thư, và cuộc cách mạng thời trang tuần hoàn từ sợi nấm (mycotextiles) trên tạp chí National Geographic Tháng 4/2024.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
+                  <Link
+                    to="/reading/case-014"
+                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#854D0E] flex items-center gap-1"
+                  >
+                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </article>
+            )}
           </div>
         </section>
 
