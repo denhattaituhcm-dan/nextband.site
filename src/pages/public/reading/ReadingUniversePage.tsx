@@ -941,7 +941,7 @@ export default function ReadingUniversePage() {
                 <div>
                   <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
                     <img
-                      src="https://images.unsplash.com/photo-1511497584788-87676104235f?w=1000&auto=format&fit=crop&q=80"
+                      src="https://images.unsplash.com/photo-1546842931-886c185b4c8c?w=1000&auto=format&fit=crop&q=80"
                       alt="The Wondrous World of Fungi & Mycotextiles"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
@@ -983,6 +983,61 @@ export default function ReadingUniversePage() {
                   <Link
                     to="/reading/case-014"
                     className="group-hover:translate-x-1 transition-transform font-semibold text-[#854D0E] flex items-center gap-1"
+                  >
+                    Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </article>
+            )}
+
+            {/* Story Card 15: Surprising Scenes in Stone (National Geographic) */}
+            {(selectedTopic === "all" || selectedTopic === "society" || selectedTopic === "science") && (
+              <article className="group bg-white rounded-2xl border border-[#EAE3D9] overflow-hidden hover:border-[#B45309]/50 hover:shadow-xl hover:shadow-[#B45309]/5 transition-all duration-300 flex flex-col justify-between">
+                <div>
+                  <div className="aspect-[16/9] bg-[#EFE9DF] relative overflow-hidden">
+                    <img
+                      src="https://images.unsplash.com/photo-1599707367072-cd6ada2bc375?w=1000&auto=format&fit=crop&q=80"
+                      alt="Surprising Scenes in Stone & Huqoq Mosaics"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute top-4 left-4 flex gap-2">
+                      <span className="px-2.5 py-1 rounded-md bg-[#2D2825]/85 backdrop-blur-md text-white text-[11px] font-medium">
+                        Khảo cổ học & Nghệ thuật Mosaic
+                      </span>
+                      <span className="px-2.5 py-1 rounded-md bg-[#F59E0B] backdrop-blur-md text-[#2D2825] text-[11px] font-bold tracking-wider">
+                        National Geographic
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-6 sm:p-7 space-y-3">
+                    <div className="flex items-center gap-2 text-xs text-[#8A7E75] font-light">
+                      <span>Reading #15</span>
+                      <span>·</span>
+                      <span>8 min read</span>
+                      <span>·</span>
+                      <span className="text-[#B45309] font-bold">
+                        IELTS Band 8.0+
+                      </span>
+                      <span>·</span>
+                      <span>Văn minh cổ đại & Lịch sử</span>
+                    </div>
+
+                    <h3 className="font-serif text-2xl font-medium text-[#241F1C] group-hover:text-[#B45309] transition-colors leading-snug">
+                      <Link to="/reading/case-015">
+                        Bài #15: Kiệt Tác Tranh Đá Huqoq: Khảo Cổ Học Giáo Đường Cổ & Bản Lĩnh Kiên Cường Vùng Galilee
+                      </Link>
+                    </h3>
+                    <p className="text-sm text-[#6E645D] leading-relaxed line-clamp-3 font-light">
+                      Khai quật giáo đường Do Thái 1.600 năm tuổi tại Huqoq hé lộ những bức tranh khảm đá (tesserae) vô giá về Samson, tháp Babel và cuộc gặp gỡ bí ẩn với Alexander Đại đế, đảo ngược hoàn toàn quan niệm về sự suy tàn dưới thời Byzantine.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-[#F5EFE7] flex items-center justify-end text-xs text-[#8C827A]">
+                  <Link
+                    to="/reading/case-015"
+                    className="group-hover:translate-x-1 transition-transform font-semibold text-[#B45309] flex items-center gap-1"
                   >
                     Bắt đầu đọc <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
