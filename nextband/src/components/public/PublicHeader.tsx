@@ -50,8 +50,9 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
     label: "Reading",
     href: "/reading",
     children: [
+      { label: "Reading Challenge", href: "/reading-challenge", badge: "Mới" },
       { label: "Tủ sách tương tác (Reading Cases)", href: "/reading#tu-sach", badge: "Articles" },
-      { label: "English Idioms (Unit 1: Age)", href: "/reading/idioms", badge: "Mới" },
+      { label: "English Idioms (Unit 1: Age)", href: "/reading/idioms" },
       { label: "DIVIDER", href: "", isDivider: true },
       { label: "Phương pháp đọc sâu (Philosophy)", href: "/reading#phuong-phap" },
     ],

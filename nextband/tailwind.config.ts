@@ -13,13 +13,27 @@ import typography from "@tailwindcss/typography";
 // ❌ Ban: text-blue-600, bg-emerald-500, text-amber-600, bg-sky-100
 //
 // To change brand color → edit CSS variables in index.css only.
-// ============================================================
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default {
   // Dark mode is class-based (disabled by default unless .dark class is explicitly added).
   // This prevents OS media queries (prefers-color-scheme: dark) from breaking the ARIS light design contract.
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+    "./nextband/pages/**/*.{ts,tsx}",
+    "./nextband/components/**/*.{ts,tsx}",
+    "./nextband/app/**/*.{ts,tsx}",
+    "./nextband/src/**/*.{ts,tsx}",
+    path.join(__dirname, "./src/**/*.{ts,tsx}").replace(/\\/g, "/"),
+    path.join(__dirname, "./index.html").replace(/\\/g, "/"),
+  ],
   prefix: "",
   theme: {
     container: {
