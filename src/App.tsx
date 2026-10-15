@@ -1,0 +1,787 @@
+import React, { lazy, Suspense } from "react";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
+import { AuthProvider } from "@/hooks/useAuth";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+
+// Layouts
+import PublicLayout from "@/layouts/PublicLayout";
+import ClientLayout from "@/layouts/ClientLayout";
+import AdminLayout from "@/layouts/AdminLayout";
+import MinimalLayout from "@/layouts/MinimalLayout";
+
+
+/**
+ * Detects stale Vite chunk errors (happen after a new deployment or network hiccup).
+ * Covers Chrome, Safari, Firefox, and Rollup/Vite error signatures.
+ */
+export const isChunkLoadError = (error: unknown): boolean => {
+  if (!error) return false;
+  const msg = error instanceof Error ? error.message : String(error);
+  const name = error instanceof Error ? error.name : "";
+  return (
+    msg.includes("Failed to fetch dynamically imported module") ||
+    msg.includes("Importing a module script failed") ||
+    msg.includes("error loading dynamically imported module") ||
+    msg.includes("dynamically imported module") ||
+    msg.includes("Loading chunk") ||
+    name === "ChunkLoadError"
+  );
+};
+
+export const isDomMutationError = (error: unknown): boolean => {
+  if (!error) return false;
+  const msg = error instanceof Error ? error.message : String(error);
+  return (
+    msg.includes("insertBefore") ||
+    msg.includes("removeChild") ||
+    msg.includes("The node before which the new node is to be inserted is not a child of this node") ||
+    msg.includes("The node to be removed is not a child of this node")
+  );
+};
+
+export const isTransientEvaluationError = (error: unknown): boolean => {
+  if (!error) return false;
+  const msg = error instanceof Error ? error.message : String(error);
+  return (
+    isChunkLoadError(error) ||
+    isDomMutationError(error) ||
+    msg.includes("Cannot read properties of undefined") ||
+    msg.includes("undefined is not an object") ||
+    msg.includes("null is not an object")
+  );
+};
+
+const CHUNK_RELOAD_KEY = "__nb_chunk_reloaded__";
+
+/**
+ * Wraps React.lazy with automatic in-memory retry and silent page reload on stale-chunk errors.
+ * Stays in Suspense fallback (PageLoader) during reload so users never see an error flash.
+ */
+function lazyWithRetry<T extends React.ComponentType<any>>(
+  factory: () => Promise<{ default: T }>,
+  retries = 2,
+  interval = 400
+): React.LazyExoticComponent<T> {
+  return lazy(() =>
+    new Promise<{ default: T }>((resolve, reject) => {
+      const attempt = (remainingRetries: number) => {
+        factory()
+          .then(resolve)
+          .catch((err: unknown) => {
+            if (isChunkLoadError(err)) {
+              if (remainingRetries > 0) {
+                setTimeout(() => attempt(remainingRetries - 1), interval);
+                return;
+              }
+              const now = Date.now();
+              const lastReload = Number(sessionStorage.getItem(CHUNK_RELOAD_KEY) || 0);
+              if (!lastReload || now - lastReload > 15000) {
+                sessionStorage.setItem(CHUNK_RELOAD_KEY, String(now));
+                window.location.reload();
+                // Keep promise pending so React keeps showing Suspense PageLoader seamlessly
+                return;
+              }
+            }
+            reject(err);
+          });
+      };
+      attempt(retries);
+    })
+  );
+}
+
+// Lazy-loaded Core Pages
+const HomePage = lazyWithRetry(() => import("@/pages/HomePage"));
+const NotFound = lazyWithRetry(() => import("@/pages/NotFound"));
+
+// Lazy-loaded Public Pages
+const PublicHomePage = lazyWithRetry(() => import("@/pages/public/PublicHomePage"));
+const AboutPage = lazyWithRetry(() => import("@/pages/public/AboutPage"));
+const MethodPage = lazyWithRetry(() => import("@/pages/public/MethodPage"));
+const AcademicSystemPage = lazyWithRetry(() => import("@/pages/public/AcademicSystemPage"));
+const CoursesPage = lazyWithRetry(() => import("@/pages/public/CoursesPage"));
+const CourseDetailPage = lazyWithRetry(() => import("@/pages/public/CourseDetailPage"));
+const TeachersPage = lazyWithRetry(() => import("@/pages/public/TeachersPage"));
+const ResultsPage = lazyWithRetry(() => import("@/pages/public/ResultsPage"));
+const CareersPage = lazyWithRetry(() => import("@/pages/public/CareersPage"));
+const JobDetailPage = lazyWithRetry(() => import("@/pages/public/JobDetailPage"));
+const NewsPage = lazyWithRetry(() => import("@/pages/public/NewsPage"));
+const NewsDetailPage = lazyWithRetry(() => import("@/pages/public/NewsDetailPage"));
+const ContactPage = lazyWithRetry(() => import("@/pages/public/ContactPage"));
+const AssessmentPage = lazyWithRetry(() => import("@/pages/public/AssessmentPage"));
+const AssessmentResultPage = lazyWithRetry(() => import("@/pages/public/AssessmentResultPage"));
+const PlacementExamInterface = lazyWithRetry(() => import("@/features/assessment/pages/PlacementExamInterface"));
+const TermsPage = lazyWithRetry(() => import("@/pages/public/TermsPage"));
+const PrivacyPage = lazyWithRetry(() => import("@/pages/public/PrivacyPage"));
+const SpeakingForecastHubPage = lazyWithRetry(() => import("@/pages/public/speaking-forecast/SpeakingForecastHub"));
+const SpeakingForecastSeasonPage = lazyWithRetry(() => import("@/pages/public/speaking-forecast/SpeakingForecastSeason"));
+const SpeakingForecastTopicPage = lazyWithRetry(() => import("@/pages/public/speaking-forecast/SpeakingForecastTopic"));
+const ReadingUniversePage = lazyWithRetry(() => import("@/pages/public/reading/ReadingUniversePage"));
+const ReadingCasePage = lazyWithRetry(() => import("@/pages/public/reading/ReadingCasePage"));
+const SelfStudyPage = lazyWithRetry(() => import("@/pages/public/SelfStudyPage"));
+const BuddyLandingPage = lazyWithRetry(() => import("@/pages/public/BuddyLandingPage"));
+const ParentHubPage = lazyWithRetry(() => import("@/pages/public/ParentHubPage"));
+const DiagnosticLandingPage = lazyWithRetry(() => import("@/pages/public/DiagnosticLandingPage"));
+const CambridgeStudentExam = lazyWithRetry(() => import("@/pages/public/CambridgeStudentExam"));
+const CambridgeStudentRoomJoin = lazyWithRetry(() => import("@/pages/public/CambridgeStudentRoomJoin"));
+
+
+// Lazy-loaded Auth Pages
+const LoginPage = lazyWithRetry(() => import("@/pages/auth/LoginPage"));
+const ForgotPasswordPage = lazyWithRetry(() => import("@/pages/auth/ForgotPasswordPage"));
+const ResetPasswordPage = lazyWithRetry(() => import("@/pages/auth/ResetPasswordPage"));
+
+// Lazy-loaded Student LMS Routes
+const StudentLessonViewerPage = lazyWithRetry(() => import("@/pages/StudentLessonViewerPage"));
+const MyCourses = lazyWithRetry(() => import("@/pages/MyCourses"));
+const MySubmissions = lazyWithRetry(() => import("@/pages/MySubmissions"));
+const CourseDetail = lazyWithRetry(() => import("@/pages/CourseDetail"));
+const SubmissionDetail = lazyWithRetry(() => import("@/pages/SubmissionDetail"));
+const ExamInterface = lazyWithRetry(() => import("@/pages/ExamInterface"));
+const Profile = lazyWithRetry(() => import("@/pages/Profile"));
+const StudentAnalyticsPage = lazyWithRetry(() => import("@/pages/StudentAnalyticsPage"));
+const VisualReconstructionPage = lazyWithRetry(() => import("@/pages/VisualReconstructionPage"));
+const StudentAttendanceProgressPage = lazyWithRetry(() => import("@/pages/StudentAttendanceProgressPage"));
+
+// Lazy-loaded Admin Pages
+const AdminDashboard = lazyWithRetry(() => import("@/pages/admin/Dashboard"));
+const AdminCourses = lazyWithRetry(() => import("@/pages/admin/Courses"));
+const AdminCourseCreate = lazyWithRetry(() => import("@/pages/admin/CourseCreate"));
+const AdminCourseEdit = lazyWithRetry(() => import("@/pages/admin/CourseEdit"));
+const AdminExams = lazyWithRetry(() => import("@/pages/admin/Exams"));
+const AdminExamCreate = lazyWithRetry(() => import("@/pages/admin/ExamCreate"));
+const AdminExamEdit = lazyWithRetry(() => import("@/pages/admin/ExamEdit"));
+const AdminSectionEdit = lazyWithRetry(() => import("@/pages/admin/SectionEdit"));
+const AdminUsers = lazyWithRetry(() => import("@/pages/admin/Users"));
+const AdminStudentsList = lazyWithRetry(() => import("@/pages/admin/StudentsListPage"));
+const AdminStudentDossier = lazyWithRetry(() => import("@/pages/admin/StudentStrategicDossierPage"));
+const AdminTeachers = lazyWithRetry(() => import("@/pages/admin/Teachers"));
+const AdminStaff = lazyWithRetry(() => import("@/pages/admin/Staff"));
+const AdminAdmins = lazyWithRetry(() => import("@/pages/admin/Admins"));
+const AdminCheckAttempt = lazyWithRetry(() => import("@/pages/admin/CheckAttempt"));
+const AdminSubmissionGrade = lazyWithRetry(() => import("@/pages/admin/SubmissionGrade"));
+const AdminClasses = lazyWithRetry(() => import("@/pages/admin/Classes"));
+const AdminClassOperations = lazyWithRetry(() => import("@/pages/admin/ClassOperations"));
+const AdminClassEdit = lazyWithRetry(() => import("@/pages/admin/ClassWorkspace"));
+const AdminClassLeague = lazyWithRetry(() => import("@/pages/admin/ClassLeague"));
+const AdminGameArena = lazyWithRetry(() => import("@/pages/admin/Arena/AdminGameArenaPage"));
+const ArenaHostPage = lazyWithRetry(() => import("@/pages/arena/ArenaHostPage"));
+const ArenaJoinPage = lazyWithRetry(() => import("@/pages/arena/ArenaJoinPage"));
+const ArenaPlayPage = lazyWithRetry(() => import("@/pages/arena/ArenaPlayPage"));
+const AdminSettings = lazyWithRetry(() => import("@/pages/admin/Settings"));
+const AdminSeasonalEvents = lazyWithRetry(() => import("@/pages/admin/SeasonalEventsPage"));
+const TeacherWorkspace = lazyWithRetry(() => import("@/pages/admin/TeacherWorkspace"));
+const AdminContentQADashboard = lazyWithRetry(() => import("@/pages/admin/AdminContentQADashboard"));
+const AdminEvidence = lazyWithRetry(() => import("@/pages/admin/Evidence"));
+const ClassAttendancePage = lazyWithRetry(() => import("@/pages/admin/ClassAttendancePage"));
+const AdminSpeakingForecast = lazyWithRetry(() => import("@/pages/admin/SpeakingForecast"));
+const AdminSpeakingForecastCreate = lazyWithRetry(() => import("@/pages/admin/SpeakingForecastCreate"));
+const AdminSpeakingForecastEdit = lazyWithRetry(() => import("@/pages/admin/SpeakingForecastEdit"));
+const AdminLeads = lazyWithRetry(() => import("@/pages/admin/Leads"));
+const AdminNotifications = lazyWithRetry(() => import("@/pages/admin/Notifications"));
+const AdminAssessments = lazyWithRetry(() => import("@/pages/admin/Assessments"));
+const AdminPeriodicReports = lazyWithRetry(() => import("@/pages/admin/PeriodicReportsPage"));
+const AdminTuitionManagement = lazyWithRetry(() => import("@/pages/admin/TuitionManagement"));
+const AdminCambridge = lazyWithRetry(() => import("@/pages/admin/Cambridge"));
+
+// Lazy-loaded Academic Intelligence Pages
+const AcademicIntelligenceLayout = lazyWithRetry(() => import("@/layouts/AcademicIntelligenceLayout"));
+const AcademicIntelligenceDashboard = lazyWithRetry(() => import("@/pages/academic-intelligence/AcademicIntelligenceDashboard"));
+const EvidenceExplorerPage = lazyWithRetry(() => import("@/pages/academic-intelligence/EvidenceExplorerPage"));
+const DiagnosticExplorerPage = lazyWithRetry(() => import("@/pages/academic-intelligence/DiagnosticExplorerPage"));
+const OntologyMatrixPage = lazyWithRetry(() => import("@/pages/academic-intelligence/OntologyMatrixPage"));
+const StudentModelPage = lazyWithRetry(() => import("@/pages/academic-intelligence/StudentModelPage"));
+const AuditIntegrityPage = lazyWithRetry(() => import("@/pages/academic-intelligence/AuditIntegrityPage"));
+
+const PageLoader = () => (
+  <div className="min-h-[400px] w-full flex flex-col items-center justify-center space-y-3 p-12">
+    <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+    <p className="text-xs font-medium text-muted-foreground animate-pulse">Đang tải trang...</p>
+  </div>
+);
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 3, // 3 minutes staleTime for standard queries
+      gcTime: 1000 * 60 * 15, // 15 minutes garbage collection time
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: true,
+      retry: 1,
+    },
+  },
+});
+
+function formatAppErrorMessage(err: any): string {
+  if (!err) return "Đã xảy ra lỗi không xác định trên hệ thống.";
+  const msg = String(err?.message || err);
+
+  if (msg.includes("invariant=310") || msg.includes("error #310")) {
+    return "Lỗi thực thi giao diện (Thứ tự Hook thay đổi khi render).";
+  }
+  if (msg.includes("invariant=300") || msg.includes("error #300")) {
+    return "Lỗi thực thi giao diện (Số lượng Hook không khớp giữa các lần render).";
+  }
+  if (msg.includes("invariant=418") || msg.includes("invariant=423")) {
+    return "Lỗi đồng bộ cấu trúc dữ liệu giao diện (Hydration mismatch).";
+  }
+  if (msg.includes("insertBefore") || msg.includes("removeChild")) {
+    return "Xung đột DOM do tính năng tự động dịch của trình duyệt (Google Dịch) hoặc tiện ích mở rộng. Vui lòng tắt tự động dịch để hiển thị chuẩn xác.";
+  }
+  return msg;
+}
+
+class AppErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: any }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: any, errorInfo: any) {
+    // If this is a stale-chunk or transient chunk evaluation error that slipped past lazyWithRetry,
+    // silently reload the page once rather than showing the error UI.
+    if (isTransientEvaluationError(error)) {
+      const alreadyReloaded = sessionStorage.getItem(CHUNK_RELOAD_KEY);
+      if (!alreadyReloaded) {
+        sessionStorage.setItem(CHUNK_RELOAD_KEY, "1");
+        window.location.reload();
+        return;
+      }
+    }
+    console.error("[CRITICAL_APP_ERROR]", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      if (isTransientEvaluationError(this.state.error)) {
+        return <PageLoader />;
+      }
+
+      const errorDisplay = formatAppErrorMessage(this.state.error);
+      const rawError = String(this.state.error?.message || this.state.error || "Unknown Error");
+
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-background p-6 text-center font-sans">
+          <div className="max-w-md w-full bg-card p-8 rounded-2xl border border-border shadow-xl space-y-4">
+            <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto text-xl font-bold">
+              ⚡
+            </div>
+            <h2 className="text-xl font-extrabold text-foreground">NextBand LMS System</h2>
+            <div className="p-3.5 bg-destructive/10 border border-destructive/20 rounded-xl text-left space-y-1.5">
+              <p className="text-xs font-semibold text-destructive">
+                {errorDisplay}
+              </p>
+              {errorDisplay !== rawError && (
+                <p className="text-[10px] font-mono text-muted-foreground break-words">
+                  {rawError}
+                </p>
+              )}
+            </div>
+            <div className="flex gap-2.5 pt-1">
+              <button
+                onClick={() => {
+                  this.setState({ hasError: false, error: null });
+                  window.location.href = window.location.origin + "/app";
+                }}
+                className="flex-1 py-2.5 px-3 border border-input hover:bg-muted font-bold text-xs rounded-xl transition-all cursor-pointer"
+              >
+                Về Trang Chính
+              </button>
+              <button
+                onClick={() => {
+                  this.setState({ hasError: false, error: null });
+                  window.location.href = window.location.origin + window.location.pathname + "?t=" + Date.now();
+                }}
+                className="flex-1 py-2.5 px-4 bg-primary hover:bg-primary/90 text-primary-foreground font-extrabold text-xs rounded-xl shadow-md transition-all cursor-pointer"
+              >
+                Làm mới trang
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function RedirectClassLessons() {
+  const { classId } = useParams<{ classId: string }>();
+  return <Navigate to={`/app/class/${classId}/lessons`} replace />;
+}
+
+function RedirectSubmission() {
+  const { id } = useParams<{ id: string }>();
+  return <Navigate to={`/app/submissions/${id}`} replace />;
+}
+
+function RedirectCourse() {
+  const { slug } = useParams<{ slug: string }>();
+  return <Navigate to={`/app/course/${slug}`} replace />;
+}
+
+const App = () => (
+  <AppErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+    <AuthProvider>
+      <TooltipProvider>
+        <Sonner />
+        <BrowserRouter>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              {/* ============================================================ */}
+              {/* 1. PUBLIC WORLD (PublicLayout — Không yêu cầu đăng nhập)   */}
+              {/* ============================================================ */}
+              <Route element={<PublicLayout />}>
+                <Route path="/" element={<PublicHomePage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/method" element={<MethodPage />} />
+                <Route path="/academic-system" element={<AcademicSystemPage />} />
+                <Route path="/courses" element={<CoursesPage />} />
+                <Route path="/courses/:slug" element={<CourseDetailPage />} />
+                <Route path="/teachers" element={<TeachersPage />} />
+                <Route path="/results" element={<ResultsPage />} />
+                <Route path="/progress" element={<Navigate to="/results" replace />} />
+                <Route path="/careers" element={<CareersPage />} />
+                <Route path="/careers/:jobSlug" element={<JobDetailPage />} />
+                <Route path="/news" element={<NewsPage />} />
+                <Route path="/news/:slug" element={<NewsDetailPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/assessment" element={<AssessmentPage />} />
+                <Route path="/assessment/result/:id" element={<AssessmentResultPage />} />
+                <Route path="/ielts-speaking-forecast" element={<SpeakingForecastHubPage />} />
+                <Route path="/ielts-speaking-forecast/:seasonSlug" element={<SpeakingForecastSeasonPage />} />
+                <Route path="/ielts-speaking-forecast/:seasonSlug/:topicSlug" element={<SpeakingForecastTopicPage />} />
+                <Route path="/terms" element={<TermsPage />} />
+                <Route path="/privacy" element={<PrivacyPage />} />
+                <Route path="/reading" element={<ReadingUniversePage />} />
+                <Route path="/self-study-courses" element={<SelfStudyPage />} />
+                <Route path="/tu-hoc" element={<Navigate to="/self-study-courses" replace />} />
+                <Route path="/self-study" element={<Navigate to="/self-study-courses" replace />} />
+                <Route path="/buddy" element={<BuddyLandingPage />} />
+              </Route>
+
+              {/* ============================================================ */}
+              {/* 1.1 CLEAN-ROOM ASSESSMENT & READING INTERFACE (Focus Mode)   */}
+              {/* ============================================================ */}
+              <Route path="/diagnostic" element={<DiagnosticLandingPage />} />
+              <Route path="/kiem-tra" element={<DiagnosticLandingPage />} />
+              <Route path="/test20" element={<DiagnosticLandingPage />} />
+              <Route path="/reading/:caseId" element={<ReadingCasePage />} />
+              <Route path="/assessment/take/:sessionId" element={<PlacementExamInterface />} />
+              <Route path="/assessment/take" element={<Navigate to="/assessment" replace />} />
+              <Route path="/cambridge/test/:testCode" element={<CambridgeStudentExam />} />
+              <Route path="/cambridge/room/:roomCode" element={<CambridgeStudentRoomJoin />} />
+              
+              {/* Class Arena Live Routes */}
+              <Route
+                path="/arena/host"
+                element={
+                  <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                    <ArenaHostPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/arena/join" element={<ArenaJoinPage />} />
+              <Route path="/arena/play" element={<ArenaPlayPage />} />
+
+              {/* ============================================================ */}
+              {/* 1.2 PARENT PROGRESS HUB (Zero-Login Magic Link View)         */}
+              {/* ============================================================ */}
+              <Route path="/p/:token" element={<ParentHubPage />} />
+
+              {/* ============================================================ */}
+              {/* 2. AUTH WORLD (Auth Pages)                                  */}
+              {/* ============================================================ */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/auth" element={<Navigate to="/login" replace />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+              {/* ============================================================ */}
+              {/* 3. APP WORLD — STUDENT LMS (/app/*)                          */}
+              {/* ============================================================ */}
+              <Route
+                element={
+                  <ProtectedRoute>
+                    <ClientLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route path="/app" element={<HomePage />} />
+                <Route path="/app/my-courses" element={<MyCourses />} />
+                <Route path="/app/class/:classId/lessons" element={<StudentLessonViewerPage />} />
+                <Route path="/app/my-submissions" element={<MySubmissions />} />
+                <Route path="/app/course/:slug" element={<CourseDetail />} />
+                <Route path="/app/submissions/:id" element={<SubmissionDetail />} />
+                <Route path="/app/analytics" element={<StudentAnalyticsPage />} />
+                <Route path="/app/attendance" element={<StudentAttendanceProgressPage />} />
+                <Route path="/app/profile" element={<Profile />} />
+                <Route path="/app/my-lexicon" element={<Navigate to="/app" replace />} />
+                <Route path="/app/reconstruction" element={<VisualReconstructionPage />} />
+              </Route>
+
+              {/* ============================================================ */}
+              {/* 4. BACKWARD-COMPATIBILITY REDIRECTS (Declarative /replace)   */}
+              {/* ============================================================ */}
+              <Route path="/analytics" element={<Navigate to="/app/analytics" replace />} />
+              <Route path="/attendance" element={<Navigate to="/app/attendance" replace />} />
+              <Route path="/my-courses" element={<Navigate to="/app/my-courses" replace />} />
+              <Route path="/profile" element={<Navigate to="/app/profile" replace />} />
+              <Route path="/class/:classId/lessons" element={<RedirectClassLessons />} />
+              <Route path="/my-submissions" element={<Navigate to="/app/my-submissions" replace />} />
+              <Route path="/submissions/:id" element={<RedirectSubmission />} />
+              <Route path="/submission/:id" element={<RedirectSubmission />} />
+              <Route path="/app/submission/:id" element={<RedirectSubmission />} />
+              <Route path="/course/:slug" element={<RedirectCourse />} />
+
+              {/* ============================================================ */}
+              {/* 5. EXAM RUNTIME INTERFACE (MinimalLayout)                    */}
+              {/* ============================================================ */}
+              <Route
+                element={
+                  <ProtectedRoute>
+                    <MinimalLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route path="/exam/:examId" element={<ExamInterface />} />
+                <Route path="/exam/:examId/review" element={<SubmissionDetail />} />
+              </Route>
+
+              {/* Admin Routes */}
+              <Route
+                element={
+                  <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                    <AdminLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin"]}>
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/reports"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin"]}>
+                      <AdminPeriodicReports />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/content-qa"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin"]}>
+                      <AdminContentQADashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/courses"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin"]}>
+                      <AdminCourses />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/tuition"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin"]}>
+                      <AdminTuitionManagement />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/courses/create"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin"]}>
+                      <AdminCourseCreate />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/courses/:id"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin"]}>
+                      <AdminCourseEdit />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/exams"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <AdminExams />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/exams/create"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <AdminExamCreate />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/exams/:id"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <AdminExamEdit />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/sections/:id"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <AdminSectionEdit />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/evidence"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin"]}>
+                      <AdminEvidence />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/students"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <AdminStudentsList />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/students/:id"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <AdminStudentDossier />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/users"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin"]}>
+                      <AdminUsers />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/teachers"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin"]}>
+                      <AdminTeachers />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/staff"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin"]}>
+                      <AdminStaff />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/admins"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin"]}>
+                      <AdminAdmins />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/check-attempt"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <AdminCheckAttempt />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/submissions/:id"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <AdminSubmissionGrade />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/classes"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <AdminClasses />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/class-operations"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "staff"]}>
+                      <AdminClassOperations />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/classes/:classId/sessions/:sessionId/attendance"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <ClassAttendancePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/classes/:id"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <AdminClassEdit />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/teacher-workspace"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <TeacherWorkspace />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/class-league"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <AdminClassLeague />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/game-arena"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <AdminGameArena />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/cambridge"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <AdminCambridge />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/leads"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "staff"]}>
+                      <AdminLeads />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/assessments"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin", "teacher"]}>
+                      <AdminAssessments />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/settings"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin"]}>
+                      <AdminSettings />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/seasonal"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin"]}>
+                      <AdminSeasonalEvents />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/notifications"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin"]}>
+                      <AdminNotifications />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/speaking-forecast"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin"]}>
+                      <AdminSpeakingForecast />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/speaking-forecast/new"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin"]}>
+                      <AdminSpeakingForecastCreate />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/speaking-forecast/:id/edit"
+                  element={
+                    <ProtectedRoute requiredRoles={["admin"]}>
+                      <AdminSpeakingForecastEdit />
+                    </ProtectedRoute>
+                  }
+                />
+              </Route>
+
+              {/* ============================================================ */}
+              {/* 6. ACADEMIC INTELLIGENCE CONTROL PLANE (/academic-intelligence) */}
+              {/* ============================================================ */}
+              <Route
+                element={
+                  <ProtectedRoute requiredRoles={["admin"]}>
+                    <AcademicIntelligenceLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route path="/academic-intelligence" element={<AcademicIntelligenceDashboard />} />
+                <Route path="/academic-intelligence/evidence" element={<EvidenceExplorerPage />} />
+                <Route path="/academic-intelligence/diagnostic" element={<DiagnosticExplorerPage />} />
+                <Route path="/academic-intelligence/ontology" element={<OntologyMatrixPage />} />
+                <Route path="/academic-intelligence/student-model" element={<StudentModelPage />} />
+                <Route path="/academic-intelligence/audit" element={<AuditIntegrityPage />} />
+              </Route>
+
+              {/* Catch-all */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
+  </QueryClientProvider>
+  </AppErrorBoundary>
+);
+
+export default App;
