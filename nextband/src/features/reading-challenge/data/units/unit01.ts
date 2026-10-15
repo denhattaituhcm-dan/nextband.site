@@ -1,0 +1,515 @@
+import { UnitConfig } from '../../types';
+
+export const unit01: UnitConfig = {
+  unitNumber: 1,
+  slug: 'the-ice-hotel',
+  title: 'The Ice Hotel',
+  category: 'Arts and Leisure',
+  audioReadingUrl: '/audio/rc1/01-.mp3',
+  audioListeningUrl: '/audio/rc1/02-.mp3',
+  wordCount: 223,
+
+  preReading: {
+    introPrompt: 'Think about the following questions.',
+    imageUrl: 'https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1000&q=80',
+    imageCaption: 'Hôtel de Glace in Quebec, Canada — built completely out of snow and ice blocks.',
+    questions: [
+      {
+        id: 'pr-1',
+        question: '1. What season is it in the photo? How do you know?',
+        sampleAnswer: 'It is winter in the photo. I know that because I can see a lot of ice and snow.',
+        hint: 'Observe the surrounding landscape and construction material.',
+      },
+      {
+        id: 'pr-2',
+        question: '2. Where do you think this hotel is?',
+        sampleAnswer: 'I think this hotel must be in a cold place like Quebec, Canada.',
+        hint: 'Look for northern countries with freezing winters.',
+      },
+      {
+        id: 'pr-3',
+        question: '3. What do you think is special about this hotel?',
+        sampleAnswer: 'I think this hotel is special because it is made entirely of ice and snow.',
+        hint: 'Notice the walls, beds, and decorative elements.',
+      },
+    ],
+  },
+
+  vocabPreview: {
+    instruction: 'Write the letter of the word or phrase with the same meaning as the underlined word.',
+    items: [
+      {
+        id: 'vp-1',
+        sentenceWithUnderline: 'It is freezing cold outside in winter.',
+        underlinedWord: 'freezing',
+        correctDefinitionLetter: 'c',
+        vietnameseMeaning: 'băng giá, cực lạnh',
+      },
+      {
+        id: 'vp-2',
+        sentenceWithUnderline: 'The Ice Hotel is very cold. Surprisingly, people like to stay there.',
+        underlinedWord: 'Surprisingly',
+        correctDefinitionLetter: 'f',
+        vietnameseMeaning: 'bất ngờ thay, đáng ngạc nhiên',
+      },
+      {
+        id: 'vp-3',
+        sentenceWithUnderline: "These dishes are very unusual. This is the first time I've seen dishes made of ice.",
+        underlinedWord: 'unusual',
+        correctDefinitionLetter: 'b',
+        vietnameseMeaning: 'khác lạ, không bình thường',
+      },
+      {
+        id: 'vp-4',
+        sentenceWithUnderline: "There's no other hotel like this in the world. It's unique.",
+        underlinedWord: 'unique',
+        correctDefinitionLetter: 'e',
+        vietnameseMeaning: 'độc nhất vô nhị',
+      },
+      {
+        id: 'vp-5',
+        sentenceWithUnderline: "I can't believe how large this hotel is. It is amazing!",
+        underlinedWord: 'amazing',
+        correctDefinitionLetter: 'd',
+        vietnameseMeaning: 'kinh ngạc, khó tin',
+      },
+      {
+        id: 'vp-6',
+        sentenceWithUnderline: "This ice art is beautiful. It's fantastic!",
+        underlinedWord: 'fantastic',
+        correctDefinitionLetter: 'a',
+        vietnameseMeaning: 'tuyệt vời, kỳ diệu',
+      },
+    ],
+    definitions: [
+      { letter: 'a', text: 'great' },
+      { letter: 'b', text: 'different' },
+      { letter: 'c', text: 'like ice' },
+      { letter: 'd', text: 'unbelievable' },
+      { letter: 'e', text: 'one of a kind' },
+      { letter: 'f', text: 'but; in fact' },
+    ],
+  },
+
+  passageNumberedLines: [
+    { text: 'Are you into skiing? Is winter your favorite time of year? If you like snow and' },
+    { text: 'ice, maybe you should stay at the Ice Hotel in Quebec, Canada. But, you can' },
+    { lineNumber: 3, text: 'only check in to this hotel during the winter. Why? Because this hotel is made' },
+    { text: 'entirely of ice and snow!' },
+    { lineNumber: 5, text: 'This amazing hotel is built every December. It has 32 rooms, and 80 people' },
+    { text: 'can stay there each night. The hotel has a movie theater, an art gallery, and a church.' },
+    { text: 'Of course, all of these parts of the hotel are made of ice. In fact, all the furniture, art,' },
+    { text: 'lights, and even plates and drinking glasses are made of ice.' },
+    { text: 'Because this hotel is so unusual, it has become very popular. People from all' },
+    { lineNumber: 10, text: 'over the world come to the Ice Hotel to look at the fantastic ice art, drink and eat' },
+    { lineNumber: 11, text: 'from designer ice dishes, and experience the unique atmosphere. Some couples' },
+    { text: "have even gotten married in the hotel's ice church." },
+    { text: 'However, all the guests keep their winter coats on!' },
+    { lineNumber: 14, text: 'Because of all the ice, the temperature inside the' },
+    { lineNumber: 15, text: 'hotel is always between -2 and -5°C.' },
+    { text: 'Surprisingly, sleeping is not a problem in' },
+    { text: 'the freezing cold hotel rooms. Every' },
+    { text: 'guest gets a special cold-weather' },
+    { text: 'sleeping bag and some' },
+    { lineNumber: 20, text: 'fur blankets.' },
+    { text: 'These keep' },
+    { lineNumber: 22, text: 'them cozy and' },
+    { text: 'warm until' },
+    { text: 'morning.' },
+  ],
+
+  passageParagraphs: [
+    'Are you into skiing? Is winter your favorite time of year? If you like snow and ice, maybe you should stay at the Ice Hotel in Quebec, Canada. But, you can only check in to this hotel during the winter. Why? Because this hotel is made entirely of ice and snow!',
+    'This amazing hotel is built every December. It has 32 rooms, and 80 people can stay there each night. The hotel has a movie theater, an art gallery, and a church. Of course, all of these parts of the hotel are made of ice. In fact, all the furniture, art, lights, and even plates and drinking glasses are made of ice.',
+    "Because this hotel is so unusual, it has become very popular. People from all over the world come to the Ice Hotel to look at the fantastic ice art, drink and eat from designer ice dishes, and experience the unique atmosphere. Some couples have even gotten married in the hotel's ice church.",
+    'However, all the guests keep their winter coats on! Because of all the ice, the temperature inside the hotel is always between -2 and -5°C. Surprisingly, sleeping is not a problem in the freezing cold hotel rooms. Every guest gets a special cold-weather sleeping bag and some fur blankets. These keep them cozy and warm until morning.',
+  ],
+
+  glossary: [
+    { line: 3, word: 'during', definition: 'at the time of', vietnameseMeaning: 'trong suốt thời gian' },
+    { line: 5, word: 'build', definition: 'to make', vietnameseMeaning: 'xây dựng, làm ra' },
+    { line: 11, word: 'atmosphere', definition: 'feeling', vietnameseMeaning: 'bầu không khí, cảm giác' },
+    { line: 14, word: 'temperature', definition: 'how hot or cold something is', vietnameseMeaning: 'nhiệt độ' },
+    { line: 20, word: 'fur', definition: 'animal hair', vietnameseMeaning: 'lông thú' },
+    { line: 22, word: 'cozy', definition: 'comfortable and warm', vietnameseMeaning: 'ấm áp, thoải mái' },
+  ],
+
+  readingComprehension: [
+    {
+      id: 'rc-1',
+      questionNumber: 1,
+      questionText: 'What is the main idea of this reading?',
+      options: [
+        { key: 'a', text: 'How the Ice Hotel is built' },
+        { key: 'b', text: 'What makes the Ice Hotel special' },
+        { key: 'c', text: 'Why the Ice Hotel is made of ice' },
+        { key: 'd', text: 'The services of the Ice Hotel' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'The passage explores the unique features, architecture, and experience of staying at the Ice Hotel.',
+    },
+    {
+      id: 'rc-2',
+      questionNumber: 2,
+      questionText: 'What can you do in the hotel?',
+      options: [
+        { key: 'a', text: 'Watch a movie' },
+        { key: 'b', text: 'Get married' },
+        { key: 'c', text: 'Eat an interesting meal' },
+        { key: 'd', text: 'All of the above' },
+      ],
+      correctAnswer: 'd',
+      explanation: 'Lines 6-7 describe the movie theater; line 12 mentions getting married in the church; lines 10-11 mention eating from ice dishes.',
+    },
+    {
+      id: 'rc-3',
+      questionNumber: 3,
+      questionText: 'Why is sleeping NOT a problem at the hotel?',
+      options: [
+        { key: 'a', text: 'The rooms are warm.' },
+        { key: 'b', text: 'The temperature is -2°C.' },
+        { key: 'c', text: 'The sleeping bags are warm.' },
+        { key: 'd', text: 'The furniture is warm.' },
+      ],
+      correctAnswer: 'c',
+      explanation: 'Lines 18-20 explain that guests receive special cold-weather sleeping bags and fur blankets that keep them cozy and warm.',
+    },
+    {
+      id: 'rc-4',
+      questionNumber: 4,
+      questionText: 'In which part of the hotel would you probably find the ice plates?',
+      options: [
+        { key: 'a', text: 'The church' },
+        { key: 'b', text: 'The restaurant' },
+        { key: 'c', text: 'The rooms' },
+        { key: 'd', text: 'The art gallery' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'Plates and designer ice dishes are used for eating and dining in a restaurant.',
+    },
+    {
+      id: 'rc-5',
+      questionNumber: 5,
+      questionText: 'What do you think happens to this hotel in the spring?',
+      options: [
+        { key: 'a', text: 'It freezes.' },
+        { key: 'b', text: 'It melts.' },
+        { key: 'c', text: 'It stays open.' },
+        { key: 'd', text: 'It moves.' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'Because the hotel is constructed completely of snow and ice, rising spring temperatures naturally cause it to melt.',
+    },
+  ],
+
+  idioms: [
+    {
+      id: 'id-1',
+      idiom: 'check in',
+      definition: 'to go to the hotel’s front desk and get the room key',
+      bookExample: 'You must check in before you go to your hotel room.',
+      sentencePrompt: 'Did John [BLANK] at the front desk this morning?',
+      correctAnswer: 'check in',
+      acceptableAnswers: ['check in', 'checked in'],
+      explanation: '“check in” means to register your arrival at reception.',
+    },
+    {
+      id: 'id-2',
+      idiom: 'be into',
+      definition: 'to enjoy doing',
+      bookExample: 'Matt doesn’t like noisy music. So, he is not into heavy metal.',
+      sentencePrompt: 'I [BLANK] video games. I really like playing them.',
+      correctAnswer: 'am into',
+      acceptableAnswers: ['am into', "'m into"],
+      explanation: '“am into” matches the first-person subject “I” and means to enjoy enthusiastically.',
+    },
+    {
+      id: 'id-3',
+      idiom: 'made (out) of',
+      definition: 'built of',
+      bookExample: 'My desk is made of wood.',
+      sentencePrompt: 'Look at that house! What is it [BLANK]?',
+      correctAnswer: 'made of',
+      acceptableAnswers: ['made of', 'made out of'],
+      explanation: '“made of” refers to the constituent construction material.',
+    },
+  ],
+
+  summary: {
+    instruction: 'Fill in the blanks with the correct words from the word bank.',
+    wordBank: ['cozy', 'fantastic', 'freezing', 'surprisingly', 'unique'],
+    passageTemplate: `The Ice Hotel is a/an [BLANK_0] hotel in Canada. It is made of only ice and snow. So, the inside temperature is usually [BLANK_1] cold. [BLANK_2], this hotel is very popular. Many people enjoy looking at the [BLANK_3] art in its gallery and eating from special ice dishes. Guests have a good sleep in the cold hotel rooms under the [BLANK_4] fur blankets.`,
+    correctAnswers: ['unique', 'freezing', 'Surprisingly', 'fantastic', 'cozy'],
+    vietnameseTranslation: 'Ice Hotel là một khách sạn độc nhất tại Canada làm hoàn toàn từ băng và tuyết. Nhiệt độ bên trong thường lạnh băng giá. Đáng ngạc nhiên thay, khách sạn này lại rất được yêu thích. Rất nhiều người thích ngắm nhìn nghệ thuật kỳ diệu trong phòng trưng bày và thưởng thức đồ ăn trên đĩa băng đặc biệt. Khách lưu trú có giấc ngủ ngon trong phòng lạnh dưới những tấm chăn lông ấm áp.',
+  },
+
+  listeningDictation: {
+    dialogTitle: 'A Visit to the Ice Hotel',
+    audioUrl: '/audio/rc1/02-.mp3',
+    trackNumber: 2,
+    speakers: [
+      {
+        speaker: 'Man',
+        lines: [{ text: 'So, would you ever stay at the Ice Hotel?' }],
+      },
+      {
+        speaker: 'Woman',
+        lines: [{ text: 'No way! I think it would be too uncomfortable.' }],
+      },
+      {
+        speaker: 'Man',
+        lines: [{ text: 'I think it sounds like a fantastic experience.' }],
+      },
+      {
+        speaker: 'Woman',
+        lines: [{ text: 'Maybe, but did you know that there is only one bathroom in the Ice Hotel?' }],
+      },
+      {
+        speaker: 'Man',
+        lines: [{ text: 'Are you serious?' }],
+      },
+      {
+        speaker: 'Woman',
+        lines: [{ text: 'That’s right. If you want to go to the bathroom, you have to go to a separate building outside!' }],
+      },
+    ],
+    fullTranscript: `Man: So, would you ever stay at the Ice Hotel?
+Woman: No way! I think it would be too uncomfortable.
+Man: I think it sounds like a fantastic experience.
+Woman: Maybe, but did you know that there is only one bathroom in the Ice Hotel?
+Man: Are you serious?
+Woman: That’s right. If you want to go to the bathroom, you have to go to a separate building outside!`,
+    questions: [
+      {
+        id: 'lq-1',
+        questionNumber: 1,
+        questionText: 'At the end of the conversation, who wants to stay at the Ice Hotel?',
+        options: [
+          { key: 'a', text: 'The woman' },
+          { key: 'b', text: 'The man' },
+          { key: 'c', text: 'Both of them' },
+          { key: 'd', text: 'Neither of them' },
+        ],
+        correctAnswer: 'd',
+        explanation: 'After learning the only bathroom is in a separate outdoor building, neither person wants to stay.',
+      },
+      {
+        id: 'lq-2',
+        questionNumber: 2,
+        questionText: 'How is the hotel inconvenient?',
+        options: [
+          { key: 'a', text: 'It is too cold.' },
+          { key: 'b', text: 'It is fantastic.' },
+          { key: 'c', text: 'It has an ice art gallery.' },
+          { key: 'd', text: 'It has only one bathroom.' },
+        ],
+        correctAnswer: 'd',
+        explanation: 'The woman emphasizes that guests must walk to a separate building outside because there is only one bathroom.',
+      },
+      {
+        id: 'lq-3',
+        questionNumber: 3,
+        questionText: 'What will they probably do?',
+        options: [
+          { key: 'a', text: 'Stay at the Ice Hotel' },
+          { key: 'b', text: 'Visit the art gallery in the Ice Hotel' },
+          { key: 'c', text: 'Go to the bathroom at the Ice Hotel' },
+          { key: 'd', text: 'Stay at the hotel next door' },
+        ],
+        correctAnswer: 'b',
+        explanation: 'They still admire the concept and will likely tour the fantastic art gallery without overnight stay.',
+      },
+    ],
+  },
+
+  grammar: {
+    title: 'What Makes a Sentence?',
+    ruleExplanation:
+      'A sentence begins with a capital letter and ends with a terminal punctuation such as a period, a question mark, or an exclamation point. A single sentence consists of a single clause (a subject and a predicate). Other complex sentences consist of two or more clauses.',
+    sampleSentences: [
+      'Are you into skiing?',
+      'Of course, all of these parts of the hotel are made of ice.',
+    ],
+    questions: [
+      {
+        id: 'gr-1',
+        sentenceBefore: '',
+        options: ['Is', 'Are'],
+        correctAnswer: 'Are',
+        sentenceAfter: 'you into skiing?',
+        explanation: 'With subject pronoun “you”, the appropriate form of “to be” is “Are”.',
+      },
+      {
+        id: 'gr-2',
+        sentenceBefore: 'Of course, all of these parts of the hotel',
+        options: ['is', 'are'],
+        correctAnswer: 'are',
+        sentenceAfter: 'made of ice.',
+        explanation: 'The plural head noun phrase “all of these parts” takes the plural verb “are”.',
+      },
+    ],
+  },
+
+  guidedWriting: {
+    title: 'An Interesting Place',
+    promptQuestions: [
+      '(1) What is an interesting place in your country?',
+      '(2) Where is it?',
+      '(3) How or why is it interesting?',
+      '(4) What can people do there?',
+    ],
+    exampleText:
+      'An interesting place in the United States is Las Vegas. This city is in the state of Nevada. It is interesting because it has big casinos. People can go to concerts, watch comedy shows, and try gambling there.',
+    suggestedAnswers: [
+      {
+        question: 'What is an interesting place in your country and where is it?',
+        sample: 'An interesting place in Vietnam is Da Lat city in the Central Highlands.',
+      },
+      {
+        question: 'Why is it interesting and what can people do there?',
+        sample: 'It is interesting because it has cool pine forests and cool weather year-round. People can visit flower gardens and enjoy hot tea.',
+      },
+    ],
+    minWords: 35,
+  },
+
+  reviewQuiz: [
+    {
+      id: 'rq-1',
+      part: 'A',
+      questionNumber: 1,
+      question: 'He ______ J.K. Rowling. He has every book she has written.',
+      options: [
+        { key: 'a', text: 'hates' },
+        { key: 'b', text: 'is into' },
+        { key: 'c', text: 'checks in' },
+        { key: 'd', text: 'experiences' },
+      ],
+      correctAnswer: 'b',
+      explanation: '“is into” means to enjoy or be enthusiastic about someone/something.',
+    },
+    {
+      id: 'rq-2',
+      part: 'A',
+      questionNumber: 2,
+      question: 'It’s so cold outside that the water has turned to ______.',
+      options: [
+        { key: 'a', text: 'freezing' },
+        { key: 'b', text: 'ice' },
+        { key: 'c', text: 'cold' },
+        { key: 'd', text: 'temperature' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'Water turns to ice when it freezes.',
+    },
+    {
+      id: 'rq-3',
+      part: 'A',
+      questionNumber: 3,
+      question: 'Picasso painted ______ pictures.',
+      options: [
+        { key: 'a', text: 'designer' },
+        { key: 'b', text: 'cozy' },
+        { key: 'c', text: 'warm' },
+        { key: 'd', text: 'unique' },
+      ],
+      correctAnswer: 'd',
+      explanation: 'Picasso’s style is one-of-a-kind and completely unique.',
+    },
+    {
+      id: 'rq-4',
+      part: 'A',
+      questionNumber: 4,
+      question: 'Many people enjoy the ______ in that restaurant.',
+      options: [
+        { key: 'a', text: 'atmosphere' },
+        { key: 'b', text: 'ice' },
+        { key: 'c', text: 'world' },
+        { key: 'd', text: 'drinking glasses' },
+      ],
+      correctAnswer: 'a',
+      explanation: '“atmosphere” refers to the enjoyable mood or ambient feeling of a venue.',
+    },
+    {
+      id: 'rq-5',
+      part: 'A',
+      questionNumber: 5,
+      question: 'I really like The Matrix. It is a ______ movie.',
+      options: [
+        { key: 'a', text: 'drinking' },
+        { key: 'b', text: 'fantastic' },
+        { key: 'c', text: 'freezing' },
+        { key: 'd', text: 'warm' },
+      ],
+      correctAnswer: 'b',
+      explanation: '“fantastic” means extraordinarily great and enjoyable.',
+    },
+    {
+      id: 'rq-6',
+      part: 'A',
+      questionNumber: 6,
+      question: 'That house is ______ wood.',
+      options: [
+        { key: 'a', text: 'made of' },
+        { key: 'b', text: 'built by' },
+        { key: 'c', text: 'looked like' },
+        { key: 'd', text: 'gotten to' },
+      ],
+      correctAnswer: 'a',
+      explanation: '“made of” is the proper idiom for construction material.',
+    },
+    {
+      id: 'rq-7',
+      part: 'A',
+      questionNumber: 7,
+      question: 'In very cold countries, people sometimes wear ______ coats.',
+      options: [
+        { key: 'a', text: 'experience' },
+        { key: 'b', text: 'inside' },
+        { key: 'c', text: 'sleeping bag' },
+        { key: 'd', text: 'fur' },
+      ],
+      correctAnswer: 'd',
+      explanation: 'Fur coats provide heavy insulation against arctic winter temperatures.',
+    },
+    {
+      id: 'rq-8',
+      part: 'B',
+      questionNumber: 8,
+      question: 'I gave her some flowers. She was ______.',
+      options: [
+        { key: 'a', text: 'surprising' },
+        { key: 'b', text: 'surprised' },
+        { key: 'c', text: 'surprisingly' },
+      ],
+      correctAnswer: 'b',
+      explanation: 'Past participle adjective “surprised” describes how a person feels.',
+    },
+    {
+      id: 'rq-9',
+      part: 'B',
+      questionNumber: 9,
+      question: '“It is so cold today.” “Yes, it’s ______!”',
+      options: [
+        { key: 'a', text: 'frozen' },
+        { key: 'b', text: 'freeze' },
+        { key: 'c', text: 'freezing' },
+      ],
+      correctAnswer: 'c',
+      explanation: '“freezing” serves as an adjective meaning very cold.',
+    },
+    {
+      id: 'rq-10',
+      part: 'B',
+      questionNumber: 10,
+      question: 'It is ______ for me to go dancing. Actually, I don’t dance well.',
+      options: [
+        { key: 'a', text: 'usual' },
+        { key: 'b', text: 'unusual' },
+        { key: 'c', text: 'usually' },
+      ],
+      correctAnswer: 'b',
+      explanation: '“unusual” is the adjective meaning rare or not common for me.',
+    },
+  ],
+};
