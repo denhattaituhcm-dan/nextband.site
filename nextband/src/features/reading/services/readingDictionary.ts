@@ -5,6 +5,7 @@ import { CASE_001_HIGH_VALUE_CHUNKS } from "./case001LexicalChunks";
 import { CASE_002_HIGH_VALUE_CHUNKS } from "./case002LexicalChunks";
 import { CASE_003_HIGH_VALUE_CHUNKS } from "./case003LexicalChunks";
 import { EXTENDED_CASES_HIGH_VALUE_CHUNKS } from "./extendedCasesLexicalChunks";
+import { CASE_001_DICTIONARY } from "./case001Dictionary";
 import { CASE_002_DICTIONARY } from "./case002Dictionary";
 import { CASE_003_DICTIONARY } from "./case003Dictionary";
 import { CASE_004_DICTIONARY } from "./case004Dictionary";
@@ -5420,7 +5421,7 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
 
 // Isolated Namespaced Dictionaries for each specific case
 export const CASE_DICTIONARIES: Record<string, Record<string, VocabularyTerm>> = {
-  "case-001": { ...CASE_001_HIGH_VALUE_CHUNKS },
+  "case-001": { ...CASE_001_HIGH_VALUE_CHUNKS, ...CASE_001_DICTIONARY },
   "case-002": { ...CASE_002_HIGH_VALUE_CHUNKS, ...CASE_002_DICTIONARY },
   "case-003": { ...CASE_003_HIGH_VALUE_CHUNKS, ...CASE_003_DICTIONARY },
   "case-004": { ...CASE_004_DICTIONARY },
