@@ -9,9 +9,31 @@ export const CASE_007_DICTIONARY: Record<string, VocabularyTerm> = {
     term: "implosion",
     pronunciation: "/ɪmˈploʊʒən/",
     pos: "noun",
-    meaning_en: "a sudden and violent collapse inward; drastic shrinkage",
-    meaning_vi: "sự sụp đổ từ bên trong / suy thoái nghiêm trọng",
-    context_note: "Sự sụp đổ tỷ lệ sinh toàn cầu đe dọa các nền kinh tế phát triển."
+    meaning_en: "a violent inward collapse caused by external pressure exceeding internal support; drastic internal hollowing-out",
+    meaning_vi: "sự sụp đổ hướng tâm / co cụm hủy diệt từ bên trong",
+    context_note: "Tỷ lệ sinh suy thoái không phải do ngoại lực tấn công mà là sự sụp đổ tự thân từ bên trong cơ cấu dân số.",
+    depth: "deep",
+    cognitive: {
+      core_concept: "Vật lý học sụp đổ hướng tâm (Inward Collapse): Lực nén bên ngoài đè bẹp kết cấu bên trong khi áp suất bên trong tụt giảm về không (ngược hướng với explosion - nổ bung ra ngoài).",
+      contrast: "Trực tiếp lật ngược nỗi ám ảnh lịch sử về 'Population Explosion' (bùng nổ dân số văng ra ngoài theo thuyết Malthus). Tác giả dùng 'Implosion' để tuyên bố thế giới không bị nổ vì quá đông người, mà đang bị hút sập vào khoảng trống rỗng bên trong do không có trẻ em sinh ra.",
+      retrieval_rule: "Khi thấy 'implosion' thay vì 'explosion', nhận diện ngay sự đổi chiều vector lực: từ bung ra ngoài chuyển thành tự co cụm và sụp đổ vào tâm.",
+      cognitive_frame: {
+        mental_scene: "Một chiếc bóng đèn chân không bị đập vỡ, hoặc một ngôi sao cạn kiệt nhiên liệu tự sụp đổ vào hố đen do chính lực hấp dẫn của nó."
+      }
+    },
+    humanized: {
+      simple_intuition: "💡 Bản chất Tri nhận: Tiền tố 'im-' (hướng nội, vào bên trong) đối nghịch với 'ex-' (hướng ngoại, ra ngoài) trong 'explosion'. Image Schema ở đây là một khoang rỗng mất áp lực bên trong và bị áp suất khí quyển xung quanh nghiền nát rúm ró vào tâm điểm.",
+      in_context_story: "🎯 Điểm chạm ngữ cảnh: Tiêu đề 'The Implosion of Global Fertility' là một cú phản pháo trí tuệ kinh điển nhắm vào luận điểm 'Population Explosion' thế kỷ 20. Tác giả The Economist chọn 'Implosion' để chỉ ra: Căn bệnh thế kỷ 21 không phải nổ tung vì quá tải người, mà là sự rỗng ruột tự thân khi tỷ lệ sinh lao dốc, khiến cả cấu trúc xã hội sụp đổ vào tâm.",
+      nuance_warning: "⚠️ Độ lệch sắc thái: Phân biệt 'Explosion' vs 'Implosion': Explosion = nổ văng tung tóe ra ngoài do áp suất trong quá lớn; Implosion = sập thụp vào bên trong do bên trong rỗng tuếch không còn gì chống đỡ lực đè từ bên ngoài.",
+      retrieval_tip: "Nhớ cặp vector đối nghịch: Explosion (Vector bung ra ngoài ➡️) vs Implosion (Vector hút vào tâm ⬅️).",
+      real_world_transfers: [
+        {
+          domain_label: "Tài chính ngân hàng",
+          sentence: "The implosion of the investment bank sent shockwaves through the financial system.",
+          connection_note: "Ngân hàng sụp đổ do nợ xấu tích tụ mục ruỗng từ bên trong ruột."
+        }
+      ]
+    }
   },
   "demographic": {
     term: "demographic",
@@ -25,9 +47,31 @@ export const CASE_007_DICTIONARY: Record<string, VocabularyTerm> = {
     term: "premise",
     pronunciation: "/ˈprɛmɪs/",
     pos: "noun",
-    meaning_en: "a previous statement or proposition from which another is inferred or followed as a conclusion",
-    meaning_vi: "tiền đề / giả định nền tảng",
-    context_note: "Tiền đề nền tảng của chủ nghĩa tư bản toàn cầu suốt hai thế kỷ qua."
+    meaning_en: "a foundational proposition or load-bearing assumption from which an entire system is derived",
+    meaning_vi: "tiền đề trụ cột / hòn đá tảng nền móng",
+    context_note: "Tiền đề cốt lõi: thế hệ sau luôn đông hơn và năng suất hơn thế hệ trước.",
+    depth: "deep",
+    cognitive: {
+      core_concept: "Hòn đá tảng chịu lực (load-bearing foundation) nằm dưới đáy của một tòa lâu đài logic hoặc một hệ thống thể chế. Nếu tiền đề sụp đổ, toàn bộ kết cấu bên trên không còn điểm tựa.",
+      contrast: "Khác với 'opinion' (quan điểm chủ quan) hay 'hypothesis' (giả thuyết cần kiểm chứng), 'premise' là điều hiển nhiên được mặc định là đúng để từ đó xây dựng nên cả một hệ thống lý thuyết và pháp lý.",
+      retrieval_rule: "Khi thấy 'premise' đi cùng 'rested upon' hoặc 'underlying', hãy mường tượng ngay tới móng nhà chịu lực.",
+      cognitive_frame: {
+        mental_scene: "Khối móng trụ ngầm dưới lòng đất gánh toàn bộ trọng lượng của công trình; khi móng nứt vỡ hoặc tan biến, tòa nhà nghiêng ngả."
+      }
+    },
+    humanized: {
+      simple_intuition: "💡 Bản chất Tri nhận: Xuất phát từ tiếng Latinh 'praemissa' (điều được đặt ra phía trước). Trong Ngôn ngữ học Tri nhận, đây là Image Schema 'FOUNDATION' (Nền móng vật lý). Một tiền đề không phải là ý kiến bàn bạc, mà là tấm bê tông cốt thép ngầm mà mọi phép toán và thể chế kinh tế tựa vào để tồn tại.",
+      in_context_story: "🎯 Điểm chạm ngữ cảnh: Tác giả gọi đây là một 'unspoken demographic premise' (tiền đề nhân khẩu ngầm định). Không ai cần viết thành luật rằng 'thế hệ sau phải đông hơn thế hệ trước', nhưng mọi mô hình quỹ hưu trí, thị trường chứng khoán và nợ công của chủ nghĩa tư bản suốt 200 năm qua đều âm thầm ký sinh lên tiền đề ngầm định đó.",
+      nuance_warning: "⚠️ Độ lệch sắc thái: Đừng dịch 'premise' đơn thuần là 'giả thuyết' (hypothesis) hay 'tiền giả định' mơ hồ. Hãy hiểu là 'giả định nền tảng mang tính sống còn' — nếu tiền đề này sai, mọi kết luận và mô hình xây dựng bên trên lập tức trở thành vô nghĩa.",
+      retrieval_tip: "Nhớ cụm 'rested upon a premise' = đứng vững trên một hòn đá tảng nền móng.",
+      real_world_transfers: [
+        {
+          domain_label: "Pháp lý & Triết học",
+          sentence: "The entire argument collapses because its central premise is fundamentally flawed.",
+          connection_note: "Hệ thống sụp đổ khi khối trụ nền tảng bị gãy."
+        }
+      ]
+    }
   },
   "successive": {
     term: "successive",
@@ -73,9 +117,31 @@ export const CASE_007_DICTIONARY: Record<string, VocabularyTerm> = {
     term: "confronting",
     pronunciation: "/kənˈfrʌntɪŋ/",
     pos: "verb (participle)",
-    meaning_en: "facing up to and dealing with a serious problem or difficulty",
-    meaning_vi: "đang đối mặt với / đương đầu với",
-    context_note: "Các quốc gia đang đối diện với mùa đông nhân khẩu học."
+    meaning_en: "facing up to an unavoidable, formidable reality directly; standing forehead-to-forehead with a crisis",
+    meaning_vi: "đang trực diện đối đầu / mắt đối mắt với cuộc khủng hoảng",
+    context_note: "Các quốc gia phát triển đang buộc phải đối mặt trực diện với mùa đông nhân khẩu học, không thể né tránh.",
+    depth: "deep",
+    cognitive: {
+      core_concept: "Hình tượng cơ thể học 'Trán đối trán' (Forehead-to-forehead confrontation): Đối mặt trực diện ở cự ly không thể lùi bước, không còn góc khuất để ngoảnh mặt làm ngơ.",
+      contrast: "Khác với 'facing' (chỉ đơn thuần nhìn về phía một vấn đề hay nguy cơ) hoặc 'experiencing' (trải nghiệm thụ động), 'confronting' đòi hỏi sự va chạm ý thức gay gắt — bạn bị ép phải nhìn thẳng vào mắt của mối đe dọa.",
+      retrieval_rule: "Khi 'confronting' đi cùng danh từ mang tính thảm họa trừu tượng như 'winter', nó nhân hóa mùa đông thành một đối thủ khổng lồ đang đứng sừng sững trước mặt.",
+      cognitive_frame: {
+        mental_scene: "Hai thực thể đứng sát sạt đối mặt nhau; một bên là quốc gia với mọi chính sách truyền thống, một bên là cơn bão tuyết nhân khẩu học lạnh lùng không khoan nhượng."
+      }
+    },
+    humanized: {
+      simple_intuition: "💡 Bản chất Tri nhận: Gốc tiếng Latinh 'com-' (cùng nhau) + 'frons' (trán / mặt). Image Schema là tư thế áp trán vào trán trong đấu vật hoặc chiến đấu sinh tử. Bạn không thể quay đầu hay nhắm mắt; bạn bắt buộc phải nhìn thẳng vào khuôn mặt của thực tế.",
+      in_context_story: "🎯 Điểm chạm ngữ cảnh: Trong câu 'nations are confronting what demographers term an unprecedented demographic winter', từ 'confronting' nâng tính cấp bách lên đỉnh điểm. Các quốc gia từ Đông Á (Hàn Quốc, Nhật Bản) đến Nam Âu (Ý, Tây Ban Nha) không chỉ 'trải qua' (experiencing) sự già hóa, mà họ đang bị đẩy vào thế phải đối đầu một mất một còn với một mùa đông băng giá chưa từng có tiền lệ.",
+      nuance_warning: "⚠️ Độ lệch sắc thái: Phân biệt 'Confront' vs 'Deal with / Cope with': Deal with/cope with là những hành động xử lý kỹ thuật hàng ngày; Confront là trạng thái tâm lý va chạm trực diện với một sự thật nghiệt ngã mà trước đây mọi người đều cố tình lờ đi.",
+      retrieval_tip: "Nhớ căn tố: 'front' = mặt trước, vầng trán. Confronting = đứng giáp mặt, mặt đối mặt không lối thoát.",
+      real_world_transfers: [
+        {
+          domain_label: "Lãnh đạo doanh nghiệp",
+          sentence: "The board is finally confronting the harsh reality of their obsolete business model.",
+          connection_note: "Buộc phải nhìn thẳng vào sự thật mô hình kinh doanh đã lỗi thời."
+        }
+      ]
+    }
   },
   "contraction": {
     term: "contraction",
@@ -329,9 +395,31 @@ export const CASE_007_DICTIONARY: Record<string, VocabularyTerm> = {
     term: "calculus",
     pronunciation: "/ˈkælkjʊləs/",
     pos: "noun",
-    meaning_en: "a method or system of calculation or political/economic assessment",
-    meaning_vi: "bài toán / phép tính toán kinh tế - xã hội",
-    context_note: "Bài toán chi tiêu công và an sinh xã hội phải thay đổi tận gốc."
+    meaning_en: "a dynamic system of continuous calculation or assessment modeling changing variables over time",
+    meaning_vi: "hệ giải tích toán kinh tế / bài toán biến thiên đa biến",
+    context_note: "Hệ phương trình giải tích đa biến vận hành chủ nghĩa tư bản toàn cầu suốt hai thế kỷ.",
+    depth: "deep",
+    cognitive: {
+      core_concept: "Hệ thống mô hình hóa sự biến thiên liên tục (differential/integral calculus) của nhiều biến số phụ thuộc lẫn nhau theo thời gian, hoàn toàn khác với phép cộng trừ tĩnh học (arithmetic).",
+      contrast: "Đối lập sâu sắc với 'arithmetic' (số học cộng trừ tĩnh trên tiêu đề phụ 'Pension Arithmetic'): arithmetic chỉ là sổ sách cân đối thu chi từng năm, còn 'calculus' là phương trình vi tích phân động lực học nơi toàn bộ hệ thống chỉ có nghiệm dương khi biến số dân số và lực lượng lao động tăng trưởng dương liên tục (df/dt > 0), và lập tức sụp đổ khi tiền đề đó dissolved.",
+      retrieval_rule: "Khi thấy 'calculus' trong văn cảnh kinh tế chính trị cao cấp (IELTS 8.0+), đừng dịch là 'sỏi' hay 'phép tính thông thường', mà hãy nhìn thấy một mô hình giải tích cân bằng động lực học.",
+      cognitive_frame: {
+        mental_scene: "Một hệ phương trình vi tích phân đa biến f(t) biến thiên theo thời gian; nếu đạo hàm dân số df/dt âm, toàn bộ cấu trúc tích lũy tư bản không còn nghiệm khả thi."
+      }
+    },
+    humanized: {
+      simple_intuition: "💡 Bản chất Tri nhận: 'Calculus' xuất phát từ tiếng Latinh nghĩa là viên sỏi nhỏ dùng để đếm vi lượng, sau đó phát triển thành môn Giải tích (vi tích phân) — công cụ toán học tối thượng để tính toán sự biến thiên liên tục thay vì các con số đứng yên. Trong kinh tế vĩ mô, 'calculus' là hệ thống các biến số vận động hữu cơ: tỷ lệ sinh, năng suất lao động, thuế và thặng dư vốn.",
+      in_context_story: "🎯 Điểm chạm ngữ cảnh: Trong câu 'the calculus of global capitalism rested upon an unspoken demographic premise...', tác giả cố tình không dùng 'calculation' hay 'arithmetic' (như ở tiêu đề phụ 'Pension Arithmetics'). Tiêu đề phụ dùng 'arithmetic' vì ở cấp độ kế toán lương hưu, đó là bài toán cộng trừ dòng tiền thu chi; nhưng ở tầm vĩ mô toàn cầu, tác giả dùng 'calculus' để nhấn mạnh cỗ máy tư bản là một hệ giải tích động lực học — nó chỉ cho nghiệm dương khi biến số dân số tăng trưởng liên tục, và hệ thống sẽ sụp đổ hoàn toàn khi tiền đề đó dissolved.",
+      nuance_warning: "⚠️ Độ lệch sắc thái: Phân biệt trực diện 'Calculus' vs 'Arithmetic / Calculation': Arithmetic chỉ là phép tính cộng trừ nhân chia tĩnh (ví dụ: thu 10 đồng thuế, chi 10 đồng lương hưu). Calculus là giải tích vi phân đo vận tốc và gia tốc biến đổi của một hệ thống phức hợp đa biến theo thời gian.",
+      retrieval_tip: "Nhớ công thức tương phản: Arithmetic = cân đối cộng trừ tĩnh tại một thời điểm; Calculus = hệ phương trình vi tích phân biến thiên động lực học theo thời gian.",
+      real_world_transfers: [
+        {
+          domain_label: "Chiến lược địa chính trị",
+          sentence: "The diplomatic calculus has shifted drastically since the treaty was signed.",
+          connection_note: "Bàn cờ toan tính chiến lược gồm vô số biến số chuyển động liên tục."
+        }
+      ]
+    }
   },
   "capitalism": {
     term: "capitalism",
@@ -353,9 +441,31 @@ export const CASE_007_DICTIONARY: Record<string, VocabularyTerm> = {
     term: "centuries",
     pronunciation: "/ˈsɛnʧəriz/",
     pos: "noun (plural)",
-    meaning_en: "periods of 100 years",
-    meaning_vi: "nhiều thế kỷ",
-    context_note: "Suốt nhiều thế kỷ qua, dân số loài người liên tục tăng trưởng."
+    meaning_en: "periods of one hundred years; an epochal time scale spanning historical eras",
+    meaning_vi: "nhiều thế kỷ / trục thời gian lịch sử dài hơn 200 năm",
+    context_note: "Trục tọa độ lịch sử hơn hai thế kỷ (từ Cách mạng Công nghiệp) hình thành nên trật tự tư bản.",
+    depth: "deep",
+    cognitive: {
+      core_concept: "Trục tọa độ thời gian mang tính kỷ nguyên (epochal scale). Không phải một chu kỳ kinh doanh ngắn (business cycle), mà là độ dài của cả một thời đại lịch sử hơn 200 năm.",
+      contrast: "Khác với 'decades' (vài thập kỷ - thường chỉ tương đương một đời người hay một chu kỳ chính sách), 'centuries' đặt vấn đề ở tầm quy luật nền tảng kéo dài từ bình minh Cách mạng Công nghiệp đến nay.",
+      retrieval_rule: "Khi thấy 'centuries' đi cùng 'rested upon', tác giả đang thiết lập một chân lý có tuổi thọ tính bằng thế kỷ để chuẩn bị cho cú đảo chiều gây sốc ở câu sau.",
+      cognitive_frame: {
+        mental_scene: "Một dòng chảy thời gian dài đằng đẵng hơn 200 năm tích lũy thói quen tư duy và mô hình phát triển, bỗng chốc đứt gãy trong nháy mắt."
+      }
+    },
+    humanized: {
+      simple_intuition: "💡 Bản chất Tri nhận: 'Centuries' (hàng thế kỷ) biểu đạt một khung quy chiếu thời gian khổng lồ (temporal landmark). Khi một mô hình tồn tại qua nhiều thế kỷ, não bộ con người tự động mã hóa nó thành 'quy luật bất biến của tự nhiên' chứ không còn là một giai đoạn tạm thời.",
+      in_context_story: "🎯 Điểm chạm ngữ cảnh: Cụm 'For more than two centuries' ở đầu câu mở màn không nhằm thông báo số năm máy móc, mà đóng vai trò đòn bẩy tâm lý (rhetorical leverage): Nó khắc họa sự vững chắc tuyệt đối của mô hình tư bản suốt hơn 200 năm qua, để ở ngay câu tiếp theo ('That foundational assumption has now dissolved'), tác giả giáng một đòn chí mạng cho thấy trật tự tưởng chừng vĩnh cửu ấy đã tan vỡ chỉ trong tích tắc.",
+      nuance_warning: "⚠️ Độ lệch sắc thái: Không nhầm lẫn với 'generations' hay 'decades'. 'Centuries' ở đây khóa khớp với cột mốc Cách mạng Công nghiệp (cuối thế kỷ 18 đến nay), khi thế giới lần đầu tiên chứng kiến tăng trưởng dân số đi đôi với tăng trưởng kinh tế liên tục.",
+      retrieval_tip: "Nhận diện cấu trúc tương phản: 'For centuries [A was true]... [Now A is gone]' — kỹ thuật tạo kịch tính tu từ đỉnh cao trong IELTS band 8.5.",
+      real_world_transfers: [
+        {
+          domain_label: "Lịch sử kinh tế",
+          sentence: "Institutions built over centuries can lose their relevance within a single decade.",
+          connection_note: "Quy chiếu thời gian thế kỷ đối lập với tốc độ sụp đổ ngắn hạn."
+        }
+      ]
+    }
   },
   "consumer": {
     term: "consumer",
@@ -372,6 +482,36 @@ export const CASE_007_DICTIONARY: Record<string, VocabularyTerm> = {
     meaning_en: "scientists who study human populations, birth rates, and aging trends",
     meaning_vi: "các nhà nhân khẩu học",
     context_note: "Các nhà nhân khẩu học theo dõi biến động tỷ lệ sinh trên toàn cầu."
+  },
+  "dissolved": {
+    term: "dissolved",
+    pronunciation: "/dɪˈzɒlvd/",
+    pos: "verb (past/participle)",
+    meaning_en: "completely disintegrated or melted away; disappeared as if transformed from a solid structure into nothingness",
+    meaning_vi: "tan rã hoàn toàn / biến mất như khối rắn hòa tan vào hư vô",
+    context_note: "Giả định nền tảng vững như đá suốt 200 năm nay đã hoàn toàn tan rã vào hư vô.",
+    depth: "deep",
+    cognitive: {
+      core_concept: "Chuyển pha vật chất (Phase change): Từ một khối chất rắn cứng cáp đóng vai trò chịu lực bỗng nhiên hòa tan hoàn toàn vào dung dịch chất lỏng, không để lại bất kỳ cấu trúc vật lý nào để chống đỡ.",
+      contrast: "Khác với 'broken' (bị gãy - vẫn còn mảnh vỡ có thể hàn gắn) hay 'weakened' (bị suy yếu - vẫn còn khung chịu lực), 'dissolved' có nghĩa là tan biến sạch sẽ, không còn một vết tích nào để bấu víu.",
+      retrieval_rule: "Khi thấy 'assumption / illusion + dissolved', đó là khoảnh khắc nhận thức sự thật nghiệt ngã: nền móng vững chắc thực chất chỉ là ảo ảnh đã bốc hơi.",
+      cognitive_frame: {
+        mental_scene: "Một khối muối hoặc đường đặc quánh từng làm chân đế, khi đổ nước vào bỗng tan biến sạch trơn, để lại khoảng trống sụp đổ."
+      }
+    },
+    humanized: {
+      simple_intuition: "💡 Bản chất Tri nhận: Image Schema 'PHASE CHANGE' (chuyển thể từ rắn sang lỏng/hư vô). Hãy tưởng tượng bạn xây nhà trên một tảng băng cứng; khi nhiệt độ tăng, tảng băng không hề bị nứt vỡ cơ học mà nó tan chảy thành nước và biến mất. Đó chính là 'dissolved' — sự biến mất triệt để không để lại dấu vết cấu trúc.",
+      in_context_story: "🎯 Điểm chạm ngữ cảnh: Trong câu 'That foundational assumption has now dissolved', tác giả dùng câu ngắn 6 từ đầy kịch tính ngay sau câu dài phức tạp trước đó. Chọn động từ 'dissolved' thay vì 'changed' hay 'failed' là một tuyệt tác tu từ: Giả định về dân số tăng trưởng từng đặc quánh và cứng rắn như đá tảng suốt 200 năm, nay đã 'hòa tan vào không khí', bỏ lại toàn bộ hệ thống lương hưu chới với giữa hư không.",
+      nuance_warning: "⚠️ Độ lệch sắc thái: Phân biệt 'Dissolved' vs 'Collapsed': Collapsed là sụp đổ cơ học (vẫn còn gạch vụn, bê tông ngổn ngang để thu dọn). Dissolved là hòa tan hóa học (biến mất triệt để, không còn vật chất để tái xây dựng theo cách cũ).",
+      retrieval_tip: "Câu ngắn 6 từ: 'That foundational assumption has now dissolved' — nhịp điệu khẳng định dứt khoát sự kết thúc của một kỷ nguyên.",
+      real_world_transfers: [
+        {
+          domain_label: "Quan hệ quốc tế",
+          sentence: "The geopolitical alliance dissolved once the common adversary collapsed.",
+          connection_note: "Liên minh gắn kết từng bền chặt tan rã không để lại dấu vết."
+        }
+      ]
+    }
   },
   "east": {
     term: "East",
@@ -457,9 +597,31 @@ export const CASE_007_DICTIONARY: Record<string, VocabularyTerm> = {
     term: "numerous",
     pronunciation: "/ˈnjuːmərəs/",
     pos: "adjective",
-    meaning_en: "great in number; abundant",
-    meaning_vi: "đông đảo / với số lượng lớn",
-    context_note: "Thế hệ người lao động từng đông đảo nay bắt đầu nghỉ hưu."
+    meaning_en: "great in number; forming a broad demographic mass or expanding cohort",
+    meaning_vi: "đông đảo về quy mô số lượng / đáy tháp dân số phình rộng",
+    context_note: "Quy mô thế hệ sau đông hơn thế hệ trước, tạo đáy tháp lao động rộng nâng đỡ hệ thống hưu trí.",
+    depth: "deep",
+    cognitive: {
+      core_concept: "Hình thái quy mô hình học (geometric scaling) — khối lượng nhân khẩu học phình to ra ở mỗi thế hệ kế tiếp, đảm bảo đáy tháp luôn rộng hơn đỉnh tháp.",
+      contrast: "Khác với 'many' (chỉ số lượng đếm được thông thường), 'numerous' trong văn cảnh này đo đạc tầm vóc nhân khẩu học (demographic cohort size) tương quan với thế hệ trước.",
+      retrieval_rule: "Trong so sánh 'more numerous and productive than the last', 'numerous' đo lượng (số người đóng thuế, số công nhân) còn 'productive' đo chất (năng suất đầu người).",
+      cognitive_frame: {
+        mental_scene: "Đáy tháp dân số đời sau nở rộng hơn đời trước, hàng trăm bàn tay người trẻ cùng nâng đỡ một người già."
+      }
+    },
+    humanized: {
+      simple_intuition: "💡 Bản chất Tri nhận: Gốc từ 'numerus' (con số, nhịp điệu quy mô). Trong tri nhận hình học không gian, 'more numerous' tạo ra hình ảnh đáy kim tự tháp liên tục mở rộng sang hai bên, tạo chân đế kiên cố gánh đỡ toàn bộ tải trọng của xã hội già hóa bên trên.",
+      in_context_story: "🎯 Điểm chạm ngữ cảnh: Tác giả ghép đôi 'more numerous and productive' như hai chân kiềng của tăng trưởng tư bản. 'Numerous' cung cấp dòng máu tươi về mặt lượng (thêm người lao động, thêm người tiêu dùng nộp thuế), còn 'productive' cung cấp sức bật về mặt chất (công nghệ, hiệu suất). Khi một trong hai chân kiềng — độ đông đảo — biến mất, cỗ máy bắt đầu đổ nghiêng.",
+      nuance_warning: "⚠️ Độ lệch sắc thái: Không dùng 'crowded' (chật chội tiêu cực) hay 'plentiful' (dồi dào về tài nguyên vô tri). 'Numerous' áp dụng cho nhóm dân số (cohorts/generations) với sắc thái quy mô số lượng áp đảo và có tổ chức.",
+      retrieval_tip: "Đi theo cặp song hành đối đỉnh: 'more numerous' (lượng) + 'productive' (chất).",
+      real_world_transfers: [
+        {
+          domain_label: "Nhân khẩu học",
+          sentence: "The baby boom produced the most numerous generation in the nation's history.",
+          connection_note: "Thế hệ bùng nổ dân số với số lượng cá thể áp đảo."
+        }
+      ]
+    }
   },
   "occasionally": {
     term: "occasionally",

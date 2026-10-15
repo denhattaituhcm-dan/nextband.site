@@ -265,7 +265,7 @@ export default function ReadingCasePage() {
     return segments.map((segment, segIdx) => {
       if (segment.isPhrase) {
         const termKey = `${paragraphId}-s${sentenceIdx}-p${segIdx}-${segment.text.toLowerCase()}`;
-        const termData = lookupWord(segment.text) || {
+        const termData = lookupWord(segment.text, selectedCaseId, sentence) || {
           term: segment.text,
           pronunciation: "",
           pos: "",
@@ -318,7 +318,7 @@ export default function ReadingCasePage() {
         if (!token) return null;
         if (isContentWord(token)) {
           const termKey = `${paragraphId}-s${sentenceIdx}-t${segIdx}-${tokIdx}-${token.toLowerCase()}`;
-          const termData = lookupWord(token) || {
+          const termData = lookupWord(token, selectedCaseId, sentence) || {
             term: token,
             pronunciation: "",
             pos: "",

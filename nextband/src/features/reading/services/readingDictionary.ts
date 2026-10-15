@@ -182,7 +182,7 @@ export const MULTI_WORD_PHRASES: string[] = [
   "woke us"
 ];
 
-// Rich Contextual Dictionary for all Cases (Case 001 - Case 006)
+// Rich Contextual Dictionary for all Cases (Case 001 - Case 013)
 export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
   ...ALL_CURATED_CHUNKS,
   ...CASE_002_DICTIONARY,
@@ -5418,104 +5418,147 @@ export const CONTEXTUAL_DICTIONARY: Record<string, VocabularyTerm> = {
   },
 };
 
+// Isolated Namespaced Dictionaries for each specific case
+export const CASE_DICTIONARIES: Record<string, Record<string, VocabularyTerm>> = {
+  "case-001": { ...CASE_001_HIGH_VALUE_CHUNKS },
+  "case-002": { ...CASE_002_HIGH_VALUE_CHUNKS, ...CASE_002_DICTIONARY },
+  "case-003": { ...CASE_003_HIGH_VALUE_CHUNKS, ...CASE_003_DICTIONARY },
+  "case-004": { ...CASE_004_DICTIONARY },
+  "case-005": { ...CASE_005_DICTIONARY },
+  "case-006": { ...CASE_006_DICTIONARY },
+  "case-007": { ...CASE_007_DICTIONARY },
+  "case-008": { ...CASE_008_DICTIONARY },
+  "case-009": { ...CASE_009_DICTIONARY },
+  "case-010": { ...CASE_010_DICTIONARY },
+  "case-011": { ...CASE_011_DICTIONARY },
+  "case-012": { ...CASE_012_DICTIONARY },
+  "case-013": { ...CASE_013_DICTIONARY },
+};
+
+export const GLOBAL_DICTIONARY: Record<string, VocabularyTerm> = CONTEXTUAL_DICTIONARY;
+
 /**
  * Dynamic Intelligent Pedagogical Synthesizer
  * Formulates humanized teacher explanations adapted to the word's complexity profile.
  */
-export function enrichCognitiveTerm(term: VocabularyTerm): VocabularyTerm {
+export function enrichCognitiveTerm(
+  term: VocabularyTerm,
+  currentSentence?: string,
+  isCrossCaseFallback: boolean = false
+): VocabularyTerm {
   const depth = determineExplanationDepth(term);
   
-  if (term.humanized) {
+  if (term.humanized && !isCrossCaseFallback) {
     return {
       ...term,
       depth,
     };
   }
 
-  return humanizeVocabularyTerm({
-    ...term,
-    depth,
-  });
+  return humanizeVocabularyTerm(
+    {
+      ...term,
+      depth,
+    },
+    currentSentence,
+    isCrossCaseFallback
+  );
 }
 
 /**
- * Smart lookup function: tries exact phrase with spaces, then normalized, then stem/lemma match.
- * Always guarantees 100% enriched Cognitive & Semantic Analysis!
+ * Helper to match a raw word in a target dictionary with exact, normalized, single-word, and lemmatized stems
  */
-export function lookupWord(rawWord: string): VocabularyTerm | null {
-  if (!rawWord) return null;
+function findInDictionary(rawWord: string, dict: Record<string, VocabularyTerm>): VocabularyTerm | null {
+  if (!rawWord || !dict) return null;
   const clean = rawWord.trim().toLowerCase();
 
-  let foundTerm: VocabularyTerm | null = null;
-
   // 1. Direct match with exact phrase
-  if (CONTEXTUAL_DICTIONARY[clean]) {
-    foundTerm = CONTEXTUAL_DICTIONARY[clean];
-  }
+  if (dict[clean]) return dict[clean];
 
   // 2. Match with punctuation stripped but SPACES PRESERVED
-  if (!foundTerm) {
-    const normalized = clean.replace(/[^a-z0-9\s-]/g, " ").replace(/\s+/g, " ").trim();
-    if (CONTEXTUAL_DICTIONARY[normalized]) {
-      foundTerm = CONTEXTUAL_DICTIONARY[normalized];
-    }
-  }
+  const normalized = clean.replace(/[^a-z0-9\s-]/g, " ").replace(/\s+/g, " ").trim();
+  if (dict[normalized]) return dict[normalized];
 
   // 3. Single-word stripped match
-  if (!foundTerm) {
-    const singleWord = clean.replace(/[^a-z0-9-]/g, "").trim();
-    if (CONTEXTUAL_DICTIONARY[singleWord]) {
-      foundTerm = CONTEXTUAL_DICTIONARY[singleWord];
+  const singleWord = clean.replace(/[^a-z0-9-]/g, "").trim();
+  if (dict[singleWord]) return dict[singleWord];
+
+  // 4. Lemmatization fallbacks (plural -s/es, past tense -ed, progressive -ing, -ly)
+  const candidates: string[] = [];
+  if (singleWord.endsWith("ies")) candidates.push(singleWord.slice(0, -3) + "y");
+  if (singleWord.endsWith("es")) candidates.push(singleWord.slice(0, -2));
+  if (singleWord.endsWith("s")) candidates.push(singleWord.slice(0, -1));
+  if (singleWord.endsWith("ed")) {
+    candidates.push(singleWord.slice(0, -2));
+    candidates.push(singleWord.slice(0, -1));
+  }
+  if (singleWord.endsWith("ing")) {
+    candidates.push(singleWord.slice(0, -3));
+    candidates.push(singleWord.slice(0, -3) + "e");
+  }
+  if (singleWord.endsWith("ly")) {
+    candidates.push(singleWord.slice(0, -2));
+    if (singleWord.endsWith("ily")) candidates.push(singleWord.slice(0, -3) + "y");
+    if (singleWord.endsWith("ally")) candidates.push(singleWord.slice(0, -4));
+  }
+
+  for (const cand of candidates) {
+    if (dict[cand]) {
+      const base = dict[cand];
+      return {
+        ...base,
+        term: rawWord.trim(),
+        context_note: base.context_note || "",
+      };
     }
   }
 
-  // 4. Lemmatization fallbacks (plural -s/es, past tense -ed, progressive -ing)
-  if (!foundTerm) {
-    const singleWord = clean.replace(/[^a-z0-9-]/g, "").trim();
-    const candidates: string[] = [];
-    if (singleWord.endsWith("ies")) candidates.push(singleWord.slice(0, -3) + "y");
-    if (singleWord.endsWith("es")) candidates.push(singleWord.slice(0, -2));
-    if (singleWord.endsWith("s")) candidates.push(singleWord.slice(0, -1));
-    if (singleWord.endsWith("ed")) {
-      candidates.push(singleWord.slice(0, -2));
-      candidates.push(singleWord.slice(0, -1));
-    }
-    if (singleWord.endsWith("ing")) {
-      candidates.push(singleWord.slice(0, -3));
-      candidates.push(singleWord.slice(0, -3) + "e");
-    }
-    if (singleWord.endsWith("ly")) {
-      candidates.push(singleWord.slice(0, -2));
-      if (singleWord.endsWith("ily")) candidates.push(singleWord.slice(0, -3) + "y");
-      if (singleWord.endsWith("ally")) candidates.push(singleWord.slice(0, -4));
-    }
+  return null;
+}
 
-    for (const cand of candidates) {
-      if (CONTEXTUAL_DICTIONARY[cand]) {
-        const base = CONTEXTUAL_DICTIONARY[cand];
-        foundTerm = {
-          ...base,
-          term: rawWord.trim(),
-          context_note: base.context_note || ""
-        };
-        break;
-      }
+/**
+ * Smart lookup function:
+ * Priority 1: Case-specific isolated dictionary (prevents context leakage across cases)
+ * Priority 2: Global general dictionary (neutralized so context_note from another case never leaks)
+ * Priority 3: Dynamic fallback using current sentence context
+ */
+export function lookupWord(
+  rawWord: string,
+  caseId?: string,
+  currentSentence?: string
+): VocabularyTerm | null {
+  if (!rawWord) return null;
+
+  // 1. Prioritize lookup in the active case dictionary
+  if (caseId && CASE_DICTIONARIES[caseId]) {
+    const caseTerm = findInDictionary(rawWord, CASE_DICTIONARIES[caseId]);
+    if (caseTerm) {
+      return enrichCognitiveTerm(caseTerm, currentSentence, false);
     }
   }
 
-  if (foundTerm) {
-    return enrichCognitiveTerm(foundTerm);
+  // 2. Fallback to GLOBAL_DICTIONARY
+  const globalTerm = findInDictionary(rawWord, GLOBAL_DICTIONARY);
+  if (globalTerm) {
+    // CRITICAL: When falling back to global dictionary across cases,
+    // TUYỆT ĐỐI KHÔNG lấy context_note hay in_context_story của bài khác đắp vào!
+    const sanitizedGlobalTerm: VocabularyTerm = {
+      ...globalTerm,
+      context_note: currentSentence ? currentSentence.trim() : "",
+      humanized: undefined, // ensure humanizeVocabularyTerm synthesizes in the current context
+    };
+    return enrichCognitiveTerm(sanitizedGlobalTerm, currentSentence, true);
   }
 
-  // Fallback for any content word: dynamically generate rich cognitive profile
+  // 3. Fallback for unindexed content word
   const baseFallback: VocabularyTerm = {
     term: rawWord.trim(),
     pronunciation: "",
     pos: "thuật ngữ học thuật",
     meaning_en: `the academic concept of ${rawWord.trim()}`,
-    meaning_vi: `khái niệm "${rawWord.trim()}"`,
-    context_note: `Thuật ngữ học thuật trong ngữ cảnh bài đọc.`,
+    meaning_vi: rawWord.trim(),
+    context_note: currentSentence ? currentSentence.trim() : "",
   };
 
-  return enrichCognitiveTerm(baseFallback);
+  return enrichCognitiveTerm(baseFallback, currentSentence, true);
 }
