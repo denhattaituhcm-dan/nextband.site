@@ -68,14 +68,13 @@ export default function ReadingCasePage() {
   const { caseId } = useParams<{ caseId?: string }>();
   const navigate = useNavigate();
 
-  const [selectedCaseId, setSelectedCaseId] = useState<string>(() => {
-    if (caseId && ALL_CASES[caseId]) return caseId;
-    return "case-002";
-  });
+  const activeCaseId = (caseId && ALL_CASES[caseId]) ? caseId : "case-001";
+  const [selectedCaseId, setSelectedCaseId] = useState<string>(activeCaseId);
 
   useEffect(() => {
-    if (caseId && ALL_CASES[caseId] && caseId !== selectedCaseId) {
-      setSelectedCaseId(caseId);
+    const targetCaseId = (caseId && ALL_CASES[caseId]) ? caseId : "case-001";
+    if (targetCaseId !== selectedCaseId) {
+      setSelectedCaseId(targetCaseId);
       setActiveSourceId("all");
       setTaskAnswers({});
       setSelectedEvidenceSentence(null);
@@ -481,28 +480,14 @@ export default function ReadingCasePage() {
               {isIntroHovered && (
                 <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 rounded-2xl border border-sky-300 bg-[#FFFDF9] p-4 text-stone-900 shadow-2xl z-40 animate-in fade-in zoom-in-95 duration-150">
                   <div className="flex items-center gap-2 border-b border-sky-200 pb-2 mb-2.5">
-                    <span className="text-base">{selectedCaseId === "case-002" ? "📈" : "❄️"}</span>
+                    <span className="text-base">
+                      {selectedCaseId === "case-001" ? "❄️" : selectedCaseId === "case-002" ? "📈" : "📖"}
+                    </span>
                     <h4 className="text-xs sm:text-sm font-black text-sky-950 uppercase tracking-wide">
-                      {selectedCaseId === "case-002"
-                        ? "Chiến Lược Lãnh Đạo: Đòn Bẩy Warren Buffett"
-                        : "Hồ sơ nghiên cứu: Hồ Băng Greenland"}
+                      {readingCase.title}
                     </h4>
                   </div>
-                  {selectedCaseId === "case-002" ? (
-                    <div className="space-y-2 text-xs text-stone-700 leading-relaxed">
-                      <p>
-                        <strong className="text-sky-950 font-bold">Fast Company Analysis (2026):</strong> Trong kỷ nguyên AI tạo sinh có thể viết code và soạn kế hoạch kinh doanh trong vài giây, kỹ năng giao tiếp thấu cảm giữa người với người trở thành lợi thế cạnh tranh sống còn.
-                      </p>
-                      <div className="rounded-xl bg-sky-50 p-2.5 border border-sky-200 space-y-1 text-[11px] text-sky-950 font-medium">
-                        <p>• Bằng chứng duy nhất Warren Buffett treo tại văn phòng: Chứng chỉ Dale Carnegie 1952.</p>
-                        <p>• Khách hàng mua sự tự tin, nhà đầu tư rót vốn cho người sáng lập mà họ tin tưởng.</p>
-                        <p>• 3 thói quen chuyển hóa: Tò mò thay vì định kiến, phản hồi liên tục, lắng nghe để thấu hiểu.</p>
-                      </div>
-                      <p className="font-semibold text-stone-800 pt-1 text-[11px]">
-                        Đối chiếu 3 nguồn tư liệu để phân tích nguyên lý lãi kép của kỹ năng giao tiếp theo Warren Buffett!
-                      </p>
-                    </div>
-                  ) : (
+                  {selectedCaseId === "case-001" ? (
                     <div className="space-y-2 text-xs text-stone-700 leading-relaxed">
                       <p>
                         <strong className="text-sky-950 font-bold">03:15 AM tại Băng tầng Greenland:</strong> Một hồ nước băng trên mặt (Supraglacial Lake G-4) dung tích 8,000,000 m³ bất ngờ biến mất hoàn toàn trong 90 phút.
@@ -515,6 +500,34 @@ export default function ReadingCasePage() {
                       <CrimeSceneBlueprint isCompact className="mt-2" />
                       <p className="font-semibold text-stone-800 pt-1 text-[11px]">
                         Nước đã thoát đi theo cơ chế nào? Đối chiếu 3 nguồn tài liệu bên dưới để tìm ra lời giải thích khoa học chuẩn xác nhất!
+                      </p>
+                    </div>
+                  ) : selectedCaseId === "case-002" ? (
+                    <div className="space-y-2 text-xs text-stone-700 leading-relaxed">
+                      <p>
+                        <strong className="text-sky-950 font-bold">Fast Company Analysis:</strong> Trong kỷ nguyên AI tạo sinh có thể viết code và soạn kế hoạch kinh doanh trong vài giây, kỹ năng giao tiếp thấu cảm giữa người với người trở thành lợi thế cạnh tranh sống còn.
+                      </p>
+                      <div className="rounded-xl bg-sky-50 p-2.5 border border-sky-200 space-y-1 text-[11px] text-sky-950 font-medium">
+                        <p>• Bằng chứng duy nhất Warren Buffett treo tại văn phòng: Chứng chỉ Dale Carnegie 1952.</p>
+                        <p>• Khách hàng mua sự tự tin, nhà đầu tư rót vốn cho người sáng lập mà họ tin tưởng.</p>
+                        <p>• 3 thói quen chuyển hóa: Tò mò thay vì định kiến, phản hồi liên tục, lắng nghe để thấu hiểu.</p>
+                      </div>
+                      <p className="font-semibold text-stone-800 pt-1 text-[11px]">
+                        Đối chiếu các nguồn tư liệu để phân tích nguyên lý lãi kép của kỹ năng giao tiếp theo Warren Buffett!
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2 text-xs text-stone-700 leading-relaxed">
+                      <p>
+                        <strong className="text-sky-950 font-bold">{readingCase.universe.name}:</strong> Phân tích chuyên sâu với góc nhìn học thuật đa chiều cùng 3 nguồn tài liệu đối chiếu.
+                      </p>
+                      <div className="rounded-xl bg-sky-50 p-2.5 border border-sky-200 space-y-1 text-[11px] text-sky-950 font-medium">
+                        <p>• Cấp độ: {readingCase.level.realm_name_vi} (IELTS Band {readingCase.level.ielts_band.toFixed(1)}).</p>
+                        <p>• Thời lượng ước tính: ~{readingCase.estimated_minutes} phút tập trung.</p>
+                        <p>• Nguồn đối chiếu: {readingCase.sources.length} tài liệu học thuật chọn lọc.</p>
+                      </div>
+                      <p className="font-semibold text-stone-800 pt-1 text-[11px]">
+                        Chạm vào từ bất kỳ để tra cứu ngữ cảnh và trả lời các gợi ý suy ngẫm ở khung bên phải!
                       </p>
                     </div>
                   )}
