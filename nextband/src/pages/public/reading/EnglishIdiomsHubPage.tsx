@@ -28,15 +28,17 @@ import unit04Data from "@/data/idioms/unit04";
 import { UNIT_04_ETYMOLOGY } from "@/data/idioms/unit04_etymology";
 import unit05Data from "@/data/idioms/unit05";
 import { UNIT_05_ETYMOLOGY } from "@/data/idioms/unit05_etymology";
+import unit06Data from "@/data/idioms/unit06";
+import { UNIT_06_ETYMOLOGY } from "@/data/idioms/unit06_etymology";
 
 export default function EnglishIdiomsHubPage() {
   const { unitId } = useParams<{ unitId?: string }>();
   const navigate = useNavigate();
 
   const parsedId = unitId ? parseInt(unitId, 10) : 1;
-  const initialUnitId = (parsedId >= 1 && parsedId <= 5 ? parsedId : 1) as 1 | 2 | 3 | 4 | 5;
+  const initialUnitId = (parsedId >= 1 && parsedId <= 6 ? parsedId : 1) as 1 | 2 | 3 | 4 | 5 | 6;
 
-  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3 | 4 | 5>(initialUnitId);
+  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3 | 4 | 5 | 6>(initialUnitId);
   const [activeTab, setActiveTab] = useState<"learn" | "practice">("learn");
   const [activeModuleFilter, setActiveModuleFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
@@ -49,8 +51,8 @@ export default function EnglishIdiomsHubPage() {
   useEffect(() => {
     if (unitId) {
       const p = parseInt(unitId, 10);
-      if (p >= 1 && p <= 5 && p !== selectedUnitId) {
-        setSelectedUnitId(p as 1 | 2 | 3 | 4 | 5);
+      if (p >= 1 && p <= 6 && p !== selectedUnitId) {
+        setSelectedUnitId(p as 1 | 2 | 3 | 4 | 5 | 6);
         setActiveModuleFilter("ALL");
         reset23();
         reset25();
@@ -175,7 +177,9 @@ export default function EnglishIdiomsHubPage() {
       ? unit03Data
       : selectedUnitId === 4
       ? unit04Data
-      : unit05Data;
+      : selectedUnitId === 5
+      ? unit05Data
+      : unit06Data;
 
   const currentEtymologyData =
     selectedUnitId === 1
@@ -186,7 +190,9 @@ export default function EnglishIdiomsHubPage() {
       ? UNIT_03_ETYMOLOGY
       : selectedUnitId === 4
       ? UNIT_04_ETYMOLOGY
-      : UNIT_05_ETYMOLOGY;
+      : selectedUnitId === 5
+      ? UNIT_05_ETYMOLOGY
+      : UNIT_06_ETYMOLOGY;
 
   // Idioms flat list
   const allIdioms = currentUnitData.modules.flatMap((m) =>
@@ -683,7 +689,7 @@ export default function EnglishIdiomsHubPage() {
     setShowRetry28(false);
   };
 
-  const handleSelectUnit = (unitId: 1 | 2 | 3 | 4 | 5) => {
+  const handleSelectUnit = (unitId: 1 | 2 | 3 | 4 | 5 | 6) => {
     setSelectedUnitId(unitId);
     setActiveModuleFilter("ALL");
     reset23();
@@ -722,16 +728,16 @@ export default function EnglishIdiomsHubPage() {
               {selectedUnitId > 1 && (
                 <button
                   type="button"
-                  onClick={() => handleSelectUnit((selectedUnitId - 1) as 1 | 2 | 3 | 4 | 5)}
+                  onClick={() => handleSelectUnit((selectedUnitId - 1) as 1 | 2 | 3 | 4 | 5 | 6)}
                   className="text-[11px] font-semibold text-[#7A7067] hover:text-[#002147] px-2 py-0.5 rounded hover:bg-[#EAE3D9]/50 transition cursor-pointer"
                 >
                   ← Unit 0{selectedUnitId - 1}
                 </button>
               )}
-              {selectedUnitId < 5 && (
+              {selectedUnitId < 6 && (
                 <button
                   type="button"
-                  onClick={() => handleSelectUnit((selectedUnitId + 1) as 1 | 2 | 3 | 4 | 5)}
+                  onClick={() => handleSelectUnit((selectedUnitId + 1) as 1 | 2 | 3 | 4 | 5 | 6)}
                   className="text-[11px] font-semibold text-[#7A7067] hover:text-[#002147] px-2 py-0.5 rounded hover:bg-[#EAE3D9]/50 transition cursor-pointer"
                 >
                   Unit 0{selectedUnitId + 1} →
@@ -790,11 +796,15 @@ export default function EnglishIdiomsHubPage() {
                 ? "Khám phá 20 thành ngữ ấn tượng miêu tả diện mạo, nét tương đồng, phong thái ăn mặc chỉn chu cùng xuất thân và vị thế xã hội."
                 : selectedUnitId === 4
                 ? "Khám phá 20 thành ngữ sắc bén khắc họa tính cách con người qua lăng kính động vật và thực phẩm, từ điềm tĩnh kiên cường đến lập dị chân chất."
-                : "Khám phá 20 thành ngữ đỉnh cao miêu tả sự xuất sắc, thành tựu kiệt xuất, những điều tuyệt vời ngoài sức tưởng tượng và cơ duyên tái ông thất mã."}
+                : selectedUnitId === 5
+                ? "Khám phá 20 thành ngữ đỉnh cao miêu tả sự xuất sắc, thành tựu kiệt xuất, những điều tuyệt vời ngoài sức tưởng tượng và cơ duyên tái ông thất mã."
+                : "Khám phá 20 thành ngữ then chốt diễn tả chất lượng tồi tàn, sự hụt hẫng thất vọng, cảm giác tẻ nhạt đến phát ngấy và giới hạn chịu đựng giọt nước tràn ly."}
             </p>
             <div className="flex flex-wrap gap-3 pt-2 text-xs font-semibold">
               <span className="px-3 py-1 rounded-full bg-black/25">📚 20 Idioms & Expressions</span>
-              <span className="px-3 py-1 rounded-full bg-black/25">🎙️ Audio giọng Mỹ chuẩn (US Accent)</span>
+              <span className="px-3 py-1 rounded-full bg-black/25">
+                🎙️ Audio giọng {currentUnitData.summary.accent === "UK" ? "Anh chuẩn (UK Accent)" : "Mỹ chuẩn (US Accent)"}
+              </span>
               <span className="px-3 py-1 rounded-full bg-black/25">🎯 5 Bài luyện tập tương tác</span>
             </div>
           </div>

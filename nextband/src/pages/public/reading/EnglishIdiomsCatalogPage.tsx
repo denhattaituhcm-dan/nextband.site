@@ -19,6 +19,7 @@ import unit02Data from "@/data/idioms/unit02";
 import unit03Data from "@/data/idioms/unit03";
 import unit04Data from "@/data/idioms/unit04";
 import unit05Data from "@/data/idioms/unit05";
+import unit06Data from "@/data/idioms/unit06";
 
 interface UnitCatalogItem {
   id: number;
@@ -166,14 +167,40 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
     accent: "US (Mỹ)",
     isAvailable: true,
   },
+  {
+    id: 6,
+    unit_number_str: unit06Data.unit_number_str,
+    title_en: unit06Data.unit_title,
+    title_vi: "Sự thất vọng, phẩm chất kém & Giọt nước tràn ly",
+    section: unit06Data.major_section,
+    description_vi:
+      "Khám phá 20 thành ngữ then chốt diễn tả chất lượng tồi tàn, sự hụt hẫng thất vọng, cảm giác tẻ nhạt đến phát ngấy và giới hạn chịu đựng giọt nước tràn ly.",
+    total_idioms: unit06Data.summary.total_idioms,
+    total_exercises: unit06Data.summary.total_practice_exercises,
+    modules: [
+      {
+        id: "6.1",
+        title: "Disappointment, low quality & negative experiences",
+        sample: "leave a bad taste in my mouth, second rate, not my cup of tea...",
+      },
+      {
+        id: "6.2",
+        title: "Wear and tear, boredom, and the breaking point",
+        sample: "seen better days, like watching paint dry, the last straw...",
+      },
+    ],
+    tags: ["Thất vọng", "Chất lượng kém", "Giọt nước tràn ly", "IELTS Speaking Part 2 & 3"],
+    accent: "UK (Anh)",
+    isAvailable: true,
+  },
 ];
 
 const UPCOMING_UNITS = [
-  { id: 6, unit_number_str: "06", title_en: "Bad Things", title_vi: "Những điều tồi tệ & trở ngại" },
   { id: 7, unit_number_str: "07", title_en: "Emotions", title_vi: "Cảm xúc & Tâm trạng con người" },
   { id: 8, unit_number_str: "08", title_en: "Relationships", title_vi: "Quan hệ tình cảm & bạn bè sâu rộng" },
   { id: 9, unit_number_str: "09", title_en: "Communication", title_vi: "Giao tiếp, đối thoại & truyền thông" },
   { id: 10, unit_number_str: "10", title_en: "Memory & Thinking", title_vi: "Trí nhớ, hồi ức & tư duy" },
+  { id: 11, unit_number_str: "11", title_en: "Time", title_vi: "Thời gian & Nhịp điệu cuộc sống" },
 ];
 
 export default function EnglishIdiomsCatalogPage() {
@@ -195,7 +222,7 @@ export default function EnglishIdiomsCatalogPage() {
     <div className="min-h-screen bg-[#FAF7F2] text-[#2D2825] font-sans selection:bg-[#F2DBD3] selection:text-[#2D2825]">
       <SEO
         title="Kho Thành Ngữ Tiếng Anh Theo Chủ Đề — English Idioms Master | ARIS IELTS"
-        description="Khám phá và luyện tập toàn diện các chủ đề thành ngữ tiếng Anh theo chuẩn giáo trình DK English for Everyone. Tích hợp audio chuẩn Mỹ, nghiên cứu từ nguyên học và bài tập chấm điểm tương tác."
+        description="Khám phá và luyện tập toàn diện các chủ đề thành ngữ tiếng Anh theo chuẩn giáo trình DK English for Everyone. Tích hợp audio chuẩn bản ngữ, nghiên cứu từ nguyên học và bài tập chấm điểm tương tác."
       />
 
       {/* Sub-nav Header */}
@@ -218,7 +245,7 @@ export default function EnglishIdiomsCatalogPage() {
           <div className="flex items-center gap-2">
             <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">
               <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-              5 Units Sẵn Sàng (100 Idioms)
+              6 Units Sẵn Sàng (120 Idioms)
             </span>
           </div>
         </div>
@@ -240,25 +267,25 @@ export default function EnglishIdiomsCatalogPage() {
             <p className="text-sm sm:text-base text-slate-100 max-w-2xl leading-relaxed font-light">
               Tuyển tập thành ngữ và cụm từ cố định trực quan theo giáo trình{" "}
               <strong className="text-white font-medium">English for Everyone: English Idioms</strong>{" "}
-              (DK Publishing). Mỗi bài học trang bị đầy đủ audio bản ngữ giọng Mỹ, nghiên cứu từ nguyên học OED giải mã lý do tại sao cụm từ có nghĩa như vậy, cùng hệ thống 5 bài tập tương tác chấm điểm chuẩn xác.
+              (DK Publishing). Mỗi bài học trang bị đầy đủ audio bản ngữ giọng Anh/Mỹ, nghiên cứu từ nguyên học OED giải mã lý do tại sao cụm từ có nghĩa như vậy, cùng hệ thống 5 bài tập tương tác chấm điểm chuẩn xác.
             </p>
 
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4">
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-amber-300">05</div>
+                <div className="text-2xl sm:text-3xl font-black text-amber-300">06</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Units đã số hóa</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-sky-200">100</div>
+                <div className="text-2xl sm:text-3xl font-black text-sky-200">120</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Thành ngữ & Cụm từ</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
                 <div className="text-2xl sm:text-3xl font-black text-emerald-200">100%</div>
-                <div className="text-xs text-slate-200 font-medium mt-0.5">Audio phát âm US</div>
+                <div className="text-xs text-slate-200 font-medium mt-0.5">Audio bản ngữ US/UK</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-purple-200">25</div>
+                <div className="text-2xl sm:text-3xl font-black text-purple-200">30</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Bài tập tương tác</div>
               </div>
             </div>
