@@ -20,6 +20,7 @@ import unit03Data from "@/data/idioms/unit03";
 import unit04Data from "@/data/idioms/unit04";
 import unit05Data from "@/data/idioms/unit05";
 import unit06Data from "@/data/idioms/unit06";
+import unit07Data from "@/data/idioms/unit07";
 
 interface UnitCatalogItem {
   id: number;
@@ -193,14 +194,40 @@ const UNITS_CATALOG: UnitCatalogItem[] = [
     accent: "UK (Anh)",
     isAvailable: true,
   },
+  {
+    id: 7,
+    unit_number_str: unit07Data.unit_number_str,
+    title_en: unit07Data.unit_title,
+    title_vi: "Thế giới động vật & Ẩn dụ ngụ ngôn",
+    section: unit07Data.major_section,
+    description_vi:
+      "20 thành ngữ đặc sắc mượn tập tính sinh học, ngụ ngôn cổ xưa và đặc trưng loài vật để khắc họa tâm lý, hành vi con người và tình huống xã hội.",
+    total_idioms: unit07Data.summary.total_idioms,
+    total_exercises: unit07Data.summary.total_practice_exercises,
+    modules: [
+      {
+        id: "7.1",
+        title: "Animal behaviors, instincts & metaphors",
+        sample: "a scaredy-cat, cry wolf, dropping like flies, elephant in the room...",
+      },
+      {
+        id: "7.2",
+        title: "Creature symbols, stereotypes & animal attributes",
+        sample: "a night owl, get someone's goat, bird's-eye view, lion's share...",
+      },
+    ],
+    tags: ["Động vật", "Ẩn dụ ngụ ngôn", "Tập tính tự nhiên", "IELTS Speaking & Writing"],
+    accent: "UK (Anh)",
+    isAvailable: true,
+  },
 ];
 
 const UPCOMING_UNITS = [
-  { id: 7, unit_number_str: "07", title_en: "Emotions", title_vi: "Cảm xúc & Tâm trạng con người" },
-  { id: 8, unit_number_str: "08", title_en: "Relationships", title_vi: "Quan hệ tình cảm & bạn bè sâu rộng" },
-  { id: 9, unit_number_str: "09", title_en: "Communication", title_vi: "Giao tiếp, đối thoại & truyền thông" },
-  { id: 10, unit_number_str: "10", title_en: "Memory & Thinking", title_vi: "Trí nhớ, hồi ức & tư duy" },
-  { id: 11, unit_number_str: "11", title_en: "Time", title_vi: "Thời gian & Nhịp điệu cuộc sống" },
+  { id: 8, unit_number_str: "08", title_en: "Food and drink", title_vi: "Ẩm thực & Đồ uống" },
+  { id: 9, unit_number_str: "09", title_en: "Parts of the body", title_vi: "Các bộ phận cơ thể con người" },
+  { id: 10, unit_number_str: "10", title_en: "Clothes and fashion", title_vi: "Trang phục & Thời trang" },
+  { id: 11, unit_number_str: "11", title_en: "Emotions", title_vi: "Cảm xúc & Tâm trạng con người" },
+  { id: 12, unit_number_str: "12", title_en: "Relationships", title_vi: "Quan hệ tình cảm & bạn bè sâu rộng" },
 ];
 
 export default function EnglishIdiomsCatalogPage() {
@@ -245,7 +272,7 @@ export default function EnglishIdiomsCatalogPage() {
           <div className="flex items-center gap-2">
             <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">
               <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-              6 Units Sẵn Sàng (120 Idioms)
+              7 Units Sẵn Sàng (140 Idioms)
             </span>
           </div>
         </div>
@@ -273,11 +300,11 @@ export default function EnglishIdiomsCatalogPage() {
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4">
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-amber-300">06</div>
+                <div className="text-2xl sm:text-3xl font-black text-amber-300">07</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Units đã số hóa</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-sky-200">120</div>
+                <div className="text-2xl sm:text-3xl font-black text-sky-200">140</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Thành ngữ & Cụm từ</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
@@ -285,7 +312,7 @@ export default function EnglishIdiomsCatalogPage() {
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Audio bản ngữ US/UK</div>
               </div>
               <div className="p-3.5 rounded-2xl bg-white/10 backdrop-blur-xs border border-white/15">
-                <div className="text-2xl sm:text-3xl font-black text-purple-200">30</div>
+                <div className="text-2xl sm:text-3xl font-black text-purple-200">35</div>
                 <div className="text-xs text-slate-200 font-medium mt-0.5">Bài tập tương tác</div>
               </div>
             </div>
