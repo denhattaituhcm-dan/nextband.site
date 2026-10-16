@@ -778,6 +778,126 @@ export const UNIT_01_DATA = {
           "explanation": "\"Young at heart\" (tâm hồn trẻ trung, yêu đời dù tuổi cao) là thành ngữ chuẩn xác và có sắc thái khen ngợi cao (Complimentary). \"Come of age\" là đạt độ tuổi thành niên (18–21 tuổi); \"in the prime of one's life\" thường chỉ độ tuổi đỉnh cao thể lực và phong độ (khoảng 30–40 tuổi)."
         }
       ]
+    },
+    {
+      "exercise_id": "1.8",
+      "exercise_type": "CONCEPTUAL_IMAGE_MATCHING",
+      "instruction": "THỬ THÁCH HIỂU NGUYÊN BẢN: KẾT NỐI HÌNH TƯỢNG VÀ NGHĨA BÓNG",
+      "page_number": 13,
+      "is_audio_based": false,
+      "description": "Bài tập phát triển tư duy ngôn ngữ học: hiểu vì sao hình tượng ban đầu lại tạo nên nghĩa bóng hiện đại thay vì học vẹt.",
+      "questions": [
+        {
+          "question_number": 1,
+          "target_idiom": "no spring chicken",
+          "prompt": "Hình tượng xuất phát điểm nào giải thích vì sao cụm từ \"no spring chicken\" lại mang nghĩa \"không còn trẻ trung nữa, đã có tuổi rồi\"?",
+          "options": [
+            {
+              "key": "A",
+              "text": "Gà tơ nở vào mùa xuân có thịt mềm béo và bán được giá cao ở chợ phiên; gà đã qua mùa đông thịt dai ngoách bị người mua chối từ vì không còn là gà non."
+            },
+            {
+              "key": "B",
+              "text": "Loài gà vào mùa xuân thường chạy nhảy nhanh nhất trong năm; gà già không đuổi kịp đồng loại."
+            },
+            {
+              "key": "C",
+              "text": "Tập quán nông dân thả gà ra đồng vào mùa xuân để đo sức khỏe gia cầm."
+            }
+          ],
+          "correct_key": "A",
+          "explanation": "Trước thời chăn nuôi công nghiệp, gà ấp nở đầu xuân ăn cỏ non thịt rất mềm và đắt giá. Gà già qua mùa đông dai và rẻ hơn nhiều. Người mua phát hiện gà già bị người bán gian lận sẽ phản ứng: \"This is no spring chicken!\".",
+          "evidence_level": "DOCUMENTED ORIGIN"
+        },
+        {
+          "question_number": 2,
+          "target_idiom": "wet behind the ears",
+          "prompt": "Vì sao việc \"ướt ở phía sau tai\" (wet behind the ears) lại biểu thị sự non nớt, chưa có kinh nghiệm thực tế?",
+          "options": [
+            {
+              "key": "A",
+              "text": "Trẻ con nghịch nước tắm xong thường quên lau khô phần nếp gấp sau tai."
+            },
+            {
+              "key": "B",
+              "text": "Thú non (bê, ngựa con) lúc mới lọt lòng mẹ, nếp gấp sâu sau vành tai là nơi mẹ khó liếm tới nhất và khô sau cùng — nghĩa là con vật chỉ vừa mới chào đời vài giờ."
+            },
+            {
+              "key": "C",
+              "text": "Thợ lặn mới vào nghề thường lúng túng làm nước rò rỉ vào sau vành tai."
+            }
+          ],
+          "correct_key": "B",
+          "explanation": "Bắt nguồn từ quan sát sinh học ở động vật có vú (bê, ngựa con): nước ối ở nếp gấp sau vành tai khô sau cùng khi mẹ liếm con. Một sinh vật còn 'wet behind the ears' nghĩa là chỉ mới bước ra thế giới, cực kỳ non nớt và ngây thơ.",
+          "evidence_level": "DOCUMENTED ORIGIN"
+        },
+        {
+          "question_number": 3,
+          "target_idiom": "long in the tooth",
+          "prompt": "Hình tượng loài ngựa giải thích cho thành ngữ \"long in the tooth\" (đã cao tuổi, quá già) như thế nào?",
+          "options": [
+            {
+              "key": "A",
+              "text": "Ngựa già thường bị mòn răng nên răng rụng bớt, làm các răng còn lại trông dài hơn."
+            },
+            {
+              "key": "B",
+              "text": "Răng ngựa tiếp tục dài ra và nướu bị teo rút dần theo năm tháng; thương lái vạch miệng ngựa xem độ dài răng để xác định con ngựa đã già nua hay chưa."
+            },
+            {
+              "key": "C",
+              "text": "Ngựa con khi mọc răng cửa đầu tiên thì răng rất dài so với hàm."
+            }
+          ],
+          "correct_key": "B",
+          "explanation": "Ngựa mọc răng liên tục bù trừ cho sự cọ mòn khi nhai cỏ; theo thời gian, nướu teo rút khiến chân răng lộ ra và chìa về phía trước. Người mua ngựa kiểm tra răng (look a horse in the mouth) thấy 'long in the tooth' là biết ngựa đã già.",
+          "evidence_level": "DOCUMENTED ORIGIN"
+        },
+        {
+          "question_number": 4,
+          "target_idiom": "over the hill",
+          "prompt": "Ẩn dụ không gian nào được sử dụng trong thành ngữ \"over the hill\" để diễn tả trạng thái qua sườn dốc cuộc đời?",
+          "options": [
+            {
+              "key": "A",
+              "text": "Hành trình đời người như leo một ngọn đồi: nửa đầu đời gắng sức leo dốc tới đỉnh (peak); khi đã bước qua đỉnh đồi, con đường còn lại là đi xuống dốc (suy giảm thể lực)."
+            },
+            {
+              "key": "B",
+              "text": "Người lính vượt qua ngọn đồi để nghỉ ngơi sau trận đánh trường kỳ."
+            },
+            {
+              "key": "C",
+              "text": "Đoàn lữ hành vượt qua đỉnh đồi để tìm kiếm vùng đất mới màu mỡ hơn."
+            }
+          ],
+          "correct_key": "A",
+          "explanation": "Cuộc đời được ánh xạ thành một ngọn đồi: giai đoạn trẻ là nỗ lực leo lên (ascent), chạm đỉnh (peak) ở tuổi trung niên sung sức. 'Over the hill' là đã bước qua đỉnh và bắt đầu chặng đường đi xuống dốc, thể lực và phong độ dần suy giảm.",
+          "evidence_level": "DOCUMENTED ORIGIN"
+        },
+        {
+          "question_number": 5,
+          "target_idiom": "come of age",
+          "prompt": "Tại sao mốc tuổi trưởng thành (come of age) trong lịch sử pháp luật Anh xưa kia lại gắn chặt với con số 21 tuổi?",
+          "options": [
+            {
+              "key": "A",
+              "text": "Đó là độ tuổi trung bình mà một người đàn ông có thể thi đỗ các kỳ thi của triều đình."
+            },
+            {
+              "key": "B",
+              "text": "Theo luật phong kiến thời hiệp sĩ, 21 tuổi là lúc cơ thể nam giới đủ phát triển xương khớp và cơ bắp để mang nổi bộ áo giáp hiệp sĩ nặng nề và cưỡi ngựa chiến."
+            },
+            {
+              "key": "C",
+              "text": "Nhà thờ thời Trung Cổ quy định chỉ người 21 tuổi mới được phép sở hữu kinh sách."
+            }
+          ],
+          "correct_key": "B",
+          "explanation": "Trong chế độ phong kiến Anh (feudal knight service), một người thừa kế đất đai chỉ được công nhận 'come of age' (đạt tuổi thành niên) ở mốc 21 tuổi vì khi đó cơ thể mới đủ vạm vỡ để mặc giáp chiến đấu. Mốc này được giữ vững suốt nhiều thế kỷ trước khi hạ xuống 18 vào thế kỷ 20.",
+          "evidence_level": "DOCUMENTED ORIGIN"
+        }
+      ]
     }
   ]
 } as const;

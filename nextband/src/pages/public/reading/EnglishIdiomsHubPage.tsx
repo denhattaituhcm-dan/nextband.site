@@ -12,14 +12,24 @@ import {
   Sparkles,
   ChevronDown,
   BookOpen,
+  Compass,
+  Lightbulb,
+  History,
+  FileCheck2,
+  ExternalLink,
 } from "lucide-react";
 import unit01Data from "@/data/idioms/unit01";
+import { UNIT_01_ETYMOLOGY } from "@/data/idioms/unit01_etymology";
+import unit02Data from "@/data/idioms/unit02";
+import { UNIT_02_ETYMOLOGY } from "@/data/idioms/unit02_etymology";
 
 export default function EnglishIdiomsHubPage() {
+  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2>(1);
   const [activeTab, setActiveTab] = useState<"learn" | "practice">("learn");
   const [activeModuleFilter, setActiveModuleFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [openDrawers, setOpenDrawers] = useState<Record<string, boolean>>({});
+  const [openEtymologyDrawers, setOpenEtymologyDrawers] = useState<Record<string, boolean>>({});
   const [currentlyPlayingAudio, setCurrentlyPlayingAudio] = useState<string | null>(null);
   const [listenedIds, setListenedIds] = useState<Set<string>>(new Set());
 
@@ -35,6 +45,31 @@ export default function EnglishIdiomsHubPage() {
     status: null,
     msg: "",
   });
+
+  // Exercise 2.3 State (Definition Matching - Unit 2)
+  const [selected23, setSelected23] = useState<Record<number, string>>({});
+  const [checked23, setChecked23] = useState<Record<number, boolean | null>>({});
+  const [showRetry23, setShowRetry23] = useState(false);
+
+  // Exercise 2.5 State (Fill in the blanks - Unit 2)
+  const [answers25, setAnswers25] = useState<Record<number, string>>({});
+  const [checked25, setChecked25] = useState<Record<number, boolean | null>>({});
+  const [showRetry25, setShowRetry25] = useState(false);
+
+  // Exercise 2.6 State (Multiple Choice - Unit 2)
+  const [selected26, setSelected26] = useState<Record<number, string>>({});
+  const [checked26, setChecked26] = useState<Record<number, boolean | null>>({});
+  const [showRetry26, setShowRetry26] = useState(false);
+
+  // Exercise 2.7 State (Situational Judgment - Unit 2)
+  const [selected27, setSelected27] = useState<Record<number, string>>({});
+  const [checked27, setChecked27] = useState<Record<number, boolean | null>>({});
+  const [showRetry27, setShowRetry27] = useState(false);
+
+  // Exercise 2.8 State (Conceptual Image Matching - Unit 2)
+  const [selected28, setSelected28] = useState<Record<number, string>>({});
+  const [checked28, setChecked28] = useState<Record<number, boolean | null>>({});
+  const [showRetry28, setShowRetry28] = useState(false);
 
   // Exercise 1.4 State (Listening Fill-in-the-blank)
   const [answers14, setAnswers14] = useState<Record<number, string>>({});
@@ -55,6 +90,11 @@ export default function EnglishIdiomsHubPage() {
   const [selected17, setSelected17] = useState<Record<number, string>>({});
   const [checked17, setChecked17] = useState<Record<number, boolean | null>>({});
   const [showRetry17, setShowRetry17] = useState(false);
+
+  // Exercise 1.8 State (Conceptual Image Matching)
+  const [selected18, setSelected18] = useState<Record<number, string>>({});
+  const [checked18, setChecked18] = useState<Record<number, boolean | null>>({});
+  const [showRetry18, setShowRetry18] = useState(false);
 
   // Clean audio on unmount
   useEffect(() => {
@@ -93,8 +133,16 @@ export default function EnglishIdiomsHubPage() {
     setOpenDrawers((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  const toggleEtymologyDrawer = (id: string) => {
+    setOpenEtymologyDrawers((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  // Current Unit Data & Etymology
+  const currentUnitData = selectedUnitId === 1 ? unit01Data : unit02Data;
+  const currentEtymologyData = selectedUnitId === 1 ? UNIT_01_ETYMOLOGY : UNIT_02_ETYMOLOGY;
+
   // Idioms flat list
-  const allIdioms = unit01Data.modules.flatMap((m) =>
+  const allIdioms = currentUnitData.modules.flatMap((m) =>
     m.idioms.map((idm) => ({
       ...idm,
       moduleId: m.module_id,
@@ -340,11 +388,259 @@ export default function EnglishIdiomsHubPage() {
     setShowRetry17(false);
   };
 
+  // EXERCISE 1.8 LOGIC (CONCEPTUAL IMAGE MATCHING - UNIT 1)
+  const ex18 = unit01Data.exercises.find((e) => e.exercise_id === "1.8");
+  const check18 = () => {
+    if (!ex18?.questions) return;
+    const res: Record<number, boolean> = {};
+    let hasFail = false;
+    ex18.questions.forEach((q) => {
+      const isMatch = selected18[q.question_number] === q.correct_key;
+      res[q.question_number] = isMatch;
+      if (!isMatch) hasFail = true;
+    });
+    setChecked18(res);
+    setShowRetry18(hasFail);
+  };
+
+  const reset18 = () => {
+    setSelected18({});
+    setChecked18({});
+    setShowRetry18(false);
+  };
+
+  const retry18 = () => {
+    setSelected18((prev) => {
+      const updated = { ...prev };
+      Object.keys(checked18).forEach((k) => {
+        const num = Number(k);
+        if (checked18[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setChecked18((prev) => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach((k) => {
+        const num = Number(k);
+        if (updated[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setShowRetry18(false);
+  };
+
+  // ================= UNIT 2 EXERCISE HANDLERS =================
+  // EXERCISE 2.3 LOGIC (DEFINITION MATCHING)
+  const ex23 = unit02Data.exercises.find((e) => e.exercise_id === "2.3");
+  const check23 = () => {
+    if (!ex23?.questions) return;
+    const res: Record<number, boolean> = {};
+    let hasFail = false;
+    ex23.questions.forEach((q) => {
+      const isMatch = selected23[q.question_number] === q.target_definition;
+      res[q.question_number] = isMatch;
+      if (!isMatch) hasFail = true;
+    });
+    setChecked23(res);
+    setShowRetry23(hasFail);
+  };
+
+  const reset23 = () => {
+    setSelected23({});
+    setChecked23({});
+    setShowRetry23(false);
+  };
+
+  const retry23 = () => {
+    setSelected23((prev) => {
+      const updated = { ...prev };
+      Object.keys(checked23).forEach((k) => {
+        const num = Number(k);
+        if (checked23[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setChecked23((prev) => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach((k) => {
+        const num = Number(k);
+        if (updated[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setShowRetry23(false);
+  };
+
+  // EXERCISE 2.5 LOGIC (FILL IN THE BLANKS)
+  const ex25 = unit02Data.exercises.find((e) => e.exercise_id === "2.5");
+  const check25 = () => {
+    if (!ex25?.questions) return;
+    const res: Record<number, boolean> = {};
+    let hasFail = false;
+    ex25.questions.forEach((q) => {
+      const val = (answers25[q.question_number] || "").trim().toLowerCase().replace(/[.,!]/g, "");
+      const isMatch = q.accepted_answers.some((ans) => ans.toLowerCase().replace(/[.,!]/g, "") === val);
+      res[q.question_number] = isMatch;
+      if (!isMatch) hasFail = true;
+    });
+    setChecked25(res);
+    setShowRetry25(hasFail);
+  };
+
+  const reset25 = () => {
+    setAnswers25({});
+    setChecked25({});
+    setShowRetry25(false);
+  };
+
+  const retry25 = () => {
+    setAnswers25((prev) => {
+      const updated = { ...prev };
+      Object.keys(checked25).forEach((k) => {
+        const num = Number(k);
+        if (checked25[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setChecked25((prev) => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach((k) => {
+        const num = Number(k);
+        if (updated[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setShowRetry25(false);
+  };
+
+  // EXERCISE 2.6 LOGIC (MULTIPLE CHOICE)
+  const ex26 = unit02Data.exercises.find((e) => e.exercise_id === "2.6");
+  const check26 = () => {
+    if (!ex26?.questions) return;
+    const res: Record<number, boolean> = {};
+    let hasFail = false;
+    ex26.questions.forEach((q) => {
+      const isMatch = selected26[q.question_number] === q.correct_key;
+      res[q.question_number] = isMatch;
+      if (!isMatch) hasFail = true;
+    });
+    setChecked26(res);
+    setShowRetry26(hasFail);
+  };
+
+  const reset26 = () => {
+    setSelected26({});
+    setChecked26({});
+    setShowRetry26(false);
+  };
+
+  const retry26 = () => {
+    setSelected26((prev) => {
+      const updated = { ...prev };
+      Object.keys(checked26).forEach((k) => {
+        const num = Number(k);
+        if (checked26[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setChecked26((prev) => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach((k) => {
+        const num = Number(k);
+        if (updated[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setShowRetry26(false);
+  };
+
+  // EXERCISE 2.7 LOGIC (SITUATIONAL JUDGMENT)
+  const ex27 = unit02Data.exercises.find((e) => e.exercise_id === "2.7");
+  const check27 = () => {
+    if (!ex27?.questions) return;
+    const res: Record<number, boolean> = {};
+    let hasFail = false;
+    ex27.questions.forEach((q) => {
+      const isMatch = selected27[q.question_number] === q.correct_key;
+      res[q.question_number] = isMatch;
+      if (!isMatch) hasFail = true;
+    });
+    setChecked27(res);
+    setShowRetry27(hasFail);
+  };
+
+  const reset27 = () => {
+    setSelected27({});
+    setChecked27({});
+    setShowRetry27(false);
+  };
+
+  const retry27 = () => {
+    setSelected27((prev) => {
+      const updated = { ...prev };
+      Object.keys(checked27).forEach((k) => {
+        const num = Number(k);
+        if (checked27[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setChecked27((prev) => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach((k) => {
+        const num = Number(k);
+        if (updated[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setShowRetry27(false);
+  };
+
+  // EXERCISE 2.8 LOGIC (CONCEPTUAL IMAGE MATCHING - UNIT 2)
+  const ex28 = unit02Data.exercises.find((e) => e.exercise_id === "2.8");
+  const check28 = () => {
+    if (!ex28?.questions) return;
+    const res: Record<number, boolean> = {};
+    let hasFail = false;
+    ex28.questions.forEach((q) => {
+      const isMatch = selected28[q.question_number] === q.correct_key;
+      res[q.question_number] = isMatch;
+      if (!isMatch) hasFail = true;
+    });
+    setChecked28(res);
+    setShowRetry28(hasFail);
+  };
+
+  const reset28 = () => {
+    setSelected28({});
+    setChecked28({});
+    setShowRetry28(false);
+  };
+
+  const retry28 = () => {
+    setSelected28((prev) => {
+      const updated = { ...prev };
+      Object.keys(checked28).forEach((k) => {
+        const num = Number(k);
+        if (checked28[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setChecked28((prev) => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach((k) => {
+        const num = Number(k);
+        if (updated[num] === false) delete updated[num];
+      });
+      return updated;
+    });
+    setShowRetry28(false);
+  };
+
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-[#2D2825] font-sans selection:bg-[#F2DBD3] selection:text-[#2D2825]">
       <SEO
-        title="English Idioms Master — Unit 01: Age | ARIS IELTS"
-        description="Luyện thành ngữ tiếng Anh chủ đề Tuổi tác (Age) qua ví dụ ngữ cảnh, audio bản ngữ và 5 bài tập tương tác."
+        title={`English Idioms Master — Unit ${currentUnitData.unit_number_str}: ${currentUnitData.unit_title} | ARIS IELTS`}
+        description={`Luyện thành ngữ tiếng Anh chủ đề ${currentUnitData.unit_title} qua ví dụ ngữ cảnh, audio bản ngữ và các bài tập tương tác.`}
       />
 
       <audio ref={audioRef} preload="auto" />
@@ -352,10 +648,43 @@ export default function EnglishIdiomsHubPage() {
       {/* Sub-nav Header */}
       <nav className="border-b border-[#EAE3D9] bg-[#FAF7F2]/95 sticky top-0 z-30 backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-6 sm:gap-8 text-xs font-medium text-[#7A7067]">
+          <div className="flex items-center gap-4 sm:gap-6 text-xs font-medium text-[#7A7067]">
             <Link to="/reading" className="hover:text-[#2D2825] transition-colors pb-1">
               ← Tủ sách đọc báo
             </Link>
+
+            {/* Unit Switcher Pills in Sub-nav */}
+            <div className="flex items-center p-0.5 bg-[#EAE3D9]/60 rounded-lg">
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedUnitId(1);
+                  setActiveModuleFilter("ALL");
+                }}
+                className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer ${
+                  selectedUnitId === 1
+                    ? "bg-white text-[#002147] shadow-xs"
+                    : "text-[#7A7067] hover:text-[#2D2825]"
+                }`}
+              >
+                Unit 01: Age
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedUnitId(2);
+                  setActiveModuleFilter("ALL");
+                }}
+                className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer ${
+                  selectedUnitId === 2
+                    ? "bg-white text-[#002147] shadow-xs"
+                    : "text-[#7A7067] hover:text-[#2D2825]"
+                }`}
+              >
+                Unit 02: Friends & Family
+              </button>
+            </div>
+
             <button
               onClick={() => setActiveTab("learn")}
               className={`pb-1 transition-all cursor-pointer font-semibold ${
@@ -374,7 +703,7 @@ export default function EnglishIdiomsHubPage() {
                   : "hover:text-[#2D2825]"
               }`}
             >
-              ✍️ Luyện tập tương tác (5 bài)
+              ✍️ Luyện tập ({selectedUnitId === 1 ? "5 bài" : "5 bài"})
             </button>
           </div>
 
@@ -393,13 +722,15 @@ export default function EnglishIdiomsHubPage() {
           <div className="relative z-10 space-y-4 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-xs text-xs font-bold tracking-wider uppercase">
               <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>Section 1: Describing People & Things</span>
+              <span>{currentUnitData.major_section}</span>
             </div>
             <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
-              Unit 01: Age (Tuổi tác)
+              Unit {currentUnitData.unit_number_str}: {currentUnitData.unit_title}
             </h1>
             <p className="text-sm sm:text-base text-slate-100 max-w-2xl leading-relaxed font-light">
-              Khám phá 20 thành ngữ cốt lõi và cụm từ cố định về tuổi thơ, thanh xuân, bước ngoặt trưởng thành và những năm tháng xế chiều.
+              {selectedUnitId === 1
+                ? "Khám phá 20 thành ngữ cốt lõi và cụm từ cố định về tuổi thơ, thanh xuân, bước ngoặt trưởng thành và những năm tháng xế chiều."
+                : "Khám phá 20 thành ngữ then chốt diễn tả tình bạn, kết giao, phai nhạt liên lạc cùng các mối quan hệ ruột thịt gia đình nhiều thế hệ."}
             </p>
             <div className="flex flex-wrap gap-3 pt-2 text-xs font-semibold">
               <span className="px-3 py-1 rounded-full bg-black/25">📚 20 Idioms & Expressions</span>
@@ -436,26 +767,19 @@ export default function EnglishIdiomsHubPage() {
                 >
                   Tất cả ({allIdioms.length})
                 </button>
-                <button
-                  onClick={() => setActiveModuleFilter("1.1")}
-                  className={`px-3 py-1.5 rounded-full font-semibold transition cursor-pointer ${
-                    activeModuleFilter === "1.1"
-                      ? "bg-[#002147] text-white"
-                      : "bg-white border border-[#EAE3D9] text-[#635951] hover:bg-slate-50"
-                  }`}
-                >
-                  Module 1.1: Idioms about Age (12)
-                </button>
-                <button
-                  onClick={() => setActiveModuleFilter("1.2")}
-                  className={`px-3 py-1.5 rounded-full font-semibold transition cursor-pointer ${
-                    activeModuleFilter === "1.2"
-                      ? "bg-[#002147] text-white"
-                      : "bg-white border border-[#EAE3D9] text-[#635951] hover:bg-slate-50"
-                  }`}
-                >
-                  Module 1.2: Expressions with 'Age' (8)
-                </button>
+                {currentUnitData.modules.map((m) => (
+                  <button
+                    key={m.module_id}
+                    onClick={() => setActiveModuleFilter(m.module_id)}
+                    className={`px-3 py-1.5 rounded-full font-semibold transition cursor-pointer ${
+                      activeModuleFilter === m.module_id
+                        ? "bg-[#002147] text-white"
+                        : "bg-white border border-[#EAE3D9] text-[#635951] hover:bg-slate-50"
+                    }`}
+                  >
+                    Module {m.module_id}: {m.module_title} ({m.idioms.length})
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -464,6 +788,8 @@ export default function EnglishIdiomsHubPage() {
               {filteredIdioms.map((item) => {
                 const isPlaying = currentlyPlayingAudio === item.audio_url;
                 const isOpen = !!openDrawers[item.id];
+                const isEtymOpen = !!openEtymologyDrawers[item.id];
+                const etym = currentEtymologyData[item.id];
                 const isInformal = (item.register || "").toLowerCase().includes("informal");
                 const isFormal = (item.register || "").toLowerCase().includes("formal");
 
@@ -529,18 +855,19 @@ export default function EnglishIdiomsHubPage() {
                       </div>
                     </div>
 
-                    <div className="pt-4 border-t border-slate-100 mt-4">
+                    <div className="pt-4 border-t border-slate-100 mt-4 space-y-2">
+                      {/* Button 1: Ngữ pháp & IELTS */}
                       <button
                         type="button"
                         onClick={() => toggleDrawer(item.id)}
                         className="w-full flex items-center justify-between px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold transition cursor-pointer"
                       >
-                        <span>{isOpen ? "Thu gọn chi tiết" : "Chi tiết ngữ pháp & IELTS"}</span>
+                        <span>{isOpen ? "Thu gọn ngữ pháp" : "Chi tiết ngữ pháp & IELTS"}</span>
                         <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isOpen ? "rotate-180" : ""}`} />
                       </button>
 
                       {isOpen && (
-                        <div className="mt-3 space-y-2 text-xs pt-2 border-t border-dashed border-slate-200">
+                        <div className="mt-2 space-y-2 text-xs pt-2 border-t border-dashed border-slate-200">
                           {item.usage_pattern && (
                             <div className="p-2 rounded bg-emerald-50 border border-emerald-200 text-emerald-900 text-[11px]">
                               <strong className="text-emerald-800 font-bold">Cấu trúc:</strong> {item.usage_pattern}
@@ -557,6 +884,131 @@ export default function EnglishIdiomsHubPage() {
                           </div>
                         </div>
                       )}
+
+                      {/* Button 2: Vì sao idiom này có nghĩa như vậy? */}
+                      {etym && (
+                        <div>
+                          <button
+                            type="button"
+                            onClick={() => toggleEtymologyDrawer(item.id)}
+                            className={`w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer border ${
+                              isEtymOpen
+                                ? "bg-amber-50/90 text-amber-900 border-amber-200"
+                                : "bg-white hover:bg-amber-50/50 text-amber-800 border-amber-200/80"
+                            }`}
+                          >
+                            <span className="flex items-center gap-1.5">
+                              <Compass className="w-3.5 h-3.5 text-amber-600" />
+                              <span>{isEtymOpen ? "Thu gọn giải nghĩa" : "Vì sao idiom này có nghĩa như vậy?"}</span>
+                            </span>
+                            <ChevronDown
+                              className={`w-3.5 h-3.5 transition-transform text-amber-600 ${
+                                isEtymOpen ? "rotate-180" : ""
+                              }`}
+                            />
+                          </button>
+
+                          {isEtymOpen && (
+                            <div className="mt-2.5 p-3.5 rounded-xl bg-amber-50/60 border border-amber-200/80 text-xs space-y-3 animate-fadeIn">
+                              {/* Header info & Evidence tag */}
+                              <div className="flex items-center justify-between flex-wrap gap-1.5 pb-2 border-b border-amber-200/60">
+                                <span className="font-bold text-[11px] text-amber-950 uppercase tracking-wide flex items-center gap-1">
+                                  <Lightbulb className="w-3.5 h-3.5 text-amber-600" />
+                                  Cơ chế hình thành nghĩa
+                                </span>
+                                <span
+                                  className={`px-2 py-0.5 rounded text-[9px] font-bold tracking-wide uppercase border ${
+                                    etym.evidence_category === "DOCUMENTED ORIGIN"
+                                      ? "bg-emerald-100 text-emerald-800 border-emerald-300"
+                                      : etym.evidence_category === "PLAUSIBLE IMAGE/MEANING CONNECTION"
+                                      ? "bg-sky-100 text-sky-800 border-sky-300"
+                                      : "bg-slate-100 text-slate-700 border-slate-300"
+                                  }`}
+                                  title="Độ tin cậy của giải thích dựa trên tư liệu ngữ nguyên học"
+                                >
+                                  {etym.evidence_category === "DOCUMENTED ORIGIN"
+                                    ? "✓ Nguồn gốc xác thực (Documented)"
+                                    : etym.evidence_category === "PLAUSIBLE IMAGE/MEANING CONNECTION"
+                                    ? "⚡ Ẩn dụ hợp lý (Plausible Connection)"
+                                    : "? Nguồn gốc chưa rõ (Uncertain)"}
+                                </span>
+                              </div>
+
+                              {/* 1. Hình ảnh ban đầu */}
+                              <div className="space-y-1">
+                                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                                  <span>🎨</span> Hình ảnh ban đầu
+                                </div>
+                                <p className="text-slate-800 text-[11px] leading-relaxed italic bg-white/70 p-2 rounded-lg border border-amber-100">
+                                  "{etym.literal_image}"
+                                </p>
+                              </div>
+
+                              {/* 2. Cách hình thành nghĩa bóng */}
+                              <div className="space-y-1">
+                                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                                  <span>🧠</span> Cách hình thành nghĩa bóng
+                                </div>
+                                <p className="text-slate-700 text-[11px] leading-relaxed">
+                                  {etym.figurative_connection}
+                                </p>
+                              </div>
+
+                              {/* 3. Bối cảnh lịch sử / văn hóa */}
+                              {etym.historical_context && (
+                                <div className="space-y-1">
+                                  <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                                    <History className="w-3 h-3 text-amber-700" /> Bối cảnh lịch sử / văn hóa
+                                  </div>
+                                  <p className="text-slate-600 text-[11px] leading-relaxed">
+                                    {etym.historical_context}
+                                  </p>
+                                </div>
+                              )}
+
+                              {/* 4. Ví dụ để hiểu sâu */}
+                              {etym.deep_example && (
+                                <div className="space-y-1">
+                                  <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                                    <FileCheck2 className="w-3 h-3 text-emerald-700" /> Ví dụ để hiểu sâu
+                                  </div>
+                                  <p className="text-slate-700 text-[11px] leading-relaxed bg-amber-100/40 p-2 rounded-lg border border-amber-200/50">
+                                    {etym.deep_example}
+                                  </p>
+                                </div>
+                              )}
+
+                              {/* 5. Nguồn đối chiếu & Nhãn bản quyền NextBand */}
+                              <div className="pt-2 border-t border-amber-200/60 text-[10px] text-slate-500 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5">
+                                <div>
+                                  <span className="font-semibold text-slate-600">Tư liệu: </span>
+                                  {etym.sources.map((s, idx) => (
+                                    <span key={idx}>
+                                      {s.url ? (
+                                        <a
+                                          href={s.url}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                          className="text-amber-800 underline hover:text-amber-950 inline-flex items-center gap-0.5"
+                                        >
+                                          {s.title}
+                                          <ExternalLink className="w-2.5 h-2.5" />
+                                        </a>
+                                      ) : (
+                                        <span>{s.title}</span>
+                                      )}
+                                      {idx < etym.sources.length - 1 ? " • " : ""}
+                                    </span>
+                                  ))}
+                                </div>
+                                <span className="text-[9px] text-amber-700 font-medium italic">
+                                  Biên soạn bởi Nghiên cứu Học thuật NextBand
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
@@ -568,13 +1020,16 @@ export default function EnglishIdiomsHubPage() {
         {/* TAB 2: PRACTICE */}
         {activeTab === "practice" && (
           <div className="space-y-8">
-            {/* EXERCISE 1.3: GROUP SORTING */}
-            {ex13 && (
-              <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
-                <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
-                  <span className="px-3 py-1 rounded-md bg-[#002147] text-white text-xs font-bold whitespace-nowrap">
-                    Bài tập 1.3
-                  </span>
+            {/* ===================== UNIT 1 EXERCISES ===================== */}
+            {selectedUnitId === 1 && (
+              <>
+                {/* EXERCISE 1.3: GROUP SORTING */}
+                {ex13 && (
+                  <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
+                    <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
+                      <span className="px-3 py-1 rounded-md bg-[#002147] text-white text-xs font-bold whitespace-nowrap">
+                        Bài tập 1.3
+                      </span>
                   <div>
                     <h3 className="text-base sm:text-lg font-bold text-slate-900">{ex13.instruction}</h3>
                     <p className="text-xs text-slate-500 mt-0.5">
@@ -1118,6 +1573,674 @@ export default function EnglishIdiomsHubPage() {
                   )}
                 </div>
               </div>
+            )}
+
+            {/* EXERCISE 1.8: CONCEPTUAL IMAGE & FIGURATIVE MATCHING */}
+            {ex18 && (
+              <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
+                <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
+                  <span className="px-3 py-1 rounded-md bg-amber-600 text-white text-xs font-bold whitespace-nowrap flex items-center gap-1">
+                    <Compass className="w-3.5 h-3.5" />
+                    Bài tập 1.8
+                  </span>
+                  <div>
+                    <h3 className="text-base sm:text-lg font-bold text-slate-900">{ex18.instruction}</h3>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      {ex18.description || "Kết nối hình tượng ban đầu với nghĩa bóng • Hiểu sâu cơ chế ngôn ngữ học"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  {ex18.questions?.map((q: any) => {
+                    const status = checked18[q.question_number];
+                    return (
+                      <div key={q.question_number} className="p-4 rounded-2xl bg-amber-50/40 border border-amber-200/70 space-y-3">
+                        <div className="flex items-start gap-2.5 text-xs sm:text-sm font-semibold text-slate-900">
+                          <span className="w-6 h-6 rounded-full bg-amber-200 text-amber-900 font-bold flex items-center justify-center shrink-0 text-xs">
+                            {q.question_number}
+                          </span>
+                          <div>
+                            <span className="inline-block px-2 py-0.5 rounded bg-amber-100 text-amber-900 font-mono font-bold text-xs mr-2">
+                              {q.target_idiom}
+                            </span>
+                            {q.prompt}
+                          </div>
+                        </div>
+
+                        <div className="space-y-2 pl-8">
+                          {q.options?.map((opt: { key: string; text: string }) => {
+                            const isSelected = selected18[q.question_number] === opt.key;
+                            return (
+                              <label
+                                key={opt.key}
+                                className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition text-xs sm:text-sm ${
+                                  isSelected
+                                    ? "bg-amber-100/80 border-amber-400 font-semibold text-amber-950"
+                                    : "bg-white border-slate-200 hover:bg-slate-50 text-slate-800"
+                                }`}
+                              >
+                                <input
+                                  type="radio"
+                                  name={`q18-${q.question_number}`}
+                                  value={opt.key}
+                                  checked={isSelected}
+                                  onChange={() =>
+                                    setSelected18((prev) => ({ ...prev, [q.question_number]: opt.key }))
+                                  }
+                                  className="mt-0.5 text-amber-600 focus:ring-amber-500"
+                                />
+                                <div>
+                                  <strong className="mr-1 text-amber-900">{opt.key}.</strong>
+                                  {opt.text}
+                                </div>
+                              </label>
+                            );
+                          })}
+                        </div>
+
+                        {status !== undefined && (
+                          <div
+                            className={`p-3 rounded-xl text-xs leading-relaxed ${
+                              status === true
+                                ? "bg-emerald-100/70 text-emerald-900 border border-emerald-300 font-medium"
+                                : "bg-red-100/70 text-red-900 border border-red-300 font-medium"
+                            }`}
+                          >
+                            <div className="flex items-center gap-1.5 font-bold">
+                              {status === true ? (
+                                <CheckCircle2 className="w-4 h-4 text-emerald-700" />
+                              ) : (
+                                <XCircle className="w-4 h-4 text-red-700" />
+                              )}
+                              <span>
+                                {status === true ? "Chính xác!" : "Chưa chuẩn xác."} (Đáp án chuẩn: {q.correct_key})
+                              </span>
+                            </div>
+                            <div className="mt-1.5 text-slate-700 font-normal">{q.explanation}</div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={reset18}
+                    className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+                  >
+                    Làm lại
+                  </button>
+                  <button
+                    type="button"
+                    onClick={check18}
+                    className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold cursor-pointer"
+                  >
+                    Kiểm tra bài hình tượng gốc
+                  </button>
+                  {showRetry18 && (
+                    <button
+                      type="button"
+                      onClick={retry18}
+                      className="px-4 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold cursor-pointer flex items-center gap-1.5"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      Luyện lại câu sai
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+              </>
+            )}
+
+            {/* ===================== UNIT 2 EXERCISES ===================== */}
+            {selectedUnitId === 2 && (
+              <>
+                {/* EXERCISE 2.3: DEFINITION MATCHING */}
+                {ex23 && (
+                  <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
+                    <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
+                      <span className="px-3 py-1 rounded-md bg-[#002147] text-white text-xs font-bold whitespace-nowrap">
+                        Bài tập 2.3
+                      </span>
+                      <div>
+                        <h3 className="text-base sm:text-lg font-bold text-slate-900">{ex23.instruction}</h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Nối thành ngữ với định nghĩa tương ứng • Chọn định nghĩa đúng cho từng thành ngữ
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      {ex23.questions?.map((q) => {
+                        const status = checked23[q.question_number];
+                        return (
+                          <div
+                            key={q.question_number}
+                            className={`p-4 rounded-2xl border text-xs sm:text-sm space-y-3 transition ${
+                              status === true
+                                ? "bg-emerald-50/60 border-emerald-300"
+                                : status === false
+                                ? "bg-red-50/60 border-red-300"
+                                : "bg-slate-50 border-slate-200"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="w-6 h-6 rounded-full bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs shrink-0">
+                                {q.question_number}
+                              </span>
+                              <span className="font-extrabold text-slate-900 text-sm">
+                                {q.term}
+                              </span>
+                            </div>
+
+                            <select
+                              value={selected23[q.question_number] || ""}
+                              onChange={(e) =>
+                                setSelected23((prev) => ({ ...prev, [q.question_number]: e.target.value }))
+                              }
+                              className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-sky-500"
+                            >
+                              <option value="">-- Chọn định nghĩa phù hợp --</option>
+                              {ex23.questions.map((opt) => (
+                                <option key={opt.target_definition} value={opt.target_definition}>
+                                  {opt.target_definition}
+                                </option>
+                              ))}
+                            </select>
+
+                            {status === true && (
+                              <div className="text-xs font-semibold text-emerald-800">
+                                ✓ Chính xác! Định nghĩa: "{q.target_definition}"
+                              </div>
+                            )}
+                            {status === false && (
+                              <div className="text-xs text-red-800">
+                                ✗ Chưa chính xác. Đáp án đúng: <strong>"{q.target_definition}"</strong>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={reset23}
+                        className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+                      >
+                        Làm lại
+                      </button>
+                      <button
+                        type="button"
+                        onClick={check23}
+                        className="px-4 py-2 rounded-xl bg-[#002147] hover:bg-[#0369a1] text-white text-xs font-bold cursor-pointer"
+                      >
+                        Kiểm tra nối định nghĩa
+                      </button>
+                      {showRetry23 && (
+                        <button
+                          type="button"
+                          onClick={retry23}
+                          className="px-4 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold cursor-pointer flex items-center gap-1.5"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          Luyện lại câu sai
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* EXERCISE 2.5: FILL IN THE BLANKS */}
+                {ex25 && (
+                  <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
+                    <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
+                      <span className="px-3 py-1 rounded-md bg-[#0284c7] text-white text-xs font-bold whitespace-nowrap">
+                        Bài tập 2.5
+                      </span>
+                      <div>
+                        <h3 className="text-base sm:text-lg font-bold text-slate-900">{ex25.instruction}</h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Điền thành ngữ chính xác vào chỗ trống theo ngữ cảnh
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      {ex25.questions?.map((q) => {
+                        const status = checked25[q.question_number];
+                        return (
+                          <div
+                            key={q.question_number}
+                            className={`p-4 rounded-2xl border text-xs sm:text-sm transition ${
+                              status === true
+                                ? "bg-emerald-50/60 border-emerald-300"
+                                : status === false
+                                ? "bg-red-50/60 border-red-300"
+                                : "bg-slate-50 border-slate-200"
+                            }`}
+                          >
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="w-6 h-6 rounded-full bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs shrink-0">
+                                {q.question_number}
+                              </span>
+                              <span className="text-slate-800">{q.prompt_prefix}</span>
+                              <input
+                                type="text"
+                                value={answers25[q.question_number] || ""}
+                                onChange={(e) =>
+                                  setAnswers25((prev) => ({ ...prev, [q.question_number]: e.target.value }))
+                                }
+                                placeholder="Nhập thành ngữ..."
+                                className="px-2.5 py-1 bg-white border border-slate-300 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-sky-500"
+                              />
+                              <span className="text-slate-800">{q.prompt_suffix}</span>
+                            </div>
+
+                            {q.hint && (
+                              <div className="mt-1 text-[11px] text-slate-500 italic pl-8">
+                                Gợi ý: {q.hint}
+                              </div>
+                            )}
+
+                            {status === true && (
+                              <div className="mt-2 text-xs font-semibold text-emerald-800 pl-8">
+                                ✓ Chính xác! Đáp án: <strong>{q.target_answer}</strong>
+                              </div>
+                            )}
+                            {status === false && (
+                              <div className="mt-2 text-xs text-red-800 pl-8">
+                                ✗ Chưa chính xác. Đáp án đúng: <strong>{q.target_answer}</strong>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={reset25}
+                        className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+                      >
+                        Làm lại
+                      </button>
+                      <button
+                        type="button"
+                        onClick={check25}
+                        className="px-4 py-2 rounded-xl bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold cursor-pointer"
+                      >
+                        Kiểm tra điền từ
+                      </button>
+                      {showRetry25 && (
+                        <button
+                          type="button"
+                          onClick={retry25}
+                          className="px-4 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold cursor-pointer flex items-center gap-1.5"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          Luyện lại câu sai
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* EXERCISE 2.6: MULTIPLE CHOICE */}
+                {ex26 && (
+                  <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
+                    <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
+                      <span className="px-3 py-1 rounded-md bg-[#002147] text-white text-xs font-bold whitespace-nowrap">
+                        Bài tập 2.6
+                      </span>
+                      <div>
+                        <h3 className="text-base sm:text-lg font-bold text-slate-900">{ex26.instruction}</h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Chọn cụm từ chính xác nhất để hoàn thành từng câu
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-5">
+                      {ex26.questions?.map((q) => {
+                        const status = checked26[q.question_number];
+                        return (
+                          <div
+                            key={q.question_number}
+                            className={`p-5 rounded-2xl border text-xs sm:text-sm space-y-3 transition ${
+                              status === true
+                                ? "bg-emerald-50/60 border-emerald-300"
+                                : status === false
+                                ? "bg-red-50/60 border-red-300"
+                                : "bg-slate-50 border-slate-200"
+                            }`}
+                          >
+                            <div className="font-semibold text-slate-900 flex items-start gap-2">
+                              <span className="w-5 h-5 rounded-full bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs shrink-0">
+                                {q.question_number}
+                              </span>
+                              <div>{q.prompt}</div>
+                            </div>
+
+                            <div className="space-y-2 pl-7">
+                              {q.options?.map((opt: { key: string; text: string }) => {
+                                const isSelected = selected26[q.question_number] === opt.key;
+                                return (
+                                  <label
+                                    key={opt.key}
+                                    className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition text-xs sm:text-sm ${
+                                      isSelected
+                                        ? "bg-sky-50 border-sky-400 font-semibold text-sky-950"
+                                        : "bg-white border-slate-200 hover:bg-slate-50 text-slate-800"
+                                    }`}
+                                  >
+                                    <input
+                                      type="radio"
+                                      name={`q26-${q.question_number}`}
+                                      value={opt.key}
+                                      checked={isSelected}
+                                      onChange={() =>
+                                        setSelected26((prev) => ({ ...prev, [q.question_number]: opt.key }))
+                                      }
+                                      className="mt-0.5"
+                                    />
+                                    <div>
+                                      <strong className="mr-1">{opt.key}.</strong>
+                                      {opt.text}
+                                    </div>
+                                  </label>
+                                );
+                              })}
+                            </div>
+
+                            {status !== undefined && (
+                              <div
+                                className={`p-3 rounded-xl text-xs leading-relaxed ${
+                                  status === true
+                                    ? "bg-emerald-100/70 text-emerald-900 border border-emerald-300 font-medium"
+                                    : "bg-red-100/70 text-red-900 border border-red-300 font-medium"
+                                }`}
+                              >
+                                <span className="font-bold">
+                                  {status === true ? "✓ Chính xác!" : "✗ Chưa chuẩn xác."} (Đáp án đúng: {q.correct_key})
+                                </span>
+                                <div className="mt-1 text-slate-700 font-normal">{q.explanation}</div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={reset26}
+                        className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+                      >
+                        Làm lại
+                      </button>
+                      <button
+                        type="button"
+                        onClick={check26}
+                        className="px-4 py-2 rounded-xl bg-[#002147] hover:bg-[#0369a1] text-white text-xs font-bold cursor-pointer"
+                      >
+                        Kiểm tra trắc nghiệm
+                      </button>
+                      {showRetry26 && (
+                        <button
+                          type="button"
+                          onClick={retry26}
+                          className="px-4 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold cursor-pointer flex items-center gap-1.5"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          Luyện lại câu sai
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* EXERCISE 2.7: SITUATIONAL JUDGMENT */}
+                {ex27 && (
+                  <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
+                    <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
+                      <span className="px-3 py-1 rounded-md bg-purple-600 text-white text-xs font-bold whitespace-nowrap">
+                        Bài tập 2.7 🌟 Vận dụng
+                      </span>
+                      <div>
+                        <h3 className="text-base sm:text-lg font-bold text-slate-900">{ex27.instruction}</h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Vận dụng thành ngữ theo tình huống thực tế • Chọn cách diễn đạt tự nhiên và đúng ngữ nghĩa
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-5">
+                      {ex27.questions?.map((q) => {
+                        const status = checked27[q.question_number];
+                        return (
+                          <div
+                            key={q.question_number}
+                            className={`p-5 rounded-2xl border text-xs sm:text-sm space-y-3 transition ${
+                              status === true
+                                ? "bg-emerald-50/60 border-emerald-300"
+                                : status === false
+                                ? "bg-red-50/60 border-red-300"
+                                : "bg-slate-50 border-slate-200"
+                            }`}
+                          >
+                            <div className="font-semibold text-slate-900 flex items-start gap-2">
+                              <span className="w-5 h-5 rounded-full bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-xs shrink-0">
+                                {q.question_number}
+                              </span>
+                              <div>{q.situation}</div>
+                            </div>
+
+                            <div className="space-y-2 pl-7">
+                              {q.options?.map((opt: { key: string; text: string }) => {
+                                const isSelected = selected27[q.question_number] === opt.key;
+                                return (
+                                  <label
+                                    key={opt.key}
+                                    className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition text-xs sm:text-sm ${
+                                      isSelected
+                                        ? "bg-sky-50 border-sky-400 font-semibold text-sky-950"
+                                        : "bg-white border-slate-200 hover:bg-slate-50 text-slate-800"
+                                    }`}
+                                  >
+                                    <input
+                                      type="radio"
+                                      name={`q27-${q.question_number}`}
+                                      value={opt.key}
+                                      checked={isSelected}
+                                      onChange={() =>
+                                        setSelected27((prev) => ({ ...prev, [q.question_number]: opt.key }))
+                                      }
+                                      className="mt-0.5"
+                                    />
+                                    <div>
+                                      <strong className="mr-1">{opt.key}.</strong>
+                                      {opt.text}
+                                    </div>
+                                  </label>
+                                );
+                              })}
+                            </div>
+
+                            {status !== undefined && (
+                              <div
+                                className={`p-3 rounded-xl text-xs leading-relaxed ${
+                                  status === true
+                                    ? "bg-emerald-100/70 text-emerald-900 border border-emerald-300 font-medium"
+                                    : "bg-red-100/70 text-red-900 border border-red-300 font-medium"
+                                }`}
+                              >
+                                <span className="font-bold">
+                                  {status === true ? "✓ Chính xác!" : "✗ Chưa chuẩn xác."} (Đáp án đúng: {q.correct_key})
+                                </span>
+                                <div className="mt-1 text-slate-700 font-normal">{q.explanation}</div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={reset27}
+                        className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+                      >
+                        Làm lại
+                      </button>
+                      <button
+                        type="button"
+                        onClick={check27}
+                        className="px-4 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold cursor-pointer"
+                      >
+                        Kiểm tra bài tình huống
+                      </button>
+                      {showRetry27 && (
+                        <button
+                          type="button"
+                          onClick={retry27}
+                          className="px-4 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold cursor-pointer flex items-center gap-1.5"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          Luyện lại câu sai
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* EXERCISE 2.8: CONCEPTUAL IMAGE & FIGURATIVE MATCHING */}
+                {ex28 && (
+                  <div className="bg-white rounded-3xl border border-[#EAE3D9] p-6 sm:p-8 space-y-6 shadow-xs">
+                    <div className="flex items-start gap-3 border-b border-slate-100 pb-4">
+                      <span className="px-3 py-1 rounded-md bg-amber-600 text-white text-xs font-bold whitespace-nowrap flex items-center gap-1">
+                        <Compass className="w-3.5 h-3.5" />
+                        Bài tập 2.8
+                      </span>
+                      <div>
+                        <h3 className="text-base sm:text-lg font-bold text-slate-900">{ex28.instruction}</h3>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          {ex28.description || "Kết nối hình tượng ban đầu với nghĩa bóng • Hiểu sâu cơ chế ngôn ngữ học"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-6">
+                      {ex28.questions?.map((q: any) => {
+                        const status = checked28[q.question_number];
+                        return (
+                          <div key={q.question_number} className="p-4 rounded-2xl bg-amber-50/40 border border-amber-200/70 space-y-3">
+                            <div className="flex items-start gap-2.5 text-xs sm:text-sm font-semibold text-slate-900">
+                              <span className="w-6 h-6 rounded-full bg-amber-200 text-amber-900 font-bold flex items-center justify-center shrink-0 text-xs">
+                                {q.question_number}
+                              </span>
+                              <div>
+                                <span className="inline-block px-2 py-0.5 rounded bg-amber-100 text-amber-900 font-mono font-bold text-xs mr-2">
+                                  {q.target_idiom}
+                                </span>
+                                {q.prompt}
+                              </div>
+                            </div>
+
+                            <div className="space-y-2 pl-8">
+                              {q.options?.map((opt: { key: string; text: string }) => {
+                                const isSelected = selected28[q.question_number] === opt.key;
+                                return (
+                                  <label
+                                    key={opt.key}
+                                    className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition text-xs sm:text-sm ${
+                                      isSelected
+                                        ? "bg-amber-100/80 border-amber-400 font-semibold text-amber-950"
+                                        : "bg-white border-slate-200 hover:bg-slate-50 text-slate-800"
+                                    }`}
+                                  >
+                                    <input
+                                      type="radio"
+                                      name={`q28-${q.question_number}`}
+                                      value={opt.key}
+                                      checked={isSelected}
+                                      onChange={() =>
+                                        setSelected28((prev) => ({ ...prev, [q.question_number]: opt.key }))
+                                      }
+                                      className="mt-0.5 text-amber-600 focus:ring-amber-500"
+                                    />
+                                    <div>
+                                      <strong className="mr-1 text-amber-900">{opt.key}.</strong>
+                                      {opt.text}
+                                    </div>
+                                  </label>
+                                );
+                              })}
+                            </div>
+
+                            {status !== undefined && (
+                              <div
+                                className={`p-3 rounded-xl text-xs leading-relaxed ${
+                                  status === true
+                                    ? "bg-emerald-100/70 text-emerald-900 border border-emerald-300 font-medium"
+                                    : "bg-red-100/70 text-red-900 border border-red-300 font-medium"
+                                }`}
+                              >
+                                <div className="flex items-center gap-1.5 font-bold">
+                                  {status === true ? (
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-700" />
+                                  ) : (
+                                    <XCircle className="w-4 h-4 text-red-700" />
+                                  )}
+                                  <span>
+                                    {status === true ? "Chính xác!" : "Chưa chuẩn xác."} (Đáp án chuẩn: {q.correct_key})
+                                  </span>
+                                </div>
+                                <div className="mt-1.5 text-slate-700 font-normal">{q.explanation}</div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={reset28}
+                        className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold cursor-pointer"
+                      >
+                        Làm lại
+                      </button>
+                      <button
+                        type="button"
+                        onClick={check28}
+                        className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold cursor-pointer"
+                      >
+                        Kiểm tra bài hình tượng gốc
+                      </button>
+                      {showRetry28 && (
+                        <button
+                          type="button"
+                          onClick={retry28}
+                          className="px-4 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 text-xs font-bold cursor-pointer flex items-center gap-1.5"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          Luyện lại câu sai
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}
