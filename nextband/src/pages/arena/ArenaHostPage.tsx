@@ -849,24 +849,31 @@ export default function ArenaHostPage() {
               PHÂN PHỐI ĐÁP ÁN CỦA LỚP (CÂU {questionIndex + 1}/{totalQuestions})
             </div>
 
-            {/* Distribution Bar Chart */}
-            <div className="grid grid-cols-4 gap-4 max-w-xl mx-auto items-end h-48 pt-6">
+            {/* Distribution Bar Chart - Cố định track chiều cao, thanh % co giãn độc lập, nhãn không bị tràn */}
+            <div className="grid grid-cols-4 gap-4 max-w-xl mx-auto h-56 pt-2 pb-2">
               {currentQuestion.options.map((opt) => {
                 const pct = distribution[opt.label] || 0;
                 const isCorrect = opt.id === currentQuestion.correctOptionId;
                 return (
-                  <div key={opt.id} className="flex flex-col items-center gap-2 h-full justify-end">
-                    <span className="text-sm font-black text-white">{pct}%</span>
-                    <div
-                      className={`w-full rounded-xl transition-all duration-700 ${
-                        state !== 'REVEAL_DISTRIBUTION' && isCorrect
-                          ? 'bg-emerald-500 shadow-lg shadow-emerald-500/30'
-                          : 'bg-purple-950/60 border border-purple-800/40'
-                      }`}
-                      style={{ height: `${Math.max(15, pct * 1.8)}px` }}
-                    />
+                  <div key={opt.id} className="flex flex-col items-center h-full justify-between">
+                    {/* Phần trên: Số % và Cột Bar trong track cố định */}
+                    <div className="w-full flex-1 flex flex-col items-center justify-end min-h-0 pb-2">
+                      <span className="text-sm font-black text-white mb-1.5">{pct}%</span>
+                      <div className="w-full max-w-[80px] h-32 flex items-end justify-center">
+                        <div
+                          className={`w-full rounded-xl transition-all duration-700 ${
+                            state !== 'REVEAL_DISTRIBUTION' && isCorrect
+                              ? 'bg-emerald-500 shadow-lg shadow-emerald-500/30'
+                              : 'bg-purple-950/80 border border-purple-800/60'
+                          }`}
+                          style={{ height: `${Math.max(8, pct)}%` }}
+                        />
+                      </div>
+                    </div>
+                    {/* Phần dưới: Nhãn đáp án luôn cố định bên dưới, không bị cột bar đè */}
                     <span
-                      className={`text-xs font-bold truncate max-w-full px-1 ${
+                      title={`${opt.label}. ${opt.text}`}
+                      className={`text-xs font-bold truncate w-full px-1 py-1 text-center block ${
                         state !== 'REVEAL_DISTRIBUTION' && isCorrect
                           ? 'text-emerald-400 font-black'
                           : 'text-purple-300'
@@ -881,11 +888,11 @@ export default function ArenaHostPage() {
 
             {/* Misconception Academic Diagnostic */}
             {state === 'TEACHER_DEBRIEF' && roomSettings.showDebrief && currentQuestion.misconception && (
-              <div className="max-w-xl mx-auto p-4 bg-red-950/40 border border-red-500/30 rounded-2xl text-left animate-fadeIn space-y-1">
+              <div className="max-w-xl mx-auto mt-4 p-4 bg-red-950/60 border border-red-500/40 rounded-2xl text-left animate-fadeIn space-y-1 shadow-lg">
                 <span className="text-xs font-bold text-red-400 uppercase tracking-wider block mb-1">
                   💡 Chẩn đoán Bẫy Misconception: {currentQuestion.misconception.diagnosticTitle}
                 </span>
-                <p className="text-sm text-slate-300 leading-relaxed font-medium">
+                <p className="text-sm text-slate-200 leading-relaxed font-medium">
                   {currentQuestion.misconception.explanation}
                 </p>
               </div>

@@ -74,7 +74,26 @@ export default function AdminGameArenaPage() {
   });
 
   const examsList = examsData?.data || [];
-  const filteredExams = examsList.filter((ex: any) => 
+
+  // Helper parse số tuần và ngày từ title bài học (W1 - D1 -> week 1, day 1)
+  const parseExamOrder = (exam: any) => {
+    const title = (exam.title || "").toUpperCase();
+    if (title.includes("FINAL")) return 9999;
+    if (title.includes("WRITING TEST")) return 9998;
+    const match = title.match(/W(\d+)\s*-\s*D(\d+)/i);
+    if (match) {
+      const week = parseInt(match[1], 10);
+      const day = parseInt(match[2], 10);
+      return week * 10 + day;
+    }
+    return (exam.week || 99) * 10;
+  };
+
+  const sortedExams = [...examsList].sort((a: any, b: any) => {
+    return parseExamOrder(a) - parseExamOrder(b);
+  });
+
+  const filteredExams = sortedExams.filter((ex: any) => 
     !searchFilter.trim() || ex.title?.toLowerCase().includes(searchFilter.toLowerCase().trim())
   );
 

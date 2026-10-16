@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { ARENA_STANDARD_QUESTIONS, ArenaQuestion, ArenaQuestionOption } from "./arena-questions.data.js";
+import { DOER_ARENA_LESSON_QUESTIONS, matchDoerLessonKey } from "./doer-questions-bank.data.js";
 
 /**
  * Strips HTML tags and decodes common HTML entities for crisp text display in Arena HUD
@@ -153,7 +154,27 @@ export class ArenaBankService {
         return playableQuestions;
       }
 
-      // Fallback if exam has only open essay/recording questions
+      // Check DOER Coursebook questions bank matching exam.title
+      if (exam && exam.title) {
+        const doerKey = matchDoerLessonKey(exam.title);
+        if (doerKey && DOER_ARENA_LESSON_QUESTIONS[doerKey]) {
+          const bankQuestions = DOER_ARENA_LESSON_QUESTIONS[doerKey];
+          return bankQuestions.map((bq, idx) => {
+            const correctOpt = bq.options.find((o) => o.id === bq.correctOptionId) || bq.options[0];
+            return {
+              id: bq.id,
+              roundIndex: idx,
+              prompt: bq.prompt,
+              options: bq.options as ArenaQuestionOption[],
+              correctOptionId: bq.correctOptionId,
+              correctAnswerText: `${correctOpt.label}. ${correctOpt.text}`,
+              correctExplanation: bq.explanation,
+            };
+          });
+        }
+      }
+
+      // Fallback if exam has only open essay/recording questions and no DOER bank match
       return ARENA_STANDARD_QUESTIONS;
     } catch (err) {
       console.warn("[ArenaBankService] Lỗi nạp câu hỏi từ examId:", examId, err);
