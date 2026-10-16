@@ -110,6 +110,13 @@ const getUnitMeta = (unitId: number) => {
         descVi: "Nắm vững sắc thái alluring, discursive, slovenly, abhorrent, rattled và các cấu trúc biến đổi tính từ C1.",
         pages: "Trang 35–39"
       };
+    case 10:
+      return {
+        shortLabel: "Unit 10: Occupations",
+        themeVi: "Nghề nghiệp, Tội phạm & Danh từ Tập hợp",
+        descVi: "Phân biệt peddler, milliner, thatcher, usurer, poacher, perjurer, stowaway và các danh từ chỉ bầy đàn C1.",
+        pages: "Trang 40–45"
+      };
     default:
       return {
         shortLabel: `Unit ${unitId}`,
@@ -1587,7 +1594,9 @@ export const VocabC1Page: React.FC = () => {
                   ? (stage6Index < 10 ? "Ex A & B (Trang 27)" : "Phần B (Trang 30)")
                   : VOCAB_C1_UNIT_1.unitId === 8
                   ? (stage6Index < 10 ? "Task Three (Trang 33)" : "Phần B (Trang 34)")
-                  : (stage6Index < 10 ? "Prepositions (Trang 36-37)" : "Phần B (Trang 39)")}
+                  : VOCAB_C1_UNIT_1.unitId === 9
+                  ? (stage6Index < 10 ? "Prepositions (Trang 36-37)" : "Phần B (Trang 39)")
+                  : (stage6Index < 10 ? "Crimes & Roles (Trang 40)" : "Phần B (Trang 45)")}
               </span>
             </div>
 

@@ -9644,7 +9644,1015 @@ export const VOCAB_C1_UNIT_9: VocabC1Unit = {
 };
 
 
-export const VOCAB_C1_UNITS: VocabC1Unit[] = [VOCAB_C1_UNIT_1, VOCAB_C1_UNIT_2, VOCAB_C1_UNIT_3, VOCAB_C1_UNIT_4, VOCAB_C1_UNIT_5, VOCAB_C1_UNIT_6, VOCAB_C1_UNIT_7, VOCAB_C1_UNIT_8, VOCAB_C1_UNIT_9];
+
+export const VOCAB_C1_UNIT_10: VocabC1Unit = {
+  unitId: 10,
+  title: "Unit 10: Occupations, Crimes & Collective Entities",
+  subtitle: "The Vocabulary Files - Level C1 (Pages 40-45)",
+
+  // 1. Words in Action (10 Traditional Occupations from Page 40 Exercise A)
+  wordsInAction: [
+    {
+      id: "u10-wia-1",
+      word: "peddler",
+      ipa: "/ˈped.lər/",
+      nuance: "[Wandering merchant traveling around selling small wares and trinkets]",
+      register: "Historical / Descriptive",
+      collocations: ["itinerant peddler", "peddler of wares", "street peddler", "peddler of rumors"],
+      enDef: "A person who travels from place to place selling small items, wares, or trinkets; a hawker.",
+      viDef: "Người bán hàng rong, kẻ đi chào bán đồ lặt vặt lưu động từ nơi này sang nơi khác.",
+      example: "In eighteenth-century villages, an itinerant **peddler** would arrive periodically selling ribbons and needles.",
+      targetKeyword: "peddler"
+    },
+    {
+      id: "u10-wia-2",
+      word: "cobbler",
+      ipa: "/ˈkɒb.lər/",
+      nuance: "[Craftsman who mends, patches, and repairs worn shoes and boots]",
+      register: "Traditional / Craft",
+      collocations: ["village cobbler", "master cobbler", "cobbler's bench", "mend by a cobbler"],
+      enDef: "A craftsman whose job is mending, patching, and repairing shoes and footwear.",
+      viDef: "Thợ đóng/sửa giày dép (chuyên vá víu và phục hồi đế giày hỏng).",
+      example: "He brought his favourite leather hiking boots to the neighborhood **cobbler** to be resoled.",
+      targetKeyword: "cobbler"
+    },
+    {
+      id: "u10-wia-3",
+      word: "potter",
+      ipa: "/ˈpɒt.ər/",
+      nuance: "[Artisan who molds earthenware vessels and clay pots on a wheel]",
+      register: "Craft / Artistic",
+      collocations: ["master potter", "potter's wheel", "earthenware potter", "potter's clay"],
+      enDef: "A skilled person who makes clay pots, dishes, and artistic earthenware on a spinning wheel.",
+      viDef: "Thợ gốm, nghệ nhân nặn đồ gốm và đồ sành sứ từ đất sét.",
+      example: "The **potter** skillfully shaped the spinning lump of damp clay into an exquisite ornamental vase.",
+      targetKeyword: "potter"
+    },
+    {
+      id: "u10-wia-4",
+      word: "playwright",
+      ipa: "/ˈpleɪ.raɪt/",
+      nuance: "[Author who crafts and composes theatrical drama scripts]",
+      register: "Literary / Formal",
+      collocations: ["prolific playwright", "celebrated playwright", "modern playwright", "playwright's script"],
+      enDef: "A person who writes theatrical plays and dramatic texts for stage performance; a dramatist.",
+      viDef: "Nhà soạn kịch, tác giả kịch bản sân khấu chuyên nghiệp.",
+      example: "Shakespeare remains the most universally acclaimed **playwright** in the history of English literature.",
+      targetKeyword: "playwright"
+    },
+    {
+      id: "u10-wia-5",
+      word: "milliner",
+      ipa: "/ˈmɪl.ɪ.nər/",
+      nuance: "[Specialist artisan designing, making and trimming women's hats]",
+      register: "Fashion / Haute Couture",
+      collocations: ["exclusive milliner", "high-end milliner", "hats from a milliner", "milliner's boutique"],
+      enDef: "A person who designs, makes, trims, or sells women's hats, bonnets, and formal headwear.",
+      viDef: "Thợ may/bán mũ nón thời trang (đặc biệt là mũ kiểu cách quý phái cho phụ nữ).",
+      example: "The royal bride commissioned an internationally famous **milliner** to design her wedding headdress.",
+      targetKeyword: "milliner"
+    },
+    {
+      id: "u10-wia-6",
+      word: "fishmonger",
+      ipa: "/ˈfɪʃˌmʌŋ.ɡər/",
+      nuance: "[Merchant or shopkeeper who cleans and sells fresh edible fish]",
+      register: "Commerce / Traditional",
+      collocations: ["local fishmonger", "fishmonger's slab", "fishmonger's shop", "licensed fishmonger"],
+      enDef: "A merchant or shopkeeper whose business is the sale of raw fish, seafood, and crustaceans.",
+      viDef: "Người bán cá, chủ tiệm kinh doanh hải sản tươi sống.",
+      example: "Every dawn the chef visits the harbor **fishmonger** to purchase fresh catch straight from trawlers.",
+      targetKeyword: "fishmonger"
+    },
+    {
+      id: "u10-wia-7",
+      word: "locksmith",
+      ipa: "/ˈlɒk.smɪθ/",
+      nuance: "[Technician who designs, installs, opens, and repairs locks and keys]",
+      register: "Technical / Practical",
+      collocations: ["call a locksmith", "emergency locksmith", "locksmith's tools", "licensed locksmith"],
+      enDef: "A specialist maker, repairer, and installer of locks, deadbolts, and security keys.",
+      viDef: "Thợ khóa (chuyên gia chế tạo, sửa chữa hoặc mở ổ khóa khi bị kẹt).",
+      example: "Having locked her car keys in the trunk, she had no choice but to summon an emergency **locksmith**.",
+      targetKeyword: "locksmith"
+    },
+    {
+      id: "u10-wia-8",
+      word: "plumber",
+      ipa: "/ˈplʌm.ər/",
+      nuance: "[Tradesman who fits and repairs water, sewage pipes and sanitary fixtures]",
+      register: "Trades / Construction",
+      collocations: ["qualified plumber", "call a plumber", "leaking pipe plumber", "emergency plumber"],
+      enDef: "A tradesperson who installs, connects, and repairs water supply, drainage pipes, and sanitation facilities.",
+      viDef: "Thợ sửa ống nước (lắp đặt đường cấp thoát nước, bồn cầu, vòi sen).",
+      example: "When the central bathroom pipe burst at midnight, we desperately needed a licensed **plumber**.",
+      targetKeyword: "plumber"
+    },
+    {
+      id: "u10-wia-9",
+      word: "thatcher",
+      ipa: "/ˈθætʃ.ər/",
+      nuance: "[Roofer building cottage roofs with bundled dried straw, rushes or reeds]",
+      register: "Traditional / Architectural",
+      collocations: ["master thatcher", "thatcher's craft", "thatcher repairing roof", "rural thatcher"],
+      enDef: "A specialist artisan who covers and repairs roofs of rustic cottages with straw, reeds, or heather.",
+      viDef: "Thợ lợp nhà tranh, thợ lợp mái bằng rơm rạ hoặc cây sậy khô kiểu thôn dã.",
+      example: "The historic English country cottage needed a seasoned **thatcher** to overhaul its deteriorating reed roof.",
+      targetKeyword: "thatcher"
+    },
+    {
+      id: "u10-wia-10",
+      word: "hardware dealer",
+      ipa: "/ˈhɑːd.weər ˈdiː.lər/",
+      nuance: "[Shopkeeper trading in metal tools, household fasteners and building gear]",
+      register: "Commerce / Retail",
+      collocations: ["local hardware dealer", "visit the hardware dealer", "hardware dealer's store", "hardware supplies"],
+      enDef: "A merchant or retailer who sells metal tools, household implements, screws, and building hardware.",
+      viDef: "Chủ cửa hàng kim khí điện máy, người bán dụng cụ cơ khí và thiết bị kim loại gia dụng.",
+      example: "He picked up a box of masonry anchors and a new spirit level from the town's **hardware dealer**.",
+      targetKeyword: "hardware dealer"
+    }
+  ],
+
+  // 2. Word Formation (10 Sentence Transformations into Adjectives from Page 43 Task Two)
+  wordFormation: [
+    {
+      id: "u10-wf-1",
+      adjective: "senile",
+      noun: "becoming increasingly senile",
+      root: "senility",
+      suffix: "-ile (Adjective)",
+      meaningVi: "Mắc chứng suy giảm trí nhớ tuổi già (thay 'affected by senility' bằng 'becoming senile')",
+      suffixChoices: ["senile", "senilous", "senilary", "seniled"],
+      ruleTip: "Biến danh từ 'senility' thành tính từ chỉ bệnh lão suy: 'senile'."
+    },
+    {
+      id: "u10-wf-2",
+      adjective: "juvenile",
+      noun: "A juvenile, aged 11",
+      root: "age",
+      suffix: "Adjective/Noun Shift",
+      meaningVi: "Thiếu niên vị thành niên (thay 'A juvenile of 11 years of age' bằng 'A juvenile, aged 11')",
+      suffixChoices: ["aged 11", "aging 11", "ageable 11", "ageless 11"],
+      ruleTip: "Rút gọn cụm chỉ độ tuổi: 'of 11 years of age' ➔ ', aged 11,'."
+    },
+    {
+      id: "u10-wf-3",
+      adjective: "illustrative",
+      noun: "is illustrative of",
+      root: "illustrate",
+      suffix: "-ive (Adjective)",
+      meaningVi: "Mang tính minh họa, chứng thực rõ nét (thay 'illustrates' bằng 'is illustrative of')",
+      suffixChoices: ["illustrative of", "illustrational with", "illustrative to", "illustrated for"],
+      ruleTip: "Cấu trúc học thuật C1: 'illustrates X' ➔ 'is illustrative of X'."
+    },
+    {
+      id: "u10-wf-4",
+      adjective: "conducive",
+      noun: "is conducive to",
+      root: "conduce",
+      suffix: "-ive (Adjective)",
+      meaningVi: "Có lợi cho, dẫn đến điều tốt (thay 'conduces to good health' bằng 'is conducive to good health')",
+      suffixChoices: ["conducive to", "conducive for", "conduction with", "conductive at"],
+      ruleTip: "Collocation C1 học thuật: 'is conducive to good health / progress'."
+    },
+    {
+      id: "u10-wf-5",
+      adjective: "knowledgeable",
+      noun: "is knowledgeable about",
+      root: "knowledge",
+      suffix: "-able (Adjective)",
+      meaningVi: "Am hiểu sâu rộng (thay 'has good knowledge of computers' bằng 'is knowledgeable about computers')",
+      suffixChoices: ["knowledgeable about", "knowing of", "knowable to", "knowledgeful in"],
+      ruleTip: "Biến đổi câu C1: 'has good knowledge of X' ➔ 'is knowledgeable about X'."
+    },
+    {
+      id: "u10-wf-6",
+      adjective: "inventive and resourceful",
+      noun: "inventive and resourceful",
+      root: "invention / resources",
+      suffix: "-ive / -ful (Dual Adjectives)",
+      meaningVi: "Sáng tạo và tháo vát (thay 'powers of invention and a person of resources' bằng 'inventive and resourceful')",
+      suffixChoices: ["inventive and resourceful", "inventable and resourced", "inventing and resource-rich", "inventionist and resourceless"],
+      ruleTip: "Biến cặp danh từ thuộc tính thành cặp tính từ cao cấp C1: 'inventive and resourceful'."
+    },
+    {
+      id: "u10-wf-7",
+      adjective: "thoughtful",
+      noun: "looked thoughtful",
+      root: "thought",
+      suffix: "-ful (Adjective)",
+      meaningVi: "Trầm ngâm đăm chiêu suy nghĩ (thay 'looked lost in thought' bằng 'looked thoughtful')",
+      suffixChoices: ["thoughtful", "thoughtless", "thought-filled", "thinking"],
+      ruleTip: "Chuyển thành ngữ 'lost in thought' sang tính từ miêu tả diện mạo: 'looked thoughtful'."
+    },
+    {
+      id: "u10-wf-8",
+      adjective: "rapid",
+      noun: "evolutionary process was rapid",
+      root: "rapidly",
+      suffix: "Adjective Shift",
+      meaningVi: "Diễn ra nhanh chóng (thay 'proceeded rapidly' bằng 'was rapid')",
+      suffixChoices: ["rapid", "rapidness", "rapidity", "rapacious"],
+      ruleTip: "Chuyển trạng từ 'proceeded rapidly' thành vị ngữ tính từ 'was rapid'."
+    },
+    {
+      id: "u10-wf-9",
+      adjective: "expansive",
+      noun: "have become expansive",
+      root: "expand",
+      suffix: "-ive (Adjective)",
+      meaningVi: "Trở nên rộng mênh mông, bành trướng (thay 'deserts have expanded' bằng 'have become expansive')",
+      suffixChoices: ["expansive", "expandable", "expanding", "expansionist"],
+      ruleTip: "Tính từ chỉ độ bao la mở rộng: 'have become / are expansive'."
+    },
+    {
+      id: "u10-wf-10",
+      adjective: "extinct",
+      noun: "have become extinct",
+      root: "extinction",
+      suffix: "-ct (State Adjective)",
+      meaningVi: "Tuyệt chủng (thay 'were driven to extinction' bằng 'have become / are extinct')",
+      suffixChoices: ["extinct", "extinctive", "extinguishable", "extinctual"],
+      ruleTip: "Biến ngữ danh từ 'driven to extinction' thành tính từ C1: 'have become extinct'."
+    }
+  ],
+
+  // 3. Confusable Words (10 Pairs from Page 43 Task Three)
+  confusableWords: [
+    {
+      id: "u10-cw-1",
+      pairKey: "conceited-deceitful",
+      wordA: "conceited",
+      wordB: "deceitful",
+      diffHighlightA: { before: "", highlight: "conceited", after: "" },
+      diffHighlightB: { before: "", highlight: "deceitful", after: "" },
+      promptSentence: "An excessively arrogant and boastful person who thinks too highly of himself is thoroughly ______.",
+      correctWord: "conceited",
+      defA: "Conceited: Tự phụ, tự cao tự đại, kiêu căng hợm mình (excessively proud of oneself).",
+      defB: "Deceitful: Lừa lọc, dối trá, xảo quyệt không đáng tin cậy (guilty of misleading others).",
+      mnemonic: "Conceited = tự phụ hợm hĩnh; Deceitful = dối trá lừa đảo."
+    },
+    {
+      id: "u10-cw-2",
+      pairKey: "lurked-larked",
+      wordA: "lurked",
+      wordB: "larked",
+      diffHighlightA: { before: "", highlight: "lurked", after: "" },
+      diffHighlightB: { before: "", highlight: "larked", after: "" },
+      promptSentence: "The stealthy street mugger ______ menacingly in the dark alley, ready to pounce on his prey.",
+      correctWord: "lurked",
+      defA: "Lurked: Rình rập, ẩn nấp trong bóng tối chờ thời cơ ra tay hại người.",
+      defB: "Larked: Đùa giỡn, bày trò vui đùa vô hại nghêu ngao (lark about/around).",
+      mnemonic: "Lurk in the dark = rình rập trong bóng tối; Lark = đùa vui tinh nghịch."
+    },
+    {
+      id: "u10-cw-3",
+      pairKey: "exhausting-exhaustive",
+      wordA: "exhausting",
+      wordB: "exhaustive",
+      diffHighlightA: { before: "", highlight: "exhausting", after: "" },
+      diffHighlightB: { before: "", highlight: "exhaustive", after: "" },
+      promptSentence: "The federal police have conducted ______ and painstaking inquiries in their effort to track down the syndicate.",
+      correctWord: "exhaustive",
+      defA: "Exhaustive: Thấu đáo, toàn diện, rà soát cặn kẽ không bỏ sót chi tiết nào (comprehensive).",
+      defB: "Exhausting: Mệt nhoài, làm kiệt sức hao tổn thể lực (tiring, fatiguing).",
+      mnemonic: "Exhaustive inquiry = điều tra toàn diện thấu đáo; Exhausting trip = chuyến đi mệt nhoài."
+    },
+    {
+      id: "u10-cw-4",
+      pairKey: "apprehensive-comprehensive",
+      wordA: "apprehensive",
+      wordB: "comprehensive",
+      diffHighlightA: { before: "", highlight: "apprehensive", after: "" },
+      diffHighlightB: { before: "", highlight: "comprehensive", after: "" },
+      promptSentence: "Are you feeling at all ______ about any unexpected pitfalls in the forthcoming examination?",
+      correctWord: "apprehensive",
+      defA: "Apprehensive: Lo âu, thấp thỏm bất an, sợ điều xui rủi xảy ra (anxious, fearful).",
+      defB: "Comprehensive: Toàn diện, bao quát mọi mặt đầy đủ (covering completely).",
+      mnemonic: "Apprehensive about exam = lo sợ thấp thỏm; Comprehensive guide = cẩm nang toàn diện."
+    },
+    {
+      id: "u10-cw-5",
+      pairKey: "inspirations-aspirations",
+      wordA: "inspirations",
+      wordB: "aspirations",
+      diffHighlightA: { before: "", highlight: "inspirations", after: "" },
+      diffHighlightB: { before: "", highlight: "aspirations", after: "" },
+      promptSentence: "Naive youthful ______ and idealistic dreams of global fame hardly ever come to full fruition.",
+      correctWord: "aspirations",
+      defA: "Aspirations: Khát vọng, hoài bão vươn tới thành công trong tương lai (ambitions, hopes).",
+      defB: "Inspirations: Nguồn cảm hứng sáng tạo đột phá xuất thần (sudden creative impulses).",
+      mnemonic: "Youthful aspirations = hoài bão tuổi trẻ; Moment of inspiration = phút thăng hoa cảm hứng."
+    },
+    {
+      id: "u10-cw-6",
+      pairKey: "pathetic-apathetic",
+      wordA: "pathetic",
+      wordB: "apathetic",
+      diffHighlightA: { before: "", highlight: "pathetic", after: "" },
+      diffHighlightB: { before: "", highlight: "apathetic", after: "" },
+      promptSentence: "It was a truly ______ and heart-rending sight to see the once-wealthy tycoon reduced to begging.",
+      correctWord: "pathetic",
+      defA: "Pathetic: Đáng thương cảm, gợi lòng xót xa thương hại; hoặc thảm hại bi đát.",
+      defB: "Apathetic: Thờ ơ, lãnh cảm vô cảm, không quan tâm đoái hoài (indifferent, uninterested).",
+      mnemonic: "Pathetic sight = cảnh tượng thảm thương; Apathetic voter = cử tri thờ ơ lãnh đạm."
+    },
+    {
+      id: "u10-cw-7",
+      pairKey: "flatter-flutter",
+      wordA: "flatter",
+      wordB: "flutter",
+      diffHighlightA: { before: "", highlight: "flatter", after: "" },
+      diffHighlightB: { before: "", highlight: "flutter", after: "" },
+      promptSentence: "When she received the urgent telegram, she was all in a frantic ______ wondering what went wrong.",
+      correctWord: "flutter",
+      defA: "Flutter (all in a flutter): Trạng thái xốn xang, hoang mang nhấp nhổm, bồn chồn đứng ngồi không yên.",
+      defB: "Flatter: Tâng bốc, nịnh hót xu nịnh để lấy lòng (praise insincerely).",
+      mnemonic: "All in a flutter = đứng ngồi không yên; Flatter boss = nịnh bợ sếp."
+    },
+    {
+      id: "u10-cw-8",
+      pairKey: "illicit-elicit",
+      wordA: "illicit",
+      wordB: "elicit",
+      diffHighlightA: { before: "", highlight: "illicit", after: "" },
+      diffHighlightB: { before: "", highlight: "elicit", after: "" },
+      promptSentence: "The clandestine and ______ sale of narcotics constitutes a severely punishable felony.",
+      correctWord: "illicit",
+      defA: "Illicit: Bất hợp pháp, lậu, phi pháp, bị luật pháp và đạo đức cấm đoán.",
+      defB: "Elicit: Khêu gợi ra, khơi gợi phản hồi hoặc rút ra thông tin từ ai đó (evoke, draw out).",
+      mnemonic: "Illicit trade = buôn bán phi pháp; Elicit a confession = gợi moi lời thú tội."
+    },
+    {
+      id: "u10-cw-9",
+      pairKey: "implicate-complicate",
+      wordA: "implicate",
+      wordB: "complicate",
+      diffHighlightA: { before: "", highlight: "implicate", after: "" },
+      diffHighlightB: { before: "", highlight: "complicate", after: "" },
+      promptSentence: "Under interrogation, the embezzler tried to ______ a high-ranking ministry official in the bribery ring.",
+      correctWord: "implicate",
+      defA: "Implicate: Kéo ai đó vào vòng lao lý, dính líu tố cáo ai là đồng phạm (involve in a crime).",
+      defB: "Complicate: Làm mọi chuyện trở nên phức tạp, rối rắm khó giải quyết (make complex).",
+      mnemonic: "Implicate in a crime = kéo ai dính líu tội phạm; Complicate matters = làm phức tạp hóa."
+    },
+    {
+      id: "u10-cw-10",
+      pairKey: "crumbled-stumbled",
+      wordA: "crumbled",
+      wordB: "stumbled",
+      diffHighlightA: { before: "", highlight: "crumbled", after: "" },
+      diffHighlightB: { before: "", highlight: "stumbled", after: "" },
+      promptSentence: "Running too hurriedly across the rocky pathway, the small toddler ______ over a loose stone and fell.",
+      correctWord: "stumbled",
+      defA: "Stumbled: Vấp chân té ngã, trượt bước loạng choạng (trip or momentarily lose balance).",
+      defB: "Crumbled: Vụn nát thành từng mảnh nhỏ, sụp đổ tan tành (bánh quy vụn, đế chế sụp đổ).",
+      mnemonic: "Stumbled over a rock = vấp đá ngã; Empire crumbled = đế chế sụp đổ vụn vỡ."
+    }
+  ],
+
+  // 4. Synonym Filter (Collective Nouns & Group Classifiers from Page 41 Exercise C)
+  synonymFilter: [
+    {
+      id: "u10-sf-1",
+      targetWord: "shoal",
+      targetCategory: "Unit 10 Collective Aquatic Nouns",
+      targetMeaning: "A large number of fish swimming together",
+      targetMeaningVi: "Đàn cá bơi cùng nhau (tập hợp sinh vật dưới nước)",
+      note: "Chọn các danh từ tập hợp chuẩn xác chỉ đàn cá dưới nước và loại trừ các tập hợp trên cạn/trên trời.",
+      words: [
+        { word: "school", isSynonym: true, meaningVi: "Đàn cá (a school of fish)" },
+        { word: "shoal", isSynonym: true, meaningVi: "Đàn cá (a shoal of mackerel)" },
+        { word: "draft", isSynonym: true, meaningVi: "Mẻ lưới cá lớn được kéo lên" },
+        { word: "run", isSynonym: true, meaningVi: "Đàn cá di cư theo mùa vượt thác" },
+        { word: "constellation", isSynonym: false, meaningVi: "Chòm sao trên bầu trời đêm" },
+        { word: "congregation", isSynonym: false, meaningVi: "Giáo đoàn đi lễ nhà thờ" }
+      ]
+    },
+    {
+      id: "u10-sf-2",
+      targetWord: "congregation",
+      targetCategory: "Unit 10 Human Assembly Nouns",
+      targetMeaning: "A gathered group of worshippers or attendees",
+      targetMeaningVi: "Hội chúng, giáo đoàn tín đồ tụ họp hành lễ",
+      note: "Chọn các danh từ tập hợp người tụ họp có trật tự tôn giáo/nghị trường và loại trừ đám đông vô trật tự.",
+      words: [
+        { word: "assembly", isSynonym: true, meaningVi: "Đại hội đoàn tụ họp" },
+        { word: "convocation", isSynonym: true, meaningVi: "Đoàn hội tụ tập chính thức" },
+        { word: "flock", isSynonym: true, meaningVi: "Đoàn chiên con / tín đồ giáo xứ" },
+        { word: "fellowship", isSynonym: true, meaningVi: "Hội đồng thông công gắn kết" },
+        { word: "mob", isSynonym: false, meaningVi: "Đám đông cuồng loạn bạo động" },
+        { word: "rabble", isSynonym: false, meaningVi: "Đám thảo khấu dân đen hỗn tạp" }
+      ]
+    },
+    {
+      id: "u10-sf-3",
+      targetWord: "cluster",
+      targetCategory: "Unit 10 Aggregation Nouns",
+      targetMeaning: "A group of trees, bushes or buildings situated close together",
+      targetMeaningVi: "Cụm, khóm, chùm (cây cối, nhà cửa mọc sát nhau)",
+      note: "Chọn 4 danh từ chỉ sự tập hợp thành cụm/chùm khóm và 2 từ lạc nghĩa.",
+      words: [
+        { word: "clump", isSynonym: true, meaningVi: "Khóm cây bụi mọc sát" },
+        { word: "copse", isSynonym: true, meaningVi: "Rặng cây bụi nhỏ" },
+        { word: "grove", isSynonym: true, meaningVi: "Lùm cây, vườn cây nhỏ" },
+        { word: "bunch", isSynonym: true, meaningVi: "Chùm, bó gom lại" },
+        { word: "dispersion", isSynonym: false, meaningVi: "Sự phân tán rải rác rời rạc" },
+        { word: "solitary", isSynonym: false, meaningVi: "Đơn độc trơ trọi một mình" }
+      ]
+    },
+    {
+      id: "u10-sf-4",
+      targetWord: "horde",
+      targetCategory: "Unit 10 Collective Crowds",
+      targetMeaning: "A large, tumultuous or disorderly crowd of people or invaders",
+      targetMeaningVi: "Đoàn lũ ồ ạt, đám đông tràn ngập hung hãn",
+      note: "Chọn 4 danh từ đồng nghĩa chỉ đám đông tràn ngập và 2 danh từ chỉ cấu trúc phân tầng đơn lẻ.",
+      words: [
+        { word: "mob", isSynonym: true, meaningVi: "Đám đông quá khích cuồng nộ" },
+        { word: "swarm", isSynonym: true, meaningVi: "Bầy đàn lúc nhúc tràn ngập" },
+        { word: "throng", isSynonym: true, meaningVi: "Dòng người đông đúc chen chúc" },
+        { word: "pack", isSynonym: true, meaningVi: "Bầy chó săn/lang sói tụ tập" },
+        { word: "individual", isSynonym: false, meaningVi: "Cá nhân đơn lẻ" },
+        { word: "hierarchy", isSynonym: false, meaningVi: "Hệ thống trật tự thứ bậc" }
+      ]
+    }
+  ],
+
+  // 5. Smart Cloze (The Great Peshtigo Firestorm of 1871 - Page 44 Ex A)
+  clozePassages: [
+    {
+      id: "u10-cp-1",
+      title: "The Forgotten Holocaust: The Great Peshtigo Fire of 1871",
+      sourceLabel: "Level C1 Academic Reading (The Vocabulary Files - Page 44)",
+      passageTemplate: "Many separate fires {{gap_1}} in the humus of the forest floor. Smoke sometimes {{gap_2}} the sun, which was often visible only at midday. On September 30, flames came within three miles of the town of Green Bay, {{gap_3}} 1,200 cords of wood stored at a charcoal kiln. The settlements in the area were becoming increasingly {{gap_4}} from both the outside world and one another as railroad and telegraph lines burned. The fires seemed to wax and wane, {{gap_5}} on the wind and chance. On September 30 the Marinette and Peshtigo Eagle reported hopefully that \"the fires have nearly {{gap_6}} now in this vicinity.\"\n\nBut the paper was wrong, and the fires were growing. By October 4, the smoke was so thick on Green Bay that ships had to use their foghorns and {{gap_7}} by compass. On October 7, the paper, reduced to looking for any scrap of good news, noted that at least the smoke had greatly reduced the mosquito population and that \"a certain establishment down on the bay shore that has been {{gap_8}} to the respectable citizens\" had burned.\n\nThe paper's editor, {{gap_9}} by the burning of the telegraph line, could not know it, but a large, deep low-pressure area was moving in from the west. The winds circling it would turn the smoldering forest of northeast-ern Wisconsin into {{gap_10}} on earth.",
+      gaps: [
+        {
+          gapNumber: 1,
+          options: [
+            { label: "A", text: "extinguished" },
+            { label: "B", text: "engulfed" },
+            { label: "C", text: "spread" },
+            { label: "D", text: "smoldered" }
+          ],
+          correctLabel: "D",
+          correctWord: "smoldered",
+          targetWord: "smoldered",
+          explanations: {
+            A: "Extinguished: bị dập tắt, mâu thuẫn hoàn toàn với khói bốc lên.",
+            B: "Engulfed: nuốt chửng (cần có tân ngữ).",
+            C: "Spread: lan tỏa, nhưng chưa diễn tả đúng trạng thái cháy ngấm ngầm âm ỉ.",
+            D: "Smoldered: Cháy âm ỉ, cháy ngún trong lớp mùn thảm mục rừng mà chưa bùng ngọn lửa lớn."
+          },
+          explanationVi: "Smoldered = cháy âm ỉ ngùn ngụt khói dưới lớp đất mùn rừng rậm."
+        },
+        {
+          gapNumber: 2,
+          options: [
+            { label: "A", text: "obscured" },
+            { label: "B", text: "burnt" },
+            { label: "C", text: "illuminated" },
+            { label: "D", text: "exposed" }
+          ],
+          correctLabel: "A",
+          correctWord: "obscured",
+          targetWord: "obscured",
+          explanations: {
+            A: "Obscured: che khuất, che mờ ánh sáng mặt trời làm chỉ thấy mờ mờ vào giữa trưa.",
+            B: "Burnt: đốt cháy.",
+            C: "Illuminated: thắp sáng bừng lên.",
+            D: "Exposed: phơi bày ra."
+          },
+          explanationVi: "Obscured the sun = khói dày đặc che khuất hoàn toàn ánh nắng mặt trời."
+        },
+        {
+          gapNumber: 3,
+          options: [
+            { label: "A", text: "damaging" },
+            { label: "B", text: "consuming" },
+            { label: "C", text: "avoiding" },
+            { label: "D", text: "licking" }
+          ],
+          correctLabel: "B",
+          correctWord: "consuming",
+          targetWord: "consuming",
+          explanations: {
+            A: "Damaging: làm hư hại nhẹ.",
+            B: "Consuming: thiêu rụi hoàn toàn (ngọn lửa nuốt trọn 1.200 súc gỗ tích trữ).",
+            C: "Avoiding: né tránh.",
+            D: "Licking: liếm láp ngọn lửa (licking at)."
+          },
+          explanationVi: "Consuming 1,200 cords of wood = ngọn lửa nuốt chửng, thiêu rụi toàn bộ kho củi gỗ."
+        },
+        {
+          gapNumber: 4,
+          options: [
+            { label: "A", text: "frightened" },
+            { label: "B", text: "lonely" },
+            { label: "C", text: "isolated" },
+            { label: "D", text: "inundated" }
+          ],
+          correctLabel: "C",
+          correctWord: "isolated",
+          targetWord: "isolated",
+          explanations: {
+            A: "Frightened: sợ hãi.",
+            B: "Lonely: cô đơn tâm lý.",
+            C: "Isolated: bị cô lập hoàn toàn về mặt địa lý do đường sắt và điện báo bị đứt.",
+            D: "Inundated: bị ngập lụt dưới nước."
+          },
+          explanationVi: "Isolated from the outside world = bị cô lập, cắt đứt liên lạc với thế giới bên ngoài."
+        },
+        {
+          gapNumber: 5,
+          options: [
+            { label: "A", text: "depending" },
+            { label: "B", text: "independent" },
+            { label: "C", text: "waiting" },
+            { label: "D", text: "from" }
+          ],
+          correctLabel: "A",
+          correctWord: "depending",
+          targetWord: "depending",
+          explanations: {
+            A: "Depending: đi với giới từ on = tùy thuộc vào chiều gió và cơ may rủi.",
+            B: "Independent: độc lập (đi với of).",
+            C: "Waiting: chờ đợi.",
+            D: "From: từ đâu."
+          },
+          explanationVi: "Depending on the wind and chance = phụ thuộc vào sức gió và sự may rủi."
+        },
+        {
+          gapNumber: 6,
+          options: [
+            { label: "A", text: "increased" },
+            { label: "B", text: "died out" },
+            { label: "C", text: "flared" },
+            { label: "D", text: "diminished" }
+          ],
+          correctLabel: "B",
+          correctWord: "died out",
+          targetWord: "died out",
+          explanations: {
+            A: "Increased: gia tăng nguy hiểm.",
+            B: "Died out: Phrasal verb C1 chỉ ngọn lửa đã lụi tàn, tắt hẳn (fires have nearly died out).",
+            C: "Flared: bùng cháy dữ dội.",
+            D: "Diminished: giảm bớt (nhưng cấu trúc 'nearly died out' là thành ngữ chuẩn)."
+          },
+          explanationVi: "Died out = ngọn lửa đã lụi tắt gần hết trong khu vực lân cận."
+        },
+        {
+          gapNumber: 7,
+          options: [
+            { label: "A", text: "steer" },
+            { label: "B", text: "drive" },
+            { label: "C", text: "guess" },
+            { label: "D", text: "navigate" }
+          ],
+          correctLabel: "D",
+          correctWord: "navigate",
+          targetWord: "navigate",
+          explanations: {
+            A: "Steer: bẻ lái vô lăng (thường cần tân ngữ 'steer the ship').",
+            B: "Drive: lái xe trên đường bộ.",
+            C: "Guess: đoán mò.",
+            D: "Navigate: hải hành, định hướng hải trình hoàn toàn bằng la bàn trong sương khói mịt mù."
+          },
+          explanationVi: "Navigate by compass = hải hành, định hướng đường đi của tàu thủy bằng la bàn."
+        },
+        {
+          gapNumber: 8,
+          options: [
+            { label: "A", text: "frequented" },
+            { label: "B", text: "obnoxious" },
+            { label: "C", text: "open" },
+            { label: "D", text: "ignorant" }
+          ],
+          correctLabel: "B",
+          correctWord: "obnoxious",
+          targetWord: "obnoxious",
+          explanations: {
+            A: "Frequented: hay lui tới.",
+            B: "Obnoxious: chướng tai gai mắt, đáng ghét tởm đối với công dân đoan trang (nhà chứa/quán rượu bất chính).",
+            C: "Open: mở cửa.",
+            D: "Ignorant: dốt nát thiếu hiểu biết."
+          },
+          explanationVi: "Obnoxious to respectable citizens = cơ sở chướng mắt, gây khó chịu cho người dân lương thiện."
+        },
+        {
+          gapNumber: 9,
+          options: [
+            { label: "A", text: "cut-off" },
+            { label: "B", text: "burnt" },
+            { label: "C", text: "dismissed" },
+            { label: "D", text: "chased" }
+          ],
+          correctLabel: "A",
+          correctWord: "cut-off",
+          targetWord: "cut-off",
+          explanations: {
+            A: "Cut-off: bị cô lập thông tin, cắt đứt đường dây điện báo nên không hay biết bão tới.",
+            B: "Burnt: bị thiêu rụi.",
+            C: "Dismissed: bị sa thải.",
+            D: "Chased: bị săn đuổi."
+          },
+          explanationVi: "Cut-off by the burning of the telegraph line = bị cắt đứt nguồn tin do đường điện báo cháy rụi."
+        },
+        {
+          gapNumber: 10,
+          options: [
+            { label: "A", text: "peace" },
+            { label: "B", text: "heaven" },
+            { label: "C", text: "hell" },
+            { label: "D", text: "paradise" }
+          ],
+          correctLabel: "C",
+          correctWord: "hell",
+          targetWord: "hell",
+          explanations: {
+            A: "Peace: thanh bình.",
+            B: "Heaven: thiên đường.",
+            C: "Hell: Collocation văn học C1 'turn into hell on earth' = biến thành địa ngục trần gian.",
+            D: "Paradise: cõi tiên."
+          },
+          explanationVi: "Hell on earth = cơn bão lửa biến cả vùng rừng thành hỏa ngục trần gian."
+        }
+      ]
+    }
+  ],
+
+  // 6. Speed Blitz (20 Instant-Recall Questions from Page 40 Ex B & Page 45 Ex B)
+  speedBlitz: [
+    // Questions 1-10: Criminal Categories & Societal Roles (Page 40 Exercise B)
+    {
+      id: "u10-sb-1",
+      questionNumber: 1,
+      prompt: "Someone who unlawfully shoots deer or catches salmon on strictly private estates is a(n) ______.",
+      options: [
+        { key: "a", text: "poacher" },
+        { key: "b", text: "forger" },
+        { key: "c", text: "usurper" },
+        { key: "d", text: "hobo" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "poacher", pos: "n", vi: "Chính xác: kẻ săn bắn/đánh bắt trộm động vật trái phép trên đất tư nhân" },
+        { key: "b", word: "forger", pos: "n", vi: "Kẻ làm giả chữ ký giấy tờ" },
+        { key: "c", word: "usurper", pos: "n", vi: "Kẻ cướp ngôi soán vị" },
+        { key: "d", word: "hobo", pos: "n", vi: "Người vô gia cư sống lang bạt" }
+      ]
+    },
+    {
+      id: "u10-sb-2",
+      questionNumber: 2,
+      prompt: "A criminal who alters a genuine check or fakes someone else's legal signature is a(n) ______.",
+      options: [
+        { key: "a", text: "quack" },
+        { key: "b", text: "forger" },
+        { key: "c", text: "usurer" },
+        { key: "d", text: "trespasser" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "quack", pos: "n", vi: "Lang băm bán thuốc dạo giả danh" },
+        { key: "b", word: "forger", pos: "n", vi: "Chính xác: kẻ làm đồ giả, giả mạo chữ ký hoặc văn kiện tài chính" },
+        { key: "c", word: "usurer", pos: "n", vi: "Kẻ cho vay nặng lãi cắt cổ" },
+        { key: "d", word: "trespasser", pos: "n", vi: "Kẻ xâm phạm gia cư bất hợp pháp" }
+      ]
+    },
+    {
+      id: "u10-sb-3",
+      questionNumber: 3,
+      prompt: "A violent assailant who attacks pedestrians in dark streets from behind to rob them is a(n) ______.",
+      options: [
+        { key: "a", text: "mugger" },
+        { key: "b", text: "poacher" },
+        { key: "c", text: "stowaway" },
+        { key: "d", text: "vagrant" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "mugger", pos: "n", vi: "Chính xác: kẻ trấn lột đường phố, hành hung nạn nhân từ phía sau để cướp tiền" },
+        { key: "b", word: "poacher", pos: "n", vi: "Kẻ săn trộm thú rừng" },
+        { key: "c", word: "stowaway", pos: "n", vi: "Kẻ đi lậu vé trốn trên tàu" },
+        { key: "d", word: "vagrant", pos: "n", vi: "Kẻ sống lang thang đầu đường xó chợ" }
+      ]
+    },
+    {
+      id: "u10-sb-4",
+      questionNumber: 4,
+      prompt: "A fanatic hired to murder an eminent politician or head of state for ideological motives is a(n) ______.",
+      options: [
+        { key: "a", text: "assassin" },
+        { key: "b", text: "perjurer" },
+        { key: "c", text: "hijacker" },
+        { key: "d", text: "hooligan" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "assassin", pos: "n", vi: "Chính xác: sát thủ chính trị ám sát nhân vật tai to mặt lớn" },
+        { key: "b", word: "perjurer", pos: "n", vi: "Kẻ thề man khai man trước tòa" },
+        { key: "c", word: "hijacker", pos: "n", vi: "Không tặc cướp máy bay" },
+        { key: "d", word: "hooligan", pos: "n", vi: "Côn đồ bóng đá phá phách" }
+      ]
+    },
+    {
+      id: "u10-sb-5",
+      questionNumber: 5,
+      prompt: "A loan shark who illegally lends money at extortionate and ruinous interest rates is a(n) ______.",
+      options: [
+        { key: "a", text: "quack" },
+        { key: "b", text: "usurer" },
+        { key: "c", text: "usurper" },
+        { key: "d", text: "forger" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "quack", pos: "n", vi: "Thầy thuốc lang băm" },
+        { key: "b", word: "usurer", pos: "n", vi: "Chính xác: kẻ cho vay nặng lãi, bóc lột lãi suất cắt cổ bất hợp pháp" },
+        { key: "c", word: "usurper", pos: "n", vi: "Kẻ tiếm quyền đoạt ngôi vua" },
+        { key: "d", word: "forger", pos: "n", vi: "Kẻ làm giả giấy tờ" }
+      ]
+    },
+    {
+      id: "u10-sb-6",
+      questionNumber: 6,
+      prompt: "A rebellious general who violently deposes the monarch and seizes the throne is a(n) ______.",
+      options: [
+        { key: "a", text: "usurper" },
+        { key: "b", text: "perjurer" },
+        { key: "c", text: "hijacker" },
+        { key: "d", text: "vagrant" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "usurper", pos: "n", vi: "Chính xác: kẻ tiếm ngôi, soán quyền vương triều bằng vũ lực" },
+        { key: "b", word: "perjurer", pos: "n", vi: "Kẻ khai man trước tòa" },
+        { key: "c", word: "hijacker", pos: "n", vi: "Kẻ cướp phương tiện giao thông" },
+        { key: "d", word: "vagrant", pos: "n", vi: "Người sống vô gia cư" }
+      ]
+    },
+    {
+      id: "u10-sb-7",
+      questionNumber: 7,
+      prompt: "A dishonest witness who knowingly gives false testimony under sacred oath in court is a(n) ______.",
+      options: [
+        { key: "a", text: "perjurer" },
+        { key: "b", text: "tax-evader" },
+        { key: "c", text: "stowaway" },
+        { key: "d", text: "mugger" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "perjurer", pos: "n", vi: "Chính xác: kẻ phạm tội thề man, làm chứng gian dối hữu thệ trước tòa án" },
+        { key: "b", word: "tax-evader", pos: "n", vi: "Kẻ trốn thuế" },
+        { key: "c", word: "stowaway", pos: "n", vi: "Kẻ trốn vé đi lậu tàu" },
+        { key: "d", word: "mugger", pos: "n", vi: "Kẻ cướp giật" }
+      ]
+    },
+    {
+      id: "u10-sb-8",
+      questionNumber: 8,
+      prompt: "A person who secretes himself in a cargo ship's hold to travel across the ocean without a ticket is a(n) ______.",
+      options: [
+        { key: "a", text: "stowaway" },
+        { key: "b", text: "vagrant" },
+        { key: "c", text: "hobo" },
+        { key: "d", text: "poacher" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "stowaway", pos: "n", vi: "Chính xác: kẻ đi lậu vé, trốn chui trốn lủi trong khoang tàu thủy / càng máy bay" },
+        { key: "b", word: "vagrant", pos: "n", vi: "Kẻ sống vất vưởng lang thang" },
+        { key: "c", word: "hobo", pos: "n", vi: "Người lang bạt tìm việc làm tạm" },
+        { key: "d", word: "poacher", pos: "n", vi: "Kẻ săn trộm" }
+      ]
+    },
+    {
+      id: "u10-sb-9",
+      questionNumber: 9,
+      prompt: "An uncredentialed impostor who pretends to possess magical ointments and medical cures is a(n) ______.",
+      options: [
+        { key: "a", text: "quack" },
+        { key: "b", text: "cobbler" },
+        { key: "c", text: "peddler" },
+        { key: "d", text: "milliner" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "quack", pos: "n", vi: "Chính xác: lang băm lang vườn giả mạo y bác sĩ bịp bợm thuốc thang" },
+        { key: "b", word: "cobbler", pos: "n", vi: "Thợ sửa giày" },
+        { key: "c", word: "peddler", pos: "n", vi: "Người bán dạo" },
+        { key: "d", word: "milliner", pos: "n", vi: "Thợ làm nón" }
+      ]
+    },
+    {
+      id: "u10-sb-10",
+      questionNumber: 10,
+      prompt: "An armed terrorist who forcibly takes command of a passenger jet in mid-flight is a(n) ______.",
+      options: [
+        { key: "a", text: "hijacker" },
+        { key: "b", text: "hooligan" },
+        { key: "c", text: "assassin" },
+        { key: "d", text: "trespasser" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "hijacker", pos: "n", vi: "Chính xác: không tặc, kẻ khống chế cướp quyền điều khiển phi cơ đang bay" },
+        { key: "b", word: "hooligan", pos: "n", vi: "Kẻ gây rối bạo loạn" },
+        { key: "c", word: "assassin", pos: "n", vi: "Sát thủ" },
+        { key: "d", word: "trespasser", pos: "n", vi: "Kẻ xâm nhập tư gia" }
+      ]
+    },
+
+    // Questions 11-20: Advanced C1 Practice Multiple-Choice (Page 45 Exercise B)
+    {
+      id: "u10-sb-11",
+      questionNumber: 11,
+      prompt: "Eloquent and precise use of language inherently ______ its cultural beauty and communicative power.",
+      options: [
+        { key: "a", text: "detracts from" },
+        { key: "b", text: "deteriorates" },
+        { key: "c", text: "enhances" },
+        { key: "d", text: "lessens" }
+      ],
+      correctKey: "c",
+      explanations: [
+        { key: "a", word: "detracts from", pos: "v", vi: "Làm giảm sút giá trị" },
+        { key: "b", word: "deteriorates", pos: "v", vi: "Làm suy thoái" },
+        { key: "c", word: "enhances", pos: "collocation", vi: "Chính xác: enhance its beauty = tôn thêm vẻ đẹp và nâng tầm phát triển" },
+        { key: "d", word: "lessens", pos: "v", vi: "Làm suy yếu bớt" }
+      ]
+    },
+    {
+      id: "u10-sb-12",
+      questionNumber: 12,
+      prompt: "Applicants must carefully fill out the visa application form exactly as ______ in the official instructions.",
+      options: [
+        { key: "a", text: "insisted" },
+        { key: "b", text: "specified" },
+        { key: "c", text: "implied" },
+        { key: "d", text: "devised" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "insisted", pos: "v", vi: "Khăng khăng đòi hỏi" },
+        { key: "b", word: "specified", pos: "collocation", vi: "Chính xác: as specified in the notes = đúng như đã được nêu rõ chi tiết trong hướng dẫn" },
+        { key: "c", word: "implied", pos: "v", vi: "Ngụ ý ẩn ý" },
+        { key: "d", word: "devised", pos: "v", vi: "Được phát minh sáng chế" }
+      ]
+    },
+    {
+      id: "u10-sb-13",
+      questionNumber: 13,
+      prompt: "He perpetually shuns any strenuous academic effort because he is such an exceptionally ______ student.",
+      options: [
+        { key: "a", text: "indolent" },
+        { key: "b", text: "diligent" },
+        { key: "c", text: "indigent" },
+        { key: "d", text: "indigenous" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "indolent", pos: "collocation", vi: "Chính xác: indolent student = học sinh lười biếng, biếng nhác ngại động tay động chân" },
+        { key: "b", word: "diligent", pos: "adj", vi: "Cần cù chăm chỉ (trái ngược với shuns work)" },
+        { key: "c", word: "indigent", pos: "adj", vi: "Nghèo khó bần cùng" },
+        { key: "d", word: "indigenous", pos: "adj", vi: "Bản địa thổ sản" }
+      ]
+    },
+    {
+      id: "u10-sb-14",
+      questionNumber: 14,
+      prompt: "His thoughts tumbled out in complete disarray; indeed, the student's essay grammar was hopelessly ______.",
+      options: [
+        { key: "a", text: "well-constructed" },
+        { key: "b", text: "incoherent" },
+        { key: "c", text: "jerry-built" },
+        { key: "d", text: "highbrow" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "well-constructed", pos: "adj", vi: "Được kết cấu chặt chẽ" },
+        { key: "b", word: "incoherent", pos: "collocation", vi: "Chính xác: incoherent grammar = ngữ pháp rời rạc, lủng củng không ra thể thống nào" },
+        { key: "c", word: "jerry-built", pos: "adj", vi: "Xây dựng cẩu thả ọp ẹp (nhà cửa)" },
+        { key: "d", word: "highbrow", pos: "adj", vi: "Trí thức cao siêu" }
+      ]
+    },
+    {
+      id: "u10-sb-15",
+      questionNumber: 15,
+      prompt: "The candidate failed the preliminary screening because his English spelling was utterly ______.",
+      options: [
+        { key: "a", text: "ferocious" },
+        { key: "b", text: "incongruous" },
+        { key: "c", text: "apprehensive" },
+        { key: "d", text: "atrocious" }
+      ],
+      correctKey: "d",
+      explanations: [
+        { key: "a", word: "ferocious", pos: "adj", vi: "Hung dữ tàn bạo" },
+        { key: "b", word: "incongruous", pos: "adj", vi: "Lạc quẻ khập khiễng" },
+        { key: "c", word: "apprehensive", pos: "adj", vi: "Lo lắng bất an" },
+        { key: "d", word: "atrocious", pos: "collocation", vi: "Chính xác: atrocious spelling = chính tả tệ hại khủng khiếp, sai be bét" }
+      ]
+    },
+    {
+      id: "u10-sb-16",
+      questionNumber: 16,
+      prompt: "The stern warning sign erected on the boundary wall read: '______ will be vigorously prosecuted.'",
+      options: [
+        { key: "a", text: "Muggers" },
+        { key: "b", text: "Hijackers" },
+        { key: "c", text: "Stowaways" },
+        { key: "d", text: "Trespassers" }
+      ],
+      correctKey: "d",
+      explanations: [
+        { key: "a", word: "Muggers", pos: "n", vi: "Kẻ trấn lột" },
+        { key: "b", word: "Hijackers", pos: "n", vi: "Không tặc" },
+        { key: "c", word: "Stowaways", pos: "n", vi: "Kẻ đi lậu vé" },
+        { key: "d", word: "Trespassers", pos: "collocation", vi: "Chính xác: 'Trespassers will be prosecuted' = thành ngữ pháp lý biển báo cấm xâm phạm đất đai" }
+      ]
+    },
+    {
+      id: "u10-sb-17",
+      questionNumber: 17,
+      prompt: "Having lied under solemn oath in the murder trial, the witness was subsequently prosecuted for ______.",
+      options: [
+        { key: "a", text: "poaching" },
+        { key: "b", text: "forgery" },
+        { key: "c", text: "perjury" },
+        { key: "d", text: "usury" }
+      ],
+      correctKey: "c",
+      explanations: [
+        { key: "a", word: "poaching", pos: "n", vi: "Săn bắn trộm" },
+        { key: "b", word: "forgery", pos: "n", vi: "Làm giả tài liệu" },
+        { key: "c", word: "perjury", pos: "collocation", vi: "Chính xác: charged with perjury = bị truy tố về tội khai man hữu thệ trước tòa" },
+        { key: "d", word: "usury", pos: "n", vi: "Cho vay nặng lãi" }
+      ]
+    },
+    {
+      id: "u10-sb-18",
+      questionNumber: 18,
+      prompt: "Not only was the young pupil's grammar incoherent and spelling atrocious, but his punctuation was completely ______.",
+      options: [
+        { key: "a", text: "slothful" },
+        { key: "b", text: "sluggish" },
+        { key: "c", text: "hazard" },
+        { key: "d", text: "haphazard" }
+      ],
+      correctKey: "d",
+      explanations: [
+        { key: "a", word: "slothful", pos: "adj", vi: "Lười chảy thây" },
+        { key: "b", word: "sluggish", pos: "adj", vi: "Chậm chạp lờ đờ" },
+        { key: "c", word: "hazard", pos: "n", vi: "Mối hiểm nguy" },
+        { key: "d", word: "haphazard", pos: "collocation", vi: "Chính xác: haphazard punctuation = chấm câu bạ đâu đặt đấy, tùy tiện lộn xộn không quy tắc" }
+      ]
+    },
+    {
+      id: "u10-sb-19",
+      prompt: "I am certainly not a habitual chain smoker, but I occasionally ______ in an expensive Cuban cigar.",
+      questionNumber: 19,
+      options: [
+        { key: "a", text: "enjoy" },
+        { key: "b", text: "indulge" },
+        { key: "c", text: "divulge" },
+        { key: "d", text: "decline" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "enjoy", pos: "v", vi: "Enjoy a cigar (không đi với giới từ in)" },
+        { key: "b", word: "indulge", pos: "collocation", vi: "Chính xác: indulge in sth = tự buông thả, nuông chiều bản thân tận hưởng cái thú gì đó" },
+        { key: "c", word: "divulge", pos: "v", vi: "Tiết lộ bí mật" },
+        { key: "d", word: "decline", pos: "v", vi: "Từ chối" }
+      ]
+    },
+    {
+      id: "u10-sb-20",
+      questionNumber: 20,
+      prompt: "Through the dense maritime fog, the lookout could faintly discern a picturesque ______ of thatched cottages.",
+      options: [
+        { key: "a", text: "constellation" },
+        { key: "b", text: "clutter" },
+        { key: "c", text: "cluster" },
+        { key: "d", text: "piled" }
+      ],
+      correctKey: "c",
+      explanations: [
+        { key: "a", word: "constellation", pos: "n", vi: "Chòm sao trên trời" },
+        { key: "b", word: "clutter", pos: "n", vi: "Mớ đồ đạc bề bộn" },
+        { key: "c", word: "cluster", pos: "collocation", vi: "Chính xác: a cluster of cottages = một cụm nhà mái tranh quây quần kề sát nhau" },
+        { key: "d", word: "piled", pos: "adj", vi: "Chất đống" }
+      ]
+    }
+  ]
+};
+
+
+export const VOCAB_C1_UNITS: VocabC1Unit[] = [VOCAB_C1_UNIT_1, VOCAB_C1_UNIT_2, VOCAB_C1_UNIT_3, VOCAB_C1_UNIT_4, VOCAB_C1_UNIT_5, VOCAB_C1_UNIT_6, VOCAB_C1_UNIT_7, VOCAB_C1_UNIT_8, VOCAB_C1_UNIT_9, VOCAB_C1_UNIT_10];
+
 
 
 
