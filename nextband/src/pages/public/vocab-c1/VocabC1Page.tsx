@@ -117,6 +117,13 @@ const getUnitMeta = (unitId: number) => {
         descVi: "Phân biệt peddler, milliner, thatcher, usurer, poacher, perjurer, stowaway và các danh từ chỉ bầy đàn C1.",
         pages: "Trang 40–45"
       };
+    case 11:
+      return {
+        shortLabel: "Unit 11: Renunciation",
+        themeVi: "Từ bỏ, Thoái vị & Nhượng bộ",
+        descVi: "Phân biệt tinh vi discard, forsake, desert, relinquish, abdicate, cede, renounce và các chuyển đổi tính từ C1.",
+        pages: "Trang 47–50"
+      };
     default:
       return {
         shortLabel: `Unit ${unitId}`,
@@ -1657,7 +1664,9 @@ export const VocabC1Page: React.FC = () => {
                   ? (stage6Index < 10 ? "Task Three (Trang 33)" : "Phần B (Trang 34)")
                   : VOCAB_C1_UNIT_1.unitId === 9
                   ? (stage6Index < 10 ? "Prepositions (Trang 36-37)" : "Phần B (Trang 39)")
-                  : (stage6Index < 10 ? "Crimes & Roles (Trang 40)" : "Phần B (Trang 45)")}
+                  : VOCAB_C1_UNIT_1.unitId === 10
+                  ? (stage6Index < 10 ? "Crimes & Roles (Trang 40)" : "Phần B (Trang 45)")
+                  : (stage6Index < 10 ? "Idioms & Preps (Trang 47-50)" : "Phần B (Trang 50)")}
               </span>
             </div>
 

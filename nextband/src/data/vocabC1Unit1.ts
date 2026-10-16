@@ -10651,7 +10651,1005 @@ export const VOCAB_C1_UNIT_10: VocabC1Unit = {
 };
 
 
-export const VOCAB_C1_UNITS: VocabC1Unit[] = [VOCAB_C1_UNIT_1, VOCAB_C1_UNIT_2, VOCAB_C1_UNIT_3, VOCAB_C1_UNIT_4, VOCAB_C1_UNIT_5, VOCAB_C1_UNIT_6, VOCAB_C1_UNIT_7, VOCAB_C1_UNIT_8, VOCAB_C1_UNIT_9, VOCAB_C1_UNIT_10];
+
+export const VOCAB_C1_UNIT_11: VocabC1Unit = {
+  unitId: 11,
+  title: "Unit 11: Renunciation, Abandonment & Surrender",
+  subtitle: "The Vocabulary Files - Level C1 (Pages 47-50)",
+
+  // 1. Words in Action (10 Nuanced Verbs of Relinquishment from Page 47 Exercise A)
+  wordsInAction: [
+    {
+      id: "u11-wia-1",
+      word: "discard",
+      ipa: "/dɪˈskɑːd/",
+      nuance: "[Get rid of something no longer useful, needed or wanted; throw away]",
+      register: "Standard / Practical",
+      collocations: ["discard old clothes", "discard a map", "discard outer leaves", "promptly discard"],
+      enDef: "To get rid of someone or something that you no longer need, want, or find useful.",
+      viDef: "Vứt bỏ, loại bỏ cái gì không còn dùng đến hoặc không còn giá trị (bản đồ cũ, lá rau héo).",
+      example: "When preparing the crisp salad, you should carefully **discard** the wilted outer lettuce leaves first.",
+      targetKeyword: "discard"
+    },
+    {
+      id: "u11-wia-2",
+      word: "forsook",
+      ipa: "/fəˈsʊk/",
+      nuance: "[Past of forsake: abandon a friend, spouse or cause in their time of need]",
+      register: "Literary / Dramatic",
+      collocations: ["forsook his family", "forsook all friends", "never forsook him", "forsook the faith"],
+      enDef: "Past tense of forsake: to leave someone or something entirely, especially when they need you.",
+      viDef: "Ruồng rẫy, bỏ rơi người thân hay bạn bè trong cơn hoạn nạn hàn vi (quá khứ của forsake).",
+      example: "When the reckless businessman plunged into bankruptcy, virtually all his fair-weather friends **forsook** him.",
+      targetKeyword: "forsook"
+    },
+    {
+      id: "u11-wia-3",
+      word: "desert",
+      ipa: "/dɪˈzɜːt/",
+      nuance: "[Illegally abandon military duty, a post, or family without intention of returning]",
+      register: "Military / Legal",
+      collocations: ["desert one's post", "desert the army", "desert his family", "court-martialed for deserting"],
+      enDef: "To illegally leave the armed forces or abandon a duty, guard post, or family member.",
+      viDef: "Đào ngũ, bỏ rơi vị trí gác hoặc dứt áo bỏ rơi gia đình con cái một cách vô trách nhiệm.",
+      example: "The terrified soldier was court-martialed and disgraced for **deserting** his defensive post under fire.",
+      targetKeyword: "desert"
+    },
+    {
+      id: "u11-wia-4",
+      word: "abandon",
+      ipa: "/əˈbæn.dən/",
+      nuance: "[Leave a place, person or pet permanently and hastily due to danger]",
+      register: "Standard / Urgent",
+      collocations: ["abandon home", "abandon ship", "abandon all hope", "forced to abandon"],
+      enDef: "To leave a place, person, or vehicle permanently, especially in face of acute danger or disaster.",
+      viDef: "Bỏ rơi, rời bỏ khẩn cấp nơi ở hoặc tài sản (khi động đất, chìm tàu, thảm họa).",
+      example: "In the terrifying wake of the earthquake, panic-stricken residents were forced to **abandon** their homes.",
+      targetKeyword: "abandon"
+    },
+    {
+      id: "u11-wia-5",
+      word: "relinquish",
+      ipa: "/rɪˈlɪŋ.kwɪʃ/",
+      nuance: "[Voluntarily or reluctantly give up power, rights, control or privileges]",
+      register: "Formal / Diplomatic",
+      collocations: ["relinquish privileges", "relinquish control", "relinquish rights", "unwilling to relinquish"],
+      enDef: "To voluntarily or formally cease to keep, claim, or maintain power, rights, or privileges.",
+      viDef: "Từ bỏ, buông bỏ đặc quyền, quyền hành hoặc quyền sở hữu (thường với sự miễn cưỡng).",
+      example: "The autocratic leader was stubbornly unwilling to **relinquish** his vast executive privileges to parliament.",
+      targetKeyword: "relinquish"
+    },
+    {
+      id: "u11-wia-6",
+      word: "resign",
+      ipa: "/rɪˈzaɪn/",
+      nuance: "[Voluntarily leave a job, office or committee by formal notification]",
+      register: "Professional / Formal",
+      collocations: ["resign from a post", "resign as director", "resign in protest", "decide to resign"],
+      enDef: "To voluntarily leave a job, committee, or elected office by giving formal notice.",
+      viDef: "Từ chức, xin thôi việc, rời bỏ chức vụ chính thức.",
+      example: "He chose to **resign** from his executive post when he was unfairly passed over in favor of a junior colleague.",
+      targetKeyword: "resign"
+    },
+    {
+      id: "u11-wia-7",
+      word: "abdicate",
+      ipa: "/ˈæb.dɪ.keɪt/",
+      nuance: "[Formally renounce a monarchical throne, sovereign crown, or high duty]",
+      register: "Royal / Constitutional",
+      collocations: ["abdicate the throne", "abdicate responsibility", "forced to abdicate", "decision to abdicate"],
+      enDef: "If a king or queen abdicates, they formally step down from the throne and renounce sovereign rule.",
+      viDef: "Thoái vị, từ bỏ ngai vàng; hoặc thoái thác nghĩa vụ tối cao.",
+      example: "Shortly after the popular revolution erupted across the capital, the monarch was forced to **abdicate**.",
+      targetKeyword: "abdicate"
+    },
+    {
+      id: "u11-wia-8",
+      word: "surrender",
+      ipa: "/səˈren.dər/",
+      nuance: "[Stop fighting and submit into enemy hands; give up territory]",
+      register: "Military / Legal",
+      collocations: ["surrender unconditionally", "forced to surrender", "surrender territory", "surrender weapons"],
+      enDef: "To stop fighting and admit defeat, placing oneself or one's forces into the custody of an opponent.",
+      viDef: "Đầu hàng, hạ vũ khí chịu khuất phục quân địch; hoặc bàn giao đất đai.",
+      example: "Outnumbered and out of ammunition, the besieged garrison had no alternative but to **surrender**.",
+      targetKeyword: "surrender"
+    },
+    {
+      id: "u11-wia-9",
+      word: "cede",
+      ipa: "/siːd/",
+      nuance: "[Formally give up sovereign land, territory or legal rights by treaty]",
+      register: "Diplomatic / Geopolitical",
+      collocations: ["cede territory", "cede sovereignty", "cede control", "forced to cede"],
+      enDef: "To officially give up power, territory, or legal jurisdiction to another country by treaty.",
+      viDef: "Nhượng lại, cắt nhượng (chủ quyền lãnh thổ hoặc quyền hạn ngoại giao theo hiệp ước).",
+      example: "The embattled defenders solemnly swore to die in combat rather than **cede** an inch of national territory.",
+      targetKeyword: "cede"
+    },
+    {
+      id: "u11-wia-10",
+      word: "renounce",
+      ipa: "/rɪˈnaʊns/",
+      nuance: "[Formally declare abandonment of a faith, claim, doctrine, or right]",
+      register: "Ethical / Constitutional",
+      collocations: ["renounce faith", "renounce violence", "renounce citizenship", "renounce all claims"],
+      enDef: "To state publicly and formally that you no longer have a particular belief, claim, or connection.",
+      viDef: "Tuyên bố từ bỏ dứt khoát (đức tin, tước vị, tôn giáo, bạo lực hoặc quyền thừa kế).",
+      example: "The stalwart early martyrs refused to **renounce** their Christian faith, even under mortal threat in the Colosseum.",
+      targetKeyword: "renounce"
+    }
+  ],
+
+  // 2. Word Formation (9 Sentence Transformations from Adverbs into Adjectives from Page 49 Task Two)
+  wordFormation: [
+    {
+      id: "u11-wf-1",
+      adjective: "utter",
+      noun: "sounded like utter nonsense",
+      root: "utterly",
+      suffix: "Adverb to Adjective Shift",
+      meaningVi: "Hoàn toàn vô lý (thay 'sounded utterly nonsensical' bằng 'sounded like utter nonsense')",
+      suffixChoices: ["utter nonsense", "utterly senseless", "uttering nonsense", "utterful nonsense"],
+      ruleTip: "Chuyển trạng từ 'utterly' thành tính từ định ngữ C1: 'utter nonsense'."
+    },
+    {
+      id: "u11-wf-2",
+      adjective: "abject",
+      noun: "lived in abject poverty",
+      root: "abjectly",
+      suffix: "Adverb to Adjective Shift",
+      meaningVi: "Khốn cùng bần hàn (thay 'were abjectly poor' bằng 'lived in abject poverty')",
+      suffixChoices: ["abject poverty", "abjected living", "abjecting poor", "abjection state"],
+      ruleTip: "Collocation C1 kinh điển: 'abjectly poor' ➔ 'lived in abject poverty'."
+    },
+    {
+      id: "u11-wf-3",
+      adjective: "absurd",
+      noun: "His demands were absurd",
+      root: "absurdly",
+      suffix: "Adverb to Adjective Shift",
+      meaningVi: "Vô lý ngớ ngẩn (thay 'was absurdly demanding' bằng 'His demands were absurd')",
+      suffixChoices: ["were absurd", "were absurdous", "had absurdity", "sounded absurdly"],
+      ruleTip: "Chuyển vị ngữ: 'He was absurdly demanding' ➔ 'His demands were absurd'."
+    },
+    {
+      id: "u11-wf-4",
+      adjective: "direct",
+      noun: "Is there a direct flight",
+      root: "directly",
+      suffix: "Adverb to Adjective Shift",
+      meaningVi: "Chuyến bay thẳng (thay 'fly directly from Rome to Toronto' bằng 'Is there a direct flight')",
+      suffixChoices: ["direct flight", "directional fly", "directing flight", "directly travel"],
+      ruleTip: "Chuyển động từ + trạng từ 'fly directly' ➔ cụm danh từ 'direct flight'."
+    },
+    {
+      id: "u11-wf-5",
+      adjective: "actual",
+      noun: "the actual words of his father",
+      root: "actually",
+      suffix: "Adverb to Adjective Shift",
+      meaningVi: "Những lời nguyên văn thực sự (thay 'what his father actually said' bằng 'the actual words of his father')",
+      suffixChoices: ["the actual words", "the actuate saying", "the acting words", "the factual talking"],
+      ruleTip: "Chuyển mệnh đề quan hệ thành cụm danh từ với tính từ 'actual': 'actual words'."
+    },
+    {
+      id: "u11-wf-6",
+      adjective: "general",
+      noun: "a general assumption that",
+      root: "generally",
+      suffix: "Adverb to Adjective Shift",
+      meaningVi: "Giả định phổ biến (thay 'It's generally assumed that' bằng 'It's a general assumption that')",
+      suffixChoices: ["a general assumption", "a generic assume", "a generalized assuming", "a generality of"],
+      ruleTip: "Collocation học thuật C1: 'generally assumed' ➔ 'a general assumption'."
+    },
+    {
+      id: "u11-wf-7",
+      adjective: "hearty",
+      noun: "given a hearty welcome",
+      root: "heartily",
+      suffix: "Adverb to Adjective Shift",
+      meaningVi: "Sự chào đón nồng ấm chân thành (thay 'were heartily welcomed' bằng 'given a hearty welcome')",
+      suffixChoices: ["a hearty welcome", "a heartful welcome", "a heartfelt welcoming", "a hearty greeting"],
+      ruleTip: "Collocation C1: 'heartily welcomed' ➔ 'given a hearty welcome by the villagers'."
+    },
+    {
+      id: "u11-wf-8",
+      adjective: "avid",
+      noun: "are avid readers of",
+      root: "avidly",
+      suffix: "Adverb to Adjective Shift",
+      meaningVi: "Độc giả say mê cuồng nhiệt (thay 'avidly read newspapers' bằng 'are avid readers of')",
+      suffixChoices: ["avid readers of", "avidity reader in", "avid reading for", "avid-minded readers"],
+      ruleTip: "Cụm danh từ C1: 'avidly read' ➔ 'are avid readers of newspapers and magazines'."
+    },
+    {
+      id: "u11-wf-9",
+      adjective: "high",
+      noun: "have a high opinion of",
+      root: "highly",
+      suffix: "Adverb to Adjective Shift",
+      meaningVi: "Đánh giá rất cao, kính trọng (thay 'think highly of him' bằng 'have a high opinion of him')",
+      suffixChoices: ["have a high opinion of", "hold in high esteem", "have high thoughts on", "keep in high mind"],
+      ruleTip: "Collocation C1 thành ngữ: 'think highly of sb' ➔ 'have a high opinion of him' / 'hold him in high esteem'."
+    }
+  ],
+
+  // 3. Confusable Words (10 Antonym Pairs & False Friends from Page 48 Task One)
+  confusableWords: [
+    {
+      id: "u11-cw-1",
+      pairKey: "ancestor-descendant",
+      wordA: "ancestor",
+      wordB: "descendant",
+      diffHighlightA: { before: "", highlight: "ancestor", after: "" },
+      diffHighlightB: { before: "", highlight: "descendant", after: "" },
+      promptSentence: "A descendant is a person that is descended from an individual that lived long ago as opposed to an ______.",
+      correctWord: "ancestor",
+      defA: "Ancestor: Tổ tiên, thế hệ đi trước thời xa xưa trong gia phả dòng họ.",
+      defB: "Descendant: Con cháu hậu duệ, người thuộc thế hệ sinh sau đẻ muộn.",
+      mnemonic: "Ancestor = tổ tiên đi trước; Descendant = hậu duệ con cháu đời sau."
+    },
+    {
+      id: "u11-cw-2",
+      pairKey: "inhale-exhale",
+      wordA: "inhale",
+      wordB: "exhale",
+      diffHighlightA: { before: "", highlight: "inhale", after: "" },
+      diffHighlightB: { before: "", highlight: "exhale", after: "" },
+      promptSentence: "In physiological respiration, to exhale is to breathe out used air as opposed to ______.",
+      correctWord: "inhale",
+      defA: "Inhale: Hít vào trong phổi (breathe in air, smoke, or vapor).",
+      defB: "Exhale: Thở ra, phì hơi thở ra ngoài môi trường.",
+      mnemonic: "IN-hale = hít VÀO; EX-hale = thở RA."
+    },
+    {
+      id: "u11-cw-3",
+      pairKey: "ameliorate-deteriorate",
+      wordA: "ameliorate",
+      wordB: "deteriorate",
+      diffHighlightA: { before: "", highlight: "ameliorate", after: "" },
+      diffHighlightB: { before: "", highlight: "deteriorate", after: "" },
+      promptSentence: "To deteriorate means to progressively become worse or degenerate in quality, as opposed to ______.",
+      correctWord: "ameliorate",
+      defA: "Ameliorate: Làm cho tốt hơn, cải thiện, làm dịu bớt tình hình tiêu cực (make better).",
+      defB: "Deteriorate: Xấu đi, xuống cấp, thoái hóa trầm trọng hơn theo thời gian.",
+      mnemonic: "Ameliorate = cải thiện nâng cao; Deteriorate = suy tàn thoái hóa."
+    },
+    {
+      id: "u11-cw-4",
+      pairKey: "obsolete-modern",
+      wordA: "obsolete",
+      wordB: "modern",
+      diffHighlightA: { before: "", highlight: "obsolete", after: "" },
+      diffHighlightB: { before: "", highlight: "modern", after: "" },
+      promptSentence: "A modern curriculum incorporates the latest scientific methodologies as opposed to ______ ones.",
+      correctWord: "obsolete",
+      defA: "Obsolete: Lỗi thời, cổ lỗ sĩ, không còn được sử dụng hay sản xuất nữa (outdated).",
+      defB: "Modern: Hiện đại, tối tân, bắt kịp bước phát triển mới nhất.",
+      mnemonic: "Obsolete technology = công nghệ lỗi thời hết thời; Modern = tân tiến."
+    },
+    {
+      id: "u11-cw-5",
+      pairKey: "assets-liabilities",
+      wordA: "assets",
+      wordB: "liabilities",
+      diffHighlightA: { before: "", highlight: "assets", after: "" },
+      diffHighlightB: { before: "", highlight: "liabilities", after: "" },
+      promptSentence: "Liabilities represent debts and monies owed to lenders, as opposed to valuable corporate ______.",
+      correctWord: "assets",
+      defA: "Assets: Tài sản hữu hình và vô hình mang lại giá trị kinh tế (property, cash, investments).",
+      defB: "Liabilities: Nợ phải trả, các khoản nợ tài chính và nghĩa vụ nợ nần ràng buộc.",
+      mnemonic: "Assets = tài sản tạo ra tiền; Liabilities = nợ tiêu tốn tiền."
+    },
+    {
+      id: "u11-cw-6",
+      pairKey: "obscure-well-known",
+      wordA: "obscure",
+      wordB: "well-known",
+      diffHighlightA: { before: "", highlight: "obscure", after: "" },
+      diffHighlightB: { before: "", highlight: "well-known", after: "" },
+      promptSentence: "A celebrated author is famous far and wide, as opposed to an utterly ______ and unrecognized writer.",
+      correctWord: "obscure",
+      defA: "Obscure: Vô danh, ít ai biết đến, khuất bóng trong bóng tối (not well known, unnoticed).",
+      defB: "Well-known: Nổi tiếng, lừng danh, được đông đảo công chúng biết đến.",
+      mnemonic: "Obscure writer = nhà văn vô danh; Well-known = lừng danh khắp chốn."
+    },
+    {
+      id: "u11-cw-7",
+      pairKey: "sanity-madness",
+      wordA: "sanity",
+      wordB: "madness",
+      diffHighlightA: { before: "", highlight: "sanity", after: "" },
+      diffHighlightB: { before: "", highlight: "madness", after: "" },
+      promptSentence: "Madness denotes mental alienation and irrational delusion, as opposed to calm psychological ______.",
+      correctWord: "sanity",
+      defA: "Sanity: Sự tỉnh táo, trạng thái tâm thần minh mẫn bình thường và lành mạnh.",
+      defB: "Madness: Cơn điên loạn, sự mất trí phát cuồng.",
+      mnemonic: "Keep your sanity = giữ sự tỉnh táo minh mẫn; Madness = điên loạn."
+    },
+    {
+      id: "u11-cw-8",
+      pairKey: "haughty-affable",
+      wordA: "haughty",
+      wordB: "affable",
+      diffHighlightA: { before: "", highlight: "haughty", after: "" },
+      diffHighlightB: { before: "", highlight: "affable", after: "" },
+      promptSentence: "An affable diplomat is warm and approachable to visitors, as opposed to a cold and ______ aristocrat.",
+      correctWord: "haughty",
+      defA: "Haughty: Kiêu kỳ, trịch thượng, tự coi mình cao sang hơn kẻ khác (arrogant, disdainful).",
+      defB: "Affable: Niềm nở, ân cần, hòa nhã dễ gần gũi với mọi người.",
+      mnemonic: "Haughty = chảnh chọe trịch thượng; Affable = xởi lởi hòa nhã."
+    },
+    {
+      id: "u11-cw-9",
+      pairKey: "prodigal-economical",
+      wordA: "prodigal",
+      wordB: "economical",
+      diffHighlightA: { before: "", highlight: "prodigal", after: "" },
+      diffHighlightB: { before: "", highlight: "economical", after: "" },
+      promptSentence: "An economical householder manages funds prudently, as opposed to a recklessly ______ spendthrift.",
+      correctWord: "prodigal",
+      defA: "Prodigal: Phung phí, hoang tàng, vung tiền qua cửa sổ (wastefully extravagant).",
+      defB: "Economical: Tiết kiệm, biết chi tiêu khôn ngoan không lãng phí.",
+      mnemonic: "Prodigal son = đứa con hoang đàng phung phí; Economical = tằn tiện khôn ngoan."
+    },
+    {
+      id: "u11-cw-10",
+      pairKey: "acquittal-conviction",
+      wordA: "acquittal",
+      wordB: "conviction",
+      diffHighlightA: { before: "", highlight: "acquittal", after: "" },
+      diffHighlightB: { before: "", highlight: "conviction", after: "" },
+      promptSentence: "A judicial conviction pronounces the defendant guilty as charged, as opposed to an honourable ______.",
+      correctWord: "acquittal",
+      defA: "Acquittal: Bản án tha bổng, phán quyết tuyên bố trắng án không có tội.",
+      defB: "Conviction: Bản án kết tội, phán quyết có tội và chịu hình phạt.",
+      mnemonic: "Acquittal = tha bổng tuyên trắng án; Conviction = định tội kết án."
+    }
+  ],
+
+  // 4. Synonym Filter (Idiomatic Nuances from Page 49 Task Three)
+  synonymFilter: [
+    {
+      id: "u11-sf-1",
+      targetWord: "cave in to",
+      targetCategory: "Unit 11 Yielding & Submission",
+      targetMeaning: "Yield to persuasion, agree after long resistance",
+      targetMeaningVi: "Nhượng bộ, xiêu lòng chịu thua trước lý lẽ của người khác",
+      note: "Chọn 4 từ/cụm đồng nghĩa chỉ sự nhượng bộ khuất phục và 2 từ biểu thị tính kiên quyết chống cự.",
+      words: [
+        { word: "give in to", isSynonym: true, meaningVi: "Đầu hàng nhượng bộ trước áp lực" },
+        { word: "yield to", isSynonym: true, meaningVi: "Chịu thua xiêu lòng chấp thuận" },
+        { word: "concede to", isSynonym: true, meaningVi: "Thừa nhận và chấp nhận thua lý lẽ" },
+        { word: "capitulate to", isSynonym: true, meaningVi: "Khuất phục hoàn toàn trước đòi hỏi" },
+        { word: "withstand", isSynonym: false, meaningVi: "Chống chọi kiên cường tới cùng" },
+        { word: "defy", isSynonym: false, meaningVi: "Thách thức chống đối bất tuân" }
+      ]
+    },
+    {
+      id: "u11-sf-2",
+      targetWord: "at odds",
+      targetCategory: "Unit 11 Conflict & Opposition",
+      targetMeaning: "In disagreement, conflicting or quarreling with someone",
+      targetMeaningVi: "Bất đồng ý kiến, xung đột cãi vã với ai",
+      note: "Chọn 4 từ/cụm đồng nghĩa diễn tả tình trạng xung khắc bất hòa và 2 cụm thể hiện sự đồng thuận hòa hợp.",
+      words: [
+        { word: "in disagreement", isSynonym: true, meaningVi: "Bất đồng quan điểm sâu sắc" },
+        { word: "in conflict", isSynonym: true, meaningVi: "Xung đột quyền lợi đối kháng" },
+        { word: "at variance", isSynonym: true, meaningVi: "Khác biệt mâu thuẫn đối chọi" },
+        { word: "embroiled", isSynonym: true, meaningVi: "Bị lôi vào vòng tranh cãi" },
+        { word: "in agreement", isSynonym: false, meaningVi: "Đồng thuận nhất trí tuyệt đối" },
+        { word: "in harmony", isSynonym: false, meaningVi: "Hòa thuận êm thắm gắn bó" }
+      ]
+    },
+    {
+      id: "u11-sf-3",
+      targetWord: "spell-bound",
+      targetCategory: "Unit 11 Captivation & Fascination",
+      targetMeaning: "With attention held completely as if by magical enchantment",
+      targetMeaningVi: "Bị mê hoặc say đắm, bị hớp hồn như có ma thuật",
+      note: "Chọn 4 từ đồng nghĩa chỉ trạng thái say mê đắm đuối và 2 từ chỉ sự thờ ơ buồn chán.",
+      words: [
+        { word: "mesmerized", isSynonym: true, meaningVi: "Bị thôi miên cuốn hút hoàn toàn" },
+        { word: "entranced", isSynonym: true, meaningVi: "Bị hớp hồn đắm say mê muội" },
+        { word: "captivated", isSynonym: true, meaningVi: "Bị quyến rũ thu hút trọn vẹn" },
+        { word: "enthralled", isSynonym: true, meaningVi: "Bị lôi cuốn say mê ngây ngất" },
+        { word: "disenchanted", isSynonym: false, meaningVi: "Bị vỡ mộng chán chường" },
+        { word: "indifferent", isSynonym: false, meaningVi: "Thờ ơ lãnh đạm không màng" }
+      ]
+    },
+    {
+      id: "u11-sf-4",
+      targetWord: "down in the dumps",
+      targetCategory: "Unit 11 Emotional Depression",
+      targetMeaning: "Feeling deeply depressed, despondent, gloomy and miserable",
+      targetMeaningVi: "Buồn chán ủ rũ, chán nản chìm trong u uất",
+      note: "Chọn 4 thành ngữ/từ chỉ nỗi u sầu buồn bã và 2 từ chỉ niềm vui sướng hân hoan tột bực.",
+      words: [
+        { word: "depressed", isSynonym: true, meaningVi: "Trầm cảm chán chường u uất" },
+        { word: "despondent", isSynonym: true, meaningVi: "Thất vọng chán nản buông xuôi" },
+        { word: "melancholy", isSynonym: true, meaningVi: "U sầu sầu muộn da diết" },
+        { word: "crestfallen", isSynonym: true, meaningVi: "Cúi đầu ủ rũ vì hụt hẫng" },
+        { word: "exuberant", isSynonym: false, meaningVi: "Hồ hởi rạng rỡ tràn đầy năng lượng" },
+        { word: "euphoric", isSynonym: false, meaningVi: "Phấn chấn ngây ngất tột cùng" }
+      ]
+    }
+  ],
+
+  // 5. Smart Cloze (Henry Ford's Five-Dollar Day Revolution - Page 50 Ex A)
+  clozePassages: [
+    {
+      id: "u11-cp-1",
+      title: "Henry Ford & The Five-Dollar Day: Welfare Capitalism",
+      sourceLabel: "Level C1 Academic Reading (The Vocabulary Files - Page 50)",
+      passageTemplate: "The mystique surrounding Henry Ford makes it difficult to {{gap_1}} his true motivations, but the wage increases benefited the company in many ways. In addition to motivating his workers, Ford was, by giving his employees more {{gap_2}} income (or any at all), also creating a consumer base for his product. He later claimed that with the $5 day \"we really started our business, for on that day we first created a lot of customers.\" But he was also {{gap_3}} by the Progressive and populist movements and may truly have been animated by {{gap_4}}. \"Our company is making enough money to do some good in the world,\" he said, \"and I'm glad to do it.\"\n\nStill, his generosity, it soon emerged, came with strings. What few noticed on January 5 was that workers did not automatically {{gap_5}} for the raise just by doing their jobs. Women, who had been earning on average $2.04 per day, did not qualify at all. \"I consider women only a {{gap_6}} factor in industry,\" Ford explained. \"I pay our women well so they can dress attractively and get married.\" Men would have to live in Detroit and work at the plant for six months before they could {{gap_7}} the full amount.\n\nEven then they had to meet Ford's social standards to {{gap_8}}. He shared the worry of many of the wealthy that laborers would {{gap_9}} their enlarged paychecks on vice and cheap thrills. Lee explained that the money might \"work a tremendous handicap along the paths of rectitude and right living and would make them a {{gap_10}} to society, and so it was established at [the] start that no man was to receive the money who could not use it advisedly and conservatively.\"",
+      gaps: [
+        {
+          gapNumber: 1,
+          options: [
+            { label: "A", text: "engage" },
+            { label: "B", text: "pinpoint" },
+            { label: "C", text: "underestimate" },
+            { label: "D", text: "favor" }
+          ],
+          correctLabel: "B",
+          correctWord: "pinpoint",
+          targetWord: "pinpoint",
+          explanations: {
+            A: "Engage: tham gia, gắn kết.",
+            B: "Pinpoint: xác định đích xác, vạch rõ chính xác động cơ ẩn giấu (pinpoint his true motivations).",
+            C: "Underestimate: đánh giá thấp.",
+            D: "Favor: ủng hộ thiên vị."
+          },
+          explanationVi: "Pinpoint his true motivations = xác định chính xác mục đích và động cơ thực sự của Henry Ford."
+        },
+        {
+          gapNumber: 2,
+          options: [
+            { label: "A", text: "predisposal" },
+            { label: "B", text: "imposing" },
+            { label: "C", text: "possible" },
+            { label: "D", text: "disposable" }
+          ],
+          correctLabel: "D",
+          correctWord: "disposable",
+          targetWord: "disposable",
+          explanations: {
+            A: "Predisposal: khuynh hướng bẩm sinh.",
+            B: "Imposing: uy nghi hoành tráng.",
+            C: "Possible: khả thi.",
+            D: "Disposable: Thuật ngữ kinh tế học C1 'disposable income' = thu nhập khả dụng sau thuế và sinh hoạt phí."
+          },
+          explanationVi: "Disposable income = thu nhập khả dụng mà công nhân có thể tự do chi tiêu để mua ôtô Ford."
+        },
+        {
+          gapNumber: 3,
+          options: [
+            { label: "A", text: "influenced" },
+            { label: "B", text: "touched" },
+            { label: "C", text: "lead" },
+            { label: "D", text: "mislead" }
+          ],
+          correctLabel: "A",
+          correctWord: "influenced",
+          targetWord: "influenced",
+          explanations: {
+            A: "Influenced: bị tác động, chịu ảnh hưởng từ các phong trào Cấp tiến và Dân túy.",
+            B: "Touched: xúc động nghẹn ngào.",
+            C: "Lead: dẫn dắt.",
+            D: "Mislead: lừa dối."
+          },
+          explanationVi: "Influenced by the Progressive movements = chịu ảnh hưởng từ tư tưởng phong trào tiến bộ."
+        },
+        {
+          gapNumber: 4,
+          options: [
+            { label: "A", text: "ferocity" },
+            { label: "B", text: "greed" },
+            { label: "C", text: "generosity" },
+            { label: "D", text: "malice" }
+          ],
+          correctLabel: "C",
+          correctWord: "generosity",
+          targetWord: "generosity",
+          explanations: {
+            A: "Ferocity: sự hung bạo dữ tợn.",
+            B: "Greed: lòng tham vô đáy.",
+            C: "Generosity: sự hào hiệp, lòng quảng đại chia sẻ lợi nhuận với công nhân.",
+            D: "Malice: ác ý hiểm độc."
+          },
+          explanationVi: "Animated by generosity = được thúc đẩy bởi tấm lòng hào hiệp làm việc thiện cho xã hội."
+        },
+        {
+          gapNumber: 5,
+          options: [
+            { label: "A", text: "get" },
+            { label: "B", text: "meet" },
+            { label: "C", text: "quantify" },
+            { label: "D", text: "qualify" }
+          ],
+          correctLabel: "D",
+          correctWord: "qualify",
+          targetWord: "qualify",
+          explanations: {
+            A: "Get: nhận được (cần tân ngữ trực tiếp, không đi với for the raise theo ngữ pháp này).",
+            B: "Meet: đáp ứng tiêu chuẩn.",
+            C: "Quantify: lượng hóa.",
+            D: "Qualify: Collocation 'qualify for the raise' = đủ điều kiện, đủ tiêu chuẩn nhận tăng lương."
+          },
+          explanationVi: "Qualify for the raise = hội đủ tiêu chuẩn để được hưởng mức lương 5 đôla/ngày."
+        },
+        {
+          gapNumber: 6,
+          options: [
+            { label: "A", text: "strong" },
+            { label: "B", text: "temporary" },
+            { label: "C", text: "false" },
+            { label: "D", text: "unnecessary" }
+          ],
+          correctLabel: "B",
+          correctWord: "temporary",
+          targetWord: "temporary",
+          explanations: {
+            A: "Strong: mạnh mẽ.",
+            B: "Temporary: yếu tố tạm thời trong nền công nghiệp (vì quan niệm phụ nữ sẽ đi lấy chồng).",
+            C: "False: sai lầm.",
+            D: "Unnecessary: không cần thiết."
+          },
+          explanationVi: "A temporary factor in industry = nhân tố tạm thời trong nhà xưởng vì phụ nữ sẽ rời đi khi kết hôn."
+        },
+        {
+          gapNumber: 7,
+          options: [
+            { label: "A", text: "earn" },
+            { label: "B", text: "deserve" },
+            { label: "C", text: "score" },
+            { label: "D", text: "demand" }
+          ],
+          correctLabel: "A",
+          correctWord: "earn",
+          targetWord: "earn",
+          explanations: {
+            A: "Earn: kiếm được số tiền đầy đủ sau 6 tháng thử việc nghiêm ngặt (earn the full amount).",
+            B: "Deserve: xứng đáng được.",
+            C: "Score: ghi điểm.",
+            D: "Demand: đòi hỏi yêu sách."
+          },
+          explanationVi: "Earn the full amount = tích lũy và kiếm trọn vẹn số tiền lương sau thời gian làm việc bắt buộc."
+        },
+        {
+          gapNumber: 8,
+          options: [
+            { label: "A", text: "benefit" },
+            { label: "B", text: "help" },
+            { label: "C", text: "advance" },
+            { label: "D", text: "promote" }
+          ],
+          correctLabel: "A",
+          correctWord: "benefit",
+          targetWord: "benefit",
+          explanations: {
+            A: "Benefit: hưởng lợi (nội động từ: meet standards to benefit = đạt chuẩn sống đạo đức để hưởng lợi).",
+            B: "Help: giúp đỡ.",
+            C: "Advance: tiến bộ.",
+            D: "Promote: thăng chức."
+          },
+          explanationVi: "Meet social standards to benefit = đáp ứng các chuẩn mực xã hội khắt khe của Ford để được hưởng chế độ."
+        },
+        {
+          gapNumber: 9,
+          options: [
+            { label: "A", text: "invest" },
+            { label: "B", text: "save" },
+            { label: "C", text: "squander" },
+            { label: "D", text: "double" }
+          ],
+          correctLabel: "C",
+          correctWord: "squander",
+          targetWord: "squander",
+          explanations: {
+            A: "Invest: đầu tư tài chính.",
+            B: "Save: tiết kiệm.",
+            C: "Squander: Collocation 'squander paychecks on vice' = phung phí sạch tiền lương vào thói hư tật xấu và rượu chè.",
+            D: "Double: tăng gấp đôi."
+          },
+          explanationVi: "Squander their paychecks on vice = ném tiền qua cửa sổ vào cờ bạc rượu chè sa đọa."
+        },
+        {
+          gapNumber: 10,
+          options: [
+            { label: "A", text: "convenience" },
+            { label: "B", text: "presence" },
+            { label: "C", text: "foray" },
+            { label: "D", text: "menace" }
+          ],
+          correctLabel: "D",
+          correctWord: "menace",
+          targetWord: "menace",
+          explanations: {
+            A: "Convenience: sự tiện nghi.",
+            B: "Presence: sự hiện diện.",
+            C: "Foray: cuộc đột kích.",
+            D: "Menace: Collocation C1 'make them a menace to society' = biến họ thành mối hiểm họa/mối đe dọa nguy hiểm cho xã hội."
+          },
+          explanationVi: "A menace to society = mối hiểm họa khôn lường đe dọa trật tự trị an xã hội."
+        }
+      ]
+    }
+  ],
+
+  // 6. Speed Blitz (20 Instant-Recall Questions from Page 47 Ex B & Page 50 Ex B)
+  speedBlitz: [
+    // Questions 1-10: Academic Idioms & Prepositions (Page 47 Ex B & Page 50 Ex B)
+    {
+      id: "u11-sb-1",
+      questionNumber: 1,
+      prompt: "The bookstore clerk promised to check their inventory to see if they had any more copies in ______.",
+      options: [
+        { key: "a", text: "surplus" },
+        { key: "b", text: "stock" },
+        { key: "c", text: "supply" },
+        { key: "d", text: "store house" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "surplus", pos: "n", vi: "Số dư thừa" },
+        { key: "b", word: "stock", pos: "collocation", vi: "Chính xác: in stock = còn hàng lưu trữ trong kho" },
+        { key: "c", word: "supply", pos: "n", vi: "Nguồn cung cấp" },
+        { key: "d", word: "store house", pos: "n", vi: "Nhà kho" }
+      ]
+    },
+    {
+      id: "u11-sb-2",
+      questionNumber: 2,
+      prompt: "In her chaotic and high-stress executive career, such peaceful weekends were few and far ______.",
+      options: [
+        { key: "a", text: "between" },
+        { key: "b", text: "beyond" },
+        { key: "c", text: "past" },
+        { key: "d", text: "over" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "between", pos: "collocation", vi: "Chính xác: few and far between = hiếm có khó tìm, cực kỳ ít khi xảy ra" },
+        { key: "b", word: "beyond", pos: "prep", vi: "Vượt quá" },
+        { key: "c", word: "past", pos: "prep", vi: "Trôi qua" },
+        { key: "d", word: "over", pos: "prep", vi: "Kết thúc" }
+      ]
+    },
+    {
+      id: "u11-sb-3",
+      questionNumber: 3,
+      prompt: "I was so deeply ______ in the gripping detective novel that I failed to hear the doorbell ring.",
+      options: [
+        { key: "a", text: "engrossed" },
+        { key: "b", text: "gripped" },
+        { key: "c", text: "submerged" },
+        { key: "d", text: "distracted" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "engrossed", pos: "collocation", vi: "Chính xác: engrossed in a book = mải mê, chìm đắm say sưa đọc sách" },
+        { key: "b", word: "gripped", pos: "v", vi: "Gripped by fear (không đi với 'gripped in a book')" },
+        { key: "c", word: "submerged", pos: "v", vi: "Chìm ngập dưới nước" },
+        { key: "d", word: "distracted", pos: "v", vi: "Xao nhãng" }
+      ]
+    },
+    {
+      id: "u11-sb-4",
+      questionNumber: 4,
+      prompt: "The seller demanded £40 while I offered £30; after haggling we finally agreed to ______ the difference at £35.",
+      options: [
+        { key: "a", text: "drop" },
+        { key: "b", text: "decrease" },
+        { key: "c", text: "split" },
+        { key: "d", text: "divide" }
+      ],
+      correctKey: "c",
+      explanations: [
+        { key: "a", word: "drop", pos: "v", vi: "Bớt giá" },
+        { key: "b", word: "decrease", pos: "v", vi: "Giảm sút" },
+        { key: "c", word: "split", pos: "collocation", vi: "Chính xác: split the difference = cưa đôi khoản chênh lệch giá, đôi bên cùng nhượng bộ" },
+        { key: "d", word: "divide", pos: "v", vi: "Chia rẽ" }
+      ]
+    },
+    {
+      id: "u11-sb-5",
+      questionNumber: 5,
+      prompt: "Far from being overweight or plump, the professional marathon runner is exceptionally ______.",
+      options: [
+        { key: "a", text: "lean" },
+        { key: "b", text: "overweight" },
+        { key: "c", text: "thick set" },
+        { key: "d", text: "obese" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "lean", pos: "collocation", vi: "Chính xác: lean = thon gọn, săn chắc không một chút mỡ thừa" },
+        { key: "b", word: "overweight", pos: "adj", vi: "Thừa cân" },
+        { key: "c", word: "thick set", pos: "adj", vi: "Đậm người bè bè" },
+        { key: "d", word: "obese", pos: "adj", vi: "Béo phì" }
+      ]
+    },
+    {
+      id: "u11-sb-6",
+      questionNumber: 6,
+      prompt: "The frontier pioneer had been violently captured and ______ by hostile warriors in the ambush.",
+      options: [
+        { key: "a", text: "slapped" },
+        { key: "b", text: "sculptured" },
+        { key: "c", text: "skull" },
+        { key: "d", text: "scalped" }
+      ],
+      correctKey: "d",
+      explanations: [
+        { key: "a", word: "slapped", pos: "v", vi: "Bị tát" },
+        { key: "b", word: "sculptured", pos: "v", vi: "Được điêu khắc" },
+        { key: "c", word: "skull", pos: "n", vi: "Hộp sọ" },
+        { key: "d", word: "scalped", pos: "v", vi: "Chính xác: lột da đầu (tục lệ thời chiến cổ xưa)" }
+      ]
+    },
+    {
+      id: "u11-sb-7",
+      questionNumber: 7,
+      prompt: "The disgraced premier didn't voluntarily ______; rather, he was forcibly evicted from office by military decree.",
+      options: [
+        { key: "a", text: "abandon" },
+        { key: "b", text: "resign" },
+        { key: "c", text: "renounce" },
+        { key: "d", text: "abdicate" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "abandon", pos: "v", vi: "Bỏ rơi" },
+        { key: "b", word: "resign", pos: "collocation", vi: "Chính xác: resign = từ chức tự nguyện khỏi cương vị thủ tướng / tổng thống" },
+        { key: "c", word: "renounce", pos: "v", vi: "Tuyên bố từ bỏ quyền" },
+        { key: "d", word: "abdicate", pos: "v", vi: "Thoái vị (dành riêng cho vua chúa hoàng gia)" }
+      ]
+    },
+    {
+      id: "u11-sb-8",
+      questionNumber: 8,
+      prompt: "Before we invest millions in venture capital, to what extent is your engineering plan actually ______?",
+      options: [
+        { key: "a", text: "palpable" },
+        { key: "b", text: "feasible" },
+        { key: "c", text: "pliable" },
+        { key: "d", text: "absurd" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "palpable", pos: "adj", vi: "Rõ ràng sờ mó được" },
+        { key: "b", word: "feasible", pos: "collocation", vi: "Chính xác: feasible plan = kế hoạch khả thi, có khả năng thực hiện thành công" },
+        { key: "c", word: "pliable", pos: "adj", vi: "Dễ uốn nắn dễ bảo" },
+        { key: "d", word: "absurd", pos: "adj", vi: "Ngớ ngẩn lố bịch" }
+      ]
+    },
+    {
+      id: "u11-sb-9",
+      questionNumber: 9,
+      prompt: "The aging monarch appeared stubbornly reluctant to ______ her long-established royal prerogatives.",
+      options: [
+        { key: "a", text: "surrender" },
+        { key: "b", text: "relinquish" },
+        { key: "c", text: "discard" },
+        { key: "d", text: "quit" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "surrender", pos: "v", vi: "Đầu hàng giặc" },
+        { key: "b", word: "relinquish", pos: "collocation", vi: "Chính xác: relinquish privileges = từ bỏ, buông bỏ đặc quyền lịch sử" },
+        { key: "c", word: "discard", pos: "v", vi: "Vứt bỏ rác rưởi" },
+        { key: "d", word: "quit", pos: "v", vi: "Bỏ cuộc" }
+      ]
+    },
+    {
+      id: "u11-sb-10",
+      questionNumber: 10,
+      prompt: "In the catastrophic event of a reactor meltdown, huge residential areas will immediately have to be ______.",
+      options: [
+        { key: "a", text: "ceded" },
+        { key: "b", text: "yielded" },
+        { key: "c", text: "evacuated" },
+        { key: "d", text: "renounced" }
+      ],
+      correctKey: "c",
+      explanations: [
+        { key: "a", word: "ceded", pos: "v", vi: "Cắt nhượng lãnh thổ" },
+        { key: "b", word: "yielded", pos: "v", vi: "Đầu hàng nhượng bộ" },
+        { key: "c", word: "evacuated", pos: "collocation", vi: "Chính xác: evacuate an area = sơ tán toàn bộ dân cư khẩn cấp khỏi khu vực nguy hiểm" },
+        { key: "d", word: "renounced", pos: "v", vi: "Từ bỏ đức tin" }
+      ]
+    },
+
+    // Questions 11-20: Advanced Micro-Context Speed Flash (Page 47 Ex B text cloze flash)
+    {
+      id: "u11-sb-11",
+      questionNumber: 11,
+      prompt: "Economic historians argue that the precise ______ of the Great Depression can be dated to late 1929.",
+      options: [
+        { key: "a", text: "onset" },
+        { key: "b", text: "outset" },
+        { key: "c", text: "offset" },
+        { key: "d", text: "onslaught" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "onset", pos: "collocation", vi: "Chính xác: the onset of the Depression = thời điểm bùng phát khởi đầu của đại suy thoái" },
+        { key: "b", word: "outset", pos: "n", vi: "At the outset (không dùng the outset of Depression)" },
+        { key: "c", word: "offset", pos: "n", vi: "Sự bù trừ đền bù" },
+        { key: "d", word: "onslaught", pos: "n", vi: "Cuộc tổng tấn công vũ bão" }
+      ]
+    },
+    {
+      id: "u11-sb-12",
+      questionNumber: 12,
+      prompt: "On Black Tuesday, the unprecedented financial stock market ______ suddenly ground to a shuddering halt.",
+      options: [
+        { key: "a", text: "boom" },
+        { key: "b", text: "boon" },
+        { key: "c", text: "bonus" },
+        { key: "d", text: "boor" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "boom", pos: "collocation", vi: "Chính xác: stock market boom = đợt bùng nổ tăng trưởng vũ bão của thị trường chứng khoán" },
+        { key: "b", word: "boon", pos: "n", vi: "Mối lợi ích trời ban" },
+        { key: "c", word: "bonus", pos: "n", vi: "Tiền thưởng thêm" },
+        { key: "d", word: "boor", pos: "n", vi: "Kẻ cục cằn thô lỗ" }
+      ]
+    },
+    {
+      id: "u11-sb-13",
+      questionNumber: 13,
+      prompt: "When asset values plunged overnight, thousands of leveraged Wall Street ______ were completely ruined.",
+      options: [
+        { key: "a", text: "adventurers" },
+        { key: "b", text: "hawkers" },
+        { key: "c", text: "executives" },
+        { key: "d", text: "speculators" }
+      ],
+      correctKey: "d",
+      explanations: [
+        { key: "a", word: "adventurers", pos: "n", vi: "Những kẻ phiêu lưu mạo hiểm" },
+        { key: "b", word: "hawkers", pos: "n", vi: "Người bán hàng rong" },
+        { key: "c", word: "executives", pos: "n", vi: "Giám đốc điều hành" },
+        { key: "d", word: "speculators", pos: "collocation", vi: "Chính xác: market speculators = các nhà đầu cơ lướt sóng tài chính" }
+      ]
+    },
+    {
+      id: "u11-sb-14",
+      questionNumber: 14,
+      prompt: "Crippled by war reparations and debt, the European post-war economy was ______ balanced.",
+      options: [
+        { key: "a", text: "cautiously" },
+        { key: "b", text: "precautionary" },
+        { key: "c", text: "precariously" },
+        { key: "d", text: "precociously" }
+      ],
+      correctKey: "c",
+      explanations: [
+        { key: "a", word: "cautiously", pos: "adv", vi: "Một cách thận trọng" },
+        { key: "b", word: "precautionary", pos: "adj", vi: "Mang tính phòng ngừa" },
+        { key: "c", word: "precariously", pos: "collocation", vi: "Chính xác: precariously balanced = ở trạng thái thăng bằng bấp bênh hiểm nghèo, chực sụp đổ" },
+        { key: "d", word: "precociously", pos: "adv", vi: "Sớm khôn, sớm phát triển" }
+      ]
+    },
+    {
+      id: "u11-sb-15",
+      questionNumber: 15,
+      prompt: "Until the American credit taps dried up, artificial industrial ______ had been sustained across Germany.",
+      options: [
+        { key: "a", text: "Destitution" },
+        { key: "b", text: "Prosperity" },
+        { key: "c", text: "Dereliction" },
+        { key: "d", text: "Expenditure" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "Destitution", pos: "n", vi: "Cảnh cơ hàn bần cùng" },
+        { key: "b", word: "Prosperity", pos: "collocation", vi: "Chính xác: industrial prosperity = sự thịnh vượng kinh tế, phồn vinh công nghiệp" },
+        { key: "c", word: "Dereliction", pos: "n", vi: "Sự bỏ hoang phế" },
+        { key: "d", word: "Expenditure", pos: "n", vi: "Chi phí chi tiêu" }
+      ]
+    },
+    {
+      id: "u11-sb-16",
+      questionNumber: 16,
+      prompt: "I am afraid my stubborn colleague is continually at ______ with the department chairman.",
+      options: [
+        { key: "a", text: "ends" },
+        { key: "b", text: "odds" },
+        { key: "c", text: "peace" },
+        { key: "d", text: "terms" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "ends", pos: "n", vi: "At loose ends = rảnh rỗi vô công rồi nghề" },
+        { key: "b", word: "odds", pos: "collocation", vi: "Chính xác: at odds with sb = xung khắc, bất đồng ý kiến sâu sắc với ai" },
+        { key: "c", word: "peace", pos: "n", vi: "At peace = yên bình" },
+        { key: "d", word: "terms", pos: "n", vi: "On good terms = hòa thuận" }
+      ]
+    },
+    {
+      id: "u11-sb-17",
+      questionNumber: 17,
+      prompt: "Because the speaker had such commanding eloquence, he held the entire grand auditorium ______.",
+      options: [
+        { key: "a", text: "spell-bound" },
+        { key: "b", text: "boundless" },
+        { key: "c", text: "earth-bound" },
+        { key: "d", text: "rebound" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "spell-bound", pos: "collocation", vi: "Chính xác: hold sb spell-bound = làm cử tọa mê mẩn, chăm chú lắng nghe như bị thôi miên" },
+        { key: "b", word: "boundless", pos: "adj", vi: "Vô biên bao la" },
+        { key: "c", word: "earth-bound", pos: "adj", vi: "Bị ràng buộc nơi trần thế" },
+        { key: "d", word: "rebound", pos: "v", vi: "Bật nảy lại" }
+      ]
+    },
+    {
+      id: "u11-sb-18",
+      questionNumber: 18,
+      prompt: "His academic dissertation was criticized for being excessively ______ and straying far from its thesis.",
+      options: [
+        { key: "a", text: "long-winded" },
+        { key: "b", text: "short-sighted" },
+        { key: "c", text: "broad-minded" },
+        { key: "d", text: "quick-witted" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "long-winded", pos: "collocation", vi: "Chính xác: long-winded = dông dài, lê thê tẻ nhạt không cần thiết" },
+        { key: "b", word: "short-sighted", pos: "adj", vi: "Thiển cận cận thị" },
+        { key: "c", word: "broad-minded", pos: "adj", vi: "Có tư tưởng cởi mở" },
+        { key: "d", word: "quick-witted", pos: "adj", vi: "Nhanh trí ứng biến mau" }
+      ]
+    },
+    {
+      id: "u11-sb-19",
+      questionNumber: 19,
+      prompt: "After a grueling ten-hour strategic negotiation, let's ______ the meeting with a celebratory toast.",
+      options: [
+        { key: "a", text: "wind up" },
+        { key: "b", text: "wind out" },
+        { key: "c", text: "wind over" },
+        { key: "d", text: "wind down" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "wind up", pos: "collocation", vi: "Chính xác: wind up the meeting = khép lại, kết thúc cuộc họp/buổi tối trang trọng" },
+        { key: "b", word: "wind out", pos: "v", vi: "Sai ngữ pháp" },
+        { key: "c", word: "wind over", pos: "v", vi: "Sai ngữ pháp" },
+        { key: "d", word: "wind down", pos: "v", vi: "Thư giãn nghỉ ngơi xả hơi" }
+      ]
+    },
+    {
+      id: "u11-sb-20",
+      questionNumber: 20,
+      prompt: "In terms of analytical skills and exam preparedness, you clearly have the ______ on your competitors.",
+      options: [
+        { key: "a", text: "edge" },
+        { key: "b", text: "verge" },
+        { key: "c", text: "brim" },
+        { key: "d", text: "ledge" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "edge", pos: "collocation", vi: "Chính xác: have the edge on / over sb = có lợi thế vượt trội hơn hẳn đối thủ" },
+        { key: "b", word: "verge", pos: "n", vi: "On the verge of = trên bờ vực" },
+        { key: "c", word: "brim", pos: "n", vi: "Filled to the brim = tràn tới miệng" },
+        { key: "d", word: "ledge", pos: "n", vi: "Gờ đá nhô ra" }
+      ]
+    }
+  ]
+};
+
+
+export const VOCAB_C1_UNITS: VocabC1Unit[] = [VOCAB_C1_UNIT_1, VOCAB_C1_UNIT_2, VOCAB_C1_UNIT_3, VOCAB_C1_UNIT_4, VOCAB_C1_UNIT_5, VOCAB_C1_UNIT_6, VOCAB_C1_UNIT_7, VOCAB_C1_UNIT_8, VOCAB_C1_UNIT_9, VOCAB_C1_UNIT_10, VOCAB_C1_UNIT_11];
+
 
 
 
