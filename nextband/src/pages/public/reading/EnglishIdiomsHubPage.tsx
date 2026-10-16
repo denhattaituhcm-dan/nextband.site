@@ -24,9 +24,11 @@ import unit02Data from "@/data/idioms/unit02";
 import { UNIT_02_ETYMOLOGY } from "@/data/idioms/unit02_etymology";
 import unit03Data from "@/data/idioms/unit03";
 import { UNIT_03_ETYMOLOGY } from "@/data/idioms/unit03_etymology";
+import unit04Data from "@/data/idioms/unit04";
+import { UNIT_04_ETYMOLOGY } from "@/data/idioms/unit04_etymology";
 
 export default function EnglishIdiomsHubPage() {
-  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3>(1);
+  const [selectedUnitId, setSelectedUnitId] = useState<1 | 2 | 3 | 4>(1);
   const [activeTab, setActiveTab] = useState<"learn" | "practice">("learn");
   const [activeModuleFilter, setActiveModuleFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
@@ -141,13 +143,22 @@ export default function EnglishIdiomsHubPage() {
 
   // Current Unit Data & Etymology
   const currentUnitData =
-    selectedUnitId === 1 ? unit01Data : selectedUnitId === 2 ? unit02Data : unit03Data;
+    selectedUnitId === 1
+      ? unit01Data
+      : selectedUnitId === 2
+      ? unit02Data
+      : selectedUnitId === 3
+      ? unit03Data
+      : unit04Data;
+
   const currentEtymologyData =
     selectedUnitId === 1
       ? UNIT_01_ETYMOLOGY
       : selectedUnitId === 2
       ? UNIT_02_ETYMOLOGY
-      : UNIT_03_ETYMOLOGY;
+      : selectedUnitId === 3
+      ? UNIT_03_ETYMOLOGY
+      : UNIT_04_ETYMOLOGY;
 
   // Idioms flat list
   const allIdioms = currentUnitData.modules.flatMap((m) =>
@@ -644,7 +655,7 @@ export default function EnglishIdiomsHubPage() {
     setShowRetry28(false);
   };
 
-  const handleSelectUnit = (unitId: 1 | 2 | 3) => {
+  const handleSelectUnit = (unitId: 1 | 2 | 3 | 4) => {
     setSelectedUnitId(unitId);
     setActiveModuleFilter("ALL");
     reset23();
@@ -706,6 +717,17 @@ export default function EnglishIdiomsHubPage() {
               >
                 Unit 03: Appearance & Background
               </button>
+              <button
+                type="button"
+                onClick={() => handleSelectUnit(4)}
+                className={`px-2.5 py-1 rounded-md text-xs font-bold transition cursor-pointer ${
+                  selectedUnitId === 4
+                    ? "bg-white text-[#002147] shadow-xs"
+                    : "text-[#7A7067] hover:text-[#2D2825]"
+                }`}
+              >
+                Unit 04: Personality Traits
+              </button>
             </div>
 
             <button
@@ -755,7 +777,9 @@ export default function EnglishIdiomsHubPage() {
                 ? "Khám phá 20 thành ngữ cốt lõi và cụm từ cố định về tuổi thơ, thanh xuân, bước ngoặt trưởng thành và những năm tháng xế chiều."
                 : selectedUnitId === 2
                 ? "Khám phá 20 thành ngữ then chốt diễn tả tình bạn, kết giao, phai nhạt liên lạc cùng các mối quan hệ ruột thịt gia đình nhiều thế hệ."
-                : "Khám phá 20 thành ngữ ấn tượng miêu tả diện mạo, nét tương đồng, phong thái ăn mặc chỉn chu cùng xuất thân và vị thế xã hội."}
+                : selectedUnitId === 3
+                ? "Khám phá 20 thành ngữ ấn tượng miêu tả diện mạo, nét tương đồng, phong thái ăn mặc chỉn chu cùng xuất thân và vị thế xã hội."
+                : "Khám phá 20 thành ngữ sắc bén khắc họa tính cách con người qua lăng kính động vật và thực phẩm, từ điềm tĩnh kiên cường đến lập dị chân chất."}
             </p>
             <div className="flex flex-wrap gap-3 pt-2 text-xs font-semibold">
               <span className="px-3 py-1 rounded-full bg-black/25">📚 20 Idioms & Expressions</span>
