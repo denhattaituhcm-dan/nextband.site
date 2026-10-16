@@ -673,28 +673,16 @@ export default function CambridgeVocabHubPage() {
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           
-          {/*  Back to Units & Brand  */}
+          {/*  Back to Units & Stage Switcher  */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate("/cambridge-vocab")}
-              className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors"
+              className="px-3 py-1.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors flex items-center gap-1.5 text-xs font-semibold"
               title="Quay lại danh mục 20 Units"
             >
               <ArrowLeft className="w-4 h-4" />
+              <span>Quay lại</span>
             </button>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight leading-none">
-                  {currentUnitData.meta.title}
-                </h1>
-                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 font-semibold border border-indigo-200">
-                  UNIT {currentUnitData.meta.unit}
-                </span>
-              </div>
-              <p className="text-xs text-slate-500 font-medium mt-0.5 hidden sm:block">
-                Cambridge Vocabulary for IELTS &bull; {currentUnitData.meta.cefr}
-              </p>
-            </div>
           </div>
 
           {/*  Stage Switcher Tabs  */}
