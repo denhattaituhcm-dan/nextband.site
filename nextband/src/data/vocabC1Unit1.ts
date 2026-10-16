@@ -8657,6 +8657,994 @@ export const VOCAB_C1_UNIT_8: VocabC1Unit = {
 };
 
 
-export const VOCAB_C1_UNITS: VocabC1Unit[] = [VOCAB_C1_UNIT_1, VOCAB_C1_UNIT_2, VOCAB_C1_UNIT_3, VOCAB_C1_UNIT_4, VOCAB_C1_UNIT_5, VOCAB_C1_UNIT_6, VOCAB_C1_UNIT_7, VOCAB_C1_UNIT_8];
+
+export const VOCAB_C1_UNIT_9: VocabC1Unit = {
+  unitId: 9,
+  title: "Unit 9: Character, Conduct & Reaction",
+  subtitle: "The Vocabulary Files - Level C1 (Pages 35-39)",
+
+  // 1. Words in Action (10 Core Lexical Sets with Synonyms & Antonyms from Page 35 Exercise A & B)
+  wordsInAction: [
+    {
+      id: "u9-wia-1",
+      word: "alluring",
+      ipa: "/əˈlʊə.rɪŋ/",
+      nuance: "[Powerfully and mysteriously attractive, enticing or tempting]",
+      register: "Literary / Descriptive",
+      collocations: ["alluring smile", "alluring prospect", "alluring fragrance", "highly alluring"],
+      enDef: "Powerfully and mysteriously attractive, fascinating, or seductive.",
+      viDef: "Quyến rũ, lôi cuốn, mê hoặc (nụ cười, viễn cảnh đầy cám dỗ).",
+      example: "The mysterious stranger gave an **alluring** smile before disappearing into the crowd.",
+      targetKeyword: "alluring"
+    },
+    {
+      id: "u9-wia-2",
+      word: "deteriorate",
+      ipa: "/dɪˈtɪə.ri.ə.reɪt/",
+      nuance: "[Progressively become worse in quality, health or condition; degenerate]",
+      register: "Medical / Formal",
+      collocations: ["condition deteriorates", "health deteriorates", "relations deteriorate", "rapidly deteriorate"],
+      enDef: "To become progressively worse, weaker, or inferior in character, condition, or value.",
+      viDef: "Xấu đi, suy thoái, chuyển biến trầm trọng hơn (sức khỏe, thời tiết, quan hệ ngoại giao).",
+      example: "Her medical condition seems to be **deteriorating** rapidly; she must be moved to intensive care.",
+      targetKeyword: "deteriorate"
+    },
+    {
+      id: "u9-wia-3",
+      word: "cheeky",
+      ipa: "/ˈtʃiː.ki/",
+      nuance: "[Insolent, disrespectful or impudent in an endearing or provocative way]",
+      register: "Informal / Expressive",
+      collocations: ["cheeky grin", "cheeky remark", "cheeky behavior", "cheeky youngster"],
+      enDef: "Showing a bold, impudent lack of respect, often in a saucy or cheeky manner.",
+      viDef: "Hỗn láo, xấc xược, táo tợn (thái độ vô phép, lời nói cộc lốc của đứa trẻ).",
+      example: "I can't bear such audacity in a child; her insolent **cheek** will not go unpunished.",
+      targetKeyword: "cheeky"
+    },
+    {
+      id: "u9-wia-4",
+      word: "fetid",
+      ipa: "/ˈfet.ɪd/",
+      nuance: "[Smelling extremely unpleasant, pungent, foul and offensive; putrid]",
+      register: "Formal / Medical",
+      collocations: ["fetid breath", "fetid odor", "fetid swamp", "fetid air"],
+      enDef: "Smelling extremely unpleasant, stale, and offensive; foul-smelling from decay.",
+      viDef: "Hôi thối, nồng nặc mùi xú uế (hơi thở sâu răng, đầm lầy ô nhiễm, thức ăn phân hủy).",
+      example: "A chronically **fetid** breath is often a clinical indication of advanced dental cavities.",
+      targetKeyword: "fetid"
+    },
+    {
+      id: "u9-wia-5",
+      word: "detrimental",
+      ipa: "/ˌdet.rɪˈmen.təl/",
+      nuance: "[Tending to cause definite harm, damage or disadvantage; noxious]",
+      register: "Academic / Formal",
+      collocations: ["detrimental effect", "detrimental impact", "highly detrimental", "detrimental to health"],
+      enDef: "Causing harm, injury, damage, or prejudice; deleterious or adverse in effect.",
+      viDef: "Có hại, gây tổn hại bất lợi (tác động tiêu cực đến sức khỏe, môi trường hoặc sự nghiệp).",
+      example: "Prolonged sleeplessness exerts a severely **detrimental** effect on cognitive performance.",
+      targetKeyword: "detrimental"
+    },
+    {
+      id: "u9-wia-6",
+      word: "rattled",
+      ipa: "/ˈræt.əld/",
+      nuance: "[Nervous, confused, flustered or embarrassed by unexpected pressure]",
+      register: "Standard / Expressive",
+      collocations: ["visibly rattled", "easily rattled", "rattled by questions", "rattled witness"],
+      enDef: "Flustered, unnerved, agitated, or unsettled through shock, confusion, or aggressive probing.",
+      viDef: "Bị làm hoảng hốt, bối rối lúng túng, mất bình tĩnh (khi bị đối chất dồn dập).",
+      example: "The defense lawyer's fierce and relentless questioning completely **rattled** the witness on the stand.",
+      targetKeyword: "rattled"
+    },
+    {
+      id: "u9-wia-7",
+      word: "abhorrent",
+      ipa: "/əbˈhɒr.ənt/",
+      nuance: "[Inspiring utter disgust and loathing; repugnant and morally despicable]",
+      register: "Ethical / Formal",
+      collocations: ["morally abhorrent", "abhorrent behavior", "abhorrent crimes", "utterly abhorrent"],
+      enDef: "Inspiring feelings of utter disgust, loathing, or moral outrage; repugnant.",
+      viDef: "Ghê tởm, đáng kinh tởm, đáng ghét cay ghét đắng (hành vi tàn bạo, tư tưởng độc ác).",
+      example: "His despotic cruelty was so utterly **abhorrent** that even his closest kin came to despise him.",
+      targetKeyword: "abhorrent"
+    },
+    {
+      id: "u9-wia-8",
+      word: "slovenly",
+      ipa: "/ˈslʌv.ən.li/",
+      nuance: "[Untidy, slipshod, messy, and careless in appearance or work habits]",
+      register: "Formal / Critical",
+      collocations: ["slovenly appearance", "slovenly habits", "slovenly work", "slovenly dress"],
+      enDef: "Habitually untidy, messy, or careless in personal appearance, manners, or work execution.",
+      viDef: "Nhếch nhác, lôi thôi lếch thếch, cẩu thả luộm thuộm (về ăn mặc hoặc tác phong).",
+      example: "Her supervisor reprimanded him for his consistently **slovenly** attire and careless paperwork.",
+      targetKeyword: "slovenly"
+    },
+    {
+      id: "u9-wia-9",
+      word: "discursive",
+      ipa: "/dɪˈskɜː.sɪv/",
+      nuance: "[Digressing ramblingly from subject to subject; wandering and rambling]",
+      register: "Academic / Literary",
+      collocations: ["discursive essay", "discursive style", "discursive rambling", "discursive lecture"],
+      enDef: "Moving from topic to topic without clear order or coherence; digressing or rambling loosely.",
+      viDef: "Lan man, dông dài, lạc đề, không mạch lạc tập trung (bài luận, cuộc trò chuyện).",
+      example: "His seminar degenerated into an excessively **discursive** speech that strayed far from the core thesis.",
+      targetKeyword: "discursive"
+    },
+    {
+      id: "u9-wia-10",
+      word: "whimsical",
+      ipa: "/ˈwɪm.zɪ.kəl/",
+      nuance: "[Playfully quaint, fanciful, or caprice-driven in an endearing manner]",
+      register: "Literary / Descriptive",
+      collocations: ["whimsical sense of humor", "whimsical smile", "whimsical charm", "whimsical notion"],
+      enDef: "Playfully quaint, unusual, fanciful, or appealingly eccentric in behavior or appearance.",
+      viDef: "Kỳ quặc một cách hóm hỉnh, thất thường tinh nghịch, ngộ nghĩnh đáng yêu.",
+      example: "The mischievous child turned back and gave us an enchanting, **whimsical** smile.",
+      targetKeyword: "whimsical"
+    }
+  ],
+
+  // 2. Word Formation (8 Sentence Transformations into Adjectives from Page 36 Task One)
+  wordFormation: [
+    {
+      id: "u9-wf-1",
+      adjective: "tearful",
+      noun: "tearful eyes",
+      root: "tear",
+      suffix: "-ful (Adjective)",
+      meaningVi: "Đầm đìa nước mắt (thay 'eyes filled with tears' bằng 'tearful eyes')",
+      suffixChoices: ["tearful", "tearing", "teared", "tearless"],
+      ruleTip: "Chuyển cụm giới từ 'with eyes filled with tears' ➔ 'with tearful eyes'."
+    },
+    {
+      id: "u9-wf-2",
+      adjective: "likely",
+      noun: "He is likely to come",
+      root: "likelihood",
+      suffix: "-ly (Adjective of Probability)",
+      meaningVi: "Có khả năng cao (thay 'In all likelihood, he will come' bằng 'He is likely to come')",
+      suffixChoices: ["likely", "likable", "liking", "likelier"],
+      ruleTip: "Cấu trúc tương đương: 'In all likelihood, S + V' ➔ 'S is likely to + V'."
+    },
+    {
+      id: "u9-wf-3",
+      adjective: "disrespectful",
+      noun: "disrespectful of elders",
+      root: "respect",
+      suffix: "dis- ... -ful (Opposite Adjective)",
+      meaningVi: "Bất kính, vô lễ (thay 'shows no respect for' bằng 'is disrespectful of')",
+      suffixChoices: ["disrespectful", "unrespectable", "irrespective", "respectless"],
+      ruleTip: "Chuyển cụm 'shows no respect for his elders' ➔ 'is disrespectful of his elders'."
+    },
+    {
+      id: "u9-wf-4",
+      adjective: "contemptuous",
+      noun: "contemptuous of thieves",
+      root: "contempt",
+      suffix: "-uous (Adjective)",
+      meaningVi: "Khinh bỉ, coi thường (thay 'feels nothing but contempt for' bằng 'is contemptuous of')",
+      suffixChoices: ["contemptuous", "contemptible", "contempting", "contemptive"],
+      ruleTip: "Phân biệt C1: 'contemptuous of sb' (khinh miệt ai) vs 'contemptible' (đáng khinh)."
+    },
+    {
+      id: "u9-wf-5",
+      adjective: "molten",
+      noun: "molten iron",
+      root: "melt",
+      suffix: "-en (Archaic Adjective)",
+      meaningVi: "Nóng chảy (thay 'melted the iron and poured it' bằng 'poured molten iron')",
+      suffixChoices: ["molten", "melting", "melty", "meltable"],
+      ruleTip: "Kim loại nung chảy ở nhiệt độ cao dùng tính từ đặc thù C1: 'molten iron / molten lava'."
+    },
+    {
+      id: "u9-wf-6",
+      adjective: "inexplicable",
+      noun: "inexplicable behaviour",
+      root: "explain",
+      suffix: "in- ... -able (Negative Adjective)",
+      meaningVi: "Không thể giải thích nổi (thay 'couldn't explain his behaviour' bằng 'was inexplicable')",
+      suffixChoices: ["inexplicable", "unexplainable", "non-explanatory", "inexplicative"],
+      ruleTip: "Chuyển thành tính từ học thuật C1: 'His behaviour was inexplicable'."
+    },
+    {
+      id: "u9-wf-7",
+      adjective: "impossible",
+      noun: "impossible for him to pass",
+      root: "possibility",
+      suffix: "im- ... -ible (Adjective)",
+      meaningVi: "Bất khả thi (thay 'There is no possibility of his passing' bằng 'It's not possible / impossible')",
+      suffixChoices: ["impossible", "impassable", "non-possible", "unpossible"],
+      ruleTip: "Cấu trúc C1: 'It's not possible / impossible for him to pass the exam'."
+    },
+    {
+      id: "u9-wf-8",
+      adjective: "fallible",
+      noun: "often fallible",
+      root: "fail",
+      suffix: "-ible (Adjective of Frailty)",
+      meaningVi: "Dễ mắc sai lầm, có thể hỏng hóc (thay 'often fail' bằng 'are often fallible')",
+      suffixChoices: ["fallible", "failure-prone", "faulty", "fallacious"],
+      ruleTip: "Tính từ triết học C1: 'fallible' = con người hoặc máy móc ai cũng có lúc sai sót."
+    }
+  ],
+
+  // 3. Confusable Words (10 Pairs from Page 37 Task Three)
+  confusableWords: [
+    {
+      id: "u9-cw-1",
+      pairKey: "convert-pervert",
+      wordA: "convert",
+      wordB: "pervert",
+      diffHighlightA: { before: "", highlight: "convert", after: "" },
+      diffHighlightB: { before: "", highlight: "pervert", after: "" },
+      promptSentence: "Christian missionaries historically journeyed overseas to ______ pagan tribes to their faith.",
+      correctWord: "convert",
+      defA: "Convert: Cải đạo, chuyển hóa niềm tin tôn giáo, thay đổi mục đích sử dụng tích cực.",
+      defB: "Pervert: Xuyên tạc, làm sai lệch công lý/sự thật, hoặc làm suy đồi tha hóa nhân cách.",
+      mnemonic: "Convert = chuyển biến niềm tin; Pervert = làm bại hoại xuyên tạc."
+    },
+    {
+      id: "u9-cw-2",
+      pairKey: "convention-conviction",
+      wordA: "convention",
+      wordB: "conviction",
+      diffHighlightA: { before: "", highlight: "convention", after: "" },
+      diffHighlightB: { before: "", highlight: "conviction", after: "" },
+      promptSentence: "It is my deep personal ______ that the self-proclaimed guru is an absolute financial fraud.",
+      correctWord: "conviction",
+      defA: "Convention: Quy ước xã hội, tục lệ truyền thống; hoặc hội nghị, hiệp định công ước.",
+      defB: "Conviction: Niềm tin vững chắc, xác tín sâu sắc trong tâm can; hoặc phán quyết kết án có tội.",
+      mnemonic: "Conviction = xác tín sắt đá / bản án; Convention = hội nghị / quy ước thông lệ."
+    },
+    {
+      id: "u9-cw-3",
+      pairKey: "coach-couch",
+      wordA: "coach",
+      wordB: "couch",
+      diffHighlightA: { before: "", highlight: "coach", after: "" },
+      diffHighlightB: { before: "", highlight: "couch", after: "" },
+      promptSentence: "Mr. Jones is our dedicated varsity baseball ______ who led the team to state finals.",
+      correctWord: "coach",
+      defA: "Coach: Huấn luyện viên thể thao, người rèn luyện; hoặc xe khách đường dài.",
+      defB: "Couch: Ghế trường kỷ, ghế sofa nệm dài để nằm nghỉ ngơi xem ti vi.",
+      mnemonic: "Coach = thầy huấn luyện; Couch potato = kẻ lười nằm ườn trên sofa."
+    },
+    {
+      id: "u9-cw-4",
+      pairKey: "reverted-retorted",
+      wordA: "reverted",
+      wordB: "retorted",
+      diffHighlightA: { before: "", highlight: "reverted", after: "" },
+      diffHighlightB: { before: "", highlight: "reverted", after: "" },
+      promptSentence: "Unfortunately, under stressful family circumstances he ______ to heavy drinking again.",
+      correctWord: "reverted",
+      defA: "Reverted: Quay trở lại thói quen xấu hoặc trạng thái nguyên thủy tiêu cực (revert to old habits).",
+      defB: "Retorted: Đáp trả đanh thép, cãi lại bằng lời lẽ sắc sảo ngay lập tức.",
+      mnemonic: "Revert to drinking = tái nghiện; Retort = đối đáp đanh thép."
+    },
+    {
+      id: "u9-cw-5",
+      pairKey: "cross-gross",
+      wordA: "cross",
+      wordB: "gross",
+      diffHighlightA: { before: "", highlight: "cross", after: "" },
+      diffHighlightB: { before: "", highlight: "gross", after: "" },
+      promptSentence: "I truly dislike people who are constantly ______ and irritable with me for no reason.",
+      correctWord: "cross",
+      defA: "Cross (with sb): Bực mình, càu nhàu, khó chịu gắt gỏng với ai đó (annoyed, irritable).",
+      defB: "Gross: Thô bỉ ghê tởm; hoặc tổng doanh thu trước thuế (gross income).",
+      mnemonic: "Cross with me = cáu gắt với tôi; Gross = kinh tởm / tổng doanh thu."
+    },
+    {
+      id: "u9-cw-6",
+      pairKey: "localise-locate",
+      wordA: "localise",
+      wordB: "locate",
+      diffHighlightA: { before: "", highlight: "localise", after: "" },
+      diffHighlightB: { before: "", highlight: "locate", after: "" },
+      promptSentence: "Highly virulent contagious diseases are notoriously difficult to ______ within one province.",
+      correctWord: "localise",
+      defA: "Localise: Khoanh vùng, cô lập và khống chế ổ dịch trong một phạm vi hẹp không để lan rộng.",
+      defB: "Locate: Định vị, xác định tọa độ hoặc tìm ra vị trí chính xác của đồ vật bị mất.",
+      mnemonic: "Localise disease = khoanh vùng dịch tễ; Locate = tìm ra vị trí."
+    },
+    {
+      id: "u9-cw-7",
+      pairKey: "wipe-weep",
+      wordA: "wipe",
+      wordB: "weep",
+      diffHighlightA: { before: "", highlight: "wipe", after: "" },
+      diffHighlightB: { before: "", highlight: "weep", after: "" },
+      promptSentence: "When the doctor gently broke the tragic news to her, she began to ______ inconsolably.",
+      correctWord: "weep",
+      defA: "Wipe: Lau chùi, quét qua, gạt đi (wipe away tears).",
+      defB: "Weep: Rơi lệ, khóc nức nở, than khóc thảm thiết vì đau buồn sâu sắc.",
+      mnemonic: "Weep = khóc thương sầu não; Wipe = lau chùi giọt lệ."
+    },
+    {
+      id: "u9-cw-8",
+      pairKey: "ledges-sledges",
+      wordA: "ledges",
+      wordB: "sledges",
+      diffHighlightA: { before: "", highlight: "ledges", after: "" },
+      diffHighlightB: { before: "", highlight: "sledges", after: "" },
+      promptSentence: "In harsh arctic winters, Eskimos traditionally used dog-drawn ______ to travel across ice.",
+      correctWord: "sledges",
+      defA: "Ledges: Gờ đá cheo leo, mỏm đá nhô ra ở vách núi; hoặc gờ cửa sổ.",
+      defB: "Sledges: Xe trượt tuyết (do chó kéo hoặc người đẩy trượt trên băng tuyết).",
+      mnemonic: "Sledges có chữ S như 'Snow sled' = xe trượt tuyết; Ledge = gờ đá cheo leo."
+    },
+    {
+      id: "u9-cw-9",
+      pairKey: "mop-mob",
+      wordA: "mop",
+      wordB: "mob",
+      diffHighlightA: { before: "", highlight: "mop", after: "" },
+      diffHighlightB: { before: "", highlight: "mob", after: "" },
+      promptSentence: "The bloodthirsty and frenzied ______ stormed the courthouse gates demanding revenge.",
+      correctWord: "mob",
+      defA: "Mop: Cây chổi lau sàn nhà, búi giẻ lau.",
+      defB: "Mob: Đám đông bạo loạn cuồng loạn, quần chúng quá khích mất kiểm soát.",
+      mnemonic: "Angry mob = đám đông bạo loạn hung hãn; Mop = cây lau nhà."
+    },
+    {
+      id: "u9-cw-10",
+      pairKey: "inclusive-conclusive",
+      wordA: "inclusive",
+      wordB: "conclusive",
+      diffHighlightA: { before: "", highlight: "inclusive", after: "" },
+      diffHighlightB: { before: "", highlight: "conclusive", after: "" },
+      promptSentence: "Forensic detectives now possess ______ DNA evidence as to who committed the murder.",
+      correctWord: "conclusive",
+      defA: "Inclusive: Bao hàm toàn diện, tính trọn gói không chừa ai (inclusive of all fees).",
+      defB: "Conclusive: Có tính quyết định, chứng cứ đanh thép không thể chối cãi (conclusive evidence).",
+      mnemonic: "Conclusive proof = bằng chứng kết luận sắt đá; Inclusive = bao gồm trọn gói."
+    }
+  ],
+
+  // 4. Synonym Filter (4 Thematic Lexical Clusters from Page 35 Exercise A)
+  synonymFilter: [
+    {
+      id: "u9-sf-1",
+      targetWord: "abhorrent",
+      targetCategory: "Unit 9 Morality & Evaluation",
+      targetMeaning: "Despicable, loathsome / inspiring moral disgust",
+      targetMeaningVi: "Đáng kinh tởm, ghê sợ, đáng ghét cay ghét đắng",
+      note: "Chọn 4 từ đồng nghĩa chỉ sự ghê tởm đáng khinh bỉ và 2 từ thể hiện sự đáng yêu, tôn quý.",
+      words: [
+        { word: "loathsome", isSynonym: true, meaningVi: "Kinh tởm đáng tởm lợm" },
+        { word: "despicable", isSynonym: true, meaningVi: "Đáng khinh miệt đê hèn" },
+        { word: "repulsive", isSynonym: true, meaningVi: "Đáng ghê sợ xua đuổi" },
+        { word: "odious", isSynonym: true, meaningVi: "Đáng căm ghét tột cùng" },
+        { word: "amiable", isSynonym: false, meaningVi: "Dễ thương, hòa nhã đáng mến" },
+        { word: "lovable", isSynonym: false, meaningVi: "Đáng yêu, dễ cảm mến" }
+      ]
+    },
+    {
+      id: "u9-sf-2",
+      targetWord: "alluring",
+      targetCategory: "Unit 9 Aesthetic & Charm",
+      targetMeaning: "Attractive, tempting, enchanting",
+      targetMeaningVi: "Quyến rũ, lôi cuốn, mê đắm lòng người",
+      note: "Chọn 4 từ đồng nghĩa chỉ vẻ đẹp lôi cuốn hấp dẫn và 2 từ mang nghĩa kinh dị, xua đuổi.",
+      words: [
+        { word: "enticing", isSynonym: true, meaningVi: "Mời gọi cám dỗ khó cưỡng" },
+        { word: "beguiling", isSynonym: true, meaningVi: "Mê hoặc làm say đắm" },
+        { word: "captivating", isSynonym: true, meaningVi: "Hút hồn cuốn hút ánh nhìn" },
+        { word: "seductive", isSynonym: true, meaningVi: "Quyến rũ khiêu gợi say mê" },
+        { word: "repugnant", isSynonym: false, meaningVi: "Kinh tởm, làm dội ngược lại" },
+        { word: "repellent", isSynonym: false, meaningVi: "Đáng ghét làm người khác tránh xa" }
+      ]
+    },
+    {
+      id: "u9-sf-3",
+      targetWord: "slovenly",
+      targetCategory: "Unit 9 Habit & Discipline",
+      targetMeaning: "Slipshod, slatternly, untidy, negligent",
+      targetMeaningVi: "Lôi thôi, nhếch nhác, cẩu thả luộm thuộm",
+      note: "Chọn 4 từ đồng nghĩa miêu tả tính cách cẩu thả luộm thuộm và 2 từ gọn gàng tươm tất.",
+      words: [
+        { word: "slipshod", isSynonym: true, meaningVi: "Cẩu thả tắc trách qua loa" },
+        { word: "slatternly", isSynonym: true, meaningVi: "Luộm thuộm nhếch nhác bừa bãi" },
+        { word: "unkempt", isSynonym: true, meaningVi: "Đầu bù tóc rối bê bối" },
+        { word: "disheveled", isSynonym: true, meaningVi: "Xốc xếch lôi thôi bừa bộn" },
+        { word: "fastidious", isSynonym: false, meaningVi: "Kỹ tính, tươm tất chỉn chu tuyệt đối" },
+        { word: "meticulous", isSynonym: false, meaningVi: "Tỉ mỉ, cẩn trọng từng li từng tí" }
+      ]
+    },
+    {
+      id: "u9-sf-4",
+      targetWord: "discursive",
+      targetCategory: "Unit 9 Discourse & Speech",
+      targetMeaning: "Digressive, deviating, wandering from topic",
+      targetMeaningVi: "Lan man, dông dài, lạc đề thiếu mạch lạc",
+      note: "Chọn 4 từ đồng nghĩa chỉ cách nói/viết dông dài lan man và 2 từ ngắn gọn súc tích mạch lạc.",
+      words: [
+        { word: "rambling", isSynonym: true, meaningVi: "Nói dông dài lòng vòng" },
+        { word: "digressive", isSynonym: true, meaningVi: "Lạc đề nhảy cóc chủ đề" },
+        { word: "circuitous", isSynonym: true, meaningVi: "Quanh co luẩn quẩn" },
+        { word: "desultory", isSynonym: true, meaningVi: "Tản mạn không đầu không đuôi" },
+        { word: "succinct", isSynonym: false, meaningVi: "Ngắn gọn súc tích trúng trọng tâm" },
+        { word: "coherent", isSynonym: false, meaningVi: "Mạch lạc kết nối chặt chẽ" }
+      ]
+    }
+  ],
+
+  // 5. Smart Cloze (New Orleans, Cultural Fusion & The Louisiana Purchase - Page 38 Ex A)
+  clozePassages: [
+    {
+      id: "u9-cp-1",
+      title: "New Orleans & The Louisiana Purchase: Cultural Transition",
+      sourceLabel: "Level C1 Academic Reading (The Vocabulary Files - Page 38)",
+      passageTemplate: "Slavery was not the only {{gap_1}} of life in New Orleans that would have been unfamiliar to men like Captain Amos Stoddard, a New Englander who became one of the {{gap_2}} of the new lands. Stoddard might have been {{gap_3}} by the odd cultural mix that New Orleans represented, and which it still {{gap_4}}, in some forms, to this day. After the Spanish ceded Louisiana to the French, much of the Spanish population in New Orleans departed for Cuba. As they left and French immigrants came in from Francophone {{gap_5}} like San Domingue, New Orleans took on a Gallic tinge. At the same time, traces of Spanish occupation remained strong, with luxurious homes in the city built in Spanish style, around courtyards and with stucco walls. As a further {{gap_6}} of the territory's past governments, the Louisiana State Legislature met in the former palace of the Spanish governors, until it burned down in 1827. In what might {{gap_7}} readers today as a particularly chilling reminder of the city's previous masters, two pillories stood on Chartres Street. The Spanish authorities had locked prisoners in those stocks and sometimes publicly humiliated and abused them.\n\nThomas Jefferson, the American President, in purchasing Louisiana and bringing about the {{gap_8}} of control that occurred on December 20, opened a new {{gap_9}} in American history and closed the old one, of which he had been a principal author. Only a few years before, he had rejected Alexander Hamilton's proposal for a national bank by {{gap_10}} that the Constitution didn't empower the U.S. government to create such an institution. By 1803 he seems to have changed his feelings about the problem of \"implied powers\" or at least been excited enough about the possible uses of 828,000 square miles of property to set aside any legal qualms.",
+      gaps: [
+        {
+          gapNumber: 1,
+          options: [
+            { label: "A", text: "aspect" },
+            { label: "B", text: "position" },
+            { label: "C", text: "view" },
+            { label: "D", text: "look" }
+          ],
+          correctLabel: "A",
+          correctWord: "aspect",
+          targetWord: "aspect",
+          explanations: {
+            A: "Aspect: khía cạnh, mặt đời sống xã hội (the only aspect of life).",
+            B: "Position: vị trí địa lý hoặc quan điểm lập trường.",
+            C: "View: tầm nhìn hoặc quan điểm.",
+            D: "Look: diện mạo bên ngoài."
+          },
+          explanationVi: "Aspect of life = khía cạnh, góc độ đời sống tại New Orleans."
+        },
+        {
+          gapNumber: 2,
+          options: [
+            { label: "A", text: "slave traders" },
+            { label: "B", text: "numbers" },
+            { label: "C", text: "governors" },
+            { label: "D", text: "many" }
+          ],
+          correctLabel: "C",
+          correctWord: "governors",
+          targetWord: "governors",
+          explanations: {
+            A: "Slave traders: kẻ buôn bán nô lệ, sai chức vụ của Đại úy Amos Stoddard.",
+            B: "Numbers: con số, sai ngữ cảnh vị trí lãnh đạo chính quyền.",
+            C: "Governors: các thống đốc, quan chức toàn quyền cai quản vùng đất mới sáp nhập.",
+            D: "Many: nhiều người."
+          },
+          explanationVi: "One of the governors of the new lands = một trong những nhà toàn quyền của vùng lãnh thổ mới."
+        },
+        {
+          gapNumber: 3,
+          options: [
+            { label: "A", text: "interested" },
+            { label: "B", text: "frightened" },
+            { label: "C", text: "perplexed" },
+            { label: "D", text: "humoured" }
+          ],
+          correctLabel: "C",
+          correctWord: "perplexed",
+          targetWord: "perplexed",
+          explanations: {
+            A: "Interested: quan tâm (đi với in, ở đây dùng bị động 'perplexed by').",
+            B: "Frightened: khiếp sợ, quá mạnh so với sự bỡ ngỡ văn hóa.",
+            C: "Perplexed: hoang mang, bối rối không hiểu nổi trước sự pha trộn văn hóa kỳ lạ.",
+            D: "Humoured: chiều chuộng theo ý người khác."
+          },
+          explanationVi: "Perplexed by = cảm thấy bối rối, ngỡ ngàng trước bản sắc văn hóa đa nguyên kỳ lạ."
+        },
+        {
+          gapNumber: 4,
+          options: [
+            { label: "A", text: "refrains" },
+            { label: "B", text: "retains" },
+            { label: "C", text: "relinquishes" },
+            { label: "D", text: "replaces" }
+          ],
+          correctLabel: "B",
+          correctWord: "retains",
+          targetWord: "retains",
+          explanations: {
+            A: "Refrains: kiềm chế, nhịn không làm gì (đi với from).",
+            B: "Retains: vẫn bảo lưu, giữ gìn được nét độc đáo này cho tới tận ngày nay.",
+            C: "Relinquishes: từ bỏ buông xuôi quyền kiểm soát.",
+            D: "Replaces: thay thế."
+          },
+          explanationVi: "Retains = tiếp tục gìn giữ, duy trì bản sắc độc đáo này đến tận hôm nay."
+        },
+        {
+          gapNumber: 5,
+          options: [
+            { label: "A", text: "continents" },
+            { label: "B", text: "industries" },
+            { label: "C", text: "colonies" },
+            { label: "D", text: "pasts" }
+          ],
+          correctLabel: "C",
+          correctWord: "colonies",
+          targetWord: "colonies",
+          explanations: {
+            A: "Continents: lục địa.",
+            B: "Industries: các ngành công nghiệp.",
+            C: "Colonies: các thuộc địa nói tiếng Pháp như Saint-Domingue (Haiti ngày nay).",
+            D: "Pasts: quá khứ."
+          },
+          explanationVi: "Francophone colonies = các xứ thuộc địa nói tiếng Pháp tại vùng Caribe."
+        },
+        {
+          gapNumber: 6,
+          options: [
+            { label: "A", text: "examination" },
+            { label: "B", text: "reference" },
+            { label: "C", text: "plunder" },
+            { label: "D", text: "reminder" }
+          ],
+          correctLabel: "D",
+          correctWord: "reminder",
+          targetWord: "reminder",
+          explanations: {
+            A: "Examination: cuộc thi cử, sự giám định kiểm tra.",
+            B: "Reference: sự tham khảo, tài liệu tham chiếu.",
+            C: "Plunder: chiến lợi phẩm cướp bóc.",
+            D: "Reminder: vật gợi nhớ, dấu tích lịch sử nhắc nhớ về chính quyền tiền nhiệm."
+          },
+          explanationVi: "A further reminder of = một dấu ấn lịch sử nhắc nhở sâu sắc về các triều đại cai trị cũ."
+        },
+        {
+          gapNumber: 7,
+          options: [
+            { label: "A", text: "present" },
+            { label: "B", text: "strike" },
+            { label: "C", text: "inspire" },
+            { label: "D", text: "instill" }
+          ],
+          correctLabel: "B",
+          correctWord: "strike",
+          targetWord: "strike",
+          explanations: {
+            A: "Present: trình diện, không có cấu trúc 'present readers as a chilling reminder'.",
+            B: "Strike: Cấu trúc C1 'strike somebody as something' = gây ấn tượng cho ai như là một điều gì.",
+            C: "Inspire: truyền cảm hứng tích cực.",
+            D: "Instill: thấm nhuần tư tưởng (instill sth in sb)."
+          },
+          explanationVi: "Cấu trúc C1 chuẩn xác: 'what might strike readers today as...' = điều có thể tạo cảm giác cho độc giả ngày nay là..."
+        },
+        {
+          gapNumber: 8,
+          options: [
+            { label: "A", text: "hand-over" },
+            { label: "B", text: "transaction" },
+            { label: "C", text: "ownership" },
+            { label: "D", text: "transfer" }
+          ],
+          correctLabel: "D",
+          correctWord: "transfer",
+          targetWord: "transfer",
+          explanations: {
+            A: "Hand-over: bàn giao thông thường, ít tính văn bản pháp lý chính thống bằng transfer.",
+            B: "Transaction: giao dịch tài chính.",
+            C: "Ownership: quyền sở hữu (không dùng 'ownership of control').",
+            D: "Transfer: Sự chuyển giao quyền lực kiểm soát chính trị (transfer of control)."
+          },
+          explanationVi: "Transfer of control = cuộc chuyển giao quyền lực quản lý chính trị lịch sử."
+        },
+        {
+          gapNumber: 9,
+          options: [
+            { label: "A", text: "chapter" },
+            { label: "B", text: "book" },
+            { label: "C", text: "piece" },
+            { label: "D", text: "paragraph" }
+          ],
+          correctLabel: "A",
+          correctWord: "chapter",
+          targetWord: "chapter",
+          explanations: {
+            A: "Chapter: Collocation ẩn dụ C1 'open a new chapter in history' = mở ra một chương mới trong lịch sử dân tộc.",
+            B: "Book: cuốn sách.",
+            C: "Piece: mảnh ghép.",
+            D: "Paragraph: đoạn văn."
+          },
+          explanationVi: "Collocation lịch sử: 'opened a new chapter in American history' = mở ra một trang sử/chương lịch sử mới."
+        },
+        {
+          gapNumber: 10,
+          options: [
+            { label: "A", text: "registering" },
+            { label: "B", text: "arguing" },
+            { label: "C", text: "bickering" },
+            { label: "D", text: "demanding" }
+          ],
+          correctLabel: "B",
+          correctWord: "arguing",
+          targetWord: "arguing",
+          explanations: {
+            A: "Registering: đăng ký ghi danh.",
+            B: "Arguing: lập luận, biện luận có lý lẽ pháp lý (arguing that the Constitution didn't empower).",
+            C: "Bickering: cãi vặt trẻ con.",
+            D: "Demanding: yêu sách đòi hỏi."
+          },
+          explanationVi: "Arguing that = đưa ra lập luận pháp lý rằng Hiến pháp không trao quyền lập ngân hàng quốc gia."
+        }
+      ]
+    }
+  ],
+
+  // 6. Speed Blitz (20 Instant-Recall Questions from Page 36 Task Two, Page 37 Task Four & Page 39 Ex B)
+  speedBlitz: [
+    // Questions 1-10: Prepositions & Phrasal Idioms (Page 36 Task Two & Page 37 Task Four)
+    {
+      id: "u9-sb-1",
+      questionNumber: 1,
+      prompt: "Did the manager promise you a raise? — Yes, he committed himself ______ it some time ago.",
+      options: [
+        { key: "a", text: "with" },
+        { key: "b", text: "to" },
+        { key: "c", text: "for" },
+        { key: "d", text: "on" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "with", pos: "prep", vi: "Sai giới từ" },
+        { key: "b", word: "to", pos: "collocation", vi: "Chính xác: commit oneself to sth = cam kết gắn bó / cam hứa thực hiện điều gì" },
+        { key: "c", word: "for", pos: "prep", vi: "Sai giới từ" },
+        { key: "d", word: "on", pos: "prep", vi: "Sai giới từ" }
+      ]
+    },
+    {
+      id: "u9-sb-2",
+      questionNumber: 2,
+      prompt: "Sweden is widely known to be rich in natural resources; indeed, it abounds ______ iron ore and timber.",
+      options: [
+        { key: "a", text: "in" },
+        { key: "b", text: "with" },
+        { key: "c", text: "of" },
+        { key: "d", text: "by" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "in", pos: "collocation", vi: "Chính xác: abound in / with sth = tràn trề dồi dào tài nguyên khoáng sản" },
+        { key: "b", word: "with", pos: "collocation", vi: "Abound with cũng đúng nhưng đáp án sách gốc dùng 'in' (hoặc with)" },
+        { key: "c", word: "of", pos: "prep", vi: "Sai giới từ" },
+        { key: "d", word: "by", pos: "prep", vi: "Sai giới từ" }
+      ]
+    },
+    {
+      id: "u9-sb-3",
+      questionNumber: 3,
+      prompt: "John's sports car was badly mangled in the crash; he may as well write it ______.",
+      options: [
+        { key: "a", text: "away" },
+        { key: "b", text: "down" },
+        { key: "c", text: "off" },
+        { key: "d", text: "out" }
+      ],
+      correctKey: "c",
+      explanations: [
+        { key: "a", word: "away", pos: "prep", vi: "Sai phrasal verb" },
+        { key: "b", word: "down", pos: "prep", vi: "Write down = ghi chép" },
+        { key: "c", word: "off", pos: "collocation", vi: "Chính xác: write off a car = xóa sổ xem như hư hỏng hoàn toàn không thể sửa" },
+        { key: "d", word: "out", pos: "prep", vi: "Write out = viết chi tiết chi phiếu" }
+      ]
+    },
+    {
+      id: "u9-sb-4",
+      questionNumber: 4,
+      prompt: "To accede ______ such an unreasonable ultimatum would establish a catastrophic precedent.",
+      options: [
+        { key: "a", text: "with" },
+        { key: "b", text: "to" },
+        { key: "c", text: "for" },
+        { key: "d", text: "in" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "with", pos: "prep", vi: "Sai giới từ" },
+        { key: "b", word: "to", pos: "collocation", vi: "Chính xác: accede to a demand / request = bằng lòng chấp thuận yêu sách" },
+        { key: "c", word: "for", pos: "prep", vi: "Sai giới từ" },
+        { key: "d", word: "in", pos: "prep", vi: "Sai giới từ" }
+      ]
+    },
+    {
+      id: "u9-sb-5",
+      questionNumber: 5,
+      prompt: "Do you like the new literature teacher? — Yes, I think I have a secret crush ______ him.",
+      options: [
+        { key: "a", text: "on" },
+        { key: "b", text: "in" },
+        { key: "c", text: "at" },
+        { key: "d", text: "for" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "on", pos: "collocation", vi: "Chính xác: have a crush on sb = thầm thương trộm nhớ ai đó" },
+        { key: "b", word: "in", pos: "prep", vi: "Sai giới từ" },
+        { key: "c", word: "at", pos: "prep", vi: "Sai giới từ" },
+        { key: "d", word: "for", pos: "prep", vi: "Have feelings for, nhưng crush đi với ON" }
+      ]
+    },
+    {
+      id: "u9-sb-6",
+      questionNumber: 6,
+      prompt: "Did you take on the directorship eventually? — I did, but it calls ______ tremendous endurance.",
+      options: [
+        { key: "a", text: "in" },
+        { key: "b", text: "for" },
+        { key: "c", text: "out" },
+        { key: "d", text: "up" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "in", pos: "prep", vi: "Call in = triệu tập" },
+        { key: "b", word: "for", pos: "collocation", vi: "Chính xác: call for sth = đòi hỏi, cần đến rất nhiều nỗ lực và thời gian" },
+        { key: "c", word: "out", pos: "prep", vi: "Call out = chỉ trích công khai" },
+        { key: "d", word: "up", pos: "prep", vi: "Call up = gọi điện hoặc gọi nhập ngũ" }
+      ]
+    },
+    {
+      id: "u9-sb-7",
+      questionNumber: 7,
+      prompt: "Can we entrust Gary with company funds? — Oh yes, he is a gentleman ______ impeccable integrity.",
+      options: [
+        { key: "a", text: "with" },
+        { key: "b", text: "of" },
+        { key: "c", text: "in" },
+        { key: "d", text: "for" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "with", pos: "prep", vi: "Sai giới từ tạo thuộc tính tính cách" },
+        { key: "b", word: "of", pos: "collocation", vi: "Chính xác: a man of impeccable honesty/integrity = người có phẩm hạnh trung thực vẹn toàn" },
+        { key: "c", word: "in", pos: "prep", vi: "Sai giới từ" },
+        { key: "d", word: "for", pos: "prep", vi: "Sai giới từ" }
+      ]
+    },
+    {
+      id: "u9-sb-8",
+      questionNumber: 8,
+      prompt: "He's in complete disagreement with our proposal; it'll take time before I bring him ______ to our view.",
+      options: [
+        { key: "a", text: "around" },
+        { key: "b", text: "round" },
+        { key: "c", text: "over" },
+        { key: "d", text: "up" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "around", pos: "prep", vi: "Mang nghĩa tương đương nhưng sách C1 chuẩn Anh dùng 'round'" },
+        { key: "b", word: "round", pos: "collocation", vi: "Chính xác: bring sb round to sth = thuyết phục ai đồng ý với góc nhìn của mình" },
+        { key: "c", word: "over", pos: "prep", vi: "Bring sb over = rủ ai qua nhà chơi" },
+        { key: "d", word: "up", pos: "prep", vi: "Bring up = nuôi nấng hoặc nêu vấn đề" }
+      ]
+    },
+    {
+      id: "u9-sb-9",
+      questionNumber: 9,
+      prompt: "What about your startup project? Did you pull it off? — No, it fell ______ like all the others.",
+      options: [
+        { key: "a", text: "apart" },
+        { key: "b", text: "out" },
+        { key: "c", text: "through" },
+        { key: "d", text: "down" }
+      ],
+      correctKey: "c",
+      explanations: [
+        { key: "a", word: "apart", pos: "prep", vi: "Fall apart = vỡ vụn từng mảnh" },
+        { key: "b", word: "out", pos: "prep", vi: "Fall out = cãi cọ bất hòa" },
+        { key: "c", word: "through", pos: "collocation", vi: "Chính xác: fall through = kế hoạch / dự án bị đổ bể, thất bại không thành" },
+        { key: "d", word: "down", pos: "prep", vi: "Fall down = ngã quỵ" }
+      ]
+    },
+    {
+      id: "u9-sb-10",
+      questionNumber: 10,
+      prompt: "The furious attack dog came ______ me all of a sudden when I casually strolled past their hedge.",
+      options: [
+        { key: "a", text: "into" },
+        { key: "b", text: "at" },
+        { key: "c", text: "over" },
+        { key: "d", text: "up" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "into", pos: "prep", vi: "Come into money = thừa kế" },
+        { key: "b", word: "at", pos: "collocation", vi: "Chính xác: come at sb = lao vào tấn công ai đó hung hãn bất ngờ" },
+        { key: "c", word: "over", pos: "prep", vi: "Come over = ghé qua" },
+        { key: "d", word: "up", pos: "prep", vi: "Come up = xuất hiện nảy sinh" }
+      ]
+    },
+
+    // Questions 11-20: Advanced Academic Practice (Page 39 Ex B)
+    {
+      id: "u9-sb-11",
+      questionNumber: 11,
+      prompt: "It's my unshakeable ______ that the self-acclaimed guru is a fraudulent opportunist.",
+      options: [
+        { key: "a", text: "conviction" },
+        { key: "b", text: "choice" },
+        { key: "c", text: "indignation" },
+        { key: "d", text: "mistrust" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "conviction", pos: "collocation", vi: "Chính xác: it's my conviction that... = tôi tin chắc một cách tuyệt đối rằng..." },
+        { key: "b", word: "choice", pos: "n", vi: "Lựa chọn cá nhân" },
+        { key: "c", word: "indignation", pos: "n", vi: "Cơn phẫn nộ bất bình" },
+        { key: "d", word: "mistrust", pos: "n", vi: "Sự ngờ vực thiếu tin tưởng" }
+      ]
+    },
+    {
+      id: "u9-sb-12",
+      questionNumber: 12,
+      prompt: "Throughout his youth, he ______ tirelessly and sacrificed all leisure to make a success of his life.",
+      options: [
+        { key: "a", text: "saved" },
+        { key: "b", text: "plunged" },
+        { key: "c", text: "strove" },
+        { key: "d", text: "throve" }
+      ],
+      correctKey: "c",
+      explanations: [
+        { key: "a", word: "saved", pos: "v", vi: "Tiết kiệm" },
+        { key: "b", word: "plunged", pos: "v", vi: "Lao dốc đâm sầm" },
+        { key: "c", word: "strove", pos: "collocation", vi: "Chính xác: strive hard (quá khứ strove) = nỗ lực phấn đấu hết sức mình" },
+        { key: "d", word: "throve", pos: "v", vi: "Phát triển thịnh vượng (không đi với 'throve hard')" }
+      ]
+    },
+    {
+      id: "u9-sb-13",
+      questionNumber: 13,
+      prompt: "Despite my earnest warnings about the risks, the reckless investor took no ______ of what I said.",
+      options: [
+        { key: "a", text: "advice" },
+        { key: "b", text: "revenge" },
+        { key: "c", text: "warning" },
+        { key: "d", text: "notice" }
+      ],
+      correctKey: "d",
+      explanations: [
+        { key: "a", word: "advice", pos: "n", vi: "Take advice (không đi với of what I said theo cấu trúc này)" },
+        { key: "b", word: "revenge", pos: "n", vi: "Báo thù trả đũa" },
+        { key: "c", word: "warning", pos: "n", vi: "Lời cảnh báo" },
+        { key: "d", word: "notice", pos: "collocation", vi: "Chính xác: take no notice of sth = hoàn toàn phớt lờ, không màng để tâm" }
+      ]
+    },
+    {
+      id: "u9-sb-14",
+      questionNumber: 14,
+      prompt: "I am urgently scheduled for surgery; could you possibly ______ me at the regional committee meeting?",
+      options: [
+        { key: "a", text: "stand in for" },
+        { key: "b", text: "make up for" },
+        { key: "c", text: "go back on" },
+        { key: "d", text: "keep in with" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "stand in for", pos: "collocation", vi: "Chính xác: stand in for sb = đại diện thay mặt ai, thế chỗ tạm thời" },
+        { key: "b", word: "make up for", pos: "v", vi: "Bù đắp cho thiệt hại" },
+        { key: "c", word: "go back on", pos: "v", vi: "Nuốt lời thất hứa" },
+        { key: "d", word: "keep in with", pos: "v", vi: "Giữ mối quan hệ hòa hảo với ai" }
+      ]
+    },
+    {
+      id: "u9-sb-15",
+      questionNumber: 15,
+      prompt: "Sophisticated corporate tax ______ deprives the national treasury of several billion dollars annually.",
+      options: [
+        { key: "a", text: "retention" },
+        { key: "b", text: "evasion" },
+        { key: "c", text: "invasion" },
+        { key: "d", text: "desertion" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "retention", pos: "n", vi: "Sự giữ lại lưu giữ" },
+        { key: "b", word: "evasion", pos: "collocation", vi: "Chính xác: tax evasion = hành vi trốn thuế bất hợp pháp gây thất thoát ngân sách" },
+        { key: "c", word: "invasion", pos: "n", vi: "Cuộc xâm lăng quân sự" },
+        { key: "d", word: "desertion", pos: "n", vi: "Tội đào ngũ rời bỏ vị trí" }
+      ]
+    },
+    {
+      id: "u9-sb-16",
+      questionNumber: 16,
+      prompt: "After malicious lies were printed in the tabloid, the government minister announced he would sue for ______.",
+      options: [
+        { key: "a", text: "praise" },
+        { key: "b", text: "diligence" },
+        { key: "c", text: "deface" },
+        { key: "d", text: "defamation" }
+      ],
+      correctKey: "d",
+      explanations: [
+        { key: "a", word: "praise", pos: "n", vi: "Lời khen ngợi" },
+        { key: "b", word: "diligence", pos: "n", vi: "Sự cần cù siêng năng" },
+        { key: "c", word: "deface", pos: "v", vi: "Làm bôi bẩn biến dạng" },
+        { key: "d", word: "defamation", pos: "collocation", vi: "Chính xác: sue for defamation = khởi kiện vì tội phỉ báng bôi nhọ danh dự" }
+      ]
+    },
+    {
+      id: "u9-sb-17",
+      questionNumber: 17,
+      prompt: "Her spiteful and derisive remark instantly ______ the already hostile mob in the town square.",
+      options: [
+        { key: "a", text: "engulfed" },
+        { key: "b", text: "engrossed" },
+        { key: "c", text: "enlivened" },
+        { key: "d", text: "enraged" }
+      ],
+      correctKey: "d",
+      explanations: [
+        { key: "a", word: "engulfed", pos: "v", vi: "Nhấn chìm bao trùm trong biển lửa" },
+        { key: "b", word: "engrossed", pos: "v", vi: "Cuốn hút tâm trí say mê" },
+        { key: "c", word: "enlivened", pos: "v", vi: "Làm sống động vui tươi" },
+        { key: "d", word: "enraged", pos: "v", vi: "Chính xác: enrage the crowd = chọc giận điên cuồng, làm bùng phát cơn thịnh nộ" }
+      ]
+    },
+    {
+      id: "u9-sb-18",
+      questionNumber: 18,
+      prompt: "She was so thoroughly infuriated that she found it almost impossible to ______ her explosive temper.",
+      options: [
+        { key: "a", text: "contain" },
+        { key: "b", text: "abstain" },
+        { key: "c", text: "retain" },
+        { key: "d", text: "detain" }
+      ],
+      correctKey: "a",
+      explanations: [
+        { key: "a", word: "contain", pos: "collocation", vi: "Chính xác: contain one's temper / anger = nén cơn giận, kìm chế cơn thịnh nộ" },
+        { key: "b", word: "abstain", pos: "v", vi: "Kiêng cử (abstain from alcohol)" },
+        { key: "c", word: "retain", pos: "v", vi: "Giữ lại quyền sở hữu" },
+        { key: "d", word: "detain", pos: "v", vi: "Tạm giam giữ" }
+      ]
+    },
+    {
+      id: "u9-sb-19",
+      questionNumber: 19,
+      prompt: "The eccentric theory he advanced concerning human evolution was widely ______ by the scientific community.",
+      options: [
+        { key: "a", text: "disgraced" },
+        { key: "b", text: "discredited" },
+        { key: "c", text: "debased" },
+        { key: "d", text: "dishonored" }
+      ],
+      correctKey: "b",
+      explanations: [
+        { key: "a", word: "disgraced", pos: "adj", vi: "Bị ruồng bỏ vì bê bối ô nhục" },
+        { key: "b", word: "discredited", pos: "collocation", vi: "Chính xác: discredited theory = lý thuyết bị bác bỏ, bị chứng minh là sai và mất uy tín" },
+        { key: "c", word: "debased", pos: "adj", vi: "Bị làm giảm giá trị hoặc phẩm chất" },
+        { key: "d", word: "dishonored", pos: "adj", vi: "Bị thất hứa hoặc làm nhục" }
+      ]
+    },
+    {
+      id: "u9-sb-20",
+      questionNumber: 20,
+      prompt: "Ruthless political warfare all too often involves deliberately defaming one's ______.",
+      options: [
+        { key: "a", text: "friends" },
+        { key: "b", text: "relatives" },
+        { key: "c", text: "colleagues" },
+        { key: "d", text: "opponents" }
+      ],
+      correctKey: "d",
+      explanations: [
+        { key: "a", word: "friends", pos: "n", vi: "Bạn bè" },
+        { key: "b", word: "relatives", pos: "n", vi: "Người thân họ hàng" },
+        { key: "c", word: "colleagues", pos: "n", vi: "Đồng nghiệp" },
+        { key: "d", word: "opponents", pos: "collocation", vi: "Chính xác: defame one's opponents = bôi nhọ thanh danh của đối thủ chính trị" }
+      ]
+    }
+  ]
+};
+
+
+export const VOCAB_C1_UNITS: VocabC1Unit[] = [VOCAB_C1_UNIT_1, VOCAB_C1_UNIT_2, VOCAB_C1_UNIT_3, VOCAB_C1_UNIT_4, VOCAB_C1_UNIT_5, VOCAB_C1_UNIT_6, VOCAB_C1_UNIT_7, VOCAB_C1_UNIT_8, VOCAB_C1_UNIT_9];
+
 
 

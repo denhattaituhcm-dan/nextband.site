@@ -103,6 +103,13 @@ const getUnitMeta = (unitId: number) => {
         descVi: "Phân biệt abate, adroit, accost, aggravate, prosper, resilient, opulent và các cụm từ C1 tinh tế.",
         pages: "Trang 31–34"
       };
+    case 9:
+      return {
+        shortLabel: "Unit 9: Conduct",
+        themeVi: "Tính cách, Hành vi & Phản ứng",
+        descVi: "Nắm vững sắc thái alluring, discursive, slovenly, abhorrent, rattled và các cấu trúc biến đổi tính từ C1.",
+        pages: "Trang 35–39"
+      };
     default:
       return {
         shortLabel: `Unit ${unitId}`,
@@ -1578,7 +1585,9 @@ export const VocabC1Page: React.FC = () => {
                   ? (stage6Index < 10 ? "Task One (Trang 24)" : "Phần B (Trang 26)")
                   : VOCAB_C1_UNIT_1.unitId === 7
                   ? (stage6Index < 10 ? "Ex A & B (Trang 27)" : "Phần B (Trang 30)")
-                  : (stage6Index < 10 ? "Task Three (Trang 33)" : "Phần B (Trang 34)")}
+                  : VOCAB_C1_UNIT_1.unitId === 8
+                  ? (stage6Index < 10 ? "Task Three (Trang 33)" : "Phần B (Trang 34)")
+                  : (stage6Index < 10 ? "Prepositions (Trang 36-37)" : "Phần B (Trang 39)")}
               </span>
             </div>
 
