@@ -1,4 +1,5 @@
 import { CambridgeUnitData } from "./types";
+import { unit01Data } from "./unit01";
 import { unit05Data } from "./unit05";
 import { CAMBRIDGE_VOCAB_UNITS } from "./unitsMeta";
 
@@ -6,6 +7,7 @@ export * from "./types";
 export * from "./unitsMeta";
 
 const unitsDataMap: Record<number, CambridgeUnitData> = {
+  1: unit01Data,
   5: unit05Data
 };
 

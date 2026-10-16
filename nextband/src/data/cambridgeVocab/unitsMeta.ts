@@ -10,7 +10,7 @@ export const CAMBRIDGE_VOCAB_UNITS: UnitOverviewItem[] = [
     titleVi: "Mối quan hệ gia đình & Phát triển đầu đời",
     descriptionVi: "Từ vựng về quan hệ huyết thống, nuôi dưỡng, giai đoạn ấu thơ và giao tiếp gia đình.",
     targetCefr: "B2 - C1",
-    isAvailable: false,
+    isAvailable: true,
     coreCollocationsPreview: ["immediate family", "maternal instinct", "sibling rivalry", "stable upbringing"]
   },
   {
