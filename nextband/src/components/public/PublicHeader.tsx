@@ -54,6 +54,7 @@ const PUBLIC_NAV_ITEMS: NavItem[] = [
       { label: "Tủ sách tương tác (Reading Cases)", href: "/reading#tu-sach", badge: "Articles" },
       { label: "English Idioms (Chọn Unit)", href: "/reading/idioms", badge: "Units 1-8" },
       { label: "Vocabulary Files C1 (Unit 1 - 12)", href: "/vocab-c1", badge: "Mới" },
+      { label: "Cambridge Vocab for IELTS (Chọn Unit)", href: "/cambridge-vocab", badge: "20 Units" },
       { label: "DIVIDER", href: "", isDivider: true },
       { label: "Phương pháp đọc sâu (Philosophy)", href: "/reading#phuong-phap" },
     ],
@@ -87,7 +88,8 @@ export function PublicHeader() {
       if (
         location.pathname.startsWith("/reading") ||
         location.pathname.startsWith("/reading-challenge") ||
-        location.pathname.startsWith("/vocab-c1")
+        location.pathname.startsWith("/vocab-c1") ||
+        location.pathname.startsWith("/cambridge-vocab")
       ) {
         return true;
       }
@@ -99,6 +101,7 @@ export function PublicHeader() {
   const isSubActive = (href: string) => {
     if (href === "/courses" && location.pathname === "/courses") return true;
     if (href === "/vocab-c1" && (location.pathname === "/vocab-c1" || location.pathname === "/reading/vocab-c1")) return true;
+    if (href === "/cambridge-vocab" && location.pathname.startsWith("/cambridge-vocab")) return true;
     if (href !== "/courses" && location.pathname === href) return true;
     return false;
   };
