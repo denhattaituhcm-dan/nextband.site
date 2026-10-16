@@ -21,7 +21,7 @@ export const CAMBRIDGE_VOCAB_UNITS: UnitOverviewItem[] = [
     titleVi: "Phát triển thể chất & Nhận thức trí tuệ",
     descriptionVi: "Khám phá các giai đoạn phát triển trí não, kỹ năng vận động và cột mốc tâm sinh lý.",
     targetCefr: "B2 - C1",
-    isAvailable: false,
+    isAvailable: true,
     coreCollocationsPreview: ["cognitive development", "motor skills", "milestone achievement", "abstract thinking"]
   },
   {

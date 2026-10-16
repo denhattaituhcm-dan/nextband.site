@@ -412,9 +412,15 @@ export default function AdminGameArenaPage() {
                   {filteredExams.map((exam: any, idx: number) => {
                     const isExamSelected = selectedExamId === exam.id;
                     const weekNum = exam.week || Math.ceil((idx + 1) / 3);
-                    const isSpeaking = exam.title?.toLowerCase().includes("speaking");
-                    const isListening = exam.title?.toLowerCase().includes("listening");
-                    const isReadingWriting = exam.title?.toLowerCase().includes("reading") || exam.title?.toLowerCase().includes("writing");
+                    const titleUpper = (exam.title || "").toUpperCase();
+                    
+                    // Nhận diện kỹ năng chuẩn xác dựa trên cấu trúc bài học DOER:
+                    // Day 1 = Writing (WRI), Day 2 = Reading & Vocabulary (kể cả khi code đề ghi LIS), Day 3 = Speaking/Vocab (SPK)
+                    const isDay2 = titleUpper.includes("D2") || titleUpper.includes("DAY 2") || titleUpper.includes("DAY2");
+                    const isSpeaking = titleUpper.includes("SPK") || titleUpper.includes("SPEAKING");
+                    const isWriting = titleUpper.includes("WRI") || titleUpper.includes("WRITING");
+                    const isReading = isDay2 || titleUpper.includes("READING");
+                    const isPureListening = !isDay2 && (titleUpper.includes("LIS") || titleUpper.includes("LISTENING"));
 
                     return (
                       <div
@@ -439,19 +445,24 @@ export default function AdminGameArenaPage() {
                                 Tuần {weekNum}
                               </Badge>
                             )}
+                            {isWriting && (
+                              <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]">
+                                Writing
+                              </Badge>
+                            )}
+                            {isReading && (
+                              <Badge className="bg-amber-50 text-amber-800 border-amber-200 text-[10px]">
+                                Reading & Vocab
+                              </Badge>
+                            )}
                             {isSpeaking && (
                               <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-[10px]">
                                 Speaking
                               </Badge>
                             )}
-                            {isListening && (
+                            {isPureListening && (
                               <Badge className="bg-purple-50 text-purple-700 border-purple-200 text-[10px]">
                                 Listening
-                              </Badge>
-                            )}
-                            {isReadingWriting && (
-                              <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]">
-                                Reading & Writing
                               </Badge>
                             )}
                           </div>

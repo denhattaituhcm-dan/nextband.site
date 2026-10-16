@@ -210,204 +210,205 @@ export const WEEK_3_QUESTIONS: Record<string, any[]> = {
     {
       id: "doer_w3d2_q01",
       roundIndex: 0,
-      prompt: "Theo bài đọc \"My 1-Month Vietnam Travel Itinerary\", hành trình của tác giả bắt đầu từ đâu và kết thúc theo hướng nào?",
+      prompt: "Trong cụm từ \"one of those standout destinations\" (bài đọc Hội An), từ \"standout\" (adj) ĐỒNG NGHĨA nhất với từ nào?",
       options: [
-        { id: "opt_A", label: "A", text: "Bắt đầu ở TP. Hồ Chí Minh rồi đi dần ra phía bắc tới Hà Nội" },
-        { id: "opt_B", label: "B", text: "Bắt đầu ở Hà Nội rồi đi dần vào nam tới TP. Hồ Chí Minh" },
-        { id: "opt_C", label: "C", text: "Chỉ ở lại TP. Hồ Chí Minh và vịnh Hạ Long" },
-        { id: "opt_D", label: "D", text: "Bắt đầu từ Đà Nẵng và đi khắp miền Trung" }
+        { id: "opt_A", label: "A", text: "remarkable / extraordinary (nổi bật, xuất chúng)" },
+        { id: "opt_B", label: "B", text: "ordinary / average (bình thường, phổ thông)" },
+        { id: "opt_C", label: "C", text: "overcrowded (quá đông đúc)" },
+        { id: "opt_D", label: "D", text: "isolated (xa xôi, cô lập)" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Bắt đầu ở TP. Hồ Chí Minh rồi đi dần ra phía bắc tới Hà Nội",
-      correctExplanation: "Tác giả viết: \"My journey started in Ho Chi Minh City in southern Vietnam... I slowly worked my way north to Hanoi via buses and trains\".",
+      correctAnswerText: "A. remarkable / extraordinary (nổi bật, xuất chúng)",
+      correctExplanation: "\"Standout\" (adj) mô tả một người/vật/địa điểm vượt trội, đặc biệt xuất sắc và đáng nhớ hơn tất cả những thứ xung quanh.",
       misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. Bắt đầu ở Hà Nội rồi đi vào nam",
-        diagnosticTitle: "Đảo lộn điểm khởi đầu hành trình",
-        explanation: "Tác giả khởi hành tại TP.HCM (Saigon) ở phía Nam và di chuyển lên phía Bắc."
+        baitOptionId: "opt_C",
+        baitOptionText: "C. overcrowded",
+        diagnosticTitle: "Nhầm lẫn giữa nổi tiếng thu hút khách với đông đúc chật chội",
+        explanation: "Standout chỉ chất lượng nổi bật vượt trội của địa danh, không mang nghĩa tiêu cực là quá tải hay chật chội."
       }
     },
     {
       id: "doer_w3d2_q02",
       roundIndex: 1,
-      prompt: "Trước khi đến Việt Nam và ăn phở chính gốc, tác giả từng có suy nghĩ gì về món phở?",
+      prompt: "Từ TRÁI NGHĨA với \"bland\" trong câu: \"I always thought pho was such a bland dish without very much flavour\" là:",
       options: [
-        { id: "opt_A", label: "A", text: "Từng nghĩ phở là một món ăn nhạt nhẽo (bland dish) không có nhiều hương vị" },
-        { id: "opt_B", label: "B", text: "Nghĩ phở là món ăn quá cay và nồng mùi gia vị" },
-        { id: "opt_C", label: "C", text: "Nghĩ phở là món đắt đỏ nhất Việt Nam" },
-        { id: "opt_D", label: "D", text: "Chưa từng nghe nói hay nhìn thấy phở bao giờ" }
+        { id: "opt_A", label: "A", text: "flavorful / tasty (đậm đà, giàu hương vị)" },
+        { id: "opt_B", label: "B", text: "tasteless (nhạt nhẽo, vô vị)" },
+        { id: "opt_C", label: "C", text: "plain (đơn điệu, không nêm nếm)" },
+        { id: "opt_D", label: "D", text: "mild (dịu nhẹ, không cay)" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Từng nghĩ phở là một món ăn nhạt nhẽo (bland dish) không có nhiều hương vị",
-      correctExplanation: "Đoạn văn viết rõ: \"I had tried pho before and I always thought it was such a bland dish without very much flavour, but as it turns out, I just needed to eat it in Vietnam...\".",
+      correctAnswerText: "A. flavorful / tasty (đậm đà, giàu hương vị)",
+      correctExplanation: "\"Bland\" = nhạt nhẽo, thiếu gia vị. Do đó từ trái nghĩa chính xác nhất là \"flavorful\" (đầy đặn hương vị).",
       misconception: {
-        baitOptionId: "opt_D",
-        baitOptionText: "D. Chưa từng nghe nói hay nhìn thấy bao giờ",
-        diagnosticTitle: "Bỏ sót chi tiết tác giả đã từng thử phở ở nước ngoài",
-        explanation: "Tác giả nói \"I had tried pho before\" chứng tỏ đã từng ăn nhưng thấy nhạt nhẽo trước khi sang VN."
+        baitOptionId: "opt_B",
+        baitOptionText: "B. tasteless",
+        diagnosticTitle: "Chọn nhầm từ đồng nghĩa thay vì từ trái nghĩa",
+        explanation: "Tasteless là từ đồng nghĩa với bland. Đề bài đang yêu cầu tìm từ TRÁI NGHĨA."
       }
     },
     {
       id: "doer_w3d2_q03",
       roundIndex: 2,
-      prompt: "Trong câu miêu tả chuyến đi Bảo tàng Chứng tích Chiến tranh: \"a sobering look at the lasting effects of the Vietnam War\", từ \"sobering\" có nghĩa là:",
+      prompt: "Trong cụm \"a sobering look at the lasting effects of the Vietnam War\", từ \"sobering\" mang sắc thái nghĩa gì?",
       options: [
-        { id: "opt_A", label: "A", text: "making you feel serious and thoughtful (khiến bạn trầm ngâm, xúc động sâu sắc)" },
-        { id: "opt_B", label: "B", text: "making you feel bored and sleepy (gây buồn ngủ)" },
-        { id: "opt_C", label: "C", text: "extremely funny and joyful (hài hước)" },
-        { id: "opt_D", label: "D", text: "expensive to visit (đắt đỏ)" }
+        { id: "opt_A", label: "A", text: "serious and thought-provoking (lắng đọng, khiến người ta phải suy ngẫm sâu sắc)" },
+        { id: "opt_B", label: "B", text: "entertaining and humorous (mang tính giải trí, hài hước)" },
+        { id: "opt_C", label: "C", text: "boring and dull (nhàm chán, tẻ nhạt)" },
+        { id: "opt_D", label: "D", text: "terrifying and chaotic (kinh hoàng, hỗn loạn)" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. making you feel serious and thoughtful (khiến bạn trầm ngâm, xúc động sâu sắc)",
-      correctExplanation: "\"Sobering\" mang nghĩa làm ai đó trầm lại, suy ngẫm một cách nghiêm túc về những bi kịch lịch sử.",
+      correctAnswerText: "A. serious and thought-provoking (lắng đọng, khiến người ta phải suy ngẫm sâu sắc)",
+      correctExplanation: "\"Sobering\" (adj) mô tả trải nghiệm trang nghiêm khiến người xem bừng tỉnh, trở nên nghiêm túc và suy ngẫm sâu xa về thực tế.",
       misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. gây buồn ngủ",
-        diagnosticTitle: "Hiểu nhầm tính chất trang nghiêm thành nhàm chán",
-        explanation: "Sobering là một trải nghiệm gây ấn tượng mạnh và cảm xúc sâu lắng, hoàn toàn không phải nhàm chán."
+        baitOptionId: "opt_C",
+        baitOptionText: "C. boring and dull",
+        diagnosticTitle: "Đánh đồng cảm giác trầm lắng với sự nhàm chán",
+        explanation: "Sobering là một trải nghiệm gây ấn tượng tinh thần mạnh mẽ và sâu sắc, hoàn toàn không phải tẻ nhạt."
       }
     },
     {
       id: "doer_w3d2_q04",
       roundIndex: 3,
-      prompt: "Tại sao tác giả lại cảm thấy ít có sự kết nối cảm xúc mạnh mẽ với thủ đô Hà Nội hơn các nơi khác?",
+      prompt: "Collocation nào trong bài đọc diễn tả \"lịch trình chi tiết các địa điểm và hoạt động của một chuyến đi\"?",
       options: [
-        { id: "opt_A", label: "A", text: "Do giao thông hỗn loạn, tiếng còi xe liên tục và sự mệt mỏi sau cả tháng di chuyển" },
-        { id: "opt_B", label: "B", text: "Do người dân ở đó không biết nói tiếng Anh" },
-        { id: "opt_C", label: "C", text: "Do thời tiết quá nóng bức" },
-        { id: "opt_D", label: "D", text: "Do tác giả bị mất hành lý khi đi tàu" }
+        { id: "opt_A", label: "A", text: "Travel itinerary" },
+        { id: "opt_B", label: "B", text: "Travel receipt" },
+        { id: "opt_C", label: "C", text: "Travel certificate" },
+        { id: "opt_D", label: "D", text: "Travel coupon" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Do giao thông hỗn loạn, tiếng còi xe liên tục và sự mệt mỏi sau cả tháng di chuyển",
-      correctExplanation: "Tác giả giải thích: \"I think it was the combination of mad traffic, constant honking, and the fact that I'd had a very busy month of travel\".",
+      correctAnswerText: "A. Travel itinerary",
+      correctExplanation: "\"Travel itinerary\" là thuật ngữ chuẩn xác chỉ bản lịch trình chi tiết các chặng dừng chân trong một chuyến du lịch.",
       misconception: {
-        baitOptionId: "opt_C",
-        baitOptionText: "C. Do thời tiết quá nóng bức",
-        diagnosticTitle: "Suy diễn về yếu tố khí hậu không có trong bài",
-        explanation: "Bài đọc không hề phàn nàn về nhiệt độ hay thời tiết ở Hà Nội."
+        baitOptionId: "opt_D",
+        baitOptionText: "D. Travel coupon",
+        diagnosticTitle: "Nhầm lẫn với vé giảm giá / phiếu tham quan",
+        explanation: "Coupon là phiếu dịch vụ/giảm giá, không mang nghĩa lịch trình di chuyển."
       }
     },
     {
       id: "doer_w3d2_q05",
       roundIndex: 4,
-      prompt: "Tác giả đã tham gia hoạt động nào tại khu phố cổ Hà Nội?",
+      prompt: "Từ \"topography\" trong câu \"Halong Bay is home to some of the most fascinating topography in the world\" mang nghĩa là gì?",
       options: [
-        { id: "opt_A", label: "A", text: "Thăm Hồ Hoàn Kiếm và xem múa rối nước tại Nhà hát Thăng Long" },
-        { id: "opt_B", label: "B", text: "Tham quan Lăng Chủ tịch Hồ Chí Minh và Chùa Một Cột" },
-        { id: "opt_C", label: "C", text: "Đi chợ đêm Đồng Xuân và ăn bún chả" },
-        { id: "opt_D", label: "D", text: "Leo lên đỉnh tháp Bút để ngắm toàn cảnh" }
+        { id: "opt_A", label: "A", text: "Địa hình và đặc điểm địa mạo tự nhiên của một vùng đất/vịnh" },
+        { id: "opt_B", label: "B", text: "Khí hậu và lượng mưa hàng năm" },
+        { id: "opt_C", label: "C", text: "Hệ thống truyền thuyết và phong tục bản địa" },
+        { id: "opt_D", label: "D", text: "Mạng lưới đường bộ và phương tiện công cộng" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Thăm Hồ Hoàn Kiếm và xem múa rối nước tại Nhà hát Thăng Long",
-      correctExplanation: "Đoạn văn viết: \"I did manage to visit Hoan Kiem Lake in the historic centre of town, and attend a water puppet show at Thang Long Water Puppet Theater\".",
+      correctAnswerText: "A. Địa hình và đặc điểm địa mạo tự nhiên của một vùng đất/vịnh",
+      correctExplanation: "\"Topography\" (danh từ học thuật) chỉ đặc tính địa hình, hình thái các khối núi đá, đảo nổi và bề mặt địa thế tự nhiên.",
       misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. Tham quan Lăng Bác",
-        diagnosticTitle: "Đoán mò các địa danh nổi tiếng của Hà Nội",
-        explanation: "Tác giả chỉ nêu đích danh Hồ Hoàn Kiếm và Nhà hát Múa rối nước Thăng Long trong lịch trình 3 ngày."
+        baitOptionId: "opt_C",
+        baitOptionText: "C. Hệ thống truyền thuyết và phong tục",
+        diagnosticTitle: "Nhầm topography với folklore / mythology",
+        explanation: "Topography thuần túy là thuật ngữ địa lý học miêu tả hình thể đất đai cảnh quan."
       }
     },
     {
       id: "doer_w3d2_q06",
       roundIndex: 5,
-      prompt: "Từ \"topography\" trong câu miêu tả Vịnh Hạ Long: \"Halong Bay is home to some of the most fascinating topography in the world\" có nghĩa là:",
+      prompt: "Chọn từ điền vào collocation chuẩn: \"This pace allowed me to ______ experience Vietnam as a whole.\" (trải nghiệm một cách thấu đáo, trọn vẹn)",
       options: [
-        { id: "opt_A", label: "A", text: "Địa hình, cảnh quan địa thế tự nhiên" },
-        { id: "opt_B", label: "B", text: "Hệ thống ẩm thực hải sản" },
-        { id: "opt_C", label: "C", text: "Lịch sử truyền thuyết dân gian" },
-        { id: "opt_D", label: "D", text: "Hệ thống giao thông đường thủy" }
+        { id: "opt_A", label: "A", text: "thoroughly" },
+        { id: "opt_B", label: "B", text: "shallowly" },
+        { id: "opt_C", label: "C", text: "partially" },
+        { id: "opt_D", label: "D", text: "roughly" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Địa hình, cảnh quan địa thế tự nhiên",
-      correctExplanation: "\"Topography\" là thuật ngữ địa lý chỉ địa hình, bề mặt cảnh quan và các đặc tính tự nhiên của một vùng đất/vịnh đảo.",
+      correctAnswerText: "A. thoroughly",
+      correctExplanation: "\"Thoroughly experience something\" là collocation cao cấp trong IELTS: trải nghiệm một cách tường tận, cặn kẽ và trọn vẹn từ đầu đến cuối.",
       misconception: {
-        baitOptionId: "opt_C",
-        baitOptionText: "C. Lịch sử truyền thuyết dân gian",
-        diagnosticTitle: "Nhầm lẫn với tên gọi \"Bay of Descending Dragons\"",
-        explanation: "Topography thuần túy là thuật ngữ địa mạo, hình thể núi đá và nước non."
+        baitOptionId: "opt_D",
+        baitOptionText: "D. roughly",
+        diagnosticTitle: "Nhầm roughly (sơ sài/ước chừng) với trải nghiệm sâu sắc",
+        explanation: "Roughly mang nghĩa áng chừng hoặc thô kệch, trái ngược hoàn toàn với ý nghĩa tường tận của thoroughly."
       }
     },
     {
       id: "doer_w3d2_q07",
       roundIndex: 6,
-      prompt: "Tại sao tác giả lại chọn tour du thuyền 3 ngày 2 đêm thay vì tour 1 ngày ở Vịnh Hạ Long?",
+      prompt: "Thành ngữ: \"I cannot recommend this experience enough!\" tương đương với câu nào dưới đây?",
       options: [
-        { id: "opt_A", label: "A", text: "Vì nhận thấy tour 1 ngày là không đủ để trải nghiệm trọn vẹn cảnh quan kỳ diệu này" },
-        { id: "opt_B", label: "B", text: "Vì các tour 1 ngày đã bán hết sạch vé" },
-        { id: "opt_C", label: "C", text: "Vì tour 3 ngày có giá rẻ hơn tour 1 ngày" },
-        { id: "opt_D", label: "D", text: "Vì thời tiết xấu khiến các chuyến tàu trong ngày bị hủy" }
+        { id: "opt_A", label: "A", text: "I strongly / wholeheartedly encourage everyone to try this experience." },
+        { id: "opt_B", label: "B", text: "I do not think this experience is suitable for most tourists." },
+        { id: "opt_C", label: "C", text: "I have run out of time to describe the trip properly." },
+        { id: "opt_D", label: "D", text: "I refuse to provide any further recommendation about this tour." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Vì nhận thấy tour 1 ngày là không đủ để trải nghiệm trọn vẹn cảnh quan kỳ diệu này",
-      correctExplanation: "Tác giả nêu: \"I knew a one day tour would not be enough time to experience this magical landscape, so I signed up for a 3 day - 2 night boat tour\".",
+      correctAnswerText: "A. I strongly / wholeheartedly encourage everyone to try this experience.",
+      correctExplanation: "\"Cannot recommend sth enough\" là cấu trúc khen ngợi tuyệt đối: khen bao nhiêu cũng chưa đủ, nhiệt liệt khuyến khích nên thử.",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Do hết vé tour 1 ngày",
-        diagnosticTitle: "Suy diễn nguyên nhân không có trong văn bản",
-        explanation: "Đây là quyết định chủ động của tác giả dựa trên mong muốn khám phá kỹ lưỡng."
+        baitOptionText: "B. I do not think this experience is suitable",
+        diagnosticTitle: "Bẫy dịch nghĩa đen từ phủ định \"cannot\"",
+        explanation: "Học sinh thấy chữ \"cannot\" tưởng là lời chê hoặc không giới thiệu, trong khi đây là thành ngữ bày tỏ sự thán phục cao nhất."
       }
     },
     {
       id: "doer_w3d2_q08",
       roundIndex: 7,
-      prompt: "Tác giả đã tham gia những hoạt động nào trên Vịnh Hạ Long trong chuyến đi 3 ngày?",
+      prompt: "Chọn giới từ chính xác đi với động từ \"grant\" trong ngữ cảnh vé tham quan phố cổ: \"The ticket grants you admission ______ a number of temples.\"",
       options: [
-        { id: "opt_A", label: "A", text: "Chèo thuyền kayak trong vịnh, thăm hang động và leo núi trên các hòn đảo" },
-        { id: "opt_B", label: "B", text: "Lặn biển ngắm san hô và câu mực đêm cùng ngư dân" },
-        { id: "opt_C", label: "C", text: "Học nhảy dù lượn và bơi vượt biển" },
-        { id: "opt_D", label: "D", text: "Tham gia lễ hội đua thuyền rồng truyền thống" }
+        { id: "opt_A", label: "A", text: "to" },
+        { id: "opt_B", label: "B", text: "for" },
+        { id: "opt_C", label: "C", text: "with" },
+        { id: "opt_D", label: "D", text: "at" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Chèo thuyền kayak trong vịnh, thăm hang động và leo núi trên các hòn đảo",
-      correctExplanation: "Bài viết liệt kê: \"kayaking in the bay, visiting caves, and hiking around some of the islands\".",
+      correctAnswerText: "A. to",
+      correctExplanation: "Cấu trúc chuẩn xác: \"admission to a place/event\" (quyền được vào cửa, cấp phép vào một địa điểm nào đó).",
       misconception: {
         baitOptionId: "opt_B",
-        baitOptionText: "B. Lặn ngắm san hô",
-        diagnosticTitle: "Đưa ra các hoạt động biển không được đề cập",
-        explanation: "Bài đọc chỉ liệt kê 3 hoạt động cụ thể: kayaking, visiting caves, hiking."
+        baitOptionText: "B. for",
+        diagnosticTitle: "Dịch từ \"cho\" trong tiếng Việt thành giới từ \"for\"",
+        explanation: "Tiếng Việt nói \"vé vào cửa cho các ngôi đền\", nhưng tiếng Anh bắt buộc dùng \"admission TO [place]\"."
       }
     },
     {
       id: "doer_w3d2_q09",
       roundIndex: 8,
-      prompt: "Xét câu hỏi True/False/Not Given: \"The author decided to sign up for a 1-day tour of Ho Chi Minh City because she wanted to save money.\" Đáp án là:",
+      prompt: "VẬN DỤNG NGỮ CẢNH MỚI: Chọn từ thích hợp để hoàn thành câu học thuật: \"The museum’s exhibition on modern art was so ______ that it attracted international praise.\"",
       options: [
-        { id: "opt_A", label: "A", text: "FALSE" },
-        { id: "opt_B", label: "B", text: "TRUE" },
-        { id: "opt_C", label: "C", text: "NOT GIVEN" },
-        { id: "opt_D", label: "D", text: "CANNOT BE DETERMINED" }
+        { id: "opt_A", label: "A", text: "standout" },
+        { id: "opt_B", label: "B", text: "bland" },
+        { id: "opt_C", label: "C", text: "sober" },
+        { id: "opt_D", label: "D", text: "rough" }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. FALSE",
-      correctExplanation: "Tác giả nói lý do đặt tour 1 ngày ở Sài Gòn là do THỜI GIAN CÓ HẠN (\"since my time was limited\"), chứ không phải để tiết kiệm tiền.",
+      correctAnswerText: "A. standout",
+      correctExplanation: "\"A standout exhibition\" = một buổi triển lãm nổi bật, xuất sắc vượt trội thu hút sự ca ngợi quốc tế. \"Bland\" (nhạt nhẽo) mâu thuẫn với vế sau.",
       misconception: {
-        baitOptionId: "opt_C",
-        baitOptionText: "C. NOT GIVEN",
-        diagnosticTitle: "Không đối chiếu được lý do thời gian vs tiền bạc",
-        explanation: "Bài đã nêu rõ lý do là do thời gian có hạn (limited time), thông tin này mâu thuẫn trực tiếp với \"save money\" nên là FALSE."
+        baitOptionId: "opt_B",
+        baitOptionText: "B. bland",
+        diagnosticTitle: "Không liên kết với kết quả tích cực \"attracted praise\"",
+        explanation: "Nếu triển lãm \"bland\" (nhạt nhẽo) thì không thể nhận được sự tán dương rộng rãi của quốc tế."
       }
     },
     {
       id: "doer_w3d2_q10",
       roundIndex: 9,
-      prompt: "Trong câu kết: \"I can't recommend this experience enough!\", người viết muốn nói gì?",
+      prompt: "PARAPHRASE: Câu \"I didn't feel very inspired to go out and explore due to the mad traffic and constant honking\" được diễn đạt lại chuẩn xác nhất là:",
       options: [
-        { id: "opt_A", label: "A", text: "Rất nhiệt liệt đề xuất mọi người nên trải nghiệm chuyến đi tuyệt vời này" },
-        { id: "opt_B", label: "B", text: "Không muốn giới thiệu trải nghiệm này cho ai vì quá tệ" },
-        { id: "opt_C", label: "C", text: "Không có đủ thời gian để viết bài đánh giá chi tiết" },
-        { id: "opt_D", label: "D", text: "Đề nghị tour du lịch nên bổ sung thêm hoạt động mới" }
+        { id: "opt_A", label: "A", text: "The relentless noise and chaotic traffic discouraged me from exploring the city." },
+        { id: "opt_B", label: "B", text: "I thoroughly enjoyed sightseeing because the traffic was full of vibrant energy." },
+        { id: "opt_C", label: "C", text: "The author was forbidden from going outdoors by local traffic regulations." },
+        { id: "opt_D", label: "D", text: "The quiet streets made the author feel isolated and bored." }
       ],
       correctOptionId: "opt_A",
-      correctAnswerText: "A. Rất nhiệt liệt đề xuất mọi người nên trải nghiệm chuyến đi tuyệt vời này",
-      correctExplanation: "Thành ngữ \"cannot recommend something enough\" là lời khen ngợi cao nhất, ý nói có khen bao nhiêu cũng không đủ vì quá tuyệt vời.",
+      correctAnswerText: "A. The relentless noise and chaotic traffic discouraged me from exploring the city.",
+      correctExplanation: "\"Relentless noise\" paraphrase cho \"constant honking\", \"chaotic traffic\" paraphrase cho \"mad traffic\", và \"discouraged me\" paraphrase cho \"didn't feel very inspired\".",
       misconception: {
-        baitOptionId: "opt_B",
-        baitOptionText: "B. Không muốn giới thiệu",
-        diagnosticTitle: "Dịch nghĩa đen phủ định \"can't\"",
-        explanation: "Người học nhìn thấy \"can't recommend\" tưởng là không đề xuất, nhưng đây là cấu trúc khen ngợi tột bậc."
+        baitOptionId: "opt_C",
+        baitOptionText: "C. The author was forbidden",
+        diagnosticTitle: "Nhầm lẫn giữa mất cảm hứng cá nhân với bị pháp luật cấm đoán",
+        explanation: "Tác giả chỉ không có hứng thú đi dạo (uninspired), không hề bị ai ngăn cấm (forbidden)."
       }
     }
   ],
+
   "WEEK 3 – DAY 3": [
     {
       id: "doer_w3d3_q01",
