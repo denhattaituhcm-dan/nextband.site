@@ -182,6 +182,15 @@ export const VocabC1Page: React.FC = () => {
   const [stage1Index, setStage1Index] = useState(0);
   const [stage1IsFlipped, setStage1IsFlipped] = useState(false);
   const [stage1SelfAssessments, setStage1SelfAssessments] = useState<Record<string, 'review' | 'mastered'>>({});
+  const [isWordPronouncing, setIsWordPronouncing] = useState(false);
+
+  const triggerLivingAudio = (word: string) => {
+    setIsWordPronouncing(true);
+    playWordAudio(word);
+    setTimeout(() => {
+      setIsWordPronouncing(false);
+    }, 1800);
+  };
 
   // STAGE 2: Word Formation
   const [stage2Index, setStage2Index] = useState(0);
@@ -463,7 +472,7 @@ export const VocabC1Page: React.FC = () => {
         if (key === " " || key === "Spacebar") {
           e.preventDefault();
           setStage1IsFlipped((prev) => !prev);
-          playWordAudio(currentWia.word);
+          triggerLivingAudio(currentWia.word);
         } else if (key === "1") {
           if (stage1IsFlipped) {
             e.preventDefault();
@@ -887,11 +896,12 @@ export const VocabC1Page: React.FC = () => {
                 )}
               </div>
               <button
-                onClick={() => playWordAudio(currentWia.word)}
-                className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-sm font-semibold border border-indigo-200 transition-all cursor-pointer shadow-xs"
+                onClick={() => triggerLivingAudio(currentWia.word)}
+                className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-sm font-semibold border border-indigo-200 transition-all cursor-pointer shadow-xs active:scale-95"
+                title="Phát âm từ vựng (phím Space hoặc click trực tiếp vào từ)"
               >
-                <Volume2 className="w-4 h-4" />
-                <span className="font-mono">Listen</span>
+                <Volume2 className={`w-4 h-4 ${isWordPronouncing ? "text-indigo-600 animate-bounce" : ""}`} />
+                <span className="font-mono">{isWordPronouncing ? "Playing..." : "Listen"}</span>
                 <kbd className="text-xs bg-white px-1.5 py-0.5 rounded border border-indigo-300 font-mono text-indigo-800 shadow-2xs">Space</kbd>
               </button>
             </div>
@@ -915,23 +925,51 @@ export const VocabC1Page: React.FC = () => {
                   <div className="inline-block px-3 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-full text-xs font-bold font-mono uppercase tracking-wider mb-4">
                     Active Recall Mode
                   </div>
-                  <h2 className="text-5xl sm:text-6xl font-black text-slate-900 tracking-tight font-mono mb-3">
-                    {currentWia.word}
-                  </h2>
+
+                  {/* Living Word on Click / Pronounce */}
+                  <div className="mb-3">
+                    <h2
+                      onClick={() => triggerLivingAudio(currentWia.word)}
+                      className="text-5xl sm:text-6xl font-black tracking-tight font-mono inline-block cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 select-none"
+                      title="Bấm vào để nghe phát âm & kích hoạt hiệu ứng sống động"
+                    >
+                      {isWordPronouncing ? (
+                        <span
+                          className="inline-flex whitespace-nowrap"
+                          style={{ '--total-chars': currentWia.word.length } as React.CSSProperties}
+                        >
+                          {Array.from(currentWia.word).map((char, cIdx) => (
+                            <span
+                              key={cIdx}
+                              className="academic-char-living"
+                              style={{ '--char-index': cIdx } as React.CSSProperties}
+                            >
+                              {char}
+                            </span>
+                          ))}
+                        </span>
+                      ) : (
+                        <span className="text-slate-900 hover:text-indigo-600 transition-colors">
+                          {currentWia.word}
+                        </span>
+                      )}
+                    </h2>
+                  </div>
+
                   <p className="font-mono text-slate-500 text-xl font-medium mb-8">{currentWia.ipa}</p>
 
                   <div>
                     <button
                       onClick={() => {
                         setStage1IsFlipped(true);
-                        playWordAudio(currentWia.word);
+                        triggerLivingAudio(currentWia.word);
                       }}
                       className="inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-base shadow-lg shadow-indigo-500/25 transition-all transform active:scale-95 cursor-pointer"
                     >
                       <span>Lật thẻ để kiểm tra nghĩa</span>
                       <kbd className="text-xs font-mono bg-white/20 text-white px-2 py-0.5 rounded">Space</kbd>
                     </button>
-                    <p className="text-xs text-slate-400 mt-3">Thử nhớ lại sắc thái và nghĩa của từ trước khi bấm lật</p>
+                    <p className="text-xs text-slate-400 mt-3">Thử nhớ lại sắc thái và nghĩa của từ trước khi bấm lật (hoặc click vào từ để nghe âm thanh)</p>
                   </div>
                 </div>
 
@@ -941,8 +979,31 @@ export const VocabC1Page: React.FC = () => {
                 >
                   <div className="flex items-baseline justify-between mb-2">
                     <div className="flex items-baseline gap-3">
-                      <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight font-mono">
-                        {currentWia.word}
+                      <h2
+                        onClick={() => triggerLivingAudio(currentWia.word)}
+                        className="text-3xl sm:text-4xl font-black tracking-tight font-mono cursor-pointer transition-all hover:scale-105 active:scale-95 select-none"
+                        title="Bấm vào để nghe lại phát âm"
+                      >
+                        {isWordPronouncing ? (
+                          <span
+                            className="inline-flex whitespace-nowrap"
+                            style={{ '--total-chars': currentWia.word.length } as React.CSSProperties}
+                          >
+                            {Array.from(currentWia.word).map((char, cIdx) => (
+                              <span
+                                key={cIdx}
+                                className="academic-char-living"
+                                style={{ '--char-index': cIdx } as React.CSSProperties}
+                              >
+                                {char}
+                              </span>
+                            ))}
+                          </span>
+                        ) : (
+                          <span className="text-slate-900 hover:text-indigo-600 transition-colors">
+                            {currentWia.word}
+                          </span>
+                        )}
                       </h2>
                       <span className="font-mono text-slate-500 text-base">{currentWia.ipa}</span>
                     </div>
